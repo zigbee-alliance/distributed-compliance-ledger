@@ -546,6 +546,30 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * No description
      *
      * @tags Query
+     * @name QueryRejectedAccountAll
+     * @summary Queries a list of RejectedAccount items.
+     * @request GET:/dcl/auth/rejected-accounts
+     */
+    queryRejectedAccountAll: (query?: {
+        "pagination.key"?: string;
+        "pagination.offset"?: string;
+        "pagination.limit"?: string;
+        "pagination.countTotal"?: boolean;
+        "pagination.reverse"?: boolean;
+    }, params?: RequestParams) => Promise<HttpResponse<DclauthQueryAllRejectedAccountResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryRejectedAccount
+     * @summary Queries a RejectedAccount by index.
+     * @request GET:/dcl/auth/rejected-accounts/{address}
+     */
+    queryRejectedAccount: (address: string, params?: RequestParams) => Promise<HttpResponse<DclauthQueryGetRejectedAccountResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
      * @name QueryRevokedAccountAll
      * @summary Queries a list of RevokedAccount items.
      * @request GET:/dcl/auth/revoked-accounts
@@ -566,29 +590,5 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @request GET:/dcl/auth/revoked-accounts/{address}
      */
     queryRevokedAccount: (address: string, params?: RequestParams) => Promise<HttpResponse<DclauthQueryGetRevokedAccountResponse, RpcStatus>>;
-    /**
-     * No description
-     *
-     * @tags Query
-     * @name QueryRejectedAccountAll
-     * @summary Queries a list of RejectedAccount items.
-     * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/rejected-accounts
-     */
-    queryRejectedAccountAll: (query?: {
-        "pagination.key"?: string;
-        "pagination.offset"?: string;
-        "pagination.limit"?: string;
-        "pagination.countTotal"?: boolean;
-        "pagination.reverse"?: boolean;
-    }, params?: RequestParams) => Promise<HttpResponse<DclauthQueryAllRejectedAccountResponse, RpcStatus>>;
-    /**
-     * No description
-     *
-     * @tags Query
-     * @name QueryRejectedAccount
-     * @summary Queries a RejectedAccount by index.
-     * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/rejected-accounts/{address}
-     */
-    queryRejectedAccount: (address: string, params?: RequestParams) => Promise<HttpResponse<DclauthQueryGetRejectedAccountResponse, RpcStatus>>;
 }
 export {};

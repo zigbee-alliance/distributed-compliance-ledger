@@ -246,6 +246,35 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
+         * @name QueryRejectedAccountAll
+         * @summary Queries a list of RejectedAccount items.
+         * @request GET:/dcl/auth/rejected-accounts
+         */
+        this.queryRejectedAccountAll = (query, params = {}) => this.request({
+            path: `/dcl/auth/rejected-accounts`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryRejectedAccount
+         * @summary Queries a RejectedAccount by index.
+         * @request GET:/dcl/auth/rejected-accounts/{address}
+         */
+        this.queryRejectedAccount = (address, params = {}) => this.request({
+            path: `/dcl/auth/rejected-accounts/${address}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
          * @name QueryRevokedAccountAll
          * @summary Queries a list of RevokedAccount items.
          * @request GET:/dcl/auth/revoked-accounts
@@ -267,35 +296,6 @@ export class Api extends HttpClient {
          */
         this.queryRevokedAccount = (address, params = {}) => this.request({
             path: `/dcl/auth/revoked-accounts/${address}`,
-            method: "GET",
-            format: "json",
-            ...params,
-        });
-        /**
-         * No description
-         *
-         * @tags Query
-         * @name QueryRejectedAccountAll
-         * @summary Queries a list of RejectedAccount items.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/rejected-accounts
-         */
-        this.queryRejectedAccountAll = (query, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/dclauth/rejected-accounts`,
-            method: "GET",
-            query: query,
-            format: "json",
-            ...params,
-        });
-        /**
-         * No description
-         *
-         * @tags Query
-         * @name QueryRejectedAccount
-         * @summary Queries a RejectedAccount by index.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/rejected-accounts/{address}
-         */
-        this.queryRejectedAccount = (address, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/dclauth/rejected-accounts/${address}`,
             method: "GET",
             format: "json",
             ...params,
