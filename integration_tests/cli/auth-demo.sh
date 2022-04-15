@@ -129,6 +129,12 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
+echo "Alice doesn't reject account for \"$user\", because Alice already approved account"
+result=$(echo $passphrase | dcld tx auth reject-add-account --address="$user_address" --info="Alice is rejecting this account" --from alice --yes 2>&1 || true)
+response_does_not_contain "$result" "\"code\": 0"
+
+test_divider
+
 echo "Get all accounts. $user account in the list because enough approvals received"
 result=$(dcld query auth all-accounts)
 check_response "$result" "\"address\": \"$user_address\""
@@ -353,6 +359,12 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
+echo "Alice doesn't reject account for \"$user\", because Alice already approved account"
+result=$(echo $passphrase | dcld tx auth reject-add-account --address="$user_address" --info="Alice is rejecting this account" --from alice --yes 2>&1 || true)
+response_does_not_contain "$result" "\"code\": 0"
+
+test_divider
+
 echo "Get all revoked accounts. No $user account in the list"
 result=$(dcld query auth all-revoked-accounts)
 check_response "$result" "\[\]"
@@ -484,7 +496,164 @@ echo "Get $user account"
 result=$(dcld query auth account --address=$user_address)
 check_response "$result" "Not Found"
 
+test_divider
 
+echo "Jack proposes account for $user"
+result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$user_address" --pubkey="$user_pubkey" --roles="Vendor" --vid="$vid" --from jack --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Get a proposed account for $user and confirm that the approval contains Jack's address"
+result=$(dcld query auth proposed-account --address=$user_address)
+check_response "$result" "\"address\": \"$user_address\""
+check_response_and_report "$result"  $jack_address "json"
+check_response_and_report "$result"  '"info": "Jack is proposing this account"' "json"
+response_does_not_contain "$result"  $alice_address "json"
+
+test_divider
+
+echo "Alice reject account for \"$user\""
+result=$(echo $passphrase | dcld tx auth reject-add-account --address="$user_address" --info="Alice is rejecting this account" --from alice --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Alice doesn't approve account for \"$user\", because Alice already rejected account"
+result=$(echo $passphrase | dcld tx auth approve-add-account --address="$user_address" --info="Alice is approving this account" --from alice --yes 2>&1 || true)
+response_does_not_contain "$result" "\"code\": 0"
+
+test_divider
+
+echo "Get all proposed accounts. $user account in the list"
+result=$(dcld query auth all-proposed-accounts)
+check_response "$result" "\"address\": \"$user_address\""
+
+test_divider
+
+echo "Get all accounts. $user account doesn't exist in the list, because doesn't enough approvals received"
+result=$(dcld query auth all-accounts)
+response_does_not_contain "$result" "\"address\": \"$user_address\""
+
+test_divider
+
+echo "Get all rejected accounts. $user account doesn't exist in the list, because doesn't enough rejected approvals received"
+result=$(dcld query auth all-rejected-accounts)
+check_response "$result" "\[\]"
+
+test_divider
+
+echo "Get all proposed accounts to revoke. No $user account in the list"
+result=$(dcld query auth all-proposed-accounts-to-revoke)
+check_response "$result" "\[\]"
+
+test_divider
+
+echo "Get all revoked accounts to revoke. No $user account in the list"
+result=$(dcld query auth all-proposed-accounts-to-revoke)
+response_does_not_contain "$result" "\"address\": \"$user_address\""
+
+test_divider
+
+echo "Get a proposed account for $user and confirm that the approval contains Jack's address"
+result=$(dcld query auth proposed-account --address=$user_address)
+check_response "$result" "\"address\": \"$user_address\""
+check_response_and_report "$result"  $jack_address "json"
+check_response_and_report "$result"  '"info": "Jack is proposing this account"' "json"
+check_response_and_report "$result"  $alice_address "json"
+check_response_and_report "$result"  '"info": "Alice is rejecting this account"' "json"
+
+test_divider
+
+echo "Get a account for $user is not found"
+result=$(dcld query auth account --address=$user_address)
+check_response "$result" "Not Found"
+
+test_divider
+
+echo "Get a proposed account to revoked for $user is not found"
+result=$(dcld query auth proposed-account-to-revoke --address=$user_address)
+check_response "$result" "Not Found"
+
+test_divider
+
+echo "Get a revoked account for $user is not found"
+result=$(dcld query auth revoked-account --address=$user_address)
+check_response "$result" "\"address\": \"$user_address\""
+
+test_divider
+
+echo "Bob reject account for \"$user\""
+result=$(echo $passphrase | dcld tx auth reject-add-account --address="$user_address" --info="Bob is rejecting this account" --from bob --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Bob can not the second time reject the same \"$user\""
+result=$(echo $passphrase | dcld tx auth reject-add-account --address="$user_address" --info="Bob is rejecting this account" --from bob --yes 2>&1 || true)
+response_does_not_contain "$result" "\"code\": 0"
+
+test_divider
+
+echo "Get all rejected accounts. $user account must be exist in the list, because enough rejected approvals received"
+result=$(dcld query auth all-rejected-accounts)
+check_response "$result" "\"address\": \"$user_address\""
+
+test_divider
+
+echo "Get all proposed accounts. $user account doesn't exist in the list"
+result=$(dcld query auth all-proposed-accounts)
+response_does_not_contain "$result" "\"address\": \"$user_address\""
+
+test_divider
+
+echo "Get all accounts. $user account doesn't exist in the list"
+result=$(dcld query auth all-accounts)
+response_does_not_contain "$result" "\"address\": \"$user_address\""
+
+test_divider
+
+echo "Get all proposed accounts to revoke. No $user account in the list"
+result=$(dcld query auth all-proposed-accounts-to-revoke)
+check_response "$result" "\[\]"
+
+test_divider
+
+echo "Get all revoked accounts to revoke. No $user account in the list"
+result=$(dcld query auth all-proposed-accounts-to-revoke)
+response_does_not_contain "$result" "\"address\": \"$user_address\""
+
+test_divider
+
+echo "Get a rejected account for $user. $user account must be exist"
+result=$(dcld query auth rejected-account --address=$user_address)
+check_response "$result" "\"address\": \"$user_address\""
+check_response_and_report "$result"  $jack_address "json"
+check_response_and_report "$result"  '"info": "Jack is proposing this account"' "json"
+check_response_and_report "$result"  $alice_address "json"
+check_response_and_report "$result"  '"info": "Alice is rejecting this account"' "json"
+check_response_and_report "$result"  $bob_address "json"
+check_response_and_report "$result"  '"info": "Bob is rejecting this account"' "json"
+
+test_divider
+
+echo "Get a account for $user is not found"
+result=$(dcld query auth account --address=$user_address)
+check_response "$result" "Not Found"
+
+test_divider
+
+echo "Get a proposed account to revoked for $user is not found"
+result=$(dcld query auth proposed-account-to-revoke --address=$user_address)
+check_response "$result" "Not Found"
+
+test_divider
+
+echo "Get a revoked account for $user is not found"
+result=$(dcld query auth revoked-account --address=$user_address)
+check_response "$result" "\"address\": \"$user_address\""
+
+test_divider
 
 pid=$RANDOM
 productName="Device #2"
