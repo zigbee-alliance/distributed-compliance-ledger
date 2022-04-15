@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { Writer, Reader } from 'protobufjs/minimal';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.vendorinfo';
-const baseVendorInfo = { vendorID: 0, vendorName: '', companyLegalName: '', companyPrefferredName: '', vendorLandingPageURL: '', creator: '' };
+const baseVendorInfo = { vendorID: 0, vendorName: '', companyLegalName: '', companyPreferredName: '', vendorLandingPageURL: '', creator: '' };
 export const VendorInfo = {
     encode(message, writer = Writer.create()) {
         if (message.vendorID !== 0) {
@@ -13,8 +13,8 @@ export const VendorInfo = {
         if (message.companyLegalName !== '') {
             writer.uint32(26).string(message.companyLegalName);
         }
-        if (message.companyPrefferredName !== '') {
-            writer.uint32(34).string(message.companyPrefferredName);
+        if (message.companyPreferredName !== '') {
+            writer.uint32(34).string(message.companyPreferredName);
         }
         if (message.vendorLandingPageURL !== '') {
             writer.uint32(42).string(message.vendorLandingPageURL);
@@ -41,7 +41,7 @@ export const VendorInfo = {
                     message.companyLegalName = reader.string();
                     break;
                 case 4:
-                    message.companyPrefferredName = reader.string();
+                    message.companyPreferredName = reader.string();
                     break;
                 case 5:
                     message.vendorLandingPageURL = reader.string();
@@ -76,11 +76,11 @@ export const VendorInfo = {
         else {
             message.companyLegalName = '';
         }
-        if (object.companyPrefferredName !== undefined && object.companyPrefferredName !== null) {
-            message.companyPrefferredName = String(object.companyPrefferredName);
+        if (object.companyPreferredName !== undefined && object.companyPreferredName !== null) {
+            message.companyPreferredName = String(object.companyPreferredName);
         }
         else {
-            message.companyPrefferredName = '';
+            message.companyPreferredName = '';
         }
         if (object.vendorLandingPageURL !== undefined && object.vendorLandingPageURL !== null) {
             message.vendorLandingPageURL = String(object.vendorLandingPageURL);
@@ -101,7 +101,7 @@ export const VendorInfo = {
         message.vendorID !== undefined && (obj.vendorID = message.vendorID);
         message.vendorName !== undefined && (obj.vendorName = message.vendorName);
         message.companyLegalName !== undefined && (obj.companyLegalName = message.companyLegalName);
-        message.companyPrefferredName !== undefined && (obj.companyPrefferredName = message.companyPrefferredName);
+        message.companyPreferredName !== undefined && (obj.companyPreferredName = message.companyPreferredName);
         message.vendorLandingPageURL !== undefined && (obj.vendorLandingPageURL = message.vendorLandingPageURL);
         message.creator !== undefined && (obj.creator = message.creator);
         return obj;
@@ -126,11 +126,11 @@ export const VendorInfo = {
         else {
             message.companyLegalName = '';
         }
-        if (object.companyPrefferredName !== undefined && object.companyPrefferredName !== null) {
-            message.companyPrefferredName = object.companyPrefferredName;
+        if (object.companyPreferredName !== undefined && object.companyPreferredName !== null) {
+            message.companyPreferredName = object.companyPreferredName;
         }
         else {
-            message.companyPrefferredName = '';
+            message.companyPreferredName = '';
         }
         if (object.vendorLandingPageURL !== undefined && object.vendorLandingPageURL !== null) {
             message.vendorLandingPageURL = object.vendorLandingPageURL;

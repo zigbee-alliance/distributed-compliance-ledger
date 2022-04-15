@@ -97,7 +97,7 @@ func TestHandler_AddVendorInfo(t *testing.T) {
 	// check
 	require.Equal(t, msgCreateVendorInfo.VendorID, receivedVendorInfo.VendorID)
 	require.Equal(t, msgCreateVendorInfo.CompanyLegalName, receivedVendorInfo.CompanyLegalName)
-	require.Equal(t, msgCreateVendorInfo.CompanyPrefferredName, receivedVendorInfo.CompanyPrefferredName)
+	require.Equal(t, msgCreateVendorInfo.CompanyPreferredName, receivedVendorInfo.CompanyPreferredName)
 	require.Equal(t, msgCreateVendorInfo.Creator, receivedVendorInfo.Creator)
 	require.Equal(t, msgCreateVendorInfo.VendorLandingPageURL, receivedVendorInfo.VendorLandingPageURL)
 	require.Equal(t, msgCreateVendorInfo.VendorName, receivedVendorInfo.VendorName)
@@ -148,7 +148,7 @@ func TestHandler_UpdateVendorInfo(t *testing.T) {
 	// check
 	require.Equal(t, msgUpdateVendorInfo.VendorID, receivedVendorInfo.VendorID)
 	require.Equal(t, msgUpdateVendorInfo.CompanyLegalName, receivedVendorInfo.CompanyLegalName)
-	require.Equal(t, msgUpdateVendorInfo.CompanyPrefferredName, receivedVendorInfo.CompanyPrefferredName)
+	require.Equal(t, msgUpdateVendorInfo.CompanyPreferredName, receivedVendorInfo.CompanyPreferredName)
 	require.Equal(t, msgUpdateVendorInfo.Creator, receivedVendorInfo.Creator)
 	require.Equal(t, msgUpdateVendorInfo.VendorLandingPageURL, receivedVendorInfo.VendorLandingPageURL)
 	require.Equal(t, msgUpdateVendorInfo.VendorName, receivedVendorInfo.VendorName)
@@ -196,7 +196,7 @@ func TestHandler_AddVendorInfoWithEmptyOptionalFields(t *testing.T) {
 
 	// add new msgCreateVendorInfo
 	msgCreateVendorInfo := NewMsgCreateVendorInfo(setup.Vendor)
-	msgCreateVendorInfo.CompanyPrefferredName = "" // Set empty CID
+	msgCreateVendorInfo.CompanyPreferredName = "" // Set empty CID
 
 	_, err := setup.Handler(setup.Ctx, msgCreateVendorInfo)
 	require.NoError(t, err)
@@ -206,7 +206,7 @@ func TestHandler_AddVendorInfoWithEmptyOptionalFields(t *testing.T) {
 	require.NoError(t, err)
 
 	// check
-	require.Equal(t, "", receivedVendorInfo.CompanyPrefferredName)
+	require.Equal(t, "", receivedVendorInfo.CompanyPreferredName)
 }
 
 func TestHandler_AddVendorInfoByNonVendor(t *testing.T) {
@@ -243,23 +243,23 @@ func TestHandler_AddVendorInfoByVendorWithAnotherVendorId(t *testing.T) {
 
 func NewMsgCreateVendorInfo(signer sdk.AccAddress) *types.MsgCreateVendorInfo {
 	return &types.MsgCreateVendorInfo{
-		Creator:               signer.String(),
-		VendorID:              testconstants.VendorID1,
-		CompanyLegalName:      testconstants.CompanyLegalName,
-		CompanyPrefferredName: testconstants.CompanyPreferredName,
-		VendorName:            testconstants.VendorName,
-		VendorLandingPageURL:  testconstants.VendorLandingPageURL,
+		Creator:              signer.String(),
+		VendorID:             testconstants.VendorID1,
+		CompanyLegalName:     testconstants.CompanyLegalName,
+		CompanyPreferredName: testconstants.CompanyPreferredName,
+		VendorName:           testconstants.VendorName,
+		VendorLandingPageURL: testconstants.VendorLandingPageURL,
 	}
 }
 
 func NewMsgUpdateVendorInfo(signer sdk.AccAddress) *types.MsgUpdateVendorInfo {
 	return &types.MsgUpdateVendorInfo{
-		Creator:               signer.String(),
-		VendorID:              testconstants.VendorID1,
-		CompanyLegalName:      testconstants.CompanyLegalName + "/updated",
-		CompanyPrefferredName: testconstants.CompanyPreferredName + "/updated",
-		VendorName:            testconstants.VendorName + "/updated",
-		VendorLandingPageURL:  testconstants.VendorLandingPageURL + "/updated",
+		Creator:              signer.String(),
+		VendorID:             testconstants.VendorID1,
+		CompanyLegalName:     testconstants.CompanyLegalName + "/updated",
+		CompanyPreferredName: testconstants.CompanyPreferredName + "/updated",
+		VendorName:           testconstants.VendorName + "/updated",
+		VendorLandingPageURL: testconstants.VendorLandingPageURL + "/updated",
 	}
 }
 

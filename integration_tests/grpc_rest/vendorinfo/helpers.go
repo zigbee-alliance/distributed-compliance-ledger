@@ -17,23 +17,23 @@ import (
 
 func NewMsgCreateVendorInfo(vid int32, signer string) *vendorinfotypes.MsgCreateVendorInfo {
 	return &vendorinfotypes.MsgCreateVendorInfo{
-		Creator:               signer,
-		VendorID:              vid,
-		VendorName:            testconstants.VendorName,
-		CompanyLegalName:      testconstants.CompanyLegalName,
-		CompanyPrefferredName: testconstants.CompanyPreferredName,
-		VendorLandingPageURL:  testconstants.VendorLandingPageURL,
+		Creator:              signer,
+		VendorID:             vid,
+		VendorName:           testconstants.VendorName,
+		CompanyLegalName:     testconstants.CompanyLegalName,
+		CompanyPreferredName: testconstants.CompanyPreferredName,
+		VendorLandingPageURL: testconstants.VendorLandingPageURL,
 	}
 }
 
 func NewMsgUpdateVendorInfo(vid int32, signer string) *vendorinfotypes.MsgUpdateVendorInfo {
 	return &vendorinfotypes.MsgUpdateVendorInfo{
-		Creator:               signer,
-		VendorID:              vid,
-		VendorName:            testconstants.VendorName + "/new",
-		CompanyLegalName:      testconstants.CompanyLegalName + "/new",
-		CompanyPrefferredName: testconstants.CompanyPreferredName + "/new",
-		VendorLandingPageURL:  testconstants.VendorLandingPageURL + "/new",
+		Creator:              signer,
+		VendorID:             vid,
+		VendorName:           testconstants.VendorName + "/new",
+		CompanyLegalName:     testconstants.CompanyLegalName + "/new",
+		CompanyPreferredName: testconstants.CompanyPreferredName + "/new",
+		VendorLandingPageURL: testconstants.VendorLandingPageURL + "/new",
 	}
 }
 

@@ -26,12 +26,12 @@ func (k msgServer) CreateVendorInfo(goCtx context.Context, msg *types.MsgCreateV
 	}
 
 	vendorInfo := types.VendorInfo{
-		Creator:               msg.Creator,
-		VendorID:              msg.VendorID,
-		VendorName:            msg.VendorName,
-		CompanyLegalName:      msg.CompanyLegalName,
-		CompanyPrefferredName: msg.CompanyPrefferredName,
-		VendorLandingPageURL:  msg.VendorLandingPageURL,
+		Creator:              msg.Creator,
+		VendorID:             msg.VendorID,
+		VendorName:           msg.VendorName,
+		CompanyLegalName:     msg.CompanyLegalName,
+		CompanyPreferredName: msg.CompanyPreferredName,
+		VendorLandingPageURL: msg.VendorLandingPageURL,
 	}
 
 	k.SetVendorInfo(
@@ -60,12 +60,12 @@ func (k msgServer) UpdateVendorInfo(goCtx context.Context, msg *types.MsgUpdateV
 	}
 
 	vendorInfo := types.VendorInfo{
-		Creator:               msg.Creator,
-		VendorID:              msg.VendorID,
-		VendorName:            msg.VendorName,
-		CompanyLegalName:      msg.CompanyLegalName,
-		CompanyPrefferredName: msg.CompanyPrefferredName,
-		VendorLandingPageURL:  msg.VendorLandingPageURL,
+		Creator:              msg.Creator,
+		VendorID:             msg.VendorID,
+		VendorName:           msg.VendorName,
+		CompanyLegalName:     msg.CompanyLegalName,
+		CompanyPreferredName: msg.CompanyPreferredName,
+		VendorLandingPageURL: msg.VendorLandingPageURL,
 	}
 
 	k.SetVendorInfo(ctx, vendorInfo)
