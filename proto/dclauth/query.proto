@@ -65,12 +65,12 @@ service Query {
 
 // Queries a RejectedAccount by index.
 	rpc RejectedAccount(QueryGetRejectedAccountRequest) returns (QueryGetRejectedAccountResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/dclauth/rejected-accounts/{address}";
+		option (google.api.http).get = "/dcl/auth/rejected-accounts/{address}";
 	}
 
 	// Queries a list of RejectedAccount items.
 	rpc RejectedAccountAll(QueryAllRejectedAccountRequest) returns (QueryAllRejectedAccountResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/dclauth/rejected-accounts";
+		option (google.api.http).get = "/dcl/auth/rejected-accounts";
 	}
 
 // this line is used by starport scaffolding # 2
