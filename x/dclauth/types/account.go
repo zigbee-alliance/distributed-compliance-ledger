@@ -167,6 +167,17 @@ func (acc PendingAccount) HasApprovalFrom(address sdk.AccAddress) bool {
 	return false
 }
 
+func (acc PendingAccount) HasRejectApprovalFrom(address sdk.AccAddress) bool {
+	addrStr := address.String()
+	for _, rejectApproval := range acc.RejectApprovals {
+		if rejectApproval.Address == addrStr {
+			return true
+		}
+	}
+
+	return false
+}
+
 /*
 	Pending Account Revocation
 */

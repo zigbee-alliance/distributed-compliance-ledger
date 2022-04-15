@@ -48,3 +48,7 @@ func (k Keeper) MemKey() sdk.StoreKey {
 func (k Keeper) AccountApprovalsCount(ctx sdk.Context) int {
 	return int(math.Round(types.AccountApprovalsPercent * float64(k.CountAccountsWithRole(ctx, types.Trustee))))
 }
+
+func (k Keeper) AccountRejectApprovalsCount(ctx sdk.Context) int {
+	return k.CountAccountsWithRole(ctx, types.Trustee) - k.AccountApprovalsCount(ctx) + 1
+}

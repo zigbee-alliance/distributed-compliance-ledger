@@ -32,6 +32,8 @@ func GetQueryCmd(queryRoute string) *cobra.Command {
 	cmd.AddCommand(CmdShowPendingAccountRevocation())
 	cmd.AddCommand(CmdListRevokedAccount())
 	cmd.AddCommand(CmdShowRevokedAccount())
+	cmd.AddCommand(CmdListRejectedAccount())
+	cmd.AddCommand(CmdShowRejectedAccount())
 	// this line is used by starport scaffolding # 1
 
 	return cmd

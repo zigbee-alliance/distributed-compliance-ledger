@@ -101,10 +101,11 @@ func (k Keeper) HandleDoubleSign(ctx sdk.Context, evidence *evidencetypes.Equivo
 		ctx, accAddr, nil, dclauthTypes.RevokedAccount_MaliciousValidator)
 	if err != nil {
 		logger.Info("Error:", err)
+	} else {
+		k.dclauthKeeper.SetRevokedAccount(ctx, *revokedAccount)
+		// delete account record
+		k.dclauthKeeper.RemoveAccount(ctx, accAddr)
 	}
 
-	k.dclauthKeeper.SetRevokedAccount(ctx, *revokedAccount)
-
-	// delete account record
-	k.dclauthKeeper.RemoveAccount(ctx, accAddr)
+	logger.Info("Error:", err)
 }

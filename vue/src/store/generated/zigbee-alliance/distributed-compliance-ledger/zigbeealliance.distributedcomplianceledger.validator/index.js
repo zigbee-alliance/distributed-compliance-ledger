@@ -368,7 +368,7 @@ export default {
             }
             catch (e) {
                 if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgDisableValidator:Init', 'Could not initialize signing client. Wallet is required.');
+                    throw new SpVuexError('TxClient:MsgApproveDisableValidator:Init', 'Could not initialize signing client. Wallet is required.');
                 }
                 else {
                     throw new SpVuexError('TxClient:MsgDisableValidator:Send', 'Could not broadcast Tx: ' + e.message);

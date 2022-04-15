@@ -15,6 +15,7 @@ export interface Account {
   roles: string[]
   approvals: Grant[]
   vendorID: number
+  rejectApprovals: Grant[]
 }
 
 const baseAccount: object = { roles: '', vendorID: 0 }
@@ -33,6 +34,9 @@ export const Account = {
     if (message.vendorID !== 0) {
       writer.uint32(32).int32(message.vendorID)
     }
+    for (const v of message.rejectApprovals) {
+      Grant.encode(v!, writer.uint32(42).fork()).ldelim()
+    }
     return writer
   },
 
@@ -42,6 +46,7 @@ export const Account = {
     const message = { ...baseAccount } as Account
     message.roles = []
     message.approvals = []
+    message.rejectApprovals = []
     while (reader.pos < end) {
       const tag = reader.uint32()
       switch (tag >>> 3) {
@@ -57,6 +62,9 @@ export const Account = {
         case 4:
           message.vendorID = reader.int32()
           break
+        case 5:
+          message.rejectApprovals.push(Grant.decode(reader, reader.uint32()))
+          break
         default:
           reader.skipType(tag & 7)
           break
@@ -69,6 +77,7 @@ export const Account = {
     const message = { ...baseAccount } as Account
     message.roles = []
     message.approvals = []
+    message.rejectApprovals = []
     if (object.baseAccount !== undefined && object.baseAccount !== null) {
       message.baseAccount = BaseAccount.fromJSON(object.baseAccount)
     } else {
@@ -89,6 +98,11 @@ export const Account = {
     } else {
       message.vendorID = 0
     }
+    if (object.rejectApprovals !== undefined && object.rejectApprovals !== null) {
+      for (const e of object.rejectApprovals) {
+        message.rejectApprovals.push(Grant.fromJSON(e))
+      }
+    }
     return message
   },
 
@@ -106,6 +120,11 @@ export const Account = {
       obj.approvals = []
     }
     message.vendorID !== undefined && (obj.vendorID = message.vendorID)
+    if (message.rejectApprovals) {
+      obj.rejectApprovals = message.rejectApprovals.map((e) => (e ? Grant.toJSON(e) : undefined))
+    } else {
+      obj.rejectApprovals = []
+    }
     return obj
   },
 
@@ -113,6 +132,7 @@ export const Account = {
     const message = { ...baseAccount } as Account
     message.roles = []
     message.approvals = []
+    message.rejectApprovals = []
     if (object.baseAccount !== undefined && object.baseAccount !== null) {
       message.baseAccount = BaseAccount.fromPartial(object.baseAccount)
     } else {
@@ -132,6 +152,11 @@ export const Account = {
       message.vendorID = object.vendorID
     } else {
       message.vendorID = 0
+    }
+    if (object.rejectApprovals !== undefined && object.rejectApprovals !== null) {
+      for (const e of object.rejectApprovals) {
+        message.rejectApprovals.push(Grant.fromPartial(e))
+      }
     }
     return message
   }

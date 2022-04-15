@@ -9,6 +9,7 @@ import { MsgDeleteModel } from "./types/model/tx";
 import { MsgCreateModelVersion } from "./types/model/tx";
 import { MsgUpdateModel } from "./types/model/tx";
 import { MsgUpdateModelVersion } from "./types/model/tx";
+import { MsgUpdateModel } from "./types/model/tx";
 
 
 const types = [
@@ -17,6 +18,7 @@ const types = [
   ["/zigbeealliance.distributedcomplianceledger.model.MsgCreateModelVersion", MsgCreateModelVersion],
   ["/zigbeealliance.distributedcomplianceledger.model.MsgUpdateModel", MsgUpdateModel],
   ["/zigbeealliance.distributedcomplianceledger.model.MsgUpdateModelVersion", MsgUpdateModelVersion],
+  ["/zigbeealliance.distributedcomplianceledger.model.MsgUpdateModel", MsgUpdateModel],
   
 ];
 export const MissingWalletError = new Error("wallet is required");
@@ -54,6 +56,7 @@ const txClient = async (wallet: OfflineSigner, { addr: addr }: TxClientOptions =
     msgCreateModelVersion: (data: MsgCreateModelVersion): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgCreateModelVersion", value: MsgCreateModelVersion.fromPartial( data ) }),
     msgUpdateModel: (data: MsgUpdateModel): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgUpdateModel", value: MsgUpdateModel.fromPartial( data ) }),
     msgUpdateModelVersion: (data: MsgUpdateModelVersion): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgUpdateModelVersion", value: MsgUpdateModelVersion.fromPartial( data ) }),
+    msgUpdateModel: (data: MsgUpdateModel): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgUpdateModel", value: MsgUpdateModel.fromPartial( data ) }),
     
   };
 };

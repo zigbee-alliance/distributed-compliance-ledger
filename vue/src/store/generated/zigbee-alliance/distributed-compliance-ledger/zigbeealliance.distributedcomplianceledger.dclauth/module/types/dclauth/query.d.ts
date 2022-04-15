@@ -5,6 +5,7 @@ import { PendingAccount } from '../dclauth/pending_account';
 import { PendingAccountRevocation } from '../dclauth/pending_account_revocation';
 import { AccountStat } from '../dclauth/account_stat';
 import { RevokedAccount } from '../dclauth/revoked_account';
+import { RejectedAccount } from '../dclauth/rejected_account';
 export declare const protobufPackage = "zigbeealliance.distributedcomplianceledger.dclauth";
 export interface QueryGetAccountRequest {
     address: string;
@@ -61,6 +62,19 @@ export interface QueryAllRevokedAccountRequest {
 }
 export interface QueryAllRevokedAccountResponse {
     revokedAccount: RevokedAccount[];
+    pagination: PageResponse | undefined;
+}
+export interface QueryGetRejectedAccountRequest {
+    address: string;
+}
+export interface QueryGetRejectedAccountResponse {
+    rejectedAccount: RejectedAccount | undefined;
+}
+export interface QueryAllRejectedAccountRequest {
+    pagination: PageRequest | undefined;
+}
+export interface QueryAllRejectedAccountResponse {
+    rejectedAccount: RejectedAccount[];
     pagination: PageResponse | undefined;
 }
 export declare const QueryGetAccountRequest: {
@@ -189,6 +203,34 @@ export declare const QueryAllRevokedAccountResponse: {
     toJSON(message: QueryAllRevokedAccountResponse): unknown;
     fromPartial(object: DeepPartial<QueryAllRevokedAccountResponse>): QueryAllRevokedAccountResponse;
 };
+export declare const QueryGetRejectedAccountRequest: {
+    encode(message: QueryGetRejectedAccountRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetRejectedAccountRequest;
+    fromJSON(object: any): QueryGetRejectedAccountRequest;
+    toJSON(message: QueryGetRejectedAccountRequest): unknown;
+    fromPartial(object: DeepPartial<QueryGetRejectedAccountRequest>): QueryGetRejectedAccountRequest;
+};
+export declare const QueryGetRejectedAccountResponse: {
+    encode(message: QueryGetRejectedAccountResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetRejectedAccountResponse;
+    fromJSON(object: any): QueryGetRejectedAccountResponse;
+    toJSON(message: QueryGetRejectedAccountResponse): unknown;
+    fromPartial(object: DeepPartial<QueryGetRejectedAccountResponse>): QueryGetRejectedAccountResponse;
+};
+export declare const QueryAllRejectedAccountRequest: {
+    encode(message: QueryAllRejectedAccountRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllRejectedAccountRequest;
+    fromJSON(object: any): QueryAllRejectedAccountRequest;
+    toJSON(message: QueryAllRejectedAccountRequest): unknown;
+    fromPartial(object: DeepPartial<QueryAllRejectedAccountRequest>): QueryAllRejectedAccountRequest;
+};
+export declare const QueryAllRejectedAccountResponse: {
+    encode(message: QueryAllRejectedAccountResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllRejectedAccountResponse;
+    fromJSON(object: any): QueryAllRejectedAccountResponse;
+    toJSON(message: QueryAllRejectedAccountResponse): unknown;
+    fromPartial(object: DeepPartial<QueryAllRejectedAccountResponse>): QueryAllRejectedAccountResponse;
+};
 /** Query defines the gRPC querier service. */
 export interface Query {
     /** Queries a account by index. */
@@ -209,6 +251,10 @@ export interface Query {
     RevokedAccount(request: QueryGetRevokedAccountRequest): Promise<QueryGetRevokedAccountResponse>;
     /** Queries a list of RevokedAccount items. */
     RevokedAccountAll(request: QueryAllRevokedAccountRequest): Promise<QueryAllRevokedAccountResponse>;
+    /** Queries a RejectedAccount by index. */
+    RejectedAccount(request: QueryGetRejectedAccountRequest): Promise<QueryGetRejectedAccountResponse>;
+    /** Queries a list of RejectedAccount items. */
+    RejectedAccountAll(request: QueryAllRejectedAccountRequest): Promise<QueryAllRejectedAccountResponse>;
 }
 export declare class QueryClientImpl implements Query {
     private readonly rpc;
@@ -222,6 +268,8 @@ export declare class QueryClientImpl implements Query {
     AccountStat(request: QueryGetAccountStatRequest): Promise<QueryGetAccountStatResponse>;
     RevokedAccount(request: QueryGetRevokedAccountRequest): Promise<QueryGetRevokedAccountResponse>;
     RevokedAccountAll(request: QueryAllRevokedAccountRequest): Promise<QueryAllRevokedAccountResponse>;
+    RejectedAccount(request: QueryGetRejectedAccountRequest): Promise<QueryGetRejectedAccountResponse>;
+    RejectedAccountAll(request: QueryAllRejectedAccountRequest): Promise<QueryAllRejectedAccountResponse>;
 }
 interface Rpc {
     request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;

@@ -15,6 +15,7 @@ service Msg {
   rpc ApproveAddAccount(MsgApproveAddAccount) returns (MsgApproveAddAccountResponse);
   rpc ProposeRevokeAccount(MsgProposeRevokeAccount) returns (MsgProposeRevokeAccountResponse);
   rpc ApproveRevokeAccount(MsgApproveRevokeAccount) returns (MsgApproveRevokeAccountResponse);
+  rpc RejectAddAccount(MsgRejectAddAccount) returns (MsgRejectAddAccountResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -59,6 +60,14 @@ message MsgApproveRevokeAccount {
 }
 
 message MsgApproveRevokeAccountResponse {
+}
+
+message MsgRejectAddAccount {
+  string signer = 1;
+  string address = 2;
+}
+
+message MsgRejectAddAccountResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message

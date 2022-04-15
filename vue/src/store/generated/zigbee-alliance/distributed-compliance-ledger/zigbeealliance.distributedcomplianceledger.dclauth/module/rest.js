@@ -271,5 +271,34 @@ export class Api extends HttpClient {
             format: "json",
             ...params,
         });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryRejectedAccountAll
+         * @summary Queries a list of RejectedAccount items.
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/rejected_account
+         */
+        this.queryRejectedAccountAll = (query, params = {}) => this.request({
+            path: `/zigbee-alliance/distributedcomplianceledger/dclauth/rejected_account`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryRejectedAccount
+         * @summary Queries a RejectedAccount by index.
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/rejected_account/{address}
+         */
+        this.queryRejectedAccount = (address, params = {}) => this.request({
+            path: `/zigbee-alliance/distributedcomplianceledger/dclauth/rejected_account/${address}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
     }
 }

@@ -26,6 +26,7 @@ export interface DclauthAccount {
 
   /** @format int32 */
   vendorID?: number;
+  rejectApprovals?: DclauthGrant[];
 }
 
 export interface DclauthAccountStat {
@@ -48,6 +49,8 @@ export type DclauthMsgApproveRevokeAccountResponse = object;
 export type DclauthMsgProposeAddAccountResponse = object;
 
 export type DclauthMsgProposeRevokeAccountResponse = object;
+
+export type DclauthMsgRejectAddAccountResponse = object;
 
 export interface DclauthPendingAccount {
   account?: DclauthAccount;
@@ -103,6 +106,21 @@ export interface DclauthQueryAllPendingAccountRevocationResponse {
   pagination?: V1Beta1PageResponse;
 }
 
+export interface DclauthQueryAllRejectedAccountResponse {
+  rejectedAccount?: DclauthRejectedAccount[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
 export interface DclauthQueryAllRevokedAccountResponse {
   revokedAccount?: DclauthRevokedAccount[];
 
@@ -134,8 +152,16 @@ export interface DclauthQueryGetPendingAccountRevocationResponse {
   pendingAccountRevocation?: DclauthPendingAccountRevocation;
 }
 
+export interface DclauthQueryGetRejectedAccountResponse {
+  rejectedAccount?: DclauthRejectedAccount;
+}
+
 export interface DclauthQueryGetRevokedAccountResponse {
   revokedAccount?: DclauthRevokedAccount;
+}
+
+export interface DclauthRejectedAccount {
+  account?: DclauthAccount;
 }
 
 export interface DclauthRevokedAccount {
@@ -807,6 +833,48 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryRevokedAccount = (address: string, params: RequestParams = {}) =>
     this.request<DclauthQueryGetRevokedAccountResponse, RpcStatus>({
       path: `/dcl/auth/revoked-accounts/${address}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryRejectedAccountAll
+   * @summary Queries a list of RejectedAccount items.
+   * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/rejected_account
+   */
+  queryRejectedAccountAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<DclauthQueryAllRejectedAccountResponse, RpcStatus>({
+      path: `/zigbee-alliance/distributedcomplianceledger/dclauth/rejected_account`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryRejectedAccount
+   * @summary Queries a RejectedAccount by index.
+   * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/rejected_account/{address}
+   */
+  queryRejectedAccount = (address: string, params: RequestParams = {}) =>
+    this.request<DclauthQueryGetRejectedAccountResponse, RpcStatus>({
+      path: `/zigbee-alliance/distributedcomplianceledger/dclauth/rejected_account/${address}`,
       method: "GET",
       format: "json",
       ...params,

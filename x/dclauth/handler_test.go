@@ -764,6 +764,308 @@ func TestHandler_ProposeAddAccount_VendorIDRequiredForVendorAccounts(t *testing.
 	require.ErrorIs(t, err, types.MissingVendorIDForVendorAccount)
 }
 
+func TestHandler_RejectAccount_TwoRejectApprovalsAreNeeded(t *testing.T) {
+	setup := Setup(t)
+
+	// store 3 trustee
+	trustee1 := storeTrustee(setup)
+	trustee2 := storeTrustee(setup)
+	trustee3 := storeTrustee(setup)
+
+	// ensure 2 trustee approvals are needed
+	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx))
+
+	// trustee1 proposes account
+	_, address, pubkey, err := proposeAddAccount(setup, trustee1)
+	require.NoError(t, err)
+
+	// trustee2 rejects to add account
+	rejectAddAccount := types.NewMsgRejectAddAccount(trustee2, address, testconstants.Info)
+	_, err = setup.Handler(setup.Ctx, rejectAddAccount)
+	require.NoError(t, err)
+
+	// ensure account doesn't exist in entity RejectedAccount
+	_, isFound := setup.Keeper.GetRejectedAccount(setup.Ctx, address)
+	require.False(t, isFound)
+
+	// trustee3 rejects to add account
+	rejectAddAccount = types.NewMsgRejectAddAccount(trustee3, address, testconstants.Info)
+	_, err = setup.Handler(setup.Ctx, rejectAddAccount)
+	require.NoError(t, err)
+
+	// rejected account must be created
+	rejectedAccount, isFound := setup.Keeper.GetRejectedAccount(setup.Ctx, address)
+	require.True(t, isFound)
+	require.Equal(t, address, rejectedAccount.GetAddress())
+	require.Equal(t, pubkey, rejectedAccount.GetPubKey())
+
+	// check for info, approvals, rejectedApprovals fields
+	require.Equal(t, testconstants.Info, rejectedAccount.Approvals[0].Info)
+	require.Equal(t, trustee1.String(), rejectedAccount.Approvals[0].Address)
+	require.Equal(t, testconstants.Info, rejectedAccount.RejectApprovals[0].Info)
+	require.Equal(t, trustee2.String(), rejectedAccount.RejectApprovals[0].Address)
+
+	// ensure pending account removed
+	require.False(t, setup.Keeper.IsPendingAccountPresent(setup.Ctx, address))
+
+	// ensure account doesn't exist in entity Account
+	require.False(t, setup.Keeper.IsAccountPresent(setup.Ctx, address))
+
+	// ensure account doesn't exist in entity RevokedAccount
+	require.False(t, setup.Keeper.IsRevokedAccountPresent(setup.Ctx, address))
+}
+
+func TestHandler_RejectAccount_ThreeRejectApprovalsAreNeeded(t *testing.T) {
+	setup := Setup(t)
+
+	// store 7 trustee
+	trustee1 := storeTrustee(setup)
+	trustee2 := storeTrustee(setup)
+	trustee3 := storeTrustee(setup)
+	trustee4 := storeTrustee(setup)
+	_ = storeTrustee(setup)
+	_ = storeTrustee(setup)
+	_ = storeTrustee(setup)
+
+	// ensure 5 trustee approvals are needed
+	require.Equal(t, 5, setup.Keeper.AccountApprovalsCount(setup.Ctx))
+
+	// trustee 1 proposes account
+	_, address, pubkey, err := proposeAddAccount(setup, trustee1)
+	require.NoError(t, err)
+
+	// trustee2 rejects to add account
+	rejectAddAccount := types.NewMsgRejectAddAccount(trustee2, address, testconstants.Info)
+	_, err = setup.Handler(setup.Ctx, rejectAddAccount)
+	require.NoError(t, err)
+
+	// ensure account doesn't exist in entity RejectedAccount
+	_, isFound := setup.Keeper.GetRejectedAccount(setup.Ctx, address)
+	require.False(t, isFound)
+
+	// trustee3 rejects to add account
+	rejectAddAccount = types.NewMsgRejectAddAccount(trustee3, address, testconstants.Info)
+	_, err = setup.Handler(setup.Ctx, rejectAddAccount)
+	require.NoError(t, err)
+
+	// ensure account doesn't exist in entity RejectedAccount
+	_, isFound = setup.Keeper.GetRejectedAccount(setup.Ctx, address)
+	require.False(t, isFound)
+
+	// trustee4 rejects to add account
+	rejectAddAccount = types.NewMsgRejectAddAccount(trustee4, address, testconstants.Info)
+	_, err = setup.Handler(setup.Ctx, rejectAddAccount)
+	require.NoError(t, err)
+
+	// rejected account must be created
+	rejectedAccount, isFound := setup.Keeper.GetRejectedAccount(setup.Ctx, address)
+	require.True(t, isFound)
+	require.Equal(t, address, rejectedAccount.GetAddress())
+	require.Equal(t, pubkey, rejectedAccount.GetPubKey())
+
+	// check for info, approvals, rejectedApprovals fields
+	require.Equal(t, testconstants.Info, rejectedAccount.Approvals[0].Info)
+	require.Equal(t, trustee1.String(), rejectedAccount.Approvals[0].Address)
+	require.Equal(t, testconstants.Info, rejectedAccount.RejectApprovals[0].Info)
+	require.Equal(t, trustee2.String(), rejectedAccount.RejectApprovals[0].Address)
+	require.Equal(t, testconstants.Info, rejectedAccount.RejectApprovals[1].Info)
+	require.Equal(t, trustee3.String(), rejectedAccount.RejectApprovals[1].Address)
+	require.Equal(t, testconstants.Info, rejectedAccount.RejectApprovals[2].Info)
+	require.Equal(t, trustee4.String(), rejectedAccount.RejectApprovals[2].Address)
+
+	// ensure pending account removed
+	require.False(t, setup.Keeper.IsPendingAccountPresent(setup.Ctx, address))
+
+	// ensure account doesn't exist in entity Account
+	require.False(t, setup.Keeper.IsAccountPresent(setup.Ctx, address))
+
+	// ensure account doesn't exist in entity RevokedAccount
+	require.False(t, setup.Keeper.IsRevokedAccountPresent(setup.Ctx, address))
+}
+
+func TestHandler_RejectAccount_ByNotTrustee(t *testing.T) {
+	setup := Setup(t)
+
+	// store account
+	address := storeAccountWithVendorID(setup, types.Vendor, testconstants.VendorID1)
+
+	for _, role := range []types.AccountRole{types.Vendor, types.CertificationCenter, types.NodeAdmin} {
+		// store signer account
+		signer := storeAccountWithVendorID(setup, role, testconstants.VendorID1)
+
+		// reject new account
+		rejectAddAccount := types.NewMsgRejectAddAccount(signer, address, testconstants.Info)
+		_, err := setup.Handler(setup.Ctx, rejectAddAccount)
+		require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
+	}
+}
+
+func TestHandler_RejectAccount_ForUnknownAccount(t *testing.T) {
+	setup := Setup(t)
+
+	// store 1 trustee
+	trustee := storeTrustee(setup)
+
+	// reject unknown account
+	rejectAddAccount := types.NewMsgRejectAddAccount(trustee, testconstants.Address1, testconstants.Info)
+	_, err := setup.Handler(setup.Ctx, rejectAddAccount)
+	require.ErrorIs(t, err, types.PendingAccountDoesNotExist)
+}
+
+func TestHandler_Duplicate_RejectAccountFromTheSameTrustee(t *testing.T) {
+	setup := Setup(t)
+
+	// store 3 trustee
+	trustee1 := storeTrustee(setup)
+	trustee2 := storeTrustee(setup)
+	_ = storeTrustee(setup)
+
+	// ensure 2 trustee approvals are needed
+	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx))
+
+	// trustee1 proposes account
+	_, address, _, err := proposeAddAccount(setup, trustee1)
+	require.NoError(t, err)
+
+	// trustee2 rejects to add account
+	rejectAddAccount := types.NewMsgRejectAddAccount(trustee2, address, testconstants.Info)
+	_, err = setup.Handler(setup.Ctx, rejectAddAccount)
+	require.NoError(t, err)
+
+	// rejected account doesn't exist in entity RejecedAccount
+	_, isFound := setup.Keeper.GetRejectedAccount(setup.Ctx, address)
+	require.False(t, isFound)
+
+	// second time trustee2 try rejects to add account
+	rejectAddAccount = types.NewMsgRejectAddAccount(trustee2, address, testconstants.Info)
+	_, err = setup.Handler(setup.Ctx, rejectAddAccount)
+	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
+}
+
+func TestHandler_ApproveAccountAndRejectAccountTheSameTrustee(t *testing.T) {
+	setup := Setup(t)
+
+	// store 3 trustee
+	trustee1 := storeTrustee(setup)
+	trustee2 := storeTrustee(setup)
+	_ = storeTrustee(setup)
+
+	// ensure 2 trustee approvals are needed
+	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx))
+
+	// trustee1 proposes account
+	_, address, _, err := proposeAddAccount(setup, trustee1)
+	require.NoError(t, err)
+
+	// trustee2 approve to add account
+	approveAddAccount := types.NewMsgApproveAddAccount(trustee2, address, testconstants.Info)
+	_, err = setup.Handler(setup.Ctx, approveAddAccount)
+	require.NoError(t, err)
+
+	// trustee2 try rejects to add account
+	rejectAddAccount := types.NewMsgRejectAddAccount(trustee2, address, testconstants.Info)
+	_, err = setup.Handler(setup.Ctx, rejectAddAccount)
+	require.ErrorIs(t, err, types.PendingAccountDoesNotExist)
+}
+
+func TestHandler_RejectAccountAndApproveAccountTheSameTrustee(t *testing.T) {
+	setup := Setup(t)
+
+	// store 3 trustee
+	trustee1 := storeTrustee(setup)
+	trustee2 := storeTrustee(setup)
+	_ = storeTrustee(setup)
+
+	// ensure 2 trustee approvals are needed
+	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx))
+
+	// trustee1 proposes account
+	_, address, _, err := proposeAddAccount(setup, trustee1)
+	require.NoError(t, err)
+
+	// trustee2 rejects to add account
+	rejectAddAccount := types.NewMsgRejectAddAccount(trustee2, address, testconstants.Info)
+	_, err = setup.Handler(setup.Ctx, rejectAddAccount)
+	require.NoError(t, err)
+
+	// trustee2 try approve to add account
+	approveAddAccount := types.NewMsgApproveAddAccount(trustee2, address, testconstants.Info)
+	_, err = setup.Handler(setup.Ctx, approveAddAccount)
+	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
+}
+
+func TestHandler_DoubleTimeRejectAccount(t *testing.T) {
+	setup := Setup(t)
+
+	// storee 3 trustee
+	trustee1 := storeTrustee(setup)
+	trustee2 := storeTrustee(setup)
+	trustee3 := storeTrustee(setup)
+
+	// ensure 2 trustee approvals are needed
+	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx))
+
+	// trustee1 proposes account
+	_, address, pubkey, err := proposeAddAccount(setup, trustee1)
+	require.NoError(t, err)
+
+	// trustee2 rejects to add account
+	rejectAddAccount := types.NewMsgRejectAddAccount(trustee2, address, testconstants.Info)
+	_, err = setup.Handler(setup.Ctx, rejectAddAccount)
+	require.NoError(t, err)
+
+	// trustee3 rejects to add account
+	rejectAddAccount = types.NewMsgRejectAddAccount(trustee3, address, testconstants.Info)
+	_, err = setup.Handler(setup.Ctx, rejectAddAccount)
+	require.NoError(t, err)
+
+	// rejected account must be created
+	rejectedAccountFirstTime, isFound := setup.Keeper.GetRejectedAccount(setup.Ctx, address)
+	require.True(t, isFound)
+	require.Equal(t, address, rejectedAccountFirstTime.GetAddress())
+	require.Equal(t, pubkey, rejectedAccountFirstTime.GetPubKey())
+
+	// check for info, approvals, rejectedApprovals fields
+	require.Equal(t, testconstants.Info, rejectedAccountFirstTime.Approvals[0].Info)
+	require.Equal(t, trustee1.String(), rejectedAccountFirstTime.Approvals[0].Address)
+	require.Equal(t, testconstants.Info, rejectedAccountFirstTime.RejectApprovals[0].Info)
+	require.Equal(t, trustee2.String(), rejectedAccountFirstTime.RejectApprovals[0].Address)
+	require.Equal(t, testconstants.Info, rejectedAccountFirstTime.RejectApprovals[1].Info)
+	require.Equal(t, trustee3.String(), rejectedAccountFirstTime.RejectApprovals[1].Address)
+
+	// trustee1 second time proposes account
+	_, address, pubkey, err = proposeAddAccount(setup, trustee1)
+	require.NoError(t, err)
+
+	// trustee2 rejects to add account
+	rejectAddAccount = types.NewMsgRejectAddAccount(trustee2, address, testconstants.Info)
+	_, err = setup.Handler(setup.Ctx, rejectAddAccount)
+	require.NoError(t, err)
+
+	// rejected account doesn't exist in entity RejecedAccount
+	_, isFound = setup.Keeper.GetRejectedAccount(setup.Ctx, address)
+	require.False(t, isFound)
+
+	// trustee3 rejects to add account
+	rejectAddAccount = types.NewMsgRejectAddAccount(trustee3, address, testconstants.Info)
+	_, err = setup.Handler(setup.Ctx, rejectAddAccount)
+	require.NoError(t, err)
+
+	// rejected account must be created
+	rejectAccountSecondTime, isFound := setup.Keeper.GetRejectedAccount(setup.Ctx, address)
+	require.True(t, isFound)
+	require.Equal(t, address, rejectAccountSecondTime.GetAddress())
+	require.Equal(t, pubkey, rejectAccountSecondTime.GetPubKey())
+
+	// check for info, approvals, rejectedApprovals fields
+	require.Equal(t, testconstants.Info, rejectAccountSecondTime.Approvals[0].Info)
+	require.Equal(t, trustee1.String(), rejectAccountSecondTime.Approvals[0].Address)
+	require.Equal(t, testconstants.Info, rejectAccountSecondTime.RejectApprovals[0].Info)
+	require.Equal(t, trustee2.String(), rejectAccountSecondTime.RejectApprovals[0].Address)
+	require.Equal(t, testconstants.Info, rejectAccountSecondTime.RejectApprovals[1].Info)
+	require.Equal(t, trustee3.String(), rejectAccountSecondTime.RejectApprovals[1].Address)
+}
+
 func storeTrustee(setup TestSetup) sdk.AccAddress {
 	return storeAccountWithVendorID(setup, types.Trustee, 0)
 }

@@ -48,6 +48,14 @@ func TestGenesis(t *testing.T) {
 			Address: "1",
 },
 	},
+	RejectedAccountList: []types.RejectedAccount{
+		{
+			Address: "0",
+},
+		{
+			Address: "1",
+},
+	},
 	// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -61,6 +69,7 @@ func TestGenesis(t *testing.T) {
 	require.ElementsMatch(t, genesisState.PendingAccountRevocationList, got.PendingAccountRevocationList)
 	require.Equal(t, genesisState.AccountStat, got.AccountStat)
 	require.ElementsMatch(t, genesisState.RevokedAccountList, got.RevokedAccountList)
+require.ElementsMatch(t, genesisState.RejectedAccountList, got.RejectedAccountList)
 // this line is used by starport scaffolding # genesis/test/assert
 }
 */

@@ -6,8 +6,9 @@ import { AccountStat } from "./module/types/dclauth/account_stat";
 import { Grant } from "./module/types/dclauth/grant";
 import { PendingAccount } from "./module/types/dclauth/pending_account";
 import { PendingAccountRevocation } from "./module/types/dclauth/pending_account_revocation";
+import { RejectedAccount } from "./module/types/dclauth/rejected_account";
 import { RevokedAccount } from "./module/types/dclauth/revoked_account";
-export { Account, AccountStat, Grant, PendingAccount, PendingAccountRevocation, RevokedAccount };
+export { Account, AccountStat, Grant, PendingAccount, PendingAccountRevocation, RejectedAccount, RevokedAccount };
 async function initTxClient(vuexGetters) {
     return await txClient(vuexGetters['common/wallet/signer'], {
         addr: vuexGetters['common/env/apiTendermint']
@@ -50,12 +51,15 @@ const getDefaultState = () => {
         AccountStat: {},
         RevokedAccount: {},
         RevokedAccountAll: {},
+        RejectedAccount: {},
+        RejectedAccountAll: {},
         _Structure: {
             Account: getStructure(Account.fromPartial({})),
             AccountStat: getStructure(AccountStat.fromPartial({})),
             Grant: getStructure(Grant.fromPartial({})),
             PendingAccount: getStructure(PendingAccount.fromPartial({})),
             PendingAccountRevocation: getStructure(PendingAccountRevocation.fromPartial({})),
+            RejectedAccount: getStructure(RejectedAccount.fromPartial({})),
             RevokedAccount: getStructure(RevokedAccount.fromPartial({})),
         },
         _Registry: registry,
@@ -135,6 +139,18 @@ export default {
                 params.query = null;
             }
             return state.RevokedAccountAll[JSON.stringify(params)] ?? {};
+        },
+        getRejectedAccount: (state) => (params = { params: {} }) => {
+            if (!params.query) {
+                params.query = null;
+            }
+            return state.RejectedAccount[JSON.stringify(params)] ?? {};
+        },
+        getRejectedAccountAll: (state) => (params = { params: {} }) => {
+            if (!params.query) {
+                params.query = null;
+            }
+            return state.RejectedAccountAll[JSON.stringify(params)] ?? {};
         },
         getTypeStructure: (state) => (type) => {
             return state._Structure[type].fields;
