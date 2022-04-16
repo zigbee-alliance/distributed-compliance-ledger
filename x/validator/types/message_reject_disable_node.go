@@ -1,6 +1,8 @@
 package types
 
 import (
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -9,12 +11,12 @@ const TypeMsgRejectDisableNode = "reject_disable_node"
 
 var _ sdk.Msg = &MsgRejectDisableNode{}
 
-func NewMsgRejectDisableNode(creator string, address string, info string, time int64) *MsgRejectDisableNode {
+func NewMsgRejectDisableNode(creator sdk.AccAddress, address sdk.ValAddress, info string) *MsgRejectDisableNode {
 	return &MsgRejectDisableNode{
-		Creator: creator,
-		Address: address,
+		Creator: creator.String(),
+		Address: address.String(),
 		Info:    info,
-		Time:    time,
+		Time:    time.Now().Unix(),
 	}
 }
 
