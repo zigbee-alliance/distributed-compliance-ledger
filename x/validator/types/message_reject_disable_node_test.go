@@ -32,6 +32,7 @@ func TestMsgRejectDisableNode_ValidateBasic(t *testing.T) {
 			err := tt.msg.ValidateBasic()
 			if tt.err != nil {
 				require.ErrorIs(t, err, tt.err)
+
 				return
 			}
 			require.NoError(t, err)

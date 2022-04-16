@@ -5,11 +5,11 @@ import "encoding/binary"
 var _ binary.ByteOrder
 
 const (
-	// RejectedNodeKeyPrefix is the prefix to retrieve all RejectedNode
+	// RejectedNodeKeyPrefix is the prefix to retrieve all RejectedNode.
 	RejectedNodeKeyPrefix = "RejectedNode/value/"
 )
 
-// RejectedNodeKey returns the store key to retrieve a RejectedNode from the index fields
+// RejectedNodeKey returns the store key to retrieve a RejectedNode from the index fields.
 func RejectedNodeKey(
 	owner string,
 ) []byte {
