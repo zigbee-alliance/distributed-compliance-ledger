@@ -8,6 +8,8 @@ starport scaffold --module validator message CreateValidator pubKey description:
 starport scaffold --module validator map Validator description:Description pubKey power:int jailed:bool jailedReason --index owner --no-message
 #    LastValidatorPower
 starport scaffold --module validator map LastValidatorPower power:int --index owner --no-message
+#   rejected validator nodes
+starport scaffold --module validator map RejectedNode approvals:strings --index owner --no-message
 #    ValidatorSigningInfo
 # starport scaffold --module validator map ValidatorSigningInfo startHeight:uint indexOffset:uint missedBlocksCounter:uint --index owner --no-message
 #    ValidatorMissedBlockBitArray

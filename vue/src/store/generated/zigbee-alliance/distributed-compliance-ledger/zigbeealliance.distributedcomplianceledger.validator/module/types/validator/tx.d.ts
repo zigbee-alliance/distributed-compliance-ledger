@@ -35,6 +35,14 @@ export interface MsgEnableValidator {
 }
 export interface MsgEnableValidatorResponse {
 }
+export interface MsgRejectDisableNode {
+    creator: string;
+    address: string;
+    info: string;
+    time: number;
+}
+export interface MsgRejectDisableNodeResponse {
+}
 export declare const MsgCreateValidator: {
     encode(message: MsgCreateValidator, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgCreateValidator;
@@ -105,14 +113,29 @@ export declare const MsgEnableValidatorResponse: {
     toJSON(_: MsgEnableValidatorResponse): unknown;
     fromPartial(_: DeepPartial<MsgEnableValidatorResponse>): MsgEnableValidatorResponse;
 };
+export declare const MsgRejectDisableNode: {
+    encode(message: MsgRejectDisableNode, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgRejectDisableNode;
+    fromJSON(object: any): MsgRejectDisableNode;
+    toJSON(message: MsgRejectDisableNode): unknown;
+    fromPartial(object: DeepPartial<MsgRejectDisableNode>): MsgRejectDisableNode;
+};
+export declare const MsgRejectDisableNodeResponse: {
+    encode(_: MsgRejectDisableNodeResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgRejectDisableNodeResponse;
+    fromJSON(_: any): MsgRejectDisableNodeResponse;
+    toJSON(_: MsgRejectDisableNodeResponse): unknown;
+    fromPartial(_: DeepPartial<MsgRejectDisableNodeResponse>): MsgRejectDisableNodeResponse;
+};
 /** Msg defines the Msg service. */
 export interface Msg {
     CreateValidator(request: MsgCreateValidator): Promise<MsgCreateValidatorResponse>;
     ProposeDisableValidator(request: MsgProposeDisableValidator): Promise<MsgProposeDisableValidatorResponse>;
     ApproveDisableValidator(request: MsgApproveDisableValidator): Promise<MsgApproveDisableValidatorResponse>;
     DisableValidator(request: MsgDisableValidator): Promise<MsgDisableValidatorResponse>;
-    /** this line is used by starport scaffolding # proto/tx/rpc */
     EnableValidator(request: MsgEnableValidator): Promise<MsgEnableValidatorResponse>;
+    /** this line is used by starport scaffolding # proto/tx/rpc */
+    RejectDisableNode(request: MsgRejectDisableNode): Promise<MsgRejectDisableNodeResponse>;
 }
 export declare class MsgClientImpl implements Msg {
     private readonly rpc;
@@ -122,6 +145,7 @@ export declare class MsgClientImpl implements Msg {
     ApproveDisableValidator(request: MsgApproveDisableValidator): Promise<MsgApproveDisableValidatorResponse>;
     DisableValidator(request: MsgDisableValidator): Promise<MsgDisableValidatorResponse>;
     EnableValidator(request: MsgEnableValidator): Promise<MsgEnableValidatorResponse>;
+    RejectDisableNode(request: MsgRejectDisableNode): Promise<MsgRejectDisableNodeResponse>;
 }
 interface Rpc {
     request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;

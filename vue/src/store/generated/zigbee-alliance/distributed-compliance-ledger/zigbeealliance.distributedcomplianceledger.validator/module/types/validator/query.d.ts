@@ -4,6 +4,7 @@ import { PageRequest, PageResponse } from '../cosmos/base/query/v1beta1/paginati
 import { LastValidatorPower } from '../validator/last_validator_power';
 import { ProposedDisableValidator } from '../validator/proposed_disable_validator';
 import { DisabledValidator } from '../validator/disabled_validator';
+import { RejectedNode } from '../validator/rejected_node';
 export declare const protobufPackage = "zigbeealliance.distributedcomplianceledger.validator";
 export interface QueryGetValidatorRequest {
     owner: string;
@@ -55,6 +56,19 @@ export interface QueryAllDisabledValidatorRequest {
 }
 export interface QueryAllDisabledValidatorResponse {
     disabledValidator: DisabledValidator[];
+    pagination: PageResponse | undefined;
+}
+export interface QueryGetRejectedNodeRequest {
+    owner: string;
+}
+export interface QueryGetRejectedNodeResponse {
+    rejectedNode: RejectedNode | undefined;
+}
+export interface QueryAllRejectedNodeRequest {
+    pagination: PageRequest | undefined;
+}
+export interface QueryAllRejectedNodeResponse {
+    rejectedNode: RejectedNode[];
     pagination: PageResponse | undefined;
 }
 export declare const QueryGetValidatorRequest: {
@@ -169,6 +183,34 @@ export declare const QueryAllDisabledValidatorResponse: {
     toJSON(message: QueryAllDisabledValidatorResponse): unknown;
     fromPartial(object: DeepPartial<QueryAllDisabledValidatorResponse>): QueryAllDisabledValidatorResponse;
 };
+export declare const QueryGetRejectedNodeRequest: {
+    encode(message: QueryGetRejectedNodeRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetRejectedNodeRequest;
+    fromJSON(object: any): QueryGetRejectedNodeRequest;
+    toJSON(message: QueryGetRejectedNodeRequest): unknown;
+    fromPartial(object: DeepPartial<QueryGetRejectedNodeRequest>): QueryGetRejectedNodeRequest;
+};
+export declare const QueryGetRejectedNodeResponse: {
+    encode(message: QueryGetRejectedNodeResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetRejectedNodeResponse;
+    fromJSON(object: any): QueryGetRejectedNodeResponse;
+    toJSON(message: QueryGetRejectedNodeResponse): unknown;
+    fromPartial(object: DeepPartial<QueryGetRejectedNodeResponse>): QueryGetRejectedNodeResponse;
+};
+export declare const QueryAllRejectedNodeRequest: {
+    encode(message: QueryAllRejectedNodeRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllRejectedNodeRequest;
+    fromJSON(object: any): QueryAllRejectedNodeRequest;
+    toJSON(message: QueryAllRejectedNodeRequest): unknown;
+    fromPartial(object: DeepPartial<QueryAllRejectedNodeRequest>): QueryAllRejectedNodeRequest;
+};
+export declare const QueryAllRejectedNodeResponse: {
+    encode(message: QueryAllRejectedNodeResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllRejectedNodeResponse;
+    fromJSON(object: any): QueryAllRejectedNodeResponse;
+    toJSON(message: QueryAllRejectedNodeResponse): unknown;
+    fromPartial(object: DeepPartial<QueryAllRejectedNodeResponse>): QueryAllRejectedNodeResponse;
+};
 /** Query defines the gRPC querier service. */
 export interface Query {
     /** Queries a validator by index. */
@@ -187,6 +229,10 @@ export interface Query {
     DisabledValidator(request: QueryGetDisabledValidatorRequest): Promise<QueryGetDisabledValidatorResponse>;
     /** Queries a list of DisabledValidator items. */
     DisabledValidatorAll(request: QueryAllDisabledValidatorRequest): Promise<QueryAllDisabledValidatorResponse>;
+    /** Queries a RejectedNode by index. */
+    RejectedNode(request: QueryGetRejectedNodeRequest): Promise<QueryGetRejectedNodeResponse>;
+    /** Queries a list of RejectedNode items. */
+    RejectedNodeAll(request: QueryAllRejectedNodeRequest): Promise<QueryAllRejectedNodeResponse>;
 }
 export declare class QueryClientImpl implements Query {
     private readonly rpc;
@@ -199,6 +245,8 @@ export declare class QueryClientImpl implements Query {
     ProposedDisableValidatorAll(request: QueryAllProposedDisableValidatorRequest): Promise<QueryAllProposedDisableValidatorResponse>;
     DisabledValidator(request: QueryGetDisabledValidatorRequest): Promise<QueryGetDisabledValidatorResponse>;
     DisabledValidatorAll(request: QueryAllDisabledValidatorRequest): Promise<QueryAllDisabledValidatorResponse>;
+    RejectedNode(request: QueryGetRejectedNodeRequest): Promise<QueryGetRejectedNodeResponse>;
+    RejectedNodeAll(request: QueryAllRejectedNodeRequest): Promise<QueryAllRejectedNodeResponse>;
 }
 interface Rpc {
     request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;

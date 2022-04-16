@@ -242,6 +242,8 @@ export type ValidatorMsgEnableValidatorResponse = object;
 
 export type ValidatorMsgProposeDisableValidatorResponse = object;
 
+export type ValidatorMsgRejectDisableNodeResponse = object;
+
 export interface ValidatorProposedDisableValidator {
   address?: string;
   creator?: string;
@@ -293,6 +295,21 @@ export interface ValidatorQueryAllProposedDisableValidatorResponse {
   pagination?: V1Beta1PageResponse;
 }
 
+export interface ValidatorQueryAllRejectedNodeResponse {
+  rejectedNode?: ValidatorRejectedNode[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
 export interface ValidatorQueryAllValidatorResponse {
   validator?: ValidatorValidator[];
 
@@ -320,8 +337,17 @@ export interface ValidatorQueryGetProposedDisableValidatorResponse {
   proposedDisableValidator?: ValidatorProposedDisableValidator;
 }
 
+export interface ValidatorQueryGetRejectedNodeResponse {
+  rejectedNode?: ValidatorRejectedNode;
+}
+
 export interface ValidatorQueryGetValidatorResponse {
   validator?: ValidatorValidator;
+}
+
+export interface ValidatorRejectedNode {
+  owner?: string;
+  approvals?: string[];
 }
 
 export interface ValidatorValidator {
@@ -779,6 +805,48 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryProposedDisableValidator = (address: string, params: RequestParams = {}) =>
     this.request<ValidatorQueryGetProposedDisableValidatorResponse, RpcStatus>({
       path: `/dcl/validator/proposed-disable-nodes/${address}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryRejectedNodeAll
+   * @summary Queries a list of RejectedNode items.
+   * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/rejected_node
+   */
+  queryRejectedNodeAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<ValidatorQueryAllRejectedNodeResponse, RpcStatus>({
+      path: `/zigbee-alliance/distributedcomplianceledger/validator/rejected_node`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryRejectedNode
+   * @summary Queries a RejectedNode by index.
+   * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/rejected_node/{owner}
+   */
+  queryRejectedNode = (owner: string, params: RequestParams = {}) =>
+    this.request<ValidatorQueryGetRejectedNodeResponse, RpcStatus>({
+      path: `/zigbee-alliance/distributedcomplianceledger/validator/rejected_node/${owner}`,
       method: "GET",
       format: "json",
       ...params,

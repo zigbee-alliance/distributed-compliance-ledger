@@ -44,6 +44,15 @@ export interface MsgEnableValidator {
 
 export interface MsgEnableValidatorResponse {}
 
+export interface MsgRejectDisableNode {
+  creator: string
+  address: string
+  info: string
+  time: number
+}
+
+export interface MsgRejectDisableNodeResponse {}
+
 const baseMsgCreateValidator: object = { signer: '' }
 
 export const MsgCreateValidator = {
@@ -645,14 +654,159 @@ export const MsgEnableValidatorResponse = {
   }
 }
 
+const baseMsgRejectDisableNode: object = { creator: '', address: '', info: '', time: 0 }
+
+export const MsgRejectDisableNode = {
+  encode(message: MsgRejectDisableNode, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== '') {
+      writer.uint32(10).string(message.creator)
+    }
+    if (message.address !== '') {
+      writer.uint32(18).string(message.address)
+    }
+    if (message.info !== '') {
+      writer.uint32(26).string(message.info)
+    }
+    if (message.time !== 0) {
+      writer.uint32(32).int64(message.time)
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgRejectDisableNode {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseMsgRejectDisableNode } as MsgRejectDisableNode
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string()
+          break
+        case 2:
+          message.address = reader.string()
+          break
+        case 3:
+          message.info = reader.string()
+          break
+        case 4:
+          message.time = longToNumber(reader.int64() as Long)
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): MsgRejectDisableNode {
+    const message = { ...baseMsgRejectDisableNode } as MsgRejectDisableNode
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator)
+    } else {
+      message.creator = ''
+    }
+    if (object.address !== undefined && object.address !== null) {
+      message.address = String(object.address)
+    } else {
+      message.address = ''
+    }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = String(object.info)
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = Number(object.time)
+    } else {
+      message.time = 0
+    }
+    return message
+  },
+
+  toJSON(message: MsgRejectDisableNode): unknown {
+    const obj: any = {}
+    message.creator !== undefined && (obj.creator = message.creator)
+    message.address !== undefined && (obj.address = message.address)
+    message.info !== undefined && (obj.info = message.info)
+    message.time !== undefined && (obj.time = message.time)
+    return obj
+  },
+
+  fromPartial(object: DeepPartial<MsgRejectDisableNode>): MsgRejectDisableNode {
+    const message = { ...baseMsgRejectDisableNode } as MsgRejectDisableNode
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator
+    } else {
+      message.creator = ''
+    }
+    if (object.address !== undefined && object.address !== null) {
+      message.address = object.address
+    } else {
+      message.address = ''
+    }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = object.info
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = object.time
+    } else {
+      message.time = 0
+    }
+    return message
+  }
+}
+
+const baseMsgRejectDisableNodeResponse: object = {}
+
+export const MsgRejectDisableNodeResponse = {
+  encode(_: MsgRejectDisableNodeResponse, writer: Writer = Writer.create()): Writer {
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgRejectDisableNodeResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseMsgRejectDisableNodeResponse } as MsgRejectDisableNodeResponse
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(_: any): MsgRejectDisableNodeResponse {
+    const message = { ...baseMsgRejectDisableNodeResponse } as MsgRejectDisableNodeResponse
+    return message
+  },
+
+  toJSON(_: MsgRejectDisableNodeResponse): unknown {
+    const obj: any = {}
+    return obj
+  },
+
+  fromPartial(_: DeepPartial<MsgRejectDisableNodeResponse>): MsgRejectDisableNodeResponse {
+    const message = { ...baseMsgRejectDisableNodeResponse } as MsgRejectDisableNodeResponse
+    return message
+  }
+}
+
 /** Msg defines the Msg service. */
 export interface Msg {
   CreateValidator(request: MsgCreateValidator): Promise<MsgCreateValidatorResponse>
   ProposeDisableValidator(request: MsgProposeDisableValidator): Promise<MsgProposeDisableValidatorResponse>
   ApproveDisableValidator(request: MsgApproveDisableValidator): Promise<MsgApproveDisableValidatorResponse>
   DisableValidator(request: MsgDisableValidator): Promise<MsgDisableValidatorResponse>
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   EnableValidator(request: MsgEnableValidator): Promise<MsgEnableValidatorResponse>
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  RejectDisableNode(request: MsgRejectDisableNode): Promise<MsgRejectDisableNodeResponse>
 }
 
 export class MsgClientImpl implements Msg {
@@ -688,6 +842,12 @@ export class MsgClientImpl implements Msg {
     const data = MsgEnableValidator.encode(request).finish()
     const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.validator.Msg', 'EnableValidator', data)
     return promise.then((data) => MsgEnableValidatorResponse.decode(new Reader(data)))
+  }
+
+  RejectDisableNode(request: MsgRejectDisableNode): Promise<MsgRejectDisableNodeResponse> {
+    const data = MsgRejectDisableNode.encode(request).finish()
+    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.validator.Msg', 'RejectDisableNode', data)
+    return promise.then((data) => MsgRejectDisableNodeResponse.decode(new Reader(data)))
   }
 }
 

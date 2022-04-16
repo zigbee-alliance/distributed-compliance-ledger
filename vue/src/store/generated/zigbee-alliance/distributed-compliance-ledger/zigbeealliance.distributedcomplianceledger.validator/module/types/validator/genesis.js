@@ -3,6 +3,7 @@ import { Validator } from '../validator/validator';
 import { LastValidatorPower } from '../validator/last_validator_power';
 import { ProposedDisableValidator } from '../validator/proposed_disable_validator';
 import { DisabledValidator } from '../validator/disabled_validator';
+import { RejectedNode } from '../validator/rejected_node';
 import { Writer, Reader } from 'protobufjs/minimal';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.validator';
 const baseGenesisState = {};
@@ -20,6 +21,9 @@ export const GenesisState = {
         for (const v of message.disabledValidatorList) {
             DisabledValidator.encode(v, writer.uint32(34).fork()).ldelim();
         }
+        for (const v of message.rejectedNodeList) {
+            RejectedNode.encode(v, writer.uint32(42).fork()).ldelim();
+        }
         return writer;
     },
     decode(input, length) {
@@ -30,6 +34,7 @@ export const GenesisState = {
         message.lastValidatorPowerList = [];
         message.proposedDisableValidatorList = [];
         message.disabledValidatorList = [];
+        message.rejectedNodeList = [];
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
@@ -45,6 +50,9 @@ export const GenesisState = {
                 case 4:
                     message.disabledValidatorList.push(DisabledValidator.decode(reader, reader.uint32()));
                     break;
+                case 5:
+                    message.rejectedNodeList.push(RejectedNode.decode(reader, reader.uint32()));
+                    break;
                 default:
                     reader.skipType(tag & 7);
                     break;
@@ -58,6 +66,7 @@ export const GenesisState = {
         message.lastValidatorPowerList = [];
         message.proposedDisableValidatorList = [];
         message.disabledValidatorList = [];
+        message.rejectedNodeList = [];
         if (object.validatorList !== undefined && object.validatorList !== null) {
             for (const e of object.validatorList) {
                 message.validatorList.push(Validator.fromJSON(e));
@@ -76,6 +85,11 @@ export const GenesisState = {
         if (object.disabledValidatorList !== undefined && object.disabledValidatorList !== null) {
             for (const e of object.disabledValidatorList) {
                 message.disabledValidatorList.push(DisabledValidator.fromJSON(e));
+            }
+        }
+        if (object.rejectedNodeList !== undefined && object.rejectedNodeList !== null) {
+            for (const e of object.rejectedNodeList) {
+                message.rejectedNodeList.push(RejectedNode.fromJSON(e));
             }
         }
         return message;
@@ -106,6 +120,12 @@ export const GenesisState = {
         else {
             obj.disabledValidatorList = [];
         }
+        if (message.rejectedNodeList) {
+            obj.rejectedNodeList = message.rejectedNodeList.map((e) => (e ? RejectedNode.toJSON(e) : undefined));
+        }
+        else {
+            obj.rejectedNodeList = [];
+        }
         return obj;
     },
     fromPartial(object) {
@@ -114,6 +134,7 @@ export const GenesisState = {
         message.lastValidatorPowerList = [];
         message.proposedDisableValidatorList = [];
         message.disabledValidatorList = [];
+        message.rejectedNodeList = [];
         if (object.validatorList !== undefined && object.validatorList !== null) {
             for (const e of object.validatorList) {
                 message.validatorList.push(Validator.fromPartial(e));
@@ -132,6 +153,11 @@ export const GenesisState = {
         if (object.disabledValidatorList !== undefined && object.disabledValidatorList !== null) {
             for (const e of object.disabledValidatorList) {
                 message.disabledValidatorList.push(DisabledValidator.fromPartial(e));
+            }
+        }
+        if (object.rejectedNodeList !== undefined && object.rejectedNodeList !== null) {
+            for (const e of object.rejectedNodeList) {
+                message.rejectedNodeList.push(RejectedNode.fromPartial(e));
             }
         }
         return message;

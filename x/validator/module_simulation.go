@@ -40,6 +40,10 @@ const (
 	// TODO: Determine the simulation weight value.
 	defaultWeightMsgEnableValidator int = 100
 
+	opWeightMsgRejectDisableNode = "op_weight_msg_create_chain"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgRejectDisableNode int = 100
+
 	// this line is used by starport scaffolding # simapp/module/const.
 )
 
@@ -114,6 +118,17 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	operations = append(operations, simulation.NewWeightedOperation(
 		weightMsgEnableValidator,
 		validatorsimulation.SimulateMsgEnableValidator(am.keeper),
+	))
+
+	var weightMsgRejectDisableNode int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgRejectDisableNode, &weightMsgRejectDisableNode, nil,
+		func(_ *rand.Rand) {
+			weightMsgRejectDisableNode = defaultWeightMsgRejectDisableNode
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgRejectDisableNode,
+		validatorsimulation.SimulateMsgRejectDisableNode(am.keeper),
 	))
 
 	// this line is used by starport scaffolding # simapp/module/operation

@@ -252,5 +252,34 @@ export class Api extends HttpClient {
             format: "json",
             ...params,
         });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryRejectedNodeAll
+         * @summary Queries a list of RejectedNode items.
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/rejected_node
+         */
+        this.queryRejectedNodeAll = (query, params = {}) => this.request({
+            path: `/zigbee-alliance/distributedcomplianceledger/validator/rejected_node`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryRejectedNode
+         * @summary Queries a RejectedNode by index.
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/rejected_node/{owner}
+         */
+        this.queryRejectedNode = (owner, params = {}) => this.request({
+            path: `/zigbee-alliance/distributedcomplianceledger/validator/rejected_node/${owner}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
     }
 }
