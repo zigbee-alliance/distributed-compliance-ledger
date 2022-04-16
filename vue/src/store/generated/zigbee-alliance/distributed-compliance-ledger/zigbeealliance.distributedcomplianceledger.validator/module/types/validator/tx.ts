@@ -668,7 +668,7 @@ export const MsgRejectDisableNode = {
       writer.uint32(26).string(message.info)
     }
     if (message.time !== 0) {
-      writer.uint32(32).int64(message.time)
+      writer.uint32(32).int32(message.time)
     }
     return writer
   },
@@ -690,7 +690,7 @@ export const MsgRejectDisableNode = {
           message.info = reader.string()
           break
         case 4:
-          message.time = longToNumber(reader.int64() as Long)
+          message.time = reader.int32()
           break
         default:
           reader.skipType(tag & 7)

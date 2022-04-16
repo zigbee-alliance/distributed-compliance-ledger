@@ -1,8 +1,11 @@
+import { Grant } from '../validator/grant';
 import { Writer, Reader } from 'protobufjs/minimal';
 export declare const protobufPackage = "zigbeealliance.distributedcomplianceledger.validator";
 export interface RejectedNode {
-    owner: string;
-    approvals: string[];
+    address: string;
+    creator: string;
+    approvals: Grant[];
+    rejectApprovals: Grant[];
 }
 export declare const RejectedNode: {
     encode(message: RejectedNode, writer?: Writer): Writer;

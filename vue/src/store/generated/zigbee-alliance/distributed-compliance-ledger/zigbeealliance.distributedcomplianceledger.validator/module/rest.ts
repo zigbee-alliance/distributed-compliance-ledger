@@ -215,6 +215,7 @@ export interface ValidatorDisabledValidator {
   creator?: string;
   approvals?: ValidatorGrant[];
   disabledByNodeAdmin?: boolean;
+  rejectApprovals?: ValidatorGrant[];
 }
 
 export interface ValidatorGrant {
@@ -248,6 +249,7 @@ export interface ValidatorProposedDisableValidator {
   address?: string;
   creator?: string;
   approvals?: ValidatorGrant[];
+  rejectApprovals?: ValidatorGrant[];
 }
 
 export interface ValidatorQueryAllDisabledValidatorResponse {
@@ -346,8 +348,10 @@ export interface ValidatorQueryGetValidatorResponse {
 }
 
 export interface ValidatorRejectedNode {
-  owner?: string;
-  approvals?: string[];
+  address?: string;
+  creator?: string;
+  approvals?: ValidatorGrant[];
+  rejectApprovals?: ValidatorGrant[];
 }
 
 export interface ValidatorValidator {
@@ -816,7 +820,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryRejectedNodeAll
    * @summary Queries a list of RejectedNode items.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/rejected_node
+   * @request GET:/dcl/validator/rejected-nodes
    */
   queryRejectedNodeAll = (
     query?: {
@@ -829,7 +833,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     params: RequestParams = {},
   ) =>
     this.request<ValidatorQueryAllRejectedNodeResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/validator/rejected_node`,
+      path: `/dcl/validator/rejected-nodes`,
       method: "GET",
       query: query,
       format: "json",
@@ -842,11 +846,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryRejectedNode
    * @summary Queries a RejectedNode by index.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/rejected_node/{owner}
+   * @request GET:/dcl/validator/rejected-nodes/{owner}
    */
   queryRejectedNode = (owner: string, params: RequestParams = {}) =>
     this.request<ValidatorQueryGetRejectedNodeResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/validator/rejected_node/${owner}`,
+      path: `/dcl/validator/rejected-nodes/${owner}`,
       method: "GET",
       format: "json",
       ...params,

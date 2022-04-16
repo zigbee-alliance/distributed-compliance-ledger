@@ -1,14 +1,21 @@
 /* eslint-disable */
+import { Grant } from '../validator/grant';
 import { Writer, Reader } from 'protobufjs/minimal';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.validator';
-const baseRejectedNode = { owner: '', approvals: '' };
+const baseRejectedNode = { address: '', creator: '' };
 export const RejectedNode = {
     encode(message, writer = Writer.create()) {
-        if (message.owner !== '') {
-            writer.uint32(10).string(message.owner);
+        if (message.address !== '') {
+            writer.uint32(10).string(message.address);
+        }
+        if (message.creator !== '') {
+            writer.uint32(18).string(message.creator);
         }
         for (const v of message.approvals) {
-            writer.uint32(18).string(v);
+            Grant.encode(v, writer.uint32(26).fork()).ldelim();
+        }
+        for (const v of message.rejectApprovals) {
+            Grant.encode(v, writer.uint32(34).fork()).ldelim();
         }
         return writer;
     },
@@ -17,14 +24,21 @@ export const RejectedNode = {
         let end = length === undefined ? reader.len : reader.pos + length;
         const message = { ...baseRejectedNode };
         message.approvals = [];
+        message.rejectApprovals = [];
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
                 case 1:
-                    message.owner = reader.string();
+                    message.address = reader.string();
                     break;
                 case 2:
-                    message.approvals.push(reader.string());
+                    message.creator = reader.string();
+                    break;
+                case 3:
+                    message.approvals.push(Grant.decode(reader, reader.uint32()));
+                    break;
+                case 4:
+                    message.rejectApprovals.push(Grant.decode(reader, reader.uint32()));
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -36,42 +50,73 @@ export const RejectedNode = {
     fromJSON(object) {
         const message = { ...baseRejectedNode };
         message.approvals = [];
-        if (object.owner !== undefined && object.owner !== null) {
-            message.owner = String(object.owner);
+        message.rejectApprovals = [];
+        if (object.address !== undefined && object.address !== null) {
+            message.address = String(object.address);
         }
         else {
-            message.owner = '';
+            message.address = '';
+        }
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = String(object.creator);
+        }
+        else {
+            message.creator = '';
         }
         if (object.approvals !== undefined && object.approvals !== null) {
             for (const e of object.approvals) {
-                message.approvals.push(String(e));
+                message.approvals.push(Grant.fromJSON(e));
+            }
+        }
+        if (object.rejectApprovals !== undefined && object.rejectApprovals !== null) {
+            for (const e of object.rejectApprovals) {
+                message.rejectApprovals.push(Grant.fromJSON(e));
             }
         }
         return message;
     },
     toJSON(message) {
         const obj = {};
-        message.owner !== undefined && (obj.owner = message.owner);
+        message.address !== undefined && (obj.address = message.address);
+        message.creator !== undefined && (obj.creator = message.creator);
         if (message.approvals) {
-            obj.approvals = message.approvals.map((e) => e);
+            obj.approvals = message.approvals.map((e) => (e ? Grant.toJSON(e) : undefined));
         }
         else {
             obj.approvals = [];
+        }
+        if (message.rejectApprovals) {
+            obj.rejectApprovals = message.rejectApprovals.map((e) => (e ? Grant.toJSON(e) : undefined));
+        }
+        else {
+            obj.rejectApprovals = [];
         }
         return obj;
     },
     fromPartial(object) {
         const message = { ...baseRejectedNode };
         message.approvals = [];
-        if (object.owner !== undefined && object.owner !== null) {
-            message.owner = object.owner;
+        message.rejectApprovals = [];
+        if (object.address !== undefined && object.address !== null) {
+            message.address = object.address;
         }
         else {
-            message.owner = '';
+            message.address = '';
+        }
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = object.creator;
+        }
+        else {
+            message.creator = '';
         }
         if (object.approvals !== undefined && object.approvals !== null) {
             for (const e of object.approvals) {
-                message.approvals.push(e);
+                message.approvals.push(Grant.fromPartial(e));
+            }
+        }
+        if (object.rejectApprovals !== undefined && object.rejectApprovals !== null) {
+            for (const e of object.rejectApprovals) {
+                message.rejectApprovals.push(Grant.fromPartial(e));
             }
         }
         return message;

@@ -11,7 +11,7 @@ func (k Keeper) SetRejectedNode(ctx sdk.Context, rejectedNode types.RejectedNode
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RejectedNodeKeyPrefix))
 	b := k.cdc.MustMarshal(&rejectedNode)
 	store.Set(types.RejectedNodeKey(
-		rejectedNode.Owner,
+		rejectedNode.Creator,
 	), b)
 }
 

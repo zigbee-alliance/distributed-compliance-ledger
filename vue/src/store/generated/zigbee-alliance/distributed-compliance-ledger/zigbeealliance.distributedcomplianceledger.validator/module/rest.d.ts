@@ -191,6 +191,7 @@ export interface ValidatorDisabledValidator {
     creator?: string;
     approvals?: ValidatorGrant[];
     disabledByNodeAdmin?: boolean;
+    rejectApprovals?: ValidatorGrant[];
 }
 export interface ValidatorGrant {
     address?: string;
@@ -213,6 +214,7 @@ export interface ValidatorProposedDisableValidator {
     address?: string;
     creator?: string;
     approvals?: ValidatorGrant[];
+    rejectApprovals?: ValidatorGrant[];
 }
 export interface ValidatorQueryAllDisabledValidatorResponse {
     disabledValidator?: ValidatorDisabledValidator[];
@@ -295,8 +297,10 @@ export interface ValidatorQueryGetValidatorResponse {
     validator?: ValidatorValidator;
 }
 export interface ValidatorRejectedNode {
-    owner?: string;
-    approvals?: string[];
+    address?: string;
+    creator?: string;
+    approvals?: ValidatorGrant[];
+    rejectApprovals?: ValidatorGrant[];
 }
 export interface ValidatorValidator {
     owner?: string;
@@ -551,7 +555,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @tags Query
      * @name QueryRejectedNodeAll
      * @summary Queries a list of RejectedNode items.
-     * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/rejected_node
+     * @request GET:/dcl/validator/rejected-nodes
      */
     queryRejectedNodeAll: (query?: {
         "pagination.key"?: string;
@@ -566,7 +570,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @tags Query
      * @name QueryRejectedNode
      * @summary Queries a RejectedNode by index.
-     * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/rejected_node/{owner}
+     * @request GET:/dcl/validator/rejected-nodes/{owner}
      */
     queryRejectedNode: (owner: string, params?: RequestParams) => Promise<HttpResponse<ValidatorQueryGetRejectedNodeResponse, RpcStatus>>;
 }
