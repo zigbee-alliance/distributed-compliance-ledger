@@ -9,7 +9,7 @@ const TypeMsgRejectDisableNode = "reject_disable_node"
 
 var _ sdk.Msg = &MsgRejectDisableNode{}
 
-func NewMsgRejectDisableNode(creator string, address string, info string, time int32) *MsgRejectDisableNode {
+func NewMsgRejectDisableNode(creator string, address string, info string, time int64) *MsgRejectDisableNode {
 	return &MsgRejectDisableNode{
 		Creator: creator,
 		Address: address,
