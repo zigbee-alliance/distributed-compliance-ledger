@@ -11,5 +11,6 @@ message DisabledValidator {
   string creator = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   repeated Grant approvals = 3; 
   bool disabledByNodeAdmin = 4; 
+  repeated Grant rejectApprovals = 5; 
 }
 
