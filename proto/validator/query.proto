@@ -59,12 +59,12 @@ service Query {
 
 // Queries a RejectedNode by index.
 	rpc RejectedNode(QueryGetRejectedNodeRequest) returns (QueryGetRejectedNodeResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/validator/rejected_node/{owner}";
+		option (google.api.http).get = "/dcl/validator/rejected-nodes/{owner}";
 	}
 
 	// Queries a list of RejectedNode items.
 	rpc RejectedNodeAll(QueryAllRejectedNodeRequest) returns (QueryAllRejectedNodeResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/validator/rejected_node";
+		option (google.api.http).get = "/dcl/validator/rejected-nodes";
 	}
 
 // this line is used by starport scaffolding # 2
