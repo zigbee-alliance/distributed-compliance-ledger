@@ -6,7 +6,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
-// SetRejectedNode set a specific rejectedNode in the store from its index
+// SetRejectedNode set a specific rejectedNode in the store from its index.
 func (k Keeper) SetRejectedNode(ctx sdk.Context, rejectedNode types.RejectedNode) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RejectedNodeKeyPrefix))
 	b := k.cdc.MustMarshal(&rejectedNode)
@@ -15,11 +15,10 @@ func (k Keeper) SetRejectedNode(ctx sdk.Context, rejectedNode types.RejectedNode
 	), b)
 }
 
-// GetRejectedNode returns a rejectedNode from its index
+// GetRejectedNode returns a rejectedNode from its index.
 func (k Keeper) GetRejectedNode(
 	ctx sdk.Context,
 	owner string,
-
 ) (val types.RejectedNode, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RejectedNodeKeyPrefix))
 
@@ -31,14 +30,14 @@ func (k Keeper) GetRejectedNode(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
-// RemoveRejectedNode removes a rejectedNode from the store
+// RemoveRejectedNode removes a rejectedNode from the store.
 func (k Keeper) RemoveRejectedNode(
 	ctx sdk.Context,
 	owner string,
-
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RejectedNodeKeyPrefix))
 	store.Delete(types.RejectedNodeKey(
@@ -46,7 +45,7 @@ func (k Keeper) RemoveRejectedNode(
 	))
 }
 
-// GetAllRejectedNode returns all rejectedNode
+// GetAllRejectedNode returns all rejectedNode.
 func (k Keeper) GetAllRejectedNode(ctx sdk.Context) (list []types.RejectedNode) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RejectedNodeKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})

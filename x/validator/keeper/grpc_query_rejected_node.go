@@ -29,9 +29,9 @@ func (k Keeper) RejectedNodeAll(c context.Context, req *types.QueryAllRejectedNo
 		}
 
 		rejectedNodes = append(rejectedNodes, rejectedNode)
+
 		return nil
 	})
-
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
@@ -50,7 +50,7 @@ func (k Keeper) RejectedNode(c context.Context, req *types.QueryGetRejectedNodeR
 		req.Owner,
 	)
 	if !found {
-		return nil, status.Error(codes.InvalidArgument, "not found")
+		return nil, status.Error(codes.NotFound, "not found")
 	}
 
 	return &types.QueryGetRejectedNodeResponse{RejectedNode: val}, nil
