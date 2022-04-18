@@ -629,7 +629,7 @@ func TestHandler_OwnerNodeAdminCanEnabledValidator(t *testing.T) {
 	require.False(t, isFound)
 }
 
-func TestHandler_TrusteeDisabkedValidatorOwnerNodeAdminCanEnableValidator(t *testing.T) {
+func TestHandler_TrusteeDisabledValidatorOwnerNodeAdminCanEnableValidator(t *testing.T) {
 	setup := Setup(t)
 
 	// create Trustees
@@ -651,7 +651,7 @@ func TestHandler_TrusteeDisabkedValidatorOwnerNodeAdminCanEnableValidator(t *tes
 	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
 	require.NoError(t, err)
 
-	// create Trustee and NodeAdmin
+	// create NodeAdmin
 	ba4 := authtypes.NewBaseAccount(sdk.AccAddress(valAddress), testconstants.PubKey4, 0, 0)
 	account4 := dclauthtypes.NewAccount(ba4,
 		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, nil, testconstants.VendorID4)
@@ -674,6 +674,88 @@ func TestHandler_TrusteeDisabkedValidatorOwnerNodeAdminCanEnableValidator(t *tes
 
 	_, isFound := setup.ValidatorKeeper.GetDisabledValidator(setup.Ctx, valAddress.String())
 	require.False(t, isFound)
+}
+
+func TestHandler_OwnerNodeAdminDisabledValidatorAndNodeAdminCanNotAddNewValidator(t *testing.T) {
+	setup := Setup(t)
+
+	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
+	require.NoError(t, err)
+
+	// create NodeAdmin
+	ba1 := authtypes.NewBaseAccount(sdk.AccAddress(valAddress), testconstants.PubKey1, 0, 0)
+	account1 := dclauthtypes.NewAccount(ba1,
+		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, nil, testconstants.VendorID1)
+	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
+
+	// node admin disable validator
+	msgDisableValidator := types.NewMsgDisableValidator(valAddress)
+	_, err = setup.Handler(setup.Ctx, msgDisableValidator)
+	require.NoError(t, err)
+
+	msgCreateValidator, err := types.NewMsgCreateValidator(
+		valAddress,
+		testconstants.ValidatorPubKey2,
+		&types.Description{Moniker: testconstants.ProductName},
+	)
+	require.NoError(t, err)
+
+	// node admin try to add a new validator
+	_, err = setup.Handler(setup.Ctx, msgCreateValidator)
+	require.Error(t, err)
+}
+
+func TestHandler_TrusteeDisabledValidatorAndOwnerNodeAdminCanNotAddNewValidator(t *testing.T) {
+	setup := Setup(t)
+
+	// create Trustees
+	ba1 := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
+	account1 := dclauthtypes.NewAccount(ba1,
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, testconstants.VendorID1)
+	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
+
+	ba2 := authtypes.NewBaseAccount(testconstants.Address2, testconstants.PubKey2, 0, 0)
+	account2 := dclauthtypes.NewAccount(ba2,
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, testconstants.VendorID2)
+	setup.DclauthKeeper.SetAccount(setup.Ctx, account2)
+
+	ba3 := authtypes.NewBaseAccount(testconstants.Address3, testconstants.PubKey3, 0, 0)
+	account3 := dclauthtypes.NewAccount(ba3,
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, testconstants.VendorID3)
+	setup.DclauthKeeper.SetAccount(setup.Ctx, account3)
+
+	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
+	require.NoError(t, err)
+
+	// create NodeAdmin
+	ba4 := authtypes.NewBaseAccount(sdk.AccAddress(valAddress), testconstants.PubKey4, 0, 0)
+	account4 := dclauthtypes.NewAccount(ba4,
+		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, nil, testconstants.VendorID4)
+	setup.DclauthKeeper.SetAccount(setup.Ctx, account4)
+
+	// propose new disable validator
+	msgProposeDisableValidator1 := NewMsgProposeDisableValidator(account1.GetAddress(), valAddress)
+	_, err = setup.Handler(setup.Ctx, msgProposeDisableValidator1)
+	require.NoError(t, err)
+
+	// approve new disable validator
+	msgProposeDisableValidator2 := NewMsgApproveDisableValidator(account2.GetAddress(), valAddress)
+	_, err = setup.Handler(setup.Ctx, msgProposeDisableValidator2)
+	require.NoError(t, err)
+
+	_, isFound := setup.ValidatorKeeper.GetDisabledValidator(setup.Ctx, valAddress.String())
+	require.True(t, isFound)
+
+	msgCreateValidator, err := types.NewMsgCreateValidator(
+		valAddress,
+		testconstants.ValidatorPubKey2,
+		&types.Description{Moniker: testconstants.ProductName},
+	)
+	require.NoError(t, err)
+
+	// node admin try to add a new validator
+	_, err = setup.Handler(setup.Ctx, msgCreateValidator)
+	require.Error(t, err)
 }
 
 func NewMsgProposeDisableValidator(signer sdk.AccAddress, address sdk.ValAddress) *types.MsgProposeDisableValidator {
