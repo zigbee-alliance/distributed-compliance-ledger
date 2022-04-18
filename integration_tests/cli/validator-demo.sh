@@ -202,6 +202,11 @@ result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld tx validator 
 check_response "$result" "\"code\": 0"
 echo "$result"
 
+test_divider
+
+echo "node admin doesn't add a new validator with new pubkey, because node admin already has disabled validator"
+result="$(docker exec "$container" /bin/sh -c "echo test1234 | ./dcld tx validator add-node --pubkey='$pubkey' --moniker="$node_name" --from="$account" --yes 2>&1 || true")"
+response_does_not_contain "$result" "\"code\": 0"
 
 test_divider
 
@@ -294,6 +299,11 @@ result=$(dcld tx validator approve-disable-node --address="$validator_address" -
 check_response "$result" "\"code\": 0"
 echo "$result"
 
+test_divider
+
+echo "node admin doesn't add a new validator with new pubkey, because node admin already has disabled validator"
+result="$(docker exec "$container" /bin/sh -c "echo test1234 | ./dcld tx validator add-node --pubkey='$pubkey' --moniker="$node_name" --from="$account" --yes 2>&1 || true")"
+response_does_not_contain "$result" "\"code\": 0"
 
 test_divider
 
