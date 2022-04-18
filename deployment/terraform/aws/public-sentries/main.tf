@@ -24,7 +24,7 @@ resource "aws_instance" "this_nodes" {
     instance_type = "t3.medium"
 
     subnet_id              = element(module.this_vpc.public_subnets, 0)
-    ipv6_address_count     = 1
+    ipv6_address_count     = var.enable_ipv6 ? 1 : 0
     
     vpc_security_group_ids = [
         module.this_dev_sg.security_group_id,
@@ -49,7 +49,7 @@ resource "aws_instance" "this_seed_node" {
     instance_type = "t3.medium"
 
     subnet_id              = element(module.this_vpc.public_subnets, 0)
-    ipv6_address_count     = 1
+    ipv6_address_count     = var.enable_ipv6 ? 1 : 0
 
     vpc_security_group_ids = [
         module.this_dev_sg.security_group_id,
@@ -69,7 +69,20 @@ resource "aws_instance" "this_seed_node" {
     }
 }
 
+resource "aws_eip" "this_nodes_eips" {
+    count = var.enable_ipv6 ? 0 : length(aws_instance.this_nodes)
+
+    instance = aws_instance.this_nodes[count.index].id
+    vpc      = true
+
+    tags = {
+        Name = "Public Sentry Node [${count.index}] Elastic IP"
+    }
+}
+
 resource "aws_eip" "this_seed_eip" {
+    count = var.enable_ipv6 ? 0 : 1
+
     instance = aws_instance.this_seed_node.id
     vpc      = true
 

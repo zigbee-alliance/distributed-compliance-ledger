@@ -23,6 +23,11 @@ variable "region_index" {
     default = 0
 }
 
+variable "enable_ipv6" {
+    description = "Enable public IPv6 addresses"
+    default = true
+}
+
 variable "peer_vpc" {
     description = "Peer VPC"
 }

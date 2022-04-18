@@ -13,13 +13,13 @@ module "this_vpc" {
     name = "public-sentries-vpc"
     cidr = "${local.vpc_network_prefix}.0.0/16"
 
-    enable_ipv6 = true
-    public_subnet_assign_ipv6_address_on_creation = true
+    enable_ipv6                                     = var.enable_ipv6
+    public_subnet_assign_ipv6_address_on_creation   = var.enable_ipv6
+    public_subnet_ipv6_prefixes                     = var.enable_ipv6 ? [1] : []
 
     azs                = [data.aws_availability_zones.available.names[0]]
 
-    public_subnet_ipv6_prefixes = [1]
-    public_subnets              = ["${local.vpc_network_prefix}.1.0/24"]
+    public_subnets     = ["${local.vpc_network_prefix}.1.0/24"]
 
     enable_nat_gateway = true
     enable_dns_hostnames = true

@@ -32,6 +32,9 @@ module "private_sentries" {
 module "public_sentries_1" {
     source      = "./public-sentries"
     nodes_count  = 1
+    
+    # enable_ipv6 = false
+
     providers = {
         aws = aws.region_1
         aws.peer = aws.region_1
@@ -44,7 +47,10 @@ module "public_sentries_1" {
 # Public Sentries region 2
 module "public_sentries_2" {
     source      = "./public-sentries"
-    nodes_count  = 2
+    nodes_count  = 1
+
+    # enable_ipv6 = false
+
     providers = {
         aws = aws.region_2
         aws.peer = aws.region_1
