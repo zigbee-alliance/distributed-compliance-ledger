@@ -5,7 +5,7 @@ export interface MsgCreateVendorInfo {
     vendorID: number;
     vendorName: string;
     companyLegalName: string;
-    companyPrefferedName: string;
+    companyPreferredName: string;
     vendorLandingPageURL: string;
 }
 export interface MsgCreateVendorInfoResponse {
@@ -15,7 +15,7 @@ export interface MsgUpdateVendorInfo {
     vendorID: number;
     vendorName: string;
     companyLegalName: string;
-    companyPrefferedName: string;
+    companyPreferredName: string;
     vendorLandingPageURL: string;
 }
 export interface MsgUpdateVendorInfoResponse {

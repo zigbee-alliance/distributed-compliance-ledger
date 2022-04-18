@@ -30,7 +30,7 @@ func (k msgServer) CreateVendorInfo(goCtx context.Context, msg *types.MsgCreateV
 		VendorID:             msg.VendorID,
 		VendorName:           msg.VendorName,
 		CompanyLegalName:     msg.CompanyLegalName,
-		CompanyPrefferedName: msg.CompanyPrefferedName,
+		CompanyPreferredName: msg.CompanyPreferredName,
 		VendorLandingPageURL: msg.VendorLandingPageURL,
 	}
 
@@ -64,7 +64,7 @@ func (k msgServer) UpdateVendorInfo(goCtx context.Context, msg *types.MsgUpdateV
 		VendorID:             msg.VendorID,
 		VendorName:           msg.VendorName,
 		CompanyLegalName:     msg.CompanyLegalName,
-		CompanyPrefferedName: msg.CompanyPrefferedName,
+		CompanyPreferredName: msg.CompanyPreferredName,
 		VendorLandingPageURL: msg.VendorLandingPageURL,
 	}
 

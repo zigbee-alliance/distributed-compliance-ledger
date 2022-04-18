@@ -1,4 +1,5 @@
 # Running a DCLedger Node
+
 > **_Note:_** If you are adding a new node to an existing long-running network, refer to [running-node-in-existing-network.md](./running-node-in-existing-network.md) for addtional instructions
 
 This document describes in how to:
@@ -65,7 +66,7 @@ sudo rm -f "$(which dcld)"
 rm -rf "$HOME/.dcl" 
 ```
 
-*NOTE: Some of the commands above may fail depending on whether or not `cosmovisor` was used in the previous setup.*
+_NOTE: Some of the commands above may fail depending on whether or not `cosmovisor` was used in the previous setup._
 
 </p>
 </details>
@@ -273,7 +274,7 @@ If the transaction has been successfully written you would find `"code": 0` in t
 
 Provide the node's `ID`, `IP` and a peer port (by default `26656`) to other validator admins.
 
-*Note* Node `ID` can be found either in the output of the `run_dcl_node` script or using `./dcld status` command.
+_Note_ Node `ID` can be found either in the output of the `run_dcl_node` script or using `./dcld status` command.
 
 ### (Optional) Create a key for a new trustee
 
@@ -340,7 +341,6 @@ As a general guidance you may consider to use only the peers you own and/or trus
   ./update_peers [PATH-TO-PEERS-FILE]
   ```
 
-  * *Notes*
+  * _Notes_
     * `cosmovisor` service should be restarted on any configuration changes
     * in case of any IP filtering firewall rules they should be updated as well
-    

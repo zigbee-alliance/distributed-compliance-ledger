@@ -253,6 +253,10 @@ func Demo(suite *utils.TestSuite) {
 	_, err = DisableValidator(suite, validatorAddr, nodeAdminName, nodeAdminAcc)
 	require.NoError(suite.T, err)
 
+	// node admin doesn't add a new validator with new pubkey, because node admin already has disabled validator
+	_, err = CreateValidator(suite, validatorAddr, nodeAdminName, nodeAdminAcc, testconstants.ValidatorPubKey2, "test123")
+	require.Error(suite.T, err)
+
 	// Query disabled validator
 	disabledValidator, err := GetDisabledValidator(suite, validatorAddr)
 	require.NoError(suite.T, err)
@@ -274,10 +278,6 @@ func Demo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 	require.Empty(suite.T, disabledValidators)
 
-	//
-	//
-	//
-
 	// Propose disable validator
 	_, err = ProposeDisableValidator(suite, validatorAddr, aliceName, aliceAccount, testconstants.Info)
 	require.NoError(suite.T, err)
@@ -297,6 +297,10 @@ func Demo(suite *utils.TestSuite) {
 	// Approve new disable validator
 	_, err = ApproveDisableValidator(suite, validatorAddr, jackName, jackAccount, testconstants.Info)
 	require.NoError(suite.T, err)
+
+	// node admin doesn't add a new validator with new pubkey, because node admin already has disabled validator
+	_, err = CreateValidator(suite, validatorAddr, nodeAdminName, nodeAdminAcc, testconstants.ValidatorPubKey2, "test123")
+	require.Error(suite.T, err)
 
 	// Query disabled validator
 	disabledValidator, err = GetDisabledValidator(suite, validatorAddr)

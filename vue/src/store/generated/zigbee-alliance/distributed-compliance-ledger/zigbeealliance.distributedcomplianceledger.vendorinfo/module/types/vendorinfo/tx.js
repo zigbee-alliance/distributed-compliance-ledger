@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { Reader, Writer } from 'protobufjs/minimal';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.vendorinfo';
-const baseMsgCreateVendorInfo = { creator: '', vendorID: 0, vendorName: '', companyLegalName: '', companyPrefferedName: '', vendorLandingPageURL: '' };
+const baseMsgCreateVendorInfo = { creator: '', vendorID: 0, vendorName: '', companyLegalName: '', companyPreferredName: '', vendorLandingPageURL: '' };
 export const MsgCreateVendorInfo = {
     encode(message, writer = Writer.create()) {
         if (message.creator !== '') {
@@ -16,8 +16,8 @@ export const MsgCreateVendorInfo = {
         if (message.companyLegalName !== '') {
             writer.uint32(34).string(message.companyLegalName);
         }
-        if (message.companyPrefferedName !== '') {
-            writer.uint32(42).string(message.companyPrefferedName);
+        if (message.companyPreferredName !== '') {
+            writer.uint32(42).string(message.companyPreferredName);
         }
         if (message.vendorLandingPageURL !== '') {
             writer.uint32(50).string(message.vendorLandingPageURL);
@@ -44,7 +44,7 @@ export const MsgCreateVendorInfo = {
                     message.companyLegalName = reader.string();
                     break;
                 case 5:
-                    message.companyPrefferedName = reader.string();
+                    message.companyPreferredName = reader.string();
                     break;
                 case 6:
                     message.vendorLandingPageURL = reader.string();
@@ -82,11 +82,11 @@ export const MsgCreateVendorInfo = {
         else {
             message.companyLegalName = '';
         }
-        if (object.companyPrefferedName !== undefined && object.companyPrefferedName !== null) {
-            message.companyPrefferedName = String(object.companyPrefferedName);
+        if (object.companyPreferredName !== undefined && object.companyPreferredName !== null) {
+            message.companyPreferredName = String(object.companyPreferredName);
         }
         else {
-            message.companyPrefferedName = '';
+            message.companyPreferredName = '';
         }
         if (object.vendorLandingPageURL !== undefined && object.vendorLandingPageURL !== null) {
             message.vendorLandingPageURL = String(object.vendorLandingPageURL);
@@ -102,7 +102,7 @@ export const MsgCreateVendorInfo = {
         message.vendorID !== undefined && (obj.vendorID = message.vendorID);
         message.vendorName !== undefined && (obj.vendorName = message.vendorName);
         message.companyLegalName !== undefined && (obj.companyLegalName = message.companyLegalName);
-        message.companyPrefferedName !== undefined && (obj.companyPrefferedName = message.companyPrefferedName);
+        message.companyPreferredName !== undefined && (obj.companyPreferredName = message.companyPreferredName);
         message.vendorLandingPageURL !== undefined && (obj.vendorLandingPageURL = message.vendorLandingPageURL);
         return obj;
     },
@@ -132,11 +132,11 @@ export const MsgCreateVendorInfo = {
         else {
             message.companyLegalName = '';
         }
-        if (object.companyPrefferedName !== undefined && object.companyPrefferedName !== null) {
-            message.companyPrefferedName = object.companyPrefferedName;
+        if (object.companyPreferredName !== undefined && object.companyPreferredName !== null) {
+            message.companyPreferredName = object.companyPreferredName;
         }
         else {
-            message.companyPrefferedName = '';
+            message.companyPreferredName = '';
         }
         if (object.vendorLandingPageURL !== undefined && object.vendorLandingPageURL !== null) {
             message.vendorLandingPageURL = object.vendorLandingPageURL;
@@ -179,7 +179,7 @@ export const MsgCreateVendorInfoResponse = {
         return message;
     }
 };
-const baseMsgUpdateVendorInfo = { creator: '', vendorID: 0, vendorName: '', companyLegalName: '', companyPrefferedName: '', vendorLandingPageURL: '' };
+const baseMsgUpdateVendorInfo = { creator: '', vendorID: 0, vendorName: '', companyLegalName: '', companyPreferredName: '', vendorLandingPageURL: '' };
 export const MsgUpdateVendorInfo = {
     encode(message, writer = Writer.create()) {
         if (message.creator !== '') {
@@ -194,8 +194,8 @@ export const MsgUpdateVendorInfo = {
         if (message.companyLegalName !== '') {
             writer.uint32(34).string(message.companyLegalName);
         }
-        if (message.companyPrefferedName !== '') {
-            writer.uint32(42).string(message.companyPrefferedName);
+        if (message.companyPreferredName !== '') {
+            writer.uint32(42).string(message.companyPreferredName);
         }
         if (message.vendorLandingPageURL !== '') {
             writer.uint32(50).string(message.vendorLandingPageURL);
@@ -222,7 +222,7 @@ export const MsgUpdateVendorInfo = {
                     message.companyLegalName = reader.string();
                     break;
                 case 5:
-                    message.companyPrefferedName = reader.string();
+                    message.companyPreferredName = reader.string();
                     break;
                 case 6:
                     message.vendorLandingPageURL = reader.string();
@@ -260,11 +260,11 @@ export const MsgUpdateVendorInfo = {
         else {
             message.companyLegalName = '';
         }
-        if (object.companyPrefferedName !== undefined && object.companyPrefferedName !== null) {
-            message.companyPrefferedName = String(object.companyPrefferedName);
+        if (object.companyPreferredName !== undefined && object.companyPreferredName !== null) {
+            message.companyPreferredName = String(object.companyPreferredName);
         }
         else {
-            message.companyPrefferedName = '';
+            message.companyPreferredName = '';
         }
         if (object.vendorLandingPageURL !== undefined && object.vendorLandingPageURL !== null) {
             message.vendorLandingPageURL = String(object.vendorLandingPageURL);
@@ -280,7 +280,7 @@ export const MsgUpdateVendorInfo = {
         message.vendorID !== undefined && (obj.vendorID = message.vendorID);
         message.vendorName !== undefined && (obj.vendorName = message.vendorName);
         message.companyLegalName !== undefined && (obj.companyLegalName = message.companyLegalName);
-        message.companyPrefferedName !== undefined && (obj.companyPrefferedName = message.companyPrefferedName);
+        message.companyPreferredName !== undefined && (obj.companyPreferredName = message.companyPreferredName);
         message.vendorLandingPageURL !== undefined && (obj.vendorLandingPageURL = message.vendorLandingPageURL);
         return obj;
     },
@@ -310,11 +310,11 @@ export const MsgUpdateVendorInfo = {
         else {
             message.companyLegalName = '';
         }
-        if (object.companyPrefferedName !== undefined && object.companyPrefferedName !== null) {
-            message.companyPrefferedName = object.companyPrefferedName;
+        if (object.companyPreferredName !== undefined && object.companyPreferredName !== null) {
+            message.companyPreferredName = object.companyPreferredName;
         }
         else {
-            message.companyPrefferedName = '';
+            message.companyPreferredName = '';
         }
         if (object.vendorLandingPageURL !== undefined && object.vendorLandingPageURL !== null) {
             message.vendorLandingPageURL = object.vendorLandingPageURL;

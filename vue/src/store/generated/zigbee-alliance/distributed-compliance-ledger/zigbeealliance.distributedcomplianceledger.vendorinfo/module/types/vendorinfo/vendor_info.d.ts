@@ -4,7 +4,7 @@ export interface VendorInfo {
     vendorID: number;
     vendorName: string;
     companyLegalName: string;
-    companyPrefferedName: string;
+    companyPreferredName: string;
     vendorLandingPageURL: string;
     creator: string;
 }
