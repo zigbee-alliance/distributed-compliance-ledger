@@ -13,7 +13,7 @@ func NewMsgCreateVendorInfo(
 	vendorID int32,
 	vendorName string,
 	companyLegalName string,
-	companyPrefferedName string,
+	companyPreferredName string,
 	vendorLandingPageURL string,
 ) *MsgCreateVendorInfo {
 	return &MsgCreateVendorInfo{
@@ -21,7 +21,7 @@ func NewMsgCreateVendorInfo(
 		VendorID:             vendorID,
 		VendorName:           vendorName,
 		CompanyLegalName:     companyLegalName,
-		CompanyPrefferedName: companyPrefferedName,
+		CompanyPreferredName: companyPreferredName,
 		VendorLandingPageURL: vendorLandingPageURL,
 	}
 }
@@ -70,7 +70,7 @@ func NewMsgUpdateVendorInfo(
 	vendorID int32,
 	vendorName string,
 	companyLegalName string,
-	companyPrefferedName string,
+	companyPreferredName string,
 	vendorLandingPageURL string,
 ) *MsgUpdateVendorInfo {
 	return &MsgUpdateVendorInfo{
@@ -78,7 +78,7 @@ func NewMsgUpdateVendorInfo(
 		VendorID:             vendorID,
 		VendorName:           vendorName,
 		CompanyLegalName:     companyLegalName,
-		CompanyPrefferedName: companyPrefferedName,
+		CompanyPreferredName: companyPreferredName,
 		VendorLandingPageURL: vendorLandingPageURL,
 	}
 }

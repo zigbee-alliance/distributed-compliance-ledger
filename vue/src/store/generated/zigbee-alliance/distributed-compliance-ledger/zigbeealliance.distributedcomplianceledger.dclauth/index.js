@@ -311,20 +311,20 @@ export default {
                 throw new SpVuexError('QueryClient:QueryRevokedAccountAll', 'API Node Unavailable. Could not perform query: ' + e.message);
             }
         },
-        async sendMsgApproveRevokeAccount({ rootGetters }, { value, fee = [], memo = '' }) {
+        async sendMsgProposeRevokeAccount({ rootGetters }, { value, fee = [], memo = '' }) {
             try {
                 const txClient = await initTxClient(rootGetters);
-                const msg = await txClient.msgApproveRevokeAccount(value);
+                const msg = await txClient.msgProposeRevokeAccount(value);
                 const result = await txClient.signAndBroadcast([msg], { fee: { amount: fee,
                         gas: "200000" }, memo });
                 return result;
             }
             catch (e) {
                 if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgApproveRevokeAccount:Init', 'Could not initialize signing client. Wallet is required.');
+                    throw new SpVuexError('TxClient:MsgProposeRevokeAccount:Init', 'Could not initialize signing client. Wallet is required.');
                 }
                 else {
-                    throw new SpVuexError('TxClient:MsgApproveRevokeAccount:Send', 'Could not broadcast Tx: ' + e.message);
+                    throw new SpVuexError('TxClient:MsgProposeRevokeAccount:Send', 'Could not broadcast Tx: ' + e.message);
                 }
             }
         },
@@ -345,20 +345,20 @@ export default {
                 }
             }
         },
-        async sendMsgProposeRevokeAccount({ rootGetters }, { value, fee = [], memo = '' }) {
+        async sendMsgApproveRevokeAccount({ rootGetters }, { value, fee = [], memo = '' }) {
             try {
                 const txClient = await initTxClient(rootGetters);
-                const msg = await txClient.msgProposeRevokeAccount(value);
+                const msg = await txClient.msgApproveRevokeAccount(value);
                 const result = await txClient.signAndBroadcast([msg], { fee: { amount: fee,
                         gas: "200000" }, memo });
                 return result;
             }
             catch (e) {
                 if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgProposeRevokeAccount:Init', 'Could not initialize signing client. Wallet is required.');
+                    throw new SpVuexError('TxClient:MsgApproveRevokeAccount:Init', 'Could not initialize signing client. Wallet is required.');
                 }
                 else {
-                    throw new SpVuexError('TxClient:MsgProposeRevokeAccount:Send', 'Could not broadcast Tx: ' + e.message);
+                    throw new SpVuexError('TxClient:MsgApproveRevokeAccount:Send', 'Could not broadcast Tx: ' + e.message);
                 }
             }
         },
@@ -379,18 +379,18 @@ export default {
                 }
             }
         },
-        async MsgApproveRevokeAccount({ rootGetters }, { value }) {
+        async MsgProposeRevokeAccount({ rootGetters }, { value }) {
             try {
                 const txClient = await initTxClient(rootGetters);
-                const msg = await txClient.msgApproveRevokeAccount(value);
+                const msg = await txClient.msgProposeRevokeAccount(value);
                 return msg;
             }
             catch (e) {
                 if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgApproveRevokeAccount:Init', 'Could not initialize signing client. Wallet is required.');
+                    throw new SpVuexError('TxClient:MsgProposeRevokeAccount:Init', 'Could not initialize signing client. Wallet is required.');
                 }
                 else {
-                    throw new SpVuexError('TxClient:MsgApproveRevokeAccount:Create', 'Could not create message: ' + e.message);
+                    throw new SpVuexError('TxClient:MsgProposeRevokeAccount:Create', 'Could not create message: ' + e.message);
                 }
             }
         },
@@ -409,18 +409,18 @@ export default {
                 }
             }
         },
-        async MsgProposeRevokeAccount({ rootGetters }, { value }) {
+        async MsgApproveRevokeAccount({ rootGetters }, { value }) {
             try {
                 const txClient = await initTxClient(rootGetters);
-                const msg = await txClient.msgProposeRevokeAccount(value);
+                const msg = await txClient.msgApproveRevokeAccount(value);
                 return msg;
             }
             catch (e) {
                 if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgProposeRevokeAccount:Init', 'Could not initialize signing client. Wallet is required.');
+                    throw new SpVuexError('TxClient:MsgApproveRevokeAccount:Init', 'Could not initialize signing client. Wallet is required.');
                 }
                 else {
-                    throw new SpVuexError('TxClient:MsgProposeRevokeAccount:Create', 'Could not create message: ' + e.message);
+                    throw new SpVuexError('TxClient:MsgApproveRevokeAccount:Create', 'Could not create message: ' + e.message);
                 }
             }
         },

@@ -21,7 +21,7 @@ func NewMsgCreateVendorInfo(vid int32, signer string) *vendorinfotypes.MsgCreate
 		VendorID:             vid,
 		VendorName:           testconstants.VendorName,
 		CompanyLegalName:     testconstants.CompanyLegalName,
-		CompanyPrefferedName: testconstants.CompanyPreferredName,
+		CompanyPreferredName: testconstants.CompanyPreferredName,
 		VendorLandingPageURL: testconstants.VendorLandingPageURL,
 	}
 }
@@ -32,7 +32,7 @@ func NewMsgUpdateVendorInfo(vid int32, signer string) *vendorinfotypes.MsgUpdate
 		VendorID:             vid,
 		VendorName:           testconstants.VendorName + "/new",
 		CompanyLegalName:     testconstants.CompanyLegalName + "/new",
-		CompanyPrefferedName: testconstants.CompanyPreferredName + "/new",
+		CompanyPreferredName: testconstants.CompanyPreferredName + "/new",
 		VendorLandingPageURL: testconstants.VendorLandingPageURL + "/new",
 	}
 }
