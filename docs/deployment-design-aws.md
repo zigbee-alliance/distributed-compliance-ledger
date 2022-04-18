@@ -42,6 +42,10 @@
   rpc_servers = # existing `Genesis Validator` / `Sentry` nodes' RPC endpoints
   trust_height = "trust-height"
   trust_hash = "trust-hash"
+
+  [consensus]
+  create_empty_blocks = false
+  create_empty_blocks_interval = "600s" # 10 mins
   ```
 
   `app.toml` file:
