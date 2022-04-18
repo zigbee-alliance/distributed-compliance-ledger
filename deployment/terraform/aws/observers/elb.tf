@@ -13,8 +13,8 @@ resource "aws_lb" "this_nlb" {
 }
 
 locals {
-    enable_tls  = var.tls_cert_arn != ""
-    ssl_policy  = "ELBSecurityPolicy-TLS13-1-2-2021-06" # TLS 1.3 (recommended)
+    tls_cert_arn    = var.enable_tls ? aws_acm_certificate_validation.this_acm_cert_validation[0].certificate_arn : ""
+    ssl_policy      = "ELBSecurityPolicy-TLS13-1-2-2021-06" # TLS 1.3 (recommended)
 }
 
 resource "aws_lb_listener" "rest" {
@@ -62,13 +62,17 @@ resource "aws_lb_listener" "tls_rest" {
     load_balancer_arn   = aws_lb.this_nlb.arn
     port                = "443"
     protocol            = "TLS"
-    certificate_arn     = var.tls_cert_arn
+    certificate_arn     = local.tls_cert_arn
     ssl_policy          = local.ssl_policy
 
     default_action {
         type = "forward"
         target_group_arn = aws_lb_target_group.rest.arn
     }
+
+    depends_on = [
+        aws_acm_certificate_validation.this_acm_cert_validation[0]
+    ]
 }
 
 resource "aws_lb_listener" "tls_grpc" {
@@ -77,13 +81,17 @@ resource "aws_lb_listener" "tls_grpc" {
     load_balancer_arn   = aws_lb.this_nlb.arn
     port                = "8443"
     protocol            = "TLS"
-    certificate_arn     = var.tls_cert_arn
+    certificate_arn     = local.tls_cert_arn
     ssl_policy          = local.ssl_policy
 
     default_action {
         type = "forward"
         target_group_arn = aws_lb_target_group.grpc.arn
     }
+
+    depends_on = [
+        aws_acm_certificate_validation.this_acm_cert_validation[0]
+    ]
 }
 
 resource "aws_lb_listener" "tls_rpc" {
@@ -92,13 +100,17 @@ resource "aws_lb_listener" "tls_rpc" {
     load_balancer_arn   = aws_lb.this_nlb.arn
     port                = "26657"
     protocol            = "TLS"
-    certificate_arn     = var.tls_cert_arn
+    certificate_arn     = local.tls_cert_arn
     ssl_policy          = local.ssl_policy
 
     default_action {
         type = "forward"
         target_group_arn = aws_lb_target_group.rpc.arn
     }
+
+    depends_on = [
+        aws_acm_certificate_validation.this_acm_cert_validation[0]
+    ]
 }
 
 resource "aws_lb_target_group" "rest" {

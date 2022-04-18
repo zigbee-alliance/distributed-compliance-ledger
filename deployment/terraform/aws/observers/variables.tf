@@ -23,8 +23,13 @@ variable "region_index" {
     default = 0
 }
 
-variable "tls_cert_arn" {
-    description = "NLB Listener TLS certificate ARN"
+variable "enable_tls" {
+    description = "Enable TLS on LB listeners"
+    default = false
+}
+
+variable "root_domain_name" {
+    description = "Root domain name"
     default = ""
 }
 

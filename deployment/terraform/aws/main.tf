@@ -63,6 +63,9 @@ module "observers_1" {
         aws.peer = aws.region_1
     }
 
+    root_domain_name    = var.root_domain_name
+    enable_tls          = var.enable_tls
+
     region_index = 1
     peer_vpc = module.private_sentries.vpc
 }
@@ -75,6 +78,9 @@ module "observers_2" {
         aws = aws.region_2
         aws.peer = aws.region_1
     }
+
+    root_domain_name    = var.root_domain_name
+    enable_tls          = var.enable_tls
 
     region_index = 2
     peer_vpc = module.private_sentries.vpc
