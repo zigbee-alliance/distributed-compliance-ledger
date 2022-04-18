@@ -12,3 +12,14 @@ func (disabledValidator ProposedDisableValidator) HasApprovalFrom(address sdk.Ac
 
 	return false
 }
+
+func (disabledValidator ProposedDisableValidator) HasRejectDisableFrom(address sdk.AccAddress) bool {
+	addrStr := address.String()
+	for _, rejectDisable := range disabledValidator.RejectApprovals {
+		if rejectDisable.Address == addrStr {
+			return true
+		}
+	}
+
+	return false
+}
