@@ -13,29 +13,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: create DCL group
-  become: true
-  group:
-    name: "{{ cosmovisor.group }}"
-    state: present
+name: Ansible Molecule test execution
+inputs:
+  ansible-role:
+    description: 'Ansible Role'
+    required: true
 
-- name: create DCL user
-  become: true
-  user:
-    name: "{{ cosmovisor.user }}"
-    groups: "{{ cosmovisor.group }}"
-    shell: /sbin/nologin
-    append: true
-    state: present
-    create_home: true
-    home: "{{ cosmovisor.home  }}"
-
-- name: setup DCL service
-  import_tasks: setup-service.yml
-
-- name: ensure user permissions
-  file:
-    recurse: true
-    state: directory
-    owner: "{{ cosmovisor.user }}"
-    path: "{{ dcl_home }}"
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-python@v3
+      with:
+        python-version: '3.x'
+    - name: install dependencies
+      shell: bash
+      run: pip install -r deployment/test-requirements.txt
+    - name: Run molecule tests
+      shell: bash
+      run: |
+        cd deployment/ansible/roles/${{ inputs.ansible-role }}/
+        molecule --debug test

@@ -13,29 +13,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: create DCL group
-  become: true
-  group:
-    name: "{{ cosmovisor.group }}"
-    state: present
-
-- name: create DCL user
-  become: true
-  user:
-    name: "{{ cosmovisor.user }}"
-    groups: "{{ cosmovisor.group }}"
-    shell: /sbin/nologin
-    append: true
-    state: present
-    create_home: true
-    home: "{{ cosmovisor.home  }}"
-
-- name: setup DCL service
-  import_tasks: setup-service.yml
-
-- name: ensure user permissions
-  file:
-    recurse: true
-    state: directory
-    owner: "{{ cosmovisor.user }}"
-    path: "{{ dcl_home }}"
+dcl_home: /var/lib/dcl/.dcl
+dcld:
+  path: "{{ dcl_home }}/cosmovisor/genesis/bin/dcld"
+chain_id: dclchain
+moniker:
+client:
+  # The network chain ID
+  chain-id: "{{ chain_id }}"
+  # The keyring's backend, where the keys are stored (os|file|kwallet|pass|test|memory)
+  keyring-backend: test
+  # CLI output format (text|json)
+  output: json
+  # <host>:<port> to Tendermint RPC interface for this chain
+  node: "tcp://localhost:26657"
+  # Transaction broadcasting mode (sync|async|block)
+  broadcast-mode: block
+config: {}
+app: {}

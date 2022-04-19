@@ -17,3 +17,5 @@
   hosts: all
   roles:
     - bootstrap
+    - configure
+    - add-accounts
