@@ -586,6 +586,13 @@ func New(
 	*/
 	// this line is used by starport scaffolding # stargate/app/beforeInitReturn
 
+	app.UpgradeKeeper.SetUpgradeHandler(
+		"v0.10.0",
+		func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
+			return make(module.VersionMap), nil
+		},
+	)
+
 	return app
 }
 
