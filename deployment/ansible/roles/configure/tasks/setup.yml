@@ -42,4 +42,4 @@
 - name: setup | create TOMLs files
   copy:
     dest: "{{ filename }}"
-    content: "{{ existing_values | combine(vars[toml]) | sivel.toiletwater.to_toml }}"
+    content: "{{ existing_values | combine(vars[toml], recursive=True) | sivel.toiletwater.to_toml }}"
