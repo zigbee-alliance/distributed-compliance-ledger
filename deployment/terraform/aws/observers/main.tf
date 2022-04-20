@@ -32,6 +32,17 @@ resource "aws_instance" "this_nodes" {
     key_name   = aws_key_pair.key_pair.id
     monitoring = true
 
+    connection {
+        type        = "ssh"
+        host        = self.public_ip
+        user        = var.ssh_username
+        private_key = file(var.ssh_private_key_path)
+    }
+    
+    provisioner "remote-exec" {
+        script = "./provisioner/install-python.sh"
+    }
+
     tags = {
         Name = "Observer Node [${count.index}]"
     }
