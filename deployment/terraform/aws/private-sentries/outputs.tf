@@ -7,5 +7,9 @@ output "private_ips" {
 }
 
 output "public_ips" {
-    value = aws_instance.this_nodes.*.public_ip
+    value = concat(slice(aws_instance.this_nodes, length(aws_eip.this_eips), length(aws_instance.this_nodes)).*.public_ip, aws_eip.this_eips.*.public_ip)
+}
+
+output "public_eips" {
+    value = aws_eip.this_eips.*.public_ip
 }

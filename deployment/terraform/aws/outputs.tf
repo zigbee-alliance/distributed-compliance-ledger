@@ -8,6 +8,7 @@ output "nodes" {
         private_sentries = {
             private_ips = var.private_sentries_config.enable ? module.private_sentries[0].private_ips : []
             public_ips  = var.private_sentries_config.enable ? module.private_sentries[0].public_ips : []
+            public_eips = var.private_sentries_config.enable ? module.private_sentries[0].public_eips : []
         },
 
         public_sentries = {
