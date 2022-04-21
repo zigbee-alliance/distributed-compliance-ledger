@@ -15,17 +15,14 @@ variable "ssh_username" {
 
 variable "nodes_count" {
     description = "Number of Public Sentry nodes"
-    default = 2
 }
 
 variable "region_index" {
     description = "Public Sentries Region Index"
-    default = 0
 }
 
 variable "enable_ipv6" {
     description = "Enable public IPv6 addresses"
-    default = true
 }
 
 variable "peer_vpc" {

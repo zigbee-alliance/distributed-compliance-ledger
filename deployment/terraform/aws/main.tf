@@ -16,78 +16,105 @@ module "validator" {
     }
 }
 
-# # Private Sentries
-# module "private_sentries" {
-#     source      = "./private-sentries"
+# Private Sentries
+module "private_sentries" {
+    count = var.private_sentries_config.enable ? 1 : 0
 
-#     providers = {
-#         aws = aws.region_1
-#         aws.peer = aws.region_1
-#     }
+    source      = "./private-sentries"
 
-#     peer_vpc = module.validator.vpc
-# }
+    nodes_count = var.private_sentries_config.nodes_count
+    providers = {
+        aws = aws.region_1
+        aws.peer = aws.region_1
+    }
 
-# # Public Sentries region 1
-# module "public_sentries_1" {
-#     source      = "./public-sentries"
-#     nodes_count  = 1
+    peer_vpc = module.validator.vpc
+}
+
+# Public Sentries region 1
+module "public_sentries_1" {
+    count = (var.private_sentries_config.enable && 
+            var.public_sentries_config.enable && 
+            contains(var.public_sentries_config.regions, 1)) ? 1 : 0
+            
+    source      = "./public-sentries"
+
+    nodes_count = var.public_sentries_config.nodes_count
     
-#     # enable_ipv6 = false
+    enable_ipv6 = var.public_sentries_config.enable_ipv6
 
-#     providers = {
-#         aws = aws.region_1
-#         aws.peer = aws.region_1
-#     }
+    providers = {
+        aws = aws.region_1
+        aws.peer = aws.region_1
+    }
 
-#     region_index = 1
-#     peer_vpc = module.private_sentries.vpc
-# }
+    region_index = 1
+    peer_vpc = module.private_sentries[0].vpc
+}
 
-# # Public Sentries region 2
-# module "public_sentries_2" {
-#     source      = "./public-sentries"
-#     nodes_count  = 1
+# Public Sentries region 2
+module "public_sentries_2" {
+    count = (var.private_sentries_config.enable && 
+            var.public_sentries_config.enable && 
+            contains(var.public_sentries_config.regions, 2)) ? 1 : 0
 
-#     # enable_ipv6 = false
+    source      = "./public-sentries"
 
-#     providers = {
-#         aws = aws.region_2
-#         aws.peer = aws.region_1
-#     }
-
-#     region_index = 2
-#     peer_vpc = module.private_sentries.vpc
-# }
-
-# # Observers region 1
-# module "observers_1" {
-#     source      = "./observers"
+    nodes_count = var.public_sentries_config.nodes_count
     
-#     providers = {
-#         aws = aws.region_1
-#         aws.peer = aws.region_1
-#     }
+    enable_ipv6 = var.public_sentries_config.enable_ipv6
 
-#     root_domain_name    = var.root_domain_name
-#     enable_tls          = var.enable_tls
+    providers = {
+        aws = aws.region_2
+        aws.peer = aws.region_1
+    }
 
-#     region_index = 1
-#     peer_vpc = module.private_sentries.vpc
-# }
+    region_index = 2
+    peer_vpc = module.private_sentries[0].vpc
+}
 
-# # Observers region 2
-# module "observers_2" {
-#     source      = "./observers"
+# Observers region 1
+module "observers_1" {
+    count = (var.private_sentries_config.enable && 
+            var.observers_config.enable && 
+            contains(var.observers_config.regions, 1)) ? 1 : 0
+
+    source      = "./observers"
     
-#     providers = {
-#         aws = aws.region_2
-#         aws.peer = aws.region_1
-#     }
+    nodes_count         = var.observers_config.nodes_count
 
-#     root_domain_name    = var.root_domain_name
-#     enable_tls          = var.enable_tls
+    root_domain_name    = var.observers_config.root_domain_name
 
-#     region_index = 2
-#     peer_vpc = module.private_sentries.vpc
-# }
+    enable_tls          = var.observers_config.enable_tls
+
+    providers = {
+        aws = aws.region_1
+        aws.peer = aws.region_1
+    }
+
+    region_index = 1
+    peer_vpc = module.private_sentries[0].vpc
+}
+
+# Observers region 2
+module "observers_2" {
+    count = (var.private_sentries_config.enable && 
+            var.observers_config.enable && 
+            contains(var.observers_config.regions, 2)) ? 1 : 0
+
+    source      = "./observers"
+    
+    nodes_count         = var.observers_config.nodes_count
+
+    root_domain_name    = var.observers_config.root_domain_name
+
+    enable_tls          = var.observers_config.enable_tls
+    
+    providers = {
+        aws = aws.region_2
+        aws.peer = aws.region_1
+    }
+
+    region_index = 2
+    peer_vpc = module.private_sentries[0].vpc
+}

@@ -19,5 +19,4 @@ variable "peer_vpc" {
 
 variable "nodes_count" {
     description = "Number of Private Sentry nodes"
-    default = 2
 }
