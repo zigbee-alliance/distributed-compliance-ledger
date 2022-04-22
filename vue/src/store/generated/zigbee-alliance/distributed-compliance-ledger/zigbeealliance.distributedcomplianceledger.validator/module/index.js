@@ -7,14 +7,16 @@ import { MsgProposeDisableValidator } from "./types/validator/tx";
 import { MsgEnableValidator } from "./types/validator/tx";
 import { MsgApproveDisableValidator } from "./types/validator/tx";
 import { MsgDisableValidator } from "./types/validator/tx";
-import { MsgRejectDisableNode } from "./types/validator/tx";
+import { MsgEnableValidator } from "./types/validator/tx";
+import { MsgApproveDisableValidator } from "./types/validator/tx";
 const types = [
     ["/zigbeealliance.distributedcomplianceledger.validator.MsgCreateValidator", MsgCreateValidator],
     ["/zigbeealliance.distributedcomplianceledger.validator.MsgProposeDisableValidator", MsgProposeDisableValidator],
     ["/zigbeealliance.distributedcomplianceledger.validator.MsgEnableValidator", MsgEnableValidator],
     ["/zigbeealliance.distributedcomplianceledger.validator.MsgApproveDisableValidator", MsgApproveDisableValidator],
     ["/zigbeealliance.distributedcomplianceledger.validator.MsgDisableValidator", MsgDisableValidator],
-    ["/zigbeealliance.distributedcomplianceledger.validator.MsgRejectDisableNode", MsgRejectDisableNode],
+    ["/zigbeealliance.distributedcomplianceledger.validator.MsgEnableValidator", MsgEnableValidator],
+    ["/zigbeealliance.distributedcomplianceledger.validator.MsgApproveDisableValidator", MsgApproveDisableValidator],
 ];
 export const MissingWalletError = new Error("wallet is required");
 export const registry = new Registry(types);
@@ -40,7 +42,8 @@ const txClient = async (wallet, { addr: addr } = { addr: "http://localhost:26657
         msgEnableValidator: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.validator.MsgEnableValidator", value: MsgEnableValidator.fromPartial(data) }),
         msgApproveDisableValidator: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.validator.MsgApproveDisableValidator", value: MsgApproveDisableValidator.fromPartial(data) }),
         msgDisableValidator: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.validator.MsgDisableValidator", value: MsgDisableValidator.fromPartial(data) }),
-        msgRejectDisableNode: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.validator.MsgRejectDisableNode", value: MsgRejectDisableNode.fromPartial(data) }),
+        msgEnableValidator: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.validator.MsgEnableValidator", value: MsgEnableValidator.fromPartial(data) }),
+        msgApproveDisableValidator: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.validator.MsgApproveDisableValidator", value: MsgApproveDisableValidator.fromPartial(data) }),
     };
 };
 const queryClient = async ({ addr: addr } = { addr: "http://localhost:1317" }) => {

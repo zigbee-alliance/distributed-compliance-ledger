@@ -13,6 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+dependency:
+  name: galaxy
+  options:
+    requirements-file: ../../../galaxy-requirements.yml
 driver:
   name: docker
 lint: |

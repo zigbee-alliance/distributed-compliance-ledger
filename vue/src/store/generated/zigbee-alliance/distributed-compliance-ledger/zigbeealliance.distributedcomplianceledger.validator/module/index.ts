@@ -9,7 +9,8 @@ import { MsgProposeDisableValidator } from "./types/validator/tx";
 import { MsgEnableValidator } from "./types/validator/tx";
 import { MsgApproveDisableValidator } from "./types/validator/tx";
 import { MsgDisableValidator } from "./types/validator/tx";
-import { MsgRejectDisableNode } from "./types/validator/tx";
+import { MsgEnableValidator } from "./types/validator/tx";
+import { MsgApproveDisableValidator } from "./types/validator/tx";
 
 
 const types = [
@@ -18,7 +19,8 @@ const types = [
   ["/zigbeealliance.distributedcomplianceledger.validator.MsgEnableValidator", MsgEnableValidator],
   ["/zigbeealliance.distributedcomplianceledger.validator.MsgApproveDisableValidator", MsgApproveDisableValidator],
   ["/zigbeealliance.distributedcomplianceledger.validator.MsgDisableValidator", MsgDisableValidator],
-  ["/zigbeealliance.distributedcomplianceledger.validator.MsgRejectDisableNode", MsgRejectDisableNode],
+  ["/zigbeealliance.distributedcomplianceledger.validator.MsgEnableValidator", MsgEnableValidator],
+  ["/zigbeealliance.distributedcomplianceledger.validator.MsgApproveDisableValidator", MsgApproveDisableValidator],
   
 ];
 export const MissingWalletError = new Error("wallet is required");
@@ -56,7 +58,8 @@ const txClient = async (wallet: OfflineSigner, { addr: addr }: TxClientOptions =
     msgEnableValidator: (data: MsgEnableValidator): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.validator.MsgEnableValidator", value: MsgEnableValidator.fromPartial( data ) }),
     msgApproveDisableValidator: (data: MsgApproveDisableValidator): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.validator.MsgApproveDisableValidator", value: MsgApproveDisableValidator.fromPartial( data ) }),
     msgDisableValidator: (data: MsgDisableValidator): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.validator.MsgDisableValidator", value: MsgDisableValidator.fromPartial( data ) }),
-    msgRejectDisableNode: (data: MsgRejectDisableNode): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.validator.MsgRejectDisableNode", value: MsgRejectDisableNode.fromPartial( data ) }),
+    msgEnableValidator: (data: MsgEnableValidator): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.validator.MsgEnableValidator", value: MsgEnableValidator.fromPartial( data ) }),
+    msgApproveDisableValidator: (data: MsgApproveDisableValidator): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.validator.MsgApproveDisableValidator", value: MsgApproveDisableValidator.fromPartial( data ) }),
     
   };
 };

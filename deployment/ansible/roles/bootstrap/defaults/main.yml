@@ -13,17 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-chain_id: dclchain
-moniker:
-# NOTE: Every host must define their own DCL accounts
-accounts: []
-config_values:
-  - chain-id "{{ chain_id }}"
-  - output json
-  - node "tcp://localhost:26657"
-  - keyring-backend test
-  - broadcast-mode block
-
 dcl_home: /var/lib/dcl/.dcl
 dcl_version: 0.9.0
 dcld:

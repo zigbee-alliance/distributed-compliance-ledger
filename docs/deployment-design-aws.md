@@ -29,28 +29,32 @@
 
 - Tendermint:
 
-`config.toml` file:
+  `config.toml` file:
 
-```toml
-[p2p]
-pex = false
-persistent_peers = # `Private Sentry` nodes with private IPs
-addr_book_strict = false
+  ```toml
+  [p2p]
+  pex = false
+  persistent_peers = # `Private Sentry` nodes with private IPs
+  addr_book_strict = false
 
-[statesync] # only for `Non-genesis Validator` nodes
-enable = true
-rpc_servers = # existing `Genesis Validator` / `Sentry` nodes' RPC endpoints
-trust_height = "trust-height"
-trust_hash = "trust-hash"
-```
+  [statesync] # only for `Non-genesis Validator` nodes
+  enable = true
+  rpc_servers = # existing `Genesis Validator` / `Sentry` nodes' RPC endpoints
+  trust_height = "trust-height"
+  trust_hash = "trust-hash"
 
-`app.toml` file:
+  [consensus]
+  create_empty_blocks = false
+  create_empty_blocks_interval = "600s" # 10 mins
+  ```
 
-```toml
-[state-sync]
-snapshot-interval = "snapshot-interval"
-snapshot-keep-recent = "snapshot-keep-recent"
-```
+  `app.toml` file:
+
+  ```toml
+  [state-sync]
+  snapshot-interval = "snapshot-interval"
+  snapshot-keep-recent = "snapshot-keep-recent"
+  ```
 
 - AWS:
   - Instance type = EC2 instance
@@ -68,30 +72,30 @@ snapshot-keep-recent = "snapshot-keep-recent"
 
 - Tendermint:
 
-`config.toml` file:
+  `config.toml` file:
 
-```toml
-[p2p]
-pex = true
-persistent_peers = # `Validator` node with private IP + other orgs' validator/sentry nodes with public IPs
-private_peer_ids = # `Validator` node id
-unconditional_peers = # `Validator` node id
-addr_book_strict = false
+  ```toml
+  [p2p]
+  pex = true
+  persistent_peers = # `Validator` node with private IP + other orgs' validator/sentry nodes with public IPs
+  private_peer_ids = # `Validator` node id
+  unconditional_peers = # `Validator` node id
+  addr_book_strict = false
 
-[statesync]
-enable = true
-rpc_servers = # `Validator` node's RPC endpoint
-trust_height = "trust-height"
-trust_hash = "trust-hash"
-```
+  [statesync]
+  enable = true
+  rpc_servers = # `Validator` node's RPC endpoint
+  trust_height = "trust-height"
+  trust_hash = "trust-hash"
+  ```
 
-`app.toml` file:
+  `app.toml` file:
 
-```toml
-[state-sync]
-snapshot-interval = "snapshot-interval"
-snapshot-keep-recent = "snapshot-keep-recent"
-```
+  ```toml
+  [state-sync]
+  snapshot-interval = "snapshot-interval"
+  snapshot-keep-recent = "snapshot-keep-recent"
+  ```
 
 - AWS:
   - Instance type = EC2 instance
@@ -110,27 +114,27 @@ snapshot-keep-recent = "snapshot-keep-recent"
 
 - Tendermint:
 
-`config.toml` file:
+  `config.toml` file:
 
-```toml
-[p2p]
-pex = true
-persistent_peers = # `Private Sentry` nodes with private IPs
-addr_book_strict = false
+  ```toml
+  [p2p]
+  pex = true
+  persistent_peers = # `Private Sentry` nodes with private IPs
+  addr_book_strict = false
 
-[statesync]
-enable = true
-rpc_servers = # `Private Sentry` nodes' RPC endpoints
-trust_height = "trust-height"
-trust_hash = "trust-hash"
-```
+  [statesync]
+  enable = true
+  rpc_servers = # `Private Sentry` nodes' RPC endpoints
+  trust_height = "trust-height"
+  trust_hash = "trust-hash"
+  ```
 
-`app.toml` file:
+  `app.toml` file:
 
-```toml
-[api]
-enable = true
-```
+  ```toml
+  [api]
+  enable = true
+  ```
 
 - AWS:
   - Instance type = EC2 instance
@@ -147,27 +151,27 @@ enable = true
 
 - Tendermint:
 
-`config.toml` file:
+  `config.toml` file:
 
-```toml
-[p2p]
-pex = true
-persistent_peers = # `Private Sentry` nodes with private IPs
+  ```toml
+  [p2p]
+  pex = true
+  persistent_peers = # `Private Sentry` nodes with private IPs
 
-[statesync]
-enable = true
-rpc_servers = # `Private Sentry` nodes' RPC endpoints
-trust_height = "trust-height"
-trust_hash = "trust-hash"
-```
+  [statesync]
+  enable = true
+  rpc_servers = # `Private Sentry` nodes' RPC endpoints
+  trust_height = "trust-height"
+  trust_hash = "trust-hash"
+  ```
 
-`app.toml` file:
+  `app.toml` file:
 
-```toml
-[state-sync]
-snapshot-interval = "snapshot-interval"
-snapshot-keep-recent = "snapshot-keep-recent"
-```
+  ```toml
+  [state-sync]
+  snapshot-interval = "snapshot-interval"
+  snapshot-keep-recent = "snapshot-keep-recent"
+  ```
 
 - AWS:
   - Instance type = EC2 instance
@@ -185,20 +189,20 @@ snapshot-keep-recent = "snapshot-keep-recent"
 
 - Tendermint:
 
-`config.toml` file:
+  `config.toml` file:
 
-```toml
-[p2p]
-pex = true
-seed_mode = true
-persistent_peers = # `Public Sentry` nodes with public IP
+  ```toml
+  [p2p]
+  pex = true
+  seed_mode = true
+  persistent_peers = # `Public Sentry` nodes with public IP
 
-[statesync]
-enable = true
-rpc_servers = # `Private Sentry` nodes' RPC endpoints
-trust_height = "trust-height"
-trust_hash = "trust-hash"
-```
+  [statesync]
+  enable = true
+  rpc_servers = # `Private Sentry` nodes' RPC endpoints
+  trust_height = "trust-height"
+  trust_hash = "trust-hash"
+  ```
 
 - AWS:
   - Instance type = EC2 instance

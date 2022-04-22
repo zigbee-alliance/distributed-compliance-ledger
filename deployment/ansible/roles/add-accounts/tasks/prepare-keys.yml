@@ -39,5 +39,5 @@
 
 - name: prepare-keys | persist key name local fact
   changed_when: false
-  shell: "echo {{ passphrase }} | {{ dcld.path }} keys show {{ key_name }} --home {{ dcl_home }} | tee /etc/ansible/facts.d/{{ key_name}}.fact"
+  shell: "echo {{ passphrase }} | {{ dcld.path }} keys show {{ key_name }} --home {{ dcl_home }} --output json | tee /etc/ansible/facts.d/{{ key_name}}.fact"
   no_log: true

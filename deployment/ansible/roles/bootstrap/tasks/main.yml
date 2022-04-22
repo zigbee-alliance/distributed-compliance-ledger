@@ -33,37 +33,6 @@
 - name: setup DCL service
   import_tasks: setup-service.yml
 
-- name: read genesis file
-  stat:
-    path: "{{ dcl_home }}/config/genesis.json"
-  register: genesis_file
-
-- name: initialize the layout
-  changed_when: false
-  command: "{{ dcld.path }} init '{{ moniker | default(ansible_hostname) }}' --chain-id '{{ chain_id }}' --home {{ dcl_home }}"
-  when: not genesis_file.stat.exists
-
-- name: configure CLI
-  changed_when: false
-  command: "{{ dcld.path }} config {{ item }} --home {{ dcl_home }}"
-  loop: "{{ config_values }}"
-
-- name: create directory for key name facts
-  file:
-    state: directory
-    recurse: true
-    path: /etc/ansible/facts.d
-
-- name: prepare keys
-  include_tasks: prepare-keys.yml
-  vars:
-    key_name: "{{ account.name }}"
-    passphrase: "{{ account.passphrase }}"
-  loop: "{{ accounts }}"
-  loop_control:
-    loop_var: account
-  no_log: true
-
 - name: ensure user permissions
   file:
     recurse: true

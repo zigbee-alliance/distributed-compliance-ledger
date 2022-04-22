@@ -11808,7 +11808,7 @@ paths:
                       type: string
                     companyLegalName:
                       type: string
-                    companyPrefferedName:
+                    companyPreferredName:
                       type: string
                     vendorLandingPageURL:
                       type: string
@@ -11942,7 +11942,7 @@ paths:
                     type: string
                   companyLegalName:
                     type: string
-                  companyPrefferedName:
+                  companyPreferredName:
                     type: string
                   vendorLandingPageURL:
                     type: string
@@ -19279,7 +19279,7 @@ definitions:
               type: string
             companyLegalName:
               type: string
-            companyPrefferedName:
+            companyPreferredName:
               type: string
             vendorLandingPageURL:
               type: string
@@ -19323,7 +19323,7 @@ definitions:
             type: string
           companyLegalName:
             type: string
-          companyPrefferedName:
+          companyPreferredName:
             type: string
           vendorLandingPageURL:
             type: string
@@ -19339,7 +19339,7 @@ definitions:
         type: string
       companyLegalName:
         type: string
-      companyPrefferedName:
+      companyPreferredName:
         type: string
       vendorLandingPageURL:
         type: string

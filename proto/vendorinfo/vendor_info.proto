@@ -9,7 +9,7 @@ message VendorInfo {
   int32 vendorID = 1; 
   string vendorName = 2; 
   string companyLegalName = 3; 
-  string companyPrefferedName = 4; 
+  string companyPreferredName = 4; 
   string vendorLandingPageURL = 5; 
   string creator = 6 [(cosmos_proto.scalar) = "cosmos.AddressString"];
 }

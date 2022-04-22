@@ -30,21 +30,72 @@ on:
       - deployment/ansible/roles/**
 
 jobs:
-  check-molecule:
-    name: Check Ansible Molecule role tests
-    strategy:
-      fail-fast: false
-      matrix:
-        role: [bootstrap, genesis]
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      bootstrap: ${{ steps.filter.outputs.bootstrap }}
+      genesis: ${{ steps.filter.outputs.genesis }}
+      add-accounts: ${{ steps.filter.outputs.add-accounts }}
+      configure: ${{ steps.filter.outputs.configure }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dorny/paths-filter@v2
+        if: ${{ !env.ACT }}
+        id: filter
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          filters: |
+            reqs: &reqs
+              - 'deployment/test-requirements.*'
+            bootstrap:
+              - *reqs
+              - 'deployment/ansible/roles/bootstrap/**'
+            genesis:
+              - *reqs
+              - 'deployment/ansible/roles/genesis/**'
+            add-accounts:
+              - *reqs
+              - 'deployment/ansible/roles/add-accounts/**'
+            configure:
+              - *reqs
+              - 'deployment/ansible/roles/configure/**'
+  check-bootstrap:
+    needs: changes
+    if: needs.changes.outputs.bootstrap == 'true'
+    name: Check Bootstrap Ansible role
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v3
+      - uses: ./.github/actions/setup-molecule
         with:
-          python-version: '3.x'
-      - name: install dependencies
-        run: pip install -r deployment/test-requirements.txt
-      - name: Run molecule tests
-        run: |
-          cd deployment/ansible/roles/${{ matrix.role }}/
-          molecule --debug test
+          ansible-role: bootstrap
+  check-genesis:
+    needs: changes
+    if: needs.changes.outputs.genesis == 'true'
+    name: Check Genesis Ansible role
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/setup-molecule
+        with:
+          ansible-role: genesis
+  check-add-accounts:
+    needs: changes
+    if: needs.changes.outputs.add-accounts == 'true'
+    name: Check Add accounts Ansible role
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/setup-molecule
+        with:
+          ansible-role: add-accounts
+  check-configure:
+    needs: changes
+    if: needs.changes.outputs.configure == 'true'
+    name: Check Configure Ansible role
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/setup-molecule
+        with:
+          ansible-role: configure

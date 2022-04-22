@@ -51,7 +51,7 @@
   set_fact:
     admin: "{{ item }}"
   when: "'NodeAdmin' in item.roles"
-  loop: "{{ accounts }}"
+  loop: "{{ accounts | default([]) }}"
   no_log: true
 
 - name: prepare-genesis | create genesis transactions
@@ -59,6 +59,12 @@
   shell: "echo {{ admin.passphrase }} | {{ dcld.path }} gentx {{ admin.name }} --chain-id {{ chain_id }} --moniker {{ moniker | default(ansible_hostname) }} --home {{ dcl_home }}"
   no_log: true
   ignore_errors: true
+
+- name: prepare-genesis | ensure gentx folder
+  file:
+    recurse: true
+    state: directory
+    path: "{{ dcl_home }}/config/gentx/"
 
 - name: prepare-genesis | collect gentx files
   changed_when: false
@@ -75,6 +81,7 @@
 - name: prepare-genesis | collect genesis transactions
   changed_when: false
   command: "{{ dcld.path }} collect-gentxs --home {{ dcl_home }}"
+  when: gentx_files.stdout_lines | length > 0
 
 - name: prepare-genesis | validate genesis file
   changed_when: false

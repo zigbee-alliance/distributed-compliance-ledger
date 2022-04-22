@@ -35,14 +35,6 @@ provisioner:
     group_vars:
       all:
         chain_id: test-net
-    host_vars:
-      node0:
-        accounts:
-          - name: jack
-            passphrase: test1234
-            roles:
-              - NodeAdmin
-              - Trustee
 verifier:
   name: testinfra
   lint:
