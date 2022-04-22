@@ -5,14 +5,17 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
 func CmdListRejectedNode() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list-rejected-node",
-		Short: "list all RejectedNode",
+		Use:   "all-rejected-disable-nodes",
+		Short: "Query the list of all rejected disable validators",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
@@ -44,30 +47,37 @@ func CmdListRejectedNode() *cobra.Command {
 
 func CmdShowRejectedNode() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "show-rejected-node [owner]",
-		Short: "shows a RejectedNode",
-		Args:  cobra.ExactArgs(1),
+		Use:   "rejected-disable-node",
+		Short: "Query rejected disable validator by address",
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
-			queryClient := types.NewQueryClient(clientCtx)
-
-			argOwner := args[0]
-
-			params := &types.QueryGetRejectedNodeRequest{
-				Owner: argOwner,
-			}
-
-			res, err := queryClient.RejectedNode(context.Background(), params)
+			addr, err := sdk.ValAddressFromBech32(viper.GetString(FlagAddress))
 			if err != nil {
-				return err
+				owner, err2 := sdk.AccAddressFromBech32(viper.GetString(FlagAddress))
+				if err2 != nil {
+					return err2
+				}
+				addr = sdk.ValAddress(owner)
 			}
 
-			return clientCtx.PrintProto(res)
+			var res types.RejectedNode
+
+			return cli.QueryWithProof(
+				clientCtx,
+				types.StoreKey,
+				types.RejectedNodeKeyPrefix,
+				types.RejectedNodeKey(addr),
+				&res,
+			)
 		},
 	}
 
+	cmd.Flags().String(FlagAddress, "", "Bech32 encoded validator address or owner account")
 	flags.AddQueryFlagsToCmd(cmd)
+
+	_ = cmd.MarkFlagRequired(FlagAddress)
 
 	return cmd
 }

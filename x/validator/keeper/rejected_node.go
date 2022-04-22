@@ -11,7 +11,7 @@ func (k Keeper) SetRejectedNode(ctx sdk.Context, rejectedNode types.RejectedNode
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RejectedNodeKeyPrefix))
 	b := k.cdc.MustMarshal(&rejectedNode)
 	store.Set(types.RejectedNodeKey(
-		rejectedNode.Creator,
+		rejectedNode.GetAddress(),
 	), b)
 }
 
@@ -22,8 +22,9 @@ func (k Keeper) GetRejectedNode(
 ) (val types.RejectedNode, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RejectedNodeKeyPrefix))
 
+	ownerValAddress, _ := sdk.ValAddressFromBech32(owner)
 	b := store.Get(types.RejectedNodeKey(
-		owner,
+		ownerValAddress,
 	))
 	if b == nil {
 		return val, false
@@ -40,8 +41,9 @@ func (k Keeper) RemoveRejectedNode(
 	owner string,
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RejectedNodeKeyPrefix))
+	ownerValAddress, _ := sdk.ValAddressFromBech32(owner)
 	store.Delete(types.RejectedNodeKey(
-		owner,
+		ownerValAddress,
 	))
 }
 

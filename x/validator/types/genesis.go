@@ -82,7 +82,11 @@ func (gs GenesisState) Validate() error {
 	rejectedNodeIndexMap := make(map[string]struct{})
 
 	for _, elem := range gs.RejectedNodeList {
-		index := string(RejectedNodeKey(elem.Creator))
+		address, err := sdk.ValAddressFromBech32(elem.Address)
+		if err != nil {
+			return err
+		}
+		index := string(RejectedNodeKey(address))
 		if _, ok := rejectedNodeIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for rejectedNode")
 		}

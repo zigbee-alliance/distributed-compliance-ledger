@@ -7,6 +7,7 @@ import (
 	fmt "fmt"
 	_ "github.com/cosmos/cosmos-proto"
 	proto "github.com/gogo/protobuf/proto"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	io "io"
 	math "math"
 	math_bits "math/bits"
@@ -63,11 +64,9 @@ func (m *RejectedNode) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_RejectedNode proto.InternalMessageInfo
 
-func (m *RejectedNode) GetAddress() string {
-	if m != nil {
-		return m.Address
-	}
-	return ""
+func (m *RejectedNode) GetAddress() sdk.ValAddress {
+	valAddr, _ := sdk.ValAddressFromBech32(m.Address)
+	return valAddr
 }
 
 func (m *RejectedNode) GetCreator() string {
