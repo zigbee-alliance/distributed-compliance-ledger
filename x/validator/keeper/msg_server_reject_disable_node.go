@@ -64,7 +64,7 @@ func (k msgServer) RejectDisableNode(goCtx context.Context, msg *types.MsgReject
 
 	// check if proposed disable validator has enough reject approvals
 	if len(proposedDisableValidator.RejectApprovals) == k.DisableValidatorRejectApprovalsCount(ctx) {
-		k.RemoveDisabledValidator(ctx, proposedDisableValidator.Address)
+		k.RemoveProposedDisableValidator(ctx, proposedDisableValidator.Address)
 		rejectedDisableValidator := types.RejectedNode(proposedDisableValidator)
 		k.SetRejectedNode(ctx, rejectedDisableValidator)
 	} else {
