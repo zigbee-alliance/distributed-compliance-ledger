@@ -886,8 +886,21 @@ func TestHandler_RejectAccount_ThreeRejectApprovalsAreNeeded(t *testing.T) {
 func TestHandler_RejectAccount_ByNotTrustee(t *testing.T) {
 	setup := Setup(t)
 
+	// store 3 trustees
+	trustee1 := storeTrustee(setup)
+	_ = storeTrustee(setup)
+	_ = storeTrustee(setup)
+
 	// store account
 	address := storeAccountWithVendorID(setup, types.Vendor, testconstants.VendorID1)
+
+	// trustee1 proposes to revoke account
+	proposeRevokeAccount := types.NewMsgProposeRevokeAccount(trustee1, address, testconstants.Info)
+	_, err := setup.Handler(setup.Ctx, proposeRevokeAccount)
+	require.NoError(t, err)
+
+	// ensure pending account revocation created
+	require.True(t, setup.Keeper.IsPendingAccountRevocationPresent(setup.Ctx, address))
 
 	for _, role := range []types.AccountRole{types.Vendor, types.CertificationCenter, types.NodeAdmin} {
 		// store signer account
@@ -942,16 +955,17 @@ func TestHandler_Duplicate_RejectAccountFromTheSameTrustee(t *testing.T) {
 	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
 }
 
-func TestHandler_ApproveAccountAndRejectAccountTheSameTrustee(t *testing.T) {
+func TestHandler_ApproveAccountAndRejectAccount_FromTheSameTrustee(t *testing.T) {
 	setup := Setup(t)
 
-	// store 3 trustee
+	// store 4 trustee
 	trustee1 := storeTrustee(setup)
 	trustee2 := storeTrustee(setup)
 	_ = storeTrustee(setup)
+	_ = storeTrustee(setup)
 
-	// ensure 2 trustee approvals are needed
-	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx))
+	// ensure 3 trustee approvals are needed
+	require.Equal(t, 3, setup.Keeper.AccountApprovalsCount(setup.Ctx))
 
 	// trustee1 proposes account
 	_, address, _, err := proposeAddAccount(setup, trustee1)
@@ -965,10 +979,10 @@ func TestHandler_ApproveAccountAndRejectAccountTheSameTrustee(t *testing.T) {
 	// trustee2 try rejects to add account
 	rejectAddAccount := types.NewMsgRejectAddAccount(trustee2, address, testconstants.Info)
 	_, err = setup.Handler(setup.Ctx, rejectAddAccount)
-	require.ErrorIs(t, err, types.PendingAccountDoesNotExist)
+	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
 }
 
-func TestHandler_RejectAccountAndApproveAccountTheSameTrustee(t *testing.T) {
+func TestHandler_RejectAccountAndApproveAccount_FromTheSameTrustee(t *testing.T) {
 	setup := Setup(t)
 
 	// store 3 trustee
