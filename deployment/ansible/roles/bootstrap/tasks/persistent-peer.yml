@@ -1,0 +1,21 @@
+- name: get node id
+  become: true
+  become_user: "{{ cosmovisor.user }}"
+  command: "{{ dcld.path }} tendermint show-node-id"
+  register: node_id_output
+
+- name: get node id | set to a variable
+  set_fact:
+    node_id: "{{ node_id_output.stdout }}"
+
+- name: get private ip address
+  set_fact:
+    private_ip: "{{ ansible_all_ipv4_addresses | ipaddr('private') | first }}"
+
+- name: build persistent peer string
+  set_fact:
+    persistent_peer: "{{ node_id + '@' + private_ip + ':26656' }}"
+
+- name: view peer
+  ansible.builtin.debug:
+    var: persistent_peer

@@ -13,16 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: validator | discover IPv4 addresses information
-  setup:
-    filter:
-      - 'ansible_default_ipv4'
-  delegate_to: "{{ item }}"
-  register: default_ipv4_facts
-  loop: "{{ groups['public-sentries'] | list }}"
-
-- name: validator | set dynamic values
+- name: validator | discover private sentry peers
   set_fact:
-    config:
-      p2p:
-        persistent_peers: "{{ default_ipv4_facts.results | map(attribute='ansible_facts.ansible_default_ipv4.address') | join(',') }}"
+    peers: "{{ (groups['private_sentries'] | map('extract', hostvars, 'persistent_peer') | list | join(',')) }}"
+  run_once: yes
+  when: config.p2p.persistent_peers is not defined
+
+- name: validator | update persistent peers
+  set_fact:
+    config: "{{ config | default({}) | combine ({ 'p2p' : {'persistent_peers': peers} }, recursive=True) }}"
+  when: config.p2p.persistent_peers is not defined

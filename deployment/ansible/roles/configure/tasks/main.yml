@@ -18,7 +18,13 @@
   command: "{{ dcld.path }} config {{ item.key }} {{ item.value }} --home {{ dcl_home }}"
   with_dict: "{{ client }}"
 
-- name: setup node type specific values
+- name: load node type specific default config values
+  include_vars:
+    file: "{{ type }}.yml"
+    hash_behaviour: merge
+  when: type is defined
+
+- name: update node type specific config values
   include_tasks: "{{ type }}.yml"
   when: type is defined
 

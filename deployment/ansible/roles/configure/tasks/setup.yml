@@ -13,13 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: setup | node type variables
-  include_vars:
-    file: "{{ type }}.yml"
-    hash_behaviour: merge
-  when: type is defined
+- name: setup | set local config map
+  set_fact:
+    local_config: "{{ vars[toml] }}"
 
-- name: setup | combine user with existing config values
+- name: setup | get existing config file path
   set_fact:
     filename: "{{ dcl_home }}/config/{{ toml }}.toml"
 
@@ -37,9 +35,9 @@
     var: "{{ item }}"
   loop:
     - "{{ existing_values }}"
-    - "{{ vars[toml] }}"
+    - "{{ local_config }}"
 
 - name: setup | create TOMLs files
   copy:
     dest: "{{ filename }}"
-    content: "{{ existing_values | combine(vars[toml], recursive=True) | sivel.toiletwater.to_toml }}"
+    content: "{{ existing_values | combine(local_config, recursive=True) | sivel.toiletwater.to_toml }}"
