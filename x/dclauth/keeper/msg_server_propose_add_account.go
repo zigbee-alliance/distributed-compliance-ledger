@@ -67,5 +67,10 @@ func (k msgServer) ProposeAddAccount(goCtx context.Context, msg *types.MsgPropos
 		k.SetAccountO(ctx, *account)
 	}
 
+	_, isFound := k.GetRejectedAccount(ctx, accAddr)
+	if isFound {
+		k.RemoveRejectedAccount(ctx, accAddr)
+	}
+
 	return &types.MsgProposeAddAccountResponse{}, nil
 }

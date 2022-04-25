@@ -85,5 +85,10 @@ func (k msgServer) ProposeDisableValidator(goCtx context.Context, msg *types.Msg
 		k.SetDisabledValidator(ctx, disabledValidator)
 	}
 
+	_, isFound = k.GetRejectedNode(ctx, validatorAddr.String())
+	if isFound {
+		k.RemoveRejectedNode(ctx, validatorAddr.String())
+	}
+
 	return &types.MsgProposeDisableValidatorResponse{}, nil
 }

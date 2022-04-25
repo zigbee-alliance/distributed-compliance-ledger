@@ -1090,9 +1090,9 @@ func TestHandler_DoubleTimeRejectDisableValidator(t *testing.T) {
 	_, isFound = setup.ValidatorKeeper.GetProposedDisableValidator(setup.Ctx, valAddress.String())
 	require.True(t, isFound)
 
-// 	// validator should not be in the entity <Proposed Disable Validator>, because we have enough reject approvals
-// 	_, isFound = setup.ValidatorKeeper.GetProposedDisableValidator(setup.Ctx, valAddress.String())
-// 	require.False(t, isFound)
+	// ensure that account not exist in <Rejected Disable Validator>
+	_, isFound = setup.ValidatorKeeper.GetRejectedNode(setup.Ctx, valAddress.String())
+	require.False(t, isFound)
 
 	// account3 (Trustee) rejects disable same validator
 	msgRejectDisableValidator = NewMsgRejectDisableValidator(account3.GetAddress(), valAddress)

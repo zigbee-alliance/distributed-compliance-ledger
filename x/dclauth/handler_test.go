@@ -1051,6 +1051,10 @@ func TestHandler_DoubleTimeRejectAccount(t *testing.T) {
 	_, address, pubkey, err = proposeAddAccount(setup, trustee1)
 	require.NoError(t, err)
 
+	// ensure that account not exist in <Rejected Account>
+	_, isFound = setup.Keeper.GetRejectedAccount(setup.Ctx, address)
+	require.False(t, isFound)
+
 	// trustee2 rejects to add account
 	rejectAddAccount = types.NewMsgRejectAddAccount(trustee2, address, testconstants.Info)
 	_, err = setup.Handler(setup.Ctx, rejectAddAccount)
