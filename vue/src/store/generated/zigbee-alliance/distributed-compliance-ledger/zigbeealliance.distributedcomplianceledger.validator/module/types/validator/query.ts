@@ -5,7 +5,7 @@ import { PageRequest, PageResponse } from '../cosmos/base/query/v1beta1/paginati
 import { LastValidatorPower } from '../validator/last_validator_power'
 import { ProposedDisableValidator } from '../validator/proposed_disable_validator'
 import { DisabledValidator } from '../validator/disabled_validator'
-import { RejectedNode } from '../validator/rejected_node'
+import { RejectedDisableNode } from '../validator/rejected_node'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.validator'
 
@@ -77,20 +77,20 @@ export interface QueryAllDisabledValidatorResponse {
   pagination: PageResponse | undefined
 }
 
-export interface QueryGetRejectedNodeRequest {
+export interface QueryGetRejectedDisableNodeRequest {
   owner: string
 }
 
-export interface QueryGetRejectedNodeResponse {
-  rejectedNode: RejectedNode | undefined
+export interface QueryGetRejectedDisableNodeResponse {
+  rejectedNode: RejectedDisableNode | undefined
 }
 
-export interface QueryAllRejectedNodeRequest {
+export interface QueryAllRejectedDisableNodeRequest {
   pagination: PageRequest | undefined
 }
 
-export interface QueryAllRejectedNodeResponse {
-  rejectedNode: RejectedNode[]
+export interface QueryAllRejectedDisableNodeResponse {
+  rejectedNode: RejectedDisableNode[]
   pagination: PageResponse | undefined
 }
 
@@ -1073,20 +1073,20 @@ export const QueryAllDisabledValidatorResponse = {
   }
 }
 
-const baseQueryGetRejectedNodeRequest: object = { owner: '' }
+const baseQueryGetRejectedDisableNodeRequest: object = { owner: '' }
 
-export const QueryGetRejectedNodeRequest = {
-  encode(message: QueryGetRejectedNodeRequest, writer: Writer = Writer.create()): Writer {
+export const QueryGetRejectedDisableNodeRequest = {
+  encode(message: QueryGetRejectedDisableNodeRequest, writer: Writer = Writer.create()): Writer {
     if (message.owner !== '') {
       writer.uint32(10).string(message.owner)
     }
     return writer
   },
 
-  decode(input: Reader | Uint8Array, length?: number): QueryGetRejectedNodeRequest {
+  decode(input: Reader | Uint8Array, length?: number): QueryGetRejectedDisableNodeRequest {
     const reader = input instanceof Uint8Array ? new Reader(input) : input
     let end = length === undefined ? reader.len : reader.pos + length
-    const message = { ...baseQueryGetRejectedNodeRequest } as QueryGetRejectedNodeRequest
+    const message = { ...baseQueryGetRejectedDisableNodeRequest } as QueryGetRejectedDisableNodeRequest
     while (reader.pos < end) {
       const tag = reader.uint32()
       switch (tag >>> 3) {
@@ -1101,8 +1101,8 @@ export const QueryGetRejectedNodeRequest = {
     return message
   },
 
-  fromJSON(object: any): QueryGetRejectedNodeRequest {
-    const message = { ...baseQueryGetRejectedNodeRequest } as QueryGetRejectedNodeRequest
+  fromJSON(object: any): QueryGetRejectedDisableNodeRequest {
+    const message = { ...baseQueryGetRejectedDisableNodeRequest } as QueryGetRejectedDisableNodeRequest
     if (object.owner !== undefined && object.owner !== null) {
       message.owner = String(object.owner)
     } else {
@@ -1111,14 +1111,14 @@ export const QueryGetRejectedNodeRequest = {
     return message
   },
 
-  toJSON(message: QueryGetRejectedNodeRequest): unknown {
+  toJSON(message: QueryGetRejectedDisableNodeRequest): unknown {
     const obj: any = {}
     message.owner !== undefined && (obj.owner = message.owner)
     return obj
   },
 
-  fromPartial(object: DeepPartial<QueryGetRejectedNodeRequest>): QueryGetRejectedNodeRequest {
-    const message = { ...baseQueryGetRejectedNodeRequest } as QueryGetRejectedNodeRequest
+  fromPartial(object: DeepPartial<QueryGetRejectedDisableNodeRequest>): QueryGetRejectedDisableNodeRequest {
+    const message = { ...baseQueryGetRejectedDisableNodeRequest } as QueryGetRejectedDisableNodeRequest
     if (object.owner !== undefined && object.owner !== null) {
       message.owner = object.owner
     } else {
@@ -1128,25 +1128,25 @@ export const QueryGetRejectedNodeRequest = {
   }
 }
 
-const baseQueryGetRejectedNodeResponse: object = {}
+const baseQueryGetRejectedDisableNodeResponse: object = {}
 
-export const QueryGetRejectedNodeResponse = {
-  encode(message: QueryGetRejectedNodeResponse, writer: Writer = Writer.create()): Writer {
+export const QueryGetRejectedDisableNodeResponse = {
+  encode(message: QueryGetRejectedDisableNodeResponse, writer: Writer = Writer.create()): Writer {
     if (message.rejectedNode !== undefined) {
-      RejectedNode.encode(message.rejectedNode, writer.uint32(10).fork()).ldelim()
+      RejectedDisableNode.encode(message.rejectedNode, writer.uint32(10).fork()).ldelim()
     }
     return writer
   },
 
-  decode(input: Reader | Uint8Array, length?: number): QueryGetRejectedNodeResponse {
+  decode(input: Reader | Uint8Array, length?: number): QueryGetRejectedDisableNodeResponse {
     const reader = input instanceof Uint8Array ? new Reader(input) : input
     let end = length === undefined ? reader.len : reader.pos + length
-    const message = { ...baseQueryGetRejectedNodeResponse } as QueryGetRejectedNodeResponse
+    const message = { ...baseQueryGetRejectedDisableNodeResponse } as QueryGetRejectedDisableNodeResponse
     while (reader.pos < end) {
       const tag = reader.uint32()
       switch (tag >>> 3) {
         case 1:
-          message.rejectedNode = RejectedNode.decode(reader, reader.uint32())
+          message.rejectedNode = RejectedDisableNode.decode(reader, reader.uint32())
           break
         default:
           reader.skipType(tag & 7)
@@ -1156,26 +1156,26 @@ export const QueryGetRejectedNodeResponse = {
     return message
   },
 
-  fromJSON(object: any): QueryGetRejectedNodeResponse {
-    const message = { ...baseQueryGetRejectedNodeResponse } as QueryGetRejectedNodeResponse
+  fromJSON(object: any): QueryGetRejectedDisableNodeResponse {
+    const message = { ...baseQueryGetRejectedDisableNodeResponse } as QueryGetRejectedDisableNodeResponse
     if (object.rejectedNode !== undefined && object.rejectedNode !== null) {
-      message.rejectedNode = RejectedNode.fromJSON(object.rejectedNode)
+      message.rejectedNode = RejectedDisableNode.fromJSON(object.rejectedNode)
     } else {
       message.rejectedNode = undefined
     }
     return message
   },
 
-  toJSON(message: QueryGetRejectedNodeResponse): unknown {
+  toJSON(message: QueryGetRejectedDisableNodeResponse): unknown {
     const obj: any = {}
-    message.rejectedNode !== undefined && (obj.rejectedNode = message.rejectedNode ? RejectedNode.toJSON(message.rejectedNode) : undefined)
+    message.rejectedNode !== undefined && (obj.rejectedNode = message.rejectedNode ? RejectedDisableNode.toJSON(message.rejectedNode) : undefined)
     return obj
   },
 
-  fromPartial(object: DeepPartial<QueryGetRejectedNodeResponse>): QueryGetRejectedNodeResponse {
-    const message = { ...baseQueryGetRejectedNodeResponse } as QueryGetRejectedNodeResponse
+  fromPartial(object: DeepPartial<QueryGetRejectedDisableNodeResponse>): QueryGetRejectedDisableNodeResponse {
+    const message = { ...baseQueryGetRejectedDisableNodeResponse } as QueryGetRejectedDisableNodeResponse
     if (object.rejectedNode !== undefined && object.rejectedNode !== null) {
-      message.rejectedNode = RejectedNode.fromPartial(object.rejectedNode)
+      message.rejectedNode = RejectedDisableNode.fromPartial(object.rejectedNode)
     } else {
       message.rejectedNode = undefined
     }
@@ -1183,20 +1183,20 @@ export const QueryGetRejectedNodeResponse = {
   }
 }
 
-const baseQueryAllRejectedNodeRequest: object = {}
+const baseQueryAllRejectedDisableNodeRequest: object = {}
 
-export const QueryAllRejectedNodeRequest = {
-  encode(message: QueryAllRejectedNodeRequest, writer: Writer = Writer.create()): Writer {
+export const QueryAllRejectedDisableNodeRequest = {
+  encode(message: QueryAllRejectedDisableNodeRequest, writer: Writer = Writer.create()): Writer {
     if (message.pagination !== undefined) {
       PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim()
     }
     return writer
   },
 
-  decode(input: Reader | Uint8Array, length?: number): QueryAllRejectedNodeRequest {
+  decode(input: Reader | Uint8Array, length?: number): QueryAllRejectedDisableNodeRequest {
     const reader = input instanceof Uint8Array ? new Reader(input) : input
     let end = length === undefined ? reader.len : reader.pos + length
-    const message = { ...baseQueryAllRejectedNodeRequest } as QueryAllRejectedNodeRequest
+    const message = { ...baseQueryAllRejectedDisableNodeRequest } as QueryAllRejectedDisableNodeRequest
     while (reader.pos < end) {
       const tag = reader.uint32()
       switch (tag >>> 3) {
@@ -1211,8 +1211,8 @@ export const QueryAllRejectedNodeRequest = {
     return message
   },
 
-  fromJSON(object: any): QueryAllRejectedNodeRequest {
-    const message = { ...baseQueryAllRejectedNodeRequest } as QueryAllRejectedNodeRequest
+  fromJSON(object: any): QueryAllRejectedDisableNodeRequest {
+    const message = { ...baseQueryAllRejectedDisableNodeRequest } as QueryAllRejectedDisableNodeRequest
     if (object.pagination !== undefined && object.pagination !== null) {
       message.pagination = PageRequest.fromJSON(object.pagination)
     } else {
@@ -1221,14 +1221,14 @@ export const QueryAllRejectedNodeRequest = {
     return message
   },
 
-  toJSON(message: QueryAllRejectedNodeRequest): unknown {
+  toJSON(message: QueryAllRejectedDisableNodeRequest): unknown {
     const obj: any = {}
     message.pagination !== undefined && (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined)
     return obj
   },
 
-  fromPartial(object: DeepPartial<QueryAllRejectedNodeRequest>): QueryAllRejectedNodeRequest {
-    const message = { ...baseQueryAllRejectedNodeRequest } as QueryAllRejectedNodeRequest
+  fromPartial(object: DeepPartial<QueryAllRejectedDisableNodeRequest>): QueryAllRejectedDisableNodeRequest {
+    const message = { ...baseQueryAllRejectedDisableNodeRequest } as QueryAllRejectedDisableNodeRequest
     if (object.pagination !== undefined && object.pagination !== null) {
       message.pagination = PageRequest.fromPartial(object.pagination)
     } else {
@@ -1238,12 +1238,12 @@ export const QueryAllRejectedNodeRequest = {
   }
 }
 
-const baseQueryAllRejectedNodeResponse: object = {}
+const baseQueryAllRejectedDisableNodeResponse: object = {}
 
-export const QueryAllRejectedNodeResponse = {
-  encode(message: QueryAllRejectedNodeResponse, writer: Writer = Writer.create()): Writer {
+export const QueryAllRejectedDisableNodeResponse = {
+  encode(message: QueryAllRejectedDisableNodeResponse, writer: Writer = Writer.create()): Writer {
     for (const v of message.rejectedNode) {
-      RejectedNode.encode(v!, writer.uint32(10).fork()).ldelim()
+      RejectedDisableNode.encode(v!, writer.uint32(10).fork()).ldelim()
     }
     if (message.pagination !== undefined) {
       PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim()
@@ -1251,16 +1251,16 @@ export const QueryAllRejectedNodeResponse = {
     return writer
   },
 
-  decode(input: Reader | Uint8Array, length?: number): QueryAllRejectedNodeResponse {
+  decode(input: Reader | Uint8Array, length?: number): QueryAllRejectedDisableNodeResponse {
     const reader = input instanceof Uint8Array ? new Reader(input) : input
     let end = length === undefined ? reader.len : reader.pos + length
-    const message = { ...baseQueryAllRejectedNodeResponse } as QueryAllRejectedNodeResponse
+    const message = { ...baseQueryAllRejectedDisableNodeResponse } as QueryAllRejectedDisableNodeResponse
     message.rejectedNode = []
     while (reader.pos < end) {
       const tag = reader.uint32()
       switch (tag >>> 3) {
         case 1:
-          message.rejectedNode.push(RejectedNode.decode(reader, reader.uint32()))
+          message.rejectedNode.push(RejectedDisableNode.decode(reader, reader.uint32()))
           break
         case 2:
           message.pagination = PageResponse.decode(reader, reader.uint32())
@@ -1273,12 +1273,12 @@ export const QueryAllRejectedNodeResponse = {
     return message
   },
 
-  fromJSON(object: any): QueryAllRejectedNodeResponse {
-    const message = { ...baseQueryAllRejectedNodeResponse } as QueryAllRejectedNodeResponse
+  fromJSON(object: any): QueryAllRejectedDisableNodeResponse {
+    const message = { ...baseQueryAllRejectedDisableNodeResponse } as QueryAllRejectedDisableNodeResponse
     message.rejectedNode = []
     if (object.rejectedNode !== undefined && object.rejectedNode !== null) {
       for (const e of object.rejectedNode) {
-        message.rejectedNode.push(RejectedNode.fromJSON(e))
+        message.rejectedNode.push(RejectedDisableNode.fromJSON(e))
       }
     }
     if (object.pagination !== undefined && object.pagination !== null) {
@@ -1289,10 +1289,10 @@ export const QueryAllRejectedNodeResponse = {
     return message
   },
 
-  toJSON(message: QueryAllRejectedNodeResponse): unknown {
+  toJSON(message: QueryAllRejectedDisableNodeResponse): unknown {
     const obj: any = {}
     if (message.rejectedNode) {
-      obj.rejectedNode = message.rejectedNode.map((e) => (e ? RejectedNode.toJSON(e) : undefined))
+      obj.rejectedNode = message.rejectedNode.map((e) => (e ? RejectedDisableNode.toJSON(e) : undefined))
     } else {
       obj.rejectedNode = []
     }
@@ -1300,12 +1300,12 @@ export const QueryAllRejectedNodeResponse = {
     return obj
   },
 
-  fromPartial(object: DeepPartial<QueryAllRejectedNodeResponse>): QueryAllRejectedNodeResponse {
-    const message = { ...baseQueryAllRejectedNodeResponse } as QueryAllRejectedNodeResponse
+  fromPartial(object: DeepPartial<QueryAllRejectedDisableNodeResponse>): QueryAllRejectedDisableNodeResponse {
+    const message = { ...baseQueryAllRejectedDisableNodeResponse } as QueryAllRejectedDisableNodeResponse
     message.rejectedNode = []
     if (object.rejectedNode !== undefined && object.rejectedNode !== null) {
       for (const e of object.rejectedNode) {
-        message.rejectedNode.push(RejectedNode.fromPartial(e))
+        message.rejectedNode.push(RejectedDisableNode.fromPartial(e))
       }
     }
     if (object.pagination !== undefined && object.pagination !== null) {
@@ -1336,9 +1336,9 @@ export interface Query {
   /** Queries a list of DisabledValidator items. */
   DisabledValidatorAll(request: QueryAllDisabledValidatorRequest): Promise<QueryAllDisabledValidatorResponse>
   /** Queries a RejectedNode by index. */
-  RejectedNode(request: QueryGetRejectedNodeRequest): Promise<QueryGetRejectedNodeResponse>
+  RejectedDisableNode(request: QueryGetRejectedDisableNodeRequest): Promise<QueryGetRejectedDisableNodeResponse>
   /** Queries a list of RejectedNode items. */
-  RejectedNodeAll(request: QueryAllRejectedNodeRequest): Promise<QueryAllRejectedNodeResponse>
+  RejectedDisableNodeAll(request: QueryAllRejectedDisableNodeRequest): Promise<QueryAllRejectedDisableNodeResponse>
 }
 
 export class QueryClientImpl implements Query {
@@ -1394,16 +1394,16 @@ export class QueryClientImpl implements Query {
     return promise.then((data) => QueryAllDisabledValidatorResponse.decode(new Reader(data)))
   }
 
-  RejectedNode(request: QueryGetRejectedNodeRequest): Promise<QueryGetRejectedNodeResponse> {
-    const data = QueryGetRejectedNodeRequest.encode(request).finish()
-    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.validator.Query', 'RejectedNode', data)
-    return promise.then((data) => QueryGetRejectedNodeResponse.decode(new Reader(data)))
+  RejectedDisableNode(request: QueryGetRejectedDisableNodeRequest): Promise<QueryGetRejectedDisableNodeResponse> {
+    const data = QueryGetRejectedDisableNodeRequest.encode(request).finish()
+    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.validator.Query', 'RejectedDisableNode', data)
+    return promise.then((data) => QueryGetRejectedDisableNodeResponse.decode(new Reader(data)))
   }
 
-  RejectedNodeAll(request: QueryAllRejectedNodeRequest): Promise<QueryAllRejectedNodeResponse> {
-    const data = QueryAllRejectedNodeRequest.encode(request).finish()
-    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.validator.Query', 'RejectedNodeAll', data)
-    return promise.then((data) => QueryAllRejectedNodeResponse.decode(new Reader(data)))
+  RejectedDisableNodeAll(request: QueryAllRejectedDisableNodeRequest): Promise<QueryAllRejectedDisableNodeResponse> {
+    const data = QueryAllRejectedDisableNodeRequest.encode(request).finish()
+    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.validator.Query', 'RejectedDisableNodeAll', data)
+    return promise.then((data) => QueryAllRejectedDisableNodeResponse.decode(new Reader(data)))
   }
 }
 

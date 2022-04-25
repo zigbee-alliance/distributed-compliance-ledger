@@ -20,7 +20,7 @@ func DefaultGenesis() *GenesisState {
 		LastValidatorPowerList:       []LastValidatorPower{},
 		ProposedDisableValidatorList: []ProposedDisableValidator{},
 		DisabledValidatorList:        []DisabledValidator{},
-		RejectedNodeList:             []RejectedNode{},
+		RejectedNodeList:             []RejectedDisableNode{},
 		// this line is used by starport scaffolding # genesis/types/default
 	}
 }

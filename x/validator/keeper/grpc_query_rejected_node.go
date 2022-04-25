@@ -11,19 +11,19 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (k Keeper) RejectedNodeAll(c context.Context, req *types.QueryAllRejectedNodeRequest) (*types.QueryAllRejectedNodeResponse, error) {
+func (k Keeper) RejectedDisableNodeAll(c context.Context, req *types.QueryAllRejectedDisableNodeRequest) (*types.QueryAllRejectedDisableNodeResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
-	var rejectedNodes []types.RejectedNode
+	var rejectedNodes []types.RejectedDisableNode
 	ctx := sdk.UnwrapSDKContext(c)
 
 	store := ctx.KVStore(k.storeKey)
 	rejectedNodeStore := prefix.NewStore(store, types.KeyPrefix(types.RejectedNodeKeyPrefix))
 
 	pageRes, err := query.Paginate(rejectedNodeStore, req.Pagination, func(key []byte, value []byte) error {
-		var rejectedNode types.RejectedNode
+		var rejectedNode types.RejectedDisableNode
 		if err := k.cdc.Unmarshal(value, &rejectedNode); err != nil {
 			return err
 		}
@@ -36,10 +36,10 @@ func (k Keeper) RejectedNodeAll(c context.Context, req *types.QueryAllRejectedNo
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.QueryAllRejectedNodeResponse{RejectedNode: rejectedNodes, Pagination: pageRes}, nil
+	return &types.QueryAllRejectedDisableNodeResponse{RejectedNode: rejectedNodes, Pagination: pageRes}, nil
 }
 
-func (k Keeper) RejectedNode(c context.Context, req *types.QueryGetRejectedNodeRequest) (*types.QueryGetRejectedNodeResponse, error) {
+func (k Keeper) RejectedDisableNode(c context.Context, req *types.QueryGetRejectedDisableNodeRequest) (*types.QueryGetRejectedDisableNodeResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
@@ -53,5 +53,5 @@ func (k Keeper) RejectedNode(c context.Context, req *types.QueryGetRejectedNodeR
 		return nil, status.Error(codes.NotFound, "not found")
 	}
 
-	return &types.QueryGetRejectedNodeResponse{RejectedNode: val}, nil
+	return &types.QueryGetRejectedDisableNodeResponse{RejectedNode: val}, nil
 }

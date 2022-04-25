@@ -255,8 +255,8 @@ export interface ValidatorQueryAllProposedDisableValidatorResponse {
      */
     pagination?: V1Beta1PageResponse;
 }
-export interface ValidatorQueryAllRejectedNodeResponse {
-    rejectedNode?: ValidatorRejectedNode[];
+export interface ValidatorQueryAllRejectedDisableNodeResponse {
+    rejectedNode?: ValidatorRejectedDisableNode[];
     /**
      * PageResponse is to be embedded in gRPC response messages where the
      * corresponding request message has used PageRequest.
@@ -290,13 +290,13 @@ export interface ValidatorQueryGetLastValidatorPowerResponse {
 export interface ValidatorQueryGetProposedDisableValidatorResponse {
     proposedDisableValidator?: ValidatorProposedDisableValidator;
 }
-export interface ValidatorQueryGetRejectedNodeResponse {
-    rejectedNode?: ValidatorRejectedNode;
+export interface ValidatorQueryGetRejectedDisableNodeResponse {
+    rejectedNode?: ValidatorRejectedDisableNode;
 }
 export interface ValidatorQueryGetValidatorResponse {
     validator?: ValidatorValidator;
 }
-export interface ValidatorRejectedNode {
+export interface ValidatorRejectedDisableNode {
     address?: string;
     creator?: string;
     approvals?: ValidatorGrant[];
@@ -553,25 +553,25 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * No description
      *
      * @tags Query
-     * @name QueryRejectedNodeAll
+     * @name QueryRejectedDisableNodeAll
      * @summary Queries a list of RejectedNode items.
-     * @request GET:/dcl/validator/rejected-nodes
+     * @request GET:/dcl/validator/rejected-disable-nodes
      */
-    queryRejectedNodeAll: (query?: {
+    queryRejectedDisableNodeAll: (query?: {
         "pagination.key"?: string;
         "pagination.offset"?: string;
         "pagination.limit"?: string;
         "pagination.countTotal"?: boolean;
         "pagination.reverse"?: boolean;
-    }, params?: RequestParams) => Promise<HttpResponse<ValidatorQueryAllRejectedNodeResponse, RpcStatus>>;
+    }, params?: RequestParams) => Promise<HttpResponse<ValidatorQueryAllRejectedDisableNodeResponse, RpcStatus>>;
     /**
      * No description
      *
      * @tags Query
-     * @name QueryRejectedNode
+     * @name QueryRejectedDisableNode
      * @summary Queries a RejectedNode by index.
-     * @request GET:/dcl/validator/rejected-nodes/{owner}
+     * @request GET:/dcl/validator/rejected-disable-nodes/{owner}
      */
-    queryRejectedNode: (owner: string, params?: RequestParams) => Promise<HttpResponse<ValidatorQueryGetRejectedNodeResponse, RpcStatus>>;
+    queryRejectedDisableNode: (owner: string, params?: RequestParams) => Promise<HttpResponse<ValidatorQueryGetRejectedDisableNodeResponse, RpcStatus>>;
 }
 export {};

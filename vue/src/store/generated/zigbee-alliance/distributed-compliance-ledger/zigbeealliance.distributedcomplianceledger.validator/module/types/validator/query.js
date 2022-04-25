@@ -5,7 +5,7 @@ import { PageRequest, PageResponse } from '../cosmos/base/query/v1beta1/paginati
 import { LastValidatorPower } from '../validator/last_validator_power';
 import { ProposedDisableValidator } from '../validator/proposed_disable_validator';
 import { DisabledValidator } from '../validator/disabled_validator';
-import { RejectedNode } from '../validator/rejected_node';
+import { RejectedDisableNode } from '../validator/rejected_node';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.validator';
 const baseQueryGetValidatorRequest = { owner: '' };
 export const QueryGetValidatorRequest = {
@@ -926,8 +926,8 @@ export const QueryAllDisabledValidatorResponse = {
         return message;
     }
 };
-const baseQueryGetRejectedNodeRequest = { owner: '' };
-export const QueryGetRejectedNodeRequest = {
+const baseQueryGetRejectedDisableNodeRequest = { owner: '' };
+export const QueryGetRejectedDisableNodeRequest = {
     encode(message, writer = Writer.create()) {
         if (message.owner !== '') {
             writer.uint32(10).string(message.owner);
@@ -937,7 +937,7 @@ export const QueryGetRejectedNodeRequest = {
     decode(input, length) {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
-        const message = { ...baseQueryGetRejectedNodeRequest };
+        const message = { ...baseQueryGetRejectedDisableNodeRequest };
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
@@ -952,7 +952,7 @@ export const QueryGetRejectedNodeRequest = {
         return message;
     },
     fromJSON(object) {
-        const message = { ...baseQueryGetRejectedNodeRequest };
+        const message = { ...baseQueryGetRejectedDisableNodeRequest };
         if (object.owner !== undefined && object.owner !== null) {
             message.owner = String(object.owner);
         }
@@ -967,7 +967,7 @@ export const QueryGetRejectedNodeRequest = {
         return obj;
     },
     fromPartial(object) {
-        const message = { ...baseQueryGetRejectedNodeRequest };
+        const message = { ...baseQueryGetRejectedDisableNodeRequest };
         if (object.owner !== undefined && object.owner !== null) {
             message.owner = object.owner;
         }
@@ -977,23 +977,23 @@ export const QueryGetRejectedNodeRequest = {
         return message;
     }
 };
-const baseQueryGetRejectedNodeResponse = {};
-export const QueryGetRejectedNodeResponse = {
+const baseQueryGetRejectedDisableNodeResponse = {};
+export const QueryGetRejectedDisableNodeResponse = {
     encode(message, writer = Writer.create()) {
         if (message.rejectedNode !== undefined) {
-            RejectedNode.encode(message.rejectedNode, writer.uint32(10).fork()).ldelim();
+            RejectedDisableNode.encode(message.rejectedNode, writer.uint32(10).fork()).ldelim();
         }
         return writer;
     },
     decode(input, length) {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
-        const message = { ...baseQueryGetRejectedNodeResponse };
+        const message = { ...baseQueryGetRejectedDisableNodeResponse };
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
                 case 1:
-                    message.rejectedNode = RejectedNode.decode(reader, reader.uint32());
+                    message.rejectedNode = RejectedDisableNode.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -1003,9 +1003,9 @@ export const QueryGetRejectedNodeResponse = {
         return message;
     },
     fromJSON(object) {
-        const message = { ...baseQueryGetRejectedNodeResponse };
+        const message = { ...baseQueryGetRejectedDisableNodeResponse };
         if (object.rejectedNode !== undefined && object.rejectedNode !== null) {
-            message.rejectedNode = RejectedNode.fromJSON(object.rejectedNode);
+            message.rejectedNode = RejectedDisableNode.fromJSON(object.rejectedNode);
         }
         else {
             message.rejectedNode = undefined;
@@ -1014,13 +1014,13 @@ export const QueryGetRejectedNodeResponse = {
     },
     toJSON(message) {
         const obj = {};
-        message.rejectedNode !== undefined && (obj.rejectedNode = message.rejectedNode ? RejectedNode.toJSON(message.rejectedNode) : undefined);
+        message.rejectedNode !== undefined && (obj.rejectedNode = message.rejectedNode ? RejectedDisableNode.toJSON(message.rejectedNode) : undefined);
         return obj;
     },
     fromPartial(object) {
-        const message = { ...baseQueryGetRejectedNodeResponse };
+        const message = { ...baseQueryGetRejectedDisableNodeResponse };
         if (object.rejectedNode !== undefined && object.rejectedNode !== null) {
-            message.rejectedNode = RejectedNode.fromPartial(object.rejectedNode);
+            message.rejectedNode = RejectedDisableNode.fromPartial(object.rejectedNode);
         }
         else {
             message.rejectedNode = undefined;
@@ -1028,8 +1028,8 @@ export const QueryGetRejectedNodeResponse = {
         return message;
     }
 };
-const baseQueryAllRejectedNodeRequest = {};
-export const QueryAllRejectedNodeRequest = {
+const baseQueryAllRejectedDisableNodeRequest = {};
+export const QueryAllRejectedDisableNodeRequest = {
     encode(message, writer = Writer.create()) {
         if (message.pagination !== undefined) {
             PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
@@ -1039,7 +1039,7 @@ export const QueryAllRejectedNodeRequest = {
     decode(input, length) {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
-        const message = { ...baseQueryAllRejectedNodeRequest };
+        const message = { ...baseQueryAllRejectedDisableNodeRequest };
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
@@ -1054,7 +1054,7 @@ export const QueryAllRejectedNodeRequest = {
         return message;
     },
     fromJSON(object) {
-        const message = { ...baseQueryAllRejectedNodeRequest };
+        const message = { ...baseQueryAllRejectedDisableNodeRequest };
         if (object.pagination !== undefined && object.pagination !== null) {
             message.pagination = PageRequest.fromJSON(object.pagination);
         }
@@ -1069,7 +1069,7 @@ export const QueryAllRejectedNodeRequest = {
         return obj;
     },
     fromPartial(object) {
-        const message = { ...baseQueryAllRejectedNodeRequest };
+        const message = { ...baseQueryAllRejectedDisableNodeRequest };
         if (object.pagination !== undefined && object.pagination !== null) {
             message.pagination = PageRequest.fromPartial(object.pagination);
         }
@@ -1079,11 +1079,11 @@ export const QueryAllRejectedNodeRequest = {
         return message;
     }
 };
-const baseQueryAllRejectedNodeResponse = {};
-export const QueryAllRejectedNodeResponse = {
+const baseQueryAllRejectedDisableNodeResponse = {};
+export const QueryAllRejectedDisableNodeResponse = {
     encode(message, writer = Writer.create()) {
         for (const v of message.rejectedNode) {
-            RejectedNode.encode(v, writer.uint32(10).fork()).ldelim();
+            RejectedDisableNode.encode(v, writer.uint32(10).fork()).ldelim();
         }
         if (message.pagination !== undefined) {
             PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim();
@@ -1093,13 +1093,13 @@ export const QueryAllRejectedNodeResponse = {
     decode(input, length) {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
-        const message = { ...baseQueryAllRejectedNodeResponse };
+        const message = { ...baseQueryAllRejectedDisableNodeResponse };
         message.rejectedNode = [];
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
                 case 1:
-                    message.rejectedNode.push(RejectedNode.decode(reader, reader.uint32()));
+                    message.rejectedNode.push(RejectedDisableNode.decode(reader, reader.uint32()));
                     break;
                 case 2:
                     message.pagination = PageResponse.decode(reader, reader.uint32());
@@ -1112,11 +1112,11 @@ export const QueryAllRejectedNodeResponse = {
         return message;
     },
     fromJSON(object) {
-        const message = { ...baseQueryAllRejectedNodeResponse };
+        const message = { ...baseQueryAllRejectedDisableNodeResponse };
         message.rejectedNode = [];
         if (object.rejectedNode !== undefined && object.rejectedNode !== null) {
             for (const e of object.rejectedNode) {
-                message.rejectedNode.push(RejectedNode.fromJSON(e));
+                message.rejectedNode.push(RejectedDisableNode.fromJSON(e));
             }
         }
         if (object.pagination !== undefined && object.pagination !== null) {
@@ -1130,7 +1130,7 @@ export const QueryAllRejectedNodeResponse = {
     toJSON(message) {
         const obj = {};
         if (message.rejectedNode) {
-            obj.rejectedNode = message.rejectedNode.map((e) => (e ? RejectedNode.toJSON(e) : undefined));
+            obj.rejectedNode = message.rejectedNode.map((e) => (e ? RejectedDisableNode.toJSON(e) : undefined));
         }
         else {
             obj.rejectedNode = [];
@@ -1139,11 +1139,11 @@ export const QueryAllRejectedNodeResponse = {
         return obj;
     },
     fromPartial(object) {
-        const message = { ...baseQueryAllRejectedNodeResponse };
+        const message = { ...baseQueryAllRejectedDisableNodeResponse };
         message.rejectedNode = [];
         if (object.rejectedNode !== undefined && object.rejectedNode !== null) {
             for (const e of object.rejectedNode) {
-                message.rejectedNode.push(RejectedNode.fromPartial(e));
+                message.rejectedNode.push(RejectedDisableNode.fromPartial(e));
             }
         }
         if (object.pagination !== undefined && object.pagination !== null) {
@@ -1199,14 +1199,14 @@ export class QueryClientImpl {
         const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.validator.Query', 'DisabledValidatorAll', data);
         return promise.then((data) => QueryAllDisabledValidatorResponse.decode(new Reader(data)));
     }
-    RejectedNode(request) {
-        const data = QueryGetRejectedNodeRequest.encode(request).finish();
-        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.validator.Query', 'RejectedNode', data);
-        return promise.then((data) => QueryGetRejectedNodeResponse.decode(new Reader(data)));
+    RejectedDisableNode(request) {
+        const data = QueryGetRejectedDisableNodeRequest.encode(request).finish();
+        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.validator.Query', 'RejectedDisableNode', data);
+        return promise.then((data) => QueryGetRejectedDisableNodeResponse.decode(new Reader(data)));
     }
-    RejectedNodeAll(request) {
-        const data = QueryAllRejectedNodeRequest.encode(request).finish();
-        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.validator.Query', 'RejectedNodeAll', data);
-        return promise.then((data) => QueryAllRejectedNodeResponse.decode(new Reader(data)));
+    RejectedDisableNodeAll(request) {
+        const data = QueryAllRejectedDisableNodeRequest.encode(request).finish();
+        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.validator.Query', 'RejectedDisableNodeAll', data);
+        return promise.then((data) => QueryAllRejectedDisableNodeResponse.decode(new Reader(data)));
     }
 }

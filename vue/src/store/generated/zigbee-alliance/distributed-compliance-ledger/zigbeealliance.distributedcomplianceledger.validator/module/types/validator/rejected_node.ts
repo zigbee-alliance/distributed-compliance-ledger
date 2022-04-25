@@ -4,17 +4,17 @@ import { Writer, Reader } from 'protobufjs/minimal'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.validator'
 
-export interface RejectedNode {
+export interface RejectedDisableNode {
   address: string
   creator: string
   approvals: Grant[]
   rejectApprovals: Grant[]
 }
 
-const baseRejectedNode: object = { address: '', creator: '' }
+const baseRejectedDisableNode: object = { address: '', creator: '' }
 
-export const RejectedNode = {
-  encode(message: RejectedNode, writer: Writer = Writer.create()): Writer {
+export const RejectedDisableNode = {
+  encode(message: RejectedDisableNode, writer: Writer = Writer.create()): Writer {
     if (message.address !== '') {
       writer.uint32(10).string(message.address)
     }
@@ -30,10 +30,10 @@ export const RejectedNode = {
     return writer
   },
 
-  decode(input: Reader | Uint8Array, length?: number): RejectedNode {
+  decode(input: Reader | Uint8Array, length?: number): RejectedDisableNode {
     const reader = input instanceof Uint8Array ? new Reader(input) : input
     let end = length === undefined ? reader.len : reader.pos + length
-    const message = { ...baseRejectedNode } as RejectedNode
+    const message = { ...baseRejectedDisableNode } as RejectedDisableNode
     message.approvals = []
     message.rejectApprovals = []
     while (reader.pos < end) {
@@ -59,8 +59,8 @@ export const RejectedNode = {
     return message
   },
 
-  fromJSON(object: any): RejectedNode {
-    const message = { ...baseRejectedNode } as RejectedNode
+  fromJSON(object: any): RejectedDisableNode {
+    const message = { ...baseRejectedDisableNode } as RejectedDisableNode
     message.approvals = []
     message.rejectApprovals = []
     if (object.address !== undefined && object.address !== null) {
@@ -86,7 +86,7 @@ export const RejectedNode = {
     return message
   },
 
-  toJSON(message: RejectedNode): unknown {
+  toJSON(message: RejectedDisableNode): unknown {
     const obj: any = {}
     message.address !== undefined && (obj.address = message.address)
     message.creator !== undefined && (obj.creator = message.creator)
@@ -103,8 +103,8 @@ export const RejectedNode = {
     return obj
   },
 
-  fromPartial(object: DeepPartial<RejectedNode>): RejectedNode {
-    const message = { ...baseRejectedNode } as RejectedNode
+  fromPartial(object: DeepPartial<RejectedDisableNode>): RejectedDisableNode {
+    const message = { ...baseRejectedDisableNode } as RejectedDisableNode
     message.approvals = []
     message.rejectApprovals = []
     if (object.address !== undefined && object.address !== null) {

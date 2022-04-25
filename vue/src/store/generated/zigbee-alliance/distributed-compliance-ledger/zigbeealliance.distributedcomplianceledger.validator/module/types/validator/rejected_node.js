@@ -2,8 +2,8 @@
 import { Grant } from '../validator/grant';
 import { Writer, Reader } from 'protobufjs/minimal';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.validator';
-const baseRejectedNode = { address: '', creator: '' };
-export const RejectedNode = {
+const baseRejectedDisableNode = { address: '', creator: '' };
+export const RejectedDisableNode = {
     encode(message, writer = Writer.create()) {
         if (message.address !== '') {
             writer.uint32(10).string(message.address);
@@ -22,7 +22,7 @@ export const RejectedNode = {
     decode(input, length) {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
-        const message = { ...baseRejectedNode };
+        const message = { ...baseRejectedDisableNode };
         message.approvals = [];
         message.rejectApprovals = [];
         while (reader.pos < end) {
@@ -48,7 +48,7 @@ export const RejectedNode = {
         return message;
     },
     fromJSON(object) {
-        const message = { ...baseRejectedNode };
+        const message = { ...baseRejectedDisableNode };
         message.approvals = [];
         message.rejectApprovals = [];
         if (object.address !== undefined && object.address !== null) {
@@ -94,7 +94,7 @@ export const RejectedNode = {
         return obj;
     },
     fromPartial(object) {
-        const message = { ...baseRejectedNode };
+        const message = { ...baseRejectedDisableNode };
         message.approvals = [];
         message.rejectApprovals = [];
         if (object.address !== undefined && object.address !== null) {
