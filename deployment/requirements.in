@@ -15,3 +15,4 @@
 ansible # GPLv3
 boto3 # Apache-2.0
 botocore # Apache-2.0
+netaddr # BSD
