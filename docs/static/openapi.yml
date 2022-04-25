@@ -11231,10 +11231,10 @@ paths:
           type: string
       tags:
         - Query
-  /dcl/validator/rejected-nodes:
+  /dcl/validator/rejected-disable-nodes:
     get:
       summary: Queries a list of RejectedNode items.
-      operationId: RejectedNodeAll
+      operationId: RejectedDisableNodeAll
       responses:
         '200':
           description: A successful response.
@@ -11549,10 +11549,10 @@ paths:
           type: boolean
       tags:
         - Query
-  /dcl/validator/rejected-nodes/{owner}:
+  /dcl/validator/rejected-disable-nodes/{owner}:
     get:
       summary: Queries a RejectedNode by index.
-      operationId: RejectedNode
+      operationId: RejectedDisableNode
       responses:
         '200':
           description: A successful response.
@@ -18432,7 +18432,7 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
-  zigbeealliance.distributedcomplianceledger.validator.QueryAllRejectedNodeResponse:
+  zigbeealliance.distributedcomplianceledger.validator.QueryAllRejectedDisableNodeResponse:
     type: object
     properties:
       rejectedNode:
@@ -18806,7 +18806,7 @@ definitions:
                   format: int64
                 info:
                   type: string
-  zigbeealliance.distributedcomplianceledger.validator.QueryGetRejectedNodeResponse:
+  zigbeealliance.distributedcomplianceledger.validator.QueryGetRejectedDisableNodeResponse:
     type: object
     properties:
       rejectedNode:
@@ -19041,7 +19041,7 @@ definitions:
           jailedReason:
             type: string
             title: the reason of validator jailing
-  zigbeealliance.distributedcomplianceledger.validator.RejectedNode:
+  zigbeealliance.distributedcomplianceledger.validator.RejectedDisableNode:
     type: object
     properties:
       address:
