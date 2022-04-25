@@ -17,6 +17,6 @@ message GenesisState {
   repeated LastValidatorPower lastValidatorPowerList = 2 [(gogoproto.nullable) = false];
   repeated ProposedDisableValidator proposedDisableValidatorList = 3 [(gogoproto.nullable) = false];
   repeated DisabledValidator disabledValidatorList = 4 [(gogoproto.nullable) = false];
-  repeated RejectedNode rejectedNodeList = 5 [(gogoproto.nullable) = false];
+  repeated RejectedDisableNode rejectedNodeList = 5 [(gogoproto.nullable) = false];
   // this line is used by starport scaffolding # genesis/proto/state
 }
