@@ -38,7 +38,7 @@ resource "aws_instance" "this_node" {
     }
     
     provisioner "remote-exec" {
-        script = "./provisioner/install-python.sh"
+        script = "./provisioner/install-ansible-deps.sh"
     }
 
     tags = {
