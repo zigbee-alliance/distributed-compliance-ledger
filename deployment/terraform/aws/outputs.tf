@@ -6,6 +6,11 @@ output "ansible_inventory" {
     value = { 
         all = {
             children = {
+
+                genesis = {
+                    hosts = { for host in local.nodes.validator.public_ips: host => null } 
+                }
+                
                 validators = {
                     hosts = { for host in local.nodes.validator.public_ips: host => null } 
                 }
