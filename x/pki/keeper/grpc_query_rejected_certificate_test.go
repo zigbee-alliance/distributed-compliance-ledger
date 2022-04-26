@@ -1,5 +1,6 @@
 package keeper_test
 
+/*
 import (
 	"strconv"
 	"testing"
@@ -127,3 +128,4 @@ func TestRejectedCertificateQueryPaginated(t *testing.T) {
 		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid request"))
 	})
 }
+*/
