@@ -1,17 +1,18 @@
 package types
 
 func NewRootCertificate(pemCert string, subject string, subjectAsText string, subjectKeyID string,
-	serialNumber string, owner string, approvals []*Grant,
+	serialNumber string, owner string, approvals []*Grant, rejectApprovals []*Grant,
 ) Certificate {
 	return Certificate{
-		PemCert:       pemCert,
-		Subject:       subject,
-		SubjectAsText: subjectAsText,
-		SubjectKeyId:  subjectKeyID,
-		SerialNumber:  serialNumber,
-		IsRoot:        true,
-		Owner:         owner,
-		Approvals:     approvals,
+		PemCert:         pemCert,
+		Subject:         subject,
+		SubjectAsText:   subjectAsText,
+		SubjectKeyId:    subjectKeyID,
+		SerialNumber:    serialNumber,
+		IsRoot:          true,
+		Owner:           owner,
+		Approvals:       approvals,
+		RejectApprovals: rejectApprovals,
 	}
 }
 
