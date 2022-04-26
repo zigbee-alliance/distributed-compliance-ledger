@@ -13,7 +13,8 @@ const baseCertificate = {
     owner: '',
     subject: '',
     subjectKeyId: '',
-    subjectAsText: ''
+    subjectAsText: '',
+    rejectApprovals: ''
 };
 export const Certificate = {
     encode(message, writer = Writer.create()) {
@@ -53,6 +54,9 @@ export const Certificate = {
         if (message.subjectAsText !== '') {
             writer.uint32(98).string(message.subjectAsText);
         }
+        for (const v of message.rejectApprovals) {
+            writer.uint32(106).string(v);
+        }
         return writer;
     },
     decode(input, length) {
@@ -60,6 +64,7 @@ export const Certificate = {
         let end = length === undefined ? reader.len : reader.pos + length;
         const message = { ...baseCertificate };
         message.approvals = [];
+        message.rejectApprovals = [];
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
@@ -99,6 +104,9 @@ export const Certificate = {
                 case 12:
                     message.subjectAsText = reader.string();
                     break;
+                case 13:
+                    message.rejectApprovals.push(reader.string());
+                    break;
                 default:
                     reader.skipType(tag & 7);
                     break;
@@ -109,6 +117,7 @@ export const Certificate = {
     fromJSON(object) {
         const message = { ...baseCertificate };
         message.approvals = [];
+        message.rejectApprovals = [];
         if (object.pemCert !== undefined && object.pemCert !== null) {
             message.pemCert = String(object.pemCert);
         }
@@ -180,6 +189,11 @@ export const Certificate = {
         else {
             message.subjectAsText = '';
         }
+        if (object.rejectApprovals !== undefined && object.rejectApprovals !== null) {
+            for (const e of object.rejectApprovals) {
+                message.rejectApprovals.push(String(e));
+            }
+        }
         return message;
     },
     toJSON(message) {
@@ -201,11 +215,18 @@ export const Certificate = {
             obj.approvals = [];
         }
         message.subjectAsText !== undefined && (obj.subjectAsText = message.subjectAsText);
+        if (message.rejectApprovals) {
+            obj.rejectApprovals = message.rejectApprovals.map((e) => e);
+        }
+        else {
+            obj.rejectApprovals = [];
+        }
         return obj;
     },
     fromPartial(object) {
         const message = { ...baseCertificate };
         message.approvals = [];
+        message.rejectApprovals = [];
         if (object.pemCert !== undefined && object.pemCert !== null) {
             message.pemCert = object.pemCert;
         }
@@ -276,6 +297,11 @@ export const Certificate = {
         }
         else {
             message.subjectAsText = '';
+        }
+        if (object.rejectApprovals !== undefined && object.rejectApprovals !== null) {
+            for (const e of object.rejectApprovals) {
+                message.rejectApprovals.push(e);
+            }
         }
         return message;
     }

@@ -5,14 +5,14 @@ import "encoding/binary"
 var _ binary.ByteOrder
 
 const (
-	// RejectedCertificateKeyPrefix is the prefix to retrieve all RejectedCertificate
+	// RejectedCertificateKeyPrefix is the prefix to retrieve all RejectedCertificate.
 	RejectedCertificateKeyPrefix = "RejectedCertificate/value/"
 )
 
-// RejectedCertificateKey returns the store key to retrieve a RejectedCertificate from the index fields
+// RejectedCertificateKey returns the store key to retrieve a RejectedCertificate from the index fields.
 func RejectedCertificateKey(
 	subject string,
-	subjectKeyId string,
+	subjectKeyID string,
 ) []byte {
 	var key []byte
 
@@ -20,8 +20,8 @@ func RejectedCertificateKey(
 	key = append(key, subjectBytes...)
 	key = append(key, []byte("/")...)
 
-	subjectKeyIdBytes := []byte(subjectKeyId)
-	key = append(key, subjectKeyIdBytes...)
+	subjectKeyIDBytes := []byte(subjectKeyID)
+	key = append(key, subjectKeyIDBytes...)
 	key = append(key, []byte("/")...)
 
 	return key

@@ -23,6 +23,7 @@ export interface PkiCertificate {
     subjectKeyId?: string;
     approvals?: PkiGrant[];
     subjectAsText?: string;
+    rejectApprovals?: string[];
 }
 export interface PkiCertificateIdentifier {
     subject?: string;
@@ -54,6 +55,7 @@ export interface PkiProposedCertificate {
     owner?: string;
     approvals?: PkiGrant[];
     subjectAsText?: string;
+    rejectApprovals?: PkiGrant[];
 }
 export interface PkiProposedCertificateRevocation {
     subject?: string;
@@ -156,10 +158,7 @@ export interface PkiQueryGetRevokedRootCertificatesResponse {
 export interface PkiRejectedCertificate {
     subject?: string;
     subjectKeyId?: string;
-    pemCert?: string;
-    serialNumber?: string;
-    owner?: string;
-    approvals?: string[];
+    certs?: PkiCertificate[];
 }
 export interface PkiRevokedCertificates {
     subject?: string;
@@ -386,6 +385,30 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * No description
      *
      * @tags Query
+     * @name QueryRejectedCertificateAll
+     * @summary Queries a list of RejectedCertificate items.
+     * @request GET:/dcl/pki/rejected_certificate
+     */
+    queryRejectedCertificateAll: (query?: {
+        "pagination.key"?: string;
+        "pagination.offset"?: string;
+        "pagination.limit"?: string;
+        "pagination.countTotal"?: boolean;
+        "pagination.reverse"?: boolean;
+    }, params?: RequestParams) => Promise<HttpResponse<PkiQueryAllRejectedCertificateResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryRejectedCertificate
+     * @summary Queries a RejectedCertificate by index.
+     * @request GET:/dcl/pki/rejected_certificate/{subject}/{subjectKeyId}
+     */
+    queryRejectedCertificate: (subject: string, subjectKeyId: string, params?: RequestParams) => Promise<HttpResponse<PkiQueryGetRejectedCertificateResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
      * @name QueryRevokedCertificatesAll
      * @summary Queries a list of RevokedCertificates items.
      * @request GET:/dcl/pki/revoked-certificates
@@ -424,29 +447,5 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @request GET:/dcl/pki/root-certificates
      */
     queryApprovedRootCertificates: (params?: RequestParams) => Promise<HttpResponse<PkiQueryGetApprovedRootCertificatesResponse, RpcStatus>>;
-    /**
-     * No description
-     *
-     * @tags Query
-     * @name QueryRejectedCertificateAll
-     * @summary Queries a list of RejectedCertificate items.
-     * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/rejected_certificate
-     */
-    queryRejectedCertificateAll: (query?: {
-        "pagination.key"?: string;
-        "pagination.offset"?: string;
-        "pagination.limit"?: string;
-        "pagination.countTotal"?: boolean;
-        "pagination.reverse"?: boolean;
-    }, params?: RequestParams) => Promise<HttpResponse<PkiQueryAllRejectedCertificateResponse, RpcStatus>>;
-    /**
-     * No description
-     *
-     * @tags Query
-     * @name QueryRejectedCertificate
-     * @summary Queries a RejectedCertificate by index.
-     * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/rejected_certificate/{subject}/{subjectKeyId}
-     */
-    queryRejectedCertificate: (subject: string, subjectKeyId: string, params?: RequestParams) => Promise<HttpResponse<PkiQueryGetRejectedCertificateResponse, RpcStatus>>;
 }
 export {};

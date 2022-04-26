@@ -23,12 +23,9 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type RejectedCertificate struct {
-	Subject      string   `protobuf:"bytes,1,opt,name=subject,proto3" json:"subject,omitempty"`
-	SubjectKeyId string   `protobuf:"bytes,2,opt,name=subjectKeyId,proto3" json:"subjectKeyId,omitempty"`
-	PemCert      string   `protobuf:"bytes,3,opt,name=pemCert,proto3" json:"pemCert,omitempty"`
-	SerialNumber string   `protobuf:"bytes,4,opt,name=serialNumber,proto3" json:"serialNumber,omitempty"`
-	Owner        string   `protobuf:"bytes,5,opt,name=owner,proto3" json:"owner,omitempty"`
-	Approvals    []string `protobuf:"bytes,6,rep,name=approvals,proto3" json:"approvals,omitempty"`
+	Subject      string         `protobuf:"bytes,1,opt,name=subject,proto3" json:"subject,omitempty"`
+	SubjectKeyId string         `protobuf:"bytes,2,opt,name=subjectKeyId,proto3" json:"subjectKeyId,omitempty"`
+	Certs        []*Certificate `protobuf:"bytes,3,rep,name=certs,proto3" json:"certs,omitempty"`
 }
 
 func (m *RejectedCertificate) Reset()         { *m = RejectedCertificate{} }
@@ -78,30 +75,9 @@ func (m *RejectedCertificate) GetSubjectKeyId() string {
 	return ""
 }
 
-func (m *RejectedCertificate) GetPemCert() string {
+func (m *RejectedCertificate) GetCerts() []*Certificate {
 	if m != nil {
-		return m.PemCert
-	}
-	return ""
-}
-
-func (m *RejectedCertificate) GetSerialNumber() string {
-	if m != nil {
-		return m.SerialNumber
-	}
-	return ""
-}
-
-func (m *RejectedCertificate) GetOwner() string {
-	if m != nil {
-		return m.Owner
-	}
-	return ""
-}
-
-func (m *RejectedCertificate) GetApprovals() []string {
-	if m != nil {
-		return m.Approvals
+		return m.Certs
 	}
 	return nil
 }
@@ -113,25 +89,23 @@ func init() {
 func init() { proto.RegisterFile("pki/rejected_certificate.proto", fileDescriptor_830b292fc8b89847) }
 
 var fileDescriptor_830b292fc8b89847 = []byte{
-	// 277 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x54, 0x90, 0xbd, 0x4e, 0xc3, 0x30,
-	0x14, 0x85, 0x63, 0x4a, 0x8b, 0x62, 0x31, 0x05, 0x06, 0x0f, 0xc8, 0xaa, 0x3a, 0x75, 0x49, 0x32,
-	0xf0, 0x06, 0xc0, 0x82, 0x90, 0x18, 0x32, 0x32, 0x80, 0x6c, 0xe7, 0x12, 0x2e, 0x4d, 0x6a, 0xcb,
-	0x71, 0x80, 0xf2, 0x14, 0xbc, 0x14, 0x12, 0x63, 0x47, 0x46, 0x94, 0xbc, 0x08, 0xca, 0x4f, 0x95,
-	0x76, 0xbb, 0xe7, 0xbb, 0x3a, 0x67, 0xf8, 0x28, 0x37, 0x2b, 0x8c, 0x2d, 0xbc, 0x82, 0x72, 0x90,
-	0x3e, 0x29, 0xb0, 0x0e, 0x9f, 0x51, 0x09, 0x07, 0x91, 0xb1, 0xda, 0xe9, 0x20, 0xfa, 0xc4, 0x4c,
-	0x02, 0x88, 0x3c, 0x47, 0xb1, 0x56, 0x10, 0xa5, 0x58, 0x3a, 0x8b, 0xb2, 0x72, 0x90, 0x2a, 0x5d,
-	0x98, 0x9e, 0xe6, 0x90, 0x66, 0x60, 0x23, 0xb3, 0xc2, 0xc5, 0x37, 0xa1, 0x67, 0xc9, 0x30, 0x77,
-	0x3d, 0xae, 0x05, 0x8c, 0x9e, 0x94, 0x95, 0x6c, 0x39, 0x23, 0x73, 0xb2, 0xf4, 0x93, 0x5d, 0x0c,
-	0x16, 0xf4, 0x74, 0x38, 0xef, 0x60, 0x73, 0x9b, 0xb2, 0xa3, 0xee, 0x7d, 0xc0, 0xda, 0xb6, 0x81,
-	0xa2, 0xdd, 0x63, 0x93, 0xbe, 0x3d, 0xc4, 0xae, 0x0d, 0x16, 0x45, 0x7e, 0x5f, 0x15, 0x12, 0x2c,
-	0x3b, 0x1e, 0xda, 0x7b, 0x2c, 0x38, 0xa7, 0x53, 0xfd, 0xbe, 0x06, 0xcb, 0xa6, 0xdd, 0xb3, 0x0f,
-	0xc1, 0x05, 0xf5, 0x85, 0x31, 0x56, 0xbf, 0x89, 0xbc, 0x64, 0xb3, 0xf9, 0x64, 0xe9, 0x27, 0x23,
-	0xb8, 0x7a, 0xfc, 0xa9, 0x39, 0xd9, 0xd6, 0x9c, 0xfc, 0xd5, 0x9c, 0x7c, 0x35, 0xdc, 0xdb, 0x36,
-	0xdc, 0xfb, 0x6d, 0xb8, 0xf7, 0x70, 0x93, 0xa1, 0x7b, 0xa9, 0x64, 0xa4, 0x74, 0x11, 0xf7, 0x72,
-	0xc2, 0x9d, 0x9d, 0x78, 0xcf, 0x4e, 0x38, 0xea, 0x09, 0x7b, 0x3f, 0xf1, 0x47, 0xdc, 0xca, 0x76,
-	0x1b, 0x03, 0xa5, 0x9c, 0x75, 0x7a, 0x2f, 0xff, 0x03, 0x00, 0x00, 0xff, 0xff, 0x4d, 0x20, 0x69,
-	0xbb, 0x80, 0x01, 0x00, 0x00,
+	// 247 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x92, 0x2b, 0xc8, 0xce, 0xd4,
+	0x2f, 0x4a, 0xcd, 0x4a, 0x4d, 0x2e, 0x49, 0x4d, 0x89, 0x4f, 0x4e, 0x2d, 0x2a, 0xc9, 0x4c, 0xcb,
+	0x4c, 0x4e, 0x2c, 0x49, 0xd5, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0xd2, 0xab, 0xca, 0x4c, 0x4f,
+	0x4a, 0x4d, 0x4d, 0xcc, 0xc9, 0xc9, 0x4c, 0xcc, 0x4b, 0x4e, 0xd5, 0x4b, 0xc9, 0x2c, 0x2e, 0x29,
+	0xca, 0x4c, 0x2a, 0x2d, 0x49, 0x4d, 0x49, 0xce, 0xcf, 0x2d, 0x80, 0x88, 0xe6, 0xa4, 0xa6, 0xa4,
+	0xa7, 0x16, 0xe9, 0x15, 0x64, 0x67, 0x4a, 0x89, 0x82, 0xcc, 0xc3, 0x30, 0x46, 0x69, 0x19, 0x23,
+	0x97, 0x70, 0x10, 0xd4, 0x16, 0x67, 0x84, 0xac, 0x90, 0x04, 0x17, 0x7b, 0x71, 0x69, 0x12, 0x48,
+	0x5c, 0x82, 0x51, 0x81, 0x51, 0x83, 0x33, 0x08, 0xc6, 0x15, 0x52, 0xe2, 0xe2, 0x81, 0x32, 0xbd,
+	0x53, 0x2b, 0x3d, 0x53, 0x24, 0x98, 0xc0, 0xd2, 0x28, 0x62, 0x42, 0x81, 0x5c, 0xac, 0x20, 0xab,
+	0x8a, 0x25, 0x98, 0x15, 0x98, 0x35, 0xb8, 0x8d, 0xac, 0x49, 0x74, 0xac, 0x1e, 0x92, 0x4b, 0x82,
+	0x20, 0x26, 0x39, 0xc5, 0x9d, 0x78, 0x24, 0xc7, 0x78, 0xe1, 0x91, 0x1c, 0xe3, 0x83, 0x47, 0x72,
+	0x8c, 0x13, 0x1e, 0xcb, 0x31, 0x5c, 0x78, 0x2c, 0xc7, 0x70, 0xe3, 0xb1, 0x1c, 0x43, 0x94, 0x4b,
+	0x7a, 0x66, 0x49, 0x46, 0x69, 0x92, 0x5e, 0x72, 0x7e, 0xae, 0x3e, 0xc4, 0x1e, 0x5d, 0x98, 0x45,
+	0xfa, 0x48, 0x16, 0xe9, 0x22, 0x6c, 0xd2, 0x85, 0x58, 0xa5, 0x5f, 0xa1, 0x0f, 0x0a, 0x94, 0x92,
+	0xca, 0x82, 0xd4, 0xe2, 0x24, 0x36, 0x70, 0x78, 0x18, 0x03, 0x02, 0x00, 0x00, 0xff, 0xff, 0xb5,
+	0x7e, 0x7f, 0xe1, 0x78, 0x01, 0x00, 0x00,
 }
 
 func (m *RejectedCertificate) Marshal() (dAtA []byte, err error) {
@@ -154,35 +128,19 @@ func (m *RejectedCertificate) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.Approvals) > 0 {
-		for iNdEx := len(m.Approvals) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.Approvals[iNdEx])
-			copy(dAtA[i:], m.Approvals[iNdEx])
-			i = encodeVarintRejectedCertificate(dAtA, i, uint64(len(m.Approvals[iNdEx])))
+	if len(m.Certs) > 0 {
+		for iNdEx := len(m.Certs) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Certs[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintRejectedCertificate(dAtA, i, uint64(size))
+			}
 			i--
-			dAtA[i] = 0x32
+			dAtA[i] = 0x1a
 		}
-	}
-	if len(m.Owner) > 0 {
-		i -= len(m.Owner)
-		copy(dAtA[i:], m.Owner)
-		i = encodeVarintRejectedCertificate(dAtA, i, uint64(len(m.Owner)))
-		i--
-		dAtA[i] = 0x2a
-	}
-	if len(m.SerialNumber) > 0 {
-		i -= len(m.SerialNumber)
-		copy(dAtA[i:], m.SerialNumber)
-		i = encodeVarintRejectedCertificate(dAtA, i, uint64(len(m.SerialNumber)))
-		i--
-		dAtA[i] = 0x22
-	}
-	if len(m.PemCert) > 0 {
-		i -= len(m.PemCert)
-		copy(dAtA[i:], m.PemCert)
-		i = encodeVarintRejectedCertificate(dAtA, i, uint64(len(m.PemCert)))
-		i--
-		dAtA[i] = 0x1a
 	}
 	if len(m.SubjectKeyId) > 0 {
 		i -= len(m.SubjectKeyId)
@@ -226,21 +184,9 @@ func (m *RejectedCertificate) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovRejectedCertificate(uint64(l))
 	}
-	l = len(m.PemCert)
-	if l > 0 {
-		n += 1 + l + sovRejectedCertificate(uint64(l))
-	}
-	l = len(m.SerialNumber)
-	if l > 0 {
-		n += 1 + l + sovRejectedCertificate(uint64(l))
-	}
-	l = len(m.Owner)
-	if l > 0 {
-		n += 1 + l + sovRejectedCertificate(uint64(l))
-	}
-	if len(m.Approvals) > 0 {
-		for _, s := range m.Approvals {
-			l = len(s)
+	if len(m.Certs) > 0 {
+		for _, e := range m.Certs {
+			l = e.Size()
 			n += 1 + l + sovRejectedCertificate(uint64(l))
 		}
 	}
@@ -348,9 +294,9 @@ func (m *RejectedCertificate) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PemCert", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Certs", wireType)
 			}
-			var stringLen uint64
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowRejectedCertificate
@@ -360,119 +306,25 @@ func (m *RejectedCertificate) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
+			if msglen < 0 {
 				return ErrInvalidLengthRejectedCertificate
 			}
-			postIndex := iNdEx + intStringLen
+			postIndex := iNdEx + msglen
 			if postIndex < 0 {
 				return ErrInvalidLengthRejectedCertificate
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.PemCert = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field SerialNumber", wireType)
+			m.Certs = append(m.Certs, &Certificate{})
+			if err := m.Certs[len(m.Certs)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
 			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowRejectedCertificate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthRejectedCertificate
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthRejectedCertificate
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.SerialNumber = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Owner", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowRejectedCertificate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthRejectedCertificate
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthRejectedCertificate
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Owner = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 6:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Approvals", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowRejectedCertificate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthRejectedCertificate
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthRejectedCertificate
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Approvals = append(m.Approvals, string(dAtA[iNdEx:postIndex]))
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
