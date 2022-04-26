@@ -62,6 +62,13 @@ export interface MsgRevokeX509Cert {
 
 export interface MsgRevokeX509CertResponse {}
 
+export interface MsgRejectAddX509RootCert {
+  signer: string
+  cert: string
+}
+
+export interface MsgRejectAddX509RootCertResponse {}
+
 const baseMsgProposeAddX509RootCert: object = { signer: '', cert: '', info: '', time: 0 }
 
 export const MsgProposeAddX509RootCert = {
@@ -994,6 +1001,116 @@ export const MsgRevokeX509CertResponse = {
   }
 }
 
+const baseMsgRejectAddX509RootCert: object = { signer: '', cert: '' }
+
+export const MsgRejectAddX509RootCert = {
+  encode(message: MsgRejectAddX509RootCert, writer: Writer = Writer.create()): Writer {
+    if (message.signer !== '') {
+      writer.uint32(10).string(message.signer)
+    }
+    if (message.cert !== '') {
+      writer.uint32(18).string(message.cert)
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgRejectAddX509RootCert {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseMsgRejectAddX509RootCert } as MsgRejectAddX509RootCert
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.signer = reader.string()
+          break
+        case 2:
+          message.cert = reader.string()
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): MsgRejectAddX509RootCert {
+    const message = { ...baseMsgRejectAddX509RootCert } as MsgRejectAddX509RootCert
+    if (object.signer !== undefined && object.signer !== null) {
+      message.signer = String(object.signer)
+    } else {
+      message.signer = ''
+    }
+    if (object.cert !== undefined && object.cert !== null) {
+      message.cert = String(object.cert)
+    } else {
+      message.cert = ''
+    }
+    return message
+  },
+
+  toJSON(message: MsgRejectAddX509RootCert): unknown {
+    const obj: any = {}
+    message.signer !== undefined && (obj.signer = message.signer)
+    message.cert !== undefined && (obj.cert = message.cert)
+    return obj
+  },
+
+  fromPartial(object: DeepPartial<MsgRejectAddX509RootCert>): MsgRejectAddX509RootCert {
+    const message = { ...baseMsgRejectAddX509RootCert } as MsgRejectAddX509RootCert
+    if (object.signer !== undefined && object.signer !== null) {
+      message.signer = object.signer
+    } else {
+      message.signer = ''
+    }
+    if (object.cert !== undefined && object.cert !== null) {
+      message.cert = object.cert
+    } else {
+      message.cert = ''
+    }
+    return message
+  }
+}
+
+const baseMsgRejectAddX509RootCertResponse: object = {}
+
+export const MsgRejectAddX509RootCertResponse = {
+  encode(_: MsgRejectAddX509RootCertResponse, writer: Writer = Writer.create()): Writer {
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgRejectAddX509RootCertResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseMsgRejectAddX509RootCertResponse } as MsgRejectAddX509RootCertResponse
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(_: any): MsgRejectAddX509RootCertResponse {
+    const message = { ...baseMsgRejectAddX509RootCertResponse } as MsgRejectAddX509RootCertResponse
+    return message
+  },
+
+  toJSON(_: MsgRejectAddX509RootCertResponse): unknown {
+    const obj: any = {}
+    return obj
+  },
+
+  fromPartial(_: DeepPartial<MsgRejectAddX509RootCertResponse>): MsgRejectAddX509RootCertResponse {
+    const message = { ...baseMsgRejectAddX509RootCertResponse } as MsgRejectAddX509RootCertResponse
+    return message
+  }
+}
+
 /** Msg defines the Msg service. */
 export interface Msg {
   ProposeAddX509RootCert(request: MsgProposeAddX509RootCert): Promise<MsgProposeAddX509RootCertResponse>
@@ -1001,8 +1118,9 @@ export interface Msg {
   AddX509Cert(request: MsgAddX509Cert): Promise<MsgAddX509CertResponse>
   ProposeRevokeX509RootCert(request: MsgProposeRevokeX509RootCert): Promise<MsgProposeRevokeX509RootCertResponse>
   ApproveRevokeX509RootCert(request: MsgApproveRevokeX509RootCert): Promise<MsgApproveRevokeX509RootCertResponse>
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   RevokeX509Cert(request: MsgRevokeX509Cert): Promise<MsgRevokeX509CertResponse>
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  RejectAddX509RootCert(request: MsgRejectAddX509RootCert): Promise<MsgRejectAddX509RootCertResponse>
 }
 
 export class MsgClientImpl implements Msg {
@@ -1044,6 +1162,12 @@ export class MsgClientImpl implements Msg {
     const data = MsgRevokeX509Cert.encode(request).finish()
     const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Msg', 'RevokeX509Cert', data)
     return promise.then((data) => MsgRevokeX509CertResponse.decode(new Reader(data)))
+  }
+
+  RejectAddX509RootCert(request: MsgRejectAddX509RootCert): Promise<MsgRejectAddX509RootCertResponse> {
+    const data = MsgRejectAddX509RootCert.encode(request).finish()
+    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Msg', 'RejectAddX509RootCert', data)
+    return promise.then((data) => MsgRejectAddX509RootCertResponse.decode(new Reader(data)))
   }
 }
 

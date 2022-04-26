@@ -918,6 +918,108 @@ export const MsgRevokeX509CertResponse = {
         return message;
     }
 };
+const baseMsgRejectAddX509RootCert = { signer: '', cert: '' };
+export const MsgRejectAddX509RootCert = {
+    encode(message, writer = Writer.create()) {
+        if (message.signer !== '') {
+            writer.uint32(10).string(message.signer);
+        }
+        if (message.cert !== '') {
+            writer.uint32(18).string(message.cert);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseMsgRejectAddX509RootCert };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.signer = reader.string();
+                    break;
+                case 2:
+                    message.cert = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseMsgRejectAddX509RootCert };
+        if (object.signer !== undefined && object.signer !== null) {
+            message.signer = String(object.signer);
+        }
+        else {
+            message.signer = '';
+        }
+        if (object.cert !== undefined && object.cert !== null) {
+            message.cert = String(object.cert);
+        }
+        else {
+            message.cert = '';
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.signer !== undefined && (obj.signer = message.signer);
+        message.cert !== undefined && (obj.cert = message.cert);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseMsgRejectAddX509RootCert };
+        if (object.signer !== undefined && object.signer !== null) {
+            message.signer = object.signer;
+        }
+        else {
+            message.signer = '';
+        }
+        if (object.cert !== undefined && object.cert !== null) {
+            message.cert = object.cert;
+        }
+        else {
+            message.cert = '';
+        }
+        return message;
+    }
+};
+const baseMsgRejectAddX509RootCertResponse = {};
+export const MsgRejectAddX509RootCertResponse = {
+    encode(_, writer = Writer.create()) {
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseMsgRejectAddX509RootCertResponse };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(_) {
+        const message = { ...baseMsgRejectAddX509RootCertResponse };
+        return message;
+    },
+    toJSON(_) {
+        const obj = {};
+        return obj;
+    },
+    fromPartial(_) {
+        const message = { ...baseMsgRejectAddX509RootCertResponse };
+        return message;
+    }
+};
 export class MsgClientImpl {
     constructor(rpc) {
         this.rpc = rpc;
@@ -951,6 +1053,11 @@ export class MsgClientImpl {
         const data = MsgRevokeX509Cert.encode(request).finish();
         const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Msg', 'RevokeX509Cert', data);
         return promise.then((data) => MsgRevokeX509CertResponse.decode(new Reader(data)));
+    }
+    RejectAddX509RootCert(request) {
+        const data = MsgRejectAddX509RootCert.encode(request).finish();
+        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Msg', 'RejectAddX509RootCert', data);
+        return promise.then((data) => MsgRejectAddX509RootCertResponse.decode(new Reader(data)));
     }
 }
 var globalThis = (() => {

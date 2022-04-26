@@ -44,6 +44,7 @@ export declare type PkiMsgApproveAddX509RootCertResponse = object;
 export declare type PkiMsgApproveRevokeX509RootCertResponse = object;
 export declare type PkiMsgProposeAddX509RootCertResponse = object;
 export declare type PkiMsgProposeRevokeX509RootCertResponse = object;
+export declare type PkiMsgRejectAddX509RootCertResponse = object;
 export declare type PkiMsgRevokeX509CertResponse = object;
 export interface PkiProposedCertificate {
     subject?: string;

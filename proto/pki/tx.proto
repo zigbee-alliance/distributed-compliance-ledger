@@ -16,6 +16,7 @@ service Msg {
   rpc ProposeRevokeX509RootCert(MsgProposeRevokeX509RootCert) returns (MsgProposeRevokeX509RootCertResponse);
   rpc ApproveRevokeX509RootCert(MsgApproveRevokeX509RootCert) returns (MsgApproveRevokeX509RootCertResponse);
   rpc RevokeX509Cert(MsgRevokeX509Cert) returns (MsgRevokeX509CertResponse);
+  rpc RejectAddX509RootCert(MsgRejectAddX509RootCert) returns (MsgRejectAddX509RootCertResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -81,6 +82,14 @@ message MsgRevokeX509Cert {
 }
 
 message MsgRevokeX509CertResponse {
+}
+
+message MsgRejectAddX509RootCert {
+  string signer = 1;
+  string cert = 2;
+}
+
+message MsgRejectAddX509RootCertResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message

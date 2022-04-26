@@ -68,6 +68,8 @@ export type PkiMsgProposeAddX509RootCertResponse = object;
 
 export type PkiMsgProposeRevokeX509RootCertResponse = object;
 
+export type PkiMsgRejectAddX509RootCertResponse = object;
+
 export type PkiMsgRevokeX509CertResponse = object;
 
 export interface PkiProposedCertificate {
