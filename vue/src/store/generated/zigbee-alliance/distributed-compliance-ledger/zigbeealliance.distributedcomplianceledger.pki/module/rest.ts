@@ -652,7 +652,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryRejectedCertificateAll
    * @summary Queries a list of RejectedCertificate items.
-   * @request GET:/dcl/pki/rejected_certificate
+   * @request GET:/dcl/pki/rejected-certificate
    */
   queryRejectedCertificateAll = (
     query?: {
@@ -665,7 +665,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     params: RequestParams = {},
   ) =>
     this.request<PkiQueryAllRejectedCertificateResponse, RpcStatus>({
-      path: `/dcl/pki/rejected_certificate`,
+      path: `/dcl/pki/rejected-certificate`,
       method: "GET",
       query: query,
       format: "json",
@@ -678,11 +678,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryRejectedCertificate
    * @summary Queries a RejectedCertificate by index.
-   * @request GET:/dcl/pki/rejected_certificate/{subject}/{subjectKeyId}
+   * @request GET:/dcl/pki/rejected-certificate/{subject}/{subjectKeyId}
    */
   queryRejectedCertificate = (subject: string, subjectKeyId: string, params: RequestParams = {}) =>
     this.request<PkiQueryGetRejectedCertificateResponse, RpcStatus>({
-      path: `/dcl/pki/rejected_certificate/${subject}/${subjectKeyId}`,
+      path: `/dcl/pki/rejected-certificate/${subject}/${subjectKeyId}`,
       method: "GET",
       format: "json",
       ...params,

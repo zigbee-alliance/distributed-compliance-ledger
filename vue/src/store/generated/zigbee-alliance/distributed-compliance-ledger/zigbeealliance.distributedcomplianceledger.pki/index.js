@@ -451,6 +451,23 @@ export default {
                 }
             }
         },
+        async sendMsgRejectAddX509RootCert({ rootGetters }, { value, fee = [], memo = '' }) {
+            try {
+                const txClient = await initTxClient(rootGetters);
+                const msg = await txClient.msgRejectAddX509RootCert(value);
+                const result = await txClient.signAndBroadcast([msg], { fee: { amount: fee,
+                        gas: "200000" }, memo });
+                return result;
+            }
+            catch (e) {
+                if (e == MissingWalletError) {
+                    throw new SpVuexError('TxClient:MsgRejectAddX509RootCert:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgRejectAddX509RootCert:Send', 'Could not broadcast Tx: ' + e.message);
+                }
+            }
+        },
         async sendMsgProposeAddX509RootCert({ rootGetters }, { value, fee = [], memo = '' }) {
             try {
                 const txClient = await initTxClient(rootGetters);
@@ -465,6 +482,40 @@ export default {
                 }
                 else {
                     throw new SpVuexError('TxClient:MsgProposeAddX509RootCert:Send', 'Could not broadcast Tx: ' + e.message);
+                }
+            }
+        },
+        async sendMsgApproveRevokeX509RootCert({ rootGetters }, { value, fee = [], memo = '' }) {
+            try {
+                const txClient = await initTxClient(rootGetters);
+                const msg = await txClient.msgApproveRevokeX509RootCert(value);
+                const result = await txClient.signAndBroadcast([msg], { fee: { amount: fee,
+                        gas: "200000" }, memo });
+                return result;
+            }
+            catch (e) {
+                if (e == MissingWalletError) {
+                    throw new SpVuexError('TxClient:MsgApproveRevokeX509RootCert:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgApproveRevokeX509RootCert:Send', 'Could not broadcast Tx: ' + e.message);
+                }
+            }
+        },
+        async sendMsgApproveAddX509RootCert({ rootGetters }, { value, fee = [], memo = '' }) {
+            try {
+                const txClient = await initTxClient(rootGetters);
+                const msg = await txClient.msgApproveAddX509RootCert(value);
+                const result = await txClient.signAndBroadcast([msg], { fee: { amount: fee,
+                        gas: "200000" }, memo });
+                return result;
+            }
+            catch (e) {
+                if (e == MissingWalletError) {
+                    throw new SpVuexError('TxClient:MsgApproveAddX509RootCert:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgApproveAddX509RootCert:Send', 'Could not broadcast Tx: ' + e.message);
                 }
             }
         },
@@ -502,57 +553,6 @@ export default {
                 }
             }
         },
-        async sendMsgApproveRevokeX509RootCert({ rootGetters }, { value, fee = [], memo = '' }) {
-            try {
-                const txClient = await initTxClient(rootGetters);
-                const msg = await txClient.msgApproveRevokeX509RootCert(value);
-                const result = await txClient.signAndBroadcast([msg], { fee: { amount: fee,
-                        gas: "200000" }, memo });
-                return result;
-            }
-            catch (e) {
-                if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgApproveRevokeX509RootCert:Init', 'Could not initialize signing client. Wallet is required.');
-                }
-                else {
-                    throw new SpVuexError('TxClient:MsgApproveRevokeX509RootCert:Send', 'Could not broadcast Tx: ' + e.message);
-                }
-            }
-        },
-        async sendMsgRejectAddX509RootCert({ rootGetters }, { value, fee = [], memo = '' }) {
-            try {
-                const txClient = await initTxClient(rootGetters);
-                const msg = await txClient.msgRejectAddX509RootCert(value);
-                const result = await txClient.signAndBroadcast([msg], { fee: { amount: fee,
-                        gas: "200000" }, memo });
-                return result;
-            }
-            catch (e) {
-                if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgRejectAddX509RootCert:Init', 'Could not initialize signing client. Wallet is required.');
-                }
-                else {
-                    throw new SpVuexError('TxClient:MsgRejectAddX509RootCert:Send', 'Could not broadcast Tx: ' + e.message);
-                }
-            }
-        },
-        async sendMsgApproveAddX509RootCert({ rootGetters }, { value, fee = [], memo = '' }) {
-            try {
-                const txClient = await initTxClient(rootGetters);
-                const msg = await txClient.msgApproveAddX509RootCert(value);
-                const result = await txClient.signAndBroadcast([msg], { fee: { amount: fee,
-                        gas: "200000" }, memo });
-                return result;
-            }
-            catch (e) {
-                if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgApproveAddX509RootCert:Init', 'Could not initialize signing client. Wallet is required.');
-                }
-                else {
-                    throw new SpVuexError('TxClient:MsgApproveAddX509RootCert:Send', 'Could not broadcast Tx: ' + e.message);
-                }
-            }
-        },
         async MsgAddX509Cert({ rootGetters }, { value }) {
             try {
                 const txClient = await initTxClient(rootGetters);
@@ -568,6 +568,21 @@ export default {
                 }
             }
         },
+        async MsgRejectAddX509RootCert({ rootGetters }, { value }) {
+            try {
+                const txClient = await initTxClient(rootGetters);
+                const msg = await txClient.msgRejectAddX509RootCert(value);
+                return msg;
+            }
+            catch (e) {
+                if (e == MissingWalletError) {
+                    throw new SpVuexError('TxClient:MsgRejectAddX509RootCert:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgRejectAddX509RootCert:Create', 'Could not create message: ' + e.message);
+                }
+            }
+        },
         async MsgProposeAddX509RootCert({ rootGetters }, { value }) {
             try {
                 const txClient = await initTxClient(rootGetters);
@@ -580,6 +595,36 @@ export default {
                 }
                 else {
                     throw new SpVuexError('TxClient:MsgProposeAddX509RootCert:Create', 'Could not create message: ' + e.message);
+                }
+            }
+        },
+        async MsgApproveRevokeX509RootCert({ rootGetters }, { value }) {
+            try {
+                const txClient = await initTxClient(rootGetters);
+                const msg = await txClient.msgApproveRevokeX509RootCert(value);
+                return msg;
+            }
+            catch (e) {
+                if (e == MissingWalletError) {
+                    throw new SpVuexError('TxClient:MsgApproveRevokeX509RootCert:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgApproveRevokeX509RootCert:Create', 'Could not create message: ' + e.message);
+                }
+            }
+        },
+        async MsgApproveAddX509RootCert({ rootGetters }, { value }) {
+            try {
+                const txClient = await initTxClient(rootGetters);
+                const msg = await txClient.msgApproveAddX509RootCert(value);
+                return msg;
+            }
+            catch (e) {
+                if (e == MissingWalletError) {
+                    throw new SpVuexError('TxClient:MsgApproveAddX509RootCert:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgApproveAddX509RootCert:Create', 'Could not create message: ' + e.message);
                 }
             }
         },
@@ -610,51 +655,6 @@ export default {
                 }
                 else {
                     throw new SpVuexError('TxClient:MsgProposeRevokeX509RootCert:Create', 'Could not create message: ' + e.message);
-                }
-            }
-        },
-        async MsgApproveRevokeX509RootCert({ rootGetters }, { value }) {
-            try {
-                const txClient = await initTxClient(rootGetters);
-                const msg = await txClient.msgApproveRevokeX509RootCert(value);
-                return msg;
-            }
-            catch (e) {
-                if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgApproveRevokeX509RootCert:Init', 'Could not initialize signing client. Wallet is required.');
-                }
-                else {
-                    throw new SpVuexError('TxClient:MsgApproveRevokeX509RootCert:Create', 'Could not create message: ' + e.message);
-                }
-            }
-        },
-        async MsgRejectAddX509RootCert({ rootGetters }, { value }) {
-            try {
-                const txClient = await initTxClient(rootGetters);
-                const msg = await txClient.msgRejectAddX509RootCert(value);
-                return msg;
-            }
-            catch (e) {
-                if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgRejectAddX509RootCert:Init', 'Could not initialize signing client. Wallet is required.');
-                }
-                else {
-                    throw new SpVuexError('TxClient:MsgRejectAddX509RootCert:Create', 'Could not create message: ' + e.message);
-                }
-            }
-        },
-        async MsgApproveAddX509RootCert({ rootGetters }, { value }) {
-            try {
-                const txClient = await initTxClient(rootGetters);
-                const msg = await txClient.msgApproveAddX509RootCert(value);
-                return msg;
-            }
-            catch (e) {
-                if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgApproveAddX509RootCert:Init', 'Could not initialize signing client. Wallet is required.');
-                }
-                else {
-                    throw new SpVuexError('TxClient:MsgApproveAddX509RootCert:Create', 'Could not create message: ' + e.message);
                 }
             }
         },

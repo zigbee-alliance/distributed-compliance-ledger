@@ -387,7 +387,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @tags Query
      * @name QueryRejectedCertificateAll
      * @summary Queries a list of RejectedCertificate items.
-     * @request GET:/dcl/pki/rejected_certificate
+     * @request GET:/dcl/pki/rejected-certificate
      */
     queryRejectedCertificateAll: (query?: {
         "pagination.key"?: string;
@@ -402,7 +402,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @tags Query
      * @name QueryRejectedCertificate
      * @summary Queries a RejectedCertificate by index.
-     * @request GET:/dcl/pki/rejected_certificate/{subject}/{subjectKeyId}
+     * @request GET:/dcl/pki/rejected-certificate/{subject}/{subjectKeyId}
      */
     queryRejectedCertificate: (subject: string, subjectKeyId: string, params?: RequestParams) => Promise<HttpResponse<PkiQueryGetRejectedCertificateResponse, RpcStatus>>;
     /**
