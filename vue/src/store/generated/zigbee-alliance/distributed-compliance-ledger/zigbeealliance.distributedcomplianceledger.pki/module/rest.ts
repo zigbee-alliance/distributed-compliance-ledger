@@ -136,7 +136,7 @@ export interface PkiQueryAllProposedCertificateRevocationResponse {
   pagination?: V1Beta1PageResponse;
 }
 
-export interface PkiQueryAllRejectedCertificateResponse {
+export interface PkiQueryAllRejectedCertificatesResponse {
   rejectedCertificate?: PkiRejectedCertificate[];
 
   /**
@@ -190,7 +190,7 @@ export interface PkiQueryGetProposedCertificateRevocationResponse {
   proposedCertificateRevocation?: PkiProposedCertificateRevocation;
 }
 
-export interface PkiQueryGetRejectedCertificateResponse {
+export interface PkiQueryGetRejectedCertificatesResponse {
   rejectedCertificate?: PkiRejectedCertificate;
 }
 
@@ -652,7 +652,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryRejectedCertificateAll
    * @summary Queries a list of RejectedCertificate items.
-   * @request GET:/dcl/pki/rejected-certificate
+   * @request GET:/dcl/pki/rejected-certificates
    */
   queryRejectedCertificateAll = (
     query?: {
@@ -664,8 +664,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     },
     params: RequestParams = {},
   ) =>
-    this.request<PkiQueryAllRejectedCertificateResponse, RpcStatus>({
-      path: `/dcl/pki/rejected-certificate`,
+    this.request<PkiQueryAllRejectedCertificatesResponse, RpcStatus>({
+      path: `/dcl/pki/rejected-certificates`,
       method: "GET",
       query: query,
       format: "json",
@@ -678,11 +678,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryRejectedCertificate
    * @summary Queries a RejectedCertificate by index.
-   * @request GET:/dcl/pki/rejected-certificate/{subject}/{subjectKeyId}
+   * @request GET:/dcl/pki/rejected-certificates/{subject}/{subjectKeyId}
    */
   queryRejectedCertificate = (subject: string, subjectKeyId: string, params: RequestParams = {}) =>
-    this.request<PkiQueryGetRejectedCertificateResponse, RpcStatus>({
-      path: `/dcl/pki/rejected-certificate/${subject}/${subjectKeyId}`,
+    this.request<PkiQueryGetRejectedCertificatesResponse, RpcStatus>({
+      path: `/dcl/pki/rejected-certificates/${subject}/${subjectKeyId}`,
       method: "GET",
       format: "json",
       ...params,

@@ -257,10 +257,10 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryRejectedCertificateAll
          * @summary Queries a list of RejectedCertificate items.
-         * @request GET:/dcl/pki/rejected-certificate
+         * @request GET:/dcl/pki/rejected-certificates
          */
         this.queryRejectedCertificateAll = (query, params = {}) => this.request({
-            path: `/dcl/pki/rejected-certificate`,
+            path: `/dcl/pki/rejected-certificates`,
             method: "GET",
             query: query,
             format: "json",
@@ -272,10 +272,10 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryRejectedCertificate
          * @summary Queries a RejectedCertificate by index.
-         * @request GET:/dcl/pki/rejected-certificate/{subject}/{subjectKeyId}
+         * @request GET:/dcl/pki/rejected-certificates/{subject}/{subjectKeyId}
          */
         this.queryRejectedCertificate = (subject, subjectKeyId, params = {}) => this.request({
-            path: `/dcl/pki/rejected-certificate/${subject}/${subjectKeyId}`,
+            path: `/dcl/pki/rejected-certificates/${subject}/${subjectKeyId}`,
             method: "GET",
             format: "json",
             ...params,

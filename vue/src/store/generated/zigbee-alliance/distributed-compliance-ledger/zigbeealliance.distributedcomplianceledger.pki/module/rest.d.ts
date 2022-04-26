@@ -102,7 +102,7 @@ export interface PkiQueryAllProposedCertificateRevocationResponse {
      */
     pagination?: V1Beta1PageResponse;
 }
-export interface PkiQueryAllRejectedCertificateResponse {
+export interface PkiQueryAllRejectedCertificatesResponse {
     rejectedCertificate?: PkiRejectedCertificate[];
     /**
      * PageResponse is to be embedded in gRPC response messages where the
@@ -146,7 +146,7 @@ export interface PkiQueryGetProposedCertificateResponse {
 export interface PkiQueryGetProposedCertificateRevocationResponse {
     proposedCertificateRevocation?: PkiProposedCertificateRevocation;
 }
-export interface PkiQueryGetRejectedCertificateResponse {
+export interface PkiQueryGetRejectedCertificatesResponse {
     rejectedCertificate?: PkiRejectedCertificate;
 }
 export interface PkiQueryGetRevokedCertificatesResponse {
@@ -387,7 +387,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @tags Query
      * @name QueryRejectedCertificateAll
      * @summary Queries a list of RejectedCertificate items.
-     * @request GET:/dcl/pki/rejected-certificate
+     * @request GET:/dcl/pki/rejected-certificates
      */
     queryRejectedCertificateAll: (query?: {
         "pagination.key"?: string;
@@ -395,16 +395,16 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
         "pagination.limit"?: string;
         "pagination.countTotal"?: boolean;
         "pagination.reverse"?: boolean;
-    }, params?: RequestParams) => Promise<HttpResponse<PkiQueryAllRejectedCertificateResponse, RpcStatus>>;
+    }, params?: RequestParams) => Promise<HttpResponse<PkiQueryAllRejectedCertificatesResponse, RpcStatus>>;
     /**
      * No description
      *
      * @tags Query
      * @name QueryRejectedCertificate
      * @summary Queries a RejectedCertificate by index.
-     * @request GET:/dcl/pki/rejected-certificate/{subject}/{subjectKeyId}
+     * @request GET:/dcl/pki/rejected-certificates/{subject}/{subjectKeyId}
      */
-    queryRejectedCertificate: (subject: string, subjectKeyId: string, params?: RequestParams) => Promise<HttpResponse<PkiQueryGetRejectedCertificateResponse, RpcStatus>>;
+    queryRejectedCertificate: (subject: string, subjectKeyId: string, params?: RequestParams) => Promise<HttpResponse<PkiQueryGetRejectedCertificatesResponse, RpcStatus>>;
     /**
      * No description
      *

@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (k Keeper) RejectedCertificateAll(c context.Context, req *types.QueryAllRejectedCertificateRequest) (*types.QueryAllRejectedCertificateResponse, error) {
+func (k Keeper) RejectedCertificateAll(c context.Context, req *types.QueryAllRejectedCertificatesRequest) (*types.QueryAllRejectedCertificatesResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
@@ -36,10 +36,10 @@ func (k Keeper) RejectedCertificateAll(c context.Context, req *types.QueryAllRej
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.QueryAllRejectedCertificateResponse{RejectedCertificate: rejectedCertificates, Pagination: pageRes}, nil
+	return &types.QueryAllRejectedCertificatesResponse{RejectedCertificate: rejectedCertificates, Pagination: pageRes}, nil
 }
 
-func (k Keeper) RejectedCertificate(c context.Context, req *types.QueryGetRejectedCertificateRequest) (*types.QueryGetRejectedCertificateResponse, error) {
+func (k Keeper) RejectedCertificate(c context.Context, req *types.QueryGetRejectedCertificatesRequest) (*types.QueryGetRejectedCertificatesResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
@@ -54,5 +54,5 @@ func (k Keeper) RejectedCertificate(c context.Context, req *types.QueryGetReject
 		return nil, status.Error(codes.InvalidArgument, "not found")
 	}
 
-	return &types.QueryGetRejectedCertificateResponse{RejectedCertificate: val}, nil
+	return &types.QueryGetRejectedCertificatesResponse{RejectedCertificate: val}, nil
 }

@@ -24,7 +24,7 @@ func CmdListRejectedCertificate() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.QueryAllRejectedCertificateRequest{
+			params := &types.QueryAllRejectedCertificatesRequest{
 				Pagination: pageReq,
 			}
 
