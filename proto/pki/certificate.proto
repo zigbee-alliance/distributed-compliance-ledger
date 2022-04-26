@@ -21,5 +21,5 @@ message Certificate {
   string subjectKeyId = 10; 
   repeated Grant approvals = 11;
   string subjectAsText = 12; 
-  repeated string rejectApprovals = 13; 
+  repeated Grant rejectApprovals = 13; 
 }
