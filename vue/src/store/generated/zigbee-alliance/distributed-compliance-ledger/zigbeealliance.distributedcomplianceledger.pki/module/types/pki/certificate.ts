@@ -17,7 +17,7 @@ export interface Certificate {
   subjectKeyId: string
   approvals: Grant[]
   subjectAsText: string
-  rejectApprovals: string[]
+  rejectApprovals: Grant[]
 }
 
 const baseCertificate: object = {
@@ -31,8 +31,7 @@ const baseCertificate: object = {
   owner: '',
   subject: '',
   subjectKeyId: '',
-  subjectAsText: '',
-  rejectApprovals: ''
+  subjectAsText: ''
 }
 
 export const Certificate = {
@@ -74,7 +73,7 @@ export const Certificate = {
       writer.uint32(98).string(message.subjectAsText)
     }
     for (const v of message.rejectApprovals) {
-      writer.uint32(106).string(v!)
+      Grant.encode(v!, writer.uint32(106).fork()).ldelim()
     }
     return writer
   },
@@ -125,7 +124,7 @@ export const Certificate = {
           message.subjectAsText = reader.string()
           break
         case 13:
-          message.rejectApprovals.push(reader.string())
+          message.rejectApprovals.push(Grant.decode(reader, reader.uint32()))
           break
         default:
           reader.skipType(tag & 7)
@@ -201,7 +200,7 @@ export const Certificate = {
     }
     if (object.rejectApprovals !== undefined && object.rejectApprovals !== null) {
       for (const e of object.rejectApprovals) {
-        message.rejectApprovals.push(String(e))
+        message.rejectApprovals.push(Grant.fromJSON(e))
       }
     }
     return message
@@ -226,7 +225,7 @@ export const Certificate = {
     }
     message.subjectAsText !== undefined && (obj.subjectAsText = message.subjectAsText)
     if (message.rejectApprovals) {
-      obj.rejectApprovals = message.rejectApprovals.map((e) => e)
+      obj.rejectApprovals = message.rejectApprovals.map((e) => (e ? Grant.toJSON(e) : undefined))
     } else {
       obj.rejectApprovals = []
     }
@@ -299,7 +298,7 @@ export const Certificate = {
     }
     if (object.rejectApprovals !== undefined && object.rejectApprovals !== null) {
       for (const e of object.rejectApprovals) {
-        message.rejectApprovals.push(e)
+        message.rejectApprovals.push(Grant.fromPartial(e))
       }
     }
     return message
