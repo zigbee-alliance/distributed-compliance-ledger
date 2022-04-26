@@ -18,7 +18,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-// Prevent strconv unused error
+// Prevent strconv unused error.
 var _ = strconv.IntSize
 
 func networkWithRejectedCertificateObjects(t *testing.T, n int) (*network.Network, []types.RejectedCertificate) {
@@ -38,6 +38,7 @@ func networkWithRejectedCertificateObjects(t *testing.T, n int) (*network.Networ
 	buf, err := cfg.Codec.MarshalJSON(&state)
 	require.NoError(t, err)
 	cfg.GenesisState[types.ModuleName] = buf
+
 	return network.New(t, cfg), state.RejectedCertificateList
 }
 
@@ -51,7 +52,7 @@ func TestShowRejectedCertificate(t *testing.T) {
 	for _, tc := range []struct {
 		desc           string
 		idSubject      string
-		idSubjectKeyId string
+		idSubjectKeyID string
 
 		args []string
 		err  error
@@ -60,7 +61,7 @@ func TestShowRejectedCertificate(t *testing.T) {
 		{
 			desc:           "found",
 			idSubject:      objs[0].Subject,
-			idSubjectKeyId: objs[0].SubjectKeyId,
+			idSubjectKeyID: objs[0].SubjectKeyId,
 
 			args: common,
 			obj:  objs[0],
@@ -68,7 +69,7 @@ func TestShowRejectedCertificate(t *testing.T) {
 		{
 			desc:           "not found",
 			idSubject:      strconv.Itoa(100000),
-			idSubjectKeyId: strconv.Itoa(100000),
+			idSubjectKeyID: strconv.Itoa(100000),
 
 			args: common,
 			err:  status.Error(codes.InvalidArgument, "not found"),
@@ -78,7 +79,7 @@ func TestShowRejectedCertificate(t *testing.T) {
 		t.Run(tc.desc, func(t *testing.T) {
 			args := []string{
 				tc.idSubject,
-				tc.idSubjectKeyId,
+				tc.idSubjectKeyID,
 			}
 			args = append(args, tc.args...)
 			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdShowRejectedCertificate(), args)
@@ -117,6 +118,7 @@ func TestListRejectedCertificate(t *testing.T) {
 		if total {
 			args = append(args, fmt.Sprintf("--%s", flags.FlagCountTotal))
 		}
+
 		return args
 	}
 	t.Run("ByOffset", func(t *testing.T) {
