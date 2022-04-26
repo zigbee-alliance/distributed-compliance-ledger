@@ -1,0 +1,21 @@
+- name: copy genesis file | read genesis file content
+  become: true
+  changed_when: false
+  command: "cat {{ dcl_home }}/config/genesis.json"
+  register: genesis_file_content
+  run_once: true
+
+- name: copy genesis file | create persistent chains directory
+  become: false
+  file:
+    path: "{{ playbook_dir }}/../persistent_chains/{{ chain_id }}"
+    state: directory
+  delegate_to: localhost
+
+- name: copy genesis file | copy genesis file to local file
+  become: false
+  copy:
+    content: "{{ genesis_file_content.stdout }}"
+    dest: "{{ playbook_dir }}/../persistent_chains/{{ chain_id }}/genesis.json"
+  run_once: true
+  delegate_to: localhost

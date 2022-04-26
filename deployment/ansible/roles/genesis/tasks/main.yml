@@ -23,8 +23,5 @@
     owner: "{{ cosmovisor.user }}"
     path: "{{ dcl_home }}"
 
-- name: ensure cosmovisor service is started and enabled
-  service:
-    name: cosmovisor
-    state: started
-    enabled: true
+- name: copy genesis file
+  include_tasks: copy-genesis-file.yml
