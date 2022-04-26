@@ -56,7 +56,7 @@
 
 - name: prepare-genesis | create genesis transactions
   changed_when: false
-  shell: "echo {{ admin.passphrase }} | {{ dcld.path }} gentx {{ admin.name }} --chain-id {{ chain_id }} --moniker {{ moniker | default(ansible_hostname) }} --home {{ dcl_home }}"
+  shell: "{{ dcld.path }} gentx {{ admin.name }} --chain-id {{ chain_id }} --home {{ dcl_home }}"
   no_log: true
   ignore_errors: true
 
