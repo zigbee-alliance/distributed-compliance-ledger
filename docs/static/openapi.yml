@@ -7627,7 +7627,15 @@ paths:
                           rejectApprovals:
                             type: array
                             items:
-                              type: string
+                              type: object
+                              properties:
+                                address:
+                                  type: string
+                                time:
+                                  type: string
+                                  format: int64
+                                info:
+                                  type: string
               pagination:
                 type: object
                 properties:
@@ -7843,7 +7851,15 @@ paths:
                         rejectApprovals:
                           type: array
                           items:
-                            type: string
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                              time:
+                                type: string
+                                format: int64
+                              info:
+                                type: string
         default:
           description: An unexpected error response.
           schema:
@@ -8443,7 +8459,15 @@ paths:
                           rejectApprovals:
                             type: array
                             items:
-                              type: string
+                              type: object
+                              properties:
+                                address:
+                                  type: string
+                                time:
+                                  type: string
+                                  format: int64
+                                info:
+                                  type: string
               pagination:
                 type: object
                 properties:
@@ -8611,7 +8635,15 @@ paths:
                         rejectApprovals:
                           type: array
                           items:
-                            type: string
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                              time:
+                                type: string
+                                format: int64
+                              info:
+                                type: string
         default:
           description: An unexpected error response.
           schema:
@@ -8706,7 +8738,15 @@ paths:
                           rejectApprovals:
                             type: array
                             items:
-                              type: string
+                              type: object
+                              properties:
+                                address:
+                                  type: string
+                                time:
+                                  type: string
+                                  format: int64
+                                info:
+                                  type: string
               pagination:
                 type: object
                 properties:
@@ -8874,7 +8914,15 @@ paths:
                         rejectApprovals:
                           type: array
                           items:
-                            type: string
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                              time:
+                                type: string
+                                format: int64
+                              info:
+                                type: string
         default:
           description: An unexpected error response.
           schema:
@@ -17809,7 +17857,15 @@ definitions:
             rejectApprovals:
               type: array
               items:
-                type: string
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
   zigbeealliance.distributedcomplianceledger.pki.ApprovedCertificatesBySubject:
     type: object
     properties:
@@ -17871,7 +17927,15 @@ definitions:
       rejectApprovals:
         type: array
         items:
-          type: string
+          type: object
+          properties:
+            address:
+              type: string
+            time:
+              type: string
+              format: int64
+            info:
+              type: string
   zigbeealliance.distributedcomplianceledger.pki.CertificateIdentifier:
     type: object
     properties:
@@ -18019,7 +18083,15 @@ definitions:
                   rejectApprovals:
                     type: array
                     items:
-                      type: string
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
       pagination:
         type: object
         properties:
@@ -18219,7 +18291,15 @@ definitions:
                   rejectApprovals:
                     type: array
                     items:
-                      type: string
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
       pagination:
         type: object
         properties:
@@ -18299,7 +18379,15 @@ definitions:
                   rejectApprovals:
                     type: array
                     items:
-                      type: string
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
       pagination:
         type: object
         properties:
@@ -18389,7 +18477,15 @@ definitions:
                 rejectApprovals:
                   type: array
                   items:
-                    type: string
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      time:
+                        type: string
+                        format: int64
+                      info:
+                        type: string
   zigbeealliance.distributedcomplianceledger.pki.QueryGetApprovedRootCertificatesResponse:
     type: object
     properties:
@@ -18542,7 +18638,15 @@ definitions:
                 rejectApprovals:
                   type: array
                   items:
-                    type: string
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      time:
+                        type: string
+                        format: int64
+                      info:
+                        type: string
   zigbeealliance.distributedcomplianceledger.pki.QueryGetRevokedCertificatesResponse:
     type: object
     properties:
@@ -18595,7 +18699,15 @@ definitions:
                 rejectApprovals:
                   type: array
                   items:
-                    type: string
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      time:
+                        type: string
+                        format: int64
+                      info:
+                        type: string
   zigbeealliance.distributedcomplianceledger.pki.QueryGetRevokedRootCertificatesResponse:
     type: object
     properties:
@@ -18660,7 +18772,15 @@ definitions:
             rejectApprovals:
               type: array
               items:
-                type: string
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
   zigbeealliance.distributedcomplianceledger.pki.RevokedCertificates:
     type: object
     properties:
@@ -18710,7 +18830,15 @@ definitions:
             rejectApprovals:
               type: array
               items:
-                type: string
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
   zigbeealliance.distributedcomplianceledger.pki.RevokedRootCertificates:
     type: object
     properties:
