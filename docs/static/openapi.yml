@@ -8398,7 +8398,7 @@ paths:
           type: string
       tags:
         - Query
-  /dcl/pki/rejected-certificate:
+  /dcl/pki/rejected-certificates:
     get:
       summary: Queries a list of RejectedCertificate items.
       operationId: RejectedCertificateAll
@@ -8576,7 +8576,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /dcl/pki/rejected-certificate/{subject}/{subjectKeyId}:
+  /dcl/pki/rejected-certificates/{subject}/{subjectKeyId}:
     get:
       summary: Queries a RejectedCertificate by index.
       operationId: RejectedCertificate
@@ -18237,7 +18237,7 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
-  zigbeealliance.distributedcomplianceledger.pki.QueryAllRejectedCertificateResponse:
+  zigbeealliance.distributedcomplianceledger.pki.QueryAllRejectedCertificatesResponse:
     type: object
     properties:
       rejectedCertificate:
@@ -18586,7 +18586,7 @@ definitions:
                   type: string
           subjectAsText:
             type: string
-  zigbeealliance.distributedcomplianceledger.pki.QueryGetRejectedCertificateResponse:
+  zigbeealliance.distributedcomplianceledger.pki.QueryGetRejectedCertificatesResponse:
     type: object
     properties:
       rejectedCertificate:
