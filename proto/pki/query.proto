@@ -84,12 +84,12 @@ service Query {
 
 // Queries a RejectedCertificate by index.
 	rpc RejectedCertificate(QueryGetRejectedCertificateRequest) returns (QueryGetRejectedCertificateResponse) {
-		option (google.api.http).get = "/dcl/pki/rejected_certificate/{subject}/{subjectKeyId}";
+		option (google.api.http).get = "/dcl/pki/rejected-certificate/{subject}/{subjectKeyId}";
 	}
 
 	// Queries a list of RejectedCertificate items.
 	rpc RejectedCertificateAll(QueryAllRejectedCertificateRequest) returns (QueryAllRejectedCertificateResponse) {
-		option (google.api.http).get = "/dcl/pki/rejected_certificate";
+		option (google.api.http).get = "/dcl/pki/rejected-certificate";
 	}
 
 // this line is used by starport scaffolding # 2
