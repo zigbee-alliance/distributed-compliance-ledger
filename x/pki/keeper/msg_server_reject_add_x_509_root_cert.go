@@ -77,6 +77,7 @@ func (k msgServer) RejectAddX509RootCert(goCtx context.Context, msg *types.MsgRe
 		}
 
 		k.SetRejectedCertificate(ctx, rejectedRootCertificate)
+		k.RemoveProposedCertificate(ctx, proposedCertificate.Subject, proposedCertificate.SubjectKeyId)
 	} else {
 		// update proposed certificate
 		k.SetProposedCertificate(ctx, proposedCertificate)

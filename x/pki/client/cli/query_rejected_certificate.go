@@ -12,7 +12,7 @@ import (
 
 func CmdListRejectedCertificate() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "all-rejected-x509-certs",
+		Use:   "all-rejected-x509-root-certs",
 		Short: "list all RejectedCertificate",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
@@ -50,7 +50,7 @@ func CmdShowRejectedCertificate() *cobra.Command {
 	)
 
 	cmd := &cobra.Command{
-		Use:   "rejected-x509-cert",
+		Use:   "rejected-x509-root-cert",
 		Short: "shows a RejectedCertificate",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
