@@ -49,7 +49,7 @@ const (
 	defaultWeightMsgRevokeX509Cert int = 100
 
 	opWeightMsgRejectAddX509RootCert = "op_weight_msg_create_chain"
-	// TODO: Determine the simulation weight value
+	// TODO: Determine the simulation weight value.
 	defaultWeightMsgRejectAddX509RootCert int = 100
 
 	// this line is used by starport scaffolding # simapp/module/const.
