@@ -134,6 +134,21 @@ export interface PkiQueryAllProposedCertificateRevocationResponse {
   pagination?: V1Beta1PageResponse;
 }
 
+export interface PkiQueryAllRejectedCertificateResponse {
+  rejectedCertificate?: PkiRejectedCertificate[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
 export interface PkiQueryAllRevokedCertificatesResponse {
   revokedCertificates?: PkiRevokedCertificates[];
 
@@ -173,12 +188,25 @@ export interface PkiQueryGetProposedCertificateRevocationResponse {
   proposedCertificateRevocation?: PkiProposedCertificateRevocation;
 }
 
+export interface PkiQueryGetRejectedCertificateResponse {
+  rejectedCertificate?: PkiRejectedCertificate;
+}
+
 export interface PkiQueryGetRevokedCertificatesResponse {
   revokedCertificates?: PkiRevokedCertificates;
 }
 
 export interface PkiQueryGetRevokedRootCertificatesResponse {
   revokedRootCertificates?: PkiRevokedRootCertificates;
+}
+
+export interface PkiRejectedCertificate {
+  subject?: string;
+  subjectKeyId?: string;
+  pemCert?: string;
+  serialNumber?: string;
+  owner?: string;
+  approvals?: string[];
 }
 
 export interface PkiRevokedCertificates {
@@ -688,6 +716,48 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryApprovedRootCertificates = (params: RequestParams = {}) =>
     this.request<PkiQueryGetApprovedRootCertificatesResponse, RpcStatus>({
       path: `/dcl/pki/root-certificates`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryRejectedCertificateAll
+   * @summary Queries a list of RejectedCertificate items.
+   * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/rejected_certificate
+   */
+  queryRejectedCertificateAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<PkiQueryAllRejectedCertificateResponse, RpcStatus>({
+      path: `/zigbee-alliance/distributedcomplianceledger/pki/rejected_certificate`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryRejectedCertificate
+   * @summary Queries a RejectedCertificate by index.
+   * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/rejected_certificate/{subject}/{subjectKeyId}
+   */
+  queryRejectedCertificate = (subject: string, subjectKeyId: string, params: RequestParams = {}) =>
+    this.request<PkiQueryGetRejectedCertificateResponse, RpcStatus>({
+      path: `/zigbee-alliance/distributedcomplianceledger/pki/rejected_certificate/${subject}/${subjectKeyId}`,
       method: "GET",
       format: "json",
       ...params,

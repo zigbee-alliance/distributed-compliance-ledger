@@ -95,6 +95,16 @@ func TestGenesisState_Validate(t *testing.T) {
 						Subject: "1",
 					},
 				},
+				RejectedCertificateList: []types.RejectedCertificate{
+					{
+						Subject:      "0",
+						SubjectKeyId: "0",
+					},
+					{
+						Subject:      "1",
+						SubjectKeyId: "1",
+					},
+				},
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -204,6 +214,22 @@ func TestGenesisState_Validate(t *testing.T) {
 					},
 					{
 						Subject: "0",
+					},
+				},
+			},
+			valid: false,
+		},
+		{
+			desc: "duplicated rejectedCertificate",
+			genState: &types.GenesisState{
+				RejectedCertificateList: []types.RejectedCertificate{
+					{
+						Subject:      "0",
+						SubjectKeyId: "0",
+					},
+					{
+						Subject:      "0",
+						SubjectKeyId: "0",
 					},
 				},
 			},

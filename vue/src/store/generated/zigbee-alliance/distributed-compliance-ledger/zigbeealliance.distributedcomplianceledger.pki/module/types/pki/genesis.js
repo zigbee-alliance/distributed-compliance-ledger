@@ -8,6 +8,7 @@ import { UniqueCertificate } from '../pki/unique_certificate';
 import { ApprovedRootCertificates } from '../pki/approved_root_certificates';
 import { RevokedRootCertificates } from '../pki/revoked_root_certificates';
 import { ApprovedCertificatesBySubject } from '../pki/approved_certificates_by_subject';
+import { RejectedCertificate } from '../pki/rejected_certificate';
 import { Writer, Reader } from 'protobufjs/minimal';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.pki';
 const baseGenesisState = {};
@@ -40,6 +41,9 @@ export const GenesisState = {
         for (const v of message.approvedCertificatesBySubjectList) {
             ApprovedCertificatesBySubject.encode(v, writer.uint32(74).fork()).ldelim();
         }
+        for (const v of message.rejectedCertificateList) {
+            RejectedCertificate.encode(v, writer.uint32(82).fork()).ldelim();
+        }
         return writer;
     },
     decode(input, length) {
@@ -53,6 +57,7 @@ export const GenesisState = {
         message.revokedCertificatesList = [];
         message.uniqueCertificateList = [];
         message.approvedCertificatesBySubjectList = [];
+        message.rejectedCertificateList = [];
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
@@ -83,6 +88,9 @@ export const GenesisState = {
                 case 9:
                     message.approvedCertificatesBySubjectList.push(ApprovedCertificatesBySubject.decode(reader, reader.uint32()));
                     break;
+                case 10:
+                    message.rejectedCertificateList.push(RejectedCertificate.decode(reader, reader.uint32()));
+                    break;
                 default:
                     reader.skipType(tag & 7);
                     break;
@@ -99,6 +107,7 @@ export const GenesisState = {
         message.revokedCertificatesList = [];
         message.uniqueCertificateList = [];
         message.approvedCertificatesBySubjectList = [];
+        message.rejectedCertificateList = [];
         if (object.approvedCertificatesList !== undefined && object.approvedCertificatesList !== null) {
             for (const e of object.approvedCertificatesList) {
                 message.approvedCertificatesList.push(ApprovedCertificates.fromJSON(e));
@@ -144,6 +153,11 @@ export const GenesisState = {
         if (object.approvedCertificatesBySubjectList !== undefined && object.approvedCertificatesBySubjectList !== null) {
             for (const e of object.approvedCertificatesBySubjectList) {
                 message.approvedCertificatesBySubjectList.push(ApprovedCertificatesBySubject.fromJSON(e));
+            }
+        }
+        if (object.rejectedCertificateList !== undefined && object.rejectedCertificateList !== null) {
+            for (const e of object.rejectedCertificateList) {
+                message.rejectedCertificateList.push(RejectedCertificate.fromJSON(e));
             }
         }
         return message;
@@ -196,6 +210,12 @@ export const GenesisState = {
         else {
             obj.approvedCertificatesBySubjectList = [];
         }
+        if (message.rejectedCertificateList) {
+            obj.rejectedCertificateList = message.rejectedCertificateList.map((e) => (e ? RejectedCertificate.toJSON(e) : undefined));
+        }
+        else {
+            obj.rejectedCertificateList = [];
+        }
         return obj;
     },
     fromPartial(object) {
@@ -207,6 +227,7 @@ export const GenesisState = {
         message.revokedCertificatesList = [];
         message.uniqueCertificateList = [];
         message.approvedCertificatesBySubjectList = [];
+        message.rejectedCertificateList = [];
         if (object.approvedCertificatesList !== undefined && object.approvedCertificatesList !== null) {
             for (const e of object.approvedCertificatesList) {
                 message.approvedCertificatesList.push(ApprovedCertificates.fromPartial(e));
@@ -252,6 +273,11 @@ export const GenesisState = {
         if (object.approvedCertificatesBySubjectList !== undefined && object.approvedCertificatesBySubjectList !== null) {
             for (const e of object.approvedCertificatesBySubjectList) {
                 message.approvedCertificatesBySubjectList.push(ApprovedCertificatesBySubject.fromPartial(e));
+            }
+        }
+        if (object.rejectedCertificateList !== undefined && object.rejectedCertificateList !== null) {
+            for (const e of object.rejectedCertificateList) {
+                message.rejectedCertificateList.push(RejectedCertificate.fromPartial(e));
             }
         }
         return message;

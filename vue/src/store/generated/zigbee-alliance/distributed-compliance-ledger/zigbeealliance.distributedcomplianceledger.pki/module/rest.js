@@ -308,5 +308,34 @@ export class Api extends HttpClient {
             format: "json",
             ...params,
         });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryRejectedCertificateAll
+         * @summary Queries a list of RejectedCertificate items.
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/rejected_certificate
+         */
+        this.queryRejectedCertificateAll = (query, params = {}) => this.request({
+            path: `/zigbee-alliance/distributedcomplianceledger/pki/rejected_certificate`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryRejectedCertificate
+         * @summary Queries a RejectedCertificate by index.
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/rejected_certificate/{subject}/{subjectKeyId}
+         */
+        this.queryRejectedCertificate = (subject, subjectKeyId, params = {}) => this.request({
+            path: `/zigbee-alliance/distributedcomplianceledger/pki/rejected_certificate/${subject}/${subjectKeyId}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
     }
 }

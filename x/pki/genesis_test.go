@@ -96,6 +96,16 @@ func TestGenesis(t *testing.T) {
 				Subject: "1",
 			},
 		},
+		RejectedCertificateList: []types.RejectedCertificate{
+			{
+				Subject:      "0",
+				SubjectKeyId: "0",
+			},
+			{
+				Subject:      "1",
+				SubjectKeyId: "1",
+			},
+		},
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -113,5 +123,6 @@ func TestGenesis(t *testing.T) {
 	require.Equal(t, genesisState.ApprovedRootCertificates, got.ApprovedRootCertificates)
 	require.Equal(t, genesisState.RevokedRootCertificates, got.RevokedRootCertificates)
 	require.ElementsMatch(t, genesisState.ApprovedCertificatesBySubjectList, got.ApprovedCertificatesBySubjectList)
+	require.ElementsMatch(t, genesisState.RejectedCertificateList, got.RejectedCertificateList)
 	// this line is used by starport scaffolding # genesis/test/assert
 }
