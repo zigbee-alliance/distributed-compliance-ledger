@@ -29,9 +29,9 @@ func (k Keeper) RejectedCertificateAll(c context.Context, req *types.QueryAllRej
 		}
 
 		rejectedCertificates = append(rejectedCertificates, rejectedCertificate)
+
 		return nil
 	})
-
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
