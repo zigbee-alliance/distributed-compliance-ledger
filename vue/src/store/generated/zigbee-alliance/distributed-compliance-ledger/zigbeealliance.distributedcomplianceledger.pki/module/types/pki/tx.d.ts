@@ -54,7 +54,10 @@ export interface MsgRevokeX509CertResponse {
 }
 export interface MsgRejectAddX509RootCert {
     signer: string;
-    cert: string;
+    subject: string;
+    subjectKeyId: string;
+    info: string;
+    time: number;
 }
 export interface MsgRejectAddX509RootCertResponse {
 }

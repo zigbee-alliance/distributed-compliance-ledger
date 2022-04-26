@@ -1,6 +1,8 @@
 package types
 
 import (
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -9,10 +11,13 @@ const TypeMsgRejectAddX509RootCert = "reject_add_x_509_root_cert"
 
 var _ sdk.Msg = &MsgRejectAddX509RootCert{}
 
-func NewMsgRejectAddX509RootCert(signer string, cert string) *MsgRejectAddX509RootCert {
+func NewMsgRejectAddX509RootCert(signer string, subject string, subjectKeyID string, info string) *MsgRejectAddX509RootCert {
 	return &MsgRejectAddX509RootCert{
-		Signer: signer,
-		Cert:   cert,
+		Signer:       signer,
+		Subject:      subject,
+		SubjectKeyId: subjectKeyID,
+		Info:         info,
+		Time:         time.Now().Unix(),
 	}
 }
 

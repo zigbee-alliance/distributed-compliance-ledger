@@ -6,12 +6,13 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
 func CmdListRejectedCertificate() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list-rejected-certificate",
+		Use:   "all-rejected-x509-certs",
 		Short: "list all RejectedCertificate",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
@@ -43,33 +44,35 @@ func CmdListRejectedCertificate() *cobra.Command {
 }
 
 func CmdShowRejectedCertificate() *cobra.Command {
+	var (
+		subject      string
+		subjectKeyID string
+	)
+
 	cmd := &cobra.Command{
-		Use:   "show-rejected-certificate [subject] [subject-key-id]",
+		Use:   "rejected-x509-cert",
 		Short: "shows a RejectedCertificate",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
+			var res types.RejectedCertificate
 
-			queryClient := types.NewQueryClient(clientCtx)
-
-			argSubject := args[0]
-			argSubjectKeyId := args[1]
-
-			params := &types.QueryGetRejectedCertificateRequest{
-				Subject:      argSubject,
-				SubjectKeyId: argSubjectKeyId,
-			}
-
-			res, err := queryClient.RejectedCertificate(context.Background(), params)
-			if err != nil {
-				return err
-			}
-
-			return clientCtx.PrintProto(res)
+			return cli.QueryWithProof(
+				clientCtx,
+				types.StoreKey,
+				types.RejectedCertificateKeyPrefix,
+				types.RejectedCertificateKey(subject, subjectKeyID),
+				&res,
+			)
 		},
 	}
 
+	cmd.Flags().StringVarP(&subject, FlagSubject, FlagSubjectShortcut, "", "Certificate's subject")
+	cmd.Flags().StringVarP(&subjectKeyID, FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "", "Certificate's subject key id (hex)")
 	flags.AddQueryFlagsToCmd(cmd)
+
+	_ = cmd.MarkFlagRequired(FlagSubject)
+	_ = cmd.MarkFlagRequired(FlagSubjectKeyID)
 
 	return cmd
 }

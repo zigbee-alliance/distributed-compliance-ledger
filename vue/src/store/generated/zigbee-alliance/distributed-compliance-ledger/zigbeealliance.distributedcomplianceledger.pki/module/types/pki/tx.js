@@ -918,14 +918,23 @@ export const MsgRevokeX509CertResponse = {
         return message;
     }
 };
-const baseMsgRejectAddX509RootCert = { signer: '', cert: '' };
+const baseMsgRejectAddX509RootCert = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0 };
 export const MsgRejectAddX509RootCert = {
     encode(message, writer = Writer.create()) {
         if (message.signer !== '') {
             writer.uint32(10).string(message.signer);
         }
-        if (message.cert !== '') {
-            writer.uint32(18).string(message.cert);
+        if (message.subject !== '') {
+            writer.uint32(18).string(message.subject);
+        }
+        if (message.subjectKeyId !== '') {
+            writer.uint32(26).string(message.subjectKeyId);
+        }
+        if (message.info !== '') {
+            writer.uint32(34).string(message.info);
+        }
+        if (message.time !== 0) {
+            writer.uint32(40).int64(message.time);
         }
         return writer;
     },
@@ -940,7 +949,16 @@ export const MsgRejectAddX509RootCert = {
                     message.signer = reader.string();
                     break;
                 case 2:
-                    message.cert = reader.string();
+                    message.subject = reader.string();
+                    break;
+                case 3:
+                    message.subjectKeyId = reader.string();
+                    break;
+                case 4:
+                    message.info = reader.string();
+                    break;
+                case 5:
+                    message.time = longToNumber(reader.int64());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -957,18 +975,39 @@ export const MsgRejectAddX509RootCert = {
         else {
             message.signer = '';
         }
-        if (object.cert !== undefined && object.cert !== null) {
-            message.cert = String(object.cert);
+        if (object.subject !== undefined && object.subject !== null) {
+            message.subject = String(object.subject);
         }
         else {
-            message.cert = '';
+            message.subject = '';
+        }
+        if (object.subjectKeyId !== undefined && object.subjectKeyId !== null) {
+            message.subjectKeyId = String(object.subjectKeyId);
+        }
+        else {
+            message.subjectKeyId = '';
+        }
+        if (object.info !== undefined && object.info !== null) {
+            message.info = String(object.info);
+        }
+        else {
+            message.info = '';
+        }
+        if (object.time !== undefined && object.time !== null) {
+            message.time = Number(object.time);
+        }
+        else {
+            message.time = 0;
         }
         return message;
     },
     toJSON(message) {
         const obj = {};
         message.signer !== undefined && (obj.signer = message.signer);
-        message.cert !== undefined && (obj.cert = message.cert);
+        message.subject !== undefined && (obj.subject = message.subject);
+        message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId);
+        message.info !== undefined && (obj.info = message.info);
+        message.time !== undefined && (obj.time = message.time);
         return obj;
     },
     fromPartial(object) {
@@ -979,11 +1018,29 @@ export const MsgRejectAddX509RootCert = {
         else {
             message.signer = '';
         }
-        if (object.cert !== undefined && object.cert !== null) {
-            message.cert = object.cert;
+        if (object.subject !== undefined && object.subject !== null) {
+            message.subject = object.subject;
         }
         else {
-            message.cert = '';
+            message.subject = '';
+        }
+        if (object.subjectKeyId !== undefined && object.subjectKeyId !== null) {
+            message.subjectKeyId = object.subjectKeyId;
+        }
+        else {
+            message.subjectKeyId = '';
+        }
+        if (object.info !== undefined && object.info !== null) {
+            message.info = object.info;
+        }
+        else {
+            message.info = '';
+        }
+        if (object.time !== undefined && object.time !== null) {
+            message.time = object.time;
+        }
+        else {
+            message.time = 0;
         }
         return message;
     }
