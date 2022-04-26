@@ -30,6 +30,15 @@ func (k msgServer) ApproveAddX509RootCert(goCtx context.Context, msg *types.MsgA
 		return nil, types.NewErrProposedCertificateDoesNotExist(msg.Subject, msg.SubjectKeyId)
 	}
 
+	// check if proposed certificate already has reject approval form signer
+	if proposedCertificate.HasRejectApprovalFrom(signerAddr.String()) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+			"Certificate associated with subject=%v and subjectKeyID=%v combination "+
+				"already has reject approval from=%v",
+			msg.Subject, msg.SubjectKeyId, msg.Signer,
+		)
+	}
+
 	// check if proposed certificate already has approval form signer
 	if proposedCertificate.HasApprovalFrom(signerAddr.String()) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
