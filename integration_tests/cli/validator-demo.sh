@@ -507,7 +507,7 @@ test_divider
 echo "Get all proposed validators to disable. $address in the list"
 result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator all-proposed-disable-nodes")
 check_response "$result" "\"approvals\":\[{\"address\":\"$alice_address\"" raw
-check_response "$result" "\"rejectApprovals\":\[{\"address\":\"$bob_address\"" raw
+check_response "$result" "\"rejects\":\[{\"address\":\"$bob_address\"" raw
 check_response "$result" "\"address\": \"$validator_address\""
 echo "$result"
 
@@ -516,7 +516,7 @@ test_divider
 echo "Get a proposed validator to disable $address"
 result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator proposed-disable-node --address="$address"")
 check_response "$result" "\"approvals\":\[{\"address\":\"$alice_address\"" raw
-check_response "$result" "\"rejectApprovals\":\[{\"address\":\"$bob_address\"" raw
+check_response "$result" "\"rejects\":\[{\"address\":\"$bob_address\"" raw
 check_response "$result" "\"address\": \"$validator_address\""
 echo "$result"
 
@@ -525,7 +525,7 @@ test_divider
 echo "Get a proposed validator to disable $validator_address"
 result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator proposed-disable-node --address="$validator_address"")
 check_response "$result" "\"approvals\":\[{\"address\":\"$alice_address\"" raw
-check_response "$result" "\"rejectApprovals\":\[{\"address\":\"$bob_address\"" raw
+check_response "$result" "\"rejects\":\[{\"address\":\"$bob_address\"" raw
 check_response "$result" "\"address\": \"$validator_address\""
 echo "$result"
 
@@ -556,7 +556,7 @@ test_divider
 echo "Get all proposed validators to disable. $address in the list"
 result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator all-proposed-disable-nodes")
 response_does_not_contain "$result" "\"approvals\":\[{\"address\":\"$alice_address\"" raw
-response_does_not_contain "$result" "\"rejectApprovals\":\[{\"address\":\"$bob_address\"" raw
+response_does_not_contain "$result" "\"rejects\":\[{\"address\":\"$bob_address\"" raw
 response_does_not_contain "$result" "\"address\": \"$validator_address\""
 echo "$result"
 
@@ -565,7 +565,7 @@ test_divider
 echo "Get all rejected validators to disable. $address in the list"
 result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator all-rejected-disable-nodes")
 check_response "$result" "\"approvals\":\[{\"address\":\"$alice_address\"" raw
-check_response "$result" "\"rejectApprovals\":\[{\"address\":\"$bob_address\"" raw
+check_response "$result" "\"rejects\":\[{\"address\":\"$bob_address\"" raw
 check_response "$result" "\"address\": \"$jack_address\""
 check_response "$result" "\"address\": \"$validator_address\""
 echo "$result"
@@ -575,7 +575,7 @@ test_divider
 echo "Get a proposed validator to disable $address"
 result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator rejected-disable-node --address="$address"")
 check_response "$result" "\"approvals\":\[{\"address\":\"$alice_address\"" raw
-check_response "$result" "\"rejectApprovals\":\[{\"address\":\"$bob_address\"" raw
+check_response "$result" "\"rejects\":\[{\"address\":\"$bob_address\"" raw
 check_response "$result" "\"address\": \"$jack_address\""
 check_response "$result" "\"address\": \"$validator_address\""
 echo "$result"
@@ -585,7 +585,7 @@ test_divider
 echo "Get a proposed validator to disable $validator_address"
 result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator rejected-disable-node --address="$validator_address"")
 check_response "$result" "\"approvals\":\[{\"address\":\"$alice_address\"" raw
-check_response "$result" "\"rejectApprovals\":\[{\"address\":\"$bob_address\"" raw
+check_response "$result" "\"rejects\":\[{\"address\":\"$bob_address\"" raw
 check_response "$result" "\"address\": \"$jack_address\""
 check_response "$result" "\"address\": \"$validator_address\""
 echo "$result"
