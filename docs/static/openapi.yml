@@ -1126,7 +1126,7 @@ paths:
                     vendorID:
                       type: integer
                       format: int32
-                    rejectApprovals:
+                    rejects:
                       type: array
                       items:
                         type: object
@@ -1853,7 +1853,7 @@ paths:
                   vendorID:
                     type: integer
                     format: int32
-                  rejectApprovals:
+                  rejects:
                     type: array
                     items:
                       type: object
@@ -2301,7 +2301,7 @@ paths:
                         vendorID:
                           type: integer
                           format: int32
-                        rejectApprovals:
+                        rejects:
                           type: array
                           items:
                             type: object
@@ -2826,7 +2826,7 @@ paths:
                       vendorID:
                         type: integer
                         format: int32
-                      rejectApprovals:
+                      rejects:
                         type: array
                         items:
                           type: object
@@ -3801,7 +3801,7 @@ paths:
                         vendorID:
                           type: integer
                           format: int32
-                        rejectApprovals:
+                        rejects:
                           type: array
                           items:
                             type: object
@@ -4326,7 +4326,7 @@ paths:
                       vendorID:
                         type: integer
                         format: int32
-                      rejectApprovals:
+                      rejects:
                         type: array
                         items:
                           type: object
@@ -4774,7 +4774,7 @@ paths:
                         vendorID:
                           type: integer
                           format: int32
-                        rejectApprovals:
+                        rejects:
                           type: array
                           items:
                             type: object
@@ -5317,7 +5317,7 @@ paths:
                       vendorID:
                         type: integer
                         format: int32
-                      rejectApprovals:
+                      rejects:
                         type: array
                         items:
                           type: object
@@ -7624,7 +7624,7 @@ paths:
                                   type: string
                           subjectAsText:
                             type: string
-                          rejectApprovals:
+                          rejects:
                             type: array
                             items:
                               type: object
@@ -7848,7 +7848,7 @@ paths:
                                 type: string
                         subjectAsText:
                           type: string
-                        rejectApprovals:
+                        rejects:
                           type: array
                           items:
                             type: object
@@ -7991,7 +7991,7 @@ paths:
                             type: string
                     subjectAsText:
                       type: string
-                    rejectApprovals:
+                    rejects:
                       type: array
                       items:
                         type: object
@@ -8148,7 +8148,7 @@ paths:
                           type: string
                   subjectAsText:
                     type: string
-                  rejectApprovals:
+                  rejects:
                     type: array
                     items:
                       type: object
@@ -8456,7 +8456,7 @@ paths:
                                   type: string
                           subjectAsText:
                             type: string
-                          rejectApprovals:
+                          rejects:
                             type: array
                             items:
                               type: object
@@ -8632,7 +8632,7 @@ paths:
                                 type: string
                         subjectAsText:
                           type: string
-                        rejectApprovals:
+                        rejects:
                           type: array
                           items:
                             type: object
@@ -8735,7 +8735,7 @@ paths:
                                   type: string
                           subjectAsText:
                             type: string
-                          rejectApprovals:
+                          rejects:
                             type: array
                             items:
                               type: object
@@ -8911,7 +8911,7 @@ paths:
                                 type: string
                         subjectAsText:
                           type: string
-                        rejectApprovals:
+                        rejects:
                           type: array
                           items:
                             type: object
@@ -9081,7 +9081,7 @@ paths:
                             type: string
                     disabledByNodeAdmin:
                       type: boolean
-                    rejectApprovals:
+                    rejects:
                       type: array
                       items:
                         type: object
@@ -9399,7 +9399,7 @@ paths:
                           type: string
                   disabledByNodeAdmin:
                     type: boolean
-                  rejectApprovals:
+                  rejects:
                     type: array
                     items:
                       type: object
@@ -11058,7 +11058,7 @@ paths:
                             format: int64
                           info:
                             type: string
-                    rejectApprovals:
+                    rejects:
                       type: array
                       items:
                         type: object
@@ -11374,7 +11374,7 @@ paths:
                           format: int64
                         info:
                           type: string
-                  rejectApprovals:
+                  rejects:
                     type: array
                     items:
                       type: object
@@ -11585,14 +11585,14 @@ paths:
   /dcl/validator/rejected-disable-nodes:
     get:
       summary: Queries a list of RejectedNode items.
-      operationId: RejectedDisableNodeAll
+      operationId: RejectedDisableValidatorAll
       responses:
         '200':
           description: A successful response.
           schema:
             type: object
             properties:
-              rejectedNode:
+              rejectedValidator:
                 type: array
                 items:
                   type: object
@@ -11613,7 +11613,7 @@ paths:
                             format: int64
                           info:
                             type: string
-                    rejectApprovals:
+                    rejects:
                       type: array
                       items:
                         type: object
@@ -11903,14 +11903,14 @@ paths:
   /dcl/validator/rejected-disable-nodes/{owner}:
     get:
       summary: Queries a RejectedNode by index.
-      operationId: RejectedDisableNode
+      operationId: RejectedDisableValidator
       responses:
         '200':
           description: A successful response.
           schema:
             type: object
             properties:
-              rejectedNode:
+              rejectedValidator:
                 type: object
                 properties:
                   address:
@@ -11929,7 +11929,7 @@ paths:
                           format: int64
                         info:
                           type: string
-                  rejectApprovals:
+                  rejects:
                     type: array
                     items:
                       type: object
@@ -13542,7 +13542,7 @@ definitions:
       vendorID:
         type: integer
         format: int32
-      rejectApprovals:
+      rejects:
         type: array
         items:
           type: object
@@ -13790,7 +13790,7 @@ definitions:
           vendorID:
             type: integer
             format: int32
-          rejectApprovals:
+          rejects:
             type: array
             items:
               type: object
@@ -14045,7 +14045,7 @@ definitions:
             vendorID:
               type: integer
               format: int32
-            rejectApprovals:
+            rejects:
               type: array
               items:
                 type: object
@@ -14313,7 +14313,7 @@ definitions:
                 vendorID:
                   type: integer
                   format: int32
-                rejectApprovals:
+                rejects:
                   type: array
                   items:
                     type: object
@@ -14628,7 +14628,7 @@ definitions:
                 vendorID:
                   type: integer
                   format: int32
-                rejectApprovals:
+                rejects:
                   type: array
                   items:
                     type: object
@@ -14896,7 +14896,7 @@ definitions:
                 vendorID:
                   type: integer
                   format: int32
-                rejectApprovals:
+                rejects:
                   type: array
                   items:
                     type: object
@@ -15171,7 +15171,7 @@ definitions:
           vendorID:
             type: integer
             format: int32
-          rejectApprovals:
+          rejects:
             type: array
             items:
               type: object
@@ -15419,7 +15419,7 @@ definitions:
               vendorID:
                 type: integer
                 format: int32
-              rejectApprovals:
+              rejects:
                 type: array
                 items:
                   type: object
@@ -15678,7 +15678,7 @@ definitions:
               vendorID:
                 type: integer
                 format: int32
-              rejectApprovals:
+              rejects:
                 type: array
                 items:
                   type: object
@@ -15917,7 +15917,7 @@ definitions:
               vendorID:
                 type: integer
                 format: int32
-              rejectApprovals:
+              rejects:
                 type: array
                 items:
                   type: object
@@ -16167,7 +16167,7 @@ definitions:
           vendorID:
             type: integer
             format: int32
-          rejectApprovals:
+          rejects:
             type: array
             items:
               type: object
@@ -16399,7 +16399,7 @@ definitions:
           vendorID:
             type: integer
             format: int32
-          rejectApprovals:
+          rejects:
             type: array
             items:
               type: object
@@ -17854,7 +17854,7 @@ definitions:
                     type: string
             subjectAsText:
               type: string
-            rejectApprovals:
+            rejects:
               type: array
               items:
                 type: object
@@ -17924,7 +17924,7 @@ definitions:
               type: string
       subjectAsText:
         type: string
-      rejectApprovals:
+      rejects:
         type: array
         items:
           type: object
@@ -17996,7 +17996,7 @@ definitions:
               type: string
       subjectAsText:
         type: string
-      rejectApprovals:
+      rejects:
         type: array
         items:
           type: object
@@ -18080,7 +18080,7 @@ definitions:
                           type: string
                   subjectAsText:
                     type: string
-                  rejectApprovals:
+                  rejects:
                     type: array
                     items:
                       type: object
@@ -18149,7 +18149,7 @@ definitions:
                     type: string
             subjectAsText:
               type: string
-            rejectApprovals:
+            rejects:
               type: array
               items:
                 type: object
@@ -18288,7 +18288,7 @@ definitions:
                           type: string
                   subjectAsText:
                     type: string
-                  rejectApprovals:
+                  rejects:
                     type: array
                     items:
                       type: object
@@ -18376,7 +18376,7 @@ definitions:
                           type: string
                   subjectAsText:
                     type: string
-                  rejectApprovals:
+                  rejects:
                     type: array
                     items:
                       type: object
@@ -18474,7 +18474,7 @@ definitions:
                         type: string
                 subjectAsText:
                   type: string
-                rejectApprovals:
+                rejects:
                   type: array
                   items:
                     type: object
@@ -18550,7 +18550,7 @@ definitions:
                   type: string
           subjectAsText:
             type: string
-          rejectApprovals:
+          rejects:
             type: array
             items:
               type: object
@@ -18635,7 +18635,7 @@ definitions:
                         type: string
                 subjectAsText:
                   type: string
-                rejectApprovals:
+                rejects:
                   type: array
                   items:
                     type: object
@@ -18696,7 +18696,7 @@ definitions:
                         type: string
                 subjectAsText:
                   type: string
-                rejectApprovals:
+                rejects:
                   type: array
                   items:
                     type: object
@@ -18769,7 +18769,7 @@ definitions:
                     type: string
             subjectAsText:
               type: string
-            rejectApprovals:
+            rejects:
               type: array
               items:
                 type: object
@@ -18827,7 +18827,7 @@ definitions:
                     type: string
             subjectAsText:
               type: string
-            rejectApprovals:
+            rejects:
               type: array
               items:
                 type: object
@@ -18887,7 +18887,7 @@ definitions:
               type: string
       disabledByNodeAdmin:
         type: boolean
-      rejectApprovals:
+      rejects:
         type: array
         items:
           type: object
@@ -18936,7 +18936,7 @@ definitions:
               format: int64
             info:
               type: string
-      rejectApprovals:
+      rejects:
         type: array
         items:
           type: object
@@ -18974,7 +18974,7 @@ definitions:
                     type: string
             disabledByNodeAdmin:
               type: boolean
-            rejectApprovals:
+            rejects:
               type: array
               items:
                 type: object
@@ -19073,7 +19073,7 @@ definitions:
                     format: int64
                   info:
                     type: string
-            rejectApprovals:
+            rejects:
               type: array
               items:
                 type: object
@@ -19110,10 +19110,10 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
-  zigbeealliance.distributedcomplianceledger.validator.QueryAllRejectedDisableNodeResponse:
+  zigbeealliance.distributedcomplianceledger.validator.QueryAllRejectedDisableValidatorResponse:
     type: object
     properties:
-      rejectedNode:
+      rejectedValidator:
         type: array
         items:
           type: object
@@ -19134,7 +19134,7 @@ definitions:
                     format: int64
                   info:
                     type: string
-            rejectApprovals:
+            rejects:
               type: array
               items:
                 type: object
@@ -19427,7 +19427,7 @@ definitions:
                   type: string
           disabledByNodeAdmin:
             type: boolean
-          rejectApprovals:
+          rejects:
             type: array
             items:
               type: object
@@ -19472,7 +19472,7 @@ definitions:
                   format: int64
                 info:
                   type: string
-          rejectApprovals:
+          rejects:
             type: array
             items:
               type: object
@@ -19484,10 +19484,10 @@ definitions:
                   format: int64
                 info:
                   type: string
-  zigbeealliance.distributedcomplianceledger.validator.QueryGetRejectedDisableNodeResponse:
+  zigbeealliance.distributedcomplianceledger.validator.QueryGetRejectedDisableValidatorResponse:
     type: object
     properties:
-      rejectedNode:
+      rejectedValidator:
         type: object
         properties:
           address:
@@ -19506,7 +19506,7 @@ definitions:
                   format: int64
                 info:
                   type: string
-          rejectApprovals:
+          rejects:
             type: array
             items:
               type: object
@@ -19719,7 +19719,7 @@ definitions:
           jailedReason:
             type: string
             title: the reason of validator jailing
-  zigbeealliance.distributedcomplianceledger.validator.RejectedDisableNode:
+  zigbeealliance.distributedcomplianceledger.validator.RejectedDisableValidator:
     type: object
     properties:
       address:
@@ -19738,7 +19738,7 @@ definitions:
               format: int64
             info:
               type: string
-      rejectApprovals:
+      rejects:
         type: array
         items:
           type: object
