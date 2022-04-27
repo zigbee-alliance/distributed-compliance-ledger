@@ -76,12 +76,12 @@
         owner: "{{ cosmovisor.user }}"
         path: "{{ dcl_home }}"
 
-- name: run dcl nodes
+- name: run all dcl nodes
   hosts: all
   tasks:
     - name: run cosmovisor service
       become: true
       service:
         name: cosmovisor
-        state: started
+        state: restarted
         enabled: true
