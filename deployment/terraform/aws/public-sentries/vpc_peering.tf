@@ -1,21 +1,21 @@
 module "this_vpc_peering" {
-    source  = "grem11n/vpc-peering/aws"
-    version = "4.1.0"
-    
-    providers = {
-      aws.this = aws
-      aws.peer = aws.peer
-    }
+  source  = "grem11n/vpc-peering/aws"
+  version = "4.1.0"
 
-    this_vpc_id = module.this_vpc.vpc_id
-    peer_vpc_id = var.peer_vpc.vpc_id
+  providers = {
+    aws.this = aws
+    aws.peer = aws.peer
+  }
 
-    this_rts_ids = [element(module.this_vpc.public_route_table_ids, 0)]
-    peer_rts_ids = [element(var.peer_vpc.public_route_table_ids, 0)]
+  this_vpc_id = module.this_vpc.vpc_id
+  peer_vpc_id = var.peer_vpc.vpc_id
 
-    auto_accept_peering = true
+  this_rts_ids = [element(module.this_vpc.public_route_table_ids, 0)]
+  peer_rts_ids = [element(var.peer_vpc.public_route_table_ids, 0)]
 
-    tags = {
-        Name = "Public Sentries to Private Sentries VPC peering"
-    }
+  auto_accept_peering = true
+
+  tags = {
+    Name = "Public Sentries to Private Sentries VPC peering"
+  }
 }
