@@ -20,11 +20,10 @@ import (
 
 // Default parameter values.
 const (
-	DclMaxMemoCharacters          uint64  = authtypes.DefaultMaxMemoCharacters
-	DclTxSigLimit                 uint64  = authtypes.DefaultTxSigLimit
-	DclTxSizeCostPerByte          uint64  = 0 // gas is not needed in DCL
-	DclSigVerifyCostED25519       uint64  = 0 // gas is not needed in DCL
-	DclSigVerifyCostSecp256k1     uint64  = 0 // gas is not needed in DCL
-	AccountApprovalsPercent       float64 = 0.66
-	AccountRejectApprovalsPercent float64 = 0.33
+	DclMaxMemoCharacters      uint64  = authtypes.DefaultMaxMemoCharacters
+	DclTxSigLimit             uint64  = authtypes.DefaultTxSigLimit
+	DclTxSizeCostPerByte      uint64  = 0 // gas is not needed in DCL
+	DclSigVerifyCostED25519   uint64  = 0 // gas is not needed in DCL
+	DclSigVerifyCostSecp256k1 uint64  = 0 // gas is not needed in DCL
+	AccountApprovalsPercent   float64 = 0.66
 )
