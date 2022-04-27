@@ -802,8 +802,8 @@ func TestHandler_RejectAccount_TwoRejectApprovalsAreNeeded(t *testing.T) {
 	// check for info, approvals, rejectedApprovals fields
 	require.Equal(t, testconstants.Info, rejectedAccount.Approvals[0].Info)
 	require.Equal(t, trustee1.String(), rejectedAccount.Approvals[0].Address)
-	require.Equal(t, testconstants.Info, rejectedAccount.RejectApprovals[0].Info)
-	require.Equal(t, trustee2.String(), rejectedAccount.RejectApprovals[0].Address)
+	require.Equal(t, testconstants.Info, rejectedAccount.Rejects[0].Info)
+	require.Equal(t, trustee2.String(), rejectedAccount.Rejects[0].Address)
 
 	// ensure pending account removed
 	require.False(t, setup.Keeper.IsPendingAccountPresent(setup.Ctx, address))
@@ -866,12 +866,12 @@ func TestHandler_RejectAccount_ThreeRejectApprovalsAreNeeded(t *testing.T) {
 	// check for info, approvals, rejectedApprovals fields
 	require.Equal(t, testconstants.Info, rejectedAccount.Approvals[0].Info)
 	require.Equal(t, trustee1.String(), rejectedAccount.Approvals[0].Address)
-	require.Equal(t, testconstants.Info, rejectedAccount.RejectApprovals[0].Info)
-	require.Equal(t, trustee2.String(), rejectedAccount.RejectApprovals[0].Address)
-	require.Equal(t, testconstants.Info, rejectedAccount.RejectApprovals[1].Info)
-	require.Equal(t, trustee3.String(), rejectedAccount.RejectApprovals[1].Address)
-	require.Equal(t, testconstants.Info, rejectedAccount.RejectApprovals[2].Info)
-	require.Equal(t, trustee4.String(), rejectedAccount.RejectApprovals[2].Address)
+	require.Equal(t, testconstants.Info, rejectedAccount.Rejects[0].Info)
+	require.Equal(t, trustee2.String(), rejectedAccount.Rejects[0].Address)
+	require.Equal(t, testconstants.Info, rejectedAccount.Rejects[1].Info)
+	require.Equal(t, trustee3.String(), rejectedAccount.Rejects[1].Address)
+	require.Equal(t, testconstants.Info, rejectedAccount.Rejects[2].Info)
+	require.Equal(t, trustee4.String(), rejectedAccount.Rejects[2].Address)
 
 	// ensure pending account removed
 	require.False(t, setup.Keeper.IsPendingAccountPresent(setup.Ctx, address))
@@ -1042,10 +1042,10 @@ func TestHandler_DoubleTimeRejectAccount(t *testing.T) {
 	// check for info, approvals, rejectedApprovals fields
 	require.Equal(t, testconstants.Info, rejectedAccountFirstTime.Approvals[0].Info)
 	require.Equal(t, trustee1.String(), rejectedAccountFirstTime.Approvals[0].Address)
-	require.Equal(t, testconstants.Info, rejectedAccountFirstTime.RejectApprovals[0].Info)
-	require.Equal(t, trustee2.String(), rejectedAccountFirstTime.RejectApprovals[0].Address)
-	require.Equal(t, testconstants.Info, rejectedAccountFirstTime.RejectApprovals[1].Info)
-	require.Equal(t, trustee3.String(), rejectedAccountFirstTime.RejectApprovals[1].Address)
+	require.Equal(t, testconstants.Info, rejectedAccountFirstTime.Rejects[0].Info)
+	require.Equal(t, trustee2.String(), rejectedAccountFirstTime.Rejects[0].Address)
+	require.Equal(t, testconstants.Info, rejectedAccountFirstTime.Rejects[1].Info)
+	require.Equal(t, trustee3.String(), rejectedAccountFirstTime.Rejects[1].Address)
 
 	// trustee1 second time proposes account
 	_, address, pubkey, err = proposeAddAccount(setup, trustee1)
@@ -1078,10 +1078,10 @@ func TestHandler_DoubleTimeRejectAccount(t *testing.T) {
 	// check for info, approvals, rejectedApprovals fields
 	require.Equal(t, testconstants.Info, rejectAccountSecondTime.Approvals[0].Info)
 	require.Equal(t, trustee1.String(), rejectAccountSecondTime.Approvals[0].Address)
-	require.Equal(t, testconstants.Info, rejectAccountSecondTime.RejectApprovals[0].Info)
-	require.Equal(t, trustee2.String(), rejectAccountSecondTime.RejectApprovals[0].Address)
-	require.Equal(t, testconstants.Info, rejectAccountSecondTime.RejectApprovals[1].Info)
-	require.Equal(t, trustee3.String(), rejectAccountSecondTime.RejectApprovals[1].Address)
+	require.Equal(t, testconstants.Info, rejectAccountSecondTime.Rejects[0].Info)
+	require.Equal(t, trustee2.String(), rejectAccountSecondTime.Rejects[0].Address)
+	require.Equal(t, testconstants.Info, rejectAccountSecondTime.Rejects[1].Info)
+	require.Equal(t, trustee3.String(), rejectAccountSecondTime.Rejects[1].Address)
 }
 
 func storeTrustee(setup TestSetup) sdk.AccAddress {

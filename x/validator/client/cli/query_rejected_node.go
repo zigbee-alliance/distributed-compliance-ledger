@@ -26,11 +26,11 @@ func CmdListRejectedNode() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.QueryAllRejectedDisableNodeRequest{
+			params := &types.QueryAllRejectedDisableValidatorRequest{
 				Pagination: pageReq,
 			}
 
-			res, err := queryClient.RejectedDisableNodeAll(context.Background(), params)
+			res, err := queryClient.RejectedDisableValidatorAll(context.Background(), params)
 			if err != nil {
 				return err
 			}
@@ -62,7 +62,7 @@ func CmdShowRejectedNode() *cobra.Command {
 				addr = sdk.ValAddress(owner)
 			}
 
-			var res types.RejectedDisableNode
+			var res types.RejectedDisableValidator
 
 			return cli.QueryWithProof(
 				clientCtx,

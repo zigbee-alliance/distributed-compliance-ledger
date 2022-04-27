@@ -14,7 +14,7 @@ export interface Certificate {
     subjectKeyId: string;
     approvals: Grant[];
     subjectAsText: string;
-    rejectApprovals: Grant[];
+    rejects: Grant[];
 }
 export declare const Certificate: {
     encode(message: Certificate, writer?: Writer): Writer;

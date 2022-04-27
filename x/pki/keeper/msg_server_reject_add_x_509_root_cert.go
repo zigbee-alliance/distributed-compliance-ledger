@@ -54,24 +54,24 @@ func (k msgServer) RejectAddX509RootCert(goCtx context.Context, msg *types.MsgRe
 		Time:    msg.Time,
 		Info:    msg.Info,
 	}
-	proposedCertificate.RejectApprovals = append(proposedCertificate.RejectApprovals, &grant)
+	proposedCertificate.Rejects = append(proposedCertificate.Rejects, &grant)
 
 	// check if proposed certificate has enough approvals
-	if len(proposedCertificate.RejectApprovals) == k.CertificateRejectApprovalsCount(ctx, k.dclauthKeeper) {
+	if len(proposedCertificate.Rejects) == k.CertificateRejectApprovalsCount(ctx, k.dclauthKeeper) {
 		// create rejected certificate
 		rejectedRootCertificate := types.RejectedCertificate{
 			Subject:      proposedCertificate.Subject,
 			SubjectKeyId: proposedCertificate.SubjectKeyId,
 			Certs: []*types.Certificate{
 				{
-					PemCert:         proposedCertificate.PemCert,
-					SerialNumber:    proposedCertificate.SerialNumber,
-					Owner:           proposedCertificate.Owner,
-					Subject:         proposedCertificate.Subject,
-					SubjectAsText:   proposedCertificate.SubjectAsText,
-					SubjectKeyId:    proposedCertificate.SubjectKeyId,
-					Approvals:       proposedCertificate.Approvals,
-					RejectApprovals: proposedCertificate.RejectApprovals,
+					PemCert:       proposedCertificate.PemCert,
+					SerialNumber:  proposedCertificate.SerialNumber,
+					Owner:         proposedCertificate.Owner,
+					Subject:       proposedCertificate.Subject,
+					SubjectAsText: proposedCertificate.SubjectAsText,
+					SubjectKeyId:  proposedCertificate.SubjectKeyId,
+					Approvals:     proposedCertificate.Approvals,
+					Rejects:       proposedCertificate.Rejects,
 				},
 			},
 		}

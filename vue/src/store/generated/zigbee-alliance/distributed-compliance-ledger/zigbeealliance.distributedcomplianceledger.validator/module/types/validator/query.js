@@ -5,7 +5,7 @@ import { PageRequest, PageResponse } from '../cosmos/base/query/v1beta1/paginati
 import { LastValidatorPower } from '../validator/last_validator_power';
 import { ProposedDisableValidator } from '../validator/proposed_disable_validator';
 import { DisabledValidator } from '../validator/disabled_validator';
-import { RejectedDisableNode } from '../validator/rejected_node';
+import { RejectedDisableValidator } from '../validator/rejected_validator';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.validator';
 const baseQueryGetValidatorRequest = { owner: '' };
 export const QueryGetValidatorRequest = {
@@ -926,8 +926,8 @@ export const QueryAllDisabledValidatorResponse = {
         return message;
     }
 };
-const baseQueryGetRejectedDisableNodeRequest = { owner: '' };
-export const QueryGetRejectedDisableNodeRequest = {
+const baseQueryGetRejectedDisableValidatorRequest = { owner: '' };
+export const QueryGetRejectedDisableValidatorRequest = {
     encode(message, writer = Writer.create()) {
         if (message.owner !== '') {
             writer.uint32(10).string(message.owner);
@@ -937,7 +937,7 @@ export const QueryGetRejectedDisableNodeRequest = {
     decode(input, length) {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
-        const message = { ...baseQueryGetRejectedDisableNodeRequest };
+        const message = { ...baseQueryGetRejectedDisableValidatorRequest };
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
@@ -952,7 +952,7 @@ export const QueryGetRejectedDisableNodeRequest = {
         return message;
     },
     fromJSON(object) {
-        const message = { ...baseQueryGetRejectedDisableNodeRequest };
+        const message = { ...baseQueryGetRejectedDisableValidatorRequest };
         if (object.owner !== undefined && object.owner !== null) {
             message.owner = String(object.owner);
         }
@@ -967,7 +967,7 @@ export const QueryGetRejectedDisableNodeRequest = {
         return obj;
     },
     fromPartial(object) {
-        const message = { ...baseQueryGetRejectedDisableNodeRequest };
+        const message = { ...baseQueryGetRejectedDisableValidatorRequest };
         if (object.owner !== undefined && object.owner !== null) {
             message.owner = object.owner;
         }
@@ -977,23 +977,23 @@ export const QueryGetRejectedDisableNodeRequest = {
         return message;
     }
 };
-const baseQueryGetRejectedDisableNodeResponse = {};
-export const QueryGetRejectedDisableNodeResponse = {
+const baseQueryGetRejectedDisableValidatorResponse = {};
+export const QueryGetRejectedDisableValidatorResponse = {
     encode(message, writer = Writer.create()) {
-        if (message.rejectedNode !== undefined) {
-            RejectedDisableNode.encode(message.rejectedNode, writer.uint32(10).fork()).ldelim();
+        if (message.rejectedValidator !== undefined) {
+            RejectedDisableValidator.encode(message.rejectedValidator, writer.uint32(10).fork()).ldelim();
         }
         return writer;
     },
     decode(input, length) {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
-        const message = { ...baseQueryGetRejectedDisableNodeResponse };
+        const message = { ...baseQueryGetRejectedDisableValidatorResponse };
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
                 case 1:
-                    message.rejectedNode = RejectedDisableNode.decode(reader, reader.uint32());
+                    message.rejectedValidator = RejectedDisableValidator.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -1003,33 +1003,34 @@ export const QueryGetRejectedDisableNodeResponse = {
         return message;
     },
     fromJSON(object) {
-        const message = { ...baseQueryGetRejectedDisableNodeResponse };
-        if (object.rejectedNode !== undefined && object.rejectedNode !== null) {
-            message.rejectedNode = RejectedDisableNode.fromJSON(object.rejectedNode);
+        const message = { ...baseQueryGetRejectedDisableValidatorResponse };
+        if (object.rejectedValidator !== undefined && object.rejectedValidator !== null) {
+            message.rejectedValidator = RejectedDisableValidator.fromJSON(object.rejectedValidator);
         }
         else {
-            message.rejectedNode = undefined;
+            message.rejectedValidator = undefined;
         }
         return message;
     },
     toJSON(message) {
         const obj = {};
-        message.rejectedNode !== undefined && (obj.rejectedNode = message.rejectedNode ? RejectedDisableNode.toJSON(message.rejectedNode) : undefined);
+        message.rejectedValidator !== undefined &&
+            (obj.rejectedValidator = message.rejectedValidator ? RejectedDisableValidator.toJSON(message.rejectedValidator) : undefined);
         return obj;
     },
     fromPartial(object) {
-        const message = { ...baseQueryGetRejectedDisableNodeResponse };
-        if (object.rejectedNode !== undefined && object.rejectedNode !== null) {
-            message.rejectedNode = RejectedDisableNode.fromPartial(object.rejectedNode);
+        const message = { ...baseQueryGetRejectedDisableValidatorResponse };
+        if (object.rejectedValidator !== undefined && object.rejectedValidator !== null) {
+            message.rejectedValidator = RejectedDisableValidator.fromPartial(object.rejectedValidator);
         }
         else {
-            message.rejectedNode = undefined;
+            message.rejectedValidator = undefined;
         }
         return message;
     }
 };
-const baseQueryAllRejectedDisableNodeRequest = {};
-export const QueryAllRejectedDisableNodeRequest = {
+const baseQueryAllRejectedDisableValidatorRequest = {};
+export const QueryAllRejectedDisableValidatorRequest = {
     encode(message, writer = Writer.create()) {
         if (message.pagination !== undefined) {
             PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
@@ -1039,7 +1040,7 @@ export const QueryAllRejectedDisableNodeRequest = {
     decode(input, length) {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
-        const message = { ...baseQueryAllRejectedDisableNodeRequest };
+        const message = { ...baseQueryAllRejectedDisableValidatorRequest };
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
@@ -1054,7 +1055,7 @@ export const QueryAllRejectedDisableNodeRequest = {
         return message;
     },
     fromJSON(object) {
-        const message = { ...baseQueryAllRejectedDisableNodeRequest };
+        const message = { ...baseQueryAllRejectedDisableValidatorRequest };
         if (object.pagination !== undefined && object.pagination !== null) {
             message.pagination = PageRequest.fromJSON(object.pagination);
         }
@@ -1069,7 +1070,7 @@ export const QueryAllRejectedDisableNodeRequest = {
         return obj;
     },
     fromPartial(object) {
-        const message = { ...baseQueryAllRejectedDisableNodeRequest };
+        const message = { ...baseQueryAllRejectedDisableValidatorRequest };
         if (object.pagination !== undefined && object.pagination !== null) {
             message.pagination = PageRequest.fromPartial(object.pagination);
         }
@@ -1079,11 +1080,11 @@ export const QueryAllRejectedDisableNodeRequest = {
         return message;
     }
 };
-const baseQueryAllRejectedDisableNodeResponse = {};
-export const QueryAllRejectedDisableNodeResponse = {
+const baseQueryAllRejectedDisableValidatorResponse = {};
+export const QueryAllRejectedDisableValidatorResponse = {
     encode(message, writer = Writer.create()) {
-        for (const v of message.rejectedNode) {
-            RejectedDisableNode.encode(v, writer.uint32(10).fork()).ldelim();
+        for (const v of message.rejectedValidator) {
+            RejectedDisableValidator.encode(v, writer.uint32(10).fork()).ldelim();
         }
         if (message.pagination !== undefined) {
             PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim();
@@ -1093,13 +1094,13 @@ export const QueryAllRejectedDisableNodeResponse = {
     decode(input, length) {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
-        const message = { ...baseQueryAllRejectedDisableNodeResponse };
-        message.rejectedNode = [];
+        const message = { ...baseQueryAllRejectedDisableValidatorResponse };
+        message.rejectedValidator = [];
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
                 case 1:
-                    message.rejectedNode.push(RejectedDisableNode.decode(reader, reader.uint32()));
+                    message.rejectedValidator.push(RejectedDisableValidator.decode(reader, reader.uint32()));
                     break;
                 case 2:
                     message.pagination = PageResponse.decode(reader, reader.uint32());
@@ -1112,11 +1113,11 @@ export const QueryAllRejectedDisableNodeResponse = {
         return message;
     },
     fromJSON(object) {
-        const message = { ...baseQueryAllRejectedDisableNodeResponse };
-        message.rejectedNode = [];
-        if (object.rejectedNode !== undefined && object.rejectedNode !== null) {
-            for (const e of object.rejectedNode) {
-                message.rejectedNode.push(RejectedDisableNode.fromJSON(e));
+        const message = { ...baseQueryAllRejectedDisableValidatorResponse };
+        message.rejectedValidator = [];
+        if (object.rejectedValidator !== undefined && object.rejectedValidator !== null) {
+            for (const e of object.rejectedValidator) {
+                message.rejectedValidator.push(RejectedDisableValidator.fromJSON(e));
             }
         }
         if (object.pagination !== undefined && object.pagination !== null) {
@@ -1129,21 +1130,21 @@ export const QueryAllRejectedDisableNodeResponse = {
     },
     toJSON(message) {
         const obj = {};
-        if (message.rejectedNode) {
-            obj.rejectedNode = message.rejectedNode.map((e) => (e ? RejectedDisableNode.toJSON(e) : undefined));
+        if (message.rejectedValidator) {
+            obj.rejectedValidator = message.rejectedValidator.map((e) => (e ? RejectedDisableValidator.toJSON(e) : undefined));
         }
         else {
-            obj.rejectedNode = [];
+            obj.rejectedValidator = [];
         }
         message.pagination !== undefined && (obj.pagination = message.pagination ? PageResponse.toJSON(message.pagination) : undefined);
         return obj;
     },
     fromPartial(object) {
-        const message = { ...baseQueryAllRejectedDisableNodeResponse };
-        message.rejectedNode = [];
-        if (object.rejectedNode !== undefined && object.rejectedNode !== null) {
-            for (const e of object.rejectedNode) {
-                message.rejectedNode.push(RejectedDisableNode.fromPartial(e));
+        const message = { ...baseQueryAllRejectedDisableValidatorResponse };
+        message.rejectedValidator = [];
+        if (object.rejectedValidator !== undefined && object.rejectedValidator !== null) {
+            for (const e of object.rejectedValidator) {
+                message.rejectedValidator.push(RejectedDisableValidator.fromPartial(e));
             }
         }
         if (object.pagination !== undefined && object.pagination !== null) {
@@ -1199,14 +1200,14 @@ export class QueryClientImpl {
         const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.validator.Query', 'DisabledValidatorAll', data);
         return promise.then((data) => QueryAllDisabledValidatorResponse.decode(new Reader(data)));
     }
-    RejectedDisableNode(request) {
-        const data = QueryGetRejectedDisableNodeRequest.encode(request).finish();
-        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.validator.Query', 'RejectedDisableNode', data);
-        return promise.then((data) => QueryGetRejectedDisableNodeResponse.decode(new Reader(data)));
+    RejectedDisableValidator(request) {
+        const data = QueryGetRejectedDisableValidatorRequest.encode(request).finish();
+        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.validator.Query', 'RejectedDisableValidator', data);
+        return promise.then((data) => QueryGetRejectedDisableValidatorResponse.decode(new Reader(data)));
     }
-    RejectedDisableNodeAll(request) {
-        const data = QueryAllRejectedDisableNodeRequest.encode(request).finish();
-        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.validator.Query', 'RejectedDisableNodeAll', data);
-        return promise.then((data) => QueryAllRejectedDisableNodeResponse.decode(new Reader(data)));
+    RejectedDisableValidatorAll(request) {
+        const data = QueryAllRejectedDisableValidatorRequest.encode(request).finish();
+        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.validator.Query', 'RejectedDisableValidatorAll', data);
+        return promise.then((data) => QueryAllRejectedDisableValidatorResponse.decode(new Reader(data)));
     }
 }

@@ -13,7 +13,7 @@ export interface DclauthAccount {
     approvals?: DclauthGrant[];
     /** @format int32 */
     vendorID?: number;
-    rejectApprovals?: DclauthGrant[];
+    rejects?: DclauthGrant[];
 }
 export interface DclauthAccountStat {
     /** @format uint64 */

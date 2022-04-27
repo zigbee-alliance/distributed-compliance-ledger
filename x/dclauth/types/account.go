@@ -169,7 +169,7 @@ func (acc PendingAccount) HasApprovalFrom(address sdk.AccAddress) bool {
 
 func (acc PendingAccount) HasRejectApprovalFrom(address sdk.AccAddress) bool {
 	addrStr := address.String()
-	for _, rejectApproval := range acc.RejectApprovals {
+	for _, rejectApproval := range acc.Rejects {
 		if rejectApproval.Address == addrStr {
 			return true
 		}

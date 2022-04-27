@@ -75,7 +75,7 @@ func (k msgServer) ApproveDisableValidator(goCtx context.Context, msg *types.Msg
 			Address:             proposedDisableValidator.Address,
 			Creator:             proposedDisableValidator.Creator,
 			Approvals:           proposedDisableValidator.Approvals,
-			RejectApprovals:     proposedDisableValidator.RejectApprovals,
+			Rejects:             proposedDisableValidator.Rejects,
 			DisabledByNodeAdmin: false,
 		}
 

@@ -4,18 +4,17 @@ import { Writer, Reader } from 'protobufjs/minimal'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.validator'
 
-export interface DisabledValidator {
+export interface RejectedDisableValidator {
   address: string
   creator: string
   approvals: Grant[]
-  disabledByNodeAdmin: boolean
   rejects: Grant[]
 }
 
-const baseDisabledValidator: object = { address: '', creator: '', disabledByNodeAdmin: false }
+const baseRejectedDisableValidator: object = { address: '', creator: '' }
 
-export const DisabledValidator = {
-  encode(message: DisabledValidator, writer: Writer = Writer.create()): Writer {
+export const RejectedDisableValidator = {
+  encode(message: RejectedDisableValidator, writer: Writer = Writer.create()): Writer {
     if (message.address !== '') {
       writer.uint32(10).string(message.address)
     }
@@ -25,19 +24,16 @@ export const DisabledValidator = {
     for (const v of message.approvals) {
       Grant.encode(v!, writer.uint32(26).fork()).ldelim()
     }
-    if (message.disabledByNodeAdmin === true) {
-      writer.uint32(32).bool(message.disabledByNodeAdmin)
-    }
     for (const v of message.rejects) {
-      Grant.encode(v!, writer.uint32(42).fork()).ldelim()
+      Grant.encode(v!, writer.uint32(34).fork()).ldelim()
     }
     return writer
   },
 
-  decode(input: Reader | Uint8Array, length?: number): DisabledValidator {
+  decode(input: Reader | Uint8Array, length?: number): RejectedDisableValidator {
     const reader = input instanceof Uint8Array ? new Reader(input) : input
     let end = length === undefined ? reader.len : reader.pos + length
-    const message = { ...baseDisabledValidator } as DisabledValidator
+    const message = { ...baseRejectedDisableValidator } as RejectedDisableValidator
     message.approvals = []
     message.rejects = []
     while (reader.pos < end) {
@@ -53,9 +49,6 @@ export const DisabledValidator = {
           message.approvals.push(Grant.decode(reader, reader.uint32()))
           break
         case 4:
-          message.disabledByNodeAdmin = reader.bool()
-          break
-        case 5:
           message.rejects.push(Grant.decode(reader, reader.uint32()))
           break
         default:
@@ -66,8 +59,8 @@ export const DisabledValidator = {
     return message
   },
 
-  fromJSON(object: any): DisabledValidator {
-    const message = { ...baseDisabledValidator } as DisabledValidator
+  fromJSON(object: any): RejectedDisableValidator {
+    const message = { ...baseRejectedDisableValidator } as RejectedDisableValidator
     message.approvals = []
     message.rejects = []
     if (object.address !== undefined && object.address !== null) {
@@ -85,11 +78,6 @@ export const DisabledValidator = {
         message.approvals.push(Grant.fromJSON(e))
       }
     }
-    if (object.disabledByNodeAdmin !== undefined && object.disabledByNodeAdmin !== null) {
-      message.disabledByNodeAdmin = Boolean(object.disabledByNodeAdmin)
-    } else {
-      message.disabledByNodeAdmin = false
-    }
     if (object.rejects !== undefined && object.rejects !== null) {
       for (const e of object.rejects) {
         message.rejects.push(Grant.fromJSON(e))
@@ -98,7 +86,7 @@ export const DisabledValidator = {
     return message
   },
 
-  toJSON(message: DisabledValidator): unknown {
+  toJSON(message: RejectedDisableValidator): unknown {
     const obj: any = {}
     message.address !== undefined && (obj.address = message.address)
     message.creator !== undefined && (obj.creator = message.creator)
@@ -107,7 +95,6 @@ export const DisabledValidator = {
     } else {
       obj.approvals = []
     }
-    message.disabledByNodeAdmin !== undefined && (obj.disabledByNodeAdmin = message.disabledByNodeAdmin)
     if (message.rejects) {
       obj.rejects = message.rejects.map((e) => (e ? Grant.toJSON(e) : undefined))
     } else {
@@ -116,8 +103,8 @@ export const DisabledValidator = {
     return obj
   },
 
-  fromPartial(object: DeepPartial<DisabledValidator>): DisabledValidator {
-    const message = { ...baseDisabledValidator } as DisabledValidator
+  fromPartial(object: DeepPartial<RejectedDisableValidator>): RejectedDisableValidator {
+    const message = { ...baseRejectedDisableValidator } as RejectedDisableValidator
     message.approvals = []
     message.rejects = []
     if (object.address !== undefined && object.address !== null) {
@@ -134,11 +121,6 @@ export const DisabledValidator = {
       for (const e of object.approvals) {
         message.approvals.push(Grant.fromPartial(e))
       }
-    }
-    if (object.disabledByNodeAdmin !== undefined && object.disabledByNodeAdmin !== null) {
-      message.disabledByNodeAdmin = object.disabledByNodeAdmin
-    } else {
-      message.disabledByNodeAdmin = false
     }
     if (object.rejects !== undefined && object.rejects !== null) {
       for (const e of object.rejects) {

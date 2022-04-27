@@ -28,7 +28,7 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdApproveDisableValidator())
 	cmd.AddCommand(CmdDisableValidator())
 	cmd.AddCommand(CmdEnableValidator())
-	cmd.AddCommand(CmdRejectDisableNode())
+	cmd.AddCommand(CmdRejectDisableValidator())
 	// this line is used by starport scaffolding # 1
 
 	return cmd

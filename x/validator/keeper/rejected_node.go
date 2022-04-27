@@ -7,11 +7,11 @@ import (
 )
 
 // SetRejectedNode set a specific rejectedNode in the store from its index.
-func (k Keeper) SetRejectedNode(ctx sdk.Context, rejectedDisableNode types.RejectedDisableNode) {
+func (k Keeper) SetRejectedNode(ctx sdk.Context, rejectedDisableValidator types.RejectedDisableValidator) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RejectedNodeKeyPrefix))
-	b := k.cdc.MustMarshal(&rejectedDisableNode)
+	b := k.cdc.MustMarshal(&rejectedDisableValidator)
 	store.Set(types.RejectedNodeKey(
-		rejectedDisableNode.GetAddress(),
+		rejectedDisableValidator.GetAddress(),
 	), b)
 }
 
@@ -19,7 +19,7 @@ func (k Keeper) SetRejectedNode(ctx sdk.Context, rejectedDisableNode types.Rejec
 func (k Keeper) GetRejectedNode(
 	ctx sdk.Context,
 	owner string,
-) (val types.RejectedDisableNode, found bool) {
+) (val types.RejectedDisableValidator, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RejectedNodeKeyPrefix))
 
 	ownerValAddress, _ := sdk.ValAddressFromBech32(owner)
@@ -48,14 +48,14 @@ func (k Keeper) RemoveRejectedNode(
 }
 
 // GetAllRejectedNode returns all rejectedNode.
-func (k Keeper) GetAllRejectedDisableNode(ctx sdk.Context) (list []types.RejectedDisableNode) {
+func (k Keeper) GetAllRejectedDisableValidator(ctx sdk.Context) (list []types.RejectedDisableValidator) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RejectedNodeKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
-		var val types.RejectedDisableNode
+		var val types.RejectedDisableValidator
 		k.cdc.MustUnmarshal(iterator.Value(), &val)
 		list = append(list, val)
 	}

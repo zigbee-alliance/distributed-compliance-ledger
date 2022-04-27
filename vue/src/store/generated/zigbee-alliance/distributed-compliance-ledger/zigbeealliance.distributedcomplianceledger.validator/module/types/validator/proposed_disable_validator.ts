@@ -8,7 +8,7 @@ export interface ProposedDisableValidator {
   address: string
   creator: string
   approvals: Grant[]
-  rejectApprovals: Grant[]
+  rejects: Grant[]
 }
 
 const baseProposedDisableValidator: object = { address: '', creator: '' }
@@ -24,7 +24,7 @@ export const ProposedDisableValidator = {
     for (const v of message.approvals) {
       Grant.encode(v!, writer.uint32(26).fork()).ldelim()
     }
-    for (const v of message.rejectApprovals) {
+    for (const v of message.rejects) {
       Grant.encode(v!, writer.uint32(34).fork()).ldelim()
     }
     return writer
@@ -35,7 +35,7 @@ export const ProposedDisableValidator = {
     let end = length === undefined ? reader.len : reader.pos + length
     const message = { ...baseProposedDisableValidator } as ProposedDisableValidator
     message.approvals = []
-    message.rejectApprovals = []
+    message.rejects = []
     while (reader.pos < end) {
       const tag = reader.uint32()
       switch (tag >>> 3) {
@@ -49,7 +49,7 @@ export const ProposedDisableValidator = {
           message.approvals.push(Grant.decode(reader, reader.uint32()))
           break
         case 4:
-          message.rejectApprovals.push(Grant.decode(reader, reader.uint32()))
+          message.rejects.push(Grant.decode(reader, reader.uint32()))
           break
         default:
           reader.skipType(tag & 7)
@@ -62,7 +62,7 @@ export const ProposedDisableValidator = {
   fromJSON(object: any): ProposedDisableValidator {
     const message = { ...baseProposedDisableValidator } as ProposedDisableValidator
     message.approvals = []
-    message.rejectApprovals = []
+    message.rejects = []
     if (object.address !== undefined && object.address !== null) {
       message.address = String(object.address)
     } else {
@@ -78,9 +78,9 @@ export const ProposedDisableValidator = {
         message.approvals.push(Grant.fromJSON(e))
       }
     }
-    if (object.rejectApprovals !== undefined && object.rejectApprovals !== null) {
-      for (const e of object.rejectApprovals) {
-        message.rejectApprovals.push(Grant.fromJSON(e))
+    if (object.rejects !== undefined && object.rejects !== null) {
+      for (const e of object.rejects) {
+        message.rejects.push(Grant.fromJSON(e))
       }
     }
     return message
@@ -95,10 +95,10 @@ export const ProposedDisableValidator = {
     } else {
       obj.approvals = []
     }
-    if (message.rejectApprovals) {
-      obj.rejectApprovals = message.rejectApprovals.map((e) => (e ? Grant.toJSON(e) : undefined))
+    if (message.rejects) {
+      obj.rejects = message.rejects.map((e) => (e ? Grant.toJSON(e) : undefined))
     } else {
-      obj.rejectApprovals = []
+      obj.rejects = []
     }
     return obj
   },
@@ -106,7 +106,7 @@ export const ProposedDisableValidator = {
   fromPartial(object: DeepPartial<ProposedDisableValidator>): ProposedDisableValidator {
     const message = { ...baseProposedDisableValidator } as ProposedDisableValidator
     message.approvals = []
-    message.rejectApprovals = []
+    message.rejects = []
     if (object.address !== undefined && object.address !== null) {
       message.address = object.address
     } else {
@@ -122,9 +122,9 @@ export const ProposedDisableValidator = {
         message.approvals.push(Grant.fromPartial(e))
       }
     }
-    if (object.rejectApprovals !== undefined && object.rejectApprovals !== null) {
-      for (const e of object.rejectApprovals) {
-        message.rejectApprovals.push(Grant.fromPartial(e))
+    if (object.rejects !== undefined && object.rejects !== null) {
+      for (const e of object.rejects) {
+        message.rejects.push(Grant.fromPartial(e))
       }
     }
     return message

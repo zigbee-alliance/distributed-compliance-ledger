@@ -14,7 +14,7 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdRejectDisableNode() *cobra.Command {
+func CmdRejectDisableValidator() *cobra.Command {
 	var (
 		address string
 		info    string
@@ -36,7 +36,7 @@ func CmdRejectDisableNode() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgRejectDisableNode(
+			msg := types.NewMsgRejectDisableValidator(
 				fromAddr,
 				addr,
 				info,

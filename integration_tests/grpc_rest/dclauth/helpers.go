@@ -853,8 +853,8 @@ func AuthDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, proposedAccount.GetRoles())
 	require.Equal(suite.T, jackAccount.Address, proposedAccount.Approvals[0].Address)
 	require.Equal(suite.T, testconstants.Info, proposedAccount.Approvals[0].Info)
-	require.Equal(suite.T, aliceAccount.Address, proposedAccount.RejectApprovals[0].Address)
-	require.Equal(suite.T, testconstants.Info, proposedAccount.RejectApprovals[0].Info)
+	require.Equal(suite.T, aliceAccount.Address, proposedAccount.Rejects[0].Address)
+	require.Equal(suite.T, testconstants.Info, proposedAccount.Rejects[0].Info)
 
 	// Query unknown proposed account to revoke
 	_, err = GetProposedAccountToRevoke(suite, testAccAddr)
@@ -904,8 +904,8 @@ func AuthDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, rejectedAccount.GetRoles())
 	require.Equal(suite.T, jackAccount.Address, rejectedAccount.Approvals[0].Address)
 	require.Equal(suite.T, testconstants.Info, rejectedAccount.Approvals[0].Info)
-	require.Equal(suite.T, aliceAccount.Address, rejectedAccount.RejectApprovals[0].Address)
-	require.Equal(suite.T, testconstants.Info, rejectedAccount.RejectApprovals[0].Info)
+	require.Equal(suite.T, aliceAccount.Address, rejectedAccount.Rejects[0].Address)
+	require.Equal(suite.T, testconstants.Info, rejectedAccount.Rejects[0].Info)
 
 	// Query proposed account
 	_, err = GetProposedAccount(suite, testAccAddr)

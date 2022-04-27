@@ -8,7 +8,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
-func (k msgServer) RejectDisableNode(goCtx context.Context, msg *types.MsgRejectDisableNode) (*types.MsgRejectDisableNodeResponse, error) {
+func (k msgServer) RejectDisableValidator(goCtx context.Context, msg *types.MsgRejectDisableValidator) (*types.MsgRejectDisableValidatorResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	creatorAddr, err := sdk.AccAddressFromBech32(msg.Creator)
@@ -60,17 +60,17 @@ func (k msgServer) RejectDisableNode(goCtx context.Context, msg *types.MsgReject
 		Info:    msg.Info,
 	}
 
-	proposedDisableValidator.RejectApprovals = append(proposedDisableValidator.RejectApprovals, &grant)
+	proposedDisableValidator.Rejects = append(proposedDisableValidator.Rejects, &grant)
 
 	// check if proposed disable validator has enough reject approvals
-	if len(proposedDisableValidator.RejectApprovals) == k.DisableValidatorRejectApprovalsCount(ctx) {
+	if len(proposedDisableValidator.Rejects) == k.DisableValidatorRejectApprovalsCount(ctx) {
 		k.RemoveProposedDisableValidator(ctx, proposedDisableValidator.Address)
-		rejectedDisableValidator := types.RejectedDisableNode(proposedDisableValidator)
+		rejectedDisableValidator := types.RejectedDisableValidator(proposedDisableValidator)
 		k.SetRejectedNode(ctx, rejectedDisableValidator)
 	} else {
 		// update proposed disable validator
 		k.SetProposedDisableValidator(ctx, proposedDisableValidator)
 	}
 
-	return &types.MsgRejectDisableNodeResponse{}, nil
+	return &types.MsgRejectDisableValidatorResponse{}, nil
 }

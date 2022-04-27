@@ -137,59 +137,59 @@ func GetProposedValidatorsToDisable(suite *utils.TestSuite) (
 
 func GetRejectedValidatorToDisable(
 	suite *utils.TestSuite, address sdk.ValAddress,
-) (*validatortypes.RejectedDisableNode, error) {
-	var res validatortypes.RejectedDisableNode
+) (*validatortypes.RejectedDisableValidator, error) {
+	var res validatortypes.RejectedDisableValidator
 
 	if suite.Rest {
-		var resp validatortypes.QueryGetRejectedDisableNodeResponse
+		var resp validatortypes.QueryGetRejectedDisableValidatorResponse
 		err := suite.QueryREST(fmt.Sprintf(DCLValidatorRejectedDisableNodeEndpoint+address.String()), &resp)
 		if err != nil {
 			return nil, err
 		}
-		res = resp.GetRejectedNode()
+		res = resp.GetRejectedValidator()
 	} else {
 		grpcConn := suite.GetGRPCConn()
 		defer grpcConn.Close()
 
 		// This creates a gRPC client to query the x/validator service.
 		validatorClient := validatortypes.NewQueryClient(grpcConn)
-		resp, err := validatorClient.RejectedDisableNode(
+		resp, err := validatorClient.RejectedDisableValidator(
 			context.Background(),
-			&validatortypes.QueryGetRejectedDisableNodeRequest{Owner: address.String()},
+			&validatortypes.QueryGetRejectedDisableValidatorRequest{Owner: address.String()},
 		)
 		if err != nil {
 			return nil, err
 		}
-		res = resp.GetRejectedNode()
+		res = resp.GetRejectedValidator()
 	}
 
 	return &res, nil
 }
 
 func GetRejectedValidatorsToDisable(suite *utils.TestSuite) (
-	res []validatortypes.RejectedDisableNode, err error,
+	res []validatortypes.RejectedDisableValidator, err error,
 ) {
 	if suite.Rest {
-		var resp validatortypes.QueryAllRejectedDisableNodeResponse
+		var resp validatortypes.QueryAllRejectedDisableValidatorResponse
 		err := suite.QueryREST(DCLValidatorRejectedDisableNodeEndpoint, &resp)
 		if err != nil {
 			return nil, err
 		}
-		res = resp.GetRejectedNode()
+		res = resp.GetRejectedValidator()
 	} else {
 		grpcConn := suite.GetGRPCConn()
 		defer grpcConn.Close()
 
 		// This creates a gRPC client to query the x/validator service.
 		validatorClient := validatortypes.NewQueryClient(grpcConn)
-		resp, err := validatorClient.RejectedDisableNodeAll(
+		resp, err := validatorClient.RejectedDisableValidatorAll(
 			context.Background(),
-			&validatortypes.QueryAllRejectedDisableNodeRequest{},
+			&validatortypes.QueryAllRejectedDisableValidatorRequest{},
 		)
 		if err != nil {
 			return nil, err
 		}
-		res = resp.GetRejectedNode()
+		res = resp.GetRejectedValidator()
 	}
 
 	return res, nil
@@ -262,7 +262,7 @@ func RejectDisableValidator(
 	signerAccount *dclauthtypes.Account,
 	info string,
 ) (*sdk.TxResponse, error) {
-	msg := validatortypes.NewMsgRejectDisableNode(suite.GetAddress(signerName), valAddr, info)
+	msg := validatortypes.NewMsgRejectDisableValidator(suite.GetAddress(signerName), valAddr, info)
 
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
@@ -444,11 +444,11 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, validatorAddr.String(), proposedValidatorToDisable.Address)
 	require.Equal(suite.T, aliceAccount.Address, proposedValidatorToDisable.Creator)
 	require.Equal(suite.T, 1, len(proposedValidatorToDisable.Approvals))
-	require.Equal(suite.T, 1, len(proposedValidatorToDisable.RejectApprovals))
+	require.Equal(suite.T, 1, len(proposedValidatorToDisable.Rejects))
 	require.Equal(suite.T, aliceAccount.Address, proposedValidatorToDisable.Approvals[0].Address)
-	require.Equal(suite.T, testconstants.Info, proposedValidatorToDisable.RejectApprovals[0].Info)
-	require.Equal(suite.T, jackAccount.Address, proposedValidatorToDisable.RejectApprovals[0].Address)
-	require.Equal(suite.T, testconstants.Info, proposedValidatorToDisable.RejectApprovals[0].Info)
+	require.Equal(suite.T, testconstants.Info, proposedValidatorToDisable.Rejects[0].Info)
+	require.Equal(suite.T, jackAccount.Address, proposedValidatorToDisable.Rejects[0].Address)
+	require.Equal(suite.T, testconstants.Info, proposedValidatorToDisable.Rejects[0].Info)
 
 	// Reject new disable validator
 	_, err = RejectDisableValidator(suite, validatorAddr, bobName, bobAccount, testconstants.Info)
@@ -468,11 +468,11 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, validatorAddr.String(), rejectedValidatorToDisable.Address)
 	require.Equal(suite.T, aliceAccount.Address, rejectedValidatorToDisable.Creator)
 	require.Equal(suite.T, 1, len(rejectedValidatorToDisable.Approvals))
-	require.Equal(suite.T, 2, len(rejectedValidatorToDisable.RejectApprovals))
+	require.Equal(suite.T, 2, len(rejectedValidatorToDisable.Rejects))
 	require.Equal(suite.T, aliceAccount.Address, rejectedValidatorToDisable.Approvals[0].Address)
 	require.Equal(suite.T, testconstants.Info, rejectedValidatorToDisable.Approvals[0].Info)
-	require.Equal(suite.T, jackAccount.Address, rejectedValidatorToDisable.RejectApprovals[0].Address)
-	require.Equal(suite.T, testconstants.Info, rejectedValidatorToDisable.RejectApprovals[0].Info)
-	require.Equal(suite.T, bobAccount.Address, rejectedValidatorToDisable.RejectApprovals[1].Address)
-	require.Equal(suite.T, testconstants.Info, rejectedValidatorToDisable.RejectApprovals[1].Info)
+	require.Equal(suite.T, jackAccount.Address, rejectedValidatorToDisable.Rejects[0].Address)
+	require.Equal(suite.T, testconstants.Info, rejectedValidatorToDisable.Rejects[0].Info)
+	require.Equal(suite.T, bobAccount.Address, rejectedValidatorToDisable.Rejects[1].Address)
+	require.Equal(suite.T, testconstants.Info, rejectedValidatorToDisable.Rejects[1].Info)
 }

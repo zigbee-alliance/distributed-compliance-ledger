@@ -1509,8 +1509,8 @@ func TestHandler_RejectX509RootCert_TwoRejectApprovalsAreNeeded(t *testing.T) {
 	require.Equal(t, testconstants.RootSerialNumber, proposedCertificate.SerialNumber)
 	require.Equal(t, setup.Trustee1.String(), proposedCertificate.Approvals[0].Address)
 	require.Equal(t, testconstants.Info, proposedCertificate.Approvals[0].Info)
-	require.Equal(t, setup.Trustee2.String(), proposedCertificate.RejectApprovals[0].Address)
-	require.Equal(t, testconstants.Info, proposedCertificate.RejectApprovals[0].Info)
+	require.Equal(t, setup.Trustee2.String(), proposedCertificate.Rejects[0].Address)
+	require.Equal(t, testconstants.Info, proposedCertificate.Rejects[0].Info)
 
 	// reject x509 root certificate by account Trustee3
 	rejectAddX509RootCert = types.NewMsgRejectAddX509RootCert(setup.Trustee3.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.Info)
@@ -1533,10 +1533,10 @@ func TestHandler_RejectX509RootCert_TwoRejectApprovalsAreNeeded(t *testing.T) {
 	require.Equal(t, testconstants.RootSerialNumber, rejectedCertificate.SerialNumber)
 	require.Equal(t, setup.Trustee1.String(), rejectedCertificate.Approvals[0].Address)
 	require.Equal(t, testconstants.Info, rejectedCertificate.Approvals[0].Info)
-	require.Equal(t, setup.Trustee2.String(), rejectedCertificate.RejectApprovals[0].Address)
-	require.Equal(t, testconstants.Info, rejectedCertificate.RejectApprovals[0].Info)
-	require.Equal(t, setup.Trustee3.String(), rejectedCertificate.RejectApprovals[1].Address)
-	require.Equal(t, testconstants.Info, rejectedCertificate.RejectApprovals[1].Info)
+	require.Equal(t, setup.Trustee2.String(), rejectedCertificate.Rejects[0].Address)
+	require.Equal(t, testconstants.Info, rejectedCertificate.Rejects[0].Info)
+	require.Equal(t, setup.Trustee3.String(), rejectedCertificate.Rejects[1].Address)
+	require.Equal(t, testconstants.Info, rejectedCertificate.Rejects[1].Info)
 }
 
 func TestHandler_RejectX509RootCert_ByNotTrustee(t *testing.T) {
@@ -1658,8 +1658,8 @@ func TestHandler_DoubleTimeRejectX509RootCert(t *testing.T) {
 	require.Equal(t, testconstants.RootSerialNumber, proposedCertificate.SerialNumber)
 	require.Equal(t, setup.Trustee1.String(), proposedCertificate.Approvals[0].Address)
 	require.Equal(t, testconstants.Info, proposedCertificate.Approvals[0].Info)
-	require.Equal(t, setup.Trustee2.String(), proposedCertificate.RejectApprovals[0].Address)
-	require.Equal(t, testconstants.Info, proposedCertificate.RejectApprovals[0].Info)
+	require.Equal(t, setup.Trustee2.String(), proposedCertificate.Rejects[0].Address)
+	require.Equal(t, testconstants.Info, proposedCertificate.Rejects[0].Info)
 
 	// reject x509 root certificate by account Trustee3
 	rejectAddX509RootCert = types.NewMsgRejectAddX509RootCert(setup.Trustee3.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.Info)
@@ -1682,10 +1682,10 @@ func TestHandler_DoubleTimeRejectX509RootCert(t *testing.T) {
 	require.Equal(t, testconstants.RootSerialNumber, rejectedCertificate.SerialNumber)
 	require.Equal(t, setup.Trustee1.String(), rejectedCertificate.Approvals[0].Address)
 	require.Equal(t, testconstants.Info, rejectedCertificate.Approvals[0].Info)
-	require.Equal(t, setup.Trustee2.String(), rejectedCertificate.RejectApprovals[0].Address)
-	require.Equal(t, testconstants.Info, rejectedCertificate.RejectApprovals[0].Info)
-	require.Equal(t, setup.Trustee3.String(), rejectedCertificate.RejectApprovals[1].Address)
-	require.Equal(t, testconstants.Info, rejectedCertificate.RejectApprovals[1].Info)
+	require.Equal(t, setup.Trustee2.String(), rejectedCertificate.Rejects[0].Address)
+	require.Equal(t, testconstants.Info, rejectedCertificate.Rejects[0].Info)
+	require.Equal(t, setup.Trustee3.String(), rejectedCertificate.Rejects[1].Address)
+	require.Equal(t, testconstants.Info, rejectedCertificate.Rejects[1].Info)
 
 	// propose x509 root certificate by account Trustee1
 	proposeAddX509RootCert = types.NewMsgProposeAddX509RootCert(setup.Trustee1.String(), testconstants.RootCertPem, testconstants.Info)
@@ -1718,10 +1718,10 @@ func TestHandler_DoubleTimeRejectX509RootCert(t *testing.T) {
 	require.Equal(t, testconstants.RootSerialNumber, rejectedCertificate.SerialNumber)
 	require.Equal(t, setup.Trustee1.String(), rejectedCertificate.Approvals[0].Address)
 	require.Equal(t, testconstants.Info, rejectedCertificate.Approvals[0].Info)
-	require.Equal(t, setup.Trustee3.String(), rejectedCertificate.RejectApprovals[0].Address)
-	require.Equal(t, testconstants.Info, rejectedCertificate.RejectApprovals[0].Info)
-	require.Equal(t, setup.Trustee2.String(), rejectedCertificate.RejectApprovals[1].Address)
-	require.Equal(t, testconstants.Info, rejectedCertificate.RejectApprovals[1].Info)
+	require.Equal(t, setup.Trustee3.String(), rejectedCertificate.Rejects[0].Address)
+	require.Equal(t, testconstants.Info, rejectedCertificate.Rejects[0].Info)
+	require.Equal(t, setup.Trustee2.String(), rejectedCertificate.Rejects[1].Address)
+	require.Equal(t, testconstants.Info, rejectedCertificate.Rejects[1].Info)
 }
 
 func proposeAndApproveRootCertificate(setup *TestSetup, ownerTrustee sdk.AccAddress) {

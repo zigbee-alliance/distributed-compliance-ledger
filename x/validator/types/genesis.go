@@ -20,7 +20,7 @@ func DefaultGenesis() *GenesisState {
 		LastValidatorPowerList:       []LastValidatorPower{},
 		ProposedDisableValidatorList: []ProposedDisableValidator{},
 		DisabledValidatorList:        []DisabledValidator{},
-		RejectedNodeList:             []RejectedDisableNode{},
+		RejectedValidatorList:        []RejectedDisableValidator{},
 		// this line is used by starport scaffolding # genesis/types/default
 	}
 }
@@ -81,7 +81,7 @@ func (gs GenesisState) Validate() error {
 	// Check for duplicated index in rejectedNode
 	rejectedNodeIndexMap := make(map[string]struct{})
 
-	for _, elem := range gs.RejectedNodeList {
+	for _, elem := range gs.RejectedValidatorList {
 		address, err := sdk.ValAddressFromBech32(elem.Address)
 		if err != nil {
 			return err

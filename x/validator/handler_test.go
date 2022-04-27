@@ -795,7 +795,7 @@ func TestHandler_RejectDisableValidator_TwoRejectApprovalsAreNeeded(t *testing.T
 	require.True(t, isFound)
 	require.Equal(t, msgRejectDisableValidator.Address, proposedDisableValidator.Address)
 	require.Equal(t, account1.Address, proposedDisableValidator.Approvals[0].Address)
-	require.Equal(t, account2.Address, proposedDisableValidator.RejectApprovals[0].Address)
+	require.Equal(t, account2.Address, proposedDisableValidator.Rejects[0].Address)
 
 	// account3 (Trustee) reject disable validator
 	msgRejectDisableValidator = NewMsgRejectDisableValidator(account3.GetAddress(), valAddress)
@@ -811,8 +811,8 @@ func TestHandler_RejectDisableValidator_TwoRejectApprovalsAreNeeded(t *testing.T
 	require.True(t, isFound)
 	require.Equal(t, msgRejectDisableValidator.Address, proposedDisableValidator.Address)
 	require.Equal(t, account1.Address, rejectedDisableValidator.Approvals[0].Address)
-	require.Equal(t, account2.Address, rejectedDisableValidator.RejectApprovals[0].Address)
-	require.Equal(t, account3.Address, rejectedDisableValidator.RejectApprovals[1].Address)
+	require.Equal(t, account2.Address, rejectedDisableValidator.Rejects[0].Address)
+	require.Equal(t, account3.Address, rejectedDisableValidator.Rejects[1].Address)
 }
 
 func TestHandler_RejectDisableValidator_ByNotTrustee(t *testing.T) {
@@ -1078,8 +1078,8 @@ func TestHandler_DoubleTimeRejectDisableValidator(t *testing.T) {
 	require.True(t, isFound)
 	require.Equal(t, msgRejectDisableValidator.Address, proposedDisableValidator.Address)
 	require.Equal(t, account1.Address, rejectedDisableValidator.Approvals[0].Address)
-	require.Equal(t, account2.Address, rejectedDisableValidator.RejectApprovals[0].Address)
-	require.Equal(t, account3.Address, rejectedDisableValidator.RejectApprovals[1].Address)
+	require.Equal(t, account2.Address, rejectedDisableValidator.Rejects[0].Address)
+	require.Equal(t, account3.Address, rejectedDisableValidator.Rejects[1].Address)
 
 	// account1 (Trustee) proposes disable validator
 	msgProposeDisableValidator = NewMsgProposeDisableValidator(account1.GetAddress(), valAddress)
@@ -1117,8 +1117,8 @@ func TestHandler_DoubleTimeRejectDisableValidator(t *testing.T) {
 	require.True(t, isFound)
 	require.Equal(t, msgRejectDisableValidator.Address, proposedDisableValidator.Address)
 	require.Equal(t, account1.Address, rejectedDisableValidator.Approvals[0].Address)
-	require.Equal(t, account3.Address, rejectedDisableValidator.RejectApprovals[0].Address)
-	require.Equal(t, account2.Address, rejectedDisableValidator.RejectApprovals[1].Address)
+	require.Equal(t, account3.Address, rejectedDisableValidator.Rejects[0].Address)
+	require.Equal(t, account2.Address, rejectedDisableValidator.Rejects[1].Address)
 }
 
 func NewMsgProposeDisableValidator(signer sdk.AccAddress, address sdk.ValAddress) *types.MsgProposeDisableValidator {
@@ -1139,8 +1139,8 @@ func NewMsgApproveDisableValidator(signer sdk.AccAddress, address sdk.ValAddress
 	}
 }
 
-func NewMsgRejectDisableValidator(signer sdk.AccAddress, address sdk.ValAddress) *types.MsgRejectDisableNode {
-	return &types.MsgRejectDisableNode{
+func NewMsgRejectDisableValidator(signer sdk.AccAddress, address sdk.ValAddress) *types.MsgRejectDisableValidator {
+	return &types.MsgRejectDisableValidator{
 		Creator: signer.String(),
 		Address: address.String(),
 		Time:    testconstants.Time,

@@ -215,7 +215,7 @@ export interface ValidatorDisabledValidator {
   creator?: string;
   approvals?: ValidatorGrant[];
   disabledByNodeAdmin?: boolean;
-  rejectApprovals?: ValidatorGrant[];
+  rejects?: ValidatorGrant[];
 }
 
 export interface ValidatorGrant {
@@ -243,13 +243,13 @@ export type ValidatorMsgEnableValidatorResponse = object;
 
 export type ValidatorMsgProposeDisableValidatorResponse = object;
 
-export type ValidatorMsgRejectDisableNodeResponse = object;
+export type ValidatorMsgRejectDisableValidatorResponse = object;
 
 export interface ValidatorProposedDisableValidator {
   address?: string;
   creator?: string;
   approvals?: ValidatorGrant[];
-  rejectApprovals?: ValidatorGrant[];
+  rejects?: ValidatorGrant[];
 }
 
 export interface ValidatorQueryAllDisabledValidatorResponse {
@@ -297,8 +297,8 @@ export interface ValidatorQueryAllProposedDisableValidatorResponse {
   pagination?: V1Beta1PageResponse;
 }
 
-export interface ValidatorQueryAllRejectedDisableNodeResponse {
-  rejectedNode?: ValidatorRejectedDisableNode[];
+export interface ValidatorQueryAllRejectedDisableValidatorResponse {
+  rejectedValidator?: ValidatorRejectedDisableValidator[];
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the
@@ -339,19 +339,19 @@ export interface ValidatorQueryGetProposedDisableValidatorResponse {
   proposedDisableValidator?: ValidatorProposedDisableValidator;
 }
 
-export interface ValidatorQueryGetRejectedDisableNodeResponse {
-  rejectedNode?: ValidatorRejectedDisableNode;
+export interface ValidatorQueryGetRejectedDisableValidatorResponse {
+  rejectedValidator?: ValidatorRejectedDisableValidator;
 }
 
 export interface ValidatorQueryGetValidatorResponse {
   validator?: ValidatorValidator;
 }
 
-export interface ValidatorRejectedDisableNode {
+export interface ValidatorRejectedDisableValidator {
   address?: string;
   creator?: string;
   approvals?: ValidatorGrant[];
-  rejectApprovals?: ValidatorGrant[];
+  rejects?: ValidatorGrant[];
 }
 
 export interface ValidatorValidator {
@@ -818,11 +818,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
-   * @name QueryRejectedDisableNodeAll
+   * @name QueryRejectedDisableValidatorAll
    * @summary Queries a list of RejectedNode items.
    * @request GET:/dcl/validator/rejected-disable-nodes
    */
-  queryRejectedDisableNodeAll = (
+  queryRejectedDisableValidatorAll = (
     query?: {
       "pagination.key"?: string;
       "pagination.offset"?: string;
@@ -832,7 +832,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     },
     params: RequestParams = {},
   ) =>
-    this.request<ValidatorQueryAllRejectedDisableNodeResponse, RpcStatus>({
+    this.request<ValidatorQueryAllRejectedDisableValidatorResponse, RpcStatus>({
       path: `/dcl/validator/rejected-disable-nodes`,
       method: "GET",
       query: query,
@@ -844,12 +844,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
-   * @name QueryRejectedDisableNode
+   * @name QueryRejectedDisableValidator
    * @summary Queries a RejectedNode by index.
    * @request GET:/dcl/validator/rejected-disable-nodes/{owner}
    */
-  queryRejectedDisableNode = (owner: string, params: RequestParams = {}) =>
-    this.request<ValidatorQueryGetRejectedDisableNodeResponse, RpcStatus>({
+  queryRejectedDisableValidator = (owner: string, params: RequestParams = {}) =>
+    this.request<ValidatorQueryGetRejectedDisableValidatorResponse, RpcStatus>({
       path: `/dcl/validator/rejected-disable-nodes/${owner}`,
       method: "GET",
       format: "json",

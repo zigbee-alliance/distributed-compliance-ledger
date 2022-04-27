@@ -37,7 +37,7 @@ export interface PkiCertificate {
   subjectKeyId?: string;
   approvals?: PkiGrant[];
   subjectAsText?: string;
-  rejectApprovals?: PkiGrant[];
+  rejects?: PkiGrant[];
 }
 
 export interface PkiCertificateIdentifier {
@@ -81,7 +81,7 @@ export interface PkiProposedCertificate {
   owner?: string;
   approvals?: PkiGrant[];
   subjectAsText?: string;
-  rejectApprovals?: PkiGrant[];
+  rejects?: PkiGrant[];
 }
 
 export interface PkiProposedCertificateRevocation {

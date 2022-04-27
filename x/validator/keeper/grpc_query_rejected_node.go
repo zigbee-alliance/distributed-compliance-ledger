@@ -11,24 +11,24 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (k Keeper) RejectedDisableNodeAll(c context.Context, req *types.QueryAllRejectedDisableNodeRequest) (*types.QueryAllRejectedDisableNodeResponse, error) {
+func (k Keeper) RejectedDisableValidatorAll(c context.Context, req *types.QueryAllRejectedDisableValidatorRequest) (*types.QueryAllRejectedDisableValidatorResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
-	var rejectedNodes []types.RejectedDisableNode
+	var rejectedValidators []types.RejectedDisableValidator
 	ctx := sdk.UnwrapSDKContext(c)
 
 	store := ctx.KVStore(k.storeKey)
 	rejectedNodeStore := prefix.NewStore(store, types.KeyPrefix(types.RejectedNodeKeyPrefix))
 
 	pageRes, err := query.Paginate(rejectedNodeStore, req.Pagination, func(key []byte, value []byte) error {
-		var rejectedNode types.RejectedDisableNode
+		var rejectedNode types.RejectedDisableValidator
 		if err := k.cdc.Unmarshal(value, &rejectedNode); err != nil {
 			return err
 		}
 
-		rejectedNodes = append(rejectedNodes, rejectedNode)
+		rejectedValidators = append(rejectedValidators, rejectedNode)
 
 		return nil
 	})
@@ -36,10 +36,10 @@ func (k Keeper) RejectedDisableNodeAll(c context.Context, req *types.QueryAllRej
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.QueryAllRejectedDisableNodeResponse{RejectedNode: rejectedNodes, Pagination: pageRes}, nil
+	return &types.QueryAllRejectedDisableValidatorResponse{RejectedValidator: rejectedValidators, Pagination: pageRes}, nil
 }
 
-func (k Keeper) RejectedDisableNode(c context.Context, req *types.QueryGetRejectedDisableNodeRequest) (*types.QueryGetRejectedDisableNodeResponse, error) {
+func (k Keeper) RejectedDisableValidator(c context.Context, req *types.QueryGetRejectedDisableValidatorRequest) (*types.QueryGetRejectedDisableValidatorResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
@@ -53,5 +53,5 @@ func (k Keeper) RejectedDisableNode(c context.Context, req *types.QueryGetReject
 		return nil, status.Error(codes.NotFound, "not found")
 	}
 
-	return &types.QueryGetRejectedDisableNodeResponse{RejectedNode: val}, nil
+	return &types.QueryGetRejectedDisableValidatorResponse{RejectedValidator: val}, nil
 }

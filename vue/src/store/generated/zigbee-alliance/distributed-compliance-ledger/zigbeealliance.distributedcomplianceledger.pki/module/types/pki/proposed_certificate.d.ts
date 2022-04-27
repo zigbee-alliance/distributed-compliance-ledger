@@ -9,7 +9,7 @@ export interface ProposedCertificate {
     owner: string;
     approvals: Grant[];
     subjectAsText: string;
-    rejectApprovals: Grant[];
+    rejects: Grant[];
 }
 export declare const ProposedCertificate: {
     encode(message: ProposedCertificate, writer?: Writer): Writer;

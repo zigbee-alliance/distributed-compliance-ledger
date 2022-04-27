@@ -37,8 +37,8 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.EnableValidator(sdk.WrapSDKContext(ctx), msg)
 
 			return sdk.WrapServiceResult(ctx, res, err)
-		case *types.MsgRejectDisableNode:
-			res, err := msgServer.RejectDisableNode(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgRejectDisableValidator:
+			res, err := msgServer.RejectDisableValidator(sdk.WrapSDKContext(ctx), msg)
 
 			return sdk.WrapServiceResult(ctx, res, err)
 			// this line is used by starport scaffolding # 1

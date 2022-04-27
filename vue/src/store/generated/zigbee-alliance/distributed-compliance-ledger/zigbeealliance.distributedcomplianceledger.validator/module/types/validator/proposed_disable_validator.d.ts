@@ -5,7 +5,7 @@ export interface ProposedDisableValidator {
     address: string;
     creator: string;
     approvals: Grant[];
-    rejectApprovals: Grant[];
+    rejects: Grant[];
 }
 export declare const ProposedDisableValidator: {
     encode(message: ProposedDisableValidator, writer?: Writer): Writer;

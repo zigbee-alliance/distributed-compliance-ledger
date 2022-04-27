@@ -2,8 +2,8 @@
 import { Grant } from '../validator/grant';
 import { Writer, Reader } from 'protobufjs/minimal';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.validator';
-const baseDisabledValidator = { address: '', creator: '', disabledByNodeAdmin: false };
-export const DisabledValidator = {
+const baseRejectedDisableValidator = { address: '', creator: '' };
+export const RejectedDisableValidator = {
     encode(message, writer = Writer.create()) {
         if (message.address !== '') {
             writer.uint32(10).string(message.address);
@@ -14,18 +14,15 @@ export const DisabledValidator = {
         for (const v of message.approvals) {
             Grant.encode(v, writer.uint32(26).fork()).ldelim();
         }
-        if (message.disabledByNodeAdmin === true) {
-            writer.uint32(32).bool(message.disabledByNodeAdmin);
-        }
         for (const v of message.rejects) {
-            Grant.encode(v, writer.uint32(42).fork()).ldelim();
+            Grant.encode(v, writer.uint32(34).fork()).ldelim();
         }
         return writer;
     },
     decode(input, length) {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
-        const message = { ...baseDisabledValidator };
+        const message = { ...baseRejectedDisableValidator };
         message.approvals = [];
         message.rejects = [];
         while (reader.pos < end) {
@@ -41,9 +38,6 @@ export const DisabledValidator = {
                     message.approvals.push(Grant.decode(reader, reader.uint32()));
                     break;
                 case 4:
-                    message.disabledByNodeAdmin = reader.bool();
-                    break;
-                case 5:
                     message.rejects.push(Grant.decode(reader, reader.uint32()));
                     break;
                 default:
@@ -54,7 +48,7 @@ export const DisabledValidator = {
         return message;
     },
     fromJSON(object) {
-        const message = { ...baseDisabledValidator };
+        const message = { ...baseRejectedDisableValidator };
         message.approvals = [];
         message.rejects = [];
         if (object.address !== undefined && object.address !== null) {
@@ -74,12 +68,6 @@ export const DisabledValidator = {
                 message.approvals.push(Grant.fromJSON(e));
             }
         }
-        if (object.disabledByNodeAdmin !== undefined && object.disabledByNodeAdmin !== null) {
-            message.disabledByNodeAdmin = Boolean(object.disabledByNodeAdmin);
-        }
-        else {
-            message.disabledByNodeAdmin = false;
-        }
         if (object.rejects !== undefined && object.rejects !== null) {
             for (const e of object.rejects) {
                 message.rejects.push(Grant.fromJSON(e));
@@ -97,7 +85,6 @@ export const DisabledValidator = {
         else {
             obj.approvals = [];
         }
-        message.disabledByNodeAdmin !== undefined && (obj.disabledByNodeAdmin = message.disabledByNodeAdmin);
         if (message.rejects) {
             obj.rejects = message.rejects.map((e) => (e ? Grant.toJSON(e) : undefined));
         }
@@ -107,7 +94,7 @@ export const DisabledValidator = {
         return obj;
     },
     fromPartial(object) {
-        const message = { ...baseDisabledValidator };
+        const message = { ...baseRejectedDisableValidator };
         message.approvals = [];
         message.rejects = [];
         if (object.address !== undefined && object.address !== null) {
@@ -126,12 +113,6 @@ export const DisabledValidator = {
             for (const e of object.approvals) {
                 message.approvals.push(Grant.fromPartial(e));
             }
-        }
-        if (object.disabledByNodeAdmin !== undefined && object.disabledByNodeAdmin !== null) {
-            message.disabledByNodeAdmin = object.disabledByNodeAdmin;
-        }
-        else {
-            message.disabledByNodeAdmin = false;
         }
         if (object.rejects !== undefined && object.rejects !== null) {
             for (const e of object.rejects) {

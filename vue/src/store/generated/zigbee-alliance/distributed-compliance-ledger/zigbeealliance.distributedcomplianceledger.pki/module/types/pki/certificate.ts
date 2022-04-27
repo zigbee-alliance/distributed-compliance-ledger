@@ -17,7 +17,7 @@ export interface Certificate {
   subjectKeyId: string
   approvals: Grant[]
   subjectAsText: string
-  rejectApprovals: Grant[]
+  rejects: Grant[]
 }
 
 const baseCertificate: object = {
@@ -72,7 +72,7 @@ export const Certificate = {
     if (message.subjectAsText !== '') {
       writer.uint32(98).string(message.subjectAsText)
     }
-    for (const v of message.rejectApprovals) {
+    for (const v of message.rejects) {
       Grant.encode(v!, writer.uint32(106).fork()).ldelim()
     }
     return writer
@@ -83,7 +83,7 @@ export const Certificate = {
     let end = length === undefined ? reader.len : reader.pos + length
     const message = { ...baseCertificate } as Certificate
     message.approvals = []
-    message.rejectApprovals = []
+    message.rejects = []
     while (reader.pos < end) {
       const tag = reader.uint32()
       switch (tag >>> 3) {
@@ -124,7 +124,7 @@ export const Certificate = {
           message.subjectAsText = reader.string()
           break
         case 13:
-          message.rejectApprovals.push(Grant.decode(reader, reader.uint32()))
+          message.rejects.push(Grant.decode(reader, reader.uint32()))
           break
         default:
           reader.skipType(tag & 7)
@@ -137,7 +137,7 @@ export const Certificate = {
   fromJSON(object: any): Certificate {
     const message = { ...baseCertificate } as Certificate
     message.approvals = []
-    message.rejectApprovals = []
+    message.rejects = []
     if (object.pemCert !== undefined && object.pemCert !== null) {
       message.pemCert = String(object.pemCert)
     } else {
@@ -198,9 +198,9 @@ export const Certificate = {
     } else {
       message.subjectAsText = ''
     }
-    if (object.rejectApprovals !== undefined && object.rejectApprovals !== null) {
-      for (const e of object.rejectApprovals) {
-        message.rejectApprovals.push(Grant.fromJSON(e))
+    if (object.rejects !== undefined && object.rejects !== null) {
+      for (const e of object.rejects) {
+        message.rejects.push(Grant.fromJSON(e))
       }
     }
     return message
@@ -224,10 +224,10 @@ export const Certificate = {
       obj.approvals = []
     }
     message.subjectAsText !== undefined && (obj.subjectAsText = message.subjectAsText)
-    if (message.rejectApprovals) {
-      obj.rejectApprovals = message.rejectApprovals.map((e) => (e ? Grant.toJSON(e) : undefined))
+    if (message.rejects) {
+      obj.rejects = message.rejects.map((e) => (e ? Grant.toJSON(e) : undefined))
     } else {
-      obj.rejectApprovals = []
+      obj.rejects = []
     }
     return obj
   },
@@ -235,7 +235,7 @@ export const Certificate = {
   fromPartial(object: DeepPartial<Certificate>): Certificate {
     const message = { ...baseCertificate } as Certificate
     message.approvals = []
-    message.rejectApprovals = []
+    message.rejects = []
     if (object.pemCert !== undefined && object.pemCert !== null) {
       message.pemCert = object.pemCert
     } else {
@@ -296,9 +296,9 @@ export const Certificate = {
     } else {
       message.subjectAsText = ''
     }
-    if (object.rejectApprovals !== undefined && object.rejectApprovals !== null) {
-      for (const e of object.rejectApprovals) {
-        message.rejectApprovals.push(Grant.fromPartial(e))
+    if (object.rejects !== undefined && object.rejects !== null) {
+      for (const e of object.rejects) {
+        message.rejects.push(Grant.fromPartial(e))
       }
     }
     return message

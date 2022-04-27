@@ -571,8 +571,8 @@ export const MsgEnableValidatorResponse = {
         return message;
     }
 };
-const baseMsgRejectDisableNode = { creator: '', address: '', info: '', time: 0 };
-export const MsgRejectDisableNode = {
+const baseMsgRejectDisableValidator = { creator: '', address: '', info: '', time: 0 };
+export const MsgRejectDisableValidator = {
     encode(message, writer = Writer.create()) {
         if (message.creator !== '') {
             writer.uint32(10).string(message.creator);
@@ -591,7 +591,7 @@ export const MsgRejectDisableNode = {
     decode(input, length) {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
-        const message = { ...baseMsgRejectDisableNode };
+        const message = { ...baseMsgRejectDisableValidator };
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
@@ -615,7 +615,7 @@ export const MsgRejectDisableNode = {
         return message;
     },
     fromJSON(object) {
-        const message = { ...baseMsgRejectDisableNode };
+        const message = { ...baseMsgRejectDisableValidator };
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = String(object.creator);
         }
@@ -651,7 +651,7 @@ export const MsgRejectDisableNode = {
         return obj;
     },
     fromPartial(object) {
-        const message = { ...baseMsgRejectDisableNode };
+        const message = { ...baseMsgRejectDisableValidator };
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = object.creator;
         }
@@ -679,15 +679,15 @@ export const MsgRejectDisableNode = {
         return message;
     }
 };
-const baseMsgRejectDisableNodeResponse = {};
-export const MsgRejectDisableNodeResponse = {
+const baseMsgRejectDisableValidatorResponse = {};
+export const MsgRejectDisableValidatorResponse = {
     encode(_, writer = Writer.create()) {
         return writer;
     },
     decode(input, length) {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
-        const message = { ...baseMsgRejectDisableNodeResponse };
+        const message = { ...baseMsgRejectDisableValidatorResponse };
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
@@ -699,7 +699,7 @@ export const MsgRejectDisableNodeResponse = {
         return message;
     },
     fromJSON(_) {
-        const message = { ...baseMsgRejectDisableNodeResponse };
+        const message = { ...baseMsgRejectDisableValidatorResponse };
         return message;
     },
     toJSON(_) {
@@ -707,7 +707,7 @@ export const MsgRejectDisableNodeResponse = {
         return obj;
     },
     fromPartial(_) {
-        const message = { ...baseMsgRejectDisableNodeResponse };
+        const message = { ...baseMsgRejectDisableValidatorResponse };
         return message;
     }
 };
@@ -740,10 +740,10 @@ export class MsgClientImpl {
         const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.validator.Msg', 'EnableValidator', data);
         return promise.then((data) => MsgEnableValidatorResponse.decode(new Reader(data)));
     }
-    RejectDisableNode(request) {
-        const data = MsgRejectDisableNode.encode(request).finish();
-        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.validator.Msg', 'RejectDisableNode', data);
-        return promise.then((data) => MsgRejectDisableNodeResponse.decode(new Reader(data)));
+    RejectDisableValidator(request) {
+        const data = MsgRejectDisableValidator.encode(request).finish();
+        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.validator.Msg', 'RejectDisableValidator', data);
+        return promise.then((data) => MsgRejectDisableValidatorResponse.decode(new Reader(data)));
     }
 }
 var globalThis = (() => {

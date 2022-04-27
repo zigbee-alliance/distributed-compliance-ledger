@@ -775,22 +775,24 @@ func (m *QueryAllDisabledValidatorResponse) GetPagination() *query.PageResponse 
 	return nil
 }
 
-type QueryGetRejectedDisableNodeRequest struct {
+type QueryGetRejectedDisableValidatorRequest struct {
 	Owner string `protobuf:"bytes,1,opt,name=owner,proto3" json:"owner,omitempty"`
 }
 
-func (m *QueryGetRejectedDisableNodeRequest) Reset()         { *m = QueryGetRejectedDisableNodeRequest{} }
-func (m *QueryGetRejectedDisableNodeRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryGetRejectedDisableNodeRequest) ProtoMessage()    {}
-func (*QueryGetRejectedDisableNodeRequest) Descriptor() ([]byte, []int) {
+func (m *QueryGetRejectedDisableValidatorRequest) Reset() {
+	*m = QueryGetRejectedDisableValidatorRequest{}
+}
+func (m *QueryGetRejectedDisableValidatorRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryGetRejectedDisableValidatorRequest) ProtoMessage()    {}
+func (*QueryGetRejectedDisableValidatorRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_31b4d73ed8fedd8d, []int{16}
 }
-func (m *QueryGetRejectedDisableNodeRequest) XXX_Unmarshal(b []byte) error {
+func (m *QueryGetRejectedDisableValidatorRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryGetRejectedDisableNodeRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryGetRejectedDisableValidatorRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryGetRejectedDisableNodeRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryGetRejectedDisableValidatorRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -800,41 +802,43 @@ func (m *QueryGetRejectedDisableNodeRequest) XXX_Marshal(b []byte, deterministic
 		return b[:n], nil
 	}
 }
-func (m *QueryGetRejectedDisableNodeRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryGetRejectedDisableNodeRequest.Merge(m, src)
+func (m *QueryGetRejectedDisableValidatorRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetRejectedDisableValidatorRequest.Merge(m, src)
 }
-func (m *QueryGetRejectedDisableNodeRequest) XXX_Size() int {
+func (m *QueryGetRejectedDisableValidatorRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryGetRejectedDisableNodeRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryGetRejectedDisableNodeRequest.DiscardUnknown(m)
+func (m *QueryGetRejectedDisableValidatorRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetRejectedDisableValidatorRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryGetRejectedDisableNodeRequest proto.InternalMessageInfo
+var xxx_messageInfo_QueryGetRejectedDisableValidatorRequest proto.InternalMessageInfo
 
-func (m *QueryGetRejectedDisableNodeRequest) GetOwner() string {
+func (m *QueryGetRejectedDisableValidatorRequest) GetOwner() string {
 	if m != nil {
 		return m.Owner
 	}
 	return ""
 }
 
-type QueryGetRejectedDisableNodeResponse struct {
-	RejectedNode RejectedDisableNode `protobuf:"bytes,1,opt,name=rejectedNode,proto3" json:"rejectedNode"`
+type QueryGetRejectedDisableValidatorResponse struct {
+	RejectedValidator RejectedDisableValidator `protobuf:"bytes,1,opt,name=rejectedValidator,proto3" json:"rejectedValidator"`
 }
 
-func (m *QueryGetRejectedDisableNodeResponse) Reset()         { *m = QueryGetRejectedDisableNodeResponse{} }
-func (m *QueryGetRejectedDisableNodeResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryGetRejectedDisableNodeResponse) ProtoMessage()    {}
-func (*QueryGetRejectedDisableNodeResponse) Descriptor() ([]byte, []int) {
+func (m *QueryGetRejectedDisableValidatorResponse) Reset() {
+	*m = QueryGetRejectedDisableValidatorResponse{}
+}
+func (m *QueryGetRejectedDisableValidatorResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryGetRejectedDisableValidatorResponse) ProtoMessage()    {}
+func (*QueryGetRejectedDisableValidatorResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_31b4d73ed8fedd8d, []int{17}
 }
-func (m *QueryGetRejectedDisableNodeResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryGetRejectedDisableValidatorResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryGetRejectedDisableNodeResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryGetRejectedDisableValidatorResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryGetRejectedDisableNodeResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryGetRejectedDisableValidatorResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -844,41 +848,43 @@ func (m *QueryGetRejectedDisableNodeResponse) XXX_Marshal(b []byte, deterministi
 		return b[:n], nil
 	}
 }
-func (m *QueryGetRejectedDisableNodeResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryGetRejectedDisableNodeResponse.Merge(m, src)
+func (m *QueryGetRejectedDisableValidatorResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetRejectedDisableValidatorResponse.Merge(m, src)
 }
-func (m *QueryGetRejectedDisableNodeResponse) XXX_Size() int {
+func (m *QueryGetRejectedDisableValidatorResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryGetRejectedDisableNodeResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryGetRejectedDisableNodeResponse.DiscardUnknown(m)
+func (m *QueryGetRejectedDisableValidatorResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetRejectedDisableValidatorResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryGetRejectedDisableNodeResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryGetRejectedDisableValidatorResponse proto.InternalMessageInfo
 
-func (m *QueryGetRejectedDisableNodeResponse) GetRejectedNode() RejectedDisableNode {
+func (m *QueryGetRejectedDisableValidatorResponse) GetRejectedValidator() RejectedDisableValidator {
 	if m != nil {
-		return m.RejectedNode
+		return m.RejectedValidator
 	}
-	return RejectedDisableNode{}
+	return RejectedDisableValidator{}
 }
 
-type QueryAllRejectedDisableNodeRequest struct {
+type QueryAllRejectedDisableValidatorRequest struct {
 	Pagination *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 
-func (m *QueryAllRejectedDisableNodeRequest) Reset()         { *m = QueryAllRejectedDisableNodeRequest{} }
-func (m *QueryAllRejectedDisableNodeRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryAllRejectedDisableNodeRequest) ProtoMessage()    {}
-func (*QueryAllRejectedDisableNodeRequest) Descriptor() ([]byte, []int) {
+func (m *QueryAllRejectedDisableValidatorRequest) Reset() {
+	*m = QueryAllRejectedDisableValidatorRequest{}
+}
+func (m *QueryAllRejectedDisableValidatorRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryAllRejectedDisableValidatorRequest) ProtoMessage()    {}
+func (*QueryAllRejectedDisableValidatorRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_31b4d73ed8fedd8d, []int{18}
 }
-func (m *QueryAllRejectedDisableNodeRequest) XXX_Unmarshal(b []byte) error {
+func (m *QueryAllRejectedDisableValidatorRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryAllRejectedDisableNodeRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryAllRejectedDisableValidatorRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryAllRejectedDisableNodeRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryAllRejectedDisableValidatorRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -888,42 +894,44 @@ func (m *QueryAllRejectedDisableNodeRequest) XXX_Marshal(b []byte, deterministic
 		return b[:n], nil
 	}
 }
-func (m *QueryAllRejectedDisableNodeRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryAllRejectedDisableNodeRequest.Merge(m, src)
+func (m *QueryAllRejectedDisableValidatorRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllRejectedDisableValidatorRequest.Merge(m, src)
 }
-func (m *QueryAllRejectedDisableNodeRequest) XXX_Size() int {
+func (m *QueryAllRejectedDisableValidatorRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryAllRejectedDisableNodeRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryAllRejectedDisableNodeRequest.DiscardUnknown(m)
+func (m *QueryAllRejectedDisableValidatorRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllRejectedDisableValidatorRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryAllRejectedDisableNodeRequest proto.InternalMessageInfo
+var xxx_messageInfo_QueryAllRejectedDisableValidatorRequest proto.InternalMessageInfo
 
-func (m *QueryAllRejectedDisableNodeRequest) GetPagination() *query.PageRequest {
+func (m *QueryAllRejectedDisableValidatorRequest) GetPagination() *query.PageRequest {
 	if m != nil {
 		return m.Pagination
 	}
 	return nil
 }
 
-type QueryAllRejectedDisableNodeResponse struct {
-	RejectedNode []RejectedDisableNode `protobuf:"bytes,1,rep,name=rejectedNode,proto3" json:"rejectedNode"`
-	Pagination   *query.PageResponse   `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+type QueryAllRejectedDisableValidatorResponse struct {
+	RejectedValidator []RejectedDisableValidator `protobuf:"bytes,1,rep,name=rejectedValidator,proto3" json:"rejectedValidator"`
+	Pagination        *query.PageResponse        `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 
-func (m *QueryAllRejectedDisableNodeResponse) Reset()         { *m = QueryAllRejectedDisableNodeResponse{} }
-func (m *QueryAllRejectedDisableNodeResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryAllRejectedDisableNodeResponse) ProtoMessage()    {}
-func (*QueryAllRejectedDisableNodeResponse) Descriptor() ([]byte, []int) {
+func (m *QueryAllRejectedDisableValidatorResponse) Reset() {
+	*m = QueryAllRejectedDisableValidatorResponse{}
+}
+func (m *QueryAllRejectedDisableValidatorResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryAllRejectedDisableValidatorResponse) ProtoMessage()    {}
+func (*QueryAllRejectedDisableValidatorResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_31b4d73ed8fedd8d, []int{19}
 }
-func (m *QueryAllRejectedDisableNodeResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryAllRejectedDisableValidatorResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryAllRejectedDisableNodeResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryAllRejectedDisableValidatorResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryAllRejectedDisableNodeResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryAllRejectedDisableValidatorResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -933,26 +941,26 @@ func (m *QueryAllRejectedDisableNodeResponse) XXX_Marshal(b []byte, deterministi
 		return b[:n], nil
 	}
 }
-func (m *QueryAllRejectedDisableNodeResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryAllRejectedDisableNodeResponse.Merge(m, src)
+func (m *QueryAllRejectedDisableValidatorResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllRejectedDisableValidatorResponse.Merge(m, src)
 }
-func (m *QueryAllRejectedDisableNodeResponse) XXX_Size() int {
+func (m *QueryAllRejectedDisableValidatorResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryAllRejectedDisableNodeResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryAllRejectedDisableNodeResponse.DiscardUnknown(m)
+func (m *QueryAllRejectedDisableValidatorResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllRejectedDisableValidatorResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryAllRejectedDisableNodeResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryAllRejectedDisableValidatorResponse proto.InternalMessageInfo
 
-func (m *QueryAllRejectedDisableNodeResponse) GetRejectedNode() []RejectedDisableNode {
+func (m *QueryAllRejectedDisableValidatorResponse) GetRejectedValidator() []RejectedDisableValidator {
 	if m != nil {
-		return m.RejectedNode
+		return m.RejectedValidator
 	}
 	return nil
 }
 
-func (m *QueryAllRejectedDisableNodeResponse) GetPagination() *query.PageResponse {
+func (m *QueryAllRejectedDisableValidatorResponse) GetPagination() *query.PageResponse {
 	if m != nil {
 		return m.Pagination
 	}
@@ -976,84 +984,83 @@ func init() {
 	proto.RegisterType((*QueryGetDisabledValidatorResponse)(nil), "zigbeealliance.distributedcomplianceledger.validator.QueryGetDisabledValidatorResponse")
 	proto.RegisterType((*QueryAllDisabledValidatorRequest)(nil), "zigbeealliance.distributedcomplianceledger.validator.QueryAllDisabledValidatorRequest")
 	proto.RegisterType((*QueryAllDisabledValidatorResponse)(nil), "zigbeealliance.distributedcomplianceledger.validator.QueryAllDisabledValidatorResponse")
-	proto.RegisterType((*QueryGetRejectedDisableNodeRequest)(nil), "zigbeealliance.distributedcomplianceledger.validator.QueryGetRejectedDisableNodeRequest")
-	proto.RegisterType((*QueryGetRejectedDisableNodeResponse)(nil), "zigbeealliance.distributedcomplianceledger.validator.QueryGetRejectedDisableNodeResponse")
-	proto.RegisterType((*QueryAllRejectedDisableNodeRequest)(nil), "zigbeealliance.distributedcomplianceledger.validator.QueryAllRejectedDisableNodeRequest")
-	proto.RegisterType((*QueryAllRejectedDisableNodeResponse)(nil), "zigbeealliance.distributedcomplianceledger.validator.QueryAllRejectedDisableNodeResponse")
+	proto.RegisterType((*QueryGetRejectedDisableValidatorRequest)(nil), "zigbeealliance.distributedcomplianceledger.validator.QueryGetRejectedDisableValidatorRequest")
+	proto.RegisterType((*QueryGetRejectedDisableValidatorResponse)(nil), "zigbeealliance.distributedcomplianceledger.validator.QueryGetRejectedDisableValidatorResponse")
+	proto.RegisterType((*QueryAllRejectedDisableValidatorRequest)(nil), "zigbeealliance.distributedcomplianceledger.validator.QueryAllRejectedDisableValidatorRequest")
+	proto.RegisterType((*QueryAllRejectedDisableValidatorResponse)(nil), "zigbeealliance.distributedcomplianceledger.validator.QueryAllRejectedDisableValidatorResponse")
 }
 
 func init() { proto.RegisterFile("validator/query.proto", fileDescriptor_31b4d73ed8fedd8d) }
 
 var fileDescriptor_31b4d73ed8fedd8d = []byte{
-	// 1085 bytes of a gzipped FileDescriptorProto
+	// 1063 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x58, 0x41, 0x6f, 0xdc, 0x44,
-	0x14, 0xce, 0xec, 0x52, 0x50, 0x86, 0x5e, 0x3a, 0xdd, 0x56, 0xdb, 0x25, 0xdd, 0x96, 0x21, 0x25,
-	0x25, 0x92, 0x6d, 0xa5, 0x80, 0x90, 0x10, 0x12, 0xda, 0x80, 0x08, 0x54, 0xa8, 0x84, 0xad, 0x94,
-	0x00, 0x52, 0x59, 0x79, 0xd7, 0x23, 0xe3, 0x32, 0xf1, 0x38, 0x1e, 0xa7, 0xa5, 0x54, 0x45, 0xc0,
-	0x81, 0x0b, 0x97, 0x0a, 0x6e, 0x9c, 0x10, 0xe2, 0x27, 0x70, 0xe5, 0x5e, 0x0e, 0x48, 0x55, 0xb9,
-	0x70, 0x42, 0x28, 0xe1, 0xc2, 0x81, 0x5e, 0x10, 0x37, 0x0e, 0x95, 0xed, 0x37, 0xeb, 0xec, 0xda,
-	0xde, 0x4d, 0xd6, 0x76, 0x6e, 0xeb, 0xcc, 0x9b, 0xf7, 0xde, 0xf7, 0xbd, 0xcf, 0x33, 0x9f, 0x83,
-	0x4f, 0xdd, 0x30, 0xb9, 0x63, 0x99, 0x81, 0xf0, 0x8d, 0xed, 0x1d, 0xe6, 0xdf, 0xd2, 0x3d, 0x5f,
-	0x04, 0x82, 0xbc, 0xf0, 0xa9, 0x63, 0xf7, 0x19, 0x33, 0x39, 0x77, 0x4c, 0x77, 0xc0, 0x74, 0xcb,
-	0x91, 0x81, 0xef, 0xf4, 0x77, 0x02, 0x66, 0x0d, 0xc4, 0x96, 0x17, 0xff, 0x95, 0x33, 0xcb, 0x66,
-	0xbe, 0x3e, 0xcc, 0xd0, 0x5a, 0xb0, 0x85, 0xb0, 0x39, 0x33, 0x4c, 0xcf, 0x31, 0x4c, 0xd7, 0x15,
-	0x81, 0x19, 0x38, 0xc2, 0x95, 0x71, 0xce, 0xd6, 0xf2, 0x40, 0xc8, 0x2d, 0x21, 0x8d, 0xbe, 0x29,
-	0x59, 0x5c, 0xcc, 0xb8, 0xb1, 0xd2, 0x67, 0x81, 0xb9, 0x62, 0x78, 0xa6, 0xed, 0xb8, 0x51, 0x30,
-	0xc4, 0x9e, 0x49, 0xda, 0x1a, 0xfe, 0x82, 0xa5, 0xc5, 0x64, 0x89, 0x9b, 0x32, 0xe8, 0x0d, 0x1f,
-	0x7b, 0x9e, 0xb8, 0xc9, 0x54, 0xd4, 0x72, 0x12, 0xe5, 0xf9, 0xc2, 0x13, 0x92, 0x59, 0x3d, 0xcb,
-	0x91, 0x66, 0x9f, 0xb3, 0xde, 0x78, 0x46, 0x9a, 0xc4, 0x42, 0x88, 0x95, 0x8a, 0x39, 0x9b, 0xc4,
-	0xf8, 0xec, 0x3a, 0x1b, 0x04, 0xcc, 0xea, 0xb9, 0xc2, 0x62, 0xb0, 0xdc, 0xb0, 0x85, 0x2d, 0xa2,
-	0x9f, 0x46, 0xf8, 0x4b, 0xa1, 0x88, 0x11, 0xf7, 0xe2, 0x85, 0xf8, 0x21, 0x5e, 0xa2, 0x97, 0x71,
-	0xf3, 0xdd, 0x90, 0x82, 0x35, 0x16, 0x6c, 0xa8, 0xcc, 0x5d, 0xb6, 0xbd, 0xc3, 0x64, 0x40, 0x74,
-	0x7c, 0x4c, 0xdc, 0x74, 0x99, 0xdf, 0x44, 0xe7, 0xd1, 0xc5, 0xf9, 0xd5, 0xe6, 0x83, 0x9f, 0xb4,
-	0x06, 0x6c, 0xee, 0x58, 0x96, 0xcf, 0xa4, 0xbc, 0x1a, 0xf8, 0x8e, 0x6b, 0x77, 0xe3, 0x30, 0xfa,
-	0x39, 0xc2, 0x67, 0x32, 0x92, 0x49, 0x4f, 0xb8, 0x92, 0x91, 0x01, 0x9e, 0x1f, 0xf6, 0x1e, 0x65,
-	0x7c, 0xf2, 0xd2, 0xab, 0xfa, 0x2c, 0xe3, 0xd5, 0x87, 0xb9, 0x57, 0x1f, 0xbb, 0xf7, 0xc7, 0xb9,
-	0xb9, 0x6e, 0x92, 0x97, 0xf6, 0x01, 0x4e, 0x87, 0xf3, 0x14, 0x9c, 0x37, 0x30, 0x4e, 0xe6, 0x0b,
-	0x1d, 0x3c, 0xab, 0x03, 0xa0, 0x50, 0x0c, 0x7a, 0xac, 0x3c, 0x10, 0x83, 0xbe, 0x6e, 0xda, 0x0c,
-	0xf6, 0x76, 0xf7, 0xed, 0xa4, 0xbf, 0x28, 0x98, 0xa3, 0x45, 0xb2, 0x61, 0xd6, 0xab, 0x80, 0x49,
-	0xd6, 0x46, 0xa0, 0xd4, 0x22, 0x28, 0x4b, 0x53, 0xa1, 0xc4, 0x1d, 0x8e, 0x60, 0xb9, 0x8a, 0x9f,
-	0x56, 0x13, 0x7b, 0xdb, 0x94, 0xc9, 0xd4, 0xd6, 0x43, 0x09, 0xcf, 0xaa, 0x83, 0x1f, 0x11, 0xa6,
-	0x93, 0xb2, 0x02, 0x53, 0x9f, 0x61, 0xc2, 0x53, 0xab, 0x30, 0x97, 0x37, 0x67, 0xa3, 0x2c, 0x5d,
-	0x0d, 0xb8, 0xcb, 0xa8, 0x44, 0x3f, 0x06, 0xec, 0x1d, 0xce, 0xf3, 0xb1, 0x97, 0x25, 0x9a, 0x7f,
-	0x14, 0x27, 0x39, 0xd5, 0xa6, 0x70, 0x52, 0x3f, 0x1a, 0x4e, 0xca, 0x13, 0xd6, 0x6b, 0x78, 0x49,
-	0x49, 0x60, 0x1d, 0xce, 0xbd, 0xd7, 0xe3, 0x33, 0x2d, 0xf5, 0x5e, 0x36, 0xf1, 0x13, 0x66, 0x2c,
-	0xa3, 0x58, 0x60, 0x5d, 0xf5, 0x48, 0x7f, 0x46, 0xf8, 0xe2, 0xf4, 0x2c, 0x40, 0xdd, 0x5d, 0x84,
-	0x9b, 0x5e, 0x4e, 0x10, 0x0c, 0xee, 0xca, 0x6c, 0x0c, 0xe6, 0x95, 0x06, 0x1e, 0x73, 0xab, 0xd2,
-	0x6d, 0x20, 0xa1, 0xc3, 0xf9, 0x34, 0x12, 0xca, 0xd2, 0xd9, 0x57, 0x35, 0xa0, 0x6c, 0x62, 0xcd,
-	0x83, 0x51, 0x56, 0x3f, 0x7a, 0xca, 0xca, 0x13, 0xe0, 0x2b, 0xf8, 0xbc, 0x92, 0x0e, 0x14, 0xb1,
-	0x0e, 0xa1, 0xbc, 0xef, 0x51, 0x72, 0x30, 0x66, 0x6c, 0x07, 0xfe, 0x6e, 0xe3, 0x13, 0xd6, 0xf8,
-	0x22, 0xcc, 0x6e, 0x6d, 0x36, 0xde, 0x52, 0xb5, 0x80, 0xb0, 0x74, 0x1d, 0x7a, 0x1d, 0x00, 0x76,
-	0x38, 0xcf, 0x05, 0x58, 0x96, 0xaa, 0xfe, 0x46, 0xc9, 0x59, 0x79, 0x68, 0x3a, 0xea, 0x47, 0x41,
-	0x47, 0x79, 0xc2, 0x79, 0x39, 0xb9, 0xbc, 0xba, 0xe0, 0xb0, 0xa0, 0x8d, 0x2b, 0xc2, 0x52, 0xec,
-	0x90, 0xc6, 0xc8, 0x9d, 0xa8, 0x6e, 0xbe, 0xef, 0x10, 0x7e, 0x66, 0xe2, 0x66, 0x60, 0x4a, 0xe2,
-	0xe3, 0xca, 0xbd, 0x85, 0x7f, 0x87, 0xc9, 0xbc, 0x35, 0x1b, 0x49, 0x19, 0x85, 0x80, 0xa6, 0x91,
-	0x22, 0x94, 0x27, 0x37, 0xd0, 0x04, 0x60, 0x65, 0x49, 0x66, 0x4f, 0x51, 0x91, 0x57, 0x2e, 0x97,
-	0x8a, 0x7a, 0xe5, 0x54, 0x94, 0x26, 0x96, 0x4b, 0x3f, 0x9c, 0xc4, 0xc7, 0x22, 0x94, 0xe4, 0x01,
-	0xc2, 0xf3, 0x89, 0x1a, 0x67, 0x3c, 0x36, 0xf3, 0xac, 0x78, 0xeb, 0x9d, 0xd2, 0xf2, 0xc5, 0x20,
-	0xe8, 0xe2, 0x97, 0xbf, 0xfd, 0xf5, 0x6d, 0xad, 0x4d, 0x16, 0x0c, 0x6b, 0xc0, 0x93, 0x6f, 0x1b,
-	0x23, 0xfc, 0x96, 0x90, 0xc6, 0xed, 0x48, 0xce, 0x77, 0xc8, 0xaf, 0x08, 0x1f, 0x1f, 0xee, 0xed,
-	0x70, 0x5e, 0x08, 0x57, 0x86, 0x27, 0x2f, 0x84, 0x2b, 0xcb, 0x7e, 0xd3, 0x85, 0x08, 0xd7, 0x69,
-	0xd2, 0xc8, 0xc2, 0x45, 0xfe, 0x45, 0x98, 0xa4, 0xfd, 0x10, 0xd9, 0x2c, 0xc6, 0x6e, 0xae, 0x7b,
-	0x6c, 0xbd, 0x57, 0x7e, 0x62, 0xc0, 0xb9, 0x1c, 0xe1, 0x5c, 0x24, 0x74, 0x0c, 0x67, 0xe8, 0xe9,
-	0xb4, 0xe8, 0x03, 0x34, 0x99, 0xe2, 0x43, 0x84, 0x4f, 0xa5, 0x53, 0x85, 0xe3, 0xdc, 0x2c, 0x46,
-	0x7f, 0x35, 0xc0, 0x27, 0x3a, 0x64, 0x4a, 0x23, 0xe0, 0x0b, 0xa4, 0x95, 0x0f, 0x9c, 0x7c, 0x53,
-	0xc3, 0xcd, 0x3c, 0x07, 0x42, 0xae, 0x15, 0x9b, 0xc9, 0x14, 0x23, 0xd7, 0xfa, 0xb0, 0xaa, 0xf4,
-	0x80, 0xff, 0xa5, 0x08, 0xff, 0x0a, 0x31, 0xc6, 0xf0, 0x2b, 0x47, 0xa5, 0xc1, 0xd5, 0xa8, 0xc1,
-	0x9b, 0x0c, 0x8e, 0xe6, 0x0e, 0xf9, 0xba, 0x86, 0x9f, 0xca, 0xcb, 0x1e, 0x6a, 0xe1, 0x5a, 0xb1,
-	0x91, 0x55, 0xc9, 0xcb, 0x01, 0xbc, 0x2c, 0xd5, 0x22, 0x5e, 0x96, 0xc8, 0x85, 0x03, 0xf1, 0x42,
-	0xfe, 0x43, 0xf8, 0x44, 0xca, 0x5d, 0x90, 0x8d, 0x62, 0xc3, 0xcb, 0xf3, 0x61, 0xad, 0xcd, 0xd2,
-	0xf3, 0x02, 0x6a, 0x23, 0x42, 0xfd, 0x1c, 0x59, 0x1a, 0x43, 0xad, 0xfc, 0x51, 0x4a, 0x05, 0x0f,
-	0x11, 0x6e, 0xa4, 0xd2, 0x85, 0xe3, 0xdf, 0x28, 0x36, 0x9f, 0x4a, 0xa0, 0x4f, 0x72, 0x9b, 0xf4,
-	0x42, 0x04, 0xfd, 0x1c, 0x39, 0x3b, 0x11, 0x3a, 0xf9, 0xa2, 0x86, 0x4f, 0x66, 0xd8, 0x02, 0x52,
-	0xf0, 0x68, 0xce, 0x77, 0x50, 0xad, 0xf7, 0x2b, 0xc8, 0x0c, 0x98, 0x5f, 0x8c, 0x30, 0x1b, 0x44,
-	0x1b, 0xc3, 0xac, 0xcc, 0xcd, 0xf8, 0xcb, 0x0f, 0x17, 0xc0, 0xff, 0x08, 0x9f, 0xce, 0x48, 0x1b,
-	0x8e, 0xbd, 0xe0, 0x41, 0x5d, 0x11, 0x0d, 0x93, 0x3d, 0x63, 0xee, 0xbb, 0x9e, 0x4d, 0xc3, 0xaa,
-	0x75, 0x6f, 0xb7, 0x8d, 0xee, 0xef, 0xb6, 0xd1, 0x9f, 0xbb, 0x6d, 0x74, 0x77, 0xaf, 0x3d, 0x77,
-	0x7f, 0xaf, 0x3d, 0xf7, 0xfb, 0x5e, 0x7b, 0xee, 0x83, 0xcb, 0xb6, 0x13, 0x7c, 0xb4, 0xd3, 0xd7,
-	0x07, 0x62, 0xcb, 0x88, 0xbb, 0xd5, 0x54, 0xbb, 0xc6, 0xbe, 0x76, 0xb5, 0xa4, 0x5f, 0x2d, 0x6e,
-	0xd8, 0xf8, 0x64, 0x5f, 0xd9, 0xe0, 0x96, 0xc7, 0x64, 0xff, 0xf1, 0xe8, 0x1f, 0xaa, 0xcf, 0x3f,
-	0x0a, 0x00, 0x00, 0xff, 0xff, 0xb2, 0xaf, 0x8b, 0x61, 0xca, 0x16, 0x00, 0x00,
+	0x18, 0xcd, 0xec, 0x52, 0x50, 0x06, 0x2e, 0x19, 0xb6, 0x68, 0xbb, 0x84, 0x6d, 0x19, 0xa5, 0xa4,
+	0x44, 0xb2, 0xad, 0x14, 0x10, 0x17, 0xa4, 0x6a, 0x03, 0x22, 0xa8, 0x42, 0x10, 0xb6, 0x52, 0x82,
+	0x90, 0xca, 0xca, 0xbb, 0x1e, 0x19, 0x97, 0x89, 0xc7, 0xb1, 0x9d, 0x96, 0x52, 0x15, 0xa1, 0x1e,
+	0xb8, 0x70, 0x89, 0xe0, 0x0f, 0x70, 0xe0, 0xce, 0x85, 0x2b, 0x12, 0xc7, 0x72, 0x40, 0xaa, 0xca,
+	0x85, 0x13, 0x42, 0x09, 0x17, 0x0e, 0xf4, 0x82, 0x90, 0x38, 0x56, 0xb6, 0xbf, 0x59, 0x6f, 0xd6,
+	0x9e, 0x75, 0xb2, 0xf6, 0xee, 0xcd, 0xce, 0x8c, 0xdf, 0x37, 0xef, 0x7d, 0xcf, 0x9f, 0xdf, 0x06,
+	0x9f, 0xbd, 0x69, 0x72, 0xc7, 0x32, 0x43, 0xe1, 0x1b, 0x7b, 0xfb, 0xcc, 0xbf, 0xad, 0x7b, 0xbe,
+	0x08, 0x05, 0x79, 0xf5, 0x73, 0xc7, 0xee, 0x33, 0x66, 0x72, 0xee, 0x98, 0xee, 0x80, 0xe9, 0x96,
+	0x13, 0x84, 0xbe, 0xd3, 0xdf, 0x0f, 0x99, 0x35, 0x10, 0xbb, 0x5e, 0xf2, 0x57, 0xce, 0x2c, 0x9b,
+	0xf9, 0xfa, 0x10, 0xa1, 0xb5, 0x6c, 0x0b, 0x61, 0x73, 0x66, 0x98, 0x9e, 0x63, 0x98, 0xae, 0x2b,
+	0x42, 0x33, 0x74, 0x84, 0x1b, 0x24, 0x98, 0xad, 0xb5, 0x81, 0x08, 0x76, 0x45, 0x60, 0xf4, 0xcd,
+	0x80, 0x25, 0xc5, 0x8c, 0x9b, 0xeb, 0x7d, 0x16, 0x9a, 0xeb, 0x86, 0x67, 0xda, 0x8e, 0x1b, 0x6f,
+	0x86, 0xbd, 0xe7, 0xd2, 0x63, 0x0d, 0xaf, 0x60, 0x69, 0x25, 0x5d, 0xe2, 0x66, 0x10, 0xf6, 0x86,
+	0xb7, 0x3d, 0x4f, 0xdc, 0x62, 0x72, 0xd7, 0x5a, 0xba, 0xcb, 0xf3, 0x85, 0x27, 0x02, 0x66, 0xf5,
+	0x2c, 0x27, 0x30, 0xfb, 0x9c, 0xf5, 0xc6, 0x11, 0x69, 0xba, 0x17, 0xb6, 0x58, 0x93, 0xf6, 0xf8,
+	0xec, 0x06, 0x1b, 0x84, 0x39, 0x7b, 0x1a, 0xb6, 0xb0, 0x45, 0x7c, 0x69, 0x44, 0x57, 0x92, 0x4a,
+	0x42, 0xbb, 0x97, 0x2c, 0x24, 0x37, 0xc9, 0x12, 0xbd, 0x8a, 0x9b, 0x1f, 0x44, 0x3a, 0x6c, 0xb2,
+	0x70, 0x5b, 0x62, 0x75, 0xd9, 0xde, 0x3e, 0x0b, 0x42, 0xa2, 0xe3, 0x33, 0xe2, 0x96, 0xcb, 0xfc,
+	0x26, 0xba, 0x80, 0x2e, 0x2d, 0x6e, 0x34, 0x1f, 0xfe, 0xa8, 0x35, 0xe0, 0xe1, 0x8e, 0x65, 0xf9,
+	0x2c, 0x08, 0xae, 0x85, 0xbe, 0xe3, 0xda, 0xdd, 0x64, 0x1b, 0xfd, 0x12, 0xe1, 0x73, 0x39, 0x60,
+	0x81, 0x27, 0xdc, 0x80, 0x91, 0x01, 0x5e, 0x1c, 0x9e, 0x36, 0x46, 0x7c, 0xfa, 0xf2, 0x15, 0x7d,
+	0x9a, 0x1e, 0xeb, 0x43, 0xec, 0x8d, 0x27, 0xee, 0xff, 0x71, 0x7e, 0xa1, 0x9b, 0xe2, 0xd2, 0x3e,
+	0xd0, 0xe9, 0x70, 0x9e, 0xa1, 0xf3, 0x36, 0xc6, 0x69, 0x93, 0xe1, 0x04, 0x2f, 0xe9, 0x40, 0x28,
+	0x72, 0x84, 0x9e, 0xd8, 0x0f, 0x1c, 0xa1, 0x6f, 0x99, 0x36, 0x83, 0x67, 0xbb, 0x23, 0x4f, 0xd2,
+	0x5f, 0x24, 0xcd, 0xe3, 0x45, 0xf2, 0x69, 0xd6, 0x67, 0x41, 0x93, 0x6c, 0x1e, 0xa3, 0x52, 0x8b,
+	0xa9, 0xac, 0x16, 0x52, 0x49, 0x4e, 0x78, 0x8c, 0xcb, 0x35, 0xfc, 0xa2, 0xec, 0xd8, 0xbb, 0x66,
+	0x90, 0x76, 0x6d, 0x2b, 0xf2, 0xf1, 0xb4, 0x3e, 0xf8, 0x1e, 0x61, 0x3a, 0x09, 0x15, 0x94, 0xfa,
+	0x02, 0x13, 0x9e, 0x59, 0x85, 0xbe, 0xbc, 0x33, 0x9d, 0x64, 0xd9, 0x6a, 0xa0, 0x5d, 0x4e, 0x25,
+	0xfa, 0x29, 0x70, 0xef, 0x70, 0xae, 0xe6, 0x5e, 0x95, 0x69, 0xfe, 0x91, 0x9a, 0x28, 0xaa, 0x15,
+	0x68, 0x52, 0x9f, 0x8f, 0x26, 0xd5, 0x19, 0xeb, 0x4d, 0xbc, 0x2a, 0x2d, 0xb0, 0x05, 0xc3, 0xef,
+	0xad, 0x64, 0xb0, 0x65, 0xde, 0xcb, 0x26, 0x7e, 0xca, 0x4c, 0x6c, 0x94, 0x18, 0xac, 0x2b, 0x6f,
+	0xe9, 0x4f, 0x08, 0x5f, 0x2a, 0x46, 0x01, 0xe9, 0x0e, 0x10, 0x6e, 0x7a, 0x8a, 0x4d, 0xd0, 0xb8,
+	0xf7, 0xa6, 0x53, 0x50, 0x55, 0x1a, 0x74, 0x54, 0x56, 0xa5, 0x7b, 0x20, 0x42, 0x87, 0xf3, 0x22,
+	0x11, 0xaa, 0xf2, 0xd9, 0x57, 0x35, 0x90, 0x6c, 0x62, 0xcd, 0x93, 0x49, 0x56, 0x9f, 0xbf, 0x64,
+	0xd5, 0x19, 0xf0, 0x0d, 0x7c, 0x41, 0x5a, 0x07, 0x8a, 0x58, 0xa7, 0x70, 0xde, 0x77, 0x28, 0x1d,
+	0x8c, 0x39, 0x8f, 0x83, 0x7e, 0x77, 0xf0, 0x92, 0x35, 0xbe, 0x08, 0xbd, 0xdb, 0x9c, 0x4e, 0xb7,
+	0x4c, 0x2d, 0x10, 0x2c, 0x5b, 0x87, 0xde, 0x00, 0x82, 0x1d, 0xce, 0x95, 0x04, 0xab, 0x72, 0xd5,
+	0xdf, 0x28, 0x9d, 0x95, 0xa7, 0x96, 0xa3, 0x3e, 0x0f, 0x39, 0xaa, 0x33, 0xce, 0x95, 0x74, 0x72,
+	0x75, 0x21, 0x66, 0xa9, 0x5e, 0xda, 0xc6, 0xb1, 0x0f, 0xa3, 0xfc, 0xfc, 0xfd, 0x30, 0x32, 0xb5,
+	0xd4, 0x08, 0xa0, 0xd9, 0x3d, 0x84, 0x97, 0x64, 0x9a, 0xab, 0x68, 0x5c, 0xa9, 0x6a, 0x4a, 0xed,
+	0x32, 0xe5, 0x46, 0xe7, 0x54, 0x11, 0xe5, 0xaa, 0x1c, 0xf5, 0x3f, 0x4a, 0xe7, 0xd4, 0xd4, 0x22,
+	0xd5, 0xe7, 0x28, 0x52, 0x65, 0x06, 0xbb, 0xfc, 0xf3, 0xb3, 0xf8, 0x4c, 0x4c, 0x9d, 0x3c, 0x44,
+	0x78, 0x31, 0x2d, 0x30, 0x25, 0x13, 0x55, 0x7c, 0x6f, 0xbd, 0x5f, 0x19, 0x5e, 0x42, 0x82, 0xae,
+	0xdc, 0xfb, 0xed, 0xaf, 0x6f, 0x6b, 0x6d, 0xb2, 0x6c, 0x58, 0x03, 0x9e, 0xfe, 0x28, 0x32, 0x5c,
+	0x61, 0xb1, 0xc0, 0xb8, 0x13, 0xbb, 0xff, 0x2e, 0xf9, 0x15, 0xe1, 0x67, 0x86, 0xcf, 0x76, 0x38,
+	0x2f, 0xc5, 0x2b, 0x27, 0xc7, 0x97, 0xe2, 0x95, 0x17, 0xd9, 0xe9, 0x72, 0xcc, 0xeb, 0x39, 0xd2,
+	0xc8, 0xe3, 0x45, 0xfe, 0x45, 0x98, 0x64, 0x33, 0x14, 0xd9, 0x29, 0xa7, 0xae, 0x32, 0x71, 0xb6,
+	0x3e, 0xac, 0x1e, 0x18, 0x78, 0xae, 0xc5, 0x3c, 0x57, 0x08, 0x1d, 0xe3, 0x19, 0xe5, 0x40, 0x2d,
+	0xfe, 0xe5, 0x9a, 0x76, 0xf1, 0x11, 0xc2, 0x67, 0xb3, 0x50, 0x51, 0x3b, 0x77, 0xca, 0xc9, 0x3f,
+	0x1b, 0xe2, 0x13, 0x53, 0x35, 0xa5, 0x31, 0xf1, 0x65, 0xd2, 0x52, 0x13, 0x27, 0xdf, 0xd4, 0x70,
+	0x53, 0x95, 0x5a, 0xc8, 0xf5, 0x72, 0x3d, 0x29, 0x08, 0x7f, 0xad, 0x8f, 0x67, 0x05, 0x0f, 0xfc,
+	0x5f, 0x8f, 0xf9, 0xaf, 0x13, 0x63, 0x8c, 0xbf, 0x4c, 0x61, 0x1a, 0x7c, 0x4e, 0x35, 0x78, 0x93,
+	0x21, 0x05, 0xdd, 0x25, 0x5f, 0xd7, 0xf0, 0xf3, 0x2a, 0xf4, 0xc8, 0x0b, 0xd7, 0xcb, 0xb5, 0x6c,
+	0x96, 0xba, 0x9c, 0x20, 0xff, 0x52, 0x2d, 0xd6, 0x65, 0x95, 0x5c, 0x3c, 0x91, 0x2e, 0xe4, 0x3f,
+	0x84, 0x97, 0x32, 0x89, 0x84, 0x6c, 0x97, 0x6b, 0x9e, 0x2a, 0xbb, 0xb5, 0x76, 0x2a, 0xc7, 0x05,
+	0xd6, 0x46, 0xcc, 0xfa, 0x65, 0xb2, 0x3a, 0xc6, 0x5a, 0x66, 0xaa, 0x8c, 0x0b, 0x1e, 0x21, 0xdc,
+	0xc8, 0xc0, 0x45, 0xed, 0xdf, 0x2e, 0xd7, 0x9f, 0x99, 0x50, 0x9f, 0x94, 0x50, 0xe9, 0xc5, 0x98,
+	0xfa, 0x79, 0xf2, 0xc2, 0x44, 0xea, 0xe4, 0xa0, 0x86, 0x9b, 0xaa, 0x80, 0x50, 0x76, 0x16, 0x14,
+	0x04, 0xac, 0xb2, 0xb3, 0xa0, 0x28, 0x4b, 0xd1, 0xd7, 0x62, 0x09, 0x0c, 0xa2, 0x8d, 0x49, 0x20,
+	0x03, 0xcf, 0xf8, 0x2c, 0x80, 0xef, 0x41, 0x34, 0x09, 0x54, 0xd8, 0x15, 0x4c, 0x82, 0x59, 0xaa,
+	0x72, 0x82, 0x84, 0xa9, 0x9c, 0x04, 0xf9, 0xaa, 0x6c, 0x58, 0xf7, 0x0f, 0xdb, 0xe8, 0xc1, 0x61,
+	0x1b, 0xfd, 0x79, 0xd8, 0x46, 0x07, 0x47, 0xed, 0x85, 0x07, 0x47, 0xed, 0x85, 0xdf, 0x8f, 0xda,
+	0x0b, 0x1f, 0x5d, 0xb5, 0x9d, 0xf0, 0x93, 0xfd, 0xbe, 0x3e, 0x10, 0xbb, 0x46, 0x72, 0x64, 0x4d,
+	0x9e, 0xd9, 0x18, 0x39, 0xb3, 0x96, 0x1e, 0x5a, 0x4b, 0x4e, 0x6d, 0x7c, 0x36, 0x52, 0x36, 0xbc,
+	0xed, 0xb1, 0xa0, 0xff, 0x64, 0xfc, 0x2f, 0xda, 0x57, 0x1e, 0x07, 0x00, 0x00, 0xff, 0xff, 0x08,
+	0x12, 0xe3, 0x6f, 0x21, 0x17, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -1085,9 +1092,9 @@ type QueryClient interface {
 	// Queries a list of DisabledValidator items.
 	DisabledValidatorAll(ctx context.Context, in *QueryAllDisabledValidatorRequest, opts ...grpc.CallOption) (*QueryAllDisabledValidatorResponse, error)
 	// Queries a RejectedNode by index.
-	RejectedDisableNode(ctx context.Context, in *QueryGetRejectedDisableNodeRequest, opts ...grpc.CallOption) (*QueryGetRejectedDisableNodeResponse, error)
+	RejectedDisableValidator(ctx context.Context, in *QueryGetRejectedDisableValidatorRequest, opts ...grpc.CallOption) (*QueryGetRejectedDisableValidatorResponse, error)
 	// Queries a list of RejectedNode items.
-	RejectedDisableNodeAll(ctx context.Context, in *QueryAllRejectedDisableNodeRequest, opts ...grpc.CallOption) (*QueryAllRejectedDisableNodeResponse, error)
+	RejectedDisableValidatorAll(ctx context.Context, in *QueryAllRejectedDisableValidatorRequest, opts ...grpc.CallOption) (*QueryAllRejectedDisableValidatorResponse, error)
 }
 
 type queryClient struct {
@@ -1170,18 +1177,18 @@ func (c *queryClient) DisabledValidatorAll(ctx context.Context, in *QueryAllDisa
 	return out, nil
 }
 
-func (c *queryClient) RejectedDisableNode(ctx context.Context, in *QueryGetRejectedDisableNodeRequest, opts ...grpc.CallOption) (*QueryGetRejectedDisableNodeResponse, error) {
-	out := new(QueryGetRejectedDisableNodeResponse)
-	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.validator.Query/RejectedDisableNode", in, out, opts...)
+func (c *queryClient) RejectedDisableValidator(ctx context.Context, in *QueryGetRejectedDisableValidatorRequest, opts ...grpc.CallOption) (*QueryGetRejectedDisableValidatorResponse, error) {
+	out := new(QueryGetRejectedDisableValidatorResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.validator.Query/RejectedDisableValidator", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *queryClient) RejectedDisableNodeAll(ctx context.Context, in *QueryAllRejectedDisableNodeRequest, opts ...grpc.CallOption) (*QueryAllRejectedDisableNodeResponse, error) {
-	out := new(QueryAllRejectedDisableNodeResponse)
-	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.validator.Query/RejectedDisableNodeAll", in, out, opts...)
+func (c *queryClient) RejectedDisableValidatorAll(ctx context.Context, in *QueryAllRejectedDisableValidatorRequest, opts ...grpc.CallOption) (*QueryAllRejectedDisableValidatorResponse, error) {
+	out := new(QueryAllRejectedDisableValidatorResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.validator.Query/RejectedDisableValidatorAll", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1207,9 +1214,9 @@ type QueryServer interface {
 	// Queries a list of DisabledValidator items.
 	DisabledValidatorAll(context.Context, *QueryAllDisabledValidatorRequest) (*QueryAllDisabledValidatorResponse, error)
 	// Queries a RejectedNode by index.
-	RejectedDisableNode(context.Context, *QueryGetRejectedDisableNodeRequest) (*QueryGetRejectedDisableNodeResponse, error)
+	RejectedDisableValidator(context.Context, *QueryGetRejectedDisableValidatorRequest) (*QueryGetRejectedDisableValidatorResponse, error)
 	// Queries a list of RejectedNode items.
-	RejectedDisableNodeAll(context.Context, *QueryAllRejectedDisableNodeRequest) (*QueryAllRejectedDisableNodeResponse, error)
+	RejectedDisableValidatorAll(context.Context, *QueryAllRejectedDisableValidatorRequest) (*QueryAllRejectedDisableValidatorResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
@@ -1240,11 +1247,11 @@ func (*UnimplementedQueryServer) DisabledValidator(ctx context.Context, req *Que
 func (*UnimplementedQueryServer) DisabledValidatorAll(ctx context.Context, req *QueryAllDisabledValidatorRequest) (*QueryAllDisabledValidatorResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DisabledValidatorAll not implemented")
 }
-func (*UnimplementedQueryServer) RejectedDisableNode(ctx context.Context, req *QueryGetRejectedDisableNodeRequest) (*QueryGetRejectedDisableNodeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RejectedDisableNode not implemented")
+func (*UnimplementedQueryServer) RejectedDisableValidator(ctx context.Context, req *QueryGetRejectedDisableValidatorRequest) (*QueryGetRejectedDisableValidatorResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RejectedDisableValidator not implemented")
 }
-func (*UnimplementedQueryServer) RejectedDisableNodeAll(ctx context.Context, req *QueryAllRejectedDisableNodeRequest) (*QueryAllRejectedDisableNodeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RejectedDisableNodeAll not implemented")
+func (*UnimplementedQueryServer) RejectedDisableValidatorAll(ctx context.Context, req *QueryAllRejectedDisableValidatorRequest) (*QueryAllRejectedDisableValidatorResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RejectedDisableValidatorAll not implemented")
 }
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
@@ -1395,38 +1402,38 @@ func _Query_DisabledValidatorAll_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Query_RejectedDisableNode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryGetRejectedDisableNodeRequest)
+func _Query_RejectedDisableValidator_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetRejectedDisableValidatorRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).RejectedDisableNode(ctx, in)
+		return srv.(QueryServer).RejectedDisableValidator(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/zigbeealliance.distributedcomplianceledger.validator.Query/RejectedDisableNode",
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.validator.Query/RejectedDisableValidator",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).RejectedDisableNode(ctx, req.(*QueryGetRejectedDisableNodeRequest))
+		return srv.(QueryServer).RejectedDisableValidator(ctx, req.(*QueryGetRejectedDisableValidatorRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Query_RejectedDisableNodeAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryAllRejectedDisableNodeRequest)
+func _Query_RejectedDisableValidatorAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryAllRejectedDisableValidatorRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).RejectedDisableNodeAll(ctx, in)
+		return srv.(QueryServer).RejectedDisableValidatorAll(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/zigbeealliance.distributedcomplianceledger.validator.Query/RejectedDisableNodeAll",
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.validator.Query/RejectedDisableValidatorAll",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).RejectedDisableNodeAll(ctx, req.(*QueryAllRejectedDisableNodeRequest))
+		return srv.(QueryServer).RejectedDisableValidatorAll(ctx, req.(*QueryAllRejectedDisableValidatorRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1468,12 +1475,12 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Query_DisabledValidatorAll_Handler,
 		},
 		{
-			MethodName: "RejectedDisableNode",
-			Handler:    _Query_RejectedDisableNode_Handler,
+			MethodName: "RejectedDisableValidator",
+			Handler:    _Query_RejectedDisableValidator_Handler,
 		},
 		{
-			MethodName: "RejectedDisableNodeAll",
-			Handler:    _Query_RejectedDisableNodeAll_Handler,
+			MethodName: "RejectedDisableValidatorAll",
+			Handler:    _Query_RejectedDisableValidatorAll_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -2068,7 +2075,7 @@ func (m *QueryAllDisabledValidatorResponse) MarshalToSizedBuffer(dAtA []byte) (i
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryGetRejectedDisableNodeRequest) Marshal() (dAtA []byte, err error) {
+func (m *QueryGetRejectedDisableValidatorRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -2078,12 +2085,12 @@ func (m *QueryGetRejectedDisableNodeRequest) Marshal() (dAtA []byte, err error) 
 	return dAtA[:n], nil
 }
 
-func (m *QueryGetRejectedDisableNodeRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryGetRejectedDisableValidatorRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryGetRejectedDisableNodeRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryGetRejectedDisableValidatorRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -2098,7 +2105,7 @@ func (m *QueryGetRejectedDisableNodeRequest) MarshalToSizedBuffer(dAtA []byte) (
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryGetRejectedDisableNodeResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryGetRejectedDisableValidatorResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -2108,18 +2115,18 @@ func (m *QueryGetRejectedDisableNodeResponse) Marshal() (dAtA []byte, err error)
 	return dAtA[:n], nil
 }
 
-func (m *QueryGetRejectedDisableNodeResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryGetRejectedDisableValidatorResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryGetRejectedDisableNodeResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryGetRejectedDisableValidatorResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	{
-		size, err := m.RejectedNode.MarshalToSizedBuffer(dAtA[:i])
+		size, err := m.RejectedValidator.MarshalToSizedBuffer(dAtA[:i])
 		if err != nil {
 			return 0, err
 		}
@@ -2131,7 +2138,7 @@ func (m *QueryGetRejectedDisableNodeResponse) MarshalToSizedBuffer(dAtA []byte) 
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryAllRejectedDisableNodeRequest) Marshal() (dAtA []byte, err error) {
+func (m *QueryAllRejectedDisableValidatorRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -2141,12 +2148,12 @@ func (m *QueryAllRejectedDisableNodeRequest) Marshal() (dAtA []byte, err error) 
 	return dAtA[:n], nil
 }
 
-func (m *QueryAllRejectedDisableNodeRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryAllRejectedDisableValidatorRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryAllRejectedDisableNodeRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryAllRejectedDisableValidatorRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -2166,7 +2173,7 @@ func (m *QueryAllRejectedDisableNodeRequest) MarshalToSizedBuffer(dAtA []byte) (
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryAllRejectedDisableNodeResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryAllRejectedDisableValidatorResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -2176,12 +2183,12 @@ func (m *QueryAllRejectedDisableNodeResponse) Marshal() (dAtA []byte, err error)
 	return dAtA[:n], nil
 }
 
-func (m *QueryAllRejectedDisableNodeResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryAllRejectedDisableValidatorResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryAllRejectedDisableNodeResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryAllRejectedDisableValidatorResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -2198,10 +2205,10 @@ func (m *QueryAllRejectedDisableNodeResponse) MarshalToSizedBuffer(dAtA []byte) 
 		i--
 		dAtA[i] = 0x12
 	}
-	if len(m.RejectedNode) > 0 {
-		for iNdEx := len(m.RejectedNode) - 1; iNdEx >= 0; iNdEx-- {
+	if len(m.RejectedValidator) > 0 {
+		for iNdEx := len(m.RejectedValidator) - 1; iNdEx >= 0; iNdEx-- {
 			{
-				size, err := m.RejectedNode[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				size, err := m.RejectedValidator[iNdEx].MarshalToSizedBuffer(dAtA[:i])
 				if err != nil {
 					return 0, err
 				}
@@ -2450,7 +2457,7 @@ func (m *QueryAllDisabledValidatorResponse) Size() (n int) {
 	return n
 }
 
-func (m *QueryGetRejectedDisableNodeRequest) Size() (n int) {
+func (m *QueryGetRejectedDisableValidatorRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -2463,18 +2470,18 @@ func (m *QueryGetRejectedDisableNodeRequest) Size() (n int) {
 	return n
 }
 
-func (m *QueryGetRejectedDisableNodeResponse) Size() (n int) {
+func (m *QueryGetRejectedDisableValidatorResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	l = m.RejectedNode.Size()
+	l = m.RejectedValidator.Size()
 	n += 1 + l + sovQuery(uint64(l))
 	return n
 }
 
-func (m *QueryAllRejectedDisableNodeRequest) Size() (n int) {
+func (m *QueryAllRejectedDisableValidatorRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -2487,14 +2494,14 @@ func (m *QueryAllRejectedDisableNodeRequest) Size() (n int) {
 	return n
 }
 
-func (m *QueryAllRejectedDisableNodeResponse) Size() (n int) {
+func (m *QueryAllRejectedDisableValidatorResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	if len(m.RejectedNode) > 0 {
-		for _, e := range m.RejectedNode {
+	if len(m.RejectedValidator) > 0 {
+		for _, e := range m.RejectedValidator {
 			l = e.Size()
 			n += 1 + l + sovQuery(uint64(l))
 		}
@@ -3996,7 +4003,7 @@ func (m *QueryAllDisabledValidatorResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryGetRejectedDisableNodeRequest) Unmarshal(dAtA []byte) error {
+func (m *QueryGetRejectedDisableValidatorRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -4019,10 +4026,10 @@ func (m *QueryGetRejectedDisableNodeRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryGetRejectedDisableNodeRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryGetRejectedDisableValidatorRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryGetRejectedDisableNodeRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryGetRejectedDisableValidatorRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -4078,7 +4085,7 @@ func (m *QueryGetRejectedDisableNodeRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryGetRejectedDisableNodeResponse) Unmarshal(dAtA []byte) error {
+func (m *QueryGetRejectedDisableValidatorResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -4101,15 +4108,15 @@ func (m *QueryGetRejectedDisableNodeResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryGetRejectedDisableNodeResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryGetRejectedDisableValidatorResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryGetRejectedDisableNodeResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryGetRejectedDisableValidatorResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field RejectedNode", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field RejectedValidator", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -4136,7 +4143,7 @@ func (m *QueryGetRejectedDisableNodeResponse) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := m.RejectedNode.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.RejectedValidator.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -4161,7 +4168,7 @@ func (m *QueryGetRejectedDisableNodeResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryAllRejectedDisableNodeRequest) Unmarshal(dAtA []byte) error {
+func (m *QueryAllRejectedDisableValidatorRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -4184,10 +4191,10 @@ func (m *QueryAllRejectedDisableNodeRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryAllRejectedDisableNodeRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryAllRejectedDisableValidatorRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryAllRejectedDisableNodeRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryAllRejectedDisableValidatorRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -4247,7 +4254,7 @@ func (m *QueryAllRejectedDisableNodeRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryAllRejectedDisableNodeResponse) Unmarshal(dAtA []byte) error {
+func (m *QueryAllRejectedDisableValidatorResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -4270,15 +4277,15 @@ func (m *QueryAllRejectedDisableNodeResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryAllRejectedDisableNodeResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryAllRejectedDisableValidatorResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryAllRejectedDisableNodeResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryAllRejectedDisableValidatorResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field RejectedNode", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field RejectedValidator", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -4305,8 +4312,8 @@ func (m *QueryAllRejectedDisableNodeResponse) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.RejectedNode = append(m.RejectedNode, RejectedDisableNode{})
-			if err := m.RejectedNode[len(m.RejectedNode)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			m.RejectedValidator = append(m.RejectedValidator, RejectedDisableValidator{})
+			if err := m.RejectedValidator[len(m.RejectedValidator)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex

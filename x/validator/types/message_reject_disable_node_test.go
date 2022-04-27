@@ -8,21 +8,21 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/sample"
 )
 
-func TestMsgRejectDisableNode_ValidateBasic(t *testing.T) {
+func TestMsgRejectDisableValidator_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name string
-		msg  MsgRejectDisableNode
+		msg  MsgRejectDisableValidator
 		err  error
 	}{
 		{
 			name: "invalid address",
-			msg: MsgRejectDisableNode{
+			msg: MsgRejectDisableValidator{
 				Creator: "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
 			name: "valid address",
-			msg: MsgRejectDisableNode{
+			msg: MsgRejectDisableValidator{
 				Creator: sample.AccAddress(),
 			},
 		},

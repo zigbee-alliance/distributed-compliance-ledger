@@ -7,12 +7,12 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-const TypeMsgRejectDisableNode = "reject_disable_node"
+const TypeMsgRejectDisableValidator = "reject_disable_validator"
 
-var _ sdk.Msg = &MsgRejectDisableNode{}
+var _ sdk.Msg = &MsgRejectDisableValidator{}
 
-func NewMsgRejectDisableNode(creator sdk.AccAddress, address sdk.ValAddress, info string) *MsgRejectDisableNode {
-	return &MsgRejectDisableNode{
+func NewMsgRejectDisableValidator(creator sdk.AccAddress, address sdk.ValAddress, info string) *MsgRejectDisableValidator {
+	return &MsgRejectDisableValidator{
 		Creator: creator.String(),
 		Address: address.String(),
 		Info:    info,
@@ -20,15 +20,15 @@ func NewMsgRejectDisableNode(creator sdk.AccAddress, address sdk.ValAddress, inf
 	}
 }
 
-func (msg *MsgRejectDisableNode) Route() string {
+func (msg *MsgRejectDisableValidator) Route() string {
 	return RouterKey
 }
 
-func (msg *MsgRejectDisableNode) Type() string {
-	return TypeMsgRejectDisableNode
+func (msg *MsgRejectDisableValidator) Type() string {
+	return TypeMsgRejectDisableValidator
 }
 
-func (msg *MsgRejectDisableNode) GetSigners() []sdk.AccAddress {
+func (msg *MsgRejectDisableValidator) GetSigners() []sdk.AccAddress {
 	creator, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		panic(err)
@@ -37,13 +37,13 @@ func (msg *MsgRejectDisableNode) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{creator}
 }
 
-func (msg *MsgRejectDisableNode) GetSignBytes() []byte {
+func (msg *MsgRejectDisableValidator) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
 
 	return sdk.MustSortJSON(bz)
 }
 
-func (msg *MsgRejectDisableNode) ValidateBasic() error {
+func (msg *MsgRejectDisableValidator) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
