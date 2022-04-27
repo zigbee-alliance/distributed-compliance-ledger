@@ -15,11 +15,11 @@
 
 - name: seed | discover public sentry peers
   set_fact:
-    peers: "{{ (groups['public_sentries'] | map('extract', hostvars, 'persistent_peer') | list | join(',')) }}"
+    public_sentry_peers: "{{ (groups['public_sentries'] | map('extract', hostvars, 'persistent_peer') | list | join(',')) }}"
   run_once: yes
-  when: config.p2p.persistent_peers is not defined
+  when: config.p2p.persistent_peers | default('', true) | trim == ''
 
 - name: seed | update persistent peers
   set_fact:
-    config: "{{ config | default({}) | combine ({ 'p2p' : {'persistent_peers': peers} }, recursive=True) }}"
-  when: config.p2p.persistent_peers is not defined
+    config: "{{ config | default({}) | combine ({ 'p2p' : {'persistent_peers': public_sentry_peers} }, recursive=True) }}"
+  when: public_sentry_peers is defined

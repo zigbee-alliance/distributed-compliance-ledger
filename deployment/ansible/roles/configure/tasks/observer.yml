@@ -15,11 +15,11 @@
 
 - name: observer | discover private sentry peers
   set_fact:
-    peers: "{{ (groups['private_sentries'] | map('extract', hostvars, 'persistent_peer') | list | join(',')) }}"
+    private_sentry_peers: "{{ (groups['private_sentries'] | map('extract', hostvars, 'persistent_peer') | select | list | join(',')) }}"
   run_once: yes
-  when: config.p2p.persistent_peers is not defined
+  when: config.p2p.persistent_peers | default('', true) | trim == ''
 
 - name: observer | update persistent peers
   set_fact:
-    config: "{{ config | default({}) | combine ({ 'p2p' : {'persistent_peers': peers} }, recursive=True) }}"
-  when: config.p2p.persistent_peers is not defined
+    config: "{{ config | default({}) | combine ({ 'p2p' : {'persistent_peers': private_sentry_peers} }, recursive=True) }}"
+  when: private_sentry_peers is defined
