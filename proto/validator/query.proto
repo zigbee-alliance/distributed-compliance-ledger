@@ -7,7 +7,7 @@ import "validator/validator.proto";
 import "validator/last_validator_power.proto";
 import "validator/proposed_disable_validator.proto";
 import "validator/disabled_validator.proto";
-import "validator/rejected_node.proto";
+import "validator/rejected_validator.proto";
 // this line is used by starport scaffolding # 1
 import "gogoproto/gogo.proto";
 
@@ -58,12 +58,12 @@ service Query {
 	}
 
 // Queries a RejectedNode by index.
-	rpc RejectedDisableNode(QueryGetRejectedDisableNodeRequest) returns (QueryGetRejectedDisableNodeResponse) {
+	rpc RejectedDisableValidator(QueryGetRejectedDisableValidatorRequest) returns (QueryGetRejectedDisableValidatorResponse) {
 		option (google.api.http).get = "/dcl/validator/rejected-disable-nodes/{owner}";
 	}
 
 	// Queries a list of RejectedNode items.
-	rpc RejectedDisableNodeAll(QueryAllRejectedDisableNodeRequest) returns (QueryAllRejectedDisableNodeResponse) {
+	rpc RejectedDisableValidatorAll(QueryAllRejectedDisableValidatorRequest) returns (QueryAllRejectedDisableValidatorResponse) {
 		option (google.api.http).get = "/dcl/validator/rejected-disable-nodes";
 	}
 
@@ -141,21 +141,21 @@ message QueryAllDisabledValidatorResponse {
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-message QueryGetRejectedDisableNodeRequest {
+message QueryGetRejectedDisableValidatorRequest {
 	  string owner = 1;
 
 }
 
-message QueryGetRejectedDisableNodeResponse {
-	RejectedDisableNode rejectedNode = 1 [(gogoproto.nullable) = false];
+message QueryGetRejectedDisableValidatorResponse {
+	RejectedDisableValidator rejectedValidator = 1 [(gogoproto.nullable) = false];
 }
 
-message QueryAllRejectedDisableNodeRequest {
+message QueryAllRejectedDisableValidatorRequest {
 	cosmos.base.query.v1beta1.PageRequest pagination = 1;
 }
 
-message QueryAllRejectedDisableNodeResponse {
-	repeated RejectedDisableNode rejectedNode = 1 [(gogoproto.nullable) = false];
+message QueryAllRejectedDisableValidatorResponse {
+	repeated RejectedDisableValidator rejectedValidator = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 

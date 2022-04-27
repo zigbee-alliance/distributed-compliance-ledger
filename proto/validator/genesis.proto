@@ -5,7 +5,7 @@ import "validator/validator.proto";
 import "validator/last_validator_power.proto";
 import "validator/proposed_disable_validator.proto";
 import "validator/disabled_validator.proto";
-import "validator/rejected_node.proto";
+import "validator/rejected_validator.proto";
 // this line is used by starport scaffolding # genesis/proto/import
 import "gogoproto/gogo.proto";
 
@@ -17,6 +17,6 @@ message GenesisState {
   repeated LastValidatorPower lastValidatorPowerList = 2 [(gogoproto.nullable) = false];
   repeated ProposedDisableValidator proposedDisableValidatorList = 3 [(gogoproto.nullable) = false];
   repeated DisabledValidator disabledValidatorList = 4 [(gogoproto.nullable) = false];
-  repeated RejectedDisableNode rejectedNodeList = 5 [(gogoproto.nullable) = false];
+  repeated RejectedDisableValidator rejectedValidatorList = 5 [(gogoproto.nullable) = false];
   // this line is used by starport scaffolding # genesis/proto/state
 }
