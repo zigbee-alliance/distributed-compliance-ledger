@@ -67,6 +67,7 @@ func TestNewAccount(t *testing.T) {
 		ba        *types.BaseAccount
 		roles     AccountRoles
 		approvals []*Grant
+		rejects   []*Grant
 		vendorID  int32
 	}
 	tests := []struct {
@@ -80,12 +81,14 @@ func TestNewAccount(t *testing.T) {
 				ba:        &types.BaseAccount{},
 				roles:     []AccountRole{Vendor, CertificationCenter, Trustee, NodeAdmin},
 				approvals: []*Grant{},
+				rejects:   []*Grant{},
 				vendorID:  1,
 			},
 			want: &Account{
 				BaseAccount: &types.BaseAccount{},
 				Roles:       []AccountRole{Vendor, CertificationCenter, Trustee, NodeAdmin},
 				Approvals:   []*Grant{},
+				Rejects:     []*Grant{},
 				VendorID:    1,
 			},
 		},
@@ -95,12 +98,14 @@ func TestNewAccount(t *testing.T) {
 				ba:        &types.BaseAccount{},
 				roles:     []AccountRole{Vendor},
 				approvals: []*Grant{},
+				rejects:   []*Grant{},
 				vendorID:  2,
 			},
 			want: &Account{
 				BaseAccount: &types.BaseAccount{},
 				Roles:       []AccountRole{Vendor},
 				Approvals:   []*Grant{},
+				Rejects:     []*Grant{},
 				VendorID:    2,
 			},
 		},
@@ -108,7 +113,7 @@ func TestNewAccount(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewAccount(tt.args.ba, tt.args.roles, tt.args.approvals, tt.args.vendorID); !reflect.DeepEqual(got, tt.want) {
+			if got := NewAccount(tt.args.ba, tt.args.roles, tt.args.approvals, tt.args.rejects, tt.args.vendorID); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewAccount() = %v, want %v", got, tt.want)
 			}
 		})

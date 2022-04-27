@@ -1710,6 +1710,10 @@ func TestHandler_DoubleTimeRejectX509RootCert(t *testing.T) {
 	_, err = setup.Handler(setup.Ctx, rejectAddX509RootCert)
 	require.NoError(t, err)
 
+	// certificate should be in the entity <Rejected X509 Root Certificate>, because we have enough rejected approvals
+	rejectedCertificate, err = queryRejectedCertificate(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	require.NoError(t, err)
+
 	// check rejected certificate
 	require.Equal(t, proposeAddX509RootCert.Cert, rejectedCertificate.PemCert)
 	require.Equal(t, proposeAddX509RootCert.Signer, rejectedCertificate.Owner)

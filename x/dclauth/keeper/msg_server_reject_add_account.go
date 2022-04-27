@@ -42,7 +42,7 @@ func (k msgServer) RejectAddAccount(
 	// check if pending account already has reject approval from signer
 	if pendAcc.HasRejectApprovalFrom(signerAddr) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
-			"Pending account associated with the address=%v already has reject approval from=%v",
+			"Pending account associated with the address=%v has been already reject approval from=%v",
 			msg.Address,
 			msg.Signer,
 		)
@@ -51,7 +51,7 @@ func (k msgServer) RejectAddAccount(
 	// check if pending account already has approval from signer
 	if pendAcc.HasApprovalFrom(signerAddr) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
-			"Pending account associated with the address=%v already has approval from=%v",
+			"Pending account associated with the address=%v has been already approval from=%v",
 			msg.Address,
 			msg.Signer,
 		)
@@ -66,9 +66,7 @@ func (k msgServer) RejectAddAccount(
 
 	// check if pending account has enough reject approvals
 	if len(pendAcc.Rejects) == k.AccountRejectApprovalsCount(ctx) {
-		account := types.NewAccount(pendAcc.BaseAccount, pendAcc.Roles, pendAcc.Approvals, pendAcc.VendorID)
-		account.Rejects = pendAcc.Rejects
-
+		account := types.NewAccount(pendAcc.BaseAccount, pendAcc.Roles, pendAcc.Approvals, pendAcc.Rejects, pendAcc.VendorID)
 		err = account.SetAccountNumber(k.GetNextAccountNumber(ctx))
 		if err != nil {
 			return nil, err

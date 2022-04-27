@@ -63,14 +63,16 @@ type DCLAccountI interface {
 	GetRoles() []AccountRole
 	GetVendorID() int32
 	GetApprovals() []*Grant
+	GetRejects() []*Grant
 }
 
 // NewAccount creates a new Account object.
-func NewAccount(ba *authtypes.BaseAccount, roles AccountRoles, approvals []*Grant, vendorID int32) *Account {
+func NewAccount(ba *authtypes.BaseAccount, roles AccountRoles, approvals []*Grant, rejects []*Grant, vendorID int32) *Account {
 	return &Account{
 		BaseAccount: ba,
 		Roles:       roles,
 		Approvals:   approvals,
+		Rejects:     rejects,
 		VendorID:    vendorID,
 	}
 }
@@ -102,6 +104,10 @@ func (acc Account) GetRoles() []AccountRole {
 
 func (acc Account) GetApprovals() []*Grant {
 	return acc.Approvals
+}
+
+func (acc Account) GetRejects() []*Grant {
+	return acc.Rejects
 }
 
 func (acc Account) GetVendorID() int32 {

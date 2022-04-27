@@ -1091,7 +1091,7 @@ func storeTrustee(setup TestSetup) sdk.AccAddress {
 func storeAccountWithVendorID(setup TestSetup, role types.AccountRole, vendorID int32) sdk.AccAddress {
 	_, pubKey, address := testdata.KeyTestPubAddr()
 	ba := authtypes.NewBaseAccount(address, pubKey, 0, 0)
-	account := types.NewAccount(ba, types.AccountRoles{role}, nil, vendorID)
+	account := types.NewAccount(ba, types.AccountRoles{role}, nil, nil, vendorID)
 	account.AccountNumber = setup.Keeper.GetNextAccountNumber(setup.Ctx)
 	setup.Keeper.SetAccount(setup.Ctx, account)
 
