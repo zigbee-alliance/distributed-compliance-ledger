@@ -91,6 +91,11 @@ func (k msgServer) ProposeAddX509RootCert(goCtx context.Context, msg *types.MsgP
 	// store proposed certificate
 	k.SetProposedCertificate(ctx, proposedCertificate)
 
+	_, isFound := k.GetRejectedCertificate(ctx, proposedCertificate.Subject, proposedCertificate.SubjectKeyId)
+	if isFound {
+		k.RemoveRejectedCertificate(ctx, proposedCertificate.Subject, proposedCertificate.SubjectKeyId)
+	}
+
 	// register the unique certificate key
 	uniqueCertificate := types.UniqueCertificate{
 		Issuer:       x509Certificate.Issuer,
