@@ -16,7 +16,7 @@ var _ = strconv.Itoa(0)
 
 func CmdRejectAddX509RootCert() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "reject-add-x-509-root-cert",
+		Use:   "reject-add-x509-root-cert",
 		Short: "Broadcast message RejectAddX509RootCert",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
