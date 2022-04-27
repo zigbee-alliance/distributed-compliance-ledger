@@ -12,10 +12,22 @@
   set_fact:
     private_ip: "{{ ansible_all_ipv4_addresses | ipaddr('private') | first }}"
 
+- name: persistent peer | get public ip address
+  ipify_facts:
+  register: public_ip_output
+
 - name: persistent peer | build persistent peer string
   set_fact:
     persistent_peer: "{{ node_id + '@' + private_ip + ':26656' }}"
 
+- name: persistent peer | build public persistent peer string
+  set_fact:
+    public_persistent_peer: "{{ node_id + '@' + public_ip_output.ansible_facts.ipify_public_ip + ':26656' }}"
+
 - name: persistent peer | view persistent peer string
   debug:
     var: persistent_peer
+
+- name: persistent peer | view public persistent peer string
+  debug:
+    var: public_persistent_peer
