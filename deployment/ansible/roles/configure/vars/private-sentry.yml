@@ -16,7 +16,7 @@
 config:
   p2p:
     pex: true
-    persistent_peers: "peer"
+    persistent_peers: ""
     private_peer_ids: ""
     unconditional_peer_ids: ""
     addr_book_strict: false
