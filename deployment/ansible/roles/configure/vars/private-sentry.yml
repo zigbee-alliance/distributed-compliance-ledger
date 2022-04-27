@@ -16,16 +16,16 @@
 config:
   p2p:
     pex: true
-    persistent_peers:
-    private_peer_ids:
-    unconditional_peers:
+    persistent_peers: "peer"
+    private_peer_ids: ""
+    unconditional_peer_ids: ""
     addr_book_strict: false
   statesync:
-    enable: true
-    rpc_servers:
-    # trust_height: trust-height
-    trust_hash: trust-hash
+    enable: false
+    rpc_servers: ""
+    trust_height: 0
+    trust_hash: ""
 app:
   state-sync:
-    snapshot-interval: snapshot-interval
-    snapshot-keep-recent: snapshot-keep-recent
+    snapshot-interval: 100
+    snapshot-keep-recent: 2

@@ -18,11 +18,11 @@ config:
     pex: true
     persistent_peers:
   statesync:
-    enable: true
-    rpc_servers:
-    # trust_height: trust-height
-    trust_hash: trust-hash
+    enable: false
+    rpc_servers: ""
+    trust_height: 0
+    trust_hash: ""
 app:
   state-sync:
-    snapshot-interval: snapshot-interval
-    snapshot-keep-recent: snapshot-keep-recent
+    snapshot-interval: 100
+    snapshot-keep-recent: 2
