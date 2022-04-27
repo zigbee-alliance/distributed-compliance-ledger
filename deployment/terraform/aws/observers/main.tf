@@ -49,7 +49,7 @@ resource "aws_instance" "this_nodes" {
 
   root_block_device {
     encrypted   = true
-    volume_size = 30
+    volume_size = 80
   }
 
   metadata_options {
