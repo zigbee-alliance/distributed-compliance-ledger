@@ -53,6 +53,11 @@ resource "aws_instance" "this_nodes" {
     encrypted   = true
     volume_size = 30
   }
+  
+  metadata_options {
+    http_endpoint = "enabled"
+    http_tokens   = "required"
+  }
 }
 
 resource "aws_instance" "this_seed_node" {
@@ -77,6 +82,11 @@ resource "aws_instance" "this_seed_node" {
   root_block_device {
     encrypted   = true
     volume_size = 30
+  }
+
+  metadata_options {
+    http_endpoint = "enabled"
+    http_tokens   = "required"
   }
 }
 
