@@ -6,10 +6,10 @@ import "validator/grant.proto";
 
 option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types";
 
-message RejectedDisableNode {
+message RejectedDisableValidator {
   string address = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"]; 
   string creator = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   repeated Grant approvals = 3; 
-  repeated Grant rejectApprovals = 4; 
+  repeated Grant rejects = 4; 
 }
 

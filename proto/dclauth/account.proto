@@ -20,6 +20,6 @@ message Account {
   repeated string roles = 2 [(gogoproto.casttype) = "AccountRole"]; 
   repeated Grant approvals = 3;
   int32 vendorID = 4;
-  repeated Grant rejectApprovals = 5;
+  repeated Grant rejects = 5;
 }
 
