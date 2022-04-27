@@ -63,11 +63,6 @@ func (k msgServer) ApproveDisableValidator(goCtx context.Context, msg *types.Msg
 
 	// check if proposed disable validator has enough approvals
 	if len(proposedDisableValidator.Approvals) == k.DisableValidatorApprovalsCount(ctx) {
-		_, isFound := k.GetRejectedNode(ctx, proposedDisableValidator.Address)
-		if isFound {
-			k.RemoveRejectedNode(ctx, proposedDisableValidator.Address)
-		}
-
 		// remove disable validator
 		k.RemoveProposedDisableValidator(ctx, proposedDisableValidator.Address)
 
