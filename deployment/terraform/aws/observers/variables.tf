@@ -17,6 +17,10 @@ variable "nodes_count" {
   description = "Number of Observer nodes"
 }
 
+variable "instance_type" {
+  description = "Type of AWS instances"
+}
+
 variable "region_index" {
   description = "Observer Region Index"
 }

@@ -21,7 +21,7 @@ resource "aws_instance" "this_nodes" {
   count = var.nodes_count
 
   ami           = data.aws_ami.ubuntu.id
-  instance_type = "t3.medium"
+  instance_type = var.instance_type
 
   subnet_id          = element(module.this_vpc.public_subnets, 0)
   ipv6_address_count = var.enable_ipv6 ? 1 : 0
@@ -53,7 +53,7 @@ resource "aws_instance" "this_nodes" {
     encrypted   = true
     volume_size = 30
   }
-  
+
   metadata_options {
     http_endpoint = "enabled"
     http_tokens   = "required"
@@ -62,7 +62,7 @@ resource "aws_instance" "this_nodes" {
 
 resource "aws_instance" "this_seed_node" {
   ami           = data.aws_ami.ubuntu.id
-  instance_type = "t3.medium"
+  instance_type = var.instance_type
 
   subnet_id          = element(module.this_vpc.public_subnets, 0)
   ipv6_address_count = var.enable_ipv6 ? 1 : 0

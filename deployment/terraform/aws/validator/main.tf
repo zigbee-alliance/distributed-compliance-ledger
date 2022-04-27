@@ -19,7 +19,7 @@ resource "aws_key_pair" "key_pair" {
 
 resource "aws_instance" "this_node" {
   ami           = data.aws_ami.ubuntu.id
-  instance_type = "t3.medium"
+  instance_type = var.instance_type
 
   subnet_id = element(module.this_vpc.public_subnets, 0)
   vpc_security_group_ids = [
