@@ -861,7 +861,7 @@ func TestHandler_RejectDisableValidator_ByNotTrustee(t *testing.T) {
 func TestHandler_RejectDisableValidator_ForUnknownAccount(t *testing.T) {
 	setup := Setup(t)
 
-	// create 3 Trustee accounts
+	// create Trustee accounts
 	ba1 := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
 	account1 := dclauthtypes.NewAccount(ba1,
 		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, testconstants.VendorID1)
@@ -912,7 +912,7 @@ func TestHandler_Duplicate_RejectDisableValidatorFromTheSameTrustee(t *testing.T
 	_, err = setup.Handler(setup.Ctx, msgRejectDisableValidator)
 	require.NoError(t, err)
 
-	// / validator should be in the entity <Proposed Disable Validator>, because we haven't enough reject approvals
+	// validator should be in the entity <Proposed Disable Validator>, because we haven't enough reject approvals
 	_, isFound = setup.ValidatorKeeper.GetProposedDisableValidator(setup.Ctx, valAddress.String())
 	require.True(t, isFound)
 
