@@ -25,6 +25,7 @@ func GetTxCmd() *cobra.Command {
 
 	cmd.AddCommand(CmdProposeUpgrade())
 	cmd.AddCommand(CmdApproveUpgrade())
+	cmd.AddCommand(CmdRejectUpgrade())
 	// this line is used by starport scaffolding # 1
 
 	return cmd

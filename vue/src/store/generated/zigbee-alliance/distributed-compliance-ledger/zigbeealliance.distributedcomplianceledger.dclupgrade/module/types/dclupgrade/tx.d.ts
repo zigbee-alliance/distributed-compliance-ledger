@@ -17,6 +17,12 @@ export interface MsgApproveUpgrade {
 }
 export interface MsgApproveUpgradeResponse {
 }
+export interface MsgRejectUpgrade {
+    creator: string;
+    name: string;
+}
+export interface MsgRejectUpgradeResponse {
+}
 export declare const MsgProposeUpgrade: {
     encode(message: MsgProposeUpgrade, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgProposeUpgrade;
@@ -45,17 +51,33 @@ export declare const MsgApproveUpgradeResponse: {
     toJSON(_: MsgApproveUpgradeResponse): unknown;
     fromPartial(_: DeepPartial<MsgApproveUpgradeResponse>): MsgApproveUpgradeResponse;
 };
+export declare const MsgRejectUpgrade: {
+    encode(message: MsgRejectUpgrade, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgRejectUpgrade;
+    fromJSON(object: any): MsgRejectUpgrade;
+    toJSON(message: MsgRejectUpgrade): unknown;
+    fromPartial(object: DeepPartial<MsgRejectUpgrade>): MsgRejectUpgrade;
+};
+export declare const MsgRejectUpgradeResponse: {
+    encode(_: MsgRejectUpgradeResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgRejectUpgradeResponse;
+    fromJSON(_: any): MsgRejectUpgradeResponse;
+    toJSON(_: MsgRejectUpgradeResponse): unknown;
+    fromPartial(_: DeepPartial<MsgRejectUpgradeResponse>): MsgRejectUpgradeResponse;
+};
 /** Msg defines the Msg service. */
 export interface Msg {
     ProposeUpgrade(request: MsgProposeUpgrade): Promise<MsgProposeUpgradeResponse>;
-    /** this line is used by starport scaffolding # proto/tx/rpc */
     ApproveUpgrade(request: MsgApproveUpgrade): Promise<MsgApproveUpgradeResponse>;
+    /** this line is used by starport scaffolding # proto/tx/rpc */
+    RejectUpgrade(request: MsgRejectUpgrade): Promise<MsgRejectUpgradeResponse>;
 }
 export declare class MsgClientImpl implements Msg {
     private readonly rpc;
     constructor(rpc: Rpc);
     ProposeUpgrade(request: MsgProposeUpgrade): Promise<MsgProposeUpgradeResponse>;
     ApproveUpgrade(request: MsgApproveUpgrade): Promise<MsgApproveUpgradeResponse>;
+    RejectUpgrade(request: MsgRejectUpgrade): Promise<MsgRejectUpgradeResponse>;
 }
 interface Rpc {
     request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;

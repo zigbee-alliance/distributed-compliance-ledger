@@ -12,6 +12,7 @@ export interface DclupgradeGrant {
 }
 export declare type DclupgradeMsgApproveUpgradeResponse = object;
 export declare type DclupgradeMsgProposeUpgradeResponse = object;
+export declare type DclupgradeMsgRejectUpgradeResponse = object;
 export interface DclupgradeProposedUpgrade {
     /** Plan specifies information about a planned upgrade and when it should occur. */
     plan?: V1Beta1Plan;

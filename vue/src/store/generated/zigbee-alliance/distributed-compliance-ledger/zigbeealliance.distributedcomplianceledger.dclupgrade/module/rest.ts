@@ -28,6 +28,8 @@ export type DclupgradeMsgApproveUpgradeResponse = object;
 
 export type DclupgradeMsgProposeUpgradeResponse = object;
 
+export type DclupgradeMsgRejectUpgradeResponse = object;
+
 export interface DclupgradeProposedUpgrade {
   /** Plan specifies information about a planned upgrade and when it should occur. */
   plan?: V1Beta1Plan;

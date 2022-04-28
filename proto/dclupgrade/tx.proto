@@ -12,6 +12,7 @@ option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/
 service Msg {
       rpc ProposeUpgrade(MsgProposeUpgrade) returns (MsgProposeUpgradeResponse);
   rpc ApproveUpgrade(MsgApproveUpgrade) returns (MsgApproveUpgradeResponse);
+  rpc RejectUpgrade(MsgRejectUpgrade) returns (MsgRejectUpgradeResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -33,6 +34,14 @@ message MsgApproveUpgrade {
 }
 
 message MsgApproveUpgradeResponse {
+}
+
+message MsgRejectUpgrade {
+  string creator = 1;
+  string name = 2;
+}
+
+message MsgRejectUpgradeResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message

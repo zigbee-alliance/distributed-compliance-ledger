@@ -32,6 +32,10 @@ const (
 	// TODO: Determine the simulation weight value.
 	defaultWeightMsgApproveUpgrade int = 100
 
+	opWeightMsgRejectUpgrade = "op_weight_msg_create_chain"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgRejectUpgrade int = 100
+
 	// this line is used by starport scaffolding # simapp/module/const.
 )
 
@@ -84,6 +88,17 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	operations = append(operations, simulation.NewWeightedOperation(
 		weightMsgApproveUpgrade,
 		dclupgradesimulation.SimulateMsgApproveUpgrade(am.keeper),
+	))
+
+	var weightMsgRejectUpgrade int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgRejectUpgrade, &weightMsgRejectUpgrade, nil,
+		func(_ *rand.Rand) {
+			weightMsgRejectUpgrade = defaultWeightMsgRejectUpgrade
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgRejectUpgrade,
+		dclupgradesimulation.SimulateMsgRejectUpgrade(am.keeper),
 	))
 
 	// this line is used by starport scaffolding # simapp/module/operation

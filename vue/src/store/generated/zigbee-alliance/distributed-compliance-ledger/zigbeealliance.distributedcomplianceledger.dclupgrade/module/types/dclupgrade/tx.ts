@@ -23,6 +23,13 @@ export interface MsgApproveUpgrade {
 
 export interface MsgApproveUpgradeResponse {}
 
+export interface MsgRejectUpgrade {
+  creator: string
+  name: string
+}
+
+export interface MsgRejectUpgradeResponse {}
+
 const baseMsgProposeUpgrade: object = { creator: '', info: '', time: 0 }
 
 export const MsgProposeUpgrade = {
@@ -311,11 +318,122 @@ export const MsgApproveUpgradeResponse = {
   }
 }
 
+const baseMsgRejectUpgrade: object = { creator: '', name: '' }
+
+export const MsgRejectUpgrade = {
+  encode(message: MsgRejectUpgrade, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== '') {
+      writer.uint32(10).string(message.creator)
+    }
+    if (message.name !== '') {
+      writer.uint32(18).string(message.name)
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgRejectUpgrade {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseMsgRejectUpgrade } as MsgRejectUpgrade
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string()
+          break
+        case 2:
+          message.name = reader.string()
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): MsgRejectUpgrade {
+    const message = { ...baseMsgRejectUpgrade } as MsgRejectUpgrade
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator)
+    } else {
+      message.creator = ''
+    }
+    if (object.name !== undefined && object.name !== null) {
+      message.name = String(object.name)
+    } else {
+      message.name = ''
+    }
+    return message
+  },
+
+  toJSON(message: MsgRejectUpgrade): unknown {
+    const obj: any = {}
+    message.creator !== undefined && (obj.creator = message.creator)
+    message.name !== undefined && (obj.name = message.name)
+    return obj
+  },
+
+  fromPartial(object: DeepPartial<MsgRejectUpgrade>): MsgRejectUpgrade {
+    const message = { ...baseMsgRejectUpgrade } as MsgRejectUpgrade
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator
+    } else {
+      message.creator = ''
+    }
+    if (object.name !== undefined && object.name !== null) {
+      message.name = object.name
+    } else {
+      message.name = ''
+    }
+    return message
+  }
+}
+
+const baseMsgRejectUpgradeResponse: object = {}
+
+export const MsgRejectUpgradeResponse = {
+  encode(_: MsgRejectUpgradeResponse, writer: Writer = Writer.create()): Writer {
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgRejectUpgradeResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseMsgRejectUpgradeResponse } as MsgRejectUpgradeResponse
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(_: any): MsgRejectUpgradeResponse {
+    const message = { ...baseMsgRejectUpgradeResponse } as MsgRejectUpgradeResponse
+    return message
+  },
+
+  toJSON(_: MsgRejectUpgradeResponse): unknown {
+    const obj: any = {}
+    return obj
+  },
+
+  fromPartial(_: DeepPartial<MsgRejectUpgradeResponse>): MsgRejectUpgradeResponse {
+    const message = { ...baseMsgRejectUpgradeResponse } as MsgRejectUpgradeResponse
+    return message
+  }
+}
+
 /** Msg defines the Msg service. */
 export interface Msg {
   ProposeUpgrade(request: MsgProposeUpgrade): Promise<MsgProposeUpgradeResponse>
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   ApproveUpgrade(request: MsgApproveUpgrade): Promise<MsgApproveUpgradeResponse>
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  RejectUpgrade(request: MsgRejectUpgrade): Promise<MsgRejectUpgradeResponse>
 }
 
 export class MsgClientImpl implements Msg {
@@ -333,6 +451,12 @@ export class MsgClientImpl implements Msg {
     const data = MsgApproveUpgrade.encode(request).finish()
     const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.dclupgrade.Msg', 'ApproveUpgrade', data)
     return promise.then((data) => MsgApproveUpgradeResponse.decode(new Reader(data)))
+  }
+
+  RejectUpgrade(request: MsgRejectUpgrade): Promise<MsgRejectUpgradeResponse> {
+    const data = MsgRejectUpgrade.encode(request).finish()
+    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.dclupgrade.Msg', 'RejectUpgrade', data)
+    return promise.then((data) => MsgRejectUpgradeResponse.decode(new Reader(data)))
   }
 }
 
