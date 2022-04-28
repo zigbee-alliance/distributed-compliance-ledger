@@ -15,7 +15,7 @@
 
 - name: public sentry | discover private sentry peers
   set_fact:
-    private_sentry_peers: "{{ (groups['private_sentries'] | default({}) | map('extract', hostvars, 'persistent_peer') | list | join(',')) }}"
+    private_sentry_peers: "{{ (groups['private_sentries'] | map('extract', hostvars, 'persistent_peer') | list | join(',')) }}"
   run_once: true
   when: config.p2p.persistent_peers | default('', true) | trim == ''
 
