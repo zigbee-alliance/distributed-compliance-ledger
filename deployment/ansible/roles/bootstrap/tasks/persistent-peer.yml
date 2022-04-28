@@ -16,8 +16,7 @@
 - name: persistent peer | get node id content
   changed_when: false
   become: true
-  become_user: "{{ cosmovisor.user }}"
-  command: "{{ dcld.path }} tendermint show-node-id"
+  command: "{{ dcld.path }} tendermint show-node-id --home {{ dcl_home }}"
   register: node_id_output
 
 - name: persistent peer | set node content to variable
