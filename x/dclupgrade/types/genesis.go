@@ -12,6 +12,7 @@ func DefaultGenesis() *GenesisState {
 	return &GenesisState{
 		ProposedUpgradeList: []ProposedUpgrade{},
 		ApprovedUpgradeList: []ApprovedUpgrade{},
+		RejectedUpgradeList: []RejectedUpgrade{},
 		// this line is used by starport scaffolding # genesis/types/default
 	}
 }
@@ -40,6 +41,16 @@ func (gs GenesisState) Validate() error {
 		}
 
 		approvedUpgradeIndexMap[index] = struct{}{}
+	}
+	// Check for duplicated index in rejectedUpgrade
+	rejectedUpgradeIndexMap := make(map[string]struct{})
+
+	for _, elem := range gs.RejectedUpgradeList {
+		index := string(RejectedUpgradeKey(elem.Name))
+		if _, ok := rejectedUpgradeIndexMap[index]; ok {
+			return fmt.Errorf("duplicated index for rejectedUpgrade")
+		}
+		rejectedUpgradeIndexMap[index] = struct{}{}
 	}
 	// this line is used by starport scaffolding # genesis/types/validate
 

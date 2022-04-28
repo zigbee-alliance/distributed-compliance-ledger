@@ -36,6 +36,14 @@ func TestGenesis(t *testing.T) {
 				},
 			},
 		},
+		RejectedUpgradeList: []types.RejectedUpgrade{
+			{
+				Name: "0",
+			},
+			{
+				Name: "1",
+			},
+		},
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -49,5 +57,6 @@ func TestGenesis(t *testing.T) {
 
 	require.ElementsMatch(t, genesisState.ProposedUpgradeList, got.ProposedUpgradeList)
 	require.ElementsMatch(t, genesisState.ApprovedUpgradeList, got.ApprovedUpgradeList)
+	require.ElementsMatch(t, genesisState.RejectedUpgradeList, got.RejectedUpgradeList)
 	// this line is used by starport scaffolding # genesis/test/assert
 }

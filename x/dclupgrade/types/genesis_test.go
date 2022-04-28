@@ -45,6 +45,14 @@ func TestGenesisState_Validate(t *testing.T) {
 						},
 					},
 				},
+				RejectedUpgradeList: []types.RejectedUpgrade{
+					{
+						Name: "0",
+					},
+					{
+						Name: "1",
+					},
+				},
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -80,6 +88,20 @@ func TestGenesisState_Validate(t *testing.T) {
 						Plan: types.Plan{
 							Name: "0",
 						},
+					},
+				},
+			},
+			valid: false,
+		},
+		{
+			desc: "duplicated rejectedUpgrade",
+			genState: &types.GenesisState{
+				RejectedUpgradeList: []types.RejectedUpgrade{
+					{
+						Name: "0",
+					},
+					{
+						Name: "0",
 					},
 				},
 			},

@@ -4,7 +4,8 @@ import { SpVuexError } from '@starport/vuex';
 import { ApprovedUpgrade } from "./module/types/dclupgrade/approved_upgrade";
 import { Grant } from "./module/types/dclupgrade/grant";
 import { ProposedUpgrade } from "./module/types/dclupgrade/proposed_upgrade";
-export { ApprovedUpgrade, Grant, ProposedUpgrade };
+import { RejectedUpgrade } from "./module/types/dclupgrade/rejected_upgrade";
+export { ApprovedUpgrade, Grant, ProposedUpgrade, RejectedUpgrade };
 async function initTxClient(vuexGetters) {
     return await txClient(vuexGetters['common/wallet/signer'], {
         addr: vuexGetters['common/env/apiTendermint']
@@ -42,10 +43,13 @@ const getDefaultState = () => {
         ProposedUpgradeAll: {},
         ApprovedUpgrade: {},
         ApprovedUpgradeAll: {},
+        RejectedUpgrade: {},
+        RejectedUpgradeAll: {},
         _Structure: {
             ApprovedUpgrade: getStructure(ApprovedUpgrade.fromPartial({})),
             Grant: getStructure(Grant.fromPartial({})),
             ProposedUpgrade: getStructure(ProposedUpgrade.fromPartial({})),
+            RejectedUpgrade: getStructure(RejectedUpgrade.fromPartial({})),
         },
         _Registry: registry,
         _Subscriptions: new Set(),
@@ -94,6 +98,18 @@ export default {
                 params.query = null;
             }
             return state.ApprovedUpgradeAll[JSON.stringify(params)] ?? {};
+        },
+        getRejectedUpgrade: (state) => (params = { params: {} }) => {
+            if (!params.query) {
+                params.query = null;
+            }
+            return state.RejectedUpgrade[JSON.stringify(params)] ?? {};
+        },
+        getRejectedUpgradeAll: (state) => (params = { params: {} }) => {
+            if (!params.query) {
+                params.query = null;
+            }
+            return state.RejectedUpgradeAll[JSON.stringify(params)] ?? {};
         },
         getTypeStructure: (state) => (type) => {
             return state._Structure[type].fields;
@@ -192,21 +208,36 @@ export default {
                 throw new SpVuexError('QueryClient:QueryApprovedUpgradeAll', 'API Node Unavailable. Could not perform query: ' + e.message);
             }
         },
-        async sendMsgApproveUpgrade({ rootGetters }, { value, fee = [], memo = '' }) {
+        async QueryRejectedUpgrade({ commit, rootGetters, getters }, { options: { subscribe, all } = { subscribe: false, all: false }, params, query = null }) {
             try {
-                const txClient = await initTxClient(rootGetters);
-                const msg = await txClient.msgApproveUpgrade(value);
-                const result = await txClient.signAndBroadcast([msg], { fee: { amount: fee,
-                        gas: "200000" }, memo });
-                return result;
+                const key = params ?? {};
+                const queryClient = await initQueryClient(rootGetters);
+                let value = (await queryClient.queryRejectedUpgrade(key.name)).data;
+                commit('QUERY', { query: 'RejectedUpgrade', key: { params: { ...key }, query }, value });
+                if (subscribe)
+                    commit('SUBSCRIBE', { action: 'QueryRejectedUpgrade', payload: { options: { all }, params: { ...key }, query } });
+                return getters['getRejectedUpgrade']({ params: { ...key }, query }) ?? {};
             }
             catch (e) {
-                if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgApproveUpgrade:Init', 'Could not initialize signing client. Wallet is required.');
+                throw new SpVuexError('QueryClient:QueryRejectedUpgrade', 'API Node Unavailable. Could not perform query: ' + e.message);
+            }
+        },
+        async QueryRejectedUpgradeAll({ commit, rootGetters, getters }, { options: { subscribe, all } = { subscribe: false, all: false }, params, query = null }) {
+            try {
+                const key = params ?? {};
+                const queryClient = await initQueryClient(rootGetters);
+                let value = (await queryClient.queryRejectedUpgradeAll(query)).data;
+                while (all && value.pagination && value.pagination.next_key != null) {
+                    let next_values = (await queryClient.queryRejectedUpgradeAll({ ...query, 'pagination.key': value.pagination.next_key })).data;
+                    value = mergeResults(value, next_values);
                 }
-                else {
-                    throw new SpVuexError('TxClient:MsgApproveUpgrade:Send', 'Could not broadcast Tx: ' + e.message);
-                }
+                commit('QUERY', { query: 'RejectedUpgradeAll', key: { params: { ...key }, query }, value });
+                if (subscribe)
+                    commit('SUBSCRIBE', { action: 'QueryRejectedUpgradeAll', payload: { options: { all }, params: { ...key }, query } });
+                return getters['getRejectedUpgradeAll']({ params: { ...key }, query }) ?? {};
+            }
+            catch (e) {
+                throw new SpVuexError('QueryClient:QueryRejectedUpgradeAll', 'API Node Unavailable. Could not perform query: ' + e.message);
             }
         },
         async sendMsgProposeUpgrade({ rootGetters }, { value, fee = [], memo = '' }) {
@@ -243,18 +274,20 @@ export default {
                 }
             }
         },
-        async MsgApproveUpgrade({ rootGetters }, { value }) {
+        async sendMsgApproveUpgrade({ rootGetters }, { value, fee = [], memo = '' }) {
             try {
                 const txClient = await initTxClient(rootGetters);
                 const msg = await txClient.msgApproveUpgrade(value);
-                return msg;
+                const result = await txClient.signAndBroadcast([msg], { fee: { amount: fee,
+                        gas: "200000" }, memo });
+                return result;
             }
             catch (e) {
                 if (e == MissingWalletError) {
                     throw new SpVuexError('TxClient:MsgApproveUpgrade:Init', 'Could not initialize signing client. Wallet is required.');
                 }
                 else {
-                    throw new SpVuexError('TxClient:MsgApproveUpgrade:Create', 'Could not create message: ' + e.message);
+                    throw new SpVuexError('TxClient:MsgApproveUpgrade:Send', 'Could not broadcast Tx: ' + e.message);
                 }
             }
         },
@@ -285,6 +318,21 @@ export default {
                 }
                 else {
                     throw new SpVuexError('TxClient:MsgRejectUpgrade:Create', 'Could not create message: ' + e.message);
+                }
+            }
+        },
+        async MsgApproveUpgrade({ rootGetters }, { value }) {
+            try {
+                const txClient = await initTxClient(rootGetters);
+                const msg = await txClient.msgApproveUpgrade(value);
+                return msg;
+            }
+            catch (e) {
+                if (e == MissingWalletError) {
+                    throw new SpVuexError('TxClient:MsgApproveUpgrade:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgApproveUpgrade:Create', 'Could not create message: ' + e.message);
                 }
             }
         },

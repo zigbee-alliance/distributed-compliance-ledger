@@ -67,12 +67,38 @@ export interface DclupgradeQueryAllProposedUpgradeResponse {
   pagination?: V1Beta1PageResponse;
 }
 
+export interface DclupgradeQueryAllRejectedUpgradeResponse {
+  rejectedUpgrade?: DclupgradeRejectedUpgrade[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
 export interface DclupgradeQueryGetApprovedUpgradeResponse {
   approvedUpgrade?: DclupgradeApprovedUpgrade;
 }
 
 export interface DclupgradeQueryGetProposedUpgradeResponse {
   proposedUpgrade?: DclupgradeProposedUpgrade;
+}
+
+export interface DclupgradeQueryGetRejectedUpgradeResponse {
+  rejectedUpgrade?: DclupgradeRejectedUpgrade;
+}
+
+export interface DclupgradeRejectedUpgrade {
+  name?: string;
+  plan?: string;
+  creator?: string;
+  approvals?: string[];
 }
 
 /**
@@ -576,6 +602,48 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryProposedUpgrade = (name: string, params: RequestParams = {}) =>
     this.request<DclupgradeQueryGetProposedUpgradeResponse, RpcStatus>({
       path: `/dcl/dclupgrade/proposed-upgrades/${name}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryRejectedUpgradeAll
+   * @summary Queries a list of RejectedUpgrade items.
+   * @request GET:/zigbee-alliance/distributedcomplianceledger/dclupgrade/rejected_upgrade
+   */
+  queryRejectedUpgradeAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<DclupgradeQueryAllRejectedUpgradeResponse, RpcStatus>({
+      path: `/zigbee-alliance/distributedcomplianceledger/dclupgrade/rejected_upgrade`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryRejectedUpgrade
+   * @summary Queries a RejectedUpgrade by index.
+   * @request GET:/zigbee-alliance/distributedcomplianceledger/dclupgrade/rejected_upgrade/{name}
+   */
+  queryRejectedUpgrade = (name: string, params: RequestParams = {}) =>
+    this.request<DclupgradeQueryGetRejectedUpgradeResponse, RpcStatus>({
+      path: `/zigbee-alliance/distributedcomplianceledger/dclupgrade/rejected_upgrade/${name}`,
       method: "GET",
       format: "json",
       ...params,

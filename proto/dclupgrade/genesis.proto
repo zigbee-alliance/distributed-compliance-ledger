@@ -4,6 +4,7 @@ package zigbeealliance.distributedcomplianceledger.dclupgrade;
 import "gogoproto/gogo.proto";
 import "dclupgrade/proposed_upgrade.proto";
 import "dclupgrade/approved_upgrade.proto";
+import "dclupgrade/rejected_upgrade.proto";
 // this line is used by starport scaffolding # genesis/proto/import
 
 option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade/types";
@@ -12,5 +13,6 @@ option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/
 message GenesisState {
   repeated ProposedUpgrade proposedUpgradeList = 1 [(gogoproto.nullable) = false];
   repeated ApprovedUpgrade approvedUpgradeList = 2 [(gogoproto.nullable) = false];
+  repeated RejectedUpgrade rejectedUpgradeList = 3 [(gogoproto.nullable) = false];
   // this line is used by starport scaffolding # genesis/proto/state
 }

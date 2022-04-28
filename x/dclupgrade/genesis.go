@@ -17,6 +17,10 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	for _, elem := range genState.ApprovedUpgradeList {
 		k.SetApprovedUpgrade(ctx, elem)
 	}
+	// Set all the rejectedUpgrade
+	for _, elem := range genState.RejectedUpgradeList {
+		k.SetRejectedUpgrade(ctx, elem)
+	}
 	// this line is used by starport scaffolding # genesis/module/init
 }
 
@@ -26,6 +30,7 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 
 	genesis.ProposedUpgradeList = k.GetAllProposedUpgrade(ctx)
 	genesis.ApprovedUpgradeList = k.GetAllApprovedUpgrade(ctx)
+	genesis.RejectedUpgradeList = k.GetAllRejectedUpgrade(ctx)
 	// this line is used by starport scaffolding # genesis/module/export
 
 	return genesis

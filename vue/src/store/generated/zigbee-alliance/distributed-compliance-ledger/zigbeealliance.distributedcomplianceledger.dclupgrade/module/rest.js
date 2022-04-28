@@ -194,5 +194,34 @@ export class Api extends HttpClient {
             format: "json",
             ...params,
         });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryRejectedUpgradeAll
+         * @summary Queries a list of RejectedUpgrade items.
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/dclupgrade/rejected_upgrade
+         */
+        this.queryRejectedUpgradeAll = (query, params = {}) => this.request({
+            path: `/zigbee-alliance/distributedcomplianceledger/dclupgrade/rejected_upgrade`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryRejectedUpgrade
+         * @summary Queries a RejectedUpgrade by index.
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/dclupgrade/rejected_upgrade/{name}
+         */
+        this.queryRejectedUpgrade = (name, params = {}) => this.request({
+            path: `/zigbee-alliance/distributedcomplianceledger/dclupgrade/rejected_upgrade/${name}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
     }
 }
