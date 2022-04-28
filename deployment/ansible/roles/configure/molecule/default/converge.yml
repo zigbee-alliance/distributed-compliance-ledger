@@ -19,26 +19,26 @@
     - role: configure
       type: validator
 
-# - name: setup private sentries
-#   hosts: private_sentries
-#   roles:
-#     - role: configure
-#       type: private-sentry
+- name: setup private sentries
+  hosts: private_sentries
+  roles:
+    - role: configure
+      type: private-sentry
 
-# - name: setup public sentries
-#   hosts: public_sentries
-#   roles:
-#     - role: configure
-#       type: public-sentry
+- name: setup public sentries
+  hosts: public_sentries
+  roles:
+    - role: configure
+      type: public-sentry
 
-# - name: setup observers
-#   hosts: observers
-#   roles:
-#     - role: configure
-#       type: observer
+- name: setup observers
+  hosts: observers
+  roles:
+    - role: configure
+      type: observer
 
-# - name: setup seeds
-#   hosts: seeds
-#   roles:
-#     - role: configure
-#       type: seed
+- name: setup seeds
+  hosts: seeds
+  roles:
+    - role: configure
+      type: seed
