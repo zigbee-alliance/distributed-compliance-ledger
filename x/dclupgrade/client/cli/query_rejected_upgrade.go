@@ -6,13 +6,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade/types"
 )
 
 func CmdListRejectedUpgrade() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list-rejected-upgrade",
-		Short: "list all RejectedUpgrade",
+		Use:   "all-rejected-upgrades",
+		Short: "Query the list of all rejected upgrades",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
@@ -43,29 +44,30 @@ func CmdListRejectedUpgrade() *cobra.Command {
 }
 
 func CmdShowRejectedUpgrade() *cobra.Command {
+	var name string
+
 	cmd := &cobra.Command{
-		Use:   "show-rejected-upgrade [name]",
-		Short: "shows a RejectedUpgrade",
-		Args:  cobra.ExactArgs(1),
+		Use:   "rejected-upgrade --name [name]",
+		Short: "Query rejected upgrade by name",
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
-			queryClient := types.NewQueryClient(clientCtx)
+			var res types.RejectedUpgrade
 
-			argName := args[0]
-
-			params := &types.QueryGetRejectedUpgradeRequest{
-				Name: argName,
-			}
-
-			res, err := queryClient.RejectedUpgrade(context.Background(), params)
-			if err != nil {
-				return err
-			}
-
-			return clientCtx.PrintProto(res)
+			return cli.QueryWithProof(
+				clientCtx,
+				types.StoreKey,
+				types.RejectedUpgradeKeyPrefix,
+				types.RejectedUpgradeKey(name),
+				&res,
+			)
 		},
 	}
+
+	cmd.Flags().StringVar(&name, FlagName, "", "Upgrade name")
+
+	_ = cmd.MarkFlagRequired(FlagName)
 
 	flags.AddQueryFlagsToCmd(cmd)
 
