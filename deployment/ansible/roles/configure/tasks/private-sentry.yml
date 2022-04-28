@@ -16,13 +16,13 @@
 - name: private-sentry | discover validator peers
   set_fact:
     validator_peers: "{{ (groups['validators'] | map('extract', hostvars, 'persistent_peer') | select | list | join(',')) }}"
-  run_once: yes
+  run_once: true
   when: config.p2p.persistent_peers | default('', true) | trim == ''
 
 - name: private-sentry | discover validator node ids
   set_fact:
     validator_node_ids: "{{ (groups['validators'] | map('extract', hostvars, 'node_id') | select | list | join(',')) }}"
-  run_once: yes
+  run_once: true
   when: config.p2p.private_peer_ids | default('', true) | trim == '' or config.p2p.unconditional_peer_ids | default('', true) | trim == ''
 
 - name: private-sentry | update persistent peers
