@@ -19,17 +19,17 @@
 ############################
 # STEP 1 build cosmovisor
 ############################
-FROM golang:alpine AS builder
+FROM golang:alpine3.15 AS builder
 
 # git is required for fetching the dependencies.
-RUN apk update && apk add --no-cache git
-
-RUN go install github.com/cosmos/cosmos-sdk/cosmovisor/cmd/cosmovisor@v1.0.0
+RUN apk --no-cache add \
+  git=2.34.2-r0 && \
+  go install github.com/cosmos/cosmos-sdk/cosmovisor/cmd/cosmovisor@v1.0.0
 
 ############################
 # STEP 2 build node image
 ############################
-FROM alpine:latest
+FROM alpine:3.15
 
 COPY --from=builder /go/bin/cosmovisor /usr/bin/
 
