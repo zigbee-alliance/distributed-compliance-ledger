@@ -41,7 +41,7 @@ func (k Keeper) RejectedCertificateAll(c context.Context, req *types.QueryAllRej
 
 func (k Keeper) RejectedCertificate(c context.Context, req *types.QueryGetRejectedCertificatesRequest) (*types.QueryGetRejectedCertificatesResponse, error) {
 	if req == nil {
-		return nil, status.Error(codes.InvalidArgument, "invalid request")
+		return nil, status.Error(codes.NotFound, "invalid request")
 	}
 	ctx := sdk.UnwrapSDKContext(c)
 
@@ -51,7 +51,7 @@ func (k Keeper) RejectedCertificate(c context.Context, req *types.QueryGetReject
 		req.SubjectKeyId,
 	)
 	if !found {
-		return nil, status.Error(codes.InvalidArgument, "not found")
+		return nil, status.Error(codes.NotFound, "not found")
 	}
 
 	return &types.QueryGetRejectedCertificatesResponse{RejectedCertificate: val}, nil
