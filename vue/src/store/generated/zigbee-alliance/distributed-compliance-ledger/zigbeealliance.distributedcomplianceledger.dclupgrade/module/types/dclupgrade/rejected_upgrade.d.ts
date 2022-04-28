@@ -1,10 +1,12 @@
+import { Plan } from '../cosmos/upgrade/v1beta1/upgrade';
+import { Grant } from '../dclupgrade/grant';
 import { Writer, Reader } from 'protobufjs/minimal';
 export declare const protobufPackage = "zigbeealliance.distributedcomplianceledger.dclupgrade";
 export interface RejectedUpgrade {
-    name: string;
-    plan: string;
+    plan: Plan | undefined;
     creator: string;
-    approvals: string[];
+    approvals: Grant[];
+    rejects: Grant[];
 }
 export declare const RejectedUpgrade: {
     encode(message: RejectedUpgrade, writer?: Writer): Writer;

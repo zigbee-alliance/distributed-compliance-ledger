@@ -31,7 +31,6 @@ func (k Keeper) RejectedUpgradeAll(c context.Context, req *types.QueryAllRejecte
 		rejectedUpgrades = append(rejectedUpgrades, rejectedUpgrade)
 		return nil
 	})
-
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}

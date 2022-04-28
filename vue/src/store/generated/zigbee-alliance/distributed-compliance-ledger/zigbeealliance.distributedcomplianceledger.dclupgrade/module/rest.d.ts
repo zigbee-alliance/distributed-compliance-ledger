@@ -3,6 +3,7 @@ export interface DclupgradeApprovedUpgrade {
     plan?: V1Beta1Plan;
     creator?: string;
     approvals?: DclupgradeGrant[];
+    rejects?: DclupgradeGrant[];
 }
 export interface DclupgradeGrant {
     address?: string;
@@ -18,6 +19,7 @@ export interface DclupgradeProposedUpgrade {
     plan?: V1Beta1Plan;
     creator?: string;
     approvals?: DclupgradeGrant[];
+    rejects?: DclupgradeGrant[];
 }
 export interface DclupgradeQueryAllApprovedUpgradeResponse {
     approvedUpgrade?: DclupgradeApprovedUpgrade[];
@@ -68,10 +70,11 @@ export interface DclupgradeQueryGetRejectedUpgradeResponse {
     rejectedUpgrade?: DclupgradeRejectedUpgrade;
 }
 export interface DclupgradeRejectedUpgrade {
-    name?: string;
-    plan?: string;
+    /** Plan specifies information about a planned upgrade and when it should occur. */
+    plan?: V1Beta1Plan;
     creator?: string;
-    approvals?: string[];
+    approvals?: DclupgradeGrant[];
+    rejects?: DclupgradeGrant[];
 }
 /**
 * `Any` contains an arbitrary serialized protocol buffer message along with a
@@ -398,7 +401,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @tags Query
      * @name QueryRejectedUpgradeAll
      * @summary Queries a list of RejectedUpgrade items.
-     * @request GET:/zigbee-alliance/distributedcomplianceledger/dclupgrade/rejected_upgrade
+     * @request GET:/dcl/dclupgrade/rejected-upgrades
      */
     queryRejectedUpgradeAll: (query?: {
         "pagination.key"?: string;
@@ -413,7 +416,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @tags Query
      * @name QueryRejectedUpgrade
      * @summary Queries a RejectedUpgrade by index.
-     * @request GET:/zigbee-alliance/distributedcomplianceledger/dclupgrade/rejected_upgrade/{name}
+     * @request GET:/dcl/dclupgrade/rejected-upgrades/{name}
      */
     queryRejectedUpgrade: (name: string, params?: RequestParams) => Promise<HttpResponse<DclupgradeQueryGetRejectedUpgradeResponse, RpcStatus>>;
 }

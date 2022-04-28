@@ -5,6 +5,9 @@ package types
 
 import (
 	fmt "fmt"
+	_ "github.com/cosmos/cosmos-proto"
+	types "github.com/cosmos/cosmos-sdk/x/upgrade/types"
+	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
@@ -23,10 +26,10 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type RejectedUpgrade struct {
-	Name      string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Plan      string   `protobuf:"bytes,2,opt,name=plan,proto3" json:"plan,omitempty"`
-	Creator   string   `protobuf:"bytes,3,opt,name=creator,proto3" json:"creator,omitempty"`
-	Approvals []string `protobuf:"bytes,4,rep,name=approvals,proto3" json:"approvals,omitempty"`
+	Plan      types.Plan `protobuf:"bytes,1,opt,name=plan,proto3" json:"plan"`
+	Creator   string     `protobuf:"bytes,2,opt,name=creator,proto3" json:"creator,omitempty"`
+	Approvals []*Grant   `protobuf:"bytes,3,rep,name=approvals,proto3" json:"approvals,omitempty"`
+	Rejects   []*Grant   `protobuf:"bytes,4,rep,name=rejects,proto3" json:"rejects,omitempty"`
 }
 
 func (m *RejectedUpgrade) Reset()         { *m = RejectedUpgrade{} }
@@ -62,18 +65,11 @@ func (m *RejectedUpgrade) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_RejectedUpgrade proto.InternalMessageInfo
 
-func (m *RejectedUpgrade) GetName() string {
-	if m != nil {
-		return m.Name
-	}
-	return ""
-}
-
-func (m *RejectedUpgrade) GetPlan() string {
+func (m *RejectedUpgrade) GetPlan() types.Plan {
 	if m != nil {
 		return m.Plan
 	}
-	return ""
+	return types.Plan{}
 }
 
 func (m *RejectedUpgrade) GetCreator() string {
@@ -83,9 +79,16 @@ func (m *RejectedUpgrade) GetCreator() string {
 	return ""
 }
 
-func (m *RejectedUpgrade) GetApprovals() []string {
+func (m *RejectedUpgrade) GetApprovals() []*Grant {
 	if m != nil {
 		return m.Approvals
+	}
+	return nil
+}
+
+func (m *RejectedUpgrade) GetRejects() []*Grant {
+	if m != nil {
+		return m.Rejects
 	}
 	return nil
 }
@@ -97,22 +100,29 @@ func init() {
 func init() { proto.RegisterFile("dclupgrade/rejected_upgrade.proto", fileDescriptor_688c74160bb15b26) }
 
 var fileDescriptor_688c74160bb15b26 = []byte{
-	// 240 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x4c, 0xd0, 0xb1, 0x4e, 0xc3, 0x30,
-	0x10, 0x80, 0xe1, 0x98, 0x56, 0xa0, 0x78, 0x41, 0xf2, 0xe4, 0x01, 0x59, 0x85, 0xa9, 0x4b, 0xe2,
-	0x01, 0xf1, 0x02, 0xac, 0x6c, 0x91, 0x58, 0x58, 0x90, 0x63, 0x9f, 0x82, 0x91, 0x13, 0x9b, 0x8b,
-	0x83, 0x80, 0xa7, 0xe0, 0xb1, 0x18, 0x3b, 0x32, 0xa2, 0xe4, 0x45, 0x50, 0xe3, 0x56, 0xe9, 0x76,
-	0xf7, 0x0d, 0x27, 0xfd, 0x47, 0xaf, 0x8d, 0x76, 0x43, 0x68, 0x50, 0x19, 0x90, 0x08, 0xaf, 0xa0,
-	0x23, 0x98, 0xe7, 0x03, 0x94, 0x01, 0x7d, 0xf4, 0xec, 0xee, 0xcb, 0x36, 0x35, 0x80, 0x72, 0xce,
-	0xaa, 0x4e, 0x43, 0x69, 0x6c, 0x1f, 0xd1, 0xd6, 0x43, 0x04, 0xa3, 0x7d, 0x1b, 0x92, 0x3a, 0x30,
-	0x0d, 0x60, 0xb9, 0x5c, 0xbb, 0x79, 0xa3, 0x97, 0xd5, 0xe1, 0xe0, 0x63, 0x22, 0xc6, 0xe8, 0xba,
-	0x53, 0x2d, 0x70, 0xb2, 0x21, 0xdb, 0xbc, 0x9a, 0xe7, 0xbd, 0x05, 0xa7, 0x3a, 0x7e, 0x96, 0x6c,
-	0x3f, 0x33, 0x4e, 0x2f, 0x34, 0x82, 0x8a, 0x1e, 0xf9, 0x6a, 0xe6, 0xe3, 0xca, 0xae, 0x68, 0xae,
-	0x42, 0x40, 0xff, 0xae, 0x5c, 0xcf, 0xd7, 0x9b, 0xd5, 0x36, 0xaf, 0x16, 0xb8, 0x87, 0x9f, 0x51,
-	0x90, 0xdd, 0x28, 0xc8, 0xdf, 0x28, 0xc8, 0xf7, 0x24, 0xb2, 0xdd, 0x24, 0xb2, 0xdf, 0x49, 0x64,
-	0x4f, 0x0f, 0x8d, 0x8d, 0x2f, 0x43, 0x5d, 0x6a, 0xdf, 0xca, 0x94, 0x53, 0x1c, 0x7b, 0xe4, 0x49,
-	0x4f, 0xb1, 0x04, 0x15, 0xa9, 0x48, 0x7e, 0xc8, 0x93, 0x0f, 0xc5, 0xcf, 0x00, 0x7d, 0x7d, 0x3e,
-	0xff, 0xe5, 0xf6, 0x3f, 0x00, 0x00, 0xff, 0xff, 0x1c, 0xf0, 0x55, 0xee, 0x3c, 0x01, 0x00, 0x00,
+	// 351 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x91, 0x3f, 0x4b, 0xc3, 0x40,
+	0x14, 0xc0, 0x93, 0xb6, 0x58, 0x9a, 0x0e, 0x42, 0x28, 0x12, 0x8b, 0xc4, 0x2a, 0x0e, 0x5d, 0x72,
+	0x47, 0x2b, 0x3a, 0xb9, 0xd8, 0xc5, 0xc1, 0x45, 0x22, 0x3a, 0x74, 0x29, 0x97, 0xdc, 0xe3, 0x8c,
+	0x5c, 0x73, 0xc7, 0xdd, 0xb5, 0xa8, 0x9f, 0xc2, 0xaf, 0x22, 0xf8, 0x21, 0x3a, 0x16, 0x27, 0x27,
+	0x91, 0xf6, 0x8b, 0x48, 0x7b, 0x09, 0xad, 0xab, 0xb8, 0xe5, 0xfd, 0xc9, 0xef, 0xf7, 0xde, 0x3d,
+	0xef, 0x88, 0xa6, 0x7c, 0x22, 0x99, 0x22, 0x14, 0xb0, 0x82, 0x47, 0x48, 0x0d, 0xd0, 0x51, 0x91,
+	0x40, 0x52, 0x09, 0x23, 0xfc, 0xb3, 0x97, 0x8c, 0x25, 0x00, 0x84, 0xf3, 0x8c, 0xe4, 0x29, 0x20,
+	0x9a, 0x69, 0xa3, 0xb2, 0x64, 0x62, 0x80, 0xa6, 0x62, 0x2c, 0x6d, 0x96, 0x03, 0x65, 0xa0, 0xd0,
+	0x86, 0xd6, 0x6e, 0x31, 0xc1, 0xc4, 0x9a, 0x80, 0x57, 0x5f, 0x16, 0xd6, 0xde, 0x4f, 0x85, 0x1e,
+	0x0b, 0x3d, 0xb2, 0x05, 0x1b, 0x14, 0xa5, 0x13, 0x1b, 0xe1, 0x72, 0x9c, 0x69, 0x2f, 0x01, 0x43,
+	0x7a, 0xf8, 0xd7, 0x34, 0xed, 0xbd, 0xad, 0x81, 0x99, 0x22, 0xb9, 0xb1, 0xf9, 0xe3, 0xb7, 0x8a,
+	0xb7, 0x1b, 0x17, 0x0b, 0xdc, 0xd9, 0xba, 0x7f, 0xee, 0xd5, 0x24, 0x27, 0x79, 0xe0, 0x76, 0xdc,
+	0x6e, 0xb3, 0x7f, 0x80, 0x0a, 0x5d, 0x09, 0x2c, 0x04, 0xe8, 0x86, 0x93, 0x7c, 0x50, 0x9b, 0x7d,
+	0x1d, 0x3a, 0xf1, 0xba, 0xdf, 0xef, 0x7b, 0xf5, 0x54, 0x01, 0x31, 0x42, 0x05, 0x95, 0x8e, 0xdb,
+	0x6d, 0x0c, 0x82, 0x8f, 0xf7, 0xa8, 0x55, 0xfc, 0x7d, 0x49, 0xa9, 0x02, 0xad, 0x6f, 0x8d, 0xca,
+	0x72, 0x16, 0x97, 0x8d, 0xfe, 0xd0, 0x6b, 0x10, 0x29, 0x95, 0x98, 0x12, 0xae, 0x83, 0x6a, 0xa7,
+	0xda, 0x6d, 0xf6, 0x2f, 0xd0, 0x9f, 0x5e, 0x0e, 0x5d, 0xad, 0xd6, 0x8a, 0x37, 0x38, 0xff, 0xde,
+	0xab, 0xdb, 0xdb, 0xe8, 0xa0, 0xf6, 0x0f, 0xe4, 0x12, 0x36, 0x80, 0xd9, 0x22, 0x74, 0xe7, 0x8b,
+	0xd0, 0xfd, 0x5e, 0x84, 0xee, 0xeb, 0x32, 0x74, 0xe6, 0xcb, 0xd0, 0xf9, 0x5c, 0x86, 0xce, 0xf0,
+	0x9a, 0x65, 0xe6, 0x61, 0x92, 0xa0, 0x54, 0x8c, 0xb1, 0x55, 0x45, 0xa5, 0x0b, 0x6f, 0xb9, 0xa2,
+	0x8d, 0x2c, 0xb2, 0x36, 0xfc, 0x84, 0xb7, 0x0e, 0x64, 0x9e, 0x25, 0xe8, 0x64, 0x67, 0x7d, 0xa1,
+	0xd3, 0x9f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x5e, 0xb6, 0x31, 0xc0, 0x6c, 0x02, 0x00, 0x00,
 }
 
 func (m *RejectedUpgrade) Marshal() (dAtA []byte, err error) {
@@ -135,13 +145,32 @@ func (m *RejectedUpgrade) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.Approvals) > 0 {
-		for iNdEx := len(m.Approvals) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.Approvals[iNdEx])
-			copy(dAtA[i:], m.Approvals[iNdEx])
-			i = encodeVarintRejectedUpgrade(dAtA, i, uint64(len(m.Approvals[iNdEx])))
+	if len(m.Rejects) > 0 {
+		for iNdEx := len(m.Rejects) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Rejects[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintRejectedUpgrade(dAtA, i, uint64(size))
+			}
 			i--
 			dAtA[i] = 0x22
+		}
+	}
+	if len(m.Approvals) > 0 {
+		for iNdEx := len(m.Approvals) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Approvals[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintRejectedUpgrade(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x1a
 		}
 	}
 	if len(m.Creator) > 0 {
@@ -149,22 +178,18 @@ func (m *RejectedUpgrade) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		copy(dAtA[i:], m.Creator)
 		i = encodeVarintRejectedUpgrade(dAtA, i, uint64(len(m.Creator)))
 		i--
-		dAtA[i] = 0x1a
-	}
-	if len(m.Plan) > 0 {
-		i -= len(m.Plan)
-		copy(dAtA[i:], m.Plan)
-		i = encodeVarintRejectedUpgrade(dAtA, i, uint64(len(m.Plan)))
-		i--
 		dAtA[i] = 0x12
 	}
-	if len(m.Name) > 0 {
-		i -= len(m.Name)
-		copy(dAtA[i:], m.Name)
-		i = encodeVarintRejectedUpgrade(dAtA, i, uint64(len(m.Name)))
-		i--
-		dAtA[i] = 0xa
+	{
+		size, err := m.Plan.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintRejectedUpgrade(dAtA, i, uint64(size))
 	}
+	i--
+	dAtA[i] = 0xa
 	return len(dAtA) - i, nil
 }
 
@@ -185,21 +210,21 @@ func (m *RejectedUpgrade) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = len(m.Name)
-	if l > 0 {
-		n += 1 + l + sovRejectedUpgrade(uint64(l))
-	}
-	l = len(m.Plan)
-	if l > 0 {
-		n += 1 + l + sovRejectedUpgrade(uint64(l))
-	}
+	l = m.Plan.Size()
+	n += 1 + l + sovRejectedUpgrade(uint64(l))
 	l = len(m.Creator)
 	if l > 0 {
 		n += 1 + l + sovRejectedUpgrade(uint64(l))
 	}
 	if len(m.Approvals) > 0 {
-		for _, s := range m.Approvals {
-			l = len(s)
+		for _, e := range m.Approvals {
+			l = e.Size()
+			n += 1 + l + sovRejectedUpgrade(uint64(l))
+		}
+	}
+	if len(m.Rejects) > 0 {
+		for _, e := range m.Rejects {
+			l = e.Size()
 			n += 1 + l + sovRejectedUpgrade(uint64(l))
 		}
 	}
@@ -243,41 +268,9 @@ func (m *RejectedUpgrade) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowRejectedUpgrade
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthRejectedUpgrade
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthRejectedUpgrade
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Name = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Plan", wireType)
 			}
-			var stringLen uint64
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowRejectedUpgrade
@@ -287,25 +280,26 @@ func (m *RejectedUpgrade) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
+			if msglen < 0 {
 				return ErrInvalidLengthRejectedUpgrade
 			}
-			postIndex := iNdEx + intStringLen
+			postIndex := iNdEx + msglen
 			if postIndex < 0 {
 				return ErrInvalidLengthRejectedUpgrade
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Plan = string(dAtA[iNdEx:postIndex])
+			if err := m.Plan.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
 			iNdEx = postIndex
-		case 3:
+		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
 			}
@@ -337,11 +331,11 @@ func (m *RejectedUpgrade) Unmarshal(dAtA []byte) error {
 			}
 			m.Creator = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 4:
+		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Approvals", wireType)
 			}
-			var stringLen uint64
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowRejectedUpgrade
@@ -351,23 +345,59 @@ func (m *RejectedUpgrade) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
+			if msglen < 0 {
 				return ErrInvalidLengthRejectedUpgrade
 			}
-			postIndex := iNdEx + intStringLen
+			postIndex := iNdEx + msglen
 			if postIndex < 0 {
 				return ErrInvalidLengthRejectedUpgrade
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Approvals = append(m.Approvals, string(dAtA[iNdEx:postIndex]))
+			m.Approvals = append(m.Approvals, &Grant{})
+			if err := m.Approvals[len(m.Approvals)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Rejects", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRejectedUpgrade
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthRejectedUpgrade
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthRejectedUpgrade
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Rejects = append(m.Rejects, &Grant{})
+			if err := m.Rejects[len(m.Rejects)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

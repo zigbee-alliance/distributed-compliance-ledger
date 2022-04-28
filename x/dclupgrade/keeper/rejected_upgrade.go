@@ -6,12 +6,12 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade/types"
 )
 
-// SetRejectedUpgrade set a specific rejectedUpgrade in the store from its index
+// SetRejectedUpgrade set a specific rejectedUpgrade in the store from its index.
 func (k Keeper) SetRejectedUpgrade(ctx sdk.Context, rejectedUpgrade types.RejectedUpgrade) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RejectedUpgradeKeyPrefix))
 	b := k.cdc.MustMarshal(&rejectedUpgrade)
 	store.Set(types.RejectedUpgradeKey(
-		rejectedUpgrade.Name,
+		rejectedUpgrade.Plan.Name,
 	), b)
 }
 
@@ -19,7 +19,6 @@ func (k Keeper) SetRejectedUpgrade(ctx sdk.Context, rejectedUpgrade types.Reject
 func (k Keeper) GetRejectedUpgrade(
 	ctx sdk.Context,
 	name string,
-
 ) (val types.RejectedUpgrade, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RejectedUpgradeKeyPrefix))
 
@@ -38,7 +37,6 @@ func (k Keeper) GetRejectedUpgrade(
 func (k Keeper) RemoveRejectedUpgrade(
 	ctx sdk.Context,
 	name string,
-
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RejectedUpgradeKeyPrefix))
 	store.Delete(types.RejectedUpgradeKey(

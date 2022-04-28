@@ -200,10 +200,10 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryRejectedUpgradeAll
          * @summary Queries a list of RejectedUpgrade items.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/dclupgrade/rejected_upgrade
+         * @request GET:/dcl/dclupgrade/rejected-upgrades
          */
         this.queryRejectedUpgradeAll = (query, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/dclupgrade/rejected_upgrade`,
+            path: `/dcl/dclupgrade/rejected-upgrades`,
             method: "GET",
             query: query,
             format: "json",
@@ -215,10 +215,10 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryRejectedUpgrade
          * @summary Queries a RejectedUpgrade by index.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/dclupgrade/rejected_upgrade/{name}
+         * @request GET:/dcl/dclupgrade/rejected-upgrades/{name}
          */
         this.queryRejectedUpgrade = (name, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/dclupgrade/rejected_upgrade/${name}`,
+            path: `/dcl/dclupgrade/rejected-upgrades/${name}`,
             method: "GET",
             format: "json",
             ...params,

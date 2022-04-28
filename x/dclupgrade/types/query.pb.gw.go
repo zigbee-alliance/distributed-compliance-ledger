@@ -620,9 +620,9 @@ var (
 
 	pattern_Query_ApprovedUpgradeAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "dclupgrade", "approved-upgrades"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_RejectedUpgrade_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"zigbee-alliance", "distributedcomplianceledger", "dclupgrade", "rejected_upgrade", "name"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_RejectedUpgrade_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "dclupgrade", "rejected-upgrades", "name"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_RejectedUpgradeAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"zigbee-alliance", "distributedcomplianceledger", "dclupgrade", "rejected_upgrade"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_RejectedUpgradeAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "dclupgrade", "rejected-upgrades"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (

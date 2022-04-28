@@ -9,6 +9,7 @@ export interface ProposedUpgrade {
   plan: Plan | undefined
   creator: string
   approvals: Grant[]
+  rejects: Grant[]
 }
 
 const baseProposedUpgrade: object = { creator: '' }
@@ -24,6 +25,9 @@ export const ProposedUpgrade = {
     for (const v of message.approvals) {
       Grant.encode(v!, writer.uint32(26).fork()).ldelim()
     }
+    for (const v of message.rejects) {
+      Grant.encode(v!, writer.uint32(34).fork()).ldelim()
+    }
     return writer
   },
 
@@ -32,6 +36,7 @@ export const ProposedUpgrade = {
     let end = length === undefined ? reader.len : reader.pos + length
     const message = { ...baseProposedUpgrade } as ProposedUpgrade
     message.approvals = []
+    message.rejects = []
     while (reader.pos < end) {
       const tag = reader.uint32()
       switch (tag >>> 3) {
@@ -44,6 +49,9 @@ export const ProposedUpgrade = {
         case 3:
           message.approvals.push(Grant.decode(reader, reader.uint32()))
           break
+        case 4:
+          message.rejects.push(Grant.decode(reader, reader.uint32()))
+          break
         default:
           reader.skipType(tag & 7)
           break
@@ -55,6 +63,7 @@ export const ProposedUpgrade = {
   fromJSON(object: any): ProposedUpgrade {
     const message = { ...baseProposedUpgrade } as ProposedUpgrade
     message.approvals = []
+    message.rejects = []
     if (object.plan !== undefined && object.plan !== null) {
       message.plan = Plan.fromJSON(object.plan)
     } else {
@@ -70,6 +79,11 @@ export const ProposedUpgrade = {
         message.approvals.push(Grant.fromJSON(e))
       }
     }
+    if (object.rejects !== undefined && object.rejects !== null) {
+      for (const e of object.rejects) {
+        message.rejects.push(Grant.fromJSON(e))
+      }
+    }
     return message
   },
 
@@ -82,12 +96,18 @@ export const ProposedUpgrade = {
     } else {
       obj.approvals = []
     }
+    if (message.rejects) {
+      obj.rejects = message.rejects.map((e) => (e ? Grant.toJSON(e) : undefined))
+    } else {
+      obj.rejects = []
+    }
     return obj
   },
 
   fromPartial(object: DeepPartial<ProposedUpgrade>): ProposedUpgrade {
     const message = { ...baseProposedUpgrade } as ProposedUpgrade
     message.approvals = []
+    message.rejects = []
     if (object.plan !== undefined && object.plan !== null) {
       message.plan = Plan.fromPartial(object.plan)
     } else {
@@ -101,6 +121,11 @@ export const ProposedUpgrade = {
     if (object.approvals !== undefined && object.approvals !== null) {
       for (const e of object.approvals) {
         message.approvals.push(Grant.fromPartial(e))
+      }
+    }
+    if (object.rejects !== undefined && object.rejects !== null) {
+      for (const e of object.rejects) {
+        message.rejects.push(Grant.fromPartial(e))
       }
     }
     return message

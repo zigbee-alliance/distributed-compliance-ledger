@@ -6,6 +6,7 @@ export interface ApprovedUpgrade {
     plan: Plan | undefined;
     creator: string;
     approvals: Grant[];
+    rejects: Grant[];
 }
 export declare const ApprovedUpgrade: {
     encode(message: ApprovedUpgrade, writer?: Writer): Writer;

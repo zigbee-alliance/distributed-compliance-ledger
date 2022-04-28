@@ -46,7 +46,7 @@ func (gs GenesisState) Validate() error {
 	rejectedUpgradeIndexMap := make(map[string]struct{})
 
 	for _, elem := range gs.RejectedUpgradeList {
-		index := string(RejectedUpgradeKey(elem.Name))
+		index := string(RejectedUpgradeKey(elem.Plan.Name))
 		if _, ok := rejectedUpgradeIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for rejectedUpgrade")
 		}
