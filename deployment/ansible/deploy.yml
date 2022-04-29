@@ -23,6 +23,7 @@
   hosts: genesis
   become: true
   roles:
+    - configure # configure cli
     - add-accounts
     - genesis
   

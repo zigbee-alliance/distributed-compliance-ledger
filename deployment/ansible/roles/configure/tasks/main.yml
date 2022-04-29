@@ -35,3 +35,4 @@
   loop:
     - config
     - app
+  when: type is defined
