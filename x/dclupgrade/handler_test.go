@@ -753,14 +753,9 @@ func TestHandler_DoubleTimeRejectUpgrade(t *testing.T) {
 	_, err = setup.Handler(setup.Ctx, msgRejectUpgrade)
 	require.NoError(t, err)
 
-	// check rejected upgrade
-	_, isFound = setup.Keeper.GetRejectedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	// check proposed upgrade
+	_, isFound = setup.Keeper.GetProposedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
 	require.False(t, isFound)
-
-	// reject new upgrade
-	msgRejectUpgrade = NewMsgRejectUpgrade(trusteeAccAddress3)
-	_, err = setup.Handler(setup.Ctx, msgRejectUpgrade)
-	require.NoError(t, err)
 
 	// check rejected upgrade
 	rejectedUpgrade, isFound := setup.Keeper.GetRejectedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
@@ -781,10 +776,6 @@ func TestHandler_DoubleTimeRejectUpgrade(t *testing.T) {
 	require.Equal(t, trusteeAccAddress3.String(), rejectedUpgrade.Rejects[1].Address)
 	require.Equal(t, msgRejectUpgrade.Time, rejectedUpgrade.Rejects[1].Time)
 	require.Equal(t, msgRejectUpgrade.Info, rejectedUpgrade.Rejects[1].Info)
-
-	// check proposed upgrade
-	_, isFound = setup.Keeper.GetProposedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
-	require.False(t, isFound)
 
 	// check approved upgrade for not being created
 	_, isFound = setup.Keeper.GetApprovedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
