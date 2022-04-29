@@ -699,6 +699,29 @@ The certificate is not active until sufficient number of Trustees approve it.
 - Validation:
   - the proposed certificate hasn't been approved by the signer yet
 
+#### REJECT_ADD_X509_ROOT_CERT
+**Status: Implemented**
+
+Rejects the proposed root certificate.
+
+The certificate is not reject until sufficient number of Trustees reject it.
+
+- Parameters:
+  - subject: `string` - proposed certificates's `Subject` in base64 format
+  - subject_key_id: `string` - proposed certificates's `Subject Key Id` in hex string format, e.g:
+  `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
+  - info: `optional(string)` - information/notes for the reject
+  - time: `optional(int64)` -- reject time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
+- In State: `pki/RejectedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
+- Who can send:
+  - Trustee
+- Number of required rejects:
+  - more than 1/3 of Trustees
+- CLI command:
+  - `dcld tx pki reject-add-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
+- Validation:
+  - the proposed certificate hasn't been rejected by the signer yet
+
 #### ADD_X509_CERT
 
 **Status: Implemented**
@@ -1015,6 +1038,26 @@ The account is not active until sufficient number of Trustees approve it.
 - CLI command:
   - `dcld tx auth approve-add-account --address=<bench32 encoded string> --from=<account>`
 
+#### REJECT_ADD_ACCOUNT
+
+**Status: Implemented**
+
+Rejects the proposed account.
+
+The account is not reject until sufficient number of Trustees reject it.
+
+- Parameters:
+  - address: `string` - account address; Bech32 encoded
+  - info: `optional(string)` - information/notes for the reject
+  - time: `optional(int64)` - reject time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
+- In State: `dclauth/RejectedAccount/value/<address>`
+- Who can send:
+  - Trustee
+- Number of required rejects:
+  - more than 1/3 of Trustees
+- CLI command:
+  - `dcld tx auth reject-add-account --address=<bench32 encoded string> --from=<account>`
+
 #### PROPOSE_REVOKE_ACCOUNT
 
 **Status: Implemented**
@@ -1226,14 +1269,10 @@ will be in a pending state until sufficient number of approvals is received.
 - Who can send:
   - Trustee
 - CLI command:
-  - `dcld tx validator propose-disable-node --address=<validator address|account>`
+  - `dcld tx validator propose-disable-node --address=<validator address> --from=<account>`
   <br> e.g.:
     ```
-    dcld query validator propose-disable-node --address=cosmosvaloper1qse069r3w0d82dul4xluqapxfg62qlndsdw9ms
-    ``` 
-    or
-    ```
-    dcld query validator propose-disable-node --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q
+    dcld query validator propose-disable-node --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q --from alice
     ```
 > **_Note:_** You can get Validator's address or owner address using query [GET_VALIDATOR](#getvalidator) 
 
@@ -1253,15 +1292,34 @@ The validator node is not disabled until sufficient number of Trustees approve i
 - Number of required approvals:
   - 2/3 of Trustees
 - CLI command:
-  - `dcld tx validator approve-disable-node --address=<validator address|account>`
+  - `dcld tx validator approve-disable-node --address=<validator address> --from=<account>`
   <br> e.g.:
     ```
-    dcld query validator approve-disable-node --address=cosmosvaloper1qse069r3w0d82dul4xluqapxfg62qlndsdw9ms
-    ``` 
-    or
+    dcld tx validator approve-disable-node --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q from alice
     ```
-    dcld query validator approve-disable-node --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q
-    ```
+> **_Note:_** You can get Validator's address or owner address using query [GET_VALIDATOR](#getvalidator)
+
+#### REJECT_DISABLE_VALIDATOR_NODE
+
+**Status: Implemented**
+
+Rejects disabling of the Validator node by a Trustee.
+
+The validator node is not reject until sufficient number of Trustees rejects it.
+
+- Parameters:
+  - address: `string` - Bech32 encoded validator address
+  - info: `optional(string)` - information/notes for the reject
+- Who can send:
+  - Trustee
+- Number of required rejects:
+  - more than 1/3 of Trustees
+- CLI command:
+  - `dcld tx validator reject-disable-node --address=<validator address> --from=<account>`
+  <br> e.g.:
+  ```
+  dcld tx validator reject-disable-node --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q --from alice
+  ```
 > **_Note:_** You can get Validator's address or owner address using query [GET_VALIDATOR](#getvalidator)
 
 #### ENABLE_VALIDATOR_NODE
@@ -1501,6 +1559,24 @@ Approves the proposed upgrade plan with the given name.
 
 ```bash
 dcld tx dclupgrade approve-upgrade --name=<string> --from=<account>
+```
+
+#### REJECT_UPGRADE
+
+**Status: Implemented**
+
+Rejects the proposed upgrade plan with the given name.
+- Paramaters:
+  - name: `string` - upgrade plan name
+- In State: `RejectUpgrade/value/<name>`
+- Who can send:
+  - Trustee
+- Number of required rejects:
+  - more than 1/3 of Trustees
+- CLI command:
+
+```bash
+dcld tx dclupgrade reject-upgrade --name=<string> --from=<account>
 ```
 
 #### GET_PROPOSED_UPGRADE
