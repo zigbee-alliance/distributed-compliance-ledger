@@ -18,6 +18,13 @@
   become: true
   roles:
     - bootstrap
+
+- name: setup genesis node
+  hosts: genesis
+  become: true
+  roles:
+    - add-accounts
+    - genesis
   
 - name: configure validator nodes
   hosts: validators
@@ -53,13 +60,6 @@
   roles:
     - role: configure
       type: seed
-
-- name: setup genesis node
-  hosts: genesis
-  become: true
-  roles:
-    - add-accounts
-    - genesis
 
 - name: copy genesis file to all nodes
   hosts: all
