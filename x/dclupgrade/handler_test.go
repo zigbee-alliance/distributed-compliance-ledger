@@ -843,6 +843,61 @@ func TestHandler_DoubleTimeRejectUpgrade(t *testing.T) {
 	require.False(t, isFound)
 }
 
+func TestHandler_ApproveUpgradePlanHeightLessBlockHeightAndWeCanReProposeUpgrade(t *testing.T) {
+	setup := Setup(t)
+
+	trusteeAccAddress1 := testdata.GenerateAccAddress()
+	trusteeAccAddress2 := testdata.GenerateAccAddress()
+	trusteeAccAddress3 := testdata.GenerateAccAddress()
+	setup.AddAccount(trusteeAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress2, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress3, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.DclauthKeeper.On("CountAccountsWithRole", mock.Anything, dclauthtypes.Trustee).Return(3)
+
+	// propose new upgrade
+	msgProposeUpgrade := NewMsgProposeUpgrade(trusteeAccAddress1)
+	msgProposeUpgrade.Plan.Height = 2
+	setup.Ctx = setup.Ctx.WithBlockHeight(1)
+
+	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(nil).Once()
+	_, err := setup.Handler(setup.Ctx, msgProposeUpgrade)
+	require.NoError(t, err)
+
+	// create approve message from trustee2
+	msgApproveUpgrade := NewMsgApproveUpgrade(trusteeAccAddress2)
+
+	// approve new upgrade with plan height < block height
+	setup.Ctx = setup.Ctx.WithBlockHeight(3)
+	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(sdkerrors.ErrInvalidRequest).Once()
+	_, err = setup.Handler(setup.Ctx, msgApproveUpgrade)
+	require.Error(t, err, sdkerrors.ErrInvalidRequest)
+
+	// check upgrade for not being added to ApprovedUpgrade store
+	_, isFound := setup.Keeper.GetApprovedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.False(t, isFound)
+
+	// re-propose new upgrade
+	msgProposeUpgrade = NewMsgProposeUpgrade(trusteeAccAddress1)
+	msgProposeUpgrade.Plan.Height = 7
+	setup.Ctx = setup.Ctx.WithBlockHeight(4)
+
+	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(nil).Once()
+	_, err = setup.Handler(setup.Ctx, msgProposeUpgrade)
+	require.NoError(t, err)
+
+	setup.Ctx = setup.Ctx.WithBlockHeight(5)
+
+	// approve new upgrade with plan height > block height
+	msgApproveUpgrade = NewMsgApproveUpgrade(trusteeAccAddress2)
+	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(nil).Once()
+	_, err = setup.Handler(setup.Ctx, msgApproveUpgrade)
+	require.NoError(t, err)
+
+	// check upgrade for being added to ApprovedUpgrade store
+	_, isFound = setup.Keeper.GetApprovedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.True(t, isFound)
+}
+
 func isContextWithCachedMultiStore(ctx sdk.Context) bool {
 	_, ok := ctx.MultiStore().(storetypes.CacheMultiStore)
 
