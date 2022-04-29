@@ -15,7 +15,7 @@ func (k Keeper) SetRejectedUpgrade(ctx sdk.Context, rejectedUpgrade types.Reject
 	), b)
 }
 
-// GetRejectedUpgrade returns a rejectedUpgrade from its index
+// GetRejectedUpgrade returns a rejectedUpgrade from its index.
 func (k Keeper) GetRejectedUpgrade(
 	ctx sdk.Context,
 	name string,
@@ -30,10 +30,11 @@ func (k Keeper) GetRejectedUpgrade(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
-// RemoveRejectedUpgrade removes a rejectedUpgrade from the store
+// RemoveRejectedUpgrade removes a rejectedUpgrade from the store.
 func (k Keeper) RemoveRejectedUpgrade(
 	ctx sdk.Context,
 	name string,
@@ -44,7 +45,7 @@ func (k Keeper) RemoveRejectedUpgrade(
 	))
 }
 
-// GetAllRejectedUpgrade returns all rejectedUpgrade
+// GetAllRejectedUpgrade returns all rejectedUpgrade.
 func (k Keeper) GetAllRejectedUpgrade(ctx sdk.Context) (list []types.RejectedUpgrade) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RejectedUpgradeKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
