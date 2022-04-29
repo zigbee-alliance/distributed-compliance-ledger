@@ -283,7 +283,7 @@ export const MsgApproveUpgradeResponse = {
         return message;
     }
 };
-const baseMsgRejectUpgrade = { creator: '', name: '' };
+const baseMsgRejectUpgrade = { creator: '', name: '', info: '', time: 0 };
 export const MsgRejectUpgrade = {
     encode(message, writer = Writer.create()) {
         if (message.creator !== '') {
@@ -291,6 +291,12 @@ export const MsgRejectUpgrade = {
         }
         if (message.name !== '') {
             writer.uint32(18).string(message.name);
+        }
+        if (message.info !== '') {
+            writer.uint32(26).string(message.info);
+        }
+        if (message.time !== 0) {
+            writer.uint32(32).int64(message.time);
         }
         return writer;
     },
@@ -306,6 +312,12 @@ export const MsgRejectUpgrade = {
                     break;
                 case 2:
                     message.name = reader.string();
+                    break;
+                case 3:
+                    message.info = reader.string();
+                    break;
+                case 4:
+                    message.time = longToNumber(reader.int64());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -328,12 +340,26 @@ export const MsgRejectUpgrade = {
         else {
             message.name = '';
         }
+        if (object.info !== undefined && object.info !== null) {
+            message.info = String(object.info);
+        }
+        else {
+            message.info = '';
+        }
+        if (object.time !== undefined && object.time !== null) {
+            message.time = Number(object.time);
+        }
+        else {
+            message.time = 0;
+        }
         return message;
     },
     toJSON(message) {
         const obj = {};
         message.creator !== undefined && (obj.creator = message.creator);
         message.name !== undefined && (obj.name = message.name);
+        message.info !== undefined && (obj.info = message.info);
+        message.time !== undefined && (obj.time = message.time);
         return obj;
     },
     fromPartial(object) {
@@ -349,6 +375,18 @@ export const MsgRejectUpgrade = {
         }
         else {
             message.name = '';
+        }
+        if (object.info !== undefined && object.info !== null) {
+            message.info = object.info;
+        }
+        else {
+            message.info = '';
+        }
+        if (object.time !== undefined && object.time !== null) {
+            message.time = object.time;
+        }
+        else {
+            message.time = 0;
         }
         return message;
     }

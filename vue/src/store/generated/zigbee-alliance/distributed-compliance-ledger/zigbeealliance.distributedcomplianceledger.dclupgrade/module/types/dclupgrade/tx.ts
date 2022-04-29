@@ -26,6 +26,8 @@ export interface MsgApproveUpgradeResponse {}
 export interface MsgRejectUpgrade {
   creator: string
   name: string
+  info: string
+  time: number
 }
 
 export interface MsgRejectUpgradeResponse {}
@@ -318,7 +320,7 @@ export const MsgApproveUpgradeResponse = {
   }
 }
 
-const baseMsgRejectUpgrade: object = { creator: '', name: '' }
+const baseMsgRejectUpgrade: object = { creator: '', name: '', info: '', time: 0 }
 
 export const MsgRejectUpgrade = {
   encode(message: MsgRejectUpgrade, writer: Writer = Writer.create()): Writer {
@@ -327,6 +329,12 @@ export const MsgRejectUpgrade = {
     }
     if (message.name !== '') {
       writer.uint32(18).string(message.name)
+    }
+    if (message.info !== '') {
+      writer.uint32(26).string(message.info)
+    }
+    if (message.time !== 0) {
+      writer.uint32(32).int64(message.time)
     }
     return writer
   },
@@ -343,6 +351,12 @@ export const MsgRejectUpgrade = {
           break
         case 2:
           message.name = reader.string()
+          break
+        case 3:
+          message.info = reader.string()
+          break
+        case 4:
+          message.time = longToNumber(reader.int64() as Long)
           break
         default:
           reader.skipType(tag & 7)
@@ -364,6 +378,16 @@ export const MsgRejectUpgrade = {
     } else {
       message.name = ''
     }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = String(object.info)
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = Number(object.time)
+    } else {
+      message.time = 0
+    }
     return message
   },
 
@@ -371,6 +395,8 @@ export const MsgRejectUpgrade = {
     const obj: any = {}
     message.creator !== undefined && (obj.creator = message.creator)
     message.name !== undefined && (obj.name = message.name)
+    message.info !== undefined && (obj.info = message.info)
+    message.time !== undefined && (obj.time = message.time)
     return obj
   },
 
@@ -385,6 +411,16 @@ export const MsgRejectUpgrade = {
       message.name = object.name
     } else {
       message.name = ''
+    }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = object.info
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = object.time
+    } else {
+      message.time = 0
     }
     return message
   }

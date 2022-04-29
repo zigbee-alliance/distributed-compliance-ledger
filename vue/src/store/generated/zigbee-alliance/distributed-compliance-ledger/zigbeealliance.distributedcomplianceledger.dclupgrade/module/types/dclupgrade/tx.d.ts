@@ -20,6 +20,8 @@ export interface MsgApproveUpgradeResponse {
 export interface MsgRejectUpgrade {
     creator: string;
     name: string;
+    info: string;
+    time: number;
 }
 export interface MsgRejectUpgradeResponse {
 }
