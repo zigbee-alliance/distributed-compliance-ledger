@@ -73,5 +73,10 @@ func (k msgServer) RejectUpgrade(goCtx context.Context, msg *types.MsgRejectUpgr
 		k.SetProposedUpgrade(ctx, proposedUpgrade)
 	}
 
+	_, isFound = k.GetRejectedUpgrade(ctx, msg.Name)
+	if isFound {
+		k.RemoveRejectedUpgrade(ctx, msg.Name)
+	}
+
 	return &types.MsgRejectUpgradeResponse{}, nil
 }
