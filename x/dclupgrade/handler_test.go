@@ -497,6 +497,361 @@ func TestHandler_ApproveUpgradePlanHeightLessBlockHeight(t *testing.T) {
 	require.False(t, isFound)
 }
 
+func TestHandler_RejectUpgrade_TwoRejectApprovalsAreNeeded(t *testing.T) {
+	setup := Setup(t)
+
+	trusteeAccAddress1 := testdata.GenerateAccAddress()
+	trusteeAccAddress2 := testdata.GenerateAccAddress()
+	trusteeAccAddress3 := testdata.GenerateAccAddress()
+	setup.AddAccount(trusteeAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress2, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress3, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.DclauthKeeper.On("CountAccountsWithRole", mock.Anything, dclauthtypes.Trustee).Return(3)
+
+	// propose new upgrade
+	msgProposeUpgrade := NewMsgProposeUpgrade(trusteeAccAddress1)
+
+	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(nil)
+	_, err := setup.Handler(setup.Ctx, msgProposeUpgrade)
+	require.NoError(t, err)
+
+	// reject new upgrade
+	msgRejectUpgrade := NewMsgRejectUpgrade(trusteeAccAddress2)
+	_, err = setup.Handler(setup.Ctx, msgRejectUpgrade)
+	require.NoError(t, err)
+
+	// check reject upgrade
+	_, isFound := setup.Keeper.GetRejectedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.False(t, isFound)
+
+	// check proposed upgrade
+	proposedUpgrade, isFound := setup.Keeper.GetProposedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.True(t, isFound)
+
+	require.Equal(t, msgProposeUpgrade.Plan, proposedUpgrade.Plan)
+	require.Equal(t, msgProposeUpgrade.Creator, proposedUpgrade.Creator)
+
+	require.Equal(t, 1, len(proposedUpgrade.Approvals))
+	require.Equal(t, msgProposeUpgrade.Creator, proposedUpgrade.Approvals[0].Address)
+	require.Equal(t, msgProposeUpgrade.Time, proposedUpgrade.Approvals[0].Time)
+	require.Equal(t, msgProposeUpgrade.Info, proposedUpgrade.Approvals[0].Info)
+
+	require.Equal(t, 1, len(proposedUpgrade.Rejects))
+	require.Equal(t, msgRejectUpgrade.Creator, proposedUpgrade.Rejects[0].Address)
+	require.Equal(t, msgRejectUpgrade.Time, proposedUpgrade.Rejects[0].Time)
+	require.Equal(t, msgRejectUpgrade.Info, proposedUpgrade.Rejects[0].Info)
+
+	// check approved upgrade for not being created
+	_, isFound = setup.Keeper.GetApprovedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.False(t, isFound)
+
+	// reject new upgrade
+	msgRejectUpgrade = NewMsgRejectUpgrade(trusteeAccAddress3)
+	_, err = setup.Handler(setup.Ctx, msgRejectUpgrade)
+	require.NoError(t, err)
+
+	// check proposed upgrade
+	_, isFound = setup.Keeper.GetProposedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.False(t, isFound)
+
+	// check reject upgrade
+	rejectedUpgrade, isFound := setup.Keeper.GetRejectedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.True(t, isFound)
+
+	require.Equal(t, msgProposeUpgrade.Plan, rejectedUpgrade.Plan)
+	require.Equal(t, msgProposeUpgrade.Creator, rejectedUpgrade.Creator)
+
+	require.Equal(t, 1, len(rejectedUpgrade.Approvals))
+	require.Equal(t, msgProposeUpgrade.Creator, proposedUpgrade.Approvals[0].Address)
+	require.Equal(t, msgProposeUpgrade.Time, proposedUpgrade.Approvals[0].Time)
+	require.Equal(t, msgProposeUpgrade.Info, proposedUpgrade.Approvals[0].Info)
+
+	require.Equal(t, 2, len(rejectedUpgrade.Rejects))
+	require.Equal(t, trusteeAccAddress2.String(), rejectedUpgrade.Rejects[0].Address)
+	require.Equal(t, msgRejectUpgrade.Time, rejectedUpgrade.Rejects[0].Time)
+	require.Equal(t, msgRejectUpgrade.Info, rejectedUpgrade.Rejects[0].Info)
+	require.Equal(t, trusteeAccAddress3.String(), rejectedUpgrade.Rejects[1].Address)
+	require.Equal(t, msgRejectUpgrade.Time, rejectedUpgrade.Rejects[1].Time)
+	require.Equal(t, msgRejectUpgrade.Info, rejectedUpgrade.Rejects[1].Info)
+
+	// check approved upgrade for not being created
+	_, isFound = setup.Keeper.GetApprovedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.False(t, isFound)
+}
+
+func TestHandler_RejectUpgrade_ByNotTrustee(t *testing.T) {
+	setup := Setup(t)
+
+	trusteeAccAddress1 := testdata.GenerateAccAddress()
+	trusteeAccAddress2 := testdata.GenerateAccAddress()
+	trusteeAccAddress3 := testdata.GenerateAccAddress()
+	setup.AddAccount(trusteeAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress2, []dclauthtypes.AccountRole{dclauthtypes.Vendor})
+	setup.AddAccount(trusteeAccAddress3, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.DclauthKeeper.On("CountAccountsWithRole", mock.Anything, dclauthtypes.Trustee).Return(3)
+
+	// propose new upgrade
+	msgProposeUpgrade := NewMsgProposeUpgrade(trusteeAccAddress1)
+
+	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(nil)
+	_, err := setup.Handler(setup.Ctx, msgProposeUpgrade)
+	require.NoError(t, err)
+
+	// reject new upgrade from role Vendor
+	msgRejectUpgrade := NewMsgRejectUpgrade(trusteeAccAddress2)
+	_, err = setup.Handler(setup.Ctx, msgRejectUpgrade)
+	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
+}
+
+func TestHandler_RejectUpgrade_ForUnknownAccount(t *testing.T) {
+	setup := Setup(t)
+
+	trusteeAccAddress1 := testdata.GenerateAccAddress()
+	setup.AddAccount(trusteeAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.DclauthKeeper.On("CountAccountsWithRole", mock.Anything, dclauthtypes.Trustee).Return(1)
+
+	// reject upgrade from unknown account
+	msgRejectUpgrade := NewMsgRejectUpgrade(trusteeAccAddress1)
+	_, err := setup.Handler(setup.Ctx, msgRejectUpgrade)
+	require.Error(t, err)
+}
+
+func TestHandler_Duplicate_RejectUpgrade_FromTheSameTrustee(t *testing.T) {
+	setup := Setup(t)
+
+	trusteeAccAddress1 := testdata.GenerateAccAddress()
+	trusteeAccAddress2 := testdata.GenerateAccAddress()
+	trusteeAccAddress3 := testdata.GenerateAccAddress()
+	setup.AddAccount(trusteeAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress2, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress3, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.DclauthKeeper.On("CountAccountsWithRole", mock.Anything, dclauthtypes.Trustee).Return(3)
+
+	// propose new upgrade
+	msgProposeUpgrade := NewMsgProposeUpgrade(trusteeAccAddress1)
+
+	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(nil)
+	_, err := setup.Handler(setup.Ctx, msgProposeUpgrade)
+	require.NoError(t, err)
+
+	// reject new upgrade
+	msgRejectUpgrade := NewMsgRejectUpgrade(trusteeAccAddress2)
+	_, err = setup.Handler(setup.Ctx, msgRejectUpgrade)
+	require.NoError(t, err)
+
+	// second time trustee2 reject new upgrade
+	msgRejectUpgrade = NewMsgRejectUpgrade(trusteeAccAddress2)
+	_, err = setup.Handler(setup.Ctx, msgRejectUpgrade)
+	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
+
+	// check proposed upgrade
+	_, isFound := setup.Keeper.GetProposedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.True(t, isFound)
+
+	// check reject upgrade
+	_, isFound = setup.Keeper.GetRejectedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.False(t, isFound)
+}
+
+func TestHandler_ApproveUpgradeAndRejectUpgrade_FromTheSameTrustee(t *testing.T) {
+	setup := Setup(t)
+
+	trusteeAccAddress1 := testdata.GenerateAccAddress()
+	trusteeAccAddress2 := testdata.GenerateAccAddress()
+	trusteeAccAddress3 := testdata.GenerateAccAddress()
+	trusteeAccAddress4 := testdata.GenerateAccAddress()
+	setup.AddAccount(trusteeAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress2, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress3, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress4, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.DclauthKeeper.On("CountAccountsWithRole", mock.Anything, dclauthtypes.Trustee).Return(4)
+
+	// propose new upgrade from trustee1
+	msgProposeUpgrade := NewMsgProposeUpgrade(trusteeAccAddress1)
+
+	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(nil)
+	_, err := setup.Handler(setup.Ctx, msgProposeUpgrade)
+	require.NoError(t, err)
+
+	// approve new upgrade from trustee2
+	msgApproveUpgrade := NewMsgApproveUpgrade(trusteeAccAddress2)
+	_, err = setup.Handler(setup.Ctx, msgApproveUpgrade)
+	require.NoError(t, err)
+
+	// try rejects upgrade from trustee2
+	msgRejectUpgrade := NewMsgRejectUpgrade(trusteeAccAddress2)
+	_, err = setup.Handler(setup.Ctx, msgRejectUpgrade)
+	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
+}
+
+func TestHandler_RejectUpgradeAndApproveUpgrade_FromTheSameTrustee(t *testing.T) {
+	setup := Setup(t)
+
+	trusteeAccAddress1 := testdata.GenerateAccAddress()
+	trusteeAccAddress2 := testdata.GenerateAccAddress()
+	trusteeAccAddress3 := testdata.GenerateAccAddress()
+	setup.AddAccount(trusteeAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress2, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress3, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.DclauthKeeper.On("CountAccountsWithRole", mock.Anything, dclauthtypes.Trustee).Return(3)
+
+	// propose new upgrade from trustee1
+	msgProposeUpgrade := NewMsgProposeUpgrade(trusteeAccAddress1)
+
+	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(nil)
+	_, err := setup.Handler(setup.Ctx, msgProposeUpgrade)
+	require.NoError(t, err)
+
+	// reject new upgrade from trustee2
+	msgRejectUpgrade := NewMsgRejectUpgrade(trusteeAccAddress2)
+	_, err = setup.Handler(setup.Ctx, msgRejectUpgrade)
+	require.NoError(t, err)
+
+	// try approve upgrade from trustee2
+	msgApproveUpgrade := NewMsgApproveUpgrade(trusteeAccAddress2)
+	_, err = setup.Handler(setup.Ctx, msgApproveUpgrade)
+	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
+}
+
+func TestHandler_DoubleTimeRejectUpgrade(t *testing.T) {
+	setup := Setup(t)
+
+	trusteeAccAddress1 := testdata.GenerateAccAddress()
+	trusteeAccAddress2 := testdata.GenerateAccAddress()
+	trusteeAccAddress3 := testdata.GenerateAccAddress()
+	setup.AddAccount(trusteeAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress2, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress3, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.DclauthKeeper.On("CountAccountsWithRole", mock.Anything, dclauthtypes.Trustee).Return(3)
+
+	// propose new upgrade from trustee1
+	msgProposeUpgrade := NewMsgProposeUpgrade(trusteeAccAddress1)
+
+	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(nil)
+	_, err := setup.Handler(setup.Ctx, msgProposeUpgrade)
+	require.NoError(t, err)
+
+	// reject new upgrade
+	msgRejectUpgrade := NewMsgRejectUpgrade(trusteeAccAddress2)
+	_, err = setup.Handler(setup.Ctx, msgRejectUpgrade)
+	require.NoError(t, err)
+
+	// check reject upgrade
+	_, isFound := setup.Keeper.GetRejectedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.False(t, isFound)
+
+	// check proposed upgrade
+	proposedUpgrade, isFound := setup.Keeper.GetProposedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.True(t, isFound)
+
+	// check approved upgrade for not being created
+	_, isFound = setup.Keeper.GetApprovedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.False(t, isFound)
+
+	// reject new upgrade
+	msgRejectUpgrade = NewMsgRejectUpgrade(trusteeAccAddress3)
+	_, err = setup.Handler(setup.Ctx, msgRejectUpgrade)
+	require.NoError(t, err)
+
+	// check rejected upgrade
+	_, isFound = setup.Keeper.GetRejectedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.False(t, isFound)
+
+	// reject new upgrade
+	msgRejectUpgrade = NewMsgRejectUpgrade(trusteeAccAddress3)
+	_, err = setup.Handler(setup.Ctx, msgRejectUpgrade)
+	require.NoError(t, err)
+
+	// check rejected upgrade
+	rejectedUpgrade, isFound := setup.Keeper.GetRejectedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.True(t, isFound)
+
+	require.Equal(t, msgProposeUpgrade.Plan, rejectedUpgrade.Plan)
+	require.Equal(t, msgProposeUpgrade.Creator, rejectedUpgrade.Creator)
+
+	require.Equal(t, 1, len(rejectedUpgrade.Approvals))
+	require.Equal(t, msgProposeUpgrade.Creator, proposedUpgrade.Approvals[0].Address)
+	require.Equal(t, msgProposeUpgrade.Time, proposedUpgrade.Approvals[0].Time)
+	require.Equal(t, msgProposeUpgrade.Info, proposedUpgrade.Approvals[0].Info)
+
+	require.Equal(t, 2, len(rejectedUpgrade.Rejects))
+	require.Equal(t, trusteeAccAddress2.String(), rejectedUpgrade.Rejects[0].Address)
+	require.Equal(t, msgRejectUpgrade.Time, rejectedUpgrade.Rejects[0].Time)
+	require.Equal(t, msgRejectUpgrade.Info, rejectedUpgrade.Rejects[0].Info)
+	require.Equal(t, trusteeAccAddress3.String(), rejectedUpgrade.Rejects[1].Address)
+	require.Equal(t, msgRejectUpgrade.Time, rejectedUpgrade.Rejects[1].Time)
+	require.Equal(t, msgRejectUpgrade.Info, rejectedUpgrade.Rejects[1].Info)
+
+	// check proposed upgrade
+	_, isFound = setup.Keeper.GetProposedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.False(t, isFound)
+
+	// check approved upgrade for not being created
+	_, isFound = setup.Keeper.GetApprovedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.False(t, isFound)
+
+	// propose re-upgrade from trustee1
+	msgProposeUpgrade = NewMsgProposeUpgrade(trusteeAccAddress1)
+
+	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(nil)
+	_, err = setup.Handler(setup.Ctx, msgProposeUpgrade)
+	require.NoError(t, err)
+
+	// check reject upgrade
+	_, isFound = setup.Keeper.GetRejectedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.False(t, isFound)
+
+	// check proposed upgrade
+	_, isFound = setup.Keeper.GetProposedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.True(t, isFound)
+
+	// reject new upgrade
+	msgRejectUpgrade = NewMsgRejectUpgrade(trusteeAccAddress3)
+	_, err = setup.Handler(setup.Ctx, msgRejectUpgrade)
+	require.NoError(t, err)
+
+	// check reject upgrade
+	_, isFound = setup.Keeper.GetRejectedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.False(t, isFound)
+
+	// check proposed upgrade
+	proposedUpgrade, isFound = setup.Keeper.GetProposedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.True(t, isFound)
+
+	// reject new upgrade
+	msgRejectUpgrade = NewMsgRejectUpgrade(trusteeAccAddress2)
+	_, err = setup.Handler(setup.Ctx, msgRejectUpgrade)
+	require.NoError(t, err)
+
+	// check rejected upgrade
+	rejectedUpgrade, isFound = setup.Keeper.GetRejectedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.True(t, isFound)
+
+	require.Equal(t, msgProposeUpgrade.Plan, rejectedUpgrade.Plan)
+	require.Equal(t, msgProposeUpgrade.Creator, rejectedUpgrade.Creator)
+
+	require.Equal(t, 1, len(rejectedUpgrade.Approvals))
+	require.Equal(t, msgProposeUpgrade.Creator, proposedUpgrade.Approvals[0].Address)
+	require.Equal(t, msgProposeUpgrade.Time, proposedUpgrade.Approvals[0].Time)
+	require.Equal(t, msgProposeUpgrade.Info, proposedUpgrade.Approvals[0].Info)
+
+	require.Equal(t, 2, len(rejectedUpgrade.Rejects))
+	require.Equal(t, trusteeAccAddress3.String(), rejectedUpgrade.Rejects[0].Address)
+	require.Equal(t, msgRejectUpgrade.Time, rejectedUpgrade.Rejects[0].Time)
+	require.Equal(t, msgRejectUpgrade.Info, rejectedUpgrade.Rejects[0].Info)
+	require.Equal(t, trusteeAccAddress2.String(), rejectedUpgrade.Rejects[1].Address)
+	require.Equal(t, msgRejectUpgrade.Time, rejectedUpgrade.Rejects[1].Time)
+	require.Equal(t, msgRejectUpgrade.Info, rejectedUpgrade.Rejects[1].Info)
+
+	// check proposed upgrade
+	_, isFound = setup.Keeper.GetProposedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.False(t, isFound)
+
+	// check approved upgrade for not being created
+	_, isFound = setup.Keeper.GetApprovedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.False(t, isFound)
+}
+
 func isContextWithCachedMultiStore(ctx sdk.Context) bool {
 	_, ok := ctx.MultiStore().(storetypes.CacheMultiStore)
 
@@ -528,5 +883,14 @@ func NewMsgApproveUpgrade(signer sdk.AccAddress) *types.MsgApproveUpgrade {
 		Name:    testconstants.UpgradePlanName,
 		Info:    testconstants.Info2,
 		Time:    testconstants.Time2,
+	}
+}
+
+func NewMsgRejectUpgrade(signer sdk.AccAddress) *types.MsgRejectUpgrade {
+	return &types.MsgRejectUpgrade{
+		Creator: signer.String(),
+		Name:    testconstants.UpgradePlanName,
+		Info:    testconstants.Info3,
+		Time:    testconstants.Time3,
 	}
 }
