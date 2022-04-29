@@ -39,6 +39,8 @@ message MsgApproveUpgradeResponse {
 message MsgRejectUpgrade {
   string creator = 1;
   string name = 2;
+  string info = 3 [(gogoproto.moretags) = "validate:\"max=4096\""];
+  int64 time = 4;
 }
 
 message MsgRejectUpgradeResponse {
