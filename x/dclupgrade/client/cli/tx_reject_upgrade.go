@@ -15,7 +15,7 @@ var _ = strconv.Itoa(0)
 func CmdRejectUpgrade() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "reject-upgrade [name]",
-		Short: "Broadcast message RejectUpgrade",
+		Short: "Reject proposed upgrade with given name",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			argName := args[0]
