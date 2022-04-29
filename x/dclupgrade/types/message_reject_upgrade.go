@@ -1,6 +1,8 @@
 package types
 
 import (
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -9,10 +11,12 @@ const TypeMsgRejectUpgrade = "reject_upgrade"
 
 var _ sdk.Msg = &MsgRejectUpgrade{}
 
-func NewMsgRejectUpgrade(creator string, name string) *MsgRejectUpgrade {
+func NewMsgRejectUpgrade(creator string, name string, info string) *MsgRejectUpgrade {
 	return &MsgRejectUpgrade{
 		Creator: creator,
 		Name:    name,
+		Info:    info,
+		Time:    time.Now().Unix(),
 	}
 }
 
