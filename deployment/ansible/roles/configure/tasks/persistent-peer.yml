@@ -13,36 +13,42 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+- name: gather facts from host
+  setup:
+  delegate_to: "{{ host }}"
+  delegate_facts: true
+
 - name: persistent peer | get node id content
   changed_when: false
   become: true
   command: "{{ dcld.path }} tendermint show-node-id --home {{ dcl_home }}"
+  delegate_to: "{{ host }}"
   register: node_id_output
 
 - name: persistent peer | set node content to variable
   set_fact:
     node_id: "{{ node_id_output.stdout }}"
+  delegate_to: "{{ host }}"
+  delegate_facts: true
 
 - name: persistent peer | get private ip address
   set_fact:
-    private_ip: "{{ ansible_all_ipv4_addresses | ipaddr('private') | first }}"
+    ip_address: "{{ hostvars[host]['ansible_default_ipv4']['address'] }}"
+  when: is_private_ip
 
-- name: persistent peer | get public ip address
+- name: persistent peer | get public ip address output
   ipify_facts:
   register: public_ip_output
+  delegate_to: "{{ host }}"
+  when: not is_private_ip
+
+- name: persistent peer | get public ip address
+  set_fact:
+    ip_address: "{{ public_ip_output.ansible_facts.ipify_public_ip }}"
+  when: not is_private_ip
 
 - name: persistent peer | build persistent peer string
   set_fact:
-    persistent_peer: "{{ node_id + '@' + private_ip + ':26656' }}"
-
-- name: persistent peer | build public persistent peer string
-  set_fact:
-    public_persistent_peer: "{{ node_id + '@' + public_ip_output.ansible_facts.ipify_public_ip + ':26656' }}"
-
-- name: persistent peer | view persistent peer string
-  debug:
-    var: persistent_peer
-
-- name: persistent peer | view public persistent peer string
-  debug:
-    var: public_persistent_peer
+    persistent_peer: "{{ hostvars[host]['node_id'] + '@' + ip_address + ':26656' }}"
+  delegate_to: "{{ host }}"
+  delegate_facts: true

@@ -49,6 +49,3 @@
     state: directory
     owner: "{{ cosmovisor.user }}"
     path: "{{ dcl_home }}"
-
-- name: retrieve persistent peer string
-  import_tasks: persistent-peer.yml

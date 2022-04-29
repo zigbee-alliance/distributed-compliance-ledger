@@ -13,13 +13,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: private-sentry | discover validator peers
+- name: private-sentry | retrieve persistent peer and node id from validator hosts
+  include_tasks: persistent-peer.yml
+  vars:
+    is_private_ip: true
+  loop_control:
+    loop_var: host
+  loop: "{{ groups['validators'] | default([]) }}"
+  run_once: true
+
+- name: private-sentry | collect validator peers
   set_fact:
     validator_peers: "{{ (groups['validators'] | default([]) | map('extract', hostvars, 'persistent_peer') | default(false) | select | list | join(',')) }}"
   run_once: true
   when: config.p2p.persistent_peers | default('', true) | trim == ''
 
-- name: private-sentry | discover validator node ids
+- name: private-sentry | collect validator node ids
   set_fact:
     validator_node_ids: "{{ (groups['validators'] | default([]) | map('extract', hostvars, 'node_id') | default(false) | select | list | join(',')) }}"
   run_once: true

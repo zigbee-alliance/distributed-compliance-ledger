@@ -13,6 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+- name: public-sentry | retrieve persistent peer string from private sentry hosts
+  include_tasks: persistent-peer.yml
+  vars:
+    is_private_ip: true
+  loop_control:
+    loop_var: host
+  loop: "{{ groups['private_sentries'] | default([]) }}"
+  run_once: true
+
 - name: observer | discover private sentry peers
   set_fact:
     private_sentry_peers: "{{ (groups['private_sentries'] | default([]) | map('extract', hostvars, 'persistent_peer') | default(false) | select | list | join(',')) }}"
