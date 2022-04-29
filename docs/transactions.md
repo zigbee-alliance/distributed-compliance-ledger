@@ -878,6 +878,20 @@ Gets a proposed but not approved root certificate with the given subject and sub
 - REST API:
   - GET `/dcl/pki/proposed-certificates/{subject}/{subject_key_id}`
 
+#### GET_REJECTED_X509_ROOT_CERT
+
+**Status: Implemented**
+
+Get a rejected root certificate with the given subject and subject key ID attributes.
+
+- Parameters:
+  - subject: `string` - certificates's `Subject` in base64 format
+  - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
+- CLI command:
+  - `dcld query pki rejected-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string>`
+- REST API:
+  - GET `/dcl/pki/rejected-certificates/{subject}/{subject_key_id}`
+
 #### GET_REVOKED_CERT
 
 **Status: Implemented**
@@ -978,6 +992,22 @@ Should be sent to trusted nodes only.
   - `dcld query pki all-proposed-x509-root-certs`
 - REST API:
   - GET `dcl/pki/proposed-certificates`
+
+ #### GET_ALL_REJECTED_X509_ROOT_CERTS
+ 
+ **Status: Implemented**
+
+Gets all rejected root certificates.
+
+Shoudl be sent to trusted nodes only.
+
+- Parameters:
+  - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
+- CLI command:
+  - `dcld query pki all-rejected-x509-root-certs`
+- REST API:
+  - GET `dcl/pki/rejected-certificates`
+
 
 #### GET_ALL_PROPOSED_X509_ROOT_CERTS_TO_REVOKE
 
@@ -1124,6 +1154,19 @@ Gets a proposed but not approved accounts by its address
 - REST API:
   - GET `/dcl/auth/proposed-accounts/{address}`
 
+#### GET_REJECTED_ACCOUNT
+
+**Status: Implemented**
+
+Get a rejected accounts by its address
+
+- Parameters:
+  - address: `string` - account address; Bech32 encoded
+- CLI command:
+  - `dcld query auth rejected-account --address <bech32 encoded string>`
+- REST API:
+  - GET `/dcl/auth/rejected-accounts/{address}`
+
 #### GET_PROPOSED_ACCOUNT_TO_REVOKE
 
 **Status: Implemented**
@@ -1179,6 +1222,22 @@ Should be sent to trusted nodes only.
   - `dcld query auth all-proposed-accounts`
 - REST API:
   - GET `/dcl/auth/proposed-accounts`
+
+#### GET_ALL_REJECTED_ACCOUNTS
+
+**Status: Implemented**
+
+Get all rejected accounts.
+
+Should be sent to trusted nodes only.
+
+- Parameters:
+  - Common pagination parameters (see [pagination-params]
+   (#common-pagination-parameters))
+- CLI command:
+  - `dcld query auth all-rejected-accounts`
+- REST API:
+  - GET `/dcl/auth/rejected-accounts`
 
 #### GET_ALL_PROPOSED_ACCOUNTS_TO_REVOKE
 
@@ -1409,6 +1468,41 @@ Should be sent to trusted nodes only.
 - REST API:
   - GET `/dcl/validator/proposed-disable-nodes`
 
+#### GET_REJECTED_DISABLE_VALIDATOR
+
+**Status: Implemented**
+
+Gets a rejected validator node.
+
+- Parameters:
+  - address: `string` - Bech32 encoded validator address or owner account
+- CLI command:
+  - `dcld query validator rejected-disable-node --address=<validator address|account>` <br> e.g.:
+    ```
+    dcld query validator rejected-disable-node --address=cosmosvaloper1qse069r3w0d82dul4xluqapxfg62qlndsdw9ms
+    ``` 
+    or
+    ```
+    dcld query validator rejected-disable-node --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q
+    ```
+- REST API:
+  - GET `/dcl/validator/rejected-disable-nodes/{address}`
+
+#### GET_ALL_REJECTED_DISABLE_VALIDATORS
+
+**Status: Implemented**
+
+Gets the list of all rejected disable validator nodes from the store.
+
+Should be sent to trusted nodes only.
+
+- Parameters:
+  - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
+- CLI command:
+  - `dcld query validator all-rejected-disable-nodes`
+- REST API:
+  - GET `/dcl/validator/rejected-disable-nodes`
+
 #### GET_DISABLED_VALIDATOR
 
 **Status: Implemented**
@@ -1613,6 +1707,23 @@ dcld query dclupgrade approved-upgrade --name=<string>
 - REST API:
   - GET `/dcl/dclupgrade/approved-upgrades/{name}`
 
+#### GET_REJECTED_UPGRADE
+
+**Status: Implemented**
+
+Gets the rejected upgrade plan with the given name.
+
+- Parameters:
+  - name: `string` - upgrade plan name
+- CLI command:
+
+```bash
+dcld query dclupgrade rejected-upgrade --name=<string>
+```
+
+- REST API:
+  - GET `/dcl/dclupgrade/rejected-upgrades/{name}`
+
 #### GET_ALL_PROPOSED_UPGRADES
 
 **Status: Implemented**
@@ -1646,6 +1757,23 @@ dcld query dclupgrade all-approved-upgrades
 
 - REST API:
   - GET `/dcl/dclupgrade/approved-upgrades`
+
+#### GET_ALL_REJECTED_UPGRADES
+
+**Status: Implemented**
+
+Gets all the rejected upgrade plans.
+
+- Parameters:
+  - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
+- CLI command:
+
+```bash
+dcld query dclupgrade all-rejected-upgrades
+```
+
+- REST API:
+  - GET `/dcl/dclupgrade/rejected-upgrades`
 
 #### PLAN
 
