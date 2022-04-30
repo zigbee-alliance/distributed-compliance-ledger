@@ -70,12 +70,7 @@
       copy:
         src: "{{ playbook_dir }}/../persistent_chains/{{ chain_id }}/genesis.json"
         dest: "{{ dcl_home }}/config/genesis.json"
-    - name: ensure user permissions
-      file:
-        recurse: true
-        state: directory
         owner: "{{ cosmovisor.user }}"
-        path: "{{ dcl_home }}"
 
 - name: run all dcl nodes
   hosts: all
