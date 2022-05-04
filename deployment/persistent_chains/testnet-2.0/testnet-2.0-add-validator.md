@@ -65,7 +65,7 @@ curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-complia
 
 ```bash
 sudo cp ./cosmovisor /usr/bin/
-sudo a+x /usr/bin/cosmovisor
+sudo chmod a+x /usr/bin/cosmovisor
 ```
 
 ## 3 Run a Full Node using state sync
