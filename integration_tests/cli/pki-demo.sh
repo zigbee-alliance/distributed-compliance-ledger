@@ -1550,4 +1550,52 @@ check_response "$result" "\"address\": \"$second_trustee_account_address\""
 
 test_divider
 
+# 16. TEST PROPOSE ROOT CERTIFICATE
+echo "16. PROPOSE TEST ROOT CERT"
+test_divider
+
+echo "$user_account (Not Trustee) propose Root certificate"
+test_root_path="integration_tests/constants/test_root_cert"
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$test_root_path" --from $user_account --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Request proposed Root certificate - there should be no Approval"
+result=$(dcld query pki proposed-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id")
+echo $result | jq
+check_response "$result" "\"subject\": \"$test_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$test_cert_subject_key_id\""
+check_response "$result" "\"serialNumber\": \"$test_cert_serial_number\""
+check_response "$result" "\"subjectAsText\": \"$test_cert_subject_as_text\""
+echo $result | jq
+
+# 17. TEST APPROVE ROOT CERTIFICATE
+echo "17. TEST APPROVE ROOT CERT"
+test_divider
+
+echo "$trustee_account (Trustee) approve Root certificate"
+result=$(echo $passphrase | dcld tx pki approve-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --from $trustee_account --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "$trustee_account (Trustee) approve Root certificate"
+result=$(echo $passphrase | dcld tx pki approve-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --from $second_trustee_account_address --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Certificate must be Approved and contains 2 approvals. Request Root certificate"
+result=$(dcld query pki x509-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id")
+echo $result | jq
+check_response "$result" "\"subject\": \"$test_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$test_cert_subject_key_id\""
+check_response "$result" "\"serialNumber\": \"$test_cert_serial_number\""
+check_response "$result" "\"subjectAsText\": \"$test_cert_subject_as_text\""
+check_response "$result" "\"address\": \"$trustee_account_address\""
+check_response "$result" "\"address\": \"$second_trustee_account_address\""
+
+test_divider
+
 echo "PASS"
