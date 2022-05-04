@@ -301,7 +301,7 @@ func Demo(suite *utils.TestSuite) {
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{approveUpgradeMsg}, bobName, bobAccount)
 	require.NoError(suite.T, err)
 
-	// Another trustee try to rejects upgrade
+	// Another trustee tries to reject upgrade
 	rejectUpgradeMsg := NewMsgRejectUpgrade(bobAccount.Address, proposeUpgradeMsg.Plan.Name)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{rejectUpgradeMsg}, bobName, bobAccount)
 	require.Error(suite.T, err)

@@ -581,7 +581,7 @@ func AuthDemo(suite *utils.TestSuite) {
 	_, err = ApproveAddAccount(suite, testAccAddr, aliceName, aliceAccount, testconstants.Info)
 	require.NoError(suite.T, err)
 
-	// Alice doesn't reject accont, because Alice already approved account
+	// Alice cannot reject accont, because Alice already approved account
 	_, err = ApproveAddAccount(suite, testAccAddr, aliceName, aliceAccount, testconstants.Info)
 	require.Error(suite.T, err)
 
@@ -744,7 +744,7 @@ func AuthDemo(suite *utils.TestSuite) {
 	_, err = ApproveAddAccount(suite, testAccAddr, aliceName, aliceAccount, testconstants.Info)
 	require.NoError(suite.T, err)
 
-	// Alice doesn't reject accont, because Alice already approved account
+	// Alice cannot reject accont, because Alice already approved account
 	_, err = ApproveAddAccount(suite, testAccAddr, aliceName, aliceAccount, testconstants.Info)
 	require.Error(suite.T, err)
 
@@ -813,7 +813,7 @@ func AuthDemo(suite *utils.TestSuite) {
 	_, err = RejectAddAccount(suite, testAccAddr, aliceName, aliceAccount, testconstants.Info)
 	require.NoError(suite.T, err)
 
-	// Alice doesn't approve accont, because Alice already rejected account
+	// Alice cannot approve account, because Alice already rejected account
 	_, err = ApproveAddAccount(suite, testAccAddr, aliceName, aliceAccount, testconstants.Info)
 	require.Error(suite.T, err)
 

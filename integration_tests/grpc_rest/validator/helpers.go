@@ -375,15 +375,15 @@ func Demo(suite *utils.TestSuite) {
 	_, err = ApproveDisableValidator(suite, validatorAddr, jackName, jackAccount, testconstants.Info)
 	require.NoError(suite.T, err)
 
-	// Doesn't approve the second time from same trustee
+	// Cannot approve the second time from same trustee
 	_, err = ApproveDisableValidator(suite, validatorAddr, jackName, jackAccount, testconstants.Info)
 	require.Error(suite.T, err)
 
-	// Doesn't reject new disable validator from same trustee, because Trustee already approved
+	// Cannot reject new disable validator from same trustee, because Trustee already approved
 	_, err = RejectDisableValidator(suite, validatorAddr, bobName, bobAccount, testconstants.Info)
 	require.Error(suite.T, err)
 
-	// node admin doesn't add a new validator with new pubkey, because node admin already has disabled validator
+	// node admin cannot add a new validator with new pubkey, because node admin already has disabled validator
 	_, err = CreateValidator(suite, validatorAddr, nodeAdminName, nodeAdminAcc, testconstants.ValidatorPubKey2, "test123")
 	require.Error(suite.T, err)
 
@@ -426,11 +426,11 @@ func Demo(suite *utils.TestSuite) {
 	_, err = RejectDisableValidator(suite, validatorAddr, jackName, jackAccount, testconstants.Info)
 	require.NoError(suite.T, err)
 
-	// Doesn't reject the second time from same trustee
+	// Cannot reject the second time from same trustee
 	_, err = RejectDisableValidator(suite, validatorAddr, jackName, jackAccount, testconstants.Info)
 	require.Error(suite.T, err)
 
-	// Doesn't approve the from the same Trustee, because Trustee already rejected
+	// Cannot approve the from the same Trustee, because Trustee already rejected
 	_, err = ApproveDisableValidator(suite, validatorAddr, jackName, jackAccount, testconstants.Info)
 	require.Error(suite.T, err)
 

@@ -129,7 +129,7 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Alice doesn't reject account for \"$user\", because Alice already approved account"
+echo "Alice cannot reject account for  \"$user\""
 result=$(echo $passphrase | dcld tx auth reject-add-account --address="$user_address" --info="Alice is rejecting this account" --from alice --yes 2>&1 || true)
 response_does_not_contain "$result" "\"code\": 0"
 
@@ -513,7 +513,7 @@ response_does_not_contain "$result"  $alice_address "json"
 
 test_divider
 
-echo "Alice reject account for \"$user\""
+echo "Alice rejects account for \"$user\""
 result=$(echo $passphrase | dcld tx auth reject-add-account --address="$user_address" --info="Alice is rejecting this account" --from alice --yes)
 check_response "$result" "\"code\": 0"
 
@@ -583,13 +583,13 @@ check_response "$result" "\"address\": \"$user_address\""
 
 test_divider
 
-echo "Bob reject account for \"$user\""
+echo "Bob rejects account for \"$user\""
 result=$(echo $passphrase | dcld tx auth reject-add-account --address="$user_address" --info="Bob is rejecting this account" --from bob --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Bob can not the second time reject the same \"$user\""
+echo "Bob cannot reject the same account \"$user\" for the second time"
 result=$(echo $passphrase | dcld tx auth reject-add-account --address="$user_address" --info="Bob is rejecting this account" --from bob --yes 2>&1 || true)
 response_does_not_contain "$result" "\"code\": 0"
 
@@ -625,7 +625,7 @@ response_does_not_contain "$result" "\"address\": \"$user_address\""
 
 test_divider
 
-echo "Get a rejected account for $user. $user account must be exist"
+echo "Get a rejected account for $user. $user account must exist"
 result=$(dcld query auth rejected-account --address=$user_address)
 check_response "$result" "\"address\": \"$user_address\""
 check_response_and_report "$result"  $jack_address "json"
