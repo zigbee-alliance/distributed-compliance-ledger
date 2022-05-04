@@ -24,10 +24,10 @@
     include_vars:
       file: "{{ type }}.yml"
       hash_behaviour: merge
-  
+
   - name: update node type specific config values
     include_tasks: "{{ type }}.yml"
-  
+
   - name: setup TOMLs files
     include_tasks: setup.yml
     loop_control:
