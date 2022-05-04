@@ -572,7 +572,7 @@ echo "$result"
 
 test_divider
 
-echo "Get a proposed validator to disable $address"
+echo "Get a rejected validator to disable $address"
 result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator rejected-disable-node --address="$address"")
 check_response "$result" "\"approvals\":\[{\"address\":\"$alice_address\"" raw
 check_response "$result" "\"rejects\":\[{\"address\":\"$bob_address\"" raw
