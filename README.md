@@ -196,7 +196,7 @@ See [Run local pool](README-DEV.md#run-local-pool) section in [README-DEV.md](RE
 
 ### Deploy a persistent pool of nodes
 
-A recommended way for deployment and client connection: [diagram](docs/deployment.png), [diagram-detailed](docs/deployment-detailed.png) and [diagram-aws](docs/deployment-aws.png).
+A recommended way for deployment and client connection: [diagram](docs/deployment.png), [diagram-detailed](docs/deployment-detailed.png) and [diagram-aws](docs/deployment-design-aws-diagram.png).
 
 One can either deploy its own network of validator nodes or join one of the persistent DC Ledger Networks.
 
