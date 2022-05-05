@@ -466,7 +466,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	// Register new Vendor account
 	vid := int32(tmrand.Uint16())
 	vendorName := utils.RandString()
-	vendorAccount := test_dclauth.CreateAccount(
+	vendorAccount := test_dclauth.CreateVendorAccount(
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
@@ -631,7 +631,7 @@ func DemoTrackRevocation(suite *utils.TestSuite) {
 	// Register new Vendor account
 	vid := int32(tmrand.Uint16())
 	vendorName := utils.RandString()
-	vendorAccount := test_dclauth.CreateAccount(
+	vendorAccount := test_dclauth.CreateVendorAccount(
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
@@ -786,7 +786,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	// Register new Vendor account
 	vid := int32(tmrand.Uint16())
 	vendorName := utils.RandString()
-	vendorAccount := test_dclauth.CreateAccount(
+	vendorAccount := test_dclauth.CreateVendorAccount(
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
@@ -940,7 +940,7 @@ func DemoTrackComplianceWithHexVidAndPid(suite *utils.TestSuite) {
 	// Register new Vendor account
 	var vid int32 = 0xA13
 	vendorName := utils.RandString()
-	vendorAccount := test_dclauth.CreateAccount(
+	vendorAccount := test_dclauth.CreateVendorAccount(
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
@@ -1047,7 +1047,7 @@ func DemoTrackRevocationWithHexVidAndPid(suite *utils.TestSuite) {
 	// Register new Vendor account
 	var vid int32 = 0xA14
 	vendorName := utils.RandString()
-	vendorAccount := test_dclauth.CreateAccount(
+	vendorAccount := test_dclauth.CreateVendorAccount(
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
@@ -1176,7 +1176,7 @@ func DemoTrackProvisionByHexVidAndPid(suite *utils.TestSuite) {
 	// Register new Vendor account
 	var vid int32 = 0xA16
 	vendorName := utils.RandString()
-	vendorAccount := test_dclauth.CreateAccount(
+	vendorAccount := test_dclauth.CreateVendorAccount(
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
