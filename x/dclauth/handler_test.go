@@ -64,7 +64,8 @@ func TestHandler_CreateAccount_OneApprovalIsNeeded(t *testing.T) {
 		require.Equal(t, 1, setup.Keeper.AccountApprovalsCount(setup.Ctx, types.AccountApprovalsPercent))
 
 		// propose account
-		_, address, pubKey, err := proposeAddAccount(setup, trustee)
+
+		_, address, pubKey, err := proposeAddAccount(setup, trustee, types.AccountRoles{types.NodeAdmin})
 		require.NoError(t, err)
 
 		// ensure active account created
@@ -89,7 +90,7 @@ func TestHandler_CreateAccount_TwoApprovalsAreNeeded(t *testing.T) {
 	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx, types.AccountApprovalsPercent))
 
 	// trustee1 propose account
-	_, address, pubKey, err := proposeAddAccount(setup, trustee1)
+	_, address, pubKey, err := proposeAddAccount(setup, trustee1, types.AccountRoles{types.NodeAdmin})
 	require.NoError(t, err)
 
 	// ensure pending account created
@@ -139,7 +140,7 @@ func TestHandler_CreateAccount_ThreeApprovalsAreNeeded(t *testing.T) {
 	require.Equal(t, 3, setup.Keeper.AccountApprovalsCount(setup.Ctx, types.AccountApprovalsPercent))
 
 	// trustee1 propose account
-	_, address, pubKey, err := proposeAddAccount(setup, trustee1)
+	_, address, pubKey, err := proposeAddAccount(setup, trustee1, types.AccountRoles{types.NodeAdmin})
 	require.NoError(t, err)
 
 	// ensure pending account created
@@ -199,7 +200,7 @@ func TestHandler_ProposeAddAccount_ByNotTrustee(t *testing.T) {
 		signer := storeAccountWithVendorID(setup, role, testconstants.VendorID1)
 
 		// propose new account
-		_, _, _, err := proposeAddAccount(setup, signer)
+		_, _, _, err := proposeAddAccount(setup, signer, types.AccountRoles{types.NodeAdmin})
 		require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
 	}
 }
@@ -212,7 +213,7 @@ func TestHandler_ProposeAddAccount_ForExistingActiveAccount(t *testing.T) {
 	trustee2 := storeTrustee(setup)
 
 	// propose account
-	_, address, pubKey, err := proposeAddAccount(setup, trustee1)
+	_, address, pubKey, err := proposeAddAccount(setup, trustee1, types.AccountRoles{types.NodeAdmin})
 	require.NoError(t, err)
 
 	// ensure active account created
@@ -241,7 +242,7 @@ func TestHandler_ProposeAddAccount_ForExistingPendingAccount(t *testing.T) {
 	_ = storeTrustee(setup)
 
 	// trustee1 proposes account
-	_, address, pubKey, err := proposeAddAccount(setup, trustee1)
+	_, address, pubKey, err := proposeAddAccount(setup, trustee1, types.AccountRoles{types.NodeAdmin})
 	require.NoError(t, err)
 
 	// ensure pending account created
@@ -270,7 +271,7 @@ func TestHandler_ApproveAddAccount_ByNotTrustee(t *testing.T) {
 	_ = storeTrustee(setup)
 
 	// propose account
-	_, address, _, err := proposeAddAccount(setup, trustee1)
+	_, address, _, err := proposeAddAccount(setup, trustee1, types.AccountRoles{types.NodeAdmin})
 	require.NoError(t, err)
 
 	// ensure pending account created
@@ -295,7 +296,7 @@ func TestHandler_ApproveAddAccount_ForExistingActiveAccount(t *testing.T) {
 	trustee2 := storeTrustee(setup)
 
 	// propose account
-	_, address, _, err := proposeAddAccount(setup, trustee1)
+	_, address, _, err := proposeAddAccount(setup, trustee1, types.AccountRoles{types.NodeAdmin})
 	require.NoError(t, err)
 
 	// ensure active account created
@@ -328,7 +329,7 @@ func TestHandler_ApproveAddAccount_ForDuplicateApproval(t *testing.T) {
 	_ = storeTrustee(setup)
 
 	// propose account
-	_, address, _, err := proposeAddAccount(setup, trustee1)
+	_, address, _, err := proposeAddAccount(setup, trustee1, types.AccountRoles{types.NodeAdmin})
 	require.NoError(t, err)
 
 	// ensure pending account created
@@ -539,7 +540,7 @@ func TestHandler_ReAdding_RevokedAccount(t *testing.T) {
 	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx, types.AccountApprovalsPercent))
 
 	// trustee1 propose account
-	_, address, pubKey, err := proposeAddAccount(setup, trustee1)
+	_, address, pubKey, err := proposeAddAccount(setup, trustee1, types.AccountRoles{types.NodeAdmin})
 	require.NoError(t, err)
 
 	// ensure pending account created
@@ -776,7 +777,7 @@ func TestHandler_RejectAccount_TwoRejectApprovalsAreNeeded(t *testing.T) {
 	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx, types.AccountApprovalsPercent))
 
 	// trustee1 proposes account
-	_, address, pubkey, err := proposeAddAccount(setup, trustee1)
+	_, address, pubkey, err := proposeAddAccount(setup, trustee1, types.AccountRoles{types.NodeAdmin})
 	require.NoError(t, err)
 
 	// trustee2 rejects to add account
@@ -831,7 +832,7 @@ func TestHandler_RejectAccount_ThreeRejectApprovalsAreNeeded(t *testing.T) {
 	require.Equal(t, 5, setup.Keeper.AccountApprovalsCount(setup.Ctx, types.AccountApprovalsPercent))
 
 	// trustee 1 proposes account
-	_, address, pubkey, err := proposeAddAccount(setup, trustee1)
+	_, address, pubkey, err := proposeAddAccount(setup, trustee1, types.AccountRoles{types.NodeAdmin})
 	require.NoError(t, err)
 
 	// trustee2 rejects to add account
@@ -937,7 +938,7 @@ func TestHandler_Duplicate_RejectAccountFromTheSameTrustee(t *testing.T) {
 	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx, types.AccountApprovalsPercent))
 
 	// trustee1 proposes account
-	_, address, _, err := proposeAddAccount(setup, trustee1)
+	_, address, _, err := proposeAddAccount(setup, trustee1, types.AccountRoles{types.NodeAdmin})
 	require.NoError(t, err)
 
 	// trustee2 rejects to add account
@@ -968,7 +969,7 @@ func TestHandler_ApproveAccountAndRejectAccount_FromTheSameTrustee(t *testing.T)
 	require.Equal(t, 3, setup.Keeper.AccountApprovalsCount(setup.Ctx, types.AccountApprovalsPercent))
 
 	// trustee1 proposes account
-	_, address, _, err := proposeAddAccount(setup, trustee1)
+	_, address, _, err := proposeAddAccount(setup, trustee1, types.AccountRoles{types.NodeAdmin})
 	require.NoError(t, err)
 
 	// trustee2 approve to add account
@@ -994,7 +995,7 @@ func TestHandler_RejectAccountAndApproveAccount_FromTheSameTrustee(t *testing.T)
 	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx, types.AccountApprovalsPercent))
 
 	// trustee1 proposes account
-	_, address, _, err := proposeAddAccount(setup, trustee1)
+	_, address, _, err := proposeAddAccount(setup, trustee1, types.AccountRoles{types.NodeAdmin})
 	require.NoError(t, err)
 
 	// trustee2 rejects to add account
@@ -1020,7 +1021,7 @@ func TestHandler_DoubleTimeRejectAccount(t *testing.T) {
 	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx, types.AccountApprovalsPercent))
 
 	// trustee1 proposes account
-	_, address, pubkey, err := proposeAddAccount(setup, trustee1)
+	_, address, pubkey, err := proposeAddAccount(setup, trustee1, types.AccountRoles{types.NodeAdmin})
 	require.NoError(t, err)
 
 	// trustee2 rejects to add account
@@ -1048,7 +1049,7 @@ func TestHandler_DoubleTimeRejectAccount(t *testing.T) {
 	require.Equal(t, trustee3.String(), rejectedAccountFirstTime.Rejects[1].Address)
 
 	// trustee1 second time proposes account
-	_, address, pubkey, err = proposeAddAccount(setup, trustee1)
+	_, address, pubkey, err = proposeAddAccount(setup, trustee1, types.AccountRoles{types.NodeAdmin})
 	require.NoError(t, err)
 
 	// ensure that account not exist in <Rejected Account>
@@ -1098,13 +1099,13 @@ func storeAccountWithVendorID(setup TestSetup, role types.AccountRole, vendorID 
 	return address
 }
 
-func proposeAddAccount(setup TestSetup, signer sdk.AccAddress) (*sdk.Result, sdk.AccAddress, cryptotypes.PubKey, error) {
+func proposeAddAccount(setup TestSetup, signer sdk.AccAddress, roles types.AccountRoles) (*sdk.Result, sdk.AccAddress, cryptotypes.PubKey, error) {
 	_, pubKey, address := testdata.KeyTestPubAddr()
 	proposeAddAccount, _ := types.NewMsgProposeAddAccount(
 		signer,
 		address,
 		pubKey,
-		types.AccountRoles{types.Vendor},
+		roles,
 		testconstants.VendorID1,
 		testconstants.Info,
 	)
