@@ -67,7 +67,7 @@ func (k msgServer) ApproveAddAccount(
 	pendAcc.Approvals = append(pendAcc.Approvals, &grant)
 
 	// check if pending account has enough approvals
-	if len(pendAcc.Approvals) == k.AccountApprovalsCount(ctx) {
+	if len(pendAcc.Approvals) == k.AccountApprovalsCount(ctx, percent) {
 		// create approved account, assign account number and store it
 		// TODO issue 99: create a separate instance of BaseAccount with
 		//		AccountNumber and Sequence set to zero

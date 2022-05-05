@@ -61,7 +61,7 @@ func TestHandler_CreateAccount_OneApprovalIsNeeded(t *testing.T) {
 		trustee := storeTrustee(setup)
 
 		// ensure 1 trustee approval is needed
-		require.Equal(t, 1, setup.Keeper.AccountApprovalsCount(setup.Ctx))
+		require.Equal(t, 1, setup.Keeper.AccountApprovalsCount(setup.Ctx, types.AccountApprovalsPercent))
 
 		// propose account
 		_, address, pubKey, err := proposeAddAccount(setup, trustee)
@@ -86,7 +86,7 @@ func TestHandler_CreateAccount_TwoApprovalsAreNeeded(t *testing.T) {
 	_ = storeTrustee(setup)
 
 	// ensure 2 trustee approvals are needed
-	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx))
+	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx, types.AccountApprovalsPercent))
 
 	// trustee1 propose account
 	_, address, pubKey, err := proposeAddAccount(setup, trustee1)
@@ -136,7 +136,7 @@ func TestHandler_CreateAccount_ThreeApprovalsAreNeeded(t *testing.T) {
 	_ = storeTrustee(setup)
 
 	// ensure 3 trustee approvals are needed
-	require.Equal(t, 3, setup.Keeper.AccountApprovalsCount(setup.Ctx))
+	require.Equal(t, 3, setup.Keeper.AccountApprovalsCount(setup.Ctx, types.AccountApprovalsPercent))
 
 	// trustee1 propose account
 	_, address, pubKey, err := proposeAddAccount(setup, trustee1)
@@ -353,7 +353,7 @@ func TestHandler_RevokeAccount_OneApprovalIsNeeded(t *testing.T) {
 		address := storeAccountWithVendorID(setup, types.Vendor, testconstants.VendorID1)
 
 		// ensure 1 trustee revocation approval is needed
-		require.Equal(t, 1, setup.Keeper.AccountApprovalsCount(setup.Ctx))
+		require.Equal(t, 1, setup.Keeper.AccountApprovalsCount(setup.Ctx, types.AccountApprovalsPercent))
 
 		// propose to revoke account
 		proposeRevokeAccount := types.NewMsgProposeRevokeAccount(trustee, address, testconstants.Info)
@@ -387,7 +387,7 @@ func TestHandler_RevokeAccount_TwoApprovalsAreNeeded(t *testing.T) {
 	address := storeAccountWithVendorID(setup, types.Vendor, testconstants.VendorID1)
 
 	// ensure 2 trustee revocation approvals are needed
-	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx))
+	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx, types.AccountApprovalsPercent))
 
 	// trustee1 proposes to revoke account
 	proposeRevokeAccount := types.NewMsgProposeRevokeAccount(trustee1, address, testconstants.Info)
@@ -439,7 +439,7 @@ func TestHandler_RevokeAccount_ThreeApprovalsAreNeeded(t *testing.T) {
 	address := storeAccountWithVendorID(setup, types.Vendor, testconstants.VendorID1)
 
 	// ensure 3 trustee revocation approvals are needed
-	require.Equal(t, 3, setup.Keeper.AccountApprovalsCount(setup.Ctx))
+	require.Equal(t, 3, setup.Keeper.AccountApprovalsCount(setup.Ctx, types.AccountApprovalsPercent))
 
 	// trustee1 proposes to revoke account
 	proposeRevokeAccount := types.NewMsgProposeRevokeAccount(trustee1, address, testconstants.Info)
@@ -505,7 +505,7 @@ func TestHandler_ReAdding_RevokedAccount(t *testing.T) {
 	address := storeAccountWithVendorID(setup, types.Vendor, testconstants.VendorID1)
 
 	// ensure 2 trustee revocation approvals are needed
-	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx))
+	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx, types.AccountApprovalsPercent))
 
 	// trustee1 proposes to revoke account
 	proposeRevokeAccount := types.NewMsgProposeRevokeAccount(trustee1, address, testconstants.Info)
@@ -536,7 +536,7 @@ func TestHandler_ReAdding_RevokedAccount(t *testing.T) {
 	require.True(t, setup.Keeper.IsRevokedAccountPresent(setup.Ctx, address))
 
 	// ensure 2 trustee approvals are needed
-	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx))
+	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx, types.AccountApprovalsPercent))
 
 	// trustee1 propose account
 	_, address, pubKey, err := proposeAddAccount(setup, trustee1)
@@ -773,7 +773,7 @@ func TestHandler_RejectAccount_TwoRejectApprovalsAreNeeded(t *testing.T) {
 	trustee3 := storeTrustee(setup)
 
 	// ensure 2 trustee approvals are needed
-	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx))
+	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx, types.AccountApprovalsPercent))
 
 	// trustee1 proposes account
 	_, address, pubkey, err := proposeAddAccount(setup, trustee1)
@@ -828,7 +828,7 @@ func TestHandler_RejectAccount_ThreeRejectApprovalsAreNeeded(t *testing.T) {
 	_ = storeTrustee(setup)
 
 	// ensure 5 trustee approvals are needed
-	require.Equal(t, 5, setup.Keeper.AccountApprovalsCount(setup.Ctx))
+	require.Equal(t, 5, setup.Keeper.AccountApprovalsCount(setup.Ctx, types.AccountApprovalsPercent))
 
 	// trustee 1 proposes account
 	_, address, pubkey, err := proposeAddAccount(setup, trustee1)
@@ -934,7 +934,7 @@ func TestHandler_Duplicate_RejectAccountFromTheSameTrustee(t *testing.T) {
 	_ = storeTrustee(setup)
 
 	// ensure 2 trustee approvals are needed
-	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx))
+	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx, types.AccountApprovalsPercent))
 
 	// trustee1 proposes account
 	_, address, _, err := proposeAddAccount(setup, trustee1)
@@ -965,7 +965,7 @@ func TestHandler_ApproveAccountAndRejectAccount_FromTheSameTrustee(t *testing.T)
 	_ = storeTrustee(setup)
 
 	// ensure 3 trustee approvals are needed
-	require.Equal(t, 3, setup.Keeper.AccountApprovalsCount(setup.Ctx))
+	require.Equal(t, 3, setup.Keeper.AccountApprovalsCount(setup.Ctx, types.AccountApprovalsPercent))
 
 	// trustee1 proposes account
 	_, address, _, err := proposeAddAccount(setup, trustee1)
@@ -991,7 +991,7 @@ func TestHandler_RejectAccountAndApproveAccount_FromTheSameTrustee(t *testing.T)
 	_ = storeTrustee(setup)
 
 	// ensure 2 trustee approvals are needed
-	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx))
+	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx, types.AccountApprovalsPercent))
 
 	// trustee1 proposes account
 	_, address, _, err := proposeAddAccount(setup, trustee1)
@@ -1017,7 +1017,7 @@ func TestHandler_DoubleTimeRejectAccount(t *testing.T) {
 	trustee3 := storeTrustee(setup)
 
 	// ensure 2 trustee approvals are needed
-	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx))
+	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx, types.AccountApprovalsPercent))
 
 	// trustee1 proposes account
 	_, address, pubkey, err := proposeAddAccount(setup, trustee1)
