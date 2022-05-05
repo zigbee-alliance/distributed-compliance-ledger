@@ -70,6 +70,12 @@ func (k msgServer) ProposeAddAccount(goCtx context.Context, msg *types.MsgPropos
 	} else {
 		// create account, assign account number and store it
 		account.AccountNumber = k.GetNextAccountNumber(ctx)
+		grant := types.Grant{
+			Address: signerAddr.String(),
+			Time:    msg.Time,
+			Info:    msg.Info,
+		}
+		account.Approvals = append(account.Approvals, &grant)
 		k.SetAccountO(ctx, *account)
 	}
 
