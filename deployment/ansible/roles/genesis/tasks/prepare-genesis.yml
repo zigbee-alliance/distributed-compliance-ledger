@@ -57,7 +57,6 @@
 - name: prepare-genesis | create genesis transactions
   changed_when: false
   shell: "{{ dcld.path }} gentx {{ admin.name }} --chain-id {{ chain_id }} --home {{ dcl_home }}"
-  no_log: true
   ignore_errors: true
 
 - name: prepare-genesis | ensure gentx folder
