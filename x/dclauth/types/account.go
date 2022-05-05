@@ -124,6 +124,14 @@ func (acc Account) HasRole(targetRole AccountRole) bool {
 	return false
 }
 
+func (acc Account) HasOnlyVendorRole(targetRole AccountRole) bool {
+	if len(acc.Roles) == 1 && acc.Roles[0] == targetRole {
+		return true
+	}
+
+	return false
+}
+
 func (acc Account) String() string {
 	out, _ := acc.MarshalYAML()
 
