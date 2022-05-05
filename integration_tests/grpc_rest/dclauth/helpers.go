@@ -21,10 +21,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/go-bip39"
 	"github.com/stretchr/testify/require"
-	tmrand "github.com/tendermint/tendermint/libs/rand"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
@@ -447,6 +445,37 @@ func CreateAccount(
 	return account
 }
 
+func CreateVendorAccount(
+	suite *utils.TestSuite,
+	accountName string,
+	roles dclauthtypes.AccountRoles,
+	vendorID int32,
+	proposerName string,
+	proposerAccount *dclauthtypes.Account,
+	approverName string,
+	approverAccount *dclauthtypes.Account,
+	info string,
+) *dclauthtypes.Account {
+	accountInfo := CreateAccountInfo(suite, accountName)
+
+	_, err := ProposeAddAccount(
+		suite,
+		accountInfo.GetAddress(),
+		accountInfo.GetPubKey(),
+		roles,
+		vendorID,
+		proposerName,
+		proposerAccount,
+		info,
+	)
+	require.NoError(suite.T, err)
+
+	account, err := GetAccount(suite, accountInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	return account
+}
+
 func NewMsgCreateModel(vid int32, pid int32, signer string) *modeltypes.MsgCreateModel {
 	return &modeltypes.MsgCreateModel{
 		Creator:                                  signer,
@@ -533,11 +562,10 @@ func AuthDemo(suite *utils.TestSuite) {
 	suite.AssertNotFound(err)
 
 	// Jack proposes new account
-	vid := int32(tmrand.Uint16())
 	_, err = ProposeAddAccount(
 		suite,
 		testAccAddr, testAccPubKey,
-		dclauthtypes.AccountRoles{dclauthtypes.Vendor}, vid,
+		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, 0,
 		jackName, jackAccount,
 		testconstants.Info,
 	)
@@ -571,7 +599,7 @@ func AuthDemo(suite *utils.TestSuite) {
 	proposedAccount, err := GetProposedAccount(suite, testAccAddr)
 	require.NoError(suite.T, err)
 	require.Equal(suite.T, testAccAddr, proposedAccount.GetAddress())
-	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, proposedAccount.GetRoles())
+	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.NodeAdmin}, proposedAccount.GetRoles())
 
 	// Query unknown revoked account
 	_, err = GetRevokedAccount(suite, testAccAddr)
@@ -605,7 +633,7 @@ func AuthDemo(suite *utils.TestSuite) {
 	testAccount, err := GetAccount(suite, testAccAddr)
 	require.NoError(suite.T, err)
 	require.Equal(suite.T, testAccAddr, testAccount.GetAddress())
-	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testAccount.GetRoles())
+	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.NodeAdmin}, testAccount.GetRoles())
 
 	// Query unknown proposed account
 	_, err = GetProposedAccount(suite, testAccAddr)
@@ -679,14 +707,6 @@ func AuthDemo(suite *utils.TestSuite) {
 	require.Error(suite.T, err)
 	suite.AssertNotFound(err)
 
-	// Try to publish another model info by test account.
-	// Ensure that the request is responded with not OK status code.
-	pid := int32(tmrand.Uint16())
-	firstModel := NewMsgCreateModel(vid, pid, testAccount.Address)
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModel}, accountName, testAccount)
-	require.Error(suite.T, err)
-	require.True(suite.T, sdkerrors.ErrUnknownAddress.Is(err))
-
 	// Ensure that new account is exist in revoked account
 	receivedRevokedAccount, err := GetRevokedAccount(suite, testAccAddr)
 	require.NoError(suite.T, err)
@@ -698,7 +718,7 @@ func AuthDemo(suite *utils.TestSuite) {
 	_, err = ProposeAddAccount(
 		suite,
 		testAccAddr, testAccPubKey,
-		dclauthtypes.AccountRoles{dclauthtypes.Vendor}, vid,
+		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, 0,
 		jackName, jackAccount,
 		testconstants.Info,
 	)
@@ -732,13 +752,13 @@ func AuthDemo(suite *utils.TestSuite) {
 	proposedAccount, err = GetProposedAccount(suite, testAccAddr)
 	require.NoError(suite.T, err)
 	require.Equal(suite.T, testAccAddr, proposedAccount.GetAddress())
-	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, proposedAccount.GetRoles())
+	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.NodeAdmin}, proposedAccount.GetRoles())
 
 	// Ensure that new account is exist in revoked account
 	receivedRevokedAccount, err = GetRevokedAccount(suite, testAccAddr)
 	require.NoError(suite.T, err)
 	require.Equal(suite.T, testAccAddr, receivedRevokedAccount.GetAddress())
-	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, receivedRevokedAccount.GetRoles())
+	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.NodeAdmin}, receivedRevokedAccount.GetRoles())
 
 	// Alice approves the revoked account
 	_, err = ApproveAddAccount(suite, testAccAddr, aliceName, aliceAccount, testconstants.Info)
@@ -768,7 +788,7 @@ func AuthDemo(suite *utils.TestSuite) {
 	testAccount, err = GetAccount(suite, testAccAddr)
 	require.NoError(suite.T, err)
 	require.Equal(suite.T, testAccAddr, testAccount.GetAddress())
-	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testAccount.GetRoles())
+	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.NodeAdmin}, testAccount.GetRoles())
 
 	// Query unknown proposed account
 	_, err = GetProposedAccount(suite, testAccAddr)
@@ -803,7 +823,7 @@ func AuthDemo(suite *utils.TestSuite) {
 	_, err = ProposeAddAccount(
 		suite,
 		testAccAddr, testAccPubKey,
-		dclauthtypes.AccountRoles{dclauthtypes.Vendor}, vid,
+		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, 0,
 		jackName, jackAccount,
 		testconstants.Info,
 	)
@@ -850,7 +870,7 @@ func AuthDemo(suite *utils.TestSuite) {
 	proposedAccount, err = GetProposedAccount(suite, testAccAddr)
 	require.NoError(suite.T, err)
 	require.Equal(suite.T, testAccAddr, proposedAccount.GetAddress())
-	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, proposedAccount.GetRoles())
+	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.NodeAdmin}, proposedAccount.GetRoles())
 	require.Equal(suite.T, jackAccount.Address, proposedAccount.Approvals[0].Address)
 	require.Equal(suite.T, testconstants.Info, proposedAccount.Approvals[0].Info)
 	require.Equal(suite.T, aliceAccount.Address, proposedAccount.Rejects[0].Address)
@@ -901,7 +921,7 @@ func AuthDemo(suite *utils.TestSuite) {
 	rejectedAccount, err := GetRejectedAccount(suite, testAccAddr)
 	require.NoError(suite.T, err)
 	require.Equal(suite.T, testAccAddr, rejectedAccount.GetAddress())
-	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, rejectedAccount.GetRoles())
+	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.NodeAdmin}, rejectedAccount.GetRoles())
 	require.Equal(suite.T, jackAccount.Address, rejectedAccount.Approvals[0].Address)
 	require.Equal(suite.T, testconstants.Info, rejectedAccount.Approvals[0].Info)
 	require.Equal(suite.T, aliceAccount.Address, rejectedAccount.Rejects[0].Address)
@@ -918,4 +938,225 @@ func AuthDemo(suite *utils.TestSuite) {
 	// Query unknown revoked account
 	_, err = GetRevokedAccount(suite, testAccAddr)
 	require.NoError(suite.T, err)
+
+	accountName = utils.RandString()
+	accountInfo = CreateAccountInfo(suite, accountName)
+	testAccPubKey = accountInfo.GetPubKey()
+	testAccAddr = accountInfo.GetAddress()
+
+	// Query unknown account
+	_, err = GetAccount(suite, testAccAddr)
+	suite.AssertNotFound(err)
+
+	// Query unknown proposed account
+	_, err = GetProposedAccount(suite, testAccAddr)
+	suite.AssertNotFound(err)
+
+	// Query unknown proposed account to revoke
+	_, err = GetProposedAccountToRevoke(suite, testAccAddr)
+	suite.AssertNotFound(err)
+
+	// Query unknown revoked account
+	_, err = GetRevokedAccount(suite, testAccAddr)
+	suite.AssertNotFound(err)
+
+	// Jack proposes new account
+	_, err = ProposeAddAccount(
+		suite,
+		testAccAddr, testAccPubKey,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor, dclauthtypes.NodeAdmin}, testconstants.Vid,
+		jackName, jackAccount,
+		testconstants.Info,
+	)
+	require.NoError(suite.T, err)
+
+	// Query all active accounts
+	receivedAccounts, _ = GetAccounts(suite)
+	require.Equal(suite.T, len(inputAccounts), len(receivedAccounts))
+
+	// Query unknown account
+	_, err = GetAccount(suite, testAccAddr)
+	suite.AssertNotFound(err)
+
+	// Query all proposed accounts
+	receivedProposedAccounts, _ = GetProposedAccounts(suite)
+	require.Equal(suite.T, len(inputProposedAccounts)+1, len(receivedProposedAccounts))
+
+	// Query proposed account
+	testProposedVendorAccount, err := GetProposedAccount(suite, testAccAddr)
+	require.NoError(suite.T, err)
+	require.Equal(suite.T, testAccAddr, testProposedVendorAccount.GetAddress())
+	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.Vendor, dclauthtypes.NodeAdmin}, testProposedVendorAccount.GetRoles())
+
+	// Alice approves new account
+	_, err = ApproveAddAccount(suite, testAccAddr, aliceName, aliceAccount, testconstants.Info)
+	require.NoError(suite.T, err)
+
+	// Query all active accounts
+	receivedAccounts, _ = GetAccounts(suite)
+	require.Equal(suite.T, len(inputAccounts)+1, len(receivedAccounts))
+
+	// Query all proposed accounts
+	receivedProposedAccounts, _ = GetProposedAccounts(suite)
+	require.Equal(suite.T, len(inputProposedAccounts), len(receivedProposedAccounts))
+
+	// Get new account
+	testAccount, err = GetAccount(suite, testAccAddr)
+	require.NoError(suite.T, err)
+	require.Equal(suite.T, testAccAddr, testAccount.GetAddress())
+	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.Vendor, dclauthtypes.NodeAdmin}, testAccount.GetRoles())
+
+	// Query unknown proposed account
+	_, err = GetProposedAccount(suite, testAccAddr)
+	suite.AssertNotFound(err)
+
+	accountName = utils.RandString()
+	accountInfo = CreateAccountInfo(suite, accountName)
+	testAccPubKey = accountInfo.GetPubKey()
+	testAccAddr = accountInfo.GetAddress()
+
+	// Query unknown account
+	_, err = GetAccount(suite, testAccAddr)
+	suite.AssertNotFound(err)
+
+	// Query unknown proposed account
+	_, err = GetProposedAccount(suite, testAccAddr)
+	suite.AssertNotFound(err)
+
+	// Query unknown proposed account to revoke
+	_, err = GetProposedAccountToRevoke(suite, testAccAddr)
+	suite.AssertNotFound(err)
+
+	// Query unknown revoked account
+	_, err = GetRevokedAccount(suite, testAccAddr)
+	suite.AssertNotFound(err)
+
+	// Jack proposes new account
+	_, err = ProposeAddAccount(
+		suite,
+		testAccAddr, testAccPubKey,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor}, testconstants.Vid,
+		jackName, jackAccount,
+		testconstants.Info,
+	)
+	require.NoError(suite.T, err)
+
+	// Query all active accounts
+	receivedAccounts, _ = GetAccounts(suite)
+	require.Equal(suite.T, len(inputAccounts)+2, len(receivedAccounts))
+
+	// Query unknown account
+	testVendorAccount, err := GetAccount(suite, testAccAddr)
+	require.NoError(suite.T, err)
+	require.Equal(suite.T, testAccAddr, testVendorAccount.GetAddress())
+	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testVendorAccount.GetRoles())
+
+	// Query all proposed accounts
+	receivedProposedAccounts, _ = GetProposedAccounts(suite)
+	require.Equal(suite.T, len(inputProposedAccounts), len(receivedProposedAccounts))
+
+	// Query proposed account
+	_, err = GetProposedAccount(suite, testAccAddr)
+	suite.AssertNotFound(err)
+
+	// // Add 2 Trustee accounts
+
+	// accountName = utils.RandString()
+	// accountInfo = CreateAccountInfo(suite, accountName)
+	// testAccPubKey = accountInfo.GetPubKey()
+	// testAccAddr = accountInfo.GetAddress()
+
+	// // Jack proposes new account
+	// _, err = ProposeAddAccount(
+	// 	suite,
+	// 	testAccAddr, testAccPubKey,
+	// 	dclauthtypes.AccountRoles{dclauthtypes.Trustee}, 0,
+	// 	jackName, jackAccount,
+	// 	testconstants.Info,
+	// )
+	// require.NoError(suite.T, err)
+
+	// // Alice approves new account
+	// _, err = ApproveAddAccount(suite, testAccAddr, aliceName, aliceAccount, testconstants.Info)
+	// require.NoError(suite.T, err)
+
+	// accountName = utils.RandString()
+	// accountInfo = CreateAccountInfo(suite, accountName)
+	// testAccPubKey = accountInfo.GetPubKey()
+	// testAccAddr = accountInfo.GetAddress()
+
+	// // Jack proposes new account
+	// _, err = ProposeAddAccount(
+	// 	suite,
+	// 	testAccAddr, testAccPubKey,
+	// 	dclauthtypes.AccountRoles{dclauthtypes.Trustee}, 0,
+	// 	jackName, jackAccount,
+	// 	testconstants.Info,
+	// )
+	// require.NoError(suite.T, err)
+
+	// // Alice approves new account
+	// _, err = ApproveAddAccount(suite, testAccAddr, aliceName, aliceAccount, testconstants.Info)
+	// require.NoError(suite.T, err)
+
+	// accountName = utils.RandString()
+	// accountInfo = CreateAccountInfo(suite, accountName)
+	// testAccPubKey = accountInfo.GetPubKey()
+	// testAccAddr = accountInfo.GetAddress()
+
+	// // Query unknown account
+	// _, err = GetAccount(suite, testAccAddr)
+	// suite.AssertNotFound(err)
+
+	// // Query unknown proposed account
+	// _, err = GetProposedAccount(suite, testAccAddr)
+	// suite.AssertNotFound(err)
+
+	// // Query unknown proposed account to revoke
+	// _, err = GetProposedAccountToRevoke(suite, testAccAddr)
+	// suite.AssertNotFound(err)
+
+	// // Query unknown revoked account
+	// _, err = GetRevokedAccount(suite, testAccAddr)
+	// suite.AssertNotFound(err)
+
+	// // Jack proposes new account
+	// _, err = ProposeAddAccount(
+	// 	suite,
+	// 	testAccAddr, testAccPubKey,
+	// 	dclauthtypes.AccountRoles{dclauthtypes.Vendor}, testconstants.Vid,
+	// 	jackName, jackAccount,
+	// 	testconstants.Info,
+	// )
+	// require.NoError(suite.T, err)
+
+	// // Query all active accounts
+	// receivedAccounts, _ = GetAccounts(suite)
+	// require.Equal(suite.T, len(inputAccounts)+4, len(receivedAccounts))
+
+	// // // Query unknown account
+	// // _, err = GetAccount(suite, testAccAddr)
+	// // suite.AssertNotFound(err)
+
+	// // Query all proposed accounts
+	// receivedProposedAccounts, _ = GetProposedAccounts(suite)
+	// require.Equal(suite.T, len(inputProposedAccounts)+1, len(receivedProposedAccounts))
+
+	// // Query proposed account
+	// testProposedVendorAccount, err = GetProposedAccount(suite, testAccAddr)
+	// require.NoError(suite.T, err)
+	// require.Equal(suite.T, testAccAddr, testProposedVendorAccount.GetAddress())
+	// require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testProposedVendorAccount.GetRoles())
+
+	// // Alice approves new account
+	// _, err = ApproveAddAccount(suite, testAccAddr, aliceName, aliceAccount, testconstants.Info)
+	// require.NoError(suite.T, err)
+
+	// // Query all active accounts
+	// receivedAccounts, _ = GetAccounts(suite)
+	// require.Equal(suite.T, len(inputAccounts)+3, len(receivedAccounts))
+
+	// // Query all proposed accounts
+	// receivedProposedAccounts, _ = GetProposedAccounts(suite)
+	// require.Equal(suite.T, len(inputProposedAccounts), len(receivedProposedAccounts))
 }
