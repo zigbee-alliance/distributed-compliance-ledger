@@ -18,9 +18,9 @@ resource "aws_key_pair" "key_pair" {
 }
 
 resource "aws_instance" "this_node" {
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = var.instance_type
-  disable_api_termination = true
+  ami                                  = data.aws_ami.ubuntu.id
+  instance_type                        = var.instance_type
+  disable_api_termination              = true
   instance_initiated_shutdown_behavior = "stop"
 
   subnet_id = element(module.this_vpc.public_subnets, 0)
