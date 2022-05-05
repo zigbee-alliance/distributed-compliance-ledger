@@ -2,7 +2,7 @@
 
 ## AWS deployment diagram
 
-![AWS deployment diagram](./deployment-aws.png)
+![AWS deployment diagram](./deployment-design-aws-diagram.png)
 
 ## Recommended IaC structure and frameworks
 
