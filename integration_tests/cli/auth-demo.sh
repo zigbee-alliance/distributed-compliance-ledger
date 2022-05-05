@@ -623,10 +623,331 @@ check_response "$result" "\"address\": \"$user_address\""
 
 test_divider
 
+vid=$RANDOM
 pid=$RANDOM
 productName="Device #2"
 echo "$user adds Model with VID: $vid PID: $pid"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --productName="$productName" --productLabel="Device Description" --commissioningCustomFlow=0 --deviceTypeID=12 --partNumber=12 --from=$user_address --yes 2>&1) || true
 check_response_and_report "$result" "key not found" raw
+
+test_divider
+
+random_string user
+echo "$user generates keys"
+cmd="(echo $passphrase; echo $passphrase) | dcld keys add $user"
+result="$(bash -c "$cmd")"
+
+test_divider
+
+echo "Get key info for $user"
+result=$(echo $passphrase | dcld keys show $user)
+check_response "$result" "\"name\": \"$user\""
+
+test_divider
+
+user_address=$(echo $passphrase | dcld keys show $user -a)
+user_pubkey=$(echo $passphrase | dcld keys show $user -p)
+
+test_divider
+
+echo "Jack proposes account for $user"
+result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$user_address" --pubkey="$user_pubkey" --roles="Vendor,NodeAdmin" --vid=$vid --from jack --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Get all active accounts. $user account is not in the list because has not enough approvals received"
+result=$(dcld query auth all-accounts)
+response_does_not_contain "$result" "\"address\": \"$user_address\""
+
+test_divider
+
+echo "Get an account for $user. $user not found"
+result=$(dcld query auth account --address=$user_address)
+check_response "$result" "Not Found"
+
+test_divider
+
+echo "Get all proposed accounts. $user account is in the list because has not enough approvals received"
+result=$(dcld query auth all-proposed-accounts)
+check_response "$result" "\"address\": \"$user_address\""
+
+test_divider
+
+echo "Get an proposed account for $user"
+result=$(dcld query auth proposed-account --address=$user_address)
+check_response "$result" "\"address\": \"$user_address\""
+check_response_and_report "$result"  $jack_address "json"
+check_response_and_report "$result"  '"info": "Jack is proposing this account"' "json"
+
+test_divider
+
+echo "Alice approves account for \"$user\""
+result=$(echo $passphrase | dcld tx auth approve-add-account --address="$user_address" --info="Alice is approving this account" --from alice --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Get all active accounts. $user account is in the list because has enough approvals received"
+result=$(dcld query auth all-accounts)
+check_response "$result" "\"address\": \"$user_address\""
+
+test_divider
+
+echo "Get an account for $user"
+result=$(dcld query auth account --address=$user_address)
+check_response "$result" "\"address\": \"$user_address\""
+check_response_and_report "$result"  $jack_address "json"
+check_response_and_report "$result"  '"info": "Jack is proposing this account"' "json"
+check_response_and_report "$result"  $alice_address "json"
+check_response_and_report "$result"  '"info": "Alice is approving this account"' "json"
+
+test_divider
+
+echo "Get all proposed accounts. $user account is not in the list because has enough approvals received"
+result=$(dcld query auth all-proposed-accounts)
+response_does_not_contain "$result" "\"address\": \"$user_address\""
+
+test_divider
+
+echo "Get an proposed account for $user. $user not found"
+result=$(dcld query auth proposed-account --address=$user_address)
+check_response "$result" "Not Found"
+
+test_divider
+
+vid=$RANDOM
+pid=$RANDOM
+
+test_divider
+
+random_string user
+echo "$user generates keys"
+cmd="(echo $passphrase; echo $passphrase) | dcld keys add $user"
+result="$(bash -c "$cmd")"
+
+test_divider
+
+echo "Get key info for $user"
+result=$(echo $passphrase | dcld keys show $user)
+check_response "$result" "\"name\": \"$user\""
+
+test_divider
+
+user_address=$(echo $passphrase | dcld keys show $user -a)
+user_pubkey=$(echo $passphrase | dcld keys show $user -p)
+
+test_divider
+
+echo "Jack proposes account for $user"
+result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$user_address" --pubkey="$user_pubkey" --roles="Vendor" --vid=$vid --from jack --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Get all active accounts. $user account in the list because has enough approvals"
+result=$(dcld query auth all-accounts)
+check_response "$result" "\"address\": \"$user_address\""
+
+test_divider
+
+echo "Get an account for $user"
+result=$(dcld query auth account --address=$user_address)
+check_response "$result" "\"address\": \"$user_address\""
+check_response_and_report "$result"  $jack_address "json"
+check_response_and_report "$result"  '"info": "Jack is proposing this account"' "json"
+
+test_divider
+
+echo "Get an proposed account for $user is not found"
+result=$(dcld query auth proposed-account --address=$user_address)
+check_response "$result" "Not Found"
+
+test_divider
+
+echo "Get all proposed accounts. $user account is not in the list"
+result=$(dcld query auth all-proposed-accounts)
+check_response "$result" "\[\]"
+
+test_divider
+
+random_string new_trustee
+echo "$new_trustee generates keys"
+cmd="(echo $passphrase; echo $passphrase) | dcld keys add $new_trustee"
+result="$(bash -c "$cmd")"
+
+test_divider
+
+echo "Get key info for $new_trustee"
+result=$(echo $passphrase | dcld keys show $new_trustee)
+check_response "$result" "\"name\": \"$new_trustee\""
+
+test_divider
+
+new_trustee_address=$(echo $passphrase | dcld keys show $new_trustee -a)
+new_trustee_pubkey=$(echo $passphrase | dcld keys show $new_trustee -p)
+
+test_divider
+
+echo "Jack proposes account for $new_trustee"
+result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$new_trustee_address" --pubkey="$new_trustee_pubkey" --roles="Trustee" --from jack --yes)
+check_response "$result" "\"code\": 0"
+
+echo "Alice approves account for \"$new_trustee\""
+result=$(echo $passphrase | dcld tx auth approve-add-account --address="$new_trustee_address" --info="Alice is approving this account" --from alice --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+random_string new_trustee
+echo "$new_trustee generates keys"
+cmd="(echo $passphrase; echo $passphrase) | dcld keys add $new_trustee"
+result="$(bash -c "$cmd")"
+
+test_divider
+
+echo "Get key info for $new_trustee"
+result=$(echo $passphrase | dcld keys show $new_trustee)
+check_response "$result" "\"name\": \"$new_trustee\""
+
+test_divider
+
+new_trustee_address=$(echo $passphrase | dcld keys show $new_trustee -a)
+new_trustee_pubkey=$(echo $passphrase | dcld keys show $new_trustee -p)
+
+test_divider
+
+echo "Jack proposes account for $new_trustee"
+result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$new_trustee_address" --pubkey="$new_trustee_pubkey" --roles="Trustee" --from jack --yes)
+check_response "$result" "\"code\": 0"
+
+echo "Alice approves account for \"$new_trustee\""
+result=$(echo $passphrase | dcld tx auth approve-add-account --address="$new_trustee_address" --info="Alice is approving this account" --from alice --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Bob approves account for \"$new_trustee\""
+result=$(echo $passphrase | dcld tx auth approve-add-account --address="$new_trustee_address" --info="Bob is approving this account" --from bob --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+vid=$RANDOM
+pid=$RANDOM
+
+random_string user
+echo "$user generates keys"
+cmd="(echo $passphrase; echo $passphrase) | dcld keys add $user"
+result="$(bash -c "$cmd")"
+
+test_divider
+
+echo "Get key info for $user"
+result=$(echo $passphrase | dcld keys show $user)
+check_response "$result" "\"name\": \"$user\""
+
+test_divider
+
+user_address=$(echo $passphrase | dcld keys show $user -a)
+user_pubkey=$(echo $passphrase | dcld keys show $user -p)
+
+test_divider
+
+echo "Jack proposes account for $user"
+result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$user_address" --pubkey="$user_pubkey" --roles="Vendor" --vid=$vid --from jack --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Get all active accounts. $user account is not in the list because has not enough approvals received"
+result=$(dcld query auth all-accounts)
+response_does_not_contain "$result" "\"address\": \"$user_address\""
+
+test_divider
+
+echo "Get an account for $user. $user not found"
+result=$(dcld query auth account --address=$user_address)
+check_response "$result" "Not Found"
+
+test_divider
+
+echo "Get all proposed accounts. $user account is in the list because has not enough approvals received"
+result=$(dcld query auth all-proposed-accounts)
+check_response "$result" "\"address\": \"$user_address\""
+
+test_divider
+
+echo "Get an proposed account for $user"
+result=$(dcld query auth proposed-account --address=$user_address)
+check_response "$result" "\"address\": \"$user_address\""
+check_response_and_report "$result"  $jack_address "json"
+check_response_and_report "$result"  '"info": "Jack is proposing this account"' "json"
+
+test_divider
+
+echo "Alice approves account for \"$user\""
+result=$(echo $passphrase | dcld tx auth approve-add-account --address="$user_address" --info="Alice is approving this account" --from alice --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Get all active accounts. $user account is in the list because has enough approvals received"
+result=$(dcld query auth all-accounts)
+check_response "$result" "\"address\": \"$user_address\""
+
+test_divider
+
+echo "Get an account for $user"
+result=$(dcld query auth account --address=$user_address)
+check_response "$result" "\"address\": \"$user_address\""
+check_response_and_report "$result"  $jack_address "json"
+check_response_and_report "$result"  '"info": "Jack is proposing this account"' "json"
+check_response_and_report "$result"  $alice_address "json"
+check_response_and_report "$result"  '"info": "Alice is approving this account"' "json"
+
+test_divider
+
+echo "Get all proposed accounts. $user account is not in the list because has enough approvals received"
+result=$(dcld query auth all-proposed-accounts)
+response_does_not_contain "$result" "\"address\": \"$user_address\""
+
+test_divider
+
+echo "Get an proposed account for $user. $user not found"
+result=$(dcld query auth proposed-account --address=$user_address)
+check_response "$result" "Not Found"
+
+test_divider
+
+productName="Device #1"
+echo "$user adds Model with VID: $vid PID: $pid"
+result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --productName="$productName" --productLabel="Device Description"   --commissioningCustomFlow=0 --deviceTypeID=12 --partNumber=12 --from=$user_address --yes)
+check_response_and_report "$result" "\"code\": 0"
+
+test_divider
+
+vidPlusOne=$((vid+1))
+echo "$user adds Model with a VID: $vidPlusOne PID: $pid, This fails with Permission denied as the VID is not associated with this vendor account."
+result=$(echo "test1234" | dcld tx model add-model --vid=$vidPlusOne --pid=$pid --productName="$productName" --productLabel="Device Description"   --commissioningCustomFlow=0 --deviceTypeID=12 --partNumber=12 --from=$user_address --yes 2>&1) || true
+check_response_and_report "$result" "transaction should be signed by a vendor account containing the vendorID $vidPlusOne"
+
+test_divider
+echo "$user updates Model with VID: $vid PID: $pid"
+result=$(echo "test1234" | dcld tx model update-model --vid=$vid --pid=$pid --productName="$productName" --productLabel="Device Description" --partNumber=12 --from=$user_address --yes)
+check_response_and_report "$result" "\"code\": 0"
+
+test_divider
+
+echo "Get Model with VID: $vid PID: $pid"
+result=$(dcld query model get-model --vid=$vid --pid=$pid)
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"pid\": $pid"
+check_response "$result" "\"productName\": \"$productName\""
+
+test_divider
+
+
+test_divider
 
 echo "PASSED"
