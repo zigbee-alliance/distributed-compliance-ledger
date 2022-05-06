@@ -18,6 +18,9 @@ export const Account = {
         if (message.vendorID !== 0) {
             writer.uint32(32).int32(message.vendorID);
         }
+        for (const v of message.rejects) {
+            Grant.encode(v, writer.uint32(42).fork()).ldelim();
+        }
         return writer;
     },
     decode(input, length) {
@@ -26,6 +29,7 @@ export const Account = {
         const message = { ...baseAccount };
         message.roles = [];
         message.approvals = [];
+        message.rejects = [];
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
@@ -41,6 +45,9 @@ export const Account = {
                 case 4:
                     message.vendorID = reader.int32();
                     break;
+                case 5:
+                    message.rejects.push(Grant.decode(reader, reader.uint32()));
+                    break;
                 default:
                     reader.skipType(tag & 7);
                     break;
@@ -52,6 +59,7 @@ export const Account = {
         const message = { ...baseAccount };
         message.roles = [];
         message.approvals = [];
+        message.rejects = [];
         if (object.baseAccount !== undefined && object.baseAccount !== null) {
             message.baseAccount = BaseAccount.fromJSON(object.baseAccount);
         }
@@ -74,6 +82,11 @@ export const Account = {
         else {
             message.vendorID = 0;
         }
+        if (object.rejects !== undefined && object.rejects !== null) {
+            for (const e of object.rejects) {
+                message.rejects.push(Grant.fromJSON(e));
+            }
+        }
         return message;
     },
     toJSON(message) {
@@ -92,12 +105,19 @@ export const Account = {
             obj.approvals = [];
         }
         message.vendorID !== undefined && (obj.vendorID = message.vendorID);
+        if (message.rejects) {
+            obj.rejects = message.rejects.map((e) => (e ? Grant.toJSON(e) : undefined));
+        }
+        else {
+            obj.rejects = [];
+        }
         return obj;
     },
     fromPartial(object) {
         const message = { ...baseAccount };
         message.roles = [];
         message.approvals = [];
+        message.rejects = [];
         if (object.baseAccount !== undefined && object.baseAccount !== null) {
             message.baseAccount = BaseAccount.fromPartial(object.baseAccount);
         }
@@ -119,6 +139,11 @@ export const Account = {
         }
         else {
             message.vendorID = 0;
+        }
+        if (object.rejects !== undefined && object.rejects !== null) {
+            for (const e of object.rejects) {
+                message.rejects.push(Grant.fromPartial(e));
+            }
         }
         return message;
     }

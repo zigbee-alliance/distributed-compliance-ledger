@@ -10,6 +10,7 @@ import "pki/unique_certificate.proto";
 import "pki/approved_root_certificates.proto";
 import "pki/revoked_root_certificates.proto";
 import "pki/approved_certificates_by_subject.proto";
+import "pki/rejected_certificate.proto";
 // this line is used by starport scaffolding # genesis/proto/import
 import "gogoproto/gogo.proto";
 
@@ -26,5 +27,6 @@ message GenesisState {
   ApprovedRootCertificates approvedRootCertificates = 7;
   RevokedRootCertificates revokedRootCertificates = 8;
   repeated ApprovedCertificatesBySubject approvedCertificatesBySubjectList = 9 [(gogoproto.nullable) = false];
+  repeated RejectedCertificate rejectedCertificateList = 10 [(gogoproto.nullable) = false];
   // this line is used by starport scaffolding # genesis/proto/state
 }

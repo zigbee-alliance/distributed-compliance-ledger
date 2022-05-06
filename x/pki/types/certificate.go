@@ -1,7 +1,7 @@
 package types
 
 func NewRootCertificate(pemCert string, subject string, subjectAsText string, subjectKeyID string,
-	serialNumber string, owner string, approvals []*Grant,
+	serialNumber string, owner string, approvals []*Grant, rejects []*Grant,
 ) Certificate {
 	return Certificate{
 		PemCert:       pemCert,
@@ -12,6 +12,7 @@ func NewRootCertificate(pemCert string, subject string, subjectAsText string, su
 		IsRoot:        true,
 		Owner:         owner,
 		Approvals:     approvals,
+		Rejects:       rejects,
 	}
 }
 
@@ -38,6 +39,16 @@ func NewNonRootCertificate(pemCert string, subject string, subjectAsText string,
 func (cert ProposedCertificate) HasApprovalFrom(address string) bool {
 	for _, approval := range cert.Approvals {
 		if approval.Address == address {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (cert ProposedCertificate) HasRejectFrom(address string) bool {
+	for _, rejectApproval := range cert.Rejects {
+		if rejectApproval.Address == address {
 			return true
 		}
 	}

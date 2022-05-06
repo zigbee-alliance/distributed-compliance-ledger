@@ -4,19 +4,21 @@ import { StdFee } from "@cosmjs/launchpad";
 import { SigningStargateClient } from "@cosmjs/stargate";
 import { Registry, OfflineSigner, EncodeObject, DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
-import { MsgCreateValidator } from "./types/validator/tx";
 import { MsgProposeDisableValidator } from "./types/validator/tx";
-import { MsgDisableValidator } from "./types/validator/tx";
 import { MsgEnableValidator } from "./types/validator/tx";
+import { MsgDisableValidator } from "./types/validator/tx";
 import { MsgApproveDisableValidator } from "./types/validator/tx";
+import { MsgRejectDisableValidator } from "./types/validator/tx";
+import { MsgCreateValidator } from "./types/validator/tx";
 
 
 const types = [
-  ["/zigbeealliance.distributedcomplianceledger.validator.MsgCreateValidator", MsgCreateValidator],
   ["/zigbeealliance.distributedcomplianceledger.validator.MsgProposeDisableValidator", MsgProposeDisableValidator],
-  ["/zigbeealliance.distributedcomplianceledger.validator.MsgDisableValidator", MsgDisableValidator],
   ["/zigbeealliance.distributedcomplianceledger.validator.MsgEnableValidator", MsgEnableValidator],
+  ["/zigbeealliance.distributedcomplianceledger.validator.MsgDisableValidator", MsgDisableValidator],
   ["/zigbeealliance.distributedcomplianceledger.validator.MsgApproveDisableValidator", MsgApproveDisableValidator],
+  ["/zigbeealliance.distributedcomplianceledger.validator.MsgRejectDisableValidator", MsgRejectDisableValidator],
+  ["/zigbeealliance.distributedcomplianceledger.validator.MsgCreateValidator", MsgCreateValidator],
   
 ];
 export const MissingWalletError = new Error("wallet is required");
@@ -49,11 +51,12 @@ const txClient = async (wallet: OfflineSigner, { addr: addr }: TxClientOptions =
 
   return {
     signAndBroadcast: (msgs: EncodeObject[], { fee, memo }: SignAndBroadcastOptions = {fee: defaultFee, memo: ""}) => client.signAndBroadcast(address, msgs, fee,memo),
-    msgCreateValidator: (data: MsgCreateValidator): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.validator.MsgCreateValidator", value: MsgCreateValidator.fromPartial( data ) }),
     msgProposeDisableValidator: (data: MsgProposeDisableValidator): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.validator.MsgProposeDisableValidator", value: MsgProposeDisableValidator.fromPartial( data ) }),
-    msgDisableValidator: (data: MsgDisableValidator): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.validator.MsgDisableValidator", value: MsgDisableValidator.fromPartial( data ) }),
     msgEnableValidator: (data: MsgEnableValidator): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.validator.MsgEnableValidator", value: MsgEnableValidator.fromPartial( data ) }),
+    msgDisableValidator: (data: MsgDisableValidator): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.validator.MsgDisableValidator", value: MsgDisableValidator.fromPartial( data ) }),
     msgApproveDisableValidator: (data: MsgApproveDisableValidator): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.validator.MsgApproveDisableValidator", value: MsgApproveDisableValidator.fromPartial( data ) }),
+    msgRejectDisableValidator: (data: MsgRejectDisableValidator): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.validator.MsgRejectDisableValidator", value: MsgRejectDisableValidator.fromPartial( data ) }),
+    msgCreateValidator: (data: MsgCreateValidator): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.validator.MsgCreateValidator", value: MsgCreateValidator.fromPartial( data ) }),
     
   };
 };

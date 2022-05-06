@@ -255,6 +255,35 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
+         * @name QueryRejectedCertificateAll
+         * @summary Queries a list of RejectedCertificate items.
+         * @request GET:/dcl/pki/rejected-certificates
+         */
+        this.queryRejectedCertificateAll = (query, params = {}) => this.request({
+            path: `/dcl/pki/rejected-certificates`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryRejectedCertificate
+         * @summary Queries a RejectedCertificate by index.
+         * @request GET:/dcl/pki/rejected-certificates/{subject}/{subjectKeyId}
+         */
+        this.queryRejectedCertificate = (subject, subjectKeyId, params = {}) => this.request({
+            path: `/dcl/pki/rejected-certificates/${subject}/${subjectKeyId}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
          * @name QueryRevokedCertificatesAll
          * @summary Queries a list of RevokedCertificates items.
          * @request GET:/dcl/pki/revoked-certificates

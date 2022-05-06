@@ -52,6 +52,15 @@ export interface MsgRevokeX509Cert {
 }
 export interface MsgRevokeX509CertResponse {
 }
+export interface MsgRejectAddX509RootCert {
+    signer: string;
+    subject: string;
+    subjectKeyId: string;
+    info: string;
+    time: number;
+}
+export interface MsgRejectAddX509RootCertResponse {
+}
 export declare const MsgProposeAddX509RootCert: {
     encode(message: MsgProposeAddX509RootCert, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgProposeAddX509RootCert;
@@ -136,6 +145,20 @@ export declare const MsgRevokeX509CertResponse: {
     toJSON(_: MsgRevokeX509CertResponse): unknown;
     fromPartial(_: DeepPartial<MsgRevokeX509CertResponse>): MsgRevokeX509CertResponse;
 };
+export declare const MsgRejectAddX509RootCert: {
+    encode(message: MsgRejectAddX509RootCert, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgRejectAddX509RootCert;
+    fromJSON(object: any): MsgRejectAddX509RootCert;
+    toJSON(message: MsgRejectAddX509RootCert): unknown;
+    fromPartial(object: DeepPartial<MsgRejectAddX509RootCert>): MsgRejectAddX509RootCert;
+};
+export declare const MsgRejectAddX509RootCertResponse: {
+    encode(_: MsgRejectAddX509RootCertResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgRejectAddX509RootCertResponse;
+    fromJSON(_: any): MsgRejectAddX509RootCertResponse;
+    toJSON(_: MsgRejectAddX509RootCertResponse): unknown;
+    fromPartial(_: DeepPartial<MsgRejectAddX509RootCertResponse>): MsgRejectAddX509RootCertResponse;
+};
 /** Msg defines the Msg service. */
 export interface Msg {
     ProposeAddX509RootCert(request: MsgProposeAddX509RootCert): Promise<MsgProposeAddX509RootCertResponse>;
@@ -143,8 +166,9 @@ export interface Msg {
     AddX509Cert(request: MsgAddX509Cert): Promise<MsgAddX509CertResponse>;
     ProposeRevokeX509RootCert(request: MsgProposeRevokeX509RootCert): Promise<MsgProposeRevokeX509RootCertResponse>;
     ApproveRevokeX509RootCert(request: MsgApproveRevokeX509RootCert): Promise<MsgApproveRevokeX509RootCertResponse>;
-    /** this line is used by starport scaffolding # proto/tx/rpc */
     RevokeX509Cert(request: MsgRevokeX509Cert): Promise<MsgRevokeX509CertResponse>;
+    /** this line is used by starport scaffolding # proto/tx/rpc */
+    RejectAddX509RootCert(request: MsgRejectAddX509RootCert): Promise<MsgRejectAddX509RootCertResponse>;
 }
 export declare class MsgClientImpl implements Msg {
     private readonly rpc;
@@ -155,6 +179,7 @@ export declare class MsgClientImpl implements Msg {
     ProposeRevokeX509RootCert(request: MsgProposeRevokeX509RootCert): Promise<MsgProposeRevokeX509RootCertResponse>;
     ApproveRevokeX509RootCert(request: MsgApproveRevokeX509RootCert): Promise<MsgApproveRevokeX509RootCertResponse>;
     RevokeX509Cert(request: MsgRevokeX509Cert): Promise<MsgRevokeX509CertResponse>;
+    RejectAddX509RootCert(request: MsgRejectAddX509RootCert): Promise<MsgRejectAddX509RootCertResponse>;
 }
 interface Rpc {
     request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;

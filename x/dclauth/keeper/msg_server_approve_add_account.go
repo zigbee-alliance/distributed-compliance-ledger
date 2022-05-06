@@ -40,6 +40,15 @@ func (k msgServer) ApproveAddAccount(
 	// get pending account
 	pendAcc, _ := k.GetPendingAccount(ctx, accAddr)
 
+	// check if pending account already has reject approval from signer
+	if pendAcc.HasRejectApprovalFrom(signerAddr) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+			"Pending account associated with the address=%v already has reject approval from=%v",
+			msg.Address,
+			msg.Signer,
+		)
+	}
+
 	// check if pending account already has approval from signer
 	if pendAcc.HasApprovalFrom(signerAddr) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
@@ -62,7 +71,7 @@ func (k msgServer) ApproveAddAccount(
 		// create approved account, assign account number and store it
 		// TODO issue 99: create a separate instance of BaseAccount with
 		//		AccountNumber and Sequence set to zero
-		account := types.NewAccount(pendAcc.BaseAccount, pendAcc.Roles, pendAcc.Approvals, pendAcc.VendorID)
+		account := types.NewAccount(pendAcc.BaseAccount, pendAcc.Roles, pendAcc.Approvals, pendAcc.Rejects, pendAcc.VendorID)
 		err = account.SetAccountNumber(k.GetNextAccountNumber(ctx))
 		if err != nil {
 			return nil, err

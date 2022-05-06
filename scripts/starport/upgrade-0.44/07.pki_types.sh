@@ -12,6 +12,7 @@ starport scaffold --module pki message AddX509Cert cert --signer signer
 starport scaffold --module pki message ProposeRevokeX509RootCert subject subjectKeyId --signer signer
 starport scaffold --module pki message ApproveRevokeX509RootCert subject subjectKeyId --signer signer
 starport scaffold --module pki message RevokeX509Cert subject subjectKeyId --signer signer
+starport scaffold --module pki message RejectAddX509RootCert cert --signer signer
 
 # CRUD data types
 starport scaffold --module pki map ApprovedCertificates certs:strings --index subject,subjectKeyId --no-message
@@ -23,6 +24,7 @@ starport scaffold --module pki map UniqueCertificate present:bool --index issuer
 starport scaffold --module pki single ApprovedRootCertificates certs:strings --no-message
 starport scaffold --module pki single RevokedRootCertificates certs:strings --no-message
 starport scaffold --module pki map ApprovedCertificatesBySubject subjectKeyIds:strings --index subject --no-message
+starport scaffold --module pki map RejectedCertificate pemCert serialNumber owner approvals:strings --index subject,subjectKeyId --no-message
 #starport scaffold --module pki map AllProposedCertificates --index subject,subjectKeyId --no-message
 
 # Allow colons (:) in subject ID part in REST URLs

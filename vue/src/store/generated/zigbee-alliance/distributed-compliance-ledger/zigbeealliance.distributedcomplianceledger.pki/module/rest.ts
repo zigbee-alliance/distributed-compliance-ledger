@@ -37,6 +37,7 @@ export interface PkiCertificate {
   subjectKeyId?: string;
   approvals?: PkiGrant[];
   subjectAsText?: string;
+  rejects?: PkiGrant[];
 }
 
 export interface PkiCertificateIdentifier {
@@ -68,6 +69,8 @@ export type PkiMsgProposeAddX509RootCertResponse = object;
 
 export type PkiMsgProposeRevokeX509RootCertResponse = object;
 
+export type PkiMsgRejectAddX509RootCertResponse = object;
+
 export type PkiMsgRevokeX509CertResponse = object;
 
 export interface PkiProposedCertificate {
@@ -78,6 +81,7 @@ export interface PkiProposedCertificate {
   owner?: string;
   approvals?: PkiGrant[];
   subjectAsText?: string;
+  rejects?: PkiGrant[];
 }
 
 export interface PkiProposedCertificateRevocation {
@@ -132,6 +136,21 @@ export interface PkiQueryAllProposedCertificateRevocationResponse {
   pagination?: V1Beta1PageResponse;
 }
 
+export interface PkiQueryAllRejectedCertificatesResponse {
+  rejectedCertificate?: PkiRejectedCertificate[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
 export interface PkiQueryAllRevokedCertificatesResponse {
   revokedCertificates?: PkiRevokedCertificates[];
 
@@ -171,12 +190,22 @@ export interface PkiQueryGetProposedCertificateRevocationResponse {
   proposedCertificateRevocation?: PkiProposedCertificateRevocation;
 }
 
+export interface PkiQueryGetRejectedCertificatesResponse {
+  rejectedCertificate?: PkiRejectedCertificate;
+}
+
 export interface PkiQueryGetRevokedCertificatesResponse {
   revokedCertificates?: PkiRevokedCertificates;
 }
 
 export interface PkiQueryGetRevokedRootCertificatesResponse {
   revokedRootCertificates?: PkiRevokedRootCertificates;
+}
+
+export interface PkiRejectedCertificate {
+  subject?: string;
+  subjectKeyId?: string;
+  certs?: PkiCertificate[];
 }
 
 export interface PkiRevokedCertificates {
@@ -612,6 +641,48 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryProposedCertificateRevocation = (subject: string, subjectKeyId: string, params: RequestParams = {}) =>
     this.request<PkiQueryGetProposedCertificateRevocationResponse, RpcStatus>({
       path: `/dcl/pki/proposed-revocation-certificates/${subject}/${subjectKeyId}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryRejectedCertificateAll
+   * @summary Queries a list of RejectedCertificate items.
+   * @request GET:/dcl/pki/rejected-certificates
+   */
+  queryRejectedCertificateAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<PkiQueryAllRejectedCertificatesResponse, RpcStatus>({
+      path: `/dcl/pki/rejected-certificates`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryRejectedCertificate
+   * @summary Queries a RejectedCertificate by index.
+   * @request GET:/dcl/pki/rejected-certificates/{subject}/{subjectKeyId}
+   */
+  queryRejectedCertificate = (subject: string, subjectKeyId: string, params: RequestParams = {}) =>
+    this.request<PkiQueryGetRejectedCertificatesResponse, RpcStatus>({
+      path: `/dcl/pki/rejected-certificates/${subject}/${subjectKeyId}`,
       method: "GET",
       format: "json",
       ...params,

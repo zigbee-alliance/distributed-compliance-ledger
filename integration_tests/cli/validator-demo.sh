@@ -85,6 +85,7 @@ address="$(docker exec $container /bin/sh -c "echo $passphrase | ./dcld keys sho
 pubkey="$(docker exec $container /bin/sh -c "echo $passphrase | ./dcld keys show $account -p")"
 alice_address="$(dcld keys show alice -a)"
 bob_address="$(dcld keys show bob -a)"
+jack_address="$(dcld keys show jack -a)"
 echo "Create account for $account and Assign NodeAdmin role"
 echo $passphrase | dcld tx auth propose-add-account --address="$address" --pubkey="$pubkey" --roles="NodeAdmin" --from jack --yes
 echo $passphrase | dcld tx auth approve-add-account --address="$address" --from alice --yes
@@ -301,6 +302,13 @@ echo "$result"
 
 test_divider
 
+echo "Bob cannot reject to disable validator $address, because Bob already approves to disable validator"
+result=$(dcld tx validator reject-disable-node --address="$validator_address" --from bob --yes)
+response_does_not_contain "$result" "\"code\": 0"
+echo "$result"
+
+test_divider
+
 echo "node admin doesn't add a new validator with new pubkey, because node admin already has disabled validator"
 result="$(docker exec "$container" /bin/sh -c "echo test1234 | ./dcld tx validator add-node --pubkey='$pubkey' --moniker="$node_name" --from="$account" --yes 2>&1 || true")"
 response_does_not_contain "$result" "\"code\": 0"
@@ -377,6 +385,13 @@ echo "$result"
 
 test_divider
 
+echo "Bob cannot reject to disable validator $address, because Bob already rejected to disable validator"
+result=$(dcld tx validator reject-disable-node --address="$validator_address" --from bob --yes)
+response_does_not_contain "$result" "\"code\": 0"
+echo "$result"
+
+test_divider
+
 echo "Get all proposed validators to disable. $address not in the list"
 result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator all-proposed-disable-nodes")
 response_does_not_contain "$result" "\"address\": \"$address\""
@@ -406,18 +421,197 @@ echo "$result"
 test_divider
 
 
-echo "Get $address"
+echo "Get a validator $address"
 result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator node --address=$address")
 check_response "$result" "\"jailed\": true"
 echo "$result"
 
 test_divider
 
-echo "Get $validator_address"
+echo "Get a validator $validator_address"
 result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator node --address=$validator_address")
 check_response "$result" "\"jailed\": true"
 echo "$result"
 
+test_divider
+
+echo "node admin enables validator"
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld tx validator enable-node --from "$account" --yes")
+check_response "$result" "\"code\": 0"
+echo "$result"
+
+test_divider
+
+echo "Alice proposes to disable validator $address"
+result=$(dcld tx validator propose-disable-node --address="$validator_address" --from alice --yes)
+check_response "$result" "\"code\": 0"
+echo "$result"
+
+test_divider
+
+echo "Get all proposed validators to disable. $address in the list"
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator all-proposed-disable-nodes")
+check_response "$result" "\"approvals\":\[{\"address\":\"$alice_address\"" raw
+check_response "$result" "\"address\": \"$validator_address\""
+echo "$result"
+
+test_divider
+
+echo "Get a proposed validator to disable $address"
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator proposed-disable-node --address="$address"")
+check_response "$result" "\"approvals\":\[{\"address\":\"$alice_address\"" raw
+check_response "$result" "\"address\": \"$validator_address\""
+echo "$result"
+
+test_divider
+
+echo "Get a proposed validator to disable $validator_address"
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator proposed-disable-node --address="$validator_address"")
+check_response "$result" "\"approvals\":\[{\"address\":\"$alice_address\"" raw
+check_response "$result" "\"address\": \"$validator_address\""
+echo "$result"
+
+test_divider
+
+echo "Bob rejects to disable validator $address"
+result=$(dcld tx validator reject-disable-node --address="$validator_address" --from bob --yes)
+check_response "$result" "\"code\": 0"
+echo "$result"
+
+test_divider
+
+echo "Bob cannot reject to disable validator $address, because Bob already rejected to disable validator"
+result=$(dcld tx validator reject-disable-node --address="$validator_address" --from bob --yes)
+response_does_not_contain "$result" "\"code\": 0"
+echo "$result"
+
+test_divider
+
+echo "Bob cannot approve to disable validator $address, because Bob already rejected to disable validator"
+result=$(dcld tx validator approve-disable-node --address="$validator_address" --from bob --yes)
+response_does_not_contain "$result" "\"code\": 0"
+echo "$result"
+
+
+test_divider
+
+echo "Get a validator $address from disabled-validator query"
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator disabled-node --address="$address"")
+response_does_not_contain "$result" "\"creator\": \"$alice_address\""
+response_does_not_contain "$result" "\"disabledByNodeAdmin\": false"
+response_does_not_contain "$result" "\"address\": \"$validator_address\""
+echo "$result"
+
+test_divider
+
+echo "Get all proposed validators to disable. $address in the list"
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator all-proposed-disable-nodes")
+check_response "$result" "\"approvals\":\[{\"address\":\"$alice_address\"" raw
+check_response "$result" "\"rejects\":\[{\"address\":\"$bob_address\"" raw
+check_response "$result" "\"address\": \"$validator_address\""
+echo "$result"
+
+test_divider
+
+echo "Get a proposed validator to disable $address"
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator proposed-disable-node --address="$address"")
+check_response "$result" "\"approvals\":\[{\"address\":\"$alice_address\"" raw
+check_response "$result" "\"rejects\":\[{\"address\":\"$bob_address\"" raw
+check_response "$result" "\"address\": \"$validator_address\""
+echo "$result"
+
+test_divider
+
+echo "Get a proposed validator to disable $validator_address"
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator proposed-disable-node --address="$validator_address"")
+check_response "$result" "\"approvals\":\[{\"address\":\"$alice_address\"" raw
+check_response "$result" "\"rejects\":\[{\"address\":\"$bob_address\"" raw
+check_response "$result" "\"address\": \"$validator_address\""
+echo "$result"
+
+test_divider
+
+echo "Jack rejects to disable validator $address"
+result=$(dcld tx validator reject-disable-node --address="$validator_address" --from jack --yes)
+check_response "$result" "\"code\": 0"
+echo "$result"
+
+test_divider
+
+echo "Jack cannot reject to disable validator $address, because Jack already rejected to disable validator"
+result=$(dcld tx validator reject-disable-node --address="$validator_address" --from jack --yes)
+response_does_not_contain "$result" "\"code\": 0"
+echo "$result"
+
+test_divider
+
+echo "Jack cannot approve to disable validator $address, because Jack already rejected to disable validator"
+result=$(dcld tx validator approve-disable-node --address="$validator_address" --from jack --yes)
+response_does_not_contain "$result" "\"code\": 0"
+echo "$result"
+
+
+test_divider
+
+echo "Get all proposed validators to disable. $address in the list"
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator all-proposed-disable-nodes")
+response_does_not_contain "$result" "\"approvals\":\[{\"address\":\"$alice_address\"" raw
+response_does_not_contain "$result" "\"rejects\":\[{\"address\":\"$bob_address\"" raw
+response_does_not_contain "$result" "\"address\": \"$validator_address\""
+echo "$result"
+
+test_divider
+
+echo "Get all rejected validators to disable. $address in the list"
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator all-rejected-disable-nodes")
+check_response "$result" "\"approvals\":\[{\"address\":\"$alice_address\"" raw
+check_response "$result" "\"rejects\":\[{\"address\":\"$bob_address\"" raw
+check_response "$result" "\"address\": \"$jack_address\""
+check_response "$result" "\"address\": \"$validator_address\""
+echo "$result"
+
+test_divider
+
+echo "Get a rejected validator to disable $address"
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator rejected-disable-node --address="$address"")
+check_response "$result" "\"approvals\":\[{\"address\":\"$alice_address\"" raw
+check_response "$result" "\"rejects\":\[{\"address\":\"$bob_address\"" raw
+check_response "$result" "\"address\": \"$jack_address\""
+check_response "$result" "\"address\": \"$validator_address\""
+echo "$result"
+
+echo "Alice proposes to disable validator $address"
+result=$(dcld tx validator propose-disable-node --address="$validator_address" --from alice --yes)
+check_response "$result" "\"code\": 0"
+echo "$result"
+
+test_divider
+
+echo "Get a proposed validator to disable $address"
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator proposed-disable-node --address="$address"")
+check_response "$result" "\"approvals\":\[{\"address\":\"$alice_address\"" raw
+check_response "$result" "\"address\": \"$validator_address\""
+echo "$result"
+
+test_divider
+
+echo "Get a proposed validator to disable $validator_address"
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator proposed-disable-node --address="$validator_address"")
+check_response "$result" "\"approvals\":\[{\"address\":\"$alice_address\"" raw
+check_response "$result" "\"address\": \"$validator_address\""
+echo "$result"
+
+test_divider
+
+echo "Get a rejected account for $address is not found"
+result=$(dcld query validator rejected-disable-node --address=$address)
+check_response "$result" "Not Found"
+
+test_divider
+
+echo "Get a rejected account for $validator_address is not found"
+result=$(dcld query validator rejected-disable-node --address=$validator_address)
+check_response "$result" "Not Found"
 
 test_divider
 
@@ -435,27 +629,9 @@ echo "$result"
 
 test_divider
 
-echo "node admin can not enable validator"
+echo "Node Admin cannot enable validator"
 result=$(dcld tx validator enable-node --from "$account" --yes 2>&1 || true)
 check_response "$result" "key not found" raw
-
-test_divider
-
-echo "Get a validator $address from disabled-validator query"
-result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator disabled-node --address=$address")
-check_response "$result" "\"creator\": \"$alice_address\""
-check_response "$result" "\"disabledByNodeAdmin\": false"
-check_response "$result" "\"address\": \"$validator_address\""
-echo "$result"
-
-test_divider
-
-echo "Get a validator $validator_address from disabled-validator query"
-result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator disabled-node --address=$validator_address")
-check_response "$result" "\"creator\": \"$alice_address\""
-check_response "$result" "\"disabledByNodeAdmin\": false"
-check_response "$result" "\"address\": \"$validator_address\""
-echo "$result"
 
 test_divider
 

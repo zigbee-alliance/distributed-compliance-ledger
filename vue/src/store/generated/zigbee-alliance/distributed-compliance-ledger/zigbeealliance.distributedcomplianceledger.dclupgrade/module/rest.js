@@ -194,5 +194,34 @@ export class Api extends HttpClient {
             format: "json",
             ...params,
         });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryRejectedUpgradeAll
+         * @summary Queries a list of RejectedUpgrade items.
+         * @request GET:/dcl/dclupgrade/rejected-upgrades
+         */
+        this.queryRejectedUpgradeAll = (query, params = {}) => this.request({
+            path: `/dcl/dclupgrade/rejected-upgrades`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryRejectedUpgrade
+         * @summary Queries a RejectedUpgrade by index.
+         * @request GET:/dcl/dclupgrade/rejected-upgrades/{name}
+         */
+        this.queryRejectedUpgrade = (name, params = {}) => this.request({
+            path: `/dcl/dclupgrade/rejected-upgrades/${name}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
     }
 }

@@ -6,6 +6,7 @@ export interface DisabledValidator {
     creator: string;
     approvals: Grant[];
     disabledByNodeAdmin: boolean;
+    rejects: Grant[];
 }
 export declare const DisabledValidator: {
     encode(message: DisabledValidator, writer?: Writer): Writer;

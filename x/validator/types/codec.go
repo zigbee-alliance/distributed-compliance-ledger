@@ -13,6 +13,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgApproveDisableValidator{}, "validator/ApproveDisableValidator", nil)
 	cdc.RegisterConcrete(&MsgDisableValidator{}, "validator/DisableValidator", nil)
 	cdc.RegisterConcrete(&MsgEnableValidator{}, "validator/EnableValidator", nil)
+	cdc.RegisterConcrete(&MsgRejectDisableValidator{}, "validator/RejectDisableValidator", nil)
 	// this line is used by starport scaffolding # 2
 }
 
@@ -31,6 +32,9 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgEnableValidator{},
+	)
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgRejectDisableValidator{},
 	)
 	// this line is used by starport scaffolding # 3
 

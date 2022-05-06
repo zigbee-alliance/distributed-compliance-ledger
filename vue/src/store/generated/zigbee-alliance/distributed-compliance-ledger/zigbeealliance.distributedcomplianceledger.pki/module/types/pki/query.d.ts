@@ -8,6 +8,7 @@ import { RevokedCertificates } from '../pki/revoked_certificates';
 import { ApprovedRootCertificates } from '../pki/approved_root_certificates';
 import { RevokedRootCertificates } from '../pki/revoked_root_certificates';
 import { ApprovedCertificatesBySubject } from '../pki/approved_certificates_by_subject';
+import { RejectedCertificate } from '../pki/rejected_certificate';
 export declare const protobufPackage = "zigbeealliance.distributedcomplianceledger.pki";
 export interface QueryGetApprovedCertificatesRequest {
     subject: string;
@@ -87,6 +88,20 @@ export interface QueryGetApprovedCertificatesBySubjectRequest {
 }
 export interface QueryGetApprovedCertificatesBySubjectResponse {
     approvedCertificatesBySubject: ApprovedCertificatesBySubject | undefined;
+}
+export interface QueryGetRejectedCertificatesRequest {
+    subject: string;
+    subjectKeyId: string;
+}
+export interface QueryGetRejectedCertificatesResponse {
+    rejectedCertificate: RejectedCertificate | undefined;
+}
+export interface QueryAllRejectedCertificatesRequest {
+    pagination: PageRequest | undefined;
+}
+export interface QueryAllRejectedCertificatesResponse {
+    rejectedCertificate: RejectedCertificate[];
+    pagination: PageResponse | undefined;
 }
 export declare const QueryGetApprovedCertificatesRequest: {
     encode(message: QueryGetApprovedCertificatesRequest, writer?: Writer): Writer;
@@ -256,6 +271,34 @@ export declare const QueryGetApprovedCertificatesBySubjectResponse: {
     toJSON(message: QueryGetApprovedCertificatesBySubjectResponse): unknown;
     fromPartial(object: DeepPartial<QueryGetApprovedCertificatesBySubjectResponse>): QueryGetApprovedCertificatesBySubjectResponse;
 };
+export declare const QueryGetRejectedCertificatesRequest: {
+    encode(message: QueryGetRejectedCertificatesRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetRejectedCertificatesRequest;
+    fromJSON(object: any): QueryGetRejectedCertificatesRequest;
+    toJSON(message: QueryGetRejectedCertificatesRequest): unknown;
+    fromPartial(object: DeepPartial<QueryGetRejectedCertificatesRequest>): QueryGetRejectedCertificatesRequest;
+};
+export declare const QueryGetRejectedCertificatesResponse: {
+    encode(message: QueryGetRejectedCertificatesResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetRejectedCertificatesResponse;
+    fromJSON(object: any): QueryGetRejectedCertificatesResponse;
+    toJSON(message: QueryGetRejectedCertificatesResponse): unknown;
+    fromPartial(object: DeepPartial<QueryGetRejectedCertificatesResponse>): QueryGetRejectedCertificatesResponse;
+};
+export declare const QueryAllRejectedCertificatesRequest: {
+    encode(message: QueryAllRejectedCertificatesRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllRejectedCertificatesRequest;
+    fromJSON(object: any): QueryAllRejectedCertificatesRequest;
+    toJSON(message: QueryAllRejectedCertificatesRequest): unknown;
+    fromPartial(object: DeepPartial<QueryAllRejectedCertificatesRequest>): QueryAllRejectedCertificatesRequest;
+};
+export declare const QueryAllRejectedCertificatesResponse: {
+    encode(message: QueryAllRejectedCertificatesResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllRejectedCertificatesResponse;
+    fromJSON(object: any): QueryAllRejectedCertificatesResponse;
+    toJSON(message: QueryAllRejectedCertificatesResponse): unknown;
+    fromPartial(object: DeepPartial<QueryAllRejectedCertificatesResponse>): QueryAllRejectedCertificatesResponse;
+};
 /** Query defines the gRPC querier service. */
 export interface Query {
     /** Queries a ApprovedCertificates by index. */
@@ -282,6 +325,10 @@ export interface Query {
     RevokedRootCertificates(request: QueryGetRevokedRootCertificatesRequest): Promise<QueryGetRevokedRootCertificatesResponse>;
     /** Queries a ApprovedCertificatesBySubject by index. */
     ApprovedCertificatesBySubject(request: QueryGetApprovedCertificatesBySubjectRequest): Promise<QueryGetApprovedCertificatesBySubjectResponse>;
+    /** Queries a RejectedCertificate by index. */
+    RejectedCertificate(request: QueryGetRejectedCertificatesRequest): Promise<QueryGetRejectedCertificatesResponse>;
+    /** Queries a list of RejectedCertificate items. */
+    RejectedCertificateAll(request: QueryAllRejectedCertificatesRequest): Promise<QueryAllRejectedCertificatesResponse>;
 }
 export declare class QueryClientImpl implements Query {
     private readonly rpc;
@@ -298,6 +345,8 @@ export declare class QueryClientImpl implements Query {
     ApprovedRootCertificates(request: QueryGetApprovedRootCertificatesRequest): Promise<QueryGetApprovedRootCertificatesResponse>;
     RevokedRootCertificates(request: QueryGetRevokedRootCertificatesRequest): Promise<QueryGetRevokedRootCertificatesResponse>;
     ApprovedCertificatesBySubject(request: QueryGetApprovedCertificatesBySubjectRequest): Promise<QueryGetApprovedCertificatesBySubjectResponse>;
+    RejectedCertificate(request: QueryGetRejectedCertificatesRequest): Promise<QueryGetRejectedCertificatesResponse>;
+    RejectedCertificateAll(request: QueryAllRejectedCertificatesRequest): Promise<QueryAllRejectedCertificatesResponse>;
 }
 interface Rpc {
     request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;

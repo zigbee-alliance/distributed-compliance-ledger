@@ -5,6 +5,7 @@ import { PageRequest, PageResponse } from '../cosmos/base/query/v1beta1/paginati
 import { LastValidatorPower } from '../validator/last_validator_power';
 import { ProposedDisableValidator } from '../validator/proposed_disable_validator';
 import { DisabledValidator } from '../validator/disabled_validator';
+import { RejectedDisableValidator } from '../validator/rejected_validator';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.validator';
 const baseQueryGetValidatorRequest = { owner: '' };
 export const QueryGetValidatorRequest = {
@@ -925,6 +926,236 @@ export const QueryAllDisabledValidatorResponse = {
         return message;
     }
 };
+const baseQueryGetRejectedDisableValidatorRequest = { owner: '' };
+export const QueryGetRejectedDisableValidatorRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.owner !== '') {
+            writer.uint32(10).string(message.owner);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryGetRejectedDisableValidatorRequest };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.owner = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryGetRejectedDisableValidatorRequest };
+        if (object.owner !== undefined && object.owner !== null) {
+            message.owner = String(object.owner);
+        }
+        else {
+            message.owner = '';
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.owner !== undefined && (obj.owner = message.owner);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryGetRejectedDisableValidatorRequest };
+        if (object.owner !== undefined && object.owner !== null) {
+            message.owner = object.owner;
+        }
+        else {
+            message.owner = '';
+        }
+        return message;
+    }
+};
+const baseQueryGetRejectedDisableValidatorResponse = {};
+export const QueryGetRejectedDisableValidatorResponse = {
+    encode(message, writer = Writer.create()) {
+        if (message.rejectedValidator !== undefined) {
+            RejectedDisableValidator.encode(message.rejectedValidator, writer.uint32(10).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryGetRejectedDisableValidatorResponse };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.rejectedValidator = RejectedDisableValidator.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryGetRejectedDisableValidatorResponse };
+        if (object.rejectedValidator !== undefined && object.rejectedValidator !== null) {
+            message.rejectedValidator = RejectedDisableValidator.fromJSON(object.rejectedValidator);
+        }
+        else {
+            message.rejectedValidator = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.rejectedValidator !== undefined &&
+            (obj.rejectedValidator = message.rejectedValidator ? RejectedDisableValidator.toJSON(message.rejectedValidator) : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryGetRejectedDisableValidatorResponse };
+        if (object.rejectedValidator !== undefined && object.rejectedValidator !== null) {
+            message.rejectedValidator = RejectedDisableValidator.fromPartial(object.rejectedValidator);
+        }
+        else {
+            message.rejectedValidator = undefined;
+        }
+        return message;
+    }
+};
+const baseQueryAllRejectedDisableValidatorRequest = {};
+export const QueryAllRejectedDisableValidatorRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.pagination !== undefined) {
+            PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryAllRejectedDisableValidatorRequest };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.pagination = PageRequest.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryAllRejectedDisableValidatorRequest };
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageRequest.fromJSON(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.pagination !== undefined && (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryAllRejectedDisableValidatorRequest };
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageRequest.fromPartial(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    }
+};
+const baseQueryAllRejectedDisableValidatorResponse = {};
+export const QueryAllRejectedDisableValidatorResponse = {
+    encode(message, writer = Writer.create()) {
+        for (const v of message.rejectedValidator) {
+            RejectedDisableValidator.encode(v, writer.uint32(10).fork()).ldelim();
+        }
+        if (message.pagination !== undefined) {
+            PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryAllRejectedDisableValidatorResponse };
+        message.rejectedValidator = [];
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.rejectedValidator.push(RejectedDisableValidator.decode(reader, reader.uint32()));
+                    break;
+                case 2:
+                    message.pagination = PageResponse.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryAllRejectedDisableValidatorResponse };
+        message.rejectedValidator = [];
+        if (object.rejectedValidator !== undefined && object.rejectedValidator !== null) {
+            for (const e of object.rejectedValidator) {
+                message.rejectedValidator.push(RejectedDisableValidator.fromJSON(e));
+            }
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageResponse.fromJSON(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        if (message.rejectedValidator) {
+            obj.rejectedValidator = message.rejectedValidator.map((e) => (e ? RejectedDisableValidator.toJSON(e) : undefined));
+        }
+        else {
+            obj.rejectedValidator = [];
+        }
+        message.pagination !== undefined && (obj.pagination = message.pagination ? PageResponse.toJSON(message.pagination) : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryAllRejectedDisableValidatorResponse };
+        message.rejectedValidator = [];
+        if (object.rejectedValidator !== undefined && object.rejectedValidator !== null) {
+            for (const e of object.rejectedValidator) {
+                message.rejectedValidator.push(RejectedDisableValidator.fromPartial(e));
+            }
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageResponse.fromPartial(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    }
+};
 export class QueryClientImpl {
     constructor(rpc) {
         this.rpc = rpc;
@@ -968,5 +1199,15 @@ export class QueryClientImpl {
         const data = QueryAllDisabledValidatorRequest.encode(request).finish();
         const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.validator.Query', 'DisabledValidatorAll', data);
         return promise.then((data) => QueryAllDisabledValidatorResponse.decode(new Reader(data)));
+    }
+    RejectedDisableValidator(request) {
+        const data = QueryGetRejectedDisableValidatorRequest.encode(request).finish();
+        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.validator.Query', 'RejectedDisableValidator', data);
+        return promise.then((data) => QueryGetRejectedDisableValidatorResponse.decode(new Reader(data)));
+    }
+    RejectedDisableValidatorAll(request) {
+        const data = QueryAllRejectedDisableValidatorRequest.encode(request).finish();
+        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.validator.Query', 'RejectedDisableValidatorAll', data);
+        return promise.then((data) => QueryAllRejectedDisableValidatorResponse.decode(new Reader(data)));
     }
 }

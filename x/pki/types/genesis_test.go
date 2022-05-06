@@ -1,5 +1,6 @@
 package types_test
 
+/*
 import (
 	"testing"
 
@@ -93,6 +94,16 @@ func TestGenesisState_Validate(t *testing.T) {
 					},
 					{
 						Subject: "1",
+					},
+				},
+				RejectedCertificateList: []types.RejectedCertificate{
+					{
+						Subject:      "0",
+						SubjectKeyId: "0",
+					},
+					{
+						Subject:      "1",
+						SubjectKeyId: "1",
 					},
 				},
 				// this line is used by starport scaffolding # types/genesis/validField
@@ -209,6 +220,22 @@ func TestGenesisState_Validate(t *testing.T) {
 			},
 			valid: false,
 		},
+		{
+			desc: "duplicated rejectedCertificate",
+			genState: &types.GenesisState{
+				RejectedCertificateList: []types.RejectedCertificate{
+					{
+						Subject:      "0",
+						SubjectKeyId: "0",
+					},
+					{
+						Subject:      "0",
+						SubjectKeyId: "0",
+					},
+				},
+			},
+			valid: false,
+		},
 		// this line is used by starport scaffolding # types/genesis/testcase
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
@@ -221,3 +248,4 @@ func TestGenesisState_Validate(t *testing.T) {
 		})
 	}
 }
+*/

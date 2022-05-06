@@ -44,6 +44,14 @@ func TestGenesis(t *testing.T) {
 			Address: "1",
 },
 	},
+	RejectedNodeList: []types.RejectedNode{
+		{
+			Owner: "0",
+},
+		{
+			Owner: "1",
+},
+	},
 	// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -58,6 +66,7 @@ func TestGenesis(t *testing.T) {
 	require.Subset(t, genesisState.LastValidatorPowerList, got.LastValidatorPowerList)
 	require.ElementsMatch(t, genesisState.ProposedDisableValidatorList, got.ProposedDisableValidatorList)
 require.ElementsMatch(t, genesisState.DisabledValidatorList, got.DisabledValidatorList)
+require.ElementsMatch(t, genesisState.RejectedNodeList, got.RejectedNodeList)
 // this line is used by starport scaffolding # genesis/test/assert
 }
 */

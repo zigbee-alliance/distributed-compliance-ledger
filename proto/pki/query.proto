@@ -11,6 +11,7 @@ import "pki/revoked_certificates.proto";
 import "pki/approved_root_certificates.proto";
 import "pki/revoked_root_certificates.proto";
 import "pki/approved_certificates_by_subject.proto";
+import "pki/rejected_certificate.proto";
 // this line is used by starport scaffolding # 1
 import "gogoproto/gogo.proto";
 
@@ -80,6 +81,16 @@ service Query {
 		option (google.api.http).get = "/dcl/pki/certificates/{subject}";
 	}
 
+
+// Queries a RejectedCertificate by index.
+	rpc RejectedCertificate(QueryGetRejectedCertificatesRequest) returns (QueryGetRejectedCertificatesResponse) {
+		option (google.api.http).get = "/dcl/pki/rejected-certificates/{subject}/{subjectKeyId}";
+	}
+
+	// Queries a list of RejectedCertificate items.
+	rpc RejectedCertificateAll(QueryAllRejectedCertificatesRequest) returns (QueryAllRejectedCertificatesResponse) {
+		option (google.api.http).get = "/dcl/pki/rejected-certificates";
+	}
 
 // this line is used by starport scaffolding # 2
 }
@@ -187,6 +198,25 @@ message QueryGetApprovedCertificatesBySubjectRequest {
 
 message QueryGetApprovedCertificatesBySubjectResponse {
 	ApprovedCertificatesBySubject approvedCertificatesBySubject = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryGetRejectedCertificatesRequest {
+	  string subject = 1;
+  string subjectKeyId = 2;
+
+}
+
+message QueryGetRejectedCertificatesResponse {
+	RejectedCertificate rejectedCertificate = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllRejectedCertificatesRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllRejectedCertificatesResponse {
+	repeated RejectedCertificate rejectedCertificate = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // this line is used by starport scaffolding # 3

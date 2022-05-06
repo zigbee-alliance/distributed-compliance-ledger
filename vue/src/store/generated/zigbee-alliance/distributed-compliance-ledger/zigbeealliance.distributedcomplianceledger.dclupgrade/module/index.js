@@ -2,9 +2,11 @@
 import { SigningStargateClient } from "@cosmjs/stargate";
 import { Registry } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
+import { MsgRejectUpgrade } from "./types/dclupgrade/tx";
 import { MsgApproveUpgrade } from "./types/dclupgrade/tx";
 import { MsgProposeUpgrade } from "./types/dclupgrade/tx";
 const types = [
+    ["/zigbeealliance.distributedcomplianceledger.dclupgrade.MsgRejectUpgrade", MsgRejectUpgrade],
     ["/zigbeealliance.distributedcomplianceledger.dclupgrade.MsgApproveUpgrade", MsgApproveUpgrade],
     ["/zigbeealliance.distributedcomplianceledger.dclupgrade.MsgProposeUpgrade", MsgProposeUpgrade],
 ];
@@ -27,6 +29,7 @@ const txClient = async (wallet, { addr: addr } = { addr: "http://localhost:26657
     const { address } = (await wallet.getAccounts())[0];
     return {
         signAndBroadcast: (msgs, { fee, memo } = { fee: defaultFee, memo: "" }) => client.signAndBroadcast(address, msgs, fee, memo),
+        msgRejectUpgrade: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.dclupgrade.MsgRejectUpgrade", value: MsgRejectUpgrade.fromPartial(data) }),
         msgApproveUpgrade: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.dclupgrade.MsgApproveUpgrade", value: MsgApproveUpgrade.fromPartial(data) }),
         msgProposeUpgrade: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.dclupgrade.MsgProposeUpgrade", value: MsgProposeUpgrade.fromPartial(data) }),
     };

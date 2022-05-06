@@ -1,5 +1,6 @@
 package cli_test
 
+/*
 import (
 	"fmt"
 	"strconv"
@@ -159,3 +160,4 @@ func TestListApprovedUpgrade(t *testing.T) {
 		)
 	})
 }
+*/

@@ -54,7 +54,7 @@ func (k msgServer) ProposeAddAccount(goCtx context.Context, msg *types.MsgPropos
 	}
 
 	ba := authtypes.NewBaseAccount(accAddr, pk, 0, 0)
-	account := types.NewAccount(ba, msg.Roles, nil, msg.VendorID)
+	account := types.NewAccount(ba, msg.Roles, nil, nil, msg.VendorID)
 
 	// if more than 1 trustee's approval is needed, create pending account else create an active account.
 	if k.AccountApprovalsCount(ctx) > 1 {
@@ -65,6 +65,11 @@ func (k msgServer) ProposeAddAccount(goCtx context.Context, msg *types.MsgPropos
 		// create account, assign account number and store it
 		account.AccountNumber = k.GetNextAccountNumber(ctx)
 		k.SetAccountO(ctx, *account)
+	}
+
+	_, isFound := k.GetRejectedAccount(ctx, accAddr)
+	if isFound {
+		k.RemoveRejectedAccount(ctx, accAddr)
 	}
 
 	return &types.MsgProposeAddAccountResponse{}, nil

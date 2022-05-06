@@ -58,6 +58,14 @@ func TestGenesisState_Validate(t *testing.T) {
 		Address: "1",
 },
 },
+RejectedAccountList: []types.RejectedAccount{
+	{
+		Address: "0",
+},
+	{
+		Address: "1",
+},
+},
 // this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -108,6 +116,20 @@ func TestGenesisState_Validate(t *testing.T) {
 	desc:     "duplicated revokedAccount",
 	genState: &types.GenesisState{
 		RevokedAccountList: []types.RevokedAccount{
+			{
+				Address: "0",
+},
+			{
+				Address: "0",
+},
+		},
+	},
+	valid:    false,
+},
+{
+	desc:     "duplicated rejectedAccount",
+	genState: &types.GenesisState{
+		RejectedAccountList: []types.RejectedAccount{
 			{
 				Address: "0",
 },

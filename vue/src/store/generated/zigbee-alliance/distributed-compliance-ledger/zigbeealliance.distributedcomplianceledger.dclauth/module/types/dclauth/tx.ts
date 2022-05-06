@@ -44,6 +44,15 @@ export interface MsgApproveRevokeAccount {
 
 export interface MsgApproveRevokeAccountResponse {}
 
+export interface MsgRejectAddAccount {
+  signer: string
+  address: string
+  info: string
+  time: number
+}
+
+export interface MsgRejectAddAccountResponse {}
+
 const baseMsgProposeAddAccount: object = { signer: '', address: '', roles: '', vendorID: 0, info: '', time: 0 }
 
 export const MsgProposeAddAccount = {
@@ -678,13 +687,158 @@ export const MsgApproveRevokeAccountResponse = {
   }
 }
 
+const baseMsgRejectAddAccount: object = { signer: '', address: '', info: '', time: 0 }
+
+export const MsgRejectAddAccount = {
+  encode(message: MsgRejectAddAccount, writer: Writer = Writer.create()): Writer {
+    if (message.signer !== '') {
+      writer.uint32(10).string(message.signer)
+    }
+    if (message.address !== '') {
+      writer.uint32(18).string(message.address)
+    }
+    if (message.info !== '') {
+      writer.uint32(26).string(message.info)
+    }
+    if (message.time !== 0) {
+      writer.uint32(32).int64(message.time)
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgRejectAddAccount {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseMsgRejectAddAccount } as MsgRejectAddAccount
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.signer = reader.string()
+          break
+        case 2:
+          message.address = reader.string()
+          break
+        case 3:
+          message.info = reader.string()
+          break
+        case 4:
+          message.time = longToNumber(reader.int64() as Long)
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): MsgRejectAddAccount {
+    const message = { ...baseMsgRejectAddAccount } as MsgRejectAddAccount
+    if (object.signer !== undefined && object.signer !== null) {
+      message.signer = String(object.signer)
+    } else {
+      message.signer = ''
+    }
+    if (object.address !== undefined && object.address !== null) {
+      message.address = String(object.address)
+    } else {
+      message.address = ''
+    }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = String(object.info)
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = Number(object.time)
+    } else {
+      message.time = 0
+    }
+    return message
+  },
+
+  toJSON(message: MsgRejectAddAccount): unknown {
+    const obj: any = {}
+    message.signer !== undefined && (obj.signer = message.signer)
+    message.address !== undefined && (obj.address = message.address)
+    message.info !== undefined && (obj.info = message.info)
+    message.time !== undefined && (obj.time = message.time)
+    return obj
+  },
+
+  fromPartial(object: DeepPartial<MsgRejectAddAccount>): MsgRejectAddAccount {
+    const message = { ...baseMsgRejectAddAccount } as MsgRejectAddAccount
+    if (object.signer !== undefined && object.signer !== null) {
+      message.signer = object.signer
+    } else {
+      message.signer = ''
+    }
+    if (object.address !== undefined && object.address !== null) {
+      message.address = object.address
+    } else {
+      message.address = ''
+    }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = object.info
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = object.time
+    } else {
+      message.time = 0
+    }
+    return message
+  }
+}
+
+const baseMsgRejectAddAccountResponse: object = {}
+
+export const MsgRejectAddAccountResponse = {
+  encode(_: MsgRejectAddAccountResponse, writer: Writer = Writer.create()): Writer {
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgRejectAddAccountResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseMsgRejectAddAccountResponse } as MsgRejectAddAccountResponse
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(_: any): MsgRejectAddAccountResponse {
+    const message = { ...baseMsgRejectAddAccountResponse } as MsgRejectAddAccountResponse
+    return message
+  },
+
+  toJSON(_: MsgRejectAddAccountResponse): unknown {
+    const obj: any = {}
+    return obj
+  },
+
+  fromPartial(_: DeepPartial<MsgRejectAddAccountResponse>): MsgRejectAddAccountResponse {
+    const message = { ...baseMsgRejectAddAccountResponse } as MsgRejectAddAccountResponse
+    return message
+  }
+}
+
 /** Msg defines the Msg service. */
 export interface Msg {
   ProposeAddAccount(request: MsgProposeAddAccount): Promise<MsgProposeAddAccountResponse>
   ApproveAddAccount(request: MsgApproveAddAccount): Promise<MsgApproveAddAccountResponse>
   ProposeRevokeAccount(request: MsgProposeRevokeAccount): Promise<MsgProposeRevokeAccountResponse>
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   ApproveRevokeAccount(request: MsgApproveRevokeAccount): Promise<MsgApproveRevokeAccountResponse>
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  RejectAddAccount(request: MsgRejectAddAccount): Promise<MsgRejectAddAccountResponse>
 }
 
 export class MsgClientImpl implements Msg {
@@ -714,6 +868,12 @@ export class MsgClientImpl implements Msg {
     const data = MsgApproveRevokeAccount.encode(request).finish()
     const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.dclauth.Msg', 'ApproveRevokeAccount', data)
     return promise.then((data) => MsgApproveRevokeAccountResponse.decode(new Reader(data)))
+  }
+
+  RejectAddAccount(request: MsgRejectAddAccount): Promise<MsgRejectAddAccountResponse> {
+    const data = MsgRejectAddAccount.encode(request).finish()
+    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.dclauth.Msg', 'RejectAddAccount', data)
+    return promise.then((data) => MsgRejectAddAccountResponse.decode(new Reader(data)))
   }
 }
 

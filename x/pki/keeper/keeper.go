@@ -45,3 +45,7 @@ func (k Keeper) CertificateApprovalsCount(ctx sdk.Context, authKeeper types.Dcla
 	return int(math.Round(types.RootCertificateApprovalsPercent *
 		float64(authKeeper.CountAccountsWithRole(ctx, authTypes.Trustee))))
 }
+
+func (k Keeper) CertificateRejectApprovalsCount(ctx sdk.Context, authKeeper types.DclauthKeeper) int {
+	return authKeeper.CountAccountsWithRole(ctx, authTypes.Trustee) - k.CertificateApprovalsCount(ctx, authKeeper) + 1
+}

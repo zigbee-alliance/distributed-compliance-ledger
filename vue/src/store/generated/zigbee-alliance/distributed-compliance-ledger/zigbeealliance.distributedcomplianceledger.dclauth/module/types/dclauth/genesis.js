@@ -4,6 +4,7 @@ import { PendingAccount } from '../dclauth/pending_account';
 import { PendingAccountRevocation } from '../dclauth/pending_account_revocation';
 import { AccountStat } from '../dclauth/account_stat';
 import { RevokedAccount } from '../dclauth/revoked_account';
+import { RejectedAccount } from '../dclauth/rejected_account';
 import { Writer, Reader } from 'protobufjs/minimal';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.dclauth';
 const baseGenesisState = {};
@@ -24,6 +25,9 @@ export const GenesisState = {
         for (const v of message.revokedAccountList) {
             RevokedAccount.encode(v, writer.uint32(42).fork()).ldelim();
         }
+        for (const v of message.rejectedAccountList) {
+            RejectedAccount.encode(v, writer.uint32(50).fork()).ldelim();
+        }
         return writer;
     },
     decode(input, length) {
@@ -34,6 +38,7 @@ export const GenesisState = {
         message.pendingAccountList = [];
         message.pendingAccountRevocationList = [];
         message.revokedAccountList = [];
+        message.rejectedAccountList = [];
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
@@ -52,6 +57,9 @@ export const GenesisState = {
                 case 5:
                     message.revokedAccountList.push(RevokedAccount.decode(reader, reader.uint32()));
                     break;
+                case 6:
+                    message.rejectedAccountList.push(RejectedAccount.decode(reader, reader.uint32()));
+                    break;
                 default:
                     reader.skipType(tag & 7);
                     break;
@@ -65,6 +73,7 @@ export const GenesisState = {
         message.pendingAccountList = [];
         message.pendingAccountRevocationList = [];
         message.revokedAccountList = [];
+        message.rejectedAccountList = [];
         if (object.accountList !== undefined && object.accountList !== null) {
             for (const e of object.accountList) {
                 message.accountList.push(Account.fromJSON(e));
@@ -89,6 +98,11 @@ export const GenesisState = {
         if (object.revokedAccountList !== undefined && object.revokedAccountList !== null) {
             for (const e of object.revokedAccountList) {
                 message.revokedAccountList.push(RevokedAccount.fromJSON(e));
+            }
+        }
+        if (object.rejectedAccountList !== undefined && object.rejectedAccountList !== null) {
+            for (const e of object.rejectedAccountList) {
+                message.rejectedAccountList.push(RejectedAccount.fromJSON(e));
             }
         }
         return message;
@@ -120,6 +134,12 @@ export const GenesisState = {
         else {
             obj.revokedAccountList = [];
         }
+        if (message.rejectedAccountList) {
+            obj.rejectedAccountList = message.rejectedAccountList.map((e) => (e ? RejectedAccount.toJSON(e) : undefined));
+        }
+        else {
+            obj.rejectedAccountList = [];
+        }
         return obj;
     },
     fromPartial(object) {
@@ -128,6 +148,7 @@ export const GenesisState = {
         message.pendingAccountList = [];
         message.pendingAccountRevocationList = [];
         message.revokedAccountList = [];
+        message.rejectedAccountList = [];
         if (object.accountList !== undefined && object.accountList !== null) {
             for (const e of object.accountList) {
                 message.accountList.push(Account.fromPartial(e));
@@ -152,6 +173,11 @@ export const GenesisState = {
         if (object.revokedAccountList !== undefined && object.revokedAccountList !== null) {
             for (const e of object.revokedAccountList) {
                 message.revokedAccountList.push(RevokedAccount.fromPartial(e));
+            }
+        }
+        if (object.rejectedAccountList !== undefined && object.rejectedAccountList !== null) {
+            for (const e of object.rejectedAccountList) {
+                message.rejectedAccountList.push(RejectedAccount.fromPartial(e));
             }
         }
         return message;
