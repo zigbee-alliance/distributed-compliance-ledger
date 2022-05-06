@@ -15,22 +15,22 @@ variable "ssh_username" {
 
 variable "nodes_count" {
   description = "Number of Observer nodes"
-  default     = 5
+}
+
+variable "instance_type" {
+  description = "Type of AWS instances"
 }
 
 variable "region_index" {
   description = "Observer Region Index"
-  default     = 0
 }
 
 variable "enable_tls" {
   description = "Enable TLS on LB listeners"
-  default     = false
 }
 
 variable "root_domain_name" {
   description = "Root domain name"
-  default     = ""
 }
 
 variable "peer_vpc" {

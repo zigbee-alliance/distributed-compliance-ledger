@@ -19,5 +19,8 @@ variable "peer_vpc" {
 
 variable "nodes_count" {
   description = "Number of Private Sentry nodes"
-  default     = 2
+}
+
+variable "instance_type" {
+  description = "Type of AWS instances"
 }

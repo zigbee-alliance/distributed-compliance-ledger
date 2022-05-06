@@ -13,29 +13,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: read genesis file
-  stat:
-    path: "{{ dcl_home }}/config/genesis.json"
-  register: genesis_file
-
-- name: initialize the layout
-  changed_when: false
-  command: "{{ dcld.path }} init '{{ moniker | default(ansible_hostname) }}' --chain-id '{{ chain_id }}' --home {{ dcl_home }}"
-  when: not genesis_file.stat.exists
-
 - name: configure CLI
   changed_when: false
   command: "{{ dcld.path }} config {{ item.key }} {{ item.value }} --home {{ dcl_home }}"
   with_dict: "{{ client }}"
 
-- name: setup node type specific values
-  include_tasks: "{{ type }}.yml"
-  when: type is defined
+- name: tasks applied to type specific
+  block:
+  - name: load node type specific default config values
+    include_vars:
+      file: "{{ type }}.yml"
+      hash_behaviour: merge
 
-- name: setup TOMLs files
-  include_tasks: setup.yml
-  loop_control:
-    loop_var: toml
-  loop:
-    - config
-    - app
+  - name: update node type specific config values
+    include_tasks: "{{ type }}.yml"
+
+  - name: setup TOMLs files
+    include_tasks: setup.yml
+    loop_control:
+      loop_var: toml
+    loop:
+      - config
+      - app
+  when: type is defined

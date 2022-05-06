@@ -623,7 +623,27 @@ check_response "$result" "\"address\": \"$user_address\""
 
 test_divider
 
-vid=$RANDOM
+echo "Jack proposes account for $user"
+result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$user_address" --pubkey="$user_pubkey" --roles="Vendor" --vid="$vid" --from jack --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Get a proposed account for $user and confirm that the approval contains Jack's address"
+result=$(dcld query auth proposed-account --address=$user_address)
+check_response "$result" "\"address\": \"$user_address\""
+check_response_and_report "$result"  $jack_address "json"
+check_response_and_report "$result"  '"info": "Jack is proposing this account"' "json"
+response_does_not_contain "$result"  $alice_address "json"
+
+test_divider
+
+echo "Get a rejected account for $user is not found"
+result=$(dcld query auth rejected-account --address=$user_address)
+check_response "$result" "Not Found"
+
+test_divider
+
 pid=$RANDOM
 productName="Device #2"
 echo "$user adds Model with VID: $vid PID: $pid"
