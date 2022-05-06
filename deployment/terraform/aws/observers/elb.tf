@@ -142,7 +142,7 @@ resource "aws_lb_target_group_attachment" "rest_targets" {
 
   target_group_arn = aws_lb_target_group.rest.arn
   target_id        = aws_instance.this_nodes[count.index].id
-  port             = 80
+  port             = 1317
 }
 
 resource "aws_lb_target_group_attachment" "grpc_targets" {

@@ -55,8 +55,6 @@ cryptography==36.0.2
     # via
     #   ansible-core
     #   paramiko
-distro==1.7.0
-    # via selinux
 docker==5.0.3
     # via molecule-docker
 enrich==1.2.7
@@ -84,6 +82,8 @@ molecule==3.6.1
     #   -r test-requirements.in
     #   molecule-docker
 molecule-docker==1.1.0
+    # via -r test-requirements.in
+netaddr==0.8.0
     # via -r test-requirements.in
 packaging==21.3
     # via
@@ -142,8 +142,6 @@ ruamel-yaml==0.17.21
     # via ansible-lint
 ruamel-yaml-clib==0.2.6
     # via ruamel-yaml
-selinux==0.2.1
-    # via molecule-docker
 six==1.16.0
     # via
     #   bcrypt

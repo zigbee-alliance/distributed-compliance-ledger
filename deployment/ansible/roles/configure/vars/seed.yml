@@ -17,9 +17,9 @@ config:
   p2p:
     pex: true
     seed_mode: true
-    persistent_peers:
+    persistent_peers: ""
   statesync:
-    enable: true
-    rpc_servers:
-    # trust_height: trust-height
-    trust_hash: trust-hash
+    enable: false
+    rpc_servers: ""
+    trust_height: 0
+    trust_hash: ""

@@ -13,16 +13,38 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: private-sentry | discover IPv4 addresses information
-  setup:
-    filter:
-      - 'ansible_default_ipv4'
-  delegate_to: "{{ item }}"
-  register: default_ipv4_facts
-  loop: "{{ groups['validators'] | list }}"
+- name: private-sentry | retrieve persistent peer and node id from validator hosts
+  include_tasks: persistent-peer.yml
+  vars:
+    is_private_ip: true
+  loop_control:
+    loop_var: host
+  loop: "{{ groups['validators'] | default([]) }}"
+  run_once: true
 
-- name: private-sentry | set dynamic values
+- name: private-sentry | collect validator peers
   set_fact:
-    config:
-      p2p:
-        persistent_peers: "{{ default_ipv4_facts.results | map(attribute='ansible_facts.ansible_default_ipv4.address') | join(',') }}"
+    validator_peers: "{{ (groups['validators'] | default([]) | map('extract', hostvars, 'persistent_peer') | default(false) | select | list | join(',')) }}"
+  run_once: true
+  when: config.p2p.persistent_peers | default('', true) | trim == ''
+
+- name: private-sentry | collect validator node ids
+  set_fact:
+    validator_node_ids: "{{ (groups['validators'] | default([]) | map('extract', hostvars, 'node_id') | default(false) | select | list | join(',')) }}"
+  run_once: true
+  when: config.p2p.private_peer_ids | default('', true) | trim == '' or config.p2p.unconditional_peer_ids | default('', true) | trim == ''
+
+- name: private-sentry | update persistent peers
+  set_fact:
+    config: "{{ config | default({}) | combine ({ 'p2p' : {'persistent_peers': validator_peers} }, recursive=True) }}"
+  when: validator_peers is defined
+
+- name: private-sentry | update private peer ids
+  set_fact:
+    config: "{{ config | default({}) | combine ({ 'p2p' : {'private_peer_ids': validator_node_ids} }, recursive=True) }}"
+  when: validator_node_ids is defined and config.p2p.private_peer_ids | default('', true) | trim == ''
+
+- name: private-sentry | update unconditional peer ids
+  set_fact:
+    config: "{{ config | default({}) | combine ({ 'p2p' : {'unconditional_peer_ids': validator_node_ids} }, recursive=True) }}"
+  when: validator_node_ids is defined and config.p2p.unconditional_peer_ids | default('', true) | trim == ''
