@@ -1,5 +1,5 @@
----
-# Copyright 2022 Samsung Corporation
+#!/bin/bash
+# Copyright 2020 DSR Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,32 +13,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: setup validators
-  hosts: validators
-  roles:
-    - role: configure
-      type: validator
-
-- name: setup private sentries
-  hosts: private_sentries
-  roles:
-    - role: configure
-      type: private-sentry
-
-- name: setup public sentries
-  hosts: public_sentries
-  roles:
-    - role: configure
-      type: public-sentry
-
-- name: setup observers
-  hosts: observers
-  roles:
-    - role: configure
-      type: observer
-
-- name: setup seeds
-  hosts: seeds
-  roles:
-    - role: configure
-      type: seed
+sudo apt-get update
+sudo apt-get install -y --no-install-recommends python3

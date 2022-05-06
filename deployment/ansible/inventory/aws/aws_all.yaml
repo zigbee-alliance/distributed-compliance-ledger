@@ -1,0 +1,14 @@
+all:
+  children:
+    genesis:
+      hosts:
+    observers:
+      hosts:
+    private_sentries:
+      hosts:
+    public_sentries:
+      hosts:
+    seeds:
+      hosts:
+    validators:
+      hosts:
