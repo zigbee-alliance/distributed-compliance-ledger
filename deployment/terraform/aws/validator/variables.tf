@@ -12,3 +12,7 @@ variable "ssh_username" {
   description = "SSH username"
   default     = "ubuntu"
 }
+
+variable "instance_type" {
+  description = "Type of AWS instances"
+}
