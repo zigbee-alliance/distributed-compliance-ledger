@@ -31,6 +31,10 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	for _, elem := range genState.RevokedAccountList {
 		k.SetRevokedAccount(ctx, elem)
 	}
+	// Set all the rejectedAccount
+	for _, elem := range genState.RejectedAccountList {
+		k.SetRejectedAccount(ctx, elem)
+	}
 	// this line is used by starport scaffolding # genesis/module/init
 }
 
@@ -47,6 +51,7 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 		genesis.AccountStat = &accountStat
 	}
 	genesis.RevokedAccountList = k.GetAllRevokedAccount(ctx)
+	genesis.RejectedAccountList = k.GetAllRejectedAccount(ctx)
 	// this line is used by starport scaffolding # genesis/module/export
 
 	return genesis

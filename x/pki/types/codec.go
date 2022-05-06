@@ -14,6 +14,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgProposeRevokeX509RootCert{}, "pki/ProposeRevokeX509RootCert", nil)
 	cdc.RegisterConcrete(&MsgApproveRevokeX509RootCert{}, "pki/ApproveRevokeX509RootCert", nil)
 	cdc.RegisterConcrete(&MsgRevokeX509Cert{}, "pki/RevokeX509Cert", nil)
+	cdc.RegisterConcrete(&MsgRejectAddX509RootCert{}, "pki/RejectAddX509RootCert", nil)
 	// this line is used by starport scaffolding # 2
 }
 
@@ -35,6 +36,9 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgRevokeX509Cert{},
+	)
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgRejectAddX509RootCert{},
 	)
 	// this line is used by starport scaffolding # 3
 

@@ -55,6 +55,14 @@ DisabledValidatorList: []types.DisabledValidator{
 		Address: "1",
 },
 },
+RejectedNodeList: []types.RejectedNode{
+	{
+		Owner: "0",
+},
+	{
+		Owner: "1",
+},
+},
 // this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -110,6 +118,20 @@ DisabledValidatorList: []types.DisabledValidator{
 },
 			{
 				Address: "0",
+},
+		},
+	},
+	valid:    false,
+},
+{
+	desc:     "duplicated rejectedNode",
+	genState: &types.GenesisState{
+		RejectedNodeList: []types.RejectedNode{
+			{
+				Owner: "0",
+},
+			{
+				Owner: "0",
 },
 		},
 	},

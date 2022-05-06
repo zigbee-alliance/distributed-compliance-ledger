@@ -23,6 +23,15 @@ export interface MsgApproveUpgrade {
 
 export interface MsgApproveUpgradeResponse {}
 
+export interface MsgRejectUpgrade {
+  creator: string
+  name: string
+  info: string
+  time: number
+}
+
+export interface MsgRejectUpgradeResponse {}
+
 const baseMsgProposeUpgrade: object = { creator: '', info: '', time: 0 }
 
 export const MsgProposeUpgrade = {
@@ -311,11 +320,156 @@ export const MsgApproveUpgradeResponse = {
   }
 }
 
+const baseMsgRejectUpgrade: object = { creator: '', name: '', info: '', time: 0 }
+
+export const MsgRejectUpgrade = {
+  encode(message: MsgRejectUpgrade, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== '') {
+      writer.uint32(10).string(message.creator)
+    }
+    if (message.name !== '') {
+      writer.uint32(18).string(message.name)
+    }
+    if (message.info !== '') {
+      writer.uint32(26).string(message.info)
+    }
+    if (message.time !== 0) {
+      writer.uint32(32).int64(message.time)
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgRejectUpgrade {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseMsgRejectUpgrade } as MsgRejectUpgrade
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string()
+          break
+        case 2:
+          message.name = reader.string()
+          break
+        case 3:
+          message.info = reader.string()
+          break
+        case 4:
+          message.time = longToNumber(reader.int64() as Long)
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): MsgRejectUpgrade {
+    const message = { ...baseMsgRejectUpgrade } as MsgRejectUpgrade
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator)
+    } else {
+      message.creator = ''
+    }
+    if (object.name !== undefined && object.name !== null) {
+      message.name = String(object.name)
+    } else {
+      message.name = ''
+    }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = String(object.info)
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = Number(object.time)
+    } else {
+      message.time = 0
+    }
+    return message
+  },
+
+  toJSON(message: MsgRejectUpgrade): unknown {
+    const obj: any = {}
+    message.creator !== undefined && (obj.creator = message.creator)
+    message.name !== undefined && (obj.name = message.name)
+    message.info !== undefined && (obj.info = message.info)
+    message.time !== undefined && (obj.time = message.time)
+    return obj
+  },
+
+  fromPartial(object: DeepPartial<MsgRejectUpgrade>): MsgRejectUpgrade {
+    const message = { ...baseMsgRejectUpgrade } as MsgRejectUpgrade
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator
+    } else {
+      message.creator = ''
+    }
+    if (object.name !== undefined && object.name !== null) {
+      message.name = object.name
+    } else {
+      message.name = ''
+    }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = object.info
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = object.time
+    } else {
+      message.time = 0
+    }
+    return message
+  }
+}
+
+const baseMsgRejectUpgradeResponse: object = {}
+
+export const MsgRejectUpgradeResponse = {
+  encode(_: MsgRejectUpgradeResponse, writer: Writer = Writer.create()): Writer {
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgRejectUpgradeResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseMsgRejectUpgradeResponse } as MsgRejectUpgradeResponse
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(_: any): MsgRejectUpgradeResponse {
+    const message = { ...baseMsgRejectUpgradeResponse } as MsgRejectUpgradeResponse
+    return message
+  },
+
+  toJSON(_: MsgRejectUpgradeResponse): unknown {
+    const obj: any = {}
+    return obj
+  },
+
+  fromPartial(_: DeepPartial<MsgRejectUpgradeResponse>): MsgRejectUpgradeResponse {
+    const message = { ...baseMsgRejectUpgradeResponse } as MsgRejectUpgradeResponse
+    return message
+  }
+}
+
 /** Msg defines the Msg service. */
 export interface Msg {
   ProposeUpgrade(request: MsgProposeUpgrade): Promise<MsgProposeUpgradeResponse>
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   ApproveUpgrade(request: MsgApproveUpgrade): Promise<MsgApproveUpgradeResponse>
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  RejectUpgrade(request: MsgRejectUpgrade): Promise<MsgRejectUpgradeResponse>
 }
 
 export class MsgClientImpl implements Msg {
@@ -333,6 +487,12 @@ export class MsgClientImpl implements Msg {
     const data = MsgApproveUpgrade.encode(request).finish()
     const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.dclupgrade.Msg', 'ApproveUpgrade', data)
     return promise.then((data) => MsgApproveUpgradeResponse.decode(new Reader(data)))
+  }
+
+  RejectUpgrade(request: MsgRejectUpgrade): Promise<MsgRejectUpgradeResponse> {
+    const data = MsgRejectUpgrade.encode(request).finish()
+    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.dclupgrade.Msg', 'RejectUpgrade', data)
+    return promise.then((data) => MsgRejectUpgradeResponse.decode(new Reader(data)))
   }
 }
 

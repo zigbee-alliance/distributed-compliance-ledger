@@ -7,6 +7,7 @@ import "validator/validator.proto";
 import "validator/last_validator_power.proto";
 import "validator/proposed_disable_validator.proto";
 import "validator/disabled_validator.proto";
+import "validator/rejected_validator.proto";
 // this line is used by starport scaffolding # 1
 import "gogoproto/gogo.proto";
 
@@ -54,6 +55,16 @@ service Query {
 	// Queries a list of DisabledValidator items.
 	rpc DisabledValidatorAll(QueryAllDisabledValidatorRequest) returns (QueryAllDisabledValidatorResponse) {
 		option (google.api.http).get = "/dcl/validator/disabled-nodes";
+	}
+
+// Queries a RejectedNode by index.
+	rpc RejectedDisableValidator(QueryGetRejectedDisableValidatorRequest) returns (QueryGetRejectedDisableValidatorResponse) {
+		option (google.api.http).get = "/dcl/validator/rejected-disable-nodes/{owner}";
+	}
+
+	// Queries a list of RejectedNode items.
+	rpc RejectedDisableValidatorAll(QueryAllRejectedDisableValidatorRequest) returns (QueryAllRejectedDisableValidatorResponse) {
+		option (google.api.http).get = "/dcl/validator/rejected-disable-nodes";
 	}
 
 // this line is used by starport scaffolding # 2
@@ -127,6 +138,24 @@ message QueryAllDisabledValidatorRequest {
 
 message QueryAllDisabledValidatorResponse {
 	repeated DisabledValidator disabledValidator = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetRejectedDisableValidatorRequest {
+	  string owner = 1;
+
+}
+
+message QueryGetRejectedDisableValidatorResponse {
+	RejectedDisableValidator rejectedValidator = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllRejectedDisableValidatorRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllRejectedDisableValidatorResponse {
+	repeated RejectedDisableValidator rejectedValidator = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 

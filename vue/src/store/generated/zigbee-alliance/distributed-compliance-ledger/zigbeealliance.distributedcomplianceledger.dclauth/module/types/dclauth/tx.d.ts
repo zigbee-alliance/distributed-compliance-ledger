@@ -36,6 +36,14 @@ export interface MsgApproveRevokeAccount {
 }
 export interface MsgApproveRevokeAccountResponse {
 }
+export interface MsgRejectAddAccount {
+    signer: string;
+    address: string;
+    info: string;
+    time: number;
+}
+export interface MsgRejectAddAccountResponse {
+}
 export declare const MsgProposeAddAccount: {
     encode(message: MsgProposeAddAccount, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgProposeAddAccount;
@@ -92,13 +100,28 @@ export declare const MsgApproveRevokeAccountResponse: {
     toJSON(_: MsgApproveRevokeAccountResponse): unknown;
     fromPartial(_: DeepPartial<MsgApproveRevokeAccountResponse>): MsgApproveRevokeAccountResponse;
 };
+export declare const MsgRejectAddAccount: {
+    encode(message: MsgRejectAddAccount, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgRejectAddAccount;
+    fromJSON(object: any): MsgRejectAddAccount;
+    toJSON(message: MsgRejectAddAccount): unknown;
+    fromPartial(object: DeepPartial<MsgRejectAddAccount>): MsgRejectAddAccount;
+};
+export declare const MsgRejectAddAccountResponse: {
+    encode(_: MsgRejectAddAccountResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgRejectAddAccountResponse;
+    fromJSON(_: any): MsgRejectAddAccountResponse;
+    toJSON(_: MsgRejectAddAccountResponse): unknown;
+    fromPartial(_: DeepPartial<MsgRejectAddAccountResponse>): MsgRejectAddAccountResponse;
+};
 /** Msg defines the Msg service. */
 export interface Msg {
     ProposeAddAccount(request: MsgProposeAddAccount): Promise<MsgProposeAddAccountResponse>;
     ApproveAddAccount(request: MsgApproveAddAccount): Promise<MsgApproveAddAccountResponse>;
     ProposeRevokeAccount(request: MsgProposeRevokeAccount): Promise<MsgProposeRevokeAccountResponse>;
-    /** this line is used by starport scaffolding # proto/tx/rpc */
     ApproveRevokeAccount(request: MsgApproveRevokeAccount): Promise<MsgApproveRevokeAccountResponse>;
+    /** this line is used by starport scaffolding # proto/tx/rpc */
+    RejectAddAccount(request: MsgRejectAddAccount): Promise<MsgRejectAddAccountResponse>;
 }
 export declare class MsgClientImpl implements Msg {
     private readonly rpc;
@@ -107,6 +130,7 @@ export declare class MsgClientImpl implements Msg {
     ApproveAddAccount(request: MsgApproveAddAccount): Promise<MsgApproveAddAccountResponse>;
     ProposeRevokeAccount(request: MsgProposeRevokeAccount): Promise<MsgProposeRevokeAccountResponse>;
     ApproveRevokeAccount(request: MsgApproveRevokeAccount): Promise<MsgApproveRevokeAccountResponse>;
+    RejectAddAccount(request: MsgRejectAddAccount): Promise<MsgRejectAddAccountResponse>;
 }
 interface Rpc {
     request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;

@@ -17,6 +17,9 @@ export const DisabledValidator = {
         if (message.disabledByNodeAdmin === true) {
             writer.uint32(32).bool(message.disabledByNodeAdmin);
         }
+        for (const v of message.rejects) {
+            Grant.encode(v, writer.uint32(42).fork()).ldelim();
+        }
         return writer;
     },
     decode(input, length) {
@@ -24,6 +27,7 @@ export const DisabledValidator = {
         let end = length === undefined ? reader.len : reader.pos + length;
         const message = { ...baseDisabledValidator };
         message.approvals = [];
+        message.rejects = [];
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
@@ -39,6 +43,9 @@ export const DisabledValidator = {
                 case 4:
                     message.disabledByNodeAdmin = reader.bool();
                     break;
+                case 5:
+                    message.rejects.push(Grant.decode(reader, reader.uint32()));
+                    break;
                 default:
                     reader.skipType(tag & 7);
                     break;
@@ -49,6 +56,7 @@ export const DisabledValidator = {
     fromJSON(object) {
         const message = { ...baseDisabledValidator };
         message.approvals = [];
+        message.rejects = [];
         if (object.address !== undefined && object.address !== null) {
             message.address = String(object.address);
         }
@@ -72,6 +80,11 @@ export const DisabledValidator = {
         else {
             message.disabledByNodeAdmin = false;
         }
+        if (object.rejects !== undefined && object.rejects !== null) {
+            for (const e of object.rejects) {
+                message.rejects.push(Grant.fromJSON(e));
+            }
+        }
         return message;
     },
     toJSON(message) {
@@ -85,11 +98,18 @@ export const DisabledValidator = {
             obj.approvals = [];
         }
         message.disabledByNodeAdmin !== undefined && (obj.disabledByNodeAdmin = message.disabledByNodeAdmin);
+        if (message.rejects) {
+            obj.rejects = message.rejects.map((e) => (e ? Grant.toJSON(e) : undefined));
+        }
+        else {
+            obj.rejects = [];
+        }
         return obj;
     },
     fromPartial(object) {
         const message = { ...baseDisabledValidator };
         message.approvals = [];
+        message.rejects = [];
         if (object.address !== undefined && object.address !== null) {
             message.address = object.address;
         }
@@ -112,6 +132,11 @@ export const DisabledValidator = {
         }
         else {
             message.disabledByNodeAdmin = false;
+        }
+        if (object.rejects !== undefined && object.rejects !== null) {
+            for (const e of object.rejects) {
+                message.rejects.push(Grant.fromPartial(e));
+            }
         }
         return message;
     }

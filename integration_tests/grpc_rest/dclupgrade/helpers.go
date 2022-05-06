@@ -34,6 +34,13 @@ func NewMsgApproveUpgrade(signer string, name string) *dclupgradetypes.MsgApprov
 	}
 }
 
+func NewMsgRejectUpgrade(signer string, name string) *dclupgradetypes.MsgRejectUpgrade {
+	return &dclupgradetypes.MsgRejectUpgrade{
+		Creator: signer,
+		Name:    name,
+	}
+}
+
 func ProposeUpgrade(
 	suite *utils.TestSuite,
 	msg *dclupgradetypes.MsgProposeUpgrade,
@@ -48,6 +55,17 @@ func ProposeUpgrade(
 func ApproveUpgrade(
 	suite *utils.TestSuite,
 	msg *dclupgradetypes.MsgApproveUpgrade,
+	signerName string,
+	signerAccount *dclauthtypes.Account,
+) (*sdk.TxResponse, error) {
+	msg.Creator = suite.GetAddress(signerName).String()
+
+	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
+}
+
+func RejectUpgrade(
+	suite *utils.TestSuite,
+	msg *dclupgradetypes.MsgRejectUpgrade,
 	signerName string,
 	signerAccount *dclauthtypes.Account,
 ) (*sdk.TxResponse, error) {
@@ -120,6 +138,37 @@ func GetApprovedUpgrade(
 	return &res, nil
 }
 
+func GetRejectedUpgrade(
+	suite *utils.TestSuite,
+	name string,
+) (*dclupgradetypes.RejectedUpgrade, error) {
+	var res dclupgradetypes.RejectedUpgrade
+
+	if suite.Rest {
+		var resp dclupgradetypes.QueryGetRejectedUpgradeResponse
+		err := suite.QueryREST(fmt.Sprintf("/dcl/dclupgrade/rejected-upgrades/%s", name), &resp)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetRejectedUpgrade()
+	} else {
+		grpcConn := suite.GetGRPCConn()
+		defer grpcConn.Close()
+
+		dclupgradeClient := dclupgradetypes.NewQueryClient(grpcConn)
+		resp, err := dclupgradeClient.RejectedUpgrade(
+			context.Background(),
+			&dclupgradetypes.QueryGetRejectedUpgradeRequest{Name: name},
+		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetRejectedUpgrade()
+	}
+
+	return &res, nil
+}
+
 func GetProposedUpgrades(suite *utils.TestSuite) (res []dclupgradetypes.ProposedUpgrade, err error) {
 	if suite.Rest {
 		var resp dclupgradetypes.QueryAllProposedUpgradeResponse
@@ -174,8 +223,34 @@ func GetApprovedUpgrades(suite *utils.TestSuite) (res []dclupgradetypes.Approved
 	return res, nil
 }
 
+func GetRejectedUpgrades(suite *utils.TestSuite) (res []dclupgradetypes.RejectedUpgrade, err error) {
+	if suite.Rest {
+		var resp dclupgradetypes.QueryAllRejectedUpgradeResponse
+		err := suite.QueryREST("dcl/dclupgrade/rejected-upgrades", &resp)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetRejectedUpgrade()
+	} else {
+		grpcConn := suite.GetGRPCConn()
+		defer grpcConn.Close()
+
+		dclupgradeClient := dclupgradetypes.NewQueryClient(grpcConn)
+		resp, err := dclupgradeClient.RejectedUpgradeAll(
+			context.Background(),
+			&dclupgradetypes.QueryAllRejectedUpgradeRequest{},
+		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetRejectedUpgrade()
+	}
+
+	return res, nil
+}
+
 func Demo(suite *utils.TestSuite) {
-	// Alice and Bob are predefined Trustees
+	// Alice and Bob and Jack are predefined Trustees
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
@@ -186,6 +261,12 @@ func Demo(suite *utils.TestSuite) {
 	bobKeyInfo, err := suite.Kr.Key(bobName)
 	require.NoError(suite.T, err)
 	bobAccount, err := test_dclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	jackName := testconstants.JackAccount
+	jackKeyInfo, err := suite.Kr.Key(jackName)
+	require.NoError(suite.T, err)
+	jackAccount, err := test_dclauth.GetAccount(suite, jackKeyInfo.GetAddress())
 	require.NoError(suite.T, err)
 
 	// trustee proposes upgrade
@@ -215,10 +296,15 @@ func Demo(suite *utils.TestSuite) {
 	_, err = GetApprovedUpgrade(suite, proposeUpgradeMsg.Plan.Name)
 	suite.AssertNotFound(err)
 
-	// another trustee approves upgrade
+	// Another trustee approves upgrade
 	approveUpgradeMsg := NewMsgApproveUpgrade(bobAccount.Address, proposeUpgradeMsg.Plan.Name)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{approveUpgradeMsg}, bobName, bobAccount)
 	require.NoError(suite.T, err)
+
+	// Another trustee tries to reject upgrade
+	rejectUpgradeMsg := NewMsgRejectUpgrade(bobAccount.Address, proposeUpgradeMsg.Plan.Name)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{rejectUpgradeMsg}, bobName, bobAccount)
+	require.Error(suite.T, err)
 
 	// Check upgrade is approved
 	approvedUpgrade, err := GetApprovedUpgrade(suite, proposeUpgradeMsg.Plan.Name)
@@ -246,6 +332,96 @@ func Demo(suite *utils.TestSuite) {
 	approvedUpgrades, err := GetApprovedUpgrades(suite)
 	require.NoError(suite.T, err)
 	require.Contains(suite.T, approvedUpgrades, *approvedUpgrade)
+
+	// Trustee proposes upgrade
+	proposeUpgradeMsg = NewMsgProposeUpgrade(aliceAccount.Address, utils.RandString(), 100000, utils.RandString())
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{proposeUpgradeMsg}, aliceName, aliceAccount)
+	require.NoError(suite.T, err)
+
+	// Check upgrade is proposed
+	_, err = GetProposedUpgrade(suite, proposeUpgradeMsg.Plan.Name)
+	require.NoError(suite.T, err)
+
+	// Get rejected upgrade
+	_, err = GetRejectedUpgrade(suite, proposeUpgradeMsg.Plan.Name)
+	suite.AssertNotFound(err)
+
+	// Get approved upgrade
+	_, err = GetApprovedUpgrade(suite, proposeUpgradeMsg.Plan.Name)
+	suite.AssertNotFound(err)
+
+	// Another trustee rejects upgrade
+	rejectUpgradeMsg = NewMsgRejectUpgrade(bobAccount.Address, proposeUpgradeMsg.Plan.Name)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{rejectUpgradeMsg}, bobName, bobAccount)
+	require.NoError(suite.T, err)
+
+	// Another trustee second time try rejects upgrade
+	rejectUpgradeMsg = NewMsgRejectUpgrade(bobAccount.Address, proposeUpgradeMsg.Plan.Name)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{rejectUpgradeMsg}, bobName, bobAccount)
+	require.Error(suite.T, err)
+
+	// Another trustee try to approve rejects upgrade
+	approveUpgradeMsg = NewMsgApproveUpgrade(bobAccount.Address, proposeUpgradeMsg.Plan.Name)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{approveUpgradeMsg}, bobName, bobAccount)
+	require.Error(suite.T, err)
+
+	// Check upgrade is proposed
+	proposedUpgrade, err = GetProposedUpgrade(suite, proposeUpgradeMsg.Plan.Name)
+	require.NoError(suite.T, err)
+
+	require.Equal(suite.T, proposeUpgradeMsg.Creator, proposedUpgrade.Creator)
+	require.Equal(suite.T, proposeUpgradeMsg.Plan, proposedUpgrade.Plan)
+
+	require.Equal(suite.T, 1, len(proposedUpgrade.Approvals))
+	require.Equal(suite.T, proposeUpgradeMsg.Creator, proposedUpgrade.Approvals[0].Address)
+	require.Equal(suite.T, proposeUpgradeMsg.Time, proposedUpgrade.Approvals[0].Time)
+	require.Equal(suite.T, proposeUpgradeMsg.Info, proposedUpgrade.Approvals[0].Info)
+
+	require.Equal(suite.T, 1, len(proposedUpgrade.Rejects))
+	require.Equal(suite.T, rejectUpgradeMsg.Creator, proposedUpgrade.Rejects[0].Address)
+	require.Equal(suite.T, rejectUpgradeMsg.Time, proposedUpgrade.Rejects[0].Time)
+	require.Equal(suite.T, rejectUpgradeMsg.Info, proposedUpgrade.Rejects[0].Info)
+
+	// Get rejected upgrade
+	_, err = GetRejectedUpgrade(suite, proposeUpgradeMsg.Plan.Name)
+	suite.AssertNotFound(err)
+
+	// Get approved upgrade
+	_, err = GetApprovedUpgrade(suite, proposeUpgradeMsg.Plan.Name)
+	suite.AssertNotFound(err)
+
+	// Another trustee rejects upgrade
+	rejectUpgradeMsg = NewMsgRejectUpgrade(jackAccount.Address, proposeUpgradeMsg.Plan.Name)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{rejectUpgradeMsg}, jackName, jackAccount)
+	require.NoError(suite.T, err)
+
+	// Get proposed upgrade
+	_, err = GetProposedUpgrade(suite, proposeUpgradeMsg.Plan.Name)
+	suite.AssertNotFound(err)
+
+	// Get approved upgrade
+	_, err = GetApprovedUpgrade(suite, proposeUpgradeMsg.Plan.Name)
+	suite.AssertNotFound(err)
+
+	// Check upgrade is rejected
+	rejectedUpgrade, err := GetRejectedUpgrade(suite, proposeUpgradeMsg.Plan.Name)
+	require.NoError(suite.T, err)
+
+	require.Equal(suite.T, proposeUpgradeMsg.Creator, rejectedUpgrade.Creator)
+	require.Equal(suite.T, proposeUpgradeMsg.Plan, rejectedUpgrade.Plan)
+
+	require.Equal(suite.T, 1, len(rejectedUpgrade.Approvals))
+	require.Equal(suite.T, proposeUpgradeMsg.Creator, rejectedUpgrade.Approvals[0].Address)
+	require.Equal(suite.T, proposeUpgradeMsg.Time, rejectedUpgrade.Approvals[0].Time)
+	require.Equal(suite.T, proposeUpgradeMsg.Info, rejectedUpgrade.Approvals[0].Info)
+
+	require.Equal(suite.T, 2, len(rejectedUpgrade.Rejects))
+	require.Equal(suite.T, bobAccount.Address, rejectedUpgrade.Rejects[0].Address)
+	require.Equal(suite.T, rejectUpgradeMsg.Time, rejectedUpgrade.Rejects[0].Time)
+	require.Equal(suite.T, rejectUpgradeMsg.Info, rejectedUpgrade.Rejects[0].Info)
+	require.Equal(suite.T, jackAccount.Address, rejectedUpgrade.Rejects[1].Address)
+	require.Equal(suite.T, rejectUpgradeMsg.Time, rejectedUpgrade.Rejects[1].Time)
+	require.Equal(suite.T, rejectUpgradeMsg.Info, rejectedUpgrade.Rejects[1].Info)
 }
 
 /* Error cases */

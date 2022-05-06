@@ -252,5 +252,34 @@ export class Api extends HttpClient {
             format: "json",
             ...params,
         });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryRejectedDisableValidatorAll
+         * @summary Queries a list of RejectedNode items.
+         * @request GET:/dcl/validator/rejected-disable-nodes
+         */
+        this.queryRejectedDisableValidatorAll = (query, params = {}) => this.request({
+            path: `/dcl/validator/rejected-disable-nodes`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryRejectedDisableValidator
+         * @summary Queries a RejectedNode by index.
+         * @request GET:/dcl/validator/rejected-disable-nodes/{owner}
+         */
+        this.queryRejectedDisableValidator = (owner, params = {}) => this.request({
+            path: `/dcl/validator/rejected-disable-nodes/${owner}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
     }
 }

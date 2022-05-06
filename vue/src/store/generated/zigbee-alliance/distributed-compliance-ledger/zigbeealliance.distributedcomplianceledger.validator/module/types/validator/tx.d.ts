@@ -35,6 +35,14 @@ export interface MsgEnableValidator {
 }
 export interface MsgEnableValidatorResponse {
 }
+export interface MsgRejectDisableValidator {
+    creator: string;
+    address: string;
+    info: string;
+    time: number;
+}
+export interface MsgRejectDisableValidatorResponse {
+}
 export declare const MsgCreateValidator: {
     encode(message: MsgCreateValidator, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgCreateValidator;
@@ -105,14 +113,29 @@ export declare const MsgEnableValidatorResponse: {
     toJSON(_: MsgEnableValidatorResponse): unknown;
     fromPartial(_: DeepPartial<MsgEnableValidatorResponse>): MsgEnableValidatorResponse;
 };
+export declare const MsgRejectDisableValidator: {
+    encode(message: MsgRejectDisableValidator, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgRejectDisableValidator;
+    fromJSON(object: any): MsgRejectDisableValidator;
+    toJSON(message: MsgRejectDisableValidator): unknown;
+    fromPartial(object: DeepPartial<MsgRejectDisableValidator>): MsgRejectDisableValidator;
+};
+export declare const MsgRejectDisableValidatorResponse: {
+    encode(_: MsgRejectDisableValidatorResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgRejectDisableValidatorResponse;
+    fromJSON(_: any): MsgRejectDisableValidatorResponse;
+    toJSON(_: MsgRejectDisableValidatorResponse): unknown;
+    fromPartial(_: DeepPartial<MsgRejectDisableValidatorResponse>): MsgRejectDisableValidatorResponse;
+};
 /** Msg defines the Msg service. */
 export interface Msg {
     CreateValidator(request: MsgCreateValidator): Promise<MsgCreateValidatorResponse>;
     ProposeDisableValidator(request: MsgProposeDisableValidator): Promise<MsgProposeDisableValidatorResponse>;
     ApproveDisableValidator(request: MsgApproveDisableValidator): Promise<MsgApproveDisableValidatorResponse>;
     DisableValidator(request: MsgDisableValidator): Promise<MsgDisableValidatorResponse>;
-    /** this line is used by starport scaffolding # proto/tx/rpc */
     EnableValidator(request: MsgEnableValidator): Promise<MsgEnableValidatorResponse>;
+    /** this line is used by starport scaffolding # proto/tx/rpc */
+    RejectDisableValidator(request: MsgRejectDisableValidator): Promise<MsgRejectDisableValidatorResponse>;
 }
 export declare class MsgClientImpl implements Msg {
     private readonly rpc;
@@ -122,6 +145,7 @@ export declare class MsgClientImpl implements Msg {
     ApproveDisableValidator(request: MsgApproveDisableValidator): Promise<MsgApproveDisableValidatorResponse>;
     DisableValidator(request: MsgDisableValidator): Promise<MsgDisableValidatorResponse>;
     EnableValidator(request: MsgEnableValidator): Promise<MsgEnableValidatorResponse>;
+    RejectDisableValidator(request: MsgRejectDisableValidator): Promise<MsgRejectDisableValidatorResponse>;
 }
 interface Rpc {
     request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;

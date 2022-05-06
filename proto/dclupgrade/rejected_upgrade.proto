@@ -1,0 +1,17 @@
+syntax = "proto3";
+package zigbeealliance.distributedcomplianceledger.dclupgrade;
+
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+import "cosmos/upgrade/v1beta1/upgrade.proto";
+import "dclupgrade/grant.proto";
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade/types";
+
+message RejectedUpgrade {
+  cosmos.upgrade.v1beta1.Plan plan = 1 [(gogoproto.nullable) = false];  
+  string creator = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"]; 
+  repeated Grant approvals = 3; 
+  repeated Grant rejects = 4;
+}
+

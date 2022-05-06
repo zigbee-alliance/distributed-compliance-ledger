@@ -9,6 +9,7 @@ import { RevokedCertificates } from '../pki/revoked_certificates';
 import { ApprovedRootCertificates } from '../pki/approved_root_certificates';
 import { RevokedRootCertificates } from '../pki/revoked_root_certificates';
 import { ApprovedCertificatesBySubject } from '../pki/approved_certificates_by_subject';
+import { RejectedCertificate } from '../pki/rejected_certificate';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.pki';
 const baseQueryGetApprovedCertificatesRequest = { subject: '', subjectKeyId: '' };
 export const QueryGetApprovedCertificatesRequest = {
@@ -1403,6 +1404,255 @@ export const QueryGetApprovedCertificatesBySubjectResponse = {
         return message;
     }
 };
+const baseQueryGetRejectedCertificatesRequest = { subject: '', subjectKeyId: '' };
+export const QueryGetRejectedCertificatesRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.subject !== '') {
+            writer.uint32(10).string(message.subject);
+        }
+        if (message.subjectKeyId !== '') {
+            writer.uint32(18).string(message.subjectKeyId);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryGetRejectedCertificatesRequest };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.subject = reader.string();
+                    break;
+                case 2:
+                    message.subjectKeyId = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryGetRejectedCertificatesRequest };
+        if (object.subject !== undefined && object.subject !== null) {
+            message.subject = String(object.subject);
+        }
+        else {
+            message.subject = '';
+        }
+        if (object.subjectKeyId !== undefined && object.subjectKeyId !== null) {
+            message.subjectKeyId = String(object.subjectKeyId);
+        }
+        else {
+            message.subjectKeyId = '';
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.subject !== undefined && (obj.subject = message.subject);
+        message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryGetRejectedCertificatesRequest };
+        if (object.subject !== undefined && object.subject !== null) {
+            message.subject = object.subject;
+        }
+        else {
+            message.subject = '';
+        }
+        if (object.subjectKeyId !== undefined && object.subjectKeyId !== null) {
+            message.subjectKeyId = object.subjectKeyId;
+        }
+        else {
+            message.subjectKeyId = '';
+        }
+        return message;
+    }
+};
+const baseQueryGetRejectedCertificatesResponse = {};
+export const QueryGetRejectedCertificatesResponse = {
+    encode(message, writer = Writer.create()) {
+        if (message.rejectedCertificate !== undefined) {
+            RejectedCertificate.encode(message.rejectedCertificate, writer.uint32(10).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryGetRejectedCertificatesResponse };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.rejectedCertificate = RejectedCertificate.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryGetRejectedCertificatesResponse };
+        if (object.rejectedCertificate !== undefined && object.rejectedCertificate !== null) {
+            message.rejectedCertificate = RejectedCertificate.fromJSON(object.rejectedCertificate);
+        }
+        else {
+            message.rejectedCertificate = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.rejectedCertificate !== undefined &&
+            (obj.rejectedCertificate = message.rejectedCertificate ? RejectedCertificate.toJSON(message.rejectedCertificate) : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryGetRejectedCertificatesResponse };
+        if (object.rejectedCertificate !== undefined && object.rejectedCertificate !== null) {
+            message.rejectedCertificate = RejectedCertificate.fromPartial(object.rejectedCertificate);
+        }
+        else {
+            message.rejectedCertificate = undefined;
+        }
+        return message;
+    }
+};
+const baseQueryAllRejectedCertificatesRequest = {};
+export const QueryAllRejectedCertificatesRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.pagination !== undefined) {
+            PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryAllRejectedCertificatesRequest };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.pagination = PageRequest.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryAllRejectedCertificatesRequest };
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageRequest.fromJSON(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.pagination !== undefined && (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryAllRejectedCertificatesRequest };
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageRequest.fromPartial(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    }
+};
+const baseQueryAllRejectedCertificatesResponse = {};
+export const QueryAllRejectedCertificatesResponse = {
+    encode(message, writer = Writer.create()) {
+        for (const v of message.rejectedCertificate) {
+            RejectedCertificate.encode(v, writer.uint32(10).fork()).ldelim();
+        }
+        if (message.pagination !== undefined) {
+            PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryAllRejectedCertificatesResponse };
+        message.rejectedCertificate = [];
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.rejectedCertificate.push(RejectedCertificate.decode(reader, reader.uint32()));
+                    break;
+                case 2:
+                    message.pagination = PageResponse.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryAllRejectedCertificatesResponse };
+        message.rejectedCertificate = [];
+        if (object.rejectedCertificate !== undefined && object.rejectedCertificate !== null) {
+            for (const e of object.rejectedCertificate) {
+                message.rejectedCertificate.push(RejectedCertificate.fromJSON(e));
+            }
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageResponse.fromJSON(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        if (message.rejectedCertificate) {
+            obj.rejectedCertificate = message.rejectedCertificate.map((e) => (e ? RejectedCertificate.toJSON(e) : undefined));
+        }
+        else {
+            obj.rejectedCertificate = [];
+        }
+        message.pagination !== undefined && (obj.pagination = message.pagination ? PageResponse.toJSON(message.pagination) : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryAllRejectedCertificatesResponse };
+        message.rejectedCertificate = [];
+        if (object.rejectedCertificate !== undefined && object.rejectedCertificate !== null) {
+            for (const e of object.rejectedCertificate) {
+                message.rejectedCertificate.push(RejectedCertificate.fromPartial(e));
+            }
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageResponse.fromPartial(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    }
+};
 export class QueryClientImpl {
     constructor(rpc) {
         this.rpc = rpc;
@@ -1466,5 +1716,15 @@ export class QueryClientImpl {
         const data = QueryGetApprovedCertificatesBySubjectRequest.encode(request).finish();
         const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Query', 'ApprovedCertificatesBySubject', data);
         return promise.then((data) => QueryGetApprovedCertificatesBySubjectResponse.decode(new Reader(data)));
+    }
+    RejectedCertificate(request) {
+        const data = QueryGetRejectedCertificatesRequest.encode(request).finish();
+        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Query', 'RejectedCertificate', data);
+        return promise.then((data) => QueryGetRejectedCertificatesResponse.decode(new Reader(data)));
+    }
+    RejectedCertificateAll(request) {
+        const data = QueryAllRejectedCertificatesRequest.encode(request).finish();
+        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Query', 'RejectedCertificateAll', data);
+        return promise.then((data) => QueryAllRejectedCertificatesResponse.decode(new Reader(data)));
     }
 }

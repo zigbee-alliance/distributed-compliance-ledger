@@ -918,6 +918,165 @@ export const MsgRevokeX509CertResponse = {
         return message;
     }
 };
+const baseMsgRejectAddX509RootCert = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0 };
+export const MsgRejectAddX509RootCert = {
+    encode(message, writer = Writer.create()) {
+        if (message.signer !== '') {
+            writer.uint32(10).string(message.signer);
+        }
+        if (message.subject !== '') {
+            writer.uint32(18).string(message.subject);
+        }
+        if (message.subjectKeyId !== '') {
+            writer.uint32(26).string(message.subjectKeyId);
+        }
+        if (message.info !== '') {
+            writer.uint32(34).string(message.info);
+        }
+        if (message.time !== 0) {
+            writer.uint32(40).int64(message.time);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseMsgRejectAddX509RootCert };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.signer = reader.string();
+                    break;
+                case 2:
+                    message.subject = reader.string();
+                    break;
+                case 3:
+                    message.subjectKeyId = reader.string();
+                    break;
+                case 4:
+                    message.info = reader.string();
+                    break;
+                case 5:
+                    message.time = longToNumber(reader.int64());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseMsgRejectAddX509RootCert };
+        if (object.signer !== undefined && object.signer !== null) {
+            message.signer = String(object.signer);
+        }
+        else {
+            message.signer = '';
+        }
+        if (object.subject !== undefined && object.subject !== null) {
+            message.subject = String(object.subject);
+        }
+        else {
+            message.subject = '';
+        }
+        if (object.subjectKeyId !== undefined && object.subjectKeyId !== null) {
+            message.subjectKeyId = String(object.subjectKeyId);
+        }
+        else {
+            message.subjectKeyId = '';
+        }
+        if (object.info !== undefined && object.info !== null) {
+            message.info = String(object.info);
+        }
+        else {
+            message.info = '';
+        }
+        if (object.time !== undefined && object.time !== null) {
+            message.time = Number(object.time);
+        }
+        else {
+            message.time = 0;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.signer !== undefined && (obj.signer = message.signer);
+        message.subject !== undefined && (obj.subject = message.subject);
+        message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId);
+        message.info !== undefined && (obj.info = message.info);
+        message.time !== undefined && (obj.time = message.time);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseMsgRejectAddX509RootCert };
+        if (object.signer !== undefined && object.signer !== null) {
+            message.signer = object.signer;
+        }
+        else {
+            message.signer = '';
+        }
+        if (object.subject !== undefined && object.subject !== null) {
+            message.subject = object.subject;
+        }
+        else {
+            message.subject = '';
+        }
+        if (object.subjectKeyId !== undefined && object.subjectKeyId !== null) {
+            message.subjectKeyId = object.subjectKeyId;
+        }
+        else {
+            message.subjectKeyId = '';
+        }
+        if (object.info !== undefined && object.info !== null) {
+            message.info = object.info;
+        }
+        else {
+            message.info = '';
+        }
+        if (object.time !== undefined && object.time !== null) {
+            message.time = object.time;
+        }
+        else {
+            message.time = 0;
+        }
+        return message;
+    }
+};
+const baseMsgRejectAddX509RootCertResponse = {};
+export const MsgRejectAddX509RootCertResponse = {
+    encode(_, writer = Writer.create()) {
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseMsgRejectAddX509RootCertResponse };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(_) {
+        const message = { ...baseMsgRejectAddX509RootCertResponse };
+        return message;
+    },
+    toJSON(_) {
+        const obj = {};
+        return obj;
+    },
+    fromPartial(_) {
+        const message = { ...baseMsgRejectAddX509RootCertResponse };
+        return message;
+    }
+};
 export class MsgClientImpl {
     constructor(rpc) {
         this.rpc = rpc;
@@ -951,6 +1110,11 @@ export class MsgClientImpl {
         const data = MsgRevokeX509Cert.encode(request).finish();
         const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Msg', 'RevokeX509Cert', data);
         return promise.then((data) => MsgRevokeX509CertResponse.decode(new Reader(data)));
+    }
+    RejectAddX509RootCert(request) {
+        const data = MsgRejectAddX509RootCert.encode(request).finish();
+        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Msg', 'RejectAddX509RootCert', data);
+        return promise.then((data) => MsgRejectAddX509RootCertResponse.decode(new Reader(data)));
     }
 }
 var globalThis = (() => {

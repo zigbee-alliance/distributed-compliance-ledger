@@ -43,3 +43,7 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 func (k Keeper) DisableValidatorApprovalsCount(ctx sdk.Context) int {
 	return int(math.Round(types.DisableValidatorPercent * float64(k.dclauthKeeper.CountAccountsWithRole(ctx, types.VoteForDisableValidatorRole))))
 }
+
+func (k Keeper) DisableValidatorRejectApprovalsCount(ctx sdk.Context) int {
+	return k.dclauthKeeper.CountAccountsWithRole(ctx, types.VoteForDisableValidatorRole) - k.DisableValidatorApprovalsCount(ctx) + 1
+}

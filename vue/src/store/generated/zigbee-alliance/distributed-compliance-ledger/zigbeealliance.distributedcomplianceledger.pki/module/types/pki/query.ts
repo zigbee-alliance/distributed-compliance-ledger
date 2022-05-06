@@ -9,6 +9,7 @@ import { RevokedCertificates } from '../pki/revoked_certificates'
 import { ApprovedRootCertificates } from '../pki/approved_root_certificates'
 import { RevokedRootCertificates } from '../pki/revoked_root_certificates'
 import { ApprovedCertificatesBySubject } from '../pki/approved_certificates_by_subject'
+import { RejectedCertificate } from '../pki/rejected_certificate'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.pki'
 
@@ -111,6 +112,24 @@ export interface QueryGetApprovedCertificatesBySubjectRequest {
 
 export interface QueryGetApprovedCertificatesBySubjectResponse {
   approvedCertificatesBySubject: ApprovedCertificatesBySubject | undefined
+}
+
+export interface QueryGetRejectedCertificatesRequest {
+  subject: string
+  subjectKeyId: string
+}
+
+export interface QueryGetRejectedCertificatesResponse {
+  rejectedCertificate: RejectedCertificate | undefined
+}
+
+export interface QueryAllRejectedCertificatesRequest {
+  pagination: PageRequest | undefined
+}
+
+export interface QueryAllRejectedCertificatesResponse {
+  rejectedCertificate: RejectedCertificate[]
+  pagination: PageResponse | undefined
 }
 
 const baseQueryGetApprovedCertificatesRequest: object = { subject: '', subjectKeyId: '' }
@@ -1592,6 +1611,268 @@ export const QueryGetApprovedCertificatesBySubjectResponse = {
   }
 }
 
+const baseQueryGetRejectedCertificatesRequest: object = { subject: '', subjectKeyId: '' }
+
+export const QueryGetRejectedCertificatesRequest = {
+  encode(message: QueryGetRejectedCertificatesRequest, writer: Writer = Writer.create()): Writer {
+    if (message.subject !== '') {
+      writer.uint32(10).string(message.subject)
+    }
+    if (message.subjectKeyId !== '') {
+      writer.uint32(18).string(message.subjectKeyId)
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetRejectedCertificatesRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseQueryGetRejectedCertificatesRequest } as QueryGetRejectedCertificatesRequest
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.subject = reader.string()
+          break
+        case 2:
+          message.subjectKeyId = reader.string()
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): QueryGetRejectedCertificatesRequest {
+    const message = { ...baseQueryGetRejectedCertificatesRequest } as QueryGetRejectedCertificatesRequest
+    if (object.subject !== undefined && object.subject !== null) {
+      message.subject = String(object.subject)
+    } else {
+      message.subject = ''
+    }
+    if (object.subjectKeyId !== undefined && object.subjectKeyId !== null) {
+      message.subjectKeyId = String(object.subjectKeyId)
+    } else {
+      message.subjectKeyId = ''
+    }
+    return message
+  },
+
+  toJSON(message: QueryGetRejectedCertificatesRequest): unknown {
+    const obj: any = {}
+    message.subject !== undefined && (obj.subject = message.subject)
+    message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId)
+    return obj
+  },
+
+  fromPartial(object: DeepPartial<QueryGetRejectedCertificatesRequest>): QueryGetRejectedCertificatesRequest {
+    const message = { ...baseQueryGetRejectedCertificatesRequest } as QueryGetRejectedCertificatesRequest
+    if (object.subject !== undefined && object.subject !== null) {
+      message.subject = object.subject
+    } else {
+      message.subject = ''
+    }
+    if (object.subjectKeyId !== undefined && object.subjectKeyId !== null) {
+      message.subjectKeyId = object.subjectKeyId
+    } else {
+      message.subjectKeyId = ''
+    }
+    return message
+  }
+}
+
+const baseQueryGetRejectedCertificatesResponse: object = {}
+
+export const QueryGetRejectedCertificatesResponse = {
+  encode(message: QueryGetRejectedCertificatesResponse, writer: Writer = Writer.create()): Writer {
+    if (message.rejectedCertificate !== undefined) {
+      RejectedCertificate.encode(message.rejectedCertificate, writer.uint32(10).fork()).ldelim()
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetRejectedCertificatesResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseQueryGetRejectedCertificatesResponse } as QueryGetRejectedCertificatesResponse
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.rejectedCertificate = RejectedCertificate.decode(reader, reader.uint32())
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): QueryGetRejectedCertificatesResponse {
+    const message = { ...baseQueryGetRejectedCertificatesResponse } as QueryGetRejectedCertificatesResponse
+    if (object.rejectedCertificate !== undefined && object.rejectedCertificate !== null) {
+      message.rejectedCertificate = RejectedCertificate.fromJSON(object.rejectedCertificate)
+    } else {
+      message.rejectedCertificate = undefined
+    }
+    return message
+  },
+
+  toJSON(message: QueryGetRejectedCertificatesResponse): unknown {
+    const obj: any = {}
+    message.rejectedCertificate !== undefined &&
+      (obj.rejectedCertificate = message.rejectedCertificate ? RejectedCertificate.toJSON(message.rejectedCertificate) : undefined)
+    return obj
+  },
+
+  fromPartial(object: DeepPartial<QueryGetRejectedCertificatesResponse>): QueryGetRejectedCertificatesResponse {
+    const message = { ...baseQueryGetRejectedCertificatesResponse } as QueryGetRejectedCertificatesResponse
+    if (object.rejectedCertificate !== undefined && object.rejectedCertificate !== null) {
+      message.rejectedCertificate = RejectedCertificate.fromPartial(object.rejectedCertificate)
+    } else {
+      message.rejectedCertificate = undefined
+    }
+    return message
+  }
+}
+
+const baseQueryAllRejectedCertificatesRequest: object = {}
+
+export const QueryAllRejectedCertificatesRequest = {
+  encode(message: QueryAllRejectedCertificatesRequest, writer: Writer = Writer.create()): Writer {
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim()
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryAllRejectedCertificatesRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseQueryAllRejectedCertificatesRequest } as QueryAllRejectedCertificatesRequest
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.pagination = PageRequest.decode(reader, reader.uint32())
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): QueryAllRejectedCertificatesRequest {
+    const message = { ...baseQueryAllRejectedCertificatesRequest } as QueryAllRejectedCertificatesRequest
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromJSON(object.pagination)
+    } else {
+      message.pagination = undefined
+    }
+    return message
+  },
+
+  toJSON(message: QueryAllRejectedCertificatesRequest): unknown {
+    const obj: any = {}
+    message.pagination !== undefined && (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined)
+    return obj
+  },
+
+  fromPartial(object: DeepPartial<QueryAllRejectedCertificatesRequest>): QueryAllRejectedCertificatesRequest {
+    const message = { ...baseQueryAllRejectedCertificatesRequest } as QueryAllRejectedCertificatesRequest
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromPartial(object.pagination)
+    } else {
+      message.pagination = undefined
+    }
+    return message
+  }
+}
+
+const baseQueryAllRejectedCertificatesResponse: object = {}
+
+export const QueryAllRejectedCertificatesResponse = {
+  encode(message: QueryAllRejectedCertificatesResponse, writer: Writer = Writer.create()): Writer {
+    for (const v of message.rejectedCertificate) {
+      RejectedCertificate.encode(v!, writer.uint32(10).fork()).ldelim()
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim()
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryAllRejectedCertificatesResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseQueryAllRejectedCertificatesResponse } as QueryAllRejectedCertificatesResponse
+    message.rejectedCertificate = []
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.rejectedCertificate.push(RejectedCertificate.decode(reader, reader.uint32()))
+          break
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32())
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): QueryAllRejectedCertificatesResponse {
+    const message = { ...baseQueryAllRejectedCertificatesResponse } as QueryAllRejectedCertificatesResponse
+    message.rejectedCertificate = []
+    if (object.rejectedCertificate !== undefined && object.rejectedCertificate !== null) {
+      for (const e of object.rejectedCertificate) {
+        message.rejectedCertificate.push(RejectedCertificate.fromJSON(e))
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromJSON(object.pagination)
+    } else {
+      message.pagination = undefined
+    }
+    return message
+  },
+
+  toJSON(message: QueryAllRejectedCertificatesResponse): unknown {
+    const obj: any = {}
+    if (message.rejectedCertificate) {
+      obj.rejectedCertificate = message.rejectedCertificate.map((e) => (e ? RejectedCertificate.toJSON(e) : undefined))
+    } else {
+      obj.rejectedCertificate = []
+    }
+    message.pagination !== undefined && (obj.pagination = message.pagination ? PageResponse.toJSON(message.pagination) : undefined)
+    return obj
+  },
+
+  fromPartial(object: DeepPartial<QueryAllRejectedCertificatesResponse>): QueryAllRejectedCertificatesResponse {
+    const message = { ...baseQueryAllRejectedCertificatesResponse } as QueryAllRejectedCertificatesResponse
+    message.rejectedCertificate = []
+    if (object.rejectedCertificate !== undefined && object.rejectedCertificate !== null) {
+      for (const e of object.rejectedCertificate) {
+        message.rejectedCertificate.push(RejectedCertificate.fromPartial(e))
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromPartial(object.pagination)
+    } else {
+      message.pagination = undefined
+    }
+    return message
+  }
+}
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Queries a ApprovedCertificates by index. */
@@ -1618,6 +1899,10 @@ export interface Query {
   RevokedRootCertificates(request: QueryGetRevokedRootCertificatesRequest): Promise<QueryGetRevokedRootCertificatesResponse>
   /** Queries a ApprovedCertificatesBySubject by index. */
   ApprovedCertificatesBySubject(request: QueryGetApprovedCertificatesBySubjectRequest): Promise<QueryGetApprovedCertificatesBySubjectResponse>
+  /** Queries a RejectedCertificate by index. */
+  RejectedCertificate(request: QueryGetRejectedCertificatesRequest): Promise<QueryGetRejectedCertificatesResponse>
+  /** Queries a list of RejectedCertificate items. */
+  RejectedCertificateAll(request: QueryAllRejectedCertificatesRequest): Promise<QueryAllRejectedCertificatesResponse>
 }
 
 export class QueryClientImpl implements Query {
@@ -1695,6 +1980,18 @@ export class QueryClientImpl implements Query {
     const data = QueryGetApprovedCertificatesBySubjectRequest.encode(request).finish()
     const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Query', 'ApprovedCertificatesBySubject', data)
     return promise.then((data) => QueryGetApprovedCertificatesBySubjectResponse.decode(new Reader(data)))
+  }
+
+  RejectedCertificate(request: QueryGetRejectedCertificatesRequest): Promise<QueryGetRejectedCertificatesResponse> {
+    const data = QueryGetRejectedCertificatesRequest.encode(request).finish()
+    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Query', 'RejectedCertificate', data)
+    return promise.then((data) => QueryGetRejectedCertificatesResponse.decode(new Reader(data)))
+  }
+
+  RejectedCertificateAll(request: QueryAllRejectedCertificatesRequest): Promise<QueryAllRejectedCertificatesResponse> {
+    const data = QueryAllRejectedCertificatesRequest.encode(request).finish()
+    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Query', 'RejectedCertificateAll', data)
+    return promise.then((data) => QueryAllRejectedCertificatesResponse.decode(new Reader(data)))
   }
 }
 
