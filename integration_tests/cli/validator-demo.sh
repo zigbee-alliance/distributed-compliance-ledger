@@ -580,15 +580,38 @@ check_response "$result" "\"address\": \"$jack_address\""
 check_response "$result" "\"address\": \"$validator_address\""
 echo "$result"
 
+echo "Alice proposes to disable validator $address"
+result=$(dcld tx validator propose-disable-node --address="$validator_address" --from alice --yes)
+check_response "$result" "\"code\": 0"
+echo "$result"
+
+test_divider
+
+echo "Get a proposed validator to disable $address"
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator proposed-disable-node --address="$address"")
+check_response "$result" "\"approvals\":\[{\"address\":\"$alice_address\"" raw
+check_response "$result" "\"address\": \"$validator_address\""
+echo "$result"
+
 test_divider
 
 echo "Get a proposed validator to disable $validator_address"
-result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator rejected-disable-node --address="$validator_address"")
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator proposed-disable-node --address="$validator_address"")
 check_response "$result" "\"approvals\":\[{\"address\":\"$alice_address\"" raw
-check_response "$result" "\"rejects\":\[{\"address\":\"$bob_address\"" raw
-check_response "$result" "\"address\": \"$jack_address\""
 check_response "$result" "\"address\": \"$validator_address\""
 echo "$result"
+
+test_divider
+
+echo "Get a rejected account for $address is not found"
+result=$(dcld query validator rejected-disable-node --address=$address)
+check_response "$result" "Not Found"
+
+test_divider
+
+echo "Get a rejected account for $validator_address is not found"
+result=$(dcld query validator rejected-disable-node --address=$validator_address)
+check_response "$result" "Not Found"
 
 test_divider
 
