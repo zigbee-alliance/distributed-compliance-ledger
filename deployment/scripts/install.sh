@@ -28,6 +28,11 @@ function warn {
     _print_msg "WARN" "$1"
 }
 
+function error {
+    _print_msg "ERROR" "$1"
+    exit 1
+}
+
 function _print_msg {
     echo "$(date +%H:%M:%S) - $1: $2"
 }
@@ -87,5 +92,22 @@ function main {
         warn "Checksum wasn't performed"
     fi
 }
+
+# Validators
+info "Validating $USER permissions"
+if ! sudo -n "true"; then
+    error "passwordless sudo is needed for '$(whoami)' user."
+fi
+
+info "Validating cosmovisor service"
+if ! systemctl is-active --quiet cosmovisor; then
+    error "cosmovisor service is not active"
+fi
+
+info "Validating cosmovisor user"
+# shellcheck disable=SC2009
+if [[ "$(whoami)" != "$(ps -o comm,user | grep cosmovisor | awk '{print $2}')" ]]; then
+    error "This script needs to be executed with comovisor user"
+fi
 
 main
