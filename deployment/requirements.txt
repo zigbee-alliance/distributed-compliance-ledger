@@ -27,6 +27,8 @@ jmespath==1.0.0
     #   botocore
 markupsafe==2.1.1
     # via jinja2
+netaddr==0.8.0
+    # via -r requirements.in
 packaging==21.3
     # via ansible-core
 pycparser==2.21
@@ -43,5 +45,7 @@ s3transfer==0.5.2
     # via boto3
 six==1.16.0
     # via python-dateutil
+toml==0.10.2
+    # via -r requirements.in
 urllib3==1.26.9
     # via botocore

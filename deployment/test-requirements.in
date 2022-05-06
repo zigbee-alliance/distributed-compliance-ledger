@@ -20,3 +20,4 @@ pytest-testinfra # Apache-2.0
 yamllint # GPLv3
 jmespath # MIT
 toml # MIT
+netaddr # BSD

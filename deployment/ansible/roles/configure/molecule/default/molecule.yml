@@ -46,7 +46,7 @@ platforms:
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
     groups:
-      - private-sentries
+      - private_sentries
   - name: node2
     image: geerlingguy/docker-ubuntu2004-ansible:latest
     pre_build_image: true
@@ -70,7 +70,7 @@ platforms:
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
     groups:
-      - public-sentries
+      - public_sentries
   - name: node4
     image: geerlingguy/docker-ubuntu2004-ansible:latest
     pre_build_image: true

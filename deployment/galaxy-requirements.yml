@@ -16,3 +16,6 @@
 collections:
   # For to_toml filter
   - name: sivel.toiletwater
+
+  # For ipify_facts
+  - name: community.general

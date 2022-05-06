@@ -1,0 +1,6 @@
+[severity]
+level = "medium"
+[rules]
+    skip-rules = [
+        "AC_AWS_0276"
+    ]

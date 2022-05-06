@@ -1,0 +1,60 @@
+---
+# Copyright 2022 Samsung Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Check Terraform scripts
+# yamllint disable-line rule:truthy
+on: 
+  push:
+    branches:
+      - master
+    paths:
+      - '**.tf'
+  pull_request:
+    branches:
+      - master
+    paths:
+      - '**.tf'
+
+jobs:
+  check-checkov:
+    name: Check static code (checkov)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run Checkov action
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: ./deployment/terraform/aws
+          quiet: true
+          soft_fail: true
+          framework: terraform
+          download_external_modules: true
+  check-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Lint Terraform
+        uses: actionshub/terraform-lint@main
+  check-terrascan:
+    runs-on: ubuntu-latest
+    name: terrascan-action
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run Terrascan
+        id: terrascan
+        uses: accurics/terrascan-action@main
+        with:
+          iac_type: 'terraform'
+          only_warn: true
