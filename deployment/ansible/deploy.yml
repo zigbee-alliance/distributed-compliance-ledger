@@ -13,18 +13,71 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: bootstrap DCL nodes
+- name: bootstrap all nodes
   hosts: all
   become: true
   roles:
     - bootstrap
+
+- name: setup genesis node
+  hosts: genesis
+  become: true
+  roles:
+    - configure # configure cli
+    - add-accounts
+    - genesis
+  
+- name: configure validator nodes
+  hosts: validators
+  become: true
+  roles:
+    - role: configure
+      type: validator
+
+- name: configure private sentry nodes
+  hosts: private_sentries
+  become: true
+  roles:
+    - role: configure
+      type: private-sentry
+
+- name: configure observer nodes
+  hosts: observers
+  become: true
+  roles:
+    - role: configure
+      type: observer
+
+- name: configure public sentry nodes
+  hosts: public_sentries
+  become: true
+  roles:
+    - role: configure
+      type: public-sentry
+
+- name: configure seed nodes
+  hosts: seeds
+  become: true
+  roles:
+    - role: configure
+      type: seed
+
+- name: copy genesis file to all nodes
+  hosts: all
+  become: true
   tasks:
-    - name: get genesis.json file
-      get_url:
-        url: https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/persistent_chains/testnet-2.0/genesis.json
-        dest: /var/lib/dcl/.dcl/config/genesis.json
-    - name: start DCL service
+    - name: copy genesis file
+      copy:
+        src: "{{ playbook_dir }}/../persistent_chains/{{ chain_id }}/genesis.json"
+        dest: "{{ dcl_home }}/config/genesis.json"
+        owner: "{{ cosmovisor.user }}"
+
+- name: run all dcl nodes
+  hosts: all
+  tasks:
+    - name: run cosmovisor service
       become: true
       service:
-        name: dcld
-        state: started
+        name: cosmovisor
+        state: restarted
+        enabled: true

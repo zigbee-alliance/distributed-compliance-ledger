@@ -1548,7 +1548,6 @@ check_response "$result" "\"subjectKeyId\": \"$test_cert_subject_key_id\""
 check_response "$result" "\"address\": \"$trustee_account_address\""
 check_response "$result" "\"address\": \"$second_trustee_account_address\""
 
-test_divider
 
 # 16. TEST PROPOSE ROOT CERTIFICATE
 echo "16. PROPOSE TEST ROOT CERT"
@@ -1569,6 +1568,13 @@ check_response "$result" "\"subjectKeyId\": \"$test_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$test_cert_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$test_cert_subject_as_text\""
 echo $result | jq
+
+test_divider
+
+echo "Certificate not found in rejected-x509-root-cert"
+result=$(dcld query pki rejected-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id")
+echo $result | jq
+check_response "$result" "Not Found"
 
 # 17. TEST APPROVE ROOT CERTIFICATE
 echo "17. TEST APPROVE ROOT CERT"

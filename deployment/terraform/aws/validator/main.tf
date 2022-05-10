@@ -18,8 +18,10 @@ resource "aws_key_pair" "key_pair" {
 }
 
 resource "aws_instance" "this_node" {
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = "t3.medium"
+  ami                                  = data.aws_ami.ubuntu.id
+  instance_type                        = var.instance_type
+  disable_api_termination              = true
+  instance_initiated_shutdown_behavior = "stop"
 
   subnet_id = element(module.this_vpc.public_subnets, 0)
   vpc_security_group_ids = [
@@ -30,16 +32,28 @@ resource "aws_instance" "this_node" {
   key_name   = aws_key_pair.key_pair.id
   monitoring = true
 
+  connection {
+    type        = "ssh"
+    host        = self.public_ip
+    user        = var.ssh_username
+    private_key = file(var.ssh_private_key_path)
+  }
+
+  provisioner "remote-exec" {
+    script = "./provisioner/install-ansible-deps.sh"
+  }
+
   tags = {
     Name = "Validator Node"
   }
 
   root_block_device {
     encrypted   = true
-    volume_size = 30
+    volume_size = 80
   }
 
   metadata_options {
-    http_tokens = "required"
+    http_endpoint = "enabled"
+    http_tokens   = "required"
   }
 }

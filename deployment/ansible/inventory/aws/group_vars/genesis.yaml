@@ -1,0 +1,6 @@
+  accounts:
+    - name: validator-key
+      passphrase: password123
+      roles:
+        - NodeAdmin
+        - Trustee

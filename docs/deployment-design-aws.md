@@ -44,6 +44,7 @@
   trust_hash = "trust-hash"
 
   [consensus]
+  skip_timeout_commit = true
   create_empty_blocks = false
   create_empty_blocks_interval = "600s" # 10 mins
   ```
