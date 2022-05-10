@@ -630,6 +630,8 @@ echo "$user adds Model with VID: $vid PID: $pid"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --productName="$productName" --productLabel="Device Description" --commissioningCustomFlow=0 --deviceTypeID=12 --partNumber=12 --from=$user_address --yes 2>&1) || true
 check_response_and_report "$result" "key not found" raw
 
+
+# These tests are needed so that we can check that when we add a Vendor account, we need 1/3 of the approvals.
 test_divider
 
 random_string user

@@ -1010,6 +1010,8 @@ func AuthDemo(suite *utils.TestSuite) {
 	_, err = GetProposedAccount(suite, testAccAddr)
 	suite.AssertNotFound(err)
 
+	// These tests are needed so that we can check that when we add a Vendor account, we need 1/3 of the approvals.
+
 	accountName = utils.RandString()
 	accountInfo = CreateAccountInfo(suite, accountName)
 	testAccPubKey = accountInfo.GetPubKey()
