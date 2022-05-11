@@ -16,14 +16,21 @@
 config:
   p2p:
     pex: false
-    persistent_peers:
+    persistent_peers: ""
     addr_book_strict: false
+  rpc:
+    laddr: "tcp://0.0.0.0:26657"
   statesync:
-    enable: true
-    rpc_servers:
-    # trust_height: trust-height
-    trust_hash: trust-hash
+    enable: false
+    rpc_servers: ""
+    trust_height: 0
+    trust_hash: ""
+  consensus:
+    skip_timeout_commit: true
+    create_empty_blocks: false
+    create_empty_blocks_interval: "600s"
+
 app:
   state-sync:
-    snapshot-interval: snapshot-interval
-    snapshot-keep-recent: snapshot-keep-recent
+    snapshot-interval: 100
+    snapshot-keep-recent: 2

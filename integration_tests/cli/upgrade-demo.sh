@@ -222,6 +222,14 @@ check_response "$reject" "\"code\": 0"
 
 test_divider
 
+proposed_dclupgrade_query=$(dcld query dclupgrade proposed-upgrade --name=$upgrade_name)
+echo "dclupgrade proposed upgrade query: $proposed_dclupgrade_query"
+check_response_and_report "$proposed_dclupgrade_query" "\"name\": \"$upgrade_name\""
+check_response_and_report "$proposed_dclupgrade_query" "\"height\": \"$upgrade_height\""
+check_response_and_report "$proposed_dclupgrade_query" "\"info\": \"$upgrade_info\""
+
+test_divider
+
 second_reject=$(dcld tx dclupgrade reject-upgrade --name=$upgrade_name --from alice --yes)
 echo "second_reject upgrade response: $reject"
 response_does_not_contain "$second_reject" "\"code\": 0"

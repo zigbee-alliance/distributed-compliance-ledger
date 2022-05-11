@@ -18,3 +18,9 @@
   serial: 1
   roles:
     - genesis
+  tasks:
+    - name: run cosmovisor service
+      service:
+        name: cosmovisor
+        state: started
+        enabled: true

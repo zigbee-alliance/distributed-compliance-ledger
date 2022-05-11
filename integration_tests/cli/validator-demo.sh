@@ -302,7 +302,7 @@ echo "$result"
 
 test_divider
 
-echo "Bob doesn't reject to disable validator $address, because Bob already approves to disable validator"
+echo "Bob cannot reject to disable validator $address, because Bob already approves to disable validator"
 result=$(dcld tx validator reject-disable-node --address="$validator_address" --from bob --yes)
 response_does_not_contain "$result" "\"code\": 0"
 echo "$result"
@@ -385,7 +385,7 @@ echo "$result"
 
 test_divider
 
-echo "Bob doesn't reject to disable validator $address, because Bob already rejected to disable validator"
+echo "Bob cannot reject to disable validator $address, because Bob already rejected to disable validator"
 result=$(dcld tx validator reject-disable-node --address="$validator_address" --from bob --yes)
 response_does_not_contain "$result" "\"code\": 0"
 echo "$result"
@@ -480,14 +480,14 @@ echo "$result"
 
 test_divider
 
-echo "Bob doesn't reject to disable validator $address, because Bob already rejected to disable validator"
+echo "Bob cannot reject to disable validator $address, because Bob already rejected to disable validator"
 result=$(dcld tx validator reject-disable-node --address="$validator_address" --from bob --yes)
 response_does_not_contain "$result" "\"code\": 0"
 echo "$result"
 
 test_divider
 
-echo "Bob doesn't approves to disable validator $address, because Bob already rejected to disable validator"
+echo "Bob cannot approve to disable validator $address, because Bob already rejected to disable validator"
 result=$(dcld tx validator approve-disable-node --address="$validator_address" --from bob --yes)
 response_does_not_contain "$result" "\"code\": 0"
 echo "$result"
@@ -538,14 +538,14 @@ echo "$result"
 
 test_divider
 
-echo "Jack doesn't reject to disable validator $address, because Jack already rejected to disable validator"
+echo "Jack cannot reject to disable validator $address, because Jack already rejected to disable validator"
 result=$(dcld tx validator reject-disable-node --address="$validator_address" --from jack --yes)
 response_does_not_contain "$result" "\"code\": 0"
 echo "$result"
 
 test_divider
 
-echo "Jack doesn't approves to disable validator $address, because Jack already rejected to disable validator"
+echo "Jack cannot approve to disable validator $address, because Jack already rejected to disable validator"
 result=$(dcld tx validator approve-disable-node --address="$validator_address" --from jack --yes)
 response_does_not_contain "$result" "\"code\": 0"
 echo "$result"
@@ -572,7 +572,7 @@ echo "$result"
 
 test_divider
 
-echo "Get a proposed validator to disable $address"
+echo "Get a rejected validator to disable $address"
 result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator rejected-disable-node --address="$address"")
 check_response "$result" "\"approvals\":\[{\"address\":\"$alice_address\"" raw
 check_response "$result" "\"rejects\":\[{\"address\":\"$bob_address\"" raw
@@ -580,15 +580,38 @@ check_response "$result" "\"address\": \"$jack_address\""
 check_response "$result" "\"address\": \"$validator_address\""
 echo "$result"
 
+echo "Alice proposes to disable validator $address"
+result=$(dcld tx validator propose-disable-node --address="$validator_address" --from alice --yes)
+check_response "$result" "\"code\": 0"
+echo "$result"
+
+test_divider
+
+echo "Get a proposed validator to disable $address"
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator proposed-disable-node --address="$address"")
+check_response "$result" "\"approvals\":\[{\"address\":\"$alice_address\"" raw
+check_response "$result" "\"address\": \"$validator_address\""
+echo "$result"
+
 test_divider
 
 echo "Get a proposed validator to disable $validator_address"
-result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator rejected-disable-node --address="$validator_address"")
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator proposed-disable-node --address="$validator_address"")
 check_response "$result" "\"approvals\":\[{\"address\":\"$alice_address\"" raw
-check_response "$result" "\"rejects\":\[{\"address\":\"$bob_address\"" raw
-check_response "$result" "\"address\": \"$jack_address\""
 check_response "$result" "\"address\": \"$validator_address\""
 echo "$result"
+
+test_divider
+
+echo "Get a rejected account for $address is not found"
+result=$(dcld query validator rejected-disable-node --address=$address)
+check_response "$result" "Not Found"
+
+test_divider
+
+echo "Get a rejected account for $validator_address is not found"
+result=$(dcld query validator rejected-disable-node --address=$validator_address)
+check_response "$result" "Not Found"
 
 test_divider
 
@@ -606,7 +629,7 @@ echo "$result"
 
 test_divider
 
-echo "node admin can not enable validator"
+echo "Node Admin cannot enable validator"
 result=$(dcld tx validator enable-node --from "$account" --yes 2>&1 || true)
 check_response "$result" "key not found" raw
 

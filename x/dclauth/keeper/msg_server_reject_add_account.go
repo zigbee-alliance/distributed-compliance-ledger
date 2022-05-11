@@ -18,10 +18,10 @@ func (k msgServer) RejectAddAccount(
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Signer: (%s)", err)
 	}
 
-	// check if sendor has enough rights to create a validator node
+	// check if sendor has enough rights to reject a validator node
 	if !k.HasRole(ctx, signerAddr, types.Trustee) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
-			"MsgApproveAddAccount transaction should be signed by an account with the %s role",
+			"MsgRejectAccount transaction should be signed by an account with the %s role",
 			types.Trustee,
 		)
 	}
@@ -42,7 +42,7 @@ func (k msgServer) RejectAddAccount(
 	// check if pending account already has reject approval from signer
 	if pendAcc.HasRejectApprovalFrom(signerAddr) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
-			"Pending account associated with the address=%v has been already reject approval from=%v",
+			"Pending account associated with the address=%v already has reject from=%v",
 			msg.Address,
 			msg.Signer,
 		)
@@ -51,7 +51,7 @@ func (k msgServer) RejectAddAccount(
 	// check if pending account already has approval from signer
 	if pendAcc.HasApprovalFrom(signerAddr) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
-			"Pending account associated with the address=%v has been already approval from=%v",
+			"Pending account associated with the address=%v already has approval from=%v",
 			msg.Address,
 			msg.Signer,
 		)
