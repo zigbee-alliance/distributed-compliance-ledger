@@ -13,15 +13,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 chain_id: test-net2
-moniker: tf-test-node
-# These accounts must be configured per node
-accounts:
-  - name: user1
-    passphrase: password123
-    roles:
-      - NodeAdmin
-  - name: user2
-    passphrase: secret1234
-    roles:
-      - Trustee
+
+dcl_home: /var/lib/dcl/.dcl
+dcl_version: 0.9.0
+dcld:
+  version: "{{ dcl_version }}"
+  path: "{{ dcl_home }}/cosmovisor/genesis/bin/dcld"
+cosmovisor:
+  version: "{{ dcl_version }}"
+  user: cosmovisor
+  group: dcl
+  path: /usr/bin/cosmovisor
+  home: "{{ dcl_home | dirname }}"
+
+dcld_checksums:
+  0.9.0: c333d828a124e527dd7a9c0170f77d61ad07091d9f6cd61dd0175a36b55aadce
+cosmovisor_checksums:
+  0.9.0: c05705efe5369b9d83e65ef7b252bd7c610eec414ae3f6c08681bcf49dc38e6d
+
+dcld_download_url: "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v{{ dcld.version }}/dcld"
+dcld_binary_checksum: "sha256:{{ dcld_checksums[dcld.version] }}"
+cosmovisor_download_url: "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v{{ cosmovisor.version }}/cosmovisor"
+cosmovisor_binary_checksum: "sha256:{{ cosmovisor_checksums[cosmovisor.version] }}"
