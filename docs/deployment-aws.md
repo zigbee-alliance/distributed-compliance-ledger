@@ -5,7 +5,7 @@
 This document describes all necessary steps to deploy a new DCL network on AWS cloud in accordance with this [design document](./deployment-design-aws.md).
 
 ## Environment
-Officially supported OS for development is `Ubuntu 20.04 LTS` and all the following intructions are tested on it. <br>
+Officially supported OS for development is `Ubuntu 20.04 LTS` and all the following intructions are tested on it.
 But you are free to use any other environment that supports [Terraform][1] and [Ansible][4].
 ## Requirements
 ### 1. Clone [DCL][5] project
