@@ -46,7 +46,7 @@ sudo chmod a+x /usr/local/bin/dasel
 ### 1. Set up an AWS user for use with Terraform
     
 Create credentials file [`~/.aws/credentials`] with the following content:
-```
+```text
 [default]
 aws_access_key_id = <access_key_id_here>
 aws_secret_access_key = <secret_access_key_here>
