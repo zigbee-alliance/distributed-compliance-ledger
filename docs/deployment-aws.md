@@ -113,7 +113,7 @@ public_sentries_config = {
 - Can be configured to run on multiple regions
 
 ### Observers:
-```
+```hcl
 observers_config = {
     enable           = true
     nodes_count      = 3
