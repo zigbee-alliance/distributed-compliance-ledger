@@ -78,7 +78,7 @@ where `<chain-id>` is the chain id of a network spefied in the previous step
 #### Genesis Node:
 [`deployment/ansible/inventory/hosts.yml`]
   - Set Genesis node instance IP address or hostname
-    ```
+    ```yaml
     all:
       ...
       children:
@@ -95,7 +95,7 @@ where `<chain-id>` is the chain id of a network spefied in the previous step
 
 [`deployment/ansible/roles/configure/vars/validator.yml`]
   - Set `persisten_peers` value in 
-      ```
+      ```yaml
       config:
         p2p:
           persistent_peers: "<node1-ID>@<node1-IP>:26656,..."
@@ -103,7 +103,7 @@ where `<chain-id>` is the chain id of a network spefied in the previous step
       ```
 [`deployment/ansible/inventory/group_vars/genesis.yaml`]
   - Set genesis accounts:
-      ```
+      ```yaml
       accounts:
       - name: validator-key
         passphrase: password123
@@ -116,7 +116,7 @@ where `<chain-id>` is the chain id of a network spefied in the previous step
 #### Validator Node:
 [`deployment/ansible/inventory/hosts.yml`]
   - Set Validator node instance IP address or hostname
-    ```
+    ```yaml
     all:
       ...
       children:
@@ -129,14 +129,14 @@ where `<chain-id>` is the chain id of a network spefied in the previous step
 
 [`deployment/ansible/roles/configure/vars/validator.yml`]
   - Set `persisten_peers` value in 
-      ```
+      ```yaml
       config:
         p2p:
           persistent_peers: "<node1-ID>@<node1-IP>:26656,..."
         ...
       ```
   - (Optional) If you are joining a long-running network, enable `statesync`
-      ```
+      ```yaml
       config:
         ...
         statesync:
@@ -151,7 +151,7 @@ where `<chain-id>` is the chain id of a network spefied in the previous step
 #### Observer Nodes:
 [`deployment/ansible/inventory/hosts.yml`]
   - Set Observer node instances IP address or hostnames
-    ```
+    ```yaml
     all:
       ...
       children:
@@ -166,14 +166,14 @@ where `<chain-id>` is the chain id of a network spefied in the previous step
 
 [`deployment/ansible/roles/configure/vars/observer.yml`]
   - Set `persisten_peers` value in 
-      ```
+      ```yaml
       config:
         p2p:
           persistent_peers: "<node1-ID>@<node1-IP>:26656,..."
         ...
       ```
   - (Optional) If you are joining a long-running network, enable `statesync`
-      ```
+      ```yaml
       config:
         ...
         statesync:
