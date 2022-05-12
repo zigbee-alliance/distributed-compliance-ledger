@@ -59,7 +59,7 @@ sudo apt-get install -y --no-install-recommends python3
 ## Configure Nodes
 
 ### 1. Set network chain id in [`deployment/ansible/inventory/hosts.yml`]
-```
+```yaml
 all:
   vars:
     chain_id: <chain-id>
