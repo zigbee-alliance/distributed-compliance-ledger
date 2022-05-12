@@ -8,7 +8,7 @@ This document describes in how to:
 ## Requirements (local machine)
 
 ### 1. Clone [DCL][5] project
-```
+```bash
 git clone https://github.com/zigbee-alliance/distributed-compliance-ledger.git
 ```
 
