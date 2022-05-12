@@ -46,3 +46,6 @@ linters:
     - gci
     - containedctx
     - maintidx
+    - execinquery
+    - nonamedreturns
+    - exhaustruct
