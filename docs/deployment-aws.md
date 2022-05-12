@@ -135,7 +135,7 @@ observers_config = {
 - Can be configured to run on multiple regions
 
 ### 2. Configure Ansible inventory variables in [`deployment/ansible/inventory/aws/group_vars/all.yaml`]
-```
+```yaml
 chain_id: test-net2
 
 dcl_home: /var/lib/dcl/.dcl
