@@ -94,7 +94,7 @@ private_sentries_config = {
 - Only one instance of private sentry is created with static ip address
 
 ### Public Sentries:
-```
+```hcl
 public_sentries_config = {
     enable        = true
     enable_ipv6   = false
