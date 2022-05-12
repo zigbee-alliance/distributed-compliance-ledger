@@ -165,7 +165,7 @@ cosmovisor_binary_checksum: "sha256:{{ cosmovisor_checksums[cosmovisor.version] 
 
 ## Deployment
 ### 1. Run terraform from [`deployment/terraform/aws`]
-```
+```bash
 terraform apply
 ```
 
