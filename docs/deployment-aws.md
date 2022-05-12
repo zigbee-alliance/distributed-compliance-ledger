@@ -91,7 +91,7 @@ private_sentries_config = {
 ```
 - Private sentry nodes are created in the region as Validator by default
 - Can be disabled by setting `enable = false`
-- Only one intance of private sentry is created with static ip address
+- Only one instance of private sentry is created with static ip address
 
 ### Public Sentries:
 ```
