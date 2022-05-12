@@ -16,8 +16,7 @@ git clone https://github.com/zigbee-alliance/distributed-compliance-ledger.git
 ```bash
 sudo apt-get update
 sudo apt-get install -y --no-install-recommends python3
-sudo apt install python3-pip
-sudo apt install python3-testresources
+sudo apt install python3-pip python3-testresources
 ```
 
 ### 3. Install [Ansible][4] and its dependencies
