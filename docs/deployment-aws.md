@@ -82,7 +82,7 @@ validator_config = {
 
 ### Private Sentries:
 
-```
+```hcl
 private_sentries_config = {
     enable        = true
     nodes_count   = 2
