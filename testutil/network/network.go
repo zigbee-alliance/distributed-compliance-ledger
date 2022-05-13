@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"net"
 	"net/http"
 	"net/url"
 	"os"
@@ -257,7 +258,7 @@ func newNetwork(t *testing.T, cfg Config) *Network {
 
 			apiURL, err := url.Parse(apiListenAddr)
 			require.NoError(t, err)
-			apiAddr = fmt.Sprintf("http://%s:%s", apiURL.Hostname(), apiURL.Port())
+			apiAddr = "http://" + net.JoinHostPort(apiURL.Hostname(), apiURL.Port())
 
 			rpcAddr, _, err := server.FreeTCPAddr()
 			require.NoError(t, err)
