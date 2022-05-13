@@ -81,7 +81,7 @@ dcld config node tcp://localhost:26657
 vid=$RANDOM
 
 echo "Jack proposes account for $user"
-result=$(echo $passphrase | dcld tx auth propose-add-account --address="$user_address" --pubkey="$user_pubkey" --roles="Vendor" --vid="$vid" --from jack --yes)
+result=$(echo $passphrase | dcld tx auth propose-add-account --address="$user_address" --pubkey="$user_pubkey" --roles="NodeAdmin" --from jack --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -144,7 +144,7 @@ echo "try to write via light client proxy"
 test_divider
 
 echo "Add vendorinfo"
-result=$(echo $passphrase | dcld tx auth propose-add-account --address="$user_address" --pubkey="$user_pubkey" --roles="Vendor" --vid="$vid" --from $user_address --yes)
+result=$(echo $passphrase | dcld tx auth propose-add-account --address="$user_address" --pubkey="$user_pubkey" --roles="NodeAdmin" --from $user_address --yes)
 echo "$result"
 check_response "$result" "Write requests don't work with a Light Client Proxy"
 
