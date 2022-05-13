@@ -187,7 +187,7 @@ where `<chain-id>` is the chain id of a network spefied in the previous step
   
 
 ## Run nodes
-### 1. Verify that all the configuration parameters from the previous section are correctly
+### 1. Verify that all the configuration parameters from the previous section are correct
 ### 2. Run ansible
 ```bash
 ansible-playbook -i ./deployment/ansible/inventory  -u <target-host-ssh-user> ./deployment/ansible/deploy.yml
