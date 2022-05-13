@@ -1064,9 +1064,12 @@ The account is not active until sufficient number of Trustees approve it.
 - Who can send:
   - Trustee
 - Number of required approvals:
-  - 2/3 of Trustees
+  - 2/3 of Trustees for account roles: `TestHouse`, `CertificationCenter`, `Trustee`, `NodeAdmin`
+  - 1/3 of Trustees for account role: `Vendor`
 - CLI command:
   - `dcld tx auth approve-add-account --address=<bench32 encoded string> --from=<account>`
+> **_Note:_**  If we are approving an account with role `Vendor`, then we need 1/3 of Trustees approvals.
+
 
 #### REJECT_ADD_ACCOUNT
 

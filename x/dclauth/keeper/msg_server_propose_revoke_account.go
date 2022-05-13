@@ -40,7 +40,7 @@ func (k msgServer) ProposeRevokeAccount(goCtx context.Context, msg *types.MsgPro
 	}
 
 	// if more than 1 trustee's approval is needed, create pending account revocation else delete the account.
-	if k.AccountApprovalsCount(ctx) > 1 {
+	if k.AccountApprovalsCount(ctx, types.AccountApprovalsPercent) > 1 {
 		// create and store pending account revocation record
 		revoc := types.NewPendingAccountRevocation(accAddr, msg.Info, msg.Time, signerAddr)
 		k.SetPendingAccountRevocation(ctx, revoc)

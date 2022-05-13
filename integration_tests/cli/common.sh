@@ -144,10 +144,6 @@ create_new_vendor_account(){
   _result=$(echo $passphrase | dcld tx auth propose-add-account --address="$_address" --pubkey="$_pubkey" --roles=Vendor --vid=$_vid --from jack --yes)
   check_response "$_result" "\"code\": 0"
 
-  echo "Alice approves account for \"$_name\" with Vendor role"
-  _result=$(echo $passphrase | dcld tx auth approve-add-account --address="$_address" --from alice --yes)
-  check_response "$_result" "\"code\": 0"
-
 }
 
 create_model_and_version() {

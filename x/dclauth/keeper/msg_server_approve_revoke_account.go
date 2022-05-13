@@ -55,7 +55,7 @@ func (k msgServer) ApproveRevokeAccount(goCtx context.Context, msg *types.MsgApp
 	revoc.Approvals = append(revoc.Approvals, &grant)
 
 	// check if pending account revocation has enough approvals
-	if len(revoc.Approvals) == k.AccountApprovalsCount(ctx) {
+	if len(revoc.Approvals) == k.AccountApprovalsCount(ctx, types.AccountApprovalsPercent) {
 		// Move account to entity revoked account
 		revokedAccount, err := k.AddAccountToRevokedAccount(
 			ctx, accAddr, revoc.Approvals, types.RevokedAccount_TrusteeVoting)
