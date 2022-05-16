@@ -55,7 +55,7 @@ sudo apt-get update
 sudo apt-get install -y --no-install-recommends python3
 ```
 
-## Configure Nodes
+## Configure Nodes (local machine)
 
 ### 1. Set network chain id in [`deployment/ansible/inventory/hosts.yml`]
 ```yaml
@@ -186,7 +186,7 @@ where `<chain-id>` is the chain id of a network spefied in the previous step
       refer to this [document](./running-node-in-existing-network.md) for detailed info
   
 
-## Run nodes
+## Run ansible (local machine)
 ### 1. Verify that all the configuration parameters from the previous section are correct
 ### 2. Run ansible
 ```bash
@@ -194,6 +194,17 @@ ansible-playbook -i ./deployment/ansible/inventory  -u <target-host-ssh-user> ./
 ```
 - `<target-host-ssh-username>` - target host ssh user
 - Ansible provisioning can take several minutes depending on number of nodes being provisioned
+
+## Deployment Verification (target machine)
+### 1. Switch to cosmovisor user
+```
+sudo su -s /bin/bash cosmovisor
+```
+
+### 2. Query status
+```
+dcld status
+```
 
 [1]: https://www.terraform.io/
 [2]: https://learn.hashicorp.com/tutorials/terraform/install-cli
