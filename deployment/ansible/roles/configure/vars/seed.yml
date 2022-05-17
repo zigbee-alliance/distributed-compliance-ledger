@@ -23,3 +23,5 @@ config:
     rpc_servers: ""
     trust_height: 0
     trust_hash: ""
+  instrumentation:
+    prometheus: true

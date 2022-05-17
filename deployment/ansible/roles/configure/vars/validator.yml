@@ -29,6 +29,8 @@ config:
     skip_timeout_commit: true
     create_empty_blocks: false
     create_empty_blocks_interval: "600s"
+  instrumentation:
+    prometheus: true
 
 app:
   state-sync:
