@@ -16,6 +16,7 @@ module "validator" {
   }
 
   instance_type = var.validator_config.instance_type
+  enable_prometheus = var.validator_config.enable_prometheus
 }
 
 # Private Sentries

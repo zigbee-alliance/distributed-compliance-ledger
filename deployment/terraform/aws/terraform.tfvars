@@ -3,6 +3,7 @@ region_2 = "us-east-2"
 
 validator_config = {
   instance_type = "t3.medium"
+  enable_prometheus = true
 }
 
 private_sentries_config = {

@@ -34,5 +34,13 @@ module "this_private_sg" {
       description = "Allow RPC from internal IPs"
       cidr_blocks = "10.0.0.0/8"
     },
+
+    {
+      from_port   = 26660
+      to_port     = 26660
+      protocol    = "tcp"
+      description = "Allow Prometheus from internal IPs"
+      cidr_blocks = "10.0.0.0/8"
+    },
   ]
 }

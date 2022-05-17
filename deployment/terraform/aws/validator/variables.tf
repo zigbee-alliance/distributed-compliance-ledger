@@ -16,3 +16,7 @@ variable "ssh_username" {
 variable "instance_type" {
   description = "Type of AWS instances"
 }
+
+variable "enable_prometheus" {
+  description = "Enable tendermint prometheus metrics"
+}

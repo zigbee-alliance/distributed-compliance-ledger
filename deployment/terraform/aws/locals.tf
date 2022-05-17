@@ -3,6 +3,7 @@ locals {
     validator = {
       private_ips = module.validator.private_ips
       public_ips  = module.validator.public_ips
+      prometheus_endpoint = module.validator.prometheus_endpoint
     },
 
     private_sentries = {

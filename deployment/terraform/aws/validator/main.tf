@@ -57,3 +57,51 @@ resource "aws_instance" "this_node" {
     http_tokens   = "required"
   }
 }
+
+resource "aws_instance" "this_prometheus_node" {
+  count = var.enable_prometheus ? 1 : 0
+
+  ami                                  = data.aws_ami.ubuntu.id
+  instance_type                        = "t3.small"
+
+  subnet_id = element(module.this_vpc.public_subnets, 0)
+  vpc_security_group_ids = [
+    module.this_dev_sg.security_group_id,
+    module.this_private_sg.security_group_id
+  ]
+
+  key_name   = aws_key_pair.key_pair.id
+  monitoring = true
+
+  iam_instance_profile = aws_iam_instance_profile.this_amp_role_profile.name
+
+  connection {
+    type        = "ssh"
+    host        = self.public_ip
+    user        = var.ssh_username
+    private_key = file(var.ssh_private_key_path)
+  }
+
+  provisioner "file" {
+    content     = local.prometheus_config
+    destination = "/tmp/prometheus.yml"
+  }
+
+  provisioner "remote-exec" {
+    script = "./provisioner/install-prometheus-service.sh"
+  }
+
+  tags = {
+    Name = "Validator Prometheus Server Node"
+  }
+
+  root_block_device {
+    encrypted   = true
+    volume_size = 10
+  }
+
+  metadata_options {
+    http_endpoint = "enabled"
+    http_tokens   = "required"
+  }
+}
