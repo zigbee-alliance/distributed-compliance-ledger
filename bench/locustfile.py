@@ -19,7 +19,7 @@ import random
 import common
 
 from locust import HttpUser, events, task
-
+from typing import List
 
 DEFAULT_TARGET_HOST = "http://localhost:26657"
 DEFAULT_REST_HOST = "http://localhost:26640"
@@ -126,3 +126,56 @@ class DCLWriteUser(HttpUser):
 
         self.vendor_account_address = common.keys_show_address(self.vendor_account_name)
         self.vendor_account_number = common.get_account_number(self.vendor_account_address)
+
+
+class DCLReadUser(HttpUser):
+    rest_host = ""
+    weight = 1
+    models: List[int] = []
+
+    def get_model_vid(self, index):
+        return self.models[index]["vid"]
+
+    def get_model_pid(self, index):
+        return self.models[index]["pid"]
+
+    def generate_get_model_url(self, vid, pid):
+        # Gererate random number for get random model
+        url = self.rest_host + "/dcl/model/models/" + str(vid) + "/" + str(pid)
+        return url
+
+
+    @task
+    def get_model(self):
+        global READ_REQUEST_COUNT
+        
+        if(len(self.models) > 0):
+            index = random.randint(0, len(self.models) - 1)
+
+            # Get vid and pid model
+            vid = self.get_model_vid(index)
+            pid = self.get_model_pid(index)
+
+            self.client.get(self.generate_get_model_url(vid, pid), name="get random model")
+        elif (len(self.models) == 0):
+            logger.info("[ERROR! NOT FOUND MODELS!]")
+
+    def on_start(self):
+        # Get REST endpoint
+        if dcl_rest_hosts:
+            self.rest_host = random.choice(dcl_rest_hosts)
+        else:
+            self.rest_host = DEFAULT_REST_HOST
+
+        # Get models list only once
+        if len(self.models) == 0:
+            # Get up to 1000 models
+            response = self.client.get(
+                self.rest_host + "/dcl/model/models?pagination.limit=1000",
+                name="get all models",
+            )
+            json_var = response.json()
+
+            for item in json_var["model"]:
+                self.models.append(item)
+                
