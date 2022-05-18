@@ -60,6 +60,7 @@ resource "aws_iam_role_policy_attachment" "this_amp_policy_attachment" {
 }
 
 resource "aws_iam_instance_profile" "this_amp_role_profile" {
+  count = var.enable_prometheus ? 1 : 0
   name = "prometheus-node-profile"
   role = aws_iam_role.this_amp_role[0].name
 }

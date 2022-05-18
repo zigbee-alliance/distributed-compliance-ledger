@@ -73,7 +73,7 @@ resource "aws_instance" "this_prometheus_node" {
   key_name   = aws_key_pair.key_pair.id
   monitoring = true
 
-  iam_instance_profile = aws_iam_instance_profile.this_amp_role_profile.name
+  iam_instance_profile = aws_iam_instance_profile.this_amp_role_profile[0].name
 
   connection {
     type        = "ssh"
