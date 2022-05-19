@@ -62,7 +62,7 @@ var (
 	HardwareVersion                            uint32 = 21
 	HardwareVersionString                             = "2.1"
 	CdVersionNumber                            int32  = 312
-	FirmwareDigests                                   = "Firmware Digest String"
+	FirmwareInformation                               = "Firmware Information String"
 	Revoked                                           = false
 	SoftwareVersionValid                              = true
 	OtaURL                                            = "https://ota.firmware.com"
