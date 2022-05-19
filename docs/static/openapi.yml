@@ -8353,7 +8353,7 @@ paths:
                   cdVersionNumber:
                     type: integer
                     format: int32
-                  firmwareDigests:
+                  firmwareInformation:
                     type: string
                   softwareVersionValid:
                     type: boolean
@@ -18950,7 +18950,7 @@ definitions:
       cdVersionNumber:
         type: integer
         format: int32
-      firmwareDigests:
+      firmwareInformation:
         type: string
       softwareVersionValid:
         type: boolean
@@ -19143,7 +19143,7 @@ definitions:
           cdVersionNumber:
             type: integer
             format: int32
-          firmwareDigests:
+          firmwareInformation:
             type: string
           softwareVersionValid:
             type: boolean
