@@ -48,7 +48,7 @@ func (k msgServer) CreateModelVersion(goCtx context.Context, msg *types.MsgCreat
 		SoftwareVersion:              msg.SoftwareVersion,
 		SoftwareVersionString:        msg.SoftwareVersionString,
 		CdVersionNumber:              msg.CdVersionNumber,
-		FirmwareDigests:              msg.FirmwareDigests,
+		FirmwareInformation:          msg.FirmwareInformation,
 		SoftwareVersionValid:         msg.SoftwareVersionValid,
 		OtaUrl:                       msg.OtaUrl,
 		OtaFileSize:                  msg.OtaFileSize,

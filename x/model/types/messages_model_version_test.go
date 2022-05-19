@@ -126,9 +126,9 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldUpperBoundViolated,
 		},
 		{
-			name: "FirmwareDigests length > 512",
+			name: "FirmwareInformation length > 512",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
-				msg.FirmwareDigests = tmrand.Str(513)
+				msg.FirmwareInformation = tmrand.Str(513)
 
 				return msg
 			}(validMsgCreateModelVersion()),
@@ -358,17 +358,17 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			}(validMsgCreateModelVersion()),
 		},
 		{
-			name: "FirmwareDigests is omitted",
+			name: "FirmwareInformation is omitted",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
-				msg.FirmwareDigests = ""
+				msg.FirmwareInformation = ""
 
 				return msg
 			}(validMsgCreateModelVersion()),
 		},
 		{
-			name: "FirmwareDigests length == 512",
+			name: "FirmwareInformation length == 512",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
-				msg.FirmwareDigests = tmrand.Str(512)
+				msg.FirmwareInformation = tmrand.Str(512)
 
 				return msg
 			}(validMsgCreateModelVersion()),
@@ -853,7 +853,7 @@ func validMsgCreateModelVersion() *MsgCreateModelVersion {
 		SoftwareVersion:              testconstants.SoftwareVersion,
 		SoftwareVersionString:        testconstants.SoftwareVersionString,
 		CdVersionNumber:              testconstants.CdVersionNumber,
-		FirmwareDigests:              testconstants.FirmwareDigests,
+		FirmwareInformation:          testconstants.FirmwareInformation,
 		SoftwareVersionValid:         testconstants.SoftwareVersionValid,
 		OtaUrl:                       testconstants.OtaURL,
 		OtaFileSize:                  testconstants.OtaFileSize,
