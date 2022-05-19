@@ -340,7 +340,7 @@ func Demo(suite *utils.TestSuite) {
 	// Register new Vendor account
 	vid := int32(tmrand.Uint16())
 	vendorName := utils.RandString()
-	vendorAccount := test_dclauth.CreateAccount(
+	vendorAccount := test_dclauth.CreateVendorAccount(
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
@@ -466,7 +466,7 @@ func AddModelByDifferentVendor(suite *utils.TestSuite) {
 	// register new Vendor account
 	vendorName := utils.RandString()
 	vid := int32(tmrand.Uint16())
-	vendorAccount := test_dclauth.CreateAccount(
+	vendorAccount := test_dclauth.CreateVendorAccount(
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
@@ -503,7 +503,7 @@ func AddModelTwice(suite *utils.TestSuite) {
 	// register new Vendor account
 	vendorName := utils.RandString()
 	vid := int32(tmrand.Uint16())
-	vendorAccount := test_dclauth.CreateAccount(
+	vendorAccount := test_dclauth.CreateVendorAccount(
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
@@ -574,7 +574,7 @@ func DemoWithHexVidAndPid(suite *utils.TestSuite) {
 	// Register new Vendor account
 	vendorName := utils.RandString()
 	var vid int32 = 0xA13
-	vendorAccount := test_dclauth.CreateAccount(
+	vendorAccount := test_dclauth.CreateVendorAccount(
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},

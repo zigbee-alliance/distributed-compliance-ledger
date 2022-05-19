@@ -537,7 +537,7 @@ func Demo(suite *utils.TestSuite) {
 	// Register new Vendor account
 	vid := int32(tmrand.Uint16())
 	vendorName := utils.RandString()
-	vendorAccount := test_dclauth.CreateAccount(
+	vendorAccount := test_dclauth.CreateVendorAccount(
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
@@ -982,7 +982,7 @@ func Demo(suite *utils.TestSuite) {
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgApproveAddX509RootCert}, jackName, jackAccount)
 	require.NoError(suite.T, err)
 
-	// Jack (Trustee) doesn't reject Root certificate, because Jack already has approved
+	// Jack (Trustee) cannot reject Root certificate, because Jack already has approved
 	msgRejectAddX509RootCert := pkitypes.MsgRejectAddX509RootCert{
 		Subject:      proposedCertificate.Subject,
 		SubjectKeyId: proposedCertificate.SubjectKeyId,
@@ -1200,7 +1200,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, vendorAccount.Address, proposedCertificate.Owner)
 	require.Equal(suite.T, 0, len(proposedCertificate.Approvals))
 
-	// Jack (Trustee) reject Root certificate
+	// Jack (Trustee) rejects Root certificate
 	msgRejectAddX509RootCert = pkitypes.MsgRejectAddX509RootCert{
 		Subject:      proposedCertificate.Subject,
 		SubjectKeyId: proposedCertificate.SubjectKeyId,
@@ -1209,11 +1209,11 @@ func Demo(suite *utils.TestSuite) {
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRejectAddX509RootCert}, jackName, jackAccount)
 	require.NoError(suite.T, err)
 
-	// Jack (Trustee) second time reject Root certificate
+	// Jack (Trustee) rejects Root certificate for the second time
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRejectAddX509RootCert}, jackName, jackAccount)
 	require.Error(suite.T, err)
 
-	// Jack (Trustee) doesn't approve Root certificate, because already Jack has rejected
+	// Jack (Trustee) cannot approve Root certificate, because already Jack has rejected
 	msgApproveAddX509RootCert = pkitypes.MsgApproveAddX509RootCert{
 		Subject:      proposedCertificate.Subject,
 		SubjectKeyId: proposedCertificate.SubjectKeyId,
@@ -1243,7 +1243,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, 0, len(proposedCertificate.Approvals))
 	require.True(suite.T, proposedCertificate.HasRejectFrom(jackAccount.Address))
 
-	// Alice (Trustee) reject Root certificate
+	// Alice (Trustee) rejects Root certificate
 	secondMsgRejectAddX509RootCert := pkitypes.MsgRejectAddX509RootCert{
 		Subject:      proposedCertificate.Subject,
 		SubjectKeyId: proposedCertificate.SubjectKeyId,

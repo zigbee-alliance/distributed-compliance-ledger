@@ -20,13 +20,13 @@
       type: validator
 
 - name: setup private sentries
-  hosts: private-sentries
+  hosts: private_sentries
   roles:
     - role: configure
       type: private-sentry
 
 - name: setup public sentries
-  hosts: public-sentries
+  hosts: public_sentries
   roles:
     - role: configure
       type: public-sentry

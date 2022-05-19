@@ -42,51 +42,35 @@ pid_in_hex_format=0xA11
 vid=2579
 pid=2577
 
-
 echo "Jack proposes account for $user"
 result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$user_address" --pubkey="$user_pubkey" --roles="Vendor" --vid="$vid_in_hex_format" --from jack --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Get an account for $user is not found"
-result=$(dcld query auth account --address=$user_address)
-check_response "$result" "Not Found"
+echo "Get all active accounts. $user account in the list because has enough approvals"
+result=$(dcld query auth all-accounts)
+check_response "$result" "\"address\": \"$user_address\""
 
-echo "Get a proposed account for $user and confirm that the approval contains Jack's address"
-result=$(dcld query auth proposed-account --address=$user_address)
+test_divider
+
+echo "Get an account for $user"
+result=$(dcld query auth account --address=$user_address)
 check_response "$result" "\"address\": \"$user_address\""
 check_response_and_report "$result"  $jack_address "json"
 check_response_and_report "$result"  '"info": "Jack is proposing this account"' "json"
-response_does_not_contain "$result"  $alice_address "json"
 
 test_divider
 
-echo "Alice approves account for \"$user\""
-result=$(echo $passphrase | dcld tx auth approve-add-account --address="$user_address" --info="Alice is approving this account" --from alice --yes)
-check_response "$result" "\"code\": 0"
-
-test_divider
-
-echo "Get $user account and confirm that alice and jack are set as approvers"
-result=$(dcld query auth account --address=$user_address)
-check_response_and_report "$result" $user_address "json"
-check_response_and_report "$result"  $jack_address "json"
-check_response_and_report "$result"  $alice_address "json"
-check_response_and_report "$result"  '"info": "Alice is approving this account"' "json"
-check_response_and_report "$result"  '"info": "Jack is proposing this account"' "json"
-
-test_divider
-
-echo "Get $user account"
-result=$(dcld query auth account --address=$user_address)
-check_response_and_report "$result" "\"address\": \"$user_address\""
-
-test_divider
-
-echo "Get a proposed account for $user is not found"
+echo "Get an proposed account for $user is not found"
 result=$(dcld query auth proposed-account --address=$user_address)
 check_response "$result" "Not Found"
+
+test_divider
+
+echo "Get all proposed accounts. $user account is not in the list"
+result=$(dcld query auth all-proposed-accounts)
+check_response "$result" "\[\]"
 
 test_divider
 

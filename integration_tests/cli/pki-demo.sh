@@ -1459,23 +1459,23 @@ check_response "$result" "\"serialNumber\": \"$test_cert_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$test_cert_subject_as_text\""
 echo $result | jq
 
-# 15. REJECT TEST ROOT CERT
-echo "11. REJECT TEST ROOT CERT"
+# 15. TEST REJECT ROOT CERT
+echo "11.  TEST REJECT ROOT CERT"
 test_divider
 
-echo "$trustee_account (Trustee) reject Root certificate"
+echo "$trustee_account (Trustee) rejects Root certificate"
 result=$(echo $passphrase | dcld tx pki reject-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --from $trustee_account --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "$trustee_account (Trustee) doesn't reject Root certificate at the second time"
+echo "$trustee_account (Trustee) cannot reject Root certificate for the second time"
 result=$(echo $passphrase | dcld tx pki reject-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --from $trustee_account --yes 2>&1 || true)
 response_does_not_contain "$result" "\"code\": 0"
 
 test_divider
 
-echo "$trustee_account (Trustee) doesn't approve Root certificate, because already has rejected"
+echo "$trustee_account (Trustee) cannot approve Root certificate, because already has rejected"
 result=$(echo $passphrase | dcld tx pki approve-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --from $trustee_account --yes 2>&1 || true)
 response_does_not_contain "$result" "\"code\": 0"
 
@@ -1510,7 +1510,7 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Certificate must be Rejected and contain 2 rejects. Request Root certificate"
+echo "Certificate must be Rejected and contains 2 rejects. Request Root certificate"
 result=$(dcld query pki rejected-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id")
 echo $result | jq
 check_response "$result" "\"subject\": \"$test_cert_subject\""
@@ -1545,6 +1545,60 @@ result=$(dcld query pki all-rejected-x509-root-certs)
 echo $result | jq
 check_response "$result" "\"subject\": \"$test_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$test_cert_subject_key_id\""
+check_response "$result" "\"address\": \"$trustee_account_address\""
+check_response "$result" "\"address\": \"$second_trustee_account_address\""
+
+
+# 16. TEST PROPOSE ROOT CERTIFICATE
+echo "16. PROPOSE TEST ROOT CERT"
+test_divider
+
+echo "$user_account (Not Trustee) propose Root certificate"
+test_root_path="integration_tests/constants/test_root_cert"
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$test_root_path" --from $user_account --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Request proposed Root certificate - there should be no Approval"
+result=$(dcld query pki proposed-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id")
+echo $result | jq
+check_response "$result" "\"subject\": \"$test_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$test_cert_subject_key_id\""
+check_response "$result" "\"serialNumber\": \"$test_cert_serial_number\""
+check_response "$result" "\"subjectAsText\": \"$test_cert_subject_as_text\""
+echo $result | jq
+
+test_divider
+
+echo "Certificate not found in rejected-x509-root-cert"
+result=$(dcld query pki rejected-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id")
+echo $result | jq
+check_response "$result" "Not Found"
+
+# 17. TEST APPROVE ROOT CERTIFICATE
+echo "17. TEST APPROVE ROOT CERT"
+test_divider
+
+echo "$trustee_account (Trustee) approve Root certificate"
+result=$(echo $passphrase | dcld tx pki approve-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --from $trustee_account --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "$trustee_account (Trustee) approve Root certificate"
+result=$(echo $passphrase | dcld tx pki approve-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --from $second_trustee_account_address --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Certificate must be Approved and contains 2 approvals. Request Root certificate"
+result=$(dcld query pki x509-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id")
+echo $result | jq
+check_response "$result" "\"subject\": \"$test_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$test_cert_subject_key_id\""
+check_response "$result" "\"serialNumber\": \"$test_cert_serial_number\""
+check_response "$result" "\"subjectAsText\": \"$test_cert_subject_as_text\""
 check_response "$result" "\"address\": \"$trustee_account_address\""
 check_response "$result" "\"address\": \"$second_trustee_account_address\""
 
