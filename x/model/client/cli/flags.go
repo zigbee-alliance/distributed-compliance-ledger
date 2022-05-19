@@ -27,7 +27,7 @@ const (
 	FlagSoftwareVersionShortcut      = "v"
 	FlagSoftwareVersionString        = "softwareVersionString"
 	FlagCdVersionNumber              = "cdVersionNumber"
-	FlagFirmwareDigests              = "firmwareDigests"
+	FlagFirmwareInformation          = "firmwareInformation"
 	FlagSoftwareVersionValid         = "softwareVersionValid"
 	FlagOtaURL                       = "otaURL"
 	FlagOtaFileSize                  = "otaFileSize"
