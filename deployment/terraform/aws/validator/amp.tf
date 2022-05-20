@@ -10,7 +10,7 @@ resource "aws_prometheus_workspace" "this_amp_workspace" {
 data "aws_region" "current" {}
 
 locals {
-    prometheus_config = var.enable_prometheus ? templatefile("${path.module}/prometheus.tpl", 
+    prometheus_config = var.enable_prometheus ? templatefile("./provisioner/prometheus.tpl", 
     { 
       monitor = "validator-monitor", 
       targets = "'${aws_instance.this_node.private_ip}:26660'", 
