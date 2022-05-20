@@ -325,7 +325,7 @@ sv_1=$RANDOM
 echo "Create a Device Model Version with all fields for VID: $vid_1 PID: $pid_1 SV: $sv_1"
 result=$(echo 'test1234' | dcld tx model add-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 \
 --softwareVersionString="1.0" --cdVersionNumber=21334 \
---firmwareDigests="123456789012345678901234567890123456789012345678901234567890123" \
+--firmwareInformation="123456789012345678901234567890123456789012345678901234567890123" \
 --softwareVersionValid=true --otaURL="https://ota.url.info" --otaFileSize=123456789 \
 --otaChecksum="123456789012345678901234567890123456789012345678901234567890123" --releaseNotesURL="https://release.notes.url.info" \
 --otaChecksumType=1 --maxApplicableSoftwareVersion=32 --minApplicableSoftwareVersion=5   --from=$vendor_account_1 --yes)
@@ -343,7 +343,7 @@ check_response_and_report "$result" "\"pid\": $pid_1"
 check_response_and_report "$result" "\"softwareVersion\": $sv_1"
 check_response_and_report "$result" "\"softwareVersionString\": \"1.0\""
 check_response_and_report "$result" "\"cdVersionNumber\": 21334"
-check_response_and_report "$result" "\"firmwareDigests\": \"123456789012345678901234567890123456789012345678901234567890123\""
+check_response_and_report "$result" "\"firmwareInformation\": \"123456789012345678901234567890123456789012345678901234567890123\""
 check_response_and_report "$result" "\"softwareVersionValid\": true"
 check_response_and_report "$result" "\"otaUrl\": \"https://ota.url.info\""
 check_response_and_report "$result" "\"otaFileSize\": \"123456789\""
@@ -371,7 +371,7 @@ check_response_and_report "$result" "\"pid\": $pid_1"
 check_response_and_report "$result" "\"softwareVersion\": $sv_1"
 check_response_and_report "$result" "\"softwareVersionString\": \"1.0\""
 check_response_and_report "$result" "\"cdVersionNumber\": 21334"
-check_response_and_report "$result" "\"firmwareDigests\": \"123456789012345678901234567890123456789012345678901234567890123\""
+check_response_and_report "$result" "\"firmwareInformation\": \"123456789012345678901234567890123456789012345678901234567890123\""
 check_response_and_report "$result" "\"softwareVersionValid\": true"
 check_response_and_report "$result" "\"otaUrl\": \"https://ota.url.info\""
 check_response_and_report "$result" "\"otaFileSize\": \"123456789\""
@@ -399,7 +399,7 @@ check_response_and_report "$result" "\"pid\": $pid_1"
 check_response_and_report "$result" "\"softwareVersion\": $sv_1"
 check_response_and_report "$result" "\"softwareVersionString\": \"1.0\""
 check_response_and_report "$result" "\"cdVersionNumber\": 21334"
-check_response_and_report "$result" "\"firmwareDigests\": \"123456789012345678901234567890123456789012345678901234567890123\""
+check_response_and_report "$result" "\"firmwareInformation\": \"123456789012345678901234567890123456789012345678901234567890123\""
 check_response_and_report "$result" "\"softwareVersionValid\": false"
 check_response_and_report "$result" "\"otaUrl\": \"https://ota.url.info\""
 check_response_and_report "$result" "\"otaFileSize\": \"123456789\""
@@ -429,7 +429,7 @@ check_response_and_report "$result" "\"pid\": $pid_1"
 check_response_and_report "$result" "\"softwareVersion\": $sv_1"
 check_response_and_report "$result" "\"softwareVersionString\": \"1.0\""
 check_response_and_report "$result" "\"cdVersionNumber\": 21334"
-check_response_and_report "$result" "\"firmwareDigests\": \"123456789012345678901234567890123456789012345678901234567890123\""
+check_response_and_report "$result" "\"firmwareInformation\": \"123456789012345678901234567890123456789012345678901234567890123\""
 check_response_and_report "$result" "\"softwareVersionValid\": true"
 check_response_and_report "$result" "\"otaUrl\": \"https://updated.ota.url.info\""
 check_response_and_report "$result" "\"otaFileSize\": \"123456789\""
@@ -443,7 +443,7 @@ sv_1=$RANDOM
 echo "Create a Device Model Version with mandatory fields and some optional fields for VID: $vid_1 PID: $pid_1 SV: $sv_1"
 result=$(echo 'test1234' | dcld tx model add-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 \
 --softwareVersionString="1.0" --cdVersionNumber=21334 \
---firmwareDigests="123456789012345678901234567890123456789012345678901234567890123" \
+--firmwareInformation="123456789012345678901234567890123456789012345678901234567890123" \
 --softwareVersionValid=true --otaURL="https://ota.url.info" --otaFileSize=123456789 \
 --otaChecksum="123456789012345678901234567890123456789012345678901234567890123" \
 --otaChecksumType=1 --maxApplicableSoftwareVersion=32 --minApplicableSoftwareVersion=5   --from=$vendor_account_1 --yes)
@@ -461,7 +461,7 @@ check_response_and_report "$result" "\"pid\": $pid_1"
 check_response_and_report "$result" "\"softwareVersion\": $sv_1"
 check_response_and_report "$result" "\"softwareVersionString\": \"1.0\""
 check_response_and_report "$result" "\"cdVersionNumber\": 21334"
-check_response_and_report "$result" "\"firmwareDigests\": \"123456789012345678901234567890123456789012345678901234567890123\""
+check_response_and_report "$result" "\"firmwareInformation\": \"123456789012345678901234567890123456789012345678901234567890123\""
 check_response_and_report "$result" "\"softwareVersionValid\": true"
 check_response_and_report "$result" "\"otaUrl\": \"https://ota.url.info\""
 check_response_and_report "$result" "\"otaFileSize\": \"123456789\""

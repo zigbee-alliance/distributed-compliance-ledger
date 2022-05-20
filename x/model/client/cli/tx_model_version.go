@@ -16,7 +16,7 @@ func CmdCreateModelVersion() *cobra.Command {
 		softwareVersion              uint32
 		softwareVersionString        string
 		cdVersionNumber              int32
-		firmwareDigests              string
+		firmwareInformation          string
 		softwareVersionValid         bool
 		otaURL                       string
 		otaFileSize                  uint64
@@ -43,7 +43,7 @@ func CmdCreateModelVersion() *cobra.Command {
 				softwareVersion,
 				softwareVersionString,
 				cdVersionNumber,
-				firmwareDigests,
+				firmwareInformation,
 				softwareVersionValid,
 				otaURL,
 				otaFileSize,
@@ -73,8 +73,8 @@ func CmdCreateModelVersion() *cobra.Command {
 		"Software Version String of model")
 	cmd.Flags().Int32Var(&cdVersionNumber, FlagCdVersionNumber, 0,
 		"CD Version Number of the certification")
-	cmd.Flags().StringVar(&firmwareDigests, FlagFirmwareDigests, "",
-		`FirmwareDigests field included in the Device Attestation response
+	cmd.Flags().StringVar(&firmwareInformation, FlagFirmwareInformation, "",
+		`FirmwareInformation field included in the Device Attestation response
 		 when this Software Image boots on the device`)
 	// by default the Software Version is valid, unless --softwareVersionValid is passed by user explicitly
 	cmd.Flags().BoolVar(&softwareVersionValid, FlagSoftwareVersionValid, true,
