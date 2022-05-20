@@ -47,9 +47,9 @@ func DecodeX509Certificate(pemCertificate string) (*Certificate, error) {
 	}
 
 	certificate := Certificate{
-		Issuer:         ToBase64String(cert.Issuer.String()),
+		Issuer:         ToBase64String(cert.RawIssuer),
 		SerialNumber:   cert.SerialNumber.String(),
-		Subject:        ToBase64String(cert.Subject.String()),
+		Subject:        ToBase64String(cert.RawSubject),
 		SubjectAsText:  ToSubjectAsText(cert.Subject.String()),
 		SubjectKeyID:   BytesToHex(cert.SubjectKeyId),
 		AuthorityKeyID: BytesToHex(cert.AuthorityKeyId),
@@ -95,8 +95,8 @@ func FormatOID(header, oldKey, newKey string) string {
 	return strings.Join(subjectValues, ",")
 }
 
-func ToBase64String(subject string) string {
-	return base64.StdEncoding.EncodeToString([]byte(subject))
+func ToBase64String(subject []byte) string {
+	return base64.StdEncoding.EncodeToString(subject)
 }
 
 func BytesToHex(bytes []byte) string {
