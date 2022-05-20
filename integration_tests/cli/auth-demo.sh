@@ -773,64 +773,64 @@ check_response "$result" "\[\]"
 
 test_divider
 
-random_string new_trustee
-echo "$new_trustee generates keys"
-cmd="(echo $passphrase; echo $passphrase) | dcld keys add $new_trustee"
+random_string new_trustee1
+echo "$new_trustee1 generates keys"
+cmd="(echo $passphrase; echo $passphrase) | dcld keys add $new_trustee1"
 result="$(bash -c "$cmd")"
 
 test_divider
 
-echo "Get key info for $new_trustee"
-result=$(echo $passphrase | dcld keys show $new_trustee)
-check_response "$result" "\"name\": \"$new_trustee\""
+echo "Get key info for $new_trustee1"
+result=$(echo $passphrase | dcld keys show $new_trustee1)
+check_response "$result" "\"name\": \"$new_trustee1\""
 
 test_divider
 
-new_trustee_address=$(echo $passphrase | dcld keys show $new_trustee -a)
-new_trustee_pubkey=$(echo $passphrase | dcld keys show $new_trustee -p)
+new_trustee_address1=$(echo $passphrase | dcld keys show $new_trustee1 -a)
+new_trustee_pubkey1=$(echo $passphrase | dcld keys show $new_trustee1 -p)
 
 test_divider
 
-echo "Jack proposes account for $new_trustee"
-result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$new_trustee_address" --pubkey="$new_trustee_pubkey" --roles="Trustee" --from jack --yes)
+echo "Jack proposes account for $new_trustee1"
+result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$new_trustee_address1" --pubkey="$new_trustee_pubkey1" --roles="Trustee" --from jack --yes)
 check_response "$result" "\"code\": 0"
 
-echo "Alice approves account for \"$new_trustee\""
-result=$(echo $passphrase | dcld tx auth approve-add-account --address="$new_trustee_address" --info="Alice is approving this account" --from alice --yes)
+echo "Alice approves account for \"$new_trustee1\""
+result=$(echo $passphrase | dcld tx auth approve-add-account --address="$new_trustee_address1" --info="Alice is approving this account" --from alice --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
 
-random_string new_trustee
-echo "$new_trustee generates keys"
-cmd="(echo $passphrase; echo $passphrase) | dcld keys add $new_trustee"
+random_string new_trustee2
+echo "$new_trustee2 generates keys"
+cmd="(echo $passphrase; echo $passphrase) | dcld keys add $new_trustee2"
 result="$(bash -c "$cmd")"
 
 test_divider
 
-echo "Get key info for $new_trustee"
-result=$(echo $passphrase | dcld keys show $new_trustee)
-check_response "$result" "\"name\": \"$new_trustee\""
+echo "Get key info for $new_trustee2"
+result=$(echo $passphrase | dcld keys show $new_trustee2)
+check_response "$result" "\"name\": \"$new_trustee2\""
 
 test_divider
 
-new_trustee_address=$(echo $passphrase | dcld keys show $new_trustee -a)
-new_trustee_pubkey=$(echo $passphrase | dcld keys show $new_trustee -p)
+new_trustee_address2=$(echo $passphrase | dcld keys show $new_trustee2 -a)
+new_trustee_pubkey2=$(echo $passphrase | dcld keys show $new_trustee2 -p)
 
 test_divider
 
-echo "Jack proposes account for $new_trustee"
-result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$new_trustee_address" --pubkey="$new_trustee_pubkey" --roles="Trustee" --from jack --yes)
+echo "Jack proposes account for $new_trustee2"
+result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$new_trustee_address2" --pubkey="$new_trustee_pubkey2" --roles="Trustee" --from jack --yes)
 check_response "$result" "\"code\": 0"
 
-echo "Alice approves account for \"$new_trustee\""
-result=$(echo $passphrase | dcld tx auth approve-add-account --address="$new_trustee_address" --info="Alice is approving this account" --from alice --yes)
+echo "Alice approves account for \"$new_trustee2\""
+result=$(echo $passphrase | dcld tx auth approve-add-account --address="$new_trustee_address2" --info="Alice is approving this account" --from alice --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Bob approves account for \"$new_trustee\""
-result=$(echo $passphrase | dcld tx auth approve-add-account --address="$new_trustee_address" --info="Bob is approving this account" --from bob --yes)
+echo "Bob approves account for \"$new_trustee2\""
+result=$(echo $passphrase | dcld tx auth approve-add-account --address="$new_trustee_address2" --info="Bob is approving this account" --from bob --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -921,6 +921,270 @@ result=$(dcld query auth proposed-account --address=$user_address)
 check_response "$result" "Not Found"
 
 test_divider
+
+
+###########################################################################################################################################
+# THESE TEST ARE NEED TO CHECK THIS SITUATION:
+# Example:
+# There are 10 trustees in the network
+# Account "A" is proposed to be added (requires at least 7 approvals. 2/3 of trustees)
+# Account "A" receives 6 approvals (one more approval is required)
+# Meanwhile 1 trustee account has been revoked and there are 9 trustees in the network
+# Account "A" is still in pending approvals, even if it has 6 approvals which are enough after the revocation of a trustee
+# Account "A" receives one more approval and now it has 7 approvals. 
+# The account has not been added even if it has more than the required number of approvals (6 required)
+
+
+# REVOKE ACCOUNT, WE NEED 3 TRUSTEE'S APPROVALS, BECAUSE WE HAVE 5 TRUSTEES
+echo "Alice proposes to revoke account for $user"
+result=$(echo $passphrase | dcld tx auth propose-revoke-account --address="$user_address" --info="Alice proposes to revoke account" --from alice --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Get a proposed account to revoke for $user"
+result=$(dcld query auth proposed-account-to-revoke --address="$user_address")
+check_response "$result" "\"address\": \"$user_address\""
+check_response_and_report "$result"  $alice_address "json"
+check_response_and_report "$result"  '"info": "Alice proposes to revoke account"' "json"
+
+test_divider
+
+echo "Bob approves to revoke account for $user"
+result=$(echo $passphrase | dcld tx auth approve-revoke-account --address="$user_address" --from bob --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Get a proposed account to revoke for $user"
+result=$(dcld query auth proposed-account-to-revoke --address="$user_address")
+check_response "$result" "\"address\": \"$user_address\""
+check_response_and_report "$result"  $alice_address "json"
+check_response_and_report "$result"  '"info": "Alice proposes to revoke account"' "json"
+
+test_divider
+
+# REMOVE TRUSTEE ACCOUNT
+echo "Alice proposes to revoke account for $new_trustee1"
+result=$(echo $passphrase | dcld tx auth propose-revoke-account --address="$new_trustee_address1" --from alice --yes)
+check_response "$result" "\"code\": 0"
+
+echo "Bob approves to revoke account for $new_trustee1"
+result=$(echo $passphrase | dcld tx auth approve-revoke-account --address="$new_trustee_address1" --from bob --yes)
+check_response "$result" "\"code\": 0"
+
+echo "Jack approves to revoke account for $new_trustee1"
+result=$(echo $passphrase | dcld tx auth approve-revoke-account --address="$new_trustee_address1" --from jack --yes)
+check_response "$result" "\"code\": 0"
+
+echo "Get revoked account $new_trustee1"
+result=$(dcld query auth revoked-account --address="$new_trustee_address1")
+check_response "$result" "\"address\": \"$new_trustee_address1\""
+check_response "$result" "\"reason\": \"$trustee_voting\""
+
+test_divider
+
+# REVOKE ACCOUNT
+echo "Jack approves to revoke account for $user"
+result=$(echo $passphrase | dcld tx auth approve-revoke-account --address="$user_address" --from jack --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Get revoked account $user account"
+result=$(dcld query auth revoked-account --address="$user_address")
+check_response "$result" "\"address\": \"$user_address\""
+check_response "$result" "\"reason\": \"$trustee_voting\""
+
+test_divider
+
+
+
+# REJECT A NEW ACCOUNT, WE NEED 2 TRUSTEE'S REJECTS, BECAUSE WE HAVE 4 TRUSTEES
+echo "Jack proposes account for $user"
+result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$user_address" --pubkey="$user_pubkey" --roles="Vendor,NodeAdmin" --vid=$vid --from jack --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Get a proposed account for $user and confirm that the approval contains Jack's address"
+result=$(dcld query auth proposed-account --address=$user_address)
+check_response "$result" "\"address\": \"$user_address\""
+check_response_and_report "$result"  $jack_address "json"
+check_response_and_report "$result"  '"info": "Jack is proposing this account"' "json"
+response_does_not_contain "$result"  $alice_address "json"
+
+test_divider
+
+echo "Bob rejects account for \"$user\""
+result=$(echo $passphrase | dcld tx auth reject-add-account --address="$user_address" --info="Bob is rejecting this account" --from bob --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Get a proposed account for $user and confirm that the approval contains Jack's address"
+result=$(dcld query auth proposed-account --address=$user_address)
+check_response "$result" "\"address\": \"$user_address\""
+check_response_and_report "$result"  $jack_address "json"
+check_response_and_report "$result"  '"info": "Jack is proposing this account"' "json"
+check_response_and_report "$result"  $bob_address "json"
+check_response_and_report "$result"  '"info": "Bob is rejecting this account"' "json"
+
+test_divider
+
+# WE REMOVE TRUSTEE ACCOUNT
+echo "Alice proposes to revoke account for $new_trustee2"
+result=$(echo $passphrase | dcld tx auth propose-revoke-account --address="$new_trustee_address2" --from alice --yes)
+check_response "$result" "\"code\": 0"
+
+echo "Bob approves to revoke account for $new_trustee2"
+result=$(echo $passphrase | dcld tx auth approve-revoke-account --address="$new_trustee_address2" --from bob --yes)
+check_response "$result" "\"code\": 0"
+
+echo "Jack approves to revoke account for $new_trustee2"
+result=$(echo $passphrase | dcld tx auth approve-revoke-account --address="$new_trustee_address2" --from jack --yes)
+check_response "$result" "\"code\": 0"
+
+echo "Get revoked account $new_trustee2"
+result=$(dcld query auth revoked-account --address="$new_trustee_address2")
+check_response "$result" "\"address\": \"$new_trustee_address2\""
+check_response "$result" "\"reason\": \"$trustee_voting\""
+
+test_divider
+
+# REJECT A NEW ACCOUNT
+echo "Alice rejects account for \"$user\""
+result=$(echo $passphrase | dcld tx auth reject-add-account --address="$user_address" --info="Alice is rejecting this account" --from alice --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Get all rejected accounts. $user account is in the list because has enough rejects received"
+result=$(dcld query auth all-rejected-accounts)
+check_response "$result" "\"address\": \"$user_address\""
+
+test_divider
+
+echo "Get rejected account for $user"
+result=$(dcld query auth rejected-account --address=$user_address)
+check_response "$result" "\"address\": \"$user_address\""
+check_response_and_report "$result"  $jack_address "json"
+check_response_and_report "$result"  '"info": "Jack is proposing this account"' "json"
+check_response_and_report "$result"  $bob_address "json"
+check_response_and_report "$result"  '"info": "Bob is rejecting this account"' "json"
+check_response_and_report "$result"  $alice_address "json"
+check_response_and_report "$result"  '"info": "Alice is rejecting this account"' "json"
+
+test_divider
+
+
+
+# ADD A NEW TRUSTEE ACCOUNT
+random_string new_trustee
+echo "$new_trustee generates keys"
+cmd="(echo $passphrase; echo $passphrase) | dcld keys add $new_trustee"
+result="$(bash -c "$cmd")"
+
+echo "Get key info for $new_trustee"
+result=$(echo $passphrase | dcld keys show $new_trustee)
+check_response "$result" "\"name\": \"$new_trustee\""
+
+new_trustee_address=$(echo $passphrase | dcld keys show $new_trustee -a)
+new_trustee_pubkey=$(echo $passphrase | dcld keys show $new_trustee -p)
+
+echo "Jack proposes account for $new_trustee"
+result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$new_trustee_address" --pubkey="$new_trustee_pubkey" --roles="Trustee" --from jack --yes)
+check_response "$result" "\"code\": 0"
+
+echo "Alice approves account for \"$new_trustee\""
+result=$(echo $passphrase | dcld tx auth approve-add-account --address="$new_trustee_address" --info="Alice is approving this account" --from alice --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+# ADD A NEW ACCOUNT, WE NEED 3 TRUSTEE'S APPROVALS, BECAUSE WE HAVE 4 TRUSTEES
+echo "Jack proposes account for $user"
+result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$user_address" --pubkey="$user_pubkey" --roles="Vendor,NodeAdmin" --vid=$vid --from jack --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Get a proposed account for $user and confirm that the approval contains Jack's address"
+result=$(dcld query auth proposed-account --address=$user_address)
+check_response "$result" "\"address\": \"$user_address\""
+check_response_and_report "$result"  $jack_address "json"
+check_response_and_report "$result"  '"info": "Jack is proposing this account"' "json"
+
+test_divider
+
+echo "Bob approves account for \"$new_trustee\""
+result=$(echo $passphrase | dcld tx auth approve-add-account --info="Bob is approving this account" --address="$user_address" --from bob --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Get a proposed account for $user and confirm that the approval contains Jack's address"
+result=$(dcld query auth proposed-account --address=$user_address)
+check_response "$result" "\"address\": \"$user_address\""
+check_response_and_report "$result"  $jack_address "json"
+check_response_and_report "$result"  '"info": "Jack is proposing this account"' "json"
+check_response_and_report "$result"  $bob_address "json"
+check_response_and_report "$result"  '"info": "Bob is approving this account"' "json"
+
+test_divider
+
+# WE REMOVE TRUSTEE ACCOUNT
+echo "Alice proposes to revoke account for $new_trustee"
+result=$(echo $passphrase | dcld tx auth propose-revoke-account --address="$new_trustee_address" --from alice --yes)
+check_response "$result" "\"code\": 0"
+
+echo "Bob approves to revoke account for $new_trustee"
+result=$(echo $passphrase | dcld tx auth approve-revoke-account --address="$new_trustee_address" --from bob --yes)
+check_response "$result" "\"code\": 0"
+
+echo "Jack approves to revoke account for $new_trustee"
+result=$(echo $passphrase | dcld tx auth approve-revoke-account --address="$new_trustee_address" --from jack --yes)
+check_response "$result" "\"code\": 0"
+
+echo "Get revoked account $new_trustee"
+result=$(dcld query auth revoked-account --address="$new_trustee_address")
+check_response "$result" "\"address\": \"$new_trustee_address\""
+check_response "$result" "\"reason\": \"$trustee_voting\""
+
+test_divider
+
+# ADD A NEW ACCOUNT
+echo "Alice approves account for \"$user\""
+result=$(echo $passphrase | dcld tx auth approve-add-account --address="$user_address" --info="Alice is approving this account" --from alice --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Get all active accounts. $user account is in the list because has enough approvals received"
+result=$(dcld query auth all-accounts)
+check_response "$result" "\"address\": \"$user_address\""
+
+test_divider
+
+echo "Get an account for $user"
+result=$(dcld query auth account --address=$user_address)
+check_response "$result" "\"address\": \"$user_address\""
+check_response_and_report "$result"  $jack_address "json"
+check_response_and_report "$result"  '"info": "Jack is proposing this account"' "json"
+check_response_and_report "$result"  $bob_address "json"
+check_response_and_report "$result"  '"info": "Bob is approving this account"' "json"
+check_response_and_report "$result"  $alice_address "json"
+check_response_and_report "$result"  '"info": "Alice is approving this account"' "json"
+
+test_divider
+
+echo "Get an proposed account for $user. $user not found"
+result=$(dcld query auth proposed-account --address=$user_address)
+check_response "$result" "Not Found"
+
+test_divider
+###########################################################################################################################################
+
 
 productName="Device #1"
 echo "$user adds Model with VID: $vid PID: $pid"
