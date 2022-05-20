@@ -17,17 +17,17 @@
 set -euo pipefail
 source integration_tests/cli/common.sh
 
-root_cert_subject="Tz1yb290LWNhLFNUPXNvbWUtc3RhdGUsQz1BVQ=="
+root_cert_subject="MDQxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApzb21lLXN0YXRlMRAwDgYDVQQKDAdyb290LWNh"
 root_cert_subject_key_id="5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB"
 root_cert_serial_number="442314047376310867378175982234956458728610743315"
 root_cert_subject_as_text="O=root-ca,ST=some-state,C=AU"
 
-intermediate_cert_subject="Tz1pbnRlcm1lZGlhdGUtY2EsU1Q9c29tZS1zdGF0ZSxDPUFV"
+intermediate_cert_subject="MDwxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApzb21lLXN0YXRlMRgwFgYDVQQKDA9pbnRlcm1lZGlhdGUtY2E="
 intermediate_cert_subject_key_id="4E:3B:73:F4:70:4D:C2:98:0D:DB:C8:5A:5F:02:3B:BF:86:25:56:2B"
 intermediate_cert_serial_number="169917617234879872371588777545667947720450185023"
 intermediate_cert_subject_as_text="O=intermediate-ca,ST=some-state,C=AU"
 
-leaf_cert_subject="Tz1sZWFmLFNUPXNvbWUtc3RhdGUsQz1BVQ=="
+leaf_cert_subject="MDExCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApzb21lLXN0YXRlMQ0wCwYDVQQKDARsZWFm"
 leaf_cert_subject_key_id="30:F4:65:75:14:20:B2:AF:3D:14:71:17:AC:49:90:93:3E:24:A0:1F"
 leaf_cert_serial_number="143290473708569835418599774898811724528308722063"
 leaf_cert_subject_as_text="O=leaf,ST=some-state,C=AU"
@@ -996,7 +996,7 @@ response_does_not_contain "$result" "\"$leaf_cert_subject_key_id\""
 
 # CHECK GOOGLE ROOT CERTIFICATE WHICH INCLUDES VID
 
-google_cert_subject="Q049TWF0dGVyIFBBQSAxLE89R29vZ2xlLEM9VVMsMS4zLjYuMS40LjEuMzcyNDQuMi4xPSMxMzA0MzYzMDMwMzY="
+google_cert_subject="MEsxCzAJBgNVBAYTAlVTMQ8wDQYDVQQKDAZHb29nbGUxFTATBgNVBAMMDE1hdHRlciBQQUEgMTEUMBIGCisGAQQBgqJ8AgEMBDYwMDY="
 google_cert_subject_key_id="B0:00:56:81:B8:88:62:89:62:80:E1:21:18:A1:A8:BE:09:DE:93:21"
 google_cert_serial_number="1"
 google_cert_subject_as_text="CN=Matter PAA 1,O=Google,C=US,vid=0x6006"
@@ -1434,7 +1434,7 @@ response_does_not_contain "$result" "\"$google_cert_subject_key_id\""
 
 
 # CHECK REJECT CERTIFICATE
-test_cert_subject="Q049TWF0dGVyIFRlc3QgUEFBLDEuMy42LjEuNC4xLjM3MjQ0LjIuMT0jMTMwNDMxMzIzNTQ0"
+test_cert_subject="MDAxGDAWBgNVBAMMD01hdHRlciBUZXN0IFBBQTEUMBIGCisGAQQBgqJ8AgEMBDEyNUQ="
 test_cert_subject_key_id="E2:90:8D:36:9C:3C:A3:C1:13:BB:09:E2:4D:C1:CC:C5:A6:66:91:D4"
 test_cert_serial_number="1647312298631"
 test_cert_subject_as_text="CN=Matter Test PAA,vid=0x125D"
