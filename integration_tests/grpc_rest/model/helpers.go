@@ -614,6 +614,6 @@ func DemoWithHexVidAndPid(suite *utils.TestSuite) {
 	// Get models of new vendor
 	vendorModels, err := GetVendorModelsByHexVid(suite, testconstants.TestVID1String)
 	require.NoError(suite.T, err)
-	require.Equal(suite.T, 1, len(vendorModels.Products))
+	require.Equal(suite.T, 2, len(vendorModels.Products))
 	require.Equal(suite.T, createFirstModelMsg.Pid, vendorModels.Products[0].Pid)
 }
