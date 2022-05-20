@@ -8,7 +8,7 @@ const baseModelVersion = {
     softwareVersion: 0,
     softwareVersionString: '',
     cdVersionNumber: 0,
-    firmwareDigests: '',
+    firmwareInformation: '',
     softwareVersionValid: false,
     otaUrl: '',
     otaFileSize: 0,
@@ -36,8 +36,8 @@ export const ModelVersion = {
         if (message.cdVersionNumber !== 0) {
             writer.uint32(40).int32(message.cdVersionNumber);
         }
-        if (message.firmwareDigests !== '') {
-            writer.uint32(50).string(message.firmwareDigests);
+        if (message.firmwareInformation !== '') {
+            writer.uint32(50).string(message.firmwareInformation);
         }
         if (message.softwareVersionValid === true) {
             writer.uint32(56).bool(message.softwareVersionValid);
@@ -91,7 +91,7 @@ export const ModelVersion = {
                     message.cdVersionNumber = reader.int32();
                     break;
                 case 6:
-                    message.firmwareDigests = reader.string();
+                    message.firmwareInformation = reader.string();
                     break;
                 case 7:
                     message.softwareVersionValid = reader.bool();
@@ -159,11 +159,11 @@ export const ModelVersion = {
         else {
             message.cdVersionNumber = 0;
         }
-        if (object.firmwareDigests !== undefined && object.firmwareDigests !== null) {
-            message.firmwareDigests = String(object.firmwareDigests);
+        if (object.firmwareInformation !== undefined && object.firmwareInformation !== null) {
+            message.firmwareInformation = String(object.firmwareInformation);
         }
         else {
-            message.firmwareDigests = '';
+            message.firmwareInformation = '';
         }
         if (object.softwareVersionValid !== undefined && object.softwareVersionValid !== null) {
             message.softwareVersionValid = Boolean(object.softwareVersionValid);
@@ -228,7 +228,7 @@ export const ModelVersion = {
         message.softwareVersion !== undefined && (obj.softwareVersion = message.softwareVersion);
         message.softwareVersionString !== undefined && (obj.softwareVersionString = message.softwareVersionString);
         message.cdVersionNumber !== undefined && (obj.cdVersionNumber = message.cdVersionNumber);
-        message.firmwareDigests !== undefined && (obj.firmwareDigests = message.firmwareDigests);
+        message.firmwareInformation !== undefined && (obj.firmwareInformation = message.firmwareInformation);
         message.softwareVersionValid !== undefined && (obj.softwareVersionValid = message.softwareVersionValid);
         message.otaUrl !== undefined && (obj.otaUrl = message.otaUrl);
         message.otaFileSize !== undefined && (obj.otaFileSize = message.otaFileSize);
@@ -272,11 +272,11 @@ export const ModelVersion = {
         else {
             message.cdVersionNumber = 0;
         }
-        if (object.firmwareDigests !== undefined && object.firmwareDigests !== null) {
-            message.firmwareDigests = object.firmwareDigests;
+        if (object.firmwareInformation !== undefined && object.firmwareInformation !== null) {
+            message.firmwareInformation = object.firmwareInformation;
         }
         else {
-            message.firmwareDigests = '';
+            message.firmwareInformation = '';
         }
         if (object.softwareVersionValid !== undefined && object.softwareVersionValid !== null) {
             message.softwareVersionValid = object.softwareVersionValid;

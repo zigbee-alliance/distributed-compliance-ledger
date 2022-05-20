@@ -46,7 +46,7 @@ func TestCreateModelVersion(t *testing.T) {
 	fields := []string{
 		fmt.Sprintf("--%s=%v", cli.FlagSoftwareVersionString, testconstants.SoftwareVersionString),
 		fmt.Sprintf("--%s=%v", cli.FlagCdVersionNumber, testconstants.CdVersionNumber),
-		fmt.Sprintf("--%s=%v", cli.FlagFirmwareDigests, testconstants.FirmwareDigests),
+		fmt.Sprintf("--%s=%v", cli.FlagFirmwareInformation, testconstants.FirmwareInformation),
 		fmt.Sprintf("--%s=%v", cli.FlagSoftwareVersionValid, testconstants.SoftwareVersionValid),
 		fmt.Sprintf("--%s=%v", cli.FlagOtaURL, testconstants.OtaURL),
 		fmt.Sprintf("--%s=%v", cli.FlagOtaFileSize, testconstants.OtaFileSize),
@@ -113,7 +113,7 @@ func TestUpdateModelVersion(t *testing.T) {
 		fmt.Sprintf("--%s=%v", cli.FlagSoftwareVersion, testconstants.SoftwareVersion),
 		fmt.Sprintf("--%s=%v", cli.FlagSoftwareVersionString, testconstants.SoftwareVersionString),
 		fmt.Sprintf("--%s=%v", cli.FlagCdVersionNumber, testconstants.CdVersionNumber),
-		fmt.Sprintf("--%s=%v", cli.FlagFirmwareDigests, testconstants.FirmwareDigests),
+		fmt.Sprintf("--%s=%v", cli.FlagFirmwareInformation, testconstants.FirmwareInformation),
 		fmt.Sprintf("--%s=%v", cli.FlagSoftwareVersionValid, testconstants.SoftwareVersionValid),
 		fmt.Sprintf("--%s=%v", cli.FlagOtaURL, testconstants.OtaURL),
 		fmt.Sprintf("--%s=%v", cli.FlagOtaFileSize, testconstants.OtaFileSize),

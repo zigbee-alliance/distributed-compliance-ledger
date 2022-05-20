@@ -76,7 +76,7 @@ message MsgCreateModelVersion {
 
   string softwareVersionString = 5 [(gogoproto.moretags) = "validate:\"required,max=64\""];
   int32 cdVersionNumber = 6 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
-  string firmwareDigests = 7 [(gogoproto.moretags) = "validate:\"max=512\""];
+  string firmwareInformation = 7 [(gogoproto.moretags) = "validate:\"max=512\""];
   bool softwareVersionValid = 8;
   string otaUrl = 9 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
   uint64 otaFileSize = 10 [(gogoproto.moretags) = "validate:\"required_with=OtaUrl\""];
