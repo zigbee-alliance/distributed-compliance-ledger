@@ -1,15 +1,15 @@
 set -euo pipefail
 source integration_tests/cli/common.sh
 
-root_cert_subject="Tz1yb290LWNhLFNUPXNvbWUtc3RhdGUsQz1BVQ=="
+root_cert_subject="MDQxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApzb21lLXN0YXRlMRAwDgYDVQQKDAdyb290LWNh"
 root_cert_subject_key_id="5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB"
 root_cert_serial_number="442314047376310867378175982234956458728610743315"
 
-intermediate_cert_subject="Tz1pbnRlcm1lZGlhdGUtY2EsU1Q9c29tZS1zdGF0ZSxDPUFV"
+intermediate_cert_subject="MDwxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApzb21lLXN0YXRlMRgwFgYDVQQKDA9pbnRlcm1lZGlhdGUtY2E="
 intermediate_cert_subject_key_id="4E:3B:73:F4:70:4D:C2:98:0D:DB:C8:5A:5F:02:3B:BF:86:25:56:2B"
 intermediate_cert_serial_number="169917617234879872371588777545667947720450185023"
 
-leaf_cert_subject="Tz1sZWFmLFNUPXNvbWUtc3RhdGUsQz1BVQ=="
+leaf_cert_subject="MDExCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApzb21lLXN0YXRlMQ0wCwYDVQQKDARsZWFm"
 leaf_cert_subject_key_id="30:F4:65:75:14:20:B2:AF:3D:14:71:17:AC:49:90:93:3E:24:A0:1F"
 leaf_cert_serial_number="143290473708569835418599774898811724528308722063"
 
