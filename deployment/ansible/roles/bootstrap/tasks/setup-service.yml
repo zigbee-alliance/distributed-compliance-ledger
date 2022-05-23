@@ -48,7 +48,7 @@
     - "{{ dcld.path | dirname }}"
     - "{{ cosmovisor.path | dirname }}"
     - "{{ cosmovisor.log_path | dirname }}"
-  
+
 - name: create cosmovisor log file
   file:
     state: touch
