@@ -69,6 +69,11 @@ func (k msgServer) ApproveUpgrade(goCtx context.Context, msg *types.MsgApproveUp
 		approvedUpgrage := types.ApprovedUpgrade(proposedUpgrade)
 		k.SetApprovedUpgrade(ctx, approvedUpgrage)
 	} else {
+		if ctx.BlockHeight() > proposedUpgrade.Plan.Height {
+			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+				"upgrade cannot be scheduled in the past",
+			)
+		}
 		// update proposed upgrade
 		k.SetProposedUpgrade(ctx, proposedUpgrade)
 	}
