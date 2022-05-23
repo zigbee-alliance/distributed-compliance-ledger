@@ -222,4 +222,87 @@ check_response "$approved_dclupgrade_query" "Not Found"
 
 test_divider
 
+# APPROVE UPGRADE'S PLAN HEIGHT LESS THAN BLOCK HEIGHT AND RE-PROPOSE UPGRADE PLAN HEIGHT BIGGER THAN BLOCK HEIGHT
+###########################################################################################################################################
+get_height current_height
+echo "Current height is $current_height"
+plan_height=$(expr $current_height + 2)
+echo "$plan_height"
+random_string upgrade_name
+random_string upgrade_info
+
+echo "propose upgrade's plan height bigger than block height"
+propose=$(dcld tx dclupgrade propose-upgrade --name=$upgrade_name --upgrade-height=$plan_height --upgrade-info=$upgrade_info --from jack --yes)
+echo "propose upgrade response: $propose"
+check_response "$propose" "\"code\": 0"
+
+proposed_dclupgrade_query=$(dcld query dclupgrade proposed-upgrade --name=$upgrade_name)
+echo "dclupgrade proposed upgrade query: $proposed_dclupgrade_query"
+check_response_and_report "$proposed_dclupgrade_query" "\"name\": \"$upgrade_name\""
+check_response_and_report "$proposed_dclupgrade_query" "\"height\": \"$plan_height\""
+check_response_and_report "$proposed_dclupgrade_query" "\"info\": \"$upgrade_info\""
+
+wait_for_height $(expr $plan_height + 5) 300 outage-safe
+get_height current_height
+echo "Current height is $current_height"
+
+echo "approve upgrade's plan height less than block height"
+approve=$(dcld tx dclupgrade approve-upgrade --name=$upgrade_name --from alice --yes)
+echo "approve upgrade response: $approve"
+check_response_and_report "$approve" "upgrade cannot be scheduled in the past" raw
+
+get_height current_height
+echo "Current height is $current_height"
+plan_height=$(expr $current_height + 3)
+
+echo "re-propose upgrade's plan height bigger than block height"
+propose=$(dcld tx dclupgrade propose-upgrade --name=$upgrade_name --upgrade-height=$plan_height --upgrade-info=$upgrade_info --from jack --yes)
+echo "propose upgrade response: $propose"
+check_response "$propose" "\"code\": 0"
+
+proposed_dclupgrade_query=$(dcld query dclupgrade proposed-upgrade --name=$upgrade_name)
+echo "dclupgrade proposed upgrade query: $proposed_dclupgrade_query"
+check_response_and_report "$proposed_dclupgrade_query" "\"name\": \"$upgrade_name\""
+check_response_and_report "$proposed_dclupgrade_query" "\"height\": \"$plan_height\""
+check_response_and_report "$proposed_dclupgrade_query" "\"info\": \"$upgrade_info\""
+###########################################################################################################################################
+
+test_divider
+
+# APPROVE UPGRADE'S PLAN HEIGHT LESS THAN BLOCK HEIGHT AND RE-PROPOSE UPGRADE PLAN HEIGHT LESS THAN BLOCK HEIGHT
+###########################################################################################################################################
+get_height current_height
+echo "Current height is $current_height"
+plan_height=$(expr $current_height + 3)
+random_string upgrade_name
+random_string upgrade_info
+
+echo "propose upgrade's plan height bigger than block height"
+propose=$(dcld tx dclupgrade propose-upgrade --name=$upgrade_name --upgrade-height=$plan_height --upgrade-info=$upgrade_info --from jack --yes)
+echo "propose upgrade response: $propose"
+check_response "$propose" "\"code\": 0"
+
+proposed_dclupgrade_query=$(dcld query dclupgrade proposed-upgrade --name=$upgrade_name)
+echo "dclupgrade proposed upgrade query: $proposed_dclupgrade_query"
+check_response_and_report "$proposed_dclupgrade_query" "\"name\": \"$upgrade_name\""
+check_response_and_report "$proposed_dclupgrade_query" "\"height\": \"$plan_height\""
+check_response_and_report "$proposed_dclupgrade_query" "\"info\": \"$upgrade_info\""
+
+wait_for_height $(expr $plan_height + 5) 300 outage-safe
+get_height current_height
+echo "Current height is $current_height"
+
+echo "approve upgrade's plan height less than block height"
+approve=$(dcld tx dclupgrade approve-upgrade --name=$upgrade_name --from alice --yes)
+echo "approve upgrade response: $approve"
+check_response_and_report "$approve" "upgrade cannot be scheduled in the past" raw
+
+echo "re-propose upgrade's plan height bigger than block height"
+propose=$(dcld tx dclupgrade propose-upgrade --name=$upgrade_name --upgrade-height=$plan_height --upgrade-info=$upgrade_info --from jack --yes)
+echo "propose upgrade response: $propose"
+check_response_and_report "$propose" "upgrade cannot be scheduled in the past" raw
+###########################################################################################################################################
+
+test_divider
+
 echo "PASSED"
