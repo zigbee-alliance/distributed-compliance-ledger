@@ -56,7 +56,7 @@ func (k msgServer) RejectUpgrade(goCtx context.Context, msg *types.MsgRejectUpgr
 	proposedUpgrade.Rejects = append(proposedUpgrade.Rejects, &grant)
 
 	// check if proposed upgrade has enough rejects
-	if len(proposedUpgrade.Rejects) == k.UpgradeRejectsCount(ctx) {
+	if len(proposedUpgrade.Rejects) >= k.UpgradeRejectsCount(ctx) {
 		// schedule upgrade
 		err = k.upgradeKeeper.ScheduleUpgrade(ctx, proposedUpgrade.Plan)
 		if err != nil {
