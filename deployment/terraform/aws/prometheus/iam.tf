@@ -1,6 +1,4 @@
 resource "aws_iam_role" "this_iam_role" {
-  name = "amp-role"
-
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -19,7 +17,6 @@ EOF
 }
 
 resource "aws_iam_policy" "this_amp_write_policy" {
-  name        = "amp-write-policy"
   description = "AMP Write Policy"
 
   policy = <<EOF
@@ -44,6 +41,5 @@ resource "aws_iam_role_policy_attachment" "this_amp_policy_attachment" {
 }
 
 resource "aws_iam_instance_profile" "this_amp_role_profile" {
-  name = "prometheus-node-amp-profile"
   role = aws_iam_role.this_iam_role.name
 }
