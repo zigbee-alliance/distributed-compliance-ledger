@@ -50,9 +50,10 @@
     - "{{ cosmovisor.log_path | dirname }}"
 
 - name: create cosmovisor log file
-  file:
-    state: touch
-    path: "{{ cosmovisor.log_path }}"
+  become: true
+  copy:
+    dest: "{{ cosmovisor.log_path }}"
+    content: ""
 
 - name: setup-service | download binary
   get_url:
