@@ -50,5 +50,5 @@ locals {
 
   prometheus_endpoints = concat(local.nodes.validator.private_ips, local.nodes.private_sentries.private_ips, local.nodes.public_sentries.private_ips, local.nodes.observers.private_ips, local.nodes.seeds.private_ips)
 
-  prometheus_endpoint  = var.prometheus_config.enable ? module.prometheus[0].prometheus_endpoint : null
+  prometheus_endpoint = var.prometheus_config.enable ? module.prometheus[0].prometheus_endpoint : null
 }

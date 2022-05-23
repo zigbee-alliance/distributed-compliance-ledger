@@ -51,7 +51,7 @@ variable "observers_config" {
 
 variable "prometheus_config" {
   type = object({
-    enable = bool
+    enable        = bool
     instance_type = string
   })
 }

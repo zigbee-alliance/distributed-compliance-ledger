@@ -18,8 +18,8 @@ resource "aws_key_pair" "key_pair" {
 }
 
 resource "aws_instance" "this_node" {
-  ami                                  = data.aws_ami.ubuntu.id
-  instance_type                        = var.instance_type
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = var.instance_type
 
   subnet_id = element(var.vpc.public_subnets, 0)
 

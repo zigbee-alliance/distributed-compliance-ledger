@@ -23,7 +23,7 @@ module "validator" {
     aws = aws.region_1
   }
 
-  instance_type = var.validator_config.instance_type
+  instance_type        = var.validator_config.instance_type
   iam_instance_profile = module.iam.iam_instance_profile
 }
 
@@ -33,8 +33,8 @@ module "private_sentries" {
 
   source = "./private-sentries"
 
-  nodes_count   = var.private_sentries_config.nodes_count
-  instance_type = var.private_sentries_config.instance_type
+  nodes_count          = var.private_sentries_config.nodes_count
+  instance_type        = var.private_sentries_config.instance_type
   iam_instance_profile = module.iam.iam_instance_profile
 
   providers = {
@@ -53,8 +53,8 @@ module "public_sentries_1" {
 
   source = "./public-sentries"
 
-  nodes_count   = var.public_sentries_config.nodes_count
-  instance_type = var.public_sentries_config.instance_type
+  nodes_count          = var.public_sentries_config.nodes_count
+  instance_type        = var.public_sentries_config.instance_type
   iam_instance_profile = module.iam.iam_instance_profile
 
   enable_ipv6 = var.public_sentries_config.enable_ipv6
@@ -76,8 +76,8 @@ module "public_sentries_2" {
 
   source = "./public-sentries"
 
-  nodes_count   = var.public_sentries_config.nodes_count
-  instance_type = var.public_sentries_config.instance_type
+  nodes_count          = var.public_sentries_config.nodes_count
+  instance_type        = var.public_sentries_config.instance_type
   iam_instance_profile = module.iam.iam_instance_profile
 
   enable_ipv6 = var.public_sentries_config.enable_ipv6
@@ -99,8 +99,8 @@ module "observers_1" {
 
   source = "./observers"
 
-  nodes_count   = var.observers_config.nodes_count
-  instance_type = var.observers_config.instance_type
+  nodes_count          = var.observers_config.nodes_count
+  instance_type        = var.observers_config.instance_type
   iam_instance_profile = module.iam.iam_instance_profile
 
   root_domain_name = var.observers_config.root_domain_name
@@ -124,8 +124,8 @@ module "observers_2" {
 
   source = "./observers"
 
-  nodes_count   = var.observers_config.nodes_count
-  instance_type = var.observers_config.instance_type
+  nodes_count          = var.observers_config.nodes_count
+  instance_type        = var.observers_config.instance_type
   iam_instance_profile = module.iam.iam_instance_profile
 
   root_domain_name = var.observers_config.root_domain_name
@@ -144,7 +144,7 @@ module "observers_2" {
 module "prometheus" {
   count = var.prometheus_config.enable ? 1 : 0
 
-  source = "./prometheus"
+  source        = "./prometheus"
   instance_type = var.prometheus_config.instance_type
 
   endpoints = local.prometheus_endpoints

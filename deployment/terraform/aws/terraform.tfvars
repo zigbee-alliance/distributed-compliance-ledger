@@ -37,6 +37,6 @@ observers_config = {
 }
 
 prometheus_config = {
-  enable = false
+  enable        = true
   instance_type = "t3.small"
 }
