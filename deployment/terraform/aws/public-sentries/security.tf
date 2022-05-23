@@ -36,6 +36,13 @@ module "this_public_sg" {
       description = "Allow RPC from all external IPs"
       cidr_blocks = "0.0.0.0/0"
     },
+    {
+      from_port   = 26660
+      to_port     = 26660
+      protocol    = "tcp"
+      description = "Allow Prometheus from internal IPs"
+      cidr_blocks = "10.0.0.0/8"
+    },
   ]
 
   ingress_with_ipv6_cidr_blocks = [
