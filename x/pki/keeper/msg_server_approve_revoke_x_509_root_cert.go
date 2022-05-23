@@ -48,7 +48,7 @@ func (k msgServer) ApproveRevokeX509RootCert(goCtx context.Context, msg *types.M
 	revocation.Approvals = append(revocation.Approvals, &grant)
 
 	// check if proposed certificate revocation has enough approvals
-	if len(revocation.Approvals) == k.CertificateApprovalsCount(ctx, k.dclauthKeeper) {
+	if len(revocation.Approvals) >= k.CertificateApprovalsCount(ctx, k.dclauthKeeper) {
 		certificates, found := k.GetApprovedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
 		// Assign the approvals to the root certificate
 		for _, cert := range certificates.Certs {
