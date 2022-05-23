@@ -60,6 +60,6 @@ resource "aws_iam_role_policy_attachment" "this_cloudwatch_policy_attachment" {
 }
 
 resource "aws_iam_instance_profile" "this_iam_instance_profile" {
-  name = "prometheus-node-profile"
+  name = "dcl-node-profile"
   role = aws_iam_role.this_iam_role.name
 }

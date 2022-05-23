@@ -8,6 +8,14 @@ provider "aws" {
   region = var.region_2
 }
 
+# IAM
+module "iam" {
+  source = "./iam"
+  providers = {
+    aws = aws.region_1
+  }
+}
+
 # Validator
 module "validator" {
   source = "./validator"
@@ -16,7 +24,7 @@ module "validator" {
   }
 
   instance_type = var.validator_config.instance_type
-  iam_instance_profile = aws_iam_instance_profile.this_iam_instance_profile.name
+  iam_instance_profile = module.iam.iam_instance_profile
 }
 
 # Private Sentries
@@ -27,7 +35,7 @@ module "private_sentries" {
 
   nodes_count   = var.private_sentries_config.nodes_count
   instance_type = var.private_sentries_config.instance_type
-  iam_instance_profile = aws_iam_instance_profile.this_iam_instance_profile.name
+  iam_instance_profile = module.iam.iam_instance_profile
 
   providers = {
     aws      = aws.region_1
@@ -47,7 +55,7 @@ module "public_sentries_1" {
 
   nodes_count   = var.public_sentries_config.nodes_count
   instance_type = var.public_sentries_config.instance_type
-  iam_instance_profile = aws_iam_instance_profile.this_iam_instance_profile.name
+  iam_instance_profile = module.iam.iam_instance_profile
 
   enable_ipv6 = var.public_sentries_config.enable_ipv6
 
@@ -70,7 +78,7 @@ module "public_sentries_2" {
 
   nodes_count   = var.public_sentries_config.nodes_count
   instance_type = var.public_sentries_config.instance_type
-  iam_instance_profile = aws_iam_instance_profile.this_iam_instance_profile.name
+  iam_instance_profile = module.iam.iam_instance_profile
 
   enable_ipv6 = var.public_sentries_config.enable_ipv6
 
@@ -93,7 +101,7 @@ module "observers_1" {
 
   nodes_count   = var.observers_config.nodes_count
   instance_type = var.observers_config.instance_type
-  iam_instance_profile = aws_iam_instance_profile.this_iam_instance_profile.name
+  iam_instance_profile = module.iam.iam_instance_profile
 
   root_domain_name = var.observers_config.root_domain_name
 
@@ -118,7 +126,7 @@ module "observers_2" {
 
   nodes_count   = var.observers_config.nodes_count
   instance_type = var.observers_config.instance_type
-  iam_instance_profile = aws_iam_instance_profile.this_iam_instance_profile.name
+  iam_instance_profile = module.iam.iam_instance_profile
 
   root_domain_name = var.observers_config.root_domain_name
 
