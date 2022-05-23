@@ -15,7 +15,7 @@
               "timezone": "Local"
             },
             {
-              "file_path": "/var/log/messages",
+              "file_path": "/var/log/cosmovisor/cosmovisor.log",
               "log_group_name":  "/apps/cosmovisor/",
               "log_stream_name": "{ip_address}_{instance_id}",
               "timestamp_format": "%b %d %H:%M:%S",
