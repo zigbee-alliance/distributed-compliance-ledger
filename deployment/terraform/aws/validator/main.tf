@@ -23,6 +23,8 @@ resource "aws_instance" "this_node" {
   disable_api_termination              = true
   instance_initiated_shutdown_behavior = "stop"
 
+  iam_instance_profile = var.iam_instance_profile.name
+
   subnet_id = element(module.this_vpc.public_subnets, 0)
   vpc_security_group_ids = [
     module.this_dev_sg.security_group_id,
@@ -39,6 +41,15 @@ resource "aws_instance" "this_node" {
     private_key = file(var.ssh_private_key_path)
   }
 
+  provisioner "file" {
+    content     = templatefile("./provisioner/cloudwatch-config.tpl", {})
+    destination = "/tmp/cloudwatch-config.json"
+  }
+
+  provisioner "remote-exec" {
+    script = "./provisioner/install-cloudwatch.sh"
+  }
+  
   provisioner "remote-exec" {
     script = "./provisioner/install-ansible-deps.sh"
   }

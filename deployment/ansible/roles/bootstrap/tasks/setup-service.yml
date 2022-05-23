@@ -47,6 +47,12 @@
   loop:
     - "{{ dcld.path | dirname }}"
     - "{{ cosmovisor.path | dirname }}"
+    - "{{ cosmovisor.log_path | dirname }}"
+  
+- name: create cosmovisor log file
+  file:
+    state: touch
+    path: "{{ cosmovisor.log_path }}"
 
 - name: setup-service | download binary
   get_url:

@@ -17,6 +17,6 @@ variable "instance_type" {
   description = "Type of AWS instances"
 }
 
-variable "enable_prometheus" {
-  description = "Enable tendermint prometheus metrics"
+variable "iam_instance_profile" {
+  description = "IAM instance profile"
 }
