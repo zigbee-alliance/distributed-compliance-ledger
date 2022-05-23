@@ -57,7 +57,7 @@ func (k msgServer) RejectAddX509RootCert(goCtx context.Context, msg *types.MsgRe
 	proposedCertificate.Rejects = append(proposedCertificate.Rejects, &grant)
 
 	// check if proposed certificate has enough approvals
-	if len(proposedCertificate.Rejects) == k.CertificateRejectApprovalsCount(ctx, k.dclauthKeeper) {
+	if len(proposedCertificate.Rejects) >= k.CertificateRejectApprovalsCount(ctx, k.dclauthKeeper) {
 		// create rejected certificate
 		rejectedRootCertificate := types.RejectedCertificate{
 			Subject:      proposedCertificate.Subject,

@@ -56,7 +56,7 @@ func (k msgServer) ApproveUpgrade(goCtx context.Context, msg *types.MsgApproveUp
 	proposedUpgrade.Approvals = append(proposedUpgrade.Approvals, &grant)
 
 	// check if proposed upgrade has enough approvals
-	if len(proposedUpgrade.Approvals) == k.UpgradeApprovalsCount(ctx) {
+	if len(proposedUpgrade.Approvals) >= k.UpgradeApprovalsCount(ctx) {
 		// schedule upgrade
 		err = k.upgradeKeeper.ScheduleUpgrade(ctx, proposedUpgrade.Plan)
 		if err != nil {

@@ -57,7 +57,7 @@ func (k msgServer) ApproveAddX509RootCert(goCtx context.Context, msg *types.MsgA
 	proposedCertificate.Approvals = append(proposedCertificate.Approvals, &grant)
 
 	// check if proposed certificate has enough approvals
-	if len(proposedCertificate.Approvals) == k.CertificateApprovalsCount(ctx, k.dclauthKeeper) {
+	if len(proposedCertificate.Approvals) >= k.CertificateApprovalsCount(ctx, k.dclauthKeeper) {
 		// create approved certificate
 		rootCertificate := types.NewRootCertificate(
 			proposedCertificate.PemCert,
