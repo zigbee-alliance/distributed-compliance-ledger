@@ -1,6 +1,4 @@
-resource "aws_iam_role" "this_amp_role" {
-  count = var.enable_prometheus ? 1 : 0
-
+resource "aws_iam_role" "this_iam_role" {
   name = "amp-role"
 
   assume_role_policy = <<EOF
@@ -21,8 +19,6 @@ EOF
 }
 
 resource "aws_iam_policy" "this_amp_write_policy" {
-  count = var.enable_prometheus ? 1 : 0
-
   name        = "amp-write-policy"
   description = "AMP Write Policy"
 
@@ -43,14 +39,11 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "this_amp_policy_attachment" {
-  count = var.enable_prometheus ? 1 : 0
-
-  role       = aws_iam_role.this_amp_role[0].name
-  policy_arn = aws_iam_policy.this_amp_write_policy[0].arn
+  role       = aws_iam_role.this_iam_role.name
+  policy_arn = aws_iam_policy.this_amp_write_policy.arn
 }
 
 resource "aws_iam_instance_profile" "this_amp_role_profile" {
-  count = var.enable_prometheus ? 1 : 0
   name = "prometheus-node-profile"
-  role = aws_iam_role.this_amp_role[0].name
+  role = aws_iam_role.this_iam_role.name
 }

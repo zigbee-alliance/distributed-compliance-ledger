@@ -11,7 +11,6 @@ variable "region_2" {
 variable "validator_config" {
   type = object({
     instance_type = string
-    enable_prometheus = bool
   })
 }
 
@@ -48,4 +47,11 @@ variable "observers_config" {
   })
 
   description = "Observers config"
+}
+
+variable "prometheus_config" {
+  type = object({
+    enable = bool
+    instance_type = string
+  })
 }

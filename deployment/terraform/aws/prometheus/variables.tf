@@ -13,18 +13,14 @@ variable "ssh_username" {
   default     = "ubuntu"
 }
 
-variable "peer_vpc" {
-  description = "Peer VPC"
-}
-
-variable "nodes_count" {
-  description = "Number of Private Sentry nodes"
-}
-
 variable "instance_type" {
-  description = "Type of AWS instances"
+  description = "Prometheus instance type"
 }
 
-variable "iam_instance_profile" {
-  description = "IAM instance profile"
+variable "endpoints" {
+  description = "Prometheus endpoints"
+}
+
+variable "vpc" {
+  description = "Prometheus VPC"
 }

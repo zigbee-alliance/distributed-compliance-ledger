@@ -3,7 +3,6 @@ region_2 = "us-east-2"
 
 validator_config = {
   instance_type = "t3.medium"
-  enable_prometheus = true
 }
 
 private_sentries_config = {
@@ -35,4 +34,9 @@ observers_config = {
     1,
     2
   ]
+}
+
+prometheus_config = {
+  enable = false
+  instance_type = "t3.small"
 }
