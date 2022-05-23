@@ -65,7 +65,7 @@ func (k msgServer) RejectAddAccount(
 	pendAcc.Rejects = append(pendAcc.Rejects, &grant)
 
 	// check if pending account has enough reject approvals
-	if len(pendAcc.Rejects) == k.AccountRejectApprovalsCount(ctx) {
+	if len(pendAcc.Rejects) >= k.AccountRejectApprovalsCount(ctx) {
 		account := types.NewAccount(pendAcc.BaseAccount, pendAcc.Roles, pendAcc.Approvals, pendAcc.Rejects, pendAcc.VendorID)
 		err = account.SetAccountNumber(k.GetNextAccountNumber(ctx))
 		if err != nil {
