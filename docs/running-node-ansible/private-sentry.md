@@ -1,5 +1,4 @@
-# Running Genesis Validator Node using Ansible
-
+# Running Private Sentry Node using Ansible
 ## Prerequisites
 Make sure you have all [prerequisites](./prerequisites.md) set up
 ## Set up ansible configuration (local machine)
@@ -10,19 +9,15 @@ Make sure you have all [prerequisites](./prerequisites.md) set up
 all:
   ...
   children:
-    genesis:
-        hosts:
-        <genesis node IP address or hostname>
     ...
-    validators:
-        hosts:
-        <genesis node IP address or hostname>
+    private_sentries:
+      hosts:
+        <private sentry node IP address or hostname>
     ...
 ```
-    You should set the same address for `validators` and `genesis` hosts because a genesis node is also a validator node
 
 ### 2. Set persistent peers string in validator configuration
-[`deployment/ansible/roles/configure/vars/validator.yml`]
+[`deployment/ansible/roles/configure/vars/private-sentry.yml`]
 
 ```yaml
 config:
@@ -30,19 +25,6 @@ config:
     persistent_peers: "<node1-ID>@<node1-IP>:26656,..."
 ...
 ```
-
-### 3. Specify genesis accounts
-[`deployment/ansible/inventory/group_vars/genesis.yaml`]
-```yaml
-accounts:
-  - name: validator-key
-    passphrase: password123
-    roles:
-        - NodeAdmin
-        - Trustee
-```
-    Genesis nodes should be created with at least one validator and trustee accounts
-
 ## Run ansible (local machine)
 ### 1. Verify that all the configuration parameters from the previous section are correct
 ### 2. Run ansible
