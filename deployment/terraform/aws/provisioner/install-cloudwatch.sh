@@ -1,5 +1,5 @@
----
-# Copyright 2022 Samsung Corporation
+#!/bin/bash
+# Copyright 2020 DSR Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,23 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-config:
-  p2p:
-    pex: true
-    persistent_peers: ""
-    private_peer_ids: ""
-    unconditional_peer_ids: ""
-    addr_book_strict: false
-  rpc:
-    laddr: "tcp://0.0.0.0:26657"
-  statesync:
-    enable: false
-    rpc_servers: ""
-    trust_height: 0
-    trust_hash: ""
-  instrumentation:
-    prometheus: true
-app:
-  state-sync:
-    snapshot-interval: 100
-    snapshot-keep-recent: 2
+wget https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
+sudo dpkg -i amazon-cloudwatch-agent.deb
+
+sudo cp /tmp/cloudwatch-config.json /opt/aws/amazon-cloudwatch-agent/bin/config.json
+
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/aws/amazon-cloudwatch-agent/bin/config.json -s

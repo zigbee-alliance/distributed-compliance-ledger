@@ -10,6 +10,7 @@ cosmovisor:
   user: cosmovisor
   group: dcl
   path: /usr/bin/cosmovisor
+  log_path: /var/log/cosmovisor/cosmovisor.log
   home: "{{ dcl_home | dirname }}"
 
 dcld_checksums:
