@@ -69,10 +69,13 @@ func (k msgServer) ApproveUpgrade(goCtx context.Context, msg *types.MsgApproveUp
 		approvedUpgrage := types.ApprovedUpgrade(proposedUpgrade)
 		k.SetApprovedUpgrade(ctx, approvedUpgrage)
 	} else {
-		if ctx.BlockHeight() > proposedUpgrade.Plan.Height {
-			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
-				"upgrade cannot be scheduled in the past",
-			)
+		// Execute scheduling upgrade in a new context branch (with branched store)
+		// to validate msg.Plan before the proposal proceeds through the approval process.
+		// State is not persisted.
+		cacheCtx, _ := ctx.CacheContext()
+		err = k.upgradeKeeper.ScheduleUpgrade(cacheCtx, proposedUpgrade.Plan)
+		if err != nil {
+			return nil, err
 		}
 		// update proposed upgrade
 		k.SetProposedUpgrade(ctx, proposedUpgrade)
