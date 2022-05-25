@@ -3,9 +3,9 @@ import { Registry, OfflineSigner, EncodeObject } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
 import { MsgProposeDisableValidator } from "./types/validator/tx";
 import { MsgEnableValidator } from "./types/validator/tx";
-import { MsgDisableValidator } from "./types/validator/tx";
-import { MsgApproveDisableValidator } from "./types/validator/tx";
 import { MsgRejectDisableValidator } from "./types/validator/tx";
+import { MsgApproveDisableValidator } from "./types/validator/tx";
+import { MsgDisableValidator } from "./types/validator/tx";
 import { MsgCreateValidator } from "./types/validator/tx";
 export declare const MissingWalletError: Error;
 export declare const registry: Registry;
@@ -20,9 +20,9 @@ declare const txClient: (wallet: OfflineSigner, { addr: addr }?: TxClientOptions
     signAndBroadcast: (msgs: EncodeObject[], { fee, memo }?: SignAndBroadcastOptions) => any;
     msgProposeDisableValidator: (data: MsgProposeDisableValidator) => EncodeObject;
     msgEnableValidator: (data: MsgEnableValidator) => EncodeObject;
-    msgDisableValidator: (data: MsgDisableValidator) => EncodeObject;
-    msgApproveDisableValidator: (data: MsgApproveDisableValidator) => EncodeObject;
     msgRejectDisableValidator: (data: MsgRejectDisableValidator) => EncodeObject;
+    msgApproveDisableValidator: (data: MsgApproveDisableValidator) => EncodeObject;
+    msgDisableValidator: (data: MsgDisableValidator) => EncodeObject;
     msgCreateValidator: (data: MsgCreateValidator) => EncodeObject;
 }>;
 interface QueryClientOptions {

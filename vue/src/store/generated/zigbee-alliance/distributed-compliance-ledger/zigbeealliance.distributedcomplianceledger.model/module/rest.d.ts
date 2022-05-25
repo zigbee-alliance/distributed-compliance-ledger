@@ -35,7 +35,7 @@ export interface ModelModelVersion {
     softwareVersionString?: string;
     /** @format int32 */
     cdVersionNumber?: number;
-    firmwareDigests?: string;
+    firmwareInformation?: string;
     softwareVersionValid?: boolean;
     otaUrl?: string;
     /** @format uint64 */
