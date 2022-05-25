@@ -11,7 +11,7 @@ message ModelVersion {
   uint32 softwareVersion = 3; 
   string softwareVersionString = 4; 
   int32 cdVersionNumber = 5; 
-  string firmwareDigests = 6; 
+  string firmwareInformation = 6; 
   bool softwareVersionValid = 7; 
   string otaUrl = 8; 
   uint64 otaFileSize = 9; 

@@ -88,7 +88,7 @@ func NewMsgCreateModelVersion(
 		SoftwareVersion:              softwareVersion,
 		SoftwareVersionString:        softwareVersionString,
 		CdVersionNumber:              testconstants.CdVersionNumber,
-		FirmwareDigests:              testconstants.FirmwareDigests,
+		FirmwareInformation:          testconstants.FirmwareInformation,
 		SoftwareVersionValid:         true,
 		OtaUrl:                       testconstants.OtaURL,
 		OtaFileSize:                  testconstants.OtaFileSize,

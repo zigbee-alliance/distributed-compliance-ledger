@@ -1217,7 +1217,7 @@ func NewModelVersion(
 		SoftwareVersion:              softwareVersion,
 		SoftwareVersionString:        softwareVersionString,
 		CdVersionNumber:              testconstants.CdVersionNumber,
-		FirmwareDigests:              testconstants.FirmwareDigests,
+		FirmwareInformation:          testconstants.FirmwareInformation,
 		SoftwareVersionValid:         testconstants.SoftwareVersionValid,
 		OtaUrl:                       testconstants.OtaURL,
 		OtaFileSize:                  testconstants.OtaFileSize,

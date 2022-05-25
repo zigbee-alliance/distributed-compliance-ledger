@@ -12,5 +12,8 @@ RestartSec=1
 Environment="DAEMON_HOME={{ dcl_home }}" "DAEMON_NAME=dcld"
 ExecStart={{ cosmovisor.path }} start
 
+StandardOutput=append:/var/log/cosmovisor/cosmovisor.log
+StandardError=append:/var/log/cosmovisor/cosmovisor.log
+
 [Install]
 WantedBy=multi-user.target

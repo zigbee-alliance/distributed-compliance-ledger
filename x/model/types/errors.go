@@ -12,7 +12,7 @@ var (
 
 	// Model Version Error Codes.
 	ErrSoftwareVersionStringInvalid = sdkerrors.Register(ModuleName, 511, "software version string invalid")
-	ErrFirmwareDigestsInvalid       = sdkerrors.Register(ModuleName, 512, "firmware digests invalid")
+	ErrFirmwareInformationInvalid   = sdkerrors.Register(ModuleName, 512, "firmware digests invalid")
 	ErrCDVersionNumberInvalid       = sdkerrors.Register(ModuleName, 513, "CD version number invalid")
 	ErrOtaURLInvalid                = sdkerrors.Register(ModuleName, 514, "OTA URL invalid")
 	ErrOtaMissingInformation        = sdkerrors.Register(ModuleName, 515, "OTA missing information")
@@ -50,10 +50,10 @@ func NewErrSoftwareVersionStringInvalid(softwareVersion interface{}) error {
 		softwareVersion)
 }
 
-func NewErrFirmwareDigestsInvalid(firmwareDigests interface{}) error {
-	return sdkerrors.Wrapf(ErrFirmwareDigestsInvalid,
-		"firmwareDigests %v is of invalid length. Maximum length should be less then 512",
-		firmwareDigests)
+func NewErrFirmwareInformationInvalid(firmwareInformation interface{}) error {
+	return sdkerrors.Wrapf(ErrFirmwareInformationInvalid,
+		"firmwareInformation %v is of invalid length. Maximum length should be less then 512",
+		firmwareInformation)
 }
 
 func NewErrCDVersionNumberInvalid(cdVersionNumber interface{}) error {
