@@ -18,21 +18,19 @@ resource "aws_key_pair" "key_pair" {
 }
 
 resource "aws_instance" "this_node" {
-  ami                                  = data.aws_ami.ubuntu.id
-  instance_type                        = var.instance_type
-  disable_api_termination              = true
-  instance_initiated_shutdown_behavior = "stop"
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = var.instance_type
 
-  iam_instance_profile = var.iam_instance_profile.name
+  subnet_id = element(var.vpc.public_subnets, 0)
 
-  subnet_id = element(module.this_vpc.public_subnets, 0)
   vpc_security_group_ids = [
     module.this_dev_sg.security_group_id,
-    module.this_private_sg.security_group_id
   ]
 
   key_name   = aws_key_pair.key_pair.id
   monitoring = true
+
+  iam_instance_profile = aws_iam_instance_profile.this_amp_role_profile.name
 
   connection {
     type        = "ssh"
@@ -42,25 +40,21 @@ resource "aws_instance" "this_node" {
   }
 
   provisioner "file" {
-    content     = templatefile("./provisioner/cloudwatch-config.tpl", {})
-    destination = "/tmp/cloudwatch-config.json"
+    content     = local.prometheus_config
+    destination = "/tmp/prometheus.yml"
   }
 
   provisioner "remote-exec" {
-    script = "./provisioner/install-cloudwatch.sh"
-  }
-
-  provisioner "remote-exec" {
-    script = "./provisioner/install-ansible-deps.sh"
+    script = "./provisioner/install-prometheus-service.sh"
   }
 
   tags = {
-    Name = "Validator Node"
+    Name = "Prometheus Server Node"
   }
 
   root_block_device {
     encrypted   = true
-    volume_size = 80
+    volume_size = 20
   }
 
   metadata_options {
@@ -68,4 +62,3 @@ resource "aws_instance" "this_node" {
     http_tokens   = "required"
   }
 }
-

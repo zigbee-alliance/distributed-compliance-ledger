@@ -23,6 +23,8 @@ resource "aws_instance" "this_nodes" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = var.instance_type
 
+  iam_instance_profile = var.iam_instance_profile.name
+
   subnet_id          = element(module.this_vpc.public_subnets, 0)
   ipv6_address_count = var.enable_ipv6 ? 1 : 0
 
@@ -39,6 +41,15 @@ resource "aws_instance" "this_nodes" {
     host        = self.public_ip
     user        = var.ssh_username
     private_key = file(var.ssh_private_key_path)
+  }
+
+  provisioner "file" {
+    content     = templatefile("./provisioner/cloudwatch-config.tpl", {})
+    destination = "/tmp/cloudwatch-config.json"
+  }
+
+  provisioner "remote-exec" {
+    script = "./provisioner/install-cloudwatch.sh"
   }
 
   provisioner "remote-exec" {
@@ -64,6 +75,8 @@ resource "aws_instance" "this_seed_node" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = var.instance_type
 
+  iam_instance_profile = var.iam_instance_profile.name
+
   subnet_id          = element(module.this_vpc.public_subnets, 0)
   ipv6_address_count = var.enable_ipv6 ? 1 : 0
 
@@ -74,6 +87,26 @@ resource "aws_instance" "this_seed_node" {
 
   key_name   = aws_key_pair.key_pair.id
   monitoring = true
+
+  connection {
+    type        = "ssh"
+    host        = self.public_ip
+    user        = var.ssh_username
+    private_key = file(var.ssh_private_key_path)
+  }
+
+  provisioner "file" {
+    content     = templatefile("./provisioner/cloudwatch-config.tpl", {})
+    destination = "/tmp/cloudwatch-config.json"
+  }
+
+  provisioner "remote-exec" {
+    script = "./provisioner/install-cloudwatch.sh"
+  }
+
+  provisioner "remote-exec" {
+    script = "./provisioner/install-ansible-deps.sh"
+  }
 
   tags = {
     Name = "Public Sentries' Seed Node"
