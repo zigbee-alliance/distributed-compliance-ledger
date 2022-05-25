@@ -994,7 +994,7 @@ func TestHandler_ApproveUpgradePlanHeightLessThanBlockHeight_And_ReProposeUpgrad
 	proposeUpgrade.Plan.Height = 3
 	setup.Ctx = setup.Ctx.WithBlockHeight(5)
 
-	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, proposeUpgrade.Plan).Return(nil).Once()
+	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, proposeUpgrade.Plan).Return(types.ErrProposedUpgradeAlreadyExists).Once()
 	_, err = setup.Handler(setup.Ctx, proposeUpgrade)
 	require.Error(t, err)
 	require.True(t, types.ErrProposedUpgradeAlreadyExists.Is(err))
