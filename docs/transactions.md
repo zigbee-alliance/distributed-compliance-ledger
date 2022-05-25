@@ -263,7 +263,7 @@ If one of `OTA_URl`, `OTA_checksum` or `OTA_checksum_type` fields is set, then t
   - cdVersionNumber `uint32` - CD Version Number of the certification
   - minApplicableSoftwareVersion `uint32` - MinApplicableSoftwareVersion should specify the lowest SoftwareVersion for which this image can be applied
   - maxApplicableSoftwareVersion `uint32` - MaxApplicableSoftwareVersion should specify the highest SoftwareVersion for which this image can be applied
-  - firmwareDigests `optional(string)` - FirmwareDigests field included in the Device Attestation response when this Software Image boots on the device
+  - firmwareInformation `optional(string)` - FirmwareInformation field included in the Device Attestation response when this Software Image boots on the device
   - softwareVersionValid `optional(bool)` - Flag to indicate whether the software version is valid or not (default true)
   - otaURL `optional(string)` - URL where to obtain the OTA image
   - otaFileSize `optional(string)`  - OtaFileSize is the total size of the OTA software image in bytes
@@ -287,7 +287,7 @@ dcld tx model add-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=
 ```bash
 dcld tx model add-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --cdVersionNumber=<uint32>
 --minApplicableSoftwareVersion=<uint32> --maxApplicableSoftwareVersion=<uint32>
---firmwareDigests=<string> --softwareVersionValid=<bool> --otaURL=<string> --otaFileSize=<string> --otaChecksum=<string> --otaChecksumType=<string> --releaseNotesURL=<string> 
+--firmwareInformation=<string> --softwareVersionValid=<bool> --otaURL=<string> --otaFileSize=<string> --otaChecksum=<string> --otaChecksumType=<string> --releaseNotesURL=<string> 
 --from=<account>
 ```
 

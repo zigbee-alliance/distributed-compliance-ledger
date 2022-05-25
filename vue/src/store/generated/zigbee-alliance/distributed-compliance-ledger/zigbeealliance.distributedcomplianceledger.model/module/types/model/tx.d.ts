@@ -53,7 +53,7 @@ export interface MsgCreateModelVersion {
     softwareVersion: number;
     softwareVersionString: string;
     cdVersionNumber: number;
-    firmwareDigests: string;
+    firmwareInformation: string;
     softwareVersionValid: boolean;
     otaUrl: string;
     otaFileSize: number;

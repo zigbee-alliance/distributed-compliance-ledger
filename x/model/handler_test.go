@@ -610,7 +610,7 @@ func TestHandler_UpdateModelVersion(t *testing.T) {
 
 	require.Equal(t, receivedModelVersion.SoftwareVersionString, msgCreateModelVersion.SoftwareVersionString)
 	require.Equal(t, receivedModelVersion.CdVersionNumber, msgCreateModelVersion.CdVersionNumber)
-	require.Equal(t, receivedModelVersion.FirmwareDigests, msgCreateModelVersion.FirmwareDigests)
+	require.Equal(t, receivedModelVersion.FirmwareInformation, msgCreateModelVersion.FirmwareInformation)
 	require.Equal(t, receivedModelVersion.OtaFileSize, msgCreateModelVersion.OtaFileSize)
 	require.Equal(t, receivedModelVersion.OtaChecksum, msgCreateModelVersion.OtaChecksum)
 	require.Equal(t, receivedModelVersion.OtaChecksumType, msgCreateModelVersion.OtaChecksumType)
@@ -989,7 +989,7 @@ func NewMsgCreateModelVersion(signer sdk.AccAddress, softwareVersion uint32) *ty
 		SoftwareVersion:              softwareVersion,
 		SoftwareVersionString:        testconstants.SoftwareVersionString,
 		CdVersionNumber:              testconstants.CdVersionNumber,
-		FirmwareDigests:              testconstants.FirmwareDigests,
+		FirmwareInformation:          testconstants.FirmwareInformation,
 		SoftwareVersionValid:         testconstants.SoftwareVersionValid,
 		OtaUrl:                       testconstants.OtaURL,
 		OtaFileSize:                  testconstants.OtaFileSize,
