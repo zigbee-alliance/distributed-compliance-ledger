@@ -34,8 +34,8 @@ func (k msgServer) ProposeUpgrade(goCtx context.Context, msg *types.MsgProposeUp
 	}
 
 	// check if proposed upgrade with the same name already exists and propose plan height
-	existProposedUpgrade, isFound := k.GetProposedUpgrade(ctx, msg.Plan.Name)
-	if isFound && ctx.BlockHeight() > existProposedUpgrade.Plan.Height && ctx.BlockHeight() < msg.Plan.Height {
+	existingProposedUpgrade, isFound := k.GetProposedUpgrade(ctx, msg.Plan.Name)
+	if isFound && ctx.BlockHeight() > existingProposedUpgrade.Plan.Height {
 		k.RemoveProposedUpgrade(ctx, msg.Plan.Name)
 	} else if isFound {
 		return nil, types.NewErrProposedUpgradeAlreadyExists(msg.Plan.Name)
