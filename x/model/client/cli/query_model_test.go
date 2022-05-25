@@ -1,6 +1,5 @@
 package cli_test
 
-/*
 import (
 	"fmt"
 	"strconv"
@@ -162,6 +161,6 @@ func TestListModel(t *testing.T) {
 		)
 	})
 }
-*/
+
 // TODO: Add negative tests for absence of required parameters and
 // for presence of unexpected parameters (including positional ones).
