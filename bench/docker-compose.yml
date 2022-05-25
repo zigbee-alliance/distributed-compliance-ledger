@@ -2,17 +2,21 @@ version: '3.2'
 
 services:
   master:
+    build:
+      context: .
+      args:
+          DCLD_NODE: https://on.matterprotocol.com:26657
     image: locust-runner
     ports:
      - "8089:8089"
     volumes:
       - ./:/dcl/bench
-      # - ~/.dcl/keyring-test:/home/locust/.dcl/keyring-test
-    command: -f /dcl/bench/locustfile.py --master -H http://master:8089
+      - ~/.dcl/keyring-test:/home/locust/.dcl/keyring-test
+    command: -f /dcl/bench/locustfile.py DCLReadUser --master -H http://master:8089
   
   worker:
     image: locust-runner
     volumes:
       - ./:/dcl/bench
-      # - ~/.dcl/keyring-test:/home/locust/.dcl/keyring-test
-    command: -f /dcl/bench/locustfile.py --worker --master-host master
+      - ~/.dcl/keyring-test:/home/locust/.dcl/keyring-test
+    command: -f /dcl/bench/locustfile.py DCLReadUser --worker --master-host master

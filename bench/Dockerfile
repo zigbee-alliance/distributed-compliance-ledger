@@ -22,8 +22,3 @@ RUN dcld config chain-id ${DCLD_CHAIN_ID}
 RUN dcld config keyring-backend test
 RUN dcld config broadcast-mode block
 RUN dcld config output json
-
-RUN dcld keys add test
-
-COPY 6f0d716d1d5c0ef842c5e2e61c21fdc79d9a9079.address /home/locust/.dcl/keyring-test
-COPY validator-key.info /home/locust/.dcl/keyring-test
