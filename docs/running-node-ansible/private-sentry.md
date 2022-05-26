@@ -33,6 +33,19 @@ ansible-playbook -i ./deployment/ansible/inventory  -u <target-host-ssh-user> ./
 ```
 - `<target-host-ssh-username>` - target host ssh user
 - Ansible provisioning can take several minutes depending on number of nodes being provisioned
+### 3. (Optional) If you are joining a long-running network, enable `statesync` or use one of the options in [running-node-in-existing-network.md](../advanced/running-node-in-existing-network.md)
+[`deployment/ansible/roles/configure/vars/public-sentry.yml`]
+
+```yaml
+config:
+...
+  statesync:
+    enable: true
+    rpc_servers: "http(s):<node1-IP>:26657, ..."
+    trust_height: <trust-height>
+    trust_hash: "<trust-hash>"
+...
+```
 
 ## Deployment Verification (target machine)
 ### 1. Switch to cosmovisor user

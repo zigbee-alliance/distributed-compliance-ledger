@@ -24,19 +24,19 @@ config:
 ...
 ```
 
-### 3. (Optional) If you are joining a long-running network, enable `statesync`
+### 3. (Optional) If you are joining a long-running network, enable `statesync` or use one of the options in [running-node-in-existing-network.md](../advanced/running-node-in-existing-network.md)
 [`deployment/ansible/roles/configure/vars/observer.yml`]
 
-    ```yaml
-    config:
-    ...
-    statesync:
-        enable: true
-        rpc_servers: "http(s):<node1-IP>:26657, ..."
-        trust_height: 0
-        trust_hash: ""
-    ...
-    ```
+```yaml
+config:
+...
+  statesync:
+    enable: true
+    rpc_servers: "http(s):<node1-IP>:26657, ..."
+    trust_height: <trust-height>
+    trust_hash: "<trust-hash>"
+...
+```
 > **_NOTE:_**  You should provide at least 2 addresses for `rpc_servers`. It can be 2 identical addresses
 
 You can use the following command to obtain `<trust-height>` and `<trust-hash>` of your network

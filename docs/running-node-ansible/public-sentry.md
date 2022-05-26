@@ -25,6 +25,19 @@ config:
     persistent_peers: "<node1-ID>@<node1-IP>:26656,..."
 ...
 ```
+### 3. (Optional) If you are joining a long-running network, enable `statesync` or use one of the options in [running-node-in-existing-network.md](../advanced/running-node-in-existing-network.md)
+[`deployment/ansible/roles/configure/vars/public-sentry.yml`]
+
+```yaml
+config:
+...
+  statesync:
+    enable: true
+    rpc_servers: "http(s):<node1-IP>:26657, ..."
+    trust_height: <trust-height>
+    trust_hash: "<trust-hash>"
+...
+```
 ## Run ansible (local machine)
 ### 1. Verify that all the configuration parameters from the previous section are correct
 ### 2. Run ansible
