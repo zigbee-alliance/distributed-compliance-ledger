@@ -47,6 +47,13 @@
   loop:
     - "{{ dcld.path | dirname }}"
     - "{{ cosmovisor.path | dirname }}"
+    - "{{ cosmovisor.log_path | dirname }}"
+
+- name: create cosmovisor log file
+  become: true
+  copy:
+    dest: "{{ cosmovisor.log_path }}"
+    content: ""
 
 - name: setup-service | download binary
   get_url:
@@ -59,3 +66,11 @@
   loop:
     - {url: "{{ dcld_download_url }}", dest: "{{ dcld.path }}", checksum: "{{ dcld_binary_checksum }}"}
     - {url: "{{ cosmovisor_download_url }}", dest: "{{ cosmovisor.path }}", checksum: "{{ cosmovisor_binary_checksum }}"}
+
+- name: create a symbolic link to dcld binary
+  ansible.builtin.file:
+    src: "{{ dcld.path }}"
+    dest: /usr/local/bin/dcld
+    owner: "{{ cosmovisor.user }}"
+    group: "{{ cosmovisor.group }}"
+    state: link

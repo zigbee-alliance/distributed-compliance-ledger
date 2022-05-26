@@ -2,6 +2,10 @@ output "nodes" {
   value = local.nodes
 }
 
+output "prometheus_endpoint" {
+  value = local.prometheus_endpoint
+}
+
 output "ansible_inventory" {
   value = {
     all = {

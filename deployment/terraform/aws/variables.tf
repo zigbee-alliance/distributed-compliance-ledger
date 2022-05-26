@@ -48,3 +48,10 @@ variable "observers_config" {
 
   description = "Observers config"
 }
+
+variable "prometheus_config" {
+  type = object({
+    enable        = bool
+    instance_type = string
+  })
+}
