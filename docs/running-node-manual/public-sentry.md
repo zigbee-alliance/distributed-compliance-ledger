@@ -23,7 +23,10 @@ Make sure you have all [prerequisites](./prerequisites.md) set up
 ```
 - Use `testnet` if you want to connect to the persistent Test Net
 
-### *** Step 5 can be automated using `run_dcl_node` script:
+### 5. (Optional) Consider enabling `state sync` in the configuration if you are joining long-running network
+- For more information refer to [running-node-in-existing-network.md](../advanced/running-node-in-existing-network.md)
+
+### *** Step 6 can be automated using `run_dcl_node` script:
 Run node:
 
 ```bash
@@ -36,7 +39,7 @@ Run node:
 >   * current user is going to be used for `cosmovisor` service to run as
 >   * current user is in sudoers list
 
-### 5. Run node:
+### 6. Run node:
 - Put `genesis.json` into dcld's config directory (usually `$HOME/.dcl/config/`).
     - Use `deployment/persistent_chains/testnet/genesis.json` if you want to connect to the persistent Test Net
 - Open `$HOME/.dcl/config/config.toml` file in your favorite text editor:
@@ -69,7 +72,7 @@ Service mode is recommended for demo and production environment.
     - `export PATH=$PATH:$HOME/.dcl/cosmovisor/current/bin`
 - Execute the following command to apply the updated `$PATH` immediately:
     - `source $HOME/.profile`
-### 6. Check the observer node is running and getting all the transactions:
+### 7. Check the observer node is running and getting all the transactions:
 - Get the node status: `dcld status --node tcp://localhost:26657`.
 - Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 5 sec). When you see the `catching_up` as `true` that signifies that the node is still downloading all the transactions. Once it has fully synced this will value will turn to `false`
 <br>Expected output format:
@@ -111,4 +114,4 @@ Service mode is recommended for demo and production environment.
     }
 ```
 
-### 7. Congrats! You are now running a public sentry node.
+### 8. Congrats! You are now running a public sentry node.
