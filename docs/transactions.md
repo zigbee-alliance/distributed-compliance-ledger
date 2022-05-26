@@ -1639,6 +1639,8 @@ dcld tx dclupgrade propose-upgrade --name=<string> --upgrade-height=<int64> --fr
 dcld tx dclupgrade propose-upgrade --name=<string> --upgrade-height=<int64> --upgrade-info=<string> --from=<account>
 ```
 
+> **_Note:_**  If the current upgrade proposal is out of date(when the current network height is greater than the proposed upgrade height), we can resubmit the upgrade proposal with the same name.
+
 #### APPROVE_UPGRADE
 
 **Status: Implemented**
