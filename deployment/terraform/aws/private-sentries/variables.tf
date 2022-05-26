@@ -24,3 +24,7 @@ variable "nodes_count" {
 variable "instance_type" {
   description = "Type of AWS instances"
 }
+
+variable "iam_instance_profile" {
+  description = "IAM instance profile"
+}
