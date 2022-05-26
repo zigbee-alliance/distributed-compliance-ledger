@@ -1,7 +1,7 @@
 # Release
 
 The steps:
-1.  Set a new upgrade handler for the verion being released in [here](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/2ea0715e47bc911c21e0f74431a87ce68bbd5043/app/app.go#L589) before releasing the binary
+1.  Set a new upgrade handler for the version being released in [here](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/2ea0715e47bc911c21e0f74431a87ce68bbd5043/app/app.go#L589) before releasing the binary
     
     example:
     ```golang
