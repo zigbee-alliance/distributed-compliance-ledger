@@ -5,8 +5,12 @@ services:
     build:
       context: .
       args:
-          DCLD_NODE: https://on.matterprotocol.com:26657
+          DCLD_VERSION: v0.10.0
+          DCLD_NODE: tcp://host.docker.internal:26657
+          DCLD_CHAIN_ID: dclchain
     image: locust-runner
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
      - "8089:8089"
     volumes:
@@ -16,6 +20,8 @@ services:
   
   worker:
     image: locust-runner
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - ./:/dcl/bench
       - ~/.dcl/keyring-test:/home/locust/.dcl/keyring-test

@@ -4,9 +4,9 @@ USER root
 
 RUN apt-get update && apt-get install -y curl && pip install pyyaml
 
-ARG DCLD_VERSION=v0.9.0
-ARG DCLD_NODE=https://on.matterprotocol.com:26657
-ARG DCLD_CHAIN_ID=test-net2
+ARG DCLD_VERSION=v0.10.0
+ARG DCLD_NODE=tcp://localhost:26657
+ARG DCLD_CHAIN_ID=dclchain
 
 RUN curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/${DCLD_VERSION}/dcld
 
