@@ -2,7 +2,18 @@
 
 ## Prerequisites
 Make sure you have all [prerequisites](./prerequisites.md) set up
-## Set up ansible configuration (local machine)
+
+## Configure DCL network parameters (local machine)
+### 1. Set network chain id in [`deployment/ansible/inventory/hosts.yml`]
+```yaml
+all:
+  vars:
+    chain_id: <chain-id>
+  ...
+```
+Every network must have a unique chain ID (e.g. `test-net`, `main-net` etc.)
+
+## Configure node type specific parameters (local machine)
 ### 1. Specify target instance address in the inventory file
 [`deployment/ansible/inventory/hosts.yml`]
 
@@ -11,11 +22,11 @@ all:
   ...
   children:
     genesis:
-        hosts:
+      hosts:
         <genesis node IP address or hostname>
     ...
     validators:
-        hosts:
+      hosts:
         <genesis node IP address or hostname>
     ...
 ```

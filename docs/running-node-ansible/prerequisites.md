@@ -54,21 +54,3 @@ Python3 needs to be installed on target machine to run ansible playbooks
 sudo apt-get update
 sudo apt-get install -y --no-install-recommends python3
 ```
-
-## Configure Nodes (local machine)
-
-### 1. Set network chain id in [`deployment/ansible/inventory/hosts.yml`]
-```yaml
-all:
-  vars:
-    chain_id: <chain-id>
-  ...
-```
-Every network must have a unique chain ID (e.g. `test-net`, `main-net` etc.)
-
-### 2. Put `genesis.json` file under specific directory (if you are not running a genesis node)
-Get or download `genesis.json` file of a network your node will be joining and put it under the following path:
-```
-deployment/persistent_chains/<chain-id>/genesis.json
-```
-where `<chain-id>` is the chain id of a network spefied in the previous step

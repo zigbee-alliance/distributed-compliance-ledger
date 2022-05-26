@@ -1,7 +1,25 @@
 # Running Observer Node using Ansible
 ## Prerequisites
 Make sure you have all [prerequisites](./prerequisites.md) set up
-## Set up ansible configuration (local machine)
+
+## Configure DCL network parameters (local machine)
+### 1. Set network chain id in [`deployment/ansible/inventory/hosts.yml`]
+```yaml
+all:
+  vars:
+    chain_id: <chain-id>
+  ...
+```
+Every network must have a unique chain ID (e.g. `test-net`, `main-net` etc.)
+
+### 2. Put `genesis.json` file under specific directory
+Get or download `genesis.json` file of a network your node will be joining and put it under the following path:
+```
+deployment/persistent_chains/<chain-id>/genesis.json
+```
+where `<chain-id>` is the chain id of a network spefied in the previous step
+
+## Configure node type specific parameters (local machine)
 ### 1. Specify target instance address in the inventory file
 [`deployment/ansible/inventory/hosts.yml`]
 ```yaml
