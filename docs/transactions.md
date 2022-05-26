@@ -685,7 +685,7 @@ Approves the proposed root certificate.
 The certificate is not active until sufficient number of Trustees approve it.
 
 - Parameters:
-  - subject: `string`  - proposed certificates's `Subject` in base64 format
+  - subject: `string`  - proposed certificates's `Subject` is base64 encoded subject DER sequence bytes
   - subject_key_id: `string`  - proposed certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
   - info: `optional(string)` - information/notes for the approval
   - time: `optional(int64)` - approval time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
@@ -707,7 +707,7 @@ Rejects the proposed root certificate.
 The certificate is not reject until sufficient number of Trustees reject it.
 
 - Parameters:
-  - subject: `string` - proposed certificates's `Subject` in base64 format
+  - subject: `string` - proposed certificates's `Subject` is base64 encoded subject DER sequence bytes
   - subject_key_id: `string` - proposed certificates's `Subject Key Id` in hex string format, e.g:
   `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
   - info: `optional(string)` - information/notes for the reject
@@ -763,7 +763,7 @@ Only the owner (sender) can revoke the certificate.
 Root certificates can not be revoked this way, use  `PROPOSE_X509_CERT_REVOC` and `APPROVE_X509_ROOT_CERT_REVOC` instead.  
 
 - Parameters:
-  - subject: `string`  - certificates's `Subject` in base64 format
+  - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
   - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
   - info: `optional(string)` - information/notes for the revocation
   - time: `optional(int64)` - revocation time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
@@ -785,7 +785,7 @@ If more than 1 Trustee signature is required to revoke a root certificate,
 then the certificate will be in a pending state until sufficient number of other Trustee's approvals is received.
 
 - Parameters:
-  - subject: `string`  - certificates's `Subject` in base64 format
+  - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
   - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
   - info: `optional(string)` - information/notes for the revocation proposal
   - time: `optional(int64)` - revocation proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
@@ -805,7 +805,7 @@ All the certificates in the chain signed by the revoked certificate will be revo
 The revocation is not applied until sufficient number of Trustees approve it.
 
 - Parameters:
-  - subject: `string`  - certificates's `Subject`in base64 format
+  - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
   - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
   - info: `optional(string)` - information/notes for the revocation approval
   - time: `optional(int64)` - revocation approval time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
@@ -826,7 +826,7 @@ Revoked certificates are not returned.
 Use `GET_ALL_REVOKED_X509_CERTS` to get a list of all revoked certificates.
 
 - Parameters:
-  - subject: `string`  - certificates's `Subject` in base64 format
+  - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
   - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
 - CLI command:
   - `dcld query pki x509-cert --subject=<base64 string> --subject-key-id=<hex string>`
@@ -843,7 +843,7 @@ Revoked certificates are not returned.
 Use `GET_ALL_REVOKED_X509_CERTS` to get a list of all revoked certificates.
 
 - Parameters:
-  - subject: `string`  - certificates's `Subject` in base64 format
+  - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
 - CLI command:
   - `dcld query pki all-subject-x509-certs (--subject=<base64 string>`
 - REST API:
@@ -857,7 +857,7 @@ Gets all child certificates for the given certificate.
 Revoked certificates are not returned.
 
 - Parameters:
-  - subject: `string`  - certificates's `Subject` in base64 string format
+  - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
   - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
 - CLI command:
   - `dcld query pki all-child-x509-certs (--subject=<base64 string> --subject-key-id=<hex string>`
@@ -871,7 +871,7 @@ Revoked certificates are not returned.
 Gets a proposed but not approved root certificate with the given subject and subject key ID attributes.
 
 - Parameters:
-  - subject: `string`  - certificates's `Subject` in base64 format
+  - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
   - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
 - CLI command:
   - `dcld query pki proposed-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string>`
@@ -885,7 +885,7 @@ Gets a proposed but not approved root certificate with the given subject and sub
 Get a rejected root certificate with the given subject and subject key ID attributes.
 
 - Parameters:
-  - subject: `string` - certificates's `Subject` in base64 format
+  - subject: `string` - certificates's `Subject` is base64 encoded subject DER sequence bytes
   - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
 - CLI command:
   - `dcld query pki rejected-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string>`
@@ -899,7 +899,7 @@ Get a rejected root certificate with the given subject and subject key ID attrib
 Gets a revoked certificate (either root, intermediate or leaf) by the given subject and subject key ID attributes.
 
 - Parameters:
-  - subject: `string`  - certificates's `Subject` in base64 format
+  - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
   - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
 - CLI command:
   - `dcld query pki revoked-x509-cert --subject=<base64 string> --subject-key-id=<hex string>`
@@ -913,7 +913,7 @@ Gets a revoked certificate (either root, intermediate or leaf) by the given subj
 Gets a proposed but not approved root certificate to be revoked.
 
 - Parameters:
-  - subject: `string`  - certificates's `Subject` in base64 format
+  - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
   - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
 - CLI command:
   - `dcld query pki proposed-x509-root-cert-to-revoke --subject=<base64 string> --subject-key-id=<hex string>`
