@@ -61,7 +61,6 @@ Run node:
 > * the script assumes that:
 >   * current user is going to be used for `cosmovisor` service to run as
 >   * current user is in sudoers list
-> * if it's not acceptable for your case please consult a less automated guide [Running Validator Node](advanced/running-validator-node.md)
 
 This command:
 
@@ -132,7 +131,7 @@ The node must present in the list and has the following params: `power:10` and `
 The value of `node ip` matches to `[rpc] laddr` field in `$HOME/.dcl/config/config.toml`
 (TCP or UNIX socket address for the RPC server to listen on).  
 Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 5 sec).
-Expected output format:
+<br>Expected output format:
 
 ```json
 {
