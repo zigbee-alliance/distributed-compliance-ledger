@@ -27,8 +27,10 @@ image:
 	docker build -t ${IMAGE_NAME} --build-arg TEST_UID=${UID} \
 		--build-arg DCL_VERSION=${DCL_VERSION} --build-arg DCL_COMMIT=${DCL_COMMIT} .
 
+TRUSTEE_ACCOUNT_COUNT ?= 3
+
 localnet_init:
-	/bin/bash ./genlocalnetconfig.sh
+	/bin/bash ./genlocalnetconfig.sh $(TRUSTEE_ACCOUNT_COUNT)
 	/bin/bash ./genlocalnetappbins.sh
 
 localnet_start:
