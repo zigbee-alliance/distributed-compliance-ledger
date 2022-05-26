@@ -5,6 +5,16 @@ DCLedger testing is implemented in python3 and based on [Locust](https://locust.
 ## Requirements
 
 * python >= 3.7
+* Install Docker as described at https://docs.docker.com/engine/install/ubuntu/
+    - In `Installation methods` section follow `Install using the repository` method
+        - Check whether your user of Ubuntu has been added to `docker` group using the following command:
+
+            ```bash
+            getent group docker | awk -F: '{print $4}'
+            ```
+
+            - If it has not been added, add it using `Manage Docker as a non-root user` section from <https://docs.docker.com/engine/install/linux-postinstall/>
+* Install Docker Compose as described at <https://docs.docker.com/compose/install/>
 
 ## Installation
 
@@ -22,36 +32,29 @@ Each write transactions is signed and thus requires:
 
 * an account with write permissions (e.g. Vendor account)
 * proper values for txn `sequence` which enforces txns ordering for an account
-
-By that reason load test uses prepared load data which can be generated as follows:
-
 * Initialize the pool and test accounts (**Warning** applicable to local in-docker pool only for now):
 
     ```bash
     make localnet_clean
 
-    # DCL_OBSERVERS=1 make localnet_init  # to initialize observers as well
-    make localnet_init
-    
-    # ./gentestaccounts.sh [<NUM-USERS>]
-    ./gentestaccounts.sh
+    DCL_OBSERVERS=1 TRUSTEE_ACCOUNT_COUNT=1 make localnet_init
 
     make localnet_start
     # Note: once started ledger may require some time to complete the initialization.
     ```
 
-* Generate test transactions:
-
+* Copy local accounts keys to folder `~/.dcl/keyring-test`:
     ```bash
-    # DCLBENCH_WRITE_USERS_COUNT=<NUM-USERS> DCLBENCH_WRITE_USERS_Q_COUNT=<NUM-REQ-PER-USER> DCLBENCH_ADD_NEW_MODELS_COUNT=<NUM-NEW-MODELS> python bench/generate.py bench/test.spec.yaml.j2 bench/txns
-    python bench/generate.py bench/test.spec.yaml.j2 bench/txns
+    cp ./.localnet/node0/keyring-test/* ~/.dcl/keyring-test
     ```
-
-Here the following (**optional**) inputs are considered:
-
-* `NUM-USERS`: number of client accounts with write access (created as Vendors). Default: 10
-* `NUM-REQ-PER-USER`: number of write txns to perform per a user. Default: 1000
-* `NUM-NEW-MODELS`: models are added to the ledger for reading afterwards in load tests. Default: 5
+* Enter to `bench` folder
+    ```bash
+    cd bench
+    ```
+* Build `docker-compose` file
+    ```bash
+    docker-compose build
+    ```
 
 ## Run
 
@@ -65,43 +68,123 @@ And open `http://localhost:9090/` to query and monitor the server-side metrics.
 
 ## Headless
 
-To run write/read load tests
-
-```bash
-locust --headless
-```
-
 To run write load tests
 
-```bash
-locust --headless DCLWriteUser
-```
+* Open the docker-compose.yml and update field `command` for `master` and `worker`.  
+    e.g.: for `master`
+    ```yml
+    command: -f /dcl/bench/locustfile.py --headless DCLWriteUser --master -H http://master:8089 
+    ```
+    e.g.: for `worker`:
+    ```yml
+    command: -f /dcl/bench/locustfile.py --headless DCLWriteUser --worker --master-host master
+    ```
+
+* Run docker-compose.yml
+    ```bash
+    docker-compose up --scale worker=<workers-count>
+    # The workers run your Users and send back statistics to the master. The master instance doesn't run any Users itself. Both the master and worker machines must have a copy of the locustfile when running Locust distributed.
+    ```
+    `<workers-count>`- number of machine.
 
 To run read load tests
 
-```bash
-locust --headless DCLReadUser
-```
+* Open the docker-compose.yml and update field `command` for `master` and `worker`.  
+    e.g.: for `master`
+    ```yml
+    command: -f /dcl/bench/locustfile.py --headless DCLReadUser --master -H http://master:8089 
+    ```
+    e.g.: for `worker`:
+    ```yml
+    command: -f /dcl/bench/locustfile.py --headless DCLReadUser --worker --master-host master
+    ```
+
+* Run docker-compose.yml
+    ```bash
+    docker-compose up --scale worker=<workers-count>
+    # The workers run your Users and send back statistics to the master. The master instance doesn't run any Users itself. Both the master and worker machines must have a copy of the locustfile when running Locust distributed.
+    ```
+    `<workers-count>`- number of machine.
+
+
+To run write/read load tests
+
+* Open the docker-compose.yml and update field `command` for `master` and `worker`.  
+    e.g.: for `master`
+    ```yml
+    command: -f /dcl/bench/locustfile.py --headless --master -H http://master:8089 
+    ```
+    e.g.: for `worker`:
+    ```yml
+    command: -f /dcl/bench/locustfile.py --headless --worker --master-host master
+    ```
+
+* Run docker-compose.yml
+    ```bash
+    docker-compose up --scale worker=<workers-count>
+    # The workers run your Users and send back statistics to the master. The master instance doesn't run any Users itself. Both the master and worker machines must have a copy of the locustfile when running Locust distributed.
+    ```
+    `<workers-count>`- number of machine.
+
 
 ## Web UI
 
-To run write/read load tests
-
-```bash
-locust
-```
-
 To run write load tests
 
-```bash
-locust DCLWriteUser
-```
+* Open the docker-compose.yml and update field `command` for `master` and `worker`.  
+    <br> e.g.: for `master`
+    ```yml
+    command: -f /dcl/bench/locustfile.py DCLWriteUser --master -H http://master:8089 
+    ```
+    e.g.: for `worker`:
+    ```yml
+    command: -f /dcl/bench/locustfile.py DCLWriteUser --worker --master-host master
+    ```
+
+* Run docker-compose.yml
+    ```bash
+    docker-compose up --scale worker=<workers-count>
+    # The workers run your Users and send back statistics to the master. The master instance doesn't run any Users itself. Both the master and worker machines must have a copy of the locustfile when running Locust distributed.
+    ```
+    `<workers-count>`- number of machine.
 
 To run read load tests
 
-```bash
-locust DCLReadUser
-```
+* Open the docker-compose.yml and update field `command` for `master` and `worker`.  
+    <br> e.g.: for `master`
+    ```yml
+    command: -f /dcl/bench/locustfile.py DCLReadUser --master -H http://master:8089 
+    ```
+    e.g.: for `worker`:
+    ```yml
+    command: -f /dcl/bench/locustfile.py DCLReadUser --worker --master-host master
+    ```
+
+* Run docker-compose.yml
+    ```bash
+    docker-compose up --scale worker=<workers-count>
+    # The workers run your Users and send back statistics to the master. The master instance doesn't run any Users itself. Both the master and worker machines must have a copy of the locustfile when running Locust distributed.
+    ```
+    `<workers-count>`- number of machine.
+
+To run write/read load tests
+
+* Open the docker-compose.yml and update field `command` for `master` and `worker`.  
+    <br> e.g.: for `master`
+    ```yml
+    command: -f /dcl/bench/locustfile.py --master -H http://master:8089 
+    ```
+    e.g.: for `worker`:
+    ```yml
+    command: -f /dcl/bench/locustfile.py --worker --master-host master
+    ```
+
+* Run docker-compose.yml
+    ```bash
+    docker-compose up --scale worker=<workers-count>
+    # The workers run your Users and send back statistics to the master. The master instance doesn't run any Users itself. Both the master and worker machines must have a copy of the locustfile when running Locust distributed.
+    ```
+    `<workers-count>`- number of machine.
 
 Then you can open `http://localhost:8089/` and launch the tests from the browser.
 
@@ -115,7 +198,9 @@ Run options (DCLedger custom ones):
     E.g. for local ledger `http://localhost:26657,http://localhost:26659,http://localhost:26661,http://localhost:26663` will specify all the nodes.
 * `--dcl-rest-hosts <comma-sepated-list>`: list of DCL nodes to target. Each user randomly picks one
     E.g. for local ledger `http://localhost:26640,http://localhost:26641,http://localhost:26642,http://localhost:26643` will specify all the nodes.
-* `--dcl-txn-file` path to a file with generated txns
+* `--dcl-trustee-account-name`: name of existing Trustee account.
+    E.g. for local ledger `jack`. Jack is Trustee account name
+
 
 Statistic options:
 
