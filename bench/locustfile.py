@@ -23,11 +23,13 @@ from typing import List
 
 DEFAULT_TARGET_HOST = "http://localhost:26657"
 DEFAULT_REST_HOST = "http://localhost:26640"
+DEFAULT_TRUSTEE_ACCOUNT_NAME = "jack"
 
 
 
 dcl_hosts = []
 dcl_rest_hosts = []
+dcl_trustee_account_names = []
 
 logger = logging.getLogger("dclbench")
 
@@ -49,6 +51,13 @@ def init_paraser(parser):
         default=DEFAULT_REST_HOST,
         help="Comma separated list of DCL REST hosts to target",
     )
+    parser.add_argument(
+        "--dcl-trustee-account-names",
+        metavar="DCL_TRUSTEE_ACCOUNT_NAMES",
+        include_in_web_ui=True,
+        default=DEFAULT_TRUSTEE_ACCOUNT_NAME,
+        help="Comma seperated list of DCL TRUSTEE ACCOUNT NAMES",
+    )
 
 
 @events.test_start.add_listener
@@ -60,6 +69,9 @@ def _(environment, **kw):
 
     if environment.parsed_options.dcl_rest_hosts:
         dcl_rest_hosts.extend(environment.parsed_options.dcl_rest_hosts.split(","))
+
+    if environment.parsed_options.dcl_trustee_account_names:
+        dcl_trustee_account_names.extend(environment.parsed_options.dcl_trustee_account_names.split(","))
 
 class DCLWriteUser(HttpUser):
     host = ""
@@ -122,11 +134,12 @@ class DCLWriteUser(HttpUser):
         else:
             self.host = DEFAULT_TARGET_HOST
         
-        common.create_vendor_account(self.vendor_account_name, self.vendor_id)
-
+        common.create_vendor_account(self.vendor_account_name, self.vendor_id, dcl_trustee_account_names[0])
+        print(self.vendor_account_name)
         self.vendor_account_address = common.keys_show_address(self.vendor_account_name)
+        print(self.vendor_account_address)
         self.vendor_account_number = common.get_account_number(self.vendor_account_address)
-
+        print(self.vendor_account_number)
 
 class DCLReadUser(HttpUser):
     rest_host = ""

@@ -26,7 +26,7 @@ DCLCLI = "dcld"
 DCL_CHAIN_ID = "dclchain"
 
 
-def create_vendor_account(vendor_name, vid):
+def create_vendor_account(vendor_name, vid, trustee_account_name):
     try:
         keys_delete(vendor_name)
     except Exception:
@@ -48,9 +48,7 @@ def create_vendor_account(vendor_name, vid):
         "--pubkey=" + vendor_pubkey,
         "--roles=Vendor",
         "--vid=" + str(vid),
-        "--from=jack",
-        "--sequence=0",
-        "--account-number=0",
+        "--from=" + trustee_account_name,
         "--yes",
     ]
     result = run_shell_cmd(cmd)
