@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes all necessary steps to deploy a new DCL network on AWS cloud in accordance with this [design document](./deployment-design-aws.md).
+This document describes all necessary steps to deploy a new DCL network on AWS cloud in accordance with this [design document](../deployment-design-aws.md).
 
 ## Environment
 Officially supported OS for development is `Ubuntu 20.04 LTS` and all the following intructions are tested on it.
