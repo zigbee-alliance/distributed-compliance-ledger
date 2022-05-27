@@ -38,3 +38,7 @@ def test_configuration(host):
         all_variables["chain_id"]
         in host.file(DCLD_HOME + "/config/client.toml").content_string
     )
+
+def test_cosmovisor_log_file(host):
+    log_file = host.file("/var/log/cosmovisor/cosmovisor.log")
+    assert log_file.exists

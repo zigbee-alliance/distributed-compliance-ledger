@@ -14,9 +14,13 @@ variable "ssh_username" {
 }
 
 variable "instance_type" {
-  description = "Type of AWS instances"
+  description = "Prometheus instance type"
 }
 
-variable "iam_instance_profile" {
-  description = "IAM instance profile"
+variable "endpoints" {
+  description = "Prometheus endpoints"
+}
+
+variable "vpc" {
+  description = "Prometheus VPC"
 }

@@ -37,14 +37,7 @@
   persistent_peers = # `Private Sentry` nodes with private IPs
   addr_book_strict = false
 
-  [statesync] # only for `Non-genesis Validator` nodes
-  enable = true
-  rpc_servers = # existing `Genesis Validator` / `Sentry` nodes' RPC endpoints
-  trust_height = "trust-height"
-  trust_hash = "trust-hash"
-
   [consensus]
-  skip_timeout_commit = true
   create_empty_blocks = false
   create_empty_blocks_interval = "600s" # 10 mins
   ```
@@ -82,12 +75,6 @@
   private_peer_ids = # `Validator` node id
   unconditional_peers = # `Validator` node id
   addr_book_strict = false
-
-  [statesync]
-  enable = true
-  rpc_servers = # `Validator` node's RPC endpoint
-  trust_height = "trust-height"
-  trust_hash = "trust-hash"
   ```
 
   `app.toml` file:
@@ -122,12 +109,6 @@
   pex = true
   persistent_peers = # `Private Sentry` nodes with private IPs
   addr_book_strict = false
-
-  [statesync]
-  enable = true
-  rpc_servers = # `Private Sentry` nodes' RPC endpoints
-  trust_height = "trust-height"
-  trust_hash = "trust-hash"
   ```
 
   `app.toml` file:
@@ -158,12 +139,6 @@
   [p2p]
   pex = true
   persistent_peers = # `Private Sentry` nodes with private IPs
-
-  [statesync]
-  enable = true
-  rpc_servers = # `Private Sentry` nodes' RPC endpoints
-  trust_height = "trust-height"
-  trust_hash = "trust-hash"
   ```
 
   `app.toml` file:
@@ -197,12 +172,6 @@
   pex = true
   seed_mode = true
   persistent_peers = # `Public Sentry` nodes with public IP
-
-  [statesync]
-  enable = true
-  rpc_servers = # `Private Sentry` nodes' RPC endpoints
-  trust_height = "trust-height"
-  trust_hash = "trust-hash"
   ```
 
 - AWS:

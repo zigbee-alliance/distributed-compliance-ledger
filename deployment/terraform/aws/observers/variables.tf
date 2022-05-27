@@ -36,3 +36,7 @@ variable "root_domain_name" {
 variable "peer_vpc" {
   description = "Peer VPC"
 }
+
+variable "iam_instance_profile" {
+  description = "IAM instance profile"
+}
