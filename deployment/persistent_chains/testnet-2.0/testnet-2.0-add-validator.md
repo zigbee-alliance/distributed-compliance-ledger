@@ -1,7 +1,7 @@
 # Add Validator Node to Testnet 2.0
 
 Here is the step-by-step guide for adding a Validator Node to Testnet 2.0 using `state sync` option
-as described in  [Runing Node in Existing Network](../../../docs/running-node-in-existing-network.md) document:
+as described in  [Runing Node in Existing Network](../../../docs/advanced/running-node-in-existing-network.md) document:
 
 ## 1 Configure an instance
 

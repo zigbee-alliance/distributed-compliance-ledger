@@ -14,7 +14,7 @@
   - `Observer` - Full Node for serving gRPC / REST / RPC clients
   - `Seed` - Full Node for sharing IP addresses of `Public Sentry` Nodes ([Seed Node](https://docs.tendermint.com/master/nodes/#seed-nodes))
 
-> **_Note:_** Most of the nodes should enable `state sync` to avoid catching up with a network from scratch. Refer to [running-node-in-existing-network.md](./running-node-in-existing-network.md) for details.
+> **_Note:_** Most of the nodes should enable `state sync` to avoid catching up with a network from scratch. Refer to [running-node-in-existing-network.md](./advanced/running-node-in-existing-network.md) for details.
 
 - [Terraform](https://www.terraform.io) - deploy an AWS infrastructure from one or more of the following modules:
   - Validator - `Validator` node instance
