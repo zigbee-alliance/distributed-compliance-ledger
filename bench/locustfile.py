@@ -73,7 +73,7 @@ def _(environment, **kw):
     if environment.parsed_options.dcl_trustee_account_names:
         dcl_trustee_account_names.extend(environment.parsed_options.dcl_trustee_account_names.split(","))
 
-class DCLWriteUser(HttpUser):
+class WriteModelLoadTest(HttpUser):
     host = ""
     weight = 5
     
@@ -139,7 +139,7 @@ class DCLWriteUser(HttpUser):
         self.vendor_account_address = common.keys_show_address(self.vendor_account_name)
         self.vendor_account_number = common.get_account_number(self.vendor_account_address)
 
-class DCLReadUser(HttpUser):
+class ReadModelLoadTest(HttpUser):
     rest_host = ""
     weight = 1
     models: List[int] = []
