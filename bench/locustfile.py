@@ -135,11 +135,9 @@ class DCLWriteUser(HttpUser):
             self.host = DEFAULT_TARGET_HOST
         
         common.create_vendor_account(self.vendor_account_name, self.vendor_id, dcl_trustee_account_names[0])
-        print(self.vendor_account_name)
+        
         self.vendor_account_address = common.keys_show_address(self.vendor_account_name)
-        print(self.vendor_account_address)
         self.vendor_account_number = common.get_account_number(self.vendor_account_address)
-        print(self.vendor_account_number)
 
 class DCLReadUser(HttpUser):
     rest_host = ""
