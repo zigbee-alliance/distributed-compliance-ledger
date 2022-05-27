@@ -5,7 +5,7 @@ services:
     build:
       context: .
       args:
-          DCLD_VERSION: v0.10.0
+          DCLD_VERSION: v0.11.0
           DCLD_NODE: tcp://host.docker.internal:26657
           DCLD_CHAIN_ID: dclchain
     image: locust-runner
@@ -16,7 +16,7 @@ services:
     volumes:
       - ./:/dcl/bench
       - ~/.dcl/keyring-test:/home/locust/.dcl/keyring-test
-    command: -f /dcl/bench/locustfile.py DCLReadUser --master -H http://master:8089
+    command: -f /dcl/bench/locustfile.py --master -H http://master:8089
   
   worker:
     image: locust-runner
@@ -25,4 +25,4 @@ services:
     volumes:
       - ./:/dcl/bench
       - ~/.dcl/keyring-test:/home/locust/.dcl/keyring-test
-    command: -f /dcl/bench/locustfile.py DCLReadUser --worker --master-host master
+    command: -f /dcl/bench/locustfile.py --worker --master-host master

@@ -4,7 +4,7 @@ USER root
 
 RUN apt-get update && apt-get install -y curl && pip install pyyaml
 
-ARG DCLD_VERSION=v0.10.0
+ARG DCLD_VERSION=v0.11.0
 ARG DCLD_NODE=tcp://localhost:26657
 ARG DCLD_CHAIN_ID=dclchain
 
