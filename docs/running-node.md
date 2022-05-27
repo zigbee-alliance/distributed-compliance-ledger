@@ -33,4 +33,27 @@ Depending on your use cases you can choose one of the following options to run y
 - [Seed](./running-node-ansible/seed.md) 
 
 ### 3. Using Terraform and Ansible on AWS cloud (fully automated)
-- [AWS deployment](./running-node-aws-terraform-ansible/deployment.md)
+- [AWS deployment](./running-node-aws-terraform-ansible/deployment.md) - this option includes configurable scripts to run DCL network according to [deployment-design-aws.md](./deployment-design-aws.md)
+
+## Security and DDoS mitigation
+- To protect your node against DDoS attacks you can consider one of the following options: 
+    - No VPN, just whitelist/blacklist via firewall rule
+    - IPSec site-to-site VPN (Cloud providers)
+    - [WireGuard](https://www.wireguard.com) P2P VPN
+- Consider enabling TLS for public endpoints (RPC/gRPC/REST)
+    - Most cloud providers including AWS provide TLS encryption integrated into Load Balancers
+    - Offload TLS encryption using a reverse proxy (i.e [Nginx][4])
+- See [deployment wiki][1] for more info
+
+## Health and Monitoring
+Health and monitoring can be configured various ways depending on a cloud provider or user needs.
+
+Some general recommendations:
+- [Prometheus][2] - for monitoring application and server performance metrics
+- [ELK][3] - for collecting application and system logs
+- See [deployment wiki][1] for more info
+
+[1]: https://github.com/zigbee-alliance/distributed-compliance-ledger/wiki/DCL-MainNet-Deployment#4-health-and-monitoring
+[2]: https://prometheus.io
+[3]: https://github.com/elastic
+[4]: https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/
