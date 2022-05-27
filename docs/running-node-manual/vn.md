@@ -52,7 +52,26 @@ Of course, only on the machine where the keypair was generated.
 ### 7. (Optional) Consider enabling `state sync` in the configuration if you are joining long-running network
 - For more information refer to [running-node-in-existing-network.md](../advanced/running-node-in-existing-network.md)
 
-### *** Step 8 can be automated using `run_dcl_node` script
+### 8. Configure p2p and consensus parameters in `[~/.dcl/config.toml]` file:
+  ```toml
+  [p2p]
+  pex = false
+  addr_book_strict = false
+
+  [consensus]
+  create_empty_blocks = false
+  create_empty_blocks_interval = "600s" # 10 mins
+  ```
+
+### 9. (Optional) Enable `state sync` snapshots in`[~/.dcl/app.toml]` file:
+
+  ```toml
+  [state-sync]
+  snapshot-interval = "snapshot-interval"
+  snapshot-keep-recent = "snapshot-keep-recent"
+  ```
+
+### *** Step 10 can be automated using `run_dcl_node` script
 Run node:
 
 ```bash
@@ -70,7 +89,7 @@ This command:
 * properly locates `genesis.json`
 * configures and starts the node
 
-### 8. Run node:
+### 10. Run node:
 - Put `genesis.json` into dcld's config directory (usually `$HOME/.dcl/config/`).
     - Use `deployment/persistent_chains/testnet/genesis.json` if you want to connect to the persistent Test Net
 - Open `$HOME/.dcl/config/config.toml` file in your favorite text editor:
@@ -104,7 +123,7 @@ Service mode is recommended for demo and production environment.
 - Execute the following command to apply the updated `$PATH` immediately:
     - `source $HOME/.profile`
 
-### 9. Add validator node to the network:
+### 11. Add validator node to the network:
 - Get this node's tendermint validator address: `./dcld tendermint show-address`.
     Expected output format:
 
@@ -126,7 +145,7 @@ Service mode is recommended for demo and production environment.
 - Add validator node: `dcld tx validator add-node --pubkey=<validator pubkey> --moniker=<node name> --from=<key name>`.
 If the transaction has been successfully written you would find `"code": 0` in the output JSON.
 
-### 10. Check the node is running and participates in consensus:
+### 12. Check the node is running and participates in consensus:
 - Get the list of all nodes: `dcld query validator all-nodes`.
 The node must present in the list and has the following params: `power:10` and `jailed:false`.
 
@@ -176,4 +195,4 @@ Make sure that `result.sync_info.latest_block_height` is increasing over the tim
 - Get the list of nodes participating in the consensus for the last block: `dcld query tendermint-validator-set`.
     - You can pass the additional value to get the result for a specific height: `dcld query tendermint-validator-set 100`  .
 
-### 11. Congrats! You are an owner of the validator node.
+### 13. Congrats! You are an owner of the validator node.

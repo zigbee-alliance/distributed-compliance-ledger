@@ -46,7 +46,26 @@ Of course, only on the machine where the keypair was generated.
 ./dcld init "<node-name>" --chain-id "<chain-id>"
 ```
 
-### *** Steps (7-8) can be automated using `run_dcl_node` script
+### 7. Configure p2p and consensus parameters in `[~/.dcl/config.toml]` file:
+  ```toml
+  [p2p]
+  pex = false
+  addr_book_strict = false
+
+  [consensus]
+  create_empty_blocks = false
+  create_empty_blocks_interval = "600s" # 10 mins
+  ```
+
+### 8. (Optional) Enable `state sync` snapshots in`[~/.dcl/app.toml]` file:
+
+  ```toml
+  [state-sync]
+  snapshot-interval = "snapshot-interval"
+  snapshot-keep-recent = "snapshot-keep-recent"
+  ```
+
+### *** Steps (9-10) can be automated using `run_dcl_node` script
 Run node:
 
 ```bash
@@ -66,7 +85,7 @@ This command:
   * current user is in sudoers list
 * you may likely want to note the summary that this script prints, in particular: node's address, public key and ID.
 
-### 7. Prepare genesis node configuration:
+### 9. Prepare genesis node configuration:
 - Add genesis account with the generated key and `Trustee`, `NodeAdmin` roles:
 `./dcld add-genesis-account --address=<address> --pubkey=<pubkey> --roles="Trustee,NodeAdmin"`
 - Optionally, add other genesis accounts using the same command.
@@ -75,7 +94,7 @@ This command:
 - Validate genesis file: `./dcld validate-genesis`.
 - Genesis file is located in `$HOME/.dcl/config/genesis.json`. Give this file to each new node admin.
 
-### 8. Run node:
+### 10. Run node:
 - Open `26656` (p2p) and `26657` (RPC) ports.
     - `sudo ufw allow 26656/tcp`
     - `sudo ufw allow 26657/tcp`
@@ -103,7 +122,7 @@ Service mode is recommended for demo and production environment.
 - Execute the following command to apply the updated `$PATH` immediately:
     - `source $HOME/.profile`
 
-### 9. Check that genesis account is created:
+### 11. Check that genesis account is created:
 
 - In order to ensure that account is created and has assigned role you can use the command:
 `dcld query auth account --address=<address>`.
@@ -124,7 +143,7 @@ Expected output format:
 }
 ```
 
-### 10. Check the node is running and participates in consensus:
+### 12. Check the node is running and participates in consensus:
 - Get the list of all nodes: `dcld query validator all-nodes`.
 The node must present in the list and has the following params: `power:10` and `jailed:false`.
 
@@ -175,7 +194,7 @@ Make sure that `result.sync_info.latest_block_height` is increasing over the tim
     - You can pass the additional value to get the result for a specific height: `dcld query tendermint-validator-set 100`.
     - As for the genesis state we have just 1 node, the command should return only our node at this phase.
 
-### 11. Add more initial trusted validator nodes to the network
+### 13. Add more initial trusted validator nodes to the network
 
 - Let's add more nodes that will be considered as trusted persistent peers by other nodes.
 - Create a sub-folder in [deployment](../../deployment/persistent_chains)
@@ -196,11 +215,11 @@ using the chosen chain-id and the genesis and persistent_peers files above (or f
 for every initial node (including the genesis one) to match the `persistent_peers.txt` content.
     - See Step 4 from [Running Node](../running-node.md) for details.
 
-### 12. Adding more validator nodes to the network
+### 14. Adding more validator nodes to the network
 
 - Just follow the [Running Node](../running-node.md) instructions
 using the chosen chain-id and the genesis and persistent_peers files above (from the chain-id subfolder).
 - Please make sure, that the persistent_peers contain all the nodes (including the genesis node)
 added at Step 10.
 
-### 13. Congrats! You are an owner of the genesis validator node.
+### 15. Congrats! You are an owner of the genesis validator node.
