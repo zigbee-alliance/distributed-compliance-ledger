@@ -67,28 +67,10 @@ anna_pubkey=$(echo "$KEYPASSWD" | dcld keys show anna -p)
 mv "$DCL_DIR"/* $LOCALNET_DIR/client
 
 
-TRUSTEE_ACCOUNT_COUNT=$1
-
 function add_genesis_accounts {
-    if [ "$TRUSTEE_ACCOUNT_COUNT" -eq 1 ]
-    then
-        dcld add-genesis-account --address="$jack_address" --pubkey="$jack_pubkey" --roles="Trustee,NodeAdmin"
-        dcld add-genesis-account --address="$alice_address" --pubkey="$alice_pubkey" --roles="NodeAdmin"
-        dcld add-genesis-account --address="$bob_address" --pubkey="$bob_pubkey" --roles="NodeAdmin"
-   
-    elif [ "$TRUSTEE_ACCOUNT_COUNT" -eq 2 ]
-    then
-        dcld add-genesis-account --address="$jack_address" --pubkey="$jack_pubkey" --roles="Trustee,NodeAdmin"
-        dcld add-genesis-account --address="$alice_address" --pubkey="$alice_pubkey" --roles="Trustee,NodeAdmin"
-        dcld add-genesis-account --address="$bob_address" --pubkey="$bob_pubkey" --roles="NodeAdmin"
-
-    elif [ "$TRUSTEE_ACCOUNT_COUNT" -eq 3 ]
-    then
-        dcld add-genesis-account --address="$jack_address" --pubkey="$jack_pubkey" --roles="Trustee,NodeAdmin"
-        dcld add-genesis-account --address="$alice_address" --pubkey="$alice_pubkey" --roles="Trustee,NodeAdmin"
-        dcld add-genesis-account --address="$bob_address" --pubkey="$bob_pubkey" --roles="Trustee,NodeAdmin"
-    fi
-
+    dcld add-genesis-account --address="$jack_address" --pubkey="$jack_pubkey" --roles="Trustee,NodeAdmin"
+    dcld add-genesis-account --address="$alice_address" --pubkey="$alice_pubkey" --roles="Trustee,NodeAdmin"
+    dcld add-genesis-account --address="$bob_address" --pubkey="$bob_pubkey" --roles="Trustee,NodeAdmin"
     dcld add-genesis-account --address="$anna_address" --pubkey="$anna_pubkey" --roles="NodeAdmin"
 }
 
