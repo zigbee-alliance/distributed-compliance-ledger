@@ -31,7 +31,7 @@ region_2 = "us-east-2"
 ```
 - Selects two regions where nodes will be created
 
-### Validator:
+### (Genesis) Validator:
 ```
 validator_config = {
     instance_type = "t3.medium"
@@ -40,7 +40,7 @@ validator_config = {
 - Validator node is created in `region_1` by default
 
 
-### Private Sentries:
+### Private Sentries (optional):
 
 ```hcl
 private_sentries_config = {
@@ -53,7 +53,7 @@ private_sentries_config = {
 - Can be disabled by setting `enable = false`
 - Only one instance of private sentry is created with static ip address
 
-### Public Sentries:
+### Public Sentries (optional):
 ```hcl
 public_sentries_config = {
     enable        = true
@@ -72,7 +72,7 @@ public_sentries_config = {
     > **_Note:_** Number of available IPv4 static addresses is restricted to 5 per region on AWS by default
 - Can be configured to run on multiple regions
 
-### Observers:
+### Observers (optional):
 ```hcl
 observers_config = {
     enable           = true
@@ -93,6 +93,18 @@ observers_config = {
     - Name servers for `root_domain_name` servers must be pointed to AWS and managed by the AWS account
 - TLS can be enabled or disabled
 - Can be configured to run on multiple regions
+
+### Prometheus (optional)
+```hcl
+prometheus_config = {
+  enable        = true
+  instance_type = "t3.small"
+}
+```
+
+- Requires `Private Sentries` being enabled
+- When enabled runs a dedicated Prometheus server on Private Sentries VPC to collect Tendermint metrics from all DCL nodes
+- Collected metrics are written to AWS [AMP workspace](https://aws.amazon.com/prometheus/)
 
 ### 2. Configure Ansible inventory variables in [`deployment/ansible/inventory/aws/group_vars/all.yaml`]
 ```yaml
@@ -153,10 +165,20 @@ ansible-playbook -i ./deployment/ansible/inventory/aws  -u ubuntu ./deployment/a
 
 - `<root_domain_name>` - domain name specified in terraform `Observers` config
 
+## Health and Monitoring
 
-[1]: https://www.terraform.io/
-[2]: https://learn.hashicorp.com/tutorials/terraform/install-cli
-[3]: https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
-[4]: https://www.ansible.com
-[5]: https://github.com/zigbee-alliance/distributed-compliance-ledger.git
-[6]: https://github.com/TomWright/dasel
+### Logs
+- Logs from all DCL nodes are collected by AWS cloudwatch agent and available at [AWS Cloudwatch](https://aws.amazon.com/cloudwatch/)
+- Logs are collected per DCL node and AWS region
+
+### Monitoring
+- Metrics of AWS EC2 instances where the DCL nodes run on are available at [AWS Cloudwatch](https://aws.amazon.com/cloudwatch/)
+- Metrics of underlying blockchain engine (Tendermint) are pushed to [AWS AMP Service](https://aws.amazon.com/prometheus/) when prometheus is enabled 
+- Use
+    ```bash
+    terraform output prometheus_endpoint
+    ```
+    to get prometheus endpoint which can be used by Grafana to visualize metrics. See detailed instructions [here][1]
+
+
+[1]: https://aws.amazon.com/blogs/opensource/using-amazon-managed-service-for-prometheus-to-monitor-ec2-environments/

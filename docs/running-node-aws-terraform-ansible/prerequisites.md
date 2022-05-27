@@ -41,3 +41,10 @@ ansible-galaxy install -r deployment/galaxy-requirements.yml
 sudo wget -qO /usr/local/bin/dasel https://github.com/TomWright/dasel/releases/latest/download/dasel_linux_amd64
 sudo chmod a+x /usr/local/bin/dasel
 ```
+
+[1]: https://www.terraform.io/
+[2]: https://learn.hashicorp.com/tutorials/terraform/install-cli
+[3]: https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+[4]: https://www.ansible.com
+[5]: https://github.com/zigbee-alliance/distributed-compliance-ledger.git
+[6]: https://github.com/TomWright/dasel
