@@ -1,7 +1,7 @@
 # Running Nodes in an existing network
 
 > **_NOTE:_** Extra node specific configuration (out of scope of this section) may apply depending on node type or infrastructure.
-> Refer to [running-node.md](./running-node.md) for more details
+> Refer to [running-node.md](../running-node.md) for more details
 
 Possible options when adding Validator, Observer, Sentry or Seed nodes to existing DCL network:
 
