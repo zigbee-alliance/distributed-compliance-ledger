@@ -24,18 +24,6 @@ func (k msgServer) ProposeUpgrade(goCtx context.Context, msg *types.MsgProposeUp
 		)
 	}
 
-	// check if proposed upgrade with the same name already exists
-	_, isFound := k.GetProposedUpgrade(ctx, msg.Plan.Name)
-	if isFound {
-		return nil, types.NewErrProposedUpgradeAlreadyExists(msg.Plan.Name)
-	}
-
-	// check if approved upgrade with the same name already exists
-	_, isFound = k.GetApprovedUpgrade(ctx, msg.Plan.Name)
-	if isFound {
-		return nil, types.NewErrApprovedUpgradeAlreadyExists(msg.Plan.Name)
-	}
-
 	// Execute scheduling upgrade in a new context branch (with branched store)
 	// to validate msg.Plan before the proposal proceeds through the approval process.
 	// State is not persisted.
@@ -43,6 +31,20 @@ func (k msgServer) ProposeUpgrade(goCtx context.Context, msg *types.MsgProposeUp
 	err = k.upgradeKeeper.ScheduleUpgrade(cacheCtx, msg.Plan)
 	if err != nil {
 		return nil, err
+	}
+
+	// check if proposed upgrade with the same name already exists and propose plan height
+	existingProposedUpgrade, isFound := k.GetProposedUpgrade(ctx, msg.Plan.Name)
+	if isFound && ctx.BlockHeight() > existingProposedUpgrade.Plan.Height {
+		k.RemoveProposedUpgrade(ctx, msg.Plan.Name)
+	} else if isFound {
+		return nil, types.NewErrProposedUpgradeAlreadyExists(msg.Plan.Name)
+	}
+
+	// check if approved upgrade with the same name already exists
+	_, isFound = k.GetApprovedUpgrade(ctx, msg.Plan.Name)
+	if isFound {
+		return nil, types.NewErrApprovedUpgradeAlreadyExists(msg.Plan.Name)
 	}
 
 	grant := types.Grant{
