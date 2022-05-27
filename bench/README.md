@@ -28,21 +28,6 @@ pip3 install -r bench/requirements.txt
 
 ## Preparation
 
-Each write transactions is signed and thus requires:
-
-* an account with write permissions (e.g. Vendor account)
-* proper values for txn `sequence` which enforces txns ordering for an account
-* Initialize the pool and test accounts (**Warning** applicable to local in-docker pool only for now):
-
-    ```bash
-    make localnet_clean
-
-    make localnet_init
-
-    make localnet_start
-    # Note: once started ledger may require some time to complete the initialization.
-    ```
-
 * Copy local accounts keys to folder `~/.dcl/keyring-test`:
     ```bash
     cp ./.localnet/node0/keyring-test/* ~/.dcl/keyring-test
@@ -55,6 +40,21 @@ Each write transactions is signed and thus requires:
     ```bash
     docker-compose build
     ```
+* Open the docker-compose.yml:
+    * update fields `DCLD_VERSION`, `DCLD_NODE`, `DCLD_CHAIN_ID` for `args`.<br>
+        e.g.:
+        ```yml
+        DCLD_VERSION: v0.11.0
+        DCLD_NODE: tcp://host.docker.internal:26657
+        DCLD_CHAIN_ID: dclchain
+        ```
+    * update field `extra_hosts`.<br>
+        e.g.:
+        ```yml
+        extra_hosts:
+          - "host.docker.internal:host-gateway"
+        ```
+        `<host.docker.internal:host-gateway>` - need to connecting to localhost from locust container.
 
 ## Run
 
@@ -85,7 +85,7 @@ To run write load tests
     docker-compose up --scale worker=<workers-count>
     # The workers run your Users and send back statistics to the master. The master instance doesn't run any Users itself. Both the master and worker machines must have a copy of the locustfile when running Locust distributed.
     ```
-    `<workers-count>`- number of machine.
+    `<workers-count>`- number of machine. `Number of users should be equal to number of workers for write tests.`
 
 To run read load tests
 
@@ -124,7 +124,7 @@ To run write/read load tests
     docker-compose up --scale worker=<workers-count>
     # The workers run your Users and send back statistics to the master. The master instance doesn't run any Users itself. Both the master and worker machines must have a copy of the locustfile when running Locust distributed.
     ```
-    `<workers-count>`- number of machine.
+    `<workers-count>`- number of machine. `Number of users should be equal to number of workers for write tests.`
 
 
 ## Web UI
@@ -146,7 +146,7 @@ To run write load tests
     docker-compose up --scale worker=<workers-count>
     # The workers run your Users and send back statistics to the master. The master instance doesn't run any Users itself. Both the master and worker machines must have a copy of the locustfile when running Locust distributed.
     ```
-    `<workers-count>`- number of machine.
+    `<workers-count>`- number of machine. `Number of users should be equal to number of workers for write tests.`
 
 To run read load tests
 
@@ -155,7 +155,7 @@ To run read load tests
     ```yml
     command: -f /dcl/bench/locustfile.py ReadModelLoadTest --master -H http://master:8089 
     ```
-    e.g.: for `worker`:
+    e.g.: for `worker`: 
     ```yml
     command: -f /dcl/bench/locustfile.py ReadModelLoadTest --worker --master-host master
     ```
@@ -184,7 +184,188 @@ To run write/read load tests
     docker-compose up --scale worker=<workers-count>
     # The workers run your Users and send back statistics to the master. The master instance doesn't run any Users itself. Both the master and worker machines must have a copy of the locustfile when running Locust distributed.
     ```
+    `<workers-count>`- number of machine. `Number of users should be equal to number of workers for write tests.`
+
+Then you can open `http://localhost:8089/` and launch the tests from the browser.
+
+# For Local Running
+Each write transactions is signed and thus requires:
+
+* an account with write permissions (e.g. Vendor account)
+* proper values for txn `sequence` which enforces txns ordering for an account
+
+By that reason load test uses prepared load data which can be generated as follows: 
+
+* Initialize the pool and test accounts (**Warning** applicable to local in-docker pool only for now):
+
+    ```bash
+    make localnet_clean
+
+    make localnet_init
+
+    make localnet_start
+    # Note: once started ledger may require some time to complete the initialization.
+    ```
+
+## Preparation
+
+* Copy local accounts keys to folder `~/.dcl/keyring-test`:
+    ```bash
+    cp ./.localnet/node0/keyring-test/* ~/.dcl/keyring-test
+    ```
+* Enter to `bench` folder
+    ```bash
+    cd bench
+    ```
+* Build `docker-compose` file
+    ```bash
+    docker-compose build
+    ```
+* Open the docker-compose.yml:
+    * update fields `DCLD_VERSION`, `DCLD_NODE`, `DCLD_CHAIN_ID` for `args`.<br>
+        e.g.:
+        ```yml
+        DCLD_VERSION: v0.11.0
+        DCLD_NODE: tcp://host.docker.internal:26657
+        DCLD_CHAIN_ID: dclchain
+        ```
+    * update field `extra_hosts`.<br>
+        e.g.:
+        ```yml
+        extra_hosts:
+          - "host.docker.internal:host-gateway"
+        ```
+        `<host.docker.internal:host-gateway>` - need to connecting to localhost from locust container.
+
+## Run
+
+### (Optional) Launch Prometheus
+
+```bash
+prometheus --config.file=bench/prometheus.yml
+```
+
+And open `http://localhost:9090/` to query and monitor the server-side metrics.
+
+## Headless
+
+To run write load tests
+
+* Open the docker-compose.yml and update field `command` for `master` and `worker`.  
+    e.g.: for `master`
+    ```yml
+    command: -f /dcl/bench/locustfile.py --headless WriteModelLoadTest --master -H http://master:8089 
+    ```
+    e.g.: for `worker`:
+    ```yml
+    command: -f /dcl/bench/locustfile.py --headless WriteModelLoadTest --worker --master-host master
+    ```
+
+* Run docker-compose.yml
+    ```bash
+    docker-compose up --scale worker=<workers-count>
+    # The workers run your Users and send back statistics to the master. The master instance doesn't run any Users itself. Both the master and worker machines must have a copy of the locustfile when running Locust distributed.
+    ```
+    `<workers-count>`- number of machine. `Number of users should be equal to number of workers for write tests.`
+
+To run read load tests
+
+* Open the docker-compose.yml and update field `command` for `master` and `worker`.  
+    e.g.: for `master`
+    ```yml
+    command: -f /dcl/bench/locustfile.py --headless ReadModelLoadTest --master -H http://master:8089 
+    ```
+    e.g.: for `worker`:
+    ```yml
+    command: -f /dcl/bench/locustfile.py --headless ReadModelLoadTest --worker --master-host master
+    ```
+
+* Run docker-compose.yml
+    ```bash
+    docker-compose up --scale worker=<workers-count>
+    # The workers run your Users and send back statistics to the master. The master instance doesn't run any Users itself. Both the master and worker machines must have a copy of the locustfile when running Locust distributed.
+    ```
     `<workers-count>`- number of machine.
+
+
+To run write/read load tests
+
+* Open the docker-compose.yml and update field `command` for `master` and `worker`.  
+    e.g.: for `master`
+    ```yml
+    command: -f /dcl/bench/locustfile.py --headless --master -H http://master:8089 
+    ```
+    e.g.: for `worker`:
+    ```yml
+    command: -f /dcl/bench/locustfile.py --headless --worker --master-host master
+    ```
+
+* Run docker-compose.yml
+    ```bash
+    docker-compose up --scale worker=<workers-count>
+    # The workers run your Users and send back statistics to the master. The master instance doesn't run any Users itself. Both the master and worker machines must have a copy of the locustfile when running Locust distributed.
+    ```
+    `<workers-count>`- number of machine. `Number of users should be equal to number of workers for write tests.`
+
+
+## Web UI
+
+To run write load tests
+
+* Open the docker-compose.yml and update field `command` for `master` and `worker`.  
+    <br> e.g.: for `master`
+    ```yml
+    command: -f /dcl/bench/locustfile.py WriteModelLoadTest --master -H http://master:8089 
+    ```
+    e.g.: for `worker`:
+    ```yml
+    command: -f /dcl/bench/locustfile.py WriteModelLoadTest --worker --master-host master
+    ```
+
+* Run docker-compose.yml
+    ```bash
+    docker-compose up --scale worker=<workers-count>
+    # The workers run your Users and send back statistics to the master. The master instance doesn't run any Users itself. Both the master and worker machines must have a copy of the locustfile when running Locust distributed.
+    ```
+    `<workers-count>`- number of machine. `Number of users should be equal to number of workers for write tests.`
+
+To run read load tests
+
+* Open the docker-compose.yml and update field `command` for `master` and `worker`.  
+    <br> e.g.: for `master`
+    ```yml
+    command: -f /dcl/bench/locustfile.py ReadModelLoadTest --master -H http://master:8089 
+    ```
+    e.g.: for `worker`: 
+    ```yml
+    command: -f /dcl/bench/locustfile.py ReadModelLoadTest --worker --master-host master
+    ```
+
+* Run docker-compose.yml
+    ```bash
+    docker-compose up --scale worker=<workers-count>
+    # The workers run your Users and send back statistics to the master. The master instance doesn't run any Users itself. Both the master and worker machines must have a copy of the locustfile when running Locust distributed.
+    ```
+    `<workers-count>`- number of machine.
+
+To run write/read load tests
+
+* Open the docker-compose.yml and update field `command` for `master` and `worker`.  
+    <br> e.g.: for `master`
+    ```yml
+    command: -f /dcl/bench/locustfile.py --master -H http://master:8089 
+    ```
+    e.g.: for `worker`:
+    ```yml
+    command: -f /dcl/bench/locustfile.py --worker --master-host master
+    ```
+
+* Run docker-compose.yml
+    ```bash
+    docker-compose up --scale worker=<workers-count>
+    # The workers run your Users and send back statistics to the master. The master instance doesn't run any Users itself. Both the master and worker machines must have a copy of the locustfile when running Locust distributed.
+    ```
+    `<workers-count>`- number of machine. `Number of users should be equal to number of workers for write tests.`
 
 Then you can open `http://localhost:8089/` and launch the tests from the browser.
 
