@@ -37,7 +37,7 @@ Each write transactions is signed and thus requires:
     ```bash
     make localnet_clean
 
-    DCL_OBSERVERS=1 TRUSTEE_ACCOUNT_COUNT=1 make localnet_init
+    make localnet_init
 
     make localnet_start
     # Note: once started ledger may require some time to complete the initialization.
@@ -73,11 +73,11 @@ To run write load tests
 * Open the docker-compose.yml and update field `command` for `master` and `worker`.  
     e.g.: for `master`
     ```yml
-    command: -f /dcl/bench/locustfile.py --headless DCLWriteUser --master -H http://master:8089 
+    command: -f /dcl/bench/locustfile.py --headless WriteModelLoadTest --master -H http://master:8089 
     ```
     e.g.: for `worker`:
     ```yml
-    command: -f /dcl/bench/locustfile.py --headless DCLWriteUser --worker --master-host master
+    command: -f /dcl/bench/locustfile.py --headless WriteModelLoadTest --worker --master-host master
     ```
 
 * Run docker-compose.yml
@@ -92,11 +92,11 @@ To run read load tests
 * Open the docker-compose.yml and update field `command` for `master` and `worker`.  
     e.g.: for `master`
     ```yml
-    command: -f /dcl/bench/locustfile.py --headless DCLReadUser --master -H http://master:8089 
+    command: -f /dcl/bench/locustfile.py --headless ReadModelLoadTest --master -H http://master:8089 
     ```
     e.g.: for `worker`:
     ```yml
-    command: -f /dcl/bench/locustfile.py --headless DCLReadUser --worker --master-host master
+    command: -f /dcl/bench/locustfile.py --headless ReadModelLoadTest --worker --master-host master
     ```
 
 * Run docker-compose.yml
@@ -134,11 +134,11 @@ To run write load tests
 * Open the docker-compose.yml and update field `command` for `master` and `worker`.  
     <br> e.g.: for `master`
     ```yml
-    command: -f /dcl/bench/locustfile.py DCLWriteUser --master -H http://master:8089 
+    command: -f /dcl/bench/locustfile.py WriteModelLoadTest --master -H http://master:8089 
     ```
     e.g.: for `worker`:
     ```yml
-    command: -f /dcl/bench/locustfile.py DCLWriteUser --worker --master-host master
+    command: -f /dcl/bench/locustfile.py WriteModelLoadTest --worker --master-host master
     ```
 
 * Run docker-compose.yml
@@ -153,11 +153,11 @@ To run read load tests
 * Open the docker-compose.yml and update field `command` for `master` and `worker`.  
     <br> e.g.: for `master`
     ```yml
-    command: -f /dcl/bench/locustfile.py DCLReadUser --master -H http://master:8089 
+    command: -f /dcl/bench/locustfile.py ReadModelLoadTest --master -H http://master:8089 
     ```
     e.g.: for `worker`:
     ```yml
-    command: -f /dcl/bench/locustfile.py DCLReadUser --worker --master-host master
+    command: -f /dcl/bench/locustfile.py ReadModelLoadTest --worker --master-host master
     ```
 
 * Run docker-compose.yml
