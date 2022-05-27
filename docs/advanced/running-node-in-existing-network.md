@@ -70,7 +70,7 @@ Possible options when adding Validator, Observer, Sentry or Seed nodes to existi
     - `<host>` - RPC endpoint host of the network being joined
     - `<port>` - RPC endpoint port of the network being joined
 
-  - Run the new node (refer to [running-node.md](./running-node.md) for node specific instructions)
+  - Run the new node (refer to [running-node.md](../running-node.md) for node specific instructions)
 
     > **_NOTE:_** State sync is not attempted if the node has any local state (LastBlockHeight > 0)
 

@@ -6,7 +6,7 @@
     * `dcld`: The binary used for both running a node and interacting with it.
     * `cosmovisor`: A small process manager that supports an automated process of Cosmos SDK based application upgrade (`dcld` upgrade in our case).
   * The service configuration file `cosmovisor.service`
-        (either part of the release or [deployment](../deployment) folder).
+        (either part of the release or [deployment](../../deployment) folder).
 * Additional generated data (for validators and observers):
   * Genesis transactions file: `genesis.json`
   * The list of alive peers: `persistent_peers.txt` with the following format: `<node id>@<ip:port>,<node2 id>@<ip:port>,...`.
@@ -68,9 +68,9 @@ _NOTE: Some of the commands above may fail depending on whether or not `cosmovis
 
 * download `dcld`, `cosmovisor` and `cosmovisor.service` from GitHub [release page](https://github.com/zigbee-alliance/distributed-compliance-ledger/releases)
 * Get setup scripts either from [release page](https://github.com/zigbee-alliance/distributed-compliance-ledger/releases) or
-    from [repository](../deployment/scripts) if you need latest development version.
+    from [repository](../../deployment/scripts) if you need latest development version.
 * (for validator and observer) Get the running DCLedegr network data:
-  * `genesis.json` can be found in a `<chain-id>` sub-directory of the [persistent_chains](../deployment/persistent_chains) folder
+  * `genesis.json` can be found in a `<chain-id>` sub-directory of the [persistent_chains](../../deployment/persistent_chains) folder
   * `persistent_peers.txt`: that file may be published there as well or can be requested from the DCLedger network admins otherwise
 
 <!-- markdownlint-disable MD033 -->

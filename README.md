@@ -28,7 +28,7 @@ DC Ledger is a public permissioned ledger in the following sense:
 - Writes to the ledger are permissioned. See [How to write to the Ledger](docs/transactions.md#how-to-write-to-the-ledger) for details.
 - PoA (proof of authority) approach is used for adding new validator nodes to the network
  (see [Add New Node Use Case](docs/use_cases/use_cases_add_validator_node.png)) and
-  [Running Node Instructions](docs/advanced/running-validator-node.md).
+  [Running Node](docs/running-node.md).
 
 In order to send write transactions to the ledger you need:
 
