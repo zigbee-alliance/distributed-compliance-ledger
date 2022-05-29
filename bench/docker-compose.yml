@@ -5,24 +5,47 @@ services:
     build:
       context: .
       args:
-          DCLD_VERSION: v0.11.0
-          DCLD_NODE: tcp://host.docker.internal:26657
-          DCLD_CHAIN_ID: dclchain
+          DCLD_VERSION: "${DCLD_VERSION}"
+          DCLD_NODE: "${DCLD_NODE}"
+          DCLD_CHAIN_ID: "${DCLD_CHAIN_ID}"
     image: locust-runner
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     ports:
-     - "8089:8089"
+      - "8089:8089"
     volumes:
       - ./:/dcl/bench
       - ~/.dcl/keyring-test:/home/locust/.dcl/keyring-test
-    command: -f /dcl/bench/locustfile.py --master -H http://master:8089
+    command:
+      - "-f" 
+      - "/dcl/bench/locustfile.py"
+      - "--users"
+      - "${COUNT_USERS}"
+      - "--dcl-hosts" 
+      - "${WRITE_HOSTS}" 
+      - "--dcl-rest-hosts" 
+      - "${READ_HOSTS}" 
+      - "--dcl-trustee-account-names"
+      - "${TRUSTEE_ACCOUNT_NAME}"
+      - "--master" 
+      - "-H" 
+      - "http://master:8089"
+      
   
   worker:
     image: locust-runner
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     volumes:
       - ./:/dcl/bench
       - ~/.dcl/keyring-test:/home/locust/.dcl/keyring-test
-    command: -f /dcl/bench/locustfile.py --worker --master-host master
+    command:
+      - "-f" 
+      - "/dcl/bench/locustfile.py"
+      - "--users"
+      - "${COUNT_USERS}"
+      - "--dcl-hosts" 
+      - "${WRITE_HOSTS}"
+      - "--dcl-rest-hosts" 
+      - "${READ_HOSTS}"
+      - "--dcl-trustee-account-names"
+      - "${TRUSTEE_ACCOUNT_NAME}"
+      - "--worker" 
+      - "--master-host" 
+      - "master"
