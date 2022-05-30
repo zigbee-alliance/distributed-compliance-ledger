@@ -1,5 +1,8 @@
 # DCL Deployment on AWS using Terraform and Ansible
 
+## Overview
+This document describes all necessary steps to deploy a new DCL network on AWS cloud in accordance with this [design document](../deployment-design-aws.md).
+
 ## Prerequisites
 Make sure you have all [prerequisites](./prerequisites.md) set up
 ## Terraform and Ansible Configuration
