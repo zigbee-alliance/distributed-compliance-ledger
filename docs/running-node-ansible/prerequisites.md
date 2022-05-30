@@ -7,7 +7,7 @@ This document describes in how to:
 
 ## Requirements (local machine)
 
-### 1. Clone [DCL][5] project
+### 1. Clone [DCL][2] project
 ```bash
 git clone https://github.com/zigbee-alliance/distributed-compliance-ledger.git
 ```
@@ -19,9 +19,9 @@ sudo apt-get install -y --no-install-recommends python3
 sudo apt install python3-pip python3-testresources
 ```
 
-### 3. Install [Ansible][4] and its dependencies
+### 3. Install [Ansible][1] and its dependencies
     
-Run the following commands from the [DCL][5] project home
+Run the following commands from the [DCL][2] project home
 ```bash
 sudo pip install -r deployment/requirements.txt
 ansible-galaxy install -r deployment/galaxy-requirements.yml
@@ -54,3 +54,6 @@ Python3 needs to be installed on target machine to run ansible playbooks
 sudo apt-get update
 sudo apt-get install -y --no-install-recommends python3
 ```
+
+[1]: https://www.ansible.com
+[2]: https://github.com/zigbee-alliance/distributed-compliance-ledger.git
