@@ -3,7 +3,7 @@
 Make sure you have all [prerequisites](./prerequisites.md) set up
 
 ## Configure DCL network parameters (local machine)
-### 1. Set network chain id
+#### 1. Set network chain id
 [`deployment/ansible/inventory/hosts.yml`]
 ```yaml
 all:
@@ -13,7 +13,7 @@ all:
 ```
 Every network must have a unique chain ID (e.g. `test-net`, `main-net` etc.)
 
-### 2. Put `genesis.json` file under specific directory
+#### 2. Put `genesis.json` file under specific directory
 Get or download `genesis.json` file of a network your node will be joining and put it under the following path:
 ```
 deployment/persistent_chains/<chain-id>/genesis.json
@@ -21,7 +21,7 @@ deployment/persistent_chains/<chain-id>/genesis.json
 where `<chain-id>` is the chain id of a network spefied in the previous step
 
 ## Configure node type specific parameters (local machine)
-### 1. Specify target instance address in the inventory file
+#### 1. Specify target instance address in the inventory file
 [`deployment/ansible/inventory/hosts.yml`]
 ```yaml
 all:
@@ -34,7 +34,7 @@ all:
       ...
 ```
 
-### 2. Set persistent peers string in validator configuration
+#### 2. Set persistent peers string in validator configuration
 [`deployment/ansible/roles/configure/vars/observer.yml`]
 ```yaml
 config:
@@ -43,7 +43,7 @@ config:
 ...
 ```
 
-### 3. (Optional) If you are joining a long-running network, enable `statesync` or use one of the options in [running-node-in-existing-network.md](../advanced/running-node-in-existing-network.md)
+#### 3. (Optional) If you are joining a long-running network, enable `statesync` or use one of the options in [running-node-in-existing-network.md](../advanced/running-node-in-existing-network.md)
 [`deployment/ansible/roles/configure/vars/observer.yml`]
 
 ```yaml
@@ -70,8 +70,8 @@ curl -s http(s)://<host>:<port>/commit | jq "{height: .result.signed_header.head
 > **_NOTE:_** State sync is not attempted if the node has any local state (LastBlockHeight > 0)
 
 ## Run ansible (local machine)
-### 1. Verify that all the configuration parameters from the previous section are correct
-### 2. Run ansible
+#### 1. Verify that all the configuration parameters from the previous section are correct
+#### 2. Run ansible
 ```bash
 ansible-playbook -i ./deployment/ansible/inventory  -u <target-host-ssh-user> ./deployment/ansible/deploy.yml
 ```
@@ -79,12 +79,12 @@ ansible-playbook -i ./deployment/ansible/inventory  -u <target-host-ssh-user> ./
 - Ansible provisioning can take several minutes depending on number of nodes being provisioned
 
 ## Deployment Verification (target machine)
-### 1. Switch to cosmovisor user
+#### 1. Switch to cosmovisor user
 ```
 sudo su -s /bin/bash cosmovisor
 ```
 
-### 2. Query status
+#### 2. Query status
 ```
 dcld status
 ```

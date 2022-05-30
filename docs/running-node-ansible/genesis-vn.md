@@ -15,7 +15,7 @@ all:
 Every network must have a unique chain ID (e.g. `test-net`, `main-net` etc.)
 
 ## Configure node type specific parameters (local machine)
-### 1. Specify target instance address in the inventory file
+#### 1. Specify target instance address in the inventory file
 [`deployment/ansible/inventory/hosts.yml`]
 
 ```yaml
@@ -33,7 +33,7 @@ all:
 ```
     You should set the same address for `validators` and `genesis` hosts because a genesis node is also a validator node
 
-### 2. Set persistent peers string in validator configuration
+#### 2. Set persistent peers string in validator configuration
 [`deployment/ansible/roles/configure/vars/validator.yml`]
 
 ```yaml
@@ -43,7 +43,7 @@ config:
 ...
 ```
 
-### 3. Specify genesis accounts
+#### 3. Specify genesis accounts
 [`deployment/ansible/inventory/group_vars/genesis.yaml`]
 ```yaml
 accounts:
@@ -56,8 +56,8 @@ accounts:
     Genesis nodes should be created with at least one validator and trustee accounts
 
 ## Run ansible (local machine)
-### 1. Verify that all the configuration parameters from the previous section are correct
-### 2. Run ansible
+#### 1. Verify that all the configuration parameters from the previous section are correct
+#### 2. Run ansible
 ```bash
 ansible-playbook -i ./deployment/ansible/inventory  -u <target-host-ssh-user> ./deployment/ansible/deploy.yml
 ```
@@ -65,12 +65,12 @@ ansible-playbook -i ./deployment/ansible/inventory  -u <target-host-ssh-user> ./
 - Ansible provisioning can take several minutes depending on number of nodes being provisioned
 
 ## Deployment Verification (target machine)
-### 1. Switch to cosmovisor user
+#### 1. Switch to cosmovisor user
 ```
 sudo su -s /bin/bash cosmovisor
 ```
 
-### 2. Query status
+#### 2. Query status
 ```
 dcld status
 ```

@@ -2,19 +2,19 @@
 
 ## Requirements (local machine)
 
-### 1. Clone [DCL][2] project
+#### 1. Clone [DCL][2] project
 ```bash
 git clone https://github.com/zigbee-alliance/distributed-compliance-ledger.git
 ```
 
-### 2. Install `Python` and `Pip`
+#### 2. Install `Python` and `Pip`
 ```bash
 sudo apt-get update
 sudo apt-get install -y --no-install-recommends python3
 sudo apt install python3-pip python3-testresources
 ```
 
-### 3. Install [Ansible][1] and its dependencies
+#### 3. Install [Ansible][1] and its dependencies
     
 Run the following commands from the [DCL][2] project home
 ```bash
