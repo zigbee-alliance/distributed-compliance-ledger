@@ -27,9 +27,9 @@ DEFAULT_TRUSTEE_ACCOUNT_NAME = "jack"
 
 
 
-dcl_hosts = []
-dcl_rest_hosts = []
-dcl_trustee_account_names = []
+write_hosts = []
+read_hosts = []
+trustee_account_names = []
 
 logger = logging.getLogger("dclbench")
 
@@ -39,21 +39,21 @@ def init_paraser(parser):
     # Set `include_in_web_ui` to False if you want to hide from the web UI
     parser.add_argument(
         "--dcl-hosts",
-        metavar="DCL_HOSTS",
+        metavar="WRITE_HOSTS",
         include_in_web_ui=True,
         default=DEFAULT_TARGET_HOST,
         help="Comma separated list of DCL hosts to target",
     )
     parser.add_argument(
         "--dcl-rest-hosts",
-        metavar="DCL_REST_HOSTS",
+        metavar="READ_HOSTS",
         include_in_web_ui=True,
         default=DEFAULT_REST_HOST,
         help="Comma separated list of DCL REST hosts to target",
     )
     parser.add_argument(
         "--dcl-trustee-account-names",
-        metavar="DCL_TRUSTEE_ACCOUNT_NAMES",
+        metavar="TRUSTEE_ACCOUNT_NAMES",
         include_in_web_ui=True,
         default=DEFAULT_TRUSTEE_ACCOUNT_NAME,
         help="Comma seperated list of DCL TRUSTEE ACCOUNT NAMES",
@@ -62,16 +62,16 @@ def init_paraser(parser):
 
 @events.test_start.add_listener
 def _(environment, **kw):
-    logger.info(f"dcl-hosts: {environment.parsed_options.dcl_hosts}")
+    logger.info(f"dcl-hosts: {environment.parsed_options.write_hosts}")
 
-    if environment.parsed_options.dcl_hosts:
-        dcl_hosts.extend(environment.parsed_options.dcl_hosts.split(","))
+    if environment.parsed_options.write_hosts:
+        write_hosts.extend(environment.parsed_options.write_hosts.split(","))
 
-    if environment.parsed_options.dcl_rest_hosts:
-        dcl_rest_hosts.extend(environment.parsed_options.dcl_rest_hosts.split(","))
+    if environment.parsed_options.read_hosts:
+        read_hosts.extend(environment.parsed_options.read_hosts.split(","))
 
-    if environment.parsed_options.dcl_trustee_account_names:
-        dcl_trustee_account_names.extend(environment.parsed_options.dcl_trustee_account_names.split(","))
+    if environment.parsed_options.trustee_account_names:
+        trustee_account_names.extend(environment.parsed_options.trustee_account_names.split(","))
 
 class WriteModelLoadTest(HttpUser):
     host = ""
@@ -129,12 +129,12 @@ class WriteModelLoadTest(HttpUser):
     
     def on_start(self):
         # Get RPC endpoint
-        if dcl_hosts:
-            self.host = random.choice(dcl_hosts)
+        if write_hosts:
+            self.host = random.choice(write_hosts)
         else:
             self.host = DEFAULT_TARGET_HOST
         
-        common.create_vendor_account(self.vendor_account_name, self.vendor_id, dcl_trustee_account_names[0])
+        common.create_vendor_account(self.vendor_account_name, self.vendor_id, trustee_account_names[0])
         
         self.vendor_account_address = common.keys_show_address(self.vendor_account_name)
         self.vendor_account_number = common.get_account_number(self.vendor_account_address)
@@ -173,8 +173,8 @@ class ReadModelLoadTest(HttpUser):
 
     def on_start(self):
         # Get REST endpoint
-        if dcl_rest_hosts:
-            self.rest_host = random.choice(dcl_rest_hosts)
+        if read_hosts:
+            self.rest_host = random.choice(read_hosts)
         else:
             self.rest_host = DEFAULT_REST_HOST
 
