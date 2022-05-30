@@ -1,5 +1,12 @@
 # Running a DCLedger Node
 
+## DCL Node types
+  - `Genesis Validator` - Validator Node created at the beginning of a network
+  - `Non-genesis Validator` - Validator Node joined a network after a significant time period
+  - `Private Sentry` - Full Node to connect other(external) Validator Nodes ([Sentry Node Architecture](https://forum.cosmos.network/t/sentry-node-architecture-overview/454))
+  - `Public Sentry` - Full Node to connect other(external) Full Nodes
+  - `Observer` - Full Node for serving gRPC / REST / RPC clients
+  - `Seed` - Full Node for sharing IP addresses of `Public Sentry` Nodes ([Seed Node](https://docs.tendermint.com/master/nodes/#seed-nodes))
 ## DCL network architecture overview
 DCL network architecture can logically have the following variations based on different use cases
 #### 1. Genesis Validator + (Optional) Private Sentry + (Optional) Public Sentry + (Optional) Observer + (Optional) Seed
@@ -17,16 +24,16 @@ DCL network architecture can logically have the following variations based on di
 ## Running a node
 Depending on your use cases you can choose one of the following options to run your nodes 
 ### 1. Manual (advanced)
-- [Genesis validator](./running-node-manual/genesis-vn.md)
-- [Validator](./running-node-manual/vn.md) 
+- [Genesis Validator](./running-node-manual/genesis-vn.md)
+- [Non-genesis Validator](./running-node-manual/vn.md) 
 - [Private Sentry](./running-node-manual/private-sentry.md)
 - [Public Sentry](./running-node-manual/public-sentry.md) 
 - [Observer](./running-node-manual/on.md)
 - [Seed](./running-node-manual/seed.md)
 
 ### 2. Using ansible (semi automated)
-- [Genesis validator](./running-node-ansible/genesis-vn.md)
-- [Validator](./running-node-ansible/vn.md) 
+- [Genesis Validator](./running-node-ansible/genesis-vn.md)
+- [Non-genesis Validator](./running-node-ansible/vn.md) 
 - [Private Sentry](./running-node-ansible/private-sentry.md) 
 - [Public Sentry](./running-node-ansible/public-sentry.md) 
 - [Observer](./running-node-ansible/on.md)
