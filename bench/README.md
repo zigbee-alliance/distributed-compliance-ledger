@@ -47,6 +47,14 @@ pip3 install -r bench/requirements.txt
         TRUSTEE_ACCOUNT_NAME=jack
         COUNT_USERS=4 
         ```
+        `<DCLD_VERSION>` - dcld binary version.<br>
+        `<DCLD_NODE>` - Address `<host>:<port>` of the node to connect.<br>
+        `<DCLD_CHAIN_ID>` - unique chain ID of the network you are going to connect.<br>
+        `<WRITE_HOSTS>` - hosts for writing load tests.<br>
+        `<READ_HOSTS>` - hosts for reading load tests.<br>
+        `<TRUSTEE_ACCOUNT_NAME>` - trustee account name.<br>
+        `<COUNT_USERS>` - number of users in load tests. `Number of users should be equal to number of workers for write tests.`
+
 
 * Build `docker-compose` file
     ```bash
@@ -231,6 +239,13 @@ By that reason load test uses prepared load data which can be generated as follo
         TRUSTEE_ACCOUNT_NAME=jack
         COUNT_USERS=4 
         ```
+        `<DCLD_VERSION>` - dcld binary version.<br>
+        `<DCLD_NODE>` - Address `<host>:<port>` of the node to connect.<br>
+        `<DCLD_CHAIN_ID>` - unique chain ID of the network you are going to connect.<br>
+        `<WRITE_HOSTS>` - hosts for writing load tests.<br>
+        `<READ_HOSTS>` - hosts for reading load tests.<br>
+        `<TRUSTEE_ACCOUNT_NAME>` - trustee account name.<br>
+        `<COUNT_USERS>` - number of users in load tests. `Number of users should be equal to number of workers for write tests.`
 
 * Open the docker-compose.yml
     * add a new field `extra_hosts` for `master` and `worker`.<br>
