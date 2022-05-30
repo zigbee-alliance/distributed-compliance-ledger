@@ -150,7 +150,7 @@ The node must present in the list and has the following params: `power:10` and `
 - Get the node status: `dcld status --node tcp://<node_ip>:26657`.
 The value of `node ip` matches to `[rpc] laddr` field in `$HOME/.dcl/config/config.toml`
 (TCP or UNIX socket address for the RPC server to listen on).  
-Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 5 sec).
+Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 10 mins).
 <br>Expected output format:
 
 ```json

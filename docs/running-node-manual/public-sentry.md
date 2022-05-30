@@ -89,7 +89,7 @@ Service mode is recommended for demo and production environment.
     - `source $HOME/.profile`
 ### 9. Check the observer node is running and getting all the transactions:
 - Get the node status: `dcld status --node tcp://localhost:26657`.
-- Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 5 sec). When you see the `catching_up` as `true` that signifies that the node is still downloading all the transactions. Once it has fully synced this will value will turn to `false`
+- Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 10 mins). When you see the `catching_up` as `true` that signifies that the node is still downloading all the transactions. Once it has fully synced this will value will turn to `false`
 <br>Expected output format:
 
 ```json
