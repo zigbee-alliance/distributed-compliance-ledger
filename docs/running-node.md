@@ -47,7 +47,7 @@ Depending on your use cases you can choose one of the following options to run y
     - No VPN, just whitelist/blacklist via firewall rule
     - IPSec site-to-site VPN (Cloud providers)
     - [WireGuard](https://www.wireguard.com) P2P VPN
-- Consider enabling TLS for public endpoints (RPC/gRPC/REST)
+- Consider enabling TLS for public endpoints (RPC/gRPC/REST) (TLS 1.3 is recommended)
     - Most cloud providers including AWS provide TLS encryption integrated into Load Balancers
     - Offload TLS encryption using a reverse proxy (i.e [Nginx][4])
 - See [deployment wiki][1] for more info
