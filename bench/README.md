@@ -48,7 +48,7 @@ pip3 install -r bench/requirements.txt
         COUNT_USERS=4 
         ```
         `<DCLD_VERSION>` - dcld binary version.<br>
-        `<DCLD_NODE>` - Address `<host>:<port>` of the node to connect. This node needs for adding account with role `Vendor` in write load tests.<br>
+        `<DCLD_NODE>` - Address `<host>:<port>` of the node to connect. This node is needed for adding an account with the role `Vendor` in write load tests.<br>
         `<DCLD_CHAIN_ID>` - unique chain ID of the network you are going to connect.<br>
         `<WRITE_HOSTS>` - hosts for writing load tests.<br>
         `<READ_HOSTS>` - hosts for reading load tests.<br>
