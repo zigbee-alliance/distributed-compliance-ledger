@@ -48,11 +48,11 @@ pip3 install -r bench/requirements.txt
         COUNT_USERS=4 
         ```
         `<DCLD_VERSION>` - dcld binary version.<br>
-        `<DCLD_NODE>` - Address `<host>:<port>` of the node to connect.<br>
+        `<DCLD_NODE>` - Address `<host>:<port>` of the node to connect. This node needs for adding account with role `Vendor` in write load tests.<br>
         `<DCLD_CHAIN_ID>` - unique chain ID of the network you are going to connect.<br>
         `<WRITE_HOSTS>` - hosts for writing load tests.<br>
         `<READ_HOSTS>` - hosts for reading load tests.<br>
-        `<TRUSTEE_ACCOUNT_NAME>` - trustee account name.<br>
+        `<TRUSTEE_ACCOUNT_NAME>` - trustee account name. `Trustee` account, which will add account with `Vendor` role in write load tests.<br>
         `<COUNT_USERS>` - number of users in load tests. `Number of users should be equal to number of workers for write tests.`
 
 
@@ -240,11 +240,11 @@ By that reason load test uses prepared load data which can be generated as follo
         COUNT_USERS=4 
         ```
         `<DCLD_VERSION>` - dcld binary version.<br>
-        `<DCLD_NODE>` - Address `<host>:<port>` of the node to connect.<br>
+        `<DCLD_NODE>` - Address `<host>:<port>` of the node to connect. This node needs for adding account with role `Vendor` in write load tests.<br>
         `<DCLD_CHAIN_ID>` - unique chain ID of the network you are going to connect.<br>
         `<WRITE_HOSTS>` - hosts for writing load tests.<br>
         `<READ_HOSTS>` - hosts for reading load tests.<br>
-        `<TRUSTEE_ACCOUNT_NAME>` - trustee account name.<br>
+        `<TRUSTEE_ACCOUNT_NAME>` - trustee account name. `Trustee` account, which will add account with `Vendor` role in write load tests.<br>
         `<COUNT_USERS>` - number of users in load tests. `Number of users should be equal to number of workers for write tests.`
 
 * Open the docker-compose.yml
