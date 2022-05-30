@@ -60,6 +60,8 @@ Some general recommendations:
 - [ELK][3] - for collecting application and system logs
 - See [deployment wiki][1] for more info
 
+[AWS deployment](./running-node-aws-terraform-ansible/deployment.md) - contains automation scripts for setting up health and monitoring on AWS
+
 [1]: https://github.com/zigbee-alliance/distributed-compliance-ledger/wiki/DCL-MainNet-Deployment#4-health-and-monitoring
 [2]: https://prometheus.io
 [3]: https://github.com/elastic
