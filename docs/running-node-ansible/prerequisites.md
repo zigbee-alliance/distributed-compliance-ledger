@@ -1,10 +1,5 @@
 # Running a DCLedger Node using Ansible (Prerequisites)
 
-This document describes in how to:
-
-* configure different types of DCLedger nodes: genesis, validator and observer
-* create a node administrator (or admin) account as a necessary part of validator and genesis node configuration
-
 ## Requirements (local machine)
 
 ### 1. Clone [DCL][2] project
