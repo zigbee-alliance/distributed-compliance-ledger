@@ -153,44 +153,6 @@ The node must present in the list and has the following params: `power:10` and `
 The value of `node ip` matches to `[rpc] laddr` field in `$HOME/.dcl/config/config.toml`
 (TCP or UNIX socket address for the RPC server to listen on).  
 Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 10 mins).
-<br>Expected output format:
-
-```json
-{
-    "node_info": {
-    "protocol_version": {
-        "p2p": "7",
-        "block": "10",
-        "app": "0"
-    },
-    "id": string, // matches to prefix <ID> of the file: $HOME/.dcl/config/gentx/gentx-<ID>.json
-    "listen_addr": "tcp://0.0.0.0:26656", // Address to listen for incoming connections. Matches to $HOME/.dcl/config/config.toml [p2p] `laddr` filed.
-    "network": "dclchain",
-    "version": "0.32.8",
-    "channels": string,
-    "moniker": string,
-    "other": {
-        "tx_index": "on",
-        "rpc_address": "tcp://127.0.0.1:26657" // TCP or UNIX socket address for the RPC server to listen on. Matches to $HOME/.dcl/config/config.toml [rpc] `laddr` filed. 
-    }
-    },
-    "sync_info": {
-    "latest_block_hash": string,
-    "latest_app_hash": string,
-    "latest_block_height": string,
-    "latest_block_time": string,
-    "catching_up": bool
-    },
-    "validator_info": {
-    "address": string,
-    "pub_key": {
-        "type": string,
-        "value": string
-    },
-    "voting_power": string
-    }
-}
-```
 
 - Get the list of nodes participating in the consensus for the last block: `dcld query tendermint-validator-set`.
     - You can pass the additional value to get the result for a specific height: `dcld query tendermint-validator-set 100`  .
