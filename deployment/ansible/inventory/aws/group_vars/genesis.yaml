@@ -1,5 +1,5 @@
   accounts:
-    - name: validator-key
+    - name: genesis-account-key
       passphrase: password123
       roles:
         - NodeAdmin
