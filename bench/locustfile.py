@@ -38,21 +38,21 @@ logger = logging.getLogger("dclbench")
 def init_paraser(parser):
     # Set `include_in_web_ui` to False if you want to hide from the web UI
     parser.add_argument(
-        "--dcl-hosts",
+        "--write-hosts",
         metavar="WRITE_HOSTS",
         include_in_web_ui=True,
         default=DEFAULT_TARGET_HOST,
         help="Comma separated list of DCL hosts to target",
     )
     parser.add_argument(
-        "--dcl-rest-hosts",
+        "--read-hosts",
         metavar="READ_HOSTS",
         include_in_web_ui=True,
         default=DEFAULT_REST_HOST,
         help="Comma separated list of DCL REST hosts to target",
     )
     parser.add_argument(
-        "--dcl-trustee-account-names",
+        "--trustee-account-names",
         metavar="TRUSTEE_ACCOUNT_NAMES",
         include_in_web_ui=True,
         default=DEFAULT_TRUSTEE_ACCOUNT_NAME,
