@@ -42,7 +42,13 @@ validator_config = {
     is_genesis    = true
 }
 ```
-- Set `is_genesis = false` to deploy just a validator node (not genesis). This option requires manually adding the validator to the network (see [making node a validator](../running-node-ansible/vn.md#make-your-node-a-validator-target-machine))
+- Set `is_genesis = false` to deploy just a validator node (not genesis). This option requires:
+  - Putting `genesis.json` file of an existing network to the following path before the step [run-ansible](#4-run-ansible)
+    ```text
+    deployment/persistent_chains/<chain-id>/genesis.json
+    ```
+    where `<chain-id>` is the chain id of a network being joined.
+  - Manually adding the validator to the network (see [making node a validator](../running-node-ansible/vn.md#make-your-node-a-validator-target-machine)) after the step [run-ansible](#4-run-ansible)
 - Validator/Genesis node is created in `region_1` by default
 
 
