@@ -45,14 +45,14 @@ pip3 install -r bench/requirements.txt
       # Note: once started ledger may require some time to complete the initialization.
       ```
 
-  * Copy local accounts keys to folder `~/.dcl/keyring-test`:
+* Copy accounts keys to folder `~/.dcl/keyring-test`:
+    * After connecting to the network, we must copy the `Trustee` account keys to `~/.dcl/keyring-test`. <br>
+    `The number of accounts with role Trustee must not exceed 3`.
+    * If you run the test against a local pool, the account keys can be copied as follows:
       ```bash
       cp ./.localnet/node0/keyring-test/* ~/.dcl/keyring-test
       ```
 
-* Copy accounts keys to folder `~/.dcl/keyring-test`:
-    * After connecting to the network, we must copy the `Trustee` account keys to `~/.dcl/keyring-test`. <br>
-    `The number of accounts with role Trustee must not exceed 3`.
 * Go to `bench` folder
     ```bash
     cd bench
@@ -70,14 +70,21 @@ pip3 install -r bench/requirements.txt
         READ_HOSTS=http://host.docker.internal:26640
         TRUSTEE_ACCOUNT_NAME=jack
         COUNT_USERS=4 
+
+        CSV_REPORT_FILE_NAME=example
+        HTML_REPORT_FILE_NAME=example
         ```
         `<DCLD_VERSION>` - dcld binary version.<br>
-        `<DCLD_NODE>` - Address `<host>:<port>` of the node to connect. This node needs for adding account with role `Vendor` in write load tests.<br>
+        `<DCLD_NODE>` - Address `<host>:<port>` of the node to connect. This node needs for adding account with role `Vendor` in write load tests. Default value in local in docker nodes is `tcp://host.docker.internal:26657`<br>
         `<DCLD_CHAIN_ID>` - unique chain ID of the network you are going to connect.<br>
-        `<WRITE_HOSTS>` - hosts for writing load tests.<br>
-        `<READ_HOSTS>` - hosts for reading load tests.<br>
+        `<WRITE_HOSTS>` - hosts for writing load tests. Default value in local in docker nodes is `http://host.docker.internal:26657`<br>
+        `<READ_HOSTS>` - hosts for reading load tests. Default value in local in docker nodes is `http://host.docker.internal:26640`<br>
         `<TRUSTEE_ACCOUNT_NAME>` - trustee account name. `Trustee` account, which will add account with `Vendor` role in write load tests.<br>
-        `<COUNT_USERS>` - number of users in load tests. `Number of users should be equal to number of workers for write tests.`
+        `<COUNT_USERS>` - number of users in load tests. `Number of users should be equal to number of workers for write tests.`<br>
+        `<CSV_REPORT_FILE_NAME>` - generates a set of stat files (summary, failures, exceptions and stats history).<br>
+        `<HTML_REPORT_FILE_NAME>` - generates an html report
+        Web UI also includes Download Data tab where the reports can be found.
+        > **_Note:_** The above options can either point to local in docker nodes or to external nodes.
 
 
 * Build `docker-compose` file
