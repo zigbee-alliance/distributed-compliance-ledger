@@ -303,15 +303,6 @@ To run write/read load tests
 
 Then you can open `http://localhost:8089/` and launch the tests from the browser.
 
-### Statistic Options
-
-[Locust](https://locust.io/) provides the following options to present the results:
-
-* `--csv <prefix>`: generates a set of stat files (summary, failures, exceptions and stats history) with the provided `<prefix>`
-* `--csv-full-history`: populates the stats history with more entries (including each specific request type)
-* `--html <path>`: generates an html report
-* Web UI also includes `Download Data` tab where the reports can be found.
-
 More details can be found in:
 
 * [locust.conf](../locust.conf): default values
