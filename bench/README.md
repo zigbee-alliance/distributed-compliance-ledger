@@ -53,7 +53,7 @@ pip3 install -r bench/requirements.txt
 * Copy accounts keys to folder `~/.dcl/keyring-test`:
     * After connecting to the network, we must copy the `Trustee` account keys to `~/.dcl/keyring-test`. <br>
     `The number of accounts with role Trustee must not exceed 3`.
-* Enter to `bench` folder
+* Go to `bench` folder
     ```bash
     cd bench
     ```
