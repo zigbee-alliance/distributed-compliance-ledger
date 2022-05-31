@@ -28,7 +28,7 @@ pip3 install -r bench/requirements.txt
 
 ## Preparation
 
-* If you are running load tests on a local pool, follow these are steps (**this item need only for the local pool**):<br>
+* If you run load tests on a local pool, follow the steps below (**this item is needed only for a local pool**):<br>
   * Each write transactions is signed and thus requires:
 
     * an account with write permissions (e.g. Vendor account)
