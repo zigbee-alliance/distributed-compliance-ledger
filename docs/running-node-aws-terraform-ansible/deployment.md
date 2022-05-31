@@ -6,7 +6,7 @@ This document describes all necessary steps to deploy a new DCL network on AWS c
 ## Prerequisites
 Make sure you have all [prerequisites](./prerequisites.md) set up
 ## Terraform and Ansible Configuration
-### 1. Set up an AWS user for use with Terraform
+#### 1. Set up an AWS user for use with Terraform
     
 Create credentials file [`~/.aws/credentials`] with the following content:
 ```text
@@ -16,7 +16,7 @@ aws_secret_access_key = <secret_access_key_here>
 ```
 > **_Note:_** Your account must have enough privileges to manage all AWS resources required by terraform
 
-### 2. Disable host key checking for Ansible (to avoid host key checking when Ansible connects to AWS instances using ssh)
+#### 2. Disable host key checking for Ansible (to avoid host key checking when Ansible connects to AWS instances using ssh)
 
 Create Ansible configuration file [`~/.ansible.cfg`] with the following content:
 ```
@@ -25,25 +25,28 @@ ANSIBLE_HOST_KEY_CHECKING=False
 
 ## Deployment Configuration
 
-### 1. Configure AWS infrastructure parameters in [`deployment/terraform/aws/terraform.tfvars`]
+#### 1. Configure AWS infrastructure parameters
+[`deployment/terraform/aws/terraform.tfvars`]
     
-### AWS Regions:
+#### AWS Regions:
 ```
 region_1 = "us-west-1"
 region_2 = "us-east-2"
 ```
 - Selects two regions where nodes will be created
 
-### (Genesis) Validator:
-```
+#### (Genesis) Validator:
+```hcl
 validator_config = {
     instance_type = "t3.medium"
+    is_genesis    = true
 }
 ```
-- Validator node is created in `region_1` by default
+- Set `is_genesis = false` to deploy just a validator node (not genesis). This option requires manually adding the validator to the network (see [making node a validator](../running-node-ansible/vn.md#make-your-node-a-validator-target-machine))
+- Validator/Genesis node is created in `region_1` by default
 
 
-### Private Sentries (optional):
+#### Private Sentries (optional):
 
 ```hcl
 private_sentries_config = {
@@ -56,7 +59,7 @@ private_sentries_config = {
 - Can be disabled by setting `enable = false`
 - Only one instance of private sentry is created with static ip address
 
-### Public Sentries (optional):
+#### Public Sentries (optional):
 ```hcl
 public_sentries_config = {
     enable        = true
@@ -75,7 +78,7 @@ public_sentries_config = {
     > **_Note:_** Number of available IPv4 static addresses is restricted to 5 per region on AWS by default
 - Can be configured to run on multiple regions
 
-### Observers (optional):
+#### Observers (optional):
 ```hcl
 observers_config = {
     enable           = true
@@ -97,7 +100,7 @@ observers_config = {
 - TLS can be enabled or disabled
 - Can be configured to run on multiple regions
 
-### Prometheus (optional)
+#### Prometheus (optional)
 ```hcl
 prometheus_config = {
   enable        = true
@@ -109,50 +112,90 @@ prometheus_config = {
 - When enabled runs a dedicated Prometheus server on Private Sentries VPC to collect Tendermint metrics from all DCL nodes
 - Collected metrics are written to AWS [AMP workspace](https://aws.amazon.com/prometheus/)
 
-### 2. Configure Ansible inventory variables in [`deployment/ansible/inventory/aws/group_vars/all.yaml`]
+#### 2. Set DCL network chain id in ansible inventory
+[`deployment/ansible/inventory/aws/group_vars/all.yaml`]
 ```yaml
-chain_id: test-net2
-
-dcl_home: /var/lib/dcl/.dcl
-dcl_version: 0.9.0
-dcld:
-  version: "{{ dcl_version }}"
-  path: "{{ dcl_home }}/cosmovisor/genesis/bin/dcld"
-cosmovisor:
-  version: "{{ dcl_version }}"
-  user: cosmovisor
-  group: dcl
-  path: /usr/bin/cosmovisor
-  home: "{{ dcl_home | dirname }}"
-
-dcld_checksums:
-  0.9.0: c333d828a124e527dd7a9c0170f77d61ad07091d9f6cd61dd0175a36b55aadce
-cosmovisor_checksums:
-  0.9.0: c05705efe5369b9d83e65ef7b252bd7c610eec414ae3f6c08681bcf49dc38e6d
-
-dcld_download_url: "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v{{ dcld.version }}/dcld"
-dcld_binary_checksum: "sha256:{{ dcld_checksums[dcld.version] }}"
-cosmovisor_download_url: "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v{{ cosmovisor.version }}/cosmovisor"
-cosmovisor_binary_checksum: "sha256:{{ cosmovisor_checksums[cosmovisor.version] }}"
+chain_id: test-net
+...
 ```
-- Specify DCL network `chain_id`
-- Specify `dcld` and `cosmovisor` versions and checksums
+<details>
+<summary>Example for Testnet 2.0</summary>
+
+```yaml
+chain_id: testnet-2.0
+...
+```
+</details>
 
 ## Deployment
-### 1. Run terraform from [`deployment/terraform/aws`]
+#### 1. Run terraform
 ```bash
+cd deployment/terraform/aws
 terraform apply
 ```
 
 > **_Note:_** Terraform asks a confirmation before applying changes
 
-### 2. Generate ansible inventory from terraform output
+#### 2. Generate ansible inventory from terraform output
 Once terraform completes successfully, run the following command to genarate ansible inventory file:
 ```bash
 terraform output -json ansible_inventory | dasel -r json -w yaml . > ../../ansible/inventory/aws/aws_all.yaml
 ```
 
-### 3. Run Ansible
+#### 3. (Optional) Consider enabling state sync
+When joining an existing pool, you may want to enable state sync for all the nodes.<br>
+To do so, you should set state sync parameters:
+```yaml
+config:
+...
+  statesync:
+    enable: true
+    rpc_servers: "http(s):<node1-IP>:26657,..."
+    trust_height: <trust-height>
+    trust_hash: "<trust-hash>"
+...
+```
+in the following ansible config files
+```text
+deployment/ansible/roles/configure/vars/
+  validator.yml
+  private-sentry.yml
+  observer.yml
+  public-senrty.yml
+  seed.yml
+```
+
+<details>
+<summary>Example for Testnet 2.0</summary>
+
+```yaml
+config:
+  statesync:
+    enable: true
+    rpc_servers: "https://on.test-net.dcl.csa-iot.org:26657,https://on.test-net.dcl.csa-iot.org:26657"
+    
+```
+</details>
+
+> **_NOTE:_**  You should provide at least 2 addresses for `rpc_servers`. It can be 2 identical addresses
+
+You can use the following command to obtain `<trust-height>` and `<trust-hash>` of your network
+
+```bash
+curl -s http(s)://<host>:<port>/commit | jq "{height: .result.signed_header.header.height, hash: .result.signed_header.commit.block_id.hash}"
+```
+<details>
+<summary>Example for Testnet 2.0</summary>
+
+```bash
+curl -s https://on.test-net.dcl.csa-iot.org:26657/commit | jq "{height: .result.signed_header.header.height, hash: .result.signed_header.commit.block_id.hash}"
+```
+</details>
+
+- `<host>` - RPC endpoint host of the network being joined
+- `<port>` - RPC endpoint port of the network being joined
+
+### 4. Run Ansible
 Run the following command from the project home:
 ```bash
 ansible-playbook -i ./deployment/ansible/inventory/aws  -u ubuntu ./deployment/ansible/deploy.yml
@@ -160,11 +203,11 @@ ansible-playbook -i ./deployment/ansible/inventory/aws  -u ubuntu ./deployment/a
 - Ansible provisioning can take several minutes depending on number of nodes being provisioned
 
 ## Deployment Verification
-### 1. Verify [`deployment/persistent_chains/<chain_id>/genesis.json`] is created
+#### 1. Verify [`deployment/persistent_chains/<chain_id>/genesis.json`] is created
 - `<chain_id>` - chain id of the network specified in Ansible inventory variables
-### 2. Verify `Observers` REST endpoint is available under `http(s)://on.<root_domain_name>` using your browser
-### 3. Verify `Observers` RPC endpoint is available under `http(s)://on.<root_domain_name>:26657` using your browser
-### 4. Verify `Observers` gRPC endpoint is available under `http(s)://on.<root_domain_name>:8443` using postman (or similar tool)
+#### 2. Verify `Observers` REST endpoint is available under `http(s)://on.<root_domain_name>` using your browser
+#### 3. Verify `Observers` RPC endpoint is available under `http(s)://on.<root_domain_name>:26657` using your browser
+#### 4. Verify `Observers` gRPC endpoint is available under `http(s)://on.<root_domain_name>:8443` using postman (or similar tool)
 
 - `<root_domain_name>` - domain name specified in terraform `Observers` config
 
