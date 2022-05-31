@@ -44,14 +44,7 @@ config:
     persistent_peers: "<node1-ID>@<node1-IP>:26656,..."
 ...
 ```
-## Run ansible (local machine)
-#### 1. Verify that all the configuration parameters from the previous section are correct
-#### 2. Run ansible
-```bash
-ansible-playbook -i ./deployment/ansible/inventory  -u <target-host-ssh-user> ./deployment/ansible/deploy.yml
-```
-- `<target-host-ssh-username>` - target host ssh user
-- Ansible provisioning can take several minutes depending on number of nodes being provisioned
+
 #### 3. (Optional) If you are joining a long-running network, enable `statesync` or use one of the options in [running-node-in-existing-network.md](../advanced/running-node-in-existing-network.md)
 [`deployment/ansible/roles/configure/vars/public-sentry.yml`]
 
@@ -65,6 +58,14 @@ config:
     trust_hash: "<trust-hash>"
 ...
 ```
+## Run ansible (local machine)
+#### 1. Verify that all the configuration parameters from the previous section are correct
+#### 2. Run ansible
+```bash
+ansible-playbook -i ./deployment/ansible/inventory  -u <target-host-ssh-user> ./deployment/ansible/deploy.yml
+```
+- `<target-host-ssh-username>` - target host ssh user
+- Ansible provisioning can take several minutes depending on number of nodes being provisioned
 
 ## Deployment Verification (target machine)
 #### 1. Switch to cosmovisor user
