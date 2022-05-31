@@ -117,3 +117,51 @@ sudo su -s /bin/bash cosmovisor
 ```
 dcld status
 ```
+
+## Make your node a Validator (target machine)
+
+#### 1. Switch to cosmovisor user
+```
+sudo su -s /bin/bash cosmovisor
+```
+
+#### 2. Generate NodeAdmin keys
+
+```bash
+dcld keys add "<admin-account-name>" 2>&1 | tee "<admin-account-name>.dclkey.data"
+```
+
+IMPORTANT keep generated data (especially the mnemonic) securely.
+
+#### 3. Share generated address and pubkey with the community
+
+address and pubkey can be found using
+
+```bash
+dcld keys show --output text "<admin-account-name>"
+```
+
+#### 4. Wait until your NodeAdmin key is proposed and approved by the quorum of trustees
+
+- Make sure the Node Admin account is proposed by a Trustee (usually CSA). The account will appear in the "Accounts" / "All Proposed Accounts" tab in https://testnet.iotledger.io/accounts.
+
+- Make sure that the proposed account is approved by at least 2/3 of Trustees. The account must disappear from the "Accounts" / "All Proposed Accounts" tab in https://testnet.iotledger.io/accounts, and appear in  "Accounts" / "All Active Accounts" tab.
+
+#### 5. Check the account presence on the ledger
+`dcld query auth account --address="<address>"`
+
+
+#### 6. Make the node a validator
+
+```bash
+dcld tx validator add-node --pubkey="<protobuf JSON encoded validator-pubkey>" --moniker="<node-name>" --from="<admin-account-name>"
+```
+
+> **_Note:_** Get `<protobuf JSON encoded validator-pubkey>` using `dcld tendermint show-validator` command
+
+(once transaction is successfully written you should see "code": 0 in the JSON output.)
+
+#### 7. Make sure the VN participates in consensus
+`dcld query tendermint-validator-set` must contain the VN's address
+
+>**_Note:_** Get your VN's address using `dcld tendermint show-address` command.
