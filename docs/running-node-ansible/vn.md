@@ -13,6 +13,17 @@ all:
 ```
 Every network must have a unique chain ID (e.g. `test-net`, `main-net` etc.)
 
+<details>
+<summary>Example for Testnet 2.0</summary>
+
+```yaml
+all:
+  vars:
+    chain_id: testnet-2.0
+  ...
+```
+</details>
+
 #### 2. Put `genesis.json` file under specific directory
 Get or download `genesis.json` file of a network your node will be joining and put it under the following path:
 ```
@@ -35,13 +46,22 @@ all:
 
 #### 2. Set persistent peers string in validator configuration
 [`deployment/ansible/roles/configure/vars/validator.yml`]
-  - Set `persisten_peers` value in 
-      ```yaml
-      config:
-        p2p:
-          persistent_peers: "<node1-ID>@<node1-IP>:26656,..."
-        ...
-      ```
+```yaml
+config:
+  p2p:
+    persistent_peers: "<node1-ID>@<node1-IP>:26656,..."
+  ...
+```
+
+<details>
+<summary>Example for Testnet 2.0</summary>
+
+```yaml
+config:
+  p2p:
+    persistent_peers: "8091122d82075eff187434f22055b193aa797835@52.21.51.189:26656,f0a652e3f08f0a9ddead545aae5233fbbaf82bd0@44.239.5.82:26656,cdff3160145059f8835e9489a9ea944b775a375e@3.11.5.22:26656,803d6f7d3489b618bc736de4914998b55c0a8240@35.224.92.247:26656,841db5c52e432a89b614d3413a639889b81394d0@34.231.53.112:26656,3029ef695af6a147d0701dd5c21154e60e299801@13.229.73.209:26656,1e35166c26761555dc63c95cef64895eff52b899@51.136.18.38:26656,52dce03ebd9a28b51d496a75d1aee690b009c72a@54.156.145.239:26656,81c2e4201bf8579f1db216dbb230d09e2dffb6b9@3.89.241.25:26656,f07ad3735ea1c883ea4c1a8d9d19f6a02e241ca5@13.209.123.210:26656"
+```
+</details>
 
 #### 3. (Optional) If you are joining a long-running network, enable `statesync` or use one of the options in [running-node-in-existing-network.md](../advanced/running-node-in-existing-network.md)
 [`deployment/ansible/roles/configure/vars/validator.yml`]
@@ -56,6 +76,8 @@ config:
     trust_hash: "<trust-hash>"
 ...
 ```
+</details>
+
 > **_NOTE:_**  You should provide at least 2 addresses for `rpc_servers`. It can be 2 identical addresses
 
 You can use the following command to obtain `<trust-height>` and `<trust-hash>` of your network
@@ -63,6 +85,13 @@ You can use the following command to obtain `<trust-height>` and `<trust-hash>` 
 ```bash
 curl -s http(s)://<host>:<port>/commit | jq "{height: .result.signed_header.header.height, hash: .result.signed_header.commit.block_id.hash}"
 ```
+<details>
+<summary>Example for Testnet 2.0</summary>
+
+```bash
+curl -s https://on.test-net.dcl.csa-iot.org:26657/commit | jq "{height: .result.signed_header.header.height, hash: .result.signed_header.commit.block_id.hash}"
+```
+</details>
 
 - `<host>` - RPC endpoint host of the network being joined
 - `<port>` - RPC endpoint port of the network being joined
