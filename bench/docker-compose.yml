@@ -1,0 +1,59 @@
+version: '3.2'
+
+services:
+  master:
+    build:
+      context: .
+      args:
+          DCLD_VERSION: "${DCLD_VERSION}"
+          DCLD_NODE: "${DCLD_NODE}"
+          DCLD_CHAIN_ID: "${DCLD_CHAIN_ID}"
+    image: locust-runner
+    ports:
+      - "8089:8089"
+    volumes:
+      - ./:/dcl/bench
+      - ~/.dcl/keyring-test:/home/locust/.dcl/keyring-test
+    command:
+      - "-f" 
+      - "/dcl/bench/locustfile.py"
+      - "--users"
+      - "${COUNT_USERS}"
+      - "--write-hosts" 
+      - "${WRITE_HOSTS}" 
+      - "--read-hosts" 
+      - "${READ_HOSTS}" 
+      - "--trustee-account-names"
+      - "${TRUSTEE_ACCOUNT_NAME}"
+      - "--master" 
+      - "-H" 
+      - "http://master:8089"
+      - "--csv"
+      - "${CSV_REPORT_FILE_NAME}"
+      - "--html"
+      - "${HTML_REPORT_FILE_NAME}"
+      
+  
+  worker:
+    image: locust-runner
+    volumes:
+      - ./:/dcl/bench
+      - ~/.dcl/keyring-test:/home/locust/.dcl/keyring-test
+    command:
+      - "-f" 
+      - "/dcl/bench/locustfile.py"
+      - "--users"
+      - "${COUNT_USERS}"
+      - "--write-hosts" 
+      - "${WRITE_HOSTS}"
+      - "--read-hosts" 
+      - "${READ_HOSTS}"
+      - "--trustee-account-names"
+      - "${TRUSTEE_ACCOUNT_NAME}"
+      - "--worker" 
+      - "--master-host" 
+      - "master"
+      - "--csv"
+      - "${CSV_REPORT_FILE_NAME}"
+      - "--html"
+      - "${HTML_REPORT_FILE_NAME}"

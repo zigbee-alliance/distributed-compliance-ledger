@@ -69,9 +69,9 @@ mv "$DCL_DIR"/* $LOCALNET_DIR/client
 
 function add_genesis_accounts {
     dcld add-genesis-account --address="$jack_address" --pubkey="$jack_pubkey" --roles="Trustee,NodeAdmin"
-    dcld add-genesis-account --address=$alice_address --pubkey=$alice_pubkey --roles="Trustee,NodeAdmin"
-    dcld add-genesis-account --address=$bob_address --pubkey=$bob_pubkey --roles="Trustee,NodeAdmin"
-    dcld add-genesis-account --address=$anna_address --pubkey=$anna_pubkey --roles="NodeAdmin"
+    dcld add-genesis-account --address="$alice_address" --pubkey="$alice_pubkey" --roles="Trustee,NodeAdmin"
+    dcld add-genesis-account --address="$bob_address" --pubkey="$bob_pubkey" --roles="Trustee,NodeAdmin"
+    dcld add-genesis-account --address="$anna_address" --pubkey="$anna_pubkey" --roles="NodeAdmin"
 }
 
 
