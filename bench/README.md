@@ -95,7 +95,7 @@ prometheus --config.file=bench/prometheus.yml
 
 And open `http://localhost:9090/` to query and monitor the server-side metrics.
 
-## Headless
+### Headless
 
 To run write load tests
 
