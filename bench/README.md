@@ -296,7 +296,7 @@ To run write/read load tests
 
 Then you can open `http://localhost:8089/` and launch the tests from the browser.
 
-Statistic options:
+### Statistic Options
 
 [Locust](https://locust.io/) provides the following options to present the results:
 
