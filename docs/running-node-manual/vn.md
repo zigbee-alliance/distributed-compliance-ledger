@@ -14,7 +14,6 @@ Make sure you have all [prerequisites](./prerequisites.md) set up
 
 3. Configure CLI:
     - `./dcld config chain-id <chain-id>`
-    - Use `testnet-2.0` for `<chain-id>` if you want to connect to the persistent Test Net
       - Use `testnet-2.0` for `<chain-id>` if you want to connect to the persistent Test Net
     - `./dcld config output json` - Output format (text/json).
     - `./dcld config node tcp://<host>:<port>` - Address of a node to connect.
