@@ -48,9 +48,22 @@ validator_config = {
     deployment/persistent_chains/<chain-id>/genesis.json
     ```
     where `<chain-id>` is the chain id of a network being joined.
+     - For `testnet-2.0` the genesis file is already in place
+        ```text
+        deployment/persistent_chains/testnet-2.0/genesis.json
+        ```
   - Manually adding the validator to the network (see [making node a validator](../running-node-ansible/vn.md#make-your-node-a-validator-target-machine)) after the step [run-ansible](#4-run-ansible)
+  - Manually set persistent_peers string in validator config
+    [`deployment/ansible/roles/configure/vars/validator.yml`]
+    ```yaml
+    config:
+      p2p:
+        persistent_peers: "<node1-ID>@<node1-IP>:26656,..."
+      ...
+    ```
+    - For `testnet-2.0` get the latest `persistent_peers` string from the CSA slack channel
+    
 - Validator/Genesis node is created in `region_1` by default
-
 
 #### Private Sentries (optional):
 
@@ -208,12 +221,15 @@ ansible-playbook -i ./deployment/ansible/inventory/aws  -u ubuntu ./deployment/a
 ```
 - Ansible provisioning can take several minutes depending on number of nodes being provisioned
 
+### 5. (For non-genesis validator nodes) Add Validator to the network
+-  Manually add the validator to the network (see [making node a validator](../running-node-ansible/vn.md#make-your-node-a-validator-target-machine)
+
 ## Deployment Verification
-#### 1. Verify [`deployment/persistent_chains/<chain_id>/genesis.json`] is created
-- `<chain_id>` - chain id of the network specified in Ansible inventory variables
-#### 2. Verify `Observers` REST endpoint is available under `http(s)://on.<root_domain_name>` using your browser
-#### 3. Verify `Observers` RPC endpoint is available under `http(s)://on.<root_domain_name>:26657` using your browser
-#### 4. Verify `Observers` gRPC endpoint is available under `http(s)://on.<root_domain_name>:8443` using postman (or similar tool)
+1. Verify [`deployment/persistent_chains/<chain_id>/genesis.json`] is created
+    - `<chain_id>` - chain id of the network specified in Ansible inventory variables
+2. Verify `Observers` REST endpoint is available under `http(s)://on.<root_domain_name>` using your browser
+3. Verify `Observers` RPC endpoint is available under `http(s)://on.<root_domain_name>:26657` using your browser
+4. Verify `Observers` gRPC endpoint is available under `http(s)://on.<root_domain_name>:8443` using postman (or similar tool)
 
 - `<root_domain_name>` - domain name specified in terraform `Observers` config
 
