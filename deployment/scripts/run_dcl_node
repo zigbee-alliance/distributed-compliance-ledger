@@ -45,6 +45,7 @@ NT_VALIDATOR="validator"
 NT_OBSERVER="observer"
 NT_PRIVATE_SENTRY="private-sentry"
 NT_PUBLIC_SENTRY="public-sentry"
+NT_SEED="seed"
 
 PERSISTENT_PEERS=
 PEER=
@@ -82,7 +83,7 @@ Options:
   -h,  --help                   print this help and exit
   -k,  --gen-key-name           node admin account key name, required for genesis account
        --gen-key-name-trustee   genesis Trustee account key name, optional, expected for genesis account only
-  -t,  --type                   node type, one of '$NT_GENESIS', '$NT_VALIDATOR', '$NT_OBSERVER', '$NT_PRIVATE_SENTRY', '$NT_PUBLIC_SENTRY' default: '$DEF_NODE_TYPE'
+  -t,  --type                   node type, one of '$NT_GENESIS', '$NT_VALIDATOR', '$NT_OBSERVER', '$NT_PRIVATE_SENTRY', '$NT_PUBLIC_SENTRY', '$NT_SEED'. default: '$DEF_NODE_TYPE'
 "
 #  -u,  --user                   node service user, default: '$DEF_NODE_USER'
 #-p,  --peer       peer hostspec as 'HOST:PORT', default: first entry of 'persistent_peers.txt'
