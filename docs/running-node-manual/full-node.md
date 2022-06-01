@@ -104,7 +104,7 @@ Run node:
 
 #### 8. Run node:
 - Put `genesis.json` into dcld's config directory (usually `$HOME/.dcl/config/`).
-    - Use `deployment/persistent_chains/testnet/genesis.json` if you want to connect to the persistent Test Net
+    - Use `deployment/persistent_chains/testnet-2.0/genesis.json` if you want to connect to the persistent Testnet 2.0
 - Open `$HOME/.dcl/config/config.toml` file in your favorite text editor:
     - Tell node how to connect to the network:
         - Set the value for the `persistent_peers` field as the content of `persistent_peers.txt` file.
