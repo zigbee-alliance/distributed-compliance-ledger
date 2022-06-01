@@ -51,7 +51,7 @@ Run node:
 - Open `$HOME/.dcl/config/config.toml` file in your favorite text editor:
     - Tell node how to connect to the network:
         - Set the value for the `persistent_peers` field as the content of `persistent_peers.txt` file.
-        - Use `deployment/persistent_chains/testnet/persistent_peers.txt` if you want to connect to the persistent Test Net.
+        - For `testnet-2.0` get the latest `persistent_peers` string from the CSA slack channel
     - Make your node public:
         - Open `$HOME/.dcl/config/config.toml`
         - Find the line under `# TCP or UNIX socket address for the RPC server to listen on`
