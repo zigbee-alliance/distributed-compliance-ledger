@@ -23,17 +23,6 @@ Make sure you have all [prerequisites](./prerequisites.md) set up
 ```bash
 ./dcld keys add "<key-name>" 2>&1 | tee "<key-name>.dclkey.data"
 ```
-Expected output format:
-
-```json
-{
-    "name": <name>, // key name. can be used for signing transactions
-    "type": "local",
-    "address": string, // bench32 encoded address
-    "pubkey": string, // bench32 encoded public key
-    "mnemonic": string // seed that can be used to generate the same private/public key pair
-}
-```
 - Remember generated `address` and `pubkey` they will be used later.
 You can retrieve `address` and `pubkey` values anytime using `./dcld keys show <name>`.
 Of course, only on the machine where the keypair was generated.
@@ -126,22 +115,6 @@ Service mode is recommended for demo and production environment.
 
 - In order to ensure that account is created and has assigned role you can use the command:
 `dcld query auth account --address=<address>`.
-Expected output format:
-```json
-{
-    "result": {
-    "address": string, // bench32 encoded address
-    "public_key": string, // bench32 encoded public key
-    "roles": [
-        "NodeAdmin", "Trustee"
-    ],
-    "coins": [],
-    "account_number": string,
-    "sequence": string
-    },
-    "height": string
-}
-```
 
 #### 12. Check the node is running and participates in consensus:
 - Get the list of all nodes: `dcld query validator all-nodes`.
