@@ -156,7 +156,6 @@ terraform apply
 > **_Note:_** Terraform asks a confirmation before applying changes
 
 #### 2. Generate ansible inventory from terraform output
-Once terraform completes successfully, run the following command to genarate ansible inventory file:
 ```bash
 terraform output -json ansible_inventory | dasel -r json -w yaml . > ../../ansible/inventory/aws/aws_all.yaml
 ```
