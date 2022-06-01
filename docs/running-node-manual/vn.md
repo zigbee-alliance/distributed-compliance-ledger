@@ -14,7 +14,8 @@ Make sure you have all [prerequisites](./prerequisites.md) set up
 
 3. Configure CLI:
     - `./dcld config chain-id <chain-id>`
-      - Use `testnet-2.0` if you want to connect to the persistent Test Net
+    - Use `testnet-2.0` for `<chain-id>` if you want to connect to the persistent Test Net
+      - Use `testnet-2.0` for `<chain-id>` if you want to connect to the persistent Test Net
     - `./dcld config output json` - Output format (text/json).
     - `./dcld config node tcp://<host>:<port>` - Address of a node to connect.
     Choose one of the listed in `persistent_peers.txt` file.
@@ -47,7 +48,7 @@ Of course, only on the machine where the keypair was generated.
 ```bash
 ./dcld init "<node-name>" --chain-id "<chain-id>"
 ```
-- Use `testnet-2.0` if you want to connect to the persistent Test Net
+- Use `testnet-2.0` for `<chain-id>` if you want to connect to the persistent Test Net
 
 #### 7. (Optional) Consider enabling `state sync` in the configuration if you are joining long-running network
 - For more information refer to [running-node-in-existing-network.md](../advanced/running-node-in-existing-network.md)

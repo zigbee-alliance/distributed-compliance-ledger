@@ -15,7 +15,8 @@ Make sure you have all [prerequisites](./prerequisites.md) set up
 #### 3. Choose the chain ID. Every network (for example, test-net, main-net, etc.) must have a unique chain ID.
 
 #### 4. Configure CLI:
-- `./dcld config chain-id <chain-id>` - the chosen unique chain ID.
+- `./dcld config chain-id <chain-id>`
+    - Use `testnet-2.0` for `<chain-id>` if you want to connect to the persistent Test Net - the chosen unique chain ID.
 - `./dcld config output json` - Output format (text/json).
 
 #### 5. Create keys for a node admin and a trustee genesis accounts
