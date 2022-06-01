@@ -24,23 +24,23 @@ Make sure you have all [prerequisites](./prerequisites.md) set up
 ```
 - Use `testnet-2.0` for `<chain-id>` if you want to connect to the persistent Test Net
 
-#### 5. (Optional) Consider enabling `state sync` in the configuration if you are joining long-running network
+#### 5. (Optional) Enable `state sync` in the configuration if you are joining long-running network
 - For more information refer to [running-node-in-existing-network.md](../advanced/running-node-in-existing-network.md)
 
-#### 6. Configure p2p parameters in `[~/.dcl/config.toml]` file:
-  ```toml
-  [p2p]
-  pex = true
-  addr_book_strict = false
-  ```
+#### 6. (Optional) Enable `state sync` snapshots in `[~/.dcl/app.toml]` file: 
 
-#### 7. (Optional) Enable `state sync` snapshots in `[~/.dcl/app.toml]` file: 
+```toml
+[state-sync]
+snapshot-interval = "snapshot-interval"
+snapshot-keep-recent = "snapshot-keep-recent"
+```
 
-  ```toml
-  [state-sync]
-  snapshot-interval = "snapshot-interval"
-  snapshot-keep-recent = "snapshot-keep-recent"
-  ```
+#### 7. Configure p2p parameters in `[~/.dcl/config.toml]` file:
+```toml
+[p2p]
+pex = true
+addr_book_strict = false
+```
 
 #### *** Step 8 can be automated using `run_dcl_node` script:
 Run node:

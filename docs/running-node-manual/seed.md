@@ -24,15 +24,14 @@ Make sure you have all [prerequisites](./prerequisites.md) set up
 ```
 - Use `testnet-2.0` for `<chain-id>` if you want to connect to the persistent Test Net
 
-#### 5. Enable seed mode in config `$HOME/.dcl/config/config.toml`:
+#### 5. (Optional) Consider enabling `state sync` in the configuration if you are joining long-running network
+- For more information refer to [running-node-in-existing-network.md](../advanced/running-node-in-existing-network.md)
+
+#### 6. Enable seed mode in config `$HOME/.dcl/config/config.toml`:
 ```toml
 [p2p]
 seed_mode=true
 ```
-
-#### 6. (Optional) Consider enabling `state sync` in the configuration if you are joining long-running network
-- For more information refer to [running-node-in-existing-network.md](../advanced/running-node-in-existing-network.md)
-
 #### *** Step 7 can be automated using `run_dcl_node` script:
 Run node:
 
