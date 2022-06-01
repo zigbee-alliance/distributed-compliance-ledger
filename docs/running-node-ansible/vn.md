@@ -144,7 +144,7 @@ dcld keys show --output text "<admin-account-name>"
 
 #### 4. Wait until your NodeAdmin key is proposed and approved by the quorum of trustees
 
-- Make sure the Node Admin account is proposed by a Trustee (usually CSA). The account will appear in the "Accounts" / "All Proposed Accounts" tab in https://testnet.iotledger.io/accounts.
+- Make sure the Node Admin account is proposed by a Trustee (usually CSA). The account will appear in the "Accounts" / "All Proposed Accounts" tab in https://testnet.iotledger.io/accounts (for `testnet-2.0` only).
 
 - Make sure that the proposed account is approved by at least 2/3 of Trustees. The account must disappear from the "Accounts" / "All Proposed Accounts" tab in https://testnet.iotledger.io/accounts, and appear in  "Accounts" / "All Active Accounts" tab.
 
