@@ -75,14 +75,7 @@ snapshot-interval = "snapshot-interval"
 snapshot-keep-recent = "snapshot-keep-recent"
 ```
 
-#### 7. Configure p2p parameters in `[~/.dcl/config.toml]` file:
-```toml
-[p2p]
-pex = true
-addr_book_strict = true
-```
-
-#### *** Step 8 can be automated using `run_dcl_node` script:
+#### *** Step 7 can be automated using `run_dcl_node` script:
 Run node:
 
 ```bash
@@ -102,7 +95,7 @@ Run node:
 >   * current user is going to be used for `cosmovisor` service to run as
 >   * current user is in sudoers list
 
-#### 8. Run node:
+#### 7. Run node:
 - Put `genesis.json` into dcld's config directory (usually `$HOME/.dcl/config/`).
     - Use `deployment/persistent_chains/testnet-2.0/genesis.json` if you want to connect to the persistent Testnet 2.0
 - Open `$HOME/.dcl/config/config.toml` file in your favorite text editor:
@@ -135,6 +128,6 @@ Service mode is recommended for demo and production environment.
     - `export PATH=$PATH:$HOME/.dcl/cosmovisor/current/bin`
 - Execute the following command to apply the updated `$PATH` immediately:
     - `source $HOME/.profile`
-#### 9. Check the node is running and getting all the transactions:
+#### 8. Check the node is running and getting all the transactions:
 - Get the node status: `dcld status --node tcp://localhost:26657`.
 - Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 10 mins). When you see the `catching_up` as `true` that signifies that the node is still downloading all the transactions. Once it has fully synced this will value will turn to `false`

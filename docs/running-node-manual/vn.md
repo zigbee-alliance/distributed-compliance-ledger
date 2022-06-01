@@ -5,13 +5,29 @@ Make sure you have all [prerequisites](./prerequisites.md) set up
 ## Deployment steps
 #### Steps [1-9] are the same as in [full-node.md](./full-node.md) 
 except:
-- set `<node-type>` to `"validator"` when using [run_dcl_node](./full-node.md#step-8-can-be-automated-using-rundclnode-script)
+- Set `<node-type>` to `"validator"` when using [run_dcl_node](./full-node.md#step-8-can-be-automated-using-rundclnode-script)
 
-- Configure consensus parameters in `[~/.dcl/config.toml]` file before step [Run node](./full-node.md#8-run-node) in [full-node.md](./full-node.md) :
+- Configure node specific parameters before running the node:
+  
+    [`config.toml`]
+
     ```toml
+    [p2p]
+    pex = false
+    persistent_peers = # `Private Sentry` nodes with private IPs
+    addr_book_strict = false
+
     [consensus]
     create_empty_blocks = false
     create_empty_blocks_interval = "600s" # 10 mins
+    ```
+
+    [`app.toml`]
+
+    ```toml
+    [state-sync]
+    snapshot-interval = "snapshot-interval"
+    snapshot-keep-recent = "snapshot-keep-recent"
     ```
 
 #### 10. Create keys for a node admin and a trustee (optional) accounts
