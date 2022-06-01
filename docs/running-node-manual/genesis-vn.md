@@ -19,24 +19,13 @@ Make sure you have all [prerequisites](./prerequisites.md) set up
     - Use `testnet-2.0` for `<chain-id>` if you want to connect to the persistent Test Net - the chosen unique chain ID.
 - `./dcld config output json` - Output format (text/json).
 
-#### 5. Create keys for a node admin and a trustee genesis accounts
-
-```bash
-./dcld keys add "<key-name>" 2>&1 | tee "<key-name>.dclkey.data"
-```
-- Remember generated `address` and `pubkey` they will be used later.
-You can retrieve `address` and `pubkey` values anytime using `./dcld keys show <name>`.
-Of course, only on the machine where the keypair was generated.
-
-> Notes: It's important to keep the generated data (especially a mnemonic that allows to recover a key) in a safe place
-
-#### 6. Initilize the node:
+#### 5. Initilize the node:
 
 ```bash
 ./dcld init "<node-name>" --chain-id "<chain-id>"
 ```
 
-#### 7. Configure p2p and consensus parameters in `[~/.dcl/config.toml]` file:
+#### 6. Configure p2p and consensus parameters in `[~/.dcl/config.toml]` file:
   ```toml
   [p2p]
   pex = false
@@ -47,13 +36,24 @@ Of course, only on the machine where the keypair was generated.
   create_empty_blocks_interval = "600s" # 10 mins
   ```
 
-#### 8. (Optional) Enable `state sync` snapshots in`[~/.dcl/app.toml]` file:
+#### 7. (Optional) Enable `state sync` snapshots in`[~/.dcl/app.toml]` file:
 
   ```toml
   [state-sync]
   snapshot-interval = "snapshot-interval"
   snapshot-keep-recent = "snapshot-keep-recent"
   ```
+
+#### 8. Create keys for a node admin and a trustee genesis accounts
+
+```bash
+./dcld keys add "<key-name>" 2>&1 | tee "<key-name>.dclkey.data"
+```
+- Remember generated `address` and `pubkey` they will be used later.
+You can retrieve `address` and `pubkey` values anytime using `./dcld keys show <name>`.
+Of course, only on the machine where the keypair was generated.
+
+> Notes: It's important to keep the generated data (especially a mnemonic that allows to recover a key) in a safe place
 
 #### *** Steps (9-10) can be automated using `run_dcl_node` script
 Run node:
