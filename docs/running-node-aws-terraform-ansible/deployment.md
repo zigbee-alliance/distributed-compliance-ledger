@@ -221,7 +221,7 @@ ansible-playbook -i ./deployment/ansible/inventory/aws  -u ubuntu ./deployment/a
 - Ansible provisioning can take several minutes depending on number of nodes being provisioned
 
 ### 5. (For non-genesis validator nodes) Add Validator to the network
--  Manually add the validator to the network (see [making node a validator](../running-node-ansible/vn.md#make-your-node-a-validator-target-machine)
+-  Manually add the validator to the network (see [making node a validator](../running-node-ansible/vn.md#make-your-node-a-validator-target-machine))
 
 ## Deployment Verification
 1. Verify [`deployment/persistent_chains/<chain_id>/genesis.json`] is created
