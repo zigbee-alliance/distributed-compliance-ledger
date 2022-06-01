@@ -14,7 +14,7 @@ all:
 Every network must have a unique chain ID (e.g. `test-net`, `main-net` etc.)
 
 <details>
-<summary>Example for Testnet 2.0</summary>
+<summary>Example for Testnet 2.0 (clickable) </summary>
 
 
 ```yaml
@@ -58,7 +58,7 @@ config:
 ```
 
 <details>
-<summary>Example for Testnet 2.0</summary>
+<summary>Example for Testnet 2.0 (clickable) </summary>
 
 ```yaml
 config:
@@ -82,7 +82,7 @@ config:
 ```
 
 <details>
-<summary>Example for Testnet 2.0</summary>
+<summary>Example for Testnet 2.0 (clickable) </summary>
 
 ```yaml
 config:
@@ -100,7 +100,7 @@ You can use the following command to obtain `<trust-height>` and `<trust-hash>` 
 curl -s http(s)://<host>:<port>/commit | jq "{height: .result.signed_header.header.height, hash: .result.signed_header.commit.block_id.hash}"
 ```
 <details>
-<summary>Example for Testnet 2.0</summary>
+<summary>Example for Testnet 2.0 (clickable) </summary>
 
 ```bash
 curl -s https://on.test-net.dcl.csa-iot.org:26657/commit | jq "{height: .result.signed_header.header.height, hash: .result.signed_header.commit.block_id.hash}"
