@@ -53,15 +53,6 @@ validator_config = {
         deployment/persistent_chains/testnet-2.0/genesis.json
         ```
   - Manually adding the validator to the network (see [making node a validator](../running-node-ansible/vn.md#make-your-node-a-validator-target-machine)) after the step [run-ansible](#4-run-ansible)
-  - Manually set persistent_peers string in validator config
-    [`deployment/ansible/roles/configure/vars/validator.yml`]
-    ```yaml
-    config:
-      p2p:
-        persistent_peers: "<node1-ID>@<node1-IP>:26656,..."
-      ...
-    ```
-    - For `testnet-2.0` get the latest `persistent_peers` string from the CSA slack channel
     
 - Validator/Genesis node is created in `region_1` by default
 
@@ -77,6 +68,15 @@ private_sentries_config = {
 - Private sentry nodes are created in the region as Validator by default
 - Can be disabled by setting `enable = false`
 - Only one instance of private sentry is created with static ip address
+- Manually set `persistent_peers` string in private sentry config
+  [`deployment/ansible/roles/configure/vars/private-sentry.yml`]
+  ```yaml
+  config:
+    p2p:
+      persistent_peers: "<node1-ID>@<node1-IP>:26656,..."
+    ...
+  ```
+  - For `testnet-2.0` get the latest `persistent_peers` string from the CSA slack channel
 
 #### Public Sentries (optional):
 ```hcl
