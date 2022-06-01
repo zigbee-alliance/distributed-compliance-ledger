@@ -3,7 +3,7 @@
 ## DCL Node types
   - `Genesis Validator` - Validator Node created at the beginning of a network
   - `Non-genesis Validator` - Validator Node joined a network after a significant time period
-  - `Private Sentry` - Full Node to connect other(external) Validator Nodes ([Sentry Node Architecture](https://forum.cosmos.network/t/sentry-node-architecture-overview/454))
+  - `Private Sentry` - Full Node to connect other (external) Validator Nodes ([Sentry Node Architecture](https://forum.cosmos.network/t/sentry-node-architecture-overview/454))
   - `Public Sentry` - Full Node to connect other(external) Full Nodes
   - `Observer` - Full Node for serving gRPC / REST / RPC clients
   - `Seed` - Full Node for sharing IP addresses of `Public Sentry` Nodes ([Seed Node](https://docs.tendermint.com/master/nodes/#seed-nodes))
