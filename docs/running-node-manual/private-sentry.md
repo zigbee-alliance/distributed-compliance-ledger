@@ -21,7 +21,7 @@ Make sure you have all [prerequisites](./prerequisites.md) set up
 ```bash
 ./dcld init "<node-name>" --chain-id "<chain-id>"
 ```
-- Use `testnet` if you want to connect to the persistent Test Net
+- Use `testnet-2.0` if you want to connect to the persistent Test Net
 
 #### 5. (Optional) Consider enabling `state sync` in the configuration if you are joining long-running network
 - For more information refer to [running-node-in-existing-network.md](../advanced/running-node-in-existing-network.md)

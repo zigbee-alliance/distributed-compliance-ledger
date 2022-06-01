@@ -21,7 +21,7 @@ Make sure you have all [prerequisites](./prerequisites.md) set up
 ```bash
 ./dcld init "<node-name>" --chain-id "<chain-id>"
 ```
-- Use `testnet` if you want to connect to the persistent Test Net
+- Use `testnet-2.0` if you want to connect to the persistent Test Net
 
 #### 5. Enable seed mode in config `$HOME/.dcl/config/config.toml`:
 ```toml
