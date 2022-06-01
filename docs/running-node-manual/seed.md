@@ -1,4 +1,4 @@
-# Running an Observer Node manually
+# Running a Seed Node manually
 
 ## Prerequisites
 Make sure you have all [prerequisites](./prerequisites.md) set up
