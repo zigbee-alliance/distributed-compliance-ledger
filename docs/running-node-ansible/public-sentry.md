@@ -26,11 +26,20 @@ all:
 </details>
 
 #### 2. Put `genesis.json` file under specific directory
-Get or download `genesis.json` file of a network your node will be joining and put it under the following path:
-```
-deployment/persistent_chains/<chain-id>/genesis.json
-```
-where `<chain-id>` is the chain id of a network spefied in the previous step
+- Get or download `genesis.json` file of a network your node will be joining and put it under the following path:
+  ```text
+  deployment/persistent_chains/<chain-id>/genesis.json
+  ```
+  where `<chain-id>` is the chain id of a network spefied in the previous step.
+
+  <details>
+  <summary>Example for Testnet 2.0 (clickable) </summary>
+
+  For `testnet-2.0` the genesis file is already in place. So you don't need to do anything!
+  ```text
+  deployment/persistent_chains/testnet-2.0/genesis.json
+  ```
+  </details>
 
 ## Configure node type specific parameters (local machine)
 #### 1. Specify target instance address in the inventory file
@@ -56,17 +65,7 @@ config:
     persistent_peers: "<node1-ID>@<node1-IP>:26656,..."
 ...
 ```
-
-<details>
-<summary>Example for Testnet 2.0 (clickable) </summary>
-
-```yaml
-config:
-  p2p:
-    persistent_peers: "8091122d82075eff187434f22055b193aa797835@52.21.51.189:26656,f0a652e3f08f0a9ddead545aae5233fbbaf82bd0@44.239.5.82:26656,cdff3160145059f8835e9489a9ea944b775a375e@3.11.5.22:26656,803d6f7d3489b618bc736de4914998b55c0a8240@35.224.92.247:26656,841db5c52e432a89b614d3413a639889b81394d0@34.231.53.112:26656,3029ef695af6a147d0701dd5c21154e60e299801@13.229.73.209:26656,1e35166c26761555dc63c95cef64895eff52b899@51.136.18.38:26656,52dce03ebd9a28b51d496a75d1aee690b009c72a@54.156.145.239:26656,81c2e4201bf8579f1db216dbb230d09e2dffb6b9@3.89.241.25:26656,f07ad3735ea1c883ea4c1a8d9d19f6a02e241ca5@13.209.123.210:26656"
-```
-</details>
-
+- For `testnet-2.0` get the latest `persistent_peers` string from the CSA slack channel
 #### 3. (Optional) If you are joining a long-running network, enable `statesync` or use one of the options in [running-node-in-existing-network.md](../advanced/running-node-in-existing-network.md)
 [`deployment/ansible/roles/configure/vars/public-sentry.yml`]
 

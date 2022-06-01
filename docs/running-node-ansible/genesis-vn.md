@@ -42,6 +42,7 @@ config:
     persistent_peers: "<node1-ID>@<node1-IP>:26656,..."
 ...
 ```
+- For `testnet-2.0` get the latest `persistent_peers` string from the CSA slack channel
 
 #### 3. Specify genesis accounts
 [`deployment/ansible/inventory/group_vars/genesis.yaml`]
