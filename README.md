@@ -197,6 +197,7 @@ See [Run local pool](README-DEV.md#run-local-pool) section in [README-DEV.md](RE
 ### Deploy a persistent pool of nodes
 
 A recommended way for deployment and client connection: [diagram](docs/deployment.png), [diagram-detailed](docs/deployment-detailed.png) and [diagram-aws](docs/deployment-design-aws-diagram.png).
+
 - If you want to deploy your own network or a standalone node follow the [Running Node](docs/running-node.md)
 
 ### Upgrade all nodes in a pool to a new version of DCL application

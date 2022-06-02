@@ -700,6 +700,7 @@ The certificate is not active until sufficient number of Trustees approve it.
   - the proposed certificate hasn't been approved by the signer yet
 
 #### REJECT_ADD_X509_ROOT_CERT
+
 **Status: Implemented**
 
 Rejects the proposed root certificate.
@@ -993,8 +994,8 @@ Should be sent to trusted nodes only.
 - REST API:
   - GET `dcl/pki/proposed-certificates`
 
- #### GET_ALL_REJECTED_X509_ROOT_CERTS
- 
+#### GET_ALL_REJECTED_X509_ROOT_CERTS
+
  **Status: Implemented**
 
 Gets all rejected root certificates.
@@ -1007,7 +1008,6 @@ Shoudl be sent to trusted nodes only.
   - `dcld query pki all-rejected-x509-root-certs`
 - REST API:
   - GET `dcl/pki/rejected-certificates`
-
 
 #### GET_ALL_PROPOSED_X509_ROOT_CERTS_TO_REVOKE
 
@@ -1068,8 +1068,8 @@ The account is not active until sufficient number of Trustees approve it.
   - 1/3 of Trustees for account role: `Vendor`
 - CLI command:
   - `dcld tx auth approve-add-account --address=<bench32 encoded string> --from=<account>`
-> **_Note:_**  If we are approving an account with role `Vendor`, then we need 1/3 of Trustees approvals.
 
+> **_Note:_**  If we are approving an account with role `Vendor`, then we need 1/3 of Trustees approvals.
 
 #### REJECT_ADD_ACCOUNT
 
@@ -1129,6 +1129,7 @@ The account is not revoked until sufficient number of Trustees approve it.
   - 2/3 of Trustees
 - CLI command:
   - `dcld tx auth approve-revoke-account --address=<bench32 encoded string> --from=<account>`
+
 > **_Note:_**  If revoking an account has sufficient number of Trustees approve it then this account is placed in Revoked Account.
 
 #### GET_ACCOUNT
@@ -1314,7 +1315,6 @@ Disables the Validator node (removes from the validator set) by the owner.
 - Parameters: No
 - CLI command:
   - `dcld tx validator disable-node --from=<account>`
-    
 
 #### PROPOSE_DISABLE_VALIDATOR_NODE
 
@@ -1332,11 +1332,13 @@ will be in a pending state until sufficient number of approvals is received.
   - Trustee
 - CLI command:
   - `dcld tx validator propose-disable-node --address=<validator address> --from=<account>`
-  <br> e.g.:
-    ```
+   e.g.:
+
+    ```bash
     dcld query validator propose-disable-node --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q --from alice
     ```
-> **_Note:_** You can get Validator's address or owner address using query [GET_VALIDATOR](#getvalidator) 
+
+> **_Note:_** You can get Validator's address or owner address using query [GET_VALIDATOR](#getvalidator)
 
 #### APPROVE_DISABLE_VALIDATOR_NODE
 
@@ -1355,10 +1357,12 @@ The validator node is not disabled until sufficient number of Trustees approve i
   - 2/3 of Trustees
 - CLI command:
   - `dcld tx validator approve-disable-node --address=<validator address> --from=<account>`
-  <br> e.g.:
-    ```
+   e.g.:
+
+    ```bash
     dcld tx validator approve-disable-node --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q from alice
     ```
+
 > **_Note:_** You can get Validator's address or owner address using query [GET_VALIDATOR](#getvalidator)
 
 #### REJECT_DISABLE_VALIDATOR_NODE
@@ -1378,10 +1382,12 @@ The validator node is not reject until sufficient number of Trustees rejects it.
   - more than 1/3 of Trustees
 - CLI command:
   - `dcld tx validator reject-disable-node --address=<validator address> --from=<account>`
-  <br> e.g.:
-  ```
+   e.g.:
+
+  ```bash
   dcld tx validator reject-disable-node --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q --from alice
   ```
+
 > **_Note:_** You can get Validator's address or owner address using query [GET_VALIDATOR](#getvalidator)
 
 #### ENABLE_VALIDATOR_NODE
@@ -1407,14 +1413,18 @@ Gets a validator node.
 - Parameters:
   - address: `string` - Bech32 encoded validator address or owner account
 - CLI command:
-  - `dcld query validator node --address=<validator address|account>` <br> e.g.:
-    ```
+  - `dcld query validator node --address=<validator address|account>`  e.g.:
+
+    ```bash
     dcld query validator node --address=cosmosvaloper1qse069r3w0d82dul4xluqapxfg62qlndsdw9ms
-    ``` 
-    or
     ```
+
+    or
+
+    ```bash
     dcld query validator node --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q
     ```
+
 - REST API:
   - GET `/dcl/validator/nodes/{owner}`
 
@@ -1445,14 +1455,18 @@ Gets a proposed validator node.
 - Parameters:
   - address: `string` - Bech32 encoded validator address or owner account
 - CLI command:
-  - `dcld query validator proposed-disable-node --address=<validator address|account>` <br> e.g.:
-    ```
+  - `dcld query validator proposed-disable-node --address=<validator address|account>`  e.g.:
+
+    ```bash
     dcld query validator proposed-disable-node --address=cosmosvaloper1qse069r3w0d82dul4xluqapxfg62qlndsdw9ms
-    ``` 
-    or
     ```
+
+    or
+
+    ```bash
     dcld query validator proposed-disable-node --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q
     ```
+
 - REST API:
   - GET `/dcl/validator/proposed-disable-nodes/{address}`
 
@@ -1480,14 +1494,18 @@ Gets a rejected validator node.
 - Parameters:
   - address: `string` - Bech32 encoded validator address or owner account
 - CLI command:
-  - `dcld query validator rejected-disable-node --address=<validator address|account>` <br> e.g.:
-    ```
+  - `dcld query validator rejected-disable-node --address=<validator address|account>`  e.g.:
+
+    ```bash
     dcld query validator rejected-disable-node --address=cosmosvaloper1qse069r3w0d82dul4xluqapxfg62qlndsdw9ms
-    ``` 
-    or
     ```
+
+    or
+
+    ```bash
     dcld query validator rejected-disable-node --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q
     ```
+
 - REST API:
   - GET `/dcl/validator/rejected-disable-nodes/{address}`
 
@@ -1516,14 +1534,18 @@ Gets a disabled validator node.
   - address: `string` - Bech32 encoded validator address or owner account
 - CLI command:
   - `dcld query validator disabled-node --address=<validator address|account>`
-  <br> e.g.:
-    ```
+   e.g.:
+
+    ```bash
     dcld query validator disabled-node --address=cosmosvaloper1qse069r3w0d82dul4xluqapxfg62qlndsdw9ms
-    ``` 
-    or
     ```
+
+    or
+
+    ```bash
     dcld query validator disabled-node --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q
     ```
+
 - REST API:
   - GET `/dcl/validator/disabled-nodes/{address}`
 
@@ -1552,14 +1574,18 @@ Gets a last validator node power.
   - address: `string` - Bech32 encoded validator address or owner account
 - CLI command:
   - `dcld query validator last-power --address=<validator address|account>`
-  <br> e.g.:
-    ```
+   e.g.:
+
+    ```bash
     dcld query validator last-power --address=cosmosvaloper1qse069r3w0d82dul4xluqapxfg62qlndsdw9ms
-    ``` 
-    or
     ```
+
+    or
+
+    ```bash
     dcld query validator last-power --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q
     ```
+
 - REST API:
   - GET `/dcl/validator/last-powers/{owner}`
 
@@ -1665,6 +1691,7 @@ dcld tx dclupgrade approve-upgrade --name=<string> --from=<account>
 **Status: Implemented**
 
 Rejects the proposed upgrade plan with the given name.
+
 - Paramaters:
   - name: `string` - upgrade plan name
 - In State: `RejectUpgrade/value/<name>`
@@ -1854,6 +1881,7 @@ Sign transaction by the given key.
   - `chain-id` - (optional) chain ID.
 - CLI command:
   - `dcld tx sign [path-to-txn-file] --from [address]`
+
 > **_Note:_**  if `account_number` and `sequence`  are not specified they will be fetched from the ledger automatically.  
 
 ### Broadcast
