@@ -28,7 +28,7 @@ DC Ledger is a public permissioned ledger in the following sense:
 - Writes to the ledger are permissioned. See [How to write to the Ledger](docs/transactions.md#how-to-write-to-the-ledger) for details.
 - PoA (proof of authority) approach is used for adding new validator nodes to the network
  (see [Add New Node Use Case](docs/use_cases/use_cases_add_validator_node.png)) and
-  [Running Node Instructions](docs/advanced/running-validator-node.md).
+  [Running Node](docs/running-node.md).
 
 In order to send write transactions to the ledger you need:
 
@@ -196,25 +196,8 @@ See [Run local pool](README-DEV.md#run-local-pool) section in [README-DEV.md](RE
 
 ### Deploy a persistent pool of nodes
 
-A recommended way for deployment and client connection: [diagram](docs/deployment.png), [diagram-detailed](docs/deployment-detailed.png) and [diagram-aws](docs/deployment-aws.png).
-
-One can either deploy its own network of validator nodes or join one of the persistent DC Ledger Networks.
-
-- If you want to deploy your own network for debug purposes,
-you can use the provided Ansible Playbook: [ansible/readme.md](deployment/ansible/README.md).
-- If you want to join an existing network (either a custom or persistent) as a validator node,
-please follow the [Running Node](docs/running-node.md) or a more detailed [Running a Validator Node](docs/advanced/running-validator-node.md) instructions.
-  > **_NOTE:_** If you are joining a `long-running` network,
-  consider the following additional instructions [Running Node in existing network](docs/running-node-in-existing-network.md)
-- If you want to join an existing new network as an observer node,
-please follow the [Running Node](docs/running-node.md) or a more detailed [Running an Observer Node](docs/advanced/running-observer-node.md) instructions.
-  > **_NOTE:_** If you are joining a `long-running` network,
-  consider the following additional instructions [Running Node in existing network](docs/running-node-in-existing-network.md)
-- If you want to deploy your own persistent network,
-you will need to create a genesis node and a genesis file first as described in
-[Running Node](docs/running-node.md) or a more detailed [Running a Genesis Validator Node](docs/advanced/running-genesis-node.md).
-Please note, that these instructions describe the case when the genesis block consists of a single node only.
-This is done just for simplicity, and nothing prevents you from adding more nodes to the genesis file by adapting the instructions accordingly.
+A recommended way for deployment and client connection: [diagram](docs/deployment.png), [diagram-detailed](docs/deployment-detailed.png) and [diagram-aws](docs/deployment-design-aws-diagram.png).
+- If you want to deploy your own network or a standalone node follow the [Running Node](docs/running-node.md)
 
 ### Upgrade all nodes in a pool to a new version of DCL application
 
@@ -240,11 +223,7 @@ See [Pool Upgrade](docs/pool-upgrade.md) and [Pool Upgrade How To](docs/pool-upg
 - [Deployment Pattern Detailed](docs/deployment-detailed.png)
 - [Deployment Recommendations](https://github.com/zigbee-alliance/distributed-compliance-ledger/wiki/DCL-MainNet-Deployment)
 - [Deployment Recommendations for AWS](./docs/deployment-design-aws.md)
-- [Running Node in a new network](docs/running-node.md)
-  - [Running Genesis Validator Node](docs/advanced/running-genesis-node.md)
-  - [Running Validator Node](docs/advanced/running-validator-node.md)
-  - [Running Observer Node](docs/advanced/running-observer-node.md)
-- [Running Node in an existing network](docs/running-node-in-existing-network.md)
+- [Running Node](docs/running-node.md)
 - [Pool Upgrade](docs/pool-upgrade.md)
 - [Pool Upgrade How To Guide](docs/pool-upgrade-how-to.md)
 - [Tendermint](https://tendermint.com/)

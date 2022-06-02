@@ -142,7 +142,7 @@ module "observers_2" {
 }
 
 module "prometheus" {
-  count = var.prometheus_config.enable ? 1 : 0
+  count = (var.private_sentries_config.enable && var.prometheus_config.enable) ? 1 : 0
 
   source        = "./prometheus"
   instance_type = var.prometheus_config.instance_type

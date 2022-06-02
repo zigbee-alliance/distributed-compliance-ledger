@@ -3,6 +3,7 @@ region_2 = "us-west-1"
 
 validator_config = {
   instance_type = "t3.medium"
+  is_genesis    = true
 }
 
 private_sentries_config = {

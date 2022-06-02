@@ -12,7 +12,7 @@ output "ansible_inventory" {
       children = {
 
         genesis = {
-          hosts = { for host in local.nodes.validator.public_ips : host => null }
+          hosts = var.validator_config.is_genesis ? { for host in local.nodes.validator.public_ips : host => null } : null
         }
 
         validators = {
