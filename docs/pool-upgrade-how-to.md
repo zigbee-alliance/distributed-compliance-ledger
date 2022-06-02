@@ -118,23 +118,65 @@ application version:
        dcld query upgrade plan
        ```
 
-    3. Downloads and verifies that the downloaded application binary matches
-       the checksum specified in the URL. This can be done with a single-line
-       command:
+    3. Verifies that the downloaded application binary matches the checksum
+       specified in the URL. This can be done automatically together with the
+       previous step by [`go-getter`](https://github.com/hashicorp/go-getter)
+       download tool (its executable binaries for various platforms can be
+       downloaded from <https://github.com/hashicorp/go-getter/releases>).
 
        For example:
 
        ```bash
-       curl -fsSL https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/scripts/install.sh | SHA256SUM=ea0e16eed3cc30b5a7f17299aca01b5d827b9a04576662d957af02608bca0fb6 bash
+       go-getter https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/vX.X.X/dcld?checksum=sha256:50708d4f7e00da347d4e678bf26780cd424232461c4bb414f72391c75e39545a $HOME/Downloads
        ```
 
-       | Variable   | Default                                     | Description                                  |
-       |:-----------|:--------------------------------------------|----------------------------------------------|
-       | DEBUG      | false                                       | Enables verbose mode during the execution    |
-       | DCL_HOME   | $HOME/.dcl                                  | DCL home folder                              |
-       | VERSION    |                                             | DCL binary version to be upgraded            |
-       | DEST       | $DCL_HOME/cosmovisor/upgrades/v$VERSION/bin | Destination path for DCL binary              |
-       | SHA256SUM  |                                             | SHA256 sum value for DCL binary verification |
+       `go-getter` verifies that the downloaded file matches the checksum when
+       the URL is provided in the specified format. If the downloaded file
+       checksum does not equal to the checksum provided in the URL, `go-getter`
+       reports that checksums did not match.
+
+    4. Creates a directory with the name of the upgrade within
+       `$HOME/.dcl/cosmovisor/upgrades`, creates `bin` sub-directory within the
+       created directory, and puts the new application binary into `bin`
+       sub-directory.
+
+       For example:
+
+       ```bash
+       cd $HOME/.dcl/cosmovisor
+       mkdir -p upgrades
+       cd upgrades
+       mkdir vX.X.X
+       cd vX.X.X
+       mkdir bin
+       cd $HOME/Downloads
+       cp ./dcld $HOME/.dcl/cosmovisor/upgrades/vX.X.X/bin/
+       ```
+
+    5. Sets proper owner and permissions for the new application binary.
+
+       For example:
+
+       ```bash
+       sudo chown $(whoami) $HOME/.dcl/cosmovisor/upgrades/vX.X.X/bin/dcld
+       sudo chmod a+x $HOME/.dcl/cosmovisor/upgrades/vX.X.X/bin/dcld
+
+    #### *** Steps [3-5] can be automated using the following command which downloads and verifies that the downloaded application binary matches the checksum specified in the URL
+      command:
+
+      For example:
+
+      ```bash
+      curl -fsSL https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/scripts/install.sh | SHA256SUM=ea0e16eed3cc30b5a7f17299aca01b5d827b9a04576662d957af02608bca0fb6 bash
+      ```
+
+      | Variable   | Default                                     | Description                                  |
+      |:-----------|:--------------------------------------------|----------------------------------------------|
+      | DEBUG      | false                                       | Enables verbose mode during the execution    |
+      | DCL_HOME   | $HOME/.dcl                                  | DCL home folder                              |
+      | VERSION    |                                             | DCL binary version to be upgraded            |
+      | DEST       | $DCL_HOME/cosmovisor/upgrades/v$VERSION/bin | Destination path for DCL binary              |
+      | SHA256SUM  |                                             | SHA256 sum value for DCL binary verification |
 
 7. **Upgrade Is Applied**: The upgrade is applied on all the nodes in the pool
    when the ledger reaches the height specified in the upgrade plan.
