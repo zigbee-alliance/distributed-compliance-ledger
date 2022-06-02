@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
 import os
 
 import testinfra.utils.ansible_runner
@@ -38,6 +37,7 @@ def test_configuration(host):
         all_variables["chain_id"]
         in host.file(DCLD_HOME + "/config/client.toml").content_string
     )
+
 
 def test_cosmovisor_log_file(host):
     log_file = host.file("/var/log/cosmovisor/cosmovisor.log")
