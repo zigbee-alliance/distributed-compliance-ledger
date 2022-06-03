@@ -6,7 +6,7 @@ Make sure you have all [prerequisites](./prerequisites.md) set up
 
 ## Configure DCL network parameters (local machine)
 
-### 1. Set network chain id
+### 1. Set network chain ID
 
 [`deployment/ansible/inventory/hosts.yml`]
 

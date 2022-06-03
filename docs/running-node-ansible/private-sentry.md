@@ -7,7 +7,7 @@ Make sure you have all [prerequisites](./prerequisites.md) set up
 
 ## Configure DCL network parameters (local machine)
 
-### 1. Set network chain id
+### 1. Set network chain ID
 
 [`deployment/ansible/inventory/hosts.yml`]
 
@@ -40,7 +40,7 @@ all:
   deployment/persistent_chains/<chain-id>/genesis.json
   ```
 
-  where `<chain-id>` is the chain id of a network spefied in the previous step.
+  where `<chain-id>` is the chain ID of a network spefied in the previous step.
 
   <details>
   <summary>Example for Testnet 2.0 (clickable) </summary>

@@ -62,7 +62,7 @@ validator_config = {
     deployment/persistent_chains/<chain-id>/genesis.json
     ```
 
-    where `<chain-id>` is the chain id of a network being joined.
+    where `<chain-id>` is the chain ID of a network being joined.
     - For `testnet-2.0` the genesis file is already in place
 
         ```text
@@ -167,7 +167,7 @@ prometheus_config = {
 - When enabled runs a dedicated Prometheus server on Private Sentries VPC to collect Tendermint metrics from all DCL nodes
 - Collected metrics are written to AWS [AMP workspace](https://aws.amazon.com/prometheus/)
 
-### 2. Set DCL network chain id in ansible inventory
+### 2. Set DCL network chain ID in ansible inventory
 
 [`deployment/ansible/inventory/aws/group_vars/all.yaml`]
 
@@ -280,7 +280,7 @@ ansible-playbook -i ./deployment/ansible/inventory/aws  -u ubuntu ./deployment/a
 ## Deployment Verification
 
 1. Verify [`deployment/persistent_chains/<chain_id>/genesis.json`] is created
-    - `<chain_id>` - chain id of the network specified in Ansible inventory variables
+    - `<chain_id>` - chain ID of the network specified in Ansible inventory variables
 2. Verify `Observers` REST endpoint is available under `http(s)://on.<root_domain_name>` using your browser
 3. Verify `Observers` RPC endpoint is available under `http(s)://on.<root_domain_name>:26657` using your browser
 4. Verify `Observers` gRPC endpoint is available under `http(s)://on.<root_domain_name>:8443` using postman (or similar tool)
