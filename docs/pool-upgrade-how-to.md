@@ -17,7 +17,16 @@ application version:
 3. **[A Trustee] ProposeUpgrade**: One of trustees proposes the upgrade using
    the following steps:
 
-   1. Calculates SHA-256 or SHA-512 checksums of the new application version
+   1. Make sure that the `auto-upgrade` parameter is present in `cosmovisor.service` (in the folder - `/etc/systemd/system/`) and if the `auto-upgrade` parameter does not exist, then add this `auto-upgrade` parameter to the section `Service` for working **`auto-upgrade`**.
+      
+      For example:
+
+      ```bash
+      Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=true"
+      ```
+      > **_Note:_**  In this case, `true` means that the **`auto-upgrade`** is working. If you want to disable **`auto-update`**, you can set the value `false` (`DAEMON_ALLOW_DOWNLOAD_BINARIES=false`) or remove the above line of code from the `cosmovisor.service`.
+
+   2. Calculates SHA-256 or SHA-512 checksums of the new application version
       binaries (for the supported platforms) taken from the project release.
       This can be done using `sha256sum` or `sha512sum` tool.
 
@@ -27,7 +36,7 @@ application version:
       sha256sum ./dcld
       ```
 
-   2. Sends [`ProposeUpgrade`](./transactions.md#propose_upgrade) transaction
+   3. Sends [`ProposeUpgrade`](./transactions.md#propose_upgrade) transaction
       with the name of the new upgrade handler, the chosen ledger height and the
       info containing URLs of the new application version binaries for supported
       platforms with the calculated checksums.
@@ -160,6 +169,8 @@ application version:
        ```bash
        sudo chown $(whoami) $HOME/.dcl/cosmovisor/upgrades/vX.X.X/bin/dcld
        sudo chmod a+x $HOME/.dcl/cosmovisor/upgrades/vX.X.X/bin/dcld
+       ```
+       > **_Note:_** If you use `auto-upgrade` with `manual-update`, then `manual-update` will work and `auto-upgrade` will be ignored.
 
     #### *** Steps [3-5] can be automated using the following command which downloads and verifies that the downloaded application binary matches the checksum specified in the URL
       command:
