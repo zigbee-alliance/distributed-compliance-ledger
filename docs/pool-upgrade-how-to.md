@@ -17,16 +17,7 @@ application version:
 3. **[A Trustee] ProposeUpgrade**: One of trustees proposes the upgrade using
    the following steps:
 
-   1. Make sure that the `auto-upgrade` parameter is present in `cosmovisor.service` (in the folder - `/etc/systemd/system/`) and if the `auto-upgrade` parameter does not exist, then add this `auto-upgrade` parameter to the section `Service` for working **`auto-upgrade`**.
-      
-      For example:
-
-      ```bash
-      Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=true"
-      ```
-      > **_Note:_**  In this case, `true` means that the **`auto-upgrade`** is working. If you want to disable **`auto-upgrade`**, you can set the value `false` (`DAEMON_ALLOW_DOWNLOAD_BINARIES=false`) or remove the above line of code from the `cosmovisor.service`.
-
-   2. Calculates SHA-256 or SHA-512 checksums of the new application version
+   1. Calculates SHA-256 or SHA-512 checksums of the new application version
       binaries (for the supported platforms) taken from the project release.
       This can be done using `sha256sum` or `sha512sum` tool.
 
@@ -36,7 +27,7 @@ application version:
       sha256sum ./dcld
       ```
 
-   3. Sends [`ProposeUpgrade`](./transactions.md#propose_upgrade) transaction
+   2. Sends [`ProposeUpgrade`](./transactions.md#propose_upgrade) transaction
       with the name of the new upgrade handler, the chosen ledger height and the
       info containing URLs of the new application version binaries for supported
       platforms with the calculated checksums.
@@ -107,70 +98,85 @@ application version:
    steps *(these must be done for all the nodes: validators, observers, seed
    nodes, sentry nodes)*:
 
-    1. Switches current user to the user on behalf of whom `cosmovisor` service
-       is running:
+   1. Make sure that the `auto-download` parameter is present in `cosmovisor.service` (in the folder - `/etc/systemd/system/`) and if the `auto-download` parameter does not exist, then add this `auto-download` parameter to the section `Service` for working **`auto-download`**.
+      
+      For example:
 
-       ```bash
-       su - <USERNAME>
-       ```
+      ```bash
+      Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=true"
+      ```
+      > **_Note:_**  In this case, `true` means that the **`auto-download`** is working. If you want to disable **`auto-download`**, you can set the value `false` (`DAEMON_ALLOW_DOWNLOAD_BINARIES=false`) or remove the above line of code from the `cosmovisor.service`.
 
-       where `<USERNAME>` is the corresponding username
+   2. Switches current user to the user on behalf of whom `cosmovisor` service
+      is running:
 
-       The command will ask for the user's password. Enter it.
+      ```bash
+      su - <USERNAME>
+      ```
 
-    2. Downloads the application binary from the URL specified in the upgrade
-       plan `Info` field and corresponding to the node platform.
+      where `<USERNAME>` is the corresponding username
 
-       Command to view the current scheduled upgrade plan:
+      The command will ask for the user's password. Enter it.
 
-       ```bash
-       dcld query upgrade plan
-       ```
+   3. Downloads the application binary from the URL specified in the upgrade
+      plan `Info` field and corresponding to the node platform.
 
-    3. Verifies that the downloaded application binary matches the checksum
-       specified in the URL. This can be done automatically together with the
-       previous step by [`go-getter`](https://github.com/hashicorp/go-getter)
-       download tool (its executable binaries for various platforms can be
-       downloaded from <https://github.com/hashicorp/go-getter/releases>).
+      Command to view the current scheduled upgrade plan:
 
-       For example:
+      ```bash
+      dcld query upgrade plan
+      ```
 
-       ```bash
-       go-getter https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/vX.X.X/dcld?checksum=sha256:50708d4f7e00da347d4e678bf26780cd424232461c4bb414f72391c75e39545a $HOME/Downloads
-       ```
+   4. Verifies that the downloaded application binary matches the checksum
+      specified in the URL. This can be done automatically together with the
+      previous step by [`go-getter`](https://github.com/hashicorp/go-getter)
+      download tool (its executable binaries for various platforms can be
+      downloaded from <https://github.com/hashicorp/go-getter/releases>).
 
-       `go-getter` verifies that the downloaded file matches the checksum when
-       the URL is provided in the specified format. If the downloaded file
-       checksum does not equal to the checksum provided in the URL, `go-getter`
-       reports that checksums did not match.
+      For example:
 
-    4. Creates a directory with the name of the upgrade within
-       `$HOME/.dcl/cosmovisor/upgrades`, creates `bin` sub-directory within the
-       created directory, and puts the new application binary into `bin`
-       sub-directory.
+      ```bash
+      go-getter https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/vX.X.X/dcld?checksum=sha256:50708d4f7e00da347d4e678bf26780cd424232461c4bb414f72391c75e39545a $HOME/Downloads
+      ```
 
-       For example:
+      `go-getter` verifies that the downloaded file matches the checksum when
+      the URL is provided in the specified format. If the downloaded file
+      checksum does not equal to the checksum provided in the URL, `go-getter`
+      reports that checksums did not match.
 
-       ```bash
-       cd $HOME/.dcl/cosmovisor
-       mkdir -p upgrades
-       cd upgrades
-       mkdir vX.X.X
-       cd vX.X.X
-       mkdir bin
-       cd $HOME/Downloads
-       cp ./dcld $HOME/.dcl/cosmovisor/upgrades/vX.X.X/bin/
-       ```
+   5. Creates a directory with the name of the upgrade within
+      `$HOME/.dcl/cosmovisor/upgrades`, creates `bin` sub-directory within the
+      created directory, and puts the new application binary into `bin`
+      sub-directory.
 
-    5. Sets proper owner and permissions for the new application binary.
+      For example:
 
-       For example:
+      ```bash
+      cd $HOME/.dcl/cosmovisor
+      mkdir -p upgrades
+      cd upgrades
+      mkdir vX.X.X
+      cd vX.X.X
+      mkdir bin
+      cd $HOME/Downloads
+      cp ./dcld $HOME/.dcl/cosmovisor/upgrades/vX.X.X/bin/
+      ```
 
-       ```bash
-       sudo chown $(whoami) $HOME/.dcl/cosmovisor/upgrades/vX.X.X/bin/dcld
-       sudo chmod a+x $HOME/.dcl/cosmovisor/upgrades/vX.X.X/bin/dcld
-       ```
-       > **_Note:_** If you use `auto-upgrade` with `manual-update`, then `manual-update` will work and `auto-upgrade` will be ignored.
+   6. Sets proper owner and permissions for the new application binary.
+
+      For example:
+
+      ```bash
+      sudo chown $(whoami) $HOME/.dcl/cosmovisor/upgrades/vX.X.X/bin/dcld
+      sudo chmod a+x $HOME/.dcl/cosmovisor/upgrades/vX.X.X/bin/dcld
+      ```
+
+      When `auto-download` is enabled:
+         * `Binary is put manually` to the correct path, then `manual-update` will work and `auto-download` will be ignored.
+         * `Binary is not there` - `auto-download` will work and `manual-update` will be ignored.
+      
+      > **_Note:_** Also make sure that propese plan should contain the link and the checksum to the binary according the format specified in cosmovisor docs. 
+      See the [Command Line Arguments And Environment Variables in Cosmovisor](https://github.com/cosmos/cosmos-sdk/tree/main/cosmovisor#command-line-arguments-and-environment-variables).
 
     #### *** Steps [3-5] can be automated using the following command which downloads and verifies that the downloaded application binary matches the checksum specified in the URL
       command:
