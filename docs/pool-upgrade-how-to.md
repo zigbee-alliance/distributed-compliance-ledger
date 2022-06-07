@@ -24,7 +24,7 @@ application version:
       ```bash
       Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=true"
       ```
-      > **_Note:_**  In this case, `true` means that the **`auto-upgrade`** is working. If you want to disable **`auto-update`**, you can set the value `false` (`DAEMON_ALLOW_DOWNLOAD_BINARIES=false`) or remove the above line of code from the `cosmovisor.service`.
+      > **_Note:_**  In this case, `true` means that the **`auto-upgrade`** is working. If you want to disable **`auto-upgrade`**, you can set the value `false` (`DAEMON_ALLOW_DOWNLOAD_BINARIES=false`) or remove the above line of code from the `cosmovisor.service`.
 
    2. Calculates SHA-256 or SHA-512 checksums of the new application version
       binaries (for the supported platforms) taken from the project release.
