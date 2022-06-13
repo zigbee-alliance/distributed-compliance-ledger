@@ -13,7 +13,8 @@ const baseComplianceInfo = {
     date: '',
     reason: '',
     owner: '',
-    programTypeVersion: ''
+    programTypeVersion: '',
+    certificationID: ''
 };
 export const ComplianceInfo = {
     encode(message, writer = Writer.create()) {
@@ -52,6 +53,9 @@ export const ComplianceInfo = {
         }
         if (message.programTypeVersion !== '') {
             writer.uint32(98).string(message.programTypeVersion);
+        }
+        if (message.certificationID !== '') {
+            writer.uint32(106).string(message.certificationID);
         }
         return writer;
     },
@@ -98,6 +102,9 @@ export const ComplianceInfo = {
                     break;
                 case 12:
                     message.programTypeVersion = reader.string();
+                    break;
+                case 13:
+                    message.certificationID = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -180,6 +187,12 @@ export const ComplianceInfo = {
         else {
             message.programTypeVersion = '';
         }
+        if (object.certificationID !== undefined && object.certificationID !== null) {
+            message.certificationID = String(object.certificationID);
+        }
+        else {
+            message.certificationID = '';
+        }
         return message;
     },
     toJSON(message) {
@@ -201,6 +214,7 @@ export const ComplianceInfo = {
             obj.history = [];
         }
         message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion);
+        message.certificationID !== undefined && (obj.certificationID = message.certificationID);
         return obj;
     },
     fromPartial(object) {
@@ -276,6 +290,12 @@ export const ComplianceInfo = {
         }
         else {
             message.programTypeVersion = '';
+        }
+        if (object.certificationID !== undefined && object.certificationID !== null) {
+            message.certificationID = object.certificationID;
+        }
+        else {
+            message.certificationID = '';
         }
         return message;
     }
