@@ -12,7 +12,10 @@ const TypeMsgCertifyModel = "certify_model"
 
 var _ sdk.Msg = &MsgCertifyModel{}
 
-func NewMsgCertifyModel(signer string, vid int32, pid int32, softwareVersion uint32, softwareVersionString string, cdVersionNumber uint32, certificationDate string, certificationType string, reason string) *MsgCertifyModel {
+func NewMsgCertifyModel(
+	signer string, vid int32, pid int32, softwareVersion uint32, softwareVersionString string, cdVersionNumber uint32,
+	certificationDate string, certificationType string, reason string, programTypeVersion string,
+) *MsgCertifyModel {
 	return &MsgCertifyModel{
 		Signer:                signer,
 		Vid:                   vid,
@@ -23,6 +26,7 @@ func NewMsgCertifyModel(signer string, vid int32, pid int32, softwareVersion uin
 		CertificationDate:     certificationDate,
 		CertificationType:     certificationType,
 		Reason:                reason,
+		ProgramTypeVersion:    programTypeVersion,
 	}
 }
 

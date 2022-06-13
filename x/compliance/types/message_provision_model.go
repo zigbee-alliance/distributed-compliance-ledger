@@ -12,7 +12,10 @@ const TypeMsgProvisionModel = "provision_model"
 
 var _ sdk.Msg = &MsgProvisionModel{}
 
-func NewMsgProvisionModel(signer string, vid int32, pid int32, softwareVersion uint32, softwareVersionString string, cDVersionNumber uint32, provisionalDate string, certificationType string, reason string) *MsgProvisionModel {
+func NewMsgProvisionModel(
+	signer string, vid int32, pid int32, softwareVersion uint32, softwareVersionString string, cDVersionNumber uint32,
+	provisionalDate string, certificationType string, reason string, programTypeVersion string,
+) *MsgProvisionModel {
 	return &MsgProvisionModel{
 		Signer:                signer,
 		Vid:                   vid,
@@ -23,6 +26,7 @@ func NewMsgProvisionModel(signer string, vid int32, pid int32, softwareVersion u
 		ProvisionalDate:       provisionalDate,
 		CertificationType:     certificationType,
 		Reason:                reason,
+		ProgramTypeVersion:    programTypeVersion,
 	}
 }
 
