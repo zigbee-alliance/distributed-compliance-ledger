@@ -24,6 +24,7 @@ func CmdRevokeModel() *cobra.Command {
 		reason                string
 		cdVersionNumber       uint32
 		programTypeVersion    string
+		certificationID       string
 	)
 
 	cmd := &cobra.Command{
@@ -47,6 +48,7 @@ func CmdRevokeModel() *cobra.Command {
 				certificationType,
 				reason,
 				programTypeVersion,
+				certificationID,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -75,6 +77,8 @@ func CmdRevokeModel() *cobra.Command {
 		"Optional comment describing the reason of revocation")
 	cmd.Flags().StringVar(&programTypeVersion, FlagProgramTypeVersion, "",
 		"Program Type Version of the certification")
+	cmd.Flags().StringVar(&certificationID, FlagCertificationID, "",
+		"Certification ID of the certification")
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)
@@ -83,6 +87,7 @@ func CmdRevokeModel() *cobra.Command {
 	_ = cmd.MarkFlagRequired(FlagCertificationType)
 	_ = cmd.MarkFlagRequired(FlagRevocationDate)
 	_ = cmd.MarkFlagRequired(FlagProgramTypeVersion)
+	_ = cmd.MarkFlagRequired(FlagCertificationID)
 	_ = cmd.MarkFlagRequired(flags.FlagFrom)
 
 	cli.AddTxFlagsToCmd(cmd)

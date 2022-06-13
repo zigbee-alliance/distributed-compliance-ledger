@@ -31,6 +31,7 @@ const (
 	FlagCDVersionNumber           = "cdVersionNumber"
 	FlagProvisionalDate           = "provisionalDate"
 	FlagProgramTypeVersion        = "programTypeVersion"
+	FlagCertificationID           = "certificationID"
 
 	TextCertificationType = "Certification type - Currently 'zigbee' and 'matter' types are supported"
 )

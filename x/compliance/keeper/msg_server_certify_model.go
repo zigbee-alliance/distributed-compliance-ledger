@@ -89,6 +89,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 			History:                            []*types.ComplianceHistoryItem{},
 			CDVersionNumber:                    msg.CDVersionNumber,
 			ProgramTypeVersion:                 msg.ProgramTypeVersion,
+			CertificationID:                    msg.CertificationID,
 		}
 	}
 
