@@ -10,7 +10,8 @@ const baseMsgCertifyModel = {
     cDVersionNumber: 0,
     certificationDate: '',
     certificationType: '',
-    reason: ''
+    reason: '',
+    programTypeVersion: ''
 };
 export const MsgCertifyModel = {
     encode(message, writer = Writer.create()) {
@@ -40,6 +41,9 @@ export const MsgCertifyModel = {
         }
         if (message.reason !== '') {
             writer.uint32(74).string(message.reason);
+        }
+        if (message.programTypeVersion !== '') {
+            writer.uint32(82).string(message.programTypeVersion);
         }
         return writer;
     },
@@ -76,6 +80,9 @@ export const MsgCertifyModel = {
                     break;
                 case 9:
                     message.reason = reader.string();
+                    break;
+                case 10:
+                    message.programTypeVersion = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -140,6 +147,12 @@ export const MsgCertifyModel = {
         else {
             message.reason = '';
         }
+        if (object.programTypeVersion !== undefined && object.programTypeVersion !== null) {
+            message.programTypeVersion = String(object.programTypeVersion);
+        }
+        else {
+            message.programTypeVersion = '';
+        }
         return message;
     },
     toJSON(message) {
@@ -153,6 +166,7 @@ export const MsgCertifyModel = {
         message.certificationDate !== undefined && (obj.certificationDate = message.certificationDate);
         message.certificationType !== undefined && (obj.certificationType = message.certificationType);
         message.reason !== undefined && (obj.reason = message.reason);
+        message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion);
         return obj;
     },
     fromPartial(object) {
@@ -211,6 +225,12 @@ export const MsgCertifyModel = {
         else {
             message.reason = '';
         }
+        if (object.programTypeVersion !== undefined && object.programTypeVersion !== null) {
+            message.programTypeVersion = object.programTypeVersion;
+        }
+        else {
+            message.programTypeVersion = '';
+        }
         return message;
     }
 };
@@ -255,7 +275,8 @@ const baseMsgRevokeModel = {
     cDVersionNumber: 0,
     revocationDate: '',
     certificationType: '',
-    reason: ''
+    reason: '',
+    programTypeVersion: ''
 };
 export const MsgRevokeModel = {
     encode(message, writer = Writer.create()) {
@@ -285,6 +306,9 @@ export const MsgRevokeModel = {
         }
         if (message.reason !== '') {
             writer.uint32(74).string(message.reason);
+        }
+        if (message.programTypeVersion !== '') {
+            writer.uint32(82).string(message.programTypeVersion);
         }
         return writer;
     },
@@ -321,6 +345,9 @@ export const MsgRevokeModel = {
                     break;
                 case 9:
                     message.reason = reader.string();
+                    break;
+                case 10:
+                    message.programTypeVersion = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -385,6 +412,12 @@ export const MsgRevokeModel = {
         else {
             message.reason = '';
         }
+        if (object.programTypeVersion !== undefined && object.programTypeVersion !== null) {
+            message.programTypeVersion = String(object.programTypeVersion);
+        }
+        else {
+            message.programTypeVersion = '';
+        }
         return message;
     },
     toJSON(message) {
@@ -398,6 +431,7 @@ export const MsgRevokeModel = {
         message.revocationDate !== undefined && (obj.revocationDate = message.revocationDate);
         message.certificationType !== undefined && (obj.certificationType = message.certificationType);
         message.reason !== undefined && (obj.reason = message.reason);
+        message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion);
         return obj;
     },
     fromPartial(object) {
@@ -456,6 +490,12 @@ export const MsgRevokeModel = {
         else {
             message.reason = '';
         }
+        if (object.programTypeVersion !== undefined && object.programTypeVersion !== null) {
+            message.programTypeVersion = object.programTypeVersion;
+        }
+        else {
+            message.programTypeVersion = '';
+        }
         return message;
     }
 };
@@ -500,7 +540,8 @@ const baseMsgProvisionModel = {
     cDVersionNumber: 0,
     provisionalDate: '',
     certificationType: '',
-    reason: ''
+    reason: '',
+    programTypeVersion: ''
 };
 export const MsgProvisionModel = {
     encode(message, writer = Writer.create()) {
@@ -530,6 +571,9 @@ export const MsgProvisionModel = {
         }
         if (message.reason !== '') {
             writer.uint32(74).string(message.reason);
+        }
+        if (message.programTypeVersion !== '') {
+            writer.uint32(82).string(message.programTypeVersion);
         }
         return writer;
     },
@@ -566,6 +610,9 @@ export const MsgProvisionModel = {
                     break;
                 case 9:
                     message.reason = reader.string();
+                    break;
+                case 10:
+                    message.programTypeVersion = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -630,6 +677,12 @@ export const MsgProvisionModel = {
         else {
             message.reason = '';
         }
+        if (object.programTypeVersion !== undefined && object.programTypeVersion !== null) {
+            message.programTypeVersion = String(object.programTypeVersion);
+        }
+        else {
+            message.programTypeVersion = '';
+        }
         return message;
     },
     toJSON(message) {
@@ -643,6 +696,7 @@ export const MsgProvisionModel = {
         message.provisionalDate !== undefined && (obj.provisionalDate = message.provisionalDate);
         message.certificationType !== undefined && (obj.certificationType = message.certificationType);
         message.reason !== undefined && (obj.reason = message.reason);
+        message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion);
         return obj;
     },
     fromPartial(object) {
@@ -700,6 +754,12 @@ export const MsgProvisionModel = {
         }
         else {
             message.reason = '';
+        }
+        if (object.programTypeVersion !== undefined && object.programTypeVersion !== null) {
+            message.programTypeVersion = object.programTypeVersion;
+        }
+        else {
+            message.programTypeVersion = '';
         }
         return message;
     }

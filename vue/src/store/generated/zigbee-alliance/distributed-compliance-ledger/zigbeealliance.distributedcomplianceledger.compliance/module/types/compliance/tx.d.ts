@@ -10,6 +10,7 @@ export interface MsgCertifyModel {
     certificationDate: string;
     certificationType: string;
     reason: string;
+    programTypeVersion: string;
 }
 export interface MsgCertifyModelResponse {
 }
@@ -23,6 +24,7 @@ export interface MsgRevokeModel {
     revocationDate: string;
     certificationType: string;
     reason: string;
+    programTypeVersion: string;
 }
 export interface MsgRevokeModelResponse {
 }
@@ -36,6 +38,7 @@ export interface MsgProvisionModel {
     provisionalDate: string;
     certificationType: string;
     reason: string;
+    programTypeVersion: string;
 }
 export interface MsgProvisionModelResponse {
 }

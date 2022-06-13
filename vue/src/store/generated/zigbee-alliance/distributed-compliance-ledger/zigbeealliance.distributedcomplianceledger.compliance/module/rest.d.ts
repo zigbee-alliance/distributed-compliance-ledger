@@ -33,6 +33,7 @@ export interface ComplianceComplianceInfo {
     reason?: string;
     owner?: string;
     history?: ComplianceComplianceHistoryItem[];
+    programTypeVersion?: string;
 }
 export declare type ComplianceMsgCertifyModelResponse = object;
 export declare type ComplianceMsgProvisionModelResponse = object;

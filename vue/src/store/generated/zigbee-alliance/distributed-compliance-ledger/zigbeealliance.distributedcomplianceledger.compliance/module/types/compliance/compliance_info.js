@@ -12,7 +12,8 @@ const baseComplianceInfo = {
     softwareVersionCertificationStatus: 0,
     date: '',
     reason: '',
-    owner: ''
+    owner: '',
+    programTypeVersion: ''
 };
 export const ComplianceInfo = {
     encode(message, writer = Writer.create()) {
@@ -48,6 +49,9 @@ export const ComplianceInfo = {
         }
         for (const v of message.history) {
             ComplianceHistoryItem.encode(v, writer.uint32(90).fork()).ldelim();
+        }
+        if (message.programTypeVersion !== '') {
+            writer.uint32(98).string(message.programTypeVersion);
         }
         return writer;
     },
@@ -91,6 +95,9 @@ export const ComplianceInfo = {
                     break;
                 case 11:
                     message.history.push(ComplianceHistoryItem.decode(reader, reader.uint32()));
+                    break;
+                case 12:
+                    message.programTypeVersion = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -167,6 +174,12 @@ export const ComplianceInfo = {
                 message.history.push(ComplianceHistoryItem.fromJSON(e));
             }
         }
+        if (object.programTypeVersion !== undefined && object.programTypeVersion !== null) {
+            message.programTypeVersion = String(object.programTypeVersion);
+        }
+        else {
+            message.programTypeVersion = '';
+        }
         return message;
     },
     toJSON(message) {
@@ -187,6 +200,7 @@ export const ComplianceInfo = {
         else {
             obj.history = [];
         }
+        message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion);
         return obj;
     },
     fromPartial(object) {
@@ -256,6 +270,12 @@ export const ComplianceInfo = {
             for (const e of object.history) {
                 message.history.push(ComplianceHistoryItem.fromPartial(e));
             }
+        }
+        if (object.programTypeVersion !== undefined && object.programTypeVersion !== null) {
+            message.programTypeVersion = object.programTypeVersion;
+        }
+        else {
+            message.programTypeVersion = '';
         }
         return message;
     }
