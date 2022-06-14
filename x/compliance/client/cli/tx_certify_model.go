@@ -15,19 +15,20 @@ var _ = strconv.Itoa(0)
 
 func CmdCertifyModel() *cobra.Command {
 	var (
-		vid                    int32
-		pid                    int32
-		softwareVersion        uint32
-		softwareVersionString  string
-		certificationDate      string
-		certificationType      string
-		reason                 string
-		cdVersionNumber        uint32
-		programTypeVersion     string
-		certificationID        string
-		familyID               string
-		supportedClusters      string
-		compliancePlatformUsed string
+		vid                       int32
+		pid                       int32
+		softwareVersion           uint32
+		softwareVersionString     string
+		certificationDate         string
+		certificationType         string
+		reason                    string
+		cdVersionNumber           uint32
+		programTypeVersion        string
+		certificationID           string
+		familyID                  string
+		supportedClusters         string
+		compliancePlatformUsed    string
+		compliancePlatformVersion string
 	)
 
 	cmd := &cobra.Command{
@@ -55,6 +56,7 @@ func CmdCertifyModel() *cobra.Command {
 				familyID,
 				supportedClusters,
 				compliancePlatformUsed,
+				compliancePlatformVersion,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -91,6 +93,8 @@ func CmdCertifyModel() *cobra.Command {
 		"Supported Clusters of the certification")
 	cmd.Flags().StringVar(&compliancePlatformUsed, FlagCompliancePlatformUsed, "",
 		"Compliance Platform Used of the certification")
+	cmd.Flags().StringVar(&compliancePlatformVersion, FlagCompliancePlatformVersion, "",
+		"Compliance Platform Version of the certification")
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)
