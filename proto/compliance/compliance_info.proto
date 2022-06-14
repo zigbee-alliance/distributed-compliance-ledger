@@ -22,6 +22,7 @@ message ComplianceInfo {
   string certificationID = 13;
   string familyID = 14;
   string supportedClusters = 15;
+  string compliancePlatformUsed = 16;
   
 }
 
