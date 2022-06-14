@@ -23,6 +23,7 @@ export interface ComplianceInfo {
   compliancePlatformUsed: string
   compliancePlatformVersion: string
   OSVersion: string
+  certificationRoute: string
 }
 
 const baseComplianceInfo: object = {
@@ -42,7 +43,8 @@ const baseComplianceInfo: object = {
   supportedClusters: '',
   compliancePlatformUsed: '',
   compliancePlatformVersion: '',
-  OSVersion: ''
+  OSVersion: '',
+  certificationRoute: ''
 }
 
 export const ComplianceInfo = {
@@ -100,6 +102,9 @@ export const ComplianceInfo = {
     }
     if (message.OSVersion !== '') {
       writer.uint32(146).string(message.OSVersion)
+    }
+    if (message.certificationRoute !== '') {
+      writer.uint32(154).string(message.certificationRoute)
     }
     return writer
   },
@@ -165,6 +170,9 @@ export const ComplianceInfo = {
           break
         case 18:
           message.OSVersion = reader.string()
+          break
+        case 19:
+          message.certificationRoute = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -267,6 +275,11 @@ export const ComplianceInfo = {
     } else {
       message.OSVersion = ''
     }
+    if (object.certificationRoute !== undefined && object.certificationRoute !== null) {
+      message.certificationRoute = String(object.certificationRoute)
+    } else {
+      message.certificationRoute = ''
+    }
     return message
   },
 
@@ -294,6 +307,7 @@ export const ComplianceInfo = {
     message.compliancePlatformUsed !== undefined && (obj.compliancePlatformUsed = message.compliancePlatformUsed)
     message.compliancePlatformVersion !== undefined && (obj.compliancePlatformVersion = message.compliancePlatformVersion)
     message.OSVersion !== undefined && (obj.OSVersion = message.OSVersion)
+    message.certificationRoute !== undefined && (obj.certificationRoute = message.certificationRoute)
     return obj
   },
 
@@ -389,6 +403,11 @@ export const ComplianceInfo = {
       message.OSVersion = object.OSVersion
     } else {
       message.OSVersion = ''
+    }
+    if (object.certificationRoute !== undefined && object.certificationRoute !== null) {
+      message.certificationRoute = object.certificationRoute
+    } else {
+      message.certificationRoute = ''
     }
     return message
   }

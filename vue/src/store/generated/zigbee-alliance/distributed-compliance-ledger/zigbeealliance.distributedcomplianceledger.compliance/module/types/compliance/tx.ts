@@ -20,6 +20,7 @@ export interface MsgCertifyModel {
   compliancePlatformUsed: string
   compliancePlatformVersion: string
   OSVersion: string
+  certificationRoute: string
 }
 
 export interface MsgCertifyModelResponse {}
@@ -41,6 +42,7 @@ export interface MsgRevokeModel {
   compliancePlatformUsed: string
   compliancePlatformVersion: string
   OSVersion: string
+  certificationRoute: string
 }
 
 export interface MsgRevokeModelResponse {}
@@ -62,6 +64,7 @@ export interface MsgProvisionModel {
   compliancePlatformUsed: string
   compliancePlatformVersion: string
   OSVersion: string
+  certificationRoute: string
 }
 
 export interface MsgProvisionModelResponse {}
@@ -82,7 +85,8 @@ const baseMsgCertifyModel: object = {
   supportedClusters: '',
   compliancePlatformUsed: '',
   compliancePlatformVersion: '',
-  OSVersion: ''
+  OSVersion: '',
+  certificationRoute: ''
 }
 
 export const MsgCertifyModel = {
@@ -134,6 +138,9 @@ export const MsgCertifyModel = {
     }
     if (message.OSVersion !== '') {
       writer.uint32(130).string(message.OSVersion)
+    }
+    if (message.certificationRoute !== '') {
+      writer.uint32(138).string(message.certificationRoute)
     }
     return writer
   },
@@ -192,6 +199,9 @@ export const MsgCertifyModel = {
           break
         case 16:
           message.OSVersion = reader.string()
+          break
+        case 17:
+          message.certificationRoute = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -283,6 +293,11 @@ export const MsgCertifyModel = {
     } else {
       message.OSVersion = ''
     }
+    if (object.certificationRoute !== undefined && object.certificationRoute !== null) {
+      message.certificationRoute = String(object.certificationRoute)
+    } else {
+      message.certificationRoute = ''
+    }
     return message
   },
 
@@ -304,6 +319,7 @@ export const MsgCertifyModel = {
     message.compliancePlatformUsed !== undefined && (obj.compliancePlatformUsed = message.compliancePlatformUsed)
     message.compliancePlatformVersion !== undefined && (obj.compliancePlatformVersion = message.compliancePlatformVersion)
     message.OSVersion !== undefined && (obj.OSVersion = message.OSVersion)
+    message.certificationRoute !== undefined && (obj.certificationRoute = message.certificationRoute)
     return obj
   },
 
@@ -389,6 +405,11 @@ export const MsgCertifyModel = {
     } else {
       message.OSVersion = ''
     }
+    if (object.certificationRoute !== undefined && object.certificationRoute !== null) {
+      message.certificationRoute = object.certificationRoute
+    } else {
+      message.certificationRoute = ''
+    }
     return message
   }
 }
@@ -447,7 +468,8 @@ const baseMsgRevokeModel: object = {
   supportedClusters: '',
   compliancePlatformUsed: '',
   compliancePlatformVersion: '',
-  OSVersion: ''
+  OSVersion: '',
+  certificationRoute: ''
 }
 
 export const MsgRevokeModel = {
@@ -499,6 +521,9 @@ export const MsgRevokeModel = {
     }
     if (message.OSVersion !== '') {
       writer.uint32(130).string(message.OSVersion)
+    }
+    if (message.certificationRoute !== '') {
+      writer.uint32(138).string(message.certificationRoute)
     }
     return writer
   },
@@ -557,6 +582,9 @@ export const MsgRevokeModel = {
           break
         case 16:
           message.OSVersion = reader.string()
+          break
+        case 17:
+          message.certificationRoute = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -648,6 +676,11 @@ export const MsgRevokeModel = {
     } else {
       message.OSVersion = ''
     }
+    if (object.certificationRoute !== undefined && object.certificationRoute !== null) {
+      message.certificationRoute = String(object.certificationRoute)
+    } else {
+      message.certificationRoute = ''
+    }
     return message
   },
 
@@ -669,6 +702,7 @@ export const MsgRevokeModel = {
     message.compliancePlatformUsed !== undefined && (obj.compliancePlatformUsed = message.compliancePlatformUsed)
     message.compliancePlatformVersion !== undefined && (obj.compliancePlatformVersion = message.compliancePlatformVersion)
     message.OSVersion !== undefined && (obj.OSVersion = message.OSVersion)
+    message.certificationRoute !== undefined && (obj.certificationRoute = message.certificationRoute)
     return obj
   },
 
@@ -754,6 +788,11 @@ export const MsgRevokeModel = {
     } else {
       message.OSVersion = ''
     }
+    if (object.certificationRoute !== undefined && object.certificationRoute !== null) {
+      message.certificationRoute = object.certificationRoute
+    } else {
+      message.certificationRoute = ''
+    }
     return message
   }
 }
@@ -812,7 +851,8 @@ const baseMsgProvisionModel: object = {
   supportedClusters: '',
   compliancePlatformUsed: '',
   compliancePlatformVersion: '',
-  OSVersion: ''
+  OSVersion: '',
+  certificationRoute: ''
 }
 
 export const MsgProvisionModel = {
@@ -864,6 +904,9 @@ export const MsgProvisionModel = {
     }
     if (message.OSVersion !== '') {
       writer.uint32(130).string(message.OSVersion)
+    }
+    if (message.certificationRoute !== '') {
+      writer.uint32(138).string(message.certificationRoute)
     }
     return writer
   },
@@ -922,6 +965,9 @@ export const MsgProvisionModel = {
           break
         case 16:
           message.OSVersion = reader.string()
+          break
+        case 17:
+          message.certificationRoute = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -1013,6 +1059,11 @@ export const MsgProvisionModel = {
     } else {
       message.OSVersion = ''
     }
+    if (object.certificationRoute !== undefined && object.certificationRoute !== null) {
+      message.certificationRoute = String(object.certificationRoute)
+    } else {
+      message.certificationRoute = ''
+    }
     return message
   },
 
@@ -1034,6 +1085,7 @@ export const MsgProvisionModel = {
     message.compliancePlatformUsed !== undefined && (obj.compliancePlatformUsed = message.compliancePlatformUsed)
     message.compliancePlatformVersion !== undefined && (obj.compliancePlatformVersion = message.compliancePlatformVersion)
     message.OSVersion !== undefined && (obj.OSVersion = message.OSVersion)
+    message.certificationRoute !== undefined && (obj.certificationRoute = message.certificationRoute)
     return obj
   },
 
@@ -1118,6 +1170,11 @@ export const MsgProvisionModel = {
       message.OSVersion = object.OSVersion
     } else {
       message.OSVersion = ''
+    }
+    if (object.certificationRoute !== undefined && object.certificationRoute !== null) {
+      message.certificationRoute = object.certificationRoute
+    } else {
+      message.certificationRoute = ''
     }
     return message
   }

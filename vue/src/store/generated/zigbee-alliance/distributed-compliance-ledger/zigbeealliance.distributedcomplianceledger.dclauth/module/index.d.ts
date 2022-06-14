@@ -3,8 +3,8 @@ import { Registry, OfflineSigner, EncodeObject } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
 import { MsgProposeAddAccount } from "./types/dclauth/tx";
 import { MsgRejectAddAccount } from "./types/dclauth/tx";
-import { MsgApproveRevokeAccount } from "./types/dclauth/tx";
 import { MsgApproveAddAccount } from "./types/dclauth/tx";
+import { MsgApproveRevokeAccount } from "./types/dclauth/tx";
 import { MsgProposeRevokeAccount } from "./types/dclauth/tx";
 export declare const MissingWalletError: Error;
 export declare const registry: Registry;
@@ -19,8 +19,8 @@ declare const txClient: (wallet: OfflineSigner, { addr: addr }?: TxClientOptions
     signAndBroadcast: (msgs: EncodeObject[], { fee, memo }?: SignAndBroadcastOptions) => any;
     msgProposeAddAccount: (data: MsgProposeAddAccount) => EncodeObject;
     msgRejectAddAccount: (data: MsgRejectAddAccount) => EncodeObject;
-    msgApproveRevokeAccount: (data: MsgApproveRevokeAccount) => EncodeObject;
     msgApproveAddAccount: (data: MsgApproveAddAccount) => EncodeObject;
+    msgApproveRevokeAccount: (data: MsgApproveRevokeAccount) => EncodeObject;
     msgProposeRevokeAccount: (data: MsgProposeRevokeAccount) => EncodeObject;
 }>;
 interface QueryClientOptions {

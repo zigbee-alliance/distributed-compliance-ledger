@@ -17,6 +17,7 @@ export interface MsgCertifyModel {
     compliancePlatformUsed: string;
     compliancePlatformVersion: string;
     OSVersion: string;
+    certificationRoute: string;
 }
 export interface MsgCertifyModelResponse {
 }
@@ -37,6 +38,7 @@ export interface MsgRevokeModel {
     compliancePlatformUsed: string;
     compliancePlatformVersion: string;
     OSVersion: string;
+    certificationRoute: string;
 }
 export interface MsgRevokeModelResponse {
 }
@@ -57,6 +59,7 @@ export interface MsgProvisionModel {
     compliancePlatformUsed: string;
     compliancePlatformVersion: string;
     OSVersion: string;
+    certificationRoute: string;
 }
 export interface MsgProvisionModelResponse {
 }
