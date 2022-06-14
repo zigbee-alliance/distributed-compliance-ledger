@@ -15,22 +15,23 @@ var _ sdk.Msg = &MsgProvisionModel{}
 func NewMsgProvisionModel(
 	signer string, vid int32, pid int32, softwareVersion uint32, softwareVersionString string, cDVersionNumber uint32,
 	provisionalDate string, certificationType string, reason string, programTypeVersion string, certificationID string,
-	familyID string, supportedClusters string,
+	familyID string, supportedClusters string, compliancePlatformUsed string,
 ) *MsgProvisionModel {
 	return &MsgProvisionModel{
-		Signer:                signer,
-		Vid:                   vid,
-		Pid:                   pid,
-		SoftwareVersion:       softwareVersion,
-		SoftwareVersionString: softwareVersionString,
-		CDVersionNumber:       cDVersionNumber,
-		ProvisionalDate:       provisionalDate,
-		CertificationType:     certificationType,
-		Reason:                reason,
-		ProgramTypeVersion:    programTypeVersion,
-		CertificationID:       certificationID,
-		FamilyID:              familyID,
-		SupportedClusters:     supportedClusters,
+		Signer:                 signer,
+		Vid:                    vid,
+		Pid:                    pid,
+		SoftwareVersion:        softwareVersion,
+		SoftwareVersionString:  softwareVersionString,
+		CDVersionNumber:        cDVersionNumber,
+		ProvisionalDate:        provisionalDate,
+		CertificationType:      certificationType,
+		Reason:                 reason,
+		ProgramTypeVersion:     programTypeVersion,
+		CertificationID:        certificationID,
+		FamilyID:               familyID,
+		SupportedClusters:      supportedClusters,
+		CompliancePlatformUsed: compliancePlatformUsed,
 	}
 }
 

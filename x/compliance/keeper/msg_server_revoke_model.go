@@ -106,6 +106,7 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 			CertificationID:                    msg.CertificationID,
 			FamilyID:                           msg.FamilyID,
 			SupportedClusters:                  msg.SupportedClusters,
+			CompliancePlatformUsed:             msg.CompliancePlatformUsed,
 		}
 	}
 

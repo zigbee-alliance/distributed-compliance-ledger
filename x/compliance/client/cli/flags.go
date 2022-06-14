@@ -34,6 +34,7 @@ const (
 	FlagCertificationID           = "certificationID"
 	FlagFamilyID                  = "familyID"
 	FlagSupportedClusters         = "supportedClusters"
+	FlagCompliancePlatformUsed    = "compliancePlatformUsed"
 
 	TextCertificationType = "Certification type - Currently 'zigbee' and 'matter' types are supported"
 )
