@@ -31,6 +31,7 @@ func CmdRevokeModel() *cobra.Command {
 		compliancePlatformVersion string
 		OSVersion                 string
 		certificationRoute        string
+		programType               string
 	)
 
 	cmd := &cobra.Command{
@@ -61,6 +62,7 @@ func CmdRevokeModel() *cobra.Command {
 				compliancePlatformVersion,
 				OSVersion,
 				certificationRoute,
+				programType,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -103,6 +105,8 @@ func CmdRevokeModel() *cobra.Command {
 		"OS Version of the certification")
 	cmd.Flags().StringVar(&certificationRoute, FlagCertificationRoute, "",
 		"Certification Route of the certification")
+	cmd.Flags().StringVar(&programType, FlagProgramType, "",
+		"Program Type of the certification")
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)
