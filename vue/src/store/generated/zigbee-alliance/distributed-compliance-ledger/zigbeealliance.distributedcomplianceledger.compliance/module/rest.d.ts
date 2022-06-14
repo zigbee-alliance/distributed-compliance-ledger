@@ -39,6 +39,7 @@ export interface ComplianceComplianceInfo {
     supportedClusters?: string;
     compliancePlatformUsed?: string;
     compliancePlatformVersion?: string;
+    OSVersion?: string;
 }
 export declare type ComplianceMsgCertifyModelResponse = object;
 export declare type ComplianceMsgProvisionModelResponse = object;

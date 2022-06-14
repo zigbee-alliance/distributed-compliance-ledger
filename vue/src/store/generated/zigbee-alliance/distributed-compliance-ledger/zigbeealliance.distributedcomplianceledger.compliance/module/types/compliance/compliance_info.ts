@@ -22,6 +22,7 @@ export interface ComplianceInfo {
   supportedClusters: string
   compliancePlatformUsed: string
   compliancePlatformVersion: string
+  OSVersion: string
 }
 
 const baseComplianceInfo: object = {
@@ -40,7 +41,8 @@ const baseComplianceInfo: object = {
   familyID: '',
   supportedClusters: '',
   compliancePlatformUsed: '',
-  compliancePlatformVersion: ''
+  compliancePlatformVersion: '',
+  OSVersion: ''
 }
 
 export const ComplianceInfo = {
@@ -95,6 +97,9 @@ export const ComplianceInfo = {
     }
     if (message.compliancePlatformVersion !== '') {
       writer.uint32(138).string(message.compliancePlatformVersion)
+    }
+    if (message.OSVersion !== '') {
+      writer.uint32(146).string(message.OSVersion)
     }
     return writer
   },
@@ -157,6 +162,9 @@ export const ComplianceInfo = {
           break
         case 17:
           message.compliancePlatformVersion = reader.string()
+          break
+        case 18:
+          message.OSVersion = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -254,6 +262,11 @@ export const ComplianceInfo = {
     } else {
       message.compliancePlatformVersion = ''
     }
+    if (object.OSVersion !== undefined && object.OSVersion !== null) {
+      message.OSVersion = String(object.OSVersion)
+    } else {
+      message.OSVersion = ''
+    }
     return message
   },
 
@@ -280,6 +293,7 @@ export const ComplianceInfo = {
     message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters)
     message.compliancePlatformUsed !== undefined && (obj.compliancePlatformUsed = message.compliancePlatformUsed)
     message.compliancePlatformVersion !== undefined && (obj.compliancePlatformVersion = message.compliancePlatformVersion)
+    message.OSVersion !== undefined && (obj.OSVersion = message.OSVersion)
     return obj
   },
 
@@ -370,6 +384,11 @@ export const ComplianceInfo = {
       message.compliancePlatformVersion = object.compliancePlatformVersion
     } else {
       message.compliancePlatformVersion = ''
+    }
+    if (object.OSVersion !== undefined && object.OSVersion !== null) {
+      message.OSVersion = object.OSVersion
+    } else {
+      message.OSVersion = ''
     }
     return message
   }

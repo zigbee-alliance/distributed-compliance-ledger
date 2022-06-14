@@ -16,6 +16,7 @@ export interface MsgCertifyModel {
     supportedClusters: string;
     compliancePlatformUsed: string;
     compliancePlatformVersion: string;
+    OSVersion: string;
 }
 export interface MsgCertifyModelResponse {
 }
@@ -35,6 +36,7 @@ export interface MsgRevokeModel {
     supportedClusters: string;
     compliancePlatformUsed: string;
     compliancePlatformVersion: string;
+    OSVersion: string;
 }
 export interface MsgRevokeModelResponse {
 }
@@ -54,6 +56,7 @@ export interface MsgProvisionModel {
     supportedClusters: string;
     compliancePlatformUsed: string;
     compliancePlatformVersion: string;
+    OSVersion: string;
 }
 export interface MsgProvisionModelResponse {
 }
