@@ -5,15 +5,16 @@ DCLedger testing is implemented in python3 and based on [Locust](https://locust.
 ## Requirements
 
 * python >= 3.7
-* Install Docker as described at https://docs.docker.com/engine/install/ubuntu/
-    - In `Installation methods` section follow `Install using the repository` method
-        - Check whether your user of Ubuntu has been added to `docker` group using the following command:
+* Install Docker as described at <https://docs.docker.com/engine/install/ubuntu/>
+  * In `Installation methods` section follow `Install using the repository` method
+    * Check whether your user of Ubuntu has been added to `docker` group using the following command:
 
-            ```bash
-            getent group docker | awk -F: '{print $4}'
-            ```
+    ```bash
+    getent group docker | awk -F: '{print $4}'
+    ```
 
-            - If it has not been added, add it using `Manage Docker as a non-root user` section from <https://docs.docker.com/engine/install/linux-postinstall/>
+    * If it has not been added, add it using `Manage Docker as a non-root user` section from <https://docs.docker.com/engine/install/linux-postinstall/>
+
 * Install Docker Compose as described at <https://docs.docker.com/compose/install/>
 
 ## Installation
@@ -28,7 +29,7 @@ pip3 install -r bench/requirements.txt
 
 ## Preparation
 
-* If you run load tests on a local pool, follow the steps below (**this item is needed only for a local pool**):<br>
+* If you run load tests on a local pool, follow the steps below (**this item is needed only for a local pool**):
   * Each write transactions is signed and thus requires:
 
     * an account with write permissions (e.g. Vendor account)
@@ -36,58 +37,60 @@ pip3 install -r bench/requirements.txt
 
   * Initialize the pool and test accounts (**Warning** applicable to local in-docker pool only for now):
 
-      ```bash
-      make localnet_clean
-
-      make localnet_init
-
-      make localnet_start
-      # Note: once started ledger may require some time to complete the initialization.
-      ```
+```bash
+make localnet_clean
+make localnet_init
+make localnet_start
+# Note: once started ledger may require some time to complete the initialization.
+```
 
 * Copy accounts keys to folder `~/.dcl/keyring-test`:
-    * After connecting to the network, we must copy the `Trustee` account keys to `~/.dcl/keyring-test`. <br>
+  * After connecting to the network, we must copy the `Trustee` account keys to `~/.dcl/keyring-test`.
     `The number of accounts with role Trustee must not exceed 3`.
-    * If you run the test against a local pool, the account keys can be copied as follows:
+  * If you run the test against a local pool, the account keys can be copied as follows:
+
       ```bash
       cp ./.localnet/node0/keyring-test/* ~/.dcl/keyring-test
       ```
 
 * Go to `bench` folder
+
     ```bash
     cd bench
     ```
 
 * Open the .env file:
-    * update fields.<br>
+  * update fields.
         e.g.:
-        ```yml
-        DCLD_VERSION=v0.11.0
-        DCLD_NODE=tcp://host.docker.internal:26657
-        DCLD_CHAIN_ID=dclchain
 
-        WRITE_HOSTS=http://host.docker.internal:26657
-        READ_HOSTS=http://host.docker.internal:26640
-        TRUSTEE_ACCOUNT_NAME=jack
-        COUNT_USERS=4 
+    ```yml
+    DCLD_VERSION=v0.11.0
+    DCLD_NODE=tcp://host.docker.internal:26657
+    DCLD_CHAIN_ID=dclchain
 
-        CSV_REPORT_FILE_NAME=example
-        HTML_REPORT_FILE_NAME=example
-        ```
-        `<DCLD_VERSION>` - dcld binary version.<br>
-        `<DCLD_NODE>` - Address `<host>:<port>` of the node to connect. This node needs for adding account with role `Vendor` in write load tests. Default value in local in docker nodes is `tcp://host.docker.internal:26657`<br>
-        `<DCLD_CHAIN_ID>` - unique chain ID of the network you are going to connect.<br>
-        `<WRITE_HOSTS>` - hosts for writing load tests. Default value in local in docker nodes is `http://host.docker.internal:26657`<br>
-        `<READ_HOSTS>` - hosts for reading load tests. Default value in local in docker nodes is `http://host.docker.internal:26640`<br>
-        `<TRUSTEE_ACCOUNT_NAME>` - trustee account name. `Trustee` account, which will add account with `Vendor` role in write load tests.<br>
-        `<COUNT_USERS>` - number of users in load tests. `Number of users should be equal to number of workers for write tests.`<br>
-        `<CSV_REPORT_FILE_NAME>` - generates a set of stat files (summary, failures, exceptions and stats history).<br>
-        `<HTML_REPORT_FILE_NAME>` - generates an html report
-        Web UI also includes Download Data tab where the reports can be found.
-        > **_Note:_** The above options can either point to local in docker nodes or to external nodes.
+    WRITE_HOSTS=http://host.docker.internal:26657
+    READ_HOSTS=http://host.docker.internal:26640
+    TRUSTEE_ACCOUNT_NAME=jack
+    COUNT_USERS=4
 
+    CSV_REPORT_FILE_NAME=example
+    HTML_REPORT_FILE_NAME=example
+    ```
+
+    `<DCLD_VERSION>` - dcld binary version.
+    `<DCLD_NODE>` - Address `<host>:<port>` of the node to connect. This node needs for adding account with role `Vendor` in write load tests. Default value in local in docker nodes is `tcp://host.docker.internal:26657`
+    `<DCLD_CHAIN_ID>` - unique chain ID of the network you are going to connect.
+    `<WRITE_HOSTS>` - hosts for writing load tests. Default value in local in docker nodes is `http://host.docker.internal:26657`
+    `<READ_HOSTS>` - hosts for reading load tests. Default value in local in docker nodes is `http://host.docker.internal:26640`
+    `<TRUSTEE_ACCOUNT_NAME>` - trustee account name. `Trustee` account, which will add account with `Vendor` role in write load tests.
+    `<COUNT_USERS>` - number of users in load tests. `Number of users should be equal to number of workers for write tests.`
+    `<CSV_REPORT_FILE_NAME>` - generates a set of stat files (summary, failures, exceptions and stats history).
+    `<HTML_REPORT_FILE_NAME>` - generates an html report
+    Web UI also includes Download Data tab where the reports can be found.
+    > **_Note:_** The above options can either point to local in docker nodes or to external nodes.
 
 * Build `docker-compose` file
+
     ```bash
     docker-compose build
     ```
@@ -108,197 +111,249 @@ To run write load tests
 
 * Open the docker-compose.yml and add a new `command` for `master` and `worker`.  
     e.g.: for `master`
+
     ```yml
     command:
       - "--headless"
       - "WriteModelLoadTest"
     ```
+
     e.g.: for `worker`:
+
     ```yml
     command: 
       - "--headless"
       - "WriteModelLoadTest"
     ```
-* Open the docker-compose.yml and add a new field `extra_hosts` for `master` and `worker` (**this item need only for the local pool**):<br>
+
+* Open the docker-compose.yml and add a new field `extra_hosts` for `master` and `worker` (**this item need only for the local pool**):
   e.g.: for `master`
+
   ```yml
   extra_hosts:
     - "host.docker.internal:host-gateway"
   ```
+
   e.g.: for `worker`
+
   ```yml
   extra_hosts:
     - "host.docker.internal:host-gateway"
   ```
+
   `<host.docker.internal:host-gateway>` - need to connecting to localhost from locust container.
 
 * Run docker-compose.yml
+
     ```bash
     docker-compose up --scale worker=<workers-count>
     # The workers run your Users and send back statistics to the master. The master instance doesn't run any Users itself. Both the master and worker machines must have a copy of the locustfile when running Locust distributed.
     ```
+
     `<workers-count>`- number of machine. `Number of users should be equal to number of workers for write tests.`
 
 To run read load tests
 
 * Open the docker-compose.yml and add a new `command` for `master` and `worker`.  
     e.g.: for `master`
+
     ```yml
     command: 
       - "--headless"
       - "ReadModelLoadTest" 
     ```
+
     e.g.: for `worker`:
+
     ```yml
     command: 
       - "--headless"
       - "ReadModelLoadTest" 
     ```
-* Open the docker-compose.yml and add a new field `extra_hosts` for `master` and `worker` (**this item need only for the local pool**):<br>
+
+* Open the docker-compose.yml and add a new field `extra_hosts` for `master` and `worker` (**this item need only for the local pool**):
   e.g.: for `master`
+
   ```yml
   extra_hosts:
     - "host.docker.internal:host-gateway"
   ```
+
   e.g.: for `worker`
+
   ```yml
   extra_hosts:
     - "host.docker.internal:host-gateway"
   ```
+
   `<host.docker.internal:host-gateway>` - need to connecting to localhost from locust container.
 
 * Run docker-compose.yml
+
     ```bash
     docker-compose up --scale worker=<workers-count>
     # The workers run your Users and send back statistics to the master. The master instance doesn't run any Users itself. Both the master and worker machines must have a copy of the locustfile when running Locust distributed.
     ```
-    `<workers-count>`- number of machine.
 
+    `<workers-count>`- number of machine.
 
 To run write/read load tests
 
 * Open the docker-compose.yml and add a new `command` for `master` and `worker`.  
     e.g.: for `master`
+
     ```yml
     command: 
       - "--headless"
     ```
+
     e.g.: for `worker`:
+
     ```yml
     command: 
       - "--headless" 
     ```
-* Open the docker-compose.yml and add a new field `extra_hosts` for `master` and `worker` (**this item need only for the local pool**):<br>
+
+* Open the docker-compose.yml and add a new field `extra_hosts` for `master` and `worker` (**this item need only for the local pool**):
   e.g.: for `master`
+
   ```yml
   extra_hosts:
     - "host.docker.internal:host-gateway"
   ```
+
   e.g.: for `worker`
+
   ```yml
   extra_hosts:
     - "host.docker.internal:host-gateway"
   ```
+
   `<host.docker.internal:host-gateway>` - need to connecting to localhost from locust container.
 
 * Run docker-compose.yml
+
     ```bash
     docker-compose up --scale worker=<workers-count>
     # The workers run your Users and send back statistics to the master. The master instance doesn't run any Users itself. Both the master and worker machines must have a copy of the locustfile when running Locust distributed.
     ```
-    `<workers-count>`- number of machine. `Number of users should be equal to number of workers for write tests.`
 
+    `<workers-count>`- number of machine. `Number of users should be equal to number of workers for write tests.`
 
 ### Web UI
 
 To run write load tests
 
-* Open the docker-compose.yml and add a new `command` for `master` and `worker`.  
-    <br> e.g.: for `master`
-    ```yml
-    command: 
-      - "WriteModelLoadTest" 
-    ```
-    e.g.: for `worker`:
+* Open the docker-compose.yml and add a new `command` for `master` and `worker`.
+    e.g.: for `master`
+
     ```yml
     command: 
       - "WriteModelLoadTest" 
     ```
 
-* Open the docker-compose.yml and add a new field `extra_hosts` for `master` and `worker` (**this item need only for the local pool**):<br>
+    e.g.: for `worker`:
+
+    ```yml
+    command: 
+      - "WriteModelLoadTest" 
+    ```
+
+* Open the docker-compose.yml and add a new field `extra_hosts` for `master` and `worker` (**this item need only for the local pool**):
   e.g.: for `master`
+
   ```yml
   extra_hosts:
     - "host.docker.internal:host-gateway"
   ```
+
   e.g.: for `worker`
+
   ```yml
   extra_hosts:
     - "host.docker.internal:host-gateway"
   ```
+
   `<host.docker.internal:host-gateway>` - need to connecting to localhost from locust container.
 
 * Run docker-compose.yml
+
     ```bash
     docker-compose up --scale worker=<workers-count>
     # The workers run your Users and send back statistics to the master. The master instance doesn't run any Users itself. Both the master and worker machines must have a copy of the locustfile when running Locust distributed.
     ```
+
     `<workers-count>`- number of machine. `Number of users should be equal to number of workers for write tests.`
 
 To run read load tests
 
 * Open the docker-compose.yml and add a new `command` for `master` and `worker`.  
-    <br> e.g.: for `master`
+     e.g.: for `master`
+
     ```yml
     command:
       - "ReadModelLoadTest" 
     ```
-    e.g.: for `worker`: 
+
+    e.g.: for `worker`:
+
     ```yml
     command: 
       - "ReadModelLoadTest" 
     ```
 
-* Open the docker-compose.yml and add a new field `extra_hosts` for `master` and `worker` (**this item need only for the local pool**):<br>
+* Open the docker-compose.yml and add a new field `extra_hosts` for `master` and `worker` (**this item need only for the local pool**):
   e.g.: for `master`
+
   ```yml
   extra_hosts:
     - "host.docker.internal:host-gateway"
   ```
+
   e.g.: for `worker`
+
   ```yml
   extra_hosts:
     - "host.docker.internal:host-gateway"
   ```
+
   `<host.docker.internal:host-gateway>` - need to connecting to localhost from locust container.
 
 * Run docker-compose.yml
+
     ```bash
     docker-compose up --scale worker=<workers-count>
     # The workers run your Users and send back statistics to the master. The master instance doesn't run any Users itself. Both the master and worker machines must have a copy of the locustfile when running Locust distributed.
     ```
+
     `<workers-count>`- number of machine.
 
 To run write/read load tests
 
-* Open the docker-compose.yml and add a new field `extra_hosts` for `master` and `worker` (**this item need only for the local pool**):<br>
+* Open the docker-compose.yml and add a new field `extra_hosts` for `master` and `worker` (**this item need only for the local pool**):
   e.g.: for `master`
+
   ```yml
   extra_hosts:
     - "host.docker.internal:host-gateway"
   ```
+
   e.g.: for `worker`
+
   ```yml
   extra_hosts:
     - "host.docker.internal:host-gateway"
   ```
+
   `<host.docker.internal:host-gateway>` - need to connecting to localhost from locust container.
 
 * Run docker-compose.yml
+
     ```bash
     docker-compose up --scale worker=<workers-count>
     # The workers run your Users and send back statistics to the master. The master instance doesn't run any Users itself. Both the master and worker machines must have a copy of the locustfile when running Locust distributed.
     ```
+
     `<workers-count>`- number of machine. `Number of users should be equal to number of workers for write tests.`
 
 Then you can open `http://localhost:8089/` and launch the tests from the browser.
@@ -335,4 +390,5 @@ Additional sources (linux):
 * [RedHat: How to set ulimit values](https://access.redhat.com/solutions/61334)
 
 ## ToDo
+
 * consider different types of tx: async, sync (currently used), commit

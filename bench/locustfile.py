@@ -14,17 +14,16 @@
 
 import json
 import logging
-import string
 import random
-import common
-
-from locust import HttpUser, events, task
+import string
 from typing import List
+
+import common
+from locust import HttpUser, events, task
 
 DEFAULT_TARGET_HOST = "http://localhost:26657"
 DEFAULT_REST_HOST = "http://localhost:26640"
 DEFAULT_TRUSTEE_ACCOUNT_NAME = "jack"
-
 
 
 write_hosts = []
@@ -71,73 +70,77 @@ def _(environment, **kw):
         read_hosts.extend(environment.parsed_options.read_hosts.split(","))
 
     if environment.parsed_options.trustee_account_names:
-        trustee_account_names.extend(environment.parsed_options.trustee_account_names.split(","))
+        trustee_account_names.extend(
+            environment.parsed_options.trustee_account_names.split(",")
+        )
+
 
 class WriteModelLoadTest(HttpUser):
     host = ""
     weight = 5
-    
+
     vendor_account_name = common.generate_random_name()
     vendor_id = common.generate_random_number()
     vendor_account_number = int
     vendor_account_address = string
 
-    model_id = 1  
+    model_id = 1
     model_sequence = 0
-    
 
     @task
     def add_model(self):
         payload = {
-            "method": "broadcast_tx_sync", 
-            "params": 
-                {
-                    "tx": 
-                        common.generate_txns(
-                            self.model_id, 
-                            self.model_sequence,  
-                            self.vendor_account_address, 
-                            self.vendor_id,
-                            self.vendor_account_number, 
-                        )
-                }, 
-            "id": 1
-            }
+            "method": "broadcast_tx_sync",
+            "params": {
+                "tx": common.generate_txns(
+                    self.model_id,
+                    self.model_sequence,
+                    self.vendor_account_address,
+                    self.vendor_id,
+                    self.vendor_account_number,
+                )
+            },
+            "id": 1,
+        }
 
         with self.client.post(
-                f"{self.host}/",
-                json.dumps(payload),
-                name="write transactions",
-                catch_response=True,
-            ) as response:
-                payload = json.loads(response.text)
+            f"{self.host}/",
+            json.dumps(payload),
+            name="write transactions",
+            catch_response=True,
+        ) as response:
+            payload = json.loads(response.text)
 
-                if "error" in payload:
-                    response.failure(json.dumps(payload["error"]))
-                elif "result" in payload:
-                    if payload["result"].get("code") != 0:
-                        error = dict(payload["result"])
-                        # to keep failure stat condensed
-                        error.pop("hash", None)
-                        response.failure(json.dumps(error))
-                else:
-                    response.failure("malformed txn: {response.text}")
-                
-                self.model_sequence += 1
-                self.model_id += 1
+            if "error" in payload:
+                response.failure(json.dumps(payload["error"]))
+            elif "result" in payload:
+                if payload["result"].get("code") != 0:
+                    error = dict(payload["result"])
+                    # to keep failure stat condensed
+                    error.pop("hash", None)
+                    response.failure(json.dumps(error))
+            else:
+                response.failure("malformed txn: {response.text}")
 
-    
+            self.model_sequence += 1
+            self.model_id += 1
+
     def on_start(self):
         # Get RPC endpoint
         if write_hosts:
             self.host = random.choice(write_hosts)
         else:
             self.host = DEFAULT_TARGET_HOST
-        
-        common.create_vendor_account(self.vendor_account_name, self.vendor_id, trustee_account_names[0])
-        
+
+        common.create_vendor_account(
+            self.vendor_account_name, self.vendor_id, trustee_account_names[0]
+        )
+
         self.vendor_account_address = common.keys_show_address(self.vendor_account_name)
-        self.vendor_account_number = common.get_account_number(self.vendor_account_address)
+        self.vendor_account_number = common.get_account_number(
+            self.vendor_account_address
+        )
+
 
 class ReadModelLoadTest(HttpUser):
     rest_host = ""
@@ -155,20 +158,21 @@ class ReadModelLoadTest(HttpUser):
         url = self.rest_host + "/dcl/model/models/" + str(vid) + "/" + str(pid)
         return url
 
-
     @task
     def get_model(self):
         global READ_REQUEST_COUNT
-        
-        if(len(self.models) > 0):
+
+        if len(self.models) > 0:
             index = random.randint(0, len(self.models) - 1)
 
             # Get vid and pid model
             vid = self.get_model_vid(index)
             pid = self.get_model_pid(index)
 
-            self.client.get(self.generate_get_model_url(vid, pid), name="get random model")
-        elif (len(self.models) == 0):
+            self.client.get(
+                self.generate_get_model_url(vid, pid), name="get random model"
+            )
+        elif len(self.models) == 0:
             logger.info("[ERROR! NOT FOUND MODELS!]")
 
     def on_start(self):
@@ -189,4 +193,3 @@ class ReadModelLoadTest(HttpUser):
 
             for item in json_var["model"]:
                 self.models.append(item)
-                

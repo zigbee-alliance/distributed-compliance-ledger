@@ -161,7 +161,8 @@ application version:
        sudo chown $(whoami) $HOME/.dcl/cosmovisor/upgrades/vX.X.X/bin/dcld
        sudo chmod a+x $HOME/.dcl/cosmovisor/upgrades/vX.X.X/bin/dcld
 
-    #### *** Steps [3-5] can be automated using the following command which downloads and verifies that the downloaded application binary matches the checksum specified in the URL
+       > Steps [3-5] can be automated using the following command which downloads and verifies that the downloaded application binary matches the checksum specified in the URL
+
       command:
 
       For example:

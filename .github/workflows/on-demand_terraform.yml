@@ -15,7 +15,7 @@
 
 name: Check Terraform scripts
 # yamllint disable-line rule:truthy
-on: 
+on:
   push:
     branches:
       - master
