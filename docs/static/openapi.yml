@@ -275,7 +275,7 @@ paths:
                             format: int64
                     programTypeVersion:
                       type: string
-                    certificationID:
+                    CDCertificationID:
                       type: string
                     familyID:
                       type: string
@@ -450,7 +450,7 @@ paths:
                           format: int64
                   programTypeVersion:
                     type: string
-                  certificationID:
+                  CDCertificationID:
                     type: string
                   familyID:
                     type: string
@@ -13688,7 +13688,7 @@ definitions:
               format: int64
       programTypeVersion:
         type: string
-      certificationID:
+      CDCertificationID:
         type: string
       familyID:
         type: string
@@ -13812,7 +13812,7 @@ definitions:
                     format: int64
             programTypeVersion:
               type: string
-            certificationID:
+            CDCertificationID:
               type: string
             familyID:
               type: string
@@ -14008,7 +14008,7 @@ definitions:
                   format: int64
           programTypeVersion:
             type: string
-          certificationID:
+          CDCertificationID:
             type: string
           familyID:
             type: string
