@@ -33,6 +33,7 @@ message MsgCertifyModel {
   string compliancePlatformUsed = 14 [(gogoproto.moretags) = "validate:\"max=100\""];
   string compliancePlatformVersion = 15 [(gogoproto.moretags) = "validate:\"max=64\""];
   string OSVersion = 16 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string certificationRoute = 17 [(gogoproto.moretags) = "validate:\"max=64\""];
 }
 
 message MsgCertifyModelResponse {
@@ -55,6 +56,7 @@ message MsgRevokeModel {
   string compliancePlatformUsed = 14 [(gogoproto.moretags) = "validate:\"max=100\""];
   string compliancePlatformVersion = 15 [(gogoproto.moretags) = "validate:\"max=64\""];
   string OSVersion = 16 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string certificationRoute = 17 [(gogoproto.moretags) = "validate:\"max=64\""];
 }
 
 message MsgRevokeModelResponse {
@@ -77,6 +79,7 @@ message MsgProvisionModel {
   string compliancePlatformUsed = 14 [(gogoproto.moretags) = "validate:\"max=100\""];
   string compliancePlatformVersion = 15 [(gogoproto.moretags) = "validate:\"max=64\""];
   string OSVersion = 16 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string certificationRoute = 17 [(gogoproto.moretags) = "validate:\"max=64\""];
 }
 
 message MsgProvisionModelResponse {
