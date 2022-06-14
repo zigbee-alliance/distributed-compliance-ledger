@@ -12,7 +12,8 @@ const baseMsgCertifyModel = {
     certificationType: '',
     reason: '',
     programTypeVersion: '',
-    certificationID: ''
+    certificationID: '',
+    familyID: ''
 };
 export const MsgCertifyModel = {
     encode(message, writer = Writer.create()) {
@@ -48,6 +49,9 @@ export const MsgCertifyModel = {
         }
         if (message.certificationID !== '') {
             writer.uint32(90).string(message.certificationID);
+        }
+        if (message.familyID !== '') {
+            writer.uint32(98).string(message.familyID);
         }
         return writer;
     },
@@ -90,6 +94,9 @@ export const MsgCertifyModel = {
                     break;
                 case 11:
                     message.certificationID = reader.string();
+                    break;
+                case 12:
+                    message.familyID = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -166,6 +173,12 @@ export const MsgCertifyModel = {
         else {
             message.certificationID = '';
         }
+        if (object.familyID !== undefined && object.familyID !== null) {
+            message.familyID = String(object.familyID);
+        }
+        else {
+            message.familyID = '';
+        }
         return message;
     },
     toJSON(message) {
@@ -181,6 +194,7 @@ export const MsgCertifyModel = {
         message.reason !== undefined && (obj.reason = message.reason);
         message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion);
         message.certificationID !== undefined && (obj.certificationID = message.certificationID);
+        message.familyID !== undefined && (obj.familyID = message.familyID);
         return obj;
     },
     fromPartial(object) {
@@ -251,6 +265,12 @@ export const MsgCertifyModel = {
         else {
             message.certificationID = '';
         }
+        if (object.familyID !== undefined && object.familyID !== null) {
+            message.familyID = object.familyID;
+        }
+        else {
+            message.familyID = '';
+        }
         return message;
     }
 };
@@ -297,7 +317,8 @@ const baseMsgRevokeModel = {
     certificationType: '',
     reason: '',
     programTypeVersion: '',
-    certificationID: ''
+    certificationID: '',
+    familyID: ''
 };
 export const MsgRevokeModel = {
     encode(message, writer = Writer.create()) {
@@ -333,6 +354,9 @@ export const MsgRevokeModel = {
         }
         if (message.certificationID !== '') {
             writer.uint32(90).string(message.certificationID);
+        }
+        if (message.familyID !== '') {
+            writer.uint32(98).string(message.familyID);
         }
         return writer;
     },
@@ -375,6 +399,9 @@ export const MsgRevokeModel = {
                     break;
                 case 11:
                     message.certificationID = reader.string();
+                    break;
+                case 12:
+                    message.familyID = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -451,6 +478,12 @@ export const MsgRevokeModel = {
         else {
             message.certificationID = '';
         }
+        if (object.familyID !== undefined && object.familyID !== null) {
+            message.familyID = String(object.familyID);
+        }
+        else {
+            message.familyID = '';
+        }
         return message;
     },
     toJSON(message) {
@@ -466,6 +499,7 @@ export const MsgRevokeModel = {
         message.reason !== undefined && (obj.reason = message.reason);
         message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion);
         message.certificationID !== undefined && (obj.certificationID = message.certificationID);
+        message.familyID !== undefined && (obj.familyID = message.familyID);
         return obj;
     },
     fromPartial(object) {
@@ -536,6 +570,12 @@ export const MsgRevokeModel = {
         else {
             message.certificationID = '';
         }
+        if (object.familyID !== undefined && object.familyID !== null) {
+            message.familyID = object.familyID;
+        }
+        else {
+            message.familyID = '';
+        }
         return message;
     }
 };
@@ -582,7 +622,8 @@ const baseMsgProvisionModel = {
     certificationType: '',
     reason: '',
     programTypeVersion: '',
-    certificationID: ''
+    certificationID: '',
+    familyID: ''
 };
 export const MsgProvisionModel = {
     encode(message, writer = Writer.create()) {
@@ -618,6 +659,9 @@ export const MsgProvisionModel = {
         }
         if (message.certificationID !== '') {
             writer.uint32(90).string(message.certificationID);
+        }
+        if (message.familyID !== '') {
+            writer.uint32(98).string(message.familyID);
         }
         return writer;
     },
@@ -660,6 +704,9 @@ export const MsgProvisionModel = {
                     break;
                 case 11:
                     message.certificationID = reader.string();
+                    break;
+                case 12:
+                    message.familyID = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -736,6 +783,12 @@ export const MsgProvisionModel = {
         else {
             message.certificationID = '';
         }
+        if (object.familyID !== undefined && object.familyID !== null) {
+            message.familyID = String(object.familyID);
+        }
+        else {
+            message.familyID = '';
+        }
         return message;
     },
     toJSON(message) {
@@ -751,6 +804,7 @@ export const MsgProvisionModel = {
         message.reason !== undefined && (obj.reason = message.reason);
         message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion);
         message.certificationID !== undefined && (obj.certificationID = message.certificationID);
+        message.familyID !== undefined && (obj.familyID = message.familyID);
         return obj;
     },
     fromPartial(object) {
@@ -820,6 +874,12 @@ export const MsgProvisionModel = {
         }
         else {
             message.certificationID = '';
+        }
+        if (object.familyID !== undefined && object.familyID !== null) {
+            message.familyID = object.familyID;
+        }
+        else {
+            message.familyID = '';
         }
         return message;
     }

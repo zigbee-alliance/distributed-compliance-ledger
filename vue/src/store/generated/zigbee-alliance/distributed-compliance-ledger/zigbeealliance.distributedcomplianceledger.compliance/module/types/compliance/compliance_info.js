@@ -14,7 +14,8 @@ const baseComplianceInfo = {
     reason: '',
     owner: '',
     programTypeVersion: '',
-    certificationID: ''
+    certificationID: '',
+    familyID: ''
 };
 export const ComplianceInfo = {
     encode(message, writer = Writer.create()) {
@@ -56,6 +57,9 @@ export const ComplianceInfo = {
         }
         if (message.certificationID !== '') {
             writer.uint32(106).string(message.certificationID);
+        }
+        if (message.familyID !== '') {
+            writer.uint32(114).string(message.familyID);
         }
         return writer;
     },
@@ -105,6 +109,9 @@ export const ComplianceInfo = {
                     break;
                 case 13:
                     message.certificationID = reader.string();
+                    break;
+                case 14:
+                    message.familyID = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -193,6 +200,12 @@ export const ComplianceInfo = {
         else {
             message.certificationID = '';
         }
+        if (object.familyID !== undefined && object.familyID !== null) {
+            message.familyID = String(object.familyID);
+        }
+        else {
+            message.familyID = '';
+        }
         return message;
     },
     toJSON(message) {
@@ -215,6 +228,7 @@ export const ComplianceInfo = {
         }
         message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion);
         message.certificationID !== undefined && (obj.certificationID = message.certificationID);
+        message.familyID !== undefined && (obj.familyID = message.familyID);
         return obj;
     },
     fromPartial(object) {
@@ -296,6 +310,12 @@ export const ComplianceInfo = {
         }
         else {
             message.certificationID = '';
+        }
+        if (object.familyID !== undefined && object.familyID !== null) {
+            message.familyID = object.familyID;
+        }
+        else {
+            message.familyID = '';
         }
         return message;
     }

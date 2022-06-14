@@ -15,6 +15,7 @@ export interface ComplianceInfo {
     history: ComplianceHistoryItem[];
     programTypeVersion: string;
     certificationID: string;
+    familyID: string;
 }
 export declare const ComplianceInfo: {
     encode(message: ComplianceInfo, writer?: Writer): Writer;

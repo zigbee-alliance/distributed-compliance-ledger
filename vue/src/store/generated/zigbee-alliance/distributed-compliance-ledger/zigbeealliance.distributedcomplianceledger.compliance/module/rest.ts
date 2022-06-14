@@ -55,6 +55,7 @@ export interface ComplianceComplianceInfo {
   history?: ComplianceComplianceHistoryItem[];
   programTypeVersion?: string;
   certificationID?: string;
+  familyID?: string;
 }
 
 export type ComplianceMsgCertifyModelResponse = object;
