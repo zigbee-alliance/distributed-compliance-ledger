@@ -293,6 +293,8 @@ paths:
                       type: string
                     transport:
                       type: string
+                    parentChild:
+                      type: string
               pagination:
                 type: object
                 properties:
@@ -473,6 +475,8 @@ paths:
                   programType:
                     type: string
                   transport:
+                    type: string
+                  parentChild:
                     type: string
         default:
           description: An unexpected error response.
@@ -13718,6 +13722,8 @@ definitions:
         type: string
       transport:
         type: string
+      parentChild:
+        type: string
   zigbeealliance.distributedcomplianceledger.compliance.ProvisionalModel:
     type: object
     properties:
@@ -13847,6 +13853,8 @@ definitions:
             programType:
               type: string
             transport:
+              type: string
+            parentChild:
               type: string
       pagination:
         type: object
@@ -14049,6 +14057,8 @@ definitions:
           programType:
             type: string
           transport:
+            type: string
+          parentChild:
             type: string
   zigbeealliance.distributedcomplianceledger.compliance.QueryGetProvisionalModelResponse:
     type: object
