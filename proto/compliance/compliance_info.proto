@@ -26,6 +26,7 @@ message ComplianceInfo {
   string compliancePlatformVersion = 17;
   string OSVersion = 18;
   string certificationRoute = 19;
+  string programType = 20;
   
 }
 
