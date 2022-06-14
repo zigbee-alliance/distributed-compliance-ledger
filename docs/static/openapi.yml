@@ -285,6 +285,8 @@ paths:
                       type: string
                     compliancePlatformVersion:
                       type: string
+                    OSVersion:
+                      type: string
               pagination:
                 type: object
                 properties:
@@ -457,6 +459,8 @@ paths:
                   compliancePlatformUsed:
                     type: string
                   compliancePlatformVersion:
+                    type: string
+                  OSVersion:
                     type: string
         default:
           description: An unexpected error response.
@@ -13694,6 +13698,8 @@ definitions:
         type: string
       compliancePlatformVersion:
         type: string
+      OSVersion:
+        type: string
   zigbeealliance.distributedcomplianceledger.compliance.ProvisionalModel:
     type: object
     properties:
@@ -13815,6 +13821,8 @@ definitions:
             compliancePlatformUsed:
               type: string
             compliancePlatformVersion:
+              type: string
+            OSVersion:
               type: string
       pagination:
         type: object
@@ -14009,6 +14017,8 @@ definitions:
           compliancePlatformUsed:
             type: string
           compliancePlatformVersion:
+            type: string
+          OSVersion:
             type: string
   zigbeealliance.distributedcomplianceledger.compliance.QueryGetProvisionalModelResponse:
     type: object
