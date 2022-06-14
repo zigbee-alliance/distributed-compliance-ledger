@@ -86,8 +86,6 @@ func CmdCertifyModel() *cobra.Command {
 	_ = cmd.MarkFlagRequired(FlagSoftwareVersionString)
 	_ = cmd.MarkFlagRequired(FlagCertificationType)
 	_ = cmd.MarkFlagRequired(FlagCertificationDate)
-	_ = cmd.MarkFlagRequired(FlagProgramTypeVersion)
-	_ = cmd.MarkFlagRequired(FlagCertificationID)
 	_ = cmd.MarkFlagRequired(flags.FlagFrom)
 
 	cli.AddTxFlagsToCmd(cmd)
