@@ -19,7 +19,8 @@ const baseMsgCertifyModel = {
     compliancePlatformVersion: '',
     OSVersion: '',
     certificationRoute: '',
-    programType: ''
+    programType: '',
+    transport: ''
 };
 export const MsgCertifyModel = {
     encode(message, writer = Writer.create()) {
@@ -76,6 +77,9 @@ export const MsgCertifyModel = {
         }
         if (message.programType !== '') {
             writer.uint32(146).string(message.programType);
+        }
+        if (message.transport !== '') {
+            writer.uint32(154).string(message.transport);
         }
         return writer;
     },
@@ -139,6 +143,9 @@ export const MsgCertifyModel = {
                     break;
                 case 18:
                     message.programType = reader.string();
+                    break;
+                case 19:
+                    message.transport = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -257,6 +264,12 @@ export const MsgCertifyModel = {
         else {
             message.programType = '';
         }
+        if (object.transport !== undefined && object.transport !== null) {
+            message.transport = String(object.transport);
+        }
+        else {
+            message.transport = '';
+        }
         return message;
     },
     toJSON(message) {
@@ -279,6 +292,7 @@ export const MsgCertifyModel = {
         message.OSVersion !== undefined && (obj.OSVersion = message.OSVersion);
         message.certificationRoute !== undefined && (obj.certificationRoute = message.certificationRoute);
         message.programType !== undefined && (obj.programType = message.programType);
+        message.transport !== undefined && (obj.transport = message.transport);
         return obj;
     },
     fromPartial(object) {
@@ -391,6 +405,12 @@ export const MsgCertifyModel = {
         else {
             message.programType = '';
         }
+        if (object.transport !== undefined && object.transport !== null) {
+            message.transport = object.transport;
+        }
+        else {
+            message.transport = '';
+        }
         return message;
     }
 };
@@ -444,7 +464,8 @@ const baseMsgRevokeModel = {
     compliancePlatformVersion: '',
     OSVersion: '',
     certificationRoute: '',
-    programType: ''
+    programType: '',
+    transport: ''
 };
 export const MsgRevokeModel = {
     encode(message, writer = Writer.create()) {
@@ -501,6 +522,9 @@ export const MsgRevokeModel = {
         }
         if (message.programType !== '') {
             writer.uint32(146).string(message.programType);
+        }
+        if (message.transport !== '') {
+            writer.uint32(154).string(message.transport);
         }
         return writer;
     },
@@ -564,6 +588,9 @@ export const MsgRevokeModel = {
                     break;
                 case 18:
                     message.programType = reader.string();
+                    break;
+                case 19:
+                    message.transport = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -682,6 +709,12 @@ export const MsgRevokeModel = {
         else {
             message.programType = '';
         }
+        if (object.transport !== undefined && object.transport !== null) {
+            message.transport = String(object.transport);
+        }
+        else {
+            message.transport = '';
+        }
         return message;
     },
     toJSON(message) {
@@ -704,6 +737,7 @@ export const MsgRevokeModel = {
         message.OSVersion !== undefined && (obj.OSVersion = message.OSVersion);
         message.certificationRoute !== undefined && (obj.certificationRoute = message.certificationRoute);
         message.programType !== undefined && (obj.programType = message.programType);
+        message.transport !== undefined && (obj.transport = message.transport);
         return obj;
     },
     fromPartial(object) {
@@ -816,6 +850,12 @@ export const MsgRevokeModel = {
         else {
             message.programType = '';
         }
+        if (object.transport !== undefined && object.transport !== null) {
+            message.transport = object.transport;
+        }
+        else {
+            message.transport = '';
+        }
         return message;
     }
 };
@@ -869,7 +909,8 @@ const baseMsgProvisionModel = {
     compliancePlatformVersion: '',
     OSVersion: '',
     certificationRoute: '',
-    programType: ''
+    programType: '',
+    transport: ''
 };
 export const MsgProvisionModel = {
     encode(message, writer = Writer.create()) {
@@ -926,6 +967,9 @@ export const MsgProvisionModel = {
         }
         if (message.programType !== '') {
             writer.uint32(146).string(message.programType);
+        }
+        if (message.transport !== '') {
+            writer.uint32(154).string(message.transport);
         }
         return writer;
     },
@@ -989,6 +1033,9 @@ export const MsgProvisionModel = {
                     break;
                 case 18:
                     message.programType = reader.string();
+                    break;
+                case 19:
+                    message.transport = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -1107,6 +1154,12 @@ export const MsgProvisionModel = {
         else {
             message.programType = '';
         }
+        if (object.transport !== undefined && object.transport !== null) {
+            message.transport = String(object.transport);
+        }
+        else {
+            message.transport = '';
+        }
         return message;
     },
     toJSON(message) {
@@ -1129,6 +1182,7 @@ export const MsgProvisionModel = {
         message.OSVersion !== undefined && (obj.OSVersion = message.OSVersion);
         message.certificationRoute !== undefined && (obj.certificationRoute = message.certificationRoute);
         message.programType !== undefined && (obj.programType = message.programType);
+        message.transport !== undefined && (obj.transport = message.transport);
         return obj;
     },
     fromPartial(object) {
@@ -1240,6 +1294,12 @@ export const MsgProvisionModel = {
         }
         else {
             message.programType = '';
+        }
+        if (object.transport !== undefined && object.transport !== null) {
+            message.transport = object.transport;
+        }
+        else {
+            message.transport = '';
         }
         return message;
     }

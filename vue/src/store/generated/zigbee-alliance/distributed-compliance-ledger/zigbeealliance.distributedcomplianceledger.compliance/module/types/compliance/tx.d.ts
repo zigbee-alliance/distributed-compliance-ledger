@@ -19,6 +19,7 @@ export interface MsgCertifyModel {
     OSVersion: string;
     certificationRoute: string;
     programType: string;
+    transport: string;
 }
 export interface MsgCertifyModelResponse {
 }
@@ -41,6 +42,7 @@ export interface MsgRevokeModel {
     OSVersion: string;
     certificationRoute: string;
     programType: string;
+    transport: string;
 }
 export interface MsgRevokeModelResponse {
 }
@@ -63,6 +65,7 @@ export interface MsgProvisionModel {
     OSVersion: string;
     certificationRoute: string;
     programType: string;
+    transport: string;
 }
 export interface MsgProvisionModelResponse {
 }

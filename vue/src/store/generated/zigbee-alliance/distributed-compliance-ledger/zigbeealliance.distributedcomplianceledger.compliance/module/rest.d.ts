@@ -42,6 +42,7 @@ export interface ComplianceComplianceInfo {
     OSVersion?: string;
     certificationRoute?: string;
     programType?: string;
+    transport?: string;
 }
 export declare type ComplianceMsgCertifyModelResponse = object;
 export declare type ComplianceMsgProvisionModelResponse = object;

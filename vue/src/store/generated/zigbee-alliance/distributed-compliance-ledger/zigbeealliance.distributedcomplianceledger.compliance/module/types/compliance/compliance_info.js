@@ -21,7 +21,8 @@ const baseComplianceInfo = {
     compliancePlatformVersion: '',
     OSVersion: '',
     certificationRoute: '',
-    programType: ''
+    programType: '',
+    transport: ''
 };
 export const ComplianceInfo = {
     encode(message, writer = Writer.create()) {
@@ -84,6 +85,9 @@ export const ComplianceInfo = {
         }
         if (message.programType !== '') {
             writer.uint32(162).string(message.programType);
+        }
+        if (message.transport !== '') {
+            writer.uint32(170).string(message.transport);
         }
         return writer;
     },
@@ -154,6 +158,9 @@ export const ComplianceInfo = {
                     break;
                 case 20:
                     message.programType = reader.string();
+                    break;
+                case 21:
+                    message.transport = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -284,6 +291,12 @@ export const ComplianceInfo = {
         else {
             message.programType = '';
         }
+        if (object.transport !== undefined && object.transport !== null) {
+            message.transport = String(object.transport);
+        }
+        else {
+            message.transport = '';
+        }
         return message;
     },
     toJSON(message) {
@@ -313,6 +326,7 @@ export const ComplianceInfo = {
         message.OSVersion !== undefined && (obj.OSVersion = message.OSVersion);
         message.certificationRoute !== undefined && (obj.certificationRoute = message.certificationRoute);
         message.programType !== undefined && (obj.programType = message.programType);
+        message.transport !== undefined && (obj.transport = message.transport);
         return obj;
     },
     fromPartial(object) {
@@ -436,6 +450,12 @@ export const ComplianceInfo = {
         }
         else {
             message.programType = '';
+        }
+        if (object.transport !== undefined && object.transport !== null) {
+            message.transport = object.transport;
+        }
+        else {
+            message.transport = '';
         }
         return message;
     }

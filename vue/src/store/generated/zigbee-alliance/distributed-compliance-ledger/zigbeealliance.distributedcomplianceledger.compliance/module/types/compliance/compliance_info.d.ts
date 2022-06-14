@@ -22,6 +22,7 @@ export interface ComplianceInfo {
     OSVersion: string;
     certificationRoute: string;
     programType: string;
+    transport: string;
 }
 export declare const ComplianceInfo: {
     encode(message: ComplianceInfo, writer?: Writer): Writer;
