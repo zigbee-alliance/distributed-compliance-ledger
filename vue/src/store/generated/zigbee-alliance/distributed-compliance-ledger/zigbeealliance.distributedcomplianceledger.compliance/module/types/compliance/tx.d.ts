@@ -11,7 +11,7 @@ export interface MsgCertifyModel {
     certificationType: string;
     reason: string;
     programTypeVersion: string;
-    certificationID: string;
+    CDCertificationID: string;
     familyID: string;
     supportedClusters: string;
     compliancePlatformUsed: string;
@@ -31,7 +31,7 @@ export interface MsgRevokeModel {
     certificationType: string;
     reason: string;
     programTypeVersion: string;
-    certificationID: string;
+    CDCertificationID: string;
     familyID: string;
     supportedClusters: string;
     compliancePlatformUsed: string;
@@ -51,7 +51,7 @@ export interface MsgProvisionModel {
     certificationType: string;
     reason: string;
     programTypeVersion: string;
-    certificationID: string;
+    CDCertificationID: string;
     familyID: string;
     supportedClusters: string;
     compliancePlatformUsed: string;

@@ -17,7 +17,7 @@ export interface ComplianceInfo {
   owner: string
   history: ComplianceHistoryItem[]
   programTypeVersion: string
-  certificationID: string
+  CDCertificationID: string
   familyID: string
   supportedClusters: string
   compliancePlatformUsed: string
@@ -37,7 +37,7 @@ const baseComplianceInfo: object = {
   reason: '',
   owner: '',
   programTypeVersion: '',
-  certificationID: '',
+  CDCertificationID: '',
   familyID: '',
   supportedClusters: '',
   compliancePlatformUsed: '',
@@ -83,8 +83,8 @@ export const ComplianceInfo = {
     if (message.programTypeVersion !== '') {
       writer.uint32(98).string(message.programTypeVersion)
     }
-    if (message.certificationID !== '') {
-      writer.uint32(106).string(message.certificationID)
+    if (message.CDCertificationID !== '') {
+      writer.uint32(106).string(message.CDCertificationID)
     }
     if (message.familyID !== '') {
       writer.uint32(114).string(message.familyID)
@@ -149,7 +149,7 @@ export const ComplianceInfo = {
           message.programTypeVersion = reader.string()
           break
         case 13:
-          message.certificationID = reader.string()
+          message.CDCertificationID = reader.string()
           break
         case 14:
           message.familyID = reader.string()
@@ -237,10 +237,10 @@ export const ComplianceInfo = {
     } else {
       message.programTypeVersion = ''
     }
-    if (object.certificationID !== undefined && object.certificationID !== null) {
-      message.certificationID = String(object.certificationID)
+    if (object.CDCertificationID !== undefined && object.CDCertificationID !== null) {
+      message.CDCertificationID = String(object.CDCertificationID)
     } else {
-      message.certificationID = ''
+      message.CDCertificationID = ''
     }
     if (object.familyID !== undefined && object.familyID !== null) {
       message.familyID = String(object.familyID)
@@ -288,7 +288,7 @@ export const ComplianceInfo = {
       obj.history = []
     }
     message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion)
-    message.certificationID !== undefined && (obj.certificationID = message.certificationID)
+    message.CDCertificationID !== undefined && (obj.CDCertificationID = message.CDCertificationID)
     message.familyID !== undefined && (obj.familyID = message.familyID)
     message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters)
     message.compliancePlatformUsed !== undefined && (obj.compliancePlatformUsed = message.compliancePlatformUsed)
@@ -360,10 +360,10 @@ export const ComplianceInfo = {
     } else {
       message.programTypeVersion = ''
     }
-    if (object.certificationID !== undefined && object.certificationID !== null) {
-      message.certificationID = object.certificationID
+    if (object.CDCertificationID !== undefined && object.CDCertificationID !== null) {
+      message.CDCertificationID = object.CDCertificationID
     } else {
-      message.certificationID = ''
+      message.CDCertificationID = ''
     }
     if (object.familyID !== undefined && object.familyID !== null) {
       message.familyID = object.familyID

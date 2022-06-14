@@ -14,7 +14,7 @@ export interface ComplianceInfo {
     owner: string;
     history: ComplianceHistoryItem[];
     programTypeVersion: string;
-    certificationID: string;
+    CDCertificationID: string;
     familyID: string;
     supportedClusters: string;
     compliancePlatformUsed: string;

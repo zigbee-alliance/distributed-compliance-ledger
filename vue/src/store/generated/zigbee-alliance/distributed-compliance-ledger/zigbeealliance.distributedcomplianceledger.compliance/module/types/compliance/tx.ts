@@ -14,7 +14,7 @@ export interface MsgCertifyModel {
   certificationType: string
   reason: string
   programTypeVersion: string
-  certificationID: string
+  CDCertificationID: string
   familyID: string
   supportedClusters: string
   compliancePlatformUsed: string
@@ -35,7 +35,7 @@ export interface MsgRevokeModel {
   certificationType: string
   reason: string
   programTypeVersion: string
-  certificationID: string
+  CDCertificationID: string
   familyID: string
   supportedClusters: string
   compliancePlatformUsed: string
@@ -56,7 +56,7 @@ export interface MsgProvisionModel {
   certificationType: string
   reason: string
   programTypeVersion: string
-  certificationID: string
+  CDCertificationID: string
   familyID: string
   supportedClusters: string
   compliancePlatformUsed: string
@@ -77,7 +77,7 @@ const baseMsgCertifyModel: object = {
   certificationType: '',
   reason: '',
   programTypeVersion: '',
-  certificationID: '',
+  CDCertificationID: '',
   familyID: '',
   supportedClusters: '',
   compliancePlatformUsed: '',
@@ -117,8 +117,8 @@ export const MsgCertifyModel = {
     if (message.programTypeVersion !== '') {
       writer.uint32(82).string(message.programTypeVersion)
     }
-    if (message.certificationID !== '') {
-      writer.uint32(90).string(message.certificationID)
+    if (message.CDCertificationID !== '') {
+      writer.uint32(90).string(message.CDCertificationID)
     }
     if (message.familyID !== '') {
       writer.uint32(98).string(message.familyID)
@@ -176,7 +176,7 @@ export const MsgCertifyModel = {
           message.programTypeVersion = reader.string()
           break
         case 11:
-          message.certificationID = reader.string()
+          message.CDCertificationID = reader.string()
           break
         case 12:
           message.familyID = reader.string()
@@ -253,10 +253,10 @@ export const MsgCertifyModel = {
     } else {
       message.programTypeVersion = ''
     }
-    if (object.certificationID !== undefined && object.certificationID !== null) {
-      message.certificationID = String(object.certificationID)
+    if (object.CDCertificationID !== undefined && object.CDCertificationID !== null) {
+      message.CDCertificationID = String(object.CDCertificationID)
     } else {
-      message.certificationID = ''
+      message.CDCertificationID = ''
     }
     if (object.familyID !== undefined && object.familyID !== null) {
       message.familyID = String(object.familyID)
@@ -298,7 +298,7 @@ export const MsgCertifyModel = {
     message.certificationType !== undefined && (obj.certificationType = message.certificationType)
     message.reason !== undefined && (obj.reason = message.reason)
     message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion)
-    message.certificationID !== undefined && (obj.certificationID = message.certificationID)
+    message.CDCertificationID !== undefined && (obj.CDCertificationID = message.CDCertificationID)
     message.familyID !== undefined && (obj.familyID = message.familyID)
     message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters)
     message.compliancePlatformUsed !== undefined && (obj.compliancePlatformUsed = message.compliancePlatformUsed)
@@ -359,10 +359,10 @@ export const MsgCertifyModel = {
     } else {
       message.programTypeVersion = ''
     }
-    if (object.certificationID !== undefined && object.certificationID !== null) {
-      message.certificationID = object.certificationID
+    if (object.CDCertificationID !== undefined && object.CDCertificationID !== null) {
+      message.CDCertificationID = object.CDCertificationID
     } else {
-      message.certificationID = ''
+      message.CDCertificationID = ''
     }
     if (object.familyID !== undefined && object.familyID !== null) {
       message.familyID = object.familyID
@@ -442,7 +442,7 @@ const baseMsgRevokeModel: object = {
   certificationType: '',
   reason: '',
   programTypeVersion: '',
-  certificationID: '',
+  CDCertificationID: '',
   familyID: '',
   supportedClusters: '',
   compliancePlatformUsed: '',
@@ -482,8 +482,8 @@ export const MsgRevokeModel = {
     if (message.programTypeVersion !== '') {
       writer.uint32(82).string(message.programTypeVersion)
     }
-    if (message.certificationID !== '') {
-      writer.uint32(90).string(message.certificationID)
+    if (message.CDCertificationID !== '') {
+      writer.uint32(90).string(message.CDCertificationID)
     }
     if (message.familyID !== '') {
       writer.uint32(98).string(message.familyID)
@@ -541,7 +541,7 @@ export const MsgRevokeModel = {
           message.programTypeVersion = reader.string()
           break
         case 11:
-          message.certificationID = reader.string()
+          message.CDCertificationID = reader.string()
           break
         case 12:
           message.familyID = reader.string()
@@ -618,10 +618,10 @@ export const MsgRevokeModel = {
     } else {
       message.programTypeVersion = ''
     }
-    if (object.certificationID !== undefined && object.certificationID !== null) {
-      message.certificationID = String(object.certificationID)
+    if (object.CDCertificationID !== undefined && object.CDCertificationID !== null) {
+      message.CDCertificationID = String(object.CDCertificationID)
     } else {
-      message.certificationID = ''
+      message.CDCertificationID = ''
     }
     if (object.familyID !== undefined && object.familyID !== null) {
       message.familyID = String(object.familyID)
@@ -663,7 +663,7 @@ export const MsgRevokeModel = {
     message.certificationType !== undefined && (obj.certificationType = message.certificationType)
     message.reason !== undefined && (obj.reason = message.reason)
     message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion)
-    message.certificationID !== undefined && (obj.certificationID = message.certificationID)
+    message.CDCertificationID !== undefined && (obj.CDCertificationID = message.CDCertificationID)
     message.familyID !== undefined && (obj.familyID = message.familyID)
     message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters)
     message.compliancePlatformUsed !== undefined && (obj.compliancePlatformUsed = message.compliancePlatformUsed)
@@ -724,10 +724,10 @@ export const MsgRevokeModel = {
     } else {
       message.programTypeVersion = ''
     }
-    if (object.certificationID !== undefined && object.certificationID !== null) {
-      message.certificationID = object.certificationID
+    if (object.CDCertificationID !== undefined && object.CDCertificationID !== null) {
+      message.CDCertificationID = object.CDCertificationID
     } else {
-      message.certificationID = ''
+      message.CDCertificationID = ''
     }
     if (object.familyID !== undefined && object.familyID !== null) {
       message.familyID = object.familyID
@@ -807,7 +807,7 @@ const baseMsgProvisionModel: object = {
   certificationType: '',
   reason: '',
   programTypeVersion: '',
-  certificationID: '',
+  CDCertificationID: '',
   familyID: '',
   supportedClusters: '',
   compliancePlatformUsed: '',
@@ -847,8 +847,8 @@ export const MsgProvisionModel = {
     if (message.programTypeVersion !== '') {
       writer.uint32(82).string(message.programTypeVersion)
     }
-    if (message.certificationID !== '') {
-      writer.uint32(90).string(message.certificationID)
+    if (message.CDCertificationID !== '') {
+      writer.uint32(90).string(message.CDCertificationID)
     }
     if (message.familyID !== '') {
       writer.uint32(98).string(message.familyID)
@@ -906,7 +906,7 @@ export const MsgProvisionModel = {
           message.programTypeVersion = reader.string()
           break
         case 11:
-          message.certificationID = reader.string()
+          message.CDCertificationID = reader.string()
           break
         case 12:
           message.familyID = reader.string()
@@ -983,10 +983,10 @@ export const MsgProvisionModel = {
     } else {
       message.programTypeVersion = ''
     }
-    if (object.certificationID !== undefined && object.certificationID !== null) {
-      message.certificationID = String(object.certificationID)
+    if (object.CDCertificationID !== undefined && object.CDCertificationID !== null) {
+      message.CDCertificationID = String(object.CDCertificationID)
     } else {
-      message.certificationID = ''
+      message.CDCertificationID = ''
     }
     if (object.familyID !== undefined && object.familyID !== null) {
       message.familyID = String(object.familyID)
@@ -1028,7 +1028,7 @@ export const MsgProvisionModel = {
     message.certificationType !== undefined && (obj.certificationType = message.certificationType)
     message.reason !== undefined && (obj.reason = message.reason)
     message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion)
-    message.certificationID !== undefined && (obj.certificationID = message.certificationID)
+    message.CDCertificationID !== undefined && (obj.CDCertificationID = message.CDCertificationID)
     message.familyID !== undefined && (obj.familyID = message.familyID)
     message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters)
     message.compliancePlatformUsed !== undefined && (obj.compliancePlatformUsed = message.compliancePlatformUsed)
@@ -1089,10 +1089,10 @@ export const MsgProvisionModel = {
     } else {
       message.programTypeVersion = ''
     }
-    if (object.certificationID !== undefined && object.certificationID !== null) {
-      message.certificationID = object.certificationID
+    if (object.CDCertificationID !== undefined && object.CDCertificationID !== null) {
+      message.CDCertificationID = object.CDCertificationID
     } else {
-      message.certificationID = ''
+      message.CDCertificationID = ''
     }
     if (object.familyID !== undefined && object.familyID !== null) {
       message.familyID = object.familyID

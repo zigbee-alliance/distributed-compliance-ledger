@@ -24,7 +24,7 @@ func CmdCertifyModel() *cobra.Command {
 		reason                    string
 		cdVersionNumber           uint32
 		programTypeVersion        string
-		certificationID           string
+		CDCertificationID         string
 		familyID                  string
 		supportedClusters         string
 		compliancePlatformUsed    string
@@ -53,7 +53,7 @@ func CmdCertifyModel() *cobra.Command {
 				certificationType,
 				reason,
 				programTypeVersion,
-				certificationID,
+				CDCertificationID,
 				familyID,
 				supportedClusters,
 				compliancePlatformUsed,
@@ -87,8 +87,8 @@ func CmdCertifyModel() *cobra.Command {
 		"Optional comment describing the reason of certification")
 	cmd.Flags().StringVar(&programTypeVersion, FlagProgramTypeVersion, "",
 		"Program Type Version of the certification")
-	cmd.Flags().StringVar(&certificationID, FlagCertificationID, "",
-		"Certification ID of the certification")
+	cmd.Flags().StringVar(&CDCertificationID, FlagCDCertificationID, "",
+		"CD Certification ID of the certification")
 	cmd.Flags().StringVar(&familyID, FlagFamilyID, "",
 		"Family ID of the certification")
 	cmd.Flags().StringVar(&supportedClusters, FlagSupportedClusters, "",

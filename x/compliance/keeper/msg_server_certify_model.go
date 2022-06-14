@@ -89,7 +89,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 			History:                            []*types.ComplianceHistoryItem{},
 			CDVersionNumber:                    msg.CDVersionNumber,
 			ProgramTypeVersion:                 msg.ProgramTypeVersion,
-			CertificationID:                    msg.CertificationID,
+			CDCertificationID:                  msg.CDCertificationID,
 			FamilyID:                           msg.FamilyID,
 			SupportedClusters:                  msg.SupportedClusters,
 			CompliancePlatformUsed:             msg.CompliancePlatformUsed,
