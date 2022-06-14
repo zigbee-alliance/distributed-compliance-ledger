@@ -63,6 +63,7 @@ export interface ComplianceComplianceInfo {
   certificationRoute?: string;
   programType?: string;
   transport?: string;
+  parentChild?: string;
 }
 
 export type ComplianceMsgCertifyModelResponse = object;

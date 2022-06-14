@@ -23,6 +23,7 @@ export interface MsgCertifyModel {
   certificationRoute: string
   programType: string
   transport: string
+  parentChild: string
 }
 
 export interface MsgCertifyModelResponse {}
@@ -47,6 +48,7 @@ export interface MsgRevokeModel {
   certificationRoute: string
   programType: string
   transport: string
+  parentChild: string
 }
 
 export interface MsgRevokeModelResponse {}
@@ -71,6 +73,7 @@ export interface MsgProvisionModel {
   certificationRoute: string
   programType: string
   transport: string
+  parentChild: string
 }
 
 export interface MsgProvisionModelResponse {}
@@ -94,7 +97,8 @@ const baseMsgCertifyModel: object = {
   OSVersion: '',
   certificationRoute: '',
   programType: '',
-  transport: ''
+  transport: '',
+  parentChild: ''
 }
 
 export const MsgCertifyModel = {
@@ -155,6 +159,9 @@ export const MsgCertifyModel = {
     }
     if (message.transport !== '') {
       writer.uint32(154).string(message.transport)
+    }
+    if (message.parentChild !== '') {
+      writer.uint32(162).string(message.parentChild)
     }
     return writer
   },
@@ -222,6 +229,9 @@ export const MsgCertifyModel = {
           break
         case 19:
           message.transport = reader.string()
+          break
+        case 20:
+          message.parentChild = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -328,6 +338,11 @@ export const MsgCertifyModel = {
     } else {
       message.transport = ''
     }
+    if (object.parentChild !== undefined && object.parentChild !== null) {
+      message.parentChild = String(object.parentChild)
+    } else {
+      message.parentChild = ''
+    }
     return message
   },
 
@@ -352,6 +367,7 @@ export const MsgCertifyModel = {
     message.certificationRoute !== undefined && (obj.certificationRoute = message.certificationRoute)
     message.programType !== undefined && (obj.programType = message.programType)
     message.transport !== undefined && (obj.transport = message.transport)
+    message.parentChild !== undefined && (obj.parentChild = message.parentChild)
     return obj
   },
 
@@ -452,6 +468,11 @@ export const MsgCertifyModel = {
     } else {
       message.transport = ''
     }
+    if (object.parentChild !== undefined && object.parentChild !== null) {
+      message.parentChild = object.parentChild
+    } else {
+      message.parentChild = ''
+    }
     return message
   }
 }
@@ -513,7 +534,8 @@ const baseMsgRevokeModel: object = {
   OSVersion: '',
   certificationRoute: '',
   programType: '',
-  transport: ''
+  transport: '',
+  parentChild: ''
 }
 
 export const MsgRevokeModel = {
@@ -574,6 +596,9 @@ export const MsgRevokeModel = {
     }
     if (message.transport !== '') {
       writer.uint32(154).string(message.transport)
+    }
+    if (message.parentChild !== '') {
+      writer.uint32(162).string(message.parentChild)
     }
     return writer
   },
@@ -641,6 +666,9 @@ export const MsgRevokeModel = {
           break
         case 19:
           message.transport = reader.string()
+          break
+        case 20:
+          message.parentChild = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -747,6 +775,11 @@ export const MsgRevokeModel = {
     } else {
       message.transport = ''
     }
+    if (object.parentChild !== undefined && object.parentChild !== null) {
+      message.parentChild = String(object.parentChild)
+    } else {
+      message.parentChild = ''
+    }
     return message
   },
 
@@ -771,6 +804,7 @@ export const MsgRevokeModel = {
     message.certificationRoute !== undefined && (obj.certificationRoute = message.certificationRoute)
     message.programType !== undefined && (obj.programType = message.programType)
     message.transport !== undefined && (obj.transport = message.transport)
+    message.parentChild !== undefined && (obj.parentChild = message.parentChild)
     return obj
   },
 
@@ -871,6 +905,11 @@ export const MsgRevokeModel = {
     } else {
       message.transport = ''
     }
+    if (object.parentChild !== undefined && object.parentChild !== null) {
+      message.parentChild = object.parentChild
+    } else {
+      message.parentChild = ''
+    }
     return message
   }
 }
@@ -932,7 +971,8 @@ const baseMsgProvisionModel: object = {
   OSVersion: '',
   certificationRoute: '',
   programType: '',
-  transport: ''
+  transport: '',
+  parentChild: ''
 }
 
 export const MsgProvisionModel = {
@@ -993,6 +1033,9 @@ export const MsgProvisionModel = {
     }
     if (message.transport !== '') {
       writer.uint32(154).string(message.transport)
+    }
+    if (message.parentChild !== '') {
+      writer.uint32(162).string(message.parentChild)
     }
     return writer
   },
@@ -1060,6 +1103,9 @@ export const MsgProvisionModel = {
           break
         case 19:
           message.transport = reader.string()
+          break
+        case 20:
+          message.parentChild = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -1166,6 +1212,11 @@ export const MsgProvisionModel = {
     } else {
       message.transport = ''
     }
+    if (object.parentChild !== undefined && object.parentChild !== null) {
+      message.parentChild = String(object.parentChild)
+    } else {
+      message.parentChild = ''
+    }
     return message
   },
 
@@ -1190,6 +1241,7 @@ export const MsgProvisionModel = {
     message.certificationRoute !== undefined && (obj.certificationRoute = message.certificationRoute)
     message.programType !== undefined && (obj.programType = message.programType)
     message.transport !== undefined && (obj.transport = message.transport)
+    message.parentChild !== undefined && (obj.parentChild = message.parentChild)
     return obj
   },
 
@@ -1289,6 +1341,11 @@ export const MsgProvisionModel = {
       message.transport = object.transport
     } else {
       message.transport = ''
+    }
+    if (object.parentChild !== undefined && object.parentChild !== null) {
+      message.parentChild = object.parentChild
+    } else {
+      message.parentChild = ''
     }
     return message
   }

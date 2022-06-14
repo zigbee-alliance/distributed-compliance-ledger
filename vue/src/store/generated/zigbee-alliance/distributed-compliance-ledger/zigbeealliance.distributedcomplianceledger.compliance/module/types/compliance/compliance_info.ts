@@ -26,6 +26,7 @@ export interface ComplianceInfo {
   certificationRoute: string
   programType: string
   transport: string
+  parentChild: string
 }
 
 const baseComplianceInfo: object = {
@@ -48,7 +49,8 @@ const baseComplianceInfo: object = {
   OSVersion: '',
   certificationRoute: '',
   programType: '',
-  transport: ''
+  transport: '',
+  parentChild: ''
 }
 
 export const ComplianceInfo = {
@@ -115,6 +117,9 @@ export const ComplianceInfo = {
     }
     if (message.transport !== '') {
       writer.uint32(170).string(message.transport)
+    }
+    if (message.parentChild !== '') {
+      writer.uint32(178).string(message.parentChild)
     }
     return writer
   },
@@ -189,6 +194,9 @@ export const ComplianceInfo = {
           break
         case 21:
           message.transport = reader.string()
+          break
+        case 22:
+          message.parentChild = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -306,6 +314,11 @@ export const ComplianceInfo = {
     } else {
       message.transport = ''
     }
+    if (object.parentChild !== undefined && object.parentChild !== null) {
+      message.parentChild = String(object.parentChild)
+    } else {
+      message.parentChild = ''
+    }
     return message
   },
 
@@ -336,6 +349,7 @@ export const ComplianceInfo = {
     message.certificationRoute !== undefined && (obj.certificationRoute = message.certificationRoute)
     message.programType !== undefined && (obj.programType = message.programType)
     message.transport !== undefined && (obj.transport = message.transport)
+    message.parentChild !== undefined && (obj.parentChild = message.parentChild)
     return obj
   },
 
@@ -446,6 +460,11 @@ export const ComplianceInfo = {
       message.transport = object.transport
     } else {
       message.transport = ''
+    }
+    if (object.parentChild !== undefined && object.parentChild !== null) {
+      message.parentChild = object.parentChild
+    } else {
+      message.parentChild = ''
     }
     return message
   }

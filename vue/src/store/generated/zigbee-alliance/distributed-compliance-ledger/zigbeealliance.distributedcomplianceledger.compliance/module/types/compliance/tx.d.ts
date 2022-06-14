@@ -20,6 +20,7 @@ export interface MsgCertifyModel {
     certificationRoute: string;
     programType: string;
     transport: string;
+    parentChild: string;
 }
 export interface MsgCertifyModelResponse {
 }
@@ -43,6 +44,7 @@ export interface MsgRevokeModel {
     certificationRoute: string;
     programType: string;
     transport: string;
+    parentChild: string;
 }
 export interface MsgRevokeModelResponse {
 }
@@ -66,6 +68,7 @@ export interface MsgProvisionModel {
     certificationRoute: string;
     programType: string;
     transport: string;
+    parentChild: string;
 }
 export interface MsgProvisionModelResponse {
 }
