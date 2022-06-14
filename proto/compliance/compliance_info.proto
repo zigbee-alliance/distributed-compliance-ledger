@@ -21,6 +21,7 @@ message ComplianceInfo {
   string programTypeVersion = 12;
   string certificationID = 13;
   string familyID = 14;
+  string supportedClusters = 15;
   
 }
 
