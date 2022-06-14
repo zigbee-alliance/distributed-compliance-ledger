@@ -19,7 +19,7 @@ message ComplianceInfo {
   string owner = 10 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   repeated ComplianceHistoryItem history = 11; 
   string programTypeVersion = 12;
-  string certificationID = 13;
+  string CDCertificationID = 13;
   string familyID = 14;
   string supportedClusters = 15;
   string compliancePlatformUsed = 16;

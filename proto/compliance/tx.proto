@@ -27,7 +27,7 @@ message MsgCertifyModel {
   string certificationType = 8 [(gogoproto.moretags) = "validate:\"required,max=100\""];
   string reason = 9 [(gogoproto.moretags) = "validate:\"max=102400\""];
   string programTypeVersion = 10 [(gogoproto.moretags) = "validate:\"max=64\""];
-  string certificationID = 11 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string CDCertificationID = 11 [(gogoproto.moretags) = "validate:\"required,max=19\""];
   string familyID = 12 [(gogoproto.moretags) = "validate:\"max=64\""];
   string supportedClusters = 13 [(gogoproto.moretags) = "validate:\"max=100\""];
   string compliancePlatformUsed = 14 [(gogoproto.moretags) = "validate:\"max=100\""];
@@ -49,7 +49,7 @@ message MsgRevokeModel {
   string certificationType = 8 [(gogoproto.moretags) = "validate:\"required,max=100\""];
   string reason = 9 [(gogoproto.moretags) = "validate:\"max=102400\""];
   string programTypeVersion = 10 [(gogoproto.moretags) = "validate:\"max=64\""];
-  string certificationID = 11 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string CDCertificationID = 11 [(gogoproto.moretags) = "validate:\"required,max=19\""];
   string familyID = 12 [(gogoproto.moretags) = "validate:\"max=64\""];
   string supportedClusters = 13 [(gogoproto.moretags) = "validate:\"max=100\""];
   string compliancePlatformUsed = 14 [(gogoproto.moretags) = "validate:\"max=100\""];
@@ -71,7 +71,7 @@ message MsgProvisionModel {
   string certificationType = 8 [(gogoproto.moretags) = "validate:\"required,max=100\""];
   string reason = 9 [(gogoproto.moretags) = "validate:\"max=102400\""];
   string programTypeVersion = 10 [(gogoproto.moretags) = "validate:\"max=64\""];
-  string certificationID = 11 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string CDCertificationID = 11 [(gogoproto.moretags) = "validate:\"required,max=19\""];
   string familyID = 12 [(gogoproto.moretags) = "validate:\"max=64\""];
   string supportedClusters = 13 [(gogoproto.moretags) = "validate:\"max=100\""];
   string compliancePlatformUsed = 14 [(gogoproto.moretags) = "validate:\"max=100\""];
