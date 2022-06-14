@@ -13,7 +13,8 @@ const baseMsgCertifyModel = {
     reason: '',
     programTypeVersion: '',
     certificationID: '',
-    familyID: ''
+    familyID: '',
+    supportedClusters: ''
 };
 export const MsgCertifyModel = {
     encode(message, writer = Writer.create()) {
@@ -52,6 +53,9 @@ export const MsgCertifyModel = {
         }
         if (message.familyID !== '') {
             writer.uint32(98).string(message.familyID);
+        }
+        if (message.supportedClusters !== '') {
+            writer.uint32(106).string(message.supportedClusters);
         }
         return writer;
     },
@@ -97,6 +101,9 @@ export const MsgCertifyModel = {
                     break;
                 case 12:
                     message.familyID = reader.string();
+                    break;
+                case 13:
+                    message.supportedClusters = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -179,6 +186,12 @@ export const MsgCertifyModel = {
         else {
             message.familyID = '';
         }
+        if (object.supportedClusters !== undefined && object.supportedClusters !== null) {
+            message.supportedClusters = String(object.supportedClusters);
+        }
+        else {
+            message.supportedClusters = '';
+        }
         return message;
     },
     toJSON(message) {
@@ -195,6 +208,7 @@ export const MsgCertifyModel = {
         message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion);
         message.certificationID !== undefined && (obj.certificationID = message.certificationID);
         message.familyID !== undefined && (obj.familyID = message.familyID);
+        message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters);
         return obj;
     },
     fromPartial(object) {
@@ -271,6 +285,12 @@ export const MsgCertifyModel = {
         else {
             message.familyID = '';
         }
+        if (object.supportedClusters !== undefined && object.supportedClusters !== null) {
+            message.supportedClusters = object.supportedClusters;
+        }
+        else {
+            message.supportedClusters = '';
+        }
         return message;
     }
 };
@@ -318,7 +338,8 @@ const baseMsgRevokeModel = {
     reason: '',
     programTypeVersion: '',
     certificationID: '',
-    familyID: ''
+    familyID: '',
+    supportedClusters: ''
 };
 export const MsgRevokeModel = {
     encode(message, writer = Writer.create()) {
@@ -357,6 +378,9 @@ export const MsgRevokeModel = {
         }
         if (message.familyID !== '') {
             writer.uint32(98).string(message.familyID);
+        }
+        if (message.supportedClusters !== '') {
+            writer.uint32(106).string(message.supportedClusters);
         }
         return writer;
     },
@@ -402,6 +426,9 @@ export const MsgRevokeModel = {
                     break;
                 case 12:
                     message.familyID = reader.string();
+                    break;
+                case 13:
+                    message.supportedClusters = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -484,6 +511,12 @@ export const MsgRevokeModel = {
         else {
             message.familyID = '';
         }
+        if (object.supportedClusters !== undefined && object.supportedClusters !== null) {
+            message.supportedClusters = String(object.supportedClusters);
+        }
+        else {
+            message.supportedClusters = '';
+        }
         return message;
     },
     toJSON(message) {
@@ -500,6 +533,7 @@ export const MsgRevokeModel = {
         message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion);
         message.certificationID !== undefined && (obj.certificationID = message.certificationID);
         message.familyID !== undefined && (obj.familyID = message.familyID);
+        message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters);
         return obj;
     },
     fromPartial(object) {
@@ -576,6 +610,12 @@ export const MsgRevokeModel = {
         else {
             message.familyID = '';
         }
+        if (object.supportedClusters !== undefined && object.supportedClusters !== null) {
+            message.supportedClusters = object.supportedClusters;
+        }
+        else {
+            message.supportedClusters = '';
+        }
         return message;
     }
 };
@@ -623,7 +663,8 @@ const baseMsgProvisionModel = {
     reason: '',
     programTypeVersion: '',
     certificationID: '',
-    familyID: ''
+    familyID: '',
+    supportedClusters: ''
 };
 export const MsgProvisionModel = {
     encode(message, writer = Writer.create()) {
@@ -662,6 +703,9 @@ export const MsgProvisionModel = {
         }
         if (message.familyID !== '') {
             writer.uint32(98).string(message.familyID);
+        }
+        if (message.supportedClusters !== '') {
+            writer.uint32(106).string(message.supportedClusters);
         }
         return writer;
     },
@@ -707,6 +751,9 @@ export const MsgProvisionModel = {
                     break;
                 case 12:
                     message.familyID = reader.string();
+                    break;
+                case 13:
+                    message.supportedClusters = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -789,6 +836,12 @@ export const MsgProvisionModel = {
         else {
             message.familyID = '';
         }
+        if (object.supportedClusters !== undefined && object.supportedClusters !== null) {
+            message.supportedClusters = String(object.supportedClusters);
+        }
+        else {
+            message.supportedClusters = '';
+        }
         return message;
     },
     toJSON(message) {
@@ -805,6 +858,7 @@ export const MsgProvisionModel = {
         message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion);
         message.certificationID !== undefined && (obj.certificationID = message.certificationID);
         message.familyID !== undefined && (obj.familyID = message.familyID);
+        message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters);
         return obj;
     },
     fromPartial(object) {
@@ -880,6 +934,12 @@ export const MsgProvisionModel = {
         }
         else {
             message.familyID = '';
+        }
+        if (object.supportedClusters !== undefined && object.supportedClusters !== null) {
+            message.supportedClusters = object.supportedClusters;
+        }
+        else {
+            message.supportedClusters = '';
         }
         return message;
     }

@@ -16,6 +16,7 @@ export interface MsgCertifyModel {
   programTypeVersion: string
   certificationID: string
   familyID: string
+  supportedClusters: string
 }
 
 export interface MsgCertifyModelResponse {}
@@ -33,6 +34,7 @@ export interface MsgRevokeModel {
   programTypeVersion: string
   certificationID: string
   familyID: string
+  supportedClusters: string
 }
 
 export interface MsgRevokeModelResponse {}
@@ -50,6 +52,7 @@ export interface MsgProvisionModel {
   programTypeVersion: string
   certificationID: string
   familyID: string
+  supportedClusters: string
 }
 
 export interface MsgProvisionModelResponse {}
@@ -66,7 +69,8 @@ const baseMsgCertifyModel: object = {
   reason: '',
   programTypeVersion: '',
   certificationID: '',
-  familyID: ''
+  familyID: '',
+  supportedClusters: ''
 }
 
 export const MsgCertifyModel = {
@@ -106,6 +110,9 @@ export const MsgCertifyModel = {
     }
     if (message.familyID !== '') {
       writer.uint32(98).string(message.familyID)
+    }
+    if (message.supportedClusters !== '') {
+      writer.uint32(106).string(message.supportedClusters)
     }
     return writer
   },
@@ -152,6 +159,9 @@ export const MsgCertifyModel = {
           break
         case 12:
           message.familyID = reader.string()
+          break
+        case 13:
+          message.supportedClusters = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -223,6 +233,11 @@ export const MsgCertifyModel = {
     } else {
       message.familyID = ''
     }
+    if (object.supportedClusters !== undefined && object.supportedClusters !== null) {
+      message.supportedClusters = String(object.supportedClusters)
+    } else {
+      message.supportedClusters = ''
+    }
     return message
   },
 
@@ -240,6 +255,7 @@ export const MsgCertifyModel = {
     message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion)
     message.certificationID !== undefined && (obj.certificationID = message.certificationID)
     message.familyID !== undefined && (obj.familyID = message.familyID)
+    message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters)
     return obj
   },
 
@@ -305,6 +321,11 @@ export const MsgCertifyModel = {
     } else {
       message.familyID = ''
     }
+    if (object.supportedClusters !== undefined && object.supportedClusters !== null) {
+      message.supportedClusters = object.supportedClusters
+    } else {
+      message.supportedClusters = ''
+    }
     return message
   }
 }
@@ -359,7 +380,8 @@ const baseMsgRevokeModel: object = {
   reason: '',
   programTypeVersion: '',
   certificationID: '',
-  familyID: ''
+  familyID: '',
+  supportedClusters: ''
 }
 
 export const MsgRevokeModel = {
@@ -399,6 +421,9 @@ export const MsgRevokeModel = {
     }
     if (message.familyID !== '') {
       writer.uint32(98).string(message.familyID)
+    }
+    if (message.supportedClusters !== '') {
+      writer.uint32(106).string(message.supportedClusters)
     }
     return writer
   },
@@ -445,6 +470,9 @@ export const MsgRevokeModel = {
           break
         case 12:
           message.familyID = reader.string()
+          break
+        case 13:
+          message.supportedClusters = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -516,6 +544,11 @@ export const MsgRevokeModel = {
     } else {
       message.familyID = ''
     }
+    if (object.supportedClusters !== undefined && object.supportedClusters !== null) {
+      message.supportedClusters = String(object.supportedClusters)
+    } else {
+      message.supportedClusters = ''
+    }
     return message
   },
 
@@ -533,6 +566,7 @@ export const MsgRevokeModel = {
     message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion)
     message.certificationID !== undefined && (obj.certificationID = message.certificationID)
     message.familyID !== undefined && (obj.familyID = message.familyID)
+    message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters)
     return obj
   },
 
@@ -598,6 +632,11 @@ export const MsgRevokeModel = {
     } else {
       message.familyID = ''
     }
+    if (object.supportedClusters !== undefined && object.supportedClusters !== null) {
+      message.supportedClusters = object.supportedClusters
+    } else {
+      message.supportedClusters = ''
+    }
     return message
   }
 }
@@ -652,7 +691,8 @@ const baseMsgProvisionModel: object = {
   reason: '',
   programTypeVersion: '',
   certificationID: '',
-  familyID: ''
+  familyID: '',
+  supportedClusters: ''
 }
 
 export const MsgProvisionModel = {
@@ -692,6 +732,9 @@ export const MsgProvisionModel = {
     }
     if (message.familyID !== '') {
       writer.uint32(98).string(message.familyID)
+    }
+    if (message.supportedClusters !== '') {
+      writer.uint32(106).string(message.supportedClusters)
     }
     return writer
   },
@@ -738,6 +781,9 @@ export const MsgProvisionModel = {
           break
         case 12:
           message.familyID = reader.string()
+          break
+        case 13:
+          message.supportedClusters = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -809,6 +855,11 @@ export const MsgProvisionModel = {
     } else {
       message.familyID = ''
     }
+    if (object.supportedClusters !== undefined && object.supportedClusters !== null) {
+      message.supportedClusters = String(object.supportedClusters)
+    } else {
+      message.supportedClusters = ''
+    }
     return message
   },
 
@@ -826,6 +877,7 @@ export const MsgProvisionModel = {
     message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion)
     message.certificationID !== undefined && (obj.certificationID = message.certificationID)
     message.familyID !== undefined && (obj.familyID = message.familyID)
+    message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters)
     return obj
   },
 
@@ -890,6 +942,11 @@ export const MsgProvisionModel = {
       message.familyID = object.familyID
     } else {
       message.familyID = ''
+    }
+    if (object.supportedClusters !== undefined && object.supportedClusters !== null) {
+      message.supportedClusters = object.supportedClusters
+    } else {
+      message.supportedClusters = ''
     }
     return message
   }

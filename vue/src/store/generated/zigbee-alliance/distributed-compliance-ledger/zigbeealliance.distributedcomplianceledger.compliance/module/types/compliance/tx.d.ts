@@ -13,6 +13,7 @@ export interface MsgCertifyModel {
     programTypeVersion: string;
     certificationID: string;
     familyID: string;
+    supportedClusters: string;
 }
 export interface MsgCertifyModelResponse {
 }
@@ -29,6 +30,7 @@ export interface MsgRevokeModel {
     programTypeVersion: string;
     certificationID: string;
     familyID: string;
+    supportedClusters: string;
 }
 export interface MsgRevokeModelResponse {
 }
@@ -45,6 +47,7 @@ export interface MsgProvisionModel {
     programTypeVersion: string;
     certificationID: string;
     familyID: string;
+    supportedClusters: string;
 }
 export interface MsgProvisionModelResponse {
 }

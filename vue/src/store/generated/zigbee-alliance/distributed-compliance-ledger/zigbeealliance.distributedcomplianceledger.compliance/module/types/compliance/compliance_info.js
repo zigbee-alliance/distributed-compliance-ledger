@@ -15,7 +15,8 @@ const baseComplianceInfo = {
     owner: '',
     programTypeVersion: '',
     certificationID: '',
-    familyID: ''
+    familyID: '',
+    supportedClusters: ''
 };
 export const ComplianceInfo = {
     encode(message, writer = Writer.create()) {
@@ -60,6 +61,9 @@ export const ComplianceInfo = {
         }
         if (message.familyID !== '') {
             writer.uint32(114).string(message.familyID);
+        }
+        if (message.supportedClusters !== '') {
+            writer.uint32(122).string(message.supportedClusters);
         }
         return writer;
     },
@@ -112,6 +116,9 @@ export const ComplianceInfo = {
                     break;
                 case 14:
                     message.familyID = reader.string();
+                    break;
+                case 15:
+                    message.supportedClusters = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -206,6 +213,12 @@ export const ComplianceInfo = {
         else {
             message.familyID = '';
         }
+        if (object.supportedClusters !== undefined && object.supportedClusters !== null) {
+            message.supportedClusters = String(object.supportedClusters);
+        }
+        else {
+            message.supportedClusters = '';
+        }
         return message;
     },
     toJSON(message) {
@@ -229,6 +242,7 @@ export const ComplianceInfo = {
         message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion);
         message.certificationID !== undefined && (obj.certificationID = message.certificationID);
         message.familyID !== undefined && (obj.familyID = message.familyID);
+        message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters);
         return obj;
     },
     fromPartial(object) {
@@ -316,6 +330,12 @@ export const ComplianceInfo = {
         }
         else {
             message.familyID = '';
+        }
+        if (object.supportedClusters !== undefined && object.supportedClusters !== null) {
+            message.supportedClusters = object.supportedClusters;
+        }
+        else {
+            message.supportedClusters = '';
         }
         return message;
     }
