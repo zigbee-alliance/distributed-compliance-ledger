@@ -3,19 +3,12 @@ package types
 const (
 	ZigbeeCertificationType string = "zigbee"
 	MatterCertificationType string = "matter"
-	FullCertificationType   string = "Full"
-	CbSCertificationType    string = "CbS" // CbS - Certification by Similarity
-	CTPCertificationType    string = "CTP" // CTP - Certification Transfer Program
-	PFCCertificationType    string = "PFC" // PFC - Product Family Certification
 )
 
 //	List of Certification Types
 type CertificationTypes []string
 
-var CertificationTypesList = CertificationTypes{
-	ZigbeeCertificationType, MatterCertificationType, FullCertificationType,
-	CbSCertificationType, CTPCertificationType, PFCCertificationType,
-}
+var CertificationTypesList = CertificationTypes{ZigbeeCertificationType, MatterCertificationType}
 
 func IsValidCertificationType(certificationType string) bool {
 	for _, i := range CertificationTypesList {
