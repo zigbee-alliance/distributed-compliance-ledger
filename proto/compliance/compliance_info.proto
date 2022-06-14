@@ -24,6 +24,7 @@ message ComplianceInfo {
   string supportedClusters = 15;
   string compliancePlatformUsed = 16;
   string compliancePlatformVersion = 17;
+  string OSVersion = 18;
   
 }
 
