@@ -17,6 +17,7 @@ export interface ComplianceInfo {
     certificationID: string;
     familyID: string;
     supportedClusters: string;
+    compliancePlatformUsed: string;
 }
 export declare const ComplianceInfo: {
     encode(message: ComplianceInfo, writer?: Writer): Writer;

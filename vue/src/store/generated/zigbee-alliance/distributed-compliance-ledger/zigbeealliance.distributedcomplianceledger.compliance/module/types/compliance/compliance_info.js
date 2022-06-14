@@ -16,7 +16,8 @@ const baseComplianceInfo = {
     programTypeVersion: '',
     certificationID: '',
     familyID: '',
-    supportedClusters: ''
+    supportedClusters: '',
+    compliancePlatformUsed: ''
 };
 export const ComplianceInfo = {
     encode(message, writer = Writer.create()) {
@@ -64,6 +65,9 @@ export const ComplianceInfo = {
         }
         if (message.supportedClusters !== '') {
             writer.uint32(122).string(message.supportedClusters);
+        }
+        if (message.compliancePlatformUsed !== '') {
+            writer.uint32(130).string(message.compliancePlatformUsed);
         }
         return writer;
     },
@@ -119,6 +123,9 @@ export const ComplianceInfo = {
                     break;
                 case 15:
                     message.supportedClusters = reader.string();
+                    break;
+                case 16:
+                    message.compliancePlatformUsed = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -219,6 +226,12 @@ export const ComplianceInfo = {
         else {
             message.supportedClusters = '';
         }
+        if (object.compliancePlatformUsed !== undefined && object.compliancePlatformUsed !== null) {
+            message.compliancePlatformUsed = String(object.compliancePlatformUsed);
+        }
+        else {
+            message.compliancePlatformUsed = '';
+        }
         return message;
     },
     toJSON(message) {
@@ -243,6 +256,7 @@ export const ComplianceInfo = {
         message.certificationID !== undefined && (obj.certificationID = message.certificationID);
         message.familyID !== undefined && (obj.familyID = message.familyID);
         message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters);
+        message.compliancePlatformUsed !== undefined && (obj.compliancePlatformUsed = message.compliancePlatformUsed);
         return obj;
     },
     fromPartial(object) {
@@ -336,6 +350,12 @@ export const ComplianceInfo = {
         }
         else {
             message.supportedClusters = '';
+        }
+        if (object.compliancePlatformUsed !== undefined && object.compliancePlatformUsed !== null) {
+            message.compliancePlatformUsed = object.compliancePlatformUsed;
+        }
+        else {
+            message.compliancePlatformUsed = '';
         }
         return message;
     }
