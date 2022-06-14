@@ -39,6 +39,7 @@ const (
 	FlagOSVersion                 = "OSVersion"
 	FlagCertificationRoute        = "certificationRoute"
 	FlagProgramType               = "programType"
+	FlagTransport                 = "transport"
 
 	TextCertificationType = "Certification type - Currently 'zigbee' and 'matter' types are supported"
 )

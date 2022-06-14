@@ -97,6 +97,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 			OSVersion:                          msg.OSVersion,
 			CertificationRoute:                 msg.CertificationRoute,
 			ProgramType:                        msg.ProgramType,
+			Transport:                          msg.Transport,
 		}
 	}
 

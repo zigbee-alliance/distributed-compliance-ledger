@@ -111,6 +111,7 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 			OSVersion:                          msg.OSVersion,
 			CertificationRoute:                 msg.CertificationRoute,
 			ProgramType:                        msg.ProgramType,
+			Transport:                          msg.Transport,
 		}
 	}
 
