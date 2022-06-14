@@ -15,6 +15,7 @@ var _ sdk.Msg = &MsgCertifyModel{}
 func NewMsgCertifyModel(
 	signer string, vid int32, pid int32, softwareVersion uint32, softwareVersionString string, cdVersionNumber uint32,
 	certificationDate string, certificationType string, reason string, programTypeVersion string, certificationID string,
+	familyID string,
 ) *MsgCertifyModel {
 	return &MsgCertifyModel{
 		Signer:                signer,
@@ -28,6 +29,7 @@ func NewMsgCertifyModel(
 		Reason:                reason,
 		ProgramTypeVersion:    programTypeVersion,
 		CertificationID:       certificationID,
+		FamilyID:              familyID,
 	}
 }
 

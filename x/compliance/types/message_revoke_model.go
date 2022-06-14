@@ -15,6 +15,7 @@ var _ sdk.Msg = &MsgRevokeModel{}
 func NewMsgRevokeModel(
 	signer string, vid int32, pid int32, softwareVersion uint32, softwareVersionString string, cdVersionNumber uint32,
 	revocationDate string, certificationType string, reason string, programTypeVersion string, certificationID string,
+	familyID string,
 ) *MsgRevokeModel {
 	return &MsgRevokeModel{
 		Signer:                signer,
@@ -28,6 +29,7 @@ func NewMsgRevokeModel(
 		Reason:                reason,
 		ProgramTypeVersion:    programTypeVersion,
 		CertificationID:       certificationID,
+		FamilyID:              familyID,
 	}
 }
 

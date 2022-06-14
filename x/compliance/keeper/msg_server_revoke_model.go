@@ -104,6 +104,7 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 			CDVersionNumber:                    msg.CDVersionNumber,
 			ProgramTypeVersion:                 msg.ProgramTypeVersion,
 			CertificationID:                    msg.CertificationID,
+			FamilyID:                           msg.FamilyID,
 		}
 	}
 

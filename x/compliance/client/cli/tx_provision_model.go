@@ -25,6 +25,7 @@ func CmdProvisionModel() *cobra.Command {
 		cdVersionNumber       uint32
 		programTypeVersion    string
 		certificationID       string
+		familyID              string
 	)
 
 	cmd := &cobra.Command{
@@ -49,6 +50,7 @@ func CmdProvisionModel() *cobra.Command {
 				reason,
 				programTypeVersion,
 				certificationID,
+				familyID,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -80,6 +82,8 @@ func CmdProvisionModel() *cobra.Command {
 		"Program Type Version of the certification")
 	cmd.Flags().StringVar(&certificationID, FlagCertificationID, "",
 		"Certification ID of the certification")
+	cmd.Flags().StringVar(&familyID, FlagFamilyID, "",
+		"Family ID of the certification")
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)
