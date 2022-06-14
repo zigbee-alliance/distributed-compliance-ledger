@@ -20,7 +20,8 @@ const baseComplianceInfo = {
     compliancePlatformUsed: '',
     compliancePlatformVersion: '',
     OSVersion: '',
-    certificationRoute: ''
+    certificationRoute: '',
+    programType: ''
 };
 export const ComplianceInfo = {
     encode(message, writer = Writer.create()) {
@@ -80,6 +81,9 @@ export const ComplianceInfo = {
         }
         if (message.certificationRoute !== '') {
             writer.uint32(154).string(message.certificationRoute);
+        }
+        if (message.programType !== '') {
+            writer.uint32(162).string(message.programType);
         }
         return writer;
     },
@@ -147,6 +151,9 @@ export const ComplianceInfo = {
                     break;
                 case 19:
                     message.certificationRoute = reader.string();
+                    break;
+                case 20:
+                    message.programType = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -271,6 +278,12 @@ export const ComplianceInfo = {
         else {
             message.certificationRoute = '';
         }
+        if (object.programType !== undefined && object.programType !== null) {
+            message.programType = String(object.programType);
+        }
+        else {
+            message.programType = '';
+        }
         return message;
     },
     toJSON(message) {
@@ -299,6 +312,7 @@ export const ComplianceInfo = {
         message.compliancePlatformVersion !== undefined && (obj.compliancePlatformVersion = message.compliancePlatformVersion);
         message.OSVersion !== undefined && (obj.OSVersion = message.OSVersion);
         message.certificationRoute !== undefined && (obj.certificationRoute = message.certificationRoute);
+        message.programType !== undefined && (obj.programType = message.programType);
         return obj;
     },
     fromPartial(object) {
@@ -416,6 +430,12 @@ export const ComplianceInfo = {
         }
         else {
             message.certificationRoute = '';
+        }
+        if (object.programType !== undefined && object.programType !== null) {
+            message.programType = object.programType;
+        }
+        else {
+            message.programType = '';
         }
         return message;
     }

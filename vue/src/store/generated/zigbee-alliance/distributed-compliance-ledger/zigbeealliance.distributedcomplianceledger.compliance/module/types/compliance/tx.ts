@@ -21,6 +21,7 @@ export interface MsgCertifyModel {
   compliancePlatformVersion: string
   OSVersion: string
   certificationRoute: string
+  programType: string
 }
 
 export interface MsgCertifyModelResponse {}
@@ -43,6 +44,7 @@ export interface MsgRevokeModel {
   compliancePlatformVersion: string
   OSVersion: string
   certificationRoute: string
+  programType: string
 }
 
 export interface MsgRevokeModelResponse {}
@@ -65,6 +67,7 @@ export interface MsgProvisionModel {
   compliancePlatformVersion: string
   OSVersion: string
   certificationRoute: string
+  programType: string
 }
 
 export interface MsgProvisionModelResponse {}
@@ -86,7 +89,8 @@ const baseMsgCertifyModel: object = {
   compliancePlatformUsed: '',
   compliancePlatformVersion: '',
   OSVersion: '',
-  certificationRoute: ''
+  certificationRoute: '',
+  programType: ''
 }
 
 export const MsgCertifyModel = {
@@ -141,6 +145,9 @@ export const MsgCertifyModel = {
     }
     if (message.certificationRoute !== '') {
       writer.uint32(138).string(message.certificationRoute)
+    }
+    if (message.programType !== '') {
+      writer.uint32(146).string(message.programType)
     }
     return writer
   },
@@ -202,6 +209,9 @@ export const MsgCertifyModel = {
           break
         case 17:
           message.certificationRoute = reader.string()
+          break
+        case 18:
+          message.programType = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -298,6 +308,11 @@ export const MsgCertifyModel = {
     } else {
       message.certificationRoute = ''
     }
+    if (object.programType !== undefined && object.programType !== null) {
+      message.programType = String(object.programType)
+    } else {
+      message.programType = ''
+    }
     return message
   },
 
@@ -320,6 +335,7 @@ export const MsgCertifyModel = {
     message.compliancePlatformVersion !== undefined && (obj.compliancePlatformVersion = message.compliancePlatformVersion)
     message.OSVersion !== undefined && (obj.OSVersion = message.OSVersion)
     message.certificationRoute !== undefined && (obj.certificationRoute = message.certificationRoute)
+    message.programType !== undefined && (obj.programType = message.programType)
     return obj
   },
 
@@ -410,6 +426,11 @@ export const MsgCertifyModel = {
     } else {
       message.certificationRoute = ''
     }
+    if (object.programType !== undefined && object.programType !== null) {
+      message.programType = object.programType
+    } else {
+      message.programType = ''
+    }
     return message
   }
 }
@@ -469,7 +490,8 @@ const baseMsgRevokeModel: object = {
   compliancePlatformUsed: '',
   compliancePlatformVersion: '',
   OSVersion: '',
-  certificationRoute: ''
+  certificationRoute: '',
+  programType: ''
 }
 
 export const MsgRevokeModel = {
@@ -524,6 +546,9 @@ export const MsgRevokeModel = {
     }
     if (message.certificationRoute !== '') {
       writer.uint32(138).string(message.certificationRoute)
+    }
+    if (message.programType !== '') {
+      writer.uint32(146).string(message.programType)
     }
     return writer
   },
@@ -585,6 +610,9 @@ export const MsgRevokeModel = {
           break
         case 17:
           message.certificationRoute = reader.string()
+          break
+        case 18:
+          message.programType = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -681,6 +709,11 @@ export const MsgRevokeModel = {
     } else {
       message.certificationRoute = ''
     }
+    if (object.programType !== undefined && object.programType !== null) {
+      message.programType = String(object.programType)
+    } else {
+      message.programType = ''
+    }
     return message
   },
 
@@ -703,6 +736,7 @@ export const MsgRevokeModel = {
     message.compliancePlatformVersion !== undefined && (obj.compliancePlatformVersion = message.compliancePlatformVersion)
     message.OSVersion !== undefined && (obj.OSVersion = message.OSVersion)
     message.certificationRoute !== undefined && (obj.certificationRoute = message.certificationRoute)
+    message.programType !== undefined && (obj.programType = message.programType)
     return obj
   },
 
@@ -793,6 +827,11 @@ export const MsgRevokeModel = {
     } else {
       message.certificationRoute = ''
     }
+    if (object.programType !== undefined && object.programType !== null) {
+      message.programType = object.programType
+    } else {
+      message.programType = ''
+    }
     return message
   }
 }
@@ -852,7 +891,8 @@ const baseMsgProvisionModel: object = {
   compliancePlatformUsed: '',
   compliancePlatformVersion: '',
   OSVersion: '',
-  certificationRoute: ''
+  certificationRoute: '',
+  programType: ''
 }
 
 export const MsgProvisionModel = {
@@ -907,6 +947,9 @@ export const MsgProvisionModel = {
     }
     if (message.certificationRoute !== '') {
       writer.uint32(138).string(message.certificationRoute)
+    }
+    if (message.programType !== '') {
+      writer.uint32(146).string(message.programType)
     }
     return writer
   },
@@ -968,6 +1011,9 @@ export const MsgProvisionModel = {
           break
         case 17:
           message.certificationRoute = reader.string()
+          break
+        case 18:
+          message.programType = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -1064,6 +1110,11 @@ export const MsgProvisionModel = {
     } else {
       message.certificationRoute = ''
     }
+    if (object.programType !== undefined && object.programType !== null) {
+      message.programType = String(object.programType)
+    } else {
+      message.programType = ''
+    }
     return message
   },
 
@@ -1086,6 +1137,7 @@ export const MsgProvisionModel = {
     message.compliancePlatformVersion !== undefined && (obj.compliancePlatformVersion = message.compliancePlatformVersion)
     message.OSVersion !== undefined && (obj.OSVersion = message.OSVersion)
     message.certificationRoute !== undefined && (obj.certificationRoute = message.certificationRoute)
+    message.programType !== undefined && (obj.programType = message.programType)
     return obj
   },
 
@@ -1175,6 +1227,11 @@ export const MsgProvisionModel = {
       message.certificationRoute = object.certificationRoute
     } else {
       message.certificationRoute = ''
+    }
+    if (object.programType !== undefined && object.programType !== null) {
+      message.programType = object.programType
+    } else {
+      message.programType = ''
     }
     return message
   }
