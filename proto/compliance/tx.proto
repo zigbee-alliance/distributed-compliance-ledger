@@ -31,6 +31,7 @@ message MsgCertifyModel {
   string familyID = 12 [(gogoproto.moretags) = "validate:\"max=64\""];
   string supportedClusters = 13 [(gogoproto.moretags) = "validate:\"max=100\""];
   string compliancePlatformUsed = 14 [(gogoproto.moretags) = "validate:\"max=100\""];
+  string compliancePlatformVersion = 15 [(gogoproto.moretags) = "validate:\"max=64\""];
 }
 
 message MsgCertifyModelResponse {
@@ -51,6 +52,7 @@ message MsgRevokeModel {
   string familyID = 12 [(gogoproto.moretags) = "validate:\"max=64\""];
   string supportedClusters = 13 [(gogoproto.moretags) = "validate:\"max=100\""];
   string compliancePlatformUsed = 14 [(gogoproto.moretags) = "validate:\"max=100\""];
+  string compliancePlatformVersion = 15 [(gogoproto.moretags) = "validate:\"max=64\""];
 }
 
 message MsgRevokeModelResponse {
@@ -71,6 +73,7 @@ message MsgProvisionModel {
   string familyID = 12 [(gogoproto.moretags) = "validate:\"max=64\""];
   string supportedClusters = 13 [(gogoproto.moretags) = "validate:\"max=100\""];
   string compliancePlatformUsed = 14 [(gogoproto.moretags) = "validate:\"max=100\""];
+  string compliancePlatformVersion = 15 [(gogoproto.moretags) = "validate:\"max=64\""];
 }
 
 message MsgProvisionModelResponse {
