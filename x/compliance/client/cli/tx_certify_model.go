@@ -26,6 +26,7 @@ func CmdCertifyModel() *cobra.Command {
 		programTypeVersion    string
 		certificationID       string
 		familyID              string
+		supportedClusters     string
 	)
 
 	cmd := &cobra.Command{
@@ -51,6 +52,7 @@ func CmdCertifyModel() *cobra.Command {
 				programTypeVersion,
 				certificationID,
 				familyID,
+				supportedClusters,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -83,6 +85,8 @@ func CmdCertifyModel() *cobra.Command {
 		"Certification ID of the certification")
 	cmd.Flags().StringVar(&familyID, FlagFamilyID, "",
 		"Family ID of the certification")
+	cmd.Flags().StringVar(&supportedClusters, FlagSupportedClusters, "",
+		"Supported Clusters of the certification")
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)

@@ -91,6 +91,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 			ProgramTypeVersion:                 msg.ProgramTypeVersion,
 			CertificationID:                    msg.CertificationID,
 			FamilyID:                           msg.FamilyID,
+			SupportedClusters:                  msg.SupportedClusters,
 		}
 	}
 
