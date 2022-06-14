@@ -20,6 +20,7 @@ message ComplianceInfo {
   repeated ComplianceHistoryItem history = 11; 
   string programTypeVersion = 12;
   string certificationID = 13;
+  string familyID = 14;
   
 }
 

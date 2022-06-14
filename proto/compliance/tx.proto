@@ -28,6 +28,7 @@ message MsgCertifyModel {
   string reason = 9 [(gogoproto.moretags) = "validate:\"max=102400\""];
   string programTypeVersion = 10 [(gogoproto.moretags) = "validate:\"max=64\""];
   string certificationID = 11 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string familyID = 12 [(gogoproto.moretags) = "validate:\"max=64\""];
 }
 
 message MsgCertifyModelResponse {
@@ -45,6 +46,7 @@ message MsgRevokeModel {
   string reason = 9 [(gogoproto.moretags) = "validate:\"max=102400\""];
   string programTypeVersion = 10 [(gogoproto.moretags) = "validate:\"max=64\""];
   string certificationID = 11 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string familyID = 12 [(gogoproto.moretags) = "validate:\"max=64\""];
 }
 
 message MsgRevokeModelResponse {
@@ -62,6 +64,7 @@ message MsgProvisionModel {
   string reason = 9 [(gogoproto.moretags) = "validate:\"max=102400\""];
   string programTypeVersion = 10 [(gogoproto.moretags) = "validate:\"max=64\""];
   string certificationID = 11 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string familyID = 12 [(gogoproto.moretags) = "validate:\"max=64\""];
 }
 
 message MsgProvisionModelResponse {
