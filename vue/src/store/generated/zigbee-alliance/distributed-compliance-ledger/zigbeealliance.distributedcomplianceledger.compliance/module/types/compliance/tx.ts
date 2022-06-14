@@ -18,6 +18,7 @@ export interface MsgCertifyModel {
   familyID: string
   supportedClusters: string
   compliancePlatformUsed: string
+  compliancePlatformVersion: string
 }
 
 export interface MsgCertifyModelResponse {}
@@ -37,6 +38,7 @@ export interface MsgRevokeModel {
   familyID: string
   supportedClusters: string
   compliancePlatformUsed: string
+  compliancePlatformVersion: string
 }
 
 export interface MsgRevokeModelResponse {}
@@ -56,6 +58,7 @@ export interface MsgProvisionModel {
   familyID: string
   supportedClusters: string
   compliancePlatformUsed: string
+  compliancePlatformVersion: string
 }
 
 export interface MsgProvisionModelResponse {}
@@ -74,7 +77,8 @@ const baseMsgCertifyModel: object = {
   certificationID: '',
   familyID: '',
   supportedClusters: '',
-  compliancePlatformUsed: ''
+  compliancePlatformUsed: '',
+  compliancePlatformVersion: ''
 }
 
 export const MsgCertifyModel = {
@@ -120,6 +124,9 @@ export const MsgCertifyModel = {
     }
     if (message.compliancePlatformUsed !== '') {
       writer.uint32(114).string(message.compliancePlatformUsed)
+    }
+    if (message.compliancePlatformVersion !== '') {
+      writer.uint32(122).string(message.compliancePlatformVersion)
     }
     return writer
   },
@@ -172,6 +179,9 @@ export const MsgCertifyModel = {
           break
         case 14:
           message.compliancePlatformUsed = reader.string()
+          break
+        case 15:
+          message.compliancePlatformVersion = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -253,6 +263,11 @@ export const MsgCertifyModel = {
     } else {
       message.compliancePlatformUsed = ''
     }
+    if (object.compliancePlatformVersion !== undefined && object.compliancePlatformVersion !== null) {
+      message.compliancePlatformVersion = String(object.compliancePlatformVersion)
+    } else {
+      message.compliancePlatformVersion = ''
+    }
     return message
   },
 
@@ -272,6 +287,7 @@ export const MsgCertifyModel = {
     message.familyID !== undefined && (obj.familyID = message.familyID)
     message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters)
     message.compliancePlatformUsed !== undefined && (obj.compliancePlatformUsed = message.compliancePlatformUsed)
+    message.compliancePlatformVersion !== undefined && (obj.compliancePlatformVersion = message.compliancePlatformVersion)
     return obj
   },
 
@@ -347,6 +363,11 @@ export const MsgCertifyModel = {
     } else {
       message.compliancePlatformUsed = ''
     }
+    if (object.compliancePlatformVersion !== undefined && object.compliancePlatformVersion !== null) {
+      message.compliancePlatformVersion = object.compliancePlatformVersion
+    } else {
+      message.compliancePlatformVersion = ''
+    }
     return message
   }
 }
@@ -403,7 +424,8 @@ const baseMsgRevokeModel: object = {
   certificationID: '',
   familyID: '',
   supportedClusters: '',
-  compliancePlatformUsed: ''
+  compliancePlatformUsed: '',
+  compliancePlatformVersion: ''
 }
 
 export const MsgRevokeModel = {
@@ -449,6 +471,9 @@ export const MsgRevokeModel = {
     }
     if (message.compliancePlatformUsed !== '') {
       writer.uint32(114).string(message.compliancePlatformUsed)
+    }
+    if (message.compliancePlatformVersion !== '') {
+      writer.uint32(122).string(message.compliancePlatformVersion)
     }
     return writer
   },
@@ -501,6 +526,9 @@ export const MsgRevokeModel = {
           break
         case 14:
           message.compliancePlatformUsed = reader.string()
+          break
+        case 15:
+          message.compliancePlatformVersion = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -582,6 +610,11 @@ export const MsgRevokeModel = {
     } else {
       message.compliancePlatformUsed = ''
     }
+    if (object.compliancePlatformVersion !== undefined && object.compliancePlatformVersion !== null) {
+      message.compliancePlatformVersion = String(object.compliancePlatformVersion)
+    } else {
+      message.compliancePlatformVersion = ''
+    }
     return message
   },
 
@@ -601,6 +634,7 @@ export const MsgRevokeModel = {
     message.familyID !== undefined && (obj.familyID = message.familyID)
     message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters)
     message.compliancePlatformUsed !== undefined && (obj.compliancePlatformUsed = message.compliancePlatformUsed)
+    message.compliancePlatformVersion !== undefined && (obj.compliancePlatformVersion = message.compliancePlatformVersion)
     return obj
   },
 
@@ -676,6 +710,11 @@ export const MsgRevokeModel = {
     } else {
       message.compliancePlatformUsed = ''
     }
+    if (object.compliancePlatformVersion !== undefined && object.compliancePlatformVersion !== null) {
+      message.compliancePlatformVersion = object.compliancePlatformVersion
+    } else {
+      message.compliancePlatformVersion = ''
+    }
     return message
   }
 }
@@ -732,7 +771,8 @@ const baseMsgProvisionModel: object = {
   certificationID: '',
   familyID: '',
   supportedClusters: '',
-  compliancePlatformUsed: ''
+  compliancePlatformUsed: '',
+  compliancePlatformVersion: ''
 }
 
 export const MsgProvisionModel = {
@@ -778,6 +818,9 @@ export const MsgProvisionModel = {
     }
     if (message.compliancePlatformUsed !== '') {
       writer.uint32(114).string(message.compliancePlatformUsed)
+    }
+    if (message.compliancePlatformVersion !== '') {
+      writer.uint32(122).string(message.compliancePlatformVersion)
     }
     return writer
   },
@@ -830,6 +873,9 @@ export const MsgProvisionModel = {
           break
         case 14:
           message.compliancePlatformUsed = reader.string()
+          break
+        case 15:
+          message.compliancePlatformVersion = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -911,6 +957,11 @@ export const MsgProvisionModel = {
     } else {
       message.compliancePlatformUsed = ''
     }
+    if (object.compliancePlatformVersion !== undefined && object.compliancePlatformVersion !== null) {
+      message.compliancePlatformVersion = String(object.compliancePlatformVersion)
+    } else {
+      message.compliancePlatformVersion = ''
+    }
     return message
   },
 
@@ -930,6 +981,7 @@ export const MsgProvisionModel = {
     message.familyID !== undefined && (obj.familyID = message.familyID)
     message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters)
     message.compliancePlatformUsed !== undefined && (obj.compliancePlatformUsed = message.compliancePlatformUsed)
+    message.compliancePlatformVersion !== undefined && (obj.compliancePlatformVersion = message.compliancePlatformVersion)
     return obj
   },
 
@@ -1004,6 +1056,11 @@ export const MsgProvisionModel = {
       message.compliancePlatformUsed = object.compliancePlatformUsed
     } else {
       message.compliancePlatformUsed = ''
+    }
+    if (object.compliancePlatformVersion !== undefined && object.compliancePlatformVersion !== null) {
+      message.compliancePlatformVersion = object.compliancePlatformVersion
+    } else {
+      message.compliancePlatformVersion = ''
     }
     return message
   }

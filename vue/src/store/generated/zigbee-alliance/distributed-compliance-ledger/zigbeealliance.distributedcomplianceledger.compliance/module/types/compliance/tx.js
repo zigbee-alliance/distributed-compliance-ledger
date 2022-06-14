@@ -15,7 +15,8 @@ const baseMsgCertifyModel = {
     certificationID: '',
     familyID: '',
     supportedClusters: '',
-    compliancePlatformUsed: ''
+    compliancePlatformUsed: '',
+    compliancePlatformVersion: ''
 };
 export const MsgCertifyModel = {
     encode(message, writer = Writer.create()) {
@@ -60,6 +61,9 @@ export const MsgCertifyModel = {
         }
         if (message.compliancePlatformUsed !== '') {
             writer.uint32(114).string(message.compliancePlatformUsed);
+        }
+        if (message.compliancePlatformVersion !== '') {
+            writer.uint32(122).string(message.compliancePlatformVersion);
         }
         return writer;
     },
@@ -111,6 +115,9 @@ export const MsgCertifyModel = {
                     break;
                 case 14:
                     message.compliancePlatformUsed = reader.string();
+                    break;
+                case 15:
+                    message.compliancePlatformVersion = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -205,6 +212,12 @@ export const MsgCertifyModel = {
         else {
             message.compliancePlatformUsed = '';
         }
+        if (object.compliancePlatformVersion !== undefined && object.compliancePlatformVersion !== null) {
+            message.compliancePlatformVersion = String(object.compliancePlatformVersion);
+        }
+        else {
+            message.compliancePlatformVersion = '';
+        }
         return message;
     },
     toJSON(message) {
@@ -223,6 +236,7 @@ export const MsgCertifyModel = {
         message.familyID !== undefined && (obj.familyID = message.familyID);
         message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters);
         message.compliancePlatformUsed !== undefined && (obj.compliancePlatformUsed = message.compliancePlatformUsed);
+        message.compliancePlatformVersion !== undefined && (obj.compliancePlatformVersion = message.compliancePlatformVersion);
         return obj;
     },
     fromPartial(object) {
@@ -311,6 +325,12 @@ export const MsgCertifyModel = {
         else {
             message.compliancePlatformUsed = '';
         }
+        if (object.compliancePlatformVersion !== undefined && object.compliancePlatformVersion !== null) {
+            message.compliancePlatformVersion = object.compliancePlatformVersion;
+        }
+        else {
+            message.compliancePlatformVersion = '';
+        }
         return message;
     }
 };
@@ -360,7 +380,8 @@ const baseMsgRevokeModel = {
     certificationID: '',
     familyID: '',
     supportedClusters: '',
-    compliancePlatformUsed: ''
+    compliancePlatformUsed: '',
+    compliancePlatformVersion: ''
 };
 export const MsgRevokeModel = {
     encode(message, writer = Writer.create()) {
@@ -405,6 +426,9 @@ export const MsgRevokeModel = {
         }
         if (message.compliancePlatformUsed !== '') {
             writer.uint32(114).string(message.compliancePlatformUsed);
+        }
+        if (message.compliancePlatformVersion !== '') {
+            writer.uint32(122).string(message.compliancePlatformVersion);
         }
         return writer;
     },
@@ -456,6 +480,9 @@ export const MsgRevokeModel = {
                     break;
                 case 14:
                     message.compliancePlatformUsed = reader.string();
+                    break;
+                case 15:
+                    message.compliancePlatformVersion = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -550,6 +577,12 @@ export const MsgRevokeModel = {
         else {
             message.compliancePlatformUsed = '';
         }
+        if (object.compliancePlatformVersion !== undefined && object.compliancePlatformVersion !== null) {
+            message.compliancePlatformVersion = String(object.compliancePlatformVersion);
+        }
+        else {
+            message.compliancePlatformVersion = '';
+        }
         return message;
     },
     toJSON(message) {
@@ -568,6 +601,7 @@ export const MsgRevokeModel = {
         message.familyID !== undefined && (obj.familyID = message.familyID);
         message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters);
         message.compliancePlatformUsed !== undefined && (obj.compliancePlatformUsed = message.compliancePlatformUsed);
+        message.compliancePlatformVersion !== undefined && (obj.compliancePlatformVersion = message.compliancePlatformVersion);
         return obj;
     },
     fromPartial(object) {
@@ -656,6 +690,12 @@ export const MsgRevokeModel = {
         else {
             message.compliancePlatformUsed = '';
         }
+        if (object.compliancePlatformVersion !== undefined && object.compliancePlatformVersion !== null) {
+            message.compliancePlatformVersion = object.compliancePlatformVersion;
+        }
+        else {
+            message.compliancePlatformVersion = '';
+        }
         return message;
     }
 };
@@ -705,7 +745,8 @@ const baseMsgProvisionModel = {
     certificationID: '',
     familyID: '',
     supportedClusters: '',
-    compliancePlatformUsed: ''
+    compliancePlatformUsed: '',
+    compliancePlatformVersion: ''
 };
 export const MsgProvisionModel = {
     encode(message, writer = Writer.create()) {
@@ -750,6 +791,9 @@ export const MsgProvisionModel = {
         }
         if (message.compliancePlatformUsed !== '') {
             writer.uint32(114).string(message.compliancePlatformUsed);
+        }
+        if (message.compliancePlatformVersion !== '') {
+            writer.uint32(122).string(message.compliancePlatformVersion);
         }
         return writer;
     },
@@ -801,6 +845,9 @@ export const MsgProvisionModel = {
                     break;
                 case 14:
                     message.compliancePlatformUsed = reader.string();
+                    break;
+                case 15:
+                    message.compliancePlatformVersion = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -895,6 +942,12 @@ export const MsgProvisionModel = {
         else {
             message.compliancePlatformUsed = '';
         }
+        if (object.compliancePlatformVersion !== undefined && object.compliancePlatformVersion !== null) {
+            message.compliancePlatformVersion = String(object.compliancePlatformVersion);
+        }
+        else {
+            message.compliancePlatformVersion = '';
+        }
         return message;
     },
     toJSON(message) {
@@ -913,6 +966,7 @@ export const MsgProvisionModel = {
         message.familyID !== undefined && (obj.familyID = message.familyID);
         message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters);
         message.compliancePlatformUsed !== undefined && (obj.compliancePlatformUsed = message.compliancePlatformUsed);
+        message.compliancePlatformVersion !== undefined && (obj.compliancePlatformVersion = message.compliancePlatformVersion);
         return obj;
     },
     fromPartial(object) {
@@ -1000,6 +1054,12 @@ export const MsgProvisionModel = {
         }
         else {
             message.compliancePlatformUsed = '';
+        }
+        if (object.compliancePlatformVersion !== undefined && object.compliancePlatformVersion !== null) {
+            message.compliancePlatformVersion = object.compliancePlatformVersion;
+        }
+        else {
+            message.compliancePlatformVersion = '';
         }
         return message;
     }

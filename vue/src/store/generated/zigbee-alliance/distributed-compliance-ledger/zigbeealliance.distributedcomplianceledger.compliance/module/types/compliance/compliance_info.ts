@@ -21,6 +21,7 @@ export interface ComplianceInfo {
   familyID: string
   supportedClusters: string
   compliancePlatformUsed: string
+  compliancePlatformVersion: string
 }
 
 const baseComplianceInfo: object = {
@@ -38,7 +39,8 @@ const baseComplianceInfo: object = {
   certificationID: '',
   familyID: '',
   supportedClusters: '',
-  compliancePlatformUsed: ''
+  compliancePlatformUsed: '',
+  compliancePlatformVersion: ''
 }
 
 export const ComplianceInfo = {
@@ -90,6 +92,9 @@ export const ComplianceInfo = {
     }
     if (message.compliancePlatformUsed !== '') {
       writer.uint32(130).string(message.compliancePlatformUsed)
+    }
+    if (message.compliancePlatformVersion !== '') {
+      writer.uint32(138).string(message.compliancePlatformVersion)
     }
     return writer
   },
@@ -149,6 +154,9 @@ export const ComplianceInfo = {
           break
         case 16:
           message.compliancePlatformUsed = reader.string()
+          break
+        case 17:
+          message.compliancePlatformVersion = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -241,6 +249,11 @@ export const ComplianceInfo = {
     } else {
       message.compliancePlatformUsed = ''
     }
+    if (object.compliancePlatformVersion !== undefined && object.compliancePlatformVersion !== null) {
+      message.compliancePlatformVersion = String(object.compliancePlatformVersion)
+    } else {
+      message.compliancePlatformVersion = ''
+    }
     return message
   },
 
@@ -266,6 +279,7 @@ export const ComplianceInfo = {
     message.familyID !== undefined && (obj.familyID = message.familyID)
     message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters)
     message.compliancePlatformUsed !== undefined && (obj.compliancePlatformUsed = message.compliancePlatformUsed)
+    message.compliancePlatformVersion !== undefined && (obj.compliancePlatformVersion = message.compliancePlatformVersion)
     return obj
   },
 
@@ -351,6 +365,11 @@ export const ComplianceInfo = {
       message.compliancePlatformUsed = object.compliancePlatformUsed
     } else {
       message.compliancePlatformUsed = ''
+    }
+    if (object.compliancePlatformVersion !== undefined && object.compliancePlatformVersion !== null) {
+      message.compliancePlatformVersion = object.compliancePlatformVersion
+    } else {
+      message.compliancePlatformVersion = ''
     }
     return message
   }
