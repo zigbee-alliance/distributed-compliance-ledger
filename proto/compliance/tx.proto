@@ -36,6 +36,7 @@ message MsgCertifyModel {
   string certificationRoute = 17 [(gogoproto.moretags) = "validate:\"max=64\""];
   string programType = 18 [(gogoproto.moretags) = "validate:\"max=64\""];
   string transport = 19 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string parentChild = 20 [(gogoproto.moretags) = "validate:\"max=64\""];
 }
 
 message MsgCertifyModelResponse {
@@ -61,6 +62,7 @@ message MsgRevokeModel {
   string certificationRoute = 17 [(gogoproto.moretags) = "validate:\"max=64\""];
   string programType = 18 [(gogoproto.moretags) = "validate:\"max=64\""];
   string transport = 19 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string parentChild = 20 [(gogoproto.moretags) = "validate:\"max=64\""];
 }
 
 message MsgRevokeModelResponse {
@@ -86,6 +88,7 @@ message MsgProvisionModel {
   string certificationRoute = 17 [(gogoproto.moretags) = "validate:\"max=64\""];
   string programType = 18 [(gogoproto.moretags) = "validate:\"max=64\""];
   string transport = 19 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string parentChild = 20 [(gogoproto.moretags) = "validate:\"max=64\""];
 }
 
 message MsgProvisionModelResponse {
