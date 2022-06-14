@@ -60,6 +60,7 @@ func (k msgServer) ProvisionModel(goCtx context.Context, msg *types.MsgProvision
 		CompliancePlatformUsed:             msg.CompliancePlatformUsed,
 		CompliancePlatformVersion:          msg.CompliancePlatformVersion,
 		OSVersion:                          msg.OSVersion,
+		CertificationRoute:                 msg.CertificationRoute,
 	}
 
 	// store compliance info

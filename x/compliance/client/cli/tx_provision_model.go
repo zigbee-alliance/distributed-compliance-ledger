@@ -30,6 +30,7 @@ func CmdProvisionModel() *cobra.Command {
 		compliancePlatformUsed    string
 		compliancePlatformVersion string
 		OSVersion                 string
+		certificationRoute        string
 	)
 
 	cmd := &cobra.Command{
@@ -59,6 +60,7 @@ func CmdProvisionModel() *cobra.Command {
 				compliancePlatformUsed,
 				compliancePlatformVersion,
 				OSVersion,
+				certificationRoute,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -100,6 +102,8 @@ func CmdProvisionModel() *cobra.Command {
 		"Compliance Platform Version of the certification")
 	cmd.Flags().StringVar(&OSVersion, FlagOSVersion, "",
 		"OS Version of the certification")
+	cmd.Flags().StringVar(&certificationRoute, FlagCertificationRoute, "",
+		"Certification Route of the certification")
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)
