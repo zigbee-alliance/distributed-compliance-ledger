@@ -279,6 +279,8 @@ paths:
                       type: string
                     familyID:
                       type: string
+                    supportedClusters:
+                      type: string
               pagination:
                 type: object
                 properties:
@@ -445,6 +447,8 @@ paths:
                   certificationID:
                     type: string
                   familyID:
+                    type: string
+                  supportedClusters:
                     type: string
         default:
           description: An unexpected error response.
@@ -13676,6 +13680,8 @@ definitions:
         type: string
       familyID:
         type: string
+      supportedClusters:
+        type: string
   zigbeealliance.distributedcomplianceledger.compliance.ProvisionalModel:
     type: object
     properties:
@@ -13791,6 +13797,8 @@ definitions:
             certificationID:
               type: string
             familyID:
+              type: string
+            supportedClusters:
               type: string
       pagination:
         type: object
@@ -13979,6 +13987,8 @@ definitions:
           certificationID:
             type: string
           familyID:
+            type: string
+          supportedClusters:
             type: string
   zigbeealliance.distributedcomplianceledger.compliance.QueryGetProvisionalModelResponse:
     type: object
