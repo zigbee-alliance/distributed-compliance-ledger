@@ -76,6 +76,10 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 	} else {
 		// There is no compliance record yet. So certification will be tracked on ledger.
 
+		if !types.IsValidPFCCertificationRoute(msg.ParentChild) {
+			return nil, types.NewErrInvalidPFCCertificationRoute(msg.ParentChild, types.PFCCertificationRouteList)
+		}
+
 		complianceInfo = types.ComplianceInfo{
 			Vid:                                msg.Vid,
 			Pid:                                msg.Pid,

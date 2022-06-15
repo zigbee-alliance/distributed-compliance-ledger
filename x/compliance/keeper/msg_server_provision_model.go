@@ -41,6 +41,10 @@ func (k msgServer) ProvisionModel(goCtx context.Context, msg *types.MsgProvision
 		}
 	}
 
+	if !types.IsValidPFCCertificationRoute(msg.ParentChild) {
+		return nil, types.NewErrInvalidPFCCertificationRoute(msg.ParentChild, types.PFCCertificationRouteList)
+	}
+
 	complianceInfo = types.ComplianceInfo{
 		Vid:                                msg.Vid,
 		Pid:                                msg.Pid,

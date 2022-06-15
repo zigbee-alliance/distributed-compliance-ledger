@@ -25,3 +25,24 @@ const (
 	CodeCertified   uint32 = 2
 	CodeRevoked     uint32 = 3
 )
+
+const (
+	ParentPFCCertificationRoute  = "parent"
+	ChildPFCCertificationRoute   = "child"
+	DefaultPFCCertificationRoute = ""
+)
+
+// list of PFC Certification Routes
+type PFCCertificationRoutes []string
+
+var PFCCertificationRouteList = PFCCertificationRoutes{ParentPFCCertificationRoute, ChildPFCCertificationRoute, DefaultPFCCertificationRoute}
+
+func IsValidPFCCertificationRoute(certificationRoute string) bool {
+	for _, i := range PFCCertificationRouteList {
+		if i == certificationRoute {
+			return true
+		}
+	}
+
+	return false
+}
