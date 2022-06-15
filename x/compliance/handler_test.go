@@ -1117,7 +1117,12 @@ func TestHandler_CertifyRevokedModel(t *testing.T) {
 		receivedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, certificationType)
 
 		// check
-		checkCertifiedModelInfo(t, certifyModelMsg, receivedComplianceInfo)
+		require.Equal(t, certifyModelMsg.Vid, receivedComplianceInfo.Vid)
+		require.Equal(t, certifyModelMsg.Pid, receivedComplianceInfo.Pid)
+		require.Equal(t, types.CodeCertified, receivedComplianceInfo.SoftwareVersionCertificationStatus)
+		require.Equal(t, certifyModelMsg.CertificationDate, receivedComplianceInfo.Date)
+		require.Equal(t, certifyModelMsg.Reason, receivedComplianceInfo.Reason)
+		require.Equal(t, certifyModelMsg.CertificationType, receivedComplianceInfo.CertificationType)
 		require.Equal(t, 1, len(receivedComplianceInfo.History))
 
 		require.Equal(t, types.CodeRevoked, receivedComplianceInfo.History[0].SoftwareVersionCertificationStatus)
