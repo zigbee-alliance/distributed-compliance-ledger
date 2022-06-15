@@ -16,7 +16,7 @@ func NewMsgRevokeModel(
 	signer string, vid int32, pid int32, softwareVersion uint32, softwareVersionString string, cdVersionNumber uint32,
 	revocationDate string, certificationType string, reason string, programTypeVersion string, cDCertificationID string,
 	familyID string, supportedClusters string, compliancePlatformUsed string, compliancePlatformVersion string, osVersion string,
-	certificationRoute string, programType string, transport string,
+	certificationRoute string, programType string, transport string, parentChild string,
 ) *MsgRevokeModel {
 	return &MsgRevokeModel{
 		Signer:                    signer,
@@ -38,6 +38,7 @@ func NewMsgRevokeModel(
 		CertificationRoute:        certificationRoute,
 		ProgramType:               programType,
 		Transport:                 transport,
+		ParentChild:               parentChild,
 	}
 }
 

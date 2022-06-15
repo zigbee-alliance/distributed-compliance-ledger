@@ -40,6 +40,7 @@ const (
 	FlagCertificationRoute        = "certificationRoute"
 	FlagProgramType               = "programType"
 	FlagTransport                 = "transport"
+	FlagParentChild               = "parentChild"
 
 	TextCertificationType = "Certification type - Currently 'zigbee' and 'matter' types are supported"
 )

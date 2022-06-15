@@ -33,6 +33,7 @@ func CmdRevokeModel() *cobra.Command {
 		certificationRoute        string
 		programType               string
 		transport                 string
+		parentChild               string
 	)
 
 	cmd := &cobra.Command{
@@ -65,6 +66,7 @@ func CmdRevokeModel() *cobra.Command {
 				certificationRoute,
 				programType,
 				transport,
+				parentChild,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -111,6 +113,8 @@ func CmdRevokeModel() *cobra.Command {
 		"Program Type of the certification")
 	cmd.Flags().StringVar(&transport, FlagTransport, "",
 		"Transport of the certification")
+	cmd.Flags().StringVar(&parentChild, FlagParentChild, "",
+		"Parent or Child  of the PFC certification route")
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)

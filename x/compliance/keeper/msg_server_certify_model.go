@@ -98,6 +98,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 			CertificationRoute:                 msg.CertificationRoute,
 			ProgramType:                        msg.ProgramType,
 			Transport:                          msg.Transport,
+			ParentChild:                        msg.ParentChild,
 		}
 	}
 
