@@ -528,6 +528,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 		CertificationDate:     certDate,
 		CertificationType:     "zigbee",
 		Reason:                certReason,
+		CDCertificationID:     testconstants.CDCertificationID,
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
@@ -730,6 +731,7 @@ func DemoTrackRevocation(suite *utils.TestSuite) {
 		CertificationDate:     certDate,
 		CertificationType:     "zigbee",
 		Reason:                certReason,
+		CDCertificationID:     testconstants.CDCertificationID,
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
@@ -829,6 +831,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 		ProvisionalDate:       provDate,
 		CertificationType:     "matter",
 		Reason:                provReason,
+		CDCertificationID:     testconstants.CDCertificationID,
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&provModelMsg}, certCenter, certCenterAccount)
@@ -886,6 +889,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 		CertificationDate:     certDate,
 		CertificationType:     "matter",
 		Reason:                certReason,
+		CDCertificationID:     testconstants.CDCertificationID,
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
@@ -1003,6 +1007,7 @@ func DemoTrackComplianceWithHexVidAndPid(suite *utils.TestSuite) {
 		CertificationDate:     certDate,
 		CertificationType:     "zigbee",
 		Reason:                certReason,
+		CDCertificationID:     testconstants.CDCertificationID,
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
@@ -1137,6 +1142,7 @@ func DemoTrackRevocationWithHexVidAndPid(suite *utils.TestSuite) {
 		CertificationDate:     certDate,
 		CertificationType:     "zigbee",
 		Reason:                certReason,
+		CDCertificationID:     testconstants.CDCertificationID,
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
@@ -1219,6 +1225,7 @@ func DemoTrackProvisionByHexVidAndPid(suite *utils.TestSuite) {
 		ProvisionalDate:       provDate,
 		CertificationType:     "matter",
 		Reason:                provReason,
+		CDCertificationID:     testconstants.CDCertificationID,
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&provModelMsg}, certCenter, certCenterAccount)
@@ -1266,6 +1273,7 @@ func DemoTrackProvisionByHexVidAndPid(suite *utils.TestSuite) {
 		CertificationDate:     certDate,
 		CertificationType:     "matter",
 		Reason:                certReason,
+		CDCertificationID:     testconstants.CDCertificationID,
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
