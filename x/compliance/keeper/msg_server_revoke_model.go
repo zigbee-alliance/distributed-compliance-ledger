@@ -102,17 +102,6 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 			SoftwareVersionCertificationStatus: types.CodeRevoked,
 			History:                            []*types.ComplianceHistoryItem{},
 			CDVersionNumber:                    msg.CDVersionNumber,
-			ProgramTypeVersion:                 msg.ProgramTypeVersion,
-			CDCertificationID:                  msg.CDCertificationID,
-			FamilyID:                           msg.FamilyID,
-			SupportedClusters:                  msg.SupportedClusters,
-			CompliancePlatformUsed:             msg.CompliancePlatformUsed,
-			CompliancePlatformVersion:          msg.CompliancePlatformVersion,
-			OSVersion:                          msg.OSVersion,
-			CertificationRoute:                 msg.CertificationRoute,
-			ProgramType:                        msg.ProgramType,
-			Transport:                          msg.Transport,
-			ParentChild:                        msg.ParentChild,
 		}
 	}
 

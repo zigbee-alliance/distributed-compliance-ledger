@@ -34,17 +34,6 @@ export interface MsgRevokeModel {
     revocationDate: string;
     certificationType: string;
     reason: string;
-    programTypeVersion: string;
-    CDCertificationID: string;
-    familyID: string;
-    supportedClusters: string;
-    compliancePlatformUsed: string;
-    compliancePlatformVersion: string;
-    OSVersion: string;
-    certificationRoute: string;
-    programType: string;
-    transport: string;
-    parentChild: string;
 }
 export interface MsgRevokeModelResponse {
 }

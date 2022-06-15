@@ -15,25 +15,14 @@ var _ = strconv.Itoa(0)
 
 func CmdRevokeModel() *cobra.Command {
 	var (
-		vid                       int32
-		pid                       int32
-		softwareVersion           uint32
-		softwareVersionString     string
-		revocationDate            string
-		certificationType         string
-		reason                    string
-		cdVersionNumber           uint32
-		programTypeVersion        string
-		CDCertificationID         string
-		familyID                  string
-		supportedClusters         string
-		compliancePlatformUsed    string
-		compliancePlatformVersion string
-		OSVersion                 string
-		certificationRoute        string
-		programType               string
-		transport                 string
-		parentChild               string
+		vid                   int32
+		pid                   int32
+		softwareVersion       uint32
+		softwareVersionString string
+		revocationDate        string
+		certificationType     string
+		reason                string
+		cdVersionNumber       uint32
 	)
 
 	cmd := &cobra.Command{
@@ -56,17 +45,6 @@ func CmdRevokeModel() *cobra.Command {
 				revocationDate,
 				certificationType,
 				reason,
-				programTypeVersion,
-				CDCertificationID,
-				familyID,
-				supportedClusters,
-				compliancePlatformUsed,
-				compliancePlatformVersion,
-				OSVersion,
-				certificationRoute,
-				programType,
-				transport,
-				parentChild,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -93,28 +71,6 @@ func CmdRevokeModel() *cobra.Command {
 		"The date of model revocation (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z")
 	cmd.Flags().StringVar(&reason, FlagReason, "",
 		"Optional comment describing the reason of revocation")
-	cmd.Flags().StringVar(&programTypeVersion, FlagProgramTypeVersion, "",
-		"Program Type Version of the certification")
-	cmd.Flags().StringVar(&CDCertificationID, FlagCDCertificationID, "",
-		"CD Certification ID of the certification")
-	cmd.Flags().StringVar(&familyID, FlagFamilyID, "",
-		"Family ID of the certification")
-	cmd.Flags().StringVar(&supportedClusters, FlagSupportedClusters, "",
-		"Supported Clusters of the certification")
-	cmd.Flags().StringVar(&compliancePlatformUsed, FlagCompliancePlatformUsed, "",
-		"Compliance Platform Used of the certification")
-	cmd.Flags().StringVar(&compliancePlatformVersion, FlagCompliancePlatformVersion, "",
-		"Compliance Platform Version of the certification")
-	cmd.Flags().StringVar(&OSVersion, FlagOSVersion, "",
-		"OS Version of the certification")
-	cmd.Flags().StringVar(&certificationRoute, FlagCertificationRoute, "",
-		"Certification Route of the certification")
-	cmd.Flags().StringVar(&programType, FlagProgramType, "",
-		"Program Type of the certification")
-	cmd.Flags().StringVar(&transport, FlagTransport, "",
-		"Transport of the certification")
-	cmd.Flags().StringVar(&parentChild, FlagParentChild, "",
-		"Parent or Child  of the PFC certification route")
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)
@@ -122,7 +78,6 @@ func CmdRevokeModel() *cobra.Command {
 	_ = cmd.MarkFlagRequired(FlagSoftwareVersionString)
 	_ = cmd.MarkFlagRequired(FlagCertificationType)
 	_ = cmd.MarkFlagRequired(FlagRevocationDate)
-	_ = cmd.MarkFlagRequired(FlagCDCertificationID)
 	_ = cmd.MarkFlagRequired(flags.FlagFrom)
 
 	cli.AddTxFlagsToCmd(cmd)

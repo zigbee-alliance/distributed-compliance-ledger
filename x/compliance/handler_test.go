@@ -793,51 +793,6 @@ func TestHandler_RevokeCertifiedModel(t *testing.T) {
 	}
 }
 
-func TestHandler_RevokeCertifiedModel_CheckAllOptionalFlags(t *testing.T) {
-	setup := Setup(t)
-
-	// add model version
-	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
-		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
-
-	for _, certificationType := range setup.CertificationTypes {
-		// certify model
-		certifyModelMsg := NewMsgCertifyModelWithAllOptionalFlags(
-			vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
-		_, err := setup.Handler(setup.Ctx, certifyModelMsg)
-		require.NoError(t, err)
-
-		// revoke model
-		revokeModelMsg := NewMsgRevokeModelWithAllOptionalFlags(
-			vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
-		revokeModelMsg.RevocationDate = time.Now().UTC().Format(time.RFC3339)
-		_, err = setup.Handler(setup.Ctx, revokeModelMsg)
-		require.NoError(t, err)
-
-		// query revoked model info
-		receivedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, certificationType)
-
-		// check
-		checkRevokedModelInfo(t, revokeModelMsg, receivedComplianceInfo)
-
-		require.Equal(t, 1, len(receivedComplianceInfo.History))
-		require.Equal(t, types.CodeCertified, receivedComplianceInfo.History[0].SoftwareVersionCertificationStatus)
-		require.Equal(t, certifyModelMsg.CertificationDate, receivedComplianceInfo.History[0].Date)
-
-		// query revoked model
-		revokedModel, _ := queryRevokedModel(setup, vid, pid, softwareVersion, certificationType)
-		require.True(t, revokedModel.Value)
-
-		// query certified model
-		certifiedModel, _ := queryCertifiedModel(setup, vid, pid, softwareVersion, certificationType)
-		require.False(t, certifiedModel.Value)
-
-		// query provisional model
-		provisionalModel, _ := queryProvisionalModel(setup, vid, pid, softwareVersion, certificationType)
-		require.False(t, provisionalModel.Value)
-	}
-}
-
 func TestHandler_RevokeProvisionedModel(t *testing.T) {
 	setup := Setup(t)
 
@@ -854,51 +809,6 @@ func TestHandler_RevokeProvisionedModel(t *testing.T) {
 
 		// revoke model
 		revokeModelMsg := NewMsgRevokeModel(
-			vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
-		revokeModelMsg.RevocationDate = time.Now().UTC().Format(time.RFC3339)
-		_, err = setup.Handler(setup.Ctx, revokeModelMsg)
-		require.NoError(t, err)
-
-		// query revoked model info
-		receivedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, certificationType)
-
-		// check
-		checkRevokedModelInfo(t, revokeModelMsg, receivedComplianceInfo)
-		require.Equal(t, 1, len(receivedComplianceInfo.History))
-
-		require.Equal(t, types.CodeProvisional, receivedComplianceInfo.History[0].SoftwareVersionCertificationStatus)
-		require.Equal(t, provisionModelMsg.ProvisionalDate, receivedComplianceInfo.History[0].Date)
-
-		// query revoked model
-		revokedModel, _ := queryRevokedModel(setup, vid, pid, softwareVersion, certificationType)
-		require.True(t, revokedModel.Value)
-
-		// query provisional model
-		provisionalModel, _ := queryProvisionalModel(setup, vid, pid, softwareVersion, certificationType)
-		require.False(t, provisionalModel.Value)
-
-		// query certified model
-		certifiedModel, _ := queryCertifiedModel(setup, vid, pid, softwareVersion, certificationType)
-		require.False(t, certifiedModel.Value)
-	}
-}
-
-func TestHandler_RevokeProvisionedModel_CheckAllOptionalFlags(t *testing.T) {
-	setup := Setup(t)
-
-	// add model version
-	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
-		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
-
-	for _, certificationType := range setup.CertificationTypes {
-		// provision model
-		provisionModelMsg := NewMsgProvisionModelWithAllOptionalFlags(
-			vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
-		_, err := setup.Handler(setup.Ctx, provisionModelMsg)
-		require.NoError(t, err)
-
-		// revoke model
-		revokeModelMsg := NewMsgRevokeModelWithAllOptionalFlags(
 			vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
 		revokeModelMsg.RevocationDate = time.Now().UTC().Format(time.RFC3339)
 		_, err = setup.Handler(setup.Ctx, revokeModelMsg)
@@ -1393,17 +1303,6 @@ func checkRevokedModelInfo(
 	require.Equal(t, revokeModelMsg.RevocationDate, receivedComplianceInfo.Date)
 	require.Equal(t, revokeModelMsg.Reason, receivedComplianceInfo.Reason)
 	require.Equal(t, revokeModelMsg.CertificationType, receivedComplianceInfo.CertificationType)
-	require.Equal(t, revokeModelMsg.CDCertificationID, receivedComplianceInfo.CDCertificationID)
-	require.Equal(t, revokeModelMsg.ProgramTypeVersion, receivedComplianceInfo.ProgramTypeVersion)
-	require.Equal(t, revokeModelMsg.FamilyID, receivedComplianceInfo.FamilyID)
-	require.Equal(t, revokeModelMsg.SupportedClusters, receivedComplianceInfo.SupportedClusters)
-	require.Equal(t, revokeModelMsg.CompliancePlatformUsed, receivedComplianceInfo.CompliancePlatformUsed)
-	require.Equal(t, revokeModelMsg.CompliancePlatformVersion, receivedComplianceInfo.CompliancePlatformVersion)
-	require.Equal(t, revokeModelMsg.OSVersion, receivedComplianceInfo.OSVersion)
-	require.Equal(t, revokeModelMsg.CertificationRoute, receivedComplianceInfo.CertificationRoute)
-	require.Equal(t, revokeModelMsg.ProgramType, receivedComplianceInfo.ProgramType)
-	require.Equal(t, revokeModelMsg.Transport, receivedComplianceInfo.Transport)
-	require.Equal(t, revokeModelMsg.ParentChild, receivedComplianceInfo.ParentChild)
 }
 
 func NewMsgProvisionModel(
@@ -1532,39 +1431,6 @@ func NewMsgRevokeModel(
 		RevocationDate:        testconstants.RevocationDate,
 		CertificationType:     certificationType,
 		Reason:                testconstants.RevocationReason,
-		CDCertificationID:     testconstants.CDCertificationID,
-	}
-}
-
-func NewMsgRevokeModelWithAllOptionalFlags(
-	vid int32,
-	pid int32,
-	softwareVersion uint32,
-	softwareVersionString string,
-	certificationType string,
-	signer sdk.AccAddress,
-) *types.MsgRevokeModel {
-	return &types.MsgRevokeModel{
-		Signer:                    signer.String(),
-		Vid:                       vid,
-		Pid:                       pid,
-		SoftwareVersion:           softwareVersion,
-		SoftwareVersionString:     softwareVersionString,
-		CDVersionNumber:           uint32(testconstants.CdVersionNumber),
-		RevocationDate:            testconstants.RevocationDate,
-		CertificationType:         certificationType,
-		Reason:                    testconstants.RevocationReason,
-		CDCertificationID:         testconstants.CDCertificationID,
-		ProgramTypeVersion:        testconstants.ProgramTypeVersion,
-		FamilyID:                  testconstants.FamilyID,
-		SupportedClusters:         testconstants.SupportedClusters,
-		CompliancePlatformUsed:    testconstants.CompliancePlatformUsed,
-		CompliancePlatformVersion: testconstants.CompliancePlatformVersion,
-		OSVersion:                 testconstants.OSVersion,
-		CertificationRoute:        testconstants.CertificationRoute,
-		ProgramType:               testconstants.ProgramType,
-		Transport:                 testconstants.Transport,
-		ParentChild:               testconstants.ParentChild1,
 	}
 }
 

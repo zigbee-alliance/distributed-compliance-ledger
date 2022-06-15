@@ -14,31 +14,18 @@ var _ sdk.Msg = &MsgRevokeModel{}
 
 func NewMsgRevokeModel(
 	signer string, vid int32, pid int32, softwareVersion uint32, softwareVersionString string, cdVersionNumber uint32,
-	revocationDate string, certificationType string, reason string, programTypeVersion string, cDCertificationID string,
-	familyID string, supportedClusters string, compliancePlatformUsed string, compliancePlatformVersion string, osVersion string,
-	certificationRoute string, programType string, transport string, parentChild string,
+	revocationDate string, certificationType string, reason string,
 ) *MsgRevokeModel {
 	return &MsgRevokeModel{
-		Signer:                    signer,
-		Vid:                       vid,
-		Pid:                       pid,
-		SoftwareVersion:           softwareVersion,
-		SoftwareVersionString:     softwareVersionString,
-		CDVersionNumber:           cdVersionNumber,
-		RevocationDate:            revocationDate,
-		CertificationType:         certificationType,
-		Reason:                    reason,
-		ProgramTypeVersion:        programTypeVersion,
-		CDCertificationID:         cDCertificationID,
-		FamilyID:                  familyID,
-		SupportedClusters:         supportedClusters,
-		CompliancePlatformUsed:    compliancePlatformUsed,
-		CompliancePlatformVersion: compliancePlatformVersion,
-		OSVersion:                 osVersion,
-		CertificationRoute:        certificationRoute,
-		ProgramType:               programType,
-		Transport:                 transport,
-		ParentChild:               parentChild,
+		Signer:                signer,
+		Vid:                   vid,
+		Pid:                   pid,
+		SoftwareVersion:       softwareVersion,
+		SoftwareVersionString: softwareVersionString,
+		CDVersionNumber:       cdVersionNumber,
+		RevocationDate:        revocationDate,
+		CertificationType:     certificationType,
+		Reason:                reason,
 	}
 }
 

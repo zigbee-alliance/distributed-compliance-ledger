@@ -475,18 +475,7 @@ const baseMsgRevokeModel = {
     cDVersionNumber: 0,
     revocationDate: '',
     certificationType: '',
-    reason: '',
-    programTypeVersion: '',
-    CDCertificationID: '',
-    familyID: '',
-    supportedClusters: '',
-    compliancePlatformUsed: '',
-    compliancePlatformVersion: '',
-    OSVersion: '',
-    certificationRoute: '',
-    programType: '',
-    transport: '',
-    parentChild: ''
+    reason: ''
 };
 export const MsgRevokeModel = {
     encode(message, writer = Writer.create()) {
@@ -516,39 +505,6 @@ export const MsgRevokeModel = {
         }
         if (message.reason !== '') {
             writer.uint32(74).string(message.reason);
-        }
-        if (message.programTypeVersion !== '') {
-            writer.uint32(82).string(message.programTypeVersion);
-        }
-        if (message.CDCertificationID !== '') {
-            writer.uint32(90).string(message.CDCertificationID);
-        }
-        if (message.familyID !== '') {
-            writer.uint32(98).string(message.familyID);
-        }
-        if (message.supportedClusters !== '') {
-            writer.uint32(106).string(message.supportedClusters);
-        }
-        if (message.compliancePlatformUsed !== '') {
-            writer.uint32(114).string(message.compliancePlatformUsed);
-        }
-        if (message.compliancePlatformVersion !== '') {
-            writer.uint32(122).string(message.compliancePlatformVersion);
-        }
-        if (message.OSVersion !== '') {
-            writer.uint32(130).string(message.OSVersion);
-        }
-        if (message.certificationRoute !== '') {
-            writer.uint32(138).string(message.certificationRoute);
-        }
-        if (message.programType !== '') {
-            writer.uint32(146).string(message.programType);
-        }
-        if (message.transport !== '') {
-            writer.uint32(154).string(message.transport);
-        }
-        if (message.parentChild !== '') {
-            writer.uint32(162).string(message.parentChild);
         }
         return writer;
     },
@@ -585,39 +541,6 @@ export const MsgRevokeModel = {
                     break;
                 case 9:
                     message.reason = reader.string();
-                    break;
-                case 10:
-                    message.programTypeVersion = reader.string();
-                    break;
-                case 11:
-                    message.CDCertificationID = reader.string();
-                    break;
-                case 12:
-                    message.familyID = reader.string();
-                    break;
-                case 13:
-                    message.supportedClusters = reader.string();
-                    break;
-                case 14:
-                    message.compliancePlatformUsed = reader.string();
-                    break;
-                case 15:
-                    message.compliancePlatformVersion = reader.string();
-                    break;
-                case 16:
-                    message.OSVersion = reader.string();
-                    break;
-                case 17:
-                    message.certificationRoute = reader.string();
-                    break;
-                case 18:
-                    message.programType = reader.string();
-                    break;
-                case 19:
-                    message.transport = reader.string();
-                    break;
-                case 20:
-                    message.parentChild = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -682,72 +605,6 @@ export const MsgRevokeModel = {
         else {
             message.reason = '';
         }
-        if (object.programTypeVersion !== undefined && object.programTypeVersion !== null) {
-            message.programTypeVersion = String(object.programTypeVersion);
-        }
-        else {
-            message.programTypeVersion = '';
-        }
-        if (object.CDCertificationID !== undefined && object.CDCertificationID !== null) {
-            message.CDCertificationID = String(object.CDCertificationID);
-        }
-        else {
-            message.CDCertificationID = '';
-        }
-        if (object.familyID !== undefined && object.familyID !== null) {
-            message.familyID = String(object.familyID);
-        }
-        else {
-            message.familyID = '';
-        }
-        if (object.supportedClusters !== undefined && object.supportedClusters !== null) {
-            message.supportedClusters = String(object.supportedClusters);
-        }
-        else {
-            message.supportedClusters = '';
-        }
-        if (object.compliancePlatformUsed !== undefined && object.compliancePlatformUsed !== null) {
-            message.compliancePlatformUsed = String(object.compliancePlatformUsed);
-        }
-        else {
-            message.compliancePlatformUsed = '';
-        }
-        if (object.compliancePlatformVersion !== undefined && object.compliancePlatformVersion !== null) {
-            message.compliancePlatformVersion = String(object.compliancePlatformVersion);
-        }
-        else {
-            message.compliancePlatformVersion = '';
-        }
-        if (object.OSVersion !== undefined && object.OSVersion !== null) {
-            message.OSVersion = String(object.OSVersion);
-        }
-        else {
-            message.OSVersion = '';
-        }
-        if (object.certificationRoute !== undefined && object.certificationRoute !== null) {
-            message.certificationRoute = String(object.certificationRoute);
-        }
-        else {
-            message.certificationRoute = '';
-        }
-        if (object.programType !== undefined && object.programType !== null) {
-            message.programType = String(object.programType);
-        }
-        else {
-            message.programType = '';
-        }
-        if (object.transport !== undefined && object.transport !== null) {
-            message.transport = String(object.transport);
-        }
-        else {
-            message.transport = '';
-        }
-        if (object.parentChild !== undefined && object.parentChild !== null) {
-            message.parentChild = String(object.parentChild);
-        }
-        else {
-            message.parentChild = '';
-        }
         return message;
     },
     toJSON(message) {
@@ -761,17 +618,6 @@ export const MsgRevokeModel = {
         message.revocationDate !== undefined && (obj.revocationDate = message.revocationDate);
         message.certificationType !== undefined && (obj.certificationType = message.certificationType);
         message.reason !== undefined && (obj.reason = message.reason);
-        message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion);
-        message.CDCertificationID !== undefined && (obj.CDCertificationID = message.CDCertificationID);
-        message.familyID !== undefined && (obj.familyID = message.familyID);
-        message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters);
-        message.compliancePlatformUsed !== undefined && (obj.compliancePlatformUsed = message.compliancePlatformUsed);
-        message.compliancePlatformVersion !== undefined && (obj.compliancePlatformVersion = message.compliancePlatformVersion);
-        message.OSVersion !== undefined && (obj.OSVersion = message.OSVersion);
-        message.certificationRoute !== undefined && (obj.certificationRoute = message.certificationRoute);
-        message.programType !== undefined && (obj.programType = message.programType);
-        message.transport !== undefined && (obj.transport = message.transport);
-        message.parentChild !== undefined && (obj.parentChild = message.parentChild);
         return obj;
     },
     fromPartial(object) {
@@ -829,72 +675,6 @@ export const MsgRevokeModel = {
         }
         else {
             message.reason = '';
-        }
-        if (object.programTypeVersion !== undefined && object.programTypeVersion !== null) {
-            message.programTypeVersion = object.programTypeVersion;
-        }
-        else {
-            message.programTypeVersion = '';
-        }
-        if (object.CDCertificationID !== undefined && object.CDCertificationID !== null) {
-            message.CDCertificationID = object.CDCertificationID;
-        }
-        else {
-            message.CDCertificationID = '';
-        }
-        if (object.familyID !== undefined && object.familyID !== null) {
-            message.familyID = object.familyID;
-        }
-        else {
-            message.familyID = '';
-        }
-        if (object.supportedClusters !== undefined && object.supportedClusters !== null) {
-            message.supportedClusters = object.supportedClusters;
-        }
-        else {
-            message.supportedClusters = '';
-        }
-        if (object.compliancePlatformUsed !== undefined && object.compliancePlatformUsed !== null) {
-            message.compliancePlatformUsed = object.compliancePlatformUsed;
-        }
-        else {
-            message.compliancePlatformUsed = '';
-        }
-        if (object.compliancePlatformVersion !== undefined && object.compliancePlatformVersion !== null) {
-            message.compliancePlatformVersion = object.compliancePlatformVersion;
-        }
-        else {
-            message.compliancePlatformVersion = '';
-        }
-        if (object.OSVersion !== undefined && object.OSVersion !== null) {
-            message.OSVersion = object.OSVersion;
-        }
-        else {
-            message.OSVersion = '';
-        }
-        if (object.certificationRoute !== undefined && object.certificationRoute !== null) {
-            message.certificationRoute = object.certificationRoute;
-        }
-        else {
-            message.certificationRoute = '';
-        }
-        if (object.programType !== undefined && object.programType !== null) {
-            message.programType = object.programType;
-        }
-        else {
-            message.programType = '';
-        }
-        if (object.transport !== undefined && object.transport !== null) {
-            message.transport = object.transport;
-        }
-        else {
-            message.transport = '';
-        }
-        if (object.parentChild !== undefined && object.parentChild !== null) {
-            message.parentChild = object.parentChild;
-        }
-        else {
-            message.parentChild = '';
         }
         return message;
     }
