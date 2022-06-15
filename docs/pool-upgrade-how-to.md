@@ -107,12 +107,19 @@ application version:
       ```
       > **_Note:_**  In this case, `true` means that the **`auto-download`** is enabled. If you want to disable **`auto-download`**, you can set the value `false` (`DAEMON_ALLOW_DOWNLOAD_BINARIES=false`) or remove the above line of code from the `cosmovisor.service`.
 
-   2. Restart `cosmovisor.service`
+      > **_Note:_** If you change the configuration in the `cosmovisor.service`, you need to restart `cosmovisor.service`:
       ```bash
       sudo systemctl restart cosmovisor
       ```
 
-   3. Switches current user to the user on behalf of whom `cosmovisor` service
+      When `auto-download` is enabled:
+      * If `auto-download` is enabled , then no manual steps are required to be done by `Node Admins`. Nevertheless, it's recommended for all `Node Admins` to manually verify and put the `binaries` as described below.
+      * If `auto-download` is enabled and the `binary` is put manually to the correct folder, then this `binary` will be used for upgrade and no `auto-download` will happen. If `auto-download` is enabled and no `binary` is put manually, then the correct `binary` will be downloaded and the `checksum` will be verified automatically.
+      
+      > **_Note:_** Also make sure that propose plan should contain the link and the checksum to the binary according the format specified in cosmovisor docs. 
+      See the [Command Line Arguments And Environment Variables in Cosmovisor](https://github.com/cosmos/cosmos-sdk/tree/main/cosmovisor#command-line-arguments-and-environment-variables).
+
+   2. Switches current user to the user on behalf of whom `cosmovisor` service
       is running:
 
       ```bash
@@ -123,7 +130,7 @@ application version:
 
       The command will ask for the user's password. Enter it.
 
-   4. Downloads the application binary from the URL specified in the upgrade
+   3. Downloads the application binary from the URL specified in the upgrade
       plan `Info` field and corresponding to the node platform.
 
       Command to view the current scheduled upgrade plan:
@@ -132,7 +139,7 @@ application version:
       dcld query upgrade plan
       ```
 
-   5. Verifies that the downloaded application binary matches the checksum
+   4. Verifies that the downloaded application binary matches the checksum
       specified in the URL. This can be done automatically together with the
       previous step by [`go-getter`](https://github.com/hashicorp/go-getter)
       download tool (its executable binaries for various platforms can be
@@ -149,7 +156,7 @@ application version:
       checksum does not equal to the checksum provided in the URL, `go-getter`
       reports that checksums did not match.
 
-   6. Creates a directory with the name of the upgrade within
+   5. Creates a directory with the name of the upgrade within
       `$HOME/.dcl/cosmovisor/upgrades`, creates `bin` sub-directory within the
       created directory, and puts the new application binary into `bin`
       sub-directory.
@@ -167,7 +174,7 @@ application version:
       cp ./dcld $HOME/.dcl/cosmovisor/upgrades/vX.X.X/bin/
       ```
 
-   7. Sets proper owner and permissions for the new application binary.
+   6. Sets proper owner and permissions for the new application binary.
 
       For example:
 
@@ -175,13 +182,6 @@ application version:
       sudo chown $(whoami) $HOME/.dcl/cosmovisor/upgrades/vX.X.X/bin/dcld
       sudo chmod a+x $HOME/.dcl/cosmovisor/upgrades/vX.X.X/bin/dcld
       ```
-
-      When `auto-download` is enabled:
-         * If `auto-download` is enabled , then no manual steps are required to be done by `Node Admins`. Nevertheless, it's recommended for all `Node Admins` to manually verify and put the `binaries` as described below.
-         * If `auto-download` is enabled and the `binary` is put manually to the correct folder, then this `binary` will be used for upgrade and no `auto-download` will happen. If `auto-download` is enabled and no `binary` is put manually, then the correct `binary` will be downloaded and the `checksum` will be verified automatically.
-      
-      > **_Note:_** Also make sure that propese plan should contain the link and the checksum to the binary according the format specified in cosmovisor docs. 
-      See the [Command Line Arguments And Environment Variables in Cosmovisor](https://github.com/cosmos/cosmos-sdk/tree/main/cosmovisor#command-line-arguments-and-environment-variables).
 
     #### *** Steps [3-5] can be automated using the following command which downloads and verifies that the downloaded application binary matches the checksum specified in the URL
       command:
