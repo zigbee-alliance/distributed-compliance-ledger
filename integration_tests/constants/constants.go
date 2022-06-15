@@ -96,12 +96,24 @@ var (
 	Time3                                      int64  = 1645809278
 
 	// Compliance.
-	ProvisionalDate   = "2019-12-12T00:00:00Z"
-	CertificationDate = "2020-01-01T00:00:00Z"
-	RevocationDate    = "2020-03-03T03:30:00Z"
-	Reason            = "Some Reason"
-	RevocationReason  = "Some Reason"
-	CertificationType = "zigbee"
+	ProvisionalDate           = "2019-12-12T00:00:00Z"
+	CertificationDate         = "2020-01-01T00:00:00Z"
+	RevocationDate            = "2020-03-03T03:30:00Z"
+	Reason                    = "Some Reason"
+	RevocationReason          = "Some Reason"
+	CertificationType         = "zigbee"
+	CDCertificationID         = "15DEXF"
+	FamilyID                  = "Some Family ID"
+	SupportedClusters         = "Some Supported Clusters"
+	CompliancePlatformUsed    = "Some Compliance Platform Used"
+	CompliancePlatformVersion = "Some Compliance Platform Version"
+	OSVersion                 = "Some OS Version"
+	CertificationRoute        = "Some Certification Route"
+	ProgramType               = "Some Program Type"
+	ProgramTypeVersion        = "Some Program Type Version"
+	Transport                 = "Some Transport"
+	ParentChild1              = "parent"
+	ParentChild2              = "child"
 
 	// Testing Result.
 	TestResult = "http://test.result.com"
