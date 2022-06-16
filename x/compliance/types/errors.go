@@ -85,7 +85,7 @@ func NewErrInvalidCertificationType(certType interface{}, certList interface{}) 
 }
 
 func NewErrInvalidPFCCertificationRoute(certRoute interface{}, certList interface{}) error {
-	return sdkerrors.Wrapf(ErrInvalidCertificationType,
+	return sdkerrors.Wrapf(ErrInvalidPFCCertificationRoute,
 		"Invalid PFCCertificationRoute: \"%s\". Supported types: [%s]",
 		certRoute, certList,
 	)
