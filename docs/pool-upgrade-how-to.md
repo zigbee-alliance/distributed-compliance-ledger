@@ -93,112 +93,111 @@ application version:
    dcld query upgrade plan
    ```
 
-6. **[All Node Admins] Download New Binary**: Before the ledger reaches the
-   height specified in the upgrade plan, each node admin does the following
-   steps *(these must be done for all the nodes: validators, observers, seed
-   nodes, sentry nodes)*:
+6. **[All Node Admins]**: 
+   
+   - If `auto-download` is enabled , then no manual steps are required to be done by `Node Admins`. Nevertheless, it's recommended for all `Node Admins` to manually verify and put the `binaries` as described below.<br>
+      - Make sure that the `auto-download` parameter is present in `cosmovisor.service` (in the folder - `/etc/systemd/system/`) and if the `auto-download` parameter does not exist, then add this `auto-download` parameter to the section `Service` for enabled **`auto-download`**.
+         
+         For example:
 
-   1. Make sure that the `auto-download` parameter is present in `cosmovisor.service` (in the folder - `/etc/systemd/system/`) and if the `auto-download` parameter does not exist, then add this `auto-download` parameter to the section `Service` for enabled **`auto-download`**.
-      
-      For example:
+         ```bash
+         Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=true"
+         ```
 
-      ```bash
-      Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=true"
-      ```
-      > **_Note:_**  In this case, `true` means that the **`auto-download`** is enabled. If you want to disable **`auto-download`**, you can set the value `false` (`DAEMON_ALLOW_DOWNLOAD_BINARIES=false`) or remove the above line of code from the `cosmovisor.service`.
+         > **_Note:_**  In this case, `true` means that the **`auto-download`** is enabled. If you want to disable **`auto-download`**, you can set the value `false` (`DAEMON_ALLOW_DOWNLOAD_BINARIES=false`) or remove the above line of code from the `cosmovisor.service`.
 
-      > **_Note:_** If you change the configuration in the `cosmovisor.service`, you need to restart `cosmovisor.service`:
-      ```bash
-      sudo systemctl restart cosmovisor
-      ```
+      - If you change the configuration in the `cosmovisor.service`, you need to restart `cosmovisor.service`:
+         ```bash
+         sudo systemctl restart cosmovisor
+         ```
 
-      When `auto-download` is enabled:
-      * If `auto-download` is enabled , then no manual steps are required to be done by `Node Admins`. Nevertheless, it's recommended for all `Node Admins` to manually verify and put the `binaries` as described below.
-      * If `auto-download` is enabled and the `binary` is put manually to the correct folder, then this `binary` will be used for upgrade and no `auto-download` will happen. If `auto-download` is enabled and no `binary` is put manually, then the correct `binary` will be downloaded and the `checksum` will be verified automatically.
-      
-      > **_Note:_** Also make sure that propose plan should contain the link and the checksum to the binary according the format specified in cosmovisor docs. 
-      See the [Command Line Arguments And Environment Variables in Cosmovisor](https://github.com/cosmos/cosmos-sdk/tree/main/cosmovisor#command-line-arguments-and-environment-variables).
+         > **_Note:_** Also make sure that propose plan should contain the link and the checksum to the binary according the format specified in cosmovisor docs. 
+         See the [Command Line Arguments And Environment Variables in Cosmovisor](https://github.com/cosmos/cosmos-sdk/tree/main/cosmovisor#command-line-arguments-and-environment-variables).
 
-   2. Switches current user to the user on behalf of whom `cosmovisor` service
-      is running:
+      - If `auto-download` is enabled and no `binary` is put manually, then the correct `binary` will be downloaded and the `checksum` will be verified automatically. 
+   
+   - **(Recommended)** If `auto-download` is enabled and the `binary` is put manually to the correct folder, then this `binary` will be used for upgrade and no `auto-download` will happen. If you follow this step, then you need to complete the `steps`, which described below.
 
-      ```bash
-      su - <USERNAME>
-      ```
+      1. Switches current user to the user on behalf of whom `cosmovisor` service
+         is running:
 
-      where `<USERNAME>` is the corresponding username
+         ```bash
+         su - <USERNAME>
+         ```
 
-      The command will ask for the user's password. Enter it.
+         where `<USERNAME>` is the corresponding username
 
-   3. Downloads the application binary from the URL specified in the upgrade
-      plan `Info` field and corresponding to the node platform.
+         The command will ask for the user's password. Enter it.
 
-      Command to view the current scheduled upgrade plan:
+      2. Downloads the application binary from the URL specified in the upgrade
+         plan `Info` field and corresponding to the node platform.
 
-      ```bash
-      dcld query upgrade plan
-      ```
+         Command to view the current scheduled upgrade plan:
 
-   4. Verifies that the downloaded application binary matches the checksum
-      specified in the URL. This can be done automatically together with the
-      previous step by [`go-getter`](https://github.com/hashicorp/go-getter)
-      download tool (its executable binaries for various platforms can be
-      downloaded from <https://github.com/hashicorp/go-getter/releases>).
+         ```bash
+         dcld query upgrade plan
+         ```
 
-      For example:
+      3. Verifies that the downloaded application binary matches the checksum
+         specified in the URL. This can be done automatically together with the
+         previous step by [`go-getter`](https://github.com/hashicorp/go-getter)
+         download tool (its executable binaries for various platforms can be
+         downloaded from <https://github.com/hashicorp/go-getter/releases>).
 
-      ```bash
-      go-getter https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/vX.X.X/dcld?checksum=sha256:50708d4f7e00da347d4e678bf26780cd424232461c4bb414f72391c75e39545a $HOME/Downloads
-      ```
+         For example:
 
-      `go-getter` verifies that the downloaded file matches the checksum when
-      the URL is provided in the specified format. If the downloaded file
-      checksum does not equal to the checksum provided in the URL, `go-getter`
-      reports that checksums did not match.
+         ```bash
+         go-getter https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/vX.X.X/dcld?checksum=sha256:50708d4f7e00da347d4e678bf26780cd424232461c4bb414f72391c75e39545a $HOME/Downloads
+         ```
 
-   5. Creates a directory with the name of the upgrade within
-      `$HOME/.dcl/cosmovisor/upgrades`, creates `bin` sub-directory within the
-      created directory, and puts the new application binary into `bin`
-      sub-directory.
+         `go-getter` verifies that the downloaded file matches the checksum when
+         the URL is provided in the specified format. If the downloaded file
+         checksum does not equal to the checksum provided in the URL, `go-getter`
+         reports that checksums did not match.
 
-      For example:
+      4. Creates a directory with the name of the upgrade within
+         `$HOME/.dcl/cosmovisor/upgrades`, creates `bin` sub-directory within the
+         created directory, and puts the new application binary into `bin`
+         sub-directory.
 
-      ```bash
-      cd $HOME/.dcl/cosmovisor
-      mkdir -p upgrades
-      cd upgrades
-      mkdir vX.X.X
-      cd vX.X.X
-      mkdir bin
-      cd $HOME/Downloads
-      cp ./dcld $HOME/.dcl/cosmovisor/upgrades/vX.X.X/bin/
-      ```
+         For example:
 
-   6. Sets proper owner and permissions for the new application binary.
+         ```bash
+         cd $HOME/.dcl/cosmovisor
+         mkdir -p upgrades
+         cd upgrades
+         mkdir vX.X.X
+         cd vX.X.X
+         mkdir bin
+         cd $HOME/Downloads
+         cp ./dcld $HOME/.dcl/cosmovisor/upgrades/vX.X.X/bin/
+         ```
 
-      For example:
+      5. Sets proper owner and permissions for the new application binary.
 
-      ```bash
-      sudo chown $(whoami) $HOME/.dcl/cosmovisor/upgrades/vX.X.X/bin/dcld
-      sudo chmod a+x $HOME/.dcl/cosmovisor/upgrades/vX.X.X/bin/dcld
-      ```
+         For example:
 
-    #### *** Steps [3-5] can be automated using the following command which downloads and verifies that the downloaded application binary matches the checksum specified in the URL
-      command:
+         ```bash
+         sudo chown $(whoami) $HOME/.dcl/cosmovisor/upgrades/vX.X.X/bin/dcld
+         sudo chmod a+x $HOME/.dcl/cosmovisor/upgrades/vX.X.X/bin/dcld
+         ```
 
-      For example:
+         #### *** Steps [3-5] can be automated using the following command which downloads and verifies that the downloaded application binary matches the checksum specified in the URL
+            command:
 
-      ```bash
-      curl -fsSL https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/scripts/install.sh | SHA256SUM=ea0e16eed3cc30b5a7f17299aca01b5d827b9a04576662d957af02608bca0fb6 bash
-      ```
+            For example:
 
-      | Variable   | Default                                     | Description                                  |
-      |:-----------|:--------------------------------------------|----------------------------------------------|
-      | DEBUG      | false                                       | Enables verbose mode during the execution    |
-      | DCL_HOME   | $HOME/.dcl                                  | DCL home folder                              |
-      | VERSION    |                                             | DCL binary version to be upgraded            |
-      | DEST       | $DCL_HOME/cosmovisor/upgrades/v$VERSION/bin | Destination path for DCL binary              |
-      | SHA256SUM  |                                             | SHA256 sum value for DCL binary verification |
+            ```bash
+            curl -fsSL https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/scripts/install.sh | SHA256SUM=ea0e16eed3cc30b5a7f17299aca01b5d827b9a04576662d957af02608bca0fb6 bash
+            ```
+
+            | Variable   | Default                                     | Description                                  |
+            |:-----------|:--------------------------------------------|----------------------------------------------|
+            | DEBUG      | false                                       | Enables verbose mode during the execution    |
+            | DCL_HOME   | $HOME/.dcl                                  | DCL home folder                              |
+            | VERSION    |                                             | DCL binary version to be upgraded            |
+            | DEST       | $DCL_HOME/cosmovisor/upgrades/v$VERSION/bin | Destination path for DCL binary              |
+            | SHA256SUM  |                                             | SHA256 sum value for DCL binary verification |
 
 7. **Upgrade Is Applied**: The upgrade is applied on all the nodes in the pool
    when the ledger reaches the height specified in the upgrade plan.
