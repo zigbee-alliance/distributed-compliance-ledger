@@ -22,6 +22,7 @@ vid=2579
 vendor_account=vendor_account_$vid_in_hex_format
 echo "Create Vendor account - $vendor_account"
 create_new_vendor_account $vendor_account $vid_in_hex_format
+cd_certification_id="123"
 
 test_divider
 
@@ -54,7 +55,7 @@ check_response "$result" "\"code\": 0"
 test_divider
 
 echo "Certify unknown Model Version with VID: $vid_in_hex_format PID: $pid_in_hex_format  SV: ${sv} with zigbee certification"
-result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --CDCertificationID="$cd_certification_id" --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --cdCertificationId="$cd_certification_id" --from $zb_account --yes)
 echo "$result"
 check_response "$result" "\"code\": 517"
 check_response "$result" "No model version"
@@ -106,14 +107,14 @@ test_divider
 
 invalid_svs=$RANDOM
 echo "Certify Model with VID: $vid_in_hex_format PID: $pid_in_hex_format  SV: ${sv} with zigbee certification and invalid SoftwareVersionString: $invalid_svs"
-result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format --softwareVersion=$sv --softwareVersionString=$invalid_svs --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --CDCertificateID="$cd_certification_id" --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format --softwareVersion=$sv --softwareVersionString=$invalid_svs --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --cdCertificationId="$cd_certification_id" --from $zb_account --yes)
 check_response "$result" "\"code\": 306"
 check_response "$result" "ledger does not have matching softwareVersionString=$invalid_svs: model version does not match"
 
 test_divider
 
 echo "Certify Model with VID: $vid_in_hex_format PID: $pid_in_hex_format  SV: ${sv} with zigbee certification"
-result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --CDCertificateID="$cd_certification_id" --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --cdCertificationId="$cd_certification_id" --from $zb_account --yes)
 echo "$result"
 check_response "$result" "\"code\": 0"
 
@@ -121,7 +122,7 @@ test_divider
 
 echo "Certify Model with VID: $vid_in_hex_format PID: $pid_in_hex_format  SV: ${sv} with matter certification"
 echo "dcld tx compliance certify-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$matter_certification_type" --certificationDate="$certification_date" --from $zb_account --yes"
-result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$matter_certification_type" --certificationDate="$certification_date"  --CDCertificateID="$cd_certification_id" --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$matter_certification_type" --certificationDate="$certification_date"  --cdCertificationId="$cd_certification_id" --from $zb_account --yes)
 echo "$result"
 check_response "$result" "\"code\": 0"
 
@@ -129,7 +130,7 @@ test_divider
 
 echo "ReCertify Model with VID: $vid_in_hex_format PID: $pid_in_hex_format  SV: ${sv} by different account"
 zigbee_certification_type="zigbee"
-result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format  --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --CDCertificateID="$cd_certification_id" --from $second_zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format  --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --cdCertificationId="$cd_certification_id" --from $second_zb_account --yes)
 check_response "$result" "\"code\": 303"
 check_response "$result" "already certified on the ledger"
 echo "$result"
@@ -138,7 +139,7 @@ test_divider
 
 echo "ReCertify Model with VID: $vid_in_hex_format PID: $pid_in_hex_format  SV: ${sv} by same account"
 zigbee_certification_type="zigbee"
-result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format  --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$zigbee_certification_type" --certificationDate="$certification_date"  --CDCertificateID="$cd_certificate_id" --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format  --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$zigbee_certification_type" --certificationDate="$certification_date"  --cdCertificationId="$cd_certification_id" --from $zb_account --yes)
 check_response "$result" "\"code\": 303"
 check_response "$result" "already certified on the ledger"
 echo "$result"
@@ -277,7 +278,7 @@ test_divider
 
 echo "Again Certify Model with VID: $vid_in_hex_format PID: $pid_in_hex_format SV: ${sv}"
 certification_date="2020-03-03T00:00:00Z"
-result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --CDCertificationID="$cd_certification_id" --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --cdCertificationId="$cd_certification_id" --from $zb_account --yes)
 check_response "$result" "\"code\": 0"
 echo "$result"
 
