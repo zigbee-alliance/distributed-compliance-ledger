@@ -88,19 +88,11 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 			SoftwareVersionCertificationStatus: types.CodeCertified,
 			History:                            []*types.ComplianceHistoryItem{},
 			CDVersionNumber:                    msg.CDVersionNumber,
-			ProgramTypeVersion:                 msg.ProgramTypeVersion,
 			CDCertificationId:                  msg.CDCertificationId,
-			FamilyId:                           msg.FamilyId,
-			SupportedClusters:                  msg.SupportedClusters,
-			CompliantPlatformUsed:              msg.CompliantPlatformUsed,
-			CompliantPlatformVersion:           msg.CompliantPlatformVersion,
-			OSVersion:                          msg.OSVersion,
-			CertificationRoute:                 msg.CertificationRoute,
-			ProgramType:                        msg.ProgramType,
-			Transport:                          msg.Transport,
-			ParentChild:                        msg.ParentChild,
 		}
 	}
+
+	complianceInfo.SetOptionalFields(msg)
 
 	// store compliance info
 	k.SetComplianceInfo(ctx, complianceInfo)
