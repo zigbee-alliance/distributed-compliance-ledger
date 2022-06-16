@@ -275,15 +275,15 @@ paths:
                             format: int64
                     programTypeVersion:
                       type: string
-                    CDCertificationID:
+                    cDCertificationId:
                       type: string
-                    familyID:
+                    familyId:
                       type: string
                     supportedClusters:
                       type: string
-                    compliancePlatformUsed:
+                    compliantPlatformUsed:
                       type: string
-                    compliancePlatformVersion:
+                    compliantPlatformVersion:
                       type: string
                     OSVersion:
                       type: string
@@ -458,15 +458,15 @@ paths:
                           format: int64
                   programTypeVersion:
                     type: string
-                  CDCertificationID:
+                  cDCertificationId:
                     type: string
-                  familyID:
+                  familyId:
                     type: string
                   supportedClusters:
                     type: string
-                  compliancePlatformUsed:
+                  compliantPlatformUsed:
                     type: string
-                  compliancePlatformVersion:
+                  compliantPlatformVersion:
                     type: string
                   OSVersion:
                     type: string
@@ -13704,15 +13704,15 @@ definitions:
               format: int64
       programTypeVersion:
         type: string
-      CDCertificationID:
+      cDCertificationId:
         type: string
-      familyID:
+      familyId:
         type: string
       supportedClusters:
         type: string
-      compliancePlatformUsed:
+      compliantPlatformUsed:
         type: string
-      compliancePlatformVersion:
+      compliantPlatformVersion:
         type: string
       OSVersion:
         type: string
@@ -13836,15 +13836,15 @@ definitions:
                     format: int64
             programTypeVersion:
               type: string
-            CDCertificationID:
+            cDCertificationId:
               type: string
-            familyID:
+            familyId:
               type: string
             supportedClusters:
               type: string
-            compliancePlatformUsed:
+            compliantPlatformUsed:
               type: string
-            compliancePlatformVersion:
+            compliantPlatformVersion:
               type: string
             OSVersion:
               type: string
@@ -14040,15 +14040,15 @@ definitions:
                   format: int64
           programTypeVersion:
             type: string
-          CDCertificationID:
+          cDCertificationId:
             type: string
-          familyID:
+          familyId:
             type: string
           supportedClusters:
             type: string
-          compliancePlatformUsed:
+          compliantPlatformUsed:
             type: string
-          compliancePlatformVersion:
+          compliantPlatformVersion:
             type: string
           OSVersion:
             type: string
