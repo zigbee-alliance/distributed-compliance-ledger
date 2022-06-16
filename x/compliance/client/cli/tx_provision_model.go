@@ -15,25 +15,25 @@ var _ = strconv.Itoa(0)
 
 func CmdProvisionModel() *cobra.Command {
 	var (
-		vid                       int32
-		pid                       int32
-		softwareVersion           uint32
-		softwareVersionString     string
-		provisionalDate           string
-		certificationType         string
-		reason                    string
-		cdVersionNumber           uint32
-		programTypeVersion        string
-		CDCertificationID         string
-		familyID                  string
-		supportedClusters         string
-		compliancePlatformUsed    string
-		compliancePlatformVersion string
-		OSVersion                 string
-		certificationRoute        string
-		programType               string
-		transport                 string
-		parentChild               string
+		vid                      int32
+		pid                      int32
+		softwareVersion          uint32
+		softwareVersionString    string
+		provisionalDate          string
+		certificationType        string
+		reason                   string
+		cdVersionNumber          uint32
+		programTypeVersion       string
+		CDCertificationID        string
+		familyID                 string
+		supportedClusters        string
+		compliantPlatformUsed    string
+		compliantPlatformVersion string
+		OSVersion                string
+		certificationRoute       string
+		programType              string
+		transport                string
+		parentChild              string
 	)
 
 	cmd := &cobra.Command{
@@ -60,8 +60,8 @@ func CmdProvisionModel() *cobra.Command {
 				CDCertificationID,
 				familyID,
 				supportedClusters,
-				compliancePlatformUsed,
-				compliancePlatformVersion,
+				compliantPlatformUsed,
+				compliantPlatformVersion,
 				OSVersion,
 				certificationRoute,
 				programType,
@@ -102,10 +102,10 @@ func CmdProvisionModel() *cobra.Command {
 		"Family ID of the certification")
 	cmd.Flags().StringVar(&supportedClusters, FlagSupportedClusters, "",
 		"Supported Clusters of the certification")
-	cmd.Flags().StringVar(&compliancePlatformUsed, FlagCompliancePlatformUsed, "",
-		"Compliance Platform Used of the certification")
-	cmd.Flags().StringVar(&compliancePlatformVersion, FlagCompliancePlatformVersion, "",
-		"Compliance Platform Version of the certification")
+	cmd.Flags().StringVar(&compliantPlatformUsed, FlagCompliantPlatformUsed, "",
+		"Compliant Platform Used of the certification")
+	cmd.Flags().StringVar(&compliantPlatformVersion, FlagCompliantPlatformVersion, "",
+		"Compliant Platform Version of the certification")
 	cmd.Flags().StringVar(&OSVersion, FlagOSVersion, "",
 		"OS Version of the certification")
 	cmd.Flags().StringVar(&certificationRoute, FlagCertificationRoute, "",

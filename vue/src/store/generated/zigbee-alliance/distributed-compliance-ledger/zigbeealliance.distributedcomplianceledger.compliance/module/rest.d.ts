@@ -34,11 +34,11 @@ export interface ComplianceComplianceInfo {
     owner?: string;
     history?: ComplianceComplianceHistoryItem[];
     programTypeVersion?: string;
-    CDCertificationID?: string;
-    familyID?: string;
+    cDCertificationId?: string;
+    familyId?: string;
     supportedClusters?: string;
-    compliancePlatformUsed?: string;
-    compliancePlatformVersion?: string;
+    compliantPlatformUsed?: string;
+    compliantPlatformVersion?: string;
     OSVersion?: string;
     certificationRoute?: string;
     programType?: string;

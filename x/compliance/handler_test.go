@@ -1258,12 +1258,12 @@ func checkProvisionalModelInfo(
 	require.Equal(t, provisionalModelMsg.ProvisionalDate, receivedComplianceInfo.Date)
 	require.Equal(t, provisionalModelMsg.Reason, receivedComplianceInfo.Reason)
 	require.Equal(t, provisionalModelMsg.CertificationType, receivedComplianceInfo.CertificationType)
-	require.Equal(t, provisionalModelMsg.CDCertificationID, receivedComplianceInfo.CDCertificationID)
+	require.Equal(t, provisionalModelMsg.CDCertificationId, receivedComplianceInfo.CDCertificationId)
 	require.Equal(t, provisionalModelMsg.ProgramTypeVersion, receivedComplianceInfo.ProgramTypeVersion)
-	require.Equal(t, provisionalModelMsg.FamilyID, receivedComplianceInfo.FamilyID)
+	require.Equal(t, provisionalModelMsg.FamilyId, receivedComplianceInfo.FamilyId)
 	require.Equal(t, provisionalModelMsg.SupportedClusters, receivedComplianceInfo.SupportedClusters)
-	require.Equal(t, provisionalModelMsg.CompliancePlatformUsed, receivedComplianceInfo.CompliancePlatformUsed)
-	require.Equal(t, provisionalModelMsg.CompliancePlatformVersion, receivedComplianceInfo.CompliancePlatformVersion)
+	require.Equal(t, provisionalModelMsg.CompliantPlatformUsed, receivedComplianceInfo.CompliantPlatformUsed)
+	require.Equal(t, provisionalModelMsg.CompliantPlatformVersion, receivedComplianceInfo.CompliantPlatformVersion)
 	require.Equal(t, provisionalModelMsg.OSVersion, receivedComplianceInfo.OSVersion)
 	require.Equal(t, provisionalModelMsg.CertificationRoute, receivedComplianceInfo.CertificationRoute)
 	require.Equal(t, provisionalModelMsg.ProgramType, receivedComplianceInfo.ProgramType)
@@ -1283,12 +1283,12 @@ func checkCertifiedModelInfo(
 	require.Equal(t, certifyModelMsg.CertificationDate, receivedComplianceInfo.Date)
 	require.Equal(t, certifyModelMsg.Reason, receivedComplianceInfo.Reason)
 	require.Equal(t, certifyModelMsg.CertificationType, receivedComplianceInfo.CertificationType)
-	require.Equal(t, certifyModelMsg.CDCertificationID, receivedComplianceInfo.CDCertificationID)
+	require.Equal(t, certifyModelMsg.CDCertificationId, receivedComplianceInfo.CDCertificationId)
 	require.Equal(t, certifyModelMsg.ProgramTypeVersion, receivedComplianceInfo.ProgramTypeVersion)
-	require.Equal(t, certifyModelMsg.FamilyID, receivedComplianceInfo.FamilyID)
+	require.Equal(t, certifyModelMsg.FamilyId, receivedComplianceInfo.FamilyId)
 	require.Equal(t, certifyModelMsg.SupportedClusters, receivedComplianceInfo.SupportedClusters)
-	require.Equal(t, certifyModelMsg.CompliancePlatformUsed, receivedComplianceInfo.CompliancePlatformUsed)
-	require.Equal(t, certifyModelMsg.CompliancePlatformVersion, receivedComplianceInfo.CompliancePlatformVersion)
+	require.Equal(t, certifyModelMsg.CompliantPlatformUsed, receivedComplianceInfo.CompliantPlatformUsed)
+	require.Equal(t, certifyModelMsg.CompliantPlatformVersion, receivedComplianceInfo.CompliantPlatformVersion)
 	require.Equal(t, certifyModelMsg.OSVersion, receivedComplianceInfo.OSVersion)
 	require.Equal(t, certifyModelMsg.CertificationRoute, receivedComplianceInfo.CertificationRoute)
 	require.Equal(t, certifyModelMsg.ProgramType, receivedComplianceInfo.ProgramType)
@@ -1328,7 +1328,7 @@ func NewMsgProvisionModel(
 		ProvisionalDate:       testconstants.ProvisionalDate,
 		CertificationType:     certificationType,
 		Reason:                testconstants.Reason,
-		CDCertificationID:     testconstants.CDCertificationID,
+		CDCertificationId:     testconstants.CDCertificationId,
 	}
 }
 
@@ -1341,26 +1341,26 @@ func NewMsgProvisionModelWithAllOptionalFlags(
 	signer sdk.AccAddress,
 ) *types.MsgProvisionModel {
 	return &types.MsgProvisionModel{
-		Signer:                    signer.String(),
-		Vid:                       vid,
-		Pid:                       pid,
-		SoftwareVersion:           softwareVersion,
-		SoftwareVersionString:     softwareVersionString,
-		CDVersionNumber:           uint32(testconstants.CdVersionNumber),
-		ProvisionalDate:           testconstants.ProvisionalDate,
-		CertificationType:         certificationType,
-		Reason:                    testconstants.Reason,
-		CDCertificationID:         testconstants.CDCertificationID,
-		ProgramTypeVersion:        testconstants.ProgramTypeVersion,
-		FamilyID:                  testconstants.FamilyID,
-		SupportedClusters:         testconstants.SupportedClusters,
-		CompliancePlatformUsed:    testconstants.CompliancePlatformUsed,
-		CompliancePlatformVersion: testconstants.CompliancePlatformVersion,
-		OSVersion:                 testconstants.OSVersion,
-		CertificationRoute:        testconstants.CertificationRoute,
-		ProgramType:               testconstants.ProgramType,
-		Transport:                 testconstants.Transport,
-		ParentChild:               testconstants.ParentChild1,
+		Signer:                   signer.String(),
+		Vid:                      vid,
+		Pid:                      pid,
+		SoftwareVersion:          softwareVersion,
+		SoftwareVersionString:    softwareVersionString,
+		CDVersionNumber:          uint32(testconstants.CdVersionNumber),
+		ProvisionalDate:          testconstants.ProvisionalDate,
+		CertificationType:        certificationType,
+		Reason:                   testconstants.Reason,
+		CDCertificationId:        testconstants.CDCertificationId,
+		ProgramTypeVersion:       testconstants.ProgramTypeVersion,
+		FamilyId:                 testconstants.FamilyId,
+		SupportedClusters:        testconstants.SupportedClusters,
+		CompliantPlatformUsed:    testconstants.CompliantPlatformUsed,
+		CompliantPlatformVersion: testconstants.CompliantPlatformVersion,
+		OSVersion:                testconstants.OSVersion,
+		CertificationRoute:       testconstants.CertificationRoute,
+		ProgramType:              testconstants.ProgramType,
+		Transport:                testconstants.Transport,
+		ParentChild:              testconstants.ParentChild1,
 	}
 }
 
@@ -1382,7 +1382,7 @@ func NewMsgCertifyModel(
 		CertificationDate:     testconstants.CertificationDate,
 		CertificationType:     certificationType,
 		Reason:                testconstants.Reason,
-		CDCertificationID:     testconstants.CDCertificationID,
+		CDCertificationId:     testconstants.CDCertificationId,
 	}
 }
 
@@ -1395,26 +1395,26 @@ func NewMsgCertifyModelWithAllOptionalFlags(
 	signer sdk.AccAddress,
 ) *types.MsgCertifyModel {
 	return &types.MsgCertifyModel{
-		Signer:                    signer.String(),
-		Vid:                       vid,
-		Pid:                       pid,
-		SoftwareVersion:           softwareVersion,
-		SoftwareVersionString:     softwareVersionString,
-		CDVersionNumber:           uint32(testconstants.CdVersionNumber),
-		CertificationDate:         testconstants.CertificationDate,
-		CertificationType:         certificationType,
-		Reason:                    testconstants.Reason,
-		CDCertificationID:         testconstants.CDCertificationID,
-		ProgramTypeVersion:        testconstants.ProgramTypeVersion,
-		FamilyID:                  testconstants.FamilyID,
-		SupportedClusters:         testconstants.SupportedClusters,
-		CompliancePlatformUsed:    testconstants.CompliancePlatformUsed,
-		CompliancePlatformVersion: testconstants.CompliancePlatformVersion,
-		OSVersion:                 testconstants.OSVersion,
-		CertificationRoute:        testconstants.CertificationRoute,
-		ProgramType:               testconstants.ProgramType,
-		Transport:                 testconstants.Transport,
-		ParentChild:               testconstants.ParentChild1,
+		Signer:                   signer.String(),
+		Vid:                      vid,
+		Pid:                      pid,
+		SoftwareVersion:          softwareVersion,
+		SoftwareVersionString:    softwareVersionString,
+		CDVersionNumber:          uint32(testconstants.CdVersionNumber),
+		CertificationDate:        testconstants.CertificationDate,
+		CertificationType:        certificationType,
+		Reason:                   testconstants.Reason,
+		CDCertificationId:        testconstants.CDCertificationId,
+		ProgramTypeVersion:       testconstants.ProgramTypeVersion,
+		FamilyId:                 testconstants.FamilyId,
+		SupportedClusters:        testconstants.SupportedClusters,
+		CompliantPlatformUsed:    testconstants.CompliantPlatformUsed,
+		CompliantPlatformVersion: testconstants.CompliantPlatformVersion,
+		OSVersion:                testconstants.OSVersion,
+		CertificationRoute:       testconstants.CertificationRoute,
+		ProgramType:              testconstants.ProgramType,
+		Transport:                testconstants.Transport,
+		ParentChild:              testconstants.ParentChild1,
 	}
 }
 
