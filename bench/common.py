@@ -12,15 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import subprocess
+import json
 import random
 import string
+import subprocess
 import tempfile
-import json
 import time
-
 from pathlib import Path
-
 
 DCLCLI = "dcld"
 DCL_CHAIN_ID = "dclchain"
@@ -69,29 +67,34 @@ def generate_txns(model_id, model_sequence, vendor_address, vendor_id, account_n
     with tempfile.TemporaryDirectory() as tmpdirname:
         random_file_name = generate_random_name()
         tmp_file = (Path(tmpdirname) / random_file_name).resolve()
-        
-        tmp_file.write_text(create_model(vendor_address, model_id, vendor_id))
-        tmp_file.write_text(txn_sign(vendor_address, account_number, model_sequence, str(tmp_file)))
-        
-        return txn_encode(str(tmp_file))
 
+        tmp_file.write_text(create_model(vendor_address, model_id, vendor_id))
+        tmp_file.write_text(
+            txn_sign(vendor_address, account_number, model_sequence, str(tmp_file))
+        )
+
+        return txn_encode(str(tmp_file))
 
 
 def keys_delete(key_name):
     cmd = [DCLCLI, "keys", "delete", key_name, "--yes"]
     return run_shell_cmd(cmd).stdout
 
+
 def keys_add(key_name):
     cmd = [DCLCLI, "keys", "add", key_name]
     return run_shell_cmd(cmd).stdout
+
 
 def keys_show_address(key_name):
     cmd = [DCLCLI, "keys", "show", key_name, "-a"]
     return run_shell_cmd(cmd).stdout.rstrip("\n")
 
+
 def keys_show_pubkey(key_name):
     cmd = [DCLCLI, "keys", "show", key_name, "-p"]
     return run_shell_cmd(cmd).stdout.rstrip("\n")
+
 
 def get_account_number(vendor_address):
     cmd = [DCLCLI, "query", "auth", "account", "--address", vendor_address]
@@ -100,7 +103,6 @@ def get_account_number(vendor_address):
     json_result = json.loads(result)
 
     return int(json_result["base_account"]["account_number"])
-
 
 
 def create_model(vendor_address, current_model_id, vendor_id):
@@ -121,27 +123,30 @@ def create_model(vendor_address, current_model_id, vendor_id):
     ]
     return run_shell_cmd(cmd).stdout
 
+
 def txn_sign(vendor_address, account, sequence_n, f_path):
     cmd = [DCLCLI, "tx", "sign", "--chain-id", DCL_CHAIN_ID]
     params = {"from": vendor_address}
-    cmd += to_cli_args(account_number=account, sequence=sequence_n, gas="auto", **params)
+    cmd += to_cli_args(
+        account_number=account, sequence=sequence_n, gas="auto", **params
+    )
     cmd.extend(["--offline", f_path])
-    
+
     return run_shell_cmd(cmd).stdout
+
 
 def txn_encode(f_path):
     cmd = [DCLCLI, "tx", "encode", f_path]
     return run_shell_cmd(cmd).stdout
 
 
-
 def generate_random_name():
     letters = string.ascii_lowercase
-    return ''.join(random.choice(letters) for i in range(10)) 
+    return "".join(random.choice(letters) for i in range(10))
+
 
 def generate_random_number():
     return random.randint(1000, 65000)
-
 
 
 def run_shell_cmd(cmd, **kwargs):
@@ -161,6 +166,7 @@ def run_shell_cmd(cmd, **kwargs):
         return subprocess.run(cmd, **_kwargs)
     except (subprocess.CalledProcessError, FileNotFoundError) as exc:
         raise RuntimeError(f"command '{cmd}' failed: {exc.stderr}") from exc
+
 
 def to_cli_args(**kwargs):
     res = []

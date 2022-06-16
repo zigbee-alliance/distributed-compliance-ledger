@@ -1,6 +1,7 @@
-  accounts:
-    - name: genesis-account-key
-      passphrase: password123
-      roles:
-        - NodeAdmin
-        - Trustee
+---
+accounts:
+  - name: genesis-account-key
+    passphrase: password123
+    roles:
+      - NodeAdmin
+      - Trustee

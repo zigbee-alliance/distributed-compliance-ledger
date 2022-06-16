@@ -1,3 +1,4 @@
+---
 accounts:
   - name: genesis-account-key
     passphrase: password123
