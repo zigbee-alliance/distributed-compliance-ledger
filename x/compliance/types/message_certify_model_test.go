@@ -381,6 +381,22 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
+		{
+			name: "invalid parent/child value",
+			msg: MsgCertifyModel{
+				Signer:                sample.AccAddress(),
+				Pid:                   1,
+				Vid:                   1,
+				SoftwareVersionString: testconstants.TestDate,
+				CertificationDate:     testconstants.CertificationDate,
+				CertificationType:     testconstants.CertificationType,
+				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
+				Reason:                testconstants.Reason,
+				CDCertificationId:     testconstants.CDCertificationId,
+				ParentChild:           "invalid parent/child value",
+			},
+			err: ErrInvalidPFCCertificationRoute,
+		},
 	}
 
 	positiveTests := []struct {
@@ -632,6 +648,36 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 				Reason:                testconstants.Reason,
 				CDCertificationId:     testconstants.CDCertificationId,
 				Transport:             testconstants.Transport,
+			},
+		},
+		{
+			name: "parent/child value is parent",
+			msg: MsgCertifyModel{
+				Signer:                sample.AccAddress(),
+				SoftwareVersionString: testconstants.SoftwareVersionString,
+				Pid:                   1,
+				Vid:                   1,
+				CertificationDate:     testconstants.CertificationDate,
+				CertificationType:     testconstants.CertificationType,
+				SoftwareVersion:       testconstants.SoftwareVersion,
+				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
+				CDCertificationId:     testconstants.CDCertificationId,
+				ParentChild:           "parent",
+			},
+		},
+		{
+			name: "parent/child value is child",
+			msg: MsgCertifyModel{
+				Signer:                sample.AccAddress(),
+				SoftwareVersionString: testconstants.SoftwareVersionString,
+				Pid:                   1,
+				Vid:                   1,
+				CertificationDate:     testconstants.CertificationDate,
+				CertificationType:     testconstants.CertificationType,
+				SoftwareVersion:       testconstants.SoftwareVersion,
+				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
+				CDCertificationId:     testconstants.CDCertificationId,
+				ParentChild:           "child",
 			},
 		},
 	}
