@@ -11,6 +11,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
+	"github.com/tendermint/tendermint/libs/rand"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	testkeeper "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/keeper"
@@ -475,6 +476,66 @@ func TestHandler_CertifyProvisionedModel(t *testing.T) {
 		certifyModelMsg := NewMsgCertifyModel(
 			vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
 		certifyModelMsg.CertificationDate = time.Now().UTC().Format(time.RFC3339)
+		_, err = setup.Handler(setup.Ctx, certifyModelMsg)
+		require.NoError(t, err)
+
+		// query certified model info
+		receivedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, certificationType)
+
+		// check
+		checkCertifiedModelInfo(t, certifyModelMsg, receivedComplianceInfo)
+		require.Equal(t, 1, len(receivedComplianceInfo.History))
+
+		require.Equal(t, types.CodeProvisional, receivedComplianceInfo.History[0].SoftwareVersionCertificationStatus)
+		require.Equal(t, provisionModelMsg.ProvisionalDate, receivedComplianceInfo.History[0].Date)
+
+		// query certified model
+		certifiedModel, _ := queryCertifiedModel(setup, vid, pid, softwareVersion, certificationType)
+		require.True(t, certifiedModel.Value)
+
+		// query provisional model
+		provisionalModel, _ := queryProvisionalModel(setup, vid, pid, softwareVersion, certificationType)
+		require.False(t, provisionalModel.Value)
+
+		// query revoked model
+		revokedModel, _ := queryRevokedModel(setup, vid, pid, softwareVersion, certificationType)
+		require.False(t, revokedModel.Value)
+	}
+}
+
+func TestHandler_CertifyProvisionedModel_WithAllOptionalFields(t *testing.T) {
+	setup := Setup(t)
+
+	// add model version
+	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
+		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
+
+	for _, certificationType := range setup.CertificationTypes {
+		// provision model
+		provisionModelMsg := NewMsgProvisionModelWithAllOptionalFlags(
+			vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+		_, err := setup.Handler(setup.Ctx, provisionModelMsg)
+		require.NoError(t, err)
+
+		maxLegthOfField := 64
+
+		// certify model
+		certifyModelMsg := NewMsgCertifyModel(
+			vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+
+		certifyModelMsg.CertificationDate = time.Now().UTC().Format(time.RFC3339)
+		certifyModelMsg.FamilyId = rand.Str(maxLegthOfField)
+		certifyModelMsg.SupportedClusters = rand.Str(maxLegthOfField)
+		certifyModelMsg.CompliantPlatformUsed = rand.Str(maxLegthOfField)
+		certifyModelMsg.CompliantPlatformVersion = rand.Str(maxLegthOfField)
+		certifyModelMsg.CertificationRoute = rand.Str(maxLegthOfField)
+		certifyModelMsg.OSVersion = rand.Str(maxLegthOfField)
+		certifyModelMsg.CertificationRoute = rand.Str(maxLegthOfField)
+		certifyModelMsg.ProgramType = rand.Str(maxLegthOfField)
+		certifyModelMsg.ProgramTypeVersion = rand.Str(maxLegthOfField)
+		certifyModelMsg.Transport = rand.Str(maxLegthOfField)
+		certifyModelMsg.ParentChild = testconstants.ParentChild2
+
 		_, err = setup.Handler(setup.Ctx, certifyModelMsg)
 		require.NoError(t, err)
 
