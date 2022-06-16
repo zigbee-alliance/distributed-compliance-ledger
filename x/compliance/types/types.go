@@ -32,7 +32,7 @@ const (
 	DefaultPFCCertificationRoute = ""
 )
 
-// List of PFC Certification Routes
+// List of PFC Certification Routes.
 type PFCCertificationRoutes []string
 
 var PFCCertificationRouteList = PFCCertificationRoutes{ParentPFCCertificationRoute, ChildPFCCertificationRoute, DefaultPFCCertificationRoute}
