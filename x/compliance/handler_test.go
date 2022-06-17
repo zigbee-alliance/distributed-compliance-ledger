@@ -1182,6 +1182,7 @@ func TestHandler_CertifyRevokedModel(t *testing.T) {
 		require.Equal(t, certifyModelMsg.Pid, receivedComplianceInfo.Pid)
 		require.Equal(t, types.CodeCertified, receivedComplianceInfo.SoftwareVersionCertificationStatus)
 		require.Equal(t, certifyModelMsg.CertificationDate, receivedComplianceInfo.Date)
+		require.Equal(t, certifyModelMsg.CDCertificationId, receivedComplianceInfo.CDCertificationId)
 		require.Equal(t, certifyModelMsg.Reason, receivedComplianceInfo.Reason)
 		require.Equal(t, certifyModelMsg.CertificationType, receivedComplianceInfo.CertificationType)
 		require.Equal(t, 1, len(receivedComplianceInfo.History))
