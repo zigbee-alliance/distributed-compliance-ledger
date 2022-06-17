@@ -429,6 +429,10 @@ func GetProvisionalModelByHexVidAndPid(
 	return &res, nil
 }
 
+const certDate = "2021-10-01T00:00:01Z"
+
+const provDate = "2021-03-01T00:00:01Z"
+
 func DemoTrackCompliance(suite *utils.TestSuite) {
 	// Query for unknown
 	_, err := GetComplianceInfo(suite, testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.CertificationType)
@@ -518,7 +522,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	suite.AssertNotFound(err)
 
 	// Certify model
-	certReason := "some reason"
+	certReason := "some reason 1"
 	certDate := "2020-01-01T00:00:01Z"
 	certifyModelMsg := compliancetypes.MsgCertifyModel{
 		Vid:                   vid,
@@ -622,7 +626,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Certify model with all optional fields
-	certReason = "some reason"
+	certReason = "some reason 3"
 	certifyModelMsg = compliancetypes.MsgCertifyModel{
 		Vid:                      vid,
 		Pid:                      pid,
@@ -753,7 +757,7 @@ func DemoTrackRevocation(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Revoke non-certified model
-	revocReason := "some reason 3"
+	revocReason := "some reason 4"
 	revocDate := "2020-03-01T00:00:01Z"
 	revocModelMsg := compliancetypes.MsgRevokeModel{
 		Vid:                   vid,
@@ -800,7 +804,7 @@ func DemoTrackRevocation(suite *utils.TestSuite) {
 	require.Equal(suite.T, len(inputAllProvisionalModels), len(provisionalModels))
 
 	// Certify model
-	certReason := "some reason 4"
+	certReason := "some reason 5"
 	certDate := "2020-05-01T00:00:01Z"
 	certifyModelMsg := compliancetypes.MsgCertifyModel{
 		Vid:                   vid,
@@ -901,8 +905,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	svs := utils.RandString()
 
 	// Provision non-existent model
-	provReason := "some reason 10"
-	provDate := "2021-03-01T00:00:01Z"
+	provReason := "some reason 6"
 	provModelMsg := compliancetypes.MsgProvisionModel{
 		Vid:                   vid,
 		Pid:                   pid,
@@ -960,8 +963,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Certify model
-	certReason := "some reason 44"
-	certDate := "2021-10-01T00:00:01Z"
+	certReason := "some reason 7"
 	certifyModelMsg := compliancetypes.MsgCertifyModel{
 		Vid:                   vid,
 		Pid:                   pid,
@@ -1013,8 +1015,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	svs = utils.RandString()
 
 	// Provision non-existent model with all optional fields
-	provReason = "some reason 10"
-	provDate = "2021-03-01T00:00:01Z"
+	provReason = "some reason 8"
 	provModelMsg = compliancetypes.MsgProvisionModel{
 		Vid:                      vid,
 		Pid:                      pid,
@@ -1088,8 +1089,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Certify model with some optional fields
-	certReason = "some reason 44"
-	certDate = "2021-10-01T00:00:01Z"
+	certReason = "some reason 9"
 	certifyModelMsg = compliancetypes.MsgCertifyModel{
 		Vid:                      vid,
 		Pid:                      pid,
@@ -1219,7 +1219,7 @@ func DemoTrackComplianceWithHexVidAndPid(suite *utils.TestSuite) {
 	suite.AssertNotFound(err)
 
 	// Certify model
-	certReason := "some reason"
+	certReason := "some reason 10"
 	certDate := "2020-01-01T00:00:01Z"
 	certifyModelMsg := compliancetypes.MsgCertifyModel{
 		Vid:                   vid,
@@ -1318,7 +1318,7 @@ func DemoTrackRevocationWithHexVidAndPid(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Revoke non-certified model
-	revocReason := "some reason 3"
+	revocReason := "some reason 11"
 	revocDate := "2020-03-01T00:00:01Z"
 	revocModelMsg := compliancetypes.MsgRevokeModel{
 		Vid:                   vid,
@@ -1355,7 +1355,7 @@ func DemoTrackRevocationWithHexVidAndPid(suite *utils.TestSuite) {
 	suite.AssertNotFound(err)
 
 	// Certify model
-	certReason := "some reason 4"
+	certReason := "some reason 12"
 	certDate := "2020-05-01T00:00:01Z"
 	certifyModelMsg := compliancetypes.MsgCertifyModel{
 		Vid:                   vid,
@@ -1439,8 +1439,7 @@ func DemoTrackProvisionByHexVidAndPid(suite *utils.TestSuite) {
 	svs := utils.RandString()
 
 	// Provision non-existent model
-	provReason := "some reason 10"
-	provDate := "2021-03-01T00:00:01Z"
+	provReason := "some reason 13"
 	provModelMsg := compliancetypes.MsgProvisionModel{
 		Vid:                   vid,
 		Pid:                   pid,
@@ -1488,8 +1487,7 @@ func DemoTrackProvisionByHexVidAndPid(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Certify model
-	certReason := "some reason 44"
-	certDate := "2021-10-01T00:00:01Z"
+	certReason := "some reason 14"
 	certifyModelMsg := compliancetypes.MsgCertifyModel{
 		Vid:                   vid,
 		Pid:                   pid,
