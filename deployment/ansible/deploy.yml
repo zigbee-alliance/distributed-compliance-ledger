@@ -23,10 +23,10 @@
   hosts: genesis
   become: true
   roles:
-    - configure # configure cli
+    - configure  # configure cli
     - add-accounts
     - genesis
-  
+
 - name: configure validator nodes
   hosts: validators
   become: true

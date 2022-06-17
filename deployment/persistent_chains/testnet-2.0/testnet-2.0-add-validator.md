@@ -148,7 +148,6 @@ It may take couple of minutes to catch up using `state-sync` depending on how fa
 
 ## 4 Make the Full Node a Validator
 
-
 ### 4.1 Generate NodeAdmin keys
 
 ```bash
@@ -169,13 +168,13 @@ The information can be shared in `#csa-dcl-testnet-node-admins` Slack channel.
 
 ### 4.3 Wait until your NodeAdmin key is proposed and approved by the quorum of Testnet 2.0 trustees
 
-Make sure the Node Admin account is proposed by a Trustee (usually CSA). The account will appear in the "Accounts" / "All Proposed Accounts" tab in https://testnet.iotledger.io/accounts.
+Make sure the Node Admin account is proposed by a Trustee (usually CSA). The account will appear in the "Accounts" / "All Proposed Accounts" tab in <https://testnet.iotledger.io/accounts>.
 
-Make sure that the proposed account is approved by at least 2/3 of Trustees. The account must disappear from the "Accounts" / "All Proposed Accounts" tab in https://testnet.iotledger.io/accounts, and appear in  "Accounts" / "All Active Accounts" tab.
+Make sure that the proposed account is approved by at least 2/3 of Trustees. The account must disappear from the "Accounts" / "All Proposed Accounts" tab in <https://testnet.iotledger.io/accounts>, and appear in  "Accounts" / "All Active Accounts" tab.
 
 ### 4.4 Check the account presence on the ledger
-`dcld query auth account --address="<address>"`
 
+`dcld query auth account --address="<address>"`
 
 ### 4.5 Make the node a validator
 
@@ -188,23 +187,27 @@ dcld tx validator add-node --pubkey="<protobuf JSON encoded validator-pubkey>" -
 (once transaction is successfully written you should see "code": 0 in the JSON output.)
 
 ### 4.5 Make sure the VN participates in consensus
+
 `dcld query tendermint-validator-set` must contain the VN's address
 
 >**_Note:_** Get your VN's address using `dcld tendermint show-address` command.
 
-
 ## 5 Validator Node Deployment Verification
 
 ### 5.1 Check the account presence on the ledger
+
 `dcld query auth account --address="<address>"`
 
 ### 5.2 Check the node service is running
+
 `systemctl status dcld`
 
 ### 5.3 Check the node gets new blocks
+
 `dcld status`. Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 5 sec)
 
 ### 5.4 Make sure the VN participates in consensus
+
 `dcld query tendermint-validator-set` must contain the VN's address
 
 >**_Note:_** Get your VN's address using `dcld tendermint show-address` command.
