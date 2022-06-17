@@ -141,6 +141,7 @@ result=$(dcld query compliance compliance-info --vid=$vid --pid=$pid --softwareV
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"softwareVersionCertificationStatus\": 1"
+check_response "$result" "\"cDCertificationId\": \"$cd_certification_id\""
 check_response "$result" "\"date\": \"$provision_date\""
 check_response "$result" "\"reason\": \"$provision_reason\""
 check_response "$result" "\"certificationType\": \"$certification_type_zb\""
@@ -346,6 +347,7 @@ result=$(dcld query compliance compliance-info --vid=$vid --pid=$pid --softwareV
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"softwareVersionCertificationStatus\": 2"
+check_response "$result" "\"cDCertificationId\": \"$cd_certification_id\""
 check_response "$result" "\"date\": \"$certification_date\""
 check_response "$result" "\"reason\": \"$certification_reason\""
 check_response "$result" "\"certificationType\": \"$certification_type_zb\""
@@ -359,6 +361,7 @@ result=$(dcld query compliance compliance-info --vid=$vid --pid=$pid --softwareV
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"softwareVersionCertificationStatus\": 3"
+check_response "$result" "\"cDCertificationId\": \"$cd_certification_id\""
 check_response "$result" "\"date\": \"$revocation_date\""
 check_response "$result" "\"reason\": \"$revocation_reason\""
 check_response "$result" "\"certificationType\": \"$certification_type_matter\""
@@ -410,3 +413,97 @@ response_does_not_contain "$result" "\"vid\": $vid"
 echo "$result"
 
 test_divider
+
+###########################################################################################################################################
+# PREPERATION
+pid=$RANDOM
+sv=$RANDOM
+svs=$RANDOM
+
+test_divider
+
+# ADD PROVISION MODEL WITH ALL OPTIONAL FIELDS
+echo "Provision Model with VID: $vid PID: $pid  SV: ${sv} with zigbee certification"
+result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --provisionalDate="$provision_date" --reason "$provision_reason" --cdCertificationId="$cd_certification_id" --programTypeVersion="1.0" --familyId="someFID" --supportedClusters="someClusters" --compliantPlatformUsed="WIFI" --compliantPlatformVersion="V1" --OSVersion="someV" --certificationRoute="Full" --programType="pType" --transport="someTransport" --parentChild="parent" --from $zb_account --yes)
+echo "$result"
+check_response "$result" "\"code\": 0"
+
+# GET PROVISION MODEL
+echo "Get Provision Model with VID: ${vid} PID: ${pid} SV: ${sv} for matter certification"
+result=$(dcld query compliance provisional-model --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType=$certification_type_zb)
+check_response "$result" "\"value\": true"
+check_response "$result" "\"pid\": $pid"
+check_response "$result" "\"vid\": $vid"
+echo "$result" | jq
+
+# GET COMPLIANCE INFO
+echo "Get Compliance Info for Model with VID: ${vid} PID: ${pid} SV: ${sv} for $certification_type_zb"
+result=$(dcld query compliance compliance-info --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType=$certification_type_zb)
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"pid\": $pid"
+check_response "$result" "\"softwareVersionCertificationStatus\": 1"
+check_response "$result" "\"reason\": \"$provision_reason\""
+check_response "$result" "\"date\": \"$provision_date\""
+check_response "$result" "\"certificationType\": \"$certification_type_zb\""
+check_response "$result" "\"programTypeVersion\": \"1.0\""
+check_response "$result" "\"cDCertificationId\": \"$cd_certification_id\""
+check_response "$result" "\"familyId\": \"someFID\""
+check_response "$result" "\"supportedClusters\": \"someClusters\""
+check_response "$result" "\"compliantPlatformUsed\": \"WIFI\""
+check_response "$result" "\"compliantPlatformVersion\": \"V1\""
+check_response "$result" "\"OSVersion\": \"someV\""
+check_response "$result" "\"certificationRoute\": \"Full\""
+check_response "$result" "\"programType\": \"pType\""
+check_response "$result" "\"transport\": \"someTransport\""
+check_response "$result" "\"parentChild\": \"parent\""
+echo "$result"
+###########################################################################################################################################
+
+test_divider
+
+###########################################################################################################################################
+# ADD MODEL VERSION
+echo "Add Model Version with VID: $vid PID: $pid SV: $sv SoftwareVersionString:$svs"
+result=$(echo '$passphrase' | dcld tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --from=$vendor_account --yes)
+echo $result
+check_response "$result" "\"code\": 0"
+
+# ADD CERTIFY MODEL WITH SOME OPTIONAL FIELD
+echo "Certify Model with VID: $vid PID: $pid SV: ${sv} with zigbee certification"
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --certificationDate="$certification_date" --cdCertificationId="$cd_certification_id" --programTypeVersion="2.0" --familyId="someFID2" --supportedClusters="someClusters2" --compliantPlatformUsed="ETHERNET" --compliantPlatformVersion="V2" --from $zb_account --yes)
+echo "$result"
+check_response "$result" "\"code\": 0"
+
+# GET CERTIFIED MODEL
+echo "Get Certified Model with VID: ${vid} PID: ${pid} SV: ${sv} for matter certification"
+result=$(dcld query compliance certified-model --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType=$certification_type_zb)
+check_response "$result" "\"value\": true"
+check_response "$result" "\"pid\": $pid"
+check_response "$result" "\"vid\": $vid"
+echo "$result" | jq
+
+# GET COMPLIANCE INFO - AFTER CERTIFY MODEL TX SOME FIELDS WILL BE UPDATE AND ANOTHER FIELDS SHOULD BE NO CHANGE
+echo "Get Compliance Info for Model with VID: ${vid} PID: ${pid} SV: ${sv} for $certification_type_zb"
+result=$(dcld query compliance compliance-info --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType=$certification_type_zb)
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"pid\": $pid"
+check_response "$result" "\"softwareVersionCertificationStatus\": 1"
+check_response "$result" "\"date\": \"$certification_date\""
+check_response "$result" "\"certificationType\": \"$certification_type_zb\""
+check_response "$result" "\"programTypeVersion\": \"2.0\""
+check_response "$result" "\"cDCertificationId\": \"$cd_certification_id\""
+check_response "$result" "\"familyId\": \"someFID2\""
+check_response "$result" "\"supportedClusters\": \"someClusters2\""
+check_response "$result" "\"compliantPlatformUsed\": \"ETHERNET\""
+check_response "$result" "\"compliantPlatformVersion\": \"V2\""
+check_response "$result" "\"OSVersion\": \"someV\""
+check_response "$result" "\"certificationRoute\": \"Full\""
+check_response "$result" "\"programType\": \"pType\""
+check_response "$result" "\"transport\": \"someTransport\""
+check_response "$result" "\"parentChild\": \"parent\""
+echo "$result"
+###########################################################################################################################################
+
+test_divider
+
+echo "PASSED"

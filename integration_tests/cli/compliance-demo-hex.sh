@@ -302,3 +302,7 @@ check_response "$result" "\"value\": false"
 echo "$result"
 
 test_divider
+
+echo "PASSED"
+
+test_divider
