@@ -462,13 +462,19 @@ echo "$result"
 test_divider
 
 ###########################################################################################################################################
+# ADD MODEL
+echo "Add Model with VID: $vid PID: $pid"
+result=$(echo "$passphrase" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0  --from $vendor_account --yes)
+echo $result
+check_response "$result" "\"code\": 0"
+
 # ADD MODEL VERSION
 echo "Add Model Version with VID: $vid PID: $pid SV: $sv SoftwareVersionString:$svs"
 result=$(echo '$passphrase' | dcld tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --from=$vendor_account --yes)
 echo $result
 check_response "$result" "\"code\": 0"
 
-# ADD CERTIFY MODEL WITH SOME OPTIONAL FIELD
+# ADD CERTIFY MODEL WITH SOME OPTIONAL FIELDS
 echo "Certify Model with VID: $vid PID: $pid SV: ${sv} with zigbee certification"
 result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --certificationDate="$certification_date" --cdCertificationId="$cd_certification_id" --programTypeVersion="2.0" --familyId="someFID2" --supportedClusters="someClusters2" --compliantPlatformUsed="ETHERNET" --compliantPlatformVersion="V2" --from $zb_account --yes)
 echo "$result"
