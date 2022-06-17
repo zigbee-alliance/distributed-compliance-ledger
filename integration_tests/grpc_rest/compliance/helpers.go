@@ -688,7 +688,6 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	require.Equal(suite.T, len(inputAllRevokedModels)+1, len(revokedModels))
 	provisionalModels, _ = GetAllProvisionalModels(suite)
 	require.Equal(suite.T, len(inputAllProvisionalModels), len(provisionalModels))
-
 }
 
 func DemoTrackRevocation(suite *utils.TestSuite) {

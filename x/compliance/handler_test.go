@@ -205,7 +205,6 @@ func TestHandler_ProvisionModel_WithAllOptionalFlags(t *testing.T) {
 		require.Error(t, err)
 		require.Equal(t, codes.NotFound, status.Code(err))
 	}
-
 }
 
 func TestHandler_ProvisionModelByDifferentRoles(t *testing.T) {
