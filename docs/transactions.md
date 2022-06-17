@@ -415,16 +415,30 @@ from the revocation list.
   - pid: `uint16` -  model product ID (positive non-zero)
   - softwareVersion: `uint32` - model software version
   - softwareVersionSting: `string` - model software version string
-  - certification_date: `string` - The date of model certification (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
-  - certification_type: `string`  - Certification type - Currently 'zigbee' and 'matter' types are supported
-  - reason `optional(string)`  - optional comment describing the reason of the certification
+  - certificationDate: `string` - The date of model certification (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
+  - certificationType: `string` - Certification type - Currently 'zigbee' and 'matter' types are supported
+  - cdCertificationId: `string` - CD Certification ID 
+  - reason `optional(string)` - optional comment describing the reason of the certification
+  - cDVersionNumber `optional(uint32)` - optional field describing the CD version number
+  - familyId `optional(string)` - optional field describing the family ID
+  - supportedClusters `optional(string)` - optional field describing the supported clusters
+  - compliantPlatformUsed `optional(string)` - optional field describing the compliant platform used
+  - compliantPlatformVersion `optional(string)` - optional field describing the compliant platform version
+  - OSVersion `optional(string)` - optional field describing the OS version
+  - certificationRoute `optional(string)` - optional field describing the certification route
+  - programType `optional(string)` - optional field describing the program type
+  - programTypeVersion `optional(string)` - optional field describing the program type version
+  - transport `optional(string)` - optional field describing the transport
+  - parentChild `optional(string)` - optional field describing the parent/child - Currently 'parent' and 'child' types are supported.
 - In State:
   - `compliance/ComplianceInfo/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
   - `compliance/CertifiedModel/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
 - Who can send:
   - CertificationCenter
 - CLI command:
-  - `dcld tx compliance certify-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string>  --certificationType=<matter|zigbee> --certificationDate=<rfc3339 encoded date> --reason=<string> --from=<account>`
+  - `dcld tx compliance certify-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string>  --certificationType=<matter|zigbee> --certificationDate=<rfc3339 encoded date> --cdCertificationId=<string> --from=<account>`
+- CLI command full:
+  - `dcld tx compliance certify-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string>  --certificationType=<matter|zigbee> --certificationDate=<rfc3339 encoded date> --cdCertificationId=<string> --reason=<string> --cDVersionNumber=<uint32> --familyId=<string> --supportedClusters=<string> --compliantPlatformUsed=<string> --compliantPlatformVersion=<string> --OSVersion=<string> --certificationRoute=<string> --programType=<string> --programTypeVersion=<string> --transport=<string> --parentChild=<string> --from=<account>`
 
 #### REVOKE_MODEL_CERTIFICATION
 
@@ -443,8 +457,8 @@ is written on the ledger (`CERTIFY_MODEL` was called), or
   - pid: `uint16` -  model product ID (positive non-zero)
   - softwareVersion: `uint32` - model software version
   - softwareVersionSting: `string` - model software version string
-  - revocation_date: `string` - The date of model revocation (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
-  - certification_type: `string`  - Certification type - Currently 'zigbee' and 'matter' types are supported
+  - revocationDate: `string` - The date of model revocation (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
+  - certificationType: `string`  - Certification type - Currently 'zigbee' and 'matter' types are supported
   - reason `optional(string)`  - optional comment describing the reason of revocation
 - In State:
   - `compliance/ComplianceInfo/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
@@ -469,16 +483,30 @@ Can not be set if there is already a certification record on the ledger (certifi
   - pid: `uint16` -  model product ID (positive non-zero)
   - softwareVersion: `uint32` - model software version
   - softwareVersionSting: `string` - model software version string
-  - provisional_date: `string` - The date of model provisioning (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
-  - certification_type: `string`  - Certification type - Currently 'zigbee' and 'matter' types are supported
+  - provisionalDate: `string` - The date of model provisioning (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
+  - certificationType: `string`  - Certification type - Currently 'zigbee' and 'matter' types are supported
+  - cdCertificationId: `string` - CD Certification ID 
   - reason `optional(string)`  - optional comment describing the reason of revocation
+  - cDVersionNumber `optional(uint32)` - optional field describing the CD version number
+  - familyId `optional(string)` - optional field describing the family ID
+  - supportedClusters `optional(string)` - optional field describing the supported clusters
+  - compliantPlatformUsed `optional(string)` - optional field describing the compliant platform used
+  - compliantPlatformVersion `optional(string)` - optional field describing the compliant platform version
+  - OSVersion `optional(string)` - optional field describing the OS version
+  - certificationRoute `optional(string)` - optional field describing the certification route
+  - programType `optional(string)` - optional field describing the program type
+  - programTypeVersion `optional(string)` - optional field describing the program type version
+  - transport `optional(string)` - optional field describing the transport
+  - parentChild `optional(string)` - optional field describing the parent/child - Currently 'parent' and 'child' types are supported.
 - In State:
   - `compliance/ComplianceInfo/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
   - `compliance/ProvisionalModel/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
 - Who can send:
   - CertificationCenter
 - CLI command:
-  - `dcld tx compliance provision-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<matter|zigbee> --provisionalDate=<rfc3339 encoded date> --reason=<string> --from=<account>`
+  - `dcld tx compliance provision-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<matter|zigbee> --provisionalDate=<rfc3339 encoded date> --from=<account>`
+- CLI command full:
+  - `dcld tx compliance provision-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<matter|zigbee> --provisionalDate=<rfc3339 encoded date> --cdCertificationId=<string> --reason=<string> --cDVersionNumber=<uint32> --familyId=<string> --supportedClusters=<string> --compliantPlatformUsed=<string> --compliantPlatformVersion=<string> --OSVersion=<string> --certificationRoute=<string> --programType=<string> --programTypeVersion=<string> --transport=<string> --parentChild=<string> --from=<account>`
 
 #### GET_CERTIFIED_MODEL
 
