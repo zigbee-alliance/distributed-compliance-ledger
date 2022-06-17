@@ -1345,7 +1345,6 @@ func DemoTrackRevocationWithHexVidAndPid(suite *utils.TestSuite) {
 	require.Equal(suite.T, vid, complianceInfo.Vid)
 	require.Equal(suite.T, pid, complianceInfo.Pid)
 	require.Equal(suite.T, sv, complianceInfo.SoftwareVersion)
-	require.Equal(suite.T, testconstants.CDCertificationId, complianceInfo.CDCertificationId)
 	require.Equal(suite.T, revocReason, complianceInfo.Reason)
 	require.Equal(suite.T, revocDate, complianceInfo.Date)
 	_, err = GetCertifiedModelByHexVidAndPid(suite, testconstants.TestVID2String, testconstants.TestPID2String, sv, compliancetypes.ZigbeeCertificationType)
