@@ -278,7 +278,7 @@ func TestMsgProvisionModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
-			name: "supportedClusters > 100",
+			name: "supportedClusters > 64",
 			msg: MsgProvisionModel{
 				Signer:                sample.AccAddress(),
 				Pid:                   1,
@@ -289,12 +289,12 @@ func TestMsgProvisionModel_ValidateBasic(t *testing.T) {
 				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 				Reason:                testconstants.Reason,
 				CDCertificationId:     testconstants.CDCertificationId,
-				SupportedClusters:     tmrand.Str(101),
+				SupportedClusters:     tmrand.Str(65),
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
-			name: "compliancePlatformUsed > 100",
+			name: "compliancePlatformUsed > 64",
 			msg: MsgProvisionModel{
 				Signer:                   sample.AccAddress(),
 				Pid:                      1,
