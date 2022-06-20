@@ -1,5 +1,6 @@
 package keeper_test
 
+/*
 import (
 	"strconv"
 	"testing"
@@ -124,3 +125,4 @@ func TestDeviceSoftwareComplianceQueryPaginated(t *testing.T) {
 		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid request"))
 	})
 }
+*/
