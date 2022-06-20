@@ -78,7 +78,15 @@ func TestGenesisState_Validate(t *testing.T) {
 						CertificationType: "1",
 					},
 				},
-				// this line is used by starport scaffolding # types/genesis/validField
+				DeviceSoftwareComplianceList: []types.DeviceSoftwareCompliance{
+	{
+		CdCertificateId: "0",
+},
+	{
+		CdCertificateId: "1",
+},
+},
+// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
 		},
@@ -162,7 +170,21 @@ func TestGenesisState_Validate(t *testing.T) {
 			},
 			valid: false,
 		},
-		// this line is used by starport scaffolding # types/genesis/testcase
+		{
+	desc:     "duplicated deviceSoftwareCompliance",
+	genState: &types.GenesisState{
+		DeviceSoftwareComplianceList: []types.DeviceSoftwareCompliance{
+			{
+				CdCertificateId: "0",
+},
+			{
+				CdCertificateId: "0",
+},
+		},
+	},
+	valid:    false,
+},
+// this line is used by starport scaffolding # types/genesis/testcase
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
 			err := tc.genState.Validate()

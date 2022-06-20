@@ -300,18 +300,18 @@ export default {
 		},
 		
 		
-		async sendMsgRejectUpgrade({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgApproveUpgrade({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgRejectUpgrade(value)
+				const msg = await txClient.msgApproveUpgrade(value)
 				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
 	gas: "200000" }, memo})
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new SpVuexError('TxClient:MsgRejectUpgrade:Init', 'Could not initialize signing client. Wallet is required.')
+					throw new SpVuexError('TxClient:MsgApproveUpgrade:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new SpVuexError('TxClient:MsgRejectUpgrade:Send', 'Could not broadcast Tx: '+ e.message)
+					throw new SpVuexError('TxClient:MsgApproveUpgrade:Send', 'Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -330,32 +330,32 @@ export default {
 				}
 			}
 		},
-		async sendMsgApproveUpgrade({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgRejectUpgrade({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgApproveUpgrade(value)
+				const msg = await txClient.msgRejectUpgrade(value)
 				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
 	gas: "200000" }, memo})
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new SpVuexError('TxClient:MsgApproveUpgrade:Init', 'Could not initialize signing client. Wallet is required.')
+					throw new SpVuexError('TxClient:MsgRejectUpgrade:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new SpVuexError('TxClient:MsgApproveUpgrade:Send', 'Could not broadcast Tx: '+ e.message)
+					throw new SpVuexError('TxClient:MsgRejectUpgrade:Send', 'Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
 		
-		async MsgRejectUpgrade({ rootGetters }, { value }) {
+		async MsgApproveUpgrade({ rootGetters }, { value }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgRejectUpgrade(value)
+				const msg = await txClient.msgApproveUpgrade(value)
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new SpVuexError('TxClient:MsgRejectUpgrade:Init', 'Could not initialize signing client. Wallet is required.')
+					throw new SpVuexError('TxClient:MsgApproveUpgrade:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new SpVuexError('TxClient:MsgRejectUpgrade:Create', 'Could not create message: ' + e.message)
+					throw new SpVuexError('TxClient:MsgApproveUpgrade:Create', 'Could not create message: ' + e.message)
 					
 				}
 			}
@@ -374,16 +374,16 @@ export default {
 				}
 			}
 		},
-		async MsgApproveUpgrade({ rootGetters }, { value }) {
+		async MsgRejectUpgrade({ rootGetters }, { value }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgApproveUpgrade(value)
+				const msg = await txClient.msgRejectUpgrade(value)
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new SpVuexError('TxClient:MsgApproveUpgrade:Init', 'Could not initialize signing client. Wallet is required.')
+					throw new SpVuexError('TxClient:MsgRejectUpgrade:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new SpVuexError('TxClient:MsgApproveUpgrade:Create', 'Could not create message: ' + e.message)
+					throw new SpVuexError('TxClient:MsgRejectUpgrade:Create', 'Could not create message: ' + e.message)
 					
 				}
 			}

@@ -3,6 +3,7 @@ import { ComplianceInfo } from '../compliance/compliance_info';
 import { CertifiedModel } from '../compliance/certified_model';
 import { RevokedModel } from '../compliance/revoked_model';
 import { ProvisionalModel } from '../compliance/provisional_model';
+import { DeviceSoftwareCompliance } from '../compliance/device_software_compliance';
 import { Writer, Reader } from 'protobufjs/minimal';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.compliance';
 const baseGenesisState = {};
@@ -20,6 +21,9 @@ export const GenesisState = {
         for (const v of message.provisionalModelList) {
             ProvisionalModel.encode(v, writer.uint32(34).fork()).ldelim();
         }
+        for (const v of message.deviceSoftwareComplianceList) {
+            DeviceSoftwareCompliance.encode(v, writer.uint32(42).fork()).ldelim();
+        }
         return writer;
     },
     decode(input, length) {
@@ -30,6 +34,7 @@ export const GenesisState = {
         message.certifiedModelList = [];
         message.revokedModelList = [];
         message.provisionalModelList = [];
+        message.deviceSoftwareComplianceList = [];
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
@@ -45,6 +50,9 @@ export const GenesisState = {
                 case 4:
                     message.provisionalModelList.push(ProvisionalModel.decode(reader, reader.uint32()));
                     break;
+                case 5:
+                    message.deviceSoftwareComplianceList.push(DeviceSoftwareCompliance.decode(reader, reader.uint32()));
+                    break;
                 default:
                     reader.skipType(tag & 7);
                     break;
@@ -58,6 +66,7 @@ export const GenesisState = {
         message.certifiedModelList = [];
         message.revokedModelList = [];
         message.provisionalModelList = [];
+        message.deviceSoftwareComplianceList = [];
         if (object.complianceInfoList !== undefined && object.complianceInfoList !== null) {
             for (const e of object.complianceInfoList) {
                 message.complianceInfoList.push(ComplianceInfo.fromJSON(e));
@@ -76,6 +85,11 @@ export const GenesisState = {
         if (object.provisionalModelList !== undefined && object.provisionalModelList !== null) {
             for (const e of object.provisionalModelList) {
                 message.provisionalModelList.push(ProvisionalModel.fromJSON(e));
+            }
+        }
+        if (object.deviceSoftwareComplianceList !== undefined && object.deviceSoftwareComplianceList !== null) {
+            for (const e of object.deviceSoftwareComplianceList) {
+                message.deviceSoftwareComplianceList.push(DeviceSoftwareCompliance.fromJSON(e));
             }
         }
         return message;
@@ -106,6 +120,12 @@ export const GenesisState = {
         else {
             obj.provisionalModelList = [];
         }
+        if (message.deviceSoftwareComplianceList) {
+            obj.deviceSoftwareComplianceList = message.deviceSoftwareComplianceList.map((e) => (e ? DeviceSoftwareCompliance.toJSON(e) : undefined));
+        }
+        else {
+            obj.deviceSoftwareComplianceList = [];
+        }
         return obj;
     },
     fromPartial(object) {
@@ -114,6 +134,7 @@ export const GenesisState = {
         message.certifiedModelList = [];
         message.revokedModelList = [];
         message.provisionalModelList = [];
+        message.deviceSoftwareComplianceList = [];
         if (object.complianceInfoList !== undefined && object.complianceInfoList !== null) {
             for (const e of object.complianceInfoList) {
                 message.complianceInfoList.push(ComplianceInfo.fromPartial(e));
@@ -132,6 +153,11 @@ export const GenesisState = {
         if (object.provisionalModelList !== undefined && object.provisionalModelList !== null) {
             for (const e of object.provisionalModelList) {
                 message.provisionalModelList.push(ProvisionalModel.fromPartial(e));
+            }
+        }
+        if (object.deviceSoftwareComplianceList !== undefined && object.deviceSoftwareComplianceList !== null) {
+            for (const e of object.deviceSoftwareComplianceList) {
+                message.deviceSoftwareComplianceList.push(DeviceSoftwareCompliance.fromPartial(e));
             }
         }
         return message;

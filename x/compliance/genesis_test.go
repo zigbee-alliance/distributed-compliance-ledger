@@ -67,6 +67,14 @@ func TestGenesis(t *testing.T) {
 				CertificationType: "1",
 			},
 		},
+		DeviceSoftwareComplianceList: []types.DeviceSoftwareCompliance{
+			{
+				CdCertificateId: "0",
+			},
+			{
+				CdCertificateId: "1",
+			},
+		},
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -79,5 +87,6 @@ func TestGenesis(t *testing.T) {
 	require.ElementsMatch(t, genesisState.CertifiedModelList, got.CertifiedModelList)
 	require.ElementsMatch(t, genesisState.RevokedModelList, got.RevokedModelList)
 	require.ElementsMatch(t, genesisState.ProvisionalModelList, got.ProvisionalModelList)
+	require.ElementsMatch(t, genesisState.DeviceSoftwareComplianceList, got.DeviceSoftwareComplianceList)
 	// this line is used by starport scaffolding # genesis/test/assert
 }
