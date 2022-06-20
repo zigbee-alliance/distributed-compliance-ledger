@@ -1389,7 +1389,7 @@ func NewMsgProvisionModel(
 		ProvisionalDate:       testconstants.ProvisionalDate,
 		CertificationType:     certificationType,
 		Reason:                testconstants.Reason,
-		CDCertificationId:     testconstants.CDCertificationId,
+		CDCertificationId:     testconstants.CDCertificationID,
 	}
 }
 
@@ -1411,7 +1411,7 @@ func NewMsgProvisionModelWithAllOptionalFlags(
 		ProvisionalDate:          testconstants.ProvisionalDate,
 		CertificationType:        certificationType,
 		Reason:                   testconstants.Reason,
-		CDCertificationId:        testconstants.CDCertificationId,
+		CDCertificationId:        testconstants.CDCertificationID,
 		ProgramTypeVersion:       testconstants.ProgramTypeVersion,
 		FamilyId:                 testconstants.FamilyId,
 		SupportedClusters:        testconstants.SupportedClusters,
@@ -1443,7 +1443,7 @@ func NewMsgCertifyModel(
 		CertificationDate:     testconstants.CertificationDate,
 		CertificationType:     certificationType,
 		Reason:                testconstants.Reason,
-		CDCertificationId:     testconstants.CDCertificationId,
+		CDCertificationId:     testconstants.CDCertificationID,
 	}
 }
 
@@ -1465,7 +1465,7 @@ func NewMsgCertifyModelWithAllOptionalFlags(
 		CertificationDate:        testconstants.CertificationDate,
 		CertificationType:        certificationType,
 		Reason:                   testconstants.Reason,
-		CDCertificationId:        testconstants.CDCertificationId,
+		CDCertificationId:        testconstants.CDCertificationID,
 		ProgramTypeVersion:       testconstants.ProgramTypeVersion,
 		FamilyId:                 testconstants.FamilyId,
 		SupportedClusters:        testconstants.SupportedClusters,

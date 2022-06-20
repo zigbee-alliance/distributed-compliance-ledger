@@ -532,7 +532,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 		CertificationDate:     certDate,
 		CertificationType:     "zigbee",
 		Reason:                certReason,
-		CDCertificationId:     testconstants.CDCertificationId,
+		CDCertificationId:     testconstants.CDCertificationID,
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
@@ -550,7 +550,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	require.Equal(suite.T, vid, complianceInfo.Vid)
 	require.Equal(suite.T, pid, complianceInfo.Pid)
 	require.Equal(suite.T, sv, complianceInfo.SoftwareVersion)
-	require.Equal(suite.T, testconstants.CDCertificationId, complianceInfo.CDCertificationId)
+	require.Equal(suite.T, testconstants.CDCertificationID, complianceInfo.CDCertificationId)
 	require.Equal(suite.T, certReason, complianceInfo.Reason)
 	require.Equal(suite.T, certDate, complianceInfo.Date)
 	modelIsCertified, _ := GetCertifiedModel(suite, vid, pid, sv, compliancetypes.ZigbeeCertificationType)
@@ -635,9 +635,9 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 		CertificationDate:        certDate,
 		CertificationType:        "zigbee",
 		Reason:                   certReason,
-		CDCertificationId:        testconstants.CDCertificationId,
+		CDCertificationId:        testconstants.CDCertificationID,
 		ProgramTypeVersion:       testconstants.ProgramTypeVersion,
-		FamilyId:                 testconstants.FamilyId,
+		FamilyId:                 testconstants.FamilyID,
 		SupportedClusters:        testconstants.SupportedClusters,
 		CompliantPlatformUsed:    testconstants.CompliantPlatformUsed,
 		CompliantPlatformVersion: testconstants.CompliantPlatformVersion,
@@ -659,11 +659,11 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	require.Equal(suite.T, vid, complianceInfo.Vid)
 	require.Equal(suite.T, pid, complianceInfo.Pid)
 	require.Equal(suite.T, sv, complianceInfo.SoftwareVersion)
-	require.Equal(suite.T, testconstants.CDCertificationId, complianceInfo.CDCertificationId)
+	require.Equal(suite.T, testconstants.CDCertificationID, complianceInfo.CDCertificationId)
 	require.Equal(suite.T, certReason, complianceInfo.Reason)
 	require.Equal(suite.T, certDate, complianceInfo.Date)
 	require.Equal(suite.T, testconstants.ProgramTypeVersion, complianceInfo.ProgramTypeVersion)
-	require.Equal(suite.T, testconstants.FamilyId, complianceInfo.FamilyId)
+	require.Equal(suite.T, testconstants.FamilyID, complianceInfo.FamilyId)
 	require.Equal(suite.T, testconstants.SupportedClusters, complianceInfo.SupportedClusters)
 	require.Equal(suite.T, testconstants.CompliantPlatformUsed, complianceInfo.CompliantPlatformUsed)
 	require.Equal(suite.T, testconstants.CompliantPlatformVersion, complianceInfo.CompliantPlatformVersion)
@@ -813,7 +813,7 @@ func DemoTrackRevocation(suite *utils.TestSuite) {
 		CertificationDate:     certDate,
 		CertificationType:     "zigbee",
 		Reason:                certReason,
-		CDCertificationId:     testconstants.CDCertificationId,
+		CDCertificationId:     testconstants.CDCertificationID,
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
@@ -826,7 +826,7 @@ func DemoTrackRevocation(suite *utils.TestSuite) {
 	require.Equal(suite.T, vid, complianceInfo.Vid)
 	require.Equal(suite.T, pid, complianceInfo.Pid)
 	require.Equal(suite.T, sv, complianceInfo.SoftwareVersion)
-	require.Equal(suite.T, testconstants.CDCertificationId, complianceInfo.CDCertificationId)
+	require.Equal(suite.T, testconstants.CDCertificationID, complianceInfo.CDCertificationId)
 	require.Equal(suite.T, certReason, complianceInfo.Reason)
 	require.Equal(suite.T, certDate, complianceInfo.Date)
 	certifiedModel, _ := GetCertifiedModel(suite, vid, pid, sv, compliancetypes.ZigbeeCertificationType)
@@ -913,7 +913,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 		ProvisionalDate:       provDate,
 		CertificationType:     "matter",
 		Reason:                provReason,
-		CDCertificationId:     testconstants.CDCertificationId,
+		CDCertificationId:     testconstants.CDCertificationID,
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&provModelMsg}, certCenter, certCenterAccount)
@@ -931,7 +931,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	require.Equal(suite.T, vid, complianceInfo.Vid)
 	require.Equal(suite.T, pid, complianceInfo.Pid)
 	require.Equal(suite.T, sv, complianceInfo.SoftwareVersion)
-	require.Equal(suite.T, testconstants.CDCertificationId, complianceInfo.CDCertificationId)
+	require.Equal(suite.T, testconstants.CDCertificationID, complianceInfo.CDCertificationId)
 	require.Equal(suite.T, provReason, complianceInfo.Reason)
 	require.Equal(suite.T, provDate, complianceInfo.Date)
 	_, err = GetCertifiedModel(suite, vid, pid, sv, compliancetypes.MatterCertificationType)
@@ -971,7 +971,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 		CertificationDate:     certDate,
 		CertificationType:     "matter",
 		Reason:                certReason,
-		CDCertificationId:     testconstants.CDCertificationId,
+		CDCertificationId:     testconstants.CDCertificationID,
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
@@ -984,7 +984,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	require.Equal(suite.T, vid, complianceInfo.Vid)
 	require.Equal(suite.T, pid, complianceInfo.Pid)
 	require.Equal(suite.T, sv, complianceInfo.SoftwareVersion)
-	require.Equal(suite.T, testconstants.CDCertificationId, complianceInfo.CDCertificationId)
+	require.Equal(suite.T, testconstants.CDCertificationID, complianceInfo.CDCertificationId)
 	require.Equal(suite.T, certReason, complianceInfo.Reason)
 	require.Equal(suite.T, certDate, complianceInfo.Date)
 	certifiedModel, _ := GetCertifiedModel(suite, vid, pid, sv, compliancetypes.MatterCertificationType)
@@ -1023,9 +1023,9 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 		ProvisionalDate:          provDate,
 		CertificationType:        "matter",
 		Reason:                   provReason,
-		CDCertificationId:        testconstants.CDCertificationId,
+		CDCertificationId:        testconstants.CDCertificationID,
 		ProgramTypeVersion:       testconstants.ProgramTypeVersion,
-		FamilyId:                 testconstants.FamilyId,
+		FamilyId:                 testconstants.FamilyID,
 		SupportedClusters:        testconstants.SupportedClusters,
 		CompliantPlatformUsed:    testconstants.CompliantPlatformUsed,
 		CompliantPlatformVersion: testconstants.CompliantPlatformVersion,
@@ -1048,10 +1048,10 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	require.Equal(suite.T, pid, complianceInfo.Pid)
 	require.Equal(suite.T, sv, complianceInfo.SoftwareVersion)
 	require.Equal(suite.T, provReason, complianceInfo.Reason)
-	require.Equal(suite.T, testconstants.CDCertificationId, complianceInfo.CDCertificationId)
+	require.Equal(suite.T, testconstants.CDCertificationID, complianceInfo.CDCertificationId)
 	require.Equal(suite.T, provDate, complianceInfo.Date)
 	require.Equal(suite.T, testconstants.ProgramTypeVersion, complianceInfo.ProgramTypeVersion)
-	require.Equal(suite.T, testconstants.FamilyId, complianceInfo.FamilyId)
+	require.Equal(suite.T, testconstants.FamilyID, complianceInfo.FamilyId)
 	require.Equal(suite.T, testconstants.SupportedClusters, complianceInfo.SupportedClusters)
 	require.Equal(suite.T, testconstants.CompliantPlatformUsed, complianceInfo.CompliantPlatformUsed)
 	require.Equal(suite.T, testconstants.CompliantPlatformVersion, complianceInfo.CompliantPlatformVersion)
@@ -1097,7 +1097,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 		CertificationDate:        certDate,
 		CertificationType:        "matter",
 		Reason:                   certReason,
-		CDCertificationId:        testconstants.CDCertificationId,
+		CDCertificationId:        testconstants.CDCertificationID,
 		ProgramTypeVersion:       "pTypeVersion",
 		FamilyId:                 "familyID",
 		SupportedClusters:        "sClusters",
@@ -1117,7 +1117,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	require.Equal(suite.T, vid, complianceInfo.Vid)
 	require.Equal(suite.T, pid, complianceInfo.Pid)
 	require.Equal(suite.T, sv, complianceInfo.SoftwareVersion)
-	require.Equal(suite.T, testconstants.CDCertificationId, complianceInfo.CDCertificationId)
+	require.Equal(suite.T, testconstants.CDCertificationID, complianceInfo.CDCertificationId)
 	require.Equal(suite.T, certReason, complianceInfo.Reason)
 	require.Equal(suite.T, certDate, complianceInfo.Date)
 	require.Equal(suite.T, "pTypeVersion", complianceInfo.ProgramTypeVersion)
@@ -1228,7 +1228,7 @@ func DemoTrackComplianceWithHexVidAndPid(suite *utils.TestSuite) {
 		CertificationDate:     certDate,
 		CertificationType:     "zigbee",
 		Reason:                certReason,
-		CDCertificationId:     testconstants.CDCertificationId,
+		CDCertificationId:     testconstants.CDCertificationID,
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
@@ -1246,7 +1246,7 @@ func DemoTrackComplianceWithHexVidAndPid(suite *utils.TestSuite) {
 	require.Equal(suite.T, vid, complianceInfo.Vid)
 	require.Equal(suite.T, pid, complianceInfo.Pid)
 	require.Equal(suite.T, sv, complianceInfo.SoftwareVersion)
-	require.Equal(suite.T, testconstants.CDCertificationId, complianceInfo.CDCertificationId)
+	require.Equal(suite.T, testconstants.CDCertificationID, complianceInfo.CDCertificationId)
 	require.Equal(suite.T, certReason, complianceInfo.Reason)
 	require.Equal(suite.T, certDate, complianceInfo.Date)
 	modelIsCertified, _ := GetCertifiedModel(suite, vid, pid, sv, compliancetypes.ZigbeeCertificationType)
@@ -1364,7 +1364,7 @@ func DemoTrackRevocationWithHexVidAndPid(suite *utils.TestSuite) {
 		CertificationDate:     certDate,
 		CertificationType:     "zigbee",
 		Reason:                certReason,
-		CDCertificationId:     testconstants.CDCertificationId,
+		CDCertificationId:     testconstants.CDCertificationID,
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
@@ -1377,7 +1377,7 @@ func DemoTrackRevocationWithHexVidAndPid(suite *utils.TestSuite) {
 	require.Equal(suite.T, vid, complianceInfo.Vid)
 	require.Equal(suite.T, pid, complianceInfo.Pid)
 	require.Equal(suite.T, sv, complianceInfo.SoftwareVersion)
-	require.Equal(suite.T, testconstants.CDCertificationId, complianceInfo.CDCertificationId)
+	require.Equal(suite.T, testconstants.CDCertificationID, complianceInfo.CDCertificationId)
 	require.Equal(suite.T, certReason, complianceInfo.Reason)
 	require.Equal(suite.T, certDate, complianceInfo.Date)
 	certifiedModel, _ := GetCertifiedModelByHexVidAndPid(suite, testconstants.TestVID2String, testconstants.TestPID2String, sv, compliancetypes.ZigbeeCertificationType)
@@ -1447,7 +1447,7 @@ func DemoTrackProvisionByHexVidAndPid(suite *utils.TestSuite) {
 		ProvisionalDate:       provDate,
 		CertificationType:     "matter",
 		Reason:                provReason,
-		CDCertificationId:     testconstants.CDCertificationId,
+		CDCertificationId:     testconstants.CDCertificationID,
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&provModelMsg}, certCenter, certCenterAccount)
@@ -1465,7 +1465,7 @@ func DemoTrackProvisionByHexVidAndPid(suite *utils.TestSuite) {
 	require.Equal(suite.T, vid, complianceInfo.Vid)
 	require.Equal(suite.T, pid, complianceInfo.Pid)
 	require.Equal(suite.T, sv, complianceInfo.SoftwareVersion)
-	require.Equal(suite.T, testconstants.CDCertificationId, complianceInfo.CDCertificationId)
+	require.Equal(suite.T, testconstants.CDCertificationID, complianceInfo.CDCertificationId)
 	require.Equal(suite.T, provReason, complianceInfo.Reason)
 	require.Equal(suite.T, provDate, complianceInfo.Date)
 	_, err = GetCertifiedModelByHexVidAndPid(suite, testconstants.TestVID3String, testconstants.TestPID3String, sv, compliancetypes.MatterCertificationType)
@@ -1495,7 +1495,7 @@ func DemoTrackProvisionByHexVidAndPid(suite *utils.TestSuite) {
 		CertificationDate:     certDate,
 		CertificationType:     "matter",
 		Reason:                certReason,
-		CDCertificationId:     testconstants.CDCertificationId,
+		CDCertificationId:     testconstants.CDCertificationID,
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
@@ -1508,7 +1508,7 @@ func DemoTrackProvisionByHexVidAndPid(suite *utils.TestSuite) {
 	require.Equal(suite.T, vid, complianceInfo.Vid)
 	require.Equal(suite.T, pid, complianceInfo.Pid)
 	require.Equal(suite.T, sv, complianceInfo.SoftwareVersion)
-	require.Equal(suite.T, testconstants.CDCertificationId, complianceInfo.CDCertificationId)
+	require.Equal(suite.T, testconstants.CDCertificationID, complianceInfo.CDCertificationId)
 	require.Equal(suite.T, certReason, complianceInfo.Reason)
 	require.Equal(suite.T, certDate, complianceInfo.Date)
 	certifiedModel, _ := GetCertifiedModelByHexVidAndPid(suite, testconstants.TestVID3String, testconstants.TestPID3String, sv, compliancetypes.MatterCertificationType)
