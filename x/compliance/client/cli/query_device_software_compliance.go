@@ -55,7 +55,7 @@ func CmdShowDeviceSoftwareCompliance() *cobra.Command {
 			argCdCertificateId := args[0]
 
 			params := &types.QueryGetDeviceSoftwareComplianceRequest{
-				CdCertificateId: argCdCertificateId,
+				CDCertificateId: argCdCertificateId,
 			}
 
 			res, err := queryClient.DeviceSoftwareCompliance(context.Background(), params)

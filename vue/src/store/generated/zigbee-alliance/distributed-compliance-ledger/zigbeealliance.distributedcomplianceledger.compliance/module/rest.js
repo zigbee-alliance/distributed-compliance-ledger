@@ -198,6 +198,35 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
+         * @name QueryDeviceSoftwareComplianceAll
+         * @summary Queries a list of DeviceSoftwareCompliance items.
+         * @request GET:/dcl/compliance/device_software_compliance
+         */
+        this.queryDeviceSoftwareComplianceAll = (query, params = {}) => this.request({
+            path: `/dcl/compliance/device_software_compliance`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryDeviceSoftwareCompliance
+         * @summary Queries a DeviceSoftwareCompliance by index.
+         * @request GET:/dcl/compliance/device_software_compliance/{cDCertificateId}
+         */
+        this.queryDeviceSoftwareCompliance = (cDCertificateId, params = {}) => this.request({
+            path: `/dcl/compliance/device_software_compliance/${cDCertificateId}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
          * @name QueryProvisionalModelAll
          * @summary Queries a list of ProvisionalModel items.
          * @request GET:/dcl/compliance/provisional-models
@@ -248,35 +277,6 @@ export class Api extends HttpClient {
          */
         this.queryRevokedModel = (vid, pid, softwareVersion, certificationType, params = {}) => this.request({
             path: `/dcl/compliance/revoked-models/${vid}/${pid}/${softwareVersion}/${certificationType}`,
-            method: "GET",
-            format: "json",
-            ...params,
-        });
-        /**
-         * No description
-         *
-         * @tags Query
-         * @name QueryDeviceSoftwareComplianceAll
-         * @summary Queries a list of DeviceSoftwareCompliance items.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/compliance/device_software_compliance
-         */
-        this.queryDeviceSoftwareComplianceAll = (query, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/compliance/device_software_compliance`,
-            method: "GET",
-            query: query,
-            format: "json",
-            ...params,
-        });
-        /**
-         * No description
-         *
-         * @tags Query
-         * @name QueryDeviceSoftwareCompliance
-         * @summary Queries a DeviceSoftwareCompliance by index.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/compliance/device_software_compliance/{cdCertificateId}
-         */
-        this.queryDeviceSoftwareCompliance = (cdCertificateId, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/compliance/device_software_compliance/${cdCertificateId}`,
             method: "GET",
             format: "json",
             ...params,

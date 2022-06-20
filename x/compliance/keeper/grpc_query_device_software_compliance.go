@@ -47,7 +47,7 @@ func (k Keeper) DeviceSoftwareCompliance(c context.Context, req *types.QueryGetD
 
 	val, found := k.GetDeviceSoftwareCompliance(
 		ctx,
-		req.CdCertificateId,
+		req.CDCertificateId,
 	)
 	if !found {
 		return nil, status.Error(codes.InvalidArgument, "not found")

@@ -69,10 +69,10 @@ func TestGenesis(t *testing.T) {
 		},
 		DeviceSoftwareComplianceList: []types.DeviceSoftwareCompliance{
 			{
-				CdCertificateId: "0",
+				CDCertificateId: "0",
 			},
 			{
-				CdCertificateId: "1",
+				CDCertificateId: "1",
 			},
 		},
 		// this line is used by starport scaffolding # genesis/test/state

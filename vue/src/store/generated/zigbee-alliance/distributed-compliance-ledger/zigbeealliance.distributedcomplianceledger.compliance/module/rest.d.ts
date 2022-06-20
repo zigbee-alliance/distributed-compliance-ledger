@@ -46,8 +46,8 @@ export interface ComplianceComplianceInfo {
     parentChild?: string;
 }
 export interface ComplianceDeviceSoftwareCompliance {
-    cdCertificateId?: string;
-    complianceInfo?: string[];
+    cDCertificateId?: string;
+    complianceInfo?: ComplianceComplianceInfo[];
 }
 export declare type ComplianceMsgCertifyModelResponse = object;
 export declare type ComplianceMsgProvisionModelResponse = object;
@@ -327,6 +327,30 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * No description
      *
      * @tags Query
+     * @name QueryDeviceSoftwareComplianceAll
+     * @summary Queries a list of DeviceSoftwareCompliance items.
+     * @request GET:/dcl/compliance/device_software_compliance
+     */
+    queryDeviceSoftwareComplianceAll: (query?: {
+        "pagination.key"?: string;
+        "pagination.offset"?: string;
+        "pagination.limit"?: string;
+        "pagination.countTotal"?: boolean;
+        "pagination.reverse"?: boolean;
+    }, params?: RequestParams) => Promise<HttpResponse<ComplianceQueryAllDeviceSoftwareComplianceResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryDeviceSoftwareCompliance
+     * @summary Queries a DeviceSoftwareCompliance by index.
+     * @request GET:/dcl/compliance/device_software_compliance/{cDCertificateId}
+     */
+    queryDeviceSoftwareCompliance: (cDCertificateId: string, params?: RequestParams) => Promise<HttpResponse<ComplianceQueryGetDeviceSoftwareComplianceResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
      * @name QueryProvisionalModelAll
      * @summary Queries a list of ProvisionalModel items.
      * @request GET:/dcl/compliance/provisional-models
@@ -371,29 +395,5 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @request GET:/dcl/compliance/revoked-models/{vid}/{pid}/{softwareVersion}/{certificationType}
      */
     queryRevokedModel: (vid: number, pid: number, softwareVersion: number, certificationType: string, params?: RequestParams) => Promise<HttpResponse<ComplianceQueryGetRevokedModelResponse, RpcStatus>>;
-    /**
-     * No description
-     *
-     * @tags Query
-     * @name QueryDeviceSoftwareComplianceAll
-     * @summary Queries a list of DeviceSoftwareCompliance items.
-     * @request GET:/zigbee-alliance/distributedcomplianceledger/compliance/device_software_compliance
-     */
-    queryDeviceSoftwareComplianceAll: (query?: {
-        "pagination.key"?: string;
-        "pagination.offset"?: string;
-        "pagination.limit"?: string;
-        "pagination.countTotal"?: boolean;
-        "pagination.reverse"?: boolean;
-    }, params?: RequestParams) => Promise<HttpResponse<ComplianceQueryAllDeviceSoftwareComplianceResponse, RpcStatus>>;
-    /**
-     * No description
-     *
-     * @tags Query
-     * @name QueryDeviceSoftwareCompliance
-     * @summary Queries a DeviceSoftwareCompliance by index.
-     * @request GET:/zigbee-alliance/distributedcomplianceledger/compliance/device_software_compliance/{cdCertificateId}
-     */
-    queryDeviceSoftwareCompliance: (cdCertificateId: string, params?: RequestParams) => Promise<HttpResponse<ComplianceQueryGetDeviceSoftwareComplianceResponse, RpcStatus>>;
 }
 export {};

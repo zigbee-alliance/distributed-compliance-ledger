@@ -11,7 +11,7 @@ func (k Keeper) SetDeviceSoftwareCompliance(ctx sdk.Context, deviceSoftwareCompl
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DeviceSoftwareComplianceKeyPrefix))
 	b := k.cdc.MustMarshal(&deviceSoftwareCompliance)
 	store.Set(types.DeviceSoftwareComplianceKey(
-		deviceSoftwareCompliance.CdCertificateId,
+		deviceSoftwareCompliance.CDCertificateId,
 	), b)
 }
 

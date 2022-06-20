@@ -66,7 +66,7 @@ func (gs GenesisState) Validate() error {
 	deviceSoftwareComplianceIndexMap := make(map[string]struct{})
 
 	for _, elem := range gs.DeviceSoftwareComplianceList {
-		index := string(DeviceSoftwareComplianceKey(elem.CdCertificateId))
+		index := string(DeviceSoftwareComplianceKey(elem.CDCertificateId))
 		if _, ok := deviceSoftwareComplianceIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for deviceSoftwareCompliance")
 		}

@@ -71,7 +71,7 @@ export interface QueryAllProvisionalModelResponse {
     pagination: PageResponse | undefined;
 }
 export interface QueryGetDeviceSoftwareComplianceRequest {
-    cdCertificateId: string;
+    cDCertificateId: string;
 }
 export interface QueryGetDeviceSoftwareComplianceResponse {
     deviceSoftwareCompliance: DeviceSoftwareCompliance | undefined;

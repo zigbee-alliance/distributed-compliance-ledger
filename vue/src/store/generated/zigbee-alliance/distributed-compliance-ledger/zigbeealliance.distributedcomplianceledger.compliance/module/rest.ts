@@ -67,8 +67,8 @@ export interface ComplianceComplianceInfo {
 }
 
 export interface ComplianceDeviceSoftwareCompliance {
-  cdCertificateId?: string;
-  complianceInfo?: string[];
+  cDCertificateId?: string;
+  complianceInfo?: ComplianceComplianceInfo[];
 }
 
 export type ComplianceMsgCertifyModelResponse = object;
@@ -568,6 +568,48 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
+   * @name QueryDeviceSoftwareComplianceAll
+   * @summary Queries a list of DeviceSoftwareCompliance items.
+   * @request GET:/dcl/compliance/device_software_compliance
+   */
+  queryDeviceSoftwareComplianceAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<ComplianceQueryAllDeviceSoftwareComplianceResponse, RpcStatus>({
+      path: `/dcl/compliance/device_software_compliance`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryDeviceSoftwareCompliance
+   * @summary Queries a DeviceSoftwareCompliance by index.
+   * @request GET:/dcl/compliance/device_software_compliance/{cDCertificateId}
+   */
+  queryDeviceSoftwareCompliance = (cDCertificateId: string, params: RequestParams = {}) =>
+    this.request<ComplianceQueryGetDeviceSoftwareComplianceResponse, RpcStatus>({
+      path: `/dcl/compliance/device_software_compliance/${cDCertificateId}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
    * @name QueryProvisionalModelAll
    * @summary Queries a list of ProvisionalModel items.
    * @request GET:/dcl/compliance/provisional-models
@@ -655,48 +697,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   ) =>
     this.request<ComplianceQueryGetRevokedModelResponse, RpcStatus>({
       path: `/dcl/compliance/revoked-models/${vid}/${pid}/${softwareVersion}/${certificationType}`,
-      method: "GET",
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryDeviceSoftwareComplianceAll
-   * @summary Queries a list of DeviceSoftwareCompliance items.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/compliance/device_software_compliance
-   */
-  queryDeviceSoftwareComplianceAll = (
-    query?: {
-      "pagination.key"?: string;
-      "pagination.offset"?: string;
-      "pagination.limit"?: string;
-      "pagination.countTotal"?: boolean;
-      "pagination.reverse"?: boolean;
-    },
-    params: RequestParams = {},
-  ) =>
-    this.request<ComplianceQueryAllDeviceSoftwareComplianceResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/compliance/device_software_compliance`,
-      method: "GET",
-      query: query,
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryDeviceSoftwareCompliance
-   * @summary Queries a DeviceSoftwareCompliance by index.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/compliance/device_software_compliance/{cdCertificateId}
-   */
-  queryDeviceSoftwareCompliance = (cdCertificateId: string, params: RequestParams = {}) =>
-    this.request<ComplianceQueryGetDeviceSoftwareComplianceResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/compliance/device_software_compliance/${cdCertificateId}`,
       method: "GET",
       format: "json",
       ...params,

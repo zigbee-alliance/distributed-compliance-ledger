@@ -90,7 +90,7 @@ export interface QueryAllProvisionalModelResponse {
 }
 
 export interface QueryGetDeviceSoftwareComplianceRequest {
-  cdCertificateId: string
+  cDCertificateId: string
 }
 
 export interface QueryGetDeviceSoftwareComplianceResponse {
@@ -1286,12 +1286,12 @@ export const QueryAllProvisionalModelResponse = {
   }
 }
 
-const baseQueryGetDeviceSoftwareComplianceRequest: object = { cdCertificateId: '' }
+const baseQueryGetDeviceSoftwareComplianceRequest: object = { cDCertificateId: '' }
 
 export const QueryGetDeviceSoftwareComplianceRequest = {
   encode(message: QueryGetDeviceSoftwareComplianceRequest, writer: Writer = Writer.create()): Writer {
-    if (message.cdCertificateId !== '') {
-      writer.uint32(10).string(message.cdCertificateId)
+    if (message.cDCertificateId !== '') {
+      writer.uint32(10).string(message.cDCertificateId)
     }
     return writer
   },
@@ -1304,7 +1304,7 @@ export const QueryGetDeviceSoftwareComplianceRequest = {
       const tag = reader.uint32()
       switch (tag >>> 3) {
         case 1:
-          message.cdCertificateId = reader.string()
+          message.cDCertificateId = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -1316,26 +1316,26 @@ export const QueryGetDeviceSoftwareComplianceRequest = {
 
   fromJSON(object: any): QueryGetDeviceSoftwareComplianceRequest {
     const message = { ...baseQueryGetDeviceSoftwareComplianceRequest } as QueryGetDeviceSoftwareComplianceRequest
-    if (object.cdCertificateId !== undefined && object.cdCertificateId !== null) {
-      message.cdCertificateId = String(object.cdCertificateId)
+    if (object.cDCertificateId !== undefined && object.cDCertificateId !== null) {
+      message.cDCertificateId = String(object.cDCertificateId)
     } else {
-      message.cdCertificateId = ''
+      message.cDCertificateId = ''
     }
     return message
   },
 
   toJSON(message: QueryGetDeviceSoftwareComplianceRequest): unknown {
     const obj: any = {}
-    message.cdCertificateId !== undefined && (obj.cdCertificateId = message.cdCertificateId)
+    message.cDCertificateId !== undefined && (obj.cDCertificateId = message.cDCertificateId)
     return obj
   },
 
   fromPartial(object: DeepPartial<QueryGetDeviceSoftwareComplianceRequest>): QueryGetDeviceSoftwareComplianceRequest {
     const message = { ...baseQueryGetDeviceSoftwareComplianceRequest } as QueryGetDeviceSoftwareComplianceRequest
-    if (object.cdCertificateId !== undefined && object.cdCertificateId !== null) {
-      message.cdCertificateId = object.cdCertificateId
+    if (object.cDCertificateId !== undefined && object.cDCertificateId !== null) {
+      message.cDCertificateId = object.cDCertificateId
     } else {
-      message.cdCertificateId = ''
+      message.cDCertificateId = ''
     }
     return message
   }
