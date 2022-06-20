@@ -273,25 +273,25 @@ paths:
                           cDVersionNumber:
                             type: integer
                             format: int64
-                    programTypeVersion:
-                      type: string
                     cDCertificationId:
-                      type: string
-                    familyId:
-                      type: string
-                    supportedClusters:
-                      type: string
-                    compliantPlatformUsed:
-                      type: string
-                    compliantPlatformVersion:
-                      type: string
-                    OSVersion:
                       type: string
                     certificationRoute:
                       type: string
                     programType:
                       type: string
+                    programTypeVersion:
+                      type: string
+                    compliantPlatformUsed:
+                      type: string
+                    compliantPlatformVersion:
+                      type: string
                     transport:
+                      type: string
+                    familyId:
+                      type: string
+                    supportedClusters:
+                      type: string
+                    OSVersion:
                       type: string
                     parentChild:
                       type: string
@@ -456,25 +456,25 @@ paths:
                         cDVersionNumber:
                           type: integer
                           format: int64
-                  programTypeVersion:
-                    type: string
                   cDCertificationId:
-                    type: string
-                  familyId:
-                    type: string
-                  supportedClusters:
-                    type: string
-                  compliantPlatformUsed:
-                    type: string
-                  compliantPlatformVersion:
-                    type: string
-                  OSVersion:
                     type: string
                   certificationRoute:
                     type: string
                   programType:
                     type: string
+                  programTypeVersion:
+                    type: string
+                  compliantPlatformUsed:
+                    type: string
+                  compliantPlatformVersion:
+                    type: string
                   transport:
+                    type: string
+                  familyId:
+                    type: string
+                  supportedClusters:
+                    type: string
+                  OSVersion:
                     type: string
                   parentChild:
                     type: string
@@ -13702,25 +13702,25 @@ definitions:
             cDVersionNumber:
               type: integer
               format: int64
-      programTypeVersion:
-        type: string
       cDCertificationId:
-        type: string
-      familyId:
-        type: string
-      supportedClusters:
-        type: string
-      compliantPlatformUsed:
-        type: string
-      compliantPlatformVersion:
-        type: string
-      OSVersion:
         type: string
       certificationRoute:
         type: string
       programType:
         type: string
+      programTypeVersion:
+        type: string
+      compliantPlatformUsed:
+        type: string
+      compliantPlatformVersion:
+        type: string
       transport:
+        type: string
+      familyId:
+        type: string
+      supportedClusters:
+        type: string
+      OSVersion:
         type: string
       parentChild:
         type: string
@@ -13834,25 +13834,25 @@ definitions:
                   cDVersionNumber:
                     type: integer
                     format: int64
-            programTypeVersion:
-              type: string
             cDCertificationId:
-              type: string
-            familyId:
-              type: string
-            supportedClusters:
-              type: string
-            compliantPlatformUsed:
-              type: string
-            compliantPlatformVersion:
-              type: string
-            OSVersion:
               type: string
             certificationRoute:
               type: string
             programType:
               type: string
+            programTypeVersion:
+              type: string
+            compliantPlatformUsed:
+              type: string
+            compliantPlatformVersion:
+              type: string
             transport:
+              type: string
+            familyId:
+              type: string
+            supportedClusters:
+              type: string
+            OSVersion:
               type: string
             parentChild:
               type: string
@@ -14038,25 +14038,25 @@ definitions:
                 cDVersionNumber:
                   type: integer
                   format: int64
-          programTypeVersion:
-            type: string
           cDCertificationId:
-            type: string
-          familyId:
-            type: string
-          supportedClusters:
-            type: string
-          compliantPlatformUsed:
-            type: string
-          compliantPlatformVersion:
-            type: string
-          OSVersion:
             type: string
           certificationRoute:
             type: string
           programType:
             type: string
+          programTypeVersion:
+            type: string
+          compliantPlatformUsed:
+            type: string
+          compliantPlatformVersion:
+            type: string
           transport:
+            type: string
+          familyId:
+            type: string
+          supportedClusters:
+            type: string
+          OSVersion:
             type: string
           parentChild:
             type: string
