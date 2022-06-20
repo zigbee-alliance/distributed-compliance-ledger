@@ -13,16 +13,16 @@ export interface ComplianceInfo {
     reason: string;
     owner: string;
     history: ComplianceHistoryItem[];
-    programTypeVersion: string;
     cDCertificationId: string;
-    familyId: string;
-    supportedClusters: string;
-    compliantPlatformUsed: string;
-    compliantPlatformVersion: string;
-    OSVersion: string;
     certificationRoute: string;
     programType: string;
+    programTypeVersion: string;
+    compliantPlatformUsed: string;
+    compliantPlatformVersion: string;
     transport: string;
+    familyId: string;
+    supportedClusters: string;
+    OSVersion: string;
     parentChild: string;
 }
 export declare const ComplianceInfo: {

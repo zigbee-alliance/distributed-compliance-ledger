@@ -338,20 +338,20 @@ export default {
                 throw new SpVuexError('QueryClient:QueryRejectedDisableValidatorAll', 'API Node Unavailable. Could not perform query: ' + e.message);
             }
         },
-        async sendMsgEnableValidator({ rootGetters }, { value, fee = [], memo = '' }) {
+        async sendMsgRejectDisableValidator({ rootGetters }, { value, fee = [], memo = '' }) {
             try {
                 const txClient = await initTxClient(rootGetters);
-                const msg = await txClient.msgEnableValidator(value);
+                const msg = await txClient.msgRejectDisableValidator(value);
                 const result = await txClient.signAndBroadcast([msg], { fee: { amount: fee,
                         gas: "200000" }, memo });
                 return result;
             }
             catch (e) {
                 if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgEnableValidator:Init', 'Could not initialize signing client. Wallet is required.');
+                    throw new SpVuexError('TxClient:MsgRejectDisableValidator:Init', 'Could not initialize signing client. Wallet is required.');
                 }
                 else {
-                    throw new SpVuexError('TxClient:MsgEnableValidator:Send', 'Could not broadcast Tx: ' + e.message);
+                    throw new SpVuexError('TxClient:MsgRejectDisableValidator:Send', 'Could not broadcast Tx: ' + e.message);
                 }
             }
         },
@@ -389,37 +389,20 @@ export default {
                 }
             }
         },
-        async sendMsgProposeDisableValidator({ rootGetters }, { value, fee = [], memo = '' }) {
+        async sendMsgEnableValidator({ rootGetters }, { value, fee = [], memo = '' }) {
             try {
                 const txClient = await initTxClient(rootGetters);
-                const msg = await txClient.msgProposeDisableValidator(value);
+                const msg = await txClient.msgEnableValidator(value);
                 const result = await txClient.signAndBroadcast([msg], { fee: { amount: fee,
                         gas: "200000" }, memo });
                 return result;
             }
             catch (e) {
                 if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgProposeDisableValidator:Init', 'Could not initialize signing client. Wallet is required.');
+                    throw new SpVuexError('TxClient:MsgEnableValidator:Init', 'Could not initialize signing client. Wallet is required.');
                 }
                 else {
-                    throw new SpVuexError('TxClient:MsgProposeDisableValidator:Send', 'Could not broadcast Tx: ' + e.message);
-                }
-            }
-        },
-        async sendMsgRejectDisableValidator({ rootGetters }, { value, fee = [], memo = '' }) {
-            try {
-                const txClient = await initTxClient(rootGetters);
-                const msg = await txClient.msgRejectDisableValidator(value);
-                const result = await txClient.signAndBroadcast([msg], { fee: { amount: fee,
-                        gas: "200000" }, memo });
-                return result;
-            }
-            catch (e) {
-                if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgRejectDisableValidator:Init', 'Could not initialize signing client. Wallet is required.');
-                }
-                else {
-                    throw new SpVuexError('TxClient:MsgRejectDisableValidator:Send', 'Could not broadcast Tx: ' + e.message);
+                    throw new SpVuexError('TxClient:MsgEnableValidator:Send', 'Could not broadcast Tx: ' + e.message);
                 }
             }
         },
@@ -440,18 +423,35 @@ export default {
                 }
             }
         },
-        async MsgEnableValidator({ rootGetters }, { value }) {
+        async sendMsgProposeDisableValidator({ rootGetters }, { value, fee = [], memo = '' }) {
             try {
                 const txClient = await initTxClient(rootGetters);
-                const msg = await txClient.msgEnableValidator(value);
+                const msg = await txClient.msgProposeDisableValidator(value);
+                const result = await txClient.signAndBroadcast([msg], { fee: { amount: fee,
+                        gas: "200000" }, memo });
+                return result;
+            }
+            catch (e) {
+                if (e == MissingWalletError) {
+                    throw new SpVuexError('TxClient:MsgProposeDisableValidator:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgProposeDisableValidator:Send', 'Could not broadcast Tx: ' + e.message);
+                }
+            }
+        },
+        async MsgRejectDisableValidator({ rootGetters }, { value }) {
+            try {
+                const txClient = await initTxClient(rootGetters);
+                const msg = await txClient.msgRejectDisableValidator(value);
                 return msg;
             }
             catch (e) {
                 if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgEnableValidator:Init', 'Could not initialize signing client. Wallet is required.');
+                    throw new SpVuexError('TxClient:MsgRejectDisableValidator:Init', 'Could not initialize signing client. Wallet is required.');
                 }
                 else {
-                    throw new SpVuexError('TxClient:MsgEnableValidator:Create', 'Could not create message: ' + e.message);
+                    throw new SpVuexError('TxClient:MsgRejectDisableValidator:Create', 'Could not create message: ' + e.message);
                 }
             }
         },
@@ -485,33 +485,18 @@ export default {
                 }
             }
         },
-        async MsgProposeDisableValidator({ rootGetters }, { value }) {
+        async MsgEnableValidator({ rootGetters }, { value }) {
             try {
                 const txClient = await initTxClient(rootGetters);
-                const msg = await txClient.msgProposeDisableValidator(value);
+                const msg = await txClient.msgEnableValidator(value);
                 return msg;
             }
             catch (e) {
                 if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgProposeDisableValidator:Init', 'Could not initialize signing client. Wallet is required.');
+                    throw new SpVuexError('TxClient:MsgEnableValidator:Init', 'Could not initialize signing client. Wallet is required.');
                 }
                 else {
-                    throw new SpVuexError('TxClient:MsgProposeDisableValidator:Create', 'Could not create message: ' + e.message);
-                }
-            }
-        },
-        async MsgRejectDisableValidator({ rootGetters }, { value }) {
-            try {
-                const txClient = await initTxClient(rootGetters);
-                const msg = await txClient.msgRejectDisableValidator(value);
-                return msg;
-            }
-            catch (e) {
-                if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgRejectDisableValidator:Init', 'Could not initialize signing client. Wallet is required.');
-                }
-                else {
-                    throw new SpVuexError('TxClient:MsgRejectDisableValidator:Create', 'Could not create message: ' + e.message);
+                    throw new SpVuexError('TxClient:MsgEnableValidator:Create', 'Could not create message: ' + e.message);
                 }
             }
         },
@@ -527,6 +512,21 @@ export default {
                 }
                 else {
                     throw new SpVuexError('TxClient:MsgDisableValidator:Create', 'Could not create message: ' + e.message);
+                }
+            }
+        },
+        async MsgProposeDisableValidator({ rootGetters }, { value }) {
+            try {
+                const txClient = await initTxClient(rootGetters);
+                const msg = await txClient.msgProposeDisableValidator(value);
+                return msg;
+            }
+            catch (e) {
+                if (e == MissingWalletError) {
+                    throw new SpVuexError('TxClient:MsgProposeDisableValidator:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgProposeDisableValidator:Create', 'Could not create message: ' + e.message);
                 }
             }
         },

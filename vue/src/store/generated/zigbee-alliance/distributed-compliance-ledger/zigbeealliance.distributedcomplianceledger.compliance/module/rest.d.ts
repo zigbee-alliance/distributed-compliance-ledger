@@ -33,16 +33,16 @@ export interface ComplianceComplianceInfo {
     reason?: string;
     owner?: string;
     history?: ComplianceComplianceHistoryItem[];
-    programTypeVersion?: string;
     cDCertificationId?: string;
-    familyId?: string;
-    supportedClusters?: string;
-    compliantPlatformUsed?: string;
-    compliantPlatformVersion?: string;
-    OSVersion?: string;
     certificationRoute?: string;
     programType?: string;
+    programTypeVersion?: string;
+    compliantPlatformUsed?: string;
+    compliantPlatformVersion?: string;
     transport?: string;
+    familyId?: string;
+    supportedClusters?: string;
+    OSVersion?: string;
     parentChild?: string;
 }
 export declare type ComplianceMsgCertifyModelResponse = object;
