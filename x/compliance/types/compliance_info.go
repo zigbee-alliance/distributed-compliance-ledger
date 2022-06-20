@@ -1,6 +1,6 @@
 package types
 
-func (d *ComplianceInfo) SetCertifiedStatus(date string, reason string, cdCertificationId string) {
+func (d *ComplianceInfo) SetCertifiedStatus(date string, reason string, cdCertificationID string) {
 	svCertificationStatus := CodeCertified
 	historyItem := ComplianceHistoryItem{
 		SoftwareVersionCertificationStatus: d.SoftwareVersionCertificationStatus,
@@ -12,7 +12,7 @@ func (d *ComplianceInfo) SetCertifiedStatus(date string, reason string, cdCertif
 	d.SoftwareVersionCertificationStatus = svCertificationStatus
 	d.Date = date
 	d.Reason = reason
-	d.CDCertificationId = cdCertificationId
+	d.CDCertificationId = cdCertificationID
 }
 
 func (d *ComplianceInfo) SetRevokedStatus(date string, reason string) {
