@@ -522,7 +522,7 @@ paths:
           type: string
       tags:
         - Query
-  /dcl/compliance/device_software_compliance:
+  /dcl/compliance/device-software-compliance:
     get:
       summary: Queries a list of DeviceSoftwareCompliance items.
       operationId: DeviceSoftwareComplianceAll
@@ -714,7 +714,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /dcl/compliance/device_software_compliance/{cDCertificateId}:
+  /dcl/compliance/device-software-compliance/{cDCertificateId}:
     get:
       summary: Queries a DeviceSoftwareCompliance by index.
       operationId: DeviceSoftwareCompliance
