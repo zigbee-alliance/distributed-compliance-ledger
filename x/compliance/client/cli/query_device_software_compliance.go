@@ -6,13 +6,15 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
 func CmdListDeviceSoftwareCompliance() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list-device-software-compliance",
-		Short: "list all DeviceSoftwareCompliance",
+		Use:   "all-device-software-compliance",
+		Short: "Query the list of all device software compliances",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
@@ -44,30 +46,30 @@ func CmdListDeviceSoftwareCompliance() *cobra.Command {
 
 func CmdShowDeviceSoftwareCompliance() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "show-device-software-compliance [cd-certificate-id]",
-		Short: "shows a DeviceSoftwareCompliance",
-		Args:  cobra.ExactArgs(1),
+		Use:   "device-software-compliance",
+		Short: "Query device software compliance for Model (identified by the `cdCertificateId`)",
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
-			queryClient := types.NewQueryClient(clientCtx)
+			argCDCertificateID := viper.GetString(FlagCDCertificationID)
 
-			argCdCertificateId := args[0]
+			var res types.DeviceSoftwareCompliance
 
-			params := &types.QueryGetDeviceSoftwareComplianceRequest{
-				CDCertificateId: argCdCertificateId,
-			}
-
-			res, err := queryClient.DeviceSoftwareCompliance(context.Background(), params)
-			if err != nil {
-				return err
-			}
-
-			return clientCtx.PrintProto(res)
+			return cli.QueryWithProof(
+				clientCtx,
+				types.StoreKey,
+				types.DeviceSoftwareComplianceKeyPrefix,
+				types.DeviceSoftwareComplianceKey(argCDCertificateID),
+				&res,
+			)
 		},
 	}
 
+	cmd.Flags().String(FlagCDCertificationID, "", "CD Certification ID of the certification")
 	flags.AddQueryFlagsToCmd(cmd)
+
+	_ = cmd.MarkFlagRequired(FlagCDCertificationID)
 
 	return cmd
 }
