@@ -57,12 +57,12 @@ service Query {
 
 // Queries a DeviceSoftwareCompliance by index.
 	rpc DeviceSoftwareCompliance(QueryGetDeviceSoftwareComplianceRequest) returns (QueryGetDeviceSoftwareComplianceResponse) {
-		option (google.api.http).get = "/dcl/compliance/device_software_compliance/{cDCertificateId}";
+		option (google.api.http).get = "/dcl/compliance/device-software-compliance/{cDCertificateId}";
 	}
 
 	// Queries a list of DeviceSoftwareCompliance items.
 	rpc DeviceSoftwareComplianceAll(QueryAllDeviceSoftwareComplianceRequest) returns (QueryAllDeviceSoftwareComplianceResponse) {
-		option (google.api.http).get = "/dcl/compliance/device_software_compliance";
+		option (google.api.http).get = "/dcl/compliance/device-software-compliance";
 	}
 
 // this line is used by starport scaffolding # 2
