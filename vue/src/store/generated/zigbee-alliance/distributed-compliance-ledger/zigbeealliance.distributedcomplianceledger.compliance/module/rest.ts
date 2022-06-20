@@ -570,7 +570,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryDeviceSoftwareComplianceAll
    * @summary Queries a list of DeviceSoftwareCompliance items.
-   * @request GET:/dcl/compliance/device_software_compliance
+   * @request GET:/dcl/compliance/device-software-compliance
    */
   queryDeviceSoftwareComplianceAll = (
     query?: {
@@ -583,7 +583,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     params: RequestParams = {},
   ) =>
     this.request<ComplianceQueryAllDeviceSoftwareComplianceResponse, RpcStatus>({
-      path: `/dcl/compliance/device_software_compliance`,
+      path: `/dcl/compliance/device-software-compliance`,
       method: "GET",
       query: query,
       format: "json",
@@ -596,11 +596,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryDeviceSoftwareCompliance
    * @summary Queries a DeviceSoftwareCompliance by index.
-   * @request GET:/dcl/compliance/device_software_compliance/{cDCertificateId}
+   * @request GET:/dcl/compliance/device-software-compliance/{cDCertificateId}
    */
   queryDeviceSoftwareCompliance = (cDCertificateId: string, params: RequestParams = {}) =>
     this.request<ComplianceQueryGetDeviceSoftwareComplianceResponse, RpcStatus>({
-      path: `/dcl/compliance/device_software_compliance/${cDCertificateId}`,
+      path: `/dcl/compliance/device-software-compliance/${cDCertificateId}`,
       method: "GET",
       format: "json",
       ...params,

@@ -200,10 +200,10 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryDeviceSoftwareComplianceAll
          * @summary Queries a list of DeviceSoftwareCompliance items.
-         * @request GET:/dcl/compliance/device_software_compliance
+         * @request GET:/dcl/compliance/device-software-compliance
          */
         this.queryDeviceSoftwareComplianceAll = (query, params = {}) => this.request({
-            path: `/dcl/compliance/device_software_compliance`,
+            path: `/dcl/compliance/device-software-compliance`,
             method: "GET",
             query: query,
             format: "json",
@@ -215,10 +215,10 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryDeviceSoftwareCompliance
          * @summary Queries a DeviceSoftwareCompliance by index.
-         * @request GET:/dcl/compliance/device_software_compliance/{cDCertificateId}
+         * @request GET:/dcl/compliance/device-software-compliance/{cDCertificateId}
          */
         this.queryDeviceSoftwareCompliance = (cDCertificateId, params = {}) => this.request({
-            path: `/dcl/compliance/device_software_compliance/${cDCertificateId}`,
+            path: `/dcl/compliance/device-software-compliance/${cDCertificateId}`,
             method: "GET",
             format: "json",
             ...params,

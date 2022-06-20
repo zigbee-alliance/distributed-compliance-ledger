@@ -329,7 +329,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @tags Query
      * @name QueryDeviceSoftwareComplianceAll
      * @summary Queries a list of DeviceSoftwareCompliance items.
-     * @request GET:/dcl/compliance/device_software_compliance
+     * @request GET:/dcl/compliance/device-software-compliance
      */
     queryDeviceSoftwareComplianceAll: (query?: {
         "pagination.key"?: string;
@@ -344,7 +344,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @tags Query
      * @name QueryDeviceSoftwareCompliance
      * @summary Queries a DeviceSoftwareCompliance by index.
-     * @request GET:/dcl/compliance/device_software_compliance/{cDCertificateId}
+     * @request GET:/dcl/compliance/device-software-compliance/{cDCertificateId}
      */
     queryDeviceSoftwareCompliance: (cDCertificateId: string, params?: RequestParams) => Promise<HttpResponse<ComplianceQueryGetDeviceSoftwareComplianceResponse, RpcStatus>>;
     /**

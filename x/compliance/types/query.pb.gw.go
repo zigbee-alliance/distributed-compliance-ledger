@@ -1244,9 +1244,9 @@ var (
 
 	pattern_Query_ProvisionalModelAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "compliance", "provisional-models"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_DeviceSoftwareCompliance_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "compliance", "device_software_compliance", "cDCertificateId"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_DeviceSoftwareCompliance_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "compliance", "device-software-compliance", "cDCertificateId"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_DeviceSoftwareComplianceAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "compliance", "device_software_compliance"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_DeviceSoftwareComplianceAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "compliance", "device-software-compliance"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (
