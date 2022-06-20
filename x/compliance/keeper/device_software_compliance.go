@@ -18,13 +18,13 @@ func (k Keeper) SetDeviceSoftwareCompliance(ctx sdk.Context, deviceSoftwareCompl
 // GetDeviceSoftwareCompliance returns a deviceSoftwareCompliance from its index
 func (k Keeper) GetDeviceSoftwareCompliance(
 	ctx sdk.Context,
-	cdCertificateId string,
+	cDCertificateId string,
 
 ) (val types.DeviceSoftwareCompliance, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DeviceSoftwareComplianceKeyPrefix))
 
 	b := store.Get(types.DeviceSoftwareComplianceKey(
-		cdCertificateId,
+		cDCertificateId,
 	))
 	if b == nil {
 		return val, false
@@ -37,12 +37,12 @@ func (k Keeper) GetDeviceSoftwareCompliance(
 // RemoveDeviceSoftwareCompliance removes a deviceSoftwareCompliance from the store
 func (k Keeper) RemoveDeviceSoftwareCompliance(
 	ctx sdk.Context,
-	cdCertificateId string,
+	cDCertificateId string,
 
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DeviceSoftwareComplianceKeyPrefix))
 	store.Delete(types.DeviceSoftwareComplianceKey(
-		cdCertificateId,
+		cDCertificateId,
 	))
 }
 
