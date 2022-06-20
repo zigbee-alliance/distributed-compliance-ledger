@@ -6,7 +6,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
-// SetDeviceSoftwareCompliance set a specific deviceSoftwareCompliance in the store from its index
+// SetDeviceSoftwareCompliance set a specific deviceSoftwareCompliance in the store from its index.
 func (k Keeper) SetDeviceSoftwareCompliance(ctx sdk.Context, deviceSoftwareCompliance types.DeviceSoftwareCompliance) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DeviceSoftwareComplianceKeyPrefix))
 	b := k.cdc.MustMarshal(&deviceSoftwareCompliance)
@@ -15,38 +15,37 @@ func (k Keeper) SetDeviceSoftwareCompliance(ctx sdk.Context, deviceSoftwareCompl
 	), b)
 }
 
-// GetDeviceSoftwareCompliance returns a deviceSoftwareCompliance from its index
+// GetDeviceSoftwareCompliance returns a deviceSoftwareCompliance from its index.
 func (k Keeper) GetDeviceSoftwareCompliance(
 	ctx sdk.Context,
-	cDCertificateId string,
-
+	cDCertificateID string,
 ) (val types.DeviceSoftwareCompliance, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DeviceSoftwareComplianceKeyPrefix))
 
 	b := store.Get(types.DeviceSoftwareComplianceKey(
-		cDCertificateId,
+		cDCertificateID,
 	))
 	if b == nil {
 		return val, false
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
-// RemoveDeviceSoftwareCompliance removes a deviceSoftwareCompliance from the store
+// RemoveDeviceSoftwareCompliance removes a deviceSoftwareCompliance from the store.
 func (k Keeper) RemoveDeviceSoftwareCompliance(
 	ctx sdk.Context,
-	cDCertificateId string,
-
+	cDCertificateID string,
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DeviceSoftwareComplianceKeyPrefix))
 	store.Delete(types.DeviceSoftwareComplianceKey(
-		cDCertificateId,
+		cDCertificateID,
 	))
 }
 
-// GetAllDeviceSoftwareCompliance returns all deviceSoftwareCompliance
+// GetAllDeviceSoftwareCompliance returns all deviceSoftwareCompliance.
 func (k Keeper) GetAllDeviceSoftwareCompliance(ctx sdk.Context) (list []types.DeviceSoftwareCompliance) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DeviceSoftwareComplianceKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
