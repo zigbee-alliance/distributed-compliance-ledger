@@ -69,13 +69,6 @@ func (k msgServer) ProvisionModel(goCtx context.Context, msg *types.MsgProvision
 	// store compliance info
 	k.SetComplianceInfo(ctx, complianceInfo)
 
-	deviceSoftwareCompliance, _ := k.GetDeviceSoftwareCompliance(ctx, msg.CDCertificationId)
-	deviceSoftwareCompliance.CDCertificateId = msg.CDCertificationId
-	deviceSoftwareCompliance.ComplianceInfo = append(deviceSoftwareCompliance.ComplianceInfo, &complianceInfo)
-
-	// store device compliance software
-	k.SetDeviceSoftwareCompliance(ctx, deviceSoftwareCompliance)
-
 	// update provisional index
 	provisionalModel := types.ProvisionalModel{
 		Vid:               msg.Vid,
