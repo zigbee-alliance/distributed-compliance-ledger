@@ -97,8 +97,10 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 	// store compliance info
 	k.SetComplianceInfo(ctx, complianceInfo)
 
-	deviceSoftwareCompliance, _ := k.GetDeviceSoftwareCompliance(ctx, msg.CDCertificationId)
-	deviceSoftwareCompliance.CDCertificateId = msg.CDCertificationId
+	deviceSoftwareCompliance, found := k.GetDeviceSoftwareCompliance(ctx, msg.CDCertificationId)
+	if !found {
+		deviceSoftwareCompliance.CDCertificateId = msg.CDCertificationId
+	}
 	deviceSoftwareCompliance.ComplianceInfo = append(deviceSoftwareCompliance.ComplianceInfo, &complianceInfo)
 
 	// store device compliance software
