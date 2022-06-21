@@ -176,6 +176,15 @@ echo "$result"
 
 test_divider
 
+echo "Get All Device Software Compliance"
+result=$(dcld query compliance all-device-software-compliance)
+check_response "$result" "\[\]"
+response_does_not_contain "$result" "\"pid\": $pid"
+response_does_not_contain "$result" "\"vid\": $vid"
+echo "$result"
+
+test_divider
+
 echo "Get All Revoked Models"
 result=$(dcld query compliance all-revoked-models)
 check_response "$result" "\[\]"
@@ -220,6 +229,19 @@ certification_reason="some reason 2"
 result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid2 --softwareVersion=$sv2 --softwareVersionString=$svs2 --certificationType="$certification_type_matter" --certificationDate="$certification_date" --reason "$certification_reason" --cdCertificationId="$cd_certification_id" --from $zb_account --yes)
 check_response "$result" "\"code\": 0"
 echo "$result"
+
+test_divider
+
+echo "Get Device Software Compliance with CDCertificationID: {$cd_certification_id}"
+result=$(dcld query compliance device-software-compliance --cdCertificationId="$cd_certification_id")
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"pid\": $pid2"
+check_response "$result" "\"softwareVersion\": $sv2"
+check_response "$result" "\"softwareVersionString\": \"$svs2\""
+check_response "$result" "\"certificationType\": \"$certification_type_matter\""
+check_response "$result" "\"date\": \"$certification_date\""
+check_response "$result" "\"reason\": \"$certification_reason\""
+check_response "$result" "\"cDCertificationId\": \"$cd_certification_id\""
 
 test_divider
 
@@ -386,6 +408,18 @@ echo "$result"
 
 test_divider
 
+echo "Get All Device Software Compliance"
+result=$(dcld query compliance all-device-software-compliance)
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"pid\": $pid2"
+check_response "$result" "\"softwareVersionCertificationStatus\": 2"
+check_response "$result" "\"date\": \"$certification_date\""
+check_response "$result" "\"certificationType\": \"$certification_type_matter\""
+check_response "$result" "\"reason\": \"$certification_reason\""
+echo "$result"
+
+test_divider
+
 echo "Get All Revoked Models"
 result=$(dcld query compliance all-revoked-models)
 check_response "$result" "\"pid\": $pid"
@@ -496,6 +530,28 @@ check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"softwareVersionCertificationStatus\": 1"
 check_response "$result" "\"date\": \"$certification_date\""
 check_response "$result" "\"certificationType\": \"$certification_type_zb\""
+check_response "$result" "\"programTypeVersion\": \"2.0\""
+check_response "$result" "\"cDCertificationId\": \"$cd_certification_id\""
+check_response "$result" "\"familyId\": \"someFID2\""
+check_response "$result" "\"supportedClusters\": \"someClusters2\""
+check_response "$result" "\"compliantPlatformUsed\": \"ETHERNET\""
+check_response "$result" "\"compliantPlatformVersion\": \"V2\""
+check_response "$result" "\"OSVersion\": \"someV\""
+check_response "$result" "\"certificationRoute\": \"Full\""
+check_response "$result" "\"programType\": \"pType\""
+check_response "$result" "\"transport\": \"someTransport\""
+check_response "$result" "\"parentChild\": \"parent\""
+echo "$result"
+
+# GET DEVICE SOFTWARE COMPLIANCE
+echo "Get Device Software Compliance for Model with CDCertificationID: ${cd_certification_id}"
+result=$(dcld query compliance device-software-compliance --cdCertificationId="$cd_certification_id")
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"pid\": $pid"
+check_response "$result" "\"softwareVersionCertificationStatus\": 1"
+check_response "$result" "\"date\": \"$certification_date\""
+check_response "$result" "\"certificationType\": \"$certification_type_zb\""
+check_response "$result" "\"certificationType\": \"$certification_type_matter\""
 check_response "$result" "\"programTypeVersion\": \"2.0\""
 check_response "$result" "\"cDCertificationId\": \"$cd_certification_id\""
 check_response "$result" "\"familyId\": \"someFID2\""

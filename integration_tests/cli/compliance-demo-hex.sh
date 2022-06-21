@@ -78,6 +78,15 @@ echo $result
 
 test_divider
 
+echo "[0]Get Device Software Compliance with CDCertificationID: ${cd_certification_id}"
+result=$(dcld query compliance device-software-compliance --cdCertificationId="$cd_certification_id")
+check_response "$result" "Not Found"
+response_does_not_contain "$result" "\"pid\": $pid"
+response_does_not_contain "$result" "\"vid\": $vid"
+echo $result
+
+test_divider
+
 echo "Get Certified Model with VID: ${vid_in_hex_format} PID: ${pid_in_hex_format} SV: ${sv} before compliance record was created"
 result=$(dcld query compliance certified-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format --softwareVersion=$sv --certificationType="zigbee")
 check_response "$result" "Not Found"
@@ -215,9 +224,23 @@ echo "Get Compliance Info for Model with VID: ${vid_in_hex_format} PID: ${pid_in
 result=$(dcld query compliance compliance-info --vid=$vid_in_hex_format --pid=$pid_in_hex_format --softwareVersion=$sv --certificationType=$matter_certification_type)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
+check_response "$result" "\"cDCertificationId\": \"$cd_certification_id\""
 check_response "$result" "\"softwareVersionCertificationStatus\": 2"
 check_response "$result" "\"date\": \"$certification_date\""
 check_response "$result" "\"certificationType\": \"$matter_certification_type\""
+echo "$result"
+
+test_divider
+
+echo "[1]Get Device Software Compliance for Model with CDCertificationId: ${cd_certification_id}"
+result=$(dcld query compliance device-software-compliance --cdCertificationId="$cd_certification_id")
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"pid\": $pid"
+check_response "$result" "\"cDCertificationId\": \"$cd_certification_id\""
+check_response "$result" "\"softwareVersionCertificationStatus\": 2"
+check_response "$result" "\"date\": \"$certification_date\""
+check_response "$result" "\"certificationType\": \"$matter_certification_type\""
+check_response "$result" "\"certificationType\": \"$zigbee_certification_type\""
 echo "$result"
 
 test_divider
@@ -255,6 +278,19 @@ echo "$result"
 
 test_divider
 
+echo "[2]Get Device Software Compliance for Model with CDCertificationId: ${cd_certification_id}"
+result=$(dcld query compliance device-software-compliance --cdCertificationId="$cd_certification_id")
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"pid\": $pid"
+check_response "$result" "\"cDCertificationId\": \"$cd_certification_id\""
+check_response "$result" "\"softwareVersionCertificationStatus\": 2"
+check_response "$result" "\"date\": \"$certification_date\""
+check_response "$result" "\"certificationType\": \"$matter_certification_type\""
+response_does_not_contain "$result" "\"certificationType\": \"$zigbee_certification_type\""
+echo "$result"
+
+test_divider
+
 echo "Get Revoked Model with VID: ${vid_in_hex_format} PID: ${pid_in_hex_format} SV: ${sv} "
 result=$(dcld query compliance revoked-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format --softwareVersion=$sv --certificationType=$zigbee_certification_type)
 check_response "$result" "\"value\": true"
@@ -282,19 +318,39 @@ result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid_in_hex
 check_response "$result" "\"code\": 0"
 echo "$result"
 
+test_divider
+
 echo "Get Compliance Info for Model with VID: ${vid_in_hex_format} PID: ${pid_in_hex_format} SV: ${sv}"
 result=$(dcld query compliance compliance-info --vid=$vid_in_hex_format --pid=$pid_in_hex_format --softwareVersion=$sv --certificationType=$zigbee_certification_type)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
+check_response "$result" "\"cDCertificationId\": \"$cd_certification_id\""
 check_response "$result" "\"softwareVersionCertificationStatus\": 2"
 check_response "$result" "\"date\": \"$certification_date\""
 check_response "$result" "\"certificationType\": \"zigbee\""
 echo "$result"
 
+test_divider
+
+echo "[3]Get Device Software Compliance for Model with CDCertificationId: ${cd_certification_id}"
+result=$(dcld query compliance device-software-compliance --cdCertificationId="$cd_certification_id")
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"pid\": $pid"
+check_response "$result" "\"cDCertificationId\": \"$cd_certification_id\""
+check_response "$result" "\"softwareVersionCertificationStatus\": 2"
+check_response "$result" "\"date\": \"$certification_date\""
+check_response "$result" "\"certificationType\": \"$matter_certification_type\""
+check_response "$result" "\"certificationType\": \"$zigbee_certification_type\""
+echo "$result"
+
+test_divider
+
 echo "Get Certified Model with VID: ${vid_in_hex_format} PID: ${pid_in_hex_format} SV: ${sv}"
 result=$(dcld query compliance certified-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format --softwareVersion=$sv --certificationType=$zigbee_certification_type)
 check_response "$result" "\"value\": true"
 echo "$result"
+
+test_divider
 
 echo "Get Revoked Model with VID: ${vid_in_hex_format} PID: ${pid_in_hex_format} SV: ${sv}"
 result=$(dcld query compliance revoked-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format --softwareVersion=$sv --certificationType=$zigbee_certification_type)

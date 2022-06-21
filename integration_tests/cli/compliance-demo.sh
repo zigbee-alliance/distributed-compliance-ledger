@@ -83,6 +83,15 @@ echo $result
 
 test_divider
 
+echo "Get Device Software Compliance with CDCertificationID: ${cd_certification_id}"
+result=$(dcld query compliance device-software-compliance --cdCertificationId="$cd_certification_id")
+check_response "$result" "Not Found"
+response_does_not_contain "$result" "\"pid\": $pid"
+response_does_not_contain "$result" "\"vid\": $vid"
+echo $result
+
+test_divider
+
 echo "Get Certified Model with VID: ${vid} PID: ${pid} SV: ${sv} before compliance record was created"
 result=$(dcld query compliance certified-model --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType="zigbee")
 check_response "$result" "Not Found"
@@ -540,7 +549,7 @@ check_response "$result" "\"code\": 0"
 test_divider
 
 # GET CERTIFIED MODEL
-echo "Get Certified Model with VID: ${vid} PID: ${pid} SV: ${sv} for matter certification"
+echo "Get Certified Model with VID: ${vid} PID: ${pid} SV: ${sv} for zigbee certification"
 result=$(dcld query compliance certified-model --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType=$zigbee_certification_type)
 check_response "$result" "\"value\": true"
 check_response "$result" "\"pid\": $pid"
@@ -574,12 +583,12 @@ test_divider
 
 # GET DEVICE SOFTWARE COMPLIANCE
 echo "Get Device Software Compliance for Model with CDCertificationID: ${cd_certification_id}"
+result=$(dcld query compliance device-software-compliance --cdCertificationId="$cd_certification_id")
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"softwareVersionCertificationStatus\": 2"
 check_response "$result" "\"date\": \"$certification_date\""
 check_response "$result" "\"certificationType\": \"$zigbee_certification_type\""
-check_response "$result" "\"certificationType\": \"$matter_certification_type\""
 check_response "$result" "\"programTypeVersion\": \"1.0\""
 check_response "$result" "\"cDCertificationId\": \"$cd_certification_id\""
 check_response "$result" "\"familyId\": \"someFID\""

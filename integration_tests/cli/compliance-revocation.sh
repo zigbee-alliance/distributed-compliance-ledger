@@ -265,6 +265,21 @@ check_response "$result" "\"softwareVersionCertificationStatus\": 2"
 check_response "$result" "\"date\": \"$certification_date\""
 check_response "$result" "\"reason\": \"$certification_reason\""
 check_response "$result" "\"certificationType\": \"$certification_type\""
+check_response "$result" "\"cDCertificationId\": \"$cd_certification_id\""
+check_response "$result" "\"history\""
+echo "$result"
+
+test_divider
+
+echo "Get Device Software Compliance for Model with CDCertficationID: ${cd_certification_id}"
+result=$(dcld query compliance device-software-compliance --cdCertificationId="$cd_certification_id")
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"pid\": $pid"
+check_response "$result" "\"softwareVersionCertificationStatus\": 2"
+check_response "$result" "\"date\": \"$certification_date\""
+check_response "$result" "\"reason\": \"$certification_reason\""
+check_response "$result" "\"certificationType\": \"$certification_type\""
+check_response "$result" "\"cDCertificationId\": \"$cd_certification_id\""
 check_response "$result" "\"history\""
 echo "$result"
 
@@ -323,3 +338,5 @@ response_does_not_contain "$result" "\"vid\": $vid"
 echo "$result"
 
 test_divider
+
+echo "PASSED"
