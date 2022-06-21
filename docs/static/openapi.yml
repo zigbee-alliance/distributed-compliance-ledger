@@ -273,6 +273,28 @@ paths:
                           cDVersionNumber:
                             type: integer
                             format: int64
+                    cDCertificationId:
+                      type: string
+                    certificationRoute:
+                      type: string
+                    programType:
+                      type: string
+                    programTypeVersion:
+                      type: string
+                    compliantPlatformUsed:
+                      type: string
+                    compliantPlatformVersion:
+                      type: string
+                    transport:
+                      type: string
+                    familyId:
+                      type: string
+                    supportedClusters:
+                      type: string
+                    OSVersion:
+                      type: string
+                    parentChild:
+                      type: string
               pagination:
                 type: object
                 properties:
@@ -434,6 +456,28 @@ paths:
                         cDVersionNumber:
                           type: integer
                           format: int64
+                  cDCertificationId:
+                    type: string
+                  certificationRoute:
+                    type: string
+                  programType:
+                    type: string
+                  programTypeVersion:
+                    type: string
+                  compliantPlatformUsed:
+                    type: string
+                  compliantPlatformVersion:
+                    type: string
+                  transport:
+                    type: string
+                  familyId:
+                    type: string
+                  supportedClusters:
+                    type: string
+                  OSVersion:
+                    type: string
+                  parentChild:
+                    type: string
         default:
           description: An unexpected error response.
           schema:
@@ -13658,6 +13702,28 @@ definitions:
             cDVersionNumber:
               type: integer
               format: int64
+      cDCertificationId:
+        type: string
+      certificationRoute:
+        type: string
+      programType:
+        type: string
+      programTypeVersion:
+        type: string
+      compliantPlatformUsed:
+        type: string
+      compliantPlatformVersion:
+        type: string
+      transport:
+        type: string
+      familyId:
+        type: string
+      supportedClusters:
+        type: string
+      OSVersion:
+        type: string
+      parentChild:
+        type: string
   zigbeealliance.distributedcomplianceledger.compliance.ProvisionalModel:
     type: object
     properties:
@@ -13768,6 +13834,28 @@ definitions:
                   cDVersionNumber:
                     type: integer
                     format: int64
+            cDCertificationId:
+              type: string
+            certificationRoute:
+              type: string
+            programType:
+              type: string
+            programTypeVersion:
+              type: string
+            compliantPlatformUsed:
+              type: string
+            compliantPlatformVersion:
+              type: string
+            transport:
+              type: string
+            familyId:
+              type: string
+            supportedClusters:
+              type: string
+            OSVersion:
+              type: string
+            parentChild:
+              type: string
       pagination:
         type: object
         properties:
@@ -13950,6 +14038,28 @@ definitions:
                 cDVersionNumber:
                   type: integer
                   format: int64
+          cDCertificationId:
+            type: string
+          certificationRoute:
+            type: string
+          programType:
+            type: string
+          programTypeVersion:
+            type: string
+          compliantPlatformUsed:
+            type: string
+          compliantPlatformVersion:
+            type: string
+          transport:
+            type: string
+          familyId:
+            type: string
+          supportedClusters:
+            type: string
+          OSVersion:
+            type: string
+          parentChild:
+            type: string
   zigbeealliance.distributedcomplianceledger.compliance.QueryGetProvisionalModelResponse:
     type: object
     properties:

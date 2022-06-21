@@ -26,6 +26,17 @@ message MsgCertifyModel {
   string certificationDate = 7 [(gogoproto.moretags) = "validate:\"required\""];
   string certificationType = 8 [(gogoproto.moretags) = "validate:\"required,max=100\""];
   string reason = 9 [(gogoproto.moretags) = "validate:\"max=102400\""];
+  string programTypeVersion = 10 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string cDCertificationId = 11 [(gogoproto.moretags) = "validate:\"required,max=64\""];
+  string familyId = 12 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string supportedClusters = 13 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string compliantPlatformUsed = 14 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string compliantPlatformVersion = 15 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string OSVersion = 16 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string certificationRoute = 17 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string programType = 18 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string transport = 19 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string parentChild = 20 [(gogoproto.moretags) = "validate:\"max=64\""];
 }
 
 message MsgCertifyModelResponse {
@@ -56,6 +67,17 @@ message MsgProvisionModel {
   string provisionalDate = 7 [(gogoproto.moretags) = "validate:\"required\""];
   string certificationType = 8 [(gogoproto.moretags) = "validate:\"required,max=100\""];
   string reason = 9 [(gogoproto.moretags) = "validate:\"max=102400\""];
+  string programTypeVersion = 10 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string cDCertificationId = 11 [(gogoproto.moretags) = "validate:\"required,max=64\""];
+  string familyId = 12 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string supportedClusters = 13 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string compliantPlatformUsed = 14 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string compliantPlatformVersion = 15 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string OSVersion = 16 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string certificationRoute = 17 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string programType = 18 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string transport = 19 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string parentChild = 20 [(gogoproto.moretags) = "validate:\"max=64\""];
 }
 
 message MsgProvisionModelResponse {

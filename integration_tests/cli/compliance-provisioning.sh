@@ -39,18 +39,19 @@ certification_type_zb="zigbee"
 certification_type_matter="matter"
 provision_date="2020-02-02T02:20:20Z"
 provision_reason="some reason"
+cd_certification_id="123"
 
 test_divider
 
 echo "Provision for uncertificate Model with VID: $vid PID: $pid for ZB"
-result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --provisionalDate="$provision_date" --reason "$provision_reason" --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --provisionalDate="$provision_date" --reason "$provision_reason" --cdCertificationId="$cd_certification_id" --from $zb_account --yes)
 check_response "$result" "\"code\": 0"
 echo "$result"
 
 test_divider
 
 echo "Provision for uncertificate Model with VID: $vid PID: $pid for Matter"
-result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_matter" --provisionalDate="$provision_date" --reason "$provision_reason" --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_matter" --provisionalDate="$provision_date" --reason "$provision_reason" --cdCertificationId="$cd_certification_id" --from $zb_account --yes)
 check_response "$result" "\"code\": 0"
 echo "$result"
 
@@ -58,7 +59,7 @@ test_divider
 
 
 echo "ReProvision Model with VID: $vid PID: $pid  SV: ${sv} by different account"
-result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --provisionalDate="$provision_date" --reason "$provision_reason" --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --provisionalDate="$provision_date" --reason "$provision_reason" --cdCertificationId="$cd_certification_id" --from $zb_account --yes)
 check_response "$result" "\"code\": 305"
 check_response "$result" "already in provisional state"
 echo "$result"
@@ -66,7 +67,7 @@ echo "$result"
 test_divider
 
 echo "ReProvision Model with VID: $vid PID: $pid  SV: ${sv} by same account"
-result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --provisionalDate="$provision_date" --reason "$provision_reason" --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --provisionalDate="$provision_date" --reason "$provision_reason" --cdCertificationId="$cd_certification_id" --from $zb_account --yes)
 check_response "$result" "\"code\": 305"
 check_response "$result" "already in provisional state"
 echo "$result"
@@ -140,6 +141,7 @@ result=$(dcld query compliance compliance-info --vid=$vid --pid=$pid --softwareV
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"softwareVersionCertificationStatus\": 1"
+check_response "$result" "\"cDCertificationId\": \"$cd_certification_id\""
 check_response "$result" "\"date\": \"$provision_date\""
 check_response "$result" "\"reason\": \"$provision_reason\""
 check_response "$result" "\"certificationType\": \"$certification_type_zb\""
@@ -215,14 +217,14 @@ test_divider
 echo "Certify Model with VID: $vid PID: $pid2 for Matter"
 certification_date="2021-02-02T02:20:19Z"
 certification_reason="some reason 2"
-result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid2 --softwareVersion=$sv2 --softwareVersionString=$svs2 --certificationType="$certification_type_matter" --certificationDate="$certification_date" --reason "$certification_reason" --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid2 --softwareVersion=$sv2 --softwareVersionString=$svs2 --certificationType="$certification_type_matter" --certificationDate="$certification_date" --reason "$certification_reason" --cdCertificationId="$cd_certification_id" --from $zb_account --yes)
 check_response "$result" "\"code\": 0"
 echo "$result"
 
 test_divider
 
 echo "Provision for already certified Model with VID: $vid PID: $pid2 for Matter"
-result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid2 --softwareVersion=$sv2 --softwareVersionString=$svs2 --certificationType="$certification_type_matter" --provisionalDate="$provision_date" --reason "$provision_reason" --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid2 --softwareVersion=$sv2 --softwareVersionString=$svs2 --certificationType="$certification_type_matter" --provisionalDate="$provision_date" --reason "$provision_reason" --cdCertificationId="$cd_certification_id" --from $zb_account --yes)
 check_response "$result" "\"code\": 303"
 check_response "$result" "already certified on the ledger"
 echo "$result"
@@ -248,7 +250,7 @@ echo "$result"
 test_divider
 
 echo "Provision for already revoked Model with VID: $vid PID: $pid3 for Matter"
-result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid3 --softwareVersion=$sv3 --softwareVersionString=$svs3 --certificationType="$certification_type_zb" --provisionalDate="$provision_date" --reason "$provision_reason" --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid3 --softwareVersion=$sv3 --softwareVersionString=$svs3 --certificationType="$certification_type_zb" --provisionalDate="$provision_date" --reason "$provision_reason" --cdCertificationId="$cd_certification_id" --from $zb_account --yes)
 check_response "$result" "\"code\": 304"
 check_response "$result" "already revoked on the ledger"
 echo "$result"
@@ -263,7 +265,7 @@ test_divider
 echo "Certify provisioned Model with VID: $vid PID: $pid"
 certification_date="2021-02-02T02:20:19Z"
 certification_reason="some reason 2"
-result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --certificationDate="$certification_date" --reason "$certification_reason" --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --certificationDate="$certification_date" --reason "$certification_reason" --cdCertificationId="$cd_certification_id" --from $zb_account --yes)
 check_response "$result" "\"code\": 0"
 echo "$result"
 
@@ -345,6 +347,7 @@ result=$(dcld query compliance compliance-info --vid=$vid --pid=$pid --softwareV
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"softwareVersionCertificationStatus\": 2"
+check_response "$result" "\"cDCertificationId\": \"$cd_certification_id\""
 check_response "$result" "\"date\": \"$certification_date\""
 check_response "$result" "\"reason\": \"$certification_reason\""
 check_response "$result" "\"certificationType\": \"$certification_type_zb\""
@@ -358,6 +361,7 @@ result=$(dcld query compliance compliance-info --vid=$vid --pid=$pid --softwareV
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"softwareVersionCertificationStatus\": 3"
+check_response "$result" "\"cDCertificationId\": \"$cd_certification_id\""
 check_response "$result" "\"date\": \"$revocation_date\""
 check_response "$result" "\"reason\": \"$revocation_reason\""
 check_response "$result" "\"certificationType\": \"$certification_type_matter\""
@@ -409,3 +413,103 @@ response_does_not_contain "$result" "\"vid\": $vid"
 echo "$result"
 
 test_divider
+
+###########################################################################################################################################
+# PREPERATION
+pid=$RANDOM
+sv=$RANDOM
+svs=$RANDOM
+
+test_divider
+
+# ADD PROVISION MODEL WITH ALL OPTIONAL FIELDS
+echo "Provision Model with VID: $vid PID: $pid  SV: ${sv} with zigbee certification"
+result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --provisionalDate="$provision_date" --reason "$provision_reason" --cdCertificationId="$cd_certification_id" --programTypeVersion="1.0" --familyId="someFID" --supportedClusters="someClusters" --compliantPlatformUsed="WIFI" --compliantPlatformVersion="V1" --OSVersion="someV" --certificationRoute="Full" --programType="pType" --transport="someTransport" --parentChild="parent" --from $zb_account --yes)
+echo "$result"
+check_response "$result" "\"code\": 0"
+
+# GET PROVISION MODEL
+echo "Get Provision Model with VID: ${vid} PID: ${pid} SV: ${sv} for matter certification"
+result=$(dcld query compliance provisional-model --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType=$certification_type_zb)
+check_response "$result" "\"value\": true"
+check_response "$result" "\"pid\": $pid"
+check_response "$result" "\"vid\": $vid"
+echo "$result" | jq
+
+# GET COMPLIANCE INFO
+echo "Get Compliance Info for Model with VID: ${vid} PID: ${pid} SV: ${sv} for $certification_type_zb"
+result=$(dcld query compliance compliance-info --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType=$certification_type_zb)
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"pid\": $pid"
+check_response "$result" "\"softwareVersionCertificationStatus\": 1"
+check_response "$result" "\"reason\": \"$provision_reason\""
+check_response "$result" "\"date\": \"$provision_date\""
+check_response "$result" "\"certificationType\": \"$certification_type_zb\""
+check_response "$result" "\"programTypeVersion\": \"1.0\""
+check_response "$result" "\"cDCertificationId\": \"$cd_certification_id\""
+check_response "$result" "\"familyId\": \"someFID\""
+check_response "$result" "\"supportedClusters\": \"someClusters\""
+check_response "$result" "\"compliantPlatformUsed\": \"WIFI\""
+check_response "$result" "\"compliantPlatformVersion\": \"V1\""
+check_response "$result" "\"OSVersion\": \"someV\""
+check_response "$result" "\"certificationRoute\": \"Full\""
+check_response "$result" "\"programType\": \"pType\""
+check_response "$result" "\"transport\": \"someTransport\""
+check_response "$result" "\"parentChild\": \"parent\""
+echo "$result"
+###########################################################################################################################################
+
+test_divider
+
+###########################################################################################################################################
+# ADD MODEL
+echo "Add Model with VID: $vid PID: $pid"
+result=$(echo "$passphrase" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0  --from $vendor_account --yes)
+echo $result
+check_response "$result" "\"code\": 0"
+
+# ADD MODEL VERSION
+echo "Add Model Version with VID: $vid PID: $pid SV: $sv SoftwareVersionString:$svs"
+result=$(echo '$passphrase' | dcld tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --from=$vendor_account --yes)
+echo $result
+check_response "$result" "\"code\": 0"
+
+# ADD CERTIFY MODEL WITH SOME OPTIONAL FIELDS
+echo "Certify Model with VID: $vid PID: $pid SV: ${sv} with zigbee certification"
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --certificationDate="$certification_date" --cdCertificationId="$cd_certification_id" --programTypeVersion="2.0" --familyId="someFID2" --supportedClusters="someClusters2" --compliantPlatformUsed="ETHERNET" --compliantPlatformVersion="V2" --from $zb_account --yes)
+echo "$result"
+check_response "$result" "\"code\": 0"
+
+# GET CERTIFIED MODEL
+echo "Get Certified Model with VID: ${vid} PID: ${pid} SV: ${sv} for matter certification"
+result=$(dcld query compliance certified-model --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType=$certification_type_zb)
+check_response "$result" "\"value\": true"
+check_response "$result" "\"pid\": $pid"
+check_response "$result" "\"vid\": $vid"
+echo "$result" | jq
+
+# GET COMPLIANCE INFO - AFTER CERTIFY MODEL TX SOME FIELDS WILL BE UPDATE AND ANOTHER FIELDS SHOULD BE NO CHANGE
+echo "Get Compliance Info for Model with VID: ${vid} PID: ${pid} SV: ${sv} for $certification_type_zb"
+result=$(dcld query compliance compliance-info --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType=$certification_type_zb)
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"pid\": $pid"
+check_response "$result" "\"softwareVersionCertificationStatus\": 1"
+check_response "$result" "\"date\": \"$certification_date\""
+check_response "$result" "\"certificationType\": \"$certification_type_zb\""
+check_response "$result" "\"programTypeVersion\": \"2.0\""
+check_response "$result" "\"cDCertificationId\": \"$cd_certification_id\""
+check_response "$result" "\"familyId\": \"someFID2\""
+check_response "$result" "\"supportedClusters\": \"someClusters2\""
+check_response "$result" "\"compliantPlatformUsed\": \"ETHERNET\""
+check_response "$result" "\"compliantPlatformVersion\": \"V2\""
+check_response "$result" "\"OSVersion\": \"someV\""
+check_response "$result" "\"certificationRoute\": \"Full\""
+check_response "$result" "\"programType\": \"pType\""
+check_response "$result" "\"transport\": \"someTransport\""
+check_response "$result" "\"parentChild\": \"parent\""
+echo "$result"
+###########################################################################################################################################
+
+test_divider
+
+echo "PASSED"

@@ -30,6 +30,17 @@ const (
 	FlagReasonShortcut            = "r"
 	FlagCDVersionNumber           = "cdVersionNumber"
 	FlagProvisionalDate           = "provisionalDate"
+	FlagProgramTypeVersion        = "programTypeVersion"
+	FlagCDCertificationID         = "cdCertificationId"
+	FlagFamilyID                  = "familyId"
+	FlagSupportedClusters         = "supportedClusters"
+	FlagCompliantPlatformUsed     = "compliantPlatformUsed"
+	FlagCompliantPlatformVersion  = "compliantPlatformVersion"
+	FlagOSVersion                 = "OSVersion"
+	FlagCertificationRoute        = "certificationRoute"
+	FlagProgramType               = "programType"
+	FlagTransport                 = "transport"
+	FlagParentChild               = "parentChild"
 
 	TextCertificationType = "Certification type - Currently 'zigbee' and 'matter' types are supported"
 )

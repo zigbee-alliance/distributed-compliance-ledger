@@ -35,6 +35,17 @@ type ComplianceInfo struct {
 	Reason                             string                   `protobuf:"bytes,9,opt,name=reason,proto3" json:"reason,omitempty"`
 	Owner                              string                   `protobuf:"bytes,10,opt,name=owner,proto3" json:"owner,omitempty"`
 	History                            []*ComplianceHistoryItem `protobuf:"bytes,11,rep,name=history,proto3" json:"history,omitempty"`
+	CDCertificationId                  string                   `protobuf:"bytes,12,opt,name=cDCertificationId,proto3" json:"cDCertificationId,omitempty"`
+	CertificationRoute                 string                   `protobuf:"bytes,13,opt,name=certificationRoute,proto3" json:"certificationRoute,omitempty"`
+	ProgramType                        string                   `protobuf:"bytes,14,opt,name=programType,proto3" json:"programType,omitempty"`
+	ProgramTypeVersion                 string                   `protobuf:"bytes,15,opt,name=programTypeVersion,proto3" json:"programTypeVersion,omitempty"`
+	CompliantPlatformUsed              string                   `protobuf:"bytes,16,opt,name=compliantPlatformUsed,proto3" json:"compliantPlatformUsed,omitempty"`
+	CompliantPlatformVersion           string                   `protobuf:"bytes,17,opt,name=compliantPlatformVersion,proto3" json:"compliantPlatformVersion,omitempty"`
+	Transport                          string                   `protobuf:"bytes,18,opt,name=transport,proto3" json:"transport,omitempty"`
+	FamilyId                           string                   `protobuf:"bytes,19,opt,name=familyId,proto3" json:"familyId,omitempty"`
+	SupportedClusters                  string                   `protobuf:"bytes,20,opt,name=supportedClusters,proto3" json:"supportedClusters,omitempty"`
+	OSVersion                          string                   `protobuf:"bytes,21,opt,name=OSVersion,proto3" json:"OSVersion,omitempty"`
+	ParentChild                        string                   `protobuf:"bytes,22,opt,name=parentChild,proto3" json:"parentChild,omitempty"`
 }
 
 func (m *ComplianceInfo) Reset()         { *m = ComplianceInfo{} }
@@ -147,6 +158,83 @@ func (m *ComplianceInfo) GetHistory() []*ComplianceHistoryItem {
 	return nil
 }
 
+func (m *ComplianceInfo) GetCDCertificationId() string {
+	if m != nil {
+		return m.CDCertificationId
+	}
+	return ""
+}
+
+func (m *ComplianceInfo) GetCertificationRoute() string {
+	if m != nil {
+		return m.CertificationRoute
+	}
+	return ""
+}
+
+func (m *ComplianceInfo) GetProgramType() string {
+	if m != nil {
+		return m.ProgramType
+	}
+	return ""
+}
+
+func (m *ComplianceInfo) GetProgramTypeVersion() string {
+	if m != nil {
+		return m.ProgramTypeVersion
+	}
+	return ""
+}
+
+func (m *ComplianceInfo) GetCompliantPlatformUsed() string {
+	if m != nil {
+		return m.CompliantPlatformUsed
+	}
+	return ""
+}
+
+func (m *ComplianceInfo) GetCompliantPlatformVersion() string {
+	if m != nil {
+		return m.CompliantPlatformVersion
+	}
+	return ""
+}
+
+func (m *ComplianceInfo) GetTransport() string {
+	if m != nil {
+		return m.Transport
+	}
+	return ""
+}
+
+func (m *ComplianceInfo) GetFamilyId() string {
+	if m != nil {
+		return m.FamilyId
+	}
+	return ""
+}
+
+func (m *ComplianceInfo) GetSupportedClusters() string {
+	if m != nil {
+		return m.SupportedClusters
+	}
+	return ""
+}
+
+func (m *ComplianceInfo) GetOSVersion() string {
+	if m != nil {
+		return m.OSVersion
+	}
+	return ""
+}
+
+func (m *ComplianceInfo) GetParentChild() string {
+	if m != nil {
+		return m.ParentChild
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterType((*ComplianceInfo)(nil), "zigbeealliance.distributedcomplianceledger.compliance.ComplianceInfo")
 }
@@ -154,34 +242,44 @@ func init() {
 func init() { proto.RegisterFile("compliance/compliance_info.proto", fileDescriptor_96709118384d66e8) }
 
 var fileDescriptor_96709118384d66e8 = []byte{
-	// 421 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x92, 0xbd, 0x6e, 0xd4, 0x40,
-	0x10, 0xc7, 0xcf, 0xdc, 0x47, 0xc8, 0x46, 0x7c, 0xad, 0x00, 0x2d, 0x29, 0x2c, 0x2b, 0x95, 0x0b,
-	0x6c, 0x4b, 0x7c, 0x3c, 0x00, 0x09, 0x05, 0x11, 0x28, 0x85, 0x83, 0x28, 0x68, 0x4e, 0xb6, 0x77,
-	0xec, 0x8c, 0x74, 0xde, 0xb5, 0x76, 0xd7, 0x84, 0xa3, 0xe2, 0x11, 0x78, 0x18, 0x1e, 0x82, 0xf2,
-	0x44, 0x45, 0x89, 0xee, 0x5e, 0x04, 0xd9, 0xeb, 0xc3, 0x27, 0x73, 0x05, 0x4a, 0x37, 0xf3, 0x9b,
-	0x9d, 0xff, 0x7f, 0x56, 0x33, 0xc4, 0xcb, 0x64, 0x59, 0x2d, 0x30, 0x11, 0x19, 0x44, 0x7d, 0x38,
-	0x47, 0x91, 0xcb, 0xb0, 0x52, 0xd2, 0x48, 0xfa, 0xf2, 0x0b, 0x16, 0x29, 0x40, 0xb2, 0xb0, 0xa5,
-	0x90, 0xa3, 0x36, 0x0a, 0xd3, 0xda, 0x00, 0xef, 0x1b, 0x16, 0xc0, 0x0b, 0x50, 0x61, 0x0f, 0x8e,
-	0xfd, 0xfd, 0xc2, 0x57, 0xa8, 0x8d, 0x54, 0xcb, 0x39, 0x1a, 0x28, 0xad, 0xc1, 0xf1, 0x93, 0x4c,
-	0xea, 0x52, 0xea, 0x79, 0x9b, 0x45, 0x36, 0xb1, 0xa5, 0x93, 0xaf, 0x13, 0x72, 0xf7, 0xec, 0x6f,
-	0xf3, 0xb9, 0xc8, 0x25, 0xbd, 0x4f, 0xc6, 0x9f, 0x90, 0x33, 0xc7, 0x73, 0xfc, 0x69, 0xdc, 0x84,
-	0x0d, 0xa9, 0x90, 0xb3, 0x5b, 0x96, 0x54, 0xc8, 0xa9, 0x4f, 0xee, 0x69, 0x99, 0x9b, 0xeb, 0x44,
-	0xc1, 0x07, 0x50, 0x1a, 0xa5, 0x60, 0x63, 0xcf, 0xf1, 0xef, 0xc4, 0x43, 0x4c, 0x9f, 0x92, 0x07,
-	0x19, 0x28, 0x83, 0x39, 0x66, 0x89, 0x41, 0x29, 0xde, 0x2f, 0x2b, 0x60, 0x13, 0xcf, 0xf1, 0x0f,
-	0xe3, 0x7f, 0x0b, 0xf4, 0x05, 0x79, 0x34, 0x10, 0xb8, 0x34, 0x0a, 0x45, 0xc1, 0xa6, 0x6d, 0xc7,
-	0xfe, 0x62, 0x33, 0x4d, 0xf6, 0xba, 0x43, 0x17, 0x75, 0x99, 0x82, 0x62, 0x33, 0x3b, 0xcd, 0x00,
-	0xd3, 0x0b, 0x72, 0x32, 0x90, 0x38, 0xdb, 0x9d, 0xe1, 0xd2, 0x24, 0xa6, 0xd6, 0xec, 0xa0, 0x6d,
-	0xfe, 0x8f, 0x97, 0x94, 0x92, 0x09, 0x4f, 0x0c, 0xb0, 0xdb, 0xed, 0x78, 0x6d, 0x4c, 0x1f, 0x93,
-	0x99, 0x82, 0x44, 0x4b, 0xc1, 0x0e, 0x5b, 0xda, 0x65, 0x34, 0x24, 0x53, 0x79, 0x2d, 0x40, 0x31,
-	0xd2, 0xe0, 0x53, 0xf6, 0xf3, 0x7b, 0xf0, 0xb0, 0xdb, 0xc5, 0x2b, 0xce, 0x15, 0x68, 0x6d, 0xbf,
-	0x13, 0xdb, 0x67, 0x34, 0x27, 0x07, 0xdd, 0x2e, 0xd9, 0x91, 0x37, 0xf6, 0x8f, 0x9e, 0xbd, 0x0b,
-	0x6f, 0x74, 0x28, 0x61, 0xbf, 0xdf, 0x37, 0x56, 0xef, 0xdc, 0x40, 0x19, 0x6f, 0xc5, 0x4f, 0xe1,
-	0xc7, 0xda, 0x75, 0x56, 0x6b, 0xd7, 0xf9, 0xbd, 0x76, 0x9d, 0x6f, 0x1b, 0x77, 0xb4, 0xda, 0xb8,
-	0xa3, 0x5f, 0x1b, 0x77, 0xf4, 0xf1, 0x6d, 0x81, 0xe6, 0xaa, 0x4e, 0x1b, 0xad, 0xc8, 0x5a, 0x07,
-	0x5b, 0xef, 0x68, 0xc7, 0x3b, 0xe8, 0xbd, 0x02, 0xeb, 0x1e, 0x7d, 0xde, 0xb9, 0xc8, 0xc8, 0x2c,
-	0x2b, 0xd0, 0xe9, 0xac, 0x3d, 0xb8, 0xe7, 0x7f, 0x02, 0x00, 0x00, 0xff, 0xff, 0x3e, 0x71, 0x5a,
-	0x29, 0x10, 0x03, 0x00, 0x00,
+	// 580 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x54, 0xcd, 0x6e, 0xd4, 0x3c,
+	0x14, 0x6d, 0xbe, 0xfe, 0xbb, 0x5f, 0xff, 0x4c, 0x5b, 0x99, 0x0a, 0x45, 0x51, 0x57, 0x59, 0x30,
+	0x89, 0xc4, 0xcf, 0x86, 0x1d, 0x9d, 0x2e, 0x18, 0x81, 0x0a, 0x4a, 0x81, 0x05, 0x9b, 0xca, 0x13,
+	0xdf, 0xcc, 0x58, 0x4a, 0xe2, 0xc8, 0x76, 0x28, 0xc3, 0x53, 0xf0, 0x30, 0x3c, 0x04, 0x62, 0x55,
+	0xb1, 0x62, 0x89, 0x66, 0x5e, 0x04, 0xc5, 0x4e, 0x26, 0xd3, 0x99, 0x41, 0x42, 0xec, 0x7c, 0xcf,
+	0xb9, 0xf7, 0xfa, 0xfa, 0x9e, 0x23, 0x23, 0x2f, 0x16, 0x59, 0x91, 0x72, 0x9a, 0xc7, 0x10, 0xb6,
+	0xc7, 0x6b, 0x9e, 0x27, 0x22, 0x28, 0xa4, 0xd0, 0x02, 0x3f, 0xfd, 0xcc, 0x07, 0x7d, 0x00, 0x9a,
+	0x5a, 0x2a, 0x60, 0x5c, 0x69, 0xc9, 0xfb, 0xa5, 0x06, 0xd6, 0x16, 0xa4, 0xc0, 0x06, 0x20, 0x83,
+	0x16, 0x38, 0xf5, 0x97, 0x37, 0x1e, 0x72, 0xa5, 0x85, 0x1c, 0x5d, 0x73, 0x0d, 0x99, 0xbd, 0xe0,
+	0xf4, 0x7e, 0x2c, 0x54, 0x26, 0xd4, 0xb5, 0x89, 0x42, 0x1b, 0x58, 0xea, 0xec, 0xfb, 0x26, 0xda,
+	0xeb, 0x4e, 0x8b, 0x7b, 0x79, 0x22, 0xf0, 0x01, 0x5a, 0xfd, 0xc8, 0x19, 0x71, 0x3c, 0xc7, 0x5f,
+	0x8f, 0xaa, 0x63, 0x85, 0x14, 0x9c, 0x91, 0xff, 0x2c, 0x52, 0x70, 0x86, 0x7d, 0xb4, 0xaf, 0x44,
+	0xa2, 0x6f, 0xa8, 0x84, 0xf7, 0x20, 0x15, 0x17, 0x39, 0x59, 0xf5, 0x1c, 0x7f, 0x37, 0x9a, 0x87,
+	0xf1, 0x43, 0x74, 0x18, 0x83, 0xd4, 0x3c, 0xe1, 0x31, 0xd5, 0x5c, 0xe4, 0x6f, 0x47, 0x05, 0x90,
+	0x35, 0xcf, 0xf1, 0xb7, 0xa3, 0x45, 0x02, 0x3f, 0x41, 0xc7, 0x73, 0x0d, 0xae, 0xb4, 0xe4, 0xf9,
+	0x80, 0xac, 0x9b, 0x8a, 0xe5, 0x64, 0x35, 0x4d, 0x7c, 0x51, 0x43, 0x97, 0x65, 0xd6, 0x07, 0x49,
+	0x36, 0xec, 0x34, 0x73, 0x30, 0xbe, 0x44, 0x67, 0x73, 0x2d, 0xba, 0xb3, 0x33, 0x5c, 0x69, 0xaa,
+	0x4b, 0x45, 0x36, 0x4d, 0xf1, 0x5f, 0x64, 0x62, 0x8c, 0xd6, 0x18, 0xd5, 0x40, 0xb6, 0xcc, 0x78,
+	0xe6, 0x8c, 0x4f, 0xd0, 0x86, 0x04, 0xaa, 0x44, 0x4e, 0xb6, 0x0d, 0x5a, 0x47, 0x38, 0x40, 0xeb,
+	0xe2, 0x26, 0x07, 0x49, 0x50, 0x05, 0x9f, 0x93, 0x1f, 0x5f, 0x3b, 0x47, 0xb5, 0x16, 0xcf, 0x19,
+	0x93, 0xa0, 0x94, 0x7d, 0x4e, 0x64, 0xd3, 0x70, 0x82, 0x36, 0x6b, 0x2d, 0xc9, 0x8e, 0xb7, 0xea,
+	0xef, 0x3c, 0x7a, 0x15, 0xfc, 0x93, 0x51, 0x82, 0x56, 0xdf, 0x17, 0xb6, 0x5f, 0x4f, 0x43, 0x16,
+	0x35, 0xcd, 0x8d, 0x42, 0x17, 0x77, 0x1e, 0xd7, 0x63, 0xe4, 0xff, 0x5a, 0xa1, 0x79, 0x02, 0x07,
+	0x08, 0xdf, 0x91, 0x2d, 0x12, 0xa5, 0x06, 0xb2, 0x6b, 0xd2, 0x97, 0x30, 0xd8, 0x43, 0x3b, 0x85,
+	0x14, 0x03, 0x49, 0x33, 0xa3, 0xfc, 0x9e, 0x49, 0x9c, 0x85, 0xaa, 0x8e, 0x33, 0x61, 0x63, 0xa7,
+	0x7d, 0xdb, 0x71, 0x91, 0xa9, 0x3c, 0xd2, 0x3c, 0x4e, 0xbf, 0x49, 0xa9, 0x4e, 0x84, 0xcc, 0xde,
+	0x29, 0x60, 0xe4, 0xc0, 0x7a, 0x64, 0x29, 0x89, 0x9f, 0x21, 0xb2, 0x40, 0x34, 0x77, 0x1d, 0x9a,
+	0xc2, 0x3f, 0xf2, 0xf8, 0x01, 0xda, 0xd6, 0x92, 0xe6, 0xaa, 0x10, 0x52, 0x13, 0x6c, 0x92, 0x5b,
+	0x00, 0x9f, 0xa2, 0xad, 0x84, 0x66, 0x3c, 0x1d, 0xf5, 0x18, 0xb9, 0x67, 0xc8, 0x69, 0x5c, 0xed,
+	0x56, 0x95, 0x45, 0x95, 0x06, 0xac, 0x9b, 0x96, 0x4a, 0x83, 0x54, 0xe4, 0xc8, 0xee, 0x76, 0x81,
+	0xa8, 0xee, 0x79, 0x7d, 0xd5, 0x0c, 0x75, 0x6c, 0xef, 0x99, 0x02, 0x66, 0x93, 0x54, 0x42, 0xae,
+	0xbb, 0x43, 0x9e, 0x32, 0x72, 0x52, 0x6f, 0xb2, 0x85, 0xce, 0xe1, 0xdb, 0xd8, 0x75, 0x6e, 0xc7,
+	0xae, 0xf3, 0x6b, 0xec, 0x3a, 0x5f, 0x26, 0xee, 0xca, 0xed, 0xc4, 0x5d, 0xf9, 0x39, 0x71, 0x57,
+	0x3e, 0xbc, 0x1c, 0x70, 0x3d, 0x2c, 0xfb, 0x95, 0x2b, 0x42, 0x6b, 0xa2, 0x4e, 0xe3, 0xa2, 0x70,
+	0xc6, 0x45, 0x9d, 0xd6, 0x35, 0x1d, 0xeb, 0xa3, 0xf0, 0xd3, 0xcc, 0xdf, 0x12, 0xea, 0x51, 0x01,
+	0xaa, 0xbf, 0x61, 0xbe, 0x8e, 0xc7, 0xbf, 0x03, 0x00, 0x00, 0xff, 0xff, 0xfd, 0xc1, 0xe2, 0x05,
+	0xda, 0x04, 0x00, 0x00,
 }
 
 func (m *ComplianceInfo) Marshal() (dAtA []byte, err error) {
@@ -204,6 +302,97 @@ func (m *ComplianceInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if len(m.ParentChild) > 0 {
+		i -= len(m.ParentChild)
+		copy(dAtA[i:], m.ParentChild)
+		i = encodeVarintComplianceInfo(dAtA, i, uint64(len(m.ParentChild)))
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0xb2
+	}
+	if len(m.OSVersion) > 0 {
+		i -= len(m.OSVersion)
+		copy(dAtA[i:], m.OSVersion)
+		i = encodeVarintComplianceInfo(dAtA, i, uint64(len(m.OSVersion)))
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0xaa
+	}
+	if len(m.SupportedClusters) > 0 {
+		i -= len(m.SupportedClusters)
+		copy(dAtA[i:], m.SupportedClusters)
+		i = encodeVarintComplianceInfo(dAtA, i, uint64(len(m.SupportedClusters)))
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0xa2
+	}
+	if len(m.FamilyId) > 0 {
+		i -= len(m.FamilyId)
+		copy(dAtA[i:], m.FamilyId)
+		i = encodeVarintComplianceInfo(dAtA, i, uint64(len(m.FamilyId)))
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0x9a
+	}
+	if len(m.Transport) > 0 {
+		i -= len(m.Transport)
+		copy(dAtA[i:], m.Transport)
+		i = encodeVarintComplianceInfo(dAtA, i, uint64(len(m.Transport)))
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0x92
+	}
+	if len(m.CompliantPlatformVersion) > 0 {
+		i -= len(m.CompliantPlatformVersion)
+		copy(dAtA[i:], m.CompliantPlatformVersion)
+		i = encodeVarintComplianceInfo(dAtA, i, uint64(len(m.CompliantPlatformVersion)))
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0x8a
+	}
+	if len(m.CompliantPlatformUsed) > 0 {
+		i -= len(m.CompliantPlatformUsed)
+		copy(dAtA[i:], m.CompliantPlatformUsed)
+		i = encodeVarintComplianceInfo(dAtA, i, uint64(len(m.CompliantPlatformUsed)))
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0x82
+	}
+	if len(m.ProgramTypeVersion) > 0 {
+		i -= len(m.ProgramTypeVersion)
+		copy(dAtA[i:], m.ProgramTypeVersion)
+		i = encodeVarintComplianceInfo(dAtA, i, uint64(len(m.ProgramTypeVersion)))
+		i--
+		dAtA[i] = 0x7a
+	}
+	if len(m.ProgramType) > 0 {
+		i -= len(m.ProgramType)
+		copy(dAtA[i:], m.ProgramType)
+		i = encodeVarintComplianceInfo(dAtA, i, uint64(len(m.ProgramType)))
+		i--
+		dAtA[i] = 0x72
+	}
+	if len(m.CertificationRoute) > 0 {
+		i -= len(m.CertificationRoute)
+		copy(dAtA[i:], m.CertificationRoute)
+		i = encodeVarintComplianceInfo(dAtA, i, uint64(len(m.CertificationRoute)))
+		i--
+		dAtA[i] = 0x6a
+	}
+	if len(m.CDCertificationId) > 0 {
+		i -= len(m.CDCertificationId)
+		copy(dAtA[i:], m.CDCertificationId)
+		i = encodeVarintComplianceInfo(dAtA, i, uint64(len(m.CDCertificationId)))
+		i--
+		dAtA[i] = 0x62
+	}
 	if len(m.History) > 0 {
 		for iNdEx := len(m.History) - 1; iNdEx >= 0; iNdEx-- {
 			{
@@ -338,6 +527,50 @@ func (m *ComplianceInfo) Size() (n int) {
 			l = e.Size()
 			n += 1 + l + sovComplianceInfo(uint64(l))
 		}
+	}
+	l = len(m.CDCertificationId)
+	if l > 0 {
+		n += 1 + l + sovComplianceInfo(uint64(l))
+	}
+	l = len(m.CertificationRoute)
+	if l > 0 {
+		n += 1 + l + sovComplianceInfo(uint64(l))
+	}
+	l = len(m.ProgramType)
+	if l > 0 {
+		n += 1 + l + sovComplianceInfo(uint64(l))
+	}
+	l = len(m.ProgramTypeVersion)
+	if l > 0 {
+		n += 1 + l + sovComplianceInfo(uint64(l))
+	}
+	l = len(m.CompliantPlatformUsed)
+	if l > 0 {
+		n += 2 + l + sovComplianceInfo(uint64(l))
+	}
+	l = len(m.CompliantPlatformVersion)
+	if l > 0 {
+		n += 2 + l + sovComplianceInfo(uint64(l))
+	}
+	l = len(m.Transport)
+	if l > 0 {
+		n += 2 + l + sovComplianceInfo(uint64(l))
+	}
+	l = len(m.FamilyId)
+	if l > 0 {
+		n += 2 + l + sovComplianceInfo(uint64(l))
+	}
+	l = len(m.SupportedClusters)
+	if l > 0 {
+		n += 2 + l + sovComplianceInfo(uint64(l))
+	}
+	l = len(m.OSVersion)
+	if l > 0 {
+		n += 2 + l + sovComplianceInfo(uint64(l))
+	}
+	l = len(m.ParentChild)
+	if l > 0 {
+		n += 2 + l + sovComplianceInfo(uint64(l))
 	}
 	return n
 }
@@ -665,6 +898,358 @@ func (m *ComplianceInfo) Unmarshal(dAtA []byte) error {
 			if err := m.History[len(m.History)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
+			iNdEx = postIndex
+		case 12:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CDCertificationId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowComplianceInfo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthComplianceInfo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthComplianceInfo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.CDCertificationId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 13:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CertificationRoute", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowComplianceInfo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthComplianceInfo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthComplianceInfo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.CertificationRoute = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 14:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ProgramType", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowComplianceInfo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthComplianceInfo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthComplianceInfo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ProgramType = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 15:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ProgramTypeVersion", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowComplianceInfo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthComplianceInfo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthComplianceInfo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ProgramTypeVersion = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 16:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CompliantPlatformUsed", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowComplianceInfo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthComplianceInfo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthComplianceInfo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.CompliantPlatformUsed = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 17:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CompliantPlatformVersion", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowComplianceInfo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthComplianceInfo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthComplianceInfo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.CompliantPlatformVersion = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 18:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Transport", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowComplianceInfo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthComplianceInfo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthComplianceInfo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Transport = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 19:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FamilyId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowComplianceInfo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthComplianceInfo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthComplianceInfo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.FamilyId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 20:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SupportedClusters", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowComplianceInfo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthComplianceInfo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthComplianceInfo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SupportedClusters = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 21:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field OSVersion", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowComplianceInfo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthComplianceInfo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthComplianceInfo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.OSVersion = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 22:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ParentChild", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowComplianceInfo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthComplianceInfo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthComplianceInfo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ParentChild = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

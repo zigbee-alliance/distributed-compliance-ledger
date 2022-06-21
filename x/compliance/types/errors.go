@@ -16,6 +16,7 @@ var (
 	ErrModelVersionStringDoesNotMatch = sdkerrors.Register(ModuleName, 306, "model version does not match")
 	ErrInvalidTestDateFormat          = sdkerrors.Register(ModuleName, 307, "test date must be in RFC3339 format")
 	ErrInvalidCertificationType       = sdkerrors.Register(ModuleName, 308, "invalid certification type")
+	ErrInvalidPFCCertificationRoute   = sdkerrors.Register(ModuleName, 309, "invalid PFC certification route")
 )
 
 func NewErrInconsistentDates(err interface{}) error {
@@ -80,5 +81,12 @@ func NewErrInvalidCertificationType(certType interface{}, certList interface{}) 
 	return sdkerrors.Wrapf(ErrInvalidCertificationType,
 		"Invalid CertificationType: \"%s\". Supported types: [%s]",
 		certType, certList,
+	)
+}
+
+func NewErrInvalidPFCCertificationRoute(certRoute interface{}, certList interface{}) error {
+	return sdkerrors.Wrapf(ErrInvalidPFCCertificationRoute,
+		"Invalid PFCCertificationRoute: \"%s\". Supported types: [%s]",
+		certRoute, certList,
 	)
 }

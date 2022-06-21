@@ -1,7 +1,7 @@
 # Setup of Local Net in Docker
 
 - Install Oracle VM VirtualBox
-- Download Ubuntu 18.04.3 VDI for VirtualBox from <https://www.osboxes.org/ubuntu/>
+- Download Ubuntu 18.04.3 VDI for VirtualBox
 - In VirtualBox create a VM using the downloaded VDI
 - Increase processors count and RAM amount in the created VM settings (set them to a half of physical facilities)
 - Start and log in to the created VM using the following credentials: osboxes/osboxes.org

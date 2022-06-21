@@ -13,6 +13,17 @@ export interface ComplianceInfo {
     reason: string;
     owner: string;
     history: ComplianceHistoryItem[];
+    cDCertificationId: string;
+    certificationRoute: string;
+    programType: string;
+    programTypeVersion: string;
+    compliantPlatformUsed: string;
+    compliantPlatformVersion: string;
+    transport: string;
+    familyId: string;
+    supportedClusters: string;
+    OSVersion: string;
+    parentChild: string;
 }
 export declare const ComplianceInfo: {
     encode(message: ComplianceInfo, writer?: Writer): Writer;

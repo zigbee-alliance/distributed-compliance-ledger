@@ -1,6 +1,6 @@
 package types
 
-func (d *ComplianceInfo) SetCertifiedStatus(date string, reason string) {
+func (d *ComplianceInfo) SetCertifiedStatus(date string, reason string, cdCertificationID string) {
 	svCertificationStatus := CodeCertified
 	historyItem := ComplianceHistoryItem{
 		SoftwareVersionCertificationStatus: d.SoftwareVersionCertificationStatus,
@@ -12,6 +12,7 @@ func (d *ComplianceInfo) SetCertifiedStatus(date string, reason string) {
 	d.SoftwareVersionCertificationStatus = svCertificationStatus
 	d.Date = date
 	d.Reason = reason
+	d.CDCertificationId = cdCertificationID
 }
 
 func (d *ComplianceInfo) SetRevokedStatus(date string, reason string) {
@@ -26,4 +27,50 @@ func (d *ComplianceInfo) SetRevokedStatus(date string, reason string) {
 	d.SoftwareVersionCertificationStatus = svCertificationStatus
 	d.Date = date
 	d.Reason = reason
+}
+
+func (d *ComplianceInfo) SetOptionalFields(msg *MsgCertifyModel) {
+	if msg.ProgramTypeVersion != "" {
+		d.ProgramTypeVersion = msg.ProgramTypeVersion
+	}
+
+	if msg.FamilyId != "" {
+		d.FamilyId = msg.FamilyId
+	}
+
+	if msg.SupportedClusters != "" {
+		d.SupportedClusters = msg.SupportedClusters
+	}
+
+	if msg.CompliantPlatformUsed != "" {
+		d.CompliantPlatformUsed = msg.CompliantPlatformUsed
+	}
+
+	if msg.CompliantPlatformVersion != "" {
+		d.CompliantPlatformVersion = msg.CompliantPlatformVersion
+	}
+
+	if msg.OSVersion != "" {
+		d.OSVersion = msg.OSVersion
+	}
+
+	if msg.CertificationRoute != "" {
+		d.CertificationRoute = msg.CertificationRoute
+	}
+
+	if msg.CertificationRoute != "" {
+		d.CertificationRoute = msg.CertificationRoute
+	}
+
+	if msg.ProgramType != "" {
+		d.ProgramType = msg.ProgramType
+	}
+
+	if msg.Transport != "" {
+		d.Transport = msg.Transport
+	}
+
+	if msg.ParentChild != "" {
+		d.ParentChild = msg.ParentChild
+	}
 }

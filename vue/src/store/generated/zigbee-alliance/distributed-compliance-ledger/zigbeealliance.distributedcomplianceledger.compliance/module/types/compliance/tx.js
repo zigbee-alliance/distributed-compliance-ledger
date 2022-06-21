@@ -10,7 +10,18 @@ const baseMsgCertifyModel = {
     cDVersionNumber: 0,
     certificationDate: '',
     certificationType: '',
-    reason: ''
+    reason: '',
+    programTypeVersion: '',
+    cDCertificationId: '',
+    familyId: '',
+    supportedClusters: '',
+    compliantPlatformUsed: '',
+    compliantPlatformVersion: '',
+    OSVersion: '',
+    certificationRoute: '',
+    programType: '',
+    transport: '',
+    parentChild: ''
 };
 export const MsgCertifyModel = {
     encode(message, writer = Writer.create()) {
@@ -40,6 +51,39 @@ export const MsgCertifyModel = {
         }
         if (message.reason !== '') {
             writer.uint32(74).string(message.reason);
+        }
+        if (message.programTypeVersion !== '') {
+            writer.uint32(82).string(message.programTypeVersion);
+        }
+        if (message.cDCertificationId !== '') {
+            writer.uint32(90).string(message.cDCertificationId);
+        }
+        if (message.familyId !== '') {
+            writer.uint32(98).string(message.familyId);
+        }
+        if (message.supportedClusters !== '') {
+            writer.uint32(106).string(message.supportedClusters);
+        }
+        if (message.compliantPlatformUsed !== '') {
+            writer.uint32(114).string(message.compliantPlatformUsed);
+        }
+        if (message.compliantPlatformVersion !== '') {
+            writer.uint32(122).string(message.compliantPlatformVersion);
+        }
+        if (message.OSVersion !== '') {
+            writer.uint32(130).string(message.OSVersion);
+        }
+        if (message.certificationRoute !== '') {
+            writer.uint32(138).string(message.certificationRoute);
+        }
+        if (message.programType !== '') {
+            writer.uint32(146).string(message.programType);
+        }
+        if (message.transport !== '') {
+            writer.uint32(154).string(message.transport);
+        }
+        if (message.parentChild !== '') {
+            writer.uint32(162).string(message.parentChild);
         }
         return writer;
     },
@@ -76,6 +120,39 @@ export const MsgCertifyModel = {
                     break;
                 case 9:
                     message.reason = reader.string();
+                    break;
+                case 10:
+                    message.programTypeVersion = reader.string();
+                    break;
+                case 11:
+                    message.cDCertificationId = reader.string();
+                    break;
+                case 12:
+                    message.familyId = reader.string();
+                    break;
+                case 13:
+                    message.supportedClusters = reader.string();
+                    break;
+                case 14:
+                    message.compliantPlatformUsed = reader.string();
+                    break;
+                case 15:
+                    message.compliantPlatformVersion = reader.string();
+                    break;
+                case 16:
+                    message.OSVersion = reader.string();
+                    break;
+                case 17:
+                    message.certificationRoute = reader.string();
+                    break;
+                case 18:
+                    message.programType = reader.string();
+                    break;
+                case 19:
+                    message.transport = reader.string();
+                    break;
+                case 20:
+                    message.parentChild = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -140,6 +217,72 @@ export const MsgCertifyModel = {
         else {
             message.reason = '';
         }
+        if (object.programTypeVersion !== undefined && object.programTypeVersion !== null) {
+            message.programTypeVersion = String(object.programTypeVersion);
+        }
+        else {
+            message.programTypeVersion = '';
+        }
+        if (object.cDCertificationId !== undefined && object.cDCertificationId !== null) {
+            message.cDCertificationId = String(object.cDCertificationId);
+        }
+        else {
+            message.cDCertificationId = '';
+        }
+        if (object.familyId !== undefined && object.familyId !== null) {
+            message.familyId = String(object.familyId);
+        }
+        else {
+            message.familyId = '';
+        }
+        if (object.supportedClusters !== undefined && object.supportedClusters !== null) {
+            message.supportedClusters = String(object.supportedClusters);
+        }
+        else {
+            message.supportedClusters = '';
+        }
+        if (object.compliantPlatformUsed !== undefined && object.compliantPlatformUsed !== null) {
+            message.compliantPlatformUsed = String(object.compliantPlatformUsed);
+        }
+        else {
+            message.compliantPlatformUsed = '';
+        }
+        if (object.compliantPlatformVersion !== undefined && object.compliantPlatformVersion !== null) {
+            message.compliantPlatformVersion = String(object.compliantPlatformVersion);
+        }
+        else {
+            message.compliantPlatformVersion = '';
+        }
+        if (object.OSVersion !== undefined && object.OSVersion !== null) {
+            message.OSVersion = String(object.OSVersion);
+        }
+        else {
+            message.OSVersion = '';
+        }
+        if (object.certificationRoute !== undefined && object.certificationRoute !== null) {
+            message.certificationRoute = String(object.certificationRoute);
+        }
+        else {
+            message.certificationRoute = '';
+        }
+        if (object.programType !== undefined && object.programType !== null) {
+            message.programType = String(object.programType);
+        }
+        else {
+            message.programType = '';
+        }
+        if (object.transport !== undefined && object.transport !== null) {
+            message.transport = String(object.transport);
+        }
+        else {
+            message.transport = '';
+        }
+        if (object.parentChild !== undefined && object.parentChild !== null) {
+            message.parentChild = String(object.parentChild);
+        }
+        else {
+            message.parentChild = '';
+        }
         return message;
     },
     toJSON(message) {
@@ -153,6 +296,17 @@ export const MsgCertifyModel = {
         message.certificationDate !== undefined && (obj.certificationDate = message.certificationDate);
         message.certificationType !== undefined && (obj.certificationType = message.certificationType);
         message.reason !== undefined && (obj.reason = message.reason);
+        message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion);
+        message.cDCertificationId !== undefined && (obj.cDCertificationId = message.cDCertificationId);
+        message.familyId !== undefined && (obj.familyId = message.familyId);
+        message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters);
+        message.compliantPlatformUsed !== undefined && (obj.compliantPlatformUsed = message.compliantPlatformUsed);
+        message.compliantPlatformVersion !== undefined && (obj.compliantPlatformVersion = message.compliantPlatformVersion);
+        message.OSVersion !== undefined && (obj.OSVersion = message.OSVersion);
+        message.certificationRoute !== undefined && (obj.certificationRoute = message.certificationRoute);
+        message.programType !== undefined && (obj.programType = message.programType);
+        message.transport !== undefined && (obj.transport = message.transport);
+        message.parentChild !== undefined && (obj.parentChild = message.parentChild);
         return obj;
     },
     fromPartial(object) {
@@ -210,6 +364,72 @@ export const MsgCertifyModel = {
         }
         else {
             message.reason = '';
+        }
+        if (object.programTypeVersion !== undefined && object.programTypeVersion !== null) {
+            message.programTypeVersion = object.programTypeVersion;
+        }
+        else {
+            message.programTypeVersion = '';
+        }
+        if (object.cDCertificationId !== undefined && object.cDCertificationId !== null) {
+            message.cDCertificationId = object.cDCertificationId;
+        }
+        else {
+            message.cDCertificationId = '';
+        }
+        if (object.familyId !== undefined && object.familyId !== null) {
+            message.familyId = object.familyId;
+        }
+        else {
+            message.familyId = '';
+        }
+        if (object.supportedClusters !== undefined && object.supportedClusters !== null) {
+            message.supportedClusters = object.supportedClusters;
+        }
+        else {
+            message.supportedClusters = '';
+        }
+        if (object.compliantPlatformUsed !== undefined && object.compliantPlatformUsed !== null) {
+            message.compliantPlatformUsed = object.compliantPlatformUsed;
+        }
+        else {
+            message.compliantPlatformUsed = '';
+        }
+        if (object.compliantPlatformVersion !== undefined && object.compliantPlatformVersion !== null) {
+            message.compliantPlatformVersion = object.compliantPlatformVersion;
+        }
+        else {
+            message.compliantPlatformVersion = '';
+        }
+        if (object.OSVersion !== undefined && object.OSVersion !== null) {
+            message.OSVersion = object.OSVersion;
+        }
+        else {
+            message.OSVersion = '';
+        }
+        if (object.certificationRoute !== undefined && object.certificationRoute !== null) {
+            message.certificationRoute = object.certificationRoute;
+        }
+        else {
+            message.certificationRoute = '';
+        }
+        if (object.programType !== undefined && object.programType !== null) {
+            message.programType = object.programType;
+        }
+        else {
+            message.programType = '';
+        }
+        if (object.transport !== undefined && object.transport !== null) {
+            message.transport = object.transport;
+        }
+        else {
+            message.transport = '';
+        }
+        if (object.parentChild !== undefined && object.parentChild !== null) {
+            message.parentChild = object.parentChild;
+        }
+        else {
+            message.parentChild = '';
         }
         return message;
     }
@@ -500,7 +720,18 @@ const baseMsgProvisionModel = {
     cDVersionNumber: 0,
     provisionalDate: '',
     certificationType: '',
-    reason: ''
+    reason: '',
+    programTypeVersion: '',
+    cDCertificationId: '',
+    familyId: '',
+    supportedClusters: '',
+    compliantPlatformUsed: '',
+    compliantPlatformVersion: '',
+    OSVersion: '',
+    certificationRoute: '',
+    programType: '',
+    transport: '',
+    parentChild: ''
 };
 export const MsgProvisionModel = {
     encode(message, writer = Writer.create()) {
@@ -530,6 +761,39 @@ export const MsgProvisionModel = {
         }
         if (message.reason !== '') {
             writer.uint32(74).string(message.reason);
+        }
+        if (message.programTypeVersion !== '') {
+            writer.uint32(82).string(message.programTypeVersion);
+        }
+        if (message.cDCertificationId !== '') {
+            writer.uint32(90).string(message.cDCertificationId);
+        }
+        if (message.familyId !== '') {
+            writer.uint32(98).string(message.familyId);
+        }
+        if (message.supportedClusters !== '') {
+            writer.uint32(106).string(message.supportedClusters);
+        }
+        if (message.compliantPlatformUsed !== '') {
+            writer.uint32(114).string(message.compliantPlatformUsed);
+        }
+        if (message.compliantPlatformVersion !== '') {
+            writer.uint32(122).string(message.compliantPlatformVersion);
+        }
+        if (message.OSVersion !== '') {
+            writer.uint32(130).string(message.OSVersion);
+        }
+        if (message.certificationRoute !== '') {
+            writer.uint32(138).string(message.certificationRoute);
+        }
+        if (message.programType !== '') {
+            writer.uint32(146).string(message.programType);
+        }
+        if (message.transport !== '') {
+            writer.uint32(154).string(message.transport);
+        }
+        if (message.parentChild !== '') {
+            writer.uint32(162).string(message.parentChild);
         }
         return writer;
     },
@@ -566,6 +830,39 @@ export const MsgProvisionModel = {
                     break;
                 case 9:
                     message.reason = reader.string();
+                    break;
+                case 10:
+                    message.programTypeVersion = reader.string();
+                    break;
+                case 11:
+                    message.cDCertificationId = reader.string();
+                    break;
+                case 12:
+                    message.familyId = reader.string();
+                    break;
+                case 13:
+                    message.supportedClusters = reader.string();
+                    break;
+                case 14:
+                    message.compliantPlatformUsed = reader.string();
+                    break;
+                case 15:
+                    message.compliantPlatformVersion = reader.string();
+                    break;
+                case 16:
+                    message.OSVersion = reader.string();
+                    break;
+                case 17:
+                    message.certificationRoute = reader.string();
+                    break;
+                case 18:
+                    message.programType = reader.string();
+                    break;
+                case 19:
+                    message.transport = reader.string();
+                    break;
+                case 20:
+                    message.parentChild = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -630,6 +927,72 @@ export const MsgProvisionModel = {
         else {
             message.reason = '';
         }
+        if (object.programTypeVersion !== undefined && object.programTypeVersion !== null) {
+            message.programTypeVersion = String(object.programTypeVersion);
+        }
+        else {
+            message.programTypeVersion = '';
+        }
+        if (object.cDCertificationId !== undefined && object.cDCertificationId !== null) {
+            message.cDCertificationId = String(object.cDCertificationId);
+        }
+        else {
+            message.cDCertificationId = '';
+        }
+        if (object.familyId !== undefined && object.familyId !== null) {
+            message.familyId = String(object.familyId);
+        }
+        else {
+            message.familyId = '';
+        }
+        if (object.supportedClusters !== undefined && object.supportedClusters !== null) {
+            message.supportedClusters = String(object.supportedClusters);
+        }
+        else {
+            message.supportedClusters = '';
+        }
+        if (object.compliantPlatformUsed !== undefined && object.compliantPlatformUsed !== null) {
+            message.compliantPlatformUsed = String(object.compliantPlatformUsed);
+        }
+        else {
+            message.compliantPlatformUsed = '';
+        }
+        if (object.compliantPlatformVersion !== undefined && object.compliantPlatformVersion !== null) {
+            message.compliantPlatformVersion = String(object.compliantPlatformVersion);
+        }
+        else {
+            message.compliantPlatformVersion = '';
+        }
+        if (object.OSVersion !== undefined && object.OSVersion !== null) {
+            message.OSVersion = String(object.OSVersion);
+        }
+        else {
+            message.OSVersion = '';
+        }
+        if (object.certificationRoute !== undefined && object.certificationRoute !== null) {
+            message.certificationRoute = String(object.certificationRoute);
+        }
+        else {
+            message.certificationRoute = '';
+        }
+        if (object.programType !== undefined && object.programType !== null) {
+            message.programType = String(object.programType);
+        }
+        else {
+            message.programType = '';
+        }
+        if (object.transport !== undefined && object.transport !== null) {
+            message.transport = String(object.transport);
+        }
+        else {
+            message.transport = '';
+        }
+        if (object.parentChild !== undefined && object.parentChild !== null) {
+            message.parentChild = String(object.parentChild);
+        }
+        else {
+            message.parentChild = '';
+        }
         return message;
     },
     toJSON(message) {
@@ -643,6 +1006,17 @@ export const MsgProvisionModel = {
         message.provisionalDate !== undefined && (obj.provisionalDate = message.provisionalDate);
         message.certificationType !== undefined && (obj.certificationType = message.certificationType);
         message.reason !== undefined && (obj.reason = message.reason);
+        message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion);
+        message.cDCertificationId !== undefined && (obj.cDCertificationId = message.cDCertificationId);
+        message.familyId !== undefined && (obj.familyId = message.familyId);
+        message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters);
+        message.compliantPlatformUsed !== undefined && (obj.compliantPlatformUsed = message.compliantPlatformUsed);
+        message.compliantPlatformVersion !== undefined && (obj.compliantPlatformVersion = message.compliantPlatformVersion);
+        message.OSVersion !== undefined && (obj.OSVersion = message.OSVersion);
+        message.certificationRoute !== undefined && (obj.certificationRoute = message.certificationRoute);
+        message.programType !== undefined && (obj.programType = message.programType);
+        message.transport !== undefined && (obj.transport = message.transport);
+        message.parentChild !== undefined && (obj.parentChild = message.parentChild);
         return obj;
     },
     fromPartial(object) {
@@ -700,6 +1074,72 @@ export const MsgProvisionModel = {
         }
         else {
             message.reason = '';
+        }
+        if (object.programTypeVersion !== undefined && object.programTypeVersion !== null) {
+            message.programTypeVersion = object.programTypeVersion;
+        }
+        else {
+            message.programTypeVersion = '';
+        }
+        if (object.cDCertificationId !== undefined && object.cDCertificationId !== null) {
+            message.cDCertificationId = object.cDCertificationId;
+        }
+        else {
+            message.cDCertificationId = '';
+        }
+        if (object.familyId !== undefined && object.familyId !== null) {
+            message.familyId = object.familyId;
+        }
+        else {
+            message.familyId = '';
+        }
+        if (object.supportedClusters !== undefined && object.supportedClusters !== null) {
+            message.supportedClusters = object.supportedClusters;
+        }
+        else {
+            message.supportedClusters = '';
+        }
+        if (object.compliantPlatformUsed !== undefined && object.compliantPlatformUsed !== null) {
+            message.compliantPlatformUsed = object.compliantPlatformUsed;
+        }
+        else {
+            message.compliantPlatformUsed = '';
+        }
+        if (object.compliantPlatformVersion !== undefined && object.compliantPlatformVersion !== null) {
+            message.compliantPlatformVersion = object.compliantPlatformVersion;
+        }
+        else {
+            message.compliantPlatformVersion = '';
+        }
+        if (object.OSVersion !== undefined && object.OSVersion !== null) {
+            message.OSVersion = object.OSVersion;
+        }
+        else {
+            message.OSVersion = '';
+        }
+        if (object.certificationRoute !== undefined && object.certificationRoute !== null) {
+            message.certificationRoute = object.certificationRoute;
+        }
+        else {
+            message.certificationRoute = '';
+        }
+        if (object.programType !== undefined && object.programType !== null) {
+            message.programType = object.programType;
+        }
+        else {
+            message.programType = '';
+        }
+        if (object.transport !== undefined && object.transport !== null) {
+            message.transport = object.transport;
+        }
+        else {
+            message.transport = '';
+        }
+        if (object.parentChild !== undefined && object.parentChild !== null) {
+            message.parentChild = object.parentChild;
+        }
+        else {
+            message.parentChild = '';
         }
         return message;
     }

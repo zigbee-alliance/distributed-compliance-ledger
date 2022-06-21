@@ -10,6 +10,17 @@ export interface MsgCertifyModel {
     certificationDate: string;
     certificationType: string;
     reason: string;
+    programTypeVersion: string;
+    cDCertificationId: string;
+    familyId: string;
+    supportedClusters: string;
+    compliantPlatformUsed: string;
+    compliantPlatformVersion: string;
+    OSVersion: string;
+    certificationRoute: string;
+    programType: string;
+    transport: string;
+    parentChild: string;
 }
 export interface MsgCertifyModelResponse {
 }
@@ -36,6 +47,17 @@ export interface MsgProvisionModel {
     provisionalDate: string;
     certificationType: string;
     reason: string;
+    programTypeVersion: string;
+    cDCertificationId: string;
+    familyId: string;
+    supportedClusters: string;
+    compliantPlatformUsed: string;
+    compliantPlatformVersion: string;
+    OSVersion: string;
+    certificationRoute: string;
+    programType: string;
+    transport: string;
+    parentChild: string;
 }
 export interface MsgProvisionModelResponse {
 }

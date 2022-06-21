@@ -15,14 +15,25 @@ var _ = strconv.Itoa(0)
 
 func CmdProvisionModel() *cobra.Command {
 	var (
-		vid                   int32
-		pid                   int32
-		softwareVersion       uint32
-		softwareVersionString string
-		provisionalDate       string
-		certificationType     string
-		reason                string
-		cdVersionNumber       uint32
+		vid                      int32
+		pid                      int32
+		softwareVersion          uint32
+		softwareVersionString    string
+		provisionalDate          string
+		certificationType        string
+		reason                   string
+		cdVersionNumber          uint32
+		programTypeVersion       string
+		CDCertificationID        string
+		familyID                 string
+		supportedClusters        string
+		compliantPlatformUsed    string
+		compliantPlatformVersion string
+		OSVersion                string
+		certificationRoute       string
+		programType              string
+		transport                string
+		parentChild              string
 	)
 
 	cmd := &cobra.Command{
@@ -45,6 +56,17 @@ func CmdProvisionModel() *cobra.Command {
 				provisionalDate,
 				certificationType,
 				reason,
+				programTypeVersion,
+				CDCertificationID,
+				familyID,
+				supportedClusters,
+				compliantPlatformUsed,
+				compliantPlatformVersion,
+				OSVersion,
+				certificationRoute,
+				programType,
+				transport,
+				parentChild,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -72,6 +94,28 @@ func CmdProvisionModel() *cobra.Command {
 		"The date of model provisioning (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z")
 	cmd.Flags().StringVar(&reason, FlagReason, "",
 		"Optional comment describing the reason of provisioning")
+	cmd.Flags().StringVar(&programTypeVersion, FlagProgramTypeVersion, "",
+		"Program Type Version of the certification")
+	cmd.Flags().StringVar(&CDCertificationID, FlagCDCertificationID, "",
+		"CD Certification ID of the certification")
+	cmd.Flags().StringVar(&familyID, FlagFamilyID, "",
+		"Family ID of the certification")
+	cmd.Flags().StringVar(&supportedClusters, FlagSupportedClusters, "",
+		"Supported Clusters of the certification")
+	cmd.Flags().StringVar(&compliantPlatformUsed, FlagCompliantPlatformUsed, "",
+		"Compliant Platform Used of the certification")
+	cmd.Flags().StringVar(&compliantPlatformVersion, FlagCompliantPlatformVersion, "",
+		"Compliant Platform Version of the certification")
+	cmd.Flags().StringVar(&OSVersion, FlagOSVersion, "",
+		"OS Version of the certification")
+	cmd.Flags().StringVar(&certificationRoute, FlagCertificationRoute, "",
+		"Certification Route of the certification")
+	cmd.Flags().StringVar(&programType, FlagProgramType, "",
+		"Program Type of the certification")
+	cmd.Flags().StringVar(&transport, FlagTransport, "",
+		"Transport of the certification")
+	cmd.Flags().StringVar(&parentChild, FlagParentChild, "",
+		"Parent or Child  of the PFC certification route")
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)
@@ -79,6 +123,7 @@ func CmdProvisionModel() *cobra.Command {
 	_ = cmd.MarkFlagRequired(FlagSoftwareVersionString)
 	_ = cmd.MarkFlagRequired(FlagCertificationType)
 	_ = cmd.MarkFlagRequired(FlagProvisionalDate)
+	_ = cmd.MarkFlagRequired(FlagCDCertificationID)
 	_ = cmd.MarkFlagRequired(flags.FlagFrom)
 
 	cli.AddTxFlagsToCmd(cmd)

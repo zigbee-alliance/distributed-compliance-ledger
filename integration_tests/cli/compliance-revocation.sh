@@ -38,6 +38,7 @@ certification_type_matter="matter"
 pid=$RANDOM
 sv=$RANDOM
 svs=$RANDOM
+cd_certification_id="123"
 
 echo "Add Model and a New Model Version with VID: $vid PID: $pid SV: $sv"
 create_model_and_version $vid $pid $sv $svs $vendor_account
@@ -200,7 +201,7 @@ certification_reason="some reason 2"
 
 echo "Certify revoked Model with VID: $vid PID: $pid from the past"
 certification_date_past="2020-02-02T02:20:19Z"
-result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type" --certificationDate="$certification_date_past" --reason "$certification_reason" --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type" --certificationDate="$certification_date_past" --reason "$certification_reason" --cdCertificationId="$cd_certification_id" --from $zb_account --yes)
 check_response "$result" "\"code\": 302"
 check_response "$result" "must be after"
 echo "$result"
@@ -209,7 +210,7 @@ test_divider
 
 echo "Certify revoked Model with VID: $vid PID: $pid for ZB"
 certification_date="2020-02-02T02:20:21Z"
-result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type" --certificationDate="$certification_date" --reason "$certification_reason" --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type" --certificationDate="$certification_date" --reason "$certification_reason" --cdCertificationId="$cd_certification_id" --from $zb_account --yes)
 check_response "$result" "\"code\": 0"
 echo "$result"
 

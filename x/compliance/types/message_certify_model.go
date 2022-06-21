@@ -12,17 +12,33 @@ const TypeMsgCertifyModel = "certify_model"
 
 var _ sdk.Msg = &MsgCertifyModel{}
 
-func NewMsgCertifyModel(signer string, vid int32, pid int32, softwareVersion uint32, softwareVersionString string, cdVersionNumber uint32, certificationDate string, certificationType string, reason string) *MsgCertifyModel {
+func NewMsgCertifyModel(
+	signer string, vid int32, pid int32, softwareVersion uint32, softwareVersionString string, cdVersionNumber uint32,
+	certificationDate string, certificationType string, reason string, programTypeVersion string, cDCertificationID string,
+	familyID string, supportedClusters string, compliantPlatformUsed string, compliantPlatformVersion string, osVersion string,
+	certificationRoute string, programType string, transport string, parentChild string,
+) *MsgCertifyModel {
 	return &MsgCertifyModel{
-		Signer:                signer,
-		Vid:                   vid,
-		Pid:                   pid,
-		SoftwareVersion:       softwareVersion,
-		SoftwareVersionString: softwareVersionString,
-		CDVersionNumber:       cdVersionNumber,
-		CertificationDate:     certificationDate,
-		CertificationType:     certificationType,
-		Reason:                reason,
+		Signer:                   signer,
+		Vid:                      vid,
+		Pid:                      pid,
+		SoftwareVersion:          softwareVersion,
+		SoftwareVersionString:    softwareVersionString,
+		CDVersionNumber:          cdVersionNumber,
+		CertificationDate:        certificationDate,
+		CertificationType:        certificationType,
+		Reason:                   reason,
+		ProgramTypeVersion:       programTypeVersion,
+		CDCertificationId:        cDCertificationID,
+		FamilyId:                 familyID,
+		SupportedClusters:        supportedClusters,
+		CompliantPlatformUsed:    compliantPlatformUsed,
+		CompliantPlatformVersion: compliantPlatformVersion,
+		OSVersion:                osVersion,
+		CertificationRoute:       certificationRoute,
+		ProgramType:              programType,
+		Transport:                transport,
+		ParentChild:              parentChild,
 	}
 }
 
@@ -67,6 +83,10 @@ func (msg *MsgCertifyModel) ValidateBasic() error {
 
 	if !IsValidCertificationType(msg.CertificationType) {
 		return NewErrInvalidCertificationType(msg.CertificationType, CertificationTypesList)
+	}
+
+	if !IsValidPFCCertificationRoute(msg.ParentChild) {
+		return NewErrInvalidPFCCertificationRoute(msg.ParentChild, PFCCertificationRouteList)
 	}
 
 	return nil
