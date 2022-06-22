@@ -955,15 +955,15 @@ func DemoTrackRevocation(suite *utils.TestSuite) {
 	// Check Device Software Compliance
 	deviceSoftwareCompliance, _ := GetDeviceSoftwareCompliance(suite, testconstants.CDCertificationID)
 	require.Equal(suite.T, testconstants.CDCertificationID, deviceSoftwareCompliance.CDCertificateId)
-	require.Equal(suite.T, 1, len(deviceSoftwareCompliance.ComplianceInfo))
-	require.Equal(suite.T, compliancetypes.ZigbeeCertificationType, deviceSoftwareCompliance.ComplianceInfo[0].CertificationType)
-	require.Equal(suite.T, uint32(2), deviceSoftwareCompliance.ComplianceInfo[0].SoftwareVersionCertificationStatus)
-	require.Equal(suite.T, vid, deviceSoftwareCompliance.ComplianceInfo[0].Vid)
-	require.Equal(suite.T, pid, deviceSoftwareCompliance.ComplianceInfo[0].Pid)
-	require.Equal(suite.T, sv, deviceSoftwareCompliance.ComplianceInfo[0].SoftwareVersion)
-	require.Equal(suite.T, testconstants.CDCertificationID, deviceSoftwareCompliance.ComplianceInfo[0].CDCertificationId)
-	require.Equal(suite.T, certReason, deviceSoftwareCompliance.ComplianceInfo[0].Reason)
-	require.Equal(suite.T, certDate, deviceSoftwareCompliance.ComplianceInfo[0].Date)
+	require.Equal(suite.T, 2, len(deviceSoftwareCompliance.ComplianceInfo))
+	require.Equal(suite.T, compliancetypes.ZigbeeCertificationType, deviceSoftwareCompliance.ComplianceInfo[1].CertificationType)
+	require.Equal(suite.T, uint32(2), deviceSoftwareCompliance.ComplianceInfo[1].SoftwareVersionCertificationStatus)
+	require.Equal(suite.T, vid, deviceSoftwareCompliance.ComplianceInfo[1].Vid)
+	require.Equal(suite.T, pid, deviceSoftwareCompliance.ComplianceInfo[1].Pid)
+	require.Equal(suite.T, sv, deviceSoftwareCompliance.ComplianceInfo[1].SoftwareVersion)
+	require.Equal(suite.T, testconstants.CDCertificationID, deviceSoftwareCompliance.ComplianceInfo[1].CDCertificationId)
+	require.Equal(suite.T, certReason, deviceSoftwareCompliance.ComplianceInfo[1].Reason)
+	require.Equal(suite.T, certDate, deviceSoftwareCompliance.ComplianceInfo[1].Date)
 
 	// Get all
 	complianceInfos, _ = GetAllComplianceInfo(suite)
@@ -975,7 +975,7 @@ func DemoTrackRevocation(suite *utils.TestSuite) {
 	provisionalModels, _ = GetAllProvisionalModels(suite)
 	require.Equal(suite.T, len(inputAllProvisionalModels), len(provisionalModels))
 	deviceSoftwareCompliances, _ = GetAllDeviceSoftwareCompliance(suite)
-	require.Equal(suite.T, len(inputAllDeviceSoftwareCompliances)+1, len(deviceSoftwareCompliances))
+	require.Equal(suite.T, len(inputAllDeviceSoftwareCompliances), len(deviceSoftwareCompliances))
 }
 
 func DemoTrackProvision(suite *utils.TestSuite) {
@@ -1131,15 +1131,15 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	// Check Device Software Compliance
 	deviceSoftwareCompliance, _ := GetDeviceSoftwareCompliance(suite, testconstants.CDCertificationID)
 	require.Equal(suite.T, testconstants.CDCertificationID, deviceSoftwareCompliance.CDCertificateId)
-	require.Equal(suite.T, 1, len(deviceSoftwareCompliance.ComplianceInfo))
-	require.Equal(suite.T, compliancetypes.MatterCertificationType, deviceSoftwareCompliance.ComplianceInfo[0].CertificationType)
-	require.Equal(suite.T, uint32(2), deviceSoftwareCompliance.ComplianceInfo[0].SoftwareVersionCertificationStatus)
-	require.Equal(suite.T, vid, deviceSoftwareCompliance.ComplianceInfo[0].Vid)
-	require.Equal(suite.T, pid, deviceSoftwareCompliance.ComplianceInfo[0].Pid)
-	require.Equal(suite.T, sv, deviceSoftwareCompliance.ComplianceInfo[0].SoftwareVersion)
-	require.Equal(suite.T, testconstants.CDCertificationID, deviceSoftwareCompliance.ComplianceInfo[0].CDCertificationId)
-	require.Equal(suite.T, certReason, deviceSoftwareCompliance.ComplianceInfo[0].Reason)
-	require.Equal(suite.T, certDate, deviceSoftwareCompliance.ComplianceInfo[0].Date)
+	require.Equal(suite.T, 3, len(deviceSoftwareCompliance.ComplianceInfo))
+	require.Equal(suite.T, compliancetypes.MatterCertificationType, deviceSoftwareCompliance.ComplianceInfo[2].CertificationType)
+	require.Equal(suite.T, uint32(2), deviceSoftwareCompliance.ComplianceInfo[2].SoftwareVersionCertificationStatus)
+	require.Equal(suite.T, vid, deviceSoftwareCompliance.ComplianceInfo[2].Vid)
+	require.Equal(suite.T, pid, deviceSoftwareCompliance.ComplianceInfo[2].Pid)
+	require.Equal(suite.T, sv, deviceSoftwareCompliance.ComplianceInfo[2].SoftwareVersion)
+	require.Equal(suite.T, testconstants.CDCertificationID, deviceSoftwareCompliance.ComplianceInfo[2].CDCertificationId)
+	require.Equal(suite.T, certReason, deviceSoftwareCompliance.ComplianceInfo[2].Reason)
+	require.Equal(suite.T, certDate, deviceSoftwareCompliance.ComplianceInfo[2].Date)
 
 	// Get all
 	complianceInfos, _ = GetAllComplianceInfo(suite)
@@ -1151,7 +1151,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	provisionalModels, _ = GetAllProvisionalModels(suite)
 	require.Equal(suite.T, len(inputAllProvisionalModels), len(provisionalModels))
 	deviceSoftwareCompliances, _ = GetAllDeviceSoftwareCompliance(suite)
-	require.Equal(suite.T, len(inputAllDeviceSoftwareCompliances)+1, len(deviceSoftwareCompliances))
+	require.Equal(suite.T, len(inputAllDeviceSoftwareCompliances), len(deviceSoftwareCompliances))
 
 	// Can not provision certified model
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&provModelMsg}, certCenter, certCenterAccount)
@@ -1226,7 +1226,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	provisionalModels, _ = GetAllProvisionalModels(suite)
 	require.Equal(suite.T, len(inputAllProvisionalModels)+1, len(provisionalModels))
 	deviceSoftwareCompliances, _ = GetAllDeviceSoftwareCompliance(suite)
-	require.Equal(suite.T, len(inputAllDeviceSoftwareCompliances)+1, len(deviceSoftwareCompliances))
+	require.Equal(suite.T, len(inputAllDeviceSoftwareCompliances), len(deviceSoftwareCompliances))
 
 	// Publish model info
 	secondModel := test_model.NewMsgCreateModel(vid, pid, vendorAccount.Address)
@@ -1290,25 +1290,25 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 
 	// Check Device Software Compliance
 	deviceSoftwareCompliance, _ = GetDeviceSoftwareCompliance(suite, testconstants.CDCertificationID)
-	require.Equal(suite.T, 2, len(deviceSoftwareCompliance.ComplianceInfo))
+	require.Equal(suite.T, 4, len(deviceSoftwareCompliance.ComplianceInfo))
 	require.Equal(suite.T, testconstants.CDCertificationID, deviceSoftwareCompliance.CDCertificateId)
-	require.Equal(suite.T, compliancetypes.MatterCertificationType, deviceSoftwareCompliance.ComplianceInfo[1].CertificationType)
-	require.Equal(suite.T, uint32(2), deviceSoftwareCompliance.ComplianceInfo[1].SoftwareVersionCertificationStatus)
-	require.Equal(suite.T, vid, deviceSoftwareCompliance.ComplianceInfo[1].Vid)
-	require.Equal(suite.T, pid, deviceSoftwareCompliance.ComplianceInfo[1].Pid)
-	require.Equal(suite.T, sv, deviceSoftwareCompliance.ComplianceInfo[1].SoftwareVersion)
-	require.Equal(suite.T, testconstants.CDCertificationID, deviceSoftwareCompliance.ComplianceInfo[1].CDCertificationId)
-	require.Equal(suite.T, certReason, deviceSoftwareCompliance.ComplianceInfo[1].Reason)
-	require.Equal(suite.T, certDate, deviceSoftwareCompliance.ComplianceInfo[1].Date)
-	require.Equal(suite.T, "pTypeVersion", deviceSoftwareCompliance.ComplianceInfo[1].ProgramTypeVersion)
-	require.Equal(suite.T, "familyID", deviceSoftwareCompliance.ComplianceInfo[1].FamilyId)
-	require.Equal(suite.T, "sClusters", deviceSoftwareCompliance.ComplianceInfo[1].SupportedClusters)
-	require.Equal(suite.T, "WIFI", deviceSoftwareCompliance.ComplianceInfo[1].CompliantPlatformUsed)
-	require.Equal(suite.T, "V1", deviceSoftwareCompliance.ComplianceInfo[1].CompliantPlatformVersion)
-	require.Equal(suite.T, testconstants.OSVersion, deviceSoftwareCompliance.ComplianceInfo[1].OSVersion)
-	require.Equal(suite.T, testconstants.CertificationRoute, deviceSoftwareCompliance.ComplianceInfo[1].CertificationRoute)
-	require.Equal(suite.T, testconstants.Transport, deviceSoftwareCompliance.ComplianceInfo[1].Transport)
-	require.Equal(suite.T, testconstants.ParentChild1, deviceSoftwareCompliance.ComplianceInfo[1].ParentChild)
+	require.Equal(suite.T, compliancetypes.MatterCertificationType, deviceSoftwareCompliance.ComplianceInfo[3].CertificationType)
+	require.Equal(suite.T, uint32(2), deviceSoftwareCompliance.ComplianceInfo[3].SoftwareVersionCertificationStatus)
+	require.Equal(suite.T, vid, deviceSoftwareCompliance.ComplianceInfo[3].Vid)
+	require.Equal(suite.T, pid, deviceSoftwareCompliance.ComplianceInfo[3].Pid)
+	require.Equal(suite.T, sv, deviceSoftwareCompliance.ComplianceInfo[3].SoftwareVersion)
+	require.Equal(suite.T, testconstants.CDCertificationID, deviceSoftwareCompliance.ComplianceInfo[3].CDCertificationId)
+	require.Equal(suite.T, certReason, deviceSoftwareCompliance.ComplianceInfo[3].Reason)
+	require.Equal(suite.T, certDate, deviceSoftwareCompliance.ComplianceInfo[3].Date)
+	require.Equal(suite.T, "pTypeVersion", deviceSoftwareCompliance.ComplianceInfo[3].ProgramTypeVersion)
+	require.Equal(suite.T, "familyID", deviceSoftwareCompliance.ComplianceInfo[3].FamilyId)
+	require.Equal(suite.T, "sClusters", deviceSoftwareCompliance.ComplianceInfo[3].SupportedClusters)
+	require.Equal(suite.T, "WIFI", deviceSoftwareCompliance.ComplianceInfo[3].CompliantPlatformUsed)
+	require.Equal(suite.T, "V1", deviceSoftwareCompliance.ComplianceInfo[3].CompliantPlatformVersion)
+	require.Equal(suite.T, testconstants.OSVersion, deviceSoftwareCompliance.ComplianceInfo[3].OSVersion)
+	require.Equal(suite.T, testconstants.CertificationRoute, deviceSoftwareCompliance.ComplianceInfo[3].CertificationRoute)
+	require.Equal(suite.T, testconstants.Transport, deviceSoftwareCompliance.ComplianceInfo[3].Transport)
+	require.Equal(suite.T, testconstants.ParentChild1, deviceSoftwareCompliance.ComplianceInfo[3].ParentChild)
 
 	// Get all
 	complianceInfos, _ = GetAllComplianceInfo(suite)
@@ -1320,7 +1320,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	provisionalModels, _ = GetAllProvisionalModels(suite)
 	require.Equal(suite.T, len(inputAllProvisionalModels), len(provisionalModels))
 	deviceSoftwareCompliances, _ = GetAllDeviceSoftwareCompliance(suite)
-	require.Equal(suite.T, len(inputAllDeviceSoftwareCompliances)+1, len(deviceSoftwareCompliances))
+	require.Equal(suite.T, len(inputAllDeviceSoftwareCompliances), len(deviceSoftwareCompliances))
 }
 
 func DemoTrackComplianceWithHexVidAndPid(suite *utils.TestSuite) {
