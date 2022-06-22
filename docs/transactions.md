@@ -602,6 +602,21 @@ This function responds with `NotFound` (404 code) if compliance information is n
 - REST API:
   - GET `/dcl/compliance/compliance-info/{vid}/{pid}/{software_version}/{certification_type}`
 
+#### GET_DEVICE_SOFTWARE_COMPLIANCE
+
+**Status: Implemented**
+
+Gets device software compliance associated with the `cDCertificationId`.
+
+This function responds with `NotFound` (404 code) if device software compliance is not found in store.
+
+- Parameters:
+  - cDCertificationId: `string` - CD Certification ID
+- CLI command:
+  - `dcld query compliance device-software-compliance --cDCertificationId=<string>`
+- REST API:
+  - GET `/dcl/compliance/device-software-compliance/{cDCertificationId}`
+
 #### GET_ALL_CERTIFIED_MODELS
 
 **Status: Implemented**
@@ -667,6 +682,21 @@ Should be sent to trusted nodes only.
   - `dcld query compliance all-compliance-info`
 - REST API:
   - GET `/dcl/compliance/compliance-info`
+
+#### GET_ALL_DEVICE_SOFTWARE_COMPLIANCES
+
+**Status: Implemented**
+
+Gets all stored device software compliances.
+
+Should be sent to trusted nodes only.
+
+- Parameters:
+  - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
+- CLI command:
+  - `dcld query compliance all-device-software-compliance`
+- REST API:
+  - `/dcl/compliance/device-software-compliance`
 
 ## X509 PKI
 
