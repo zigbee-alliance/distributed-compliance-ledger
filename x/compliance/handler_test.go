@@ -868,9 +868,9 @@ func TestHandler_RevokeCertifiedModel(t *testing.T) {
 		require.Equal(t, certifyModelMsg.CertificationDate, receivedComplianceInfo.History[0].Date)
 
 		// query device software compliance
-		receivedDeviceSoftwareCompliance, _ = queryDeviceSoftwareCompliance(setup, testconstants.CDCertificationID)
-		require.Equal(t, receivedDeviceSoftwareCompliance.CDCertificateId, testconstants.CDCertificationID)
-		require.Equal(t, len(receivedDeviceSoftwareCompliance.ComplianceInfo), 0)
+		_, err = queryDeviceSoftwareCompliance(setup, testconstants.CDCertificationID)
+		require.Error(t, err)
+		require.Equal(t, codes.NotFound, status.Code(err))
 
 		// query revoked model
 		revokedModel, _ := queryRevokedModel(setup, vid, pid, softwareVersion, certificationType)
@@ -1192,7 +1192,7 @@ func TestHandler_CertifyRevokedModel(t *testing.T) {
 	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
 
-	for _, certificationType := range setup.CertificationTypes {
+	for index, certificationType := range setup.CertificationTypes {
 		// revoke model
 		revokeModelMsg := NewMsgRevokeModel(
 			vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
@@ -1208,8 +1208,6 @@ func TestHandler_CertifyRevokedModel(t *testing.T) {
 
 		// query certified model info
 		receivedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, certificationType)
-
-		// check
 		require.Equal(t, certifyModelMsg.Vid, receivedComplianceInfo.Vid)
 		require.Equal(t, certifyModelMsg.Pid, receivedComplianceInfo.Pid)
 		require.Equal(t, types.CodeCertified, receivedComplianceInfo.SoftwareVersionCertificationStatus)
@@ -1218,9 +1216,13 @@ func TestHandler_CertifyRevokedModel(t *testing.T) {
 		require.Equal(t, certifyModelMsg.Reason, receivedComplianceInfo.Reason)
 		require.Equal(t, certifyModelMsg.CertificationType, receivedComplianceInfo.CertificationType)
 		require.Equal(t, 1, len(receivedComplianceInfo.History))
-
 		require.Equal(t, types.CodeRevoked, receivedComplianceInfo.History[0].SoftwareVersionCertificationStatus)
 		require.Equal(t, revokeModelMsg.RevocationDate, receivedComplianceInfo.History[0].Date)
+
+		// query device software compliance
+		receivedDeviceSoftwareCompliance, _ := queryDeviceSoftwareCompliance(setup, testconstants.CDCertificationID)
+		require.Equal(t, receivedDeviceSoftwareCompliance.CDCertificateId, testconstants.CDCertificationID)
+		checkDeviceSoftwareCompliance(t, receivedDeviceSoftwareCompliance.ComplianceInfo[index], receivedComplianceInfo)
 
 		// query certified model
 		certifiedModel, _ := queryCertifiedModel(setup, vid, pid, softwareVersion, certificationType)
