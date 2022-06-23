@@ -4,6 +4,7 @@ import { PageRequest, PageResponse } from '../cosmos/base/query/v1beta1/paginati
 import { CertifiedModel } from '../compliance/certified_model';
 import { RevokedModel } from '../compliance/revoked_model';
 import { ProvisionalModel } from '../compliance/provisional_model';
+import { DeviceSoftwareCompliance } from '../compliance/device_software_compliance';
 export declare const protobufPackage = "zigbeealliance.distributedcomplianceledger.compliance";
 export interface QueryGetComplianceInfoRequest {
     vid: number;
@@ -67,6 +68,19 @@ export interface QueryAllProvisionalModelRequest {
 }
 export interface QueryAllProvisionalModelResponse {
     provisionalModel: ProvisionalModel[];
+    pagination: PageResponse | undefined;
+}
+export interface QueryGetDeviceSoftwareComplianceRequest {
+    cDCertificateId: string;
+}
+export interface QueryGetDeviceSoftwareComplianceResponse {
+    deviceSoftwareCompliance: DeviceSoftwareCompliance | undefined;
+}
+export interface QueryAllDeviceSoftwareComplianceRequest {
+    pagination: PageRequest | undefined;
+}
+export interface QueryAllDeviceSoftwareComplianceResponse {
+    deviceSoftwareCompliance: DeviceSoftwareCompliance[];
     pagination: PageResponse | undefined;
 }
 export declare const QueryGetComplianceInfoRequest: {
@@ -181,6 +195,34 @@ export declare const QueryAllProvisionalModelResponse: {
     toJSON(message: QueryAllProvisionalModelResponse): unknown;
     fromPartial(object: DeepPartial<QueryAllProvisionalModelResponse>): QueryAllProvisionalModelResponse;
 };
+export declare const QueryGetDeviceSoftwareComplianceRequest: {
+    encode(message: QueryGetDeviceSoftwareComplianceRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetDeviceSoftwareComplianceRequest;
+    fromJSON(object: any): QueryGetDeviceSoftwareComplianceRequest;
+    toJSON(message: QueryGetDeviceSoftwareComplianceRequest): unknown;
+    fromPartial(object: DeepPartial<QueryGetDeviceSoftwareComplianceRequest>): QueryGetDeviceSoftwareComplianceRequest;
+};
+export declare const QueryGetDeviceSoftwareComplianceResponse: {
+    encode(message: QueryGetDeviceSoftwareComplianceResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetDeviceSoftwareComplianceResponse;
+    fromJSON(object: any): QueryGetDeviceSoftwareComplianceResponse;
+    toJSON(message: QueryGetDeviceSoftwareComplianceResponse): unknown;
+    fromPartial(object: DeepPartial<QueryGetDeviceSoftwareComplianceResponse>): QueryGetDeviceSoftwareComplianceResponse;
+};
+export declare const QueryAllDeviceSoftwareComplianceRequest: {
+    encode(message: QueryAllDeviceSoftwareComplianceRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllDeviceSoftwareComplianceRequest;
+    fromJSON(object: any): QueryAllDeviceSoftwareComplianceRequest;
+    toJSON(message: QueryAllDeviceSoftwareComplianceRequest): unknown;
+    fromPartial(object: DeepPartial<QueryAllDeviceSoftwareComplianceRequest>): QueryAllDeviceSoftwareComplianceRequest;
+};
+export declare const QueryAllDeviceSoftwareComplianceResponse: {
+    encode(message: QueryAllDeviceSoftwareComplianceResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllDeviceSoftwareComplianceResponse;
+    fromJSON(object: any): QueryAllDeviceSoftwareComplianceResponse;
+    toJSON(message: QueryAllDeviceSoftwareComplianceResponse): unknown;
+    fromPartial(object: DeepPartial<QueryAllDeviceSoftwareComplianceResponse>): QueryAllDeviceSoftwareComplianceResponse;
+};
 /** Query defines the gRPC querier service. */
 export interface Query {
     /** Queries a ComplianceInfo by index. */
@@ -199,6 +241,10 @@ export interface Query {
     ProvisionalModel(request: QueryGetProvisionalModelRequest): Promise<QueryGetProvisionalModelResponse>;
     /** Queries a list of ProvisionalModel items. */
     ProvisionalModelAll(request: QueryAllProvisionalModelRequest): Promise<QueryAllProvisionalModelResponse>;
+    /** Queries a DeviceSoftwareCompliance by index. */
+    DeviceSoftwareCompliance(request: QueryGetDeviceSoftwareComplianceRequest): Promise<QueryGetDeviceSoftwareComplianceResponse>;
+    /** Queries a list of DeviceSoftwareCompliance items. */
+    DeviceSoftwareComplianceAll(request: QueryAllDeviceSoftwareComplianceRequest): Promise<QueryAllDeviceSoftwareComplianceResponse>;
 }
 export declare class QueryClientImpl implements Query {
     private readonly rpc;
@@ -211,6 +257,8 @@ export declare class QueryClientImpl implements Query {
     RevokedModelAll(request: QueryAllRevokedModelRequest): Promise<QueryAllRevokedModelResponse>;
     ProvisionalModel(request: QueryGetProvisionalModelRequest): Promise<QueryGetProvisionalModelResponse>;
     ProvisionalModelAll(request: QueryAllProvisionalModelRequest): Promise<QueryAllProvisionalModelResponse>;
+    DeviceSoftwareCompliance(request: QueryGetDeviceSoftwareComplianceRequest): Promise<QueryGetDeviceSoftwareComplianceResponse>;
+    DeviceSoftwareComplianceAll(request: QueryAllDeviceSoftwareComplianceRequest): Promise<QueryAllDeviceSoftwareComplianceResponse>;
 }
 interface Rpc {
     request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;

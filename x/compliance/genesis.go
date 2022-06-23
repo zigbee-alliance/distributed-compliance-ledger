@@ -25,6 +25,10 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	for _, elem := range genState.ProvisionalModelList {
 		k.SetProvisionalModel(ctx, elem)
 	}
+	// Set all the deviceSoftwareCompliance
+	for _, elem := range genState.DeviceSoftwareComplianceList {
+		k.SetDeviceSoftwareCompliance(ctx, elem)
+	}
 	// this line is used by starport scaffolding # genesis/module/init
 }
 
@@ -36,6 +40,7 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	genesis.CertifiedModelList = k.GetAllCertifiedModel(ctx)
 	genesis.RevokedModelList = k.GetAllRevokedModel(ctx)
 	genesis.ProvisionalModelList = k.GetAllProvisionalModel(ctx)
+	genesis.DeviceSoftwareComplianceList = k.GetAllDeviceSoftwareCompliance(ctx)
 	// this line is used by starport scaffolding # genesis/module/export
 
 	return genesis

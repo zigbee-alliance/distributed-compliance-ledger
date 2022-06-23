@@ -198,6 +198,35 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
+         * @name QueryDeviceSoftwareComplianceAll
+         * @summary Queries a list of DeviceSoftwareCompliance items.
+         * @request GET:/dcl/compliance/device-software-compliance
+         */
+        this.queryDeviceSoftwareComplianceAll = (query, params = {}) => this.request({
+            path: `/dcl/compliance/device-software-compliance`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryDeviceSoftwareCompliance
+         * @summary Queries a DeviceSoftwareCompliance by index.
+         * @request GET:/dcl/compliance/device-software-compliance/{cDCertificateId}
+         */
+        this.queryDeviceSoftwareCompliance = (cDCertificateId, params = {}) => this.request({
+            path: `/dcl/compliance/device-software-compliance/${cDCertificateId}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
          * @name QueryProvisionalModelAll
          * @summary Queries a list of ProvisionalModel items.
          * @request GET:/dcl/compliance/provisional-models

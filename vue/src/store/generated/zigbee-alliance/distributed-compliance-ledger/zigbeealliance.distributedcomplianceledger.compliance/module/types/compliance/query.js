@@ -5,6 +5,7 @@ import { PageRequest, PageResponse } from '../cosmos/base/query/v1beta1/paginati
 import { CertifiedModel } from '../compliance/certified_model';
 import { RevokedModel } from '../compliance/revoked_model';
 import { ProvisionalModel } from '../compliance/provisional_model';
+import { DeviceSoftwareCompliance } from '../compliance/device_software_compliance';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.compliance';
 const baseQueryGetComplianceInfoRequest = { vid: 0, pid: 0, softwareVersion: 0, certificationType: '' };
 export const QueryGetComplianceInfoRequest = {
@@ -1150,6 +1151,236 @@ export const QueryAllProvisionalModelResponse = {
         return message;
     }
 };
+const baseQueryGetDeviceSoftwareComplianceRequest = { cDCertificateId: '' };
+export const QueryGetDeviceSoftwareComplianceRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.cDCertificateId !== '') {
+            writer.uint32(10).string(message.cDCertificateId);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryGetDeviceSoftwareComplianceRequest };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.cDCertificateId = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryGetDeviceSoftwareComplianceRequest };
+        if (object.cDCertificateId !== undefined && object.cDCertificateId !== null) {
+            message.cDCertificateId = String(object.cDCertificateId);
+        }
+        else {
+            message.cDCertificateId = '';
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.cDCertificateId !== undefined && (obj.cDCertificateId = message.cDCertificateId);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryGetDeviceSoftwareComplianceRequest };
+        if (object.cDCertificateId !== undefined && object.cDCertificateId !== null) {
+            message.cDCertificateId = object.cDCertificateId;
+        }
+        else {
+            message.cDCertificateId = '';
+        }
+        return message;
+    }
+};
+const baseQueryGetDeviceSoftwareComplianceResponse = {};
+export const QueryGetDeviceSoftwareComplianceResponse = {
+    encode(message, writer = Writer.create()) {
+        if (message.deviceSoftwareCompliance !== undefined) {
+            DeviceSoftwareCompliance.encode(message.deviceSoftwareCompliance, writer.uint32(10).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryGetDeviceSoftwareComplianceResponse };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.deviceSoftwareCompliance = DeviceSoftwareCompliance.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryGetDeviceSoftwareComplianceResponse };
+        if (object.deviceSoftwareCompliance !== undefined && object.deviceSoftwareCompliance !== null) {
+            message.deviceSoftwareCompliance = DeviceSoftwareCompliance.fromJSON(object.deviceSoftwareCompliance);
+        }
+        else {
+            message.deviceSoftwareCompliance = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.deviceSoftwareCompliance !== undefined &&
+            (obj.deviceSoftwareCompliance = message.deviceSoftwareCompliance ? DeviceSoftwareCompliance.toJSON(message.deviceSoftwareCompliance) : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryGetDeviceSoftwareComplianceResponse };
+        if (object.deviceSoftwareCompliance !== undefined && object.deviceSoftwareCompliance !== null) {
+            message.deviceSoftwareCompliance = DeviceSoftwareCompliance.fromPartial(object.deviceSoftwareCompliance);
+        }
+        else {
+            message.deviceSoftwareCompliance = undefined;
+        }
+        return message;
+    }
+};
+const baseQueryAllDeviceSoftwareComplianceRequest = {};
+export const QueryAllDeviceSoftwareComplianceRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.pagination !== undefined) {
+            PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryAllDeviceSoftwareComplianceRequest };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.pagination = PageRequest.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryAllDeviceSoftwareComplianceRequest };
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageRequest.fromJSON(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.pagination !== undefined && (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryAllDeviceSoftwareComplianceRequest };
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageRequest.fromPartial(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    }
+};
+const baseQueryAllDeviceSoftwareComplianceResponse = {};
+export const QueryAllDeviceSoftwareComplianceResponse = {
+    encode(message, writer = Writer.create()) {
+        for (const v of message.deviceSoftwareCompliance) {
+            DeviceSoftwareCompliance.encode(v, writer.uint32(10).fork()).ldelim();
+        }
+        if (message.pagination !== undefined) {
+            PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryAllDeviceSoftwareComplianceResponse };
+        message.deviceSoftwareCompliance = [];
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.deviceSoftwareCompliance.push(DeviceSoftwareCompliance.decode(reader, reader.uint32()));
+                    break;
+                case 2:
+                    message.pagination = PageResponse.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryAllDeviceSoftwareComplianceResponse };
+        message.deviceSoftwareCompliance = [];
+        if (object.deviceSoftwareCompliance !== undefined && object.deviceSoftwareCompliance !== null) {
+            for (const e of object.deviceSoftwareCompliance) {
+                message.deviceSoftwareCompliance.push(DeviceSoftwareCompliance.fromJSON(e));
+            }
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageResponse.fromJSON(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        if (message.deviceSoftwareCompliance) {
+            obj.deviceSoftwareCompliance = message.deviceSoftwareCompliance.map((e) => (e ? DeviceSoftwareCompliance.toJSON(e) : undefined));
+        }
+        else {
+            obj.deviceSoftwareCompliance = [];
+        }
+        message.pagination !== undefined && (obj.pagination = message.pagination ? PageResponse.toJSON(message.pagination) : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryAllDeviceSoftwareComplianceResponse };
+        message.deviceSoftwareCompliance = [];
+        if (object.deviceSoftwareCompliance !== undefined && object.deviceSoftwareCompliance !== null) {
+            for (const e of object.deviceSoftwareCompliance) {
+                message.deviceSoftwareCompliance.push(DeviceSoftwareCompliance.fromPartial(e));
+            }
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageResponse.fromPartial(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    }
+};
 export class QueryClientImpl {
     constructor(rpc) {
         this.rpc = rpc;
@@ -1193,5 +1424,15 @@ export class QueryClientImpl {
         const data = QueryAllProvisionalModelRequest.encode(request).finish();
         const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.compliance.Query', 'ProvisionalModelAll', data);
         return promise.then((data) => QueryAllProvisionalModelResponse.decode(new Reader(data)));
+    }
+    DeviceSoftwareCompliance(request) {
+        const data = QueryGetDeviceSoftwareComplianceRequest.encode(request).finish();
+        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.compliance.Query', 'DeviceSoftwareCompliance', data);
+        return promise.then((data) => QueryGetDeviceSoftwareComplianceResponse.decode(new Reader(data)));
+    }
+    DeviceSoftwareComplianceAll(request) {
+        const data = QueryAllDeviceSoftwareComplianceRequest.encode(request).finish();
+        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.compliance.Query', 'DeviceSoftwareComplianceAll', data);
+        return promise.then((data) => QueryAllDeviceSoftwareComplianceResponse.decode(new Reader(data)));
     }
 }

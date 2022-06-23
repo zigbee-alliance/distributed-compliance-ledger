@@ -66,6 +66,11 @@ export interface ComplianceComplianceInfo {
   parentChild?: string;
 }
 
+export interface ComplianceDeviceSoftwareCompliance {
+  cDCertificateId?: string;
+  complianceInfo?: ComplianceComplianceInfo[];
+}
+
 export type ComplianceMsgCertifyModelResponse = object;
 
 export type ComplianceMsgProvisionModelResponse = object;
@@ -115,6 +120,21 @@ export interface ComplianceQueryAllComplianceInfoResponse {
   pagination?: V1Beta1PageResponse;
 }
 
+export interface ComplianceQueryAllDeviceSoftwareComplianceResponse {
+  deviceSoftwareCompliance?: ComplianceDeviceSoftwareCompliance[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
 export interface ComplianceQueryAllProvisionalModelResponse {
   provisionalModel?: ComplianceProvisionalModel[];
 
@@ -151,6 +171,10 @@ export interface ComplianceQueryGetCertifiedModelResponse {
 
 export interface ComplianceQueryGetComplianceInfoResponse {
   complianceInfo?: ComplianceComplianceInfo;
+}
+
+export interface ComplianceQueryGetDeviceSoftwareComplianceResponse {
+  deviceSoftwareCompliance?: ComplianceDeviceSoftwareCompliance;
 }
 
 export interface ComplianceQueryGetProvisionalModelResponse {
@@ -535,6 +559,48 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   ) =>
     this.request<ComplianceQueryGetComplianceInfoResponse, RpcStatus>({
       path: `/dcl/compliance/compliance-info/${vid}/${pid}/${softwareVersion}/${certificationType}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryDeviceSoftwareComplianceAll
+   * @summary Queries a list of DeviceSoftwareCompliance items.
+   * @request GET:/dcl/compliance/device-software-compliance
+   */
+  queryDeviceSoftwareComplianceAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<ComplianceQueryAllDeviceSoftwareComplianceResponse, RpcStatus>({
+      path: `/dcl/compliance/device-software-compliance`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryDeviceSoftwareCompliance
+   * @summary Queries a DeviceSoftwareCompliance by index.
+   * @request GET:/dcl/compliance/device-software-compliance/{cDCertificateId}
+   */
+  queryDeviceSoftwareCompliance = (cDCertificateId: string, params: RequestParams = {}) =>
+    this.request<ComplianceQueryGetDeviceSoftwareComplianceResponse, RpcStatus>({
+      path: `/dcl/compliance/device-software-compliance/${cDCertificateId}`,
       method: "GET",
       format: "json",
       ...params,

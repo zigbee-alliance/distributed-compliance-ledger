@@ -862,6 +862,198 @@ func (m *QueryAllProvisionalModelResponse) GetPagination() *query.PageResponse {
 	return nil
 }
 
+type QueryGetDeviceSoftwareComplianceRequest struct {
+	CDCertificateId string `protobuf:"bytes,1,opt,name=cDCertificateId,proto3" json:"cDCertificateId,omitempty"`
+}
+
+func (m *QueryGetDeviceSoftwareComplianceRequest) Reset() {
+	*m = QueryGetDeviceSoftwareComplianceRequest{}
+}
+func (m *QueryGetDeviceSoftwareComplianceRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryGetDeviceSoftwareComplianceRequest) ProtoMessage()    {}
+func (*QueryGetDeviceSoftwareComplianceRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_06039bbcb314fcaf, []int{16}
+}
+func (m *QueryGetDeviceSoftwareComplianceRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetDeviceSoftwareComplianceRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetDeviceSoftwareComplianceRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetDeviceSoftwareComplianceRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetDeviceSoftwareComplianceRequest.Merge(m, src)
+}
+func (m *QueryGetDeviceSoftwareComplianceRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetDeviceSoftwareComplianceRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetDeviceSoftwareComplianceRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetDeviceSoftwareComplianceRequest proto.InternalMessageInfo
+
+func (m *QueryGetDeviceSoftwareComplianceRequest) GetCDCertificateId() string {
+	if m != nil {
+		return m.CDCertificateId
+	}
+	return ""
+}
+
+type QueryGetDeviceSoftwareComplianceResponse struct {
+	DeviceSoftwareCompliance DeviceSoftwareCompliance `protobuf:"bytes,1,opt,name=deviceSoftwareCompliance,proto3" json:"deviceSoftwareCompliance"`
+}
+
+func (m *QueryGetDeviceSoftwareComplianceResponse) Reset() {
+	*m = QueryGetDeviceSoftwareComplianceResponse{}
+}
+func (m *QueryGetDeviceSoftwareComplianceResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryGetDeviceSoftwareComplianceResponse) ProtoMessage()    {}
+func (*QueryGetDeviceSoftwareComplianceResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_06039bbcb314fcaf, []int{17}
+}
+func (m *QueryGetDeviceSoftwareComplianceResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetDeviceSoftwareComplianceResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetDeviceSoftwareComplianceResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetDeviceSoftwareComplianceResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetDeviceSoftwareComplianceResponse.Merge(m, src)
+}
+func (m *QueryGetDeviceSoftwareComplianceResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetDeviceSoftwareComplianceResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetDeviceSoftwareComplianceResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetDeviceSoftwareComplianceResponse proto.InternalMessageInfo
+
+func (m *QueryGetDeviceSoftwareComplianceResponse) GetDeviceSoftwareCompliance() DeviceSoftwareCompliance {
+	if m != nil {
+		return m.DeviceSoftwareCompliance
+	}
+	return DeviceSoftwareCompliance{}
+}
+
+type QueryAllDeviceSoftwareComplianceRequest struct {
+	Pagination *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllDeviceSoftwareComplianceRequest) Reset() {
+	*m = QueryAllDeviceSoftwareComplianceRequest{}
+}
+func (m *QueryAllDeviceSoftwareComplianceRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryAllDeviceSoftwareComplianceRequest) ProtoMessage()    {}
+func (*QueryAllDeviceSoftwareComplianceRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_06039bbcb314fcaf, []int{18}
+}
+func (m *QueryAllDeviceSoftwareComplianceRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllDeviceSoftwareComplianceRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllDeviceSoftwareComplianceRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllDeviceSoftwareComplianceRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllDeviceSoftwareComplianceRequest.Merge(m, src)
+}
+func (m *QueryAllDeviceSoftwareComplianceRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllDeviceSoftwareComplianceRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllDeviceSoftwareComplianceRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllDeviceSoftwareComplianceRequest proto.InternalMessageInfo
+
+func (m *QueryAllDeviceSoftwareComplianceRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryAllDeviceSoftwareComplianceResponse struct {
+	DeviceSoftwareCompliance []DeviceSoftwareCompliance `protobuf:"bytes,1,rep,name=deviceSoftwareCompliance,proto3" json:"deviceSoftwareCompliance"`
+	Pagination               *query.PageResponse        `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllDeviceSoftwareComplianceResponse) Reset() {
+	*m = QueryAllDeviceSoftwareComplianceResponse{}
+}
+func (m *QueryAllDeviceSoftwareComplianceResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryAllDeviceSoftwareComplianceResponse) ProtoMessage()    {}
+func (*QueryAllDeviceSoftwareComplianceResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_06039bbcb314fcaf, []int{19}
+}
+func (m *QueryAllDeviceSoftwareComplianceResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllDeviceSoftwareComplianceResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllDeviceSoftwareComplianceResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllDeviceSoftwareComplianceResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllDeviceSoftwareComplianceResponse.Merge(m, src)
+}
+func (m *QueryAllDeviceSoftwareComplianceResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllDeviceSoftwareComplianceResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllDeviceSoftwareComplianceResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllDeviceSoftwareComplianceResponse proto.InternalMessageInfo
+
+func (m *QueryAllDeviceSoftwareComplianceResponse) GetDeviceSoftwareCompliance() []DeviceSoftwareCompliance {
+	if m != nil {
+		return m.DeviceSoftwareCompliance
+	}
+	return nil
+}
+
+func (m *QueryAllDeviceSoftwareComplianceResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*QueryGetComplianceInfoRequest)(nil), "zigbeealliance.distributedcomplianceledger.compliance.QueryGetComplianceInfoRequest")
 	proto.RegisterType((*QueryGetComplianceInfoResponse)(nil), "zigbeealliance.distributedcomplianceledger.compliance.QueryGetComplianceInfoResponse")
@@ -879,70 +1071,85 @@ func init() {
 	proto.RegisterType((*QueryGetProvisionalModelResponse)(nil), "zigbeealliance.distributedcomplianceledger.compliance.QueryGetProvisionalModelResponse")
 	proto.RegisterType((*QueryAllProvisionalModelRequest)(nil), "zigbeealliance.distributedcomplianceledger.compliance.QueryAllProvisionalModelRequest")
 	proto.RegisterType((*QueryAllProvisionalModelResponse)(nil), "zigbeealliance.distributedcomplianceledger.compliance.QueryAllProvisionalModelResponse")
+	proto.RegisterType((*QueryGetDeviceSoftwareComplianceRequest)(nil), "zigbeealliance.distributedcomplianceledger.compliance.QueryGetDeviceSoftwareComplianceRequest")
+	proto.RegisterType((*QueryGetDeviceSoftwareComplianceResponse)(nil), "zigbeealliance.distributedcomplianceledger.compliance.QueryGetDeviceSoftwareComplianceResponse")
+	proto.RegisterType((*QueryAllDeviceSoftwareComplianceRequest)(nil), "zigbeealliance.distributedcomplianceledger.compliance.QueryAllDeviceSoftwareComplianceRequest")
+	proto.RegisterType((*QueryAllDeviceSoftwareComplianceResponse)(nil), "zigbeealliance.distributedcomplianceledger.compliance.QueryAllDeviceSoftwareComplianceResponse")
 }
 
 func init() { proto.RegisterFile("compliance/query.proto", fileDescriptor_06039bbcb314fcaf) }
 
 var fileDescriptor_06039bbcb314fcaf = []byte{
-	// 926 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x98, 0x51, 0x6b, 0xf3, 0x54,
-	0x18, 0xc7, 0x7b, 0xda, 0xf7, 0x15, 0x3c, 0xce, 0xad, 0x3b, 0x8a, 0x94, 0x3a, 0xb3, 0x1a, 0x64,
-	0x2b, 0xc3, 0x26, 0x6c, 0xe2, 0x07, 0xe8, 0x86, 0x0e, 0x11, 0x61, 0xcb, 0x6a, 0xd5, 0x21, 0x8c,
-	0xb4, 0x39, 0x8d, 0x07, 0xd3, 0x9c, 0x2c, 0x49, 0xab, 0x75, 0xec, 0xc6, 0x7b, 0x41, 0x11, 0xc1,
-	0x21, 0xbb, 0xf0, 0xd2, 0x6f, 0xb2, 0xcb, 0x81, 0x20, 0x5e, 0x0d, 0xe9, 0x44, 0xd0, 0x4b, 0x3f,
-	0x81, 0xe4, 0xe4, 0x64, 0x4d, 0xd2, 0xa4, 0x95, 0x26, 0x7d, 0xd9, 0xcd, 0x08, 0xe7, 0x9c, 0x9c,
-	0xe7, 0xf9, 0xff, 0x9e, 0x7f, 0xf6, 0x3c, 0x1b, 0x7c, 0xa5, 0x4b, 0xfb, 0x96, 0x41, 0x54, 0xb3,
-	0x8b, 0xe5, 0xf3, 0x01, 0xb6, 0x47, 0x92, 0x65, 0x53, 0x97, 0xa2, 0xb7, 0xbf, 0x22, 0x7a, 0x07,
-	0x63, 0xd5, 0xf0, 0xf7, 0x24, 0x8d, 0x38, 0xae, 0x4d, 0x3a, 0x03, 0x17, 0x6b, 0x93, 0x37, 0x0c,
-	0xac, 0xe9, 0xd8, 0x96, 0x26, 0x0b, 0xd5, 0x0d, 0x9d, 0x52, 0xdd, 0xc0, 0xb2, 0x6a, 0x11, 0x59,
-	0x35, 0x4d, 0xea, 0xaa, 0x2e, 0xa1, 0xa6, 0xe3, 0x5f, 0x5a, 0xdd, 0xe9, 0x52, 0xa7, 0x4f, 0x1d,
-	0xb9, 0xa3, 0x3a, 0x3c, 0x9a, 0x3c, 0xdc, 0xed, 0x60, 0x57, 0xdd, 0x95, 0x2d, 0x55, 0x27, 0x26,
-	0x3b, 0xcc, 0xcf, 0xd6, 0x42, 0x89, 0x4d, 0x1e, 0xcf, 0x88, 0xd9, 0xa3, 0x49, 0x27, 0xb0, 0xed,
-	0x92, 0x1e, 0xc1, 0xda, 0x59, 0x9f, 0x6a, 0xd8, 0xe0, 0x27, 0x84, 0xd0, 0x09, 0x1b, 0x0f, 0xe9,
-	0xe7, 0xb1, 0x7d, 0x31, 0xb4, 0x6f, 0xd9, 0x74, 0x48, 0x1c, 0x42, 0x4d, 0xd5, 0x88, 0x9c, 0x79,
-	0x59, 0xa7, 0x3a, 0x65, 0x8f, 0xb2, 0xf7, 0xe4, 0xaf, 0x8a, 0x3f, 0x01, 0xf8, 0xda, 0xb1, 0x27,
-	0xe0, 0x10, 0xbb, 0x07, 0x0f, 0x97, 0xbc, 0x67, 0xf6, 0xa8, 0x82, 0xcf, 0x07, 0xd8, 0x71, 0x51,
-	0x19, 0x96, 0x86, 0x44, 0xab, 0x80, 0x1a, 0xa8, 0x3f, 0x55, 0xbc, 0x47, 0x6f, 0xc5, 0x22, 0x5a,
-	0xa5, 0xe8, 0xaf, 0x58, 0x44, 0x43, 0x75, 0xb8, 0xe6, 0xd0, 0x9e, 0xfb, 0x85, 0x6a, 0xe3, 0x36,
-	0xb6, 0xbd, 0xe0, 0x95, 0x52, 0x0d, 0xd4, 0x5f, 0x54, 0xe2, 0xcb, 0xe8, 0x4d, 0xb8, 0xce, 0x25,
-	0x76, 0x19, 0xa4, 0xd6, 0xc8, 0xc2, 0x95, 0x27, 0x35, 0x50, 0x7f, 0x5e, 0x99, 0xde, 0x10, 0x7f,
-	0x00, 0x50, 0x48, 0xcb, 0xce, 0xb1, 0xa8, 0xe9, 0x60, 0xe4, 0xc0, 0xd5, 0x6e, 0x64, 0x87, 0x65,
-	0xfa, 0xc2, 0xde, 0x3b, 0xd2, 0x42, 0x85, 0x97, 0xa2, 0x61, 0xf6, 0x9f, 0xdc, 0xdc, 0x6d, 0x16,
-	0x94, 0x58, 0x08, 0x51, 0xe7, 0xd0, 0x9a, 0x86, 0x91, 0x0c, 0xed, 0x5d, 0x08, 0x27, 0x46, 0xe0,
-	0x19, 0x6d, 0x49, 0xbe, 0x6b, 0x24, 0xcf, 0x35, 0x92, 0xef, 0x51, 0xee, 0x1a, 0xe9, 0x48, 0xd5,
-	0x31, 0x7f, 0x57, 0x09, 0xbd, 0x29, 0xde, 0x05, 0x00, 0x12, 0x22, 0xcd, 0x00, 0x50, 0x5a, 0x32,
-	0x00, 0x74, 0x18, 0xd1, 0x57, 0x64, 0xfa, 0xb6, 0xe7, 0xea, 0xf3, 0x33, 0x8e, 0x08, 0x8c, 0xf8,
-	0x2f, 0xf0, 0xfe, 0x07, 0x9e, 0x6d, 0x1f, 0x9d, 0xff, 0x62, 0xd9, 0x85, 0xf0, 0x47, 0x76, 0xb2,
-	0xfa, 0x2f, 0x72, 0xd9, 0x03, 0xfe, 0xc8, 0x6a, 0xc4, 0x7f, 0x89, 0xd0, 0x96, 0xe2, 0xbf, 0xff,
-	0x0f, 0xa0, 0xb4, 0x64, 0x00, 0xf9, 0xf9, 0xef, 0x0a, 0xc0, 0x57, 0x83, 0x0a, 0x2b, 0xfe, 0x6f,
-	0xd6, 0x47, 0xe3, 0xbe, 0x6f, 0x00, 0xdc, 0x48, 0xce, 0x8d, 0xa3, 0xef, 0xc3, 0x15, 0x3b, 0xb4,
-	0xce, 0xeb, 0x7c, 0xb0, 0x20, 0xf8, 0x70, 0x08, 0x8e, 0x3d, 0x72, 0xbd, 0x88, 0x39, 0xaa, 0xa6,
-	0x61, 0x24, 0xa1, 0xca, 0xcb, 0x73, 0xbf, 0x05, 0xb2, 0xa7, 0xe2, 0xa4, 0xca, 0x2e, 0x2d, 0x51,
-	0x76, 0x7e, 0x5e, 0xbb, 0x06, 0x70, 0x33, 0xa8, 0xe7, 0xd1, 0xa4, 0x4b, 0x3f, 0x1a, 0xbf, 0x5d,
-	0x03, 0x58, 0x4b, 0xcf, 0x8f, 0xc3, 0x1f, 0xc1, 0xb2, 0x15, 0xdb, 0xe3, 0xb5, 0x3e, 0x5c, 0xb0,
-	0x00, 0xf1, 0x50, 0xbc, 0x08, 0x53, 0x61, 0x44, 0xc2, 0xf1, 0x35, 0x0d, 0x23, 0x0d, 0x5f, 0x5e,
-	0x1e, 0xfc, 0x2b, 0x40, 0x91, 0x18, 0x6b, 0x26, 0x8a, 0xd2, 0x33, 0x40, 0x91, 0x9b, 0x27, 0xf7,
-	0x7e, 0x29, 0xc3, 0xa7, 0x4c, 0x28, 0xfa, 0xb1, 0x08, 0x57, 0xa3, 0xbd, 0x1f, 0xb5, 0x16, 0x94,
-	0x31, 0x73, 0xa0, 0xac, 0x7e, 0x98, 0xf3, 0xad, 0xbe, 0x2a, 0xf1, 0x93, 0xaf, 0x7f, 0xfd, 0xf3,
-	0xfb, 0xe2, 0x09, 0x3a, 0x96, 0xb5, 0xae, 0x21, 0x27, 0x0e, 0xdd, 0x0d, 0x6f, 0xe8, 0x96, 0x2f,
-	0x86, 0x44, 0xbb, 0x94, 0x2f, 0x2c, 0xf6, 0x33, 0xf6, 0xc5, 0x5c, 0xca, 0x17, 0x53, 0xdf, 0xc5,
-	0x25, 0xfa, 0x1b, 0xc0, 0xf5, 0x68, 0xd4, 0xa6, 0x61, 0x64, 0xa3, 0x93, 0x36, 0x39, 0x66, 0xa3,
-	0x93, 0x3a, 0x25, 0x8a, 0xdb, 0x8c, 0xce, 0xeb, 0x68, 0x73, 0x0e, 0x1d, 0x74, 0xe5, 0xd9, 0x20,
-	0xda, 0x6c, 0x33, 0xdb, 0x20, 0x69, 0x44, 0xc9, 0x6e, 0x83, 0xc4, 0x71, 0x44, 0x3c, 0x65, 0x42,
-	0x5b, 0x48, 0x99, 0x12, 0x1a, 0x9c, 0x6f, 0xb0, 0xbf, 0x8a, 0x9c, 0x05, 0x7c, 0xf0, 0x8f, 0xe7,
-	0x83, 0x48, 0xd8, 0x5c, 0x7c, 0x90, 0x3f, 0x9e, 0xd4, 0x69, 0x4d, 0xac, 0x33, 0x3c, 0x22, 0xaa,
-	0xcd, 0xc3, 0x83, 0xbe, 0x2b, 0xc2, 0x95, 0x70, 0x6f, 0x44, 0x4a, 0xc6, 0x82, 0x25, 0xcc, 0x0c,
-	0xd5, 0x93, 0x5c, 0xef, 0xe4, 0x1a, 0x3f, 0x66, 0x1a, 0x15, 0x74, 0x14, 0xd7, 0xc8, 0xdb, 0xfa,
-	0xe2, 0x06, 0x18, 0x03, 0xb8, 0x16, 0x0e, 0xe9, 0x95, 0x5f, 0xc9, 0x58, 0xa8, 0xdc, 0xb1, 0xa4,
-	0x8c, 0x4d, 0xe2, 0x16, 0xc3, 0x52, 0x43, 0xc2, 0x6c, 0x2c, 0xe8, 0xe7, 0x22, 0x2c, 0xc7, 0x1b,
-	0x11, 0x6a, 0x67, 0x2c, 0x54, 0x4a, 0xc3, 0xae, 0x7e, 0x94, 0xfb, 0xbd, 0x5c, 0xed, 0xa7, 0x4c,
-	0x6d, 0x1b, 0xb5, 0xe2, 0x6a, 0x43, 0xbd, 0x74, 0x71, 0x23, 0xfc, 0x0b, 0xe0, 0x4b, 0xf1, 0xd0,
-	0x9e, 0x19, 0xda, 0x19, 0x0b, 0xb7, 0x14, 0x4c, 0x33, 0x66, 0x18, 0x71, 0x87, 0x61, 0x7a, 0x03,
-	0x89, 0xf3, 0x31, 0xed, 0xe3, 0x9b, 0xb1, 0x00, 0x6e, 0xc7, 0x02, 0xf8, 0x63, 0x2c, 0x80, 0x6f,
-	0xef, 0x85, 0xc2, 0xed, 0xbd, 0x50, 0xf8, 0xfd, 0x5e, 0x28, 0x9c, 0xbe, 0xaf, 0x13, 0xf7, 0xb3,
-	0x41, 0xc7, 0x8b, 0x2c, 0xfb, 0x89, 0x36, 0x82, 0x4c, 0xe5, 0x50, 0xa6, 0x8d, 0x50, 0xb3, 0xf1,
-	0x73, 0x95, 0xbf, 0x0c, 0xc7, 0x74, 0x47, 0x16, 0x76, 0x3a, 0xcf, 0xb1, 0xff, 0x4c, 0xbd, 0xf5,
-	0x5f, 0x00, 0x00, 0x00, 0xff, 0xff, 0xa5, 0x0c, 0xfc, 0x3e, 0xd2, 0x13, 0x00, 0x00,
+	// 1098 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x98, 0x41, 0x6f, 0xdc, 0x44,
+	0x14, 0xc7, 0x33, 0xbb, 0x2d, 0x52, 0x87, 0xd2, 0xa4, 0x43, 0x85, 0x56, 0xdb, 0xe2, 0x2c, 0x23,
+	0xd4, 0xac, 0x42, 0xd7, 0x56, 0x83, 0xb8, 0x21, 0xa4, 0x6d, 0x02, 0x51, 0x85, 0x10, 0xa9, 0x13,
+	0x02, 0x54, 0xa8, 0x2b, 0xef, 0x7a, 0x62, 0x46, 0x4c, 0x3c, 0x8e, 0xed, 0x2c, 0x84, 0x28, 0x17,
+	0x2e, 0x9c, 0x90, 0x28, 0x08, 0x89, 0x0a, 0xf5, 0xc0, 0x17, 0xe1, 0xdc, 0x63, 0x25, 0x24, 0xc4,
+	0x29, 0x42, 0x1b, 0x84, 0x04, 0x47, 0x3e, 0x01, 0xf2, 0x78, 0x9c, 0xb5, 0xbd, 0xf6, 0x6e, 0xb4,
+	0xf6, 0xd2, 0x5c, 0x22, 0x6b, 0xe6, 0x79, 0xde, 0x7b, 0xbf, 0xf7, 0x8f, 0xf3, 0x9f, 0xc0, 0x97,
+	0x7a, 0x7c, 0xd7, 0x61, 0xd4, 0xb0, 0x7b, 0x44, 0xdb, 0xdb, 0x27, 0xee, 0x81, 0xea, 0xb8, 0xdc,
+	0xe7, 0xe8, 0x8d, 0x2f, 0xa9, 0xd5, 0x25, 0xc4, 0x60, 0xe1, 0x9e, 0x6a, 0x52, 0xcf, 0x77, 0x69,
+	0x77, 0xdf, 0x27, 0xe6, 0xf0, 0x0d, 0x46, 0x4c, 0x8b, 0xb8, 0xea, 0x70, 0xa1, 0x7e, 0xc3, 0xe2,
+	0xdc, 0x62, 0x44, 0x33, 0x1c, 0xaa, 0x19, 0xb6, 0xcd, 0x7d, 0xc3, 0xa7, 0xdc, 0xf6, 0xc2, 0x43,
+	0xeb, 0xcb, 0x3d, 0xee, 0xed, 0x72, 0x4f, 0xeb, 0x1a, 0x9e, 0xcc, 0xa6, 0xf5, 0x6f, 0x77, 0x89,
+	0x6f, 0xdc, 0xd6, 0x1c, 0xc3, 0xa2, 0xb6, 0x08, 0x96, 0xb1, 0x8d, 0x58, 0x61, 0xc3, 0xc7, 0x0e,
+	0xb5, 0x77, 0x78, 0x56, 0x04, 0x71, 0x7d, 0xba, 0x43, 0x89, 0xd9, 0xd9, 0xe5, 0x26, 0x61, 0x32,
+	0x42, 0x89, 0x45, 0xb8, 0xa4, 0xcf, 0x3f, 0x4b, 0xed, 0xe3, 0xd8, 0xbe, 0xe3, 0xf2, 0x3e, 0xf5,
+	0x28, 0xb7, 0x0d, 0x96, 0x88, 0x79, 0x2d, 0x16, 0x63, 0x92, 0x3e, 0xed, 0x91, 0x8e, 0xc7, 0x77,
+	0xfc, 0xcf, 0x0d, 0x97, 0x74, 0x86, 0x5b, 0x32, 0xf8, 0x9a, 0xc5, 0x2d, 0x2e, 0x1e, 0xb5, 0xe0,
+	0x29, 0x5c, 0xc5, 0x3f, 0x01, 0xf8, 0xf2, 0xbd, 0xa0, 0xdb, 0x75, 0xe2, 0xaf, 0x9e, 0xbe, 0x72,
+	0xd7, 0xde, 0xe1, 0x3a, 0xd9, 0xdb, 0x27, 0x9e, 0x8f, 0x16, 0x60, 0xb5, 0x4f, 0xcd, 0x1a, 0x68,
+	0x80, 0xe6, 0x45, 0x3d, 0x78, 0x0c, 0x56, 0x1c, 0x6a, 0xd6, 0x2a, 0xe1, 0x8a, 0x43, 0x4d, 0xd4,
+	0x84, 0xf3, 0x51, 0xe2, 0x6d, 0xe2, 0x06, 0x95, 0xd6, 0xaa, 0x0d, 0xd0, 0x7c, 0x41, 0x4f, 0x2f,
+	0xa3, 0x5b, 0xf0, 0xaa, 0xe4, 0xd1, 0x13, 0x44, 0xb7, 0x0e, 0x1c, 0x52, 0xbb, 0xd0, 0x00, 0xcd,
+	0x4b, 0xfa, 0xe8, 0x06, 0xfe, 0x01, 0x40, 0x25, 0xaf, 0x3a, 0xcf, 0xe1, 0xb6, 0x47, 0x90, 0x07,
+	0xaf, 0xf4, 0x12, 0x3b, 0xa2, 0xd2, 0xe7, 0x57, 0xde, 0x56, 0xa7, 0x52, 0x89, 0x9a, 0x4c, 0x73,
+	0xe7, 0xc2, 0x93, 0xe3, 0xc5, 0x39, 0x3d, 0x95, 0x02, 0x5b, 0x12, 0x5a, 0x9b, 0xb1, 0x6c, 0x68,
+	0xef, 0x40, 0x38, 0x54, 0x8d, 0xac, 0xe8, 0xa6, 0x1a, 0x4a, 0x4c, 0x0d, 0x24, 0xa6, 0x86, 0x82,
+	0x96, 0x12, 0x53, 0x37, 0x0c, 0x8b, 0xc8, 0x77, 0xf5, 0xd8, 0x9b, 0xf8, 0x38, 0x02, 0x90, 0x91,
+	0x69, 0x0c, 0x80, 0xea, 0x8c, 0x01, 0xa0, 0xf5, 0x44, 0x7f, 0x15, 0xd1, 0xdf, 0xd2, 0xc4, 0xfe,
+	0xc2, 0x8a, 0x13, 0x0d, 0x26, 0xf4, 0x17, 0xfd, 0xa2, 0xbc, 0x17, 0x68, 0xfc, 0xdc, 0xe9, 0x2f,
+	0x55, 0x5d, 0x0c, 0x7f, 0x62, 0xa7, 0xa8, 0xfe, 0x12, 0x87, 0x9d, 0xe2, 0x4f, 0xac, 0x26, 0xf4,
+	0x97, 0x09, 0x6d, 0x26, 0xfa, 0x3b, 0x3b, 0x80, 0xea, 0x8c, 0x01, 0x94, 0xa7, 0xbf, 0x47, 0x00,
+	0x5e, 0x8f, 0x26, 0xac, 0x87, 0x9f, 0xe1, 0x73, 0xa3, 0xbe, 0x6f, 0x00, 0xbc, 0x91, 0x5d, 0x9b,
+	0x44, 0xbf, 0x0b, 0x2f, 0xbb, 0xb1, 0x75, 0x39, 0xe7, 0xd5, 0x29, 0xc1, 0xc7, 0x53, 0x48, 0xec,
+	0x89, 0xe3, 0x31, 0x91, 0xa8, 0xda, 0x8c, 0x65, 0xa1, 0x2a, 0x4b, 0x73, 0xbf, 0x45, 0x6d, 0x8f,
+	0xe4, 0xc9, 0x6d, 0xbb, 0x3a, 0xc3, 0xb6, 0xcb, 0xd3, 0xda, 0x63, 0x00, 0x17, 0xa3, 0x79, 0x6e,
+	0x0c, 0xff, 0xa4, 0x9f, 0x1b, 0xbd, 0x3d, 0x06, 0xb0, 0x91, 0x5f, 0x9f, 0x84, 0x7f, 0x00, 0x17,
+	0x9c, 0xd4, 0x9e, 0x9c, 0xf5, 0xfa, 0x94, 0x03, 0x48, 0xa7, 0x92, 0x43, 0x18, 0x49, 0x83, 0xa9,
+	0xc4, 0xd7, 0x66, 0x2c, 0x0f, 0x5f, 0x59, 0x1a, 0xfc, 0x2b, 0x42, 0x91, 0x99, 0x6b, 0x2c, 0x8a,
+	0xea, 0xff, 0x80, 0xa2, 0x3c, 0x4d, 0x6e, 0xc2, 0xa5, 0x68, 0xe4, 0x6b, 0xc2, 0x41, 0x6e, 0x4a,
+	0x09, 0x0d, 0x6d, 0x40, 0xc4, 0xb6, 0x09, 0xe7, 0x7b, 0x6b, 0xab, 0xa7, 0xaa, 0x21, 0x77, 0x43,
+	0x99, 0x5e, 0xd2, 0xd3, 0xcb, 0xf8, 0x17, 0x00, 0x9b, 0x93, 0x4f, 0x95, 0x14, 0x1f, 0x02, 0x58,
+	0x33, 0x73, 0x82, 0xe4, 0x04, 0xdf, 0x9f, 0x12, 0x67, 0x5e, 0x6e, 0x89, 0x35, 0x37, 0x2d, 0xde,
+	0x93, 0x54, 0xda, 0x8c, 0x4d, 0xa2, 0x52, 0x96, 0xe2, 0xbe, 0xae, 0x48, 0x66, 0x63, 0x73, 0x9e,
+	0x8d, 0x59, 0xf5, 0x19, 0x30, 0x2b, 0x4d, 0x92, 0x2b, 0x83, 0x6b, 0xf0, 0xa2, 0x20, 0x81, 0x7e,
+	0xac, 0xc0, 0x2b, 0x49, 0x3b, 0x8a, 0xb6, 0xa6, 0x6c, 0x6b, 0xec, 0x1d, 0xa7, 0xfe, 0x41, 0xc9,
+	0xa7, 0x86, 0x5d, 0xe1, 0x8f, 0xbf, 0xfa, 0xf5, 0xcf, 0xef, 0x2b, 0x9b, 0xe8, 0x9e, 0x66, 0xf6,
+	0x98, 0x96, 0x79, 0x69, 0x6c, 0x05, 0x97, 0x46, 0xed, 0xb0, 0x4f, 0xcd, 0x23, 0xed, 0xd0, 0x11,
+	0x3f, 0x53, 0x1f, 0xf1, 0x23, 0xed, 0x70, 0xe4, 0x53, 0x7d, 0x84, 0xfe, 0x06, 0xf0, 0x6a, 0x32,
+	0x6b, 0x9b, 0xb1, 0x62, 0x74, 0xf2, 0x2e, 0x33, 0xc5, 0xe8, 0xe4, 0x5e, 0x5c, 0xf0, 0x92, 0xa0,
+	0xf3, 0x0a, 0x5a, 0x9c, 0x40, 0x07, 0x3d, 0x0a, 0x64, 0x90, 0xf4, 0x7f, 0x85, 0x65, 0x90, 0xe5,
+	0x9a, 0x8b, 0xcb, 0x20, 0xd3, 0x21, 0xe3, 0xfb, 0xa2, 0xd1, 0x2d, 0xa4, 0x8f, 0x34, 0x1a, 0xc5,
+	0xb7, 0xc4, 0xad, 0xde, 0x9b, 0x42, 0x07, 0xff, 0x04, 0x3a, 0x48, 0xa4, 0x2d, 0x45, 0x07, 0xe5,
+	0xe3, 0xc9, 0xbd, 0x40, 0xe0, 0xa6, 0xc0, 0x83, 0x51, 0x63, 0x12, 0x1e, 0xf4, 0xb0, 0x02, 0x2f,
+	0xc7, 0xed, 0x1a, 0xd2, 0x0b, 0x0e, 0x2c, 0xc3, 0xc6, 0xd6, 0x37, 0x4b, 0x3d, 0x53, 0xf6, 0xf8,
+	0x91, 0xe8, 0x51, 0x47, 0x1b, 0xe9, 0x1e, 0xa5, 0xd3, 0x9c, 0x5e, 0x00, 0x03, 0x00, 0xe7, 0xe3,
+	0x29, 0x83, 0xf1, 0xeb, 0x05, 0x07, 0x55, 0x3a, 0x96, 0x1c, 0x27, 0x8f, 0x6f, 0x0a, 0x2c, 0x0d,
+	0xa4, 0x8c, 0xc7, 0x82, 0x7e, 0xae, 0xc0, 0x85, 0xb4, 0x37, 0x42, 0xdb, 0x05, 0x07, 0x95, 0xe3,
+	0x21, 0xeb, 0x1f, 0x96, 0x7e, 0xae, 0xec, 0xf6, 0x13, 0xd1, 0xed, 0x36, 0xda, 0x4a, 0x77, 0x1b,
+	0xb3, 0x77, 0xd3, 0x0b, 0xe1, 0x5f, 0x00, 0x5f, 0x4c, 0xa7, 0x0e, 0xc4, 0xb0, 0x5d, 0x70, 0x70,
+	0x33, 0xc1, 0x34, 0xc6, 0x56, 0xe3, 0x65, 0x81, 0xe9, 0x55, 0x84, 0x27, 0x63, 0x0a, 0x84, 0x51,
+	0xcb, 0x73, 0x2c, 0xe8, 0x41, 0xc1, 0x41, 0x4e, 0xb0, 0x7e, 0xf5, 0xce, 0xcc, 0xce, 0x97, 0x24,
+	0xd6, 0x04, 0x89, 0xb7, 0xd0, 0x9b, 0x69, 0x12, 0xa1, 0x09, 0x6b, 0x45, 0xba, 0x68, 0xc5, 0xb6,
+	0x0e, 0x53, 0x66, 0xfc, 0x08, 0x7d, 0x57, 0x81, 0xd7, 0xf3, 0x52, 0x05, 0x02, 0x79, 0x50, 0x70,
+	0x90, 0x33, 0xc5, 0x74, 0x06, 0x37, 0x8c, 0x57, 0x04, 0xa6, 0x5b, 0x68, 0xf9, 0xec, 0x98, 0xee,
+	0x90, 0x27, 0x03, 0x05, 0x3c, 0x1d, 0x28, 0xe0, 0x8f, 0x81, 0x02, 0xbe, 0x3d, 0x51, 0xe6, 0x9e,
+	0x9e, 0x28, 0x73, 0xbf, 0x9f, 0x28, 0x73, 0xf7, 0xdf, 0xb5, 0xa8, 0xff, 0xe9, 0x7e, 0x37, 0xa8,
+	0x44, 0x0b, 0x0b, 0x6f, 0x45, 0x95, 0x6b, 0xb1, 0xca, 0x63, 0x87, 0xb5, 0xc2, 0xda, 0xb5, 0x2f,
+	0xe2, 0xb9, 0xfd, 0x03, 0x87, 0x78, 0xdd, 0xe7, 0xc4, 0x7f, 0xd9, 0x5f, 0xff, 0x2f, 0x00, 0x00,
+	0xff, 0xff, 0x61, 0x71, 0x5b, 0x6a, 0xcb, 0x18, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -973,6 +1180,10 @@ type QueryClient interface {
 	ProvisionalModel(ctx context.Context, in *QueryGetProvisionalModelRequest, opts ...grpc.CallOption) (*QueryGetProvisionalModelResponse, error)
 	// Queries a list of ProvisionalModel items.
 	ProvisionalModelAll(ctx context.Context, in *QueryAllProvisionalModelRequest, opts ...grpc.CallOption) (*QueryAllProvisionalModelResponse, error)
+	// Queries a DeviceSoftwareCompliance by index.
+	DeviceSoftwareCompliance(ctx context.Context, in *QueryGetDeviceSoftwareComplianceRequest, opts ...grpc.CallOption) (*QueryGetDeviceSoftwareComplianceResponse, error)
+	// Queries a list of DeviceSoftwareCompliance items.
+	DeviceSoftwareComplianceAll(ctx context.Context, in *QueryAllDeviceSoftwareComplianceRequest, opts ...grpc.CallOption) (*QueryAllDeviceSoftwareComplianceResponse, error)
 }
 
 type queryClient struct {
@@ -1055,6 +1266,24 @@ func (c *queryClient) ProvisionalModelAll(ctx context.Context, in *QueryAllProvi
 	return out, nil
 }
 
+func (c *queryClient) DeviceSoftwareCompliance(ctx context.Context, in *QueryGetDeviceSoftwareComplianceRequest, opts ...grpc.CallOption) (*QueryGetDeviceSoftwareComplianceResponse, error) {
+	out := new(QueryGetDeviceSoftwareComplianceResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.compliance.Query/DeviceSoftwareCompliance", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) DeviceSoftwareComplianceAll(ctx context.Context, in *QueryAllDeviceSoftwareComplianceRequest, opts ...grpc.CallOption) (*QueryAllDeviceSoftwareComplianceResponse, error) {
+	out := new(QueryAllDeviceSoftwareComplianceResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.compliance.Query/DeviceSoftwareComplianceAll", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 type QueryServer interface {
 	// Queries a ComplianceInfo by index.
@@ -1073,6 +1302,10 @@ type QueryServer interface {
 	ProvisionalModel(context.Context, *QueryGetProvisionalModelRequest) (*QueryGetProvisionalModelResponse, error)
 	// Queries a list of ProvisionalModel items.
 	ProvisionalModelAll(context.Context, *QueryAllProvisionalModelRequest) (*QueryAllProvisionalModelResponse, error)
+	// Queries a DeviceSoftwareCompliance by index.
+	DeviceSoftwareCompliance(context.Context, *QueryGetDeviceSoftwareComplianceRequest) (*QueryGetDeviceSoftwareComplianceResponse, error)
+	// Queries a list of DeviceSoftwareCompliance items.
+	DeviceSoftwareComplianceAll(context.Context, *QueryAllDeviceSoftwareComplianceRequest) (*QueryAllDeviceSoftwareComplianceResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
@@ -1102,6 +1335,12 @@ func (*UnimplementedQueryServer) ProvisionalModel(ctx context.Context, req *Quer
 }
 func (*UnimplementedQueryServer) ProvisionalModelAll(ctx context.Context, req *QueryAllProvisionalModelRequest) (*QueryAllProvisionalModelResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ProvisionalModelAll not implemented")
+}
+func (*UnimplementedQueryServer) DeviceSoftwareCompliance(ctx context.Context, req *QueryGetDeviceSoftwareComplianceRequest) (*QueryGetDeviceSoftwareComplianceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeviceSoftwareCompliance not implemented")
+}
+func (*UnimplementedQueryServer) DeviceSoftwareComplianceAll(ctx context.Context, req *QueryAllDeviceSoftwareComplianceRequest) (*QueryAllDeviceSoftwareComplianceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeviceSoftwareComplianceAll not implemented")
 }
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
@@ -1252,6 +1491,42 @@ func _Query_ProvisionalModelAll_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_DeviceSoftwareCompliance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetDeviceSoftwareComplianceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).DeviceSoftwareCompliance(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.compliance.Query/DeviceSoftwareCompliance",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).DeviceSoftwareCompliance(ctx, req.(*QueryGetDeviceSoftwareComplianceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_DeviceSoftwareComplianceAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryAllDeviceSoftwareComplianceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).DeviceSoftwareComplianceAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.compliance.Query/DeviceSoftwareComplianceAll",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).DeviceSoftwareComplianceAll(ctx, req.(*QueryAllDeviceSoftwareComplianceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Query_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "zigbeealliance.distributedcomplianceledger.compliance.Query",
 	HandlerType: (*QueryServer)(nil),
@@ -1287,6 +1562,14 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ProvisionalModelAll",
 			Handler:    _Query_ProvisionalModelAll_Handler,
+		},
+		{
+			MethodName: "DeviceSoftwareCompliance",
+			Handler:    _Query_DeviceSoftwareCompliance_Handler,
+		},
+		{
+			MethodName: "DeviceSoftwareComplianceAll",
+			Handler:    _Query_DeviceSoftwareComplianceAll_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -1941,6 +2224,153 @@ func (m *QueryAllProvisionalModelResponse) MarshalToSizedBuffer(dAtA []byte) (in
 	return len(dAtA) - i, nil
 }
 
+func (m *QueryGetDeviceSoftwareComplianceRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetDeviceSoftwareComplianceRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetDeviceSoftwareComplianceRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.CDCertificateId) > 0 {
+		i -= len(m.CDCertificateId)
+		copy(dAtA[i:], m.CDCertificateId)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.CDCertificateId)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetDeviceSoftwareComplianceResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetDeviceSoftwareComplianceResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetDeviceSoftwareComplianceResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.DeviceSoftwareCompliance.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllDeviceSoftwareComplianceRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllDeviceSoftwareComplianceRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllDeviceSoftwareComplianceRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllDeviceSoftwareComplianceResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllDeviceSoftwareComplianceResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllDeviceSoftwareComplianceResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.DeviceSoftwareCompliance) > 0 {
+		for iNdEx := len(m.DeviceSoftwareCompliance) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.DeviceSoftwareCompliance[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintQuery(dAtA []byte, offset int, v uint64) int {
 	offset -= sovQuery(v)
 	base := offset
@@ -2201,6 +2631,62 @@ func (m *QueryAllProvisionalModelResponse) Size() (n int) {
 	_ = l
 	if len(m.ProvisionalModel) > 0 {
 		for _, e := range m.ProvisionalModel {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetDeviceSoftwareComplianceRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.CDCertificateId)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetDeviceSoftwareComplianceResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.DeviceSoftwareCompliance.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	return n
+}
+
+func (m *QueryAllDeviceSoftwareComplianceRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryAllDeviceSoftwareComplianceResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.DeviceSoftwareCompliance) > 0 {
+		for _, e := range m.DeviceSoftwareCompliance {
 			l = e.Size()
 			n += 1 + l + sovQuery(uint64(l))
 		}
@@ -3870,6 +4356,377 @@ func (m *QueryAllProvisionalModelResponse) Unmarshal(dAtA []byte) error {
 			}
 			m.ProvisionalModel = append(m.ProvisionalModel, ProvisionalModel{})
 			if err := m.ProvisionalModel[len(m.ProvisionalModel)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetDeviceSoftwareComplianceRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetDeviceSoftwareComplianceRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetDeviceSoftwareComplianceRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CDCertificateId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.CDCertificateId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetDeviceSoftwareComplianceResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetDeviceSoftwareComplianceResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetDeviceSoftwareComplianceResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DeviceSoftwareCompliance", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.DeviceSoftwareCompliance.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllDeviceSoftwareComplianceRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllDeviceSoftwareComplianceRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllDeviceSoftwareComplianceRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllDeviceSoftwareComplianceResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllDeviceSoftwareComplianceResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllDeviceSoftwareComplianceResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DeviceSoftwareCompliance", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.DeviceSoftwareCompliance = append(m.DeviceSoftwareCompliance, DeviceSoftwareCompliance{})
+			if err := m.DeviceSoftwareCompliance[len(m.DeviceSoftwareCompliance)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex

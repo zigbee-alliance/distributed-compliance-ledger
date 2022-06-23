@@ -7,6 +7,7 @@ import "compliance/compliance_info.proto";
 import "compliance/certified_model.proto";
 import "compliance/revoked_model.proto";
 import "compliance/provisional_model.proto";
+import "compliance/device_software_compliance.proto";
 // this line is used by starport scaffolding # 1
 import "gogoproto/gogo.proto";
 
@@ -52,6 +53,16 @@ service Query {
 	// Queries a list of ProvisionalModel items.
 	rpc ProvisionalModelAll(QueryAllProvisionalModelRequest) returns (QueryAllProvisionalModelResponse) {
 		option (google.api.http).get = "/dcl/compliance/provisional-models";
+	}
+
+// Queries a DeviceSoftwareCompliance by index.
+	rpc DeviceSoftwareCompliance(QueryGetDeviceSoftwareComplianceRequest) returns (QueryGetDeviceSoftwareComplianceResponse) {
+		option (google.api.http).get = "/dcl/compliance/device-software-compliance/{cDCertificateId}";
+	}
+
+	// Queries a list of DeviceSoftwareCompliance items.
+	rpc DeviceSoftwareComplianceAll(QueryAllDeviceSoftwareComplianceRequest) returns (QueryAllDeviceSoftwareComplianceResponse) {
+		option (google.api.http).get = "/dcl/compliance/device-software-compliance";
 	}
 
 // this line is used by starport scaffolding # 2
@@ -138,6 +149,24 @@ message QueryAllProvisionalModelRequest {
 
 message QueryAllProvisionalModelResponse {
 	repeated ProvisionalModel provisionalModel = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetDeviceSoftwareComplianceRequest {
+	  string cDCertificateId = 1;
+
+}
+
+message QueryGetDeviceSoftwareComplianceResponse {
+	DeviceSoftwareCompliance deviceSoftwareCompliance = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllDeviceSoftwareComplianceRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllDeviceSoftwareComplianceResponse {
+	repeated DeviceSoftwareCompliance deviceSoftwareCompliance = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 

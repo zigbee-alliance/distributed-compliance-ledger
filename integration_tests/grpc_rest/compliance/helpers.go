@@ -429,6 +429,72 @@ func GetProvisionalModelByHexVidAndPid(
 	return &res, nil
 }
 
+func GetAllDeviceSoftwareCompliance(suite *utils.TestSuite) (res []compliancetypes.DeviceSoftwareCompliance, err error) {
+	if suite.Rest {
+		var resp compliancetypes.QueryAllDeviceSoftwareComplianceResponse
+		err := suite.QueryREST("/dcl/compliance/device-software-compliance", &resp)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetDeviceSoftwareCompliance()
+	} else {
+		grpcConn := suite.GetGRPCConn()
+		defer grpcConn.Close()
+
+		// This creates a gRPC client to query the x/pki service.
+		client := compliancetypes.NewQueryClient(grpcConn)
+		resp, err := client.DeviceSoftwareComplianceAll(
+			context.Background(),
+			&compliancetypes.QueryAllDeviceSoftwareComplianceRequest{},
+		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetDeviceSoftwareCompliance()
+	}
+
+	return res, nil
+}
+
+func GetDeviceSoftwareCompliance(
+	suite *utils.TestSuite, cDCertificationID string,
+) (*compliancetypes.DeviceSoftwareCompliance, error) {
+	var res compliancetypes.DeviceSoftwareCompliance
+
+	if suite.Rest {
+		var resp compliancetypes.QueryGetDeviceSoftwareComplianceResponse
+		err := suite.QueryREST(
+			fmt.Sprintf(
+				"/dcl/compliance/device-software-compliance/%s",
+				cDCertificationID,
+			),
+			&resp,
+		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetDeviceSoftwareCompliance()
+	} else {
+		grpcConn := suite.GetGRPCConn()
+		defer grpcConn.Close()
+
+		// This creates a gRPC client to query the x/pki service.
+		client := compliancetypes.NewQueryClient(grpcConn)
+		resp, err := client.DeviceSoftwareCompliance(
+			context.Background(),
+			&compliancetypes.QueryGetDeviceSoftwareComplianceRequest{
+				CDCertificateId: cDCertificationID,
+			},
+		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetDeviceSoftwareCompliance()
+	}
+
+	return &res, nil
+}
+
 const certDate = "2021-10-01T00:00:01Z"
 
 const provDate = "2021-03-01T00:00:01Z"
@@ -453,6 +519,8 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	require.Equal(suite.T, 0, len(inputAllRevokedModels))
 	inputAllProvisionalModels, _ := GetAllProvisionalModels(suite)
 	require.Equal(suite.T, 0, len(inputAllProvisionalModels))
+	inputAllDeviceSoftwareCompliance, _ := GetAllDeviceSoftwareCompliance(suite)
+	require.Equal(suite.T, 0, len(inputAllDeviceSoftwareCompliance))
 
 	// Alice and Jack are predefined Trustees
 	aliceName := testconstants.AliceAccount
@@ -560,6 +628,19 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	modelIsProvisional, _ := GetProvisionalModel(suite, vid, pid, sv, compliancetypes.ZigbeeCertificationType)
 	require.False(suite.T, modelIsProvisional.Value)
 
+	// Check device software compliance
+	deviceSoftwareCompliance, _ := GetDeviceSoftwareCompliance(suite, testconstants.CDCertificationID)
+	require.Equal(suite.T, testconstants.CDCertificationID, deviceSoftwareCompliance.CDCertificateId)
+	require.Equal(suite.T, 1, len(deviceSoftwareCompliance.ComplianceInfo))
+	require.Equal(suite.T, compliancetypes.ZigbeeCertificationType, deviceSoftwareCompliance.ComplianceInfo[0].CertificationType)
+	require.Equal(suite.T, uint32(2), deviceSoftwareCompliance.ComplianceInfo[0].SoftwareVersionCertificationStatus)
+	require.Equal(suite.T, vid, deviceSoftwareCompliance.ComplianceInfo[0].Vid)
+	require.Equal(suite.T, pid, deviceSoftwareCompliance.ComplianceInfo[0].Pid)
+	require.Equal(suite.T, sv, deviceSoftwareCompliance.ComplianceInfo[0].SoftwareVersion)
+	require.Equal(suite.T, testconstants.CDCertificationID, deviceSoftwareCompliance.ComplianceInfo[0].CDCertificationId)
+	require.Equal(suite.T, certReason, deviceSoftwareCompliance.ComplianceInfo[0].Reason)
+	require.Equal(suite.T, certDate, deviceSoftwareCompliance.ComplianceInfo[0].Date)
+
 	// Get all models
 	complianceInfos, _ := GetAllComplianceInfo(suite)
 	require.Equal(suite.T, len(inputAllComplianceInfo)+1, len(complianceInfos))
@@ -569,6 +650,8 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	require.Equal(suite.T, len(inputAllRevokedModels), len(revokedModels))
 	provisionalModels, _ := GetAllProvisionalModels(suite)
 	require.Equal(suite.T, len(inputAllProvisionalModels), len(provisionalModels))
+	deviceSoftwareCompliances, _ := GetAllDeviceSoftwareCompliance(suite)
+	require.Equal(suite.T, len(inputAllDeviceSoftwareCompliance)+1, len(deviceSoftwareCompliances))
 
 	// Revoke model certification
 	revocReason := "some reason 2"
@@ -602,6 +685,10 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	modelIsProvisional, _ = GetProvisionalModel(suite, vid, pid, sv, compliancetypes.ZigbeeCertificationType)
 	require.False(suite.T, modelIsProvisional.Value)
 
+	// Check modek is revoked from the entity Device Software Compliance
+	_, err = GetDeviceSoftwareCompliance(suite, testconstants.CDCertificationID)
+	suite.AssertNotFound(err)
+
 	// Get all
 	complianceInfos, _ = GetAllComplianceInfo(suite)
 	require.Equal(suite.T, len(inputAllComplianceInfo)+1, len(complianceInfos))
@@ -611,6 +698,8 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	require.Equal(suite.T, len(inputAllRevokedModels)+1, len(revokedModels))
 	provisionalModels, _ = GetAllProvisionalModels(suite)
 	require.Equal(suite.T, len(inputAllProvisionalModels), len(provisionalModels))
+	deviceSoftwareCompliances, _ = GetAllDeviceSoftwareCompliance(suite)
+	require.Equal(suite.T, len(inputAllDeviceSoftwareCompliance), len(deviceSoftwareCompliances))
 
 	// Publish model info
 	pid = int32(tmrand.Uint16())
@@ -679,6 +768,28 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	modelIsProvisional, _ = GetProvisionalModel(suite, vid, pid, sv, compliancetypes.ZigbeeCertificationType)
 	require.False(suite.T, modelIsProvisional.Value)
 
+	// Check Device Software Compliance
+	deviceSoftwareCompliance, _ = GetDeviceSoftwareCompliance(suite, testconstants.CDCertificationID)
+	require.Equal(suite.T, testconstants.CDCertificationID, deviceSoftwareCompliance.CDCertificateId)
+	require.Equal(suite.T, 1, len(deviceSoftwareCompliance.ComplianceInfo))
+	require.Equal(suite.T, compliancetypes.ZigbeeCertificationType, deviceSoftwareCompliance.ComplianceInfo[0].CertificationType)
+	require.Equal(suite.T, uint32(2), deviceSoftwareCompliance.ComplianceInfo[0].SoftwareVersionCertificationStatus)
+	require.Equal(suite.T, vid, deviceSoftwareCompliance.ComplianceInfo[0].Vid)
+	require.Equal(suite.T, pid, deviceSoftwareCompliance.ComplianceInfo[0].Pid)
+	require.Equal(suite.T, sv, deviceSoftwareCompliance.ComplianceInfo[0].SoftwareVersion)
+	require.Equal(suite.T, testconstants.CDCertificationID, deviceSoftwareCompliance.ComplianceInfo[0].CDCertificationId)
+	require.Equal(suite.T, certReason, deviceSoftwareCompliance.ComplianceInfo[0].Reason)
+	require.Equal(suite.T, certDate, deviceSoftwareCompliance.ComplianceInfo[0].Date)
+	require.Equal(suite.T, testconstants.ProgramTypeVersion, deviceSoftwareCompliance.ComplianceInfo[0].ProgramTypeVersion)
+	require.Equal(suite.T, testconstants.FamilyID, deviceSoftwareCompliance.ComplianceInfo[0].FamilyId)
+	require.Equal(suite.T, testconstants.SupportedClusters, deviceSoftwareCompliance.ComplianceInfo[0].SupportedClusters)
+	require.Equal(suite.T, testconstants.CompliantPlatformUsed, deviceSoftwareCompliance.ComplianceInfo[0].CompliantPlatformUsed)
+	require.Equal(suite.T, testconstants.CompliantPlatformVersion, deviceSoftwareCompliance.ComplianceInfo[0].CompliantPlatformVersion)
+	require.Equal(suite.T, testconstants.OSVersion, deviceSoftwareCompliance.ComplianceInfo[0].OSVersion)
+	require.Equal(suite.T, testconstants.CertificationRoute, deviceSoftwareCompliance.ComplianceInfo[0].CertificationRoute)
+	require.Equal(suite.T, testconstants.Transport, deviceSoftwareCompliance.ComplianceInfo[0].Transport)
+	require.Equal(suite.T, testconstants.ParentChild1, deviceSoftwareCompliance.ComplianceInfo[0].ParentChild)
+
 	// Get all models
 	complianceInfos, _ = GetAllComplianceInfo(suite)
 	require.Equal(suite.T, len(inputAllComplianceInfo)+2, len(complianceInfos))
@@ -688,6 +799,8 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	require.Equal(suite.T, len(inputAllRevokedModels)+1, len(revokedModels))
 	provisionalModels, _ = GetAllProvisionalModels(suite)
 	require.Equal(suite.T, len(inputAllProvisionalModels), len(provisionalModels))
+	deviceSoftwareCompliances, _ = GetAllDeviceSoftwareCompliance(suite)
+	require.Equal(suite.T, len(inputAllDeviceSoftwareCompliance)+1, len(deviceSoftwareCompliances))
 }
 
 func DemoTrackRevocation(suite *utils.TestSuite) {
@@ -695,6 +808,7 @@ func DemoTrackRevocation(suite *utils.TestSuite) {
 	inputAllCertifiedModels, _ := GetAllCertifiedModels(suite)
 	inputAllRevokedModels, _ := GetAllRevokedModels(suite)
 	inputAllProvisionalModels, _ := GetAllProvisionalModels(suite)
+	inputAllDeviceSoftwareCompliances, _ := GetAllDeviceSoftwareCompliance(suite)
 
 	// TODO: simplify initialization
 
@@ -801,6 +915,8 @@ func DemoTrackRevocation(suite *utils.TestSuite) {
 	require.Equal(suite.T, len(inputAllRevokedModels)+1, len(revokedModels))
 	provisionalModels, _ := GetAllProvisionalModels(suite)
 	require.Equal(suite.T, len(inputAllProvisionalModels), len(provisionalModels))
+	deviceSoftwareCompliances, _ := GetAllDeviceSoftwareCompliance(suite)
+	require.Equal(suite.T, len(inputAllDeviceSoftwareCompliances), len(deviceSoftwareCompliances))
 
 	// Certify model
 	certReason := "some reason 5"
@@ -836,6 +952,19 @@ func DemoTrackRevocation(suite *utils.TestSuite) {
 	provisionalModel, _ := GetProvisionalModel(suite, vid, pid, sv, compliancetypes.ZigbeeCertificationType)
 	require.False(suite.T, provisionalModel.Value)
 
+	// Check Device Software Compliance
+	deviceSoftwareCompliance, _ := GetDeviceSoftwareCompliance(suite, testconstants.CDCertificationID)
+	require.Equal(suite.T, testconstants.CDCertificationID, deviceSoftwareCompliance.CDCertificateId)
+	require.Equal(suite.T, 2, len(deviceSoftwareCompliance.ComplianceInfo))
+	require.Equal(suite.T, compliancetypes.ZigbeeCertificationType, deviceSoftwareCompliance.ComplianceInfo[1].CertificationType)
+	require.Equal(suite.T, uint32(2), deviceSoftwareCompliance.ComplianceInfo[1].SoftwareVersionCertificationStatus)
+	require.Equal(suite.T, vid, deviceSoftwareCompliance.ComplianceInfo[1].Vid)
+	require.Equal(suite.T, pid, deviceSoftwareCompliance.ComplianceInfo[1].Pid)
+	require.Equal(suite.T, sv, deviceSoftwareCompliance.ComplianceInfo[1].SoftwareVersion)
+	require.Equal(suite.T, testconstants.CDCertificationID, deviceSoftwareCompliance.ComplianceInfo[1].CDCertificationId)
+	require.Equal(suite.T, certReason, deviceSoftwareCompliance.ComplianceInfo[1].Reason)
+	require.Equal(suite.T, certDate, deviceSoftwareCompliance.ComplianceInfo[1].Date)
+
 	// Get all
 	complianceInfos, _ = GetAllComplianceInfo(suite)
 	require.Equal(suite.T, len(inputAllComplianceInfo)+1, len(complianceInfos))
@@ -845,6 +974,8 @@ func DemoTrackRevocation(suite *utils.TestSuite) {
 	require.Equal(suite.T, len(inputAllRevokedModels), len(revokedModels))
 	provisionalModels, _ = GetAllProvisionalModels(suite)
 	require.Equal(suite.T, len(inputAllProvisionalModels), len(provisionalModels))
+	deviceSoftwareCompliances, _ = GetAllDeviceSoftwareCompliance(suite)
+	require.Equal(suite.T, len(inputAllDeviceSoftwareCompliances), len(deviceSoftwareCompliances))
 }
 
 func DemoTrackProvision(suite *utils.TestSuite) {
@@ -852,6 +983,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	inputAllCertifiedModels, _ := GetAllCertifiedModels(suite)
 	inputAllRevokedModels, _ := GetAllRevokedModels(suite)
 	inputAllProvisionalModels, _ := GetAllProvisionalModels(suite)
+	inputAllDeviceSoftwareCompliances, _ := GetAllDeviceSoftwareCompliance(suite)
 
 	// TODO: simplify initialization
 
@@ -950,6 +1082,8 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	require.Equal(suite.T, len(inputAllRevokedModels), len(revokedModels))
 	provisionalModels, _ := GetAllProvisionalModels(suite)
 	require.Equal(suite.T, len(inputAllProvisionalModels)+1, len(provisionalModels))
+	deviceSoftwareCompliances, _ := GetAllDeviceSoftwareCompliance(suite)
+	require.Equal(suite.T, len(inputAllDeviceSoftwareCompliances), len(deviceSoftwareCompliances))
 
 	// Publish model info
 	firstModel := test_model.NewMsgCreateModel(vid, pid, vendorAccount.Address)
@@ -994,6 +1128,19 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	provisionalModel, _ := GetProvisionalModel(suite, vid, pid, sv, compliancetypes.MatterCertificationType)
 	require.False(suite.T, provisionalModel.Value)
 
+	// Check Device Software Compliance
+	deviceSoftwareCompliance, _ := GetDeviceSoftwareCompliance(suite, testconstants.CDCertificationID)
+	require.Equal(suite.T, testconstants.CDCertificationID, deviceSoftwareCompliance.CDCertificateId)
+	require.Equal(suite.T, 3, len(deviceSoftwareCompliance.ComplianceInfo))
+	require.Equal(suite.T, compliancetypes.MatterCertificationType, deviceSoftwareCompliance.ComplianceInfo[2].CertificationType)
+	require.Equal(suite.T, uint32(2), deviceSoftwareCompliance.ComplianceInfo[2].SoftwareVersionCertificationStatus)
+	require.Equal(suite.T, vid, deviceSoftwareCompliance.ComplianceInfo[2].Vid)
+	require.Equal(suite.T, pid, deviceSoftwareCompliance.ComplianceInfo[2].Pid)
+	require.Equal(suite.T, sv, deviceSoftwareCompliance.ComplianceInfo[2].SoftwareVersion)
+	require.Equal(suite.T, testconstants.CDCertificationID, deviceSoftwareCompliance.ComplianceInfo[2].CDCertificationId)
+	require.Equal(suite.T, certReason, deviceSoftwareCompliance.ComplianceInfo[2].Reason)
+	require.Equal(suite.T, certDate, deviceSoftwareCompliance.ComplianceInfo[2].Date)
+
 	// Get all
 	complianceInfos, _ = GetAllComplianceInfo(suite)
 	require.Equal(suite.T, len(inputAllComplianceInfo)+1, len(complianceInfos))
@@ -1003,6 +1150,8 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	require.Equal(suite.T, len(inputAllRevokedModels), len(revokedModels))
 	provisionalModels, _ = GetAllProvisionalModels(suite)
 	require.Equal(suite.T, len(inputAllProvisionalModels), len(provisionalModels))
+	deviceSoftwareCompliances, _ = GetAllDeviceSoftwareCompliance(suite)
+	require.Equal(suite.T, len(inputAllDeviceSoftwareCompliances), len(deviceSoftwareCompliances))
 
 	// Can not provision certified model
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&provModelMsg}, certCenter, certCenterAccount)
@@ -1076,6 +1225,8 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	require.Equal(suite.T, len(inputAllRevokedModels), len(revokedModels))
 	provisionalModels, _ = GetAllProvisionalModels(suite)
 	require.Equal(suite.T, len(inputAllProvisionalModels)+1, len(provisionalModels))
+	deviceSoftwareCompliances, _ = GetAllDeviceSoftwareCompliance(suite)
+	require.Equal(suite.T, len(inputAllDeviceSoftwareCompliances), len(deviceSoftwareCompliances))
 
 	// Publish model info
 	secondModel := test_model.NewMsgCreateModel(vid, pid, vendorAccount.Address)
@@ -1137,6 +1288,28 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	provisionalModel, _ = GetProvisionalModel(suite, vid, pid, sv, compliancetypes.MatterCertificationType)
 	require.False(suite.T, provisionalModel.Value)
 
+	// Check Device Software Compliance
+	deviceSoftwareCompliance, _ = GetDeviceSoftwareCompliance(suite, testconstants.CDCertificationID)
+	require.Equal(suite.T, 4, len(deviceSoftwareCompliance.ComplianceInfo))
+	require.Equal(suite.T, testconstants.CDCertificationID, deviceSoftwareCompliance.CDCertificateId)
+	require.Equal(suite.T, compliancetypes.MatterCertificationType, deviceSoftwareCompliance.ComplianceInfo[3].CertificationType)
+	require.Equal(suite.T, uint32(2), deviceSoftwareCompliance.ComplianceInfo[3].SoftwareVersionCertificationStatus)
+	require.Equal(suite.T, vid, deviceSoftwareCompliance.ComplianceInfo[3].Vid)
+	require.Equal(suite.T, pid, deviceSoftwareCompliance.ComplianceInfo[3].Pid)
+	require.Equal(suite.T, sv, deviceSoftwareCompliance.ComplianceInfo[3].SoftwareVersion)
+	require.Equal(suite.T, testconstants.CDCertificationID, deviceSoftwareCompliance.ComplianceInfo[3].CDCertificationId)
+	require.Equal(suite.T, certReason, deviceSoftwareCompliance.ComplianceInfo[3].Reason)
+	require.Equal(suite.T, certDate, deviceSoftwareCompliance.ComplianceInfo[3].Date)
+	require.Equal(suite.T, "pTypeVersion", deviceSoftwareCompliance.ComplianceInfo[3].ProgramTypeVersion)
+	require.Equal(suite.T, "familyID", deviceSoftwareCompliance.ComplianceInfo[3].FamilyId)
+	require.Equal(suite.T, "sClusters", deviceSoftwareCompliance.ComplianceInfo[3].SupportedClusters)
+	require.Equal(suite.T, "WIFI", deviceSoftwareCompliance.ComplianceInfo[3].CompliantPlatformUsed)
+	require.Equal(suite.T, "V1", deviceSoftwareCompliance.ComplianceInfo[3].CompliantPlatformVersion)
+	require.Equal(suite.T, testconstants.OSVersion, deviceSoftwareCompliance.ComplianceInfo[3].OSVersion)
+	require.Equal(suite.T, testconstants.CertificationRoute, deviceSoftwareCompliance.ComplianceInfo[3].CertificationRoute)
+	require.Equal(suite.T, testconstants.Transport, deviceSoftwareCompliance.ComplianceInfo[3].Transport)
+	require.Equal(suite.T, testconstants.ParentChild1, deviceSoftwareCompliance.ComplianceInfo[3].ParentChild)
+
 	// Get all
 	complianceInfos, _ = GetAllComplianceInfo(suite)
 	require.Equal(suite.T, len(inputAllComplianceInfo)+2, len(complianceInfos))
@@ -1146,6 +1319,8 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	require.Equal(suite.T, len(inputAllRevokedModels), len(revokedModels))
 	provisionalModels, _ = GetAllProvisionalModels(suite)
 	require.Equal(suite.T, len(inputAllProvisionalModels), len(provisionalModels))
+	deviceSoftwareCompliances, _ = GetAllDeviceSoftwareCompliance(suite)
+	require.Equal(suite.T, len(inputAllDeviceSoftwareCompliances), len(deviceSoftwareCompliances))
 }
 
 func DemoTrackComplianceWithHexVidAndPid(suite *utils.TestSuite) {

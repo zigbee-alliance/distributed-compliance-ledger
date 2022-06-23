@@ -13,3 +13,4 @@ starport scaffold --module compliance map ComplianceInfo softwareVersionString c
 starport scaffold --module compliance map CertifiedModel value:bool --index vid:int,pid:int,softwareVersion:uint,certificationType --no-message
 starport scaffold --module compliance map RevokedModel value:bool --index vid:int,pid:int,softwareVersion:uint,certificationType --no-message
 starport scaffold --module compliance map ProvisionalModel value:bool --index vid:int,pid:int,softwareVersion:uint,certificationType --no-message
+starport scaffold --module compliance map DeviceSoftwareCompliance ComplianceInfo:strings --index cdCertificateId:string --no-message
