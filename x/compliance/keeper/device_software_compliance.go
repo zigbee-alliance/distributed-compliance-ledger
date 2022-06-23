@@ -60,3 +60,19 @@ func (k Keeper) GetAllDeviceSoftwareCompliance(ctx sdk.Context) (list []types.De
 
 	return
 }
+
+func IsComplianceInfoExist(
+	m types.DeviceSoftwareCompliance, vid int32, pid int32, softwareVersion uint32, softwareVersionString string,
+) (int, bool) {
+	for index, info := range m.ComplianceInfo {
+		if info.Vid == vid && info.Pid == pid && info.SoftwareVersion == softwareVersion && info.SoftwareVersionString == softwareVersionString {
+			return index, true
+		}
+	}
+
+	return -1, false
+}
+
+func RemoveComplianceInfo(m *types.DeviceSoftwareCompliance, removeComplianceInfoIndex int) {
+	m.ComplianceInfo = append(m.ComplianceInfo[:removeComplianceInfoIndex], m.ComplianceInfo[removeComplianceInfoIndex+1:]...)
+}
