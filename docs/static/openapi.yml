@@ -273,7 +273,7 @@ paths:
                           cDVersionNumber:
                             type: integer
                             format: int64
-                    cDCertificationId:
+                    cDCertificateId:
                       type: string
                     certificationRoute:
                       type: string
@@ -456,7 +456,7 @@ paths:
                         cDVersionNumber:
                           type: integer
                           format: int64
-                  cDCertificationId:
+                  cDCertificateId:
                     type: string
                   certificationRoute:
                     type: string
@@ -584,7 +584,7 @@ paths:
                                 cDVersionNumber:
                                   type: integer
                                   format: int64
-                          cDCertificationId:
+                          cDCertificateId:
                             type: string
                           certificationRoute:
                             type: string
@@ -774,7 +774,7 @@ paths:
                               cDVersionNumber:
                                 type: integer
                                 format: int64
-                        cDCertificationId:
+                        cDCertificateId:
                           type: string
                         certificationRoute:
                           type: string
@@ -14005,7 +14005,7 @@ definitions:
             cDVersionNumber:
               type: integer
               format: int64
-      cDCertificationId:
+      cDCertificateId:
         type: string
       certificationRoute:
         type: string
@@ -14077,7 +14077,7 @@ definitions:
                   cDVersionNumber:
                     type: integer
                     format: int64
-            cDCertificationId:
+            cDCertificateId:
               type: string
             certificationRoute:
               type: string
@@ -14209,7 +14209,7 @@ definitions:
                   cDVersionNumber:
                     type: integer
                     format: int64
-            cDCertificationId:
+            cDCertificateId:
               type: string
             certificationRoute:
               type: string
@@ -14311,7 +14311,7 @@ definitions:
                         cDVersionNumber:
                           type: integer
                           format: int64
-                  cDCertificationId:
+                  cDCertificateId:
                     type: string
                   certificationRoute:
                     type: string
@@ -14515,7 +14515,7 @@ definitions:
                 cDVersionNumber:
                   type: integer
                   format: int64
-          cDCertificationId:
+          cDCertificateId:
             type: string
           certificationRoute:
             type: string
@@ -14590,7 +14590,7 @@ definitions:
                       cDVersionNumber:
                         type: integer
                         format: int64
-                cDCertificationId:
+                cDCertificateId:
                   type: string
                 certificationRoute:
                   type: string
