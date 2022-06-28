@@ -72,7 +72,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 			)
 		}
 
-		complianceInfo.SetCertifiedStatus(msg.CertificationDate, msg.Reason, msg.CDCertificationId)
+		complianceInfo.SetCertifiedStatus(msg.CertificationDate, msg.Reason, msg.CDCertificateId)
 	} else {
 		// There is no compliance record yet. So certification will be tracked on ledger.
 
@@ -88,7 +88,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 			SoftwareVersionCertificationStatus: types.CodeCertified,
 			History:                            []*types.ComplianceHistoryItem{},
 			CDVersionNumber:                    msg.CDVersionNumber,
-			CDCertificationId:                  msg.CDCertificationId,
+			CDCertificateId:                    msg.CDCertificateId,
 		}
 	}
 
@@ -97,9 +97,9 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 	// store compliance info
 	k.SetComplianceInfo(ctx, complianceInfo)
 
-	deviceSoftwareCompliance, found := k.GetDeviceSoftwareCompliance(ctx, msg.CDCertificationId)
+	deviceSoftwareCompliance, found := k.GetDeviceSoftwareCompliance(ctx, msg.CDCertificateId)
 	if !found {
-		deviceSoftwareCompliance.CDCertificateId = msg.CDCertificationId
+		deviceSoftwareCompliance.CDCertificateId = msg.CDCertificateId
 	}
 	deviceSoftwareCompliance.ComplianceInfo = append(deviceSoftwareCompliance.ComplianceInfo, &complianceInfo)
 

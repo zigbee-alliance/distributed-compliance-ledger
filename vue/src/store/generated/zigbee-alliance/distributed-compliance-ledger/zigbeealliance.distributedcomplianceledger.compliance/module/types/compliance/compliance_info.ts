@@ -16,7 +16,7 @@ export interface ComplianceInfo {
   reason: string
   owner: string
   history: ComplianceHistoryItem[]
-  cDCertificationId: string
+  cDCertificateId: string
   certificationRoute: string
   programType: string
   programTypeVersion: string
@@ -40,7 +40,7 @@ const baseComplianceInfo: object = {
   date: '',
   reason: '',
   owner: '',
-  cDCertificationId: '',
+  cDCertificateId: '',
   certificationRoute: '',
   programType: '',
   programTypeVersion: '',
@@ -88,8 +88,8 @@ export const ComplianceInfo = {
     for (const v of message.history) {
       ComplianceHistoryItem.encode(v!, writer.uint32(90).fork()).ldelim()
     }
-    if (message.cDCertificationId !== '') {
-      writer.uint32(98).string(message.cDCertificationId)
+    if (message.cDCertificateId !== '') {
+      writer.uint32(98).string(message.cDCertificateId)
     }
     if (message.certificationRoute !== '') {
       writer.uint32(106).string(message.certificationRoute)
@@ -166,7 +166,7 @@ export const ComplianceInfo = {
           message.history.push(ComplianceHistoryItem.decode(reader, reader.uint32()))
           break
         case 12:
-          message.cDCertificationId = reader.string()
+          message.cDCertificateId = reader.string()
           break
         case 13:
           message.certificationRoute = reader.string()
@@ -264,10 +264,10 @@ export const ComplianceInfo = {
         message.history.push(ComplianceHistoryItem.fromJSON(e))
       }
     }
-    if (object.cDCertificationId !== undefined && object.cDCertificationId !== null) {
-      message.cDCertificationId = String(object.cDCertificationId)
+    if (object.cDCertificateId !== undefined && object.cDCertificateId !== null) {
+      message.cDCertificateId = String(object.cDCertificateId)
     } else {
-      message.cDCertificationId = ''
+      message.cDCertificateId = ''
     }
     if (object.certificationRoute !== undefined && object.certificationRoute !== null) {
       message.certificationRoute = String(object.certificationRoute)
@@ -339,7 +339,7 @@ export const ComplianceInfo = {
     } else {
       obj.history = []
     }
-    message.cDCertificationId !== undefined && (obj.cDCertificationId = message.cDCertificationId)
+    message.cDCertificateId !== undefined && (obj.cDCertificateId = message.cDCertificateId)
     message.certificationRoute !== undefined && (obj.certificationRoute = message.certificationRoute)
     message.programType !== undefined && (obj.programType = message.programType)
     message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion)
@@ -411,10 +411,10 @@ export const ComplianceInfo = {
         message.history.push(ComplianceHistoryItem.fromPartial(e))
       }
     }
-    if (object.cDCertificationId !== undefined && object.cDCertificationId !== null) {
-      message.cDCertificationId = object.cDCertificationId
+    if (object.cDCertificateId !== undefined && object.cDCertificateId !== null) {
+      message.cDCertificateId = object.cDCertificateId
     } else {
-      message.cDCertificationId = ''
+      message.cDCertificateId = ''
     }
     if (object.certificationRoute !== undefined && object.certificationRoute !== null) {
       message.certificationRoute = object.certificationRoute

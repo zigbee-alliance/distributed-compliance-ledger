@@ -3,9 +3,9 @@ import { Registry, OfflineSigner, EncodeObject } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
 import { MsgUpdateModel } from "./types/model/tx";
 import { MsgDeleteModel } from "./types/model/tx";
+import { MsgCreateModel } from "./types/model/tx";
 import { MsgCreateModelVersion } from "./types/model/tx";
 import { MsgUpdateModelVersion } from "./types/model/tx";
-import { MsgCreateModel } from "./types/model/tx";
 export declare const MissingWalletError: Error;
 export declare const registry: Registry;
 interface TxClientOptions {
@@ -19,9 +19,9 @@ declare const txClient: (wallet: OfflineSigner, { addr: addr }?: TxClientOptions
     signAndBroadcast: (msgs: EncodeObject[], { fee, memo }?: SignAndBroadcastOptions) => any;
     msgUpdateModel: (data: MsgUpdateModel) => EncodeObject;
     msgDeleteModel: (data: MsgDeleteModel) => EncodeObject;
+    msgCreateModel: (data: MsgCreateModel) => EncodeObject;
     msgCreateModelVersion: (data: MsgCreateModelVersion) => EncodeObject;
     msgUpdateModelVersion: (data: MsgUpdateModelVersion) => EncodeObject;
-    msgCreateModel: (data: MsgCreateModel) => EncodeObject;
 }>;
 interface QueryClientOptions {
     addr: string;

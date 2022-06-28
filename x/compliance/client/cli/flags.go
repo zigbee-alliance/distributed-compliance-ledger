@@ -31,7 +31,7 @@ const (
 	FlagCDVersionNumber           = "cdVersionNumber"
 	FlagProvisionalDate           = "provisionalDate"
 	FlagProgramTypeVersion        = "programTypeVersion"
-	FlagCDCertificationID         = "cdCertificationId"
+	FlagCDCertificateID           = "cdCertificateId"
 	FlagFamilyID                  = "familyId"
 	FlagSupportedClusters         = "supportedClusters"
 	FlagCompliantPlatformUsed     = "compliantPlatformUsed"

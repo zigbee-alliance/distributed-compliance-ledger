@@ -53,7 +53,7 @@ export interface ComplianceComplianceInfo {
   reason?: string;
   owner?: string;
   history?: ComplianceComplianceHistoryItem[];
-  cDCertificationId?: string;
+  cDCertificateId?: string;
   certificationRoute?: string;
   programType?: string;
   programTypeVersion?: string;
