@@ -14,7 +14,7 @@ var _ sdk.Msg = &MsgProvisionModel{}
 
 func NewMsgProvisionModel(
 	signer string, vid int32, pid int32, softwareVersion uint32, softwareVersionString string, cDVersionNumber uint32,
-	provisionalDate string, certificationType string, reason string, programTypeVersion string, cDCertificationID string,
+	provisionalDate string, certificationType string, reason string, programTypeVersion string, cDCertificateID string,
 	familyID string, supportedClusters string, compliantPlatformUsed string, compliantPlatformVersion string, osVersion string,
 	certificationRoute string, programType string, transport string, parentChild string,
 ) *MsgProvisionModel {
@@ -29,7 +29,7 @@ func NewMsgProvisionModel(
 		CertificationType:        certificationType,
 		Reason:                   reason,
 		ProgramTypeVersion:       programTypeVersion,
-		CDCertificationId:        cDCertificationID,
+		CDCertificateId:          cDCertificateID,
 		FamilyId:                 familyID,
 		SupportedClusters:        supportedClusters,
 		CompliantPlatformUsed:    compliantPlatformUsed,

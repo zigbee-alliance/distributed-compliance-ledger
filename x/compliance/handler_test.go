@@ -359,8 +359,8 @@ func TestHandler_CertifyModel_Zigbee(t *testing.T) {
 	checkCertifiedModelInfo(t, certifyModelMsg, receivedComplianceInfo)
 
 	// query device software compliance
-	receivedDeviceSoftwareCompliance, _ := queryDeviceSoftwareCompliance(setup, testconstants.CDCertificationID)
-	require.Equal(t, receivedDeviceSoftwareCompliance.CDCertificateId, testconstants.CDCertificationID)
+	receivedDeviceSoftwareCompliance, _ := queryDeviceSoftwareCompliance(setup, testconstants.CDCertificateID)
+	require.Equal(t, receivedDeviceSoftwareCompliance.CDCertificateId, testconstants.CDCertificateID)
 	checkDeviceSoftwareCompliance(t, receivedDeviceSoftwareCompliance.ComplianceInfo[0], receivedComplianceInfo)
 
 	// check
@@ -392,8 +392,8 @@ func TestHandler_CertifyModel_Zigbee_WithAllOptionalFlags(t *testing.T) {
 	checkCertifiedModelInfo(t, certifyModelMsg, receivedComplianceInfo)
 
 	// query device software compliance
-	receivedDeviceSoftwareCompliance, _ := queryDeviceSoftwareCompliance(setup, testconstants.CDCertificationID)
-	require.Equal(t, receivedDeviceSoftwareCompliance.CDCertificateId, testconstants.CDCertificationID)
+	receivedDeviceSoftwareCompliance, _ := queryDeviceSoftwareCompliance(setup, testconstants.CDCertificateID)
+	require.Equal(t, receivedDeviceSoftwareCompliance.CDCertificateId, testconstants.CDCertificateID)
 	checkDeviceSoftwareCompliance(t, receivedDeviceSoftwareCompliance.ComplianceInfo[0], receivedComplianceInfo)
 
 	// check
@@ -425,8 +425,8 @@ func TestHandler_CertifyModel_Matter(t *testing.T) {
 	checkCertifiedModelInfo(t, certifyModelMsg, receivedComplianceInfo)
 
 	// query device software compliance
-	receivedDeviceSoftwareCompliance, _ := queryDeviceSoftwareCompliance(setup, testconstants.CDCertificationID)
-	require.Equal(t, receivedDeviceSoftwareCompliance.CDCertificateId, testconstants.CDCertificationID)
+	receivedDeviceSoftwareCompliance, _ := queryDeviceSoftwareCompliance(setup, testconstants.CDCertificateID)
+	require.Equal(t, receivedDeviceSoftwareCompliance.CDCertificateId, testconstants.CDCertificateID)
 	checkDeviceSoftwareCompliance(t, receivedDeviceSoftwareCompliance.ComplianceInfo[0], receivedComplianceInfo)
 
 	// check
@@ -458,8 +458,8 @@ func TestHandler_CertifyModel_Matter_WithAllOptionalFlags(t *testing.T) {
 	checkCertifiedModelInfo(t, certifyModelMsg, receivedComplianceInfo)
 
 	// query device software compliance
-	receivedDeviceSoftwareCompliance, _ := queryDeviceSoftwareCompliance(setup, testconstants.CDCertificationID)
-	require.Equal(t, receivedDeviceSoftwareCompliance.CDCertificateId, testconstants.CDCertificationID)
+	receivedDeviceSoftwareCompliance, _ := queryDeviceSoftwareCompliance(setup, testconstants.CDCertificateID)
+	require.Equal(t, receivedDeviceSoftwareCompliance.CDCertificateId, testconstants.CDCertificateID)
 	checkDeviceSoftwareCompliance(t, receivedDeviceSoftwareCompliance.ComplianceInfo[0], receivedComplianceInfo)
 
 	// check
@@ -502,8 +502,8 @@ func TestHandler_CertifyProvisionedModel(t *testing.T) {
 		require.Equal(t, provisionModelMsg.ProvisionalDate, receivedComplianceInfo.History[0].Date)
 
 		// query device software compliance
-		receivedDeviceSoftwareCompliance, _ := queryDeviceSoftwareCompliance(setup, testconstants.CDCertificationID)
-		require.Equal(t, receivedDeviceSoftwareCompliance.CDCertificateId, testconstants.CDCertificationID)
+		receivedDeviceSoftwareCompliance, _ := queryDeviceSoftwareCompliance(setup, testconstants.CDCertificateID)
+		require.Equal(t, receivedDeviceSoftwareCompliance.CDCertificateId, testconstants.CDCertificateID)
 		checkDeviceSoftwareCompliance(t, receivedDeviceSoftwareCompliance.ComplianceInfo[index], receivedComplianceInfo)
 
 		// query certified model
@@ -564,8 +564,8 @@ func TestHandler_CertifyProvisionedModel_WithAllOptionalFields(t *testing.T) {
 		require.Equal(t, provisionModelMsg.ProvisionalDate, receivedComplianceInfo.History[0].Date)
 
 		// query device software compliance
-		receivedDeviceSoftwareCompliance, _ := queryDeviceSoftwareCompliance(setup, testconstants.CDCertificationID)
-		require.Equal(t, receivedDeviceSoftwareCompliance.CDCertificateId, testconstants.CDCertificationID)
+		receivedDeviceSoftwareCompliance, _ := queryDeviceSoftwareCompliance(setup, testconstants.CDCertificateID)
+		require.Equal(t, receivedDeviceSoftwareCompliance.CDCertificateId, testconstants.CDCertificateID)
 		checkDeviceSoftwareCompliance(t, receivedDeviceSoftwareCompliance.ComplianceInfo[index], receivedComplianceInfo)
 
 		// query certified model
@@ -611,8 +611,8 @@ func TestHandler_CertifyProvisionedModelWithAllOptionalFlags(t *testing.T) {
 		require.Equal(t, provisionModelMsg.ProvisionalDate, receivedComplianceInfo.History[0].Date)
 
 		// query device software compliance
-		receivedDeviceSoftwareCompliance, _ := queryDeviceSoftwareCompliance(setup, testconstants.CDCertificationID)
-		require.Equal(t, receivedDeviceSoftwareCompliance.CDCertificateId, testconstants.CDCertificationID)
+		receivedDeviceSoftwareCompliance, _ := queryDeviceSoftwareCompliance(setup, testconstants.CDCertificateID)
+		require.Equal(t, receivedDeviceSoftwareCompliance.CDCertificateId, testconstants.CDCertificateID)
 		checkDeviceSoftwareCompliance(t, receivedDeviceSoftwareCompliance.ComplianceInfo[index], receivedComplianceInfo)
 
 		// query certified model
@@ -849,8 +849,8 @@ func TestHandler_RevokeCertifiedModel(t *testing.T) {
 		checkCertifiedModelInfo(t, certifyModelMsg, receivedComplianceInfo)
 
 		// query device software compliance
-		receivedDeviceSoftwareCompliance, _ := queryDeviceSoftwareCompliance(setup, testconstants.CDCertificationID)
-		require.Equal(t, receivedDeviceSoftwareCompliance.CDCertificateId, testconstants.CDCertificationID)
+		receivedDeviceSoftwareCompliance, _ := queryDeviceSoftwareCompliance(setup, testconstants.CDCertificateID)
+		require.Equal(t, receivedDeviceSoftwareCompliance.CDCertificateId, testconstants.CDCertificateID)
 		checkDeviceSoftwareCompliance(t, receivedDeviceSoftwareCompliance.ComplianceInfo[0], receivedComplianceInfo)
 
 		// revoke model
@@ -868,7 +868,7 @@ func TestHandler_RevokeCertifiedModel(t *testing.T) {
 		require.Equal(t, certifyModelMsg.CertificationDate, receivedComplianceInfo.History[0].Date)
 
 		// query device software compliance
-		_, err = queryDeviceSoftwareCompliance(setup, testconstants.CDCertificationID)
+		_, err = queryDeviceSoftwareCompliance(setup, testconstants.CDCertificateID)
 		require.Error(t, err)
 		require.Equal(t, codes.NotFound, status.Code(err))
 
@@ -1212,7 +1212,7 @@ func TestHandler_CertifyRevokedModel(t *testing.T) {
 		require.Equal(t, certifyModelMsg.Pid, receivedComplianceInfo.Pid)
 		require.Equal(t, types.CodeCertified, receivedComplianceInfo.SoftwareVersionCertificationStatus)
 		require.Equal(t, certifyModelMsg.CertificationDate, receivedComplianceInfo.Date)
-		require.Equal(t, certifyModelMsg.CDCertificationId, receivedComplianceInfo.CDCertificationId)
+		require.Equal(t, certifyModelMsg.CDCertificateId, receivedComplianceInfo.CDCertificateId)
 		require.Equal(t, certifyModelMsg.Reason, receivedComplianceInfo.Reason)
 		require.Equal(t, certifyModelMsg.CertificationType, receivedComplianceInfo.CertificationType)
 		require.Equal(t, 1, len(receivedComplianceInfo.History))
@@ -1220,8 +1220,8 @@ func TestHandler_CertifyRevokedModel(t *testing.T) {
 		require.Equal(t, revokeModelMsg.RevocationDate, receivedComplianceInfo.History[0].Date)
 
 		// query device software compliance
-		receivedDeviceSoftwareCompliance, _ := queryDeviceSoftwareCompliance(setup, testconstants.CDCertificationID)
-		require.Equal(t, receivedDeviceSoftwareCompliance.CDCertificateId, testconstants.CDCertificationID)
+		receivedDeviceSoftwareCompliance, _ := queryDeviceSoftwareCompliance(setup, testconstants.CDCertificateID)
+		require.Equal(t, receivedDeviceSoftwareCompliance.CDCertificateId, testconstants.CDCertificateID)
 		checkDeviceSoftwareCompliance(t, receivedDeviceSoftwareCompliance.ComplianceInfo[index], receivedComplianceInfo)
 
 		// query certified model
@@ -1266,10 +1266,10 @@ func queryComplianceInfo(
 
 func queryDeviceSoftwareCompliance(
 	setup *TestSetup,
-	cDCertificationID string,
+	cDCertificateID string,
 ) (*types.DeviceSoftwareCompliance, error) {
 	req := &types.QueryGetDeviceSoftwareComplianceRequest{
-		CDCertificateId: cDCertificationID,
+		CDCertificateId: cDCertificateID,
 	}
 
 	resp, err := setup.Keeper.DeviceSoftwareCompliance(setup.Wctx, req)
@@ -1374,7 +1374,7 @@ func checkProvisionalModelInfo(
 	require.Equal(t, provisionalModelMsg.ProvisionalDate, receivedComplianceInfo.Date)
 	require.Equal(t, provisionalModelMsg.Reason, receivedComplianceInfo.Reason)
 	require.Equal(t, provisionalModelMsg.CertificationType, receivedComplianceInfo.CertificationType)
-	require.Equal(t, provisionalModelMsg.CDCertificationId, receivedComplianceInfo.CDCertificationId)
+	require.Equal(t, provisionalModelMsg.CDCertificateId, receivedComplianceInfo.CDCertificateId)
 	require.Equal(t, provisionalModelMsg.ProgramTypeVersion, receivedComplianceInfo.ProgramTypeVersion)
 	require.Equal(t, provisionalModelMsg.FamilyId, receivedComplianceInfo.FamilyId)
 	require.Equal(t, provisionalModelMsg.SupportedClusters, receivedComplianceInfo.SupportedClusters)
@@ -1399,7 +1399,7 @@ func checkCertifiedModelInfo(
 	require.Equal(t, certifyModelMsg.CertificationDate, receivedComplianceInfo.Date)
 	require.Equal(t, certifyModelMsg.Reason, receivedComplianceInfo.Reason)
 	require.Equal(t, certifyModelMsg.CertificationType, receivedComplianceInfo.CertificationType)
-	require.Equal(t, certifyModelMsg.CDCertificationId, receivedComplianceInfo.CDCertificationId)
+	require.Equal(t, certifyModelMsg.CDCertificateId, receivedComplianceInfo.CDCertificateId)
 	require.Equal(t, certifyModelMsg.ProgramTypeVersion, receivedComplianceInfo.ProgramTypeVersion)
 	require.Equal(t, certifyModelMsg.FamilyId, receivedComplianceInfo.FamilyId)
 	require.Equal(t, certifyModelMsg.SupportedClusters, receivedComplianceInfo.SupportedClusters)
@@ -1424,7 +1424,7 @@ func checkDeviceSoftwareCompliance(
 	require.Equal(t, info.Date, receivedComplianceInfo.Date)
 	require.Equal(t, info.Reason, receivedComplianceInfo.Reason)
 	require.Equal(t, info.CertificationType, receivedComplianceInfo.CertificationType)
-	require.Equal(t, info.CDCertificationId, receivedComplianceInfo.CDCertificationId)
+	require.Equal(t, info.CDCertificateId, receivedComplianceInfo.CDCertificateId)
 	require.Equal(t, info.ProgramTypeVersion, receivedComplianceInfo.ProgramTypeVersion)
 	require.Equal(t, info.FamilyId, receivedComplianceInfo.FamilyId)
 	require.Equal(t, info.SupportedClusters, receivedComplianceInfo.SupportedClusters)
@@ -1469,7 +1469,7 @@ func NewMsgProvisionModel(
 		ProvisionalDate:       testconstants.ProvisionalDate,
 		CertificationType:     certificationType,
 		Reason:                testconstants.Reason,
-		CDCertificationId:     testconstants.CDCertificationID,
+		CDCertificateId:       testconstants.CDCertificateID,
 	}
 }
 
@@ -1491,7 +1491,7 @@ func NewMsgProvisionModelWithAllOptionalFlags(
 		ProvisionalDate:          testconstants.ProvisionalDate,
 		CertificationType:        certificationType,
 		Reason:                   testconstants.Reason,
-		CDCertificationId:        testconstants.CDCertificationID,
+		CDCertificateId:          testconstants.CDCertificateID,
 		ProgramTypeVersion:       testconstants.ProgramTypeVersion,
 		FamilyId:                 testconstants.FamilyID,
 		SupportedClusters:        testconstants.SupportedClusters,
@@ -1523,7 +1523,7 @@ func NewMsgCertifyModel(
 		CertificationDate:     testconstants.CertificationDate,
 		CertificationType:     certificationType,
 		Reason:                testconstants.Reason,
-		CDCertificationId:     testconstants.CDCertificationID,
+		CDCertificateId:       testconstants.CDCertificateID,
 	}
 }
 
@@ -1545,7 +1545,7 @@ func NewMsgCertifyModelWithAllOptionalFlags(
 		CertificationDate:        testconstants.CertificationDate,
 		CertificationType:        certificationType,
 		Reason:                   testconstants.Reason,
-		CDCertificationId:        testconstants.CDCertificationID,
+		CDCertificateId:          testconstants.CDCertificateID,
 		ProgramTypeVersion:       testconstants.ProgramTypeVersion,
 		FamilyId:                 testconstants.FamilyID,
 		SupportedClusters:        testconstants.SupportedClusters,

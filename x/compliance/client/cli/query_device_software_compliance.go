@@ -52,7 +52,7 @@ func CmdShowDeviceSoftwareCompliance() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
-			argCDCertificateID := viper.GetString(FlagCDCertificationID)
+			argCDCertificateID := viper.GetString(FlagCDCertificateID)
 
 			var res types.DeviceSoftwareCompliance
 
@@ -66,10 +66,10 @@ func CmdShowDeviceSoftwareCompliance() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().String(FlagCDCertificationID, "", "CD Certification ID of the certification")
+	cmd.Flags().String(FlagCDCertificateID, "", "CD Certificate ID of the certification")
 	flags.AddQueryFlagsToCmd(cmd)
 
-	_ = cmd.MarkFlagRequired(FlagCDCertificationID)
+	_ = cmd.MarkFlagRequired(FlagCDCertificateID)
 
 	return cmd
 }

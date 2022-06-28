@@ -27,7 +27,7 @@ message MsgCertifyModel {
   string certificationType = 8 [(gogoproto.moretags) = "validate:\"required,max=100\""];
   string reason = 9 [(gogoproto.moretags) = "validate:\"max=102400\""];
   string programTypeVersion = 10 [(gogoproto.moretags) = "validate:\"max=64\""];
-  string cDCertificationId = 11 [(gogoproto.moretags) = "validate:\"required,max=64\""];
+  string cDCertificateId = 11 [(gogoproto.moretags) = "validate:\"required,max=64\""];
   string familyId = 12 [(gogoproto.moretags) = "validate:\"max=64\""];
   string supportedClusters = 13 [(gogoproto.moretags) = "validate:\"max=64\""];
   string compliantPlatformUsed = 14 [(gogoproto.moretags) = "validate:\"max=64\""];
@@ -68,7 +68,7 @@ message MsgProvisionModel {
   string certificationType = 8 [(gogoproto.moretags) = "validate:\"required,max=100\""];
   string reason = 9 [(gogoproto.moretags) = "validate:\"max=102400\""];
   string programTypeVersion = 10 [(gogoproto.moretags) = "validate:\"max=64\""];
-  string cDCertificationId = 11 [(gogoproto.moretags) = "validate:\"required,max=64\""];
+  string cDCertificateId = 11 [(gogoproto.moretags) = "validate:\"required,max=64\""];
   string familyId = 12 [(gogoproto.moretags) = "validate:\"max=64\""];
   string supportedClusters = 13 [(gogoproto.moretags) = "validate:\"max=64\""];
   string compliantPlatformUsed = 14 [(gogoproto.moretags) = "validate:\"max=64\""];
