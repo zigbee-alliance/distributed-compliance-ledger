@@ -95,8 +95,9 @@ application version:
 
 6. **[All Node Admins]**: 
    
-   - If `auto-download` is enabled , then no manual steps are required to be done by `Node Admins`. Nevertheless, it's recommended for all `Node Admins` to manually verify and put the `binaries` as described below.<br>
-      - Make sure that the `auto-download` parameter is present in `cosmovisor.service` (in the folder - `/etc/systemd/system/`) and if the `auto-download` parameter does not exist, then add this `auto-download` parameter to the section `Service` for enabled **`auto-download`**.
+   - If `auto-download` is enabled , then no manual steps are required to be done by `Node Admins`. Auto-download verifies that the downloaded binary hash is equal to the one specified in the `propose-upgrade` request, so the downloaded binary can be trusted.
+   Nevertheless, it's recommended for all `Node Admins` to manually verify and put the `binaries` as described below.<br>
+      - Make sure that the `auto-download` parameter is present in `cosmovisor.service` (in the folder - `/etc/systemd/system/`) and if the `auto-download` parameter does not exist, then add it to the  `Service` section (see [cosmovisor.service](../deployment/cosmovisor.service)).
          
          For example:
 
@@ -104,19 +105,19 @@ application version:
          Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=true"
          ```
 
-         > **_Note:_**  In this case, `true` means that the **`auto-download`** is enabled. If you want to disable **`auto-download`**, you can set the value `false` (`DAEMON_ALLOW_DOWNLOAD_BINARIES=false`) or remove the above line of code from the `cosmovisor.service`.
+         > **_Note:_**  In this case, `true` means that the **`auto-download`** is enabled. If you want to disable **`auto-download`**, you can set the value to`false` (`DAEMON_ALLOW_DOWNLOAD_BINARIES=false`) or remove the above line from the `cosmovisor.service`.
 
       - If you change the configuration in the `cosmovisor.service`, you need to restart `cosmovisor.service`:
          ```bash
          sudo systemctl restart cosmovisor
          ```
 
-         > **_Note:_** Also make sure that propose plan should contain the link and the checksum to the binary according the format specified in cosmovisor docs. 
+         > **_Note:_** Also make sure that propose plan should contain the link and the checksum to the binary according to the format specified in cosmovisor docs. 
          See the [Command Line Arguments And Environment Variables in Cosmovisor](https://github.com/cosmos/cosmos-sdk/tree/main/cosmovisor#command-line-arguments-and-environment-variables).
 
       - If `auto-download` is enabled and no `binary` is put manually, then the correct `binary` will be downloaded and the `checksum` will be verified automatically. 
    
-   - **(Recommended)** If `auto-download` is enabled and the `binary` is put manually to the correct folder, then this `binary` will be used for upgrade and no `auto-download` will happen. If you follow this step, then you need to complete the `steps`, which described below.
+   - **(Recommended)** If `auto-download` is enabled and the `binary` is put manually to the correct folder, then this `binary` will be used for upgrade and no `auto-download` will happen. If you follow this way, then you need to complete the `steps` described below.
 
       1. Switches current user to the user on behalf of whom `cosmovisor` service
          is running:

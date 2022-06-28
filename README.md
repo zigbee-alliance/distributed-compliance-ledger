@@ -87,14 +87,6 @@ A Light Client Proxy can be connected to multiple nodes and will verify the stat
 
 **Please make sure that TLS is enabled in gRPC, REST or Light Client Proxy for secure communication with a Node.**
 
-### Public UI (Outdated, doesn't work with DCL 0.6+)
-
-- based on the REST API
-- can be used to browse the ledger
-  - please note that it doesn't show all the accounts on the ledger
-  - it shows only the default (demo) accounts created on the UI server
-- **for demo purposes only**: can be used for sending write requests from the default (demo) accounts
-- source code and documentation are located in [dcl-ui](dcl-ui) directory
 
 ## How To
 
