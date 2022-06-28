@@ -18,7 +18,7 @@ message ComplianceInfo {
   string reason = 9; 
   string owner = 10 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   repeated ComplianceHistoryItem history = 11;
-  string cDCertificationId = 12;
+  string cDCertificateId = 12;
   string certificationRoute = 13;
   string programType = 14;
   string programTypeVersion = 15;
