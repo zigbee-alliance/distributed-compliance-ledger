@@ -457,7 +457,7 @@ func GetAllDeviceSoftwareCompliance(suite *utils.TestSuite) (res []compliancetyp
 }
 
 func GetDeviceSoftwareCompliance(
-	suite *utils.TestSuite, CDCertificateId string,
+	suite *utils.TestSuite, cDCertificateID string,
 ) (*compliancetypes.DeviceSoftwareCompliance, error) {
 	var res compliancetypes.DeviceSoftwareCompliance
 
@@ -466,7 +466,7 @@ func GetDeviceSoftwareCompliance(
 		err := suite.QueryREST(
 			fmt.Sprintf(
 				"/dcl/compliance/device-software-compliance/%s",
-				CDCertificateId,
+				cDCertificateID,
 			),
 			&resp,
 		)
@@ -483,7 +483,7 @@ func GetDeviceSoftwareCompliance(
 		resp, err := client.DeviceSoftwareCompliance(
 			context.Background(),
 			&compliancetypes.QueryGetDeviceSoftwareComplianceRequest{
-				CDCertificateId: CDCertificateId,
+				CDCertificateId: cDCertificateID,
 			},
 		)
 		if err != nil {
