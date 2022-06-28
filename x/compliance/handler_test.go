@@ -1266,10 +1266,10 @@ func queryComplianceInfo(
 
 func queryDeviceSoftwareCompliance(
 	setup *TestSetup,
-	CDCertificateID string,
+	cDCertificateID string,
 ) (*types.DeviceSoftwareCompliance, error) {
 	req := &types.QueryGetDeviceSoftwareComplianceRequest{
-		CDCertificateId: CDCertificateID,
+		CDCertificateId: cDCertificateID,
 	}
 
 	resp, err := setup.Keeper.DeviceSoftwareCompliance(setup.Wctx, req)
