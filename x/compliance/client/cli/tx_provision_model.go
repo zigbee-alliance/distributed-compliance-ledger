@@ -24,7 +24,7 @@ func CmdProvisionModel() *cobra.Command {
 		reason                   string
 		cdVersionNumber          uint32
 		programTypeVersion       string
-		CDCertificationID        string
+		CDCertificateID          string
 		familyID                 string
 		supportedClusters        string
 		compliantPlatformUsed    string
@@ -57,7 +57,7 @@ func CmdProvisionModel() *cobra.Command {
 				certificationType,
 				reason,
 				programTypeVersion,
-				CDCertificationID,
+				CDCertificateID,
 				familyID,
 				supportedClusters,
 				compliantPlatformUsed,
@@ -96,7 +96,7 @@ func CmdProvisionModel() *cobra.Command {
 		"Optional comment describing the reason of provisioning")
 	cmd.Flags().StringVar(&programTypeVersion, FlagProgramTypeVersion, "",
 		"Program Type Version of the certification")
-	cmd.Flags().StringVar(&CDCertificationID, FlagCDCertificationID, "",
+	cmd.Flags().StringVar(&CDCertificateID, FlagCDCertificateID, "",
 		"CD Certification ID of the certification")
 	cmd.Flags().StringVar(&familyID, FlagFamilyID, "",
 		"Family ID of the certification")
@@ -123,7 +123,7 @@ func CmdProvisionModel() *cobra.Command {
 	_ = cmd.MarkFlagRequired(FlagSoftwareVersionString)
 	_ = cmd.MarkFlagRequired(FlagCertificationType)
 	_ = cmd.MarkFlagRequired(FlagProvisionalDate)
-	_ = cmd.MarkFlagRequired(FlagCDCertificationID)
+	_ = cmd.MarkFlagRequired(FlagCDCertificateID)
 	_ = cmd.MarkFlagRequired(flags.FlagFrom)
 
 	cli.AddTxFlagsToCmd(cmd)

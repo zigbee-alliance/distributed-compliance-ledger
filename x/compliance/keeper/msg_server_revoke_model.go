@@ -71,7 +71,7 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 		complianceInfo.SetRevokedStatus(msg.RevocationDate, msg.Reason)
 
 		// remove compliance info from the entity Device Compliance Info
-		deviceSoftwareCompliance, found := k.GetDeviceSoftwareCompliance(ctx, complianceInfo.CDCertificationId)
+		deviceSoftwareCompliance, found := k.GetDeviceSoftwareCompliance(ctx, complianceInfo.CDCertificateId)
 		if found {
 			index, found := deviceSoftwareCompliance.IsComplianceInfoExist(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.SoftwareVersionString)
 			if found {
