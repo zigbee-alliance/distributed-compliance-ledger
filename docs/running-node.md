@@ -58,7 +58,7 @@ Depending on your use cases you can choose one of the following options to run y
 - To protect your node against DDoS attacks you can consider one of the following options:
   - No VPN, just whitelist/blacklist via firewall rule
   - IPSec site-to-site VPN (Cloud providers)
-  - [WireGuard](https://www.wireguard.com) P2P VPN
+  - WireGuard P2P VPN
 - Consider enabling TLS for public endpoints (RPC/gRPC/REST) (TLS 1.3 is recommended)
   - Most cloud providers including AWS provide TLS encryption integrated into Load Balancers
   - Offload TLS encryption using a reverse proxy (i.e [Nginx][4])
