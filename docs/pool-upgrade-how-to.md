@@ -109,6 +109,7 @@ application version:
 
       - If you change the configuration in the `cosmovisor.service`, you need to restart `cosmovisor.service`:
          ```bash
+         sudo systemctl daemon-reload
          sudo systemctl restart cosmovisor
          ```
 
