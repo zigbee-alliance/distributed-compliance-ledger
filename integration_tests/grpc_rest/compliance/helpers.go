@@ -717,25 +717,26 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	// Certify model with all optional fields
 	certReason = "some reason 3"
 	certifyModelMsg = compliancetypes.MsgCertifyModel{
-		Vid:                      vid,
-		Pid:                      pid,
-		SoftwareVersion:          sv,
-		SoftwareVersionString:    svs,
-		CertificationDate:        certDate,
-		CertificationType:        "zigbee",
-		Reason:                   certReason,
-		CDCertificateId:          testconstants.CDCertificateID,
-		ProgramTypeVersion:       testconstants.ProgramTypeVersion,
-		FamilyId:                 testconstants.FamilyID,
-		SupportedClusters:        testconstants.SupportedClusters,
-		CompliantPlatformUsed:    testconstants.CompliantPlatformUsed,
-		CompliantPlatformVersion: testconstants.CompliantPlatformVersion,
-		OSVersion:                testconstants.OSVersion,
-		CertificationRoute:       testconstants.CertificationRoute,
-		ProgramType:              testconstants.ProgramType,
-		Transport:                testconstants.Transport,
-		ParentChild:              testconstants.ParentChild1,
-		Signer:                   certCenterAccount.Address,
+		Vid:                                vid,
+		Pid:                                pid,
+		SoftwareVersion:                    sv,
+		SoftwareVersionString:              svs,
+		CertificationDate:                  certDate,
+		CertificationType:                  "zigbee",
+		Reason:                             certReason,
+		CDCertificateId:                    testconstants.CDCertificateID,
+		ProgramTypeVersion:                 testconstants.ProgramTypeVersion,
+		FamilyId:                           testconstants.FamilyID,
+		SupportedClusters:                  testconstants.SupportedClusters,
+		CompliantPlatformUsed:              testconstants.CompliantPlatformUsed,
+		CompliantPlatformVersion:           testconstants.CompliantPlatformVersion,
+		OSVersion:                          testconstants.OSVersion,
+		CertificationRoute:                 testconstants.CertificationRoute,
+		ProgramType:                        testconstants.ProgramType,
+		Transport:                          testconstants.Transport,
+		ParentChild:                        testconstants.ParentChild1,
+		CertificationIdOfSoftwareComponent: testconstants.CertificationIDOfSoftwareComponent,
+		Signer:                             certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)
@@ -760,6 +761,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.CertificationRoute, complianceInfo.CertificationRoute)
 	require.Equal(suite.T, testconstants.Transport, complianceInfo.Transport)
 	require.Equal(suite.T, testconstants.ParentChild1, complianceInfo.ParentChild)
+	require.Equal(suite.T, testconstants.CertificationIDOfSoftwareComponent, complianceInfo.CertificationIdOfSoftwareComponent)
 
 	modelIsCertified, _ = GetCertifiedModel(suite, vid, pid, sv, compliancetypes.ZigbeeCertificationType)
 	require.True(suite.T, modelIsCertified.Value)
@@ -789,6 +791,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.CertificationRoute, deviceSoftwareCompliance.ComplianceInfo[0].CertificationRoute)
 	require.Equal(suite.T, testconstants.Transport, deviceSoftwareCompliance.ComplianceInfo[0].Transport)
 	require.Equal(suite.T, testconstants.ParentChild1, deviceSoftwareCompliance.ComplianceInfo[0].ParentChild)
+	require.Equal(suite.T, testconstants.CertificationIDOfSoftwareComponent, deviceSoftwareCompliance.ComplianceInfo[0].CertificationIdOfSoftwareComponent)
 
 	// Get all models
 	complianceInfos, _ = GetAllComplianceInfo(suite)
@@ -1165,25 +1168,26 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	// Provision non-existent model with all optional fields
 	provReason = "some reason 8"
 	provModelMsg = compliancetypes.MsgProvisionModel{
-		Vid:                      vid,
-		Pid:                      pid,
-		SoftwareVersion:          sv,
-		SoftwareVersionString:    svs,
-		ProvisionalDate:          provDate,
-		CertificationType:        "matter",
-		Reason:                   provReason,
-		CDCertificateId:          testconstants.CDCertificateID,
-		ProgramTypeVersion:       testconstants.ProgramTypeVersion,
-		FamilyId:                 testconstants.FamilyID,
-		SupportedClusters:        testconstants.SupportedClusters,
-		CompliantPlatformUsed:    testconstants.CompliantPlatformUsed,
-		CompliantPlatformVersion: testconstants.CompliantPlatformVersion,
-		OSVersion:                testconstants.OSVersion,
-		CertificationRoute:       testconstants.CertificationRoute,
-		ProgramType:              testconstants.ProgramType,
-		Transport:                testconstants.Transport,
-		ParentChild:              testconstants.ParentChild1,
-		Signer:                   certCenterAccount.Address,
+		Vid:                                vid,
+		Pid:                                pid,
+		SoftwareVersion:                    sv,
+		SoftwareVersionString:              svs,
+		ProvisionalDate:                    provDate,
+		CertificationType:                  "matter",
+		Reason:                             provReason,
+		CDCertificateId:                    testconstants.CDCertificateID,
+		ProgramTypeVersion:                 testconstants.ProgramTypeVersion,
+		FamilyId:                           testconstants.FamilyID,
+		SupportedClusters:                  testconstants.SupportedClusters,
+		CompliantPlatformUsed:              testconstants.CompliantPlatformUsed,
+		CompliantPlatformVersion:           testconstants.CompliantPlatformVersion,
+		OSVersion:                          testconstants.OSVersion,
+		CertificationRoute:                 testconstants.CertificationRoute,
+		ProgramType:                        testconstants.ProgramType,
+		Transport:                          testconstants.Transport,
+		ParentChild:                        testconstants.ParentChild1,
+		CertificationIdOfSoftwareComponent: testconstants.CertificationIDOfSoftwareComponent,
+		Signer:                             certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&provModelMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)
@@ -1208,6 +1212,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.CertificationRoute, complianceInfo.CertificationRoute)
 	require.Equal(suite.T, testconstants.Transport, complianceInfo.Transport)
 	require.Equal(suite.T, testconstants.ParentChild1, complianceInfo.ParentChild)
+	require.Equal(suite.T, testconstants.CertificationIDOfSoftwareComponent, complianceInfo.CertificationIdOfSoftwareComponent)
 
 	_, err = GetCertifiedModel(suite, vid, pid, sv, compliancetypes.MatterCertificationType)
 	suite.AssertNotFound(err)
@@ -1241,20 +1246,21 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	// Certify model with some optional fields
 	certReason = "some reason 9"
 	certifyModelMsg = compliancetypes.MsgCertifyModel{
-		Vid:                      vid,
-		Pid:                      pid,
-		SoftwareVersion:          sv,
-		SoftwareVersionString:    svs,
-		CertificationDate:        certDate,
-		CertificationType:        "matter",
-		Reason:                   certReason,
-		CDCertificateId:          testconstants.CDCertificateID,
-		ProgramTypeVersion:       "pTypeVersion",
-		FamilyId:                 "familyID",
-		SupportedClusters:        "sClusters",
-		CompliantPlatformUsed:    "WIFI",
-		CompliantPlatformVersion: "V1",
-		Signer:                   certCenterAccount.Address,
+		Vid:                                vid,
+		Pid:                                pid,
+		SoftwareVersion:                    sv,
+		SoftwareVersionString:              svs,
+		CertificationDate:                  certDate,
+		CertificationType:                  "matter",
+		Reason:                             certReason,
+		CDCertificateId:                    testconstants.CDCertificateID,
+		ProgramTypeVersion:                 "pTypeVersion",
+		FamilyId:                           "familyID",
+		SupportedClusters:                  "sClusters",
+		CompliantPlatformUsed:              "WIFI",
+		CompliantPlatformVersion:           "V1",
+		CertificationIdOfSoftwareComponent: "x5732",
+		Signer:                             certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)
@@ -1276,6 +1282,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	require.Equal(suite.T, "sClusters", complianceInfo.SupportedClusters)
 	require.Equal(suite.T, "WIFI", complianceInfo.CompliantPlatformUsed)
 	require.Equal(suite.T, "V1", complianceInfo.CompliantPlatformVersion)
+	require.Equal(suite.T, "x5732", complianceInfo.CertificationIdOfSoftwareComponent)
 	require.Equal(suite.T, testconstants.OSVersion, complianceInfo.OSVersion)
 	require.Equal(suite.T, testconstants.CertificationRoute, complianceInfo.CertificationRoute)
 	require.Equal(suite.T, testconstants.Transport, complianceInfo.Transport)
@@ -1305,6 +1312,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	require.Equal(suite.T, "sClusters", deviceSoftwareCompliance.ComplianceInfo[3].SupportedClusters)
 	require.Equal(suite.T, "WIFI", deviceSoftwareCompliance.ComplianceInfo[3].CompliantPlatformUsed)
 	require.Equal(suite.T, "V1", deviceSoftwareCompliance.ComplianceInfo[3].CompliantPlatformVersion)
+	require.Equal(suite.T, "x5732", deviceSoftwareCompliance.ComplianceInfo[3].CertificationIdOfSoftwareComponent)
 	require.Equal(suite.T, testconstants.OSVersion, deviceSoftwareCompliance.ComplianceInfo[3].OSVersion)
 	require.Equal(suite.T, testconstants.CertificationRoute, deviceSoftwareCompliance.ComplianceInfo[3].CertificationRoute)
 	require.Equal(suite.T, testconstants.Transport, deviceSoftwareCompliance.ComplianceInfo[3].Transport)
