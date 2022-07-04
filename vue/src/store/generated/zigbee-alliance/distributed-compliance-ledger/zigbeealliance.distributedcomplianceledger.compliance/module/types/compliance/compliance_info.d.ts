@@ -24,6 +24,7 @@ export interface ComplianceInfo {
     supportedClusters: string;
     OSVersion: string;
     parentChild: string;
+    certificationIdOfSoftwareComponent: string;
 }
 export declare const ComplianceInfo: {
     encode(message: ComplianceInfo, writer?: Writer): Writer;

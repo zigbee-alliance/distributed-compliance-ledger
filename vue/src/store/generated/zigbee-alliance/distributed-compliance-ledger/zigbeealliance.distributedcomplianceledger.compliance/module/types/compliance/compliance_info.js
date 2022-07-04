@@ -23,7 +23,8 @@ const baseComplianceInfo = {
     familyId: '',
     supportedClusters: '',
     OSVersion: '',
-    parentChild: ''
+    parentChild: '',
+    certificationIdOfSoftwareComponent: ''
 };
 export const ComplianceInfo = {
     encode(message, writer = Writer.create()) {
@@ -92,6 +93,9 @@ export const ComplianceInfo = {
         }
         if (message.parentChild !== '') {
             writer.uint32(178).string(message.parentChild);
+        }
+        if (message.certificationIdOfSoftwareComponent !== '') {
+            writer.uint32(186).string(message.certificationIdOfSoftwareComponent);
         }
         return writer;
     },
@@ -168,6 +172,9 @@ export const ComplianceInfo = {
                     break;
                 case 22:
                     message.parentChild = reader.string();
+                    break;
+                case 23:
+                    message.certificationIdOfSoftwareComponent = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -310,6 +317,12 @@ export const ComplianceInfo = {
         else {
             message.parentChild = '';
         }
+        if (object.certificationIdOfSoftwareComponent !== undefined && object.certificationIdOfSoftwareComponent !== null) {
+            message.certificationIdOfSoftwareComponent = String(object.certificationIdOfSoftwareComponent);
+        }
+        else {
+            message.certificationIdOfSoftwareComponent = '';
+        }
         return message;
     },
     toJSON(message) {
@@ -341,6 +354,7 @@ export const ComplianceInfo = {
         message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters);
         message.OSVersion !== undefined && (obj.OSVersion = message.OSVersion);
         message.parentChild !== undefined && (obj.parentChild = message.parentChild);
+        message.certificationIdOfSoftwareComponent !== undefined && (obj.certificationIdOfSoftwareComponent = message.certificationIdOfSoftwareComponent);
         return obj;
     },
     fromPartial(object) {
@@ -476,6 +490,12 @@ export const ComplianceInfo = {
         }
         else {
             message.parentChild = '';
+        }
+        if (object.certificationIdOfSoftwareComponent !== undefined && object.certificationIdOfSoftwareComponent !== null) {
+            message.certificationIdOfSoftwareComponent = object.certificationIdOfSoftwareComponent;
+        }
+        else {
+            message.certificationIdOfSoftwareComponent = '';
         }
         return message;
     }

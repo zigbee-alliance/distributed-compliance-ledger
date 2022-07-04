@@ -64,6 +64,7 @@ export interface ComplianceComplianceInfo {
   supportedClusters?: string;
   OSVersion?: string;
   parentChild?: string;
+  certificationIdOfSoftwareComponent?: string;
 }
 
 export interface ComplianceDeviceSoftwareCompliance {

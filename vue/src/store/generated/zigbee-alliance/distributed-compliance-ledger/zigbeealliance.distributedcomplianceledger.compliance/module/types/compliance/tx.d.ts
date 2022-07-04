@@ -21,6 +21,7 @@ export interface MsgCertifyModel {
     programType: string;
     transport: string;
     parentChild: string;
+    certificationIdOfSoftwareComponent: string;
 }
 export interface MsgCertifyModelResponse {
 }
@@ -58,6 +59,7 @@ export interface MsgProvisionModel {
     programType: string;
     transport: string;
     parentChild: string;
+    certificationIdOfSoftwareComponent: string;
 }
 export interface MsgProvisionModelResponse {
 }
