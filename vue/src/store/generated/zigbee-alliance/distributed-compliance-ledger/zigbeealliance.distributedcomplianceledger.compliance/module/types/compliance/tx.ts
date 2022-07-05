@@ -24,6 +24,7 @@ export interface MsgCertifyModel {
   programType: string
   transport: string
   parentChild: string
+  certificationIdOfSoftwareComponent: string
 }
 
 export interface MsgCertifyModelResponse {}
@@ -63,6 +64,7 @@ export interface MsgProvisionModel {
   programType: string
   transport: string
   parentChild: string
+  certificationIdOfSoftwareComponent: string
 }
 
 export interface MsgProvisionModelResponse {}
@@ -87,7 +89,8 @@ const baseMsgCertifyModel: object = {
   certificationRoute: '',
   programType: '',
   transport: '',
-  parentChild: ''
+  parentChild: '',
+  certificationIdOfSoftwareComponent: ''
 }
 
 export const MsgCertifyModel = {
@@ -151,6 +154,9 @@ export const MsgCertifyModel = {
     }
     if (message.parentChild !== '') {
       writer.uint32(162).string(message.parentChild)
+    }
+    if (message.certificationIdOfSoftwareComponent !== '') {
+      writer.uint32(170).string(message.certificationIdOfSoftwareComponent)
     }
     return writer
   },
@@ -221,6 +227,9 @@ export const MsgCertifyModel = {
           break
         case 20:
           message.parentChild = reader.string()
+          break
+        case 21:
+          message.certificationIdOfSoftwareComponent = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -332,6 +341,11 @@ export const MsgCertifyModel = {
     } else {
       message.parentChild = ''
     }
+    if (object.certificationIdOfSoftwareComponent !== undefined && object.certificationIdOfSoftwareComponent !== null) {
+      message.certificationIdOfSoftwareComponent = String(object.certificationIdOfSoftwareComponent)
+    } else {
+      message.certificationIdOfSoftwareComponent = ''
+    }
     return message
   },
 
@@ -357,6 +371,7 @@ export const MsgCertifyModel = {
     message.programType !== undefined && (obj.programType = message.programType)
     message.transport !== undefined && (obj.transport = message.transport)
     message.parentChild !== undefined && (obj.parentChild = message.parentChild)
+    message.certificationIdOfSoftwareComponent !== undefined && (obj.certificationIdOfSoftwareComponent = message.certificationIdOfSoftwareComponent)
     return obj
   },
 
@@ -461,6 +476,11 @@ export const MsgCertifyModel = {
       message.parentChild = object.parentChild
     } else {
       message.parentChild = ''
+    }
+    if (object.certificationIdOfSoftwareComponent !== undefined && object.certificationIdOfSoftwareComponent !== null) {
+      message.certificationIdOfSoftwareComponent = object.certificationIdOfSoftwareComponent
+    } else {
+      message.certificationIdOfSoftwareComponent = ''
     }
     return message
   }
@@ -763,7 +783,8 @@ const baseMsgProvisionModel: object = {
   certificationRoute: '',
   programType: '',
   transport: '',
-  parentChild: ''
+  parentChild: '',
+  certificationIdOfSoftwareComponent: ''
 }
 
 export const MsgProvisionModel = {
@@ -827,6 +848,9 @@ export const MsgProvisionModel = {
     }
     if (message.parentChild !== '') {
       writer.uint32(162).string(message.parentChild)
+    }
+    if (message.certificationIdOfSoftwareComponent !== '') {
+      writer.uint32(170).string(message.certificationIdOfSoftwareComponent)
     }
     return writer
   },
@@ -897,6 +921,9 @@ export const MsgProvisionModel = {
           break
         case 20:
           message.parentChild = reader.string()
+          break
+        case 21:
+          message.certificationIdOfSoftwareComponent = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -1008,6 +1035,11 @@ export const MsgProvisionModel = {
     } else {
       message.parentChild = ''
     }
+    if (object.certificationIdOfSoftwareComponent !== undefined && object.certificationIdOfSoftwareComponent !== null) {
+      message.certificationIdOfSoftwareComponent = String(object.certificationIdOfSoftwareComponent)
+    } else {
+      message.certificationIdOfSoftwareComponent = ''
+    }
     return message
   },
 
@@ -1033,6 +1065,7 @@ export const MsgProvisionModel = {
     message.programType !== undefined && (obj.programType = message.programType)
     message.transport !== undefined && (obj.transport = message.transport)
     message.parentChild !== undefined && (obj.parentChild = message.parentChild)
+    message.certificationIdOfSoftwareComponent !== undefined && (obj.certificationIdOfSoftwareComponent = message.certificationIdOfSoftwareComponent)
     return obj
   },
 
@@ -1137,6 +1170,11 @@ export const MsgProvisionModel = {
       message.parentChild = object.parentChild
     } else {
       message.parentChild = ''
+    }
+    if (object.certificationIdOfSoftwareComponent !== undefined && object.certificationIdOfSoftwareComponent !== null) {
+      message.certificationIdOfSoftwareComponent = object.certificationIdOfSoftwareComponent
+    } else {
+      message.certificationIdOfSoftwareComponent = ''
     }
     return message
   }

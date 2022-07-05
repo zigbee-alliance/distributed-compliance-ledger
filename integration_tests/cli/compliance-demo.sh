@@ -542,7 +542,7 @@ test_divider
 
 # ADD CERTIFY MODEL WITH ALL OPTIONAL FIELDS
 echo "Certify Model with VID: $vid PID: $pid SV: ${sv} with zigbee certification"
-result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --cdCertificateId="$cd_certificate_id" --programTypeVersion="1.0" --familyId="someFID" --supportedClusters="someClusters" --compliantPlatformUsed="WIFI" --compliantPlatformVersion="V1" --OSVersion="someV" --certificationRoute="Full" --programType="pType" --transport="someTransport" --parentChild="parent" --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --cdCertificateId="$cd_certificate_id" --programTypeVersion="1.0" --familyId="someFID" --supportedClusters="someClusters" --compliantPlatformUsed="WIFI" --compliantPlatformVersion="V1" --OSVersion="someV" --certificationRoute="Full" --programType="pType" --transport="someTransport" --parentChild="parent" --certificationIDOfSoftwareComponent="someIDOfSoftwareComponent" --from $zb_account --yes)
 echo "$result"
 check_response "$result" "\"code\": 0"
 
@@ -577,6 +577,7 @@ check_response "$result" "\"certificationRoute\": \"Full\""
 check_response "$result" "\"programType\": \"pType\""
 check_response "$result" "\"transport\": \"someTransport\""
 check_response "$result" "\"parentChild\": \"parent\""
+check_response "$result" "\"certificationIdOfSoftwareComponent\": \"someIDOfSoftwareComponent\""
 echo "$result"
 
 test_divider
@@ -600,6 +601,7 @@ check_response "$result" "\"certificationRoute\": \"Full\""
 check_response "$result" "\"programType\": \"pType\""
 check_response "$result" "\"transport\": \"someTransport\""
 check_response "$result" "\"parentChild\": \"parent\""
+check_response "$result" "\"certificationIdOfSoftwareComponent\": \"someIDOfSoftwareComponent\""
 echo "$result"
 ###########################################################################################################################################
 

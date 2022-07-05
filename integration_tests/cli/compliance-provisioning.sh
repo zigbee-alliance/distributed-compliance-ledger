@@ -458,7 +458,7 @@ test_divider
 
 # ADD PROVISION MODEL WITH ALL OPTIONAL FIELDS
 echo "Provision Model with VID: $vid PID: $pid  SV: ${sv} with zigbee certification"
-result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --provisionalDate="$provision_date" --reason "$provision_reason" --cdCertificateId="$cd_certificate_id" --programTypeVersion="1.0" --familyId="someFID" --supportedClusters="someClusters" --compliantPlatformUsed="WIFI" --compliantPlatformVersion="V1" --OSVersion="someV" --certificationRoute="Full" --programType="pType" --transport="someTransport" --parentChild="parent" --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --provisionalDate="$provision_date" --reason "$provision_reason" --cdCertificateId="$cd_certificate_id" --programTypeVersion="1.0" --familyId="someFID" --supportedClusters="someClusters" --compliantPlatformUsed="WIFI" --compliantPlatformVersion="V1" --OSVersion="someV" --certificationRoute="Full" --programType="pType" --transport="someTransport" --parentChild="parent" --certificationIDOfSoftwareComponent="someIDOfSoftwareComponent1" --from $zb_account --yes)
 echo "$result"
 check_response "$result" "\"code\": 0"
 
@@ -490,6 +490,7 @@ check_response "$result" "\"certificationRoute\": \"Full\""
 check_response "$result" "\"programType\": \"pType\""
 check_response "$result" "\"transport\": \"someTransport\""
 check_response "$result" "\"parentChild\": \"parent\""
+check_response "$result" "\"certificationIdOfSoftwareComponent\": \"someIDOfSoftwareComponent1\""
 echo "$result"
 ###########################################################################################################################################
 
@@ -510,7 +511,7 @@ check_response "$result" "\"code\": 0"
 
 # ADD CERTIFY MODEL WITH SOME OPTIONAL FIELDS
 echo "Certify Model with VID: $vid PID: $pid SV: ${sv} with zigbee certification"
-result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --certificationDate="$certification_date" --cdCertificateId="$cd_certificate_id" --programTypeVersion="2.0" --familyId="someFID2" --supportedClusters="someClusters2" --compliantPlatformUsed="ETHERNET" --compliantPlatformVersion="V2" --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --certificationDate="$certification_date" --cdCertificateId="$cd_certificate_id" --programTypeVersion="2.0" --familyId="someFID2" --supportedClusters="someClusters2" --compliantPlatformUsed="ETHERNET" --compliantPlatformVersion="V2" --certificationIDOfSoftwareComponent="someIDOfSoftwareComponent2" --from $zb_account --yes)
 echo "$result"
 check_response "$result" "\"code\": 0"
 
@@ -541,6 +542,7 @@ check_response "$result" "\"certificationRoute\": \"Full\""
 check_response "$result" "\"programType\": \"pType\""
 check_response "$result" "\"transport\": \"someTransport\""
 check_response "$result" "\"parentChild\": \"parent\""
+check_response "$result" "\"certificationIdOfSoftwareComponent\": \"someIDOfSoftwareComponent2\""
 echo "$result"
 
 # GET DEVICE SOFTWARE COMPLIANCE
@@ -563,6 +565,7 @@ check_response "$result" "\"certificationRoute\": \"Full\""
 check_response "$result" "\"programType\": \"pType\""
 check_response "$result" "\"transport\": \"someTransport\""
 check_response "$result" "\"parentChild\": \"parent\""
+check_response "$result" "\"certificationIdOfSoftwareComponent\": \"someIDOfSoftwareComponent2\""
 echo "$result"
 ###########################################################################################################################################
 

@@ -73,4 +73,8 @@ func (d *ComplianceInfo) SetOptionalFields(msg *MsgCertifyModel) {
 	if msg.ParentChild != "" {
 		d.ParentChild = msg.ParentChild
 	}
+
+	if msg.CertificationIdOfSoftwareComponent != "" {
+		d.CertificationIdOfSoftwareComponent = msg.CertificationIdOfSoftwareComponent
+	}
 }

@@ -37,6 +37,7 @@ message MsgCertifyModel {
   string programType = 18 [(gogoproto.moretags) = "validate:\"max=64\""];
   string transport = 19 [(gogoproto.moretags) = "validate:\"max=64\""];
   string parentChild = 20 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string certificationIdOfSoftwareComponent = 21 [(gogoproto.moretags) = "validate:\"max=64\""];
 }
 
 message MsgCertifyModelResponse {
@@ -78,6 +79,7 @@ message MsgProvisionModel {
   string programType = 18 [(gogoproto.moretags) = "validate:\"max=64\""];
   string transport = 19 [(gogoproto.moretags) = "validate:\"max=64\""];
   string parentChild = 20 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string certificationIdOfSoftwareComponent = 21 [(gogoproto.moretags) = "validate:\"max=64\""];
 }
 
 message MsgProvisionModelResponse {
