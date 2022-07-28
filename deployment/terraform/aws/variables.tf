@@ -8,6 +8,14 @@ variable "region_2" {
   # default     = "us-east-2"
 }
 
+variable "ssh_public_key_path" {
+  description = "SSH public key path"
+}
+
+variable "ssh_private_key_path" {
+  description = "SSH private key path"
+}
+
 variable "validator_config" {
   type = object({
     instance_type = string
