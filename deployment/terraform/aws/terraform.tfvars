@@ -1,6 +1,9 @@
 region_1 = "us-east-2"
 region_2 = "us-west-1"
 
+ssh_public_key_path  = "~/.ssh/id_rsa.pub"
+ssh_private_key_path = "~/.ssh/id_rsa"
+
 validator_config = {
   instance_type = "t3.medium"
   is_genesis    = true

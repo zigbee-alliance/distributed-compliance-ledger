@@ -23,6 +23,9 @@ module "validator" {
     aws = aws.region_1
   }
 
+  ssh_public_key_path  = var.ssh_public_key_path
+  ssh_private_key_path = var.ssh_private_key_path
+
   instance_type        = var.validator_config.instance_type
   iam_instance_profile = module.iam.iam_instance_profile
 }
@@ -41,6 +44,9 @@ module "private_sentries" {
     aws      = aws.region_1
     aws.peer = aws.region_1
   }
+
+  ssh_public_key_path  = var.ssh_public_key_path
+  ssh_private_key_path = var.ssh_private_key_path
 
   peer_vpc = module.validator.vpc
 }
@@ -64,6 +70,9 @@ module "public_sentries_1" {
     aws.peer = aws.region_1
   }
 
+  ssh_public_key_path  = var.ssh_public_key_path
+  ssh_private_key_path = var.ssh_private_key_path
+
   region_index = 1
   peer_vpc     = module.private_sentries[0].vpc
 }
@@ -86,6 +95,9 @@ module "public_sentries_2" {
     aws      = aws.region_2
     aws.peer = aws.region_1
   }
+
+  ssh_public_key_path  = var.ssh_public_key_path
+  ssh_private_key_path = var.ssh_private_key_path
 
   region_index = 2
   peer_vpc     = module.private_sentries[0].vpc
@@ -112,6 +124,9 @@ module "observers_1" {
     aws.peer = aws.region_1
   }
 
+  ssh_public_key_path  = var.ssh_public_key_path
+  ssh_private_key_path = var.ssh_private_key_path
+
   region_index = 1
   peer_vpc     = module.private_sentries[0].vpc
 }
@@ -137,6 +152,9 @@ module "observers_2" {
     aws.peer = aws.region_1
   }
 
+  ssh_public_key_path  = var.ssh_public_key_path
+  ssh_private_key_path = var.ssh_private_key_path
+
   region_index = 2
   peer_vpc     = module.private_sentries[0].vpc
 }
@@ -152,6 +170,9 @@ module "prometheus" {
   providers = {
     aws = aws.region_1
   }
+
+  ssh_public_key_path  = var.ssh_public_key_path
+  ssh_private_key_path = var.ssh_private_key_path
 
   vpc = module.private_sentries[0].vpc
 }
