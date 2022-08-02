@@ -34,8 +34,18 @@
 
 - name: prepare-keys | add private key
   shell: "(echo {{ passphrase }}; echo {{ passphrase }}) | {{ dcld.path }} keys add {{ key_name }} --home {{ dcl_home }}"
+  register: key_secret
   when: key_name_exists.rc != 0
   no_log: true
+
+- name: prepare-keys | copy key secret to local machine
+  become: false
+  copy:
+    content: "{{ key_secret.stdout }}"
+    dest: "{{ playbook_dir }}/../persistent_chains/{{ chain_id }}/{{ key_name }}.json"
+  run_once: true
+  when: key_name_exists.rc != 0
+  delegate_to: localhost
 
 - name: prepare-keys | persist key name local fact
   changed_when: false
