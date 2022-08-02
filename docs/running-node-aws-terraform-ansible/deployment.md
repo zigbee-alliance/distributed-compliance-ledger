@@ -28,7 +28,8 @@ aws_secret_access_key = <secret_access_key_here>
 Create Ansible configuration file [`~/.ansible.cfg`] with the following content:
 
 ```text
-ANSIBLE_HOST_KEY_CHECKING=False
+[defaults]
+HOST_KEY_CHECKING=False
 ```
 
 ## Deployment Configuration
