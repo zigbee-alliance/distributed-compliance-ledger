@@ -20,13 +20,6 @@
   register: genesis_file_content
   run_once: true
 
-- name: copy genesis file | create persistent chains directory
-  become: false
-  file:
-    path: "{{ playbook_dir }}/../persistent_chains/{{ chain_id }}"
-    state: directory
-  delegate_to: localhost
-
 - name: copy genesis file | copy genesis file to local file
   become: false
   copy:
