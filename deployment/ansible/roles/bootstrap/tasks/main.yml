@@ -52,3 +52,10 @@
   loop:
     - "{{ dcl_home }}"
     - "{{ cosmovisor.log_path | dirname }}"
+
+- name: create local persistent chains directory
+  become: false
+  file:
+    path: "{{ playbook_dir }}/../persistent_chains/{{ chain_id }}"
+    state: directory
+  delegate_to: localhost
