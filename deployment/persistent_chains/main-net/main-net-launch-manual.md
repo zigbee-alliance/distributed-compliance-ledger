@@ -121,6 +121,8 @@ The following steps are expected to be done **before** the ceremony.
 ## II. Ceremony
 6. **Wait until the CSA Mainnet infrastructure is up and running**
 
+    6.1. Go to https://dcl.csa-iot.org to access DCL Web UI and follow the ceremony procedure
+
 7. **Run Sentry Node (skip this section if you are not running a sentry node)**
 
     7.1. Download genesis
@@ -153,7 +155,7 @@ The following steps are expected to be done **before** the ceremony.
 
 9. **Run Validator Node**
 
-    9.1. Wait until your Admin Account has been apporoved by CSA
+    9.1. Wait until your NodeAdmin account has been apporoved by CSA
 
     9.2. Download genesis
 
