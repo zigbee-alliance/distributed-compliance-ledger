@@ -284,9 +284,30 @@ ansible-playbook -i ./deployment/ansible/inventory/aws  -u ubuntu ./deployment/a
     - `<chain_id>` - chain ID of the network specified in Ansible inventory variables
 2. Verify `Observers` REST endpoint is available under `http(s)://on.<root_domain_name>` using your browser
 3. Verify `Observers` RPC endpoint is available under `http(s)://on.<root_domain_name>:26657` using your browser
-4. Verify `Observers` gRPC endpoint is available under `http(s)://on.<root_domain_name>:8443` using postman (or similar tool)
+4. Verify `Observers` gRPC endpoint is available under `http(s)://on.<root_domain_name>:8443` using Postman (or similar tool)
 
 - `<root_domain_name>` - domain name specified in terraform `Observers` config
+
+## DCL Web UI integration
+
+### Using AWS Amplify Service
+1. Make a fork from [DCL UI](https://github.com/Comcast/dcl-ui) repo to your own github account
+2. Access your AWS Amplify console and follow the [instructions][1]
+    - skip instructions for setting up a backend since you are going to deploy only static Vue.js app
+    - use the following environment variables:
+      ```.env
+      VUE_APP_DCL_API_NODE=https://on.<root_domain_name>
+      VUE_APP_DCL_RPC_NODE=https://on.<root_domain_name>:26657
+      VUE_APP_DCL_WEBSOCKET_NODE=wss://on.<root_domain_name>:26657/websocket
+      VUE_APP_DCL_CHAIN_ID=<chain-id>
+      VUE_APP_DCL_ADDR_PREFIX=cosmos
+      VUE_APP_DCL_SDK_VERSION=Stargate
+      VUE_APP_DCL_TX_API=/rpc/tx?hash=0x
+      VUE_APP_DCL_REFRESH=500000
+      ```
+    - add your `<root_domain_name>` with a free SSL certificate
+  
+  3. Your DCL UI should be available under `https://<root_domain_name>`
 
 ## Health and Monitoring
 
@@ -308,3 +329,4 @@ ansible-playbook -i ./deployment/ansible/inventory/aws  -u ubuntu ./deployment/a
     to get prometheus endpoint which can be used by Grafana to visualize metrics. See detailed instructions [here][1]
 
 [1]: https://aws.amazon.com/blogs/opensource/using-amazon-managed-service-for-prometheus-to-monitor-ec2-environments/
+[2]: https://docs.aws.amazon.com/amplify/latest/userguide/getting-started.html
