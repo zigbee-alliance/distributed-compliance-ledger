@@ -1,7 +1,9 @@
 # DCL Mainnet Launch Guide
 
 <!-- markdownlint-disable MD029 -->
-This document is a step-by-step guide for DCL Mainnet launch ceremony. It  describes the following stages in details:
+This document is a step-by-step guide for those who prefer manual configuration of DCL nodes.
+
+It  describes the following stages in details:
 
 * Pre-Ceremony
 * Ceremony
@@ -14,6 +16,7 @@ of a node setup logic along with requirements for the hardware and operating sys
 
 The following steps are expected to be done **before** the ceremony.
 
+> **_Note:_** Steps [1-2] are done for every validator node while steps [3-5] are done only once
 1. **Configure Validator/Sentry Node**
 
     1.1. `Ubuntu 20.04 LTS` is recommended.
@@ -164,9 +167,13 @@ The following steps are expected to be done **before** the ceremony.
     ```
 
     9.3. Prepare `persistent_peers.txt` file
-    - If you are not running a senrty node - download or copy-paste up-to date `persistent_peers.txt` file to the same directory as `run_dcl_node`.
-    - If you are running a senrty node - specify only your sentry node's address in `persistent_peers.txt` file in the following format: 
+    - If you are not running a sentry node - download or copy-paste up-to date `persistent_peers.txt` file to the same directory as `run_dcl_node`.
+    - If you are running a sentry node - specify only your sentry node's address in `persistent_peers.txt` file in the following format: 
         - `<sentry node id>`@`<sentry node's private/public IP address>`
+        - Use the following command to get node id of a node
+            ```bash
+            ./dcld tendermint show-validator
+            ```
         > _Note_: It is better to communicate with a senrty node using internal private ip address if both validator and sentry nodes are in the same (logical) network
 
     9.4. Run VN
@@ -213,7 +220,7 @@ The following steps are expected to be done **before** the ceremony.
 
 ## III: Post-Ceremony: Validation (For every Validator/Sentry Node)
 
-13. **Make sure that all VNs accept incoming connections from this node for the given persistent peers file**
+13. **Make sure that Sentry (VN in case Sentry is not used) nodes accept incoming connections from this node for the given persistent peers file**
 
     ```bash
     # fetch the helper script
@@ -260,4 +267,4 @@ The following steps are expected to be done **before** the ceremony.
 
 ## V. Post-Ceremony: Adding new nodes to mainnet
 
-When adding new nodes to mainnet after a while, you might consider one of the options described in [running-node-in-existing-network](../../../docs/advanced/running-node-in-existing-network.md).
+When adding new nodes to mainnet after a while, you might consider one of the options described in [running-node.md](../../../docs/running-node.md).
