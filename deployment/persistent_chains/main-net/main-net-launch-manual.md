@@ -218,7 +218,7 @@ The following steps are expected to be done **before** the ceremony.
         ```
 
 
-## III: Post-Ceremony: Validation (For every Validator/Sentry Node)
+## III: Post-Ceremony: Validation
 
 13. **Make sure that Sentry (VN in case Sentry is not used) nodes accept incoming connections from this node for the given persistent peers file**
 
