@@ -16,6 +16,49 @@ of a node setup logic along with requirements for the hardware and operating sys
 
 The following steps are expected to be done **before** the ceremony.
 
+0. **Check connectivity of your instances with other companies' instances**
+    
+    The following steps should be performed on all public facing nodes (VN or Sentry depending on the configuration).
+
+    You can also use the following instructions to check the connectivity between your own internal nodes (Sentry-VN, Sentry-Observer, etc.)
+
+    0.1. Download the following scripts:
+    ```bash
+    # fetch the helper scripts
+    curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/scripts/utils/run_stub_server
+    curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/scripts/utils/test_endpoints
+
+    # give execute permission
+    sudo chmod u+x run_stub_server test_endpoints
+    ```
+
+    0.2. Run stub server on Sentry (VN if Sentry is not used) Node instance:
+    ```bash
+    ./run_stub_server <port-number>
+    ```
+    - Script requires sudo permission
+    - Stub server helps to troubleshoot network (connection, firewall, etc) issues before actual mainnet launch
+    - `<port-number>` - port number the stub server will listen on
+    - Run the stub server on the following ports:
+        - 26656 (tendermint p2p port)
+            ```bash
+            ./run_stub_server 26656
+            ```
+    
+    0.3. Once the stub servers on all public facing nodes (VN or Sentry depending on configuration) are running. It is time to check connectivity other nodes with yours.
+    - Create or copy `persistent_endpoints.txt` file into the the directory as `test_endpoints` script
+    - `persistent_endpoints.txt` file contains comma-separated (without spaces) list of `[IP:PORT]` pairs of all public facing nodes
+        - example:
+            ```txt
+            1.1.1.1:26656,2.2.2.2:26656
+            ```
+        - Cordinate with other NodeAdmins in `#dcl-node-admins` slack channel to get up-to date list of addresses
+    - Run the `test_endpoints` script to check connectivity with nodes specified in the `persistent_endpoints.txt`
+        ```bash
+        ./test_endpoints
+        ```
+        - you should see connectivity status for all [IP:PORT] pairs in the output
+
 > **_Note:_** Steps [1-2] are done for every validator node while steps [3-5] are done only once
 1. **Configure Validator/Sentry Node**
 
