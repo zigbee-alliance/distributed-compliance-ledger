@@ -1,0 +1,92 @@
+#!/bin/bash
+# Copyright 2022 DSR Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+set -eu
+set -o pipefail
+
+TIMEOUT_DEF=3
+PERSISTENT_ENDPOINTS_FILE="${1:-./persistent_endpoints.txt}"
+
+TIMEOUT="${TIMEOUT:-$TIMEOUT_DEF}"
+
+PASSED_RES=PASSED
+SKIPPED_RES=SKIPPED
+FAILED_RES=FAILED
+IP_TOOL=ip
+
+final_res=true
+
+function usage {
+  echo "\
+Usage: $0 [persistent-endpoints-file]
+
+Tests connections to ip:port pairs from the persistent endpoints file.
+If the file is not specified './persistent_endpoints.txt' is used.
+
+The tool uses netcat. It tries to install it if not available!
+
+TIMEOUT environment variable may be used to set connections
+timeout (seconds). Default: 3 seconds.
+"
+}
+
+function check {
+    set -u
+
+    nc -w "$TIMEOUT" -z "$1" "$2" 2>&1 >/dev/null
+    
+    if [[ $? -eq 0 ]]; then
+        echo "$PASSED_RES"
+    else
+        echo "$FAILED_RES"
+    fi
+}
+
+if [[ ("${1-}" == "-h" || "${1:-}" == "--help") ]]; then
+    usage
+    exit 0
+fi
+
+if [[ ! -f "$PERSISTENT_ENDPOINTS_FILE" ]]; then
+    echo "Error. '$PERSISTENT_ENDPOINTS_FILE' file not found"
+    usage
+    exit 1
+fi
+
+if [[ -z "$(which nc)" ]]; then
+    echo '"netcat" not found. installing...'
+    sudo apt-get update -y && sudo apt-get install netcat -y
+fi
+
+IFS=',' read -a peers <<< "$(cat "$PERSISTENT_ENDPOINTS_FILE")"
+
+for peer in "${peers[@]}"
+do
+    IFS=':' read -a _arr <<< "$(echo "$peer" | cut -d @ -f 2)"
+
+    res="$(check "${_arr[0]}" "${_arr[1]}")"
+
+    echo "Connection to peer '${_arr[0]}:${_arr[1]}' $res"
+
+    if [[ "$res" == "$FAILED_RES" ]]; then
+        final_res=false
+    fi
+done
+
+if [[ "$final_res" == true ]]; then
+    exit 0
+else
+    exit 1
+fi
