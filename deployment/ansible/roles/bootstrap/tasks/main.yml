@@ -40,7 +40,7 @@
 
 - name: initialize the layout
   changed_when: false
-  command: "{{ dcld.path }} init '{{ moniker | default(ansible_hostname) }}' --chain-id '{{ chain_id }}' --home {{ dcl_home }}"
+  command: "{{ dcld.path }} init '{{ moniker | default(ansible_hostname) }}-{{groups[group_names[0]].index(inventory_hostname)}}' --chain-id '{{ chain_id }}' --home {{ dcl_home }}"
   when: not genesis_file.stat.exists
 
 - name: ensure user permissions
