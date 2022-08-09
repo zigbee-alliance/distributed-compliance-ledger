@@ -57,7 +57,7 @@ resource "aws_instance" "this_nodes" {
   }
 
   tags = {
-    Name = "Public Sentry Node ${count.index}"
+    Name = "Public Sentry Node [${count.index}]"
   }
 
   root_block_device {
