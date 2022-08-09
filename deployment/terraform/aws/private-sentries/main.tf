@@ -56,7 +56,7 @@ resource "aws_instance" "this_nodes" {
   }
 
   tags = {
-    Name = "Private Sentry Node ${count.index}"
+    Name = "Private Sentry Node [${count.index}]"
   }
 
   root_block_device {
@@ -76,6 +76,6 @@ resource "aws_eip" "this_eips" {
   vpc      = true
 
   tags = {
-    Name = "Private Sentry Node ${count.index} Elastic IP"
+    Name = "Private Sentry Node [${count.index}] Elastic IP"
   }
 }
