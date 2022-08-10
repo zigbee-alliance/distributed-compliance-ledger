@@ -1,6 +1,4 @@
 ---
-  moniker: "{{ company_name }}-VN"
-  
   accounts:
   - name: genesis-account-key
     passphrase: password123
