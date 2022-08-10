@@ -38,7 +38,7 @@
     path: "{{ dcl_home }}/config/genesis.json"
   register: genesis_file
 
-- name: update type name for genesis 
+- name: update type name for genesis
   set_fact:
     type_name: "Genesis-{{ type_name }}"
   when: ('genesis' in group_names)
