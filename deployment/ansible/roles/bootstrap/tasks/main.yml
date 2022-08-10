@@ -38,9 +38,19 @@
     path: "{{ dcl_home }}/config/genesis.json"
   register: genesis_file
 
+- name: update type name for genesis
+  set_fact:
+    type_name: "Genesis-{{ type_name }}"
+  when: ('genesis' in group_names)
+
+- name: generate moniker
+  set_fact:
+    moniker: "{{ company_name }}-{{ type_name }}-{{'%02d'|format(groups[group_names[0]].index(inventory_hostname)|int + 1)}}"
+  when: not genesis_file.stat.exists
+
 - name: initialize the layout
   changed_when: false
-  command: "{{ dcld.path }} init '{{ moniker | default(ansible_hostname) }}-{{groups[group_names[0]].index(inventory_hostname)}}' --chain-id '{{ chain_id }}' --home {{ dcl_home }}"
+  command: "{{ dcld.path }} init '{{ moniker }}' --chain-id '{{ chain_id }}' --home {{ dcl_home }}"
   when: not genesis_file.stat.exists
 
 - name: ensure user permissions

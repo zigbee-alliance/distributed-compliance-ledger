@@ -35,6 +35,8 @@ provisioner:
     group_vars:
       all:
         chain_id: test-net
+        company_name: CSA
+        type_name: VN
 verifier:
   name: testinfra
   lint:
