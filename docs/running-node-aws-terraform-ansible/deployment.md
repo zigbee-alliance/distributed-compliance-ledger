@@ -168,12 +168,14 @@ prometheus_config = {
 - When enabled runs a dedicated Prometheus server on Private Sentries VPC to collect Tendermint metrics from all DCL nodes
 - Collected metrics are written to AWS [AMP workspace](https://aws.amazon.com/prometheus/)
 
-### 2. Set DCL network chain ID in ansible inventory
+### 2. Set DCL network params ansible inventory
 
 [`deployment/ansible/inventory/aws/group_vars/all.yaml`]
 
 ```yaml
 chain_id: test-net
+company_name: company-x
+dcl_version: vX.Y.Z
 ...
 ```
 
@@ -182,6 +184,8 @@ chain_id: test-net
 
 ```yaml
 chain_id: testnet-2.0
+company_name: CSA
+dcl_version: 0.12.0
 ...
 ```
 
