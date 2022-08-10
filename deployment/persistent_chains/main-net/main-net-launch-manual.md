@@ -73,12 +73,16 @@ The following steps are expected to be done **before** the ceremony.
     1.3. Login as a DCL user
 
     1.4. (Optional) Clean up the system
-    * Note. Following steps are needed if you earlier version of DCL installed on the same computer.
 
     ```bash
+    # clean earlier version of DCL installed on the same computer.
     sudo systemctl stop dcld
     sudo rm -f "$(which dcld)"
     rm -rf "$HOME/.dcl"
+
+    # kill any processes running on ports 26656 and 26657
+    sudo kill -9 $(sudo lsof -t -i:26656)
+    sudo kill -9 $(sudo lsof -t -i:26657)
     ```
 
     1.5. Get the release artifacts (DCL v0.12.0):
