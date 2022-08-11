@@ -59,7 +59,7 @@ The following steps are expected to be done **before** the ceremony.
         ```
         - you should see connectivity status for all [IP:PORT] pairs in the output
 
-> **_Note:_** Steps [1-2] are done for every validator node while steps [3-5] are done only once
+> **_Note:_** Steps [1-2] are done for every node while steps [3-6] are done only once
 1. **Configure Validator/Sentry Node**
 
     1.1. `Ubuntu 20.04 LTS` is recommended.
@@ -138,11 +138,11 @@ The following steps are expected to be done **before** the ceremony.
 
     **IMPORTANT** keep generated data (especially the mnemonic) securely.
 
-    3.3. Share generated `address` and `pubkey` (in Slack or in a special doc).
+    3.3. Share generated `address` and `pubkey` in #dcl-enrollment Slack Channel.
 
     `address` and `pubkey` can be found in the `dcld keys show --output text "<admin-account-name>"` output.
 
-4. **[Optional] Generate Trustee keys (VN only)**
+4. **[Optional] Generate Trustee keys**
 
     4.1. Choose a machine where Trustee keys will be hold (it can be either VN Node, or a separate machine with `dcld` binary)
 
@@ -154,37 +154,75 @@ The following steps are expected to be done **before** the ceremony.
 
     **IMPORTANT** keep generated data (especially the mnemonic) securely.
 
-    4.3. Share generated `address` and `pubkey` (in Slack or in a special doc).
+    4.3. Share generated `address` and `pubkey` in #dcl-enrollment Slack Channel.
 
     `address` and `pubkey` can be found in the `dcld keys show --output text "<trustee-account-name>"` output.
 
-5. **Share Node info with other Node Admins** (in Slack or in a special doc)
+5. **Share Node info with other Node Admins** in #dcl-enrollment Slack Channel.
 
-    5.1. Share Sentry Node's (VN's if a sentry node is not used) public IP address
+    5.1. Share Sentry Node's public IP address (VN's if a sentry node is not used) 
 
-    5.2. Share Sentry Node's (VN's if a sentry node is not used) `id`
+    5.2. Share Sentry Node's `id` (VN's if a sentry node is not used)
     - Get node's `id` using the following command:
         ```bash
         ./dcld tendermint show-node-id
         ```
+        
+    5.3. CSA will create and share persistent_peers.txt based on the shared data.
 
+6. **[VN only] Update Empty Block Interval to 600s**.
+    
+    6.1 Open dcl configuration file.
+        ```bash
+        ~/.dcl/config/config.toml
+        ```
+    
+    6.2 Locate section `[consensus]`.
+    
+    6.3 Configure as follows:
+    
+    ```bash 
+    -- FROM: --
+    # EmptyBlocks mode and possible interval between empty blocks
+    create_empty_blocks = true
+    create_empty_blocks_interval = "0s"
+
+    -- TO: --
+    # EmptyBlocks mode and possible interval between empty blocks
+    create_empty_blocks = false
+    create_empty_blocks_interval = "600s" #10min 
+    ```
 ## II. Ceremony
-6. **Wait until the CSA Mainnet infrastructure is up and running**
+7. **Wait until the CSA Mainnet infrastructure is up and running**
 
-    6.1. Access DCL Web UI link provided by CSA and follow the ceremony procedure
+    7.1. Access DCL [Web UI][1] and follow the ceremony procedure
 
-7. **Run Sentry Node (skip this section if you are not running a sentry node)**
+8. **Add Trustee accounts to Mainnet**
 
-    7.1. Download genesis
+    8.1. To be able to approve proposals using [Web UI][1], all Trustees (including CSA) should create a wallet in [Web UI][1] using mnemonics generated while creating a trustee key.
+
+    8.2. CSA proposes all Trustee accounts using [Web UI][1]
+
+    8.3. Approved Trustees approve other proposed Trustee accounts using [Web UI][1]
+
+9. **Add NodeAdmin accounts to Mainnet**
+
+    9.1. CSA proposes all NodeAdmin accounts using [Web UI][1]
+
+    9.2. Trustees approve proposed NodeAdmin accounts
+
+10. **Run Sentry Node (skip this step if you are not running a sentry node)**
+
+    10.1. Download geneåsis
 
     ```bash
     curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/persistent_chains/main-net/genesis.json
     ```
 
-    7.2. Prepare `persistent_peers.txt` file 
+    10.2. Prepare `persistent_peers.txt` file 
     - download or copy-paste up-to date `persistent_peers.txt` file to the same directory as `run_dcl_node`
 
-    7.3. Run Sentry Node
+    10.3. Run Sentry Node
 
     ```bash
     chmod u+x run_dcl_node
@@ -193,37 +231,37 @@ The following steps are expected to be done **before** the ceremony.
     * Naming convention for `<node-name>` is `[company name]-[node type]-[sequence number]` e.g. `<CSA-SN-01>`
 
 
-    7.4. Wait until catchup is finished: `./dcld status` returns `"catching_up": false`
+    10.4. Wait until catchup is finished: `./dcld status` returns `"catching_up": false`
 
-8. **Sentry Node Deployment Verification (skip this section if you are not running a sentry node)**
+11. **Sentry Node Deployment Verification (skip this step if you are not running a sentry node)**
 
-    8.1. Check the account presence on the ledger: `./dcld query auth account --address="<address>"`.
+    11.1. Check the account presence on the ledger: `./dcld query auth account --address="<address>"`.
 
-    8.2. Check the cosmovisor service is running: `systemctl status cosmovisor`
+    11.2. Check the cosmovisor service is running: `systemctl status cosmovisor`
 
-    8.3. Check the node gets new blocks: `./dcld status`. Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 5 sec).
+    11.3. Check the node gets new blocks: `./dcld status`. Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 5 sec).
 
-9. **Run Validator Node**
+12. **Run Validator Node**
 
-    9.1. Wait until your NodeAdmin account has been apporoved by CSA
+    12.1. Wait until your NodeAdmin account has been apporoved by CSA
 
-    9.2. Download genesis
+    12.2. Download genesis
 
     ```bash
     curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/persistent_chains/main-net/genesis.json
     ```
 
-    9.3. Prepare `persistent_peers.txt` file
-    - If you are not running a sentry node - download or copy-paste up-to date `persistent_peers.txt` file to the same directory as `run_dcl_node`.
+    12.3. Prepare `persistent_peers.txt` file
+    - If you are not running a sentry node - copy-paste the up-to-date `persistent_peers.txt` file to the same directory as `run_dcl_node`.
     - If you are running a sentry node - specify only your sentry node's address in `persistent_peers.txt` file in the following format: 
         - `<sentry node id>`@`<sentry node's private/public IP address>`
         - Use the following command to get node id of a node
             ```bash
             ./dcld tendermint show-validator
             ```
-        > _Note_: It is better to communicate with a senrty node using internal private ip address if both validator and sentry nodes are in the same (logical) network
+        > _Note_: It is better to communicate with a sentry node using internal private ip address if both validator and sentry nodes are in the same (logical) network
 
-    9.4. Run VN
+    12.4. Run Validator Node (VN)
 
     ```bash
     chmod u+x run_dcl_node
@@ -232,32 +270,37 @@ The following steps are expected to be done **before** the ceremony.
     * Naming convention for `<node-name>` is `[company name]-[node type]-[sequence number]` e.g. `<CSA-VN-01>`
 
 
-    9.5. Wait until catchup is finished: `./dcld status` returns `"catching_up": false`
+    12.5. Wait until catchup is finished: `./dcld status` returns `"catching_up": false`
 
-    9.6. Make the node a validator
+    12.6. Make the node a validator
 
     ```bash
     ./dcld tx validator add-node --pubkey="<protobuf JSON encoded validator-pubkey>" --moniker="<node-name>" --from="<admin-account-name>"
     ```
 
-    * `[Note]` Run the following command to get `<protobuf JSON encoded validator-pubkey>`
+       * `[Note]` Run the following command to get `<protobuf JSON encoded validator-pubkey>`
+       
+         ```bash
+         ./dcld tendermint show-validator
+         ```
 
-        ```bash
-        ./dcld tendermint show-validator
-        ```
+    ```bash
+    ie.
+    ./dcld tx validator add-node --pubkey='{"@type":"/cosmos.crypto.ed25519.PubKey","key":"MH2rju5vHc/nE6yH+SIsQZsXcsHhOVI9Zv8Pf+lm36o="}' --moniker='CSA-VN-01' --from='csa-account'
+    ```
 
     (once transaction is successfully written you should see `"code": 0` in the JSON output.)
 
 
-10. **VN Deployment Verification**
+13. **VN Deployment Verification**
 
-    10.1. Check the account presence on the ledger: `./dcld query auth account --address="<address>"`.
+    13.1. Check the account presence on the ledger: `./dcld query auth account --address="<address>"`.
 
-    10.2. Check the cosmovisor service is running: `systemctl status cosmovisor`
+    13.2. Check the cosmovisor service is running: `systemctl status cosmovisor`
 
-    10.3. Check the node gets new blocks: `./dcld status`. Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 5 sec).
+    13.3. Check the node gets new blocks: `./dcld status`. Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 5 sec).
 
-    10.4. Make sure the VN participates in consensus: `./dcld query tendermint-validator-set` must contain the VN's address.
+    13.4. Make sure the VN participates in consensus: `./dcld query tendermint-validator-set` must contain the VN's address.
     * `[Note]` Get VN's address using the following command
 
         ```bash
@@ -267,7 +310,7 @@ The following steps are expected to be done **before** the ceremony.
 
 ## III: Post-Ceremony: Validation
 
-13. **Make sure that Sentry (VN in case Sentry is not used) nodes accept incoming connections from this node for the given persistent peers file**
+**Make sure that Sentry (VN in case Sentry is not used) nodes accept incoming connections from this node for the given persistent peers file**
 
     ```bash
     # fetch the helper script
@@ -315,3 +358,6 @@ The following steps are expected to be done **before** the ceremony.
 ## V. Post-Ceremony: Adding new nodes to mainnet
 
 When adding new nodes to mainnet after a while, you might consider one of the options described in [running-node.md](../../../docs/running-node.md).
+
+
+[1]: https://webui.dcl.csa-iot.org
