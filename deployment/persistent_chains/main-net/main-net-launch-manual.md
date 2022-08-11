@@ -79,13 +79,20 @@ The following steps are expected to be done **before** the ceremony.
     sudo systemctl stop dcld
     sudo rm -f "$(which dcld)"
     rm -rf "$HOME/.dcl"
+    ```
 
-    # kill any processes running on ports 26656 and 26657
+    1.5. Make sure that no processes running on ports `26656` and `26657`
+    ```bash
+    # install lsof
+    sudo apt install lsof
+
+    # kill the processes running on ports 26656 and 26657
+    # command fails if no process is running on given port
     sudo kill -9 $(sudo lsof -t -i:26656)
     sudo kill -9 $(sudo lsof -t -i:26657)
     ```
 
-    1.5. Get the release artifacts (DCL v0.12.0):
+    1.6. Get the release artifacts (DCL v0.12.0):
 
     ```bash
     curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v0.12.0/dcld
@@ -94,7 +101,7 @@ The following steps are expected to be done **before** the ceremony.
     curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v0.12.0/run_dcl_node
     ```
 
-    1.6. Put `cosmovisor` binary in a folder listed in `$PATH` (e.g. `/usr/bin/`) and set a proper owner and executable permissions.
+    1.7. Put `cosmovisor` binary in a folder listed in `$PATH` (e.g. `/usr/bin/`) and set a proper owner and executable permissions.
 
     ```bash
     sudo cp -f ./cosmovisor -t /usr/bin
@@ -102,7 +109,7 @@ The following steps are expected to be done **before** the ceremony.
     sudo chmod u+x /usr/bin/cosmovisor
     ```
 
-    1.7. Configure the firewall
+    1.8. Configure the firewall
 
     * p2p and RPC (by default: `26656` and `26657` respectively) should be available for TCP connections.
         For Ubuntu:
