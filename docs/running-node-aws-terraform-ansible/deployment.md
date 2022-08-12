@@ -184,7 +184,19 @@ dcl_version: vX.Y.Z
 
 ```yaml
 chain_id: testnet-2.0
-company_name: CSA
+company_name: <your-company-name>
+dcl_version: 0.12.0
+...
+```
+
+</details>
+
+<details>
+<summary>Example for Mainnet (clickable) </summary>
+
+```yaml
+chain_id: main-net
+company_name: <your-company-name>
 dcl_version: 0.12.0
 ...
 ```
@@ -248,6 +260,19 @@ config:
 
 </details>
 
+<details>
+<summary>Example for Mainnet (clickable) </summary>
+
+```yaml
+config:
+  statesync:
+    enable: true
+    rpc_servers: "https://on.dcl.csa-iot.org:26657,https://on.dcl.csa-iot.org:26657"
+    
+```
+
+</details>
+
 > **_NOTE:_**  You should provide at least 2 addresses for `rpc_servers`. It can be 2 identical addresses
 
 You can use the following command to obtain `<trust-height>` and `<trust-hash>` of your network
@@ -261,6 +286,15 @@ curl -s http(s)://<host>:<port>/commit | jq "{height: .result.signed_header.head
 
 ```bash
 curl -s https://on.test-net.dcl.csa-iot.org:26657/commit | jq "{height: .result.signed_header.header.height, hash: .result.signed_header.commit.block_id.hash}"
+```
+
+</details>
+
+<details>
+<summary>Example for Mainnet (clickable) </summary>
+
+```bash
+curl -s https://on.dcl.csa-iot.org:26657/commit | jq "{height: .result.signed_header.header.height, hash: .result.signed_header.commit.block_id.hash}"
 ```
 
 </details>
