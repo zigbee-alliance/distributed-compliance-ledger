@@ -55,6 +55,17 @@ rpc_servers = "https://on.test-net.dcl.csa-iot.org:26657,https://on.test-net.dcl
 
 </details>
 
+<details>
+<summary>Example for Mainnet (clickable) </summary>
+
+```toml
+[statesync]
+enable = true
+rpc_servers = "https://on.dcl.csa-iot.org:26657,https://on.dcl.csa-iot.org:26657"
+```
+
+</details>
+
 > **_NOTE:_**  You should provide at least 2 addresses for `rpc_servers`. It can be 2 identical addresses
 
 You can use the following command to obtain `<trust-height>` and `<trust-hash>` of your network
@@ -68,6 +79,15 @@ curl -s http(s)://<host>:<port>/commit | jq "{height: .result.signed_header.head
 
 ```bash
 curl -s https://on.test-net.dcl.csa-iot.org:26657/commit | jq "{height: .result.signed_header.header.height, hash: .result.signed_header.commit.block_id.hash}"
+```
+
+</details>
+
+<details>
+<summary>Example for Mainnet (clickable) </summary>
+
+```bash
+curl -s https://on.dcl.csa-iot.org:26657/commit | jq "{height: .result.signed_header.header.height, hash: .result.signed_header.commit.block_id.hash}"
 ```
 
 </details>
