@@ -21,6 +21,7 @@ Make sure you have all [prerequisites](./prerequisites.md) set up
 
 - `./dcld config chain-id <chain-id>`
   - Use `testnet-2.0` for `<chain-id>` if you want to connect to the persistent Test Net - the chosen unique chain ID.
+  - Use `main-net` for `<chain-id>` if you want to connect to the persistent Test Net - the chosen unique chain ID.
 - `./dcld config output json` - Output format (text/json).
 
 ### 5. Initilize the node

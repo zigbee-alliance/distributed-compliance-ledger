@@ -52,7 +52,7 @@ config:
 ...
 ```
 
-- For `testnet-2.0` get the latest `persistent_peers` string from the CSA slack channel
+- For `testnet-2.0` or `main-net` get the latest `persistent_peers` string from the CSA slack channel
 
 ### 3. Specify genesis accounts
 

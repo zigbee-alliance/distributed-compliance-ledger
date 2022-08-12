@@ -29,6 +29,7 @@ Make sure you have all [prerequisites](./prerequisites.md) set up
 ```
 
 - Use `testnet-2.0` for `<chain-id>` if you want to connect to the persistent Test Net
+- Use `main-net` for `<chain-id>` if you want to connect to the persistent Main Net
 
 ### 5. (Optional) Enable `state sync` in the configuration if you are joining long-running network
 
@@ -131,10 +132,11 @@ Run node:
 
 - Put `genesis.json` into dcld's config directory (usually `$HOME/.dcl/config/`).
   - Use `deployment/persistent_chains/testnet-2.0/genesis.json` if you want to connect to the persistent Testnet 2.0
+  - Use `deployment/persistent_chains/main-net/genesis.json` if you want to connect to the persistent Mainnet
 - Open `$HOME/.dcl/config/config.toml` file in your favorite text editor:
   - Tell node how to connect to the network:
     - Set the value for the `persistent_peers` field as the content of `persistent_peers.txt` file.
-    - For `testnet-2.0` get the latest `persistent_peers` string from the CSA slack channel
+    - For `testnet-2.0` or `main-net` get the latest `persistent_peers` string from the CSA slack channel
   - Make your node public:
     - Open `$HOME/.dcl/config/config.toml`
     - Find the line under `# TCP or UNIX socket address for the RPC server to listen on`
