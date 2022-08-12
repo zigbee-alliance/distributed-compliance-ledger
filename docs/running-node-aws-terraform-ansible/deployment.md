@@ -64,11 +64,10 @@ validator_config = {
     ```
 
     where `<chain-id>` is the chain ID of a network being joined.
-    - For `testnet-2.0` the genesis file is already in place
+    - For `testnet-2.0` and `main-net` the genesis files are already in place
 
-        ```text
-        deployment/persistent_chains/testnet-2.0/genesis.json
-        ```
+      - `deployment/persistent_chains/testnet-2.0/genesis.json` (testnet-2.0)
+      - `deployment/persistent_chains/main-net/genesis.json` (main-net)
 
   - Manually adding the validator to the network (see [making node a validator](../running-node-ansible/vn.md#make-your-node-a-validator-target-machine)) after the step [run-ansible](#4-run-ansible)
 
@@ -82,7 +81,7 @@ validator_config = {
     ...
   ```
 
-  - For `testnet-2.0` get the latest `persistent_peers` string from the CSA slack channel
+  - For `testnet-2.0` or `main-net` get the latest `persistent_peers` string from the CSA slack channel
 
 - Validator/Genesis node is created in `region_1` by default
 
@@ -109,7 +108,7 @@ private_sentries_config = {
     ...
   ```
 
-  - For `testnet-2.0` get the latest `persistent_peers` string from the CSA slack channel
+  - For `testnet-2.0` or `main-net` get the latest `persistent_peers` string from the CSA slack channel
 
 #### Public Sentries (optional)
 
