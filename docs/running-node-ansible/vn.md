@@ -207,7 +207,7 @@ dcld keys show --output text "<admin-account-name>"
 
 - Make sure the Node Admin account is proposed by a Trustee (usually CSA). The account will appear in the "Accounts" / "All Proposed Accounts" tab in DCL Web UI
     - <https://testnet.iotledger.io> (for `testnet-2.0`)
-    - <https://webui.csa-iot.org> (for `main-net`)
+    - <https://webui.dcl.csa-iot.org> (for `main-net`)
 
 - Make sure that the proposed account is approved by at least 2/3 of Trustees. The account must disappear from the "Accounts" / "All Proposed Accounts" tab in Web UI, and appear in  "Accounts" / "All Active Accounts" tab.
 
