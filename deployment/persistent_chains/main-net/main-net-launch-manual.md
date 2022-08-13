@@ -76,7 +76,9 @@ The following steps are expected to be done **before** the ceremony.
 
     ```bash
     # clean earlier version of DCL installed on the same computer.
+    sudo systemctl stop cosmvisor
     sudo systemctl stop dcld
+    sudo rm -f "$(which cosmovisor)"
     sudo rm -f "$(which dcld)"
     rm -rf "$HOME/.dcl"
     ```
