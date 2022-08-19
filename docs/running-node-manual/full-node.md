@@ -20,6 +20,7 @@ Make sure you have all [prerequisites](./prerequisites.md) set up
 
 - `./dcld config chain-id <chain-id>`
   - Use `testnet-2.0` for `<chain-id>` if you want to connect to the persistent Test Net
+  - Use `main-net` for `<chain-id>` if you want to connect to the persistent Main Net
 - `./dcld config output json` - Output format (text/json).
 
 ### 4. Initilize the node
@@ -106,7 +107,17 @@ snapshot-interval = "snapshot-interval"
 snapshot-keep-recent = "snapshot-keep-recent"
 ```
 
-### *** Step 7 can be automated using `run_dcl_node` script
+### 7. Get genesis and persistent peers files
+
+- Put `genesis.json` into dcld's config directory (usually `$HOME/.dcl/config/`).
+  - Use `deployment/persistent_chains/testnet-2.0/genesis.json` if you want to connect to the persistent Testnet 2.0
+  - Use `deployment/persistent_chains/main-net/genesis.json` if you want to connect to the persistent Mainnet
+- Create an empty `persistent_peers.txt` in the current path because this file is required by `run_dcl_node` script
+    ```bash
+    touch persistent_peers.txt
+    ```
+
+### *** Step 8 can be automated using `run_dcl_node` script
 
 Run node:
 
@@ -128,20 +139,14 @@ Run node:
 >   - current user is going to be used for `cosmovisor` service to run as
 >   - current user is in sudoers list
 
-### 7. Run node
+### 8. Run node
 
-- Put `genesis.json` into dcld's config directory (usually `$HOME/.dcl/config/`).
-  - Use `deployment/persistent_chains/testnet-2.0/genesis.json` if you want to connect to the persistent Testnet 2.0
-  - Use `deployment/persistent_chains/main-net/genesis.json` if you want to connect to the persistent Mainnet
 - Open `$HOME/.dcl/config/config.toml` file in your favorite text editor:
-  - Tell node how to connect to the network:
-    - Set the value for the `persistent_peers` field as the content of `persistent_peers.txt` file.
-    - For `testnet-2.0` or `main-net` get the latest `persistent_peers` string from the CSA slack channel
   - Make your node public:
     - Open `$HOME/.dcl/config/config.toml`
     - Find the line under `# TCP or UNIX socket address for the RPC server to listen on`
     - Change it to: `laddr = "tcp://0.0.0.0:26657"`
-  - Optionally change other setting.
+  - Change other settings (see specific instructions for every Node type)
 - Open `26656` (p2p) and `26657` (RPC) ports.
   - `sudo ufw allow 26656/tcp`
   - `sudo ufw allow 26657/tcp`

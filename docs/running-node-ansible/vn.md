@@ -101,8 +101,11 @@ config:
     persistent_peers: "<node1-ID>@<node1-IP>:26656,..."
   ...
 ```
-
-- For `testnet-2.0` or `main-net` get the latest `persistent_peers` string from the CSA slack channel
+`persistent_peers` value:
+  - If your VN doesn't use any Private Sentry nodes, then the `persistent_peers` field must point to other orgs' validator/sentry nodes with public IPs.   
+    For `testnet-2.0` or `main-net` the `persistent_peers` string can be get from the CSA slack channel.
+  - If Private Sentry Nodes are used, then it must point to `Private Sentry` nodes with private IPs.
+  - Use the following command to get `node-ID` of a node: `./dcld tendermint show-validator`.
 
 ### 3. (Optional) If you are joining a long-running network, enable `statesync` or use one of the options in [running-node-in-existing-network.md](../advanced/running-node-in-existing-network.md)
 

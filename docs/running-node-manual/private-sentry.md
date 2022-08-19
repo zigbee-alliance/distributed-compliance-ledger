@@ -18,7 +18,7 @@ except:
     ```toml
     [p2p]
     pex = true
-    persistent_peers = # `Validator` node with private IP + other orgs' validator/sentry nodes with public IPs
+    persistent_peers = "<node1-ID>@<node1-IP>:26656,..." # See the comment below on what values should be set here 
     private_peer_ids = # `Validator` node id
     unconditional_peers = # `Validator` node id
     addr_book_strict = false
@@ -31,3 +31,8 @@ except:
     snapshot-interval = "snapshot-interval"
     snapshot-keep-recent = "snapshot-keep-recent"
     ```
+- `persistent_peers` value:
+  - `Validator` node with private IP + other orgs' validator/sentry nodes with public IPs.
+  - For `testnet-2.0` or `main-net` get the latest `persistent_peers` (other orgs' validator/sentry nodes with public IPs) from the CSA slack channel.
+  - Use the following command to get `node-ID` of a node: `./dcld tendermint show-validator`.
+  

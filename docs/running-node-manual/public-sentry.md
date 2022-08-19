@@ -18,7 +18,7 @@ except:
     ```toml
     [p2p]
     pex = true
-    persistent_peers = # `Private Sentry` nodes with private IPs
+    persistent_peers = "<node1-ID>@<node1-IP>:26656,..." # See the comment below on what values should be set here 
     ```
 
     [`app.toml`]
@@ -28,3 +28,7 @@ except:
     snapshot-interval = "snapshot-interval"
     snapshot-keep-recent = "snapshot-keep-recent"
     ```
+- `persistent_peers` value:
+  - If your VN doesn't use any Private Sentry nodes, then it must point to the `Validator` node with private IP.
+  - Otherwise, it must point to the Private Sentry nodes with private IPs.
+  - Use the following command to get `node-ID` of a node: `./dcld tendermint show-validator`.

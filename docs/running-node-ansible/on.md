@@ -1,6 +1,13 @@
 # Running Observer Node using Ansible
 <!-- markdownlint-disable MD033 -->
 
+The current version of Ansible scripts doesn't support a case when an Observer Node is connected 
+to another organization's Public Sentries via Seed nodes (Option 1 from [running-node-manual/on.md](../running-node-manual/on.md)). If this is your case, please 
+follow the manual steps described in [running-node-manual/on.md](../running-node-manual/on.md).
+
+Ansible scripts can still be used to connect an ON to VN/Sentries within your organization,
+or to connect an ON to another organization's public nodes with known public IPs (Option 2 and 3 from [running-node-manual/on.md](../running-node-manual/on.md)).   
+
 ## Prerequisites
 
 Make sure you have all [prerequisites](./prerequisites.md) set up
@@ -104,8 +111,13 @@ config:
     persistent_peers: "<node1-ID>@<node1-IP>:26656,..."
 ...
 ```
-
-- For `testnet-2.0` or `main-net` get the latest `persistent_peers` string from the CSA slack channel
+- If an Observer node needs to be connected to my organization nodes:
+  - If your VN doesn't use any Private Sentry nodes, then `persistent_peers` must point to the `Validator` node with private IP.
+  - Otherwise, `persistent_peers` must point to the Private Sentry nodes with private IPs.
+  - Use the following command to get `node-ID` of a node: `./dcld tendermint show-validator`.
+- If an Observer node is connected to another organization's public nodes:
+  - `persistent_peers` must point to another organization nodes with public IPs that this organization shared with you.
+ 
 
 ### 3. (Optional) If you are joining a long-running network, enable `statesync` or use one of the options in [running-node-in-existing-network.md](../advanced/running-node-in-existing-network.md)
 

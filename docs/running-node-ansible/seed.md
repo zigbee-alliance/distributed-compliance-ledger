@@ -41,6 +41,7 @@ all:
     chain_id: main-net
   ...
 ```
+</details>
 
 ### 2. Put `genesis.json` file under specific directory
 
@@ -102,7 +103,9 @@ config:
 ...
 ```
 
-- For `testnet-2.0` or `main-net` get the latest `persistent_peers` string from the CSA slack channel
+`persistent_peers` values:
+  - `Public Sentry` nodes with public IP
+  - Use the following command to get `node-ID` of a node: `./dcld tendermint show-validator`.
 
 ### 3. (Optional) If you are joining a long-running network, enable `statesync` or use one of the options in [running-node-in-existing-network.md](../advanced/running-node-in-existing-network.md)
 
