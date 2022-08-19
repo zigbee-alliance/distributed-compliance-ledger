@@ -6,7 +6,7 @@ Make sure you have all [prerequisites](./prerequisites.md) set up
 
 ## Deployment steps
 
-### Steps [1-9] are the same as in [full-node.md](./full-node.md)
+### Steps [1-8] are the same as in [full-node.md](./full-node.md)
 
 except:
 
@@ -19,7 +19,7 @@ except:
     ```toml
     [p2p]
     pex = false
-    persistent_peers = # `Private Sentry` nodes with private IPs
+    persistent_peers = "<node1-ID>@<node1-IP>:26656,..." # See the comment below on what values should be set here  
     addr_book_strict = false
 
     [consensus]
@@ -34,6 +34,11 @@ except:
     snapshot-interval = "snapshot-interval"
     snapshot-keep-recent = "snapshot-keep-recent"
     ```
+- `persistent_peers` value:
+  - If your VN doesn't use any Private Sentry nodes, then the `persistent_peers` field must point to other orgs' validator/sentry nodes with public IPs.   
+  For `testnet-2.0` or `main-net` the `persistent_peers` string can be get from the CSA slack channel.
+  - If Private Sentry Nodes are used, then it must point to `Private Sentry` nodes with private IPs.
+  - Use the following command to get `node-ID` of a node: `./dcld tendermint show-validator`.
 
 ### 10. Create keys for a node admin and a trustee (optional) accounts
 

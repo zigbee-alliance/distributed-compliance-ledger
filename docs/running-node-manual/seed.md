@@ -19,5 +19,6 @@ except:
     [p2p]
     pex = true
     seed_mode = true
-    persistent_peers = # `Public Sentry` nodes with public IP
+    persistent_peers = "<node1-ID>@<node1-IP>:26656,..."  # `Public Sentry` nodes with public IP
     ```
+- Use the following command to get `node-ID` of a node: `./dcld tendermint show-validator`.

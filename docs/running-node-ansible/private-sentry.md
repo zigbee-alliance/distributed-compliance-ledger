@@ -41,6 +41,7 @@ all:
     chain_id: main-net
   ...
 ```
+</details>
 
 ### 2. Put `genesis.json` file under specific directory
 
@@ -101,8 +102,11 @@ config:
     persistent_peers: "<node1-ID>@<node1-IP>:26656,..."
 ...
 ```
+`persistent_peers` value:
+  - `Validator` node with private IP + other orgs' validator/sentry nodes with public IPs.
+  - For `testnet-2.0` or `main-net` get the latest `persistent_peers` (other orgs' validator/sentry nodes with public IPs) from the CSA slack channel.
+  - Use the following command to get `node-ID` of a node: `./dcld tendermint show-validator`.
 
-- For `testnet-2.0` or `main-net` get the latest `persistent_peers` string from the CSA slack channel
 
 ### 3. (Optional) If you are joining a long-running network, enable `statesync` or use one of the options in [running-node-in-existing-network.md](../advanced/running-node-in-existing-network.md)
 

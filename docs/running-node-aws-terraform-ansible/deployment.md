@@ -5,6 +5,9 @@
 
 This document describes all necessary steps to deploy a new DCL network on AWS cloud in accordance with this [design document](../deployment-design-aws.md).
 
+Please note, that the current version of the script can not be used to run just an Observer node without a VN.
+If you need to run an ON connected to another organization nodes, please follow the manual steps from [running-node-manual/on.md](../running-node-manual/on.md).
+
 ## Prerequisites
 
 Make sure you have all [prerequisites](./prerequisites.md) set up
