@@ -13,7 +13,7 @@ except:
 - Set `<node-type>` to `"observer"` when using [run_dcl_node](./full-node.md#step-8-can-be-automated-using-rundclnode-script)
 - Configure node specific parameters before running the node depending on the ON deployment option.
 
-#### Option 1: an Observer node is connected to another organization's Public Sentries via Seed nodes**
+#### Option 1: an Observer node is connected to another organization's Public Sentries via Seed nodes
 
 This is the main option if you want to connect an ON to CSA public nodes.
 
@@ -46,12 +46,12 @@ seeds = "8190bf7a220892165727896ddac6e71e735babe5@100.25.175.140:26656"
 <summary>CSA `seeds` Example for MainNet (clickable) </summary>
 
   ```bash
-seeds = "TBD@54.183.6.67:26656"
+seeds = "ba1f547b83040904568f181a39ebe6d7e29dd438@54.183.6.67:26656"
 ```
 
 </details>
 
-#### Option 2: an Observer node is connected to another organization's public nodes**
+#### Option 2: an Observer node is connected to another organization's public nodes
 
 This option can be used if you have a trusted relationship with some organization and that organization
 provided you with access to its nodes.   
@@ -76,7 +76,7 @@ provided you with access to its nodes.
   - another organization nodes with public IPs that this organization shared with you. 
 
     
-#### Option 3: an Observer node is connected to my organization nodes**
+#### Option 3: an Observer node is connected to my organization nodes
 
 This is the option when you have a VN and want to create an ON connected to it.
 
