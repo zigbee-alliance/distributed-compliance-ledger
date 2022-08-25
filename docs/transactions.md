@@ -245,6 +245,22 @@ All non-edited fields remain the same.
 - CLI command:
   - `dcld tx model update-model --vid=<uint16> --pid=<uint16> ... --from=<account>`
 
+#### DELETE_MODEL
+
+**Status: Implemented**
+
+Deletes an existing Model identified by a unique combination of `vid` (vendor ID) and `pid` (product ID)
+by the vendor account.
+
+- Parameters:
+  - vid: `uint16` -  model vendor ID (positive non-zero)
+  - pid: `uint16` -  model product ID (positive non-zero)
+- In State: `model/Model/value/<vid>/<pid>`
+- Who can send:
+  - Vendor account associated with the same vid who has created the model
+- CLI command:
+  - `dcld tx model delete-model --vid=<uint16> --pid=<uint16> --from=<account>`
+
 #### ADD_MODEL_VERSION
 
 **Status: Implemented**
