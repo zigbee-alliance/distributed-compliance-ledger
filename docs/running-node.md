@@ -7,7 +7,7 @@
 - `Private Sentry` - Full Node to connect other (external) Validator Nodes ([Sentry Node Architecture](https://forum.cosmos.network/t/sentry-node-architecture-overview/454))
 - `Public Sentry` - Full Node to connect other (external) Full Nodes
 - `Observer` - Full Node for serving gRPC / REST / RPC clients
-- `Seed` - Full Node for sharing IP addresses of `Public Sentry` Nodes ([Seed Node](https://docs.tendermint.com/master/nodes/#seed-nodes))
+- `Seed` - Full Node for sharing IP addresses of `Public Sentry` Nodes ([Seed Node](https://docs.tendermint.com/))
 
 ## DCL network architecture overview
 
