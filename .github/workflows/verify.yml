@@ -59,7 +59,7 @@ jobs:
     needs:
       - changes
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v3
       - uses: reviewdog/action-actionlint@v1
   links:
     if: needs.changes.outputs.docs == 'true'

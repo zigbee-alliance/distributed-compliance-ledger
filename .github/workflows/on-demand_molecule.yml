@@ -65,7 +65,7 @@ jobs:
     name: Check Bootstrap Ansible role
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ./.github/actions/setup-molecule
         with:
           ansible-role: bootstrap
@@ -75,7 +75,7 @@ jobs:
     name: Check Genesis Ansible role
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ./.github/actions/setup-molecule
         with:
           ansible-role: genesis
@@ -85,7 +85,7 @@ jobs:
     name: Check Add accounts Ansible role
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ./.github/actions/setup-molecule
         with:
           ansible-role: add-accounts
@@ -95,7 +95,7 @@ jobs:
     name: Check Configure Ansible role
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ./.github/actions/setup-molecule
         with:
           ansible-role: configure
