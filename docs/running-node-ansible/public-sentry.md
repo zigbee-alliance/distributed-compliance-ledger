@@ -44,7 +44,7 @@ config:
 `persistent_peers` value:
   - If your VN doesn't use any Private Sentry nodes, then it must point to the `Validator` node with private IP.
   - Otherwise, it must point to the Private Sentry nodes with private IPs.
-  - Use the following command to get `node-ID` of a node: `./dcld tendermint show-validator`.
+  - Use the following command to get `node-ID` of a node: `./dcld tendermint show-node-id`.
 
 ### 4. (Optional) If you are joining a long-running network, enable `statesync` or use one of the options in [running-node-in-existing-network.md](../advanced/running-node-in-existing-network.md)
 

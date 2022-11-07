@@ -44,7 +44,7 @@ config:
 
 `persistent_peers` values:
   - `Public Sentry` nodes with public IP
-  - Use the following command to get `node-ID` of a node: `./dcld tendermint show-validator`.
+  - Use the following command to get `node-ID` of a node: `./dcld tendermint show-node-id`.
 
 ### 4. (Optional) If you are joining a long-running network, enable `statesync` or use one of the options in [running-node-in-existing-network.md](../advanced/running-node-in-existing-network.md)
 
