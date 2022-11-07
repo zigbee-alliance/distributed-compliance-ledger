@@ -31,7 +31,7 @@ all:
       ...
 ```
 
-### 3. Specefy the nodes for connection
+### 3. Specify the nodes for connection
 
 #### Option 1: an Observer node is connected to another organization's Public Sentries via Seed nodes
 
@@ -51,7 +51,7 @@ config:
 <summary>CSA `seeds` Example for Testnet 2.0 (clickable) </summary>
 
 ```bash
-seeds = "8190bf7a220892165727896ddac6e71e735babe5@100.25.175.140:26656"
+seeds: "8190bf7a220892165727896ddac6e71e735babe5@100.25.175.140:26656"
 ```
 
 </details>
@@ -60,7 +60,7 @@ seeds = "8190bf7a220892165727896ddac6e71e735babe5@100.25.175.140:26656"
 <summary>CSA `seeds` Example for MainNet (clickable) </summary>
 
   ```bash
-seeds = "ba1f547b83040904568f181a39ebe6d7e29dd438@54.183.6.67:26656"
+seeds: "ba1f547b83040904568f181a39ebe6d7e29dd438@54.183.6.67:26656"
 ```
 
 </details>

@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-Make sure you have all [prerequisites](./prerequisites.md) set up
+Make sure you have all [prerequisites](./prerequisites.md) set up.
 
 ## Deployment steps
 
