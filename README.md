@@ -8,8 +8,6 @@ If you are interested in how to build and run the project locally, please look a
 Please note, that the only officially supported platform now is Linux.
 It's recommended to develop and deploy the App on Ubuntu 18.04 or Ubuntu 20.04.
 
-**Please note, that there were breaking changes in DCL 0.6 (migration to the latest Cosmos SDK), so
-the current master and DCL releases 0.6+ are not compatible with pools and Test Nets running DCL 0.5.**
 
 ## Overview
 
@@ -51,7 +49,7 @@ In order to send write transactions to the ledger you need:
 
 - **Full Node**: contains a full replication of data (ledger, state, etc.):
   - **Validator Node (VN)**: a full node participating in consensus protocol (ordering transactions).
-  - **Sentry Node:** a full nodes that doesn't participate in consensus and wraps the validator node representing it for the rest of the network
+  - **Sentry Node:** a full node that doesn't participate in consensus and wraps the validator node representing it for the rest of the network
     as one of the ways for DDoS protection.
     - **Private Sentry Node:** a full node to connect other Validator or Sentry nodes only; should not be accessed by clients.
     - **Public Sentry Node:** a full node to connect other external full nodes (possibly observer nodes).
@@ -88,7 +86,33 @@ A Light Client Proxy can be connected to multiple nodes and will verify the stat
 **Please make sure that TLS is enabled in gRPC, REST or Light Client Proxy for secure communication with a Node.**
 
 
-## How To
+## How To: Node Opertators
+### Add an Observer node to existing network
+See [Running Node](docs/running-node.md). There are two options to add an Observer nodes:
+- [Manually](docs/running-node-manual/on.md)
+- [Ansible](docs/running-node-ansible/on.md)
+
+Please take into account [running-node-in-existing-network.md](docs/advanced/running-node-in-existing-network.md).
+
+### Add a Validator node to existing network
+A recommended way for deployment and client connection: [diagram](docs/deployment.png), [diagram-detailed](docs/deployment-detailed.png) and [diagram-aws](docs/deployment-design-aws-diagram.png).
+
+See [Running Node](docs/running-node.md) for possible patterns and instructions.
+
+Please take into account [running-node-in-existing-network.md](docs/advanced/running-node-in-existing-network.md).
+
+### Upgrade all nodes in a pool to a new version of DCL application
+
+DCL application can be simultaneously updated on all nodes in the pool without breaking consensus.
+See [Pool Upgrade](docs/pool-upgrade.md) and [Pool Upgrade How To](docs/pool-upgrade-how-to.md) for details.
+
+### Run a local pool of nodes in Docker
+
+This is for development purposes only. 
+
+See [Run local pool](README-DEV.md#run-local-pool) section in [README-DEV.md](README-DEV.md).
+
+## How To: Users
 
 ### CLI
 
@@ -143,6 +167,7 @@ but they may be provided in the future.
   - [Golang Light Client implementation](https://pkg.go.dev/github.com/tendermint/tendermint/lite2)
   - [Rust Light Client implementation](https://docs.rs/tendermint-light-client/0.23.3/tendermint_light_client/)
 
+
 ### Instructions
 
 After the CLI or REST API is configured and Account with an appropriate role is created,
@@ -182,20 +207,6 @@ the following instructions from [how-to.md](docs/how-to.md) can be used for ever
   - publish X509 certificates
   - revoke X509 certificates
 
-### Run a local pool of nodes in Docker
-
-See [Run local pool](README-DEV.md#run-local-pool) section in [README-DEV.md](README-DEV.md).
-
-### Deploy a persistent pool of nodes
-
-A recommended way for deployment and client connection: [diagram](docs/deployment.png), [diagram-detailed](docs/deployment-detailed.png) and [diagram-aws](docs/deployment-design-aws-diagram.png).
-
-- If you want to deploy your own network or a standalone node follow the [Running Node](docs/running-node.md)
-
-### Upgrade all nodes in a pool to a new version of DCL application
-
-DCL application can be simultaneously updated on all nodes in the pool without breaking consensus.
-See [Pool Upgrade](docs/pool-upgrade.md) and [Pool Upgrade How To](docs/pool-upgrade-how-to.md) for details.
 
 ## Useful Links
 

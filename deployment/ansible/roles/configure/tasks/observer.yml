@@ -32,3 +32,15 @@
   set_fact:
     config: "{{ config | default({}) | combine ({ 'p2p' : {'persistent_peers': private_sentry_peers} }, recursive=True) }}"
   when: private_sentry_peers is defined
+
+- name: open REST port
+  community.general.ufw:
+    to_port: '1317'
+    proto: tcp
+    rule: allow
+
+- name: open gRPC port
+  community.general.ufw:
+    to_port: '9090'
+    proto: tcp
+    rule: allow    
