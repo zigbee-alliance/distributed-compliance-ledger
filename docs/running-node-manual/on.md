@@ -99,5 +99,5 @@ This is the option when you have a VN and want to create an ON connected to it.
   `persistent_peers` value:
    - If your VN doesn't use any Private Sentry nodes, then it must point to the `Validator` node with private IP.
    - Otherwise, it must point to the Private Sentry nodes with private IPs.
-   - Use the following command to get `node-ID` of a node: `./dcld tendermint show-validator`.
+   - Use the following command to get `node-ID` of a node: `./dcld tendermint show-node-id`.
 
