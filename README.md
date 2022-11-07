@@ -86,7 +86,7 @@ A Light Client Proxy can be connected to multiple nodes and will verify the stat
 **Please make sure that TLS is enabled in gRPC, REST or Light Client Proxy for secure communication with a Node.**
 
 
-## How To: Node Opertators
+## How To: Node Operators
 ### Add an Observer node to existing network
 See [Running Node](docs/running-node.md). There are two options to add an Observer nodes:
 - [Manually](docs/running-node-manual/on.md)
@@ -139,7 +139,7 @@ See [Run Light Client Proxy](docs/running-light-client-proxy.md) for details how
 
 - **There are no state proofs in REST, so REST queries should be sent to trusted Validator or Observer nodes only.**
 - OpenAPI specification: <https://zigbee-alliance.github.io/distributed-compliance-ledger/>.
-- Any running node exposes a REST API at port `1317`. See <https://docs.cosmos.network/v0.44/core/grpc_rest.html>.
+- Any running node exposes a REST API at port `1317`. See <https://docs.cosmos.network/v0.45/core/grpc_rest.html>.
 - See [transactions](docs/transactions.md) for a full list of endpoints.
 - REST HTTP(S) queries can be directly used for read requests.
   See [How to read from the Ledger](docs/transactions.md#how-to-read-from-the-ledger).
@@ -150,14 +150,14 @@ See [Run Light Client Proxy](docs/running-light-client-proxy.md) for details how
 ### gRPC
 
 - **There are no state proofs in gRPC, so gRPC queries should be sent to trusted Validator or Observer nodes only.**
-- Any running node exposes a REST API at port `9090`. See <https://docs.cosmos.network/v0.44/core/grpc_rest.html>.
+- Any running node exposes a REST API at port `9090`. See <https://docs.cosmos.network/v0.45/core/grpc_rest.html>.
 - A client code can be generated for all popular languages from the proto files [proto](proto), see <https://grpc.io/docs/languages/>.
 - The generated client code can be used for read and write requests, i.e. generation and signing of transactions
   See [How to read from the Ledger](docs/transactions.md#how-to-read-from-the-ledger) and [How to write to the Ledger](docs/transactions.md#how-to-write-to-the-ledger) for details.
 
 ### Tendermint RPC and Light Client
 
-- Tendermint RPC is exposed by every running node  at port `26657`. See <https://docs.cosmos.network/v0.44/core/grpc_rest.html#tendermint-rpc>.
+- Tendermint RPC is exposed by every running node  at port `26657`. See <https://docs.cosmos.network/v0.45/core/grpc_rest.html#tendermint-rpc>.
 - Tendermint RPC supports state proofs. Tendermint's Light Client library can be used to verify the state proofs.
     So, if Light Client API is used, then it's possible to communicate with non-trusted nodes.
 - Please note, that multi-value queries don't have state proofs support and should be sent to trusted nodes only.

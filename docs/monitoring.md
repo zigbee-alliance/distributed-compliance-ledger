@@ -5,7 +5,7 @@
 As long as DCLedger is built on top of Cosmos SDK and Tendermint their monitoring abilities can be considered for DCLedger as well.
 
 * Starting from `v0.21.0` Tendermint provides Prometheus compatible [metrics](https://docs.tendermint.com/v0.34/tendermint-core/metrics.html).
-* Starting from `v0.40.0` Cosmos SDK provides [telemetry](https://docs.cosmos.network/v0.44/core/telemetry.html) package as a server-side support for application performance and behavior explorations.
+* Starting from `v0.40.0` Cosmos SDK provides [telemetry](https://docs.cosmos.network/v0.45/core/telemetry.html) package as a server-side support for application performance and behavior explorations.
 
 ## Installation & Configuration
 
