@@ -8,8 +8,6 @@ If you are interested in how to build and run the project locally, please look a
 Please note, that the only officially supported platform now is Linux.
 It's recommended to develop and deploy the App on Ubuntu 18.04 or Ubuntu 20.04.
 
-**Please note, that there were breaking changes in DCL 0.6 (migration to the latest Cosmos SDK), so
-the current master and DCL releases 0.6+ are not compatible with pools and Test Nets running DCL 0.5.**
 
 ## Overview
 
@@ -51,7 +49,7 @@ In order to send write transactions to the ledger you need:
 
 - **Full Node**: contains a full replication of data (ledger, state, etc.):
   - **Validator Node (VN)**: a full node participating in consensus protocol (ordering transactions).
-  - **Sentry Node:** a full nodes that doesn't participate in consensus and wraps the validator node representing it for the rest of the network
+  - **Sentry Node:** a full node that doesn't participate in consensus and wraps the validator node representing it for the rest of the network
     as one of the ways for DDoS protection.
     - **Private Sentry Node:** a full node to connect other Validator or Sentry nodes only; should not be accessed by clients.
     - **Public Sentry Node:** a full node to connect other external full nodes (possibly observer nodes).
@@ -88,7 +86,33 @@ A Light Client Proxy can be connected to multiple nodes and will verify the stat
 **Please make sure that TLS is enabled in gRPC, REST or Light Client Proxy for secure communication with a Node.**
 
 
-## How To
+## How To: Node Operators
+### Add an Observer node to existing network
+See [Running Node](docs/running-node.md). There are two options to add an Observer nodes:
+- [Manually](docs/running-node-manual/on.md)
+- [Ansible](docs/running-node-ansible/on.md)
+
+Please take into account [running-node-in-existing-network.md](docs/advanced/running-node-in-existing-network.md).
+
+### Add a Validator node to existing network
+A recommended way for deployment and client connection: [diagram](docs/deployment.png), [diagram-detailed](docs/deployment-detailed.png) and [diagram-aws](docs/deployment-design-aws-diagram.png).
+
+See [Running Node](docs/running-node.md) for possible patterns and instructions.
+
+Please take into account [running-node-in-existing-network.md](docs/advanced/running-node-in-existing-network.md).
+
+### Upgrade all nodes in a pool to a new version of DCL application
+
+DCL application can be simultaneously updated on all nodes in the pool without breaking consensus.
+See [Pool Upgrade](docs/pool-upgrade.md) and [Pool Upgrade How To](docs/pool-upgrade-how-to.md) for details.
+
+### Run a local pool of nodes in Docker
+
+This is for development purposes only. 
+
+See [Run local pool](README-DEV.md#run-local-pool) section in [README-DEV.md](README-DEV.md).
+
+## How To: Users
 
 ### CLI
 
@@ -115,7 +139,7 @@ See [Run Light Client Proxy](docs/running-light-client-proxy.md) for details how
 
 - **There are no state proofs in REST, so REST queries should be sent to trusted Validator or Observer nodes only.**
 - OpenAPI specification: <https://zigbee-alliance.github.io/distributed-compliance-ledger/>.
-- Any running node exposes a REST API at port `1317`. See <https://docs.cosmos.network/v0.44/core/grpc_rest.html>.
+- Any running node exposes a REST API at port `1317`. See <https://docs.cosmos.network/v0.45/core/grpc_rest.html>.
 - See [transactions](docs/transactions.md) for a full list of endpoints.
 - REST HTTP(S) queries can be directly used for read requests.
   See [How to read from the Ledger](docs/transactions.md#how-to-read-from-the-ledger).
@@ -126,14 +150,14 @@ See [Run Light Client Proxy](docs/running-light-client-proxy.md) for details how
 ### gRPC
 
 - **There are no state proofs in gRPC, so gRPC queries should be sent to trusted Validator or Observer nodes only.**
-- Any running node exposes a REST API at port `9090`. See <https://docs.cosmos.network/v0.44/core/grpc_rest.html>.
+- Any running node exposes a REST API at port `9090`. See <https://docs.cosmos.network/v0.45/core/grpc_rest.html>.
 - A client code can be generated for all popular languages from the proto files [proto](proto), see <https://grpc.io/docs/languages/>.
 - The generated client code can be used for read and write requests, i.e. generation and signing of transactions
   See [How to read from the Ledger](docs/transactions.md#how-to-read-from-the-ledger) and [How to write to the Ledger](docs/transactions.md#how-to-write-to-the-ledger) for details.
 
 ### Tendermint RPC and Light Client
 
-- Tendermint RPC is exposed by every running node  at port `26657`. See <https://docs.cosmos.network/v0.44/core/grpc_rest.html#tendermint-rpc>.
+- Tendermint RPC is exposed by every running node  at port `26657`. See <https://docs.cosmos.network/v0.45/core/grpc_rest.html#tendermint-rpc>.
 - Tendermint RPC supports state proofs. Tendermint's Light Client library can be used to verify the state proofs.
     So, if Light Client API is used, then it's possible to communicate with non-trusted nodes.
 - Please note, that multi-value queries don't have state proofs support and should be sent to trusted nodes only.
@@ -142,6 +166,7 @@ but they may be provided in the future.
 - The following libraries can be used as light clients:
   - [Golang Light Client implementation](https://pkg.go.dev/github.com/tendermint/tendermint/lite2)
   - [Rust Light Client implementation](https://docs.rs/tendermint-light-client/0.23.3/tendermint_light_client/)
+
 
 ### Instructions
 
@@ -182,20 +207,6 @@ the following instructions from [how-to.md](docs/how-to.md) can be used for ever
   - publish X509 certificates
   - revoke X509 certificates
 
-### Run a local pool of nodes in Docker
-
-See [Run local pool](README-DEV.md#run-local-pool) section in [README-DEV.md](README-DEV.md).
-
-### Deploy a persistent pool of nodes
-
-A recommended way for deployment and client connection: [diagram](docs/deployment.png), [diagram-detailed](docs/deployment-detailed.png) and [diagram-aws](docs/deployment-design-aws-diagram.png).
-
-- If you want to deploy your own network or a standalone node follow the [Running Node](docs/running-node.md)
-
-### Upgrade all nodes in a pool to a new version of DCL application
-
-DCL application can be simultaneously updated on all nodes in the pool without breaking consensus.
-See [Pool Upgrade](docs/pool-upgrade.md) and [Pool Upgrade How To](docs/pool-upgrade-how-to.md) for details.
 
 ## Useful Links
 

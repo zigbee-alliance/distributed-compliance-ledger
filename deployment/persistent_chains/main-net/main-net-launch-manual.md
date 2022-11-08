@@ -266,7 +266,7 @@ The following steps are expected to be done **before** the ceremony.
         - `<sentry node id>`@`<sentry node's private/public IP address>`
         - Use the following command to get node id of a node
             ```bash
-            ./dcld tendermint show-validator
+            ./dcld tendermint show-node-id
             ```
         > _Note_: It is better to communicate with a sentry node using internal private ip address if both validator and sentry nodes are in the same (logical) network
 

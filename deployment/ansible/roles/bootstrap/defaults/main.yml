@@ -13,35 +13,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-dcl_home: /var/lib/dcl/.dcl
-dcl_version: 0.12.0
-dcld:
-  version: "{{ dcl_version }}"
-  path: "{{ dcl_home }}/cosmovisor/genesis/bin/dcld"
-cosmovisor:
-  version: "{{ dcl_version }}"
-  user: cosmovisor
-  group: dcl
-  path: /usr/bin/cosmovisor
-  log_path: /var/log/cosmovisor/cosmovisor.log
-  home: "{{ dcl_home | dirname }}"
 
-dcld_checksums:
-  0.12.0: ac8dc75bcbebda04fbef644ddbcee4b852d721a3522ccf06ff5d1bb8464949c6
-  0.11.0: 33986b277be76d3e7b5443a09232d87d58324ad7cb6123f3d550149f2dc28452
-  0.10.0: ea0e16eed3cc30b5a7f17299aca01b5d827b9a04576662d957af02608bca0fb6
-  0.9.0: c333d828a124e527dd7a9c0170f77d61ad07091d9f6cd61dd0175a36b55aadce
-  0.8.0: eae8e20cbe7c9fc1e090aa8ab358afdf2044636911d75c2284f733e33f0acaab
-  0.7.0: 50708d4f7e00da347d4e678bf26780cd424232461c4bb414f72391c75e39545a
-  0.6.0: 1ab6b9084fc0444858307f13b708d9f275d548dd2cfb3bc7d8e10d59897d7278
-cosmovisor_checksums:
-  0.12.0: eae97a7207b5747dca9614e7b7ec478a4cc559669ad716b142dd5a2bc2266881
-  0.11.0: 05bf568e34a7c92a61f268401a9f1d6df3c3f015e884a239da5d35c299da6adb
-  0.10.0: 6dac8f0e0267bd930be91c6f3369eb9c35a649546ea071b223a7c8c00203d26a
-  0.9.0: c05705efe5369b9d83e65ef7b252bd7c610eec414ae3f6c08681bcf49dc38e6d
-  0.8.0: c05705efe5369b9d83e65ef7b252bd7c610eec414ae3f6c08681bcf49dc38e6d
-
-dcld_download_url: "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v{{ dcld.version }}/dcld"
-dcld_binary_checksum: "sha256:{{ dcld_checksums[dcld.version] }}"
-cosmovisor_download_url: "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v{{ cosmovisor.version }}/cosmovisor"
-cosmovisor_binary_checksum: "sha256:{{ cosmovisor_checksums[cosmovisor.version] }}"

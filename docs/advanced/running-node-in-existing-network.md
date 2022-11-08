@@ -119,4 +119,4 @@ Possible options when adding Validator, Observer, Sentry or Seed nodes to existi
   - Probably error-prone (if at least one migration has a bug, catchup fails)
 
 - References:
-  - <https://docs.cosmos.network/v0.44/core/upgrade.html#syncing-a-full-node-to-an-upgraded-blockchain>
+  - <https://docs.cosmos.network/v0.45/core/upgrade.html#syncing-a-full-node-to-an-upgraded-blockchain>

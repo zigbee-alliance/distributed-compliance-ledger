@@ -2,82 +2,21 @@
 <!-- markdownlint-disable MD033 -->
 
 ## Prerequisites
+Follow all steps from [common.md](./common.md).
 
-Make sure you have all [prerequisites](./prerequisites.md) set up
-
-## Configure DCL network parameters (local machine)
-
-### 1. Set network chain ID
-
-[`deployment/ansible/inventory/hosts.yml`]
-
-```yaml
-all:
-  vars:
-    chain_id: <chain-id>
-  ...
-```
-
-Every network must have a unique chain ID (e.g. `test-net`, `main-net` etc.)
-
-<details>
-<summary>Example for Testnet 2.0 (clickable) </summary>
-
-```yaml
-all:
-  vars:
-    chain_id: testnet-2.0
-  ...
-```
-
-</details>
-
-<details>
-<summary>Example for Mainnet (clickable) </summary>
-
-```yaml
-all:
-  vars:
-    chain_id: main-net
-  ...
-```
-</details>
-
-### 2. Put `genesis.json` file under specific directory
-
-- Get or download `genesis.json` file of a network your node will be joining and put it under the following path:
-
-  ```text
-  deployment/persistent_chains/<chain-id>/genesis.json
-  ```
-
-  where `<chain-id>` is the chain ID of a network spefied in the previous step.
-
-  <details>
-  <summary>Example for Testnet 2.0 (clickable) </summary>
-
-  For `testnet-2.0` the genesis file is already in place. So you don't need to do anything!
-
-  ```text
-  deployment/persistent_chains/testnet-2.0/genesis.json
-  ```
-
-  </details>
-
-  <details>
-  <summary>Example for Mainnet (clickable) </summary>
-
-  For `main-net` the genesis file is already in place. So you don't need to do anything!
-
-  ```text
-  deployment/persistent_chains/main-net/genesis.json
-  ```
-
-  </details>
 
 ## Configure node type specific parameters (local machine)
 
-### 1. Specify target instance address in the inventory file
+### 1. Set node type
+
+[`deployment/ansible/inventory/group_vars/all.yml`]
+
+```yaml
+  type_name: "Priv-SN"
+  ...
+```
+
+### 2. Specify target instance address
 
 [`deployment/ansible/inventory/hosts.yml`]
 
@@ -92,7 +31,7 @@ all:
     ...
 ```
 
-### 2. Set persistent peers string in private sentry configuration
+### 3. Set persistent peers string in private sentry configuration
 
 [`deployment/ansible/roles/configure/vars/private-sentry.yml`]
 
@@ -105,10 +44,10 @@ config:
 `persistent_peers` value:
   - `Validator` node with private IP + other orgs' validator/sentry nodes with public IPs.
   - For `testnet-2.0` or `main-net` get the latest `persistent_peers` (other orgs' validator/sentry nodes with public IPs) from the CSA slack channel.
-  - Use the following command to get `node-ID` of a node: `./dcld tendermint show-validator`.
+  - Use the following command to get `node-ID` of a node: `./dcld tendermint show-node-id`.
 
 
-### 3. (Optional) If you are joining a long-running network, enable `statesync` or use one of the options in [running-node-in-existing-network.md](../advanced/running-node-in-existing-network.md)
+### 4. (Optional) If you are joining a long-running network, enable `statesync` or use one of the options in [running-node-in-existing-network.md](../advanced/running-node-in-existing-network.md)
 
 [`deployment/ansible/roles/configure/vars/public-sentry.yml`]
 

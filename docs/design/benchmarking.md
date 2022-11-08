@@ -42,9 +42,9 @@ The following ones makes sense to track:
 
 ### Cosmos SDK metrics
 
-Starting from `v0.40.0` Cosmos SDK provides [telemetry](https://docs.cosmos.network/v0.44/core/telemetry.html) package as a server-side support for application performance and behavior explorations.
+Starting from `v0.40.0` Cosmos SDK provides [telemetry](https://docs.cosmos.network/v0.45/core/telemetry.html) package as a server-side support for application performance and behavior explorations.
 
-The following [metrics](https://docs.cosmos.network/v0.44/core/telemetry.html#supported-metrics) make sense to track:
+The following [metrics](https://docs.cosmos.network/v0.45/core/telemetry.html#supported-metrics) make sense to track:
 
 - `tx_count`: Total number of txs processed via DeliverTx (tx)
 - `tx_successful`: Total number of successful txs processed via DeliverTx  (tx)
@@ -67,7 +67,7 @@ Notes:
 
 - For the moment it's not clear enough what production setup will look like, in particular:
   - number of validators
-  - type of external endpoints, options are [Cosmos SDK / Tendermint endpoints](https://docs.cosmos.network/v0.44/core/grpc_rest.html)
+  - type of external endpoints, options are [Cosmos SDK / Tendermint endpoints](https://docs.cosmos.network/v0.45/core/grpc_rest.html)
   - type and number of proxies for validator-validator and client-validator connections
 
 Current assumptions for production:
@@ -94,7 +94,7 @@ Current assumptions for production:
 
 **ToDo** define which client endpoints are considered in production
 
-As long as CosmosSDK (Tendermint) provides multiple client [endpoints](https://docs.cosmos.network/v0.44/core/grpc_rest.html) makes sense to benchmark all of them (separately and in a combination), in particular:
+As long as CosmosSDK (Tendermint) provides multiple client [endpoints](https://docs.cosmos.network/v0.45/core/grpc_rest.html) makes sense to benchmark all of them (separately and in a combination), in particular:
 
 - http RPC
 - websocket RPC
@@ -114,7 +114,7 @@ As long as CosmosSDK (Tendermint) provides multiple client [endpoints](https://d
 
 ## Load Generation Framework
 
-As long as DCledger based on Cosmos SDK and Tendermint which provide standard HTTP/websocket RPC and REST  [endpoints](https://docs.cosmos.network/v0.44/core/grpc_rest.html) to perform both read & write txns generic production ready tools like [jMeter](https://jmeter.apache.org/), [Locust](https://locust.io/), [K6](https://k6.io/) may be used.
+As long as DCledger based on Cosmos SDK and Tendermint which provide standard HTTP/websocket RPC and REST  [endpoints](https://docs.cosmos.network/v0.45/core/grpc_rest.html) to perform both read & write txns generic production ready tools like [jMeter](https://jmeter.apache.org/), [Locust](https://locust.io/), [K6](https://k6.io/) may be used.
 
 [Locust](https://locust.io/) looks like the most easy-to-go option:
 

@@ -114,7 +114,7 @@ application version:
          ```
 
          > **_Note:_** Also make sure that propose plan should contain the link and the checksum to the binary according to the format specified in cosmovisor docs. 
-         See the [Command Line Arguments And Environment Variables in Cosmovisor](https://github.com/cosmos/cosmos-sdk/tree/main/cosmovisor#command-line-arguments-and-environment-variables).
+         See the [Command Line Arguments And Environment Variables in Cosmovisor](https://github.com/cosmos/cosmos-sdk/tree/main/tools/cosmovisor#command-line-arguments-and-environment-variables).
 
       - If `auto-download` is enabled and no `binary` is put manually, then the correct `binary` will be downloaded and the `checksum` will be verified automatically. 
    

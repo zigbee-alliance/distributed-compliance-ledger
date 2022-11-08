@@ -1,9 +1,9 @@
 ---
-chain_id: test-net2
+chain_id: testnet-2.0
 company_name: CSA
+dcl_version: 0.12.0
 
 dcl_home: /var/lib/dcl/.dcl
-dcl_version: 0.12.0
 dcld:
   version: "{{ dcl_version }}"
   path: "{{ dcl_home }}/cosmovisor/genesis/bin/dcld"

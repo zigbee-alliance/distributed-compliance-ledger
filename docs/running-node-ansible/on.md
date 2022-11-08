@@ -1,91 +1,22 @@
 # Running Observer Node using Ansible
 <!-- markdownlint-disable MD033 -->
-
-The current version of Ansible scripts doesn't support a case when an Observer Node is connected 
-to another organization's Public Sentries via Seed nodes (Option 1 from [running-node-manual/on.md](../running-node-manual/on.md)). If this is your case, please 
-follow the manual steps described in [running-node-manual/on.md](../running-node-manual/on.md).
-
-Ansible scripts can still be used to connect an ON to VN/Sentries within your organization,
-or to connect an ON to another organization's public nodes with known public IPs (Option 2 and 3 from [running-node-manual/on.md](../running-node-manual/on.md)).   
+ 
 
 ## Prerequisites
-
-Make sure you have all [prerequisites](./prerequisites.md) set up
-
-## Configure DCL network parameters (local machine)
-
-### 1. Set network chain ID
-
-[`deployment/ansible/inventory/hosts.yml`]
-
-```yaml
-all:
-  vars:
-    chain_id: <chain-id>
-  ...
-```
-
-Every network must have a unique chain ID (e.g. `test-net`, `main-net` etc.)
-
-<details>
-<summary>Example for Testnet 2.0 (clickable) </summary>
-
-```yaml
-all:
-  vars:
-    chain_id: testnet-2.0
-  ...
-```
-
-</details>
-
-<details>
-<summary>Example for Mainnet (clickable) </summary>
-
-```yaml
-all:
-  vars:
-    chain_id: main-net
-  ...
-```
-
-</details>
-
-### 2. Put `genesis.json` file under specific directory
-
-- Get or download `genesis.json` file of a network your node will be joining and put it under the following path:
-
-  ```text
-  deployment/persistent_chains/<chain-id>/genesis.json
-  ```
-
-  where `<chain-id>` is the chain ID of a network spefied in the previous step.
-
-  <details>
-  <summary>Example for Testnet 2.0 (clickable) </summary>
-
-  For `testnet-2.0` the genesis file is already in place. So you don't need to do anything!
-
-  ```text
-  deployment/persistent_chains/testnet-2.0/genesis.json
-  ```
-
-  </details>
-
-  <details>
-  <summary>Example for Mainnet (clickable) </summary>
-
-  For `main-net` the genesis file is already in place. So you don't need to do anything!
-
-  ```text
-  deployment/persistent_chains/main-net/genesis.json
-  ```
-
-  </details>
+Follow all steps from [common.md](./common.md).
 
 ## Configure node type specific parameters (local machine)
 
-### 1. Specify target instance address in the inventory file
+### 1. Set node type
+
+[`deployment/ansible/inventory/group_vars/all.yml`]
+
+```yaml
+  type_name: "ON"
+  ...
+```
+
+### 2. Specify target instance address
 
 [`deployment/ansible/inventory/hosts.yml`]
 
@@ -100,7 +31,44 @@ all:
       ...
 ```
 
-### 2. Set persistent peers string in observer configuration
+### 3. Specify the nodes for connection
+
+#### Option 1: an Observer node is connected to another organization's Public Sentries via Seed nodes
+
+This is the main option if you want to connect an ON to CSA public nodes.
+
+[`deployment/ansible/roles/configure/vars/observer.yml`]
+
+```yaml
+...
+config:
+  p2p:
+    seeds: "<seed-node-ID>@<seed-node-public-IP>:26656"
+...
+```
+
+<details>
+<summary>CSA `seeds` Example for Testnet 2.0 (clickable) </summary>
+
+```bash
+seeds: "8190bf7a220892165727896ddac6e71e735babe5@100.25.175.140:26656"
+```
+
+</details>
+
+<details>
+<summary>CSA `seeds` Example for MainNet (clickable) </summary>
+
+  ```bash
+seeds: "ba1f547b83040904568f181a39ebe6d7e29dd438@54.183.6.67:26656"
+```
+
+</details>
+
+#### Option 2: an Observer node is connected to another organization's public nodes
+
+This option can be used if you have a trusted relationship with some organization and that organization
+provided you with access to its nodes.   
 
 [`deployment/ansible/roles/configure/vars/observer.yml`]
 
@@ -111,15 +79,32 @@ config:
     persistent_peers: "<node1-ID>@<node1-IP>:26656,..."
 ...
 ```
-- If an Observer node needs to be connected to my organization nodes:
-  - If your VN doesn't use any Private Sentry nodes, then `persistent_peers` must point to the `Validator` node with private IP.
-  - Otherwise, `persistent_peers` must point to the Private Sentry nodes with private IPs.
-  - Use the following command to get `node-ID` of a node: `./dcld tendermint show-validator`.
-- If an Observer node is connected to another organization's public nodes:
-  - `persistent_peers` must point to another organization nodes with public IPs that this organization shared with you.
+
+`persistent_peers` value:
+  - another organization nodes with public IPs that this organization shared with you. 
+
+#### Option 3: an Observer node is connected to my organization nodes
+
+This is the option when you have a VN and want to create an ON connected to it.
+
+[`deployment/ansible/roles/configure/vars/observer.yml`]
+
+```yaml
+...
+config:
+  p2p:
+    persistent_peers: "<node1-ID>@<node1-IP>:26656,..."
+...
+```
+
+`persistent_peers` value:
+  - If your VN doesn't use any Private Sentry nodes, then it must point to the `Validator` node with private IP.
+  - Otherwise, it must point to the Private Sentry nodes with private IPs.
+  - Use the following command to get `node-ID` of a node: `./dcld tendermint show-node-id`.
+
  
 
-### 3. (Optional) If you are joining a long-running network, enable `statesync` or use one of the options in [running-node-in-existing-network.md](../advanced/running-node-in-existing-network.md)
+### 4. (Optional) If you are joining a long-running network, enable `statesync` or use one of the options in [running-node-in-existing-network.md](../advanced/running-node-in-existing-network.md)
 
 [`deployment/ansible/roles/configure/vars/observer.yml`]
 
