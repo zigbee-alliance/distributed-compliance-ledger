@@ -48,19 +48,19 @@ func (k msgServer) RejectAddAccount(
 		)
 	}
 
-	// check if pending account already has approval from signer
-	if pendAcc.HasApprovalFrom(signerAddr) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
-			"Pending account associated with the address=%v already has approval from=%v",
-			msg.Address,
-			msg.Signer,
-		)
-	}
-
 	grant := types.Grant{
 		Address: signerAddr.String(),
 		Time:    msg.Time,
 		Info:    msg.Info,
+	}
+
+	// check if pending account already has approval from signer
+	if pendAcc.HasApprovalFrom(signerAddr) {
+		for i, other := range pendAcc.Approvals {
+			if other.Address == grant.Address {
+				pendAcc.Approvals = append(pendAcc.Approvals[:i], pendAcc.Approvals[i+1:]...)
+			}
+		}
 	}
 	pendAcc.Rejects = append(pendAcc.Rejects, &grant)
 
