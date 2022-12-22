@@ -1217,7 +1217,7 @@ func Demo(suite *utils.TestSuite) {
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRejectAddX509RootCert}, jackName, jackAccount)
 	require.Error(suite.T, err)
 
-	// Jack (Trustee) cannot approve Root certificate, because already Jack has rejected
+	// Jack (Trustee) can approve Root certificate even if already Jack has rejected
 	msgApproveAddX509RootCert = pkitypes.MsgApproveAddX509RootCert{
 		Subject:      proposedCertificate.Subject,
 		SubjectKeyId: proposedCertificate.SubjectKeyId,
