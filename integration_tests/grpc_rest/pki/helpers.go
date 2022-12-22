@@ -982,14 +982,18 @@ func Demo(suite *utils.TestSuite) {
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgApproveAddX509RootCert}, jackName, jackAccount)
 	require.NoError(suite.T, err)
 
-	// Jack (Trustee) cannot reject Root certificate, because Jack already has approved
+	// Jack (Trustee) rejects Root certificate after approval
 	msgRejectAddX509RootCert := pkitypes.MsgRejectAddX509RootCert{
 		Subject:      proposedCertificate.Subject,
 		SubjectKeyId: proposedCertificate.SubjectKeyId,
 		Signer:       jackAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRejectAddX509RootCert}, jackName, jackAccount)
-	require.Error(suite.T, err)
+	require.NoError(suite.T, err)
+
+	// Jack (Trustee) re-approves Root certificate
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgApproveAddX509RootCert}, jackName, jackAccount)
+	require.NoError(suite.T, err)
 
 	// Request all proposed Root certificates
 	proposedCertificates, _ = GetAllProposedX509RootCerts(suite)
@@ -1220,7 +1224,11 @@ func Demo(suite *utils.TestSuite) {
 		Signer:       jackAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgApproveAddX509RootCert}, jackName, jackAccount)
-	require.Error(suite.T, err)
+	require.NoError(suite.T, err)
+
+	// Jack (Trustee) re-rejects Root certificate
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRejectAddX509RootCert}, jackName, jackAccount)
+	require.NoError(suite.T, err)
 
 	// Request all proposed Root certificates
 	proposedCertificates, _ = GetAllProposedX509RootCerts(suite)

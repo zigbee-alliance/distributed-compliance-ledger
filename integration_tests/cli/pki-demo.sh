@@ -1469,14 +1469,20 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "$trustee_account (Trustee) cannot reject Root certificate for the second time"
-result=$(echo $passphrase | dcld tx pki reject-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --from $trustee_account --yes 2>&1 || true)
-response_does_not_contain "$result" "\"code\": 0"
+echo "$trustee_account (Trustee) can approve Root certificate even if already has rejected"
+result=$(echo $passphrase | dcld tx pki approve-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --from $trustee_account --yes 2>&1 || true)
+check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "$trustee_account (Trustee) cannot approve Root certificate, because already has rejected"
-result=$(echo $passphrase | dcld tx pki approve-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --from $trustee_account --yes 2>&1 || true)
+echo "$trustee_account (Trustee) rejects Root certificate"
+result=$(echo $passphrase | dcld tx pki reject-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --from $trustee_account --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "$trustee_account (Trustee) cannot reject Root certificate for the second time"
+result=$(echo $passphrase | dcld tx pki reject-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --from $trustee_account --yes 2>&1 || true)
 response_does_not_contain "$result" "\"code\": 0"
 
 test_divider
