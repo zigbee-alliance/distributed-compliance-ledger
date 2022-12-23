@@ -40,15 +40,6 @@ func (k msgServer) ApproveAddAccount(
 	// get pending account
 	pendAcc, _ := k.GetPendingAccount(ctx, accAddr)
 
-	// check if pending account already has reject approval from signer
-	if pendAcc.HasRejectApprovalFrom(signerAddr) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
-			"Pending account associated with the address=%v already has reject approval from=%v",
-			msg.Address,
-			msg.Signer,
-		)
-	}
-
 	// check if pending account already has approval from signer
 	if pendAcc.HasApprovalFrom(signerAddr) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
@@ -64,6 +55,14 @@ func (k msgServer) ApproveAddAccount(
 		Info:    msg.Info,
 	}
 
+	// check if pending account already has reject approval from signer
+	if pendAcc.HasRejectApprovalFrom(signerAddr) {
+		for i, other := range pendAcc.Rejects {
+			if other.Address == grant.Address {
+				pendAcc.Rejects = append(pendAcc.Rejects[:i], pendAcc.Rejects[i+1:]...)
+			}
+		}
+	}
 	pendAcc.Approvals = append(pendAcc.Approvals, &grant)
 
 	var percent float64
