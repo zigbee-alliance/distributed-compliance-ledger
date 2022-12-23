@@ -387,7 +387,12 @@ func TestHandler_DisabledValidatorOnPropose(t *testing.T) {
 	require.NoError(t, err)
 
 	_, isFound := setup.ValidatorKeeper.GetProposedDisableValidator(setup.Ctx, msgProposeDisableValidator1.Address)
-	require.False(t, isFound)
+	require.True(t, isFound)
+
+	// approve new disablevalidator
+	msgApproveDisableValidator := NewMsgApproveDisableValidator(account2.GetAddress(), valAddress)
+	_, err = setup.Handler(setup.Ctx, msgApproveDisableValidator)
+	require.NoError(t, err)
 
 	disabledValidator, isFound := setup.ValidatorKeeper.GetDisabledValidator(setup.Ctx, msgProposeDisableValidator1.Address)
 	require.True(t, isFound)
@@ -544,9 +549,14 @@ func TestHandler_DisabledValidatorAlreadyExistsPropose(t *testing.T) {
 	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
 	require.NoError(t, err)
 
-	// propose and approve new disablevalidator (will be approved because of 2 trustees)
+	// propose new disablevalidator
 	msgProposeDisableValidator := NewMsgProposeDisableValidator(account1.GetAddress(), valAddress)
 	_, err = setup.Handler(setup.Ctx, msgProposeDisableValidator)
+	require.NoError(t, err)
+
+	// approve new disablevalidator
+	msgApproveDisableValidator := NewMsgApproveDisableValidator(account2.GetAddress(), valAddress)
+	_, err = setup.Handler(setup.Ctx, msgApproveDisableValidator)
 	require.NoError(t, err)
 
 	msgProposeDisableValidator = NewMsgProposeDisableValidator(account1.GetAddress(), valAddress)

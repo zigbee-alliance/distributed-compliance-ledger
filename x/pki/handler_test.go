@@ -362,7 +362,7 @@ func TestHandler_TwoThirdApprovalsNeededForAddingRootCertification(t *testing.T)
 	}
 
 	// We have 3 Trustees in test setup.
-	twoThirds := int(math.Round(types.RootCertificateApprovalsPercent * float64(3+totalAdditionalTrustees)))
+	twoThirds := int(math.Ceil(types.RootCertificateApprovalsPercent * float64(3+totalAdditionalTrustees)))
 
 	// Until we hit 2/3 of the total number of Trustees, we should not be able to approve the certificate
 	for i := 1; i < twoThirds-1; i++ {
@@ -428,7 +428,7 @@ func TestHandler_TwoThirdApprovalsNeededForRevokingRootCertification(t *testing.
 	}
 
 	// We have 3 Trustees in test setup.
-	twoThirds := int(math.Round(types.RootCertificateApprovalsPercent * float64(3+totalAdditionalTrustees)))
+	twoThirds := int(math.Ceil(types.RootCertificateApprovalsPercent * float64(3+totalAdditionalTrustees)))
 
 	// Trustee1 proposes to revoke the certificate
 	proposeRevokeX509RootCert := types.NewMsgProposeRevokeX509RootCert(

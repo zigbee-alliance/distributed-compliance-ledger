@@ -54,7 +54,7 @@ func Setup(t *testing.T) TestSetup {
 func TestHandler_CreateAccount_OneApprovalIsNeeded(t *testing.T) {
 	setup := Setup(t)
 
-	countTrustees := 2
+	countTrustees := 1
 
 	for i := 0; i < countTrustees; i++ {
 		// store trustee
@@ -216,6 +216,11 @@ func TestHandler_ProposeAddAccount_ForExistingActiveAccount(t *testing.T) {
 	_, address, pubKey, err := proposeAddAccount(setup, trustee1, types.AccountRoles{types.NodeAdmin})
 	require.NoError(t, err)
 
+	// approve account
+	approveAddAccount := types.NewMsgApproveAddAccount(trustee2, address, testconstants.Info)
+	_, err = setup.Handler(setup.Ctx, approveAddAccount)
+	require.NoError(t, err)
+
 	// ensure active account created
 	require.True(t, setup.Keeper.IsAccountPresent(setup.Ctx, address))
 
@@ -299,11 +304,16 @@ func TestHandler_ApproveAddAccount_ForExistingActiveAccount(t *testing.T) {
 	_, address, _, err := proposeAddAccount(setup, trustee1, types.AccountRoles{types.NodeAdmin})
 	require.NoError(t, err)
 
+	// approve account
+	approveAddAccount := types.NewMsgApproveAddAccount(trustee2, address, testconstants.Info)
+	_, err = setup.Handler(setup.Ctx, approveAddAccount)
+	require.NoError(t, err)
+
 	// ensure active account created
 	require.True(t, setup.Keeper.IsAccountPresent(setup.Ctx, address))
 
 	// try to approve active account
-	approveAddAccount := types.NewMsgApproveAddAccount(trustee2, address, testconstants.Info)
+	approveAddAccount = types.NewMsgApproveAddAccount(trustee2, address, testconstants.Info)
 	_, err = setup.Handler(setup.Ctx, approveAddAccount)
 	require.ErrorIs(t, err, types.PendingAccountDoesNotExist)
 }
@@ -344,7 +354,7 @@ func TestHandler_ApproveAddAccount_ForDuplicateApproval(t *testing.T) {
 func TestHandler_RevokeAccount_OneApprovalIsNeeded(t *testing.T) {
 	setup := Setup(t)
 
-	countTrustees := 2
+	countTrustees := 1
 
 	for i := 0; i < countTrustees; i++ {
 		// store trustee
@@ -1105,7 +1115,7 @@ func TestHandler_DoubleTimeRejectAccount(t *testing.T) {
 func TestHandler_CreateVendorAccount_OneApprovalIsNeeded(t *testing.T) {
 	setup := Setup(t)
 
-	countTrustees := 4
+	countTrustees := 1
 
 	for i := 0; i < countTrustees; i++ {
 		// store trustee
@@ -1252,7 +1262,7 @@ func TestHandler_CreateVendorAccount_ThreeApprovalsAreNeeded(t *testing.T) {
 func TestHandler_CreateVendorAccountWithDifferentRole_OneApprovalIsNeeded(t *testing.T) {
 	setup := Setup(t)
 
-	countTrustees := 2
+	countTrustees := 1
 
 	for i := 0; i < countTrustees; i++ {
 		// store trustee
