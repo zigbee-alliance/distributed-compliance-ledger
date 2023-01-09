@@ -60,6 +60,7 @@ func (k msgServer) ApproveAddAccount(
 		for i, other := range pendAcc.Rejects {
 			if other.Address == grant.Address {
 				pendAcc.Rejects = append(pendAcc.Rejects[:i], pendAcc.Rejects[i+1:]...)
+				break
 			}
 		}
 	}
