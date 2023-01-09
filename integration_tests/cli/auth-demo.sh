@@ -29,14 +29,6 @@ check_response "$result" "\"name\": \"$user\""
 
 test_divider
 
-user_address=$(echo $passphrase | dcld keys list)
-test_divider
-test_divider
-test_divider
-test_divider
-test_divider
-test_divider
-
 echo $user_address
 
 user_address=$(echo $passphrase | dcld keys show $user -a)
