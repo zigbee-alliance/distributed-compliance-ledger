@@ -29,8 +29,6 @@ check_response "$result" "\"name\": \"$user\""
 
 test_divider
 
-echo $user_address
-
 user_address=$(echo $passphrase | dcld keys show $user -a)
 user_pubkey=$(echo $passphrase | dcld keys show $user -p)
 
