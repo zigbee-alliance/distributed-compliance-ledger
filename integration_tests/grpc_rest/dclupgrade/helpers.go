@@ -338,14 +338,9 @@ func Demo(suite *utils.TestSuite) {
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{proposeUpgradeMsg}, aliceName, aliceAccount)
 	require.NoError(suite.T, err)
 
-	// Trustee rejects upgrade
-	rejectUpgradeMsg = NewMsgRejectUpgrade(aliceAccount.Address, proposeUpgradeMsg.Plan.Name)
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{rejectUpgradeMsg}, aliceName, aliceAccount)
-	require.NoError(suite.T, err)
-
-	// Trustee re-approves upgrade
-	approveUpgradeMsg = NewMsgApproveUpgrade(aliceAccount.Address, proposeUpgradeMsg.Plan.Name)
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{approveUpgradeMsg}, aliceName, aliceAccount)
+	// Another trustee rejects upgrade
+	rejectUpgradeMsg = NewMsgRejectUpgrade(bobAccount.Address, proposeUpgradeMsg.Plan.Name)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{rejectUpgradeMsg}, bobName, bobAccount)
 	require.NoError(suite.T, err)
 
 	// Check upgrade is proposed
@@ -359,11 +354,6 @@ func Demo(suite *utils.TestSuite) {
 	// Get approved upgrade
 	_, err = GetApprovedUpgrade(suite, proposeUpgradeMsg.Plan.Name)
 	suite.AssertNotFound(err)
-
-	// Another trustee rejects upgrade
-	rejectUpgradeMsg = NewMsgRejectUpgrade(bobAccount.Address, proposeUpgradeMsg.Plan.Name)
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{rejectUpgradeMsg}, bobName, bobAccount)
-	require.NoError(suite.T, err)
 
 	// Another trustee second time try rejects upgrade
 	rejectUpgradeMsg = NewMsgRejectUpgrade(bobAccount.Address, proposeUpgradeMsg.Plan.Name)

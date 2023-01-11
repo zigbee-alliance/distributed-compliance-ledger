@@ -571,14 +571,6 @@ func AuthDemo(suite *utils.TestSuite) {
 	)
 	require.NoError(suite.T, err)
 
-	// Jack rejects new account
-	_, err = RejectAddAccount(suite, testAccAddr, jackName, jackAccount, testconstants.Info)
-	require.NoError(suite.T, err)
-
-	// Jack re-approves new account
-	_, err = ApproveAddAccount(suite, testAccAddr, jackName, jackAccount, testconstants.Info)
-	require.NoError(suite.T, err)
-
 	// Query all active accounts
 	receivedAccounts, _ := GetAccounts(suite)
 	require.Equal(suite.T, len(inputAccounts), len(receivedAccounts))
@@ -1111,6 +1103,14 @@ func AuthDemo(suite *utils.TestSuite) {
 
 	// Alice approves new account
 	_, err = ApproveAddAccount(suite, testAccAddr, aliceName, aliceAccount, testconstants.Info)
+	require.NoError(suite.T, err)
+
+	// Jack rejects new account
+	_, err = RejectAddAccount(suite, testAccAddr, jackName, jackAccount, testconstants.Info)
+	require.NoError(suite.T, err)
+
+	// Jack re-approves new account
+	_, err = ApproveAddAccount(suite, testAccAddr, jackName, jackAccount, testconstants.Info)
 	require.NoError(suite.T, err)
 
 	// Bob approves new account
