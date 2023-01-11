@@ -56,6 +56,14 @@ func (k msgServer) RejectAddAccount(
 
 	// check if pending account already has approval from signer
 	if pendAcc.HasApprovalFrom(signerAddr) {
+		// Remove pending account if there are no rejects and other approvals
+		if len(pendAcc.Approvals) == 1 && len(pendAcc.Rejects) == 0 {
+			k.RemovePendingAccount(ctx, accAddr)
+
+			return &types.MsgRejectAddAccountResponse{}, nil
+		}
+
+		// Remove approval from the list of approvals
 		for i, other := range pendAcc.Approvals {
 			if other.Address == grant.Address {
 				pendAcc.Approvals = append(pendAcc.Approvals[:i], pendAcc.Approvals[i+1:]...)

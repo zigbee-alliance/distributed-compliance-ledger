@@ -16,18 +16,26 @@ func (k msgServer) RejectAddX509RootCert(goCtx context.Context, msg *types.MsgRe
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
 
-	// check if signer has root certificate approval role
-	if !k.dclauthKeeper.HasRole(ctx, signerAddr, types.RootCertificateApprovalRole) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
-			"MsgApproveAddX509RootCert transaction should be signed by an account with the \"%s\" role",
-			types.RootCertificateApprovalRole,
-		)
-	}
-
 	// get proposed certificate
 	proposedCertificate, found := k.GetProposedCertificate(ctx, msg.Subject, msg.SubjectKeyId)
 	if !found {
 		return nil, types.NewErrProposedCertificateDoesNotExist(msg.Subject, msg.SubjectKeyId)
+	}
+
+	// check if signer has root certificate approval role
+	if !k.dclauthKeeper.HasRole(ctx, signerAddr, types.RootCertificateApprovalRole) {
+		// Remove proposed certificate if there are no rejects and approvals
+		if proposedCertificate.Owner == msg.Signer && len(proposedCertificate.Approvals) == 0 && len(proposedCertificate.Rejects) == 0 {
+			k.RemoveProposedCertificate(ctx, msg.Subject, msg.SubjectKeyId)
+			k.RemoveUniqueCertificate(ctx, proposedCertificate.Subject, proposedCertificate.SerialNumber)
+
+			return &types.MsgRejectAddX509RootCertResponse{}, nil
+		}
+
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+			"MsgApproveAddX509RootCert transaction should be signed by an account with the \"%s\" role",
+			types.RootCertificateApprovalRole,
+		)
 	}
 
 	// check if proposed certificate already has reject approval form signer
@@ -48,6 +56,15 @@ func (k msgServer) RejectAddX509RootCert(goCtx context.Context, msg *types.MsgRe
 
 	// check if proposed certificate has approval form signer
 	if proposedCertificate.HasApprovalFrom(signerAddr.String()) {
+		// Remove proposed certificate if there are no rejects and other approvals
+		if proposedCertificate.Owner == msg.Signer && len(proposedCertificate.Approvals) == 1 && len(proposedCertificate.Rejects) == 0 {
+			k.RemoveProposedCertificate(ctx, msg.Subject, msg.SubjectKeyId)
+			k.RemoveUniqueCertificate(ctx, proposedCertificate.Subject, proposedCertificate.SerialNumber)
+
+			return &types.MsgRejectAddX509RootCertResponse{}, nil
+		}
+
+		// Remove approval from the list of approvals
 		for i, other := range proposedCertificate.Approvals {
 			if other.Address == grant.Address {
 				proposedCertificate.Approvals = append(proposedCertificate.Approvals[:i], proposedCertificate.Approvals[i+1:]...)
