@@ -192,6 +192,54 @@ func TestHandler_CreateAccount_ThreeApprovalsAreNeeded(t *testing.T) {
 	require.False(t, setup.Keeper.IsRevokedAccountPresent(setup.Ctx, address))
 }
 
+func TestHandler_ProposeAndRejectAccount(t *testing.T) {
+	setup := Setup(t)
+
+	// store 3 trustees
+	trustee1 := storeTrustee(setup)
+	_ = storeTrustee(setup)
+	_ = storeTrustee(setup)
+
+	// ensure 2 trustee approvals are needed
+	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx, types.AccountApprovalsPercent))
+
+	// trustee1 propose account
+	_, address, _, err := proposeAddAccount(setup, trustee1, types.AccountRoles{types.NodeAdmin})
+	require.NoError(t, err)
+
+	// trustee1 rejects account
+	rejectAddAccount := types.NewMsgRejectAddAccount(trustee1, address, testconstants.Info2)
+	_, err = setup.Handler(setup.Ctx, rejectAddAccount)
+	require.NoError(t, err)
+
+	// ensure no pending account present
+	require.False(t, setup.Keeper.IsPendingAccountPresent(setup.Ctx, address))
+}
+
+func TestHandler_ProposeAddAndRejectAccount_ByAnotherTrustee(t *testing.T) {
+	setup := Setup(t)
+
+	// store 3 trustees
+	trustee1 := storeTrustee(setup)
+	trustee2 := storeTrustee(setup)
+	_ = storeTrustee(setup)
+
+	// ensure 2 trustee approvals are needed
+	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx, types.AccountApprovalsPercent))
+
+	// trustee1 propose account
+	_, address, _, err := proposeAddAccount(setup, trustee1, types.AccountRoles{types.NodeAdmin})
+	require.NoError(t, err)
+
+	// trustee2 rejects account
+	rejectAddAccount := types.NewMsgRejectAddAccount(trustee2, address, testconstants.Info2)
+	_, err = setup.Handler(setup.Ctx, rejectAddAccount)
+	require.NoError(t, err)
+
+	// ensure pending account present
+	require.True(t, setup.Keeper.IsPendingAccountPresent(setup.Ctx, address))
+}
+
 func TestHandler_ProposeAddAccount_ByNotTrustee(t *testing.T) {
 	setup := Setup(t)
 
