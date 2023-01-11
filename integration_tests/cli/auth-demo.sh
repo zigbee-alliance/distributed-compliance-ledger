@@ -29,8 +29,6 @@ check_response "$result" "\"name\": \"$user\""
 
 test_divider
 
-echo $user_address
-
 user_address=$(echo $passphrase | dcld keys show $user -a)
 user_pubkey=$(echo $passphrase | dcld keys show $user -p)
 
@@ -281,18 +279,6 @@ test_divider
 
 echo "Jack proposes account for $user"
 result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$user_address" --pubkey="$user_pubkey" --roles="NodeAdmin" --from jack --yes)
-check_response "$result" "\"code\": 0"
-
-test_divider
-
-echo "Jack can reject account for \"$user\" even if Jack already approved account"
-result=$(echo $passphrase | dcld tx auth reject-add-account --address="$user_address" --info="Jack is rejecting this account" --from jack --yes 2>&1 || true)
-check_response "$result" "\"code\": 0"
-
-test_divider
-
-echo "Jack re-approves account for \"$user\""
-result=$(echo $passphrase | dcld tx auth approve-add-account --address="$user_address" --info="Jack is proposing this account" --from jack --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -827,6 +813,14 @@ check_response "$result" "\"code\": 0"
 
 echo "Alice approves account for \"$new_trustee2\""
 result=$(echo $passphrase | dcld tx auth approve-add-account --address="$new_trustee_address2" --info="Alice is approving this account" --from alice --yes)
+check_response "$result" "\"code\": 0"
+
+echo "Jack can reject account for \"$user\" even if Jack already approved account"
+result=$(echo $passphrase | dcld tx auth reject-add-account --address="$new_trustee_address2" --info="Jack is rejecting this account" --from jack --yes 2>&1 || true)
+check_response "$result" "\"code\": 0"
+
+echo "Jack re-approves account for \"$user\""
+result=$(echo $passphrase | dcld tx auth approve-add-account --address="$new_trustee_address2" --info="Jack is proposing this account" --from jack --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider

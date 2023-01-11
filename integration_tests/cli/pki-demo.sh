@@ -1463,8 +1463,42 @@ echo $result | jq
 echo "11.  TEST REJECT ROOT CERT"
 test_divider
 
+random_string new_trustee1
+echo "$new_trustee1 generates keys"
+cmd="(echo $passphrase; echo $passphrase) | dcld keys add $new_trustee1"
+result="$(bash -c "$cmd")"
+
+test_divider
+
+echo "Get key info for $new_trustee1"
+result=$(echo $passphrase | dcld keys show $new_trustee1)
+check_response "$result" "\"name\": \"$new_trustee1\""
+
+test_divider
+
+new_trustee_address1=$(echo $passphrase | dcld keys show $new_trustee1 -a)
+new_trustee_pubkey1=$(echo $passphrase | dcld keys show $new_trustee1 -p)
+
+test_divider
+
+echo "Jack proposes account for $new_trustee1"
+result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$new_trustee_address1" --pubkey="$new_trustee_pubkey1" --roles="Trustee" --from jack --yes)
+check_response "$result" "\"code\": 0"
+
+echo "Alice approves account for \"$new_trustee1\""
+result=$(echo $passphrase | dcld tx auth approve-add-account --address="$new_trustee_address1" --info="Alice is approving this account" --from alice --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
 echo "$trustee_account (Trustee) rejects Root certificate"
 result=$(echo $passphrase | dcld tx pki reject-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --from $trustee_account --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Bob (Trustee) approves Root certificate"
+result=$(echo $passphrase | dcld tx pki approve-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --from bob --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1515,6 +1549,19 @@ result=$(echo "$passphrase" | dcld tx pki reject-add-x509-root-cert --subject="$
 check_response "$result" "\"code\": 0"
 
 test_divider
+
+echo "Alice proposes to revoke account for $new_trustee1"
+result=$(echo $passphrase | dcld tx auth propose-revoke-account --address="$new_trustee_address1" --from alice --yes)
+check_response "$result" "\"code\": 0"
+
+echo "Bob approves to revoke account for $new_trustee1"
+result=$(echo $passphrase | dcld tx auth approve-revoke-account --address="$new_trustee_address1" --from bob --yes)
+check_response "$result" "\"code\": 0"
+
+echo "Jack approves to revoke account for $new_trustee1"
+result=$(echo $passphrase | dcld tx auth approve-revoke-account --address="$new_trustee_address1" --from jack --yes)
+check_response "$result" "\"code\": 0"
+
 
 echo "Certificate must be Rejected and contains 2 rejects. Request Root certificate"
 result=$(dcld query pki rejected-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id")

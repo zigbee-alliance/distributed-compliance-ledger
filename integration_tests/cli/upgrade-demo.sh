@@ -148,13 +148,7 @@ check_response "$propose" "\"code\": 0"
 
 test_divider
 
-reject=$(dcld tx dclupgrade reject-upgrade --name=$upgrade_name --from $trustee_account --yes)
-echo "reject upgrade response: $reject"
-check_response "$reject" "\"code\": 0"
-
-test_divider
-
-approve=$(dcld tx dclupgrade approve-upgrade --name=$upgrade_name --from $trustee_account --yes)
+approve=$(dcld tx dclupgrade approve-upgrade --name=$upgrade_name --from alice --yes)
 echo "approve upgrade response: $approve"
 check_response "$approve" "\"code\": 0"
 
@@ -168,9 +162,27 @@ check_response_and_report "$proposed_dclupgrade_query" "\"info\": \"$upgrade_inf
 
 test_divider
 
+reject=$(dcld tx dclupgrade reject-upgrade --name=$upgrade_name --from $trustee_account --yes)
+echo "reject upgrade response: $reject"
+check_response "$reject" "\"code\": 0"
+
+test_divider
+
+approve=$(dcld tx dclupgrade approve-upgrade --name=$upgrade_name --from $trustee_account --yes)
+echo "approve upgrade response: $approve"
+check_response "$approve" "\"code\": 0"
+
+test_divider
+
 reject=$(dcld tx dclupgrade reject-upgrade --name=$upgrade_name --from alice --yes)
 echo "reject upgrade response: $reject"
 check_response "$reject" "\"code\": 0"
+
+test_divider
+
+second_reject=$(dcld tx dclupgrade reject-upgrade --name=$upgrade_name --from alice --yes)
+echo "second_reject upgrade response: $reject"
+response_does_not_contain "$second_reject" "\"code\": 0"
 
 test_divider
 
@@ -179,12 +191,6 @@ echo "dclupgrade proposed upgrade query: $proposed_dclupgrade_query"
 check_response_and_report "$proposed_dclupgrade_query" "\"name\": \"$upgrade_name\""
 check_response_and_report "$proposed_dclupgrade_query" "\"height\": \"$upgrade_height\""
 check_response_and_report "$proposed_dclupgrade_query" "\"info\": \"$upgrade_info\""
-
-test_divider
-
-second_reject=$(dcld tx dclupgrade reject-upgrade --name=$upgrade_name --from alice --yes)
-echo "second_reject upgrade response: $reject"
-response_does_not_contain "$second_reject" "\"code\": 0"
 
 test_divider
 

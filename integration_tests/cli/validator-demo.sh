@@ -269,18 +269,6 @@ echo "$result"
 
 test_divider
 
-echo "Alice can revote to reject disable validator $address even if Alice already approves to disable validator"
-result=$(dcld tx validator reject-disable-node --address="$validator_address" --from alice --yes)
-check_response "$result" "\"code\": 0"
-echo "$result"
-
-echo "Alice approves to disable validator $address"
-result=$(dcld tx validator approve-disable-node --address="$validator_address" --from alice --yes)
-check_response "$result" "\"code\": 0"
-echo "$result"
-
-test_divider
-
 echo "Get all proposed validators to disable. $address in the list"
 result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator all-proposed-disable-nodes")
 check_response "$result" "\"approvals\":\[{\"address\":\"$alice_address\"" raw
@@ -448,6 +436,34 @@ echo "$result"
 
 test_divider
 
+random_string new_trustee1
+echo "$new_trustee1 generates keys"
+cmd="(echo $passphrase; echo $passphrase) | dcld keys add $new_trustee1"
+result="$(bash -c "$cmd")"
+
+test_divider
+
+echo "Get key info for $new_trustee1"
+result=$(echo $passphrase | dcld keys show $new_trustee1)
+check_response "$result" "\"name\": \"$new_trustee1\""
+
+test_divider
+
+new_trustee_address1=$(echo $passphrase | dcld keys show $new_trustee1 -a)
+new_trustee_pubkey1=$(echo $passphrase | dcld keys show $new_trustee1 -p)
+
+test_divider
+
+echo "Jack proposes account for $new_trustee1"
+result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$new_trustee_address1" --pubkey="$new_trustee_pubkey1" --roles="Trustee" --from jack --yes)
+check_response "$result" "\"code\": 0"
+
+echo "Alice approves account for \"$new_trustee1\""
+result=$(echo $passphrase | dcld tx auth approve-add-account --address="$new_trustee_address1" --info="Alice is approving this account" --from alice --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
 echo "Alice proposes to disable validator $address"
 result=$(dcld tx validator propose-disable-node --address="$validator_address" --from alice --yes)
 check_response "$result" "\"code\": 0"
@@ -455,17 +471,36 @@ echo "$result"
 
 test_divider
 
-echo "Alice can revote to reject disable validator $address even if Alice already approves to disable validator"
-result=$(dcld tx validator reject-disable-node --address="$validator_address" --from alice --yes)
+echo "Bob approves to disable validator $address"
+result=$(dcld tx validator approve-disable-node --address="$validator_address" --from bob --yes)
 check_response "$result" "\"code\": 0"
 echo "$result"
 
 test_divider
 
-echo "Alice approves to disable validator $address"
-result=$(dcld tx validator approve-disable-node --address="$validator_address" --from alice --yes)
+echo "Bob can revote to reject disable validator $address even if Bob already approves to disable validator"
+result=$(dcld tx validator reject-disable-node --address="$validator_address" --from bob --yes)
 check_response "$result" "\"code\": 0"
 echo "$result"
+
+test_divider
+
+echo "Bob approves to disable validator $address"
+result=$(dcld tx validator approve-disable-node --address="$validator_address" --from bob --yes)
+check_response "$result" "\"code\": 0"
+echo "$result"
+
+echo "Alice proposes to revoke account for $new_trustee1"
+result=$(echo $passphrase | dcld tx auth propose-revoke-account --address="$new_trustee_address1" --from alice --yes)
+check_response "$result" "\"code\": 0"
+
+echo "Bob approves to revoke account for $new_trustee1"
+result=$(echo $passphrase | dcld tx auth approve-revoke-account --address="$new_trustee_address1" --from bob --yes)
+check_response "$result" "\"code\": 0"
+
+echo "Jack approves to revoke account for $new_trustee1"
+result=$(echo $passphrase | dcld tx auth approve-revoke-account --address="$new_trustee_address1" --from jack --yes)
+check_response "$result" "\"code\": 0"
 
 test_divider
 
