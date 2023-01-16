@@ -530,4 +530,42 @@ func ProposeUpgradeTwice(suite *utils.TestSuite) {
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{proposeUpgradeMsg}, bobName, bobAccount)
 	require.Error(suite.T, err)
 	require.ErrorIs(suite.T, err, dclupgradetypes.ErrProposedUpgradeAlreadyExists)
+
+	// trustee rejects upgrade
+	rejectUpgradeMsg := NewMsgRejectUpgrade(aliceAccount.Address, planName)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{rejectUpgradeMsg}, aliceName, aliceAccount)
+	require.NoError(suite.T, err)
+}
+
+func ProposeAndRejectUpgrade(suite *utils.TestSuite) {
+	// Alice is predefined Trustee
+	aliceName := testconstants.AliceAccount
+	aliceKeyInfo, err := suite.Kr.Key(aliceName)
+	require.NoError(suite.T, err)
+	aliceAccount, err := test_dclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	planName, height, info := utils.RandString(), int64(100000), utils.RandString()
+
+	// trustee proposes upgrade
+	proposeUpgradeMsg := NewMsgProposeUpgrade(aliceAccount.Address, planName, height, info)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{proposeUpgradeMsg}, aliceName, aliceAccount)
+	require.NoError(suite.T, err)
+
+	// trustee rejects upgrade
+	rejectUpgradeMsg := NewMsgRejectUpgrade(aliceAccount.Address, planName)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{rejectUpgradeMsg}, aliceName, aliceAccount)
+	require.NoError(suite.T, err)
+
+	// Check upgrade is not proposed
+	_, err = GetProposedUpgrade(suite, proposeUpgradeMsg.Plan.Name)
+	suite.AssertNotFound(err)
+
+	// Check upgrade is not approved
+	_, err = GetApprovedUpgrade(suite, proposeUpgradeMsg.Plan.Name)
+	suite.AssertNotFound(err)
+
+	// Check upgrade is not rejected
+	_, err = GetRejectedUpgrade(suite, proposeUpgradeMsg.Plan.Name)
+	suite.AssertNotFound(err)
 }

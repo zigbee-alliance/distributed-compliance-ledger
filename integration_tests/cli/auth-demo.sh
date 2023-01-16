@@ -1213,6 +1213,51 @@ check_response "$result" "\"productName\": \"$productName\""
 
 test_divider
 
+# TEST PROPOSE AND REJECT ACCOUNT
+random_string user
+echo "$user generates keys"
+cmd="(echo $passphrase; echo $passphrase) | dcld keys add $user"
+result="$(bash -c "$cmd")"
+
+test_divider
+
+echo "Get key info for $user"
+result=$(echo $passphrase | dcld keys show $user)
+check_response "$result" "\"name\": \"$user\""
+
+test_divider
+
+user_address=$(echo $passphrase | dcld keys show $user -a)
+user_pubkey=$(echo $passphrase | dcld keys show $user -p)
+
+echo "jack (Trustee) propose account"
+result=$(dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$user_address" --pubkey="$user_pubkey" --roles="NodeAdmin" --from jack --yes)
+check_response "$result" "\"code\": 0"
+
+echo "jack (Trustee) rejects account"
+result=$(dcld tx auth reject-add-account --address="$user_address" --info="Jack is rejecting this account" --from jack --yes 2>&1 || true)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Propose not found in proposed proposed account"
+result=$(dcld query auth proposed-account --address=$user_address)
+echo $result | jq
+check_response "$result" "Not Found"
+
+test_divider
+
+echo "Account not found in rejected account"
+result=$(dcld query auth rejected-account --address=$user_address)
+echo $result | jq
+check_response "$result" "Not Found"
+
+test_divider
+
+echo "Upgrade not found in approved upgrade query"
+result=$(dcld query auth account --address="$user_address")
+echo $result | jq
+check_response "$result" "Not Found"
 
 test_divider
 

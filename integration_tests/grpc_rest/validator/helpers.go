@@ -415,6 +415,22 @@ func Demo(suite *utils.TestSuite) {
 	_, err = ProposeDisableValidator(suite, validatorAddr, aliceName, aliceAccount, testconstants.Info)
 	require.NoError(suite.T, err)
 
+	_, err = RejectDisableValidator(suite, validatorAddr, aliceName, aliceAccount, testconstants.Info)
+	require.NoError(suite.T, err)
+
+	_, err = GetProposedValidatorToDisable(suite, valAddress)
+	suite.AssertNotFound(err)
+
+	_, err = GetDisabledValidator(suite, valAddress)
+	suite.AssertNotFound(err)
+
+	_, err = GetRejectedValidatorToDisable(suite, valAddress)
+	suite.AssertNotFound(err)
+
+	// Propose disable validator
+	_, err = ProposeDisableValidator(suite, validatorAddr, aliceName, aliceAccount, testconstants.Info)
+	require.NoError(suite.T, err)
+
 	// Query proposed disable validator
 	proposedValidatorToDisable, err = GetProposedValidatorToDisable(suite, validatorAddr)
 	require.NoError(suite.T, err)

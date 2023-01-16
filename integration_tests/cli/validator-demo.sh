@@ -197,6 +197,35 @@ echo "$result"
 
 test_divider
 
+# TEST PROPOSE AND REJECT DISABLE VALIDATOR
+echo "jack (Trustee) propose disable validator"
+result=$(dcld tx validator propose-disable-node --address="$validator_address" --from alice --yes)
+check_response "$result" "\"code\": 0"
+
+echo "jack (Trustee) rejects disable validator"
+result=$(dcld tx validator reject-disable-node --address="$validator_address" --from alice --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Propose not found in proposed disable validator"
+result=$(dcld query validator proposed-disable-node --address="$validator_address")
+echo $result | jq
+check_response "$result" "Not Found"
+
+test_divider
+
+echo "Upgrade not found in rejected upgrade"
+result=$(dcld query validator rejected-disable-node --address="$validator_address")
+echo $result | jq
+check_response "$result" "Not Found"
+
+test_divider
+
+echo "Upgrade not found in approved upgrade query"
+result=$(dcld query validator disabled-node --address="$validator_address")
+echo $result | jq
+check_response "$result" "Not Found"
 
 echo "node admin disables validator"
 result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld tx validator disable-node --from "$account" --yes")

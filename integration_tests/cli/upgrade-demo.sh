@@ -322,5 +322,43 @@ check_response_and_report "$propose" "upgrade cannot be scheduled in the past" r
 ###########################################################################################################################################
 
 test_divider
+get_height current_height
+echo "Current height is $current_height"
+plan_height=$(expr $current_height + 3)
+random_string upgrade_name
+random_string upgrade_info
+
+# 18. TEST PROPOSE AND REJECT UPGRADE
+echo "18. TEST PROPOSE AND REJECT UPGRADE"
+test_divider
+
+echo "jack (Trustee) propose upgrade"
+result=$(dcld tx dclupgrade propose-upgrade --name=$upgrade_name --upgrade-height=$plan_height --upgrade-info=$upgrade_info --from jack --yes)
+check_response "$result" "\"code\": 0"
+
+echo "jack (Trustee) rejects upgrade"
+result=$(dcld tx dclupgrade reject-upgrade --name=$upgrade_name --from jack --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Upgrade not found in proposed upgrade"
+result=$(dcld query dclupgrade proposed-upgrade --name=$upgrade_name)
+echo $result | jq
+check_response "$result" "Not Found"
+
+test_divider
+
+echo "Upgrade not found in rejected upgrade"
+result=$(dcld query dclupgrade rejected-upgrade --name=$upgrade_name)
+echo $result | jq
+check_response "$result" "Not Found"
+
+test_divider
+
+echo "Upgrade not found in approved upgrade query"
+result=$(dcld query dclupgrade approved-upgrade --name=$upgrade_name)
+echo $result | jq
+check_response "$result" "Not Found"
 
 echo "PASSED"
