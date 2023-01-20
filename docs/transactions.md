@@ -727,9 +727,8 @@ All PKI related methods are based on this restriction.
 
 Proposes a new self-signed root certificate.
 
-If it's sent by a non-Trustee account, or more than 1 Trustee signature is required to add a root certificate,
-then the certificate
-will be in a pending state until sufficient number of other Trustee's approvals is received.
+If more than 1 Trustee signature is required to add the root certificate, the root certificate
+will be in a pending state until sufficient number of approvals is received.
 
 The certificate is immutable. It can only be revoked by either the owner or a quorum of Trustees.
 
