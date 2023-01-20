@@ -769,7 +769,7 @@ The certificate is not active until sufficient number of Trustees approve it.
 - Who can send:
   - Trustee
 - Number of required approvals:
-  - 2/3 of Trustees
+  - greater than 2/3 of Trustees
 - CLI command:
   - `dcld tx pki approve-add-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
 - Validation:
@@ -890,7 +890,7 @@ The revocation is not applied until sufficient number of Trustees approve it.
 - Who can send:
   - Trustee
 - Number of required approvals:
-  - 2/3 of Trustees
+  - greater than 2/3 of Trustees
 - CLI command:
   - `dcld tx pki approve-revoke-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
 
@@ -1140,12 +1140,12 @@ The account is not active until sufficient number of Trustees approve it.
 - Who can send:
   - Trustee
 - Number of required approvals:
-  - 2/3 of Trustees for account roles: `TestHouse`, `CertificationCenter`, `Trustee`, `NodeAdmin`
-  - 1/3 of Trustees for account role: `Vendor`
+  - greater than 2/3 of Trustees for account roles: `TestHouse`, `CertificationCenter`, `Trustee`, `NodeAdmin`
+  - greater than 1/3 of Trustees for account role: `Vendor`
 - CLI command:
   - `dcld tx auth approve-add-account --address=<bench32 encoded string> --from=<account>`
 
-> **_Note:_**  If we are approving an account with role `Vendor`, then we need 1/3 of Trustees approvals.
+> **_Note:_**  If we are approving an account with role `Vendor`, then we need more than 1/3 of Trustees approvals.
 
 #### REJECT_ADD_ACCOUNT
 
@@ -1202,7 +1202,7 @@ The account is not revoked until sufficient number of Trustees approve it.
 - Who can send:
   - Trustee
 - Number of required approvals:
-  - 2/3 of Trustees
+  - greater than 2/3 of Trustees
 - CLI command:
   - `dcld tx auth approve-revoke-account --address=<bench32 encoded string> --from=<account>`
 
@@ -1430,7 +1430,7 @@ The validator node is not disabled until sufficient number of Trustees approve i
 - Who can send:
   - Trustee
 - Number of required approvals:
-  - 2/3 of Trustees
+  - greater than 2/3 of Trustees
 - CLI command:
   - `dcld tx validator approve-disable-node --address=<validator address> --from=<account>`
    e.g.:
@@ -1728,7 +1728,7 @@ Proposes an upgrade plan with the given name at the given height.
 - Who can send:
   - Trustee
 - Number of required approvals:
-  - 2/3 of Trustees
+  - greater than 2/3 of Trustees
 - CLI command minimal:
 
 ```bash
@@ -1755,7 +1755,7 @@ Approves the proposed upgrade plan with the given name. It also can be used for 
 - Who can send:
   - Trustee
 - Number of required approvals:
-  - 2/3 of Trustees
+  - greater than 2/3 of Trustees
 - CLI command:
 
 ```bash
