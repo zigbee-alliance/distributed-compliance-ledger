@@ -756,7 +756,7 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
 
 **Status: Implemented**
 
-Approves the proposed root certificate.
+Approves the proposed root certificate. It also can be used for revote (i.e. change vote from reject to approve)
 
 The certificate is not active until sufficient number of Trustees approve it.
 
@@ -779,7 +779,7 @@ The certificate is not active until sufficient number of Trustees approve it.
 
 **Status: Implemented**
 
-Rejects the proposed root certificate.
+Rejects the proposed root certificate. It also can be used for revote (i.e. change vote from approve to reject)
 
 The certificate is not reject until sufficient number of Trustees reject it.
 
@@ -1128,7 +1128,7 @@ will be in a pending state until sufficient number of approvals is received.
 
 **Status: Implemented**
 
-Approves the proposed account.
+Approves the proposed account. It also can be used for revote (i.e. change vote from reject to approve)
 
 The account is not active until sufficient number of Trustees approve it.
 
@@ -1151,7 +1151,7 @@ The account is not active until sufficient number of Trustees approve it.
 
 **Status: Implemented**
 
-Rejects the proposed account.
+Rejects the proposed account. It also can be used for revote (i.e. change vote from approve to reject)
 
 The account is not reject until sufficient number of Trustees reject it.
 
@@ -1420,7 +1420,7 @@ will be in a pending state until sufficient number of approvals is received.
 
 **Status: Implemented**
 
-Approves disabling of the Validator node by a Trustee.
+Approves disabling of the Validator node by a Trustee. It also can be used for revote (i.e. change vote from reject to approve)
 
 The validator node is not disabled until sufficient number of Trustees approve it.
 
@@ -1445,7 +1445,7 @@ The validator node is not disabled until sufficient number of Trustees approve i
 
 **Status: Implemented**
 
-Rejects disabling of the Validator node by a Trustee.
+Rejects disabling of the Validator node by a Trustee. It also can be used for revote (i.e. change vote from approve to reject)
 
 The validator node is not reject until sufficient number of Trustees rejects it.
 
@@ -1747,7 +1747,7 @@ dcld tx dclupgrade propose-upgrade --name=<string> --upgrade-height=<int64> --up
 
 **Status: Implemented**
 
-Approves the proposed upgrade plan with the given name.
+Approves the proposed upgrade plan with the given name. It also can be used for revote (i.e. change vote from reject to approve)
 
 - Parameters:
   - name: `string` - upgrade plan name
@@ -1766,7 +1766,7 @@ dcld tx dclupgrade approve-upgrade --name=<string> --from=<account>
 
 **Status: Implemented**
 
-Rejects the proposed upgrade plan with the given name.
+Rejects the proposed upgrade plan with the given name. It also can be used for revote (i.e. change vote from approve to reject)
 
 - Paramaters:
   - name: `string` - upgrade plan name
