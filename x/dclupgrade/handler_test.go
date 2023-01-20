@@ -1018,6 +1018,116 @@ func TestHandler_ApproveUpgradePlanHeightLessThanBlockHeight_And_ReProposeUpgrad
 	require.True(t, types.ErrProposedUpgradeAlreadyExists.Is(err))
 }
 
+func TestHandler_RejectUpgrade_TwoRejectApprovalsAreNeeded_FiveTrustees(t *testing.T) {
+	setup := Setup(t)
+
+	// we have 5 trustees: 1 approval comes from propose => we need 2 rejects to make upgrade rejected
+
+	trusteeAccAddress1 := testdata.GenerateAccAddress()
+	trusteeAccAddress2 := testdata.GenerateAccAddress()
+	trusteeAccAddress3 := testdata.GenerateAccAddress()
+	trusteeAccAddress4 := testdata.GenerateAccAddress()
+	trusteeAccAddress5 := testdata.GenerateAccAddress()
+	setup.AddAccount(trusteeAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress2, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress3, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress4, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress5, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.DclauthKeeper.On("CountAccountsWithRole", mock.Anything, dclauthtypes.Trustee).Return(5)
+
+	// propose upgrade by account Trustee1
+	proposeUpgrade := NewMsgProposeUpgrade(trusteeAccAddress1)
+	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, proposeUpgrade.Plan).Return(nil)
+	_, err := setup.Handler(setup.Ctx, proposeUpgrade)
+	require.NoError(t, err)
+
+	// reject upgrade by account Trustee2
+	rejectUpgrade := NewMsgRejectUpgrade(trusteeAccAddress2)
+	_, err = setup.Handler(setup.Ctx, rejectUpgrade)
+	require.NoError(t, err)
+
+	// upgrade should be in the entity <Proposed Upgrade>, because we haven't enough reject approvals
+	proposedUpgrade, found := setup.Keeper.GetProposedUpgrade(setup.Ctx, proposeUpgrade.Plan.Name)
+	require.True(t, found)
+
+	// check proposed upgrade
+	require.Equal(t, proposeUpgrade.Plan, proposedUpgrade.Plan)
+	require.Equal(t, proposeUpgrade.Creator, proposedUpgrade.Creator)
+
+	// reject upgrade by account Trustee3
+	rejectUpgrade = NewMsgRejectUpgrade(trusteeAccAddress3)
+	_, err = setup.Handler(setup.Ctx, rejectUpgrade)
+	require.NoError(t, err)
+
+	// upgrade should be in the entity <Rejected Upgrade>, because we have enough rejected approvals
+	rejectedUpgrade, found := setup.Keeper.GetRejectedUpgrade(setup.Ctx, proposedUpgrade.Plan.Name)
+	require.True(t, found)
+
+	// check rejected upgrade
+	require.Equal(t, proposeUpgrade.Plan, rejectedUpgrade.Plan)
+	require.Equal(t, proposeUpgrade.Creator, rejectedUpgrade.Creator)
+}
+
+func TestHandler_ApproveUpgrade_FourApprovalsAreNeeded_FiveTrustees(t *testing.T) {
+	setup := Setup(t)
+
+	// we have 5 trustees: 1 approval comes from propose => we need 3 more approvals
+
+	trusteeAccAddress1 := testdata.GenerateAccAddress()
+	trusteeAccAddress2 := testdata.GenerateAccAddress()
+	trusteeAccAddress3 := testdata.GenerateAccAddress()
+	trusteeAccAddress4 := testdata.GenerateAccAddress()
+	trusteeAccAddress5 := testdata.GenerateAccAddress()
+	setup.AddAccount(trusteeAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress2, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress3, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress4, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress5, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.DclauthKeeper.On("CountAccountsWithRole", mock.Anything, dclauthtypes.Trustee).Return(5)
+
+	// propose upgrade by account Trustee1
+	proposeUpgrade := NewMsgProposeUpgrade(trusteeAccAddress1)
+	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, proposeUpgrade.Plan).Return(nil)
+	_, err := setup.Handler(setup.Ctx, proposeUpgrade)
+	require.NoError(t, err)
+
+	// approve upgrade by account Trustee2
+	approveUpgrade := types.NewMsgApproveUpgrade(trusteeAccAddress2.String(), proposeUpgrade.Plan.Name, proposeUpgrade.Info)
+	_, err = setup.Handler(setup.Ctx, approveUpgrade)
+	require.NoError(t, err)
+
+	// approve upgrade by account Trustee3
+	approveUpgrade = types.NewMsgApproveUpgrade(trusteeAccAddress3.String(), proposeUpgrade.Plan.Name, proposeUpgrade.Info)
+	_, err = setup.Handler(setup.Ctx, approveUpgrade)
+	require.NoError(t, err)
+
+	// reject upgrade by account Trustee4
+	rejectUpgrade := types.NewMsgRejectUpgrade(trusteeAccAddress4.String(), proposeUpgrade.Plan.Name, proposeUpgrade.Info)
+	_, err = setup.Handler(setup.Ctx, rejectUpgrade)
+	require.NoError(t, err)
+
+	// upgrade should be in the entity <Proposed Upgrade>, because we haven't enough approvals
+	proposedUpgrade, found := setup.Keeper.GetProposedUpgrade(setup.Ctx, proposeUpgrade.Plan.Name)
+	require.True(t, found)
+
+	// check proposed upgrade
+	require.Equal(t, proposeUpgrade.Plan, proposedUpgrade.Plan)
+	require.Equal(t, proposeUpgrade.Creator, proposedUpgrade.Creator)
+
+	// approve upgrade by account Trustee5
+	approveUpgrade = types.NewMsgApproveUpgrade(trusteeAccAddress5.String(), proposeUpgrade.Plan.Name, proposeUpgrade.Info)
+	_, err = setup.Handler(setup.Ctx, approveUpgrade)
+	require.NoError(t, err)
+
+	// upgrade should be in the entity <Approved Upgrade>, because we have enough approvals
+	approvedUpgrade, found := setup.Keeper.GetApprovedUpgrade(setup.Ctx, proposeUpgrade.Plan.Name)
+	require.True(t, found)
+
+	// check upgrade
+	require.Equal(t, proposeUpgrade.Plan, approvedUpgrade.Plan)
+	require.Equal(t, proposeUpgrade.Creator, approvedUpgrade.Creator)
+}
+
 func isContextWithCachedMultiStore(ctx sdk.Context) bool {
 	_, ok := ctx.MultiStore().(storetypes.CacheMultiStore)
 
