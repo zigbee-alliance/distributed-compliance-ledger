@@ -58,6 +58,7 @@ func (k msgServer) RejectUpgrade(goCtx context.Context, msg *types.MsgRejectUpgr
 		for i, other := range proposedUpgrade.Approvals {
 			if other.Address == grant.Address {
 				proposedUpgrade.Approvals = append(proposedUpgrade.Approvals[:i], proposedUpgrade.Approvals[i+1:]...)
+				break
 			}
 		}
 	}
