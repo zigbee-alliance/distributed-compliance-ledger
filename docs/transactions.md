@@ -768,7 +768,7 @@ The certificate is not active until sufficient number of Trustees approve it.
 - Who can send:
   - Trustee
 - Number of required approvals:
-  - greater than 2/3 of Trustees
+  - greater than 2/3 of Trustees (proposal by a Trustee is also counted as an approval)
 - CLI command:
   - `dcld tx pki approve-add-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
 - Validation:
@@ -891,7 +891,7 @@ The revocation is not applied until sufficient number of Trustees approve it.
 - Who can send:
   - Trustee
 - Number of required approvals:
-  - greater than 2/3 of Trustees
+  - greater than 2/3 of Trustees (proposal by a Trustee is also counted as an approval)
 - CLI command:
   - `dcld tx pki approve-revoke-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
 
@@ -1141,8 +1141,8 @@ The account is not active until sufficient number of Trustees approve it.
 - Who can send:
   - Trustee
 - Number of required approvals:
-  - greater than 2/3 of Trustees for account roles: `TestHouse`, `CertificationCenter`, `Trustee`, `NodeAdmin`
-  - greater than 1/3 of Trustees for account role: `Vendor`
+  - greater than 2/3 of Trustees for account roles: `TestHouse`, `CertificationCenter`, `Trustee`, `NodeAdmin` (proposal by a Trustee is also counted as an approval)
+  - greater than 1/3 of Trustees for account role: `Vendor` (proposal by a Trustee is also counted as an approval)
 - CLI command:
   - `dcld tx auth approve-add-account --address=<bench32 encoded string> --from=<account>`
 
@@ -1205,7 +1205,7 @@ The account is not revoked until sufficient number of Trustees approve it.
 - Who can send:
   - Trustee
 - Number of required approvals:
-  - greater than 2/3 of Trustees
+  - greater than 2/3 of Trustees (proposal by a Trustee is also counted as an approval)
 - CLI command:
   - `dcld tx auth approve-revoke-account --address=<bench32 encoded string> --from=<account>`
 
@@ -1433,7 +1433,7 @@ The validator node is not disabled until sufficient number of Trustees approve i
 - Who can send:
   - Trustee
 - Number of required approvals:
-  - greater than 2/3 of Trustees
+  - greater than 2/3 of Trustees (proposal by a Trustee is also counted as an approval)
 - CLI command:
   - `dcld tx validator approve-disable-node --address=<validator address> --from=<account>`
    e.g.:
@@ -1733,7 +1733,7 @@ Proposes an upgrade plan with the given name at the given height.
 - Who can send:
   - Trustee
 - Number of required approvals:
-  - greater than 2/3 of Trustees
+  - greater than 2/3 of Trustees (proposal by a Trustee is also counted as an approval)
 - CLI command minimal:
 
 ```bash
@@ -1760,7 +1760,7 @@ Approves the proposed upgrade plan with the given name. It also can be used for 
 - Who can send:
   - Trustee
 - Number of required approvals:
-  - greater than 2/3 of Trustees
+  - greater than 2/3 of Trustees (proposal by a Trustee is also counted as an approval)
 - CLI command:
 
 ```bash
