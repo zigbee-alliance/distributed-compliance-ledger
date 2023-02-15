@@ -1,5 +1,5 @@
-#!/usr/bin/env bash
-# Copyright 2022
+---
+# Copyright 2022 Samsung Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,8 +13,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-echo "Generating DCL openapi ..."
-CONFIG_FILE="$PWD/scripts/swagger/config/dcl-config.json"
-OUTPUT_FILE="$PWD/docs/static/openapi.yml"
+name: Check Docker files
+# yamllint disable-line rule:truthy
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '**/Dockerfile'
+  pull_request:
+    branches:
+      - master
+    paths:
+      - '**/Dockerfile'
 
-./scripts/swagger/protoc-swagger-gen.sh "$CONFIG_FILE" "$OUTPUT_FILE"
+jobs:
+  check-dockerfile-lint:
+    name: Check Dockerfile lint issues (hadolint)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: hadolint/hadolint-action@v2.1.0
+        with:
+          recursive: true

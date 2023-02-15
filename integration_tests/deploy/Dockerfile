@@ -17,11 +17,11 @@
 ################################################################################
 FROM jrei/systemd-ubuntu:20.04
 
-RUN apt-get update && apt-get install -y \
-        sudo \
-        curl \
-        netcat \
-        iproute2 \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        sudo=1.8.31-1ubuntu1.2 \
+        curl=7.68.0-1ubuntu2.10 \
+        netcat=1.206-1ubuntu1 \
+        iproute2=5.5.0-1ubuntu1 \
     && rm -rf /var/lib/apt/lists/*
 
 # test user
