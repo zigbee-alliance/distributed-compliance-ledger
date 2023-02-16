@@ -169,7 +169,7 @@ for node_name in node0 node1 node2 node3 observer0; do
 
         # enables RPC and prometheus endpoints
         # FIXME issue 99: not good code
-        sed -i $SED_EXT '0,/^enable = false/{s~enable = false~enable = true~}' "$LOCALNET_DIR/${node_name}/config/app.toml"
+        sed -i $SED_EXT '0,/^enable = false/s~enable = false~enable = true~' "$LOCALNET_DIR/${node_name}/config/app.toml"
 
         # enables prometheus endpoints
         sed -i $SED_EXT 's/prometheus = false/prometheus = true/g' "$LOCALNET_DIR/${node_name}/config/config.toml"
