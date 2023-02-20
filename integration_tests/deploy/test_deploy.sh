@@ -70,8 +70,11 @@ for node in "$GVN_NAME" "$VN_NAME"; do
     # TODO firewall routine (requires ufw installed)
 
     echo "$node: upload release artifacts"
+    echo "$node":"$DCL_USER_HOME"
     docker cp deployment/cosmovisor.service "$node":"$DCL_USER_HOME"
+    echo "1"
     docker cp "$GOBIN"/dcld "$node":"$DCL_USER_HOME"
+    echo "2"
     docker cp deployment/scripts/run_dcl_node "$node":"$DCL_USER_HOME"
     docker cp deployment/scripts/test_peers_conn "$node":"$DCL_USER_HOME"
 
