@@ -181,8 +181,8 @@ Not all fields can be edited (see `EDIT_MODEL`).
   - pid: `uint16` -  model product ID (positive non-zero)
   - deviceTypeID: `uint16` -  DeviceTypeID is the device type identifier. For example, DeviceTypeID 10 (0x000a), is the device type identifier for a Door Lock.
   - productName: `string` -  model name
-  - productLabel: `string` -  model description (string or path to file containing data)
-  - partNumber: `string` -  stock keeping unit
+  - productLabel: `optional(string)` -  model description (string or path to file containing data)
+  - partNumber: `optional(string)` -  stock keeping unit
   - commissioningCustomFlow: `optional(uint8)` - A value of 1 indicates that user interaction with the device (pressing a button, for example) is required before commissioning can take place. When CommissioningCustomflow is set to a value of 2, the commissioner SHOULD attempt to obtain a URL which MAY be used to provide an end user with the necessary details for how to configure the product for initial commissioning
   - commissioningCustomFlowURL: `optional(string)` - commissioningCustomFlowURL SHALL identify a vendor specific commissioning URL for the device model when the commissioningCustomFlow field is set to '2'
   - commissioningModeInitialStepsHint: `optional(uint32)` - commissioningModeInitialStepsHint SHALL identify a hint for the steps that can be used to put into commissioning mode a device that has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 1 (bit 0 is set) indicates that a device that has not yet been commissioned will enter Commissioning Mode upon a power cycle.
