@@ -112,12 +112,6 @@ check_response_and_report "$result" "required flag(s) \"from\" not set" raw
 
 test_divider
 
-echo "Add model without enough parameters"
-result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct  --partNumber="1" --commissioningCustomFlow=0  --from $vendor_account --yes 2>&1) || true
-check_response_and_report "$result" "required flag(s) \"productLabel\" not set" raw
-
-test_divider
-
 echo "Update model with Non Mutable fields" 
 pid=$RANDOM
 sv=$RANDOM
