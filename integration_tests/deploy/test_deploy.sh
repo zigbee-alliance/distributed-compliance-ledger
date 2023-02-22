@@ -74,7 +74,7 @@ for node in "$GVN_NAME" "$VN_NAME"; do
     docker cp "$GOBIN"/dcld "$node":"$DCL_USER_HOME"
     docker cp deployment/scripts/run_dcl_node "$node":"$DCL_USER_HOME"
     docker cp deployment/scripts/test_peers_conn "$node":"$DCL_USER_HOME"
-
+    docker ps
     docker_exec "$node" ./dcld version
 
     echo "$node: init"
