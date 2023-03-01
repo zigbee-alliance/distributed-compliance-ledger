@@ -51,3 +51,5 @@ linters:
     - exhaustruct
     - nosnakecase
     - dupword
+    - nolintlint
+    - gofmt
