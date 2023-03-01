@@ -49,3 +49,5 @@ linters:
     - execinquery
     - nonamedreturns
     - exhaustruct
+    - nosnakecase
+    - dupword
