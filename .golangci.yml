@@ -53,4 +53,4 @@ linters:
     - dupword
     - nolintlint
     - gofmt
-    - gofumt
+    - gofumpt
