@@ -14,7 +14,14 @@
 # limitations under the License.
 
 linters:
-  enable-all: true
+  enable:
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - typecheck
+    - unused
   disable:
     - golint  # The linter 'golint' is deprecated (since v1.41.0) due to: The repository of the linter has been archived by the owner.  Replaced by revive.
     - gochecknoinits
@@ -49,3 +56,8 @@ linters:
     - execinquery
     - nonamedreturns
     - exhaustruct
+    - nosnakecase
+    - dupword
+    - nolintlint
+    - gofmt
+    - gofumpt

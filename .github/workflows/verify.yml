@@ -107,7 +107,7 @@ jobs:
   integration-tests:
     if: needs.changes.outputs.src == 'true'
     name: Integration tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs:
       - changes
     steps:
