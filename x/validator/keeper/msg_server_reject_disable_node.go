@@ -64,6 +64,7 @@ func (k msgServer) RejectDisableValidator(goCtx context.Context, msg *types.MsgR
 		for i, other := range proposedDisableValidator.Approvals {
 			if other.Address == grant.Address {
 				proposedDisableValidator.Approvals = append(proposedDisableValidator.Approvals[:i], proposedDisableValidator.Approvals[i+1:]...)
+
 				break
 			}
 		}
