@@ -244,8 +244,7 @@ dcld tx vendorinfo add-vendor --vid=<uint16> --vendorName=<string> --companyLega
 Minimal command:
 
 ```bash
- dcld tx model add-model --vid=<uint16> --pid=<uint16> --deviceTypeID=<uint16> --productName=<string> --productLabel=<string or path> --partNumber=<string> 
- --from=<account>
+ dcld tx model add-model --vid=<uint16> --pid=<uint16> --deviceTypeID=<uint16> --productName=<string> --from=<account>
 ```
 
 Full command:
