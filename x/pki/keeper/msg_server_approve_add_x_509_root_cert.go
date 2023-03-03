@@ -51,6 +51,7 @@ func (k msgServer) ApproveAddX509RootCert(goCtx context.Context, msg *types.MsgA
 		for i, other := range proposedCertificate.Rejects {
 			if other.Address == grant.Address {
 				proposedCertificate.Rejects = append(proposedCertificate.Rejects[:i], proposedCertificate.Rejects[i+1:]...)
+
 				break
 			}
 		}
