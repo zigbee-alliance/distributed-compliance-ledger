@@ -1023,11 +1023,6 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Approve add root_certificate"
-result=$(echo $passphrase | dcld tx pki approve-add-x509-root-cert --subject="$root_cert_subject_new" --subject-key-id=$root_cert_subject_key_id_new --from=$trustee_account_4 --yes)
-check_response "$result" "\"code\": 0"
-
-test_divider
 
 echo "Approve add root_certificate"
 result=$(echo $passphrase | dcld tx pki approve-add-x509-root-cert --subject="$root_cert_subject_new" --subject-key-id=$root_cert_subject_key_id_new --from=$trustee_account_5 --yes)
