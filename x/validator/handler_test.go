@@ -964,19 +964,13 @@ func TestHandler_ApproveDisableValidatorAndRejectDisableValidator_FromTheSamerTr
 	require.NoError(t, err)
 
 	// ensure that account is in <Proposed Disable Validator>
-	proposedDisableValidator, isFound := setup.ValidatorKeeper.GetProposedDisableValidator(setup.Ctx, valAddress.String())
+	_, isFound = setup.ValidatorKeeper.GetProposedDisableValidator(setup.Ctx, valAddress.String())
 	require.True(t, isFound)
-	prevRejectsLen := len(proposedDisableValidator.Rejects)
-	prevApprovalsLen := len(proposedDisableValidator.Approvals)
+
 	// account2 (Trustee) try rejects disable validator
 	msgRejectDisableValidator := NewMsgRejectDisableValidator(account2.GetAddress(), valAddress)
 	_, err = setup.Handler(setup.Ctx, msgRejectDisableValidator)
-	require.NoError(t, err)
-
-	proposedDisableValidator, isFound = setup.ValidatorKeeper.GetProposedDisableValidator(setup.Ctx, valAddress.String())
-	require.True(t, isFound)
-	require.Equal(t, len(proposedDisableValidator.Rejects), prevRejectsLen+1)
-	require.Equal(t, len(proposedDisableValidator.Approvals), prevApprovalsLen-1)
+	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
 }
 
 func TestHandler_RejectDisableValidatorAndApproveDisableValidator_FromTheSameTrustee(t *testing.T) {
@@ -1021,20 +1015,13 @@ func TestHandler_RejectDisableValidatorAndApproveDisableValidator_FromTheSameTru
 	require.NoError(t, err)
 
 	// ensure that account is in <Proposed Disable Validator>
-	proposedDisableValidator, isFound := setup.ValidatorKeeper.GetProposedDisableValidator(setup.Ctx, valAddress.String())
+	_, isFound = setup.ValidatorKeeper.GetProposedDisableValidator(setup.Ctx, valAddress.String())
 	require.True(t, isFound)
-	prevRejectsLen := len(proposedDisableValidator.Rejects)
-	prevApprovalsLen := len(proposedDisableValidator.Approvals)
 
 	// account2 (Trustee) try approve disable validator
 	msgApproveDisableValidator := NewMsgApproveDisableValidator(account2.GetAddress(), valAddress)
 	_, err = setup.Handler(setup.Ctx, msgApproveDisableValidator)
-	require.NoError(t, err)
-
-	proposedDisableValidator, isFound = setup.ValidatorKeeper.GetProposedDisableValidator(setup.Ctx, valAddress.String())
-	require.True(t, isFound)
-	require.Equal(t, len(proposedDisableValidator.Rejects), prevRejectsLen-1)
-	require.Equal(t, len(proposedDisableValidator.Approvals), prevApprovalsLen+1)
+	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
 }
 
 func TestHandler_DoubleTimeRejectDisableValidator(t *testing.T) {

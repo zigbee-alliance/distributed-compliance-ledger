@@ -972,36 +972,27 @@ func TestHandler_ApproveAccountAndRejectAccount_FromTheSameTrustee(t *testing.T)
 	_, address, _, err := proposeAddAccount(setup, trustee1, types.AccountRoles{types.NodeAdmin})
 	require.NoError(t, err)
 
-	// trustee2 approves to add account
+	// trustee2 approve to add account
 	approveAddAccount := types.NewMsgApproveAddAccount(trustee2, address, testconstants.Info)
 	_, err = setup.Handler(setup.Ctx, approveAddAccount)
 	require.NoError(t, err)
 
-	pendingAcc, _ := setup.Keeper.GetPendingAccount(setup.Ctx, address)
-	prevRejectsLen := len(pendingAcc.Rejects)
-	prevApprovalsLen := len(pendingAcc.Approvals)
-	// trustee2 rejects to add account
+	// trustee2 try rejects to add account
 	rejectAddAccount := types.NewMsgRejectAddAccount(trustee2, address, testconstants.Info)
 	_, err = setup.Handler(setup.Ctx, rejectAddAccount)
-	require.NoError(t, err)
-
-	pendingAcc, found := setup.Keeper.GetPendingAccount(setup.Ctx, address)
-	require.True(t, found)
-	require.Equal(t, len(pendingAcc.Rejects), prevRejectsLen+1)
-	require.Equal(t, len(pendingAcc.Approvals), prevApprovalsLen-1)
+	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
 }
 
 func TestHandler_RejectAccountAndApproveAccount_FromTheSameTrustee(t *testing.T) {
 	setup := Setup(t)
 
-	// store 4 trustee
+	// store 3 trustee
 	trustee1 := storeTrustee(setup)
 	trustee2 := storeTrustee(setup)
 	_ = storeTrustee(setup)
-	_ = storeTrustee(setup)
 
-	// ensure 3 trustee approvals are needed
-	require.Equal(t, 3, setup.Keeper.AccountApprovalsCount(setup.Ctx, types.AccountApprovalsPercent))
+	// ensure 2 trustee approvals are needed
+	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx, types.AccountApprovalsPercent))
 
 	// trustee1 proposes account
 	_, address, _, err := proposeAddAccount(setup, trustee1, types.AccountRoles{types.NodeAdmin})
@@ -1012,18 +1003,10 @@ func TestHandler_RejectAccountAndApproveAccount_FromTheSameTrustee(t *testing.T)
 	_, err = setup.Handler(setup.Ctx, rejectAddAccount)
 	require.NoError(t, err)
 
-	pendingAcc, _ := setup.Keeper.GetPendingAccount(setup.Ctx, address)
-	prevRejectsLen := len(pendingAcc.Rejects)
-	prevApprovalsLen := len(pendingAcc.Approvals)
-	// trustee2 approves to add account
+	// trustee2 try approve to add account
 	approveAddAccount := types.NewMsgApproveAddAccount(trustee2, address, testconstants.Info)
 	_, err = setup.Handler(setup.Ctx, approveAddAccount)
-	require.NoError(t, err)
-
-	pendingAcc, found := setup.Keeper.GetPendingAccount(setup.Ctx, address)
-	require.True(t, found)
-	require.Equal(t, len(pendingAcc.Rejects), prevRejectsLen-1)
-	require.Equal(t, len(pendingAcc.Approvals), prevApprovalsLen+1)
+	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
 }
 
 func TestHandler_DoubleTimeRejectAccount(t *testing.T) {

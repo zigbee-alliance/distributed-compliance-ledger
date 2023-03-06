@@ -571,14 +571,6 @@ func AuthDemo(suite *utils.TestSuite) {
 	)
 	require.NoError(suite.T, err)
 
-	// Jack rejects new account
-	_, err = RejectAddAccount(suite, testAccAddr, jackName, jackAccount, testconstants.Info)
-	require.NoError(suite.T, err)
-
-	// Jack re-approves new account
-	_, err = ApproveAddAccount(suite, testAccAddr, jackName, jackAccount, testconstants.Info)
-	require.NoError(suite.T, err)
-
 	// Query all active accounts
 	receivedAccounts, _ := GetAccounts(suite)
 	require.Equal(suite.T, len(inputAccounts), len(receivedAccounts))
@@ -617,7 +609,7 @@ func AuthDemo(suite *utils.TestSuite) {
 	_, err = ApproveAddAccount(suite, testAccAddr, aliceName, aliceAccount, testconstants.Info)
 	require.NoError(suite.T, err)
 
-	// Alice cannot approve account twice
+	// Alice cannot reject accont, because Alice already approved account
 	_, err = ApproveAddAccount(suite, testAccAddr, aliceName, aliceAccount, testconstants.Info)
 	require.Error(suite.T, err)
 
@@ -841,8 +833,8 @@ func AuthDemo(suite *utils.TestSuite) {
 	_, err = RejectAddAccount(suite, testAccAddr, aliceName, aliceAccount, testconstants.Info)
 	require.NoError(suite.T, err)
 
-	// Alice can not reject account twice
-	_, err = RejectAddAccount(suite, testAccAddr, aliceName, aliceAccount, testconstants.Info)
+	// Alice cannot approve account, because Alice already rejected account
+	_, err = ApproveAddAccount(suite, testAccAddr, aliceName, aliceAccount, testconstants.Info)
 	require.Error(suite.T, err)
 
 	// Query all active accounts
@@ -897,7 +889,7 @@ func AuthDemo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Bob can not the second time reject the same account
-	_, err = RejectAddAccount(suite, testAccAddr, bobName, bobAccount, testconstants.Info)
+	_, err = ApproveAddAccount(suite, testAccAddr, aliceName, aliceAccount, testconstants.Info)
 	require.Error(suite.T, err)
 
 	// Query all active accounts

@@ -12,7 +12,7 @@ option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/
 
 // Msg defines the Msg service.
 service Msg {
-  rpc CreateModel(MsgCreateModel) returns (MsgCreateModelResponse);
+      rpc CreateModel(MsgCreateModel) returns (MsgCreateModelResponse);
   rpc UpdateModel(MsgUpdateModel) returns (MsgUpdateModelResponse);
   rpc DeleteModel(MsgDeleteModel) returns (MsgDeleteModelResponse);
   rpc CreateModelVersion(MsgCreateModelVersion) returns (MsgCreateModelVersionResponse);
@@ -27,8 +27,8 @@ message MsgCreateModel {
 
   int32 deviceTypeId = 4 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
   string productName = 5 [(gogoproto.moretags) = "validate:\"required,max=128\""];
-  string productLabel = 6 [(gogoproto.moretags) = "validate:\"max=256\""];
-  string partNumber = 7 [(gogoproto.moretags) = "validate:\"max=32\""];
+  string productLabel = 6 [(gogoproto.moretags) = "validate:\"required,max=256\""];
+  string partNumber = 7 [(gogoproto.moretags) = "validate:\"required,max=32\""];
   int32 commissioningCustomFlow = 8 [(gogoproto.moretags) = "validate:\"gte=0,lte=2\""];
   string commissioningCustomFlowUrl = 9 [(gogoproto.moretags) = "validate:\"required_if=CommissioningCustomFlow 2,omitempty,url,startsnotwith=http:,max=256\""];
   uint32 commissioningModeInitialStepsHint = 10;

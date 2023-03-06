@@ -678,18 +678,10 @@ func TestHandler_ApproveUpgradeAndRejectUpgrade_FromTheSameTrustee(t *testing.T)
 	_, err = setup.Handler(setup.Ctx, msgApproveUpgrade)
 	require.NoError(t, err)
 
-	pendingUpgrade, _ := setup.Keeper.GetProposedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
-	prevRejectsLen := len(pendingUpgrade.Rejects)
-	prevApprovalsLen := len(pendingUpgrade.Approvals)
-	// reject upgrade from trustee2
+	// try rejects upgrade from trustee2
 	msgRejectUpgrade := NewMsgRejectUpgrade(trusteeAccAddress2)
 	_, err = setup.Handler(setup.Ctx, msgRejectUpgrade)
-	require.NoError(t, err)
-
-	pendingUpgrade, found := setup.Keeper.GetProposedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
-	require.True(t, found)
-	require.Equal(t, len(pendingUpgrade.Rejects), prevRejectsLen+1)
-	require.Equal(t, len(pendingUpgrade.Approvals), prevApprovalsLen-1)
+	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
 }
 
 func TestHandler_RejectUpgradeAndApproveUpgrade_FromTheSameTrustee(t *testing.T) {
@@ -698,12 +690,10 @@ func TestHandler_RejectUpgradeAndApproveUpgrade_FromTheSameTrustee(t *testing.T)
 	trusteeAccAddress1 := testdata.GenerateAccAddress()
 	trusteeAccAddress2 := testdata.GenerateAccAddress()
 	trusteeAccAddress3 := testdata.GenerateAccAddress()
-	trusteeAccAddress4 := testdata.GenerateAccAddress()
 	setup.AddAccount(trusteeAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
 	setup.AddAccount(trusteeAccAddress2, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
 	setup.AddAccount(trusteeAccAddress3, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
-	setup.AddAccount(trusteeAccAddress4, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
-	setup.DclauthKeeper.On("CountAccountsWithRole", mock.Anything, dclauthtypes.Trustee).Return(4)
+	setup.DclauthKeeper.On("CountAccountsWithRole", mock.Anything, dclauthtypes.Trustee).Return(3)
 
 	// propose new upgrade from trustee1
 	msgProposeUpgrade := NewMsgProposeUpgrade(trusteeAccAddress1)
@@ -717,18 +707,10 @@ func TestHandler_RejectUpgradeAndApproveUpgrade_FromTheSameTrustee(t *testing.T)
 	_, err = setup.Handler(setup.Ctx, msgRejectUpgrade)
 	require.NoError(t, err)
 
-	pendingUpgrade, _ := setup.Keeper.GetProposedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
-	prevRejectsLen := len(pendingUpgrade.Rejects)
-	prevApprovalsLen := len(pendingUpgrade.Approvals)
-	// approve upgrade from trustee2
+	// try approve upgrade from trustee2
 	msgApproveUpgrade := NewMsgApproveUpgrade(trusteeAccAddress2)
 	_, err = setup.Handler(setup.Ctx, msgApproveUpgrade)
-	require.NoError(t, err)
-
-	pendingUpgrade, found := setup.Keeper.GetProposedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
-	require.True(t, found)
-	require.Equal(t, len(pendingUpgrade.Rejects), prevRejectsLen-1)
-	require.Equal(t, len(pendingUpgrade.Approvals), prevApprovalsLen+1)
+	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
 }
 
 func TestHandler_DoubleTimeRejectUpgrade(t *testing.T) {

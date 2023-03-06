@@ -59,6 +59,7 @@ make test_deploy_env_build
 GVN_IP="$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $GVN_NAME)"
 VN_IP="$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $VN_NAME)"
 
+
 test_divider
 
 echo "CLUSTER NODES PREPARATION"

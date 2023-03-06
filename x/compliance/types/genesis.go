@@ -1,6 +1,8 @@
 package types
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // DefaultIndex is the default capability global index.
 const DefaultIndex uint64 = 1

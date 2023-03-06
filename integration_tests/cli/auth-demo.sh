@@ -283,18 +283,6 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Jack can reject account for \"$user\" even if Jack already approved account"
-result=$(echo $passphrase | dcld tx auth reject-add-account --address="$user_address" --info="Jack is rejecting this account" --from jack --yes 2>&1 || true)
-check_response "$result" "\"code\": 0"
-
-test_divider
-
-echo "Jack re-approves account for \"$user\""
-result=$(echo $passphrase | dcld tx auth approve-add-account --address="$user_address" --info="Jack is proposing this account" --from jack --yes)
-check_response "$result" "\"code\": 0"
-
-test_divider
-
 echo "Get all revoked accounts. $user account in the list"
 result=$(dcld query auth all-revoked-accounts)
 check_response "$result" "\"address\": \"$user_address\""
@@ -336,6 +324,12 @@ test_divider
 echo "Alice approves account for \"$user\""
 result=$(echo $passphrase | dcld tx auth approve-add-account --address="$user_address" --info="Alice is approving this account" --from alice --yes)
 check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Alice doesn't reject account for \"$user\", because Alice already approved account"
+result=$(echo $passphrase | dcld tx auth reject-add-account --address="$user_address" --info="Alice is rejecting this account" --from alice --yes 2>&1 || true)
+response_does_not_contain "$result" "\"code\": 0"
 
 test_divider
 
@@ -490,6 +484,12 @@ test_divider
 echo "Alice rejects account for \"$user\""
 result=$(echo $passphrase | dcld tx auth reject-add-account --address="$user_address" --info="Alice is rejecting this account" --from alice --yes)
 check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Alice doesn't approve account for \"$user\", because Alice already rejected account"
+result=$(echo $passphrase | dcld tx auth approve-add-account --address="$user_address" --info="Alice is approving this account" --from alice --yes 2>&1 || true)
+response_does_not_contain "$result" "\"code\": 0"
 
 test_divider
 
