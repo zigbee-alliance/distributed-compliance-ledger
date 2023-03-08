@@ -211,7 +211,7 @@ trustee_account_3="bob"
 vendor_account="vendor_account"
 
 plan_name="v0.13.0-pre"
-upgrade_checksum="sha256:4a57e3a02d0d9a696aba953d2416c0fa3cae95494d500dcc21584cb718314b08"
+upgrade_checksum="sha256:2e1df8fcd97d0f35f214fcc0fc9bc9bb28827f8815bba4b6ab797b19d8d0d4ac"
 
 vid=1
 pid_1=1
@@ -327,8 +327,8 @@ plan_height=$(expr $current_height \* 7)
 test_divider
 
 echo "Propose upgrade $plan_name at height $plan_height"
-echo "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$plan_name/dcld?checksum=$upgrade_checksum"
-result=$(echo $passphrase | dcld tx dclupgrade propose-upgrade --name=$plan_name --upgrade-height=$plan_height --upgrade-info="{\"binaries\":{\"linux/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$plan_name/dcld?checksum=$upgrade_checksum\"}}" --from $trustee_account_1 --yes)
+echo "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$plan_name/dcld.ubuntu.tar.gz?checksum=$upgrade_checksum"
+result=$(echo $passphrase | dcld tx dclupgrade propose-upgrade --name=$plan_name --upgrade-height=$plan_height --upgrade-info="{\"binaries\":{\"linux/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$plan_name/dcld.ubuntu.tar.gz?checksum=$upgrade_checksum\"}}" --from $trustee_account_1 --yes)
 echo "$result"
 check_response "$result" "\"code\": 0"
 
@@ -409,8 +409,22 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Provision model vid=$vid pid=$pid_2"
-result=$(echo $passphrase | dcld tx compliance provision-model --vid=$vid --pid=$pid_2 --softwareVersion=$software_version --softwareVersionString=$software_version_string --certificationType=$certification_type --provisionalDate=$provisional_date --cdCertificateId=$cd_certificate_id --from=$certification_center_account --yes)
+echo "Certify model vid=$vid pid=$pid_2"
+result=$(echo $passphrase | dcld tx compliance certify-model --vid=$vid --pid=$pid_2 --softwareVersion=$software_version --softwareVersionString=$software_version_string  --certificationType=$certification_type --certificationDate=$certification_date --cdCertificateId=$cd_certificate_id --from=$certification_center_account --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Revoke model certification vid=$vid pid=$pid_2"
+result=$(echo $passphrase | dcld tx compliance revoke-model --vid=$vid --pid=$pid_2 --softwareVersion=$software_version --softwareVersionString=$software_version_string --certificationType=$certification_type --revocationDate=$certification_date --from=$certification_center_account --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+test_divider
+
+echo "Provision model vid=$vid pid=$pid_3"
+result=$(echo $passphrase | dcld tx compliance provision-model --vid=$vid --pid=$pid_3 --softwareVersion=$software_version --softwareVersionString=$software_version_string --certificationType=$certification_type --provisionalDate=$provisional_date --cdCertificateId=$cd_certificate_id --from=$certification_center_account --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -604,6 +618,7 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
+
 echo "Wait for block height to become greater than upgrade $plan_name plan height"
 wait_for_height $(expr $plan_height + 1) 300 outage-safe
 
@@ -688,17 +703,16 @@ check_response "$result" "\"pid\": $pid_1"
 check_response "$result" "\"softwareVersion\": $software_version"
 check_response "$result" "\"certificationType\": \"$certification_type\""
 
-# echo "Get revoked Model with VID: $vid PID: $pid_3"
-# result=$(dcld query compliance revoked-model --vid=$vid --pid=$pid_3 --softwareVersion=$software_version --certificationType=$certification_type)
-# check_response "$result" "\"vid\": $vid"
-# check_response "$result" "\"pid\": $pid_3"
-# check_response "$result" "\"productLabel\": \"$product_label\""
-
-echo "Get provisional model with VID: $vid PID: $pid_2"
-result=$(dcld query compliance provisional-model --vid=$vid --pid=$pid_2 --softwareVersion=$software_version --certificationType=$certification_type)
-check_response "$result" "\"value\": true"
+echo "Get revoked Model with VID: $vid PID: $pid_2"
+result=$(dcld query compliance revoked-model --vid=$vid --pid=$pid_2 --softwareVersion=$software_version --certificationType=$certification_type)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid_2"
+
+echo "Get provisional model with VID: $vid PID: $pid_3"
+result=$(dcld query compliance provisional-model --vid=$vid --pid=$pid_3 --softwareVersion=$software_version --certificationType=$certification_type)
+check_response "$result" "\"value\": true"
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"pid\": $pid_3"
 
 echo "Get compliance-info model with VID: $vid PID: $pid_1"
 result=$(dcld query compliance compliance-info --vid=$vid --pid=$pid_1 --softwareVersion=$software_version --certificationType=$certification_type)
@@ -727,12 +741,12 @@ check_response "$result" "\"pid\": $pid_1"
 echo "Get all provisional models"
 result=$(dcld query compliance all-provisional-models)
 check_response "$result" "\"vid\": $vid"
-check_response "$result" "\"pid\": $pid_2"
+check_response "$result" "\"pid\": $pid_3"
 
-# echo "Get all revoked models"
-# result=$(dcld query compliance all-revoked-models)
-# check_response "$result" "\"vid\": $vid"
-# check_response "$result" "\"pid\": $pid_3"
+echo "Get all revoked models"
+result=$(dcld query compliance all-revoked-models)
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"pid\": $pid_2"
 
 echo "Get all compliance infos"
 result=$(dcld query compliance all-compliance-info)
@@ -965,14 +979,20 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Revoke model certification vid=$vid pid=$pid_1"
-result=$(echo $passphrase | dcld tx compliance revoke-model --vid=$vid --pid=$pid_1 --softwareVersion=$software_version --softwareVersionString=$software_version_string --certificationType=$certification_type --revocationDate=$certification_date --from=$certification_center_account --yes)
+echo "Certify model vid=$vid_new pid=$pid_2_new"
+result=$(echo $passphrase | dcld tx compliance certify-model --vid=$vid_new --pid=$pid_2_new --softwareVersion=$software_version_new --softwareVersionString=$software_version_string_new  --certificationType=$certification_type_new --certificationDate=$certification_date_new --cdCertificateId=$cd_certificate_id_new --from=$certification_center_account_new --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Provision model vid=$vid_new pid=$pid_2_new"
-result=$(echo $passphrase | dcld tx compliance provision-model --vid=$vid_new --pid=$pid_2_new --softwareVersion=$software_version_new --softwareVersionString=$software_version_string_new --certificationType=$certification_type_new --provisionalDate=$provisional_date_new --cdCertificateId=$cd_certificate_id_new --from=$certification_center_account_new --yes)
+echo "Revoke model certification vid=$vid_new pid=$pid_2_new"
+result=$(echo $passphrase | dcld tx compliance revoke-model --vid=$vid_new --pid=$pid_2_new --softwareVersion=$software_version_new --softwareVersionString=$software_version_string_new --certificationType=$certification_type_new --revocationDate=$certification_date_new --from=$certification_center_account_new --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Provision model vid=$vid_new pid=$pid_3_new"
+result=$(echo $passphrase | dcld tx compliance provision-model --vid=$vid_new --pid=$pid_3_new --softwareVersion=$software_version_new --softwareVersionString=$software_version_string_new --certificationType=$certification_type_new --provisionalDate=$provisional_date_new --cdCertificateId=$cd_certificate_id_new --from=$certification_center_account_new --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -991,6 +1011,12 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
+echo "reject add root_certificate"
+result=$(echo $passphrase | dcld tx pki reject-add-x509-root-cert --subject="$root_cert_subject_new" --subject-key-id=$root_cert_subject_key_id_new --from=$trustee_account_2 --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
 echo "Approve add root_certificate"
 result=$(echo $passphrase | dcld tx pki approve-add-x509-root-cert --subject="$root_cert_subject_new" --subject-key-id=$root_cert_subject_key_id_new --from=$trustee_account_3 --yes)
 check_response "$result" "\"code\": 0"
@@ -999,6 +1025,12 @@ test_divider
 
 echo "Approve add root_certificate"
 result=$(echo $passphrase | dcld tx pki approve-add-x509-root-cert --subject="$root_cert_subject_new" --subject-key-id=$root_cert_subject_key_id_new --from=$trustee_account_4 --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Approve add root_certificate"
+result=$(echo $passphrase | dcld tx pki approve-add-x509-root-cert --subject="$root_cert_subject_new" --subject-key-id=$root_cert_subject_key_id_new --from=$trustee_account_5 --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1039,6 +1071,12 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
+echo "Revoke intermediate_cert"
+result=$(echo $passphrase | dcld tx pki revoke-x509-cert --subject="$intermediate_cert_subject_new" --subject-key-id="$intermediate_cert_subject_key_id_new" --from=$trustee_account_1 --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
 echo "Propose revoke root_certificate"
 result=$(echo "$passphrase" | dcld tx pki propose-revoke-x509-root-cert --subject="$root_cert_subject_new" --subject-key-id="$root_cert_subject_key_id_new" --from="$trustee_account_1" --yes)
 check_response "$result" "\"code\": 0"
@@ -1066,12 +1104,6 @@ test_divider
 echo "Propose revoke test_root_certificate"
 result=$(echo $passphrase | dcld tx pki propose-revoke-x509-root-cert --subject="$test_root_cert_subject_new" --subject-key-id="$test_root_cert_subject_key_id_new" --from $trustee_account_1 --yes)
 check_response "$result" "\"code\": 0"
-
-test_divider
-
-# echo "Revoke intermediate_cert"
-# result=$(echo $passphrase | dcld tx pki revoke-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --from=$trustee_account_1 --yes)
-# check_response "$result" "\"code\": 0"
 
 test_divider
 
@@ -1113,14 +1145,14 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Approve add account $user_4_address"
-result=$(dcld tx auth approve-add-account --address="$user_4_address" --from=$trustee_account_3 --yes)
+echo "Approve add account $user_5_address"
+result=$(dcld tx auth approve-add-account --address="$user_5_address" --from=$trustee_account_3 --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Approve add account $user_4_address"
-result=$(dcld tx auth approve-add-account --address="$user_4_address" --from=$trustee_account_4 --yes)
+echo "Approve add account $user_5_address"
+result=$(dcld tx auth approve-add-account --address="$user_5_address" --from=$trustee_account_4 --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1292,10 +1324,10 @@ check_response "$result" "\"pid\": $pid_1_new"
 check_response "$result" "\"softwareVersion\": $software_version_new"
 check_response "$result" "\"certificationType\": \"$certification_type_new\""
 
-echo "Get revoked Model with VID: $vid PID: $pid_1"
-result=$(dcld query compliance revoked-model --vid=$vid --pid=$pid_1 --softwareVersion=$software_version --certificationType=$certification_type)
-check_response "$result" "\"vid\": $vid"
-check_response "$result" "\"pid\": $pid_1"
+echo "Get revoked Model with VID: $vid_new PID: $pid_2_new"
+result=$(dcld query compliance revoked-model --vid=$vid_new --pid=$pid_2_new --softwareVersion=$software_version_new --certificationType=$certification_type_new)
+check_response "$result" "\"vid\": $vid_new"
+check_response "$result" "\"pid\": $pid_2_new"
 
 echo "Get certified model with VID: $vid_new PID: $pid_1_new"
 result=$(dcld query compliance certified-model --vid=$vid_new --pid=$pid_1_new --softwareVersion=$software_version_new --certificationType=$certification_type_new)
@@ -1303,11 +1335,11 @@ check_response "$result" "\"value\": true"
 check_response "$result" "\"vid\": $vid_new"
 check_response "$result" "\"pid\": $pid_1_new"
 
-echo "Get provisional model with VID: $vid_new PID: $pid_2_new"
-result=$(dcld query compliance provisional-model --vid=$vid_new --pid=$pid_2_new --softwareVersion=$software_version_new --certificationType=$certification_type_new)
+echo "Get provisional model with VID: $vid_new PID: $pid_3_new"
+result=$(dcld query compliance provisional-model --vid=$vid_new --pid=$pid_3_new --softwareVersion=$software_version_new --certificationType=$certification_type_new)
 check_response "$result" "\"value\": true"
 check_response "$result" "\"vid\": $vid_new"
-check_response "$result" "\"pid\": $pid_2_new"
+check_response "$result" "\"pid\": $pid_3_new"
 
 echo "Get compliance-info model with VID: $vid_new PID: $pid_1_new"
 result=$(dcld query compliance compliance-info --vid=$vid_new --pid=$pid_1_new --softwareVersion=$software_version_new --certificationType=$certification_type_new)
@@ -1336,12 +1368,12 @@ check_response "$result" "\"pid\": $pid_1_new"
 echo "Get all provisional models"
 result=$(dcld query compliance all-provisional-models)
 check_response "$result" "\"vid\": $vid_new"
-check_response "$result" "\"pid\": $pid_2_new"
+check_response "$result" "\"pid\": $pid_3_new"
 
 echo "Get all revoked models"
 result=$(dcld query compliance all-revoked-models)
-check_response "$result" "\"vid\": $vid"
-check_response "$result" "\"pid\": $pid_1"
+check_response "$result" "\"vid\": $vid_new"
+check_response "$result" "\"pid\": $pid_2_new"
 
 echo "Get all compliance infos"
 result=$(dcld query compliance all-compliance-info)
@@ -1374,40 +1406,35 @@ result=$(dcld query pki proposed-x509-root-cert --subject=$google_root_cert_subj
 check_response "$result" "\"subject\": \"$google_root_cert_subject_new\""
 check_response "$result" "\"subjectKeyId\": \"$google_root_cert_subject_key_id_new\""
 
-# echo "Get revoked x509 certificate"
-# result=$(dcld query pki revoked-x509-cert --subject=$intermediate_cert_subject --subject-key-id=$intermediate_cert_subject_key_id)
-# check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
-# check_response "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
+echo "Get revoked x509 certificate"
+result=$(dcld query pki revoked-x509-cert --subject=$intermediate_cert_subject_new --subject-key-id=$intermediate_cert_subject_key_id_new)
+check_response "$result" "\"subject\": \"$intermediate_cert_subject_new\""
+check_response "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id_new\""
 
 echo "Get proposed x509 root certificate to revoke"
 result=$(dcld query pki proposed-x509-root-cert-to-revoke --subject=$test_root_cert_subject_new --subject-key-id=$test_root_cert_subject_key_id_new)
 check_response "$result" "\"subject\": \"$test_root_cert_subject_new\""
 check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id_new\""
 
-echo "Get all revoked x509 root certificates"
-result=$(dcld query pki all-revoked-x509-root-certs)
-check_response "$result" "\"subject\": \"$root_cert_subject\""
-check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
-
 echo "Get all proposed x509 root certificates"
 result=$(dcld query pki all-proposed-x509-root-certs)
-check_response "$result" "\"subject\": \"$google_root_cert_subject\""
-check_response "$result" "\"subjectKeyId\": \"$google_root_cert_subject_key_id\""
+check_response "$result" "\"subject\": \"$google_root_cert_subject_new\""
+check_response "$result" "\"subjectKeyId\": \"$google_root_cert_subject_key_id_new\""
 
-# echo "Get all revoked x509 root certificates"
-# result=$(dcld query pki all-revoked-x509-root-certs)
-# check_response "$result" "\"subject\": \"$intermediate_cert_subject_new\""
-# check_response "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id_new\""
+echo "Get all revoked x509 root certificates"
+result=$(dcld query pki all-revoked-x509-root-certs)
+check_response "$result" "\"subject\": \"$root_cert_subject_new\""
+check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id_new\""
 
 echo "Get all proposed x509 root certificates to revoke"
 result=$(dcld query pki all-proposed-x509-root-certs-to-revoke)
-check_response "$result" "\"subject\": \"$test_root_cert_subject\""
-check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id\""
+check_response "$result" "\"subject\": \"$test_root_cert_subject_new\""
+check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id_new\""
 
 echo "Get all x509 certificates"
 result=$(dcld query pki all-x509-certs)
-check_response "$result" "\"subject\": \"$test_root_cert_subject\""
-check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id\""
+check_response "$result" "\"subject\": \"$test_root_cert_subject_new\""
+check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id_new\""
 
 test_divider
 
