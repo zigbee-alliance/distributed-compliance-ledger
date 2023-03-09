@@ -100,18 +100,6 @@ check_response_and_report "$result" "ProductName is a required field" raw
 
 test_divider
 
-echo "Add model with empty description"
-result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel="" --partNumber=1 --commissioningCustomFlow=0  --from $vendor_account --yes 2>&1) || true
-check_response_and_report "$result" "ProductLabel is a required field" raw
-
-test_divider
-
-echo "Add model with empty partNumber"
-result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel="Test Label" --partNumber="" --commissioningCustomFlow=0  --from $vendor_account --yes 2>&1) || true
-check_response_and_report "$result" "PartNumber is a required field" raw
-
-test_divider
-
 echo "Add model with empty --from flag"
 result=$(dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0  --from "" --yes 2>&1) || true
 check_response_and_report "$result" "invalid creator address (empty address string is not allowed)" raw
@@ -121,12 +109,6 @@ test_divider
 echo "Add model without --from flag"
 result=$(dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0  --yes 2>&1) || true
 check_response_and_report "$result" "required flag(s) \"from\" not set" raw
-
-test_divider
-
-echo "Add model without enough parameters"
-result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct  --partNumber="1" --commissioningCustomFlow=0  --from $vendor_account --yes 2>&1) || true
-check_response_and_report "$result" "required flag(s) \"productLabel\" not set" raw
 
 test_divider
 

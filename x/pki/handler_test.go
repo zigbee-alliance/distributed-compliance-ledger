@@ -1601,10 +1601,18 @@ func TestHandler_ApproveX509RootCertAndRejectX509RootCert_FromTheSameTrustee(t *
 		_, err = setup.Handler(setup.Ctx, approveAddX509RootCert)
 		require.NoError(t, err)
 
+		pendingCert, _ := setup.Keeper.GetProposedCertificate(setup.Ctx, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+		prevRejectsLen := len(pendingCert.Rejects)
+		prevApprovalsLen := len(pendingCert.Approvals)
 		// reject x509 root certificate by account Trustee2
 		rejectAddX509RootCert := types.NewMsgRejectAddX509RootCert(setup.Trustee2.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.Info)
 		_, err = setup.Handler(setup.Ctx, rejectAddX509RootCert)
-		require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
+		require.NoError(t, err)
+
+		pendingCert, found := setup.Keeper.GetProposedCertificate(setup.Ctx, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+		require.True(t, found)
+		require.Equal(t, len(pendingCert.Rejects), prevRejectsLen+1)
+		require.Equal(t, len(pendingCert.Approvals), prevApprovalsLen-1)
 	}
 }
 
@@ -1626,10 +1634,18 @@ func TestHandler_RejectX509RootCertAndApproveX509RootCert_FromTheSameTrustee(t *
 		_, err = setup.Handler(setup.Ctx, rejectAddX509RootCert)
 		require.NoError(t, err)
 
+		pendingCert, _ := setup.Keeper.GetProposedCertificate(setup.Ctx, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+		prevRejectsLen := len(pendingCert.Rejects)
+		prevApprovalsLen := len(pendingCert.Approvals)
 		// approve x509 root certificate by account Trustee2
 		approveAddX509RootCert := types.NewMsgApproveAddX509RootCert(setup.Trustee2.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.Info)
 		_, err = setup.Handler(setup.Ctx, approveAddX509RootCert)
-		require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
+		require.NoError(t, err)
+
+		pendingCert, found := setup.Keeper.GetProposedCertificate(setup.Ctx, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+		require.True(t, found)
+		require.Equal(t, len(pendingCert.Rejects), prevRejectsLen-1)
+		require.Equal(t, len(pendingCert.Approvals), prevApprovalsLen+1)
 	}
 }
 
