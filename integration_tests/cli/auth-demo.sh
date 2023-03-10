@@ -935,7 +935,7 @@ test_divider
 # The account has not been added even if it has more than the required number of approvals (6 required)
 
 
-# REVOKE ACCOUNT, WE NEED 3 TRUSTEE'S APPROVALS, BECAUSE WE HAVE 5 TRUSTEES
+# REVOKE ACCOUNT, WE NEED 4 TRUSTEE'S APPROVALS, BECAUSE WE HAVE 5 TRUSTEES
 echo "Alice proposes to revoke account for $user"
 result=$(echo $passphrase | dcld tx auth propose-revoke-account --address="$user_address" --info="Alice proposes to revoke account" --from alice --yes)
 check_response "$result" "\"code\": 0"
@@ -977,6 +977,10 @@ echo "Jack approves to revoke account for $new_trustee1"
 result=$(echo $passphrase | dcld tx auth approve-revoke-account --address="$new_trustee_address1" --from jack --yes)
 check_response "$result" "\"code\": 0"
 
+echo "$new_trustee1 approves to revoke account for $new_trustee1"
+result=$(echo $passphrase | dcld tx auth approve-revoke-account --address="$new_trustee_address1" --from $new_trustee1 --yes)
+check_response "$result" "\"code\": 0"
+
 echo "Get revoked account $new_trustee1"
 result=$(dcld query auth revoked-account --address="$new_trustee_address1")
 check_response "$result" "\"address\": \"$new_trustee_address1\""
@@ -1000,7 +1004,7 @@ test_divider
 
 
 
-# REJECT A NEW ACCOUNT, WE NEED 2 TRUSTEE'S REJECTS, BECAUSE WE HAVE 4 TRUSTEES
+# REJECT A NEW ACCOUNT, WE NEED 3 TRUSTEE'S REJECTS, BECAUSE WE HAVE 4 TRUSTEES
 echo "Jack proposes account for $user"
 result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$user_address" --pubkey="$user_pubkey" --roles="Vendor,NodeAdmin" --vid=$vid --from jack --yes)
 check_response "$result" "\"code\": 0"

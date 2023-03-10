@@ -54,7 +54,7 @@ func Setup(t *testing.T) TestSetup {
 func TestHandler_CreateAccount_OneApprovalIsNeeded(t *testing.T) {
 	setup := Setup(t)
 
-	countTrustees := 2
+	countTrustees := 1
 
 	for i := 0; i < countTrustees; i++ {
 		// store trustee
@@ -216,6 +216,11 @@ func TestHandler_ProposeAddAccount_ForExistingActiveAccount(t *testing.T) {
 	_, address, pubKey, err := proposeAddAccount(setup, trustee1, types.AccountRoles{types.NodeAdmin})
 	require.NoError(t, err)
 
+	// approve account
+	approveAddAccount := types.NewMsgApproveAddAccount(trustee2, address, testconstants.Info)
+	_, err = setup.Handler(setup.Ctx, approveAddAccount)
+	require.NoError(t, err)
+
 	// ensure active account created
 	require.True(t, setup.Keeper.IsAccountPresent(setup.Ctx, address))
 
@@ -299,11 +304,16 @@ func TestHandler_ApproveAddAccount_ForExistingActiveAccount(t *testing.T) {
 	_, address, _, err := proposeAddAccount(setup, trustee1, types.AccountRoles{types.NodeAdmin})
 	require.NoError(t, err)
 
+	// approve account
+	approveAddAccount := types.NewMsgApproveAddAccount(trustee2, address, testconstants.Info)
+	_, err = setup.Handler(setup.Ctx, approveAddAccount)
+	require.NoError(t, err)
+
 	// ensure active account created
 	require.True(t, setup.Keeper.IsAccountPresent(setup.Ctx, address))
 
 	// try to approve active account
-	approveAddAccount := types.NewMsgApproveAddAccount(trustee2, address, testconstants.Info)
+	approveAddAccount = types.NewMsgApproveAddAccount(trustee2, address, testconstants.Info)
 	_, err = setup.Handler(setup.Ctx, approveAddAccount)
 	require.ErrorIs(t, err, types.PendingAccountDoesNotExist)
 }
@@ -344,7 +354,7 @@ func TestHandler_ApproveAddAccount_ForDuplicateApproval(t *testing.T) {
 func TestHandler_RevokeAccount_OneApprovalIsNeeded(t *testing.T) {
 	setup := Setup(t)
 
-	countTrustees := 2
+	countTrustees := 1
 
 	for i := 0; i < countTrustees; i++ {
 		// store trustee
@@ -1105,7 +1115,7 @@ func TestHandler_DoubleTimeRejectAccount(t *testing.T) {
 func TestHandler_CreateVendorAccount_OneApprovalIsNeeded(t *testing.T) {
 	setup := Setup(t)
 
-	countTrustees := 4
+	countTrustees := 1
 
 	for i := 0; i < countTrustees; i++ {
 		// store trustee
@@ -1252,7 +1262,7 @@ func TestHandler_CreateVendorAccount_ThreeApprovalsAreNeeded(t *testing.T) {
 func TestHandler_CreateVendorAccountWithDifferentRole_OneApprovalIsNeeded(t *testing.T) {
 	setup := Setup(t)
 
-	countTrustees := 2
+	countTrustees := 1
 
 	for i := 0; i < countTrustees; i++ {
 		// store trustee
@@ -1388,6 +1398,235 @@ func TestHandler_CreateVendorAccountWithDifferentRole_ThreeApprovalsAreNeeded(t 
 
 	// check that account revoked from entity RevokedAccount
 	require.False(t, setup.Keeper.IsRevokedAccountPresent(setup.Ctx, address))
+}
+
+func TestHandler_RejectAccount_TwoRejectApprovalsAreNeeded_FiveTrustees(t *testing.T) {
+	setup := Setup(t)
+
+	// we have 5 trustees: 1 approval comes from propose => we need 2 rejects to make account rejected
+
+	trustee1 := storeTrustee(setup)
+	trustee2 := storeTrustee(setup)
+	trustee3 := storeTrustee(setup)
+	_ = storeTrustee(setup)
+	_ = storeTrustee(setup)
+
+	// ensure 4 trustee approvals are needed
+	require.Equal(t, 4, setup.Keeper.AccountApprovalsCount(setup.Ctx, types.AccountApprovalsPercent))
+
+	// trustee1 propose account
+	_, address, pubKey, err := proposeAddAccount(setup, trustee1, types.AccountRoles{types.NodeAdmin, types.Vendor})
+	require.NoError(t, err)
+
+	// reject account by account Trustee2
+	rejectAddAccount := types.NewMsgRejectAddAccount(trustee2, address, testconstants.Info)
+	_, err = setup.Handler(setup.Ctx, rejectAddAccount)
+	require.NoError(t, err)
+
+	// account should be in the entity <Proposed Account>, because we haven't enough reject approvals
+	pendingAccount, found := setup.Keeper.GetPendingAccount(setup.Ctx, address)
+	require.True(t, found)
+
+	// check proposed account
+	require.Equal(t, address.String(), pendingAccount.Address)
+	require.Equal(t, pubKey, pendingAccount.GetPubKey())
+
+	// reject account by account Trustee3
+	rejectAddAccount = types.NewMsgRejectAddAccount(trustee3, address, testconstants.Info)
+	_, err = setup.Handler(setup.Ctx, rejectAddAccount)
+	require.NoError(t, err)
+
+	// account should be in the entity <Rejected Account>, because we have enough rejected approvals
+	rejectedAccount, found := setup.Keeper.GetRejectedAccount(setup.Ctx, address)
+	require.True(t, found)
+
+	// check rejected account
+	require.Equal(t, address.String(), rejectedAccount.Address)
+	require.Equal(t, pubKey, rejectedAccount.GetPubKey())
+}
+
+func TestHandler_ApproveAccount_FourApprovalsAreNeeded_FiveTrustees(t *testing.T) {
+	setup := Setup(t)
+
+	// we have 5 trustees: 1 approval comes from propose => we need 3 more approvals
+
+	trustee1 := storeTrustee(setup)
+	trustee2 := storeTrustee(setup)
+	trustee3 := storeTrustee(setup)
+	trustee4 := storeTrustee(setup)
+	_ = storeTrustee(setup)
+
+	// ensure 4 trustee approvals are needed
+	require.Equal(t, 4, setup.Keeper.AccountApprovalsCount(setup.Ctx, types.AccountApprovalsPercent))
+
+	// trustee1 propose account
+	_, address, pubKey, err := proposeAddAccount(setup, trustee1, types.AccountRoles{types.NodeAdmin, types.Vendor})
+	require.NoError(t, err)
+
+	// approve account by account Trustee2
+	approveAddAccount := types.NewMsgApproveAddAccount(trustee2, address, testconstants.Info2)
+	_, err = setup.Handler(setup.Ctx, approveAddAccount)
+	require.NoError(t, err)
+
+	// approve account by account Trustee3
+	approveAddAccount = types.NewMsgApproveAddAccount(trustee3, address, testconstants.Info2)
+	_, err = setup.Handler(setup.Ctx, approveAddAccount)
+	require.NoError(t, err)
+
+	// account should be in the entity <Proposed Account>, because we haven't enough approvals
+	proposedAccount, found := setup.Keeper.GetPendingAccount(setup.Ctx, address)
+	require.True(t, found)
+
+	// check proposed account
+	require.Equal(t, address.String(), proposedAccount.Address)
+	require.Equal(t, pubKey, proposedAccount.GetPubKey())
+
+	// approve account by account Trustee4
+	approveAddAccount = types.NewMsgApproveAddAccount(trustee4, address, testconstants.Info2)
+	_, err = setup.Handler(setup.Ctx, approveAddAccount)
+	require.NoError(t, err)
+
+	// account should be in the entity <Account>, because we have enough approvals
+	approvedAccount, found := setup.Keeper.GetAccountO(setup.Ctx, address)
+	require.True(t, found)
+
+	// check account
+	require.Equal(t, address.String(), approvedAccount.Address)
+	require.Equal(t, pubKey, approvedAccount.GetPubKey())
+}
+
+func TestHandler_ApproveVendorAccount_TwoApprovalsAreNeeded_FourTrustees(t *testing.T) {
+	setup := Setup(t)
+
+	// we have 4 trustees: 1 approval comes from propose => we need 1 more approval
+
+	trustee1 := storeTrustee(setup)
+	trustee2 := storeTrustee(setup)
+	_ = storeTrustee(setup)
+	_ = storeTrustee(setup)
+
+	// trustee1 propose account
+	_, address, pubKey, err := proposeAddAccount(setup, trustee1, types.AccountRoles{types.Vendor})
+	require.NoError(t, err)
+
+	// account should be in the entity <Proposed Account>, because we haven't enough approvals
+	proposedAccount, found := setup.Keeper.GetPendingAccount(setup.Ctx, address)
+	require.True(t, found)
+
+	// check proposed account
+	require.Equal(t, address.String(), proposedAccount.Address)
+	require.Equal(t, pubKey, proposedAccount.GetPubKey())
+
+	// approve account by account Trustee2
+	approveAddAccount := types.NewMsgApproveAddAccount(trustee2, address, testconstants.Info2)
+	_, err = setup.Handler(setup.Ctx, approveAddAccount)
+	require.NoError(t, err)
+
+	// account should be in the entity <Account>, because we have enough approvals
+	approvedAccount, found := setup.Keeper.GetAccountO(setup.Ctx, address)
+	require.True(t, found)
+
+	// check account
+	require.Equal(t, address.String(), approvedAccount.Address)
+	require.Equal(t, pubKey, approvedAccount.GetPubKey())
+}
+
+func TestHandler_RejectVendorAccount_ThreeRejectsAreNeeded_FourTrustees(t *testing.T) {
+	setup := Setup(t)
+
+	// we have 4 trustees => we need 3 rejects
+
+	trustee1 := storeTrustee(setup)
+	trustee2 := storeTrustee(setup)
+	trustee3 := storeTrustee(setup)
+	trustee4 := storeTrustee(setup)
+
+	// trustee1 propose account
+	_, address, pubKey, err := proposeAddAccount(setup, trustee1, types.AccountRoles{types.Vendor})
+	require.NoError(t, err)
+
+	// reject account by account Trustee2
+	rejectAddAccount := types.NewMsgRejectAddAccount(trustee2, address, testconstants.Info2)
+	_, err = setup.Handler(setup.Ctx, rejectAddAccount)
+	require.NoError(t, err)
+
+	// reject account by account Trustee3
+	rejectAddAccount = types.NewMsgRejectAddAccount(trustee3, address, testconstants.Info2)
+	_, err = setup.Handler(setup.Ctx, rejectAddAccount)
+	require.NoError(t, err)
+
+	// account should be in the entity <Proposed Account>, because we haven't enough rejects
+	proposedAccount, found := setup.Keeper.GetPendingAccount(setup.Ctx, address)
+	require.True(t, found)
+
+	// check proposed account
+	require.Equal(t, address.String(), proposedAccount.Address)
+	require.Equal(t, pubKey, proposedAccount.GetPubKey())
+
+	// reject account by account Trustee4
+	rejectAddAccount = types.NewMsgRejectAddAccount(trustee4, address, testconstants.Info2)
+	_, err = setup.Handler(setup.Ctx, rejectAddAccount)
+	require.NoError(t, err)
+
+	// account should be in the entity <Rejected Account>, because we have enough rejects
+	rejectedAccount, found := setup.Keeper.GetRejectedAccount(setup.Ctx, address)
+	require.True(t, found)
+
+	// check rejected account
+	require.Equal(t, address.String(), rejectedAccount.Address)
+	require.Equal(t, pubKey, rejectedAccount.GetPubKey())
+}
+
+func TestHandler_RejectVendorAccount_ThreeRejectsAreNeeded_FiveTrustees(t *testing.T) {
+	setup := Setup(t)
+
+	// we have 5 trustees => we need 4 rejects
+
+	trustee1 := storeTrustee(setup)
+	trustee2 := storeTrustee(setup)
+	trustee3 := storeTrustee(setup)
+	trustee4 := storeTrustee(setup)
+	trustee5 := storeTrustee(setup)
+
+	// trustee1 propose account
+	_, address, pubKey, err := proposeAddAccount(setup, trustee1, types.AccountRoles{types.Vendor})
+	require.NoError(t, err)
+
+	// reject account by account Trustee2
+	rejectAddAccount := types.NewMsgRejectAddAccount(trustee2, address, testconstants.Info2)
+	_, err = setup.Handler(setup.Ctx, rejectAddAccount)
+	require.NoError(t, err)
+
+	// reject account by account Trustee3
+	rejectAddAccount = types.NewMsgRejectAddAccount(trustee3, address, testconstants.Info2)
+	_, err = setup.Handler(setup.Ctx, rejectAddAccount)
+	require.NoError(t, err)
+
+	// reject account by account Trustee4
+	rejectAddAccount = types.NewMsgRejectAddAccount(trustee4, address, testconstants.Info2)
+	_, err = setup.Handler(setup.Ctx, rejectAddAccount)
+	require.NoError(t, err)
+
+	// account should be in the entity <Proposed Account>, because we haven't enough rejects
+	proposedAccount, found := setup.Keeper.GetPendingAccount(setup.Ctx, address)
+	require.True(t, found)
+
+	// check proposed account
+	require.Equal(t, address.String(), proposedAccount.Address)
+	require.Equal(t, pubKey, proposedAccount.GetPubKey())
+
+	// reject account by account Trustee5
+	rejectAddAccount = types.NewMsgRejectAddAccount(trustee5, address, testconstants.Info2)
+	_, err = setup.Handler(setup.Ctx, rejectAddAccount)
+	require.NoError(t, err)
+
+	// account should be in the entity <Rejected Account>, because we have enough rejects
+	rejectedAccount, found := setup.Keeper.GetRejectedAccount(setup.Ctx, address)
+	require.True(t, found)
+
+	// check rejected account
+	require.Equal(t, address.String(), rejectedAccount.Address)
+	require.Equal(t, pubKey, rejectedAccount.GetPubKey())
 }
 
 func storeTrustee(setup TestSetup) sdk.AccAddress {
