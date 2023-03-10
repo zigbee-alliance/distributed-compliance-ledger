@@ -226,6 +226,78 @@ func TestHandler_ProposedDisableValidatorExists(t *testing.T) {
 	require.ErrorIs(t, err, types.ErrProposedDisableValidatorAlreadyExists)
 }
 
+func TestHandler_ProposeAndRejectDisableValidator(t *testing.T) {
+	setup := Setup(t)
+
+	// create Trustees
+	ba1 := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
+	account1 := dclauthtypes.NewAccount(ba1,
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1)
+	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
+
+	ba2 := authtypes.NewBaseAccount(testconstants.Address2, testconstants.PubKey2, 0, 0)
+	account2 := dclauthtypes.NewAccount(ba2,
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2)
+	setup.DclauthKeeper.SetAccount(setup.Ctx, account2)
+
+	ba3 := authtypes.NewBaseAccount(testconstants.Address3, testconstants.PubKey3, 0, 0)
+	account3 := dclauthtypes.NewAccount(ba3,
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3)
+	setup.DclauthKeeper.SetAccount(setup.Ctx, account3)
+
+	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
+	require.NoError(t, err)
+
+	// propose disable validator
+	msgProposeDisableValidator := NewMsgProposeDisableValidator(account1.GetAddress(), valAddress)
+	_, err = setup.Handler(setup.Ctx, msgProposeDisableValidator)
+	require.NoError(t, err)
+
+	// reject disable validator
+	rejectDisableValidator := types.NewMsgRejectDisableValidator(account1.GetAddress(), valAddress, testconstants.Info)
+	_, err = setup.Handler(setup.Ctx, rejectDisableValidator)
+	require.NoError(t, err)
+
+	_, found := setup.ValidatorKeeper.GetProposedDisableValidator(setup.Ctx, valAddress.String())
+	require.False(t, found)
+}
+
+func TestHandler_ProposeAndRejectDisableValidator_ByAnotherTrustee(t *testing.T) {
+	setup := Setup(t)
+
+	// create Trustees
+	ba1 := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
+	account1 := dclauthtypes.NewAccount(ba1,
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1)
+	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
+
+	ba2 := authtypes.NewBaseAccount(testconstants.Address2, testconstants.PubKey2, 0, 0)
+	account2 := dclauthtypes.NewAccount(ba2,
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2)
+	setup.DclauthKeeper.SetAccount(setup.Ctx, account2)
+
+	ba3 := authtypes.NewBaseAccount(testconstants.Address3, testconstants.PubKey3, 0, 0)
+	account3 := dclauthtypes.NewAccount(ba3,
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3)
+	setup.DclauthKeeper.SetAccount(setup.Ctx, account3)
+
+	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
+	require.NoError(t, err)
+
+	// propose disable validator
+	msgProposeDisableValidator := NewMsgProposeDisableValidator(account1.GetAddress(), valAddress)
+	_, err = setup.Handler(setup.Ctx, msgProposeDisableValidator)
+	require.NoError(t, err)
+
+	// reject disable validator
+	rejectDisableValidator := types.NewMsgRejectDisableValidator(account2.GetAddress(), valAddress, testconstants.Info)
+	_, err = setup.Handler(setup.Ctx, rejectDisableValidator)
+	require.NoError(t, err)
+
+	_, found := setup.ValidatorKeeper.GetProposedDisableValidator(setup.Ctx, valAddress.String())
+	require.True(t, found)
+}
+
 func TestHandler_OnlyTrusteeCanProposeDisableValidator(t *testing.T) {
 	setup := Setup(t)
 

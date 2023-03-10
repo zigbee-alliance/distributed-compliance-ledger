@@ -53,6 +53,14 @@ func (k msgServer) RejectDisableValidator(goCtx context.Context, msg *types.MsgR
 
 	// check if disable validator has approval from message creator
 	if proposedDisableValidator.HasApprovalFrom(creatorAddr) {
+		// Remove propose disable validator if there are no rejects and other approvals
+		if len(proposedDisableValidator.Approvals) == 1 && len(proposedDisableValidator.Rejects) == 0 {
+			k.RemoveProposedDisableValidator(ctx, proposedDisableValidator.Address)
+
+			return &types.MsgRejectDisableValidatorResponse{}, nil
+		}
+
+		// Remove approval from the list of approvals
 		for i, other := range proposedDisableValidator.Approvals {
 			if other.Address == grant.Address {
 				proposedDisableValidator.Approvals = append(proposedDisableValidator.Approvals[:i], proposedDisableValidator.Approvals[i+1:]...)
