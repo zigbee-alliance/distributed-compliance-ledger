@@ -1167,7 +1167,8 @@ The account is not reject until sufficient number of Trustees reject it.
 - Who can send:
   - Trustee
 - Number of required rejects:
-  - more than 1/3 of Trustees
+  - greater than 1/3 of Trustees for account roles: `TestHouse`, `CertificationCenter`, `Trustee`, `NodeAdmin` (proposal by a Trustee is also counted as an approval)
+  - greater than 2/3 of Trustees for account role: `Vendor` (proposal by a Trustee is also counted as an approval)
 - CLI command:
   - `dcld tx auth reject-add-account --address=<bench32 encoded string> --from=<account>`
 

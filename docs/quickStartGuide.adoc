@@ -4,7 +4,7 @@
 This guide will help you configure DCL CLI (`dcld`) and interact with DCL TestNet.
 
 === Test Net Infrastructure
-Please refer to https://github.com/zigbee-alliance/distributed-compliance-ledger/tree/master/deployment/persistent_chains/testnet-2.0 for upto date node info.
+Please refer to https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/deployment/persistent_chains/testnet-2.0/testnet-2.0-csa-endpoints.md for upto date node info.
 
 === DCL CLI setup
 These steps will configure `dcld` on Ubuntu platform.
@@ -63,8 +63,8 @@ $ dcld keys add <vendor-name>
 # Zigbee Alliance will propose your account to DCL
 $ dcld tx auth propose-add-account \
 --address=cosmos1pkxl6k9r4r5ng9k6upp3e4f2wt2putq652w693 \ 
---pubkey={"@type":"/cosmos.crypto.secp256k1.PubKey","key":"A9v90lbd1tCtvXTKH3Fmir9wIg/cLlWU+/HSDnDYfaMm"} \
- --roles=Vendor --from=<Zigbee Aliance Account>
+--pubkey='{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"A9v90lbd1tCtvXTKH3Fmir9wIg/cLlWU+/HSDnDYfaMm"}' \
+ --roles=Vendor --from=<Zigbee Aliance Account> --vid=<vendor-id>
 
 # 2/3rd DCL Trustees will need to approve using following txn.
 $ dcld tx auth approve-add-account \
