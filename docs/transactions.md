@@ -780,7 +780,7 @@ The certificate is not active until sufficient number of Trustees approve it.
 
 Rejects the proposed root certificate. It also can be used for revote (i.e. change vote from approve to reject)
 
-If proposed root certificate has only proposer's approval and no rejects than proposer can send this transaction to remove the proposal
+If proposed root certificate has only proposer's approval and no rejects then proposer can send this transaction to remove the proposal
 
 The certificate is not reject until sufficient number of Trustees reject it.
 
@@ -1154,7 +1154,7 @@ The account is not active until sufficient number of Trustees approve it.
 
 Rejects the proposed account. It also can be used for revote (i.e. change vote from approve to reject)
 
-If proposed account has only proposer's approval and no rejects than proposer can send this transaction to remove the proposal
+If proposed account has only proposer's approval and no rejects then proposer can send this transaction to remove the proposal
 
 The account is not reject until sufficient number of Trustees reject it.
 
@@ -1166,7 +1166,8 @@ The account is not reject until sufficient number of Trustees reject it.
 - Who can send:
   - Trustee
 - Number of required rejects:
-  - more than 1/3 of Trustees
+  - greater than 1/3 of Trustees for account roles: `TestHouse`, `CertificationCenter`, `Trustee`, `NodeAdmin` (proposal by a Trustee is also counted as an approval)
+  - greater than 2/3 of Trustees for account role: `Vendor` (proposal by a Trustee is also counted as an approval)
 - CLI command:
   - `dcld tx auth reject-add-account --address=<bench32 encoded string> --from=<account>`
 
@@ -1450,7 +1451,7 @@ The validator node is not disabled until sufficient number of Trustees approve i
 
 Rejects disabling of the Validator node by a Trustee. It also can be used for revote (i.e. change vote from approve to reject)
 
-If disable validator proposal has only proposer's approval and no rejects than proposer can send this transaction to remove the proposal
+If disable validator proposal has only proposer's approval and no rejects then proposer can send this transaction to remove the proposal
 
 The validator node is not reject until sufficient number of Trustees rejects it.
 
@@ -1773,7 +1774,7 @@ dcld tx dclupgrade approve-upgrade --name=<string> --from=<account>
 
 Rejects the proposed upgrade plan with the given name. It also can be used for revote (i.e. change vote from approve to reject)
 
-If proposed upgrade has only proposer's approval and no rejects than proposer can send this transaction to remove the proposal
+If proposed upgrade has only proposer's approval and no rejects then proposer can send this transaction to remove the proposal
 
 - Paramaters:
   - name: `string` - upgrade plan name
