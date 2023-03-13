@@ -571,14 +571,6 @@ func AuthDemo(suite *utils.TestSuite) {
 	)
 	require.NoError(suite.T, err)
 
-	// Jack rejects new account
-	_, err = RejectAddAccount(suite, testAccAddr, jackName, jackAccount, testconstants.Info)
-	require.NoError(suite.T, err)
-
-	// Jack re-approves new account
-	_, err = ApproveAddAccount(suite, testAccAddr, jackName, jackAccount, testconstants.Info)
-	require.NoError(suite.T, err)
-
 	// Query all active accounts
 	receivedAccounts, _ := GetAccounts(suite)
 	require.Equal(suite.T, len(inputAccounts), len(receivedAccounts))
@@ -1113,6 +1105,14 @@ func AuthDemo(suite *utils.TestSuite) {
 	_, err = ApproveAddAccount(suite, testAccAddr, aliceName, aliceAccount, testconstants.Info)
 	require.NoError(suite.T, err)
 
+	// Jack rejects new account
+	_, err = RejectAddAccount(suite, testAccAddr, jackName, jackAccount, testconstants.Info)
+	require.NoError(suite.T, err)
+
+	// Jack re-approves new account
+	_, err = ApproveAddAccount(suite, testAccAddr, jackName, jackAccount, testconstants.Info)
+	require.NoError(suite.T, err)
+
 	// Bob approves new account
 	_, err = ApproveAddAccount(suite, testAccAddr, bobName, bobAccount, testconstants.Info)
 	require.NoError(suite.T, err)
@@ -1140,6 +1140,37 @@ func AuthDemo(suite *utils.TestSuite) {
 
 	// Query unknown revoked account
 	_, err = GetRevokedAccount(suite, testAccAddr)
+	suite.AssertNotFound(err)
+
+	// Jack proposes new account
+	_, err = ProposeAddAccount(
+		suite,
+		testAccAddr, testAccPubKey,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor}, testconstants.Vid,
+		jackName, jackAccount,
+		testconstants.Info,
+	)
+	require.NoError(suite.T, err)
+
+	// Jack rejects new account
+	_, err = RejectAddAccount(
+		suite,
+		testAccAddr,
+		jackName, jackAccount,
+		testconstants.Info,
+	)
+	require.NoError(suite.T, err)
+
+	// Query revoked account
+	_, err = GetRevokedAccount(suite, testAccAddr)
+	suite.AssertNotFound(err)
+
+	// Query proposed account
+	_, err = GetProposedAccount(suite, testAccAddr)
+	suite.AssertNotFound(err)
+
+	// Query account
+	_, err = GetAccount(suite, testAccAddr)
 	suite.AssertNotFound(err)
 
 	// Jack proposes new account

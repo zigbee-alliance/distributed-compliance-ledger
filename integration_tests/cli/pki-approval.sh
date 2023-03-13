@@ -44,7 +44,7 @@ create_new_account user_account "CertificationCenter"
 
 test_divider
 
-echo "Add 3 new Trustee accounts, this will result in a total of 6 Trustees and 3 approvals needed for 2/3 quorum"
+echo "Add 3 new Trustee accounts, this will result in a total of 6 Trustees and 4 approvals needed for 2/3 quorum"
 
 test_divider
 
@@ -110,8 +110,12 @@ echo "$second_trustee_account approves account for $sixth_trustee_account"
 result=$(echo $passphrase | dcld tx auth approve-add-account --address="$sixth_trustee_address" --from $second_trustee_account --yes)
 check_response "$result" "\"code\": 0"
 
-echo "third_trustee_account approves account for $sixth_trustee_account"
+echo "$third_trustee_account approves account for $sixth_trustee_account"
 result=$(echo $passphrase | dcld tx auth approve-add-account --address="$sixth_trustee_address" --from $third_trustee_account --yes)
+check_response "$result" "\"code\": 0"
+
+echo "$fourth_trustee_account approves account for $sixth_trustee_account"
+result=$(echo $passphrase | dcld tx auth approve-add-account --address="$sixth_trustee_address" --from $fourth_trustee_account --yes)
 check_response "$result" "\"code\": 0"
 
 echo "Verify that sixth account is now present"
