@@ -27,6 +27,11 @@ func TestVendorInfoDemoREST(t *testing.T) {
 	vendorinfo.Demo(&suite)
 }
 
+func TestVendorInfoDemoWithVendorAdminREST(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
+	vendorinfo.DemoWithVendorAdmin(&suite)
+}
+
 func TestAddVendorInfoByNonVendorREST(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, true)
 	vendorinfo.AddVendorInfoByNonVendor(&suite)
@@ -36,6 +41,12 @@ func TestAddVendorInfoByDifferentVendorREST(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, true)
 	vendorinfo.AddVendorInfoByDifferentVendor(&suite)
 }
+
+func TestAddVendorInfoByNonVendorAdminREST(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
+	vendorinfo.AddVendorInfoByNonVendorAdmin(&suite)
+}
+
 
 func TestGetVendorInfoForUnknownREST(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, true)

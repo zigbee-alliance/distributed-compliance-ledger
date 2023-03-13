@@ -174,6 +174,55 @@ func Demo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 }
 
+func DemoWithVendorAdmin(suite *utils.TestSuite) {
+	// Alice and Bob are predefined Trustees
+	aliceName := testconstants.AliceAccount
+	aliceKeyInfo, err := suite.Kr.Key(aliceName)
+	require.NoError(suite.T, err)
+	aliceAccount, err := test_dclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	bobName := testconstants.BobAccount
+	bobKeyInfo, err := suite.Kr.Key(bobName)
+	require.NoError(suite.T, err)
+	bobAccount, err := test_dclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	// Register new VendorAdmin account
+	vid := int32(tmrand.Uint16())
+	vendorAdminName := utils.RandString()
+	vendorAdminAccount := test_dclauth.CreateVendorAccount(
+		suite,
+		vendorAdminName,
+		dclauthtypes.AccountRoles{dclauthtypes.VendorAdmin},
+		vid,
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+		testconstants.Info,
+	)
+	require.NotNil(suite.T, vendorAdminAccount)
+
+	// New vendor adds first vendorinfo
+	createFirstVendorInfoByVendorAdminMsg := NewMsgCreateVendorInfo(vid, vendorAdminAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createFirstVendorInfoByVendorAdminMsg}, vendorAdminName, vendorAdminAccount)
+	require.NoError(suite.T, err)
+
+	// Check first vendorinfo by VendorAdmin is added
+	receivedVendorInfoByVendorAdmin, err := GetVendorInfo(suite, createFirstVendorInfoByVendorAdminMsg.VendorID)
+	require.NoError(suite.T, err)
+	require.Equal(suite.T, createFirstVendorInfoByVendorAdminMsg.VendorID, receivedVendorInfoByVendorAdmin.VendorID)
+	require.Equal(suite.T, createFirstVendorInfoByVendorAdminMsg.VendorName, receivedVendorInfoByVendorAdmin.VendorName)
+	require.Equal(suite.T, createFirstVendorInfoByVendorAdminMsg.CompanyLegalName, receivedVendorInfoByVendorAdmin.CompanyLegalName)
+	require.Equal(suite.T, createFirstVendorInfoByVendorAdminMsg.CompanyLegalName, receivedVendorInfoByVendorAdmin.CompanyLegalName)
+	require.Equal(suite.T, createFirstVendorInfoByVendorAdminMsg.VendorLandingPageURL, receivedVendorInfoByVendorAdmin.VendorLandingPageURL)
+
+	// Get all vendorinfos
+	_, err = GetVendorInfos(suite)
+	require.NoError(suite.T, err)
+}
+
 /* Error cases */
 
 func AddVendorInfoByNonVendor(suite *utils.TestSuite) {
@@ -246,6 +295,44 @@ func AddVendorInfoByDifferentVendor(suite *utils.TestSuite) {
 	// try to add createVendorInfoMsg
 	createVendorInfoMsg := NewMsgCreateVendorInfo(vid, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createVendorInfoMsg}, vendorName, vendorAccount)
+	require.Error(suite.T, err)
+	require.True(suite.T, sdkerrors.ErrUnauthorized.Is(err))
+}
+
+func AddVendorInfoByNonVendorAdmin(suite *utils.TestSuite) {
+	// Alice and Bob are predefined Trustees
+	aliceName := testconstants.AliceAccount
+	aliceKeyInfo, err := suite.Kr.Key(aliceName)
+	require.NoError(suite.T, err)
+	aliceAccount, err := test_dclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	bobName := testconstants.BobAccount
+	bobKeyInfo, err := suite.Kr.Key(bobName)
+	require.NoError(suite.T, err)
+	bobAccount, err := test_dclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	// register new account without VendorAdmin role
+	nonVendorAdminAccountNamew := utils.RandString()
+	vid := int32(tmrand.Uint16())
+	nonVendorAdminAccount := test_dclauth.CreateAccount(
+		suite,
+		nonVendorAdminAccountNamew,
+		dclauthtypes.AccountRoles{dclauthtypes.CertificationCenter, dclauthtypes.NodeAdmin},
+		vid,
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+		testconstants.Info,
+	)
+
+	require.NotContains(suite.T, nonVendorAdminAccount.Roles, dclauthtypes.VendorAdmin)
+
+	// try to add createVendorInfoMsg
+	createVendorInfoMsg := NewMsgCreateVendorInfo(vid, nonVendorAdminAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createVendorInfoMsg}, nonVendorAdminAccountNamew, nonVendorAdminAccount)
 	require.Error(suite.T, err)
 	require.True(suite.T, sdkerrors.ErrUnauthorized.Is(err))
 }

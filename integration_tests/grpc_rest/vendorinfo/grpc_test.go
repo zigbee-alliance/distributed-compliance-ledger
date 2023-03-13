@@ -27,6 +27,11 @@ func TestVendorInfoDemoGRPC(t *testing.T) {
 	vendorinfo.Demo(&suite)
 }
 
+func TestVendorInfoDemoWithVendorAdminGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	vendorinfo.DemoWithVendorAdmin(&suite)
+}
+
 func TestAddVendorInfoByNonVendorGRPC(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, false)
 	vendorinfo.AddVendorInfoByNonVendor(&suite)
@@ -35,6 +40,11 @@ func TestAddVendorInfoByNonVendorGRPC(t *testing.T) {
 func TestAddVendorInfoByDifferentVendorGRPC(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, false)
 	vendorinfo.AddVendorInfoByDifferentVendor(&suite)
+}
+
+func TestAddVendorInfoByNonVendorAdminGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	vendorinfo.AddVendorInfoByNonVendorAdmin(&suite)
 }
 
 func TestGetVendorInfoForUnknownGRPC(t *testing.T) {
