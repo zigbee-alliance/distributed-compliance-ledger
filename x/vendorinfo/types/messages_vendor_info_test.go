@@ -202,30 +202,6 @@ func TestMsgUpdateVendorInfo_ValidateBasic(t *testing.T) {
 			err: sdkerrors.ErrInvalidAddress,
 		},
 		{
-			name: "vendor name is not set",
-			msg: MsgUpdateVendorInfo{
-				Creator:              sample.AccAddress(),
-				VendorID:             testconstants.VendorID1,
-				VendorName:           "",
-				CompanyLegalName:     testconstants.CompanyLegalName,
-				CompanyPreferredName: testconstants.CompanyPreferredName,
-				VendorLandingPageURL: testconstants.VendorLandingPageURL,
-			},
-			err: validator.ErrRequiredFieldMissing,
-		},
-		{
-			name: "company legal name is not set",
-			msg: MsgUpdateVendorInfo{
-				Creator:              sample.AccAddress(),
-				VendorID:             testconstants.VendorID1,
-				VendorName:           testconstants.VendorName,
-				CompanyLegalName:     "",
-				CompanyPreferredName: testconstants.CompanyPreferredName,
-				VendorLandingPageURL: testconstants.VendorLandingPageURL,
-			},
-			err: validator.ErrRequiredFieldMissing,
-		},
-		{
 			name: "vid less than 0",
 			msg: MsgUpdateVendorInfo{
 				Creator:              sample.AccAddress(),
@@ -345,6 +321,28 @@ func TestMsgUpdateVendorInfo_ValidateBasic(t *testing.T) {
 				VendorID:             testconstants.VendorID1,
 				VendorName:           testconstants.VendorName,
 				CompanyLegalName:     testconstants.CompanyLegalName,
+				VendorLandingPageURL: testconstants.VendorLandingPageURL,
+			},
+		},
+		{
+			name: "optional vendor name is not set",
+			msg: MsgUpdateVendorInfo{
+				Creator:              sample.AccAddress(),
+				VendorID:             testconstants.VendorID1,
+				VendorName:           "",
+				CompanyLegalName:     testconstants.CompanyLegalName,
+				CompanyPreferredName: testconstants.CompanyPreferredName,
+				VendorLandingPageURL: testconstants.VendorLandingPageURL,
+			},
+		},
+		{
+			name: "optional company legal name is not set",
+			msg: MsgUpdateVendorInfo{
+				Creator:              sample.AccAddress(),
+				VendorID:             testconstants.VendorID1,
+				VendorName:           testconstants.VendorName,
+				CompanyLegalName:     "",
+				CompanyPreferredName: testconstants.CompanyPreferredName,
 				VendorLandingPageURL: testconstants.VendorLandingPageURL,
 			},
 		},
