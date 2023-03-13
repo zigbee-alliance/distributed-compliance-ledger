@@ -12,7 +12,7 @@ func checkAddVendorRights(ctx sdk.Context, k Keeper, signer sdk.AccAddress, vid 
 	// sender must have Vendor role and VendorID or VendorAdmin role to add a new vendorinfo
 	isVendor := k.dclauthKeeper.HasRole(ctx, signer, dclauthtypes.Vendor)
 	isVendorAdmin := k.dclauthKeeper.HasRole(ctx, signer, dclauthtypes.VendorAdmin)
-	
+
 	if !isVendor && !isVendorAdmin {
 		return sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("MsgAddVendorInfo transaction should be "+
 			"signed by an account with the %s or %s roles", dclauthtypes.Vendor, dclauthtypes.VendorAdmin))

@@ -33,7 +33,7 @@ const (
 	CertificationCenter AccountRole = "CertificationCenter"
 	Trustee             AccountRole = "Trustee"
 	NodeAdmin           AccountRole = "NodeAdmin"
-	VendorAdmin			AccountRole = "VendorAdmin"
+	VendorAdmin         AccountRole = "VendorAdmin"
 )
 
 var Roles = AccountRoles{Vendor, CertificationCenter, Trustee, NodeAdmin, VendorAdmin}
