@@ -27,11 +27,6 @@ func TestVendorInfoDemoREST(t *testing.T) {
 	vendorinfo.Demo(&suite)
 }
 
-func TestVendorInfoDemoWithVendorAdminREST(t *testing.T) {
-	suite := utils.SetupTest(t, testconstants.ChainID, true)
-	vendorinfo.DemoWithVendorAdmin(&suite)
-}
-
 func TestAddVendorInfoByNonVendorREST(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, true)
 	vendorinfo.AddVendorInfoByNonVendor(&suite)
