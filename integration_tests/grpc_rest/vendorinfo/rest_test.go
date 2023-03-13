@@ -42,7 +42,6 @@ func TestAddVendorInfoByNonVendorAdminREST(t *testing.T) {
 	vendorinfo.AddVendorInfoByNonVendorAdmin(&suite)
 }
 
-
 func TestGetVendorInfoForUnknownREST(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, true)
 	vendorinfo.GetVendorInfoForUnknown(&suite)
