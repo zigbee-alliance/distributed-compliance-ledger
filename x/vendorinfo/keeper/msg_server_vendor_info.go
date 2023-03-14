@@ -61,7 +61,7 @@ func (k msgServer) UpdateVendorInfo(goCtx context.Context, msg *types.MsgUpdateV
 	}
 
 	// update existing model value only if corresponding value in MsgUpdate is not empty
-	vendorInfo.VendorID = msg.VendorID	
+	vendorInfo.VendorID = msg.VendorID
 
 	if msg.Creator != "" {
 		vendorInfo.Creator = msg.Creator
