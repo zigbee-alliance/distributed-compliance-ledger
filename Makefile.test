@@ -31,6 +31,10 @@ localnet_init:
 	/bin/bash ./genlocalnetconfig.sh
 	/bin/bash ./genlocalnetappbins.sh
 
+localnet_init_latest_version:
+	/bin/bash ./genlocalnetconfig.sh
+	/bin/bash ./genlocalnetappbins.sh "" "" "" "true"
+
 localnet_start:
 	@if [ -d "${LOCALNET_DIR}/observer0" ]; then\
 		docker compose --profile observers up -d;\
