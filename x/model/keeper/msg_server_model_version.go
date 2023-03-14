@@ -135,3 +135,12 @@ func (k msgServer) UpdateModelVersion(goCtx context.Context, msg *types.MsgUpdat
 
 	return &types.MsgUpdateModelVersionResponse{}, nil
 }
+
+func (k msgServer) DeleteModelVersion(goCtx context.Context, msg *types.MsgDeleteModelVersion) (*types.MsgDeleteModelVersionResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// TODO: Handling the message
+	_ = ctx
+
+	return &types.MsgDeleteModelVersionResponse{}, nil
+}
