@@ -727,9 +727,8 @@ All PKI related methods are based on this restriction.
 
 Proposes a new self-signed root certificate.
 
-If it's sent by a non-Trustee account, or more than 1 Trustee signature is required to add a root certificate,
-then the certificate
-will be in a pending state until sufficient number of other Trustee's approvals is received.
+If more than 1 Trustee signature is required to add the root certificate, the root certificate
+will be in a pending state until sufficient number of approvals is received.
 
 The certificate is immutable. It can only be revoked by either the owner or a quorum of Trustees.
 
@@ -739,7 +738,7 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
   - time: `optional(int64)` - proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State: `pki/ProposedCertificate/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - Who can send:
-  - Any role
+  - Trustee
 - CLI command:
   - `dcld tx pki propose-add-x509-root-cert --certificate=<string-or-path> --from=<account>`
 - Validation:
