@@ -346,6 +346,28 @@ func TestMsgUpdateVendorInfo_ValidateBasic(t *testing.T) {
 				VendorLandingPageURL: testconstants.VendorLandingPageURL,
 			},
 		},
+		{
+			name: "optional company preferred name is not set",
+			msg: MsgUpdateVendorInfo{
+				Creator:              sample.AccAddress(),
+				VendorID:             testconstants.VendorID1,
+				VendorName:           testconstants.VendorName,
+				CompanyLegalName:     testconstants.CompanyLegalName,
+				CompanyPreferredName: "",
+				VendorLandingPageURL: testconstants.VendorLandingPageURL,
+			},
+		},
+		{
+			name: "optional vendor landing page URL is not set",
+			msg: MsgUpdateVendorInfo{
+				Creator:              sample.AccAddress(),
+				VendorID:             testconstants.VendorID1,
+				VendorName:           testconstants.VendorName,
+				CompanyLegalName:     testconstants.CompanyLegalName,
+				CompanyPreferredName: testconstants.CompanyPreferredName,
+				VendorLandingPageURL: "",
+			},
+		},
 	}
 	for _, tt := range positiveTests {
 		t.Run(tt.name, func(t *testing.T) {
