@@ -6,6 +6,7 @@ package types
 import (
 	fmt "fmt"
 	_ "github.com/cosmos/cosmos-proto"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
@@ -63,11 +64,9 @@ func (m *RejectedDisableValidator) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_RejectedDisableValidator proto.InternalMessageInfo
 
-func (m *RejectedDisableValidator) GetAddress() string {
-	if m != nil {
-		return m.Address
-	}
-	return ""
+func (m *RejectedDisableValidator) GetAddress() sdk.ValAddress {
+	valAddr, _ := sdk.ValAddressFromBech32(m.Address)
+	return valAddr
 }
 
 func (m *RejectedDisableValidator) GetCreator() string {
