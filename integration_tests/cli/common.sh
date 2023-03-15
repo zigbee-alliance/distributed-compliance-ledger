@@ -146,18 +146,6 @@ create_new_vendor_account(){
 
 }
 
-create_new_vendor_admin_account() {
-  local _name="$1"
-
-  echo $passphrase | dcld keys add "$_name"
-  _address=$(echo $passphrase | dcld keys show $_name -a)
-  _pubkey=$(echo $passphrase | dcld keys show $_name -p)
-
-  echo "Jack proposes account for \"$_name\" with VendorAdmin role"
-  _result=$(echo $passphrase | dcld tx auth propose-add-account --address="$_address" --pubkey="$_pubkey" --roles=VendorAdmin --from jack --yes)
-  check_response "$_result" "\"code\": 0"
-}
-
 create_model_and_version() {
   local _vid="$1"
   local _pid="$2"
