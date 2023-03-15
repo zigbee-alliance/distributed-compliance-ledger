@@ -115,6 +115,7 @@ test_divider
 echo "Create a vendor info reacord from a vendor admin account"
 vid=$RANDOM
 result=$(echo "test1234" | dcld tx vendorinfo add-vendor --vid=$vid --companyLegalName="$companyLegalName" --vendorName="$vendorName" --from=$vendor_admin_account --yes 2>&1) || true
+echo "$result"
 check_response "$result" "\"code\": 0"
 echo "$result"
 
