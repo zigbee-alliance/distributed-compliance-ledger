@@ -364,7 +364,7 @@ func UpdateVendorInfoByVendorAdmin(suite *utils.TestSuite) {
 	updateVendorInfoMsg := NewMsgUpdateVendorInfo(vid, vendorAdminAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{updateVendorInfoMsg}, vendorAdminAccountName, vendorAdminAccount)
 	require.NoError(suite.T, err)
-	
+
 	updatedVendorInfo, err := GetVendorInfo(suite, vid)
 	require.NoError(suite.T, err)
 
