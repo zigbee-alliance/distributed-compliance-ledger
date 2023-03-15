@@ -13,6 +13,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgDeleteModel{}, "model/DeleteModel", nil)
 	cdc.RegisterConcrete(&MsgCreateModelVersion{}, "model/CreateModelVersion", nil)
 	cdc.RegisterConcrete(&MsgUpdateModelVersion{}, "model/UpdateModelVersion", nil)
+	cdc.RegisterConcrete(&MsgDeleteModelVersion{}, "model/DeleteModelVersion", nil)
 	// this line is used by starport scaffolding # 2
 }
 
@@ -25,6 +26,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreateModelVersion{},
 		&MsgUpdateModelVersion{},
+		&MsgDeleteModelVersion{},
 	)
 	// this line is used by starport scaffolding # 3
 
