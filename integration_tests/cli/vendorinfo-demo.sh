@@ -72,6 +72,25 @@ echo "$result"
 
 test_divider
 
+# Update vendor info with empty optional fields
+echo "Update vendor info record for VID: $vid (with required fields only)"
+result=$(dcld tx vendorinfo update-vendor --vid=$vid --from=$vendor_account --yes)
+check_response "$result" "\"code\": 0"
+echo "$result"
+
+test_divider
+
+# Query updated vendor info record
+echo "Verify that omitted fields in update object are not set to empty string"
+result=$(dcld query vendorinfo vendor --vid=$vid)
+check_response "$result" "\"vendorID\": $vid"
+check_response "$result" "\"companyLegalName\": \"$companyLegalName\""
+check_response "$result" "\"vendorName\": \"$vendorName\""
+check_response "$result" "\"vendorLandingPageURL\": \"$vendorLandingPageURL\""
+echo "$result"
+
+test_divider
+
 # Update vendor info record
 echo "Update vendor info record for VID: $vid"
 companyLegalName="ABC Subsidiary Corporation"
