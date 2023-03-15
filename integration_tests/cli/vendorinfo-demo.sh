@@ -27,7 +27,7 @@ create_new_vendor_account $vendor_account $vid
 echo "Create Second Vendor Account - $second_vendor_account"
 create_new_vendor_account $second_vendor_account $vid2
 echo "Create A VendorAdmin Account - $vendor_admin_account"
-create_new_account VendorAdmin "$vendor_admin_account"
+create_new_account $vendor_admin_account "VendorAdmin"
 
 test_divider
 
