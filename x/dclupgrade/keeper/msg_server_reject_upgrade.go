@@ -38,14 +38,6 @@ func (k msgServer) RejectUpgrade(goCtx context.Context, msg *types.MsgRejectUpgr
 		)
 	}
 
-	// check if proposed upgrade already has approval from message creator
-	if proposedUpgrade.HasApprovalFrom(creatorAddr) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
-			"Proposed upgrade with name=%v already has approval from=%v",
-			msg.Name, msg.Creator,
-		)
-	}
-
 	// append approval
 	grant := types.Grant{
 		Address: creatorAddr.String(),
@@ -53,6 +45,24 @@ func (k msgServer) RejectUpgrade(goCtx context.Context, msg *types.MsgRejectUpgr
 		Info:    msg.Info,
 	}
 
+	// check if proposed upgrade already has approval from message creator
+	if proposedUpgrade.HasApprovalFrom(creatorAddr) {
+		// Remove proposed certificate if there are no rejects and other approvals
+		if len(proposedUpgrade.Approvals) == 1 && len(proposedUpgrade.Rejects) == 0 {
+			k.RemoveProposedUpgrade(ctx, proposedUpgrade.Plan.Name)
+
+			return &types.MsgRejectUpgradeResponse{}, nil
+		}
+
+		// Remove approval from the list of approvals
+		for i, other := range proposedUpgrade.Approvals {
+			if other.Address == grant.Address {
+				proposedUpgrade.Approvals = append(proposedUpgrade.Approvals[:i], proposedUpgrade.Approvals[i+1:]...)
+
+				break
+			}
+		}
+	}
 	proposedUpgrade.Rejects = append(proposedUpgrade.Rejects, &grant)
 
 	// check if proposed upgrade has enough rejects

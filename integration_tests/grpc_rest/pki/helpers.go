@@ -550,12 +550,20 @@ func Demo(suite *utils.TestSuite) {
 	)
 	require.NotNil(suite.T, vendorAccount)
 
-	// User (Not Trustee) propose Root certificate
+	// Vendor (Not Trustee) propose Root certificate
 	msgProposeAddX509RootCert := pkitypes.MsgProposeAddX509RootCert{
 		Cert:   testconstants.RootCertPem,
 		Signer: vendorAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeAddX509RootCert}, vendorName, vendorAccount)
+	require.Error(suite.T, err)
+
+	// Jack (Trustee) propose Root certificate
+	msgProposeAddX509RootCert = pkitypes.MsgProposeAddX509RootCert{
+		Cert:   testconstants.RootCertPem,
+		Signer: jackAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeAddX509RootCert}, jackName, jackAccount)
 	require.NoError(suite.T, err)
 
 	// Request all proposed Root certificates
@@ -572,17 +580,8 @@ func Demo(suite *utils.TestSuite) {
 	// Request proposed Root certificate
 	proposedCertificate, _ := GetProposedX509RootCert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	require.Equal(suite.T, testconstants.RootCertPem, proposedCertificate.PemCert)
-	require.Equal(suite.T, vendorAccount.Address, proposedCertificate.Owner)
-	require.Equal(suite.T, 0, len(proposedCertificate.Approvals))
-
-	// Jack (Trustee) approve Root certificate
-	msgApproveAddX509RootCert := pkitypes.MsgApproveAddX509RootCert{
-		Subject:      proposedCertificate.Subject,
-		SubjectKeyId: proposedCertificate.SubjectKeyId,
-		Signer:       jackAccount.Address,
-	}
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgApproveAddX509RootCert}, jackName, jackAccount)
-	require.NoError(suite.T, err)
+	require.Equal(suite.T, jackAccount.Address, proposedCertificate.Owner)
+	require.Equal(suite.T, 1, len(proposedCertificate.Approvals))
 
 	// Request all proposed Root certificates
 	proposedCertificates, _ = GetAllProposedX509RootCerts(suite)
@@ -598,7 +597,7 @@ func Demo(suite *utils.TestSuite) {
 	// Request proposed Root certificate
 	proposedCertificate, _ = GetProposedX509RootCert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	require.Equal(suite.T, testconstants.RootCertPem, proposedCertificate.PemCert)
-	require.Equal(suite.T, vendorAccount.Address, proposedCertificate.Owner)
+	require.Equal(suite.T, jackAccount.Address, proposedCertificate.Owner)
 	require.True(suite.T, proposedCertificate.HasApprovalFrom(jackAccount.Address))
 
 	// Alice (Trustee) approve Root certificate
@@ -634,7 +633,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.RootSubjectAsText, certificate.Certs[0].SubjectAsText)
 	require.Equal(suite.T, 1, len(certificate.Certs))
 	require.Equal(suite.T, testconstants.RootCertPem, certificate.Certs[0].PemCert)
-	require.Equal(suite.T, vendorAccount.Address, certificate.Certs[0].Owner)
+	require.Equal(suite.T, jackAccount.Address, certificate.Certs[0].Owner)
 	require.True(suite.T, certificate.Certs[0].IsRoot)
 
 	// User (Not Trustee) add Intermediate certificate
@@ -896,7 +895,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.RootSubject, revokedCertificate.Certs[0].Subject)
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, revokedCertificate.Certs[0].SubjectKeyId)
 	require.Equal(suite.T, testconstants.RootCertPem, revokedCertificate.Certs[0].PemCert)
-	require.Equal(suite.T, vendorAccount.Address, revokedCertificate.Certs[0].Owner)
+	require.Equal(suite.T, jackAccount.Address, revokedCertificate.Certs[0].Owner)
 	require.Equal(suite.T, testconstants.RootSubjectAsText, revokedCertificate.Certs[0].SubjectAsText)
 	require.True(suite.T, revokedCertificate.Certs[0].IsRoot)
 
@@ -949,12 +948,12 @@ func Demo(suite *utils.TestSuite) {
 	_, err = GetProposedRevocationX509Cert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
 	suite.AssertNotFound(err)
 
-	// User (Not Trustee) propose Google Root certificate
+	// Alice (Trustee) propose Google Root certificate
 	msgProposeAddX509GoogleRootcert := pkitypes.MsgProposeAddX509RootCert{
 		Cert:   testconstants.GoogleCertPem,
-		Signer: vendorAccount.Address,
+		Signer: aliceAccount.Address,
 	}
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeAddX509GoogleRootcert}, vendorName, vendorAccount)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeAddX509GoogleRootcert}, aliceName, aliceAccount)
 	require.NoError(suite.T, err)
 
 	// Request all proposed Root certificate
@@ -970,26 +969,17 @@ func Demo(suite *utils.TestSuite) {
 	// Request proposed Google Root certificate
 	proposedCertificate, _ = GetProposedX509RootCert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
 	require.Equal(suite.T, testconstants.GoogleCertPem, proposedCertificate.PemCert)
-	require.Equal(suite.T, vendorAccount.Address, proposedCertificate.Owner)
-	require.Equal(suite.T, 0, len(proposedCertificate.Approvals))
+	require.Equal(suite.T, aliceAccount.Address, proposedCertificate.Owner)
+	require.Equal(suite.T, 1, len(proposedCertificate.Approvals))
 
-	// Jack (Trustee) approve Root certificate
-	msgApproveAddX509RootCert = pkitypes.MsgApproveAddX509RootCert{
-		Subject:      proposedCertificate.Subject,
-		SubjectKeyId: proposedCertificate.SubjectKeyId,
-		Signer:       jackAccount.Address,
-	}
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgApproveAddX509RootCert}, jackName, jackAccount)
-	require.NoError(suite.T, err)
-
-	// Jack (Trustee) cannot reject Root certificate, because Jack already has approved
+	// Jack (Trustee) rejects Root certificate after approval
 	msgRejectAddX509RootCert := pkitypes.MsgRejectAddX509RootCert{
 		Subject:      proposedCertificate.Subject,
 		SubjectKeyId: proposedCertificate.SubjectKeyId,
 		Signer:       jackAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRejectAddX509RootCert}, jackName, jackAccount)
-	require.Error(suite.T, err)
+	require.NoError(suite.T, err)
 
 	// Request all proposed Root certificates
 	proposedCertificates, _ = GetAllProposedX509RootCerts(suite)
@@ -1004,17 +994,16 @@ func Demo(suite *utils.TestSuite) {
 	// Request proposed Root certificate
 	proposedCertificate, _ = GetProposedX509RootCert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
 	require.Equal(suite.T, testconstants.GoogleCertPem, proposedCertificate.PemCert)
-	require.Equal(suite.T, vendorAccount.Address, proposedCertificate.Owner)
-	require.True(suite.T, proposedCertificate.HasApprovalFrom(jackAccount.Address))
+	require.Equal(suite.T, aliceAccount.Address, proposedCertificate.Owner)
+	require.True(suite.T, proposedCertificate.HasApprovalFrom(aliceAccount.Address))
 
-	// Alice (Trustee) approve Google Root certificate
-	secondMsgApproveAddX509GoogleRootCert := pkitypes.MsgApproveAddX509RootCert{
+	// Jack (Trustee) approves Root certificate
+	msgApproveAddX509RootCert := pkitypes.MsgApproveAddX509RootCert{
 		Subject:      proposedCertificate.Subject,
 		SubjectKeyId: proposedCertificate.SubjectKeyId,
-		Signer:       aliceAccount.Address,
+		Signer:       jackAccount.Address,
 	}
-
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&secondMsgApproveAddX509GoogleRootCert}, aliceName, aliceAccount)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgApproveAddX509RootCert}, jackName, jackAccount)
 	require.NoError(suite.T, err)
 
 	// Request all proposed Root certificates
@@ -1039,7 +1028,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, certificate.SubjectKeyId)
 	require.Equal(suite.T, 1, len(certificate.Certs))
 	require.Equal(suite.T, testconstants.GoogleCertPem, certificate.Certs[0].PemCert)
-	require.Equal(suite.T, vendorAccount.Address, certificate.Certs[0].Owner)
+	require.Equal(suite.T, aliceAccount.Address, certificate.Certs[0].Owner)
 	require.Equal(suite.T, testconstants.GoogleSubjectAsText, certificate.Certs[0].SubjectAsText)
 	require.True(suite.T, certificate.Certs[0].IsRoot)
 
@@ -1137,7 +1126,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.GoogleSubject, revokedCertificate.Certs[0].Subject)
 	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, revokedCertificate.Certs[0].SubjectKeyId)
 	require.Equal(suite.T, testconstants.GoogleCertPem, revokedCertificate.Certs[0].PemCert)
-	require.Equal(suite.T, vendorAccount.Address, revokedCertificate.Certs[0].Owner)
+	require.Equal(suite.T, aliceAccount.Address, revokedCertificate.Certs[0].Owner)
 	require.Equal(suite.T, testconstants.GoogleSubjectAsText, revokedCertificate.Certs[0].SubjectAsText)
 	require.True(suite.T, revokedCertificate.Certs[0].IsRoot)
 
@@ -1172,12 +1161,43 @@ func Demo(suite *utils.TestSuite) {
 	_, err = GetProposedX509RootCert(suite, testconstants.TestSubject, testconstants.TestSubjectKeyID)
 	suite.AssertNotFound(err)
 
-	// User (Not Trustee) propose Test Root certificate
+	// Alice (Trustee) propose Test Root certificate
 	msgProposeAddX509TestRootCert := pkitypes.MsgProposeAddX509RootCert{
 		Cert:   testconstants.TestCertPem,
-		Signer: vendorAccount.Address,
+		Signer: aliceAccount.Address,
 	}
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeAddX509TestRootCert}, vendorName, vendorAccount)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeAddX509TestRootCert}, aliceName, aliceAccount)
+	require.NoError(suite.T, err)
+
+	// Request proposed Test Root certificate
+	proposedCertificate, _ = GetProposedX509RootCert(suite, testconstants.TestSubject, testconstants.TestSubjectKeyID)
+	require.Equal(suite.T, testconstants.TestCertPem, proposedCertificate.PemCert)
+	require.Equal(suite.T, aliceAccount.Address, proposedCertificate.Owner)
+
+	// Alice (Trustee) rejects Test Root certificate
+	msgRejectX509TestRootCert := pkitypes.MsgRejectAddX509RootCert{
+		Subject:      proposedCertificate.Subject,
+		SubjectKeyId: proposedCertificate.SubjectKeyId,
+		Signer:       aliceAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRejectX509TestRootCert}, aliceName, aliceAccount)
+	require.NoError(suite.T, err)
+
+	_, err = GetProposedX509RootCert(suite, testconstants.TestSubject, testconstants.TestSubjectKeyID)
+	suite.AssertNotFound(err)
+
+	_, err = GetX509Cert(suite, testconstants.TestSubject, testconstants.TestSubjectKeyID)
+	suite.AssertNotFound(err)
+
+	_, err = GetRevokedX509Cert(suite, testconstants.TestSubject, testconstants.TestSubjectKeyID)
+	suite.AssertNotFound(err)
+
+	// Alice (Trustee) propose Test Root certificate
+	msgProposeAddX509TestRootCert = pkitypes.MsgProposeAddX509RootCert{
+		Cert:   testconstants.TestCertPem,
+		Signer: aliceAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeAddX509TestRootCert}, aliceName, aliceAccount)
 	require.NoError(suite.T, err)
 
 	// Request all proposed Root certificates
@@ -1197,8 +1217,8 @@ func Demo(suite *utils.TestSuite) {
 	// Request proposed Test Root certificate
 	proposedCertificate, _ = GetProposedX509RootCert(suite, testconstants.TestSubject, testconstants.TestSubjectKeyID)
 	require.Equal(suite.T, testconstants.TestCertPem, proposedCertificate.PemCert)
-	require.Equal(suite.T, vendorAccount.Address, proposedCertificate.Owner)
-	require.Equal(suite.T, 0, len(proposedCertificate.Approvals))
+	require.Equal(suite.T, aliceAccount.Address, proposedCertificate.Owner)
+	require.Equal(suite.T, 1, len(proposedCertificate.Approvals))
 
 	// Jack (Trustee) rejects Root certificate
 	msgRejectAddX509RootCert = pkitypes.MsgRejectAddX509RootCert{
@@ -1211,15 +1231,6 @@ func Demo(suite *utils.TestSuite) {
 
 	// Jack (Trustee) rejects Root certificate for the second time
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRejectAddX509RootCert}, jackName, jackAccount)
-	require.Error(suite.T, err)
-
-	// Jack (Trustee) cannot approve Root certificate, because already Jack has rejected
-	msgApproveAddX509RootCert = pkitypes.MsgApproveAddX509RootCert{
-		Subject:      proposedCertificate.Subject,
-		SubjectKeyId: proposedCertificate.SubjectKeyId,
-		Signer:       jackAccount.Address,
-	}
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgApproveAddX509RootCert}, jackName, jackAccount)
 	require.Error(suite.T, err)
 
 	// Request all proposed Root certificates
@@ -1239,8 +1250,8 @@ func Demo(suite *utils.TestSuite) {
 	// Request proposed Test Root certificate
 	proposedCertificate, _ = GetProposedX509RootCert(suite, testconstants.TestSubject, testconstants.TestSubjectKeyID)
 	require.Equal(suite.T, testconstants.TestCertPem, proposedCertificate.PemCert)
-	require.Equal(suite.T, vendorAccount.Address, proposedCertificate.Owner)
-	require.Equal(suite.T, 0, len(proposedCertificate.Approvals))
+	require.Equal(suite.T, aliceAccount.Address, proposedCertificate.Owner)
+	require.Equal(suite.T, 1, len(proposedCertificate.Approvals))
 	require.True(suite.T, proposedCertificate.HasRejectFrom(jackAccount.Address))
 
 	// Alice (Trustee) rejects Root certificate
@@ -1273,7 +1284,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, 1, len(rejectedCertificate.Certs))
 	require.Equal(suite.T, testconstants.TestCertPem, rejectedCertificate.Certs[0].PemCert)
 	require.Equal(suite.T, testconstants.TestSubjectAsText, rejectedCertificate.Certs[0].SubjectAsText)
-	require.Equal(suite.T, vendorAccount.Address, rejectedCertificate.Certs[0].Owner)
+	require.Equal(suite.T, aliceAccount.Address, rejectedCertificate.Certs[0].Owner)
 	require.Equal(suite.T, jackAccount.Address, rejectedCertificate.Certs[0].Rejects[0].Address)
 	require.Equal(suite.T, aliceAccount.Address, rejectedCertificate.Certs[0].Rejects[1].Address)
 }

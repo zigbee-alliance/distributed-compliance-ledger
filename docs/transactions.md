@@ -181,8 +181,8 @@ Not all fields can be edited (see `EDIT_MODEL`).
   - pid: `uint16` -  model product ID (positive non-zero)
   - deviceTypeID: `uint16` -  DeviceTypeID is the device type identifier. For example, DeviceTypeID 10 (0x000a), is the device type identifier for a Door Lock.
   - productName: `string` -  model name
-  - productLabel: `string` -  model description (string or path to file containing data)
-  - partNumber: `string` -  stock keeping unit
+  - productLabel: `optional(string)` -  model description (string or path to file containing data)
+  - partNumber: `optional(string)` -  stock keeping unit
   - commissioningCustomFlow: `optional(uint8)` - A value of 1 indicates that user interaction with the device (pressing a button, for example) is required before commissioning can take place. When CommissioningCustomflow is set to a value of 2, the commissioner SHOULD attempt to obtain a URL which MAY be used to provide an end user with the necessary details for how to configure the product for initial commissioning
   - commissioningCustomFlowURL: `optional(string)` - commissioningCustomFlowURL SHALL identify a vendor specific commissioning URL for the device model when the commissioningCustomFlow field is set to '2'
   - commissioningModeInitialStepsHint: `optional(uint32)` - commissioningModeInitialStepsHint SHALL identify a hint for the steps that can be used to put into commissioning mode a device that has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 1 (bit 0 is set) indicates that a device that has not yet been commissioned will enter Commissioning Mode upon a power cycle.
@@ -727,9 +727,8 @@ All PKI related methods are based on this restriction.
 
 Proposes a new self-signed root certificate.
 
-If it's sent by a non-Trustee account, or more than 1 Trustee signature is required to add a root certificate,
-then the certificate
-will be in a pending state until sufficient number of other Trustee's approvals is received.
+If more than 1 Trustee signature is required to add the root certificate, the root certificate
+will be in a pending state until sufficient number of approvals is received.
 
 The certificate is immutable. It can only be revoked by either the owner or a quorum of Trustees.
 
@@ -739,7 +738,7 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
   - time: `optional(int64)` - proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State: `pki/ProposedCertificate/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - Who can send:
-  - Any role
+  - Trustee
 - CLI command:
   - `dcld tx pki propose-add-x509-root-cert --certificate=<string-or-path> --from=<account>`
 - Validation:
@@ -756,7 +755,7 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
 
 **Status: Implemented**
 
-Approves the proposed root certificate.
+Approves the proposed root certificate. It also can be used for revote (i.e. change vote from reject to approve)
 
 The certificate is not active until sufficient number of Trustees approve it.
 
@@ -769,7 +768,7 @@ The certificate is not active until sufficient number of Trustees approve it.
 - Who can send:
   - Trustee
 - Number of required approvals:
-  - 2/3 of Trustees
+  - greater than 2/3 of Trustees (proposal by a Trustee is also counted as an approval)
 - CLI command:
   - `dcld tx pki approve-add-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
 - Validation:
@@ -779,7 +778,9 @@ The certificate is not active until sufficient number of Trustees approve it.
 
 **Status: Implemented**
 
-Rejects the proposed root certificate.
+Rejects the proposed root certificate. It also can be used for revote (i.e. change vote from approve to reject)
+
+If proposed root certificate has only proposer's approval and no rejects then proposer can send this transaction to remove the proposal
 
 The certificate is not reject until sufficient number of Trustees reject it.
 
@@ -890,7 +891,7 @@ The revocation is not applied until sufficient number of Trustees approve it.
 - Who can send:
   - Trustee
 - Number of required approvals:
-  - 2/3 of Trustees
+  - greater than 2/3 of Trustees (proposal by a Trustee is also counted as an approval)
 - CLI command:
   - `dcld tx pki approve-revoke-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
 
@@ -1128,7 +1129,7 @@ will be in a pending state until sufficient number of approvals is received.
 
 **Status: Implemented**
 
-Approves the proposed account.
+Approves the proposed account. It also can be used for revote (i.e. change vote from reject to approve)
 
 The account is not active until sufficient number of Trustees approve it.
 
@@ -1140,18 +1141,20 @@ The account is not active until sufficient number of Trustees approve it.
 - Who can send:
   - Trustee
 - Number of required approvals:
-  - 2/3 of Trustees for account roles: `TestHouse`, `CertificationCenter`, `Trustee`, `NodeAdmin`
-  - 1/3 of Trustees for account role: `Vendor`
+  - greater than 2/3 of Trustees for account roles: `TestHouse`, `CertificationCenter`, `Trustee`, `NodeAdmin` (proposal by a Trustee is also counted as an approval)
+  - greater than 1/3 of Trustees for account role: `Vendor` (proposal by a Trustee is also counted as an approval)
 - CLI command:
   - `dcld tx auth approve-add-account --address=<bench32 encoded string> --from=<account>`
 
-> **_Note:_**  If we are approving an account with role `Vendor`, then we need 1/3 of Trustees approvals.
+> **_Note:_**  If we are approving an account with role `Vendor`, then we need more than 1/3 of Trustees approvals.
 
 #### REJECT_ADD_ACCOUNT
 
 **Status: Implemented**
 
-Rejects the proposed account.
+Rejects the proposed account. It also can be used for revote (i.e. change vote from approve to reject)
+
+If proposed account has only proposer's approval and no rejects then proposer can send this transaction to remove the proposal
 
 The account is not reject until sufficient number of Trustees reject it.
 
@@ -1163,7 +1166,8 @@ The account is not reject until sufficient number of Trustees reject it.
 - Who can send:
   - Trustee
 - Number of required rejects:
-  - more than 1/3 of Trustees
+  - greater than 1/3 of Trustees for account roles: `TestHouse`, `CertificationCenter`, `Trustee`, `NodeAdmin` (proposal by a Trustee is also counted as an approval)
+  - greater than 2/3 of Trustees for account role: `Vendor` (proposal by a Trustee is also counted as an approval)
 - CLI command:
   - `dcld tx auth reject-add-account --address=<bench32 encoded string> --from=<account>`
 
@@ -1202,7 +1206,7 @@ The account is not revoked until sufficient number of Trustees approve it.
 - Who can send:
   - Trustee
 - Number of required approvals:
-  - 2/3 of Trustees
+  - greater than 2/3 of Trustees (proposal by a Trustee is also counted as an approval)
 - CLI command:
   - `dcld tx auth approve-revoke-account --address=<bench32 encoded string> --from=<account>`
 
@@ -1420,7 +1424,7 @@ will be in a pending state until sufficient number of approvals is received.
 
 **Status: Implemented**
 
-Approves disabling of the Validator node by a Trustee.
+Approves disabling of the Validator node by a Trustee. It also can be used for revote (i.e. change vote from reject to approve)
 
 The validator node is not disabled until sufficient number of Trustees approve it.
 
@@ -1430,7 +1434,7 @@ The validator node is not disabled until sufficient number of Trustees approve i
 - Who can send:
   - Trustee
 - Number of required approvals:
-  - 2/3 of Trustees
+  - greater than 2/3 of Trustees (proposal by a Trustee is also counted as an approval)
 - CLI command:
   - `dcld tx validator approve-disable-node --address=<validator address> --from=<account>`
    e.g.:
@@ -1445,7 +1449,9 @@ The validator node is not disabled until sufficient number of Trustees approve i
 
 **Status: Implemented**
 
-Rejects disabling of the Validator node by a Trustee.
+Rejects disabling of the Validator node by a Trustee. It also can be used for revote (i.e. change vote from approve to reject)
+
+If disable validator proposal has only proposer's approval and no rejects then proposer can send this transaction to remove the proposal
 
 The validator node is not reject until sufficient number of Trustees rejects it.
 
@@ -1728,7 +1734,7 @@ Proposes an upgrade plan with the given name at the given height.
 - Who can send:
   - Trustee
 - Number of required approvals:
-  - 2/3 of Trustees
+  - greater than 2/3 of Trustees (proposal by a Trustee is also counted as an approval)
 - CLI command minimal:
 
 ```bash
@@ -1747,7 +1753,7 @@ dcld tx dclupgrade propose-upgrade --name=<string> --upgrade-height=<int64> --up
 
 **Status: Implemented**
 
-Approves the proposed upgrade plan with the given name.
+Approves the proposed upgrade plan with the given name. It also can be used for revote (i.e. change vote from reject to approve)
 
 - Parameters:
   - name: `string` - upgrade plan name
@@ -1755,7 +1761,7 @@ Approves the proposed upgrade plan with the given name.
 - Who can send:
   - Trustee
 - Number of required approvals:
-  - 2/3 of Trustees
+  - greater than 2/3 of Trustees (proposal by a Trustee is also counted as an approval)
 - CLI command:
 
 ```bash
@@ -1766,7 +1772,9 @@ dcld tx dclupgrade approve-upgrade --name=<string> --from=<account>
 
 **Status: Implemented**
 
-Rejects the proposed upgrade plan with the given name.
+Rejects the proposed upgrade plan with the given name. It also can be used for revote (i.e. change vote from approve to reject)
+
+If proposed upgrade has only proposer's approval and no rejects then proposer can send this transaction to remove the proposal
 
 - Paramaters:
   - name: `string` - upgrade plan name

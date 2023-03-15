@@ -127,15 +127,6 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
-			name: "ProductLabel is omitted",
-			msg: func(msg *MsgCreateModel) *MsgCreateModel {
-				msg.ProductLabel = ""
-
-				return msg
-			}(validMsgCreateModel()),
-			err: validator.ErrRequiredFieldMissing,
-		},
-		{
 			name: "ProductLabel length > 256",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.ProductLabel = tmrand.Str(257)
@@ -143,15 +134,6 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldMaxLengthExceeded,
-		},
-		{
-			name: "PartNumber is omitted",
-			msg: func(msg *MsgCreateModel) *MsgCreateModel {
-				msg.PartNumber = ""
-
-				return msg
-			}(validMsgCreateModel()),
-			err: validator.ErrRequiredFieldMissing,
 		},
 		{
 			name: "PartNumber length > 32",
