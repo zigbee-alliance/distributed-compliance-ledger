@@ -202,7 +202,7 @@ func TestHandler_UpdateVendorInfoWithEmptyOptionalFields(t *testing.T) {
 
 	// query vendorinfo
 	vendorInfo, err := queryVendorInfo(setup, msgCreateVendorInfo.VendorID)
-	require.NoError(t, err)	
+	require.NoError(t, err)
 
 	msgUpdateVendorInfo := &types.MsgUpdateVendorInfo{
 		Creator:              vendorInfo.Creator,
@@ -218,7 +218,7 @@ func TestHandler_UpdateVendorInfoWithEmptyOptionalFields(t *testing.T) {
 	// query the updated vendorinfo
 	updatedVendorInfo, err := queryVendorInfo(setup, msgCreateVendorInfo.VendorID)
 	require.NoError(t, err)
-	
+
 	require.Equal(t, updatedVendorInfo.Creator, vendorInfo.Creator)
 	require.Equal(t, updatedVendorInfo.VendorID, vendorInfo.VendorID)
 	require.Equal(t, updatedVendorInfo.CompanyLegalName, vendorInfo.CompanyLegalName)
@@ -238,7 +238,7 @@ func TestHandler_UpdateVendorInfoWithAllOptionalFields(t *testing.T) {
 
 	// query vendorinfo
 	vendorInfo, err := queryVendorInfo(setup, msgCreateVendorInfo.VendorID)
-	require.NoError(t, err)	
+	require.NoError(t, err)
 
 	companyLegalName := "1"
 	companyPreferredName := "2"
@@ -259,7 +259,7 @@ func TestHandler_UpdateVendorInfoWithAllOptionalFields(t *testing.T) {
 	// query the updated vendorinfo
 	updatedVendorInfo, err := queryVendorInfo(setup, msgCreateVendorInfo.VendorID)
 	require.NoError(t, err)
-	
+
 	require.Equal(t, updatedVendorInfo.Creator, vendorInfo.Creator)
 	require.Equal(t, updatedVendorInfo.VendorID, vendorInfo.VendorID)
 	require.Equal(t, updatedVendorInfo.CompanyLegalName, companyLegalName)
