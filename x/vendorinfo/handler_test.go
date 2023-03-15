@@ -241,6 +241,7 @@ func TestHandler_AddVendorInfoByVendorAdmin(t *testing.T) {
 	require.NoError(t, err)
 
 	newVendorInfo, err := queryVendorInfo(setup, msgCreateVendorInfo.VendorID)
+	require.NoError(t, err)
 
 	// check if stored correctly
 	require.Equal(t, msgCreateVendorInfo.Creator, newVendorInfo.Creator)
@@ -268,6 +269,7 @@ func TestHandler_AddAndUpdateVendorInfoByVendorAdmin(t *testing.T) {
 	require.NoError(t, err)
 
 	updatedVendorInfo, err := queryVendorInfo(setup, msgCreateVendorInfo.VendorID)
+	require.NoError(t, err)
 
 	// check if updated correctly
 	require.Equal(t, msgUpdateVendorInfo.Creator, updatedVendorInfo.Creator)
@@ -298,6 +300,7 @@ func TestHandled_AddVendorInfoByVendorUpdateVendorInfoByVendorAdmin(t *testing.T
 	require.NoError(t, err)
 
 	updatedVendorInfo, err := queryVendorInfo(setup, msgCreateVendorInfo.VendorID)
+	require.NoError(t, err)
 
 	// check if updated correctly
 	require.Equal(t, msgUpdateVendorInfo.Creator, updatedVendorInfo.Creator)
@@ -329,6 +332,7 @@ func TestHandled_AddVendorInfoByVendorAdminUpdateVendorInfoByVendor(t *testing.T
 	require.NoError(t, err)
 
 	updatedVendorInfo, err := queryVendorInfo(setup, msgCreateVendorInfo.VendorID)
+	require.NoError(t, err)
 
 	// check if updated correctly
 	require.Equal(t, msgUpdateVendorInfo.Creator, updatedVendorInfo.Creator)
