@@ -292,6 +292,22 @@ dcld tx model update-model --vid=<uint16> --pid=<uint16> ... --from=<account>
 dcld tx model update-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> ... --from=<account>
 ```
 
+## Vendor Admin Instructions
+
+Vendor Admin account creation is the same process as the creation of a non-Vendor account i.e. requires approvals by >2/3 of trustees. 
+
+### 1. Add Vendor
+
+```bash
+dcld tx vendorinfo add-vendor --vid=<uint16> --vendorName=<string> --companyLegalName=<string> --companyPreferredName=<string> --vendorLandingPageURL=<string> --from=<vendor-admin-account>
+```
+
+### 2. Edit Vendor Info
+
+```bash
+dcld tx vendorinfo update-vendor --vid=<uint16> ... --from=<vendor-admin-account>
+```
+
 ## Certification Center Instructions
 
 ### 1A. Publish an intermediate or leaf X509 certificate(s) to be used for signing the Certification blob
