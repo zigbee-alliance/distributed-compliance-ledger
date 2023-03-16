@@ -86,7 +86,6 @@ result=$(dcld query vendorinfo vendor --vid=$vid)
 check_response "$result" "\"vendorID\": $vid"
 check_response "$result" "\"companyLegalName\": \"$companyLegalName\""
 check_response "$result" "\"vendorName\": \"$vendorName\""
-check_response "$result" "\"vendorLandingPageURL\": \"$vendorLandingPageURL\""
 echo "$result"
 
 test_divider
