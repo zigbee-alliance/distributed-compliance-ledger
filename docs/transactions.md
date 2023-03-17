@@ -117,8 +117,8 @@ Adds a record about a Vendor.
   - vendorLandingPageURL: `optional(string)` -  URL of the vendor's landing page
 - In State: `vendorinfo/VendorInfo/value/<vid>`
 - Who can send:
-  - Vendor account
-  - VendorAdmin account
+  - Account with a vendor role who has the matching Vendor ID
+  - Account with a vendor admin role
 - CLI command:
   - `dcld tx vendorinfo add-vendor --vid=<uint16> --vendorName=<string> --companyLegalName=<string> --companyPreferredName=<string> --vendorLandingPageURL=<string> --from=<account>`
 
