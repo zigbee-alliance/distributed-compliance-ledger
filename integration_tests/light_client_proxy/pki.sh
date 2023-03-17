@@ -138,13 +138,14 @@ test_divider
 echo "$user_account (Not Trustee) propose Root certificate"
 root_path="integration_tests/constants/root_cert"
 result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_path" --from $user_account --yes)
-check_response "$result" "\"code\": 0"
+response_does_not_contain "$result" "\"code\": 0"
 echo "$result"
 
 test_divider
 
-echo "$trustee_account (Trustee) approve Root certificate"
-result=$(echo $passphrase | dcld tx pki approve-add-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $trustee_account --yes)
+echo "$trustee_account (Trustee) propose Root certificate"
+root_path="integration_tests/constants/root_cert"
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_path" --from $trustee_account --yes)
 check_response "$result" "\"code\": 0"
 echo "$result"
 
