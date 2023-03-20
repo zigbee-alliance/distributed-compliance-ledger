@@ -35,8 +35,9 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 }
 
 // TODO issue 99: these getters were initially created
-//		for tests needs: to link dependent keepers,
-//		need to explore the alternatives
+//
+//	for tests needs: to link dependent keepers,
+//	need to explore the alternatives
 func (k Keeper) StoreKey() sdk.StoreKey {
 	return k.storeKey
 }
@@ -46,7 +47,7 @@ func (k Keeper) MemKey() sdk.StoreKey {
 }
 
 func (k Keeper) AccountApprovalsCount(ctx sdk.Context, percent float64) int {
-	approvalsCount := int(math.Round(percent * float64(k.CountAccountsWithRole(ctx, types.Trustee))))
+	approvalsCount := int(math.Ceil(percent * float64(k.CountAccountsWithRole(ctx, types.Trustee))))
 	if approvalsCount == 0 {
 		return 1
 	}
@@ -54,6 +55,6 @@ func (k Keeper) AccountApprovalsCount(ctx sdk.Context, percent float64) int {
 	return approvalsCount
 }
 
-func (k Keeper) AccountRejectApprovalsCount(ctx sdk.Context) int {
-	return k.CountAccountsWithRole(ctx, types.Trustee) - k.AccountApprovalsCount(ctx, types.AccountApprovalsPercent) + 1
+func (k Keeper) AccountRejectApprovalsCount(ctx sdk.Context, percent float64) int {
+	return k.CountAccountsWithRole(ctx, types.Trustee) - k.AccountApprovalsCount(ctx, percent) + 1
 }

@@ -41,3 +41,8 @@ func TestProposeUpgradeTwiceGRPC(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, false)
 	dclupgrade.ProposeUpgradeTwice(&suite)
 }
+
+func TestProposeAndRejectUpgradeGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	dclupgrade.ProposeAndRejectUpgrade(&suite)
+}

@@ -44,7 +44,7 @@ create_new_account user_account "CertificationCenter"
 
 test_divider
 
-echo "Add 3 new Trustee accounts, this will result in a total of 6 Trustees and 3 approvals needed for 2/3 quorum"
+echo "Add 3 new Trustee accounts, this will result in a total of 6 Trustees and 4 approvals needed for 2/3 quorum"
 
 test_divider
 
@@ -110,8 +110,12 @@ echo "$second_trustee_account approves account for $sixth_trustee_account"
 result=$(echo $passphrase | dcld tx auth approve-add-account --address="$sixth_trustee_address" --from $second_trustee_account --yes)
 check_response "$result" "\"code\": 0"
 
-echo "third_trustee_account approves account for $sixth_trustee_account"
+echo "$third_trustee_account approves account for $sixth_trustee_account"
 result=$(echo $passphrase | dcld tx auth approve-add-account --address="$sixth_trustee_address" --from $third_trustee_account --yes)
+check_response "$result" "\"code\": 0"
+
+echo "$fourth_trustee_account approves account for $sixth_trustee_account"
+result=$(echo $passphrase | dcld tx auth approve-add-account --address="$sixth_trustee_address" --from $fourth_trustee_account --yes)
 check_response "$result" "\"code\": 0"
 
 echo "Verify that sixth account is now present"
@@ -124,8 +128,11 @@ echo "PROPOSE ROOT CERT"
 echo "$user_account (Not Trustee) propose Root certificate"
 root_path="integration_tests/constants/root_cert"
 result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_path" --from $user_account --yes)
-check_response "$result" "\"code\": 0"
+response_does_not_contain "$result" "\"code\": 0"
 
+echo "$fourth_trustee_account (Trustee) propose Root certificate"
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_path" --from $fourth_trustee_account --yes)
+check_response "$result" "\"code\": 0"
 
 test_divider
 
@@ -160,16 +167,6 @@ result=$(echo "$passphrase" | dcld tx pki approve-add-x509-root-cert --subject="
 check_response "$result" "\"code\": 0"
 
 test_divider
-
-echo "Verify Root certificate is not present in approved state"
-result=$(echo "$passphrase" | dcld query pki x509-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
-check_response "$result" "Not Found"
-
-test_divider
-
-echo "$fourth_trustee_account (Trustee) approve Root certificate"
-result=$(echo "$passphrase" | dcld tx pki approve-add-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $fourth_trustee_account --yes)
-check_response "$result" "\"code\": 0"
 
 echo "Verify Root certificate is in approved state"
 result=$(echo "$passphrase" | dcld query pki x509-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")  

@@ -42,7 +42,7 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 }
 
 func (k Keeper) CertificateApprovalsCount(ctx sdk.Context, authKeeper types.DclauthKeeper) int {
-	return int(math.Round(types.RootCertificateApprovalsPercent *
+	return int(math.Ceil(types.RootCertificateApprovalsPercent *
 		float64(authKeeper.CountAccountsWithRole(ctx, authTypes.Trustee))))
 }
 
