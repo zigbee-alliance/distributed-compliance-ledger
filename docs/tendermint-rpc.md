@@ -17,7 +17,7 @@ Subscribing to Tendermint WebSocket events can be done using any WS clients like
 wscat -c ws://localhost:26657/websocket
 ```
 
-2. Subscribe to the `tx` event:
+2. Subscribe to the `tx` event (refer to the [docs](https://docs.tendermint.com/v0.34/rpc/#) to learn the syntax):
 
 ```json
 > {"jsonrpc":"2.0","method":"subscribe","id":0,"params":{"query":"tm.event='Tx'"}}
@@ -43,7 +43,7 @@ dcld tx auth propose-add-account \
 --from=jack
 ```
 
-4. Confirm the s------it is listening to the event in the first window:
+4. Confirm that the subscriber received the event:
 
 ```json
 {
@@ -207,4 +207,4 @@ It returns a response as follows:
 }
 ```
 
-The `proof` property can be excluded from the response by setting the `proof` property in the query string to `false` (or just by omitting it).  
+The `proof` property can be excluded from the response by setting the `prove` property in the query string to `false` (or just by omitting it).  
