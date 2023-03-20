@@ -152,9 +152,9 @@ func (msg *MsgUpdateModelVersion) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgDeleteModelVersion{}
 
-func NewMsgDeleteModelVersion(signer string, vid int32, pid int32, softwareVersion int32) *MsgDeleteModelVersion {
+func NewMsgDeleteModelVersion(creator string, vid int32, pid int32, softwareVersion uint32) *MsgDeleteModelVersion {
 	return &MsgDeleteModelVersion{
-		Signer:          signer,
+		Creator:         creator,
 		Vid:             vid,
 		Pid:             pid,
 		SoftwareVersion: softwareVersion,
@@ -170,7 +170,7 @@ func (msg *MsgDeleteModelVersion) Type() string {
 }
 
 func (msg *MsgDeleteModelVersion) GetSigners() []sdk.AccAddress {
-	signer, err := sdk.AccAddressFromBech32(msg.Signer)
+	signer, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		panic(err)
 	}
@@ -185,7 +185,7 @@ func (msg *MsgDeleteModelVersion) GetSignBytes() []byte {
 }
 
 func (msg *MsgDeleteModelVersion) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Signer)
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address (%s)", err)
 	}
