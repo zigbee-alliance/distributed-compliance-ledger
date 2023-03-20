@@ -128,7 +128,7 @@ Detailed info about subscribing can be found [here](https://docs.tendermint.com/
 Unsubscribing is done using a similar command to [subscription](#subscribe):
 
 ```json
-> {"jsonrpc":"2.0","method":"unsubscribe","id":0,"params":{"query":"tm.event='Tx'"}}
+{"jsonrpc":"2.0","method":"unsubscribe","id":0,"params":{"query":"tm.event='Tx'"}}
 ```
 
 ## Querying Application Components
