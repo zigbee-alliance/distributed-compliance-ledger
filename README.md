@@ -194,6 +194,9 @@ the following instructions from [how-to.md](docs/how-to.md) can be used for ever
   - publish device model version
   - publish X509 certificates
   - revoke X509 certificates
+- [Vendor Admin](docs/how-to.md#vendor-admin-instructions)
+  - publish vendor info
+  - update vendor info for any vendor
 - [Certification Center](docs/how-to.md#certification-center-instructions)
   - certify or revoke certification of device models
   - publish X509 certificates
