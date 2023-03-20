@@ -79,7 +79,7 @@ func (k msgServer) UpdateModelVersion(goCtx context.Context, msg *types.MsgUpdat
 	if err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
-	if err := checkModelRights(ctx, k.Keeper, signerAddr, msg.Vid, "MsgCreateModelVersion"); err != nil {
+	if err := checkModelRights(ctx, k.Keeper, signerAddr, msg.Vid, "MsgDeleteModelVersion"); err != nil {
 		return nil, err
 	}
 
@@ -139,8 +139,61 @@ func (k msgServer) UpdateModelVersion(goCtx context.Context, msg *types.MsgUpdat
 func (k msgServer) DeleteModelVersion(goCtx context.Context, msg *types.MsgDeleteModelVersion) (*types.MsgDeleteModelVersionResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// TODO: Handling the message
-	_ = ctx
+	// check signer has enough rights to delete model version
+	signerAddr, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
+	}
+	if err := checkModelRights(ctx, k.Keeper, signerAddr, msg.Vid, "MsgDeleteModelVersion"); err != nil {
+		return nil, err
+	}
+
+	// check if model version exists
+	modelVersion, isFound := k.GetModelVersion(
+		ctx,
+		msg.Vid,
+		msg.Pid,
+		msg.SoftwareVersion,
+	)
+
+	if !isFound {
+		return nil, types.NewErrModelVersionDoesNotExist(msg.Vid, msg.Pid, msg.SoftwareVersion)
+	}
+
+	if msg.Creator != modelVersion.Creator {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "MsgDeleteModelVersion transaction should be "+
+			"signed by a modelVersion %d %d %d creator", msg.Vid, msg.Pid, msg.SoftwareVersion)
+	}
+
+	isFound = k.IsModelCertified(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion)
+	if isFound {
+		return nil, types.NewErrModelCertified(msg.Vid, msg.Pid)
+	}
+
+	// store updated model version
+	k.RemoveModelVersion(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion)
 
 	return &types.MsgDeleteModelVersionResponse{}, nil
+}
+
+func (k msgServer) IsModelCertified(ctx sdk.Context, vid int32, pid int32, softwareVersion uint32) bool {
+	certificationTypes := []string{"zigbee", "matter"}
+	for _, certType := range certificationTypes {
+		_, isFound := k.ComplianceKeeper.GetComplianceInfo(ctx, vid, pid, softwareVersion, certType)
+		if isFound {
+			return true
+		}
+
+		_, isFound = k.ComplianceKeeper.GetProvisionalModel(ctx, vid, pid, softwareVersion, certType)
+		if isFound {
+			return true
+		}
+
+		_, isFound = k.ComplianceKeeper.GetRevokedModel(ctx, vid, pid, softwareVersion, certType)
+		if isFound {
+			return true
+		}
+	}
+
+	return false
 }
