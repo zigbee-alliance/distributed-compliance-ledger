@@ -195,5 +195,29 @@ func (k msgServer) DeleteModel(goCtx context.Context, msg *types.MsgDeleteModel)
 	// remove product from VendorProducts
 	k.RemoveVendorProduct(ctx, msg.Vid, msg.Pid)
 
+	modelVersions, err := k.ModelVersions(goCtx, &types.QueryGetModelVersionsRequest{
+		Vid: msg.Vid, 
+		Pid: msg.Pid,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	// remove modelVersion for each softwareVersion
+	for _, softwareVersion := range modelVersions.ModelVersions.SoftwareVersions {
+		msgDeleteModelVersion := types.NewMsgDeleteModelVersion(
+			msg.Creator, 
+			msg.Vid, 
+			msg.Pid, 
+			int32(softwareVersion),
+		)
+
+		k.DeleteModelVersion(goCtx, msgDeleteModelVersion)
+	}
+
+	// remove modelVersions record
+	k.RemoveModelVersions(ctx, msg.Vid, msg.Pid)
+
 	return &types.MsgDeleteModelResponse{}, nil
 }
