@@ -37,6 +37,11 @@ func TestAddVendorInfoByDifferentVendorGRPC(t *testing.T) {
 	vendorinfo.AddVendorInfoByDifferentVendor(&suite)
 }
 
+func TestAddVendorInfoByNonVendorAdminGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	vendorinfo.AddVendorInfoByNonVendorAdmin(&suite)
+}
+
 func TestGetVendorInfoForUnknownGRPC(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, false)
 	vendorinfo.GetVendorInfoForUnknown(&suite)
@@ -50,4 +55,14 @@ func TestGetVendorInfoForInvalidVidGRPC(t *testing.T) {
 func TestAddVendorInfoTwiceGRPC(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, false)
 	vendorinfo.AddVendorInfoTwice(&suite)
+}
+
+func TestAddVendorInfoByVendorAdminGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	vendorinfo.AddVendorInfoByVendorAdmin(&suite)
+}
+
+func TestUpdateVendorInfoByVendorAdminGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	vendorinfo.UpdateVendorInfoByVendorAdmin(&suite)
 }

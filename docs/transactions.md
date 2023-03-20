@@ -16,6 +16,7 @@ an Account or sign the request.
 - The following roles are supported:
   - `Trustee` - can create and approve accounts, approve root certificates.
   - `Vendor` - can add models that belong to the vendor ID associated with the vendor account.
+  - `VendorAdmin` - can add vendor info records and update any vendor info.
   - `CertificationCenter` - can certify and revoke models.
   - `NodeAdmin` - can add validator nodes to the network.
 
@@ -116,7 +117,8 @@ Adds a record about a Vendor.
   - vendorLandingPageURL: `optional(string)` -  URL of the vendor's landing page
 - In State: `vendorinfo/VendorInfo/value/<vid>`
 - Who can send:
-  - Vendor account
+  - Account with a vendor role who has the matching Vendor ID
+  - Account with a vendor admin role
 - CLI command:
   - `dcld tx vendorinfo add-vendor --vid=<uint16> --vendorName=<string> --companyLegalName=<string> --companyPreferredName=<string> --vendorLandingPageURL=<string> --from=<account>`
 
@@ -135,6 +137,7 @@ Updates a record about a Vendor.
 - In State: `vendorinfo/VendorInfo/value/<vid>`
 - Who can send:
   - Account with a vendor role who has the matching Vendor ID
+  - Account with a vendor admin role
 - CLI command:
   - `dcld tx vendorinfo update-vendor --vid=<uint16> ... --from=<account>`
 
@@ -727,9 +730,8 @@ All PKI related methods are based on this restriction.
 
 Proposes a new self-signed root certificate.
 
-If it's sent by a non-Trustee account, or more than 1 Trustee signature is required to add a root certificate,
-then the certificate
-will be in a pending state until sufficient number of other Trustee's approvals is received.
+If more than 1 Trustee signature is required to add the root certificate, the root certificate
+will be in a pending state until sufficient number of approvals is received.
 
 The certificate is immutable. It can only be revoked by either the owner or a quorum of Trustees.
 
@@ -739,7 +741,7 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
   - time: `optional(int64)` - proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State: `pki/ProposedCertificate/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - Who can send:
-  - Any role
+  - Trustee
 - CLI command:
   - `dcld tx pki propose-add-x509-root-cert --certificate=<string-or-path> --from=<account>`
 - Validation:
@@ -1117,7 +1119,7 @@ will be in a pending state until sufficient number of approvals is received.
   - address: `string` - account address; Bech32 encoded
   - pub_key: `string` - account's Protobuf JSON encoded public key
   - vid: `optional(uint16)` - vendor ID (only needed for vendor role)
-  - roles: `array<string>` - the list of roles, comma-separated, assigning to the account. Supported roles: `Vendor`, `TestHouse`, `CertificationCenter`, `Trustee`, `NodeAdmin`.
+  - roles: `array<string>` - the list of roles, comma-separated, assigning to the account. Supported roles: `Vendor`, `TestHouse`, `CertificationCenter`, `Trustee`, `NodeAdmin`, `VendorAdmin`.
   - info: `optional(string)` - information/notes for the proposal
   - time: `optional(int64)` - proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State: `dclauth/PendingAccount/value/<address>`
@@ -1142,7 +1144,7 @@ The account is not active until sufficient number of Trustees approve it.
 - Who can send:
   - Trustee
 - Number of required approvals:
-  - greater than 2/3 of Trustees for account roles: `TestHouse`, `CertificationCenter`, `Trustee`, `NodeAdmin` (proposal by a Trustee is also counted as an approval)
+  - greater than 2/3 of Trustees for account roles: `TestHouse`, `CertificationCenter`, `Trustee`, `NodeAdmin`, `VendorAdmin` (proposal by a Trustee is also counted as an approval)
   - greater than 1/3 of Trustees for account role: `Vendor` (proposal by a Trustee is also counted as an approval)
 - CLI command:
   - `dcld tx auth approve-add-account --address=<bench32 encoded string> --from=<account>`
@@ -1167,7 +1169,7 @@ The account is not reject until sufficient number of Trustees reject it.
 - Who can send:
   - Trustee
 - Number of required rejects:
-  - greater than 1/3 of Trustees for account roles: `TestHouse`, `CertificationCenter`, `Trustee`, `NodeAdmin` (proposal by a Trustee is also counted as an approval)
+  - greater than 1/3 of Trustees for account roles: `TestHouse`, `CertificationCenter`, `Trustee`, `NodeAdmin`, `VendorAdmin` (proposal by a Trustee is also counted as an approval)
   - greater than 2/3 of Trustees for account role: `Vendor` (proposal by a Trustee is also counted as an approval)
 - CLI command:
   - `dcld tx auth reject-add-account --address=<bench32 encoded string> --from=<account>`

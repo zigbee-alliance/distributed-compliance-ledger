@@ -188,41 +188,6 @@ dcld tx dclupgrade propose-upgrade --name=<upgrade name> --upgrade-height=<upgra
 dcld tx dclupgrade approve-upgrade --name=<upgrade name> --from=<account>
 ```
   
-## CA instructions
-
-Currently any role can propose an X509 root certificate, or publish
-(intermediate or leaf) X509 certificates.
-
-### 1. Propose a new self-signed root certificate
-
-```bash
-dcld tx pki propose-add-x509-root-cert --certificate=<string-or-path> --from=<account>
-```
-
-Example: `dcld tx pki propose-add-x509-root-cert --certificate="/path/to/certificate/file" --from=jack`
-  
-Example: `dcld tx pki propose-add-x509-root-cert --certificate="----BEGIN CERTIFICATE----- ......" --from=jack`
-
-### 2. Publish an intermediate or leaf X509 certificate
-
-```bash
-dcld tx pki add-x509-cert --certificate=<string-or-path> --from=<account>
-```
-
-The certificate must be signed by a chain of certificates which must be already present on the ledger.
-
-  Example: `dcld tx pki add-x509-cert --certificate="/path/to/certificate/file" --from=jack`
-  
-  Example: `dcld tx pki add-x509-cert --certificate="----BEGIN CERTIFICATE----- ......" --from=jack`  
-
-### 3. Revoke an intermediate or leaf X509 certificate
-
-```bash
-dcld tx pki revoke-x509-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>
-```
-
-Can be done by the certificate's issuer only.
-
 ## Vendor Instructions
 
 ### 1. Publish an intermediate or leaf X509 certificate(s) to be used for signing X509 Certificates for every Device
@@ -290,6 +255,22 @@ dcld tx model update-model --vid=<uint16> --pid=<uint16> ... --from=<account>
 
 ```bash
 dcld tx model update-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> ... --from=<account>
+```
+
+## Vendor Admin Instructions
+
+Vendor Admin account creation is the same process as the creation of a non-Vendor account i.e. requires approvals by >2/3 of trustees. 
+
+### 1. Add Vendor
+
+```bash
+dcld tx vendorinfo add-vendor --vid=<uint16> --vendorName=<string> --companyLegalName=<string> --companyPreferredName=<string> --vendorLandingPageURL=<string> --from=<vendor-admin-account>
+```
+
+### 2. Edit Vendor Info
+
+```bash
+dcld tx vendorinfo update-vendor --vid=<uint16> ... --from=<vendor-admin-account>
 ```
 
 ## Certification Center Instructions
