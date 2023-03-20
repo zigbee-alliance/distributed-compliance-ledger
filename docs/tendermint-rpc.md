@@ -14,26 +14,30 @@ Subscribing to Tendermint WebSocket events can be done using any WS clients like
 1. Connect to the server:
 
 ```bash
-wscat -c ws://localhost:26657/websocket
+wscat -c ws://<node-ip>:<port>/websocket
 ```
+
+In cases of [Test Net](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/deployment/persistent_chains/testnet-2.0/testnet-2.0-csa-endpoints.md) and [Main Net](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/deployment/persistent_chains/main-net/main-net-csa-endpoints.md) observer nodes, `node-ip`s are `on.test-net.dcl.csa-iot.org` and `on.dcl.csa-iot.org`, respectively, having the same ports `26657`
 
 2. Subscribe to the `tx` event:
 
 ```json
-> {"jsonrpc":"2.0","method":"subscribe","id":0,"params":{"query":"tm.event='Tx'"}}
+{"jsonrpc":"2.0","method":"subscribe","id":0,"params":{"query":"tm.event='Tx'"}}
 ```
 
 You should get the following response if everything is OK:
 
 ```json
-< {
+{
   "jsonrpc": "2.0",
   "id": 0,
   "result": {}
 }
 ```
 
-3. Perform any transaction in another terminal tab to broadcast a `tx` event:
+3. Wait for the transaction
+
+Consider performing any transaction in another terminal tab to broadcast a `tx` event for the test purposes. For example, the following transaction can be sent in case of a local pool (for Test Net or Main Net pools `dcld` needs to be configured properly and write access needs to be given, see https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/how-to.md#cli-configuration)
 
 ```bash
 dcld tx auth propose-add-account \
@@ -43,7 +47,7 @@ dcld tx auth propose-add-account \
 --from=jack
 ```
 
-4. Confirm the s------it is listening to the event in the first window:
+4. Confirm that the subscriber received the event. For the transaction example above:
 
 ```json
 {
@@ -128,7 +132,7 @@ Detailed info about subscribing can be found [here](https://docs.tendermint.com/
 Unsubscribing is done using a similar command to [subscription](#subscribe):
 
 ```json
-> {"jsonrpc":"2.0","method":"unsubscribe","id":0,"params":{"query":"tm.event='Tx'"}}
+{"jsonrpc":"2.0","method":"unsubscribe","id":0,"params":{"query":"tm.event='Tx'"}}
 ```
 
 ## Querying Application Components
@@ -136,7 +140,7 @@ Unsubscribing is done using a similar command to [subscription](#subscribe):
 There are many endpoints available to query various types of information about the nodes. For example, a transaction can be fetched by its hash using any web client like curl as follows:
 
 ```bash
-curl -X GET "http://localhost:26657/tx?hash=0x74504B24ED59A424E436656E5E9A11034C7A7C7ED3BE7C3CDEA1ED387EF62967&prove=true" -H "accept: application/json"
+curl -X GET "http://<node-ip>:<port>/tx?hash=0x74504B24ED59A424E436656E5E9A11034C7A7C7ED3BE7C3CDEA1ED387EF62967&prove=true" -H "accept: application/json"
 ```
 
 It returns a response as follows:
