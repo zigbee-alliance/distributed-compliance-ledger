@@ -192,6 +192,71 @@ func TestHandler_CreateAccount_ThreeApprovalsAreNeeded(t *testing.T) {
 	require.False(t, setup.Keeper.IsRevokedAccountPresent(setup.Ctx, address))
 }
 
+func TestHandler_CreateVendorAdminAccount_TwoThirdApprovalsNeeded(t *testing.T) {
+	setup := Setup(t)
+
+	// store 4 trustees
+	trustee1 := storeTrustee(setup)
+	trustee2 := storeTrustee(setup)
+	trustee3 := storeTrustee(setup)
+	_ = storeTrustee(setup)
+
+	// ensure 3 trustee approvals are needed
+	require.Equal(t, 3, setup.Keeper.AccountApprovalsCount(setup.Ctx, types.AccountApprovalsPercent))
+
+	// trustee1 propose account
+	_, address, pubKey, err := proposeAddAccount(setup, trustee1, types.AccountRoles{types.VendorAdmin})
+	require.NoError(t, err)
+
+	// ensure pending account created
+	pendingAccount, found := setup.Keeper.GetPendingAccount(setup.Ctx, address)
+	require.True(t, found)
+	require.Equal(t, address.String(), pendingAccount.Address)
+	require.Equal(t, true, pendingAccount.HasApprovalFrom(trustee1))
+	// ensure no active account created
+	require.False(t, setup.Keeper.IsAccountPresent(setup.Ctx, address))
+
+	// trustee2 approves account
+	approveAddAccount := types.NewMsgApproveAddAccount(trustee2, address, testconstants.Info2)
+	_, err = setup.Handler(setup.Ctx, approveAddAccount)
+	require.NoError(t, err)
+
+	// ensure second approval added to pending account
+	pendingAccount, found = setup.Keeper.GetPendingAccount(setup.Ctx, address)
+	require.True(t, found)
+	require.Equal(t, address.String(), pendingAccount.Address)
+	require.Equal(t, true, pendingAccount.HasApprovalFrom(trustee1))
+	require.Equal(t, true, pendingAccount.HasApprovalFrom(trustee2))
+
+	// ensure no active account created
+	require.False(t, setup.Keeper.IsAccountPresent(setup.Ctx, address))
+
+	// trustee3 approves account
+	approveAddAccount = types.NewMsgApproveAddAccount(trustee3, address, testconstants.Info3)
+	_, err = setup.Handler(setup.Ctx, approveAddAccount)
+	require.NoError(t, err)
+
+	// active account must be created
+	account := setup.Keeper.GetAccount(setup.Ctx, address)
+	require.Equal(t, address, account.GetAddress())
+	require.Equal(t, pubKey, account.GetPubKey())
+
+	// check for info field and approvals
+	dclAccount, _ := setup.Keeper.GetAccountO(setup.Ctx, address)
+	require.Equal(t, testconstants.Info, dclAccount.Approvals[0].Info)
+	require.Equal(t, testconstants.Info2, dclAccount.Approvals[1].Info)
+	require.Equal(t, testconstants.Info3, dclAccount.Approvals[2].Info)
+	require.Equal(t, trustee1.String(), dclAccount.Approvals[0].Address)
+	require.Equal(t, trustee2.String(), dclAccount.Approvals[1].Address)
+	require.Equal(t, trustee3.String(), dclAccount.Approvals[2].Address)
+
+	// ensure pending account removed
+	require.False(t, setup.Keeper.IsPendingAccountPresent(setup.Ctx, address))
+
+	// check that account revoked from entity RevokedAccount
+	require.False(t, setup.Keeper.IsRevokedAccountPresent(setup.Ctx, address))
+}
+
 func TestHandler_ProposeAndRejectAccount(t *testing.T) {
 	setup := Setup(t)
 

@@ -250,6 +250,130 @@ func AddVendorInfoByDifferentVendor(suite *utils.TestSuite) {
 	require.True(suite.T, sdkerrors.ErrUnauthorized.Is(err))
 }
 
+func AddVendorInfoByNonVendorAdmin(suite *utils.TestSuite) {
+	// Alice and Bob are predefined Trustees
+	aliceName := testconstants.AliceAccount
+	aliceKeyInfo, err := suite.Kr.Key(aliceName)
+	require.NoError(suite.T, err)
+	aliceAccount, err := test_dclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	bobName := testconstants.BobAccount
+	bobKeyInfo, err := suite.Kr.Key(bobName)
+	require.NoError(suite.T, err)
+	bobAccount, err := test_dclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	// register new account without VendorAdmin role
+	nonVendorAdminAccountNamew := utils.RandString()
+	vid := int32(tmrand.Uint16())
+	nonVendorAdminAccount := test_dclauth.CreateAccount(
+		suite,
+		nonVendorAdminAccountNamew,
+		dclauthtypes.AccountRoles{dclauthtypes.CertificationCenter, dclauthtypes.NodeAdmin},
+		vid,
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+		testconstants.Info,
+	)
+
+	require.NotContains(suite.T, nonVendorAdminAccount.Roles, dclauthtypes.VendorAdmin)
+
+	// try to add createVendorInfoMsg
+	createVendorInfoMsg := NewMsgCreateVendorInfo(vid, nonVendorAdminAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createVendorInfoMsg}, nonVendorAdminAccountNamew, nonVendorAdminAccount)
+	require.Error(suite.T, err)
+	require.True(suite.T, sdkerrors.ErrUnauthorized.Is(err))
+}
+
+func AddVendorInfoByVendorAdmin(suite *utils.TestSuite) {
+	// Alice and Bob are predefined Trustees
+	aliceName := testconstants.AliceAccount
+	aliceKeyInfo, err := suite.Kr.Key(aliceName)
+	require.NoError(suite.T, err)
+	aliceAccount, err := test_dclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	bobName := testconstants.BobAccount
+	bobKeyInfo, err := suite.Kr.Key(bobName)
+	require.NoError(suite.T, err)
+	bobAccount, err := test_dclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	// register new account without VendorAdmin role
+	vendorAdminAccountName := utils.RandString()
+	vid := int32(tmrand.Uint16())
+	vendorAdminAccount := test_dclauth.CreateAccount(
+		suite,
+		vendorAdminAccountName,
+		dclauthtypes.AccountRoles{dclauthtypes.VendorAdmin},
+		vid,
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+		testconstants.Info,
+	)
+
+	require.Contains(suite.T, vendorAdminAccount.Roles, dclauthtypes.VendorAdmin)
+
+	// create vendor info by vendorAdmin
+	createVendorInfoMsg := NewMsgCreateVendorInfo(vid, vendorAdminAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createVendorInfoMsg}, vendorAdminAccountName, vendorAdminAccount)
+	require.NoError(suite.T, err)
+}
+
+func UpdateVendorInfoByVendorAdmin(suite *utils.TestSuite) {
+	// Alice and Bob are predefined Trustees
+	aliceName := testconstants.AliceAccount
+	aliceKeyInfo, err := suite.Kr.Key(aliceName)
+	require.NoError(suite.T, err)
+	aliceAccount, err := test_dclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	bobName := testconstants.BobAccount
+	bobKeyInfo, err := suite.Kr.Key(bobName)
+	require.NoError(suite.T, err)
+	bobAccount, err := test_dclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	// register new account without VendorAdmin role
+	vendorAdminAccountName := utils.RandString()
+	vid := int32(tmrand.Uint16())
+	vendorAdminAccount := test_dclauth.CreateAccount(
+		suite,
+		vendorAdminAccountName,
+		dclauthtypes.AccountRoles{dclauthtypes.VendorAdmin},
+		vid,
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+		testconstants.Info,
+	)
+
+	require.Contains(suite.T, vendorAdminAccount.Roles, dclauthtypes.VendorAdmin)
+
+	// try to add createVendorInfoMsg
+	createVendorInfoMsg := NewMsgCreateVendorInfo(vid, vendorAdminAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createVendorInfoMsg}, vendorAdminAccountName, vendorAdminAccount)
+	require.NoError(suite.T, err)
+
+	updateVendorInfoMsg := NewMsgUpdateVendorInfo(vid, vendorAdminAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{updateVendorInfoMsg}, vendorAdminAccountName, vendorAdminAccount)
+	require.NoError(suite.T, err)
+
+	updatedVendorInfo, err := GetVendorInfo(suite, vid)
+	require.NoError(suite.T, err)
+
+	require.Equal(suite.T, updateVendorInfoMsg.CompanyLegalName, updatedVendorInfo.CompanyLegalName)
+	require.Equal(suite.T, updateVendorInfoMsg.CompanyPreferredName, updatedVendorInfo.CompanyPreferredName)
+	require.Equal(suite.T, updateVendorInfoMsg.VendorLandingPageURL, updatedVendorInfo.VendorLandingPageURL)
+	require.Equal(suite.T, updateVendorInfoMsg.VendorName, updatedVendorInfo.VendorName)
+}
+
 func AddVendorInfoTwice(suite *utils.TestSuite) {
 	// Alice and Bob are predefined Trustees
 	aliceName := testconstants.AliceAccount

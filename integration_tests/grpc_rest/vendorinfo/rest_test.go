@@ -37,6 +37,11 @@ func TestAddVendorInfoByDifferentVendorREST(t *testing.T) {
 	vendorinfo.AddVendorInfoByDifferentVendor(&suite)
 }
 
+func TestAddVendorInfoByNonVendorAdminREST(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
+	vendorinfo.AddVendorInfoByNonVendorAdmin(&suite)
+}
+
 func TestGetVendorInfoForUnknownREST(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, true)
 	vendorinfo.GetVendorInfoForUnknown(&suite)
@@ -55,4 +60,14 @@ func TestAddVendorInfoTwiceREST(t *testing.T) {
 func TestDemoWithHexVid(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, true)
 	vendorinfo.DemoWithHexVid(&suite)
+}
+
+func TestAddVendorInfoByVendorAdminREST(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
+	vendorinfo.AddVendorInfoByVendorAdmin(&suite)
+}
+
+func TestUpdateVendorInfoByVendorAdminREST(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
+	vendorinfo.UpdateVendorInfoByVendorAdmin(&suite)
 }

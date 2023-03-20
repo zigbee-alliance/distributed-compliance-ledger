@@ -21,10 +21,13 @@ vid=$RANDOM
 vid2=$RANDOM
 vendor_account=vendor_account_$vid
 second_vendor_account=vendor_account_$vid2
+vendor_admin_account=vendor_admin_account
 echo "Create First Vendor Account - $vendor_account"
 create_new_vendor_account $vendor_account $vid
 echo "Create Second Vendor Account - $second_vendor_account"
 create_new_vendor_account $second_vendor_account $vid2
+echo "Create A VendorAdmin Account - $vendor_admin_account"
+create_new_account $vendor_admin_account "VendorAdmin"
 
 test_divider
 
@@ -105,5 +108,25 @@ test_divider
 result=$(echo "test1234" | dcld tx vendorinfo update-vendor --vid=$vid --companyLegalName="$companyLegalName" --vendorName="$vendorName" --from=$second_vendor_account --yes 2>&1) || true
 echo "$result"
 check_response_and_report "$result" "transaction should be signed by a vendor account associated with the vendorID $vid"
+
+test_divider
+
+# Create a vendor info reacord from a vendor admin account
+echo "Create a vendor info reacord from a vendor admin account"
+vid=$RANDOM
+result=$(echo "test1234" | dcld tx vendorinfo add-vendor --vid=$vid --companyLegalName="$companyLegalName" --vendorName="$vendorName" --from=$vendor_admin_account --yes 2>&1) || true
+echo "$result"
+check_response "$result" "\"code\": 0"
+echo "$result"
+
+test_divider
+
+# Update the vendor info record by a vendor admin account
+echo "Update the vendor info record by a vendor admin account"
+companyLegalName1="New Corp"
+vendorName1="New Vendor Name"
+result=$(echo "test1234" | dcld tx vendorinfo update-vendor --vid=$vid --companyLegalName="$companyLegalName1" --vendorName="$vendorName1" --from=$vendor_admin_account --yes)
+check_response "$result" "\"code\": 0"
+echo "$result"
 
 test_divider
