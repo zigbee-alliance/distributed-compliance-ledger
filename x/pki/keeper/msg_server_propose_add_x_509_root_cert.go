@@ -12,6 +12,19 @@ import (
 func (k msgServer) ProposeAddX509RootCert(goCtx context.Context, msg *types.MsgProposeAddX509RootCert) (*types.MsgProposeAddX509RootCertResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	signerAddr, err := sdk.AccAddressFromBech32(msg.Signer)
+	if err != nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
+	}
+
+	// check if sender has enough rights to propose a x509 root cert
+	if !k.dclauthKeeper.HasRole(ctx, signerAddr, types.RootCertificateApprovalRole) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+			"MsgProposeAddX509RootCert transaction should be signed by an account with the %s role",
+			types.RootCertificateApprovalRole,
+		)
+	}
+
 	// decode pem certificate
 	x509Certificate, err := x509.DecodeX509Certificate(msg.Cert)
 	if err != nil {
@@ -63,6 +76,12 @@ func (k msgServer) ProposeAddX509RootCert(goCtx context.Context, msg *types.MsgP
 		}
 	}
 
+	grant := types.Grant{
+		Address: signerAddr.String(),
+		Time:    msg.Time,
+		Info:    msg.Info,
+	}
+
 	// create a new proposed certificate with empty approvals list
 	proposedCertificate := types.ProposedCertificate{
 		Subject:       x509Certificate.Subject,
@@ -74,19 +93,7 @@ func (k msgServer) ProposeAddX509RootCert(goCtx context.Context, msg *types.MsgP
 		Approvals:     []*types.Grant{},
 	}
 
-	// if signer has `RootCertificateApprovalRole` append approval
-	signerAddr, err := sdk.AccAddressFromBech32(msg.Signer)
-	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
-	}
-	if k.dclauthKeeper.HasRole(ctx, signerAddr, types.RootCertificateApprovalRole) {
-		grant := types.Grant{
-			Address: signerAddr.String(),
-			Time:    msg.Time,
-			Info:    msg.Info,
-		}
-		proposedCertificate.Approvals = append(proposedCertificate.Approvals, &grant)
-	}
+	proposedCertificate.Approvals = append(proposedCertificate.Approvals, &grant)
 
 	// store proposed certificate
 	k.SetProposedCertificate(ctx, proposedCertificate)
