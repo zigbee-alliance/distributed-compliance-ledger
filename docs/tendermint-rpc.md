@@ -17,16 +17,16 @@ Subscribing to Tendermint WebSocket events can be done using any WS clients like
 wscat -c ws://localhost:26657/websocket
 ```
 
-2. Subscribe to the `tx` event (refer to the [docs](https://docs.tendermint.com/v0.34/rpc/#) to learn the syntax):
+2. Subscribe to the `tx` event in the wscat command line (refer to the [docs](https://docs.tendermint.com/v0.34/rpc/#) to learn the syntax):
 
 ```json
-> {"jsonrpc":"2.0","method":"subscribe","id":0,"params":{"query":"tm.event='Tx'"}}
+{"jsonrpc":"2.0","method":"subscribe","id":0,"params":{"query":"tm.event='Tx'"}}
 ```
 
 You should get the following response if everything is OK:
 
 ```json
-< {
+{
   "jsonrpc": "2.0",
   "id": 0,
   "result": {}
