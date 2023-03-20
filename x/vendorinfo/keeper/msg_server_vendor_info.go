@@ -11,18 +11,19 @@ import (
 func (k msgServer) CreateVendorInfo(goCtx context.Context, msg *types.MsgCreateVendorInfo) (*types.MsgCreateVendorInfoResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	// check if creator has enough rights to create vendorinfo
+	if err := checkAddVendorRights(ctx, k.Keeper, msg.GetSigners()[0], msg.VendorID); err != nil {
+		return nil, err
+	}
+
 	// Check if the value already exists
 	_, isFound := k.GetVendorInfo(
 		ctx,
 		msg.VendorID,
 	)
+
 	if isFound {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "index already set")
-	}
-
-	// check if creator has enough rights to create vendorinfo
-	if err := checkAddVendorRights(ctx, k.Keeper, msg.GetSigners()[0], msg.VendorID); err != nil {
-		return nil, err
 	}
 
 	vendorInfo := types.VendorInfo{
@@ -44,6 +45,11 @@ func (k msgServer) CreateVendorInfo(goCtx context.Context, msg *types.MsgCreateV
 
 func (k msgServer) UpdateVendorInfo(goCtx context.Context, msg *types.MsgUpdateVendorInfo) (*types.MsgUpdateVendorInfoResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// check if creator has enough rights to update vendorinfo
+	if err := checkUpdateVendorRights(ctx, k.Keeper, msg.GetSigners()[0], msg.VendorID); err != nil {
+		return nil, err
+	}
 
 	// Check if the value exists
 	vendorInfo, isFound := k.GetVendorInfo(
