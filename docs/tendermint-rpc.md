@@ -19,7 +19,7 @@ wscat -c ws://<node-ip>:<port>/websocket
 
 In cases of [Test Net](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/deployment/persistent_chains/testnet-2.0/testnet-2.0-csa-endpoints.md) and [Main Net](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/deployment/persistent_chains/main-net/main-net-csa-endpoints.md) observer nodes, `node-ip`s are `on.test-net.dcl.csa-iot.org` and `on.dcl.csa-iot.org`, respectively, having the same ports `26657`
 
-2. Subscribe to the `tx` event:
+2. Subscribe to the `tx` event in the wscat command line (refer to the [docs](https://docs.tendermint.com/v0.34/rpc/#) to learn the syntax):
 
 ```json
 {"jsonrpc":"2.0","method":"subscribe","id":0,"params":{"query":"tm.event='Tx'"}}
@@ -211,4 +211,4 @@ It returns a response as follows:
 }
 ```
 
-The `proof` property can be excluded from the response by setting the `proof` property in the query string to `false` (or just by omitting it).  
+The `proof` property can be excluded from the response by setting the `prove` property in the query string to `false` (or just by omitting it).  
