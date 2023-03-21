@@ -9,6 +9,7 @@ import (
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
+	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	math_bits "math/bits"
 )
 
@@ -25,7 +26,7 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // GenesisState defines the compliance module's genesis state.
 type GenesisState struct {
-	ComplianceInfoList           []ComplianceInfo           `protobuf:"bytes,1,rep,name=complianceInfoList,proto3" json:"complianceInfoList"`
+	ComplianceInfoList           []dclcompltypes.ComplianceInfo           `protobuf:"bytes,1,rep,name=complianceInfoList,proto3" json:"complianceInfoList"`
 	CertifiedModelList           []CertifiedModel           `protobuf:"bytes,2,rep,name=certifiedModelList,proto3" json:"certifiedModelList"`
 	RevokedModelList             []RevokedModel             `protobuf:"bytes,3,rep,name=revokedModelList,proto3" json:"revokedModelList"`
 	ProvisionalModelList         []ProvisionalModel         `protobuf:"bytes,4,rep,name=provisionalModelList,proto3" json:"provisionalModelList"`
@@ -65,7 +66,7 @@ func (m *GenesisState) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_GenesisState proto.InternalMessageInfo
 
-func (m *GenesisState) GetComplianceInfoList() []ComplianceInfo {
+func (m *GenesisState) GetComplianceInfoList() []dclcompltypes.ComplianceInfo {
 	if m != nil {
 		return m.ComplianceInfoList
 	}
@@ -342,7 +343,7 @@ func (m *GenesisState) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ComplianceInfoList = append(m.ComplianceInfoList, ComplianceInfo{})
+			m.ComplianceInfoList = append(m.ComplianceInfoList, dclcompltypes.ComplianceInfo{})
 			if err := m.ComplianceInfoList[len(m.ComplianceInfoList)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}

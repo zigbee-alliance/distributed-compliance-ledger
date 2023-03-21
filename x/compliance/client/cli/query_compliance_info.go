@@ -6,6 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
+	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
@@ -60,11 +61,11 @@ func CmdShowComplianceInfo() *cobra.Command {
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
-			var res types.ComplianceInfo
+			var res dclcompltypes.ComplianceInfo
 
 			return cli.QueryWithProof(
 				clientCtx,
-				types.StoreKey,
+				dclcompltypes.StoreKey,
 				types.ComplianceInfoKeyPrefix,
 				types.ComplianceInfoKey(vid, pid, softwareVersion, certificationType),
 				&res,

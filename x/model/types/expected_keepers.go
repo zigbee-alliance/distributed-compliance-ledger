@@ -2,7 +2,7 @@ package types
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
+	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
@@ -20,21 +20,5 @@ type ComplianceKeeper interface {
 		pid int32,
 		softwareVersion uint32,
 		certificationType string,
-	) (val types.ComplianceInfo, found bool)
-
-	GetProvisionalModel(
-		ctx sdk.Context,
-		vid int32,
-		pid int32,
-		softwareVersion uint32,
-		certificationType string,
-	) (val types.ProvisionalModel, found bool)
-
-	GetRevokedModel(
-		ctx sdk.Context,
-		vid int32,
-		pid int32,
-		softwareVersion uint32,
-		certificationType string,
-	) (val types.RevokedModel, found bool)
+	) (val dclcompltypes.ComplianceInfo, found bool)
 }

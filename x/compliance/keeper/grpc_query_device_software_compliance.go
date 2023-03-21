@@ -6,6 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
+	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -20,7 +21,7 @@ func (k Keeper) DeviceSoftwareComplianceAll(c context.Context, req *types.QueryA
 	ctx := sdk.UnwrapSDKContext(c)
 
 	store := ctx.KVStore(k.storeKey)
-	deviceSoftwareComplianceStore := prefix.NewStore(store, types.KeyPrefix(types.DeviceSoftwareComplianceKeyPrefix))
+	deviceSoftwareComplianceStore := prefix.NewStore(store, dclcompltypes.KeyPrefix(types.DeviceSoftwareComplianceKeyPrefix))
 
 	pageRes, err := query.Paginate(deviceSoftwareComplianceStore, req.Pagination, func(key []byte, value []byte) error {
 		var deviceSoftwareCompliance types.DeviceSoftwareCompliance
