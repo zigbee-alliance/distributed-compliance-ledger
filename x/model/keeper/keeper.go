@@ -15,7 +15,8 @@ type (
 		storeKey sdk.StoreKey
 		memKey   sdk.StoreKey
 
-		dclauthKeeper types.DclauthKeeper
+		dclauthKeeper    types.DclauthKeeper
+		ComplianceKeeper types.ComplianceKeeper
 	}
 )
 

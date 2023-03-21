@@ -7,6 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
@@ -58,7 +59,7 @@ func CmdShowDeviceSoftwareCompliance() *cobra.Command {
 
 			return cli.QueryWithProof(
 				clientCtx,
-				types.StoreKey,
+				dclcompltypes.StoreKey,
 				types.DeviceSoftwareComplianceKeyPrefix,
 				types.DeviceSoftwareComplianceKey(argCDCertificateID),
 				&res,

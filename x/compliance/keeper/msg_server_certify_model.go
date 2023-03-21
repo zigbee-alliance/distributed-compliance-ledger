@@ -7,12 +7,13 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	modeltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
-func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyModel) (*types.MsgCertifyModelResponse, error) {
+func (k msgServer) CertifyModel(goCtx context.Context, msg *dclcompltypes.MsgCertifyModel) (*dclcompltypes.MsgCertifyModelResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	signerAddr, err := sdk.AccAddressFromBech32(msg.Signer)
@@ -37,7 +38,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 
 	// check if softwareVersionString matches with what is stored for the given version
 	if modelVersion.SoftwareVersionString != msg.SoftwareVersionString {
-		return nil, types.NewErrModelVersionStringDoesNotMatch(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.SoftwareVersionString)
+		return nil, dclcompltypes.NewErrModelVersionStringDoesNotMatch(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.SoftwareVersionString)
 	}
 
 	complianceInfo, found := k.GetComplianceInfo(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
@@ -52,21 +53,21 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 		// and so the test results are not required to be present.
 
 		// check if compliance is already in certified state
-		if complianceInfo.SoftwareVersionCertificationStatus == types.CodeCertified {
-			return nil, types.NewErrAlreadyCertified(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
+		if complianceInfo.SoftwareVersionCertificationStatus == dclcompltypes.CodeCertified {
+			return nil, dclcompltypes.NewErrAlreadyCertified(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
 		}
 
 		// if state changes on `certified` check that certification date is after provisional/revocation date
 		newDate, err := time.Parse(time.RFC3339, msg.CertificationDate)
 		if err != nil {
-			return nil, types.NewErrInvalidTestDateFormat(msg.CertificationDate)
+			return nil, dclcompltypes.NewErrInvalidTestDateFormat(msg.CertificationDate)
 		}
 		oldDate, err := time.Parse(time.RFC3339, complianceInfo.Date)
 		if err != nil {
-			return nil, types.NewErrInvalidTestDateFormat(complianceInfo.Date)
+			return nil, dclcompltypes.NewErrInvalidTestDateFormat(complianceInfo.Date)
 		}
 		if newDate.Before(oldDate) {
-			return nil, types.NewErrInconsistentDates(
+			return nil, dclcompltypes.NewErrInconsistentDates(
 				fmt.Sprintf("The `certification_date`:%v must be after the current `date`:%v to "+
 					"certify model", msg.CertificationDate, complianceInfo.Date),
 			)
@@ -76,7 +77,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 	} else {
 		// There is no compliance record yet. So certification will be tracked on ledger.
 
-		complianceInfo = types.ComplianceInfo{
+		complianceInfo = dclcompltypes.ComplianceInfo{
 			Vid:                                msg.Vid,
 			Pid:                                msg.Pid,
 			SoftwareVersion:                    msg.SoftwareVersion,
@@ -85,8 +86,8 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 			Date:                               msg.CertificationDate,
 			Reason:                             msg.Reason,
 			Owner:                              msg.Signer,
-			SoftwareVersionCertificationStatus: types.CodeCertified,
-			History:                            []*types.ComplianceHistoryItem{},
+			SoftwareVersionCertificationStatus: dclcompltypes.CodeCertified,
+			History:                            []*dclcompltypes.ComplianceHistoryItem{},
 			CDVersionNumber:                    msg.CDVersionNumber,
 			CDCertificateId:                    msg.CDCertificateId,
 		}
@@ -132,5 +133,5 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 	}
 	k.SetProvisionalModel(ctx, provisionalModel)
 
-	return &types.MsgCertifyModelResponse{}, nil
+	return &dclcompltypes.MsgCertifyModelResponse{}, nil
 }

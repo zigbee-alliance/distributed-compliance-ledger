@@ -8,15 +8,15 @@ import (
 	"github.com/stretchr/testify/require"
 	keepertest "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/nullify"
+	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/keeper"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
 // Prevent strconv unused error.
 var _ = strconv.IntSize
 
-func createNComplianceInfo(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.ComplianceInfo {
-	items := make([]types.ComplianceInfo, n)
+func createNComplianceInfo(keeper *keeper.Keeper, ctx sdk.Context, n int) []dclcompltypes.ComplianceInfo {
+	items := make([]dclcompltypes.ComplianceInfo, n)
 	for i := range items {
 		items[i].Vid = int32(i)
 		items[i].Pid = int32(i)

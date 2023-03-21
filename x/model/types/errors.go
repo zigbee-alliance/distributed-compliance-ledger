@@ -38,6 +38,12 @@ func NewErrModelDoesNotExist(vid interface{}, pid interface{}) error {
 		vid, pid)
 }
 
+func NewErrModelCertified(vid interface{}, pid interface{}) error {
+	return sdkerrors.Wrapf(ErrModelAlreadyExists,
+		"Model associated with vid=%v and pid=%v certified and its model versions can't be deleted",
+		vid, pid)
+}
+
 func NewErrVendorProductsDoNotExist(vid interface{}) error {
 	return sdkerrors.Wrapf(ErrVendorProductsDoNotExist,
 		"No vendor products associated with vid=%v exist on the ledger",

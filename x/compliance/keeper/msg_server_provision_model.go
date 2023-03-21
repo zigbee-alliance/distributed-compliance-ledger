@@ -5,11 +5,12 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
-func (k msgServer) ProvisionModel(goCtx context.Context, msg *types.MsgProvisionModel) (*types.MsgProvisionModelResponse, error) {
+func (k msgServer) ProvisionModel(goCtx context.Context, msg *dclcompltypes.MsgProvisionModel) (*dclcompltypes.MsgProvisionModelResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	signerAddr, err := sdk.AccAddressFromBech32(msg.Signer)
@@ -30,18 +31,18 @@ func (k msgServer) ProvisionModel(goCtx context.Context, msg *types.MsgProvision
 	complianceInfo, found := k.GetComplianceInfo(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
 	if found {
 		switch status := complianceInfo.SoftwareVersionCertificationStatus; status {
-		case types.CodeProvisional:
-			return nil, types.NewErrAlreadyProvisional(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
-		case types.CodeCertified:
-			return nil, types.NewErrAlreadyCertified(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
-		case types.CodeRevoked:
-			return nil, types.NewErrAlreadyRevoked(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
+		case dclcompltypes.CodeProvisional:
+			return nil, dclcompltypes.NewErrAlreadyProvisional(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
+		case dclcompltypes.CodeCertified:
+			return nil, dclcompltypes.NewErrAlreadyCertified(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
+		case dclcompltypes.CodeRevoked:
+			return nil, dclcompltypes.NewErrAlreadyRevoked(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
 		default:
-			return nil, types.NewErrComplianceInfoAlreadyExist(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
+			return nil, dclcompltypes.NewErrComplianceInfoAlreadyExist(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
 		}
 	}
 
-	complianceInfo = types.ComplianceInfo{
+	complianceInfo = dclcompltypes.ComplianceInfo{
 		Vid:                                msg.Vid,
 		Pid:                                msg.Pid,
 		SoftwareVersion:                    msg.SoftwareVersion,
@@ -50,8 +51,8 @@ func (k msgServer) ProvisionModel(goCtx context.Context, msg *types.MsgProvision
 		Date:                               msg.ProvisionalDate,
 		Reason:                             msg.Reason,
 		Owner:                              msg.Signer,
-		SoftwareVersionCertificationStatus: types.CodeProvisional,
-		History:                            []*types.ComplianceHistoryItem{},
+		SoftwareVersionCertificationStatus: dclcompltypes.CodeProvisional,
+		History:                            []*dclcompltypes.ComplianceHistoryItem{},
 		CDVersionNumber:                    msg.CDVersionNumber,
 		ProgramTypeVersion:                 msg.ProgramTypeVersion,
 		CDCertificateId:                    msg.CDCertificateId,
@@ -80,5 +81,5 @@ func (k msgServer) ProvisionModel(goCtx context.Context, msg *types.MsgProvision
 	}
 	k.SetProvisionalModel(ctx, provisionalModel)
 
-	return &types.MsgProvisionModelResponse{}, nil
+	return &dclcompltypes.MsgProvisionModelResponse{}, nil
 }
