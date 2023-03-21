@@ -5,8 +5,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/keeper"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
 // NewHandler ...
@@ -17,21 +17,21 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 		ctx = ctx.WithEventManager(sdk.NewEventManager())
 
 		switch msg := msg.(type) {
-		case *types.MsgCertifyModel:
+		case *dclcompltypes.MsgCertifyModel:
 			res, err := msgServer.CertifyModel(sdk.WrapSDKContext(ctx), msg)
 
 			return sdk.WrapServiceResult(ctx, res, err)
-		case *types.MsgRevokeModel:
+		case *dclcompltypes.MsgRevokeModel:
 			res, err := msgServer.RevokeModel(sdk.WrapSDKContext(ctx), msg)
 
 			return sdk.WrapServiceResult(ctx, res, err)
-		case *types.MsgProvisionModel:
+		case *dclcompltypes.MsgProvisionModel:
 			res, err := msgServer.ProvisionModel(sdk.WrapSDKContext(ctx), msg)
 
 			return sdk.WrapServiceResult(ctx, res, err)
 			// this line is used by starport scaffolding # 1
 		default:
-			errMsg := fmt.Sprintf("unrecognized %s message type: %T", types.ModuleName, msg)
+			errMsg := fmt.Sprintf("unrecognized %s message type: %T", dclcompltypes.ModuleName, msg)
 
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
 		}

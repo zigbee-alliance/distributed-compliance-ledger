@@ -7,8 +7,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/spf13/cobra"
+	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
 var _ = strconv.Itoa(0)
@@ -35,7 +35,7 @@ func CmdRevokeModel() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgRevokeModel(
+			msg := dclcompltypes.NewMsgRevokeModel(
 				clientCtx.GetFromAddress().String(),
 				vid,
 				pid,

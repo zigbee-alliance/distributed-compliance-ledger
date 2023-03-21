@@ -183,16 +183,6 @@ func (k msgServer) IsModelCertified(ctx sdk.Context, vid int32, pid int32, softw
 		if isFound {
 			return true
 		}
-
-		_, isFound = k.ComplianceKeeper.GetProvisionalModel(ctx, vid, pid, softwareVersion, certType)
-		if isFound {
-			return true
-		}
-
-		_, isFound = k.ComplianceKeeper.GetRevokedModel(ctx, vid, pid, softwareVersion, certType)
-		if isFound {
-			return true
-		}
 	}
 
 	return false
