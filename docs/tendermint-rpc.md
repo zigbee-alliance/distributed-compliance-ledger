@@ -124,7 +124,7 @@ dcld tx auth propose-add-account \
   }
 }
 ```
-
+<sup>string are encoded in base64 format</sup>   
 Detailed info about subscribing can be found [here](https://docs.tendermint.com/v0.34/rpc/#/Websocket/subscribe).
 
 ### Unsubscribe
