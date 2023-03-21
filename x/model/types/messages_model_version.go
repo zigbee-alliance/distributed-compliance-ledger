@@ -187,7 +187,12 @@ func (msg *MsgDeleteModelVersion) GetSignBytes() []byte {
 func (msg *MsgDeleteModelVersion) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address (%s)", err)
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	err = validator.Validate(msg)
+	if err != nil {
+		return err
 	}
 
 	return nil
