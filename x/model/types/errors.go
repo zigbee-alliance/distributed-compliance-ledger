@@ -24,6 +24,7 @@ var (
 	ErrMaxSVLessThanMinSV           = sdkerrors.Register(ModuleName, 521, "max software version less than min software version")
 	ErrLsfRevisionIsNotValid        = sdkerrors.Register(ModuleName, 522, "LsfRevision should monotonically increase by 1")
 	ErrLsfRevisionIsNotAllowed      = sdkerrors.Register(ModuleName, 523, "LsfRevision is not allowed if LsfURL is not present")
+	ErrModelVersionCertified        = sdkerrors.Register(ModuleName, 524, "model version certified")
 )
 
 func NewErrModelAlreadyExists(vid interface{}, pid interface{}) error {
@@ -35,12 +36,6 @@ func NewErrModelAlreadyExists(vid interface{}, pid interface{}) error {
 func NewErrModelDoesNotExist(vid interface{}, pid interface{}) error {
 	return sdkerrors.Wrapf(ErrModelDoesNotExist,
 		"No model associated with vid=%v and pid=%v exist on the ledger",
-		vid, pid)
-}
-
-func NewErrModelCertified(vid interface{}, pid interface{}) error {
-	return sdkerrors.Wrapf(ErrModelAlreadyExists,
-		"Model associated with vid=%v and pid=%v certified and its model versions can't be deleted",
 		vid, pid)
 }
 
@@ -129,4 +124,10 @@ func NewErrLsfRevisionIsNotValid(previousLsfVersion interface{},
 	return sdkerrors.Wrapf(ErrLsfRevisionIsNotValid,
 		"LsfRevision %v should be greater then existing lsfRevision %v by 1",
 		currentLsfVersion, previousLsfVersion)
+}
+
+func NewErrModelVersionCertified(vid interface{}, pid interface{}, softwareVersion interface{}) error {
+	return sdkerrors.Wrapf(ErrModelVersionCertified,
+		"Model version associated with vid=%v, pid=%v and softwareVersion=%v certified and its model versions can't be deleted",
+		vid, pid, softwareVersion)
 }
