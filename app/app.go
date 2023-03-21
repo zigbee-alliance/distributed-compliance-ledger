@@ -421,6 +421,7 @@ func New(
 		keys[modelmoduletypes.MemStoreKey],
 
 		app.DclauthKeeper,
+		app.ComplianceKeeper,
 	)
 	modelModule := modelmodule.NewAppModule(appCodec, app.ModelKeeper)
 
