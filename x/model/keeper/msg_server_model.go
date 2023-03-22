@@ -6,6 +6,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (k msgServer) CreateModel(goCtx context.Context, msg *types.MsgCreateModel) (*types.MsgCreateModelResponse, error) {
@@ -168,9 +170,11 @@ func (k msgServer) DeleteModel(goCtx context.Context, msg *types.MsgDeleteModel)
 
 	// check if signer has enough rights to delete model
 	signerAddr, err := sdk.AccAddressFromBech32(msg.Creator)
+
 	if err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
+	
 	if err := checkModelRights(ctx, k.Keeper, signerAddr, msg.Vid, "MsgDeleteModel"); err != nil {
 		return nil, err
 	}
@@ -181,6 +185,7 @@ func (k msgServer) DeleteModel(goCtx context.Context, msg *types.MsgDeleteModel)
 		msg.Vid,
 		msg.Pid,
 	)
+
 	if !isFound {
 		return nil, types.NewErrModelDoesNotExist(msg.Vid, msg.Pid)
 	}
@@ -194,6 +199,32 @@ func (k msgServer) DeleteModel(goCtx context.Context, msg *types.MsgDeleteModel)
 
 	// remove product from VendorProducts
 	k.RemoveVendorProduct(ctx, msg.Vid, msg.Pid)
+
+	modelVersions, err := k.ModelVersions(goCtx, &types.QueryGetModelVersionsRequest{
+		Vid: msg.Vid, 
+		Pid: msg.Pid,
+	})
+
+	if err != nil && status.Code(err) == codes.InvalidArgument {
+		return nil, err
+	} 
+
+	if modelVersions != nil {
+		// remove modelVersion for each softwareVersion
+		for _, softwareVersion := range modelVersions.ModelVersions.SoftwareVersions {
+			msgDeleteModelVersion := types.NewMsgDeleteModelVersion(
+				msg.Creator, 
+				msg.Vid, 
+				msg.Pid, 
+				softwareVersion,
+			)
+	
+			k.DeleteModelVersion(goCtx, msgDeleteModelVersion)
+		}
+	
+		// remove modelVersions record
+		k.RemoveModelVersions(ctx, msg.Vid, msg.Pid)
+	}
 
 	return &types.MsgDeleteModelResponse{}, nil
 }
