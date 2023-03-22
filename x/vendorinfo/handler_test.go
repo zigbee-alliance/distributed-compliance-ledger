@@ -191,6 +191,83 @@ func TestHandler_OnlyOwnerCanUpdateVendorInfo(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestHandler_UpdateVendorInfoWithEmptyOptionalFields(t *testing.T) {
+	setup := Setup(t)
+
+	// add new msgCreateVendorInfo
+	msgCreateVendorInfo := NewMsgCreateVendorInfo(setup.Vendor)
+
+	_, err := setup.Handler(setup.Ctx, msgCreateVendorInfo)
+	require.NoError(t, err)
+
+	// query vendorinfo
+	vendorInfo, err := queryVendorInfo(setup, msgCreateVendorInfo.VendorID)
+	require.NoError(t, err)
+
+	msgUpdateVendorInfo := &types.MsgUpdateVendorInfo{
+		Creator:              vendorInfo.Creator,
+		VendorID:             vendorInfo.VendorID,
+		CompanyLegalName:     "",
+		CompanyPreferredName: "",
+		VendorName:           "",
+		VendorLandingPageURL: "",
+	}
+	_, err = setup.Handler(setup.Ctx, msgUpdateVendorInfo)
+	require.NoError(t, err)
+
+	// query the updated vendorinfo
+	updatedVendorInfo, err := queryVendorInfo(setup, msgCreateVendorInfo.VendorID)
+	require.NoError(t, err)
+
+	require.Equal(t, updatedVendorInfo.Creator, vendorInfo.Creator)
+	require.Equal(t, updatedVendorInfo.VendorID, vendorInfo.VendorID)
+	require.Equal(t, updatedVendorInfo.CompanyLegalName, vendorInfo.CompanyLegalName)
+	require.Equal(t, updatedVendorInfo.CompanyPreferredName, vendorInfo.CompanyPreferredName)
+	require.Equal(t, updatedVendorInfo.VendorName, vendorInfo.VendorName)
+	require.Equal(t, updatedVendorInfo.VendorLandingPageURL, vendorInfo.VendorLandingPageURL)
+}
+
+func TestHandler_UpdateVendorInfoWithAllOptionalFields(t *testing.T) {
+	setup := Setup(t)
+
+	// add new msgCreateVendorInfo
+	msgCreateVendorInfo := NewMsgCreateVendorInfo(setup.Vendor)
+
+	_, err := setup.Handler(setup.Ctx, msgCreateVendorInfo)
+	require.NoError(t, err)
+
+	// query vendorinfo
+	vendorInfo, err := queryVendorInfo(setup, msgCreateVendorInfo.VendorID)
+	require.NoError(t, err)
+
+	companyLegalName := "1"
+	companyPreferredName := "2"
+	vendorName := "3"
+	vendorLandingPageURL := "4"
+
+	msgUpdateVendorInfo := &types.MsgUpdateVendorInfo{
+		Creator:              vendorInfo.Creator,
+		VendorID:             vendorInfo.VendorID,
+		CompanyLegalName:     companyLegalName,
+		CompanyPreferredName: companyPreferredName,
+		VendorName:           vendorName,
+		VendorLandingPageURL: vendorLandingPageURL,
+	}
+	_, err = setup.Handler(setup.Ctx, msgUpdateVendorInfo)
+	require.NoError(t, err)
+
+	// query the updated vendorinfo
+	updatedVendorInfo, err := queryVendorInfo(setup, msgCreateVendorInfo.VendorID)
+	require.NoError(t, err)
+
+	require.Equal(t, updatedVendorInfo.Creator, vendorInfo.Creator)
+	require.Equal(t, updatedVendorInfo.VendorID, vendorInfo.VendorID)
+	require.Equal(t, updatedVendorInfo.CompanyLegalName, companyLegalName)
+	require.Equal(t, updatedVendorInfo.CompanyPreferredName, companyPreferredName)
+	require.Equal(t, updatedVendorInfo.VendorName, vendorName)
+	require.Equal(t, updatedVendorInfo.VendorLandingPageURL, vendorLandingPageURL)
+}
+
 func TestHandler_AddVendorInfoWithEmptyOptionalFields(t *testing.T) {
 	setup := Setup(t)
 

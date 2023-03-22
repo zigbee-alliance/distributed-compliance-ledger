@@ -30,8 +30,8 @@ message MsgUpdateVendorInfo {
   string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
   int32 vendorID = 2 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
 
-  string vendorName = 3 [(gogoproto.moretags) = "validate:\"required,max=128\""];
-  string companyLegalName = 4 [(gogoproto.moretags) = "validate:\"required,max=256\""];
+  string vendorName = 3 [(gogoproto.moretags) = "validate:\"omitempty,max=128\""];
+  string companyLegalName = 4 [(gogoproto.moretags) = "validate:\"omitempty,max=256\""];
   string companyPreferredName = 5 [(gogoproto.moretags) = "validate:\"omitempty,max=256\""];
   string vendorLandingPageURL = 6 [(gogoproto.moretags) = "validate:\"omitempty,max=256,url\""];
 }

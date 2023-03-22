@@ -52,7 +52,7 @@ func (k msgServer) UpdateVendorInfo(goCtx context.Context, msg *types.MsgUpdateV
 	}
 
 	// Check if the value exists
-	_, isFound := k.GetVendorInfo(
+	vendorInfo, isFound := k.GetVendorInfo(
 		ctx,
 		msg.VendorID,
 	)
@@ -61,13 +61,32 @@ func (k msgServer) UpdateVendorInfo(goCtx context.Context, msg *types.MsgUpdateV
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, "index not set")
 	}
 
-	vendorInfo := types.VendorInfo{
-		Creator:              msg.Creator,
-		VendorID:             msg.VendorID,
-		VendorName:           msg.VendorName,
-		CompanyLegalName:     msg.CompanyLegalName,
-		CompanyPreferredName: msg.CompanyPreferredName,
-		VendorLandingPageURL: msg.VendorLandingPageURL,
+	// check if creator has enough rights to update vendorinfo
+	if err := checkUpdateVendorRights(ctx, k.Keeper, msg.GetSigners()[0], msg.VendorID); err != nil {
+		return nil, err
+	}
+
+	// update existing model value only if corresponding value in MsgUpdate is not empty
+	vendorInfo.VendorID = msg.VendorID
+
+	if msg.Creator != "" {
+		vendorInfo.Creator = msg.Creator
+	}
+
+	if msg.VendorName != "" {
+		vendorInfo.VendorName = msg.VendorName
+	}
+
+	if msg.CompanyLegalName != "" {
+		vendorInfo.CompanyLegalName = msg.CompanyLegalName
+	}
+
+	if msg.CompanyPreferredName != "" {
+		vendorInfo.CompanyPreferredName = msg.CompanyPreferredName
+	}
+
+	if msg.VendorLandingPageURL != "" {
+		vendorInfo.VendorLandingPageURL = msg.VendorLandingPageURL
 	}
 
 	k.SetVendorInfo(ctx, vendorInfo)
