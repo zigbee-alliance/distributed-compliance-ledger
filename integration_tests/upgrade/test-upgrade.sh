@@ -318,36 +318,6 @@ check_response "$result" "\"code\": 0"
 test_divider
 
 # Body
-
-get_height current_height
-echo "Current height is $current_height"
-
-plan_height=$(expr $current_height \* 7)
-
-test_divider
-
-echo "Propose upgrade $plan_name at height $plan_height"
-echo "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$plan_name/dcld.ubuntu.tar.gz?checksum=$upgrade_checksum"
-result=$(echo $passphrase | dcld tx dclupgrade propose-upgrade --name=$plan_name --upgrade-height=$plan_height --upgrade-info="{\"binaries\":{\"linux/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$plan_name/dcld.ubuntu.tar.gz?checksum=$upgrade_checksum\"}}" --from $trustee_account_1 --yes)
-echo "$result"
-check_response "$result" "\"code\": 0"
-
-test_divider
-
-echo "Approve upgrade $plan_name"
-result=$(echo $passphrase | dcld tx dclupgrade approve-upgrade --name $plan_name --from $trustee_account_2 --yes)
-echo "$result"
-check_response "$result" "\"code\": 0"
-
-test_divider
-
-echo "Approve upgrade $plan_name"
-result=$(echo $passphrase | dcld tx dclupgrade approve-upgrade --name $plan_name --from $trustee_account_3 --yes)
-echo "$result"
-check_response "$result" "\"code\": 0"
-
-test_divider
-
 echo "send all ledger update transactions before upgrade"
 
 # VENDOR_INFO
@@ -618,6 +588,35 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
+
+get_height current_height
+echo "Current height is $current_height"
+
+plan_height=$(expr $current_height \+ 20)
+
+test_divider
+
+echo "Propose upgrade $plan_name at height $plan_height"
+echo "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$plan_name/dcld.ubuntu.tar.gz?checksum=$upgrade_checksum"
+result=$(echo $passphrase | dcld tx dclupgrade propose-upgrade --name=$plan_name --upgrade-height=$plan_height --upgrade-info="{\"binaries\":{\"linux/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$plan_name/dcld.ubuntu.tar.gz?checksum=$upgrade_checksum\"}}" --from $trustee_account_1 --yes)
+echo "$result"
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Approve upgrade $plan_name"
+result=$(echo $passphrase | dcld tx dclupgrade approve-upgrade --name $plan_name --from $trustee_account_2 --yes)
+echo "$result"
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Approve upgrade $plan_name"
+result=$(echo $passphrase | dcld tx dclupgrade approve-upgrade --name $plan_name --from $trustee_account_3 --yes)
+echo "$result"
+check_response "$result" "\"code\": 0"
+
+test_divider
 
 echo "Wait for block height to become greater than upgrade $plan_name plan height"
 wait_for_height $(expr $plan_height + 1) 300 outage-safe

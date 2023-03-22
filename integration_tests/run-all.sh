@@ -189,7 +189,7 @@ fi
 if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "upgrade" ]]; then
     UPGRADE_SHELL_TEST="./integration_tests/upgrade/test-upgrade.sh"
 
-    init_pool "" "localnet_init_latest_version"
+    init_pool "" "localnet_init_latest_stable_release"
 
     log "*****************************************************************************************"
     log "Running $UPGRADE_SHELL_TEST"

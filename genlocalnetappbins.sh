@@ -3,7 +3,7 @@ set -euo pipefail
 DOCKERFILE="${1:-Dockerfile-build}"
 IMAGE_TAG="${2:-dcld-build}"
 VERSION_DIR="${3:-genesis}"
-LATEST_VERSION="${4:-false}"
+if [[ "${4}" == "v0.13.0-pre" ]]; then LATEST_VERSION="true"; else LATEST_VERSION="false"; fi
 
 LOCALNET_DIR=".localnet"
 
