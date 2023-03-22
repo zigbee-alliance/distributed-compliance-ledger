@@ -191,6 +191,83 @@ func TestHandler_OnlyOwnerCanUpdateVendorInfo(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestHandler_UpdateVendorInfoWithEmptyOptionalFields(t *testing.T) {
+	setup := Setup(t)
+
+	// add new msgCreateVendorInfo
+	msgCreateVendorInfo := NewMsgCreateVendorInfo(setup.Vendor)
+
+	_, err := setup.Handler(setup.Ctx, msgCreateVendorInfo)
+	require.NoError(t, err)
+
+	// query vendorinfo
+	vendorInfo, err := queryVendorInfo(setup, msgCreateVendorInfo.VendorID)
+	require.NoError(t, err)
+
+	msgUpdateVendorInfo := &types.MsgUpdateVendorInfo{
+		Creator:              vendorInfo.Creator,
+		VendorID:             vendorInfo.VendorID,
+		CompanyLegalName:     "",
+		CompanyPreferredName: "",
+		VendorName:           "",
+		VendorLandingPageURL: "",
+	}
+	_, err = setup.Handler(setup.Ctx, msgUpdateVendorInfo)
+	require.NoError(t, err)
+
+	// query the updated vendorinfo
+	updatedVendorInfo, err := queryVendorInfo(setup, msgCreateVendorInfo.VendorID)
+	require.NoError(t, err)
+
+	require.Equal(t, updatedVendorInfo.Creator, vendorInfo.Creator)
+	require.Equal(t, updatedVendorInfo.VendorID, vendorInfo.VendorID)
+	require.Equal(t, updatedVendorInfo.CompanyLegalName, vendorInfo.CompanyLegalName)
+	require.Equal(t, updatedVendorInfo.CompanyPreferredName, vendorInfo.CompanyPreferredName)
+	require.Equal(t, updatedVendorInfo.VendorName, vendorInfo.VendorName)
+	require.Equal(t, updatedVendorInfo.VendorLandingPageURL, vendorInfo.VendorLandingPageURL)
+}
+
+func TestHandler_UpdateVendorInfoWithAllOptionalFields(t *testing.T) {
+	setup := Setup(t)
+
+	// add new msgCreateVendorInfo
+	msgCreateVendorInfo := NewMsgCreateVendorInfo(setup.Vendor)
+
+	_, err := setup.Handler(setup.Ctx, msgCreateVendorInfo)
+	require.NoError(t, err)
+
+	// query vendorinfo
+	vendorInfo, err := queryVendorInfo(setup, msgCreateVendorInfo.VendorID)
+	require.NoError(t, err)
+
+	companyLegalName := "1"
+	companyPreferredName := "2"
+	vendorName := "3"
+	vendorLandingPageURL := "4"
+
+	msgUpdateVendorInfo := &types.MsgUpdateVendorInfo{
+		Creator:              vendorInfo.Creator,
+		VendorID:             vendorInfo.VendorID,
+		CompanyLegalName:     companyLegalName,
+		CompanyPreferredName: companyPreferredName,
+		VendorName:           vendorName,
+		VendorLandingPageURL: vendorLandingPageURL,
+	}
+	_, err = setup.Handler(setup.Ctx, msgUpdateVendorInfo)
+	require.NoError(t, err)
+
+	// query the updated vendorinfo
+	updatedVendorInfo, err := queryVendorInfo(setup, msgCreateVendorInfo.VendorID)
+	require.NoError(t, err)
+
+	require.Equal(t, updatedVendorInfo.Creator, vendorInfo.Creator)
+	require.Equal(t, updatedVendorInfo.VendorID, vendorInfo.VendorID)
+	require.Equal(t, updatedVendorInfo.CompanyLegalName, companyLegalName)
+	require.Equal(t, updatedVendorInfo.CompanyPreferredName, companyPreferredName)
+	require.Equal(t, updatedVendorInfo.VendorName, vendorName)
+	require.Equal(t, updatedVendorInfo.VendorLandingPageURL, vendorLandingPageURL)
+}
+
 func TestHandler_AddVendorInfoWithEmptyOptionalFields(t *testing.T) {
 	setup := Setup(t)
 
@@ -226,6 +303,121 @@ func TestHandler_AddVendorInfoByNonVendor(t *testing.T) {
 		require.Error(t, err)
 		require.True(t, sdkerrors.ErrUnauthorized.Is(err))
 	}
+}
+
+func TestHandler_AddVendorInfoByVendorAdmin(t *testing.T) {
+	setup := Setup(t)
+
+	accAddress := GenerateAccAddress()
+
+	// add a new account with VendoeAdmin role
+	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, setup.VendorID)
+
+	msgCreateVendorInfo := NewMsgCreateVendorInfo(accAddress)
+	_, err := setup.Handler(setup.Ctx, msgCreateVendorInfo)
+	require.NoError(t, err)
+
+	newVendorInfo, err := queryVendorInfo(setup, msgCreateVendorInfo.VendorID)
+	require.NoError(t, err)
+
+	// check if stored correctly
+	require.Equal(t, msgCreateVendorInfo.Creator, newVendorInfo.Creator)
+	require.Equal(t, msgCreateVendorInfo.VendorID, newVendorInfo.VendorID)
+	require.Equal(t, msgCreateVendorInfo.CompanyLegalName, newVendorInfo.CompanyLegalName)
+	require.Equal(t, msgCreateVendorInfo.CompanyPreferredName, newVendorInfo.CompanyPreferredName)
+	require.Equal(t, msgCreateVendorInfo.VendorName, newVendorInfo.VendorName)
+	require.Equal(t, msgCreateVendorInfo.VendorLandingPageURL, newVendorInfo.VendorLandingPageURL)
+}
+
+func TestHandler_AddAndUpdateVendorInfoByVendorAdmin(t *testing.T) {
+	setup := Setup(t)
+
+	accAddress := GenerateAccAddress()
+
+	// add a new account with VendoeAdmin role
+	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, setup.VendorID)
+
+	msgCreateVendorInfo := NewMsgCreateVendorInfo(accAddress)
+	_, err := setup.Handler(setup.Ctx, msgCreateVendorInfo)
+	require.NoError(t, err)
+
+	msgUpdateVendorInfo := NewMsgUpdateVendorInfo(accAddress)
+	_, err = setup.Handler(setup.Ctx, msgUpdateVendorInfo)
+	require.NoError(t, err)
+
+	updatedVendorInfo, err := queryVendorInfo(setup, msgCreateVendorInfo.VendorID)
+	require.NoError(t, err)
+
+	// check if updated correctly
+	require.Equal(t, msgUpdateVendorInfo.Creator, updatedVendorInfo.Creator)
+	require.Equal(t, msgUpdateVendorInfo.VendorID, updatedVendorInfo.VendorID)
+	require.Equal(t, msgUpdateVendorInfo.CompanyLegalName, updatedVendorInfo.CompanyLegalName)
+	require.Equal(t, msgUpdateVendorInfo.CompanyPreferredName, updatedVendorInfo.CompanyPreferredName)
+	require.Equal(t, msgUpdateVendorInfo.VendorName, updatedVendorInfo.VendorName)
+	require.Equal(t, msgUpdateVendorInfo.VendorLandingPageURL, updatedVendorInfo.VendorLandingPageURL)
+}
+
+func TestHandled_AddVendorInfoByVendorUpdateVendorInfoByVendorAdmin(t *testing.T) {
+	setup := Setup(t)
+
+	vendorAccAddress := GenerateAccAddress()
+	vendorAdminAccAddress := GenerateAccAddress()
+
+	setup.AddAccount(vendorAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, setup.VendorID)
+	setup.AddAccount(vendorAdminAccAddress, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, setup.VendorID+2)
+
+	// create vendorInfo by Vendor
+	msgCreateVendorInfo := NewMsgCreateVendorInfo(vendorAccAddress)
+	_, err := setup.Handler(setup.Ctx, msgCreateVendorInfo)
+	require.NoError(t, err)
+
+	// update vendorInfo by VendorAdmin
+	msgUpdateVendorInfo := NewMsgUpdateVendorInfo(vendorAdminAccAddress)
+	_, err = setup.Handler(setup.Ctx, msgUpdateVendorInfo)
+	require.NoError(t, err)
+
+	updatedVendorInfo, err := queryVendorInfo(setup, msgCreateVendorInfo.VendorID)
+	require.NoError(t, err)
+
+	// check if updated correctly
+	require.Equal(t, msgUpdateVendorInfo.Creator, updatedVendorInfo.Creator)
+	require.Equal(t, msgUpdateVendorInfo.VendorID, updatedVendorInfo.VendorID)
+	require.Equal(t, msgUpdateVendorInfo.CompanyLegalName, updatedVendorInfo.CompanyLegalName)
+	require.Equal(t, msgUpdateVendorInfo.CompanyPreferredName, updatedVendorInfo.CompanyPreferredName)
+	require.Equal(t, msgUpdateVendorInfo.VendorName, updatedVendorInfo.VendorName)
+	require.Equal(t, msgUpdateVendorInfo.VendorLandingPageURL, updatedVendorInfo.VendorLandingPageURL)
+}
+
+func TestHandled_AddVendorInfoByVendorAdminUpdateVendorInfoByVendor(t *testing.T) {
+	setup := Setup(t)
+
+	vendorAccAddress := GenerateAccAddress()
+	vendorAdminAccAddress := GenerateAccAddress()
+
+	setup.AddAccount(vendorAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, setup.VendorID)
+	setup.AddAccount(vendorAdminAccAddress, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, setup.VendorID+1)
+
+	// create vendorInfo by VendorAdmin
+	msgCreateVendorInfo := NewMsgCreateVendorInfo(vendorAdminAccAddress)
+	msgCreateVendorInfo.VendorID = setup.VendorID
+	_, err := setup.Handler(setup.Ctx, msgCreateVendorInfo)
+	require.NoError(t, err)
+
+	// update vendorInfo by Vendor
+	msgUpdateVendorInfo := NewMsgUpdateVendorInfo(vendorAccAddress)
+	_, err = setup.Handler(setup.Ctx, msgUpdateVendorInfo)
+	require.NoError(t, err)
+
+	updatedVendorInfo, err := queryVendorInfo(setup, msgCreateVendorInfo.VendorID)
+	require.NoError(t, err)
+
+	// check if updated correctly
+	require.Equal(t, msgUpdateVendorInfo.Creator, updatedVendorInfo.Creator)
+	require.Equal(t, msgUpdateVendorInfo.VendorID, updatedVendorInfo.VendorID)
+	require.Equal(t, msgUpdateVendorInfo.CompanyLegalName, updatedVendorInfo.CompanyLegalName)
+	require.Equal(t, msgUpdateVendorInfo.CompanyPreferredName, updatedVendorInfo.CompanyPreferredName)
+	require.Equal(t, msgUpdateVendorInfo.VendorName, updatedVendorInfo.VendorName)
+	require.Equal(t, msgUpdateVendorInfo.VendorLandingPageURL, updatedVendorInfo.VendorLandingPageURL)
 }
 
 func TestHandler_AddVendorInfoByVendorWithAnotherVendorId(t *testing.T) {
