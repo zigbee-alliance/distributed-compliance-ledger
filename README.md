@@ -166,6 +166,7 @@ but they may be provided in the future.
 - The following libraries can be used as light clients:
   - [Golang Light Client implementation](https://pkg.go.dev/github.com/tendermint/tendermint/lite2)
   - [Rust Light Client implementation](https://docs.rs/tendermint-light-client/0.23.3/tendermint_light_client/)
+- Refer to [this doc](./docs/tendermint-rpc.md) to see how to [subscribe](./docs/tendermint-rpc.md#subscribe) to a Tendermint WebSocket based events and/or [query](./docs/tendermint-rpc.md#querying-application-components) an application components.
 
 
 ### Instructions
