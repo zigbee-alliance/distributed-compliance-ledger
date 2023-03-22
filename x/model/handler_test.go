@@ -440,7 +440,7 @@ func TestHandler_DeleteModelWithAssociatedModelVersions(t *testing.T) {
 	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion1)
 	require.NoError(t, err)
 
-	msgCreateModelVersion2 := NewMsgCreateModelVersion(setup.Vendor, testconstants.SoftwareVersion + 1)
+	msgCreateModelVersion2 := NewMsgCreateModelVersion(setup.Vendor, testconstants.SoftwareVersion+1)
 	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion2)
 	require.NoError(t, err)
 
