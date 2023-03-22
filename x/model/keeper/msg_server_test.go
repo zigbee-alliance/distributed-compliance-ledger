@@ -13,7 +13,7 @@ import (
 //nolint:deadcode,unused
 func setupMsgServer(tb testing.TB) (types.MsgServer, context.Context) {
 	tb.Helper()
-	k, ctx := keepertest.ModelKeeper(tb, nil)
+	k, ctx := keepertest.ModelKeeper(tb, nil, nil)
 
 	return keeper.NewMsgServerImpl(*k), sdk.WrapSDKContext(ctx)
 }
