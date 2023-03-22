@@ -17,22 +17,24 @@ version: '3.2'
 
 services:
   test_deploy_gvn:
+    privileged: true
     image: dcledger_deploy
     build: .
     container_name: test_deploy_gvn
     volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
     tmpfs:
       - /run
       - /run/lock
       - /tmp
 
   test_deploy_vn:
+    privileged: true
     image: dcledger_deploy
     build: .
     container_name: test_deploy_vn
     volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
     tmpfs:
       - /run
       - /run/lock

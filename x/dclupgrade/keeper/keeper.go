@@ -45,7 +45,7 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 }
 
 func (k Keeper) UpgradeApprovalsCount(ctx sdk.Context) int {
-	return int(math.Round(types.UpgradeApprovalsPercent * float64(k.dclauthKeeper.CountAccountsWithRole(ctx, types.UpgradeApprovalRole))))
+	return int(math.Ceil(types.UpgradeApprovalsPercent * float64(k.dclauthKeeper.CountAccountsWithRole(ctx, types.UpgradeApprovalRole))))
 }
 
 func (k Keeper) UpgradeRejectsCount(ctx sdk.Context) int {

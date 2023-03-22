@@ -39,20 +39,31 @@ func (k msgServer) RejectAddX509RootCert(goCtx context.Context, msg *types.MsgRe
 		)
 	}
 
-	// check if proposed certificate already has approval form signer
-	if proposedCertificate.HasApprovalFrom(signerAddr.String()) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
-			"Certificate associated with subject=%v and subjectKeyID=%v combination "+
-				"already has approval from=%v",
-			msg.Subject, msg.SubjectKeyId, msg.Signer,
-		)
-	}
-
 	// append approval
 	grant := types.Grant{
 		Address: signerAddr.String(),
 		Time:    msg.Time,
 		Info:    msg.Info,
+	}
+
+	// check if proposed certificate has approval form signer
+	if proposedCertificate.HasApprovalFrom(signerAddr.String()) {
+		// Remove proposed certificate if there are no rejects and other approvals
+		if len(proposedCertificate.Approvals) == 1 && len(proposedCertificate.Rejects) == 0 {
+			k.RemoveProposedCertificate(ctx, msg.Subject, msg.SubjectKeyId)
+			k.RemoveUniqueCertificate(ctx, proposedCertificate.Subject, proposedCertificate.SerialNumber)
+
+			return &types.MsgRejectAddX509RootCertResponse{}, nil
+		}
+
+		// Remove approval from the list of approvals
+		for i, other := range proposedCertificate.Approvals {
+			if other.Address == grant.Address {
+				proposedCertificate.Approvals = append(proposedCertificate.Approvals[:i], proposedCertificate.Approvals[i+1:]...)
+
+				break
+			}
+		}
 	}
 	proposedCertificate.Rejects = append(proposedCertificate.Rejects, &grant)
 

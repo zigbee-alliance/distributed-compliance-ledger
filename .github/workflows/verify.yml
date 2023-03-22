@@ -107,7 +107,7 @@ jobs:
   integration-tests:
     if: needs.changes.outputs.src == 'true'
     name: Integration tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs:
       - changes
     steps:
@@ -138,9 +138,9 @@ jobs:
         with:
           go-version: 1.17
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v3.1.0
         with:
-          version: latest
+          version: v1.46.0
           args: --timeout 5m0s
   check:
     if: always()

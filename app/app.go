@@ -607,6 +607,13 @@ func New(
 		},
 	)
 
+	app.UpgradeKeeper.SetUpgradeHandler(
+		"v0.13.0-pre",
+		func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
+			return make(module.VersionMap), nil
+		},
+	)
+
 	return app
 }
 

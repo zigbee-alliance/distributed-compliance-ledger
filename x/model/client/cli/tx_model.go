@@ -130,8 +130,6 @@ and for these values the commissioningModeSecondaryStepInstruction SHALL be set`
 	_ = cmd.MarkFlagRequired(FlagPid)
 	_ = cmd.MarkFlagRequired(FlagDeviceTypeID)
 	_ = cmd.MarkFlagRequired(FlagProductName)
-	_ = cmd.MarkFlagRequired(FlagProductLabel)
-	_ = cmd.MarkFlagRequired(FlagPartNumber)
 	_ = cmd.MarkFlagRequired(flags.FlagFrom)
 
 	return cmd
