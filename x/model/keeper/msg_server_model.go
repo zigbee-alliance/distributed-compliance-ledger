@@ -174,7 +174,7 @@ func (k msgServer) DeleteModel(goCtx context.Context, msg *types.MsgDeleteModel)
 	if err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
-	
+
 	if err := checkModelRights(ctx, k.Keeper, signerAddr, msg.Vid, "MsgDeleteModel"); err != nil {
 		return nil, err
 	}
@@ -191,13 +191,13 @@ func (k msgServer) DeleteModel(goCtx context.Context, msg *types.MsgDeleteModel)
 	}
 
 	modelVersions, err := k.ModelVersions(goCtx, &types.QueryGetModelVersionsRequest{
-		Vid: msg.Vid, 
+		Vid: msg.Vid,
 		Pid: msg.Pid,
 	})
 
 	if err != nil && status.Code(err) == codes.InvalidArgument {
 		return nil, err
-	} 
+	}
 
 	if modelVersions != nil {
 		if err = removeAssociatedModelVersions(k, goCtx, modelVersions.ModelVersions, *msg); err != nil {
@@ -231,9 +231,9 @@ func removeAssociatedModelVersions(k msgServer, goCtx context.Context, modelVers
 	// remove modelVersion for each softwareVersion
 	for _, softwareVersion := range modelVersions.SoftwareVersions {
 		msgDeleteModelVersion := types.NewMsgDeleteModelVersion(
-			msg.Creator, 
-			msg.Vid, 
-			msg.Pid, 
+			msg.Creator,
+			msg.Vid,
+			msg.Pid,
 			softwareVersion,
 		)
 
