@@ -124,7 +124,21 @@ dcld tx auth propose-add-account \
   }
 }
 ```
-<sup>string are encoded in base64 format</sup>   
+
+### Decoding The Transaction String 
+
+The details of transaction payload encoding can be found [here](https://docs.cosmos.network/main/core/encoding#transaction-encoding). Thus, the transaction payload/string in the example above can be decoded as follows:
+
+```bash
+dcld tx decode CocCCoQCCkgvemlnYmVlYWxsaWFuY2UuZGlzdHJpYnV0ZWRjb21wbGlhbmNlbGVkZ2VyLmRjbGF1dGguTXNnUHJvcG9zZUFkZEFjY291bnQStwEKLWNvc21vczE0cG1nMnhnMzd0enI2a3VxNHV4dnp3a3p1ZnRldGQ3dDhhMnN1dRItY29zbW9zMXNkZzV2a3B6OXVyY2VtbXc2N2xueHZ6aGh1dmVxZTZ2NzBleDJsGkYKHy9jb3Ntb3MuY3J5cHRvLnNlY3AyNTZrMS5QdWJLZXkSIwohA4m98FT/tgsMWZuVBlavWmawwXrvv/nUMhDlU8QsHlOMIglOb2RlQWRtaW44lo/YoAYSWApQCkYKHy9jb3Ntb3MuY3J5cHRvLnNlY3AyNTZrMS5QdWJLZXkSIwohApEHaI8+Wj64IQdR/WZDMaWHNd53+9G19zNcWjrAiXMbEgQKAggBGAISBBDAmgwaQJCg0T8phCo70H7VpL2M1C0kQix4LeVOjkXWgK3EHmFobXkBGLH2jJiKTHakVWUO2yj2Tdpc4YoTDw2eKe6UZj8=
+```
+
+which gives the result:
+
+```json
+{"body":{"messages":[{"@type":"/zigbeealliance.distributedcomplianceledger.dclauth.MsgProposeAddAccount","signer":"cosmos14pmg2xg37tzr6kuq4uxvzwkzuftetd7t8a2suu","address":"cosmos1sdg5vkpz9urcemmw67lnxvzhhuveqe6v70ex2l","pubKey":{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"A4m98FT/tgsMWZuVBlavWmawwXrvv/nUMhDlU8QsHlOM"},"roles":["NodeAdmin"],"vendorID":0,"info":"","time":"1679165334"}],"memo":"","timeout_height":"0","extension_options":[],"non_critical_extension_options":[]},"auth_info":{"signer_infos":[{"public_key":{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"ApEHaI8+Wj64IQdR/WZDMaWHNd53+9G19zNcWjrAiXMb"},"mode_info":{"single":{"mode":"SIGN_MODE_DIRECT"}},"sequence":"2"}],"fee":{"amount":[],"gas_limit":"200000","payer":"","granter":""}},"signatures":["kKDRPymEKjvQftWkvYzULSRCLHgt5U6ORdaArcQeYWhteQEYsfaMmIpMdqRVZQ7bKPZN2lzhihMPDZ4p7pRmPw=="]}
+```
+
 Detailed info about subscribing can be found [here](https://docs.tendermint.com/v0.34/rpc/#/Websocket/subscribe).
 
 ### Unsubscribe
