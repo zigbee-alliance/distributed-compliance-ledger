@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -204,6 +205,8 @@ func (k msgServer) DeleteModel(goCtx context.Context, msg *types.MsgDeleteModel)
 		Vid: msg.Vid, 
 		Pid: msg.Pid,
 	})
+
+	fmt. Printf("%#v\n", modelVersions)
 
 	if err != nil && status.Code(err) == codes.InvalidArgument {
 		return nil, err
