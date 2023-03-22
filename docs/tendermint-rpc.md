@@ -1,6 +1,6 @@
 # Tendermint RPC
 
-[Tendermint RPC](https://docs.tendermint.com/v0.34/rpc/#) can be used to query application's state and/or subscribe to Tendermint WebSocket events.   
+[Tendermint RPC](https://docs.tendermint.com/v0.34/rpc/#) can be used to query application's state and/or [subscribe to Tendermint WebSocket events](https://docs.tendermint.com/v0.34/tendermint-core/subscription.html).   
 The default RPC listen address is tcp://0.0.0.0:26657. See the [docs](https://docs.tendermint.com/v0.34/rpc/#) to learn how to configure and customize.
 
 ## WebSocket Events
