@@ -57,3 +57,8 @@ func TestGetModelForInvalidVidPidGRPC(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, false)
 	model.GetModelForInvalidVidPid(&suite)
 }
+
+func TestDeleteModelWithAssociatedModelVersionsGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	model.DeleteModelWithAssociatedModelVersions(&suite)
+}

@@ -427,6 +427,53 @@ func TestHandler_DeleteModel(t *testing.T) {
 	require.Equal(t, codes.NotFound, status.Code(err))
 }
 
+func TestHandler_DeleteModelWithAssociatedModelVersions(t *testing.T) {
+	setup := Setup(t)
+
+	// add new model
+	msgCreateModel := NewMsgCreateModel(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// add two new model versions
+	msgCreateModelVersion1 := NewMsgCreateModelVersion(setup.Vendor, testconstants.SoftwareVersion)
+	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion1)
+	require.NoError(t, err)
+
+	msgCreateModelVersion2 := NewMsgCreateModelVersion(setup.Vendor, testconstants.SoftwareVersion+1)
+	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion2)
+	require.NoError(t, err)
+
+	complianceKeeper := setup.ComplianceKeeper
+	complianceKeeper.On("GetComplianceInfo", mock.Anything, msgCreateModelVersion1.Vid, msgCreateModelVersion1.Pid, msgCreateModelVersion1.SoftwareVersion, mock.Anything).Return(false)
+	complianceKeeper.On("GetComplianceInfo", mock.Anything, msgCreateModelVersion2.Vid, msgCreateModelVersion2.Pid, msgCreateModelVersion2.SoftwareVersion, mock.Anything).Return(false)
+	complianceKeeper.On("GetComplianceInfo", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(true)
+
+	msgDeleteModel := NewMsgDeleteModel(setup.Vendor)
+	_, err = setup.Handler(setup.Ctx, msgDeleteModel)
+	require.NoError(t, err)
+
+	// query first deleted model version
+	_, err = queryModelVersion(
+		setup,
+		msgCreateModelVersion1.Vid,
+		msgCreateModelVersion1.Pid,
+		msgCreateModelVersion1.SoftwareVersion,
+	)
+	require.Error(t, err)
+	require.Equal(t, codes.NotFound, status.Code(err))
+
+	// query second deleted model version
+	_, err = queryModelVersion(
+		setup,
+		msgCreateModelVersion2.Vid,
+		msgCreateModelVersion2.Pid,
+		msgCreateModelVersion2.SoftwareVersion,
+	)
+	require.Error(t, err)
+	require.Equal(t, codes.NotFound, status.Code(err))
+}
+
 func TestHandler_OnlyOwnerAndVendorWithSameVidCanDeleteModel(t *testing.T) {
 	setup := Setup(t)
 
