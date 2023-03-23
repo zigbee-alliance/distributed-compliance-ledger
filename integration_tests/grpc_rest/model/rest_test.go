@@ -62,3 +62,8 @@ func TestAddModelInHexFormat(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, true)
 	model.DemoWithHexVidAndPid(&suite)
 }
+
+func TestDeleteModelWithAssociatedModelVersionsREST(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
+	model.DeleteModelWithAssociatedModelVersions(&suite)
+}
