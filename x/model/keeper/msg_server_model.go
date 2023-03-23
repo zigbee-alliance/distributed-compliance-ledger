@@ -6,8 +6,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 func (k msgServer) CreateModel(goCtx context.Context, msg *types.MsgCreateModel) (*types.MsgCreateModelResponse, error) {
@@ -200,18 +198,11 @@ func (k msgServer) DeleteModel(goCtx context.Context, msg *types.MsgDeleteModel)
 	// remove product from VendorProducts
 	k.RemoveVendorProduct(ctx, msg.Vid, msg.Pid)
 
-	modelVersions, err := k.ModelVersions(goCtx, &types.QueryGetModelVersionsRequest{
-		Vid: msg.Vid, 
-		Pid: msg.Pid,
-	})
+	modelVersions, found := k.GetModelVersions(ctx, msg.Vid, msg.Pid)
 
-	if err != nil && status.Code(err) == codes.InvalidArgument {
-		return nil, err
-	} 
-
-	if modelVersions != nil {
+	if found {
 		// remove modelVersion for each softwareVersion
-		for _, softwareVersion := range modelVersions.ModelVersions.SoftwareVersions {
+		for _, softwareVersion := range modelVersions.SoftwareVersions {
 			msgDeleteModelVersion := types.NewMsgDeleteModelVersion(
 				msg.Creator, 
 				msg.Vid, 
