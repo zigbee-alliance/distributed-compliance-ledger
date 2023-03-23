@@ -18,6 +18,8 @@ remove_containers = $(if $(1),docker rm -f $(1),true)
 localnet_containers = $(shell docker ps --format '{{.ID}}' --filter network=$(LOCALNET_DOCKER_NETWORK))
 clean_network = $(call remove_containers,$(call localnet_containers))
 
+MAINNET_STABLE_VERSION="v0.12.0"
+
 # test deploy vars
 TEST_DEPLOY_GVN = "test_deploy_gvn"
 TEST_DEPLOY_VN = "test_deploy_vn"
@@ -30,6 +32,10 @@ image:
 localnet_init:
 	/bin/bash ./genlocalnetconfig.sh
 	/bin/bash ./genlocalnetappbins.sh
+
+localnet_init_latest_stable_release:
+	/bin/bash ./genlocalnetconfig.sh
+	/bin/bash ./genlocalnetappbins.sh "" "" "" ${MAINNET_STABLE_VERSION}
 
 localnet_start:
 	@if [ -d "${LOCALNET_DIR}/observer0" ]; then\
@@ -73,10 +79,6 @@ test_deploy_env_build:
 test_deploy_env_clean:
 	docker compose -f integration_tests/deploy/docker-compose.yml down
 
-localnet_init_test_upgrade: localnet_init
-	/bin/bash ./genlocalnetappbins.sh integration_tests/upgrade/Dockerfile-build dcld-upgrade-build upgrades/test-upgrade
-
 .PHONY: localnet_init localnet_start localnet_stop localnet_clean localnet_export \
 		localnet_reset localnet_rebuild \
 		test_deploy_env_build test_deploy_env_clean \
-		localnet_init_test_upgrade

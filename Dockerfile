@@ -19,17 +19,29 @@
 ############################
 # STEP 1 build cosmovisor
 ############################
-FROM golang:alpine AS builder
+FROM ubuntu:latest AS builder
 
-# git is required for fetching the dependencies.
-RUN apk update && apk add --no-cache git
+ARG GO_VERSION
+ENV GO_VERSION=1.19.4
+
+RUN apt-get update
+RUN apt-get install -y wget git gcc
+
+RUN wget -P /tmp "https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz"
+
+RUN tar -C /usr/local -xzf "/tmp/go${GO_VERSION}.linux-amd64.tar.gz"
+RUN rm "/tmp/go${GO_VERSION}.linux-amd64.tar.gz"
+
+ENV GOPATH /go
+ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
+RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 
 RUN go install github.com/cosmos/cosmos-sdk/cosmovisor/cmd/cosmovisor@v1.0.0
 
 ############################
 # STEP 2 build node image
 ############################
-FROM alpine:latest
+FROM ubuntu:latest
 
 COPY --from=builder /go/bin/cosmovisor /usr/bin/
 
@@ -43,10 +55,15 @@ ENV TEST_USER=${TEST_USER:-dcl}
 ARG TEST_UID
 ENV TEST_UID=${TEST_UID:-1000}
 #ARG gid=1000
-RUN adduser -D -u ${TEST_UID} -h /var/lib/${TEST_USER} -g 'DCLedger user' ${TEST_USER}
-
+RUN adduser --disabled-password --uid ${TEST_UID} --home /var/lib/${TEST_USER} --gecos 'DCLedger user' ${TEST_USER}
 ENV DAEMON_HOME=/var/lib/${TEST_USER}/.dcl
 ENV DAEMON_NAME=dcld
+ENV DAEMON_ALLOW_DOWNLOAD_BINARIES=true
+
+RUN apt-get update
+RUN apt-get install -y ca-certificates
+
+RUN update-ca-certificates
 
 VOLUME /var/lib/${TEST_USER}
 
