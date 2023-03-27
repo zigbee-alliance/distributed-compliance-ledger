@@ -67,3 +67,8 @@ func TestDeleteModelWithAssociatedModelVersionsREST(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, true)
 	model.DeleteModelWithAssociatedModelVersions(&suite)
 }
+
+func TestDeleteModelWithAssociatedModelVersionsCertifiedREST(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
+	model.DeleteModelWithAssociatedModelVersionsCertified(&suite)
+}
