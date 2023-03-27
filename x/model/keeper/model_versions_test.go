@@ -28,7 +28,7 @@ func createNModelVersions(keeper *keeper.Keeper, ctx sdk.Context, n int) []types
 }
 
 func TestModelVersionsGet(t *testing.T) {
-	keeper, ctx := keepertest.ModelKeeper(t, nil)
+	keeper, ctx := keepertest.ModelKeeper(t, nil, nil)
 	items := createNModelVersions(keeper, ctx, 10)
 	for _, item := range items {
 		rst, found := keeper.GetModelVersions(ctx,
@@ -44,7 +44,7 @@ func TestModelVersionsGet(t *testing.T) {
 }
 
 func TestModelVersionsRemove(t *testing.T) {
-	keeper, ctx := keepertest.ModelKeeper(t, nil)
+	keeper, ctx := keepertest.ModelKeeper(t, nil, nil)
 	items := createNModelVersions(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemoveModelVersions(ctx,
@@ -60,7 +60,7 @@ func TestModelVersionsRemove(t *testing.T) {
 }
 
 func TestModelVersionsGetAll(t *testing.T) {
-	keeper, ctx := keepertest.ModelKeeper(t, nil)
+	keeper, ctx := keepertest.ModelKeeper(t, nil, nil)
 	items := createNModelVersions(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),

@@ -168,9 +168,11 @@ func (k msgServer) DeleteModel(goCtx context.Context, msg *types.MsgDeleteModel)
 
 	// check if signer has enough rights to delete model
 	signerAddr, err := sdk.AccAddressFromBech32(msg.Creator)
+
 	if err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
+
 	if err := checkModelRights(ctx, k.Keeper, signerAddr, msg.Vid, "MsgDeleteModel"); err != nil {
 		return nil, err
 	}
@@ -181,8 +183,17 @@ func (k msgServer) DeleteModel(goCtx context.Context, msg *types.MsgDeleteModel)
 		msg.Vid,
 		msg.Pid,
 	)
+
 	if !isFound {
 		return nil, types.NewErrModelDoesNotExist(msg.Vid, msg.Pid)
+	}
+
+	modelVersions, found := k.GetModelVersions(ctx, msg.Vid, msg.Pid)
+
+	if found {
+		if err = removeAssociatedModelVersions(k, goCtx, modelVersions, *msg); err != nil {
+			return nil, err
+		}
 	}
 
 	// remove model from store
@@ -220,4 +231,32 @@ func (k msgServer) DeleteModel(goCtx context.Context, msg *types.MsgDeleteModel)
 	k.RemoveModelVersions(ctx, msg.Vid, msg.Pid)
 
 	return &types.MsgDeleteModelResponse{}, nil
+}
+
+func removeAssociatedModelVersions(k msgServer, goCtx context.Context, modelVersions types.ModelVersions, msg types.MsgDeleteModel) error {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// check if no model version has certification record
+	for _, softwareVersion := range modelVersions.SoftwareVersions {
+		if k.IsModelCertified(ctx, msg.Vid, msg.Pid, softwareVersion) {
+			return types.NewErrModelVersionCertified(msg.Vid, msg.Pid, softwareVersion)
+		}
+	}
+
+	// remove modelVersion for each softwareVersion
+	for _, softwareVersion := range modelVersions.SoftwareVersions {
+		msgDeleteModelVersion := types.NewMsgDeleteModelVersion(
+			msg.Creator,
+			msg.Vid,
+			msg.Pid,
+			softwareVersion,
+		)
+
+		k.DeleteModelVersion(goCtx, msgDeleteModelVersion)
+	}
+
+	// remove modelVersions record
+	k.RemoveModelVersions(ctx, msg.Vid, msg.Pid)
+
+	return nil
 }

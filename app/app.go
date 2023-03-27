@@ -421,6 +421,7 @@ func New(
 		keys[modelmoduletypes.MemStoreKey],
 
 		app.DclauthKeeper,
+		app.ComplianceKeeper,
 	)
 	modelModule := modelmodule.NewAppModule(appCodec, app.ModelKeeper)
 
@@ -602,6 +603,13 @@ func New(
 
 	app.UpgradeKeeper.SetUpgradeHandler(
 		"v0.12.0",
+		func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
+			return make(module.VersionMap), nil
+		},
+	)
+
+	app.UpgradeKeeper.SetUpgradeHandler(
+		"v0.13.0-pre",
 		func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
 			return make(module.VersionMap), nil
 		},

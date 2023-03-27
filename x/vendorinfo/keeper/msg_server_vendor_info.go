@@ -11,18 +11,19 @@ import (
 func (k msgServer) CreateVendorInfo(goCtx context.Context, msg *types.MsgCreateVendorInfo) (*types.MsgCreateVendorInfoResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	// check if creator has enough rights to create vendorinfo
+	if err := checkAddVendorRights(ctx, k.Keeper, msg.GetSigners()[0], msg.VendorID); err != nil {
+		return nil, err
+	}
+
 	// Check if the value already exists
 	_, isFound := k.GetVendorInfo(
 		ctx,
 		msg.VendorID,
 	)
+
 	if isFound {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "index already set")
-	}
-
-	// check if creator has enough rights to create vendorinfo
-	if err := checkAddVendorRights(ctx, k.Keeper, msg.GetSigners()[0], msg.VendorID); err != nil {
-		return nil, err
 	}
 
 	vendorInfo := types.VendorInfo{
@@ -45,11 +46,17 @@ func (k msgServer) CreateVendorInfo(goCtx context.Context, msg *types.MsgCreateV
 func (k msgServer) UpdateVendorInfo(goCtx context.Context, msg *types.MsgUpdateVendorInfo) (*types.MsgUpdateVendorInfoResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	// check if creator has enough rights to update vendorinfo
+	if err := checkUpdateVendorRights(ctx, k.Keeper, msg.GetSigners()[0], msg.VendorID); err != nil {
+		return nil, err
+	}
+
 	// Check if the value exists
-	_, isFound := k.GetVendorInfo(
+	vendorInfo, isFound := k.GetVendorInfo(
 		ctx,
 		msg.VendorID,
 	)
+
 	if !isFound {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, "index not set")
 	}
@@ -59,13 +66,27 @@ func (k msgServer) UpdateVendorInfo(goCtx context.Context, msg *types.MsgUpdateV
 		return nil, err
 	}
 
-	vendorInfo := types.VendorInfo{
-		Creator:              msg.Creator,
-		VendorID:             msg.VendorID,
-		VendorName:           msg.VendorName,
-		CompanyLegalName:     msg.CompanyLegalName,
-		CompanyPreferredName: msg.CompanyPreferredName,
-		VendorLandingPageURL: msg.VendorLandingPageURL,
+	// update existing model value only if corresponding value in MsgUpdate is not empty
+	vendorInfo.VendorID = msg.VendorID
+
+	if msg.Creator != "" {
+		vendorInfo.Creator = msg.Creator
+	}
+
+	if msg.VendorName != "" {
+		vendorInfo.VendorName = msg.VendorName
+	}
+
+	if msg.CompanyLegalName != "" {
+		vendorInfo.CompanyLegalName = msg.CompanyLegalName
+	}
+
+	if msg.CompanyPreferredName != "" {
+		vendorInfo.CompanyPreferredName = msg.CompanyPreferredName
+	}
+
+	if msg.VendorLandingPageURL != "" {
+		vendorInfo.VendorLandingPageURL = msg.VendorLandingPageURL
 	}
 
 	k.SetVendorInfo(ctx, vendorInfo)

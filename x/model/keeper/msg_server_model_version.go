@@ -165,9 +165,9 @@ func (k msgServer) DeleteModelVersion(goCtx context.Context, msg *types.MsgDelet
 			"signed by a modelVersion %d %d %d creator", msg.Vid, msg.Pid, msg.SoftwareVersion)
 	}
 
-	isFound = k.IsModelCertified(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion)
-	if isFound {
-		return nil, types.NewErrModelCertified(msg.Vid, msg.Pid)
+	isCertified := k.IsModelCertified(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion)
+	if isCertified {
+		return nil, types.NewErrModelVersionCertified(msg.Vid, msg.Pid, modelVersion.SoftwareVersion)
 	}
 
 	// store updated model version
@@ -179,7 +179,7 @@ func (k msgServer) DeleteModelVersion(goCtx context.Context, msg *types.MsgDelet
 func (k msgServer) IsModelCertified(ctx sdk.Context, vid int32, pid int32, softwareVersion uint32) bool {
 	certificationTypes := []string{"zigbee", "matter"}
 	for _, certType := range certificationTypes {
-		_, isFound := k.ComplianceKeeper.GetComplianceInfo(ctx, vid, pid, softwareVersion, certType)
+		_, isFound := k.complianceKeeper.GetComplianceInfo(ctx, vid, pid, softwareVersion, certType)
 		if isFound {
 			return true
 		}
