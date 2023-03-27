@@ -25,6 +25,7 @@ import (
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	test_dclauth "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/grpc_rest/dclauth"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
+	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	modeltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
@@ -121,6 +122,21 @@ func NewMsgUpdateModelVersion(
 		SoftwareVersion: softwareVersion,
 		OtaUrl:          testconstants.OtaURL + "/new",
 		ReleaseNotesUrl: testconstants.ReleaseNotesURL + "/new",
+	}
+}
+
+func NewMsgCertifyModelVersion(
+	signer string,
+	vid int32,
+	pid int32,
+) *dclcompltypes.MsgCertifyModel {
+	return &dclcompltypes.MsgCertifyModel{
+		Signer:            signer,
+		Vid:               vid,
+		Pid:               pid,
+		CertificationDate: testconstants.CertificationDate,
+		CDCertificateId:   testconstants.CDCertificateID,
+		CertificationType: testconstants.CertificationType,
 	}
 }
 
@@ -393,6 +409,75 @@ func DeleteModelWithAssociatedModelVersions(suite *utils.TestSuite) {
 	modelVersion2, err := GetModelVersion(suite, createModelVersionMsg2.Vid, createModelVersionMsg2.Pid, createModelVersionMsg2.SoftwareVersion)
 	require.Error(suite.T, err)
 	require.Nil(suite.T, modelVersion2)
+}
+
+func DeleteModelWithAssociatedModelVersionsCertified(suite *utils.TestSuite) {
+	// Alice and Bob are predefined Trustees
+	aliceName := testconstants.AliceAccount
+	aliceKeyInfo, err := suite.Kr.Key(aliceName)
+	require.NoError(suite.T, err)
+	aliceAccount, err := test_dclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	bobName := testconstants.BobAccount
+	bobKeyInfo, err := suite.Kr.Key(bobName)
+	require.NoError(suite.T, err)
+	bobAccount, err := test_dclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	// Register new Vendor account
+	vid := int32(tmrand.Uint16())
+	vendorName := utils.RandString()
+	vendorAccount := test_dclauth.CreateVendorAccount(
+		suite,
+		vendorName,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		vid,
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+		testconstants.Info,
+	)
+	require.NotNil(suite.T, vendorAccount)
+
+	// New vendor adds a model
+	pid := int32(tmrand.Uint16())
+	createModelMsg := NewMsgCreateModel(vid, pid, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelMsg}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	createModelVersionMsg1 := NewMsgCreateModelVersion(vid, pid, 1, "1", vendorName)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelVersionMsg1}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	createModelVersionMsg2 := NewMsgCreateModelVersion(vid, pid, 2, "2", vendorName)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelVersionMsg2}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	// certify model version
+	certifyModelVersionMsg := NewMsgCertifyModelVersion(aliceName, vid, pid)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{certifyModelVersionMsg}, aliceName, aliceAccount)
+	require.NoError(suite.T, err)
+
+	deleteModelMsg := NewMsgDeleteModel(vid, pid, vendorName)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{deleteModelMsg}, vendorName, vendorAccount)
+	require.Error(suite.T, err)
+
+	// check if model is not deleted
+	model, err := GetModel(suite, deleteModelMsg.Vid, deleteModelMsg.Pid)
+	require.NoError(suite.T, err)
+	require.NotNil(suite.T, model)
+
+	// check if model version 1 is deleted
+	modelVersion1, err := GetModelVersion(suite, createModelVersionMsg1.Vid, createModelVersionMsg1.Pid, createModelVersionMsg1.SoftwareVersion)
+	require.NoError(suite.T, err)
+	require.NotNil(suite.T, modelVersion1)
+
+	// check if model version 2 is deleted
+	modelVersion2, err := GetModelVersion(suite, createModelVersionMsg2.Vid, createModelVersionMsg2.Pid, createModelVersionMsg2.SoftwareVersion)
+	require.NoError(suite.T, err)
+	require.NotNil(suite.T, modelVersion2)
 }
 
 func Demo(suite *utils.TestSuite) {
