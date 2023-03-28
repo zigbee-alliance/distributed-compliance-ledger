@@ -17,12 +17,22 @@
 # The resulting image is used only for getting the build artifact from
 # a container based on it. Containers based on this image are never run.
 ################################################################################
-FROM golang:alpine
+FROM ubuntu:20.04 AS builder
 
-# git is required for fetching the dependencies,
-# make is required for building,
-# build-base is needed because gcc is required for building.
-RUN apk update && apk add --no-cache git make build-base
+ARG GO_VERSION
+ENV GO_VERSION=1.19.4
+
+RUN apt-get update
+RUN apt-get install -y wget git gcc make
+
+RUN wget -P /tmp "https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz"
+
+RUN tar -C /usr/local -xzf "/tmp/go${GO_VERSION}.linux-amd64.tar.gz"
+RUN rm "/tmp/go${GO_VERSION}.linux-amd64.tar.gz"
+
+ENV GOPATH /go
+ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
+RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 
 WORKDIR /go/src/dc-ledger
 COPY app ./app/
