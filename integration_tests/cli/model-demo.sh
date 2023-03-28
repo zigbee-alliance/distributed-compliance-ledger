@@ -69,7 +69,7 @@ test_divider
 sv=1
 cd_version_num=10
 echo "Create Model Versions with VID: $vid PID: $pid SoftwareVersion: $sv"
-result=$(echo "test1234" | dcld tx model add-model-version --vid=$vid --pid=$pid --softwareVersion=$sv minApplicableSoftwareVersion-1 --softwareVersionSting=$sv --cdVersionNumber=$cd_version_num --from=$vendor_account --yes)
+result=$(echo "test1234" | dcld tx model add-model-version --vid=$vid --pid=$pid --softwareVersion=$sv --minApplicableSoftwareVersion=1 --maxApplicableSoftwareVersion=2 --softwareVersionString=$sv --cdVersionNumber=$cd_version_num --from=$vendor_account --yes)
 check_response "$result" "\"code\": 0"
 echo "$result"
 
