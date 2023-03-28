@@ -1,11 +1,11 @@
-*
-!app
-!cmd
-!testutil
-!utils
-!x
-!go.mod
-!go.sum
-!Makefile
-!docs/docs.go
-!docs/static
+- !app
+  !cmd
+  !testutil
+  !utils
+  !x
+  !types
+  !go.mod
+  !go.sum
+  !Makefile
+  !docs/docs.go
+  !docs/static
