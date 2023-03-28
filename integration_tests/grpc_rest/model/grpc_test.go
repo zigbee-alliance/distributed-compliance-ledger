@@ -62,3 +62,8 @@ func TestDeleteModelWithAssociatedModelVersionsGRPC(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, false)
 	model.DeleteModelWithAssociatedModelVersions(&suite)
 }
+
+func TestDeleteModelWithAssociatedModelVersionsCertifiedGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	model.DeleteModelWithAssociatedModelVersionsCertified(&suite)
+}

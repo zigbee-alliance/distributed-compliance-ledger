@@ -172,7 +172,7 @@ func (k msgServer) DeleteModel(goCtx context.Context, msg *types.MsgDeleteModel)
 	if err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
-	
+
 	if err := checkModelRights(ctx, k.Keeper, signerAddr, msg.Vid, "MsgDeleteModel"); err != nil {
 		return nil, err
 	}
@@ -188,6 +188,14 @@ func (k msgServer) DeleteModel(goCtx context.Context, msg *types.MsgDeleteModel)
 		return nil, types.NewErrModelDoesNotExist(msg.Vid, msg.Pid)
 	}
 
+	modelVersions, found := k.GetModelVersions(ctx, msg.Vid, msg.Pid)
+
+	if found {
+		if err = removeAssociatedModelVersions(k, goCtx, modelVersions, *msg); err != nil {
+			return nil, err
+		}
+	}
+
 	// remove model from store
 	k.RemoveModel(
 		ctx,
@@ -198,24 +206,33 @@ func (k msgServer) DeleteModel(goCtx context.Context, msg *types.MsgDeleteModel)
 	// remove product from VendorProducts
 	k.RemoveVendorProduct(ctx, msg.Vid, msg.Pid)
 
-	modelVersions, found := k.GetModelVersions(ctx, msg.Vid, msg.Pid)
+	return &types.MsgDeleteModelResponse{}, nil
+}
 
-	if found {
-		// remove modelVersion for each softwareVersion
-		for _, softwareVersion := range modelVersions.SoftwareVersions {
-			msgDeleteModelVersion := types.NewMsgDeleteModelVersion(
-				msg.Creator, 
-				msg.Vid, 
-				msg.Pid, 
-				softwareVersion,
-			)
-	
-			k.DeleteModelVersion(goCtx, msgDeleteModelVersion)
+func removeAssociatedModelVersions(k msgServer, goCtx context.Context, modelVersions types.ModelVersions, msg types.MsgDeleteModel) error {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// check if no model version has certification record
+	for _, softwareVersion := range modelVersions.SoftwareVersions {
+		if k.IsModelCertified(ctx, msg.Vid, msg.Pid, softwareVersion) {
+			return types.NewErrModelVersionCertified(msg.Vid, msg.Pid, softwareVersion)
 		}
-	
-		// remove modelVersions record
-		k.RemoveModelVersions(ctx, msg.Vid, msg.Pid)
 	}
 
-	return &types.MsgDeleteModelResponse{}, nil
+	// remove modelVersion for each softwareVersion
+	for _, softwareVersion := range modelVersions.SoftwareVersions {
+		msgDeleteModelVersion := types.NewMsgDeleteModelVersion(
+			msg.Creator,
+			msg.Vid,
+			msg.Pid,
+			softwareVersion,
+		)
+
+		k.DeleteModelVersion(goCtx, msgDeleteModelVersion)
+	}
+
+	// remove modelVersions record
+	k.RemoveModelVersions(ctx, msg.Vid, msg.Pid)
+
+	return nil
 }
