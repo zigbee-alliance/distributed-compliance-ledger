@@ -105,6 +105,8 @@ Possible options when adding Validator, Observer, Sentry or Seed nodes to existi
 
 ### 3) Catchup from genesis
 
+> **Caution:** Since the release of version 1.0 has some breaking changes, creation of a new node from genesis *does not* work. Consider using another approach described in [this](./running-node-in-existing-network.md) document.
+
 - Prerequisites:
   - All binary versions used for upgrading (using `cosmovisor`) existing network up to current state must be available
 - Steps:
