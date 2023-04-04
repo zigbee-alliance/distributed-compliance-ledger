@@ -423,7 +423,6 @@ func New(
 		app.DclauthKeeper,
 		app.ComplianceKeeper,
 	)
-	modelModule := modelmodule.NewAppModule(appCodec, app.ModelKeeper)
 
 	app.ComplianceKeeper = *compliancemodulekeeper.NewKeeper(
 		appCodec,
@@ -432,6 +431,10 @@ func New(
 		app.DclauthKeeper,
 		app.ModelKeeper,
 	)
+
+	app.ModelKeeper.SetComplianceKeeper(app.ComplianceKeeper)
+
+	modelModule := modelmodule.NewAppModule(appCodec, app.ModelKeeper)
 	complianceModule := compliancemodule.NewAppModule(appCodec, app.ComplianceKeeper)
 
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
