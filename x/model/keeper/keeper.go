@@ -38,7 +38,7 @@ func NewKeeper(
 	}
 }
 
-func (k Keeper) SetComplianceKeeper(complianceKeeper types.ComplianceKeeper) {
+func (k *Keeper) SetComplianceKeeper(complianceKeeper types.ComplianceKeeper) {
 	k.complianceKeeper = complianceKeeper
 }
 
