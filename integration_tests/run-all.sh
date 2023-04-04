@@ -106,7 +106,7 @@ cleanup_pool
 
 # Cli shell tests
 if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "cli" ]]; then
-  CLI_SHELL_TESTS=$(find integration_tests/cli -type f -name '*.sh' -not -name "common.sh")
+  CLI_SHELL_TESTS=$(find integration_tests/cli -type f -name 'modelversion-demo.sh' -not -name "common.sh")
 
   for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
     init_pool

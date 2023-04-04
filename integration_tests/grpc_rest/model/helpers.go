@@ -136,16 +136,20 @@ func NewMsgUpdateModelVersion(
 
 func NewMsgCertifyModelVersion(
 	signer string,
+	softwareVersion uint32,
+	softwareVersionString string,
 	vid int32,
 	pid int32,
 ) *dclcompltypes.MsgCertifyModel {
 	return &dclcompltypes.MsgCertifyModel{
-		Signer:            signer,
-		Vid:               vid,
-		Pid:               pid,
-		CertificationDate: testconstants.CertificationDate,
-		CDCertificateId:   testconstants.CDCertificateID,
-		CertificationType: testconstants.CertificationType,
+		Signer:                signer,
+		Vid:                   vid,
+		Pid:                   pid,
+		CertificationDate:     testconstants.CertificationDate,
+		CDCertificateId:       testconstants.CDCertificateID,
+		CertificationType:     testconstants.CertificationType,
+		SoftwareVersion:       softwareVersion,
+		SoftwareVersionString: softwareVersionString,
 	}
 }
 
@@ -450,26 +454,42 @@ func DeleteModelWithAssociatedModelVersionsCertified(suite *utils.TestSuite) {
 	)
 	require.NotNil(suite.T, vendorAccount)
 
+	// Register new Certification center
+	ccvid := int32(tmrand.Uint16())
+	ccName := utils.RandString()
+	ccAccount := testDclauth.CreateAccount(
+		suite,
+		ccName,
+		dclauthtypes.AccountRoles{dclauthtypes.CertificationCenter},
+		ccvid,
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+		testconstants.Info,
+	)
+	require.NotNil(suite.T, vendorAccount)
+
 	// New vendor adds a model
 	pid := int32(tmrand.Uint16())
 	createModelMsg := NewMsgCreateModel(vid, pid, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelMsg}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
-	createModelVersionMsg1 := NewMsgCreateModelVersion(vid, pid, 1, "1", vendorName)
+	createModelVersionMsg1 := NewMsgCreateModelVersion(vid, pid, 1, "1", vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelVersionMsg1}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
-	createModelVersionMsg2 := NewMsgCreateModelVersion(vid, pid, 2, "2", vendorName)
+	createModelVersionMsg2 := NewMsgCreateModelVersion(vid, pid, 2, "2", vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelVersionMsg2}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	// certify model version
-	certifyModelVersionMsg := NewMsgCertifyModelVersion(aliceName, vid, pid)
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{certifyModelVersionMsg}, aliceName, aliceAccount)
+	certifyModelVersionMsg := NewMsgCertifyModelVersion(ccAccount.Address, 1, "1", vid, pid)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{certifyModelVersionMsg}, ccName, ccAccount)
 	require.NoError(suite.T, err)
 
-	deleteModelMsg := NewMsgDeleteModel(vid, pid, vendorName)
+	deleteModelMsg := NewMsgDeleteModel(vid, pid, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{deleteModelMsg}, vendorName, vendorAccount)
 	require.Error(suite.T, err)
 
