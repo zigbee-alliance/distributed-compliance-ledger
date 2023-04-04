@@ -4,7 +4,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
-	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
@@ -191,44 +190,51 @@ func CmdUpdateModelVersion() *cobra.Command {
 }
 
 func CmdDeleteModelVersion() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "delete-model-version [vid] [pid] [software-version]",
-		Short: "Broadcast message DeleteModelVersion",
-		Args:  cobra.ExactArgs(3),
-		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			argVid, err := cast.ToInt32E(args[0])
-			if err != nil {
-				return err
-			}
-			argPid, err := cast.ToInt32E(args[1])
-			if err != nil {
-				return err
-			}
-			argSoftwareVersion, err := cast.ToUint32E(args[2])
-			if err != nil {
-				return err
-			}
+	var (
+		vid             int32
+		pid             int32
+		softwareVersion uint32
+	)
 
+	cmd := &cobra.Command{
+		Use:   "delete-model-version",
+		Short: "Delete existing Model Version",
+		Args:  cobra.ExactArgs(0),
+		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
-
 			msg := types.NewMsgDeleteModelVersion(
 				clientCtx.GetFromAddress().String(),
-				argVid,
-				argPid,
-				argSoftwareVersion,
+				vid,
+				pid,
+				softwareVersion,
 			)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
+
+			// validate basic will be called in GenerateOrBroadcastTxCLI
+			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+			if cli.IsWriteInsteadReadRPCError(err) {
+				return clientCtx.PrintString(cli.LightClientProxyForWriteRequests)
 			}
 
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+			return err
 		},
 	}
 
-	flags.AddTxFlagsToCmd(cmd)
+	cmd.Flags().Int32Var(&vid, FlagVid, 0,
+		"Model vendor ID (positive non-zero uint16)")
+	cmd.Flags().Int32Var(&pid, FlagPid, 0,
+		"Model product ID (positive non-zero uint16)")
+	cmd.Flags().Uint32VarP(&softwareVersion, FlagSoftwareVersion, FlagSoftwareVersionShortcut, 0,
+		"Software Version of model (uint32)")
+
+	cli.AddTxFlagsToCmd(cmd)
+
+	_ = cmd.MarkFlagRequired(FlagVid)
+	_ = cmd.MarkFlagRequired(FlagPid)
+	_ = cmd.MarkFlagRequired(FlagSoftwareVersion)
+	_ = cmd.MarkFlagRequired(flags.FlagFrom)
 
 	return cmd
 }
