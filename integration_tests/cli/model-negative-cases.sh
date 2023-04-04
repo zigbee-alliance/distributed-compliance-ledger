@@ -61,6 +61,7 @@ echo "$result"
 test_divider
 
 sv=$RANDOM
+svs=$RANDOM
 echo "Create a Device Model Version with VID: $vid PID: $pid SV: $sv"
 result=$(echo 'test1234' | dcld tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$softwareVersionString --from=$vendor_account --yes)
 echo "$result"

@@ -191,9 +191,27 @@ func (k msgServer) DeleteModel(goCtx context.Context, msg *types.MsgDeleteModel)
 	modelVersions, found := k.GetModelVersions(ctx, msg.Vid, msg.Pid)
 
 	if found {
-		if err = removeAssociatedModelVersions(k, goCtx, modelVersions, *msg); err != nil {
-			return nil, err
+		// check if no model version has certification record
+		for _, softwareVersion := range modelVersions.SoftwareVersions {
+			if k.IsModelCertified(ctx, msg.Vid, msg.Pid, softwareVersion) {
+				return nil, types.NewErrModelVersionCertified(msg.Vid, msg.Pid, softwareVersion)
+			}
 		}
+
+		// remove modelVersion for each softwareVersion
+		for _, softwareVersion := range modelVersions.SoftwareVersions {
+			msgDeleteModelVersion := types.NewMsgDeleteModelVersion(
+				msg.Creator,
+				msg.Vid,
+				msg.Pid,
+				softwareVersion,
+			)
+
+			k.DeleteModelVersion(goCtx, msgDeleteModelVersion)
+		}
+
+		// remove modelVersions record
+		k.RemoveModelVersions(ctx, msg.Vid, msg.Pid)
 	}
 
 	// remove model from store
@@ -207,32 +225,4 @@ func (k msgServer) DeleteModel(goCtx context.Context, msg *types.MsgDeleteModel)
 	k.RemoveVendorProduct(ctx, msg.Vid, msg.Pid)
 
 	return &types.MsgDeleteModelResponse{}, nil
-}
-
-func removeAssociatedModelVersions(k msgServer, goCtx context.Context, modelVersions types.ModelVersions, msg types.MsgDeleteModel) error {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	// check if no model version has certification record
-	for _, softwareVersion := range modelVersions.SoftwareVersions {
-		if k.IsModelCertified(ctx, msg.Vid, msg.Pid, softwareVersion) {
-			return types.NewErrModelVersionCertified(msg.Vid, msg.Pid, softwareVersion)
-		}
-	}
-
-	// remove modelVersion for each softwareVersion
-	for _, softwareVersion := range modelVersions.SoftwareVersions {
-		msgDeleteModelVersion := types.NewMsgDeleteModelVersion(
-			msg.Creator,
-			msg.Vid,
-			msg.Pid,
-			softwareVersion,
-		)
-
-		k.DeleteModelVersion(goCtx, msgDeleteModelVersion)
-	}
-
-	// remove modelVersions record
-	k.RemoveModelVersions(ctx, msg.Vid, msg.Pid)
-
-	return nil
 }
