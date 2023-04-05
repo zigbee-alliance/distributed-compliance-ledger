@@ -13,7 +13,7 @@ func (k Keeper) ModelVersions(c context.Context, req *types.QueryGetModelVersion
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
-	
+
 	ctx := sdk.UnwrapSDKContext(c)
 
 	val, found := k.GetModelVersions(

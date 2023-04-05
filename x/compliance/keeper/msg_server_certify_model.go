@@ -42,7 +42,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *dclcompltypes.MsgCer
 	}
 
 	complianceInfo, found := k.GetComplianceInfo(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
-	// nolint:nestif
+	//nolint:nestif
 	if found {
 		// Compliance record already exist. Cases:
 		// 1) We want to re-certify compliance which is already certified now -> Error.

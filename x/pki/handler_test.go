@@ -2137,7 +2137,7 @@ func queryChildCertificates(
 	return &resp.ChildCertificates, nil
 }
 
-// nolint:unparam
+//nolint:unparam
 func queryRejectedCertificate(
 	setup *TestSetup,
 	subject string,

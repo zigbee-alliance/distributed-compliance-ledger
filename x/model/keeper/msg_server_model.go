@@ -168,7 +168,6 @@ func (k msgServer) DeleteModel(goCtx context.Context, msg *types.MsgDeleteModel)
 
 	// check if signer has enough rights to delete model
 	signerAddr, err := sdk.AccAddressFromBech32(msg.Creator)
-
 	if err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
@@ -207,7 +206,10 @@ func (k msgServer) DeleteModel(goCtx context.Context, msg *types.MsgDeleteModel)
 				softwareVersion,
 			)
 
-			k.DeleteModelVersion(goCtx, msgDeleteModelVersion)
+			_, err = k.DeleteModelVersion(goCtx, msgDeleteModelVersion)
+			if err != nil {
+				return nil, err
+			}
 		}
 
 		// remove modelVersions record

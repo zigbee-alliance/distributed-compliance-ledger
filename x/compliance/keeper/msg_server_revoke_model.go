@@ -42,7 +42,7 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *dclcompltypes.MsgRevo
 	}
 
 	complianceInfo, found := k.GetComplianceInfo(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
-	// nolint:nestif
+	//nolint:nestif
 	if found {
 		// Compliance record already exist. Cases:
 		// 1) We want to re-revoke compliance which is already in revoked state now -> Error.
