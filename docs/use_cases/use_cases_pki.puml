@@ -33,4 +33,10 @@ L -> L:the certificate and all child certificates are revoked\nafter receiving a
 == Revoke a Certificate by the owner ==
 V -> L: REVOKE_X509_CERT
 L -> L: the certificate and all child certificates are revoked
+
+== Publish CRL of an Intermediate or Leaf Certificate by Trustee ==
+T1 -> L: PROPOSE_PUBLISH_CRL
+TN -> L: APPROVE_PUBLISH_CRL
+L -> L: Pending CRL becomes published\nafter receiving approval from N (or K% of) Trustees
+
 @enduml

@@ -1,18 +1,19 @@
 # Transactions and Queries
+
 <!-- markdownlint-disable MD036 -->
 
 See use case sequence diagrams for the examples of how transaction can be used.
 
 ## General
 
-- Every writer to the Ledger must  
+- Every writer to the Ledger must
   - Have a private/public key pair.
   - Have an Account created on the ledger via `ACCOUNT` transaction (see [Use Case Txn Auth](use_cases/use_cases_txn_auth.puml)).
     - The Account stores the public part of the key
     - The Account has an associated role. The role is used for authorization policies.
   - Sign every transaction by the private key.
 - Ledger is public for read which means that anyone can read from the Ledger without a need to have
-an Account or sign the request.  
+  an Account or sign the request.
 - The following roles are supported:
   - `Trustee` - can create and approve accounts, approve root certificates.
   - `Vendor` - can add models that belong to the vendor ID associated with the vendor account.
@@ -23,9 +24,9 @@ an Account or sign the request.
 
 - Local CLI
   - Configure the CLI before using.
-      See `CLI Configuration` section in [how-to.md](how-to.md#cli-configuration).
+    See `CLI Configuration` section in [how-to.md](how-to.md#cli-configuration).
   - Generate and store a private key for the Account to be used for sending.
-      See `Getting Account` section in [how-to.md](how-to.md#getting-account).
+    See `Getting Account` section in [how-to.md](how-to.md#getting-account).
   - Send transactions to the ledger from the Account (`--from`).
     - it will automatically build a request, sign it by the account's key, and broadcast to the ledger.
   - See `CLI` sub-sections for every write request (transaction).
@@ -34,13 +35,13 @@ an Account or sign the request.
       - CLI 1: Is connected to the network of nodes. Doesn't have access to private keys.
       - CLI 2: Stores private key. Does not have a connection to the network of nodes.
     - Build transaction by CLI 1: `dcld tx ... --generate-only`
-    - Fetch `account number` and `sequence` by CLI 1:  `dcld query auth account --address <address>`
+    - Fetch `account number` and `sequence` by CLI 1: `dcld query auth account --address <address>`
     - Sign transaction by CLI 2: `dcld tx sign txn.json --from <from> --account-number <int> --sequence <int> --gas "auto" --offline --output-document txn.json`
     - Broadcat transaction by CLI 1: `dcld tx broadcast txn.json`
 - gRPC:
   - Generate a client code from the proto files [proto](../proto) for the client language (see <https://grpc.io/docs/languages/>)
   - Build, sign, and broadcast the message (transaction).
-      See [grpc/rest integration tests](../integration_tests/grpc_rest) as an example.
+    See [grpc/rest integration tests](../integration_tests/grpc_rest) as an example.
 - REST API
   - Build and sign a transaction by one of the following ways
     - In code via gRPC (see above)
@@ -79,10 +80,11 @@ Please make sure that TLS is enabled in gRPC, REST or Light Client Proxy for sec
   - There are no state proofs in gRPC, so gRPC queries should be sent to trusted Validator or Observer nodes only.
 - Tendermint RPC
   - Tendermint RPC OpenAPI specification can be found in <https://zigbee-alliance.github.io/distributed-compliance-ledger/>.
-  - Tendermint RPC is exposed by every running node  at port `26657`. See <https://docs.cosmos.network/v0.45/core/grpc_rest.html#tendermint-rpc>.
+  - Tendermint RPC is exposed by every running node at port `26657`. See <https://docs.cosmos.network/v0.45/core/grpc_rest.html#tendermint-rpc>.
   - Tendermint RPC supports state proofs. Tendermint's Light Client library can be used to verify the state proofs.
     So, if Light Client API is used, then it's possible to communicate with non-trusted nodes.
   - Please note, that multi-value queries don't have state proofs support and should be sent to trusted nodes only.
+  - Refer to [this doc](./tendermint-rpc.md) to see how to [subscribe](./tendermint-rpc.md#subscribe) to a Tendermint WebSocket based events and/or [query](./tendermint-rpc.md#querying-application-components) an application components.
 
 `NotFound` (404 code) is returned if an entry is not found on the ledger.
 
@@ -93,12 +95,12 @@ Please make sure that TLS is enabled in gRPC, REST or Light Client Proxy for sec
 
 ### Common pagination parameters
 
-- count-total `optional(bool)`:  count total number of records
-- limit `optional(uint)`:        pagination limit (default 100)
-- offset `optional(uint)`:       pagination offset
-- page `optional(uint)`:         pagination page. This sets offset to a multiple of limit (default 1).
-- page-key `optional(string)`:   pagination page-key
-- reverse `optional(bool)`:       results are sorted in descending order
+- count-total `optional(bool)`: count total number of records
+- limit `optional(uint)`: pagination limit (default 100)
+- offset `optional(uint)`: pagination offset
+- page `optional(uint)`: pagination page. This sets offset to a multiple of limit (default 1).
+- page-key `optional(string)`: pagination page-key
+- reverse `optional(bool)`: results are sorted in descending order
 
 ## VENDOR INFO
 
@@ -109,11 +111,11 @@ Please make sure that TLS is enabled in gRPC, REST or Light Client Proxy for sec
 Adds a record about a Vendor.
 
 - Parameters:
-  - vid: `uint16` -  Vendor ID (positive non-zero)
-  - vendorName: `string` -  Vendor name
-  - companyLegalName: `string` -  Legal name of the vendor company
-  - companyPreferredName: `optional(string)` -  Preferred name of the vendor company
-  - vendorLandingPageURL: `optional(string)` -  URL of the vendor's landing page
+  - vid: `uint16` - Vendor ID (positive non-zero)
+  - vendorName: `string` - Vendor name
+  - companyLegalName: `string` - Legal name of the vendor company
+  - companyPreferredName: `optional(string)` - Preferred name of the vendor company
+  - vendorLandingPageURL: `optional(string)` - URL of the vendor's landing page
 - In State: `vendorinfo/VendorInfo/value/<vid>`
 - Who can send:
   - Vendor account
@@ -127,11 +129,11 @@ Adds a record about a Vendor.
 Updates a record about a Vendor.
 
 - Parameters:
-  - vid: `uint16` -  Vendor ID (positive non-zero)
-  - vendorName: `optional(string)` -  Vendor name
-  - companyLegalName: `optional(string)` -  Legal name of the vendor company
-  - companyPreferredName: `optional(string)` -  Preferred name of the vendor company
-  - vendorLandingPageURL: `optional(string)` -  URL of the vendor's landing page
+  - vid: `uint16` - Vendor ID (positive non-zero)
+  - vendorName: `optional(string)` - Vendor name
+  - companyLegalName: `optional(string)` - Legal name of the vendor company
+  - companyPreferredName: `optional(string)` - Preferred name of the vendor company
+  - vendorLandingPageURL: `optional(string)` - URL of the vendor's landing page
 - In State: `vendorinfo/VendorInfo/value/<vid>`
 - Who can send:
   - Account with a vendor role who has the matching Vendor ID
@@ -145,7 +147,7 @@ Updates a record about a Vendor.
 Gets a Vendor Info for the given `vid` (vendor ID).
 
 - Parameters:
-  - vid: `uint16` -  model vendor ID (positive non-zero)
+  - vid: `uint16` - model vendor ID (positive non-zero)
 - CLI command:
   - `dcld query vendorinfo vendor --vid=<uint16>`
 - REST API:
@@ -177,12 +179,12 @@ Adds a new Model identified by a unique combination of `vid` (vendor ID) and `pi
 Not all fields can be edited (see `EDIT_MODEL`).
 
 - Parameters:
-  - vid: `uint16` -  model vendor ID (positive non-zero)
-  - pid: `uint16` -  model product ID (positive non-zero)
-  - deviceTypeID: `uint16` -  DeviceTypeID is the device type identifier. For example, DeviceTypeID 10 (0x000a), is the device type identifier for a Door Lock.
-  - productName: `string` -  model name
-  - productLabel: `string` -  model description (string or path to file containing data)
-  - partNumber: `string` -  stock keeping unit
+  - vid: `uint16` - model vendor ID (positive non-zero)
+  - pid: `uint16` - model product ID (positive non-zero)
+  - deviceTypeID: `uint16` - DeviceTypeID is the device type identifier. For example, DeviceTypeID 10 (0x000a), is the device type identifier for a Door Lock.
+  - productName: `string` - model name
+  - productLabel: `optional(string)` - model description (string or path to file containing data)
+  - partNumber: `optional(string)` - stock keeping unit
   - commissioningCustomFlow: `optional(uint8)` - A value of 1 indicates that user interaction with the device (pressing a button, for example) is required before commissioning can take place. When CommissioningCustomflow is set to a value of 2, the commissioner SHOULD attempt to obtain a URL which MAY be used to provide an end user with the necessary details for how to configure the product for initial commissioning
   - commissioningCustomFlowURL: `optional(string)` - commissioningCustomFlowURL SHALL identify a vendor specific commissioning URL for the device model when the commissioningCustomFlow field is set to '2'
   - commissioningModeInitialStepsHint: `optional(uint32)` - commissioningModeInitialStepsHint SHALL identify a hint for the steps that can be used to put into commissioning mode a device that has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 1 (bit 0 is set) indicates that a device that has not yet been commissioned will enter Commissioning Mode upon a power cycle.
@@ -207,7 +209,7 @@ dcld tx model add-model --vid=<uint16> --pid=<uint16> --deviceTypeID=<uint16> --
 - CLI command full:
 
 ```bash
-dcld tx model add-model --vid=<uint16> --pid=<uint16> --deviceTypeID=<uint16> --productName=<string> --productLabel=<string or path> --partNumber=<string> 
+dcld tx model add-model --vid=<uint16> --pid=<uint16> --deviceTypeID=<uint16> --productName=<string> --productLabel=<string or path> --partNumber=<string>
     --commissioningCustomFlow=<uint8> --commissioningCustomFlowUrl=<string> --commissioningModeInitialStepsHint=<uint32> --commissioningModeInitialStepsInstruction=<string>
     --commissioningModeSecondaryStepsHint=<uint32> --commissioningModeSecondaryStepsInstruction=<string> --userManualURL=<string> --supportURL=<string> --productURL=<string> --lsfURL=<string>
     --from=<account>
@@ -226,17 +228,17 @@ a new model info with a new `vid` or `pid` can be created.
 All non-edited fields remain the same.
 
 - Parameters:
-  - vid: `uint16` -  model vendor ID (positive non-zero)
-  - pid: `uint16` -  model product ID (positive non-zero)
-  - productName: `optional(string)` -  model name
-  - productLabel: `optional(string)` -  model description (string or path to file containing data)
-  - partNumber: `optional(string)` -  stock keeping unit
+  - vid: `uint16` - model vendor ID (positive non-zero)
+  - pid: `uint16` - model product ID (positive non-zero)
+  - productName: `optional(string)` - model name
+  - productLabel: `optional(string)` - model description (string or path to file containing data)
+  - partNumber: `optional(string)` - stock keeping unit
   - commissioningCustomFlowURL: `optional(string)` - commissioningCustomFlowURL SHALL identify a vendor specific commissioning URL for the device model when the commissioningCustomFlow field is set to '2'
   - commissioningModeInitialStepsInstruction: `optional(string)` - commissioningModeInitialStepsInstruction SHALL contain text which relates to specific values of CommissioningModeInitialStepsHint. Certain values of CommissioningModeInitialStepsHint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioningModeInitialStepsInstruction SHALL be set
   - commissioningModeSecondaryStepInstruction: `optional(string)` - commissioningModeSecondaryStepInstruction SHALL contain text which relates to specific values of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioningModeSecondaryStepInstruction SHALL be set
   - userManualURL: `optional(string)` - URL that contains product specific web page that contains user manual for the device model.
   - supportURL: `optional(string)` - URL that contains product specific web page that contains support details for the device model.
-  - productURL: `optional(string)` - URL that contains product specific web page that contains details for the device model.  
+  - productURL: `optional(string)` - URL that contains product specific web page that contains details for the device model.
   - lsfURL: `optional(string)` - URL to the Localized String File of this product.
 - lsfRevision: `optional(uint32)` - LsfRevision is a monotonically increasing positive integer indicating the latest available version of Localized String File.
 - In State: `model/Model/value/<vid>/<pid>`
@@ -253,8 +255,8 @@ Deletes an existing Model identified by a unique combination of `vid` (vendor ID
 by the vendor account.
 
 - Parameters:
-  - vid: `uint16` -  model vendor ID (positive non-zero)
-  - pid: `uint16` -  model product ID (positive non-zero)
+  - vid: `int32` - model vendor ID (positive non-zero)
+  - pid: `int32` - model product ID (positive non-zero)
 - In State: `model/Model/value/<vid>/<pid>`
 - Who can send:
   - Vendor account associated with the same vid who has created the model
@@ -272,8 +274,8 @@ Not all Model Software Version fields can be edited (see `EDIT_MODEL_VERSION`).
 If one of `OTA_URl`, `OTA_checksum` or `OTA_checksum_type` fields is set, then the other two must also be set.
 
 - Parameters:
-  - vid: `uint16` -  model vendor ID (positive non-zero)
-  - pid: `uint16` -  model product ID (positive non-zero)
+  - vid: `uint16` - model vendor ID (positive non-zero)
+  - pid: `uint16` - model product ID (positive non-zero)
   - softwareVersion: `uint32` - model software version
   - softwareVersionSting: `string` - model software version string
   - cdVersionNumber `uint32` - CD Version Number of the certification
@@ -282,7 +284,7 @@ If one of `OTA_URl`, `OTA_checksum` or `OTA_checksum_type` fields is set, then t
   - firmwareInformation `optional(string)` - FirmwareInformation field included in the Device Attestation response when this Software Image boots on the device
   - softwareVersionValid `optional(bool)` - Flag to indicate whether the software version is valid or not (default true)
   - otaURL `optional(string)` - URL where to obtain the OTA image
-  - otaFileSize `optional(string)`  - OtaFileSize is the total size of the OTA software image in bytes
+  - otaFileSize `optional(string)` - OtaFileSize is the total size of the OTA software image in bytes
   - otaChecksum `optional(string)` - Digest of the entire contents of the associated OTA Software Update Image under the OtaUrl attribute, encoded in base64 string representation. The digest SHALL have been computed using the algorithm specified in OtaChecksumType
   - otaChecksumType `optional(string)` - Numeric identifier as defined in IANA Named Information Hash Algorithm Registry for the type of otaChecksum. For example, a value of 1 would match the sha-256 identifier, which maps to the SHA-256 digest algorithm
   - releaseNotesURL `optional(string)` - URL that contains product specific web page that contains release notes for the device model.
@@ -303,7 +305,7 @@ dcld tx model add-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=
 ```bash
 dcld tx model add-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --cdVersionNumber=<uint32>
 --minApplicableSoftwareVersion=<uint32> --maxApplicableSoftwareVersion=<uint32>
---firmwareInformation=<string> --softwareVersionValid=<bool> --otaURL=<string> --otaFileSize=<string> --otaChecksum=<string> --otaChecksumType=<string> --releaseNotesURL=<string> 
+--firmwareInformation=<string> --softwareVersionValid=<bool> --otaURL=<string> --otaFileSize=<string> --otaChecksum=<string> --otaChecksumType=<string> --releaseNotesURL=<string>
 --from=<account>
 ```
 
@@ -314,15 +316,16 @@ dcld tx model add-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=
 Edits an existing Model Software Version identified by a unique combination of `vid` (vendor ID) `pid` (product ID) and `softwareVersion`
 by the vendor.
 
-Only the fields listed below (except `vid` `pid` and `softwareVersion`)  can be edited.
+Only the fields listed below (except `vid` `pid` and `softwareVersion`) can be edited.
 
 All non-edited fields remain the same.
 
-`otaURL` can be edited only if  `otaFileSize`, `otaChecksum` and `otaChecksumType` are already set.
+`otaURL` can be edited only if `otaFileSize`, `otaChecksum` and `otaChecksumType` are already set.
 
 - Parameters:
-  - vid: `uint16` -  model vendor ID (positive non-zero)
-  - pid: `uint16` -  model product ID (positive non-zero)
+
+  - vid: `uint16` - model vendor ID (positive non-zero)
+  - pid: `uint16` - model product ID (positive non-zero)
   - softwareVersion: `uint32` - model software version (positive non-zero)
   - softwareVersionValid `optional(bool)` - Flag to indicate whether the software version is valid or not (default true)
   - otaURL `optional(string)` - URL where to obtain the OTA image
@@ -336,6 +339,25 @@ All non-edited fields remain the same.
 - CLI command:
   - `dcld tx model update-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> ... --from=<account>`
 
+#### DELETE_MODEL_VERSION
+
+**Status: Implemented**
+
+Deletes an existing Model Version identified by a unique combination of `vid` (vendor ID), `pid` (product ID) and `softwareVersion`
+by the vendor account.
+
+Model Version can be deleted only before it is certified.
+
+- Parameters:
+  - vid: `int32` - model version vendor ID (positive non-zero)
+  - pid: `int32` - model version product ID (positive non-zero)
+  - softwareVersion: `uint32` - model version software version (positive non-zero)
+- In State: `model/ModelVersion/value/<vid>/<pid>/<softwareVersion>`
+- Who can send:
+  - Vendor account associated with the same vid who has created the model version
+- CLI command:
+  - `dcld tx model delete-model-version --vid=<int32> --pid=<int32> --from=<account>`
+
 #### GET_MODEL
 
 **Status: Implemented**
@@ -343,8 +365,8 @@ All non-edited fields remain the same.
 Gets a Model Info with the given `vid` (vendor ID) and `pid` (product ID).
 
 - Parameters:
-  - vid: `uint16` -  model vendor ID (positive non-zero)
-  - pid: `uint16` -  model product ID (positive non-zero)
+  - vid: `uint16` - model vendor ID (positive non-zero)
+  - pid: `uint16` - model product ID (positive non-zero)
 - CLI command:
   - `dcld query model get-model --vid=<uint16> --pid=<uint16>`
 - REST API:
@@ -357,8 +379,8 @@ Gets a Model Info with the given `vid` (vendor ID) and `pid` (product ID).
 Gets a Model Software Versions for the given `vid`, `pid` and `softwareVersion`.
 
 - Parameters
-  - vid: `uint16` -  model vendor ID (positive non-zero)
-  - pid: `uint16` -  model product ID (positive non-zero)
+  - vid: `uint16` - model vendor ID (positive non-zero)
+  - pid: `uint16` - model product ID (positive non-zero)
   - softwareVersion: `uint32` - model software version (positive non-zero)
 - CLI command:
   - `dcld query model model-version --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32>`
@@ -387,7 +409,7 @@ Should be sent to trusted nodes only.
 Gets all Model Infos by the given Vendor (`vid`).
 
 - Parameters:
-  - vid: `uint16` -  model vendor ID (positive non-zero)
+  - vid: `uint16` - model vendor ID (positive non-zero)
 - CLI command:
   - `dcld query model vendor-models --vid=<uint16>`
 - REST API:
@@ -400,8 +422,8 @@ Gets all Model Infos by the given Vendor (`vid`).
 Gets all Model Software Versions for the given `vid` and `pid` combination.
 
 - Parameters:
-  - vid: `uint16` -  model vendor ID (positive non-zero)
-  - pid: `uint16` -  model product ID (positive non-zero)
+  - vid: `uint16` - model vendor ID (positive non-zero)
+  - pid: `uint16` - model product ID (positive non-zero)
 - CLI command:
   - `dcld query model all-model-versions --vid=<uint16> --pid=<uint16>`
 - REST API:
@@ -427,13 +449,13 @@ It can be used for use cases where only revocation is tracked on the ledger to r
 from the revocation list.
 
 - Parameters:
-  - vid: `uint16` -  model vendor ID (positive non-zero)
-  - pid: `uint16` -  model product ID (positive non-zero)
+  - vid: `uint16` - model vendor ID (positive non-zero)
+  - pid: `uint16` - model product ID (positive non-zero)
   - softwareVersion: `uint32` - model software version
   - softwareVersionSting: `string` - model software version string
   - certificationDate: `string` - The date of model certification (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
   - certificationType: `string` - Certification type - Currently 'zigbee', 'matter', 'access control', 'product security' types are supported
-  - cdCertificateId: `string` - CD Certificate ID 
+  - cdCertificateId: `string` - CD Certificate ID
   - reason `optional(string)` - optional comment describing the reason of the certification
   - cDVersionNumber `optional(uint32)` - optional field describing the CD version number
   - familyId `optional(string)` - optional field describing the family ID
@@ -467,16 +489,16 @@ The corresponding Model and Model Version are not required to be present on the 
 
 It can be used in cases where every compliance result
 is written on the ledger (`CERTIFY_MODEL` was called), or
- cases where only revocation list is stored on the ledger.
+cases where only revocation list is stored on the ledger.
 
 - Parameters:
-  - vid: `uint16` -  model vendor ID (positive non-zero)
-  - pid: `uint16` -  model product ID (positive non-zero)
+  - vid: `uint16` - model vendor ID (positive non-zero)
+  - pid: `uint16` - model product ID (positive non-zero)
   - softwareVersion: `uint32` - model software version
   - softwareVersionSting: `string` - model software version string
   - revocationDate: `string` - The date of model revocation (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
-  - certificationType: `string`  - Certification type - Currently 'zigbee' and 'matter', 'access control', 'product security' types are supported
-  - reason `optional(string)`  - optional comment describing the reason of revocation
+  - certificationType: `string` - Certification type - Currently 'zigbee' and 'matter', 'access control', 'product security' types are supported
+  - reason `optional(string)` - optional comment describing the reason of revocation
 - In State:
   - `compliance/ComplianceInfo/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
   - `compliance/RevokedModel/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
@@ -496,14 +518,14 @@ The corresponding Model and Model Version is required to be present in the ledge
 Can not be set if there is already a certification record on the ledger (certified or revoked).
 
 - Parameters:
-  - vid: `uint16` -  model vendor ID (positive non-zero)
-  - pid: `uint16` -  model product ID (positive non-zero)
+  - vid: `uint16` - model vendor ID (positive non-zero)
+  - pid: `uint16` - model product ID (positive non-zero)
   - softwareVersion: `uint32` - model software version
   - softwareVersionSting: `string` - model software version string
   - provisionalDate: `string` - The date of model provisioning (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
-  - certificationType: `string`  - Certification type - Currently 'zigbee' and 'matter', 'access control', 'product security' types are supported
-  - cdCertificateId: `string` - CD Certificate ID 
-  - reason `optional(string)`  - optional comment describing the reason of revocation
+  - certificationType: `string` - Certification type - Currently 'zigbee' and 'matter', 'access control', 'product security' types are supported
+  - cdCertificateId: `string` - CD Certificate ID
+  - reason `optional(string)` - optional comment describing the reason of revocation
   - cDVersionNumber `optional(uint32)` - optional field describing the CD version number
   - familyId `optional(string)` - optional field describing the family ID
   - supportedClusters `optional(string)` - optional field describing the supported clusters
@@ -543,10 +565,10 @@ This function returns `true` if compliance information is found on ledger and it
 You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
 
 - Parameters:
-  - vid: `uint16` -  model vendor ID (positive non-zero)
-  - pid: `uint16` -  model product ID (positive non-zero)
+  - vid: `uint16` - model vendor ID (positive non-zero)
+  - pid: `uint16` - model product ID (positive non-zero)
   - softwareVersion: `uint32` - model software version
-  - certification_type: `string`  - Certification type - Currently 'zigbee' and 'matter' types are supported
+  - certification_type: `string` - Certification type - Currently 'zigbee' and 'matter' types are supported
 - CLI command:
   - `dcld query compliance certified-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter|access control|product security>`
 - REST API:
@@ -559,7 +581,7 @@ You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
 Gets a structure containing the Model Version / Certification Type key (`vid`, `pid`, `softwareVersion`, `certificationType`) and a flag (`value`) indicating whether the given Model Version is revoked for `certificationType` standard.
 
 It contains information about revocation only, so it should be used in cases
- where only revocation is tracked on the ledger.
+where only revocation is tracked on the ledger.
 
 This function responds with `NotFound` (404 code) if Model Version was never certified or revoked earlier.
 
@@ -568,10 +590,10 @@ This function returns `true` if compliance information is found on ledger and it
 You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
 
 - Parameters:
-  - vid: `uint16` -  model vendor ID (positive non-zero)
-  - pid: `uint16` -  model product ID (positive non-zero)
+  - vid: `uint16` - model vendor ID (positive non-zero)
+  - pid: `uint16` - model product ID (positive non-zero)
   - softwareVersion: `uint32` - model software version
-  - certification_type: `string`  - Certification type - Currently 'zigbee' and 'matter' types are supported
+  - certification_type: `string` - Certification type - Currently 'zigbee' and 'matter' types are supported
 - CLI command:
   - `dcld query compliance revoked-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter|access control|product security>`
 - REST API:
@@ -590,10 +612,10 @@ This function returns `true` if compliance information is found on the ledger an
 You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
 
 - Parameters:
-  - vid: `uint16` -  model vendor ID (positive non-zero)
-  - pid: `uint16` -  model product ID (positive non-zero)
+  - vid: `uint16` - model vendor ID (positive non-zero)
+  - pid: `uint16` - model product ID (positive non-zero)
   - softwareVersion: `uint32` - model software version
-  - certification_type: `string`  - Certification type - Currently 'zigbee' and 'matter' types are supported
+  - certification_type: `string` - Certification type - Currently 'zigbee' and 'matter' types are supported
 - CLI command:
   - `dcld query compliance provisional-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter|access control|product security>`
 - REST API:
@@ -611,10 +633,10 @@ to get the whole compliance information without additional state check.
 This function responds with `NotFound` (404 code) if compliance information is not found in store.
 
 - Parameters:
-  - vid: `uint16` -  model vendor ID (positive non-zero)
-  - pid: `uint16` -  model product ID (positive non-zero)
+  - vid: `uint16` - model vendor ID (positive non-zero)
+  - pid: `uint16` - model product ID (positive non-zero)
   - softwareVersion: `uint32` - model software version
-  - certification_type: `string`  - Certification type - Currently 'zigbee' and 'matter' types are supported
+  - certification_type: `string` - Certification type - Currently 'zigbee' and 'matter' types are supported
 - CLI command:
   - `dcld query compliance compliance-info --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter|access control|product security>`
 - REST API:
@@ -660,7 +682,7 @@ Should be sent to trusted nodes only.
 Gets all revoked Model Versions for all vendors (`vid`s).
 
 It contains information about revocation only, so it should be used in cases
- where only revocation is tracked on the ledger.
+where only revocation is tracked on the ledger.
 
 Should be sent to trusted nodes only.
 
@@ -761,8 +783,8 @@ Approves the proposed root certificate.
 The certificate is not active until sufficient number of Trustees approve it.
 
 - Parameters:
-  - subject: `string`  - proposed certificates's `Subject` is base64 encoded subject DER sequence bytes
-  - subject_key_id: `string`  - proposed certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
+  - subject: `string` - proposed certificates's `Subject` is base64 encoded subject DER sequence bytes
+  - subject_key_id: `string` - proposed certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
   - info: `optional(string)` - information/notes for the approval
   - time: `optional(int64)` - approval time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State: `pki/ApprovedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
@@ -786,7 +808,7 @@ The certificate is not reject until sufficient number of Trustees reject it.
 - Parameters:
   - subject: `string` - proposed certificates's `Subject` is base64 encoded subject DER sequence bytes
   - subject_key_id: `string` - proposed certificates's `Subject Key Id` in hex string format, e.g:
-  `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
+    `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
   - info: `optional(string)` - information/notes for the reject
   - time: `optional(int64)` -- reject time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State: `pki/RejectedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
@@ -827,7 +849,7 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
   - the signature (self-signature) and expiration date are valid.
   - parent certificate must be already stored on the ledger and a valid chain to some root certificate can be built.
 
-> **_Note:_**  Multiple certificates can refer to the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination.
+> **_Note:_** Multiple certificates can refer to the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination.
 
 #### REVOKE_X509_CERT
 
@@ -837,11 +859,11 @@ Revokes the given X509 certificate (either intermediate or leaf).
 All the certificates in the chain signed by the revoked certificate will be revoked as well.
 
 Only the owner (sender) can revoke the certificate.
-Root certificates can not be revoked this way, use  `PROPOSE_X509_CERT_REVOC` and `APPROVE_X509_ROOT_CERT_REVOC` instead.  
+Root certificates can not be revoked this way, use `PROPOSE_X509_CERT_REVOC` and `APPROVE_X509_ROOT_CERT_REVOC` instead.
 
 - Parameters:
-  - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
-  - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
+  - subject: `string` - certificates's `Subject` is base64 encoded subject DER sequence bytes
+  - subject_key_id: `string` - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
   - info: `optional(string)` - information/notes for the revocation
   - time: `optional(int64)` - revocation time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State: `pki/RevokedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
@@ -862,8 +884,8 @@ If more than 1 Trustee signature is required to revoke a root certificate,
 then the certificate will be in a pending state until sufficient number of other Trustee's approvals is received.
 
 - Parameters:
-  - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
-  - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
+  - subject: `string` - certificates's `Subject` is base64 encoded subject DER sequence bytes
+  - subject_key_id: `string` - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
   - info: `optional(string)` - information/notes for the revocation proposal
   - time: `optional(int64)` - revocation proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State: `pki/ProposedCertificateRevocation/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
@@ -882,8 +904,8 @@ All the certificates in the chain signed by the revoked certificate will be revo
 The revocation is not applied until sufficient number of Trustees approve it.
 
 - Parameters:
-  - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
-  - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
+  - subject: `string` - certificates's `Subject` is base64 encoded subject DER sequence bytes
+  - subject_key_id: `string` - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
   - info: `optional(string)` - information/notes for the revocation approval
   - time: `optional(int64)` - revocation approval time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State: `pki/RevokedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
@@ -894,6 +916,53 @@ The revocation is not applied until sufficient number of Trustees approve it.
 - CLI command:
   - `dcld tx pki approve-revoke-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
 
+#### PROPOSE_PUBLISH_CRL
+
+**Status: Implemented**
+
+Proposes publishing the CRL of the given X509 Intermediate or Leaf certificate by a Trustee.
+
+If more than 1 Trustee signature is required to publish the CRL,
+then the proposal will be in a pending state until sufficient number of other Trustee's approvals is received.
+
+- Parameters:
+  - vid: `int32` - Vendor ID (positive non-zero)
+  - subject: `string` - certificates's `Subject` is base64 encoded subject DER sequence bytes
+  - subject_key_id: `string` - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
+  - pid: `optional(int32)` - product ID (positive non-zero)
+  - dataUrl: `optional(string)` - URL of the CRL
+  - dataFileSize: `optional(uint64)` - file size of the CRL
+  - dataChecksum: `optional(string)` - checksum of the CRL
+  - dataChecksumType: `optional(int32)` - checksum type of the CRL
+  - RevocationType: `optional(int32)` - type of revocation (0 - UNKNOWN, 1 - RFC5280 CRl)
+  - info: `optional(string)` - information/notes for the publish proposal
+  - time: `optional(int64)` - publish proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
+- In State: `pki/ProposedPublishCRL/value/<vid>/<Certificate's Subject>/<Certificate's Subject Key ID>`
+- Who can send:
+  - Trustee
+- CLI command:
+  - `dcld tx pki propose-publish-crl --vid=<int32> --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
+
+#### APPROVE_PUBLISH_CRL
+
+**Status: Implemented**
+
+Approves publishing of the CRL the given X509 Intermediate or Leaf certificate by a Trustee.
+
+The publishing is not applied until sufficient number of Trustees approve it.
+
+- Parameters:
+  - vid: `int32` - Vendor ID (positive non-zero)
+  - subject: `string` - certificates's `Subject` is base64 encoded subject DER sequence bytes
+  - subject_key_id: `string` - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
+- In State: `pki/PublishedCRLs/value/<vid>/<Certificate's Subject>/<Certificate's Subject Key ID>`
+- Who can send:
+  - Trustee
+- Number of required approvals:
+  - greater than 2/3 of Trustees (proposal by a Trustee is also counted as an approval)
+- CLI command:
+  - `dcld tx pki approve-publish-crl --vid=<int32> --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
+
 #### GET_X509_CERT
 
 **Status: Implemented**
@@ -903,8 +972,8 @@ Revoked certificates are not returned.
 Use `GET_ALL_REVOKED_X509_CERTS` to get a list of all revoked certificates.
 
 - Parameters:
-  - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
-  - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
+  - subject: `string` - certificates's `Subject` is base64 encoded subject DER sequence bytes
+  - subject_key_id: `string` - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
 - CLI command:
   - `dcld query pki x509-cert --subject=<base64 string> --subject-key-id=<hex string>`
 - REST API:
@@ -920,7 +989,7 @@ Revoked certificates are not returned.
 Use `GET_ALL_REVOKED_X509_CERTS` to get a list of all revoked certificates.
 
 - Parameters:
-  - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
+  - subject: `string` - certificates's `Subject` is base64 encoded subject DER sequence bytes
 - CLI command:
   - `dcld query pki all-subject-x509-certs (--subject=<base64 string>`
 - REST API:
@@ -934,8 +1003,8 @@ Gets all child certificates for the given certificate.
 Revoked certificates are not returned.
 
 - Parameters:
-  - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
-  - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
+  - subject: `string` - certificates's `Subject` is base64 encoded subject DER sequence bytes
+  - subject_key_id: `string` - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
 - CLI command:
   - `dcld query pki all-child-x509-certs (--subject=<base64 string> --subject-key-id=<hex string>`
 - REST API:
@@ -948,8 +1017,8 @@ Revoked certificates are not returned.
 Gets a proposed but not approved root certificate with the given subject and subject key ID attributes.
 
 - Parameters:
-  - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
-  - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
+  - subject: `string` - certificates's `Subject` is base64 encoded subject DER sequence bytes
+  - subject_key_id: `string` - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
 - CLI command:
   - `dcld query pki proposed-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string>`
 - REST API:
@@ -963,7 +1032,7 @@ Get a rejected root certificate with the given subject and subject key ID attrib
 
 - Parameters:
   - subject: `string` - certificates's `Subject` is base64 encoded subject DER sequence bytes
-  - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
+  - subject_key_id: `string` - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
 - CLI command:
   - `dcld query pki rejected-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string>`
 - REST API:
@@ -976,8 +1045,8 @@ Get a rejected root certificate with the given subject and subject key ID attrib
 Gets a revoked certificate (either root, intermediate or leaf) by the given subject and subject key ID attributes.
 
 - Parameters:
-  - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
-  - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
+  - subject: `string` - certificates's `Subject` is base64 encoded subject DER sequence bytes
+  - subject_key_id: `string` - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
 - CLI command:
   - `dcld query pki revoked-x509-cert --subject=<base64 string> --subject-key-id=<hex string>`
 - REST API:
@@ -990,8 +1059,8 @@ Gets a revoked certificate (either root, intermediate or leaf) by the given subj
 Gets a proposed but not approved root certificate to be revoked.
 
 - Parameters:
-  - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
-  - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
+  - subject: `string` - certificates's `Subject` is base64 encoded subject DER sequence bytes
+  - subject_key_id: `string` - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
 - CLI command:
   - `dcld query pki proposed-x509-root-cert-to-revoke --subject=<base64 string> --subject-key-id=<hex string>`
 - REST API:
@@ -1072,7 +1141,7 @@ Should be sent to trusted nodes only.
 
 #### GET_ALL_REJECTED_X509_ROOT_CERTS
 
- **Status: Implemented**
+**Status: Implemented**
 
 Gets all rejected root certificates.
 
@@ -1145,7 +1214,7 @@ The account is not active until sufficient number of Trustees approve it.
 - CLI command:
   - `dcld tx auth approve-add-account --address=<bench32 encoded string> --from=<account>`
 
-> **_Note:_**  If we are approving an account with role `Vendor`, then we need 1/3 of Trustees approvals.
+> **_Note:_** If we are approving an account with role `Vendor`, then we need more than 1/3 of Trustees approvals.
 
 #### REJECT_ADD_ACCOUNT
 
@@ -1206,7 +1275,7 @@ The account is not revoked until sufficient number of Trustees approve it.
 - CLI command:
   - `dcld tx auth approve-revoke-account --address=<bench32 encoded string> --from=<account>`
 
-> **_Note:_**  If revoking an account has sufficient number of Trustees approve it then this account is placed in Revoked Account.
+> **_Note:_** If revoking an account has sufficient number of Trustees approve it then this account is placed in Revoked Account.
 
 #### GET_ACCOUNT
 
@@ -1313,7 +1382,7 @@ Should be sent to trusted nodes only.
 
 - Parameters:
   - Common pagination parameters (see [pagination-params]
-   (#common-pagination-parameters))
+    (#common-pagination-parameters))
 - CLI command:
   - `dcld query auth all-rejected-accounts`
 - REST API:
@@ -1407,8 +1476,9 @@ will be in a pending state until sufficient number of approvals is received.
 - Who can send:
   - Trustee
 - CLI command:
+
   - `dcld tx validator propose-disable-node --address=<validator address> --from=<account>`
-   e.g.:
+    e.g.:
 
     ```bash
     dcld query validator propose-disable-node --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q --from alice
@@ -1432,8 +1502,9 @@ The validator node is not disabled until sufficient number of Trustees approve i
 - Number of required approvals:
   - 2/3 of Trustees
 - CLI command:
+
   - `dcld tx validator approve-disable-node --address=<validator address> --from=<account>`
-   e.g.:
+    e.g.:
 
     ```bash
     dcld tx validator approve-disable-node --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q from alice
@@ -1457,8 +1528,9 @@ The validator node is not reject until sufficient number of Trustees rejects it.
 - Number of required rejects:
   - more than 1/3 of Trustees
 - CLI command:
+
   - `dcld tx validator reject-disable-node --address=<validator address> --from=<account>`
-   e.g.:
+    e.g.:
 
   ```bash
   dcld tx validator reject-disable-node --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q --from alice
@@ -1489,7 +1561,8 @@ Gets a validator node.
 - Parameters:
   - address: `string` - Bech32 encoded validator address or owner account
 - CLI command:
-  - `dcld query validator node --address=<validator address|account>`  e.g.:
+
+  - `dcld query validator node --address=<validator address|account>` e.g.:
 
     ```bash
     dcld query validator node --address=cosmosvaloper1qse069r3w0d82dul4xluqapxfg62qlndsdw9ms
@@ -1510,8 +1583,8 @@ Gets a validator node.
 
 Gets the list of all validator nodes from the store.
 
-> **_Note:_**  All stored validator nodes (`active` and `jailed`) will be returned by default.
-In order to get an active validator set use specific command [validator set](#validator-set).
+> **_Note:_** All stored validator nodes (`active` and `jailed`) will be returned by default.
+> In order to get an active validator set use specific command [validator set](#validator-set).
 
 Should be sent to trusted nodes only.
 
@@ -1531,7 +1604,8 @@ Gets a proposed validator node.
 - Parameters:
   - address: `string` - Bech32 encoded validator address or owner account
 - CLI command:
-  - `dcld query validator proposed-disable-node --address=<validator address|account>`  e.g.:
+
+  - `dcld query validator proposed-disable-node --address=<validator address|account>` e.g.:
 
     ```bash
     dcld query validator proposed-disable-node --address=cosmosvaloper1qse069r3w0d82dul4xluqapxfg62qlndsdw9ms
@@ -1570,7 +1644,8 @@ Gets a rejected validator node.
 - Parameters:
   - address: `string` - Bech32 encoded validator address or owner account
 - CLI command:
-  - `dcld query validator rejected-disable-node --address=<validator address|account>`  e.g.:
+
+  - `dcld query validator rejected-disable-node --address=<validator address|account>` e.g.:
 
     ```bash
     dcld query validator rejected-disable-node --address=cosmosvaloper1qse069r3w0d82dul4xluqapxfg62qlndsdw9ms
@@ -1609,8 +1684,9 @@ Gets a disabled validator node.
 - Parameters:
   - address: `string` - Bech32 encoded validator address or owner account
 - CLI command:
+
   - `dcld query validator disabled-node --address=<validator address|account>`
-   e.g.:
+    e.g.:
 
     ```bash
     dcld query validator disabled-node --address=cosmosvaloper1qse069r3w0d82dul4xluqapxfg62qlndsdw9ms
@@ -1649,8 +1725,9 @@ Gets a last validator node power.
 - Parameters:
   - address: `string` - Bech32 encoded validator address or owner account
 - CLI command:
+
   - `dcld query validator last-power --address=<validator address|account>`
-   e.g.:
+    e.g.:
 
     ```bash
     dcld query validator last-power --address=cosmosvaloper1qse069r3w0d82dul4xluqapxfg62qlndsdw9ms
@@ -1708,18 +1785,18 @@ Proposes an upgrade plan with the given name at the given height.
 
 - Parameters:
   - name: `string` - upgrade plan name
-  - upgrade-height: `int64` -  upgrade plan height (positive non-zero)
+  - upgrade-height: `int64` - upgrade plan height (positive non-zero)
   - upgrade-info: `optional(string)` - upgrade plan info (for node admins to
-      read). Recommended format is an os/architecture -> application binary URL
-      map as a JSON under `binaries` key where each URL should include the
-      corresponding checksum as `checksum` query parameter with the value in the
-      format `type:value` where `type` is `sha256` or `sha512` and `value` is
-      the actual checksum value. For example:
+    read). Recommended format is an os/architecture -> application binary URL
+    map as a JSON under `binaries` key where each URL should include the
+    corresponding checksum as `checksum` query parameter with the value in the
+    format `type:value` where `type` is `sha256` or `sha512` and `value` is
+    the actual checksum value. For example:
 
 ```json
 {
   "binaries": {
-    "linux/amd64":"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v0.7.0/dcld?checksum=sha256:aec070645fe53ee3b3763059376134f058cc337247c978add178b6ccdfb0019f"
+    "linux/amd64": "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v0.7.0/dcld?checksum=sha256:aec070645fe53ee3b3763059376134f058cc337247c978add178b6ccdfb0019f"
   }
 }
 ```
@@ -1741,7 +1818,7 @@ dcld tx dclupgrade propose-upgrade --name=<string> --upgrade-height=<int64> --fr
 dcld tx dclupgrade propose-upgrade --name=<string> --upgrade-height=<int64> --upgrade-info=<string> --from=<account>
 ```
 
-> **_Note:_**  If the current upgrade proposal is out of date(when the current network height is greater than the proposed upgrade height), we can resubmit the upgrade proposal with the same name.
+> **_Note:_** If the current upgrade proposal is out of date(when the current network height is greater than the proposed upgrade height), we can resubmit the upgrade proposal with the same name.
 
 #### APPROVE_UPGRADE
 
@@ -1951,14 +2028,14 @@ Sign transaction by the given key.
 
 - Parameters:
   - `txn` - transaction to sign.
-  - `from` -  name or address of private key to use to sign.
+  - `from` - name or address of private key to use to sign.
   - `account-number` - (optional) the account number of the signing account.
   - `sequence` - (optional) the sequence number of the signing account.
   - `chain-id` - (optional) chain ID.
 - CLI command:
   - `dcld tx sign [path-to-txn-file] --from [address]`
 
-> **_Note:_**  if `account_number` and `sequence`  are not specified they will be fetched from the ledger automatically.  
+> **_Note:_** if `account_number` and `sequence` are not specified they will be fetched from the ledger automatically.
 
 ### Broadcast
 
@@ -1970,7 +2047,7 @@ Broadcast transaction to the ledger.
   - `dcld tx broadcast [path-to-txn-file]`
 - REST API:
   - POST `/cosmos/tx/v1beta1/txs`
-  
+
 #### Status
 
 Query status of a node.
@@ -2041,9 +2118,9 @@ Commands:
   The exported key can be stored to a file for import.
 
   Command: `dcld keys export <key name>`
-  
+
   Example: `dcld keys export jack`
-  
+
 - Import a key.
 
   A key can be imported from the ASCII-armored encrypted format
@@ -2052,6 +2129,6 @@ Commands:
   which was used during the export process.
 
   Command: `dcld keys import <key name> <key file>`
-  
+
   Example: `dcld keys import jack jack_exported_priv_key_file`
-<!-- markdownlint-enable MD036 -->
+  <!-- markdownlint-enable MD036 -->
