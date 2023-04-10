@@ -78,6 +78,8 @@ export type ComplianceMsgProvisionModelResponse = object;
 
 export type ComplianceMsgRevokeModelResponse = object;
 
+export type ComplianceMsgUpdateComplianceInfoResponse = object;
+
 export interface ComplianceProvisionalModel {
   /** @format int32 */
   vid?: number;

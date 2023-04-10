@@ -63,6 +63,33 @@ export interface MsgProvisionModel {
 }
 export interface MsgProvisionModelResponse {
 }
+export interface MsgUpdateComplianceInfo {
+    creator: string;
+    vid: number;
+    pid: number;
+    softwareVersion: number;
+    softwareVersionString: string;
+    certificationType: string;
+    cDVersionNumber: number;
+    softwareVersionCertificationStatus: number;
+    date: string;
+    reason: string;
+    owner: string;
+    cDCertificateId: string;
+    certificationRoute: string;
+    programType: string;
+    programTypeVersion: string;
+    compliantPlatformUsed: string;
+    compliantPlatformVersion: string;
+    transport: string;
+    familyId: string;
+    supportedClusters: string;
+    OSVersion: string;
+    parentChild: string;
+    certificationIdOfSoftwareComponent: string;
+}
+export interface MsgUpdateComplianceInfoResponse {
+}
 export declare const MsgCertifyModel: {
     encode(message: MsgCertifyModel, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgCertifyModel;
@@ -105,12 +132,27 @@ export declare const MsgProvisionModelResponse: {
     toJSON(_: MsgProvisionModelResponse): unknown;
     fromPartial(_: DeepPartial<MsgProvisionModelResponse>): MsgProvisionModelResponse;
 };
+export declare const MsgUpdateComplianceInfo: {
+    encode(message: MsgUpdateComplianceInfo, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateComplianceInfo;
+    fromJSON(object: any): MsgUpdateComplianceInfo;
+    toJSON(message: MsgUpdateComplianceInfo): unknown;
+    fromPartial(object: DeepPartial<MsgUpdateComplianceInfo>): MsgUpdateComplianceInfo;
+};
+export declare const MsgUpdateComplianceInfoResponse: {
+    encode(_: MsgUpdateComplianceInfoResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateComplianceInfoResponse;
+    fromJSON(_: any): MsgUpdateComplianceInfoResponse;
+    toJSON(_: MsgUpdateComplianceInfoResponse): unknown;
+    fromPartial(_: DeepPartial<MsgUpdateComplianceInfoResponse>): MsgUpdateComplianceInfoResponse;
+};
 /** Msg defines the Msg service. */
 export interface Msg {
     CertifyModel(request: MsgCertifyModel): Promise<MsgCertifyModelResponse>;
     RevokeModel(request: MsgRevokeModel): Promise<MsgRevokeModelResponse>;
-    /** this line is used by starport scaffolding # proto/tx/rpc */
     ProvisionModel(request: MsgProvisionModel): Promise<MsgProvisionModelResponse>;
+    /** this line is used by starport scaffolding # proto/tx/rpc */
+    UpdateComplianceInfo(request: MsgUpdateComplianceInfo): Promise<MsgUpdateComplianceInfoResponse>;
 }
 export declare class MsgClientImpl implements Msg {
     private readonly rpc;
@@ -118,6 +160,7 @@ export declare class MsgClientImpl implements Msg {
     CertifyModel(request: MsgCertifyModel): Promise<MsgCertifyModelResponse>;
     RevokeModel(request: MsgRevokeModel): Promise<MsgRevokeModelResponse>;
     ProvisionModel(request: MsgProvisionModel): Promise<MsgProvisionModelResponse>;
+    UpdateComplianceInfo(request: MsgUpdateComplianceInfo): Promise<MsgUpdateComplianceInfoResponse>;
 }
 interface Rpc {
     request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;

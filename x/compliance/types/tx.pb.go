@@ -653,6 +653,262 @@ func (m *MsgProvisionModelResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgProvisionModelResponse proto.InternalMessageInfo
 
+type MsgUpdateComplianceInfo struct {
+	Creator                            string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	Vid                                int32  `protobuf:"varint,2,opt,name=vid,proto3" json:"vid,omitempty" validate:"gte=1,lte=65535"`
+	Pid                                int32  `protobuf:"varint,3,opt,name=pid,proto3" json:"pid,omitempty" validate:"gte=1,lte=65535"`
+	SoftwareVersion                    uint32 `protobuf:"varint,4,opt,name=softwareVersion,proto3" json:"softwareVersion,omitempty"`
+	SoftwareVersionString              string `protobuf:"bytes,5,opt,name=softwareVersionString,proto3" json:"softwareVersionString,omitempty" validate:"required,max=64"`
+	CertificationType                  string `protobuf:"bytes,6,opt,name=certificationType,proto3" json:"certificationType,omitempty" validate:"required,max=64"`
+	CDVersionNumber                    uint32 `protobuf:"varint,7,opt,name=cDVersionNumber,proto3" json:"cDVersionNumber,omitempty" validate:"gte=0,lte=65535"`
+	SoftwareVersionCertificationStatus uint32 `protobuf:"varint,8,opt,name=softwareVersionCertificationStatus,proto3" json:"softwareVersionCertificationStatus,omitempty"`
+	Date                               string `protobuf:"bytes,9,opt,name=date,proto3" json:"date,omitempty"`
+	Reason                             string `protobuf:"bytes,10,opt,name=reason,proto3" json:"reason,omitempty" validate:"max=102400"`
+	Owner                              string `protobuf:"bytes,11,opt,name=owner,proto3" json:"owner,omitempty"`
+	CDCertificateId                    string `protobuf:"bytes,12,opt,name=cDCertificateId,proto3" json:"cDCertificateId,omitempty" validate:"required,max=64"`
+	CertificationRoute                 string `protobuf:"bytes,13,opt,name=certificationRoute,proto3" json:"certificationRoute,omitempty" validate:"max=64"`
+	ProgramType                        string `protobuf:"bytes,14,opt,name=programType,proto3" json:"programType,omitempty" validate:"max=64"`
+	ProgramTypeVersion                 string `protobuf:"bytes,15,opt,name=programTypeVersion,proto3" json:"programTypeVersion,omitempty" validate:"max=64"`
+	CompliantPlatformUsed              string `protobuf:"bytes,16,opt,name=compliantPlatformUsed,proto3" json:"compliantPlatformUsed,omitempty" validate:"max=64"`
+	CompliantPlatformVersion           string `protobuf:"bytes,17,opt,name=compliantPlatformVersion,proto3" json:"compliantPlatformVersion,omitempty" validate:"max=64"`
+	Transport                          string `protobuf:"bytes,18,opt,name=transport,proto3" json:"transport,omitempty" validate:"max=64"`
+	FamilyId                           string `protobuf:"bytes,19,opt,name=familyId,proto3" json:"familyId,omitempty" validate:"max=64"`
+	SupportedClusters                  string `protobuf:"bytes,20,opt,name=supportedClusters,proto3" json:"supportedClusters,omitempty" validate:"max=64"`
+	OSVersion                          string `protobuf:"bytes,21,opt,name=OSVersion,proto3" json:"OSVersion,omitempty" validate:"max=64"`
+	ParentChild                        string `protobuf:"bytes,22,opt,name=parentChild,proto3" json:"parentChild,omitempty" validate:"max=64"`
+	CertificationIdOfSoftwareComponent string `protobuf:"bytes,23,opt,name=certificationIdOfSoftwareComponent,proto3" json:"certificationIdOfSoftwareComponent,omitempty" validate:"max=64"`
+}
+
+func (m *MsgUpdateComplianceInfo) Reset()         { *m = MsgUpdateComplianceInfo{} }
+func (m *MsgUpdateComplianceInfo) String() string { return proto.CompactTextString(m) }
+func (*MsgUpdateComplianceInfo) ProtoMessage()    {}
+func (*MsgUpdateComplianceInfo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_db4a0d801b7ae7cc, []int{6}
+}
+func (m *MsgUpdateComplianceInfo) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgUpdateComplianceInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgUpdateComplianceInfo.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgUpdateComplianceInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUpdateComplianceInfo.Merge(m, src)
+}
+func (m *MsgUpdateComplianceInfo) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgUpdateComplianceInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUpdateComplianceInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgUpdateComplianceInfo proto.InternalMessageInfo
+
+func (m *MsgUpdateComplianceInfo) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+func (m *MsgUpdateComplianceInfo) GetVid() int32 {
+	if m != nil {
+		return m.Vid
+	}
+	return 0
+}
+
+func (m *MsgUpdateComplianceInfo) GetPid() int32 {
+	if m != nil {
+		return m.Pid
+	}
+	return 0
+}
+
+func (m *MsgUpdateComplianceInfo) GetSoftwareVersion() uint32 {
+	if m != nil {
+		return m.SoftwareVersion
+	}
+	return 0
+}
+
+func (m *MsgUpdateComplianceInfo) GetSoftwareVersionString() string {
+	if m != nil {
+		return m.SoftwareVersionString
+	}
+	return ""
+}
+
+func (m *MsgUpdateComplianceInfo) GetCertificationType() string {
+	if m != nil {
+		return m.CertificationType
+	}
+	return ""
+}
+
+func (m *MsgUpdateComplianceInfo) GetCDVersionNumber() uint32 {
+	if m != nil {
+		return m.CDVersionNumber
+	}
+	return 0
+}
+
+func (m *MsgUpdateComplianceInfo) GetSoftwareVersionCertificationStatus() uint32 {
+	if m != nil {
+		return m.SoftwareVersionCertificationStatus
+	}
+	return 0
+}
+
+func (m *MsgUpdateComplianceInfo) GetDate() string {
+	if m != nil {
+		return m.Date
+	}
+	return ""
+}
+
+func (m *MsgUpdateComplianceInfo) GetReason() string {
+	if m != nil {
+		return m.Reason
+	}
+	return ""
+}
+
+func (m *MsgUpdateComplianceInfo) GetOwner() string {
+	if m != nil {
+		return m.Owner
+	}
+	return ""
+}
+
+func (m *MsgUpdateComplianceInfo) GetCDCertificateId() string {
+	if m != nil {
+		return m.CDCertificateId
+	}
+	return ""
+}
+
+func (m *MsgUpdateComplianceInfo) GetCertificationRoute() string {
+	if m != nil {
+		return m.CertificationRoute
+	}
+	return ""
+}
+
+func (m *MsgUpdateComplianceInfo) GetProgramType() string {
+	if m != nil {
+		return m.ProgramType
+	}
+	return ""
+}
+
+func (m *MsgUpdateComplianceInfo) GetProgramTypeVersion() string {
+	if m != nil {
+		return m.ProgramTypeVersion
+	}
+	return ""
+}
+
+func (m *MsgUpdateComplianceInfo) GetCompliantPlatformUsed() string {
+	if m != nil {
+		return m.CompliantPlatformUsed
+	}
+	return ""
+}
+
+func (m *MsgUpdateComplianceInfo) GetCompliantPlatformVersion() string {
+	if m != nil {
+		return m.CompliantPlatformVersion
+	}
+	return ""
+}
+
+func (m *MsgUpdateComplianceInfo) GetTransport() string {
+	if m != nil {
+		return m.Transport
+	}
+	return ""
+}
+
+func (m *MsgUpdateComplianceInfo) GetFamilyId() string {
+	if m != nil {
+		return m.FamilyId
+	}
+	return ""
+}
+
+func (m *MsgUpdateComplianceInfo) GetSupportedClusters() string {
+	if m != nil {
+		return m.SupportedClusters
+	}
+	return ""
+}
+
+func (m *MsgUpdateComplianceInfo) GetOSVersion() string {
+	if m != nil {
+		return m.OSVersion
+	}
+	return ""
+}
+
+func (m *MsgUpdateComplianceInfo) GetParentChild() string {
+	if m != nil {
+		return m.ParentChild
+	}
+	return ""
+}
+
+func (m *MsgUpdateComplianceInfo) GetCertificationIdOfSoftwareComponent() string {
+	if m != nil {
+		return m.CertificationIdOfSoftwareComponent
+	}
+	return ""
+}
+
+type MsgUpdateComplianceInfoResponse struct {
+}
+
+func (m *MsgUpdateComplianceInfoResponse) Reset()         { *m = MsgUpdateComplianceInfoResponse{} }
+func (m *MsgUpdateComplianceInfoResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgUpdateComplianceInfoResponse) ProtoMessage()    {}
+func (*MsgUpdateComplianceInfoResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_db4a0d801b7ae7cc, []int{7}
+}
+func (m *MsgUpdateComplianceInfoResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgUpdateComplianceInfoResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgUpdateComplianceInfoResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgUpdateComplianceInfoResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUpdateComplianceInfoResponse.Merge(m, src)
+}
+func (m *MsgUpdateComplianceInfoResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgUpdateComplianceInfoResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUpdateComplianceInfoResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgUpdateComplianceInfoResponse proto.InternalMessageInfo
+
 func init() {
 	proto.RegisterType((*MsgCertifyModel)(nil), "zigbeealliance.distributedcomplianceledger.compliance.MsgCertifyModel")
 	proto.RegisterType((*MsgCertifyModelResponse)(nil), "zigbeealliance.distributedcomplianceledger.compliance.MsgCertifyModelResponse")
@@ -660,66 +916,80 @@ func init() {
 	proto.RegisterType((*MsgRevokeModelResponse)(nil), "zigbeealliance.distributedcomplianceledger.compliance.MsgRevokeModelResponse")
 	proto.RegisterType((*MsgProvisionModel)(nil), "zigbeealliance.distributedcomplianceledger.compliance.MsgProvisionModel")
 	proto.RegisterType((*MsgProvisionModelResponse)(nil), "zigbeealliance.distributedcomplianceledger.compliance.MsgProvisionModelResponse")
+	proto.RegisterType((*MsgUpdateComplianceInfo)(nil), "zigbeealliance.distributedcomplianceledger.compliance.MsgUpdateComplianceInfo")
+	proto.RegisterType((*MsgUpdateComplianceInfoResponse)(nil), "zigbeealliance.distributedcomplianceledger.compliance.MsgUpdateComplianceInfoResponse")
 }
 
 func init() { proto.RegisterFile("compliance/tx.proto", fileDescriptor_db4a0d801b7ae7cc) }
 
 var fileDescriptor_db4a0d801b7ae7cc = []byte{
-	// 853 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x58, 0xcd, 0x6e, 0xdb, 0x46,
-	0x10, 0x36, 0x6b, 0xc7, 0x8d, 0x57, 0x89, 0x55, 0xad, 0xad, 0x66, 0xad, 0x00, 0x92, 0xc1, 0x93,
-	0x0e, 0xd1, 0x5f, 0x1c, 0xa5, 0x40, 0x01, 0xa3, 0x88, 0x15, 0xb7, 0x31, 0x02, 0x25, 0x2e, 0x9d,
-	0xf6, 0xd0, 0x4b, 0x41, 0x69, 0x47, 0xcc, 0xa2, 0x24, 0x97, 0xdd, 0x5d, 0xa9, 0x56, 0x8f, 0x6d,
-	0x1f, 0xa0, 0xef, 0x50, 0xa0, 0xa7, 0x1e, 0xfb, 0x10, 0x45, 0x4f, 0x41, 0x4f, 0x3d, 0x09, 0x85,
-	0xfd, 0x06, 0x7a, 0x82, 0x82, 0xa4, 0xa8, 0x1f, 0x4a, 0x26, 0x04, 0xc3, 0x80, 0x11, 0x40, 0x37,
-	0x7b, 0x38, 0xdf, 0xcf, 0xee, 0x8c, 0xc7, 0x43, 0xa2, 0x9d, 0x36, 0x77, 0x3c, 0x9b, 0x99, 0x6e,
-	0x1b, 0x2a, 0xea, 0xbc, 0xec, 0x09, 0xae, 0x38, 0xae, 0xff, 0xc8, 0xac, 0x16, 0x80, 0x69, 0x87,
-	0x0f, 0xca, 0x94, 0x49, 0x25, 0x58, 0xab, 0xab, 0x80, 0x4e, 0xd2, 0x6d, 0xa0, 0x16, 0x88, 0xf2,
-	0x24, 0x90, 0xdb, 0x6b, 0x73, 0xe9, 0x70, 0xf9, 0x6d, 0x40, 0x52, 0x09, 0x7f, 0x09, 0x19, 0x73,
-	0xbb, 0x16, 0xb7, 0x78, 0x18, 0xf7, 0x7f, 0x0a, 0xa3, 0xfa, 0x2f, 0x29, 0x94, 0x6e, 0x4a, 0xab,
-	0x01, 0x42, 0xb1, 0x4e, 0xbf, 0xc9, 0x29, 0xd8, 0xf8, 0x0b, 0xb4, 0x29, 0x99, 0xe5, 0x82, 0x20,
-	0xda, 0xbe, 0x56, 0xdc, 0x3a, 0xaa, 0x0c, 0x07, 0x85, 0x9d, 0x9e, 0x69, 0x33, 0x6a, 0x2a, 0xf8,
-	0x54, 0x17, 0xf0, 0x7d, 0x97, 0x09, 0xa0, 0xfa, 0x3f, 0x7f, 0x96, 0x76, 0x47, 0x12, 0xcf, 0x28,
-	0x15, 0x20, 0xe5, 0x99, 0x12, 0xcc, 0xb5, 0x8c, 0x11, 0x1c, 0x57, 0xd1, 0x7a, 0x8f, 0x51, 0xf2,
-	0xc1, 0xbe, 0x56, 0xbc, 0x73, 0x94, 0x1f, 0x0e, 0x0a, 0xb9, 0x09, 0x8b, 0xa5, 0xe0, 0xb0, 0xf6,
-	0xc8, 0x56, 0x70, 0xf8, 0xb4, 0x5e, 0x3f, 0xa8, 0xeb, 0x86, 0x9f, 0xea, 0x23, 0x3c, 0x46, 0xc9,
-	0xfa, 0x72, 0x08, 0x8f, 0x51, 0x5c, 0x44, 0x69, 0xc9, 0x3b, 0xea, 0x07, 0x53, 0xc0, 0xd7, 0x20,
-	0x24, 0xe3, 0x2e, 0xd9, 0xd8, 0xd7, 0x8a, 0xf7, 0x8d, 0x78, 0x18, 0xbf, 0x41, 0xd9, 0x58, 0x28,
-	0xb4, 0x4b, 0xee, 0x04, 0xa7, 0x8c, 0xa9, 0x45, 0xa7, 0x7c, 0xe4, 0x98, 0xe7, 0x87, 0x4f, 0x9f,
-	0xe8, 0xc6, 0x62, 0x30, 0x7e, 0x81, 0xd2, 0xed, 0xe7, 0xa3, 0xd0, 0xab, 0xae, 0xd3, 0x02, 0x41,
-	0x36, 0x7d, 0xfd, 0x45, 0xee, 0xab, 0xd3, 0xee, 0xe3, 0x30, 0x7c, 0x8c, 0x32, 0xed, 0xa0, 0x0c,
-	0xac, 0x6d, 0x2a, 0xc6, 0xdd, 0xe7, 0xa6, 0x02, 0xf2, 0x61, 0xe0, 0xed, 0xc1, 0x15, 0x15, 0x30,
-	0xe6, 0x11, 0xb8, 0x19, 0xa3, 0x79, 0xd3, 0xf7, 0x80, 0xdc, 0x0d, 0x68, 0x0a, 0xc3, 0x41, 0xe1,
-	0xe1, 0x15, 0x47, 0xac, 0x55, 0xab, 0x71, 0x3a, 0x1f, 0x89, 0x6b, 0x68, 0x53, 0x80, 0x29, 0xb9,
-	0x4b, 0xb6, 0x02, 0x8e, 0xbd, 0xe1, 0xa0, 0x90, 0x9d, 0x70, 0x84, 0xd0, 0xc7, 0x4f, 0x7c, 0xf4,
-	0x28, 0x11, 0x1f, 0x23, 0xec, 0x09, 0x6e, 0x09, 0xd3, 0xf1, 0x19, 0xa2, 0xaa, 0xa0, 0x00, 0x9e,
-	0x1d, 0x0e, 0x0a, 0x99, 0x59, 0xb8, 0x7f, 0xb9, 0x0b, 0x00, 0xe1, 0xcd, 0x36, 0xc6, 0x86, 0xe0,
-	0x84, 0x92, 0xd4, 0x52, 0x95, 0x8a, 0xc3, 0x70, 0x0d, 0xdd, 0xed, 0x98, 0x0e, 0xb3, 0xfb, 0x27,
-	0x94, 0xdc, 0x4b, 0xb2, 0x31, 0x4e, 0xc3, 0x0d, 0x94, 0x91, 0x5d, 0xcf, 0xe3, 0x42, 0x01, 0x6d,
-	0xd8, 0x5d, 0xa9, 0x40, 0x48, 0x72, 0x3f, 0x09, 0x3b, 0x9f, 0x8f, 0x5f, 0xa2, 0x6c, 0xf4, 0xb7,
-	0xa9, 0x4e, 0x6d, 0x53, 0x75, 0xb8, 0x70, 0xbe, 0x92, 0x40, 0xc9, 0x76, 0x12, 0xd1, 0x62, 0x0c,
-	0xfe, 0x12, 0x91, 0xb9, 0x07, 0xd1, 0xdd, 0xa6, 0x93, 0xf8, 0xae, 0x84, 0xe1, 0x03, 0xb4, 0xf5,
-	0xfa, 0x2c, 0xe2, 0xf8, 0x28, 0x89, 0x63, 0x92, 0xe7, 0x57, 0x77, 0xa6, 0x4b, 0x0c, 0xde, 0x55,
-	0x40, 0x32, 0x89, 0xd5, 0x9d, 0x07, 0xe0, 0x4f, 0x50, 0x6a, 0xaa, 0xe6, 0x04, 0x27, 0xe1, 0xa7,
-	0x33, 0x7d, 0xd3, 0x4a, 0x98, 0xae, 0xf4, 0xef, 0x9a, 0xec, 0x24, 0x9a, 0x1e, 0xe7, 0x05, 0x6a,
-	0xa6, 0x00, 0x57, 0x35, 0xde, 0x32, 0x9b, 0x92, 0xdd, 0x64, 0xb5, 0x49, 0x26, 0x06, 0xa4, 0xcf,
-	0x98, 0x3f, 0xa1, 0xaf, 0x3b, 0x67, 0xa3, 0x41, 0xd0, 0xe0, 0x8e, 0xc7, 0x5d, 0x70, 0x15, 0xc9,
-	0x26, 0xf1, 0x2d, 0x41, 0xa0, 0xef, 0xa1, 0x07, 0xb1, 0x29, 0x6c, 0x80, 0xf4, 0xb8, 0x2b, 0x41,
-	0xff, 0x7b, 0x03, 0x6d, 0x37, 0xa5, 0x65, 0x40, 0x8f, 0x7f, 0x07, 0xab, 0x01, 0x7d, 0x8b, 0x03,
-	0xfa, 0x33, 0xb4, 0x2d, 0xa0, 0xc7, 0x97, 0x9f, 0xce, 0xb1, 0xf4, 0xdb, 0x1f, 0xcd, 0x3a, 0x41,
-	0x1f, 0xcf, 0xf6, 0xd2, 0xb8, 0xcd, 0x7e, 0x4a, 0xa1, 0x4c, 0x53, 0x5a, 0xa7, 0x82, 0xf7, 0x98,
-	0x7f, 0xe6, 0x55, 0xa7, 0xdd, 0x62, 0xa7, 0x3d, 0x43, 0x69, 0x2f, 0x2a, 0x84, 0x69, 0x2f, 0xd3,
-	0x6a, 0xf1, 0xfc, 0xd5, 0x1a, 0xb0, 0x5a, 0x03, 0x56, 0x6b, 0xc0, 0xfb, 0xb6, 0x06, 0x3c, 0x44,
-	0x7b, 0x73, 0x33, 0x38, 0x9a, 0xd0, 0x8f, 0x7f, 0xde, 0x40, 0xeb, 0x4d, 0x69, 0xe1, 0xdf, 0x35,
-	0x74, 0x6f, 0xe6, 0x7d, 0xed, 0xf3, 0xf2, 0xb5, 0x5e, 0x16, 0xcb, 0xb1, 0x8d, 0x23, 0xf7, 0xea,
-	0x66, 0x78, 0x22, 0xc3, 0xf8, 0x37, 0x0d, 0xa5, 0xa6, 0xd7, 0x96, 0xe3, 0xeb, 0xf3, 0x4f, 0xd1,
-	0xe4, 0x9a, 0x37, 0x42, 0x33, 0x76, 0xf9, 0x87, 0x86, 0xb6, 0x63, 0xff, 0xf5, 0x5e, 0x5c, 0x5f,
-	0x61, 0x96, 0x29, 0x77, 0x7a, 0x53, 0x4c, 0x91, 0xdd, 0x23, 0xf8, 0xeb, 0x22, 0xaf, 0xbd, 0xbb,
-	0xc8, 0x6b, 0xff, 0x5d, 0xe4, 0xb5, 0x5f, 0x2f, 0xf3, 0x6b, 0xef, 0x2e, 0xf3, 0x6b, 0xff, 0x5e,
-	0xe6, 0xd7, 0xbe, 0x79, 0x69, 0x31, 0xf5, 0xb6, 0xdb, 0xf2, 0x69, 0x2a, 0xa1, 0x6a, 0x29, 0x92,
-	0xad, 0x4c, 0xc9, 0x96, 0x26, 0x32, 0xa5, 0x50, 0xb8, 0x72, 0x5e, 0x99, 0xfe, 0x04, 0xd1, 0xf7,
-	0x40, 0xb6, 0x36, 0x83, 0xcf, 0x03, 0x07, 0xff, 0x07, 0x00, 0x00, 0xff, 0xff, 0xe8, 0x9a, 0x0d,
-	0x97, 0x9d, 0x10, 0x00, 0x00,
+	// 1051 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x98, 0x41, 0x6f, 0xe2, 0x46,
+	0x14, 0xc7, 0xe3, 0x26, 0x21, 0x9b, 0x21, 0x81, 0x65, 0x02, 0x9b, 0x09, 0x2b, 0x41, 0xea, 0x53,
+	0x0e, 0x1b, 0x48, 0x36, 0x9b, 0xad, 0x54, 0x29, 0xaa, 0x36, 0x6c, 0xda, 0x8d, 0xb6, 0x64, 0x53,
+	0x67, 0x77, 0x0f, 0xbd, 0x54, 0x06, 0x0f, 0xde, 0x51, 0x8d, 0xc7, 0x9d, 0x19, 0xd8, 0xa4, 0xc7,
+	0xaa, 0x1f, 0xa0, 0xdf, 0xa1, 0x52, 0xa5, 0x4a, 0x3d, 0xf6, 0xdc, 0x53, 0x0f, 0x55, 0x4f, 0xab,
+	0x9e, 0x7a, 0x42, 0x55, 0xf2, 0x0d, 0xf8, 0x04, 0x95, 0x6d, 0x0c, 0xc6, 0x18, 0xcb, 0x4b, 0x50,
+	0x51, 0x25, 0x6e, 0x30, 0xbc, 0xff, 0xff, 0x3d, 0xfb, 0x0d, 0xbf, 0x37, 0x36, 0xd8, 0xa8, 0xd3,
+	0xa6, 0x65, 0x10, 0xd5, 0xac, 0xe3, 0xb2, 0xb8, 0x2c, 0x59, 0x8c, 0x0a, 0x0a, 0x0f, 0xbf, 0x25,
+	0x7a, 0x0d, 0x63, 0xd5, 0x70, 0x7f, 0x28, 0x69, 0x84, 0x0b, 0x46, 0x6a, 0x2d, 0x81, 0xb5, 0x41,
+	0xb8, 0x81, 0x35, 0x1d, 0xb3, 0xd2, 0x60, 0x21, 0xbf, 0x55, 0xa7, 0xbc, 0x49, 0xf9, 0x57, 0x8e,
+	0x49, 0xd9, 0xfd, 0xe2, 0x3a, 0xe6, 0xb3, 0x3a, 0xd5, 0xa9, 0xbb, 0x6e, 0x7f, 0x72, 0x57, 0xe5,
+	0xef, 0x93, 0x20, 0x5d, 0xe5, 0x7a, 0x05, 0x33, 0x41, 0x1a, 0x57, 0x55, 0xaa, 0x61, 0x03, 0x7e,
+	0x06, 0x12, 0x9c, 0xe8, 0x26, 0x66, 0x48, 0xda, 0x96, 0x76, 0x56, 0x8f, 0xcb, 0xdd, 0x4e, 0x71,
+	0xa3, 0xad, 0x1a, 0x44, 0x53, 0x05, 0xfe, 0x58, 0x66, 0xf8, 0x9b, 0x16, 0x61, 0x58, 0x93, 0xff,
+	0xfa, 0x75, 0x37, 0xdb, 0x4b, 0xf1, 0x44, 0xd3, 0x18, 0xe6, 0xfc, 0x42, 0x30, 0x62, 0xea, 0x4a,
+	0x4f, 0x0e, 0xf7, 0xc0, 0x62, 0x9b, 0x68, 0xe8, 0x83, 0x6d, 0x69, 0x67, 0xf9, 0xb8, 0xd0, 0xed,
+	0x14, 0xf3, 0x03, 0x17, 0x5d, 0xe0, 0xa3, 0xfd, 0x07, 0x86, 0xc0, 0x47, 0x8f, 0x0f, 0x0f, 0x0f,
+	0x0e, 0x65, 0xc5, 0x0e, 0xb5, 0x15, 0x16, 0xd1, 0xd0, 0x62, 0x3c, 0x85, 0x45, 0x34, 0xb8, 0x03,
+	0xd2, 0x9c, 0x36, 0xc4, 0x5b, 0x95, 0xe1, 0xd7, 0x98, 0x71, 0x42, 0x4d, 0xb4, 0xb4, 0x2d, 0xed,
+	0xac, 0x2b, 0xc1, 0x65, 0xf8, 0x12, 0xe4, 0x02, 0x4b, 0x6e, 0xb9, 0x68, 0xd9, 0xb9, 0xca, 0x40,
+	0x36, 0xef, 0x2a, 0x1f, 0x34, 0xd5, 0xcb, 0xa3, 0xc7, 0x8f, 0x64, 0x25, 0x5c, 0x0c, 0x9f, 0x81,
+	0x74, 0xfd, 0x69, 0x6f, 0xe9, 0xac, 0xd5, 0xac, 0x61, 0x86, 0x12, 0x76, 0xfe, 0xb0, 0xea, 0xf7,
+	0xfc, 0xd5, 0x07, 0x65, 0xf0, 0x04, 0x64, 0xea, 0x4e, 0x1b, 0x48, 0x5d, 0x15, 0x84, 0x9a, 0x4f,
+	0x55, 0x81, 0xd1, 0x8a, 0x53, 0xdb, 0xe6, 0x98, 0x0e, 0x28, 0xa3, 0x0a, 0x58, 0x0d, 0xd8, 0xbc,
+	0xbc, 0xb2, 0x30, 0xba, 0xe3, 0xd8, 0x14, 0xbb, 0x9d, 0xe2, 0xfd, 0x31, 0x97, 0xb8, 0xbf, 0xb7,
+	0x17, 0xb4, 0xb3, 0x95, 0x70, 0x1f, 0x24, 0x18, 0x56, 0x39, 0x35, 0xd1, 0xaa, 0xe3, 0xb1, 0xd5,
+	0xed, 0x14, 0x73, 0x03, 0x0f, 0x57, 0xfa, 0xf0, 0x91, 0xad, 0xee, 0x05, 0xc2, 0x13, 0x00, 0x2d,
+	0x46, 0x75, 0xa6, 0x36, 0x6d, 0x07, 0xaf, 0x2b, 0xc0, 0x91, 0xe7, 0xba, 0x9d, 0x62, 0x66, 0x58,
+	0x6e, 0xdf, 0xdc, 0x10, 0x81, 0x7b, 0x67, 0x2b, 0xfd, 0x82, 0xf0, 0xa9, 0x86, 0x92, 0xb1, 0x3a,
+	0x15, 0x94, 0xc1, 0x7d, 0x70, 0xa7, 0xa1, 0x36, 0x89, 0x71, 0x75, 0xaa, 0xa1, 0xb5, 0xa8, 0x32,
+	0xfa, 0x61, 0xb0, 0x02, 0x32, 0xbc, 0x65, 0x59, 0x94, 0x09, 0xac, 0x55, 0x8c, 0x16, 0x17, 0x98,
+	0x71, 0xb4, 0x1e, 0xa5, 0x1d, 0x8d, 0x87, 0xcf, 0x41, 0xce, 0xfb, 0x6f, 0x8a, 0x73, 0x43, 0x15,
+	0x0d, 0xca, 0x9a, 0xaf, 0x38, 0xd6, 0x50, 0x2a, 0xca, 0x28, 0x5c, 0x03, 0xbf, 0x00, 0x68, 0xe4,
+	0x07, 0xef, 0xde, 0xa6, 0xa3, 0xfc, 0xc6, 0xca, 0xe0, 0x01, 0x58, 0x7d, 0x71, 0xe1, 0x79, 0xdc,
+	0x8d, 0xf2, 0x18, 0xc4, 0xd9, 0xdd, 0x1d, 0xda, 0x25, 0x0a, 0x6d, 0x09, 0x8c, 0x32, 0x91, 0xdd,
+	0x1d, 0x15, 0xc0, 0x8f, 0x40, 0xd2, 0xd7, 0x73, 0x04, 0xa3, 0xf4, 0xfe, 0x48, 0xbb, 0x68, 0xc1,
+	0x54, 0x93, 0xdb, 0xf7, 0x1a, 0x6d, 0x44, 0x16, 0xdd, 0x8f, 0x73, 0xb2, 0xa9, 0x0c, 0x9b, 0xa2,
+	0xf2, 0x86, 0x18, 0x1a, 0xca, 0x46, 0x67, 0x1b, 0x44, 0x42, 0x0c, 0xe4, 0xa1, 0xe2, 0x4f, 0xb5,
+	0x17, 0x8d, 0x8b, 0x1e, 0x08, 0x2a, 0xb4, 0x69, 0x51, 0x13, 0x9b, 0x02, 0xe5, 0xa2, 0xfc, 0x62,
+	0x18, 0xc8, 0x5b, 0x60, 0x33, 0x40, 0x61, 0x05, 0x73, 0x8b, 0x9a, 0x1c, 0xcb, 0x7f, 0x2e, 0x81,
+	0x54, 0x95, 0xeb, 0x0a, 0x6e, 0xd3, 0xaf, 0xf1, 0x1c, 0xd0, 0x33, 0x04, 0xf4, 0x27, 0x20, 0xc5,
+	0x70, 0x9b, 0xc6, 0xa7, 0x73, 0x20, 0x7c, 0xf6, 0x68, 0x96, 0x11, 0xb8, 0x37, 0xbc, 0x97, 0xfa,
+	0xdb, 0xec, 0xbb, 0x24, 0xc8, 0x54, 0xb9, 0x7e, 0xce, 0x68, 0x9b, 0xd8, 0xd7, 0x3c, 0xdf, 0x69,
+	0x33, 0xdc, 0x69, 0x4f, 0x40, 0xda, 0xf2, 0x1a, 0xa1, 0x1a, 0x71, 0xb6, 0x5a, 0x30, 0x7e, 0x7e,
+	0x0c, 0x98, 0x1f, 0x03, 0xe6, 0xc7, 0x80, 0xff, 0xdb, 0x31, 0xe0, 0x3e, 0xd8, 0x1a, 0x61, 0x70,
+	0x9f, 0xd0, 0x3f, 0x27, 0x9d, 0x43, 0xc2, 0x2b, 0xcb, 0xf6, 0xad, 0xf4, 0x9f, 0xf9, 0x4e, 0xcd,
+	0x06, 0x85, 0x08, 0xac, 0xd4, 0x19, 0x56, 0x05, 0xed, 0x81, 0x5a, 0xf1, 0xbe, 0xce, 0x12, 0xbc,
+	0x4b, 0xff, 0x15, 0x78, 0x3f, 0x0f, 0x63, 0x5d, 0x22, 0x96, 0x63, 0x08, 0xea, 0x42, 0x30, 0xbe,
+	0x32, 0x19, 0xc6, 0xcf, 0x80, 0x1c, 0x28, 0xb8, 0xe2, 0xcf, 0x76, 0x21, 0x54, 0xd1, 0xe2, 0x0e,
+	0x94, 0xd7, 0x95, 0x18, 0x91, 0x10, 0x82, 0x25, 0x3b, 0xb5, 0x8b, 0x60, 0xc5, 0xf9, 0xec, 0x03,
+	0x33, 0x88, 0x0b, 0xe6, 0x12, 0x58, 0xa6, 0x6f, 0xed, 0x99, 0xee, 0x72, 0x14, 0x8d, 0x1d, 0xde,
+	0x6e, 0x58, 0x18, 0x81, 0xd7, 0x26, 0x23, 0x70, 0x38, 0x34, 0xd6, 0x6f, 0x09, 0x8d, 0x54, 0x6c,
+	0x68, 0x84, 0x8f, 0xa4, 0xf4, 0xfb, 0x8e, 0xa4, 0xb1, 0x40, 0xbf, 0x3b, 0x65, 0xa0, 0x67, 0x26,
+	0x06, 0xfa, 0x80, 0x8d, 0x30, 0x26, 0x1b, 0xfd, 0xd3, 0x71, 0xe3, 0x16, 0xd3, 0x31, 0xfb, 0x9e,
+	0xd3, 0x71, 0x68, 0xfa, 0xe4, 0x62, 0x4e, 0x9f, 0x00, 0xc8, 0xef, 0x4d, 0x19, 0xe4, 0x9b, 0xb7,
+	0x05, 0xf9, 0x87, 0xa0, 0x38, 0x06, 0xd5, 0x1e, 0xce, 0x1f, 0xfe, 0xbe, 0x0c, 0x16, 0xab, 0x5c,
+	0x87, 0x3f, 0x49, 0x60, 0x6d, 0xe8, 0xf5, 0xdb, 0xa7, 0xa5, 0x89, 0xde, 0xfd, 0x95, 0x02, 0x0f,
+	0x90, 0xf9, 0xb3, 0xe9, 0xf8, 0x78, 0x05, 0xc3, 0x1f, 0x25, 0x90, 0xf4, 0x3f, 0x85, 0x9e, 0x4c,
+	0xee, 0xef, 0xb3, 0xc9, 0x57, 0xa7, 0x62, 0xd3, 0xaf, 0xf2, 0x17, 0x09, 0xa4, 0x02, 0x0f, 0x31,
+	0xcf, 0x26, 0xcf, 0x30, 0xec, 0x94, 0x3f, 0x9f, 0x96, 0x53, 0xbf, 0xdc, 0xdf, 0x24, 0x90, 0x0d,
+	0x9d, 0xe8, 0xb7, 0xe8, 0x5e, 0x98, 0x5f, 0xfe, 0xf5, 0x74, 0xfd, 0xbc, 0x0b, 0x38, 0xc6, 0x7f,
+	0x5c, 0x17, 0xa4, 0x77, 0xd7, 0x05, 0xe9, 0x9f, 0xeb, 0x82, 0xf4, 0xc3, 0x4d, 0x61, 0xe1, 0xdd,
+	0x4d, 0x61, 0xe1, 0xef, 0x9b, 0xc2, 0xc2, 0x97, 0xcf, 0x75, 0x22, 0xde, 0xb4, 0x6a, 0xb6, 0x59,
+	0xd9, 0xcd, 0xbd, 0xeb, 0x25, 0x2f, 0xfb, 0x92, 0xef, 0x0e, 0x92, 0xed, 0xba, 0xe9, 0xcb, 0x97,
+	0x65, 0xff, 0x2b, 0xf1, 0x2b, 0x0b, 0xf3, 0x5a, 0xc2, 0x79, 0x5d, 0x7d, 0xf0, 0x6f, 0x00, 0x00,
+	0x00, 0xff, 0xff, 0x9b, 0xbd, 0x67, 0x2f, 0x2d, 0x17, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -737,6 +1007,7 @@ type MsgClient interface {
 	CertifyModel(ctx context.Context, in *MsgCertifyModel, opts ...grpc.CallOption) (*MsgCertifyModelResponse, error)
 	RevokeModel(ctx context.Context, in *MsgRevokeModel, opts ...grpc.CallOption) (*MsgRevokeModelResponse, error)
 	ProvisionModel(ctx context.Context, in *MsgProvisionModel, opts ...grpc.CallOption) (*MsgProvisionModelResponse, error)
+	UpdateComplianceInfo(ctx context.Context, in *MsgUpdateComplianceInfo, opts ...grpc.CallOption) (*MsgUpdateComplianceInfoResponse, error)
 }
 
 type msgClient struct {
@@ -774,11 +1045,21 @@ func (c *msgClient) ProvisionModel(ctx context.Context, in *MsgProvisionModel, o
 	return out, nil
 }
 
+func (c *msgClient) UpdateComplianceInfo(ctx context.Context, in *MsgUpdateComplianceInfo, opts ...grpc.CallOption) (*MsgUpdateComplianceInfoResponse, error) {
+	out := new(MsgUpdateComplianceInfoResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.compliance.Msg/UpdateComplianceInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
 	CertifyModel(context.Context, *MsgCertifyModel) (*MsgCertifyModelResponse, error)
 	RevokeModel(context.Context, *MsgRevokeModel) (*MsgRevokeModelResponse, error)
 	ProvisionModel(context.Context, *MsgProvisionModel) (*MsgProvisionModelResponse, error)
+	UpdateComplianceInfo(context.Context, *MsgUpdateComplianceInfo) (*MsgUpdateComplianceInfoResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
@@ -793,6 +1074,9 @@ func (*UnimplementedMsgServer) RevokeModel(ctx context.Context, req *MsgRevokeMo
 }
 func (*UnimplementedMsgServer) ProvisionModel(ctx context.Context, req *MsgProvisionModel) (*MsgProvisionModelResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ProvisionModel not implemented")
+}
+func (*UnimplementedMsgServer) UpdateComplianceInfo(ctx context.Context, req *MsgUpdateComplianceInfo) (*MsgUpdateComplianceInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateComplianceInfo not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
@@ -853,6 +1137,24 @@ func _Msg_ProvisionModel_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_UpdateComplianceInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgUpdateComplianceInfo)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).UpdateComplianceInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.compliance.Msg/UpdateComplianceInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).UpdateComplianceInfo(ctx, req.(*MsgUpdateComplianceInfo))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "zigbeealliance.distributedcomplianceledger.compliance.Msg",
 	HandlerType: (*MsgServer)(nil),
@@ -868,6 +1170,10 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ProvisionModel",
 			Handler:    _Msg_ProvisionModel_Handler,
+		},
+		{
+			MethodName: "UpdateComplianceInfo",
+			Handler:    _Msg_UpdateComplianceInfo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -1369,6 +1675,219 @@ func (m *MsgProvisionModelResponse) MarshalToSizedBuffer(dAtA []byte) (int, erro
 	return len(dAtA) - i, nil
 }
 
+func (m *MsgUpdateComplianceInfo) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgUpdateComplianceInfo) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgUpdateComplianceInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.CertificationIdOfSoftwareComponent) > 0 {
+		i -= len(m.CertificationIdOfSoftwareComponent)
+		copy(dAtA[i:], m.CertificationIdOfSoftwareComponent)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.CertificationIdOfSoftwareComponent)))
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0xba
+	}
+	if len(m.ParentChild) > 0 {
+		i -= len(m.ParentChild)
+		copy(dAtA[i:], m.ParentChild)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.ParentChild)))
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0xb2
+	}
+	if len(m.OSVersion) > 0 {
+		i -= len(m.OSVersion)
+		copy(dAtA[i:], m.OSVersion)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.OSVersion)))
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0xaa
+	}
+	if len(m.SupportedClusters) > 0 {
+		i -= len(m.SupportedClusters)
+		copy(dAtA[i:], m.SupportedClusters)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.SupportedClusters)))
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0xa2
+	}
+	if len(m.FamilyId) > 0 {
+		i -= len(m.FamilyId)
+		copy(dAtA[i:], m.FamilyId)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.FamilyId)))
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0x9a
+	}
+	if len(m.Transport) > 0 {
+		i -= len(m.Transport)
+		copy(dAtA[i:], m.Transport)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Transport)))
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0x92
+	}
+	if len(m.CompliantPlatformVersion) > 0 {
+		i -= len(m.CompliantPlatformVersion)
+		copy(dAtA[i:], m.CompliantPlatformVersion)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.CompliantPlatformVersion)))
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0x8a
+	}
+	if len(m.CompliantPlatformUsed) > 0 {
+		i -= len(m.CompliantPlatformUsed)
+		copy(dAtA[i:], m.CompliantPlatformUsed)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.CompliantPlatformUsed)))
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0x82
+	}
+	if len(m.ProgramTypeVersion) > 0 {
+		i -= len(m.ProgramTypeVersion)
+		copy(dAtA[i:], m.ProgramTypeVersion)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.ProgramTypeVersion)))
+		i--
+		dAtA[i] = 0x7a
+	}
+	if len(m.ProgramType) > 0 {
+		i -= len(m.ProgramType)
+		copy(dAtA[i:], m.ProgramType)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.ProgramType)))
+		i--
+		dAtA[i] = 0x72
+	}
+	if len(m.CertificationRoute) > 0 {
+		i -= len(m.CertificationRoute)
+		copy(dAtA[i:], m.CertificationRoute)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.CertificationRoute)))
+		i--
+		dAtA[i] = 0x6a
+	}
+	if len(m.CDCertificateId) > 0 {
+		i -= len(m.CDCertificateId)
+		copy(dAtA[i:], m.CDCertificateId)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.CDCertificateId)))
+		i--
+		dAtA[i] = 0x62
+	}
+	if len(m.Owner) > 0 {
+		i -= len(m.Owner)
+		copy(dAtA[i:], m.Owner)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Owner)))
+		i--
+		dAtA[i] = 0x5a
+	}
+	if len(m.Reason) > 0 {
+		i -= len(m.Reason)
+		copy(dAtA[i:], m.Reason)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Reason)))
+		i--
+		dAtA[i] = 0x52
+	}
+	if len(m.Date) > 0 {
+		i -= len(m.Date)
+		copy(dAtA[i:], m.Date)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Date)))
+		i--
+		dAtA[i] = 0x4a
+	}
+	if m.SoftwareVersionCertificationStatus != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.SoftwareVersionCertificationStatus))
+		i--
+		dAtA[i] = 0x40
+	}
+	if m.CDVersionNumber != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.CDVersionNumber))
+		i--
+		dAtA[i] = 0x38
+	}
+	if len(m.CertificationType) > 0 {
+		i -= len(m.CertificationType)
+		copy(dAtA[i:], m.CertificationType)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.CertificationType)))
+		i--
+		dAtA[i] = 0x32
+	}
+	if len(m.SoftwareVersionString) > 0 {
+		i -= len(m.SoftwareVersionString)
+		copy(dAtA[i:], m.SoftwareVersionString)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.SoftwareVersionString)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if m.SoftwareVersion != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.SoftwareVersion))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.Pid != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.Pid))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Vid != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.Vid))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgUpdateComplianceInfoResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgUpdateComplianceInfoResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgUpdateComplianceInfoResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
 	offset -= sovTx(v)
 	base := offset
@@ -1618,6 +2137,111 @@ func (m *MsgProvisionModel) Size() (n int) {
 }
 
 func (m *MsgProvisionModelResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgUpdateComplianceInfo) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.Vid != 0 {
+		n += 1 + sovTx(uint64(m.Vid))
+	}
+	if m.Pid != 0 {
+		n += 1 + sovTx(uint64(m.Pid))
+	}
+	if m.SoftwareVersion != 0 {
+		n += 1 + sovTx(uint64(m.SoftwareVersion))
+	}
+	l = len(m.SoftwareVersionString)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.CertificationType)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.CDVersionNumber != 0 {
+		n += 1 + sovTx(uint64(m.CDVersionNumber))
+	}
+	if m.SoftwareVersionCertificationStatus != 0 {
+		n += 1 + sovTx(uint64(m.SoftwareVersionCertificationStatus))
+	}
+	l = len(m.Date)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Reason)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Owner)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.CDCertificateId)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.CertificationRoute)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.ProgramType)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.ProgramTypeVersion)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.CompliantPlatformUsed)
+	if l > 0 {
+		n += 2 + l + sovTx(uint64(l))
+	}
+	l = len(m.CompliantPlatformVersion)
+	if l > 0 {
+		n += 2 + l + sovTx(uint64(l))
+	}
+	l = len(m.Transport)
+	if l > 0 {
+		n += 2 + l + sovTx(uint64(l))
+	}
+	l = len(m.FamilyId)
+	if l > 0 {
+		n += 2 + l + sovTx(uint64(l))
+	}
+	l = len(m.SupportedClusters)
+	if l > 0 {
+		n += 2 + l + sovTx(uint64(l))
+	}
+	l = len(m.OSVersion)
+	if l > 0 {
+		n += 2 + l + sovTx(uint64(l))
+	}
+	l = len(m.ParentChild)
+	if l > 0 {
+		n += 2 + l + sovTx(uint64(l))
+	}
+	l = len(m.CertificationIdOfSoftwareComponent)
+	if l > 0 {
+		n += 2 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgUpdateComplianceInfoResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -3385,6 +4009,777 @@ func (m *MsgProvisionModelResponse) Unmarshal(dAtA []byte) error {
 		}
 		if fieldNum <= 0 {
 			return fmt.Errorf("proto: MsgProvisionModelResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgUpdateComplianceInfo) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgUpdateComplianceInfo: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgUpdateComplianceInfo: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Vid", wireType)
+			}
+			m.Vid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Vid |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pid", wireType)
+			}
+			m.Pid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Pid |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SoftwareVersion", wireType)
+			}
+			m.SoftwareVersion = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SoftwareVersion |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SoftwareVersionString", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SoftwareVersionString = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CertificationType", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.CertificationType = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CDVersionNumber", wireType)
+			}
+			m.CDVersionNumber = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.CDVersionNumber |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 8:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SoftwareVersionCertificationStatus", wireType)
+			}
+			m.SoftwareVersionCertificationStatus = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SoftwareVersionCertificationStatus |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 9:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Date", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Date = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 10:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Reason", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Reason = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 11:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Owner", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Owner = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 12:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CDCertificateId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.CDCertificateId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 13:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CertificationRoute", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.CertificationRoute = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 14:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ProgramType", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ProgramType = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 15:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ProgramTypeVersion", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ProgramTypeVersion = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 16:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CompliantPlatformUsed", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.CompliantPlatformUsed = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 17:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CompliantPlatformVersion", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.CompliantPlatformVersion = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 18:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Transport", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Transport = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 19:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FamilyId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.FamilyId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 20:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SupportedClusters", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SupportedClusters = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 21:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field OSVersion", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.OSVersion = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 22:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ParentChild", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ParentChild = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 23:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CertificationIdOfSoftwareComponent", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.CertificationIdOfSoftwareComponent = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgUpdateComplianceInfoResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgUpdateComplianceInfoResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgUpdateComplianceInfoResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:

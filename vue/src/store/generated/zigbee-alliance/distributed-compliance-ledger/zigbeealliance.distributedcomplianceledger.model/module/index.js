@@ -3,16 +3,16 @@ import { SigningStargateClient } from "@cosmjs/stargate";
 import { Registry } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
 import { MsgCreateModelVersion } from "./types/model/tx";
-import { MsgCreateModel } from "./types/model/tx";
-import { MsgUpdateModel } from "./types/model/tx";
 import { MsgUpdateModelVersion } from "./types/model/tx";
 import { MsgDeleteModel } from "./types/model/tx";
+import { MsgUpdateModel } from "./types/model/tx";
+import { MsgCreateModel } from "./types/model/tx";
 const types = [
     ["/zigbeealliance.distributedcomplianceledger.model.MsgCreateModelVersion", MsgCreateModelVersion],
-    ["/zigbeealliance.distributedcomplianceledger.model.MsgCreateModel", MsgCreateModel],
-    ["/zigbeealliance.distributedcomplianceledger.model.MsgUpdateModel", MsgUpdateModel],
     ["/zigbeealliance.distributedcomplianceledger.model.MsgUpdateModelVersion", MsgUpdateModelVersion],
     ["/zigbeealliance.distributedcomplianceledger.model.MsgDeleteModel", MsgDeleteModel],
+    ["/zigbeealliance.distributedcomplianceledger.model.MsgUpdateModel", MsgUpdateModel],
+    ["/zigbeealliance.distributedcomplianceledger.model.MsgCreateModel", MsgCreateModel],
 ];
 export const MissingWalletError = new Error("wallet is required");
 export const registry = new Registry(types);
@@ -34,10 +34,10 @@ const txClient = async (wallet, { addr: addr } = { addr: "http://localhost:26657
     return {
         signAndBroadcast: (msgs, { fee, memo } = { fee: defaultFee, memo: "" }) => client.signAndBroadcast(address, msgs, fee, memo),
         msgCreateModelVersion: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgCreateModelVersion", value: MsgCreateModelVersion.fromPartial(data) }),
-        msgCreateModel: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgCreateModel", value: MsgCreateModel.fromPartial(data) }),
-        msgUpdateModel: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgUpdateModel", value: MsgUpdateModel.fromPartial(data) }),
         msgUpdateModelVersion: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgUpdateModelVersion", value: MsgUpdateModelVersion.fromPartial(data) }),
         msgDeleteModel: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgDeleteModel", value: MsgDeleteModel.fromPartial(data) }),
+        msgUpdateModel: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgUpdateModel", value: MsgUpdateModel.fromPartial(data) }),
+        msgCreateModel: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgCreateModel", value: MsgCreateModel.fromPartial(data) }),
     };
 };
 const queryClient = async ({ addr: addr } = { addr: "http://localhost:1317" }) => {
