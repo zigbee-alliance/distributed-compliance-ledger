@@ -1,12 +1,12 @@
 package cli
 
 import (
+	"math"
 	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
-	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
@@ -14,49 +14,36 @@ import (
 var _ = strconv.Itoa(0)
 
 func CmdUpdateComplianceInfo() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "update-compliance-info [vid] [pid] [software-version] [software-version-string] [certification-type] [c-d-version-number] [software-version-certification-status] [date] [reason] [owner] [c-d-certificate-id] [certification-route] [program-type] [program-type-version] [compliant-platform-used] [compliant-platform-version] [transport] [family-id] [supported-clusters] [os-version] [parent-child] [certification-id-of-software-component]",
-		Short: "Broadcast message UpdateComplianceInfo",
-		Args:  cobra.ExactArgs(22),
-		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			argVid, err := cast.ToInt32E(args[0])
-			if err != nil {
-				return err
-			}
-			argPid, err := cast.ToInt32E(args[1])
-			if err != nil {
-				return err
-			}
-			argSoftwareVersion, err := cast.ToUint32E(args[2])
-			if err != nil {
-				return err
-			}
-			argSoftwareVersionString := args[3]
-			argCertificationType := args[4]
-			argCDVersionNumber, err := cast.ToUint32E(args[5])
-			if err != nil {
-				return err
-			}
-			argSoftwareVersionCertificationStatus, err := cast.ToUint32E(args[6])
-			if err != nil {
-				return err
-			}
-			argDate := args[7]
-			argReason := args[8]
-			argOwner := args[9]
-			argCDCertificateId := args[10]
-			argCertificationRoute := args[11]
-			argProgramType := args[12]
-			argProgramTypeVersion := args[13]
-			argCompliantPlatformUsed := args[14]
-			argCompliantPlatformVersion := args[15]
-			argTransport := args[16]
-			argFamilyId := args[17]
-			argSupportedClusters := args[18]
-			argOSVersion := args[19]
-			argParentChild := args[20]
-			argCertificationIdOfSoftwareComponent := args[21]
+	var (
+		vid                                int32
+		pid                                int32
+		softwareVersion                    uint32
+		softwareVersionString              string
+		certificationType                  string
+		cdVersionNumber                    uint32
+		softwareVersionCertificationStatus uint32
+		certificationDate                  string
+		reason                             string
+		owner                              string
+		CDCertificateID                    string
+		certificationRoute                 string
+		programType                        string
+		programTypeVersion                 string
+		compliantPlatformUsed              string
+		compliantPlatformVersion           string
+		transport                          string
+		familyID                           string
+		supportedClusters                  string
+		OSVersion                          string
+		parentChild                        string
+		certificationIDOfSoftwareComponent string
+	)
 
+	cmd := &cobra.Command{
+		Use:   "update-compliance-info",
+		Short: "Update compliance info which exists on the ledger",
+		Args:  cobra.ExactArgs(0),
+		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
@@ -64,28 +51,28 @@ func CmdUpdateComplianceInfo() *cobra.Command {
 
 			msg := types.NewMsgUpdateComplianceInfo(
 				clientCtx.GetFromAddress().String(),
-				argVid,
-				argPid,
-				argSoftwareVersion,
-				argSoftwareVersionString,
-				argCertificationType,
-				argCDVersionNumber,
-				argSoftwareVersionCertificationStatus,
-				argDate,
-				argReason,
-				argOwner,
-				argCDCertificateId,
-				argCertificationRoute,
-				argProgramType,
-				argProgramTypeVersion,
-				argCompliantPlatformUsed,
-				argCompliantPlatformVersion,
-				argTransport,
-				argFamilyId,
-				argSupportedClusters,
-				argOSVersion,
-				argParentChild,
-				argCertificationIdOfSoftwareComponent,
+				vid,
+				pid,
+				softwareVersion,
+				softwareVersionString,
+				certificationType,
+				cdVersionNumber,
+				softwareVersionCertificationStatus,
+				certificationDate,
+				reason,
+				owner,
+				CDCertificateID,
+				certificationRoute,
+				programType,
+				programTypeVersion,
+				compliantPlatformUsed,
+				compliantPlatformVersion,
+				transport,
+				familyID,
+				supportedClusters,
+				OSVersion,
+				parentChild,
+				certificationIDOfSoftwareComponent,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
@@ -93,6 +80,54 @@ func CmdUpdateComplianceInfo() *cobra.Command {
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
+
+	cmd.Flags().Int32Var(&vid, FlagVID, 0,
+		"Model vendor ID (positive non-zero uint16)")
+	cmd.Flags().Int32Var(&pid, FlagPID, 0,
+		"Model product ID (positive non-zero uint16)")
+	cmd.Flags().Uint32VarP(&softwareVersion, FlagSoftwareVersion, FlagSoftwareVersionShortcut, math.MaxUint32,
+		"Software Version of model (uint32)")
+	cmd.Flags().StringVar(&softwareVersionString, FlagSoftwareVersionString, "",
+		"Software Version String of model")
+	cmd.Flags().Uint32Var(&cdVersionNumber, FlagCDVersionNumber, math.MaxUint32,
+		"CD Version Number of the certification")
+	cmd.Flags().StringVarP(&certificationType, FlagCertificationType, FlagCertificationTypeShortcut, "", TextCertificationType)
+	cmd.Flags().StringVarP(&certificationDate, FlagCertificationDate, FlagDateShortcut, "",
+		"The date of model certification (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z")
+	cmd.Flags().StringVar(&reason, FlagReason, "",
+		"Optional comment describing the reason of certification")
+	cmd.Flags().StringVar(&owner, FlagOwner, "", "Signer of certification")
+	cmd.Flags().StringVar(&programTypeVersion, FlagProgramTypeVersion, "",
+		"Program Type Version of the certification")
+	cmd.Flags().StringVar(&CDCertificateID, FlagCDCertificateID, "",
+		"CD Certification ID of the certification")
+	cmd.Flags().StringVar(&familyID, FlagFamilyID, "",
+		"Family ID of the certification")
+	cmd.Flags().StringVar(&supportedClusters, FlagSupportedClusters, "",
+		"Supported Clusters of the certification")
+	cmd.Flags().StringVar(&compliantPlatformUsed, FlagCompliantPlatformUsed, "",
+		"Compliant Platform Used of the certification")
+	cmd.Flags().StringVar(&compliantPlatformVersion, FlagCompliantPlatformVersion, "",
+		"Compliant Platform Version of the certification")
+	cmd.Flags().StringVar(&OSVersion, FlagOSVersion, "",
+		"OS Version of the certification")
+	cmd.Flags().StringVar(&certificationRoute, FlagCertificationRoute, "",
+		"Certification Route of the certification")
+	cmd.Flags().StringVar(&programType, FlagProgramType, "",
+		"Program Type of the certification")
+	cmd.Flags().StringVar(&transport, FlagTransport, "",
+		"Transport of the certification")
+	cmd.Flags().StringVar(&parentChild, FlagParentChild, "",
+		"Parent or Child  of the PFC certification route")
+	cmd.Flags().StringVar(&certificationIDOfSoftwareComponent, FlagCertificationIDOfSoftwareComponent, "",
+		"certification ID of software component")
+	cmd.Flags().Uint32Var(&softwareVersionCertificationStatus, FlagSoftwareVersionCertificationStatus, math.MaxUint32, "software version certification status")
+
+	_ = cmd.MarkFlagRequired(FlagVID)
+	_ = cmd.MarkFlagRequired(FlagPID)
+	_ = cmd.MarkFlagRequired(FlagSoftwareVersion)
+	_ = cmd.MarkFlagRequired(FlagCertificationType)
+	_ = cmd.MarkFlagRequired(flags.FlagFrom)
 
 	flags.AddTxFlagsToCmd(cmd)
 

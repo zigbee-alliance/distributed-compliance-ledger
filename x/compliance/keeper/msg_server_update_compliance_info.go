@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"math"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -19,7 +20,7 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
 
-	if !k.dclauthKeeper.HasRole(ctx, signerAddr, dclauthtypes.Vendor) {
+	if !k.dclauthKeeper.HasRole(ctx, signerAddr, dclauthtypes.CertificationCenter) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "%s transaction should be "+
 			"signed by an account with the %s role", "MsgUpdateComplianceInfo", dclauthtypes.CertificationCenter)
 	}
@@ -27,16 +28,16 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 	complianceInfo, isFound := k.GetComplianceInfo(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
 
 	if !isFound {
-		return nil, types.NewErrComplianceInfoNotFound(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
+		return nil, types.NewErrComplianceInfoDoesNotExist(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
 	}
 
 	if msg.CDCertificateId != "" {
 		complianceInfo.CDCertificateId = msg.CDCertificateId
 	}
 
-	// if msg.CDVersionNumber != "" {
-	// 	complianceInfo.CDVersionNumber = msg.CDVersionNumber
-	// }
+	if msg.CDVersionNumber != math.MaxUint32 {
+		complianceInfo.CDVersionNumber = msg.CDVersionNumber
+	}
 
 	if msg.CertificationIdOfSoftwareComponent != "" {
 		complianceInfo.CertificationIdOfSoftwareComponent = msg.CertificationIdOfSoftwareComponent
@@ -86,13 +87,9 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 		complianceInfo.Reason = msg.Reason
 	}
 
-	// if msg.SoftwareVersion != "" {
-	// 	complianceInfo.SoftwareVersion = msg.SoftwareVersion
-	// }
-
-	// if msg.SoftwareVersionCertificationStatus != "" {
-	// 	complianceInfo.SoftwareVersionCertificationStatus = msg.SoftwareVersionCertificationStatus
-	// }
+	if msg.SoftwareVersionCertificationStatus != math.MaxUint32 {
+		complianceInfo.SoftwareVersionCertificationStatus = msg.SoftwareVersionCertificationStatus
+	}
 
 	if msg.SoftwareVersionString != "" {
 		complianceInfo.SoftwareVersionString = msg.SoftwareVersionString
@@ -105,6 +102,8 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 	if msg.Transport != "" {
 		complianceInfo.Transport = msg.Transport
 	}
+
+	k.SetComplianceInfo(ctx, complianceInfo)
 
 	return &types.MsgUpdateComplianceInfoResponse{}, nil
 }

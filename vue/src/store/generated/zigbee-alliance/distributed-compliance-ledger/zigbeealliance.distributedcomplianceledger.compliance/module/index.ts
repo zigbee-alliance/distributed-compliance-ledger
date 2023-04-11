@@ -5,16 +5,16 @@ import { SigningStargateClient } from "@cosmjs/stargate";
 import { Registry, OfflineSigner, EncodeObject, DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
 import { MsgProvisionModel } from "./types/compliance/tx";
+import { MsgCertifyModel } from "./types/compliance/tx";
 import { MsgRevokeModel } from "./types/compliance/tx";
 import { MsgUpdateComplianceInfo } from "./types/compliance/tx";
-import { MsgCertifyModel } from "./types/compliance/tx";
 
 
 const types = [
   ["/zigbeealliance.distributedcomplianceledger.compliance.MsgProvisionModel", MsgProvisionModel],
+  ["/zigbeealliance.distributedcomplianceledger.compliance.MsgCertifyModel", MsgCertifyModel],
   ["/zigbeealliance.distributedcomplianceledger.compliance.MsgRevokeModel", MsgRevokeModel],
   ["/zigbeealliance.distributedcomplianceledger.compliance.MsgUpdateComplianceInfo", MsgUpdateComplianceInfo],
-  ["/zigbeealliance.distributedcomplianceledger.compliance.MsgCertifyModel", MsgCertifyModel],
   
 ];
 export const MissingWalletError = new Error("wallet is required");
@@ -48,9 +48,9 @@ const txClient = async (wallet: OfflineSigner, { addr: addr }: TxClientOptions =
   return {
     signAndBroadcast: (msgs: EncodeObject[], { fee, memo }: SignAndBroadcastOptions = {fee: defaultFee, memo: ""}) => client.signAndBroadcast(address, msgs, fee,memo),
     msgProvisionModel: (data: MsgProvisionModel): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.compliance.MsgProvisionModel", value: MsgProvisionModel.fromPartial( data ) }),
+    msgCertifyModel: (data: MsgCertifyModel): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.compliance.MsgCertifyModel", value: MsgCertifyModel.fromPartial( data ) }),
     msgRevokeModel: (data: MsgRevokeModel): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.compliance.MsgRevokeModel", value: MsgRevokeModel.fromPartial( data ) }),
     msgUpdateComplianceInfo: (data: MsgUpdateComplianceInfo): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.compliance.MsgUpdateComplianceInfo", value: MsgUpdateComplianceInfo.fromPartial( data ) }),
-    msgCertifyModel: (data: MsgCertifyModel): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.compliance.MsgCertifyModel", value: MsgCertifyModel.fromPartial( data ) }),
     
   };
 };

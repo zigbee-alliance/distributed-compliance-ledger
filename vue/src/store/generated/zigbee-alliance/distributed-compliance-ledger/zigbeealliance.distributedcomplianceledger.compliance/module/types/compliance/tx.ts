@@ -1,6 +1,5 @@
 /* eslint-disable */
-import { Reader, util, configure, Writer } from 'protobufjs/minimal'
-import * as Long from 'long'
+import { Reader, Writer } from 'protobufjs/minimal'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.compliance'
 
@@ -1285,7 +1284,7 @@ export const MsgUpdateComplianceInfo = {
       writer.uint32(24).int32(message.pid)
     }
     if (message.softwareVersion !== 0) {
-      writer.uint32(32).uint64(message.softwareVersion)
+      writer.uint32(32).uint32(message.softwareVersion)
     }
     if (message.softwareVersionString !== '') {
       writer.uint32(42).string(message.softwareVersionString)
@@ -1364,7 +1363,7 @@ export const MsgUpdateComplianceInfo = {
           message.pid = reader.int32()
           break
         case 4:
-          message.softwareVersion = longToNumber(reader.uint64() as Long)
+          message.softwareVersion = reader.uint32()
           break
         case 5:
           message.softwareVersionString = reader.string()
@@ -1781,16 +1780,6 @@ interface Rpc {
   request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>
 }
 
-declare var self: any | undefined
-declare var window: any | undefined
-var globalThis: any = (() => {
-  if (typeof globalThis !== 'undefined') return globalThis
-  if (typeof self !== 'undefined') return self
-  if (typeof window !== 'undefined') return window
-  if (typeof global !== 'undefined') return global
-  throw 'Unable to locate global object'
-})()
-
 type Builtin = Date | Function | Uint8Array | string | number | undefined
 export type DeepPartial<T> = T extends Builtin
   ? T
@@ -1801,15 +1790,3 @@ export type DeepPartial<T> = T extends Builtin
   : T extends {}
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>
-
-function longToNumber(long: Long): number {
-  if (long.gt(Number.MAX_SAFE_INTEGER)) {
-    throw new globalThis.Error('Value is larger than Number.MAX_SAFE_INTEGER')
-  }
-  return long.toNumber()
-}
-
-if (util.Long !== Long) {
-  util.Long = Long as any
-  configure()
-}
