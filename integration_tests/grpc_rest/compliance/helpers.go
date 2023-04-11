@@ -701,6 +701,32 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	deviceSoftwareCompliances, _ = GetAllDeviceSoftwareCompliance(suite)
 	require.Equal(suite.T, len(inputAllDeviceSoftwareCompliance), len(deviceSoftwareCompliances))
 
+	oldComplianceInfo, _ := GetComplianceInfo(suite, vid, pid, sv, compliancetypes.ZigbeeCertificationType)
+
+	updateComplianceInfoMsg := compliancetypes.MsgUpdateComplianceInfo{
+		Creator:           certCenterAccount.Address,
+		Vid:               vid,
+		Pid:               pid,
+		SoftwareVersion:   sv,
+		CertificationType: compliancetypes.ZigbeeCertificationType,
+		ProgramType:       "new program type",
+		Reason:            "new reason",
+		ParentChild:       "child",
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&updateComplianceInfoMsg}, certCenter, certCenterAccount)
+	require.NoError(suite.T, err)
+
+	updatedComplianceInfo, _ := GetComplianceInfo(suite, vid, pid, sv, compliancetypes.ZigbeeCertificationType)
+
+	require.Equal(suite.T, updatedComplianceInfo.ProgramType, updateComplianceInfoMsg.ProgramType)
+	require.Equal(suite.T, updatedComplianceInfo.Reason, updateComplianceInfoMsg.Reason)
+	require.Equal(suite.T, updatedComplianceInfo.ParentChild, updateComplianceInfoMsg.ParentChild)
+	require.Equal(suite.T, updatedComplianceInfo.CDCertificateId, oldComplianceInfo.CDCertificateId)
+	require.Equal(suite.T, updatedComplianceInfo.CDVersionNumber, oldComplianceInfo.CDVersionNumber)
+	require.Equal(suite.T, updatedComplianceInfo.CertificationIdOfSoftwareComponent, oldComplianceInfo.CertificationIdOfSoftwareComponent)
+	require.Equal(suite.T, updatedComplianceInfo.Date, oldComplianceInfo.Date)
+	require.Equal(suite.T, updatedComplianceInfo.SoftwareVersionCertificationStatus, oldComplianceInfo.SoftwareVersionCertificationStatus)
+
 	// Publish model info
 	pid = int32(tmrand.Uint16())
 	secondModel := test_model.NewMsgCreateModel(vid, pid, vendorAccount.Address)
