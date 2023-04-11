@@ -341,6 +341,80 @@ func TestHandler_ProvisionDifferentModels(t *testing.T) {
 	}
 }
 
+func TestHandler_UpdateComplianceInfoByCertificationCenter(t *testing.T) {
+	setup := Setup(t)
+
+	// add model version
+	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
+		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
+
+	// certify model
+	certifyModelMsg := NewMsgCertifyModel(
+		vid, pid, softwareVersion, softwareVersionString, types.ZigbeeCertificationType, setup.CertificationCenter)
+	_, err := setup.Handler(setup.Ctx, certifyModelMsg)
+	require.NoError(t, err)
+
+	// query certified model
+	receivedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, types.ZigbeeCertificationType)
+	checkCertifiedModelInfo(t, certifyModelMsg, receivedComplianceInfo)
+
+	const (
+		parentChild                        = "parent"
+		softwareVersionCertificationStatus = 3
+	)
+
+	updateComplianceInfoMsg := NewMsgUpdateComplianceInfo(setup.CertificationCenter, vid, pid, softwareVersion, softwareVersionString, types.ZigbeeCertificationType, softwareVersionCertificationStatus, "", parentChild)
+	_, err = setup.Handler(setup.Ctx, updateComplianceInfoMsg)
+	require.NoError(t, err)
+
+	updatedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, types.ZigbeeCertificationType)
+
+	require.Equal(t, updatedComplianceInfo.ParentChild, updateComplianceInfoMsg.ParentChild)
+	require.Equal(t, updatedComplianceInfo.SoftwareVersionCertificationStatus, updateComplianceInfoMsg.SoftwareVersionCertificationStatus)
+	require.Equal(t, updatedComplianceInfo.Date, updateComplianceInfoMsg.Date)
+	require.Equal(t, updatedComplianceInfo.Reason, updateComplianceInfoMsg.Reason)
+	require.Equal(t, updatedComplianceInfo.ProgramType, receivedComplianceInfo.ProgramType)
+}
+
+func TestHandler_UpdateComplianceInfoNotByCertificationCenter(t *testing.T) {
+	setup := Setup(t)
+
+	// add model version
+	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
+		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
+
+	// certify model
+	certifyModelMsg := NewMsgCertifyModel(
+		vid, pid, softwareVersion, softwareVersionString, types.ZigbeeCertificationType, setup.CertificationCenter)
+	_, err := setup.Handler(setup.Ctx, certifyModelMsg)
+	require.NoError(t, err)
+
+	// query certified model
+	receivedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, types.ZigbeeCertificationType)
+	checkCertifiedModelInfo(t, certifyModelMsg, receivedComplianceInfo)
+
+	const (
+		parentChild                        = "parent"
+		softwareVersionCertificationStatus = 3
+	)
+
+	accAddress := GenerateAccAddress()
+
+	setup.DclauthKeeper.On("HasRole", mock.Anything, accAddress, dclauthtypes.CertificationCenter).Return(false)
+
+	updateComplianceInfoMsg := NewMsgUpdateComplianceInfo(accAddress, vid, pid, softwareVersion, softwareVersionString, types.ZigbeeCertificationType, softwareVersionCertificationStatus, "", parentChild)
+	_, err = setup.Handler(setup.Ctx, updateComplianceInfoMsg)
+	require.Error(t, err)
+
+	updatedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, types.ZigbeeCertificationType)
+
+	require.Equal(t, updatedComplianceInfo.ParentChild, receivedComplianceInfo.ParentChild)
+	require.Equal(t, updatedComplianceInfo.SoftwareVersionCertificationStatus, receivedComplianceInfo.SoftwareVersionCertificationStatus)
+	require.Equal(t, updatedComplianceInfo.Date, receivedComplianceInfo.Date)
+	require.Equal(t, updatedComplianceInfo.Reason, receivedComplianceInfo.Reason)
+	require.Equal(t, updatedComplianceInfo.ProgramType, receivedComplianceInfo.ProgramType)
+}
+
 func TestHandler_CertifyModel_Zigbee(t *testing.T) {
 	setup := Setup(t)
 
@@ -1474,6 +1548,44 @@ func NewMsgProvisionModel(
 		CertificationType:     certificationType,
 		Reason:                testconstants.Reason,
 		CDCertificateId:       testconstants.CDCertificateID,
+	}
+}
+
+func NewMsgUpdateComplianceInfo(
+	creator sdk.AccAddress,
+	vid int32,
+	pid int32,
+	softwareVersion uint32,
+	softwareVersionString string,
+	certificationType string,
+	softwareVersionCertificationStatus uint32,
+	programType string,
+	parentChild string,
+) *types.MsgUpdateComplianceInfo {
+	return &types.MsgUpdateComplianceInfo{
+		Creator:                            creator.String(),
+		Vid:                                vid,
+		Pid:                                pid,
+		SoftwareVersion:                    softwareVersion,
+		SoftwareVersionString:              softwareVersionString,
+		CertificationType:                  certificationType,
+		CDVersionNumber:                    uint32(testconstants.CdVersionNumber),
+		SoftwareVersionCertificationStatus: softwareVersionCertificationStatus,
+		Date:                               testconstants.ProvisionalDate,
+		Reason:                             testconstants.Reason,
+		Owner:                              "",
+		CDCertificateId:                    testconstants.CDCertificateID,
+		CertificationRoute:                 "",
+		ProgramType:                        programType,
+		ProgramTypeVersion:                 "",
+		CompliantPlatformUsed:              "",
+		CompliantPlatformVersion:           "",
+		Transport:                          "",
+		FamilyId:                           "",
+		SupportedClusters:                  "",
+		OSVersion:                          "",
+		ParentChild:                        parentChild,
+		CertificationIdOfSoftwareComponent: "",
 	}
 }
 
