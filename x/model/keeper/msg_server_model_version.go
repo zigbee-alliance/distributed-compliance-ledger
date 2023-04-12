@@ -160,14 +160,9 @@ func (k msgServer) DeleteModelVersion(goCtx context.Context, msg *types.MsgDelet
 		return nil, types.NewErrModelVersionDoesNotExist(msg.Vid, msg.Pid, msg.SoftwareVersion)
 	}
 
-	if msg.Creator != modelVersion.Creator {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "MsgDeleteModelVersion transaction should be "+
-			"signed by a modelVersion %d %d %d creator", msg.Vid, msg.Pid, msg.SoftwareVersion)
-	}
-
-	isCertified := k.IsModelCertified(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion)
+	isCertified := k.IsModelVersionCertified(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion)
 	if isCertified {
-		return nil, types.NewErrModelVersionCertified(msg.Vid, msg.Pid, modelVersion.SoftwareVersion)
+		return nil, types.NewErrModelDeletionCertified(msg.Vid, msg.Pid, modelVersion.SoftwareVersion)
 	}
 
 	// store updated model version

@@ -11,20 +11,20 @@ var (
 	ErrVendorProductsDoNotExist = sdkerrors.Register(ModuleName, 504, "vendor products do not exist")
 
 	// Model Version Error Codes.
-	ErrSoftwareVersionStringInvalid = sdkerrors.Register(ModuleName, 511, "software version string invalid")
-	ErrFirmwareInformationInvalid   = sdkerrors.Register(ModuleName, 512, "firmware digests invalid")
-	ErrCDVersionNumberInvalid       = sdkerrors.Register(ModuleName, 513, "CD version number invalid")
-	ErrOtaURLInvalid                = sdkerrors.Register(ModuleName, 514, "OTA URL invalid")
-	ErrOtaMissingInformation        = sdkerrors.Register(ModuleName, 515, "OTA missing information")
-	ErrReleaseNotesURLInvalid       = sdkerrors.Register(ModuleName, 516, "release notes URL invalid")
-	ErrModelVersionDoesNotExist     = sdkerrors.Register(ModuleName, 517, "model version does not exist")
-	ErrNoModelVersionsExist         = sdkerrors.Register(ModuleName, 518, "no model versions exist")
-	ErrModelVersionAlreadyExists    = sdkerrors.Register(ModuleName, 519, "model version already exists")
-	ErrOtaURLCannotBeSet            = sdkerrors.Register(ModuleName, 520, "OTA URL cannot be set")
-	ErrMaxSVLessThanMinSV           = sdkerrors.Register(ModuleName, 521, "max software version less than min software version")
-	ErrLsfRevisionIsNotValid        = sdkerrors.Register(ModuleName, 522, "LsfRevision should monotonically increase by 1")
-	ErrLsfRevisionIsNotAllowed      = sdkerrors.Register(ModuleName, 523, "LsfRevision is not allowed if LsfURL is not present")
-	ErrModelVersionDeletionCertified        = sdkerrors.Register(ModuleName, 524, "model version certified and can not be deleted")
+	ErrSoftwareVersionStringInvalid  = sdkerrors.Register(ModuleName, 511, "software version string invalid")
+	ErrFirmwareInformationInvalid    = sdkerrors.Register(ModuleName, 512, "firmware digests invalid")
+	ErrCDVersionNumberInvalid        = sdkerrors.Register(ModuleName, 513, "CD version number invalid")
+	ErrOtaURLInvalid                 = sdkerrors.Register(ModuleName, 514, "OTA URL invalid")
+	ErrOtaMissingInformation         = sdkerrors.Register(ModuleName, 515, "OTA missing information")
+	ErrReleaseNotesURLInvalid        = sdkerrors.Register(ModuleName, 516, "release notes URL invalid")
+	ErrModelVersionDoesNotExist      = sdkerrors.Register(ModuleName, 517, "model version does not exist")
+	ErrNoModelVersionsExist          = sdkerrors.Register(ModuleName, 518, "no model versions exist")
+	ErrModelVersionAlreadyExists     = sdkerrors.Register(ModuleName, 519, "model version already exists")
+	ErrOtaURLCannotBeSet             = sdkerrors.Register(ModuleName, 520, "OTA URL cannot be set")
+	ErrMaxSVLessThanMinSV            = sdkerrors.Register(ModuleName, 521, "max software version less than min software version")
+	ErrLsfRevisionIsNotValid         = sdkerrors.Register(ModuleName, 522, "LsfRevision should monotonically increase by 1")
+	ErrLsfRevisionIsNotAllowed       = sdkerrors.Register(ModuleName, 523, "LsfRevision is not allowed if LsfURL is not present")
+	ErrModelVersionDeletionCertified = sdkerrors.Register(ModuleName, 524, "model version certified and can not be deleted")
 )
 
 func NewErrModelAlreadyExists(vid interface{}, pid interface{}) error {
@@ -126,8 +126,8 @@ func NewErrLsfRevisionIsNotValid(previousLsfVersion interface{},
 		currentLsfVersion, previousLsfVersion)
 }
 
-func NewErrModelVersionDeletionCertified(vid interface{}, pid interface{}, softwareVersion interface{}) error {
-	return sdkerrors.Wrapf(ErrModelVersionCertified,
-		"Model version associated with vid=%v, pid=%v and softwareVersion=%v is certified and can't be deleted",
+func NewErrModelDeletionCertified(vid interface{}, pid interface{}, softwareVersion interface{}) error {
+	return sdkerrors.Wrapf(ErrModelVersionDeletionCertified,
+		"Model version associated with vid=%v, pid=%v and softwareVersion=%v is certified and the corresponding model can't be deleted",
 		vid, pid, softwareVersion)
 }

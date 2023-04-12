@@ -1021,6 +1021,44 @@ func TestHandler_DeleteModelVersion(t *testing.T) {
 	require.Equal(t, codes.NotFound, status.Code(err))
 }
 
+func TestHandler_DeleteModelVersionDifferendAccSameVid(t *testing.T) {
+	setup := Setup(t)
+
+	// add new model
+	msgCreateModel := NewMsgCreateModel(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// add new model version
+	msgCreateModelVersion := NewMsgCreateModelVersion(setup.Vendor, testconstants.SoftwareVersion)
+	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion)
+	require.NoError(t, err)
+
+	secondAcc := testdata.GenerateAccAddress()
+	secondAccVid := testconstants.VendorID1
+
+	setup.AddAccount(secondAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, secondAccVid)
+
+	msgDeleteModelVersion := NewMsgDeleteModelVersion(secondAcc)
+
+	complianceKeeper := setup.ComplianceKeeper
+	complianceKeeper.On("GetComplianceInfo", mock.Anything, msgDeleteModelVersion.Vid, msgDeleteModelVersion.Pid, msgDeleteModelVersion.SoftwareVersion, mock.Anything).Return(false)
+	complianceKeeper.On("GetComplianceInfo", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(true)
+
+	_, err = setup.Handler(setup.Ctx, msgDeleteModelVersion)
+	require.NoError(t, err)
+
+	// query model version
+	_, err = queryModelVersion(
+		setup,
+		msgDeleteModelVersion.Vid,
+		msgDeleteModelVersion.Pid,
+		msgDeleteModelVersion.SoftwareVersion,
+	)
+	require.Error(t, err)
+	require.Equal(t, codes.NotFound, status.Code(err))
+}
+
 func TestHandler_DeleteModelVersionNotByVendor(t *testing.T) {
 	setup := Setup(t)
 
@@ -1123,7 +1161,7 @@ func TestHandler_DeleteModelVersionCertified(t *testing.T) {
 	complianceKeeper.On("GetComplianceInfo", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(false)
 
 	_, err = setup.Handler(setup.Ctx, msgDeleteModelVersion)
-	require.ErrorIs(t, err, types.ErrModelVersionCertified)
+	require.ErrorIs(t, err, types.ErrModelVersionDeletionCertified)
 }
 
 func queryModel(
