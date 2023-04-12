@@ -256,7 +256,7 @@ All non-edited fields remain the same.
 Deletes an existing Model identified by a unique combination of `vid` (vendor ID) and `pid` (product ID)
 by the vendor account.
 
-If one of Model Versions associated with the Model is certified than Model can not be deleted. If Model has no associated certified Model Versions, Model Versions will be removed with associated Model.
+If one of Model Versions associated with the Model is certified then Model can not be deleted. When Model is deleted, all associated Model Versions will be deleted as well.
 
 - Parameters:
   - vid: `int32` -  model vendor ID (positive non-zero)
