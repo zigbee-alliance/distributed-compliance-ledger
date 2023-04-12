@@ -4,20 +4,19 @@ import (
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 
 	// "strings".
 	"github.com/spf13/cobra"
-
 	// sdk "github.com/cosmos/cosmos-sdk/types".
-	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 )
 
 // GetQueryCmd returns the cli query commands for this module.
 func GetQueryCmd(queryRoute string) *cobra.Command {
 	// Group compliance queries under a subcommand
 	cmd := &cobra.Command{
-		Use:                        dclcompltypes.ModuleName,
-		Short:                      fmt.Sprintf("Querying commands for the %s module", dclcompltypes.ModuleName),
+		Use:                        types.ModuleName,
+		Short:                      fmt.Sprintf("Querying commands for the %s module", types.ModuleName),
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,

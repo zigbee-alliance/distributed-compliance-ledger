@@ -13,7 +13,7 @@ import (
 	modeltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
-func (k msgServer) RevokeModel(goCtx context.Context, msg *dclcompltypes.MsgRevokeModel) (*dclcompltypes.MsgRevokeModelResponse, error) {
+func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel) (*types.MsgRevokeModelResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	signerAddr, err := sdk.AccAddressFromBech32(msg.Signer)
@@ -38,7 +38,7 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *dclcompltypes.MsgRevo
 
 	// check if softwareVersionString matches with what is stored for the given version
 	if modelVersion.SoftwareVersionString != msg.SoftwareVersionString {
-		return nil, dclcompltypes.NewErrModelVersionStringDoesNotMatch(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.SoftwareVersionString)
+		return nil, types.NewErrModelVersionStringDoesNotMatch(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.SoftwareVersionString)
 	}
 
 	complianceInfo, found := k.GetComplianceInfo(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
@@ -49,21 +49,21 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *dclcompltypes.MsgRevo
 		// 2) We want to revoke certified or provisioned compliance.
 
 		// check if compliance is already in revoked state
-		if complianceInfo.SoftwareVersionCertificationStatus == dclcompltypes.CodeRevoked {
-			return nil, dclcompltypes.NewErrAlreadyRevoked(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
+		if complianceInfo.SoftwareVersionCertificationStatus == types.CodeRevoked {
+			return nil, types.NewErrAlreadyRevoked(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
 		}
 		// if state changes on `revoked` check that revocation date is after certification/provisional date
 		newDate, err := time.Parse(time.RFC3339, msg.RevocationDate)
 		if err != nil {
-			return nil, dclcompltypes.NewErrInvalidTestDateFormat(msg.RevocationDate)
+			return nil, types.NewErrInvalidTestDateFormat(msg.RevocationDate)
 		}
 		oldDate, err := time.Parse(time.RFC3339, complianceInfo.Date)
 		if err != nil {
-			return nil, dclcompltypes.NewErrInvalidTestDateFormat(complianceInfo.Date)
+			return nil, types.NewErrInvalidTestDateFormat(complianceInfo.Date)
 		}
 
 		if newDate.Before(oldDate) {
-			return nil, dclcompltypes.NewErrInconsistentDates(
+			return nil, types.NewErrInconsistentDates(
 				fmt.Sprintf("The `revocation_date`:%v must be after the `certification_date`:%v to "+
 					"revoke model", msg.RevocationDate, complianceInfo.Date),
 			)
@@ -115,7 +115,7 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *dclcompltypes.MsgRevo
 			Date:                               msg.RevocationDate,
 			Reason:                             msg.Reason,
 			Owner:                              msg.Signer,
-			SoftwareVersionCertificationStatus: dclcompltypes.CodeRevoked,
+			SoftwareVersionCertificationStatus: types.CodeRevoked,
 			History:                            []*dclcompltypes.ComplianceHistoryItem{},
 			CDVersionNumber:                    msg.CDVersionNumber,
 		}
@@ -134,5 +134,5 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *dclcompltypes.MsgRevo
 	}
 	k.SetRevokedModel(ctx, revokedModel)
 
-	return &dclcompltypes.MsgRevokeModelResponse{}, nil
+	return &types.MsgRevokeModelResponse{}, nil
 }

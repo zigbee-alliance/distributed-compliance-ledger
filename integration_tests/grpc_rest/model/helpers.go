@@ -25,7 +25,7 @@ import (
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	testDclauth "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/grpc_rest/dclauth"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
-	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	modeltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
@@ -140,8 +140,8 @@ func NewMsgCertifyModelVersion(
 	softwareVersionString string,
 	vid int32,
 	pid int32,
-) *dclcompltypes.MsgCertifyModel {
-	return &dclcompltypes.MsgCertifyModel{
+) *types.MsgCertifyModel {
+	return &types.MsgCertifyModel{
 		Signer:                signer,
 		Vid:                   vid,
 		Pid:                   pid,
@@ -810,7 +810,7 @@ func DeleteModelVersionCertified(suite *utils.TestSuite) {
 	// Certify model version
 	certReason := "some reason 5"
 	certDate := "2020-05-01T00:00:01Z"
-	certifyModelMsg := dclcompltypes.MsgCertifyModel{
+	certifyModelMsg := types.MsgCertifyModel{
 		Vid:                   vid,
 		Pid:                   pid,
 		SoftwareVersion:       1,

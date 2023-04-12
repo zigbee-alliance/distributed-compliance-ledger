@@ -65,7 +65,7 @@ func CmdShowComplianceInfo() *cobra.Command {
 
 			return cli.QueryWithProof(
 				clientCtx,
-				dclcompltypes.StoreKey,
+				types.StoreKey,
 				types.ComplianceInfoKeyPrefix,
 				types.ComplianceInfoKey(vid, pid, softwareVersion, certificationType),
 				&res,

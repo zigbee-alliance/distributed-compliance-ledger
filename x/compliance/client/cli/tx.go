@@ -6,7 +6,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/spf13/cobra"
-	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
+	types "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	// "github.com/cosmos/cosmos-sdk/client/flags".
 )
 
@@ -15,8 +15,8 @@ var DefaultRelativePacketTimeoutTimestamp = uint64((time.Duration(10) * time.Min
 // GetTxCmd returns the transaction commands for this module.
 func GetTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:                        dclcompltypes.ModuleName,
-		Short:                      fmt.Sprintf("%s transactions subcommands", dclcompltypes.ModuleName),
+		Use:                        types.ModuleName,
+		Short:                      fmt.Sprintf("%s transactions subcommands", types.ModuleName),
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,

@@ -3,13 +3,12 @@ package keeper
 import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
 // SetCertifiedModel set a specific certifiedModel in the store from its index.
 func (k Keeper) SetCertifiedModel(ctx sdk.Context, certifiedModel types.CertifiedModel) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), dclcompltypes.KeyPrefix(types.CertifiedModelKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.CertifiedModelKeyPrefix))
 	b := k.cdc.MustMarshal(&certifiedModel)
 	store.Set(types.CertifiedModelKey(
 		certifiedModel.Vid,
@@ -27,7 +26,7 @@ func (k Keeper) GetCertifiedModel(
 	softwareVersion uint32,
 	certificationType string,
 ) (val types.CertifiedModel, found bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), dclcompltypes.KeyPrefix(types.CertifiedModelKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.CertifiedModelKeyPrefix))
 
 	b := store.Get(types.CertifiedModelKey(
 		vid,
@@ -52,7 +51,7 @@ func (k Keeper) RemoveCertifiedModel(
 	softwareVersion uint32,
 	certificationType string,
 ) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), dclcompltypes.KeyPrefix(types.CertifiedModelKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.CertifiedModelKeyPrefix))
 	store.Delete(types.CertifiedModelKey(
 		vid,
 		pid,
@@ -63,7 +62,7 @@ func (k Keeper) RemoveCertifiedModel(
 
 // GetAllCertifiedModel returns all certifiedModel.
 func (k Keeper) GetAllCertifiedModel(ctx sdk.Context) (list []types.CertifiedModel) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), dclcompltypes.KeyPrefix(types.CertifiedModelKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.CertifiedModelKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()

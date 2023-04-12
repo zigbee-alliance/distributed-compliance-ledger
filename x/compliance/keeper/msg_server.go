@@ -1,8 +1,6 @@
 package keeper
 
-import (
-	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
-)
+import "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 
 type msgServer struct {
 	Keeper
@@ -10,8 +8,8 @@ type msgServer struct {
 
 // NewMsgServerImpl returns an implementation of the MsgServer interface
 // for the provided Keeper.
-func NewMsgServerImpl(keeper Keeper) dclcompltypes.MsgServer {
+func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 	return &msgServer{Keeper: keeper}
 }
 
-var _ dclcompltypes.MsgServer = msgServer{}
+var _ types.MsgServer = msgServer{}
