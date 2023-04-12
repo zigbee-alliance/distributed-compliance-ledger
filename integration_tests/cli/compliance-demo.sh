@@ -615,6 +615,9 @@ new_transport="new_transport"
 # UPDATE COMPLIANCE INFO BY CERTIFICATION CENTER ACCOUNT
 echo "Update Compliance Info for Model with VID: ${vid} PID: ${pid} SV: ${sv} for $zigbee_certification_type"
 result=$(dcld tx compliance update-compliance-info --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType=$zigbee_certification_type --reason=$new_reason --programType=$new_program_type --parentChild=$new_parent_child --transport=$new_transport --from=$zb_account)
+echo "$result"
+
+result=$(dcld query compliance compliance-info --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType=$zigbee_certification_type)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"softwareVersionCertificationStatus\": 2"
