@@ -128,6 +128,6 @@ func NewErrLsfRevisionIsNotValid(previousLsfVersion interface{},
 
 func NewErrModelVersionDeletionCertified(vid interface{}, pid interface{}, softwareVersion interface{}) error {
 	return sdkerrors.Wrapf(ErrModelVersionCertified,
-		"Model version associated with vid=%v, pid=%v and softwareVersion=%v certified and its model versions can't be deleted",
+		"Model version associated with vid=%v, pid=%v and softwareVersion=%v is certified and can't be deleted",
 		vid, pid, softwareVersion)
 }
