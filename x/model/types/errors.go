@@ -25,6 +25,8 @@ var (
 	ErrLsfRevisionIsNotValid        = sdkerrors.Register(ModuleName, 522, "LsfRevision should monotonically increase by 1")
 	ErrLsfRevisionIsNotAllowed      = sdkerrors.Register(ModuleName, 523, "LsfRevision is not allowed if LsfURL is not present")
 	ErrModelVersionCertified        = sdkerrors.Register(ModuleName, 524, "model version certified")
+	ErrOtaFileSizeCannotBeSet       = sdkerrors.Register(ModuleName, 525, "OTA File size cannot be set")
+	ErrOtaChecksumCannotBeSet       = sdkerrors.Register(ModuleName, 526, "OTA checksum cannot be set")
 )
 
 func NewErrModelAlreadyExists(vid interface{}, pid interface{}) error {
@@ -101,7 +103,21 @@ func NewErrModelVersionAlreadyExists(vid interface{}, pid interface{}, softwareV
 func NewErrOtaURLCannotBeSet(vid interface{}, pid interface{}, softwareVersion interface{}) error {
 	return sdkerrors.Wrapf(ErrOtaURLCannotBeSet,
 		"OTA URL cannot be set for model version associated with vid=%v, pid=%v "+
-			"and softwareVersion=%v because OTA was not set for this model initially",
+			"and softwareVersion=%v because OTA URL was set for this model initially",
+		vid, pid, softwareVersion)
+}
+
+func NewErrOtaFileSizeCannotBeSet(vid interface{}, pid interface{}, softwareVersion interface{}) error {
+	return sdkerrors.Wrapf(ErrOtaFileSizeCannotBeSet,
+		"OTA File Size cannot be set for model version associated with vid=%v, pid=%v "+
+			"and softwareVersion=%v because OTA File Size was set for this model initially",
+		vid, pid, softwareVersion)
+}
+
+func NewErrOtaChecksumCannotBeSet(vid interface{}, pid interface{}, softwareVersion interface{}) error {
+	return sdkerrors.Wrapf(ErrOtaChecksumCannotBeSet,
+		"OTA Checksum cannot be set for model version associated with vid=%v, pid=%v "+
+			"and softwareVersion=%v because OTA checksum was set for this model initially",
 		vid, pid, softwareVersion)
 }
 
