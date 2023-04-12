@@ -10,7 +10,7 @@ import (
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
-func (k msgServer) ProvisionModel(goCtx context.Context, msg *dclcompltypes.MsgProvisionModel) (*dclcompltypes.MsgProvisionModelResponse, error) {
+func (k msgServer) ProvisionModel(goCtx context.Context, msg *types.MsgProvisionModel) (*types.MsgProvisionModelResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	signerAddr, err := sdk.AccAddressFromBech32(msg.Signer)
@@ -32,13 +32,13 @@ func (k msgServer) ProvisionModel(goCtx context.Context, msg *dclcompltypes.MsgP
 	if found {
 		switch status := complianceInfo.SoftwareVersionCertificationStatus; status {
 		case dclcompltypes.CodeProvisional:
-			return nil, dclcompltypes.NewErrAlreadyProvisional(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
+			return nil, types.NewErrAlreadyProvisional(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
 		case dclcompltypes.CodeCertified:
-			return nil, dclcompltypes.NewErrAlreadyCertified(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
+			return nil, types.NewErrAlreadyCertified(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
 		case dclcompltypes.CodeRevoked:
-			return nil, dclcompltypes.NewErrAlreadyRevoked(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
+			return nil, types.NewErrAlreadyRevoked(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
 		default:
-			return nil, dclcompltypes.NewErrComplianceInfoAlreadyExist(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
+			return nil, types.NewErrComplianceInfoAlreadyExist(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
 		}
 	}
 
@@ -81,5 +81,5 @@ func (k msgServer) ProvisionModel(goCtx context.Context, msg *dclcompltypes.MsgP
 	}
 	k.SetProvisionalModel(ctx, provisionalModel)
 
-	return &dclcompltypes.MsgProvisionModelResponse{}, nil
+	return &types.MsgProvisionModelResponse{}, nil
 }

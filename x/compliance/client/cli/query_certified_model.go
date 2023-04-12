@@ -6,7 +6,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
-	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
@@ -66,7 +65,7 @@ func CmdShowCertifiedModel() *cobra.Command {
 
 			return cli.QueryWithProof(
 				clientCtx,
-				dclcompltypes.StoreKey,
+				types.StoreKey,
 				types.CertifiedModelKeyPrefix,
 				types.CertifiedModelKey(vid, pid, softwareVersion, certificationType),
 				&res,

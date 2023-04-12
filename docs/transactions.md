@@ -256,11 +256,11 @@ All non-edited fields remain the same.
 Deletes an existing Model identified by a unique combination of `vid` (vendor ID) and `pid` (product ID)
 by the vendor account.
 
-If one of Model Versions associated with the Model is certified than Model can not be deleted. If Model has no associated certified Model Versions, Model Versions will be removed with associated Model.
+If one of Model Versions associated with the Model is certified then Model can not be deleted. When Model is deleted, all associated Model Versions will be deleted as well.
 
 - Parameters:
-  - vid: `int32` -  model vendor ID (positive non-zero)
-  - pid: `int32` -  model product ID (positive non-zero)
+  - vid: `uint16` -  model vendor ID (positive non-zero)
+  - pid: `uint16` -  model product ID (positive non-zero)
 - In State: `model/Model/value/<vid>/<pid>`
 - Who can send:
   - Vendor account associated with the same vid who has created the model
@@ -352,8 +352,8 @@ by the vendor account.
 Model Version can be deleted only before it is certified.
 
 - Parameters:
-  - vid: `int32` -  model version vendor ID (positive non-zero)
-  - pid: `int32` -  model version product ID (positive non-zero)
+  - vid: `uint16` -  model version vendor ID (positive non-zero)
+  - pid: `uint16` -  model version product ID (positive non-zero)
   - softwareVersion: `uint32` - model version software version (positive non-zero)
 - In State: `model/ModelVersion/value/<vid>/<pid>/<softwareVersion>`
 - Who can send:

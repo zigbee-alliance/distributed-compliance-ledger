@@ -5,6 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
@@ -174,14 +175,9 @@ func (k msgServer) DeleteModelVersion(goCtx context.Context, msg *types.MsgDelet
 		return nil, types.NewErrModelVersionDoesNotExist(msg.Vid, msg.Pid, msg.SoftwareVersion)
 	}
 
-	if msg.Creator != modelVersion.Creator {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "MsgDeleteModelVersion transaction should be "+
-			"signed by a modelVersion %d %d %d creator", msg.Vid, msg.Pid, msg.SoftwareVersion)
-	}
-
-	isCertified := k.IsModelCertified(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion)
+	isCertified := k.IsModelVersionCertified(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion)
 	if isCertified {
-		return nil, types.NewErrModelVersionCertified(msg.Vid, msg.Pid, modelVersion.SoftwareVersion)
+		return nil, types.NewErrModelDeletionCertified(msg.Vid, msg.Pid, modelVersion.SoftwareVersion)
 	}
 
 	// store updated model version
@@ -190,8 +186,8 @@ func (k msgServer) DeleteModelVersion(goCtx context.Context, msg *types.MsgDelet
 	return &types.MsgDeleteModelVersionResponse{}, nil
 }
 
-func (k msgServer) IsModelCertified(ctx sdk.Context, vid int32, pid int32, softwareVersion uint32) bool {
-	certificationTypes := []string{"zigbee", "matter"}
+func (k msgServer) IsModelVersionCertified(ctx sdk.Context, vid int32, pid int32, softwareVersion uint32) bool {
+	certificationTypes := dclcompltypes.CertificationTypesList
 	for _, certType := range certificationTypes {
 		_, isFound := k.complianceKeeper.GetComplianceInfo(ctx, vid, pid, softwareVersion, certType)
 		if isFound {

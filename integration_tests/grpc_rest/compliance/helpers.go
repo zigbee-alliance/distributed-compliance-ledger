@@ -593,7 +593,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	// Certify model
 	certReason := "some reason 1"
 	certDate := "2020-01-01T00:00:01Z"
-	certifyModelMsg := dclcompltypes.MsgCertifyModel{
+	certifyModelMsg := compliancetypes.MsgCertifyModel{
 		Vid:                   vid,
 		Pid:                   pid,
 		SoftwareVersion:       sv,
@@ -610,7 +610,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	// Certify model again
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
 	require.Error(suite.T, err)
-	require.True(suite.T, dclcompltypes.ErrAlreadyCertified.Is(err))
+	require.True(suite.T, compliancetypes.ErrAlreadyCertified.Is(err))
 
 	// Check model is certified
 	complianceInfo, _ := GetComplianceInfo(suite, vid, pid, sv, dclcompltypes.ZigbeeCertificationType)
@@ -657,7 +657,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	// Revoke model certification
 	revocReason := "some reason 2"
 	revocDate := "2020-02-01T00:00:01Z"
-	revocModelMsg := dclcompltypes.MsgRevokeModel{
+	revocModelMsg := compliancetypes.MsgRevokeModel{
 		Vid:                   vid,
 		Pid:                   pid,
 		SoftwareVersion:       sv,
@@ -717,7 +717,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 
 	// Certify model with all optional fields
 	certReason = "some reason 3"
-	certifyModelMsg = dclcompltypes.MsgCertifyModel{
+	certifyModelMsg = compliancetypes.MsgCertifyModel{
 		Vid:                                vid,
 		Pid:                                pid,
 		SoftwareVersion:                    sv,
@@ -876,7 +876,7 @@ func DemoTrackRevocation(suite *utils.TestSuite) {
 	// Revoke non-certified model
 	revocReason := "some reason 4"
 	revocDate := "2020-03-01T00:00:01Z"
-	revocModelMsg := dclcompltypes.MsgRevokeModel{
+	revocModelMsg := compliancetypes.MsgRevokeModel{
 		Vid:                   vid,
 		Pid:                   pid,
 		SoftwareVersion:       sv,
@@ -892,7 +892,7 @@ func DemoTrackRevocation(suite *utils.TestSuite) {
 	// Revoke model again
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&revocModelMsg}, certCenter, certCenterAccount)
 	require.Error(suite.T, err)
-	require.True(suite.T, dclcompltypes.ErrAlreadyRevoked.Is(err))
+	require.True(suite.T, compliancetypes.ErrAlreadyRevoked.Is(err))
 
 	// Check non-certified model is revoked
 	complianceInfo, _ := GetComplianceInfo(suite, vid, pid, sv, dclcompltypes.ZigbeeCertificationType)
@@ -925,7 +925,7 @@ func DemoTrackRevocation(suite *utils.TestSuite) {
 	// Certify model
 	certReason := "some reason 5"
 	certDate := "2020-05-01T00:00:01Z"
-	certifyModelMsg := dclcompltypes.MsgCertifyModel{
+	certifyModelMsg := compliancetypes.MsgCertifyModel{
 		Vid:                   vid,
 		Pid:                   pid,
 		SoftwareVersion:       sv,
@@ -1041,7 +1041,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 
 	// Provision non-existent model
 	provReason := "some reason 6"
-	provModelMsg := dclcompltypes.MsgProvisionModel{
+	provModelMsg := compliancetypes.MsgProvisionModel{
 		Vid:                   vid,
 		Pid:                   pid,
 		SoftwareVersion:       sv,
@@ -1058,7 +1058,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	// Provision model again
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&provModelMsg}, certCenter, certCenterAccount)
 	require.Error(suite.T, err)
-	require.True(suite.T, dclcompltypes.ErrAlreadyProvisional.Is(err))
+	require.True(suite.T, compliancetypes.ErrAlreadyProvisional.Is(err))
 
 	// Check non-existent model is provisioned
 	complianceInfo, _ := GetComplianceInfo(suite, vid, pid, sv, dclcompltypes.MatterCertificationType)
@@ -1101,7 +1101,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 
 	// Certify model
 	certReason := "some reason 7"
-	certifyModelMsg := dclcompltypes.MsgCertifyModel{
+	certifyModelMsg := compliancetypes.MsgCertifyModel{
 		Vid:                   vid,
 		Pid:                   pid,
 		SoftwareVersion:       sv,
@@ -1160,7 +1160,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	// Can not provision certified model
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&provModelMsg}, certCenter, certCenterAccount)
 	require.Error(suite.T, err)
-	require.True(suite.T, dclcompltypes.ErrAlreadyCertified.Is(err))
+	require.True(suite.T, compliancetypes.ErrAlreadyCertified.Is(err))
 
 	pid = int32(tmrand.Uint16())
 	sv = tmrand.Uint32()
@@ -1168,7 +1168,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 
 	// Provision non-existent model with all optional fields
 	provReason = "some reason 8"
-	provModelMsg = dclcompltypes.MsgProvisionModel{
+	provModelMsg = compliancetypes.MsgProvisionModel{
 		Vid:                                vid,
 		Pid:                                pid,
 		SoftwareVersion:                    sv,
@@ -1246,7 +1246,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 
 	// Certify model with some optional fields
 	certReason = "some reason 9"
-	certifyModelMsg = dclcompltypes.MsgCertifyModel{
+	certifyModelMsg = compliancetypes.MsgCertifyModel{
 		Vid:                                vid,
 		Pid:                                pid,
 		SoftwareVersion:                    sv,
@@ -1404,7 +1404,7 @@ func DemoTrackComplianceWithHexVidAndPid(suite *utils.TestSuite) {
 	// Certify model
 	certReason := "some reason 10"
 	certDate := "2020-01-01T00:00:01Z"
-	certifyModelMsg := dclcompltypes.MsgCertifyModel{
+	certifyModelMsg := compliancetypes.MsgCertifyModel{
 		Vid:                   vid,
 		Pid:                   pid,
 		SoftwareVersion:       sv,
@@ -1421,7 +1421,7 @@ func DemoTrackComplianceWithHexVidAndPid(suite *utils.TestSuite) {
 	// Certify model again
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
 	require.Error(suite.T, err)
-	require.True(suite.T, dclcompltypes.ErrAlreadyCertified.Is(err))
+	require.True(suite.T, compliancetypes.ErrAlreadyCertified.Is(err))
 
 	// Check model is certified
 	complianceInfo, _ := GetComplianceInfoByHexVidAndPid(suite, testconstants.TestVID1String, testconstants.TestPID1String, sv, dclcompltypes.ZigbeeCertificationType)
@@ -1503,7 +1503,7 @@ func DemoTrackRevocationWithHexVidAndPid(suite *utils.TestSuite) {
 	// Revoke non-certified model
 	revocReason := "some reason 11"
 	revocDate := "2020-03-01T00:00:01Z"
-	revocModelMsg := dclcompltypes.MsgRevokeModel{
+	revocModelMsg := compliancetypes.MsgRevokeModel{
 		Vid:                   vid,
 		Pid:                   pid,
 		SoftwareVersion:       sv,
@@ -1519,7 +1519,7 @@ func DemoTrackRevocationWithHexVidAndPid(suite *utils.TestSuite) {
 	// Revoke model again
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&revocModelMsg}, certCenter, certCenterAccount)
 	require.Error(suite.T, err)
-	require.True(suite.T, dclcompltypes.ErrAlreadyRevoked.Is(err))
+	require.True(suite.T, compliancetypes.ErrAlreadyRevoked.Is(err))
 
 	// Check non-certified model is revoked
 	complianceInfo, _ := GetComplianceInfoByHexVidAndPid(suite, testconstants.TestVID2String, testconstants.TestPID2String, sv, dclcompltypes.ZigbeeCertificationType)
@@ -1540,7 +1540,7 @@ func DemoTrackRevocationWithHexVidAndPid(suite *utils.TestSuite) {
 	// Certify model
 	certReason := "some reason 12"
 	certDate := "2020-05-01T00:00:01Z"
-	certifyModelMsg := dclcompltypes.MsgCertifyModel{
+	certifyModelMsg := compliancetypes.MsgCertifyModel{
 		Vid:                   vid,
 		Pid:                   pid,
 		SoftwareVersion:       sv,
@@ -1623,7 +1623,7 @@ func DemoTrackProvisionByHexVidAndPid(suite *utils.TestSuite) {
 
 	// Provision non-existent model
 	provReason := "some reason 13"
-	provModelMsg := dclcompltypes.MsgProvisionModel{
+	provModelMsg := compliancetypes.MsgProvisionModel{
 		Vid:                   vid,
 		Pid:                   pid,
 		SoftwareVersion:       sv,
@@ -1640,7 +1640,7 @@ func DemoTrackProvisionByHexVidAndPid(suite *utils.TestSuite) {
 	// Provision model again
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&provModelMsg}, certCenter, certCenterAccount)
 	require.Error(suite.T, err)
-	require.True(suite.T, dclcompltypes.ErrAlreadyProvisional.Is(err))
+	require.True(suite.T, compliancetypes.ErrAlreadyProvisional.Is(err))
 
 	// Check non-existent model is provisioned
 	complianceInfo, _ := GetComplianceInfoByHexVidAndPid(suite, testconstants.TestVID3String, testconstants.TestPID3String, sv, dclcompltypes.MatterCertificationType)
@@ -1671,7 +1671,7 @@ func DemoTrackProvisionByHexVidAndPid(suite *utils.TestSuite) {
 
 	// Certify model
 	certReason := "some reason 14"
-	certifyModelMsg := dclcompltypes.MsgCertifyModel{
+	certifyModelMsg := compliancetypes.MsgCertifyModel{
 		Vid:                   vid,
 		Pid:                   pid,
 		SoftwareVersion:       sv,
@@ -1705,5 +1705,5 @@ func DemoTrackProvisionByHexVidAndPid(suite *utils.TestSuite) {
 	// Can not provision certified model
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&provModelMsg}, certCenter, certCenterAccount)
 	require.Error(suite.T, err)
-	require.True(suite.T, dclcompltypes.ErrAlreadyCertified.Is(err))
+	require.True(suite.T, compliancetypes.ErrAlreadyCertified.Is(err))
 }

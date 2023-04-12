@@ -9,7 +9,7 @@ import (
 
 // SetComplianceInfo set a specific complianceInfo in the store from its index.
 func (k Keeper) SetComplianceInfo(ctx sdk.Context, complianceInfo dclcompltypes.ComplianceInfo) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), dclcompltypes.KeyPrefix(types.ComplianceInfoKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ComplianceInfoKeyPrefix))
 	b := k.cdc.MustMarshal(&complianceInfo)
 	store.Set(types.ComplianceInfoKey(
 		complianceInfo.Vid,
@@ -27,7 +27,7 @@ func (k Keeper) GetComplianceInfo(
 	softwareVersion uint32,
 	certificationType string,
 ) (val dclcompltypes.ComplianceInfo, found bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), dclcompltypes.KeyPrefix(types.ComplianceInfoKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ComplianceInfoKeyPrefix))
 
 	b := store.Get(types.ComplianceInfoKey(
 		vid,
@@ -52,7 +52,7 @@ func (k Keeper) RemoveComplianceInfo(
 	softwareVersion uint32,
 	certificationType string,
 ) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), dclcompltypes.KeyPrefix(types.ComplianceInfoKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ComplianceInfoKeyPrefix))
 	store.Delete(types.ComplianceInfoKey(
 		vid,
 		pid,
@@ -63,7 +63,7 @@ func (k Keeper) RemoveComplianceInfo(
 
 // GetAllComplianceInfo returns all complianceInfo.
 func (k Keeper) GetAllComplianceInfo(ctx sdk.Context) (list []dclcompltypes.ComplianceInfo) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), dclcompltypes.KeyPrefix(types.ComplianceInfoKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ComplianceInfoKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()

@@ -262,7 +262,7 @@ func TestHandler_ProvisionModelTwice(t *testing.T) {
 		secondProvisionModelMsg.ProvisionalDate = time.Now().UTC().Format(time.RFC3339)
 		_, err = setup.Handler(setup.Ctx, secondProvisionModelMsg)
 		require.Error(t, err)
-		require.True(t, dclcompltypes.ErrAlreadyProvisional.Is(err))
+		require.True(t, types.ErrAlreadyProvisional.Is(err))
 	}
 }
 
@@ -286,7 +286,7 @@ func TestHandler_ProvisionCertifiedModel(t *testing.T) {
 		provisionModelMsg.ProvisionalDate = time.Now().UTC().Format(time.RFC3339)
 		_, err = setup.Handler(setup.Ctx, provisionModelMsg)
 		require.Error(t, err)
-		require.True(t, dclcompltypes.ErrAlreadyCertified.Is(err))
+		require.True(t, types.ErrAlreadyCertified.Is(err))
 	}
 }
 
@@ -310,7 +310,7 @@ func TestHandler_ProvisionRevokedModel(t *testing.T) {
 		provisionModelMsg.ProvisionalDate = time.Now().UTC().Format(time.RFC3339)
 		_, err = setup.Handler(setup.Ctx, provisionModelMsg)
 		require.Error(t, err)
-		require.True(t, dclcompltypes.ErrAlreadyRevoked.Is(err))
+		require.True(t, types.ErrAlreadyRevoked.Is(err))
 	}
 }
 
@@ -691,7 +691,7 @@ func TestHandler_CertifyModelWithWrongSoftwareVersionString(t *testing.T) {
 			vid, pid, softwareVersion, softwareVersionString+"-modified", certificationType, setup.CertificationCenter)
 		_, err := setup.Handler(setup.Ctx, certifyModelMsg)
 		require.Error(t, err)
-		require.True(t, dclcompltypes.ErrModelVersionStringDoesNotMatch.Is(err))
+		require.True(t, types.ErrModelVersionStringDoesNotMatch.Is(err))
 	}
 }
 
@@ -715,7 +715,7 @@ func TestHandler_CertifyModelTwice(t *testing.T) {
 		secondCertifyModelMsg.CertificationDate = time.Now().UTC().Format(time.RFC3339)
 		_, err = setup.Handler(setup.Ctx, secondCertifyModelMsg)
 		require.Error(t, err)
-		require.True(t, dclcompltypes.ErrAlreadyCertified.Is(err))
+		require.True(t, types.ErrAlreadyCertified.Is(err))
 	}
 }
 
@@ -742,7 +742,7 @@ func TestHandler_CertifyModelTwiceByDifferentAccounts(t *testing.T) {
 			vid, pid, softwareVersion, softwareVersionString, certificationType, accAddress)
 		_, err = setup.Handler(setup.Ctx, secondCertifyModelMsg)
 		require.Error(t, err)
-		require.True(t, dclcompltypes.ErrAlreadyCertified.Is(err))
+		require.True(t, types.ErrAlreadyCertified.Is(err))
 	}
 }
 
@@ -795,7 +795,7 @@ func TestHandler_CertifyProvisionedModelForCertificationDateBeforeProvisionalDat
 		certifyModelMsg.CertificationDate = certificationDate
 		_, err = setup.Handler(setup.Ctx, certifyModelMsg)
 		require.Error(t, err)
-		require.True(t, dclcompltypes.ErrInconsistentDates.Is(err))
+		require.True(t, types.ErrInconsistentDates.Is(err))
 	}
 }
 
@@ -993,7 +993,7 @@ func TestHandler_RevokeModelWithWrongSoftwareVersionString(t *testing.T) {
 			vid, pid, softwareVersion, softwareVersionString+"-modified", certificationType, setup.CertificationCenter)
 		_, err := setup.Handler(setup.Ctx, revokeModelMsg)
 		require.Error(t, err)
-		require.True(t, dclcompltypes.ErrModelVersionStringDoesNotMatch.Is(err))
+		require.True(t, types.ErrModelVersionStringDoesNotMatch.Is(err))
 	}
 }
 
@@ -1017,7 +1017,7 @@ func TestHandler_RevokeModelTwice(t *testing.T) {
 		secondRevokeModelMsg.RevocationDate = time.Now().UTC().Format(time.RFC3339)
 		_, err = setup.Handler(setup.Ctx, secondRevokeModelMsg)
 		require.Error(t, err)
-		require.True(t, dclcompltypes.ErrAlreadyRevoked.Is(err))
+		require.True(t, types.ErrAlreadyRevoked.Is(err))
 	}
 }
 
@@ -1070,7 +1070,7 @@ func TestHandler_RevokeCertifiedModelForRevocationDateBeforeCertificationDate(t 
 		revokeModelMsg.RevocationDate = revocationDate
 		_, err = setup.Handler(setup.Ctx, revokeModelMsg)
 		require.Error(t, err)
-		require.True(t, dclcompltypes.ErrInconsistentDates.Is(err))
+		require.True(t, types.ErrInconsistentDates.Is(err))
 	}
 }
 
@@ -1099,7 +1099,7 @@ func TestHandler_RevokeProvisionedModelForRevocationDateBeforeProvisionalDate(t 
 		revokeModelMsg.RevocationDate = revocationDate
 		_, err = setup.Handler(setup.Ctx, revokeModelMsg)
 		require.Error(t, err)
-		require.True(t, dclcompltypes.ErrInconsistentDates.Is(err))
+		require.True(t, types.ErrInconsistentDates.Is(err))
 	}
 }
 
@@ -1128,7 +1128,7 @@ func TestHandler_CertifyRevokedModelForCertificationDateBeforeRevocationDate(t *
 		certifyModelMsg.CertificationDate = certificationDate
 		_, err = setup.Handler(setup.Ctx, certifyModelMsg)
 		require.Error(t, err)
-		require.True(t, dclcompltypes.ErrInconsistentDates.Is(err))
+		require.True(t, types.ErrInconsistentDates.Is(err))
 	}
 }
 
@@ -1366,7 +1366,7 @@ func queryRevokedModel(
 
 func checkProvisionalModelInfo(
 	t *testing.T,
-	provisionalModelMsg *dclcompltypes.MsgProvisionModel,
+	provisionalModelMsg *types.MsgProvisionModel,
 	receivedComplianceInfo *dclcompltypes.ComplianceInfo,
 ) {
 	t.Helper()
@@ -1392,7 +1392,7 @@ func checkProvisionalModelInfo(
 
 func checkCertifiedModelInfo(
 	t *testing.T,
-	certifyModelMsg *dclcompltypes.MsgCertifyModel,
+	certifyModelMsg *types.MsgCertifyModel,
 	receivedComplianceInfo *dclcompltypes.ComplianceInfo,
 ) {
 	t.Helper()
@@ -1444,7 +1444,7 @@ func checkDeviceSoftwareCompliance(
 
 func checkRevokedModelInfo(
 	t *testing.T,
-	revokeModelMsg *dclcompltypes.MsgRevokeModel,
+	revokeModelMsg *types.MsgRevokeModel,
 	receivedComplianceInfo *dclcompltypes.ComplianceInfo,
 ) {
 	t.Helper()
@@ -1463,8 +1463,8 @@ func NewMsgProvisionModel(
 	softwareVersionString string,
 	certificationType string,
 	signer sdk.AccAddress,
-) *dclcompltypes.MsgProvisionModel {
-	return &dclcompltypes.MsgProvisionModel{
+) *types.MsgProvisionModel {
+	return &types.MsgProvisionModel{
 		Signer:                signer.String(),
 		Vid:                   vid,
 		Pid:                   pid,
@@ -1485,8 +1485,8 @@ func NewMsgProvisionModelWithAllOptionalFlags(
 	softwareVersionString string,
 	certificationType string,
 	signer sdk.AccAddress,
-) *dclcompltypes.MsgProvisionModel {
-	return &dclcompltypes.MsgProvisionModel{
+) *types.MsgProvisionModel {
+	return &types.MsgProvisionModel{
 		Signer:                             signer.String(),
 		Vid:                                vid,
 		Pid:                                pid,
@@ -1518,8 +1518,8 @@ func NewMsgCertifyModel(
 	softwareVersionString string,
 	certificationType string,
 	signer sdk.AccAddress,
-) *dclcompltypes.MsgCertifyModel {
-	return &dclcompltypes.MsgCertifyModel{
+) *types.MsgCertifyModel {
+	return &types.MsgCertifyModel{
 		Signer:                signer.String(),
 		Vid:                   vid,
 		Pid:                   pid,
@@ -1540,8 +1540,8 @@ func NewMsgCertifyModelWithAllOptionalFlags(
 	softwareVersionString string,
 	certificationType string,
 	signer sdk.AccAddress,
-) *dclcompltypes.MsgCertifyModel {
-	return &dclcompltypes.MsgCertifyModel{
+) *types.MsgCertifyModel {
+	return &types.MsgCertifyModel{
 		Signer:                             signer.String(),
 		Vid:                                vid,
 		Pid:                                pid,
@@ -1573,8 +1573,8 @@ func NewMsgRevokeModel(
 	softwareVersionString string,
 	certificationType string,
 	signer sdk.AccAddress,
-) *dclcompltypes.MsgRevokeModel {
-	return &dclcompltypes.MsgRevokeModel{
+) *types.MsgRevokeModel {
+	return &types.MsgRevokeModel{
 		Signer:                signer.String(),
 		Vid:                   vid,
 		Pid:                   pid,

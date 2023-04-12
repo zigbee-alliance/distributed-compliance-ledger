@@ -6,8 +6,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
-	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
+
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -21,7 +21,7 @@ func (k Keeper) ProvisionalModelAll(c context.Context, req *types.QueryAllProvis
 	ctx := sdk.UnwrapSDKContext(c)
 
 	store := ctx.KVStore(k.storeKey)
-	provisionalModelStore := prefix.NewStore(store, dclcompltypes.KeyPrefix(types.ProvisionalModelKeyPrefix))
+	provisionalModelStore := prefix.NewStore(store, types.KeyPrefix(types.ProvisionalModelKeyPrefix))
 
 	pageRes, err := query.FilteredPaginate(
 		provisionalModelStore, req.Pagination,

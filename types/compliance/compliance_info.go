@@ -29,52 +29,62 @@ func (d *ComplianceInfo) SetRevokedStatus(date string, reason string) {
 	d.Reason = reason
 }
 
-func (d *ComplianceInfo) SetOptionalFields(msg *MsgCertifyModel) {
-	if msg.ProgramTypeVersion != "" {
-		d.ProgramTypeVersion = msg.ProgramTypeVersion
+func (d *ComplianceInfo) SetOptionalFields(optionalFields *OptionalFields) {
+	if optionalFields.ProgramTypeVersion != "" {
+		d.ProgramTypeVersion = optionalFields.ProgramTypeVersion
 	}
 
-	if msg.FamilyId != "" {
-		d.FamilyId = msg.FamilyId
+	if optionalFields.FamilyID != "" {
+		d.FamilyId = optionalFields.FamilyID
 	}
 
-	if msg.SupportedClusters != "" {
-		d.SupportedClusters = msg.SupportedClusters
+	if optionalFields.SupportedClusters != "" {
+		d.SupportedClusters = optionalFields.SupportedClusters
 	}
 
-	if msg.CompliantPlatformUsed != "" {
-		d.CompliantPlatformUsed = msg.CompliantPlatformUsed
+	if optionalFields.CompliantPlatformUsed != "" {
+		d.CompliantPlatformUsed = optionalFields.CompliantPlatformUsed
 	}
 
-	if msg.CompliantPlatformVersion != "" {
-		d.CompliantPlatformVersion = msg.CompliantPlatformVersion
+	if optionalFields.CompliantPlatformVersion != "" {
+		d.CompliantPlatformVersion = optionalFields.CompliantPlatformVersion
 	}
 
-	if msg.OSVersion != "" {
-		d.OSVersion = msg.OSVersion
+	if optionalFields.OSVersion != "" {
+		d.OSVersion = optionalFields.OSVersion
 	}
 
-	if msg.CertificationRoute != "" {
-		d.CertificationRoute = msg.CertificationRoute
+	if optionalFields.CertificationRoute != "" {
+		d.CertificationRoute = optionalFields.CertificationRoute
 	}
 
-	if msg.CertificationRoute != "" {
-		d.CertificationRoute = msg.CertificationRoute
+	if optionalFields.ProgramType != "" {
+		d.ProgramType = optionalFields.ProgramType
 	}
 
-	if msg.ProgramType != "" {
-		d.ProgramType = msg.ProgramType
+	if optionalFields.Transport != "" {
+		d.Transport = optionalFields.Transport
 	}
 
-	if msg.Transport != "" {
-		d.Transport = msg.Transport
+	if optionalFields.ParentChild != "" {
+		d.ParentChild = optionalFields.ParentChild
 	}
 
-	if msg.ParentChild != "" {
-		d.ParentChild = msg.ParentChild
+	if optionalFields.CertificationIDOfSoftwareComponent != "" {
+		d.CertificationIdOfSoftwareComponent = optionalFields.CertificationIDOfSoftwareComponent
 	}
+}
 
-	if msg.CertificationIdOfSoftwareComponent != "" {
-		d.CertificationIdOfSoftwareComponent = msg.CertificationIdOfSoftwareComponent
-	}
+type OptionalFields struct {
+	ProgramTypeVersion                 string
+	FamilyID                           string
+	SupportedClusters                  string
+	CompliantPlatformUsed              string
+	CompliantPlatformVersion           string
+	OSVersion                          string
+	CertificationRoute                 string
+	ProgramType                        string
+	Transport                          string
+	ParentChild                        string
+	CertificationIDOfSoftwareComponent string
 }

@@ -5,27 +5,28 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
 
-const TypeMsgProvisionModel = "provision_model"
+const TypeMsgCertifyModel = "certify_model"
 
-var _ sdk.Msg = &MsgProvisionModel{}
+var _ sdk.Msg = &MsgCertifyModel{}
 
-func NewMsgProvisionModel(
-	signer string, vid int32, pid int32, softwareVersion uint32, softwareVersionString string, cDVersionNumber uint32,
-	provisionalDate string, certificationType string, reason string, programTypeVersion string, cDCertificateID string,
+func NewMsgCertifyModel(
+	signer string, vid int32, pid int32, softwareVersion uint32, softwareVersionString string, cdVersionNumber uint32,
+	certificationDate string, certificationType string, reason string, programTypeVersion string, cDCertificateID string,
 	familyID string, supportedClusters string, compliantPlatformUsed string, compliantPlatformVersion string, osVersion string,
 	certificationRoute string, programType string, transport string, parentChild string, certificationIDOfSoftwareComponent string,
-) *MsgProvisionModel {
-	return &MsgProvisionModel{
+) *MsgCertifyModel {
+	return &MsgCertifyModel{
 		Signer:                             signer,
 		Vid:                                vid,
 		Pid:                                pid,
 		SoftwareVersion:                    softwareVersion,
 		SoftwareVersionString:              softwareVersionString,
-		CDVersionNumber:                    cDVersionNumber,
-		ProvisionalDate:                    provisionalDate,
+		CDVersionNumber:                    cdVersionNumber,
+		CertificationDate:                  certificationDate,
 		CertificationType:                  certificationType,
 		Reason:                             reason,
 		ProgramTypeVersion:                 programTypeVersion,
@@ -43,15 +44,15 @@ func NewMsgProvisionModel(
 	}
 }
 
-func (msg *MsgProvisionModel) Route() string {
+func (msg *MsgCertifyModel) Route() string {
 	return RouterKey
 }
 
-func (msg *MsgProvisionModel) Type() string {
-	return TypeMsgProvisionModel
+func (msg *MsgCertifyModel) Type() string {
+	return TypeMsgCertifyModel
 }
 
-func (msg *MsgProvisionModel) GetSigners() []sdk.AccAddress {
+func (msg *MsgCertifyModel) GetSigners() []sdk.AccAddress {
 	signer, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
 		panic(err)
@@ -60,13 +61,13 @@ func (msg *MsgProvisionModel) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{signer}
 }
 
-func (msg *MsgProvisionModel) GetSignBytes() []byte {
+func (msg *MsgCertifyModel) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
 
 	return sdk.MustSortJSON(bz)
 }
 
-func (msg *MsgProvisionModel) ValidateBasic() error {
+func (msg *MsgCertifyModel) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address (%s)", err)
@@ -77,17 +78,17 @@ func (msg *MsgProvisionModel) ValidateBasic() error {
 		return err
 	}
 
-	_, err = time.Parse(time.RFC3339, msg.ProvisionalDate)
+	_, err = time.Parse(time.RFC3339, msg.CertificationDate)
 	if err != nil {
-		return NewErrInvalidTestDateFormat(msg.ProvisionalDate)
+		return NewErrInvalidTestDateFormat(msg.CertificationDate)
 	}
 
-	if !IsValidCertificationType(msg.CertificationType) {
-		return NewErrInvalidCertificationType(msg.CertificationType, CertificationTypesList)
+	if !dclcompltypes.IsValidCertificationType(msg.CertificationType) {
+		return NewErrInvalidCertificationType(msg.CertificationType, dclcompltypes.CertificationTypesList)
 	}
 
-	if !IsValidPFCCertificationRoute(msg.ParentChild) {
-		return NewErrInvalidPFCCertificationRoute(msg.ParentChild, PFCCertificationRouteList)
+	if !dclcompltypes.IsValidPFCCertificationRoute(msg.ParentChild) {
+		return NewErrInvalidPFCCertificationRoute(msg.ParentChild, dclcompltypes.PFCCertificationRouteList)
 	}
 
 	return nil

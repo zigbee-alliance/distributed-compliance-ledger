@@ -12,7 +12,6 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	tmdb "github.com/tendermint/tm-db"
-	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
@@ -23,8 +22,8 @@ func ComplianceKeeper(
 	modelKeeper types.ModelKeeper,
 ) (*keeper.Keeper, sdk.Context) {
 	tb.Helper()
-	storeKey := sdk.NewKVStoreKey(dclcompltypes.StoreKey)
-	memStoreKey := storetypes.NewMemoryStoreKey(dclcompltypes.MemStoreKey)
+	storeKey := sdk.NewKVStoreKey(types.StoreKey)
+	memStoreKey := storetypes.NewMemoryStoreKey(types.MemStoreKey)
 
 	db := tmdb.NewMemDB()
 	stateStore := store.NewCommitMultiStore(db)
