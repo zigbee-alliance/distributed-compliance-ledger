@@ -300,7 +300,7 @@ test_divider
 # Update the model version with few mutable fields and make sure all other fields are still the same
 echo "Update Device Model Version with few mutable fields and make sure all other fields are still the same for VID: $vid_1 PID: $pid_1 SV: $sv_1"
 result=$(echo "test1234" | dcld tx model update-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 --softwareVersionValid=true \
---releaseNotesURL="https://release.url.info" --minApplicableSoftwareVersion=2 --maxApplicableSoftwareVersion=20 --from=$vendor_account_1 --yes)
+--releaseNotesURL="https://release.url.info" --otaURL="https://ota.url.com" --otaFileSize=123 --otaChecksum="123123123" --minApplicableSoftwareVersion=2 --maxApplicableSoftwareVersion=20 --from=$vendor_account_1 --yes)
 check_response_and_report "$result" "\"code\": 0"
 
 test_divider
@@ -315,11 +315,32 @@ check_response_and_report "$result" "\"softwareVersion\": $sv_1"
 check_response_and_report "$result" "\"softwareVersionString\": \"1\""
 check_response_and_report "$result" "\"cdVersionNumber\": 1"
 check_response_and_report "$result" "\"softwareVersionValid\": true"
+check_response_and_report "$result" "\"otaUrl\": \"https://ota.url.com\""
+check_response_and_report "$result" "\"otaFileSize\": \"123\""
+check_response_and_report "$result" "\"otaChecksum\": \"123123123\""
 check_response_and_report "$result" "\"minApplicableSoftwareVersion\": 2"
 check_response_and_report "$result" "\"maxApplicableSoftwareVersion\": 20"
 check_response_and_report "$result" "\"releaseNotesUrl\": \"https://release.url.info\""
 
+test_divider
 
+# OTA fields cannot be set after being updated
+echo "OTAUrl cannot be set after being updated for VID: $vid_1 PID: $pid_1 SV: $sv_1"
+result=$(echo "test1234" | dcld tx model update-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 \
+--otaURL="https://ota.urlnew.com" --from=$vendor_account_1 --yes)
+response_does_not_contain "$result" "\"code\": 0"
+
+echo "otaFileSize cannot be set after being updated for VID: $vid_1 PID: $pid_1 SV: $sv_1"
+result=$(echo "test1234" | dcld tx model update-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 \
+--otaFileSize=12345 --from=$vendor_account_1 --yes)
+response_does_not_contain "$result" "\"code\": 0"
+
+echo "otaChecksum cannot be set after being updated for VID: $vid_1 PID: $pid_1 SV: $sv_1"
+result=$(echo "test1234" | dcld tx model update-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 \
+--otaChecksum="1231231234555555555" --from=$vendor_account_1 --yes)
+response_does_not_contain "$result" "\"code\": 0"
+
+test_divider
 
 sv_1=$RANDOM
 echo "Create a Device Model Version with all fields for VID: $vid_1 PID: $pid_1 SV: $sv_1"
@@ -413,7 +434,7 @@ test_divider
 
 echo "Update Device Model Version with all mutable fields for VID: $vid_1 PID: $pid_1 SV: $sv_1"
 result=$(echo 'test1234' | dcld tx model update-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 \
---softwareVersionValid=true --otaURL="https://updated.ota.url.info" --releaseNotesURL="https://updated.release.notes.url.info" \
+--softwareVersionValid=true --releaseNotesURL="https://updated.release.notes.url.info" \
 --maxApplicableSoftwareVersion=25 --minApplicableSoftwareVersion=15   --from=$vendor_account_1 --yes)
 echo "$result"
 check_response_and_report "$result" "\"code\": 0"
@@ -431,7 +452,7 @@ check_response_and_report "$result" "\"softwareVersionString\": \"1.0\""
 check_response_and_report "$result" "\"cdVersionNumber\": 21334"
 check_response_and_report "$result" "\"firmwareInformation\": \"123456789012345678901234567890123456789012345678901234567890123\""
 check_response_and_report "$result" "\"softwareVersionValid\": true"
-check_response_and_report "$result" "\"otaUrl\": \"https://updated.ota.url.info\""
+check_response_and_report "$result" "\"otaUrl\": \"https://ota.url.info\""
 check_response_and_report "$result" "\"otaFileSize\": \"123456789\""
 check_response_and_report "$result" "\"otaChecksum\": \"123456789012345678901234567890123456789012345678901234567890123\""
 check_response_and_report "$result" "\"otaChecksumType\": 1"

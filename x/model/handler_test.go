@@ -936,6 +936,99 @@ func TestHandler_UpdateOnlyMaxApplicableSoftwareVersion(t *testing.T) {
 	require.Equal(t, uint32(5), receivedModelVersion.MaxApplicableSoftwareVersion)
 }
 
+func TestHandler_UpdateOTAFieldsInitiallyNotSet(t *testing.T) {
+	setup := Setup(t)
+
+	// add new model
+	msgCreateModel := NewMsgCreateModel(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// add new model version
+	msgCreateModelVersion := NewMsgCreateModelVersion(setup.Vendor, testconstants.SoftwareVersion)
+	msgCreateModelVersion.OtaUrl = ""
+	msgCreateModelVersion.OtaFileSize = 0
+	msgCreateModelVersion.OtaChecksum = ""
+
+	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion)
+	require.NoError(t, err)
+
+	// try to update only max version to a value less than stored min version
+	msgUpdateModelVersion := NewMsgUpdateModelVersion(setup.Vendor)
+	msgUpdateModelVersion.OtaUrl = "https://123.com"
+	msgUpdateModelVersion.OtaFileSize = 4
+	msgUpdateModelVersion.OtaChecksum = "123"
+
+	_, err = setup.Handler(setup.Ctx, msgUpdateModelVersion)
+	require.NoError(t, err)
+
+	// query updated model version
+	receivedModelVersion, err := queryModelVersion(
+		setup,
+		msgUpdateModelVersion.Vid,
+		msgUpdateModelVersion.Pid,
+		msgUpdateModelVersion.SoftwareVersion,
+	)
+	require.NoError(t, err)
+
+	// check that OTA fields has not been updated
+	require.Equal(t, msgUpdateModelVersion.OtaUrl, receivedModelVersion.OtaUrl)
+	require.Equal(t, msgUpdateModelVersion.OtaFileSize, receivedModelVersion.OtaFileSize)
+	require.Equal(t, msgUpdateModelVersion.OtaChecksum, receivedModelVersion.OtaChecksum)
+}
+
+func TestHandler_UpdateOTAFieldsInitiallySet(t *testing.T) {
+	setup := Setup(t)
+
+	// add new model
+	msgCreateModel := NewMsgCreateModel(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// add new model version
+	msgCreateModelVersion := NewMsgCreateModelVersion(setup.Vendor, testconstants.SoftwareVersion)
+
+	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion)
+	require.NoError(t, err)
+
+	// try to update OTA fields
+	newOTAUrl := "https://123.com"
+
+	msgUpdateModelVersion := NewMsgUpdateModelVersion(setup.Vendor)
+	msgUpdateModelVersion.OtaUrl = newOTAUrl
+
+	_, err = setup.Handler(setup.Ctx, msgUpdateModelVersion)
+	require.ErrorIs(t, err, types.ErrOtaURLCannotBeSet)
+
+	msgUpdateModelVersion = NewMsgUpdateModelVersion(setup.Vendor)
+	msgUpdateModelVersion.OtaUrl = msgCreateModelVersion.OtaUrl
+	msgUpdateModelVersion.OtaFileSize = 4
+
+	_, err = setup.Handler(setup.Ctx, msgUpdateModelVersion)
+	require.ErrorIs(t, err, types.ErrOtaFileSizeCannotBeSet)
+
+	msgUpdateModelVersion = NewMsgUpdateModelVersion(setup.Vendor)
+	msgUpdateModelVersion.OtaUrl = msgCreateModelVersion.OtaUrl
+	msgUpdateModelVersion.OtaChecksum = "123"
+
+	_, err = setup.Handler(setup.Ctx, msgUpdateModelVersion)
+	require.ErrorIs(t, err, types.ErrOtaChecksumCannotBeSet)
+
+	// query not updated model version
+	receivedModelVersion, err := queryModelVersion(
+		setup,
+		msgUpdateModelVersion.Vid,
+		msgUpdateModelVersion.Pid,
+		msgUpdateModelVersion.SoftwareVersion,
+	)
+	require.NoError(t, err)
+
+	// check that OTA fields has not been updated
+	require.NotEqual(t, receivedModelVersion.OtaUrl, newOTAUrl)
+	require.NotEqual(t, receivedModelVersion.OtaChecksum, msgUpdateModelVersion.OtaChecksum)
+	require.NotEqual(t, receivedModelVersion.OtaFileSize, msgUpdateModelVersion.OtaFileSize)
+}
+
 func TestHandler_OnlyOwnerAndVendorWithSameVidCanUpdateModelVersion(t *testing.T) {
 	setup := Setup(t)
 
