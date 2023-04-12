@@ -31,11 +31,11 @@ func (k msgServer) ProvisionModel(goCtx context.Context, msg *types.MsgProvision
 	complianceInfo, found := k.GetComplianceInfo(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
 	if found {
 		switch status := complianceInfo.SoftwareVersionCertificationStatus; status {
-		case types.CodeProvisional:
+		case dclcompltypes.CodeProvisional:
 			return nil, types.NewErrAlreadyProvisional(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
-		case types.CodeCertified:
+		case dclcompltypes.CodeCertified:
 			return nil, types.NewErrAlreadyCertified(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
-		case types.CodeRevoked:
+		case dclcompltypes.CodeRevoked:
 			return nil, types.NewErrAlreadyRevoked(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
 		default:
 			return nil, types.NewErrComplianceInfoAlreadyExist(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
@@ -51,7 +51,7 @@ func (k msgServer) ProvisionModel(goCtx context.Context, msg *types.MsgProvision
 		Date:                               msg.ProvisionalDate,
 		Reason:                             msg.Reason,
 		Owner:                              msg.Signer,
-		SoftwareVersionCertificationStatus: types.CodeProvisional,
+		SoftwareVersionCertificationStatus: dclcompltypes.CodeProvisional,
 		History:                            []*dclcompltypes.ComplianceHistoryItem{},
 		CDVersionNumber:                    msg.CDVersionNumber,
 		ProgramTypeVersion:                 msg.ProgramTypeVersion,

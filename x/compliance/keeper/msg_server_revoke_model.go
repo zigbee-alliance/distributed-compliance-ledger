@@ -49,7 +49,7 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 		// 2) We want to revoke certified or provisioned compliance.
 
 		// check if compliance is already in revoked state
-		if complianceInfo.SoftwareVersionCertificationStatus == types.CodeRevoked {
+		if complianceInfo.SoftwareVersionCertificationStatus == dclcompltypes.CodeRevoked {
 			return nil, types.NewErrAlreadyRevoked(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
 		}
 		// if state changes on `revoked` check that revocation date is after certification/provisional date
@@ -115,7 +115,7 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 			Date:                               msg.RevocationDate,
 			Reason:                             msg.Reason,
 			Owner:                              msg.Signer,
-			SoftwareVersionCertificationStatus: types.CodeRevoked,
+			SoftwareVersionCertificationStatus: dclcompltypes.CodeRevoked,
 			History:                            []*dclcompltypes.ComplianceHistoryItem{},
 			CDVersionNumber:                    msg.CDVersionNumber,
 		}

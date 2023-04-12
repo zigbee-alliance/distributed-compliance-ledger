@@ -53,7 +53,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 		// and so the test results are not required to be present.
 
 		// check if compliance is already in certified state
-		if complianceInfo.SoftwareVersionCertificationStatus == types.CodeCertified {
+		if complianceInfo.SoftwareVersionCertificationStatus == dclcompltypes.CodeCertified {
 			return nil, types.NewErrAlreadyCertified(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
 		}
 
@@ -86,7 +86,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 			Date:                               msg.CertificationDate,
 			Reason:                             msg.Reason,
 			Owner:                              msg.Signer,
-			SoftwareVersionCertificationStatus: types.CodeCertified,
+			SoftwareVersionCertificationStatus: dclcompltypes.CodeCertified,
 			History:                            []*dclcompltypes.ComplianceHistoryItem{},
 			CDVersionNumber:                    msg.CDVersionNumber,
 			CDCertificateId:                    msg.CDCertificateId,

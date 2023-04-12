@@ -5,6 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
@@ -172,7 +173,7 @@ func (k msgServer) DeleteModelVersion(goCtx context.Context, msg *types.MsgDelet
 }
 
 func (k msgServer) IsModelVersionCertified(ctx sdk.Context, vid int32, pid int32, softwareVersion uint32) bool {
-	certificationTypes := []string{"zigbee", "matter"}
+	certificationTypes := dclcompltypes.CertificationTypesList
 	for _, certType := range certificationTypes {
 		_, isFound := k.complianceKeeper.GetComplianceInfo(ctx, vid, pid, softwareVersion, certType)
 		if isFound {
