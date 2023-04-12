@@ -97,9 +97,11 @@ message MsgUpdateModelVersion {
 
   bool softwareVersionValid = 5;
   string otaUrl = 6 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
-  uint32 minApplicableSoftwareVersion = 7;
-  uint32 maxApplicableSoftwareVersion = 8 [(gogoproto.moretags) = "validate:\"omitempty,gtecsfield=MinApplicableSoftwareVersion\""];
-  string releaseNotesUrl = 9 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
+  uint64 otaFileSize = 7;
+  string otaChecksum = 8 [(gogoproto.moretags) = "validate:\"max=64\""];
+  uint32 minApplicableSoftwareVersion = 9;
+  uint32 maxApplicableSoftwareVersion = 10 [(gogoproto.moretags) = "validate:\"omitempty,gtecsfield=MinApplicableSoftwareVersion\""];
+  string releaseNotesUrl = 11 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
 }
 message MsgUpdateModelVersionResponse {}
 
