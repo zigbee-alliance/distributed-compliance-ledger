@@ -34,8 +34,8 @@ func (d *ComplianceInfo) SetOptionalFields(optionalFields *OptionalFields) {
 		d.ProgramTypeVersion = optionalFields.ProgramTypeVersion
 	}
 
-	if optionalFields.FamilyId != "" {
-		d.FamilyId = optionalFields.FamilyId
+	if optionalFields.FamilyID != "" {
+		d.FamilyId = optionalFields.FamilyID
 	}
 
 	if optionalFields.SupportedClusters != "" {
@@ -70,14 +70,14 @@ func (d *ComplianceInfo) SetOptionalFields(optionalFields *OptionalFields) {
 		d.ParentChild = optionalFields.ParentChild
 	}
 
-	if optionalFields.CertificationIdOfSoftwareComponent != "" {
-		d.CertificationIdOfSoftwareComponent = optionalFields.CertificationIdOfSoftwareComponent
+	if optionalFields.CertificationIDOfSoftwareComponent != "" {
+		d.CertificationIdOfSoftwareComponent = optionalFields.CertificationIDOfSoftwareComponent
 	}
 }
 
 type OptionalFields struct {
 	ProgramTypeVersion                 string
-	FamilyId                           string
+	FamilyID                           string
 	SupportedClusters                  string
 	CompliantPlatformUsed              string
 	CompliantPlatformVersion           string
@@ -86,5 +86,5 @@ type OptionalFields struct {
 	ProgramType                        string
 	Transport                          string
 	ParentChild                        string
-	CertificationIdOfSoftwareComponent string
+	CertificationIDOfSoftwareComponent string
 }

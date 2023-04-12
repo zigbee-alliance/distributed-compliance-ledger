@@ -95,7 +95,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 
 	optionalFields := &dclcompltypes.OptionalFields{
 		ProgramTypeVersion:                 msg.ProgramTypeVersion,
-		FamilyId:                           msg.FamilyId,
+		FamilyID:                           msg.FamilyId,
 		SupportedClusters:                  msg.SupportedClusters,
 		CompliantPlatformUsed:              msg.CompliantPlatformUsed,
 		CompliantPlatformVersion:           msg.CompliantPlatformVersion,
@@ -104,7 +104,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 		ProgramType:                        msg.ProgramType,
 		Transport:                          msg.Transport,
 		ParentChild:                        msg.ParentChild,
-		CertificationIdOfSoftwareComponent: msg.CertificationIdOfSoftwareComponent,
+		CertificationIDOfSoftwareComponent: msg.CertificationIdOfSoftwareComponent,
 	}
 
 	complianceInfo.SetOptionalFields(optionalFields)
