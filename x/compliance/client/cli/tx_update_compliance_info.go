@@ -123,7 +123,6 @@ func CmdUpdateComplianceInfo() *cobra.Command {
 		"Parent or Child  of the PFC certification route")
 	cmd.Flags().StringVar(&certificationIDOfSoftwareComponent, FlagCertificationIDOfSoftwareComponent, "",
 		"certification ID of software component")
-	cmd.Flags().Uint32Var(&softwareVersionCertificationStatus, FlagSoftwareVersionCertificationStatus, math.MaxUint32, "software version certification status")
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)

@@ -370,10 +370,10 @@ func TestHandler_UpdateComplianceInfoByCertificationCenter(t *testing.T) {
 	updatedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, types.ZigbeeCertificationType)
 
 	require.Equal(t, updatedComplianceInfo.ParentChild, updateComplianceInfoMsg.ParentChild)
-	require.Equal(t, updatedComplianceInfo.SoftwareVersionCertificationStatus, updateComplianceInfoMsg.SoftwareVersionCertificationStatus)
 	require.Equal(t, updatedComplianceInfo.Date, updateComplianceInfoMsg.Date)
 	require.Equal(t, updatedComplianceInfo.Reason, updateComplianceInfoMsg.Reason)
 	require.Equal(t, updatedComplianceInfo.ProgramType, receivedComplianceInfo.ProgramType)
+	require.Equal(t, updatedComplianceInfo.SoftwareVersionCertificationStatus, receivedComplianceInfo.SoftwareVersionCertificationStatus)
 }
 
 func TestHandler_UpdateComplianceInfoNotByCertificationCenter(t *testing.T) {

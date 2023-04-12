@@ -643,6 +643,8 @@ by_vendor_program_type="by_vendor_program_type"
 by_vendor_parent_child="by_vendor_parent_child"
 by_vendor_transport="by_vendor_transport"
 
+test_divider
+
 # UPDATE COMPLIANCE INFO BY *NON CERTIFICATION CENTER ACCOUNT
 echo "Update Compliance Info for Model with VID: ${vid} PID: ${pid} SV: ${sv} for $zigbee_certification_type"
 result=$(echo "$passphrase" | dcld tx compliance update-compliance-info --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType=$zigbee_certification_type --reason=$by_vendor_reason --programType=$by_vendor_program_type --parentChild=$by_vendor_parent_child --transport=$by_vendor_transport --from=$vendor_account --yes)

@@ -47,10 +47,6 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 		complianceInfo.CertificationRoute = msg.CertificationRoute
 	}
 
-	if msg.CertificationType != "" {
-		complianceInfo.CertificationType = msg.CertificationType
-	}
-
 	if msg.CompliantPlatformUsed != "" {
 		complianceInfo.CompliantPlatformUsed = msg.CompliantPlatformUsed
 	}
@@ -85,14 +81,6 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 
 	if msg.Reason != "" {
 		complianceInfo.Reason = msg.Reason
-	}
-
-	if msg.SoftwareVersionCertificationStatus != math.MaxUint32 {
-		complianceInfo.SoftwareVersionCertificationStatus = msg.SoftwareVersionCertificationStatus
-	}
-
-	if msg.SoftwareVersionString != "" {
-		complianceInfo.SoftwareVersionString = msg.SoftwareVersionString
 	}
 
 	if msg.SupportedClusters != "" {
