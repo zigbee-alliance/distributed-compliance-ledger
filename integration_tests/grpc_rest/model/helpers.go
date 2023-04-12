@@ -826,7 +826,7 @@ func DeleteModelVersionCertified(suite *utils.TestSuite) {
 
 	deleteModelVersionMsg := NewMsgDeleteModelVersion(vid, pid, 1, vendorName)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{deleteModelVersionMsg}, vendorName, vendorAccount)
-	require.ErrorIs(suite.T, err, modeltypes.ErrModelVersionCertified)
+	require.ErrorIs(suite.T, err, modeltypes.ErrModelVersionDeletionCertified)
 
 	// check if modelVersion is not deleted
 	model, err := GetModelVersion(suite, deleteModelVersionMsg.Vid, deleteModelVersionMsg.Pid, deleteModelVersionMsg.SoftwareVersion)
