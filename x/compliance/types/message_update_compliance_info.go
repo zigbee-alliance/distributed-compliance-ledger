@@ -50,18 +50,22 @@ func (msg *MsgUpdateComplianceInfo) GetSigners() []sdk.AccAddress {
 	if err != nil {
 		panic(err)
 	}
+
 	return []sdk.AccAddress{creator}
 }
 
 func (msg *MsgUpdateComplianceInfo) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
+
 	return sdk.MustSortJSON(bz)
 }
 
 func (msg *MsgUpdateComplianceInfo) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
+
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
 	return nil
 }
