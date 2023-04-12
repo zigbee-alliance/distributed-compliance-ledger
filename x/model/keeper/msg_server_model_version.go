@@ -176,7 +176,7 @@ func (k msgServer) DeleteModelVersion(goCtx context.Context, msg *types.MsgDelet
 	return &types.MsgDeleteModelVersionResponse{}, nil
 }
 
-func (k msgServer) IsModelCertified(ctx sdk.Context, vid int32, pid int32, softwareVersion uint32) bool {
+func (k msgServer) IsModelVersionCertified(ctx sdk.Context, vid int32, pid int32, softwareVersion uint32) bool {
 	certificationTypes := []string{"zigbee", "matter"}
 	for _, certType := range certificationTypes {
 		_, isFound := k.complianceKeeper.GetComplianceInfo(ctx, vid, pid, softwareVersion, certType)
