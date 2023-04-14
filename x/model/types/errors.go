@@ -27,6 +27,7 @@ var (
 	ErrModelVersionDeletionCertified = sdkerrors.Register(ModuleName, 524, "model version certified and can not be deleted")
 	ErrOtaFileSizeCannotBeSet        = sdkerrors.Register(ModuleName, 525, "OTA File size cannot be set")
 	ErrOtaChecksumCannotBeSet        = sdkerrors.Register(ModuleName, 526, "OTA checksum cannot be set")
+	ErrModelDeletionCertified        = sdkerrors.Register(ModuleName, 527, "model has a model version that has a compliance record and  correcponding model can not be deleted")
 )
 
 func NewErrModelAlreadyExists(vid interface{}, pid interface{}) error {
@@ -143,7 +144,7 @@ func NewErrLsfRevisionIsNotValid(previousLsfVersion interface{},
 }
 
 func NewErrModelDeletionCertified(vid interface{}, pid interface{}, softwareVersion interface{}) error {
-	return sdkerrors.Wrapf(ErrModelVersionDeletionCertified,
+	return sdkerrors.Wrapf(ErrModelDeletionCertified,
 		"Model version associated with vid=%v, pid=%v and softwareVersion=%v has a compliance record and the corresponding model can't be deleted",
 		vid, pid, softwareVersion)
 }
