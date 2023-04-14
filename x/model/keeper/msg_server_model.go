@@ -192,7 +192,7 @@ func (k msgServer) DeleteModel(goCtx context.Context, msg *types.MsgDeleteModel)
 	if found {
 		// check if no model version has certification record
 		for _, softwareVersion := range modelVersions.SoftwareVersions {
-			if k.IsModelVersionCertified(ctx, msg.Vid, msg.Pid, softwareVersion) {
+			if k.IsComplianceInfoPresent(ctx, msg.Vid, msg.Pid, softwareVersion) {
 				return nil, types.NewErrModelDeletionCertified(msg.Vid, msg.Pid, softwareVersion)
 			}
 		}
