@@ -68,10 +68,8 @@ export interface MsgUpdateComplianceInfo {
     vid: number;
     pid: number;
     softwareVersion: number;
-    softwareVersionString: string;
     certificationType: string;
     cDVersionNumber: number;
-    softwareVersionCertificationStatus: number;
     date: string;
     reason: string;
     owner: string;

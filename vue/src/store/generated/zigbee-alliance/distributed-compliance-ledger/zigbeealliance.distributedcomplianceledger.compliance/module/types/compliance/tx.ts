@@ -74,10 +74,8 @@ export interface MsgUpdateComplianceInfo {
   vid: number
   pid: number
   softwareVersion: number
-  softwareVersionString: string
   certificationType: string
   cDVersionNumber: number
-  softwareVersionCertificationStatus: number
   date: string
   reason: string
   owner: string
@@ -1251,10 +1249,8 @@ const baseMsgUpdateComplianceInfo: object = {
   vid: 0,
   pid: 0,
   softwareVersion: 0,
-  softwareVersionString: '',
   certificationType: '',
   cDVersionNumber: 0,
-  softwareVersionCertificationStatus: 0,
   date: '',
   reason: '',
   owner: '',
@@ -1286,62 +1282,56 @@ export const MsgUpdateComplianceInfo = {
     if (message.softwareVersion !== 0) {
       writer.uint32(32).uint32(message.softwareVersion)
     }
-    if (message.softwareVersionString !== '') {
-      writer.uint32(42).string(message.softwareVersionString)
-    }
     if (message.certificationType !== '') {
-      writer.uint32(50).string(message.certificationType)
+      writer.uint32(42).string(message.certificationType)
     }
     if (message.cDVersionNumber !== 0) {
-      writer.uint32(56).uint32(message.cDVersionNumber)
-    }
-    if (message.softwareVersionCertificationStatus !== 0) {
-      writer.uint32(64).uint32(message.softwareVersionCertificationStatus)
+      writer.uint32(48).uint32(message.cDVersionNumber)
     }
     if (message.date !== '') {
-      writer.uint32(74).string(message.date)
+      writer.uint32(58).string(message.date)
     }
     if (message.reason !== '') {
-      writer.uint32(82).string(message.reason)
+      writer.uint32(66).string(message.reason)
     }
     if (message.owner !== '') {
-      writer.uint32(90).string(message.owner)
+      writer.uint32(74).string(message.owner)
     }
     if (message.cDCertificateId !== '') {
-      writer.uint32(98).string(message.cDCertificateId)
+      writer.uint32(82).string(message.cDCertificateId)
     }
     if (message.certificationRoute !== '') {
-      writer.uint32(106).string(message.certificationRoute)
+      writer.uint32(90).string(message.certificationRoute)
     }
     if (message.programType !== '') {
-      writer.uint32(114).string(message.programType)
+      writer.uint32(98).string(message.programType)
     }
     if (message.programTypeVersion !== '') {
-      writer.uint32(122).string(message.programTypeVersion)
+      writer.uint32(106).string(message.programTypeVersion)
     }
     if (message.compliantPlatformUsed !== '') {
-      writer.uint32(130).string(message.compliantPlatformUsed)
+      writer.uint32(114).string(message.compliantPlatformUsed)
     }
     if (message.compliantPlatformVersion !== '') {
-      writer.uint32(138).string(message.compliantPlatformVersion)
+      writer.uint32(122).string(message.compliantPlatformVersion)
     }
     if (message.transport !== '') {
-      writer.uint32(146).string(message.transport)
+      writer.uint32(130).string(message.transport)
     }
     if (message.familyId !== '') {
-      writer.uint32(154).string(message.familyId)
+      writer.uint32(138).string(message.familyId)
     }
     if (message.supportedClusters !== '') {
-      writer.uint32(162).string(message.supportedClusters)
+      writer.uint32(146).string(message.supportedClusters)
     }
     if (message.OSVersion !== '') {
-      writer.uint32(170).string(message.OSVersion)
+      writer.uint32(154).string(message.OSVersion)
     }
     if (message.parentChild !== '') {
-      writer.uint32(178).string(message.parentChild)
+      writer.uint32(162).string(message.parentChild)
     }
     if (message.certificationIdOfSoftwareComponent !== '') {
-      writer.uint32(186).string(message.certificationIdOfSoftwareComponent)
+      writer.uint32(170).string(message.certificationIdOfSoftwareComponent)
     }
     return writer
   },
@@ -1366,60 +1356,54 @@ export const MsgUpdateComplianceInfo = {
           message.softwareVersion = reader.uint32()
           break
         case 5:
-          message.softwareVersionString = reader.string()
-          break
-        case 6:
           message.certificationType = reader.string()
           break
-        case 7:
+        case 6:
           message.cDVersionNumber = reader.uint32()
           break
-        case 8:
-          message.softwareVersionCertificationStatus = reader.uint32()
-          break
-        case 9:
+        case 7:
           message.date = reader.string()
           break
-        case 10:
+        case 8:
           message.reason = reader.string()
           break
-        case 11:
+        case 9:
           message.owner = reader.string()
           break
-        case 12:
+        case 10:
           message.cDCertificateId = reader.string()
           break
-        case 13:
+        case 11:
           message.certificationRoute = reader.string()
           break
-        case 14:
+        case 12:
           message.programType = reader.string()
           break
-        case 15:
+        case 13:
           message.programTypeVersion = reader.string()
           break
-        case 16:
+        case 14:
           message.compliantPlatformUsed = reader.string()
           break
-        case 17:
+        case 15:
           message.compliantPlatformVersion = reader.string()
           break
-        case 18:
+        case 16:
           message.transport = reader.string()
           break
-        case 19:
+        case 17:
           message.familyId = reader.string()
           break
-        case 20:
+        case 18:
           message.supportedClusters = reader.string()
           break
-        case 21:
+        case 19:
           message.OSVersion = reader.string()
           break
-        case 22:
+        case 20:
           message.parentChild = reader.string()
           break
-        case 23:
+        case 21:
           message.certificationIdOfSoftwareComponent = reader.string()
           break
         default:
@@ -1452,11 +1436,6 @@ export const MsgUpdateComplianceInfo = {
     } else {
       message.softwareVersion = 0
     }
-    if (object.softwareVersionString !== undefined && object.softwareVersionString !== null) {
-      message.softwareVersionString = String(object.softwareVersionString)
-    } else {
-      message.softwareVersionString = ''
-    }
     if (object.certificationType !== undefined && object.certificationType !== null) {
       message.certificationType = String(object.certificationType)
     } else {
@@ -1466,11 +1445,6 @@ export const MsgUpdateComplianceInfo = {
       message.cDVersionNumber = Number(object.cDVersionNumber)
     } else {
       message.cDVersionNumber = 0
-    }
-    if (object.softwareVersionCertificationStatus !== undefined && object.softwareVersionCertificationStatus !== null) {
-      message.softwareVersionCertificationStatus = Number(object.softwareVersionCertificationStatus)
-    } else {
-      message.softwareVersionCertificationStatus = 0
     }
     if (object.date !== undefined && object.date !== null) {
       message.date = String(object.date)
@@ -1556,10 +1530,8 @@ export const MsgUpdateComplianceInfo = {
     message.vid !== undefined && (obj.vid = message.vid)
     message.pid !== undefined && (obj.pid = message.pid)
     message.softwareVersion !== undefined && (obj.softwareVersion = message.softwareVersion)
-    message.softwareVersionString !== undefined && (obj.softwareVersionString = message.softwareVersionString)
     message.certificationType !== undefined && (obj.certificationType = message.certificationType)
     message.cDVersionNumber !== undefined && (obj.cDVersionNumber = message.cDVersionNumber)
-    message.softwareVersionCertificationStatus !== undefined && (obj.softwareVersionCertificationStatus = message.softwareVersionCertificationStatus)
     message.date !== undefined && (obj.date = message.date)
     message.reason !== undefined && (obj.reason = message.reason)
     message.owner !== undefined && (obj.owner = message.owner)
@@ -1600,11 +1572,6 @@ export const MsgUpdateComplianceInfo = {
     } else {
       message.softwareVersion = 0
     }
-    if (object.softwareVersionString !== undefined && object.softwareVersionString !== null) {
-      message.softwareVersionString = object.softwareVersionString
-    } else {
-      message.softwareVersionString = ''
-    }
     if (object.certificationType !== undefined && object.certificationType !== null) {
       message.certificationType = object.certificationType
     } else {
@@ -1614,11 +1581,6 @@ export const MsgUpdateComplianceInfo = {
       message.cDVersionNumber = object.cDVersionNumber
     } else {
       message.cDVersionNumber = 0
-    }
-    if (object.softwareVersionCertificationStatus !== undefined && object.softwareVersionCertificationStatus !== null) {
-      message.softwareVersionCertificationStatus = object.softwareVersionCertificationStatus
-    } else {
-      message.softwareVersionCertificationStatus = 0
     }
     if (object.date !== undefined && object.date !== null) {
       message.date = object.date

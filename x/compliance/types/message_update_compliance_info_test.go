@@ -5,7 +5,10 @@ import (
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
+	tmrand "github.com/tendermint/tendermint/libs/rand"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/sample"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
 
 func TestMsgUpdateComplianceInfo_ValidateBasic(t *testing.T) {
@@ -20,10 +23,132 @@ func TestMsgUpdateComplianceInfo_ValidateBasic(t *testing.T) {
 				Creator: "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidAddress,
-		}, {
-			name: "valid address",
+		},
+		{
+			name: "date is not RFC3339",
 			msg: MsgUpdateComplianceInfo{
-				Creator: sample.AccAddress(),
+				Creator:           sample.AccAddress(),
+				Pid:               1,
+				Vid:               1,
+				Date:              "2020-01-01",
+				CertificationType: testconstants.CertificationType,
+				CDCertificateId:   testconstants.CDCertificateID,
+			},
+			err: ErrInvalidTestDateFormat,
+		},
+		{
+			name: "invalid certification type",
+			msg: MsgUpdateComplianceInfo{
+				Creator:           sample.AccAddress(),
+				Pid:               1,
+				Vid:               1,
+				Date:              testconstants.CertificationDate,
+				CertificationType: "invalid certification type",
+				CDVersionNumber:   "312",
+				Reason:            testconstants.Reason,
+				CDCertificateId:   testconstants.CDCertificateID,
+			},
+			err: ErrInvalidCertificationType,
+		},
+		{
+			name: "invalid parent child field",
+			msg: MsgUpdateComplianceInfo{
+				Creator:           sample.AccAddress(),
+				Pid:               1,
+				Vid:               1,
+				Date:              testconstants.CertificationDate,
+				CertificationType: testconstants.CertificationType,
+				CDVersionNumber:   "312",
+				Reason:            testconstants.Reason,
+				CDCertificateId:   testconstants.CDCertificateID,
+				ParentChild:       "invalid parent child",
+			},
+			err: ErrInvalidPFCCertificationRoute,
+		},
+		{
+			name: "certificationRoute > 64",
+			msg: MsgUpdateComplianceInfo{
+				Creator:            sample.AccAddress(),
+				Pid:                1,
+				Vid:                1,
+				Date:               testconstants.CertificationDate,
+				CertificationType:  testconstants.CertificationType,
+				CDVersionNumber:    "312",
+				Reason:             testconstants.Reason,
+				CertificationRoute: tmrand.Str(65),
+			},
+			err: validator.ErrFieldMaxLengthExceeded,
+		},
+		{
+			name: "update compliance info message with all optional fields not set",
+			msg: MsgUpdateComplianceInfo{
+				Creator:           sample.AccAddress(),
+				Vid:               1,
+				Pid:               1,
+				CertificationType: testconstants.CertificationType,
+				SoftwareVersion:   testconstants.SoftwareVersion,
+			},
+		},
+		{
+			name: "update compliance info message with all optional fields set",
+			msg: MsgUpdateComplianceInfo{
+				Creator:                            sample.AccAddress(),
+				Vid:                                1,
+				Pid:                                1,
+				CertificationType:                  testconstants.CertificationType,
+				SoftwareVersion:                    testconstants.SoftwareVersion,
+				Reason:                             testconstants.Reason,
+				CDVersionNumber:                    "312",
+				CDCertificateId:                    testconstants.CDCertificateID,
+				Date:                               testconstants.CertificationDate,
+				ParentChild:                        "parent",
+				CertificationRoute:                 tmrand.Str(60),
+				ProgramType:                        testconstants.ProgramType,
+				ProgramTypeVersion:                 testconstants.ProgramTypeVersion,
+				CompliantPlatformUsed:              testconstants.CompliantPlatformUsed,
+				CompliantPlatformVersion:           testconstants.CompliantPlatformVersion,
+				Transport:                          testconstants.Transport,
+				FamilyId:                           testconstants.FamilyID,
+				SupportedClusters:                  testconstants.SupportedClusters,
+				OSVersion:                          testconstants.OSVersion,
+				CertificationIdOfSoftwareComponent: testconstants.CertificationIDOfSoftwareComponent,
+			},
+		},
+		{
+			name: "valid update compliance info message",
+			msg: MsgUpdateComplianceInfo{
+				Creator:           sample.AccAddress(),
+				Vid:               1,
+				Pid:               1,
+				CertificationType: testconstants.CertificationType,
+				SoftwareVersion:   testconstants.SoftwareVersion,
+				Reason:            testconstants.Reason,
+			},
+		},
+		{
+			name: "certification type is zigbee",
+			msg: MsgUpdateComplianceInfo{
+				Creator:           sample.AccAddress(),
+				Pid:               1,
+				Vid:               1,
+				Date:              testconstants.CertificationDate,
+				CertificationType: "zigbee",
+				SoftwareVersion:   testconstants.SoftwareVersion,
+				CDVersionNumber:   "312",
+				CDCertificateId:   testconstants.CDCertificateID,
+			},
+		},
+		{
+			name: "certification type is matter",
+			msg: MsgUpdateComplianceInfo{
+				Creator:           sample.AccAddress(),
+				Pid:               1,
+				Vid:               1,
+				Date:              testconstants.CertificationDate,
+				CertificationType: "matter",
+				SoftwareVersion:   testconstants.SoftwareVersion,
+				CDVersionNumber:   "312",
+				CDCertificateId:   testconstants.CDCertificateID,
 			},
 		},
 	}

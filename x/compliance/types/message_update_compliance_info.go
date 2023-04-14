@@ -1,24 +1,25 @@
 package types
 
 import (
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
 
 var _ sdk.Msg = &MsgUpdateComplianceInfo{}
 
 const TypeMsgUpdateComplianceInfo = "update_compliance_info"
 
-func NewMsgUpdateComplianceInfo(creator string, vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, cDVersionNumber uint32, softwareVersionCertificationStatus uint32, date string, reason string, owner string, cDCertificateID string, certificationRoute string, programType string, programTypeVersion string, compliantPlatformUsed string, compliantPlatformVersion string, transport string, familyID string, supportedClusters string, oSVersion string, parentChild string, certificationIDOfSoftwareComponent string) *MsgUpdateComplianceInfo {
+func NewMsgUpdateComplianceInfo(creator string, vid int32, pid int32, softwareVersion uint32, certificationType string, cDVersionNumber string, date string, reason string, owner string, cDCertificateID string, certificationRoute string, programType string, programTypeVersion string, compliantPlatformUsed string, compliantPlatformVersion string, transport string, familyID string, supportedClusters string, oSVersion string, parentChild string, certificationIDOfSoftwareComponent string) *MsgUpdateComplianceInfo {
 	return &MsgUpdateComplianceInfo{
 		Creator:                            creator,
 		Vid:                                vid,
 		Pid:                                pid,
 		SoftwareVersion:                    softwareVersion,
-		SoftwareVersionString:              softwareVersionString,
 		CertificationType:                  certificationType,
 		CDVersionNumber:                    cDVersionNumber,
-		SoftwareVersionCertificationStatus: softwareVersionCertificationStatus,
 		Date:                               date,
 		Reason:                             reason,
 		Owner:                              owner,
@@ -65,6 +66,28 @@ func (msg *MsgUpdateComplianceInfo) ValidateBasic() error {
 
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	err = validator.Validate(msg)
+
+	if err != nil {
+		return err
+	}
+
+	if msg.Date != "" {
+		_, err = time.Parse(time.RFC3339, msg.Date)
+
+		if err != nil {
+			return NewErrInvalidTestDateFormat(msg.Date)
+		}
+	}
+
+	if !IsValidCertificationType(msg.CertificationType) {
+		return NewErrInvalidCertificationType(msg.CertificationType, CertificationTypesList)
+	}
+
+	if !IsValidPFCCertificationRoute(msg.ParentChild) {
+		return NewErrInvalidPFCCertificationRoute(msg.ParentChild, PFCCertificationRouteList)
 	}
 
 	return nil

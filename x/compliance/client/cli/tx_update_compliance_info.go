@@ -18,10 +18,8 @@ func CmdUpdateComplianceInfo() *cobra.Command {
 		vid                                int32
 		pid                                int32
 		softwareVersion                    uint32
-		softwareVersionString              string
 		certificationType                  string
 		cdVersionNumber                    uint32
-		softwareVersionCertificationStatus uint32
 		certificationDate                  string
 		reason                             string
 		owner                              string
@@ -54,10 +52,8 @@ func CmdUpdateComplianceInfo() *cobra.Command {
 				vid,
 				pid,
 				softwareVersion,
-				softwareVersionString,
 				certificationType,
 				cdVersionNumber,
-				softwareVersionCertificationStatus,
 				certificationDate,
 				reason,
 				owner,
@@ -89,8 +85,6 @@ func CmdUpdateComplianceInfo() *cobra.Command {
 		"Model product ID (positive non-zero uint16)")
 	cmd.Flags().Uint32VarP(&softwareVersion, FlagSoftwareVersion, FlagSoftwareVersionShortcut, math.MaxUint32,
 		"Software Version of model (uint32)")
-	cmd.Flags().StringVar(&softwareVersionString, FlagSoftwareVersionString, "",
-		"Software Version String of model")
 	cmd.Flags().Uint32Var(&cdVersionNumber, FlagCDVersionNumber, math.MaxUint32,
 		"CD Version Number of the certification")
 	cmd.Flags().StringVarP(&certificationType, FlagCertificationType, FlagCertificationTypeShortcut, "", TextCertificationType)
