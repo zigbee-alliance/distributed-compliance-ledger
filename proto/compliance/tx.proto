@@ -92,7 +92,7 @@ message MsgUpdateComplianceInfo {
   int32 pid = 3 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
   uint32 softwareVersion = 4;
   string certificationType = 5 [(gogoproto.moretags) = "validate:\"required,max=64\""];
-  uint32 cDVersionNumber = 6 [(gogoproto.moretags) = "validate:\"omitempty,gte=0,lte=65535\""]; 
+  string cDVersionNumber = 6 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""]; 
   string date = 7; 
   string reason = 8 [(gogoproto.moretags) = "validate:\"omitempty,max=102400\""]; 
   string owner = 9 [(cosmos_proto.scalar) = "cosmos.AddressString"];

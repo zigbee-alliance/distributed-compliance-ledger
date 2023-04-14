@@ -1568,7 +1568,7 @@ func NewMsgUpdateComplianceInfo(
 		Pid:                                pid,
 		SoftwareVersion:                    softwareVersion,
 		CertificationType:                  certificationType,
-		CDVersionNumber:                    uint32(testconstants.CdVersionNumber),
+		CDVersionNumber:                    "312",
 		Date:                               testconstants.ProvisionalDate,
 		Reason:                             testconstants.Reason,
 		Owner:                              "",

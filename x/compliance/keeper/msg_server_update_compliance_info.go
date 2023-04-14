@@ -2,10 +2,11 @@ package keeper
 
 import (
 	"context"
-	"math"
+	"strconv"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
@@ -35,8 +36,14 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 		complianceInfo.CDCertificateId = msg.CDCertificateId
 	}
 
-	if msg.CDVersionNumber != math.MaxUint32 {
-		complianceInfo.CDVersionNumber = msg.CDVersionNumber
+	if msg.CDVersionNumber != "" {
+		cdVersionNumber, err := ParseCDVersionNumber(msg.CDVersionNumber)
+
+		if err != nil {
+			return nil, err
+		}
+
+		complianceInfo.CDVersionNumber = cdVersionNumber
 	}
 
 	if msg.CertificationIdOfSoftwareComponent != "" {
@@ -94,4 +101,18 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 	k.SetComplianceInfo(ctx, complianceInfo)
 
 	return &types.MsgUpdateComplianceInfoResponse{}, nil
+}
+
+func ParseCDVersionNumber(cdVersionNumberString string) (uint32, error) {
+	cdVersionNumber, err := strconv.ParseUint(cdVersionNumberString, 10, 32)
+
+	if err != nil {
+		return 65536, err
+	}
+
+	if cdVersionNumber < 0 || cdVersionNumber > 65535 {
+		return 65536, sdkerrors.Wrap(validator.ErrFieldUpperBoundViolated, "CDVersionNumber must not be greater than 65535: field upper bound violatedError")
+	}
+
+	return uint32(cdVersionNumber), nil
 }

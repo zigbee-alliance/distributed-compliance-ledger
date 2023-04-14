@@ -1222,7 +1222,7 @@ const baseMsgUpdateComplianceInfo = {
     pid: 0,
     softwareVersion: 0,
     certificationType: '',
-    cDVersionNumber: 0,
+    cDVersionNumber: '',
     date: '',
     reason: '',
     owner: '',
@@ -1256,8 +1256,8 @@ export const MsgUpdateComplianceInfo = {
         if (message.certificationType !== '') {
             writer.uint32(42).string(message.certificationType);
         }
-        if (message.cDVersionNumber !== 0) {
-            writer.uint32(48).uint32(message.cDVersionNumber);
+        if (message.cDVersionNumber !== '') {
+            writer.uint32(50).string(message.cDVersionNumber);
         }
         if (message.date !== '') {
             writer.uint32(58).string(message.date);
@@ -1329,7 +1329,7 @@ export const MsgUpdateComplianceInfo = {
                     message.certificationType = reader.string();
                     break;
                 case 6:
-                    message.cDVersionNumber = reader.uint32();
+                    message.cDVersionNumber = reader.string();
                     break;
                 case 7:
                     message.date = reader.string();
@@ -1416,10 +1416,10 @@ export const MsgUpdateComplianceInfo = {
             message.certificationType = '';
         }
         if (object.cDVersionNumber !== undefined && object.cDVersionNumber !== null) {
-            message.cDVersionNumber = Number(object.cDVersionNumber);
+            message.cDVersionNumber = String(object.cDVersionNumber);
         }
         else {
-            message.cDVersionNumber = 0;
+            message.cDVersionNumber = '';
         }
         if (object.date !== undefined && object.date !== null) {
             message.date = String(object.date);
@@ -1574,7 +1574,7 @@ export const MsgUpdateComplianceInfo = {
             message.cDVersionNumber = object.cDVersionNumber;
         }
         else {
-            message.cDVersionNumber = 0;
+            message.cDVersionNumber = '';
         }
         if (object.date !== undefined && object.date !== null) {
             message.date = object.date;
