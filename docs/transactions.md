@@ -359,7 +359,7 @@ Model Version can be deleted only before it is certified.
 - Who can send:
   - Vendor account associated with the same vid who has created the model version
 - CLI command:
-  - `dcld tx model delete-model-version --vid=<int32> --pid=<int32> --from=<account>`
+  - `dcld tx model delete-model-version --vid=< uint16 > --pid=< uint16 > --softwareVersion=<uint32> --from=<account>`
 
 #### GET_MODEL
 
