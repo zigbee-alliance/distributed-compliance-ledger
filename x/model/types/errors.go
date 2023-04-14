@@ -144,6 +144,12 @@ func NewErrLsfRevisionIsNotValid(previousLsfVersion interface{},
 
 func NewErrModelDeletionCertified(vid interface{}, pid interface{}, softwareVersion interface{}) error {
 	return sdkerrors.Wrapf(ErrModelVersionDeletionCertified,
-		"Model version associated with vid=%v, pid=%v and softwareVersion=%v is certified and the corresponding model can't be deleted",
+		"Model version associated with vid=%v, pid=%v and softwareVersion=%v has a compliance record and the corresponding model can't be deleted",
+		vid, pid, softwareVersion)
+}
+
+func NewErrModelVersionDeletionCertified(vid interface{}, pid interface{}, softwareVersion interface{}) error {
+	return sdkerrors.Wrapf(ErrModelVersionDeletionCertified,
+		"Model version associated with vid=%v, pid=%v and softwareVersion=%v has a compliance record and can't be deleted",
 		vid, pid, softwareVersion)
 }

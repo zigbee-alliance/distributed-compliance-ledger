@@ -175,9 +175,9 @@ func (k msgServer) DeleteModelVersion(goCtx context.Context, msg *types.MsgDelet
 		return nil, types.NewErrModelVersionDoesNotExist(msg.Vid, msg.Pid, msg.SoftwareVersion)
 	}
 
-	isCertified := k.IsModelVersionCertified(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion)
+	isCertified := k.IsComplianceInfoPresent(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion)
 	if isCertified {
-		return nil, types.NewErrModelDeletionCertified(msg.Vid, msg.Pid, modelVersion.SoftwareVersion)
+		return nil, types.NewErrModelVersionDeletionCertified(msg.Vid, msg.Pid, modelVersion.SoftwareVersion)
 	}
 
 	// store updated model version
@@ -186,7 +186,8 @@ func (k msgServer) DeleteModelVersion(goCtx context.Context, msg *types.MsgDelet
 	return &types.MsgDeleteModelVersionResponse{}, nil
 }
 
-func (k msgServer) IsModelVersionCertified(ctx sdk.Context, vid int32, pid int32, softwareVersion uint32) bool {
+// Returns true if there is a Compliance Info in any status (Certified, Revoked, Provisioned, etc.)
+func (k msgServer) IsComplianceInfoPresent(ctx sdk.Context, vid int32, pid int32, softwareVersion uint32) bool {
 	certificationTypes := dclcompltypes.CertificationTypesList
 	for _, certType := range certificationTypes {
 		_, isFound := k.complianceKeeper.GetComplianceInfo(ctx, vid, pid, softwareVersion, certType)

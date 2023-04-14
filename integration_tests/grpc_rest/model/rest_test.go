@@ -72,3 +72,33 @@ func TestDeleteModelWithAssociatedModelVersionsCertifiedREST(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, true)
 	model.DeleteModelWithAssociatedModelVersionsCertified(&suite)
 }
+
+func TestDeleteModelVersionREST(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
+	model.DeleteModelVersion(&suite)
+}
+
+func TestDeleteModelVersionNotByVendorREST(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
+	model.DeleteModelVersionNotByVendor(&suite)
+}
+
+func TestDeleteModelVersionDifferentVidREST(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
+	model.DeleteModelVersionDifferentVid(&suite)
+}
+
+func TestDeleteModelVersionDoesNotExistREST(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
+	model.DeleteModelVersionDoesNotExist(&suite)
+}
+
+func TestDeleteModelVersionNotByCreatorREST(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
+	model.DeleteModelVersionNotByCreator(&suite)
+}
+
+func TestDeleteModelVersionCertifiedREST(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
+	model.DeleteModelVersionCertified(&suite)
+}
