@@ -24,7 +24,7 @@ var (
 	ErrMaxSVLessThanMinSV            = sdkerrors.Register(ModuleName, 521, "max software version less than min software version")
 	ErrLsfRevisionIsNotValid         = sdkerrors.Register(ModuleName, 522, "LsfRevision should monotonically increase by 1")
 	ErrLsfRevisionIsNotAllowed       = sdkerrors.Register(ModuleName, 523, "LsfRevision is not allowed if LsfURL is not present")
-	ErrModelVersionDeletionCertified = sdkerrors.Register(ModuleName, 524, "model version certified and can not be deleted")
+	ErrModelVersionDeletionCertified = sdkerrors.Register(ModuleName, 524, "model version has a compliance record and can not be deleted")
 )
 
 func NewErrModelAlreadyExists(vid interface{}, pid interface{}) error {
