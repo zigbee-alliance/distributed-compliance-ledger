@@ -63,7 +63,32 @@ func TestDeleteModelWithAssociatedModelVersionsGRPC(t *testing.T) {
 	model.DeleteModelWithAssociatedModelVersions(&suite)
 }
 
-func TestDeleteModelWithAssociatedModelVersionsCertifiedGRPC(t *testing.T) {
+func TestDeleteModelVersionGRPC(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, false)
-	model.DeleteModelWithAssociatedModelVersionsCertified(&suite)
+	model.DeleteModelVersion(&suite)
+}
+
+func TestDeleteModelVersionNotByVendorGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	model.DeleteModelVersionNotByVendor(&suite)
+}
+
+func TestDeleteModelVersionDifferentVidGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	model.DeleteModelVersionDifferentVid(&suite)
+}
+
+func TestDeleteModelVersionDoesNotExistGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	model.DeleteModelVersionDoesNotExist(&suite)
+}
+
+func TestDeleteModelVersionNotByCreatorGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	model.DeleteModelVersionNotByCreator(&suite)
+}
+
+func TestDeleteModelVersionCertifiedGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	model.DeleteModelVersionCertified(&suite)
 }

@@ -413,7 +413,7 @@ func DeleteModelWithAssociatedModelVersions(suite *utils.TestSuite) {
 	require.Error(suite.T, err)
 	require.Nil(suite.T, model)
 
-	// check if model version 1 is deleted
+	// check if model version 1 is not deleted
 	modelVersion1, err := GetModelVersion(suite, createModelVersionMsg1.Vid, createModelVersionMsg1.Pid, createModelVersionMsg1.SoftwareVersion)
 	require.Error(suite.T, err)
 	require.Nil(suite.T, modelVersion1)
@@ -498,7 +498,7 @@ func DeleteModelWithAssociatedModelVersionsCertified(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 	require.NotNil(suite.T, model)
 
-	// check if model version 1 is deleted
+	// check if model version 1 is not deleted
 	modelVersion1, err := GetModelVersion(suite, createModelVersionMsg1.Vid, createModelVersionMsg1.Pid, createModelVersionMsg1.SoftwareVersion)
 	require.NoError(suite.T, err)
 	require.NotNil(suite.T, modelVersion1)
