@@ -110,7 +110,7 @@ func ParseCDVersionNumber(cdVersionNumberString string) (uint32, error) {
 		return 65536, err
 	}
 
-	if cdVersionNumber < 0 || cdVersionNumber > 65535 {
+	if cdVersionNumber > 65535 {
 		return 65536, sdkerrors.Wrap(validator.ErrFieldUpperBoundViolated, "CDVersionNumber must not be greater than 65535: field upper bound violatedError")
 	}
 
