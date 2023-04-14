@@ -25,6 +25,7 @@ var (
 	ErrLsfRevisionIsNotValid         = sdkerrors.Register(ModuleName, 522, "LsfRevision should monotonically increase by 1")
 	ErrLsfRevisionIsNotAllowed       = sdkerrors.Register(ModuleName, 523, "LsfRevision is not allowed if LsfURL is not present")
 	ErrModelVersionDeletionCertified = sdkerrors.Register(ModuleName, 524, "model version has a compliance record and can not be deleted")
+	ErrModelDeletionCertified        = sdkerrors.Register(ModuleName, 525, "model has a model version that has a compliance record and  correcponding model can not be deleted")
 )
 
 func NewErrModelAlreadyExists(vid interface{}, pid interface{}) error {
@@ -127,7 +128,7 @@ func NewErrLsfRevisionIsNotValid(previousLsfVersion interface{},
 }
 
 func NewErrModelDeletionCertified(vid interface{}, pid interface{}, softwareVersion interface{}) error {
-	return sdkerrors.Wrapf(ErrModelVersionDeletionCertified,
+	return sdkerrors.Wrapf(ErrModelDeletionCertified,
 		"Model version associated with vid=%v, pid=%v and softwareVersion=%v has a compliance record and the corresponding model can't be deleted",
 		vid, pid, softwareVersion)
 }
