@@ -79,6 +79,17 @@ func NewErrModelVersionStringDoesNotMatch(vid interface{}, pid interface{},
 	)
 }
 
+func NewErrModelVersionCDVersionNumberDoesNotMatch(vid interface{}, pid interface{},
+	softwareVersion interface{}, cDVersionNumber interface{},
+) error {
+	return sdkerrors.Wrapf(
+		ErrModelVersionStringDoesNotMatch,
+		"Model with vid=%v, pid=%v, softwareVersion=%v present on the ledger does not have"+
+			" matching CDVersionNumber=%v",
+		vid, pid, softwareVersion, cDVersionNumber,
+	)
+}
+
 func NewErrInvalidTestDateFormat(testDate interface{}) error {
 	return sdkerrors.Wrapf(ErrInvalidTestDateFormat,
 		"Invalid TestDate \"%v\": it must be RFC3339 encoded date, for example 2019-10-12T07:20:50.52Z",

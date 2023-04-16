@@ -142,8 +142,8 @@ func TestHandler_ProvisionModel(t *testing.T) {
 	softwareVersion := testconstants.SoftwareVersion
 	softwareVersionString := testconstants.SoftwareVersionString
 
-	// set absence of model version
-	setup.SetNoModelVersionForKey(vid, pid, softwareVersion)
+	// set presence of model version
+	setup.AddModelVersion(vid, pid, softwareVersion, softwareVersionString)
 
 	for _, certificationType := range setup.CertificationTypes {
 		// provision model
@@ -179,8 +179,8 @@ func TestHandler_ProvisionModel_WithAllOptionalFlags(t *testing.T) {
 	softwareVersion := testconstants.SoftwareVersion
 	softwareVersionString := testconstants.SoftwareVersionString
 
-	// set absence of model version
-	setup.SetNoModelVersionForKey(vid, pid, softwareVersion)
+	// set presence of model version
+	setup.AddModelVersion(vid, pid, softwareVersion, softwareVersionString)
 
 	for _, certificationType := range setup.CertificationTypes {
 		// provision model
@@ -246,8 +246,8 @@ func TestHandler_ProvisionModelTwice(t *testing.T) {
 	softwareVersion := testconstants.SoftwareVersion
 	softwareVersionString := testconstants.SoftwareVersionString
 
-	// set absence of model version
-	setup.SetNoModelVersionForKey(vid, pid, softwareVersion)
+	// set presence of model version
+	setup.AddModelVersion(vid, pid, softwareVersion, softwareVersionString)
 
 	for _, certificationType := range setup.CertificationTypes {
 		// provision model
@@ -323,8 +323,8 @@ func TestHandler_ProvisionDifferentModels(t *testing.T) {
 		softwareVersion := uint32(i)
 		softwareVersionString := fmt.Sprint(i)
 
-		// set absence of model version
-		setup.SetNoModelVersionForKey(vid, pid, softwareVersion)
+		// set presence of model version
+		setup.AddModelVersion(vid, pid, softwareVersion, softwareVersionString)
 
 		for _, certificationType := range setup.CertificationTypes {
 			// provision model
@@ -443,6 +443,67 @@ func TestHandler_UpdateComplianceInfoByCertificationCenterAllOptionalFields(t *t
 	require.Equal(t, updatedComplianceInfo.OSVersion, updateComplianceInfoMsg.OSVersion)
 	require.Equal(t, updatedComplianceInfo.ParentChild, updateComplianceInfoMsg.ParentChild)
 	require.Equal(t, updatedComplianceInfo.CertificationIdOfSoftwareComponent, updateComplianceInfoMsg.CertificationIdOfSoftwareComponent)
+}
+
+func TestHandler_UpdateComplianceInfoCDCertificateIdChanged(t *testing.T) {
+	setup := Setup(t)
+
+	// add model version
+	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
+		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
+
+	// certify model
+	certifyModelMsg := NewMsgCertifyModel(
+		vid, pid, softwareVersion, softwareVersionString, types.ZigbeeCertificationType, setup.CertificationCenter)
+	_, err := setup.Handler(setup.Ctx, certifyModelMsg)
+	require.NoError(t, err)
+
+	// query certified model
+	receivedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, types.ZigbeeCertificationType)
+	checkCertifiedModelInfo(t, certifyModelMsg, receivedComplianceInfo)
+
+	originalComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, types.ZigbeeCertificationType)
+	originalDeviceSoftwareCompliance, err := queryDeviceSoftwareCompliance(setup, receivedComplianceInfo.CDCertificateId)
+
+	updateComplianceInfoMsg := &types.MsgUpdateComplianceInfo{
+		Creator:           setup.CertificationCenter.String(),
+		Vid:               vid,
+		Pid:               pid,
+		SoftwareVersion:   softwareVersion,
+		CertificationType: types.ZigbeeCertificationType,
+		CDCertificateId:   "new_cd_certificate_id",
+	}
+
+	_, err = setup.Handler(setup.Ctx, updateComplianceInfoMsg)
+	require.NoError(t, err)
+
+	updatedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, types.ZigbeeCertificationType)
+
+	require.Equal(t, updatedComplianceInfo.CDCertificateId, updatedComplianceInfo.CDCertificateId)
+
+	require.Equal(t, updatedComplianceInfo.CDVersionNumber, originalComplianceInfo.CDVersionNumber)
+	require.Equal(t, updatedComplianceInfo.Date, originalComplianceInfo.Date)
+	require.Equal(t, updatedComplianceInfo.Reason, originalComplianceInfo.Reason)
+	require.Equal(t, updatedComplianceInfo.CertificationRoute, originalComplianceInfo.CertificationRoute)
+	require.Equal(t, updatedComplianceInfo.ProgramType, originalComplianceInfo.ProgramType)
+	require.Equal(t, updatedComplianceInfo.ProgramTypeVersion, originalComplianceInfo.ProgramTypeVersion)
+	require.Equal(t, updatedComplianceInfo.CompliantPlatformUsed, originalComplianceInfo.CompliantPlatformUsed)
+	require.Equal(t, updatedComplianceInfo.CompliantPlatformVersion, originalComplianceInfo.CompliantPlatformVersion)
+	require.Equal(t, updatedComplianceInfo.Transport, originalComplianceInfo.Transport)
+	require.Equal(t, updatedComplianceInfo.FamilyId, originalComplianceInfo.FamilyId)
+	require.Equal(t, updatedComplianceInfo.SupportedClusters, originalComplianceInfo.SupportedClusters)
+	require.Equal(t, updatedComplianceInfo.OSVersion, originalComplianceInfo.OSVersion)
+	require.Equal(t, updatedComplianceInfo.ParentChild, originalComplianceInfo.ParentChild)
+	require.Equal(t, updatedComplianceInfo.CertificationIdOfSoftwareComponent, originalComplianceInfo.CertificationIdOfSoftwareComponent)
+
+	deviceSoftwareCompliance, err := queryDeviceSoftwareCompliance(setup, updateComplianceInfoMsg.CDCertificateId)
+	require.NoError(t, err)
+
+	require.Equal(t, len(deviceSoftwareCompliance.ComplianceInfo), len(originalDeviceSoftwareCompliance.ComplianceInfo))
+
+	for _, softwareCompliance := range deviceSoftwareCompliance.ComplianceInfo {
+		require.Equal(t, softwareCompliance.CDCertificateId, updateComplianceInfoMsg.CDCertificateId)
+	}
 }
 
 func TestHandler_UpdateComplianceInfoByCertificationCenterNoOptionalFields(t *testing.T) {
@@ -858,7 +919,7 @@ func TestHandler_CertifyModelForUnknownModel(t *testing.T) {
 	softwareVersion := testconstants.SoftwareVersion
 	softwareVersionString := testconstants.SoftwareVersionString
 
-	// set absence of model version
+	// set presence of model version
 	setup.SetNoModelVersionForKey(vid, pid, softwareVersion)
 
 	// try to certify model
@@ -1160,7 +1221,7 @@ func TestHandler_RevokeModelForUnknownModel(t *testing.T) {
 	softwareVersion := testconstants.SoftwareVersion
 	softwareVersionString := testconstants.SoftwareVersionString
 
-	// set absence of model version
+	// set presence of model version
 	setup.SetNoModelVersionForKey(vid, pid, softwareVersion)
 
 	// try to revoke model
