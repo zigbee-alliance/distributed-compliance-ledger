@@ -463,7 +463,7 @@ func TestHandler_UpdateComplianceInfoCDCertificateIdChanged(t *testing.T) {
 	checkCertifiedModelInfo(t, certifyModelMsg, receivedComplianceInfo)
 
 	originalComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, types.ZigbeeCertificationType)
-	originalDeviceSoftwareCompliance, err := queryDeviceSoftwareCompliance(setup, receivedComplianceInfo.CDCertificateId)
+	originalDeviceSoftwareCompliance, _ := queryDeviceSoftwareCompliance(setup, receivedComplianceInfo.CDCertificateId)
 
 	updateComplianceInfoMsg := &types.MsgUpdateComplianceInfo{
 		Creator:           setup.CertificationCenter.String(),
