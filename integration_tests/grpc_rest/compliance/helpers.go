@@ -1447,6 +1447,7 @@ func DemoTrackComplianceWithHexVidAndPid(suite *utils.TestSuite) {
 		CertificationType:     "zigbee",
 		Reason:                certReason,
 		CDCertificateId:       testconstants.CDCertificateID,
+		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
@@ -1545,6 +1546,7 @@ func DemoTrackRevocationWithHexVidAndPid(suite *utils.TestSuite) {
 		RevocationDate:        revocDate,
 		CertificationType:     "zigbee",
 		Reason:                revocReason,
+		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&revocModelMsg}, certCenter, certCenterAccount)
@@ -1583,6 +1585,7 @@ func DemoTrackRevocationWithHexVidAndPid(suite *utils.TestSuite) {
 		CertificationType:     "zigbee",
 		Reason:                certReason,
 		CDCertificateId:       testconstants.CDCertificateID,
+		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
@@ -1655,6 +1658,16 @@ func DemoTrackProvisionByHexVidAndPid(suite *utils.TestSuite) {
 	sv := tmrand.Uint32()
 	svs := utils.RandString()
 
+	// Publish model info
+	firstModel := test_model.NewMsgCreateModel(vid, pid, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModel}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	// Publish modelVersion
+	firstModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModelVersion}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
 	// Provision non-existent model
 	provReason := "some reason 13"
 	provModelMsg := compliancetypes.MsgProvisionModel{
@@ -1666,6 +1679,7 @@ func DemoTrackProvisionByHexVidAndPid(suite *utils.TestSuite) {
 		CertificationType:     "matter",
 		Reason:                provReason,
 		CDCertificateId:       testconstants.CDCertificateID,
+		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&provModelMsg}, certCenter, certCenterAccount)
@@ -1693,16 +1707,6 @@ func DemoTrackProvisionByHexVidAndPid(suite *utils.TestSuite) {
 	provisionModel, _ := GetProvisionalModelByHexVidAndPid(suite, testconstants.TestVID3String, testconstants.TestPID3String, sv, compliancetypes.MatterCertificationType)
 	require.True(suite.T, provisionModel.Value)
 
-	// Publish model info
-	firstModel := test_model.NewMsgCreateModel(vid, pid, vendorAccount.Address)
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModel}, vendorName, vendorAccount)
-	require.NoError(suite.T, err)
-
-	// Publish modelVersion
-	firstModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModelVersion}, vendorName, vendorAccount)
-	require.NoError(suite.T, err)
-
 	// Certify model
 	certReason := "some reason 14"
 	certifyModelMsg := compliancetypes.MsgCertifyModel{
@@ -1714,6 +1718,7 @@ func DemoTrackProvisionByHexVidAndPid(suite *utils.TestSuite) {
 		CertificationType:     "matter",
 		Reason:                certReason,
 		CDCertificateId:       testconstants.CDCertificateID,
+		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
