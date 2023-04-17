@@ -720,6 +720,43 @@ Should be sent to trusted nodes only.
 - REST API:
   - `/dcl/compliance/device-software-compliance`
 
+#### UPDATE_COMPLIANCE_INFO
+
+**Status: Implemented**
+
+Updates a compliance info by VID, PID, Software Version and Certification Type.
+
+Should be sent to trusted nodes only.
+
+- Parameters:
+  - vid: `uint16` -  model vendor ID (positive non-zero)
+  - pid: `uint16` -  model product ID (positive non-zero)
+  - softwareVersion: `uint32` - model software version
+  - certificationType: `string` - Certification type - Currently 'zigbee', 'matter', 'access control', 'product security' types are supported
+  - certificationDate: `optional(string)` - The date of model certification (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
+  - cdCertificateId: `optional(string)` - CD Certificate ID 
+  - reason `optional(string)` - optional comment describing the reason of the certification
+  - cDVersionNumber `optional(uint32)` - optional field describing the CD version number, must be the same with the associated model version
+  - familyId `optional(string)` - optional field describing the family ID
+  - supportedClusters `optional(string)` - optional field describing the supported clusters
+  - compliantPlatformUsed `optional(string)` - optional field describing the compliant platform used
+  - compliantPlatformVersion `optional(string)` - optional field describing the compliant platform version
+  - OSVersion `optional(string)` - optional field describing the OS version
+  - certificationRoute `optional(string)` - optional field describing the certification route
+  - programType `optional(string)` - optional field describing the program type
+  - programTypeVersion `optional(string)` - optional field describing the program type version
+  - transport `optional(string)` - optional field describing the transport
+  - parentChild `optional(string)` - optional field describing the parent/child - Currently 'parent' and 'child' types are supported
+  - certificationIDOfSoftwareComponent `optional(string)` - optional field describing the certification ID of software component
+- Who can send:
+  - CertificationCenter
+- CLI command:
+  - `dcld tx compliance update-compliance-info`
+- CLI command full:
+  - `dcld tx compliance update-compliance-info --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<string> --cdVersionNumber=<string> --certificationDate=$upd_certification_date --reason=$upd_reason --cdCertificateId=$upd_cd_certificate_id --certificationRoute=$upd_certification_route --programType=$upd_program_type --programTypeVersion=$upd_program_type_version --compliantPlatformUsed=$upd_compliant_platform_used --compliantPlatformVersion=$upd_compliant_platform_version --transport=$upd_transport --familyId=$upd_familyID --supportedClusters=$upd_supported_clusters --OSVersion=$upd_os_version --parentChild=$upd_parent_child --certificationIDOfSoftwareComponent=$upd_certification_id_of_software_component --from=$zb_account`
+- REST API:
+  - `/dcl/compliance/update-compliance-info`
+
 ## X509 PKI
 
 **NOTE**: X.509 v3 certificates are only supported (all certificates MUST contain `Subject Key ID` field).
