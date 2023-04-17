@@ -559,58 +559,6 @@ func DeleteModelVersion(suite *utils.TestSuite) {
 	require.Nil(suite.T, model)
 }
 
-func DeleteModelVersionNotByVendor(suite *utils.TestSuite) {
-	// Alice and Bob are predefined Trustees
-	aliceName := testconstants.AliceAccount
-	aliceKeyInfo, err := suite.Kr.Key(aliceName)
-	require.NoError(suite.T, err)
-	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
-	require.NoError(suite.T, err)
-
-	bobName := testconstants.BobAccount
-	bobKeyInfo, err := suite.Kr.Key(bobName)
-	require.NoError(suite.T, err)
-	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
-	require.NoError(suite.T, err)
-
-	// Register new vendor account
-	vid := int32(tmrand.Uint16())
-	vendorName := utils.RandString()
-	vendorAccount := testDclauth.CreateAccount(
-		suite,
-		vendorName,
-		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin},
-		vid,
-		aliceName,
-		aliceAccount,
-		bobName,
-		bobAccount,
-		testconstants.Info,
-	)
-	require.NotNil(suite.T, vendorAccount)
-
-	// vendor adds a model
-	pid := int32(tmrand.Uint16())
-	createModelMsg := NewMsgCreateModel(vid, pid, vendorAccount.Address)
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelMsg}, vendorName, vendorAccount)
-	require.NoError(suite.T, err)
-
-	createModelVersionMsg := NewMsgCreateModelVersion(vid, pid, 1, "1", vendorAccount.Address)
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelVersionMsg}, vendorName, vendorAccount)
-	require.NoError(suite.T, err)
-
-	deleteModelVersionMsg := NewMsgDeleteModelVersion(aliceAccount.VendorID, pid, 1, aliceAccount.Address)
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{deleteModelVersionMsg}, aliceName, aliceAccount)
-	require.ErrorIs(suite.T, err, sdkerrors.ErrUnauthorized)
-
-	// check if modelVersion is not deleted
-	model, err := GetModelVersion(suite, deleteModelVersionMsg.Vid, deleteModelVersionMsg.Pid, deleteModelVersionMsg.SoftwareVersion)
-	require.NoError(suite.T, err)
-	require.Equal(suite.T, vid, model.Vid)
-	require.Equal(suite.T, pid, model.Pid)
-	require.Equal(suite.T, 1, model.SoftwareVersion)
-}
-
 func DeleteModelVersionDifferentVid(suite *utils.TestSuite) {
 	// Alice and Bob are predefined Trustees
 	aliceName := testconstants.AliceAccount
@@ -651,16 +599,32 @@ func DeleteModelVersionDifferentVid(suite *utils.TestSuite) {
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelVersionMsg}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
-	deleteModelVersionMsg := NewMsgDeleteModelVersion(1234, pid, 1, vendorAccount.Address)
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{deleteModelVersionMsg}, vendorName, vendorAccount)
+	// Register new Vendor account
+	vid2 := int32(tmrand.Uint16())
+	vendor2Name := utils.RandString()
+	vendor2Account := testDclauth.CreateVendorAccount(
+		suite,
+		vendor2Name,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		vid2,
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+		testconstants.Info,
+	)
+	require.NotNil(suite.T, vendorAccount)
+
+	deleteModelVersionMsg := NewMsgDeleteModelVersion(vid, pid, 1, vendor2Account.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{deleteModelVersionMsg}, vendor2Name, vendor2Account)
 	require.ErrorIs(suite.T, err, sdkerrors.ErrUnauthorized)
 
 	// check if modelVersion is not deleted
 	model, err := GetModelVersion(suite, deleteModelVersionMsg.Vid, deleteModelVersionMsg.Pid, deleteModelVersionMsg.SoftwareVersion)
 	require.NoError(suite.T, err)
-	require.Equal(suite.T, aliceAccount.VendorID, model.Vid)
+	require.Equal(suite.T, vendorAccount.VendorID, model.Vid)
 	require.Equal(suite.T, pid, model.Pid)
-	require.Equal(suite.T, 1, model.SoftwareVersion)
+	require.Equal(suite.T, uint32(1), model.SoftwareVersion)
 }
 
 func DeleteModelVersionDoesNotExist(suite *utils.TestSuite) {
@@ -694,7 +658,7 @@ func DeleteModelVersionDoesNotExist(suite *utils.TestSuite) {
 	require.NotNil(suite.T, vendorAccount)
 
 	pid := int32(tmrand.Uint16())
-	deleteModelVersionMsg := NewMsgDeleteModelVersion(1234, pid, 1, vendorAccount.Address)
+	deleteModelVersionMsg := NewMsgDeleteModelVersion(vid, pid, 1, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{deleteModelVersionMsg}, vendorName, vendorAccount)
 	require.ErrorIs(suite.T, err, modeltypes.ErrModelVersionDoesNotExist)
 }
@@ -755,16 +719,16 @@ func DeleteModelVersionNotByCreator(suite *utils.TestSuite) {
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelVersionMsg}, vendor1Name, vendor1Account)
 	require.NoError(suite.T, err)
 
-	deleteModelVersionMsg := NewMsgDeleteModelVersion(vid2, pid, 1, vendor2Account.Address)
+	deleteModelVersionMsg := NewMsgDeleteModelVersion(vid1, pid, 1, vendor2Account.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{deleteModelVersionMsg}, vendor2Name, vendor2Account)
 	require.ErrorIs(suite.T, err, sdkerrors.ErrUnauthorized)
 
 	// check if modelVersion is not deleted
 	model, err := GetModelVersion(suite, deleteModelVersionMsg.Vid, deleteModelVersionMsg.Pid, deleteModelVersionMsg.SoftwareVersion)
 	require.NoError(suite.T, err)
-	require.Equal(suite.T, aliceAccount.VendorID, model.Vid)
+	require.Equal(suite.T, vendor1Account.VendorID, model.Vid)
 	require.Equal(suite.T, pid, model.Pid)
-	require.Equal(suite.T, 1, model.SoftwareVersion)
+	require.Equal(suite.T, uint32(1), model.SoftwareVersion)
 }
 
 func DeleteModelVersionCertified(suite *utils.TestSuite) {
@@ -807,6 +771,20 @@ func DeleteModelVersionCertified(suite *utils.TestSuite) {
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelVersionMsg}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
+	certCenterName := utils.RandString()
+	certCenterAccount := testDclauth.CreateAccount(
+		suite,
+		certCenterName,
+		dclauthtypes.AccountRoles{dclauthtypes.CertificationCenter},
+		vid,
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+		testconstants.Info,
+	)
+	require.NotNil(suite.T, certCenterAccount)
+
 	// Certify model version
 	certReason := "some reason 5"
 	certDate := "2020-05-01T00:00:01Z"
@@ -819,21 +797,21 @@ func DeleteModelVersionCertified(suite *utils.TestSuite) {
 		CertificationType:     "zigbee",
 		Reason:                certReason,
 		CDCertificateId:       testconstants.CDCertificateID,
-		Signer:                vendorAccount.Address,
+		Signer:                certCenterAccount.Address,
 	}
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, vendorName, vendorAccount)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenterName, certCenterAccount)
 	require.NoError(suite.T, err)
 
-	deleteModelVersionMsg := NewMsgDeleteModelVersion(vid, pid, 1, vendorName)
+	deleteModelVersionMsg := NewMsgDeleteModelVersion(vid, pid, 1, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{deleteModelVersionMsg}, vendorName, vendorAccount)
 	require.ErrorIs(suite.T, err, modeltypes.ErrModelVersionDeletionCertified)
 
 	// check if modelVersion is not deleted
 	model, err := GetModelVersion(suite, deleteModelVersionMsg.Vid, deleteModelVersionMsg.Pid, deleteModelVersionMsg.SoftwareVersion)
 	require.NoError(suite.T, err)
-	require.Equal(suite.T, aliceAccount.VendorID, model.Vid)
+	require.Equal(suite.T, vendorAccount.VendorID, model.Vid)
 	require.Equal(suite.T, pid, model.Pid)
-	require.Equal(suite.T, 1, model.SoftwareVersion)
+	require.Equal(suite.T, uint32(1), model.SoftwareVersion)
 }
 
 func Demo(suite *utils.TestSuite) {

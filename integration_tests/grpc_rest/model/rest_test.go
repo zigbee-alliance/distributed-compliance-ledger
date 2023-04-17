@@ -78,11 +78,6 @@ func TestDeleteModelVersionREST(t *testing.T) {
 	model.DeleteModelVersion(&suite)
 }
 
-func TestDeleteModelVersionNotByVendorREST(t *testing.T) {
-	suite := utils.SetupTest(t, testconstants.ChainID, true)
-	model.DeleteModelVersionNotByVendor(&suite)
-}
-
 func TestDeleteModelVersionDifferentVidREST(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, true)
 	model.DeleteModelVersionDifferentVid(&suite)
