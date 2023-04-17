@@ -601,6 +601,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 		CertificationType:     "zigbee",
 		Reason:                certReason,
 		CDCertificateId:       testconstants.CDCertificateID,
+		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
@@ -664,6 +665,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 		RevocationDate:        revocDate,
 		CertificationType:     "zigbee",
 		Reason:                revocReason,
+		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&revocModelMsg}, certCenter, certCenterAccount)
@@ -765,6 +767,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 		Transport:                          testconstants.Transport,
 		ParentChild:                        testconstants.ParentChild1,
 		CertificationIdOfSoftwareComponent: testconstants.CertificationIDOfSoftwareComponent,
+		CDVersionNumber:                    uint32(testconstants.CdVersionNumber),
 		Signer:                             certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
@@ -912,6 +915,7 @@ func DemoTrackRevocation(suite *utils.TestSuite) {
 		RevocationDate:        revocDate,
 		CertificationType:     "zigbee",
 		Reason:                revocReason,
+		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&revocModelMsg}, certCenter, certCenterAccount)
@@ -962,6 +966,7 @@ func DemoTrackRevocation(suite *utils.TestSuite) {
 		CertificationType:     "zigbee",
 		Reason:                certReason,
 		CDCertificateId:       testconstants.CDCertificateID,
+		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
@@ -1067,6 +1072,15 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	sv := tmrand.Uint32()
 	svs := utils.RandString()
 
+	firstModel := test_model.NewMsgCreateModel(vid, pid, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModel}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	// Publish modelVersion
+	firstModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModelVersion}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
 	// Provision non-existent model
 	provReason := "some reason 6"
 	provModelMsg := compliancetypes.MsgProvisionModel{
@@ -1078,6 +1092,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 		CertificationType:     "matter",
 		Reason:                provReason,
 		CDCertificateId:       testconstants.CDCertificateID,
+		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&provModelMsg}, certCenter, certCenterAccount)
@@ -1117,16 +1132,6 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	deviceSoftwareCompliances, _ := GetAllDeviceSoftwareCompliance(suite)
 	require.Equal(suite.T, len(inputAllDeviceSoftwareCompliances), len(deviceSoftwareCompliances))
 
-	// Publish model info
-	firstModel := test_model.NewMsgCreateModel(vid, pid, vendorAccount.Address)
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModel}, vendorName, vendorAccount)
-	require.NoError(suite.T, err)
-
-	// Publish modelVersion
-	firstModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModelVersion}, vendorName, vendorAccount)
-	require.NoError(suite.T, err)
-
 	// Certify model
 	certReason := "some reason 7"
 	certifyModelMsg := compliancetypes.MsgCertifyModel{
@@ -1138,6 +1143,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 		CertificationType:     "matter",
 		Reason:                certReason,
 		CDCertificateId:       testconstants.CDCertificateID,
+		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
@@ -1194,6 +1200,14 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	sv = tmrand.Uint32()
 	svs = utils.RandString()
 
+	secondModel := test_model.NewMsgCreateModel(vid, pid, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{secondModel}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	secondModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{secondModelVersion}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
 	// Provision non-existent model with all optional fields
 	provReason = "some reason 8"
 	provModelMsg = compliancetypes.MsgProvisionModel{
@@ -1216,6 +1230,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 		Transport:                          testconstants.Transport,
 		ParentChild:                        testconstants.ParentChild1,
 		CertificationIdOfSoftwareComponent: testconstants.CertificationIDOfSoftwareComponent,
+		CDVersionNumber:                    uint32(testconstants.CdVersionNumber),
 		Signer:                             certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&provModelMsg}, certCenter, certCenterAccount)
@@ -1262,16 +1277,6 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	deviceSoftwareCompliances, _ = GetAllDeviceSoftwareCompliance(suite)
 	require.Equal(suite.T, len(inputAllDeviceSoftwareCompliances), len(deviceSoftwareCompliances))
 
-	// Publish model info
-	secondModel := test_model.NewMsgCreateModel(vid, pid, vendorAccount.Address)
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{secondModel}, vendorName, vendorAccount)
-	require.NoError(suite.T, err)
-
-	// Publish modelVersion
-	secondModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{secondModelVersion}, vendorName, vendorAccount)
-	require.NoError(suite.T, err)
-
 	// Certify model with some optional fields
 	certReason = "some reason 9"
 	certifyModelMsg = compliancetypes.MsgCertifyModel{
@@ -1289,6 +1294,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 		CompliantPlatformUsed:              "WIFI",
 		CompliantPlatformVersion:           "V1",
 		CertificationIdOfSoftwareComponent: "x5732",
+		CDVersionNumber:                    uint32(testconstants.CdVersionNumber),
 		Signer:                             certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
