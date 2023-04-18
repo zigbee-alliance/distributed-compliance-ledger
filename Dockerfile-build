@@ -40,6 +40,7 @@ COPY cmd ./cmd/
 COPY testutil ./testutil/
 COPY utils ./utils/
 COPY x ./x/
+COPY types ./types/
 COPY go.mod go.sum Makefile ./
 COPY docs/docs.go ./docs/
 COPY docs/static ./docs/static/

@@ -18,7 +18,7 @@ import (
 var _ = strconv.IntSize
 
 func TestModelQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.ModelKeeper(t, nil)
+	keeper, ctx := keepertest.ModelKeeper(t, nil, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNModel(keeper, ctx, 2)
 	for _, tc := range []struct {
@@ -72,7 +72,7 @@ func TestModelQuerySingle(t *testing.T) {
 }
 
 func TestModelQueryPaginated(t *testing.T) {
-	keeper, ctx := keepertest.ModelKeeper(t, nil)
+	keeper, ctx := keepertest.ModelKeeper(t, nil, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNModel(keeper, ctx, 5)
 

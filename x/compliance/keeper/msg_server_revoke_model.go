@@ -7,6 +7,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	modeltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
@@ -41,14 +42,14 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 	}
 
 	complianceInfo, found := k.GetComplianceInfo(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
-	// nolint:nestif
+	//nolint:nestif
 	if found {
 		// Compliance record already exist. Cases:
 		// 1) We want to re-revoke compliance which is already in revoked state now -> Error.
 		// 2) We want to revoke certified or provisioned compliance.
 
 		// check if compliance is already in revoked state
-		if complianceInfo.SoftwareVersionCertificationStatus == types.CodeRevoked {
+		if complianceInfo.SoftwareVersionCertificationStatus == dclcompltypes.CodeRevoked {
 			return nil, types.NewErrAlreadyRevoked(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
 		}
 		// if state changes on `revoked` check that revocation date is after certification/provisional date
@@ -105,7 +106,7 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 	} else {
 		// There is no compliance record yet. So only revocation will be tracked on ledger.
 
-		complianceInfo = types.ComplianceInfo{
+		complianceInfo = dclcompltypes.ComplianceInfo{
 			Vid:                                msg.Vid,
 			Pid:                                msg.Pid,
 			SoftwareVersion:                    msg.SoftwareVersion,
@@ -114,8 +115,8 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 			Date:                               msg.RevocationDate,
 			Reason:                             msg.Reason,
 			Owner:                              msg.Signer,
-			SoftwareVersionCertificationStatus: types.CodeRevoked,
-			History:                            []*types.ComplianceHistoryItem{},
+			SoftwareVersionCertificationStatus: dclcompltypes.CodeRevoked,
+			History:                            []*dclcompltypes.ComplianceHistoryItem{},
 			CDVersionNumber:                    msg.CDVersionNumber,
 		}
 	}

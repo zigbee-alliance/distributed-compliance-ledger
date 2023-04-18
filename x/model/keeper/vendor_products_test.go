@@ -27,7 +27,7 @@ func createNVendorProducts(keeper *keeper.Keeper, ctx sdk.Context, n int) []type
 }
 
 func TestVendorProductsGet(t *testing.T) {
-	keeper, ctx := keepertest.ModelKeeper(t, nil)
+	keeper, ctx := keepertest.ModelKeeper(t, nil, nil)
 	items := createNVendorProducts(keeper, ctx, 10)
 	for _, item := range items {
 		rst, found := keeper.GetVendorProducts(ctx,
@@ -42,7 +42,7 @@ func TestVendorProductsGet(t *testing.T) {
 }
 
 func TestVendorProductsRemove(t *testing.T) {
-	keeper, ctx := keepertest.ModelKeeper(t, nil)
+	keeper, ctx := keepertest.ModelKeeper(t, nil, nil)
 	items := createNVendorProducts(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemoveVendorProducts(ctx,
@@ -56,7 +56,7 @@ func TestVendorProductsRemove(t *testing.T) {
 }
 
 func TestVendorProductsGetAll(t *testing.T) {
-	keeper, ctx := keepertest.ModelKeeper(t, nil)
+	keeper, ctx := keepertest.ModelKeeper(t, nil, nil)
 	items := createNVendorProducts(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),

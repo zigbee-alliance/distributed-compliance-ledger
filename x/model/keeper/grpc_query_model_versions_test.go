@@ -17,7 +17,7 @@ import (
 var _ = strconv.IntSize
 
 func TestModelVersionsQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.ModelKeeper(t, nil)
+	keeper, ctx := keepertest.ModelKeeper(t, nil, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNModelVersions(keeper, ctx, 2)
 	for _, tc := range []struct {

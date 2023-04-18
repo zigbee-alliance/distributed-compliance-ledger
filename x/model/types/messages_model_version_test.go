@@ -878,3 +878,174 @@ func validMsgUpdateModelVersion() *MsgUpdateModelVersion {
 		ReleaseNotesUrl:              testconstants.ReleaseNotesURL + "/updated",
 	}
 }
+
+func TestMsgDeleteModelVersion_ValidateBasic(t *testing.T) {
+	negativeTests := []struct {
+		name string
+		msg  *MsgDeleteModelVersion
+		err  error
+	}{
+		{
+			name: "Creator is omitted",
+			msg: func(msg *MsgDeleteModelVersion) *MsgDeleteModelVersion {
+				msg.Creator = ""
+
+				return msg
+			}(validMsgDeleteModelVersion()),
+			err: sdkerrors.ErrInvalidAddress,
+		},
+		{
+			name: "Creator is not valid address",
+			msg: func(msg *MsgDeleteModelVersion) *MsgDeleteModelVersion {
+				msg.Creator = "not valid address"
+
+				return msg
+			}(validMsgDeleteModelVersion()),
+			err: sdkerrors.ErrInvalidAddress,
+		},
+		{
+			name: "Vid < 0",
+			msg: func(msg *MsgDeleteModelVersion) *MsgDeleteModelVersion {
+				msg.Vid = -1
+
+				return msg
+			}(validMsgDeleteModelVersion()),
+			err: validator.ErrFieldLowerBoundViolated,
+		},
+		{
+			name: "Vid == 0",
+			msg: func(msg *MsgDeleteModelVersion) *MsgDeleteModelVersion {
+				msg.Vid = 0
+
+				return msg
+			}(validMsgDeleteModelVersion()),
+			err: validator.ErrFieldLowerBoundViolated,
+		},
+		{
+			name: "Vid > 65535",
+			msg: func(msg *MsgDeleteModelVersion) *MsgDeleteModelVersion {
+				msg.Vid = 65536
+
+				return msg
+			}(validMsgDeleteModelVersion()),
+			err: validator.ErrFieldUpperBoundViolated,
+		},
+		{
+			name: "Pid < 0",
+			msg: func(msg *MsgDeleteModelVersion) *MsgDeleteModelVersion {
+				msg.Pid = -1
+
+				return msg
+			}(validMsgDeleteModelVersion()),
+			err: validator.ErrFieldLowerBoundViolated,
+		},
+		{
+			name: "Pid == 0",
+			msg: func(msg *MsgDeleteModelVersion) *MsgDeleteModelVersion {
+				msg.Pid = 0
+
+				return msg
+			}(validMsgDeleteModelVersion()),
+			err: validator.ErrFieldLowerBoundViolated,
+		},
+		{
+			name: "Pid > 65535",
+			msg: func(msg *MsgDeleteModelVersion) *MsgDeleteModelVersion {
+				msg.Pid = 65536
+
+				return msg
+			}(validMsgDeleteModelVersion()),
+			err: validator.ErrFieldUpperBoundViolated,
+		},
+	}
+
+	positiveTests := []struct {
+		name string
+		msg  *MsgDeleteModelVersion
+	}{
+		{
+			name: "valid message",
+			msg:  validMsgDeleteModelVersion(),
+		},
+		{
+			name: "Creator is valid address",
+			msg: func(msg *MsgDeleteModelVersion) *MsgDeleteModelVersion {
+				msg.Creator = sample.AccAddress()
+
+				return msg
+			}(validMsgDeleteModelVersion()),
+		},
+		{
+			name: "Vid == 1",
+			msg: func(msg *MsgDeleteModelVersion) *MsgDeleteModelVersion {
+				msg.Vid = 1
+
+				return msg
+			}(validMsgDeleteModelVersion()),
+		},
+		{
+			name: "Vid == 65535",
+			msg: func(msg *MsgDeleteModelVersion) *MsgDeleteModelVersion {
+				msg.Vid = 65535
+
+				return msg
+			}(validMsgDeleteModelVersion()),
+		},
+		{
+			name: "Pid == 1",
+			msg: func(msg *MsgDeleteModelVersion) *MsgDeleteModelVersion {
+				msg.Pid = 1
+
+				return msg
+			}(validMsgDeleteModelVersion()),
+		},
+		{
+			name: "Pid == 65535",
+			msg: func(msg *MsgDeleteModelVersion) *MsgDeleteModelVersion {
+				msg.Pid = 65535
+
+				return msg
+			}(validMsgDeleteModelVersion()),
+		},
+		{
+			name: "SoftwareVersion == 0",
+			msg: func(msg *MsgDeleteModelVersion) *MsgDeleteModelVersion {
+				msg.SoftwareVersion = 0
+
+				return msg
+			}(validMsgDeleteModelVersion()),
+		},
+		{
+			name: "SoftwareVersion > 0",
+			msg: func(msg *MsgDeleteModelVersion) *MsgDeleteModelVersion {
+				msg.SoftwareVersion = 1
+
+				return msg
+			}(validMsgDeleteModelVersion()),
+		},
+	}
+
+	for _, tt := range negativeTests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.msg.ValidateBasic()
+			require.Error(t, err)
+			require.ErrorIs(t, err, tt.err)
+		})
+	}
+
+	for _, tt := range positiveTests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.msg.ValidateBasic()
+			require.NoError(t, err)
+		})
+	}
+}
+
+func validMsgDeleteModelVersion() *MsgDeleteModelVersion {
+	return &MsgDeleteModelVersion{
+		Creator:         sample.AccAddress(),
+		Vid:             testconstants.Vid,
+		Pid:             testconstants.Pid,
+		SoftwareVersion: testconstants.SoftwareVersion,
+	}
+}

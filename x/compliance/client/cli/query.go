@@ -4,12 +4,11 @@ import (
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 
 	// "strings".
 	"github.com/spf13/cobra"
-
 	// sdk "github.com/cosmos/cosmos-sdk/types".
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module.

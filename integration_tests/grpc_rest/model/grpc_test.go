@@ -57,3 +57,33 @@ func TestGetModelForInvalidVidPidGRPC(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, false)
 	model.GetModelForInvalidVidPid(&suite)
 }
+
+func TestDeleteModelWithAssociatedModelVersionsGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	model.DeleteModelWithAssociatedModelVersions(&suite)
+}
+
+func TestDeleteModelVersionGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	model.DeleteModelVersion(&suite)
+}
+
+func TestDeleteModelVersionDifferentVidGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	model.DeleteModelVersionDifferentVid(&suite)
+}
+
+func TestDeleteModelVersionDoesNotExistGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	model.DeleteModelVersionDoesNotExist(&suite)
+}
+
+func TestDeleteModelVersionNotByCreatorGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	model.DeleteModelVersionNotByCreator(&suite)
+}
+
+func TestDeleteModelVersionCertifiedGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	model.DeleteModelVersionCertified(&suite)
+}

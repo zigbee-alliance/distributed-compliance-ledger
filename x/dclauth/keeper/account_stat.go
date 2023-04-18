@@ -8,8 +8,8 @@ import (
 
 // SetAccountStat set accountStat in the store
 // NOTE:
-//	- the API is needed by genesis logic
-//	- but it shouldn't be used in run-time, so makes sense to take care about better way
+//   - the API is needed by genesis logic
+//   - but it shouldn't be used in run-time, so makes sense to take care about better way
 func (k Keeper) SetAccountStat(ctx sdk.Context, accountStat types.AccountStat) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.AccountStatKey))
 	b := k.cdc.MustMarshal(&accountStat)
