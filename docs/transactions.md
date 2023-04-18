@@ -747,7 +747,6 @@ Should be sent to trusted nodes only.
 
 Updates a compliance info by VID, PID, Software Version and Certification Type.
 
-Should be sent to trusted nodes only.
 
 - Parameters:
   - vid: `uint16` -  model vendor ID (positive non-zero)
