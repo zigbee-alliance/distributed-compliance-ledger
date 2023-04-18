@@ -7,6 +7,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	modeltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
@@ -45,7 +46,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 	}
 
 	complianceInfo, found := k.GetComplianceInfo(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
-	// nolint:nestif
+	//nolint:nestif
 	if found {
 		// Compliance record already exist. Cases:
 		// 1) We want to re-certify compliance which is already certified now -> Error.
@@ -56,7 +57,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 		// and so the test results are not required to be present.
 
 		// check if compliance is already in certified state
-		if complianceInfo.SoftwareVersionCertificationStatus == types.CodeCertified {
+		if complianceInfo.SoftwareVersionCertificationStatus == dclcompltypes.CodeCertified {
 			return nil, types.NewErrAlreadyCertified(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
 		}
 
@@ -80,7 +81,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 	} else {
 		// There is no compliance record yet. So certification will be tracked on ledger.
 
-		complianceInfo = types.ComplianceInfo{
+		complianceInfo = dclcompltypes.ComplianceInfo{
 			Vid:                                msg.Vid,
 			Pid:                                msg.Pid,
 			SoftwareVersion:                    msg.SoftwareVersion,
@@ -89,14 +90,28 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 			Date:                               msg.CertificationDate,
 			Reason:                             msg.Reason,
 			Owner:                              msg.Signer,
-			SoftwareVersionCertificationStatus: types.CodeCertified,
-			History:                            []*types.ComplianceHistoryItem{},
+			SoftwareVersionCertificationStatus: dclcompltypes.CodeCertified,
+			History:                            []*dclcompltypes.ComplianceHistoryItem{},
 			CDVersionNumber:                    msg.CDVersionNumber,
 			CDCertificateId:                    msg.CDCertificateId,
 		}
 	}
 
-	complianceInfo.SetOptionalFields(msg)
+	optionalFields := &dclcompltypes.OptionalFields{
+		ProgramTypeVersion:                 msg.ProgramTypeVersion,
+		FamilyID:                           msg.FamilyId,
+		SupportedClusters:                  msg.SupportedClusters,
+		CompliantPlatformUsed:              msg.CompliantPlatformUsed,
+		CompliantPlatformVersion:           msg.CompliantPlatformVersion,
+		OSVersion:                          msg.OSVersion,
+		CertificationRoute:                 msg.CertificationRoute,
+		ProgramType:                        msg.ProgramType,
+		Transport:                          msg.Transport,
+		ParentChild:                        msg.ParentChild,
+		CertificationIDOfSoftwareComponent: msg.CertificationIdOfSoftwareComponent,
+	}
+
+	complianceInfo.SetOptionalFields(optionalFields)
 
 	// store compliance info
 	k.SetComplianceInfo(ctx, complianceInfo)

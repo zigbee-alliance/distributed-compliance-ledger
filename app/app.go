@@ -36,7 +36,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/docs"
 	compliancemodule "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance"
 	compliancemodulekeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/keeper"
-	compliancemoduletypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
+	compliancetypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	dclauthmodule "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/ante"
 	baseauthmodulekeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/base/keeper"
@@ -256,7 +256,7 @@ func New(
 		pkimoduletypes.StoreKey,
 		vendorinfomoduletypes.StoreKey,
 		modelmoduletypes.StoreKey,
-		compliancemoduletypes.StoreKey,
+		compliancetypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -421,16 +421,20 @@ func New(
 		keys[modelmoduletypes.MemStoreKey],
 
 		app.DclauthKeeper,
+		app.ComplianceKeeper,
 	)
-	modelModule := modelmodule.NewAppModule(appCodec, app.ModelKeeper)
 
 	app.ComplianceKeeper = *compliancemodulekeeper.NewKeeper(
 		appCodec,
-		keys[compliancemoduletypes.StoreKey],
-		keys[compliancemoduletypes.MemStoreKey],
+		keys[compliancetypes.StoreKey],
+		keys[compliancetypes.MemStoreKey],
 		app.DclauthKeeper,
 		app.ModelKeeper,
 	)
+
+	app.ModelKeeper.SetComplianceKeeper(app.ComplianceKeeper)
+
+	modelModule := modelmodule.NewAppModule(appCodec, app.ModelKeeper)
 	complianceModule := compliancemodule.NewAppModule(appCodec, app.ComplianceKeeper)
 
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
@@ -541,7 +545,7 @@ func New(
 		pkimoduletypes.ModuleName,
 		vendorinfomoduletypes.ModuleName,
 		modelmoduletypes.ModuleName,
-		compliancemoduletypes.ModuleName,
+		compliancetypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	)
 
@@ -776,7 +780,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(pkimoduletypes.ModuleName)
 	paramsKeeper.Subspace(vendorinfomoduletypes.ModuleName)
 	paramsKeeper.Subspace(modelmoduletypes.ModuleName)
-	paramsKeeper.Subspace(compliancemoduletypes.ModuleName)
+	paramsKeeper.Subspace(compliancetypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper

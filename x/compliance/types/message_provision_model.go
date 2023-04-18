@@ -5,6 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
 
@@ -82,12 +83,12 @@ func (msg *MsgProvisionModel) ValidateBasic() error {
 		return NewErrInvalidTestDateFormat(msg.ProvisionalDate)
 	}
 
-	if !IsValidCertificationType(msg.CertificationType) {
-		return NewErrInvalidCertificationType(msg.CertificationType, CertificationTypesList)
+	if !dclcompltypes.IsValidCertificationType(msg.CertificationType) {
+		return NewErrInvalidCertificationType(msg.CertificationType, dclcompltypes.CertificationTypesList)
 	}
 
-	if !IsValidPFCCertificationRoute(msg.ParentChild) {
-		return NewErrInvalidPFCCertificationRoute(msg.ParentChild, PFCCertificationRouteList)
+	if !dclcompltypes.IsValidPFCCertificationRoute(msg.ParentChild) {
+		return NewErrInvalidPFCCertificationRoute(msg.ParentChild, dclcompltypes.PFCCertificationRouteList)
 	}
 
 	return nil

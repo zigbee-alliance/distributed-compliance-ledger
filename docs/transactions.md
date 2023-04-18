@@ -256,6 +256,8 @@ All non-edited fields remain the same.
 Deletes an existing Model identified by a unique combination of `vid` (vendor ID) and `pid` (product ID)
 by the vendor account.
 
+If one of Model Versions associated with the Model is certified then Model can not be deleted. When Model is deleted, all associated Model Versions will be deleted as well.
+
 - Parameters:
   - vid: `uint16` -  model vendor ID (positive non-zero)
   - pid: `uint16` -  model product ID (positive non-zero)
@@ -339,6 +341,25 @@ All non-edited fields remain the same.
   - Vendor associated with the same vid who created the Model
 - CLI command:
   - `dcld tx model update-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> ... --from=<account>`
+
+#### DELETE_MODEL_VERSION
+
+**Status: Implemented**
+
+Deletes an existing Model Version identified by a unique combination of `vid` (vendor ID), `pid` (product ID) and `softwareVersion`
+by the vendor account.
+
+Model Version can be deleted only before it is certified.
+
+- Parameters:
+  - vid: `uint16` -  model version vendor ID (positive non-zero)
+  - pid: `uint16` -  model version product ID (positive non-zero)
+  - softwareVersion: `uint32` - model version software version (positive non-zero)
+- In State: `model/ModelVersion/value/<vid>/<pid>/<softwareVersion>`
+- Who can send:
+  - Vendor account associated with the same vid who has created the model version
+- CLI command:
+  - `dcld tx model delete-model-version --vid=< uint16 > --pid=< uint16 > --softwareVersion=<uint32> --from=<account>`
 
 #### GET_MODEL
 
