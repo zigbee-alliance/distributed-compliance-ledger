@@ -74,6 +74,8 @@ _NOTE: Some of the commands above may fail depending on whether or not `cosmovis
   * `genesis.json` can be found in a `<chain-id>` sub-directory of the [persistent_chains](../../deployment/persistent_chains) folder
   * `persistent_peers.txt`: that file may be published there as well or can be requested from the DCLedger network admins otherwise
 
+See [this](../advanced/running-node-in-existing-network.md) document for running node in existing network. Also, note that if the [3<sup>rd</sup> option](../advanced/running-node-in-existing-network.md#3-catchup-from-genesis) is used, then a version at the time of genesis needs to be utilized.
+
 <!-- markdownlint-disable MD033 -->
 <details>
 <summary>Example (click to expand)</summary>
