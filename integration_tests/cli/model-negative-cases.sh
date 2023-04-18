@@ -23,9 +23,15 @@ create_new_account certification_house "CertificationCenter"
 
 vid=$RANDOM
 pid=$RANDOM
+softwareVersionString=$RANDOM
 vendor_account=vendor_account_$vid
 echo "Create Vendor account - $vendor_account"
 create_new_vendor_account $vendor_account $vid
+
+test_divider
+
+echo "Create CertificationCenter account"
+create_new_account zb_account "CertificationCenter"
 
 # Body
 
@@ -53,6 +59,25 @@ check_response_and_report "$result" "\"code\": 501"
 echo "$result"
 
 test_divider
+
+sv=$RANDOM
+svs=$RANDOM
+echo "Create a Device Model Version with VID: $vid PID: $pid SV: $sv"
+result=$(echo 'test1234' | dcld tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$softwareVersionString --from=$vendor_account --yes)
+echo "$result"
+check_response "$result" "\"code\": 0"
+
+certification_date="2020-01-01T00:00:01Z"
+zigbee_certification_type="zigbee"
+matter_certification_type="matter"
+cd_certificate_id="123"
+result=$(echo 'test1234' | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --softwareVersionString=$softwareVersionString --cdCertificateId="$cd_certificate_id" --from $zb_account --yes)
+echo "$result"
+
+echo "Delete Model with VID: ${vid} PID: ${pid}"
+result=$(dcld tx model delete-model --vid=$vid --pid=$pid --from=$vendor_account --yes)
+check_response "$result" "\"code\": 525" # code for model certified error
+
 
 # CLI side errors
 

@@ -1,8 +1,6 @@
 package keeper
 
-import (
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
-)
+import "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 
 type msgServer struct {
 	Keeper

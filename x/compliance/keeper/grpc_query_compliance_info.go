@@ -7,7 +7,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
+
+	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"google.golang.org/grpc/codes"
+
 	"google.golang.org/grpc/status"
 )
 
@@ -16,14 +19,14 @@ func (k Keeper) ComplianceInfoAll(c context.Context, req *types.QueryAllComplian
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
-	var complianceInfos []types.ComplianceInfo
+	var complianceInfos []dclcompltypes.ComplianceInfo
 	ctx := sdk.UnwrapSDKContext(c)
 
 	store := ctx.KVStore(k.storeKey)
 	complianceInfoStore := prefix.NewStore(store, types.KeyPrefix(types.ComplianceInfoKeyPrefix))
 
 	pageRes, err := query.Paginate(complianceInfoStore, req.Pagination, func(key []byte, value []byte) error {
-		var complianceInfo types.ComplianceInfo
+		var complianceInfo dclcompltypes.ComplianceInfo
 		if err := k.cdc.Unmarshal(value, &complianceInfo); err != nil {
 			return err
 		}

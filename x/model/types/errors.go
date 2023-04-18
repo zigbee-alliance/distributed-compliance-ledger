@@ -11,19 +11,21 @@ var (
 	ErrVendorProductsDoNotExist = sdkerrors.Register(ModuleName, 504, "vendor products do not exist")
 
 	// Model Version Error Codes.
-	ErrSoftwareVersionStringInvalid = sdkerrors.Register(ModuleName, 511, "software version string invalid")
-	ErrFirmwareInformationInvalid   = sdkerrors.Register(ModuleName, 512, "firmware digests invalid")
-	ErrCDVersionNumberInvalid       = sdkerrors.Register(ModuleName, 513, "CD version number invalid")
-	ErrOtaURLInvalid                = sdkerrors.Register(ModuleName, 514, "OTA URL invalid")
-	ErrOtaMissingInformation        = sdkerrors.Register(ModuleName, 515, "OTA missing information")
-	ErrReleaseNotesURLInvalid       = sdkerrors.Register(ModuleName, 516, "release notes URL invalid")
-	ErrModelVersionDoesNotExist     = sdkerrors.Register(ModuleName, 517, "model version does not exist")
-	ErrNoModelVersionsExist         = sdkerrors.Register(ModuleName, 518, "no model versions exist")
-	ErrModelVersionAlreadyExists    = sdkerrors.Register(ModuleName, 519, "model version already exists")
-	ErrOtaURLCannotBeSet            = sdkerrors.Register(ModuleName, 520, "OTA URL cannot be set")
-	ErrMaxSVLessThanMinSV           = sdkerrors.Register(ModuleName, 521, "max software version less than min software version")
-	ErrLsfRevisionIsNotValid        = sdkerrors.Register(ModuleName, 522, "LsfRevision should monotonically increase by 1")
-	ErrLsfRevisionIsNotAllowed      = sdkerrors.Register(ModuleName, 523, "LsfRevision is not allowed if LsfURL is not present")
+	ErrSoftwareVersionStringInvalid  = sdkerrors.Register(ModuleName, 511, "software version string invalid")
+	ErrFirmwareInformationInvalid    = sdkerrors.Register(ModuleName, 512, "firmware digests invalid")
+	ErrCDVersionNumberInvalid        = sdkerrors.Register(ModuleName, 513, "CD version number invalid")
+	ErrOtaURLInvalid                 = sdkerrors.Register(ModuleName, 514, "OTA URL invalid")
+	ErrOtaMissingInformation         = sdkerrors.Register(ModuleName, 515, "OTA missing information")
+	ErrReleaseNotesURLInvalid        = sdkerrors.Register(ModuleName, 516, "release notes URL invalid")
+	ErrModelVersionDoesNotExist      = sdkerrors.Register(ModuleName, 517, "model version does not exist")
+	ErrNoModelVersionsExist          = sdkerrors.Register(ModuleName, 518, "no model versions exist")
+	ErrModelVersionAlreadyExists     = sdkerrors.Register(ModuleName, 519, "model version already exists")
+	ErrOtaURLCannotBeSet             = sdkerrors.Register(ModuleName, 520, "OTA URL cannot be set")
+	ErrMaxSVLessThanMinSV            = sdkerrors.Register(ModuleName, 521, "max software version less than min software version")
+	ErrLsfRevisionIsNotValid         = sdkerrors.Register(ModuleName, 522, "LsfRevision should monotonically increase by 1")
+	ErrLsfRevisionIsNotAllowed       = sdkerrors.Register(ModuleName, 523, "LsfRevision is not allowed if LsfURL is not present")
+	ErrModelVersionDeletionCertified = sdkerrors.Register(ModuleName, 524, "model version has a compliance record and can not be deleted")
+	ErrModelDeletionCertified        = sdkerrors.Register(ModuleName, 525, "model has a model version that has a compliance record and  correcponding model can not be deleted")
 )
 
 func NewErrModelAlreadyExists(vid interface{}, pid interface{}) error {
@@ -123,4 +125,16 @@ func NewErrLsfRevisionIsNotValid(previousLsfVersion interface{},
 	return sdkerrors.Wrapf(ErrLsfRevisionIsNotValid,
 		"LsfRevision %v should be greater then existing lsfRevision %v by 1",
 		currentLsfVersion, previousLsfVersion)
+}
+
+func NewErrModelDeletionCertified(vid interface{}, pid interface{}, softwareVersion interface{}) error {
+	return sdkerrors.Wrapf(ErrModelDeletionCertified,
+		"Model version associated with vid=%v, pid=%v and softwareVersion=%v has a compliance record and the corresponding model can't be deleted",
+		vid, pid, softwareVersion)
+}
+
+func NewErrModelVersionDeletionCertified(vid interface{}, pid interface{}, softwareVersion interface{}) error {
+	return sdkerrors.Wrapf(ErrModelVersionDeletionCertified,
+		"Model version associated with vid=%v, pid=%v and softwareVersion=%v has a compliance record and can't be deleted",
+		vid, pid, softwareVersion)
 }

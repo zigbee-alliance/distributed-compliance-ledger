@@ -26,6 +26,7 @@ import (
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	testkeeper "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/testdata"
+	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
@@ -59,14 +60,33 @@ func (m *DclauthKeeperMock) HasVendorID(
 
 var _ types.DclauthKeeper = &DclauthKeeperMock{}
 
+type ComplianceKeeperMock struct {
+	mock.Mock
+}
+
+func (m *ComplianceKeeperMock) GetComplianceInfo(
+	ctx sdk.Context,
+	vid int32,
+	pid int32,
+	softwareVersion uint32,
+	certificationType string,
+) (val dclcompltypes.ComplianceInfo, found bool) {
+	args := m.Called(ctx, vid, pid, softwareVersion, certificationType)
+
+	return val, args.Bool(0)
+}
+
+var _ types.ComplianceKeeper = &ComplianceKeeperMock{}
+
 type TestSetup struct {
 	T *testing.T
 	// Cdc         *amino.Codec
-	Ctx           sdk.Context
-	Wctx          context.Context
-	Keeper        *keeper.Keeper
-	DclauthKeeper *DclauthKeeperMock
-	Handler       sdk.Handler
+	Ctx              sdk.Context
+	Wctx             context.Context
+	Keeper           *keeper.Keeper
+	DclauthKeeper    *DclauthKeeperMock
+	ComplianceKeeper *ComplianceKeeperMock
+	Handler          sdk.Handler
 	// Querier     sdk.Querier
 	Vendor   sdk.AccAddress
 	VendorID int32
@@ -91,20 +111,22 @@ func (setup *TestSetup) AddAccount(
 func Setup(t *testing.T) *TestSetup {
 	t.Helper()
 	dclauthKeeper := &DclauthKeeperMock{}
-	keeper, ctx := testkeeper.ModelKeeper(t, dclauthKeeper)
+	complianceKeeper := &ComplianceKeeperMock{}
+	keeper, ctx := testkeeper.ModelKeeper(t, dclauthKeeper, complianceKeeper)
 
 	vendor := testdata.GenerateAccAddress()
 	vendorID := testconstants.VendorID1
 
 	setup := &TestSetup{
-		T:             t,
-		Ctx:           ctx,
-		Wctx:          sdk.WrapSDKContext(ctx),
-		Keeper:        keeper,
-		DclauthKeeper: dclauthKeeper,
-		Handler:       NewHandler(*keeper),
-		Vendor:        vendor,
-		VendorID:      vendorID,
+		T:                t,
+		Ctx:              ctx,
+		Wctx:             sdk.WrapSDKContext(ctx),
+		Keeper:           keeper,
+		DclauthKeeper:    dclauthKeeper,
+		ComplianceKeeper: complianceKeeper,
+		Handler:          NewHandler(*keeper),
+		Vendor:           vendor,
+		VendorID:         vendorID,
 	}
 
 	setup.AddAccount(vendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, vendorID)
@@ -403,6 +425,108 @@ func TestHandler_DeleteModel(t *testing.T) {
 	_, err = queryModel(setup, msgDeleteModel.Vid, msgDeleteModel.Pid)
 	require.Error(t, err)
 	require.Equal(t, codes.NotFound, status.Code(err))
+}
+
+func TestHandler_DeleteModelWithAssociatedModelVersionsNotCertified(t *testing.T) {
+	setup := Setup(t)
+
+	// add new model
+	msgCreateModel := NewMsgCreateModel(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// add two new model versions
+	msgCreateModelVersion1 := NewMsgCreateModelVersion(setup.Vendor, testconstants.SoftwareVersion)
+	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion1)
+	require.NoError(t, err)
+
+	msgCreateModelVersion2 := NewMsgCreateModelVersion(setup.Vendor, testconstants.SoftwareVersion+1)
+	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion2)
+	require.NoError(t, err)
+
+	// mock model versions not to be certified
+	complianceKeeper := setup.ComplianceKeeper
+	complianceKeeper.On("GetComplianceInfo", mock.Anything, msgCreateModelVersion1.Vid, msgCreateModelVersion1.Pid, msgCreateModelVersion1.SoftwareVersion, mock.Anything).Return(false)
+	complianceKeeper.On("GetComplianceInfo", mock.Anything, msgCreateModelVersion2.Vid, msgCreateModelVersion2.Pid, msgCreateModelVersion2.SoftwareVersion, mock.Anything).Return(false)
+	complianceKeeper.On("GetComplianceInfo", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(true)
+
+	msgDeleteModel := NewMsgDeleteModel(setup.Vendor)
+	_, err = setup.Handler(setup.Ctx, msgDeleteModel)
+	require.NoError(t, err)
+
+	// query first deleted model version
+	_, err = queryModelVersion(
+		setup,
+		msgCreateModelVersion1.Vid,
+		msgCreateModelVersion1.Pid,
+		msgCreateModelVersion1.SoftwareVersion,
+	)
+	require.Error(t, err)
+	require.Equal(t, codes.NotFound, status.Code(err))
+
+	// query second deleted model version
+	_, err = queryModelVersion(
+		setup,
+		msgCreateModelVersion2.Vid,
+		msgCreateModelVersion2.Pid,
+		msgCreateModelVersion2.SoftwareVersion,
+	)
+	require.Error(t, err)
+	require.Equal(t, codes.NotFound, status.Code(err))
+
+	// query deleted model
+	_, err = queryModel(setup, msgDeleteModel.Vid, msgDeleteModel.Pid)
+	require.Error(t, err)
+	require.Equal(t, codes.NotFound, status.Code(err))
+}
+
+func TestHandler_DeleteModelWithAssociatedModelVersionsCertified(t *testing.T) {
+	setup := Setup(t)
+
+	// add new model
+	msgCreateModel := NewMsgCreateModel(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// add two new model versions
+	msgCreateModelVersion1 := NewMsgCreateModelVersion(setup.Vendor, testconstants.SoftwareVersion)
+	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion1)
+	require.NoError(t, err)
+
+	msgCreateModelVersion2 := NewMsgCreateModelVersion(setup.Vendor, testconstants.SoftwareVersion+1)
+	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion2)
+	require.NoError(t, err)
+
+	// mock one model version to be certified
+	complianceKeeper := setup.ComplianceKeeper
+	complianceKeeper.On("GetComplianceInfo", mock.Anything, msgCreateModelVersion1.Vid, msgCreateModelVersion1.Pid, msgCreateModelVersion1.SoftwareVersion, mock.Anything).Return(false)
+	complianceKeeper.On("GetComplianceInfo", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(true)
+
+	msgDeleteModel := NewMsgDeleteModel(setup.Vendor)
+	_, err = setup.Handler(setup.Ctx, msgDeleteModel)
+	require.Error(t, err)
+
+	// query first deleted model version - should not be deleted
+	_, err = queryModelVersion(
+		setup,
+		msgCreateModelVersion1.Vid,
+		msgCreateModelVersion1.Pid,
+		msgCreateModelVersion1.SoftwareVersion,
+	)
+	require.NoError(t, err)
+
+	// query second deleted model version - should not be deleted
+	_, err = queryModelVersion(
+		setup,
+		msgCreateModelVersion2.Vid,
+		msgCreateModelVersion2.Pid,
+		msgCreateModelVersion2.SoftwareVersion,
+	)
+	require.NoError(t, err)
+
+	// query deleted model - should not be deleted
+	_, err = queryModel(setup, msgDeleteModel.Vid, msgDeleteModel.Pid)
+	require.NoError(t, err)
 }
 
 func TestHandler_OnlyOwnerAndVendorWithSameVidCanDeleteModel(t *testing.T) {
@@ -864,6 +988,182 @@ func TestHandler_OnlyOwnerAndVendorWithSameVidCanUpdateModelVersion(t *testing.T
 	require.NoError(t, err)
 }
 
+func TestHandler_DeleteModelVersion(t *testing.T) {
+	setup := Setup(t)
+
+	// add new model
+	msgCreateModel := NewMsgCreateModel(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// add new model version
+	msgCreateModelVersion := NewMsgCreateModelVersion(setup.Vendor, testconstants.SoftwareVersion)
+	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion)
+	require.NoError(t, err)
+
+	msgDeleteModelVersion := NewMsgDeleteModelVersion(setup.Vendor)
+
+	complianceKeeper := setup.ComplianceKeeper
+	complianceKeeper.On("GetComplianceInfo", mock.Anything, msgDeleteModelVersion.Vid, msgDeleteModelVersion.Pid, msgDeleteModelVersion.SoftwareVersion, mock.Anything).Return(false)
+	complianceKeeper.On("GetComplianceInfo", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(true)
+
+	_, err = setup.Handler(setup.Ctx, msgDeleteModelVersion)
+	require.NoError(t, err)
+
+	// query model version
+	_, err = queryModelVersion(
+		setup,
+		msgDeleteModelVersion.Vid,
+		msgDeleteModelVersion.Pid,
+		msgDeleteModelVersion.SoftwareVersion,
+	)
+	require.Error(t, err)
+	require.Equal(t, codes.NotFound, status.Code(err))
+}
+
+func TestHandler_DeleteModelVersionDifferendAccSameVid(t *testing.T) {
+	setup := Setup(t)
+
+	// add new model
+	msgCreateModel := NewMsgCreateModel(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// add new model version
+	msgCreateModelVersion := NewMsgCreateModelVersion(setup.Vendor, testconstants.SoftwareVersion)
+	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion)
+	require.NoError(t, err)
+
+	secondAcc := testdata.GenerateAccAddress()
+	secondAccVid := testconstants.VendorID1
+
+	setup.AddAccount(secondAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, secondAccVid)
+
+	msgDeleteModelVersion := NewMsgDeleteModelVersion(secondAcc)
+
+	complianceKeeper := setup.ComplianceKeeper
+	complianceKeeper.On("GetComplianceInfo", mock.Anything, msgDeleteModelVersion.Vid, msgDeleteModelVersion.Pid, msgDeleteModelVersion.SoftwareVersion, mock.Anything).Return(false)
+	complianceKeeper.On("GetComplianceInfo", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(true)
+
+	_, err = setup.Handler(setup.Ctx, msgDeleteModelVersion)
+	require.NoError(t, err)
+
+	// query model version
+	_, err = queryModelVersion(
+		setup,
+		msgDeleteModelVersion.Vid,
+		msgDeleteModelVersion.Pid,
+		msgDeleteModelVersion.SoftwareVersion,
+	)
+	require.Error(t, err)
+	require.Equal(t, codes.NotFound, status.Code(err))
+}
+
+func TestHandler_DeleteModelVersionNotByVendor(t *testing.T) {
+	setup := Setup(t)
+
+	// add new model
+	msgCreateModel := NewMsgCreateModel(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// add new model version
+	msgCreateModelVersion := NewMsgCreateModelVersion(setup.Vendor, testconstants.SoftwareVersion)
+	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion)
+	require.NoError(t, err)
+
+	setup.AddAccount(testconstants.Address1, []dclauthtypes.AccountRole{dclauthtypes.Trustee}, testconstants.VendorID2)
+
+	msgDeleteModelVersion := NewMsgDeleteModelVersion(testconstants.Address1)
+
+	_, err = setup.Handler(setup.Ctx, msgDeleteModelVersion)
+	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
+}
+
+func TestHandler_DeleteModelVersionDifferentVid(t *testing.T) {
+	setup := Setup(t)
+
+	// add new model
+	msgCreateModel := NewMsgCreateModel(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// add new model version
+	msgCreateModelVersion := NewMsgCreateModelVersion(setup.Vendor, testconstants.SoftwareVersion)
+	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion)
+	require.NoError(t, err)
+
+	msgDeleteModelVersion := NewMsgDeleteModelVersion(setup.Vendor)
+	msgDeleteModelVersion.Vid = 55
+
+	_, err = setup.Handler(setup.Ctx, msgDeleteModelVersion)
+	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
+}
+
+func TestHandler_DeleteModelVersionDoesNotExist(t *testing.T) {
+	setup := Setup(t)
+
+	// add new model
+	msgCreateModel := NewMsgCreateModel(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// add new model version
+	msgCreateModelVersion := NewMsgCreateModelVersion(setup.Vendor, testconstants.SoftwareVersion)
+	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion)
+	require.NoError(t, err)
+
+	msgDeleteModelVersion := NewMsgDeleteModelVersion(setup.Vendor)
+	msgDeleteModelVersion.SoftwareVersion = 3
+
+	_, err = setup.Handler(setup.Ctx, msgDeleteModelVersion)
+	require.ErrorIs(t, err, types.ErrModelVersionDoesNotExist)
+}
+
+func TestHandler_DeleteModelVersionNotByCreator(t *testing.T) {
+	setup := Setup(t)
+
+	// add new model
+	msgCreateModel := NewMsgCreateModel(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// add new model version
+	msgCreateModelVersion := NewMsgCreateModelVersion(setup.Vendor, testconstants.SoftwareVersion)
+	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion)
+	require.NoError(t, err)
+
+	setup.AddAccount(testconstants.Address1, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID2)
+
+	msgDeleteModelVersion := NewMsgDeleteModelVersion(testconstants.Address1)
+
+	_, err = setup.Handler(setup.Ctx, msgDeleteModelVersion)
+	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
+}
+
+func TestHandler_DeleteModelVersionCertified(t *testing.T) {
+	setup := Setup(t)
+
+	// add new model
+	msgCreateModel := NewMsgCreateModel(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// add new model version
+	msgCreateModelVersion := NewMsgCreateModelVersion(setup.Vendor, testconstants.SoftwareVersion)
+	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion)
+	require.NoError(t, err)
+
+	msgDeleteModelVersion := NewMsgDeleteModelVersion(setup.Vendor)
+
+	complianceKeeper := setup.ComplianceKeeper
+	complianceKeeper.On("GetComplianceInfo", mock.Anything, msgDeleteModelVersion.Vid, msgDeleteModelVersion.Pid, msgDeleteModelVersion.SoftwareVersion, mock.Anything).Return(true)
+	complianceKeeper.On("GetComplianceInfo", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(false)
+
+	_, err = setup.Handler(setup.Ctx, msgDeleteModelVersion)
+	require.ErrorIs(t, err, types.ErrModelVersionDeletionCertified)
+}
+
 func queryModel(
 	setup *TestSetup,
 	vid int32,
@@ -1012,5 +1312,14 @@ func NewMsgUpdateModelVersion(signer sdk.AccAddress) *types.MsgUpdateModelVersio
 		MinApplicableSoftwareVersion: testconstants.MinApplicableSoftwareVersion + 1,
 		MaxApplicableSoftwareVersion: testconstants.MaxApplicableSoftwareVersion + 1,
 		ReleaseNotesUrl:              testconstants.ReleaseNotesURL + "/updated",
+	}
+}
+
+func NewMsgDeleteModelVersion(signer sdk.AccAddress) *types.MsgDeleteModelVersion {
+	return &types.MsgDeleteModelVersion{
+		Creator:         signer.String(),
+		Vid:             testconstants.VendorID1,
+		Pid:             testconstants.Pid,
+		SoftwareVersion: testconstants.SoftwareVersion,
 	}
 }

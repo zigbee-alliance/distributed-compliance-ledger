@@ -188,3 +188,53 @@ func CmdUpdateModelVersion() *cobra.Command {
 
 	return cmd
 }
+
+func CmdDeleteModelVersion() *cobra.Command {
+	var (
+		vid             int32
+		pid             int32
+		softwareVersion uint32
+	)
+
+	cmd := &cobra.Command{
+		Use:   "delete-model-version",
+		Short: "Delete existing Model Version",
+		Args:  cobra.ExactArgs(0),
+		RunE: func(cmd *cobra.Command, args []string) (err error) {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			msg := types.NewMsgDeleteModelVersion(
+				clientCtx.GetFromAddress().String(),
+				vid,
+				pid,
+				softwareVersion,
+			)
+
+			// validate basic will be called in GenerateOrBroadcastTxCLI
+			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+			if cli.IsWriteInsteadReadRPCError(err) {
+				return clientCtx.PrintString(cli.LightClientProxyForWriteRequests)
+			}
+
+			return err
+		},
+	}
+
+	cmd.Flags().Int32Var(&vid, FlagVid, 0,
+		"Model vendor ID (positive non-zero uint16)")
+	cmd.Flags().Int32Var(&pid, FlagPid, 0,
+		"Model product ID (positive non-zero uint16)")
+	cmd.Flags().Uint32VarP(&softwareVersion, FlagSoftwareVersion, FlagSoftwareVersionShortcut, 0,
+		"Software Version of model (uint32)")
+
+	cli.AddTxFlagsToCmd(cmd)
+
+	_ = cmd.MarkFlagRequired(FlagVid)
+	_ = cmd.MarkFlagRequired(FlagPid)
+	_ = cmd.MarkFlagRequired(FlagSoftwareVersion)
+	_ = cmd.MarkFlagRequired(flags.FlagFrom)
+
+	return cmd
+}

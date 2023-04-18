@@ -16,7 +16,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
-func ModelKeeper(tb testing.TB, dclauthKeeper types.DclauthKeeper) (*keeper.Keeper, sdk.Context) {
+func ModelKeeper(tb testing.TB, dclauthKeeper types.DclauthKeeper, complianceKeeper types.ComplianceKeeper) (*keeper.Keeper, sdk.Context) {
 	tb.Helper()
 	storeKey := sdk.NewKVStoreKey(types.StoreKey)
 	memStoreKey := storetypes.NewMemoryStoreKey(types.MemStoreKey)
@@ -33,6 +33,7 @@ func ModelKeeper(tb testing.TB, dclauthKeeper types.DclauthKeeper) (*keeper.Keep
 		storeKey,
 		memStoreKey,
 		dclauthKeeper,
+		complianceKeeper,
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())

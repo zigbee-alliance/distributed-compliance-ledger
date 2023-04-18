@@ -7,6 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
+
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

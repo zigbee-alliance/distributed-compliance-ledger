@@ -118,7 +118,7 @@ func (k Keeper) IsApprovedCertificatePresent(
 func (k Keeper) verifyCertificate(ctx sdk.Context,
 	x509Certificate *x509.Certificate,
 ) (string, string, error) {
-	// nolint:nestif
+	//nolint:nestif
 	if x509Certificate.IsSelfSigned() {
 		// in this system a certificate is self-signed if and only if it is a root certificate
 		if err := x509Certificate.Verify(x509Certificate); err == nil {

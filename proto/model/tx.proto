@@ -17,6 +17,7 @@ service Msg {
   rpc DeleteModel(MsgDeleteModel) returns (MsgDeleteModelResponse);
   rpc CreateModelVersion(MsgCreateModelVersion) returns (MsgCreateModelVersionResponse);
   rpc UpdateModelVersion(MsgUpdateModelVersion) returns (MsgUpdateModelVersionResponse);
+  rpc DeleteModelVersion(MsgDeleteModelVersion) returns (MsgDeleteModelVersionResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -101,5 +102,15 @@ message MsgUpdateModelVersion {
   string releaseNotesUrl = 9 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
 }
 message MsgUpdateModelVersionResponse {}
+
+message MsgDeleteModelVersion {
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  int32 vid = 2 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
+  int32 pid = 3 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
+  uint32 softwareVersion = 4;
+}
+
+message MsgDeleteModelVersionResponse {
+}
 
 // this line is used by starport scaffolding # proto/tx/message
