@@ -38,7 +38,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 
 	// check if softwareVersionString matches with what is stored for the given version
 	if modelVersion.SoftwareVersionString != msg.SoftwareVersionString {
-		return nil, types.NewErrModelVersionStringDoesNotMatch(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.SoftwareVersionString)
+		return nil, types.NewErrModelVersionSoftwareVersionStringDoesNotMatch(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.SoftwareVersionString)
 	}
 
 	if modelVersion.CdVersionNumber != int32(msg.CDVersionNumber) {

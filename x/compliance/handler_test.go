@@ -480,7 +480,7 @@ func TestHandler_UpdateComplianceInfoCDCertificateIdChanged(t *testing.T) {
 
 	updatedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, types.ZigbeeCertificationType)
 
-	require.Equal(t, updatedComplianceInfo.CDCertificateId, updatedComplianceInfo.CDCertificateId)
+	require.Equal(t, updatedComplianceInfo.CDCertificateId, originalComplianceInfo.CDCertificateId)
 
 	require.Equal(t, updatedComplianceInfo.CDVersionNumber, originalComplianceInfo.CDVersionNumber)
 	require.Equal(t, updatedComplianceInfo.Date, originalComplianceInfo.Date)

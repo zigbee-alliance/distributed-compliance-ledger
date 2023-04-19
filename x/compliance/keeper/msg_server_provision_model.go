@@ -49,6 +49,10 @@ func (k msgServer) ProvisionModel(goCtx context.Context, msg *types.MsgProvision
 		return nil, modeltypes.NewErrModelVersionDoesNotExist(msg.Vid, msg.Pid, msg.SoftwareVersion)
 	}
 
+	if modelVersion.SoftwareVersionString != msg.SoftwareVersionString {
+		return nil, types.NewErrModelVersionSoftwareVersionStringDoesNotMatch(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.SoftwareVersionString)
+	}
+
 	if modelVersion.CdVersionNumber != int32(msg.CDVersionNumber) {
 		return nil, types.NewErrModelVersionCDVersionNumberDoesNotMatch(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CDVersionNumber)
 	}
