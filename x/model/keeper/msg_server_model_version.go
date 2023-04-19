@@ -104,29 +104,17 @@ func (k msgServer) UpdateModelVersion(goCtx context.Context, msg *types.MsgUpdat
 		return nil, types.NewErrMaxSVLessThanMinSV(modelVersion.MinApplicableSoftwareVersion, msg.MaxApplicableSoftwareVersion)
 	}
 
-	if msg.OtaUrl != "" && modelVersion.OtaUrl != "" && msg.OtaUrl != modelVersion.OtaUrl {
-		return nil, types.NewErrOtaURLCannotBeSet(modelVersion.Vid, modelVersion.Pid, modelVersion.SoftwareVersion)
-	}
-
-	if msg.OtaFileSize != 0 && modelVersion.OtaFileSize != 0 && msg.OtaFileSize != modelVersion.OtaFileSize {
-		return nil, types.NewErrOtaFileSizeCannotBeSet(modelVersion.Vid, modelVersion.Pid, modelVersion.SoftwareVersion)
-	}
-
-	if msg.OtaChecksum != "" && modelVersion.OtaChecksum != "" && msg.OtaChecksum != modelVersion.OtaChecksum {
-		return nil, types.NewErrOtaChecksumCannotBeSet(modelVersion.Vid, modelVersion.Pid, modelVersion.SoftwareVersion)
-	}
-
 	// update existing model version value only if corresponding value in MsgUpdate is not empty
 
-	if msg.OtaUrl != "" && modelVersion.OtaUrl == "" {
+	if msg.OtaUrl != "" {
 		modelVersion.OtaUrl = msg.OtaUrl
 	}
 
-	if msg.OtaFileSize != 0 && modelVersion.OtaFileSize == 0 {
+	if msg.OtaFileSize != 0 {
 		modelVersion.OtaFileSize = msg.OtaFileSize
 	}
 
-	if msg.OtaChecksum != "" && modelVersion.OtaChecksum == "" {
+	if msg.OtaChecksum != "" {
 		modelVersion.OtaChecksum = msg.OtaChecksum
 	}
 
