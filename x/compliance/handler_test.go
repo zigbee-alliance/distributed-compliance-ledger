@@ -352,12 +352,12 @@ func TestHandler_UpdateComplianceInfoByCertificationCenter(t *testing.T) {
 
 	// certify model
 	certifyModelMsg := NewMsgCertifyModel(
-		vid, pid, softwareVersion, softwareVersionString, types.ZigbeeCertificationType, setup.CertificationCenter)
+		vid, pid, softwareVersion, softwareVersionString, dclcompltypes.ZigbeeCertificationType, setup.CertificationCenter)
 	_, err := setup.Handler(setup.Ctx, certifyModelMsg)
 	require.NoError(t, err)
 
 	// query certified model
-	receivedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, types.ZigbeeCertificationType)
+	receivedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, dclcompltypes.ZigbeeCertificationType)
 	checkCertifiedModelInfo(t, certifyModelMsg, receivedComplianceInfo)
 
 	const (
@@ -365,13 +365,13 @@ func TestHandler_UpdateComplianceInfoByCertificationCenter(t *testing.T) {
 		softwareVersionCertificationStatus = 3
 	)
 
-	originalComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, types.ZigbeeCertificationType)
+	originalComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, dclcompltypes.ZigbeeCertificationType)
 
-	updateComplianceInfoMsg := NewMsgUpdateComplianceInfo(setup.CertificationCenter, vid, pid, softwareVersion, softwareVersionString, types.ZigbeeCertificationType, softwareVersionCertificationStatus, "", parentChild)
+	updateComplianceInfoMsg := NewMsgUpdateComplianceInfo(setup.CertificationCenter, vid, pid, softwareVersion, softwareVersionString, dclcompltypes.ZigbeeCertificationType, softwareVersionCertificationStatus, "", parentChild)
 	_, err = setup.Handler(setup.Ctx, updateComplianceInfoMsg)
 	require.NoError(t, err)
 
-	updatedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, types.ZigbeeCertificationType)
+	updatedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, dclcompltypes.ZigbeeCertificationType)
 
 	require.Equal(t, updatedComplianceInfo.ParentChild, updateComplianceInfoMsg.ParentChild)
 	require.Equal(t, updatedComplianceInfo.Date, updateComplianceInfoMsg.Date)
@@ -389,12 +389,12 @@ func TestHandler_UpdateComplianceInfoByCertificationCenterAllOptionalFields(t *t
 
 	// certify model
 	certifyModelMsg := NewMsgCertifyModel(
-		vid, pid, softwareVersion, softwareVersionString, types.ZigbeeCertificationType, setup.CertificationCenter)
+		vid, pid, softwareVersion, softwareVersionString, dclcompltypes.ZigbeeCertificationType, setup.CertificationCenter)
 	_, err := setup.Handler(setup.Ctx, certifyModelMsg)
 	require.NoError(t, err)
 
 	// query certified model
-	receivedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, types.ZigbeeCertificationType)
+	receivedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, dclcompltypes.ZigbeeCertificationType)
 	checkCertifiedModelInfo(t, certifyModelMsg, receivedComplianceInfo)
 
 	parentChild := "parent"
@@ -404,7 +404,7 @@ func TestHandler_UpdateComplianceInfoByCertificationCenterAllOptionalFields(t *t
 		Vid:                                vid,
 		Pid:                                pid,
 		SoftwareVersion:                    softwareVersion,
-		CertificationType:                  types.ZigbeeCertificationType,
+		CertificationType:                  dclcompltypes.ZigbeeCertificationType,
 		CDVersionNumber:                    "312",
 		Date:                               testconstants.ProvisionalDate,
 		Reason:                             testconstants.Reason,
@@ -425,7 +425,7 @@ func TestHandler_UpdateComplianceInfoByCertificationCenterAllOptionalFields(t *t
 	_, err = setup.Handler(setup.Ctx, updateComplianceInfoMsg)
 	require.NoError(t, err)
 
-	updatedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, types.ZigbeeCertificationType)
+	updatedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, dclcompltypes.ZigbeeCertificationType)
 
 	cDVersionNumber, _ := strconv.ParseUint(updateComplianceInfoMsg.CDVersionNumber, 10, 32)
 
@@ -455,15 +455,15 @@ func TestHandler_UpdateComplianceInfoCDCertificateIdChanged(t *testing.T) {
 
 	// certify model
 	certifyModelMsg := NewMsgCertifyModel(
-		vid, pid, softwareVersion, softwareVersionString, types.ZigbeeCertificationType, setup.CertificationCenter)
+		vid, pid, softwareVersion, softwareVersionString, dclcompltypes.ZigbeeCertificationType, setup.CertificationCenter)
 	_, err := setup.Handler(setup.Ctx, certifyModelMsg)
 	require.NoError(t, err)
 
 	// query certified model
-	receivedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, types.ZigbeeCertificationType)
+	receivedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, dclcompltypes.ZigbeeCertificationType)
 	checkCertifiedModelInfo(t, certifyModelMsg, receivedComplianceInfo)
 
-	originalComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, types.ZigbeeCertificationType)
+	originalComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, dclcompltypes.ZigbeeCertificationType)
 	originalDeviceSoftwareCompliance, _ := queryDeviceSoftwareCompliance(setup, receivedComplianceInfo.CDCertificateId)
 
 	updateComplianceInfoMsg := &types.MsgUpdateComplianceInfo{
@@ -471,14 +471,14 @@ func TestHandler_UpdateComplianceInfoCDCertificateIdChanged(t *testing.T) {
 		Vid:               vid,
 		Pid:               pid,
 		SoftwareVersion:   softwareVersion,
-		CertificationType: types.ZigbeeCertificationType,
+		CertificationType: dclcompltypes.ZigbeeCertificationType,
 		CDCertificateId:   "new_cd_certificate_id",
 	}
 
 	_, err = setup.Handler(setup.Ctx, updateComplianceInfoMsg)
 	require.NoError(t, err)
 
-	updatedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, types.ZigbeeCertificationType)
+	updatedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, dclcompltypes.ZigbeeCertificationType)
 
 	require.Equal(t, updatedComplianceInfo.CDCertificateId, originalComplianceInfo.CDCertificateId)
 
@@ -516,28 +516,28 @@ func TestHandler_UpdateComplianceInfoByCertificationCenterNoOptionalFields(t *te
 
 	// certify model
 	certifyModelMsg := NewMsgCertifyModel(
-		vid, pid, softwareVersion, softwareVersionString, types.ZigbeeCertificationType, setup.CertificationCenter)
+		vid, pid, softwareVersion, softwareVersionString, dclcompltypes.ZigbeeCertificationType, setup.CertificationCenter)
 	_, err := setup.Handler(setup.Ctx, certifyModelMsg)
 	require.NoError(t, err)
 
 	// query certified model
-	receivedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, types.ZigbeeCertificationType)
+	receivedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, dclcompltypes.ZigbeeCertificationType)
 	checkCertifiedModelInfo(t, certifyModelMsg, receivedComplianceInfo)
 
-	originalComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, types.ZigbeeCertificationType)
+	originalComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, dclcompltypes.ZigbeeCertificationType)
 
 	updateComplianceInfoMsg := &types.MsgUpdateComplianceInfo{
 		Creator:           setup.CertificationCenter.String(),
 		Vid:               vid,
 		Pid:               pid,
 		SoftwareVersion:   softwareVersion,
-		CertificationType: types.ZigbeeCertificationType,
+		CertificationType: dclcompltypes.ZigbeeCertificationType,
 	}
 
 	_, err = setup.Handler(setup.Ctx, updateComplianceInfoMsg)
 	require.NoError(t, err)
 
-	updatedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, types.ZigbeeCertificationType)
+	updatedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, dclcompltypes.ZigbeeCertificationType)
 
 	require.Equal(t, updatedComplianceInfo.CDVersionNumber, originalComplianceInfo.CDVersionNumber)
 	require.Equal(t, updatedComplianceInfo.Date, originalComplianceInfo.Date)
@@ -565,12 +565,12 @@ func TestHandler_UpdateComplianceInfoNotByCertificationCenter(t *testing.T) {
 
 	// certify model
 	certifyModelMsg := NewMsgCertifyModel(
-		vid, pid, softwareVersion, softwareVersionString, types.ZigbeeCertificationType, setup.CertificationCenter)
+		vid, pid, softwareVersion, softwareVersionString, dclcompltypes.ZigbeeCertificationType, setup.CertificationCenter)
 	_, err := setup.Handler(setup.Ctx, certifyModelMsg)
 	require.NoError(t, err)
 
 	// query certified model
-	receivedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, types.ZigbeeCertificationType)
+	receivedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, dclcompltypes.ZigbeeCertificationType)
 	checkCertifiedModelInfo(t, certifyModelMsg, receivedComplianceInfo)
 
 	const (
@@ -582,13 +582,13 @@ func TestHandler_UpdateComplianceInfoNotByCertificationCenter(t *testing.T) {
 
 	setup.DclauthKeeper.On("HasRole", mock.Anything, accAddress, dclauthtypes.CertificationCenter).Return(false)
 
-	originalComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, types.ZigbeeCertificationType)
+	originalComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, dclcompltypes.ZigbeeCertificationType)
 
-	updateComplianceInfoMsg := NewMsgUpdateComplianceInfo(accAddress, vid, pid, softwareVersion, softwareVersionString, types.ZigbeeCertificationType, softwareVersionCertificationStatus, "", parentChild)
+	updateComplianceInfoMsg := NewMsgUpdateComplianceInfo(accAddress, vid, pid, softwareVersion, softwareVersionString, dclcompltypes.ZigbeeCertificationType, softwareVersionCertificationStatus, "", parentChild)
 	_, err = setup.Handler(setup.Ctx, updateComplianceInfoMsg)
 	require.Error(t, err)
 
-	updatedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, types.ZigbeeCertificationType)
+	updatedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, dclcompltypes.ZigbeeCertificationType)
 
 	require.Equal(t, updatedComplianceInfo.ParentChild, originalComplianceInfo.ParentChild)
 	require.Equal(t, updatedComplianceInfo.SoftwareVersionCertificationStatus, originalComplianceInfo.SoftwareVersionCertificationStatus)

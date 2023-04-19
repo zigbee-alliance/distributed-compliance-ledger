@@ -704,14 +704,14 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	deviceSoftwareCompliances, _ = GetAllDeviceSoftwareCompliance(suite)
 	require.Equal(suite.T, len(inputAllDeviceSoftwareCompliance), len(deviceSoftwareCompliances))
 
-	oldComplianceInfo, _ := GetComplianceInfo(suite, vid, pid, sv, compliancetypes.ZigbeeCertificationType)
+	oldComplianceInfo, _ := GetComplianceInfo(suite, vid, pid, sv, dclcompltypes.ZigbeeCertificationType)
 
 	updateComplianceInfoMsg := compliancetypes.MsgUpdateComplianceInfo{
 		Creator:           certCenterAccount.Address,
 		Vid:               vid,
 		Pid:               pid,
 		SoftwareVersion:   sv,
-		CertificationType: compliancetypes.ZigbeeCertificationType,
+		CertificationType: dclcompltypes.ZigbeeCertificationType,
 		ProgramType:       "new program type",
 		Reason:            "new reason",
 		ParentChild:       "child",
@@ -719,7 +719,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&updateComplianceInfoMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)
 
-	updatedComplianceInfo, _ := GetComplianceInfo(suite, vid, pid, sv, compliancetypes.ZigbeeCertificationType)
+	updatedComplianceInfo, _ := GetComplianceInfo(suite, vid, pid, sv, dclcompltypes.ZigbeeCertificationType)
 
 	// updated fields
 	require.Equal(suite.T, updatedComplianceInfo.ProgramType, updateComplianceInfoMsg.ProgramType)

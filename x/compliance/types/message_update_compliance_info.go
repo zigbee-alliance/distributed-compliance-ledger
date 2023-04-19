@@ -6,6 +6,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
 
@@ -93,12 +94,12 @@ func (msg *MsgUpdateComplianceInfo) ValidateBasic() error {
 		return sdkerrors.Wrap(validator.ErrFieldUpperBoundViolated, "CDVersionNumber must not be greater than 65535: field upper bound violatedError")
 	}
 
-	if !IsValidCertificationType(msg.CertificationType) {
-		return NewErrInvalidCertificationType(msg.CertificationType, CertificationTypesList)
+	if !dclcompltypes.IsValidCertificationType(msg.CertificationType) {
+		return NewErrInvalidCertificationType(msg.CertificationType, dclcompltypes.CertificationTypesList)
 	}
 
-	if !IsValidPFCCertificationRoute(msg.ParentChild) {
-		return NewErrInvalidPFCCertificationRoute(msg.ParentChild, PFCCertificationRouteList)
+	if !dclcompltypes.IsValidPFCCertificationRoute(msg.ParentChild) {
+		return NewErrInvalidPFCCertificationRoute(msg.ParentChild, dclcompltypes.PFCCertificationRouteList)
 	}
 
 	return nil
