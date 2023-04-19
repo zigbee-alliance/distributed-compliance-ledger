@@ -76,7 +76,7 @@ echo "$result"
 
 echo "Delete Model with VID: ${vid} PID: ${pid}"
 result=$(dcld tx model delete-model --vid=$vid --pid=$pid --from=$vendor_account --yes)
-check_response "$result" "\"code\": 527" # code for model certified error
+check_response "$result" "\"code\": 525" # code for model certified error
 
 
 # CLI side errors

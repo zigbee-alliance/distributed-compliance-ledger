@@ -324,24 +324,6 @@ check_response_and_report "$result" "\"releaseNotesUrl\": \"https://release.url.
 
 test_divider
 
-# OTA fields cannot be set after being updated
-echo "OTAUrl cannot be set after being updated for VID: $vid_1 PID: $pid_1 SV: $sv_1"
-result=$(echo "test1234" | dcld tx model update-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 \
---otaURL="https://ota.urlnew.com" --from=$vendor_account_1 --yes)
-response_does_not_contain "$result" "\"code\": 0"
-
-echo "otaFileSize cannot be set after being updated for VID: $vid_1 PID: $pid_1 SV: $sv_1"
-result=$(echo "test1234" | dcld tx model update-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 \
---otaFileSize=12345 --from=$vendor_account_1 --yes)
-response_does_not_contain "$result" "\"code\": 0"
-
-echo "otaChecksum cannot be set after being updated for VID: $vid_1 PID: $pid_1 SV: $sv_1"
-result=$(echo "test1234" | dcld tx model update-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 \
---otaChecksum="1231231234555555555" --from=$vendor_account_1 --yes)
-response_does_not_contain "$result" "\"code\": 0"
-
-test_divider
-
 sv_1=$RANDOM
 echo "Create a Device Model Version with all fields for VID: $vid_1 PID: $pid_1 SV: $sv_1"
 result=$(echo 'test1234' | dcld tx model add-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 \
@@ -434,8 +416,8 @@ test_divider
 
 echo "Update Device Model Version with all mutable fields for VID: $vid_1 PID: $pid_1 SV: $sv_1"
 result=$(echo 'test1234' | dcld tx model update-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 \
---softwareVersionValid=true --releaseNotesURL="https://updated.release.notes.url.info" \
---maxApplicableSoftwareVersion=25 --minApplicableSoftwareVersion=15   --from=$vendor_account_1 --yes)
+--softwareVersionValid=true --otaURL="https://updated.ota.url.info" --releaseNotesURL="https://updated.release.notes.url.info" \
+--maxApplicableSoftwareVersion=25 --minApplicableSoftwareVersion=15 --from=$vendor_account_1 --yes)
 echo "$result"
 check_response_and_report "$result" "\"code\": 0"
 
@@ -452,7 +434,7 @@ check_response_and_report "$result" "\"softwareVersionString\": \"1.0\""
 check_response_and_report "$result" "\"cdVersionNumber\": 21334"
 check_response_and_report "$result" "\"firmwareInformation\": \"123456789012345678901234567890123456789012345678901234567890123\""
 check_response_and_report "$result" "\"softwareVersionValid\": true"
-check_response_and_report "$result" "\"otaUrl\": \"https://ota.url.info\""
+check_response_and_report "$result" "\"otaUrl\": \"https://updated.ota.url.info\""
 check_response_and_report "$result" "\"otaFileSize\": \"123456789\""
 check_response_and_report "$result" "\"otaChecksum\": \"123456789012345678901234567890123456789012345678901234567890123\""
 check_response_and_report "$result" "\"otaChecksumType\": 1"
