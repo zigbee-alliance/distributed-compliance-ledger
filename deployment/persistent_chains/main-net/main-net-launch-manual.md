@@ -222,7 +222,7 @@ The following steps are expected to be done **before** the ceremony.
 
 10. **Run Sentry Node (skip this step if you are not running a sentry node)**
 
-    10.1. Download geneåsis
+    10.1. Download genesis
 
     ```bash
     curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/persistent_chains/main-net/genesis.json
@@ -252,7 +252,7 @@ The following steps are expected to be done **before** the ceremony.
 
 12. **Run Validator Node**
 
-    12.1. Wait until your NodeAdmin account has been apporoved by CSA
+    12.1. Wait until your NodeAdmin account has been approved by CSA
 
     12.2. Download genesis
 
