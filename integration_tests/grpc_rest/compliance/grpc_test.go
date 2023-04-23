@@ -43,3 +43,8 @@ func TestComplianceDemoTrackProvisionGRPC(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, false)
 	compliance.DemoTrackProvision(&suite)
 }
+
+func TestCDCertificateIDUpdateChangesOnlyOneComplianceInfoGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	compliance.CDCertificateIDUpdateChangesOnlyOneComplianceInfo(&suite)
+}

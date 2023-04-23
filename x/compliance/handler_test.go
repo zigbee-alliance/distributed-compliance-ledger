@@ -3,7 +3,6 @@ package compliance
 import (
 	"context"
 	"fmt"
-	"strconv"
 	"testing"
 	"time"
 
@@ -405,7 +404,7 @@ func TestHandler_UpdateComplianceInfoByCertificationCenterAllOptionalFields(t *t
 		Pid:                                pid,
 		SoftwareVersion:                    softwareVersion,
 		CertificationType:                  dclcompltypes.ZigbeeCertificationType,
-		CDVersionNumber:                    "312",
+		CDVersionNumber:                    312,
 		Date:                               testconstants.ProvisionalDate,
 		Reason:                             testconstants.Reason,
 		CDCertificateId:                    testconstants.CDCertificateID,
@@ -427,9 +426,7 @@ func TestHandler_UpdateComplianceInfoByCertificationCenterAllOptionalFields(t *t
 
 	updatedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, dclcompltypes.ZigbeeCertificationType)
 
-	cDVersionNumber, _ := strconv.ParseUint(updateComplianceInfoMsg.CDVersionNumber, 10, 32)
-
-	require.Equal(t, updatedComplianceInfo.CDVersionNumber, uint32(cDVersionNumber))
+	require.Equal(t, updatedComplianceInfo.CDVersionNumber, updateComplianceInfoMsg.CDVersionNumber)
 	require.Equal(t, updatedComplianceInfo.Date, updateComplianceInfoMsg.Date)
 	require.Equal(t, updatedComplianceInfo.Reason, updateComplianceInfoMsg.Reason)
 	require.Equal(t, updatedComplianceInfo.CDCertificateId, updateComplianceInfoMsg.CDCertificateId)
@@ -480,7 +477,7 @@ func TestHandler_UpdateComplianceInfoCDCertificateIdChanged(t *testing.T) {
 
 	updatedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, dclcompltypes.ZigbeeCertificationType)
 
-	require.Equal(t, updatedComplianceInfo.CDCertificateId, originalComplianceInfo.CDCertificateId)
+	require.Equal(t, "new_cd_certificate_id", updatedComplianceInfo.CDCertificateId)
 
 	require.Equal(t, updatedComplianceInfo.CDVersionNumber, originalComplianceInfo.CDVersionNumber)
 	require.Equal(t, updatedComplianceInfo.Date, originalComplianceInfo.Date)
@@ -1750,7 +1747,7 @@ func NewMsgUpdateComplianceInfo(
 		Pid:                                pid,
 		SoftwareVersion:                    softwareVersion,
 		CertificationType:                  certificationType,
-		CDVersionNumber:                    "312",
+		CDVersionNumber:                    312,
 		Date:                               testconstants.ProvisionalDate,
 		Reason:                             testconstants.Reason,
 		Owner:                              "",
