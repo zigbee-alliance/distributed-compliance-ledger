@@ -568,6 +568,7 @@ func CDCertificateIDUpdateChangesOnlyOneComplianceInfo(suite *utils.TestSuite) {
 
 	// Certify first model version
 	certReason := "some reason 1"
+	certDate := "2020-01-01T00:00:01Z"
 	certifyModelVersionMsg := compliancetypes.MsgCertifyModel{
 		Vid:                   vid,
 		Pid:                   pid,
@@ -715,6 +716,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 
 	// Certify model
 	certReason := "some reason 1"
+	certDate := "2020-01-01T00:00:01Z"
 	certifyModelMsg := compliancetypes.MsgCertifyModel{
 		Vid:                   vid,
 		Pid:                   pid,
