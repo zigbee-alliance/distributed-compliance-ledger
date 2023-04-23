@@ -71,7 +71,7 @@ certification_date="2020-01-01T00:00:01Z"
 zigbee_certification_type="zigbee"
 matter_certification_type="matter"
 cd_certificate_id="123"
-result=$(echo 'test1234' | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --softwareVersionString=$softwareVersionString --cdCertificateId="$cd_certificate_id" --from $zb_account --yes)
+result=$(echo 'test1234' | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --cdVersionNumber=1 --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --softwareVersionString=$softwareVersionString --cdCertificateId="$cd_certificate_id" --from $zb_account --yes)
 echo "$result"
 
 echo "Delete Model with VID: ${vid} PID: ${pid}"

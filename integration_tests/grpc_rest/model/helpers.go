@@ -148,6 +148,7 @@ func NewMsgCertifyModelVersion(
 		CertificationDate:     testconstants.CertificationDate,
 		CDCertificateId:       testconstants.CDCertificateID,
 		CertificationType:     testconstants.CertificationType,
+		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		SoftwareVersion:       softwareVersion,
 		SoftwareVersionString: softwareVersionString,
 	}
@@ -797,6 +798,7 @@ func DeleteModelVersionCertified(suite *utils.TestSuite) {
 		CertificationType:     "zigbee",
 		Reason:                certReason,
 		CDCertificateId:       testconstants.CDCertificateID,
+		CDVersionNumber:       uint32(createModelVersionMsg.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenterName, certCenterAccount)
