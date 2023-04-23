@@ -568,7 +568,6 @@ func CDCertificateIDUpdateChangesOnlyOneComplianceInfo(suite *utils.TestSuite) {
 
 	// Certify first model version
 	certReason := "some reason 1"
-	certDate := "2020-01-01T00:00:01Z"
 	certifyModelVersionMsg := compliancetypes.MsgCertifyModel{
 		Vid:                   vid,
 		Pid:                   pid,
@@ -601,14 +600,14 @@ func CDCertificateIDUpdateChangesOnlyOneComplianceInfo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Update compliance info of first model version
-	cdCertificateIdNew := testconstants.CDCertificateID + "new"
+	cdCertificateIDNew := testconstants.CDCertificateID + "new"
 	updateComplianceInfoMsg := compliancetypes.MsgUpdateComplianceInfo{
 		Creator:           certCenterAccount.Address,
 		Vid:               vid,
 		Pid:               pid,
 		SoftwareVersion:   svFirst,
 		CertificationType: dclcompltypes.ZigbeeCertificationType,
-		CDCertificateId:   cdCertificateIdNew,
+		CDCertificateId:   cdCertificateIDNew,
 		CDVersionNumber:   uint32(testconstants.CdVersionNumber),
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&updateComplianceInfoMsg}, certCenter, certCenterAccount)
@@ -620,7 +619,7 @@ func CDCertificateIDUpdateChangesOnlyOneComplianceInfo(suite *utils.TestSuite) {
 	secondComplianceInfo, err := GetComplianceInfo(suite, vid, pid, svSecond, dclcompltypes.ZigbeeCertificationType)
 	require.NoError(suite.T, err)
 
-	assert.Equal(suite.T, cdCertificateIdNew, firstComplianceInfo.CDCertificateId)
+	assert.Equal(suite.T, cdCertificateIDNew, firstComplianceInfo.CDCertificateId)
 	assert.Equal(suite.T, testconstants.CDCertificateID, secondComplianceInfo.CDCertificateId)
 }
 
@@ -716,7 +715,6 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 
 	// Certify model
 	certReason := "some reason 1"
-	certDate := "2020-01-01T00:00:01Z"
 	certifyModelMsg := compliancetypes.MsgCertifyModel{
 		Vid:                   vid,
 		Pid:                   pid,
@@ -1564,7 +1562,6 @@ func DemoTrackComplianceWithHexVidAndPid(suite *utils.TestSuite) {
 
 	// Certify model
 	certReason := "some reason 10"
-	certDate := "2020-01-01T00:00:01Z"
 	certifyModelMsg := compliancetypes.MsgCertifyModel{
 		Vid:                   vid,
 		Pid:                   pid,
