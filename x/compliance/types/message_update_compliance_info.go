@@ -1,7 +1,6 @@
 package types
 
 import (
-	"strconv"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -14,7 +13,7 @@ var _ sdk.Msg = &MsgUpdateComplianceInfo{}
 
 const TypeMsgUpdateComplianceInfo = "update_compliance_info"
 
-func NewMsgUpdateComplianceInfo(creator string, vid int32, pid int32, softwareVersion uint32, certificationType string, cDVersionNumber string, date string, reason string, owner string, cDCertificateID string, certificationRoute string, programType string, programTypeVersion string, compliantPlatformUsed string, compliantPlatformVersion string, transport string, familyID string, supportedClusters string, oSVersion string, parentChild string, certificationIDOfSoftwareComponent string) *MsgUpdateComplianceInfo {
+func NewMsgUpdateComplianceInfo(creator string, vid int32, pid int32, softwareVersion uint32, certificationType string, cDVersionNumber uint32, date string, reason string, owner string, cDCertificateID string, certificationRoute string, programType string, programTypeVersion string, compliantPlatformUsed string, compliantPlatformVersion string, transport string, familyID string, supportedClusters string, oSVersion string, parentChild string, certificationIDOfSoftwareComponent string) *MsgUpdateComplianceInfo {
 	return &MsgUpdateComplianceInfo{
 		Creator:                            creator,
 		Vid:                                vid,
@@ -84,13 +83,7 @@ func (msg *MsgUpdateComplianceInfo) ValidateBasic() error {
 		}
 	}
 
-	cdVersionNumber, err := strconv.ParseUint(msg.CDVersionNumber, 10, 32)
-
-	if err != nil {
-		return err
-	}
-
-	if cdVersionNumber > 65535 {
+	if msg.CDVersionNumber > 65535 {
 		return sdkerrors.Wrap(validator.ErrFieldUpperBoundViolated, "CDVersionNumber must not be greater than 65535: field upper bound violatedError")
 	}
 
