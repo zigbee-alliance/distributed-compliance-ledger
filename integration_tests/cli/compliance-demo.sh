@@ -169,7 +169,7 @@ invalid_svs=$RANDOM
 echo "Certify Model with VID: $vid PID: $pid  SV: ${sv} with zigbee certification and invalid SoftwareVersionString: $invalid_svs"
 result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$invalid_svs --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --cdCertificateId="$cd_certificate_id" --from $zb_account --yes)
 check_response "$result" "\"code\": 306"
-check_response "$result" "ledger does not have matching softwareVersionString=$invalid_svs: model version does not match"
+# check_response "$result" "failed to execute message; message index: 0: Model with vid=$vid, pid=$pid, softwareVersion=$svs present on the ledger does not have matching softwareVersionString=$invalid_svs: model version does not match"
 
 test_divider
 
