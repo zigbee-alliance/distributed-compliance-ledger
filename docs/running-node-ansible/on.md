@@ -104,7 +104,7 @@ config:
 
  
 
-### 4. (Optional) If you are joining a long-running network, enable `statesync` or use one of the options in [running-node-in-existing-network.md](../advanced/running-node-in-existing-network.md)
+### 4. If you are joining a long-running network, enable `statesync` or use one of the options in [running-node-in-existing-network.md](../advanced/running-node-in-existing-network.md)
 
 [`deployment/ansible/roles/configure/vars/observer.yml`]
 
