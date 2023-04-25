@@ -13,6 +13,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgCertifyModel{}, "compliance/CertifyModel", nil)
 	cdc.RegisterConcrete(&MsgRevokeModel{}, "compliance/RevokeModel", nil)
 	cdc.RegisterConcrete(&MsgProvisionModel{}, "compliance/ProvisionModel", nil)
+	cdc.RegisterConcrete(&MsgDeleteComplianceInfo{}, "compliance/DeleteComplianceInfo", nil)
 	// this line is used by starport scaffolding # 2
 }
 
@@ -25,6 +26,9 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgProvisionModel{},
+	)
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgDeleteComplianceInfo{},
 	)
 	// this line is used by starport scaffolding # 3
 

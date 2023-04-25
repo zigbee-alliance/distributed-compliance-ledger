@@ -13,6 +13,7 @@ service Msg {
       rpc CertifyModel(MsgCertifyModel) returns (MsgCertifyModelResponse);
   rpc RevokeModel(MsgRevokeModel) returns (MsgRevokeModelResponse);
   rpc ProvisionModel(MsgProvisionModel) returns (MsgProvisionModelResponse);
+  rpc DeleteComplianceInfo(MsgDeleteComplianceInfo) returns (MsgDeleteComplianceInfoResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -83,6 +84,17 @@ message MsgProvisionModel {
 }
 
 message MsgProvisionModelResponse {
+}
+
+message MsgDeleteComplianceInfo {
+  string signer = 1;
+  int32 vid = 2;
+  int32 pid = 3;
+  uint64 softwareVersion = 4;
+  string certificationType = 5;
+}
+
+message MsgDeleteComplianceInfoResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message
