@@ -13,7 +13,7 @@ import (
 func (k msgServer) DeleteComplianceInfo(goCtx context.Context, msg *types.MsgDeleteComplianceInfo) (*types.MsgDeleteComplianceInfoResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	signerAddr, err := sdk.AccAddressFromBech32(msg.Signer)
+	signerAddr, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}

@@ -3,15 +3,16 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
 
 const TypeMsgDeleteComplianceInfo = "delete_compliance_info"
 
 var _ sdk.Msg = &MsgDeleteComplianceInfo{}
 
-func NewMsgDeleteComplianceInfo(signer string, vid int32, pid int32, softwareVersion uint32, certificationType string) *MsgDeleteComplianceInfo {
+func NewMsgDeleteComplianceInfo(creator string, vid int32, pid int32, softwareVersion uint32, certificationType string) *MsgDeleteComplianceInfo {
 	return &MsgDeleteComplianceInfo{
-		Signer:            signer,
+		Creator:           creator,
 		Vid:               vid,
 		Pid:               pid,
 		SoftwareVersion:   softwareVersion,
@@ -28,7 +29,7 @@ func (msg *MsgDeleteComplianceInfo) Type() string {
 }
 
 func (msg *MsgDeleteComplianceInfo) GetSigners() []sdk.AccAddress {
-	signer, err := sdk.AccAddressFromBech32(msg.Signer)
+	signer, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		panic(err)
 	}
@@ -43,9 +44,14 @@ func (msg *MsgDeleteComplianceInfo) GetSignBytes() []byte {
 }
 
 func (msg *MsgDeleteComplianceInfo) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Signer)
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address (%s)", err)
+	}
+
+	err = validator.Validate(msg)
+	if err != nil {
+		return err
 	}
 
 	return nil
