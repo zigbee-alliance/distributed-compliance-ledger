@@ -87,6 +87,15 @@ export interface MsgUpdateModelVersion {
 
 export interface MsgUpdateModelVersionResponse {}
 
+export interface MsgDeleteModelVersion {
+  creator: string
+  vid: number
+  pid: number
+  softwareVersion: number
+}
+
+export interface MsgDeleteModelVersionResponse {}
+
 const baseMsgCreateModel: object = {
   creator: '',
   vid: 0,
@@ -1516,14 +1525,159 @@ export const MsgUpdateModelVersionResponse = {
   }
 }
 
+const baseMsgDeleteModelVersion: object = { creator: '', vid: 0, pid: 0, softwareVersion: 0 }
+
+export const MsgDeleteModelVersion = {
+  encode(message: MsgDeleteModelVersion, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== '') {
+      writer.uint32(10).string(message.creator)
+    }
+    if (message.vid !== 0) {
+      writer.uint32(16).int32(message.vid)
+    }
+    if (message.pid !== 0) {
+      writer.uint32(24).int32(message.pid)
+    }
+    if (message.softwareVersion !== 0) {
+      writer.uint32(32).uint32(message.softwareVersion)
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgDeleteModelVersion {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseMsgDeleteModelVersion } as MsgDeleteModelVersion
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string()
+          break
+        case 2:
+          message.vid = reader.int32()
+          break
+        case 3:
+          message.pid = reader.int32()
+          break
+        case 4:
+          message.softwareVersion = reader.uint32()
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): MsgDeleteModelVersion {
+    const message = { ...baseMsgDeleteModelVersion } as MsgDeleteModelVersion
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator)
+    } else {
+      message.creator = ''
+    }
+    if (object.vid !== undefined && object.vid !== null) {
+      message.vid = Number(object.vid)
+    } else {
+      message.vid = 0
+    }
+    if (object.pid !== undefined && object.pid !== null) {
+      message.pid = Number(object.pid)
+    } else {
+      message.pid = 0
+    }
+    if (object.softwareVersion !== undefined && object.softwareVersion !== null) {
+      message.softwareVersion = Number(object.softwareVersion)
+    } else {
+      message.softwareVersion = 0
+    }
+    return message
+  },
+
+  toJSON(message: MsgDeleteModelVersion): unknown {
+    const obj: any = {}
+    message.creator !== undefined && (obj.creator = message.creator)
+    message.vid !== undefined && (obj.vid = message.vid)
+    message.pid !== undefined && (obj.pid = message.pid)
+    message.softwareVersion !== undefined && (obj.softwareVersion = message.softwareVersion)
+    return obj
+  },
+
+  fromPartial(object: DeepPartial<MsgDeleteModelVersion>): MsgDeleteModelVersion {
+    const message = { ...baseMsgDeleteModelVersion } as MsgDeleteModelVersion
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator
+    } else {
+      message.creator = ''
+    }
+    if (object.vid !== undefined && object.vid !== null) {
+      message.vid = object.vid
+    } else {
+      message.vid = 0
+    }
+    if (object.pid !== undefined && object.pid !== null) {
+      message.pid = object.pid
+    } else {
+      message.pid = 0
+    }
+    if (object.softwareVersion !== undefined && object.softwareVersion !== null) {
+      message.softwareVersion = object.softwareVersion
+    } else {
+      message.softwareVersion = 0
+    }
+    return message
+  }
+}
+
+const baseMsgDeleteModelVersionResponse: object = {}
+
+export const MsgDeleteModelVersionResponse = {
+  encode(_: MsgDeleteModelVersionResponse, writer: Writer = Writer.create()): Writer {
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgDeleteModelVersionResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseMsgDeleteModelVersionResponse } as MsgDeleteModelVersionResponse
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(_: any): MsgDeleteModelVersionResponse {
+    const message = { ...baseMsgDeleteModelVersionResponse } as MsgDeleteModelVersionResponse
+    return message
+  },
+
+  toJSON(_: MsgDeleteModelVersionResponse): unknown {
+    const obj: any = {}
+    return obj
+  },
+
+  fromPartial(_: DeepPartial<MsgDeleteModelVersionResponse>): MsgDeleteModelVersionResponse {
+    const message = { ...baseMsgDeleteModelVersionResponse } as MsgDeleteModelVersionResponse
+    return message
+  }
+}
+
 /** Msg defines the Msg service. */
 export interface Msg {
   CreateModel(request: MsgCreateModel): Promise<MsgCreateModelResponse>
   UpdateModel(request: MsgUpdateModel): Promise<MsgUpdateModelResponse>
   DeleteModel(request: MsgDeleteModel): Promise<MsgDeleteModelResponse>
   CreateModelVersion(request: MsgCreateModelVersion): Promise<MsgCreateModelVersionResponse>
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   UpdateModelVersion(request: MsgUpdateModelVersion): Promise<MsgUpdateModelVersionResponse>
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  DeleteModelVersion(request: MsgDeleteModelVersion): Promise<MsgDeleteModelVersionResponse>
 }
 
 export class MsgClientImpl implements Msg {
@@ -1559,6 +1713,12 @@ export class MsgClientImpl implements Msg {
     const data = MsgUpdateModelVersion.encode(request).finish()
     const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.model.Msg', 'UpdateModelVersion', data)
     return promise.then((data) => MsgUpdateModelVersionResponse.decode(new Reader(data)))
+  }
+
+  DeleteModelVersion(request: MsgDeleteModelVersion): Promise<MsgDeleteModelVersionResponse> {
+    const data = MsgDeleteModelVersion.encode(request).finish()
+    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.model.Msg', 'DeleteModelVersion', data)
+    return promise.then((data) => MsgDeleteModelVersionResponse.decode(new Reader(data)))
   }
 }
 
