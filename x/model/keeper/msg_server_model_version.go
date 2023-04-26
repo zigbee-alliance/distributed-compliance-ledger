@@ -80,7 +80,7 @@ func (k msgServer) UpdateModelVersion(goCtx context.Context, msg *types.MsgUpdat
 	if err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
-	if err := checkModelRights(ctx, k.Keeper, signerAddr, msg.Vid, "MsgDeleteModelVersion"); err != nil {
+	if err := checkModelRights(ctx, k.Keeper, signerAddr, msg.Vid, "MsgUpdateModelVersion"); err != nil {
 		return nil, err
 	}
 
@@ -95,12 +95,6 @@ func (k msgServer) UpdateModelVersion(goCtx context.Context, msg *types.MsgUpdat
 		return nil, types.NewErrModelVersionDoesNotExist(msg.Vid, msg.Pid, msg.SoftwareVersion)
 	}
 
-	// Only OtaURL is modifiable field per specs. This can only be modified if this was set initially
-	// as otaFileSize, otaChecksum and otaChecksumType are non mutable fields
-	if msg.OtaUrl != "" && modelVersion.OtaUrl == "" {
-		return nil, types.NewErrOtaURLCannotBeSet(msg.Vid, msg.Pid, msg.SoftwareVersion)
-	}
-
 	if msg.MinApplicableSoftwareVersion != 0 && msg.MaxApplicableSoftwareVersion == 0 && msg.MinApplicableSoftwareVersion > modelVersion.MaxApplicableSoftwareVersion {
 		return nil, types.NewErrMaxSVLessThanMinSV(msg.MinApplicableSoftwareVersion, modelVersion.MaxApplicableSoftwareVersion)
 	}
@@ -112,12 +106,20 @@ func (k msgServer) UpdateModelVersion(goCtx context.Context, msg *types.MsgUpdat
 
 	// update existing model version value only if corresponding value in MsgUpdate is not empty
 
-	// SoftwareVersionValid flag is updated in any case. So pass the existing value to keep it unchanged.
-	modelVersion.SoftwareVersionValid = msg.SoftwareVersionValid
-
 	if msg.OtaUrl != "" {
 		modelVersion.OtaUrl = msg.OtaUrl
 	}
+
+	if msg.OtaFileSize != 0 {
+		modelVersion.OtaFileSize = msg.OtaFileSize
+	}
+
+	if msg.OtaChecksum != "" {
+		modelVersion.OtaChecksum = msg.OtaChecksum
+	}
+
+	// SoftwareVersionValid flag is updated in any case. So pass the existing value to keep it unchanged.
+	modelVersion.SoftwareVersionValid = msg.SoftwareVersionValid
 
 	if msg.MinApplicableSoftwareVersion != 0 {
 		modelVersion.MinApplicableSoftwareVersion = msg.MinApplicableSoftwareVersion
