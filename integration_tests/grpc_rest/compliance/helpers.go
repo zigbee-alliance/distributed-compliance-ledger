@@ -580,7 +580,7 @@ func DeleteComplianceInfoForAllCertStatuses(suite *utils.TestSuite) {
 		Pid:               pid,
 		SoftwareVersion:   sv,
 		CertificationType: testconstants.CertificationType,
-		Signer:            certCenterAccount.Address,
+		Creator:           certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&deleteComplInfoMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)
@@ -617,7 +617,7 @@ func DeleteComplianceInfoForAllCertStatuses(suite *utils.TestSuite) {
 		Pid:               pid,
 		SoftwareVersion:   sv,
 		CertificationType: testconstants.CertificationType,
-		Signer:            certCenterAccount.Address,
+		Creator:           certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&deleteComplInfoMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)
@@ -654,7 +654,7 @@ func DeleteComplianceInfoForAllCertStatuses(suite *utils.TestSuite) {
 		Pid:               pid,
 		SoftwareVersion:   sv,
 		CertificationType: testconstants.CertificationType,
-		Signer:            certCenterAccount.Address,
+		Creator:           certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&deleteComplInfoMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)
