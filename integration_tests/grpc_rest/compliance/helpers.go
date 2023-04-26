@@ -757,7 +757,6 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 
 	// Certify model
 	certReason := "some reason 1"
-	//nolint:goconst
 	certDate := "2020-01-01T00:00:01Z"
 	certifyModelMsg := compliancetypes.MsgCertifyModel{
 		Vid:                   vid,
@@ -1569,7 +1568,6 @@ func DemoTrackComplianceWithHexVidAndPid(suite *utils.TestSuite) {
 
 	// Certify model
 	certReason := "some reason 10"
-	//nolint:goconst
 	certDate := "2020-01-01T00:00:01Z"
 	certifyModelMsg := compliancetypes.MsgCertifyModel{
 		Vid:                   vid,
