@@ -25,6 +25,7 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdCertifyModel())
 	cmd.AddCommand(CmdRevokeModel())
 	cmd.AddCommand(CmdProvisionModel())
+	cmd.AddCommand(CmdDeleteComplianceInfo())
 	// this line is used by starport scaffolding # 1
 
 	return cmd

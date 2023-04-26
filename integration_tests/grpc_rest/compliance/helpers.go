@@ -500,6 +500,171 @@ const certDate = "2021-10-01T00:00:01Z"
 
 const provDate = "2021-03-01T00:00:01Z"
 
+func DeleteComplianceInfoForAllCertStatuses(suite *utils.TestSuite) {
+	// Alice and Jack are predefined Trustees
+	aliceName := testconstants.AliceAccount
+	aliceKeyInfo, err := suite.Kr.Key(aliceName)
+	require.NoError(suite.T, err)
+	aliceAccount, err := test_dclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	jackName := testconstants.JackAccount
+	jackKeyInfo, err := suite.Kr.Key(jackName)
+	require.NoError(suite.T, err)
+	jackAccount, err := test_dclauth.GetAccount(suite, jackKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	// Register new Vendor account
+	vid := int32(tmrand.Uint16())
+	vendorName := utils.RandString()
+	vendorAccount := test_dclauth.CreateVendorAccount(
+		suite,
+		vendorName,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		vid,
+		aliceName,
+		aliceAccount,
+		jackName,
+		jackAccount,
+		testconstants.Info,
+	)
+	require.NotNil(suite.T, vendorAccount)
+
+	// Register new CertificationCenter account
+	certCenter := utils.RandString()
+	certCenterAccount := test_dclauth.CreateAccount(
+		suite,
+		certCenter,
+		dclauthtypes.AccountRoles{dclauthtypes.CertificationCenter},
+		1,
+		aliceName,
+		aliceAccount,
+		jackName,
+		jackAccount,
+		testconstants.Info,
+	)
+	require.NotNil(suite.T, certCenterAccount)
+
+	// Publish model info
+	pid := int32(tmrand.Uint16())
+	firstModel := test_model.NewMsgCreateModel(vid, pid, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModel}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	// Publish modelVersion
+	sv := tmrand.Uint32()
+	svs := utils.RandString()
+	firstModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModelVersion}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	// Certify model
+	certReason := "some reason 1"
+	//nolint:goconst
+	certDate := "2020-01-01T00:00:01Z"
+	certifyModelMsg := compliancetypes.MsgCertifyModel{
+		Vid:                   vid,
+		Pid:                   pid,
+		SoftwareVersion:       sv,
+		SoftwareVersionString: svs,
+		CertificationDate:     certDate,
+		CertificationType:     testconstants.CertificationType,
+		Reason:                certReason,
+		CDCertificateId:       testconstants.CDCertificateID,
+		Signer:                certCenterAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
+	require.NoError(suite.T, err)
+
+	deleteComplInfoMsg := compliancetypes.MsgDeleteComplianceInfo{
+		Vid:               vid,
+		Pid:               pid,
+		SoftwareVersion:   sv,
+		CertificationType: testconstants.CertificationType,
+		Creator:           certCenterAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&deleteComplInfoMsg}, certCenter, certCenterAccount)
+	require.NoError(suite.T, err)
+
+	// check
+	_, err = GetCertifiedModel(suite, testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.CertificationType)
+	suite.AssertNotFound(err)
+
+	// Publish modelVersion
+	sv = tmrand.Uint32()
+	svs = utils.RandString()
+	secondModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{secondModelVersion}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	// Provision model
+	provReason := "some reason 6"
+	provModelMsg := compliancetypes.MsgProvisionModel{
+		Vid:                   vid,
+		Pid:                   pid,
+		SoftwareVersion:       sv,
+		SoftwareVersionString: svs,
+		ProvisionalDate:       provDate,
+		CertificationType:     testconstants.CertificationType,
+		Reason:                provReason,
+		CDCertificateId:       testconstants.CDCertificateID,
+		Signer:                certCenterAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&provModelMsg}, certCenter, certCenterAccount)
+	require.NoError(suite.T, err)
+
+	deleteComplInfoMsg = compliancetypes.MsgDeleteComplianceInfo{
+		Vid:               vid,
+		Pid:               pid,
+		SoftwareVersion:   sv,
+		CertificationType: testconstants.CertificationType,
+		Creator:           certCenterAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&deleteComplInfoMsg}, certCenter, certCenterAccount)
+	require.NoError(suite.T, err)
+
+	// check
+	_, err = GetProvisionalModel(suite, testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.CertificationType)
+	suite.AssertNotFound(err)
+
+	// Publish modelVersion
+	sv = tmrand.Uint32()
+	svs = utils.RandString()
+	thirdModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{thirdModelVersion}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	// Revoke model
+	revocReason := "some reason 2"
+	revocDate := "2020-02-01T00:00:01Z"
+	revocModelMsg := compliancetypes.MsgRevokeModel{
+		Vid:                   vid,
+		Pid:                   pid,
+		SoftwareVersion:       sv,
+		SoftwareVersionString: svs,
+		RevocationDate:        revocDate,
+		CertificationType:     testconstants.CertificationType,
+		Reason:                revocReason,
+		Signer:                certCenterAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&revocModelMsg}, certCenter, certCenterAccount)
+	require.NoError(suite.T, err)
+
+	deleteComplInfoMsg = compliancetypes.MsgDeleteComplianceInfo{
+		Vid:               vid,
+		Pid:               pid,
+		SoftwareVersion:   sv,
+		CertificationType: testconstants.CertificationType,
+		Creator:           certCenterAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&deleteComplInfoMsg}, certCenter, certCenterAccount)
+	require.NoError(suite.T, err)
+
+	// check
+	_, err = GetRevokedModel(suite, testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.CertificationType)
+	suite.AssertNotFound(err)
+}
+
 func DemoTrackCompliance(suite *utils.TestSuite) {
 	// Query for unknown
 	_, err := GetComplianceInfo(suite, testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.CertificationType)
