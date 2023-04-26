@@ -51,6 +51,7 @@ export interface ComplianceDeviceSoftwareCompliance {
     complianceInfo?: ComplianceComplianceInfo[];
 }
 export declare type ComplianceMsgCertifyModelResponse = object;
+export declare type ComplianceMsgDeleteComplianceInfoResponse = object;
 export declare type ComplianceMsgProvisionModelResponse = object;
 export declare type ComplianceMsgRevokeModelResponse = object;
 export interface ComplianceProvisionalModel {

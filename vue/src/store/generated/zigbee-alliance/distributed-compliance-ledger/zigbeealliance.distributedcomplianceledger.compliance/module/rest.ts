@@ -74,6 +74,8 @@ export interface ComplianceDeviceSoftwareCompliance {
 
 export type ComplianceMsgCertifyModelResponse = object;
 
+export type ComplianceMsgDeleteComplianceInfoResponse = object;
+
 export type ComplianceMsgProvisionModelResponse = object;
 
 export type ComplianceMsgRevokeModelResponse = object;

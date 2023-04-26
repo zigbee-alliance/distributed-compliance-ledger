@@ -1251,7 +1251,9 @@ const baseMsgUpdateModelVersion = {
     otaUrl: '',
     minApplicableSoftwareVersion: 0,
     maxApplicableSoftwareVersion: 0,
-    releaseNotesUrl: ''
+    releaseNotesUrl: '',
+    otaFileSize: 0,
+    otaChecksum: ''
 };
 export const MsgUpdateModelVersion = {
     encode(message, writer = Writer.create()) {
@@ -1281,6 +1283,12 @@ export const MsgUpdateModelVersion = {
         }
         if (message.releaseNotesUrl !== '') {
             writer.uint32(74).string(message.releaseNotesUrl);
+        }
+        if (message.otaFileSize !== 0) {
+            writer.uint32(80).uint64(message.otaFileSize);
+        }
+        if (message.otaChecksum !== '') {
+            writer.uint32(90).string(message.otaChecksum);
         }
         return writer;
     },
@@ -1317,6 +1325,12 @@ export const MsgUpdateModelVersion = {
                     break;
                 case 9:
                     message.releaseNotesUrl = reader.string();
+                    break;
+                case 10:
+                    message.otaFileSize = longToNumber(reader.uint64());
+                    break;
+                case 11:
+                    message.otaChecksum = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -1381,6 +1395,18 @@ export const MsgUpdateModelVersion = {
         else {
             message.releaseNotesUrl = '';
         }
+        if (object.otaFileSize !== undefined && object.otaFileSize !== null) {
+            message.otaFileSize = Number(object.otaFileSize);
+        }
+        else {
+            message.otaFileSize = 0;
+        }
+        if (object.otaChecksum !== undefined && object.otaChecksum !== null) {
+            message.otaChecksum = String(object.otaChecksum);
+        }
+        else {
+            message.otaChecksum = '';
+        }
         return message;
     },
     toJSON(message) {
@@ -1394,6 +1420,8 @@ export const MsgUpdateModelVersion = {
         message.minApplicableSoftwareVersion !== undefined && (obj.minApplicableSoftwareVersion = message.minApplicableSoftwareVersion);
         message.maxApplicableSoftwareVersion !== undefined && (obj.maxApplicableSoftwareVersion = message.maxApplicableSoftwareVersion);
         message.releaseNotesUrl !== undefined && (obj.releaseNotesUrl = message.releaseNotesUrl);
+        message.otaFileSize !== undefined && (obj.otaFileSize = message.otaFileSize);
+        message.otaChecksum !== undefined && (obj.otaChecksum = message.otaChecksum);
         return obj;
     },
     fromPartial(object) {
@@ -1451,6 +1479,18 @@ export const MsgUpdateModelVersion = {
         }
         else {
             message.releaseNotesUrl = '';
+        }
+        if (object.otaFileSize !== undefined && object.otaFileSize !== null) {
+            message.otaFileSize = object.otaFileSize;
+        }
+        else {
+            message.otaFileSize = 0;
+        }
+        if (object.otaChecksum !== undefined && object.otaChecksum !== null) {
+            message.otaChecksum = object.otaChecksum;
+        }
+        else {
+            message.otaChecksum = '';
         }
         return message;
     }

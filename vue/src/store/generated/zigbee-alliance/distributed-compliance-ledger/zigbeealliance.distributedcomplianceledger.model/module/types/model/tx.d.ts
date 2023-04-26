@@ -75,6 +75,8 @@ export interface MsgUpdateModelVersion {
     minApplicableSoftwareVersion: number;
     maxApplicableSoftwareVersion: number;
     releaseNotesUrl: string;
+    otaFileSize: number;
+    otaChecksum: string;
 }
 export interface MsgUpdateModelVersionResponse {
 }
