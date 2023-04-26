@@ -19,14 +19,14 @@ func TestMsgDeleteComplianceInfo_ValidateBasic(t *testing.T) {
 		{
 			name: "invalid address",
 			msg: MsgDeleteComplianceInfo{
-				Signer: "invalid_address",
+				Creator: "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		},
 		{
 			name: "vid is 0",
 			msg: MsgDeleteComplianceInfo{
-				Signer:            sample.AccAddress(),
+				Creator:           sample.AccAddress(),
 				Vid:               0,
 				Pid:               1,
 				CertificationType: testconstants.CertificationType,
@@ -37,7 +37,7 @@ func TestMsgDeleteComplianceInfo_ValidateBasic(t *testing.T) {
 		{
 			name: "vid < 0",
 			msg: MsgDeleteComplianceInfo{
-				Signer:            sample.AccAddress(),
+				Creator:           sample.AccAddress(),
 				Vid:               -1,
 				Pid:               1,
 				CertificationType: testconstants.CertificationType,
@@ -48,7 +48,7 @@ func TestMsgDeleteComplianceInfo_ValidateBasic(t *testing.T) {
 		{
 			name: "vid > 65535",
 			msg: MsgDeleteComplianceInfo{
-				Signer:            sample.AccAddress(),
+				Creator:           sample.AccAddress(),
 				Vid:               65536,
 				Pid:               1,
 				CertificationType: testconstants.CertificationType,
@@ -59,7 +59,7 @@ func TestMsgDeleteComplianceInfo_ValidateBasic(t *testing.T) {
 		{
 			name: "pid is 0",
 			msg: MsgDeleteComplianceInfo{
-				Signer:            sample.AccAddress(),
+				Creator:           sample.AccAddress(),
 				Pid:               0,
 				Vid:               1,
 				CertificationType: testconstants.CertificationType,
@@ -70,7 +70,7 @@ func TestMsgDeleteComplianceInfo_ValidateBasic(t *testing.T) {
 		{
 			name: "pid < 0",
 			msg: MsgDeleteComplianceInfo{
-				Signer:            sample.AccAddress(),
+				Creator:           sample.AccAddress(),
 				Pid:               -1,
 				Vid:               1,
 				CertificationType: testconstants.CertificationType,
@@ -81,7 +81,7 @@ func TestMsgDeleteComplianceInfo_ValidateBasic(t *testing.T) {
 		{
 			name: "pid > 65535",
 			msg: MsgDeleteComplianceInfo{
-				Signer:            sample.AccAddress(),
+				Creator:           sample.AccAddress(),
 				Pid:               65536,
 				Vid:               1,
 				CertificationType: testconstants.CertificationType,
@@ -92,7 +92,7 @@ func TestMsgDeleteComplianceInfo_ValidateBasic(t *testing.T) {
 		{
 			name: "invalid certification type",
 			msg: MsgDeleteComplianceInfo{
-				Signer:            sample.AccAddress(),
+				Creator:           sample.AccAddress(),
 				Pid:               1,
 				Vid:               1,
 				CertificationType: "invalid certification type",
@@ -102,7 +102,7 @@ func TestMsgDeleteComplianceInfo_ValidateBasic(t *testing.T) {
 		{
 			name: "certification type not set",
 			msg: MsgDeleteComplianceInfo{
-				Signer:            sample.AccAddress(),
+				Creator:           sample.AccAddress(),
 				Pid:               1,
 				Vid:               1,
 				CertificationType: "",
@@ -119,7 +119,7 @@ func TestMsgDeleteComplianceInfo_ValidateBasic(t *testing.T) {
 		{
 			name: "valid provision model msg",
 			msg: MsgDeleteComplianceInfo{
-				Signer:            sample.AccAddress(),
+				Creator:           sample.AccAddress(),
 				Pid:               1,
 				Vid:               1,
 				CertificationType: testconstants.CertificationType,
@@ -129,7 +129,7 @@ func TestMsgDeleteComplianceInfo_ValidateBasic(t *testing.T) {
 		{
 			name: "software version = 0",
 			msg: MsgDeleteComplianceInfo{
-				Signer:            sample.AccAddress(),
+				Creator:           sample.AccAddress(),
 				Pid:               1,
 				Vid:               1,
 				CertificationType: testconstants.CertificationType,
@@ -139,7 +139,7 @@ func TestMsgDeleteComplianceInfo_ValidateBasic(t *testing.T) {
 		{
 			name: "cd version number = 0",
 			msg: MsgDeleteComplianceInfo{
-				Signer:            sample.AccAddress(),
+				Creator:           sample.AccAddress(),
 				Pid:               1,
 				Vid:               1,
 				CertificationType: testconstants.CertificationType,
@@ -149,7 +149,7 @@ func TestMsgDeleteComplianceInfo_ValidateBasic(t *testing.T) {
 		{
 			name: "certification type is zigbee",
 			msg: MsgDeleteComplianceInfo{
-				Signer:            sample.AccAddress(),
+				Creator:           sample.AccAddress(),
 				Pid:               1,
 				Vid:               1,
 				CertificationType: "zigbee",
@@ -159,7 +159,7 @@ func TestMsgDeleteComplianceInfo_ValidateBasic(t *testing.T) {
 		{
 			name: "certification type is matter",
 			msg: MsgDeleteComplianceInfo{
-				Signer:            sample.AccAddress(),
+				Creator:           sample.AccAddress(),
 				Pid:               1,
 				Vid:               1,
 				CertificationType: "matter",
@@ -169,7 +169,7 @@ func TestMsgDeleteComplianceInfo_ValidateBasic(t *testing.T) {
 		{
 			name: "minimal pid, vid values",
 			msg: MsgDeleteComplianceInfo{
-				Signer:            sample.AccAddress(),
+				Creator:           sample.AccAddress(),
 				Pid:               1,
 				Vid:               1,
 				CertificationType: testconstants.CertificationType,
@@ -179,7 +179,7 @@ func TestMsgDeleteComplianceInfo_ValidateBasic(t *testing.T) {
 		{
 			name: "max pid, vid values",
 			msg: MsgDeleteComplianceInfo{
-				Signer:            sample.AccAddress(),
+				Creator:           sample.AccAddress(),
 				Pid:               65535,
 				Vid:               65535,
 				CertificationType: testconstants.CertificationType,

@@ -1609,7 +1609,7 @@ func NewMsgDeleteComplianceInfo(
 	signer sdk.AccAddress,
 ) *types.MsgDeleteComplianceInfo {
 	return &types.MsgDeleteComplianceInfo{
-		Signer:            signer.String(),
+		Creator:           signer.String(),
 		Vid:               vid,
 		Pid:               pid,
 		SoftwareVersion:   softwareVersion,
