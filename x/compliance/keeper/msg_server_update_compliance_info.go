@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"strconv"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -31,18 +32,24 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 		return nil, types.NewErrComplianceInfoDoesNotExist(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
 	}
 
-	if msg.CDVersionNumber != 0 {
+	if msg.CDVersionNumber != "" {
+		cdVersionNumber, err := strconv.ParseUint(msg.CDVersionNumber, 10, 32)
+
+		if err != nil {
+			return nil, err
+		}
+
 		modelVersion, isFound := k.modelKeeper.GetModelVersion(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion)
 
 		if !isFound {
 			return nil, modeltypes.NewErrModelVersionDoesNotExist(msg.Vid, msg.Pid, msg.SoftwareVersion)
 		}
 
-		if modelVersion.CdVersionNumber != int32(msg.CDVersionNumber) {
+		if modelVersion.CdVersionNumber != int32(cdVersionNumber) {
 			return nil, types.NewErrModelVersionCDVersionNumberDoesNotMatch(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CDVersionNumber)
 		}
 
-		complianceInfo.CDVersionNumber = msg.CDVersionNumber
+		complianceInfo.CDVersionNumber = uint32(cdVersionNumber)
 	}
 
 	if msg.CertificationIdOfSoftwareComponent != "" {
@@ -101,25 +108,19 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 	if msg.CDCertificateId != "" {
 		deviceSoftwareCompliance, isFound := k.GetDeviceSoftwareCompliance(ctx, complianceInfo.CDCertificateId)
 
-		index, found := deviceSoftwareCompliance.IsComplianceInfoExist(msg.Vid, msg.Pid, msg.SoftwareVersion)
-		if found {
-			deviceSoftwareCompliance.RemoveComplianceInfo(index)
-		}
-
 		if !isFound {
 			deviceSoftwareCompliance.CDCertificateId = msg.CDCertificateId
 			deviceSoftwareCompliance.ComplianceInfo = append(deviceSoftwareCompliance.ComplianceInfo, &complianceInfo)
 		}
 
-		k.SetDeviceSoftwareCompliance(ctx, deviceSoftwareCompliance)
-		complianceInfo.CDCertificateId = msg.CDCertificateId
-
-		deviceSoftwareCompliance, isFound = k.GetDeviceSoftwareCompliance(ctx, complianceInfo.CDCertificateId)
-
-		if !isFound {
-			deviceSoftwareCompliance.CDCertificateId = msg.CDCertificateId
+		for _, info := range deviceSoftwareCompliance.ComplianceInfo {
+			info.CDCertificateId = msg.CDCertificateId
+			k.SetComplianceInfo(ctx, *info)
 		}
-		deviceSoftwareCompliance.ComplianceInfo = append(deviceSoftwareCompliance.ComplianceInfo, &complianceInfo)
+
+		complianceInfo.CDCertificateId = msg.CDCertificateId
+		deviceSoftwareCompliance.CDCertificateId = msg.CDCertificateId
+
 		k.SetDeviceSoftwareCompliance(ctx, deviceSoftwareCompliance)
 	}
 
