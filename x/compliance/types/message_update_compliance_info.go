@@ -94,10 +94,6 @@ func (msg *MsgUpdateComplianceInfo) ValidateBasic() error {
 		if cdVersionNumber > 65535 {
 			return sdkerrors.Wrap(validator.ErrFieldUpperBoundViolated, "CDVersionNumber must not be greater than 65535: field upper bound violatedError")
 		}
-
-		if cdVersionNumber < 0 {
-			return sdkerrors.Wrap(validator.ErrFieldUpperBoundViolated, "CDVersionNumber must not be less than 0: field lower bound violatedError")
-		}
 	}
 
 	if !dclcompltypes.IsValidCertificationType(msg.CertificationType) {

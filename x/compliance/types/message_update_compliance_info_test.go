@@ -1,6 +1,7 @@
 package types
 
 import (
+	"strconv"
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -150,6 +151,33 @@ func TestMsgUpdateComplianceInfo_ValidateBasic(t *testing.T) {
 				CDVersionNumber:   "312",
 				CDCertificateId:   testconstants.CDCertificateID,
 			},
+		},
+		{
+			name: "cdVersionNumber > 65535",
+			msg: MsgUpdateComplianceInfo{
+				Creator:           sample.AccAddress(),
+				Vid:               1,
+				Pid:               1,
+				CertificationType: testconstants.CertificationType,
+				SoftwareVersion:   testconstants.SoftwareVersion,
+				Reason:            testconstants.Reason,
+				CDVersionNumber:   "65536",
+			},
+			err: validator.ErrFieldUpperBoundViolated,
+		},
+
+		{
+			name: "cdVersionNumber < 0",
+			msg: MsgUpdateComplianceInfo{
+				Creator:           sample.AccAddress(),
+				Vid:               1,
+				Pid:               1,
+				CertificationType: testconstants.CertificationType,
+				SoftwareVersion:   testconstants.SoftwareVersion,
+				Reason:            testconstants.Reason,
+				CDVersionNumber:   "-1",
+			},
+			err: strconv.ErrSyntax,
 		},
 	}
 	for _, tt := range tests {
