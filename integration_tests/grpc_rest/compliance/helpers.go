@@ -609,7 +609,7 @@ func CDCertificateIDUpdateChangesOnlyOneComplianceInfo(suite *utils.TestSuite) {
 		SoftwareVersion:   svFirst,
 		CertificationType: dclcompltypes.ZigbeeCertificationType,
 		CDCertificateId:   cdCertificateIDNew,
-		CDVersionNumber:   uint32(testconstants.CdVersionNumber),
+		CDVersionNumber:   "312",
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&updateComplianceInfoMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)
@@ -787,7 +787,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 		Pid:               pid,
 		SoftwareVersion:   sv,
 		CDCertificateId:   testconstants.CDCertificateID,
-		CDVersionNumber:   uint32(testconstants.CdVersionNumber),
+		CDVersionNumber:   "312",
 		CertificationType: dclcompltypes.ZigbeeCertificationType,
 		ProgramType:       "new program type",
 		Reason:            "new reason",

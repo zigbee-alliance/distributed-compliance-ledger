@@ -3,6 +3,7 @@ package compliance
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"testing"
 	"time"
 
@@ -404,7 +405,7 @@ func TestHandler_UpdateComplianceInfoByCertificationCenterAllOptionalFields(t *t
 		Pid:                                pid,
 		SoftwareVersion:                    softwareVersion,
 		CertificationType:                  dclcompltypes.ZigbeeCertificationType,
-		CDVersionNumber:                    312,
+		CDVersionNumber:                    "312",
 		Date:                               testconstants.ProvisionalDate,
 		Reason:                             testconstants.Reason,
 		CDCertificateId:                    testconstants.CDCertificateID,
@@ -426,7 +427,7 @@ func TestHandler_UpdateComplianceInfoByCertificationCenterAllOptionalFields(t *t
 
 	updatedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, dclcompltypes.ZigbeeCertificationType)
 
-	require.Equal(t, updatedComplianceInfo.CDVersionNumber, updateComplianceInfoMsg.CDVersionNumber)
+	require.Equal(t, strconv.FormatUint(uint64(updatedComplianceInfo.CDVersionNumber), 10), updateComplianceInfoMsg.CDVersionNumber)
 	require.Equal(t, updatedComplianceInfo.Date, updateComplianceInfoMsg.Date)
 	require.Equal(t, updatedComplianceInfo.Reason, updateComplianceInfoMsg.Reason)
 	require.Equal(t, updatedComplianceInfo.CDCertificateId, updateComplianceInfoMsg.CDCertificateId)
@@ -1747,7 +1748,7 @@ func NewMsgUpdateComplianceInfo(
 		Pid:                                pid,
 		SoftwareVersion:                    softwareVersion,
 		CertificationType:                  certificationType,
-		CDVersionNumber:                    312,
+		CDVersionNumber:                    "312",
 		Date:                               testconstants.ProvisionalDate,
 		Reason:                             testconstants.Reason,
 		Owner:                              "",
