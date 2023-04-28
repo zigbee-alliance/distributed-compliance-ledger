@@ -12,8 +12,8 @@
 
 
 ## Revocation Distribution Point Schema
-The schema is the same as in [PR360](https://github.com/CHIP-Specifications/connectedhomeip-spec/pull/6360).
-However, the validation logic is proposed to be a bit different (see [Validation Logic](#validation-logic) and [Divergence](#divergence-from-pr360httpsgithubcomchip-specificationsconnectedhomeip-specpull6360)). 
+The schema is the same as in `PR6360`.
+However, the validation logic is proposed to be a bit different (see [Validation Logic](#validation-logic) and [Divergence](#divergence-from-pr6360)). 
 
 
 | Name                 | Type    | Constraint          | Mutable | Conformance |
@@ -30,9 +30,9 @@ However, the validation logic is proposed to be a bit different (see [Validation
 | DataDigestType       | uint32  | all                 | Yes     | O (desc)    |
 | RevocationType       | uint32  | all                 | No      | M           |
 
-*: [PR360](https://github.com/CHIP-Specifications/connectedhomeip-spec/pull/6360) defines PID as `uint32` which is incorrect. PID must be `uint16` as in other places.
+*: `PR6360` defines PID as `uint32` which is incorrect. PID must be `uint16` as in other places.
 
-## Divergence from [PR360](https://github.com/CHIP-Specifications/connectedhomeip-spec/pull/6360)
+## Divergence from PR6360
 1. No validation of `DataUrl` content.
    If the content is invalid, it can be edited/removed by either owner Vendor or Trustees via Update and Delete commands.
 
