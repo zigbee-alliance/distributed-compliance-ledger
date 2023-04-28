@@ -61,9 +61,9 @@ However, the validation logic is proposed to be a bit different (see [Validation
 ## A need for Proof-of-possession of `CRLSignerCertificate` key
 No additional proof-of-possession is required because 
 - The transaction is already signed by the Vendor account key, so only a trusted Vendor can send it.
-- DCL checks that `CRLSignerCertificate` is a valid PAI (signed by a trusted PAA from DCL) or a PAA present on the ledger.
+- DCL checks that `CRLSignerCertificate` is either a valid PAI (signed by a trusted PAA from DCL) or a PAA present on the ledger.
 - It can be complicated to create an interactive PoP of `CRLSignerCertificate` for some PAIs.
-- Indirect CRL are out of scope for now
+- Indirect CRLs are out of scope for now
 
 ## Transactions
 
