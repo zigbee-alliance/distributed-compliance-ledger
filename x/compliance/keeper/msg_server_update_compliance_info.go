@@ -118,7 +118,12 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 			deviceSoftwareCompliance.ComplianceInfo = append(deviceSoftwareCompliance.ComplianceInfo, &complianceInfo)
 		}
 
-		k.SetDeviceSoftwareCompliance(ctx, deviceSoftwareCompliance)
+		if len(deviceSoftwareCompliance.ComplianceInfo) == 0 {
+			k.RemoveDeviceSoftwareCompliance(ctx, deviceSoftwareCompliance.CDCertificateId)
+		} else {
+			k.SetDeviceSoftwareCompliance(ctx, deviceSoftwareCompliance)
+		}
+
 		complianceInfo.CDCertificateId = msg.CDCertificateId
 
 		deviceSoftwareCompliance, isFound = k.GetDeviceSoftwareCompliance(ctx, complianceInfo.CDCertificateId)
