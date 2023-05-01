@@ -105,6 +105,7 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 	}
 
 	// if cdCertificateId is present, update all related indices as well.
+	//nolint:nestif
 	if msg.CDCertificateId != "" {
 		deviceSoftwareCompliance, isFound := k.GetDeviceSoftwareCompliance(ctx, complianceInfo.CDCertificateId)
 
