@@ -1258,8 +1258,9 @@ func TestHandler_DeleteComplianceInfoForAllCertStatuses(t *testing.T) {
 	require.NoError(t, err)
 
 	// check
-	_, err = queryCertifiedModel(setup, vid, pid, softwareVersion, dclcompltypes.MatterCertificationType)
+	certifiedModel, err := queryCertifiedModel(setup, vid, pid, softwareVersion, dclcompltypes.MatterCertificationType)
 	require.Equal(setup.T, err.Error(), "rpc error: code = NotFound desc = not found")
+	require.Nil(setup.T, certifiedModel)
 
 	// add model version
 	vid, pid, softwareVersion, softwareVersionString = setup.AddModelVersion(
@@ -1275,8 +1276,9 @@ func TestHandler_DeleteComplianceInfoForAllCertStatuses(t *testing.T) {
 	_, err = setup.Handler(setup.Ctx, deleteComplInfoMsg)
 	require.NoError(t, err)
 
-	_, err = queryProvisionalModel(setup, vid, pid, softwareVersion, dclcompltypes.MatterCertificationType)
+	provisionalModel, err := queryProvisionalModel(setup, vid, pid, softwareVersion, dclcompltypes.MatterCertificationType)
 	require.Equal(setup.T, err.Error(), "rpc error: code = NotFound desc = not found")
+	require.Nil(setup.T, provisionalModel)
 
 	// add model version
 	vid, pid, softwareVersion, softwareVersionString = setup.AddModelVersion(
@@ -1292,8 +1294,9 @@ func TestHandler_DeleteComplianceInfoForAllCertStatuses(t *testing.T) {
 	_, err = setup.Handler(setup.Ctx, deleteComplInfoMsg)
 	require.NoError(t, err)
 
-	_, err = queryRevokedModel(setup, vid, pid, softwareVersion, dclcompltypes.MatterCertificationType)
+	revokedModel, err := queryRevokedModel(setup, vid, pid, softwareVersion, dclcompltypes.MatterCertificationType)
 	require.Equal(setup.T, err.Error(), "rpc error: code = NotFound desc = not found")
+	require.Nil(setup.T, revokedModel)
 }
 
 func TestHandler_DeleteComplianceInfoDoesNotExist(t *testing.T) {
