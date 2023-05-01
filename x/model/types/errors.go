@@ -24,7 +24,7 @@ var (
 	ErrMaxSVLessThanMinSV            = sdkerrors.Register(ModuleName, 521, "max software version less than min software version")
 	ErrLsfRevisionIsNotValid         = sdkerrors.Register(ModuleName, 522, "LsfRevision should monotonically increase by 1")
 	ErrLsfRevisionIsNotAllowed       = sdkerrors.Register(ModuleName, 523, "LsfRevision is not allowed if LsfURL is not present")
-	ErrModelVersionDeletionCertified = sdkerrors.Register(ModuleName, 524, "model version certified and can not be deleted")
+	ErrModelVersionDeletionCertified = sdkerrors.Register(ModuleName, 524, "model version has a compliance record and can not be deleted")
 	ErrModelDeletionCertified        = sdkerrors.Register(ModuleName, 525, "model has a model version that has a compliance record and  correcponding model can not be deleted")
 )
 
@@ -96,13 +96,6 @@ func NewErrNoModelVersionsExist(vid interface{}, pid interface{}) error {
 func NewErrModelVersionAlreadyExists(vid interface{}, pid interface{}, softwareVersion interface{}) error {
 	return sdkerrors.Wrapf(ErrModelVersionAlreadyExists,
 		"Model Version already exists on ledger with vid=%v pid=%v and softwareVersion=%v exist on the ledger",
-		vid, pid, softwareVersion)
-}
-
-func NewErrOtaURLCannotBeSet(vid interface{}, pid interface{}, softwareVersion interface{}) error {
-	return sdkerrors.Wrapf(ErrOtaURLCannotBeSet,
-		"OTA URL cannot be set for model version associated with vid=%v, pid=%v "+
-			"and softwareVersion=%v because OTA URL was set for this model initially",
 		vid, pid, softwareVersion)
 }
 
