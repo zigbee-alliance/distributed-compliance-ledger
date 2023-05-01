@@ -498,7 +498,7 @@ The corresponding Compliance Info is required to be present on the ledger
 - Who can send:
   - CertificationCenter
 - CLI command:
-  - `dcld tx compliance revoke-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<matter|zigbee|access control|product security> --from=<account>`
+  - `dcld tx compliance delete-compliance-info --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<matter|zigbee|access control|product security> --from=<account>`
 
 #### REVOKE_MODEL_CERTIFICATION
 

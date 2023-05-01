@@ -607,4 +607,16 @@ echo "$result"
 
 test_divider
 
+# delete compliance info
+echo "delete compliance info vid=$vid pid=$pid softwareVerion=$sv certificationType=$zigbee_certification_type"
+result=$(echo "$passphrase" | dcld tx compliance delete-compliance-info --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType=$zigbee_certification_type --from=$zb_account --yes)
+
+test_divider
+
+echo "Get Compliance Info with VID: ${vid} PID: ${pid} SV: ${sv} after deletion"
+result=$(dcld query compliance compliance-info --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType=$zigbee_certification_type)
+check_response "$result" "Not Found"
+
+test_divider
+
 echo "PASSED"
