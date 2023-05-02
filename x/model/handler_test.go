@@ -698,6 +698,7 @@ func TestHandler_UpdateModelVersion(t *testing.T) {
 
 	// try update not present model version
 	msgUpdateModelVersion := NewMsgUpdateModelVersion(setup.Vendor)
+
 	_, err = setup.Handler(setup.Ctx, msgUpdateModelVersion)
 	require.Error(t, err)
 	require.True(t, types.ErrModelVersionDoesNotExist.Is(err))
@@ -727,7 +728,9 @@ func TestHandler_UpdateModelVersion(t *testing.T) {
 	require.Equal(t, receivedModelVersion.SoftwareVersion, msgUpdateModelVersion.SoftwareVersion)
 
 	require.Equal(t, receivedModelVersion.SoftwareVersionValid, msgUpdateModelVersion.SoftwareVersionValid)
-	require.Equal(t, receivedModelVersion.OtaUrl, msgUpdateModelVersion.OtaUrl)
+	require.Equal(t, receivedModelVersion.OtaUrl, msgCreateModelVersion.OtaUrl+"/updated")
+	require.Equal(t, receivedModelVersion.OtaChecksum, msgUpdateModelVersion.OtaChecksum)
+	require.Equal(t, receivedModelVersion.OtaFileSize, msgUpdateModelVersion.OtaFileSize)
 	require.Equal(t, receivedModelVersion.MinApplicableSoftwareVersion, msgUpdateModelVersion.MinApplicableSoftwareVersion)
 	require.Equal(t, receivedModelVersion.MaxApplicableSoftwareVersion, msgUpdateModelVersion.MaxApplicableSoftwareVersion)
 	require.Equal(t, receivedModelVersion.ReleaseNotesUrl, msgUpdateModelVersion.ReleaseNotesUrl)
@@ -735,8 +738,7 @@ func TestHandler_UpdateModelVersion(t *testing.T) {
 	require.Equal(t, receivedModelVersion.SoftwareVersionString, msgCreateModelVersion.SoftwareVersionString)
 	require.Equal(t, receivedModelVersion.CdVersionNumber, msgCreateModelVersion.CdVersionNumber)
 	require.Equal(t, receivedModelVersion.FirmwareInformation, msgCreateModelVersion.FirmwareInformation)
-	require.Equal(t, receivedModelVersion.OtaFileSize, msgCreateModelVersion.OtaFileSize)
-	require.Equal(t, receivedModelVersion.OtaChecksum, msgCreateModelVersion.OtaChecksum)
+	require.Equal(t, receivedModelVersion.OtaChecksum, msgCreateModelVersion.OtaChecksum+"updated")
 	require.Equal(t, receivedModelVersion.OtaChecksumType, msgCreateModelVersion.OtaChecksumType)
 
 	// query model versions
@@ -769,7 +771,7 @@ func TestHandler_PartiallyUpdateModelVersion(t *testing.T) {
 	msgUpdateModelVersion := NewMsgUpdateModelVersion(setup.Vendor)
 	// Update only SoftwareVersionValid and ReleaseNotesUrl
 	msgUpdateModelVersion.SoftwareVersionValid = !msgCreateModelVersion.SoftwareVersionValid
-	msgUpdateModelVersion.OtaUrl = ""
+
 	msgUpdateModelVersion.MinApplicableSoftwareVersion = 0
 	msgUpdateModelVersion.MaxApplicableSoftwareVersion = 0
 	msgUpdateModelVersion.ReleaseNotesUrl = "https://new.releasenotes.url"
@@ -797,7 +799,7 @@ func TestHandler_PartiallyUpdateModelVersion(t *testing.T) {
 	require.Equal(t, msgUpdateModelVersion.ReleaseNotesUrl, receivedModelVersion.ReleaseNotesUrl)
 	require.NotEqual(t, msgCreateModelVersion.ReleaseNotesUrl, receivedModelVersion.ReleaseNotesUrl)
 
-	require.Equal(t, msgCreateModelVersion.OtaUrl, receivedModelVersion.OtaUrl)
+	require.Equal(t, msgCreateModelVersion.OtaUrl+"/updated", receivedModelVersion.OtaUrl)
 	require.Equal(t, msgCreateModelVersion.MinApplicableSoftwareVersion, receivedModelVersion.MinApplicableSoftwareVersion)
 	require.Equal(t, msgCreateModelVersion.MaxApplicableSoftwareVersion, receivedModelVersion.MaxApplicableSoftwareVersion)
 }
@@ -819,6 +821,7 @@ func TestHandler_UpdateOnlyMinApplicableSoftwareVersion(t *testing.T) {
 
 	// try to update only min version to a value greater than stored max version
 	msgUpdateModelVersion := NewMsgUpdateModelVersion(setup.Vendor)
+
 	msgUpdateModelVersion.MinApplicableSoftwareVersion = 11
 	msgUpdateModelVersion.MaxApplicableSoftwareVersion = 0
 
@@ -828,6 +831,7 @@ func TestHandler_UpdateOnlyMinApplicableSoftwareVersion(t *testing.T) {
 
 	// try to update only min version to a value less than stored max version
 	msgUpdateModelVersion = NewMsgUpdateModelVersion(setup.Vendor)
+
 	msgUpdateModelVersion.MinApplicableSoftwareVersion = 7
 	msgUpdateModelVersion.MaxApplicableSoftwareVersion = 0
 
@@ -849,6 +853,7 @@ func TestHandler_UpdateOnlyMinApplicableSoftwareVersion(t *testing.T) {
 
 	// try to update only min version to a value equal to stored max version
 	msgUpdateModelVersion = NewMsgUpdateModelVersion(setup.Vendor)
+
 	msgUpdateModelVersion.MinApplicableSoftwareVersion = 10
 	msgUpdateModelVersion.MaxApplicableSoftwareVersion = 0
 
@@ -886,6 +891,7 @@ func TestHandler_UpdateOnlyMaxApplicableSoftwareVersion(t *testing.T) {
 
 	// try to update only max version to a value less than stored min version
 	msgUpdateModelVersion := NewMsgUpdateModelVersion(setup.Vendor)
+
 	msgUpdateModelVersion.MinApplicableSoftwareVersion = 0
 	msgUpdateModelVersion.MaxApplicableSoftwareVersion = 4
 
@@ -895,6 +901,7 @@ func TestHandler_UpdateOnlyMaxApplicableSoftwareVersion(t *testing.T) {
 
 	// try to update only max version to a value greater than stored min version
 	msgUpdateModelVersion = NewMsgUpdateModelVersion(setup.Vendor)
+
 	msgUpdateModelVersion.MinApplicableSoftwareVersion = 0
 	msgUpdateModelVersion.MaxApplicableSoftwareVersion = 7
 
@@ -916,6 +923,7 @@ func TestHandler_UpdateOnlyMaxApplicableSoftwareVersion(t *testing.T) {
 
 	// try to update only max version to a value equal to stored min version
 	msgUpdateModelVersion = NewMsgUpdateModelVersion(setup.Vendor)
+
 	msgUpdateModelVersion.MinApplicableSoftwareVersion = 0
 	msgUpdateModelVersion.MaxApplicableSoftwareVersion = 5
 
@@ -934,6 +942,87 @@ func TestHandler_UpdateOnlyMaxApplicableSoftwareVersion(t *testing.T) {
 	// check that max version has been updated
 	require.Equal(t, uint32(5), receivedModelVersion.MinApplicableSoftwareVersion)
 	require.Equal(t, uint32(5), receivedModelVersion.MaxApplicableSoftwareVersion)
+}
+
+func TestHandler_UpdateOTAFieldsInitiallyNotSet(t *testing.T) {
+	setup := Setup(t)
+
+	// add new model
+	msgCreateModel := NewMsgCreateModel(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// add new model version
+	msgCreateModelVersion := NewMsgCreateModelVersion(setup.Vendor, testconstants.SoftwareVersion)
+	msgCreateModelVersion.OtaUrl = ""
+	msgCreateModelVersion.OtaFileSize = 0
+	msgCreateModelVersion.OtaChecksum = ""
+
+	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion)
+	require.NoError(t, err)
+
+	// try to update only max version to a value less than stored min version
+	msgUpdateModelVersion := NewMsgUpdateModelVersion(setup.Vendor)
+	msgUpdateModelVersion.OtaUrl = "https://123.com"
+	msgUpdateModelVersion.OtaFileSize = 4
+	msgUpdateModelVersion.OtaChecksum = "123"
+
+	_, err = setup.Handler(setup.Ctx, msgUpdateModelVersion)
+	require.NoError(t, err)
+
+	// query updated model version
+	receivedModelVersion, err := queryModelVersion(
+		setup,
+		msgUpdateModelVersion.Vid,
+		msgUpdateModelVersion.Pid,
+		msgUpdateModelVersion.SoftwareVersion,
+	)
+	require.NoError(t, err)
+
+	// check that OTA fields has not been updated
+	require.Equal(t, msgUpdateModelVersion.OtaUrl, receivedModelVersion.OtaUrl)
+	require.Equal(t, msgUpdateModelVersion.OtaFileSize, receivedModelVersion.OtaFileSize)
+	require.Equal(t, msgUpdateModelVersion.OtaChecksum, receivedModelVersion.OtaChecksum)
+}
+
+func TestHandler_UpdateOTAFieldsInitiallySet(t *testing.T) {
+	setup := Setup(t)
+
+	// add new model
+	msgCreateModel := NewMsgCreateModel(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// add new model version
+	msgCreateModelVersion := NewMsgCreateModelVersion(setup.Vendor, testconstants.SoftwareVersion)
+
+	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion)
+	require.NoError(t, err)
+
+	// try to update OTA fields
+	newOTAUrl := "https://123.com"
+
+	msgUpdateModelVersion := NewMsgUpdateModelVersion(setup.Vendor)
+	msgUpdateModelVersion.OtaUrl = newOTAUrl
+	msgUpdateModelVersion.OtaFileSize = 4
+	msgUpdateModelVersion.OtaChecksum = "123"
+
+	_, err = setup.Handler(setup.Ctx, msgUpdateModelVersion)
+	require.NoError(t, err)
+
+	// query not updated model version
+	receivedModelVersion, err := queryModelVersion(
+		setup,
+		msgUpdateModelVersion.Vid,
+		msgUpdateModelVersion.Pid,
+		msgUpdateModelVersion.SoftwareVersion,
+	)
+	require.NoError(t, err)
+
+	// check that OTA fields has not been updated
+	require.Equal(t, receivedModelVersion.OtaUrl, newOTAUrl)
+	require.Equal(t, receivedModelVersion.OtaChecksum, msgUpdateModelVersion.OtaChecksum)
+	require.Equal(t, receivedModelVersion.OtaFileSize, msgUpdateModelVersion.OtaFileSize)
 }
 
 func TestHandler_OnlyOwnerAndVendorWithSameVidCanUpdateModelVersion(t *testing.T) {
@@ -975,6 +1064,7 @@ func TestHandler_OnlyOwnerAndVendorWithSameVidCanUpdateModelVersion(t *testing.T
 
 	// update existing model version by owner
 	msgUpdateModelVersion = NewMsgUpdateModelVersion(setup.Vendor)
+
 	_, err = setup.Handler(setup.Ctx, msgUpdateModelVersion)
 	require.NoError(t, err)
 
@@ -983,6 +1073,7 @@ func TestHandler_OnlyOwnerAndVendorWithSameVidCanUpdateModelVersion(t *testing.T
 
 	// update existing model by vendor with the same VendorID as owner's one
 	msgUpdateModelVersion = NewMsgUpdateModelVersion(vendorWithSameVid)
+
 	msgUpdateModelVersion.ReleaseNotesUrl += "/updated-once-more"
 	_, err = setup.Handler(setup.Ctx, msgUpdateModelVersion)
 	require.NoError(t, err)
@@ -1309,6 +1400,8 @@ func NewMsgUpdateModelVersion(signer sdk.AccAddress) *types.MsgUpdateModelVersio
 		SoftwareVersion:              testconstants.SoftwareVersion,
 		SoftwareVersionValid:         !testconstants.SoftwareVersionValid,
 		OtaUrl:                       testconstants.OtaURL + "/updated",
+		OtaFileSize:                  testconstants.OtaFileSize + 1,
+		OtaChecksum:                  testconstants.OtaChecksum + "updated",
 		MinApplicableSoftwareVersion: testconstants.MinApplicableSoftwareVersion + 1,
 		MaxApplicableSoftwareVersion: testconstants.MaxApplicableSoftwareVersion + 1,
 		ReleaseNotesUrl:              testconstants.ReleaseNotesURL + "/updated",

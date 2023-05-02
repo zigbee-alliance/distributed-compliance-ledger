@@ -124,6 +124,8 @@ func CmdUpdateModelVersion() *cobra.Command {
 		softwareVersion              uint32
 		softwareVersionValid         bool
 		otaURL                       string
+		OtaFileSize                  uint64
+		OtaChecksum                  string
 		minApplicableSoftwareVersion uint32
 		maxApplicableSoftwareVersion uint32
 		releaseNotesURL              string
@@ -145,6 +147,8 @@ func CmdUpdateModelVersion() *cobra.Command {
 				softwareVersion,
 				softwareVersionValid,
 				otaURL,
+				OtaFileSize,
+				OtaChecksum,
 				minApplicableSoftwareVersion,
 				maxApplicableSoftwareVersion,
 				releaseNotesURL,
@@ -172,6 +176,11 @@ func CmdUpdateModelVersion() *cobra.Command {
 		"boolean flag to revoke the software version model")
 	cmd.Flags().StringVar(&otaURL, FlagOtaURL, "",
 		"URL where to obtain the OTA image")
+	cmd.Flags().Uint64Var(&OtaFileSize, FlagOtaFileSize, 0, "OtaFileSize is the total size of the OTA software image in bytes")
+	cmd.Flags().StringVar(&OtaChecksum, FlagOtaChecksum, "", `Digest of the entire contents of the associated OTA 
+	Software Update Image under the OtaUrl attribute, 
+	encoded in base64 string representation. The digest SHALL have been computed using 
+	the algorithm specified in OtaChecksumType`)
 	cmd.Flags().Uint32Var(&minApplicableSoftwareVersion, FlagMinApplicableSoftwareVersion, 0,
 		`MinApplicableSoftwareVersion should specify the lowest SoftwareVersion for which this image can be applied`)
 	cmd.Flags().Uint32Var(&maxApplicableSoftwareVersion, FlagMaxApplicableSoftwareVersion, 0,

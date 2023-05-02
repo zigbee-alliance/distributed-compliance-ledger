@@ -129,7 +129,6 @@ func TestUpdateModelVersion(t *testing.T) {
 
 	fields := []string{
 		fmt.Sprintf("--%s=%v", cli.FlagSoftwareVersionValid, !testconstants.SoftwareVersionValid),
-		fmt.Sprintf("--%s=%v", cli.FlagOtaURL, testconstants.OtaURL+"/updated"),
 		fmt.Sprintf("--%s=%v", cli.FlagMinApplicableSoftwareVersion, testconstants.MinApplicableSoftwareVersion+1),
 		fmt.Sprintf("--%s=%v", cli.FlagMaxApplicableSoftwareVersion, testconstants.MaxApplicableSoftwareVersion+1),
 		fmt.Sprintf("--%s=%v", cli.FlagReleaseNotesURL, testconstants.ReleaseNotesURL+"/updated"),
