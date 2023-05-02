@@ -339,13 +339,11 @@ All non-edited fields remain the same.
   - otaFileSize `optional(string)`  - OtaFileSize is the total size of the OTA software image in bytes
   - otaChecksum `optional(string)` - Digest of the entire contents of the associated OTA Software Update Image under the OtaUrl attribute, encoded in base64 string representation. The digest SHALL have been computed using the algorithm specified in OtaChecksumType
 
-  
-
 - In State: `model/ModelVersion/value/<vid>/<pid>/<softwareVersion>`
 - Who can send:
   - Vendor associated with the same vid who created the Model
 - CLI command:
-  - `dcld tx model update- --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> ... --from=<account>`
+  - `dcld tx model update-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> ... --from=<account>`
 
 #### DELETE_MODEL_VERSION
 

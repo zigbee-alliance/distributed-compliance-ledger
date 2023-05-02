@@ -738,7 +738,6 @@ func TestHandler_UpdateModelVersion(t *testing.T) {
 	require.Equal(t, receivedModelVersion.SoftwareVersionString, msgCreateModelVersion.SoftwareVersionString)
 	require.Equal(t, receivedModelVersion.CdVersionNumber, msgCreateModelVersion.CdVersionNumber)
 	require.Equal(t, receivedModelVersion.FirmwareInformation, msgCreateModelVersion.FirmwareInformation)
-	require.Equal(t, receivedModelVersion.OtaFileSize, msgCreateModelVersion.OtaFileSize+1)
 	require.Equal(t, receivedModelVersion.OtaChecksum, msgCreateModelVersion.OtaChecksum+"updated")
 	require.Equal(t, receivedModelVersion.OtaChecksumType, msgCreateModelVersion.OtaChecksumType)
 
@@ -823,8 +822,6 @@ func TestHandler_UpdateOnlyMinApplicableSoftwareVersion(t *testing.T) {
 	// try to update only min version to a value greater than stored max version
 	msgUpdateModelVersion := NewMsgUpdateModelVersion(setup.Vendor)
 
-	msgUpdateModelVersion.OtaChecksum = ""
-	msgUpdateModelVersion.OtaFileSize = 0
 	msgUpdateModelVersion.MinApplicableSoftwareVersion = 11
 	msgUpdateModelVersion.MaxApplicableSoftwareVersion = 0
 
@@ -835,8 +832,6 @@ func TestHandler_UpdateOnlyMinApplicableSoftwareVersion(t *testing.T) {
 	// try to update only min version to a value less than stored max version
 	msgUpdateModelVersion = NewMsgUpdateModelVersion(setup.Vendor)
 
-	msgUpdateModelVersion.OtaChecksum = ""
-	msgUpdateModelVersion.OtaFileSize = 0
 	msgUpdateModelVersion.MinApplicableSoftwareVersion = 7
 	msgUpdateModelVersion.MaxApplicableSoftwareVersion = 0
 
@@ -859,8 +854,6 @@ func TestHandler_UpdateOnlyMinApplicableSoftwareVersion(t *testing.T) {
 	// try to update only min version to a value equal to stored max version
 	msgUpdateModelVersion = NewMsgUpdateModelVersion(setup.Vendor)
 
-	msgUpdateModelVersion.OtaChecksum = ""
-	msgUpdateModelVersion.OtaFileSize = 0
 	msgUpdateModelVersion.MinApplicableSoftwareVersion = 10
 	msgUpdateModelVersion.MaxApplicableSoftwareVersion = 0
 
@@ -899,8 +892,6 @@ func TestHandler_UpdateOnlyMaxApplicableSoftwareVersion(t *testing.T) {
 	// try to update only max version to a value less than stored min version
 	msgUpdateModelVersion := NewMsgUpdateModelVersion(setup.Vendor)
 
-	msgUpdateModelVersion.OtaChecksum = ""
-	msgUpdateModelVersion.OtaFileSize = 0
 	msgUpdateModelVersion.MinApplicableSoftwareVersion = 0
 	msgUpdateModelVersion.MaxApplicableSoftwareVersion = 4
 
@@ -911,8 +902,6 @@ func TestHandler_UpdateOnlyMaxApplicableSoftwareVersion(t *testing.T) {
 	// try to update only max version to a value greater than stored min version
 	msgUpdateModelVersion = NewMsgUpdateModelVersion(setup.Vendor)
 
-	msgUpdateModelVersion.OtaChecksum = ""
-	msgUpdateModelVersion.OtaFileSize = 0
 	msgUpdateModelVersion.MinApplicableSoftwareVersion = 0
 	msgUpdateModelVersion.MaxApplicableSoftwareVersion = 7
 
@@ -935,8 +924,6 @@ func TestHandler_UpdateOnlyMaxApplicableSoftwareVersion(t *testing.T) {
 	// try to update only max version to a value equal to stored min version
 	msgUpdateModelVersion = NewMsgUpdateModelVersion(setup.Vendor)
 
-	msgUpdateModelVersion.OtaChecksum = ""
-	msgUpdateModelVersion.OtaFileSize = 0
 	msgUpdateModelVersion.MinApplicableSoftwareVersion = 0
 	msgUpdateModelVersion.MaxApplicableSoftwareVersion = 5
 
@@ -1077,8 +1064,6 @@ func TestHandler_OnlyOwnerAndVendorWithSameVidCanUpdateModelVersion(t *testing.T
 
 	// update existing model version by owner
 	msgUpdateModelVersion = NewMsgUpdateModelVersion(setup.Vendor)
-	msgUpdateModelVersion.OtaChecksum = ""
-	msgUpdateModelVersion.OtaFileSize = 0
 
 	_, err = setup.Handler(setup.Ctx, msgUpdateModelVersion)
 	require.NoError(t, err)
@@ -1088,8 +1073,6 @@ func TestHandler_OnlyOwnerAndVendorWithSameVidCanUpdateModelVersion(t *testing.T
 
 	// update existing model by vendor with the same VendorID as owner's one
 	msgUpdateModelVersion = NewMsgUpdateModelVersion(vendorWithSameVid)
-	msgUpdateModelVersion.OtaChecksum = ""
-	msgUpdateModelVersion.OtaFileSize = 0
 
 	msgUpdateModelVersion.ReleaseNotesUrl += "/updated-once-more"
 	_, err = setup.Handler(setup.Ctx, msgUpdateModelVersion)
