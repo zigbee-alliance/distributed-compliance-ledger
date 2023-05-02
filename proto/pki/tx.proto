@@ -18,6 +18,7 @@ service Msg {
   rpc RevokeX509Cert(MsgRevokeX509Cert) returns (MsgRevokeX509CertResponse);
   rpc RejectAddX509RootCert(MsgRejectAddX509RootCert) returns (MsgRejectAddX509RootCertResponse);
   rpc AddPkiRevocationDistributionPoint(MsgAddPkiRevocationDistributionPoint) returns (MsgAddPkiRevocationDistributionPointResponse);
+  rpc UpdatePkiRevocationDistributionPoint(MsgUpdatePkiRevocationDistributionPoint) returns (MsgUpdatePkiRevocationDistributionPointResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -112,6 +113,21 @@ message MsgAddPkiRevocationDistributionPoint {
 }
 
 message MsgAddPkiRevocationDistributionPointResponse {
+}
+
+message MsgUpdatePkiRevocationDistributionPoint {
+  string signer = 1;
+  uint64 vid = 2;
+  string label = 3;
+  string crlSignerCertificate = 4;
+  string issuerSubjectKeyID = 5;
+  string dataUrl = 6;
+  uint64 dataFileSize = 7;
+  string dataDigest = 8;
+  uint64 dataDigestType = 9;
+}
+
+message MsgUpdatePkiRevocationDistributionPointResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message
