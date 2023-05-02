@@ -3,6 +3,7 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
 
@@ -52,6 +53,10 @@ func (msg *MsgDeleteComplianceInfo) ValidateBasic() error {
 	err = validator.Validate(msg)
 	if err != nil {
 		return err
+	}
+
+	if !dclcompltypes.IsValidCertificationType(msg.CertificationType) {
+		return NewErrInvalidCertificationType(msg.CertificationType, dclcompltypes.CertificationTypesList)
 	}
 
 	return nil
