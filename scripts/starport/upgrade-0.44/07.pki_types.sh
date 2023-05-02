@@ -13,6 +13,7 @@ starport scaffold --module pki message ProposeRevokeX509RootCert subject subject
 starport scaffold --module pki message ApproveRevokeX509RootCert subject subjectKeyId --signer signer
 starport scaffold --module pki message RevokeX509Cert subject subjectKeyId --signer signer
 starport scaffold --module pki message RejectAddX509RootCert cert --signer signer
+starport scaffold --module pki message add-pki-revocation-distribution-point vid:uint pid:uint isPAA:bool label crlSignerCertificate issuerSubjectKeyID dataUrl dataFileSize:uint dataDigest dataDigestType:uint revocationType:uint --signer signer
 
 # CRUD data types
 starport scaffold --module pki map ApprovedCertificates certs:strings --index subject,subjectKeyId --no-message
