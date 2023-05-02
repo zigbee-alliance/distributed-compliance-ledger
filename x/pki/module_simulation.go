@@ -52,6 +52,10 @@ const (
 	// TODO: Determine the simulation weight value.
 	defaultWeightMsgRejectAddX509RootCert int = 100
 
+	opWeightMsgAddPkiRevocationDistributionPoint = "op_weight_msg_create_chain"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgAddPkiRevocationDistributionPoint int = 100
+
 	// this line is used by starport scaffolding # simapp/module/const.
 )
 
@@ -160,6 +164,17 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	operations = append(operations, simulation.NewWeightedOperation(
 		weightMsgRejectAddX509RootCert,
 		pkisimulation.SimulateMsgRejectAddX509RootCert(am.keeper),
+	))
+
+	var weightMsgAddPkiRevocationDistributionPoint int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgAddPkiRevocationDistributionPoint, &weightMsgAddPkiRevocationDistributionPoint, nil,
+		func(_ *rand.Rand) {
+			weightMsgAddPkiRevocationDistributionPoint = defaultWeightMsgAddPkiRevocationDistributionPoint
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgAddPkiRevocationDistributionPoint,
+		pkisimulation.SimulateMsgAddPkiRevocationDistributionPoint(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
 
 	// this line is used by starport scaffolding # simapp/module/operation

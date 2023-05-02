@@ -7,7 +7,7 @@ const (
 	ProductSecurityType     string = "product security"
 )
 
-//	List of Certification Types
+// List of Certification Types
 type CertificationTypes []string
 
 var CertificationTypesList = CertificationTypes{ZigbeeCertificationType, MatterCertificationType, AccessControlType, ProductSecurityType}
