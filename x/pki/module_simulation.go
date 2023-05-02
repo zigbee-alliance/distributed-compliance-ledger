@@ -174,7 +174,7 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	)
 	operations = append(operations, simulation.NewWeightedOperation(
 		weightMsgAddPkiRevocationDistributionPoint,
-		pkisimulation.SimulateMsgAddPkiRevocationDistributionPoint(am.accountKeeper, am.bankKeeper, am.keeper),
+		pkisimulation.SimulateMsgAddPkiRevocationDistributionPoint(am.keeper),
 	))
 
 	// this line is used by starport scaffolding # simapp/module/operation

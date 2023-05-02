@@ -19,11 +19,11 @@ func CmdAddPkiRevocationDistributionPoint() *cobra.Command {
 		Short: "Broadcast message add-pki-revocation-distribution-point",
 		Args:  cobra.ExactArgs(11),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			argVid, err := cast.ToUint64E(args[0])
+			argVid, err := cast.ToInt32E(args[0])
 			if err != nil {
 				return err
 			}
-			argPid, err := cast.ToUint64E(args[1])
+			argPid, err := cast.ToInt32E(args[1])
 			if err != nil {
 				return err
 			}
@@ -40,7 +40,7 @@ func CmdAddPkiRevocationDistributionPoint() *cobra.Command {
 				return err
 			}
 			argDataDigest := args[8]
-			argDataDigestType, err := cast.ToUint64E(args[9])
+			argDataDigestType, err := cast.ToUint32E(args[9])
 			if err != nil {
 				return err
 			}
