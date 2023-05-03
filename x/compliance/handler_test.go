@@ -1240,7 +1240,37 @@ func TestHandler_CertifyRevokedModel(t *testing.T) {
 	}
 }
 
-func TestHandler_DeleteComplianceInfoForAllCertStatuses(t *testing.T) {
+func TestHandler_DeleteComplianceInfoForRevokedModel(t *testing.T) {
+	setup := Setup(t)
+
+	// add model version
+	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
+		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion+2, testconstants.SoftwareVersionString)
+
+	// Revoke model
+	revokeModelMsg := NewMsgRevokeModel(
+		vid, pid, softwareVersion, softwareVersionString, dclcompltypes.MatterCertificationType, setup.CertificationCenter)
+	_, err := setup.Handler(setup.Ctx, revokeModelMsg)
+	require.NoError(t, err)
+
+	deleteComplInfoMsg := NewMsgDeleteComplianceInfo(vid, pid, softwareVersion, dclcompltypes.MatterCertificationType, setup.CertificationCenter)
+	_, err = setup.Handler(setup.Ctx, deleteComplInfoMsg)
+	require.NoError(t, err)
+
+	revokedModel, err := queryRevokedModel(setup, vid, pid, softwareVersion, dclcompltypes.MatterCertificationType)
+	require.Equal(setup.T, err.Error(), "rpc error: code = NotFound desc = not found")
+	require.Nil(setup.T, revokedModel)
+
+	deviceSoftwareCompliance, err := queryDeviceSoftwareCompliance(setup, testconstants.CDCertificateID)
+	require.Equal(setup.T, err.Error(), "rpc error: code = NotFound desc = not found")
+	require.Nil(setup.T, deviceSoftwareCompliance)
+
+	complianceInfo, err := queryComplianceInfo(setup, vid, pid, softwareVersion, dclcompltypes.MatterCertificationType)
+	require.Equal(setup.T, err.Error(), "rpc error: code = NotFound desc = not found")
+	require.Nil(setup.T, complianceInfo)
+}
+
+func TestHandler_DeleteComplianceInfoForCertifiedModel(t *testing.T) {
 	setup := Setup(t)
 
 	// add model version
@@ -1268,18 +1298,22 @@ func TestHandler_DeleteComplianceInfoForAllCertStatuses(t *testing.T) {
 	complianceInfo, err := queryComplianceInfo(setup, vid, pid, softwareVersion, dclcompltypes.MatterCertificationType)
 	require.Equal(setup.T, err.Error(), "rpc error: code = NotFound desc = not found")
 	require.Nil(setup.T, complianceInfo)
+}
+
+func TestHandler_DeleteComplianceInfoForProvisionalModel(t *testing.T) {
+	setup := Setup(t)
 
 	// add model version
-	vid, pid, softwareVersion, softwareVersionString = setup.AddModelVersion(
+	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion+1, testconstants.SoftwareVersionString)
 
 	// Provision model
 	provisionModelMsg := NewMsgProvisionModel(
 		vid, pid, softwareVersion, softwareVersionString, dclcompltypes.MatterCertificationType, setup.CertificationCenter)
-	_, err = setup.Handler(setup.Ctx, provisionModelMsg)
+	_, err := setup.Handler(setup.Ctx, provisionModelMsg)
 	require.NoError(t, err)
 
-	deleteComplInfoMsg = NewMsgDeleteComplianceInfo(vid, pid, softwareVersion, dclcompltypes.MatterCertificationType, setup.CertificationCenter)
+	deleteComplInfoMsg := NewMsgDeleteComplianceInfo(vid, pid, softwareVersion, dclcompltypes.MatterCertificationType, setup.CertificationCenter)
 	_, err = setup.Handler(setup.Ctx, deleteComplInfoMsg)
 	require.NoError(t, err)
 
@@ -1287,37 +1321,11 @@ func TestHandler_DeleteComplianceInfoForAllCertStatuses(t *testing.T) {
 	require.Equal(setup.T, err.Error(), "rpc error: code = NotFound desc = not found")
 	require.Nil(setup.T, provisionalModel)
 
-	deviceSoftwareCompliance, err = queryDeviceSoftwareCompliance(setup, provisionModelMsg.CDCertificateId)
+	deviceSoftwareCompliance, err := queryDeviceSoftwareCompliance(setup, provisionModelMsg.CDCertificateId)
 	require.Equal(setup.T, err.Error(), "rpc error: code = NotFound desc = not found")
 	require.Nil(setup.T, deviceSoftwareCompliance)
 
-	complianceInfo, err = queryComplianceInfo(setup, vid, pid, softwareVersion, dclcompltypes.MatterCertificationType)
-	require.Equal(setup.T, err.Error(), "rpc error: code = NotFound desc = not found")
-	require.Nil(setup.T, complianceInfo)
-
-	// add model version
-	vid, pid, softwareVersion, softwareVersionString = setup.AddModelVersion(
-		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion+2, testconstants.SoftwareVersionString)
-
-	// Revoke model
-	revokeModelMsg := NewMsgRevokeModel(
-		vid, pid, softwareVersion, softwareVersionString, dclcompltypes.MatterCertificationType, setup.CertificationCenter)
-	_, err = setup.Handler(setup.Ctx, revokeModelMsg)
-	require.NoError(t, err)
-
-	deleteComplInfoMsg = NewMsgDeleteComplianceInfo(vid, pid, softwareVersion, dclcompltypes.MatterCertificationType, setup.CertificationCenter)
-	_, err = setup.Handler(setup.Ctx, deleteComplInfoMsg)
-	require.NoError(t, err)
-
-	revokedModel, err := queryRevokedModel(setup, vid, pid, softwareVersion, dclcompltypes.MatterCertificationType)
-	require.Equal(setup.T, err.Error(), "rpc error: code = NotFound desc = not found")
-	require.Nil(setup.T, revokedModel)
-
-	deviceSoftwareCompliance, err = queryDeviceSoftwareCompliance(setup, testconstants.CDCertificateID)
-	require.Equal(setup.T, err.Error(), "rpc error: code = NotFound desc = not found")
-	require.Nil(setup.T, deviceSoftwareCompliance)
-
-	complianceInfo, err = queryComplianceInfo(setup, vid, pid, softwareVersion, dclcompltypes.MatterCertificationType)
+	complianceInfo, err := queryComplianceInfo(setup, vid, pid, softwareVersion, dclcompltypes.MatterCertificationType)
 	require.Equal(setup.T, err.Error(), "rpc error: code = NotFound desc = not found")
 	require.Nil(setup.T, complianceInfo)
 }
