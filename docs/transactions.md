@@ -485,6 +485,24 @@ from the revocation list.
 - CLI command full:
   - `dcld tx compliance certify-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string>  --certificationType=<matter|zigbee|access control|product security> --certificationDate=<rfc3339 encoded date> --cdCertificateId=<string> --reason=<string> --cDVersionNumber=<uint32> --familyId=<string> --supportedClusters=<string> --compliantPlatformUsed=<string> --compliantPlatformVersion=<string> --OSVersion=<string> --certificationRoute=<string> --programType=<string> --programTypeVersion=<string> --transport=<string> --parentChild=<string> --certificationIDOfSoftwareComponent=<string> --from=<account>`
 
+### DELETE_COMPLIANCE_INFO
+
+**Status: Implemented**
+
+Delete compliance of the Model Version to the ZB or Matter standard.
+
+The corresponding Compliance Info is required to be present on the ledger
+
+- Parameters:
+  - vid: `uint16` - model vendor ID (positive non-zero)
+  - pid: `uint16` - model product ID (positive non-zero)
+  - softwareVersion: `uint32` - model software version
+  - certificationType: `string` - Certification type - Currently 'zigbee' and 'matter', 'access control', 'product security' types are supported
+- Who can send:
+  - CertificationCenter
+- CLI command:
+  - `dcld tx compliance delete-compliance-info --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<matter|zigbee|access control|product security> --from=<account>`
+
 #### REVOKE_MODEL_CERTIFICATION
 
 **Status: Implemented**

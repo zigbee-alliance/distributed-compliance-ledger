@@ -1,10 +1,10 @@
 package types
 
 func (m *DeviceSoftwareCompliance) IsComplianceInfoExist(
-	vid int32, pid int32, softwareVersion uint32, softwareVersionString string,
+	vid int32, pid int32, softwareVersion uint32,
 ) (int, bool) {
 	for index, info := range m.ComplianceInfo {
-		if info.Vid == vid && info.Pid == pid && info.SoftwareVersion == softwareVersion && info.SoftwareVersionString == softwareVersionString {
+		if info.Vid == vid && info.Pid == pid && info.SoftwareVersion == softwareVersion {
 			return index, true
 		}
 	}

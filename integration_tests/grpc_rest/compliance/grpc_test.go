@@ -43,3 +43,8 @@ func TestComplianceDemoTrackProvisionGRPC(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, false)
 	compliance.DemoTrackProvision(&suite)
 }
+
+func TestDeleteComplianceInfoForAllCertStatusesGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	compliance.DeleteComplianceInfoForAllCertStatuses(&suite)
+}

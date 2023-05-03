@@ -17,6 +17,7 @@ var (
 	ErrInvalidTestDateFormat          = sdkerrors.Register(ModuleName, 307, "test date must be in RFC3339 format")
 	ErrInvalidCertificationType       = sdkerrors.Register(ModuleName, 308, "invalid certification type")
 	ErrInvalidPFCCertificationRoute   = sdkerrors.Register(ModuleName, 309, "invalid PFC certification route")
+	ErrComplianceInfoDoesNotExist     = sdkerrors.Register(ModuleName, 310, "compliance info does not exist")
 )
 
 func NewErrInconsistentDates(err interface{}) error {
@@ -53,8 +54,16 @@ func NewErrAlreadyProvisional(vid interface{}, pid interface{}, sv interface{}, 
 
 func NewErrComplianceInfoAlreadyExist(vid interface{}, pid interface{}, sv interface{}, certificationType interface{}) error {
 	return sdkerrors.Wrapf(
-		ErrAlreadyRevoked,
+		ErrComplianceInfoAlreadyExist,
 		"Model with vid=%v, pid=%v, softwareVersion=%v, certificationType=%v already has compliance info on the ledger",
+		vid, pid, sv, certificationType,
+	)
+}
+
+func NewErrComplianceInfoDoesNotExist(vid interface{}, pid interface{}, sv interface{}, certificationType interface{}) error {
+	return sdkerrors.Wrapf(
+		ErrComplianceInfoDoesNotExist,
+		"Model with vid=%v, pid=%v, softwareVersion=%v, certificationType=%v has no compliance info on the ledger",
 		vid, pid, sv, certificationType,
 	)
 }
