@@ -335,6 +335,9 @@ All non-edited fields remain the same.
   - maxApplicableSoftwareVersion `optional(uint32)` - MaxApplicableSoftwareVersion should specify the highest SoftwareVersion for which this image can be applied
   - minApplicableSoftwareVersion `optional(uint32)` - MinApplicableSoftwareVersion should specify the lowest SoftwareVersion for which this image can be applied
   - releaseNotesURL `optional(string)` - URL that contains product specific web page that contains release notes for the device model.
+  - otaURL `optional(string)` - URL where to obtain the OTA image
+  - otaFileSize `optional(string)`  - OtaFileSize is the total size of the OTA software image in bytes
+  - otaChecksum `optional(string)` - Digest of the entire contents of the associated OTA Software Update Image under the OtaUrl attribute, encoded in base64 string representation. The digest SHALL have been computed using the algorithm specified in OtaChecksumType
 
 - In State: `model/ModelVersion/value/<vid>/<pid>/<softwareVersion>`
 - Who can send:

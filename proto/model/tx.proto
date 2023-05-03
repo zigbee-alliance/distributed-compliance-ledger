@@ -100,6 +100,8 @@ message MsgUpdateModelVersion {
   uint32 minApplicableSoftwareVersion = 7;
   uint32 maxApplicableSoftwareVersion = 8 [(gogoproto.moretags) = "validate:\"omitempty,gtecsfield=MinApplicableSoftwareVersion\""];
   string releaseNotesUrl = 9 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
+  uint64 otaFileSize = 10;
+  string otaChecksum = 11 [(gogoproto.moretags) = "validate:\"max=64\""];
 }
 message MsgUpdateModelVersionResponse {}
 
