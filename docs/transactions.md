@@ -3,6 +3,18 @@
 
 See use case sequence diagrams for the examples of how transaction can be used.
 
+1. [General](#general)
+2. [How to write to the Ledger](#how-to-write-to-the-ledger)
+3. [How to read from the Ledger](#how-to-read-from-the-ledger)
+4. [Vendor Info](#vendor-info)
+5. [Model and Model Version](#model-and-model_version)
+6. [Compliance](#certify_device_compliance)
+7. [X509 PKI](#x509-pki)
+8. [Auth](#auth)
+9. [Validator Node](#validator_node)
+10. [Upgrade](#upgrade)
+11. [Extensions](#extensions)
+
 ## General
 
 - Every writer to the Ledger must  
@@ -335,6 +347,9 @@ All non-edited fields remain the same.
   - maxApplicableSoftwareVersion `optional(uint32)` - MaxApplicableSoftwareVersion should specify the highest SoftwareVersion for which this image can be applied
   - minApplicableSoftwareVersion `optional(uint32)` - MinApplicableSoftwareVersion should specify the lowest SoftwareVersion for which this image can be applied
   - releaseNotesURL `optional(string)` - URL that contains product specific web page that contains release notes for the device model.
+  - otaURL `optional(string)` - URL where to obtain the OTA image
+  - otaFileSize `optional(string)`  - OtaFileSize is the total size of the OTA software image in bytes
+  - otaChecksum `optional(string)` - Digest of the entire contents of the associated OTA Software Update Image under the OtaUrl attribute, encoded in base64 string representation. The digest SHALL have been computed using the algorithm specified in OtaChecksumType
 
 - In State: `model/ModelVersion/value/<vid>/<pid>/<softwareVersion>`
 - Who can send:
@@ -481,6 +496,24 @@ from the revocation list.
   - `dcld tx compliance certify-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string>  --certificationType=<matter|zigbee|access control|product security> --certificationDate=<rfc3339 encoded date> --cdCertificateId=<string> --from=<account>`
 - CLI command full:
   - `dcld tx compliance certify-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string>  --certificationType=<matter|zigbee|access control|product security> --certificationDate=<rfc3339 encoded date> --cdCertificateId=<string> --reason=<string> --cDVersionNumber=<uint32> --familyId=<string> --supportedClusters=<string> --compliantPlatformUsed=<string> --compliantPlatformVersion=<string> --OSVersion=<string> --certificationRoute=<string> --programType=<string> --programTypeVersion=<string> --transport=<string> --parentChild=<string> --certificationIDOfSoftwareComponent=<string> --from=<account>`
+
+### DELETE_COMPLIANCE_INFO
+
+**Status: Implemented**
+
+Delete compliance of the Model Version to the ZB or Matter standard.
+
+The corresponding Compliance Info is required to be present on the ledger
+
+- Parameters:
+  - vid: `uint16` - model vendor ID (positive non-zero)
+  - pid: `uint16` - model product ID (positive non-zero)
+  - softwareVersion: `uint32` - model software version
+  - certificationType: `string` - Certification type - Currently 'zigbee' and 'matter', 'access control', 'product security' types are supported
+- Who can send:
+  - CertificationCenter
+- CLI command:
+  - `dcld tx compliance delete-compliance-info --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<matter|zigbee|access control|product security> --from=<account>`
 
 #### REVOKE_MODEL_CERTIFICATION
 
@@ -984,7 +1017,7 @@ Use `GET_ALL_REVOKED_X509_CERTS` to get a list of all revoked certificates.
 - Parameters:
   - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
 - CLI command:
-  - `dcld query pki all-subject-x509-certs (--subject=<base64 string>`
+  - `dcld query pki all-subject-x509-certs --subject=<base64 string>`
 - REST API:
   - GET `/dcl/pki/certificates/{subject}`
 
@@ -1066,7 +1099,8 @@ Gets a proposed but not approved root certificate to be revoked.
 Gets all approved root certificates. Revoked certificates are not returned.
 Use `GET_ALL_REVOKED_X509_CERTS_ROOT` to get a list of all revoked root certificates.
 
-- Parameters: No
+- Parameters:
+  - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
 - CLI command:
   - `dcld query pki all-x509-root-certs`
 - REST API:
@@ -1078,7 +1112,8 @@ Use `GET_ALL_REVOKED_X509_CERTS_ROOT` to get a list of all revoked root certific
 
 Gets all revoked root certificates.
 
-- Parameters: No
+- Parameters:
+  - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
 - CLI command:
   - `dcld query pki all-revoked-x509-root-certs`
 - REST API:
@@ -1479,7 +1514,7 @@ will be in a pending state until sufficient number of approvals is received.
     dcld query validator propose-disable-node --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q --from alice
     ```
 
-> **_Note:_** You can get Validator's address or owner address using query [GET_VALIDATOR](#getvalidator)
+> **_Note:_** You can get Validator's address or owner address using query [GET_VALIDATOR](#get_validator)
 
 #### APPROVE_DISABLE_VALIDATOR_NODE
 
@@ -1504,7 +1539,7 @@ The validator node is not disabled until sufficient number of Trustees approve i
     dcld tx validator approve-disable-node --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q from alice
     ```
 
-> **_Note:_** You can get Validator's address or owner address using query [GET_VALIDATOR](#getvalidator)
+> **_Note:_** You can get Validator's address or owner address using query [GET_VALIDATOR](#get_validator)
 
 #### REJECT_DISABLE_VALIDATOR_NODE
 
@@ -1531,7 +1566,7 @@ The validator node is not reject until sufficient number of Trustees rejects it.
   dcld tx validator reject-disable-node --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q --from alice
   ```
 
-> **_Note:_** You can get Validator's address or owner address using query [GET_VALIDATOR](#getvalidator)
+> **_Note:_** You can get Validator's address or owner address using query [GET_VALIDATOR](#get_validator)
 
 #### ENABLE_VALIDATOR_NODE
 

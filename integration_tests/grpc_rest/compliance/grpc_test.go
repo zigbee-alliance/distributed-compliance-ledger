@@ -48,3 +48,8 @@ func TestCDCertificateIDUpdateChangesOnlyOneComplianceInfoGRPC(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, false)
 	compliance.CDCertificateIDUpdateChangesOnlyOneComplianceInfo(&suite)
 }
+
+func TestDeleteComplianceInfoForAllCertStatusesGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	compliance.DeleteComplianceInfoForAllCertStatuses(&suite)
+}

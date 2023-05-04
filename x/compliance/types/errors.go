@@ -55,7 +55,7 @@ func NewErrAlreadyProvisional(vid interface{}, pid interface{}, sv interface{}, 
 
 func NewErrComplianceInfoAlreadyExist(vid interface{}, pid interface{}, sv interface{}, certificationType interface{}) error {
 	return sdkerrors.Wrapf(
-		ErrAlreadyRevoked,
+		ErrComplianceInfoAlreadyExist,
 		"Model with vid=%v, pid=%v, softwareVersion=%v, certificationType=%v already has compliance info on the ledger",
 		vid, pid, sv, certificationType,
 	)
@@ -64,7 +64,7 @@ func NewErrComplianceInfoAlreadyExist(vid interface{}, pid interface{}, sv inter
 func NewErrComplianceInfoDoesNotExist(vid interface{}, pid interface{}, sv interface{}, certificationType interface{}) error {
 	return sdkerrors.Wrapf(
 		ErrComplianceInfoDoesNotExist,
-		"Compliance info with vid=%v, pid=%v, softwareVersion=%v, certificationType=%v does not exist on the ledger",
+		"Model with vid=%v, pid=%v, softwareVersion=%v, certificationType=%v has no compliance info on the ledger",
 		vid, pid, sv, certificationType,
 	)
 }

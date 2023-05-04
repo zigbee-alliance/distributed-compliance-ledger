@@ -14,6 +14,7 @@ service Msg {
   rpc RevokeModel(MsgRevokeModel) returns (MsgRevokeModelResponse);
   rpc ProvisionModel(MsgProvisionModel) returns (MsgProvisionModelResponse);
   rpc UpdateComplianceInfo(MsgUpdateComplianceInfo) returns (MsgUpdateComplianceInfoResponse);
+  rpc DeleteComplianceInfo(MsgDeleteComplianceInfo) returns (MsgDeleteComplianceInfoResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -111,6 +112,17 @@ message MsgUpdateComplianceInfo {
 }
 
 message MsgUpdateComplianceInfoResponse {
+}
+
+message MsgDeleteComplianceInfo {
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  int32 vid = 2 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
+  int32 pid = 3 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
+  uint32 softwareVersion = 4;
+  string certificationType = 5 [(gogoproto.moretags) = "validate:\"required,max=100\""];
+}
+
+message MsgDeleteComplianceInfoResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message

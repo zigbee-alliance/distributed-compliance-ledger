@@ -763,4 +763,28 @@ echo $result
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
 
+# delete compliance info
+echo "delete compliance info vid=$vid pid=$pid softwareVerion=$sv certificationType=$zigbee_certification_type"
+result=$(echo "$passphrase" | dcld tx compliance delete-compliance-info --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType=$zigbee_certification_type --from=$zb_account --yes)
+
+test_divider
+
+echo "Get Compliance Info with VID: ${vid} PID: ${pid} SV: ${sv} after deletion"
+result=$(dcld query compliance compliance-info --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType=$zigbee_certification_type)
+check_response "$result" "Not Found"
+
+test_divider
+
+echo "Get Device Software Compliance for cdCertificateId: $cd_certificate_id after deletion"
+result=$(dcld query compliance device-software-compliance --cdCertificateId="$cd_certificate_id")
+response_does_not_contain "$result" "\"vid\":$vid,\"pid\":$pid,\"softwareVersion\":$sv,\"certificationType\":\"$zigbee_certification_type\""
+
+test_divider
+
+echo "Get Compliance Info with VID: ${vid} PID: ${pid} SV: ${sv} after deletion"
+result=$(dcld query compliance certified-model --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType=$zigbee_certification_type)
+check_response "$result" "Not Found"
+
+test_divider
+
 echo "PASSED"

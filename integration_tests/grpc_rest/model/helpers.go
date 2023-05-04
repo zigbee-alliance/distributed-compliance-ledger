@@ -130,6 +130,8 @@ func NewMsgUpdateModelVersion(
 		Pid:             pid,
 		SoftwareVersion: softwareVersion,
 		OtaUrl:          testconstants.OtaURL + "/new",
+		OtaFileSize:     testconstants.OtaFileSize + 1,
+		OtaChecksum:     testconstants.OtaChecksum + "/new",
 		ReleaseNotesUrl: testconstants.ReleaseNotesURL + "/new",
 	}
 }
@@ -899,6 +901,22 @@ func Demo(suite *utils.TestSuite) {
 	receivedModel, err = GetModel(suite, createSecondModelMsg.Vid, createSecondModelMsg.Pid)
 	require.NoError(suite.T, err)
 	require.Equal(suite.T, updateSecondModelMsg.ProductLabel, receivedModel.ProductLabel)
+
+	// add new model version
+	createModelVersionMsg := NewMsgCreateModelVersion(createFirstModelMsg.Vid, createFirstModelMsg.Pid, 1, "1", vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelVersionMsg}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	updateModelVersionMsg := NewMsgUpdateModelVersion(createFirstModelMsg.Vid, createFirstModelMsg.Pid, 1, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{updateModelVersionMsg}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	// Check model version is updated
+	receivedModelVersion, err := GetModelVersion(suite, createFirstModelMsg.Vid, createFirstModelMsg.Pid, createModelVersionMsg.SoftwareVersion)
+	require.NoError(suite.T, err)
+	require.Equal(suite.T, createModelVersionMsg.OtaFileSize+1, receivedModelVersion.OtaFileSize)
+	require.Equal(suite.T, createModelVersionMsg.OtaChecksum+"/new", receivedModelVersion.OtaChecksum)
+	require.Equal(suite.T, createModelVersionMsg.OtaUrl+"/new", receivedModelVersion.OtaUrl)
 }
 
 /* Error cases */

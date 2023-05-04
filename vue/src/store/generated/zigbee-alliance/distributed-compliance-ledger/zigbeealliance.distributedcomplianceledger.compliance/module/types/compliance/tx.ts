@@ -95,6 +95,16 @@ export interface MsgUpdateComplianceInfo {
 
 export interface MsgUpdateComplianceInfoResponse {}
 
+export interface MsgDeleteComplianceInfo {
+  creator: string
+  vid: number
+  pid: number
+  softwareVersion: number
+  certificationType: string
+}
+
+export interface MsgDeleteComplianceInfoResponse {}
+
 const baseMsgCertifyModel: object = {
   signer: '',
   vid: 0,
@@ -1699,13 +1709,175 @@ export const MsgUpdateComplianceInfoResponse = {
   }
 }
 
+const baseMsgDeleteComplianceInfo: object = { creator: '', vid: 0, pid: 0, softwareVersion: 0, certificationType: '' }
+
+export const MsgDeleteComplianceInfo = {
+  encode(message: MsgDeleteComplianceInfo, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== '') {
+      writer.uint32(10).string(message.creator)
+    }
+    if (message.vid !== 0) {
+      writer.uint32(16).int32(message.vid)
+    }
+    if (message.pid !== 0) {
+      writer.uint32(24).int32(message.pid)
+    }
+    if (message.softwareVersion !== 0) {
+      writer.uint32(32).uint32(message.softwareVersion)
+    }
+    if (message.certificationType !== '') {
+      writer.uint32(42).string(message.certificationType)
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgDeleteComplianceInfo {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseMsgDeleteComplianceInfo } as MsgDeleteComplianceInfo
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string()
+          break
+        case 2:
+          message.vid = reader.int32()
+          break
+        case 3:
+          message.pid = reader.int32()
+          break
+        case 4:
+          message.softwareVersion = reader.uint32()
+          break
+        case 5:
+          message.certificationType = reader.string()
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): MsgDeleteComplianceInfo {
+    const message = { ...baseMsgDeleteComplianceInfo } as MsgDeleteComplianceInfo
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator)
+    } else {
+      message.creator = ''
+    }
+    if (object.vid !== undefined && object.vid !== null) {
+      message.vid = Number(object.vid)
+    } else {
+      message.vid = 0
+    }
+    if (object.pid !== undefined && object.pid !== null) {
+      message.pid = Number(object.pid)
+    } else {
+      message.pid = 0
+    }
+    if (object.softwareVersion !== undefined && object.softwareVersion !== null) {
+      message.softwareVersion = Number(object.softwareVersion)
+    } else {
+      message.softwareVersion = 0
+    }
+    if (object.certificationType !== undefined && object.certificationType !== null) {
+      message.certificationType = String(object.certificationType)
+    } else {
+      message.certificationType = ''
+    }
+    return message
+  },
+
+  toJSON(message: MsgDeleteComplianceInfo): unknown {
+    const obj: any = {}
+    message.creator !== undefined && (obj.creator = message.creator)
+    message.vid !== undefined && (obj.vid = message.vid)
+    message.pid !== undefined && (obj.pid = message.pid)
+    message.softwareVersion !== undefined && (obj.softwareVersion = message.softwareVersion)
+    message.certificationType !== undefined && (obj.certificationType = message.certificationType)
+    return obj
+  },
+
+  fromPartial(object: DeepPartial<MsgDeleteComplianceInfo>): MsgDeleteComplianceInfo {
+    const message = { ...baseMsgDeleteComplianceInfo } as MsgDeleteComplianceInfo
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator
+    } else {
+      message.creator = ''
+    }
+    if (object.vid !== undefined && object.vid !== null) {
+      message.vid = object.vid
+    } else {
+      message.vid = 0
+    }
+    if (object.pid !== undefined && object.pid !== null) {
+      message.pid = object.pid
+    } else {
+      message.pid = 0
+    }
+    if (object.softwareVersion !== undefined && object.softwareVersion !== null) {
+      message.softwareVersion = object.softwareVersion
+    } else {
+      message.softwareVersion = 0
+    }
+    if (object.certificationType !== undefined && object.certificationType !== null) {
+      message.certificationType = object.certificationType
+    } else {
+      message.certificationType = ''
+    }
+    return message
+  }
+}
+
+const baseMsgDeleteComplianceInfoResponse: object = {}
+
+export const MsgDeleteComplianceInfoResponse = {
+  encode(_: MsgDeleteComplianceInfoResponse, writer: Writer = Writer.create()): Writer {
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgDeleteComplianceInfoResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseMsgDeleteComplianceInfoResponse } as MsgDeleteComplianceInfoResponse
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(_: any): MsgDeleteComplianceInfoResponse {
+    const message = { ...baseMsgDeleteComplianceInfoResponse } as MsgDeleteComplianceInfoResponse
+    return message
+  },
+
+  toJSON(_: MsgDeleteComplianceInfoResponse): unknown {
+    const obj: any = {}
+    return obj
+  },
+
+  fromPartial(_: DeepPartial<MsgDeleteComplianceInfoResponse>): MsgDeleteComplianceInfoResponse {
+    const message = { ...baseMsgDeleteComplianceInfoResponse } as MsgDeleteComplianceInfoResponse
+    return message
+  }
+}
+
 /** Msg defines the Msg service. */
 export interface Msg {
   CertifyModel(request: MsgCertifyModel): Promise<MsgCertifyModelResponse>
   RevokeModel(request: MsgRevokeModel): Promise<MsgRevokeModelResponse>
   ProvisionModel(request: MsgProvisionModel): Promise<MsgProvisionModelResponse>
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   UpdateComplianceInfo(request: MsgUpdateComplianceInfo): Promise<MsgUpdateComplianceInfoResponse>
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  DeleteComplianceInfo(request: MsgDeleteComplianceInfo): Promise<MsgDeleteComplianceInfoResponse>
 }
 
 export class MsgClientImpl implements Msg {
@@ -1735,6 +1907,12 @@ export class MsgClientImpl implements Msg {
     const data = MsgUpdateComplianceInfo.encode(request).finish()
     const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.compliance.Msg', 'UpdateComplianceInfo', data)
     return promise.then((data) => MsgUpdateComplianceInfoResponse.decode(new Reader(data)))
+  }
+
+  DeleteComplianceInfo(request: MsgDeleteComplianceInfo): Promise<MsgDeleteComplianceInfoResponse> {
+    const data = MsgDeleteComplianceInfo.encode(request).finish()
+    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.compliance.Msg', 'DeleteComplianceInfo', data)
+    return promise.then((data) => MsgDeleteComplianceInfoResponse.decode(new Reader(data)))
   }
 }
 

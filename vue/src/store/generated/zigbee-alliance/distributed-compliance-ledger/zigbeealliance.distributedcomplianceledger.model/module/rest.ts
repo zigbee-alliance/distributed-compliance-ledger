@@ -91,6 +91,8 @@ export type ModelMsgCreateModelVersionResponse = object;
 
 export type ModelMsgDeleteModelResponse = object;
 
+export type ModelMsgDeleteModelVersionResponse = object;
+
 export type ModelMsgUpdateModelResponse = object;
 
 export type ModelMsgUpdateModelVersionResponse = object;

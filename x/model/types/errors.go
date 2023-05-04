@@ -99,13 +99,6 @@ func NewErrModelVersionAlreadyExists(vid interface{}, pid interface{}, softwareV
 		vid, pid, softwareVersion)
 }
 
-func NewErrOtaURLCannotBeSet(vid interface{}, pid interface{}, softwareVersion interface{}) error {
-	return sdkerrors.Wrapf(ErrOtaURLCannotBeSet,
-		"OTA URL cannot be set for model version associated with vid=%v, pid=%v "+
-			"and softwareVersion=%v because OTA was not set for this model initially",
-		vid, pid, softwareVersion)
-}
-
 func NewErrMaxSVLessThanMinSV(minApplicableSoftwareVersion interface{},
 	maxApplicableSoftwareVersion interface{},
 ) error {

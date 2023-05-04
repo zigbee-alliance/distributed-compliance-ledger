@@ -88,6 +88,15 @@ export interface MsgUpdateComplianceInfo {
 }
 export interface MsgUpdateComplianceInfoResponse {
 }
+export interface MsgDeleteComplianceInfo {
+    creator: string;
+    vid: number;
+    pid: number;
+    softwareVersion: number;
+    certificationType: string;
+}
+export interface MsgDeleteComplianceInfoResponse {
+}
 export declare const MsgCertifyModel: {
     encode(message: MsgCertifyModel, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgCertifyModel;
@@ -144,13 +153,28 @@ export declare const MsgUpdateComplianceInfoResponse: {
     toJSON(_: MsgUpdateComplianceInfoResponse): unknown;
     fromPartial(_: DeepPartial<MsgUpdateComplianceInfoResponse>): MsgUpdateComplianceInfoResponse;
 };
+export declare const MsgDeleteComplianceInfo: {
+    encode(message: MsgDeleteComplianceInfo, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgDeleteComplianceInfo;
+    fromJSON(object: any): MsgDeleteComplianceInfo;
+    toJSON(message: MsgDeleteComplianceInfo): unknown;
+    fromPartial(object: DeepPartial<MsgDeleteComplianceInfo>): MsgDeleteComplianceInfo;
+};
+export declare const MsgDeleteComplianceInfoResponse: {
+    encode(_: MsgDeleteComplianceInfoResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgDeleteComplianceInfoResponse;
+    fromJSON(_: any): MsgDeleteComplianceInfoResponse;
+    toJSON(_: MsgDeleteComplianceInfoResponse): unknown;
+    fromPartial(_: DeepPartial<MsgDeleteComplianceInfoResponse>): MsgDeleteComplianceInfoResponse;
+};
 /** Msg defines the Msg service. */
 export interface Msg {
     CertifyModel(request: MsgCertifyModel): Promise<MsgCertifyModelResponse>;
     RevokeModel(request: MsgRevokeModel): Promise<MsgRevokeModelResponse>;
     ProvisionModel(request: MsgProvisionModel): Promise<MsgProvisionModelResponse>;
-    /** this line is used by starport scaffolding # proto/tx/rpc */
     UpdateComplianceInfo(request: MsgUpdateComplianceInfo): Promise<MsgUpdateComplianceInfoResponse>;
+    /** this line is used by starport scaffolding # proto/tx/rpc */
+    DeleteComplianceInfo(request: MsgDeleteComplianceInfo): Promise<MsgDeleteComplianceInfoResponse>;
 }
 export declare class MsgClientImpl implements Msg {
     private readonly rpc;
@@ -159,6 +183,7 @@ export declare class MsgClientImpl implements Msg {
     RevokeModel(request: MsgRevokeModel): Promise<MsgRevokeModelResponse>;
     ProvisionModel(request: MsgProvisionModel): Promise<MsgProvisionModelResponse>;
     UpdateComplianceInfo(request: MsgUpdateComplianceInfo): Promise<MsgUpdateComplianceInfoResponse>;
+    DeleteComplianceInfo(request: MsgDeleteComplianceInfo): Promise<MsgDeleteComplianceInfoResponse>;
 }
 interface Rpc {
     request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
