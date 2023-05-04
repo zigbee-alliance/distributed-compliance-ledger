@@ -179,6 +179,19 @@ func TestMsgUpdateComplianceInfo_ValidateBasic(t *testing.T) {
 			},
 			err: strconv.ErrSyntax,
 		},
+		{
+			name: "non-integer cdVersionNumber",
+			msg: MsgUpdateComplianceInfo{
+				Creator:           sample.AccAddress(),
+				Vid:               1,
+				Pid:               1,
+				CertificationType: testconstants.CertificationType,
+				SoftwareVersion:   testconstants.SoftwareVersion,
+				Reason:            testconstants.Reason,
+				CDVersionNumber:   "0.1402",
+			},
+			err: strconv.ErrSyntax,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
