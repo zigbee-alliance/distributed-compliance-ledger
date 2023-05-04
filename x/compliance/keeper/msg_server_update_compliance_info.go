@@ -36,7 +36,7 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 		cdVersionNumber, err := strconv.ParseUint(msg.CDVersionNumber, 10, 32)
 
 		if err != nil {
-			return nil, err
+			return nil, types.NewErrInvalidUint32ForCdVersionNumber(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType, msg.CDVersionNumber)
 		}
 
 		modelVersion, isFound := k.modelKeeper.GetModelVersion(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion)
@@ -104,39 +104,44 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 		complianceInfo.Transport = msg.Transport
 	}
 
-	// if cdCertificateId is present, update all related indices as well.
 	//nolint:nestif
-	if msg.CDCertificateId != "" {
-		deviceSoftwareCompliance, isFound := k.GetDeviceSoftwareCompliance(ctx, complianceInfo.CDCertificateId)
+	if msg.CDCertificateId != "" && msg.CDCertificateId != complianceInfo.CDCertificateId {
+		// remove the compliance info from a device software compliance with its old cd certificate id
+		currentDeviceSoftwareCompliance, isFound := k.GetDeviceSoftwareCompliance(ctx, complianceInfo.CDCertificateId)
+
+		index, found := currentDeviceSoftwareCompliance.IsComplianceInfoExist(msg.Vid, msg.Pid, msg.SoftwareVersion)
+		if found {
+			currentDeviceSoftwareCompliance.RemoveComplianceInfo(index)
+		}
+
+		if len(currentDeviceSoftwareCompliance.ComplianceInfo) == 0 {
+			k.RemoveDeviceSoftwareCompliance(ctx, currentDeviceSoftwareCompliance.CDCertificateId)
+		} else {
+			k.SetDeviceSoftwareCompliance(ctx, currentDeviceSoftwareCompliance)
+		}
+
+		// update the compliance info cd certificate id field
+		complianceInfo.CDCertificateId = msg.CDCertificateId
+
+		// insert the compliance info to a device software compliance with its new cd certificate id if exists, else create one.
+		targetDeviceSoftwareCompliance, isFound := k.GetDeviceSoftwareCompliance(ctx, complianceInfo.CDCertificateId)
+
+		if !isFound {
+			targetDeviceSoftwareCompliance.CDCertificateId = msg.CDCertificateId
+		}
+		targetDeviceSoftwareCompliance.ComplianceInfo = append(targetDeviceSoftwareCompliance.ComplianceInfo, &complianceInfo)
+		k.SetDeviceSoftwareCompliance(ctx, targetDeviceSoftwareCompliance)
+	} else { // update the corresponding device software compliance to sync with compliance info.
+		deviceSoftwareCompliance, _ := k.GetDeviceSoftwareCompliance(ctx, complianceInfo.CDCertificateId)
 
 		index, found := deviceSoftwareCompliance.IsComplianceInfoExist(msg.Vid, msg.Pid, msg.SoftwareVersion)
 		if found {
-			deviceSoftwareCompliance.RemoveComplianceInfo(index)
+			deviceSoftwareCompliance.ComplianceInfo[index] = &complianceInfo
 		}
 
-		if !isFound {
-			deviceSoftwareCompliance.CDCertificateId = msg.CDCertificateId
-			deviceSoftwareCompliance.ComplianceInfo = append(deviceSoftwareCompliance.ComplianceInfo, &complianceInfo)
-		}
-
-		if len(deviceSoftwareCompliance.ComplianceInfo) == 0 {
-			k.RemoveDeviceSoftwareCompliance(ctx, deviceSoftwareCompliance.CDCertificateId)
-		} else {
-			k.SetDeviceSoftwareCompliance(ctx, deviceSoftwareCompliance)
-		}
-
-		complianceInfo.CDCertificateId = msg.CDCertificateId
-
-		deviceSoftwareCompliance, isFound = k.GetDeviceSoftwareCompliance(ctx, complianceInfo.CDCertificateId)
-
-		if !isFound {
-			deviceSoftwareCompliance.CDCertificateId = msg.CDCertificateId
-		}
-		deviceSoftwareCompliance.ComplianceInfo = append(deviceSoftwareCompliance.ComplianceInfo, &complianceInfo)
 		k.SetDeviceSoftwareCompliance(ctx, deviceSoftwareCompliance)
 	}
 
 	k.SetComplianceInfo(ctx, complianceInfo)
-
 	return &types.MsgUpdateComplianceInfoResponse{}, nil
 }
