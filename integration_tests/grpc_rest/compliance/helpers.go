@@ -39,6 +39,11 @@ import (
 	TODO: provide tests for error cases
 */
 
+var (
+	certDate   = "2020-01-01T00:00:01Z"
+	certReason = "some reason 1"
+)
+
 func GetAllComplianceInfo(suite *utils.TestSuite) (res []dclcompltypes.ComplianceInfo, err error) {
 	if suite.Rest {
 		var resp compliancetypes.QueryAllComplianceInfoResponse
@@ -497,8 +502,6 @@ func GetDeviceSoftwareCompliance(
 	return &res, nil
 }
 
-const certDate = "2021-10-01T00:00:01Z"
-
 const provDate = "2021-03-01T00:00:01Z"
 
 func CDCertificateIDUpdateChangesOnlyOneComplianceInfo(suite *utils.TestSuite) {
@@ -567,8 +570,6 @@ func CDCertificateIDUpdateChangesOnlyOneComplianceInfo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Certify first model version
-	certReason := "some reason 1"
-	certDate := "2020-01-01T00:00:01Z"
 	certifyModelVersionMsg := compliancetypes.MsgCertifyModel{
 		Vid:                   vid,
 		Pid:                   pid,
@@ -683,9 +684,6 @@ func DeleteComplianceInfoForAllCertStatuses(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Certify model
-	certReason := "some reason 1"
-	//nolint:goconst
-	certDate := "2020-01-01T00:00:01Z"
 	certifyModelMsg := compliancetypes.MsgCertifyModel{
 		Vid:                   vid,
 		Pid:                   pid,
@@ -883,8 +881,6 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	suite.AssertNotFound(err)
 
 	// Certify model
-	certReason := "some reason 1"
-	certDate := "2020-01-01T00:00:01Z"
 	certifyModelMsg := compliancetypes.MsgCertifyModel{
 		Vid:                   vid,
 		Pid:                   pid,

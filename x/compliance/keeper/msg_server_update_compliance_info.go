@@ -107,7 +107,7 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 	//nolint:nestif
 	if msg.CDCertificateId != "" && msg.CDCertificateId != complianceInfo.CDCertificateId {
 		// remove the compliance info from a device software compliance with its old cd certificate id
-		currentDeviceSoftwareCompliance, isFound := k.GetDeviceSoftwareCompliance(ctx, complianceInfo.CDCertificateId)
+		currentDeviceSoftwareCompliance, _ := k.GetDeviceSoftwareCompliance(ctx, complianceInfo.CDCertificateId)
 
 		index, found := currentDeviceSoftwareCompliance.IsComplianceInfoExist(msg.Vid, msg.Pid, msg.SoftwareVersion)
 		if found {
@@ -143,5 +143,6 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 	}
 
 	k.SetComplianceInfo(ctx, complianceInfo)
+
 	return &types.MsgUpdateComplianceInfoResponse{}, nil
 }
