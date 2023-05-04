@@ -756,7 +756,7 @@ Updates a compliance info by VID, PID, Software Version and Certification Type.
   - certificationDate: `optional(string)` - The date of model certification (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
   - cdCertificateId: `optional(string)` - CD Certificate ID 
   - reason `optional(string)` - optional comment describing the reason of the certification
-  - cDVersionNumber `optional(uint32)` - optional field describing the CD version number, must be the same with the associated model version
+  - cDVersionNumber `optional(string)` - optional field (a uint32-parsable string) describing the CD version number, must be the same with the associated model version
   - familyId `optional(string)` - optional field describing the family ID
   - supportedClusters `optional(string)` - optional field describing the supported clusters
   - compliantPlatformUsed `optional(string)` - optional field describing the compliant platform used
