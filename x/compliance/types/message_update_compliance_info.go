@@ -88,7 +88,7 @@ func (msg *MsgUpdateComplianceInfo) ValidateBasic() error {
 		cdVersionNumber, err := strconv.ParseUint(msg.CDVersionNumber, 10, 32)
 
 		if err != nil {
-			return err
+			return NewErrInvalidUint32ForCdVersionNumber(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType, msg.CDVersionNumber)
 		}
 
 		if cdVersionNumber > 65535 {

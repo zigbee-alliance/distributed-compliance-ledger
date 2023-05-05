@@ -1,7 +1,6 @@
 package types
 
 import (
-	"strconv"
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -177,7 +176,7 @@ func TestMsgUpdateComplianceInfo_ValidateBasic(t *testing.T) {
 				Reason:            testconstants.Reason,
 				CDVersionNumber:   "-1",
 			},
-			err: strconv.ErrSyntax,
+			err: ErrInvalidUint32ForCdVersionNumber,
 		},
 		{
 			name: "non-integer cdVersionNumber",
@@ -190,7 +189,7 @@ func TestMsgUpdateComplianceInfo_ValidateBasic(t *testing.T) {
 				Reason:            testconstants.Reason,
 				CDVersionNumber:   "0.1402",
 			},
-			err: strconv.ErrSyntax,
+			err: ErrInvalidUint32ForCdVersionNumber,
 		},
 	}
 	for _, tt := range tests {
