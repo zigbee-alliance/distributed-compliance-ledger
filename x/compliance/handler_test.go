@@ -1600,8 +1600,8 @@ func TestHandler_UpdateToAnotherCDCertificateID(t *testing.T) {
 	setup := Setup(t)
 
 	const (
-		CD_CERT_ID_1 = "CD_CERT_ID_1"
-		CD_CERT_ID_2 = "CD_CERT_ID_2"
+		cdCertID1 = "cdCertID1"
+		cdCertID2 = "cdCertID2"
 	)
 
 	// add model version
@@ -1611,7 +1611,7 @@ func TestHandler_UpdateToAnotherCDCertificateID(t *testing.T) {
 	// certify first model version
 	certifyModelMsg := NewMsgCertifyModel(
 		vid1, pid1, softwareVersion1, softwareVersionString1, dclcompltypes.ZigbeeCertificationType, setup.CertificationCenter)
-	certifyModelMsg.CDCertificateId = CD_CERT_ID_1
+	certifyModelMsg.CDCertificateId = cdCertID1
 
 	_, err := setup.Handler(setup.Ctx, certifyModelMsg)
 	require.NoError(t, err)
@@ -1623,7 +1623,7 @@ func TestHandler_UpdateToAnotherCDCertificateID(t *testing.T) {
 	// certify second model version
 	certifyModelMsg = NewMsgCertifyModel(
 		vid2, pid2, softwareVersion2, softwareVersionString2, dclcompltypes.ZigbeeCertificationType, setup.CertificationCenter)
-	certifyModelMsg.CDCertificateId = CD_CERT_ID_2
+	certifyModelMsg.CDCertificateId = cdCertID2
 
 	_, err = setup.Handler(setup.Ctx, certifyModelMsg)
 	require.NoError(t, err)
@@ -1635,17 +1635,17 @@ func TestHandler_UpdateToAnotherCDCertificateID(t *testing.T) {
 		Pid:               pid1,
 		SoftwareVersion:   softwareVersion1,
 		CertificationType: dclcompltypes.ZigbeeCertificationType,
-		CDCertificateId:   CD_CERT_ID_2,
+		CDCertificateId:   cdCertID2,
 	}
 
-	originalDeviceSoftwareCompliance1, _ := queryDeviceSoftwareCompliance(setup, CD_CERT_ID_1)
-	originalDeviceSoftwareCompliance2, _ := queryDeviceSoftwareCompliance(setup, CD_CERT_ID_2)
+	originalDeviceSoftwareCompliance1, _ := queryDeviceSoftwareCompliance(setup, cdCertID1)
+	originalDeviceSoftwareCompliance2, _ := queryDeviceSoftwareCompliance(setup, cdCertID2)
 
 	_, err = setup.Handler(setup.Ctx, updateComplianceInfoMsg)
 	require.NoError(t, err)
 
-	newDeviceSoftwareCompliance1, _ := queryDeviceSoftwareCompliance(setup, CD_CERT_ID_1)
-	newDeviceSoftwareCompliance2, _ := queryDeviceSoftwareCompliance(setup, CD_CERT_ID_2)
+	newDeviceSoftwareCompliance1, _ := queryDeviceSoftwareCompliance(setup, cdCertID1)
+	newDeviceSoftwareCompliance2, _ := queryDeviceSoftwareCompliance(setup, cdCertID2)
 
 	firstComplianceInfo, err := queryComplianceInfo(setup, vid1, pid1, softwareVersion1, testconstants.CertificationType)
 	require.NoError(t, err)
@@ -1654,10 +1654,10 @@ func TestHandler_UpdateToAnotherCDCertificateID(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, updateComplianceInfoMsg.CDCertificateId, firstComplianceInfo.CDCertificateId)
-	require.Equal(t, CD_CERT_ID_2, secondComplianceInfo.CDCertificateId)
+	require.Equal(t, cdCertID2, secondComplianceInfo.CDCertificateId)
 
-	require.Equal(t, CD_CERT_ID_2, firstComplianceInfo.CDCertificateId)
-	require.Equal(t, CD_CERT_ID_2, newDeviceSoftwareCompliance2.ComplianceInfo[1].CDCertificateId)
+	require.Equal(t, cdCertID2, firstComplianceInfo.CDCertificateId)
+	require.Equal(t, cdCertID2, newDeviceSoftwareCompliance2.ComplianceInfo[1].CDCertificateId)
 
 	require.Equal(t, 1, len(originalDeviceSoftwareCompliance1.ComplianceInfo))
 	require.Equal(t, 1, len(originalDeviceSoftwareCompliance2.ComplianceInfo))
@@ -1665,9 +1665,9 @@ func TestHandler_UpdateToAnotherCDCertificateID(t *testing.T) {
 	require.Equal(t, 2, len(newDeviceSoftwareCompliance2.ComplianceInfo))
 	require.Equal(t, originalDeviceSoftwareCompliance2.ComplianceInfo[0], newDeviceSoftwareCompliance2.ComplianceInfo[0])
 
-	cdCertificateIdExcluded := newDeviceSoftwareCompliance2.ComplianceInfo[1]
-	cdCertificateIdExcluded.CDCertificateId = CD_CERT_ID_1
-	require.Equal(t, originalDeviceSoftwareCompliance1.ComplianceInfo[0], cdCertificateIdExcluded)
+	cdCertificateIDExcluded := newDeviceSoftwareCompliance2.ComplianceInfo[1]
+	cdCertificateIDExcluded.CDCertificateId = cdCertID1
+	require.Equal(t, originalDeviceSoftwareCompliance1.ComplianceInfo[0], cdCertificateIDExcluded)
 }
 
 func TestHandler_CertifyRevokedModel(t *testing.T) {
