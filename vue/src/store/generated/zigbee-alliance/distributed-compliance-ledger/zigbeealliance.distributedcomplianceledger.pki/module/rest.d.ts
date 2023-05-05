@@ -98,7 +98,7 @@ export interface PkiQueryAllApprovedCertificatesResponse {
     pagination?: V1Beta1PageResponse;
 }
 export interface PkiQueryAllPkiRevocationDistributionPointResponse {
-    pKIRevocationDistributionPoint?: PkiPkiRevocationDistributionPoint[];
+    PkiRevocationDistributionPoint?: PkiPkiRevocationDistributionPoint[];
     /**
      * PageResponse is to be embedded in gRPC response messages where the
      * corresponding request message has used PageRequest.
@@ -175,7 +175,7 @@ export interface PkiQueryGetChildCertificatesResponse {
     childCertificates?: PkiChildCertificates;
 }
 export interface PkiQueryGetPkiRevocationDistributionPointResponse {
-    pKIRevocationDistributionPoint?: PkiPkiRevocationDistributionPoint;
+    PkiRevocationDistributionPoint?: PkiPkiRevocationDistributionPoint;
 }
 export interface PkiQueryGetProposedCertificateResponse {
     proposedCertificate?: PkiProposedCertificate;

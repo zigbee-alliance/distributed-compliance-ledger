@@ -1747,8 +1747,8 @@ export const QueryGetPkiRevocationDistributionPointRequest = {
 const baseQueryGetPkiRevocationDistributionPointResponse = {};
 export const QueryGetPkiRevocationDistributionPointResponse = {
     encode(message, writer = Writer.create()) {
-        if (message.pKIRevocationDistributionPoint !== undefined) {
-            PkiRevocationDistributionPoint.encode(message.pKIRevocationDistributionPoint, writer.uint32(10).fork()).ldelim();
+        if (message.PkiRevocationDistributionPoint !== undefined) {
+            PkiRevocationDistributionPoint.encode(message.PkiRevocationDistributionPoint, writer.uint32(10).fork()).ldelim();
         }
         return writer;
     },
@@ -1760,7 +1760,7 @@ export const QueryGetPkiRevocationDistributionPointResponse = {
             const tag = reader.uint32();
             switch (tag >>> 3) {
                 case 1:
-                    message.pKIRevocationDistributionPoint = PkiRevocationDistributionPoint.decode(reader, reader.uint32());
+                    message.PkiRevocationDistributionPoint = PkiRevocationDistributionPoint.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -1771,29 +1771,29 @@ export const QueryGetPkiRevocationDistributionPointResponse = {
     },
     fromJSON(object) {
         const message = { ...baseQueryGetPkiRevocationDistributionPointResponse };
-        if (object.pKIRevocationDistributionPoint !== undefined && object.pKIRevocationDistributionPoint !== null) {
-            message.pKIRevocationDistributionPoint = PkiRevocationDistributionPoint.fromJSON(object.pKIRevocationDistributionPoint);
+        if (object.PkiRevocationDistributionPoint !== undefined && object.PkiRevocationDistributionPoint !== null) {
+            message.PkiRevocationDistributionPoint = PkiRevocationDistributionPoint.fromJSON(object.PkiRevocationDistributionPoint);
         }
         else {
-            message.pKIRevocationDistributionPoint = undefined;
+            message.PkiRevocationDistributionPoint = undefined;
         }
         return message;
     },
     toJSON(message) {
         const obj = {};
-        message.pKIRevocationDistributionPoint !== undefined &&
-            (obj.pKIRevocationDistributionPoint = message.pKIRevocationDistributionPoint
-                ? PkiRevocationDistributionPoint.toJSON(message.pKIRevocationDistributionPoint)
+        message.PkiRevocationDistributionPoint !== undefined &&
+            (obj.PkiRevocationDistributionPoint = message.PkiRevocationDistributionPoint
+                ? PkiRevocationDistributionPoint.toJSON(message.PkiRevocationDistributionPoint)
                 : undefined);
         return obj;
     },
     fromPartial(object) {
         const message = { ...baseQueryGetPkiRevocationDistributionPointResponse };
-        if (object.pKIRevocationDistributionPoint !== undefined && object.pKIRevocationDistributionPoint !== null) {
-            message.pKIRevocationDistributionPoint = PkiRevocationDistributionPoint.fromPartial(object.pKIRevocationDistributionPoint);
+        if (object.PkiRevocationDistributionPoint !== undefined && object.PkiRevocationDistributionPoint !== null) {
+            message.PkiRevocationDistributionPoint = PkiRevocationDistributionPoint.fromPartial(object.PkiRevocationDistributionPoint);
         }
         else {
-            message.pKIRevocationDistributionPoint = undefined;
+            message.PkiRevocationDistributionPoint = undefined;
         }
         return message;
     }
@@ -1852,7 +1852,7 @@ export const QueryAllPkiRevocationDistributionPointRequest = {
 const baseQueryAllPkiRevocationDistributionPointResponse = {};
 export const QueryAllPkiRevocationDistributionPointResponse = {
     encode(message, writer = Writer.create()) {
-        for (const v of message.pKIRevocationDistributionPoint) {
+        for (const v of message.PkiRevocationDistributionPoint) {
             PkiRevocationDistributionPoint.encode(v, writer.uint32(10).fork()).ldelim();
         }
         if (message.pagination !== undefined) {
@@ -1864,12 +1864,12 @@ export const QueryAllPkiRevocationDistributionPointResponse = {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
         const message = { ...baseQueryAllPkiRevocationDistributionPointResponse };
-        message.pKIRevocationDistributionPoint = [];
+        message.PkiRevocationDistributionPoint = [];
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
                 case 1:
-                    message.pKIRevocationDistributionPoint.push(PkiRevocationDistributionPoint.decode(reader, reader.uint32()));
+                    message.PkiRevocationDistributionPoint.push(PkiRevocationDistributionPoint.decode(reader, reader.uint32()));
                     break;
                 case 2:
                     message.pagination = PageResponse.decode(reader, reader.uint32());
@@ -1883,10 +1883,10 @@ export const QueryAllPkiRevocationDistributionPointResponse = {
     },
     fromJSON(object) {
         const message = { ...baseQueryAllPkiRevocationDistributionPointResponse };
-        message.pKIRevocationDistributionPoint = [];
-        if (object.pKIRevocationDistributionPoint !== undefined && object.pKIRevocationDistributionPoint !== null) {
-            for (const e of object.pKIRevocationDistributionPoint) {
-                message.pKIRevocationDistributionPoint.push(PkiRevocationDistributionPoint.fromJSON(e));
+        message.PkiRevocationDistributionPoint = [];
+        if (object.PkiRevocationDistributionPoint !== undefined && object.PkiRevocationDistributionPoint !== null) {
+            for (const e of object.PkiRevocationDistributionPoint) {
+                message.PkiRevocationDistributionPoint.push(PkiRevocationDistributionPoint.fromJSON(e));
             }
         }
         if (object.pagination !== undefined && object.pagination !== null) {
@@ -1899,21 +1899,21 @@ export const QueryAllPkiRevocationDistributionPointResponse = {
     },
     toJSON(message) {
         const obj = {};
-        if (message.pKIRevocationDistributionPoint) {
-            obj.pKIRevocationDistributionPoint = message.pKIRevocationDistributionPoint.map((e) => (e ? PkiRevocationDistributionPoint.toJSON(e) : undefined));
+        if (message.PkiRevocationDistributionPoint) {
+            obj.PkiRevocationDistributionPoint = message.PkiRevocationDistributionPoint.map((e) => (e ? PkiRevocationDistributionPoint.toJSON(e) : undefined));
         }
         else {
-            obj.pKIRevocationDistributionPoint = [];
+            obj.PkiRevocationDistributionPoint = [];
         }
         message.pagination !== undefined && (obj.pagination = message.pagination ? PageResponse.toJSON(message.pagination) : undefined);
         return obj;
     },
     fromPartial(object) {
         const message = { ...baseQueryAllPkiRevocationDistributionPointResponse };
-        message.pKIRevocationDistributionPoint = [];
-        if (object.pKIRevocationDistributionPoint !== undefined && object.pKIRevocationDistributionPoint !== null) {
-            for (const e of object.pKIRevocationDistributionPoint) {
-                message.pKIRevocationDistributionPoint.push(PkiRevocationDistributionPoint.fromPartial(e));
+        message.PkiRevocationDistributionPoint = [];
+        if (object.PkiRevocationDistributionPoint !== undefined && object.PkiRevocationDistributionPoint !== null) {
+            for (const e of object.PkiRevocationDistributionPoint) {
+                message.PkiRevocationDistributionPoint.push(PkiRevocationDistributionPoint.fromPartial(e));
             }
         }
         if (object.pagination !== undefined && object.pagination !== null) {

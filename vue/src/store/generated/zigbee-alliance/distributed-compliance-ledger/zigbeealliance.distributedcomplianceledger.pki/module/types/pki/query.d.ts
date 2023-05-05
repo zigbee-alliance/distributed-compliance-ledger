@@ -110,13 +110,13 @@ export interface QueryGetPkiRevocationDistributionPointRequest {
     issuerSubjectKeyID: string;
 }
 export interface QueryGetPkiRevocationDistributionPointResponse {
-    pKIRevocationDistributionPoint: PkiRevocationDistributionPoint | undefined;
+    PkiRevocationDistributionPoint: PkiRevocationDistributionPoint | undefined;
 }
 export interface QueryAllPkiRevocationDistributionPointRequest {
     pagination: PageRequest | undefined;
 }
 export interface QueryAllPkiRevocationDistributionPointResponse {
-    pKIRevocationDistributionPoint: PkiRevocationDistributionPoint[];
+    PkiRevocationDistributionPoint: PkiRevocationDistributionPoint[];
     pagination: PageResponse | undefined;
 }
 export declare const QueryGetApprovedCertificatesRequest: {
