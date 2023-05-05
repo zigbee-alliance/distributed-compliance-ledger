@@ -106,7 +106,19 @@ func TestGenesis(t *testing.T) {
 				SubjectKeyId: "1",
 			},
 		},
-		// this line is used by starport scaffolding # genesis/test/state
+		PKIRevocationDistributionPointList: []types.PKIRevocationDistributionPoint{
+		{
+			Vid: 0,
+Label: "0",
+IssuerSubjectKeyID: "0",
+},
+		{
+			Vid: 1,
+Label: "1",
+IssuerSubjectKeyID: "1",
+},
+	},
+	// this line is used by starport scaffolding # genesis/test/state
 	}
 
 	k, ctx := keepertest.PkiKeeper(t, nil)
@@ -124,5 +136,6 @@ func TestGenesis(t *testing.T) {
 	require.Equal(t, genesisState.RevokedRootCertificates, got.RevokedRootCertificates)
 	require.ElementsMatch(t, genesisState.ApprovedCertificatesBySubjectList, got.ApprovedCertificatesBySubjectList)
 	require.ElementsMatch(t, genesisState.RejectedCertificateList, got.RejectedCertificateList)
-	// this line is used by starport scaffolding # genesis/test/assert
+	require.ElementsMatch(t, genesisState.PKIRevocationDistributionPointList, got.PKIRevocationDistributionPointList)
+// this line is used by starport scaffolding # genesis/test/assert
 }
