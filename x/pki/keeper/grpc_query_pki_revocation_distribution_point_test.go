@@ -1,7 +1,7 @@
 package keeper_test
 
 import (
-    "strconv"
+	"strconv"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -10,16 +10,16 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/nullify"
 	keepertest "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/nullify"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
 // Prevent strconv unused error
 var _ = strconv.IntSize
 
 func TestPKIRevocationDistributionPointQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.PkiKeeper(t)
+	keeper, ctx := keepertest.PkiKeeper(t, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNPKIRevocationDistributionPoint(keeper, ctx, 2)
 	for _, tc := range []struct {
@@ -29,34 +29,31 @@ func TestPKIRevocationDistributionPointQuerySingle(t *testing.T) {
 		err      error
 	}{
 		{
-			desc:     "First",
-			request:  &types.QueryGetPKIRevocationDistributionPointRequest{
-			    Vid: msgs[0].Vid,
-                Label: msgs[0].Label,
-                IssuerSubjectKeyID: msgs[0].IssuerSubjectKeyID,
-                
+			desc: "First",
+			request: &types.QueryGetPKIRevocationDistributionPointRequest{
+				Vid:                msgs[0].Vid,
+				Label:              msgs[0].Label,
+				IssuerSubjectKeyID: msgs[0].IssuerSubjectKeyID,
 			},
 			response: &types.QueryGetPKIRevocationDistributionPointResponse{PKIRevocationDistributionPoint: msgs[0]},
 		},
 		{
-			desc:     "Second",
-			request:  &types.QueryGetPKIRevocationDistributionPointRequest{
-			    Vid: msgs[1].Vid,
-                Label: msgs[1].Label,
-                IssuerSubjectKeyID: msgs[1].IssuerSubjectKeyID,
-                
+			desc: "Second",
+			request: &types.QueryGetPKIRevocationDistributionPointRequest{
+				Vid:                msgs[1].Vid,
+				Label:              msgs[1].Label,
+				IssuerSubjectKeyID: msgs[1].IssuerSubjectKeyID,
 			},
 			response: &types.QueryGetPKIRevocationDistributionPointResponse{PKIRevocationDistributionPoint: msgs[1]},
 		},
 		{
-			desc:    "KeyNotFound",
+			desc: "KeyNotFound",
 			request: &types.QueryGetPKIRevocationDistributionPointRequest{
-			    Vid:100000,
-                Label:strconv.Itoa(100000),
-                IssuerSubjectKeyID:strconv.Itoa(100000),
-                
+				Vid:                100000,
+				Label:              strconv.Itoa(100000),
+				IssuerSubjectKeyID: strconv.Itoa(100000),
 			},
-			err:     status.Error(codes.InvalidArgument, "not found"),
+			err: status.Error(codes.InvalidArgument, "not found"),
 		},
 		{
 			desc: "InvalidRequest",
@@ -79,7 +76,7 @@ func TestPKIRevocationDistributionPointQuerySingle(t *testing.T) {
 }
 
 func TestPKIRevocationDistributionPointQueryPaginated(t *testing.T) {
-	keeper, ctx := keepertest.PkiKeeper(t)
+	keeper, ctx := keepertest.PkiKeeper(t, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNPKIRevocationDistributionPoint(keeper, ctx, 5)
 
@@ -100,9 +97,9 @@ func TestPKIRevocationDistributionPointQueryPaginated(t *testing.T) {
 			require.NoError(t, err)
 			require.LessOrEqual(t, len(resp.PKIRevocationDistributionPoint), step)
 			require.Subset(t,
-            	nullify.Fill(msgs),
-            	nullify.Fill(resp.PKIRevocationDistributionPoint),
-            )
+				nullify.Fill(msgs),
+				nullify.Fill(resp.PKIRevocationDistributionPoint),
+			)
 		}
 	})
 	t.Run("ByKey", func(t *testing.T) {
@@ -113,9 +110,9 @@ func TestPKIRevocationDistributionPointQueryPaginated(t *testing.T) {
 			require.NoError(t, err)
 			require.LessOrEqual(t, len(resp.PKIRevocationDistributionPoint), step)
 			require.Subset(t,
-            	nullify.Fill(msgs),
-            	nullify.Fill(resp.PKIRevocationDistributionPoint),
-            )
+				nullify.Fill(msgs),
+				nullify.Fill(resp.PKIRevocationDistributionPoint),
+			)
 			next = resp.Pagination.NextKey
 		}
 	})
