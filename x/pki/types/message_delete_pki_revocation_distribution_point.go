@@ -9,7 +9,7 @@ const TypeMsgDeletePkiRevocationDistributionPoint = "delete_pki_revocation_distr
 
 var _ sdk.Msg = &MsgDeletePkiRevocationDistributionPoint{}
 
-func NewMsgDeletePkiRevocationDistributionPoint(signer string, vid uint64, label string, issuerSubjectKeyID string) *MsgDeletePkiRevocationDistributionPoint {
+func NewMsgDeletePkiRevocationDistributionPoint(signer string, vid int32, label string, issuerSubjectKeyID string) *MsgDeletePkiRevocationDistributionPoint {
 	return &MsgDeletePkiRevocationDistributionPoint{
 		Signer:             signer,
 		Vid:                vid,

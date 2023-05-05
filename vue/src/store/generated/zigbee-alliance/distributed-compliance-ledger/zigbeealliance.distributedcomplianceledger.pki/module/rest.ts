@@ -59,11 +59,15 @@ export interface PkiGrant {
   info?: string;
 }
 
+export type PkiMsgAddPkiRevocationDistributionPointResponse = object;
+
 export type PkiMsgAddX509CertResponse = object;
 
 export type PkiMsgApproveAddX509RootCertResponse = object;
 
 export type PkiMsgApproveRevokeX509RootCertResponse = object;
+
+export type PkiMsgDeletePkiRevocationDistributionPointResponse = object;
 
 export type PkiMsgProposeAddX509RootCertResponse = object;
 
@@ -72,6 +76,31 @@ export type PkiMsgProposeRevokeX509RootCertResponse = object;
 export type PkiMsgRejectAddX509RootCertResponse = object;
 
 export type PkiMsgRevokeX509CertResponse = object;
+
+export type PkiMsgUpdatePkiRevocationDistributionPointResponse = object;
+
+export interface PkiPkiRevocationDistributionPoint {
+  /** @format uint64 */
+  vid?: string;
+  label?: string;
+  issuerSubjectKeyID?: string;
+
+  /** @format uint64 */
+  pid?: string;
+  isPAA?: boolean;
+  crlSignerCertificate?: string;
+  dataUrl?: string;
+
+  /** @format uint64 */
+  dataFileSize?: string;
+  dataDigest?: string;
+
+  /** @format uint64 */
+  dataDigestType?: string;
+
+  /** @format uint64 */
+  revocationType?: string;
+}
 
 export interface PkiProposedCertificate {
   subject?: string;
@@ -93,6 +122,21 @@ export interface PkiProposedCertificateRevocation {
 
 export interface PkiQueryAllApprovedCertificatesResponse {
   approvedCertificates?: PkiApprovedCertificates[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
+export interface PkiQueryAllPkiRevocationDistributionPointResponse {
+  pKIRevocationDistributionPoint?: PkiPkiRevocationDistributionPoint[];
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the
@@ -180,6 +224,10 @@ export interface PkiQueryGetApprovedRootCertificatesResponse {
 
 export interface PkiQueryGetChildCertificatesResponse {
   childCertificates?: PkiChildCertificates;
+}
+
+export interface PkiQueryGetPkiRevocationDistributionPointResponse {
+  pKIRevocationDistributionPoint?: PkiPkiRevocationDistributionPoint;
 }
 
 export interface PkiQueryGetProposedCertificateResponse {
@@ -757,6 +805,53 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryApprovedRootCertificates = (params: RequestParams = {}) =>
     this.request<PkiQueryGetApprovedRootCertificatesResponse, RpcStatus>({
       path: `/dcl/pki/root-certificates`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryPkiRevocationDistributionPointAll
+   * @summary Queries a list of PkiRevocationDistributionPoint items.
+   * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/pki-revocation-distribution-point
+   */
+  queryPkiRevocationDistributionPointAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<PkiQueryAllPkiRevocationDistributionPointResponse, RpcStatus>({
+      path: `/zigbee-alliance/distributedcomplianceledger/pki/pki-revocation-distribution-point`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryPkiRevocationDistributionPoint
+   * @summary Queries a PkiRevocationDistributionPoint by index.
+   * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/pki-revocation-distribution-point/{vid}/{label}/{issuerSubjectKeyID}
+   */
+  queryPkiRevocationDistributionPoint = (
+    vid: string,
+    label: string,
+    issuerSubjectKeyID: string,
+    params: RequestParams = {},
+  ) =>
+    this.request<PkiQueryGetPkiRevocationDistributionPointResponse, RpcStatus>({
+      path: `/zigbee-alliance/distributedcomplianceledger/pki/pki-revocation-distribution-point/${vid}/${label}/${issuerSubjectKeyID}`,
       method: "GET",
       format: "json",
       ...params,

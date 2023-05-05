@@ -93,14 +93,14 @@ service Query {
 		option (google.api.http).get = "/dcl/pki/rejected-certificates";
 	}
 
-// Queries a PKIRevocationDistributionPoint by index.
-	rpc PKIRevocationDistributionPoint(QueryGetPKIRevocationDistributionPointRequest) returns (QueryGetPKIRevocationDistributionPointResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/pki/pki_revocation_distribution_point/{vid}/{label}/{issuerSubjectKeyID}";
+// Queries a PkiRevocationDistributionPoint by index.
+	rpc PkiRevocationDistributionPoint(QueryGetPkiRevocationDistributionPointRequest) returns (QueryGetPkiRevocationDistributionPointResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/pki/pki-revocation-distribution-point/{vid}/{label}/{issuerSubjectKeyID}";
 	}
 
-	// Queries a list of PKIRevocationDistributionPoint items.
-	rpc PKIRevocationDistributionPointAll(QueryAllPKIRevocationDistributionPointRequest) returns (QueryAllPKIRevocationDistributionPointResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/pki/pki_revocation_distribution_point";
+	// Queries a list of PkiRevocationDistributionPoint items.
+	rpc PkiRevocationDistributionPointAll(QueryAllPkiRevocationDistributionPointRequest) returns (QueryAllPkiRevocationDistributionPointResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/pki/pki-revocation-distribution-point";
 	}
 
 // this line is used by starport scaffolding # 2
@@ -230,23 +230,23 @@ message QueryAllRejectedCertificatesResponse {
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-message QueryGetPKIRevocationDistributionPointRequest {
+message QueryGetPkiRevocationDistributionPointRequest {
 	  uint64 vid = 1;
   string label = 2;
   string issuerSubjectKeyID = 3;
 
 }
 
-message QueryGetPKIRevocationDistributionPointResponse {
-	PKIRevocationDistributionPoint pKIRevocationDistributionPoint = 1 [(gogoproto.nullable) = false];
+message QueryGetPkiRevocationDistributionPointResponse {
+	PkiRevocationDistributionPoint pKIRevocationDistributionPoint = 1 [(gogoproto.nullable) = false];
 }
 
-message QueryAllPKIRevocationDistributionPointRequest {
+message QueryAllPkiRevocationDistributionPointRequest {
 	cosmos.base.query.v1beta1.PageRequest pagination = 1;
 }
 
-message QueryAllPKIRevocationDistributionPointResponse {
-	repeated PKIRevocationDistributionPoint pKIRevocationDistributionPoint = 1 [(gogoproto.nullable) = false];
+message QueryAllPkiRevocationDistributionPointResponse {
+	repeated PkiRevocationDistributionPoint pKIRevocationDistributionPoint = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 

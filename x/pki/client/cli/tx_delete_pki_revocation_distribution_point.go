@@ -19,7 +19,7 @@ func CmdDeletePkiRevocationDistributionPoint() *cobra.Command {
 		Short: "Broadcast message delete-pki-revocation-distribution-point",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			argVid, err := cast.ToUint64E(args[0])
+			argVid, err := cast.ToInt32E(args[0])
 			if err != nil {
 				return err
 			}

@@ -11,19 +11,19 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (k Keeper) PKIRevocationDistributionPointAll(c context.Context, req *types.QueryAllPKIRevocationDistributionPointRequest) (*types.QueryAllPKIRevocationDistributionPointResponse, error) {
+func (k Keeper) PkiRevocationDistributionPointAll(c context.Context, req *types.QueryAllPkiRevocationDistributionPointRequest) (*types.QueryAllPkiRevocationDistributionPointResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
-	var pKIRevocationDistributionPoints []types.PKIRevocationDistributionPoint
+	var pKIRevocationDistributionPoints []types.PkiRevocationDistributionPoint
 	ctx := sdk.UnwrapSDKContext(c)
 
 	store := ctx.KVStore(k.storeKey)
-	pKIRevocationDistributionPointStore := prefix.NewStore(store, types.KeyPrefix(types.PKIRevocationDistributionPointKeyPrefix))
+	pKIRevocationDistributionPointStore := prefix.NewStore(store, types.KeyPrefix(types.PkiRevocationDistributionPointKeyPrefix))
 
 	pageRes, err := query.Paginate(pKIRevocationDistributionPointStore, req.Pagination, func(key []byte, value []byte) error {
-		var pKIRevocationDistributionPoint types.PKIRevocationDistributionPoint
+		var pKIRevocationDistributionPoint types.PkiRevocationDistributionPoint
 		if err := k.cdc.Unmarshal(value, &pKIRevocationDistributionPoint); err != nil {
 			return err
 		}
@@ -36,24 +36,24 @@ func (k Keeper) PKIRevocationDistributionPointAll(c context.Context, req *types.
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.QueryAllPKIRevocationDistributionPointResponse{PKIRevocationDistributionPoint: pKIRevocationDistributionPoints, Pagination: pageRes}, nil
+	return &types.QueryAllPkiRevocationDistributionPointResponse{PkiRevocationDistributionPoint: pKIRevocationDistributionPoints, Pagination: pageRes}, nil
 }
 
-func (k Keeper) PKIRevocationDistributionPoint(c context.Context, req *types.QueryGetPKIRevocationDistributionPointRequest) (*types.QueryGetPKIRevocationDistributionPointResponse, error) {
+func (k Keeper) PkiRevocationDistributionPoint(c context.Context, req *types.QueryGetPkiRevocationDistributionPointRequest) (*types.QueryGetPkiRevocationDistributionPointResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 	ctx := sdk.UnwrapSDKContext(c)
 
-	val, found := k.GetPKIRevocationDistributionPoint(
-	    ctx,
-	    req.Vid,
-        req.Label,
-        req.IssuerSubjectKeyID,
-        )
+	val, found := k.GetPkiRevocationDistributionPoint(
+		ctx,
+		req.Vid,
+		req.Label,
+		req.IssuerSubjectKeyID,
+	)
 	if !found {
-	    return nil, status.Error(codes.InvalidArgument, "not found")
+		return nil, status.Error(codes.InvalidArgument, "not found")
 	}
 
-	return &types.QueryGetPKIRevocationDistributionPointResponse{PKIRevocationDistributionPoint: val}, nil
+	return &types.QueryGetPkiRevocationDistributionPointResponse{PkiRevocationDistributionPoint: val}, nil
 }
