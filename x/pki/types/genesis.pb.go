@@ -35,7 +35,7 @@ type GenesisState struct {
 	RevokedRootCertificates            *RevokedRootCertificates         `protobuf:"bytes,8,opt,name=revokedRootCertificates,proto3" json:"revokedRootCertificates,omitempty"`
 	ApprovedCertificatesBySubjectList  []ApprovedCertificatesBySubject  `protobuf:"bytes,9,rep,name=approvedCertificatesBySubjectList,proto3" json:"approvedCertificatesBySubjectList"`
 	RejectedCertificateList            []RejectedCertificate            `protobuf:"bytes,10,rep,name=rejectedCertificateList,proto3" json:"rejectedCertificateList"`
-	PKIRevocationDistributionPointList []PkiRevocationDistributionPoint `protobuf:"bytes,11,rep,name=pKIRevocationDistributionPointList,proto3" json:"pKIRevocationDistributionPointList"`
+	PkiRevocationDistributionPointList []PkiRevocationDistributionPoint `protobuf:"bytes,11,rep,name=pKIRevocationDistributionPointList,proto3" json:"pKIRevocationDistributionPointList"`
 }
 
 func (m *GenesisState) Reset()         { *m = GenesisState{} }
@@ -141,9 +141,9 @@ func (m *GenesisState) GetRejectedCertificateList() []RejectedCertificate {
 	return nil
 }
 
-func (m *GenesisState) GetPKIRevocationDistributionPointList() []PkiRevocationDistributionPoint {
+func (m *GenesisState) GetPkiRevocationDistributionPointList() []PkiRevocationDistributionPoint {
 	if m != nil {
-		return m.PKIRevocationDistributionPointList
+		return m.PkiRevocationDistributionPointList
 	}
 	return nil
 }
@@ -215,10 +215,10 @@ func (m *GenesisState) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.PKIRevocationDistributionPointList) > 0 {
-		for iNdEx := len(m.PKIRevocationDistributionPointList) - 1; iNdEx >= 0; iNdEx-- {
+	if len(m.PkiRevocationDistributionPointList) > 0 {
+		for iNdEx := len(m.PkiRevocationDistributionPointList) - 1; iNdEx >= 0; iNdEx-- {
 			{
-				size, err := m.PKIRevocationDistributionPointList[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				size, err := m.PkiRevocationDistributionPointList[iNdEx].MarshalToSizedBuffer(dAtA[:i])
 				if err != nil {
 					return 0, err
 				}
@@ -441,8 +441,8 @@ func (m *GenesisState) Size() (n int) {
 			n += 1 + l + sovGenesis(uint64(l))
 		}
 	}
-	if len(m.PKIRevocationDistributionPointList) > 0 {
-		for _, e := range m.PKIRevocationDistributionPointList {
+	if len(m.PkiRevocationDistributionPointList) > 0 {
+		for _, e := range m.PkiRevocationDistributionPointList {
 			l = e.Size()
 			n += 1 + l + sovGenesis(uint64(l))
 		}
@@ -831,7 +831,7 @@ func (m *GenesisState) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 11:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PKIRevocationDistributionPointList", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field PkiRevocationDistributionPointList", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -858,8 +858,8 @@ func (m *GenesisState) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.PKIRevocationDistributionPointList = append(m.PKIRevocationDistributionPointList, PkiRevocationDistributionPoint{})
-			if err := m.PKIRevocationDistributionPointList[len(m.PKIRevocationDistributionPointList)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			m.PkiRevocationDistributionPointList = append(m.PkiRevocationDistributionPointList, PkiRevocationDistributionPoint{})
+			if err := m.PkiRevocationDistributionPointList[len(m.PkiRevocationDistributionPointList)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex

@@ -15,66 +15,65 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/network"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/nullify"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/client/cli"
-    "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
 // Prevent strconv unused error
 var _ = strconv.IntSize
 
-func networkWithPKIRevocationDistributionPointObjects(t *testing.T, n int) (*network.Network, []types.PKIRevocationDistributionPoint) {
+func networkWithPkiRevocationDistributionPointObjects(t *testing.T, n int) (*network.Network, []types.PkiRevocationDistributionPoint) {
 	t.Helper()
 	cfg := network.DefaultConfig()
 	state := types.GenesisState{}
-    require.NoError(t, cfg.Codec.UnmarshalJSON(cfg.GenesisState[types.ModuleName], &state))
+	require.NoError(t, cfg.Codec.UnmarshalJSON(cfg.GenesisState[types.ModuleName], &state))
 
 	for i := 0; i < n; i++ {
-		pKIRevocationDistributionPoint := types.PKIRevocationDistributionPoint{
-			Vid: uint64(i),
-			Label: strconv.Itoa(i),
+		pKIRevocationDistributionPoint := types.PkiRevocationDistributionPoint{
+			Vid:                uint64(i),
+			Label:              strconv.Itoa(i),
 			IssuerSubjectKeyID: strconv.Itoa(i),
-			
 		}
 		nullify.Fill(&pKIRevocationDistributionPoint)
-		state.PKIRevocationDistributionPointList = append(state.PKIRevocationDistributionPointList, pKIRevocationDistributionPoint)
+		state.PkiRevocationDistributionPointList = append(state.PkiRevocationDistributionPointList, pKIRevocationDistributionPoint)
 	}
 	buf, err := cfg.Codec.MarshalJSON(&state)
 	require.NoError(t, err)
 	cfg.GenesisState[types.ModuleName] = buf
-	return network.New(t, cfg), state.PKIRevocationDistributionPointList
+	return network.New(t, cfg), state.PkiRevocationDistributionPointList
 }
 
-func TestShowPKIRevocationDistributionPoint(t *testing.T) {
-	net, objs := networkWithPKIRevocationDistributionPointObjects(t, 2)
+func TestShowPkiRevocationDistributionPoint(t *testing.T) {
+	net, objs := networkWithPkiRevocationDistributionPointObjects(t, 2)
 
 	ctx := net.Validators[0].ClientCtx
 	common := []string{
 		fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 	}
 	for _, tc := range []struct {
-		desc string
-		idVid uint64
-        idLabel string
-        idIssuerSubjectKeyID string
-        
+		desc                 string
+		idVid                uint64
+		idLabel              string
+		idIssuerSubjectKeyID string
+
 		args []string
 		err  error
-		obj  types.PKIRevocationDistributionPoint
+		obj  types.PkiRevocationDistributionPoint
 	}{
 		{
-			desc: "found",
-			idVid: objs[0].Vid,
-            idLabel: objs[0].Label,
-            idIssuerSubjectKeyID: objs[0].IssuerSubjectKeyID,
-            
+			desc:                 "found",
+			idVid:                objs[0].Vid,
+			idLabel:              objs[0].Label,
+			idIssuerSubjectKeyID: objs[0].IssuerSubjectKeyID,
+
 			args: common,
 			obj:  objs[0],
 		},
 		{
-			desc: "not found",
-			idVid: 100000,
-            idLabel: strconv.Itoa(100000),
-            idIssuerSubjectKeyID: strconv.Itoa(100000),
-            
+			desc:                 "not found",
+			idVid:                100000,
+			idLabel:              strconv.Itoa(100000),
+			idIssuerSubjectKeyID: strconv.Itoa(100000),
+
 			args: common,
 			err:  status.Error(codes.InvalidArgument, "not found"),
 		},
@@ -82,33 +81,32 @@ func TestShowPKIRevocationDistributionPoint(t *testing.T) {
 		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
 			args := []string{
-			    strconv.Itoa(int(tc.idVid)),
-                tc.idLabel,
-                tc.idIssuerSubjectKeyID,
-                
+				strconv.Itoa(int(tc.idVid)),
+				tc.idLabel,
+				tc.idIssuerSubjectKeyID,
 			}
 			args = append(args, tc.args...)
-			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdShowPKIRevocationDistributionPoint(), args)
+			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdShowPkiRevocationDistributionPoint(), args)
 			if tc.err != nil {
 				stat, ok := status.FromError(tc.err)
 				require.True(t, ok)
 				require.ErrorIs(t, stat.Err(), tc.err)
 			} else {
 				require.NoError(t, err)
-				var resp types.QueryGetPKIRevocationDistributionPointResponse
+				var resp types.QueryGetPkiRevocationDistributionPointResponse
 				require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &resp))
-				require.NotNil(t, resp.PKIRevocationDistributionPoint)
+				require.NotNil(t, resp.PkiRevocationDistributionPoint)
 				require.Equal(t,
 					nullify.Fill(&tc.obj),
-					nullify.Fill(&resp.PKIRevocationDistributionPoint),
+					nullify.Fill(&resp.PkiRevocationDistributionPoint),
 				)
 			}
 		})
 	}
 }
 
-func TestListPKIRevocationDistributionPoint(t *testing.T) {
-	net, objs := networkWithPKIRevocationDistributionPointObjects(t, 5)
+func TestListPkiRevocationDistributionPoint(t *testing.T) {
+	net, objs := networkWithPkiRevocationDistributionPointObjects(t, 5)
 
 	ctx := net.Validators[0].ClientCtx
 	request := func(next []byte, offset, limit uint64, total bool) []string {
@@ -130,15 +128,15 @@ func TestListPKIRevocationDistributionPoint(t *testing.T) {
 		step := 2
 		for i := 0; i < len(objs); i += step {
 			args := request(nil, uint64(i), uint64(step), false)
-			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdListPKIRevocationDistributionPoint(), args)
+			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdListPkiRevocationDistributionPoint(), args)
 			require.NoError(t, err)
-			var resp types.QueryAllPKIRevocationDistributionPointResponse
+			var resp types.QueryAllPkiRevocationDistributionPointResponse
 			require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &resp))
-			require.LessOrEqual(t, len(resp.PKIRevocationDistributionPoint), step)
+			require.LessOrEqual(t, len(resp.PkiRevocationDistributionPoint), step)
 			require.Subset(t,
-            	nullify.Fill(objs),
-            	nullify.Fill(resp.PKIRevocationDistributionPoint),
-            )
+				nullify.Fill(objs),
+				nullify.Fill(resp.PkiRevocationDistributionPoint),
+			)
 		}
 	})
 	t.Run("ByKey", func(t *testing.T) {
@@ -146,29 +144,29 @@ func TestListPKIRevocationDistributionPoint(t *testing.T) {
 		var next []byte
 		for i := 0; i < len(objs); i += step {
 			args := request(next, 0, uint64(step), false)
-			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdListPKIRevocationDistributionPoint(), args)
+			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdListPkiRevocationDistributionPoint(), args)
 			require.NoError(t, err)
-			var resp types.QueryAllPKIRevocationDistributionPointResponse
+			var resp types.QueryAllPkiRevocationDistributionPointResponse
 			require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &resp))
-			require.LessOrEqual(t, len(resp.PKIRevocationDistributionPoint), step)
+			require.LessOrEqual(t, len(resp.PkiRevocationDistributionPoint), step)
 			require.Subset(t,
-            	nullify.Fill(objs),
-            	nullify.Fill(resp.PKIRevocationDistributionPoint),
-            )
+				nullify.Fill(objs),
+				nullify.Fill(resp.PkiRevocationDistributionPoint),
+			)
 			next = resp.Pagination.NextKey
 		}
 	})
 	t.Run("Total", func(t *testing.T) {
 		args := request(nil, 0, uint64(len(objs)), true)
-		out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdListPKIRevocationDistributionPoint(), args)
+		out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdListPkiRevocationDistributionPoint(), args)
 		require.NoError(t, err)
-		var resp types.QueryAllPKIRevocationDistributionPointResponse
+		var resp types.QueryAllPkiRevocationDistributionPointResponse
 		require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &resp))
 		require.NoError(t, err)
 		require.Equal(t, len(objs), int(resp.Pagination.Total))
 		require.ElementsMatch(t,
 			nullify.Fill(objs),
-			nullify.Fill(resp.PKIRevocationDistributionPoint),
+			nullify.Fill(resp.PkiRevocationDistributionPoint),
 		)
 	})
 }

@@ -15,23 +15,23 @@ import (
 // Prevent strconv unused error
 var _ = strconv.IntSize
 
-func createNPKIRevocationDistributionPoint(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.PKIRevocationDistributionPoint {
-	items := make([]types.PKIRevocationDistributionPoint, n)
+func createNPkiRevocationDistributionPoint(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.PkiRevocationDistributionPoint {
+	items := make([]types.PkiRevocationDistributionPoint, n)
 	for i := range items {
 		items[i].Vid = uint64(i)
 		items[i].Label = strconv.Itoa(i)
 		items[i].IssuerSubjectKeyID = strconv.Itoa(i)
 
-		keeper.SetPKIRevocationDistributionPoint(ctx, items[i])
+		keeper.SetPkiRevocationDistributionPoint(ctx, items[i])
 	}
 	return items
 }
 
-func TestPKIRevocationDistributionPointGet(t *testing.T) {
+func TestPkiRevocationDistributionPointGet(t *testing.T) {
 	keeper, ctx := keepertest.PkiKeeper(t, nil)
-	items := createNPKIRevocationDistributionPoint(keeper, ctx, 10)
+	items := createNPkiRevocationDistributionPoint(keeper, ctx, 10)
 	for _, item := range items {
-		rst, found := keeper.GetPKIRevocationDistributionPoint(ctx,
+		rst, found := keeper.GetPkiRevocationDistributionPoint(ctx,
 			item.Vid,
 			item.Label,
 			item.IssuerSubjectKeyID,
@@ -43,16 +43,16 @@ func TestPKIRevocationDistributionPointGet(t *testing.T) {
 		)
 	}
 }
-func TestPKIRevocationDistributionPointRemove(t *testing.T) {
+func TestPkiRevocationDistributionPointRemove(t *testing.T) {
 	keeper, ctx := keepertest.PkiKeeper(t, nil)
-	items := createNPKIRevocationDistributionPoint(keeper, ctx, 10)
+	items := createNPkiRevocationDistributionPoint(keeper, ctx, 10)
 	for _, item := range items {
-		keeper.RemovePKIRevocationDistributionPoint(ctx,
+		keeper.RemovePkiRevocationDistributionPoint(ctx,
 			item.Vid,
 			item.Label,
 			item.IssuerSubjectKeyID,
 		)
-		_, found := keeper.GetPKIRevocationDistributionPoint(ctx,
+		_, found := keeper.GetPkiRevocationDistributionPoint(ctx,
 			item.Vid,
 			item.Label,
 			item.IssuerSubjectKeyID,
@@ -61,11 +61,11 @@ func TestPKIRevocationDistributionPointRemove(t *testing.T) {
 	}
 }
 
-func TestPKIRevocationDistributionPointGetAll(t *testing.T) {
+func TestPkiRevocationDistributionPointGetAll(t *testing.T) {
 	keeper, ctx := keepertest.PkiKeeper(t, nil)
-	items := createNPKIRevocationDistributionPoint(keeper, ctx, 10)
+	items := createNPkiRevocationDistributionPoint(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),
-		nullify.Fill(keeper.GetAllPKIRevocationDistributionPoint(ctx)),
+		nullify.Fill(keeper.GetAllPkiRevocationDistributionPoint(ctx)),
 	)
 }

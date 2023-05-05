@@ -50,7 +50,7 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 		k.SetRejectedCertificate(ctx, elem)
 	}
 	// Set all the pKIRevocationDistributionPoint
-	for _, elem := range genState.PKIRevocationDistributionPointList {
+	for _, elem := range genState.PkiRevocationDistributionPointList {
 		k.SetPkiRevocationDistributionPoint(ctx, elem)
 	}
 	// this line is used by starport scaffolding # genesis/module/init
@@ -78,7 +78,7 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	}
 	genesis.ApprovedCertificatesBySubjectList = k.GetAllApprovedCertificatesBySubject(ctx)
 	genesis.RejectedCertificateList = k.GetAllRejectedCertificate(ctx)
-	genesis.PKIRevocationDistributionPointList = k.GetAllPkiRevocationDistributionPoint(ctx)
+	genesis.PkiRevocationDistributionPointList = k.GetAllPkiRevocationDistributionPoint(ctx)
 	// this line is used by starport scaffolding # genesis/module/export
 
 	return genesis

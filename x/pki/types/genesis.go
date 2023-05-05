@@ -20,7 +20,7 @@ func DefaultGenesis() *GenesisState {
 		RevokedRootCertificates:            nil,
 		ApprovedCertificatesBySubjectList:  []ApprovedCertificatesBySubject{},
 		RejectedCertificateList:            []RejectedCertificate{},
-		PKIRevocationDistributionPointList: []PkiRevocationDistributionPoint{},
+		PkiRevocationDistributionPointList: []PkiRevocationDistributionPoint{},
 		// this line is used by starport scaffolding # genesis/types/default
 	}
 }
@@ -113,7 +113,7 @@ func (gs GenesisState) Validate() error {
 	// Check for duplicated index in pKIRevocationDistributionPoint
 	pKIRevocationDistributionPointIndexMap := make(map[string]struct{})
 
-	for _, elem := range gs.PKIRevocationDistributionPointList {
+	for _, elem := range gs.PkiRevocationDistributionPointList {
 		index := string(PkiRevocationDistributionPointKey(elem.Vid, elem.Label, elem.IssuerSubjectKeyID))
 		if _, ok := pKIRevocationDistributionPointIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for pKIRevocationDistributionPoint")
