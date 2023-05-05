@@ -1541,7 +1541,7 @@ func TestHandler_CDCertificateIDUpdateChangesOnlyOneComplianceInfo(t *testing.T)
 func TestHandler_UpdateWithTheSameCDCertificateID(t *testing.T) {
 	setup := Setup(t)
 
-	const CD_CERT_ID = "CD_CERT_ID"
+	const cdCertID = "cdCertID"
 
 	// add model version
 	vid1, pid1, softwareVersion1, softwareVersionString1 := setup.AddModelVersion(
@@ -1550,7 +1550,7 @@ func TestHandler_UpdateWithTheSameCDCertificateID(t *testing.T) {
 	// certify first model version
 	certifyModelMsg := NewMsgCertifyModel(
 		vid1, pid1, softwareVersion1, softwareVersionString1, dclcompltypes.ZigbeeCertificationType, setup.CertificationCenter)
-	certifyModelMsg.CDCertificateId = CD_CERT_ID
+	certifyModelMsg.CDCertificateId = cdCertID
 
 	_, err := setup.Handler(setup.Ctx, certifyModelMsg)
 	require.NoError(t, err)
@@ -1562,7 +1562,7 @@ func TestHandler_UpdateWithTheSameCDCertificateID(t *testing.T) {
 	// certify second model version
 	certifyModelMsg = NewMsgCertifyModel(
 		vid2, pid2, softwareVersion2, softwareVersionString2, dclcompltypes.ZigbeeCertificationType, setup.CertificationCenter)
-	certifyModelMsg.CDCertificateId = CD_CERT_ID
+	certifyModelMsg.CDCertificateId = cdCertID
 
 	_, err = setup.Handler(setup.Ctx, certifyModelMsg)
 	require.NoError(t, err)
@@ -1574,10 +1574,10 @@ func TestHandler_UpdateWithTheSameCDCertificateID(t *testing.T) {
 		Pid:               pid1,
 		SoftwareVersion:   softwareVersion1,
 		CertificationType: dclcompltypes.ZigbeeCertificationType,
-		CDCertificateId:   CD_CERT_ID,
+		CDCertificateId:   cdCertID,
 	}
 
-	originalDeviceSoftwareCompliance, _ := queryDeviceSoftwareCompliance(setup, CD_CERT_ID)
+	originalDeviceSoftwareCompliance, _ := queryDeviceSoftwareCompliance(setup, cdCertID)
 
 	_, err = setup.Handler(setup.Ctx, updateComplianceInfoMsg)
 	require.NoError(t, err)
@@ -1591,7 +1591,7 @@ func TestHandler_UpdateWithTheSameCDCertificateID(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, updateComplianceInfoMsg.CDCertificateId, firstComplianceInfo.CDCertificateId)
-	require.Equal(t, CD_CERT_ID, secondComplianceInfo.CDCertificateId)
+	require.Equal(t, cdCertID, secondComplianceInfo.CDCertificateId)
 
 	require.Equal(t, true, reflect.DeepEqual(originalDeviceSoftwareCompliance, newDeviceSoftwareCompliance))
 }
