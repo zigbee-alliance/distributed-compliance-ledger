@@ -59,6 +59,11 @@ func TestDemoTrackProvisionByHexVidAndPid(t *testing.T) {
 	compliance.DemoTrackProvisionByHexVidAndPid(&suite)
 }
 
+func TestCDCertificateIDUpdateChangesOnlyOneComplianceInfoRest(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
+	compliance.CDCertificateIDUpdateChangesOnlyOneComplianceInfo(&suite)
+}
+
 func TestDeleteComplianceInfoForAllCertStatusesREST(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, true)
 	compliance.DeleteComplianceInfoForAllCertStatuses(&suite)

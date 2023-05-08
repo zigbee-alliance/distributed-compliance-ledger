@@ -19,6 +19,7 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	tmrand "github.com/tendermint/tendermint/libs/rand"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
@@ -500,6 +501,129 @@ const certDate = "2021-10-01T00:00:01Z"
 
 const provDate = "2021-03-01T00:00:01Z"
 
+func CDCertificateIDUpdateChangesOnlyOneComplianceInfo(suite *utils.TestSuite) {
+	// Alice and Jack are predefined Trustees
+	aliceName := testconstants.AliceAccount
+	aliceKeyInfo, err := suite.Kr.Key(aliceName)
+	require.NoError(suite.T, err)
+	aliceAccount, err := test_dclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	jackName := testconstants.JackAccount
+	jackKeyInfo, err := suite.Kr.Key(jackName)
+	require.NoError(suite.T, err)
+	jackAccount, err := test_dclauth.GetAccount(suite, jackKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	// Register new Vendor account
+	vid := int32(tmrand.Uint16())
+	vendorName := utils.RandString()
+	vendorAccount := test_dclauth.CreateVendorAccount(
+		suite,
+		vendorName,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		vid,
+		aliceName,
+		aliceAccount,
+		jackName,
+		jackAccount,
+		testconstants.Info,
+	)
+	require.NotNil(suite.T, vendorAccount)
+
+	// Register new CertificationCenter account
+	certCenter := utils.RandString()
+	certCenterAccount := test_dclauth.CreateAccount(
+		suite,
+		certCenter,
+		dclauthtypes.AccountRoles{dclauthtypes.CertificationCenter},
+		1,
+		aliceName,
+		aliceAccount,
+		jackName,
+		jackAccount,
+		testconstants.Info,
+	)
+	require.NotNil(suite.T, certCenterAccount)
+
+	// Publish model info
+	pid := int32(tmrand.Uint16())
+	firstModel := test_model.NewMsgCreateModel(vid, pid, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModel}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	// Publish modelVersion
+	svFirst := tmrand.Uint32()
+	svsFirst := utils.RandString()
+	firstModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, svFirst, svsFirst, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModelVersion}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	// Publish second modelVersion
+	svSecond := tmrand.Uint32()
+	svsSecond := utils.RandString()
+	secondModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, svSecond, svsSecond, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{secondModelVersion}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	// Certify first model version
+	certReason := testconstants.Reason + "1"
+	certDate := testconstants.FirstJanuary
+	certifyModelVersionMsg := compliancetypes.MsgCertifyModel{
+		Vid:                   vid,
+		Pid:                   pid,
+		SoftwareVersion:       svFirst,
+		SoftwareVersionString: svsFirst,
+		CertificationDate:     certDate,
+		CertificationType:     "zigbee",
+		Reason:                certReason,
+		CDCertificateId:       testconstants.CDCertificateID,
+		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
+		Signer:                certCenterAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelVersionMsg}, certCenter, certCenterAccount)
+	require.NoError(suite.T, err)
+
+	// Certify second model version
+	certifyModelVersionMsg = compliancetypes.MsgCertifyModel{
+		Vid:                   vid,
+		Pid:                   pid,
+		SoftwareVersion:       svSecond,
+		SoftwareVersionString: svsSecond,
+		CertificationDate:     certDate,
+		CertificationType:     "zigbee",
+		Reason:                certReason,
+		CDCertificateId:       testconstants.CDCertificateID,
+		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
+		Signer:                certCenterAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelVersionMsg}, certCenter, certCenterAccount)
+	require.NoError(suite.T, err)
+
+	// Update compliance info of first model version
+	cdCertificateIDNew := testconstants.CDCertificateID + "new"
+	updateComplianceInfoMsg := compliancetypes.MsgUpdateComplianceInfo{
+		Creator:           certCenterAccount.Address,
+		Vid:               vid,
+		Pid:               pid,
+		SoftwareVersion:   svFirst,
+		CertificationType: dclcompltypes.ZigbeeCertificationType,
+		CDCertificateId:   cdCertificateIDNew,
+		CDVersionNumber:   "312",
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&updateComplianceInfoMsg}, certCenter, certCenterAccount)
+	require.NoError(suite.T, err)
+
+	firstComplianceInfo, err := GetComplianceInfo(suite, vid, pid, svFirst, dclcompltypes.ZigbeeCertificationType)
+	require.NoError(suite.T, err)
+
+	secondComplianceInfo, err := GetComplianceInfo(suite, vid, pid, svSecond, dclcompltypes.ZigbeeCertificationType)
+	require.NoError(suite.T, err)
+
+	assert.Equal(suite.T, cdCertificateIDNew, firstComplianceInfo.CDCertificateId)
+	assert.Equal(suite.T, testconstants.CDCertificateID, secondComplianceInfo.CDCertificateId)
+}
+
 func DeleteComplianceInfoForAllCertStatuses(suite *utils.TestSuite) {
 	// Alice and Jack are predefined Trustees
 	aliceName := testconstants.AliceAccount
@@ -559,9 +683,8 @@ func DeleteComplianceInfoForAllCertStatuses(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Certify model
-	certReason := "some reason 1"
-	//nolint:goconst
-	certDate := "2020-01-01T00:00:01Z"
+	certReason := testconstants.Reason + "1"
+	certDate := testconstants.FirstJanuary
 	certifyModelMsg := compliancetypes.MsgCertifyModel{
 		Vid:                   vid,
 		Pid:                   pid,
@@ -571,6 +694,7 @@ func DeleteComplianceInfoForAllCertStatuses(suite *utils.TestSuite) {
 		CertificationType:     testconstants.CertificationType,
 		Reason:                certReason,
 		CDCertificateId:       testconstants.CDCertificateID,
+		CDVersionNumber:       uint32(firstModelVersion.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
@@ -606,6 +730,7 @@ func DeleteComplianceInfoForAllCertStatuses(suite *utils.TestSuite) {
 		SoftwareVersionString: svs,
 		ProvisionalDate:       provDate,
 		CertificationType:     testconstants.CertificationType,
+		CDVersionNumber:       uint32(secondModelVersion.CdVersionNumber),
 		Reason:                provReason,
 		CDCertificateId:       testconstants.CDCertificateID,
 		Signer:                certCenterAccount.Address,
@@ -644,6 +769,7 @@ func DeleteComplianceInfoForAllCertStatuses(suite *utils.TestSuite) {
 		SoftwareVersionString: svs,
 		RevocationDate:        revocDate,
 		CertificationType:     testconstants.CertificationType,
+		CDVersionNumber:       uint32(secondModelVersion.CdVersionNumber),
 		Reason:                revocReason,
 		Signer:                certCenterAccount.Address,
 	}
@@ -756,8 +882,8 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	suite.AssertNotFound(err)
 
 	// Certify model
-	certReason := "some reason 1"
-	certDate := "2020-01-01T00:00:01Z"
+	certReason := testconstants.Reason + "1"
+	certDate := testconstants.FirstJanuary
 	certifyModelMsg := compliancetypes.MsgCertifyModel{
 		Vid:                   vid,
 		Pid:                   pid,
@@ -767,6 +893,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 		CertificationType:     "zigbee",
 		Reason:                certReason,
 		CDCertificateId:       testconstants.CDCertificateID,
+		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
@@ -819,6 +946,37 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	deviceSoftwareCompliances, _ := GetAllDeviceSoftwareCompliance(suite)
 	require.Equal(suite.T, len(inputAllDeviceSoftwareCompliance)+1, len(deviceSoftwareCompliances))
 
+	oldComplianceInfo, _ := GetComplianceInfo(suite, vid, pid, sv, dclcompltypes.ZigbeeCertificationType)
+
+	updateComplianceInfoMsg := compliancetypes.MsgUpdateComplianceInfo{
+		Creator:           certCenterAccount.Address,
+		Vid:               vid,
+		Pid:               pid,
+		SoftwareVersion:   sv,
+		CDCertificateId:   testconstants.CDCertificateID,
+		CDVersionNumber:   "312",
+		CertificationType: dclcompltypes.ZigbeeCertificationType,
+		ProgramType:       "new program type",
+		Reason:            "new reason",
+		ParentChild:       "child",
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&updateComplianceInfoMsg}, certCenter, certCenterAccount)
+	require.NoError(suite.T, err)
+
+	updatedComplianceInfo, _ := GetComplianceInfo(suite, vid, pid, sv, dclcompltypes.ZigbeeCertificationType)
+
+	// updated fields
+	require.Equal(suite.T, updatedComplianceInfo.ProgramType, updateComplianceInfoMsg.ProgramType)
+	require.Equal(suite.T, updatedComplianceInfo.Reason, updateComplianceInfoMsg.Reason)
+	require.Equal(suite.T, updatedComplianceInfo.ParentChild, updateComplianceInfoMsg.ParentChild)
+
+	// not updated fields
+	require.Equal(suite.T, updatedComplianceInfo.CDCertificateId, oldComplianceInfo.CDCertificateId)
+	require.Equal(suite.T, updatedComplianceInfo.CDVersionNumber, oldComplianceInfo.CDVersionNumber)
+	require.Equal(suite.T, updatedComplianceInfo.CertificationIdOfSoftwareComponent, oldComplianceInfo.CertificationIdOfSoftwareComponent)
+	require.Equal(suite.T, updatedComplianceInfo.Date, oldComplianceInfo.Date)
+	require.Equal(suite.T, updatedComplianceInfo.SoftwareVersionCertificationStatus, oldComplianceInfo.SoftwareVersionCertificationStatus)
+
 	// Revoke model certification
 	revocReason := "some reason 2"
 	revocDate := "2020-02-01T00:00:01Z"
@@ -830,6 +988,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 		RevocationDate:        revocDate,
 		CertificationType:     "zigbee",
 		Reason:                revocReason,
+		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&revocModelMsg}, certCenter, certCenterAccount)
@@ -902,6 +1061,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 		Transport:                          testconstants.Transport,
 		ParentChild:                        testconstants.ParentChild1,
 		CertificationIdOfSoftwareComponent: testconstants.CertificationIDOfSoftwareComponent,
+		CDVersionNumber:                    uint32(testconstants.CdVersionNumber),
 		Signer:                             certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
@@ -1049,6 +1209,7 @@ func DemoTrackRevocation(suite *utils.TestSuite) {
 		RevocationDate:        revocDate,
 		CertificationType:     "zigbee",
 		Reason:                revocReason,
+		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&revocModelMsg}, certCenter, certCenterAccount)
@@ -1099,6 +1260,7 @@ func DemoTrackRevocation(suite *utils.TestSuite) {
 		CertificationType:     "zigbee",
 		Reason:                certReason,
 		CDCertificateId:       testconstants.CDCertificateID,
+		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
@@ -1204,6 +1366,15 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	sv := tmrand.Uint32()
 	svs := utils.RandString()
 
+	firstModel := test_model.NewMsgCreateModel(vid, pid, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModel}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	// Publish modelVersion
+	firstModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModelVersion}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
 	// Provision non-existent model
 	provReason := "some reason 6"
 	provModelMsg := compliancetypes.MsgProvisionModel{
@@ -1215,6 +1386,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 		CertificationType:     "matter",
 		Reason:                provReason,
 		CDCertificateId:       testconstants.CDCertificateID,
+		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&provModelMsg}, certCenter, certCenterAccount)
@@ -1254,16 +1426,6 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	deviceSoftwareCompliances, _ := GetAllDeviceSoftwareCompliance(suite)
 	require.Equal(suite.T, len(inputAllDeviceSoftwareCompliances), len(deviceSoftwareCompliances))
 
-	// Publish model info
-	firstModel := test_model.NewMsgCreateModel(vid, pid, vendorAccount.Address)
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModel}, vendorName, vendorAccount)
-	require.NoError(suite.T, err)
-
-	// Publish modelVersion
-	firstModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModelVersion}, vendorName, vendorAccount)
-	require.NoError(suite.T, err)
-
 	// Certify model
 	certReason := "some reason 7"
 	certifyModelMsg := compliancetypes.MsgCertifyModel{
@@ -1275,6 +1437,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 		CertificationType:     "matter",
 		Reason:                certReason,
 		CDCertificateId:       testconstants.CDCertificateID,
+		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
@@ -1331,6 +1494,14 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	sv = tmrand.Uint32()
 	svs = utils.RandString()
 
+	secondModel := test_model.NewMsgCreateModel(vid, pid, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{secondModel}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	secondModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{secondModelVersion}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
 	// Provision non-existent model with all optional fields
 	provReason = "some reason 8"
 	provModelMsg = compliancetypes.MsgProvisionModel{
@@ -1353,6 +1524,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 		Transport:                          testconstants.Transport,
 		ParentChild:                        testconstants.ParentChild1,
 		CertificationIdOfSoftwareComponent: testconstants.CertificationIDOfSoftwareComponent,
+		CDVersionNumber:                    uint32(testconstants.CdVersionNumber),
 		Signer:                             certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&provModelMsg}, certCenter, certCenterAccount)
@@ -1399,16 +1571,6 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	deviceSoftwareCompliances, _ = GetAllDeviceSoftwareCompliance(suite)
 	require.Equal(suite.T, len(inputAllDeviceSoftwareCompliances), len(deviceSoftwareCompliances))
 
-	// Publish model info
-	secondModel := test_model.NewMsgCreateModel(vid, pid, vendorAccount.Address)
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{secondModel}, vendorName, vendorAccount)
-	require.NoError(suite.T, err)
-
-	// Publish modelVersion
-	secondModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{secondModelVersion}, vendorName, vendorAccount)
-	require.NoError(suite.T, err)
-
 	// Certify model with some optional fields
 	certReason = "some reason 9"
 	certifyModelMsg = compliancetypes.MsgCertifyModel{
@@ -1426,6 +1588,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 		CompliantPlatformUsed:              "WIFI",
 		CompliantPlatformVersion:           "V1",
 		CertificationIdOfSoftwareComponent: "x5732",
+		CDVersionNumber:                    uint32(testconstants.CdVersionNumber),
 		Signer:                             certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
@@ -1567,8 +1730,7 @@ func DemoTrackComplianceWithHexVidAndPid(suite *utils.TestSuite) {
 	suite.AssertNotFound(err)
 
 	// Certify model
-	certReason := "some reason 10"
-	certDate := "2020-01-01T00:00:01Z"
+	certReason := testconstants.Reason + "10"
 	certifyModelMsg := compliancetypes.MsgCertifyModel{
 		Vid:                   vid,
 		Pid:                   pid,
@@ -1578,6 +1740,7 @@ func DemoTrackComplianceWithHexVidAndPid(suite *utils.TestSuite) {
 		CertificationType:     "zigbee",
 		Reason:                certReason,
 		CDCertificateId:       testconstants.CDCertificateID,
+		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
@@ -1666,7 +1829,7 @@ func DemoTrackRevocationWithHexVidAndPid(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Revoke non-certified model
-	revocReason := "some reason 11"
+	revocReason := testconstants.Reason + "11"
 	revocDate := "2020-03-01T00:00:01Z"
 	revocModelMsg := compliancetypes.MsgRevokeModel{
 		Vid:                   vid,
@@ -1676,6 +1839,7 @@ func DemoTrackRevocationWithHexVidAndPid(suite *utils.TestSuite) {
 		RevocationDate:        revocDate,
 		CertificationType:     "zigbee",
 		Reason:                revocReason,
+		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&revocModelMsg}, certCenter, certCenterAccount)
@@ -1703,7 +1867,7 @@ func DemoTrackRevocationWithHexVidAndPid(suite *utils.TestSuite) {
 	suite.AssertNotFound(err)
 
 	// Certify model
-	certReason := "some reason 12"
+	certReason := testconstants.Reason + "12"
 	certDate := "2020-05-01T00:00:01Z"
 	certifyModelMsg := compliancetypes.MsgCertifyModel{
 		Vid:                   vid,
@@ -1714,6 +1878,7 @@ func DemoTrackRevocationWithHexVidAndPid(suite *utils.TestSuite) {
 		CertificationType:     "zigbee",
 		Reason:                certReason,
 		CDCertificateId:       testconstants.CDCertificateID,
+		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
@@ -1786,8 +1951,18 @@ func DemoTrackProvisionByHexVidAndPid(suite *utils.TestSuite) {
 	sv := tmrand.Uint32()
 	svs := utils.RandString()
 
+	// Publish model info
+	firstModel := test_model.NewMsgCreateModel(vid, pid, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModel}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	// Publish modelVersion
+	firstModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModelVersion}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
 	// Provision non-existent model
-	provReason := "some reason 13"
+	provReason := testconstants.Reason + "13"
 	provModelMsg := compliancetypes.MsgProvisionModel{
 		Vid:                   vid,
 		Pid:                   pid,
@@ -1797,6 +1972,7 @@ func DemoTrackProvisionByHexVidAndPid(suite *utils.TestSuite) {
 		CertificationType:     "matter",
 		Reason:                provReason,
 		CDCertificateId:       testconstants.CDCertificateID,
+		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&provModelMsg}, certCenter, certCenterAccount)
@@ -1824,18 +2000,8 @@ func DemoTrackProvisionByHexVidAndPid(suite *utils.TestSuite) {
 	provisionModel, _ := GetProvisionalModelByHexVidAndPid(suite, testconstants.TestVID3String, testconstants.TestPID3String, sv, dclcompltypes.MatterCertificationType)
 	require.True(suite.T, provisionModel.Value)
 
-	// Publish model info
-	firstModel := test_model.NewMsgCreateModel(vid, pid, vendorAccount.Address)
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModel}, vendorName, vendorAccount)
-	require.NoError(suite.T, err)
-
-	// Publish modelVersion
-	firstModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModelVersion}, vendorName, vendorAccount)
-	require.NoError(suite.T, err)
-
 	// Certify model
-	certReason := "some reason 14"
+	certReason := testconstants.Reason + "14"
 	certifyModelMsg := compliancetypes.MsgCertifyModel{
 		Vid:                   vid,
 		Pid:                   pid,
@@ -1845,6 +2011,7 @@ func DemoTrackProvisionByHexVidAndPid(suite *utils.TestSuite) {
 		CertificationType:     "matter",
 		Reason:                certReason,
 		CDCertificateId:       testconstants.CDCertificateID,
+		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)

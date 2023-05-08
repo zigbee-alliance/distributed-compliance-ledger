@@ -29,6 +29,10 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.ProvisionModel(sdk.WrapSDKContext(ctx), msg)
 
 			return sdk.WrapServiceResult(ctx, res, err)
+		case *types.MsgUpdateComplianceInfo:
+			res, err := msgServer.UpdateComplianceInfo(sdk.WrapSDKContext(ctx), msg)
+
+			return sdk.WrapServiceResult(ctx, res, err)
 		case *types.MsgDeleteComplianceInfo:
 			res, err := msgServer.DeleteComplianceInfo(sdk.WrapSDKContext(ctx), msg)
 

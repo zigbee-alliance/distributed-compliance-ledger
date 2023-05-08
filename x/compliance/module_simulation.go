@@ -36,6 +36,10 @@ const (
 	// TODO: Determine the simulation weight value.
 	defaultWeightMsgProvisionModel int = 100
 
+	opWeightMsgUpdateComplianceInfo = "op_weight_msg_create_chain"
+	// TODO: Determine the simulation weight value.
+	defaultWeightMsgUpdateComplianceInfo int = 100
+
 	opWeightMsgDeleteComplianceInfo = "op_weight_msg_create_chain"
 	// TODO: Determine the simulation weight value.
 	defaultWeightMsgDeleteComplianceInfo int = 100
@@ -106,6 +110,16 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 		compliancesimulation.SimulateMsgProvisionModel(am.keeper),
 	))
 
+	var weightMsgUpdateComplianceInfo int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgUpdateComplianceInfo, &weightMsgUpdateComplianceInfo, nil,
+		func(_ *rand.Rand) {
+			weightMsgUpdateComplianceInfo = defaultWeightMsgUpdateComplianceInfo
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgUpdateComplianceInfo,
+		compliancesimulation.SimulateMsgUpdateComplianceInfo(am.keeper),
+	))
 	var weightMsgDeleteComplianceInfo int
 	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgDeleteComplianceInfo, &weightMsgDeleteComplianceInfo, nil,
 		func(_ *rand.Rand) {

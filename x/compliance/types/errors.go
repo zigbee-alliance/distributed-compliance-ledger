@@ -8,16 +8,17 @@ import (
 
 // x/compliance module sentinel errors.
 var (
-	ErrComplianceInfoAlreadyExist     = sdkerrors.Register(ModuleName, 301, "compliance info already exist")
-	ErrInconsistentDates              = sdkerrors.Register(ModuleName, 302, "inconsistent dates")
-	ErrAlreadyCertified               = sdkerrors.Register(ModuleName, 303, "model already certified")
-	ErrAlreadyRevoked                 = sdkerrors.Register(ModuleName, 304, "model already revoked")
-	ErrAlreadyProvisional             = sdkerrors.Register(ModuleName, 305, "model already in provisional state")
-	ErrModelVersionStringDoesNotMatch = sdkerrors.Register(ModuleName, 306, "model version does not match")
-	ErrInvalidTestDateFormat          = sdkerrors.Register(ModuleName, 307, "test date must be in RFC3339 format")
-	ErrInvalidCertificationType       = sdkerrors.Register(ModuleName, 308, "invalid certification type")
-	ErrInvalidPFCCertificationRoute   = sdkerrors.Register(ModuleName, 309, "invalid PFC certification route")
-	ErrComplianceInfoDoesNotExist     = sdkerrors.Register(ModuleName, 310, "compliance info does not exist")
+	ErrComplianceInfoAlreadyExist      = sdkerrors.Register(ModuleName, 301, "compliance info already exist")
+	ErrInconsistentDates               = sdkerrors.Register(ModuleName, 302, "inconsistent dates")
+	ErrAlreadyCertified                = sdkerrors.Register(ModuleName, 303, "model already certified")
+	ErrAlreadyRevoked                  = sdkerrors.Register(ModuleName, 304, "model already revoked")
+	ErrAlreadyProvisional              = sdkerrors.Register(ModuleName, 305, "model already in provisional state")
+	ErrModelVersionStringDoesNotMatch  = sdkerrors.Register(ModuleName, 306, "model version does not match")
+	ErrInvalidTestDateFormat           = sdkerrors.Register(ModuleName, 307, "test date must be in RFC3339 format")
+	ErrInvalidCertificationType        = sdkerrors.Register(ModuleName, 308, "invalid certification type")
+	ErrInvalidPFCCertificationRoute    = sdkerrors.Register(ModuleName, 309, "invalid PFC certification route")
+	ErrComplianceInfoDoesNotExist      = sdkerrors.Register(ModuleName, 310, "compliance info not found")
+	ErrInvalidUint32ForCdVersionNumber = sdkerrors.Register(ModuleName, 311, "invalid uint32 for cd version number")
 )
 
 func NewErrInconsistentDates(err interface{}) error {
@@ -68,6 +69,14 @@ func NewErrComplianceInfoDoesNotExist(vid interface{}, pid interface{}, sv inter
 	)
 }
 
+func NewErrInvalidUint32ForCdVersionNumber(vid interface{}, pid interface{}, sv interface{}, certificationType interface{}, cdVersionNumber interface{}) error {
+	return sdkerrors.Wrapf(
+		ErrInvalidUint32ForCdVersionNumber,
+		"Compliance info with vid=%v, pid=%v, softwareVersion=%v, certificationType=%v cannot be updated with an invalid uint32 cd version number %v",
+		vid, pid, sv, certificationType, cdVersionNumber,
+	)
+}
+
 func NewErrModelVersionStringDoesNotMatch(vid interface{}, pid interface{},
 	softwareVersion interface{}, softwareVersionString interface{},
 ) error {
@@ -76,6 +85,17 @@ func NewErrModelVersionStringDoesNotMatch(vid interface{}, pid interface{},
 		"Model with vid=%v, pid=%v, softwareVersion=%v present on the ledger does not have"+
 			" matching softwareVersionString=%v",
 		vid, pid, softwareVersion, softwareVersionString,
+	)
+}
+
+func NewErrModelVersionCDVersionNumberDoesNotMatch(vid interface{}, pid interface{},
+	softwareVersion interface{}, cDVersionNumber interface{},
+) error {
+	return sdkerrors.Wrapf(
+		ErrModelVersionStringDoesNotMatch,
+		"Model with vid=%v, pid=%v, softwareVersion=%v present on the ledger does not have"+
+			" matching CDVersionNumber=%v",
+		vid, pid, softwareVersion, cDVersionNumber,
 	)
 }
 

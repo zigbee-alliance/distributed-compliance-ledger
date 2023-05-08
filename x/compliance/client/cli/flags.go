@@ -42,6 +42,8 @@ const (
 	FlagTransport                          = "transport"
 	FlagParentChild                        = "parentChild"
 	FlagCertificationIDOfSoftwareComponent = "certificationIDOfSoftwareComponent"
+	FlagOwner                              = "owner"
+	FlagSoftwareVersionCertificationStatus = "softwareVersionCertificationStatus"
 
 	TextCertificationType = "Certification type - Currently 'zigbee' and 'matter' types are supported"
 )

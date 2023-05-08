@@ -75,8 +75,18 @@ export interface MsgUpdateModelVersion {
     minApplicableSoftwareVersion: number;
     maxApplicableSoftwareVersion: number;
     releaseNotesUrl: string;
+    otaFileSize: number;
+    otaChecksum: string;
 }
 export interface MsgUpdateModelVersionResponse {
+}
+export interface MsgDeleteModelVersion {
+    creator: string;
+    vid: number;
+    pid: number;
+    softwareVersion: number;
+}
+export interface MsgDeleteModelVersionResponse {
 }
 export declare const MsgCreateModel: {
     encode(message: MsgCreateModel, writer?: Writer): Writer;
@@ -148,14 +158,29 @@ export declare const MsgUpdateModelVersionResponse: {
     toJSON(_: MsgUpdateModelVersionResponse): unknown;
     fromPartial(_: DeepPartial<MsgUpdateModelVersionResponse>): MsgUpdateModelVersionResponse;
 };
+export declare const MsgDeleteModelVersion: {
+    encode(message: MsgDeleteModelVersion, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgDeleteModelVersion;
+    fromJSON(object: any): MsgDeleteModelVersion;
+    toJSON(message: MsgDeleteModelVersion): unknown;
+    fromPartial(object: DeepPartial<MsgDeleteModelVersion>): MsgDeleteModelVersion;
+};
+export declare const MsgDeleteModelVersionResponse: {
+    encode(_: MsgDeleteModelVersionResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgDeleteModelVersionResponse;
+    fromJSON(_: any): MsgDeleteModelVersionResponse;
+    toJSON(_: MsgDeleteModelVersionResponse): unknown;
+    fromPartial(_: DeepPartial<MsgDeleteModelVersionResponse>): MsgDeleteModelVersionResponse;
+};
 /** Msg defines the Msg service. */
 export interface Msg {
     CreateModel(request: MsgCreateModel): Promise<MsgCreateModelResponse>;
     UpdateModel(request: MsgUpdateModel): Promise<MsgUpdateModelResponse>;
     DeleteModel(request: MsgDeleteModel): Promise<MsgDeleteModelResponse>;
     CreateModelVersion(request: MsgCreateModelVersion): Promise<MsgCreateModelVersionResponse>;
-    /** this line is used by starport scaffolding # proto/tx/rpc */
     UpdateModelVersion(request: MsgUpdateModelVersion): Promise<MsgUpdateModelVersionResponse>;
+    /** this line is used by starport scaffolding # proto/tx/rpc */
+    DeleteModelVersion(request: MsgDeleteModelVersion): Promise<MsgDeleteModelVersionResponse>;
 }
 export declare class MsgClientImpl implements Msg {
     private readonly rpc;
@@ -165,6 +190,7 @@ export declare class MsgClientImpl implements Msg {
     DeleteModel(request: MsgDeleteModel): Promise<MsgDeleteModelResponse>;
     CreateModelVersion(request: MsgCreateModelVersion): Promise<MsgCreateModelVersionResponse>;
     UpdateModelVersion(request: MsgUpdateModelVersion): Promise<MsgUpdateModelVersionResponse>;
+    DeleteModelVersion(request: MsgDeleteModelVersion): Promise<MsgDeleteModelVersionResponse>;
 }
 interface Rpc {
     request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
