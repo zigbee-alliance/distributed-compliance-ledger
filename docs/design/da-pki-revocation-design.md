@@ -84,17 +84,19 @@ and DACs (leaf certificates) added to DCL if they are revoked in the CRL identif
     - Vendor account
     - `vid` field in the transaction (`VendorID`) must be equal to the Vendor account's VID
     - `vid` field in the `CRLSignerCertificate` (for vendor-scoped PAAs and PAIs) must be equal to the Vendor account's VID
+- Validation of parameters:
+    - See [Validation](#validation-logic) section for details. 
 - Parameters:
-    - vid: `uint16` -  Vendor ID (positive non-zero)
-    - pid: `optional(uint16)` -  Product ID (positive non-zero)
+    - vid: `uint16` -  Vendor ID (positive non-zero). Must be the same as Vendor account's VID and `vid` field in the VID-scoped `CRLSignerCertificate`.
+    - pid: `optional(uint16)` -  Product ID (positive non-zero). Must be empty if `IsPAA` is true. Must be equal to a `pid` field in `CRLSignerCertificate`.
     - isPAA: `bool` -  True if the revocation information distribution point relates to a PAA
     - label: `string` -  A label to disambiguate multiple revocation information partitions of a particular issuer.
-    - crlSignerCertificate: `string` -  PEM encoded certificate (string or path to file containing data)
-    - issuerSubjectKeyID: `string` -  crlSignerCertificate's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
-    - dataUrl: `string` -  The URL where to obtain the information in the format indicated by the RevocationType field
+    - crlSignerCertificate: `string` -  PEM encoded certificate. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data.
+    - issuerSubjectKeyID: `string` - crlSignerCertificate's `Subject Key Id` as an even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters., e.g: `5A880E6C3653D07FB08971A3F473790930E62BDB`. Must math the `CRLSignerCertificate`'s Subject Key Identifier.
+    - dataUrl: `string` -  The URL where to obtain the information in the format indicated by the RevocationType field. Must start with either `http` or `https`.
     - dataFileSize: `optional(uint64)` -  Total size in bytes of the file found at the DataUrl. Must be omitted if RevocationType is 1.
-    - dataDigest: `optional(string)` -  Digest of the entire contents of the associated file downloaded from the DataUrl. Must be omitted if RevocationType is 1.
-    - dataDigestType: `optional(uint32)` - The type of digest used in the DataDigest field from the list of [1, 7, 8, 10, 11, 12] (IANA Named Information Hash Algorithm Registry).
+    - dataDigest: `optional(string)` -  Digest of the entire contents of the associated file downloaded from the DataUrl. Must be omitted if RevocationType is 1. Must be provided if and only if the `DataFileSize` field is present.
+    - dataDigestType: `optional(uint32)` - The type of digest used in the DataDigest field from the list of [1, 7, 8, 10, 11, 12] (IANA Named Information Hash Algorithm Registry). Must be provided if and only if the `DataDigest` field is present.
     - revocationType: `uint32` - The type of file found at the DataUrl for this entry. Supported types: 1 - RFC5280 Certificate Revocation List (CRL).
 - In State:
     - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>` -> list of Revocation Distribution Points
@@ -110,14 +112,15 @@ Updates an existing PKI Revocation distribution endpoint owned by the sender.
 - Who can send:
     - Vendor account
     - `vid` field in the transaction (`VendorID`) must be equal to the Vendor account's VID
+    - `vid` field in the corresponding `CRLSignerCertificate` (for vendor-scoped PAAs and PAIs) must be equal to the Vendor account's VID
 - Parameters:
-    - vid: `uint16` -  Vendor ID (positive non-zero)
+    - vid: `uint16` -  Vendor ID (positive non-zero). Must be the same as Vendor account's VID and `vid` field in the VID-scoped `CRLSignerCertificate`.
     - label: `string` -  A label to disambiguate multiple revocation information partitions of a particular issuer.
-    - issuerSubjectKeyID: `string` -  issuer certificate's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
-    - dataUrl: `string` -  The URL where to obtain the information in the format indicated by the RevocationType field
+    - issuerSubjectKeyID: `string` -  crlSignerCertificate's `Subject Key Id` as an even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters., e.g: `5A880E6C3653D07FB08971A3F473790930E62BDB`.
+    - dataUrl: `string` -  The URL where to obtain the information in the format indicated by the RevocationType field. Must start with either `http` or `https`.
     - dataFileSize: `optional(uint64)` -  Total size in bytes of the file found at the DataUrl. Must be omitted if RevocationType is 1.
-    - dataDigest: `optional(string)` -  Digest of the entire contents of the associated file downloaded from the DataUrl. Must be omitted if RevocationType is 1.
-    - dataDigestType: `optional(uint32)` - The type of digest used in the DataDigest field from the list of [1, 7, 8, 10, 11, 12] (IANA Named Information Hash Algorithm Registry).
+    - dataDigest: `optional(string)` -  Digest of the entire contents of the associated file downloaded from the DataUrl. Must be omitted if RevocationType is 1. Must be provided if and only if the `DataFileSize` field is present.
+    - dataDigestType: `optional(uint32)` - The type of digest used in the DataDigest field from the list of [1, 7, 8, 10, 11, 12] (IANA Named Information Hash Algorithm Registry). Must be provided if and only if the `DataDigest` field is present.
 - In State:
     - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>` -> list of Revocation Distribution Points
     - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>/<vid>/<label>` -> Revocation Distribution Point
@@ -131,10 +134,11 @@ Deletes a PKI Revocation distribution endpoint owned by the sender.
 - Who can send:
     - Vendor account
     - `vid` field in the transaction (`VendorID`) must be equal to the Vendor account's VID
+    - `vid` field in the corresponding `CRLSignerCertificate` (for vendor-scoped PAAs and PAIs) must be equal to the Vendor account's VID
 - Parameters:
-    - vid: `uint16` -  Vendor ID (positive non-zero)
+    - vid: `uint16` -  Vendor ID (positive non-zero). Must be the same as Vendor account's VID and `vid` field in the VID-scoped `CRLSignerCertificate`.
     - label: `string` -  A label to disambiguate multiple revocation information partitions of a particular issuer.
-    - issuerSubjectKeyID: `string` -  issuer certificate's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
+    - issuerSubjectKeyID: `string` - crlSignerCertificate's `Subject Key Id` as an even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters., e.g: `5A880E6C3653D07FB08971A3F473790930E62BDB`.
 - In State:
     - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>` -> list of Revocation Distribution Points
     - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>/<vid>/<label>` -> Revocation Distribution Point
@@ -151,7 +155,7 @@ Use `GET_ALL_PKI_REVOCATION_DISTRIBUTION_POINT` to get a list of all revocation 
 - Parameters:
   - vid: `uint16` -  Vendor ID (positive non-zero)
   - label: `string` -  A label to disambiguate multiple revocation information partitions of a particular issuer.
-  - issuerSubjectKeyID: `string` -  issuer certificate's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
+  - issuerSubjectKeyID: `string` - crlSignerCertificate's `Subject Key Id` as an even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters., e.g: `5A880E6C3653D07FB08971A3F473790930E62BDB`.
 - CLI command:
   - `dcld query pki revocation-point --vid=<uint16> --label=<string> --subject-key-id=<string>`
 - REST API:
@@ -161,7 +165,7 @@ Use `GET_ALL_PKI_REVOCATION_DISTRIBUTION_POINT` to get a list of all revocation 
 Gets a list of revocation distribution point identified by IssuerSubjectKeyID.
 
 - Parameters:
-  - issuerSubjectKeyID: `string` -  issuer certificate's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
+  - issuerSubjectKeyID: `string` -  crlSignerCertificate's `Subject Key Id` as an even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters., e.g: `5A880E6C3653D07FB08971A3F473790930E62BDB`.
 - CLI command:
   - `dcld query pki revocation-points --subject-key-id=<string>`
 - REST API:
@@ -194,8 +198,10 @@ Gets a list of all revocation distribution points.
 - If `RevocationType` is 1 (RFC5280 CRL), then `DataFileSize`, `DataDigest`, `DataDigestType` must be empty.
 - Check that `ProductID` field is provided if and only if `IsPAA` is false and `CRLSignerCertificate` has a PID in its subject.  
 - Check that `ProductID` must be equal to the PID in `CRLSignerCertificate`'s subject.
+  - both OID and text versions of PID in a certificate can be supported (either `pid` or `1.3.6.1.4.1.37244.2.2`, see `x509.ToSubjectAsText` method)
 - Check that `VendorID` is equal to the vid in `CRLSignerCertificate`'s subject.
-- Check that `IssuerSubjectKeyID` is equal to the `CRLSignerCertificate`'s Subject Key Identifier.
+  - both OID and text versions of VID in a certificate can be supported (either `vid` or `1.3.6.1.4.1.37244.2.1`, see `x509.ToSubjectAsText` method)
+- Check that `IssuerSubjectKeyID` value is equal to the `CRLSignerCertificate`'s Subject Key Identifier (make sure they have the same format before comparison).
 - If `IsPAA` is true, then
   - check that the `CRLSignerCertificate` is a PAA (root certificate, self-signed).
   - If `CRLSignerCertificate` encodes a vid in its subject, then it must be equal to `VendorID` field.
@@ -209,5 +215,7 @@ Gets a list of all revocation distribution points.
    - Query a certificate by `crlSignerCertificate` Subject and Subject Key ID. If it's not found - error.
    - Check that pem value of the found certificate is equal to `crlSignerCertificate` value.
 - If `crlSignerCertificate` is a PAI (intermediate certificate, not self-signed):
-   - Check that `crlSignerCertificate` is chained back to certificates present on DCL (`verifyCertificate` method).
+   - Check that `crlSignerCertificate` is chained back to certificates present on DCL (`x509.verifyCertificate` method):
+      - Query for a PAA where `Subject == CRLSignerCertificate.Issuer` and `SubjectKeyID == CRLSignerCertificate.AuthorityKeyId`
+      - Build certification path with both elements, verify path
 - Check that (VendorID, Label, IssuerSubjectKeyID) combination is unique when adding the distribution endpoint.
