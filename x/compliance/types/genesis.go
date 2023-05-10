@@ -2,6 +2,8 @@ package types
 
 import (
 	"fmt"
+
+	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 )
 
 // DefaultIndex is the default capability global index.
@@ -10,7 +12,7 @@ const DefaultIndex uint64 = 1
 // DefaultGenesis returns the default Capability genesis state.
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
-		ComplianceInfoList:           []ComplianceInfo{},
+		ComplianceInfoList:           []dclcompltypes.ComplianceInfo{},
 		CertifiedModelList:           []CertifiedModel{},
 		RevokedModelList:             []RevokedModel{},
 		ProvisionalModelList:         []ProvisionalModel{},

@@ -6,9 +6,8 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/spf13/cobra"
-
+	types "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	// "github.com/cosmos/cosmos-sdk/client/flags".
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
 var DefaultRelativePacketTimeoutTimestamp = uint64((time.Duration(10) * time.Minute).Nanoseconds())
@@ -26,6 +25,8 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdCertifyModel())
 	cmd.AddCommand(CmdRevokeModel())
 	cmd.AddCommand(CmdProvisionModel())
+	cmd.AddCommand(CmdUpdateComplianceInfo())
+	cmd.AddCommand(CmdDeleteComplianceInfo())
 	// this line is used by starport scaffolding # 1
 
 	return cmd

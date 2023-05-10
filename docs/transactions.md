@@ -3,6 +3,18 @@
 
 See use case sequence diagrams for the examples of how transaction can be used.
 
+1. [General](#general)
+2. [How to write to the Ledger](#how-to-write-to-the-ledger)
+3. [How to read from the Ledger](#how-to-read-from-the-ledger)
+4. [Vendor Info](#vendor-info)
+5. [Model and Model Version](#model-and-model_version)
+6. [Compliance](#certify_device_compliance)
+7. [X509 PKI](#x509-pki)
+8. [Auth](#auth)
+9. [Validator Node](#validator_node)
+10. [Upgrade](#upgrade)
+11. [Extensions](#extensions)
+
 ## General
 
 - Every writer to the Ledger must  
@@ -16,6 +28,7 @@ an Account or sign the request.
 - The following roles are supported:
   - `Trustee` - can create and approve accounts, approve root certificates.
   - `Vendor` - can add models that belong to the vendor ID associated with the vendor account.
+  - `VendorAdmin` - can add vendor info records and update any vendor info.
   - `CertificationCenter` - can certify and revoke models.
   - `NodeAdmin` - can add validator nodes to the network.
 
@@ -83,6 +96,7 @@ Please make sure that TLS is enabled in gRPC, REST or Light Client Proxy for sec
   - Tendermint RPC supports state proofs. Tendermint's Light Client library can be used to verify the state proofs.
     So, if Light Client API is used, then it's possible to communicate with non-trusted nodes.
   - Please note, that multi-value queries don't have state proofs support and should be sent to trusted nodes only.
+  - Refer to [this doc](./tendermint-rpc.md) to see how to [subscribe](./tendermint-rpc.md#subscribe) to a Tendermint WebSocket based events and/or [query](./tendermint-rpc.md#querying-application-components) an application components. 
 
 `NotFound` (404 code) is returned if an entry is not found on the ledger.
 
@@ -116,7 +130,8 @@ Adds a record about a Vendor.
   - vendorLandingPageURL: `optional(string)` -  URL of the vendor's landing page
 - In State: `vendorinfo/VendorInfo/value/<vid>`
 - Who can send:
-  - Vendor account
+  - Account with a vendor role who has the matching Vendor ID
+  - Account with a vendor admin role
 - CLI command:
   - `dcld tx vendorinfo add-vendor --vid=<uint16> --vendorName=<string> --companyLegalName=<string> --companyPreferredName=<string> --vendorLandingPageURL=<string> --from=<account>`
 
@@ -135,6 +150,7 @@ Updates a record about a Vendor.
 - In State: `vendorinfo/VendorInfo/value/<vid>`
 - Who can send:
   - Account with a vendor role who has the matching Vendor ID
+  - Account with a vendor admin role
 - CLI command:
   - `dcld tx vendorinfo update-vendor --vid=<uint16> ... --from=<account>`
 
@@ -181,8 +197,8 @@ Not all fields can be edited (see `EDIT_MODEL`).
   - pid: `uint16` -  model product ID (positive non-zero)
   - deviceTypeID: `uint16` -  DeviceTypeID is the device type identifier. For example, DeviceTypeID 10 (0x000a), is the device type identifier for a Door Lock.
   - productName: `string` -  model name
-  - productLabel: `string` -  model description (string or path to file containing data)
-  - partNumber: `string` -  stock keeping unit
+  - productLabel: `optional(string)` -  model description (string or path to file containing data)
+  - partNumber: `optional(string)` -  stock keeping unit
   - commissioningCustomFlow: `optional(uint8)` - A value of 1 indicates that user interaction with the device (pressing a button, for example) is required before commissioning can take place. When CommissioningCustomflow is set to a value of 2, the commissioner SHOULD attempt to obtain a URL which MAY be used to provide an end user with the necessary details for how to configure the product for initial commissioning
   - commissioningCustomFlowURL: `optional(string)` - commissioningCustomFlowURL SHALL identify a vendor specific commissioning URL for the device model when the commissioningCustomFlow field is set to '2'
   - commissioningModeInitialStepsHint: `optional(uint32)` - commissioningModeInitialStepsHint SHALL identify a hint for the steps that can be used to put into commissioning mode a device that has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 1 (bit 0 is set) indicates that a device that has not yet been commissioned will enter Commissioning Mode upon a power cycle.
@@ -251,6 +267,8 @@ All non-edited fields remain the same.
 
 Deletes an existing Model identified by a unique combination of `vid` (vendor ID) and `pid` (product ID)
 by the vendor account.
+
+If one of Model Versions associated with the Model is certified then Model can not be deleted. When Model is deleted, all associated Model Versions will be deleted as well.
 
 - Parameters:
   - vid: `uint16` -  model vendor ID (positive non-zero)
@@ -329,12 +347,34 @@ All non-edited fields remain the same.
   - maxApplicableSoftwareVersion `optional(uint32)` - MaxApplicableSoftwareVersion should specify the highest SoftwareVersion for which this image can be applied
   - minApplicableSoftwareVersion `optional(uint32)` - MinApplicableSoftwareVersion should specify the lowest SoftwareVersion for which this image can be applied
   - releaseNotesURL `optional(string)` - URL that contains product specific web page that contains release notes for the device model.
+  - otaURL `optional(string)` - URL where to obtain the OTA image
+  - otaFileSize `optional(string)`  - OtaFileSize is the total size of the OTA software image in bytes
+  - otaChecksum `optional(string)` - Digest of the entire contents of the associated OTA Software Update Image under the OtaUrl attribute, encoded in base64 string representation. The digest SHALL have been computed using the algorithm specified in OtaChecksumType
 
 - In State: `model/ModelVersion/value/<vid>/<pid>/<softwareVersion>`
 - Who can send:
   - Vendor associated with the same vid who created the Model
 - CLI command:
   - `dcld tx model update-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> ... --from=<account>`
+
+#### DELETE_MODEL_VERSION
+
+**Status: Implemented**
+
+Deletes an existing Model Version identified by a unique combination of `vid` (vendor ID), `pid` (product ID) and `softwareVersion`
+by the vendor account.
+
+Model Version can be deleted only before it is certified.
+
+- Parameters:
+  - vid: `uint16` -  model version vendor ID (positive non-zero)
+  - pid: `uint16` -  model version product ID (positive non-zero)
+  - softwareVersion: `uint32` - model version software version (positive non-zero)
+- In State: `model/ModelVersion/value/<vid>/<pid>/<softwareVersion>`
+- Who can send:
+  - Vendor account associated with the same vid who has created the model version
+- CLI command:
+  - `dcld tx model delete-model-version --vid=< uint16 > --pid=< uint16 > --softwareVersion=<uint32> --from=<account>`
 
 #### GET_MODEL
 
@@ -456,6 +496,24 @@ from the revocation list.
   - `dcld tx compliance certify-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string>  --certificationType=<matter|zigbee|access control|product security> --certificationDate=<rfc3339 encoded date> --cdCertificateId=<string> --from=<account>`
 - CLI command full:
   - `dcld tx compliance certify-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string>  --certificationType=<matter|zigbee|access control|product security> --certificationDate=<rfc3339 encoded date> --cdCertificateId=<string> --reason=<string> --cDVersionNumber=<uint32> --familyId=<string> --supportedClusters=<string> --compliantPlatformUsed=<string> --compliantPlatformVersion=<string> --OSVersion=<string> --certificationRoute=<string> --programType=<string> --programTypeVersion=<string> --transport=<string> --parentChild=<string> --certificationIDOfSoftwareComponent=<string> --from=<account>`
+
+### DELETE_COMPLIANCE_INFO
+
+**Status: Implemented**
+
+Delete compliance of the Model Version to the ZB or Matter standard.
+
+The corresponding Compliance Info is required to be present on the ledger
+
+- Parameters:
+  - vid: `uint16` - model vendor ID (positive non-zero)
+  - pid: `uint16` - model product ID (positive non-zero)
+  - softwareVersion: `uint32` - model software version
+  - certificationType: `string` - Certification type - Currently 'zigbee' and 'matter', 'access control', 'product security' types are supported
+- Who can send:
+  - CertificationCenter
+- CLI command:
+  - `dcld tx compliance delete-compliance-info --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<matter|zigbee|access control|product security> --from=<account>`
 
 #### REVOKE_MODEL_CERTIFICATION
 
@@ -716,6 +774,42 @@ Should be sent to trusted nodes only.
 - REST API:
   - `/dcl/compliance/device-software-compliance`
 
+#### UPDATE_COMPLIANCE_INFO
+
+**Status: Implemented**
+
+Updates a compliance info by VID, PID, Software Version and Certification Type.
+
+
+- Parameters:
+  - vid: `uint16` -  model vendor ID (positive non-zero)
+  - pid: `uint16` -  model product ID (positive non-zero)
+  - softwareVersion: `uint32` - model software version
+  - certificationType: `string` - Certification type - Currently 'zigbee', 'matter', 'access control', 'product security' types are supported
+  - certificationDate: `optional(string)` - The date of model certification (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
+  - cdCertificateId: `optional(string)` - CD Certificate ID 
+  - reason `optional(string)` - optional comment describing the reason of the certification
+  - cDVersionNumber `optional(string)` - optional field (a uint32-parsable string) describing the CD version number, must be the same with the associated model version
+  - familyId `optional(string)` - optional field describing the family ID
+  - supportedClusters `optional(string)` - optional field describing the supported clusters
+  - compliantPlatformUsed `optional(string)` - optional field describing the compliant platform used
+  - compliantPlatformVersion `optional(string)` - optional field describing the compliant platform version
+  - OSVersion `optional(string)` - optional field describing the OS version
+  - certificationRoute `optional(string)` - optional field describing the certification route
+  - programType `optional(string)` - optional field describing the program type
+  - programTypeVersion `optional(string)` - optional field describing the program type version
+  - transport `optional(string)` - optional field describing the transport
+  - parentChild `optional(string)` - optional field describing the parent/child - Currently 'parent' and 'child' types are supported
+  - certificationIDOfSoftwareComponent `optional(string)` - optional field describing the certification ID of software component
+- Who can send:
+  - CertificationCenter
+- CLI command:
+  - `dcld tx compliance update-compliance-info`
+- CLI command full:
+  - `dcld tx compliance update-compliance-info --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<string> --cdVersionNumber=<string> --certificationDate=$upd_certification_date --reason=$upd_reason --cdCertificateId=$upd_cd_certificate_id --certificationRoute=$upd_certification_route --programType=$upd_program_type --programTypeVersion=$upd_program_type_version --compliantPlatformUsed=$upd_compliant_platform_used --compliantPlatformVersion=$upd_compliant_platform_version --transport=$upd_transport --familyId=$upd_familyID --supportedClusters=$upd_supported_clusters --OSVersion=$upd_os_version --parentChild=$upd_parent_child --certificationIDOfSoftwareComponent=$upd_certification_id_of_software_component --from=$zb_account`
+- REST API:
+  - `/dcl/compliance/update-compliance-info`
+
 ## X509 PKI
 
 **NOTE**: X.509 v3 certificates are only supported (all certificates MUST contain `Subject Key ID` field).
@@ -727,9 +821,8 @@ All PKI related methods are based on this restriction.
 
 Proposes a new self-signed root certificate.
 
-If it's sent by a non-Trustee account, or more than 1 Trustee signature is required to add a root certificate,
-then the certificate
-will be in a pending state until sufficient number of other Trustee's approvals is received.
+If more than 1 Trustee signature is required to add the root certificate, the root certificate
+will be in a pending state until sufficient number of approvals is received.
 
 The certificate is immutable. It can only be revoked by either the owner or a quorum of Trustees.
 
@@ -739,7 +832,7 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
   - time: `optional(int64)` - proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State: `pki/ProposedCertificate/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - Who can send:
-  - Any role
+  - Trustee
 - CLI command:
   - `dcld tx pki propose-add-x509-root-cert --certificate=<string-or-path> --from=<account>`
 - Validation:
@@ -756,7 +849,7 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
 
 **Status: Implemented**
 
-Approves the proposed root certificate.
+Approves the proposed root certificate. It also can be used for revote (i.e. change vote from reject to approve)
 
 The certificate is not active until sufficient number of Trustees approve it.
 
@@ -769,7 +862,7 @@ The certificate is not active until sufficient number of Trustees approve it.
 - Who can send:
   - Trustee
 - Number of required approvals:
-  - 2/3 of Trustees
+  - greater than 2/3 of Trustees (proposal by a Trustee is also counted as an approval)
 - CLI command:
   - `dcld tx pki approve-add-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
 - Validation:
@@ -779,7 +872,9 @@ The certificate is not active until sufficient number of Trustees approve it.
 
 **Status: Implemented**
 
-Rejects the proposed root certificate.
+Rejects the proposed root certificate. It also can be used for revote (i.e. change vote from approve to reject)
+
+If proposed root certificate has only proposer's approval and no rejects then proposer can send this transaction to remove the proposal
 
 The certificate is not reject until sufficient number of Trustees reject it.
 
@@ -890,7 +985,7 @@ The revocation is not applied until sufficient number of Trustees approve it.
 - Who can send:
   - Trustee
 - Number of required approvals:
-  - 2/3 of Trustees
+  - greater than 2/3 of Trustees (proposal by a Trustee is also counted as an approval)
 - CLI command:
   - `dcld tx pki approve-revoke-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
 
@@ -922,7 +1017,7 @@ Use `GET_ALL_REVOKED_X509_CERTS` to get a list of all revoked certificates.
 - Parameters:
   - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
 - CLI command:
-  - `dcld query pki all-subject-x509-certs (--subject=<base64 string>`
+  - `dcld query pki all-subject-x509-certs --subject=<base64 string>`
 - REST API:
   - GET `/dcl/pki/certificates/{subject}`
 
@@ -1004,7 +1099,8 @@ Gets a proposed but not approved root certificate to be revoked.
 Gets all approved root certificates. Revoked certificates are not returned.
 Use `GET_ALL_REVOKED_X509_CERTS_ROOT` to get a list of all revoked root certificates.
 
-- Parameters: No
+- Parameters:
+  - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
 - CLI command:
   - `dcld query pki all-x509-root-certs`
 - REST API:
@@ -1016,7 +1112,8 @@ Use `GET_ALL_REVOKED_X509_CERTS_ROOT` to get a list of all revoked root certific
 
 Gets all revoked root certificates.
 
-- Parameters: No
+- Parameters:
+  - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
 - CLI command:
   - `dcld query pki all-revoked-x509-root-certs`
 - REST API:
@@ -1115,7 +1212,7 @@ will be in a pending state until sufficient number of approvals is received.
   - address: `string` - account address; Bech32 encoded
   - pub_key: `string` - account's Protobuf JSON encoded public key
   - vid: `optional(uint16)` - vendor ID (only needed for vendor role)
-  - roles: `array<string>` - the list of roles, comma-separated, assigning to the account. Supported roles: `Vendor`, `TestHouse`, `CertificationCenter`, `Trustee`, `NodeAdmin`.
+  - roles: `array<string>` - the list of roles, comma-separated, assigning to the account. Supported roles: `Vendor`, `TestHouse`, `CertificationCenter`, `Trustee`, `NodeAdmin`, `VendorAdmin`.
   - info: `optional(string)` - information/notes for the proposal
   - time: `optional(int64)` - proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State: `dclauth/PendingAccount/value/<address>`
@@ -1128,7 +1225,7 @@ will be in a pending state until sufficient number of approvals is received.
 
 **Status: Implemented**
 
-Approves the proposed account.
+Approves the proposed account. It also can be used for revote (i.e. change vote from reject to approve)
 
 The account is not active until sufficient number of Trustees approve it.
 
@@ -1140,18 +1237,20 @@ The account is not active until sufficient number of Trustees approve it.
 - Who can send:
   - Trustee
 - Number of required approvals:
-  - 2/3 of Trustees for account roles: `TestHouse`, `CertificationCenter`, `Trustee`, `NodeAdmin`
-  - 1/3 of Trustees for account role: `Vendor`
+  - greater than 2/3 of Trustees for account roles: `TestHouse`, `CertificationCenter`, `Trustee`, `NodeAdmin`, `VendorAdmin` (proposal by a Trustee is also counted as an approval)
+  - greater than 1/3 of Trustees for account role: `Vendor` (proposal by a Trustee is also counted as an approval)
 - CLI command:
   - `dcld tx auth approve-add-account --address=<bench32 encoded string> --from=<account>`
 
-> **_Note:_**  If we are approving an account with role `Vendor`, then we need 1/3 of Trustees approvals.
+> **_Note:_**  If we are approving an account with role `Vendor`, then we need more than 1/3 of Trustees approvals.
 
 #### REJECT_ADD_ACCOUNT
 
 **Status: Implemented**
 
-Rejects the proposed account.
+Rejects the proposed account. It also can be used for revote (i.e. change vote from approve to reject)
+
+If proposed account has only proposer's approval and no rejects then proposer can send this transaction to remove the proposal
 
 The account is not reject until sufficient number of Trustees reject it.
 
@@ -1163,7 +1262,8 @@ The account is not reject until sufficient number of Trustees reject it.
 - Who can send:
   - Trustee
 - Number of required rejects:
-  - more than 1/3 of Trustees
+  - greater than 1/3 of Trustees for account roles: `TestHouse`, `CertificationCenter`, `Trustee`, `NodeAdmin`, `VendorAdmin` (proposal by a Trustee is also counted as an approval)
+  - greater than 2/3 of Trustees for account role: `Vendor` (proposal by a Trustee is also counted as an approval)
 - CLI command:
   - `dcld tx auth reject-add-account --address=<bench32 encoded string> --from=<account>`
 
@@ -1202,7 +1302,7 @@ The account is not revoked until sufficient number of Trustees approve it.
 - Who can send:
   - Trustee
 - Number of required approvals:
-  - 2/3 of Trustees
+  - greater than 2/3 of Trustees (proposal by a Trustee is also counted as an approval)
 - CLI command:
   - `dcld tx auth approve-revoke-account --address=<bench32 encoded string> --from=<account>`
 
@@ -1414,13 +1514,13 @@ will be in a pending state until sufficient number of approvals is received.
     dcld query validator propose-disable-node --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q --from alice
     ```
 
-> **_Note:_** You can get Validator's address or owner address using query [GET_VALIDATOR](#getvalidator)
+> **_Note:_** You can get Validator's address or owner address using query [GET_VALIDATOR](#get_validator)
 
 #### APPROVE_DISABLE_VALIDATOR_NODE
 
 **Status: Implemented**
 
-Approves disabling of the Validator node by a Trustee.
+Approves disabling of the Validator node by a Trustee. It also can be used for revote (i.e. change vote from reject to approve)
 
 The validator node is not disabled until sufficient number of Trustees approve it.
 
@@ -1430,7 +1530,7 @@ The validator node is not disabled until sufficient number of Trustees approve i
 - Who can send:
   - Trustee
 - Number of required approvals:
-  - 2/3 of Trustees
+  - greater than 2/3 of Trustees (proposal by a Trustee is also counted as an approval)
 - CLI command:
   - `dcld tx validator approve-disable-node --address=<validator address> --from=<account>`
    e.g.:
@@ -1439,13 +1539,15 @@ The validator node is not disabled until sufficient number of Trustees approve i
     dcld tx validator approve-disable-node --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q from alice
     ```
 
-> **_Note:_** You can get Validator's address or owner address using query [GET_VALIDATOR](#getvalidator)
+> **_Note:_** You can get Validator's address or owner address using query [GET_VALIDATOR](#get_validator)
 
 #### REJECT_DISABLE_VALIDATOR_NODE
 
 **Status: Implemented**
 
-Rejects disabling of the Validator node by a Trustee.
+Rejects disabling of the Validator node by a Trustee. It also can be used for revote (i.e. change vote from approve to reject)
+
+If disable validator proposal has only proposer's approval and no rejects then proposer can send this transaction to remove the proposal
 
 The validator node is not reject until sufficient number of Trustees rejects it.
 
@@ -1464,7 +1566,7 @@ The validator node is not reject until sufficient number of Trustees rejects it.
   dcld tx validator reject-disable-node --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q --from alice
   ```
 
-> **_Note:_** You can get Validator's address or owner address using query [GET_VALIDATOR](#getvalidator)
+> **_Note:_** You can get Validator's address or owner address using query [GET_VALIDATOR](#get_validator)
 
 #### ENABLE_VALIDATOR_NODE
 
@@ -1728,7 +1830,7 @@ Proposes an upgrade plan with the given name at the given height.
 - Who can send:
   - Trustee
 - Number of required approvals:
-  - 2/3 of Trustees
+  - greater than 2/3 of Trustees (proposal by a Trustee is also counted as an approval)
 - CLI command minimal:
 
 ```bash
@@ -1747,7 +1849,7 @@ dcld tx dclupgrade propose-upgrade --name=<string> --upgrade-height=<int64> --up
 
 **Status: Implemented**
 
-Approves the proposed upgrade plan with the given name.
+Approves the proposed upgrade plan with the given name. It also can be used for revote (i.e. change vote from reject to approve)
 
 - Parameters:
   - name: `string` - upgrade plan name
@@ -1755,7 +1857,7 @@ Approves the proposed upgrade plan with the given name.
 - Who can send:
   - Trustee
 - Number of required approvals:
-  - 2/3 of Trustees
+  - greater than 2/3 of Trustees (proposal by a Trustee is also counted as an approval)
 - CLI command:
 
 ```bash
@@ -1766,7 +1868,9 @@ dcld tx dclupgrade approve-upgrade --name=<string> --from=<account>
 
 **Status: Implemented**
 
-Rejects the proposed upgrade plan with the given name.
+Rejects the proposed upgrade plan with the given name. It also can be used for revote (i.e. change vote from approve to reject)
+
+If proposed upgrade has only proposer's approval and no rejects then proposer can send this transaction to remove the proposal
 
 - Paramaters:
   - name: `string` - upgrade plan name

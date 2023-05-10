@@ -23,8 +23,9 @@ import (
 	"github.com/stretchr/testify/require"
 	tmrand "github.com/tendermint/tendermint/libs/rand"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
-	test_dclauth "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/grpc_rest/dclauth"
+	testDclauth "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/grpc_rest/dclauth"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	modeltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
@@ -74,6 +75,23 @@ func NewMsgUpdateModel(vid int32, pid int32, signer string) *modeltypes.MsgUpdat
 	}
 }
 
+func NewMsgDeleteModel(vid int32, pid int32, signer string) *modeltypes.MsgDeleteModel {
+	return &modeltypes.MsgDeleteModel{
+		Creator: signer,
+		Vid:     vid,
+		Pid:     pid,
+	}
+}
+
+func NewMsgDeleteModelVersion(vid int32, pid int32, softwareVersion uint32, signer string) *modeltypes.MsgDeleteModelVersion {
+	return &modeltypes.MsgDeleteModelVersion{
+		Creator:         signer,
+		Vid:             vid,
+		Pid:             pid,
+		SoftwareVersion: softwareVersion,
+	}
+}
+
 func NewMsgCreateModelVersion(
 	vid int32,
 	pid int32,
@@ -112,7 +130,29 @@ func NewMsgUpdateModelVersion(
 		Pid:             pid,
 		SoftwareVersion: softwareVersion,
 		OtaUrl:          testconstants.OtaURL + "/new",
+		OtaFileSize:     testconstants.OtaFileSize + 1,
+		OtaChecksum:     testconstants.OtaChecksum + "/new",
 		ReleaseNotesUrl: testconstants.ReleaseNotesURL + "/new",
+	}
+}
+
+func NewMsgCertifyModelVersion(
+	signer string,
+	softwareVersion uint32,
+	softwareVersionString string,
+	vid int32,
+	pid int32,
+) *types.MsgCertifyModel {
+	return &types.MsgCertifyModel{
+		Signer:                signer,
+		Vid:                   vid,
+		Pid:                   pid,
+		CertificationDate:     testconstants.CertificationDate,
+		CDCertificateId:       testconstants.CDCertificateID,
+		CertificationType:     testconstants.CertificationType,
+		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
+		SoftwareVersion:       softwareVersion,
+		SoftwareVersionString: softwareVersionString,
 	}
 }
 
@@ -323,24 +363,479 @@ func GetVendorModelsByHexVid(
 	return &res, nil
 }
 
-func Demo(suite *utils.TestSuite) {
+func DeleteModelWithAssociatedModelVersions(suite *utils.TestSuite) {
 	// Alice and Bob are predefined Trustees
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
-	aliceAccount, err := test_dclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
 	require.NoError(suite.T, err)
 
 	bobName := testconstants.BobAccount
 	bobKeyInfo, err := suite.Kr.Key(bobName)
 	require.NoError(suite.T, err)
-	bobAccount, err := test_dclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
 	require.NoError(suite.T, err)
 
 	// Register new Vendor account
 	vid := int32(tmrand.Uint16())
 	vendorName := utils.RandString()
-	vendorAccount := test_dclauth.CreateVendorAccount(
+	vendorAccount := testDclauth.CreateVendorAccount(
+		suite,
+		vendorName,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		vid,
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+		testconstants.Info,
+	)
+	require.NotNil(suite.T, vendorAccount)
+
+	// New vendor adds a model
+	pid := int32(tmrand.Uint16())
+	createModelMsg := NewMsgCreateModel(vid, pid, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelMsg}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	createModelVersionMsg1 := NewMsgCreateModelVersion(vid, pid, 1, "1", vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelVersionMsg1}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	createModelVersionMsg2 := NewMsgCreateModelVersion(vid, pid, 2, "2", vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelVersionMsg2}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	deleteModelMsg := NewMsgDeleteModel(vid, pid, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{deleteModelMsg}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	// check if model is deleted
+	model, err := GetModel(suite, deleteModelMsg.Vid, deleteModelMsg.Pid)
+	require.Error(suite.T, err)
+	require.Nil(suite.T, model)
+
+	// check if model version 1 is not deleted
+	modelVersion1, err := GetModelVersion(suite, createModelVersionMsg1.Vid, createModelVersionMsg1.Pid, createModelVersionMsg1.SoftwareVersion)
+	require.Error(suite.T, err)
+	require.Nil(suite.T, modelVersion1)
+
+	// check if model version 2 is deleted
+	modelVersion2, err := GetModelVersion(suite, createModelVersionMsg2.Vid, createModelVersionMsg2.Pid, createModelVersionMsg2.SoftwareVersion)
+	require.Error(suite.T, err)
+	require.Nil(suite.T, modelVersion2)
+}
+
+func DeleteModelWithAssociatedModelVersionsCertified(suite *utils.TestSuite) {
+	// Alice and Bob are predefined Trustees
+	aliceName := testconstants.AliceAccount
+	aliceKeyInfo, err := suite.Kr.Key(aliceName)
+	require.NoError(suite.T, err)
+	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	bobName := testconstants.BobAccount
+	bobKeyInfo, err := suite.Kr.Key(bobName)
+	require.NoError(suite.T, err)
+	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	// Register new Vendor account
+	vid := int32(tmrand.Uint16())
+	vendorName := utils.RandString()
+	vendorAccount := testDclauth.CreateVendorAccount(
+		suite,
+		vendorName,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		vid,
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+		testconstants.Info,
+	)
+	require.NotNil(suite.T, vendorAccount)
+
+	// Register new Certification center
+	ccvid := int32(tmrand.Uint16())
+	ccName := utils.RandString()
+	ccAccount := testDclauth.CreateAccount(
+		suite,
+		ccName,
+		dclauthtypes.AccountRoles{dclauthtypes.CertificationCenter},
+		ccvid,
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+		testconstants.Info,
+	)
+	require.NotNil(suite.T, vendorAccount)
+
+	// New vendor adds a model
+	pid := int32(tmrand.Uint16())
+	createModelMsg := NewMsgCreateModel(vid, pid, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelMsg}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	createModelVersionMsg1 := NewMsgCreateModelVersion(vid, pid, 1, "1", vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelVersionMsg1}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	createModelVersionMsg2 := NewMsgCreateModelVersion(vid, pid, 2, "2", vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelVersionMsg2}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	// certify model version
+	certifyModelVersionMsg := NewMsgCertifyModelVersion(ccAccount.Address, 1, "1", vid, pid)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{certifyModelVersionMsg}, ccName, ccAccount)
+	require.NoError(suite.T, err)
+
+	deleteModelMsg := NewMsgDeleteModel(vid, pid, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{deleteModelMsg}, vendorName, vendorAccount)
+	require.Error(suite.T, err)
+
+	// check if model is not deleted
+	model, err := GetModel(suite, deleteModelMsg.Vid, deleteModelMsg.Pid)
+	require.NoError(suite.T, err)
+	require.NotNil(suite.T, model)
+
+	// check if model version 1 is not deleted
+	modelVersion1, err := GetModelVersion(suite, createModelVersionMsg1.Vid, createModelVersionMsg1.Pid, createModelVersionMsg1.SoftwareVersion)
+	require.NoError(suite.T, err)
+	require.NotNil(suite.T, modelVersion1)
+
+	// check if model version 2 is deleted
+	modelVersion2, err := GetModelVersion(suite, createModelVersionMsg2.Vid, createModelVersionMsg2.Pid, createModelVersionMsg2.SoftwareVersion)
+	require.NoError(suite.T, err)
+	require.NotNil(suite.T, modelVersion2)
+}
+
+func DeleteModelVersion(suite *utils.TestSuite) {
+	// Alice and Bob are predefined Trustees
+	aliceName := testconstants.AliceAccount
+	aliceKeyInfo, err := suite.Kr.Key(aliceName)
+	require.NoError(suite.T, err)
+	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	bobName := testconstants.BobAccount
+	bobKeyInfo, err := suite.Kr.Key(bobName)
+	require.NoError(suite.T, err)
+	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	// Register new Vendor account
+	vid := int32(tmrand.Uint16())
+	vendorName := utils.RandString()
+	vendorAccount := testDclauth.CreateVendorAccount(
+		suite,
+		vendorName,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		vid,
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+		testconstants.Info,
+	)
+	require.NotNil(suite.T, vendorAccount)
+
+	// New vendor adds a model
+	pid := int32(tmrand.Uint16())
+	createModelMsg := NewMsgCreateModel(vid, pid, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelMsg}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	createModelVersionMsg := NewMsgCreateModelVersion(vid, pid, 1, "1", vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelVersionMsg}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	deleteModelVersionMsg := NewMsgDeleteModelVersion(vid, pid, 1, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{deleteModelVersionMsg}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	// check if modelVersion is deleted
+	model, err := GetModelVersion(suite, deleteModelVersionMsg.Vid, deleteModelVersionMsg.Pid, deleteModelVersionMsg.SoftwareVersion)
+	require.Error(suite.T, err)
+	require.Nil(suite.T, model)
+}
+
+func DeleteModelVersionDifferentVid(suite *utils.TestSuite) {
+	// Alice and Bob are predefined Trustees
+	aliceName := testconstants.AliceAccount
+	aliceKeyInfo, err := suite.Kr.Key(aliceName)
+	require.NoError(suite.T, err)
+	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	bobName := testconstants.BobAccount
+	bobKeyInfo, err := suite.Kr.Key(bobName)
+	require.NoError(suite.T, err)
+	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	// Register new Vendor account
+	vid := int32(tmrand.Uint16())
+	vendorName := utils.RandString()
+	vendorAccount := testDclauth.CreateVendorAccount(
+		suite,
+		vendorName,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		vid,
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+		testconstants.Info,
+	)
+	require.NotNil(suite.T, vendorAccount)
+
+	// vendor adds a model
+	pid := int32(tmrand.Uint16())
+	createModelMsg := NewMsgCreateModel(vid, pid, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelMsg}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	createModelVersionMsg := NewMsgCreateModelVersion(vid, pid, 1, "1", vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelVersionMsg}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	// Register new Vendor account
+	vid2 := int32(tmrand.Uint16())
+	vendor2Name := utils.RandString()
+	vendor2Account := testDclauth.CreateVendorAccount(
+		suite,
+		vendor2Name,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		vid2,
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+		testconstants.Info,
+	)
+	require.NotNil(suite.T, vendorAccount)
+
+	deleteModelVersionMsg := NewMsgDeleteModelVersion(vid, pid, 1, vendor2Account.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{deleteModelVersionMsg}, vendor2Name, vendor2Account)
+	require.ErrorIs(suite.T, err, sdkerrors.ErrUnauthorized)
+
+	// check if modelVersion is not deleted
+	model, err := GetModelVersion(suite, deleteModelVersionMsg.Vid, deleteModelVersionMsg.Pid, deleteModelVersionMsg.SoftwareVersion)
+	require.NoError(suite.T, err)
+	require.Equal(suite.T, vendorAccount.VendorID, model.Vid)
+	require.Equal(suite.T, pid, model.Pid)
+	require.Equal(suite.T, uint32(1), model.SoftwareVersion)
+}
+
+func DeleteModelVersionDoesNotExist(suite *utils.TestSuite) {
+	// Alice and Bob are predefined Trustees
+	aliceName := testconstants.AliceAccount
+	aliceKeyInfo, err := suite.Kr.Key(aliceName)
+	require.NoError(suite.T, err)
+	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	bobName := testconstants.BobAccount
+	bobKeyInfo, err := suite.Kr.Key(bobName)
+	require.NoError(suite.T, err)
+	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	// Register new Vendor account
+	vid := int32(tmrand.Uint16())
+	vendorName := utils.RandString()
+	vendorAccount := testDclauth.CreateVendorAccount(
+		suite,
+		vendorName,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		vid,
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+		testconstants.Info,
+	)
+	require.NotNil(suite.T, vendorAccount)
+
+	pid := int32(tmrand.Uint16())
+	deleteModelVersionMsg := NewMsgDeleteModelVersion(vid, pid, 1, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{deleteModelVersionMsg}, vendorName, vendorAccount)
+	require.ErrorIs(suite.T, err, modeltypes.ErrModelVersionDoesNotExist)
+}
+
+func DeleteModelVersionNotByCreator(suite *utils.TestSuite) {
+	// Alice and Bob are predefined Trustees
+	aliceName := testconstants.AliceAccount
+	aliceKeyInfo, err := suite.Kr.Key(aliceName)
+	require.NoError(suite.T, err)
+	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	bobName := testconstants.BobAccount
+	bobKeyInfo, err := suite.Kr.Key(bobName)
+	require.NoError(suite.T, err)
+	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	// Register new Vendor account
+	vid1 := int32(tmrand.Uint16())
+	vendor1Name := utils.RandString()
+	vendor1Account := testDclauth.CreateVendorAccount(
+		suite,
+		vendor1Name,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		vid1,
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+		testconstants.Info,
+	)
+	require.NotNil(suite.T, vendor1Account)
+
+	// Register new Vendor account
+	vid2 := int32(tmrand.Uint16())
+	vendor2Name := utils.RandString()
+	vendor2Account := testDclauth.CreateVendorAccount(
+		suite,
+		vendor2Name,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		vid2,
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+		testconstants.Info,
+	)
+	require.NotNil(suite.T, vendor2Account)
+
+	// Vendor adds a model
+	pid := int32(tmrand.Uint16())
+	createModelMsg := NewMsgCreateModel(vid1, pid, vendor1Account.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelMsg}, vendor1Name, vendor1Account)
+	require.NoError(suite.T, err)
+
+	createModelVersionMsg := NewMsgCreateModelVersion(vid1, pid, 1, "1", vendor1Account.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelVersionMsg}, vendor1Name, vendor1Account)
+	require.NoError(suite.T, err)
+
+	deleteModelVersionMsg := NewMsgDeleteModelVersion(vid1, pid, 1, vendor2Account.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{deleteModelVersionMsg}, vendor2Name, vendor2Account)
+	require.ErrorIs(suite.T, err, sdkerrors.ErrUnauthorized)
+
+	// check if modelVersion is not deleted
+	model, err := GetModelVersion(suite, deleteModelVersionMsg.Vid, deleteModelVersionMsg.Pid, deleteModelVersionMsg.SoftwareVersion)
+	require.NoError(suite.T, err)
+	require.Equal(suite.T, vendor1Account.VendorID, model.Vid)
+	require.Equal(suite.T, pid, model.Pid)
+	require.Equal(suite.T, uint32(1), model.SoftwareVersion)
+}
+
+func DeleteModelVersionCertified(suite *utils.TestSuite) {
+	// Alice and Bob are predefined Trustees
+	aliceName := testconstants.AliceAccount
+	aliceKeyInfo, err := suite.Kr.Key(aliceName)
+	require.NoError(suite.T, err)
+	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	bobName := testconstants.BobAccount
+	bobKeyInfo, err := suite.Kr.Key(bobName)
+	require.NoError(suite.T, err)
+	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	// Register new Vendor account
+	vid := int32(tmrand.Uint16())
+	vendorName := utils.RandString()
+	vendorAccount := testDclauth.CreateVendorAccount(
+		suite,
+		vendorName,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		vid,
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+		testconstants.Info,
+	)
+	require.NotNil(suite.T, vendorAccount)
+
+	// vendor adds a model
+	pid := int32(tmrand.Uint16())
+	createModelMsg := NewMsgCreateModel(vid, pid, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelMsg}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	createModelVersionMsg := NewMsgCreateModelVersion(vid, pid, 1, "1", vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelVersionMsg}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	certCenterName := utils.RandString()
+	certCenterAccount := testDclauth.CreateAccount(
+		suite,
+		certCenterName,
+		dclauthtypes.AccountRoles{dclauthtypes.CertificationCenter},
+		vid,
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+		testconstants.Info,
+	)
+	require.NotNil(suite.T, certCenterAccount)
+
+	// Certify model version
+	certReason := "some reason 5"
+	certDate := "2020-05-01T00:00:01Z"
+	certifyModelMsg := types.MsgCertifyModel{
+		Vid:                   vid,
+		Pid:                   pid,
+		SoftwareVersion:       1,
+		SoftwareVersionString: "1",
+		CertificationDate:     certDate,
+		CertificationType:     "zigbee",
+		Reason:                certReason,
+		CDCertificateId:       testconstants.CDCertificateID,
+		CDVersionNumber:       uint32(createModelVersionMsg.CdVersionNumber),
+		Signer:                certCenterAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenterName, certCenterAccount)
+	require.NoError(suite.T, err)
+
+	deleteModelVersionMsg := NewMsgDeleteModelVersion(vid, pid, 1, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{deleteModelVersionMsg}, vendorName, vendorAccount)
+	require.ErrorIs(suite.T, err, modeltypes.ErrModelVersionDeletionCertified)
+
+	// check if modelVersion is not deleted
+	model, err := GetModelVersion(suite, deleteModelVersionMsg.Vid, deleteModelVersionMsg.Pid, deleteModelVersionMsg.SoftwareVersion)
+	require.NoError(suite.T, err)
+	require.Equal(suite.T, vendorAccount.VendorID, model.Vid)
+	require.Equal(suite.T, pid, model.Pid)
+	require.Equal(suite.T, uint32(1), model.SoftwareVersion)
+}
+
+func Demo(suite *utils.TestSuite) {
+	// Alice and Bob are predefined Trustees
+	aliceName := testconstants.AliceAccount
+	aliceKeyInfo, err := suite.Kr.Key(aliceName)
+	require.NoError(suite.T, err)
+	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	bobName := testconstants.BobAccount
+	bobKeyInfo, err := suite.Kr.Key(bobName)
+	require.NoError(suite.T, err)
+	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	// Register new Vendor account
+	vid := int32(tmrand.Uint16())
+	vendorName := utils.RandString()
+	vendorAccount := testDclauth.CreateVendorAccount(
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
@@ -406,6 +901,22 @@ func Demo(suite *utils.TestSuite) {
 	receivedModel, err = GetModel(suite, createSecondModelMsg.Vid, createSecondModelMsg.Pid)
 	require.NoError(suite.T, err)
 	require.Equal(suite.T, updateSecondModelMsg.ProductLabel, receivedModel.ProductLabel)
+
+	// add new model version
+	createModelVersionMsg := NewMsgCreateModelVersion(createFirstModelMsg.Vid, createFirstModelMsg.Pid, 1, "1", vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelVersionMsg}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	updateModelVersionMsg := NewMsgUpdateModelVersion(createFirstModelMsg.Vid, createFirstModelMsg.Pid, 1, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{updateModelVersionMsg}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	// Check model version is updated
+	receivedModelVersion, err := GetModelVersion(suite, createFirstModelMsg.Vid, createFirstModelMsg.Pid, createModelVersionMsg.SoftwareVersion)
+	require.NoError(suite.T, err)
+	require.Equal(suite.T, createModelVersionMsg.OtaFileSize+1, receivedModelVersion.OtaFileSize)
+	require.Equal(suite.T, createModelVersionMsg.OtaChecksum+"/new", receivedModelVersion.OtaChecksum)
+	require.Equal(suite.T, createModelVersionMsg.OtaUrl+"/new", receivedModelVersion.OtaUrl)
 }
 
 /* Error cases */
@@ -415,19 +926,19 @@ func AddModelByNonVendor(suite *utils.TestSuite) {
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
-	aliceAccount, err := test_dclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
 	require.NoError(suite.T, err)
 
 	bobName := testconstants.BobAccount
 	bobKeyInfo, err := suite.Kr.Key(bobName)
 	require.NoError(suite.T, err)
-	bobAccount, err := test_dclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
 	require.NoError(suite.T, err)
 
 	// register new account without Vendor role
 	nonVendorAccountName := utils.RandString()
 	vid := int32(tmrand.Uint16())
-	nonVendorAccount := test_dclauth.CreateAccount(
+	nonVendorAccount := testDclauth.CreateAccount(
 		suite,
 		nonVendorAccountName,
 		dclauthtypes.AccountRoles{dclauthtypes.CertificationCenter},
@@ -454,19 +965,19 @@ func AddModelByDifferentVendor(suite *utils.TestSuite) {
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
-	aliceAccount, err := test_dclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
 	require.NoError(suite.T, err)
 
 	bobName := testconstants.BobAccount
 	bobKeyInfo, err := suite.Kr.Key(bobName)
 	require.NoError(suite.T, err)
-	bobAccount, err := test_dclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
 	require.NoError(suite.T, err)
 
 	// register new Vendor account
 	vendorName := utils.RandString()
 	vid := int32(tmrand.Uint16())
-	vendorAccount := test_dclauth.CreateVendorAccount(
+	vendorAccount := testDclauth.CreateVendorAccount(
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
@@ -491,19 +1002,19 @@ func AddModelTwice(suite *utils.TestSuite) {
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
-	aliceAccount, err := test_dclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
 	require.NoError(suite.T, err)
 
 	bobName := testconstants.BobAccount
 	bobKeyInfo, err := suite.Kr.Key(bobName)
 	require.NoError(suite.T, err)
-	bobAccount, err := test_dclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
 	require.NoError(suite.T, err)
 
 	// register new Vendor account
 	vendorName := utils.RandString()
 	vid := int32(tmrand.Uint16())
-	vendorAccount := test_dclauth.CreateVendorAccount(
+	vendorAccount := testDclauth.CreateVendorAccount(
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
@@ -562,19 +1073,19 @@ func DemoWithHexVidAndPid(suite *utils.TestSuite) {
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
-	aliceAccount, err := test_dclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
 	require.NoError(suite.T, err)
 
 	bobName := testconstants.BobAccount
 	bobKeyInfo, err := suite.Kr.Key(bobName)
 	require.NoError(suite.T, err)
-	bobAccount, err := test_dclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
 	require.NoError(suite.T, err)
 
 	// Register new Vendor account
 	vendorName := utils.RandString()
 	var vid int32 = 0xA13
-	vendorAccount := test_dclauth.CreateVendorAccount(
+	vendorAccount := testDclauth.CreateVendorAccount(
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},

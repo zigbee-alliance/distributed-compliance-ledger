@@ -17,6 +17,8 @@ import (
 	io "io"
 	math "math"
 	math_bits "math/bits"
+
+	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -99,7 +101,7 @@ func (m *QueryGetComplianceInfoRequest) GetCertificationType() string {
 }
 
 type QueryGetComplianceInfoResponse struct {
-	ComplianceInfo ComplianceInfo `protobuf:"bytes,1,opt,name=complianceInfo,proto3" json:"complianceInfo"`
+	ComplianceInfo dclcompltypes.ComplianceInfo `protobuf:"bytes,1,opt,name=complianceInfo,proto3" json:"complianceInfo"`
 }
 
 func (m *QueryGetComplianceInfoResponse) Reset()         { *m = QueryGetComplianceInfoResponse{} }
@@ -135,11 +137,11 @@ func (m *QueryGetComplianceInfoResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryGetComplianceInfoResponse proto.InternalMessageInfo
 
-func (m *QueryGetComplianceInfoResponse) GetComplianceInfo() ComplianceInfo {
+func (m *QueryGetComplianceInfoResponse) GetComplianceInfo() dclcompltypes.ComplianceInfo {
 	if m != nil {
 		return m.ComplianceInfo
 	}
-	return ComplianceInfo{}
+	return dclcompltypes.ComplianceInfo{}
 }
 
 type QueryAllComplianceInfoRequest struct {
@@ -187,7 +189,7 @@ func (m *QueryAllComplianceInfoRequest) GetPagination() *query.PageRequest {
 }
 
 type QueryAllComplianceInfoResponse struct {
-	ComplianceInfo []ComplianceInfo    `protobuf:"bytes,1,rep,name=complianceInfo,proto3" json:"complianceInfo"`
+	ComplianceInfo []dclcompltypes.ComplianceInfo    `protobuf:"bytes,1,rep,name=complianceInfo,proto3" json:"complianceInfo"`
 	Pagination     *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 
@@ -224,7 +226,7 @@ func (m *QueryAllComplianceInfoResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryAllComplianceInfoResponse proto.InternalMessageInfo
 
-func (m *QueryAllComplianceInfoResponse) GetComplianceInfo() []ComplianceInfo {
+func (m *QueryAllComplianceInfoResponse) GetComplianceInfo() []dclcompltypes.ComplianceInfo {
 	if m != nil {
 		return m.ComplianceInfo
 	}
@@ -3070,7 +3072,7 @@ func (m *QueryAllComplianceInfoResponse) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ComplianceInfo = append(m.ComplianceInfo, ComplianceInfo{})
+			m.ComplianceInfo = append(m.ComplianceInfo, dclcompltypes.ComplianceInfo{})
 			if err := m.ComplianceInfo[len(m.ComplianceInfo)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}

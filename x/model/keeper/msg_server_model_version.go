@@ -5,6 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
@@ -79,7 +80,7 @@ func (k msgServer) UpdateModelVersion(goCtx context.Context, msg *types.MsgUpdat
 	if err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
-	if err := checkModelRights(ctx, k.Keeper, signerAddr, msg.Vid, "MsgCreateModelVersion"); err != nil {
+	if err := checkModelRights(ctx, k.Keeper, signerAddr, msg.Vid, "MsgUpdateModelVersion"); err != nil {
 		return nil, err
 	}
 
@@ -94,12 +95,6 @@ func (k msgServer) UpdateModelVersion(goCtx context.Context, msg *types.MsgUpdat
 		return nil, types.NewErrModelVersionDoesNotExist(msg.Vid, msg.Pid, msg.SoftwareVersion)
 	}
 
-	// Only OtaURL is modifiable field per specs. This can only be modified if this was set initially
-	// as otaFileSize, otaChecksum and otaChecksumType are non mutable fields
-	if msg.OtaUrl != "" && modelVersion.OtaUrl == "" {
-		return nil, types.NewErrOtaURLCannotBeSet(msg.Vid, msg.Pid, msg.SoftwareVersion)
-	}
-
 	if msg.MinApplicableSoftwareVersion != 0 && msg.MaxApplicableSoftwareVersion == 0 && msg.MinApplicableSoftwareVersion > modelVersion.MaxApplicableSoftwareVersion {
 		return nil, types.NewErrMaxSVLessThanMinSV(msg.MinApplicableSoftwareVersion, modelVersion.MaxApplicableSoftwareVersion)
 	}
@@ -111,12 +106,20 @@ func (k msgServer) UpdateModelVersion(goCtx context.Context, msg *types.MsgUpdat
 
 	// update existing model version value only if corresponding value in MsgUpdate is not empty
 
-	// SoftwareVersionValid flag is updated in any case. So pass the existing value to keep it unchanged.
-	modelVersion.SoftwareVersionValid = msg.SoftwareVersionValid
-
 	if msg.OtaUrl != "" {
 		modelVersion.OtaUrl = msg.OtaUrl
 	}
+
+	if msg.OtaFileSize != 0 {
+		modelVersion.OtaFileSize = msg.OtaFileSize
+	}
+
+	if msg.OtaChecksum != "" {
+		modelVersion.OtaChecksum = msg.OtaChecksum
+	}
+
+	// SoftwareVersionValid flag is updated in any case. So pass the existing value to keep it unchanged.
+	modelVersion.SoftwareVersionValid = msg.SoftwareVersionValid
 
 	if msg.MinApplicableSoftwareVersion != 0 {
 		modelVersion.MinApplicableSoftwareVersion = msg.MinApplicableSoftwareVersion
@@ -134,4 +137,52 @@ func (k msgServer) UpdateModelVersion(goCtx context.Context, msg *types.MsgUpdat
 	k.SetModelVersion(ctx, modelVersion)
 
 	return &types.MsgUpdateModelVersionResponse{}, nil
+}
+
+func (k msgServer) DeleteModelVersion(goCtx context.Context, msg *types.MsgDeleteModelVersion) (*types.MsgDeleteModelVersionResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// check signer has enough rights to delete model version
+	signerAddr, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
+	}
+	if err := checkModelRights(ctx, k.Keeper, signerAddr, msg.Vid, "MsgDeleteModelVersion"); err != nil {
+		return nil, err
+	}
+
+	// check if model version exists
+	modelVersion, isFound := k.GetModelVersion(
+		ctx,
+		msg.Vid,
+		msg.Pid,
+		msg.SoftwareVersion,
+	)
+
+	if !isFound {
+		return nil, types.NewErrModelVersionDoesNotExist(msg.Vid, msg.Pid, msg.SoftwareVersion)
+	}
+
+	isCertified := k.IsComplianceInfoPresent(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion)
+	if isCertified {
+		return nil, types.NewErrModelVersionDeletionCertified(msg.Vid, msg.Pid, modelVersion.SoftwareVersion)
+	}
+
+	// store updated model version
+	k.RemoveModelVersion(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion)
+
+	return &types.MsgDeleteModelVersionResponse{}, nil
+}
+
+// Returns true if there is a Compliance Info in any status (Certified, Revoked, Provisioned, etc.)
+func (k msgServer) IsComplianceInfoPresent(ctx sdk.Context, vid int32, pid int32, softwareVersion uint32) bool {
+	certificationTypes := dclcompltypes.CertificationTypesList
+	for _, certType := range certificationTypes {
+		_, isFound := k.complianceKeeper.GetComplianceInfo(ctx, vid, pid, softwareVersion, certType)
+		if isFound {
+			return true
+		}
+	}
+
+	return false
 }

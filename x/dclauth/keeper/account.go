@@ -17,7 +17,8 @@ func (k Keeper) SetAccountO(ctx sdk.Context, account types.Account) {
 }
 
 // TODO issue 99: currently it's just a dirty fulfill
-//		to satisfy comsmos auth.keeper.AccountI ifaces
+//
+//	to satisfy comsmos auth.keeper.AccountI ifaces
 func (k Keeper) SetAccount(ctx sdk.Context, account authtypes.AccountI) {
 	dclAcc, ok := account.(types.DCLAccountI)
 

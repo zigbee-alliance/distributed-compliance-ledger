@@ -32,7 +32,7 @@ Make sure you have all [prerequisites](./prerequisites.md) set up.
 - Use `testnet-2.0` for `<chain-id>` if you want to connect to the persistent Test Net
 - Use `main-net` for `<chain-id>` if you want to connect to the persistent Main Net
 
-### 5. (Optional) Enable `state sync` in the configuration if you are joining long-running network
+### 5. Enable `state sync` in the configuration or use one of the options in [running-node-in-existing-network.md](../advanced/running-node-in-existing-network.md) if you are joining long-running network
 
 [`$HOME/.dcl/config/config.toml`]
 

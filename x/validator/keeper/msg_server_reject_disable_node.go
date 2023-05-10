@@ -44,15 +44,6 @@ func (k msgServer) RejectDisableValidator(goCtx context.Context, msg *types.MsgR
 		)
 	}
 
-	// check if disable validator already has approval from message creator
-	if proposedDisableValidator.HasApprovalFrom(creatorAddr) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
-			"Disabled validator with address=%v already has approval from=%v",
-			msg.Address,
-			msg.Creator,
-		)
-	}
-
 	// append approval
 	grant := types.Grant{
 		Address: creatorAddr.String(),
@@ -60,6 +51,24 @@ func (k msgServer) RejectDisableValidator(goCtx context.Context, msg *types.MsgR
 		Info:    msg.Info,
 	}
 
+	// check if disable validator has approval from message creator
+	if proposedDisableValidator.HasApprovalFrom(creatorAddr) {
+		// Remove propose disable validator if there are no rejects and other approvals
+		if len(proposedDisableValidator.Approvals) == 1 && len(proposedDisableValidator.Rejects) == 0 {
+			k.RemoveProposedDisableValidator(ctx, proposedDisableValidator.Address)
+
+			return &types.MsgRejectDisableValidatorResponse{}, nil
+		}
+
+		// Remove approval from the list of approvals
+		for i, other := range proposedDisableValidator.Approvals {
+			if other.Address == grant.Address {
+				proposedDisableValidator.Approvals = append(proposedDisableValidator.Approvals[:i], proposedDisableValidator.Approvals[i+1:]...)
+
+				break
+			}
+		}
+	}
 	proposedDisableValidator.Rejects = append(proposedDisableValidator.Rejects, &grant)
 
 	// check if proposed disable validator has enough reject approvals

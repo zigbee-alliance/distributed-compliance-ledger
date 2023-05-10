@@ -41,3 +41,8 @@ func TestProposeUpgradeTwiceREST(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, true)
 	dclupgrade.ProposeUpgradeTwice(&suite)
 }
+
+func TestProposeAndRejectUpgradeRest(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	dclupgrade.ProposeAndRejectUpgrade(&suite)
+}

@@ -145,3 +145,14 @@ echo "Update a Device Model Version with VID: $vid PID: $pid SV: $sv from a diff
 result=$(echo 'test1234' | dcld tx model update-model-version --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionValid=false --from=$different_vendor_account --yes)
 check_response_and_report "$result" "transaction should be signed by a vendor account containing the vendorID $vid"
 
+# Delete existing model version
+echo "Delete a Device Model Version with VID: $vid PID: $pid SV: $sv"
+result=$(echo 'test1234' | dcld tx model delete-model-version --vid=$vid --pid=$pid --softwareVersion=$sv --from=$vendor_account --yes)
+echo "$result"
+check_response "$result" "\"code\": 0"
+
+# Query deleted model version
+echo "Query deleted Device Model Version with VID: $vid PID: $pid SV: $sv"
+result=$(dcld query model model-version --vid=$vid --pid=$pid --softwareVersion=$sv)
+echo "$result"
+check_response "$result" "Not Found"

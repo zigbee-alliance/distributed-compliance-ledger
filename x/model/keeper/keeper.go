@@ -15,7 +15,8 @@ type (
 		storeKey sdk.StoreKey
 		memKey   sdk.StoreKey
 
-		dclauthKeeper types.DclauthKeeper
+		dclauthKeeper    types.DclauthKeeper
+		complianceKeeper types.ComplianceKeeper
 	}
 )
 
@@ -25,14 +26,20 @@ func NewKeeper(
 	memKey sdk.StoreKey,
 
 	dclauthKeeper types.DclauthKeeper,
+	complianceKeeper types.ComplianceKeeper,
 ) *Keeper {
 	return &Keeper{
 		cdc:      cdc,
 		storeKey: storeKey,
 		memKey:   memKey,
 
-		dclauthKeeper: dclauthKeeper,
+		dclauthKeeper:    dclauthKeeper,
+		complianceKeeper: complianceKeeper,
 	}
+}
+
+func (k *Keeper) SetComplianceKeeper(complianceKeeper types.ComplianceKeeper) {
+	k.complianceKeeper = complianceKeeper
 }
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {

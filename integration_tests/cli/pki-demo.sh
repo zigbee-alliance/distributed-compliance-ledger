@@ -36,9 +36,11 @@ leaf_cert_subject_as_text="O=leaf,ST=some-state,C=AU"
 
 trustee_account="jack"
 second_trustee_account="alice"
+third_trustee_account="bob"
 
 trustee_account_address=$(echo $passphrase | dcld keys show jack -a)
 second_trustee_account_address=$(echo $passphrase | dcld keys show alice -a)
+third_trustee_account_address=$(echo $passphrase | dcld keys show bob -a)
 
 echo "Create regular account"
 create_new_account user_account "CertificationCenter"
@@ -170,8 +172,11 @@ test_divider
 echo "$user_account (Not Trustee) propose Root certificate"
 root_path="integration_tests/constants/root_cert"
 result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_path" --from $user_account --yes)
-check_response "$result" "\"code\": 0"
+response_does_not_contain "$result" "\"code\": 0"
 
+echo "$trustee_account (Trustee) propose Root certificate"
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_path" --from $trustee_account --yes)
+check_response "$result" "\"code\": 0"
 
 test_divider
 
@@ -260,13 +265,6 @@ test_divider
 # 3. APPROVE ROOT CERT
 
 echo "3. APPROVE ROOT CERT"
-test_divider
-
-echo "$trustee_account (Trustee) approve Root certificate"
-result=$(echo $passphrase | dcld tx pki approve-add-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $trustee_account --yes)
-check_response "$result" "\"code\": 0"
-
-
 test_divider
 
 echo "Certificate must be still in Proposed state but with Approval from $trustee_account. Request proposed Root certificate"
@@ -1116,14 +1114,20 @@ test_divider
 echo "$user_account (Not Trustee) propose Root certificate"
 google_root_path="integration_tests/constants/google_root_cert"
 result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$google_root_path" --from $user_account --yes)
+response_does_not_contain "$result" "\"code\": 0"
+
+echo "$trustee_account (Trustee) propose Root certificate"
+google_root_path="integration_tests/constants/google_root_cert"
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$google_root_path" --from $trustee_account --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Request proposed Root certificate - there should be no Approval"
+echo "Request proposed Root certificate - there should be Approval"
 result=$(dcld query pki proposed-x509-root-cert --subject="$google_cert_subject" --subject-key-id="$google_cert_subject_key_id")
 echo $result | jq
 check_response "$result" "\"subject\": \"$google_cert_subject\""
+check_response "$result" "\"address\": \"$trustee_account_address\""
 check_response "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$google_cert_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$google_cert_subject_as_text\""
@@ -1192,12 +1196,6 @@ test_divider
 # 11. APPROVE GOOGLE ROOT CERT
 
 echo "11. APPROVE GOOGLE ROOT CERT"
-test_divider
-
-echo "$trustee_account (Trustee) approve Root certificate"
-result=$(echo $passphrase | dcld tx pki approve-add-x509-root-cert --subject="$google_cert_subject" --subject-key-id="$google_cert_subject_key_id" --from $trustee_account --yes)
-check_response "$result" "\"code\": 0"
-
 test_divider
 
 echo "Certificate must be still in Proposed state but with Approval from $trustee_account. Request proposed Root certificate"
@@ -1439,28 +1437,115 @@ test_cert_subject_key_id="E2:90:8D:36:9C:3C:A3:C1:13:BB:09:E2:4D:C1:CC:C5:A6:66:
 test_cert_serial_number="1647312298631"
 test_cert_subject_as_text="CN=Matter Test PAA,vid=0x125D"
 
-# 14. PROPOSE TEST ROOT CERT
-echo "14. PROPOSE TEST ROOT CERT"
+# 14. TEST PROPOSE AND REJECT ROOT CERTIFICATE
+echo "14. TEST PROPOSE AND REJECT ROOT CERTIFICATE"
+test_divider
+
+echo "$trustee_account (Trustee) propose Root certificate"
+test_root_path="integration_tests/constants/test_root_cert"
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$test_root_path" --from $trustee_account --yes)
+check_response "$result" "\"code\": 0"
+
+echo "$trustee_account (Trustee) rejects Root certificate"
+result=$(echo $passphrase | dcld tx pki reject-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --from $trustee_account --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Certificate not found in proposed-x509-root-cert"
+result=$(dcld query pki proposed-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id")
+echo $result | jq
+check_response "$result" "Not Found"
+
+test_divider
+
+echo "Certificate not found in rejected-x509-root-cert"
+result=$(dcld query pki rejected-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id")
+echo $result | jq
+check_response "$result" "Not Found"
+
+test_divider
+
+echo "Certificate not found in x509-cert"
+result=$(dcld query pki x509-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id")
+echo $result | jq
+check_response "$result" "Not Found"
+
+
+# 15. PROPOSE TEST ROOT CERT
+echo "15. PROPOSE TEST ROOT CERT"
 test_divider
 
 echo "$user_account (Not Trustee) propose Root certificate"
 test_root_path="integration_tests/constants/test_root_cert"
 result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$test_root_path" --from $user_account --yes)
+response_does_not_contain "$result" "\"code\": 0"
+
+echo "$trustee_account (Trustee) propose Root certificate"
+test_root_path="integration_tests/constants/test_root_cert"
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$test_root_path" --from $trustee_account --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Request proposed Root certificate - there should be no Approval"
+echo "Request proposed Root certificate - there should be Approval"
 result=$(dcld query pki proposed-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id")
 echo $result | jq
 check_response "$result" "\"subject\": \"$test_cert_subject\""
+check_response "$result" "\"address\": \"$trustee_account_address\""
 check_response "$result" "\"subjectKeyId\": \"$test_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$test_cert_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$test_cert_subject_as_text\""
 echo $result | jq
 
-# 15. TEST REJECT ROOT CERT
-echo "11.  TEST REJECT ROOT CERT"
+# 16. TEST REJECT ROOT CERT
+echo "16.  TEST REJECT ROOT CERT"
+test_divider
+
+random_string new_trustee1
+echo "$new_trustee1 generates keys"
+cmd="(echo $passphrase; echo $passphrase) | dcld keys add $new_trustee1"
+result="$(bash -c "$cmd")"
+
+test_divider
+
+echo "Get key info for $new_trustee1"
+result=$(echo $passphrase | dcld keys show $new_trustee1)
+check_response "$result" "\"name\": \"$new_trustee1\""
+
+test_divider
+
+new_trustee_address1=$(echo $passphrase | dcld keys show $new_trustee1 -a)
+new_trustee_pubkey1=$(echo $passphrase | dcld keys show $new_trustee1 -p)
+
+test_divider
+
+echo "Jack proposes account for $new_trustee1"
+result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$new_trustee_address1" --pubkey="$new_trustee_pubkey1" --roles="Trustee" --from jack --yes)
+check_response "$result" "\"code\": 0"
+
+echo "Alice approves account for \"$new_trustee1\""
+result=$(echo $passphrase | dcld tx auth approve-add-account --address="$new_trustee_address1" --info="Alice is approving this account" --from alice --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Bob (Trustee) approves Root certificate"
+result=$(echo $passphrase | dcld tx pki approve-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --from bob --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "$trustee_account (Trustee) rejects Root certificate"
+result=$(echo $passphrase | dcld tx pki reject-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --from $trustee_account --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "$trustee_account (Trustee) can approve Root certificate even if already has rejected"
+result=$(echo $passphrase | dcld tx pki approve-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --from $trustee_account --yes 2>&1 || true)
+check_response "$result" "\"code\": 0"
+
 test_divider
 
 echo "$trustee_account (Trustee) rejects Root certificate"
@@ -1471,12 +1556,6 @@ test_divider
 
 echo "$trustee_account (Trustee) cannot reject Root certificate for the second time"
 result=$(echo $passphrase | dcld tx pki reject-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --from $trustee_account --yes 2>&1 || true)
-response_does_not_contain "$result" "\"code\": 0"
-
-test_divider
-
-echo "$trustee_account (Trustee) cannot approve Root certificate, because already has rejected"
-result=$(echo $passphrase | dcld tx pki approve-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --from $trustee_account --yes 2>&1 || true)
 response_does_not_contain "$result" "\"code\": 0"
 
 test_divider
@@ -1509,6 +1588,19 @@ result=$(echo "$passphrase" | dcld tx pki reject-add-x509-root-cert --subject="$
 check_response "$result" "\"code\": 0"
 
 test_divider
+
+echo "Alice proposes to revoke account for $new_trustee1"
+result=$(echo $passphrase | dcld tx auth propose-revoke-account --address="$new_trustee_address1" --from alice --yes)
+check_response "$result" "\"code\": 0"
+
+echo "Bob approves to revoke account for $new_trustee1"
+result=$(echo $passphrase | dcld tx auth approve-revoke-account --address="$new_trustee_address1" --from bob --yes)
+check_response "$result" "\"code\": 0"
+
+echo "Jack approves to revoke account for $new_trustee1"
+result=$(echo $passphrase | dcld tx auth approve-revoke-account --address="$new_trustee_address1" --from jack --yes)
+check_response "$result" "\"code\": 0"
+
 
 echo "Certificate must be Rejected and contains 2 rejects. Request Root certificate"
 result=$(dcld query pki rejected-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id")
@@ -1549,21 +1641,27 @@ check_response "$result" "\"address\": \"$trustee_account_address\""
 check_response "$result" "\"address\": \"$second_trustee_account_address\""
 
 
-# 16. TEST PROPOSE ROOT CERTIFICATE
-echo "16. PROPOSE TEST ROOT CERT"
+# 17. TEST PROPOSE ROOT CERTIFICATE
+echo "17. PROPOSE TEST ROOT CERT"
 test_divider
 
 echo "$user_account (Not Trustee) propose Root certificate"
 test_root_path="integration_tests/constants/test_root_cert"
 result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$test_root_path" --from $user_account --yes)
+response_does_not_contain "$result" "\"code\": 0"
+
+echo "$trustee_account (Trustee) propose Root certificate"
+test_root_path="integration_tests/constants/test_root_cert"
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$test_root_path" --from $trustee_account --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Request proposed Root certificate - there should be no Approval"
+echo "Request proposed Root certificate - there should be Approval"
 result=$(dcld query pki proposed-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id")
 echo $result | jq
 check_response "$result" "\"subject\": \"$test_cert_subject\""
+check_response "$result" "\"address\": \"$trustee_account_address\""
 check_response "$result" "\"subjectKeyId\": \"$test_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$test_cert_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$test_cert_subject_as_text\""
@@ -1576,17 +1674,11 @@ result=$(dcld query pki rejected-x509-root-cert --subject="$test_cert_subject" -
 echo $result | jq
 check_response "$result" "Not Found"
 
-# 17. TEST APPROVE ROOT CERTIFICATE
-echo "17. TEST APPROVE ROOT CERT"
+# 18. TEST APPROVE ROOT CERTIFICATE
+echo "18. TEST APPROVE ROOT CERT"
 test_divider
 
-echo "$trustee_account (Trustee) approve Root certificate"
-result=$(echo $passphrase | dcld tx pki approve-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --from $trustee_account --yes)
-check_response "$result" "\"code\": 0"
-
-test_divider
-
-echo "$trustee_account (Trustee) approve Root certificate"
+echo "$second_trustee_account (Trustee) approve Root certificate"
 result=$(echo $passphrase | dcld tx pki approve-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --from $second_trustee_account_address --yes)
 check_response "$result" "\"code\": 0"
 

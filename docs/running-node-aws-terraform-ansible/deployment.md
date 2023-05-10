@@ -222,7 +222,7 @@ terraform apply
 terraform output -json ansible_inventory | dasel -r json -w yaml . > ../../ansible/inventory/aws/aws_all.yaml
 ```
 
-### 3. (Optional) Consider enabling state sync
+### 3. Consider enabling state sync
 
 When joining an existing pool, you may want to enable state sync for all the nodes.
 To do so, you should set state sync parameters:

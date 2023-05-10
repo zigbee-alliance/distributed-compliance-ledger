@@ -54,7 +54,7 @@ func TestGenesis(t *testing.T) {
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
-	k, ctx := keepertest.ModelKeeper(t, nil)
+	k, ctx := keepertest.ModelKeeper(t, nil, nil)
 	model.InitGenesis(ctx, *k, genesisState)
 	got := model.ExportGenesis(ctx, *k)
 	require.NotNil(t, got)
