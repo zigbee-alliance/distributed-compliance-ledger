@@ -92,7 +92,7 @@ and DACs (leaf certificates) added to DCL if they are revoked in the CRL identif
     - isPAA: `bool` -  True if the revocation information distribution point relates to a PAA
     - label: `string` -  A label to disambiguate multiple revocation information partitions of a particular issuer.
     - crlSignerCertificate: `string` -  PEM encoded certificate. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data.
-    - issuerSubjectKeyID: `string` - crlSignerCertificate's `Subject Key Id` as an even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters., e.g: `5A880E6C3653D07FB08971A3F473790930E62BDB`. Must math the `CRLSignerCertificate`'s Subject Key Identifier.
+    - issuerSubjectKeyID: `string` - crlSignerCertificate's `Subject Key Id` as an even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters., e.g: `5A880E6C3653D07FB08971A3F473790930E62BDB`. Must match the `CRLSignerCertificate`'s Subject Key Identifier.
     - dataUrl: `string` -  The URL where to obtain the information in the format indicated by the RevocationType field. Must start with either `http` or `https`.
     - dataFileSize: `optional(uint64)` -  Total size in bytes of the file found at the DataUrl. Must be omitted if RevocationType is 1.
     - dataDigest: `optional(string)` -  Digest of the entire contents of the associated file downloaded from the DataUrl. Must be omitted if RevocationType is 1. Must be provided if and only if the `DataFileSize` field is present.
