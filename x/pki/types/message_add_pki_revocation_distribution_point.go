@@ -3,6 +3,7 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
 
 const TypeMsgAddPkiRevocationDistributionPoint = "add_pki_revocation_distribution_point"
@@ -52,5 +53,58 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address (%s)", err)
 	}
+
+	err = validator.Validate(msg)
+	if err != nil {
+		return err
+	}
+
+	allowedDataDigestTypes := [6]uint32{1, 7, 8, 10, 11, 12}
+	allowedRevocationType := uint64(1)
+
+	isDataDigestInTypes := false
+	for _, digestType := range allowedDataDigestTypes {
+		if digestType == msg.DataDigestType {
+			isDataDigestInTypes = true
+
+			break
+		}
+	}
+
+	if !isDataDigestInTypes {
+		return DataDigestNotInTypes
+	}
+
+	if msg.RevocationType != allowedRevocationType {
+		return RevocationNotInTypes
+	}
+
+	if msg.IsPAA {
+		if msg.Pid == nil {
+			return EmptyPid
+		}
+
+	}
+
+	if msg.DataFileSize == nil && msg.DataDigest != nil {
+		return EmptyDataFileSize
+	}
+
+	if msg.DataFileSize != nil && msg.DataDigest == nil {
+		return EmptyDataDigest
+	}
+
+	if msg.DataDigest == nil && msg.DataDigestType != nil {
+		return EmptyDataDigest
+	}
+
+	if msg.DataDigest != nil && msg.DataDigestType == nil {
+		return emptyDataDigestType
+	}
+
+	if msg.RevocationType == 1 && (msg.DataFileSize != nil || msg.DataDigest != nil || msg.dataDigestType != nil) {
+
+	}
+
 	return nil
 }
