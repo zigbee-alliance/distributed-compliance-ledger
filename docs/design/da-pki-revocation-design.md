@@ -2,60 +2,34 @@
 
 ## User Stories
 
-1. Revocation of PAI
+1. Revocation of a VID-scoped PAI
 
-   A Vendor with DCL write privilege can submit a transaction to publish the location of the CRL distribution point for a PAA associated with the Vendor ID. This information can be updated by the Vendor.
+   A Vendor with DCL write privilege can submit a transaction to publish the location of the CRL distribution point for a PAA associated with the Vendor ID. This information can be updated or deleted by the Vendor with the same Vendor ID.
 
 2. Revocation of a DAC 
 
-   A Vendor with DCL write privilege can submit a transaction to publish the location of the CRL distribution point for a PAI associated with the Vendor ID. This information can be updated by the Vendor.
+   A Vendor with DCL write privilege can submit a transaction to publish the location of the CRL distribution point for a PAI associated with the Vendor ID. This information can be updated or deleted by the Vendor with the same Vendor ID.
+
+3. Revocation of a non-VID-scoped PAI
+
+   A Vendor Admin with DCL write privilege can submit a transaction to publish the location of the CRL distribution point for a non-VID scoped PAA. This information can be updated or deleted by any Vendor Admin account.
 
 
 ## Revocation Distribution Point Schema
-The schema is the same as in `PR6360`.
-However, the validation logic is proposed to be a bit different (see [Validation Logic](#validation-logic) and [Divergence](#divergence-from-pr6360)). 
 
-
-| Name                 | Type    | Constraint          | Mutable | Conformance |
-|:---------------------|:--------|:--------------------|:--------|-------------|
-| VendorID             | uint16  | all                 | No      | M           |
-| ProductID            | uint16* | all                 | No      | O (desc)    |
-| IsPAA                | bool    | all                 | No      | M           |
-| Label                | string  | max 64              | No      | M           |
-| CRLSignerCertificate | string  | max 2048            | No      | M           |
-| IssuerSubjectKeyID   | string  | max 64              | No      | M           |
-| DataUrl              | string  | max 256             | Yes     | M           |
-| DataFileSize         | uint64  | desc                | Yes     | O           |
-| DataDigest           | string  | max 128             | Yes     | O (desc)    |
-| DataDigestType       | uint32  | all                 | Yes     | O (desc)    |
-| RevocationType       | uint32  | all                 | No      | M           |
-
-*: `PR6360` defines PID as `uint32` which is incorrect. PID must be `uint16` as in other places.
-
-## Divergence from PR6360
-1. No validation of `DataUrl` content.
-   If the content is invalid, it can be edited/removed by either owner Vendor or Trustees via Update and Delete commands.
-
-   Such validation requires resolving an external URL, and this is a non-deterministic operation:
-   some nodes may resolve the URL successfully, but some nodes may not resolve it or be redirected to a different content.
-   Non-deterministic results of validation may cause a situation that on some nodes the transaction is considered as valid,
-   and on some nodes as invalid. That will break the consensus protocol and DCL won't be able to process write requests anymore.
-   An alternative option is to pass the whole content of `DataUrl` to the transaction, but it doesn't make a lot of sense because
-    1. the content can be quite big (1 MB)
-    2. there will be no guarantee that `DataUrl` actually points to the same content as passed
-
-2. Validation of `CRLSignerCertificate`. If `CRLSignerCertificate` is a PAA, then it must be present on DCL (there must be a PAA on DCL with the same pem value).
-   If `CRLSignerCertificate` is a PAI, then it must be chained back to a valid PAA present on the ledger.
-
-3. If `IssuerSubjectKeyID` is not equal to the `Subject Key Identifier` of `CRLSignerCertificate`, the transaction is considered invalid and rejected.
-
-4. If `RevocationType` is 1 (RFC5280 CRL), then `DataFileSize`, `DataDigest`, `DataDigestType` must be empty.
-
-   Otherwise, it may cause confusion. Certificates to be revoked are added to the content of CRL URL without a need to send a transaction to the ledger.
-   So, someone may look at the DCL entry, see that a file size is specified, then go to the URL, and see that the actual size there is different.
-   It may cause a question if the data is valid, and why a different file size is in DCL.
-
-5. `ProductID` is expected to be `unit16`, not `unit32` as in other places.
+| Name                 | Type   | Constraint          | Mutable | Conformance |
+|:---------------------|:-------|:--------------------|:--------|-------------|
+| VendorID             | uint16 | all                 | No      | M           |
+| ProductID            | uint16 | all                 | No      | O (desc)    |
+| IsPAA                | bool   | all                 | No      | M           |
+| Label                | string | max 64              | No      | M           |
+| CRLSignerCertificate | string | max 2048            | Yes     | M           |
+| IssuerSubjectKeyID   | string | max 64              | No      | M           |
+| DataUrl              | string | max 256             | Yes     | M           |
+| DataFileSize         | uint64 | desc                | Yes     | O           |
+| DataDigest           | string | max 128             | Yes     | O (desc)    |
+| DataDigestType       | uint32 | all                 | Yes     | O (desc)    |
+| RevocationType       | uint32 | all                 | No      | M           |
 
 
 ## A need for Proof-of-possession of `CRLSignerCertificate` key
@@ -81,9 +55,11 @@ and DACs (leaf certificates) added to DCL if they are revoked in the CRL identif
 
 
 - Who can send:
-    - Vendor account
-    - `vid` field in the transaction (`VendorID`) must be equal to the Vendor account's VID
-    - `vid` field in the `CRLSignerCertificate` (for vendor-scoped PAAs and PAIs) must be equal to the Vendor account's VID
+    - Vendor account for VID-scoped `crlSignerCertificate`
+      - `vid` field in the transaction (`VendorID`) must be equal to the Vendor account's VID
+      - `vid` field in the `CRLSignerCertificate` must be equal to the Vendor account's VID  
+    - Vendor Admin account for non-VID scoped `crlSignerCertificate`
+      - `vid` field must be absent in `CRLSignerCertificate` 
 - Validation of parameters:
     - See [Validation](#validation-logic) section for details. 
 - Parameters:
@@ -110,14 +86,17 @@ and DACs (leaf certificates) added to DCL if they are revoked in the CRL identif
 Updates an existing PKI Revocation distribution endpoint owned by the sender.
 
 - Who can send:
-    - Vendor account
-    - `vid` field in the transaction (`VendorID`) must be equal to the Vendor account's VID
-    - `vid` field in the corresponding `CRLSignerCertificate` (for vendor-scoped PAAs and PAIs) must be equal to the Vendor account's VID
+    - Vendor account for VID-scoped `crlSignerCertificate`
+      - `vid` field in the transaction (`VendorID`) must be equal to the Vendor account's VID
+      - `vid` field in the corresponding `CRLSignerCertificate` (for vendor-scoped PAAs and PAIs) must be equal to the Vendor account's VID
+    - Vendor Admin account for non-VID scoped `crlSignerCertificate`
+      - `vid` field must be absent in the corresponding`CRLSignerCertificate`
 - Parameters:
     - vid: `uint16` -  Vendor ID (positive non-zero). Must be the same as Vendor account's VID and `vid` field in the VID-scoped `CRLSignerCertificate`.
     - label: `string` -  A label to disambiguate multiple revocation information partitions of a particular issuer.
     - issuerSubjectKeyID: `string` -  crlSignerCertificate's `Subject Key Id` as an even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters., e.g: `5A880E6C3653D07FB08971A3F473790930E62BDB`.
-    - dataUrl: `string` -  The URL where to obtain the information in the format indicated by the RevocationType field. Must start with either `http` or `https`.
+    - crlSignerCertificate: `optional(string)` -  PEM encoded certificate. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data.
+    - dataUrl: `optional(string)` -  The URL where to obtain the information in the format indicated by the RevocationType field. Must start with either `http` or `https`.
     - dataFileSize: `optional(uint64)` -  Total size in bytes of the file found at the DataUrl. Must be omitted if RevocationType is 1.
     - dataDigest: `optional(string)` -  Digest of the entire contents of the associated file downloaded from the DataUrl. Must be omitted if RevocationType is 1. Must be provided if and only if the `DataFileSize` field is present.
     - dataDigestType: `optional(uint32)` - The type of digest used in the DataDigest field from the list of [1, 7, 8, 10, 11, 12] (IANA Named Information Hash Algorithm Registry). Must be provided if and only if the `DataDigest` field is present.
@@ -126,15 +105,17 @@ Updates an existing PKI Revocation distribution endpoint owned by the sender.
     - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>/<vid>/<label>` -> Revocation Distribution Point
 - CLI command:
     - `dcld tx pki update-revocation-point --vid=<uint16> --label=<string>
-      --subject-key-id=<string> --data-url=<string> --from=<account>`
+      --subject-key-id=<string> --data-url=<string> --certificate=<string-or-path> --from=<account>`
 
 ### 3. DELETE_DELETE_PKI_REVOCATION_DISTRIBUTION_POINT
 Deletes a PKI Revocation distribution endpoint owned by the sender.
 
 - Who can send:
-    - Vendor account
-    - `vid` field in the transaction (`VendorID`) must be equal to the Vendor account's VID
-    - `vid` field in the corresponding `CRLSignerCertificate` (for vendor-scoped PAAs and PAIs) must be equal to the Vendor account's VID
+    - Vendor account for VID-scoped `crlSignerCertificate`
+        - `vid` field in the transaction (`VendorID`) must be equal to the Vendor account's VID
+        - `vid` field in the corresponding `CRLSignerCertificate` (for vendor-scoped PAAs and PAIs) must be equal to the Vendor account's VID
+    - Vendor Admin account for non-VID scoped `crlSignerCertificate`
+        - `vid` field must be absent in the corresponding`CRLSignerCertificate`
 - Parameters:
     - vid: `uint16` -  Vendor ID (positive non-zero). Must be the same as Vendor account's VID and `vid` field in the VID-scoped `CRLSignerCertificate`.
     - label: `string` -  A label to disambiguate multiple revocation information partitions of a particular issuer.
@@ -197,25 +178,57 @@ Gets a list of all revocation distribution points.
 - `DataDigestType` is provided if and only if the `DataDigest` field is present. 
 - If `RevocationType` is 1 (RFC5280 CRL), then `DataFileSize`, `DataDigest`, `DataDigestType` must be empty.
 - Check that `ProductID` field is provided if and only if `IsPAA` is false and `CRLSignerCertificate` has a PID in its subject.  
-- Check that `ProductID` must be equal to the PID in `CRLSignerCertificate`'s subject.
+ If `ProductID` is provided, it must be equal to the PID in `CRLSignerCertificate`'s subject.
   - both OID and text versions of PID in a certificate can be supported (either `pid` or `1.3.6.1.4.1.37244.2.2`, see `x509.ToSubjectAsText` method)
-- Check that `VendorID` is equal to the vid in `CRLSignerCertificate`'s subject.
-  - both OID and text versions of VID in a certificate can be supported (either `vid` or `1.3.6.1.4.1.37244.2.1`, see `x509.ToSubjectAsText` method)
-- Check that `IssuerSubjectKeyID` value is equal to the `CRLSignerCertificate`'s Subject Key Identifier (make sure they have the same format before comparison).
+- For `ADD_PKI_REVOCATION_DISTRIBUTION_POINT` only: Check that `IssuerSubjectKeyID` value is equal to the `CRLSignerCertificate`'s Subject Key Identifier (make sure they have the same format before comparison).
 - If `IsPAA` is true, then
   - check that the `CRLSignerCertificate` is a PAA (root certificate, self-signed).
   - If `CRLSignerCertificate` encodes a vid in its subject, then it must be equal to `VendorID` field.
+    - both OID and text versions of VID in a certificate can be supported (either `vid` or `1.3.6.1.4.1.37244.2.1`, see `x509.ToSubjectAsText` method)
 - If `IsPAA` is false, then
   - check that `CRLSignerCertificate` is a non-root certificate (not self-signed).
   - `CRLSignerCertificate` must encode a vid in its subject equal to `VendorID` field.
+    - both OID and text versions of VID in a certificate can be supported (either `vid` or `1.3.6.1.4.1.37244.2.1`, see `x509.ToSubjectAsText` method)
 
 ### Dynamic validation (when adding to a block)
-- `VendorID` field must be equal to the Vendor account's VID
+
+#### ADD_PKI_REVOCATION_DISTRIBUTION_POINT
 - If `crlSignerCertificate` is a PAA (root certificate, self-signed):
+   - If `CRLSignerCertificate` encodes a vid in its subject, then the sender must be a Vendor account
+     and `VendorID` field must be equal to the Vendor account's VID. 
+     Otherwise, the sender must be a Vendor Admin account.
+       - both OID and text versions of VID in a certificate can be supported (either `vid` or `1.3.6.1.4.1.37244.2.1`, see `x509.ToSubjectAsText` method) 
    - Query a certificate by `crlSignerCertificate` Subject and Subject Key ID. If it's not found - error.
    - Check that pem value of the found certificate is equal to `crlSignerCertificate` value.
 - If `crlSignerCertificate` is a PAI (intermediate certificate, not self-signed):
+   - Check that the sender is a Vendor account and `VendorID` field must be equal to the Vendor account's VID.
    - Check that `crlSignerCertificate` is chained back to certificates present on DCL (`x509.verifyCertificate` method):
-      - Query for a PAA where `Subject == CRLSignerCertificate.Issuer` and `SubjectKeyID == CRLSignerCertificate.AuthorityKeyId`
-      - Build certification path with both elements, verify path
+       - Query for a PAA where `Subject == CRLSignerCertificate.Issuer` and `SubjectKeyID == CRLSignerCertificate.AuthorityKeyId`
+       - Build certification path with both elements, verify path
 - Check that (VendorID, Label, IssuerSubjectKeyID) combination is unique when adding the distribution endpoint.
+
+#### UPDATE_PKI_REVOCATION_DISTRIBUTION_POINT
+
+- Check that Revocation Distribution Point is found by (VendorID, Label, IssuerSubjectKeyID)
+- If Revocation Distribution Point's Signer Certificate is a PAA (root certificate, self-signed):
+  - If `crlSignerCertificate` is provided, it must be a PAA (root certificate, self-signed)
+  - If Revocation Distribution Point's Signer Certificate encodes a vid in its subject (both OID and text versions of VID in a certificate can be supported (either `vid` or `1.3.6.1.4.1.37244.2.1`, see `x509.ToSubjectAsText` method))
+     - the sender must be a Vendor account and `VendorID` field must be equal to the Vendor account's VID.
+     - if `crlSignerCertificate` is provided, it must also encode the same vid in its subject
+  - Otherwise
+     - the sender must be a Vendor Admin account.
+     - if `crlSignerCertificate` is provided, no vid must be encoded in its subject
+- If Revocation Distribution Point's Signer Certificate is a PAI (intermediate certificate, not self-signed):
+    - Check that the sender is a Vendor account and `VendorID` field must be equal to the Vendor account's VID.
+    - If `crlSignerCertificate` is provided, it must encode a vid in its subject and this vid must be equal to `VendorID` field
+
+#### DELETE_PKI_REVOCATION_DISTRIBUTION_POINT
+
+- Check that Revocation Distribution Point is found by (VendorID, Label, IssuerSubjectKeyID)
+- If Revocation Distribution Point's Signer Certificate is a PAA (root certificate, self-signed):
+    - If Revocation Distribution Point's Signer Certificate encodes a vid in its subject, then the sender must be a Vendor account
+      and `VendorID` field must be equal to the Vendor account's VID.
+      Otherwise, the sender must be a Vendor Admin account.
+        - both OID and text versions of VID in a certificate can be supported (either `vid` or `1.3.6.1.4.1.37244.2.1`, see `x509.ToSubjectAsText` method)
+- If Revocation Distribution Point's Signer Certificate is a PAI (intermediate certificate, not self-signed):
+- Check that the sender is a Vendor account and `VendorID` field must be equal to the Vendor account's VID.ust encode a vid in its subject and this vid must be equal to `VendorID` field
