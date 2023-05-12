@@ -173,9 +173,10 @@ Gets a list of all revocation distribution points.
 - `DataDigestType` is one of the following values: [1, 7, 8, 10, 11, 12].
 - `RevocationType` is one of the following values: [1]
 - `ProductID` must be empty if `IsPAA` is true. 
-- `DataUrl` starts with either `http` or `https`.
+- `DataUrl` starts with either `http` or `https` and follow the syntax of [RFC3986](https://datatracker.ietf.org/doc/html/rfc3986).
 - `DataDigest` is present if and only if the `DataFileSize` field is present.
 - `DataDigestType` is provided if and only if the `DataDigest` field is present. 
+- `IssuerSubjectKeyID` must consist of even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters., e.g: `5A880E6C3653D07FB08971A3F473790930E62BDB`.
 - If `RevocationType` is 1 (RFC5280 CRL), then `DataFileSize`, `DataDigest`, `DataDigestType` must be empty.
 - Check that `ProductID` field is provided if and only if `IsPAA` is false and `CRLSignerCertificate` has a PID in its subject.  
   If `ProductID` is provided, it must be equal to the PID in `CRLSignerCertificate`'s subject.
