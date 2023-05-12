@@ -166,6 +166,7 @@ but they may be provided in the future.
 - The following libraries can be used as light clients:
   - [Golang Light Client implementation](https://pkg.go.dev/github.com/tendermint/tendermint/lite2)
   - [Rust Light Client implementation](https://docs.rs/tendermint-light-client/0.23.3/tendermint_light_client/)
+- Refer to [this doc](./docs/tendermint-rpc.md) to see how to [subscribe](./docs/tendermint-rpc.md#subscribe) to a Tendermint WebSocket based events and/or [query](./docs/tendermint-rpc.md#querying-application-components) an application components.
 
 
 ### Instructions
@@ -188,16 +189,15 @@ the following instructions from [how-to.md](docs/how-to.md) can be used for ever
   - propose pool upgrade
   - approve pool upgrade
 
-- [CA](docs/how-to.md#ca-instructions)
-  - propose X509 root certificates
-  - publish X509 certificates
-  - revoke X509 certificates
 - [Vendor](docs/how-to.md#vendor-instructions)
   - publish vendor info
   - publish device model info
   - publish device model version
   - publish X509 certificates
   - revoke X509 certificates
+- [Vendor Admin](docs/how-to.md#vendor-admin-instructions)
+  - publish vendor info
+  - update vendor info for any vendor
 - [Certification Center](docs/how-to.md#certification-center-instructions)
   - certify or revoke certification of device models
   - publish X509 certificates

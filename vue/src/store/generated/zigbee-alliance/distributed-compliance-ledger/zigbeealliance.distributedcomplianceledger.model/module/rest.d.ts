@@ -60,6 +60,7 @@ export interface ModelModelVersions {
 export declare type ModelMsgCreateModelResponse = object;
 export declare type ModelMsgCreateModelVersionResponse = object;
 export declare type ModelMsgDeleteModelResponse = object;
+export declare type ModelMsgDeleteModelVersionResponse = object;
 export declare type ModelMsgUpdateModelResponse = object;
 export declare type ModelMsgUpdateModelVersionResponse = object;
 export interface ModelProduct {

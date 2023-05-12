@@ -1251,7 +1251,9 @@ const baseMsgUpdateModelVersion = {
     otaUrl: '',
     minApplicableSoftwareVersion: 0,
     maxApplicableSoftwareVersion: 0,
-    releaseNotesUrl: ''
+    releaseNotesUrl: '',
+    otaFileSize: 0,
+    otaChecksum: ''
 };
 export const MsgUpdateModelVersion = {
     encode(message, writer = Writer.create()) {
@@ -1281,6 +1283,12 @@ export const MsgUpdateModelVersion = {
         }
         if (message.releaseNotesUrl !== '') {
             writer.uint32(74).string(message.releaseNotesUrl);
+        }
+        if (message.otaFileSize !== 0) {
+            writer.uint32(80).uint64(message.otaFileSize);
+        }
+        if (message.otaChecksum !== '') {
+            writer.uint32(90).string(message.otaChecksum);
         }
         return writer;
     },
@@ -1317,6 +1325,12 @@ export const MsgUpdateModelVersion = {
                     break;
                 case 9:
                     message.releaseNotesUrl = reader.string();
+                    break;
+                case 10:
+                    message.otaFileSize = longToNumber(reader.uint64());
+                    break;
+                case 11:
+                    message.otaChecksum = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -1381,6 +1395,18 @@ export const MsgUpdateModelVersion = {
         else {
             message.releaseNotesUrl = '';
         }
+        if (object.otaFileSize !== undefined && object.otaFileSize !== null) {
+            message.otaFileSize = Number(object.otaFileSize);
+        }
+        else {
+            message.otaFileSize = 0;
+        }
+        if (object.otaChecksum !== undefined && object.otaChecksum !== null) {
+            message.otaChecksum = String(object.otaChecksum);
+        }
+        else {
+            message.otaChecksum = '';
+        }
         return message;
     },
     toJSON(message) {
@@ -1394,6 +1420,8 @@ export const MsgUpdateModelVersion = {
         message.minApplicableSoftwareVersion !== undefined && (obj.minApplicableSoftwareVersion = message.minApplicableSoftwareVersion);
         message.maxApplicableSoftwareVersion !== undefined && (obj.maxApplicableSoftwareVersion = message.maxApplicableSoftwareVersion);
         message.releaseNotesUrl !== undefined && (obj.releaseNotesUrl = message.releaseNotesUrl);
+        message.otaFileSize !== undefined && (obj.otaFileSize = message.otaFileSize);
+        message.otaChecksum !== undefined && (obj.otaChecksum = message.otaChecksum);
         return obj;
     },
     fromPartial(object) {
@@ -1452,6 +1480,18 @@ export const MsgUpdateModelVersion = {
         else {
             message.releaseNotesUrl = '';
         }
+        if (object.otaFileSize !== undefined && object.otaFileSize !== null) {
+            message.otaFileSize = object.otaFileSize;
+        }
+        else {
+            message.otaFileSize = 0;
+        }
+        if (object.otaChecksum !== undefined && object.otaChecksum !== null) {
+            message.otaChecksum = object.otaChecksum;
+        }
+        else {
+            message.otaChecksum = '';
+        }
         return message;
     }
 };
@@ -1487,6 +1527,146 @@ export const MsgUpdateModelVersionResponse = {
         return message;
     }
 };
+const baseMsgDeleteModelVersion = { creator: '', vid: 0, pid: 0, softwareVersion: 0 };
+export const MsgDeleteModelVersion = {
+    encode(message, writer = Writer.create()) {
+        if (message.creator !== '') {
+            writer.uint32(10).string(message.creator);
+        }
+        if (message.vid !== 0) {
+            writer.uint32(16).int32(message.vid);
+        }
+        if (message.pid !== 0) {
+            writer.uint32(24).int32(message.pid);
+        }
+        if (message.softwareVersion !== 0) {
+            writer.uint32(32).uint32(message.softwareVersion);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseMsgDeleteModelVersion };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.creator = reader.string();
+                    break;
+                case 2:
+                    message.vid = reader.int32();
+                    break;
+                case 3:
+                    message.pid = reader.int32();
+                    break;
+                case 4:
+                    message.softwareVersion = reader.uint32();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseMsgDeleteModelVersion };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = String(object.creator);
+        }
+        else {
+            message.creator = '';
+        }
+        if (object.vid !== undefined && object.vid !== null) {
+            message.vid = Number(object.vid);
+        }
+        else {
+            message.vid = 0;
+        }
+        if (object.pid !== undefined && object.pid !== null) {
+            message.pid = Number(object.pid);
+        }
+        else {
+            message.pid = 0;
+        }
+        if (object.softwareVersion !== undefined && object.softwareVersion !== null) {
+            message.softwareVersion = Number(object.softwareVersion);
+        }
+        else {
+            message.softwareVersion = 0;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.creator !== undefined && (obj.creator = message.creator);
+        message.vid !== undefined && (obj.vid = message.vid);
+        message.pid !== undefined && (obj.pid = message.pid);
+        message.softwareVersion !== undefined && (obj.softwareVersion = message.softwareVersion);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseMsgDeleteModelVersion };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = object.creator;
+        }
+        else {
+            message.creator = '';
+        }
+        if (object.vid !== undefined && object.vid !== null) {
+            message.vid = object.vid;
+        }
+        else {
+            message.vid = 0;
+        }
+        if (object.pid !== undefined && object.pid !== null) {
+            message.pid = object.pid;
+        }
+        else {
+            message.pid = 0;
+        }
+        if (object.softwareVersion !== undefined && object.softwareVersion !== null) {
+            message.softwareVersion = object.softwareVersion;
+        }
+        else {
+            message.softwareVersion = 0;
+        }
+        return message;
+    }
+};
+const baseMsgDeleteModelVersionResponse = {};
+export const MsgDeleteModelVersionResponse = {
+    encode(_, writer = Writer.create()) {
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseMsgDeleteModelVersionResponse };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(_) {
+        const message = { ...baseMsgDeleteModelVersionResponse };
+        return message;
+    },
+    toJSON(_) {
+        const obj = {};
+        return obj;
+    },
+    fromPartial(_) {
+        const message = { ...baseMsgDeleteModelVersionResponse };
+        return message;
+    }
+};
 export class MsgClientImpl {
     constructor(rpc) {
         this.rpc = rpc;
@@ -1515,6 +1695,11 @@ export class MsgClientImpl {
         const data = MsgUpdateModelVersion.encode(request).finish();
         const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.model.Msg', 'UpdateModelVersion', data);
         return promise.then((data) => MsgUpdateModelVersionResponse.decode(new Reader(data)));
+    }
+    DeleteModelVersion(request) {
+        const data = MsgDeleteModelVersion.encode(request).finish();
+        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.model.Msg', 'DeleteModelVersion', data);
+        return promise.then((data) => MsgDeleteModelVersionResponse.decode(new Reader(data)));
     }
 }
 var globalThis = (() => {

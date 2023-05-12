@@ -9,6 +9,8 @@ import (
 	io "io"
 	math "math"
 	math_bits "math/bits"
+	
+	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -24,7 +26,7 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type DeviceSoftwareCompliance struct {
 	CDCertificateId string            `protobuf:"bytes,1,opt,name=cDCertificateId,proto3" json:"cDCertificateId,omitempty"`
-	ComplianceInfo  []*ComplianceInfo `protobuf:"bytes,2,rep,name=complianceInfo,proto3" json:"complianceInfo,omitempty"`
+	ComplianceInfo  []*dclcompltypes.ComplianceInfo `protobuf:"bytes,2,rep,name=complianceInfo,proto3" json:"complianceInfo,omitempty"`
 }
 
 func (m *DeviceSoftwareCompliance) Reset()         { *m = DeviceSoftwareCompliance{} }
@@ -67,7 +69,7 @@ func (m *DeviceSoftwareCompliance) GetCDCertificateId() string {
 	return ""
 }
 
-func (m *DeviceSoftwareCompliance) GetComplianceInfo() []*ComplianceInfo {
+func (m *DeviceSoftwareCompliance) GetComplianceInfo() []*dclcompltypes.ComplianceInfo {
 	if m != nil {
 		return m.ComplianceInfo
 	}
@@ -272,7 +274,7 @@ func (m *DeviceSoftwareCompliance) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ComplianceInfo = append(m.ComplianceInfo, &ComplianceInfo{})
+			m.ComplianceInfo = append(m.ComplianceInfo, &dclcompltypes.ComplianceInfo{})
 			if err := m.ComplianceInfo[len(m.ComplianceInfo)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}

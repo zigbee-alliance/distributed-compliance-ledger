@@ -124,6 +124,8 @@ func CmdUpdateModelVersion() *cobra.Command {
 		softwareVersion              uint32
 		softwareVersionValid         bool
 		otaURL                       string
+		OtaFileSize                  uint64
+		OtaChecksum                  string
 		minApplicableSoftwareVersion uint32
 		maxApplicableSoftwareVersion uint32
 		releaseNotesURL              string
@@ -145,6 +147,8 @@ func CmdUpdateModelVersion() *cobra.Command {
 				softwareVersion,
 				softwareVersionValid,
 				otaURL,
+				OtaFileSize,
+				OtaChecksum,
 				minApplicableSoftwareVersion,
 				maxApplicableSoftwareVersion,
 				releaseNotesURL,
@@ -172,12 +176,67 @@ func CmdUpdateModelVersion() *cobra.Command {
 		"boolean flag to revoke the software version model")
 	cmd.Flags().StringVar(&otaURL, FlagOtaURL, "",
 		"URL where to obtain the OTA image")
+	cmd.Flags().Uint64Var(&OtaFileSize, FlagOtaFileSize, 0, "OtaFileSize is the total size of the OTA software image in bytes")
+	cmd.Flags().StringVar(&OtaChecksum, FlagOtaChecksum, "", `Digest of the entire contents of the associated OTA 
+	Software Update Image under the OtaUrl attribute, 
+	encoded in base64 string representation. The digest SHALL have been computed using 
+	the algorithm specified in OtaChecksumType`)
 	cmd.Flags().Uint32Var(&minApplicableSoftwareVersion, FlagMinApplicableSoftwareVersion, 0,
 		`MinApplicableSoftwareVersion should specify the lowest SoftwareVersion for which this image can be applied`)
 	cmd.Flags().Uint32Var(&maxApplicableSoftwareVersion, FlagMaxApplicableSoftwareVersion, 0,
 		`MaxApplicableSoftwareVersion should specify the highest SoftwareVersion for which this image can be applied`)
 	cmd.Flags().StringVar(&releaseNotesURL, FlagReleaseNotesURL, "",
 		`URL that contains product specific web page that contains release notes for the device model.`)
+
+	cli.AddTxFlagsToCmd(cmd)
+
+	_ = cmd.MarkFlagRequired(FlagVid)
+	_ = cmd.MarkFlagRequired(FlagPid)
+	_ = cmd.MarkFlagRequired(FlagSoftwareVersion)
+	_ = cmd.MarkFlagRequired(flags.FlagFrom)
+
+	return cmd
+}
+
+func CmdDeleteModelVersion() *cobra.Command {
+	var (
+		vid             int32
+		pid             int32
+		softwareVersion uint32
+	)
+
+	cmd := &cobra.Command{
+		Use:   "delete-model-version",
+		Short: "Delete existing Model Version",
+		Args:  cobra.ExactArgs(0),
+		RunE: func(cmd *cobra.Command, args []string) (err error) {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			msg := types.NewMsgDeleteModelVersion(
+				clientCtx.GetFromAddress().String(),
+				vid,
+				pid,
+				softwareVersion,
+			)
+
+			// validate basic will be called in GenerateOrBroadcastTxCLI
+			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+			if cli.IsWriteInsteadReadRPCError(err) {
+				return clientCtx.PrintString(cli.LightClientProxyForWriteRequests)
+			}
+
+			return err
+		},
+	}
+
+	cmd.Flags().Int32Var(&vid, FlagVid, 0,
+		"Model vendor ID (positive non-zero uint16)")
+	cmd.Flags().Int32Var(&pid, FlagPid, 0,
+		"Model product ID (positive non-zero uint16)")
+	cmd.Flags().Uint32VarP(&softwareVersion, FlagSoftwareVersion, FlagSoftwareVersionShortcut, 0,
+		"Software Version of model (uint32)")
 
 	cli.AddTxFlagsToCmd(cmd)
 

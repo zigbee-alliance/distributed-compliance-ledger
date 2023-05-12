@@ -49,3 +49,4 @@ linters:
     - execinquery
     - nonamedreturns
     - exhaustruct
+    - gofumpt

@@ -32,7 +32,7 @@ Make sure you have all [prerequisites](./prerequisites.md) set up.
 - Use `testnet-2.0` for `<chain-id>` if you want to connect to the persistent Test Net
 - Use `main-net` for `<chain-id>` if you want to connect to the persistent Main Net
 
-### 5. (Optional) Enable `state sync` in the configuration if you are joining long-running network
+### 5. Enable `state sync` in the configuration or use one of the options in [running-node-in-existing-network.md](../advanced/running-node-in-existing-network.md) if you are joining long-running network
 
 [`$HOME/.dcl/config/config.toml`]
 
@@ -99,7 +99,7 @@ curl -s https://on.dcl.csa-iot.org:26657/commit | jq "{height: .result.signed_he
 
 > **_NOTE:_** State sync is not attempted if the node has any local state (LastBlockHeight > 0)
 
-### 6. (Optional) Enable `state sync` snapshots in `[~/.dcl/app.toml]` file
+### 6. (Optional) Enable `state sync` snapshots in `[~/.dcl/config/app.toml]` file
 
 ```toml
 [state-sync]
@@ -169,7 +169,7 @@ Service mode is recommended for demo and production environment.
 - Execute the following command to apply the updated `$PATH` immediately:
   - `source $HOME/.profile`
 
-### 8. Check the node is running and getting all the transactions
+### 9. Check the node is running and getting all the transactions
 
 - Get the node status: `dcld status --node tcp://localhost:26657`.
 - Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 10 mins). When you see the `catching_up` as `true` that signifies that the node is still downloading all the transactions. Once it has fully synced this will value will turn to `false`
