@@ -3,12 +3,13 @@ package keeper
 import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
 // SetPkiRevocationDistributionPoint set a specific pKIRevocationDistributionPoint in the store from its index
 func (k Keeper) SetPkiRevocationDistributionPoint(ctx sdk.Context, pKIRevocationDistributionPoint types.PkiRevocationDistributionPoint) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PkiRevocationDistributionPointKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.PkiRevocationDistributionPointKeyPrefix))
 	b := k.cdc.MustMarshal(&pKIRevocationDistributionPoint)
 	store.Set(types.PkiRevocationDistributionPointKey(
 		pKIRevocationDistributionPoint.Vid,
@@ -25,7 +26,7 @@ func (k Keeper) GetPkiRevocationDistributionPoint(
 	issuerSubjectKeyID string,
 
 ) (val types.PkiRevocationDistributionPoint, found bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PkiRevocationDistributionPointKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.PkiRevocationDistributionPointKeyPrefix))
 
 	b := store.Get(types.PkiRevocationDistributionPointKey(
 		vid,
@@ -48,7 +49,7 @@ func (k Keeper) RemovePkiRevocationDistributionPoint(
 	issuerSubjectKeyID string,
 
 ) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PkiRevocationDistributionPointKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.PkiRevocationDistributionPointKeyPrefix))
 	store.Delete(types.PkiRevocationDistributionPointKey(
 		vid,
 		label,
@@ -58,7 +59,7 @@ func (k Keeper) RemovePkiRevocationDistributionPoint(
 
 // GetAllPkiRevocationDistributionPoint returns all pKIRevocationDistributionPoint
 func (k Keeper) GetAllPkiRevocationDistributionPoint(ctx sdk.Context) (list []types.PkiRevocationDistributionPoint) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PkiRevocationDistributionPointKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.PkiRevocationDistributionPointKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()

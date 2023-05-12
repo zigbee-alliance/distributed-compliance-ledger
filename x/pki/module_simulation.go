@@ -10,6 +10,7 @@ import (
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/sample"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	pkisimulation "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/simulation"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
@@ -76,7 +77,7 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 	pkiGenesis := types.GenesisState{
 		// this line is used by starport scaffolding # simapp/module/genesisState
 	}
-	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(&pkiGenesis)
+	simState.GenState[pkitypes.ModuleName] = simState.Cdc.MustMarshalJSON(&pkiGenesis)
 }
 
 // ProposalContents doesn't return any content functions for governance proposals.

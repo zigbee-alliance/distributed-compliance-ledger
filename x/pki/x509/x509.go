@@ -22,7 +22,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 )
 
 type Certificate struct {
@@ -38,12 +38,12 @@ type Certificate struct {
 func DecodeX509Certificate(pemCertificate string) (*Certificate, error) {
 	block, _ := pem.Decode([]byte(pemCertificate))
 	if block == nil {
-		return nil, types.NewErrInvalidCertificate("Could not decode pem certificate")
+		return nil, pkitypes.NewErrInvalidCertificate("Could not decode pem certificate")
 	}
 
 	cert, err := x509.ParseCertificate(block.Bytes)
 	if err != nil {
-		return nil, types.NewErrInvalidCertificate(fmt.Sprintf("Could not parse certificate: %v", err.Error()))
+		return nil, pkitypes.NewErrInvalidCertificate(fmt.Sprintf("Could not parse certificate: %v", err.Error()))
 	}
 
 	certificate := Certificate{
@@ -119,7 +119,7 @@ func (c Certificate) Verify(parent *Certificate) error {
 	opts := x509.VerifyOptions{Roots: roots}
 
 	if _, err := c.Certificate.Verify(opts); err != nil {
-		return types.NewErrInvalidCertificate(fmt.Sprintf("Certificate verification failed. Error: %v", err))
+		return pkitypes.NewErrInvalidCertificate(fmt.Sprintf("Certificate verification failed. Error: %v", err))
 	}
 
 	return nil

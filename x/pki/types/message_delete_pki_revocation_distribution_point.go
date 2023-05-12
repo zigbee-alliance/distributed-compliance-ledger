@@ -3,6 +3,7 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 )
 
 const TypeMsgDeletePkiRevocationDistributionPoint = "delete_pki_revocation_distribution_point"
@@ -19,7 +20,7 @@ func NewMsgDeletePkiRevocationDistributionPoint(signer string, vid int32, label 
 }
 
 func (msg *MsgDeletePkiRevocationDistributionPoint) Route() string {
-	return RouterKey
+	return pkitypes.RouterKey
 }
 
 func (msg *MsgDeletePkiRevocationDistributionPoint) Type() string {

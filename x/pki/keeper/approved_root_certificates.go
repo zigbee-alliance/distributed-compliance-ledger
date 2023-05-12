@@ -3,21 +3,22 @@ package keeper
 import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
 // SetApprovedRootCertificates set approvedRootCertificates in the store.
 func (k Keeper) SetApprovedRootCertificates(ctx sdk.Context, approvedRootCertificates types.ApprovedRootCertificates) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedRootCertificatesKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(pkitypes.ApprovedRootCertificatesKeyPrefix))
 	b := k.cdc.MustMarshal(&approvedRootCertificates)
-	store.Set(types.ApprovedRootCertificatesKey, b)
+	store.Set(pkitypes.ApprovedRootCertificatesKey, b)
 }
 
 // GetApprovedRootCertificates returns approvedRootCertificates.
 func (k Keeper) GetApprovedRootCertificates(ctx sdk.Context) (val types.ApprovedRootCertificates, found bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedRootCertificatesKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(pkitypes.ApprovedRootCertificatesKeyPrefix))
 
-	b := store.Get(types.ApprovedRootCertificatesKey)
+	b := store.Get(pkitypes.ApprovedRootCertificatesKey)
 	if b == nil {
 		return val, false
 	}
@@ -29,8 +30,8 @@ func (k Keeper) GetApprovedRootCertificates(ctx sdk.Context) (val types.Approved
 
 // RemoveApprovedRootCertificates removes approvedRootCertificates from the store.
 func (k Keeper) RemoveApprovedRootCertificates(ctx sdk.Context) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedRootCertificatesKeyPrefix))
-	store.Delete(types.ApprovedRootCertificatesKey)
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(pkitypes.ApprovedRootCertificatesKeyPrefix))
+	store.Delete(pkitypes.ApprovedRootCertificatesKey)
 }
 
 // Add root certificate to the list.

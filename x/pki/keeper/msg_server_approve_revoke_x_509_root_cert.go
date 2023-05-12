@@ -5,6 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
@@ -27,7 +28,7 @@ func (k msgServer) ApproveRevokeX509RootCert(goCtx context.Context, msg *types.M
 	// get proposed certificate revocation
 	revocation, found := k.GetProposedCertificateRevocation(ctx, msg.Subject, msg.SubjectKeyId)
 	if !found {
-		return nil, types.NewErrProposedCertificateRevocationDoesNotExist(msg.Subject, msg.SubjectKeyId)
+		return nil, pkitypes.NewErrProposedCertificateRevocationDoesNotExist(msg.Subject, msg.SubjectKeyId)
 	}
 
 	// check if proposed certificate revocation already has approval form signer
@@ -57,7 +58,7 @@ func (k msgServer) ApproveRevokeX509RootCert(goCtx context.Context, msg *types.M
 			}
 		}
 		if !found {
-			return nil, types.NewErrCertificateDoesNotExist(msg.Subject, msg.SubjectKeyId)
+			return nil, pkitypes.NewErrCertificateDoesNotExist(msg.Subject, msg.SubjectKeyId)
 		}
 		k.AddRevokedCertificates(ctx, certificates)
 		k.RemoveApprovedCertificates(ctx, msg.Subject, msg.SubjectKeyId)

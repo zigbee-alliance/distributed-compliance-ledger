@@ -13,6 +13,7 @@ import (
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	testkeeper "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
@@ -264,7 +265,7 @@ func TestHandler_ProposeAddX509RootCert_ForInvalidCertificate(t *testing.T) {
 	proposeAddX509RootCert := types.NewMsgProposeAddX509RootCert(setup.Trustee1.String(), testconstants.StubCertPem, testconstants.Info)
 	_, err := setup.Handler(setup.Ctx, proposeAddX509RootCert)
 	require.Error(t, err)
-	require.True(t, types.ErrInvalidCertificate.Is(err))
+	require.True(t, pkitypes.ErrInvalidCertificate.Is(err))
 }
 
 func TestHandler_ProposeAddX509RootCert_ForNonRootCertificate(t *testing.T) {
@@ -274,7 +275,7 @@ func TestHandler_ProposeAddX509RootCert_ForNonRootCertificate(t *testing.T) {
 	proposeAddX509RootCert := types.NewMsgProposeAddX509RootCert(setup.Trustee1.String(), testconstants.LeafCertPem, testconstants.Info)
 	_, err := setup.Handler(setup.Ctx, proposeAddX509RootCert)
 	require.Error(t, err)
-	require.True(t, types.ErrInappropriateCertificateType.Is(err))
+	require.True(t, pkitypes.ErrInappropriateCertificateType.Is(err))
 }
 
 func TestHandler_ProposeAddX509RootCert_ProposedCertificateAlreadyExists(t *testing.T) {
@@ -293,7 +294,7 @@ func TestHandler_ProposeAddX509RootCert_ProposedCertificateAlreadyExists(t *test
 	proposeAddX509RootCert = types.NewMsgProposeAddX509RootCert(anotherAccount.String(), testconstants.RootCertPem, testconstants.Info)
 	_, err = setup.Handler(setup.Ctx, proposeAddX509RootCert)
 	require.Error(t, err)
-	require.True(t, types.ErrProposedCertificateAlreadyExists.Is(err))
+	require.True(t, pkitypes.ErrProposedCertificateAlreadyExists.Is(err))
 }
 
 func TestHandler_ProposeAddX509RootCert_CertificateAlreadyExists(t *testing.T) {
@@ -311,7 +312,7 @@ func TestHandler_ProposeAddX509RootCert_CertificateAlreadyExists(t *testing.T) {
 	proposeAddX509RootCert := types.NewMsgProposeAddX509RootCert(setup.Trustee1.String(), testconstants.RootCertPem, testconstants.Info)
 	_, err := setup.Handler(setup.Ctx, proposeAddX509RootCert)
 	require.Error(t, err)
-	require.True(t, types.ErrCertificateAlreadyExists.Is(err))
+	require.True(t, pkitypes.ErrCertificateAlreadyExists.Is(err))
 }
 
 func TestHandler_ProposeAddX509RootCert_ForDifferentSerialNumber(t *testing.T) {
@@ -586,7 +587,7 @@ func TestHandler_ApproveAddX509RootCert_ForUnknownProposedCertificate(t *testing
 		setup.Trustee1.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.Info)
 	_, err := setup.Handler(setup.Ctx, approveAddX509RootCert)
 	require.Error(t, err)
-	require.True(t, types.ErrProposedCertificateDoesNotExist.Is(err))
+	require.True(t, pkitypes.ErrProposedCertificateDoesNotExist.Is(err))
 }
 
 func TestHandler_ApproveAddX509RootCert_ByNotTrustee(t *testing.T) {
@@ -712,7 +713,7 @@ func TestHandler_AddX509Cert_ForInvalidCertificate(t *testing.T) {
 	addX509Cert := types.NewMsgAddX509Cert(setup.Trustee1.String(), testconstants.StubCertPem)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
 	require.Error(t, err)
-	require.True(t, types.ErrInvalidCertificate.Is(err))
+	require.True(t, pkitypes.ErrInvalidCertificate.Is(err))
 }
 
 func TestHandler_AddX509Cert_ForRootCertificate(t *testing.T) {
@@ -722,7 +723,7 @@ func TestHandler_AddX509Cert_ForRootCertificate(t *testing.T) {
 	addX509Cert := types.NewMsgAddX509Cert(setup.Trustee1.String(), testconstants.RootCertPem)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
 	require.Error(t, err)
-	require.True(t, types.ErrInappropriateCertificateType.Is(err))
+	require.True(t, pkitypes.ErrInappropriateCertificateType.Is(err))
 }
 
 func TestHandler_AddX509Cert_ForDuplicate(t *testing.T) {
@@ -740,7 +741,7 @@ func TestHandler_AddX509Cert_ForDuplicate(t *testing.T) {
 	// store intermediate certificate second time
 	_, err = setup.Handler(setup.Ctx, addX509Cert)
 	require.Error(t, err)
-	require.True(t, types.ErrCertificateAlreadyExists.Is(err))
+	require.True(t, pkitypes.ErrCertificateAlreadyExists.Is(err))
 }
 
 func TestHandler_AddX509Cert_ForDifferentSerialNumber(t *testing.T) {
@@ -814,7 +815,7 @@ func TestHandler_AddX509Cert_ForAbsentDirectParentCert(t *testing.T) {
 	addX509Cert := types.NewMsgAddX509Cert(setup.Trustee1.String(), testconstants.IntermediateCertPem)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
 	require.Error(t, err)
-	require.True(t, types.ErrInvalidCertificate.Is(err))
+	require.True(t, pkitypes.ErrInvalidCertificate.Is(err))
 }
 
 func TestHandler_AddX509Cert_ForNoRootCert(t *testing.T) {
@@ -828,7 +829,7 @@ func TestHandler_AddX509Cert_ForNoRootCert(t *testing.T) {
 	addX509Cert := types.NewMsgAddX509Cert(setup.Trustee1.String(), testconstants.LeafCertPem)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
 	require.Error(t, err)
-	require.True(t, types.ErrInvalidCertificate.Is(err))
+	require.True(t, pkitypes.ErrInvalidCertificate.Is(err))
 }
 
 func TestHandler_AddX509Cert_ForFailedCertificateVerification(t *testing.T) {
@@ -843,7 +844,7 @@ func TestHandler_AddX509Cert_ForFailedCertificateVerification(t *testing.T) {
 	addX509Cert := types.NewMsgAddX509Cert(setup.Trustee1.String(), testconstants.IntermediateCertPem)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
 	require.Error(t, err)
-	require.True(t, types.ErrInvalidCertificate.Is(err))
+	require.True(t, pkitypes.ErrInvalidCertificate.Is(err))
 }
 
 func TestHandler_AddX509Cert_ForTree(t *testing.T) {
@@ -1079,7 +1080,7 @@ func TestHandler_ProposeRevokeX509RootCert_CertificateDoesNotExist(t *testing.T)
 		setup.Trustee1.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.Info)
 	_, err := setup.Handler(setup.Ctx, proposeRevokeX509RootCert)
 	require.Error(t, err)
-	require.True(t, types.ErrCertificateDoesNotExist.Is(err))
+	require.True(t, pkitypes.ErrCertificateDoesNotExist.Is(err))
 }
 
 func TestHandler_ProposeRevokeX509RootCert_ForProposedCertificate(t *testing.T) {
@@ -1099,7 +1100,7 @@ func TestHandler_ProposeRevokeX509RootCert_ForProposedCertificate(t *testing.T) 
 		setup.Trustee1.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.Info)
 	_, err = setup.Handler(setup.Ctx, proposeRevokeX509RootCert)
 	require.Error(t, err)
-	require.True(t, types.ErrCertificateDoesNotExist.Is(err))
+	require.True(t, pkitypes.ErrCertificateDoesNotExist.Is(err))
 }
 
 func TestHandler_ProposeRevokeX509RootCert_ProposedRevocationAlreadyExists(t *testing.T) {
@@ -1123,7 +1124,7 @@ func TestHandler_ProposeRevokeX509RootCert_ProposedRevocationAlreadyExists(t *te
 		anotherTrustee.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.Info)
 	_, err = setup.Handler(setup.Ctx, proposeRevokeX509RootCert)
 	require.Error(t, err)
-	require.True(t, types.ErrProposedCertificateRevocationAlreadyExists.Is(err))
+	require.True(t, pkitypes.ErrProposedCertificateRevocationAlreadyExists.Is(err))
 }
 
 func TestHandler_ProposeRevokeX509RootCert_ForNonRootCertificate(t *testing.T) {
@@ -1143,7 +1144,7 @@ func TestHandler_ProposeRevokeX509RootCert_ForNonRootCertificate(t *testing.T) {
 		setup.Trustee1.String(), testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID, testconstants.Info)
 	_, err = setup.Handler(setup.Ctx, proposeRevokeX509RootCert)
 	require.Error(t, err)
-	require.True(t, types.ErrInappropriateCertificateType.Is(err))
+	require.True(t, pkitypes.ErrInappropriateCertificateType.Is(err))
 }
 
 func TestHandler_ApproveRevokeX509RootCert_ForNotEnoughApprovals(t *testing.T) {
@@ -1270,7 +1271,7 @@ func TestHandler_ApproveRevokeX509RootCert_ProposedRevocationDoesNotExist(t *tes
 		setup.Trustee1.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.Info)
 	_, err := setup.Handler(setup.Ctx, approveRevokeX509RootCert)
 	require.Error(t, err)
-	require.True(t, types.ErrProposedCertificateRevocationDoesNotExist.Is(err))
+	require.True(t, pkitypes.ErrProposedCertificateRevocationDoesNotExist.Is(err))
 }
 
 func TestHandler_ApproveRevokeX509RootCert_Twice(t *testing.T) {
@@ -1446,7 +1447,7 @@ func TestHandler_RevokeX509Cert_CertificateDoesNotExist(t *testing.T) {
 		setup.Trustee1.String(), testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID, testconstants.Info)
 	_, err := setup.Handler(setup.Ctx, revokeX509Cert)
 	require.Error(t, err)
-	require.True(t, types.ErrCertificateDoesNotExist.Is(err))
+	require.True(t, pkitypes.ErrCertificateDoesNotExist.Is(err))
 }
 
 func TestHandler_RevokeX509Cert_ForRootCertificate(t *testing.T) {
@@ -1460,7 +1461,7 @@ func TestHandler_RevokeX509Cert_ForRootCertificate(t *testing.T) {
 		setup.Trustee1.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.Info)
 	_, err := setup.Handler(setup.Ctx, revokeX509Cert)
 	require.Error(t, err)
-	require.True(t, types.ErrInappropriateCertificateType.Is(err))
+	require.True(t, pkitypes.ErrInappropriateCertificateType.Is(err))
 }
 
 func TestHandler_RevokeX509Cert_ByNotOwner(t *testing.T) {

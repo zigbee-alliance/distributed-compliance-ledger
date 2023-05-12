@@ -6,6 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -20,7 +21,7 @@ func (k Keeper) PkiRevocationDistributionPointAll(c context.Context, req *types.
 	ctx := sdk.UnwrapSDKContext(c)
 
 	store := ctx.KVStore(k.storeKey)
-	pKIRevocationDistributionPointStore := prefix.NewStore(store, types.KeyPrefix(types.PkiRevocationDistributionPointKeyPrefix))
+	pKIRevocationDistributionPointStore := prefix.NewStore(store, pkitypes.KeyPrefix(types.PkiRevocationDistributionPointKeyPrefix))
 
 	pageRes, err := query.Paginate(pKIRevocationDistributionPointStore, req.Pagination, func(key []byte, value []byte) error {
 		var pKIRevocationDistributionPoint types.PkiRevocationDistributionPoint

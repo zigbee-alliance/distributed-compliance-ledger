@@ -6,6 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -20,7 +21,7 @@ func (k Keeper) RejectedCertificateAll(c context.Context, req *types.QueryAllRej
 	ctx := sdk.UnwrapSDKContext(c)
 
 	store := ctx.KVStore(k.storeKey)
-	rejectedCertificateStore := prefix.NewStore(store, types.KeyPrefix(types.RejectedCertificateKeyPrefix))
+	rejectedCertificateStore := prefix.NewStore(store, pkitypes.KeyPrefix(types.RejectedCertificateKeyPrefix))
 
 	pageRes, err := query.Paginate(rejectedCertificateStore, req.Pagination, func(key []byte, value []byte) error {
 		var rejectedCertificate types.RejectedCertificate

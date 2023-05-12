@@ -4,6 +4,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
@@ -24,7 +25,7 @@ func CmdShowChildCertificates() *cobra.Command {
 
 			return cli.QueryWithProof(
 				clientCtx,
-				types.StoreKey,
+				pkitypes.StoreKey,
 				types.ChildCertificatesKeyPrefix,
 				types.ChildCertificatesKey(subject, subjectKeyID),
 				&res,

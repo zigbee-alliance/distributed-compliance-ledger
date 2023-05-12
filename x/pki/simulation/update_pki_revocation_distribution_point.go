@@ -6,6 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
@@ -22,6 +23,6 @@ func SimulateMsgUpdatePkiRevocationDistributionPoint(
 
 		// TODO: Handling the UpdatePkiRevocationDistributionPoint simulation
 
-		return simtypes.NoOpMsg(types.ModuleName, msg.Type(), "UpdatePkiRevocationDistributionPoint simulation not implemented"), nil, nil
+		return simtypes.NoOpMsg(pkitypes.ModuleName, msg.Type(), "UpdatePkiRevocationDistributionPoint simulation not implemented"), nil, nil
 	}
 }
