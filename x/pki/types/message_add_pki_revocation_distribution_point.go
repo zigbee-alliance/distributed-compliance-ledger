@@ -1,9 +1,13 @@
 package types
 
 import (
+	"strings"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/x509"
 )
 
 const TypeMsgAddPkiRevocationDistributionPoint = "add_pki_revocation_distribution_point"
@@ -28,7 +32,7 @@ func NewMsgAddPkiRevocationDistributionPoint(signer string, vid int32, pid int32
 }
 
 func (msg *MsgAddPkiRevocationDistributionPoint) Route() string {
-	return RouterKey
+	return pkitypes.RouterKey
 }
 
 func (msg *MsgAddPkiRevocationDistributionPoint) Type() string {
@@ -79,11 +83,27 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 		return RevocationNotInTypes
 	}
 
+	cert, err := x509.DecodeX509Certificate(msg.CrlSignerCertificate)
+	if err != nil {
+		return err
+	}
+
 	if msg.IsPAA {
-		if msg.Pid == nil {
-			return EmptyPid
+		if msg.Pid != nil {
+			return NotEmptyPid
 		}
 
+		if !cert.IsSelfSigned() {
+			return PAANotSelfSigned
+		}
+	} else {
+		if !strings.Contains(cert.SubjectAsText, msg.Pid) {
+			return CRLSignerCertificateDoesNotContainPid
+		}
+
+		if cert.IsSelfSigned() {
+			return NonPAASelfSigned
+		}
 	}
 
 	if msg.DataFileSize == nil && msg.DataDigest != nil {
@@ -99,11 +119,15 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 	}
 
 	if msg.DataDigest != nil && msg.DataDigestType == nil {
-		return emptyDataDigestType
+		return EmptyDataDigestType
 	}
 
 	if msg.RevocationType == 1 && (msg.DataFileSize != nil || msg.DataDigest != nil || msg.dataDigestType != nil) {
+		return DataFieldPresented
+	}
 
+	if msg.IssuerSubjectKeyID != cert.SubjectKeyID {
+		return IssuerSubjectKeyIDNotEqualsCertSubjectKeyID
 	}
 
 	return nil
