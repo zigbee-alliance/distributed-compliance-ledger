@@ -1,6 +1,7 @@
 package types
 
 import (
+	"fmt"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -76,11 +77,11 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 	}
 
 	if !isDataDigestInTypes {
-		return DataDigestNotInTypes
+		return pkitypes.NewErrInvalidDataDigestType(fmt.Sprintf("invalid DataDigestType: %d", msg.DataDigestType))
 	}
 
 	if msg.RevocationType != allowedRevocationType {
-		return RevocationNotInTypes
+		return pkitypes.NewErrInvalidRevocationType(fmt.Sprintf("invalid RevocationType: %d", msg.RevocationType))
 	}
 
 	cert, err := x509.DecodeX509Certificate(msg.CrlSignerCertificate)
@@ -89,45 +90,45 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 	}
 
 	if msg.IsPAA {
-		if msg.Pid != nil {
-			return NotEmptyPid
+		if msg.Pid != 0 {
+			return pkitypes.NewErrNotEmptyPid("pid is not empty for root certificate")
 		}
 
 		if !cert.IsSelfSigned() {
-			return PAANotSelfSigned
+			return pkitypes.NewErrPAANotSelfSigned(fmt.Sprintf("root certificate with subject: %s, subjectKeyID: %s is not self-signed", cert.SubjectAsText, cert.SubjectKeyID))
 		}
 	} else {
-		if !strings.Contains(cert.SubjectAsText, msg.Pid) {
-			return CRLSignerCertificateDoesNotContainPid
+		if !strings.Contains(cert.SubjectAsText, string(msg.Pid)) {
+			return pkitypes.NewErrCRLSignerCertificateDoesNotContainPid(fmt.Sprintf("CRLSignerCertificate with subject: %s, subjectKeyID does not contain pid: %d", cert.SubjectAsText, cert.SubjectKeyID, msg.Pid))
 		}
 
 		if cert.IsSelfSigned() {
-			return NonPAASelfSigned
+			return pkitypes.NewErrNonPAASelfSigned(fmt.Sprintf("non-root certificate with subject: %s, subjectKeyID: %s is self-signed", cert.SubjectAsText, cert.SubjectKeyID))
 		}
 	}
 
-	if msg.DataFileSize == nil && msg.DataDigest != nil {
-		return EmptyDataFileSize
+	if msg.DataFileSize == 0 && msg.DataDigest != "" {
+		return pkitypes.NewErrEmptyDataFileSize(fmt.Sprintf("msgAddRevocationDistributionPoint with CRLSignerCertificate: %s has empty DataFileSize when DataDigest is not empty", msg.CrlSignerCertificate))
 	}
 
-	if msg.DataFileSize != nil && msg.DataDigest == nil {
-		return EmptyDataDigest
+	if msg.DataFileSize != 0 && msg.DataDigest == "" {
+		return pkitypes.NewErrEmptyDataDigest(fmt.Sprintf("msgAddRevocationDistributionPoint with CRLSignerCertificate: %s has empty DataDigest when DataFileSize is not empty", msg.CrlSignerCertificate))
 	}
 
-	if msg.DataDigest == nil && msg.DataDigestType != nil {
-		return EmptyDataDigest
+	if msg.DataDigest == "" && msg.DataDigestType != 0 {
+		return pkitypes.NewErrEmptyDataDigest(fmt.Sprintf("msgAddRevocationDistributionPoint with CRLSignerCertificate: %s has empty DataDigest when DataDigestType is not empty", msg.CrlSignerCertificate))
 	}
 
-	if msg.DataDigest != nil && msg.DataDigestType == nil {
-		return EmptyDataDigestType
+	if msg.DataDigest != "" && msg.DataDigestType == 0 {
+		return pkitypes.NewErrEmptyDataDigestType(fmt.Sprintf("msgAddRevocationDistributionPoint with CRLSignerCertificate: %s has empty DataDigestType when DataDigest is not empty", msg.CrlSignerCertificate))
 	}
 
-	if msg.RevocationType == 1 && (msg.DataFileSize != nil || msg.DataDigest != nil || msg.dataDigestType != nil) {
-		return DataFieldPresented
+	if msg.RevocationType == 1 && (msg.DataFileSize != 0 || msg.DataDigest != "" || msg.DataDigestType != 0) {
+		return pkitypes.NewErrDataFieldPresented(fmt.Sprintf("msgAddRevocationDistributionPoint with CRLSignerCertificate: %s has one or more non-empty DataFields when RevocationType is 1", msg.CrlSignerCertificate))
 	}
 
 	if msg.IssuerSubjectKeyID != cert.SubjectKeyID {
-		return IssuerSubjectKeyIDNotEqualsCertSubjectKeyID
+		return pkitypes.NewErrIssuerSubjectKeyIDNotEqualsCertSubjectKeyID(fmt.Sprintf("msgAddRevocationDistributionPoint with CRLSignerCertificate: %s has IssuerSubjectKeyID: %s which is not equal to certificate SubjectKeyID: %s", msg.CrlSignerCertificate, msg.IssuerSubjectKeyID, cert.SubjectKeyID))
 	}
 
 	return nil
