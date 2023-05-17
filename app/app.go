@@ -34,6 +34,7 @@ import (
 	tmos "github.com/tendermint/tendermint/libs/os"
 	dbm "github.com/tendermint/tm-db"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/docs"
+	dclpkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	compliancemodule "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance"
 	compliancemodulekeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/keeper"
 	compliancetypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
@@ -52,7 +53,6 @@ import (
 	modelmoduletypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 	pkimodule "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki"
 	pkimodulekeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/keeper"
-	pkimoduletypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 	validatormodule "github.com/zigbee-alliance/distributed-compliance-ledger/x/validator"
 	validatormodulekeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/keeper"
 	validatormoduletypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
@@ -253,7 +253,7 @@ func New(
 		dclauthmoduletypes.StoreKey,
 		validatormoduletypes.StoreKey,
 		dclupgrademoduletypes.StoreKey,
-		pkimoduletypes.StoreKey,
+		dclpkitypes.StoreKey,
 		vendorinfomoduletypes.StoreKey,
 		modelmoduletypes.StoreKey,
 		compliancetypes.StoreKey,
@@ -399,8 +399,8 @@ func New(
 
 	app.PkiKeeper = *pkimodulekeeper.NewKeeper(
 		appCodec,
-		keys[pkimoduletypes.StoreKey],
-		keys[pkimoduletypes.MemStoreKey],
+		keys[dclpkitypes.StoreKey],
+		keys[dclpkitypes.MemStoreKey],
 
 		app.DclauthKeeper,
 	)
@@ -542,7 +542,7 @@ func New(
 		validatormoduletypes.ModuleName,
 		dclgenutilmoduletypes.ModuleName,
 		dclupgrademoduletypes.ModuleName,
-		pkimoduletypes.ModuleName,
+		dclpkitypes.ModuleName,
 		vendorinfomoduletypes.ModuleName,
 		modelmoduletypes.ModuleName,
 		compliancetypes.ModuleName,
@@ -777,7 +777,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(validatormoduletypes.ModuleName)
 	paramsKeeper.Subspace(dclgenutilmoduletypes.ModuleName)
 	paramsKeeper.Subspace(dclupgrademoduletypes.ModuleName)
-	paramsKeeper.Subspace(pkimoduletypes.ModuleName)
+	paramsKeeper.Subspace(dclpkitypes.ModuleName)
 	paramsKeeper.Subspace(vendorinfomoduletypes.ModuleName)
 	paramsKeeper.Subspace(modelmoduletypes.ModuleName)
 	paramsKeeper.Subspace(compliancetypes.ModuleName)

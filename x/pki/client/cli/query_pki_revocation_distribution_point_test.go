@@ -16,6 +16,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/nullify"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/client/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
+	dclpkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/types/pki"
 )
 
 // Prevent strconv unused error
@@ -25,7 +26,7 @@ func networkWithPkiRevocationDistributionPointObjects(t *testing.T, n int) (*net
 	t.Helper()
 	cfg := network.DefaultConfig()
 	state := types.GenesisState{}
-	require.NoError(t, cfg.Codec.UnmarshalJSON(cfg.GenesisState[types.ModuleName], &state))
+	require.NoError(t, cfg.Codec.UnmarshalJSON(cfg.GenesisState[dclpkitypes.ModuleName], &state))
 
 	for i := 0; i < n; i++ {
 		pKIRevocationDistributionPoint := types.PkiRevocationDistributionPoint{
@@ -38,7 +39,7 @@ func networkWithPkiRevocationDistributionPointObjects(t *testing.T, n int) (*net
 	}
 	buf, err := cfg.Codec.MarshalJSON(&state)
 	require.NoError(t, err)
-	cfg.GenesisState[types.ModuleName] = buf
+	cfg.GenesisState[dclpkitypes.ModuleName] = buf
 	return network.New(t, cfg), state.PkiRevocationDistributionPointList
 }
 
