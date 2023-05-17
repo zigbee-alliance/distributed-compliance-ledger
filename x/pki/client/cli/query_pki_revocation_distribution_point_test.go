@@ -14,9 +14,9 @@ import (
 
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/network"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/nullify"
+	dclpkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/client/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
-	dclpkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/types/pki"
 )
 
 // Prevent strconv unused error
