@@ -95,7 +95,7 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 		}
 
 		if !cert.IsSelfSigned() {
-			return pkitypes.NewErrPAANotSelfSigned(fmt.Sprintf("root certificate with subject: %s, subjectKeyID: %s is not self-signed", cert.SubjectAsText, cert.SubjectKeyID))
+			return pkitypes.NewErrPAANotSelfSigned(fmt.Sprintf("CRL Signer Certificate must be self-signed if isPAA is True")
 		}
 	} else {
 		if !strings.Contains(cert.SubjectAsText, string(msg.Pid)) {
