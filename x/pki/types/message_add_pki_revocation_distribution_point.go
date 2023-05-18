@@ -91,7 +91,7 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 
 	if msg.IsPAA {
 		if msg.Pid != 0 {
-			return pkitypes.NewErrNotEmptyPid("pid is not empty for root certificate")
+			return pkitypes.NewErrNotEmptyPid("Product ID (pid) must be empty for root certificates when isPAA is true")
 		}
 
 		if !cert.IsSelfSigned() {
