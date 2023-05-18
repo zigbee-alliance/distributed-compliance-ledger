@@ -108,7 +108,7 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 	}
 
 	if msg.DataFileSize == 0 && msg.DataDigest != "" {
-		return pkitypes.NewErrEmptyDataFileSize(fmt.Sprintf("msgAddRevocationDistributionPoint with CRLSignerCertificate: %s has empty DataFileSize when DataDigest is not empty", msg.CrlSignerCertificate))
+		return pkitypes.NewErrNonEmptyDataDigest("Data Digest must be provided only if Data File Size is provided")
 	}
 
 	if msg.DataFileSize != 0 && msg.DataDigest == "" {
