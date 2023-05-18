@@ -92,15 +92,15 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 		}
 
 		if !cert.IsSelfSigned() {
-			return pkitypes.NewErrPAANotSelfSigned(fmt.Sprintf("CRL Signer Certificate must be self-signed if isPAA is True")
+			return pkitypes.NewErrPAANotSelfSigned(fmt.Sprintf("CRL Signer Certificate must be self-signed if isPAA is True"))
 		}
 	} else {
 		if !strings.Contains(cert.SubjectAsText, string(msg.Pid)) {
-			return pkitypes.NewErrCRLSignerCertificateDoesNotContainPid(fmt.Sprintf("CRLSignerCertificate with subject: %s, subjectKeyID does not contain pid: %d", cert.SubjectAsText, cert.SubjectKeyID, msg.Pid))
+			return pkitypes.NewErrCRLSignerCertificateDoesNotContainPid(fmt.Sprintf("CRLSignerCertificate with subject: %s, subjectKeyID: %s does not contain pid: %d", cert.SubjectAsText, cert.SubjectKeyID, msg.Pid))
 		}
 
 		if cert.IsSelfSigned() {
-			return pkitypes.NewErrNonPAASelfSigned(fmt.Sprintf("CRL Signer Certificate shall not be self-sgined if isPAA is False))
+			return pkitypes.NewErrNonPAASelfSigned(fmt.Sprintf("CRL Signer Certificate shall not be self-sgined if isPAA is False"))
 		}
 	}
 
@@ -113,7 +113,7 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 	}
 
 	if msg.DataDigest == "" && msg.DataDigestType != 0 {
-                return pkitypes.NewErrNonEmptyDataDigestType("Data Digest Type must be provided only if Data Digest is provided")
+		return pkitypes.NewErrNonEmptyDataDigestType("Data Digest Type must be provided only if Data Digest is provided")
 	}
 
 	if msg.DataDigest != "" && msg.DataDigestType == 0 {

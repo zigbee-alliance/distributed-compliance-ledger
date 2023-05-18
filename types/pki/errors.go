@@ -120,7 +120,12 @@ func NewErrNonPAASelfSigned(e interface{}) error {
 		e)
 }
 
-func NewErrEmptyDataFileSize(e interface{}) error {
+func NewErrNonEmptyDataDigest(e interface{}) error {
+	return sdkerrors.Wrapf(ErrEmptyDataFileSize, "%v",
+		e)
+}
+
+func NewErrNonEmptyDataDigestType(e interface{}) error {
 	return sdkerrors.Wrapf(ErrEmptyDataFileSize, "%v",
 		e)
 }
