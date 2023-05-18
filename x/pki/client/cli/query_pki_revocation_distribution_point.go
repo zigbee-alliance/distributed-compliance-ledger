@@ -45,7 +45,7 @@ func CmdListPkiRevocationDistributionPoint() *cobra.Command {
 
 func CmdShowPkiRevocationDistributionPoint() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "show-pki-revocation-distribution-point [vid] [label] [issuer-subject-key-id]",
+		Use:   "revocation-point",
 		Short: "shows a PkiRevocationDistributionPoint",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
