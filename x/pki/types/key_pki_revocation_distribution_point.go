@@ -11,14 +11,14 @@ const (
 
 // PkiRevocationDistributionPointKey returns the store key to retrieve a PkiRevocationDistributionPoint from the index fields
 func PkiRevocationDistributionPointKey(
-	vid uint64,
+	vid int32,
 	label string,
 	issuerSubjectKeyID string,
 ) []byte {
 	var key []byte
 
 	vidBytes := make([]byte, 8)
-	binary.BigEndian.PutUint64(vidBytes, vid)
+	binary.BigEndian.PutUint32(vidBytes, uint32(vid))
 	key = append(key, vidBytes...)
 	key = append(key, []byte("/")...)
 

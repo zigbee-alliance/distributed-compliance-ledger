@@ -21,7 +21,7 @@ func (k Keeper) SetPkiRevocationDistributionPoint(ctx sdk.Context, pKIRevocation
 // GetPkiRevocationDistributionPoint returns a pKIRevocationDistributionPoint from its index
 func (k Keeper) GetPkiRevocationDistributionPoint(
 	ctx sdk.Context,
-	vid uint64,
+	vid int32,
 	label string,
 	issuerSubjectKeyID string,
 
@@ -44,7 +44,7 @@ func (k Keeper) GetPkiRevocationDistributionPoint(
 // RemovePkiRevocationDistributionPoint removes a pKIRevocationDistributionPoint from the store
 func (k Keeper) RemovePkiRevocationDistributionPoint(
 	ctx sdk.Context,
-	vid uint64,
+	vid int32,
 	label string,
 	issuerSubjectKeyID string,
 

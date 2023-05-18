@@ -770,12 +770,23 @@ func request_Query_PkiRevocationDistributionPoint_0(ctx context.Context, marshal
 		_   = err
 	)
 
+	val, ok = pathParams["issuerSubjectKeyID"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "issuerSubjectKeyID")
+	}
+
+	protoReq.IssuerSubjectKeyID, err = runtime.String(val)
+
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "issuerSubjectKeyID", err)
+	}
+
 	val, ok = pathParams["vid"]
 	if !ok {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "vid")
 	}
 
-	protoReq.Vid, err = runtime.Uint64(val)
+	protoReq.Vid, err = runtime.Int32(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "vid", err)
@@ -790,17 +801,6 @@ func request_Query_PkiRevocationDistributionPoint_0(ctx context.Context, marshal
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "label", err)
-	}
-
-	val, ok = pathParams["issuerSubjectKeyID"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "issuerSubjectKeyID")
-	}
-
-	protoReq.IssuerSubjectKeyID, err = runtime.String(val)
-
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "issuerSubjectKeyID", err)
 	}
 
 	msg, err := client.PkiRevocationDistributionPoint(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -819,12 +819,23 @@ func local_request_Query_PkiRevocationDistributionPoint_0(ctx context.Context, m
 		_   = err
 	)
 
+	val, ok = pathParams["issuerSubjectKeyID"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "issuerSubjectKeyID")
+	}
+
+	protoReq.IssuerSubjectKeyID, err = runtime.String(val)
+
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "issuerSubjectKeyID", err)
+	}
+
 	val, ok = pathParams["vid"]
 	if !ok {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "vid")
 	}
 
-	protoReq.Vid, err = runtime.Uint64(val)
+	protoReq.Vid, err = runtime.Int32(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "vid", err)
@@ -839,17 +850,6 @@ func local_request_Query_PkiRevocationDistributionPoint_0(ctx context.Context, m
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "label", err)
-	}
-
-	val, ok = pathParams["issuerSubjectKeyID"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "issuerSubjectKeyID")
-	}
-
-	protoReq.IssuerSubjectKeyID, err = runtime.String(val)
-
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "issuerSubjectKeyID", err)
 	}
 
 	msg, err := server.PkiRevocationDistributionPoint(ctx, &protoReq)
@@ -1660,9 +1660,9 @@ var (
 
 	pattern_Query_RejectedCertificateAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "rejected-certificates"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_PkiRevocationDistributionPoint_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5, 1, 0, 4, 1, 5, 6}, []string{"dcl", "pki", "pki-revocation-distribution-point", "vid", "label", "issuerSubjectKeyID"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_PkiRevocationDistributionPoint_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"dcl", "pki", "revocation-points", "issuerSubjectKeyID", "vid", "label"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_PkiRevocationDistributionPointAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"dcl", "pki", "pki-revocation-distribution-point"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_PkiRevocationDistributionPointAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "revocation-points"}, "", runtime.AssumeColonVerbOpt(false)))
 )
 
 var (

@@ -44,7 +44,7 @@ func CmdAddPkiRevocationDistributionPoint() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			argRevocationType, err := cast.ToUint64E(args[10])
+			argRevocationType, err := cast.ToUint32E(args[10])
 			if err != nil {
 				return err
 			}

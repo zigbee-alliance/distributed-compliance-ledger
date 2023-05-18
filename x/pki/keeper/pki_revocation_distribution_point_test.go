@@ -18,7 +18,7 @@ var _ = strconv.IntSize
 func createNPkiRevocationDistributionPoint(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.PkiRevocationDistributionPoint {
 	items := make([]types.PkiRevocationDistributionPoint, n)
 	for i := range items {
-		items[i].Vid = uint64(i)
+		items[i].Vid = int32(i)
 		items[i].Label = strconv.Itoa(i)
 		items[i].IssuerSubjectKeyID = strconv.Itoa(i)
 

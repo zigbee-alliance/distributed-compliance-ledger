@@ -53,7 +53,7 @@ func CmdShowPkiRevocationDistributionPoint() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			argVid, err := cast.ToUint64E(args[0])
+			argVid, err := cast.ToInt32E(args[0])
 			if err != nil {
 				return err
 			}

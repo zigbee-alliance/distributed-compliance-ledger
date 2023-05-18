@@ -231,7 +231,7 @@ message QueryAllRejectedCertificatesResponse {
 }
 
 message QueryGetPkiRevocationDistributionPointRequest {
-	  uint64 vid = 1;
+	  int32 vid = 1;
   string label = 2;
   string issuerSubjectKeyID = 3;
 

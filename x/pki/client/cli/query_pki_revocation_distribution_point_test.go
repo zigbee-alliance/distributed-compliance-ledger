@@ -30,7 +30,7 @@ func networkWithPkiRevocationDistributionPointObjects(t *testing.T, n int) (*net
 
 	for i := 0; i < n; i++ {
 		pKIRevocationDistributionPoint := types.PkiRevocationDistributionPoint{
-			Vid:                uint64(i),
+			Vid:                int32(i),
 			Label:              strconv.Itoa(i),
 			IssuerSubjectKeyID: strconv.Itoa(i),
 		}
@@ -52,7 +52,7 @@ func TestShowPkiRevocationDistributionPoint(t *testing.T) {
 	}
 	for _, tc := range []struct {
 		desc                 string
-		idVid                uint64
+		idVid                int32
 		idLabel              string
 		idIssuerSubjectKeyID string
 
