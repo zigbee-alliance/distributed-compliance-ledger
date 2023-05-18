@@ -78,7 +78,7 @@ and DACs (leaf certificates) added to DCL if they are revoked in the CRL identif
     - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>` -> list of Revocation Distribution Points
     - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>/<vid>/<label>`-> Revocation Distribution Point
 - CLI command:
-    - `dcld tx pki add-revocation-point --vid=<uint16> --pid=<uint16> --is-paa=<bool> --label=<string>
+    - `dcld tx pki add-revocation-point --vid=<uint16> --pid=<uint16> --issuer-subject-key-id=<string> --is-paa=<bool> --label=<string>
       --certificate=<string-or-path> --data-url=<string> --revocation-type=1 --from=<account>`
 
 
@@ -104,8 +104,8 @@ Updates an existing PKI Revocation distribution endpoint owned by the sender.
     - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>` -> list of Revocation Distribution Points
     - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>/<vid>/<label>` -> Revocation Distribution Point
 - CLI command:
-    - `dcld tx pki update-revocation-point --vid=<uint16> --label=<string>
-      --subject-key-id=<string> --data-url=<string> --certificate=<string-or-path> --from=<account>`
+    - `dcld tx pki update-revocation-point --vid=<uint16> --issuer-subject-key-id=<string> --label=<string>
+      --data-url=<string> --certificate=<string-or-path> --from=<account>`
 
 ### 3. DELETE_DELETE_PKI_REVOCATION_DISTRIBUTION_POINT
 Deletes a PKI Revocation distribution endpoint owned by the sender.
@@ -124,7 +124,7 @@ Deletes a PKI Revocation distribution endpoint owned by the sender.
     - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>` -> list of Revocation Distribution Points
     - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>/<vid>/<label>` -> Revocation Distribution Point
 - CLI command:
-    - `dcld tx pki delete-revocation-point --vid=<uint16> --label=<string> --subject-key-id=<string> --from=<account>`
+    - `dcld tx pki delete-revocation-point --vid=<uint16> --issuer-subject-key-id=<string> --label=<string> --from=<account>`
 
 
 ## Query
