@@ -15,7 +15,7 @@ var _ = strconv.Itoa(0)
 
 func CmdUpdatePkiRevocationDistributionPoint() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-pki-revocation-distribution-point [vid] [label] [crl-signer-certificate] [issuer-subject-key-id] [data-url] [data-file-size] [data-digest] [data-digest-type]",
+		Use:   "update-revocation-point",
 		Short: "Broadcast message update-pki-revocation-distribution-point",
 		Args:  cobra.ExactArgs(8),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
