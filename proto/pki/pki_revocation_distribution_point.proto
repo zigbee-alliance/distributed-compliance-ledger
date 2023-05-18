@@ -4,17 +4,17 @@ package zigbeealliance.distributedcomplianceledger.pki;
 option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types";
 
 message PkiRevocationDistributionPoint {
-  uint64 vid = 1; 
+  int32 vid = 1; 
   string label = 2; 
   string issuerSubjectKeyID = 3; 
-  uint64 pid = 4; 
+  int32 pid = 4; 
   bool isPAA = 5; 
   string crlSignerCertificate = 6; 
   string dataUrl = 7; 
   uint64 dataFileSize = 8; 
   string dataDigest = 9; 
-  uint64 dataDigestType = 10; 
-  uint64 revocationType = 11; 
+  uint32 dataDigestType = 10; 
+  uint32 revocationType = 11; 
   
 }
 

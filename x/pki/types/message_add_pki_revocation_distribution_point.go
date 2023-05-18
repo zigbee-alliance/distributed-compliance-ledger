@@ -64,9 +64,6 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 		return err
 	}
 
-	allowedDataDigestTypes := [6]uint32{1, 7, 8, 10, 11, 12}
-	allowedRevocationType := uint64(1)
-
 	isDataDigestInTypes := false
 	for _, digestType := range allowedDataDigestTypes {
 		if digestType == msg.DataDigestType {
@@ -77,16 +74,16 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 	}
 
 	if !isDataDigestInTypes {
-		return pkitypes.NewErrInvalidDataDigestType(fmt.Sprintf("invalid DataDigestType: %d", msg.DataDigestType))
+		return pkitypes.NewErrInvalidDataDigestType(fmt.Sprintf("invalid DataDigestType: %d. Supported types are: %v", msg.DataDigestType, allowedDataDigestTypes))
 	}
 
 	if msg.RevocationType != allowedRevocationType {
-		return pkitypes.NewErrInvalidRevocationType(fmt.Sprintf("invalid RevocationType: %d", msg.RevocationType))
+		return pkitypes.NewErrInvalidRevocationType(fmt.Sprintf("invalid RevocationType: %d. Supported types are: %d", msg.RevocationType, allowedRevocationType))
 	}
 
 	cert, err := x509.DecodeX509Certificate(msg.CrlSignerCertificate)
 	if err != nil {
-		return err
+		return pkitypes.NewErrInvalidCertificate(err)
 	}
 
 	if msg.IsPAA {

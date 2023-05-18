@@ -110,7 +110,7 @@ message MsgAddPkiRevocationDistributionPoint {
   uint64 dataFileSize = 9;
   string dataDigest = 10;
   uint32 dataDigestType = 11;
-  uint64 revocationType = 12 [(gogoproto.moretags) = "validate:\"required\""];
+  uint32 revocationType = 12 [(gogoproto.moretags) = "validate:\"required\""];
 }
 
 message MsgAddPkiRevocationDistributionPointResponse {
