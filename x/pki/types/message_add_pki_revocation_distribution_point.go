@@ -124,7 +124,7 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 	}
 
 	if msg.RevocationType == 1 && (msg.DataFileSize != 0 || msg.DataDigest != "" || msg.DataDigestType != 0) {
-		return pkitypes.NewErrDataFieldPresented(fmt.Sprintf("msgAddRevocationDistributionPoint with CRLSignerCertificate: %s has one or more non-empty DataFields when RevocationType is 1", msg.CrlSignerCertificate))
+		return pkitypes.NewErrDataFieldPresented("Data Digest, Data File Size and Data Digest Type must be omitted for Revocation Type 1")
 	}
 
 	if msg.IssuerSubjectKeyID != cert.SubjectKeyID {
