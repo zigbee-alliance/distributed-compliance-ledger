@@ -138,7 +138,7 @@ Use `GET_ALL_PKI_REVOCATION_DISTRIBUTION_POINT` to get a list of all revocation 
   - label: `string` -  A label to disambiguate multiple revocation information partitions of a particular issuer.
   - issuerSubjectKeyID: `string` - Uniquely identifies the PAA or PAI for which this revocation distribution point is provided. Must consist of even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters., e.g: `5A880E6C3653D07FB08971A3F473790930E62BDB`.
 - CLI command:
-  - `dcld query pki revocation-point --vid=<uint16> --label=<string> --subject-key-id=<string>`
+  - `dcld query pki revocation-point --vid=<uint16> --label=<string> --issuer-subject-key-id=<string>`
 - REST API:
   - GET `/dcl/pki/revocation-points/{issuerSubjectKeyID}/{vid}/{label}`
   
@@ -148,7 +148,7 @@ Gets a list of revocation distribution point identified by IssuerSubjectKeyID.
 - Parameters:
     - issuerSubjectKeyID: `string` - Uniquely identifies the PAA or PAI for which this revocation distribution point is provided. Must consist of even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters., e.g: `5A880E6C3653D07FB08971A3F473790930E62BDB`.
 - CLI command:
-  - `dcld query pki revocation-points --subject-key-id=<string>`
+  - `dcld query pki revocation-points --issuer-subject-key-id=<string>`
 - REST API:
   - GET `/dcl/pki/revocation-points/{issuerSubjectKeyID}`
 
