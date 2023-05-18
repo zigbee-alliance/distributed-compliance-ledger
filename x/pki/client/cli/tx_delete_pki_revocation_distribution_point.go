@@ -15,7 +15,7 @@ var _ = strconv.Itoa(0)
 
 func CmdDeletePkiRevocationDistributionPoint() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "delete-pki-revocation-distribution-point [vid] [label] [issuer-subject-key-id]",
+		Use:   "delete-revocation-point",
 		Short: "Broadcast message delete-pki-revocation-distribution-point",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {

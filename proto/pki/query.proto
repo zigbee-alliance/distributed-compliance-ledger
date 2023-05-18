@@ -95,12 +95,12 @@ service Query {
 
 // Queries a PkiRevocationDistributionPoint by index.
 	rpc PkiRevocationDistributionPoint(QueryGetPkiRevocationDistributionPointRequest) returns (QueryGetPkiRevocationDistributionPointResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/pki/pki-revocation-distribution-point/{vid}/{label}/{issuerSubjectKeyID}";
+		option (google.api.http).get = "/dcl/pki/revocation-points/{issuerSubjectKeyID}/{vid}/{label}";
 	}
 
 	// Queries a list of PkiRevocationDistributionPoint items.
 	rpc PkiRevocationDistributionPointAll(QueryAllPkiRevocationDistributionPointRequest) returns (QueryAllPkiRevocationDistributionPointResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/pki/pki-revocation-distribution-point";
+		option (google.api.http).get = "/dcl/pki/revocation-points";
 	}
 
 // this line is used by starport scaffolding # 2

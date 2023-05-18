@@ -15,7 +15,7 @@ var _ = strconv.Itoa(0)
 
 func CmdAddPkiRevocationDistributionPoint() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "add-pki-revocation-distribution-point [vid] [pid] [is-paa] [label] [crl-signer-certificate] [issuer-subject-key-id] [data-url] [data-file-size] [data-digest] [data-digest-type] [revocation-type]",
+		Use:   "add-revocation-point",
 		Short: "Broadcast message add-pki-revocation-distribution-point",
 		Args:  cobra.ExactArgs(11),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {

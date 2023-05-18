@@ -88,11 +88,11 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 
 	if msg.IsPAA {
 		if msg.Pid != 0 {
-			return pkitypes.NewErrNotEmptyPid("pid is not empty for root certificate")
+			return pkitypes.NewErrNotEmptyPid("Product ID (pid) must be empty for root certificates when isPAA is true")
 		}
 
 		if !cert.IsSelfSigned() {
-			return pkitypes.NewErrPAANotSelfSigned(fmt.Sprintf("root certificate with subject: %s, subjectKeyID: %s is not self-signed", cert.SubjectAsText, cert.SubjectKeyID))
+			return pkitypes.NewErrPAANotSelfSigned(fmt.Sprintf("CRL Signer Certificate must be self-signed if isPAA is True")
 		}
 	} else {
 		if !strings.Contains(cert.SubjectAsText, string(msg.Pid)) {
@@ -100,28 +100,28 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 		}
 
 		if cert.IsSelfSigned() {
-			return pkitypes.NewErrNonPAASelfSigned(fmt.Sprintf("non-root certificate with subject: %s, subjectKeyID: %s is self-signed", cert.SubjectAsText, cert.SubjectKeyID))
+			return pkitypes.NewErrNonPAASelfSigned(fmt.Sprintf("CRL Signer Certificate shall not be self-sgined if isPAA is False))
 		}
 	}
 
 	if msg.DataFileSize == 0 && msg.DataDigest != "" {
-		return pkitypes.NewErrEmptyDataFileSize(fmt.Sprintf("msgAddRevocationDistributionPoint with CRLSignerCertificate: %s has empty DataFileSize when DataDigest is not empty", msg.CrlSignerCertificate))
+		return pkitypes.NewErrNonEmptyDataDigest("Data Digest must be provided only if Data File Size is provided")
 	}
 
 	if msg.DataFileSize != 0 && msg.DataDigest == "" {
-		return pkitypes.NewErrEmptyDataDigest(fmt.Sprintf("msgAddRevocationDistributionPoint with CRLSignerCertificate: %s has empty DataDigest when DataFileSize is not empty", msg.CrlSignerCertificate))
+		return pkitypes.NewErrEmptyDataDigest("Data Digest must be provided if Data File Size is provided")
 	}
 
 	if msg.DataDigest == "" && msg.DataDigestType != 0 {
-		return pkitypes.NewErrEmptyDataDigest(fmt.Sprintf("msgAddRevocationDistributionPoint with CRLSignerCertificate: %s has empty DataDigest when DataDigestType is not empty", msg.CrlSignerCertificate))
+                return pkitypes.NewErrNonEmptyDataDigestType("Data Digest Type must be provided only if Data Digest is provided")
 	}
 
 	if msg.DataDigest != "" && msg.DataDigestType == 0 {
-		return pkitypes.NewErrEmptyDataDigestType(fmt.Sprintf("msgAddRevocationDistributionPoint with CRLSignerCertificate: %s has empty DataDigestType when DataDigest is not empty", msg.CrlSignerCertificate))
+		return pkitypes.NewErrEmptyDataDigestType("Data Digest Type must be provided if Data Digest is provided")
 	}
 
 	if msg.RevocationType == 1 && (msg.DataFileSize != 0 || msg.DataDigest != "" || msg.DataDigestType != 0) {
-		return pkitypes.NewErrDataFieldPresented(fmt.Sprintf("msgAddRevocationDistributionPoint with CRLSignerCertificate: %s has one or more non-empty DataFields when RevocationType is 1", msg.CrlSignerCertificate))
+		return pkitypes.NewErrDataFieldPresented("Data Digest, Data File Size and Data Digest Type must be omitted for Revocation Type 1")
 	}
 
 	if msg.IssuerSubjectKeyID != cert.SubjectKeyID {
