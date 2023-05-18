@@ -140,7 +140,7 @@ Use `GET_ALL_PKI_REVOCATION_DISTRIBUTION_POINT` to get a list of all revocation 
 - CLI command:
   - `dcld query pki revocation-point --vid=<uint16> --label=<string> --subject-key-id=<string>`
 - REST API:
-  - GET `/dcl/pki/revocation-points/{subject_key_id}/{vid}/{label}`
+  - GET `/dcl/pki/revocation-points/{issuerSubjectKeyID}/{vid}/{label}`
   
 ### 2. GET_PKI_REVOCATION_DISTRIBUTION_POINTS_BY_SUBJECT_KEY_ID
 Gets a list of revocation distribution point identified by IssuerSubjectKeyID.
@@ -150,8 +150,8 @@ Gets a list of revocation distribution point identified by IssuerSubjectKeyID.
 - CLI command:
   - `dcld query pki revocation-points --subject-key-id=<string>`
 - REST API:
-  - GET `/dcl/pki/revocation-points/{subject_key_id}`
-  - 
+  - GET `/dcl/pki/revocation-points/{issuerSubjectKeyID}`
+
 ### 3. GET_ALL_PKI_REVOCATION_DISTRIBUTION_POINT
 Gets a list of all revocation distribution points.
 
