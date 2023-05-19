@@ -1,6 +1,9 @@
 package types
 
 import (
+	fmt "fmt"
+	"regexp"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
@@ -55,6 +58,41 @@ func (msg *MsgUpdatePkiRevocationDistributionPoint) ValidateBasic() error {
 	err = validator.Validate(msg)
 	if err != nil {
 		return err
+	}
+
+	isDataDigestInTypes := false
+	for _, digestType := range allowedDataDigestTypes {
+		if digestType == msg.DataDigestType {
+			isDataDigestInTypes = true
+
+			break
+		}
+	}
+
+	if !isDataDigestInTypes {
+		return pkitypes.NewErrInvalidDataDigestType(fmt.Sprintf("invalid DataDigestType: %d. Supported types are: %v", msg.DataDigestType, allowedDataDigestTypes))
+	}
+
+	if msg.DataFileSize == 0 && msg.DataDigest != "" {
+		return pkitypes.NewErrNonEmptyDataDigest("Data Digest must be provided only if Data File Size is provided")
+	}
+
+	if msg.DataFileSize != 0 && msg.DataDigest == "" {
+		return pkitypes.NewErrEmptyDataDigest("Data Digest must be provided if Data File Size is provided")
+	}
+
+	if msg.DataDigest == "" && msg.DataDigestType != 0 {
+		return pkitypes.NewErrNonEmptyDataDigestType("Data Digest Type must be provided only if Data Digest is provided")
+	}
+
+	if msg.DataDigest != "" && msg.DataDigestType == 0 {
+		return pkitypes.NewErrEmptyDataDigestType("Data Digest Type must be provided if Data Digest is provided")
+	}
+
+	match, _ := regexp.MatchString("^(?:[0-9A-F]{2})+$", msg.IssuerSubjectKeyID)
+
+	if !match {
+		return pkitypes.NewErrWrongSubjectKeyIDFormat("Wrong IssuerSubjectKeyID format. It must consist of even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters")
 	}
 
 	return nil
