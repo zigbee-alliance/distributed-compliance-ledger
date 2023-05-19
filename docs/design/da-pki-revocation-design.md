@@ -220,7 +220,10 @@ Gets a list of all revocation distribution points.
      - if `crlSignerCertificate` is provided, no vid must be encoded in its subject
 - If Revocation Distribution Point's Signer Certificate is a PAI (intermediate certificate, not self-signed):
     - Check that the sender is a Vendor account and `VendorID` field must be equal to the Vendor account's VID.
-    - If `crlSignerCertificate` is provided, it must encode a vid in its subject and this vid must be equal to `VendorID` field
+    - If `crlSignerCertificate` is provided
+      - it must encode a vid in its subject and this vid must be equal to `VendorID` field
+      - if it encodes a pid in its subject, it must be equal to the `ProductID` field
+      - if `ProductID` field was provided, the new certificate must encode a pid in its subject, and the pid value must be equal to `ProductID`.
 
 #### DELETE_PKI_REVOCATION_DISTRIBUTION_POINT
 
