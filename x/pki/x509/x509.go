@@ -73,6 +73,17 @@ func ToSubjectAsText(subject string) string {
 	return subjectAsText
 }
 
+func SubjectAsTextToMap(subjectAsText string) map[string]string {
+	splittedSubjectText := strings.Split(subjectAsText, ", ")
+	subjectMap := make(map[string]string)
+	for _, elem := range splittedSubjectText {
+		splittedElem := strings.Split(elem, "=")
+		subjectMap[splittedElem[0]] = splittedElem[1]
+	}
+
+	return subjectMap
+}
+
 // This function is needed to patch the Issuer/Subject(vid/pid) field of certificate to hex format.
 // https://github.com/zigbee-alliance/distributed-compliance-ledger/issues/270
 func FormatOID(header, oldKey, newKey string) string {

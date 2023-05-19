@@ -3,7 +3,7 @@ package types
 import (
 	"fmt"
 	"regexp"
-	"strings"
+	"strconv"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -87,6 +87,8 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 		return pkitypes.NewErrInvalidCertificate(err)
 	}
 
+	subjectAsMap := x509.SubjectAsTextToMap(cert.SubjectAsText)
+
 	if msg.IsPAA {
 		if msg.Pid != 0 {
 			return pkitypes.NewErrNotEmptyPid("Product ID (pid) must be empty for root certificates when isPAA is true")
@@ -95,13 +97,51 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 		if !cert.IsSelfSigned() {
 			return pkitypes.NewErrPAANotSelfSigned(fmt.Sprintf("CRL Signer Certificate must be self-signed if isPAA is True"))
 		}
+
+		strVid, found := subjectAsMap["vid"]
+		if found {
+			vid, err := strconv.ParseInt(strVid, 10, 32)
+			if err != nil {
+				return err
+			}
+
+			if int32(vid) != msg.Vid {
+				return pkitypes.NewErrCRLSignerCertificateVidNotEqualMsgVid("CRL Signer Certificate vid must equal to message vid")
+			}
+		}
 	} else {
-		if !strings.Contains(cert.SubjectAsText, string(msg.Pid)) {
-			return pkitypes.NewErrCRLSignerCertificateDoesNotContainPid(fmt.Sprintf("CRLSignerCertificate with subject: %s, subjectKeyID: %s does not contain pid: %d", cert.SubjectAsText, cert.SubjectKeyID, msg.Pid))
+		strPid, found := subjectAsMap["pid"]
+		if found {
+			pid, err := strconv.ParseInt(strPid, 10, 32)
+			if err != nil {
+				return err
+			}
+
+			if int32(pid) != msg.Pid {
+				return pkitypes.NewErrCRLSignerCertificatePidNotEqualMsgPid("CRL Signer Certificate pid must equal to message pid")
+			}
+		} else {
+			if msg.Pid != 0 {
+				return pkitypes.NewErrNotEmptyPid("Product ID (pid) must be empty when it is not found in root certificate")
+			}
+		}
+
+		strVid, found := subjectAsMap["vid"]
+		if found {
+			vid, err := strconv.ParseInt(strVid, 10, 32)
+			if err != nil {
+				return err
+			}
+
+			if int32(vid) != msg.Vid {
+				return pkitypes.NewErrCRLSignerCertificateVidNotEqualMsgVid("CRL Signer Certificate vid must equal to message vid")
+			}
+		} else {
+			return pkitypes.NewErrVidNotFound("vid not found in CRL Signer Certificate subject")
 		}
 
 		if cert.IsSelfSigned() {
-			return pkitypes.NewErrNonPAASelfSigned(fmt.Sprintf("CRL Signer Certificate shall not be self-sgined if isPAA is False"))
+			return pkitypes.NewErrNonPAASelfSigned(fmt.Sprintf("CRL Signer Certificate shall not be self-signed if isPAA is False"))
 		}
 	}
 

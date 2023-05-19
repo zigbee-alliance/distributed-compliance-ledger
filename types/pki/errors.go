@@ -21,13 +21,15 @@ var (
 	ErrInvalidRevocationType                      = sdkerrors.Register(ModuleName, 411, "invalid revocation type")
 	ErrNotEmptyPid                                = sdkerrors.Register(ModuleName, 412, "pid is not empty")
 	ErrPAANotSelfSigned                           = sdkerrors.Register(ModuleName, 413, "PAA is not self-signed")
-	ErrCRLSignerCertificateDoesNotContainPid      = sdkerrors.Register(ModuleName, 414, "CRLSignerCertificate does not contain pid")
-	ErrNonPAASelfSigned                           = sdkerrors.Register(ModuleName, 415, "non PAA certificate self signed")
-	ErrEmptyDataFileSize                          = sdkerrors.Register(ModuleName, 416, "empty data file size")
-	ErrEmptyDataDigest                            = sdkerrors.Register(ModuleName, 417, "empty data digest")
-	ErrEmptyDataDigestType                        = sdkerrors.Register(ModuleName, 418, "empty data digest type")
-	ErrDataFieldPresented                         = sdkerrors.Register(ModuleName, 419, "data field presented")
-	ErrWrongSubjectKeyIDFormat                    = sdkerrors.Register(ModuleName, 420, "wrong SubjectKeyID format")
+	ErrCRLSignerCertificatePidNotEqualMsgPid      = sdkerrors.Register(ModuleName, 414, "CRLSignerCertificate pid does not equal message pid")
+	ErrCRLSignerCertificateVidNotEqualMsgVid      = sdkerrors.Register(ModuleName, 415, "CRLSignerCertificate vid does not equal message vid")
+	ErrNonPAASelfSigned                           = sdkerrors.Register(ModuleName, 416, "non PAA certificate self signed")
+	ErrEmptyDataFileSize                          = sdkerrors.Register(ModuleName, 417, "empty data file size")
+	ErrEmptyDataDigest                            = sdkerrors.Register(ModuleName, 418, "empty data digest")
+	ErrEmptyDataDigestType                        = sdkerrors.Register(ModuleName, 419, "empty data digest type")
+	ErrDataFieldPresented                         = sdkerrors.Register(ModuleName, 420, "data field presented")
+	ErrWrongSubjectKeyIDFormat                    = sdkerrors.Register(ModuleName, 421, "wrong SubjectKeyID format")
+	ErrVidNotFound                                = sdkerrors.Register(ModuleName, 422, "vid not found")
 )
 
 func NewErrProposedCertificateAlreadyExists(subject string, subjectKeyID string) error {
@@ -110,8 +112,13 @@ func NewErrPAANotSelfSigned(e interface{}) error {
 		e)
 }
 
-func NewErrCRLSignerCertificateDoesNotContainPid(e interface{}) error {
-	return sdkerrors.Wrapf(ErrCRLSignerCertificateDoesNotContainPid, "%v",
+func NewErrCRLSignerCertificatePidNotEqualMsgPid(e interface{}) error {
+	return sdkerrors.Wrapf(ErrCRLSignerCertificatePidNotEqualMsgPid, "%v",
+		e)
+}
+
+func NewErrCRLSignerCertificateVidNotEqualMsgVid(e interface{}) error {
+	return sdkerrors.Wrapf(ErrCRLSignerCertificateVidNotEqualMsgVid, "%v",
 		e)
 }
 
@@ -147,5 +154,10 @@ func NewErrDataFieldPresented(e interface{}) error {
 
 func NewErrWrongSubjectKeyIDFormat(e interface{}) error {
 	return sdkerrors.Wrapf(ErrWrongSubjectKeyIDFormat, "%v",
+		e)
+}
+
+func NewErrVidNotFound(e interface{}) error {
+	return sdkerrors.Wrapf(ErrVidNotFound, "%v",
 		e)
 }
