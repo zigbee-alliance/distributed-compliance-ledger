@@ -1,6 +1,8 @@
 package types
 
 import (
+	"regexp"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
@@ -50,6 +52,12 @@ func (msg *MsgDeletePkiRevocationDistributionPoint) ValidateBasic() error {
 	err = validator.Validate(msg)
 	if err != nil {
 		return err
+	}
+
+	match, _ := regexp.MatchString("^(?:[0-9A-F]{2})+$", msg.IssuerSubjectKeyID)
+
+	if !match {
+		return pkitypes.NewErrWrongSubjectKeyIDFormat("Wrong IssuerSubjectKeyID format. It must consist of even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters")
 	}
 
 	return nil

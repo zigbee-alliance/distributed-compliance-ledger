@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -120,12 +121,14 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 		return pkitypes.NewErrEmptyDataDigestType("Data Digest Type must be provided if Data Digest is provided")
 	}
 
-	if msg.RevocationType == 1 && (msg.DataFileSize != 0 || msg.DataDigest != "" || msg.DataDigestType != 0) {
+	if msg.RevocationType == allowedRevocationType && (msg.DataFileSize != 0 || msg.DataDigest != "" || msg.DataDigestType != 0) {
 		return pkitypes.NewErrDataFieldPresented("Data Digest, Data File Size and Data Digest Type must be omitted for Revocation Type 1")
 	}
 
-	if msg.IssuerSubjectKeyID != cert.SubjectKeyID {
-		return pkitypes.NewErrIssuerSubjectKeyIDNotEqualsCertSubjectKeyID(fmt.Sprintf("msgAddRevocationDistributionPoint with CRLSignerCertificate: %s has IssuerSubjectKeyID: %s which is not equal to certificate SubjectKeyID: %s", msg.CrlSignerCertificate, msg.IssuerSubjectKeyID, cert.SubjectKeyID))
+	match, _ := regexp.MatchString("^(?:[0-9A-F]{2})+$", msg.IssuerSubjectKeyID)
+
+	if !match {
+		return pkitypes.NewErrWrongSubjectKeyIDFormat("Wrong IssuerSubjectKeyID format. It must consist of even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters")
 	}
 
 	return nil
