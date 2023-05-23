@@ -2,26 +2,102 @@ package keeper
 
 import (
 	"context"
+	"strconv"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
+	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
+
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/x509"
 )
 
 func (k msgServer) AddPkiRevocationDistributionPoint(goCtx context.Context, msg *types.MsgAddPkiRevocationDistributionPoint) (*types.MsgAddPkiRevocationDistributionPointResponse, error) {
-	_ = sdk.UnwrapSDKContext(goCtx)
+	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	x509Certificate, err := x509.DecodeX509Certificate(msg.CrlSignerCertificate)
+	crlSignerCertificate, err := x509.DecodeX509Certificate(msg.CrlSignerCertificate)
 	if err != nil {
 		return nil, pkitypes.NewErrInvalidCertificate(err)
 	}
 
-	if x509Certificate.IsSelfSigned() {
-		return nil, pkitypes.NewErrInappropriateCertificateType(
-			"Inappropriate Certificate Type: Passed certificate is self-signed, " +
-				"so it cannot be added to the system as a non-root certificate. " +
-				"To propose adding a root certificate please use `PROPOSE_ADD_X509_ROOT_CERT` transaction.")
+	signerAddr, err := sdk.AccAddressFromBech32(msg.Signer)
+	if err != nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
+	}
+
+	if crlSignerCertificate.IsSelfSigned() {
+		subjectAsMap := x509.SubjectAsTextToMap(crlSignerCertificate.SubjectAsText)
+
+		strVid, found := subjectAsMap["vid"]
+		if found {
+			vid, err := strconv.ParseInt(strVid, 10, 32)
+			if err != nil {
+				return nil, err
+			}
+
+			// check if signer has vendor role
+			if !k.dclauthKeeper.HasRole(ctx, signerAddr, dclauthtypes.Vendor) {
+				return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+					"MsgAddPkiRevocationDistributionPoint transaction should be signed by an account with the \"%s\" role",
+					dclauthtypes.Vendor,
+				)
+			}
+
+			if int32(vid) != msg.Vid {
+				return nil, pkitypes.NewErrCRLSignerCertificateVidNotEqualMsgVid("CRL signer Certificate vid must equal to message vid")
+			} else if !k.dclauthKeeper.HasRole(ctx, signerAddr, dclauthtypes.VendorAdmin) {
+				return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+					"MsgAddPkiRevocationDistributionPoint transaction should be signed by an account with the \"%s\" role since certificate is self-signed and vid is not equal to message vid",
+					dclauthtypes.VendorAdmin,
+				)
+			}
+		}
+
+		approvedCertificates, isFound := k.GetApprovedCertificates(ctx, crlSignerCertificate.Subject, crlSignerCertificate.SubjectKeyID)
+		if !isFound {
+			return nil, pkitypes.NewErrCertificateDoesNotExist(crlSignerCertificate.Subject, crlSignerCertificate.SubjectKeyID)
+		}
+
+		if approvedCertificates.Certs[0].PemCert != msg.CrlSignerCertificate {
+			return nil, pkitypes.NewErrPemValuesNotEqual("Pem values of CRL signer certificate and certificate found by its Subject and SubjectKeyID are is not equal ")
+		}
+	} else {
+		// check if signer has vendor role
+		if !k.dclauthKeeper.HasRole(ctx, signerAddr, dclauthtypes.Vendor) {
+			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+				"MsgAddPkiRevocationDistributionPoint transaction should be signed by an account with the \"%s\" role",
+				dclauthtypes.Vendor,
+			)
+		}
+
+		signerAccount, _ := k.dclauthKeeper.GetAccountO(ctx, signerAddr)
+
+		if msg.Vid != signerAccount.VendorID {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized,
+				"MsgAddPkiRevocationDistributionPoint signer must have the same vid as provided in message",
+			)
+		}
+
+		approvedCertificates, isFound := k.GetApprovedCertificates(ctx, crlSignerCertificate.Issuer, crlSignerCertificate.AuthorityKeyID)
+		if !isFound {
+			return nil, pkitypes.NewErrCertificateDoesNotExist(crlSignerCertificate.Issuer, crlSignerCertificate.AuthorityKeyID)
+		}
+
+		cert, err := x509.DecodeX509Certificate(approvedCertificates.Certs[0].PemCert)
+		if err != nil {
+			return nil, err
+		}
+
+		_, _, err = k.verifyCertificate(ctx, cert)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	_, isFound := k.GetPkiRevocationDistributionPoint(ctx, msg.Vid, msg.Label, msg.IssuerSubjectKeyID)
+	if isFound {
+		return nil, pkitypes.NewErrPkiRevocationDistributionPointAlreadyExists("PKI revocation distribution point already exist")
 	}
 
 	return &types.MsgAddPkiRevocationDistributionPointResponse{}, nil

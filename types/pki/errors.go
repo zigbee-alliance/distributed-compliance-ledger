@@ -8,28 +8,30 @@ import (
 
 // x/pki module sentinel errors.
 var (
-	ErrProposedCertificateAlreadyExists           = sdkerrors.Register(ModuleName, 401, "proposed certificate already exists")
-	ErrProposedCertificateDoesNotExist            = sdkerrors.Register(ModuleName, 402, "proposed certificate does not exist")
-	ErrCertificateAlreadyExists                   = sdkerrors.Register(ModuleName, 403, "certificate already exists")
-	ErrCertificateDoesNotExist                    = sdkerrors.Register(ModuleName, 404, "certificate does not exist")
-	ErrProposedCertificateRevocationAlreadyExists = sdkerrors.Register(ModuleName, 405, "proposed certificate revocation already exists")
-	ErrProposedCertificateRevocationDoesNotExist  = sdkerrors.Register(ModuleName, 406, "proposed certificate revocation does not exist")
-	ErrRevokedCertificateDoesNotExist             = sdkerrors.Register(ModuleName, 407, "revoked certificate does not exist")
-	ErrInappropriateCertificateType               = sdkerrors.Register(ModuleName, 408, "inappropriate certificate type")
-	ErrInvalidCertificate                         = sdkerrors.Register(ModuleName, 409, "invalid certificate")
-	ErrInvalidDataDigestType                      = sdkerrors.Register(ModuleName, 410, "invalid data digest type")
-	ErrInvalidRevocationType                      = sdkerrors.Register(ModuleName, 411, "invalid revocation type")
-	ErrNotEmptyPid                                = sdkerrors.Register(ModuleName, 412, "pid is not empty")
-	ErrPAANotSelfSigned                           = sdkerrors.Register(ModuleName, 413, "PAA is not self-signed")
-	ErrCRLSignerCertificatePidNotEqualMsgPid      = sdkerrors.Register(ModuleName, 414, "CRLSignerCertificate pid does not equal message pid")
-	ErrCRLSignerCertificateVidNotEqualMsgVid      = sdkerrors.Register(ModuleName, 415, "CRLSignerCertificate vid does not equal message vid")
-	ErrNonPAASelfSigned                           = sdkerrors.Register(ModuleName, 416, "non PAA certificate self signed")
-	ErrEmptyDataFileSize                          = sdkerrors.Register(ModuleName, 417, "empty data file size")
-	ErrEmptyDataDigest                            = sdkerrors.Register(ModuleName, 418, "empty data digest")
-	ErrEmptyDataDigestType                        = sdkerrors.Register(ModuleName, 419, "empty data digest type")
-	ErrDataFieldPresented                         = sdkerrors.Register(ModuleName, 420, "data field presented")
-	ErrWrongSubjectKeyIDFormat                    = sdkerrors.Register(ModuleName, 421, "wrong SubjectKeyID format")
-	ErrVidNotFound                                = sdkerrors.Register(ModuleName, 422, "vid not found")
+	ErrProposedCertificateAlreadyExists            = sdkerrors.Register(ModuleName, 401, "proposed certificate already exists")
+	ErrProposedCertificateDoesNotExist             = sdkerrors.Register(ModuleName, 402, "proposed certificate does not exist")
+	ErrCertificateAlreadyExists                    = sdkerrors.Register(ModuleName, 403, "certificate already exists")
+	ErrCertificateDoesNotExist                     = sdkerrors.Register(ModuleName, 404, "certificate does not exist")
+	ErrProposedCertificateRevocationAlreadyExists  = sdkerrors.Register(ModuleName, 405, "proposed certificate revocation already exists")
+	ErrProposedCertificateRevocationDoesNotExist   = sdkerrors.Register(ModuleName, 406, "proposed certificate revocation does not exist")
+	ErrRevokedCertificateDoesNotExist              = sdkerrors.Register(ModuleName, 407, "revoked certificate does not exist")
+	ErrInappropriateCertificateType                = sdkerrors.Register(ModuleName, 408, "inappropriate certificate type")
+	ErrInvalidCertificate                          = sdkerrors.Register(ModuleName, 409, "invalid certificate")
+	ErrInvalidDataDigestType                       = sdkerrors.Register(ModuleName, 410, "invalid data digest type")
+	ErrInvalidRevocationType                       = sdkerrors.Register(ModuleName, 411, "invalid revocation type")
+	ErrNotEmptyPid                                 = sdkerrors.Register(ModuleName, 412, "pid is not empty")
+	ErrPAANotSelfSigned                            = sdkerrors.Register(ModuleName, 413, "PAA is not self-signed")
+	ErrCRLSignerCertificatePidNotEqualMsgPid       = sdkerrors.Register(ModuleName, 414, "CRLSignerCertificate pid does not equal message pid")
+	ErrCRLSignerCertificateVidNotEqualMsgVid       = sdkerrors.Register(ModuleName, 415, "CRLSignerCertificate vid does not equal message vid")
+	ErrNonPAASelfSigned                            = sdkerrors.Register(ModuleName, 416, "non PAA certificate self signed")
+	ErrEmptyDataFileSize                           = sdkerrors.Register(ModuleName, 417, "empty data file size")
+	ErrEmptyDataDigest                             = sdkerrors.Register(ModuleName, 418, "empty data digest")
+	ErrEmptyDataDigestType                         = sdkerrors.Register(ModuleName, 419, "empty data digest type")
+	ErrDataFieldPresented                          = sdkerrors.Register(ModuleName, 420, "data field presented")
+	ErrWrongSubjectKeyIDFormat                     = sdkerrors.Register(ModuleName, 421, "wrong SubjectKeyID format")
+	ErrVidNotFound                                 = sdkerrors.Register(ModuleName, 422, "vid not found")
+	ErrPemValuesNotEqual                           = sdkerrors.Register(ModuleName, 423, "pem values are not equal")
+	ErrPkiRevocationDistributionPointAlreadyExists = sdkerrors.Register(ModuleName, 424, "Pki revocation distribution point already exists")
 )
 
 func NewErrProposedCertificateAlreadyExists(subject string, subjectKeyID string) error {
@@ -160,4 +162,12 @@ func NewErrWrongSubjectKeyIDFormat(e interface{}) error {
 func NewErrVidNotFound(e interface{}) error {
 	return sdkerrors.Wrapf(ErrVidNotFound, "%v",
 		e)
+}
+
+func NewErrPemValuesNotEqual(e interface{}) error {
+	return sdkerrors.Wrapf(ErrPemValuesNotEqual, "%v", e)
+}
+
+func NewErrPkiRevocationDistributionPointAlreadyExists(e interface{}) error {
+	return sdkerrors.Wrapf(ErrPkiRevocationDistributionPointAlreadyExists, "%v", e)
 }

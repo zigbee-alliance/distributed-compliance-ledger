@@ -43,6 +43,15 @@ func (m *DclauthKeeperMock) CountAccountsWithRole(ctx sdk.Context, roleToCount d
 	return args.Int(0)
 }
 
+func (m *DclauthKeeperMock) GetAccountO(
+	ctx sdk.Context,
+	address sdk.AccAddress,
+) (val dclauthtypes.Account, found bool) {
+	args := m.Called(ctx, address)
+
+	return args.Get(0).(dclauthtypes.Account), args.Bool(1)
+}
+
 var _ types.DclauthKeeper = &DclauthKeeperMock{}
 
 type TestSetup struct {
