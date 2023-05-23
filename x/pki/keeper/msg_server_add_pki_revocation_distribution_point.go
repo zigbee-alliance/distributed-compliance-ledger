@@ -100,5 +100,21 @@ func (k msgServer) AddPkiRevocationDistributionPoint(goCtx context.Context, msg 
 		return nil, pkitypes.NewErrPkiRevocationDistributionPointAlreadyExists("PKI revocation distribution point already exist")
 	}
 
+	pkiRevocationDistributionPoint := types.PkiRevocationDistributionPoint{
+		Vid:                  msg.Vid,
+		Label:                msg.Label,
+		IssuerSubjectKeyID:   msg.IssuerSubjectKeyID,
+		Pid:                  msg.Pid,
+		IsPAA:                msg.IsPAA,
+		CrlSignerCertificate: msg.CrlSignerCertificate,
+		DataUrl:              msg.DataUrl,
+		DataFileSize:         msg.DataFileSize,
+		DataDigest:           msg.DataDigest,
+		DataDigestType:       msg.DataDigestType,
+		RevocationType:       msg.RevocationType,
+	}
+
+	k.SetPkiRevocationDistributionPoint(ctx, pkiRevocationDistributionPoint)
+
 	return &types.MsgAddPkiRevocationDistributionPointResponse{}, nil
 }
