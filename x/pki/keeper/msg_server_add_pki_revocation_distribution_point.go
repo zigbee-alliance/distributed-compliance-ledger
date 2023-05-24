@@ -26,6 +26,8 @@ func (k msgServer) AddPkiRevocationDistributionPoint(goCtx context.Context, msg 
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
 
+	signerAccount, _ := k.dclauthKeeper.GetAccountO(ctx, signerAddr)
+
 	if crlSignerCertificate.IsSelfSigned() {
 		subjectAsMap := x509.SubjectAsTextToMap(crlSignerCertificate.SubjectAsText)
 
@@ -44,8 +46,8 @@ func (k msgServer) AddPkiRevocationDistributionPoint(goCtx context.Context, msg 
 				)
 			}
 
-			if int32(vid) != msg.Vid {
-				return nil, pkitypes.NewErrCRLSignerCertificateVidNotEqualMsgVid("CRL signer Certificate vid must equal to message vid")
+			if int32(vid) != signerAccount.VendorID {
+				return nil, pkitypes.NewErrCRLSignerCertificateVidNotEqualAccountVid("CRL signer Certificate vid must equal to signer account vid")
 			} else if !k.dclauthKeeper.HasRole(ctx, signerAddr, dclauthtypes.VendorAdmin) {
 				return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
 					"MsgAddPkiRevocationDistributionPoint transaction should be signed by an account with the \"%s\" role since certificate is self-signed and vid is not equal to message vid",
@@ -70,8 +72,6 @@ func (k msgServer) AddPkiRevocationDistributionPoint(goCtx context.Context, msg 
 				dclauthtypes.Vendor,
 			)
 		}
-
-		signerAccount, _ := k.dclauthKeeper.GetAccountO(ctx, signerAddr)
 
 		if msg.Vid != signerAccount.VendorID {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized,

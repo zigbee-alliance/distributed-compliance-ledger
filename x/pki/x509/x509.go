@@ -59,10 +59,6 @@ func DecodeX509Certificate(pemCertificate string) (*Certificate, error) {
 	return &certificate, nil
 }
 
-func EncodeX509Certificate(certificate Certificate) {
-
-}
-
 func ToSubjectAsText(subject string) string {
 	oldVIDKey := "1.3.6.1.4.1.37244.2.1"
 	oldPIDKey := "1.3.6.1.4.1.37244.2.2"

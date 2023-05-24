@@ -20,18 +20,22 @@ var (
 	ErrInvalidDataDigestType                       = sdkerrors.Register(ModuleName, 410, "invalid data digest type")
 	ErrInvalidRevocationType                       = sdkerrors.Register(ModuleName, 411, "invalid revocation type")
 	ErrNotEmptyPid                                 = sdkerrors.Register(ModuleName, 412, "pid is not empty")
-	ErrPAANotSelfSigned                            = sdkerrors.Register(ModuleName, 413, "PAA is not self-signed")
-	ErrCRLSignerCertificatePidNotEqualMsgPid       = sdkerrors.Register(ModuleName, 414, "CRLSignerCertificate pid does not equal message pid")
-	ErrCRLSignerCertificateVidNotEqualMsgVid       = sdkerrors.Register(ModuleName, 415, "CRLSignerCertificate vid does not equal message vid")
-	ErrNonPAASelfSigned                            = sdkerrors.Register(ModuleName, 416, "non PAA certificate self signed")
-	ErrEmptyDataFileSize                           = sdkerrors.Register(ModuleName, 417, "empty data file size")
-	ErrEmptyDataDigest                             = sdkerrors.Register(ModuleName, 418, "empty data digest")
-	ErrEmptyDataDigestType                         = sdkerrors.Register(ModuleName, 419, "empty data digest type")
-	ErrDataFieldPresented                          = sdkerrors.Register(ModuleName, 420, "data field presented")
-	ErrWrongSubjectKeyIDFormat                     = sdkerrors.Register(ModuleName, 421, "wrong SubjectKeyID format")
-	ErrVidNotFound                                 = sdkerrors.Register(ModuleName, 422, "vid not found")
-	ErrPemValuesNotEqual                           = sdkerrors.Register(ModuleName, 423, "pem values are not equal")
-	ErrPkiRevocationDistributionPointAlreadyExists = sdkerrors.Register(ModuleName, 424, "Pki revocation distribution point already exists")
+	ErrNotEmptyVid                                 = sdkerrors.Register(ModuleName, 413, "vid is not empty")
+	ErrPAANotSelfSigned                            = sdkerrors.Register(ModuleName, 414, "PAA is not self-signed")
+	ErrCRLSignerCertificatePidNotEqualMsgPid       = sdkerrors.Register(ModuleName, 415, "CRLSignerCertificate pid does not equal message pid")
+	ErrCRLSignerCertificateVidNotEqualMsgVid       = sdkerrors.Register(ModuleName, 416, "CRLSignerCertificate vid does not equal message vid")
+	ErrCRLSignerCertificateVidNotEqualAccountVid   = sdkerrors.Register(ModuleName, 417, "CRLSignerCertificate vid does not equal account vid")
+	ErrNonPAASelfSigned                            = sdkerrors.Register(ModuleName, 418, "non PAA certificate self signed")
+	ErrEmptyDataFileSize                           = sdkerrors.Register(ModuleName, 419, "empty data file size")
+	ErrEmptyDataDigest                             = sdkerrors.Register(ModuleName, 420, "empty data digest")
+	ErrEmptyDataDigestType                         = sdkerrors.Register(ModuleName, 421, "empty data digest type")
+	ErrDataFieldPresented                          = sdkerrors.Register(ModuleName, 422, "data field presented")
+	ErrWrongSubjectKeyIDFormat                     = sdkerrors.Register(ModuleName, 423, "wrong SubjectKeyID format")
+	ErrVidNotFound                                 = sdkerrors.Register(ModuleName, 424, "vid not found")
+	ErrPidNotFound                                 = sdkerrors.Register(ModuleName, 425, "pid not found")
+	ErrPemValuesNotEqual                           = sdkerrors.Register(ModuleName, 426, "pem values are not equal")
+	ErrPkiRevocationDistributionPointAlreadyExists = sdkerrors.Register(ModuleName, 427, "pki revocation distribution point already exists")
+	ErrPkiRevocationDistributionPointDoesNotExists = sdkerrors.Register(ModuleName, 428, "pki revocaition distribution point does not exist")
 )
 
 func NewErrProposedCertificateAlreadyExists(subject string, subjectKeyID string) error {
@@ -109,6 +113,11 @@ func NewErrNotEmptyPid(e interface{}) error {
 		e)
 }
 
+func NewErrNotEmptyVid(e interface{}) error {
+	return sdkerrors.Wrapf(ErrNotEmptyVid, "%v",
+		e)
+}
+
 func NewErrPAANotSelfSigned(e interface{}) error {
 	return sdkerrors.Wrapf(ErrPAANotSelfSigned, "%v",
 		e)
@@ -164,10 +173,23 @@ func NewErrVidNotFound(e interface{}) error {
 		e)
 }
 
+func NewErrPidNotFound(e interface{}) error {
+	return sdkerrors.Wrapf(ErrPidNotFound, "%v",
+		e)
+}
+
 func NewErrPemValuesNotEqual(e interface{}) error {
 	return sdkerrors.Wrapf(ErrPemValuesNotEqual, "%v", e)
 }
 
 func NewErrPkiRevocationDistributionPointAlreadyExists(e interface{}) error {
 	return sdkerrors.Wrapf(ErrPkiRevocationDistributionPointAlreadyExists, "%v", e)
+}
+
+func NewErrPkiRevocationDistributionPointDoesNotExists(e interface{}) error {
+	return sdkerrors.Wrapf(ErrPkiRevocationDistributionPointDoesNotExists, "%v", e)
+}
+
+func NewErrCRLSignerCertificateVidNotEqualAccountVid(e interface{}) error {
+	return sdkerrors.Wrapf(ErrCRLSignerCertificateVidNotEqualAccountVid, "%v", e)
 }
