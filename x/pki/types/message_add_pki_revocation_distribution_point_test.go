@@ -415,9 +415,60 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 		name string
 		msg  MsgAddPkiRevocationDistributionPoint
 	}{
-		// {
-		// 	name: "valid approve add x509cert msg",
-		// },
+		{
+			name: "minimal msg isPAA true",
+			msg: MsgAddPkiRevocationDistributionPoint{
+				Signer:               sample.AccAddress(),
+				Vid:                  65522,
+				IsPAA:                &true_,
+				CrlSignerCertificate: testconstants.RootCertWithPidVidInSubject,
+				Label:                "label",
+				DataUrl:              testconstants.DataURL,
+				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+				RevocationType:       1,
+			},
+		},
+		{
+			name: "minimal msg isPAA false",
+			msg: MsgAddPkiRevocationDistributionPoint{
+				Signer:               sample.AccAddress(),
+				Vid:                  65522,
+				IsPAA:                &false_,
+				Pid:                  32769,
+				CrlSignerCertificate: testconstants.NonRootCertWithPidVidInSubject,
+				Label:                "label",
+				DataUrl:              testconstants.DataURL,
+				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+				RevocationType:       1,
+			},
+		},
+		{
+			name: "vid == cert.vid",
+			msg: MsgAddPkiRevocationDistributionPoint{
+				Signer:               sample.AccAddress(),
+				Vid:                  65522,
+				IsPAA:                &true_,
+				CrlSignerCertificate: testconstants.RootCertWithPidVidInSubject,
+				Label:                "label",
+				DataUrl:              testconstants.DataURL,
+				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+				RevocationType:       1,
+			},
+		},
+		{
+			name: "vid == cert.vid, pid == cert.pid",
+			msg: MsgAddPkiRevocationDistributionPoint{
+				Signer:               sample.AccAddress(),
+				Vid:                  65522,
+				IsPAA:                &false_,
+				CrlSignerCertificate: testconstants.NonRootCertWithPidVidInSubject,
+				Label:                "label",
+				DataUrl:              testconstants.DataURL,
+				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+				Pid:                  32769,
+				RevocationType:       1,
+			},
+		},
 	}
 
 	for _, tt := range negativeTests {

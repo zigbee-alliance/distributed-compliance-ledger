@@ -102,11 +102,17 @@ func TestMsgDeletePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 
 	positiveTests := []struct {
 		name string
-		msg  MsgAddPkiRevocationDistributionPoint
+		msg  MsgDeletePkiRevocationDistributionPoint
 	}{
-		// {
-		// 	name: "valid approve add x509cert msg",
-		// },
+		{
+			name: "example msg",
+			msg: MsgDeletePkiRevocationDistributionPoint{
+				Signer:             sample.AccAddress(),
+				Vid:                65522,
+				Label:              "label",
+				IssuerSubjectKeyID: testconstants.SubjectKeyIDWithoutColons,
+			},
+		},
 	}
 
 	for _, tt := range negativeTests {
