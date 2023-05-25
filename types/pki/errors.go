@@ -29,13 +29,14 @@ var (
 	ErrEmptyDataFileSize                           = sdkerrors.Register(ModuleName, 419, "empty data file size")
 	ErrEmptyDataDigest                             = sdkerrors.Register(ModuleName, 420, "empty data digest")
 	ErrEmptyDataDigestType                         = sdkerrors.Register(ModuleName, 421, "empty data digest type")
-	ErrDataFieldPresented                          = sdkerrors.Register(ModuleName, 422, "data field presented")
-	ErrWrongSubjectKeyIDFormat                     = sdkerrors.Register(ModuleName, 423, "wrong SubjectKeyID format")
-	ErrVidNotFound                                 = sdkerrors.Register(ModuleName, 424, "vid not found")
-	ErrPidNotFound                                 = sdkerrors.Register(ModuleName, 425, "pid not found")
-	ErrPemValuesNotEqual                           = sdkerrors.Register(ModuleName, 426, "pem values are not equal")
-	ErrPkiRevocationDistributionPointAlreadyExists = sdkerrors.Register(ModuleName, 427, "pki revocation distribution point already exists")
-	ErrPkiRevocationDistributionPointDoesNotExists = sdkerrors.Register(ModuleName, 428, "pki revocaition distribution point does not exist")
+	ErrNonEmptyDataDigestType                      = sdkerrors.Register(ModuleName, 422, "non empty data digest type")
+	ErrDataFieldPresented                          = sdkerrors.Register(ModuleName, 423, "data field presented")
+	ErrWrongSubjectKeyIDFormat                     = sdkerrors.Register(ModuleName, 424, "wrong SubjectKeyID format")
+	ErrVidNotFound                                 = sdkerrors.Register(ModuleName, 425, "vid not found")
+	ErrPidNotFound                                 = sdkerrors.Register(ModuleName, 426, "pid not found")
+	ErrPemValuesNotEqual                           = sdkerrors.Register(ModuleName, 427, "pem values are not equal")
+	ErrPkiRevocationDistributionPointAlreadyExists = sdkerrors.Register(ModuleName, 428, "pki revocation distribution point already exists")
+	ErrPkiRevocationDistributionPointDoesNotExists = sdkerrors.Register(ModuleName, 429, "pki revocaition distribution point does not exist")
 )
 
 func NewErrProposedCertificateAlreadyExists(subject string, subjectKeyID string) error {
@@ -144,7 +145,7 @@ func NewErrNonEmptyDataDigest(e interface{}) error {
 }
 
 func NewErrNonEmptyDataDigestType(e interface{}) error {
-	return sdkerrors.Wrapf(ErrEmptyDataFileSize, "%v",
+	return sdkerrors.Wrapf(ErrNonEmptyDataDigestType, "%v",
 		e)
 }
 

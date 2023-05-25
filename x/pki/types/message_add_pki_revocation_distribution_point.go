@@ -21,7 +21,7 @@ func NewMsgAddPkiRevocationDistributionPoint(signer string, vid int32, pid int32
 		Signer:               signer,
 		Vid:                  vid,
 		Pid:                  pid,
-		IsPAA:                isPAA,
+		IsPAA:                &isPAA,
 		Label:                label,
 		CrlSignerCertificate: crlSignerCertificate,
 		IssuerSubjectKeyID:   issuerSubjectKeyID,
@@ -65,12 +65,15 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 		return err
 	}
 
-	isDataDigestInTypes := false
-	for _, digestType := range allowedDataDigestTypes {
-		if digestType == msg.DataDigestType {
-			isDataDigestInTypes = true
+	isDataDigestInTypes := true
+	if msg.DataDigestType != 0 {
+		isDataDigestInTypes = false
+		for _, digestType := range allowedDataDigestTypes {
+			if digestType == msg.DataDigestType {
+				isDataDigestInTypes = true
 
-			break
+				break
+			}
 		}
 	}
 
@@ -89,7 +92,7 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 
 	subjectAsMap := x509.SubjectAsTextToMap(cert.SubjectAsText)
 
-	if msg.IsPAA {
+	if *msg.IsPAA {
 		if msg.Pid != 0 {
 			return pkitypes.NewErrNotEmptyPid("Product ID (pid) must be empty for root certificates when isPAA is true")
 		}
@@ -122,8 +125,12 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 			}
 		} else {
 			if msg.Pid != 0 {
-				return pkitypes.NewErrNotEmptyPid("Product ID (pid) must be empty when it is not found in root certificate")
+				return pkitypes.NewErrNotEmptyPid("Product ID (pid) must be empty when it is not found in non-root certificate")
 			}
+		}
+
+		if cert.IsSelfSigned() {
+			return pkitypes.NewErrNonPAASelfSigned(fmt.Sprintf("CRL Signer Certificate shall not be self-signed if isPAA is False"))
 		}
 
 		strVid, found := subjectAsMap["vid"]
@@ -138,10 +145,6 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 			}
 		} else {
 			return pkitypes.NewErrVidNotFound("vid not found in CRL Signer Certificate subject")
-		}
-
-		if cert.IsSelfSigned() {
-			return pkitypes.NewErrNonPAASelfSigned(fmt.Sprintf("CRL Signer Certificate shall not be self-signed if isPAA is False"))
 		}
 	}
 

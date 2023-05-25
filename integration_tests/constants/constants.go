@@ -81,6 +81,8 @@ var (
 	SupportURL                                        = "https://url.supporturl.dclmodel"
 	ProductURL                                        = "https://url.producturl.dclmodel"
 	LsfURL                                            = "https://url.lsfurl.dclmodel"
+	DataURL                                           = "https://url.data.dclmodel"
+	URLWithoutProtocol                                = "url.dclmodel"
 	LsfRevision                                int32  = 1
 	EmptyLsfRevision                           int32
 	ChipBlob                                          = "Chip Blob Text"
@@ -245,6 +247,66 @@ skxY48EcSnatPseu6GcuFZw/bE/7uvp/PknnofJVAiAFXbU9SkxGi+Lqqa4YQRx9
 tpcQ/mhg7DECwutZLCxKyA==
 -----END CERTIFICATE-----`
 
+	RootCertWithPidVidInSubject = `
+-----BEGIN CERTIFICATE-----
+MIIE0jCCAroCCQD4tZUQwzFn9jANBgkqhkiG9w0BAQUFADArMRMwEQYKKwYBBAGC
+onwCAgwDMTIzMRQwEgYKKwYBBAGConwCAQwEMTIzNDAeFw0yMzA1MjUxMjE1MTBa
+Fw0yODA1MjMxMjE1MTBaMCsxEzARBgorBgEEAYKifAICDAMxMjMxFDASBgorBgEE
+AYKifAIBDAQxMjM0MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA0f+m
+MqTDzgNwt7MPYJQvOP/1OLJuboQ84N44JPDtSWu820LO8sj+iFWtlNt4sCCly3Ej
+52/uJINPQ90Nn17TLdLs59OyLuzO5GtL4jxhGmTcmMXyFrcC/DbKm0ogjQMcUTY+
+bZ5FcfpJAak0yoHEIKbaqhVFOuanFnbwoeDNL+ULF+zoilVCGeChLVhlYYLwJuQq
+KL+1GT66bdwqwxw4W1d9B2K2MDhhDcO6k0pL/SN6ulbPiJnjnmqjQKN7MX+W5VzV
+1OPvmZFuQFpz1jw4a6jOi200eypEayNpYtOKcz9thYJTEXKvRO5pmSc6B9CnXAKh
+8bWKkPV9M3Ooc85UvWpg80doIoctFPB79EJEGs0LL/CCUVBq0DwCWQm9Bi90Mb7i
+ehx3YgTjNF+z70ER1IIR8lXV7bcmM10cyqDHgubYKB5bH00LSEuTK1YrSHQYtIR3
+rWuI8u586LYJQLD0DIwIMkHdXQx+fnYcyIEPf2Ly3I7IfIXc3NdDo7U+2GQXDwxB
+cwn1WttJPvqOdwG420Bnsc7xWIeXlrzCJ9ihyZsV9DT1rXdQcKpKkwxyPp9MO3Ls
++ccU6lBy4962a3ATR+OXodhrbgSVWsEyK1oF3o8KXd8do9KXptbgtGMeNG093giY
+OG99UOzls92F57z2pAm/D9mA+XxuA86yGnE+vUkCAwEAATANBgkqhkiG9w0BAQUF
+AAOCAgEASfLIAKaEKKzpUyjy/Xin+jYeKuPlRju163tvTCWTh1Uh05JSPZxv0bFq
+UDrDAiXyJKwwfgpMfVLv8uPUSRZ1av8uQGFVEFl5y31xkm3Cl5QRtdz0TlugiRk9
+KHMRqqlp+2IKshCynJEKB0AJAIcu0GHEVTav4n2+4H6rBcWToXQI6P9iYwBwTLV8
+lHdq9rkwDTjQaUPOGQAB123eRxeX6Lg0m0UH/CQoYSloZX70YaH7A4Dl+LDV50aI
+YAJZzGuaicgEZ9Qgx54fmTtU19yzCtOt/a9yKEhWSbYSXTcVk1N7+xpYBFf6VbHo
+CIlItQKnm71umcxXRe6rlsHa9PeCAnghRRm9gBF2v5W0Hhu6vVYgA2A/yYC+0t2K
+exiE9tW2I6gW9wAhlzWJua6kkEivMheR48pGvRx0EkawfHC0LAaxjXcbXZrszJO8
+rugkuSzZXp1J6PtGCT2UfanquNwlRimT1Z2qT2gv45AdUf8evy+nyAjXzAMZK60h
+2ev003Q6j4ghyQ+y3RTQsIiBwClN9A1vC5Y0eeu8Ho/MSKHG9M53z/g0/SnzVqXF
+xuif5Y2sgy+F+TY4BVOHGOEzvUTKpi9ugNCe2ohI1v23TUm4o21gB7arvg85shmp
+m5wx8DX7hA1kLjepBhWneIMnS6u44XvlxV3dso70gBo6oaZvOwE=
+-----END CERTIFICATE-----`
+
+	NonRootCertWithPidVidInSubject = `
+-----BEGIN CERTIFICATE-----
+MIIEyjCCArICAQEwDQYJKoZIhvcNAQEFBQAwKzETMBEGCisGAQQBgqJ8AgIMAzEy
+MzEUMBIGCisGAQQBgqJ8AgEMBDEyMzQwHhcNMjMwNTI1MTIxNzQxWhcNMjgwNTIz
+MTIxNzQxWjArMRMwEQYKKwYBBAGConwCAgwDMTIzMRQwEgYKKwYBBAGConwCAQwE
+MTIzNDCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBAMzARxlXvgWOs6X1
+I5M3N3R+5WFYX41iEYhgJuqxGfSWtM34XC+KJITQwBYz1QDy5HjQ9OcqC1KirDeP
+CJL4rJdfEnL9K1nUD71FSi3x+nH4rjKfiL4YAdgX8aULvsUANgQ2yuwjyOoAexOQ
+VDdCA46vh/vqz7DvhRZxupAdZjBIV2v9FRcNIBXTuYhTTvQFAhBX3rDMDivwiNEu
+8TTr9TvwzMvXbJNETWb4Em+QsDudpKLCfDsafY0zVYfUvSqCpmPALuTDq/JlpU+c
+cHSIxMoEAlvs7mOCaqo1yUnpBczTl94mPBj+n9ybLDAcEYCuRY2FfHpE+Vp5eXpA
+hURUxTG2g9a0jVlN/FrPw9LbJ+oFGcipfdCSug4Wck6JmUFSP4a8RgkeKyl+uW7E
+PrcLNQ6wDm/sNVdByvLLyoLDkjhJvbcKJB1ltKTiOlRod0xoZPzVkkbP0qrYpyO+
+qsQhuqc3ivF9gs3ppK+Y3Qo5sbdsZI9rADz3XMYfkqWMp8t4QvRIwnsb4QLeKcFH
+2trzjjuZmv/RniYcLQFcWojONcr4Bhyczg9WNnO2PT/JE/nihnXLyFyv5nBrM17i
+qPjgYzzEAPjigREYZoiYIf21arAAnNdkzuBz8ugH2UJI5FflSmJahperEUTJcgFk
+FZUaeCModzPHz5nHpUy1HIfj+aP7AgMBAAEwDQYJKoZIhvcNAQEFBQADggIBAKlv
+PuQmUc/huNjj70yrfuw9yoMFIXgKlIgm3d5vwbGUcsRDBviJHD8zoUIjN8SeVljF
+ePB6D24za7/0T6Yzvgy14MyfoKhSd4AudwQessyoQ0ThQzMR+mz6aOr0+2Ws9kz0
+oHWeeRecKgnMiS8AdFc8vBsxbTuRbVsdRf1ztNFLa+qymnvlg4bHx8PBOhL3XQ3d
+OZ+9ivkyFRXs04//ABV/4gME8WE83Z2/sLKQj2TyK6T7oVHknvsqTSpwyXc4SZ/6
+fuF3T7t+DpBlJRrCFJ5QR2551Ff1yBnEqR1k89Hxs4CeUT9OsFnqC9hSZpKBNEds
+wZ3WrxEco43g4SdbhY1+uNMuuWD8dOdkoBMcKkzA65YELOYgPE78nT8aQ+C7vgsH
+hDMK6kWfZ+rPFfFvDnyKJ8kl2wq5AKoVUz0Z6W+PebTJVtTZURmFMMMBJKNiIqAQ
+jqfsR7995Hus6gudBfqZMqRDkfFaauXhlXuXa8KRBN+VGPqv8jC8a0ugzUdHF47n
+igv2SOZqUwfhioNamelbMlSnLK4AaCiyqXte5VTJ2DxJwpNJ1UKEUKEiUG+S6Z32
+hnYgZz6KbANGeD+SzwckPt+0Lnq0XH8tc5/YDtiJzc/DGNqmJIl2takq+VQvkltL
+GpBNAxQ9uU5gPFth8ARBVJsveqerg/hO+bArPI72
+-----END CERTIFICATE-----`
+
 	RootIssuer        = "MDQxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApzb21lLXN0YXRlMRAwDgYDVQQKDAdyb290LWNh"
 	RootSubject       = "MDQxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApzb21lLXN0YXRlMRAwDgYDVQQKDAdyb290LWNh"
 	RootSubjectAsText = "O=root-ca,ST=some-state,C=AU"
@@ -279,10 +341,12 @@ tpcQ/mhg7DECwutZLCxKyA==
 	TestSubjectKeyID   = "E2:90:8D:36:9C:3C:A3:C1:13:BB:09:E2:4D:C1:CC:C5:A6:66:91:D4"
 	TestSerialNumber   = "1647312298631"
 
-	TestVID1String = "0xA13"
-	TestPID1String = "0xA11"
-	TestVID2String = "0xA14"
-	TestPID2String = "0xA15"
-	TestVID3String = "0xA16"
-	TestPID3String = "0xA17"
+	TestVID1String            = "0xA13"
+	TestPID1String            = "0xA11"
+	TestVID2String            = "0xA14"
+	TestPID2String            = "0xA15"
+	TestVID3String            = "0xA16"
+	TestPID3String            = "0xA17"
+	SubjectKeyIDWithoutColons = "5A880E6C3653D07FB08971A3F473790930E62BDB"
+	DataDigest                = "9a5d2c1f4b3e6f8d7b1a0c9e2f5d8b7"
 )
