@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
+	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -101,9 +102,9 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 			return pkitypes.NewErrPAANotSelfSigned(fmt.Sprintf("CRL Signer Certificate must be self-signed if isPAA is True"))
 		}
 
-		strVid, found := subjectAsMap["vid"]
+		strVid, found := subjectAsMap["Mvid"]
 		if found {
-			vid, err := strconv.ParseInt(strVid, 10, 32)
+			vid, err := strconv.ParseInt(strings.Trim(strVid, "0x"), 16, 32)
 			if err != nil {
 				return err
 			}
@@ -113,11 +114,15 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 			}
 		}
 	} else {
-		strPid, found := subjectAsMap["pid"]
+		strPid, found := subjectAsMap["Mpid"]
 		if found {
-			pid, err := strconv.ParseInt(strPid, 10, 32)
+			pid, err := strconv.ParseInt(strings.Trim(strPid, "0x"), 16, 32)
 			if err != nil {
 				return err
+			}
+
+			if msg.Pid == 0 {
+				return pkitypes.NewErrPidNotFound("Product ID (pid) must be provided when it is found in non-root certificate")
 			}
 
 			if int32(pid) != msg.Pid {
@@ -133,9 +138,9 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 			return pkitypes.NewErrNonPAASelfSigned(fmt.Sprintf("CRL Signer Certificate shall not be self-signed if isPAA is False"))
 		}
 
-		strVid, found := subjectAsMap["vid"]
+		strVid, found := subjectAsMap["Mvid"]
 		if found {
-			vid, err := strconv.ParseInt(strVid, 10, 32)
+			vid, err := strconv.ParseInt(strings.Trim(strVid, "0x"), 16, 32)
 			if err != nil {
 				return err
 			}

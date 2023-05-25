@@ -1,7 +1,7 @@
 package types
 
 import (
-	"fmt"
+	fmt "fmt"
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -351,6 +351,63 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 				RevocationType:       1,
 			},
 			err: pkitypes.ErrPAANotSelfSigned,
+		},
+		{
+			name: "PAA is true, CRL signer certificate contains vid != msg.vid",
+			msg: MsgAddPkiRevocationDistributionPoint{
+				Signer:               sample.AccAddress(),
+				Vid:                  1,
+				IsPAA:                &true_,
+				CrlSignerCertificate: testconstants.RootCertWithPidVidInSubject,
+				Label:                "label",
+				DataUrl:              testconstants.DataURL,
+				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+				RevocationType:       1,
+			},
+			err: pkitypes.ErrCRLSignerCertificateVidNotEqualMsgVid,
+		},
+		{
+			name: "PAA is false, cert does not contain vid",
+			msg: MsgAddPkiRevocationDistributionPoint{
+				Signer:               sample.AccAddress(),
+				Vid:                  1,
+				IsPAA:                &false_,
+				CrlSignerCertificate: testconstants.IntermediateCertPem,
+				Label:                "label",
+				DataUrl:              testconstants.DataURL,
+				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+				RevocationType:       1,
+			},
+			err: pkitypes.ErrVidNotFound,
+		},
+		{
+			name: "PAA is false, cert pid provided, msg pid does not provided",
+			msg: MsgAddPkiRevocationDistributionPoint{
+				Signer:               sample.AccAddress(),
+				Vid:                  1,
+				IsPAA:                &false_,
+				CrlSignerCertificate: testconstants.NonRootCertWithPidVidInSubject,
+				Label:                "label",
+				DataUrl:              testconstants.DataURL,
+				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+				RevocationType:       1,
+			},
+			err: pkitypes.ErrPidNotFound,
+		},
+		{
+			name: "PAA is false, cert pid != msg.pid",
+			msg: MsgAddPkiRevocationDistributionPoint{
+				Signer:               sample.AccAddress(),
+				Vid:                  1,
+				IsPAA:                &false_,
+				CrlSignerCertificate: testconstants.NonRootCertWithPidVidInSubject,
+				Label:                "label",
+				DataUrl:              testconstants.DataURL,
+				Pid:                  1,
+				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+				RevocationType:       1,
+			},
+			err: pkitypes.ErrCRLSignerCertificatePidNotEqualMsgPid,
 		},
 	}
 

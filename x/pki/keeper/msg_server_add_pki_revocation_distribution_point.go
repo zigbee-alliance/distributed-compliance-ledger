@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 	"strconv"
+	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -31,9 +32,9 @@ func (k msgServer) AddPkiRevocationDistributionPoint(goCtx context.Context, msg 
 	if crlSignerCertificate.IsSelfSigned() {
 		subjectAsMap := x509.SubjectAsTextToMap(crlSignerCertificate.SubjectAsText)
 
-		strVid, found := subjectAsMap["vid"]
+		strVid, found := subjectAsMap["Mvid"]
 		if found {
-			vid, err := strconv.ParseInt(strVid, 10, 32)
+			vid, err := strconv.ParseInt(strings.Trim(strVid, "0x"), 16, 32)
 			if err != nil {
 				return nil, err
 			}

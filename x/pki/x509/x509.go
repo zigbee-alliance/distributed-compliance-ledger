@@ -63,8 +63,8 @@ func ToSubjectAsText(subject string) string {
 	oldVIDKey := "1.3.6.1.4.1.37244.2.1"
 	oldPIDKey := "1.3.6.1.4.1.37244.2.2"
 
-	newVIDKey := "vid"
-	newPIDKey := "pid"
+	newVIDKey := "Mvid"
+	newPIDKey := "Mpid"
 
 	subjectAsText := subject
 	subjectAsText = FormatOID(subjectAsText, oldVIDKey, newVIDKey)
@@ -74,7 +74,7 @@ func ToSubjectAsText(subject string) string {
 }
 
 func SubjectAsTextToMap(subjectAsText string) map[string]string {
-	splittedSubjectText := strings.Split(subjectAsText, ", ")
+	splittedSubjectText := strings.Split(subjectAsText, ",")
 	subjectMap := make(map[string]string)
 	for _, elem := range splittedSubjectText {
 		splittedElem := strings.Split(elem, "=")

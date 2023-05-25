@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 	"strconv"
+	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -46,9 +47,9 @@ func (k msgServer) UpdatePkiRevocationDistributionPoint(goCtx context.Context, m
 
 		subjectAsMap := x509.SubjectAsTextToMap(crlSignerCertificate.SubjectAsText)
 
-		strVid, found := subjectAsMap["vid"]
+		strVid, found := subjectAsMap["Mvid"]
 		if found {
-			_, err := strconv.ParseInt(strVid, 10, 32)
+			_, err := strconv.ParseInt(strings.Trim(strVid, "0x"), 16, 32)
 			if err != nil {
 				return nil, err
 			}
@@ -68,9 +69,9 @@ func (k msgServer) UpdatePkiRevocationDistributionPoint(goCtx context.Context, m
 			if pkiRevocationDistributionPoint.CrlSignerCertificate != "" {
 				subjectAsMap := x509.SubjectAsTextToMap(crlSignerCertificate.SubjectAsText)
 
-				strVid, found := subjectAsMap["vid"]
+				strVid, found := subjectAsMap["Mvid"]
 				if found {
-					vid, err := strconv.ParseInt(strVid, 10, 32)
+					vid, err := strconv.ParseInt(strings.Trim(strVid, "0x"), 16, 32)
 					if err != nil {
 						return nil, err
 					}
@@ -92,7 +93,7 @@ func (k msgServer) UpdatePkiRevocationDistributionPoint(goCtx context.Context, m
 			if msg.CrlSignerCertificate != "" {
 				subjectAsMap := x509.SubjectAsTextToMap(msg.CrlSignerCertificate)
 
-				_, found := subjectAsMap["vid"]
+				_, found := subjectAsMap["Mvid"]
 				if found {
 					return nil, pkitypes.NewErrNotEmptyVid("updated CRL signed certificate must not contain vid in its subject")
 				}
@@ -116,9 +117,9 @@ func (k msgServer) UpdatePkiRevocationDistributionPoint(goCtx context.Context, m
 		if msg.CrlSignerCertificate != "" {
 			subjectAsMap := x509.SubjectAsTextToMap(msg.CrlSignerCertificate)
 
-			strVid, found := subjectAsMap["vid"]
+			strVid, found := subjectAsMap["Mvid"]
 			if found {
-				vid, err := strconv.ParseInt(strVid, 10, 32)
+				vid, err := strconv.ParseInt(strings.Trim(strVid, "0x"), 16, 32)
 				if err != nil {
 					return nil, err
 				}
@@ -128,9 +129,9 @@ func (k msgServer) UpdatePkiRevocationDistributionPoint(goCtx context.Context, m
 				}
 			}
 
-			strPid, found := subjectAsMap["pid"]
+			strPid, found := subjectAsMap["Mpid"]
 			if found {
-				pid, err := strconv.ParseInt(strPid, 10, 32)
+				pid, err := strconv.ParseInt(strings.Trim(strPid, "0x"), 16, 32)
 				if err != nil {
 					return nil, err
 				}
@@ -141,9 +142,9 @@ func (k msgServer) UpdatePkiRevocationDistributionPoint(goCtx context.Context, m
 			}
 
 			if pkiRevocationDistributionPoint.Pid != 0 {
-				strPid, found := subjectAsMap["pid"]
+				strPid, found := subjectAsMap["Mpid"]
 				if found {
-					pid, err := strconv.ParseInt(strPid, 10, 32)
+					pid, err := strconv.ParseInt(strings.Trim(strPid, "0x"), 16, 32)
 					if err != nil {
 						return nil, err
 					}

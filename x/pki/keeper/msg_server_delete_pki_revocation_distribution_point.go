@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 	"strconv"
+	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -35,9 +36,9 @@ func (k msgServer) DeletePkiRevocationDistributionPoint(goCtx context.Context, m
 	if crlSignerCertificate.IsSelfSigned() {
 		subjectAsMap := x509.SubjectAsTextToMap(crlSignerCertificate.SubjectAsText)
 
-		strVid, found := subjectAsMap["vid"]
+		strVid, found := subjectAsMap["Mvid"]
 		if found {
-			_, err := strconv.ParseInt(strVid, 10, 32)
+			_, err := strconv.ParseInt(strings.Trim(strVid, "0x"), 16, 32)
 			if err != nil {
 				return nil, err
 			}
@@ -77,9 +78,9 @@ func (k msgServer) DeletePkiRevocationDistributionPoint(goCtx context.Context, m
 
 		subjectAsMap := x509.SubjectAsTextToMap(crlSignerCertificate.SubjectAsText)
 
-		strVid, found := subjectAsMap["vid"]
+		strVid, found := subjectAsMap["Mvid"]
 		if found {
-			vid, err := strconv.ParseInt(strVid, 10, 32)
+			vid, err := strconv.ParseInt(strings.Trim(strVid, "0x"), 16, 32)
 			if err != nil {
 				return nil, err
 			}
