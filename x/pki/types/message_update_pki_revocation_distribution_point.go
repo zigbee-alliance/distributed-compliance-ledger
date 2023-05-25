@@ -60,12 +60,15 @@ func (msg *MsgUpdatePkiRevocationDistributionPoint) ValidateBasic() error {
 		return err
 	}
 
-	isDataDigestInTypes := false
-	for _, digestType := range allowedDataDigestTypes {
-		if digestType == msg.DataDigestType {
-			isDataDigestInTypes = true
+	isDataDigestInTypes := true
+	if msg.DataDigestType != 0 {
+		isDataDigestInTypes = false
+		for _, digestType := range allowedDataDigestTypes {
+			if digestType == msg.DataDigestType {
+				isDataDigestInTypes = true
 
-			break
+				break
+			}
 		}
 	}
 
