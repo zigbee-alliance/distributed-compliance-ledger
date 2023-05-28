@@ -49,11 +49,6 @@ func (k msgServer) AddPkiRevocationDistributionPoint(goCtx context.Context, msg 
 
 			if int32(vid) != signerAccount.VendorID {
 				return nil, pkitypes.NewErrCRLSignerCertificateVidNotEqualAccountVid("CRL signer Certificate vid must equal to signer account vid")
-			} else if !k.dclauthKeeper.HasRole(ctx, signerAddr, dclauthtypes.VendorAdmin) {
-				return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
-					"MsgAddPkiRevocationDistributionPoint transaction should be signed by an account with the \"%s\" role since certificate is self-signed and vid is not equal to message vid",
-					dclauthtypes.VendorAdmin,
-				)
 			}
 		}
 

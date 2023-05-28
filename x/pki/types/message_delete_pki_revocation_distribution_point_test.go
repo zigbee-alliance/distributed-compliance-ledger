@@ -108,7 +108,7 @@ func TestMsgDeletePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "example msg",
 			msg: MsgDeletePkiRevocationDistributionPoint{
 				Signer:             sample.AccAddress(),
-				Vid:                65522,
+				Vid:                65521,
 				Label:              "label",
 				IssuerSubjectKeyID: testconstants.SubjectKeyIDWithoutColons,
 			},
