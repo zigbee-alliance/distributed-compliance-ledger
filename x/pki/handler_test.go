@@ -2195,7 +2195,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAANewCertificateNotPAA(t 
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 	}
 	_, err = setup.Handler(setup.Ctx, &updatePkiRevocationDistributionPoint)
-	require.ErrorIs(t, err, pkitypes.ErrPAANotSelfSigned)
+	require.ErrorIs(t, err, pkitypes.ErrRootCertificateIsNotSelfSigned)
 }
 
 func TestHandler_UpdatePkiRevocationDistributionPoint_PAASenderNotVendor(t *testing.T) {

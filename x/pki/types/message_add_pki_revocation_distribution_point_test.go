@@ -217,7 +217,7 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 				DataDigestType:       1,
 				RevocationType:       1,
 			},
-			err: pkitypes.ErrNonEmptyDataDigestType,
+			err: pkitypes.ErrNotEmptyDataDigestType,
 		},
 		{
 			name: "dataDigest presented, DataDigestType not presented",
@@ -336,7 +336,7 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 				RevocationType:       1,
 			},
-			err: pkitypes.ErrNonPAASelfSigned,
+			err: pkitypes.ErrNonRootCertificateSelfSigned,
 		},
 		{
 			name: "IsPAA true, certificate is non-root",
@@ -350,7 +350,7 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 				RevocationType:       1,
 			},
-			err: pkitypes.ErrPAANotSelfSigned,
+			err: pkitypes.ErrRootCertificateIsNotSelfSigned,
 		},
 		{
 			name: "PAA is true, CRL signer certificate contains vid != msg.vid",

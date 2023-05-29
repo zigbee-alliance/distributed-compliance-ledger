@@ -99,7 +99,7 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 		}
 
 		if !cert.IsSelfSigned() {
-			return pkitypes.NewErrPAANotSelfSigned(fmt.Sprintf("CRL Signer Certificate must be self-signed if isPAA is True"))
+			return pkitypes.NewErrRootCertificateIsNotSelfSigned(fmt.Sprintf("CRL Signer Certificate must be self-signed if isPAA is True"))
 		}
 
 		strVid, found := subjectAsMap["Mvid"]
@@ -135,7 +135,7 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 		}
 
 		if cert.IsSelfSigned() {
-			return pkitypes.NewErrNonPAASelfSigned(fmt.Sprintf("CRL Signer Certificate shall not be self-signed if isPAA is False"))
+			return pkitypes.NewErrNonRootCertificateSelfSigned(fmt.Sprintf("CRL Signer Certificate shall not be self-signed if isPAA is False"))
 		}
 
 		strVid, found := subjectAsMap["Mvid"]
@@ -162,7 +162,7 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 	}
 
 	if msg.DataDigest == "" && msg.DataDigestType != 0 {
-		return pkitypes.NewErrNonEmptyDataDigestType("Data Digest Type must be provided only if Data Digest is provided")
+		return pkitypes.NewErrNotEmptyDataDigestType("Data Digest Type must be provided only if Data Digest is provided")
 	}
 
 	if msg.DataDigest != "" && msg.DataDigestType == 0 {

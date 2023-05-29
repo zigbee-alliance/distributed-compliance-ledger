@@ -21,20 +21,20 @@ var (
 	ErrInvalidRevocationType                       = sdkerrors.Register(ModuleName, 411, "invalid revocation type")
 	ErrNotEmptyPid                                 = sdkerrors.Register(ModuleName, 412, "pid is not empty")
 	ErrNotEmptyVid                                 = sdkerrors.Register(ModuleName, 413, "vid is not empty")
-	ErrPAANotSelfSigned                            = sdkerrors.Register(ModuleName, 414, "PAA is not self-signed")
+	ErrRootCertificateIsNotSelfSigned              = sdkerrors.Register(ModuleName, 414, "Root certificate is not self-signed")
 	ErrCRLSignerCertificatePidNotEqualMsgPid       = sdkerrors.Register(ModuleName, 415, "CRLSignerCertificate pid does not equal message pid")
 	ErrCRLSignerCertificateVidNotEqualMsgVid       = sdkerrors.Register(ModuleName, 416, "CRLSignerCertificate vid does not equal message vid")
 	ErrCRLSignerCertificateVidNotEqualAccountVid   = sdkerrors.Register(ModuleName, 417, "CRLSignerCertificate vid does not equal account vid")
-	ErrNonPAASelfSigned                            = sdkerrors.Register(ModuleName, 418, "non PAA certificate self signed")
+	ErrNonRootCertificateSelfSigned                = sdkerrors.Register(ModuleName, 418, "Intermediate or leaf certificate must not be self-signed")
 	ErrEmptyDataFileSize                           = sdkerrors.Register(ModuleName, 419, "empty data file size")
 	ErrEmptyDataDigest                             = sdkerrors.Register(ModuleName, 420, "empty data digest")
 	ErrEmptyDataDigestType                         = sdkerrors.Register(ModuleName, 421, "empty data digest type")
-	ErrNonEmptyDataDigestType                      = sdkerrors.Register(ModuleName, 422, "non empty data digest type")
-	ErrDataFieldPresented                          = sdkerrors.Register(ModuleName, 423, "data field presented")
+	ErrNotEmptyDataDigestType                      = sdkerrors.Register(ModuleName, 422, "not empty data digest type")
+	ErrDataFieldPresented                          = sdkerrors.Register(ModuleName, 423, "one or more of DataDigest, DataDigestType, DataFileSize fields presented")
 	ErrWrongSubjectKeyIDFormat                     = sdkerrors.Register(ModuleName, 424, "wrong SubjectKeyID format")
 	ErrVidNotFound                                 = sdkerrors.Register(ModuleName, 425, "vid not found")
 	ErrPidNotFound                                 = sdkerrors.Register(ModuleName, 426, "pid not found")
-	ErrPemValuesNotEqual                           = sdkerrors.Register(ModuleName, 427, "pem values are not equal")
+	ErrPemValuesNotEqual                           = sdkerrors.Register(ModuleName, 427, "pem values of certificates are not equal")
 	ErrPkiRevocationDistributionPointAlreadyExists = sdkerrors.Register(ModuleName, 428, "pki revocation distribution point already exists")
 	ErrPkiRevocationDistributionPointDoesNotExists = sdkerrors.Register(ModuleName, 429, "pki revocaition distribution point does not exist")
 )
@@ -119,8 +119,8 @@ func NewErrNotEmptyVid(e interface{}) error {
 		e)
 }
 
-func NewErrPAANotSelfSigned(e interface{}) error {
-	return sdkerrors.Wrapf(ErrPAANotSelfSigned, "%v",
+func NewErrRootCertificateIsNotSelfSigned(e interface{}) error {
+	return sdkerrors.Wrapf(ErrRootCertificateIsNotSelfSigned, "%v",
 		e)
 }
 
@@ -134,8 +134,8 @@ func NewErrCRLSignerCertificateVidNotEqualMsgVid(e interface{}) error {
 		e)
 }
 
-func NewErrNonPAASelfSigned(e interface{}) error {
-	return sdkerrors.Wrapf(ErrNonPAASelfSigned, "%v",
+func NewErrNonRootCertificateSelfSigned(e interface{}) error {
+	return sdkerrors.Wrapf(ErrNonRootCertificateSelfSigned, "%v",
 		e)
 }
 
@@ -144,8 +144,8 @@ func NewErrNonEmptyDataDigest(e interface{}) error {
 		e)
 }
 
-func NewErrNonEmptyDataDigestType(e interface{}) error {
-	return sdkerrors.Wrapf(ErrNonEmptyDataDigestType, "%v",
+func NewErrNotEmptyDataDigestType(e interface{}) error {
+	return sdkerrors.Wrapf(ErrNotEmptyDataDigestType, "%v",
 		e)
 }
 

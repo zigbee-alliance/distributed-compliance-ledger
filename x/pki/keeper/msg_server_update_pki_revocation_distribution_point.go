@@ -41,61 +41,47 @@ func (k msgServer) UpdatePkiRevocationDistributionPoint(goCtx context.Context, m
 			}
 
 			if !updatedCrlSignerCertificate.IsSelfSigned() {
-				return nil, pkitypes.NewErrPAANotSelfSigned("Updated CRL signer certificate must be self-signed since old one was self-signed")
+				return nil, pkitypes.NewErrRootCertificateIsNotSelfSigned("Updated CRL signer certificate must be self-signed since old one was self-signed")
 			}
 		}
 
 		subjectAsMap := x509.SubjectAsTextToMap(crlSignerCertificate.SubjectAsText)
 
 		strVid, found := subjectAsMap["Mvid"]
-		if found {
-			_, err := strconv.ParseInt(strings.Trim(strVid, "0x"), 16, 32)
-			if err != nil {
-				return nil, err
-			}
 
-			// check if signer has vendor role
-			if !k.dclauthKeeper.HasRole(ctx, signerAddr, dclauthtypes.Vendor) {
-				return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
-					"MsgUpdatePkiRevocationDistributionPoint transaction should be signed by an account with the \"%s\" role",
-					dclauthtypes.Vendor,
-				)
-			}
+		if !found {
+			return nil, pkitypes.NewErrVidNotFound("vid must be encoded in Revocation Distribution Point's Signer Certificate")
+		}
 
-			if signerAccount.VendorID != msg.Vid {
-				return nil, pkitypes.NewErrCRLSignerCertificateVidNotEqualAccountVid("CRL signer Certificate vid must equal to signer account vid")
-			}
+		_, err := strconv.ParseInt(strings.Trim(strVid, "0x"), 16, 32)
+		if err != nil {
+			return nil, err
+		}
 
-			if pkiRevocationDistributionPoint.CrlSignerCertificate != "" {
-				subjectAsMap := x509.SubjectAsTextToMap(crlSignerCertificate.SubjectAsText)
+		// check if signer has vendor role
+		if !k.dclauthKeeper.HasRole(ctx, signerAddr, dclauthtypes.Vendor) {
+			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+				"MsgUpdatePkiRevocationDistributionPoint transaction should be signed by an account with the \"%s\" role",
+				dclauthtypes.Vendor,
+			)
+		}
 
-				strVid, found := subjectAsMap["Mvid"]
-				if found {
-					vid, err := strconv.ParseInt(strings.Trim(strVid, "0x"), 16, 32)
-					if err != nil {
-						return nil, err
-					}
+		if signerAccount.VendorID != msg.Vid {
+			return nil, pkitypes.NewErrCRLSignerCertificateVidNotEqualAccountVid("CRL signer Certificate vid must equal to signer account vid")
+		}
 
-					if int32(vid) != msg.Vid {
-						return nil, pkitypes.NewErrCRLSignerCertificateVidNotEqualMsgVid("CRL signer Certificate vid must equal to message vid")
-					}
+		if pkiRevocationDistributionPoint.CrlSignerCertificate != "" {
+			subjectAsMap := x509.SubjectAsTextToMap(crlSignerCertificate.SubjectAsText)
+
+			strVid, found := subjectAsMap["Mvid"]
+			if found {
+				vid, err := strconv.ParseInt(strings.Trim(strVid, "0x"), 16, 32)
+				if err != nil {
+					return nil, err
 				}
-			}
-		} else {
-			// check if signer has vendor admin role
-			if !k.dclauthKeeper.HasRole(ctx, signerAddr, dclauthtypes.VendorAdmin) {
-				return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
-					"MsgUpdatePkiRevocationDistributionPoint transaction should be signed by an account with the \"%s\" role",
-					dclauthtypes.VendorAdmin,
-				)
-			}
 
-			if msg.CrlSignerCertificate != "" {
-				subjectAsMap := x509.SubjectAsTextToMap(msg.CrlSignerCertificate)
-
-				_, found := subjectAsMap["Mvid"]
-				if found {
-					return nil, pkitypes.NewErrNotEmptyVid("updated CRL signed certificate must not contain vid in its subject")
+				if int32(vid) != msg.Vid {
+					return nil, pkitypes.NewErrCRLSignerCertificateVidNotEqualMsgVid("CRL signer Certificate vid must equal to message vid")
 				}
 			}
 		}

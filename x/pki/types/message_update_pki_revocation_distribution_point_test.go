@@ -115,7 +115,7 @@ func TestMsgUpdatePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 				DataDigestType:       1,
 			},
-			err: pkitypes.ErrNonEmptyDataDigestType,
+			err: pkitypes.ErrNotEmptyDataDigestType,
 		},
 		{
 			name: "dataDigest presented, DataDigestType not presented",

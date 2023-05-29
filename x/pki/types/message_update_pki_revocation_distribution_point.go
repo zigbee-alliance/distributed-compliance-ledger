@@ -85,7 +85,7 @@ func (msg *MsgUpdatePkiRevocationDistributionPoint) ValidateBasic() error {
 	}
 
 	if msg.DataDigest == "" && msg.DataDigestType != 0 {
-		return pkitypes.NewErrNonEmptyDataDigestType("Data Digest Type must be provided only if Data Digest is provided")
+		return pkitypes.NewErrNotEmptyDataDigestType("Data Digest Type must be provided only if Data Digest is provided")
 	}
 
 	if msg.DataDigest != "" && msg.DataDigestType == 0 {

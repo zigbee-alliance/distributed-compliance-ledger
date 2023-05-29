@@ -75,17 +75,7 @@ func (k msgServer) AddPkiRevocationDistributionPoint(goCtx context.Context, msg 
 			)
 		}
 
-		approvedCertificates, isFound := k.GetApprovedCertificates(ctx, crlSignerCertificate.Issuer, crlSignerCertificate.AuthorityKeyID)
-		if !isFound {
-			return nil, pkitypes.NewErrCertificateDoesNotExist(crlSignerCertificate.Issuer, crlSignerCertificate.AuthorityKeyID)
-		}
-
-		cert, err := x509.DecodeX509Certificate(approvedCertificates.Certs[0].PemCert)
-		if err != nil {
-			return nil, err
-		}
-
-		_, _, err = k.verifyCertificate(ctx, cert)
+		_, _, err = k.verifyCertificate(ctx, crlSignerCertificate)
 		if err != nil {
 			return nil, err
 		}

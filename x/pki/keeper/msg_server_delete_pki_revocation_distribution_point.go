@@ -37,31 +37,25 @@ func (k msgServer) DeletePkiRevocationDistributionPoint(goCtx context.Context, m
 		subjectAsMap := x509.SubjectAsTextToMap(crlSignerCertificate.SubjectAsText)
 
 		strVid, found := subjectAsMap["Mvid"]
-		if found {
-			_, err := strconv.ParseInt(strings.Trim(strVid, "0x"), 16, 32)
-			if err != nil {
-				return nil, err
-			}
+		_, err := strconv.ParseInt(strings.Trim(strVid, "0x"), 16, 32)
+		if err != nil {
+			return nil, err
+		}
 
-			// check if signer has vendor role
-			if !k.dclauthKeeper.HasRole(ctx, signerAddr, dclauthtypes.Vendor) {
-				return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
-					"MsgDeletePkiRevocationDistributionPoint transaction should be signed by an account with the \"%s\" role",
-					dclauthtypes.Vendor,
-				)
-			}
+		if !found {
+			return nil, pkitypes.NewErrVidNotFound("vid must be encoded in Revocation Distribution Point's Signer Certificate")
+		}
 
-			if signerAccount.VendorID != msg.Vid {
-				return nil, pkitypes.NewErrCRLSignerCertificateVidNotEqualAccountVid("CRL signer Certificate vid must equal to signer account vid")
-			}
-		} else {
-			// check if signer has vendor admin role
-			if !k.dclauthKeeper.HasRole(ctx, signerAddr, dclauthtypes.VendorAdmin) {
-				return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
-					"MsgDeletePkiRevocationDistributionPoint transaction should be signed by an account with the \"%s\" role",
-					dclauthtypes.VendorAdmin,
-				)
-			}
+		// check if signer has vendor role
+		if !k.dclauthKeeper.HasRole(ctx, signerAddr, dclauthtypes.Vendor) {
+			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+				"MsgDeletePkiRevocationDistributionPoint transaction should be signed by an account with the \"%s\" role",
+				dclauthtypes.Vendor,
+			)
+		}
+
+		if signerAccount.VendorID != msg.Vid {
+			return nil, pkitypes.NewErrCRLSignerCertificateVidNotEqualAccountVid("CRL signer Certificate vid must equal to signer account vid")
 		}
 	} else {
 		// check if signer has vendor role
@@ -79,15 +73,18 @@ func (k msgServer) DeletePkiRevocationDistributionPoint(goCtx context.Context, m
 		subjectAsMap := x509.SubjectAsTextToMap(crlSignerCertificate.SubjectAsText)
 
 		strVid, found := subjectAsMap["Mvid"]
-		if found {
-			vid, err := strconv.ParseInt(strings.Trim(strVid, "0x"), 16, 32)
-			if err != nil {
-				return nil, err
-			}
 
-			if int32(vid) != msg.Vid {
-				return nil, pkitypes.NewErrCRLSignerCertificateVidNotEqualMsgVid("CRL signer Certificate vid must equal to message vid")
-			}
+		if !found {
+			return nil, pkitypes.NewErrVidNotFound("vid must be encoded in non-root CRL signer certificate")
+		}
+
+		vid, err := strconv.ParseInt(strings.Trim(strVid, "0x"), 16, 32)
+		if err != nil {
+			return nil, err
+		}
+
+		if int32(vid) != msg.Vid {
+			return nil, pkitypes.NewErrCRLSignerCertificateVidNotEqualMsgVid("CRL signer Certificate vid must equal to message vid")
 		}
 	}
 
