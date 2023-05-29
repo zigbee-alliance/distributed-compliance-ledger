@@ -193,15 +193,15 @@ Gets a list of all revocation distribution points.
 ### Dynamic validation (when adding to a block)
 
 #### ADD_PKI_REVOCATION_DISTRIBUTION_POINT
+- The sender must be a Vendor account
 - If `crlSignerCertificate` is a PAA (root certificate, self-signed):
-   - If `CRLSignerCertificate` encodes a vid in its subject, then the sender must be a Vendor account
-     and `VendorID` field must be equal to the Vendor account's VID. 
-     Otherwise, the sender must be a Vendor Admin account.
+   - If `CRLSignerCertificate` encodes a vid in its subject, then `VendorID` field must be equal to the Vendor account's VID. 
+     Otherwise, Unsupported Error.
        - both OID and text versions of VID in a certificate can be supported (either `Mvid` or `1.3.6.1.4.1.37244.2.1`, see `x509.ToSubjectAsText` method and "2.2. Encoding of Vendor ID and Product ID in subject and issuer fields" section in spec) 
    - Query a certificate by `crlSignerCertificate` Subject and Subject Key ID. If it's not found - error.
    - Check that pem value of the found certificate is equal to `crlSignerCertificate` value.
 - If `crlSignerCertificate` is a PAI (intermediate certificate, not self-signed):
-   - Check that the sender is a Vendor account and `VendorID` field must be equal to the Vendor account's VID.
+   - Check that `VendorID` field must be equal to the Vendor account's VID.
    - Check that `crlSignerCertificate` is chained back to certificates present on DCL (`x509.verifyCertificate` method):
        - Query for a PAA where `Subject == CRLSignerCertificate.Issuer` and `SubjectKeyID == CRLSignerCertificate.AuthorityKeyId`
        - Build certification path with both elements, verify path
@@ -210,28 +210,21 @@ Gets a list of all revocation distribution points.
 #### UPDATE_PKI_REVOCATION_DISTRIBUTION_POINT
 
 - Check that Revocation Distribution Point is found by (VendorID, Label, IssuerSubjectKeyID)
-- If Revocation Distribution Point's Signer Certificate is a PAA (root certificate, self-signed):
-  - If `crlSignerCertificate` is provided, it must be a PAA (root certificate, self-signed)
-  - If Revocation Distribution Point's Signer Certificate encodes a vid in its subject (both OID and text versions of VID in a certificate can be supported (either `Mvid` or `1.3.6.1.4.1.37244.2.1`, see `x509.ToSubjectAsText` method and "2.2. Encoding of Vendor ID and Product ID in subject and issuer fields" section in spec))
-     - the sender must be a Vendor account and `VendorID` field must be equal to the Vendor account's VID.
-     - if `crlSignerCertificate` is provided, it must also encode the same vid in its subject
-  - Otherwise
-     - the sender must be a Vendor Admin account.
-     - if `crlSignerCertificate` is provided, no vid must be encoded in its subject
-- If Revocation Distribution Point's Signer Certificate is a PAI (intermediate certificate, not self-signed):
-    - Check that the sender is a Vendor account and `VendorID` field must be equal to the Vendor account's VID.
-    - If `crlSignerCertificate` is provided
-      - it must encode a vid in its subject and this vid must be equal to `VendorID` field
-      - if it encodes a pid in its subject, it must be equal to the `ProductID` field
-      - if `ProductID` field was provided, the new certificate must encode a pid in its subject, and the pid value must be equal to `ProductID`.
+- The sender must be a Vendor account
+- Check that Revocation Distribution Point's `VendorID` field must be equal to the Vendor account's VID.
+- If `crlSignerCertificate` is provided:
+   - If Revocation Distribution Point's Signer Certificate is a PAA (root certificate, self-signed):
+      - `crlSignerCertificate` must be a PAA (root certificate, self-signed)
+      - if `crlSignerCertificate` encodes a VID in its subject, it must be equal to Revocation Distribution Point's `VendorID` field
+      - if `crlSignerCertificate` doesn't encode a VID in its subject, throw Unsupported Error 
+   - If Revocation Distribution Point's Signer Certificate is a PAI (intermediate certificate, not self-signed):
+     - `crlSignerCertificate` must be a PAI
+     - `crlSignerCertificate` must encode a vid in its subject and this vid must be equal to `VendorID` field
+     - if `crlSignerCertificate` encodes a pid in its subject, it must be equal to the `ProductID` field
+
 
 #### DELETE_PKI_REVOCATION_DISTRIBUTION_POINT
 
 - Check that Revocation Distribution Point is found by (VendorID, Label, IssuerSubjectKeyID)
-- If Revocation Distribution Point's Signer Certificate is a PAA (root certificate, self-signed):
-    - If Revocation Distribution Point's Signer Certificate encodes a vid in its subject, then the sender must be a Vendor account
-      and `VendorID` field must be equal to the Vendor account's VID.
-      Otherwise, the sender must be a Vendor Admin account.
-        - both OID and text versions of VID in a certificate can be supported (either `Mvid` or `1.3.6.1.4.1.37244.2.1`, see `x509.ToSubjectAsText` method and "2.2. Encoding of Vendor ID and Product ID in subject and issuer fields" section in spec)
-- If Revocation Distribution Point's Signer Certificate is a PAI (intermediate certificate, not self-signed):
-- Check that the sender is a Vendor account and `VendorID` field must be equal to the Vendor account's VID.ust encode a vid in its subject and this vid must be equal to `VendorID` field
+- Check that the sender is a Vendor account
+- Check that Revocation Distribution Point's `VendorID` field must be equal to the Vendor account's VID.
