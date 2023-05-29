@@ -234,4 +234,5 @@ Gets a list of all revocation distribution points.
       Otherwise, the sender must be a Vendor Admin account.
         - both OID and text versions of VID in a certificate can be supported (either `Mvid` or `1.3.6.1.4.1.37244.2.1`, see `x509.ToSubjectAsText` method and "2.2. Encoding of Vendor ID and Product ID in subject and issuer fields" section in spec)
 - If Revocation Distribution Point's Signer Certificate is a PAI (intermediate certificate, not self-signed):
-- Check that the sender is a Vendor account and `VendorID` field must be equal to the Vendor account's VID.ust encode a vid in its subject and this vid must be equal to `VendorID` field
+    - Check that the sender is a Vendor account and `VendorID` field must be equal to the Vendor account's VID. 
+    - `crlSignerCertificate` must encode a vid in its subject and this vid must be equal to `VendorID` field
