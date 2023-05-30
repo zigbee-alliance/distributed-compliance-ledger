@@ -122,7 +122,7 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 			}
 
 			if msg.Pid == 0 {
-				return pkitypes.NewErrPidNotFound("Product ID (pid) must be provided when it is found in non-root certificate")
+				return pkitypes.NewErrPidNotFound("Product ID (pid) must be provided when it is found in non-root CRL Signer Certificate")
 			}
 
 			if int32(pid) != msg.Pid {
