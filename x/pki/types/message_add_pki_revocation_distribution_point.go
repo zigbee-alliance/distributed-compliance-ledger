@@ -110,7 +110,7 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 			}
 
 			if int32(vid) != msg.Vid {
-				return pkitypes.NewErrCRLSignerCertificateVidNotEqualMsgVid("CRL Signer Certificate vid must equal to message vid")
+				return pkitypes.NewErrCRLSignerCertificateVidNotEqualMsgVid("CRL Signer Certificate's vid must be equal to the provided vid in the message")
 			}
 		}
 	} else {
