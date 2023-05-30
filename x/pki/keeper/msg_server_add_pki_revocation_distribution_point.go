@@ -29,45 +29,41 @@ func (k msgServer) AddPkiRevocationDistributionPoint(goCtx context.Context, msg 
 
 	signerAccount, _ := k.dclauthKeeper.GetAccountO(ctx, signerAddr)
 
+	// check if signer has vendor role
+	if !k.dclauthKeeper.HasRole(ctx, signerAddr, dclauthtypes.Vendor) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+			"MsgAddPkiRevocationDistributionPoint transaction should be signed by an account with the \"%s\" role",
+			dclauthtypes.Vendor,
+		)
+	}
+
 	if crlSignerCertificate.IsSelfSigned() {
 		subjectAsMap := x509.SubjectAsTextToMap(crlSignerCertificate.SubjectAsText)
 
-		strVid, found := subjectAsMap["Mvid"]
-		if found {
-			vid, err := strconv.ParseInt(strings.Trim(strVid, "0x"), 16, 32)
-			if err != nil {
-				return nil, err
-			}
+		strVid, found := subjectAsMap[x509.Mvid]
 
-			// check if signer has vendor role
-			if !k.dclauthKeeper.HasRole(ctx, signerAddr, dclauthtypes.Vendor) {
-				return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
-					"MsgAddPkiRevocationDistributionPoint transaction should be signed by an account with the \"%s\" role",
-					dclauthtypes.Vendor,
-				)
-			}
+		if !found {
+			return nil, pkitypes.NewErrUnsupportedOperation("publishing a revocation point for non-VID scoped root certificates is currently not supported")
+		}
 
-			if int32(vid) != signerAccount.VendorID {
-				return nil, pkitypes.NewErrCRLSignerCertificateVidNotEqualAccountVid("CRL signer Certificate vid must equal to signer account vid")
-			}
+		vid, err := strconv.ParseInt(strings.Trim(strVid, "0x"), 16, 32)
+		if err != nil {
+			return nil, err
+		}
+
+		if int32(vid) != signerAccount.VendorID {
+			return nil, pkitypes.NewErrCRLSignerCertificateVidNotEqualAccountVid("CRL signer Certificate vid must equal to signer account vid")
 		}
 
 		approvedCertificates, isFound := k.GetApprovedCertificates(ctx, crlSignerCertificate.Subject, crlSignerCertificate.SubjectKeyID)
 		if !isFound {
-			return nil, pkitypes.NewErrCertificateDoesNotExist(crlSignerCertificate.Subject, crlSignerCertificate.SubjectKeyID)
+			return nil, sdkerrors.Wrap(pkitypes.NewErrCertificateDoesNotExist(crlSignerCertificate.Subject, crlSignerCertificate.SubjectKeyID), "CRL signer Certificate must be a root certificate present on the ledger if isPAA = True")
 		}
 
 		if approvedCertificates.Certs[0].PemCert != msg.CrlSignerCertificate {
 			return nil, pkitypes.NewErrPemValuesNotEqual("Pem values of CRL signer certificate and certificate found by its Subject and SubjectKeyID are is not equal ")
 		}
 	} else {
-		// check if signer has vendor role
-		if !k.dclauthKeeper.HasRole(ctx, signerAddr, dclauthtypes.Vendor) {
-			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
-				"MsgAddPkiRevocationDistributionPoint transaction should be signed by an account with the \"%s\" role",
-				dclauthtypes.Vendor,
-			)
-		}
 
 		if msg.Vid != signerAccount.VendorID {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized,

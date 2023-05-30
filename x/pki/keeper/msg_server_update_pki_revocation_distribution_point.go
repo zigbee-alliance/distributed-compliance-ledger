@@ -47,7 +47,7 @@ func (k msgServer) UpdatePkiRevocationDistributionPoint(goCtx context.Context, m
 
 		subjectAsMap := x509.SubjectAsTextToMap(crlSignerCertificate.SubjectAsText)
 
-		strVid, found := subjectAsMap["Mvid"]
+		strVid, found := subjectAsMap[x509.Mvid]
 
 		if !found {
 			return nil, pkitypes.NewErrVidNotFound("vid must be encoded in Revocation Distribution Point's Signer Certificate")
@@ -73,7 +73,7 @@ func (k msgServer) UpdatePkiRevocationDistributionPoint(goCtx context.Context, m
 		if pkiRevocationDistributionPoint.CrlSignerCertificate != "" {
 			subjectAsMap := x509.SubjectAsTextToMap(crlSignerCertificate.SubjectAsText)
 
-			strVid, found := subjectAsMap["Mvid"]
+			strVid, found := subjectAsMap[x509.Mvid]
 			if found {
 				vid, err := strconv.ParseInt(strings.Trim(strVid, "0x"), 16, 32)
 				if err != nil {
@@ -103,7 +103,7 @@ func (k msgServer) UpdatePkiRevocationDistributionPoint(goCtx context.Context, m
 		if msg.CrlSignerCertificate != "" {
 			subjectAsMap := x509.SubjectAsTextToMap(msg.CrlSignerCertificate)
 
-			strVid, found := subjectAsMap["Mvid"]
+			strVid, found := subjectAsMap[x509.Mvid]
 			if found {
 				vid, err := strconv.ParseInt(strings.Trim(strVid, "0x"), 16, 32)
 				if err != nil {
@@ -115,7 +115,7 @@ func (k msgServer) UpdatePkiRevocationDistributionPoint(goCtx context.Context, m
 				}
 			}
 
-			strPid, found := subjectAsMap["Mpid"]
+			strPid, found := subjectAsMap[x509.Mpid]
 			if found {
 				pid, err := strconv.ParseInt(strings.Trim(strPid, "0x"), 16, 32)
 				if err != nil {
@@ -128,7 +128,7 @@ func (k msgServer) UpdatePkiRevocationDistributionPoint(goCtx context.Context, m
 			}
 
 			if pkiRevocationDistributionPoint.Pid != 0 {
-				strPid, found := subjectAsMap["Mpid"]
+				strPid, found := subjectAsMap[x509.Mpid]
 				if found {
 					pid, err := strconv.ParseInt(strings.Trim(strPid, "0x"), 16, 32)
 					if err != nil {

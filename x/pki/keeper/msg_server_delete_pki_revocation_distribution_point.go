@@ -36,7 +36,7 @@ func (k msgServer) DeletePkiRevocationDistributionPoint(goCtx context.Context, m
 	if crlSignerCertificate.IsSelfSigned() {
 		subjectAsMap := x509.SubjectAsTextToMap(crlSignerCertificate.SubjectAsText)
 
-		strVid, found := subjectAsMap["Mvid"]
+		strVid, found := subjectAsMap[x509.Mvid]
 		_, err := strconv.ParseInt(strings.Trim(strVid, "0x"), 16, 32)
 		if err != nil {
 			return nil, err
@@ -72,7 +72,7 @@ func (k msgServer) DeletePkiRevocationDistributionPoint(goCtx context.Context, m
 
 		subjectAsMap := x509.SubjectAsTextToMap(crlSignerCertificate.SubjectAsText)
 
-		strVid, found := subjectAsMap["Mvid"]
+		strVid, found := subjectAsMap[x509.Mvid]
 
 		if !found {
 			return nil, pkitypes.NewErrVidNotFound("vid must be encoded in non-root CRL signer certificate")

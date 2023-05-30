@@ -99,14 +99,19 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 		}
 
 		if !cert.IsSelfSigned() {
-			return pkitypes.NewErrRootCertificateIsNotSelfSigned(fmt.Sprintf("CRL Signer Certificate must be self-signed if isPAA is True"))
+			return pkitypes.NewErrRootCertificateIsNotSelfSigned("CRL Signer Certificate must be self-signed if isPAA is True")
 		}
 
-		strVid, found := subjectAsMap["Mvid"]
+		strVid, found := subjectAsMap[x509.Mvid]
+
+		if !found {
+			return pkitypes.NewErrUnsupportedOperation("publishing a revocation point for non-VID scoped root certificates is currently not supported")
+		}
+
 		if found {
 			vid, err := strconv.ParseInt(strings.Trim(strVid, "0x"), 16, 32)
 			if err != nil {
-				return err
+				return sdkerrors.Wrapf(pkitypes.ErrInvalidVidFormat, "Could not parse vid: %s", err)
 			}
 
 			if int32(vid) != msg.Vid {
@@ -114,11 +119,11 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 			}
 		}
 	} else {
-		strPid, found := subjectAsMap["Mpid"]
+		strPid, found := subjectAsMap[x509.Mpid]
 		if found {
 			pid, err := strconv.ParseInt(strings.Trim(strPid, "0x"), 16, 32)
 			if err != nil {
-				return err
+				return sdkerrors.Wrapf(pkitypes.ErrInvalidPidFormat, "Could not parse pid: %s", err)
 			}
 
 			if msg.Pid == 0 {
@@ -135,14 +140,14 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 		}
 
 		if cert.IsSelfSigned() {
-			return pkitypes.NewErrNonRootCertificateSelfSigned(fmt.Sprintf("CRL Signer Certificate shall not be self-signed if isPAA is False"))
+			return pkitypes.NewErrNonRootCertificateSelfSigned("CRL Signer Certificate shall not be self-signed if isPAA is False")
 		}
 
-		strVid, found := subjectAsMap["Mvid"]
+		strVid, found := subjectAsMap[x509.Mvid]
 		if found {
 			vid, err := strconv.ParseInt(strings.Trim(strVid, "0x"), 16, 32)
 			if err != nil {
-				return err
+				return sdkerrors.Wrapf(pkitypes.ErrInvalidVidFormat, "Could not parse vid: %s", err)
 			}
 
 			if int32(vid) != msg.Vid {
@@ -170,7 +175,7 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 	}
 
 	if msg.RevocationType == allowedRevocationType && (msg.DataFileSize != 0 || msg.DataDigest != "" || msg.DataDigestType != 0) {
-		return pkitypes.NewErrDataFieldPresented("Data Digest, Data File Size and Data Digest Type must be omitted for Revocation Type 1")
+		return pkitypes.NewErrDataFieldPresented(fmt.Sprintf("Data Digest, Data File Size and Data Digest Type must be omitted for Revocation Type %d", allowedRevocationType))
 	}
 
 	match, _ := regexp.MatchString("^(?:[0-9A-F]{2})+$", msg.IssuerSubjectKeyID)

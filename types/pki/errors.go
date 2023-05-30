@@ -37,6 +37,9 @@ var (
 	ErrPemValuesNotEqual                           = sdkerrors.Register(ModuleName, 427, "pem values of certificates are not equal")
 	ErrPkiRevocationDistributionPointAlreadyExists = sdkerrors.Register(ModuleName, 428, "pki revocation distribution point already exists")
 	ErrPkiRevocationDistributionPointDoesNotExists = sdkerrors.Register(ModuleName, 429, "pki revocaition distribution point does not exist")
+	ErrUnsupportedOperation                        = sdkerrors.Register(ModuleName, 430, "unsupported operation")
+	ErrInvalidVidFormat                            = sdkerrors.Register(ModuleName, 431, "invalid vid format")
+	ErrInvalidPidFormat                            = sdkerrors.Register(ModuleName, 432, "invalid pid format")
 )
 
 func NewErrProposedCertificateAlreadyExists(subject string, subjectKeyID string) error {
@@ -193,4 +196,16 @@ func NewErrPkiRevocationDistributionPointDoesNotExists(e interface{}) error {
 
 func NewErrCRLSignerCertificateVidNotEqualAccountVid(e interface{}) error {
 	return sdkerrors.Wrapf(ErrCRLSignerCertificateVidNotEqualAccountVid, "%v", e)
+}
+
+func NewErrUnsupportedOperation(e interface{}) error {
+	return sdkerrors.Wrapf(ErrUnsupportedOperation, "%v", e)
+}
+
+func NewErrInvalidVidFormat(e interface{}) error {
+	return sdkerrors.Wrapf(ErrInvalidVidFormat, "%v", e)
+}
+
+func NewErrInvalidPidFormat(e interface{}) error {
+	return sdkerrors.Wrapf(ErrInvalidPidFormat, "%v", e)
 }
