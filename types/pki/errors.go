@@ -40,6 +40,7 @@ var (
 	ErrUnsupportedOperation                        = sdkerrors.Register(ModuleName, 430, "unsupported operation")
 	ErrInvalidVidFormat                            = sdkerrors.Register(ModuleName, 431, "invalid vid format")
 	ErrInvalidPidFormat                            = sdkerrors.Register(ModuleName, 432, "invalid pid format")
+	ErrInvalidDataUrlFormat                        = sdkerrors.Register(ModuleName, 433, "invalid data url format")
 )
 
 func NewErrProposedCertificateAlreadyExists(subject string, subjectKeyID string) error {
@@ -208,4 +209,8 @@ func NewErrInvalidVidFormat(e interface{}) error {
 
 func NewErrInvalidPidFormat(e interface{}) error {
 	return sdkerrors.Wrapf(ErrInvalidPidFormat, "%v", e)
+}
+
+func NewErrInvalidDataUrlFormat(e interface{}) error {
+	return sdkerrors.Wrapf(ErrInvalidDataUrlFormat, "%v", e)
 }

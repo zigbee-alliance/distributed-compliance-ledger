@@ -83,8 +83,20 @@ func TestMsgUpdatePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "dataUrl starts not with http or https",
 			msg: MsgUpdatePkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  1,
-				CrlSignerCertificate: testconstants.RootCertPem,
+				Vid:                  65521,
+				CrlSignerCertificate: testconstants.RootCertWithPidVidInSubject,
+				Label:                "label",
+				DataUrl:              "ftp://" + testconstants.URLWithoutProtocol,
+				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+			},
+			err: pkitypes.ErrInvalidDataUrlFormat,
+		},
+		{
+			name: "dataUrl without protocol",
+			msg: MsgUpdatePkiRevocationDistributionPoint{
+				Signer:               sample.AccAddress(),
+				Vid:                  65521,
+				CrlSignerCertificate: testconstants.RootCertWithPidVidInSubject,
 				Label:                "label",
 				DataUrl:              testconstants.URLWithoutProtocol,
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,

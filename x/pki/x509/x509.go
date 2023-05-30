@@ -20,6 +20,7 @@ import (
 	"encoding/hex"
 	"encoding/pem"
 	"fmt"
+	"strconv"
 	"strings"
 
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
@@ -78,15 +79,51 @@ func ToSubjectAsText(subject string) string {
 	return subjectAsText
 }
 
-func SubjectAsTextToMap(subjectAsText string) map[string]string {
+func subjectAsTextToMap(subjectAsText string) map[string]string {
 	splittedSubjectText := strings.Split(subjectAsText, ",")
 	subjectMap := make(map[string]string)
 	for _, elem := range splittedSubjectText {
 		splittedElem := strings.Split(elem, "=")
+		if splittedElem[0] == "vid" {
+			splittedElem[0] = "Mvid"
+		}
+		if splittedElem[0] == "pid" {
+			splittedElem[0] = "Mpid"
+		}
 		subjectMap[splittedElem[0]] = splittedElem[1]
 	}
 
 	return subjectMap
+}
+
+func GetVidFromSubject(subjectAsText string) (int32, error) {
+	subjectAsTextMap := subjectAsTextToMap(subjectAsText)
+
+	if strValue, ok := subjectAsTextMap[Mvid]; ok {
+		vid, err := strconv.ParseInt(strings.Trim(strValue, "0x"), 16, 32)
+		if err != nil {
+			return 0, err
+		}
+
+		return int32(vid), nil
+	}
+
+	return 0, nil
+}
+
+func GetPidFromSubject(subjectAsText string) (int32, error) {
+	subjectAsTextMap := subjectAsTextToMap(subjectAsText)
+
+	if strValue, ok := subjectAsTextMap[Mpid]; ok {
+		vid, err := strconv.ParseInt(strings.Trim(strValue, "0x"), 16, 32)
+		if err != nil {
+			return 0, err
+		}
+
+		return int32(vid), nil
+	}
+
+	return 0, nil
 }
 
 // This function is needed to patch the Issuer/Subject(vid/pid) field of certificate to hex format.

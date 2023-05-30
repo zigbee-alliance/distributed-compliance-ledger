@@ -3,7 +3,6 @@ package types
 import (
 	"fmt"
 	"regexp"
-	"strconv"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -55,6 +54,45 @@ func (msg *MsgAddPkiRevocationDistributionPoint) GetSignBytes() []byte {
 	return sdk.MustSortJSON(bz)
 }
 
+func (msg *MsgAddPkiRevocationDistributionPoint) verifyVid(subjectAsText string) error {
+	vid, err := x509.GetVidFromSubject(subjectAsText)
+
+	if err != nil {
+		return sdkerrors.Wrapf(pkitypes.ErrInvalidVidFormat, "Could not parse vid: %s", err)
+	}
+
+	if vid == 0 {
+		return sdkerrors.Wrap(pkitypes.ErrUnsupportedOperation, "publishing a revocation point for non-VID scoped root certificates is currently not supported")
+	}
+
+	if int32(vid) != msg.Vid {
+		return pkitypes.NewErrCRLSignerCertificateVidNotEqualMsgVid("CRL Signer Certificate vid must equal to message vid")
+	}
+
+	return nil
+}
+
+func (msg *MsgAddPkiRevocationDistributionPoint) verifyPid(subjectAsText string) error {
+	pid, err := x509.GetPidFromSubject(subjectAsText)
+
+	if err != nil {
+		return sdkerrors.Wrapf(pkitypes.ErrInvalidPidFormat, "Could not parse pid: %s", err)
+	}
+	if pid == 0 && msg.Pid != 0 {
+		return pkitypes.NewErrNotEmptyPid("Product ID (pid) must be empty when it is not found in non-root certificate")
+	}
+
+	if pid != 0 && msg.Pid == 0 {
+		return pkitypes.NewErrPidNotFound("Product ID (pid) must be provided when it is found in non-root certificate")
+	}
+
+	if int32(pid) != msg.Pid {
+		return pkitypes.NewErrCRLSignerCertificatePidNotEqualMsgPid("CRL Signer Certificate pid must equal to message pid")
+	}
+
+	return nil
+}
+
 func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
@@ -91,8 +129,6 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 		return pkitypes.NewErrInvalidCertificate(err)
 	}
 
-	subjectAsMap := x509.SubjectAsTextToMap(cert.SubjectAsText)
-
 	if *msg.IsPAA {
 		if msg.Pid != 0 {
 			return pkitypes.NewErrNotEmptyPid("Product ID (pid) must be empty for root certificates when isPAA is true")
@@ -102,60 +138,31 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 			return pkitypes.NewErrRootCertificateIsNotSelfSigned("CRL Signer Certificate must be self-signed if isPAA is True")
 		}
 
-		strVid, found := subjectAsMap[x509.Mvid]
+		err = msg.verifyVid(cert.SubjectAsText)
 
-		if !found {
-			return pkitypes.NewErrUnsupportedOperation("publishing a revocation point for non-VID scoped root certificates is currently not supported")
-		}
-
-		if found {
-			vid, err := strconv.ParseInt(strings.Trim(strVid, "0x"), 16, 32)
-			if err != nil {
-				return sdkerrors.Wrapf(pkitypes.ErrInvalidVidFormat, "Could not parse vid: %s", err)
-			}
-
-			if int32(vid) != msg.Vid {
-				return pkitypes.NewErrCRLSignerCertificateVidNotEqualMsgVid("CRL Signer Certificate vid must equal to message vid")
-			}
+		if err != nil {
+			return err
 		}
 	} else {
-		strPid, found := subjectAsMap[x509.Mpid]
-		if found {
-			pid, err := strconv.ParseInt(strings.Trim(strPid, "0x"), 16, 32)
-			if err != nil {
-				return sdkerrors.Wrapf(pkitypes.ErrInvalidPidFormat, "Could not parse pid: %s", err)
-			}
+		err = msg.verifyPid(cert.SubjectAsText)
 
-			if msg.Pid == 0 {
-				return pkitypes.NewErrPidNotFound("Product ID (pid) must be provided when it is found in non-root certificate")
-			}
-
-			if int32(pid) != msg.Pid {
-				return pkitypes.NewErrCRLSignerCertificatePidNotEqualMsgPid("CRL Signer Certificate pid must equal to message pid")
-			}
-		} else {
-			if msg.Pid != 0 {
-				return pkitypes.NewErrNotEmptyPid("Product ID (pid) must be empty when it is not found in non-root certificate")
-			}
+		if err != nil {
+			return err
 		}
 
 		if cert.IsSelfSigned() {
 			return pkitypes.NewErrNonRootCertificateSelfSigned("CRL Signer Certificate shall not be self-signed if isPAA is False")
 		}
 
-		strVid, found := subjectAsMap[x509.Mvid]
-		if found {
-			vid, err := strconv.ParseInt(strings.Trim(strVid, "0x"), 16, 32)
-			if err != nil {
-				return sdkerrors.Wrapf(pkitypes.ErrInvalidVidFormat, "Could not parse vid: %s", err)
-			}
+		err = msg.verifyVid(cert.SubjectAsText)
 
-			if int32(vid) != msg.Vid {
-				return pkitypes.NewErrCRLSignerCertificateVidNotEqualMsgVid("CRL Signer Certificate vid must equal to message vid")
-			}
-		} else {
-			return pkitypes.NewErrVidNotFound("vid not found in CRL Signer Certificate subject")
+		if err != nil {
+			return err
 		}
+	}
+
+	if !strings.HasPrefix(msg.DataUrl, "https://") && !strings.HasPrefix(msg.DataUrl, "http://") {
+		return pkitypes.NewErrInvalidDataUrlFormat("Data Url must start with https:// or http://")
 	}
 
 	if msg.DataFileSize == 0 && msg.DataDigest != "" {

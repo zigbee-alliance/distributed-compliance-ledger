@@ -3,6 +3,7 @@ package types
 import (
 	fmt "fmt"
 	"regexp"
+	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -70,6 +71,10 @@ func (msg *MsgUpdatePkiRevocationDistributionPoint) ValidateBasic() error {
 				break
 			}
 		}
+	}
+
+	if msg.DataUrl != "" && !strings.HasPrefix(msg.DataUrl, "https://") && !strings.HasPrefix(msg.DataUrl, "http://") {
+		return pkitypes.NewErrInvalidDataUrlFormat("Data Url must start with https:// or http://")
 	}
 
 	if !isDataDigestInTypes {
