@@ -48,7 +48,7 @@ func (k msgServer) AddPkiRevocationDistributionPoint(goCtx context.Context, msg 
 			}
 
 			if int32(vid) != signerAccount.VendorID {
-				return nil, pkitypes.NewErrCRLSignerCertificateVidNotEqualAccountVid("CRL signer Certificate vid must equal to signer account vid")
+				return nil, pkitypes.NewErrCRLSignerCertificateVidNotEqualAccountVid("CRL signer Certificate's vid must be equal to signer account's vid")
 			}
 		}
 
