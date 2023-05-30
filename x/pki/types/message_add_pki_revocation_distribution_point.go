@@ -130,7 +130,7 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 			}
 		} else {
 			if msg.Pid != 0 {
-				return pkitypes.NewErrNotEmptyPid("Product ID (pid) must be empty when it is not found in non-root certificate")
+				return pkitypes.NewErrNotEmptyPid("Product ID (pid) must be empty when it is not found in non-root CRL Signer Certificate")
 			}
 		}
 
