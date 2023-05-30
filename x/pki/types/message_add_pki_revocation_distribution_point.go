@@ -126,7 +126,7 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 			}
 
 			if int32(pid) != msg.Pid {
-				return pkitypes.NewErrCRLSignerCertificatePidNotEqualMsgPid("CRL Signer Certificate pid must equal to message pid")
+				return pkitypes.NewErrCRLSignerCertificatePidNotEqualMsgPid("CRL Signer Certificate's pid must be equal to the provided pid in the message")
 			}
 		} else {
 			if msg.Pid != 0 {
