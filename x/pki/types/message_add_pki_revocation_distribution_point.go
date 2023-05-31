@@ -2,7 +2,6 @@ package types
 
 import (
 	"fmt"
-	"regexp"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -66,7 +65,7 @@ func (msg *MsgAddPkiRevocationDistributionPoint) verifyVid(subjectAsText string)
 	}
 
 	if int32(vid) != msg.Vid {
-		return pkitypes.NewErrCRLSignerCertificateVidNotEqualMsgVid("CRL Signer Certificate vid must equal to message vid")
+		return pkitypes.NewErrCRLSignerCertificateVidNotEqualMsgVid("CRL Signer Certificate's vid must be equal to the provided vid in the message")
 	}
 
 	return nil
@@ -79,15 +78,15 @@ func (msg *MsgAddPkiRevocationDistributionPoint) verifyPid(subjectAsText string)
 		return sdkerrors.Wrapf(pkitypes.ErrInvalidPidFormat, "Could not parse pid: %s", err)
 	}
 	if pid == 0 && msg.Pid != 0 {
-		return pkitypes.NewErrNotEmptyPid("Product ID (pid) must be empty when it is not found in non-root certificate")
+		return pkitypes.NewErrNotEmptyPid("Product ID (pid) must be empty when it is not found in non-root CRL Signer Certificate")
 	}
 
 	if pid != 0 && msg.Pid == 0 {
-		return pkitypes.NewErrPidNotFound("Product ID (pid) must be provided when it is found in non-root certificate")
+		return pkitypes.NewErrPidNotFound("Product ID (pid) must be provided when it is found in non-root CRL Signer Certificate")
 	}
 
 	if int32(pid) != msg.Pid {
-		return pkitypes.NewErrCRLSignerCertificatePidNotEqualMsgPid("CRL Signer Certificate pid must equal to message pid")
+		return pkitypes.NewErrCRLSignerCertificatePidNotEqualMsgPid("CRL Signer Certificate's pid must be equal to the provided pid in the message")
 	}
 
 	return nil
@@ -185,7 +184,7 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 		return pkitypes.NewErrDataFieldPresented(fmt.Sprintf("Data Digest, Data File Size and Data Digest Type must be omitted for Revocation Type %d", allowedRevocationType))
 	}
 
-	match, _ := regexp.MatchString("^(?:[0-9A-F]{2})+$", msg.IssuerSubjectKeyID)
+	match := VerifyRevocationPointIssuerSubjectKeyIDFormat(msg.IssuerSubjectKeyID)
 
 	if !match {
 		return pkitypes.NewErrWrongSubjectKeyIDFormat("Wrong IssuerSubjectKeyID format. It must consist of even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters")

@@ -1955,7 +1955,7 @@ func TestHandler_ApproveX509RootCert_FourApprovalsAreNeeded_FiveTrustees(t *test
 	require.Equal(t, testconstants.RootSerialNumber, approvedCertificate.SerialNumber)
 }
 
-func TestHandler_AddPkiRevocationDistributionPoint_PAACertEncodesVidSenderNotVendor(t *testing.T) {
+func TestHandler_AddPkiRevocationDistributionPoint_PAASenderNotVendor(t *testing.T) {
 	setup := Setup(t)
 
 	true_ := true
@@ -1963,7 +1963,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAACertEncodesVidSenderNotVen
 		Signer:               setup.Trustee1.String(),
 		Vid:                  65521,
 		IsPAA:                &true_,
-		Pid:                  32769,
+		Pid:                  8,
 		CrlSignerCertificate: testconstants.RootCertWithPidVidInSubject,
 		Label:                "label",
 		DataUrl:              testconstants.DataURL,
@@ -1974,7 +1974,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAACertEncodesVidSenderNotVen
 	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
 }
 
-func TestHandler_AddPkiRevocationDistributionPoint_PAACertEncodesVidSenderNotEqualVidField(t *testing.T) {
+func TestHandler_AddPkiRevocationDistributionPoint_PAACertEncodesVidSenderVidNotEqualVidField(t *testing.T) {
 	setup := Setup(t)
 
 	vendorAcc := GenerateAccAddress()
@@ -1985,7 +1985,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAACertEncodesVidSenderNotEqu
 		Signer:               vendorAcc.String(),
 		Vid:                  65521,
 		IsPAA:                &true_,
-		Pid:                  32769,
+		Pid:                  8,
 		CrlSignerCertificate: testconstants.RootCertWithPidVidInSubject,
 		Label:                "label",
 		DataUrl:              testconstants.DataURL,
@@ -2007,7 +2007,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAACertNotFound(t *testing.T)
 		Signer:               vendorAcc.String(),
 		Vid:                  65521,
 		IsPAA:                &true_,
-		Pid:                  32769,
+		Pid:                  8,
 		CrlSignerCertificate: testconstants.RootCertWithPidVidInSubject,
 		Label:                "label",
 		DataUrl:              testconstants.DataURL,
@@ -2040,7 +2040,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAAPemValueOfStoredCertNotEqu
 		Signer:               vendorAcc.String(),
 		Vid:                  65521,
 		IsPAA:                &true_,
-		Pid:                  32769,
+		Pid:                  8,
 		CrlSignerCertificate: testconstants.RootCertPem,
 		Label:                "label",
 		DataUrl:              testconstants.DataURL,
@@ -2051,7 +2051,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAAPemValueOfStoredCertNotEqu
 	require.ErrorIs(t, err, pkitypes.ErrCertificateDoesNotExist)
 }
 
-func TestHandler_AddPkiRevocationDistributionPoint_PAICertEncodesVidSenderNotVendor(t *testing.T) {
+func TestHandler_AddPkiRevocationDistributionPoint_PAISenderNotVendor(t *testing.T) {
 	setup := Setup(t)
 
 	false_ := false
@@ -2059,7 +2059,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAICertEncodesVidSenderNotVen
 		Signer:               setup.Trustee1.String(),
 		Vid:                  65521,
 		IsPAA:                &false_,
-		Pid:                  32769,
+		Pid:                  8,
 		CrlSignerCertificate: testconstants.NonRootCertWithPidVidInSubject,
 		Label:                "label",
 		DataUrl:              testconstants.DataURL,
@@ -2074,14 +2074,14 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAINotChainedBackToDCLCerts(t
 	setup := Setup(t)
 
 	vendorAcc := GenerateAccAddress()
-	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, 1)
+	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, 65521)
 
 	true_ := true
 	addPkiRevocationDistributionPoint := types.MsgAddPkiRevocationDistributionPoint{
 		Signer:               vendorAcc.String(),
 		Vid:                  65521,
 		IsPAA:                &true_,
-		Pid:                  32769,
+		Pid:                  8,
 		CrlSignerCertificate: testconstants.NonRootCertWithPidVidInSubject,
 		Label:                "label",
 		DataUrl:              testconstants.DataURL,
@@ -2089,7 +2089,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAINotChainedBackToDCLCerts(t
 		RevocationType:       1,
 	}
 	_, err := setup.Handler(setup.Ctx, &addPkiRevocationDistributionPoint)
-	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
+	require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
 }
 
 func TestHandler_AddPkiRevocationDistributionPoint_PAAAlreadyExists(t *testing.T) {
@@ -2114,7 +2114,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAAAlreadyExists(t *testing.T
 		Signer:               vendorAcc.String(),
 		Vid:                  65521,
 		IsPAA:                &true_,
-		Pid:                  32769,
+		Pid:                  8,
 		CrlSignerCertificate: testconstants.RootCertWithPidVidInSubject,
 		Label:                "label",
 		DataUrl:              testconstants.DataURL,
@@ -2128,7 +2128,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAAAlreadyExists(t *testing.T
 		Signer:               vendorAcc.String(),
 		Vid:                  65521,
 		IsPAA:                &true_,
-		Pid:                  32769,
+		Pid:                  8,
 		CrlSignerCertificate: testconstants.RootCertWithPidVidInSubject,
 		Label:                "label",
 		DataUrl:              testconstants.DataURL,
@@ -2142,8 +2142,11 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAAAlreadyExists(t *testing.T
 func TestHandler_UpdatePkiRevocationDistributionPoint_NotFound(t *testing.T) {
 	setup := Setup(t)
 
+	vendorAcc := GenerateAccAddress()
+	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, 65521)
+
 	updatePkiRevocationDistributionPoint := types.MsgUpdatePkiRevocationDistributionPoint{
-		Signer:               setup.Trustee1.String(),
+		Signer:               vendorAcc.String(),
 		Vid:                  65521,
 		CrlSignerCertificate: testconstants.RootCertWithPidVidInSubject,
 		Label:                "label",
@@ -2176,7 +2179,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAANewCertificateNotPAA(t 
 		Signer:               vendorAcc.String(),
 		Vid:                  65521,
 		IsPAA:                &true_,
-		Pid:                  32769,
+		Pid:                  8,
 		CrlSignerCertificate: testconstants.RootCertWithPidVidInSubject,
 		Label:                "label",
 		DataUrl:              testconstants.DataURL,
@@ -2220,7 +2223,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAASenderNotVendor(t *test
 		Signer:               vendorAcc.String(),
 		Vid:                  65521,
 		IsPAA:                &true_,
-		Pid:                  32769,
+		Pid:                  8,
 		CrlSignerCertificate: testconstants.RootCertWithPidVidInSubject,
 		Label:                "label",
 		DataUrl:              testconstants.DataURL,
@@ -2264,7 +2267,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAASenderVidNotEqualCertVi
 		Signer:               vendorAcc.String(),
 		Vid:                  65521,
 		IsPAA:                &true_,
-		Pid:                  32769,
+		Pid:                  8,
 		CrlSignerCertificate: testconstants.RootCertWithPidVidInSubject,
 		Label:                "label",
 		DataUrl:              testconstants.DataURL,
@@ -2311,7 +2314,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAISenderIsNotVendor(t *te
 		Signer:               vendorAcc.String(),
 		Vid:                  65521,
 		IsPAA:                &true_,
-		Pid:                  32769,
+		Pid:                  8,
 		CrlSignerCertificate: testconstants.NonRootCertWithPidVidInSubject,
 		Label:                "label",
 		DataUrl:              testconstants.DataURL,
@@ -2358,7 +2361,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAISenderVidNotEqualCertVi
 		Signer:               vendorAcc.String(),
 		Vid:                  65521,
 		IsPAA:                &false_,
-		Pid:                  32769,
+		Pid:                  8,
 		CrlSignerCertificate: testconstants.NonRootCertWithPidVidInSubject,
 		Label:                "label",
 		DataUrl:              testconstants.DataURL,
@@ -2380,7 +2383,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAISenderVidNotEqualCertVi
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 	}
 	_, err = setup.Handler(setup.Ctx, &updatePkiRevocationDistributionPoint)
-	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
+	require.ErrorIs(t, err, pkitypes.ErrCRLSignerCertificateVidNotEqualAccountVid)
 }
 
 func TestHandler_UpdatePkiRevocationDistributionPoint_PAICertVidNotEqualMsgVid(t *testing.T) {
@@ -2409,7 +2412,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAICertVidNotEqualMsgVid(t
 		Signer:               vendorAcc.String(),
 		Vid:                  65521,
 		IsPAA:                &false_,
-		Pid:                  32769,
+		Pid:                  8,
 		CrlSignerCertificate: testconstants.NonRootCertWithPidVidInSubject,
 		Label:                "label",
 		DataUrl:              testconstants.DataURL,
@@ -2419,19 +2422,16 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAICertVidNotEqualMsgVid(t
 	_, err = setup.Handler(setup.Ctx, &addPkiRevocationDistributionPoint)
 	require.NoError(t, err)
 
-	newVendorAcc := GenerateAccAddress()
-	setup.AddAccount(newVendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, 65522)
-
 	updatePkiRevocationDistributionPoint := types.MsgUpdatePkiRevocationDistributionPoint{
-		Signer:               newVendorAcc.String(),
-		Vid:                  65521,
+		Signer:               vendorAcc.String(),
+		Vid:                  65522,
 		CrlSignerCertificate: testconstants.NonRootCertWithPidVidInSubject,
 		Label:                "label",
 		DataUrl:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 	}
 	_, err = setup.Handler(setup.Ctx, &updatePkiRevocationDistributionPoint)
-	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
+	require.ErrorIs(t, err, sdkerrors.ErrNotFound)
 }
 
 func TestHandler_UpdatePkiRevocationDistributionPoint_PAIPidNotFoundInNewCert(t *testing.T) {
@@ -2461,7 +2461,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAIPidNotFoundInNewCert(t 
 		Signer:               vendorAcc.String(),
 		Vid:                  65521,
 		IsPAA:                &false_,
-		Pid:                  32769,
+		Pid:                  8,
 		CrlSignerCertificate: testconstants.NonRootCertWithPidVidInSubject,
 		Label:                "label",
 		DataUrl:              testconstants.DataURL,
@@ -2483,11 +2483,14 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAIPidNotFoundInNewCert(t 
 	require.ErrorIs(t, err, pkitypes.ErrPidNotFound)
 }
 
-func TestHandler_DeleetePkiRevocationDistributionPoint_NotFound(t *testing.T) {
+func TestHandler_DeletePkiRevocationDistributionPoint_NotFound(t *testing.T) {
 	setup := Setup(t)
 
+	vendorAcc := GenerateAccAddress()
+	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, 65521)
+
 	deletePkiRevocationDistributionPoint := types.MsgDeletePkiRevocationDistributionPoint{
-		Signer:             setup.Trustee1.String(),
+		Signer:             vendorAcc.String(),
 		Vid:                65521,
 		Label:              "label",
 		IssuerSubjectKeyID: testconstants.SubjectKeyIDWithoutColons,
@@ -2518,7 +2521,7 @@ func TestHandler_DeletePkiRevocationDistributionPoint_PAASenderNotVendor(t *test
 		Signer:               vendorAcc.String(),
 		Vid:                  65521,
 		IsPAA:                &true_,
-		Pid:                  32769,
+		Pid:                  8,
 		CrlSignerCertificate: testconstants.RootCertWithPidVidInSubject,
 		Label:                "label",
 		DataUrl:              testconstants.DataURL,
@@ -2560,7 +2563,7 @@ func TestHandler_DeletePkiRevocationDistributionPoint_PAASenderVidNotEqualCertVi
 		Signer:               vendorAcc.String(),
 		Vid:                  65521,
 		IsPAA:                &true_,
-		Pid:                  32769,
+		Pid:                  8,
 		CrlSignerCertificate: testconstants.RootCertWithPidVidInSubject,
 		Label:                "label",
 		DataUrl:              testconstants.DataURL,
@@ -2610,7 +2613,7 @@ func TestHandler_DeletePkiRevocationDistributionPoint_PAISenderNotVendor(t *test
 		Signer:               vendorAcc.String(),
 		Vid:                  65521,
 		IsPAA:                &false_,
-		Pid:                  32769,
+		Pid:                  8,
 		CrlSignerCertificate: testconstants.NonRootCertWithPidVidInSubject,
 		Label:                "label",
 		DataUrl:              testconstants.DataURL,
@@ -2657,7 +2660,7 @@ func TestHandler_DeletePkiRevocationDistributionPoint_PAISenderVidNotEqualCertVi
 		Signer:               vendorAcc.String(),
 		Vid:                  65521,
 		IsPAA:                &false_,
-		Pid:                  32769,
+		Pid:                  8,
 		CrlSignerCertificate: testconstants.NonRootCertWithPidVidInSubject,
 		Label:                "label",
 		DataUrl:              testconstants.DataURL,
