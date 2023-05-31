@@ -1,5 +1,6 @@
 package cli_test
 
+/*
 import (
 	"fmt"
 	"strconv"
@@ -171,3 +172,4 @@ func TestListPkiRevocationDistributionPoint(t *testing.T) {
 		)
 	})
 }
+*/

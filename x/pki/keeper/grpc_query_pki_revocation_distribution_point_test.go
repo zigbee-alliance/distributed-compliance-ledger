@@ -53,7 +53,7 @@ func TestPkiRevocationDistributionPointQuerySingle(t *testing.T) {
 				Label:              strconv.Itoa(100000),
 				IssuerSubjectKeyID: strconv.Itoa(100000),
 			},
-			err: status.Error(codes.InvalidArgument, "not found"),
+			err: status.Error(codes.NotFound, "not found"),
 		},
 		{
 			desc: "InvalidRequest",

@@ -118,6 +118,14 @@ Label: "1",
 IssuerSubjectKeyID: "1",
 },
 },
+PkiRevocationDistributionPointsByIssuerSubjectKeyIdList: []types.PkiRevocationDistributionPointsByIssuerSubjectKeyId{
+	{
+		IssuerSubjectKeyId: "0",
+},
+	{
+		IssuerSubjectKeyId: "1",
+},
+},
 // this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -261,6 +269,20 @@ IssuerSubjectKeyID: "0",
 				Vid: 0,
 Label: "0",
 IssuerSubjectKeyID: "0",
+},
+		},
+	},
+	valid:    false,
+},
+{
+	desc:     "duplicated pkiRevocationDistributionPointsByIssuerSubjectKeyId",
+	genState: &types.GenesisState{
+		PkiRevocationDistributionPointsByIssuerSubjectKeyIdList: []types.PkiRevocationDistributionPointsByIssuerSubjectKeyId{
+			{
+				IssuerSubjectKeyId: "0",
+},
+			{
+				IssuerSubjectKeyId: "0",
 },
 		},
 	},

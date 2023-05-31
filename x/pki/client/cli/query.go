@@ -38,6 +38,7 @@ func GetQueryCmd(queryRoute string) *cobra.Command {
 	cmd.AddCommand(CmdShowRejectedCertificate())
 	cmd.AddCommand(CmdListPkiRevocationDistributionPoint())
 	cmd.AddCommand(CmdShowPkiRevocationDistributionPoint())
+	cmd.AddCommand(CmdShowPkiRevocationDistributionPointsByIssuerSubjectKeyId())
 	// this line is used by starport scaffolding # 1
 
 	return cmd

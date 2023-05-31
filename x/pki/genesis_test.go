@@ -118,6 +118,14 @@ func TestGenesis(t *testing.T) {
 				IssuerSubjectKeyID: "1",
 			},
 		},
+		PkiRevocationDistributionPointsByIssuerSubjectKeyIdList: []types.PkiRevocationDistributionPointsByIssuerSubjectKeyId{
+			{
+				IssuerSubjectKeyId: "0",
+			},
+			{
+				IssuerSubjectKeyId: "1",
+			},
+		},
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -137,5 +145,6 @@ func TestGenesis(t *testing.T) {
 	require.ElementsMatch(t, genesisState.ApprovedCertificatesBySubjectList, got.ApprovedCertificatesBySubjectList)
 	require.ElementsMatch(t, genesisState.RejectedCertificateList, got.RejectedCertificateList)
 	require.ElementsMatch(t, genesisState.PkiRevocationDistributionPointList, got.PkiRevocationDistributionPointList)
+	require.ElementsMatch(t, genesisState.PkiRevocationDistributionPointsByIssuerSubjectKeyIdList, got.PkiRevocationDistributionPointsByIssuerSubjectKeyIdList)
 	// this line is used by starport scaffolding # genesis/test/assert
 }

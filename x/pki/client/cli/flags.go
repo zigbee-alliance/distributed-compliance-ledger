@@ -23,4 +23,5 @@ const (
 	FlagRevocationType           = "revocation-type"
 	FlagLabel                    = "label"
 	FlagLabelShortcut            = "l"
+	FlagIssuerSubjectKeyID       = "issuer-subject-key-id"
 )
