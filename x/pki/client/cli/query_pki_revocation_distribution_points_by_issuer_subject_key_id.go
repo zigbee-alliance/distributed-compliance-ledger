@@ -13,7 +13,7 @@ func CmdShowPkiRevocationDistributionPointsByIssuerSubjectKeyId() *cobra.Command
 	var issuerSubjectKeyId string
 
 	cmd := &cobra.Command{
-		Use:   "revocation-points",
+		Use:   "revocation-points-by-issuer",
 		Short: "Gets all revocation points associated with issuer's subject key id",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
