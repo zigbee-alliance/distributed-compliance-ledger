@@ -84,7 +84,7 @@ func TestMsgUpdatePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			msg: MsgUpdatePkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
 				Vid:                  65521,
-				CrlSignerCertificate: testconstants.RootCertWithPidVidInSubject,
+				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 				Label:                "label",
 				DataUrl:              "ftp://" + testconstants.URLWithoutProtocol,
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
@@ -96,7 +96,7 @@ func TestMsgUpdatePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			msg: MsgUpdatePkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
 				Vid:                  65521,
-				CrlSignerCertificate: testconstants.RootCertWithPidVidInSubject,
+				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 				Label:                "label",
 				DataUrl:              testconstants.URLWithoutProtocol,
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
@@ -201,7 +201,7 @@ func TestMsgUpdatePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 				Label:                "label",
 				Vid:                  1,
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
-				CrlSignerCertificate: testconstants.RootCertWithPidVidInSubject,
+				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 				DataUrl:              testconstants.DataURL,
 				DataDigest:           testconstants.DataDigest,
 				DataDigestType:       1,

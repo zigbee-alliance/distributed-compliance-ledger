@@ -115,12 +115,12 @@ func GetPidFromSubject(subjectAsText string) (int32, error) {
 	subjectAsTextMap := subjectAsTextToMap(subjectAsText)
 
 	if strValue, ok := subjectAsTextMap[Mpid]; ok {
-		vid, err := strconv.ParseInt(strings.Trim(strValue, "0x"), 16, 32)
+		pid, err := strconv.ParseInt(strings.Trim(strValue, "0x"), 16, 32)
 		if err != nil {
 			return 0, err
 		}
 
-		return int32(vid), nil
+		return int32(pid), nil
 	}
 
 	return 0, nil
