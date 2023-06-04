@@ -50,12 +50,12 @@ func CmdDeletePkiRevocationDistributionPoint() *cobra.Command {
 	cmd.Flags().Int32Var(&vid, FlagVid, 0,
 		"Vendor ID (positive non-zero). Must be the same as Vendor account's VID and vid field in the VID-scoped CRLSignerCertificate")
 	cmd.Flags().StringVarP(&label, FlagLabel, FlagLabelShortcut, "", " A label to disambiguate multiple revocation information partitions of a particular issuer")
-	cmd.Flags().StringVarP(&issuerSubjectKeyID, FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "", "Uniquely identifies the PAA or PAI for which this revocation distribution point is provided. Must consist of even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters., e.g: 5A880E6C3653D07FB08971A3F473790930E62BDB")
+	cmd.Flags().StringVar(&issuerSubjectKeyID, FlagIssuerSubjectKeyID, "", "Uniquely identifies the PAA or PAI for which this revocation distribution point is provided. Must consist of even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters., e.g: 5A880E6C3653D07FB08971A3F473790930E62BDB")
 	flags.AddTxFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(FlagVid)
 	_ = cmd.MarkFlagRequired(FlagLabel)
-	_ = cmd.MarkFlagRequired(FlagSubjectKeyID)
+	_ = cmd.MarkFlagRequired(FlagIssuerSubjectKeyID)
 	_ = cmd.MarkFlagRequired(flags.FlagFrom)
 
 	return cmd

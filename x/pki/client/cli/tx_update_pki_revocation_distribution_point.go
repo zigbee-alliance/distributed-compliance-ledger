@@ -7,6 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
@@ -35,11 +36,16 @@ func CmdUpdatePkiRevocationDistributionPoint() *cobra.Command {
 				return err
 			}
 
+			cert, err := cli.ReadFromFile(viper.GetString(FlagCertificate))
+			if err != nil {
+				return err
+			}
+
 			msg := types.NewMsgUpdatePkiRevocationDistributionPoint(
 				clientCtx.GetFromAddress().String(),
 				vid,
 				label,
-				crlSignerCertificate,
+				cert,
 				issuerSubjectKeyID,
 				dataUrl,
 				dataFileSize,
@@ -61,7 +67,7 @@ func CmdUpdatePkiRevocationDistributionPoint() *cobra.Command {
 		"Vendor ID (positive non-zero). Must be the same as Vendor account's VID and vid field in the VID-scoped CRLSignerCertificate")
 	cmd.Flags().StringVarP(&label, FlagLabel, FlagLabelShortcut, "", " A label to disambiguate multiple revocation information partitions of a particular issuer")
 	cmd.Flags().StringVarP(&crlSignerCertificate, FlagCertificate, FlagCertificateShortcut, "", "The issuer certificate whose revocation information is provided in the distribution point entry, encoded in X.509v3 PEM format. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data")
-	cmd.Flags().StringVarP(&issuerSubjectKeyID, FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "", "Uniquely identifies the PAA or PAI for which this revocation distribution point is provided. Must consist of even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters., e.g: 5A880E6C3653D07FB08971A3F473790930E62BDB")
+	cmd.Flags().StringVar(&issuerSubjectKeyID, FlagIssuerSubjectKeyID, "", "Uniquely identifies the PAA or PAI for which this revocation distribution point is provided. Must consist of even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters., e.g: 5A880E6C3653D07FB08971A3F473790930E62BDB")
 	cmd.Flags().StringVar(&dataUrl, FlagDataUrl, "", "The URL where to obtain the information in the format indicated by the RevocationType field. Must start with either http or https")
 	cmd.Flags().Uint64Var(&dataFileSize, FlagDataFileSize, 0, "Total size in bytes of the file found at the DataUrl. Must be omitted if RevocationType is 1")
 	cmd.Flags().StringVar(&dataDigest, FlagDataDigest, "", "Digest of the entire contents of the associated file downloaded from the DataUrl. Must be omitted if RevocationType is 1. Must be provided if and only if the DataFileSize field is present")
@@ -70,7 +76,7 @@ func CmdUpdatePkiRevocationDistributionPoint() *cobra.Command {
 
 	_ = cmd.MarkFlagRequired(FlagVid)
 	_ = cmd.MarkFlagRequired(FlagLabel)
-	_ = cmd.MarkFlagRequired(FlagSubjectKeyID)
+	_ = cmd.MarkFlagRequired(FlagIssuerSubjectKeyID)
 	_ = cmd.MarkFlagRequired(flags.FlagFrom)
 
 	return cmd
