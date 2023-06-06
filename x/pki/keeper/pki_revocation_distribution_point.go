@@ -7,7 +7,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-// SetPkiRevocationDistributionPoint set a specific pKIRevocationDistributionPoint in the store from its index
+// SetPkiRevocationDistributionPoint set a specific pKIRevocationDistributionPoint in the store from its index.
 func (k Keeper) SetPkiRevocationDistributionPoint(ctx sdk.Context, pKIRevocationDistributionPoint types.PkiRevocationDistributionPoint) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.PkiRevocationDistributionPointKeyPrefix))
 	b := k.cdc.MustMarshal(&pKIRevocationDistributionPoint)
@@ -18,7 +18,7 @@ func (k Keeper) SetPkiRevocationDistributionPoint(ctx sdk.Context, pKIRevocation
 	), b)
 }
 
-// GetPkiRevocationDistributionPoint returns a pKIRevocationDistributionPoint from its index
+// GetPkiRevocationDistributionPoint returns a pKIRevocationDistributionPoint from its index.
 func (k Keeper) GetPkiRevocationDistributionPoint(
 	ctx sdk.Context,
 	vid int32,
@@ -38,10 +38,11 @@ func (k Keeper) GetPkiRevocationDistributionPoint(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
-// RemovePkiRevocationDistributionPoint removes a pKIRevocationDistributionPoint from the store
+// RemovePkiRevocationDistributionPoint removes a pKIRevocationDistributionPoint from the store.
 func (k Keeper) RemovePkiRevocationDistributionPoint(
 	ctx sdk.Context,
 	vid int32,

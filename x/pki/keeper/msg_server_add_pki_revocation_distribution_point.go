@@ -12,7 +12,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/x509"
 )
 
-func (k msgServer) verifyVid(subjectAsText string, signerVid int32) error {
+func verifyVid(subjectAsText string, signerVid int32) error {
 	vid, err := x509.GetVidFromSubject(subjectAsText)
 
 	if err != nil {
@@ -23,7 +23,7 @@ func (k msgServer) verifyVid(subjectAsText string, signerVid int32) error {
 		return pkitypes.NewErrUnsupportedOperation("publishing a revocation point for non-VID scoped root certificates is currently not supported")
 	}
 
-	if int32(vid) != signerVid {
+	if vid != signerVid {
 		return pkitypes.NewErrCRLSignerCertificateVidNotEqualAccountVid("CRL signer Certificate's vid must be equal to signer account's vid")
 	}
 
@@ -60,7 +60,7 @@ func (k msgServer) AddPkiRevocationDistributionPoint(goCtx context.Context, msg 
 	}
 
 	if crlSignerCertificate.IsSelfSigned() {
-		err = k.verifyVid(crlSignerCertificate.SubjectAsText, signerAccount.VendorID)
+		err = verifyVid(crlSignerCertificate.SubjectAsText, signerAccount.VendorID)
 
 		if err != nil {
 			return nil, err

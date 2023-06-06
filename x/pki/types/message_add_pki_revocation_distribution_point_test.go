@@ -185,7 +185,7 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 				RevocationType:       1,
 			},
-			err: pkitypes.ErrInvalidDataUrlFormat,
+			err: pkitypes.ErrInvalidDataURLFormat,
 		},
 		{
 			name: "dataUrl without protocol",

@@ -49,12 +49,15 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			return sdk.WrapServiceResult(ctx, res, err)
 		case *types.MsgAddPkiRevocationDistributionPoint:
 			res, err := msgServer.AddPkiRevocationDistributionPoint(sdk.WrapSDKContext(ctx), msg)
+
 			return sdk.WrapServiceResult(ctx, res, err)
 		case *types.MsgUpdatePkiRevocationDistributionPoint:
 			res, err := msgServer.UpdatePkiRevocationDistributionPoint(sdk.WrapSDKContext(ctx), msg)
+
 			return sdk.WrapServiceResult(ctx, res, err)
 		case *types.MsgDeletePkiRevocationDistributionPoint:
 			res, err := msgServer.DeletePkiRevocationDistributionPoint(sdk.WrapSDKContext(ctx), msg)
+
 			return sdk.WrapServiceResult(ctx, res, err)
 			// this line is used by starport scaffolding # 1
 		default:

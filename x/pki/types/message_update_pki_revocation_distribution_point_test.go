@@ -89,7 +89,7 @@ func TestMsgUpdatePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 				DataUrl:              "ftp://" + testconstants.URLWithoutProtocol,
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 			},
-			err: pkitypes.ErrInvalidDataUrlFormat,
+			err: pkitypes.ErrInvalidDataURLFormat,
 		},
 		{
 			name: "dataUrl without protocol",

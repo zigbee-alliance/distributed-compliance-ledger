@@ -73,7 +73,7 @@ func (msg *MsgUpdatePkiRevocationDistributionPoint) ValidateBasic() error {
 	}
 
 	if msg.DataUrl != "" && !strings.HasPrefix(msg.DataUrl, "https://") && !strings.HasPrefix(msg.DataUrl, "http://") {
-		return pkitypes.NewErrInvalidDataUrlFormat("Data Url must start with https:// or http://")
+		return pkitypes.NewErrInvalidDataURLFormat("Data Url must start with https:// or http://")
 	}
 
 	if !isDataDigestInTypes {

@@ -64,7 +64,7 @@ func (msg *MsgAddPkiRevocationDistributionPoint) verifyVid(subjectAsText string)
 		return sdkerrors.Wrap(pkitypes.ErrUnsupportedOperation, "publishing a revocation point for non-VID scoped root certificates is currently not supported")
 	}
 
-	if int32(vid) != msg.Vid {
+	if vid != msg.Vid {
 		return pkitypes.NewErrCRLSignerCertificateVidNotEqualMsgVid("CRL Signer Certificate's vid must be equal to the provided vid in the message")
 	}
 
@@ -85,7 +85,7 @@ func (msg *MsgAddPkiRevocationDistributionPoint) verifyPid(subjectAsText string)
 		return pkitypes.NewErrPidNotFound("Product ID (pid) must be provided when it is found in non-root CRL Signer Certificate")
 	}
 
-	if int32(pid) != msg.Pid {
+	if pid != msg.Pid {
 		return pkitypes.NewErrCRLSignerCertificatePidNotEqualMsgPid("CRL Signer Certificate's pid must be equal to the provided pid in the message")
 	}
 
@@ -161,7 +161,7 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 	}
 
 	if !strings.HasPrefix(msg.DataUrl, "https://") && !strings.HasPrefix(msg.DataUrl, "http://") {
-		return pkitypes.NewErrInvalidDataUrlFormat("Data Url must start with https:// or http://")
+		return pkitypes.NewErrInvalidDataURLFormat("Data Url must start with https:// or http://")
 	}
 
 	if msg.DataFileSize == 0 && msg.DataDigest != "" {

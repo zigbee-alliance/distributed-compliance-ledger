@@ -30,6 +30,7 @@ func (k Keeper) PkiRevocationDistributionPointAll(c context.Context, req *types.
 		}
 
 		pKIRevocationDistributionPoints = append(pKIRevocationDistributionPoints, pKIRevocationDistributionPoint)
+
 		return nil
 	})
 

@@ -32,6 +32,7 @@ func (k Keeper) GetPkiRevocationDistributionPointsByIssuerSubjectKeyId(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
