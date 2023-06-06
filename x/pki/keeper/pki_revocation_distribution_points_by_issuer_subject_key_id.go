@@ -7,7 +7,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-// SetPkiRevocationDistributionPointsByIssuerSubjectKeyId set a specific pkiRevocationDistributionPointsByIssuerSubjectKeyId in the store from its index
+// SetPkiRevocationDistributionPointsByIssuerSubjectKeyId set a specific pkiRevocationDistributionPointsByIssuerSubjectKeyId in the store from its index.
 func (k Keeper) SetPkiRevocationDistributionPointsByIssuerSubjectKeyId(ctx sdk.Context, pkiRevocationDistributionPointsByIssuerSubjectKeyId types.PkiRevocationDistributionPointsByIssuerSubjectKeyId) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.PkiRevocationDistributionPointsByIssuerSubjectKeyIdKeyPrefix))
 	b := k.cdc.MustMarshal(&pkiRevocationDistributionPointsByIssuerSubjectKeyId)
@@ -16,7 +16,7 @@ func (k Keeper) SetPkiRevocationDistributionPointsByIssuerSubjectKeyId(ctx sdk.C
 	), b)
 }
 
-// GetPkiRevocationDistributionPointsByIssuerSubjectKeyId returns a pkiRevocationDistributionPointsByIssuerSubjectKeyId from its index
+// GetPkiRevocationDistributionPointsByIssuerSubjectKeyId returns a pkiRevocationDistributionPointsByIssuerSubjectKeyId from its index.
 func (k Keeper) GetPkiRevocationDistributionPointsByIssuerSubjectKeyId(
 	ctx sdk.Context,
 	issuerSubjectKeyId string,
@@ -36,7 +36,7 @@ func (k Keeper) GetPkiRevocationDistributionPointsByIssuerSubjectKeyId(
 	return val, true
 }
 
-// RemovePkiRevocationDistributionPointsByIssuerSubjectKeyId removes a pkiRevocationDistributionPointsByIssuerSubjectKeyId from the store
+// RemovePkiRevocationDistributionPointsByIssuerSubjectKeyId removes a pkiRevocationDistributionPointsByIssuerSubjectKeyId from the store.
 func (k Keeper) RemovePkiRevocationDistributionPointsByIssuerSubjectKeyId(
 	ctx sdk.Context,
 	issuerSubjectKeyId string,
@@ -48,7 +48,7 @@ func (k Keeper) RemovePkiRevocationDistributionPointsByIssuerSubjectKeyId(
 	))
 }
 
-// GetAllPkiRevocationDistributionPointsByIssuerSubjectKeyId returns all pkiRevocationDistributionPointsByIssuerSubjectKeyId
+// GetAllPkiRevocationDistributionPointsByIssuerSubjectKeyId returns all pkiRevocationDistributionPointsByIssuerSubjectKeyId.
 func (k Keeper) GetAllPkiRevocationDistributionPointsByIssuerSubjectKeyId(ctx sdk.Context) (list []types.PkiRevocationDistributionPointsByIssuerSubjectKeyId) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.PkiRevocationDistributionPointsByIssuerSubjectKeyIdKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})

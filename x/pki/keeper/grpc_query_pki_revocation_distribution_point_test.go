@@ -15,7 +15,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-// Prevent strconv unused error
+// Prevent strconv unused error.
 var _ = strconv.IntSize
 
 func TestPkiRevocationDistributionPointQuerySingle(t *testing.T) {

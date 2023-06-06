@@ -58,7 +58,7 @@ func (k Keeper) RemovePkiRevocationDistributionPoint(
 	))
 }
 
-// GetAllPkiRevocationDistributionPoint returns all pKIRevocationDistributionPoint
+// GetAllPkiRevocationDistributionPoint returns all pKIRevocationDistributionPoint.
 func (k Keeper) GetAllPkiRevocationDistributionPoint(ctx sdk.Context) (list []types.PkiRevocationDistributionPoint) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.PkiRevocationDistributionPointKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})

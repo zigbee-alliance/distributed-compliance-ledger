@@ -5,11 +5,11 @@ import "encoding/binary"
 var _ binary.ByteOrder
 
 const (
-	// PkiRevocationDistributionPointKeyPrefix is the prefix to retrieve all PkiRevocationDistributionPoint
+	// PkiRevocationDistributionPointKeyPrefix is the prefix to retrieve all PkiRevocationDistributionPoint.
 	PkiRevocationDistributionPointKeyPrefix = "PkiRevocationDistributionPoint/value/"
 )
 
-// PkiRevocationDistributionPointKey returns the store key to retrieve a PkiRevocationDistributionPoint from the index fields
+// PkiRevocationDistributionPointKey returns the store key to retrieve a PkiRevocationDistributionPoint from the index fields.
 func PkiRevocationDistributionPointKey(
 	vid int32,
 	label string,

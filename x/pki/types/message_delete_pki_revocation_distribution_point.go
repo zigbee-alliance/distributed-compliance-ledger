@@ -33,6 +33,7 @@ func (msg *MsgDeletePkiRevocationDistributionPoint) GetSigners() []sdk.AccAddres
 	if err != nil {
 		panic(err)
 	}
+
 	return []sdk.AccAddress{signer}
 }
 

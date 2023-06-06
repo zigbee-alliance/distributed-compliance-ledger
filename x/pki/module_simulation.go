@@ -54,15 +54,15 @@ const (
 	defaultWeightMsgRejectAddX509RootCert int = 100
 
 	opWeightMsgAddPkiRevocationDistributionPoint = "op_weight_msg_create_chain"
-	// TODO: Determine the simulation weight value
+	// TODO: Determine the simulation weight value.
 	defaultWeightMsgAddPkiRevocationDistributionPoint int = 100
 
 	opWeightMsgUpdatePkiRevocationDistributionPoint = "op_weight_msg_create_chain"
-	// TODO: Determine the simulation weight value
+	// TODO: Determine the simulation weight value.
 	defaultWeightMsgUpdatePkiRevocationDistributionPoint int = 100
 
 	opWeightMsgDeletePkiRevocationDistributionPoint = "op_weight_msg_create_chain"
-	// TODO: Determine the simulation weight value
+	// TODO: Determine the simulation weight value.
 	defaultWeightMsgDeletePkiRevocationDistributionPoint int = 100
 
 	// this line is used by starport scaffolding # simapp/module/const.
