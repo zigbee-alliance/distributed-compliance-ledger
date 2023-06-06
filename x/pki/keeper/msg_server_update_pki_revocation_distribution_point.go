@@ -95,7 +95,11 @@ func (k msgServer) UpdatePkiRevocationDistributionPoint(goCtx context.Context, m
 			}
 
 			if pid != 0 && pid != pkiRevocationDistributionPoint.Pid {
-				return nil, pkitypes.NewErrCRLSignerCertificateVidNotEqualMsgVid("PEM value of CRL signer certificate and certificate found by its Subject and SubjectKeyID on the ledger is not equal")
+				return nil, pkitypes.NewErrCRLSignerCertificatePidNotEqualMsgPid("pid in updated CRL Signer Certificate must be equal to pid in revocation point")
+			}
+
+			if pid == 0 && pid != pkiRevocationDistributionPoint.Pid {
+				return nil, pkitypes.NewErrPidNotFound("pid not found in updated CRL Signer Certificate when it is provided in revocation point")
 			}
 		}
 	}

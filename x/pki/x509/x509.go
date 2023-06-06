@@ -20,6 +20,7 @@ import (
 	"encoding/hex"
 	"encoding/pem"
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -80,10 +81,13 @@ func ToSubjectAsText(subject string) string {
 }
 
 func subjectAsTextToMap(subjectAsText string) map[string]string {
-	splittedSubjectText := strings.Split(subjectAsText, ",")
+	r := regexp.MustCompile(`(([^\s,]+\s?=\s?[^[\s,]+)|(([^\s,]+:\s?[^\s,]+)))`)
+	matches := r.FindAllString(subjectAsText, -1)
+
 	subjectMap := make(map[string]string)
-	for _, elem := range splittedSubjectText {
-		splittedElem := strings.Split(elem, "=")
+	for _, elem := range matches {
+		r = regexp.MustCompile(`(\s?=\s?)|(\s?:\s?)`)
+		splittedElem := r.Split(elem, -1)
 		if splittedElem[0] == "vid" {
 			splittedElem[0] = "Mvid"
 		}
