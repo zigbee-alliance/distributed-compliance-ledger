@@ -20,7 +20,7 @@ func NewMsgAddPkiRevocationDistributionPoint(signer string, vid int32, pid int32
 		Signer:               signer,
 		Vid:                  vid,
 		Pid:                  pid,
-		IsPAA:                &isPAA,
+		IsPAA:                isPAA,
 		Label:                label,
 		CrlSignerCertificate: crlSignerCertificate,
 		IssuerSubjectKeyID:   issuerSubjectKeyID,
@@ -128,7 +128,7 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 		return pkitypes.NewErrInvalidCertificate(err)
 	}
 
-	if *msg.IsPAA {
+	if msg.IsPAA {
 		if msg.Pid != 0 {
 			return pkitypes.NewErrNotEmptyPid("Product ID (pid) must be empty for root certificates when isPAA is true")
 		}

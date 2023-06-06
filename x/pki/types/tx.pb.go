@@ -801,7 +801,7 @@ type MsgAddPkiRevocationDistributionPoint struct {
 	Signer               string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty" validate:"required"`
 	Vid                  int32  `protobuf:"varint,2,opt,name=vid,proto3" json:"vid,omitempty" validate:"gte=1,lte=65535,required"`
 	Pid                  int32  `protobuf:"varint,3,opt,name=pid,proto3" json:"pid,omitempty" validate:"gte=0,lte=65535"`
-	IsPAA                *bool   `protobuf:"varint,4,opt,name=isPAA,proto3" json:"isPAA,omitempty" validate:"required"`
+	IsPAA                bool   `protobuf:"varint,4,opt,name=isPAA,proto3" json:"isPAA,omitempty"`
 	Label                string `protobuf:"bytes,5,opt,name=label,proto3" json:"label,omitempty" validate:"required"`
 	CrlSignerCertificate string `protobuf:"bytes,6,opt,name=crlSignerCertificate,proto3" json:"crlSignerCertificate,omitempty" validate:"required"`
 	IssuerSubjectKeyID   string `protobuf:"bytes,7,opt,name=issuerSubjectKeyID,proto3" json:"issuerSubjectKeyID,omitempty" validate:"required"`
@@ -868,7 +868,7 @@ func (m *MsgAddPkiRevocationDistributionPoint) GetPid() int32 {
 
 func (m *MsgAddPkiRevocationDistributionPoint) GetIsPAA() bool {
 	if m != nil {
-		return *m.IsPAA
+		return m.IsPAA
 	}
 	return false
 }
@@ -2340,9 +2340,9 @@ func (m *MsgAddPkiRevocationDistributionPoint) MarshalToSizedBuffer(dAtA []byte)
 		i--
 		dAtA[i] = 0x2a
 	}
-	if *m.IsPAA {
+	if m.IsPAA {
 		i--
-		if *m.IsPAA {
+		if m.IsPAA {
 			dAtA[i] = 1
 		} else {
 			dAtA[i] = 0
@@ -2846,7 +2846,7 @@ func (m *MsgAddPkiRevocationDistributionPoint) Size() (n int) {
 	if m.Pid != 0 {
 		n += 1 + sovTx(uint64(m.Pid))
 	}
-	if *m.IsPAA {
+	if m.IsPAA {
 		n += 2
 	}
 	l = len(m.Label)
@@ -4763,7 +4763,7 @@ func (m *MsgAddPkiRevocationDistributionPoint) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			*m.IsPAA = bool(v != 0)
+			m.IsPAA = bool(v != 0)
 		case 5:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Label", wireType)

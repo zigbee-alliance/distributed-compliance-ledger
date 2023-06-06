@@ -1958,11 +1958,10 @@ func TestHandler_ApproveX509RootCert_FourApprovalsAreNeeded_FiveTrustees(t *test
 func TestHandler_AddPkiRevocationDistributionPoint_PAASenderNotVendor(t *testing.T) {
 	setup := Setup(t)
 
-	true_ := true
 	addPkiRevocationDistributionPoint := types.MsgAddPkiRevocationDistributionPoint{
 		Signer:               setup.Trustee1.String(),
 		Vid:                  65521,
-		IsPAA:                &true_,
+		IsPAA:                true,
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 		Label:                "label",
@@ -1980,11 +1979,10 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAACertEncodesVidSenderVidNot
 	vendorAcc := GenerateAccAddress()
 	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, 1)
 
-	true_ := true
 	addPkiRevocationDistributionPoint := types.MsgAddPkiRevocationDistributionPoint{
 		Signer:               vendorAcc.String(),
 		Vid:                  65521,
-		IsPAA:                &true_,
+		IsPAA:                true,
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 		Label:                "label",
@@ -2002,11 +2000,10 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAACertNotFound(t *testing.T)
 	vendorAcc := GenerateAccAddress()
 	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, 65521)
 
-	true_ := true
 	addPkiRevocationDistributionPoint := types.MsgAddPkiRevocationDistributionPoint{
 		Signer:               vendorAcc.String(),
 		Vid:                  65521,
-		IsPAA:                &true_,
+		IsPAA:                true,
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 		Label:                "label",
@@ -2035,11 +2032,10 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAAPemValueOfStoredCertNotEqu
 	vendorAcc := GenerateAccAddress()
 	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, 65522)
 
-	true_ := true
 	addPkiRevocationDistributionPoint := types.MsgAddPkiRevocationDistributionPoint{
 		Signer:               vendorAcc.String(),
 		Vid:                  65522,
-		IsPAA:                &true_,
+		IsPAA:                true,
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAACertWithNumericVid1,
 		Label:                "label",
@@ -2054,11 +2050,10 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAAPemValueOfStoredCertNotEqu
 func TestHandler_AddPkiRevocationDistributionPoint_PAISenderNotVendor(t *testing.T) {
 	setup := Setup(t)
 
-	false_ := false
 	addPkiRevocationDistributionPoint := types.MsgAddPkiRevocationDistributionPoint{
 		Signer:               setup.Trustee1.String(),
 		Vid:                  65521,
-		IsPAA:                &false_,
+		IsPAA:                false,
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAICertWithNumericPidVid,
 		Label:                "label",
@@ -2076,11 +2071,10 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAINotChainedBackToDCLCerts(t
 	vendorAcc := GenerateAccAddress()
 	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, 65521)
 
-	true_ := true
 	addPkiRevocationDistributionPoint := types.MsgAddPkiRevocationDistributionPoint{
 		Signer:               vendorAcc.String(),
 		Vid:                  65521,
-		IsPAA:                &true_,
+		IsPAA:                false,
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAICertWithNumericPidVid,
 		Label:                "label",
@@ -2109,11 +2103,10 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAAAlreadyExists(t *testing.T
 	_, err = setup.Handler(setup.Ctx, approveAddX509RootCert)
 	require.NoError(t, err)
 
-	true_ := true
 	addPkiRevocationDistributionPoint := types.MsgAddPkiRevocationDistributionPoint{
 		Signer:               vendorAcc.String(),
 		Vid:                  65521,
-		IsPAA:                &true_,
+		IsPAA:                true,
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 		Label:                "label",
@@ -2127,7 +2120,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAAAlreadyExists(t *testing.T
 	addPkiRevocationDistributionPoint = types.MsgAddPkiRevocationDistributionPoint{
 		Signer:               vendorAcc.String(),
 		Vid:                  65521,
-		IsPAA:                &true_,
+		IsPAA:                true,
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 		Label:                "label",
@@ -2174,11 +2167,10 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAANewCertificateNotPAA(t 
 	_, err = setup.Handler(setup.Ctx, approveAddX509RootCert)
 	require.NoError(t, err)
 
-	true_ := true
 	addPkiRevocationDistributionPoint := types.MsgAddPkiRevocationDistributionPoint{
 		Signer:               vendorAcc.String(),
 		Vid:                  65521,
-		IsPAA:                &true_,
+		IsPAA:                true,
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 		Label:                "label",
@@ -2218,11 +2210,10 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAASenderNotVendor(t *test
 	_, err = setup.Handler(setup.Ctx, approveAddX509RootCert)
 	require.NoError(t, err)
 
-	true_ := true
 	addPkiRevocationDistributionPoint := types.MsgAddPkiRevocationDistributionPoint{
 		Signer:               vendorAcc.String(),
 		Vid:                  65521,
-		IsPAA:                &true_,
+		IsPAA:                true,
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 		Label:                "label",
@@ -2262,11 +2253,10 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAASenderVidNotEqualCertVi
 	_, err = setup.Handler(setup.Ctx, approveAddX509RootCert)
 	require.NoError(t, err)
 
-	true_ := true
 	addPkiRevocationDistributionPoint := types.MsgAddPkiRevocationDistributionPoint{
 		Signer:               vendorAcc.String(),
 		Vid:                  65521,
-		IsPAA:                &true_,
+		IsPAA:                true,
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 		Label:                "label",
@@ -2309,11 +2299,10 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAISenderIsNotVendor(t *te
 	_, err = setup.Handler(setup.Ctx, approveAddX509RootCert)
 	require.NoError(t, err)
 
-	true_ := true
 	addPkiRevocationDistributionPoint := types.MsgAddPkiRevocationDistributionPoint{
 		Signer:               vendorAcc.String(),
 		Vid:                  65521,
-		IsPAA:                &true_,
+		IsPAA:                true,
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAICertWithNumericPidVid,
 		Label:                "label",
@@ -2356,11 +2345,10 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAISenderVidNotEqualCertVi
 	_, err = setup.Handler(setup.Ctx, addX509Cert)
 	require.NoError(t, err)
 
-	false_ := true
 	addPkiRevocationDistributionPoint := types.MsgAddPkiRevocationDistributionPoint{
 		Signer:               vendorAcc.String(),
 		Vid:                  65521,
-		IsPAA:                &false_,
+		IsPAA:                false,
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAICertWithPidVid,
 		Label:                "label",
@@ -2407,11 +2395,10 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAICertVidNotEqualMsgVid(t
 	_, err = setup.Handler(setup.Ctx, addX509Cert)
 	require.NoError(t, err)
 
-	false_ := false
 	addPkiRevocationDistributionPoint := types.MsgAddPkiRevocationDistributionPoint{
 		Signer:               vendorAcc.String(),
 		Vid:                  65521,
-		IsPAA:                &false_,
+		IsPAA:                false,
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAICertWithNumericPidVid,
 		Label:                "label",
@@ -2456,11 +2443,10 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAIPidNotFoundInNewCert(t 
 	_, err = setup.Handler(setup.Ctx, addX509Cert)
 	require.NoError(t, err)
 
-	false_ := false
 	addPkiRevocationDistributionPoint := types.MsgAddPkiRevocationDistributionPoint{
 		Signer:               vendorAcc.String(),
 		Vid:                  65522,
-		IsPAA:                &false_,
+		IsPAA:                false,
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAICertWithPidVid,
 		Label:                "label",
@@ -2516,11 +2502,10 @@ func TestHandler_DeletePkiRevocationDistributionPoint_PAASenderNotVendor(t *test
 	_, err = setup.Handler(setup.Ctx, approveAddX509RootCert)
 	require.NoError(t, err)
 
-	true_ := true
 	addPkiRevocationDistributionPoint := types.MsgAddPkiRevocationDistributionPoint{
 		Signer:               vendorAcc.String(),
 		Vid:                  65521,
-		IsPAA:                &true_,
+		IsPAA:                true,
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 		Label:                "label",
@@ -2558,11 +2543,10 @@ func TestHandler_DeletePkiRevocationDistributionPoint_PAASenderVidNotEqualCertVi
 	_, err = setup.Handler(setup.Ctx, approveAddX509RootCert)
 	require.NoError(t, err)
 
-	true_ := true
 	addPkiRevocationDistributionPoint := types.MsgAddPkiRevocationDistributionPoint{
 		Signer:               vendorAcc.String(),
 		Vid:                  65521,
-		IsPAA:                &true_,
+		IsPAA:                true,
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 		Label:                "label",
@@ -2608,11 +2592,10 @@ func TestHandler_DeletePkiRevocationDistributionPoint_PAISenderNotVendor(t *test
 	_, err = setup.Handler(setup.Ctx, addX509Cert)
 	require.NoError(t, err)
 
-	false_ := false
 	addPkiRevocationDistributionPoint := types.MsgAddPkiRevocationDistributionPoint{
 		Signer:               vendorAcc.String(),
 		Vid:                  65521,
-		IsPAA:                &false_,
+		IsPAA:                false,
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAICertWithNumericPidVid,
 		Label:                "label",
@@ -2655,11 +2638,10 @@ func TestHandler_DeletePkiRevocationDistributionPoint_PAISenderVidNotEqualCertVi
 	_, err = setup.Handler(setup.Ctx, addX509Cert)
 	require.NoError(t, err)
 
-	false_ := false
 	addPkiRevocationDistributionPoint := types.MsgAddPkiRevocationDistributionPoint{
 		Signer:               vendorAcc.String(),
 		Vid:                  65521,
-		IsPAA:                &false_,
+		IsPAA:                false,
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAICertWithNumericPidVid,
 		Label:                "label",

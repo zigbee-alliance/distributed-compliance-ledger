@@ -102,7 +102,7 @@ message MsgAddPkiRevocationDistributionPoint {
   string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
   int32 vid = 2 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535,required\""];
   int32 pid = 3 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
-  bool isPAA = 4 [(gogoproto.moretags) = "validate:\"required\""];
+  bool isPAA = 4;
   string label = 5 [(gogoproto.moretags) = "validate:\"required\""];
   string crlSignerCertificate = 6 [(gogoproto.moretags) = "validate:\"required\""];
   string issuerSubjectKeyID = 7 [(gogoproto.moretags) = "validate:\"required\""];
