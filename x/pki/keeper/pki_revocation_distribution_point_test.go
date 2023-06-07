@@ -24,6 +24,7 @@ func createNPkiRevocationDistributionPoint(keeper *keeper.Keeper, ctx sdk.Contex
 
 		keeper.SetPkiRevocationDistributionPoint(ctx, items[i])
 	}
+
 	return items
 }
 

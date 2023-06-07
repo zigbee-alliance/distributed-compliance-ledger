@@ -22,6 +22,7 @@ func createNPkiRevocationDistributionPointsByIssuerSubjectKeyId(keeper *keeper.K
 
 		keeper.SetPkiRevocationDistributionPointsByIssuerSubjectKeyId(ctx, items[i])
 	}
+
 	return items
 }
 

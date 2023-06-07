@@ -41,11 +41,13 @@ func (msg *MsgUpdatePkiRevocationDistributionPoint) GetSigners() []sdk.AccAddres
 	if err != nil {
 		panic(err)
 	}
+
 	return []sdk.AccAddress{signer}
 }
 
 func (msg *MsgUpdatePkiRevocationDistributionPoint) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
+
 	return sdk.MustSortJSON(bz)
 }
 

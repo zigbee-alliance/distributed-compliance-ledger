@@ -110,9 +110,15 @@ func (k msgServer) UpdatePkiRevocationDistributionPoint(goCtx context.Context, m
 		}
 
 		if crlSignerCertificate.IsSelfSigned() {
-			verifyPAA(updatedCrlSignerCertificate, pkiRevocationDistributionPoint.Vid)
+			err := verifyPAA(updatedCrlSignerCertificate, pkiRevocationDistributionPoint.Vid)
+			if err != nil {
+				return nil, err
+			}
 		} else {
-			verifyPAI(updatedCrlSignerCertificate, msg.Vid, pkiRevocationDistributionPoint.Pid)
+			err := verifyPAI(updatedCrlSignerCertificate, msg.Vid, pkiRevocationDistributionPoint.Pid)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 	if msg.CrlSignerCertificate != "" {

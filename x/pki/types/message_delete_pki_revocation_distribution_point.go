@@ -39,6 +39,7 @@ func (msg *MsgDeletePkiRevocationDistributionPoint) GetSigners() []sdk.AccAddres
 
 func (msg *MsgDeletePkiRevocationDistributionPoint) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
+
 	return sdk.MustSortJSON(bz)
 }
 
