@@ -11,7 +11,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/x509"
 )
 
-func verifyPAA(updatedCrlSignerCertificate *x509.Certificate, revocationPointVid int32) error {
+func verifyUpdatedPAA(updatedCrlSignerCertificate *x509.Certificate, revocationPointVid int32) error {
 	if !updatedCrlSignerCertificate.IsSelfSigned() {
 		return pkitypes.NewErrRootCertificateIsNotSelfSigned("Updated CRL signer certificate must be self-signed since old one was self-signed")
 	}
@@ -33,7 +33,7 @@ func verifyPAA(updatedCrlSignerCertificate *x509.Certificate, revocationPointVid
 	return nil
 }
 
-func verifyPAI(updatedCrlSignerCertificate *x509.Certificate, msgVid int32, revocationPointPid int32) error {
+func verifyUpdatedPAI(updatedCrlSignerCertificate *x509.Certificate, msgVid int32, revocationPointPid int32) error {
 	if updatedCrlSignerCertificate.IsSelfSigned() {
 		return pkitypes.NewErrNonRootCertificateSelfSigned("Updated CRL signer certificate must not be self-signed since old one was not self-signed")
 	}
@@ -76,12 +76,12 @@ func verifyUpdatedCertificate(updatedCertificate string, revocationPoint types.P
 	}
 
 	if isPrevCertPAA {
-		err := verifyPAA(updatedCrlSignerCertificate, revocationPoint.Vid)
+		err := verifyUpdatedPAA(updatedCrlSignerCertificate, revocationPoint.Vid)
 		if err != nil {
 			return err
 		}
 	} else {
-		err := verifyPAI(updatedCrlSignerCertificate, msgVid, revocationPoint.Pid)
+		err := verifyUpdatedPAI(updatedCrlSignerCertificate, msgVid, revocationPoint.Pid)
 		if err != nil {
 			return err
 		}

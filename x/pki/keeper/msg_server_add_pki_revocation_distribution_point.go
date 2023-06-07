@@ -30,6 +30,20 @@ func verifyVid(subjectAsText string, signerVid int32) error {
 	return nil
 }
 
+func (k msgServer) verifyPAA(crlSignerCertificate *x509.Certificate, certPemValue string, signerVid int32, approvedCertificates types.ApprovedCertificates) error {
+	err := verifyVid(crlSignerCertificate.SubjectAsText, signerVid)
+
+	if err != nil {
+		return err
+	}
+
+	if approvedCertificates.Certs[0].PemCert != certPemValue {
+		return pkitypes.NewErrPemValuesNotEqual("Pem values of CRL signer certificate and certificate found by its Subject and SubjectKeyID are is not equal ")
+	}
+
+	return nil
+}
+
 func (k msgServer) AddPkiRevocationDistributionPoint(goCtx context.Context, msg *types.MsgAddPkiRevocationDistributionPoint) (*types.MsgAddPkiRevocationDistributionPointResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -60,22 +74,19 @@ func (k msgServer) AddPkiRevocationDistributionPoint(goCtx context.Context, msg 
 	}
 
 	if crlSignerCertificate.IsSelfSigned() {
-		err = verifyVid(crlSignerCertificate.SubjectAsText, signerAccount.VendorID)
-
-		if err != nil {
-			return nil, err
-		}
-
 		approvedCertificates, isFound := k.GetApprovedCertificates(ctx, crlSignerCertificate.Subject, crlSignerCertificate.SubjectKeyID)
 		if !isFound {
 			return nil, sdkerrors.Wrap(pkitypes.NewErrCertificateDoesNotExist(crlSignerCertificate.Subject, crlSignerCertificate.SubjectKeyID), "CRL signer Certificate must be a root certificate present on the ledger if isPAA = True")
 		}
 
-		if approvedCertificates.Certs[0].PemCert != msg.CrlSignerCertificate {
-			return nil, pkitypes.NewErrPemValuesNotEqual("Pe values of CRL signer certificate and certificate found by its Subject and SubjectKeyID are is not equal ")
+		err = k.verifyPAA(crlSignerCertificate, msg.CrlSignerCertificate, signerAccount.VendorID, approvedCertificates)
+
+		if err != nil {
+			return nil, err
 		}
 	} else {
 		_, _, err = k.verifyCertificate(ctx, crlSignerCertificate)
+
 		if err != nil {
 			return nil, err
 		}
