@@ -86,6 +86,8 @@ func verifyUpdatedCertificate(updatedCertificate string, revocationPoint types.P
 			return err
 		}
 	}
+
+	return nil
 }
 
 func (k msgServer) UpdatePkiRevocationDistributionPoint(goCtx context.Context, msg *types.MsgUpdatePkiRevocationDistributionPoint) (*types.MsgUpdatePkiRevocationDistributionPointResponse, error) {
