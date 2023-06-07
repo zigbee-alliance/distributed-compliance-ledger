@@ -69,6 +69,25 @@ func verifyPAI(updatedCrlSignerCertificate *x509.Certificate, msgVid int32, revo
 	return nil
 }
 
+func verifyUpdatedCertificate(updatedCertificate string, revocationPoint types.PkiRevocationDistributionPoint, msgVid int32, isPrevCertPAA bool) error {
+	updatedCrlSignerCertificate, err := x509.DecodeX509Certificate(updatedCertificate)
+	if err != nil {
+		return pkitypes.NewErrInvalidCertificate(err)
+	}
+
+	if isPrevCertPAA {
+		err := verifyPAA(updatedCrlSignerCertificate, revocationPoint.Vid)
+		if err != nil {
+			return err
+		}
+	} else {
+		err := verifyPAI(updatedCrlSignerCertificate, msgVid, revocationPoint.Pid)
+		if err != nil {
+			return err
+		}
+	}
+}
+
 func (k msgServer) UpdatePkiRevocationDistributionPoint(goCtx context.Context, msg *types.MsgUpdatePkiRevocationDistributionPoint) (*types.MsgUpdatePkiRevocationDistributionPointResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -104,24 +123,12 @@ func (k msgServer) UpdatePkiRevocationDistributionPoint(goCtx context.Context, m
 	}
 
 	if msg.CrlSignerCertificate != "" {
-		updatedCrlSignerCertificate, err := x509.DecodeX509Certificate(msg.CrlSignerCertificate)
+		err = verifyUpdatedCertificate(msg.CrlSignerCertificate, pkiRevocationDistributionPoint, msg.Vid, crlSignerCertificate.IsSelfSigned())
+
 		if err != nil {
-			return nil, pkitypes.NewErrInvalidCertificate(err)
+			return nil, err
 		}
 
-		if crlSignerCertificate.IsSelfSigned() {
-			err := verifyPAA(updatedCrlSignerCertificate, pkiRevocationDistributionPoint.Vid)
-			if err != nil {
-				return nil, err
-			}
-		} else {
-			err := verifyPAI(updatedCrlSignerCertificate, msg.Vid, pkiRevocationDistributionPoint.Pid)
-			if err != nil {
-				return nil, err
-			}
-		}
-	}
-	if msg.CrlSignerCertificate != "" {
 		pkiRevocationDistributionPoint.CrlSignerCertificate = msg.CrlSignerCertificate
 	}
 

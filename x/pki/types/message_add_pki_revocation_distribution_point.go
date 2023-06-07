@@ -94,6 +94,44 @@ func (msg *MsgAddPkiRevocationDistributionPoint) verifyPid(subjectAsText string)
 	return nil
 }
 
+func (msg *MsgAddPkiRevocationDistributionPoint) verifyPAA(cert *x509.Certificate) error {
+	if msg.Pid != 0 {
+		return pkitypes.NewErrNotEmptyPid("Product ID (pid) must be empty for root certificates when isPAA is true")
+	}
+
+	if !cert.IsSelfSigned() {
+		return pkitypes.NewErrRootCertificateIsNotSelfSigned("CRL Signer Certificate must be self-signed if isPAA is True")
+	}
+
+	err := msg.verifyVid(cert.SubjectAsText)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (msg *MsgAddPkiRevocationDistributionPoint) verifyPAI(cert *x509.Certificate) error {
+	err := msg.verifyPid(cert.SubjectAsText)
+
+	if err != nil {
+		return err
+	}
+
+	if cert.IsSelfSigned() {
+		return pkitypes.NewErrNonRootCertificateSelfSigned("CRL Signer Certificate shall not be self-signed if isPAA is False")
+	}
+
+	err = msg.verifyVid(cert.SubjectAsText)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
@@ -131,31 +169,13 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 	}
 
 	if msg.IsPAA {
-		if msg.Pid != 0 {
-			return pkitypes.NewErrNotEmptyPid("Product ID (pid) must be empty for root certificates when isPAA is true")
-		}
-
-		if !cert.IsSelfSigned() {
-			return pkitypes.NewErrRootCertificateIsNotSelfSigned("CRL Signer Certificate must be self-signed if isPAA is True")
-		}
-
-		err = msg.verifyVid(cert.SubjectAsText)
+		err = msg.verifyPAA(cert)
 
 		if err != nil {
 			return err
 		}
 	} else {
-		err = msg.verifyPid(cert.SubjectAsText)
-
-		if err != nil {
-			return err
-		}
-
-		if cert.IsSelfSigned() {
-			return pkitypes.NewErrNonRootCertificateSelfSigned("CRL Signer Certificate shall not be self-signed if isPAA is False")
-		}
-
-		err = msg.verifyVid(cert.SubjectAsText)
+		err = msg.verifyPAI(cert)
 
 		if err != nil {
 			return err
