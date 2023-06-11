@@ -975,7 +975,7 @@ type MsgUpdatePkiRevocationDistributionPoint struct {
 	Label                string `protobuf:"bytes,3,opt,name=label,proto3" json:"label,omitempty" validate:"required"`
 	CrlSignerCertificate string `protobuf:"bytes,4,opt,name=crlSignerCertificate,proto3" json:"crlSignerCertificate,omitempty"`
 	IssuerSubjectKeyID   string `protobuf:"bytes,5,opt,name=issuerSubjectKeyID,proto3" json:"issuerSubjectKeyID,omitempty" validate:"required"`
-	DataURL              string `protobuf:"bytes,6,opt,name=dataURL,proto3" json:"dataURL,omitempty" validate:"omitempty, url"`
+	DataURL              string `protobuf:"bytes,6,opt,name=dataURL,proto3" json:"dataURL,omitempty" validate:"omitempty,url"`
 	DataFileSize         uint64 `protobuf:"varint,7,opt,name=dataFileSize,proto3" json:"dataFileSize,omitempty"`
 	DataDigest           string `protobuf:"bytes,8,opt,name=dataDigest,proto3" json:"dataDigest,omitempty"`
 	DataDigestType       uint32 `protobuf:"varint,9,opt,name=dataDigestType,proto3" json:"dataDigestType,omitempty"`
