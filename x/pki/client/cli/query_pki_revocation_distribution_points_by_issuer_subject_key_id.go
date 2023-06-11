@@ -9,8 +9,8 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-func CmdShowPkiRevocationDistributionPointsByIssuerSubjectKeyId() *cobra.Command {
-	var issuerSubjectKeyId string
+func CmdShowPkiRevocationDistributionPointsByIssuerSubjectKeyID() *cobra.Command {
+	var issuerSubjectKeyID string
 
 	cmd := &cobra.Command{
 		Use:   "revocation-points-by-issuer",
@@ -18,19 +18,19 @@ func CmdShowPkiRevocationDistributionPointsByIssuerSubjectKeyId() *cobra.Command
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
-			var res types.PkiRevocationDistributionPointsByIssuerSubjectKeyId
+			var res types.PkiRevocationDistributionPointsByIssuerSubjectKeyID
 
 			return cli.QueryWithProof(
 				clientCtx,
 				pkitypes.StoreKey,
-				types.PkiRevocationDistributionPointsByIssuerSubjectKeyIdKeyPrefix,
-				types.PkiRevocationDistributionPointsByIssuerSubjectKeyIdKey(issuerSubjectKeyId),
+				types.PkiRevocationDistributionPointsByIssuerSubjectKeyIDKeyPrefix,
+				types.PkiRevocationDistributionPointsByIssuerSubjectKeyIDKey(issuerSubjectKeyID),
 				&res,
 			)
 		},
 	}
 
-	cmd.Flags().StringVar(&issuerSubjectKeyId, FlagIssuerSubjectKeyID, "", "Issuer's subject key id")
+	cmd.Flags().StringVar(&issuerSubjectKeyID, FlagIssuerSubjectKeyID, "", "Issuer's subject key id")
 	flags.AddQueryFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(FlagIssuerSubjectKeyID)

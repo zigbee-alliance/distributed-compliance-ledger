@@ -53,7 +53,7 @@ result=$(dcld query pki revocation-point --vid=$vid --label=$label --issuer-subj
 
 response_does_not_contain "$result" "\"vid\": 123"
 response_does_not_contain "$result" "\"label\": \"test\""
-response_does_not_contain "$result" "\"issuerSubjectKeyId\": \"AB\""
+response_does_not_contain "$result" "\"issuerSubjectKeyID\": \"AB\""
 check_response "$result" "Not Found"
 
 test_divider
@@ -62,7 +62,7 @@ echo "3. QUERY REVOCATION BY ISSUER SUBJECT KEY ID"
 
 result=$(dcld query pki revocation-points-by-issuer --issuer-subject-key-id=AB)
 
-response_does_not_contain "$result" "\"issuerSubjectKeyId\": \"AB\""
+response_does_not_contain "$result" "\"issuerSubjectKeyID\": \"AB\""
 check_response "$result" "Not Found"
 
 test_divider

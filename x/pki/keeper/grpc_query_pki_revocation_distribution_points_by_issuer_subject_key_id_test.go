@@ -17,34 +17,34 @@ import (
 // Prevent strconv unused error.
 var _ = strconv.IntSize
 
-func TestPkiRevocationDistributionPointsByIssuerSubjectKeyIdQuerySingle(t *testing.T) {
+func TestPkiRevocationDistributionPointsByIssuerSubjectKeyIDQuerySingle(t *testing.T) {
 	keeper, ctx := keepertest.PkiKeeper(t, nil)
 	wctx := sdk.WrapSDKContext(ctx)
-	msgs := createNPkiRevocationDistributionPointsByIssuerSubjectKeyId(keeper, ctx, 2)
+	msgs := createNPkiRevocationDistributionPointsByIssuerSubjectKeyID(keeper, ctx, 2)
 	for _, tc := range []struct {
 		desc     string
-		request  *types.QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIdRequest
-		response *types.QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIdResponse
+		request  *types.QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest
+		response *types.QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse
 		err      error
 	}{
 		{
 			desc: "First",
-			request: &types.QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIdRequest{
-				IssuerSubjectKeyId: msgs[0].IssuerSubjectKeyId,
+			request: &types.QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest{
+				IssuerSubjectKeyID: msgs[0].IssuerSubjectKeyID,
 			},
-			response: &types.QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIdResponse{PkiRevocationDistributionPointsByIssuerSubjectKeyId: msgs[0]},
+			response: &types.QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse{PkiRevocationDistributionPointsByIssuerSubjectKeyID: msgs[0]},
 		},
 		{
 			desc: "Second",
-			request: &types.QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIdRequest{
-				IssuerSubjectKeyId: msgs[1].IssuerSubjectKeyId,
+			request: &types.QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest{
+				IssuerSubjectKeyID: msgs[1].IssuerSubjectKeyID,
 			},
-			response: &types.QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIdResponse{PkiRevocationDistributionPointsByIssuerSubjectKeyId: msgs[1]},
+			response: &types.QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse{PkiRevocationDistributionPointsByIssuerSubjectKeyID: msgs[1]},
 		},
 		{
 			desc: "KeyNotFound",
-			request: &types.QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIdRequest{
-				IssuerSubjectKeyId: strconv.Itoa(100000),
+			request: &types.QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest{
+				IssuerSubjectKeyID: strconv.Itoa(100000),
 			},
 			err: status.Error(codes.InvalidArgument, "not found"),
 		},
@@ -54,7 +54,7 @@ func TestPkiRevocationDistributionPointsByIssuerSubjectKeyIdQuerySingle(t *testi
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
-			response, err := keeper.PkiRevocationDistributionPointsByIssuerSubjectKeyId(wctx, tc.request)
+			response, err := keeper.PkiRevocationDistributionPointsByIssuerSubjectKeyID(wctx, tc.request)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
 			} else {

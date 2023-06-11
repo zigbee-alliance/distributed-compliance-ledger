@@ -21,7 +21,7 @@ func DefaultGenesis() *GenesisState {
 		ApprovedCertificatesBySubjectList:                       []ApprovedCertificatesBySubject{},
 		RejectedCertificateList:                                 []RejectedCertificate{},
 		PkiRevocationDistributionPointList:                      []PkiRevocationDistributionPoint{},
-		PkiRevocationDistributionPointsByIssuerSubjectKeyIdList: []PkiRevocationDistributionPointsByIssuerSubjectKeyId{},
+		PkiRevocationDistributionPointsByIssuerSubjectKeyIDList: []PkiRevocationDistributionPointsByIssuerSubjectKeyID{},
 		// this line is used by starport scaffolding # genesis/types/default
 	}
 }
@@ -121,15 +121,15 @@ func (gs GenesisState) Validate() error {
 		}
 		pKIRevocationDistributionPointIndexMap[index] = struct{}{}
 	}
-	// Check for duplicated index in pkiRevocationDistributionPointsByIssuerSubjectKeyId
-	pkiRevocationDistributionPointsByIssuerSubjectKeyIdIndexMap := make(map[string]struct{})
+	// Check for duplicated index in pkiRevocationDistributionPointsByIssuerSubjectKeyID
+	pkiRevocationDistributionPointsByIssuerSubjectKeyIDIndexMap := make(map[string]struct{})
 
-	for _, elem := range gs.PkiRevocationDistributionPointsByIssuerSubjectKeyIdList {
-		index := string(PkiRevocationDistributionPointsByIssuerSubjectKeyIdKey(elem.IssuerSubjectKeyId))
-		if _, ok := pkiRevocationDistributionPointsByIssuerSubjectKeyIdIndexMap[index]; ok {
-			return fmt.Errorf("duplicated index for pkiRevocationDistributionPointsByIssuerSubjectKeyId")
+	for _, elem := range gs.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList {
+		index := string(PkiRevocationDistributionPointsByIssuerSubjectKeyIDKey(elem.IssuerSubjectKeyID))
+		if _, ok := pkiRevocationDistributionPointsByIssuerSubjectKeyIDIndexMap[index]; ok {
+			return fmt.Errorf("duplicated index for pkiRevocationDistributionPointsByIssuerSubjectKeyID")
 		}
-		pkiRevocationDistributionPointsByIssuerSubjectKeyIdIndexMap[index] = struct{}{}
+		pkiRevocationDistributionPointsByIssuerSubjectKeyIDIndexMap[index] = struct{}{}
 	}
 	// this line is used by starport scaffolding # genesis/types/validate
 

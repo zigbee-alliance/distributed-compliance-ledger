@@ -16,7 +16,7 @@ const (
 	FlagVid                      = "vid"
 	FlagPid                      = "pid"
 	FlagIsPAA                    = "is-paa"
-	FlagDataUrl                  = "data-url"
+	FlagDataURL                  = "data-url"
 	FlagDataFileSize             = "data-file-size"
 	FlagDataDigest               = "data-digest"
 	FlagDataDigestType           = "data-digest-type"

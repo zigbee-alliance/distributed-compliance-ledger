@@ -15,7 +15,7 @@ const TypeMsgAddPkiRevocationDistributionPoint = "add_pki_revocation_distributio
 
 var _ sdk.Msg = &MsgAddPkiRevocationDistributionPoint{}
 
-func NewMsgAddPkiRevocationDistributionPoint(signer string, vid int32, pid int32, isPAA bool, label string, crlSignerCertificate string, issuerSubjectKeyID string, dataUrl string, dataFileSize uint64, dataDigest string, dataDigestType uint32, revocationType uint32) *MsgAddPkiRevocationDistributionPoint {
+func NewMsgAddPkiRevocationDistributionPoint(signer string, vid int32, pid int32, isPAA bool, label string, crlSignerCertificate string, issuerSubjectKeyID string, dataURL string, dataFileSize uint64, dataDigest string, dataDigestType uint32, revocationType uint32) *MsgAddPkiRevocationDistributionPoint {
 	return &MsgAddPkiRevocationDistributionPoint{
 		Signer:               signer,
 		Vid:                  vid,
@@ -24,7 +24,7 @@ func NewMsgAddPkiRevocationDistributionPoint(signer string, vid int32, pid int32
 		Label:                label,
 		CrlSignerCertificate: crlSignerCertificate,
 		IssuerSubjectKeyID:   issuerSubjectKeyID,
-		DataUrl:              dataUrl,
+		DataURL:              dataURL,
 		DataFileSize:         dataFileSize,
 		DataDigest:           dataDigest,
 		DataDigestType:       dataDigestType,
@@ -182,7 +182,7 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 		}
 	}
 
-	if !strings.HasPrefix(msg.DataUrl, "https://") && !strings.HasPrefix(msg.DataUrl, "http://") {
+	if !strings.HasPrefix(msg.DataURL, "https://") && !strings.HasPrefix(msg.DataURL, "http://") {
 		return pkitypes.NewErrInvalidDataURLFormat("Data Url must start with https:// or http://")
 	}
 

@@ -14,14 +14,14 @@ const TypeMsgUpdatePkiRevocationDistributionPoint = "update_pki_revocation_distr
 
 var _ sdk.Msg = &MsgUpdatePkiRevocationDistributionPoint{}
 
-func NewMsgUpdatePkiRevocationDistributionPoint(signer string, vid int32, label string, crlSignerCertificate string, issuerSubjectKeyID string, dataUrl string, dataFileSize uint64, dataDigest string, dataDigestType uint32) *MsgUpdatePkiRevocationDistributionPoint {
+func NewMsgUpdatePkiRevocationDistributionPoint(signer string, vid int32, label string, crlSignerCertificate string, issuerSubjectKeyID string, dataURL string, dataFileSize uint64, dataDigest string, dataDigestType uint32) *MsgUpdatePkiRevocationDistributionPoint {
 	return &MsgUpdatePkiRevocationDistributionPoint{
 		Signer:               signer,
 		Vid:                  vid,
 		Label:                label,
 		CrlSignerCertificate: crlSignerCertificate,
 		IssuerSubjectKeyID:   issuerSubjectKeyID,
-		DataUrl:              dataUrl,
+		DataURL:              dataURL,
 		DataFileSize:         dataFileSize,
 		DataDigest:           dataDigest,
 		DataDigestType:       dataDigestType,
@@ -74,7 +74,7 @@ func (msg *MsgUpdatePkiRevocationDistributionPoint) ValidateBasic() error {
 		}
 	}
 
-	if msg.DataUrl != "" && !strings.HasPrefix(msg.DataUrl, "https://") && !strings.HasPrefix(msg.DataUrl, "http://") {
+	if msg.DataURL != "" && !strings.HasPrefix(msg.DataURL, "https://") && !strings.HasPrefix(msg.DataURL, "http://") {
 		return pkitypes.NewErrInvalidDataURLFormat("Data Url must start with https:// or http://")
 	}
 

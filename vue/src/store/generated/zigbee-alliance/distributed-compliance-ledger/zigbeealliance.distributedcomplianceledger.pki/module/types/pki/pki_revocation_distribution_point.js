@@ -9,7 +9,7 @@ const basePkiRevocationDistributionPoint = {
     pid: 0,
     isPAA: false,
     crlSignerCertificate: '',
-    dataUrl: '',
+    dataURL: '',
     dataFileSize: 0,
     dataDigest: '',
     dataDigestType: 0,
@@ -35,8 +35,8 @@ export const PkiRevocationDistributionPoint = {
         if (message.crlSignerCertificate !== '') {
             writer.uint32(50).string(message.crlSignerCertificate);
         }
-        if (message.dataUrl !== '') {
-            writer.uint32(58).string(message.dataUrl);
+        if (message.dataURL !== '') {
+            writer.uint32(58).string(message.dataURL);
         }
         if (message.dataFileSize !== 0) {
             writer.uint32(64).uint64(message.dataFileSize);
@@ -78,7 +78,7 @@ export const PkiRevocationDistributionPoint = {
                     message.crlSignerCertificate = reader.string();
                     break;
                 case 7:
-                    message.dataUrl = reader.string();
+                    message.dataURL = reader.string();
                     break;
                 case 8:
                     message.dataFileSize = longToNumber(reader.uint64());
@@ -137,11 +137,11 @@ export const PkiRevocationDistributionPoint = {
         else {
             message.crlSignerCertificate = '';
         }
-        if (object.dataUrl !== undefined && object.dataUrl !== null) {
-            message.dataUrl = String(object.dataUrl);
+        if (object.dataURL !== undefined && object.dataURL !== null) {
+            message.dataURL = String(object.dataURL);
         }
         else {
-            message.dataUrl = '';
+            message.dataURL = '';
         }
         if (object.dataFileSize !== undefined && object.dataFileSize !== null) {
             message.dataFileSize = Number(object.dataFileSize);
@@ -177,7 +177,7 @@ export const PkiRevocationDistributionPoint = {
         message.pid !== undefined && (obj.pid = message.pid);
         message.isPAA !== undefined && (obj.isPAA = message.isPAA);
         message.crlSignerCertificate !== undefined && (obj.crlSignerCertificate = message.crlSignerCertificate);
-        message.dataUrl !== undefined && (obj.dataUrl = message.dataUrl);
+        message.dataURL !== undefined && (obj.dataURL = message.dataURL);
         message.dataFileSize !== undefined && (obj.dataFileSize = message.dataFileSize);
         message.dataDigest !== undefined && (obj.dataDigest = message.dataDigest);
         message.dataDigestType !== undefined && (obj.dataDigestType = message.dataDigestType);
@@ -222,11 +222,11 @@ export const PkiRevocationDistributionPoint = {
         else {
             message.crlSignerCertificate = '';
         }
-        if (object.dataUrl !== undefined && object.dataUrl !== null) {
-            message.dataUrl = object.dataUrl;
+        if (object.dataURL !== undefined && object.dataURL !== null) {
+            message.dataURL = object.dataURL;
         }
         else {
-            message.dataUrl = '';
+            message.dataURL = '';
         }
         if (object.dataFileSize !== undefined && object.dataFileSize !== null) {
             message.dataFileSize = object.dataFileSize;

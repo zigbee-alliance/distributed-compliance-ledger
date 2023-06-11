@@ -3,8 +3,8 @@ package zigbeealliance.distributedcomplianceledger.pki;
 
 option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types";
 
-message PkiRevocationDistributionPointsByIssuerSubjectKeyId {
-  string issuerSubjectKeyId = 1; 
+message PkiRevocationDistributionPointsByIssuerSubjectKeyID {
+  string issuerSubjectKeyID = 1; 
   
 }
 

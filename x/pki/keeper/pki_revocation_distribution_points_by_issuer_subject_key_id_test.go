@@ -15,23 +15,23 @@ import (
 // Prevent strconv unused error.
 var _ = strconv.IntSize
 
-func createNPkiRevocationDistributionPointsByIssuerSubjectKeyId(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.PkiRevocationDistributionPointsByIssuerSubjectKeyId {
-	items := make([]types.PkiRevocationDistributionPointsByIssuerSubjectKeyId, n)
+func createNPkiRevocationDistributionPointsByIssuerSubjectKeyID(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.PkiRevocationDistributionPointsByIssuerSubjectKeyID {
+	items := make([]types.PkiRevocationDistributionPointsByIssuerSubjectKeyID, n)
 	for i := range items {
-		items[i].IssuerSubjectKeyId = strconv.Itoa(i)
+		items[i].IssuerSubjectKeyID = strconv.Itoa(i)
 
-		keeper.SetPkiRevocationDistributionPointsByIssuerSubjectKeyId(ctx, items[i])
+		keeper.SetPkiRevocationDistributionPointsByIssuerSubjectKeyID(ctx, items[i])
 	}
 
 	return items
 }
 
-func TestPkiRevocationDistributionPointsByIssuerSubjectKeyIdGet(t *testing.T) {
+func TestPkiRevocationDistributionPointsByIssuerSubjectKeyIDGet(t *testing.T) {
 	keeper, ctx := keepertest.PkiKeeper(t, nil)
-	items := createNPkiRevocationDistributionPointsByIssuerSubjectKeyId(keeper, ctx, 10)
+	items := createNPkiRevocationDistributionPointsByIssuerSubjectKeyID(keeper, ctx, 10)
 	for _, item := range items {
-		rst, found := keeper.GetPkiRevocationDistributionPointsByIssuerSubjectKeyId(ctx,
-			item.IssuerSubjectKeyId,
+		rst, found := keeper.GetPkiRevocationDistributionPointsByIssuerSubjectKeyID(ctx,
+			item.IssuerSubjectKeyID,
 		)
 		require.True(t, found)
 		require.Equal(t,
@@ -40,25 +40,25 @@ func TestPkiRevocationDistributionPointsByIssuerSubjectKeyIdGet(t *testing.T) {
 		)
 	}
 }
-func TestPkiRevocationDistributionPointsByIssuerSubjectKeyIdRemove(t *testing.T) {
+func TestPkiRevocationDistributionPointsByIssuerSubjectKeyIDRemove(t *testing.T) {
 	keeper, ctx := keepertest.PkiKeeper(t, nil)
-	items := createNPkiRevocationDistributionPointsByIssuerSubjectKeyId(keeper, ctx, 10)
+	items := createNPkiRevocationDistributionPointsByIssuerSubjectKeyID(keeper, ctx, 10)
 	for _, item := range items {
-		keeper.RemovePkiRevocationDistributionPointsByIssuerSubjectKeyId(ctx,
-			item.IssuerSubjectKeyId,
+		keeper.RemovePkiRevocationDistributionPointsByIssuerSubjectKeyID(ctx,
+			item.IssuerSubjectKeyID,
 		)
-		_, found := keeper.GetPkiRevocationDistributionPointsByIssuerSubjectKeyId(ctx,
-			item.IssuerSubjectKeyId,
+		_, found := keeper.GetPkiRevocationDistributionPointsByIssuerSubjectKeyID(ctx,
+			item.IssuerSubjectKeyID,
 		)
 		require.False(t, found)
 	}
 }
 
-func TestPkiRevocationDistributionPointsByIssuerSubjectKeyIdGetAll(t *testing.T) {
+func TestPkiRevocationDistributionPointsByIssuerSubjectKeyIDGetAll(t *testing.T) {
 	keeper, ctx := keepertest.PkiKeeper(t, nil)
-	items := createNPkiRevocationDistributionPointsByIssuerSubjectKeyId(keeper, ctx, 10)
+	items := createNPkiRevocationDistributionPointsByIssuerSubjectKeyID(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),
-		nullify.Fill(keeper.GetAllPkiRevocationDistributionPointsByIssuerSubjectKeyId(ctx)),
+		nullify.Fill(keeper.GetAllPkiRevocationDistributionPointsByIssuerSubjectKeyID(ctx)),
 	)
 }

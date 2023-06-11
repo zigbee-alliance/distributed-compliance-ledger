@@ -7,25 +7,25 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-// SetPkiRevocationDistributionPointsByIssuerSubjectKeyId set a specific pkiRevocationDistributionPointsByIssuerSubjectKeyId in the store from its index.
-func (k Keeper) SetPkiRevocationDistributionPointsByIssuerSubjectKeyId(ctx sdk.Context, pkiRevocationDistributionPointsByIssuerSubjectKeyId types.PkiRevocationDistributionPointsByIssuerSubjectKeyId) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.PkiRevocationDistributionPointsByIssuerSubjectKeyIdKeyPrefix))
-	b := k.cdc.MustMarshal(&pkiRevocationDistributionPointsByIssuerSubjectKeyId)
-	store.Set(types.PkiRevocationDistributionPointsByIssuerSubjectKeyIdKey(
-		pkiRevocationDistributionPointsByIssuerSubjectKeyId.IssuerSubjectKeyId,
+// SetPkiRevocationDistributionPointsByIssuerSubjectKeyID set a specific pkiRevocationDistributionPointsByIssuerSubjectKeyID in the store from its index.
+func (k Keeper) SetPkiRevocationDistributionPointsByIssuerSubjectKeyID(ctx sdk.Context, pkiRevocationDistributionPointsByIssuerSubjectKeyID types.PkiRevocationDistributionPointsByIssuerSubjectKeyID) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.PkiRevocationDistributionPointsByIssuerSubjectKeyIDKeyPrefix))
+	b := k.cdc.MustMarshal(&pkiRevocationDistributionPointsByIssuerSubjectKeyID)
+	store.Set(types.PkiRevocationDistributionPointsByIssuerSubjectKeyIDKey(
+		pkiRevocationDistributionPointsByIssuerSubjectKeyID.IssuerSubjectKeyID,
 	), b)
 }
 
-// GetPkiRevocationDistributionPointsByIssuerSubjectKeyId returns a pkiRevocationDistributionPointsByIssuerSubjectKeyId from its index.
-func (k Keeper) GetPkiRevocationDistributionPointsByIssuerSubjectKeyId(
+// GetPkiRevocationDistributionPointsByIssuerSubjectKeyID returns a pkiRevocationDistributionPointsByIssuerSubjectKeyID from its index.
+func (k Keeper) GetPkiRevocationDistributionPointsByIssuerSubjectKeyID(
 	ctx sdk.Context,
-	issuerSubjectKeyId string,
+	issuerSubjectKeyID string,
 
-) (val types.PkiRevocationDistributionPointsByIssuerSubjectKeyId, found bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.PkiRevocationDistributionPointsByIssuerSubjectKeyIdKeyPrefix))
+) (val types.PkiRevocationDistributionPointsByIssuerSubjectKeyID, found bool) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.PkiRevocationDistributionPointsByIssuerSubjectKeyIDKeyPrefix))
 
-	b := store.Get(types.PkiRevocationDistributionPointsByIssuerSubjectKeyIdKey(
-		issuerSubjectKeyId,
+	b := store.Get(types.PkiRevocationDistributionPointsByIssuerSubjectKeyIDKey(
+		issuerSubjectKeyID,
 	))
 	if b == nil {
 		return val, false
@@ -36,27 +36,27 @@ func (k Keeper) GetPkiRevocationDistributionPointsByIssuerSubjectKeyId(
 	return val, true
 }
 
-// RemovePkiRevocationDistributionPointsByIssuerSubjectKeyId removes a pkiRevocationDistributionPointsByIssuerSubjectKeyId from the store.
-func (k Keeper) RemovePkiRevocationDistributionPointsByIssuerSubjectKeyId(
+// RemovePkiRevocationDistributionPointsByIssuerSubjectKeyID removes a pkiRevocationDistributionPointsByIssuerSubjectKeyID from the store.
+func (k Keeper) RemovePkiRevocationDistributionPointsByIssuerSubjectKeyID(
 	ctx sdk.Context,
-	issuerSubjectKeyId string,
+	issuerSubjectKeyID string,
 
 ) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.PkiRevocationDistributionPointsByIssuerSubjectKeyIdKeyPrefix))
-	store.Delete(types.PkiRevocationDistributionPointsByIssuerSubjectKeyIdKey(
-		issuerSubjectKeyId,
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.PkiRevocationDistributionPointsByIssuerSubjectKeyIDKeyPrefix))
+	store.Delete(types.PkiRevocationDistributionPointsByIssuerSubjectKeyIDKey(
+		issuerSubjectKeyID,
 	))
 }
 
-// GetAllPkiRevocationDistributionPointsByIssuerSubjectKeyId returns all pkiRevocationDistributionPointsByIssuerSubjectKeyId.
-func (k Keeper) GetAllPkiRevocationDistributionPointsByIssuerSubjectKeyId(ctx sdk.Context) (list []types.PkiRevocationDistributionPointsByIssuerSubjectKeyId) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.PkiRevocationDistributionPointsByIssuerSubjectKeyIdKeyPrefix))
+// GetAllPkiRevocationDistributionPointsByIssuerSubjectKeyID returns all pkiRevocationDistributionPointsByIssuerSubjectKeyID.
+func (k Keeper) GetAllPkiRevocationDistributionPointsByIssuerSubjectKeyID(ctx sdk.Context) (list []types.PkiRevocationDistributionPointsByIssuerSubjectKeyID) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.PkiRevocationDistributionPointsByIssuerSubjectKeyIDKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
-		var val types.PkiRevocationDistributionPointsByIssuerSubjectKeyId
+		var val types.PkiRevocationDistributionPointsByIssuerSubjectKeyID
 		k.cdc.MustUnmarshal(iterator.Value(), &val)
 		list = append(list, val)
 	}

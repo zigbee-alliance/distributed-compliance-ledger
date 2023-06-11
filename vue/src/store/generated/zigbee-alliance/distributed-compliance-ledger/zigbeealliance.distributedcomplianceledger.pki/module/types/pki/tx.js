@@ -1085,7 +1085,7 @@ const baseMsgAddPkiRevocationDistributionPoint = {
     label: '',
     crlSignerCertificate: '',
     issuerSubjectKeyID: '',
-    dataUrl: '',
+    dataURL: '',
     dataFileSize: 0,
     dataDigest: '',
     dataDigestType: 0,
@@ -1114,8 +1114,8 @@ export const MsgAddPkiRevocationDistributionPoint = {
         if (message.issuerSubjectKeyID !== '') {
             writer.uint32(58).string(message.issuerSubjectKeyID);
         }
-        if (message.dataUrl !== '') {
-            writer.uint32(66).string(message.dataUrl);
+        if (message.dataURL !== '') {
+            writer.uint32(66).string(message.dataURL);
         }
         if (message.dataFileSize !== 0) {
             writer.uint32(72).uint64(message.dataFileSize);
@@ -1160,7 +1160,7 @@ export const MsgAddPkiRevocationDistributionPoint = {
                     message.issuerSubjectKeyID = reader.string();
                     break;
                 case 8:
-                    message.dataUrl = reader.string();
+                    message.dataURL = reader.string();
                     break;
                 case 9:
                     message.dataFileSize = longToNumber(reader.uint64());
@@ -1225,11 +1225,11 @@ export const MsgAddPkiRevocationDistributionPoint = {
         else {
             message.issuerSubjectKeyID = '';
         }
-        if (object.dataUrl !== undefined && object.dataUrl !== null) {
-            message.dataUrl = String(object.dataUrl);
+        if (object.dataURL !== undefined && object.dataURL !== null) {
+            message.dataURL = String(object.dataURL);
         }
         else {
-            message.dataUrl = '';
+            message.dataURL = '';
         }
         if (object.dataFileSize !== undefined && object.dataFileSize !== null) {
             message.dataFileSize = Number(object.dataFileSize);
@@ -1266,7 +1266,7 @@ export const MsgAddPkiRevocationDistributionPoint = {
         message.label !== undefined && (obj.label = message.label);
         message.crlSignerCertificate !== undefined && (obj.crlSignerCertificate = message.crlSignerCertificate);
         message.issuerSubjectKeyID !== undefined && (obj.issuerSubjectKeyID = message.issuerSubjectKeyID);
-        message.dataUrl !== undefined && (obj.dataUrl = message.dataUrl);
+        message.dataURL !== undefined && (obj.dataURL = message.dataURL);
         message.dataFileSize !== undefined && (obj.dataFileSize = message.dataFileSize);
         message.dataDigest !== undefined && (obj.dataDigest = message.dataDigest);
         message.dataDigestType !== undefined && (obj.dataDigestType = message.dataDigestType);
@@ -1317,11 +1317,11 @@ export const MsgAddPkiRevocationDistributionPoint = {
         else {
             message.issuerSubjectKeyID = '';
         }
-        if (object.dataUrl !== undefined && object.dataUrl !== null) {
-            message.dataUrl = object.dataUrl;
+        if (object.dataURL !== undefined && object.dataURL !== null) {
+            message.dataURL = object.dataURL;
         }
         else {
-            message.dataUrl = '';
+            message.dataURL = '';
         }
         if (object.dataFileSize !== undefined && object.dataFileSize !== null) {
             message.dataFileSize = object.dataFileSize;
@@ -1388,7 +1388,7 @@ const baseMsgUpdatePkiRevocationDistributionPoint = {
     label: '',
     crlSignerCertificate: '',
     issuerSubjectKeyID: '',
-    dataUrl: '',
+    dataURL: '',
     dataFileSize: 0,
     dataDigest: '',
     dataDigestType: 0
@@ -1410,8 +1410,8 @@ export const MsgUpdatePkiRevocationDistributionPoint = {
         if (message.issuerSubjectKeyID !== '') {
             writer.uint32(42).string(message.issuerSubjectKeyID);
         }
-        if (message.dataUrl !== '') {
-            writer.uint32(50).string(message.dataUrl);
+        if (message.dataURL !== '') {
+            writer.uint32(50).string(message.dataURL);
         }
         if (message.dataFileSize !== 0) {
             writer.uint32(56).uint64(message.dataFileSize);
@@ -1447,7 +1447,7 @@ export const MsgUpdatePkiRevocationDistributionPoint = {
                     message.issuerSubjectKeyID = reader.string();
                     break;
                 case 6:
-                    message.dataUrl = reader.string();
+                    message.dataURL = reader.string();
                     break;
                 case 7:
                     message.dataFileSize = longToNumber(reader.uint64());
@@ -1497,11 +1497,11 @@ export const MsgUpdatePkiRevocationDistributionPoint = {
         else {
             message.issuerSubjectKeyID = '';
         }
-        if (object.dataUrl !== undefined && object.dataUrl !== null) {
-            message.dataUrl = String(object.dataUrl);
+        if (object.dataURL !== undefined && object.dataURL !== null) {
+            message.dataURL = String(object.dataURL);
         }
         else {
-            message.dataUrl = '';
+            message.dataURL = '';
         }
         if (object.dataFileSize !== undefined && object.dataFileSize !== null) {
             message.dataFileSize = Number(object.dataFileSize);
@@ -1530,7 +1530,7 @@ export const MsgUpdatePkiRevocationDistributionPoint = {
         message.label !== undefined && (obj.label = message.label);
         message.crlSignerCertificate !== undefined && (obj.crlSignerCertificate = message.crlSignerCertificate);
         message.issuerSubjectKeyID !== undefined && (obj.issuerSubjectKeyID = message.issuerSubjectKeyID);
-        message.dataUrl !== undefined && (obj.dataUrl = message.dataUrl);
+        message.dataURL !== undefined && (obj.dataURL = message.dataURL);
         message.dataFileSize !== undefined && (obj.dataFileSize = message.dataFileSize);
         message.dataDigest !== undefined && (obj.dataDigest = message.dataDigest);
         message.dataDigestType !== undefined && (obj.dataDigestType = message.dataDigestType);
@@ -1568,11 +1568,11 @@ export const MsgUpdatePkiRevocationDistributionPoint = {
         else {
             message.issuerSubjectKeyID = '';
         }
-        if (object.dataUrl !== undefined && object.dataUrl !== null) {
-            message.dataUrl = object.dataUrl;
+        if (object.dataURL !== undefined && object.dataURL !== null) {
+            message.dataURL = object.dataURL;
         }
         else {
-            message.dataUrl = '';
+            message.dataURL = '';
         }
         if (object.dataFileSize !== undefined && object.dataFileSize !== null) {
             message.dataFileSize = object.dataFileSize;

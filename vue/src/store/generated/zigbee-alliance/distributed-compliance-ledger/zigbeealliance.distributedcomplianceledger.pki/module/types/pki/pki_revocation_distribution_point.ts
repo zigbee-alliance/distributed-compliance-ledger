@@ -11,7 +11,7 @@ export interface PkiRevocationDistributionPoint {
   pid: number
   isPAA: boolean
   crlSignerCertificate: string
-  dataUrl: string
+  dataURL: string
   dataFileSize: number
   dataDigest: string
   dataDigestType: number
@@ -25,7 +25,7 @@ const basePkiRevocationDistributionPoint: object = {
   pid: 0,
   isPAA: false,
   crlSignerCertificate: '',
-  dataUrl: '',
+  dataURL: '',
   dataFileSize: 0,
   dataDigest: '',
   dataDigestType: 0,
@@ -35,7 +35,7 @@ const basePkiRevocationDistributionPoint: object = {
 export const PkiRevocationDistributionPoint = {
   encode(message: PkiRevocationDistributionPoint, writer: Writer = Writer.create()): Writer {
     if (message.vid !== 0) {
-      writer.uint32(8).uint64(message.vid)
+      writer.uint32(8).int32(message.vid)
     }
     if (message.label !== '') {
       writer.uint32(18).string(message.label)
@@ -44,7 +44,7 @@ export const PkiRevocationDistributionPoint = {
       writer.uint32(26).string(message.issuerSubjectKeyID)
     }
     if (message.pid !== 0) {
-      writer.uint32(32).uint64(message.pid)
+      writer.uint32(32).int32(message.pid)
     }
     if (message.isPAA === true) {
       writer.uint32(40).bool(message.isPAA)
@@ -52,8 +52,8 @@ export const PkiRevocationDistributionPoint = {
     if (message.crlSignerCertificate !== '') {
       writer.uint32(50).string(message.crlSignerCertificate)
     }
-    if (message.dataUrl !== '') {
-      writer.uint32(58).string(message.dataUrl)
+    if (message.dataURL !== '') {
+      writer.uint32(58).string(message.dataURL)
     }
     if (message.dataFileSize !== 0) {
       writer.uint32(64).uint64(message.dataFileSize)
@@ -62,10 +62,10 @@ export const PkiRevocationDistributionPoint = {
       writer.uint32(74).string(message.dataDigest)
     }
     if (message.dataDigestType !== 0) {
-      writer.uint32(80).uint64(message.dataDigestType)
+      writer.uint32(80).uint32(message.dataDigestType)
     }
     if (message.revocationType !== 0) {
-      writer.uint32(88).uint64(message.revocationType)
+      writer.uint32(88).uint32(message.revocationType)
     }
     return writer
   },
@@ -78,7 +78,7 @@ export const PkiRevocationDistributionPoint = {
       const tag = reader.uint32()
       switch (tag >>> 3) {
         case 1:
-          message.vid = longToNumber(reader.uint64() as Long)
+          message.vid = reader.int32()
           break
         case 2:
           message.label = reader.string()
@@ -87,7 +87,7 @@ export const PkiRevocationDistributionPoint = {
           message.issuerSubjectKeyID = reader.string()
           break
         case 4:
-          message.pid = longToNumber(reader.uint64() as Long)
+          message.pid = reader.int32()
           break
         case 5:
           message.isPAA = reader.bool()
@@ -96,7 +96,7 @@ export const PkiRevocationDistributionPoint = {
           message.crlSignerCertificate = reader.string()
           break
         case 7:
-          message.dataUrl = reader.string()
+          message.dataURL = reader.string()
           break
         case 8:
           message.dataFileSize = longToNumber(reader.uint64() as Long)
@@ -105,10 +105,10 @@ export const PkiRevocationDistributionPoint = {
           message.dataDigest = reader.string()
           break
         case 10:
-          message.dataDigestType = longToNumber(reader.uint64() as Long)
+          message.dataDigestType = reader.uint32()
           break
         case 11:
-          message.revocationType = longToNumber(reader.uint64() as Long)
+          message.revocationType = reader.uint32()
           break
         default:
           reader.skipType(tag & 7)
@@ -150,10 +150,10 @@ export const PkiRevocationDistributionPoint = {
     } else {
       message.crlSignerCertificate = ''
     }
-    if (object.dataUrl !== undefined && object.dataUrl !== null) {
-      message.dataUrl = String(object.dataUrl)
+    if (object.dataURL !== undefined && object.dataURL !== null) {
+      message.dataURL = String(object.dataURL)
     } else {
-      message.dataUrl = ''
+      message.dataURL = ''
     }
     if (object.dataFileSize !== undefined && object.dataFileSize !== null) {
       message.dataFileSize = Number(object.dataFileSize)
@@ -186,7 +186,7 @@ export const PkiRevocationDistributionPoint = {
     message.pid !== undefined && (obj.pid = message.pid)
     message.isPAA !== undefined && (obj.isPAA = message.isPAA)
     message.crlSignerCertificate !== undefined && (obj.crlSignerCertificate = message.crlSignerCertificate)
-    message.dataUrl !== undefined && (obj.dataUrl = message.dataUrl)
+    message.dataURL !== undefined && (obj.dataURL = message.dataURL)
     message.dataFileSize !== undefined && (obj.dataFileSize = message.dataFileSize)
     message.dataDigest !== undefined && (obj.dataDigest = message.dataDigest)
     message.dataDigestType !== undefined && (obj.dataDigestType = message.dataDigestType)
@@ -226,10 +226,10 @@ export const PkiRevocationDistributionPoint = {
     } else {
       message.crlSignerCertificate = ''
     }
-    if (object.dataUrl !== undefined && object.dataUrl !== null) {
-      message.dataUrl = object.dataUrl
+    if (object.dataURL !== undefined && object.dataURL !== null) {
+      message.dataURL = object.dataURL
     } else {
-      message.dataUrl = ''
+      message.dataURL = ''
     }
     if (object.dataFileSize !== undefined && object.dataFileSize !== null) {
       message.dataFileSize = object.dataFileSize

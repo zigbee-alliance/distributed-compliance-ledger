@@ -60,7 +60,7 @@ func TestMsgDeletePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			err: validator.ErrRequiredFieldMissing,
 		},
 		{
-			name: "issuerSubjectKeyId empty",
+			name: "issuerSubjectKeyID empty",
 			msg: MsgDeletePkiRevocationDistributionPoint{
 				Signer: sample.AccAddress(),
 				Vid:    1,
@@ -69,7 +69,7 @@ func TestMsgDeletePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			err: validator.ErrRequiredFieldMissing,
 		},
 		{
-			name: "wrong IssuerSubjectKeyId format (not [0-9A-F])",
+			name: "wrong IssuerSubjectKeyID format (not [0-9A-F])",
 			msg: MsgDeletePkiRevocationDistributionPoint{
 				Signer:             sample.AccAddress(),
 				Vid:                1,
@@ -79,7 +79,7 @@ func TestMsgDeletePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			err: pkitypes.ErrWrongSubjectKeyIDFormat,
 		},
 		{
-			name: "wrong IssuerSubjectKeyId format (not even number of symbols)",
+			name: "wrong IssuerSubjectKeyID format (not even number of symbols)",
 			msg: MsgDeletePkiRevocationDistributionPoint{
 				Signer:             sample.AccAddress(),
 				Vid:                1,
@@ -89,7 +89,7 @@ func TestMsgDeletePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			err: pkitypes.ErrWrongSubjectKeyIDFormat,
 		},
 		{
-			name: "wrong IssuerSubjectKeyId format (not even number of symbols)",
+			name: "wrong IssuerSubjectKeyID format (not even number of symbols)",
 			msg: MsgDeletePkiRevocationDistributionPoint{
 				Signer:             sample.AccAddress(),
 				Vid:                1,

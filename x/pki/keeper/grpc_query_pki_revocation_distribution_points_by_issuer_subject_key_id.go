@@ -9,19 +9,19 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (k Keeper) PkiRevocationDistributionPointsByIssuerSubjectKeyId(c context.Context, req *types.QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIdRequest) (*types.QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIdResponse, error) {
+func (k Keeper) PkiRevocationDistributionPointsByIssuerSubjectKeyID(c context.Context, req *types.QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest) (*types.QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 	ctx := sdk.UnwrapSDKContext(c)
 
-	val, found := k.GetPkiRevocationDistributionPointsByIssuerSubjectKeyId(
+	val, found := k.GetPkiRevocationDistributionPointsByIssuerSubjectKeyID(
 		ctx,
-		req.IssuerSubjectKeyId,
+		req.IssuerSubjectKeyID,
 	)
 	if !found {
 		return nil, status.Error(codes.InvalidArgument, "not found")
 	}
 
-	return &types.QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIdResponse{PkiRevocationDistributionPointsByIssuerSubjectKeyId: val}, nil
+	return &types.QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse{PkiRevocationDistributionPointsByIssuerSubjectKeyID: val}, nil
 }

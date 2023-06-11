@@ -1,6 +1,5 @@
 /* eslint-disable */
-import { Reader, util, configure, Writer } from 'protobufjs/minimal'
-import * as Long from 'long'
+import { Reader, Writer } from 'protobufjs/minimal'
 import { ApprovedCertificates } from '../pki/approved_certificates'
 import { PageRequest, PageResponse } from '../cosmos/base/query/v1beta1/pagination'
 import { ProposedCertificate } from '../pki/proposed_certificate'
@@ -12,6 +11,7 @@ import { RevokedRootCertificates } from '../pki/revoked_root_certificates'
 import { ApprovedCertificatesBySubject } from '../pki/approved_certificates_by_subject'
 import { RejectedCertificate } from '../pki/rejected_certificate'
 import { PkiRevocationDistributionPoint } from '../pki/pki_revocation_distribution_point'
+import { PkiRevocationDistributionPointsByIssuerSubjectKeyID } from '../pki/pki_revocation_distribution_points_by_issuer_subject_key_id'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.pki'
 
@@ -151,6 +151,14 @@ export interface QueryAllPkiRevocationDistributionPointRequest {
 export interface QueryAllPkiRevocationDistributionPointResponse {
   PkiRevocationDistributionPoint: PkiRevocationDistributionPoint[]
   pagination: PageResponse | undefined
+}
+
+export interface QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest {
+  issuerSubjectKeyID: string
+}
+
+export interface QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse {
+  pkiRevocationDistributionPointsByIssuerSubjectKeyID: PkiRevocationDistributionPointsByIssuerSubjectKeyID | undefined
 }
 
 const baseQueryGetApprovedCertificatesRequest: object = { subject: '', subjectKeyId: '' }
@@ -1899,7 +1907,7 @@ const baseQueryGetPkiRevocationDistributionPointRequest: object = { vid: 0, labe
 export const QueryGetPkiRevocationDistributionPointRequest = {
   encode(message: QueryGetPkiRevocationDistributionPointRequest, writer: Writer = Writer.create()): Writer {
     if (message.vid !== 0) {
-      writer.uint32(8).uint64(message.vid)
+      writer.uint32(8).int32(message.vid)
     }
     if (message.label !== '') {
       writer.uint32(18).string(message.label)
@@ -1918,7 +1926,7 @@ export const QueryGetPkiRevocationDistributionPointRequest = {
       const tag = reader.uint32()
       switch (tag >>> 3) {
         case 1:
-          message.vid = longToNumber(reader.uint64() as Long)
+          message.vid = reader.int32()
           break
         case 2:
           message.label = reader.string()
@@ -2175,6 +2183,139 @@ export const QueryAllPkiRevocationDistributionPointResponse = {
   }
 }
 
+const baseQueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest: object = { issuerSubjectKeyID: '' }
+
+export const QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest = {
+  encode(message: QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest, writer: Writer = Writer.create()): Writer {
+    if (message.issuerSubjectKeyID !== '') {
+      writer.uint32(10).string(message.issuerSubjectKeyID)
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = {
+      ...baseQueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest
+    } as QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.issuerSubjectKeyID = reader.string()
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest {
+    const message = {
+      ...baseQueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest
+    } as QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest
+    if (object.issuerSubjectKeyID !== undefined && object.issuerSubjectKeyID !== null) {
+      message.issuerSubjectKeyID = String(object.issuerSubjectKeyID)
+    } else {
+      message.issuerSubjectKeyID = ''
+    }
+    return message
+  },
+
+  toJSON(message: QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest): unknown {
+    const obj: any = {}
+    message.issuerSubjectKeyID !== undefined && (obj.issuerSubjectKeyID = message.issuerSubjectKeyID)
+    return obj
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest>
+  ): QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest {
+    const message = {
+      ...baseQueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest
+    } as QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest
+    if (object.issuerSubjectKeyID !== undefined && object.issuerSubjectKeyID !== null) {
+      message.issuerSubjectKeyID = object.issuerSubjectKeyID
+    } else {
+      message.issuerSubjectKeyID = ''
+    }
+    return message
+  }
+}
+
+const baseQueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse: object = {}
+
+export const QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse = {
+  encode(message: QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse, writer: Writer = Writer.create()): Writer {
+    if (message.pkiRevocationDistributionPointsByIssuerSubjectKeyID !== undefined) {
+      PkiRevocationDistributionPointsByIssuerSubjectKeyID.encode(message.pkiRevocationDistributionPointsByIssuerSubjectKeyID, writer.uint32(10).fork()).ldelim()
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = {
+      ...baseQueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse
+    } as QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.pkiRevocationDistributionPointsByIssuerSubjectKeyID = PkiRevocationDistributionPointsByIssuerSubjectKeyID.decode(reader, reader.uint32())
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse {
+    const message = {
+      ...baseQueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse
+    } as QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse
+    if (object.pkiRevocationDistributionPointsByIssuerSubjectKeyID !== undefined && object.pkiRevocationDistributionPointsByIssuerSubjectKeyID !== null) {
+      message.pkiRevocationDistributionPointsByIssuerSubjectKeyID = PkiRevocationDistributionPointsByIssuerSubjectKeyID.fromJSON(
+        object.pkiRevocationDistributionPointsByIssuerSubjectKeyID
+      )
+    } else {
+      message.pkiRevocationDistributionPointsByIssuerSubjectKeyID = undefined
+    }
+    return message
+  },
+
+  toJSON(message: QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse): unknown {
+    const obj: any = {}
+    message.pkiRevocationDistributionPointsByIssuerSubjectKeyID !== undefined &&
+      (obj.pkiRevocationDistributionPointsByIssuerSubjectKeyID = message.pkiRevocationDistributionPointsByIssuerSubjectKeyID
+        ? PkiRevocationDistributionPointsByIssuerSubjectKeyID.toJSON(message.pkiRevocationDistributionPointsByIssuerSubjectKeyID)
+        : undefined)
+    return obj
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse>
+  ): QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse {
+    const message = {
+      ...baseQueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse
+    } as QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse
+    if (object.pkiRevocationDistributionPointsByIssuerSubjectKeyID !== undefined && object.pkiRevocationDistributionPointsByIssuerSubjectKeyID !== null) {
+      message.pkiRevocationDistributionPointsByIssuerSubjectKeyID = PkiRevocationDistributionPointsByIssuerSubjectKeyID.fromPartial(
+        object.pkiRevocationDistributionPointsByIssuerSubjectKeyID
+      )
+    } else {
+      message.pkiRevocationDistributionPointsByIssuerSubjectKeyID = undefined
+    }
+    return message
+  }
+}
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Queries a ApprovedCertificates by index. */
@@ -2209,6 +2350,10 @@ export interface Query {
   PkiRevocationDistributionPoint(request: QueryGetPkiRevocationDistributionPointRequest): Promise<QueryGetPkiRevocationDistributionPointResponse>
   /** Queries a list of PkiRevocationDistributionPoint items. */
   PkiRevocationDistributionPointAll(request: QueryAllPkiRevocationDistributionPointRequest): Promise<QueryAllPkiRevocationDistributionPointResponse>
+  /** Queries a PkiRevocationDistributionPointsByIssuerSubjectKeyID by index. */
+  PkiRevocationDistributionPointsByIssuerSubjectKeyID(
+    request: QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest
+  ): Promise<QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse>
 }
 
 export class QueryClientImpl implements Query {
@@ -2311,21 +2456,19 @@ export class QueryClientImpl implements Query {
     const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Query', 'PkiRevocationDistributionPointAll', data)
     return promise.then((data) => QueryAllPkiRevocationDistributionPointResponse.decode(new Reader(data)))
   }
+
+  PkiRevocationDistributionPointsByIssuerSubjectKeyID(
+    request: QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest
+  ): Promise<QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse> {
+    const data = QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest.encode(request).finish()
+    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Query', 'PkiRevocationDistributionPointsByIssuerSubjectKeyID', data)
+    return promise.then((data) => QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse.decode(new Reader(data)))
+  }
 }
 
 interface Rpc {
   request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>
 }
-
-declare var self: any | undefined
-declare var window: any | undefined
-var globalThis: any = (() => {
-  if (typeof globalThis !== 'undefined') return globalThis
-  if (typeof self !== 'undefined') return self
-  if (typeof window !== 'undefined') return window
-  if (typeof global !== 'undefined') return global
-  throw 'Unable to locate global object'
-})()
 
 type Builtin = Date | Function | Uint8Array | string | number | undefined
 export type DeepPartial<T> = T extends Builtin
@@ -2337,15 +2480,3 @@ export type DeepPartial<T> = T extends Builtin
   : T extends {}
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>
-
-function longToNumber(long: Long): number {
-  if (long.gt(Number.MAX_SAFE_INTEGER)) {
-    throw new globalThis.Error('Value is larger than Number.MAX_SAFE_INTEGER')
-  }
-  return long.toNumber()
-}
-
-if (util.Long !== Long) {
-  util.Long = Long as any
-  configure()
-}

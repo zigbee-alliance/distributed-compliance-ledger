@@ -134,8 +134,8 @@ func (k msgServer) UpdatePkiRevocationDistributionPoint(goCtx context.Context, m
 		pkiRevocationDistributionPoint.CrlSignerCertificate = msg.CrlSignerCertificate
 	}
 
-	if msg.DataUrl != "" {
-		pkiRevocationDistributionPoint.DataUrl = msg.DataUrl
+	if msg.DataURL != "" {
+		pkiRevocationDistributionPoint.DataURL = msg.DataURL
 	}
 
 	if msg.DataFileSize != 0 {

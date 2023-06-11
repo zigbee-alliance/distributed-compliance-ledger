@@ -1965,7 +1965,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAASenderNotVendor(t *testing
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 		Label:                "label",
-		DataUrl:              testconstants.DataURL,
+		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 		RevocationType:       1,
 	}
@@ -1986,7 +1986,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAACertEncodesVidSenderVidNot
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 		Label:                "label",
-		DataUrl:              testconstants.DataURL,
+		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 		RevocationType:       1,
 	}
@@ -2007,7 +2007,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAACertNotFound(t *testing.T)
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 		Label:                "label",
-		DataUrl:              testconstants.DataURL,
+		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 		RevocationType:       1,
 	}
@@ -2039,7 +2039,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAAPemValueOfStoredCertNotEqu
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAACertWithNumericVid1,
 		Label:                "label",
-		DataUrl:              testconstants.DataURL,
+		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 		RevocationType:       1,
 	}
@@ -2057,7 +2057,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAISenderNotVendor(t *testing
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAICertWithNumericPidVid,
 		Label:                "label",
-		DataUrl:              testconstants.DataURL,
+		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 		RevocationType:       1,
 	}
@@ -2078,7 +2078,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAINotChainedBackToDCLCerts(t
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAICertWithNumericPidVid,
 		Label:                "label",
-		DataUrl:              testconstants.DataURL,
+		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 		RevocationType:       1,
 	}
@@ -2110,7 +2110,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAAAlreadyExists(t *testing.T
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 		Label:                "label",
-		DataUrl:              testconstants.DataURL,
+		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 		RevocationType:       1,
 	}
@@ -2124,7 +2124,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAAAlreadyExists(t *testing.T
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 		Label:                "label",
-		DataUrl:              testconstants.DataURL,
+		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 		RevocationType:       1,
 	}
@@ -2143,7 +2143,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_NotFound(t *testing.T) {
 		Vid:                  65521,
 		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 		Label:                "label",
-		DataUrl:              testconstants.DataURL,
+		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 	}
 	_, err := setup.Handler(setup.Ctx, &updatePkiRevocationDistributionPoint)
@@ -2174,7 +2174,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAANewCertificateNotPAA(t 
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 		Label:                "label",
-		DataUrl:              testconstants.DataURL,
+		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 		RevocationType:       1,
 	}
@@ -2186,7 +2186,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAANewCertificateNotPAA(t 
 		Vid:                  65521,
 		CrlSignerCertificate: testconstants.PAICertWithNumericPidVid,
 		Label:                "label",
-		DataUrl:              testconstants.DataURL,
+		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 	}
 	_, err = setup.Handler(setup.Ctx, &updatePkiRevocationDistributionPoint)
@@ -2217,7 +2217,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAASenderNotVendor(t *test
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 		Label:                "label",
-		DataUrl:              testconstants.DataURL,
+		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 		RevocationType:       1,
 	}
@@ -2229,7 +2229,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAASenderNotVendor(t *test
 		Vid:                  65521,
 		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 		Label:                "label",
-		DataUrl:              testconstants.DataURL,
+		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 	}
 	_, err = setup.Handler(setup.Ctx, &updatePkiRevocationDistributionPoint)
@@ -2260,7 +2260,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAASenderVidNotEqualCertVi
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 		Label:                "label",
-		DataUrl:              testconstants.DataURL,
+		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 		RevocationType:       1,
 	}
@@ -2275,7 +2275,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAASenderVidNotEqualCertVi
 		Vid:                  65521,
 		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 		Label:                "label",
-		DataUrl:              testconstants.DataURL,
+		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 	}
 	_, err = setup.Handler(setup.Ctx, &updatePkiRevocationDistributionPoint)
@@ -2306,7 +2306,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAISenderIsNotVendor(t *te
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAICertWithNumericPidVid,
 		Label:                "label",
-		DataUrl:              testconstants.DataURL,
+		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 		RevocationType:       1,
 	}
@@ -2318,7 +2318,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAISenderIsNotVendor(t *te
 		Vid:                  65521,
 		CrlSignerCertificate: testconstants.PAICertWithNumericPidVid,
 		Label:                "label",
-		DataUrl:              testconstants.DataURL,
+		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 	}
 	_, err = setup.Handler(setup.Ctx, &updatePkiRevocationDistributionPoint)
@@ -2352,7 +2352,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAISenderVidNotEqualCertVi
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAICertWithPidVid,
 		Label:                "label",
-		DataUrl:              testconstants.DataURL,
+		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 		RevocationType:       1,
 	}
@@ -2367,7 +2367,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAISenderVidNotEqualCertVi
 		Vid:                  65521,
 		CrlSignerCertificate: testconstants.PAICertWithPidVid,
 		Label:                "label",
-		DataUrl:              testconstants.DataURL,
+		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 	}
 	_, err = setup.Handler(setup.Ctx, &updatePkiRevocationDistributionPoint)
@@ -2402,7 +2402,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAICertVidNotEqualMsgVid(t
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAICertWithNumericPidVid,
 		Label:                "label",
-		DataUrl:              testconstants.DataURL,
+		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 		RevocationType:       1,
 	}
@@ -2414,7 +2414,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAICertVidNotEqualMsgVid(t
 		Vid:                  65522,
 		CrlSignerCertificate: testconstants.PAICertWithNumericPidVid,
 		Label:                "label",
-		DataUrl:              testconstants.DataURL,
+		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 	}
 	_, err = setup.Handler(setup.Ctx, &updatePkiRevocationDistributionPoint)
@@ -2450,7 +2450,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAIPidNotFoundInNewCert(t 
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAICertWithPidVid,
 		Label:                "label",
-		DataUrl:              testconstants.DataURL,
+		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 		RevocationType:       1,
 	}
@@ -2462,7 +2462,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAIPidNotFoundInNewCert(t 
 		Vid:                  65522,
 		CrlSignerCertificate: testconstants.PAICertWithVid,
 		Label:                "label",
-		DataUrl:              testconstants.DataURL,
+		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 	}
 	_, err = setup.Handler(setup.Ctx, &updatePkiRevocationDistributionPoint)
@@ -2509,7 +2509,7 @@ func TestHandler_DeletePkiRevocationDistributionPoint_PAASenderNotVendor(t *test
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 		Label:                "label",
-		DataUrl:              testconstants.DataURL,
+		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 		RevocationType:       1,
 	}
@@ -2550,7 +2550,7 @@ func TestHandler_DeletePkiRevocationDistributionPoint_PAASenderVidNotEqualCertVi
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 		Label:                "label",
-		DataUrl:              testconstants.DataURL,
+		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 		RevocationType:       1,
 	}
@@ -2599,7 +2599,7 @@ func TestHandler_DeletePkiRevocationDistributionPoint_PAISenderNotVendor(t *test
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAICertWithNumericPidVid,
 		Label:                "label",
-		DataUrl:              testconstants.DataURL,
+		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 		RevocationType:       1,
 	}
@@ -2645,7 +2645,7 @@ func TestHandler_DeletePkiRevocationDistributionPoint_PAISenderVidNotEqualCertVi
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAICertWithNumericPidVid,
 		Label:                "label",
-		DataUrl:              testconstants.DataURL,
+		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 		RevocationType:       1,
 	}

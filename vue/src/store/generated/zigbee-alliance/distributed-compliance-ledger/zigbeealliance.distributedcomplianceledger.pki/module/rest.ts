@@ -80,26 +80,30 @@ export type PkiMsgRevokeX509CertResponse = object;
 export type PkiMsgUpdatePkiRevocationDistributionPointResponse = object;
 
 export interface PkiPkiRevocationDistributionPoint {
-  /** @format uint64 */
-  vid?: string;
+  /** @format int32 */
+  vid?: number;
   label?: string;
   issuerSubjectKeyID?: string;
 
-  /** @format uint64 */
-  pid?: string;
+  /** @format int32 */
+  pid?: number;
   isPAA?: boolean;
   crlSignerCertificate?: string;
-  dataUrl?: string;
+  dataURL?: string;
 
   /** @format uint64 */
   dataFileSize?: string;
   dataDigest?: string;
 
-  /** @format uint64 */
-  dataDigestType?: string;
+  /** @format int64 */
+  dataDigestType?: number;
 
-  /** @format uint64 */
-  revocationType?: string;
+  /** @format int64 */
+  revocationType?: number;
+}
+
+export interface PkiPkiRevocationDistributionPointsByIssuerSubjectKeyID {
+  issuerSubjectKeyID?: string;
 }
 
 export interface PkiProposedCertificate {
@@ -228,6 +232,10 @@ export interface PkiQueryGetChildCertificatesResponse {
 
 export interface PkiQueryGetPkiRevocationDistributionPointResponse {
   PkiRevocationDistributionPoint?: PkiPkiRevocationDistributionPoint;
+}
+
+export interface PkiQueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse {
+  pkiRevocationDistributionPointsByIssuerSubjectKeyID?: PkiPkiRevocationDistributionPointsByIssuerSubjectKeyID;
 }
 
 export interface PkiQueryGetProposedCertificateResponse {
@@ -740,6 +748,69 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
+   * @name QueryPkiRevocationDistributionPointAll
+   * @summary Queries a list of PkiRevocationDistributionPoint items.
+   * @request GET:/dcl/pki/revocation-points
+   */
+  queryPkiRevocationDistributionPointAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<PkiQueryAllPkiRevocationDistributionPointResponse, RpcStatus>({
+      path: `/dcl/pki/revocation-points`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryPkiRevocationDistributionPointsByIssuerSubjectKeyID
+   * @summary Queries a PkiRevocationDistributionPointsByIssuerSubjectKeyID by index.
+   * @request GET:/dcl/pki/revocation-points/{issuerSubjectKeyID}
+   */
+  queryPkiRevocationDistributionPointsByIssuerSubjectKeyID = (issuerSubjectKeyID: string, params: RequestParams = {}) =>
+    this.request<PkiQueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse, RpcStatus>({
+      path: `/dcl/pki/revocation-points/${issuerSubjectKeyID}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryPkiRevocationDistributionPoint
+   * @summary Queries a PkiRevocationDistributionPoint by index.
+   * @request GET:/dcl/pki/revocation-points/{issuerSubjectKeyID}/{vid}/{label}
+   */
+  queryPkiRevocationDistributionPoint = (
+    issuerSubjectKeyID: string,
+    vid: number,
+    label: string,
+    params: RequestParams = {},
+  ) =>
+    this.request<PkiQueryGetPkiRevocationDistributionPointResponse, RpcStatus>({
+      path: `/dcl/pki/revocation-points/${issuerSubjectKeyID}/${vid}/${label}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
    * @name QueryRevokedCertificatesAll
    * @summary Queries a list of RevokedCertificates items.
    * @request GET:/dcl/pki/revoked-certificates
@@ -805,53 +876,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryApprovedRootCertificates = (params: RequestParams = {}) =>
     this.request<PkiQueryGetApprovedRootCertificatesResponse, RpcStatus>({
       path: `/dcl/pki/root-certificates`,
-      method: "GET",
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryPkiRevocationDistributionPointAll
-   * @summary Queries a list of PkiRevocationDistributionPoint items.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/pki-revocation-distribution-point
-   */
-  queryPkiRevocationDistributionPointAll = (
-    query?: {
-      "pagination.key"?: string;
-      "pagination.offset"?: string;
-      "pagination.limit"?: string;
-      "pagination.countTotal"?: boolean;
-      "pagination.reverse"?: boolean;
-    },
-    params: RequestParams = {},
-  ) =>
-    this.request<PkiQueryAllPkiRevocationDistributionPointResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/pki/pki-revocation-distribution-point`,
-      method: "GET",
-      query: query,
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryPkiRevocationDistributionPoint
-   * @summary Queries a PkiRevocationDistributionPoint by index.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/pki-revocation-distribution-point/{vid}/{label}/{issuerSubjectKeyID}
-   */
-  queryPkiRevocationDistributionPoint = (
-    vid: string,
-    label: string,
-    issuerSubjectKeyID: string,
-    params: RequestParams = {},
-  ) =>
-    this.request<PkiQueryGetPkiRevocationDistributionPointResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/pki/pki-revocation-distribution-point/${vid}/${label}/${issuerSubjectKeyID}`,
       method: "GET",
       format: "json",
       ...params,

@@ -22,7 +22,7 @@ func CmdAddPkiRevocationDistributionPoint() *cobra.Command {
 		label                string
 		crlSignerCertificate string
 		issuerSubjectKeyID   string
-		dataUrl              string
+		dataURL              string
 		dataFileSize         uint64
 		dataDigest           string
 		dataDigestType       uint32
@@ -52,7 +52,7 @@ func CmdAddPkiRevocationDistributionPoint() *cobra.Command {
 				label,
 				cert,
 				issuerSubjectKeyID,
-				dataUrl,
+				dataURL,
 				dataFileSize,
 				dataDigest,
 				dataDigestType,
@@ -77,11 +77,11 @@ func CmdAddPkiRevocationDistributionPoint() *cobra.Command {
 	cmd.Flags().StringVarP(&label, FlagLabel, FlagLabelShortcut, "", " A label to disambiguate multiple revocation information partitions of a particular issuer")
 	cmd.Flags().StringVarP(&crlSignerCertificate, FlagCertificate, FlagCertificateShortcut, "", "The issuer certificate whose revocation information is provided in the distribution point entry, encoded in X.509v3 PEM format. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data")
 	cmd.Flags().StringVar(&issuerSubjectKeyID, FlagIssuerSubjectKeyID, "", "Uniquely identifies the PAA or PAI for which this revocation distribution point is provided. Must consist of even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters., e.g: 5A880E6C3653D07FB08971A3F473790930E62BDB")
-	cmd.Flags().StringVar(&dataUrl, FlagDataUrl, "", "The URL where to obtain the information in the format indicated by the RevocationType field. Must start with either http or https")
-	cmd.Flags().Uint64Var(&dataFileSize, FlagDataFileSize, 0, "Total size in bytes of the file found at the DataUrl. Must be omitted if RevocationType is 1")
-	cmd.Flags().StringVar(&dataDigest, FlagDataDigest, "", "Digest of the entire contents of the associated file downloaded from the DataUrl. Must be omitted if RevocationType is 1. Must be provided if and only if the DataFileSize field is present")
+	cmd.Flags().StringVar(&dataURL, FlagDataURL, "", "The URL where to obtain the information in the format indicated by the RevocationType field. Must start with either http or https")
+	cmd.Flags().Uint64Var(&dataFileSize, FlagDataFileSize, 0, "Total size in bytes of the file found at the DataURL. Must be omitted if RevocationType is 1")
+	cmd.Flags().StringVar(&dataDigest, FlagDataDigest, "", "Digest of the entire contents of the associated file downloaded from the DataURL. Must be omitted if RevocationType is 1. Must be provided if and only if the DataFileSize field is present")
 	cmd.Flags().Uint32Var(&dataDigestType, FlagDataDigestType, 0, "The type of digest used in the DataDigest field from the list of [1, 7, 8, 10, 11, 12] (IANA Named Information Hash Algorithm Registry). Must be provided if and only if the DataDigest field is present") //TODO: will give error if omitted
-	cmd.Flags().Uint32Var(&revocationType, FlagRevocationType, 1, "The type of file found at the DataUrl for this entry. Supported types: 1 - RFC5280 Certificate Revocation List (CRL)")
+	cmd.Flags().Uint32Var(&revocationType, FlagRevocationType, 1, "The type of file found at the DataURL for this entry. Supported types: 1 - RFC5280 Certificate Revocation List (CRL)")
 	flags.AddTxFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(FlagVid)
@@ -89,7 +89,7 @@ func CmdAddPkiRevocationDistributionPoint() *cobra.Command {
 	_ = cmd.MarkFlagRequired(FlagLabel)
 	_ = cmd.MarkFlagRequired(FlagCertificate)
 	_ = cmd.MarkFlagRequired(FlagIssuerSubjectKeyID)
-	_ = cmd.MarkFlagRequired(FlagDataUrl)
+	_ = cmd.MarkFlagRequired(FlagDataURL)
 	_ = cmd.MarkFlagRequired(FlagRevocationType)
 	_ = cmd.MarkFlagRequired(flags.FlagFrom)
 

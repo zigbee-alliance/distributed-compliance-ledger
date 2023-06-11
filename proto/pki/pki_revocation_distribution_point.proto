@@ -10,7 +10,7 @@ message PkiRevocationDistributionPoint {
   int32 pid = 4; 
   bool isPAA = 5; 
   string crlSignerCertificate = 6; 
-  string dataUrl = 7; 
+  string dataURL = 7; 
   uint64 dataFileSize = 8; 
   string dataDigest = 9; 
   uint32 dataDigestType = 10; 

@@ -69,7 +69,7 @@ export interface MsgAddPkiRevocationDistributionPoint {
     label: string;
     crlSignerCertificate: string;
     issuerSubjectKeyID: string;
-    dataUrl: string;
+    dataURL: string;
     dataFileSize: number;
     dataDigest: string;
     dataDigestType: number;
@@ -83,7 +83,7 @@ export interface MsgUpdatePkiRevocationDistributionPoint {
     label: string;
     crlSignerCertificate: string;
     issuerSubjectKeyID: string;
-    dataUrl: string;
+    dataURL: string;
     dataFileSize: number;
     dataDigest: string;
     dataDigestType: number;

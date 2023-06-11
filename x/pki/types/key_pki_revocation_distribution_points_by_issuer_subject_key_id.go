@@ -5,18 +5,18 @@ import "encoding/binary"
 var _ binary.ByteOrder
 
 const (
-	// PkiRevocationDistributionPointsByIssuerSubjectKeyIdKeyPrefix is the prefix to retrieve all PkiRevocationDistributionPointsByIssuerSubjectKeyId.
-	PkiRevocationDistributionPointsByIssuerSubjectKeyIdKeyPrefix = "PkiRevocationDistributionPointsByIssuerSubjectKeyId/value/"
+	// PkiRevocationDistributionPointsByIssuerSubjectKeyIDKeyPrefix is the prefix to retrieve all PkiRevocationDistributionPointsByIssuerSubjectKeyID.
+	PkiRevocationDistributionPointsByIssuerSubjectKeyIDKeyPrefix = "PkiRevocationDistributionPointsByIssuerSubjectKeyID/value/"
 )
 
-// PkiRevocationDistributionPointsByIssuerSubjectKeyIdKey returns the store key to retrieve a PkiRevocationDistributionPointsByIssuerSubjectKeyId from the index fields.
-func PkiRevocationDistributionPointsByIssuerSubjectKeyIdKey(
-	issuerSubjectKeyId string,
+// PkiRevocationDistributionPointsByIssuerSubjectKeyIDKey returns the store key to retrieve a PkiRevocationDistributionPointsByIssuerSubjectKeyID from the index fields.
+func PkiRevocationDistributionPointsByIssuerSubjectKeyIDKey(
+	issuerSubjectKeyID string,
 ) []byte {
 	var key []byte
 
-	issuerSubjectKeyIdBytes := []byte(issuerSubjectKeyId)
-	key = append(key, issuerSubjectKeyIdBytes...)
+	issuerSubjectKeyIDBytes := []byte(issuerSubjectKeyID)
+	key = append(key, issuerSubjectKeyIDBytes...)
 	key = append(key, []byte("/")...)
 
 	return key

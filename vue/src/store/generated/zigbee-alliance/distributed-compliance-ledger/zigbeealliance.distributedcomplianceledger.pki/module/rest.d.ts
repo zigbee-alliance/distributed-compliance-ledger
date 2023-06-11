@@ -59,7 +59,7 @@ export interface PkiPkiRevocationDistributionPoint {
     pid?: string;
     isPAA?: boolean;
     crlSignerCertificate?: string;
-    dataUrl?: string;
+    dataURL?: string;
     /** @format uint64 */
     dataFileSize?: string;
     dataDigest?: string;

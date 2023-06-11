@@ -104,7 +104,7 @@ func (k msgServer) AddPkiRevocationDistributionPoint(goCtx context.Context, msg 
 		Pid:                  msg.Pid,
 		IsPAA:                msg.IsPAA,
 		CrlSignerCertificate: msg.CrlSignerCertificate,
-		DataUrl:              msg.DataUrl,
+		DataURL:              msg.DataURL,
 		DataFileSize:         msg.DataFileSize,
 		DataDigest:           msg.DataDigest,
 		DataDigestType:       msg.DataDigestType,
