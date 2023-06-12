@@ -827,7 +827,7 @@ will be in a pending state until sufficient number of approvals is received.
 The certificate is immutable. It can only be revoked by either the owner or a quorum of Trustees.
 
 - Parameters:
-  - cert: `string` - PEM encoded certificate (string or path to file containing data)
+  - cert: `string` - PEM encoded certificate. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data.
   - info: `optional(string)` - information/notes for the proposal
   - time: `optional(int64)` - proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State: `pki/ProposedCertificate/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
@@ -904,7 +904,7 @@ already present on the ledger.
 The certificate is immutable. It can only be revoked by either the owner or a quorum of Trustees.
 
 - Parameters:
-  - cert: `string` - PEM encoded certificate (string or path to file containing data)
+  - cert: `string` - PEM encoded certificate. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data.
 - In State:
   - `pki/ApprovedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
   - `pki/ChildCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
