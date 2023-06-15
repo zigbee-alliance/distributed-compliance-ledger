@@ -15,7 +15,7 @@ const TypeMsgAddPkiRevocationDistributionPoint = "add_pki_revocation_distributio
 
 var _ sdk.Msg = &MsgAddPkiRevocationDistributionPoint{}
 
-func NewMsgAddPkiRevocationDistributionPoint(signer string, vid int32, pid int32, isPAA bool, label string, crlSignerCertificate string, issuerSubjectKeyID string, dataURL string, dataFileSize uint64, dataDigest string, dataDigestType uint32, revocationType uint32) *MsgAddPkiRevocationDistributionPoint {
+func NewMsgAddPkiRevocationDistributionPoint(signer string, vid int32, pid int32, isPAA bool, label string, crlSignerCertificate string, issuerSubjectKeyID string, DataURL string, dataFileSize uint64, dataDigest string, dataDigestType uint32, revocationType uint32) *MsgAddPkiRevocationDistributionPoint {
 	return &MsgAddPkiRevocationDistributionPoint{
 		Signer:               signer,
 		Vid:                  vid,
@@ -24,7 +24,7 @@ func NewMsgAddPkiRevocationDistributionPoint(signer string, vid int32, pid int32
 		Label:                label,
 		CrlSignerCertificate: crlSignerCertificate,
 		IssuerSubjectKeyID:   issuerSubjectKeyID,
-		DataURL:              dataURL,
+		DataURL:              DataURL,
 		DataFileSize:         dataFileSize,
 		DataDigest:           dataDigest,
 		DataDigestType:       dataDigestType,
@@ -67,7 +67,7 @@ func (msg *MsgAddPkiRevocationDistributionPoint) verifyVid(subjectAsText string)
 	}
 
 	if vid != msg.Vid {
-		return pkitypes.NewErrCRLSignerCertificateVidNotEqualMsgVid("CRL Signer Certificate's vid must be equal to the provided vid in the message")
+		return pkitypes.NewErrCRLSignerCertificateVidNotEqualMsgVid(fmt.Sprintf("CRL Signer Certificate's vid=%d must be equal to the provided vid=%d in the message", vid, msg.Vid))
 	}
 
 	return nil
@@ -84,11 +84,11 @@ func (msg *MsgAddPkiRevocationDistributionPoint) verifyPid(subjectAsText string)
 	}
 
 	if pid != 0 && msg.Pid == 0 {
-		return pkitypes.NewErrPidNotFound("Product ID (pid) must be provided when it is found in non-root CRL Signer Certificate")
+		return pkitypes.NewErrPidNotFound(fmt.Sprintf("Product ID (pid) must be provided when pid=%d in non-root CRL Signer Certificate", pid))
 	}
 
 	if pid != msg.Pid {
-		return pkitypes.NewErrCRLSignerCertificatePidNotEqualMsgPid("CRL Signer Certificate's pid must be equal to the provided pid in the message")
+		return pkitypes.NewErrCRLSignerCertificatePidNotEqualMsgPid(fmt.Sprintf("CRL Signer Certificate's pid=%d must be equal to the provided pid=%d in the message", pid, msg.Pid))
 	}
 
 	return nil
@@ -132,16 +132,23 @@ func (msg *MsgAddPkiRevocationDistributionPoint) verifyPAI(cert *x509.Certificat
 	return nil
 }
 
-func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Signer)
+func (msg *MsgAddPkiRevocationDistributionPoint) verifySignerCertificate() error {
+	cert, err := x509.DecodeX509Certificate(msg.CrlSignerCertificate)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address (%s)", err)
+		return pkitypes.NewErrInvalidCertificate(err)
 	}
 
-	err = validator.Validate(msg)
-	if err != nil {
-		return err
+	err = error(nil)
+	if msg.IsPAA {
+		err = msg.verifyPAA(cert)
+	} else {
+		err = msg.verifyPAI(cert)
 	}
+
+	return err
+}
+
+func (msg *MsgAddPkiRevocationDistributionPoint) verifyFields() error {
 
 	isDataDigestInTypes := true
 	if msg.DataDigestType != 0 {
@@ -159,27 +166,17 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 		return pkitypes.NewErrInvalidDataDigestType(fmt.Sprintf("invalid DataDigestType: %d. Supported types are: %v", msg.DataDigestType, allowedDataDigestTypes))
 	}
 
-	if msg.RevocationType != allowedRevocationType {
-		return pkitypes.NewErrInvalidRevocationType(fmt.Sprintf("invalid RevocationType: %d. Supported types are: %d", msg.RevocationType, allowedRevocationType))
+	isRevocationInTypes := false
+	for _, revocationType := range allowedRevocationTypes {
+		if revocationType == msg.RevocationType {
+			isRevocationInTypes = true
+
+			break
+		}
 	}
 
-	cert, err := x509.DecodeX509Certificate(msg.CrlSignerCertificate)
-	if err != nil {
-		return pkitypes.NewErrInvalidCertificate(err)
-	}
-
-	if msg.IsPAA {
-		err = msg.verifyPAA(cert)
-
-		if err != nil {
-			return err
-		}
-	} else {
-		err = msg.verifyPAI(cert)
-
-		if err != nil {
-			return err
-		}
+	if !isRevocationInTypes {
+		return pkitypes.NewErrInvalidRevocationType(fmt.Sprintf("invalid RevocationType: %d. Supported types are: %d", msg.RevocationType, allowedRevocationTypes))
 	}
 
 	if !strings.HasPrefix(msg.DataURL, "https://") && !strings.HasPrefix(msg.DataURL, "http://") {
@@ -202,14 +199,38 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 		return pkitypes.NewErrEmptyDataDigestType("Data Digest Type must be provided if Data Digest is provided")
 	}
 
-	if msg.RevocationType == allowedRevocationType && (msg.DataFileSize != 0 || msg.DataDigest != "" || msg.DataDigestType != 0) {
-		return pkitypes.NewErrDataFieldPresented(fmt.Sprintf("Data Digest, Data File Size and Data Digest Type must be omitted for Revocation Type %d", allowedRevocationType))
+	CRLRevocationType := uint32(1)
+
+	if msg.RevocationType == CRLRevocationType && (msg.DataFileSize != 0 || msg.DataDigest != "" || msg.DataDigestType != 0) {
+		return pkitypes.NewErrDataFieldPresented(fmt.Sprintf("Data Digest, Data File Size and Data Digest Type must be omitted for Revocation Type %d", CRLRevocationType))
 	}
 
 	match := VerifyRevocationPointIssuerSubjectKeyIDFormat(msg.IssuerSubjectKeyID)
 
 	if !match {
 		return pkitypes.NewErrWrongSubjectKeyIDFormat("Wrong IssuerSubjectKeyID format. It must consist of even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters")
+	}
+
+	return nil
+}
+
+func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Signer)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address (%s)", err)
+	}
+
+	err = validator.Validate(msg)
+	if err != nil {
+		return err
+	}
+
+	if err := msg.verifyFields(); err != nil {
+		return err
+	}
+
+	if err := msg.verifySignerCertificate(); err != nil {
+		return err
 	}
 
 	return nil

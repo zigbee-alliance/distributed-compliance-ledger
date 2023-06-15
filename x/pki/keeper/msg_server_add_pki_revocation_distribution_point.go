@@ -12,38 +12,6 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/x509"
 )
 
-func verifyVid(subjectAsText string, signerVid int32) error {
-	vid, err := x509.GetVidFromSubject(subjectAsText)
-
-	if err != nil {
-		return sdkerrors.Wrapf(pkitypes.ErrInvalidVidFormat, "Could not parse vid: %s", err)
-	}
-
-	if vid == 0 {
-		return pkitypes.NewErrUnsupportedOperation("publishing a revocation point for non-VID scoped root certificates is currently not supported")
-	}
-
-	if vid != signerVid {
-		return pkitypes.NewErrCRLSignerCertificateVidNotEqualAccountVid("CRL signer Certificate's vid must be equal to signer account's vid")
-	}
-
-	return nil
-}
-
-func (k msgServer) verifyPAA(crlSignerCertificate *x509.Certificate, certPemValue string, signerVid int32, approvedCertificates types.ApprovedCertificates) error {
-	err := verifyVid(crlSignerCertificate.SubjectAsText, signerVid)
-
-	if err != nil {
-		return err
-	}
-
-	if approvedCertificates.Certs[0].PemCert != certPemValue {
-		return pkitypes.NewErrPemValuesNotEqual("Pem values of CRL signer certificate and certificate found by its Subject and SubjectKeyID are is not equal ")
-	}
-
-	return nil
-}
-
 func (k msgServer) AddPkiRevocationDistributionPoint(goCtx context.Context, msg *types.MsgAddPkiRevocationDistributionPoint) (*types.MsgAddPkiRevocationDistributionPointResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -79,7 +47,9 @@ func (k msgServer) AddPkiRevocationDistributionPoint(goCtx context.Context, msg 
 			return nil, sdkerrors.Wrap(pkitypes.NewErrCertificateDoesNotExist(crlSignerCertificate.Subject, crlSignerCertificate.SubjectKeyID), "CRL signer Certificate must be a root certificate present on the ledger if isPAA = True")
 		}
 
-		err = k.verifyPAA(crlSignerCertificate, msg.CrlSignerCertificate, signerAccount.VendorID, approvedCertificates)
+		if approvedCertificates.Certs[0].PemCert != msg.CrlSignerCertificate {
+			return nil, pkitypes.NewErrPemValuesNotEqual("Pem values of CRL signer certificate and certificate found by its Subject and SubjectKeyID are is not equal ")
+		}
 
 		if err != nil {
 			return nil, err

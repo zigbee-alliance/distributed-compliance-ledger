@@ -101,24 +101,17 @@ func subjectAsTextToMap(subjectAsText string) map[string]string {
 }
 
 func GetVidFromSubject(subjectAsText string) (int32, error) {
-	subjectAsTextMap := subjectAsTextToMap(subjectAsText)
-
-	if strValue, ok := subjectAsTextMap[Mvid]; ok {
-		vid, err := strconv.ParseInt(strings.Trim(strValue, "0x"), 16, 32)
-		if err != nil {
-			return 0, err
-		}
-
-		return int32(vid), nil
-	}
-
-	return 0, nil
+	return getIntValueFromSubject(subjectAsText, Mvid)
 }
 
 func GetPidFromSubject(subjectAsText string) (int32, error) {
+	return getIntValueFromSubject(subjectAsText, Mpid)
+}
+
+func getIntValueFromSubject(subjectAsText string, key string) (int32, error) {
 	subjectAsTextMap := subjectAsTextToMap(subjectAsText)
 
-	if strValue, ok := subjectAsTextMap[Mpid]; ok {
+	if strValue, ok := subjectAsTextMap[key]; ok {
 		pid, err := strconv.ParseInt(strings.Trim(strValue, "0x"), 16, 32)
 		if err != nil {
 			return 0, err

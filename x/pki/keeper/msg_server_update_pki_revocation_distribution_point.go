@@ -33,7 +33,7 @@ func verifyUpdatedPAA(updatedCrlSignerCertificate *x509.Certificate, revocationP
 	return nil
 }
 
-func verifyUpdatedPAI(updatedCrlSignerCertificate *x509.Certificate, msgVid int32, revocationPointPid int32) error {
+func verifyUpdatedPAI(updatedCrlSignerCertificate *x509.Certificate, revocationPointVid int32, revocationPointPid int32) error {
 	if updatedCrlSignerCertificate.IsSelfSigned() {
 		return pkitypes.NewErrNonRootCertificateSelfSigned("Updated CRL signer certificate must not be self-signed since old one was not self-signed")
 	}
@@ -48,8 +48,8 @@ func verifyUpdatedPAI(updatedCrlSignerCertificate *x509.Certificate, msgVid int3
 		return pkitypes.NewErrVidNotFound("vid must be present in updated non-root CRL signer certificate")
 	}
 
-	if vid != msgVid {
-		return pkitypes.NewErrCRLSignerCertificateVidNotEqualMsgVid("CRL Signer Certificate's vid must be equal to the provided vid in the message")
+	if vid != revocationPointVid {
+		return pkitypes.NewErrCRLSignerCertificateVidNotEqualRevocationPointVid("CRL Signer Certificate's vid must be equal to the provided vid in the reovocation point")
 	}
 
 	pid, err := x509.GetPidFromSubject(updatedCrlSignerCertificate.SubjectAsText)
@@ -81,7 +81,7 @@ func verifyUpdatedCertificate(updatedCertificate string, revocationPoint types.P
 			return err
 		}
 	} else {
-		err := verifyUpdatedPAI(updatedCrlSignerCertificate, msgVid, revocationPoint.Pid)
+		err := verifyUpdatedPAI(updatedCrlSignerCertificate, revocationPoint.Vid, revocationPoint.Pid)
 		if err != nil {
 			return err
 		}

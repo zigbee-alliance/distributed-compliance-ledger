@@ -25,6 +25,7 @@ starport scaffold --module pki map ProposedCertificateRevocation  approvals:stri
 starport scaffold --module pki map RevokedCertificates certs:strings --index subject,subjectKeyId --no-message
 starport scaffold --module pki map UniqueCertificate present:bool --index issuer,serialNumber --no-message
 starport scaffold --module pki map PKIRevocationDistributionPoint --index vid:uint,label,issuerSubjectKeyID pid:uint isPAA:bool crlSignerCertificate dataURL dataFileSize:uint dataDigest dataDigestType:uint revocationType:uint --signer signer --no-message
+starport scaffold --module pki map PKIRevocationDistributionPointByIssuerSubjectKeyId points:strings --index issuerSubjectKeyID --no-message
 starport scaffold --module pki single ApprovedRootCertificates certs:strings --no-message
 starport scaffold --module pki single RevokedRootCertificates certs:strings --no-message
 starport scaffold --module pki map ApprovedCertificatesBySubject subjectKeyIds:strings --index subject --no-message

@@ -13,7 +13,7 @@ import (
 
 func CmdListPkiRevocationDistributionPoint() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "revocation-points",
+		Use:   "all-revocation-points",
 		Short: "Gets all PKI revocation distribution points",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)

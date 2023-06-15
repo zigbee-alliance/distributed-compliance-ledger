@@ -42,7 +42,7 @@ test_divider
 
 echo "1. QUERY ALL REVOCATION POINTS EMPTY"
 
-result=$(dcld query pki revocation-points)
+result=$(dcld query pki all-revocation-points)
 check_response "$result" "\[\]"
 
 test_divider
@@ -60,7 +60,7 @@ test_divider
 
 echo "3. QUERY REVOCATION BY ISSUER SUBJECT KEY ID"
 
-result=$(dcld query pki revocation-points-by-issuer --issuer-subject-key-id=AB)
+result=$(dcld query pki revocation-points --issuer-subject-key-id=AB)
 
 response_does_not_contain "$result" "\"issuerSubjectKeyID\": \"AB\""
 check_response "$result" "Not Found"
