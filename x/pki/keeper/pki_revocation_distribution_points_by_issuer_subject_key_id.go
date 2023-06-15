@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"reflect"
+
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
@@ -62,4 +64,20 @@ func (k Keeper) GetAllPkiRevocationDistributionPointsByIssuerSubjectKeyID(ctx sd
 	}
 
 	return
+}
+
+// Add PKIRevocationDistributionPoint to a subject->subjectKeyId index.
+func (k Keeper) AddPKIRevocationDistributionPointBySubjectKeyID(ctx sdk.Context, subjectKeyID string, pkiRevocationDistributionPoint types.PkiRevocationDistributionPoint) {
+	revocationPoints, _ := k.GetPkiRevocationDistributionPointsByIssuerSubjectKeyID(ctx, subjectKeyID)
+
+	// Check if revocation point is already there
+	for _, revocationPoint := range revocationPoints.Points {
+		if reflect.DeepEqual(revocationPoint, pkiRevocationDistributionPoint) {
+			return
+		}
+	}
+
+	revocationPoints.Points = append(revocationPoints.Points, &pkiRevocationDistributionPoint)
+
+	k.SetPkiRevocationDistributionPointsByIssuerSubjectKeyID(ctx, revocationPoints)
 }

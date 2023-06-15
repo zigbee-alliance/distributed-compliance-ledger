@@ -240,23 +240,6 @@ export default {
                 throw new SpVuexError('QueryClient:QueryRejectedUpgradeAll', 'API Node Unavailable. Could not perform query: ' + e.message);
             }
         },
-        async sendMsgApproveUpgrade({ rootGetters }, { value, fee = [], memo = '' }) {
-            try {
-                const txClient = await initTxClient(rootGetters);
-                const msg = await txClient.msgApproveUpgrade(value);
-                const result = await txClient.signAndBroadcast([msg], { fee: { amount: fee,
-                        gas: "200000" }, memo });
-                return result;
-            }
-            catch (e) {
-                if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgApproveUpgrade:Init', 'Could not initialize signing client. Wallet is required.');
-                }
-                else {
-                    throw new SpVuexError('TxClient:MsgApproveUpgrade:Send', 'Could not broadcast Tx: ' + e.message);
-                }
-            }
-        },
         async sendMsgRejectUpgrade({ rootGetters }, { value, fee = [], memo = '' }) {
             try {
                 const txClient = await initTxClient(rootGetters);
@@ -271,6 +254,23 @@ export default {
                 }
                 else {
                     throw new SpVuexError('TxClient:MsgRejectUpgrade:Send', 'Could not broadcast Tx: ' + e.message);
+                }
+            }
+        },
+        async sendMsgApproveUpgrade({ rootGetters }, { value, fee = [], memo = '' }) {
+            try {
+                const txClient = await initTxClient(rootGetters);
+                const msg = await txClient.msgApproveUpgrade(value);
+                const result = await txClient.signAndBroadcast([msg], { fee: { amount: fee,
+                        gas: "200000" }, memo });
+                return result;
+            }
+            catch (e) {
+                if (e == MissingWalletError) {
+                    throw new SpVuexError('TxClient:MsgApproveUpgrade:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgApproveUpgrade:Send', 'Could not broadcast Tx: ' + e.message);
                 }
             }
         },
@@ -291,21 +291,6 @@ export default {
                 }
             }
         },
-        async MsgApproveUpgrade({ rootGetters }, { value }) {
-            try {
-                const txClient = await initTxClient(rootGetters);
-                const msg = await txClient.msgApproveUpgrade(value);
-                return msg;
-            }
-            catch (e) {
-                if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgApproveUpgrade:Init', 'Could not initialize signing client. Wallet is required.');
-                }
-                else {
-                    throw new SpVuexError('TxClient:MsgApproveUpgrade:Create', 'Could not create message: ' + e.message);
-                }
-            }
-        },
         async MsgRejectUpgrade({ rootGetters }, { value }) {
             try {
                 const txClient = await initTxClient(rootGetters);
@@ -318,6 +303,21 @@ export default {
                 }
                 else {
                     throw new SpVuexError('TxClient:MsgRejectUpgrade:Create', 'Could not create message: ' + e.message);
+                }
+            }
+        },
+        async MsgApproveUpgrade({ rootGetters }, { value }) {
+            try {
+                const txClient = await initTxClient(rootGetters);
+                const msg = await txClient.msgApproveUpgrade(value);
+                return msg;
+            }
+            catch (e) {
+                if (e == MissingWalletError) {
+                    throw new SpVuexError('TxClient:MsgApproveUpgrade:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgApproveUpgrade:Create', 'Could not create message: ' + e.message);
                 }
             }
         },

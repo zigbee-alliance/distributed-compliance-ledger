@@ -151,6 +151,7 @@ func (k msgServer) UpdatePkiRevocationDistributionPoint(goCtx context.Context, m
 	}
 
 	k.SetPkiRevocationDistributionPoint(ctx, pkiRevocationDistributionPoint)
+	k.AddPKIRevocationDistributionPointBySubjectKeyID(ctx, crlSignerCertificate.SubjectKeyID, pkiRevocationDistributionPoint)
 
 	return &types.MsgUpdatePkiRevocationDistributionPointResponse{}, nil
 }
