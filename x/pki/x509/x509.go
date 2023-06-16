@@ -92,7 +92,7 @@ func subjectAsTextToMap(subjectAsText string) map[string]string {
 			splittedElem[0] = Mvid
 		}
 		if splittedElem[0] == "pid" {
-			splittedElem[0] = "Mpid"
+			splittedElem[0] = Mpid
 		}
 		subjectMap[splittedElem[0]] = splittedElem[1]
 	}
