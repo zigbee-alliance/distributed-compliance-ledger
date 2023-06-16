@@ -70,7 +70,7 @@ func verifyUpdatedPAI(updatedCrlSignerCertificate *x509.Certificate, revocationP
 	return nil
 }
 
-func verifyUpdatedCertificate(updatedCertificate string, revocationPoint types.PkiRevocationDistributionPoint, msgVid int32, isPrevCertPAA bool) error {
+func verifyUpdatedCertificate(updatedCertificate string, revocationPoint types.PkiRevocationDistributionPoint, isPrevCertPAA bool) error {
 	updatedCrlSignerCertificate, err := x509.DecodeX509Certificate(updatedCertificate)
 	if err != nil {
 		return pkitypes.NewErrInvalidCertificate(err)
@@ -126,7 +126,7 @@ func (k msgServer) UpdatePkiRevocationDistributionPoint(goCtx context.Context, m
 	}
 
 	if msg.CrlSignerCertificate != "" {
-		err = verifyUpdatedCertificate(msg.CrlSignerCertificate, pkiRevocationDistributionPoint, msg.Vid, crlSignerCertificate.IsSelfSigned())
+		err = verifyUpdatedCertificate(msg.CrlSignerCertificate, pkiRevocationDistributionPoint, crlSignerCertificate.IsSelfSigned())
 
 		if err != nil {
 			return nil, err

@@ -15,7 +15,7 @@ const TypeMsgAddPkiRevocationDistributionPoint = "add_pki_revocation_distributio
 
 var _ sdk.Msg = &MsgAddPkiRevocationDistributionPoint{}
 
-func NewMsgAddPkiRevocationDistributionPoint(signer string, vid int32, pid int32, isPAA bool, label string, crlSignerCertificate string, issuerSubjectKeyID string, DataURL string, dataFileSize uint64, dataDigest string, dataDigestType uint32, revocationType uint32) *MsgAddPkiRevocationDistributionPoint {
+func NewMsgAddPkiRevocationDistributionPoint(signer string, vid int32, pid int32, isPAA bool, label string, crlSignerCertificate string, issuerSubjectKeyID string, dataURL string, dataFileSize uint64, dataDigest string, dataDigestType uint32, revocationType uint32) *MsgAddPkiRevocationDistributionPoint {
 	return &MsgAddPkiRevocationDistributionPoint{
 		Signer:               signer,
 		Vid:                  vid,
@@ -24,7 +24,7 @@ func NewMsgAddPkiRevocationDistributionPoint(signer string, vid int32, pid int32
 		Label:                label,
 		CrlSignerCertificate: crlSignerCertificate,
 		IssuerSubjectKeyID:   issuerSubjectKeyID,
-		DataURL:              DataURL,
+		DataURL:              dataURL,
 		DataFileSize:         dataFileSize,
 		DataDigest:           dataDigest,
 		DataDigestType:       dataDigestType,
@@ -138,7 +138,6 @@ func (msg *MsgAddPkiRevocationDistributionPoint) verifySignerCertificate() error
 		return pkitypes.NewErrInvalidCertificate(err)
 	}
 
-	err = error(nil)
 	if msg.IsPAA {
 		err = msg.verifyPAA(cert)
 	} else {
@@ -149,7 +148,6 @@ func (msg *MsgAddPkiRevocationDistributionPoint) verifySignerCertificate() error
 }
 
 func (msg *MsgAddPkiRevocationDistributionPoint) verifyFields() error {
-
 	isDataDigestInTypes := true
 	if msg.DataDigestType != 0 {
 		isDataDigestInTypes = false

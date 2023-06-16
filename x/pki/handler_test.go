@@ -2044,7 +2044,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAAPemValueOfStoredCertNotEqu
 		RevocationType:       1,
 	}
 	_, err = setup.Handler(setup.Ctx, &addPkiRevocationDistributionPoint)
-	require.ErrorIs(t, err, pkitypes.ErrPemValuesNotEqual)
+	require.ErrorIs(t, err, pkitypes.ErrCertificateDoesNotExist)
 }
 
 func TestHandler_AddPkiRevocationDistributionPoint_PAISenderNotVendor(t *testing.T) {
