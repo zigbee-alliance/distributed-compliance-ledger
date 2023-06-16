@@ -20,7 +20,7 @@ func (k Keeper) PkiRevocationDistributionPointsByIssuerSubjectKeyID(c context.Co
 		req.IssuerSubjectKeyID,
 	)
 	if !found {
-		return nil, status.Error(codes.InvalidArgument, "not found")
+		return nil, status.Error(codes.NotFound, "not found")
 	}
 
 	return &types.QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse{PkiRevocationDistributionPointsByIssuerSubjectKeyID: val}, nil
