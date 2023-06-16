@@ -77,15 +77,13 @@ func verifyUpdatedCertificate(updatedCertificate string, revocationPoint types.P
 	}
 
 	if isPrevCertPAA {
-		err := verifyUpdatedPAA(updatedCrlSignerCertificate, revocationPoint.Vid)
-		if err != nil {
-			return err
-		}
+		err = verifyUpdatedPAA(updatedCrlSignerCertificate, revocationPoint.Vid)
 	} else {
-		err := verifyUpdatedPAI(updatedCrlSignerCertificate, revocationPoint.Vid, revocationPoint.Pid)
-		if err != nil {
-			return err
-		}
+		err = verifyUpdatedPAI(updatedCrlSignerCertificate, revocationPoint.Vid, revocationPoint.Pid)
+	}
+
+	if err != nil {
+		return err
 	}
 
 	return nil
