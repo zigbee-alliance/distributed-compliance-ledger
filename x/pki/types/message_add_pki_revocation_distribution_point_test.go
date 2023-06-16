@@ -145,7 +145,7 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			err: pkitypes.ErrInvalidDataDigestType,
 		},
 		{
-			name: fmt.Sprintf("revocationType is not one of %v", allowedRevocationType),
+			name: fmt.Sprintf("revocationType is not one of %v", AllowedRevocationType),
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
 				Vid:                  65521,

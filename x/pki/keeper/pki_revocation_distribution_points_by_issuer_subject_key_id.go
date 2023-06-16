@@ -66,7 +66,11 @@ func (k Keeper) GetAllPkiRevocationDistributionPointsByIssuerSubjectKeyID(ctx sd
 
 // Add PkiRevocationDistributionPoint to a subjectKeyID->revocationPoint index.
 func (k Keeper) AddPkiRevocationDistributionPointBySubjectKeyID(ctx sdk.Context, pkiRevocationDistributionPoint types.PkiRevocationDistributionPoint) {
-	revocationPoints, _ := k.GetPkiRevocationDistributionPointsByIssuerSubjectKeyID(ctx, pkiRevocationDistributionPoint.IssuerSubjectKeyID)
+	revocationPoints, isFound := k.GetPkiRevocationDistributionPointsByIssuerSubjectKeyID(ctx, pkiRevocationDistributionPoint.IssuerSubjectKeyID)
+
+	if !isFound {
+		revocationPoints.IssuerSubjectKeyID = pkiRevocationDistributionPoint.IssuerSubjectKeyID
+	}
 
 	// Check if revocation point is already there
 	for _, revocationPoint := range revocationPoints.Points {

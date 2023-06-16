@@ -159,8 +159,8 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 		return pkitypes.NewErrInvalidDataDigestType(fmt.Sprintf("invalid DataDigestType: %d. Supported types are: %v", msg.DataDigestType, allowedDataDigestTypes))
 	}
 
-	if msg.RevocationType != allowedRevocationType {
-		return pkitypes.NewErrInvalidRevocationType(fmt.Sprintf("invalid RevocationType: %d. Supported types are: %d", msg.RevocationType, allowedRevocationType))
+	if msg.RevocationType != AllowedRevocationType {
+		return pkitypes.NewErrInvalidRevocationType(fmt.Sprintf("invalid RevocationType: %d. Supported types are: %d", msg.RevocationType, AllowedRevocationType))
 	}
 
 	cert, err := x509.DecodeX509Certificate(msg.CrlSignerCertificate)
@@ -202,8 +202,8 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 		return pkitypes.NewErrEmptyDataDigestType("Data Digest Type must be provided if Data Digest is provided")
 	}
 
-	if msg.RevocationType == allowedRevocationType && (msg.DataFileSize != 0 || msg.DataDigest != "" || msg.DataDigestType != 0) {
-		return pkitypes.NewErrDataFieldPresented(fmt.Sprintf("Data Digest, Data File Size and Data Digest Type must be omitted for Revocation Type %d", allowedRevocationType))
+	if msg.RevocationType == AllowedRevocationType && (msg.DataFileSize != 0 || msg.DataDigest != "" || msg.DataDigestType != 0) {
+		return pkitypes.NewErrDataFieldPresented(fmt.Sprintf("Data Digest, Data File Size and Data Digest Type must be omitted for Revocation Type %d", AllowedRevocationType))
 	}
 
 	match := VerifyRevocationPointIssuerSubjectKeyIDFormat(msg.IssuerSubjectKeyID)
