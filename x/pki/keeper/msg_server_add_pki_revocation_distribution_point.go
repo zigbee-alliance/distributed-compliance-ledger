@@ -48,7 +48,7 @@ func (k msgServer) AddPkiRevocationDistributionPoint(goCtx context.Context, msg 
 		}
 
 		if approvedCertificates.Certs[0].PemCert != msg.CrlSignerCertificate {
-			return nil, pkitypes.NewErrPemValuesNotEqual("Pem values of CRL signer certificate and certificate found by its Subject and SubjectKeyID are is not equal ")
+			return nil, pkitypes.NewErrPemValuesNotEqual("PEM values of the CRL signer certificate and a certificate found by its Subject and SubjectKeyID are not equal")
 		}
 	} else {
 		_, _, err = k.verifyCertificate(ctx, crlSignerCertificate)
