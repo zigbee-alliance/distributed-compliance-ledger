@@ -63,7 +63,7 @@ func (msg *MsgAddPkiRevocationDistributionPoint) verifyVid(subjectAsText string)
 	}
 
 	if vid == 0 {
-		return sdkerrors.Wrap(pkitypes.ErrUnsupportedOperation, "publishing a revocation point for non-VID scoped root certificates is currently not supported")
+		return sdkerrors.Wrap(pkitypes.ErrUnsupportedOperation, "publishing a revocation point for non-VID scoped certificates is currently not supported")
 	}
 
 	if vid != msg.Vid {
