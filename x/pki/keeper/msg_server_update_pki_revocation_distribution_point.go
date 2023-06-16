@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -134,6 +135,11 @@ func (k msgServer) UpdatePkiRevocationDistributionPoint(goCtx context.Context, m
 		pkiRevocationDistributionPoint.CrlSignerCertificate = msg.CrlSignerCertificate
 	}
 
+	CRLRevocationType := uint32(1)
+	if pkiRevocationDistributionPoint.RevocationType == CRLRevocationType && (msg.DataFileSize != 0 || msg.DataDigest != "" || msg.DataDigestType != 0) {
+		return nil, pkitypes.NewErrDataFieldPresented(fmt.Sprintf("Data Digest, Data File Size and Data Digest Type must be omitted for Revocation Type %d", CRLRevocationType))
+	}
+
 	if msg.DataURL != "" {
 		pkiRevocationDistributionPoint.DataURL = msg.DataURL
 	}
@@ -151,6 +157,7 @@ func (k msgServer) UpdatePkiRevocationDistributionPoint(goCtx context.Context, m
 	}
 
 	k.SetPkiRevocationDistributionPoint(ctx, pkiRevocationDistributionPoint)
+	k.UpdatePkiRevocationDistributionPointBySubjectKeyID(ctx, pkiRevocationDistributionPoint)
 
 	return &types.MsgUpdatePkiRevocationDistributionPointResponse{}, nil
 }

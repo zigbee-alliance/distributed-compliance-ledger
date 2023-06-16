@@ -38,6 +38,7 @@ func (k msgServer) DeletePkiRevocationDistributionPoint(goCtx context.Context, m
 	}
 
 	k.RemovePkiRevocationDistributionPoint(ctx, msg.Vid, msg.Label, msg.IssuerSubjectKeyID)
+	k.RemovePkiRevocationDistributionPointBySubjectKeyID(ctx, pkiRevocationDistributionPoint)
 
 	return &types.MsgDeletePkiRevocationDistributionPointResponse{}, nil
 }

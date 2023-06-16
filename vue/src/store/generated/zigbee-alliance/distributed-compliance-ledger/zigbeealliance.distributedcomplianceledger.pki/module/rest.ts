@@ -104,6 +104,7 @@ export interface PkiPkiRevocationDistributionPoint {
 
 export interface PkiPkiRevocationDistributionPointsByIssuerSubjectKeyID {
   issuerSubjectKeyID?: string;
+  points?: PkiPkiRevocationDistributionPoint[];
 }
 
 export interface PkiProposedCertificate {
