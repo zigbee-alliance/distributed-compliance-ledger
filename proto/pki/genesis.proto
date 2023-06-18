@@ -31,6 +31,6 @@ message GenesisState {
   repeated ApprovedCertificatesBySubject approvedCertificatesBySubjectList = 9 [(gogoproto.nullable) = false];
   repeated RejectedCertificate rejectedCertificateList = 10 [(gogoproto.nullable) = false];
   repeated PkiRevocationDistributionPoint PkiRevocationDistributionPointList = 11 [(gogoproto.nullable) = false];
-  repeated PkiRevocationDistributionPointsByIssuerSubjectKeyID pkiRevocationDistributionPointsByIssuerSubjectKeyIDList = 12 [(gogoproto.nullable) = false];
+  repeated PkiRevocationDistributionPointsByIssuerSubjectKeyID PkiRevocationDistributionPointsByIssuerSubjectKeyIDList = 12 [(gogoproto.nullable) = false];
   // this line is used by starport scaffolding # genesis/proto/state
 }
