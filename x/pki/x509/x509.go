@@ -89,10 +89,10 @@ func subjectAsTextToMap(subjectAsText string) map[string]string {
 		r = regexp.MustCompile(`(\s?=\s?)|(\s?:\s?)`)
 		splittedElem := r.Split(elem, -1)
 		if splittedElem[0] == "vid" {
-			splittedElem[0] = "Mvid"
+			splittedElem[0] = Mvid
 		}
 		if splittedElem[0] == "pid" {
-			splittedElem[0] = "Mpid"
+			splittedElem[0] = Mpid
 		}
 		subjectMap[splittedElem[0]] = splittedElem[1]
 	}
