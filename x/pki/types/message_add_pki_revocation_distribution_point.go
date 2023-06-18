@@ -197,8 +197,6 @@ func (msg *MsgAddPkiRevocationDistributionPoint) verifyFields() error {
 		return pkitypes.NewErrEmptyDataDigestType("Data Digest Type must be provided if Data Digest is provided")
 	}
 
-	CRLRevocationType := uint32(1)
-
 	if msg.RevocationType == CRLRevocationType && (msg.DataFileSize != 0 || msg.DataDigest != "" || msg.DataDigestType != 0) {
 		return pkitypes.NewErrDataFieldPresented(fmt.Sprintf("Data Digest, Data File Size and Data Digest Type must be omitted for Revocation Type %d", CRLRevocationType))
 	}

@@ -2343,6 +2343,20 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAAWithVid(t *testing.T) {
 	}
 	_, err = setup.Handler(setup.Ctx, &updatePkiRevocationDistributionPoint)
 	require.NoError(t, err)
+
+	revocationPointBySubjectKeyID, isFound := setup.Keeper.GetPkiRevocationDistributionPointsByIssuerSubjectKeyID(setup.Ctx, testconstants.SubjectKeyIDWithoutColons)
+	require.True(t, isFound)
+	require.Equal(t, len(revocationPointBySubjectKeyID.Points), 1)
+	require.Equal(t, revocationPointBySubjectKeyID.Points[0].CrlSignerCertificate, updatePkiRevocationDistributionPoint.CrlSignerCertificate)
+	require.Equal(t, revocationPointBySubjectKeyID.Points[0].DataURL, updatePkiRevocationDistributionPoint.DataURL)
+	require.Equal(t, revocationPointBySubjectKeyID.Points[0].Pid, addPkiRevocationDistributionPoint.Pid)
+	require.Equal(t, revocationPointBySubjectKeyID.Points[0].RevocationType, addPkiRevocationDistributionPoint.RevocationType)
+	require.Equal(t, revocationPointBySubjectKeyID.Points[0].IssuerSubjectKeyID, addPkiRevocationDistributionPoint.IssuerSubjectKeyID)
+	require.Equal(t, revocationPointBySubjectKeyID.Points[0].Vid, addPkiRevocationDistributionPoint.Vid)
+	require.Equal(t, revocationPointBySubjectKeyID.Points[0].Label, addPkiRevocationDistributionPoint.Label)
+	require.Equal(t, revocationPointBySubjectKeyID.Points[0].DataDigest, addPkiRevocationDistributionPoint.DataDigest)
+	require.Equal(t, revocationPointBySubjectKeyID.Points[0].DataDigestType, addPkiRevocationDistributionPoint.DataDigestType)
+	require.Equal(t, revocationPointBySubjectKeyID.Points[0].DataFileSize, addPkiRevocationDistributionPoint.DataFileSize)
 }
 
 func TestHandler_RevocationPointsByIssuerSubjectKeyID(t *testing.T) {
@@ -2476,9 +2490,16 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_MinimalParams(t *testing.T
 
 	updatedPoint, isFound := setup.Keeper.GetPkiRevocationDistributionPoint(setup.Ctx, 65521, "label", testconstants.SubjectKeyIDWithoutColons)
 	require.True(t, isFound)
-	require.Equal(t, updatedPoint.DataURL, addPkiRevocationDistributionPoint.DataURL)
 	require.Equal(t, updatedPoint.CrlSignerCertificate, addPkiRevocationDistributionPoint.CrlSignerCertificate)
+	require.Equal(t, updatedPoint.DataURL, addPkiRevocationDistributionPoint.DataURL)
 	require.Equal(t, updatedPoint.Pid, addPkiRevocationDistributionPoint.Pid)
+	require.Equal(t, updatedPoint.RevocationType, addPkiRevocationDistributionPoint.RevocationType)
+	require.Equal(t, updatedPoint.IssuerSubjectKeyID, addPkiRevocationDistributionPoint.IssuerSubjectKeyID)
+	require.Equal(t, updatedPoint.Vid, addPkiRevocationDistributionPoint.Vid)
+	require.Equal(t, updatedPoint.Label, addPkiRevocationDistributionPoint.Label)
+	require.Equal(t, updatedPoint.DataDigest, addPkiRevocationDistributionPoint.DataDigest)
+	require.Equal(t, updatedPoint.DataDigestType, addPkiRevocationDistributionPoint.DataDigestType)
+	require.Equal(t, updatedPoint.DataFileSize, addPkiRevocationDistributionPoint.DataFileSize)
 }
 
 func TestHandler_UpdatePkiRevocationDistributionPoint_AllParams(t *testing.T) {
@@ -3063,6 +3084,12 @@ func TestHandler_DeletePkiRevocationDistributionPoint_PAA(t *testing.T) {
 	}
 	_, err = setup.Handler(setup.Ctx, &deletePkiRevocationDistributionPoint)
 	require.NoError(t, err)
+
+	_, isFound := setup.Keeper.GetPkiRevocationDistributionPoint(setup.Ctx, 65521, "label", testconstants.SubjectKeyIDWithoutColons)
+	require.False(t, isFound)
+
+	_, isFound = setup.Keeper.GetPkiRevocationDistributionPointsByIssuerSubjectKeyID(setup.Ctx, testconstants.SubjectKeyIDWithoutColons)
+	require.False(t, isFound)
 }
 
 func TestHandler_DeletePkiRevocationDistributionPoint_PAI(t *testing.T) {
