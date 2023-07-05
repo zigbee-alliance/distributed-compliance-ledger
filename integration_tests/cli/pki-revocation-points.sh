@@ -118,12 +118,12 @@ echo $result
 
 test_divider
 
-# echo "9. ADD REVOCATION POINT FOR PAI WHEN CERT IS NOT CHAINED BACK TO DCL CERTS"
+echo "9. ADD REVOCATION POINT FOR PAI WHEN CERT IS NOT CHAINED BACK TO DCL CERTS"
 
-# result=$(dcld tx pki add-revocation-point --vid=$vid --pid=$pid --is-paa="false" --certificate="$pai_cert_with_numeric_vid_pid_path" --label="$label" --data-url="$data_url" --issuer-subject-key-id=$issuer_subject_key_id --revocation-type=1 --from=$vendor_account --yes)
+result=$(dcld tx pki add-revocation-point --vid=$vid --pid=$pid --is-paa="false" --certificate="$pai_cert_with_numeric_vid_pid_path" --label="$label" --data-url="$data_url" --issuer-subject-key-id=$issuer_subject_key_id --revocation-type=1 --from=$vendor_account --yes)
 
-# response_does_not_contain "$result" "\"code\": 0"
-# echo $result
+response_does_not_contain "$result" "\"code\": 0"
+echo $result
 
 echo "10. ADD REVOCATION POINT FOR PAA WHEN REVOCATION POINT ALREADY EXISTS"
 
