@@ -55,7 +55,7 @@ It's recommended to develop and deploy the App on Ubuntu 18.04 or Ubuntu 20.04.
     ./integration_tests/run-all.sh
     ```
 
-    If you want to run a particular group of tests (cli, light, rest), you can
+    If you want to run a particular group of tests (cli, light, rest, deploy, upgrade), you can
 
     ```bash
     ./integration_tests/run-all.sh cli
