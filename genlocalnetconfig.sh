@@ -28,6 +28,7 @@ fi
 DCL_DIR="$HOME/.dcl"
 KEYPASSWD=test1234  # NOTE not necessary actually since we yse 'test' keyring backend now
 CHAIN_ID=dclchain
+DCL_BINARY=dcld
 
 rm -rf "$DCL_DIR"
 
@@ -41,53 +42,52 @@ fi
 if [ -n "$MAINNET_STABLE_VERSION" ]; then
     wget "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/${MAINNET_STABLE_VERSION}/dcld"
     chmod ugo+x dcld
-    # cp dcld ${LOCALNET_DIR}/${node_name}/cosmovisor/${VERSION_DIR}/bin/
-    # rm dcld
+    DCL_BINARY=./dcld
 fi
 
 
 # client
 
-./dcld config chain-id "$CHAIN_ID"
-./dcld config output json
-./dcld config node "tcp://localhost:26657"
-./dcld config keyring-backend test
-./dcld config broadcast-mode block
+$DCL_BINARY config chain-id "$CHAIN_ID"
+$DCL_BINARY  config output json
+$DCL_BINARY  config node "tcp://localhost:26657"
+$DCL_BINARY  config keyring-backend test
+$DCL_BINARY  config broadcast-mode block
 
-(echo "$KEYPASSWD"; echo "$KEYPASSWD") | ./dcld keys add jack
-(echo "$KEYPASSWD"; echo "$KEYPASSWD") | ./dcld keys add alice
-(echo "$KEYPASSWD"; echo "$KEYPASSWD") | ./dcld keys add bob
-(echo "$KEYPASSWD"; echo "$KEYPASSWD") | ./dcld keys add anna
+(echo "$KEYPASSWD"; echo "$KEYPASSWD") | $DCL_BINARY  keys add jack
+(echo "$KEYPASSWD"; echo "$KEYPASSWD") | $DCL_BINARY  keys add alice
+(echo "$KEYPASSWD"; echo "$KEYPASSWD") | $DCL_BINARY  keys add bob
+(echo "$KEYPASSWD"; echo "$KEYPASSWD") | $DCL_BINARY  keys add anna
 
 # common keyring (client) data for all the nodes
 # TODO issue 99: do we need all the keys on all the nodes
-jack_address=$(echo "$KEYPASSWD" | ./dcld keys show jack -a)
-jack_pubkey=$(echo "$KEYPASSWD" | ./dcld keys show jack -p)
+jack_address=$(echo "$KEYPASSWD" | $DCL_BINARY  keys show jack -a)
+jack_pubkey=$(echo "$KEYPASSWD" | $DCL_BINARY  keys show jack -p)
 
-alice_address=$(echo "$KEYPASSWD" | ./dcld keys show alice -a)
-alice_pubkey=$(echo "$KEYPASSWD" | ./dcld keys show alice -p)
+alice_address=$(echo "$KEYPASSWD" | $DCL_BINARY  keys show alice -a)
+alice_pubkey=$(echo "$KEYPASSWD" | $DCL_BINARY  keys show alice -p)
 
-bob_address=$(echo "$KEYPASSWD" | ./dcld keys show bob -a)
-bob_pubkey=$(echo "$KEYPASSWD" | ./dcld keys show bob -p)
+bob_address=$(echo "$KEYPASSWD" | $DCL_BINARY  keys show bob -a)
+bob_pubkey=$(echo "$KEYPASSWD" | $DCL_BINARY  keys show bob -p)
 
-anna_address=$(echo "$KEYPASSWD" | ./dcld keys show anna -a)
-anna_pubkey=$(echo "$KEYPASSWD" | ./dcld keys show anna -p)
+anna_address=$(echo "$KEYPASSWD" | $DCL_BINARY  keys show anna -a)
+anna_pubkey=$(echo "$KEYPASSWD" | $DCL_BINARY  keys show anna -p)
 
 mv "$DCL_DIR"/* $LOCALNET_DIR/client
 
 
 function add_genesis_accounts {
-    ./dcld add-genesis-account --address="$jack_address" --pubkey="$jack_pubkey" --roles="Trustee,NodeAdmin"
-    ./dcld add-genesis-account --address="$alice_address" --pubkey="$alice_pubkey" --roles="Trustee,NodeAdmin"
-    ./dcld add-genesis-account --address="$bob_address" --pubkey="$bob_pubkey" --roles="Trustee,NodeAdmin"
-    ./dcld add-genesis-account --address="$anna_address" --pubkey="$anna_pubkey" --roles="NodeAdmin"
+    $DCL_BINARY  add-genesis-account --address="$jack_address" --pubkey="$jack_pubkey" --roles="Trustee,NodeAdmin"
+    $DCL_BINARY  add-genesis-account --address="$alice_address" --pubkey="$alice_pubkey" --roles="Trustee,NodeAdmin"
+    $DCL_BINARY  add-genesis-account --address="$bob_address" --pubkey="$bob_pubkey" --roles="Trustee,NodeAdmin"
+    $DCL_BINARY  add-genesis-account --address="$anna_address" --pubkey="$anna_pubkey" --roles="NodeAdmin"
 }
 
 
 function gentx {
     local _node_name="$1"
     local _key_name="$2"
-    echo "$KEYPASSWD" | ./dcld gentx "$_key_name" --chain-id "$CHAIN_ID" --moniker "$_node_name"
+    echo "$KEYPASSWD" | $DCL_BINARY  gentx "$_key_name" --chain-id "$CHAIN_ID" --moniker "$_node_name"
 }
 
 
@@ -96,7 +96,7 @@ function init_node {
     local _key_name="${2:-}"
     local _copy_only="${3:-}"
 
-    ./dcld init "$_node_name" --chain-id "$CHAIN_ID"
+    $DCL_BINARY  init "$_node_name" --chain-id "$CHAIN_ID"
     cp -R "$LOCALNET_DIR"/client/* "$DCL_DIR"
 
     # we need to make them in an app state for each node
@@ -134,8 +134,8 @@ done
 
 # Embed them into genesis
 
-./dcld collect-gentxs
-./dcld validate-genesis
+$DCL_BINARY  collect-gentxs
+$DCL_BINARY  validate-genesis
 
 # Update genesis for all nodes
 
@@ -194,11 +194,11 @@ function init_light_client_proxy {
 
     rm -rf "$DCL_DIR"
 
-    ./dcld config chain-id "$CHAIN_ID"
-    ./dcld config node "tcp://localhost:26657"
-    ./dcld config broadcast-mode block
-    ./dcld config keyring-backend test
-    ./dcld config broadcast-mode block
+    $DCL_BINARY  config chain-id "$CHAIN_ID"
+    $DCL_BINARY  config node "tcp://localhost:26657"
+    $DCL_BINARY  config broadcast-mode block
+    $DCL_BINARY  config keyring-backend test
+    $DCL_BINARY  config broadcast-mode block
 
     cp -R "$LOCALNET_DIR"/client/* "$DCL_DIR"
 
