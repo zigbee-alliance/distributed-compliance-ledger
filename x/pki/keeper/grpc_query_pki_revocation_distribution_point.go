@@ -57,5 +57,5 @@ func (k Keeper) PkiRevocationDistributionPoint(c context.Context, req *types.Que
 		return nil, status.Error(codes.NotFound, "not found")
 	}
 
-	return &types.QueryGetPkiRevocationDistributionPointResponse{PkiRevocationDistributionPoint: val}, nil
+	return &types.QueryGetPkiRevocationDistributionPointResponse{PkiRevocationDistributionPoint: *val}, nil
 }

@@ -2395,7 +2395,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint(t *testing.T) {
 	var err error
 	vendorAcc := GenerateAccAddress()
 	const vid int32 = 65521
-	addedRevocation := types.MsgAddPkiRevocationDistributionPoint{
+	addedRevocation := &types.MsgAddPkiRevocationDistributionPoint{
 		Signer:               vendorAcc.String(),
 		Vid:                  vid,
 		IsPAA:                true,
@@ -2478,8 +2478,8 @@ func TestHandler_UpdatePkiRevocationDistributionPoint(t *testing.T) {
 			require.NoError(t, err)
 
 			// add revocation
-			if &addedRevocation != nil {
-				_, err = setup.Handler(setup.Ctx, &addedRevocation)
+			if addedRevocation != nil {
+				_, err = setup.Handler(setup.Ctx, addedRevocation)
 				require.NoError(t, err)
 			}
 			_, err = setup.Handler(setup.Ctx, &tc.updatedRevocation)
@@ -2488,7 +2488,11 @@ func TestHandler_UpdatePkiRevocationDistributionPoint(t *testing.T) {
 			if tc.valid {
 				require.NoError(t, err)
 				require.True(t, isFound)
-
+				if updatedPoint == nil {
+					t.Fail()
+					
+					return
+				}
 				require.Equal(t, updatedPoint.Vid, addedRevocation.Vid)
 				require.Equal(t, updatedPoint.Pid, addedRevocation.Pid)
 				require.Equal(t, updatedPoint.IsPAA, addedRevocation.IsPAA)
@@ -2506,7 +2510,6 @@ func TestHandler_UpdatePkiRevocationDistributionPoint(t *testing.T) {
 			}
 		})
 	}
-
 }
 
 func compareUpdatedStringFields(t *testing.T, oldValue string, newValue string, updatedValue string) {
