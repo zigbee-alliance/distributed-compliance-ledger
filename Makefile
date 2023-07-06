@@ -1,7 +1,7 @@
 PACKAGES = $(shell go list ./... | grep -v '/integration_tests')
 
 ifndef DCL_VERSION
-DCL_VERSION := $(shell echo $(shell git describe --tags) | sed 's/^v//')
+DCL_VERSION := $(shell echo $(shell git describe --tags --always) | sed 's/^v//')
 endif
 
 ifndef DCL_COMMIT

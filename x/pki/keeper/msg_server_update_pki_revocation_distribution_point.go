@@ -124,7 +124,7 @@ func (k msgServer) UpdatePkiRevocationDistributionPoint(goCtx context.Context, m
 	}
 
 	if msg.CrlSignerCertificate != "" {
-		err = verifyUpdatedCertificate(msg.CrlSignerCertificate, *pkiRevocationDistributionPoint, crlSignerCertificate.IsSelfSigned())
+		err = verifyUpdatedCertificate(msg.CrlSignerCertificate, pkiRevocationDistributionPoint, crlSignerCertificate.IsSelfSigned())
 
 		if err != nil {
 			return nil, err
@@ -153,8 +153,8 @@ func (k msgServer) UpdatePkiRevocationDistributionPoint(goCtx context.Context, m
 		pkiRevocationDistributionPoint.DataDigestType = msg.DataDigestType
 	}
 
-	k.SetPkiRevocationDistributionPoint(ctx, *pkiRevocationDistributionPoint)
-	k.UpdatePkiRevocationDistributionPointBySubjectKeyID(ctx, *pkiRevocationDistributionPoint)
+	k.SetPkiRevocationDistributionPoint(ctx, pkiRevocationDistributionPoint)
+	k.UpdatePkiRevocationDistributionPointBySubjectKeyID(ctx, pkiRevocationDistributionPoint)
 
 	return &types.MsgUpdatePkiRevocationDistributionPointResponse{}, nil
 }

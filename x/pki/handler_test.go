@@ -2488,11 +2488,6 @@ func TestHandler_UpdatePkiRevocationDistributionPoint(t *testing.T) {
 			if tc.valid {
 				require.NoError(t, err)
 				require.True(t, isFound)
-				if updatedPoint == nil {
-					t.Fail()
-
-					return
-				}
 				require.Equal(t, updatedPoint.Vid, addedRevocation.Vid)
 				require.Equal(t, updatedPoint.Pid, addedRevocation.Pid)
 				require.Equal(t, updatedPoint.IsPAA, addedRevocation.IsPAA)

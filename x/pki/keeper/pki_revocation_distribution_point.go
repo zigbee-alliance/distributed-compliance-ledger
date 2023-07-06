@@ -25,7 +25,7 @@ func (k Keeper) GetPkiRevocationDistributionPoint(
 	label string,
 	issuerSubjectKeyID string,
 
-) (val *types.PkiRevocationDistributionPoint, found bool) {
+) (val types.PkiRevocationDistributionPoint, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.PkiRevocationDistributionPointKeyPrefix))
 
 	b := store.Get(types.PkiRevocationDistributionPointKey(
@@ -34,10 +34,10 @@ func (k Keeper) GetPkiRevocationDistributionPoint(
 		issuerSubjectKeyID,
 	))
 	if b == nil {
-		return nil, false
+		return val, false
 	}
 
-	k.cdc.MustUnmarshal(b, val)
+	k.cdc.MustUnmarshal(b, &val)
 
 	return val, true
 }
