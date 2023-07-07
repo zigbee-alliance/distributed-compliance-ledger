@@ -9,6 +9,7 @@ import { ApprovedRootCertificates } from '../pki/approved_root_certificates';
 import { RevokedRootCertificates } from '../pki/revoked_root_certificates';
 import { ApprovedCertificatesBySubject } from '../pki/approved_certificates_by_subject';
 import { RejectedCertificate } from '../pki/rejected_certificate';
+import { PkiRevocationDistributionPoint } from '../pki/pki_revocation_distribution_point';
 export declare const protobufPackage = "zigbeealliance.distributedcomplianceledger.pki";
 export interface QueryGetApprovedCertificatesRequest {
     subject: string;
@@ -101,6 +102,21 @@ export interface QueryAllRejectedCertificatesRequest {
 }
 export interface QueryAllRejectedCertificatesResponse {
     rejectedCertificate: RejectedCertificate[];
+    pagination: PageResponse | undefined;
+}
+export interface QueryGetPkiRevocationDistributionPointRequest {
+    vid: number;
+    label: string;
+    issuerSubjectKeyID: string;
+}
+export interface QueryGetPkiRevocationDistributionPointResponse {
+    PkiRevocationDistributionPoint: PkiRevocationDistributionPoint | undefined;
+}
+export interface QueryAllPkiRevocationDistributionPointRequest {
+    pagination: PageRequest | undefined;
+}
+export interface QueryAllPkiRevocationDistributionPointResponse {
+    PkiRevocationDistributionPoint: PkiRevocationDistributionPoint[];
     pagination: PageResponse | undefined;
 }
 export declare const QueryGetApprovedCertificatesRequest: {
@@ -299,6 +315,34 @@ export declare const QueryAllRejectedCertificatesResponse: {
     toJSON(message: QueryAllRejectedCertificatesResponse): unknown;
     fromPartial(object: DeepPartial<QueryAllRejectedCertificatesResponse>): QueryAllRejectedCertificatesResponse;
 };
+export declare const QueryGetPkiRevocationDistributionPointRequest: {
+    encode(message: QueryGetPkiRevocationDistributionPointRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetPkiRevocationDistributionPointRequest;
+    fromJSON(object: any): QueryGetPkiRevocationDistributionPointRequest;
+    toJSON(message: QueryGetPkiRevocationDistributionPointRequest): unknown;
+    fromPartial(object: DeepPartial<QueryGetPkiRevocationDistributionPointRequest>): QueryGetPkiRevocationDistributionPointRequest;
+};
+export declare const QueryGetPkiRevocationDistributionPointResponse: {
+    encode(message: QueryGetPkiRevocationDistributionPointResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetPkiRevocationDistributionPointResponse;
+    fromJSON(object: any): QueryGetPkiRevocationDistributionPointResponse;
+    toJSON(message: QueryGetPkiRevocationDistributionPointResponse): unknown;
+    fromPartial(object: DeepPartial<QueryGetPkiRevocationDistributionPointResponse>): QueryGetPkiRevocationDistributionPointResponse;
+};
+export declare const QueryAllPkiRevocationDistributionPointRequest: {
+    encode(message: QueryAllPkiRevocationDistributionPointRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllPkiRevocationDistributionPointRequest;
+    fromJSON(object: any): QueryAllPkiRevocationDistributionPointRequest;
+    toJSON(message: QueryAllPkiRevocationDistributionPointRequest): unknown;
+    fromPartial(object: DeepPartial<QueryAllPkiRevocationDistributionPointRequest>): QueryAllPkiRevocationDistributionPointRequest;
+};
+export declare const QueryAllPkiRevocationDistributionPointResponse: {
+    encode(message: QueryAllPkiRevocationDistributionPointResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllPkiRevocationDistributionPointResponse;
+    fromJSON(object: any): QueryAllPkiRevocationDistributionPointResponse;
+    toJSON(message: QueryAllPkiRevocationDistributionPointResponse): unknown;
+    fromPartial(object: DeepPartial<QueryAllPkiRevocationDistributionPointResponse>): QueryAllPkiRevocationDistributionPointResponse;
+};
 /** Query defines the gRPC querier service. */
 export interface Query {
     /** Queries a ApprovedCertificates by index. */
@@ -329,6 +373,10 @@ export interface Query {
     RejectedCertificate(request: QueryGetRejectedCertificatesRequest): Promise<QueryGetRejectedCertificatesResponse>;
     /** Queries a list of RejectedCertificate items. */
     RejectedCertificateAll(request: QueryAllRejectedCertificatesRequest): Promise<QueryAllRejectedCertificatesResponse>;
+    /** Queries a PkiRevocationDistributionPoint by index. */
+    PkiRevocationDistributionPoint(request: QueryGetPkiRevocationDistributionPointRequest): Promise<QueryGetPkiRevocationDistributionPointResponse>;
+    /** Queries a list of PkiRevocationDistributionPoint items. */
+    PkiRevocationDistributionPointAll(request: QueryAllPkiRevocationDistributionPointRequest): Promise<QueryAllPkiRevocationDistributionPointResponse>;
 }
 export declare class QueryClientImpl implements Query {
     private readonly rpc;
@@ -347,6 +395,8 @@ export declare class QueryClientImpl implements Query {
     ApprovedCertificatesBySubject(request: QueryGetApprovedCertificatesBySubjectRequest): Promise<QueryGetApprovedCertificatesBySubjectResponse>;
     RejectedCertificate(request: QueryGetRejectedCertificatesRequest): Promise<QueryGetRejectedCertificatesResponse>;
     RejectedCertificateAll(request: QueryAllRejectedCertificatesRequest): Promise<QueryAllRejectedCertificatesResponse>;
+    PkiRevocationDistributionPoint(request: QueryGetPkiRevocationDistributionPointRequest): Promise<QueryGetPkiRevocationDistributionPointResponse>;
+    PkiRevocationDistributionPointAll(request: QueryAllPkiRevocationDistributionPointRequest): Promise<QueryAllPkiRevocationDistributionPointResponse>;
 }
 interface Rpc {
     request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;

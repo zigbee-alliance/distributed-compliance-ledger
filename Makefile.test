@@ -1,5 +1,5 @@
 ifndef DCL_VERSION
-DCL_VERSION := $(shell echo $(shell git describe --tags) | sed 's/^v//')
+DCL_VERSION := $(shell echo $(shell git describe --tags --always) | sed 's/^v//')
 endif
 
 ifndef DCL_COMMIT
@@ -34,7 +34,7 @@ localnet_init:
 	/bin/bash ./genlocalnetappbins.sh
 
 localnet_init_latest_stable_release:
-	/bin/bash ./genlocalnetconfig.sh
+	/bin/bash ./genlocalnetconfig.sh ${MAINNET_STABLE_VERSION}
 	/bin/bash ./genlocalnetappbins.sh "" "" "" ${MAINNET_STABLE_VERSION}
 
 localnet_start:

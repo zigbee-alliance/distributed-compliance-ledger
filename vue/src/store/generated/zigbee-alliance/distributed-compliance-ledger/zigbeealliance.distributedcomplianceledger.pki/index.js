@@ -8,13 +8,14 @@ import { Certificate } from "./module/types/pki/certificate";
 import { CertificateIdentifier } from "./module/types/pki/certificate_identifier";
 import { ChildCertificates } from "./module/types/pki/child_certificates";
 import { Grant } from "./module/types/pki/grant";
+import { PkiRevocationDistributionPoint } from "./module/types/pki/pki_revocation_distribution_point";
 import { ProposedCertificate } from "./module/types/pki/proposed_certificate";
 import { ProposedCertificateRevocation } from "./module/types/pki/proposed_certificate_revocation";
 import { RejectedCertificate } from "./module/types/pki/rejected_certificate";
 import { RevokedCertificates } from "./module/types/pki/revoked_certificates";
 import { RevokedRootCertificates } from "./module/types/pki/revoked_root_certificates";
 import { UniqueCertificate } from "./module/types/pki/unique_certificate";
-export { ApprovedCertificates, ApprovedCertificatesBySubject, ApprovedRootCertificates, Certificate, CertificateIdentifier, ChildCertificates, Grant, ProposedCertificate, ProposedCertificateRevocation, RejectedCertificate, RevokedCertificates, RevokedRootCertificates, UniqueCertificate };
+export { ApprovedCertificates, ApprovedCertificatesBySubject, ApprovedRootCertificates, Certificate, CertificateIdentifier, ChildCertificates, Grant, PkiRevocationDistributionPoint, ProposedCertificate, ProposedCertificateRevocation, RejectedCertificate, RevokedCertificates, RevokedRootCertificates, UniqueCertificate };
 async function initTxClient(vuexGetters) {
     return await txClient(vuexGetters['common/wallet/signer'], {
         addr: vuexGetters['common/env/apiTendermint']
@@ -62,6 +63,8 @@ const getDefaultState = () => {
         ApprovedCertificatesBySubject: {},
         RejectedCertificate: {},
         RejectedCertificateAll: {},
+        PkiRevocationDistributionPoint: {},
+        PkiRevocationDistributionPointAll: {},
         _Structure: {
             ApprovedCertificates: getStructure(ApprovedCertificates.fromPartial({})),
             ApprovedCertificatesBySubject: getStructure(ApprovedCertificatesBySubject.fromPartial({})),
@@ -70,6 +73,7 @@ const getDefaultState = () => {
             CertificateIdentifier: getStructure(CertificateIdentifier.fromPartial({})),
             ChildCertificates: getStructure(ChildCertificates.fromPartial({})),
             Grant: getStructure(Grant.fromPartial({})),
+            PkiRevocationDistributionPoint: getStructure(PkiRevocationDistributionPoint.fromPartial({})),
             ProposedCertificate: getStructure(ProposedCertificate.fromPartial({})),
             ProposedCertificateRevocation: getStructure(ProposedCertificateRevocation.fromPartial({})),
             RejectedCertificate: getStructure(RejectedCertificate.fromPartial({})),
@@ -184,6 +188,18 @@ export default {
                 params.query = null;
             }
             return state.RejectedCertificateAll[JSON.stringify(params)] ?? {};
+        },
+        getPkiRevocationDistributionPoint: (state) => (params = { params: {} }) => {
+            if (!params.query) {
+                params.query = null;
+            }
+            return state.PkiRevocationDistributionPoint[JSON.stringify(params)] ?? {};
+        },
+        getPkiRevocationDistributionPointAll: (state) => (params = { params: {} }) => {
+            if (!params.query) {
+                params.query = null;
+            }
+            return state.PkiRevocationDistributionPointAll[JSON.stringify(params)] ?? {};
         },
         getTypeStructure: (state) => (type) => {
             return state._Structure[type].fields;
@@ -655,6 +671,51 @@ export default {
                 }
                 else {
                     throw new SpVuexError('TxClient:MsgAddX509Cert:Create', 'Could not create message: ' + e.message);
+                }
+            }
+        },
+        async MsgAddX509Cert({ rootGetters }, { value }) {
+            try {
+                const txClient = await initTxClient(rootGetters);
+                const msg = await txClient.msgAddX509Cert(value);
+                return msg;
+            }
+            catch (e) {
+                if (e == MissingWalletError) {
+                    throw new SpVuexError('TxClient:MsgAddX509Cert:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgAddX509Cert:Create', 'Could not create message: ' + e.message);
+                }
+            }
+        },
+        async MsgApproveRevokeX509RootCert({ rootGetters }, { value }) {
+            try {
+                const txClient = await initTxClient(rootGetters);
+                const msg = await txClient.msgApproveRevokeX509RootCert(value);
+                return msg;
+            }
+            catch (e) {
+                if (e == MissingWalletError) {
+                    throw new SpVuexError('TxClient:MsgApproveRevokeX509RootCert:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgApproveRevokeX509RootCert:Create', 'Could not create message: ' + e.message);
+                }
+            }
+        },
+        async MsgUpdatePkiRevocationDistributionPoint({ rootGetters }, { value }) {
+            try {
+                const txClient = await initTxClient(rootGetters);
+                const msg = await txClient.msgUpdatePkiRevocationDistributionPoint(value);
+                return msg;
+            }
+            catch (e) {
+                if (e == MissingWalletError) {
+                    throw new SpVuexError('TxClient:MsgUpdatePkiRevocationDistributionPoint:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgUpdatePkiRevocationDistributionPoint:Create', 'Could not create message: ' + e.message);
                 }
             }
         },

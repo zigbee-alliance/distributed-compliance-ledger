@@ -10,6 +10,7 @@ import (
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/sample"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	pkisimulation "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/simulation"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
@@ -52,6 +53,18 @@ const (
 	// TODO: Determine the simulation weight value.
 	defaultWeightMsgRejectAddX509RootCert int = 100
 
+	opWeightMsgAddPkiRevocationDistributionPoint = "op_weight_msg_create_chain"
+	// TODO: Determine the simulation weight value.
+	defaultWeightMsgAddPkiRevocationDistributionPoint int = 100
+
+	opWeightMsgUpdatePkiRevocationDistributionPoint = "op_weight_msg_create_chain"
+	// TODO: Determine the simulation weight value.
+	defaultWeightMsgUpdatePkiRevocationDistributionPoint int = 100
+
+	opWeightMsgDeletePkiRevocationDistributionPoint = "op_weight_msg_create_chain"
+	// TODO: Determine the simulation weight value.
+	defaultWeightMsgDeletePkiRevocationDistributionPoint int = 100
+
 	// this line is used by starport scaffolding # simapp/module/const.
 )
 
@@ -64,7 +77,7 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 	pkiGenesis := types.GenesisState{
 		// this line is used by starport scaffolding # simapp/module/genesisState
 	}
-	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(&pkiGenesis)
+	simState.GenState[pkitypes.ModuleName] = simState.Cdc.MustMarshalJSON(&pkiGenesis)
 }
 
 // ProposalContents doesn't return any content functions for governance proposals.
@@ -160,6 +173,39 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	operations = append(operations, simulation.NewWeightedOperation(
 		weightMsgRejectAddX509RootCert,
 		pkisimulation.SimulateMsgRejectAddX509RootCert(am.keeper),
+	))
+
+	var weightMsgAddPkiRevocationDistributionPoint int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgAddPkiRevocationDistributionPoint, &weightMsgAddPkiRevocationDistributionPoint, nil,
+		func(_ *rand.Rand) {
+			weightMsgAddPkiRevocationDistributionPoint = defaultWeightMsgAddPkiRevocationDistributionPoint
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgAddPkiRevocationDistributionPoint,
+		pkisimulation.SimulateMsgAddPkiRevocationDistributionPoint(am.keeper),
+	))
+
+	var weightMsgUpdatePkiRevocationDistributionPoint int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgUpdatePkiRevocationDistributionPoint, &weightMsgUpdatePkiRevocationDistributionPoint, nil,
+		func(_ *rand.Rand) {
+			weightMsgUpdatePkiRevocationDistributionPoint = defaultWeightMsgUpdatePkiRevocationDistributionPoint
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgUpdatePkiRevocationDistributionPoint,
+		pkisimulation.SimulateMsgUpdatePkiRevocationDistributionPoint(am.keeper),
+	))
+
+	var weightMsgDeletePkiRevocationDistributionPoint int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgDeletePkiRevocationDistributionPoint, &weightMsgDeletePkiRevocationDistributionPoint, nil,
+		func(_ *rand.Rand) {
+			weightMsgDeletePkiRevocationDistributionPoint = defaultWeightMsgDeletePkiRevocationDistributionPoint
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgDeletePkiRevocationDistributionPoint,
+		pkisimulation.SimulateMsgDeletePkiRevocationDistributionPoint(am.keeper),
 	))
 
 	// this line is used by starport scaffolding # simapp/module/operation

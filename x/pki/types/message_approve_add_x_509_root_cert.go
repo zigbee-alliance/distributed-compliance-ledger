@@ -5,6 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
 
@@ -23,7 +24,7 @@ func NewMsgApproveAddX509RootCert(signer string, subject string, subjectKeyID st
 }
 
 func (msg *MsgApproveAddX509RootCert) Route() string {
-	return RouterKey
+	return pkitypes.RouterKey
 }
 
 func (msg *MsgApproveAddX509RootCert) Type() string {

@@ -3,12 +3,13 @@ package keeper
 import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
 // SetRevokedCertificates set a specific revokedCertificates in the store from its index.
 func (k Keeper) SetRevokedCertificates(ctx sdk.Context, revokedCertificates types.RevokedCertificates) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RevokedCertificatesKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.RevokedCertificatesKeyPrefix))
 	b := k.cdc.MustMarshal(&revokedCertificates)
 	store.Set(types.RevokedCertificatesKey(
 		revokedCertificates.Subject,
@@ -22,7 +23,7 @@ func (k Keeper) GetRevokedCertificates(
 	subject string,
 	subjectKeyID string,
 ) (val types.RevokedCertificates, found bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RevokedCertificatesKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.RevokedCertificatesKeyPrefix))
 
 	b := store.Get(types.RevokedCertificatesKey(
 		subject,
@@ -43,7 +44,7 @@ func (k Keeper) RemoveRevokedCertificates(
 	subject string,
 	subjectKeyID string,
 ) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RevokedCertificatesKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.RevokedCertificatesKeyPrefix))
 	store.Delete(types.RevokedCertificatesKey(
 		subject,
 		subjectKeyID,
@@ -52,7 +53,7 @@ func (k Keeper) RemoveRevokedCertificates(
 
 // GetAllRevokedCertificates returns all revokedCertificates.
 func (k Keeper) GetAllRevokedCertificates(ctx sdk.Context) (list []types.RevokedCertificates) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RevokedCertificatesKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.RevokedCertificatesKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()
@@ -68,7 +69,7 @@ func (k Keeper) GetAllRevokedCertificates(ctx sdk.Context) (list []types.Revoked
 
 // Add revoked certificates to the list of revoked certificates for the subject/subjectKeyId map.
 func (k Keeper) AddRevokedCertificates(ctx sdk.Context, approvedCertificates types.ApprovedCertificates) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RevokedCertificatesKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.RevokedCertificatesKeyPrefix))
 
 	revokedCertificatesBytes := store.Get(types.RevokedCertificatesKey(
 		approvedCertificates.Subject,

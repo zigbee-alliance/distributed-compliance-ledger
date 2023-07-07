@@ -1367,6 +1367,318 @@ func (m *QueryAllRejectedCertificatesResponse) GetPagination() *query.PageRespon
 	return nil
 }
 
+type QueryGetPkiRevocationDistributionPointRequest struct {
+	Vid                int32  `protobuf:"varint,1,opt,name=vid,proto3" json:"vid,omitempty"`
+	Label              string `protobuf:"bytes,2,opt,name=label,proto3" json:"label,omitempty"`
+	IssuerSubjectKeyID string `protobuf:"bytes,3,opt,name=issuerSubjectKeyID,proto3" json:"issuerSubjectKeyID,omitempty"`
+}
+
+func (m *QueryGetPkiRevocationDistributionPointRequest) Reset() {
+	*m = QueryGetPkiRevocationDistributionPointRequest{}
+}
+func (m *QueryGetPkiRevocationDistributionPointRequest) String() string {
+	return proto.CompactTextString(m)
+}
+func (*QueryGetPkiRevocationDistributionPointRequest) ProtoMessage() {}
+func (*QueryGetPkiRevocationDistributionPointRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_62972e0134af9ed2, []int{28}
+}
+func (m *QueryGetPkiRevocationDistributionPointRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetPkiRevocationDistributionPointRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetPkiRevocationDistributionPointRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetPkiRevocationDistributionPointRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetPkiRevocationDistributionPointRequest.Merge(m, src)
+}
+func (m *QueryGetPkiRevocationDistributionPointRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetPkiRevocationDistributionPointRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetPkiRevocationDistributionPointRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetPkiRevocationDistributionPointRequest proto.InternalMessageInfo
+
+func (m *QueryGetPkiRevocationDistributionPointRequest) GetVid() int32 {
+	if m != nil {
+		return m.Vid
+	}
+	return 0
+}
+
+func (m *QueryGetPkiRevocationDistributionPointRequest) GetLabel() string {
+	if m != nil {
+		return m.Label
+	}
+	return ""
+}
+
+func (m *QueryGetPkiRevocationDistributionPointRequest) GetIssuerSubjectKeyID() string {
+	if m != nil {
+		return m.IssuerSubjectKeyID
+	}
+	return ""
+}
+
+type QueryGetPkiRevocationDistributionPointResponse struct {
+	PkiRevocationDistributionPoint PkiRevocationDistributionPoint `protobuf:"bytes,1,opt,name=PkiRevocationDistributionPoint,proto3" json:"PkiRevocationDistributionPoint"`
+}
+
+func (m *QueryGetPkiRevocationDistributionPointResponse) Reset() {
+	*m = QueryGetPkiRevocationDistributionPointResponse{}
+}
+func (m *QueryGetPkiRevocationDistributionPointResponse) String() string {
+	return proto.CompactTextString(m)
+}
+func (*QueryGetPkiRevocationDistributionPointResponse) ProtoMessage() {}
+func (*QueryGetPkiRevocationDistributionPointResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_62972e0134af9ed2, []int{29}
+}
+func (m *QueryGetPkiRevocationDistributionPointResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetPkiRevocationDistributionPointResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetPkiRevocationDistributionPointResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetPkiRevocationDistributionPointResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetPkiRevocationDistributionPointResponse.Merge(m, src)
+}
+func (m *QueryGetPkiRevocationDistributionPointResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetPkiRevocationDistributionPointResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetPkiRevocationDistributionPointResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetPkiRevocationDistributionPointResponse proto.InternalMessageInfo
+
+func (m *QueryGetPkiRevocationDistributionPointResponse) GetPkiRevocationDistributionPoint() PkiRevocationDistributionPoint {
+	if m != nil {
+		return m.PkiRevocationDistributionPoint
+	}
+	return PkiRevocationDistributionPoint{}
+}
+
+type QueryAllPkiRevocationDistributionPointRequest struct {
+	Pagination *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllPkiRevocationDistributionPointRequest) Reset() {
+	*m = QueryAllPkiRevocationDistributionPointRequest{}
+}
+func (m *QueryAllPkiRevocationDistributionPointRequest) String() string {
+	return proto.CompactTextString(m)
+}
+func (*QueryAllPkiRevocationDistributionPointRequest) ProtoMessage() {}
+func (*QueryAllPkiRevocationDistributionPointRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_62972e0134af9ed2, []int{30}
+}
+func (m *QueryAllPkiRevocationDistributionPointRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllPkiRevocationDistributionPointRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllPkiRevocationDistributionPointRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllPkiRevocationDistributionPointRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllPkiRevocationDistributionPointRequest.Merge(m, src)
+}
+func (m *QueryAllPkiRevocationDistributionPointRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllPkiRevocationDistributionPointRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllPkiRevocationDistributionPointRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllPkiRevocationDistributionPointRequest proto.InternalMessageInfo
+
+func (m *QueryAllPkiRevocationDistributionPointRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryAllPkiRevocationDistributionPointResponse struct {
+	PkiRevocationDistributionPoint []PkiRevocationDistributionPoint `protobuf:"bytes,1,rep,name=PkiRevocationDistributionPoint,proto3" json:"PkiRevocationDistributionPoint"`
+	Pagination                     *query.PageResponse              `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllPkiRevocationDistributionPointResponse) Reset() {
+	*m = QueryAllPkiRevocationDistributionPointResponse{}
+}
+func (m *QueryAllPkiRevocationDistributionPointResponse) String() string {
+	return proto.CompactTextString(m)
+}
+func (*QueryAllPkiRevocationDistributionPointResponse) ProtoMessage() {}
+func (*QueryAllPkiRevocationDistributionPointResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_62972e0134af9ed2, []int{31}
+}
+func (m *QueryAllPkiRevocationDistributionPointResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllPkiRevocationDistributionPointResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllPkiRevocationDistributionPointResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllPkiRevocationDistributionPointResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllPkiRevocationDistributionPointResponse.Merge(m, src)
+}
+func (m *QueryAllPkiRevocationDistributionPointResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllPkiRevocationDistributionPointResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllPkiRevocationDistributionPointResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllPkiRevocationDistributionPointResponse proto.InternalMessageInfo
+
+func (m *QueryAllPkiRevocationDistributionPointResponse) GetPkiRevocationDistributionPoint() []PkiRevocationDistributionPoint {
+	if m != nil {
+		return m.PkiRevocationDistributionPoint
+	}
+	return nil
+}
+
+func (m *QueryAllPkiRevocationDistributionPointResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest struct {
+	IssuerSubjectKeyID string `protobuf:"bytes,1,opt,name=issuerSubjectKeyID,proto3" json:"issuerSubjectKeyID,omitempty"`
+}
+
+func (m *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest) Reset() {
+	*m = QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest{}
+}
+func (m *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest) String() string {
+	return proto.CompactTextString(m)
+}
+func (*QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest) ProtoMessage() {}
+func (*QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_62972e0134af9ed2, []int{32}
+}
+func (m *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest.Merge(m, src)
+}
+func (m *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest proto.InternalMessageInfo
+
+func (m *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest) GetIssuerSubjectKeyID() string {
+	if m != nil {
+		return m.IssuerSubjectKeyID
+	}
+	return ""
+}
+
+type QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse struct {
+	PkiRevocationDistributionPointsByIssuerSubjectKeyID PkiRevocationDistributionPointsByIssuerSubjectKeyID `protobuf:"bytes,1,opt,name=pkiRevocationDistributionPointsByIssuerSubjectKeyID,proto3" json:"pkiRevocationDistributionPointsByIssuerSubjectKeyID"`
+}
+
+func (m *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse) Reset() {
+	*m = QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse{}
+}
+func (m *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse) String() string {
+	return proto.CompactTextString(m)
+}
+func (*QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse) ProtoMessage() {}
+func (*QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_62972e0134af9ed2, []int{33}
+}
+func (m *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse.Merge(m, src)
+}
+func (m *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse proto.InternalMessageInfo
+
+func (m *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse) GetPkiRevocationDistributionPointsByIssuerSubjectKeyID() PkiRevocationDistributionPointsByIssuerSubjectKeyID {
+	if m != nil {
+		return m.PkiRevocationDistributionPointsByIssuerSubjectKeyID
+	}
+	return PkiRevocationDistributionPointsByIssuerSubjectKeyID{}
+}
+
 func init() {
 	proto.RegisterType((*QueryGetApprovedCertificatesRequest)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetApprovedCertificatesRequest")
 	proto.RegisterType((*QueryGetApprovedCertificatesResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetApprovedCertificatesResponse")
@@ -1396,96 +1708,121 @@ func init() {
 	proto.RegisterType((*QueryGetRejectedCertificatesResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetRejectedCertificatesResponse")
 	proto.RegisterType((*QueryAllRejectedCertificatesRequest)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryAllRejectedCertificatesRequest")
 	proto.RegisterType((*QueryAllRejectedCertificatesResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryAllRejectedCertificatesResponse")
+	proto.RegisterType((*QueryGetPkiRevocationDistributionPointRequest)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetPkiRevocationDistributionPointRequest")
+	proto.RegisterType((*QueryGetPkiRevocationDistributionPointResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetPkiRevocationDistributionPointResponse")
+	proto.RegisterType((*QueryAllPkiRevocationDistributionPointRequest)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryAllPkiRevocationDistributionPointRequest")
+	proto.RegisterType((*QueryAllPkiRevocationDistributionPointResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryAllPkiRevocationDistributionPointResponse")
+	proto.RegisterType((*QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest")
+	proto.RegisterType((*QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse")
 }
 
 func init() { proto.RegisterFile("pki/query.proto", fileDescriptor_62972e0134af9ed2) }
 
 var fileDescriptor_62972e0134af9ed2 = []byte{
-	// 1344 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x59, 0xcd, 0x6f, 0xe4, 0xb4,
-	0x1b, 0xae, 0xa7, 0xbf, 0xdf, 0x22, 0x0c, 0x02, 0xad, 0x5b, 0xda, 0x32, 0xb4, 0xd3, 0xae, 0xb7,
-	0xf4, 0x0b, 0x9a, 0xd0, 0x45, 0xec, 0xc2, 0x01, 0x50, 0x3f, 0x44, 0x17, 0x10, 0x52, 0x77, 0x8a,
-	0x58, 0x84, 0x16, 0xaa, 0x4c, 0xc6, 0x4c, 0x43, 0xd3, 0x71, 0x36, 0xc9, 0x54, 0x0c, 0x55, 0x91,
-	0x40, 0x42, 0x48, 0x9c, 0x10, 0x70, 0x81, 0x23, 0x48, 0x88, 0x3b, 0x07, 0xfe, 0x85, 0x95, 0xb8,
-	0xac, 0xc4, 0x85, 0x13, 0x42, 0xed, 0x1e, 0x40, 0x8b, 0x84, 0xb8, 0x80, 0xb8, 0x00, 0x8a, 0xe3,
-	0x34, 0x99, 0x89, 0xe3, 0x49, 0x53, 0x0f, 0xdc, 0xa6, 0xb1, 0xf3, 0x3e, 0xef, 0xf3, 0xf8, 0xf5,
-	0x6b, 0x3f, 0x29, 0xbc, 0xd7, 0xd9, 0xb1, 0xf4, 0xeb, 0x2d, 0xe2, 0xb6, 0x35, 0xc7, 0xa5, 0x3e,
-	0x45, 0xda, 0x5b, 0x56, 0xa3, 0x46, 0x88, 0x61, 0xdb, 0x96, 0xd1, 0x34, 0x89, 0x56, 0xb7, 0x3c,
-	0xdf, 0xb5, 0x6a, 0x2d, 0x9f, 0xd4, 0x4d, 0xba, 0xeb, 0x84, 0x4f, 0x6d, 0x52, 0x6f, 0x10, 0x57,
-	0x73, 0x76, 0xac, 0xf2, 0x78, 0x83, 0xd2, 0x86, 0x4d, 0x74, 0xc3, 0xb1, 0x74, 0xa3, 0xd9, 0xa4,
-	0xbe, 0xe1, 0x5b, 0xb4, 0xe9, 0x85, 0xd1, 0xca, 0x0b, 0x26, 0xf5, 0x76, 0xa9, 0xa7, 0xd7, 0x0c,
-	0x8f, 0x84, 0x30, 0xfa, 0xde, 0x52, 0x8d, 0xf8, 0xc6, 0x92, 0xee, 0x18, 0x0d, 0xab, 0xc9, 0x26,
-	0xf3, 0xb9, 0x93, 0x41, 0x2a, 0x86, 0xe3, 0xb8, 0x74, 0x8f, 0xd4, 0xb7, 0x4c, 0xe2, 0xfa, 0xd6,
-	0xeb, 0x96, 0x69, 0xf8, 0x24, 0x0a, 0x56, 0x09, 0x26, 0x38, 0x2e, 0x75, 0xa8, 0xd7, 0x39, 0x81,
-	0x8f, 0x8f, 0x07, 0xe3, 0xe6, 0xb6, 0x65, 0x0b, 0xdf, 0x9e, 0xcf, 0x7a, 0x7b, 0xcb, 0x25, 0x7b,
-	0xd4, 0x4c, 0x66, 0xc2, 0x80, 0x82, 0xa7, 0x3b, 0xe2, 0x44, 0xa6, 0x3b, 0x32, 0x75, 0x29, 0xf5,
-	0x45, 0xb3, 0xce, 0x27, 0xa3, 0x64, 0x4d, 0x5a, 0xc8, 0x24, 0xbd, 0x55, 0x6b, 0x6f, 0x79, 0xad,
-	0xda, 0x1b, 0xc4, 0xf4, 0x3b, 0xd3, 0x0a, 0x9e, 0x08, 0xf9, 0x0f, 0x37, 0x68, 0x83, 0xb2, 0x9f,
-	0x7a, 0xf0, 0x8b, 0x3f, 0xbd, 0x3f, 0x5c, 0x82, 0xad, 0x70, 0x20, 0xfc, 0x23, 0x1c, 0xc2, 0x26,
-	0x3c, 0x7f, 0x25, 0x58, 0x93, 0x75, 0xe2, 0x2f, 0xf3, 0x14, 0x56, 0x13, 0x19, 0x54, 0xc9, 0xf5,
-	0x16, 0xf1, 0x7c, 0x34, 0x06, 0xef, 0xe0, 0x89, 0x8c, 0x81, 0x29, 0x30, 0x77, 0x67, 0x35, 0xfa,
-	0x13, 0x61, 0x78, 0x37, 0xff, 0xf9, 0x3c, 0x69, 0x3f, 0x5b, 0x1f, 0x2b, 0xb1, 0xe1, 0x8e, 0x67,
-	0xf8, 0x4b, 0x00, 0xa7, 0xe5, 0x28, 0x9e, 0x43, 0x9b, 0x1e, 0x41, 0x6f, 0xc3, 0x61, 0x43, 0x30,
-	0xce, 0x30, 0xef, 0xba, 0xb0, 0x76, 0xc2, 0xc2, 0xd4, 0x44, 0x58, 0x2b, 0xff, 0xbb, 0xf1, 0xc3,
-	0xe4, 0x40, 0x55, 0x88, 0x83, 0x77, 0xb9, 0x1a, 0xcb, 0xb6, 0x2d, 0x53, 0xe3, 0x19, 0x08, 0xe3,
-	0xd2, 0xe5, 0xc9, 0xcd, 0x68, 0x5c, 0xd7, 0xa0, 0xce, 0xb5, 0x70, 0x3b, 0xf1, 0x3a, 0xd7, 0x36,
-	0x8c, 0x06, 0xe1, 0xef, 0x56, 0x13, 0x6f, 0xe2, 0x5f, 0x23, 0x5d, 0x32, 0xf1, 0x7a, 0xea, 0x32,
-	0xf8, 0x6f, 0xe8, 0x82, 0xd6, 0x3b, 0x08, 0x97, 0x18, 0xe1, 0xd9, 0x9e, 0x84, 0xc3, 0xe4, 0x3b,
-	0x18, 0xd7, 0x20, 0x8e, 0x0a, 0x61, 0x83, 0xef, 0xc3, 0x04, 0x90, 0x9a, 0x6a, 0xfb, 0x1c, 0xc4,
-	0x35, 0x2d, 0x04, 0xe1, 0xa2, 0xee, 0xc3, 0x21, 0x27, 0x3d, 0xcc, 0x97, 0x73, 0xf5, 0xa4, 0x9a,
-	0x0a, 0x90, 0xb8, 0xa4, 0x22, 0x14, 0x6c, 0x73, 0x21, 0x96, 0x6d, 0x5b, 0x22, 0x84, 0xaa, 0x42,
-	0xbb, 0x0d, 0xe2, 0xc2, 0x2e, 0x24, 0xc9, 0x60, 0xff, 0x25, 0x51, 0x59, 0x64, 0x53, 0xd1, 0xfa,
-	0xaf, 0x06, 0x47, 0x81, 0x68, 0x0b, 0x8f, 0xc0, 0x33, 0x96, 0xe7, 0xb5, 0x88, 0xcb, 0x2b, 0x8c,
-	0xff, 0x85, 0x66, 0xe0, 0x3d, 0x46, 0xcb, 0xdf, 0xa6, 0xae, 0xe5, 0xb7, 0x93, 0x25, 0xd6, 0xf5,
-	0x14, 0x7f, 0x06, 0xe0, 0x39, 0x09, 0x08, 0xd7, 0xb3, 0x05, 0xcf, 0x9a, 0xdd, 0x83, 0x7c, 0x19,
-	0x97, 0x4f, 0xaa, 0x66, 0x0a, 0x85, 0x6b, 0x99, 0x46, 0xc0, 0x36, 0x7c, 0x58, 0xba, 0x01, 0xa2,
-	0xb3, 0x4e, 0xcd, 0x7e, 0xfb, 0x16, 0xc0, 0xc5, 0x9c, 0x70, 0x5c, 0x96, 0x4f, 0x01, 0x9c, 0x70,
-	0x64, 0x33, 0xb9, 0x46, 0x2f, 0x28, 0xa8, 0xb8, 0x38, 0x28, 0xd7, 0x4b, 0x8e, 0x8c, 0xf7, 0xb8,
-	0x76, 0x59, 0x3b, 0xa5, 0x5b, 0x3b, 0x55, 0x5b, 0xf4, 0x93, 0x12, 0x57, 0xb1, 0x37, 0xf0, 0x09,
-	0x54, 0x1c, 0xfc, 0x6f, 0x54, 0xec, 0xcb, 0x81, 0x51, 0x0d, 0xef, 0x51, 0xea, 0xaf, 0x27, 0xc9,
-	0x03, 0x43, 0x08, 0x12, 0x77, 0x47, 0x37, 0x3d, 0x5c, 0xf4, 0xc0, 0x10, 0x20, 0x45, 0xdd, 0x51,
-	0x80, 0x92, 0x3c, 0x30, 0x24, 0x42, 0xf4, 0xe3, 0xc0, 0x28, 0x24, 0xc9, 0x60, 0xff, 0x25, 0x51,
-	0x57, 0x64, 0xf3, 0x70, 0xb6, 0xfb, 0x7a, 0x5a, 0xa5, 0xd4, 0x17, 0x08, 0x8c, 0xbf, 0x01, 0x70,
-	0xae, 0xf7, 0x5c, 0xae, 0xce, 0x07, 0x00, 0x8e, 0x19, 0x19, 0x93, 0xf8, 0xe2, 0x5c, 0x2e, 0x7a,
-	0x77, 0xeb, 0x8e, 0xc7, 0x85, 0xca, 0xc4, 0xc3, 0x73, 0x70, 0xa6, 0xab, 0xc8, 0xb3, 0x38, 0x7e,
-	0x0d, 0x62, 0x3d, 0x32, 0xa7, 0x72, 0x8a, 0xef, 0x03, 0x38, 0xea, 0x8a, 0xe7, 0x70, 0x86, 0xeb,
-	0x05, 0xab, 0x20, 0x83, 0x60, 0x16, 0x1a, 0xbe, 0x1c, 0x1f, 0x7a, 0xc2, 0xfb, 0x6d, 0x7b, 0x33,
-	0xdc, 0xf3, 0x3d, 0x7b, 0x46, 0xc7, 0x81, 0xd6, 0x23, 0x54, 0xa2, 0x15, 0x1b, 0xb2, 0x99, 0x45,
-	0x0f, 0x34, 0x29, 0x7c, 0xd4, 0x8a, 0xa5, 0xc8, 0x49, 0x87, 0x57, 0xe5, 0xc6, 0x51, 0x7d, 0x0b,
-	0xfd, 0x22, 0xe1, 0xf0, 0xc4, 0x28, 0xc9, 0x86, 0x91, 0x1a, 0x2f, 0xde, 0x43, 0x53, 0xa1, 0xe2,
-	0x86, 0x91, 0x1a, 0x4a, 0xda, 0x3b, 0x99, 0x14, 0xaa, 0x9a, 0xe8, 0x2f, 0x09, 0x7b, 0x57, 0x4c,
-	0x94, 0xc1, 0xfe, 0x8b, 0xa2, 0xac, 0x8b, 0x5e, 0xb8, 0xf5, 0x00, 0xfc, 0x3f, 0xa3, 0x8b, 0xfe,
-	0x04, 0x70, 0x58, 0x54, 0xb9, 0x68, 0xf3, 0xa4, 0x5c, 0x72, 0x7c, 0x9b, 0x28, 0xbf, 0xa8, 0x36,
-	0x68, 0xc8, 0x0c, 0x5f, 0x7c, 0xf7, 0xbb, 0x5b, 0x1f, 0x97, 0x1e, 0x41, 0x9a, 0x5e, 0x37, 0x6d,
-	0x9d, 0x7d, 0x56, 0x4a, 0x4c, 0xd3, 0xf7, 0x79, 0xf9, 0x1f, 0x1c, 0xff, 0x62, 0x1b, 0xe1, 0x00,
-	0x1d, 0x01, 0x38, 0x2a, 0x0a, 0xbc, 0x6c, 0xdb, 0x05, 0xe9, 0xcb, 0x3f, 0x46, 0x14, 0xa4, 0xdf,
-	0xe3, 0x8b, 0x03, 0x9e, 0x60, 0xf4, 0x47, 0xd1, 0x7d, 0x42, 0xfa, 0xe8, 0x6f, 0x00, 0x87, 0x04,
-	0xd7, 0x44, 0x54, 0x2d, 0xba, 0x16, 0xd9, 0x26, 0xb8, 0xbc, 0xa9, 0x34, 0x26, 0xe7, 0xf7, 0x34,
-	0xe3, 0xf7, 0x04, 0xba, 0x74, 0xcc, 0x2f, 0xba, 0xd0, 0x2e, 0xe6, 0x5b, 0xe7, 0x9f, 0x01, 0x1c,
-	0x11, 0x00, 0x04, 0xcb, 0x5c, 0x2d, 0xba, 0x22, 0xca, 0x45, 0x90, 0xdb, 0x7d, 0x3c, 0xc3, 0x44,
-	0x98, 0x42, 0x15, 0xb9, 0x08, 0xe8, 0x0f, 0x00, 0xcf, 0xa6, 0xec, 0x27, 0xda, 0x28, 0xba, 0x2e,
-	0x59, 0xa6, 0xbc, 0x7c, 0x45, 0x61, 0x44, 0x4e, 0xf1, 0x49, 0x46, 0xf1, 0x12, 0x7a, 0x2c, 0xae,
-	0xe3, 0x60, 0x6e, 0xd7, 0x22, 0x87, 0xe6, 0xff, 0x40, 0xdf, 0xef, 0x74, 0xf9, 0x07, 0xe8, 0xab,
-	0x12, 0x9c, 0x90, 0xda, 0x21, 0x74, 0x4d, 0x69, 0x75, 0x76, 0xb9, 0xcb, 0xf2, 0xab, 0x7d, 0x8a,
-	0xce, 0xd5, 0x79, 0x8e, 0xa9, 0xb3, 0x86, 0x56, 0xd2, 0x05, 0x10, 0x7f, 0x11, 0xcf, 0xb9, 0x21,
-	0x3e, 0x2a, 0xc1, 0x29, 0x29, 0x6a, 0xb0, 0x35, 0xae, 0x29, 0x2d, 0x63, 0x35, 0x6a, 0xe5, 0x35,
-	0xdc, 0x78, 0x89, 0xa9, 0xf5, 0x10, 0x9a, 0xcf, 0xad, 0x16, 0xfa, 0x0b, 0xc0, 0x21, 0x81, 0xab,
-	0x29, 0xde, 0x27, 0xb3, 0xbd, 0x5f, 0xf1, 0x3e, 0x29, 0x31, 0x78, 0xf8, 0x29, 0xc6, 0xf9, 0x71,
-	0x74, 0xf1, 0x98, 0x33, 0xbf, 0x7f, 0xe7, 0xac, 0x8a, 0x9f, 0x00, 0x1c, 0x11, 0xc4, 0x3f, 0x55,
-	0x9b, 0x54, 0xae, 0x81, 0xdc, 0xe4, 0xe2, 0x07, 0x99, 0x06, 0x93, 0x68, 0x42, 0xaa, 0x01, 0xfa,
-	0x0d, 0xc0, 0xb1, 0x2c, 0x77, 0x86, 0xae, 0x9e, 0xf6, 0x92, 0x92, 0x61, 0xd6, 0xca, 0x2f, 0xab,
-	0x0f, 0xcc, 0x69, 0x63, 0x46, 0x7b, 0x1c, 0x95, 0x63, 0xda, 0x94, 0xfa, 0x9d, 0x9c, 0x7f, 0x07,
-	0x70, 0x34, 0xc3, 0xaf, 0xa1, 0x97, 0x4e, 0x59, 0x8f, 0x59, 0x8c, 0xaf, 0x2a, 0x8f, 0xcb, 0x09,
-	0x2f, 0x30, 0xc2, 0xd3, 0x08, 0xa7, 0xd6, 0x39, 0x4d, 0xfc, 0xbd, 0x12, 0x9c, 0x90, 0x9a, 0xb3,
-	0xe2, 0x07, 0x43, 0x1e, 0xf7, 0x5a, 0xfc, 0x60, 0xc8, 0x65, 0x68, 0xf1, 0x2c, 0x93, 0xe2, 0x1c,
-	0x9a, 0xec, 0x71, 0xfb, 0x45, 0xef, 0x94, 0x82, 0x06, 0x97, 0x76, 0x15, 0xa7, 0x68, 0x46, 0x99,
-	0xc6, 0xac, 0xf8, 0x4d, 0x5f, 0xe6, 0xbe, 0x04, 0x57, 0xc1, 0xc8, 0x26, 0xe5, 0xec, 0x71, 0xb7,
-	0x59, 0x8f, 0x4b, 0x21, 0x9c, 0xea, 0xc6, 0xaf, 0x5e, 0x86, 0x1e, 0x26, 0x54, 0x70, 0x19, 0x14,
-	0xca, 0xb0, 0xf2, 0xda, 0x8d, 0xc3, 0x0a, 0xb8, 0x79, 0x58, 0x01, 0x3f, 0x1e, 0x56, 0xc0, 0x87,
-	0x47, 0x95, 0x81, 0x9b, 0x47, 0x95, 0x81, 0xef, 0x8f, 0x2a, 0x03, 0xaf, 0xac, 0x35, 0x2c, 0x7f,
-	0xbb, 0x55, 0xd3, 0x4c, 0xba, 0xab, 0x87, 0x19, 0x2e, 0x46, 0x29, 0xea, 0x89, 0x14, 0x17, 0xe3,
-	0x1c, 0x17, 0xc3, 0x24, 0xf5, 0x37, 0x19, 0x9e, 0xdf, 0x76, 0x88, 0x57, 0x3b, 0xc3, 0xfe, 0x31,
-	0xfd, 0xe8, 0x3f, 0x01, 0x00, 0x00, 0xff, 0xff, 0x1b, 0x97, 0xb6, 0xac, 0x97, 0x20, 0x00, 0x00,
+	// 1640 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x5a, 0xcf, 0x6f, 0xdc, 0xc4,
+	0x17, 0xcf, 0x78, 0xbf, 0xed, 0x57, 0x0c, 0x08, 0xe8, 0x34, 0x34, 0x61, 0xd5, 0x6c, 0x52, 0xb7,
+	0xa4, 0xbf, 0xc8, 0x9a, 0xb4, 0xa2, 0x85, 0x43, 0xa9, 0xf2, 0xa3, 0xb4, 0x05, 0x81, 0xd2, 0x0d,
+	0xa2, 0x08, 0x95, 0xae, 0xbc, 0x5e, 0xb3, 0x35, 0x71, 0x76, 0x5c, 0xdb, 0x1b, 0x58, 0xa2, 0x45,
+	0x02, 0x09, 0x2a, 0x71, 0x42, 0xc0, 0x01, 0x10, 0x27, 0x2a, 0x55, 0xdc, 0x39, 0xf0, 0x2f, 0x54,
+	0xe2, 0x40, 0x25, 0x0e, 0x20, 0x21, 0x21, 0xd4, 0x70, 0x00, 0x15, 0x09, 0xb8, 0x80, 0xb8, 0x00,
+	0xf2, 0xf8, 0x39, 0xf6, 0xae, 0xc7, 0xb3, 0x5e, 0xc7, 0xdb, 0xde, 0xd6, 0x9e, 0xf1, 0x7b, 0xf3,
+	0xf9, 0xbc, 0x37, 0x6f, 0xde, 0x7c, 0x12, 0x7c, 0x9f, 0xb5, 0x62, 0x28, 0x97, 0x5b, 0xba, 0xdd,
+	0x2e, 0x5b, 0x36, 0x75, 0x29, 0x29, 0xbf, 0x6e, 0x34, 0x6a, 0xba, 0xae, 0x9a, 0xa6, 0xa1, 0x36,
+	0x35, 0xbd, 0x5c, 0x37, 0x1c, 0xd7, 0x36, 0x6a, 0x2d, 0x57, 0xaf, 0x6b, 0x74, 0xd5, 0xf2, 0xdf,
+	0x9a, 0x7a, 0xbd, 0xa1, 0xdb, 0x65, 0x6b, 0xc5, 0x28, 0xee, 0x6e, 0x50, 0xda, 0x30, 0x75, 0x45,
+	0xb5, 0x0c, 0x45, 0x6d, 0x36, 0xa9, 0xab, 0xba, 0x06, 0x6d, 0x3a, 0xbe, 0xb5, 0xe2, 0x21, 0x8d,
+	0x3a, 0xab, 0xd4, 0x51, 0x6a, 0xaa, 0xa3, 0xfb, 0x6e, 0x94, 0xb5, 0xd9, 0x9a, 0xee, 0xaa, 0xb3,
+	0x8a, 0xa5, 0x36, 0x8c, 0x26, 0x9b, 0x0c, 0x73, 0x27, 0xbd, 0xa5, 0xa8, 0x96, 0x65, 0xd3, 0x35,
+	0xbd, 0x5e, 0xd5, 0x74, 0xdb, 0x35, 0x5e, 0x36, 0x34, 0xd5, 0xd5, 0x03, 0x63, 0x25, 0x6f, 0x82,
+	0x65, 0x53, 0x8b, 0x3a, 0xdd, 0x13, 0x60, 0x7c, 0xb7, 0x37, 0xae, 0x5d, 0x32, 0x4c, 0xee, 0xd7,
+	0x07, 0x93, 0xbe, 0xae, 0xda, 0xfa, 0x1a, 0xd5, 0xa2, 0x2b, 0x61, 0x8e, 0xbc, 0xb7, 0x2b, 0xfc,
+	0x85, 0xec, 0xeb, 0x5a, 0xa9, 0x4d, 0xa9, 0xcb, 0x9b, 0xb5, 0x37, 0x6a, 0x25, 0x69, 0xd2, 0xa1,
+	0x44, 0xd0, 0xd5, 0x5a, 0xbb, 0xea, 0xb4, 0x6a, 0xaf, 0xe8, 0x9a, 0xdb, 0xbd, 0x2c, 0xef, 0x0d,
+	0x17, 0xff, 0x61, 0x86, 0x70, 0xc5, 0x88, 0x00, 0xaa, 0x6e, 0x86, 0xcf, 0x7b, 0xb0, 0xa8, 0xd1,
+	0x0c, 0x8c, 0x9d, 0x4a, 0x35, 0x99, 0xad, 0xc2, 0x70, 0x9c, 0x96, 0x6e, 0x07, 0x8b, 0xa9, 0xae,
+	0xe8, 0xed, 0xaa, 0x51, 0x07, 0x33, 0xa3, 0x0d, 0xda, 0xa0, 0xec, 0xa7, 0xe2, 0xfd, 0x82, 0xb7,
+	0x0f, 0xfa, 0x61, 0xaf, 0xfa, 0x03, 0xfe, 0x83, 0x3f, 0x24, 0x6b, 0x78, 0xef, 0x39, 0x2f, 0x0f,
+	0x4e, 0xeb, 0xee, 0x1c, 0xc0, 0x5e, 0x88, 0xa0, 0xae, 0xe8, 0x97, 0x5b, 0xba, 0xe3, 0x92, 0x71,
+	0xfc, 0x7f, 0xf0, 0x37, 0x8e, 0xa6, 0xd0, 0x81, 0xbb, 0x2a, 0xc1, 0x23, 0x91, 0xf1, 0x3d, 0xf0,
+	0xf3, 0x69, 0xbd, 0x7d, 0xb6, 0x3e, 0x2e, 0xb1, 0xe1, 0xae, 0x77, 0xf2, 0x35, 0x84, 0xf7, 0x89,
+	0xbd, 0x38, 0x16, 0x6d, 0x3a, 0x3a, 0x79, 0x03, 0x8f, 0xaa, 0x9c, 0x71, 0xe6, 0xf3, 0xee, 0x23,
+	0x8b, 0x03, 0x6e, 0x86, 0x32, 0xcf, 0xd7, 0xfc, 0xff, 0xae, 0xff, 0x30, 0x39, 0x52, 0xe1, 0xfa,
+	0x91, 0x57, 0x81, 0x8d, 0x39, 0xd3, 0x14, 0xb1, 0xf1, 0x24, 0xc6, 0xe1, 0x76, 0x81, 0xc5, 0x4d,
+	0x97, 0x81, 0x57, 0x6f, 0x6f, 0x95, 0xfd, 0x2d, 0x0c, 0x7b, 0xab, 0xbc, 0xa4, 0x36, 0x74, 0xf8,
+	0xb6, 0x12, 0xf9, 0x52, 0xfe, 0x2d, 0xe0, 0x25, 0xd1, 0x5f, 0x5f, 0x5e, 0x0a, 0xb7, 0x83, 0x17,
+	0x72, 0xba, 0x0b, 0xb0, 0xc4, 0x00, 0xef, 0xef, 0x0b, 0xd8, 0x5f, 0x7c, 0x17, 0xe2, 0x1a, 0x96,
+	0x83, 0x44, 0x58, 0x82, 0xbd, 0x1f, 0x71, 0x94, 0x4f, 0xb6, 0x7d, 0x86, 0xc2, 0x9c, 0xe6, 0x3a,
+	0x01, 0x52, 0xd7, 0xf1, 0x4e, 0x2b, 0x3e, 0x0c, 0xe1, 0x5c, 0x18, 0x94, 0x53, 0x8e, 0x27, 0xa0,
+	0x94, 0xe7, 0x45, 0x36, 0x81, 0x88, 0x39, 0xd3, 0x14, 0x10, 0x91, 0x57, 0xa2, 0xdd, 0x42, 0x61,
+	0x62, 0x67, 0xa2, 0xa4, 0x30, 0x7c, 0x4a, 0xf2, 0x4c, 0xb2, 0xa9, 0x20, 0xfe, 0x0b, 0xde, 0xf1,
+	0xc3, 0xdb, 0xc2, 0xbb, 0xf0, 0x76, 0xbf, 0x8e, 0x42, 0x86, 0xc1, 0x13, 0x99, 0xc6, 0xf7, 0xaa,
+	0x2d, 0xf7, 0x12, 0xb5, 0x0d, 0xb7, 0x1d, 0x4d, 0xb1, 0x9e, 0xb7, 0xf2, 0x27, 0x08, 0xef, 0x11,
+	0x38, 0x01, 0x3e, 0x5b, 0x78, 0x87, 0xd6, 0x3b, 0x08, 0x61, 0x9c, 0x1b, 0x94, 0xcd, 0x98, 0x17,
+	0xe0, 0x32, 0xee, 0x41, 0x36, 0xf1, 0xc3, 0xc2, 0x0d, 0x10, 0x9c, 0x30, 0xf9, 0xec, 0xb7, 0xaf,
+	0x10, 0x9e, 0x49, 0xe9, 0x0e, 0x68, 0xf9, 0x18, 0xe1, 0x09, 0x4b, 0x34, 0x13, 0x38, 0x7a, 0x26,
+	0x87, 0x8c, 0x0b, 0x8d, 0x02, 0x5f, 0x62, 0xcf, 0xf2, 0x1a, 0x70, 0x97, 0xb4, 0x53, 0x7a, 0xb9,
+	0xcb, 0x6b, 0x8b, 0x7e, 0x28, 0x01, 0x8b, 0xfd, 0x1d, 0x0f, 0xc0, 0x62, 0xe1, 0xce, 0xb0, 0x38,
+	0x94, 0x03, 0xa3, 0xe2, 0xf7, 0x6e, 0xf9, 0xb7, 0x27, 0xd1, 0x03, 0x83, 0xeb, 0x24, 0xac, 0x8e,
+	0x76, 0x7c, 0x38, 0xeb, 0x81, 0xc1, 0xf1, 0x14, 0x54, 0x47, 0x8e, 0x97, 0xe8, 0x81, 0x21, 0x20,
+	0x62, 0x18, 0x07, 0x46, 0x26, 0x4a, 0x0a, 0xc3, 0xa7, 0x24, 0xbf, 0x24, 0x3b, 0x88, 0xf7, 0xf7,
+	0xb6, 0xa7, 0x15, 0x4a, 0x5d, 0x0e, 0xc1, 0xf2, 0x97, 0x08, 0x1f, 0xe8, 0x3f, 0x17, 0xd8, 0x79,
+	0x17, 0xe1, 0x71, 0x35, 0x61, 0x12, 0x04, 0xe7, 0x4c, 0xd6, 0xde, 0xad, 0xd7, 0x1e, 0x10, 0x95,
+	0xe8, 0x4f, 0x3e, 0x80, 0xa7, 0x7b, 0x92, 0x3c, 0x09, 0xe3, 0x17, 0x28, 0xe4, 0x23, 0x71, 0x2a,
+	0x40, 0xbc, 0x82, 0xf0, 0x98, 0xcd, 0x9f, 0x03, 0x08, 0x4f, 0x67, 0xcc, 0x82, 0x04, 0x80, 0x49,
+	0xde, 0xe4, 0x33, 0xe1, 0xa1, 0xc7, 0xed, 0x6f, 0xdb, 0xcb, 0xfe, 0x9e, 0xef, 0x5b, 0x33, 0xba,
+	0x0e, 0xb4, 0x3e, 0xa6, 0x22, 0xa5, 0x58, 0x15, 0xcd, 0xcc, 0x7a, 0xa0, 0x09, 0xdd, 0x07, 0xa5,
+	0x58, 0xe8, 0x39, 0x7a, 0xc3, 0xab, 0xc0, 0x65, 0x35, 0xff, 0x12, 0x7a, 0x35, 0x72, 0xc3, 0xe3,
+	0x7b, 0x89, 0x16, 0x8c, 0xd8, 0x78, 0xf6, 0x1a, 0x1a, 0x33, 0x15, 0x16, 0x8c, 0xd8, 0x50, 0xf4,
+	0x7a, 0x27, 0xa2, 0x22, 0xaf, 0x22, 0xfa, 0x6b, 0xe4, 0x7a, 0x97, 0x8d, 0x94, 0xc2, 0xf0, 0x49,
+	0xc9, 0xaf, 0x8a, 0x5e, 0x89, 0xf6, 0x81, 0x2b, 0x46, 0xd8, 0x0d, 0x2c, 0x46, 0x74, 0x8c, 0x25,
+	0x6a, 0x34, 0x37, 0xb7, 0xe0, 0xfd, 0xb8, 0xb0, 0x66, 0xd4, 0x19, 0xc3, 0xdb, 0x2a, 0xde, 0x4f,
+	0x32, 0x8a, 0xb7, 0x99, 0x6a, 0x4d, 0x37, 0x21, 0xc9, 0xfc, 0x07, 0x52, 0xc6, 0xc4, 0x6f, 0xcf,
+	0x97, 0xc3, 0x9c, 0x5b, 0x1c, 0x2f, 0xb0, 0x29, 0x9c, 0x11, 0xf9, 0x6b, 0x84, 0xcb, 0x69, 0x57,
+	0x02, 0x21, 0xf8, 0x14, 0xe1, 0x92, 0x78, 0x2a, 0x24, 0xc2, 0xb3, 0x03, 0x77, 0x53, 0x42, 0xab,
+	0x10, 0x99, 0x3e, 0xbe, 0xe5, 0x57, 0x23, 0xcd, 0x61, 0x2a, 0x6a, 0xf3, 0xca, 0xe1, 0x8f, 0x24,
+	0xa0, 0x32, 0x85, 0xe7, 0x41, 0xa8, 0x2c, 0xdc, 0x29, 0x2a, 0xf3, 0xcb, 0x77, 0x17, 0xcf, 0xa7,
+	0x4b, 0x32, 0x67, 0xbe, 0x7d, 0x36, 0x96, 0xa4, 0x41, 0xa0, 0xf8, 0xb9, 0x8d, 0x12, 0x73, 0xfb,
+	0xaa, 0x84, 0x17, 0xb6, 0xe4, 0x16, 0xa2, 0xf4, 0x3d, 0xc2, 0x47, 0xad, 0xc1, 0xbf, 0x87, 0x54,
+	0xd2, 0xf2, 0x0d, 0x1d, 0xd7, 0x15, 0xc4, 0x33, 0xcb, 0x2a, 0x8f, 0xfc, 0x2e, 0xe3, 0x6d, 0x8c,
+	0x25, 0xf2, 0x37, 0xc2, 0xa3, 0xbc, 0x53, 0x94, 0x2c, 0x0f, 0x0a, 0x21, 0x85, 0x4e, 0x5a, 0x7c,
+	0x2e, 0x5f, 0xa3, 0x7e, 0xac, 0xe4, 0x63, 0x6f, 0x7d, 0xf3, 0xd3, 0x07, 0xd2, 0x23, 0xa4, 0xac,
+	0xd4, 0x35, 0x53, 0x61, 0xb2, 0x7a, 0x64, 0x9a, 0xb2, 0x0e, 0x47, 0x71, 0x67, 0xf3, 0x17, 0x3b,
+	0x94, 0x3b, 0x64, 0x03, 0xe1, 0x31, 0x9e, 0xe1, 0x39, 0xd3, 0xcc, 0x08, 0x5f, 0x2c, 0x8c, 0x66,
+	0x84, 0xdf, 0x47, 0xfd, 0x94, 0x27, 0x18, 0xfc, 0x31, 0xf2, 0x00, 0x17, 0x3e, 0xf9, 0x17, 0xe1,
+	0x9d, 0x9c, 0x2b, 0x2b, 0xa9, 0x64, 0x8d, 0x45, 0xb2, 0x20, 0x57, 0x5c, 0xce, 0xd5, 0x26, 0xe0,
+	0x3b, 0xc9, 0xf0, 0x3d, 0x4e, 0x8e, 0x6f, 0xe2, 0x0b, 0x2e, 0xd7, 0x33, 0xe9, 0xe2, 0xfc, 0x0b,
+	0xc2, 0xbb, 0x38, 0x0e, 0xbc, 0x30, 0x57, 0xb2, 0x46, 0x24, 0x77, 0x12, 0xc4, 0xd2, 0xa3, 0x3c,
+	0xcd, 0x48, 0x98, 0x22, 0x25, 0x31, 0x09, 0xe4, 0x2f, 0x84, 0x77, 0xc4, 0xa4, 0x30, 0xb2, 0x94,
+	0x35, 0x2e, 0x49, 0x02, 0x61, 0xf1, 0x5c, 0x8e, 0x16, 0x01, 0xe2, 0x09, 0x06, 0xf1, 0x38, 0x79,
+	0x34, 0xcc, 0x63, 0x6f, 0x6e, 0x4f, 0x90, 0xfd, 0x9a, 0xdf, 0x51, 0xd6, 0xbb, 0x15, 0xc7, 0x0e,
+	0xf9, 0x5c, 0xc2, 0x13, 0x42, 0x69, 0x86, 0x5c, 0xc8, 0x35, 0x3b, 0x7b, 0x94, 0xae, 0xe2, 0x4b,
+	0x43, 0xb2, 0x0e, 0xec, 0x3c, 0xc5, 0xd8, 0x59, 0x24, 0xf3, 0xf1, 0x04, 0x08, 0xff, 0x26, 0x96,
+	0x72, 0x43, 0xbc, 0x2f, 0xe1, 0x29, 0xa1, 0x57, 0x6f, 0x6b, 0x5c, 0xc8, 0x35, 0x8d, 0xf3, 0x61,
+	0x2b, 0xad, 0xf8, 0x27, 0xcf, 0x32, 0xb6, 0x0e, 0x93, 0x83, 0xa9, 0xd9, 0x22, 0xff, 0x20, 0xbc,
+	0x93, 0xa3, 0xb0, 0x64, 0xaf, 0x93, 0xc9, 0x3a, 0x54, 0xf6, 0x3a, 0x29, 0x10, 0x9b, 0xe4, 0x27,
+	0x18, 0xe6, 0xc7, 0xc8, 0xb1, 0x4d, 0xcc, 0xa0, 0x05, 0xa4, 0xcc, 0x8a, 0x9f, 0x11, 0xde, 0xc5,
+	0xb1, 0xbf, 0xa5, 0x32, 0x99, 0x3b, 0x07, 0x62, 0xc1, 0x4d, 0x7e, 0x88, 0x71, 0x30, 0x49, 0x26,
+	0x84, 0x1c, 0x90, 0x3f, 0x10, 0x1e, 0x4f, 0x52, 0x8a, 0xc8, 0xf9, 0xad, 0x36, 0x29, 0x09, 0xc2,
+	0x51, 0xf1, 0x85, 0xfc, 0x0d, 0x03, 0x6c, 0x99, 0xc1, 0xde, 0x4d, 0x8a, 0x21, 0x6c, 0x4a, 0xdd,
+	0x6e, 0xcc, 0x7f, 0x22, 0x3c, 0x96, 0xa0, 0x1d, 0x91, 0xe7, 0xb7, 0x98, 0x8f, 0x49, 0x88, 0xcf,
+	0xe7, 0x6e, 0x17, 0x00, 0x1f, 0x62, 0x80, 0xf7, 0x11, 0x39, 0x16, 0xe7, 0x38, 0xf0, 0xb7, 0x25,
+	0x3c, 0x21, 0x14, 0x8a, 0xb2, 0x1f, 0x0c, 0x69, 0x94, 0xb4, 0xec, 0x07, 0x43, 0x2a, 0x71, 0x4d,
+	0xde, 0xcf, 0xa8, 0xd8, 0x43, 0x26, 0xfb, 0x74, 0xbf, 0xe4, 0x4d, 0xc9, 0x2b, 0x70, 0x71, 0x85,
+	0x63, 0x0b, 0xc5, 0x28, 0x51, 0x24, 0xca, 0xde, 0xe9, 0x8b, 0x94, 0x20, 0x4e, 0x2b, 0x18, 0x48,
+	0x36, 0x29, 0x6b, 0xdc, 0x2d, 0x56, 0xe3, 0x62, 0x1e, 0xb6, 0xd4, 0xf1, 0xe7, 0x4f, 0x43, 0x1f,
+	0x41, 0x8c, 0xd3, 0x0c, 0x72, 0x69, 0x20, 0xd7, 0xa4, 0x7e, 0x52, 0x03, 0xc9, 0xde, 0xb5, 0xa4,
+	0xd1, 0x59, 0x8a, 0x17, 0x87, 0x65, 0x1e, 0x98, 0x38, 0xc5, 0x98, 0x38, 0x49, 0x4e, 0x74, 0xd5,
+	0x01, 0x38, 0xde, 0xfd, 0xff, 0x09, 0x0a, 0x5a, 0xc6, 0xe8, 0x05, 0xb8, 0xa3, 0xac, 0xaf, 0x19,
+	0xf5, 0x8e, 0xb2, 0xce, 0x04, 0xb4, 0x0e, 0x79, 0x47, 0xc2, 0x7b, 0xc4, 0x1e, 0xbd, 0x0c, 0xc9,
+	0xde, 0xb3, 0x0c, 0x91, 0xab, 0xd4, 0xc2, 0x13, 0xef, 0x90, 0xe8, 0xe5, 0x8a, 0x7c, 0x2b, 0xe1,
+	0xa3, 0x19, 0xb4, 0x08, 0x62, 0x0f, 0x27, 0xce, 0x22, 0x69, 0xa8, 0xe8, 0xdc, 0x56, 0x9f, 0x40,
+	0xe2, 0x71, 0x46, 0xe2, 0x2c, 0x51, 0x06, 0x4c, 0xb8, 0xf9, 0x8b, 0xd7, 0x6f, 0x96, 0xd0, 0x8d,
+	0x9b, 0x25, 0xf4, 0xe3, 0xcd, 0x12, 0x7a, 0x6f, 0xa3, 0x34, 0x72, 0x63, 0xa3, 0x34, 0xf2, 0xdd,
+	0x46, 0x69, 0xe4, 0xc5, 0xc5, 0x86, 0xe1, 0x5e, 0x6a, 0xd5, 0xca, 0x1a, 0x5d, 0x55, 0x7c, 0x44,
+	0x33, 0x01, 0x24, 0x25, 0x02, 0x69, 0x26, 0xc4, 0x34, 0xe3, 0x83, 0x52, 0x5e, 0x63, 0x0b, 0x70,
+	0xdb, 0x96, 0xee, 0xd4, 0xb6, 0xb3, 0x7f, 0x58, 0x3b, 0xfa, 0x5f, 0x00, 0x00, 0x00, 0xff, 0xff,
+	0x0a, 0x9f, 0x39, 0x84, 0x23, 0x29, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -1528,6 +1865,12 @@ type QueryClient interface {
 	RejectedCertificate(ctx context.Context, in *QueryGetRejectedCertificatesRequest, opts ...grpc.CallOption) (*QueryGetRejectedCertificatesResponse, error)
 	// Queries a list of RejectedCertificate items.
 	RejectedCertificateAll(ctx context.Context, in *QueryAllRejectedCertificatesRequest, opts ...grpc.CallOption) (*QueryAllRejectedCertificatesResponse, error)
+	// Queries a PkiRevocationDistributionPoint by index.
+	PkiRevocationDistributionPoint(ctx context.Context, in *QueryGetPkiRevocationDistributionPointRequest, opts ...grpc.CallOption) (*QueryGetPkiRevocationDistributionPointResponse, error)
+	// Queries a list of PkiRevocationDistributionPoint items.
+	PkiRevocationDistributionPointAll(ctx context.Context, in *QueryAllPkiRevocationDistributionPointRequest, opts ...grpc.CallOption) (*QueryAllPkiRevocationDistributionPointResponse, error)
+	// Queries a PkiRevocationDistributionPointsByIssuerSubjectKeyID by index.
+	PkiRevocationDistributionPointsByIssuerSubjectKeyID(ctx context.Context, in *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest, opts ...grpc.CallOption) (*QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse, error)
 }
 
 type queryClient struct {
@@ -1664,6 +2007,33 @@ func (c *queryClient) RejectedCertificateAll(ctx context.Context, in *QueryAllRe
 	return out, nil
 }
 
+func (c *queryClient) PkiRevocationDistributionPoint(ctx context.Context, in *QueryGetPkiRevocationDistributionPointRequest, opts ...grpc.CallOption) (*QueryGetPkiRevocationDistributionPointResponse, error) {
+	out := new(QueryGetPkiRevocationDistributionPointResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Query/PkiRevocationDistributionPoint", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) PkiRevocationDistributionPointAll(ctx context.Context, in *QueryAllPkiRevocationDistributionPointRequest, opts ...grpc.CallOption) (*QueryAllPkiRevocationDistributionPointResponse, error) {
+	out := new(QueryAllPkiRevocationDistributionPointResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Query/PkiRevocationDistributionPointAll", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) PkiRevocationDistributionPointsByIssuerSubjectKeyID(ctx context.Context, in *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest, opts ...grpc.CallOption) (*QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse, error) {
+	out := new(QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Query/PkiRevocationDistributionPointsByIssuerSubjectKeyID", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 type QueryServer interface {
 	// Queries a ApprovedCertificates by index.
@@ -1694,6 +2064,12 @@ type QueryServer interface {
 	RejectedCertificate(context.Context, *QueryGetRejectedCertificatesRequest) (*QueryGetRejectedCertificatesResponse, error)
 	// Queries a list of RejectedCertificate items.
 	RejectedCertificateAll(context.Context, *QueryAllRejectedCertificatesRequest) (*QueryAllRejectedCertificatesResponse, error)
+	// Queries a PkiRevocationDistributionPoint by index.
+	PkiRevocationDistributionPoint(context.Context, *QueryGetPkiRevocationDistributionPointRequest) (*QueryGetPkiRevocationDistributionPointResponse, error)
+	// Queries a list of PkiRevocationDistributionPoint items.
+	PkiRevocationDistributionPointAll(context.Context, *QueryAllPkiRevocationDistributionPointRequest) (*QueryAllPkiRevocationDistributionPointResponse, error)
+	// Queries a PkiRevocationDistributionPointsByIssuerSubjectKeyID by index.
+	PkiRevocationDistributionPointsByIssuerSubjectKeyID(context.Context, *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest) (*QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
@@ -1741,6 +2117,15 @@ func (*UnimplementedQueryServer) RejectedCertificate(ctx context.Context, req *Q
 }
 func (*UnimplementedQueryServer) RejectedCertificateAll(ctx context.Context, req *QueryAllRejectedCertificatesRequest) (*QueryAllRejectedCertificatesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RejectedCertificateAll not implemented")
+}
+func (*UnimplementedQueryServer) PkiRevocationDistributionPoint(ctx context.Context, req *QueryGetPkiRevocationDistributionPointRequest) (*QueryGetPkiRevocationDistributionPointResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PkiRevocationDistributionPoint not implemented")
+}
+func (*UnimplementedQueryServer) PkiRevocationDistributionPointAll(ctx context.Context, req *QueryAllPkiRevocationDistributionPointRequest) (*QueryAllPkiRevocationDistributionPointResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PkiRevocationDistributionPointAll not implemented")
+}
+func (*UnimplementedQueryServer) PkiRevocationDistributionPointsByIssuerSubjectKeyID(ctx context.Context, req *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest) (*QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PkiRevocationDistributionPointsByIssuerSubjectKeyID not implemented")
 }
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
@@ -1999,6 +2384,60 @@ func _Query_RejectedCertificateAll_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_PkiRevocationDistributionPoint_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetPkiRevocationDistributionPointRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).PkiRevocationDistributionPoint(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Query/PkiRevocationDistributionPoint",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).PkiRevocationDistributionPoint(ctx, req.(*QueryGetPkiRevocationDistributionPointRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_PkiRevocationDistributionPointAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryAllPkiRevocationDistributionPointRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).PkiRevocationDistributionPointAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Query/PkiRevocationDistributionPointAll",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).PkiRevocationDistributionPointAll(ctx, req.(*QueryAllPkiRevocationDistributionPointRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_PkiRevocationDistributionPointsByIssuerSubjectKeyID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).PkiRevocationDistributionPointsByIssuerSubjectKeyID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Query/PkiRevocationDistributionPointsByIssuerSubjectKeyID",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).PkiRevocationDistributionPointsByIssuerSubjectKeyID(ctx, req.(*QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Query_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "zigbeealliance.distributedcomplianceledger.pki.Query",
 	HandlerType: (*QueryServer)(nil),
@@ -2058,6 +2497,18 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RejectedCertificateAll",
 			Handler:    _Query_RejectedCertificateAll_Handler,
+		},
+		{
+			MethodName: "PkiRevocationDistributionPoint",
+			Handler:    _Query_PkiRevocationDistributionPoint_Handler,
+		},
+		{
+			MethodName: "PkiRevocationDistributionPointAll",
+			Handler:    _Query_PkiRevocationDistributionPointAll_Handler,
+		},
+		{
+			MethodName: "PkiRevocationDistributionPointsByIssuerSubjectKeyID",
+			Handler:    _Query_PkiRevocationDistributionPointsByIssuerSubjectKeyID_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -3079,6 +3530,228 @@ func (m *QueryAllRejectedCertificatesResponse) MarshalToSizedBuffer(dAtA []byte)
 	return len(dAtA) - i, nil
 }
 
+func (m *QueryGetPkiRevocationDistributionPointRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetPkiRevocationDistributionPointRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetPkiRevocationDistributionPointRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.IssuerSubjectKeyID) > 0 {
+		i -= len(m.IssuerSubjectKeyID)
+		copy(dAtA[i:], m.IssuerSubjectKeyID)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.IssuerSubjectKeyID)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Label) > 0 {
+		i -= len(m.Label)
+		copy(dAtA[i:], m.Label)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Label)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.Vid != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.Vid))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetPkiRevocationDistributionPointResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetPkiRevocationDistributionPointResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetPkiRevocationDistributionPointResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.PkiRevocationDistributionPoint.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllPkiRevocationDistributionPointRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllPkiRevocationDistributionPointRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllPkiRevocationDistributionPointRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllPkiRevocationDistributionPointResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllPkiRevocationDistributionPointResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllPkiRevocationDistributionPointResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.PkiRevocationDistributionPoint) > 0 {
+		for iNdEx := len(m.PkiRevocationDistributionPoint) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.PkiRevocationDistributionPoint[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.IssuerSubjectKeyID) > 0 {
+		i -= len(m.IssuerSubjectKeyID)
+		copy(dAtA[i:], m.IssuerSubjectKeyID)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.IssuerSubjectKeyID)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.PkiRevocationDistributionPointsByIssuerSubjectKeyID.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintQuery(dAtA []byte, offset int, v uint64) int {
 	offset -= sovQuery(v)
 	base := offset
@@ -3479,6 +4152,93 @@ func (m *QueryAllRejectedCertificatesResponse) Size() (n int) {
 		l = m.Pagination.Size()
 		n += 1 + l + sovQuery(uint64(l))
 	}
+	return n
+}
+
+func (m *QueryGetPkiRevocationDistributionPointRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Vid != 0 {
+		n += 1 + sovQuery(uint64(m.Vid))
+	}
+	l = len(m.Label)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	l = len(m.IssuerSubjectKeyID)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetPkiRevocationDistributionPointResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.PkiRevocationDistributionPoint.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	return n
+}
+
+func (m *QueryAllPkiRevocationDistributionPointRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryAllPkiRevocationDistributionPointResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.PkiRevocationDistributionPoint) > 0 {
+		for _, e := range m.PkiRevocationDistributionPoint {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.IssuerSubjectKeyID)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.PkiRevocationDistributionPointsByIssuerSubjectKeyID.Size()
+	n += 1 + l + sovQuery(uint64(l))
 	return n
 }
 
@@ -6107,6 +6867,593 @@ func (m *QueryAllRejectedCertificatesResponse) Unmarshal(dAtA []byte) error {
 				m.Pagination = &query.PageResponse{}
 			}
 			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetPkiRevocationDistributionPointRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetPkiRevocationDistributionPointRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetPkiRevocationDistributionPointRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Vid", wireType)
+			}
+			m.Vid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Vid |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Label", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Label = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IssuerSubjectKeyID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.IssuerSubjectKeyID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetPkiRevocationDistributionPointResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetPkiRevocationDistributionPointResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetPkiRevocationDistributionPointResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PkiRevocationDistributionPoint", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.PkiRevocationDistributionPoint.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllPkiRevocationDistributionPointRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllPkiRevocationDistributionPointRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllPkiRevocationDistributionPointRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllPkiRevocationDistributionPointResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllPkiRevocationDistributionPointResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllPkiRevocationDistributionPointResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PkiRevocationDistributionPoint", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PkiRevocationDistributionPoint = append(m.PkiRevocationDistributionPoint, PkiRevocationDistributionPoint{})
+			if err := m.PkiRevocationDistributionPoint[len(m.PkiRevocationDistributionPoint)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IssuerSubjectKeyID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.IssuerSubjectKeyID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PkiRevocationDistributionPointsByIssuerSubjectKeyID", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.PkiRevocationDistributionPointsByIssuerSubjectKeyID.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex

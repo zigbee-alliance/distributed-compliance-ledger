@@ -5,6 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
@@ -27,7 +28,7 @@ func (k msgServer) RejectAddX509RootCert(goCtx context.Context, msg *types.MsgRe
 	// get proposed certificate
 	proposedCertificate, found := k.GetProposedCertificate(ctx, msg.Subject, msg.SubjectKeyId)
 	if !found {
-		return nil, types.NewErrProposedCertificateDoesNotExist(msg.Subject, msg.SubjectKeyId)
+		return nil, pkitypes.NewErrProposedCertificateDoesNotExist(msg.Subject, msg.SubjectKeyId)
 	}
 
 	// check if proposed certificate already has reject approval form signer

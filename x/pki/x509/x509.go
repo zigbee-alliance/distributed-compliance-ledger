@@ -20,9 +20,11 @@ import (
 	"encoding/hex"
 	"encoding/pem"
 	"fmt"
+	"regexp"
+	"strconv"
 	"strings"
 
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 )
 
 type Certificate struct {
@@ -35,15 +37,20 @@ type Certificate struct {
 	Certificate    *x509.Certificate
 }
 
+const (
+	Mvid = "Mvid"
+	Mpid = "Mpid"
+)
+
 func DecodeX509Certificate(pemCertificate string) (*Certificate, error) {
 	block, _ := pem.Decode([]byte(pemCertificate))
 	if block == nil {
-		return nil, types.NewErrInvalidCertificate("Could not decode pem certificate")
+		return nil, pkitypes.NewErrInvalidCertificate("Could not decode pem certificate")
 	}
 
 	cert, err := x509.ParseCertificate(block.Bytes)
 	if err != nil {
-		return nil, types.NewErrInvalidCertificate(fmt.Sprintf("Could not parse certificate: %v", err.Error()))
+		return nil, pkitypes.NewErrInvalidCertificate(fmt.Sprintf("Could not parse certificate: %v", err.Error()))
 	}
 
 	certificate := Certificate{
@@ -71,6 +78,49 @@ func ToSubjectAsText(subject string) string {
 	subjectAsText = FormatOID(subjectAsText, oldPIDKey, newPIDKey)
 
 	return subjectAsText
+}
+
+func subjectAsTextToMap(subjectAsText string) map[string]string {
+	r := regexp.MustCompile(`(([^\s,]+\s?=\s?[^[\s,]+)|(([^\s,]+:\s?[^\s,]+)))`)
+	matches := r.FindAllString(subjectAsText, -1)
+
+	subjectMap := make(map[string]string)
+	for _, elem := range matches {
+		r = regexp.MustCompile(`(\s?=\s?)|(\s?:\s?)`)
+		splittedElem := r.Split(elem, -1)
+		if splittedElem[0] == "vid" {
+			splittedElem[0] = Mvid
+		}
+		if splittedElem[0] == "pid" {
+			splittedElem[0] = Mpid
+		}
+		subjectMap[splittedElem[0]] = splittedElem[1]
+	}
+
+	return subjectMap
+}
+
+func GetVidFromSubject(subjectAsText string) (int32, error) {
+	return getIntValueFromSubject(subjectAsText, Mvid)
+}
+
+func GetPidFromSubject(subjectAsText string) (int32, error) {
+	return getIntValueFromSubject(subjectAsText, Mpid)
+}
+
+func getIntValueFromSubject(subjectAsText string, key string) (int32, error) {
+	subjectAsTextMap := subjectAsTextToMap(subjectAsText)
+
+	if strValue, ok := subjectAsTextMap[key]; ok {
+		pid, err := strconv.ParseInt(strings.Trim(strValue, "0x"), 16, 32)
+		if err != nil {
+			return 0, err
+		}
+
+		return int32(pid), nil
+	}
+
+	return 0, nil
 }
 
 // This function is needed to patch the Issuer/Subject(vid/pid) field of certificate to hex format.
@@ -119,7 +169,7 @@ func (c Certificate) Verify(parent *Certificate) error {
 	opts := x509.VerifyOptions{Roots: roots}
 
 	if _, err := c.Certificate.Verify(opts); err != nil {
-		return types.NewErrInvalidCertificate(fmt.Sprintf("Certificate verification failed. Error: %v", err))
+		return pkitypes.NewErrInvalidCertificate(fmt.Sprintf("Certificate verification failed. Error: %v", err))
 	}
 
 	return nil

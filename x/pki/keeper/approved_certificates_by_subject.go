@@ -3,12 +3,13 @@ package keeper
 import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
 // SetApprovedCertificatesBySubject set a specific approvedCertificatesBySubject in the store from its index.
 func (k Keeper) SetApprovedCertificatesBySubject(ctx sdk.Context, approvedCertificatesBySubject types.ApprovedCertificatesBySubject) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedCertificatesBySubjectKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ApprovedCertificatesBySubjectKeyPrefix))
 	b := k.cdc.MustMarshal(&approvedCertificatesBySubject)
 	store.Set(types.ApprovedCertificatesBySubjectKey(
 		approvedCertificatesBySubject.Subject,
@@ -20,7 +21,7 @@ func (k Keeper) GetApprovedCertificatesBySubject(
 	ctx sdk.Context,
 	subject string,
 ) (val types.ApprovedCertificatesBySubject, found bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedCertificatesBySubjectKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ApprovedCertificatesBySubjectKeyPrefix))
 
 	b := store.Get(types.ApprovedCertificatesBySubjectKey(
 		subject,
@@ -39,7 +40,7 @@ func (k Keeper) RemoveApprovedCertificatesBySubject(
 	ctx sdk.Context,
 	subject string,
 ) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedCertificatesBySubjectKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ApprovedCertificatesBySubjectKeyPrefix))
 	store.Delete(types.ApprovedCertificatesBySubjectKey(
 		subject,
 	))
@@ -47,7 +48,7 @@ func (k Keeper) RemoveApprovedCertificatesBySubject(
 
 // GetAllApprovedCertificatesBySubject returns all approvedCertificatesBySubject.
 func (k Keeper) GetAllApprovedCertificatesBySubject(ctx sdk.Context) (list []types.ApprovedCertificatesBySubject) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedCertificatesBySubjectKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ApprovedCertificatesBySubjectKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()

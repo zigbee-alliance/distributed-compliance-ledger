@@ -3,6 +3,8 @@ package pki
 import (
 	"fmt"
 
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/keeper"
@@ -45,9 +47,21 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.RejectAddX509RootCert(sdk.WrapSDKContext(ctx), msg)
 
 			return sdk.WrapServiceResult(ctx, res, err)
+		case *types.MsgAddPkiRevocationDistributionPoint:
+			res, err := msgServer.AddPkiRevocationDistributionPoint(sdk.WrapSDKContext(ctx), msg)
+
+			return sdk.WrapServiceResult(ctx, res, err)
+		case *types.MsgUpdatePkiRevocationDistributionPoint:
+			res, err := msgServer.UpdatePkiRevocationDistributionPoint(sdk.WrapSDKContext(ctx), msg)
+
+			return sdk.WrapServiceResult(ctx, res, err)
+		case *types.MsgDeletePkiRevocationDistributionPoint:
+			res, err := msgServer.DeletePkiRevocationDistributionPoint(sdk.WrapSDKContext(ctx), msg)
+
+			return sdk.WrapServiceResult(ctx, res, err)
 			// this line is used by starport scaffolding # 1
 		default:
-			errMsg := fmt.Sprintf("unrecognized %s message type: %T", types.ModuleName, msg)
+			errMsg := fmt.Sprintf("unrecognized %s message type: %T", pkitypes.ModuleName, msg)
 
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
 		}

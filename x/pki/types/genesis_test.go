@@ -106,7 +106,27 @@ func TestGenesisState_Validate(t *testing.T) {
 						SubjectKeyId: "1",
 					},
 				},
-				// this line is used by starport scaffolding # types/genesis/validField
+				PKIRevocationDistributionPointList: []types.PKIRevocationDistributionPoint{
+	{
+		Vid: 0,
+Label: "0",
+IssuerSubjectKeyID: "0",
+},
+	{
+		Vid: 1,
+Label: "1",
+IssuerSubjectKeyID: "1",
+},
+},
+PkiRevocationDistributionPointsByIssuerSubjectKeyIDList: []types.PkiRevocationDistributionPointsByIssuerSubjectKeyID{
+	{
+		IssuerSubjectKeyID: "0",
+},
+	{
+		IssuerSubjectKeyID: "1",
+},
+},
+// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
 		},
@@ -236,7 +256,39 @@ func TestGenesisState_Validate(t *testing.T) {
 			},
 			valid: false,
 		},
-		// this line is used by starport scaffolding # types/genesis/testcase
+		{
+	desc:     "duplicated pKIRevocationDistributionPoint",
+	genState: &types.GenesisState{
+		PKIRevocationDistributionPointList: []types.PKIRevocationDistributionPoint{
+			{
+				Vid: 0,
+Label: "0",
+IssuerSubjectKeyID: "0",
+},
+			{
+				Vid: 0,
+Label: "0",
+IssuerSubjectKeyID: "0",
+},
+		},
+	},
+	valid:    false,
+},
+{
+	desc:     "duplicated pkiRevocationDistributionPointsByIssuerSubjectKeyID",
+	genState: &types.GenesisState{
+		PkiRevocationDistributionPointsByIssuerSubjectKeyIDList: []types.PkiRevocationDistributionPointsByIssuerSubjectKeyID{
+			{
+				IssuerSubjectKeyID: "0",
+},
+			{
+				IssuerSubjectKeyID: "0",
+},
+		},
+	},
+	valid:    false,
+},
+// this line is used by starport scaffolding # types/genesis/testcase
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
 			err := tc.genState.Validate()

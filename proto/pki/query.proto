@@ -12,6 +12,8 @@ import "pki/approved_root_certificates.proto";
 import "pki/revoked_root_certificates.proto";
 import "pki/approved_certificates_by_subject.proto";
 import "pki/rejected_certificate.proto";
+import "pki/pki_revocation_distribution_point.proto";
+import "pki/pki_revocation_distribution_points_by_issuer_subject_key_id.proto";
 // this line is used by starport scaffolding # 1
 import "gogoproto/gogo.proto";
 
@@ -90,6 +92,21 @@ service Query {
 	// Queries a list of RejectedCertificate items.
 	rpc RejectedCertificateAll(QueryAllRejectedCertificatesRequest) returns (QueryAllRejectedCertificatesResponse) {
 		option (google.api.http).get = "/dcl/pki/rejected-certificates";
+	}
+
+// Queries a PkiRevocationDistributionPoint by index.
+	rpc PkiRevocationDistributionPoint(QueryGetPkiRevocationDistributionPointRequest) returns (QueryGetPkiRevocationDistributionPointResponse) {
+		option (google.api.http).get = "/dcl/pki/revocation-points/{issuerSubjectKeyID}/{vid}/{label}";
+	}
+
+	// Queries a list of PkiRevocationDistributionPoint items.
+	rpc PkiRevocationDistributionPointAll(QueryAllPkiRevocationDistributionPointRequest) returns (QueryAllPkiRevocationDistributionPointResponse) {
+		option (google.api.http).get = "/dcl/pki/revocation-points";
+	}
+
+// Queries a PkiRevocationDistributionPointsByIssuerSubjectKeyID by index.
+	rpc PkiRevocationDistributionPointsByIssuerSubjectKeyID(QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest) returns (QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse) {
+		option (google.api.http).get = "/dcl/pki/revocation-points/{issuerSubjectKeyID}";
 	}
 
 // this line is used by starport scaffolding # 2
@@ -217,6 +234,35 @@ message QueryAllRejectedCertificatesRequest {
 message QueryAllRejectedCertificatesResponse {
 	repeated RejectedCertificate rejectedCertificate = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetPkiRevocationDistributionPointRequest {
+	  int32 vid = 1;
+  string label = 2;
+  string issuerSubjectKeyID = 3;
+
+}
+
+message QueryGetPkiRevocationDistributionPointResponse {
+	PkiRevocationDistributionPoint PkiRevocationDistributionPoint = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllPkiRevocationDistributionPointRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllPkiRevocationDistributionPointResponse {
+	repeated PkiRevocationDistributionPoint PkiRevocationDistributionPoint = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest {
+	  string issuerSubjectKeyID = 1;
+
+}
+
+message QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse {
+	PkiRevocationDistributionPointsByIssuerSubjectKeyID pkiRevocationDistributionPointsByIssuerSubjectKeyID = 1 [(gogoproto.nullable) = false];
 }
 
 // this line is used by starport scaffolding # 3

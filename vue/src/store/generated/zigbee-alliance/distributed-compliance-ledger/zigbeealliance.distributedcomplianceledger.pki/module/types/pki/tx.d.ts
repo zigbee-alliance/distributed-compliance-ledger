@@ -61,6 +61,43 @@ export interface MsgRejectAddX509RootCert {
 }
 export interface MsgRejectAddX509RootCertResponse {
 }
+export interface MsgAddPkiRevocationDistributionPoint {
+    signer: string;
+    vid: number;
+    pid: number;
+    isPAA: boolean;
+    label: string;
+    crlSignerCertificate: string;
+    issuerSubjectKeyID: string;
+    dataURL: string;
+    dataFileSize: number;
+    dataDigest: string;
+    dataDigestType: number;
+    revocationType: number;
+}
+export interface MsgAddPkiRevocationDistributionPointResponse {
+}
+export interface MsgUpdatePkiRevocationDistributionPoint {
+    signer: string;
+    vid: number;
+    label: string;
+    crlSignerCertificate: string;
+    issuerSubjectKeyID: string;
+    dataURL: string;
+    dataFileSize: number;
+    dataDigest: string;
+    dataDigestType: number;
+}
+export interface MsgUpdatePkiRevocationDistributionPointResponse {
+}
+export interface MsgDeletePkiRevocationDistributionPoint {
+    signer: string;
+    vid: number;
+    label: string;
+    issuerSubjectKeyID: string;
+}
+export interface MsgDeletePkiRevocationDistributionPointResponse {
+}
 export declare const MsgProposeAddX509RootCert: {
     encode(message: MsgProposeAddX509RootCert, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgProposeAddX509RootCert;
@@ -159,6 +196,48 @@ export declare const MsgRejectAddX509RootCertResponse: {
     toJSON(_: MsgRejectAddX509RootCertResponse): unknown;
     fromPartial(_: DeepPartial<MsgRejectAddX509RootCertResponse>): MsgRejectAddX509RootCertResponse;
 };
+export declare const MsgAddPkiRevocationDistributionPoint: {
+    encode(message: MsgAddPkiRevocationDistributionPoint, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgAddPkiRevocationDistributionPoint;
+    fromJSON(object: any): MsgAddPkiRevocationDistributionPoint;
+    toJSON(message: MsgAddPkiRevocationDistributionPoint): unknown;
+    fromPartial(object: DeepPartial<MsgAddPkiRevocationDistributionPoint>): MsgAddPkiRevocationDistributionPoint;
+};
+export declare const MsgAddPkiRevocationDistributionPointResponse: {
+    encode(_: MsgAddPkiRevocationDistributionPointResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgAddPkiRevocationDistributionPointResponse;
+    fromJSON(_: any): MsgAddPkiRevocationDistributionPointResponse;
+    toJSON(_: MsgAddPkiRevocationDistributionPointResponse): unknown;
+    fromPartial(_: DeepPartial<MsgAddPkiRevocationDistributionPointResponse>): MsgAddPkiRevocationDistributionPointResponse;
+};
+export declare const MsgUpdatePkiRevocationDistributionPoint: {
+    encode(message: MsgUpdatePkiRevocationDistributionPoint, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdatePkiRevocationDistributionPoint;
+    fromJSON(object: any): MsgUpdatePkiRevocationDistributionPoint;
+    toJSON(message: MsgUpdatePkiRevocationDistributionPoint): unknown;
+    fromPartial(object: DeepPartial<MsgUpdatePkiRevocationDistributionPoint>): MsgUpdatePkiRevocationDistributionPoint;
+};
+export declare const MsgUpdatePkiRevocationDistributionPointResponse: {
+    encode(_: MsgUpdatePkiRevocationDistributionPointResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdatePkiRevocationDistributionPointResponse;
+    fromJSON(_: any): MsgUpdatePkiRevocationDistributionPointResponse;
+    toJSON(_: MsgUpdatePkiRevocationDistributionPointResponse): unknown;
+    fromPartial(_: DeepPartial<MsgUpdatePkiRevocationDistributionPointResponse>): MsgUpdatePkiRevocationDistributionPointResponse;
+};
+export declare const MsgDeletePkiRevocationDistributionPoint: {
+    encode(message: MsgDeletePkiRevocationDistributionPoint, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgDeletePkiRevocationDistributionPoint;
+    fromJSON(object: any): MsgDeletePkiRevocationDistributionPoint;
+    toJSON(message: MsgDeletePkiRevocationDistributionPoint): unknown;
+    fromPartial(object: DeepPartial<MsgDeletePkiRevocationDistributionPoint>): MsgDeletePkiRevocationDistributionPoint;
+};
+export declare const MsgDeletePkiRevocationDistributionPointResponse: {
+    encode(_: MsgDeletePkiRevocationDistributionPointResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgDeletePkiRevocationDistributionPointResponse;
+    fromJSON(_: any): MsgDeletePkiRevocationDistributionPointResponse;
+    toJSON(_: MsgDeletePkiRevocationDistributionPointResponse): unknown;
+    fromPartial(_: DeepPartial<MsgDeletePkiRevocationDistributionPointResponse>): MsgDeletePkiRevocationDistributionPointResponse;
+};
 /** Msg defines the Msg service. */
 export interface Msg {
     ProposeAddX509RootCert(request: MsgProposeAddX509RootCert): Promise<MsgProposeAddX509RootCertResponse>;
@@ -167,8 +246,11 @@ export interface Msg {
     ProposeRevokeX509RootCert(request: MsgProposeRevokeX509RootCert): Promise<MsgProposeRevokeX509RootCertResponse>;
     ApproveRevokeX509RootCert(request: MsgApproveRevokeX509RootCert): Promise<MsgApproveRevokeX509RootCertResponse>;
     RevokeX509Cert(request: MsgRevokeX509Cert): Promise<MsgRevokeX509CertResponse>;
-    /** this line is used by starport scaffolding # proto/tx/rpc */
     RejectAddX509RootCert(request: MsgRejectAddX509RootCert): Promise<MsgRejectAddX509RootCertResponse>;
+    AddPkiRevocationDistributionPoint(request: MsgAddPkiRevocationDistributionPoint): Promise<MsgAddPkiRevocationDistributionPointResponse>;
+    UpdatePkiRevocationDistributionPoint(request: MsgUpdatePkiRevocationDistributionPoint): Promise<MsgUpdatePkiRevocationDistributionPointResponse>;
+    /** this line is used by starport scaffolding # proto/tx/rpc */
+    DeletePkiRevocationDistributionPoint(request: MsgDeletePkiRevocationDistributionPoint): Promise<MsgDeletePkiRevocationDistributionPointResponse>;
 }
 export declare class MsgClientImpl implements Msg {
     private readonly rpc;
@@ -180,6 +262,9 @@ export declare class MsgClientImpl implements Msg {
     ApproveRevokeX509RootCert(request: MsgApproveRevokeX509RootCert): Promise<MsgApproveRevokeX509RootCertResponse>;
     RevokeX509Cert(request: MsgRevokeX509Cert): Promise<MsgRevokeX509CertResponse>;
     RejectAddX509RootCert(request: MsgRejectAddX509RootCert): Promise<MsgRejectAddX509RootCertResponse>;
+    AddPkiRevocationDistributionPoint(request: MsgAddPkiRevocationDistributionPoint): Promise<MsgAddPkiRevocationDistributionPointResponse>;
+    UpdatePkiRevocationDistributionPoint(request: MsgUpdatePkiRevocationDistributionPoint): Promise<MsgUpdatePkiRevocationDistributionPointResponse>;
+    DeletePkiRevocationDistributionPoint(request: MsgDeletePkiRevocationDistributionPoint): Promise<MsgDeletePkiRevocationDistributionPointResponse>;
 }
 interface Rpc {
     request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;

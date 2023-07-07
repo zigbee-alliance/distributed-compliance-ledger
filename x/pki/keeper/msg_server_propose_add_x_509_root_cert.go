@@ -5,6 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/x509"
 )
@@ -28,24 +29,24 @@ func (k msgServer) ProposeAddX509RootCert(goCtx context.Context, msg *types.MsgP
 	// decode pem certificate
 	x509Certificate, err := x509.DecodeX509Certificate(msg.Cert)
 	if err != nil {
-		return nil, types.NewErrInvalidCertificate(err)
+		return nil, pkitypes.NewErrInvalidCertificate(err)
 	}
 
 	// fail if certificate is not self-signed
 	if !x509Certificate.IsSelfSigned() {
-		return nil, types.NewErrInappropriateCertificateType(
+		return nil, pkitypes.NewErrInappropriateCertificateType(
 			"Inappropriate Certificate Type: Passed certificate is not self-signed, " +
 				"so it cannot be used as a root certificate.")
 	}
 
 	// check if `Proposed` certificate with the same Subject/SubjectKeyId combination already exists
 	if k.IsProposedCertificatePresent(ctx, x509Certificate.Subject, x509Certificate.SubjectKeyID) {
-		return nil, types.NewErrProposedCertificateAlreadyExists(x509Certificate.Subject, x509Certificate.SubjectKeyID)
+		return nil, pkitypes.NewErrProposedCertificateAlreadyExists(x509Certificate.Subject, x509Certificate.SubjectKeyID)
 	}
 
 	// check if certificate with Issuer/Serial Number combination already exists
 	if k.IsUniqueCertificatePresent(ctx, x509Certificate.Issuer, x509Certificate.SerialNumber) {
-		return nil, types.NewErrCertificateAlreadyExists(x509Certificate.Issuer, x509Certificate.SerialNumber)
+		return nil, pkitypes.NewErrCertificateAlreadyExists(x509Certificate.Issuer, x509Certificate.SerialNumber)
 	}
 
 	// verify certificate

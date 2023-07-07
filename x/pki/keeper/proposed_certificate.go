@@ -3,12 +3,13 @@ package keeper
 import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
 // SetProposedCertificate set a specific proposedCertificate in the store from its index.
 func (k Keeper) SetProposedCertificate(ctx sdk.Context, proposedCertificate types.ProposedCertificate) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedCertificateKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ProposedCertificateKeyPrefix))
 	b := k.cdc.MustMarshal(&proposedCertificate)
 	store.Set(types.ProposedCertificateKey(
 		proposedCertificate.Subject,
@@ -22,7 +23,7 @@ func (k Keeper) GetProposedCertificate(
 	subject string,
 	subjectKeyID string,
 ) (val types.ProposedCertificate, found bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedCertificateKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ProposedCertificateKeyPrefix))
 
 	b := store.Get(types.ProposedCertificateKey(
 		subject,
@@ -43,7 +44,7 @@ func (k Keeper) RemoveProposedCertificate(
 	subject string,
 	subjectKeyID string,
 ) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedCertificateKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ProposedCertificateKeyPrefix))
 	store.Delete(types.ProposedCertificateKey(
 		subject,
 		subjectKeyID,
@@ -52,7 +53,7 @@ func (k Keeper) RemoveProposedCertificate(
 
 // GetAllProposedCertificate returns all proposedCertificate.
 func (k Keeper) GetAllProposedCertificate(ctx sdk.Context) (list []types.ProposedCertificate) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedCertificateKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ProposedCertificateKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()
@@ -73,7 +74,7 @@ func (k Keeper) IsProposedCertificatePresent(
 	subject string,
 	subjectKeyID string,
 ) bool {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedCertificateKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ProposedCertificateKeyPrefix))
 
 	return store.Has(types.ProposedCertificateKey(
 		subject,

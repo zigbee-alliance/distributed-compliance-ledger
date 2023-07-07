@@ -5,13 +5,14 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/x509"
 )
 
 // SetApprovedCertificates set a specific approvedCertificates in the store from its index.
 func (k Keeper) SetApprovedCertificates(ctx sdk.Context, approvedCertificates types.ApprovedCertificates) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedCertificatesKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ApprovedCertificatesKeyPrefix))
 	b := k.cdc.MustMarshal(&approvedCertificates)
 	store.Set(types.ApprovedCertificatesKey(
 		approvedCertificates.Subject,
@@ -25,7 +26,7 @@ func (k Keeper) GetApprovedCertificates(
 	subject string,
 	subjectKeyID string,
 ) (val types.ApprovedCertificates, found bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedCertificatesKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ApprovedCertificatesKeyPrefix))
 
 	b := store.Get(types.ApprovedCertificatesKey(
 		subject,
@@ -46,7 +47,7 @@ func (k Keeper) RemoveApprovedCertificates(
 	subject string,
 	subjectKeyID string,
 ) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedCertificatesKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ApprovedCertificatesKeyPrefix))
 	store.Delete(types.ApprovedCertificatesKey(
 		subject,
 		subjectKeyID,
@@ -55,7 +56,7 @@ func (k Keeper) RemoveApprovedCertificates(
 
 // GetAllApprovedCertificates returns all approvedCertificates.
 func (k Keeper) GetAllApprovedCertificates(ctx sdk.Context) (list []types.ApprovedCertificates) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedCertificatesKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ApprovedCertificatesKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()
@@ -71,7 +72,7 @@ func (k Keeper) GetAllApprovedCertificates(ctx sdk.Context) (list []types.Approv
 
 // Add an approved certificate to the list of approved certificates for the subject/subjectKeyId map.
 func (k Keeper) AddApprovedCertificate(ctx sdk.Context, approvedCertificate types.Certificate) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedCertificatesKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ApprovedCertificatesKeyPrefix))
 
 	approvedCertificatesBytes := store.Get(types.ApprovedCertificatesKey(
 		approvedCertificate.Subject,
@@ -105,7 +106,7 @@ func (k Keeper) IsApprovedCertificatePresent(
 	subject string,
 	subjectKeyID string,
 ) bool {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedCertificatesKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ApprovedCertificatesKeyPrefix))
 
 	return store.Has(types.ApprovedCertificatesKey(
 		subject,
@@ -127,7 +128,7 @@ func (k Keeper) verifyCertificate(ctx sdk.Context,
 	} else {
 		parentCertificates, found := k.GetApprovedCertificates(ctx, x509Certificate.Issuer, x509Certificate.AuthorityKeyID)
 		if !found {
-			return "", "", types.NewErrInvalidCertificate(
+			return "", "", pkitypes.NewErrInvalidCertificate(
 				fmt.Sprintf("Certificate verification failed for certificate with subject=%v and subjectKeyID=%v",
 					x509Certificate.Subject, x509Certificate.SubjectKeyID))
 		}
@@ -150,7 +151,7 @@ func (k Keeper) verifyCertificate(ctx sdk.Context,
 		}
 	}
 
-	return "", "", types.NewErrInvalidCertificate(
+	return "", "", pkitypes.NewErrInvalidCertificate(
 		fmt.Sprintf("Certificate verification failed for certificate with subject=%v and subjectKeyID=%v",
 			x509Certificate.Subject, x509Certificate.SubjectKeyID))
 }

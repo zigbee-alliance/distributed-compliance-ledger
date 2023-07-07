@@ -3,12 +3,13 @@ package keeper
 import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
 // SetRejectedCertificate set a specific rejectedCertificate in the store from its index.
 func (k Keeper) SetRejectedCertificate(ctx sdk.Context, rejectedCertificate types.RejectedCertificate) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RejectedCertificateKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.RejectedCertificateKeyPrefix))
 	b := k.cdc.MustMarshal(&rejectedCertificate)
 	store.Set(types.RejectedCertificateKey(
 		rejectedCertificate.Subject,
@@ -22,7 +23,7 @@ func (k Keeper) GetRejectedCertificate(
 	subject string,
 	subjectKeyID string,
 ) (val types.RejectedCertificate, found bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RejectedCertificateKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.RejectedCertificateKeyPrefix))
 
 	b := store.Get(types.RejectedCertificateKey(
 		subject,
@@ -43,7 +44,7 @@ func (k Keeper) RemoveRejectedCertificate(
 	subject string,
 	subjectKeyID string,
 ) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RejectedCertificateKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.RejectedCertificateKeyPrefix))
 	store.Delete(types.RejectedCertificateKey(
 		subject,
 		subjectKeyID,
@@ -52,7 +53,7 @@ func (k Keeper) RemoveRejectedCertificate(
 
 // GetAllRejectedCertificate returns all rejectedCertificate.
 func (k Keeper) GetAllRejectedCertificate(ctx sdk.Context) (list []types.RejectedCertificate) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RejectedCertificateKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.RejectedCertificateKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()

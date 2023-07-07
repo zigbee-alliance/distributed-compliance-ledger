@@ -797,6 +797,438 @@ func (m *MsgRejectAddX509RootCertResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgRejectAddX509RootCertResponse proto.InternalMessageInfo
 
+type MsgAddPkiRevocationDistributionPoint struct {
+	Signer               string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty" validate:"required"`
+	Vid                  int32  `protobuf:"varint,2,opt,name=vid,proto3" json:"vid,omitempty" validate:"gte=1,lte=65535,required"`
+	Pid                  int32  `protobuf:"varint,3,opt,name=pid,proto3" json:"pid,omitempty" validate:"gte=0,lte=65535"`
+	IsPAA                bool   `protobuf:"varint,4,opt,name=isPAA,proto3" json:"isPAA,omitempty"`
+	Label                string `protobuf:"bytes,5,opt,name=label,proto3" json:"label,omitempty" validate:"required"`
+	CrlSignerCertificate string `protobuf:"bytes,6,opt,name=crlSignerCertificate,proto3" json:"crlSignerCertificate,omitempty" validate:"required"`
+	IssuerSubjectKeyID   string `protobuf:"bytes,7,opt,name=issuerSubjectKeyID,proto3" json:"issuerSubjectKeyID,omitempty" validate:"required"`
+	DataURL              string `protobuf:"bytes,8,opt,name=dataURL,proto3" json:"dataURL,omitempty" validate:"required,url"`
+	DataFileSize         uint64 `protobuf:"varint,9,opt,name=dataFileSize,proto3" json:"dataFileSize,omitempty"`
+	DataDigest           string `protobuf:"bytes,10,opt,name=dataDigest,proto3" json:"dataDigest,omitempty"`
+	DataDigestType       uint32 `protobuf:"varint,11,opt,name=dataDigestType,proto3" json:"dataDigestType,omitempty"`
+	RevocationType       uint32 `protobuf:"varint,12,opt,name=revocationType,proto3" json:"revocationType,omitempty" validate:"required"`
+}
+
+func (m *MsgAddPkiRevocationDistributionPoint) Reset()         { *m = MsgAddPkiRevocationDistributionPoint{} }
+func (m *MsgAddPkiRevocationDistributionPoint) String() string { return proto.CompactTextString(m) }
+func (*MsgAddPkiRevocationDistributionPoint) ProtoMessage()    {}
+func (*MsgAddPkiRevocationDistributionPoint) Descriptor() ([]byte, []int) {
+	return fileDescriptor_badfdb2b39855d16, []int{14}
+}
+func (m *MsgAddPkiRevocationDistributionPoint) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgAddPkiRevocationDistributionPoint) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgAddPkiRevocationDistributionPoint.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgAddPkiRevocationDistributionPoint) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgAddPkiRevocationDistributionPoint.Merge(m, src)
+}
+func (m *MsgAddPkiRevocationDistributionPoint) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgAddPkiRevocationDistributionPoint) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgAddPkiRevocationDistributionPoint.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgAddPkiRevocationDistributionPoint proto.InternalMessageInfo
+
+func (m *MsgAddPkiRevocationDistributionPoint) GetSigner() string {
+	if m != nil {
+		return m.Signer
+	}
+	return ""
+}
+
+func (m *MsgAddPkiRevocationDistributionPoint) GetVid() int32 {
+	if m != nil {
+		return m.Vid
+	}
+	return 0
+}
+
+func (m *MsgAddPkiRevocationDistributionPoint) GetPid() int32 {
+	if m != nil {
+		return m.Pid
+	}
+	return 0
+}
+
+func (m *MsgAddPkiRevocationDistributionPoint) GetIsPAA() bool {
+	if m != nil {
+		return m.IsPAA
+	}
+	return false
+}
+
+func (m *MsgAddPkiRevocationDistributionPoint) GetLabel() string {
+	if m != nil {
+		return m.Label
+	}
+	return ""
+}
+
+func (m *MsgAddPkiRevocationDistributionPoint) GetCrlSignerCertificate() string {
+	if m != nil {
+		return m.CrlSignerCertificate
+	}
+	return ""
+}
+
+func (m *MsgAddPkiRevocationDistributionPoint) GetIssuerSubjectKeyID() string {
+	if m != nil {
+		return m.IssuerSubjectKeyID
+	}
+	return ""
+}
+
+func (m *MsgAddPkiRevocationDistributionPoint) GetDataURL() string {
+	if m != nil {
+		return m.DataURL
+	}
+	return ""
+}
+
+func (m *MsgAddPkiRevocationDistributionPoint) GetDataFileSize() uint64 {
+	if m != nil {
+		return m.DataFileSize
+	}
+	return 0
+}
+
+func (m *MsgAddPkiRevocationDistributionPoint) GetDataDigest() string {
+	if m != nil {
+		return m.DataDigest
+	}
+	return ""
+}
+
+func (m *MsgAddPkiRevocationDistributionPoint) GetDataDigestType() uint32 {
+	if m != nil {
+		return m.DataDigestType
+	}
+	return 0
+}
+
+func (m *MsgAddPkiRevocationDistributionPoint) GetRevocationType() uint32 {
+	if m != nil {
+		return m.RevocationType
+	}
+	return 0
+}
+
+type MsgAddPkiRevocationDistributionPointResponse struct {
+}
+
+func (m *MsgAddPkiRevocationDistributionPointResponse) Reset() {
+	*m = MsgAddPkiRevocationDistributionPointResponse{}
+}
+func (m *MsgAddPkiRevocationDistributionPointResponse) String() string {
+	return proto.CompactTextString(m)
+}
+func (*MsgAddPkiRevocationDistributionPointResponse) ProtoMessage() {}
+func (*MsgAddPkiRevocationDistributionPointResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_badfdb2b39855d16, []int{15}
+}
+func (m *MsgAddPkiRevocationDistributionPointResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgAddPkiRevocationDistributionPointResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgAddPkiRevocationDistributionPointResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgAddPkiRevocationDistributionPointResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgAddPkiRevocationDistributionPointResponse.Merge(m, src)
+}
+func (m *MsgAddPkiRevocationDistributionPointResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgAddPkiRevocationDistributionPointResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgAddPkiRevocationDistributionPointResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgAddPkiRevocationDistributionPointResponse proto.InternalMessageInfo
+
+type MsgUpdatePkiRevocationDistributionPoint struct {
+	Signer               string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty" validate:"required"`
+	Vid                  int32  `protobuf:"varint,2,opt,name=vid,proto3" json:"vid,omitempty" validate:"gte=1,lte=65535,required"`
+	Label                string `protobuf:"bytes,3,opt,name=label,proto3" json:"label,omitempty" validate:"required"`
+	CrlSignerCertificate string `protobuf:"bytes,4,opt,name=crlSignerCertificate,proto3" json:"crlSignerCertificate,omitempty"`
+	IssuerSubjectKeyID   string `protobuf:"bytes,5,opt,name=issuerSubjectKeyID,proto3" json:"issuerSubjectKeyID,omitempty" validate:"required"`
+	DataURL              string `protobuf:"bytes,6,opt,name=dataURL,proto3" json:"dataURL,omitempty" validate:"omitempty,url"`
+	DataFileSize         uint64 `protobuf:"varint,7,opt,name=dataFileSize,proto3" json:"dataFileSize,omitempty"`
+	DataDigest           string `protobuf:"bytes,8,opt,name=dataDigest,proto3" json:"dataDigest,omitempty"`
+	DataDigestType       uint32 `protobuf:"varint,9,opt,name=dataDigestType,proto3" json:"dataDigestType,omitempty"`
+}
+
+func (m *MsgUpdatePkiRevocationDistributionPoint) Reset() {
+	*m = MsgUpdatePkiRevocationDistributionPoint{}
+}
+func (m *MsgUpdatePkiRevocationDistributionPoint) String() string { return proto.CompactTextString(m) }
+func (*MsgUpdatePkiRevocationDistributionPoint) ProtoMessage()    {}
+func (*MsgUpdatePkiRevocationDistributionPoint) Descriptor() ([]byte, []int) {
+	return fileDescriptor_badfdb2b39855d16, []int{16}
+}
+func (m *MsgUpdatePkiRevocationDistributionPoint) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgUpdatePkiRevocationDistributionPoint) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgUpdatePkiRevocationDistributionPoint.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgUpdatePkiRevocationDistributionPoint) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUpdatePkiRevocationDistributionPoint.Merge(m, src)
+}
+func (m *MsgUpdatePkiRevocationDistributionPoint) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgUpdatePkiRevocationDistributionPoint) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUpdatePkiRevocationDistributionPoint.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgUpdatePkiRevocationDistributionPoint proto.InternalMessageInfo
+
+func (m *MsgUpdatePkiRevocationDistributionPoint) GetSigner() string {
+	if m != nil {
+		return m.Signer
+	}
+	return ""
+}
+
+func (m *MsgUpdatePkiRevocationDistributionPoint) GetVid() int32 {
+	if m != nil {
+		return m.Vid
+	}
+	return 0
+}
+
+func (m *MsgUpdatePkiRevocationDistributionPoint) GetLabel() string {
+	if m != nil {
+		return m.Label
+	}
+	return ""
+}
+
+func (m *MsgUpdatePkiRevocationDistributionPoint) GetCrlSignerCertificate() string {
+	if m != nil {
+		return m.CrlSignerCertificate
+	}
+	return ""
+}
+
+func (m *MsgUpdatePkiRevocationDistributionPoint) GetIssuerSubjectKeyID() string {
+	if m != nil {
+		return m.IssuerSubjectKeyID
+	}
+	return ""
+}
+
+func (m *MsgUpdatePkiRevocationDistributionPoint) GetDataURL() string {
+	if m != nil {
+		return m.DataURL
+	}
+	return ""
+}
+
+func (m *MsgUpdatePkiRevocationDistributionPoint) GetDataFileSize() uint64 {
+	if m != nil {
+		return m.DataFileSize
+	}
+	return 0
+}
+
+func (m *MsgUpdatePkiRevocationDistributionPoint) GetDataDigest() string {
+	if m != nil {
+		return m.DataDigest
+	}
+	return ""
+}
+
+func (m *MsgUpdatePkiRevocationDistributionPoint) GetDataDigestType() uint32 {
+	if m != nil {
+		return m.DataDigestType
+	}
+	return 0
+}
+
+type MsgUpdatePkiRevocationDistributionPointResponse struct {
+}
+
+func (m *MsgUpdatePkiRevocationDistributionPointResponse) Reset() {
+	*m = MsgUpdatePkiRevocationDistributionPointResponse{}
+}
+func (m *MsgUpdatePkiRevocationDistributionPointResponse) String() string {
+	return proto.CompactTextString(m)
+}
+func (*MsgUpdatePkiRevocationDistributionPointResponse) ProtoMessage() {}
+func (*MsgUpdatePkiRevocationDistributionPointResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_badfdb2b39855d16, []int{17}
+}
+func (m *MsgUpdatePkiRevocationDistributionPointResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgUpdatePkiRevocationDistributionPointResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgUpdatePkiRevocationDistributionPointResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgUpdatePkiRevocationDistributionPointResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUpdatePkiRevocationDistributionPointResponse.Merge(m, src)
+}
+func (m *MsgUpdatePkiRevocationDistributionPointResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgUpdatePkiRevocationDistributionPointResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUpdatePkiRevocationDistributionPointResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgUpdatePkiRevocationDistributionPointResponse proto.InternalMessageInfo
+
+type MsgDeletePkiRevocationDistributionPoint struct {
+	Signer             string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty" validate:"required"`
+	Vid                int32  `protobuf:"varint,2,opt,name=vid,proto3" json:"vid,omitempty" validate:"gte=1,lte=65535,required"`
+	Label              string `protobuf:"bytes,3,opt,name=label,proto3" json:"label,omitempty" validate:"required"`
+	IssuerSubjectKeyID string `protobuf:"bytes,4,opt,name=issuerSubjectKeyID,proto3" json:"issuerSubjectKeyID,omitempty" validate:"required"`
+}
+
+func (m *MsgDeletePkiRevocationDistributionPoint) Reset() {
+	*m = MsgDeletePkiRevocationDistributionPoint{}
+}
+func (m *MsgDeletePkiRevocationDistributionPoint) String() string { return proto.CompactTextString(m) }
+func (*MsgDeletePkiRevocationDistributionPoint) ProtoMessage()    {}
+func (*MsgDeletePkiRevocationDistributionPoint) Descriptor() ([]byte, []int) {
+	return fileDescriptor_badfdb2b39855d16, []int{18}
+}
+func (m *MsgDeletePkiRevocationDistributionPoint) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgDeletePkiRevocationDistributionPoint) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgDeletePkiRevocationDistributionPoint.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgDeletePkiRevocationDistributionPoint) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgDeletePkiRevocationDistributionPoint.Merge(m, src)
+}
+func (m *MsgDeletePkiRevocationDistributionPoint) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgDeletePkiRevocationDistributionPoint) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgDeletePkiRevocationDistributionPoint.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgDeletePkiRevocationDistributionPoint proto.InternalMessageInfo
+
+func (m *MsgDeletePkiRevocationDistributionPoint) GetSigner() string {
+	if m != nil {
+		return m.Signer
+	}
+	return ""
+}
+
+func (m *MsgDeletePkiRevocationDistributionPoint) GetVid() int32 {
+	if m != nil {
+		return m.Vid
+	}
+	return 0
+}
+
+func (m *MsgDeletePkiRevocationDistributionPoint) GetLabel() string {
+	if m != nil {
+		return m.Label
+	}
+	return ""
+}
+
+func (m *MsgDeletePkiRevocationDistributionPoint) GetIssuerSubjectKeyID() string {
+	if m != nil {
+		return m.IssuerSubjectKeyID
+	}
+	return ""
+}
+
+type MsgDeletePkiRevocationDistributionPointResponse struct {
+}
+
+func (m *MsgDeletePkiRevocationDistributionPointResponse) Reset() {
+	*m = MsgDeletePkiRevocationDistributionPointResponse{}
+}
+func (m *MsgDeletePkiRevocationDistributionPointResponse) String() string {
+	return proto.CompactTextString(m)
+}
+func (*MsgDeletePkiRevocationDistributionPointResponse) ProtoMessage() {}
+func (*MsgDeletePkiRevocationDistributionPointResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_badfdb2b39855d16, []int{19}
+}
+func (m *MsgDeletePkiRevocationDistributionPointResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgDeletePkiRevocationDistributionPointResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgDeletePkiRevocationDistributionPointResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgDeletePkiRevocationDistributionPointResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgDeletePkiRevocationDistributionPointResponse.Merge(m, src)
+}
+func (m *MsgDeletePkiRevocationDistributionPointResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgDeletePkiRevocationDistributionPointResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgDeletePkiRevocationDistributionPointResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgDeletePkiRevocationDistributionPointResponse proto.InternalMessageInfo
+
 func init() {
 	proto.RegisterType((*MsgProposeAddX509RootCert)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgProposeAddX509RootCert")
 	proto.RegisterType((*MsgProposeAddX509RootCertResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgProposeAddX509RootCertResponse")
@@ -812,55 +1244,87 @@ func init() {
 	proto.RegisterType((*MsgRevokeX509CertResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgRevokeX509CertResponse")
 	proto.RegisterType((*MsgRejectAddX509RootCert)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgRejectAddX509RootCert")
 	proto.RegisterType((*MsgRejectAddX509RootCertResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgRejectAddX509RootCertResponse")
+	proto.RegisterType((*MsgAddPkiRevocationDistributionPoint)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgAddPkiRevocationDistributionPoint")
+	proto.RegisterType((*MsgAddPkiRevocationDistributionPointResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgAddPkiRevocationDistributionPointResponse")
+	proto.RegisterType((*MsgUpdatePkiRevocationDistributionPoint)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgUpdatePkiRevocationDistributionPoint")
+	proto.RegisterType((*MsgUpdatePkiRevocationDistributionPointResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgUpdatePkiRevocationDistributionPointResponse")
+	proto.RegisterType((*MsgDeletePkiRevocationDistributionPoint)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgDeletePkiRevocationDistributionPoint")
+	proto.RegisterType((*MsgDeletePkiRevocationDistributionPointResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgDeletePkiRevocationDistributionPointResponse")
 }
 
 func init() { proto.RegisterFile("pki/tx.proto", fileDescriptor_badfdb2b39855d16) }
 
 var fileDescriptor_badfdb2b39855d16 = []byte{
-	// 685 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x97, 0x31, 0x6f, 0xd3, 0x40,
-	0x14, 0xc7, 0x7b, 0x69, 0x5a, 0xd4, 0xa3, 0xaa, 0x84, 0x29, 0xc5, 0x75, 0x2b, 0x27, 0x98, 0x0a,
-	0x55, 0x82, 0xd8, 0xa1, 0xb4, 0xa5, 0xad, 0x04, 0x52, 0x5a, 0x04, 0x54, 0xb4, 0x52, 0x31, 0x0c,
-	0x88, 0x01, 0x94, 0xd8, 0x87, 0x39, 0x9a, 0xe4, 0xcc, 0x9d, 0x13, 0xa5, 0x7c, 0x0a, 0x16, 0xd6,
-	0x6e, 0x20, 0x31, 0x83, 0x58, 0x59, 0x19, 0x2b, 0xc4, 0xc0, 0x14, 0x50, 0xb2, 0x31, 0xe6, 0x13,
-	0xa0, 0x9c, 0x63, 0xa7, 0x6e, 0xe2, 0xa2, 0xb8, 0x61, 0x81, 0x6c, 0x97, 0xf3, 0xbd, 0xff, 0xff,
-	0xbd, 0x9f, 0x9f, 0xf2, 0xce, 0x70, 0xdc, 0xde, 0xc5, 0x9a, 0x53, 0x51, 0x6d, 0x4a, 0x1c, 0x22,
-	0xa8, 0xaf, 0xb0, 0x95, 0x43, 0x28, 0x9b, 0xcf, 0xe3, 0x6c, 0xd1, 0x40, 0xaa, 0x89, 0x99, 0x43,
-	0x71, 0xae, 0xe4, 0x20, 0xd3, 0x20, 0x05, 0xdb, 0xdd, 0xcd, 0x23, 0xd3, 0x42, 0x54, 0xb5, 0x77,
-	0xb1, 0x34, 0x6d, 0x10, 0x56, 0x20, 0xec, 0x29, 0x8f, 0xd6, 0xdc, 0x1f, 0xae, 0x94, 0x34, 0x69,
-	0x11, 0x8b, 0xb8, 0xfb, 0xcd, 0x95, 0xbb, 0xab, 0xfc, 0x00, 0x70, 0x7a, 0x9b, 0x59, 0x3b, 0x94,
-	0xd8, 0x84, 0xa1, 0x8c, 0x69, 0x3e, 0x5a, 0x4a, 0xaf, 0xea, 0x84, 0x38, 0x1b, 0x88, 0x3a, 0xc2,
-	0x1d, 0x38, 0xca, 0xb0, 0x55, 0x44, 0x54, 0x04, 0x49, 0x30, 0x3f, 0xb6, 0xae, 0x35, 0xaa, 0x89,
-	0xb3, 0xe5, 0x6c, 0x1e, 0x9b, 0x59, 0x07, 0xad, 0x29, 0x14, 0xbd, 0x2c, 0x61, 0x8a, 0x4c, 0xe5,
-	0xeb, 0xc7, 0xd4, 0x64, 0xcb, 0x2c, 0x63, 0x9a, 0x14, 0x31, 0xf6, 0xc0, 0xa1, 0xb8, 0x68, 0xe9,
-	0xad, 0x70, 0x61, 0x05, 0xc6, 0x0d, 0x44, 0x1d, 0x31, 0xc6, 0x65, 0xe6, 0x1a, 0xd5, 0x44, 0xb2,
-	0x53, 0xe6, 0x4a, 0x21, 0x5b, 0xb9, 0x71, 0x35, 0xbd, 0xb8, 0xb2, 0x74, 0x7d, 0x39, 0xad, 0xe8,
-	0x3c, 0x42, 0xb8, 0x0c, 0xe3, 0xb8, 0xf8, 0x8c, 0x88, 0xc3, 0x3c, 0xf2, 0x7c, 0x30, 0x81, 0x66,
-	0xc0, 0x62, 0x7a, 0x75, 0x59, 0xd1, 0xf9, 0x21, 0x41, 0x80, 0x71, 0x07, 0x17, 0x90, 0x18, 0x4f,
-	0x82, 0xf9, 0x61, 0x9d, 0xaf, 0x95, 0x8b, 0xf0, 0x42, 0x68, 0x81, 0x3a, 0x62, 0x36, 0x29, 0x32,
-	0xa4, 0xbc, 0x8b, 0x71, 0x0c, 0x19, 0xdb, 0xa6, 0xa4, 0xfc, 0xf7, 0x30, 0xac, 0xc1, 0x53, 0xac,
-	0x94, 0x7b, 0x81, 0x0c, 0x8f, 0x44, 0xb2, 0x51, 0x4d, 0xcc, 0x86, 0x92, 0x58, 0x58, 0x54, 0x74,
-	0x2f, 0x40, 0xd8, 0x80, 0xe3, 0xad, 0xe5, 0x3d, 0xb4, 0xb7, 0x69, 0xb6, 0x80, 0x24, 0x1a, 0xd5,
-	0xc4, 0x4c, 0x88, 0xc0, 0xc2, 0xd2, 0xb2, 0xa2, 0x07, 0x82, 0x7c, 0x9a, 0xf1, 0x5e, 0x68, 0x8e,
-	0x74, 0xd0, 0xec, 0xce, 0xc9, 0xa7, 0xf9, 0x0d, 0xc0, 0x89, 0xe6, 0x29, 0xf7, 0xf1, 0x3f, 0xd3,
-	0x49, 0x22, 0x9c, 0x0a, 0x56, 0xe5, 0x17, 0xfc, 0x3e, 0x06, 0x67, 0xdb, 0x4d, 0xa6, 0xa3, 0x32,
-	0xd9, 0x45, 0x83, 0x0e, 0xea, 0xde, 0x41, 0x97, 0xe0, 0xdc, 0x71, 0xa8, 0x8e, 0x32, 0x6d, 0xb5,
-	0xda, 0x7f, 0xc1, 0x74, 0xa4, 0x17, 0xa6, 0xa3, 0x1d, 0x4c, 0x43, 0x51, 0xf9, 0x4c, 0xf7, 0x63,
-	0xf0, 0xcc, 0x36, 0xb3, 0xda, 0x27, 0x06, 0xcd, 0x19, 0x6c, 0xce, 0x19, 0x3e, 0x06, 0x82, 0x7c,
-	0x7c, 0x7a, 0x6f, 0x63, 0x50, 0xe4, 0x4f, 0x9b, 0x86, 0x83, 0x19, 0x11, 0x0a, 0x51, 0x81, 0xc9,
-	0x30, 0x4c, 0x1e, 0xcb, 0x85, 0x5f, 0x63, 0x70, 0x78, 0x9b, 0x59, 0xc2, 0x27, 0x00, 0xa7, 0x42,
-	0x2e, 0x1f, 0x9b, 0x3d, 0x5e, 0x7e, 0xd4, 0xd0, 0x31, 0x2f, 0xdd, 0xef, 0x9b, 0x94, 0x57, 0x00,
-	0x4f, 0x3c, 0xe4, 0xba, 0x10, 0x25, 0xf1, 0xee, 0x52, 0x91, 0x12, 0x3f, 0x7e, 0x38, 0x0b, 0x6f,
-	0x00, 0x3c, 0x7d, 0x78, 0x32, 0xdf, 0x8c, 0x62, 0xd1, 0x8e, 0x97, 0x6e, 0x9f, 0x2c, 0xde, 0xcf,
-	0xeb, 0x33, 0x80, 0xd3, 0xe1, 0x03, 0x74, 0x2b, 0xfa, 0x1b, 0xec, 0x54, 0x93, 0x1e, 0xf6, 0x53,
-	0x2d, 0x50, 0x41, 0xf8, 0xb8, 0xda, 0x8a, 0xfe, 0x2a, 0xfb, 0x54, 0xc1, 0x1f, 0xe7, 0x83, 0xb0,
-	0x0f, 0xe0, 0xc4, 0x91, 0xe1, 0x90, 0x89, 0x60, 0x14, 0x94, 0x90, 0x36, 0x4f, 0x2c, 0xe1, 0x27,
-	0xf8, 0x01, 0xc0, 0x73, 0xdd, 0xff, 0x7f, 0xef, 0x46, 0x32, 0xe9, 0xa2, 0x24, 0xed, 0xf4, 0x4b,
-	0xc9, 0xcb, 0x7a, 0xfd, 0xc9, 0x97, 0x9a, 0x0c, 0x0e, 0x6a, 0x32, 0xf8, 0x59, 0x93, 0xc1, 0xeb,
-	0xba, 0x3c, 0x74, 0x50, 0x97, 0x87, 0xbe, 0xd7, 0xe5, 0xa1, 0xc7, 0xb7, 0x2c, 0xec, 0x3c, 0x2f,
-	0xe5, 0x54, 0x83, 0x14, 0x34, 0xd7, 0x35, 0xe5, 0xd9, 0x6a, 0x87, 0x6c, 0x53, 0x6d, 0xdf, 0x94,
-	0x6b, 0xac, 0x55, 0x34, 0xfe, 0xa1, 0xb8, 0x67, 0x23, 0x96, 0x1b, 0xe5, 0xdf, 0x72, 0xd7, 0x7e,
-	0x07, 0x00, 0x00, 0xff, 0xff, 0x97, 0xd6, 0x01, 0xdd, 0x3c, 0x0e, 0x00, 0x00,
+	// 1090 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x58, 0xdf, 0x6f, 0xdb, 0x54,
+	0x14, 0x9e, 0xf3, 0xa3, 0x3f, 0xce, 0x4a, 0x11, 0x97, 0xb2, 0xb9, 0x6e, 0x95, 0x64, 0x5e, 0xb5,
+	0x55, 0xa2, 0xf9, 0xd1, 0xae, 0x09, 0xeb, 0xa4, 0x82, 0xd2, 0x45, 0x1b, 0xd5, 0x5a, 0x29, 0xb8,
+	0x9d, 0x40, 0x08, 0x31, 0x39, 0xf1, 0x9d, 0xb9, 0xd4, 0xc9, 0x35, 0xf6, 0x4d, 0xd5, 0xee, 0x4f,
+	0xe0, 0x89, 0x17, 0x9e, 0x90, 0xf6, 0x06, 0x12, 0xcf, 0x20, 0x5e, 0x79, 0xe5, 0x71, 0x42, 0x48,
+	0xf0, 0x14, 0xa6, 0xf6, 0x3f, 0xc8, 0x3b, 0x12, 0xb2, 0x9d, 0xd8, 0x75, 0x6b, 0xa7, 0x89, 0x97,
+	0x3e, 0x30, 0xfa, 0xe6, 0x7b, 0x73, 0xbe, 0xef, 0x9e, 0xf3, 0xdd, 0xcf, 0xb9, 0xf7, 0x18, 0xa6,
+	0xf4, 0x3d, 0x92, 0x67, 0x07, 0x39, 0xdd, 0xa0, 0x8c, 0xa2, 0xdc, 0x33, 0xa2, 0xd6, 0x30, 0x96,
+	0x35, 0x8d, 0xc8, 0xcd, 0x3a, 0xce, 0x29, 0xc4, 0x64, 0x06, 0xa9, 0xb5, 0x18, 0x56, 0xea, 0xb4,
+	0xa1, 0x3b, 0xb3, 0x1a, 0x56, 0x54, 0x6c, 0xe4, 0xf4, 0x3d, 0x22, 0xcc, 0xd6, 0xa9, 0xd9, 0xa0,
+	0xe6, 0x13, 0x1b, 0x9d, 0x77, 0x06, 0x0e, 0x95, 0x30, 0xa3, 0x52, 0x95, 0x3a, 0xf3, 0xd6, 0x93,
+	0x33, 0x2b, 0xfe, 0xcd, 0xc1, 0xec, 0xb6, 0xa9, 0x56, 0x0d, 0xaa, 0x53, 0x13, 0x97, 0x15, 0xe5,
+	0x93, 0x62, 0x61, 0x4d, 0xa2, 0x94, 0xdd, 0xc7, 0x06, 0x43, 0x0f, 0x61, 0xcc, 0x24, 0x6a, 0x13,
+	0x1b, 0x3c, 0x97, 0xe1, 0x16, 0x27, 0x37, 0xf2, 0x9d, 0x76, 0xfa, 0xed, 0x7d, 0x59, 0x23, 0x8a,
+	0xcc, 0xf0, 0x3d, 0xd1, 0xc0, 0x5f, 0xb5, 0x88, 0x81, 0x15, 0xf1, 0xf7, 0x9f, 0xb3, 0x33, 0xdd,
+	0xc5, 0xca, 0x8a, 0x62, 0x60, 0xd3, 0xdc, 0x61, 0x06, 0x69, 0xaa, 0x52, 0x17, 0x8e, 0xee, 0x42,
+	0xa2, 0x8e, 0x0d, 0xc6, 0xc7, 0x6c, 0x9a, 0x85, 0x4e, 0x3b, 0x9d, 0x39, 0x4b, 0xb3, 0xd4, 0x90,
+	0x0f, 0xd6, 0x97, 0x0b, 0xab, 0x77, 0x8b, 0xef, 0x95, 0x0a, 0xa2, 0x64, 0x23, 0xd0, 0xbb, 0x90,
+	0x20, 0xcd, 0xa7, 0x94, 0x8f, 0xdb, 0xc8, 0xeb, 0xfe, 0x04, 0x2c, 0xc0, 0x6a, 0x61, 0xad, 0x24,
+	0x4a, 0x76, 0x10, 0x42, 0x90, 0x60, 0xa4, 0x81, 0xf9, 0x44, 0x86, 0x5b, 0x8c, 0x4b, 0xf6, 0xb3,
+	0x78, 0x13, 0x6e, 0x84, 0x16, 0x28, 0x61, 0x53, 0xa7, 0x4d, 0x13, 0x8b, 0x3f, 0xc4, 0x6c, 0x19,
+	0xca, 0xba, 0x6e, 0xd0, 0xfd, 0x8b, 0x93, 0xe1, 0x1e, 0x8c, 0x9b, 0xad, 0xda, 0x97, 0xb8, 0xde,
+	0x53, 0x22, 0xd3, 0x69, 0xa7, 0xe7, 0x43, 0x95, 0x58, 0x59, 0x15, 0xa5, 0x1e, 0x00, 0xdd, 0x87,
+	0xa9, 0xee, 0xe3, 0x23, 0x7c, 0xb8, 0xa9, 0x74, 0x05, 0x49, 0x77, 0xda, 0xe9, 0xb9, 0x10, 0x82,
+	0x95, 0x62, 0x49, 0x94, 0x7c, 0x20, 0x57, 0xcd, 0xc4, 0x30, 0x6a, 0x26, 0xcf, 0xa8, 0x19, 0xac,
+	0x93, 0xab, 0xe6, 0x1f, 0x1c, 0x4c, 0x5b, 0x51, 0xce, 0xcf, 0xaf, 0x8d, 0x93, 0x78, 0xb8, 0xe6,
+	0xaf, 0xca, 0x2d, 0xf8, 0xc7, 0x18, 0xcc, 0x7b, 0x26, 0x93, 0xf0, 0x3e, 0xdd, 0xc3, 0x97, 0x0e,
+	0x0a, 0x76, 0xd0, 0x2d, 0x58, 0xe8, 0x27, 0xd5, 0x69, 0x4d, 0xbb, 0x56, 0xfb, 0x5f, 0x68, 0x9a,
+	0x1c, 0x46, 0xd3, 0xb1, 0x33, 0x9a, 0x86, 0x4a, 0xe5, 0x6a, 0xfa, 0x3c, 0x06, 0x6f, 0x6d, 0x9b,
+	0xaa, 0x17, 0x71, 0x69, 0x4e, 0xbf, 0x39, 0xe7, 0xec, 0x63, 0xc0, 0xaf, 0x8f, 0xab, 0xde, 0xf7,
+	0x31, 0xe0, 0xed, 0x5f, 0xad, 0x05, 0x2f, 0xcf, 0x88, 0x50, 0x11, 0x45, 0xc8, 0x84, 0xc9, 0xe4,
+	0x6a, 0xf9, 0x5d, 0xd2, 0xb1, 0xac, 0xa2, 0x54, 0xf7, 0x88, 0xa5, 0x77, 0x5d, 0x66, 0x84, 0x36,
+	0x2b, 0xbd, 0xfb, 0x0d, 0xa1, 0xcd, 0x2a, 0x25, 0xcd, 0x11, 0xea, 0xba, 0x06, 0xf1, 0x7d, 0xa2,
+	0xd8, 0x9a, 0x26, 0x37, 0x6e, 0x77, 0xda, 0xe9, 0x9b, 0x1e, 0x8b, 0xca, 0xf0, 0xfa, 0xf2, 0x92,
+	0xc6, 0xf0, 0x7a, 0xa9, 0x58, 0xbc, 0x53, 0x5c, 0x72, 0x59, 0x25, 0x0b, 0x83, 0x0a, 0x10, 0xd7,
+	0x89, 0xa3, 0x66, 0x72, 0x23, 0xd5, 0x69, 0xa7, 0x05, 0x3f, 0xb4, 0xe0, 0x41, 0x45, 0xc9, 0x0a,
+	0x45, 0x33, 0x90, 0x24, 0x66, 0xb5, 0x5c, 0xb6, 0x45, 0x9c, 0x90, 0x9c, 0x01, 0xca, 0x42, 0x52,
+	0x93, 0x6b, 0x58, 0x0b, 0x7e, 0xd1, 0xbd, 0x45, 0x9d, 0x28, 0xf4, 0x08, 0x66, 0xea, 0x86, 0xb6,
+	0x63, 0xa7, 0x6f, 0x89, 0x47, 0x9e, 0x92, 0xba, 0xcc, 0x9c, 0x37, 0xbf, 0x0f, 0x3a, 0x10, 0x84,
+	0x1e, 0x02, 0x22, 0xa6, 0xd9, 0xc2, 0xc6, 0x8e, 0xb7, 0xd7, 0x15, 0x7e, 0xbc, 0x3f, 0x55, 0x00,
+	0x04, 0x15, 0x61, 0x5c, 0x91, 0x99, 0xfc, 0x58, 0xda, 0xe2, 0x27, 0x6c, 0xf4, 0x5c, 0xa7, 0x9d,
+	0xbe, 0x1e, 0x60, 0xaf, 0x96, 0xa1, 0x89, 0x52, 0x2f, 0x16, 0x89, 0x30, 0x65, 0x3d, 0x3e, 0x20,
+	0x1a, 0xde, 0x21, 0xcf, 0x30, 0x3f, 0x99, 0xe1, 0x16, 0x13, 0x92, 0x6f, 0x0e, 0xa5, 0x00, 0xac,
+	0x71, 0x85, 0xa8, 0xd8, 0x64, 0x3c, 0x58, 0xec, 0xd2, 0x89, 0x19, 0x74, 0x0b, 0xa6, 0xbd, 0xd1,
+	0xee, 0xa1, 0x8e, 0xf9, 0xab, 0x19, 0x6e, 0xf1, 0x0d, 0xe9, 0xd4, 0x2c, 0xfa, 0x00, 0xa6, 0x0d,
+	0xd7, 0x52, 0x76, 0xdc, 0x94, 0x15, 0x17, 0x5e, 0xe7, 0xa9, 0x70, 0x31, 0x07, 0x4b, 0x83, 0x98,
+	0xd3, 0x75, 0xf3, 0x3f, 0x71, 0xb8, 0xbd, 0x6d, 0xaa, 0x8f, 0x75, 0x8b, 0xf8, 0x3f, 0x60, 0x68,
+	0xd7, 0x88, 0xf1, 0x81, 0x8c, 0xb8, 0x12, 0x62, 0x44, 0xfb, 0x1f, 0x62, 0x28, 0xbf, 0x25, 0x87,
+	0xf7, 0x5b, 0xc9, 0xf3, 0x9b, 0x63, 0xfc, 0xf9, 0x4e, 0x3b, 0xcd, 0x7b, 0x68, 0xda, 0x20, 0x0c,
+	0x37, 0x74, 0x76, 0x78, 0x8e, 0xe1, 0xc6, 0xcf, 0x35, 0xdc, 0xc4, 0x00, 0x86, 0x9b, 0x0c, 0x32,
+	0x9c, 0xb8, 0x0c, 0xf9, 0x01, 0xb7, 0xff, 0xe4, 0x61, 0x62, 0x59, 0xa6, 0x82, 0x35, 0xfc, 0x3a,
+	0x5a, 0x26, 0x78, 0xfb, 0x13, 0x43, 0x6f, 0x7f, 0x57, 0xda, 0x41, 0x64, 0xea, 0x49, 0xbb, 0xf2,
+	0xf5, 0x9b, 0x10, 0xdf, 0x36, 0x55, 0xf4, 0x0b, 0x07, 0xd7, 0x42, 0x1a, 0xdb, 0xcd, 0x21, 0x1b,
+	0xeb, 0x5c, 0x68, 0x0b, 0x29, 0x7c, 0x34, 0x32, 0xaa, 0x5e, 0x01, 0x76, 0xe2, 0x21, 0xad, 0x68,
+	0x94, 0xc4, 0x83, 0xa9, 0x22, 0x25, 0xde, 0xbf, 0xf1, 0x43, 0xdf, 0x72, 0x70, 0xf5, 0x64, 0xd7,
+	0xf7, 0x7e, 0x94, 0x25, 0x3c, 0xbc, 0xf0, 0xe0, 0xd5, 0xf0, 0x6e, 0x5e, 0xbf, 0x72, 0x30, 0x1b,
+	0xde, 0x9c, 0x6d, 0x45, 0xdf, 0xc1, 0xb3, 0x6c, 0xc2, 0xee, 0x28, 0xd9, 0x7c, 0x15, 0x84, 0xb7,
+	0x42, 0x5b, 0xd1, 0xb7, 0x72, 0x44, 0x15, 0x9c, 0xdb, 0x7b, 0xa0, 0xe7, 0x1c, 0x4c, 0x9f, 0x6a,
+	0x3c, 0xca, 0x11, 0x16, 0xf2, 0x53, 0x08, 0x9b, 0xaf, 0x4c, 0xe1, 0x26, 0xf8, 0x13, 0x07, 0xef,
+	0x04, 0xdf, 0xed, 0x3f, 0x8c, 0xb4, 0x48, 0x00, 0x93, 0x50, 0x1d, 0x15, 0x93, 0x9b, 0xf5, 0x9f,
+	0x1c, 0xdc, 0x38, 0xff, 0x16, 0xbd, 0x1b, 0xed, 0x45, 0xea, 0xcf, 0x2a, 0x7c, 0x76, 0x11, 0xac,
+	0x6e, 0x65, 0x2f, 0x39, 0x58, 0x18, 0xe8, 0x46, 0xf5, 0x71, 0x84, 0x34, 0x06, 0x21, 0x16, 0x9e,
+	0x5c, 0x10, 0xb1, 0xaf, 0xc4, 0x81, 0x6e, 0x00, 0x51, 0x4a, 0x1c, 0x84, 0x38, 0x52, 0x89, 0xc3,
+	0x1c, 0xc6, 0x1b, 0x9f, 0xff, 0x76, 0x94, 0xe2, 0x5e, 0x1c, 0xa5, 0xb8, 0x97, 0x47, 0x29, 0xee,
+	0x9b, 0xe3, 0xd4, 0x95, 0x17, 0xc7, 0xa9, 0x2b, 0x7f, 0x1d, 0xa7, 0xae, 0x7c, 0x5a, 0x51, 0x09,
+	0xfb, 0xa2, 0x55, 0xcb, 0xd5, 0x69, 0x23, 0xef, 0x24, 0x91, 0xed, 0x65, 0x91, 0x3f, 0x91, 0x45,
+	0xd6, 0x4b, 0x23, 0xeb, 0xe4, 0x91, 0x3f, 0xc8, 0xdb, 0x1f, 0xc9, 0x0f, 0x75, 0x6c, 0xd6, 0xc6,
+	0xec, 0xef, 0xd8, 0x77, 0xfe, 0x0d, 0x00, 0x00, 0xff, 0xff, 0xca, 0x43, 0xc9, 0x5b, 0x38, 0x17,
+	0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -882,6 +1346,9 @@ type MsgClient interface {
 	ApproveRevokeX509RootCert(ctx context.Context, in *MsgApproveRevokeX509RootCert, opts ...grpc.CallOption) (*MsgApproveRevokeX509RootCertResponse, error)
 	RevokeX509Cert(ctx context.Context, in *MsgRevokeX509Cert, opts ...grpc.CallOption) (*MsgRevokeX509CertResponse, error)
 	RejectAddX509RootCert(ctx context.Context, in *MsgRejectAddX509RootCert, opts ...grpc.CallOption) (*MsgRejectAddX509RootCertResponse, error)
+	AddPkiRevocationDistributionPoint(ctx context.Context, in *MsgAddPkiRevocationDistributionPoint, opts ...grpc.CallOption) (*MsgAddPkiRevocationDistributionPointResponse, error)
+	UpdatePkiRevocationDistributionPoint(ctx context.Context, in *MsgUpdatePkiRevocationDistributionPoint, opts ...grpc.CallOption) (*MsgUpdatePkiRevocationDistributionPointResponse, error)
+	DeletePkiRevocationDistributionPoint(ctx context.Context, in *MsgDeletePkiRevocationDistributionPoint, opts ...grpc.CallOption) (*MsgDeletePkiRevocationDistributionPointResponse, error)
 }
 
 type msgClient struct {
@@ -955,6 +1422,33 @@ func (c *msgClient) RejectAddX509RootCert(ctx context.Context, in *MsgRejectAddX
 	return out, nil
 }
 
+func (c *msgClient) AddPkiRevocationDistributionPoint(ctx context.Context, in *MsgAddPkiRevocationDistributionPoint, opts ...grpc.CallOption) (*MsgAddPkiRevocationDistributionPointResponse, error) {
+	out := new(MsgAddPkiRevocationDistributionPointResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Msg/AddPkiRevocationDistributionPoint", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) UpdatePkiRevocationDistributionPoint(ctx context.Context, in *MsgUpdatePkiRevocationDistributionPoint, opts ...grpc.CallOption) (*MsgUpdatePkiRevocationDistributionPointResponse, error) {
+	out := new(MsgUpdatePkiRevocationDistributionPointResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Msg/UpdatePkiRevocationDistributionPoint", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) DeletePkiRevocationDistributionPoint(ctx context.Context, in *MsgDeletePkiRevocationDistributionPoint, opts ...grpc.CallOption) (*MsgDeletePkiRevocationDistributionPointResponse, error) {
+	out := new(MsgDeletePkiRevocationDistributionPointResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Msg/DeletePkiRevocationDistributionPoint", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
 	ProposeAddX509RootCert(context.Context, *MsgProposeAddX509RootCert) (*MsgProposeAddX509RootCertResponse, error)
@@ -964,6 +1458,9 @@ type MsgServer interface {
 	ApproveRevokeX509RootCert(context.Context, *MsgApproveRevokeX509RootCert) (*MsgApproveRevokeX509RootCertResponse, error)
 	RevokeX509Cert(context.Context, *MsgRevokeX509Cert) (*MsgRevokeX509CertResponse, error)
 	RejectAddX509RootCert(context.Context, *MsgRejectAddX509RootCert) (*MsgRejectAddX509RootCertResponse, error)
+	AddPkiRevocationDistributionPoint(context.Context, *MsgAddPkiRevocationDistributionPoint) (*MsgAddPkiRevocationDistributionPointResponse, error)
+	UpdatePkiRevocationDistributionPoint(context.Context, *MsgUpdatePkiRevocationDistributionPoint) (*MsgUpdatePkiRevocationDistributionPointResponse, error)
+	DeletePkiRevocationDistributionPoint(context.Context, *MsgDeletePkiRevocationDistributionPoint) (*MsgDeletePkiRevocationDistributionPointResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
@@ -990,6 +1487,15 @@ func (*UnimplementedMsgServer) RevokeX509Cert(ctx context.Context, req *MsgRevok
 }
 func (*UnimplementedMsgServer) RejectAddX509RootCert(ctx context.Context, req *MsgRejectAddX509RootCert) (*MsgRejectAddX509RootCertResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RejectAddX509RootCert not implemented")
+}
+func (*UnimplementedMsgServer) AddPkiRevocationDistributionPoint(ctx context.Context, req *MsgAddPkiRevocationDistributionPoint) (*MsgAddPkiRevocationDistributionPointResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddPkiRevocationDistributionPoint not implemented")
+}
+func (*UnimplementedMsgServer) UpdatePkiRevocationDistributionPoint(ctx context.Context, req *MsgUpdatePkiRevocationDistributionPoint) (*MsgUpdatePkiRevocationDistributionPointResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdatePkiRevocationDistributionPoint not implemented")
+}
+func (*UnimplementedMsgServer) DeletePkiRevocationDistributionPoint(ctx context.Context, req *MsgDeletePkiRevocationDistributionPoint) (*MsgDeletePkiRevocationDistributionPointResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeletePkiRevocationDistributionPoint not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
@@ -1122,6 +1628,60 @@ func _Msg_RejectAddX509RootCert_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_AddPkiRevocationDistributionPoint_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgAddPkiRevocationDistributionPoint)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).AddPkiRevocationDistributionPoint(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Msg/AddPkiRevocationDistributionPoint",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).AddPkiRevocationDistributionPoint(ctx, req.(*MsgAddPkiRevocationDistributionPoint))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_UpdatePkiRevocationDistributionPoint_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgUpdatePkiRevocationDistributionPoint)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).UpdatePkiRevocationDistributionPoint(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Msg/UpdatePkiRevocationDistributionPoint",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).UpdatePkiRevocationDistributionPoint(ctx, req.(*MsgUpdatePkiRevocationDistributionPoint))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_DeletePkiRevocationDistributionPoint_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgDeletePkiRevocationDistributionPoint)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).DeletePkiRevocationDistributionPoint(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Msg/DeletePkiRevocationDistributionPoint",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).DeletePkiRevocationDistributionPoint(ctx, req.(*MsgDeletePkiRevocationDistributionPoint))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "zigbeealliance.distributedcomplianceledger.pki.Msg",
 	HandlerType: (*MsgServer)(nil),
@@ -1153,6 +1713,18 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RejectAddX509RootCert",
 			Handler:    _Msg_RejectAddX509RootCert_Handler,
+		},
+		{
+			MethodName: "AddPkiRevocationDistributionPoint",
+			Handler:    _Msg_AddPkiRevocationDistributionPoint_Handler,
+		},
+		{
+			MethodName: "UpdatePkiRevocationDistributionPoint",
+			Handler:    _Msg_UpdatePkiRevocationDistributionPoint_Handler,
+		},
+		{
+			MethodName: "DeletePkiRevocationDistributionPoint",
+			Handler:    _Msg_DeletePkiRevocationDistributionPoint_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -1698,6 +2270,304 @@ func (m *MsgRejectAddX509RootCertResponse) MarshalToSizedBuffer(dAtA []byte) (in
 	return len(dAtA) - i, nil
 }
 
+func (m *MsgAddPkiRevocationDistributionPoint) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgAddPkiRevocationDistributionPoint) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgAddPkiRevocationDistributionPoint) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.RevocationType != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.RevocationType))
+		i--
+		dAtA[i] = 0x60
+	}
+	if m.DataDigestType != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.DataDigestType))
+		i--
+		dAtA[i] = 0x58
+	}
+	if len(m.DataDigest) > 0 {
+		i -= len(m.DataDigest)
+		copy(dAtA[i:], m.DataDigest)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.DataDigest)))
+		i--
+		dAtA[i] = 0x52
+	}
+	if m.DataFileSize != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.DataFileSize))
+		i--
+		dAtA[i] = 0x48
+	}
+	if len(m.DataURL) > 0 {
+		i -= len(m.DataURL)
+		copy(dAtA[i:], m.DataURL)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.DataURL)))
+		i--
+		dAtA[i] = 0x42
+	}
+	if len(m.IssuerSubjectKeyID) > 0 {
+		i -= len(m.IssuerSubjectKeyID)
+		copy(dAtA[i:], m.IssuerSubjectKeyID)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.IssuerSubjectKeyID)))
+		i--
+		dAtA[i] = 0x3a
+	}
+	if len(m.CrlSignerCertificate) > 0 {
+		i -= len(m.CrlSignerCertificate)
+		copy(dAtA[i:], m.CrlSignerCertificate)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.CrlSignerCertificate)))
+		i--
+		dAtA[i] = 0x32
+	}
+	if len(m.Label) > 0 {
+		i -= len(m.Label)
+		copy(dAtA[i:], m.Label)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Label)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if m.IsPAA {
+		i--
+		if m.IsPAA {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.Pid != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.Pid))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Vid != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.Vid))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgAddPkiRevocationDistributionPointResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgAddPkiRevocationDistributionPointResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgAddPkiRevocationDistributionPointResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgUpdatePkiRevocationDistributionPoint) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgUpdatePkiRevocationDistributionPoint) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgUpdatePkiRevocationDistributionPoint) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.DataDigestType != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.DataDigestType))
+		i--
+		dAtA[i] = 0x48
+	}
+	if len(m.DataDigest) > 0 {
+		i -= len(m.DataDigest)
+		copy(dAtA[i:], m.DataDigest)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.DataDigest)))
+		i--
+		dAtA[i] = 0x42
+	}
+	if m.DataFileSize != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.DataFileSize))
+		i--
+		dAtA[i] = 0x38
+	}
+	if len(m.DataURL) > 0 {
+		i -= len(m.DataURL)
+		copy(dAtA[i:], m.DataURL)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.DataURL)))
+		i--
+		dAtA[i] = 0x32
+	}
+	if len(m.IssuerSubjectKeyID) > 0 {
+		i -= len(m.IssuerSubjectKeyID)
+		copy(dAtA[i:], m.IssuerSubjectKeyID)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.IssuerSubjectKeyID)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if len(m.CrlSignerCertificate) > 0 {
+		i -= len(m.CrlSignerCertificate)
+		copy(dAtA[i:], m.CrlSignerCertificate)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.CrlSignerCertificate)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.Label) > 0 {
+		i -= len(m.Label)
+		copy(dAtA[i:], m.Label)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Label)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.Vid != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.Vid))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgUpdatePkiRevocationDistributionPointResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgUpdatePkiRevocationDistributionPointResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgUpdatePkiRevocationDistributionPointResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgDeletePkiRevocationDistributionPoint) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgDeletePkiRevocationDistributionPoint) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgDeletePkiRevocationDistributionPoint) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.IssuerSubjectKeyID) > 0 {
+		i -= len(m.IssuerSubjectKeyID)
+		copy(dAtA[i:], m.IssuerSubjectKeyID)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.IssuerSubjectKeyID)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.Label) > 0 {
+		i -= len(m.Label)
+		copy(dAtA[i:], m.Label)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Label)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.Vid != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.Vid))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgDeletePkiRevocationDistributionPointResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgDeletePkiRevocationDistributionPointResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgDeletePkiRevocationDistributionPointResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
 	offset -= sovTx(v)
 	base := offset
@@ -1952,6 +2822,150 @@ func (m *MsgRejectAddX509RootCert) Size() (n int) {
 }
 
 func (m *MsgRejectAddX509RootCertResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgAddPkiRevocationDistributionPoint) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.Vid != 0 {
+		n += 1 + sovTx(uint64(m.Vid))
+	}
+	if m.Pid != 0 {
+		n += 1 + sovTx(uint64(m.Pid))
+	}
+	if m.IsPAA {
+		n += 2
+	}
+	l = len(m.Label)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.CrlSignerCertificate)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.IssuerSubjectKeyID)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.DataURL)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.DataFileSize != 0 {
+		n += 1 + sovTx(uint64(m.DataFileSize))
+	}
+	l = len(m.DataDigest)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.DataDigestType != 0 {
+		n += 1 + sovTx(uint64(m.DataDigestType))
+	}
+	if m.RevocationType != 0 {
+		n += 1 + sovTx(uint64(m.RevocationType))
+	}
+	return n
+}
+
+func (m *MsgAddPkiRevocationDistributionPointResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgUpdatePkiRevocationDistributionPoint) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.Vid != 0 {
+		n += 1 + sovTx(uint64(m.Vid))
+	}
+	l = len(m.Label)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.CrlSignerCertificate)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.IssuerSubjectKeyID)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.DataURL)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.DataFileSize != 0 {
+		n += 1 + sovTx(uint64(m.DataFileSize))
+	}
+	l = len(m.DataDigest)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.DataDigestType != 0 {
+		n += 1 + sovTx(uint64(m.DataDigestType))
+	}
+	return n
+}
+
+func (m *MsgUpdatePkiRevocationDistributionPointResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgDeletePkiRevocationDistributionPoint) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.Vid != 0 {
+		n += 1 + sovTx(uint64(m.Vid))
+	}
+	l = len(m.Label)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.IssuerSubjectKeyID)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgDeletePkiRevocationDistributionPointResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -3608,6 +4622,977 @@ func (m *MsgRejectAddX509RootCertResponse) Unmarshal(dAtA []byte) error {
 		}
 		if fieldNum <= 0 {
 			return fmt.Errorf("proto: MsgRejectAddX509RootCertResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgAddPkiRevocationDistributionPoint) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgAddPkiRevocationDistributionPoint: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgAddPkiRevocationDistributionPoint: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Vid", wireType)
+			}
+			m.Vid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Vid |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pid", wireType)
+			}
+			m.Pid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Pid |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IsPAA", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.IsPAA = bool(v != 0)
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Label", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Label = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CrlSignerCertificate", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.CrlSignerCertificate = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IssuerSubjectKeyID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.IssuerSubjectKeyID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 8:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DataURL", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.DataURL = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 9:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DataFileSize", wireType)
+			}
+			m.DataFileSize = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.DataFileSize |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 10:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DataDigest", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.DataDigest = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 11:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DataDigestType", wireType)
+			}
+			m.DataDigestType = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.DataDigestType |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 12:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RevocationType", wireType)
+			}
+			m.RevocationType = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.RevocationType |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgAddPkiRevocationDistributionPointResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgAddPkiRevocationDistributionPointResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgAddPkiRevocationDistributionPointResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgUpdatePkiRevocationDistributionPoint) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgUpdatePkiRevocationDistributionPoint: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgUpdatePkiRevocationDistributionPoint: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Vid", wireType)
+			}
+			m.Vid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Vid |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Label", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Label = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CrlSignerCertificate", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.CrlSignerCertificate = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IssuerSubjectKeyID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.IssuerSubjectKeyID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DataURL", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.DataURL = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DataFileSize", wireType)
+			}
+			m.DataFileSize = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.DataFileSize |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 8:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DataDigest", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.DataDigest = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 9:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DataDigestType", wireType)
+			}
+			m.DataDigestType = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.DataDigestType |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgUpdatePkiRevocationDistributionPointResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgUpdatePkiRevocationDistributionPointResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgUpdatePkiRevocationDistributionPointResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgDeletePkiRevocationDistributionPoint) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgDeletePkiRevocationDistributionPoint: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgDeletePkiRevocationDistributionPoint: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Vid", wireType)
+			}
+			m.Vid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Vid |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Label", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Label = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IssuerSubjectKeyID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.IssuerSubjectKeyID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgDeletePkiRevocationDistributionPointResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgDeletePkiRevocationDistributionPointResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgDeletePkiRevocationDistributionPointResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:

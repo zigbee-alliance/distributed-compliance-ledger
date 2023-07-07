@@ -3,12 +3,13 @@ package keeper
 import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
 // SetChildCertificates set a specific childCertificates in the store from its index.
 func (k Keeper) SetChildCertificates(ctx sdk.Context, childCertificates types.ChildCertificates) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ChildCertificatesKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ChildCertificatesKeyPrefix))
 	b := k.cdc.MustMarshal(&childCertificates)
 	store.Set(types.ChildCertificatesKey(
 		childCertificates.Issuer,
@@ -22,7 +23,7 @@ func (k Keeper) GetChildCertificates(
 	issuer string,
 	authorityKeyID string,
 ) (val types.ChildCertificates, found bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ChildCertificatesKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ChildCertificatesKeyPrefix))
 
 	b := store.Get(types.ChildCertificatesKey(
 		issuer,
@@ -43,7 +44,7 @@ func (k Keeper) RemoveChildCertificates(
 	issuer string,
 	authorityKeyID string,
 ) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ChildCertificatesKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ChildCertificatesKeyPrefix))
 	store.Delete(types.ChildCertificatesKey(
 		issuer,
 		authorityKeyID,
@@ -52,7 +53,7 @@ func (k Keeper) RemoveChildCertificates(
 
 // GetAllChildCertificates returns all childCertificates.
 func (k Keeper) GetAllChildCertificates(ctx sdk.Context) (list []types.ChildCertificates) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ChildCertificatesKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ChildCertificatesKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()
@@ -68,7 +69,7 @@ func (k Keeper) GetAllChildCertificates(ctx sdk.Context) (list []types.ChildCert
 
 // Add a child certificate to the list of child certificate IDs for the issuer/authorityKeyId map.
 func (k Keeper) AddChildCertificate(ctx sdk.Context, issuer string, authorityKeyID string, certID types.CertificateIdentifier) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ChildCertificatesKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ChildCertificatesKeyPrefix))
 
 	childCertificatesBytes := store.Get(types.ChildCertificatesKey(
 		issuer,

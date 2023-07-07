@@ -337,5 +337,34 @@ export class Api extends HttpClient {
             format: "json",
             ...params,
         });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryPkiRevocationDistributionPointAll
+         * @summary Queries a list of PkiRevocationDistributionPoint items.
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/pki-revocation-distribution-point
+         */
+        this.queryPkiRevocationDistributionPointAll = (query, params = {}) => this.request({
+            path: `/zigbee-alliance/distributedcomplianceledger/pki/pki-revocation-distribution-point`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryPkiRevocationDistributionPoint
+         * @summary Queries a PkiRevocationDistributionPoint by index.
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/pki-revocation-distribution-point/{vid}/{label}/{issuerSubjectKeyID}
+         */
+        this.queryPkiRevocationDistributionPoint = (vid, label, issuerSubjectKeyID, params = {}) => this.request({
+            path: `/zigbee-alliance/distributedcomplianceledger/pki/pki-revocation-distribution-point/${vid}/${label}/${issuerSubjectKeyID}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
     }
 }

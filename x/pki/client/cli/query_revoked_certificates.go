@@ -6,6 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
@@ -63,7 +64,7 @@ func CmdShowRevokedCertificates() *cobra.Command {
 
 			return cli.QueryWithProof(
 				clientCtx,
-				types.StoreKey,
+				pkitypes.StoreKey,
 				types.RevokedCertificatesKeyPrefix,
 				types.RevokedCertificatesKey(subject, subjectKeyID),
 				&res,

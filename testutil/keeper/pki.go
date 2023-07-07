@@ -12,14 +12,15 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	tmdb "github.com/tendermint/tm-db"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
 func PkiKeeper(tb testing.TB, dclauthKeeper types.DclauthKeeper) (*keeper.Keeper, sdk.Context) {
 	tb.Helper()
-	storeKey := sdk.NewKVStoreKey(types.StoreKey)
-	memStoreKey := storetypes.NewMemoryStoreKey(types.MemStoreKey)
+	storeKey := sdk.NewKVStoreKey(pkitypes.StoreKey)
+	memStoreKey := storetypes.NewMemoryStoreKey(pkitypes.MemStoreKey)
 
 	db := tmdb.NewMemDB()
 	stateStore := store.NewCommitMultiStore(db)

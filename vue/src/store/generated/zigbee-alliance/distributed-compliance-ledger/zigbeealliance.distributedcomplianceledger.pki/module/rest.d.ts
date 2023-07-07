@@ -40,13 +40,34 @@ export interface PkiGrant {
     time?: string;
     info?: string;
 }
+export declare type PkiMsgAddPkiRevocationDistributionPointResponse = object;
 export declare type PkiMsgAddX509CertResponse = object;
 export declare type PkiMsgApproveAddX509RootCertResponse = object;
 export declare type PkiMsgApproveRevokeX509RootCertResponse = object;
+export declare type PkiMsgDeletePkiRevocationDistributionPointResponse = object;
 export declare type PkiMsgProposeAddX509RootCertResponse = object;
 export declare type PkiMsgProposeRevokeX509RootCertResponse = object;
 export declare type PkiMsgRejectAddX509RootCertResponse = object;
 export declare type PkiMsgRevokeX509CertResponse = object;
+export declare type PkiMsgUpdatePkiRevocationDistributionPointResponse = object;
+export interface PkiPkiRevocationDistributionPoint {
+    /** @format uint64 */
+    vid?: string;
+    label?: string;
+    issuerSubjectKeyID?: string;
+    /** @format uint64 */
+    pid?: string;
+    isPAA?: boolean;
+    crlSignerCertificate?: string;
+    dataURL?: string;
+    /** @format uint64 */
+    dataFileSize?: string;
+    dataDigest?: string;
+    /** @format uint64 */
+    dataDigestType?: string;
+    /** @format uint64 */
+    revocationType?: string;
+}
 export interface PkiProposedCertificate {
     subject?: string;
     subjectKeyId?: string;
@@ -65,6 +86,19 @@ export interface PkiProposedCertificateRevocation {
 }
 export interface PkiQueryAllApprovedCertificatesResponse {
     approvedCertificates?: PkiApprovedCertificates[];
+    /**
+     * PageResponse is to be embedded in gRPC response messages where the
+     * corresponding request message has used PageRequest.
+     *
+     *  message SomeResponse {
+     *          repeated Bar results = 1;
+     *          PageResponse page = 2;
+     *  }
+     */
+    pagination?: V1Beta1PageResponse;
+}
+export interface PkiQueryAllPkiRevocationDistributionPointResponse {
+    PkiRevocationDistributionPoint?: PkiPkiRevocationDistributionPoint[];
     /**
      * PageResponse is to be embedded in gRPC response messages where the
      * corresponding request message has used PageRequest.
@@ -139,6 +173,9 @@ export interface PkiQueryGetApprovedRootCertificatesResponse {
 }
 export interface PkiQueryGetChildCertificatesResponse {
     childCertificates?: PkiChildCertificates;
+}
+export interface PkiQueryGetPkiRevocationDistributionPointResponse {
+    PkiRevocationDistributionPoint?: PkiPkiRevocationDistributionPoint;
 }
 export interface PkiQueryGetProposedCertificateResponse {
     proposedCertificate?: PkiProposedCertificate;
@@ -447,5 +484,29 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @request GET:/dcl/pki/root-certificates
      */
     queryApprovedRootCertificates: (params?: RequestParams) => Promise<HttpResponse<PkiQueryGetApprovedRootCertificatesResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryPkiRevocationDistributionPointAll
+     * @summary Queries a list of PkiRevocationDistributionPoint items.
+     * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/pki-revocation-distribution-point
+     */
+    queryPkiRevocationDistributionPointAll: (query?: {
+        "pagination.key"?: string;
+        "pagination.offset"?: string;
+        "pagination.limit"?: string;
+        "pagination.countTotal"?: boolean;
+        "pagination.reverse"?: boolean;
+    }, params?: RequestParams) => Promise<HttpResponse<PkiQueryAllPkiRevocationDistributionPointResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryPkiRevocationDistributionPoint
+     * @summary Queries a PkiRevocationDistributionPoint by index.
+     * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/pki-revocation-distribution-point/{vid}/{label}/{issuerSubjectKeyID}
+     */
+    queryPkiRevocationDistributionPoint: (vid: string, label: string, issuerSubjectKeyID: string, params?: RequestParams) => Promise<HttpResponse<PkiQueryGetPkiRevocationDistributionPointResponse, RpcStatus>>;
 }
 export {};

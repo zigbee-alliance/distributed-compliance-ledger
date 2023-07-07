@@ -4,20 +4,19 @@ import (
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/client"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 
 	// "strings".
 	"github.com/spf13/cobra"
-
 	// sdk "github.com/cosmos/cosmos-sdk/types".
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module.
 func GetQueryCmd(queryRoute string) *cobra.Command {
 	// Group pki queries under a subcommand
 	cmd := &cobra.Command{
-		Use:                        types.ModuleName,
-		Short:                      fmt.Sprintf("Querying commands for the %s module", types.ModuleName),
+		Use:                        pkitypes.ModuleName,
+		Short:                      fmt.Sprintf("Querying commands for the %s module", pkitypes.ModuleName),
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
@@ -37,6 +36,9 @@ func GetQueryCmd(queryRoute string) *cobra.Command {
 	cmd.AddCommand(CmdShowApprovedCertificatesBySubject())
 	cmd.AddCommand(CmdListRejectedCertificate())
 	cmd.AddCommand(CmdShowRejectedCertificate())
+	cmd.AddCommand(CmdListPkiRevocationDistributionPoint())
+	cmd.AddCommand(CmdShowPkiRevocationDistributionPoint())
+	cmd.AddCommand(CmdShowPkiRevocationDistributionPointsByIssuerSubjectKeyID())
 	// this line is used by starport scaffolding # 1
 
 	return cmd

@@ -3,12 +3,13 @@ package keeper
 import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
 // SetUniqueCertificate set a specific uniqueCertificate in the store from its index.
 func (k Keeper) SetUniqueCertificate(ctx sdk.Context, uniqueCertificate types.UniqueCertificate) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UniqueCertificateKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.UniqueCertificateKeyPrefix))
 	b := k.cdc.MustMarshal(&uniqueCertificate)
 	store.Set(types.UniqueCertificateKey(
 		uniqueCertificate.Issuer,
@@ -22,7 +23,7 @@ func (k Keeper) GetUniqueCertificate(
 	issuer string,
 	serialNumber string,
 ) (val types.UniqueCertificate, found bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UniqueCertificateKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.UniqueCertificateKeyPrefix))
 
 	b := store.Get(types.UniqueCertificateKey(
 		issuer,
@@ -43,7 +44,7 @@ func (k Keeper) RemoveUniqueCertificate(
 	issuer string,
 	serialNumber string,
 ) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UniqueCertificateKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.UniqueCertificateKeyPrefix))
 	store.Delete(types.UniqueCertificateKey(
 		issuer,
 		serialNumber,
@@ -52,7 +53,7 @@ func (k Keeper) RemoveUniqueCertificate(
 
 // GetAllUniqueCertificate returns all uniqueCertificate.
 func (k Keeper) GetAllUniqueCertificate(ctx sdk.Context) (list []types.UniqueCertificate) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UniqueCertificateKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.UniqueCertificateKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()
@@ -72,7 +73,7 @@ func (k Keeper) IsUniqueCertificatePresent(
 	issuer string,
 	serialNumber string,
 ) bool {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UniqueCertificateKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.UniqueCertificateKeyPrefix))
 
 	return store.Has(types.UniqueCertificateKey(
 		issuer,

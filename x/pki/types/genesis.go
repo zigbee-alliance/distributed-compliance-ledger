@@ -10,16 +10,18 @@ const DefaultIndex uint64 = 1
 // DefaultGenesis returns the default Capability genesis state.
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
-		ApprovedCertificatesList:          []ApprovedCertificates{},
-		ProposedCertificateList:           []ProposedCertificate{},
-		ChildCertificatesList:             []ChildCertificates{},
-		ProposedCertificateRevocationList: []ProposedCertificateRevocation{},
-		RevokedCertificatesList:           []RevokedCertificates{},
-		UniqueCertificateList:             []UniqueCertificate{},
-		ApprovedRootCertificates:          nil,
-		RevokedRootCertificates:           nil,
-		ApprovedCertificatesBySubjectList: []ApprovedCertificatesBySubject{},
-		RejectedCertificateList:           []RejectedCertificate{},
+		ApprovedCertificatesList:                                []ApprovedCertificates{},
+		ProposedCertificateList:                                 []ProposedCertificate{},
+		ChildCertificatesList:                                   []ChildCertificates{},
+		ProposedCertificateRevocationList:                       []ProposedCertificateRevocation{},
+		RevokedCertificatesList:                                 []RevokedCertificates{},
+		UniqueCertificateList:                                   []UniqueCertificate{},
+		ApprovedRootCertificates:                                nil,
+		RevokedRootCertificates:                                 nil,
+		ApprovedCertificatesBySubjectList:                       []ApprovedCertificatesBySubject{},
+		RejectedCertificateList:                                 []RejectedCertificate{},
+		PkiRevocationDistributionPointList:                      []PkiRevocationDistributionPoint{},
+		PkiRevocationDistributionPointsByIssuerSubjectKeyIDList: []PkiRevocationDistributionPointsByIssuerSubjectKeyID{},
 		// this line is used by starport scaffolding # genesis/types/default
 	}
 }
@@ -108,6 +110,26 @@ func (gs GenesisState) Validate() error {
 			return fmt.Errorf("duplicated index for rejectedCertificate")
 		}
 		rejectedCertificateIndexMap[index] = struct{}{}
+	}
+	// Check for duplicated index in pKIRevocationDistributionPoint
+	pKIRevocationDistributionPointIndexMap := make(map[string]struct{})
+
+	for _, elem := range gs.PkiRevocationDistributionPointList {
+		index := string(PkiRevocationDistributionPointKey(elem.Vid, elem.Label, elem.IssuerSubjectKeyID))
+		if _, ok := pKIRevocationDistributionPointIndexMap[index]; ok {
+			return fmt.Errorf("duplicated index for pKIRevocationDistributionPoint")
+		}
+		pKIRevocationDistributionPointIndexMap[index] = struct{}{}
+	}
+	// Check for duplicated index in pkiRevocationDistributionPointsByIssuerSubjectKeyID
+	pkiRevocationDistributionPointsByIssuerSubjectKeyIDIndexMap := make(map[string]struct{})
+
+	for _, elem := range gs.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList {
+		index := string(PkiRevocationDistributionPointsByIssuerSubjectKeyIDKey(elem.IssuerSubjectKeyID))
+		if _, ok := pkiRevocationDistributionPointsByIssuerSubjectKeyIDIndexMap[index]; ok {
+			return fmt.Errorf("duplicated index for pkiRevocationDistributionPointsByIssuerSubjectKeyID")
+		}
+		pkiRevocationDistributionPointsByIssuerSubjectKeyIDIndexMap[index] = struct{}{}
 	}
 	// this line is used by starport scaffolding # genesis/types/validate
 

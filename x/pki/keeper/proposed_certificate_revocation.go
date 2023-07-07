@@ -3,12 +3,13 @@ package keeper
 import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
 // SetProposedCertificateRevocation set a specific proposedCertificateRevocation in the store from its index.
 func (k Keeper) SetProposedCertificateRevocation(ctx sdk.Context, proposedCertificateRevocation types.ProposedCertificateRevocation) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedCertificateRevocationKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ProposedCertificateRevocationKeyPrefix))
 	b := k.cdc.MustMarshal(&proposedCertificateRevocation)
 	store.Set(types.ProposedCertificateRevocationKey(
 		proposedCertificateRevocation.Subject,
@@ -22,7 +23,7 @@ func (k Keeper) GetProposedCertificateRevocation(
 	subject string,
 	subjectKeyID string,
 ) (val types.ProposedCertificateRevocation, found bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedCertificateRevocationKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ProposedCertificateRevocationKeyPrefix))
 
 	b := store.Get(types.ProposedCertificateRevocationKey(
 		subject,
@@ -43,7 +44,7 @@ func (k Keeper) RemoveProposedCertificateRevocation(
 	subject string,
 	subjectKeyID string,
 ) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedCertificateRevocationKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ProposedCertificateRevocationKeyPrefix))
 	store.Delete(types.ProposedCertificateRevocationKey(
 		subject,
 		subjectKeyID,
@@ -52,7 +53,7 @@ func (k Keeper) RemoveProposedCertificateRevocation(
 
 // GetAllProposedCertificateRevocation returns all proposedCertificateRevocation.
 func (k Keeper) GetAllProposedCertificateRevocation(ctx sdk.Context) (list []types.ProposedCertificateRevocation) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedCertificateRevocationKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ProposedCertificateRevocationKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()
@@ -73,7 +74,7 @@ func (k Keeper) IsProposedCertificateRevocationPresent(
 	subject string,
 	subjectKeyID string,
 ) bool {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedCertificateRevocationKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ProposedCertificateRevocationKeyPrefix))
 
 	return store.Has(types.ProposedCertificateRevocationKey(
 		subject,

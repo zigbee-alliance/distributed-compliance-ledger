@@ -4,6 +4,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
@@ -21,7 +22,7 @@ func CmdShowApprovedCertificatesBySubject() *cobra.Command {
 
 			return cli.QueryWithProof(
 				clientCtx,
-				types.StoreKey,
+				pkitypes.StoreKey,
 				types.ApprovedCertificatesBySubjectKeyPrefix,
 				types.ApprovedCertificatesBySubjectKey(subject),
 				&res,

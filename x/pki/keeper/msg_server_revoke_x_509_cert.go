@@ -6,6 +6,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
@@ -14,11 +15,11 @@ func (k msgServer) RevokeX509Cert(goCtx context.Context, msg *types.MsgRevokeX50
 
 	certificates, found := k.GetApprovedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
 	if !found {
-		return nil, types.NewErrCertificateDoesNotExist(msg.Subject, msg.SubjectKeyId)
+		return nil, pkitypes.NewErrCertificateDoesNotExist(msg.Subject, msg.SubjectKeyId)
 	}
 
 	if certificates.Certs[0].IsRoot {
-		return nil, types.NewErrInappropriateCertificateType(
+		return nil, pkitypes.NewErrInappropriateCertificateType(
 			fmt.Sprintf("Inappropriate Certificate Type: Certificate with subject=%v and subjectKeyID=%v "+
 				"is a root certificate. To propose revocation of a root certificate please use "+
 				"`PROPOSE_REVOKE_X509_ROOT_CERT` transaction.", msg.Subject, msg.SubjectKeyId),
