@@ -209,3 +209,7 @@ if [[ -n "$DCL_LIGHT_CLIENT_PROXY" ]]; then
     mkdir "$LOCALNET_DIR/lightclient0"
     init_light_client_proxy lightclient0
 fi
+
+if [ -n "$MAINNET_STABLE_VERSION" ]; then
+    rm dcld
+fi

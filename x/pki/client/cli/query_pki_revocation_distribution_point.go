@@ -61,7 +61,7 @@ func CmdShowPkiRevocationDistributionPoint() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
-			var res types.ProposedCertificateRevocation
+			var res types.PkiRevocationDistributionPoint
 
 			return cli.QueryWithProof(
 				clientCtx,
