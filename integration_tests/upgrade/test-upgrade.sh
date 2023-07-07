@@ -852,6 +852,8 @@ intermediate_cert_path_new="integration_tests/constants/intermediate_cert_gsr4"
 intermediate_cert_subject_new="MEYxCzAJBgNVBAYTAlVTMSIwIAYDVQQKExlHb29nbGUgVHJ1c3QgU2VydmljZXMgTExDMRMwEQYDVQQDEwpHVFMgQ0EgMkQ0"
 intermediate_cert_subject_key_id_new="A8:88:D9:8A:39:AC:65:D5:82:4B:37:A8:95:6C:65:43:CD:44:01:E0"
 
+test_data_url="https://www.newexample.com"
+
 vendor_name_new="VendorNameNew"
 company_legal_name_new="LegalCompanyNameNew"
 company_preferred_name_new="CompanyPreferredNameNew"
@@ -1102,6 +1104,38 @@ test_divider
 
 echo "Propose revoke test_root_certificate"
 result=$(echo $passphrase | dcld tx pki propose-revoke-x509-root-cert --subject="$test_root_cert_subject_new" --subject-key-id="$test_root_cert_subject_key_id_new" --from $trustee_account_1 --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+# PKI Revocation point
+
+echo "Add new revocaton point for a old vid"
+result=$(echo $passphrase | tx pki add-revocation-point --vid=$vid --is-paa="true" --certificate="$test_root_cert_path" --label="$product_label" --data-url="$test_data_url" --issuer-subject-key-id=$test_root_cert_subject_key_id --from=$vendor_account --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Add new revocaton point for a new vid"
+result=$(echo $passphrase | tx pki add-revocation-point --vid=$vid_new --is-paa="true" --certificate="$test_root_cert_path_new" --label="$product_label_new" --data-url="$test_data_url" --issuer-subject-key-id=$test_root_cert_subject_key_id_new --from=$vendor_account_new --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Update revocaton point for an old vid"
+result=$(echo $passphrase | tx pki update-revocation-point --vid=$vid --certificate="$test_root_cert_path" --label="$product_label" --data-url="$test_data_url" --issuer-subject-key-id=$test_root_cert_subject_key_id --from=$vendor_account --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Update revocaton point for a new vid"
+result=$(echo $passphrase | tx pki update-revocation-point --vid=$vid_new --certificate="$test_root_cert_path_new" --label="$product_label_new" --data-url="$test_data_url" --issuer-subject-key-id=$test_root_cert_subject_key_id_new --from=$vendor_account_new --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Delete revocaton point for the old vid"
+result=$(echo $passphrase | tx pki delete-revocation-point --vid=$vid --label="$product_label" --issuer-subject-key-id=$test_root_cert_subject_key_id --from=$vendor_account --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1415,6 +1449,20 @@ result=$(dcld query pki proposed-x509-root-cert-to-revoke --subject=$test_root_c
 check_response "$result" "\"subject\": \"$test_root_cert_subject_new\""
 check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id_new\""
 
+echo "Get revocation point"
+result=$(dcld query pki revocation-point --vid=$vid_new --label=$product_label_new --issuer-subject-key-id=$test_root_cert_subject_key_id_new)
+check_response "$result" "\"vid\": \"$vid_new\""
+check_response "$result" "\"issuerSubjectKeyID\": \"$test_root_cert_subject_key_id_new\""
+check_response "$result" "\"label\": \"$product_label_new\""
+check_response "$result" "\"dataUrl\": \"$test_data_url\""
+
+echo "Get revocation points by issuer subject key id"
+result=$(dcld query pki revocation-point --issuer-subject-key-id=$test_root_cert_subject_key_id_new)
+check_response "$result" "\"vid\": \"$vid_new\""
+check_response "$result" "\"issuerSubjectKeyID\": \"$test_root_cert_subject_key_id_new\""
+check_response "$result" "\"label\": \"$product_label_new\""
+check_response "$result" "\"dataUrl\": \"$test_data_url\""
+
 echo "Get all proposed x509 root certificates"
 result=$(dcld query pki all-proposed-x509-root-certs)
 check_response "$result" "\"subject\": \"$google_root_cert_subject_new\""
@@ -1434,6 +1482,13 @@ echo "Get all x509 certificates"
 result=$(dcld query pki all-x509-certs)
 check_response "$result" "\"subject\": \"$test_root_cert_subject_new\""
 check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id_new\""
+
+echo "Get all revocation points"
+result=$(dcld query pki all-revocation-points)
+check_response "$result" "\"vid\": \"$vid_new\""
+check_response "$result" "\"issuerSubjectKeyID\": \"$test_root_cert_subject_key_id_new\""
+check_response "$result" "\"label\": \"$product_label_new\""
+check_response "$result" "\"dataUrl\": \"$test_data_url\""
 
 test_divider
 
