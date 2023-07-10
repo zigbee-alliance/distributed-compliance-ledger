@@ -211,7 +211,7 @@ trustee_account_3="bob"
 vendor_account="vendor_account"
 
 plan_name="v0.13.0-pre"
-upgrade_checksum="sha256:2e1df8fcd97d0f35f214fcc0fc9bc9bb28827f8815bba4b6ab797b19d8d0d4ac"
+upgrade_checksum="sha256:f3b50f414c04dda19c14cbe1c4b8e17a952708ded35ac74992ef972604cbb61b"
 
 vid=1
 pid_1=1
@@ -597,8 +597,8 @@ plan_height=$(expr $current_height \+ 20)
 test_divider
 
 echo "Propose upgrade $plan_name at height $plan_height"
-echo "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$plan_name/dcld.ubuntu.tar.gz?checksum=$upgrade_checksum"
-result=$(echo $passphrase | dcld tx dclupgrade propose-upgrade --name=$plan_name --upgrade-height=$plan_height --upgrade-info="{\"binaries\":{\"linux/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$plan_name/dcld.ubuntu.tar.gz?checksum=$upgrade_checksum\"}}" --from $trustee_account_1 --yes)
+echo "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.2.0-pre/dcld.ubuntu.tar.gz?checksum=$upgrade_checksum"
+result=$(echo $passphrase | dcld tx dclupgrade propose-upgrade --name=$plan_name --upgrade-height=$plan_height --upgrade-info="{\"binaries\":{\"linux/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.2.0-pre/dcld.ubuntu.tar.gz?checksum=$upgrade_checksum\"}}" --from $trustee_account_1 --yes)
 echo "$result"
 check_response "$result" "\"code\": 0"
 
@@ -619,7 +619,7 @@ check_response "$result" "\"code\": 0"
 test_divider
 
 echo "Wait for block height to become greater than upgrade $plan_name plan height"
-wait_for_height $(expr $plan_height + 1) 300 outage-safe
+wait_for_height $(expr $plan_height + 1) 3000 outage-safe
 
 test_divider
 
@@ -852,7 +852,9 @@ intermediate_cert_path_new="integration_tests/constants/intermediate_cert_gsr4"
 intermediate_cert_subject_new="MEYxCzAJBgNVBAYTAlVTMSIwIAYDVQQKExlHb29nbGUgVHJ1c3QgU2VydmljZXMgTExDMRMwEQYDVQQDEwpHVFMgQ0EgMkQ0"
 intermediate_cert_subject_key_id_new="A8:88:D9:8A:39:AC:65:D5:82:4B:37:A8:95:6C:65:43:CD:44:01:E0"
 
-test_data_url="https://www.newexample.com"
+test_data_url="https://url.data.dclmodel"
+issuer_subject_key_id="5A880E6C3653D07FB08971A3F473790930E62BDB"
+issuer_vid=4701
 
 vendor_name_new="VendorNameNew"
 company_legal_name_new="LegalCompanyNameNew"
@@ -1110,32 +1112,32 @@ test_divider
 
 # PKI Revocation point
 
-echo "Add new revocaton point for a old vid"
-result=$(echo $passphrase | tx pki add-revocation-point --vid=$vid --is-paa="true" --certificate="$test_root_cert_path" --label="$product_label" --data-url="$test_data_url" --issuer-subject-key-id=$test_root_cert_subject_key_id --from=$vendor_account --yes)
+echo "Add new revocaton point for a old label"
+result=$(echo $passphrase | dcld tx pki add-revocation-point --vid=$issuer_vid --revocation-type=1 --is-paa="true" --certificate="$test_root_cert_path" --label="$product_label" --data-url="$test_data_url" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Add new revocaton point for a new vid"
-result=$(echo $passphrase | tx pki add-revocation-point --vid=$vid_new --is-paa="true" --certificate="$test_root_cert_path_new" --label="$product_label_new" --data-url="$test_data_url" --issuer-subject-key-id=$test_root_cert_subject_key_id_new --from=$vendor_account_new --yes)
+echo "Add new revocaton point for a new label"
+result=$(echo $passphrase | dcld tx pki add-revocation-point --vid=$issuer_vid --revocation-type=1 --is-paa="true" --certificate="$test_root_cert_path_new" --label="$product_label_new" --data-url="$test_data_url" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account_new --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Update revocaton point for an old vid"
-result=$(echo $passphrase | tx pki update-revocation-point --vid=$vid --certificate="$test_root_cert_path" --label="$product_label" --data-url="$test_data_url" --issuer-subject-key-id=$test_root_cert_subject_key_id --from=$vendor_account --yes)
+result=$(echo $passphrase | dcld tx pki update-revocation-point --vid=$issuer_vid --certificate="$test_root_cert_path" --label="$product_label" --data-url="$test_data_url" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Update revocaton point for a new vid"
-result=$(echo $passphrase | tx pki update-revocation-point --vid=$vid_new --certificate="$test_root_cert_path_new" --label="$product_label_new" --data-url="$test_data_url" --issuer-subject-key-id=$test_root_cert_subject_key_id_new --from=$vendor_account_new --yes)
+result=$(echo $passphrase | dcld tx pki update-revocation-point --vid=$issuer_vid --certificate="$test_root_cert_path_new" --label="$product_label_new" --data-url="$test_data_url" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account_new --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Delete revocaton point for the old vid"
-result=$(echo $passphrase | tx pki delete-revocation-point --vid=$vid --label="$product_label" --issuer-subject-key-id=$test_root_cert_subject_key_id --from=$vendor_account --yes)
+result=$(echo $passphrase | dcld tx pki delete-revocation-point --vid=$issuer_vid --label="$product_label" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1450,16 +1452,16 @@ check_response "$result" "\"subject\": \"$test_root_cert_subject_new\""
 check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id_new\""
 
 echo "Get revocation point"
-result=$(dcld query pki revocation-point --vid=$vid_new --label=$product_label_new --issuer-subject-key-id=$test_root_cert_subject_key_id_new)
-check_response "$result" "\"vid\": \"$vid_new\""
-check_response "$result" "\"issuerSubjectKeyID\": \"$test_root_cert_subject_key_id_new\""
+result=$(dcld query pki revocation-point --vid=$issuer_vid --label=$product_label_new --issuer-subject-key-id=$issuer_subject_key_id)
+check_response "$result" "\"vid\": \"$issuer_vid\""
+check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
 check_response "$result" "\"label\": \"$product_label_new\""
 check_response "$result" "\"dataUrl\": \"$test_data_url\""
 
 echo "Get revocation points by issuer subject key id"
-result=$(dcld query pki revocation-point --issuer-subject-key-id=$test_root_cert_subject_key_id_new)
-check_response "$result" "\"vid\": \"$vid_new\""
-check_response "$result" "\"issuerSubjectKeyID\": \"$test_root_cert_subject_key_id_new\""
+result=$(dcld query pki revocation-points --issuer-subject-key-id=$issuer_subject_key_id)
+check_response "$result" "\"vid\": \"$issuer_vid\""
+check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
 check_response "$result" "\"label\": \"$product_label_new\""
 check_response "$result" "\"dataUrl\": \"$test_data_url\""
 
@@ -1485,8 +1487,8 @@ check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id_new
 
 echo "Get all revocation points"
 result=$(dcld query pki all-revocation-points)
-check_response "$result" "\"vid\": \"$vid_new\""
-check_response "$result" "\"issuerSubjectKeyID\": \"$test_root_cert_subject_key_id_new\""
+check_response "$result" "\"vid\": \"$issuer_vid\""
+check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
 check_response "$result" "\"label\": \"$product_label_new\""
 check_response "$result" "\"dataUrl\": \"$test_data_url\""
 

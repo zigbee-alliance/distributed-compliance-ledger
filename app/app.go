@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -238,6 +239,7 @@ func New(
 	bApp := baseapp.NewBaseApp(Name, logger, db, encodingConfig.TxConfig.TxDecoder(), baseAppOptions...)
 	bApp.SetCommitMultiStoreTracer(traceStore)
 	bApp.SetVersion(version.Version)
+	bApp.SetProtocolVersion(2)
 	bApp.SetInterfaceRegistry(interfaceRegistry)
 
 	keys := sdk.NewKVStoreKeys(
@@ -589,7 +591,10 @@ func New(
 		app.ScopedTransferKeeper = scopedTransferKeeper
 	*/
 	// this line is used by starport scaffolding # stargate/app/beforeInitReturn
-
+	if err := cfg.RegisterMigration(dclpkitypes.ModuleName, 2, func(ctx sdk.Context) error {return nil}); err != nil {
+		panic(fmt.Errorf("failed to migrate %s to v2: %w", dclpkitypes.ModuleName, err))
+	}
+	
 	app.UpgradeKeeper.SetUpgradeHandler(
 		"v0.10.0",
 		func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
@@ -613,6 +618,13 @@ func New(
 
 	app.UpgradeKeeper.SetUpgradeHandler(
 		"v0.13.0-pre",
+		func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
+			return make(module.VersionMap), nil
+		},
+	)
+
+	app.UpgradeKeeper.SetUpgradeHandler(
+		"v1.2.0",
 		func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
 			return make(module.VersionMap), nil
 		},
