@@ -210,8 +210,8 @@ trustee_account_2="alice"
 trustee_account_3="bob"
 vendor_account="vendor_account"
 
-plan_name="v0.13.0-pre"
-upgrade_checksum="sha256:2e1df8fcd97d0f35f214fcc0fc9bc9bb28827f8815bba4b6ab797b19d8d0d4ac"
+plan_name="v1.2.0-dev2"
+upgrade_checksum="sha256:72632245e2350bf69c79039e339854e639c1bea41317a8381bd7322ccd7b2240"
 
 vid=1
 pid_1=1
