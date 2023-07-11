@@ -818,7 +818,7 @@ test_divider
 
 # after upgrade constatnts
 
-vid_new=2
+vid_new=4701
 pid_1_new=11
 pid_2_new=22
 pid_3_new=33
@@ -978,25 +978,25 @@ test_divider
 # CERTIFY_DEVICE_COMPLIANCE
 
 echo "Certify model vid=$vid_new pid=$pid_1_new"
-result=$(echo $passphrase | dcld tx compliance certify-model --vid=$vid_new --pid=$pid_1_new --softwareVersion=$software_version_new --softwareVersionString=$software_version_string_new  --certificationType=$certification_type_new --certificationDate=$certification_date_new --cdCertificateId=$cd_certificate_id_new --from=$certification_center_account_new --yes)
+result=$(echo $passphrase | dcld tx compliance certify-model --vid=$vid_new --pid=$pid_1_new --softwareVersion=$software_version_new --softwareVersionString=$software_version_string_new  --certificationType=$certification_type_new --certificationDate=$certification_date_new --cdCertificateId=$cd_certificate_id_new --from=$certification_center_account_new --cdVersionNumber=$cd_version_number_new --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Provision model vid=$vid_new pid=$pid_2_new"
+result=$(echo $passphrase | dcld tx compliance provision-model --vid=$vid_new --pid=$pid_2_new --softwareVersion=$software_version_new --softwareVersionString=$software_version_string_new --certificationType=$certification_type_new --provisionalDate=$provisional_date_new --cdCertificateId=$cd_certificate_id_new --from=$certification_center_account_new --cdVersionNumber=$cd_version_number_new --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Certify model vid=$vid_new pid=$pid_2_new"
-result=$(echo $passphrase | dcld tx compliance certify-model --vid=$vid_new --pid=$pid_2_new --softwareVersion=$software_version_new --softwareVersionString=$software_version_string_new  --certificationType=$certification_type_new --certificationDate=$certification_date_new --cdCertificateId=$cd_certificate_id_new --from=$certification_center_account_new --yes)
+result=$(echo $passphrase | dcld tx compliance certify-model --vid=$vid_new --pid=$pid_2_new --softwareVersion=$software_version_new --softwareVersionString=$software_version_string_new  --certificationType=$certification_type_new --certificationDate=$certification_date_new --cdCertificateId=$cd_certificate_id_new --from=$certification_center_account_new --cdVersionNumber=$cd_version_number_new  --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Revoke model certification vid=$vid_new pid=$pid_2_new"
-result=$(echo $passphrase | dcld tx compliance revoke-model --vid=$vid_new --pid=$pid_2_new --softwareVersion=$software_version_new --softwareVersionString=$software_version_string_new --certificationType=$certification_type_new --revocationDate=$certification_date_new --from=$certification_center_account_new --yes)
-check_response "$result" "\"code\": 0"
-
-test_divider
-
-echo "Provision model vid=$vid_new pid=$pid_3_new"
-result=$(echo $passphrase | dcld tx compliance provision-model --vid=$vid_new --pid=$pid_3_new --softwareVersion=$software_version_new --softwareVersionString=$software_version_string_new --certificationType=$certification_type_new --provisionalDate=$provisional_date_new --cdCertificateId=$cd_certificate_id_new --from=$certification_center_account_new --yes)
+result=$(echo $passphrase | dcld tx compliance revoke-model --vid=$vid_new --pid=$pid_2_new --softwareVersion=$software_version_new --softwareVersionString=$software_version_string_new --certificationType=$certification_type_new --revocationDate=$certification_date_new --from=$certification_center_account_new --cdVersionNumber=$cd_version_number_new --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1114,7 +1114,7 @@ test_divider
 # PKI Revocation point
 
 echo "Add new revocaton point for a old label"
-result=$(echo $passphrase | dcld tx pki add-revocation-point --vid=$issuer_vid --revocation-type=1 --is-paa="true" --certificate="$test_root_cert_path" --label="$product_label" --data-url="$test_data_url" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account --yes)
+result=$(echo $passphrase | dcld tx pki add-revocation-point --vid=$issuer_vid --revocation-type=1 --is-paa="true" --certificate="$test_root_cert_path" --label="$product_label" --data-url="$test_data_url" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account_new --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1146,7 +1146,7 @@ test_divider
 # AUTH
 
 echo "Propose add account $user_4_address"
-result=$(echo $passphrase | dcld tx auth propose-add-account --address="$user_4_address" --pubkey="$user_4_pubkey" --roles="CertificationCenter" --from="$trustee_account_1" --yes)
+result=$(echo $passphrase | dcld tx auth propose-add-account --address="$user_4_address" --pubkey="$user_4_pubkey" --roles="CertificationCenter" --vid=$issuer_vid --from="$trustee_account_1" --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
