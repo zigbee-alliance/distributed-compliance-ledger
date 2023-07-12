@@ -841,9 +841,9 @@ root_cert_path_new="integration_tests/constants/google_root_cert_gsr4"
 root_cert_subject_new="MFAxJDAiBgNVBAsTG0dsb2JhbFNpZ24gRUNDIFJvb3QgQ0EgLSBSNDETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UEAxMKR2xvYmFsU2lnbg=="
 root_cert_subject_key_id_new="54:B0:7B:AD:45:B8:E2:40:7F:FB:0A:6E:FB:BE:33:C9:3C:A3:84:D5"
 
-test_root_cert_path_new="integration_tests/constants/google_root_cert_r1"
-test_root_cert_subject_new="MEcxCzAJBgNVBAYTAlVTMSIwIAYDVQQKExlHb29nbGUgVHJ1c3QgU2VydmljZXMgTExDMRQwEgYDVQQDEwtHVFMgUm9vdCBSMQ=="
-test_root_cert_subject_key_id_new="E4:AF:2B:26:71:1A:2B:48:27:85:2F:52:66:2C:EF:F0:89:13:71:3E"
+test_root_cert_path_new="integration_tests/constants/paa_cert_numeric_vid"
+test_root_cert_subject_new="MDAxGDAWBgNVBAMMD01hdHRlciBUZXN0IFBBQTEUMBIGCisGAQQBgqJ8AgEMBEZGRjE="
+test_root_cert_subject_key_id_new="6A:FD:22:77:1F:51:1F:EC:BF:16:41:97:67:10:DC:DC:31:A1:71:7E"
 
 google_root_cert_path_new="integration_tests/constants/google_root_cert_r2"
 google_root_cert_subject_new="MEcxCzAJBgNVBAYTAlVTMSIwIAYDVQQKExlHb29nbGUgVHJ1c3QgU2VydmljZXMgTExDMRQwEgYDVQQDEwtHVFMgUm9vdCBSMg=="
@@ -855,7 +855,6 @@ intermediate_cert_subject_key_id_new="A8:88:D9:8A:39:AC:65:D5:82:4B:37:A8:95:6C:
 
 test_data_url="https://url.data.dclmodel"
 issuer_subject_key_id="5A880E6C3653D07FB08971A3F473790930E62BDB"
-issuer_vid=4701
 
 vendor_name_new="VendorNameNew"
 company_legal_name_new="LegalCompanyNameNew"
@@ -1113,32 +1112,27 @@ test_divider
 
 # PKI Revocation point
 
-echo "Add new revocaton point for a old label"
-result=$(echo $passphrase | dcld tx pki add-revocation-point --vid=$issuer_vid --revocation-type=1 --is-paa="true" --certificate="$test_root_cert_path" --label="$product_label" --data-url="$test_data_url" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account_new --yes)
+echo "Add new revocaton point for"
+result=$(echo $passphrase | dcld tx pki add-revocation-point --vid=$vid_new --revocation-type=1 --is-paa="true" --certificate="$test_root_cert_path" --label="$product_label" --data-url="$test_data_url" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account_new --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Add new revocaton point for a new label"
-result=$(echo $passphrase | dcld tx pki add-revocation-point --vid=$issuer_vid --revocation-type=1 --is-paa="true" --certificate="$test_root_cert_path_new" --label="$product_label_new" --data-url="$test_data_url" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account_new --yes)
+
+echo "Update revocaton point"
+result=$(echo $passphrase | dcld tx pki update-revocation-point --vid=$vid_new --certificate="$test_root_cert_path" --label="$product_label" --data-url="$test_data_url/new" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account_new --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Update revocaton point for an old vid"
-result=$(echo $passphrase | dcld tx pki update-revocation-point --vid=$issuer_vid --certificate="$test_root_cert_path" --label="$product_label" --data-url="$test_data_url" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account --yes)
+echo "Delete revocaton point"
+result=$(echo $passphrase | dcld tx pki delete-revocation-point --vid=$vid_new --label="$product_label" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account_new --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Update revocaton point for a new vid"
-result=$(echo $passphrase | dcld tx pki update-revocation-point --vid=$issuer_vid --certificate="$test_root_cert_path_new" --label="$product_label_new" --data-url="$test_data_url" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account_new --yes)
-check_response "$result" "\"code\": 0"
-
-test_divider
-
-echo "Delete revocaton point for the old vid"
-result=$(echo $passphrase | dcld tx pki delete-revocation-point --vid=$issuer_vid --label="$product_label" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account --yes)
+echo "Add new revocaton point"
+result=$(echo $passphrase | dcld tx pki add-revocation-point --vid=$vid_new --revocation-type=1 --is-paa="true" --certificate="$test_root_cert_path" --label="$product_label_new" --data-url="$test_data_url" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account_new --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1146,7 +1140,7 @@ test_divider
 # AUTH
 
 echo "Propose add account $user_4_address"
-result=$(echo $passphrase | dcld tx auth propose-add-account --address="$user_4_address" --pubkey="$user_4_pubkey" --roles="CertificationCenter" --vid=$issuer_vid --from="$trustee_account_1" --yes)
+result=$(echo $passphrase | dcld tx auth propose-add-account --address="$user_4_address" --pubkey="$user_4_pubkey" --roles="CertificationCenter" --vid=$vid_new --from="$trustee_account_1" --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1371,11 +1365,11 @@ check_response "$result" "\"value\": true"
 check_response "$result" "\"vid\": $vid_new"
 check_response "$result" "\"pid\": $pid_1_new"
 
-echo "Get provisional model with VID: $vid_new PID: $pid_3_new"
-result=$(dcld query compliance provisional-model --vid=$vid_new --pid=$pid_3_new --softwareVersion=$software_version_new --certificationType=$certification_type_new)
-check_response "$result" "\"value\": true"
+echo "Get model with VID: $vid_new PID: $pid_3_new"
+result=$(dcld query compliance provisional-model --vid=$vid_new --pid=$pid_2_new --softwareVersion=$software_version_new --certificationType=$certification_type_new)
+check_response "$result" "\"value\": false"
 check_response "$result" "\"vid\": $vid_new"
-check_response "$result" "\"pid\": $pid_3_new"
+check_response "$result" "\"pid\": $pid_2_new"
 
 echo "Get compliance-info model with VID: $vid_new PID: $pid_1_new"
 result=$(dcld query compliance compliance-info --vid=$vid_new --pid=$pid_1_new --softwareVersion=$software_version_new --certificationType=$certification_type_new)
@@ -1403,8 +1397,8 @@ check_response "$result" "\"pid\": $pid_1_new"
 
 echo "Get all provisional models"
 result=$(dcld query compliance all-provisional-models)
-check_response "$result" "\"vid\": $vid_new"
-check_response "$result" "\"pid\": $pid_3_new"
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"pid\": $pid_3"
 
 echo "Get all revoked models"
 result=$(dcld query compliance all-revoked-models)
@@ -1453,15 +1447,15 @@ check_response "$result" "\"subject\": \"$test_root_cert_subject_new\""
 check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id_new\""
 
 echo "Get revocation point"
-result=$(dcld query pki revocation-point --vid=$issuer_vid --label=$product_label_new --issuer-subject-key-id=$issuer_subject_key_id)
-check_response "$result" "\"vid\": \"$issuer_vid\""
+result=$(dcld query pki revocation-point --vid=$vid_new --label=$product_label_new --issuer-subject-key-id=$issuer_subject_key_id)
+check_response "$result" "\"vid\": \"$vid_new\""
 check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
 check_response "$result" "\"label\": \"$product_label_new\""
 check_response "$result" "\"dataUrl\": \"$test_data_url\""
 
 echo "Get revocation points by issuer subject key id"
 result=$(dcld query pki revocation-points --issuer-subject-key-id=$issuer_subject_key_id)
-check_response "$result" "\"vid\": \"$issuer_vid\""
+check_response "$result" "\"vid\": \"$vid_new\""
 check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
 check_response "$result" "\"label\": \"$product_label_new\""
 check_response "$result" "\"dataUrl\": \"$test_data_url\""
@@ -1488,7 +1482,7 @@ check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id_new
 
 echo "Get all revocation points"
 result=$(dcld query pki all-revocation-points)
-check_response "$result" "\"vid\": \"$issuer_vid\""
+check_response "$result" "\"vid\": \"$vid_new\""
 check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
 check_response "$result" "\"label\": \"$product_label_new\""
 check_response "$result" "\"dataUrl\": \"$test_data_url\""
