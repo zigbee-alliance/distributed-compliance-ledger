@@ -1448,17 +1448,17 @@ check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id_new
 
 echo "Get revocation point"
 result=$(dcld query pki revocation-point --vid=$vid_new --label=$product_label_new --issuer-subject-key-id=$issuer_subject_key_id)
-check_response "$result" "\"vid\": \"$vid_new\""
+check_response "$result" "\"vid\": $vid_new"
 check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
 check_response "$result" "\"label\": \"$product_label_new\""
-check_response "$result" "\"dataUrl\": \"$test_data_url\""
+check_response "$result" "\"dataURL\": \"$test_data_url\""
 
 echo "Get revocation points by issuer subject key id"
 result=$(dcld query pki revocation-points --issuer-subject-key-id=$issuer_subject_key_id)
-check_response "$result" "\"vid\": \"$vid_new\""
+check_response "$result" "\"vid\": $vid_new"
 check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
 check_response "$result" "\"label\": \"$product_label_new\""
-check_response "$result" "\"dataUrl\": \"$test_data_url\""
+check_response "$result" "\"dataURL\": \"$test_data_url\""
 
 echo "Get all proposed x509 root certificates"
 result=$(dcld query pki all-proposed-x509-root-certs)
@@ -1482,10 +1482,10 @@ check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id_new
 
 echo "Get all revocation points"
 result=$(dcld query pki all-revocation-points)
-check_response "$result" "\"vid\": \"$vid_new\""
+check_response "$result" "\"vid\": $vid_new"
 check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
 check_response "$result" "\"label\": \"$product_label_new\""
-check_response "$result" "\"dataUrl\": \"$test_data_url\""
+check_response "$result" "\"dataURL\": \"$test_data_url\""
 
 test_divider
 
