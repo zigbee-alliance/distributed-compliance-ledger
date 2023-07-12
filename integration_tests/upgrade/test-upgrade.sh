@@ -1365,7 +1365,7 @@ check_response "$result" "\"value\": true"
 check_response "$result" "\"vid\": $vid_new"
 check_response "$result" "\"pid\": $pid_1_new"
 
-echo "Get model with VID: $vid_new PID: $pid_3_new"
+echo "Get provisional model with VID: $vid_new PID: $pid_2_new"
 result=$(dcld query compliance provisional-model --vid=$vid_new --pid=$pid_2_new --softwareVersion=$software_version_new --certificationType=$certification_type_new)
 check_response "$result" "\"value\": false"
 check_response "$result" "\"vid\": $vid_new"
