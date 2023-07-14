@@ -19,6 +19,7 @@ func SimulateMsgProposeAddX509RootCert(
 		simAccount, _ := simtypes.RandomAcc(r, accs)
 		msg := &types.MsgProposeAddX509RootCert{
 			Signer: simAccount.Address.String(),
+			Vid: int32(r.Uint32()),
 		}
 
 		// TODO: Handling the ProposeAddX509RootCert simulation
