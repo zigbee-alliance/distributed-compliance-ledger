@@ -29,12 +29,15 @@ func CmdProposeAddX509RootCert() *cobra.Command {
 			if err != nil {
 				return err
 			}
+			vid := viper.GetInt32(FlagVid)
+
 			info := viper.GetString(FlagInfo)
 
 			msg := types.NewMsgProposeAddX509RootCert(
 				clientCtx.GetFromAddress().String(),
 				cert,
 				info,
+				vid,
 			)
 			// validate basic will be called in GenerateOrBroadcastTxCLI
 			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)

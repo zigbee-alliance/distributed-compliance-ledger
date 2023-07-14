@@ -38,6 +38,7 @@ func TestMsgProposeAddX509RootCert_ValidateBasic(t *testing.T) {
 			msg: MsgProposeAddX509RootCert{
 				Signer: sample.AccAddress(),
 				Cert:   testconstants.RootCertPem + tmrand.Str(10485761-len(testconstants.RootCertPem)),
+				Vid:	testconstants.Vid,
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
@@ -47,6 +48,18 @@ func TestMsgProposeAddX509RootCert_ValidateBasic(t *testing.T) {
 				Signer: sample.AccAddress(),
 				Cert:   testconstants.RootCertPem,
 				Info:   tmrand.Str(4097),
+				Vid:	testconstants.Vid,
+			},
+			err: validator.ErrFieldMaxLengthExceeded,
+		},
+
+		{
+			name: "VID is required",
+			msg: MsgProposeAddX509RootCert{
+				Signer: sample.AccAddress(),
+				Cert:   testconstants.RootCertPem,
+				Info:   testconstants.Info,
+				Time:   12345,
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
@@ -63,6 +76,7 @@ func TestMsgProposeAddX509RootCert_ValidateBasic(t *testing.T) {
 				Cert:   testconstants.RootCertPem,
 				Info:   testconstants.Info,
 				Time:   12345,
+				Vid:	testconstants.Vid,
 			},
 		},
 		{
@@ -71,6 +85,7 @@ func TestMsgProposeAddX509RootCert_ValidateBasic(t *testing.T) {
 				Signer: sample.AccAddress(),
 				Cert:   testconstants.RootCertPem,
 				Info:   tmrand.Str(4096),
+				Vid:	testconstants.Vid,
 			},
 		},
 		{
@@ -79,6 +94,7 @@ func TestMsgProposeAddX509RootCert_ValidateBasic(t *testing.T) {
 				Signer: sample.AccAddress(),
 				Cert:   testconstants.RootCertPem,
 				Info:   "",
+				Vid:	testconstants.Vid,
 			},
 		},
 	}

@@ -4,6 +4,7 @@ package zigbeealliance.distributedcomplianceledger.pki;
 option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types";
 
 import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
 import "pki/grant.proto";
 
 message ProposedCertificate {
@@ -15,5 +16,6 @@ message ProposedCertificate {
   repeated Grant approvals = 6;
   string subjectAsText = 7; 
   repeated Grant rejects = 8;
+  int32 vid = 9 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
 }
 

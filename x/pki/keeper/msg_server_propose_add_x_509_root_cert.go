@@ -92,6 +92,7 @@ func (k msgServer) ProposeAddX509RootCert(goCtx context.Context, msg *types.MsgP
 		SerialNumber:  x509Certificate.SerialNumber,
 		Owner:         msg.Signer,
 		Approvals:     []*types.Grant{},
+		Vid:           msg.Vid,
 	}
 
 	proposedCertificate.Approvals = append(proposedCertificate.Approvals, &grant)
