@@ -2,7 +2,6 @@ package types
 
 import (
 	fmt "fmt"
-	"regexp"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -22,7 +21,7 @@ func NewMsgProposeAddX509RootCert(signer string, cert string, info string, vid i
 		Cert:   cert,
 		Info:   info,
 		Time:   time.Now().Unix(),
-		Vid:	vid,
+		Vid:    vid,
 	}
 }
 
@@ -55,22 +54,19 @@ func (msg *MsgProposeAddX509RootCert) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address (%s)", err)
 	}
 
-	cert, err := x509.DecodeX509Certificate(msg.Cert)
-	if err != nil {
-		return pkitypes.NewErrInvalidCertificate(err)
-	}
-	pattern := regexp.MustCompile("vid=0[xX][0-9a-fA-F]+")
-	subjectVid := pattern.FindString(cert.Subject)
-	if subjectVid != "" || subjectVid!=fmt.Sprintf("vid=%x", msg.Vid) {
-		return pkitypes.NewErrCertificateVidNotEqualMsgVid(fmt.Sprintf("Certificate subject %s does not equal msg VID=%x", subjectVid, msg.Vid))
-	}
-
 	err = validator.Validate(msg)
 	if err != nil {
 		return err
 	}
 
+	cert, err := x509.DecodeX509Certificate(msg.Cert)
+	if err != nil {
+		return pkitypes.NewErrInvalidCertificate(err)
+	}
+	subjectVid, err := x509.GetVidFromSubject(cert.SubjectAsText)
+	if err == nil && subjectVid !=0 && subjectVid != msg.Vid {
+		return pkitypes.NewErrCertificateVidNotEqualMsgVid(fmt.Sprintf("Certificate VID=%d does not equal msg VID=%d", subjectVid, msg.Vid))
+	}
+
 	return nil
 }
-
-
