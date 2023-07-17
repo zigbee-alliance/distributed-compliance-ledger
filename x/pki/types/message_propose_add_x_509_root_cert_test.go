@@ -61,7 +61,7 @@ func TestMsgProposeAddX509RootCert_ValidateBasic(t *testing.T) {
 				Info:   testconstants.Info,
 				Time:   12345,
 			},
-			err: validator.ErrFieldMaxLengthExceeded,
+			err: validator.ErrFieldLowerBoundViolated,
 		},
 	}
 
