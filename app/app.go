@@ -589,7 +589,6 @@ func New(
 		app.ScopedTransferKeeper = scopedTransferKeeper
 	*/
 	// this line is used by starport scaffolding # stargate/app/beforeInitReturn
-
 	app.UpgradeKeeper.SetUpgradeHandler(
 		"v0.10.0",
 		func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
@@ -613,6 +612,13 @@ func New(
 
 	app.UpgradeKeeper.SetUpgradeHandler(
 		"v0.13.0-pre",
+		func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
+			return make(module.VersionMap), nil
+		},
+	)
+
+	app.UpgradeKeeper.SetUpgradeHandler(
+		"v1.2.0",
 		func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
 			return make(module.VersionMap), nil
 		},

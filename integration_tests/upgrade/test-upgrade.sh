@@ -210,8 +210,9 @@ trustee_account_2="alice"
 trustee_account_3="bob"
 vendor_account="vendor_account"
 
-plan_name="v0.13.0-pre"
-upgrade_checksum="sha256:2e1df8fcd97d0f35f214fcc0fc9bc9bb28827f8815bba4b6ab797b19d8d0d4ac"
+plan_name="v1.2.0"
+binary_version="v1.2.0-dev2"
+upgrade_checksum="sha256:72632245e2350bf69c79039e339854e639c1bea41317a8381bd7322ccd7b2240"
 
 vid=1
 pid_1=1
@@ -597,8 +598,8 @@ plan_height=$(expr $current_height \+ 20)
 test_divider
 
 echo "Propose upgrade $plan_name at height $plan_height"
-echo "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$plan_name/dcld.ubuntu.tar.gz?checksum=$upgrade_checksum"
-result=$(echo $passphrase | dcld tx dclupgrade propose-upgrade --name=$plan_name --upgrade-height=$plan_height --upgrade-info="{\"binaries\":{\"linux/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$plan_name/dcld.ubuntu.tar.gz?checksum=$upgrade_checksum\"}}" --from $trustee_account_1 --yes)
+echo "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version/dcld.ubuntu.tar.gz?checksum=$upgrade_checksum"
+result=$(echo $passphrase | dcld tx dclupgrade propose-upgrade --name=$plan_name --upgrade-height=$plan_height --upgrade-info="{\"binaries\":{\"linux/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version/dcld.ubuntu.tar.gz?checksum=$upgrade_checksum\"}}" --from $trustee_account_1 --yes)
 echo "$result"
 check_response "$result" "\"code\": 0"
 
@@ -817,7 +818,7 @@ test_divider
 
 # after upgrade constatnts
 
-vid_new=2
+vid_new=4701
 pid_1_new=11
 pid_2_new=22
 pid_3_new=33
@@ -840,9 +841,9 @@ root_cert_path_new="integration_tests/constants/google_root_cert_gsr4"
 root_cert_subject_new="MFAxJDAiBgNVBAsTG0dsb2JhbFNpZ24gRUNDIFJvb3QgQ0EgLSBSNDETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UEAxMKR2xvYmFsU2lnbg=="
 root_cert_subject_key_id_new="54:B0:7B:AD:45:B8:E2:40:7F:FB:0A:6E:FB:BE:33:C9:3C:A3:84:D5"
 
-test_root_cert_path_new="integration_tests/constants/google_root_cert_r1"
-test_root_cert_subject_new="MEcxCzAJBgNVBAYTAlVTMSIwIAYDVQQKExlHb29nbGUgVHJ1c3QgU2VydmljZXMgTExDMRQwEgYDVQQDEwtHVFMgUm9vdCBSMQ=="
-test_root_cert_subject_key_id_new="E4:AF:2B:26:71:1A:2B:48:27:85:2F:52:66:2C:EF:F0:89:13:71:3E"
+test_root_cert_path_new="integration_tests/constants/paa_cert_numeric_vid"
+test_root_cert_subject_new="MDAxGDAWBgNVBAMMD01hdHRlciBUZXN0IFBBQTEUMBIGCisGAQQBgqJ8AgEMBEZGRjE="
+test_root_cert_subject_key_id_new="6A:FD:22:77:1F:51:1F:EC:BF:16:41:97:67:10:DC:DC:31:A1:71:7E"
 
 google_root_cert_path_new="integration_tests/constants/google_root_cert_r2"
 google_root_cert_subject_new="MEcxCzAJBgNVBAYTAlVTMSIwIAYDVQQKExlHb29nbGUgVHJ1c3QgU2VydmljZXMgTExDMRQwEgYDVQQDEwtHVFMgUm9vdCBSMg=="
@@ -851,6 +852,9 @@ google_root_cert_subject_key_id_new="BB:FF:CA:8E:23:9F:4F:99:CA:DB:E2:68:A6:A5:1
 intermediate_cert_path_new="integration_tests/constants/intermediate_cert_gsr4"
 intermediate_cert_subject_new="MEYxCzAJBgNVBAYTAlVTMSIwIAYDVQQKExlHb29nbGUgVHJ1c3QgU2VydmljZXMgTExDMRMwEQYDVQQDEwpHVFMgQ0EgMkQ0"
 intermediate_cert_subject_key_id_new="A8:88:D9:8A:39:AC:65:D5:82:4B:37:A8:95:6C:65:43:CD:44:01:E0"
+
+test_data_url="https://url.data.dclmodel"
+issuer_subject_key_id="5A880E6C3653D07FB08971A3F473790930E62BDB"
 
 vendor_name_new="VendorNameNew"
 company_legal_name_new="LegalCompanyNameNew"
@@ -973,25 +977,25 @@ test_divider
 # CERTIFY_DEVICE_COMPLIANCE
 
 echo "Certify model vid=$vid_new pid=$pid_1_new"
-result=$(echo $passphrase | dcld tx compliance certify-model --vid=$vid_new --pid=$pid_1_new --softwareVersion=$software_version_new --softwareVersionString=$software_version_string_new  --certificationType=$certification_type_new --certificationDate=$certification_date_new --cdCertificateId=$cd_certificate_id_new --from=$certification_center_account_new --yes)
+result=$(echo $passphrase | dcld tx compliance certify-model --vid=$vid_new --pid=$pid_1_new --softwareVersion=$software_version_new --softwareVersionString=$software_version_string_new  --certificationType=$certification_type_new --certificationDate=$certification_date_new --cdCertificateId=$cd_certificate_id_new --from=$certification_center_account_new --cdVersionNumber=$cd_version_number_new --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Provision model vid=$vid_new pid=$pid_2_new"
+result=$(echo $passphrase | dcld tx compliance provision-model --vid=$vid_new --pid=$pid_2_new --softwareVersion=$software_version_new --softwareVersionString=$software_version_string_new --certificationType=$certification_type_new --provisionalDate=$provisional_date_new --cdCertificateId=$cd_certificate_id_new --from=$certification_center_account_new --cdVersionNumber=$cd_version_number_new --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Certify model vid=$vid_new pid=$pid_2_new"
-result=$(echo $passphrase | dcld tx compliance certify-model --vid=$vid_new --pid=$pid_2_new --softwareVersion=$software_version_new --softwareVersionString=$software_version_string_new  --certificationType=$certification_type_new --certificationDate=$certification_date_new --cdCertificateId=$cd_certificate_id_new --from=$certification_center_account_new --yes)
+result=$(echo $passphrase | dcld tx compliance certify-model --vid=$vid_new --pid=$pid_2_new --softwareVersion=$software_version_new --softwareVersionString=$software_version_string_new  --certificationType=$certification_type_new --certificationDate=$certification_date_new --cdCertificateId=$cd_certificate_id_new --from=$certification_center_account_new --cdVersionNumber=$cd_version_number_new  --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Revoke model certification vid=$vid_new pid=$pid_2_new"
-result=$(echo $passphrase | dcld tx compliance revoke-model --vid=$vid_new --pid=$pid_2_new --softwareVersion=$software_version_new --softwareVersionString=$software_version_string_new --certificationType=$certification_type_new --revocationDate=$certification_date_new --from=$certification_center_account_new --yes)
-check_response "$result" "\"code\": 0"
-
-test_divider
-
-echo "Provision model vid=$vid_new pid=$pid_3_new"
-result=$(echo $passphrase | dcld tx compliance provision-model --vid=$vid_new --pid=$pid_3_new --softwareVersion=$software_version_new --softwareVersionString=$software_version_string_new --certificationType=$certification_type_new --provisionalDate=$provisional_date_new --cdCertificateId=$cd_certificate_id_new --from=$certification_center_account_new --yes)
+result=$(echo $passphrase | dcld tx compliance revoke-model --vid=$vid_new --pid=$pid_2_new --softwareVersion=$software_version_new --softwareVersionString=$software_version_string_new --certificationType=$certification_type_new --revocationDate=$certification_date_new --from=$certification_center_account_new --cdVersionNumber=$cd_version_number_new --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1106,10 +1110,37 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
+# PKI Revocation point
+
+echo "Add new revocaton point for"
+result=$(echo $passphrase | dcld tx pki add-revocation-point --vid=$vid_new --revocation-type=1 --is-paa="true" --certificate="$test_root_cert_path" --label="$product_label" --data-url="$test_data_url" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account_new --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+
+echo "Update revocaton point"
+result=$(echo $passphrase | dcld tx pki update-revocation-point --vid=$vid_new --certificate="$test_root_cert_path" --label="$product_label" --data-url="$test_data_url/new" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account_new --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Delete revocaton point"
+result=$(echo $passphrase | dcld tx pki delete-revocation-point --vid=$vid_new --label="$product_label" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account_new --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Add new revocaton point"
+result=$(echo $passphrase | dcld tx pki add-revocation-point --vid=$vid_new --revocation-type=1 --is-paa="true" --certificate="$test_root_cert_path" --label="$product_label_new" --data-url="$test_data_url" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account_new --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
 # AUTH
 
 echo "Propose add account $user_4_address"
-result=$(echo $passphrase | dcld tx auth propose-add-account --address="$user_4_address" --pubkey="$user_4_pubkey" --roles="CertificationCenter" --from="$trustee_account_1" --yes)
+result=$(echo $passphrase | dcld tx auth propose-add-account --address="$user_4_address" --pubkey="$user_4_pubkey" --roles="CertificationCenter" --vid=$vid_new --from="$trustee_account_1" --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1334,11 +1365,11 @@ check_response "$result" "\"value\": true"
 check_response "$result" "\"vid\": $vid_new"
 check_response "$result" "\"pid\": $pid_1_new"
 
-echo "Get provisional model with VID: $vid_new PID: $pid_3_new"
-result=$(dcld query compliance provisional-model --vid=$vid_new --pid=$pid_3_new --softwareVersion=$software_version_new --certificationType=$certification_type_new)
-check_response "$result" "\"value\": true"
+echo "Get provisional model with VID: $vid_new PID: $pid_2_new"
+result=$(dcld query compliance provisional-model --vid=$vid_new --pid=$pid_2_new --softwareVersion=$software_version_new --certificationType=$certification_type_new)
+check_response "$result" "\"value\": false"
 check_response "$result" "\"vid\": $vid_new"
-check_response "$result" "\"pid\": $pid_3_new"
+check_response "$result" "\"pid\": $pid_2_new"
 
 echo "Get compliance-info model with VID: $vid_new PID: $pid_1_new"
 result=$(dcld query compliance compliance-info --vid=$vid_new --pid=$pid_1_new --softwareVersion=$software_version_new --certificationType=$certification_type_new)
@@ -1366,8 +1397,8 @@ check_response "$result" "\"pid\": $pid_1_new"
 
 echo "Get all provisional models"
 result=$(dcld query compliance all-provisional-models)
-check_response "$result" "\"vid\": $vid_new"
-check_response "$result" "\"pid\": $pid_3_new"
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"pid\": $pid_3"
 
 echo "Get all revoked models"
 result=$(dcld query compliance all-revoked-models)
@@ -1415,6 +1446,20 @@ result=$(dcld query pki proposed-x509-root-cert-to-revoke --subject=$test_root_c
 check_response "$result" "\"subject\": \"$test_root_cert_subject_new\""
 check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id_new\""
 
+echo "Get revocation point"
+result=$(dcld query pki revocation-point --vid=$vid_new --label=$product_label_new --issuer-subject-key-id=$issuer_subject_key_id)
+check_response "$result" "\"vid\": $vid_new"
+check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
+check_response "$result" "\"label\": \"$product_label_new\""
+check_response "$result" "\"dataURL\": \"$test_data_url\""
+
+echo "Get revocation points by issuer subject key id"
+result=$(dcld query pki revocation-points --issuer-subject-key-id=$issuer_subject_key_id)
+check_response "$result" "\"vid\": $vid_new"
+check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
+check_response "$result" "\"label\": \"$product_label_new\""
+check_response "$result" "\"dataURL\": \"$test_data_url\""
+
 echo "Get all proposed x509 root certificates"
 result=$(dcld query pki all-proposed-x509-root-certs)
 check_response "$result" "\"subject\": \"$google_root_cert_subject_new\""
@@ -1434,6 +1479,13 @@ echo "Get all x509 certificates"
 result=$(dcld query pki all-x509-certs)
 check_response "$result" "\"subject\": \"$test_root_cert_subject_new\""
 check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id_new\""
+
+echo "Get all revocation points"
+result=$(dcld query pki all-revocation-points)
+check_response "$result" "\"vid\": $vid_new"
+check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
+check_response "$result" "\"label\": \"$product_label_new\""
+check_response "$result" "\"dataURL\": \"$test_data_url\""
 
 test_divider
 

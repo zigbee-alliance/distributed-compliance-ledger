@@ -131,6 +131,21 @@ result=$(dcld tx pki add-revocation-point --vid=$vid --is-paa="true" --certifica
 check_response "$result" "\"code\": 0"
 echo $result
 
+result=$(dcld query pki all-revocation-points)
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"label\": \"$label\""
+check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
+
+result=$(dcld query pki revocation-points --issuer-subject-key-id=$issuer_subject_key_id)
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"label\": \"$label\""
+check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
+
+result=$(dcld query pki revocation-point --vid=$vid --label=$label --issuer-subject-key-id=$issuer_subject_key_id)
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"label\": \"$label\""
+check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
+
 result=$(dcld tx pki add-revocation-point --vid=$vid --is-paa="true" --certificate="$paa_cert_with_numeric_vid_path" --label="$label" --data-url="$data_url" --issuer-subject-key-id=$issuer_subject_key_id --revocation-type=1 --from=$vendor_account --yes)
 response_does_not_contain "$result" "\"code\": 0"
 echo $result
@@ -169,6 +184,14 @@ echo "15. UPDATE REVOCATION POINT FOR PAA WHEN MSG VID IS NOT EQUAL TO CERT VID"
 
 result=$(dcld tx pki update-revocation-point --vid=$vid_65522 --certificate="$paa_cert_with_numeric_vid_path" --label="$label" --data-url="$data_url" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account --yes)
 response_does_not_contain "$result" "\"code\": 0"
+echo $result
+
+test_divider
+
+echo "16. DELETE REVOCATION"
+
+result=$(dcld tx pki delete-revocation-point --vid=$vid --label="$label" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account --yes)
+check_response "$result" "\"code\": 0"
 echo $result
 
 test_divider
