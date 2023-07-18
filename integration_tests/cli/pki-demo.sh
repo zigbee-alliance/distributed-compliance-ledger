@@ -21,6 +21,7 @@ root_cert_subject="MDQxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApzb21lLXN0YXRlMRAwDgYDVQQKD
 root_cert_subject_key_id="5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB"
 root_cert_serial_number="442314047376310867378175982234956458728610743315"
 root_cert_subject_as_text="O=root-ca,ST=some-state,C=AU"
+vid=1
 
 intermediate_cert_subject="MDwxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApzb21lLXN0YXRlMRgwFgYDVQQKDA9pbnRlcm1lZGlhdGUtY2E="
 intermediate_cert_subject_key_id="4E:3B:73:F4:70:4D:C2:98:0D:DB:C8:5A:5F:02:3B:BF:86:25:56:2B"
@@ -171,11 +172,11 @@ test_divider
 
 echo "$user_account (Not Trustee) propose Root certificate"
 root_path="integration_tests/constants/root_cert"
-result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_path" --from $user_account --yes)
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_path" --from $user_account --vid $vid --yes)
 response_does_not_contain "$result" "\"code\": 0"
 
 echo "$trustee_account (Trustee) propose Root certificate"
-result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_path" --from $trustee_account --yes)
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_path" --from $trustee_account  --vid $vid --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1113,12 +1114,12 @@ test_divider
 
 echo "$user_account (Not Trustee) propose Root certificate"
 google_root_path="integration_tests/constants/google_root_cert"
-result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$google_root_path" --from $user_account --yes)
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$google_root_path" --from $user_account --vid=$vid --yes)
 response_does_not_contain "$result" "\"code\": 0"
 
 echo "$trustee_account (Trustee) propose Root certificate"
 google_root_path="integration_tests/constants/google_root_cert"
-result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$google_root_path" --from $trustee_account --yes)
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$google_root_path" --from $trustee_account --vid=$vid --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1443,7 +1444,7 @@ test_divider
 
 echo "$trustee_account (Trustee) propose Root certificate"
 test_root_path="integration_tests/constants/test_root_cert"
-result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$test_root_path" --from $trustee_account --yes)
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$test_root_path" --vid=$vid --from $trustee_account --yes)
 check_response "$result" "\"code\": 0"
 
 echo "$trustee_account (Trustee) rejects Root certificate"
@@ -1478,12 +1479,12 @@ test_divider
 
 echo "$user_account (Not Trustee) propose Root certificate"
 test_root_path="integration_tests/constants/test_root_cert"
-result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$test_root_path" --from $user_account --yes)
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$test_root_path" --vid=$vid --from $user_account --yes)
 response_does_not_contain "$result" "\"code\": 0"
 
 echo "$trustee_account (Trustee) propose Root certificate"
 test_root_path="integration_tests/constants/test_root_cert"
-result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$test_root_path" --from $trustee_account --yes)
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$test_root_path" --vid=$vid --from $trustee_account --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1647,12 +1648,12 @@ test_divider
 
 echo "$user_account (Not Trustee) propose Root certificate"
 test_root_path="integration_tests/constants/test_root_cert"
-result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$test_root_path" --from $user_account --yes)
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$test_root_path" --vid $vid --from $user_account --yes)
 response_does_not_contain "$result" "\"code\": 0"
 
 echo "$trustee_account (Trustee) propose Root certificate"
 test_root_path="integration_tests/constants/test_root_cert"
-result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$test_root_path" --from $trustee_account --yes)
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$test_root_path" --vid $vid --from $trustee_account --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
