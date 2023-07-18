@@ -20,6 +20,7 @@ func createNProposedCertificate(keeper *keeper.Keeper, ctx sdk.Context, n int) [
 	for i := range items {
 		items[i].Subject = strconv.Itoa(i)
 		items[i].SubjectKeyId = strconv.Itoa(i)
+		items[i].Vid = int32(i)
 
 		keeper.SetProposedCertificate(ctx, items[i])
 	}
