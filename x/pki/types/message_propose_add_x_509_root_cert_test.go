@@ -68,7 +68,7 @@ func TestMsgProposeAddX509RootCert_ValidateBasic(t *testing.T) {
 			name: "invalid VID",
 			msg: MsgProposeAddX509RootCert{
 				Signer: sample.AccAddress(),
-				Cert:   testconstants.RootCertPem,
+				Cert:   testconstants.PAACertWithNumericVid,
 				Info:   testconstants.Info,
 				Time:   12345,
 				Vid:    testconstants.Vid + 5,
@@ -85,10 +85,10 @@ func TestMsgProposeAddX509RootCert_ValidateBasic(t *testing.T) {
 			name: "valid propose add x509cert msg",
 			msg: MsgProposeAddX509RootCert{
 				Signer: sample.AccAddress(),
-				Cert:   testconstants.RootCertPem,
+				Cert:   testconstants.PAACertWithNumericVid,
 				Info:   testconstants.Info,
 				Time:   12345,
-				Vid:    testconstants.Vid,
+				Vid:    testconstants.GoogleVid,
 			},
 		},
 		{
