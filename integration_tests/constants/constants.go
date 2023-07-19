@@ -389,4 +389,6 @@ SM49BAMCA0cAMEQCIHZQ4Yv8BJhq6w3Gjhu8AZlvRLSwNLDYDI2UpothBjIDAiB4
 	TestPID3String            = "0xA17"
 	SubjectKeyIDWithoutColons = "5A880E6C3653D07FB08971A3F473790930E62BDB"
 	DataDigest                = "9a5d2c1f4b3e6f8d7b1a0c9e2f5d8b7"
+
+	TestCertPemVid = 4701
 )
