@@ -198,6 +198,7 @@ check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$root_cert_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$root_cert_subject_as_text\""
+check_response "$result" "\"vid\": $vid"
 echo $result | jq
 
 test_divider
@@ -276,6 +277,7 @@ check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$root_cert_serial_number\""
 check_response "$result" "\"address\": \"$trustee_account_address\""
 check_response "$result" "\"subjectAsText\": \"$root_cert_subject_as_text\""
+check_response "$result" "\"vid\": $vid"
 response_does_not_contain "$result" "\"address\": \"$second_trustee_account_address\""
 check_response "$result" "[\"$(echo "$passphrase" | dcld keys show jack -a)\"]"
 
@@ -999,6 +1001,7 @@ google_cert_subject="MEsxCzAJBgNVBAYTAlVTMQ8wDQYDVQQKDAZHb29nbGUxFTATBgNVBAMMDE1
 google_cert_subject_key_id="B0:00:56:81:B8:88:62:89:62:80:E1:21:18:A1:A8:BE:09:DE:93:21"
 google_cert_serial_number="1"
 google_cert_subject_as_text="CN=Matter PAA 1,O=Google,C=US,vid=0x6006"
+google_cert_vid=24582
 
 # 9. QUERY ALL (EMPTY)
 
@@ -1114,12 +1117,12 @@ test_divider
 
 echo "$user_account (Not Trustee) propose Root certificate"
 google_root_path="integration_tests/constants/google_root_cert"
-result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$google_root_path" --from $user_account --vid=$vid --yes)
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$google_root_path" --from $user_account --vid=$google_cert_vid --yes)
 response_does_not_contain "$result" "\"code\": 0"
 
 echo "$trustee_account (Trustee) propose Root certificate"
 google_root_path="integration_tests/constants/google_root_cert"
-result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$google_root_path" --from $trustee_account --vid=$vid --yes)
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$google_root_path" --from $trustee_account --vid=$google_cert_vid --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1132,6 +1135,7 @@ check_response "$result" "\"address\": \"$trustee_account_address\""
 check_response "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$google_cert_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$google_cert_subject_as_text\""
+check_response "$result" "\"vid\": $google_cert_vid"
 echo $result | jq
 
 test_divider
@@ -1206,6 +1210,7 @@ check_response "$result" "\"subject\": \"$google_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$google_cert_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$google_cert_subject_as_text\""
+check_response "$result" "\"vid\": $google_cert_vid"
 check_response "$result" "\"address\": \"$trustee_account_address\""
 response_does_not_contain "$result" "\"address\": \"$second_trustee_account_address\""
 check_response "$result" "[\"$(echo "$passphrase" | dcld keys show jack -a)\"]"
@@ -1437,6 +1442,7 @@ test_cert_subject="MDAxGDAWBgNVBAMMD01hdHRlciBUZXN0IFBBQTEUMBIGCisGAQQBgqJ8AgEMB
 test_cert_subject_key_id="E2:90:8D:36:9C:3C:A3:C1:13:BB:09:E2:4D:C1:CC:C5:A6:66:91:D4"
 test_cert_serial_number="1647312298631"
 test_cert_subject_as_text="CN=Matter Test PAA,vid=0x125D"
+test_cert_vid=4701
 
 # 14. TEST PROPOSE AND REJECT ROOT CERTIFICATE
 echo "14. TEST PROPOSE AND REJECT ROOT CERTIFICATE"
@@ -1444,7 +1450,7 @@ test_divider
 
 echo "$trustee_account (Trustee) propose Root certificate"
 test_root_path="integration_tests/constants/test_root_cert"
-result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$test_root_path" --vid=$vid --from $trustee_account --yes)
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$test_root_path" --vid=$test_cert_vid --from $trustee_account --yes)
 check_response "$result" "\"code\": 0"
 
 echo "$trustee_account (Trustee) rejects Root certificate"
@@ -1479,12 +1485,12 @@ test_divider
 
 echo "$user_account (Not Trustee) propose Root certificate"
 test_root_path="integration_tests/constants/test_root_cert"
-result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$test_root_path" --vid=$vid --from $user_account --yes)
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$test_root_path" --vid=$test_cert_vid --from $user_account --yes)
 response_does_not_contain "$result" "\"code\": 0"
 
 echo "$trustee_account (Trustee) propose Root certificate"
 test_root_path="integration_tests/constants/test_root_cert"
-result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$test_root_path" --vid=$vid --from $trustee_account --yes)
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$test_root_path" --vid=$test_cert_vid --from $trustee_account --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1497,6 +1503,7 @@ check_response "$result" "\"address\": \"$trustee_account_address\""
 check_response "$result" "\"subjectKeyId\": \"$test_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$test_cert_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$test_cert_subject_as_text\""
+check_response "$result" "\"vid\": $test_cert_vid"
 echo $result | jq
 
 # 16. TEST REJECT ROOT CERT
@@ -1648,12 +1655,12 @@ test_divider
 
 echo "$user_account (Not Trustee) propose Root certificate"
 test_root_path="integration_tests/constants/test_root_cert"
-result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$test_root_path" --vid $vid --from $user_account --yes)
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$test_root_path" --vid $test_cert_vid --from $user_account --yes)
 response_does_not_contain "$result" "\"code\": 0"
 
 echo "$trustee_account (Trustee) propose Root certificate"
 test_root_path="integration_tests/constants/test_root_cert"
-result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$test_root_path" --vid $vid --from $trustee_account --yes)
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$test_root_path" --vid $test_cert_vid --from $trustee_account --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1666,6 +1673,7 @@ check_response "$result" "\"address\": \"$trustee_account_address\""
 check_response "$result" "\"subjectKeyId\": \"$test_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$test_cert_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$test_cert_subject_as_text\""
+check_response "$result" "\"vid\": $test_cert_vid"
 echo $result | jq
 
 test_divider
@@ -1694,6 +1702,7 @@ check_response "$result" "\"serialNumber\": \"$test_cert_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$test_cert_subject_as_text\""
 check_response "$result" "\"address\": \"$trustee_account_address\""
 check_response "$result" "\"address\": \"$second_trustee_account_address\""
+check_response "$result" "\"vid\": $test_cert_vid"
 
 test_divider
 

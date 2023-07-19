@@ -64,8 +64,11 @@ func (msg *MsgProposeAddX509RootCert) ValidateBasic() error {
 		return pkitypes.NewErrInvalidCertificate(err)
 	}
 	subjectVid, err := x509.GetVidFromSubject(cert.SubjectAsText)
-	if err == nil && subjectVid != 0 && subjectVid != msg.Vid {
-		return pkitypes.NewErrCertificateVidNotEqualMsgVid(fmt.Sprintf("Certificate VID=%d does not equal msg VID=%d", subjectVid, msg.Vid))
+	if err != nil {
+		return pkitypes.NewErrInvalidCertificate(err)
+	}
+	if subjectVid != 0 && subjectVid != msg.Vid {
+		return pkitypes.NewErrCertificateVidNotEqualMsgVid(fmt.Sprintf("Certificate VID=%d is not equal to the msg VID=%d", subjectVid, msg.Vid))
 	}
 
 	return nil
