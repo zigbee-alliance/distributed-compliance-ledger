@@ -40,7 +40,6 @@ message MsgApproveAddX509RootCert {
   string subjectKeyId = 3 [(gogoproto.moretags) = "validate:\"required,max=256\""];
   string info = 4 [(gogoproto.moretags) = "validate:\"max=4096\""];
   int64 time = 5;
-  int32 vid = 6 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535,required\""];
 }
 
 message MsgApproveAddX509RootCertResponse {

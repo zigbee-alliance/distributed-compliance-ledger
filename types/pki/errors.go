@@ -42,7 +42,7 @@ var (
 	ErrInvalidVidFormat                                  = sdkerrors.Register(ModuleName, 432, "invalid vid format")
 	ErrInvalidPidFormat                                  = sdkerrors.Register(ModuleName, 433, "invalid pid format")
 	ErrInvalidDataURLFormat                              = sdkerrors.Register(ModuleName, 434, "invalid data url format")
-	ErrCertificateVidNotEqualMsgVid                      = sdkerrors.Register(ModuleName, 435, "certificate vid does not equal message vid")
+	ErrCertificateVidNotEqualMsgVid                      = sdkerrors.Register(ModuleName, 435, "certificate's vid is not equal to the message vid")
 )
 
 func NewErrProposedCertificateAlreadyExists(subject string, subjectKeyID string) error {
