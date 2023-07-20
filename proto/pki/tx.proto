@@ -28,6 +28,7 @@ message MsgProposeAddX509RootCert {
   string cert = 2 [(gogoproto.moretags) = "validate:\"required,max=10485760\""];
   string info = 3 [(gogoproto.moretags) = "validate:\"max=4096\""];
   int64 time = 4;
+  int32 vid = 5 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535,required\""];
 }
 
 message MsgProposeAddX509RootCertResponse {

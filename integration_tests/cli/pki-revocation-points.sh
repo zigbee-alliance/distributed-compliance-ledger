@@ -97,7 +97,7 @@ test_divider
 echo "7. ADD REVOCATION POINT FOR PAA WHEN CRL SIGNER CERTIFICATE PEM VALUE IS NOT EQUAL TO STORED CERTIFICATE PEM VALUE"
 
 echo "Trustees add PAA cert with numeric vid to the ledger"
-result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$paa_cert_with_numeric_vid_path" --from $trustee_account --yes)
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$paa_cert_with_numeric_vid_path" --vid $vid --from $trustee_account --yes)
 check_response "$result" "\"code\": 0"
 result=$(echo "$passphrase" | dcld tx pki approve-add-x509-root-cert --subject="$paa_cert_with_numeric_vid_subject" --subject-key-id="$paa_cert_with_numeric_vid_subject_key_id" --from $second_trustee_account --yes)
 check_response "$result" "\"code\": 0"

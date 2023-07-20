@@ -42,13 +42,14 @@ fi
 if [ -n "$MAINNET_STABLE_VERSION" ]; then
     wget "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/${MAINNET_STABLE_VERSION}/dcld"
     chmod ugo+x dcld
-    DCL_BINARY=./dcld
+    mv dcld dcld_mainnet_stable
+    DCL_BINARY=./dcld_mainnet_stable
 fi
 
 
 # client
 
-$DCL_BINARY config chain-id "$CHAIN_ID"
+$DCL_BINARY  config chain-id "$CHAIN_ID"
 $DCL_BINARY  config output json
 $DCL_BINARY  config node "tcp://localhost:26657"
 $DCL_BINARY  config keyring-backend test
@@ -210,6 +211,6 @@ if [[ -n "$DCL_LIGHT_CLIENT_PROXY" ]]; then
     init_light_client_proxy lightclient0
 fi
 
-if [ -n "$MAINNET_STABLE_VERSION" ]; then
-    rm dcld
-fi
+#if [ -n "$MAINNET_STABLE_VERSION" ]; then
+#    rm dcld
+#fi

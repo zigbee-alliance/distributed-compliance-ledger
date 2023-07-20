@@ -372,6 +372,7 @@ SM49BAMCA0cAMEQCIHZQ4Yv8BJhq6w3Gjhu8AZlvRLSwNLDYDI2UpothBjIDAiB4
 	GoogleSubjectAsText  = "CN=Matter PAA 1,O=Google,C=US,vid=0x6006"
 	GoogleSubjectKeyID   = "B0:00:56:81:B8:88:62:89:62:80:E1:21:18:A1:A8:BE:09:DE:93:21"
 	GoogleSerialNumber   = "1"
+	GoogleVid            = 65521
 
 	TestIssuer         = "MDAxGDAWBgNVBAMMD01hdHRlciBUZXN0IFBBQTEUMBIGCisGAQQBgqJ8AgEMBDEyNUQ="
 	TestAuthorityKeyID = "E2:90:8D:36:9C:3C:A3:C1:13:BB:09:E2:4D:C1:CC:C5:A6:66:91:D4"
@@ -388,4 +389,6 @@ SM49BAMCA0cAMEQCIHZQ4Yv8BJhq6w3Gjhu8AZlvRLSwNLDYDI2UpothBjIDAiB4
 	TestPID3String            = "0xA17"
 	SubjectKeyIDWithoutColons = "5A880E6C3653D07FB08971A3F473790930E62BDB"
 	DataDigest                = "9a5d2c1f4b3e6f8d7b1a0c9e2f5d8b7"
+
+	TestCertPemVid = 4701
 )

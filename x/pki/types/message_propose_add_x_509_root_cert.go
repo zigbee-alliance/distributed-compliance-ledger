@@ -1,24 +1,27 @@
 package types
 
 import (
+	fmt "fmt"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/x509"
 )
 
 const TypeMsgProposeAddX509RootCert = "propose_add_x_509_root_cert"
 
 var _ sdk.Msg = &MsgProposeAddX509RootCert{}
 
-func NewMsgProposeAddX509RootCert(signer string, cert string, info string) *MsgProposeAddX509RootCert {
+func NewMsgProposeAddX509RootCert(signer string, cert string, info string, vid int32) *MsgProposeAddX509RootCert {
 	return &MsgProposeAddX509RootCert{
 		Signer: signer,
 		Cert:   cert,
 		Info:   info,
 		Time:   time.Now().Unix(),
+		Vid:    vid,
 	}
 }
 
@@ -54,6 +57,18 @@ func (msg *MsgProposeAddX509RootCert) ValidateBasic() error {
 	err = validator.Validate(msg)
 	if err != nil {
 		return err
+	}
+
+	cert, err := x509.DecodeX509Certificate(msg.Cert)
+	if err != nil {
+		return pkitypes.NewErrInvalidCertificate(err)
+	}
+	subjectVid, err := x509.GetVidFromSubject(cert.SubjectAsText)
+	if err != nil {
+		return pkitypes.NewErrInvalidCertificate(err)
+	}
+	if subjectVid != 0 && subjectVid != msg.Vid {
+		return pkitypes.NewErrCertificateVidNotEqualMsgVid(fmt.Sprintf("Certificate VID=%d is not equal to the msg VID=%d", subjectVid, msg.Vid))
 	}
 
 	return nil

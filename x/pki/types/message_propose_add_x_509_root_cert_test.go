@@ -8,6 +8,7 @@ import (
 	tmrand "github.com/tendermint/tendermint/libs/rand"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/sample"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
 
@@ -38,6 +39,7 @@ func TestMsgProposeAddX509RootCert_ValidateBasic(t *testing.T) {
 			msg: MsgProposeAddX509RootCert{
 				Signer: sample.AccAddress(),
 				Cert:   testconstants.RootCertPem + tmrand.Str(10485761-len(testconstants.RootCertPem)),
+				Vid:    testconstants.Vid,
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
@@ -47,8 +49,31 @@ func TestMsgProposeAddX509RootCert_ValidateBasic(t *testing.T) {
 				Signer: sample.AccAddress(),
 				Cert:   testconstants.RootCertPem,
 				Info:   tmrand.Str(4097),
+				Vid:    testconstants.Vid,
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
+		},
+
+		{
+			name: "VID is required",
+			msg: MsgProposeAddX509RootCert{
+				Signer: sample.AccAddress(),
+				Cert:   testconstants.RootCertPem,
+				Info:   testconstants.Info,
+				Time:   12345,
+			},
+			err: validator.ErrFieldLowerBoundViolated,
+		},
+		{
+			name: "invalid VID",
+			msg: MsgProposeAddX509RootCert{
+				Signer: sample.AccAddress(),
+				Cert:   testconstants.PAACertWithNumericVid,
+				Info:   testconstants.Info,
+				Time:   12345,
+				Vid:    testconstants.Vid + 5,
+			},
+			err: pkitypes.ErrCertificateVidNotEqualMsgVid,
 		},
 	}
 
@@ -60,9 +85,10 @@ func TestMsgProposeAddX509RootCert_ValidateBasic(t *testing.T) {
 			name: "valid propose add x509cert msg",
 			msg: MsgProposeAddX509RootCert{
 				Signer: sample.AccAddress(),
-				Cert:   testconstants.RootCertPem,
+				Cert:   testconstants.PAACertWithNumericVid,
 				Info:   testconstants.Info,
 				Time:   12345,
+				Vid:    testconstants.GoogleVid,
 			},
 		},
 		{
@@ -71,6 +97,7 @@ func TestMsgProposeAddX509RootCert_ValidateBasic(t *testing.T) {
 				Signer: sample.AccAddress(),
 				Cert:   testconstants.RootCertPem,
 				Info:   tmrand.Str(4096),
+				Vid:    testconstants.Vid,
 			},
 		},
 		{
@@ -79,6 +106,7 @@ func TestMsgProposeAddX509RootCert_ValidateBasic(t *testing.T) {
 				Signer: sample.AccAddress(),
 				Cert:   testconstants.RootCertPem,
 				Info:   "",
+				Vid:    testconstants.Vid,
 			},
 		},
 	}

@@ -554,6 +554,7 @@ func Demo(suite *utils.TestSuite) {
 	msgProposeAddX509RootCert := pkitypes.MsgProposeAddX509RootCert{
 		Cert:   testconstants.RootCertPem,
 		Signer: vendorAccount.Address,
+		Vid:    testconstants.Vid,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeAddX509RootCert}, vendorName, vendorAccount)
 	require.Error(suite.T, err)
@@ -562,6 +563,7 @@ func Demo(suite *utils.TestSuite) {
 	msgProposeAddX509RootCert = pkitypes.MsgProposeAddX509RootCert{
 		Cert:   testconstants.RootCertPem,
 		Signer: jackAccount.Address,
+		Vid:    testconstants.Vid,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeAddX509RootCert}, jackName, jackAccount)
 	require.NoError(suite.T, err)
@@ -947,11 +949,12 @@ func Demo(suite *utils.TestSuite) {
 
 	_, err = GetProposedRevocationX509Cert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
 	suite.AssertNotFound(err)
-
+	googlCertVid := int32(24582)
 	// Alice (Trustee) propose Google Root certificate
 	msgProposeAddX509GoogleRootcert := pkitypes.MsgProposeAddX509RootCert{
 		Cert:   testconstants.GoogleCertPem,
 		Signer: aliceAccount.Address,
+		Vid:    googlCertVid,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeAddX509GoogleRootcert}, aliceName, aliceAccount)
 	require.NoError(suite.T, err)
@@ -1165,6 +1168,7 @@ func Demo(suite *utils.TestSuite) {
 	msgProposeAddX509TestRootCert := pkitypes.MsgProposeAddX509RootCert{
 		Cert:   testconstants.TestCertPem,
 		Signer: aliceAccount.Address,
+		Vid:    testconstants.TestCertPemVid,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeAddX509TestRootCert}, aliceName, aliceAccount)
 	require.NoError(suite.T, err)
@@ -1196,6 +1200,7 @@ func Demo(suite *utils.TestSuite) {
 	msgProposeAddX509TestRootCert = pkitypes.MsgProposeAddX509RootCert{
 		Cert:   testconstants.TestCertPem,
 		Signer: aliceAccount.Address,
+		Vid:    testconstants.TestCertPemVid,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeAddX509TestRootCert}, aliceName, aliceAccount)
 	require.NoError(suite.T, err)
