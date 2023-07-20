@@ -20,6 +20,8 @@ for node_name in node0 node1 node2 node3 observer0 lightclient0; do
         if [ -n "$MAINNET_STABLE_VERSION" ]; then
             cp dcld ${LOCALNET_DIR}/${node_name}/cosmovisor/${VERSION_DIR}/bin/
             mv ${LOCALNET_DIR}/${node_name}/cosmovisor/${VERSION_DIR}/bin/dcld ${LOCALNET_DIR}/${node_name}/cosmovisor/${VERSION_DIR}/bin/dcld_mainnet_stable
+            chmod ugo+x ${LOCALNET_DIR}/${node_name}/cosmovisor/${VERSION_DIR}/bin/dcld_mainnet_stable
+            echo "ls -al ${LOCALNET_DIR}/${node_name}/cosmovisor/${VERSION_DIR}/bin"
         fi
         docker cp ${IMAGE_TAG}-inst:/go/bin/dcld ${LOCALNET_DIR}/${node_name}/cosmovisor/${VERSION_DIR}/bin/
     fi
