@@ -61,6 +61,7 @@ It's recommended to develop and deploy the App on Ubuntu 18.04 or Ubuntu 20.04.
     ./integration_tests/run-all.sh cli
     ./integration_tests/run-all.sh light
     ./integration_tests/run-all.sh rest
+    ./integration_tests/run-all.sh upgrade
     ./integration_tests/run-all.sh cli,light
     ```
 
