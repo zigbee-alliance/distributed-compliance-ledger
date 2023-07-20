@@ -211,6 +211,6 @@ if [[ -n "$DCL_LIGHT_CLIENT_PROXY" ]]; then
     init_light_client_proxy lightclient0
 fi
 
-if [ -n "$MAINNET_STABLE_VERSION" ]; then
-    rm dcld
-fi
+#if [ -n "$MAINNET_STABLE_VERSION" ]; then
+#    rm dcld
+#fi
