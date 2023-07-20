@@ -16,7 +16,7 @@
 set -euo pipefail
 source integration_tests/cli/common.sh
 
-DCLD_BIN_OLD="dcld_mainnet_stable"
+DCLD_BIN_OLD="./dcld_mainnet_stable"
 DCLD_BIN_NEW="dcld"
 
 DETAILED_OUTPUT=true
