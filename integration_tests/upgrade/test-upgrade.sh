@@ -236,7 +236,6 @@ test_root_cert_subject_key_id="E2:90:8D:36:9C:3C:A3:C1:13:BB:09:E2:4D:C1:CC:C5:A
 google_root_cert_path="integration_tests/constants/google_root_cert"
 google_root_cert_subject="MEsxCzAJBgNVBAYTAlVTMQ8wDQYDVQQKDAZHb29nbGUxFTATBgNVBAMMDE1hdHRlciBQQUEgMTEUMBIGCisGAQQBgqJ8AgEMBDYwMDY="
 google_root_cert_subject_key_id="B0:00:56:81:B8:88:62:89:62:80:E1:21:18:A1:A8:BE:09:DE:93:21"
-google_cert_vid=24582
 
 intermediate_cert_path="integration_tests/constants/intermediate_cert"
 intermediate_cert_subject="MDwxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApzb21lLXN0YXRlMRgwFgYDVQQKDA9pbnRlcm1lZGlhdGUtY2E="
@@ -594,7 +593,7 @@ plan_height=$(expr $current_height \+ 20)
 test_divider
 
 echo "Propose upgrade $plan_name at height $plan_height"
-echo "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version/dcld?checksum=$upgrade_checksum"
+# echo "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version/dcld?checksum=$upgrade_checksum"
 echo "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version/dcld"
 #result=$(echo $passphrase | $DCLD_BIN_OLD tx dclupgrade propose-upgrade --name=$plan_name --upgrade-height=$plan_height --upgrade-info="{\"binaries\":{\"linux/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version/dcld.ubuntu.tar.gz?checksum=$upgrade_checksum\"}}" --from $trustee_account_1 --yes)
 result=$(echo $passphrase | $DCLD_BIN_OLD tx dclupgrade propose-upgrade --name=$plan_name --upgrade-height=$plan_height --upgrade-info="{\"binaries\":{\"linux/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version/dcld.ubuntu.tar.gz\"}}" --from $trustee_account_1 --yes)
@@ -764,23 +763,31 @@ test_divider
 
 echo "Get all x509 root certificates"
 result=$($DCLD_BIN_NEW query pki all-x509-root-certs)
+echo "$result"
 check_response "$result" "\"subject\": \"$test_root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id\""
+check_response "$result" "\"vid\": \"0\""
 
 echo "Get all revoked x509 root certificates"
 result=$($DCLD_BIN_NEW query pki all-revoked-x509-root-certs)
+echo "$result"
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
+check_response "$result" "\"vid\": \"0\""
 
 echo "Get all proposed x509 root certificates"
 result=$($DCLD_BIN_NEW query pki all-proposed-x509-root-certs)
+echo "$result"
 check_response "$result" "\"subject\": \"$google_root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$google_root_cert_subject_key_id\""
+check_response "$result" "\"vid\": \"0\""
 
 echo "Get all proposed x509 root certificates"
 result=$($DCLD_BIN_NEW query pki all-proposed-x509-root-certs-to-revoke)
+echo "$result"
 check_response "$result" "\"subject\": \"$test_root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id\""
+check_response "$result" "\"vid\": \"0\""
 
 test_divider
 
@@ -839,14 +846,17 @@ cd_certificate_id_new="15DEXC"
 root_cert_path_new="integration_tests/constants/google_root_cert_gsr4"
 root_cert_subject_new="MFAxJDAiBgNVBAsTG0dsb2JhbFNpZ24gRUNDIFJvb3QgQ0EgLSBSNDETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UEAxMKR2xvYmFsU2lnbg=="
 root_cert_subject_key_id_new="54:B0:7B:AD:45:B8:E2:40:7F:FB:0A:6E:FB:BE:33:C9:3C:A3:84:D5"
+root_cert_path_new_random_vid="1234"
 
 test_root_cert_path_new="integration_tests/constants/paa_cert_numeric_vid"
 test_root_cert_subject_new="MDAxGDAWBgNVBAMMD01hdHRlciBUZXN0IFBBQTEUMBIGCisGAQQBgqJ8AgEMBEZGRjE="
 test_root_cert_subject_key_id_new="6A:FD:22:77:1F:51:1F:EC:BF:16:41:97:67:10:DC:DC:31:A1:71:7E"
+test_root_cert_path_new_vid="65521"
 
 google_root_cert_path_new="integration_tests/constants/google_root_cert_r2"
 google_root_cert_subject_new="MEcxCzAJBgNVBAYTAlVTMSIwIAYDVQQKExlHb29nbGUgVHJ1c3QgU2VydmljZXMgTExDMRQwEgYDVQQDEwtHVFMgUm9vdCBSMg=="
 google_root_cert_subject_key_id_new="BB:FF:CA:8E:23:9F:4F:99:CA:DB:E2:68:A6:A5:15:27:17:1E:D9:0E"
+google_root_cert_path_new_vid="1234"
 
 intermediate_cert_path_new="integration_tests/constants/intermediate_cert_gsr4"
 intermediate_cert_subject_new="MEYxCzAJBgNVBAYTAlVTMSIwIAYDVQQKExlHb29nbGUgVHJ1c3QgU2VydmljZXMgTExDMRMwEQYDVQQDEwpHVFMgQ0EgMkQ0"
@@ -1002,7 +1012,7 @@ test_divider
 # X509 PKI
 
 echo "Propose add root_certificate"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx pki propose-add-x509-root-cert --certificate="$root_cert_path_new" --from=$trustee_account_1 --yes)
+result=$(echo $passphrase | $DCLD_BIN_NEW tx pki propose-add-x509-root-cert --certificate="$root_cert_path_new" --vid="$root_cert_path_new_vid" --from=$trustee_account_1 --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1038,7 +1048,7 @@ check_response "$result" "\"code\": 0"
 test_divider
 
 echo "Propose add test_root_certificate"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx pki propose-add-x509-root-cert --certificate="$test_root_cert_path_new" --from=$trustee_account_1 --yes)
+result=$(echo $passphrase | $DCLD_BIN_NEW tx pki propose-add-x509-root-cert --certificate="$test_root_cert_path_new" --vid="$test_root_cert_path_new_vid" --from=$trustee_account_1 --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1062,7 +1072,7 @@ check_response "$result" "\"code\": 0"
 test_divider
 
 echo "Propose add google_root_certificate"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx pki propose-add-x509-root-cert --certificate="$google_root_cert_path_new" --from=$trustee_account_1 --yes)
+result=$(echo $passphrase | $DCLD_BIN_NEW tx pki propose-add-x509-root-cert --certificate="$google_root_cert_path_new" --vid="$google_root_cert_path_new_vid" --from=$trustee_account_1 --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
