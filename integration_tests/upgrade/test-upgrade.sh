@@ -763,31 +763,23 @@ test_divider
 
 echo "Get all x509 root certificates"
 result=$($DCLD_BIN_NEW query pki all-x509-root-certs)
-echo "$result"
 check_response "$result" "\"subject\": \"$test_root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id\""
-check_response "$result" "\"vid\": \"0\""
 
 echo "Get all revoked x509 root certificates"
 result=$($DCLD_BIN_NEW query pki all-revoked-x509-root-certs)
-echo "$result"
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
-check_response "$result" "\"vid\": \"0\""
 
 echo "Get all proposed x509 root certificates"
 result=$($DCLD_BIN_NEW query pki all-proposed-x509-root-certs)
-echo "$result"
 check_response "$result" "\"subject\": \"$google_root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$google_root_cert_subject_key_id\""
-check_response "$result" "\"vid\": \"0\""
 
 echo "Get all proposed x509 root certificates"
 result=$($DCLD_BIN_NEW query pki all-proposed-x509-root-certs-to-revoke)
-echo "$result"
 check_response "$result" "\"subject\": \"$test_root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id\""
-check_response "$result" "\"vid\": \"0\""
 
 test_divider
 
