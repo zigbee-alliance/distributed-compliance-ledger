@@ -203,8 +203,8 @@ trustee_account_3="bob"
 vendor_account="vendor_account"
 
 plan_name="v1.2.0"
-binary_version="v1.2.0-dev3"
-upgrade_checksum="sha256:7194fd6dbeab39130e3050e6260d8871e9dab4b1ae6b049caaa5d134bd0da0f7"
+binary_version="v1.2.0-dev2"
+upgrade_checksum="sha256:72632245e2350bf69c79039e339854e639c1bea41317a8381bd7322ccd7b2240"
 
 vid=1
 pid_1=1
