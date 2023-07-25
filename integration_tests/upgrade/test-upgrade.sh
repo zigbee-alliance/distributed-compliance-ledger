@@ -848,7 +848,7 @@ test_root_cert_path_new_vid="65521"
 google_root_cert_path_new="integration_tests/constants/google_root_cert_r2"
 google_root_cert_subject_new="MEcxCzAJBgNVBAYTAlVTMSIwIAYDVQQKExlHb29nbGUgVHJ1c3QgU2VydmljZXMgTExDMRQwEgYDVQQDEwtHVFMgUm9vdCBSMg=="
 google_root_cert_subject_key_id_new="BB:FF:CA:8E:23:9F:4F:99:CA:DB:E2:68:A6:A5:15:27:17:1E:D9:0E"
-google_root_cert_path_new_vid="1234"
+google_root_cert_path_new_random_vid="1234"
 
 intermediate_cert_path_new="integration_tests/constants/intermediate_cert_gsr4"
 intermediate_cert_subject_new="MEYxCzAJBgNVBAYTAlVTMSIwIAYDVQQKExlHb29nbGUgVHJ1c3QgU2VydmljZXMgTExDMRMwEQYDVQQDEwpHVFMgQ0EgMkQ0"
@@ -1004,7 +1004,7 @@ test_divider
 # X509 PKI
 
 echo "Propose add root_certificate"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx pki propose-add-x509-root-cert --certificate="$root_cert_path_new" --vid="$root_cert_path_new_vid" --from=$trustee_account_1 --yes)
+result=$(echo $passphrase | $DCLD_BIN_NEW tx pki propose-add-x509-root-cert --certificate="$root_cert_path_new" --vid="$root_cert_path_new_random_vid" --from=$trustee_account_1 --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1064,7 +1064,7 @@ check_response "$result" "\"code\": 0"
 test_divider
 
 echo "Propose add google_root_certificate"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx pki propose-add-x509-root-cert --certificate="$google_root_cert_path_new" --vid="$google_root_cert_path_new_vid" --from=$trustee_account_1 --yes)
+result=$(echo $passphrase | $DCLD_BIN_NEW tx pki propose-add-x509-root-cert --certificate="$google_root_cert_path_new" --vid="$google_root_cert_path_new_random_vid" --from=$trustee_account_1 --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
