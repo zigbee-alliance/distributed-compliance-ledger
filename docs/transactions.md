@@ -929,6 +929,10 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
 **Status: Implemented**
 
 Revokes the given X509 certificate (either intermediate or leaf).
+
+Revocation here just means removing it from the ledger.
+If a Revocation Distribution Point needs to be published (such as RFC5280 Certificate Revocation List), please use [ADD_PKI_REVOCATION_DISTRIBUTION_POINT](#add_pki_revocation_distribution_point).
+
 All the certificates in the chain signed by the revoked certificate will be revoked as well.
 
 Only the owner (sender) can revoke the certificate.
@@ -950,6 +954,9 @@ Root certificates can not be revoked this way, use  `PROPOSE_X509_CERT_REVOC` an
 **Status: Implemented**
 
 Proposes revocation of the given X509 root certificate by a Trustee.
+
+Revocation here just means removing it from the ledger.
+If a Revocation Distribution Point needs to be published (such as RFC5280 Certificate Revocation List), please use [ADD_PKI_REVOCATION_DISTRIBUTION_POINT](#add_pki_revocation_distribution_point).
 
 All the certificates in the chain signed by the revoked certificate will be revoked as well.
 
@@ -974,6 +981,9 @@ then the certificate will be in a pending state until sufficient number of other
 Approves the revocation of the given X509 root certificate by a Trustee.
 All the certificates in the chain signed by the revoked certificate will be revoked as well.
 
+Revocation here just means removing it from the ledger.
+If a Revocation Distribution Point needs to be published (such as RFC5280 Certificate Revocation List), please use [ADD_PKI_REVOCATION_DISTRIBUTION_POINT](#add_pki_revocation_distribution_point).
+
 The revocation is not applied until sufficient number of Trustees approve it.
 
 - Parameters:
@@ -988,6 +998,94 @@ The revocation is not applied until sufficient number of Trustees approve it.
   - greater than 2/3 of Trustees (proposal by a Trustee is also counted as an approval)
 - CLI command:
   - `dcld tx pki approve-revoke-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
+
+#### ADD_PKI_REVOCATION_DISTRIBUTION_POINT
+
+**Status: Implemented**
+
+Publishes a PKI Revocation distribution endpoint (such as RFC5280 Certificate Revocation List) owned by the Vendor.
+Currently, only VID-scoped `crlSignerCertificate` are supported (`CRLSignerCertificate` encodes a vid in its subject).
+
+If `crlSignerCertificate` is a PAA (root certificate), then it must be present on DCL.
+
+If `crlSignerCertificate` is a PAI (intermediate certificate), then it must be chained back to a valid PAA (root certificate) present on DCL.
+In this case `crlSignerCertificate` is not required to be present on DCL, and will not be added to DCL as a result of this transaction.
+If PAI needs to be added to DCL, it should be done via [ADD_X509_CERT](#add_x509_cert) transaction.
+
+Publishing the revocation distribution endpoint doesn't automatically remove PAI (Intermediate certificates)
+and DACs (leaf certificates) added to DCL if they are revoked in the CRL identified by this distribution point.
+[REVOKE_X509_CERT](#revoke_x509_cert) needs to be called to remove an intermediate or leaf certificate from the ledger. 
+
+
+- Who can send: Vendor account
+    - `vid` field in the transaction (`VendorID`) must be equal to the Vendor account's VID
+    - `vid` field in the `CRLSignerCertificate` must be equal to the Vendor account's VID
+- Parameters:
+  - vid: `uint16` -  Vendor ID (positive non-zero). Must be the same as Vendor account's VID and `vid` field in the VID-scoped `CRLSignerCertificate`.
+  - pid: `optional(uint16)` -  Product ID (positive non-zero). Must be empty if `IsPAA` is true. Must be equal to a `pid` field in `CRLSignerCertificate`.
+  - isPAA: `bool` -  True if the revocation information distribution point relates to a PAA
+  - label: `string` -  A label to disambiguate multiple revocation information partitions of a particular issuer.
+  - crlSignerCertificate: `string` - The issuer certificate whose revocation information is provided in the distribution point entry, encoded in X.509v3 PEM format. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data.
+  - issuerSubjectKeyID: `string` - Uniquely identifies the PAA or PAI for which this revocation distribution point is provided. Must consist of even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters., e.g: `5A880E6C3653D07FB08971A3F473790930E62BDB`.
+  - dataUrl: `string` -  The URL where to obtain the information in the format indicated by the RevocationType field. Must start with either `http` or `https`.
+  - dataFileSize: `optional(uint64)` -  Total size in bytes of the file found at the DataUrl. Must be omitted if RevocationType is 1.
+  - dataDigest: `optional(string)` -  Digest of the entire contents of the associated file downloaded from the DataUrl. Must be omitted if RevocationType is 1. Must be provided if and only if the `DataFileSize` field is present.
+  - dataDigestType: `optional(uint32)` - The type of digest used in the DataDigest field from the list of [1, 7, 8, 10, 11, 12] (IANA Named Information Hash Algorithm Registry). Must be provided if and only if the `DataDigest` field is present.
+  - revocationType: `uint32` - The type of file found at the DataUrl for this entry. Supported types: 1 - RFC5280 Certificate Revocation List (CRL).
+- In State:
+  - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>` -> list of Revocation Distribution Points
+  - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>/<vid>/<label>`-> Revocation Distribution Point
+- CLI command:
+  - `dcld tx pki add-revocation-point --vid=<uint16> --pid=<uint16> --issuer-subject-key-id=<string> --is-paa=<bool> --label=<string>
+    --certificate=<string-or-path> --data-url=<string> --revocation-type=1 --from=<account>`
+
+
+#### UPDATE_PKI_REVOCATION_DISTRIBUTION_POINT
+
+**Status: Implemented**
+
+Updates an existing PKI Revocation distribution endpoint (such as RFC5280 Certificate Revocation List) owned by the Vendor.
+Currently, only VID-scoped `crlSignerCertificate` are supported (`CRLSignerCertificate` encodes a vid in its subject).
+
+- Who can send: Vendor account
+    - `vid` field in the transaction (`VendorID`) must be equal to the Vendor account's VID
+    - `vid` field in the corresponding `CRLSignerCertificate` must be equal to the Vendor account's VID
+- Parameters:
+  - vid: `uint16` -  Vendor ID (positive non-zero). Must be the same as Vendor account's VID and `vid` field in the VID-scoped `CRLSignerCertificate`.
+  - label: `string` -  A label to disambiguate multiple revocation information partitions of a particular issuer.
+  - issuerSubjectKeyID: `string` - Uniquely identifies the PAA or PAI for which this revocation distribution point is provided. Must consist of even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters., e.g: `5A880E6C3653D07FB08971A3F473790930E62BDB`.
+  - crlSignerCertificate: `optional(string)` - The issuer certificate whose revocation information is provided in the distribution point entry, encoded in X.509v3 PEM format. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data.
+  - dataUrl: `optional(string)` -  The URL where to obtain the information in the format indicated by the RevocationType field. Must start with either `http` or `https`.
+  - dataFileSize: `optional(uint64)` -  Total size in bytes of the file found at the DataUrl. Must be omitted if RevocationType is 1.
+  - dataDigest: `optional(string)` -  Digest of the entire contents of the associated file downloaded from the DataUrl. Must be omitted if RevocationType is 1. Must be provided if and only if the `DataFileSize` field is present.
+  - dataDigestType: `optional(uint32)` - The type of digest used in the DataDigest field from the list of [1, 7, 8, 10, 11, 12] (IANA Named Information Hash Algorithm Registry). Must be provided if and only if the `DataDigest` field is present.
+- In State:
+  - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>` -> list of Revocation Distribution Points
+  - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>/<vid>/<label>` -> Revocation Distribution Point
+- CLI command:
+  - `dcld tx pki update-revocation-point --vid=<uint16> --issuer-subject-key-id=<string> --label=<string>
+    --data-url=<string> --certificate=<string-or-path> --from=<account>`
+
+#### DELETE_DELETE_PKI_REVOCATION_DISTRIBUTION_POINT
+
+**Status: Implemented**
+
+Deletes a PKI Revocation distribution endpoint (such as RFC5280 Certificate Revocation List)  owned by the Vendor.
+Currently, only VID-scoped `crlSignerCertificate` are supported (`CRLSignerCertificate` encodes a vid in its subject).
+
+- Who can send: Vendor account
+  - `vid` field in the transaction (`VendorID`) must be equal to the Vendor account's VID
+  - `vid` field in the corresponding `CRLSignerCertificate` must be equal to the Vendor account's VID
+- Parameters:
+  - vid: `uint16` -  Vendor ID (positive non-zero). Must be the same as Vendor account's VID and `vid` field in the VID-scoped `CRLSignerCertificate`.
+  - label: `string` -  A label to disambiguate multiple revocation information partitions of a particular issuer.
+  - issuerSubjectKeyID: `string` - Uniquely identifies the PAA or PAI for which this revocation distribution point is provided. Must consist of even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters., e.g: `5A880E6C3653D07FB08971A3F473790930E62BDB`.
+- In State:
+  - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>` -> list of Revocation Distribution Points
+  - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>/<vid>/<label>` -> Revocation Distribution Point
+- CLI command:
+  - `dcld tx pki delete-revocation-point --vid=<uint16> --issuer-subject-key-id=<string> --label=<string> --from=<account>`
+
 
 #### GET_X509_CERT
 
@@ -1070,6 +1168,9 @@ Get a rejected root certificate with the given subject and subject key ID attrib
 
 Gets a revoked certificate (either root, intermediate or leaf) by the given subject and subject key ID attributes.
 
+Revocation here just means removing it from the ledger.
+If a Revocation Distribution Point (such as RFC5280 Certificate Revocation List) published to the ledger needs to be queried, please use [GET_PKI_REVOCATION_DISTRIBUTION_POINT](#get_pki_revocation_distribution_point).
+
 - Parameters:
   - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
   - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
@@ -1083,6 +1184,9 @@ Gets a revoked certificate (either root, intermediate or leaf) by the given subj
 **Status: Implemented**
 
 Gets a proposed but not approved root certificate to be revoked.
+
+Revocation here just means removing it from the ledger.
+If a Revocation Distribution Point (such as RFC5280 Certificate Revocation List) published to the ledger needs to be queried, please use [GET_PKI_REVOCATION_DISTRIBUTION_POINT](#get_pki_revocation_distribution_point).
 
 - Parameters:
   - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
@@ -1111,6 +1215,9 @@ Use `GET_ALL_REVOKED_X509_CERTS_ROOT` to get a list of all revoked root certific
 **Status: Implemented**
 
 Gets all revoked root certificates.
+
+Revocation here just means removing it from the ledger.
+If a Revocation Distribution Point (such as RFC5280 Certificate Revocation List) published to the ledger needs to be queried, please use [GET_PKI_REVOCATION_DISTRIBUTION_POINT](#get_pki_revocation_distribution_point).
 
 - Parameters:
   - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
@@ -1142,6 +1249,9 @@ Should be sent to trusted nodes only.
 **Status: Implemented**
 
 Gets all revoked certificates (both root and non-root).
+
+Revocation here just means removing it from the ledger.
+If a Revocation Distribution Point (such as RFC5280 Certificate Revocation List) published to the ledger needs to be queried, please use [GET_PKI_REVOCATION_DISTRIBUTION_POINT](#get_pki_revocation_distribution_point).
 
 Should be sent to trusted nodes only.
 
@@ -1188,6 +1298,9 @@ Shoudl be sent to trusted nodes only.
 
 Gets all proposed but not approved root certificates to be revoked.
 
+Revocation here just means removing it from the ledger.
+If a Revocation Distribution Point (such as RFC5280 Certificate Revocation List) published to the ledger needs to be queried, please use [GET_PKI_REVOCATION_DISTRIBUTION_POINT](#get_pki_revocation_distribution_point).
+
 Should be sent to trusted nodes only.
 
 - Parameters:
@@ -1196,6 +1309,50 @@ Should be sent to trusted nodes only.
   - `dcld query pki all-proposed-x509-root-certs-to-revoke`
 - REST API:
   - GET `/dcl/pki/proposed-revocation-certificates`
+
+#### GET_PKI_REVOCATION_DISTRIBUTION_POINT
+
+**Status: Implemented**
+
+Gets a revocation distribution point (such as RFC5280 Certificate Revocation List) identified by (VendorID, Label, IssuerSubjectKeyID) unique combination.
+Use [GET_ALL_PKI_REVOCATION_DISTRIBUTION_POINT](#get_all_pki_revocation_distribution_point) to get a list of all revocation distribution points.
+
+- Parameters:
+  - vid: `uint16` -  Vendor ID (positive non-zero)
+  - label: `string` -  A label to disambiguate multiple revocation information partitions of a particular issuer.
+  - issuerSubjectKeyID: `string` - Uniquely identifies the PAA or PAI for which this revocation distribution point is provided. Must consist of even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters., e.g: `5A880E6C3653D07FB08971A3F473790930E62BDB`.
+- CLI command:
+  - `dcld query pki revocation-point --vid=<uint16> --label=<string> --issuer-subject-key-id=<string>`
+- REST API:
+  - GET `/dcl/pki/revocation-points/{issuerSubjectKeyID}/{vid}/{label}`
+
+#### GET_PKI_REVOCATION_DISTRIBUTION_POINTS_BY_SUBJECT_KEY_ID
+
+**Status: Implemented**
+
+Gets a list of revocation distribution point (such as RFC5280 Certificate Revocation List) identified by IssuerSubjectKeyID.
+
+- Parameters:
+  - issuerSubjectKeyID: `string` - Uniquely identifies the PAA or PAI for which this revocation distribution point is provided. Must consist of even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters., e.g: `5A880E6C3653D07FB08971A3F473790930E62BDB`.
+- CLI command:
+  - `dcld query pki revocation-points --issuer-subject-key-id=<string>`
+- REST API:
+  - GET `/dcl/pki/revocation-points/{issuerSubjectKeyID}`
+
+#### GET_ALL_PKI_REVOCATION_DISTRIBUTION_POINT
+
+**Status: Implemented**
+
+Gets a list of all revocation distribution points (such as RFC5280 Certificate Revocation List).
+
+Should be sent to trusted nodes only.
+
+- Parameters:
+  - Common pagination parameters
+- CLI command:
+  - `dcld query pki all-revocation-points`
+- REST API:
+  - GET `/dcl/pki/revocation-points`
 
 ## AUTH
 

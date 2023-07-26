@@ -54,12 +54,9 @@ Publishing the revocation distribution endpoint doesn't automatically remove PAI
 and DACs (leaf certificates) added to DCL if they are revoked in the CRL identified by this distribution point.
 
 
-- Who can send:
-    - Vendor account for VID-scoped `crlSignerCertificate`
-      - `vid` field in the transaction (`VendorID`) must be equal to the Vendor account's VID
-      - `vid` field in the `CRLSignerCertificate` must be equal to the Vendor account's VID  
-    - Vendor Admin account for non-VID scoped `crlSignerCertificate`
-      - `vid` field must be absent in `CRLSignerCertificate` 
+- Who can send: Vendor account
+    - `vid` field in the transaction (`VendorID`) must be equal to the Vendor account's VID
+    - `vid` field in the `CRLSignerCertificate` must be equal to the Vendor account's VID
 - Validation of parameters:
     - See [Validation](#validation-logic) section for details. 
 - Parameters:
@@ -85,12 +82,9 @@ and DACs (leaf certificates) added to DCL if they are revoked in the CRL identif
 ### 2. UPDATE_PKI_REVOCATION_DISTRIBUTION_POINT
 Updates an existing PKI Revocation distribution endpoint owned by the sender.
 
-- Who can send:
-    - Vendor account for VID-scoped `crlSignerCertificate`
-      - `vid` field in the transaction (`VendorID`) must be equal to the Vendor account's VID
-      - `vid` field in the corresponding `CRLSignerCertificate` (for vendor-scoped PAAs and PAIs) must be equal to the Vendor account's VID
-    - Vendor Admin account for non-VID scoped `crlSignerCertificate`
-      - `vid` field must be absent in the corresponding`CRLSignerCertificate`
+- Who can send: Vendor account
+    - `vid` field in the transaction (`VendorID`) must be equal to the Vendor account's VID
+    - `vid` field in the `CRLSignerCertificate` must be equal to the Vendor account's VID
 - Parameters:
     - vid: `uint16` -  Vendor ID (positive non-zero). Must be the same as Vendor account's VID and `vid` field in the VID-scoped `CRLSignerCertificate`.
     - label: `string` -  A label to disambiguate multiple revocation information partitions of a particular issuer.
