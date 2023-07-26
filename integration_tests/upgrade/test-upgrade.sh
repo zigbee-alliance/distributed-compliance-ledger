@@ -234,6 +234,9 @@ root_cert_subject_as_text="O=root-ca,ST=some-state,C=AU"
 test_root_cert_path="integration_tests/constants/test_root_cert"
 test_root_cert_subject="MDAxGDAWBgNVBAMMD01hdHRlciBUZXN0IFBBQTEUMBIGCisGAQQBgqJ8AgEMBDEyNUQ="
 test_root_cert_subject_key_id="E2:90:8D:36:9C:3C:A3:C1:13:BB:09:E2:4D:C1:CC:C5:A6:66:91:D4"
+test_root_cert_serial_number="1647312298631"
+test_root_cert_subject_as_text="CN=Matter Test PAA,vid=0x125D"
+test_root_cert_vid=4701
 
 google_root_cert_path="integration_tests/constants/google_root_cert"
 google_root_cert_subject="MEsxCzAJBgNVBAYTAlVTMQ8wDQYDVQQKDAZHb29nbGUxFTATBgNVBAMMDE1hdHRlciBQQUEgMTEUMBIGCisGAQQBgqJ8AgEMBDYwMDY="
@@ -588,18 +591,17 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
-
 echo "Get x509 root certificates"
-result=$($DCLD_BIN_OLD query pki x509-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
+result=$($DCLD_BIN_NEW query pki x509-cert --subject="$test_root_cert_subject" --subject-key-id="$test_root_cert_subject_key_id")
 echo $result | jq
-check_response "$result" "\"subject\": \"$root_cert_subject\""
-check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
-check_response "$result" "\"serialNumber\": \"$root_cert_serial_number\""
-check_response "$result" "\"subjectAsText\": \"$root_cert_subject_as_text\""
+check_response "$result" "\"subject\": \"$test_root_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id\""
+check_response "$result" "\"serialNumber\": \"$test_root_cert_serial_number\""
+check_response "$result" "\"subjectAsText\": \"$test_root_cert_subject_as_text\""
 response_does_not_contain "$result" "\"vid\":"
 
 echo "Get x509 proposed root certificates"
-result=$($DCLD_BIN_OLD query pki proposed-x509-root-cert --subject="$google_root_cert_subject" --subject-key-id="$google_root_cert_subject_key_id")
+result=$($DCLD_BIN_NEW query pki proposed-x509-root-cert --subject="$google_root_cert_subject" --subject-key-id="$google_root_cert_subject_key_id")
 echo $result | jq
 check_response "$result" "\"subject\": \"$google_root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$google_root_cert_subject_key_id\""
@@ -802,12 +804,12 @@ check_response "$result" "\"subject\": \"$test_root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id\""
 
 echo "Get x509 root certificates"
-result=$($DCLD_BIN_NEW query pki x509-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
+result=$($DCLD_BIN_NEW query pki x509-cert --subject="$test_root_cert_subject" --subject-key-id="$test_root_cert_subject_key_id")
 echo $result | jq
-check_response "$result" "\"subject\": \"$root_cert_subject\""
-check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
-check_response "$result" "\"serialNumber\": \"$root_cert_serial_number\""
-check_response "$result" "\"subjectAsText\": \"$root_cert_subject_as_text\""
+check_response "$result" "\"subject\": \"$test_root_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id\""
+check_response "$result" "\"serialNumber\": \"$test_root_cert_serial_number\""
+check_response "$result" "\"subjectAsText\": \"$test_root_cert_subject_as_text\""
 check_response "$result" "\"vid\": \"0\""
 
 echo "Get x509 proposed root certificates"
@@ -1467,6 +1469,7 @@ echo "Get x509 root certificate"
 result=$($DCLD_BIN_NEW query pki x509-cert --subject=$test_root_cert_subject_new --subject-key-id=$test_root_cert_subject_key_id_new)
 check_response "$result" "\"subject\": \"$test_root_cert_subject_new\""
 check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id_new\""
+check_response "$result" "\"vid\": \"$test_root_cert_path_new_vid\""
 
 echo "Get all subject x509 root certificates"
 result=$($DCLD_BIN_NEW query pki all-subject-x509-certs --subject=$test_root_cert_subject_new)
@@ -1477,6 +1480,7 @@ echo "Get proposed x509 root certificate"
 result=$($DCLD_BIN_NEW query pki proposed-x509-root-cert --subject=$google_root_cert_subject_new --subject-key-id=$google_root_cert_subject_key_id_new)
 check_response "$result" "\"subject\": \"$google_root_cert_subject_new\""
 check_response "$result" "\"subjectKeyId\": \"$google_root_cert_subject_key_id_new\""
+check_response "$result" "\"vid\": \"$google_root_cert_path_new_random_vid\""
 
 echo "Get revoked x509 certificate"
 result=$($DCLD_BIN_NEW query pki revoked-x509-cert --subject=$intermediate_cert_subject_new --subject-key-id=$intermediate_cert_subject_key_id_new)
