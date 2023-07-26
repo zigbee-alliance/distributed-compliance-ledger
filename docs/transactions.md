@@ -135,7 +135,7 @@ Adds a record about a Vendor.
 - CLI command:
   - `dcld tx vendorinfo add-vendor --vid=<uint16> --vendorName=<string> --companyLegalName=<string> --companyPreferredName=<string> --vendorLandingPageURL=<string> --from=<account>`
 
-#### UPDATE_VENDOR_INFO
+### UPDATE_VENDOR_INFO
 
 **Status: Implemented**
 
@@ -154,7 +154,7 @@ Updates a record about a Vendor.
 - CLI command:
   - `dcld tx vendorinfo update-vendor --vid=<uint16> ... --from=<account>`
 
-#### GET_VENDOR_INFO
+### GET_VENDOR_INFO
 
 **Status: Implemented**
 
@@ -167,7 +167,7 @@ Gets a Vendor Info for the given `vid` (vendor ID).
 - REST API:
   - GET `/dcl/vendorinfo/vendors/{vid}`
 
-#### GET_ALL_VENDOR_INFO
+### GET_ALL_VENDOR_INFO
 
 **Status: Implemented**
 
@@ -229,7 +229,7 @@ dcld tx model add-model --vid=<uint16> --pid=<uint16> --deviceTypeID=<uint16> --
     --from=<account>
 ```
 
-#### EDIT_MODEL
+### EDIT_MODEL
 
 **Status: Implemented**
 
@@ -261,7 +261,7 @@ All non-edited fields remain the same.
 - CLI command:
   - `dcld tx model update-model --vid=<uint16> --pid=<uint16> ... --from=<account>`
 
-#### DELETE_MODEL
+### DELETE_MODEL
 
 **Status: Implemented**
 
@@ -279,7 +279,7 @@ If one of Model Versions associated with the Model is certified then Model can n
 - CLI command:
   - `dcld tx model delete-model --vid=<uint16> --pid=<uint16> --from=<account>`
 
-#### ADD_MODEL_VERSION
+### ADD_MODEL_VERSION
 
 **Status: Implemented**
 
@@ -325,7 +325,7 @@ dcld tx model add-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=
 --from=<account>
 ```
 
-#### EDIT_MODEL_VERSION
+### EDIT_MODEL_VERSION
 
 **Status: Implemented**
 
@@ -357,7 +357,7 @@ All non-edited fields remain the same.
 - CLI command:
   - `dcld tx model update-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> ... --from=<account>`
 
-#### DELETE_MODEL_VERSION
+### DELETE_MODEL_VERSION
 
 **Status: Implemented**
 
@@ -376,7 +376,7 @@ Model Version can be deleted only before it is certified.
 - CLI command:
   - `dcld tx model delete-model-version --vid=< uint16 > --pid=< uint16 > --softwareVersion=<uint32> --from=<account>`
 
-#### GET_MODEL
+### GET_MODEL
 
 **Status: Implemented**
 
@@ -390,7 +390,7 @@ Gets a Model Info with the given `vid` (vendor ID) and `pid` (product ID).
 - REST API:
   - GET `/dcl/model/models/{vid}/{pid}`
 
-#### GET_MODEL_VERSION
+### GET_MODEL_VERSION
 
 **Status: Implemented**
 
@@ -405,7 +405,7 @@ Gets a Model Software Versions for the given `vid`, `pid` and `softwareVersion`.
 - REST API:
   - GET `/dcl/model/versions/{vid}/{pid}/{softwareVersion}`
 
-#### GET_ALL_MODELS
+### GET_ALL_MODELS
 
 **Status: Implemented**
 
@@ -420,7 +420,7 @@ Should be sent to trusted nodes only.
 - REST API:
   - GET `/dcl/model/models`
 
-#### GET_ALL_VENDOR_MODELS
+### GET_ALL_VENDOR_MODELS
 
 **Status: Implemented**
 
@@ -433,7 +433,7 @@ Gets all Model Infos by the given Vendor (`vid`).
 - REST API:
   - GET `/dcl/model/models/{vid}`
 
-#### GET_ALL_MODEL_VERSIONS
+### GET_ALL_MODEL_VERSIONS
 
 **Status: Implemented**
 
@@ -497,6 +497,42 @@ from the revocation list.
 - CLI command full:
   - `dcld tx compliance certify-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string>  --certificationType=<matter|zigbee|access control|product security> --certificationDate=<rfc3339 encoded date> --cdCertificateId=<string> --reason=<string> --cDVersionNumber=<uint32> --familyId=<string> --supportedClusters=<string> --compliantPlatformUsed=<string> --compliantPlatformVersion=<string> --OSVersion=<string> --certificationRoute=<string> --programType=<string> --programTypeVersion=<string> --transport=<string> --parentChild=<string> --certificationIDOfSoftwareComponent=<string> --from=<account>`
 
+### UPDATE_COMPLIANCE_INFO
+
+**Status: Implemented**
+
+Updates a compliance info by VID, PID, Software Version and Certification Type.
+
+
+- Parameters:
+  - vid: `uint16` -  model vendor ID (positive non-zero)
+  - pid: `uint16` -  model product ID (positive non-zero)
+  - softwareVersion: `uint32` - model software version
+  - certificationType: `string` - Certification type - Currently 'zigbee', 'matter', 'access control', 'product security' types are supported
+  - certificationDate: `optional(string)` - The date of model certification (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
+  - cdCertificateId: `optional(string)` - CD Certificate ID
+  - reason `optional(string)` - optional comment describing the reason of the certification
+  - cDVersionNumber `optional(string)` - optional field (a uint32-parsable string) describing the CD version number, must be the same with the associated model version
+  - familyId `optional(string)` - optional field describing the family ID
+  - supportedClusters `optional(string)` - optional field describing the supported clusters
+  - compliantPlatformUsed `optional(string)` - optional field describing the compliant platform used
+  - compliantPlatformVersion `optional(string)` - optional field describing the compliant platform version
+  - OSVersion `optional(string)` - optional field describing the OS version
+  - certificationRoute `optional(string)` - optional field describing the certification route
+  - programType `optional(string)` - optional field describing the program type
+  - programTypeVersion `optional(string)` - optional field describing the program type version
+  - transport `optional(string)` - optional field describing the transport
+  - parentChild `optional(string)` - optional field describing the parent/child - Currently 'parent' and 'child' types are supported
+  - certificationIDOfSoftwareComponent `optional(string)` - optional field describing the certification ID of software component
+- Who can send:
+  - CertificationCenter
+- CLI command:
+  - `dcld tx compliance update-compliance-info`
+- CLI command full:
+  - `dcld tx compliance update-compliance-info --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<string> --cdVersionNumber=<string> --certificationDate=$upd_certification_date --reason=$upd_reason --cdCertificateId=$upd_cd_certificate_id --certificationRoute=$upd_certification_route --programType=$upd_program_type --programTypeVersion=$upd_program_type_version --compliantPlatformUsed=$upd_compliant_platform_used --compliantPlatformVersion=$upd_compliant_platform_version --transport=$upd_transport --familyId=$upd_familyID --supportedClusters=$upd_supported_clusters --OSVersion=$upd_os_version --parentChild=$upd_parent_child --certificationIDOfSoftwareComponent=$upd_certification_id_of_software_component --from=$zb_account`
+- REST API:
+  - `/dcl/compliance/update-compliance-info`
+
 ### DELETE_COMPLIANCE_INFO
 
 **Status: Implemented**
@@ -515,7 +551,7 @@ The corresponding Compliance Info is required to be present on the ledger
 - CLI command:
   - `dcld tx compliance delete-compliance-info --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<matter|zigbee|access control|product security> --from=<account>`
 
-#### REVOKE_MODEL_CERTIFICATION
+### REVOKE_MODEL_CERTIFICATION
 
 **Status: Implemented**
 
@@ -543,7 +579,7 @@ is written on the ledger (`CERTIFY_MODEL` was called), or
 - CLI command:
   - `dcld tx compliance revoke-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<matter|zigbee|access control|product security> --revocationDate=<rfc3339 encoded date> --reason=<string> --from=<account>`
 
-#### PROVISION_MODEL
+### PROVISION_MODEL
 
 **Status: Implemented**
 
@@ -584,7 +620,7 @@ Can not be set if there is already a certification record on the ledger (certifi
 - CLI command full:
   - `dcld tx compliance provision-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<matter|zigbee|access control|product security> --provisionalDate=<rfc3339 encoded date> --cdCertificateId=<string> --reason=<string> --cDVersionNumber=<uint32> --familyId=<string> --supportedClusters=<string> --compliantPlatformUsed=<string> --compliantPlatformVersion=<string> --OSVersion=<string> --certificationRoute=<string> --programType=<string> --programTypeVersion=<string> --transport=<string> --parentChild=<string> --certificationIDOfSoftwareComponent=<string> --from=<account>`
 
-#### GET_CERTIFIED_MODEL
+### GET_CERTIFIED_MODEL
 
 **Status: Implemented**
 
@@ -610,7 +646,7 @@ You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
 - REST API:
   - GET `/dcl/compliance/certified-models/{vid}/{pid}/{software_version}/{certification_type}`
 
-#### GET_REVOKED_MODEL
+### GET_REVOKED_MODEL
 
 **Status: Implemented**
 
@@ -635,7 +671,7 @@ You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
 - REST API:
   - GET `/dcl/compliance/revoked-models/{vid}/{pid}/{software_version}/{certification_type}`
 
-#### GET_PROVISIONAL_MODEL
+### GET_PROVISIONAL_MODEL
 
 **Status: Implemented**
 
@@ -657,7 +693,7 @@ You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
 - REST API:
   - GET `/dcl/compliance/provisional-models/{vid}/{pid}/{software_version}/{certification_type}`
 
-#### GET_COMPLIANCE_INFO
+### GET_COMPLIANCE_INFO
 
 **Status: Implemented**
 
@@ -678,7 +714,7 @@ This function responds with `NotFound` (404 code) if compliance information is n
 - REST API:
   - GET `/dcl/compliance/compliance-info/{vid}/{pid}/{software_version}/{certification_type}`
 
-#### GET_DEVICE_SOFTWARE_COMPLIANCE
+### GET_DEVICE_SOFTWARE_COMPLIANCE
 
 **Status: Implemented**
 
@@ -693,7 +729,7 @@ This function responds with `NotFound` (404 code) if device software compliance 
 - REST API:
   - GET `/dcl/compliance/device-software-compliance/{cDCertificateId}`
 
-#### GET_ALL_CERTIFIED_MODELS
+### GET_ALL_CERTIFIED_MODELS
 
 **Status: Implemented**
 
@@ -711,7 +747,7 @@ Should be sent to trusted nodes only.
 - REST API:
   - GET `/dcl/compliance/certified-models`
 
-#### GET_ALL_REVOKED_MODELS
+### GET_ALL_REVOKED_MODELS
 
 **Status: Implemented**
 
@@ -729,7 +765,7 @@ Should be sent to trusted nodes only.
 - REST API:
   - GET `/dcl/compliance/revoked-models`
 
-#### GET_ALL_PROVISIONAL_MODELS
+### GET_ALL_PROVISIONAL_MODELS
 
 **Status: Implemented**
 
@@ -744,7 +780,7 @@ Should be sent to trusted nodes only.
 - REST API:
   - GET `/dcl/compliance/provisional-models`
 
-#### GET_ALL_COMPLIANCE_INFO_RECORDS
+### GET_ALL_COMPLIANCE_INFO_RECORDS
 
 **Status: Implemented**
 
@@ -759,7 +795,7 @@ Should be sent to trusted nodes only.
 - REST API:
   - GET `/dcl/compliance/compliance-info`
 
-#### GET_ALL_DEVICE_SOFTWARE_COMPLIANCES
+### GET_ALL_DEVICE_SOFTWARE_COMPLIANCES
 
 **Status: Implemented**
 
@@ -773,42 +809,6 @@ Should be sent to trusted nodes only.
   - `dcld query compliance all-device-software-compliance`
 - REST API:
   - `/dcl/compliance/device-software-compliance`
-
-#### UPDATE_COMPLIANCE_INFO
-
-**Status: Implemented**
-
-Updates a compliance info by VID, PID, Software Version and Certification Type.
-
-
-- Parameters:
-  - vid: `uint16` -  model vendor ID (positive non-zero)
-  - pid: `uint16` -  model product ID (positive non-zero)
-  - softwareVersion: `uint32` - model software version
-  - certificationType: `string` - Certification type - Currently 'zigbee', 'matter', 'access control', 'product security' types are supported
-  - certificationDate: `optional(string)` - The date of model certification (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
-  - cdCertificateId: `optional(string)` - CD Certificate ID 
-  - reason `optional(string)` - optional comment describing the reason of the certification
-  - cDVersionNumber `optional(string)` - optional field (a uint32-parsable string) describing the CD version number, must be the same with the associated model version
-  - familyId `optional(string)` - optional field describing the family ID
-  - supportedClusters `optional(string)` - optional field describing the supported clusters
-  - compliantPlatformUsed `optional(string)` - optional field describing the compliant platform used
-  - compliantPlatformVersion `optional(string)` - optional field describing the compliant platform version
-  - OSVersion `optional(string)` - optional field describing the OS version
-  - certificationRoute `optional(string)` - optional field describing the certification route
-  - programType `optional(string)` - optional field describing the program type
-  - programTypeVersion `optional(string)` - optional field describing the program type version
-  - transport `optional(string)` - optional field describing the transport
-  - parentChild `optional(string)` - optional field describing the parent/child - Currently 'parent' and 'child' types are supported
-  - certificationIDOfSoftwareComponent `optional(string)` - optional field describing the certification ID of software component
-- Who can send:
-  - CertificationCenter
-- CLI command:
-  - `dcld tx compliance update-compliance-info`
-- CLI command full:
-  - `dcld tx compliance update-compliance-info --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<string> --cdVersionNumber=<string> --certificationDate=$upd_certification_date --reason=$upd_reason --cdCertificateId=$upd_cd_certificate_id --certificationRoute=$upd_certification_route --programType=$upd_program_type --programTypeVersion=$upd_program_type_version --compliantPlatformUsed=$upd_compliant_platform_used --compliantPlatformVersion=$upd_compliant_platform_version --transport=$upd_transport --familyId=$upd_familyID --supportedClusters=$upd_supported_clusters --OSVersion=$upd_os_version --parentChild=$upd_parent_child --certificationIDOfSoftwareComponent=$upd_certification_id_of_software_component --from=$zb_account`
-- REST API:
-  - `/dcl/compliance/update-compliance-info`
 
 ## X509 PKI
 
@@ -845,7 +845,7 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
     - sender must match to the owner of the existing certificates.
   - the signature (self-signature) and expiration date are valid.
 
-#### APPROVE_ADD_X509_ROOT_CERT
+### APPROVE_ADD_X509_ROOT_CERT
 
 **Status: Implemented**
 
@@ -868,7 +868,7 @@ The certificate is not active until sufficient number of Trustees approve it.
 - Validation:
   - the proposed certificate hasn't been approved by the signer yet
 
-#### REJECT_ADD_X509_ROOT_CERT
+### REJECT_ADD_X509_ROOT_CERT
 
 **Status: Implemented**
 
@@ -894,7 +894,7 @@ The certificate is not reject until sufficient number of Trustees reject it.
 - Validation:
   - the proposed certificate hasn't been rejected by the signer yet
 
-#### ADD_X509_CERT
+### ADD_X509_CERT
 
 **Status: Implemented**
 
@@ -924,11 +924,15 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
 
 > **_Note:_**  Multiple certificates can refer to the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination.
 
-#### REVOKE_X509_CERT
+### REVOKE_X509_CERT
 
 **Status: Implemented**
 
 Revokes the given X509 certificate (either intermediate or leaf).
+
+Revocation here just means removing it from the ledger.
+If a Revocation Distribution Point needs to be published (such as RFC5280 Certificate Revocation List), please use [ADD_PKI_REVOCATION_DISTRIBUTION_POINT](#add_pki_revocation_distribution_point).
+
 All the certificates in the chain signed by the revoked certificate will be revoked as well.
 
 Only the owner (sender) can revoke the certificate.
@@ -945,11 +949,14 @@ Root certificates can not be revoked this way, use  `PROPOSE_X509_CERT_REVOC` an
 - CLI command:
   - `dcld tx pki revoke-x509-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
 
-#### PROPOSE_REVOKE_X509_ROOT_CERT
+### PROPOSE_REVOKE_X509_ROOT_CERT
 
 **Status: Implemented**
 
 Proposes revocation of the given X509 root certificate by a Trustee.
+
+Revocation here just means removing it from the ledger.
+If a Revocation Distribution Point needs to be published (such as RFC5280 Certificate Revocation List), please use [ADD_PKI_REVOCATION_DISTRIBUTION_POINT](#add_pki_revocation_distribution_point).
 
 All the certificates in the chain signed by the revoked certificate will be revoked as well.
 
@@ -967,12 +974,15 @@ then the certificate will be in a pending state until sufficient number of other
 - CLI command:
   - `dcld tx pki propose-revoke-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
 
-#### APPROVE_REVOKE_X509_ROOT_CERT
+### APPROVE_REVOKE_X509_ROOT_CERT
 
 **Status: Implemented**
 
 Approves the revocation of the given X509 root certificate by a Trustee.
 All the certificates in the chain signed by the revoked certificate will be revoked as well.
+
+Revocation here just means removing it from the ledger.
+If a Revocation Distribution Point needs to be published (such as RFC5280 Certificate Revocation List), please use [ADD_PKI_REVOCATION_DISTRIBUTION_POINT](#add_pki_revocation_distribution_point).
 
 The revocation is not applied until sufficient number of Trustees approve it.
 
@@ -989,7 +999,95 @@ The revocation is not applied until sufficient number of Trustees approve it.
 - CLI command:
   - `dcld tx pki approve-revoke-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
 
-#### GET_X509_CERT
+### ADD_PKI_REVOCATION_DISTRIBUTION_POINT
+
+**Status: Implemented**
+
+Publishes a PKI Revocation distribution endpoint (such as RFC5280 Certificate Revocation List) owned by the Vendor.
+Currently, only VID-scoped `crlSignerCertificate` are supported (`CRLSignerCertificate` encodes a vid in its subject).
+
+If `crlSignerCertificate` is a PAA (root certificate), then it must be present on DCL.
+
+If `crlSignerCertificate` is a PAI (intermediate certificate), then it must be chained back to a valid PAA (root certificate) present on DCL.
+In this case `crlSignerCertificate` is not required to be present on DCL, and will not be added to DCL as a result of this transaction.
+If PAI needs to be added to DCL, it should be done via [ADD_X509_CERT](#add_x509_cert) transaction.
+
+Publishing the revocation distribution endpoint doesn't automatically remove PAI (Intermediate certificates)
+and DACs (leaf certificates) added to DCL if they are revoked in the CRL identified by this distribution point.
+[REVOKE_X509_CERT](#revoke_x509_cert) needs to be called to remove an intermediate or leaf certificate from the ledger. 
+
+
+- Who can send: Vendor account
+    - `vid` field in the transaction (`VendorID`) must be equal to the Vendor account's VID
+    - `vid` field in the `CRLSignerCertificate` must be equal to the Vendor account's VID
+- Parameters:
+  - vid: `uint16` -  Vendor ID (positive non-zero). Must be the same as Vendor account's VID and `vid` field in the VID-scoped `CRLSignerCertificate`.
+  - pid: `optional(uint16)` -  Product ID (positive non-zero). Must be empty if `IsPAA` is true. Must be equal to a `pid` field in `CRLSignerCertificate`.
+  - isPAA: `bool` -  True if the revocation information distribution point relates to a PAA
+  - label: `string` -  A label to disambiguate multiple revocation information partitions of a particular issuer.
+  - crlSignerCertificate: `string` - The issuer certificate whose revocation information is provided in the distribution point entry, encoded in X.509v3 PEM format. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data.
+  - issuerSubjectKeyID: `string` - Uniquely identifies the PAA or PAI for which this revocation distribution point is provided. Must consist of even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters., e.g: `5A880E6C3653D07FB08971A3F473790930E62BDB`.
+  - dataUrl: `string` -  The URL where to obtain the information in the format indicated by the RevocationType field. Must start with either `http` or `https`.
+  - dataFileSize: `optional(uint64)` -  Total size in bytes of the file found at the DataUrl. Must be omitted if RevocationType is 1.
+  - dataDigest: `optional(string)` -  Digest of the entire contents of the associated file downloaded from the DataUrl. Must be omitted if RevocationType is 1. Must be provided if and only if the `DataFileSize` field is present.
+  - dataDigestType: `optional(uint32)` - The type of digest used in the DataDigest field from the list of [1, 7, 8, 10, 11, 12] (IANA Named Information Hash Algorithm Registry). Must be provided if and only if the `DataDigest` field is present.
+  - revocationType: `uint32` - The type of file found at the DataUrl for this entry. Supported types: 1 - RFC5280 Certificate Revocation List (CRL).
+- In State:
+  - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>` -> list of Revocation Distribution Points
+  - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>/<vid>/<label>`-> Revocation Distribution Point
+- CLI command:
+  - `dcld tx pki add-revocation-point --vid=<uint16> --pid=<uint16> --issuer-subject-key-id=<string> --is-paa=<bool> --label=<string>
+    --certificate=<string-or-path> --data-url=<string> --revocation-type=1 --from=<account>`
+
+
+### UPDATE_PKI_REVOCATION_DISTRIBUTION_POINT
+
+**Status: Implemented**
+
+Updates an existing PKI Revocation distribution endpoint (such as RFC5280 Certificate Revocation List) owned by the Vendor.
+Currently, only VID-scoped `crlSignerCertificate` are supported (`CRLSignerCertificate` encodes a vid in its subject).
+
+- Who can send: Vendor account
+    - `vid` field in the transaction (`VendorID`) must be equal to the Vendor account's VID
+    - `vid` field in the corresponding `CRLSignerCertificate` must be equal to the Vendor account's VID
+- Parameters:
+  - vid: `uint16` -  Vendor ID (positive non-zero). Must be the same as Vendor account's VID and `vid` field in the VID-scoped `CRLSignerCertificate`.
+  - label: `string` -  A label to disambiguate multiple revocation information partitions of a particular issuer.
+  - issuerSubjectKeyID: `string` - Uniquely identifies the PAA or PAI for which this revocation distribution point is provided. Must consist of even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters., e.g: `5A880E6C3653D07FB08971A3F473790930E62BDB`.
+  - crlSignerCertificate: `optional(string)` - The issuer certificate whose revocation information is provided in the distribution point entry, encoded in X.509v3 PEM format. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data.
+  - dataUrl: `optional(string)` -  The URL where to obtain the information in the format indicated by the RevocationType field. Must start with either `http` or `https`.
+  - dataFileSize: `optional(uint64)` -  Total size in bytes of the file found at the DataUrl. Must be omitted if RevocationType is 1.
+  - dataDigest: `optional(string)` -  Digest of the entire contents of the associated file downloaded from the DataUrl. Must be omitted if RevocationType is 1. Must be provided if and only if the `DataFileSize` field is present.
+  - dataDigestType: `optional(uint32)` - The type of digest used in the DataDigest field from the list of [1, 7, 8, 10, 11, 12] (IANA Named Information Hash Algorithm Registry). Must be provided if and only if the `DataDigest` field is present.
+- In State:
+  - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>` -> list of Revocation Distribution Points
+  - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>/<vid>/<label>` -> Revocation Distribution Point
+- CLI command:
+  - `dcld tx pki update-revocation-point --vid=<uint16> --issuer-subject-key-id=<string> --label=<string>
+    --data-url=<string> --certificate=<string-or-path> --from=<account>`
+
+### DELETE_DELETE_PKI_REVOCATION_DISTRIBUTION_POINT
+
+**Status: Implemented**
+
+Deletes a PKI Revocation distribution endpoint (such as RFC5280 Certificate Revocation List)  owned by the Vendor.
+Currently, only VID-scoped `crlSignerCertificate` are supported (`CRLSignerCertificate` encodes a vid in its subject).
+
+- Who can send: Vendor account
+  - `vid` field in the transaction (`VendorID`) must be equal to the Vendor account's VID
+  - `vid` field in the corresponding `CRLSignerCertificate` must be equal to the Vendor account's VID
+- Parameters:
+  - vid: `uint16` -  Vendor ID (positive non-zero). Must be the same as Vendor account's VID and `vid` field in the VID-scoped `CRLSignerCertificate`.
+  - label: `string` -  A label to disambiguate multiple revocation information partitions of a particular issuer.
+  - issuerSubjectKeyID: `string` - Uniquely identifies the PAA or PAI for which this revocation distribution point is provided. Must consist of even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters., e.g: `5A880E6C3653D07FB08971A3F473790930E62BDB`.
+- In State:
+  - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>` -> list of Revocation Distribution Points
+  - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>/<vid>/<label>` -> Revocation Distribution Point
+- CLI command:
+  - `dcld tx pki delete-revocation-point --vid=<uint16> --issuer-subject-key-id=<string> --label=<string> --from=<account>`
+
+
+### GET_X509_CERT
 
 **Status: Implemented**
 
@@ -1005,7 +1103,7 @@ Use `GET_ALL_REVOKED_X509_CERTS` to get a list of all revoked certificates.
 - REST API:
   - GET `/dcl/pki/certificates/{subject}/{subject_key_id}`
 
-#### GET_ALL_SUBJECT_X509_CERTS
+### GET_ALL_SUBJECT_X509_CERTS
 
 **Status: Implemented**
 
@@ -1021,7 +1119,7 @@ Use `GET_ALL_REVOKED_X509_CERTS` to get a list of all revoked certificates.
 - REST API:
   - GET `/dcl/pki/certificates/{subject}`
 
-#### GET_ALL_CHILD_X509_CERTS
+### GET_ALL_CHILD_X509_CERTS
 
 **Status: Implemented**
 
@@ -1036,7 +1134,7 @@ Revoked certificates are not returned.
 - REST API:
   - GET `/dcl/pki/child-certificates/{subject}/{subject_key_id}`
 
-#### GET_PROPOSED_X509_ROOT_CERT
+### GET_PROPOSED_X509_ROOT_CERT
 
 **Status: Implemented**
 
@@ -1050,7 +1148,7 @@ Gets a proposed but not approved root certificate with the given subject and sub
 - REST API:
   - GET `/dcl/pki/proposed-certificates/{subject}/{subject_key_id}`
 
-#### GET_REJECTED_X509_ROOT_CERT
+### GET_REJECTED_X509_ROOT_CERT
 
 **Status: Implemented**
 
@@ -1064,11 +1162,14 @@ Get a rejected root certificate with the given subject and subject key ID attrib
 - REST API:
   - GET `/dcl/pki/rejected-certificates/{subject}/{subject_key_id}`
 
-#### GET_REVOKED_CERT
+### GET_REVOKED_CERT
 
 **Status: Implemented**
 
 Gets a revoked certificate (either root, intermediate or leaf) by the given subject and subject key ID attributes.
+
+Revocation here just means removing it from the ledger.
+If a Revocation Distribution Point (such as RFC5280 Certificate Revocation List) published to the ledger needs to be queried, please use [GET_PKI_REVOCATION_DISTRIBUTION_POINT](#get_pki_revocation_distribution_point).
 
 - Parameters:
   - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
@@ -1078,11 +1179,14 @@ Gets a revoked certificate (either root, intermediate or leaf) by the given subj
 - REST API:
   - GET `/dcl/pki/revoked-certificates/{subject}/{subject_key_id}`
 
-#### GET_PROPOSED_X509_ROOT_CERT_TO_REVOKE
+### GET_PROPOSED_X509_ROOT_CERT_TO_REVOKE
 
 **Status: Implemented**
 
 Gets a proposed but not approved root certificate to be revoked.
+
+Revocation here just means removing it from the ledger.
+If a Revocation Distribution Point (such as RFC5280 Certificate Revocation List) published to the ledger needs to be queried, please use [GET_PKI_REVOCATION_DISTRIBUTION_POINT](#get_pki_revocation_distribution_point).
 
 - Parameters:
   - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
@@ -1092,7 +1196,7 @@ Gets a proposed but not approved root certificate to be revoked.
 - REST API:
   - GET `/dcl/pki/proposed-revocation-certificates/{subject}/{subject_key_id}`
 
-#### GET_ALL_X509_ROOT_CERTS
+### GET_ALL_X509_ROOT_CERTS
 
 **Status: Implemented**
 
@@ -1106,11 +1210,14 @@ Use `GET_ALL_REVOKED_X509_CERTS_ROOT` to get a list of all revoked root certific
 - REST API:
   - GET `/dcl/pki/root-certificates`
 
-#### GET_ALL_REVOKED_X509_ROOT_CERTS
+### GET_ALL_REVOKED_X509_ROOT_CERTS
 
 **Status: Implemented**
 
 Gets all revoked root certificates.
+
+Revocation here just means removing it from the ledger.
+If a Revocation Distribution Point (such as RFC5280 Certificate Revocation List) published to the ledger needs to be queried, please use [GET_PKI_REVOCATION_DISTRIBUTION_POINT](#get_pki_revocation_distribution_point).
 
 - Parameters:
   - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
@@ -1119,7 +1226,7 @@ Gets all revoked root certificates.
 - REST API:
   - GET `/dcl/pki/revoked-root-certificates`
 
-#### GET_ALL_X509_CERTS
+### GET_ALL_X509_CERTS
 
 **Status: Implemented**
 
@@ -1137,11 +1244,14 @@ Should be sent to trusted nodes only.
 - REST API:
   - GET `/dcl/pki/certificates`
 
-#### GET_ALL_REVOKED_X509_CERTS
+### GET_ALL_REVOKED_X509_CERTS
 
 **Status: Implemented**
 
 Gets all revoked certificates (both root and non-root).
+
+Revocation here just means removing it from the ledger.
+If a Revocation Distribution Point (such as RFC5280 Certificate Revocation List) published to the ledger needs to be queried, please use [GET_PKI_REVOCATION_DISTRIBUTION_POINT](#get_pki_revocation_distribution_point).
 
 Should be sent to trusted nodes only.
 
@@ -1152,7 +1262,7 @@ Should be sent to trusted nodes only.
 - REST API:
   - GET `/dcl/pki/revoked-certificates`
 
-#### GET_ALL_PROPOSED_X509_ROOT_CERTS
+### GET_ALL_PROPOSED_X509_ROOT_CERTS
 
 **Status: Implemented**
 
@@ -1167,7 +1277,7 @@ Should be sent to trusted nodes only.
 - REST API:
   - GET `dcl/pki/proposed-certificates`
 
-#### GET_ALL_REJECTED_X509_ROOT_CERTS
+### GET_ALL_REJECTED_X509_ROOT_CERTS
 
  **Status: Implemented**
 
@@ -1182,11 +1292,14 @@ Shoudl be sent to trusted nodes only.
 - REST API:
   - GET `dcl/pki/rejected-certificates`
 
-#### GET_ALL_PROPOSED_X509_ROOT_CERTS_TO_REVOKE
+### GET_ALL_PROPOSED_X509_ROOT_CERTS_TO_REVOKE
 
 **Status: Implemented**
 
 Gets all proposed but not approved root certificates to be revoked.
+
+Revocation here just means removing it from the ledger.
+If a Revocation Distribution Point (such as RFC5280 Certificate Revocation List) published to the ledger needs to be queried, please use [GET_PKI_REVOCATION_DISTRIBUTION_POINT](#get_pki_revocation_distribution_point).
 
 Should be sent to trusted nodes only.
 
@@ -1196,6 +1309,50 @@ Should be sent to trusted nodes only.
   - `dcld query pki all-proposed-x509-root-certs-to-revoke`
 - REST API:
   - GET `/dcl/pki/proposed-revocation-certificates`
+
+### GET_PKI_REVOCATION_DISTRIBUTION_POINT
+
+**Status: Implemented**
+
+Gets a revocation distribution point (such as RFC5280 Certificate Revocation List) identified by (VendorID, Label, IssuerSubjectKeyID) unique combination.
+Use [GET_ALL_PKI_REVOCATION_DISTRIBUTION_POINT](#get_all_pki_revocation_distribution_point) to get a list of all revocation distribution points.
+
+- Parameters:
+  - vid: `uint16` -  Vendor ID (positive non-zero)
+  - label: `string` -  A label to disambiguate multiple revocation information partitions of a particular issuer.
+  - issuerSubjectKeyID: `string` - Uniquely identifies the PAA or PAI for which this revocation distribution point is provided. Must consist of even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters., e.g: `5A880E6C3653D07FB08971A3F473790930E62BDB`.
+- CLI command:
+  - `dcld query pki revocation-point --vid=<uint16> --label=<string> --issuer-subject-key-id=<string>`
+- REST API:
+  - GET `/dcl/pki/revocation-points/{issuerSubjectKeyID}/{vid}/{label}`
+
+### GET_PKI_REVOCATION_DISTRIBUTION_POINTS_BY_SUBJECT_KEY_ID
+
+**Status: Implemented**
+
+Gets a list of revocation distribution point (such as RFC5280 Certificate Revocation List) identified by IssuerSubjectKeyID.
+
+- Parameters:
+  - issuerSubjectKeyID: `string` - Uniquely identifies the PAA or PAI for which this revocation distribution point is provided. Must consist of even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters., e.g: `5A880E6C3653D07FB08971A3F473790930E62BDB`.
+- CLI command:
+  - `dcld query pki revocation-points --issuer-subject-key-id=<string>`
+- REST API:
+  - GET `/dcl/pki/revocation-points/{issuerSubjectKeyID}`
+
+### GET_ALL_PKI_REVOCATION_DISTRIBUTION_POINT
+
+**Status: Implemented**
+
+Gets a list of all revocation distribution points (such as RFC5280 Certificate Revocation List).
+
+Should be sent to trusted nodes only.
+
+- Parameters:
+  - Common pagination parameters
+- CLI command:
+  - `dcld query pki all-revocation-points`
+- REST API:
+  - GET `/dcl/pki/revocation-points`
 
 ## AUTH
 
@@ -1221,7 +1378,7 @@ will be in a pending state until sufficient number of approvals is received.
 - CLI command:
   - `dcld tx auth propose-add-account --address=<bench32 encoded string> --pubkey=<protobuf JSON encoded> --roles=<role1,role2,...> --vid=<uint16> --from=<account>`
 
-#### APPROVE_ADD_ACCOUNT
+### APPROVE_ADD_ACCOUNT
 
 **Status: Implemented**
 
@@ -1244,7 +1401,7 @@ The account is not active until sufficient number of Trustees approve it.
 
 > **_Note:_**  If we are approving an account with role `Vendor`, then we need more than 1/3 of Trustees approvals.
 
-#### REJECT_ADD_ACCOUNT
+### REJECT_ADD_ACCOUNT
 
 **Status: Implemented**
 
@@ -1267,7 +1424,7 @@ The account is not reject until sufficient number of Trustees reject it.
 - CLI command:
   - `dcld tx auth reject-add-account --address=<bench32 encoded string> --from=<account>`
 
-#### PROPOSE_REVOKE_ACCOUNT
+### PROPOSE_REVOKE_ACCOUNT
 
 **Status: Implemented**
 
@@ -1286,7 +1443,7 @@ will be in a pending state until sufficient number of approvals is received.
 - CLI command:
   - `dcld tx auth propose-revoke-account --address=<bench32 encoded string> --from=<account>`
 
-#### APPROVE_REVOKE_ACCOUNT
+### APPROVE_REVOKE_ACCOUNT
 
 **Status: Implemented**
 
@@ -1308,7 +1465,7 @@ The account is not revoked until sufficient number of Trustees approve it.
 
 > **_Note:_**  If revoking an account has sufficient number of Trustees approve it then this account is placed in Revoked Account.
 
-#### GET_ACCOUNT
+### GET_ACCOUNT
 
 **Status: Implemented**
 
@@ -1321,7 +1478,7 @@ Gets an accounts by the address. Revoked accounts are not returned.
 - REST API:
   - GET `/dcl/auth/accounts/{address}`
 
-#### GET_PROPOSED_ACCOUNT
+### GET_PROPOSED_ACCOUNT
 
 **Status: Implemented**
 
@@ -1334,7 +1491,7 @@ Gets a proposed but not approved accounts by its address
 - REST API:
   - GET `/dcl/auth/proposed-accounts/{address}`
 
-#### GET_REJECTED_ACCOUNT
+### GET_REJECTED_ACCOUNT
 
 **Status: Implemented**
 
@@ -1347,7 +1504,7 @@ Get a rejected accounts by its address
 - REST API:
   - GET `/dcl/auth/rejected-accounts/{address}`
 
-#### GET_PROPOSED_ACCOUNT_TO_REVOKE
+### GET_PROPOSED_ACCOUNT_TO_REVOKE
 
 **Status: Implemented**
 
@@ -1360,7 +1517,7 @@ Gets a proposed but not approved accounts to be revoked by its address.
 - REST API:
   - GET `/dcl/auth/proposed-revocation-accounts/{address}`
 
-#### GET_REVOKED_ACCOUNT
+### GET_REVOKED_ACCOUNT
 
 **Status: Implemented**
 
@@ -1373,7 +1530,7 @@ Gets a revoked account by its address.
 - REST API:
   - GET `/dcl/auth/revoked-accounts/{address}`
 
-#### GET_ALL_ACCOUNTS
+### GET_ALL_ACCOUNTS
 
 **Status: Implemented**
 
@@ -1388,7 +1545,7 @@ Should be sent to trusted nodes only.
 - REST API:
   - GET `/dcl/auth/accounts`
 
-#### GET_ALL_PROPOSED_ACCOUNTS
+### GET_ALL_PROPOSED_ACCOUNTS
 
 **Status: Implemented**
 
@@ -1403,7 +1560,7 @@ Should be sent to trusted nodes only.
 - REST API:
   - GET `/dcl/auth/proposed-accounts`
 
-#### GET_ALL_REJECTED_ACCOUNTS
+### GET_ALL_REJECTED_ACCOUNTS
 
 **Status: Implemented**
 
@@ -1419,7 +1576,7 @@ Should be sent to trusted nodes only.
 - REST API:
   - GET `/dcl/auth/rejected-accounts`
 
-#### GET_ALL_PROPOSED_ACCOUNTS_TO_REVOKE
+### GET_ALL_PROPOSED_ACCOUNTS_TO_REVOKE
 
 **Status: Implemented**
 
@@ -1434,7 +1591,7 @@ Should be sent to trusted nodes only.
 - REST API:
   - GET `/dcl/auth/proposed-revocation-accounts`
 
-#### GET_ALL_REVOKED_ACCOUNTS
+### GET_ALL_REVOKED_ACCOUNTS
 
 **Status: Implemented**
 
@@ -1449,7 +1606,7 @@ Should be sent to trusted nodes only.
 - REST API:
   - GET `/dcl/auth/revoked-accounts`
 
-#### ROTATE_KEY
+### ROTATE_KEY
 
 **Status: Not Implemented**
 
@@ -1480,7 +1637,7 @@ Adds a new Validator node.
 - CLI command:
   - `dcld tx validator add-node --pubkey=<protobuf JSON encoded> --moniker=<string> --from=<account>`
 
-#### DISABLE_VALIDATOR_NODE
+### DISABLE_VALIDATOR_NODE
 
 **Status: Implemented**
 
@@ -1492,7 +1649,7 @@ Disables the Validator node (removes from the validator set) by the owner.
 - CLI command:
   - `dcld tx validator disable-node --from=<account>`
 
-#### PROPOSE_DISABLE_VALIDATOR_NODE
+### PROPOSE_DISABLE_VALIDATOR_NODE
 
 **Status: Implemented**
 
@@ -1516,7 +1673,7 @@ will be in a pending state until sufficient number of approvals is received.
 
 > **_Note:_** You can get Validator's address or owner address using query [GET_VALIDATOR](#get_validator)
 
-#### APPROVE_DISABLE_VALIDATOR_NODE
+### APPROVE_DISABLE_VALIDATOR_NODE
 
 **Status: Implemented**
 
@@ -1541,7 +1698,7 @@ The validator node is not disabled until sufficient number of Trustees approve i
 
 > **_Note:_** You can get Validator's address or owner address using query [GET_VALIDATOR](#get_validator)
 
-#### REJECT_DISABLE_VALIDATOR_NODE
+### REJECT_DISABLE_VALIDATOR_NODE
 
 **Status: Implemented**
 
@@ -1568,7 +1725,7 @@ The validator node is not reject until sufficient number of Trustees rejects it.
 
 > **_Note:_** You can get Validator's address or owner address using query [GET_VALIDATOR](#get_validator)
 
-#### ENABLE_VALIDATOR_NODE
+### ENABLE_VALIDATOR_NODE
 
 **Status: Implemented**
 
@@ -1582,7 +1739,7 @@ the node will be enabled and returned to the active validator set.
 - CLI command:
   - `dcld tx validator enable-node --from=<account>`
 
-#### GET_VALIDATOR
+### GET_VALIDATOR
 
 **Status: Implemented**
 
@@ -1606,7 +1763,7 @@ Gets a validator node.
 - REST API:
   - GET `/dcl/validator/nodes/{owner}`
 
-#### GET_ALL_VALIDATORS
+### GET_ALL_VALIDATORS
 
 **Status: Implemented**
 
@@ -1624,7 +1781,7 @@ Should be sent to trusted nodes only.
 - REST API:
   - GET `/dcl/validator/nodes`
 
-#### GET_PROPOSED_DISABLE_VALIDATOR
+### GET_PROPOSED_DISABLE_VALIDATOR
 
 **Status: Implemented**
 
@@ -1648,7 +1805,7 @@ Gets a proposed validator node.
 - REST API:
   - GET `/dcl/validator/proposed-disable-nodes/{address}`
 
-#### GET_ALL_PROPOSED_DISABLE_VALIDATORS
+### GET_ALL_PROPOSED_DISABLE_VALIDATORS
 
 **Status: Implemented**
 
@@ -1663,7 +1820,7 @@ Should be sent to trusted nodes only.
 - REST API:
   - GET `/dcl/validator/proposed-disable-nodes`
 
-#### GET_REJECTED_DISABLE_VALIDATOR
+### GET_REJECTED_DISABLE_VALIDATOR
 
 **Status: Implemented**
 
@@ -1687,7 +1844,7 @@ Gets a rejected validator node.
 - REST API:
   - GET `/dcl/validator/rejected-disable-nodes/{address}`
 
-#### GET_ALL_REJECTED_DISABLE_VALIDATORS
+### GET_ALL_REJECTED_DISABLE_VALIDATORS
 
 **Status: Implemented**
 
@@ -1702,7 +1859,7 @@ Should be sent to trusted nodes only.
 - REST API:
   - GET `/dcl/validator/rejected-disable-nodes`
 
-#### GET_DISABLED_VALIDATOR
+### GET_DISABLED_VALIDATOR
 
 **Status: Implemented**
 
@@ -1727,7 +1884,7 @@ Gets a disabled validator node.
 - REST API:
   - GET `/dcl/validator/disabled-nodes/{address}`
 
-#### GET_ALL_DISABLED_VALIDATORS
+### GET_ALL_DISABLED_VALIDATORS
 
 **Status: Implemented**
 
@@ -1742,7 +1899,7 @@ Should be sent to trusted nodes only.
 - REST API:
   - GET `/dcl/validator/disabled-nodes`
 
-#### GET_LAST_VALIDATOR_POWER
+### GET_LAST_VALIDATOR_POWER
 
 **Status: Implemented**
 
@@ -1767,7 +1924,7 @@ Gets a last validator node power.
 - REST API:
   - GET `/dcl/validator/last-powers/{owner}`
 
-#### GET_ALL_LAST_VALIDATORS_POWER
+### GET_ALL_LAST_VALIDATORS_POWER
 
 **Status: Implemented**
 
@@ -1782,7 +1939,7 @@ Should be sent to trusted nodes only.
 - REST API:
   - GET `/dcl/validator/last-powers`
 
-#### UPDATE_VALIDATOR_NODE
+### UPDATE_VALIDATOR_NODE
 
 **Status: Not Implemented**
 
@@ -1845,7 +2002,7 @@ dcld tx dclupgrade propose-upgrade --name=<string> --upgrade-height=<int64> --up
 
 > **_Note:_**  If the current upgrade proposal is out of date(when the current network height is greater than the proposed upgrade height), we can resubmit the upgrade proposal with the same name.
 
-#### APPROVE_UPGRADE
+### APPROVE_UPGRADE
 
 **Status: Implemented**
 
@@ -1864,7 +2021,7 @@ Approves the proposed upgrade plan with the given name. It also can be used for 
 dcld tx dclupgrade approve-upgrade --name=<string> --from=<account>
 ```
 
-#### REJECT_UPGRADE
+### REJECT_UPGRADE
 
 **Status: Implemented**
 
@@ -1885,7 +2042,7 @@ If proposed upgrade has only proposer's approval and no rejects then proposer ca
 dcld tx dclupgrade reject-upgrade --name=<string> --from=<account>
 ```
 
-#### GET_PROPOSED_UPGRADE
+### GET_PROPOSED_UPGRADE
 
 **Status: Implemented**
 
@@ -1902,7 +2059,7 @@ dcld query dclupgrade proposed-upgrade --name=<string>
 - REST API:
   - GET `/dcl/dclupgrade/proposed-upgrades/{name}`
 
-#### GET_APPROVED_UPGRADE
+### GET_APPROVED_UPGRADE
 
 **Status: Implemented**
 
@@ -1919,7 +2076,7 @@ dcld query dclupgrade approved-upgrade --name=<string>
 - REST API:
   - GET `/dcl/dclupgrade/approved-upgrades/{name}`
 
-#### GET_REJECTED_UPGRADE
+### GET_REJECTED_UPGRADE
 
 **Status: Implemented**
 
@@ -1936,7 +2093,7 @@ dcld query dclupgrade rejected-upgrade --name=<string>
 - REST API:
   - GET `/dcl/dclupgrade/rejected-upgrades/{name}`
 
-#### GET_ALL_PROPOSED_UPGRADES
+### GET_ALL_PROPOSED_UPGRADES
 
 **Status: Implemented**
 
@@ -1953,7 +2110,7 @@ dcld query dclupgrade all-proposed-upgrades
 - REST API:
   - GET `/dcl/dclupgrade/proposed-upgrades`
 
-#### GET_ALL_APPROVED_UPGRADES
+### GET_ALL_APPROVED_UPGRADES
 
 **Status: Implemented**
 
@@ -1970,7 +2127,7 @@ dcld query dclupgrade all-approved-upgrades
 - REST API:
   - GET `/dcl/dclupgrade/approved-upgrades`
 
-#### GET_ALL_REJECTED_UPGRADES
+### GET_ALL_REJECTED_UPGRADES
 
 **Status: Implemented**
 
@@ -1987,7 +2144,7 @@ dcld query dclupgrade all-rejected-upgrades
 - REST API:
   - GET `/dcl/dclupgrade/rejected-upgrades`
 
-#### PLAN
+### GET_UPGRADE_PLAN
 
 **Status: Implemented**
 
@@ -2002,7 +2159,7 @@ dcld query upgrade plan
 - REST API:
   - GET `/cosmos/upgrade/v1beta1/current_plan`
 
-#### APPLIED
+### GET_APPLIED_UPGRADE
 
 **Status: Implemented**
 
@@ -2022,7 +2179,7 @@ dcld query upgrade applied <string>
 - REST API:
   - GET `/cosmos/upgrade/v1beta1/applied_plan/{name}`
 
-#### MODULE_VERSIONS
+### GET_MODULE_VERSIONS
 
 **Status: Implemented**
 
@@ -2075,7 +2232,7 @@ Broadcast transaction to the ledger.
 - REST API:
   - POST `/cosmos/tx/v1beta1/txs`
   
-#### Status
+### Status
 
 Query status of a node.
 
@@ -2086,7 +2243,7 @@ Query status of a node.
 - REST API:
   - GET `/cosmos/base/tendermint/v1beta1/node_info`
 
-#### Validator set
+### Validator set
 
 Get the list of tendermint validators participating in the consensus at given height.
 
@@ -2098,7 +2255,7 @@ Get the list of tendermint validators participating in the consensus at given he
   - GET `/cosmos/base/tendermint/v1beta1/validatorsets/latest`
   - GET `/cosmos/base/tendermint/v1beta1/validatorsets/{height}`
 
-#### Keys
+### Keys
 
 The set of CLI commands that allows you to manage your local keystore.
 
