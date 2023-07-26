@@ -228,6 +228,8 @@ cd_certificate_id="15DEXF"
 root_cert_path="integration_tests/constants/root_cert"
 root_cert_subject="MDQxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApzb21lLXN0YXRlMRAwDgYDVQQKDAdyb290LWNh"
 root_cert_subject_key_id="5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB"
+root_cert_serial_number="442314047376310867378175982234956458728610743315"
+root_cert_subject_as_text="O=root-ca,ST=some-state,C=AU"
 
 test_root_cert_path="integration_tests/constants/test_root_cert"
 test_root_cert_subject="MDAxGDAWBgNVBAMMD01hdHRlciBUZXN0IFBBQTEUMBIGCisGAQQBgqJ8AgEMBDEyNUQ="
@@ -236,6 +238,8 @@ test_root_cert_subject_key_id="E2:90:8D:36:9C:3C:A3:C1:13:BB:09:E2:4D:C1:CC:C5:A
 google_root_cert_path="integration_tests/constants/google_root_cert"
 google_root_cert_subject="MEsxCzAJBgNVBAYTAlVTMQ8wDQYDVQQKDAZHb29nbGUxFTATBgNVBAMMDE1hdHRlciBQQUEgMTEUMBIGCisGAQQBgqJ8AgEMBDYwMDY="
 google_root_cert_subject_key_id="B0:00:56:81:B8:88:62:89:62:80:E1:21:18:A1:A8:BE:09:DE:93:21"
+google_cert_serial_number="1"
+google_cert_subject_as_text="CN=Matter PAA 1,O=Google,C=US,vid=0x6006"
 
 intermediate_cert_path="integration_tests/constants/intermediate_cert"
 intermediate_cert_subject="MDwxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApzb21lLXN0YXRlMRgwFgYDVQQKDA9pbnRlcm1lZGlhdGUtY2E="
@@ -585,6 +589,24 @@ check_response "$result" "\"code\": 0"
 test_divider
 
 
+echo "Get x509 root certificates"
+result=$($DCLD_BIN_OLD query pki x509-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
+echo $result | jq
+check_response "$result" "\"subject\": \"$root_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
+check_response "$result" "\"serialNumber\": \"$root_cert_serial_number\""
+check_response "$result" "\"subjectAsText\": \"$root_cert_subject_as_text\""
+response_does_not_contain "$result" "\"vid\":"
+
+echo "Get x509 proposed root certificates"
+result=$($DCLD_BIN_OLD query pki proposed-x509-root-cert --subject="$google_root_cert_subject" --subject-key-id="$google_root_cert_subject_key_id")
+echo $result | jq
+check_response "$result" "\"subject\": \"$google_root_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$google_root_cert_subject_key_id\""
+check_response "$result" "\"serialNumber\": \"$google_cert_serial_number\""
+check_response "$result" "\"subjectAsText\": \"$google_cert_subject_as_text\""
+response_does_not_contain "$result" "\"vid\":"
+
 get_height current_height
 echo "Current height is $current_height"
 
@@ -778,6 +800,24 @@ echo "Get all proposed x509 root certificates"
 result=$($DCLD_BIN_NEW query pki all-proposed-x509-root-certs-to-revoke)
 check_response "$result" "\"subject\": \"$test_root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id\""
+
+echo "Get x509 root certificates"
+result=$($DCLD_BIN_NEW query pki x509-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
+echo $result | jq
+check_response "$result" "\"subject\": \"$root_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
+check_response "$result" "\"serialNumber\": \"$root_cert_serial_number\""
+check_response "$result" "\"subjectAsText\": \"$root_cert_subject_as_text\""
+check_response "$result" "\"vid\": \"0\""
+
+echo "Get x509 proposed root certificates"
+result=$($DCLD_BIN_NEW query pki proposed-x509-root-cert --subject="$google_root_cert_subject" --subject-key-id="$google_root_cert_subject_key_id")
+echo $result | jq
+check_response "$result" "\"subject\": \"$google_root_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$google_root_cert_subject_key_id\""
+check_response "$result" "\"serialNumber\": \"$google_cert_serial_number\""
+check_response "$result" "\"subjectAsText\": \"$google_cert_subject_as_text\""
+check_response "$result" "\"vid\": \"0\""
 
 test_divider
 
