@@ -186,21 +186,21 @@ if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "deploy" ]]; then
 fi
 
 # Upgrade procedure tests
-#if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "upgrade" ]]; then
-#    UPGRADE_SHELL_TEST="./integration_tests/upgrade/test-upgrade.sh"
-#
-#    init_pool "" "localnet_init_latest_stable_release"
-#
-#    log "*****************************************************************************************"
-#    log "Running $UPGRADE_SHELL_TEST"
-#    log "*****************************************************************************************"
-#
-#    if bash "$UPGRADE_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
-#      log "$UPGRADE_SHELL_TEST finished successfully"
-#    else
-#      log "$UPGRADE_SHELL_TEST failed"
-#      exit 1
-#    fi
-#
-#    cleanup_pool
-#fi
+if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "upgrade" ]]; then
+    UPGRADE_SHELL_TEST="./integration_tests/upgrade/test-upgrade.sh"
+
+    init_pool "" "localnet_init_latest_stable_release"
+
+    log "*****************************************************************************************"
+    log "Running $UPGRADE_SHELL_TEST"
+    log "*****************************************************************************************"
+
+    if bash "$UPGRADE_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
+      log "$UPGRADE_SHELL_TEST finished successfully"
+    else
+      log "$UPGRADE_SHELL_TEST failed"
+      exit 1
+    fi
+
+    cleanup_pool
+fi

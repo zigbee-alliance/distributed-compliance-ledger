@@ -205,7 +205,8 @@ Gets a list of all revocation distribution points.
    - Check that `crlSignerCertificate` is chained back to certificates present on DCL (`x509.verifyCertificate` method):
        - Query for a PAA where `Subject == CRLSignerCertificate.Issuer` and `SubjectKeyID == CRLSignerCertificate.AuthorityKeyId`
        - Build certification path with both elements, verify path
-- Check that (VendorID, Label, IssuerSubjectKeyID) combination is unique when adding the distribution endpoint.
+- Check that (VendorID, IssuerSubjectKeyID, Label) combination is unique when adding the distribution endpoint.
+- Check that (VendorID, IssuerSubjectKeyID, DataUrl) combination is unique when adding the
 
 #### UPDATE_PKI_REVOCATION_DISTRIBUTION_POINT
 
@@ -221,7 +222,7 @@ Gets a list of all revocation distribution points.
      - `crlSignerCertificate` must be a PAI
      - `crlSignerCertificate` must encode a vid in its subject and this vid must be equal to `VendorID` field
      - if `crlSignerCertificate` encodes a pid in its subject, it must be equal to the `ProductID` field
-
+- Check that (VendorID, IssuerSubjectKeyID, DataUrl) combination is unique when updating the distribution endpoint.
 
 #### DELETE_PKI_REVOCATION_DISTRIBUTION_POINT
 

@@ -151,14 +151,16 @@ Please take into account the following when sending a PR:
     - run unit tests
     - run integration tests
 
-## How To Add a new Module
+## How To Add a new Module or Transaction
 
 - Use [starport](https://github.com/tendermint/starport) command to scaffold the module.
   Consider using a docker container built from the provided [Dockerfile](scripts/Dockerfile) to have a predictable version of starport. See [README.md](scripts/README.md).
-- Have a look at the scripts and commands used for generation of existing modules and do it in a similar way
+- Have a look at the scripts and commands used for generation of existing modules, messages and CRUD operations and do it in a similar way
   (for example [PKI module commands](scripts/starport/upgrade-0.44/07.pki_types.sh)).
+- If a new transaction with a new data in state (key-value) and new queries needs to be created, then both message and CRUD commands need to be executed.
+- If just a message to update existing state values need to be created, then a message command is enough.  
 - Adjust the generated code
-  - change the return value of `AppModule.ConsensusVersion` method to 1 in `x/<module>/module.go`
+  - increment the return value of `AppModule.ConsensusVersion` method in `x/<module>/module.go`
   - correct REST endpoints: `/dcl` instead of `/zigbee-alliance/distributedcomplianceledger` in `proto/<module>/query.proto` and in entries related to queries of the new module in `docs/static/openapi.yml`
   - add message validation as annotations (`validate` tags) in `proto/<module>/tx.proto`
   - add `(cosmos_proto.scalar) = "cosmos.AddressString"` annotation for all fields with address/account type (such as `signer` or `owner`).
@@ -167,13 +169,19 @@ Please take into account the following when sending a PR:
     - Note2: for `uint16` type: use `int32` during starport scaffolding, and add custom validation (annotations above) to check the lower and upper bounds.
     - Note3: for `uint32` type: use `int32` during starport scaffolding, then replace it by `uint32` in .proto files, re-generate the code and fix compilation errors.
   - build proto (for example `starport chain build`). Fix compilation errors if any.
-  - generate openapi docs from proto using (`scripts/dcl-swagger-gen.sh`). recommended to run from container built from [Dockerfile](scripts/Dockerfile)
+  - generate openapi docs from proto using (`scripts/dcl-swagger-gen.sh`). It's recommended to run from container built from [Dockerfile](scripts/Dockerfile)
 
   - **Note1**: colons (`:`) are part of subject-id in PKI module, but colons are not allowed in gRPC REST URLs by default.
     `allow_colon_final_segments=true` should be used as a workaround.
     So, make sure that `runtime.AssumeColonVerbOpt(false)` in `/x/pki/types/query.pb.gw.go`.
     It's usually sufficient to revert the generated changes in `/x/pki/types/query.pb.gw.go`.
-- Call `validator.Validate(msg)` in `ValidateBasic` methods for all generated messages
+  - **Note2**: move `compliance_info.pb.go` and `compliance_history_item.pb.go` to `types/compliance` and adjust the import in other places accordingly.
+    It may be easier just to revert changes in all  `*.pb.go` files not affected by your changes in `.proto`
+  - **Note3**: `starport chain build` needs to be called only if you made manual changes in `.proto` files.
+    There is no need to call `starport chain build` again once all errors and adjustments above are done. It's sufficient just to build the project via usual ways (such as `make build`)  
+- Add static validation for new messages:
+  - Call `validator.Validate(msg)` in `ValidateBasic` methods for all generated messages
+  - Add additional checks to `ValidateBasic` that do not depend on the state (key-value) and order of transactions
 - Implement business logic in `msg_server_xxx.go`
 - Improve `NotFound` error processing:
   - replace `status.Error(codes.InvalidArgument, "not found")` to `status.Error(codes.NotFound, "not found")` in every generated `grpc_query_xxx.go` to return 404 error in REST.
@@ -191,11 +199,16 @@ Please take into account the following when sending a PR:
   Consider using the provided [Dockerfile](scripts/Dockerfile) to have a predictable version of starport. See [README.md](scripts/README.md).
 - **Never change `.pb` files manually**. Do the changes in `.proto` files.
 - Every time `.proto` files change, re-generate the code (for example `starport chain build`) and fix compilation errors if any.
-- Update openapi docs from proto using (`scripts/dcl-swagger-gen.sh`). recommended to run from container built from [Dockerfile](scripts/Dockerfile)
+- Update openapi docs from proto using (`scripts/dcl-swagger-gen.sh`). It's recommended to run from container built from [Dockerfile](scripts/Dockerfile).
 - **Note1**: colons (`:`) are part of subject-id in PKI module, but colons are not allowed in gRPC REST URLs by default.
   `allow_colon_final_segments=true` should be used as a workaround.
   So, make sure that `runtime.AssumeColonVerbOpt(false)` in `/x/pki/types/query.pb.gw.go`.
   It's usually sufficient to revert the generated changes in `/x/pki/types/query.pb.gw.go`.
+- **Note2**: move `compliance_info.pb.go` and `compliance_history_item.pb.go` to `types/compliance` and adjust the import in other places accordingly.
+  It may be easier just to revert changes in all  `*.pb.go` files not affected by your changes in `.proto`
+- **Note3**: `starport chain build` needs to be called only if you made manual changes in `.proto` files.
+  There is no need to call `starport chain build` again once all errors and adjustments above are done. It's sufficient just to build the project via usual ways (such as `make build`)
+
 
 ## Update Cosmos-sdk Version
 
