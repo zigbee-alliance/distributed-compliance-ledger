@@ -11,33 +11,33 @@ an Account created on the Ledger with an appropriate role (see [Getting Account]
 the following instructions can be used for every role (see [Use Case Diagrams](use_cases)):
   - [Trustee](#trustee-instructions)
     - propose new accounts
-    - approve new accounts
+    - approve/reject new accounts
     - propose revocation of accounts
     - approve revocation of accounts
     - propose X509 root certificates
-    - approve X509 root certificates
+    - approve/reject X509 root certificates
     - propose revocation of X509 root certificates
     - approve revocation of X509 root certificates
-    - publish X509 certificates
-    - revoke X509 certificates
     - propose pool upgrade
-    - approve pool upgrade
-  - [CA](#ca-instructions)
-    - propose X509 root certificates
-    - publish X509 certificates
-    - revoke X509 certificates
+    - approve/reject pool upgrade
+    - propose disable a validator node
+    - approve/reject disable a validator node 
   - [Vendor](#vendor-instructions)
-    - publish device model info
-    - publish X509 certificates
-    - revoke X509 certificates
+    - publish/update vendor info
+    - publish/update/delete device model info
+    - publish/update/delete device model version
+    - publish/update/delete PKI Revocation Distribution Point
+    - publish/remove X509 certificates
   - [Certification Center](#certification-center-instructions)
     - certify or revoke certification of device models
-    - publish X509 certificates
-    - revoke X509 certificates
-  - [Node Admin](#node-admin-instructions-setting-up-a-new-validator-node)
+    - update/delete compliance info
+  - [Vendor Admin](#vendor-admin-instructions)
+    - publish/update vendor info for any vendor
+  - Node Admin
     - add a new Validator node
-    - publish X509 certificates
-    - revoke X509 certificates
+    - disable a Validator node
+    - enable a Validator node
+
 
 ## CLI Configuration
 
@@ -257,6 +257,26 @@ dcld tx model update-model --vid=<uint16> --pid=<uint16> ... --from=<account>
 dcld tx model update-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> ... --from=<account>
 ```
 
+### 8. Add PKI Revocation Distribution Point
+
+```bash
+dcld tx pki add-revocation-point --vid=<uint16> --pid=<uint16> --issuer-subject-key-id=<string> --is-paa=<bool> --label=<string>
+    --certificate=<string-or-path> --data-url=<string> --revocation-type=1 --from=<account>
+```
+
+### 9. Edit PKI Revocation Distribution Point
+
+```bash
+dcld tx pki update-revocation-point --vid=<uint16> --issuer-subject-key-id=<string> --label=<string>
+    --data-url=<string> --certificate=<string-or-path> --from=<account>
+```
+
+### 10. Delete PKI Revocation Distribution Point
+
+```bash
+dcld tx pki delete-revocation-point --vid=<uint16> --issuer-subject-key-id=<string> --label=<string> --from=<account>
+```
+
 ## Vendor Admin Instructions
 
 Vendor Admin account creation is the same process as the creation of a non-Vendor account i.e. requires approvals by >2/3 of trustees. 
@@ -275,17 +295,7 @@ dcld tx vendorinfo update-vendor --vid=<uint16> ... --from=<vendor-admin-account
 
 ## Certification Center Instructions
 
-### 1A. Publish an intermediate or leaf X509 certificate(s) to be used for signing the Certification blob
-
-This step is needed for off-ledger certification use case only, see [use_cases_device_off_ledger_certification](use_cases/use_cases_device_off_ledger_certification.png).
-
-The certificate must be signed by a chain of certificates which must be already present on the ledger.
-
-```bash
-dcld tx pki add-x509-cert --certificate=<string-or-path> --from=<account>
-```
-
-### 1B. Certify the device model with the given VID/PID
+### 1. Certify the device model with the given VID/PID
 
 This step is needed for on-ledger certification use case only, see [use_cases_device_on_ledger_certification](use_cases/use_cases_device_on_ledger_certification.png).
 
