@@ -592,7 +592,7 @@ check_response "$result" "\"code\": 0"
 test_divider
 
 echo "Get x509 root certificates"
-result=$($DCLD_BIN_NEW query pki x509-cert --subject="$test_root_cert_subject" --subject-key-id="$test_root_cert_subject_key_id")
+result=$($DCLD_BIN_OLD query pki x509-cert --subject="$test_root_cert_subject" --subject-key-id="$test_root_cert_subject_key_id")
 echo $result | jq
 check_response "$result" "\"subject\": \"$test_root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id\""
@@ -601,7 +601,7 @@ check_response "$result" "\"subjectAsText\": \"$test_root_cert_subject_as_text\"
 response_does_not_contain "$result" "\"vid\":"
 
 echo "Get x509 proposed root certificates"
-result=$($DCLD_BIN_NEW query pki proposed-x509-root-cert --subject="$google_root_cert_subject" --subject-key-id="$google_root_cert_subject_key_id")
+result=$($DCLD_BIN_OLD query pki proposed-x509-root-cert --subject="$google_root_cert_subject" --subject-key-id="$google_root_cert_subject_key_id")
 echo $result | jq
 check_response "$result" "\"subject\": \"$google_root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$google_root_cert_subject_key_id\""
