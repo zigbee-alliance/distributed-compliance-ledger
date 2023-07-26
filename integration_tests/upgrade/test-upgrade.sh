@@ -204,7 +204,7 @@ vendor_account="vendor_account"
 
 plan_name="v1.2.0"
 binary_version="v1.2.0-dev3"
-upgrade_checksum="sha256:72632245e2350bf69c79039e339854e639c1bea41317a8381bd7322ccd7b2241"
+upgrade_checksum="sha256:7194fd6dbeab39130e3050e6260d8871e9dab4b1ae6b049caaa5d134bd0da0f7"
 
 vid=1
 pid_1=1
@@ -593,10 +593,8 @@ plan_height=$(expr $current_height \+ 20)
 test_divider
 
 echo "Propose upgrade $plan_name at height $plan_height"
-# echo "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version/dcld?checksum=$upgrade_checksum"
-echo "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version/dcld"
-#result=$(echo $passphrase | $DCLD_BIN_OLD tx dclupgrade propose-upgrade --name=$plan_name --upgrade-height=$plan_height --upgrade-info="{\"binaries\":{\"linux/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version/dcld.ubuntu.tar.gz?checksum=$upgrade_checksum\"}}" --from $trustee_account_1 --yes)
-result=$(echo $passphrase | $DCLD_BIN_OLD tx dclupgrade propose-upgrade --name=$plan_name --upgrade-height=$plan_height --upgrade-info="{\"binaries\":{\"linux/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version/dcld\"}}" --from $trustee_account_1 --yes)
+echo "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version/dcld?checksum=$upgrade_checksum"
+result=$(echo $passphrase | $DCLD_BIN_OLD tx dclupgrade propose-upgrade --name=$plan_name --upgrade-height=$plan_height --upgrade-info="{\"binaries\":{\"linux/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version/dcld?checksum=$upgrade_checksum\"}}" --from $trustee_account_1 --yes)
 echo "$result"
 check_response "$result" "\"code\": 0"
 
