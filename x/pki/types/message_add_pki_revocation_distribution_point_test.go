@@ -340,9 +340,9 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "pid not encoded in CRL signer certificate",
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  1,
+				Vid:                  65522,
 				IsPAA:                false,
-				CrlSignerCertificate: testconstants.RootCertPem,
+				CrlSignerCertificate: testconstants.PAICertWithVid,
 				Label:                "label",
 				DataURL:              testconstants.DataURL,
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
@@ -405,13 +405,13 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 				RevocationType:       1,
 			},
-			err: pkitypes.ErrUnsupportedOperation,
+			err: pkitypes.ErrCRLSignerCertificateVidNotEqualMsgVid,
 		},
 		{
 			name: "PAA is false, cert pid provided, msg pid does not provided",
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  1,
+				Vid:                  65521,
 				IsPAA:                false,
 				CrlSignerCertificate: testconstants.PAICertWithNumericPidVid,
 				Label:                "label",
@@ -425,7 +425,7 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "PAA is false, cert pid != msg.pid",
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  1,
+				Vid:                  65521,
 				IsPAA:                false,
 				CrlSignerCertificate: testconstants.PAICertWithNumericPidVid,
 				Label:                "label",
@@ -435,20 +435,6 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 				RevocationType:       1,
 			},
 			err: pkitypes.ErrCRLSignerCertificatePidNotEqualMsgPid,
-		},
-		{
-			name: "PAA is true, cert non-vid scoped",
-			msg: MsgAddPkiRevocationDistributionPoint{
-				Signer:               sample.AccAddress(),
-				Vid:                  1,
-				IsPAA:                true,
-				CrlSignerCertificate: testconstants.RootCertPem,
-				Label:                "label",
-				DataURL:              testconstants.DataURL,
-				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
-				RevocationType:       1,
-			},
-			err: pkitypes.ErrUnsupportedOperation,
 		},
 	}
 
@@ -517,6 +503,19 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 				Vid:                  65521,
 				IsPAA:                true,
 				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
+				Label:                "label",
+				DataURL:              testconstants.DataURL,
+				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+				RevocationType:       1,
+			},
+		},
+		{
+			name: "PAA is true, cert non-vid scoped",
+			msg: MsgAddPkiRevocationDistributionPoint{
+				Signer:               sample.AccAddress(),
+				Vid:                  1,
+				IsPAA:                true,
+				CrlSignerCertificate: testconstants.RootCertPem,
 				Label:                "label",
 				DataURL:              testconstants.DataURL,
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
