@@ -2303,6 +2303,18 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAIWithVid(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestHandler_AddPkiRevocationDistributionPoint_PAA_NoVid(t *testing.T) {
+}
+
+func TestHandler_AddPkiRevocationDistributionPoint_PAANoVid_LedgerPAANoVid(t *testing.T) {
+}
+
+func TestHandler_AddPkiRevocationDistributionPoint_PAANoVid_WrongVID(t *testing.T) {
+}
+
+func TestHandler_AddPkiRevocationDistributionPoint_PAANoVid_PEMValueNotEqual(t *testing.T) {
+}
+
 func TestHandler_RevocationPointsByIssuerSubjectKeyID(t *testing.T) {
 	setup := Setup(t)
 
@@ -2949,6 +2961,9 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAIPidNotFoundInNewCert(t 
 	}
 	_, err = setup.Handler(setup.Ctx, &updatePkiRevocationDistributionPoint)
 	require.ErrorIs(t, err, pkitypes.ErrPidNotFound)
+}
+
+func TestHandler_UpdatePkiRevocationDistributionPoint_PAAWrongPemValue(t *testing.T) {
 }
 
 func TestHandler_DeletePkiRevocationDistributionPoint_NotFound(t *testing.T) {
