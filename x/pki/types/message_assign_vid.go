@@ -39,6 +39,7 @@ func (msg *MsgAssignVid) GetSigners() []sdk.AccAddress {
 
 func (msg *MsgAssignVid) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
+
 	return sdk.MustSortJSON(bz)
 }
 
