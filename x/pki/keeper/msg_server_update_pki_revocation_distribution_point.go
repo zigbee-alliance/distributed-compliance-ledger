@@ -111,7 +111,7 @@ func (k msgServer) verifyUpdatedPAA(ctx sdk.Context, newCertificatePem string, r
 	if err != nil {
 		return sdkerrors.Wrapf(pkitypes.ErrInvalidVidFormat, "Could not parse vid: %s", err)
 	}
-	if newVid != revocationPoint.Vid {
+	if newVid != 0 && newVid != revocationPoint.Vid {
 		return pkitypes.NewErrCRLSignerCertificateVidNotEqualMsgVid("CRL Signer Certificate's vid must be equal to the provided vid in the message")
 	}
 
@@ -167,7 +167,7 @@ func (k msgServer) verifyUpdatedPAI(ctx sdk.Context, newCertificatePem string, r
 		return sdkerrors.Wrapf(pkitypes.ErrInvalidVidFormat, "Could not parse vid: %s", err)
 	}
 	if newVid != revocationPoint.Vid {
-		return pkitypes.NewErrCRLSignerCertificateVidNotEqualRevocationPointVid("CRL Signer Certificate's vid must be equal to the provided vid in the reovocation point")
+		return pkitypes.NewErrCRLSignerCertificateVidNotEqualRevocationPointVid(revocationPoint.Vid, newVid)
 	}
 
 	// check PID
@@ -180,6 +180,11 @@ func (k msgServer) verifyUpdatedPAI(ctx sdk.Context, newCertificatePem string, r
 	}
 	if newPid == 0 && newPid != revocationPoint.Pid {
 		return pkitypes.NewErrPidNotFound("pid not found in updated CRL Signer Certificate when it is provided in revocation point")
+	}
+
+	// check that it's chained back to a cert on DCL
+	if _, _, err := k.verifyCertificate(ctx, newCertificate); err != nil {
+		return pkitypes.NewErrCertNotChainedBack()
 	}
 
 	return nil

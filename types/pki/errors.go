@@ -44,6 +44,7 @@ var (
 	ErrInvalidDataURLFormat                              = sdkerrors.Register(ModuleName, 434, "invalid data url format")
 	ErrCertificateVidNotEqualMsgVid                      = sdkerrors.Register(ModuleName, 435, "certificate's vid is not equal to the message vid")
 	ErrMessageVidNotEqualRootCertVid                     = sdkerrors.Register(ModuleName, 436, "Message vid does not equal ledger's root certificate vid")
+	ErrCertNotChainedBack                                = sdkerrors.Register(ModuleName, 437, "Certificate is not chained back to a root certificate on DCL")
 )
 
 func NewErrProposedCertificateAlreadyExists(subject string, subjectKeyID string) error {
@@ -147,9 +148,9 @@ func NewErrMessageVidNotEqualRootCertVid(vid1 int32, vid2 int32) error {
 		vid1, vid2)
 }
 
-func NewErrCRLSignerCertificateVidNotEqualRevocationPointVid(e interface{}) error {
-	return sdkerrors.Wrapf(ErrCRLSignerCertificateVidNotEqualRevocationPointVid, "%v",
-		e)
+func NewErrCRLSignerCertificateVidNotEqualRevocationPointVid(vid1 int32, vid2 int32) error {
+	return sdkerrors.Wrapf(ErrCRLSignerCertificateVidNotEqualRevocationPointVid,
+		"CRL Signer Certificate's vid=%d must be equal to the provided vid=%d in the reovocation point", vid1, vid2)
 }
 
 func NewErrNonRootCertificateSelfSigned(e interface{}) error {
@@ -231,4 +232,8 @@ func NewErrInvalidDataURLFormat(e interface{}) error {
 
 func NewErrCertificateVidNotEqualMsgVid(e interface{}) error {
 	return sdkerrors.Wrapf(ErrCertificateVidNotEqualMsgVid, "%v", e)
+}
+
+func NewErrCertNotChainedBack() error {
+	return sdkerrors.Wrapf(ErrCertNotChainedBack, "CRL Signer Certificate is not chained back to root certificate on DCL")
 }

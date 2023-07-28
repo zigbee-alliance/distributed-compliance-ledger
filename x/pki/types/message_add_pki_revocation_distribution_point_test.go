@@ -97,7 +97,7 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "issuerSubjectKeyID empty",
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  65521,
+				Vid:                  testconstants.PAACertWithNumericVidVid,
 				IsPAA:                true,
 				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 				Label:                "label",
@@ -108,7 +108,7 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "dataURL empty",
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  65521,
+				Vid:                  testconstants.PAACertWithNumericVidVid,
 				IsPAA:                true,
 				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 				Label:                "label",
@@ -120,7 +120,7 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "revocationType empty",
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  65521,
+				Vid:                  testconstants.PAACertWithNumericVidVid,
 				IsPAA:                true,
 				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 				Label:                "label",
@@ -133,7 +133,7 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: fmt.Sprintf("dataDigestType is not one of %v", allowedDataDigestTypes),
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  65521,
+				Vid:                  testconstants.PAACertWithNumericVidVid,
 				IsPAA:                true,
 				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 				Label:                "label",
@@ -148,7 +148,7 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: fmt.Sprintf("revocationType is not one of %v", allowedRevocationTypes),
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  65521,
+				Vid:                  testconstants.PAACertWithNumericVidVid,
 				IsPAA:                true,
 				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 				Label:                "label",
@@ -162,7 +162,7 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "pid not empty when IsPAA is true",
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  65521,
+				Vid:                  testconstants.PAACertWithNumericVidVid,
 				IsPAA:                true,
 				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 				Label:                "label",
@@ -177,7 +177,7 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "dataURL starts not with http or https",
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  65521,
+				Vid:                  testconstants.PAACertWithNumericVidVid,
 				IsPAA:                true,
 				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 				Label:                "label",
@@ -191,7 +191,7 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "dataURL without protocol",
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  65521,
+				Vid:                  testconstants.PAACertWithNumericVidVid,
 				IsPAA:                true,
 				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 				Label:                "label",
@@ -205,7 +205,7 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "dataDigest presented, DataFileSize not presented",
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  65521,
+				Vid:                  testconstants.PAACertWithNumericVidVid,
 				IsPAA:                true,
 				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 				Label:                "label",
@@ -220,7 +220,7 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "DataFileSize presented, dataDigest not presented",
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  65521,
+				Vid:                  testconstants.PAACertWithNumericVidVid,
 				IsPAA:                true,
 				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 				Label:                "label",
@@ -235,7 +235,7 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "dataDigestType presented, DataDigest not presented",
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  65521,
+				Vid:                  testconstants.PAACertWithNumericVidVid,
 				IsPAA:                true,
 				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 				Label:                "label",
@@ -250,7 +250,7 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "dataDigest presented, DataDigestType not presented",
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  65521,
+				Vid:                  testconstants.PAACertWithNumericVidVid,
 				IsPAA:                true,
 				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 				Label:                "label",
@@ -266,7 +266,7 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "wrong IssuerSubjectKeyID format (not [0-9A-F])",
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  65521,
+				Vid:                  testconstants.PAACertWithNumericVidVid,
 				IsPAA:                true,
 				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 				Label:                "label",
@@ -280,7 +280,7 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "wrong IssuerSubjectKeyID format (not even number of symbols)",
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  65521,
+				Vid:                  testconstants.PAACertWithNumericVidVid,
 				IsPAA:                true,
 				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 				Label:                "label",
@@ -294,7 +294,7 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "wrong IssuerSubjectKeyID format (with colons)",
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  65521,
+				Vid:                  testconstants.PAACertWithNumericVidVid,
 				IsPAA:                true,
 				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 				Label:                "label",
@@ -308,7 +308,7 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "data fields present when revocationType is 1",
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  65521,
+				Vid:                  testconstants.PAACertWithNumericVidVid,
 				IsPAA:                true,
 				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 				Label:                "label",
@@ -446,7 +446,7 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "minimal msg isPAA true",
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  65521,
+				Vid:                  testconstants.PAACertWithNumericVidVid,
 				IsPAA:                true,
 				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 				Label:                "label",
@@ -473,7 +473,7 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "vid == cert.vid",
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  65521,
+				Vid:                  testconstants.PAACertWithNumericVidVid,
 				IsPAA:                true,
 				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 				Label:                "label",
@@ -500,7 +500,7 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "numeric MVid",
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  65521,
+				Vid:                  testconstants.PAACertWithNumericVidVid,
 				IsPAA:                true,
 				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 				Label:                "label",

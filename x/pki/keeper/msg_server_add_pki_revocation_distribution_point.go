@@ -112,6 +112,9 @@ func (k msgServer) checkRootCert(ctx sdk.Context, crlSignerCertificate *x509.Cer
 }
 
 func (k msgServer) checkNonRootCert(ctx sdk.Context, crlSignerCertificate *x509.Certificate) error {
-	_, _, err := k.verifyCertificate(ctx, crlSignerCertificate)
-	return err
+	// check that it's chained back to a cert on DCL
+	if _, _, err := k.verifyCertificate(ctx, crlSignerCertificate); err != nil {
+		return pkitypes.NewErrCertNotChainedBack()
+	}
+	return nil
 }
