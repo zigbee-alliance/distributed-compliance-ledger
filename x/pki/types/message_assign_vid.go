@@ -11,11 +11,11 @@ const TypeMsgAssignVid = "assign_vid"
 
 var _ sdk.Msg = &MsgAssignVid{}
 
-func NewMsgAssignVid(signer string, subject string, subjectKeyId string, vid int32) *MsgAssignVid {
+func NewMsgAssignVid(signer string, subject string, subjectKeyID string, vid int32) *MsgAssignVid {
 	return &MsgAssignVid{
 		Signer:       signer,
 		Subject:      subject,
-		SubjectKeyId: subjectKeyId,
+		SubjectKeyId: subjectKeyID,
 		Vid:          vid,
 	}
 }
