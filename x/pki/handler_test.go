@@ -3354,7 +3354,7 @@ func TestHandler_AssignVid_MessageVidAndCertificateVidNotEqual(t *testing.T) {
 	require.ErrorIs(t, err, pkitypes.ErrCertificateVidNotEqualMsgVid)
 }
 
-func TestHandler_AssignVid_certWithoutSubjectVid(t *testing.T) {
+func TestHandler_AssignVid_certificateWithoutSubjectVid(t *testing.T) {
 	setup := Setup(t)
 
 	vendorAcc := GenerateAccAddress()
@@ -3382,7 +3382,7 @@ func TestHandler_AssignVid_certWithoutSubjectVid(t *testing.T) {
 	require.NotEqual(t, certificates.Certs[0].Vid, testconstants.TestCertPemVid)
 }
 
-func TestHandler_AssignVid_certWithSubjectVid(t *testing.T) {
+func TestHandler_AssignVid_certificateWithSubjectVid(t *testing.T) {
 	setup := Setup(t)
 
 	vendorAcc := GenerateAccAddress()
