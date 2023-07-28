@@ -32,6 +32,7 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdAddPkiRevocationDistributionPoint())
 	cmd.AddCommand(CmdUpdatePkiRevocationDistributionPoint())
 	cmd.AddCommand(CmdDeletePkiRevocationDistributionPoint())
+	cmd.AddCommand(CmdAssignVid())
 	// this line is used by starport scaffolding # 1
 
 	return cmd
