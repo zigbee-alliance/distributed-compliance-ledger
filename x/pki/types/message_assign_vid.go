@@ -33,6 +33,7 @@ func (msg *MsgAssignVid) GetSigners() []sdk.AccAddress {
 	if err != nil {
 		panic(err)
 	}
+
 	return []sdk.AccAddress{signer}
 }
 

@@ -1835,18 +1835,18 @@ func TestHandler_DoubleTimeRejectX509RootCert(t *testing.T) {
 }
 
 type RootCertOptions struct {
-	pemCert 		 string
-	info 				 string
-	subject 		 string
+	pemCert      string
+	info         string
+	subject      string
 	subjectKeyID string
-	vid 				 int32
+	vid          int32
 }
 
 func createTestRootCertOptions() *RootCertOptions {
 	return &RootCertOptions{
 		pemCert:      testconstants.RootCertPem,
-		info: 				testconstants.Info,
-		subject: 		  testconstants.RootSubject,
+		info:         testconstants.Info,
+		subject:      testconstants.RootSubject,
 		subjectKeyID: testconstants.RootSubjectKeyID,
 		vid:          testconstants.Vid,
 	}
@@ -1855,8 +1855,8 @@ func createTestRootCertOptions() *RootCertOptions {
 func createPAACertWithNumericVidOptions() *RootCertOptions {
 	return &RootCertOptions{
 		pemCert:      testconstants.PAACertWithNumericVid,
-		info: 				testconstants.Info,
-		subject: 		  testconstants.PAACertWithNumericVidSubject,
+		info:         testconstants.Info,
+		subject:      testconstants.PAACertWithNumericVidSubject,
 		subjectKeyID: testconstants.PAACertWithNumericVidSubjectKeyID,
 		vid:          testconstants.PAACertWithNumericVidVid,
 	}
@@ -3287,9 +3287,9 @@ func TestHandler_AssignVid_SenderNotVendor(t *testing.T) {
 
 	assignVid := types.MsgAssignVid{
 		Signer:       setup.Trustee1.String(),
-		Subject: 			testconstants.TestSubject,
+		Subject:      testconstants.TestSubject,
 		SubjectKeyId: testconstants.TestSubjectKeyID,
-		Vid:	 				testconstants.TestCertPemVid,
+		Vid:          testconstants.TestCertPemVid,
 	}
 
 	_, err := setup.Handler(setup.Ctx, &assignVid)
@@ -3303,10 +3303,10 @@ func TestHandler_AssignVid_CertificateDoesNotExist(t *testing.T) {
 	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.TestCertPemVid)
 
 	assignVid := types.MsgAssignVid{
-		Signer:      	vendorAcc.String(),
-		Subject: 			testconstants.TestSubject,
+		Signer:       vendorAcc.String(),
+		Subject:      testconstants.TestSubject,
 		SubjectKeyId: testconstants.TestSubjectKeyID,
-		Vid:	 				testconstants.TestCertPemVid,
+		Vid:          testconstants.TestCertPemVid,
 	}
 
 	_, err := setup.Handler(setup.Ctx, &assignVid)
@@ -3323,10 +3323,10 @@ func TestHandler_AssignVid_CertificateAlreadyHasVid(t *testing.T) {
 	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
 	assignVid := types.MsgAssignVid{
-		Signer:      	vendorAcc.String(),
-		Subject: 			rootCertOptions.subject,
+		Signer:       vendorAcc.String(),
+		Subject:      rootCertOptions.subject,
 		SubjectKeyId: rootCertOptions.subjectKeyID,
-		Vid:	 				testconstants.PAACertWithNumericVidVid,
+		Vid:          testconstants.PAACertWithNumericVidVid,
 	}
 
 	_, err := setup.Handler(setup.Ctx, &assignVid)
@@ -3344,10 +3344,10 @@ func TestHandler_AssignVid_MessageVidAndCertificateVidNotEqual(t *testing.T) {
 	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
 	assignVid := types.MsgAssignVid{
-		Signer:      	vendorAcc.String(),
-		Subject: 			rootCertOptions.subject,
+		Signer:       vendorAcc.String(),
+		Subject:      rootCertOptions.subject,
 		SubjectKeyId: rootCertOptions.subjectKeyID,
-		Vid:	 				1,
+		Vid:          1,
 	}
 
 	_, err := setup.Handler(setup.Ctx, &assignVid)
@@ -3365,10 +3365,10 @@ func TestHandler_AssignVid_certificateWithoutSubjectVid(t *testing.T) {
 	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
 	assignVid := types.MsgAssignVid{
-		Signer:      	vendorAcc.String(),
-		Subject: 			rootCertOptions.subject,
+		Signer:       vendorAcc.String(),
+		Subject:      rootCertOptions.subject,
 		SubjectKeyId: rootCertOptions.subjectKeyID,
-		Vid:	 				testconstants.PAACertWithNumericVidVid,
+		Vid:          testconstants.PAACertWithNumericVidVid,
 	}
 
 	_, err := setup.Handler(setup.Ctx, &assignVid)
@@ -3393,10 +3393,10 @@ func TestHandler_AssignVid_certificateWithSubjectVid(t *testing.T) {
 	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
 	assignVid := types.MsgAssignVid{
-		Signer:      	vendorAcc.String(),
-		Subject: 			rootCertOptions.subject,
+		Signer:       vendorAcc.String(),
+		Subject:      rootCertOptions.subject,
 		SubjectKeyId: rootCertOptions.subjectKeyID,
-		Vid:	 				testconstants.PAACertWithNumericVidVid,
+		Vid:          testconstants.PAACertWithNumericVidVid,
 	}
 
 	_, err := setup.Handler(setup.Ctx, &assignVid)

@@ -66,7 +66,7 @@ const (
 	defaultWeightMsgDeletePkiRevocationDistributionPoint int = 100
 
 	opWeightMsgAssignVid = "op_weight_msg_create_chain"
-	// TODO: Determine the simulation weight value
+	// TODO: Determine the simulation weight value.
 	defaultWeightMsgAssignVid int = 100
 
 	// this line is used by starport scaffolding # simapp/module/const.
