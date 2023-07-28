@@ -38,6 +38,9 @@ export interface PkiCertificate {
   approvals?: PkiGrant[];
   subjectAsText?: string;
   rejects?: PkiGrant[];
+
+  /** @format int32 */
+  vid?: number;
 }
 
 export interface PkiCertificateIdentifier {
@@ -66,6 +69,8 @@ export type PkiMsgAddX509CertResponse = object;
 export type PkiMsgApproveAddX509RootCertResponse = object;
 
 export type PkiMsgApproveRevokeX509RootCertResponse = object;
+
+export type PkiMsgAssignVidResponse = object;
 
 export type PkiMsgDeletePkiRevocationDistributionPointResponse = object;
 
@@ -116,6 +121,9 @@ export interface PkiProposedCertificate {
   approvals?: PkiGrant[];
   subjectAsText?: string;
   rejects?: PkiGrant[];
+
+  /** @format int32 */
+  vid?: number;
 }
 
 export interface PkiProposedCertificateRevocation {
@@ -322,7 +330,7 @@ export interface V1Beta1PageRequest {
    * count_total is only respected when offset is used. It is ignored when key
    * is set.
    */
-  countTotal?: boolean;
+  count_total?: boolean;
 
   /**
    * reverse is set to true if results are to be returned in the descending order.
@@ -343,7 +351,7 @@ corresponding request message has used PageRequest.
 */
 export interface V1Beta1PageResponse {
   /** @format byte */
-  nextKey?: string;
+  next_key?: string;
 
   /** @format uint64 */
   total?: string;
@@ -558,7 +566,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.key"?: string;
       "pagination.offset"?: string;
       "pagination.limit"?: string;
-      "pagination.countTotal"?: boolean;
+      "pagination.count_total"?: boolean;
       "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
@@ -632,7 +640,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.key"?: string;
       "pagination.offset"?: string;
       "pagination.limit"?: string;
-      "pagination.countTotal"?: boolean;
+      "pagination.count_total"?: boolean;
       "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
@@ -674,7 +682,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.key"?: string;
       "pagination.offset"?: string;
       "pagination.limit"?: string;
-      "pagination.countTotal"?: boolean;
+      "pagination.count_total"?: boolean;
       "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
@@ -716,7 +724,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.key"?: string;
       "pagination.offset"?: string;
       "pagination.limit"?: string;
-      "pagination.countTotal"?: boolean;
+      "pagination.count_total"?: boolean;
       "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
@@ -758,7 +766,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.key"?: string;
       "pagination.offset"?: string;
       "pagination.limit"?: string;
-      "pagination.countTotal"?: boolean;
+      "pagination.count_total"?: boolean;
       "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
@@ -775,11 +783,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
-   * @name QueryPkiRevocationDistributionPointsByIssuerSubjectKeyID
+   * @name QueryPkiRevocationDistributionPointsByIssuerSubjectKeyId
    * @summary Queries a PkiRevocationDistributionPointsByIssuerSubjectKeyID by index.
    * @request GET:/dcl/pki/revocation-points/{issuerSubjectKeyID}
    */
-  queryPkiRevocationDistributionPointsByIssuerSubjectKeyID = (issuerSubjectKeyID: string, params: RequestParams = {}) =>
+  queryPkiRevocationDistributionPointsByIssuerSubjectKeyId = (issuerSubjectKeyID: string, params: RequestParams = {}) =>
     this.request<PkiQueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse, RpcStatus>({
       path: `/dcl/pki/revocation-points/${issuerSubjectKeyID}`,
       method: "GET",
@@ -821,7 +829,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.key"?: string;
       "pagination.offset"?: string;
       "pagination.limit"?: string;
-      "pagination.countTotal"?: boolean;
+      "pagination.count_total"?: boolean;
       "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},

@@ -9,6 +9,7 @@ import (
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/x509"
 )
 
 func (k msgServer) AssignVid(goCtx context.Context, msg *types.MsgAssignVid) (*types.MsgAssignVidResponse, error) {
@@ -46,6 +47,15 @@ func (k msgServer) AssignVid(goCtx context.Context, msg *types.MsgAssignVid) (*t
 	// check that the certificate VID has not been set
 	if rootCertificate.Vid != 0 {
 		return nil, pkitypes.NewErrNotEmptyVid("Vendor ID (VID) is already present in the certificate")
+	}
+
+	// check that the certificate VID and Message VID are equal
+	subjectVid, err := x509.GetVidFromSubject(rootCertificate.SubjectAsText)
+	if err != nil {
+		return nil, pkitypes.NewErrInvalidCertificate(err)
+	}
+	if subjectVid != 0 && subjectVid != msg.Vid {
+		return nil, pkitypes.NewErrCertificateVidNotEqualMsgVid(fmt.Sprintf("Certificate VID=%d is not equal to the msg VID=%d", subjectVid, msg.Vid))
 	}
 
 	rootCertificate.Vid = msg.Vid

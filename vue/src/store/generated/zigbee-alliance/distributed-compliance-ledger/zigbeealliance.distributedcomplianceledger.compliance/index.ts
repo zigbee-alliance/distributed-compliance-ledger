@@ -1,6 +1,4 @@
 import { txClient, queryClient, MissingWalletError , registry} from './module'
-// @ts-ignore
-import { SpVuexError } from '@starport/vuex'
 
 import { CertifiedModel } from "./module/types/compliance/certified_model"
 import { ComplianceHistoryItem } from "./module/types/compliance/compliance_history_item"
@@ -183,7 +181,7 @@ export default {
 					const sub=JSON.parse(subscription)
 					await dispatch(sub.action, sub.payload)
 				}catch(e) {
-					throw new SpVuexError('Subscriptions: ' + e.message)
+					throw new Error('Subscriptions: ' + e.message)
 				}
 			})
 		},
@@ -204,7 +202,7 @@ export default {
 				if (subscribe) commit('SUBSCRIBE', { action: 'QueryComplianceInfo', payload: { options: { all }, params: {...key},query }})
 				return getters['getComplianceInfo']( { params: {...key}, query}) ?? {}
 			} catch (e) {
-				throw new SpVuexError('QueryClient:QueryComplianceInfo', 'API Node Unavailable. Could not perform query: ' + e.message)
+				throw new Error('QueryClient:QueryComplianceInfo API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
@@ -230,7 +228,7 @@ export default {
 				if (subscribe) commit('SUBSCRIBE', { action: 'QueryComplianceInfoAll', payload: { options: { all }, params: {...key},query }})
 				return getters['getComplianceInfoAll']( { params: {...key}, query}) ?? {}
 			} catch (e) {
-				throw new SpVuexError('QueryClient:QueryComplianceInfoAll', 'API Node Unavailable. Could not perform query: ' + e.message)
+				throw new Error('QueryClient:QueryComplianceInfoAll API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
@@ -252,7 +250,7 @@ export default {
 				if (subscribe) commit('SUBSCRIBE', { action: 'QueryCertifiedModel', payload: { options: { all }, params: {...key},query }})
 				return getters['getCertifiedModel']( { params: {...key}, query}) ?? {}
 			} catch (e) {
-				throw new SpVuexError('QueryClient:QueryCertifiedModel', 'API Node Unavailable. Could not perform query: ' + e.message)
+				throw new Error('QueryClient:QueryCertifiedModel API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
@@ -278,7 +276,7 @@ export default {
 				if (subscribe) commit('SUBSCRIBE', { action: 'QueryCertifiedModelAll', payload: { options: { all }, params: {...key},query }})
 				return getters['getCertifiedModelAll']( { params: {...key}, query}) ?? {}
 			} catch (e) {
-				throw new SpVuexError('QueryClient:QueryCertifiedModelAll', 'API Node Unavailable. Could not perform query: ' + e.message)
+				throw new Error('QueryClient:QueryCertifiedModelAll API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
@@ -300,7 +298,7 @@ export default {
 				if (subscribe) commit('SUBSCRIBE', { action: 'QueryRevokedModel', payload: { options: { all }, params: {...key},query }})
 				return getters['getRevokedModel']( { params: {...key}, query}) ?? {}
 			} catch (e) {
-				throw new SpVuexError('QueryClient:QueryRevokedModel', 'API Node Unavailable. Could not perform query: ' + e.message)
+				throw new Error('QueryClient:QueryRevokedModel API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
@@ -326,7 +324,7 @@ export default {
 				if (subscribe) commit('SUBSCRIBE', { action: 'QueryRevokedModelAll', payload: { options: { all }, params: {...key},query }})
 				return getters['getRevokedModelAll']( { params: {...key}, query}) ?? {}
 			} catch (e) {
-				throw new SpVuexError('QueryClient:QueryRevokedModelAll', 'API Node Unavailable. Could not perform query: ' + e.message)
+				throw new Error('QueryClient:QueryRevokedModelAll API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
@@ -348,7 +346,7 @@ export default {
 				if (subscribe) commit('SUBSCRIBE', { action: 'QueryProvisionalModel', payload: { options: { all }, params: {...key},query }})
 				return getters['getProvisionalModel']( { params: {...key}, query}) ?? {}
 			} catch (e) {
-				throw new SpVuexError('QueryClient:QueryProvisionalModel', 'API Node Unavailable. Could not perform query: ' + e.message)
+				throw new Error('QueryClient:QueryProvisionalModel API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
@@ -374,7 +372,7 @@ export default {
 				if (subscribe) commit('SUBSCRIBE', { action: 'QueryProvisionalModelAll', payload: { options: { all }, params: {...key},query }})
 				return getters['getProvisionalModelAll']( { params: {...key}, query}) ?? {}
 			} catch (e) {
-				throw new SpVuexError('QueryClient:QueryProvisionalModelAll', 'API Node Unavailable. Could not perform query: ' + e.message)
+				throw new Error('QueryClient:QueryProvisionalModelAll API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
@@ -396,7 +394,7 @@ export default {
 				if (subscribe) commit('SUBSCRIBE', { action: 'QueryDeviceSoftwareCompliance', payload: { options: { all }, params: {...key},query }})
 				return getters['getDeviceSoftwareCompliance']( { params: {...key}, query}) ?? {}
 			} catch (e) {
-				throw new SpVuexError('QueryClient:QueryDeviceSoftwareCompliance', 'API Node Unavailable. Could not perform query: ' + e.message)
+				throw new Error('QueryClient:QueryDeviceSoftwareCompliance API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
@@ -422,39 +420,24 @@ export default {
 				if (subscribe) commit('SUBSCRIBE', { action: 'QueryDeviceSoftwareComplianceAll', payload: { options: { all }, params: {...key},query }})
 				return getters['getDeviceSoftwareComplianceAll']( { params: {...key}, query}) ?? {}
 			} catch (e) {
-				throw new SpVuexError('QueryClient:QueryDeviceSoftwareComplianceAll', 'API Node Unavailable. Could not perform query: ' + e.message)
+				throw new Error('QueryClient:QueryDeviceSoftwareComplianceAll API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
 		
 		
-		async sendMsgProvisionModel({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgRevokeModel({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgProvisionModel(value)
+				const msg = await txClient.msgRevokeModel(value)
 				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
 	gas: "200000" }, memo})
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new SpVuexError('TxClient:MsgProvisionModel:Init', 'Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgRevokeModel:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new SpVuexError('TxClient:MsgProvisionModel:Send', 'Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgDeleteComplianceInfo({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgDeleteComplianceInfo(value)
-				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
-	gas: "200000" }, memo})
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new SpVuexError('TxClient:MsgDeleteComplianceInfo:Init', 'Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new SpVuexError('TxClient:MsgDeleteComplianceInfo:Send', 'Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgRevokeModel:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -467,24 +450,9 @@ export default {
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new SpVuexError('TxClient:MsgUpdateComplianceInfo:Init', 'Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgUpdateComplianceInfo:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new SpVuexError('TxClient:MsgUpdateComplianceInfo:Send', 'Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgRevokeModel({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgRevokeModel(value)
-				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
-	gas: "200000" }, memo})
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new SpVuexError('TxClient:MsgRevokeModel:Init', 'Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new SpVuexError('TxClient:MsgRevokeModel:Send', 'Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgUpdateComplianceInfo:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -497,38 +465,53 @@ export default {
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new SpVuexError('TxClient:MsgCertifyModel:Init', 'Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgCertifyModel:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new SpVuexError('TxClient:MsgCertifyModel:Send', 'Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgCertifyModel:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgDeleteComplianceInfo({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgDeleteComplianceInfo(value)
+				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
+	gas: "200000" }, memo})
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgDeleteComplianceInfo:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgDeleteComplianceInfo:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgProvisionModel({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgProvisionModel(value)
+				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
+	gas: "200000" }, memo})
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgProvisionModel:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgProvisionModel:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
 		
-		async MsgProvisionModel({ rootGetters }, { value }) {
+		async MsgRevokeModel({ rootGetters }, { value }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgProvisionModel(value)
+				const msg = await txClient.msgRevokeModel(value)
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new SpVuexError('TxClient:MsgProvisionModel:Init', 'Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgRevokeModel:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new SpVuexError('TxClient:MsgProvisionModel:Create', 'Could not create message: ' + e.message)
-					
-				}
-			}
-		},
-		async MsgDeleteComplianceInfo({ rootGetters }, { value }) {
-			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgDeleteComplianceInfo(value)
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new SpVuexError('TxClient:MsgDeleteComplianceInfo:Init', 'Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new SpVuexError('TxClient:MsgDeleteComplianceInfo:Create', 'Could not create message: ' + e.message)
-					
+					throw new Error('TxClient:MsgRevokeModel:Create Could not create message: ' + e.message)
 				}
 			}
 		},
@@ -539,24 +522,9 @@ export default {
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new SpVuexError('TxClient:MsgUpdateComplianceInfo:Init', 'Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgUpdateComplianceInfo:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new SpVuexError('TxClient:MsgUpdateComplianceInfo:Create', 'Could not create message: ' + e.message)
-					
-				}
-			}
-		},
-		async MsgRevokeModel({ rootGetters }, { value }) {
-			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgRevokeModel(value)
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new SpVuexError('TxClient:MsgRevokeModel:Init', 'Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new SpVuexError('TxClient:MsgRevokeModel:Create', 'Could not create message: ' + e.message)
-					
+					throw new Error('TxClient:MsgUpdateComplianceInfo:Create Could not create message: ' + e.message)
 				}
 			}
 		},
@@ -567,10 +535,35 @@ export default {
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new SpVuexError('TxClient:MsgCertifyModel:Init', 'Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgCertifyModel:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new SpVuexError('TxClient:MsgCertifyModel:Create', 'Could not create message: ' + e.message)
-					
+					throw new Error('TxClient:MsgCertifyModel:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgDeleteComplianceInfo({ rootGetters }, { value }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgDeleteComplianceInfo(value)
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgDeleteComplianceInfo:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgDeleteComplianceInfo:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgProvisionModel({ rootGetters }, { value }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgProvisionModel(value)
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgProvisionModel:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgProvisionModel:Create Could not create message: ' + e.message)
 				}
 			}
 		},

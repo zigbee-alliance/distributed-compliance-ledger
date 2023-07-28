@@ -1,6 +1,4 @@
 import { txClient, queryClient, MissingWalletError , registry} from './module'
-// @ts-ignore
-import { SpVuexError } from '@starport/vuex'
 
 import { ApprovedUpgrade } from "./module/types/dclupgrade/approved_upgrade"
 import { Grant } from "./module/types/dclupgrade/grant"
@@ -151,7 +149,7 @@ export default {
 					const sub=JSON.parse(subscription)
 					await dispatch(sub.action, sub.payload)
 				}catch(e) {
-					throw new SpVuexError('Subscriptions: ' + e.message)
+					throw new Error('Subscriptions: ' + e.message)
 				}
 			})
 		},
@@ -172,7 +170,7 @@ export default {
 				if (subscribe) commit('SUBSCRIBE', { action: 'QueryProposedUpgrade', payload: { options: { all }, params: {...key},query }})
 				return getters['getProposedUpgrade']( { params: {...key}, query}) ?? {}
 			} catch (e) {
-				throw new SpVuexError('QueryClient:QueryProposedUpgrade', 'API Node Unavailable. Could not perform query: ' + e.message)
+				throw new Error('QueryClient:QueryProposedUpgrade API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
@@ -198,7 +196,7 @@ export default {
 				if (subscribe) commit('SUBSCRIBE', { action: 'QueryProposedUpgradeAll', payload: { options: { all }, params: {...key},query }})
 				return getters['getProposedUpgradeAll']( { params: {...key}, query}) ?? {}
 			} catch (e) {
-				throw new SpVuexError('QueryClient:QueryProposedUpgradeAll', 'API Node Unavailable. Could not perform query: ' + e.message)
+				throw new Error('QueryClient:QueryProposedUpgradeAll API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
@@ -220,7 +218,7 @@ export default {
 				if (subscribe) commit('SUBSCRIBE', { action: 'QueryApprovedUpgrade', payload: { options: { all }, params: {...key},query }})
 				return getters['getApprovedUpgrade']( { params: {...key}, query}) ?? {}
 			} catch (e) {
-				throw new SpVuexError('QueryClient:QueryApprovedUpgrade', 'API Node Unavailable. Could not perform query: ' + e.message)
+				throw new Error('QueryClient:QueryApprovedUpgrade API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
@@ -246,7 +244,7 @@ export default {
 				if (subscribe) commit('SUBSCRIBE', { action: 'QueryApprovedUpgradeAll', payload: { options: { all }, params: {...key},query }})
 				return getters['getApprovedUpgradeAll']( { params: {...key}, query}) ?? {}
 			} catch (e) {
-				throw new SpVuexError('QueryClient:QueryApprovedUpgradeAll', 'API Node Unavailable. Could not perform query: ' + e.message)
+				throw new Error('QueryClient:QueryApprovedUpgradeAll API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
@@ -268,7 +266,7 @@ export default {
 				if (subscribe) commit('SUBSCRIBE', { action: 'QueryRejectedUpgrade', payload: { options: { all }, params: {...key},query }})
 				return getters['getRejectedUpgrade']( { params: {...key}, query}) ?? {}
 			} catch (e) {
-				throw new SpVuexError('QueryClient:QueryRejectedUpgrade', 'API Node Unavailable. Could not perform query: ' + e.message)
+				throw new Error('QueryClient:QueryRejectedUpgrade API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
@@ -294,7 +292,7 @@ export default {
 				if (subscribe) commit('SUBSCRIBE', { action: 'QueryRejectedUpgradeAll', payload: { options: { all }, params: {...key},query }})
 				return getters['getRejectedUpgradeAll']( { params: {...key}, query}) ?? {}
 			} catch (e) {
-				throw new SpVuexError('QueryClient:QueryRejectedUpgradeAll', 'API Node Unavailable. Could not perform query: ' + e.message)
+				throw new Error('QueryClient:QueryRejectedUpgradeAll API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
@@ -309,9 +307,9 @@ export default {
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new SpVuexError('TxClient:MsgRejectUpgrade:Init', 'Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgRejectUpgrade:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new SpVuexError('TxClient:MsgRejectUpgrade:Send', 'Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgRejectUpgrade:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -324,9 +322,9 @@ export default {
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new SpVuexError('TxClient:MsgApproveUpgrade:Init', 'Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgApproveUpgrade:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new SpVuexError('TxClient:MsgApproveUpgrade:Send', 'Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgApproveUpgrade:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -339,9 +337,9 @@ export default {
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new SpVuexError('TxClient:MsgProposeUpgrade:Init', 'Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgProposeUpgrade:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new SpVuexError('TxClient:MsgProposeUpgrade:Send', 'Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgProposeUpgrade:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -353,10 +351,9 @@ export default {
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new SpVuexError('TxClient:MsgRejectUpgrade:Init', 'Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgRejectUpgrade:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new SpVuexError('TxClient:MsgRejectUpgrade:Create', 'Could not create message: ' + e.message)
-					
+					throw new Error('TxClient:MsgRejectUpgrade:Create Could not create message: ' + e.message)
 				}
 			}
 		},
@@ -367,10 +364,9 @@ export default {
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new SpVuexError('TxClient:MsgApproveUpgrade:Init', 'Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgApproveUpgrade:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new SpVuexError('TxClient:MsgApproveUpgrade:Create', 'Could not create message: ' + e.message)
-					
+					throw new Error('TxClient:MsgApproveUpgrade:Create Could not create message: ' + e.message)
 				}
 			}
 		},
@@ -381,10 +377,9 @@ export default {
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new SpVuexError('TxClient:MsgProposeUpgrade:Init', 'Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgProposeUpgrade:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new SpVuexError('TxClient:MsgProposeUpgrade:Create', 'Could not create message: ' + e.message)
-					
+					throw new Error('TxClient:MsgProposeUpgrade:Create Could not create message: ' + e.message)
 				}
 			}
 		},

@@ -6,7 +6,7 @@ import { Writer, Reader } from 'protobufjs/minimal'
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.dclauth'
 
 export interface Account {
-  baseAccount: BaseAccount | undefined
+  base_account: BaseAccount | undefined
   /**
    * NOTE. we do not user AccountRoles casting here to preserve repeated form
    *       so protobuf takes care about repeated items in generated code,
@@ -22,8 +22,8 @@ const baseAccount: object = { roles: '', vendorID: 0 }
 
 export const Account = {
   encode(message: Account, writer: Writer = Writer.create()): Writer {
-    if (message.baseAccount !== undefined) {
-      BaseAccount.encode(message.baseAccount, writer.uint32(10).fork()).ldelim()
+    if (message.base_account !== undefined) {
+      BaseAccount.encode(message.base_account, writer.uint32(10).fork()).ldelim()
     }
     for (const v of message.roles) {
       writer.uint32(18).string(v!)
@@ -51,7 +51,7 @@ export const Account = {
       const tag = reader.uint32()
       switch (tag >>> 3) {
         case 1:
-          message.baseAccount = BaseAccount.decode(reader, reader.uint32())
+          message.base_account = BaseAccount.decode(reader, reader.uint32())
           break
         case 2:
           message.roles.push(reader.string())
@@ -78,10 +78,10 @@ export const Account = {
     message.roles = []
     message.approvals = []
     message.rejects = []
-    if (object.baseAccount !== undefined && object.baseAccount !== null) {
-      message.baseAccount = BaseAccount.fromJSON(object.baseAccount)
+    if (object.base_account !== undefined && object.base_account !== null) {
+      message.base_account = BaseAccount.fromJSON(object.base_account)
     } else {
-      message.baseAccount = undefined
+      message.base_account = undefined
     }
     if (object.roles !== undefined && object.roles !== null) {
       for (const e of object.roles) {
@@ -108,7 +108,7 @@ export const Account = {
 
   toJSON(message: Account): unknown {
     const obj: any = {}
-    message.baseAccount !== undefined && (obj.baseAccount = message.baseAccount ? BaseAccount.toJSON(message.baseAccount) : undefined)
+    message.base_account !== undefined && (obj.base_account = message.base_account ? BaseAccount.toJSON(message.base_account) : undefined)
     if (message.roles) {
       obj.roles = message.roles.map((e) => e)
     } else {
@@ -133,10 +133,10 @@ export const Account = {
     message.roles = []
     message.approvals = []
     message.rejects = []
-    if (object.baseAccount !== undefined && object.baseAccount !== null) {
-      message.baseAccount = BaseAccount.fromPartial(object.baseAccount)
+    if (object.base_account !== undefined && object.base_account !== null) {
+      message.base_account = BaseAccount.fromPartial(object.base_account)
     } else {
-      message.baseAccount = undefined
+      message.base_account = undefined
     }
     if (object.roles !== undefined && object.roles !== null) {
       for (const e of object.roles) {

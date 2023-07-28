@@ -1,13 +1,10 @@
 package types
 
 import (
-	fmt "fmt"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/x509"
 )
 
 const TypeMsgAssignVid = "assign_vid"
@@ -53,15 +50,6 @@ func (msg *MsgAssignVid) ValidateBasic() error {
 	err = validator.Validate(msg)
 	if err != nil {
 		return err
-	}
-
-	subjectVid, err := x509.GetVidFromSubject(msg.Subject)
-	if err != nil {
-		return pkitypes.NewErrInvalidCertificate(err)
-	}
-	
-	if subjectVid != 0 && subjectVid != msg.Vid {
-		return pkitypes.NewErrCertificateVidNotEqualMsgVid(fmt.Sprintf("Certificate VID=%d is not equal to the msg VID=%d", subjectVid, msg.Vid))
 	}
 
 	return nil

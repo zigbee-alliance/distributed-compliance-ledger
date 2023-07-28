@@ -43,7 +43,7 @@ export interface Plan {
    *
    * @deprecated
    */
-  upgradedClientState: Any | undefined
+  upgraded_client_state: Any | undefined
 }
 
 /**
@@ -93,8 +93,8 @@ export const Plan = {
     if (message.info !== '') {
       writer.uint32(34).string(message.info)
     }
-    if (message.upgradedClientState !== undefined) {
-      Any.encode(message.upgradedClientState, writer.uint32(42).fork()).ldelim()
+    if (message.upgraded_client_state !== undefined) {
+      Any.encode(message.upgraded_client_state, writer.uint32(42).fork()).ldelim()
     }
     return writer
   },
@@ -119,7 +119,7 @@ export const Plan = {
           message.info = reader.string()
           break
         case 5:
-          message.upgradedClientState = Any.decode(reader, reader.uint32())
+          message.upgraded_client_state = Any.decode(reader, reader.uint32())
           break
         default:
           reader.skipType(tag & 7)
@@ -151,10 +151,10 @@ export const Plan = {
     } else {
       message.info = ''
     }
-    if (object.upgradedClientState !== undefined && object.upgradedClientState !== null) {
-      message.upgradedClientState = Any.fromJSON(object.upgradedClientState)
+    if (object.upgraded_client_state !== undefined && object.upgraded_client_state !== null) {
+      message.upgraded_client_state = Any.fromJSON(object.upgraded_client_state)
     } else {
-      message.upgradedClientState = undefined
+      message.upgraded_client_state = undefined
     }
     return message
   },
@@ -165,7 +165,8 @@ export const Plan = {
     message.time !== undefined && (obj.time = message.time !== undefined ? message.time.toISOString() : null)
     message.height !== undefined && (obj.height = message.height)
     message.info !== undefined && (obj.info = message.info)
-    message.upgradedClientState !== undefined && (obj.upgradedClientState = message.upgradedClientState ? Any.toJSON(message.upgradedClientState) : undefined)
+    message.upgraded_client_state !== undefined &&
+      (obj.upgraded_client_state = message.upgraded_client_state ? Any.toJSON(message.upgraded_client_state) : undefined)
     return obj
   },
 
@@ -191,10 +192,10 @@ export const Plan = {
     } else {
       message.info = ''
     }
-    if (object.upgradedClientState !== undefined && object.upgradedClientState !== null) {
-      message.upgradedClientState = Any.fromPartial(object.upgradedClientState)
+    if (object.upgraded_client_state !== undefined && object.upgraded_client_state !== null) {
+      message.upgraded_client_state = Any.fromPartial(object.upgraded_client_state)
     } else {
-      message.upgradedClientState = undefined
+      message.upgraded_client_state = undefined
     }
     return message
   }

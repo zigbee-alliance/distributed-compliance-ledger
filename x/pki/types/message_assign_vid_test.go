@@ -8,7 +8,6 @@ import (
 	tmrand "github.com/tendermint/tendermint/libs/rand"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/sample"
-	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
 
@@ -30,8 +29,8 @@ func TestMsgAssignVid_ValidateBasic(t *testing.T) {
 			msg: MsgAssignVid{
 				Signer:       sample.AccAddress(),
 				Subject:      "",
-				SubjectKeyId: testconstants.TestSubjectKeyID,
-				Vid: 					testconstants.TestCertPemVid,
+				SubjectKeyId: testconstants.PAACertWithNumericVidSubjectKeyID,
+				Vid: 					testconstants.PAACertWithNumericVidVid,
 			},
 			err: validator.ErrRequiredFieldMissing,
 		},
@@ -39,9 +38,9 @@ func TestMsgAssignVid_ValidateBasic(t *testing.T) {
 			name: "empty SubjectKeyId",
 			msg: MsgAssignVid{
 				Signer:       sample.AccAddress(),
-				Subject:      testconstants.TestSubject,
+				Subject:      testconstants.PAACertWithNumericVidSubject,
 				SubjectKeyId: "",
-				Vid:          testconstants.TestCertPemVid,
+				Vid:          testconstants.PAACertWithNumericVidVid,
 			},
 			err: validator.ErrRequiredFieldMissing,
 		},
@@ -49,9 +48,9 @@ func TestMsgAssignVid_ValidateBasic(t *testing.T) {
 			name: "subject len > 1024 (1 KB)",
 			msg: MsgAssignVid{
 				Signer:       sample.AccAddress(),
-				Subject:      testconstants.TestSubject + tmrand.Str(1025-len(testconstants.RootSubject)),
-				SubjectKeyId: testconstants.TestSubjectKeyID,
-				Vid: 					testconstants.TestCertPemVid,
+				Subject:      testconstants.PAACertWithNumericVidSubject + tmrand.Str(1025-len(testconstants.PAACertWithNumericVidSubjectKeyID)),
+				SubjectKeyId: testconstants.PAACertWithNumericVidSubjectKeyID,
+				Vid: 					testconstants.PAACertWithNumericVidVid,
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
@@ -59,9 +58,9 @@ func TestMsgAssignVid_ValidateBasic(t *testing.T) {
 			name: "subject key id len > 256",
 			msg: MsgAssignVid{
 				Signer:       sample.AccAddress(),
-				Subject:      testconstants.TestSubject,
-				SubjectKeyId: testconstants.TestSubjectKeyID + tmrand.Str(257-len(testconstants.RootSubjectKeyID)),
-				Vid: 					testconstants.TestCertPemVid,
+				Subject:      testconstants.PAACertWithNumericVidSubject,
+				SubjectKeyId: testconstants.PAACertWithNumericVidSubjectKeyID + tmrand.Str(257-len(testconstants.PAACertWithNumericVidSubjectKeyID)),
+				Vid: 					testconstants.PAACertWithNumericVidVid,
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
@@ -69,8 +68,8 @@ func TestMsgAssignVid_ValidateBasic(t *testing.T) {
 			name: "empty vid",
 			msg: MsgAssignVid{
 				Signer: 			sample.AccAddress(),
-				Subject:      testconstants.TestSubject,
-				SubjectKeyId: testconstants.TestSubjectKeyID,
+				Subject:      testconstants.PAACertWithNumericVidSubject,
+				SubjectKeyId: testconstants.PAACertWithNumericVidSubjectKeyID,
 			},
 			err: validator.ErrFieldLowerBoundViolated,
 		},
@@ -78,8 +77,8 @@ func TestMsgAssignVid_ValidateBasic(t *testing.T) {
 			name: "vid < 1",
 			msg: MsgAssignVid{
 				Signer:       sample.AccAddress(),
-				Subject: 			testconstants.TestSubject,
-				SubjectKeyId: testconstants.TestSubjectKeyID,
+				Subject: 			testconstants.PAACertWithNumericVidSubject,
+				SubjectKeyId: testconstants.PAACertWithNumericVidSubjectKeyID,
 				Vid:          0,
 			},
 			err: validator.ErrFieldLowerBoundViolated,
@@ -88,21 +87,11 @@ func TestMsgAssignVid_ValidateBasic(t *testing.T) {
 			name: "vid > 65535",
 			msg: MsgAssignVid{
 				Signer:       sample.AccAddress(),
-				Subject: 			testconstants.TestSubject,
-				SubjectKeyId: testconstants.TestSubjectKeyID,
+				Subject: 			testconstants.PAACertWithNumericVidSubject,
+				SubjectKeyId: testconstants.PAACertWithNumericVidSubjectKeyID,
 				Vid:          65536,
 			},
 			err: validator.ErrFieldUpperBoundViolated,
-		},
-		{
-			name: "invalid VID",
-			msg: MsgAssignVid{
-				Signer:       sample.AccAddress(),
-				Subject:      testconstants.TestSubject,
-				SubjectKeyId: testconstants.TestSubjectKeyID,
-				Vid:          testconstants.TestCertPemVid + 5,
-			},
-			err: pkitypes.ErrCertificateVidNotEqualMsgVid,
 		},
 	}
 
@@ -114,9 +103,9 @@ func TestMsgAssignVid_ValidateBasic(t *testing.T) {
 			name: "valid assign vid msg",
 			msg: MsgAssignVid{
 				Signer:       sample.AccAddress(),
-				Subject:      testconstants.TestSubject,
-				SubjectKeyId: testconstants.TestSubjectKeyID,
-				Vid:          testconstants.TestCertPemVid,
+				Subject:      testconstants.PAACertWithNumericVidSubject,
+				SubjectKeyId: testconstants.PAACertWithNumericVidSubjectKeyID,
+				Vid:          testconstants.PAACertWithNumericVidVid,
 			},
 		},
 	}
@@ -124,11 +113,8 @@ func TestMsgAssignVid_ValidateBasic(t *testing.T) {
 	for _, tt := range negativeTests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := tt.msg.ValidateBasic()
-			if tt.err != nil {
-				require.ErrorIs(t, err, tt.err)
-				return
-			}
-			require.NoError(t, err)
+			require.Error(t, err)
+			require.ErrorIs(t, err, tt.err)
 		})
 	}
 
