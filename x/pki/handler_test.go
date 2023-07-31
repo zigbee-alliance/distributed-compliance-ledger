@@ -3313,12 +3313,39 @@ func TestHandler_AssignVid_CertificateDoesNotExist(t *testing.T) {
 	require.ErrorIs(t, err, pkitypes.ErrCertificateDoesNotExist)
 }
 
+func TestHandler_AssignVid_ForNonRootCertificate(t *testing.T) {
+	setup := Setup(t)
+
+	vendorAcc := GenerateAccAddress()
+	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.TestCertPemVid)
+
+	// propose and approve x509 root certificate
+	rootCertOptions := createTestRootCertOptions()
+	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+
+	// add x509 intermediate certificate
+	addX509Cert := types.NewMsgAddX509Cert(setup.Trustee1.String(), testconstants.IntermediateCertPem)
+	_, err := setup.Handler(setup.Ctx, addX509Cert)
+	require.NoError(t, err)
+
+	assignVid := types.MsgAssignVid{
+		Signer:       vendorAcc.String(),
+		Subject:      testconstants.IntermediateSubject,
+		SubjectKeyId: testconstants.IntermediateSubjectKeyID,
+		Vid:          testconstants.PAACertWithNumericVidVid,
+	}
+
+	_, err = setup.Handler(setup.Ctx, &assignVid)
+	require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+}
+
 func TestHandler_AssignVid_CertificateAlreadyHasVid(t *testing.T) {
 	setup := Setup(t)
 
 	vendorAcc := GenerateAccAddress()
 	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.TestCertPemVid)
 
+	// propose and approve x509 root certificate
 	rootCertOptions := createPAACertWithNumericVidOptions()
 	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
@@ -3339,6 +3366,7 @@ func TestHandler_AssignVid_MessageVidAndCertificateVidNotEqual(t *testing.T) {
 	vendorAcc := GenerateAccAddress()
 	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.TestCertPemVid)
 
+	// propose and approve x509 root certificate
 	rootCertOptions := createPAACertWithNumericVidOptions()
 	rootCertOptions.vid = 0
 	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
@@ -3360,6 +3388,7 @@ func TestHandler_AssignVid_certificateWithoutSubjectVid(t *testing.T) {
 	vendorAcc := GenerateAccAddress()
 	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.TestCertPemVid)
 
+	// propose and approve x509 root certificate
 	rootCertOptions := createTestRootCertOptions()
 	rootCertOptions.vid = 0
 	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
@@ -3388,6 +3417,7 @@ func TestHandler_AssignVid_certificateWithSubjectVid(t *testing.T) {
 	vendorAcc := GenerateAccAddress()
 	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.TestCertPemVid)
 
+	// propose and approve x509 root certificate
 	rootCertOptions := createPAACertWithNumericVidOptions()
 	rootCertOptions.vid = 0
 	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
