@@ -87,10 +87,11 @@ func (k msgServer) checkRootCert(ctx sdk.Context, crlSignerCertificate *x509.Cer
 	}
 
 	// check that it has the same PEM value
-	var foundRootCert *types.Certificate = nil
+	var foundRootCert *types.Certificate
 	for _, approvedCertificate := range approvedCertificates.Certs {
 		if approvedCertificate.PemCert == msg.CrlSignerCertificate {
 			foundRootCert = approvedCertificate
+
 			break
 		}
 	}
@@ -116,5 +117,6 @@ func (k msgServer) checkNonRootCert(ctx sdk.Context, crlSignerCertificate *x509.
 	if _, _, err := k.verifyCertificate(ctx, crlSignerCertificate); err != nil {
 		return pkitypes.NewErrCertNotChainedBack()
 	}
+
 	return nil
 }
