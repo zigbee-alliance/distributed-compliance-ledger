@@ -8,6 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
@@ -15,7 +16,7 @@ var _ = strconv.Itoa(0)
 
 func CmdAssignVid() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "assign-vid [subject] [subject-key-id] [vid]",
+		Use:   "assign-vid",
 		Short: "Assigns a VID to non-VID scoped PAAs",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -34,11 +35,13 @@ func CmdAssignVid() *cobra.Command {
 				subjectKeyID,
 				vid,
 			)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
+			// validate basic will be called in GenerateOrBroadcastTxCLI
+			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+			if cli.IsWriteInsteadReadRPCError(err) {
+				return clientCtx.PrintString(cli.LightClientProxyForWriteRequests)
 			}
 
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+			return err
 		},
 	}
 
