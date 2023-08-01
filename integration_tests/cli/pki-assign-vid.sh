@@ -9,9 +9,8 @@ root_cert_vid=65521
 trustee_account="jack"
 second_trustee_account="alice"
 
-vendor_account=vendor_account_$root_cert_vid
-echo "Create Vendor account - $vendor_account"
-create_new_vendor_account $vendor_account $root_cert_vid
+echo "Create a VendorAdmin Account"
+create_new_account vendor_admin_account "VendorAdmin"
 
 test_divider
 
@@ -24,7 +23,8 @@ check_response "$result" "\"code\": 0"
 result=$(echo "$passphrase" | dcld tx pki approve-add-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $second_trustee_account --yes)
 check_response "$result" "\"code\": 0"
 
-result=$(dcld tx pki assign-vid --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --vid="$root_cert_vid" --from=$vendor_account --yes)
+echo "Assing VID"
+result=$(dcld tx pki assign-vid --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --vid="$root_cert_vid" --from $vendor_admin_account --yes)
 check_response "$result" "vid is not empty"
 
 test_divider
