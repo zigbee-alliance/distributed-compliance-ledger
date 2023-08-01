@@ -1051,7 +1051,7 @@ Updates an existing PKI Revocation distribution endpoint (such as RFC5280 Certif
   - VID-scoped PAAs (Root certs) and PAIs (Intermediate certs): `vid` field in the `CRLSignerCertificate`'s subject must be equal to the Vendor account's VID
   - Non-VID scoped PAAs (Root certs): `vid` field associated with the corresponding PAA on the ledger must be equal to the Vendor account's VID
 - Parameters:
-  - vid: `uint16` -  Vendor ID (positive non-zero). Must be the same as Vendor account's VID and `vid` field in the VID-scoped `CRLSignerCertificate`.
+  - vid: `uint16` -  Vendor ID (positive non-zero). Must be the same as Vendor account's VID and `vid` field in the VID-scoped `CRLSignerCertificate`. Must be the same as a `vid` associated with non-VID scoped `CRLSignerCertificate` on the ledger.
   - label: `string` -  A label to disambiguate multiple revocation information partitions of a particular issuer.
   - issuerSubjectKeyID: `string` - Uniquely identifies the PAA or PAI for which this revocation distribution point is provided. Must consist of even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters., e.g: `5A880E6C3653D07FB08971A3F473790930E62BDB`.
   - crlSignerCertificate: `optional(string)` - The issuer certificate whose revocation information is provided in the distribution point entry, encoded in X.509v3 PEM format. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data.
@@ -1077,7 +1077,7 @@ Deletes a PKI Revocation distribution endpoint (such as RFC5280 Certificate Revo
   - VID-scoped PAAs (Root certs) and PAIs (Intermediate certs): `vid` field in the `CRLSignerCertificate`'s subject must be equal to the Vendor account's VID
   - Non-VID scoped PAAs (Root certs): `vid` field associated with the corresponding PAA on the ledger must be equal to the Vendor account's VID
 - Parameters:
-  - vid: `uint16` -  Vendor ID (positive non-zero). Must be the same as Vendor account's VID and `vid` field in the VID-scoped `CRLSignerCertificate`.
+  - vid: `uint16` -  Vendor ID (positive non-zero). Must be the same as Vendor account's VID and `vid` field in the VID-scoped `CRLSignerCertificate`. Must be the same as a `vid` associated with non-VID scoped `CRLSignerCertificate` on the ledger.
   - label: `string` -  A label to disambiguate multiple revocation information partitions of a particular issuer.
   - issuerSubjectKeyID: `string` - Uniquely identifies the PAA or PAI for which this revocation distribution point is provided. Must consist of even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters., e.g: `5A880E6C3653D07FB08971A3F473790930E62BDB`.
 - In State:

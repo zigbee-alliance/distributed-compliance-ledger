@@ -135,7 +135,7 @@ func (k msgServer) verifyUpdatedPAA(ctx sdk.Context, newCertificatePem string, r
 	}
 
 	// check that new cert has the same VID as in the message if it's non-VID scoped
-	// (vid-scoped has been already checked as patr of static validation + equality of PEM values
+	// (vid-scoped has been already checked as part of static validation + equality of PEM values)
 	ledgerRootVid, err := x509.GetVidFromSubject(foundRootCert.SubjectAsText)
 	if err != nil {
 		return sdkerrors.Wrapf(pkitypes.ErrInvalidVidFormat, "Could not parse vid: %s", err)

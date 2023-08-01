@@ -43,7 +43,7 @@ var (
 	ErrInvalidPidFormat                                  = sdkerrors.Register(ModuleName, 433, "invalid pid format")
 	ErrInvalidDataURLFormat                              = sdkerrors.Register(ModuleName, 434, "invalid data url format")
 	ErrCertificateVidNotEqualMsgVid                      = sdkerrors.Register(ModuleName, 435, "certificate's vid is not equal to the message vid")
-	ErrMessageVidNotEqualRootCertVid                     = sdkerrors.Register(ModuleName, 436, "Message vid does not equal ledger's root certificate vid")
+	ErrMessageVidNotEqualRootCertVid                     = sdkerrors.Register(ModuleName, 436, "Message vid is not equal to ledger's root certificate vid")
 	ErrCertNotChainedBack                                = sdkerrors.Register(ModuleName, 437, "Certificate is not chained back to a root certificate on DCL")
 )
 
@@ -144,7 +144,7 @@ func NewErrCRLSignerCertificateVidNotEqualMsgVid(e interface{}) error {
 
 func NewErrMessageVidNotEqualRootCertVid(vid1 int32, vid2 int32) error {
 	return sdkerrors.Wrapf(ErrMessageVidNotEqualRootCertVid,
-		"Message vid=%d does not equal ledger's root certificate vid=%d",
+		"Message vid=%d is not equal to ledger's root certificate vid=%d",
 		vid1, vid2)
 }
 

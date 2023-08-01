@@ -220,7 +220,7 @@ Gets a list of all revocation distribution points.
         - If the found certificate doesn't have an associated VID, raise an error
         - Both OID and text versions of VID in a certificate can be supported (either `Mvid` or `1.3.6.1.4.1.37244.2.1`, see `x509.ToSubjectAsText` method and "2.2. Encoding of Vendor ID and Product ID in subject and issuer fields" section in spec)
    - If Revocation Distribution Point's Signer Certificate is a PAI (intermediate certificate, not self-signed):
-     - `crlSignerCertificate` must be a PAI
+     - `crlSignerCertificate` must be a PAI chained back to an existing PAA on the ledger
      - `crlSignerCertificate` must encode a vid in its subject and this vid must be equal to `VendorID` field
      - if `crlSignerCertificate` encodes a pid in its subject, it must be equal to the `ProductID` field
 - Check that (VendorID, IssuerSubjectKeyID, DataUrl) combination is unique when updating the distribution endpoint.
