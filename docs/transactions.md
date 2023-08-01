@@ -1052,7 +1052,7 @@ Assigns a Vendor ID (VID) to non-VID scoped PAAs (root certificates) already pre
 - Who can send:
   - Vendor Admin
 - CLI command:
-  - `dcld pki assign-vid --subject=<base64 string> --subject-key-id=<hex string> --vid=<uint16>`
+  - `dcld pki assign-vid --subject=<base64 string> --subject-key-id=<hex string> --vid=<uint16> --from=<account>`
 
 ### UPDATE_PKI_REVOCATION_DISTRIBUTION_POINT
 
