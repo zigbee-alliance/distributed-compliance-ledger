@@ -82,6 +82,7 @@ var (
 	ProductURL                                        = "https://url.producturl.dclmodel"
 	LsfURL                                            = "https://url.lsfurl.dclmodel"
 	DataURL                                           = "https://url.data.dclmodel"
+	DataURL2                                          = "https://url.data.dclmodel2"
 	URLWithoutProtocol                                = "url.dclmodel"
 	LsfRevision                                int32  = 1
 	EmptyLsfRevision                           int32

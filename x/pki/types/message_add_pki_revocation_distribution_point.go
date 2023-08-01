@@ -55,45 +55,6 @@ func (msg *MsgAddPkiRevocationDistributionPoint) GetSignBytes() []byte {
 	return sdk.MustSortJSON(bz)
 }
 
-func (msg *MsgAddPkiRevocationDistributionPoint) verifyVid(subjectAsText string) error {
-	vid, err := x509.GetVidFromSubject(subjectAsText)
-
-	if err != nil {
-		return sdkerrors.Wrapf(pkitypes.ErrInvalidVidFormat, "Could not parse vid: %s", err)
-	}
-
-	if vid == 0 {
-		return sdkerrors.Wrap(pkitypes.ErrUnsupportedOperation, "publishing a revocation point for non-VID scoped certificates is currently not supported")
-	}
-
-	if vid != msg.Vid {
-		return pkitypes.NewErrCRLSignerCertificateVidNotEqualMsgVid(fmt.Sprintf("CRL Signer Certificate's vid=%d must be equal to the provided vid=%d in the message", vid, msg.Vid))
-	}
-
-	return nil
-}
-
-func (msg *MsgAddPkiRevocationDistributionPoint) verifyPid(subjectAsText string) error {
-	pid, err := x509.GetPidFromSubject(subjectAsText)
-
-	if err != nil {
-		return sdkerrors.Wrapf(pkitypes.ErrInvalidPidFormat, "Could not parse pid: %s", err)
-	}
-	if pid == 0 && msg.Pid != 0 {
-		return pkitypes.NewErrNotEmptyPid("Product ID (pid) must be empty when it is not found in non-root CRL Signer Certificate")
-	}
-
-	if pid != 0 && msg.Pid == 0 {
-		return pkitypes.NewErrPidNotFound(fmt.Sprintf("Product ID (pid) must be provided when pid=%d in non-root CRL Signer Certificate", pid))
-	}
-
-	if pid != msg.Pid {
-		return pkitypes.NewErrCRLSignerCertificatePidNotEqualMsgPid(fmt.Sprintf("CRL Signer Certificate's pid=%d must be equal to the provided pid=%d in the message", pid, msg.Pid))
-	}
-
-	return nil
-}
-
 func (msg *MsgAddPkiRevocationDistributionPoint) verifyPAA(cert *x509.Certificate) error {
 	if msg.Pid != 0 {
 		return pkitypes.NewErrNotEmptyPid("Product ID (pid) must be empty for root certificates when isPAA is true")
@@ -103,30 +64,47 @@ func (msg *MsgAddPkiRevocationDistributionPoint) verifyPAA(cert *x509.Certificat
 		return pkitypes.NewErrRootCertificateIsNotSelfSigned("CRL Signer Certificate must be self-signed if isPAA is True")
 	}
 
-	err := msg.verifyVid(cert.SubjectAsText)
-
+	// verify VID
+	vid, err := x509.GetVidFromSubject(cert.SubjectAsText)
 	if err != nil {
-		return err
+		return sdkerrors.Wrapf(pkitypes.ErrInvalidVidFormat, "Could not parse vid: %s", err)
+	}
+
+	if vid > 0 && vid != msg.Vid {
+		return pkitypes.NewErrCRLSignerCertificateVidNotEqualMsgVid(fmt.Sprintf("CRL Signer Certificate's vid=%d must be equal to the provided vid=%d in the message", vid, msg.Vid))
 	}
 
 	return nil
 }
 
 func (msg *MsgAddPkiRevocationDistributionPoint) verifyPAI(cert *x509.Certificate) error {
-	err := msg.verifyPid(cert.SubjectAsText)
-
-	if err != nil {
-		return err
-	}
-
 	if cert.IsSelfSigned() {
 		return pkitypes.NewErrNonRootCertificateSelfSigned("CRL Signer Certificate shall not be self-signed if isPAA is False")
 	}
 
-	err = msg.verifyVid(cert.SubjectAsText)
-
+	// verify VID
+	vid, err := x509.GetVidFromSubject(cert.SubjectAsText)
 	if err != nil {
-		return err
+		return sdkerrors.Wrapf(pkitypes.ErrInvalidVidFormat, "Could not parse vid: %s", err)
+	}
+
+	if vid != msg.Vid {
+		return pkitypes.NewErrCRLSignerCertificateVidNotEqualMsgVid(fmt.Sprintf("CRL Signer Certificate's vid=%d must be equal to the provided vid=%d in the message", vid, msg.Vid))
+	}
+
+	// verify PID
+	pid, err := x509.GetPidFromSubject(cert.SubjectAsText)
+	if err != nil {
+		return sdkerrors.Wrapf(pkitypes.ErrInvalidPidFormat, "Could not parse pid: %s", err)
+	}
+	if pid == 0 && msg.Pid != 0 {
+		return pkitypes.NewErrNotEmptyPid("Product ID (pid) must be empty when it is not found in non-root CRL Signer Certificate")
+	}
+	if pid != 0 && msg.Pid == 0 {
+		return pkitypes.NewErrPidNotFound(fmt.Sprintf("Product ID (pid) must be provided when pid=%d in non-root CRL Signer Certificate", pid))
+	}
+	if pid != msg.Pid {
+		return pkitypes.NewErrCRLSignerCertificatePidNotEqualMsgPid(fmt.Sprintf("CRL Signer Certificate's pid=%d must be equal to the provided pid=%d in the message", pid, msg.Pid))
 	}
 
 	return nil
