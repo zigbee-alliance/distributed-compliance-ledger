@@ -3959,7 +3959,7 @@ func TestHandler_DeletePkiRevocationDistributionPoint_Multiple_SameIssuerSubject
 	_, err = setup.Handler(setup.Ctx, &deletePkiRevocationDistributionPoint)
 	require.NoError(t, err)
 
-	revocationPointBySubjectKeyID, isFound = setup.Keeper.GetPkiRevocationDistributionPointsByIssuerSubjectKeyID(setup.Ctx, testconstants.SubjectKeyIDWithoutColons)
+	_, isFound = setup.Keeper.GetPkiRevocationDistributionPointsByIssuerSubjectKeyID(setup.Ctx, testconstants.SubjectKeyIDWithoutColons)
 	require.False(t, isFound)
 }
 
