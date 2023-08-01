@@ -4118,7 +4118,7 @@ func TestHandler_AssignVid_certificateWithoutSubjectVid(t *testing.T) {
 		Signer:       vendorAcc.String(),
 		Subject:      rootCertOptions.subject,
 		SubjectKeyId: rootCertOptions.subjectKeyID,
-		Vid:          testconstants.PAACertWithNumericVidVid,
+		Vid:          testconstants.Vid,
 	}
 
 	_, err := setup.Handler(setup.Ctx, &assignVid)
@@ -4128,8 +4128,8 @@ func TestHandler_AssignVid_certificateWithoutSubjectVid(t *testing.T) {
 	certificates, _ := queryApprovedCertificates(setup, rootCertOptions.subject, rootCertOptions.subjectKeyID)
 
 	// check
-	require.Equal(t, 1, len(certificates.Certs))
-	require.NotEqual(t, certificates.Certs[0].Vid, testconstants.TestCertPemVid)
+	require.Equal(t, len(certificates.Certs), 1)
+	require.EqualValues(t, certificates.Certs[0].Vid, testconstants.Vid)
 }
 
 func TestHandler_AssignVid_certificateWithSubjectVid(t *testing.T) {
@@ -4157,8 +4157,8 @@ func TestHandler_AssignVid_certificateWithSubjectVid(t *testing.T) {
 	certificates, _ := queryApprovedCertificates(setup, rootCertOptions.subject, rootCertOptions.subjectKeyID)
 
 	// check
-	require.Equal(t, 1, len(certificates.Certs))
-	require.NotEqual(t, certificates.Certs[0].Vid, testconstants.TestCertPemVid)
+	require.Equal(t, len(certificates.Certs), 1)
+	require.EqualValues(t, certificates.Certs[0].Vid, testconstants.PAACertWithNumericVidVid)
 }
 
 func queryProposedCertificate(
