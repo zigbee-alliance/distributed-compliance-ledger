@@ -2382,7 +2382,7 @@ func TestHandler_RevocationPointsByIssuerSubjectKeyID(t *testing.T) {
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 		Label:                "label",
-		DataURL:              testconstants.DataURL,
+		DataURL:              testconstants.DataURL + "/1",
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 		RevocationType:       1,
 	}
@@ -2400,7 +2400,7 @@ func TestHandler_RevocationPointsByIssuerSubjectKeyID(t *testing.T) {
 		Pid:                  8,
 		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 		Label:                "label1",
-		DataURL:              testconstants.DataURL,
+		DataURL:              testconstants.DataURL + "/2",
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 		RevocationType:       1,
 	}
