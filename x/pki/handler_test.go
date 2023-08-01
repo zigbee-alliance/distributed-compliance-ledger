@@ -2302,7 +2302,6 @@ func TestHandler_AddPkiRevocationDistributionPoint_DataURLNotUnique(t *testing.T
 	_, err = setup.Handler(setup.Ctx, &addPkiRevocationDistributionPoint)
 	require.NoError(t, err)
 
-
 	addPkiRevocationDistributionPoint = types.MsgAddPkiRevocationDistributionPoint{
 		Signer:               vendorAcc.String(),
 		Vid:                  65522,
