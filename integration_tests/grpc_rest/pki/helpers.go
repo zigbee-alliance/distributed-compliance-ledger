@@ -611,6 +611,17 @@ func Demo(suite *utils.TestSuite) {
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&secondMsgApproveAddX509RootCert}, aliceName, aliceAccount)
 	require.NoError(suite.T, err)
 
+	// Assign VID to Root certificate that already has VID
+	msgAssignVid := pkitypes.MsgAssignVid{
+		Signer:       vendorAccount.Address,
+		Subject:      testconstants.RootSubject,
+		SubjectKeyId: testconstants.RootSubjectKeyID,
+		Vid:          testconstants.Vid,
+	}
+
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAssignVid}, vendorName, vendorAccount)
+	require.ErrorContains(suite.T, err, "vid is not empty")
+
 	// Request all proposed Root certificates
 	proposedCertificates, _ = GetAllProposedX509RootCerts(suite)
 	require.Equal(suite.T, 0, len(proposedCertificates))
