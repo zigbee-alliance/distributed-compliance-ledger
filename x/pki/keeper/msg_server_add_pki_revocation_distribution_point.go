@@ -48,7 +48,6 @@ func (k msgServer) AddPkiRevocationDistributionPoint(goCtx context.Context, msg 
 		return nil, pkitypes.NewErrPkiRevocationDistributionPointAlreadyExists("PKI revocation distribution point already exist")
 	}
 
-
 	if crlSignerCertificate.IsSelfSigned() {
 		// check that crlSignerCertificate cert is present on the ledger and has the same VID
 		err = k.checkRootCert(ctx, crlSignerCertificate, msg)
@@ -59,11 +58,11 @@ func (k msgServer) AddPkiRevocationDistributionPoint(goCtx context.Context, msg 
 	if err != nil {
 		return nil, err
 	}
-  
- revocationList, isFound := k.GetPkiRevocationDistributionPointsByIssuerSubjectKeyID(ctx, msg.IssuerSubjectKeyID)
+
+	revocationList, isFound := k.GetPkiRevocationDistributionPointsByIssuerSubjectKeyID(ctx, msg.IssuerSubjectKeyID)
 	if isFound {
 		for _, revocationPoint := range revocationList.Points {
-			if revocationPoint.DataURL == msg.DataURL {
+			if revocationPoint.DataURL == msg.DataURL && revocationPoint.Vid == msg.Vid {
 				return nil, pkitypes.NewErrPkiRevocationDistributionPointAlreadyExists(
 					fmt.Sprintf("PKI revocation distribution point with DataURL (%s) already exist for IssuerID (%s)", msg.DataURL, msg.IssuerSubjectKeyID))
 			}

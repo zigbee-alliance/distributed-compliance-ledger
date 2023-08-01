@@ -72,7 +72,7 @@ func (k msgServer) UpdatePkiRevocationDistributionPoint(goCtx context.Context, m
 	revocationList, isFound := k.GetPkiRevocationDistributionPointsByIssuerSubjectKeyID(ctx, msg.IssuerSubjectKeyID)
 	if isFound {
 		for _, revocationPoint := range revocationList.Points {
-			if revocationPoint.DataURL == msg.DataURL && revocationPoint.Label != msg.Label {
+			if revocationPoint.DataURL == msg.DataURL && revocationPoint.Vid == msg.Vid && revocationPoint.Label != msg.Label {
 				return nil, pkitypes.NewErrPkiRevocationDistributionPointAlreadyExists(
 					fmt.Sprintf("PKI revocation distribution point with DataURL (%s) already exist for IssuerID (%s)", msg.DataURL, msg.IssuerSubjectKeyID))
 			}
