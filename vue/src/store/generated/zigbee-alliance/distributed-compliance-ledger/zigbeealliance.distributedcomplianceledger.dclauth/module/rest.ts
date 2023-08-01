@@ -20,7 +20,7 @@ export interface DclauthAccount {
    * for basic account functionality. Any custom account type should extend this
    * type for additional functionality (e.g. vesting).
    */
-  base_account?: V1Beta1BaseAccount;
+  baseAccount?: V1Beta1BaseAccount;
   roles?: string[];
   approvals?: DclauthGrant[];
 
@@ -386,10 +386,10 @@ export interface V1Beta1BaseAccount {
    *       "value": "1.212s"
    *     }
    */
-  pub_key?: ProtobufAny;
+  pubKey?: ProtobufAny;
 
   /** @format uint64 */
-  account_number?: string;
+  accountNumber?: string;
 
   /** @format uint64 */
   sequence?: string;
@@ -431,7 +431,7 @@ export interface V1Beta1PageRequest {
    * count_total is only respected when offset is used. It is ignored when key
    * is set.
    */
-  count_total?: boolean;
+  countTotal?: boolean;
 
   /**
    * reverse is set to true if results are to be returned in the descending order.
@@ -452,7 +452,7 @@ corresponding request message has used PageRequest.
 */
 export interface V1Beta1PageResponse {
   /** @format byte */
-  next_key?: string;
+  nextKey?: string;
 
   /** @format uint64 */
   total?: string;
@@ -667,7 +667,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.key"?: string;
       "pagination.offset"?: string;
       "pagination.limit"?: string;
-      "pagination.count_total"?: boolean;
+      "pagination.countTotal"?: boolean;
       "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
@@ -725,7 +725,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.key"?: string;
       "pagination.offset"?: string;
       "pagination.limit"?: string;
-      "pagination.count_total"?: boolean;
+      "pagination.countTotal"?: boolean;
       "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
@@ -767,7 +767,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.key"?: string;
       "pagination.offset"?: string;
       "pagination.limit"?: string;
-      "pagination.count_total"?: boolean;
+      "pagination.countTotal"?: boolean;
       "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
@@ -809,7 +809,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.key"?: string;
       "pagination.offset"?: string;
       "pagination.limit"?: string;
-      "pagination.count_total"?: boolean;
+      "pagination.countTotal"?: boolean;
       "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
@@ -851,7 +851,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.key"?: string;
       "pagination.offset"?: string;
       "pagination.limit"?: string;
-      "pagination.count_total"?: boolean;
+      "pagination.countTotal"?: boolean;
       "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},

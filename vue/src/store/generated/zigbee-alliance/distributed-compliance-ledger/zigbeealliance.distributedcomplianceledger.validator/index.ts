@@ -1,4 +1,6 @@
 import { txClient, queryClient, MissingWalletError , registry} from './module'
+// @ts-ignore
+import { SpVuexError } from '@starport/vuex'
 
 import { Description } from "./module/types/validator/description"
 import { DisabledValidator } from "./module/types/validator/disabled_validator"
@@ -183,7 +185,7 @@ export default {
 					const sub=JSON.parse(subscription)
 					await dispatch(sub.action, sub.payload)
 				}catch(e) {
-					throw new Error('Subscriptions: ' + e.message)
+					throw new SpVuexError('Subscriptions: ' + e.message)
 				}
 			})
 		},
@@ -204,7 +206,7 @@ export default {
 				if (subscribe) commit('SUBSCRIBE', { action: 'QueryValidator', payload: { options: { all }, params: {...key},query }})
 				return getters['getValidator']( { params: {...key}, query}) ?? {}
 			} catch (e) {
-				throw new Error('QueryClient:QueryValidator API Node Unavailable. Could not perform query: ' + e.message)
+				throw new SpVuexError('QueryClient:QueryValidator', 'API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
@@ -230,7 +232,7 @@ export default {
 				if (subscribe) commit('SUBSCRIBE', { action: 'QueryValidatorAll', payload: { options: { all }, params: {...key},query }})
 				return getters['getValidatorAll']( { params: {...key}, query}) ?? {}
 			} catch (e) {
-				throw new Error('QueryClient:QueryValidatorAll API Node Unavailable. Could not perform query: ' + e.message)
+				throw new SpVuexError('QueryClient:QueryValidatorAll', 'API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
@@ -252,7 +254,7 @@ export default {
 				if (subscribe) commit('SUBSCRIBE', { action: 'QueryLastValidatorPower', payload: { options: { all }, params: {...key},query }})
 				return getters['getLastValidatorPower']( { params: {...key}, query}) ?? {}
 			} catch (e) {
-				throw new Error('QueryClient:QueryLastValidatorPower API Node Unavailable. Could not perform query: ' + e.message)
+				throw new SpVuexError('QueryClient:QueryLastValidatorPower', 'API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
@@ -278,7 +280,7 @@ export default {
 				if (subscribe) commit('SUBSCRIBE', { action: 'QueryLastValidatorPowerAll', payload: { options: { all }, params: {...key},query }})
 				return getters['getLastValidatorPowerAll']( { params: {...key}, query}) ?? {}
 			} catch (e) {
-				throw new Error('QueryClient:QueryLastValidatorPowerAll API Node Unavailable. Could not perform query: ' + e.message)
+				throw new SpVuexError('QueryClient:QueryLastValidatorPowerAll', 'API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
@@ -300,7 +302,7 @@ export default {
 				if (subscribe) commit('SUBSCRIBE', { action: 'QueryProposedDisableValidator', payload: { options: { all }, params: {...key},query }})
 				return getters['getProposedDisableValidator']( { params: {...key}, query}) ?? {}
 			} catch (e) {
-				throw new Error('QueryClient:QueryProposedDisableValidator API Node Unavailable. Could not perform query: ' + e.message)
+				throw new SpVuexError('QueryClient:QueryProposedDisableValidator', 'API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
@@ -326,7 +328,7 @@ export default {
 				if (subscribe) commit('SUBSCRIBE', { action: 'QueryProposedDisableValidatorAll', payload: { options: { all }, params: {...key},query }})
 				return getters['getProposedDisableValidatorAll']( { params: {...key}, query}) ?? {}
 			} catch (e) {
-				throw new Error('QueryClient:QueryProposedDisableValidatorAll API Node Unavailable. Could not perform query: ' + e.message)
+				throw new SpVuexError('QueryClient:QueryProposedDisableValidatorAll', 'API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
@@ -348,7 +350,7 @@ export default {
 				if (subscribe) commit('SUBSCRIBE', { action: 'QueryDisabledValidator', payload: { options: { all }, params: {...key},query }})
 				return getters['getDisabledValidator']( { params: {...key}, query}) ?? {}
 			} catch (e) {
-				throw new Error('QueryClient:QueryDisabledValidator API Node Unavailable. Could not perform query: ' + e.message)
+				throw new SpVuexError('QueryClient:QueryDisabledValidator', 'API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
@@ -374,7 +376,7 @@ export default {
 				if (subscribe) commit('SUBSCRIBE', { action: 'QueryDisabledValidatorAll', payload: { options: { all }, params: {...key},query }})
 				return getters['getDisabledValidatorAll']( { params: {...key}, query}) ?? {}
 			} catch (e) {
-				throw new Error('QueryClient:QueryDisabledValidatorAll API Node Unavailable. Could not perform query: ' + e.message)
+				throw new SpVuexError('QueryClient:QueryDisabledValidatorAll', 'API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
@@ -396,7 +398,7 @@ export default {
 				if (subscribe) commit('SUBSCRIBE', { action: 'QueryRejectedDisableValidator', payload: { options: { all }, params: {...key},query }})
 				return getters['getRejectedDisableValidator']( { params: {...key}, query}) ?? {}
 			} catch (e) {
-				throw new Error('QueryClient:QueryRejectedDisableValidator API Node Unavailable. Could not perform query: ' + e.message)
+				throw new SpVuexError('QueryClient:QueryRejectedDisableValidator', 'API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
@@ -422,27 +424,12 @@ export default {
 				if (subscribe) commit('SUBSCRIBE', { action: 'QueryRejectedDisableValidatorAll', payload: { options: { all }, params: {...key},query }})
 				return getters['getRejectedDisableValidatorAll']( { params: {...key}, query}) ?? {}
 			} catch (e) {
-				throw new Error('QueryClient:QueryRejectedDisableValidatorAll API Node Unavailable. Could not perform query: ' + e.message)
+				throw new SpVuexError('QueryClient:QueryRejectedDisableValidatorAll', 'API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
 		
 		
-		async sendMsgDisableValidator({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgDisableValidator(value)
-				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
-	gas: "200000" }, memo})
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgDisableValidator:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgDisableValidator:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
 		async sendMsgEnableValidator({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
@@ -452,39 +439,9 @@ export default {
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgEnableValidator:Init Could not initialize signing client. Wallet is required.')
+					throw new SpVuexError('TxClient:MsgEnableValidator:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgEnableValidator:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgCreateValidator({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgCreateValidator(value)
-				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
-	gas: "200000" }, memo})
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCreateValidator:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgCreateValidator:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgApproveDisableValidator({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgApproveDisableValidator(value)
-				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
-	gas: "200000" }, memo})
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgApproveDisableValidator:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgApproveDisableValidator:Send Could not broadcast Tx: '+ e.message)
+					throw new SpVuexError('TxClient:MsgEnableValidator:Send', 'Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -497,9 +454,24 @@ export default {
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgProposeDisableValidator:Init Could not initialize signing client. Wallet is required.')
+					throw new SpVuexError('TxClient:MsgProposeDisableValidator:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgProposeDisableValidator:Send Could not broadcast Tx: '+ e.message)
+					throw new SpVuexError('TxClient:MsgProposeDisableValidator:Send', 'Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgCreateValidator({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgCreateValidator(value)
+				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
+	gas: "200000" }, memo})
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new SpVuexError('TxClient:MsgCreateValidator:Init', 'Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new SpVuexError('TxClient:MsgCreateValidator:Send', 'Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -512,26 +484,43 @@ export default {
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRejectDisableValidator:Init Could not initialize signing client. Wallet is required.')
+					throw new SpVuexError('TxClient:MsgRejectDisableValidator:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgRejectDisableValidator:Send Could not broadcast Tx: '+ e.message)
+					throw new SpVuexError('TxClient:MsgRejectDisableValidator:Send', 'Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgApproveDisableValidator({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgApproveDisableValidator(value)
+				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
+	gas: "200000" }, memo})
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new SpVuexError('TxClient:MsgApproveDisableValidator:Init', 'Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new SpVuexError('TxClient:MsgApproveDisableValidator:Send', 'Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgDisableValidator({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgDisableValidator(value)
+				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
+	gas: "200000" }, memo})
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new SpVuexError('TxClient:MsgDisableValidator:Init', 'Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new SpVuexError('TxClient:MsgDisableValidator:Send', 'Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
 		
-		async MsgDisableValidator({ rootGetters }, { value }) {
-			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgDisableValidator(value)
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgDisableValidator:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgDisableValidator:Create Could not create message: ' + e.message)
-				}
-			}
-		},
 		async MsgEnableValidator({ rootGetters }, { value }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
@@ -539,35 +528,10 @@ export default {
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgEnableValidator:Init Could not initialize signing client. Wallet is required.')
+					throw new SpVuexError('TxClient:MsgEnableValidator:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgEnableValidator:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgCreateValidator({ rootGetters }, { value }) {
-			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgCreateValidator(value)
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCreateValidator:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgCreateValidator:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgApproveDisableValidator({ rootGetters }, { value }) {
-			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgApproveDisableValidator(value)
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgApproveDisableValidator:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgApproveDisableValidator:Create Could not create message: ' + e.message)
+					throw new SpVuexError('TxClient:MsgEnableValidator:Create', 'Could not create message: ' + e.message)
+					
 				}
 			}
 		},
@@ -578,9 +542,24 @@ export default {
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgProposeDisableValidator:Init Could not initialize signing client. Wallet is required.')
+					throw new SpVuexError('TxClient:MsgProposeDisableValidator:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgProposeDisableValidator:Create Could not create message: ' + e.message)
+					throw new SpVuexError('TxClient:MsgProposeDisableValidator:Create', 'Could not create message: ' + e.message)
+					
+				}
+			}
+		},
+		async MsgCreateValidator({ rootGetters }, { value }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgCreateValidator(value)
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new SpVuexError('TxClient:MsgCreateValidator:Init', 'Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new SpVuexError('TxClient:MsgCreateValidator:Create', 'Could not create message: ' + e.message)
+					
 				}
 			}
 		},
@@ -591,9 +570,38 @@ export default {
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRejectDisableValidator:Init Could not initialize signing client. Wallet is required.')
+					throw new SpVuexError('TxClient:MsgRejectDisableValidator:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgRejectDisableValidator:Create Could not create message: ' + e.message)
+					throw new SpVuexError('TxClient:MsgRejectDisableValidator:Create', 'Could not create message: ' + e.message)
+					
+				}
+			}
+		},
+		async MsgApproveDisableValidator({ rootGetters }, { value }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgApproveDisableValidator(value)
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new SpVuexError('TxClient:MsgApproveDisableValidator:Init', 'Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new SpVuexError('TxClient:MsgApproveDisableValidator:Create', 'Could not create message: ' + e.message)
+					
+				}
+			}
+		},
+		async MsgDisableValidator({ rootGetters }, { value }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgDisableValidator(value)
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new SpVuexError('TxClient:MsgDisableValidator:Init', 'Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new SpVuexError('TxClient:MsgDisableValidator:Create', 'Could not create message: ' + e.message)
+					
 				}
 			}
 		},
