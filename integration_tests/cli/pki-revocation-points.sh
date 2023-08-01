@@ -48,6 +48,18 @@ echo "Create Vendor account - $vendor_account_non_vid_scoped"
 create_new_vendor_account $vendor_account_non_vid_scoped $vid_non_vid_scoped
 test_divider
 
+echo "Trustees add PAA cert with numeric vid to the ledger"
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$paa_cert_with_numeric_vid_path" --vid $vid --from $trustee_account --yes)
+check_response "$result" "\"code\": 0"
+result=$(echo "$passphrase" | dcld tx pki approve-add-x509-root-cert --subject="$paa_cert_with_numeric_vid_subject" --subject-key-id="$paa_cert_with_numeric_vid_subject_key_id" --from $second_trustee_account --yes)
+check_response "$result" "\"code\": 0"
+
+echo "Trustees add PAA no VID"
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$paa_cert_no_vid_path" --vid $vid_non_vid_scoped --from $trustee_account --yes)
+check_response "$result" "\"code\": 0"
+result=$(echo "$passphrase" | dcld tx pki approve-add-x509-root-cert --subject="$paa_cert_no_vid_subject" --subject-key-id="$paa_cert_no_vid_subject_key_id" --from $second_trustee_account --yes)
+check_response "$result" "\"code\": 0"
+
 echo "1. QUERY ALL REVOCATION POINTS EMPTY"
 
 result=$(dcld query pki all-revocation-points)
@@ -104,14 +116,7 @@ test_divider
 
 echo "7. ADD REVOCATION POINT FOR PAA WHEN CRL SIGNER CERTIFICATE PEM VALUE IS NOT EQUAL TO STORED CERTIFICATE PEM VALUE"
 
-echo "Trustees add PAA cert with numeric vid to the ledger"
-result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$paa_cert_with_numeric_vid_path" --vid $vid --from $trustee_account --yes)
-check_response "$result" "\"code\": 0"
-result=$(echo "$passphrase" | dcld tx pki approve-add-x509-root-cert --subject="$paa_cert_with_numeric_vid_subject" --subject-key-id="$paa_cert_with_numeric_vid_subject_key_id" --from $second_trustee_account --yes)
-check_response "$result" "\"code\": 0"
-
 result=$(dcld tx pki add-revocation-point --vid=$vid_65522 --is-paa="true" --certificate="$paa_cert_with_numeric_vid1_path" --label="$label" --data-url="$data_url" --issuer-subject-key-id=$issuer_subject_key_id --revocation-type=1 --from=$vendor_account_65522 --yes)
-
 response_does_not_contain "$result" "\"code\": 0"
 echo $result
 
