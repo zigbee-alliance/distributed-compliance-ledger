@@ -34,23 +34,18 @@ func (k msgServer) AssignVid(goCtx context.Context, msg *types.MsgAssignVid) (*t
 		return nil, pkitypes.NewErrCertificateDoesNotExist(msg.Subject, msg.SubjectKeyId)
 	}
 
-	rootCertificate := certificates.Certs[0]
+	certificate := certificates.Certs[0]
 
 	// fail if certificates are not root
-	if !rootCertificate.IsRoot {
+	if !certificate.IsRoot {
 		return nil, pkitypes.NewErrInappropriateCertificateType(
 			fmt.Sprintf("Inappropriate Certificate Type: Certificate with subject=%v and subjectKeyID=%v "+
 				"is not a root certificate.", msg.Subject, msg.SubjectKeyId),
 		)
 	}
 
-	// check that the certificate VID has not been set
-	if rootCertificate.Vid != 0 {
-		return nil, pkitypes.NewErrNotEmptyVid("Vendor ID (VID) is already present in the certificate")
-	}
-
 	// check that the certificate VID and Message VID are equal
-	subjectVid, err := x509.GetVidFromSubject(rootCertificate.SubjectAsText)
+	subjectVid, err := x509.GetVidFromSubject(certificate.SubjectAsText)
 	if err != nil {
 		return nil, pkitypes.NewErrInvalidCertificate(err)
 	}
@@ -58,7 +53,23 @@ func (k msgServer) AssignVid(goCtx context.Context, msg *types.MsgAssignVid) (*t
 		return nil, pkitypes.NewErrCertificateVidNotEqualMsgVid(fmt.Sprintf("Certificate VID=%d is not equal to the msg VID=%d", subjectVid, msg.Vid))
 	}
 
-	rootCertificate.Vid = msg.Vid
+	hasCertificateWithoutVid := false
+
+	// assign the VID to certificates that don't have it
+	for _, certificate := range certificates.Certs {
+		if certificate.Vid != 0 {
+			continue
+		}
+
+		hasCertificateWithoutVid = true
+
+		certificate.Vid = msg.Vid
+	}
+
+	// check that the VID has been set for at least one certificate
+	if !hasCertificateWithoutVid {
+		return nil, pkitypes.NewErrNotEmptyVid("Vendor ID (VID) already present in certificates")
+	}
 
 	k.SetApprovedCertificates(ctx, certificates)
 
