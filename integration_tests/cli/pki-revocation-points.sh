@@ -146,7 +146,13 @@ check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"label\": \"$label\""
 check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
 
-result=$(dcld tx pki add-revocation-point --vid=$vid --is-paa="true" --certificate="$paa_cert_with_numeric_vid_path" --label="$label" --data-url="$data_url" --issuer-subject-key-id=$issuer_subject_key_id --revocation-type=1 --from=$vendor_account --yes)
+# (vid, issuer, label) - key already exist
+result=$(dcld tx pki add-revocation-point --vid=$vid --is-paa="true" --certificate="$paa_cert_with_numeric_vid_path" --label="$label" --data-url="$data_url-new" --issuer-subject-key-id=$issuer_subject_key_id --revocation-type=1 --from=$vendor_account --yes)
+response_does_not_contain "$result" "\"code\": 0"
+echo $result
+
+# (vid, issuer, dataURL) - key already exist
+result=$(dcld tx pki add-revocation-point --vid=$vid --is-paa="true" --certificate="$paa_cert_with_numeric_vid_path" --label="$label-new" --data-url="$data_url" --issuer-subject-key-id=$issuer_subject_key_id --revocation-type=1 --from=$vendor_account --yes)
 response_does_not_contain "$result" "\"code\": 0"
 echo $result
 

@@ -2266,6 +2266,58 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAIWithStringVidPid(t *testin
 	require.NoError(t, err)
 }
 
+func TestHandler_AddPkiRevocationDistributionPoint_DataURLNotUnique(t *testing.T) {
+	setup := Setup(t)
+
+	vendorAcc := GenerateAccAddress()
+	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, 65522)
+
+	// propose x509 root certificate by account Trustee1
+	proposeAddX509RootCert := types.NewMsgProposeAddX509RootCert(setup.Trustee1.String(), testconstants.PAACertNoVid, testconstants.Info, testconstants.Vid)
+	_, err := setup.Handler(setup.Ctx, proposeAddX509RootCert)
+	require.NoError(t, err)
+
+	// approve
+	approveAddX509RootCert := types.NewMsgApproveAddX509RootCert(
+		setup.Trustee2.String(), testconstants.PAACertNoVidSubject, testconstants.PAACertNoVidSubjectKeyID, testconstants.Info)
+	_, err = setup.Handler(setup.Ctx, approveAddX509RootCert)
+	require.NoError(t, err)
+
+	// add intermediate certificate
+	addX509Cert := types.NewMsgAddX509Cert(vendorAcc.String(), testconstants.PAICertWithPidVid)
+	_, err = setup.Handler(setup.Ctx, addX509Cert)
+	require.NoError(t, err)
+
+	addPkiRevocationDistributionPoint := types.MsgAddPkiRevocationDistributionPoint{
+		Signer:               vendorAcc.String(),
+		Vid:                  65522,
+		IsPAA:                false,
+		Pid:                  8,
+		CrlSignerCertificate: testconstants.PAICertWithPidVid,
+		Label:                "label",
+		DataURL:              testconstants.DataURL,
+		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+		RevocationType:       1,
+	}
+	_, err = setup.Handler(setup.Ctx, &addPkiRevocationDistributionPoint)
+	require.NoError(t, err)
+
+
+	addPkiRevocationDistributionPoint = types.MsgAddPkiRevocationDistributionPoint{
+		Signer:               vendorAcc.String(),
+		Vid:                  65522,
+		IsPAA:                false,
+		Pid:                  8,
+		CrlSignerCertificate: testconstants.PAICertWithPidVid,
+		Label:                "label-new",
+		DataURL:              testconstants.DataURL,
+		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+		RevocationType:       1,
+	}
+	_, err = setup.Handler(setup.Ctx, &addPkiRevocationDistributionPoint)
+	require.ErrorIs(t, err, pkitypes.ErrPkiRevocationDistributionPointAlreadyExists)
+}
+
 func TestHandler_AddPkiRevocationDistributionPoint_PAIWithVid(t *testing.T) {
 	setup := Setup(t)
 
@@ -2396,17 +2448,31 @@ func TestHandler_UpdatePkiRevocationDistributionPoint(t *testing.T) {
 	var err error
 	vendorAcc := GenerateAccAddress()
 	const vid int32 = 65521
-	addedRevocation := &types.MsgAddPkiRevocationDistributionPoint{
-		Signer:               vendorAcc.String(),
-		Vid:                  vid,
-		IsPAA:                true,
-		Pid:                  8,
-		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
-		Label:                "label",
-		DataURL:              testconstants.DataURL,
-		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
-		RevocationType:       1,
+	addedRevocationPoints := []types.MsgAddPkiRevocationDistributionPoint{
+		{
+			Signer:               vendorAcc.String(),
+			Vid:                  vid,
+			IsPAA:                true,
+			Pid:                  8,
+			CrlSignerCertificate: testconstants.PAACertWithNumericVid,
+			Label:                testconstants.ProductLabel + "-1",
+			DataURL:              testconstants.DataURL + "/1",
+			IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+			RevocationType:       1,
+		},
+		{
+			Signer:               vendorAcc.String(),
+			Vid:                  vid,
+			IsPAA:                true,
+			Pid:                  8,
+			CrlSignerCertificate: testconstants.PAACertWithNumericVid,
+			Label:                testconstants.ProductLabel + "-2",
+			DataURL:              testconstants.DataURL + "/2",
+			IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+			RevocationType:       1,
+		},
 	}
+	addedRevocation := addedRevocationPoints[0]
 	cases := []struct {
 		valid             bool
 		name              string
@@ -2461,6 +2527,18 @@ func TestHandler_UpdatePkiRevocationDistributionPoint(t *testing.T) {
 			},
 			err: pkitypes.ErrDataFieldPresented,
 		},
+		{
+			valid: false,
+			name:  "Valid: not unique DataURL for Issuer",
+			updatedRevocation: types.MsgUpdatePkiRevocationDistributionPoint{
+				Signer:             addedRevocation.Signer,
+				Vid:                addedRevocation.Vid,
+				Label:              addedRevocation.Label,
+				DataURL:            addedRevocationPoints[1].DataURL,
+				IssuerSubjectKeyID: addedRevocation.IssuerSubjectKeyID,
+			},
+			err: pkitypes.ErrPkiRevocationDistributionPointAlreadyExists,
+		},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -2479,8 +2557,8 @@ func TestHandler_UpdatePkiRevocationDistributionPoint(t *testing.T) {
 			require.NoError(t, err)
 
 			// add revocation
-			if addedRevocation != nil {
-				_, err = setup.Handler(setup.Ctx, addedRevocation)
+			for _, revocationPoint := range addedRevocationPoints {
+				_, err = setup.Handler(setup.Ctx, &revocationPoint)
 				require.NoError(t, err)
 			}
 			_, err = setup.Handler(setup.Ctx, &tc.updatedRevocation)
