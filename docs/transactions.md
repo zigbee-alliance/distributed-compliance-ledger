@@ -989,6 +989,26 @@ The revocation is not applied until sufficient number of Trustees approve it.
 - CLI command:
   - `dcld tx pki approve-revoke-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
 
+
+#### ASSIGN_VID
+
+**Status: Implemented**
+
+Assigns a Vendor ID (VID) to non-VID scoped PAAs (root certificates) already present on the ledger.
+
+- Parameters:
+  - subject: `string` - certificates's `Subject` is base64 encoded subject DER sequence bytes
+  - subject_key_id: `string` - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
+  - vid: `uint16` -  Vendor ID (positive non-zero). Must be the same as Vendor account's VID.
+- Who can send:
+  - Vendor Admin
+- CLI command:
+  - `dcld pki assign-vid --subject=<base64 string> --subject-key-id=<hex string> --vid=<uint16>`
+- Validation:
+  - provided certificate must be root:
+    - `Issuer` == `Subject`
+    - `Authority Key Identifier` == `Subject Key Identifier`
+
 #### GET_X509_CERT
 
 **Status: Implemented**
