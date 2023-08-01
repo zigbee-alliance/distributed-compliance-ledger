@@ -3282,7 +3282,7 @@ func TestHandler_DeletePkiRevocationDistributionPoint_PAISenderVidNotEqualCertVi
 	require.ErrorIs(t, err, pkitypes.ErrCRLSignerCertificateVidNotEqualAccountVid)
 }
 
-func TestHandler_AssignVid_SenderNotVendor(t *testing.T) {
+func TestHandler_AssignVid_SenderNotVendorAdmin(t *testing.T) {
 	setup := Setup(t)
 
 	assignVid := types.MsgAssignVid{
@@ -3300,7 +3300,7 @@ func TestHandler_AssignVid_CertificateDoesNotExist(t *testing.T) {
 	setup := Setup(t)
 
 	vendorAcc := GenerateAccAddress()
-	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.TestCertPemVid)
+	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, testconstants.TestCertPemVid)
 
 	assignVid := types.MsgAssignVid{
 		Signer:       vendorAcc.String(),
@@ -3317,7 +3317,7 @@ func TestHandler_AssignVid_ForNonRootCertificate(t *testing.T) {
 	setup := Setup(t)
 
 	vendorAcc := GenerateAccAddress()
-	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.TestCertPemVid)
+	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, testconstants.PAACertWithNumericVidVid)
 
 	// propose and approve x509 root certificate
 	rootCertOptions := createTestRootCertOptions()
@@ -3343,7 +3343,7 @@ func TestHandler_AssignVid_CertificateAlreadyHasVid(t *testing.T) {
 	setup := Setup(t)
 
 	vendorAcc := GenerateAccAddress()
-	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.TestCertPemVid)
+	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, testconstants.PAACertWithNumericVidVid)
 
 	// propose and approve x509 root certificate
 	rootCertOptions := createPAACertWithNumericVidOptions()
@@ -3364,7 +3364,7 @@ func TestHandler_AssignVid_MessageVidAndCertificateVidNotEqual(t *testing.T) {
 	setup := Setup(t)
 
 	vendorAcc := GenerateAccAddress()
-	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.TestCertPemVid)
+	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, 1)
 
 	// propose and approve x509 root certificate
 	rootCertOptions := createPAACertWithNumericVidOptions()
@@ -3382,11 +3382,33 @@ func TestHandler_AssignVid_MessageVidAndCertificateVidNotEqual(t *testing.T) {
 	require.ErrorIs(t, err, pkitypes.ErrCertificateVidNotEqualMsgVid)
 }
 
+func TestHandler_AssignVid_MessageVidAndAccountVidNotEqual(t *testing.T) {
+	setup := Setup(t)
+
+	vendorAcc := GenerateAccAddress()
+	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, 1)
+
+	// propose and approve x509 root certificate
+	rootCertOptions := createPAACertWithNumericVidOptions()
+	rootCertOptions.vid = 0
+	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+
+	assignVid := types.MsgAssignVid{
+		Signer:       vendorAcc.String(),
+		Subject:      rootCertOptions.subject,
+		SubjectKeyId: rootCertOptions.subjectKeyID,
+		Vid:          testconstants.PAACertWithNumericVidVid,
+	}
+
+	_, err := setup.Handler(setup.Ctx, &assignVid)
+	require.ErrorIs(t, err, pkitypes.ErrCRLSignerCertificateVidNotEqualAccountVid)
+}
+
 func TestHandler_AssignVid_certificateWithoutSubjectVid(t *testing.T) {
 	setup := Setup(t)
 
 	vendorAcc := GenerateAccAddress()
-	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.TestCertPemVid)
+	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, testconstants.PAACertWithNumericVidVid)
 
 	// propose and approve x509 root certificate
 	rootCertOptions := createTestRootCertOptions()
@@ -3415,7 +3437,7 @@ func TestHandler_AssignVid_certificateWithSubjectVid(t *testing.T) {
 	setup := Setup(t)
 
 	vendorAcc := GenerateAccAddress()
-	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.TestCertPemVid)
+	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, testconstants.PAACertWithNumericVidVid)
 
 	// propose and approve x509 root certificate
 	rootCertOptions := createPAACertWithNumericVidOptions()

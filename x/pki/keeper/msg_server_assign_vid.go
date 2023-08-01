@@ -21,10 +21,18 @@ func (k msgServer) AssignVid(goCtx context.Context, msg *types.MsgAssignVid) (*t
 	}
 
 	// check if signer has vendor role
-	if !k.dclauthKeeper.HasRole(ctx, signerAddr, dclauthtypes.Vendor) {
+	if !k.dclauthKeeper.HasRole(ctx, signerAddr, dclauthtypes.VendorAdmin) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
 			"AssignVid transaction should be signed by an account with the \"%s\" role",
 			dclauthtypes.Vendor,
+		)
+	}
+
+	signerAccount, _ := k.dclauthKeeper.GetAccountO(ctx, signerAddr)
+
+	if msg.Vid != signerAccount.VendorID {
+		return nil, sdkerrors.Wrap(pkitypes.ErrCRLSignerCertificateVidNotEqualAccountVid,
+			"MsgAddPkiRevocationDistributionPoint signer must have the same vid as provided in message",
 		)
 	}
 
