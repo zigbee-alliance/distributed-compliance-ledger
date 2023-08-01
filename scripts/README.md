@@ -37,3 +37,8 @@ Generate Cosmos base openapi
 ./scripts/cosmos-swagger-gen.sh base
 ./scripts/cosmos-swagger-gen.sh tx
 ```
+
+Update DCL openapi
+```bash
+./scripts/dcl-swagger-gen.sh
+```

@@ -177,35 +177,32 @@ the following instructions from [how-to.md](docs/how-to.md) can be used for ever
 
 - [Trustee](docs/how-to.md#trustee-instructions)
   - propose new accounts
-  - approve new accounts
+  - approve/reject new accounts
   - propose revocation of accounts
   - approve revocation of accounts
   - propose X509 root certificates
-  - approve X509 root certificates
+  - approve/reject X509 root certificates
   - propose revocation of X509 root certificates
   - approve revocation of X509 root certificates
-  - publish X509 certificates
-  - revoke X509 certificates
   - propose pool upgrade
-  - approve pool upgrade
-
+  - approve/reject pool upgrade
+  - propose disable a validator node
+  - approve/reject disable a validator node
 - [Vendor](docs/how-to.md#vendor-instructions)
-  - publish vendor info
-  - publish device model info
-  - publish device model version
-  - publish X509 certificates
-  - revoke X509 certificates
-- [Vendor Admin](docs/how-to.md#vendor-admin-instructions)
-  - publish vendor info
-  - update vendor info for any vendor
+  - publish/update vendor info
+  - publish/update/delete device model info
+  - publish/update/delete device model version
+  - publish/update/delete PKI Revocation Distribution Point
+  - publish/remove X509 certificates
 - [Certification Center](docs/how-to.md#certification-center-instructions)
   - certify or revoke certification of device models
-  - publish X509 certificates
-  - revoke X509 certificates
-- [Node Admin](docs/how-to.md#node-admin-instructions-setting-up-a-new-validator-node)
+  - update/delete compliance info
+- [Vendor Admin](docs/how-to.md#vendor-admin-instructions)
+  - publish/update vendor info for any vendor
+- Node Admin
   - add a new Validator node
-  - publish X509 certificates
-  - revoke X509 certificates
+  - disable a Validator node
+  - enable a Validator node
 
 
 ## Useful Links
