@@ -204,8 +204,7 @@ vendor_account="vendor_account"
 
 plan_name="v1.2.0"
 binary_version="v1.2.0-dev4"
-upgrade_checksum="sha256:7194fd6dbeab39130e3050e6260d8871e9dab4b1ae6b049caaa5d134bd0da0f7"
-
+upgrade_checksum="sha256:ab6c59e43fb8612a179d208004dc97c62e3d2cab8918fa4712eb4473216cca84"
 vid=1
 pid_1=1
 pid_2=2
