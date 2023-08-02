@@ -1053,9 +1053,18 @@ test_divider
 
 # X509 PKI
 
-echo "Assign VID to root_certificate"
+echo "Assign VID to test_root_certificate"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx pki assign-vid --subject="$test_root_cert_subject" --subject-key-id="$test_root_cert_subject_key_id" --vid="$test_root_cert_vid" --from $vendor_admin_account --yes)
 check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Verify that vid is assigned for test_root_certificate"
+result=$($DCLD_BIN_OLD query pki x509-cert --subject="$test_root_cert_subject" --subject-key-id="$test_root_cert_subject_key_id")
+echo $result | jq
+check_response "$result" "\"subject\": \"$test_root_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id\""
+check_response "$result" "\"vid\": $test_root_cert_vid"
 
 test_divider
 
