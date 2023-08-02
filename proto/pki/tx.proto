@@ -20,6 +20,7 @@ service Msg {
   rpc AddPkiRevocationDistributionPoint(MsgAddPkiRevocationDistributionPoint) returns (MsgAddPkiRevocationDistributionPointResponse);
   rpc UpdatePkiRevocationDistributionPoint(MsgUpdatePkiRevocationDistributionPoint) returns (MsgUpdatePkiRevocationDistributionPointResponse);
   rpc DeletePkiRevocationDistributionPoint(MsgDeletePkiRevocationDistributionPoint) returns (MsgDeletePkiRevocationDistributionPointResponse);
+  rpc AssignVid(MsgAssignVid) returns (MsgAssignVidResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -140,6 +141,16 @@ message MsgDeletePkiRevocationDistributionPoint {
 }
 
 message MsgDeletePkiRevocationDistributionPointResponse {
+}
+
+message MsgAssignVid {
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  string subject = 2 [(gogoproto.moretags) = "validate:\"required,max=1024\""];
+  string subjectKeyId = 3 [(gogoproto.moretags) = "validate:\"required,max=256\""];
+  int32 vid = 4 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535,required\""];
+}
+
+message MsgAssignVidResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message

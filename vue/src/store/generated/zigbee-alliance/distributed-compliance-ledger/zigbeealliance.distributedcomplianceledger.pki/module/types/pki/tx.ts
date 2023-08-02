@@ -9,6 +9,7 @@ export interface MsgProposeAddX509RootCert {
   cert: string
   info: string
   time: number
+  vid: number
 }
 
 export interface MsgProposeAddX509RootCertResponse {}
@@ -112,7 +113,16 @@ export interface MsgDeletePkiRevocationDistributionPoint {
 
 export interface MsgDeletePkiRevocationDistributionPointResponse {}
 
-const baseMsgProposeAddX509RootCert: object = { signer: '', cert: '', info: '', time: 0 }
+export interface MsgAssignVid {
+  signer: string
+  subject: string
+  subjectKeyId: string
+  vid: number
+}
+
+export interface MsgAssignVidResponse {}
+
+const baseMsgProposeAddX509RootCert: object = { signer: '', cert: '', info: '', time: 0, vid: 0 }
 
 export const MsgProposeAddX509RootCert = {
   encode(message: MsgProposeAddX509RootCert, writer: Writer = Writer.create()): Writer {
@@ -127,6 +137,9 @@ export const MsgProposeAddX509RootCert = {
     }
     if (message.time !== 0) {
       writer.uint32(32).int64(message.time)
+    }
+    if (message.vid !== 0) {
+      writer.uint32(40).int32(message.vid)
     }
     return writer
   },
@@ -149,6 +162,9 @@ export const MsgProposeAddX509RootCert = {
           break
         case 4:
           message.time = longToNumber(reader.int64() as Long)
+          break
+        case 5:
+          message.vid = reader.int32()
           break
         default:
           reader.skipType(tag & 7)
@@ -180,6 +196,11 @@ export const MsgProposeAddX509RootCert = {
     } else {
       message.time = 0
     }
+    if (object.vid !== undefined && object.vid !== null) {
+      message.vid = Number(object.vid)
+    } else {
+      message.vid = 0
+    }
     return message
   },
 
@@ -189,6 +210,7 @@ export const MsgProposeAddX509RootCert = {
     message.cert !== undefined && (obj.cert = message.cert)
     message.info !== undefined && (obj.info = message.info)
     message.time !== undefined && (obj.time = message.time)
+    message.vid !== undefined && (obj.vid = message.vid)
     return obj
   },
 
@@ -213,6 +235,11 @@ export const MsgProposeAddX509RootCert = {
       message.time = object.time
     } else {
       message.time = 0
+    }
+    if (object.vid !== undefined && object.vid !== null) {
+      message.vid = object.vid
+    } else {
+      message.vid = 0
     }
     return message
   }
@@ -1881,6 +1908,150 @@ export const MsgDeletePkiRevocationDistributionPointResponse = {
   }
 }
 
+const baseMsgAssignVid: object = { signer: '', subject: '', subjectKeyId: '', vid: 0 }
+
+export const MsgAssignVid = {
+  encode(message: MsgAssignVid, writer: Writer = Writer.create()): Writer {
+    if (message.signer !== '') {
+      writer.uint32(10).string(message.signer)
+    }
+    if (message.subject !== '') {
+      writer.uint32(18).string(message.subject)
+    }
+    if (message.subjectKeyId !== '') {
+      writer.uint32(26).string(message.subjectKeyId)
+    }
+    if (message.vid !== 0) {
+      writer.uint32(32).int32(message.vid)
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgAssignVid {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseMsgAssignVid } as MsgAssignVid
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.signer = reader.string()
+          break
+        case 2:
+          message.subject = reader.string()
+          break
+        case 3:
+          message.subjectKeyId = reader.string()
+          break
+        case 4:
+          message.vid = reader.int32()
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): MsgAssignVid {
+    const message = { ...baseMsgAssignVid } as MsgAssignVid
+    if (object.signer !== undefined && object.signer !== null) {
+      message.signer = String(object.signer)
+    } else {
+      message.signer = ''
+    }
+    if (object.subject !== undefined && object.subject !== null) {
+      message.subject = String(object.subject)
+    } else {
+      message.subject = ''
+    }
+    if (object.subjectKeyId !== undefined && object.subjectKeyId !== null) {
+      message.subjectKeyId = String(object.subjectKeyId)
+    } else {
+      message.subjectKeyId = ''
+    }
+    if (object.vid !== undefined && object.vid !== null) {
+      message.vid = Number(object.vid)
+    } else {
+      message.vid = 0
+    }
+    return message
+  },
+
+  toJSON(message: MsgAssignVid): unknown {
+    const obj: any = {}
+    message.signer !== undefined && (obj.signer = message.signer)
+    message.subject !== undefined && (obj.subject = message.subject)
+    message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId)
+    message.vid !== undefined && (obj.vid = message.vid)
+    return obj
+  },
+
+  fromPartial(object: DeepPartial<MsgAssignVid>): MsgAssignVid {
+    const message = { ...baseMsgAssignVid } as MsgAssignVid
+    if (object.signer !== undefined && object.signer !== null) {
+      message.signer = object.signer
+    } else {
+      message.signer = ''
+    }
+    if (object.subject !== undefined && object.subject !== null) {
+      message.subject = object.subject
+    } else {
+      message.subject = ''
+    }
+    if (object.subjectKeyId !== undefined && object.subjectKeyId !== null) {
+      message.subjectKeyId = object.subjectKeyId
+    } else {
+      message.subjectKeyId = ''
+    }
+    if (object.vid !== undefined && object.vid !== null) {
+      message.vid = object.vid
+    } else {
+      message.vid = 0
+    }
+    return message
+  }
+}
+
+const baseMsgAssignVidResponse: object = {}
+
+export const MsgAssignVidResponse = {
+  encode(_: MsgAssignVidResponse, writer: Writer = Writer.create()): Writer {
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgAssignVidResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseMsgAssignVidResponse } as MsgAssignVidResponse
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(_: any): MsgAssignVidResponse {
+    const message = { ...baseMsgAssignVidResponse } as MsgAssignVidResponse
+    return message
+  },
+
+  toJSON(_: MsgAssignVidResponse): unknown {
+    const obj: any = {}
+    return obj
+  },
+
+  fromPartial(_: DeepPartial<MsgAssignVidResponse>): MsgAssignVidResponse {
+    const message = { ...baseMsgAssignVidResponse } as MsgAssignVidResponse
+    return message
+  }
+}
+
 /** Msg defines the Msg service. */
 export interface Msg {
   ProposeAddX509RootCert(request: MsgProposeAddX509RootCert): Promise<MsgProposeAddX509RootCertResponse>
@@ -1892,8 +2063,9 @@ export interface Msg {
   RejectAddX509RootCert(request: MsgRejectAddX509RootCert): Promise<MsgRejectAddX509RootCertResponse>
   AddPkiRevocationDistributionPoint(request: MsgAddPkiRevocationDistributionPoint): Promise<MsgAddPkiRevocationDistributionPointResponse>
   UpdatePkiRevocationDistributionPoint(request: MsgUpdatePkiRevocationDistributionPoint): Promise<MsgUpdatePkiRevocationDistributionPointResponse>
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   DeletePkiRevocationDistributionPoint(request: MsgDeletePkiRevocationDistributionPoint): Promise<MsgDeletePkiRevocationDistributionPointResponse>
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  AssignVid(request: MsgAssignVid): Promise<MsgAssignVidResponse>
 }
 
 export class MsgClientImpl implements Msg {
@@ -1959,6 +2131,12 @@ export class MsgClientImpl implements Msg {
     const data = MsgDeletePkiRevocationDistributionPoint.encode(request).finish()
     const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Msg', 'DeletePkiRevocationDistributionPoint', data)
     return promise.then((data) => MsgDeletePkiRevocationDistributionPointResponse.decode(new Reader(data)))
+  }
+
+  AssignVid(request: MsgAssignVid): Promise<MsgAssignVidResponse> {
+    const data = MsgAssignVid.encode(request).finish()
+    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Msg', 'AssignVid', data)
+    return promise.then((data) => MsgAssignVidResponse.decode(new Reader(data)))
   }
 }
 

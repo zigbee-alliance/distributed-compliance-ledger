@@ -1039,6 +1039,20 @@ and DACs (leaf certificates) added to DCL if they are revoked in the CRL identif
   - `dcld tx pki add-revocation-point --vid=<uint16> --pid=<uint16> --issuer-subject-key-id=<string> --is-paa=<bool> --label=<string>
     --certificate=<string-or-path> --data-url=<string> --revocation-type=1 --from=<account>`
 
+#### ASSIGN_VID
+
+**Status: Implemented**
+
+Assigns a Vendor ID (VID) to non-VID scoped PAAs (root certificates) already present on the ledger.
+
+- Parameters:
+  - subject: `string` - certificates's `Subject` is base64 encoded subject DER sequence bytes
+  - subject_key_id: `string` - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
+  - vid: `uint16` -  Vendor ID (positive non-zero). Must be the same as `vid` field in the VID-scoped `CRLSignerCertificate`.
+- Who can send:
+  - Vendor Admin
+- CLI command:
+  - `dcld pki assign-vid --subject=<base64 string> --subject-key-id=<hex string> --vid=<uint16> --from=<account>`
 
 ### UPDATE_PKI_REVOCATION_DISTRIBUTION_POINT
 
