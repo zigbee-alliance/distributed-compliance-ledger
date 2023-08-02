@@ -1056,11 +1056,15 @@ test_divider
 
 echo "Assign VID to non-VID scoped root_certificate"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx pki assign-vid --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --vid="$root_cert_path_new_random_vid" --from $vendor_admin_account --yes)
-check_response "$result" "vid is not empty"
+check_response "$result" "\"code\": 0"
+
+test_divider
 
 echo "Assign VID to VID scoped test_root_certificate"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx pki assign-vid --subject="$test_root_cert_subject" --subject-key-id="$test_root_cert_subject_key_id" --vid="$test_root_cert_vid" --from $vendor_admin_account --yes)
-check_response "$result" "vid is not empty"
+check_response "$result" "\"code\": 0"
+
+test_divider
 
 echo "Propose add root_certificate"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx pki propose-add-x509-root-cert --certificate="$root_cert_path_new" --vid="$root_cert_path_new_random_vid" --from=$trustee_account_1 --yes)
