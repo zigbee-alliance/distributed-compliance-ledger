@@ -1060,7 +1060,7 @@ check_response "$result" "\"code\": 0"
 test_divider
 
 echo "Verify that vid is assigned to test_root_certificate"
-result=$($DCLD_BIN_OLD query pki x509-cert --subject="$test_root_cert_subject" --subject-key-id="$test_root_cert_subject_key_id")
+result=$($DCLD_BIN_NEW query pki x509-cert --subject="$test_root_cert_subject" --subject-key-id="$test_root_cert_subject_key_id")
 echo $result | jq
 check_response "$result" "\"subject\": \"$test_root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id\""
