@@ -203,9 +203,8 @@ trustee_account_3="bob"
 vendor_account="vendor_account"
 
 plan_name="v1.2.0"
-binary_version="v1.2.0-dev3"
-upgrade_checksum="sha256:7194fd6dbeab39130e3050e6260d8871e9dab4b1ae6b049caaa5d134bd0da0f7"
-
+binary_version="v1.2.0-dev4"
+upgrade_checksum="sha256:ab6c59e43fb8612a179d208004dc97c62e3d2cab8918fa4712eb4473216cca84"
 vid=1
 pid_1=1
 pid_2=2
@@ -903,6 +902,7 @@ company_preferred_name_new="CompanyPreferredNameNew"
 vendor_landing_page_url_new="https://www.newexample.com"
 
 vendor_account_new="vendor_account_new"
+vendor_admin_account="vendor_admin_account"
 certification_center_account_new="certification_center_account_new"
 
 echo "Create Vendor account $vendor_account_new"
@@ -921,6 +921,16 @@ result="$(echo $passphrase | $DCLD_BIN_NEW keys add "$certification_center_accou
 _address=$(echo $passphrase | $DCLD_BIN_NEW keys show $certification_center_account_new -a)
 _pubkey=$(echo $passphrase | $DCLD_BIN_NEW keys show $certification_center_account_new -p)
 result="$(echo $passphrase | $DCLD_BIN_NEW tx auth propose-add-account --address="$_address" --pubkey="$_pubkey" --roles="CertificationCenter" --from "$trustee_account_1" --yes)"
+result="$(echo $passphrase | $DCLD_BIN_NEW tx auth approve-add-account --address="$_address" --from "$trustee_account_2" --yes)"
+result="$(echo $passphrase | $DCLD_BIN_NEW tx auth approve-add-account --address="$_address" --from "$trustee_account_3" --yes)"
+result="$(echo $passphrase | $DCLD_BIN_NEW tx auth approve-add-account --address="$_address" --from "$trustee_account_4" --yes)"
+
+echo "Create VendorAdmin account"
+
+result="$(echo $passphrase | $DCLD_BIN_NEW keys add "$vendor_admin_account")"
+_address=$(echo $passphrase | $DCLD_BIN_NEW keys show $vendor_admin_account -a)
+_pubkey=$(echo $passphrase | $DCLD_BIN_NEW keys show $vendor_admin_account -p)
+result="$(echo $passphrase | $DCLD_BIN_NEW tx auth propose-add-account --address="$_address" --pubkey="$_pubkey" --roles="VendorAdmin" --from "$trustee_account_1" --yes)"
 result="$(echo $passphrase | $DCLD_BIN_NEW tx auth approve-add-account --address="$_address" --from "$trustee_account_2" --yes)"
 result="$(echo $passphrase | $DCLD_BIN_NEW tx auth approve-add-account --address="$_address" --from "$trustee_account_3" --yes)"
 result="$(echo $passphrase | $DCLD_BIN_NEW tx auth approve-add-account --address="$_address" --from "$trustee_account_4" --yes)"
@@ -1042,6 +1052,21 @@ check_response "$result" "\"code\": 0"
 test_divider
 
 # X509 PKI
+
+echo "Assign VID to test_root_certificate"
+result=$(echo $passphrase | $DCLD_BIN_NEW tx pki assign-vid --subject="$test_root_cert_subject" --subject-key-id="$test_root_cert_subject_key_id" --vid="$test_root_cert_vid" --from $vendor_admin_account --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Verify that vid is assigned to test_root_certificate"
+result=$($DCLD_BIN_NEW query pki x509-cert --subject="$test_root_cert_subject" --subject-key-id="$test_root_cert_subject_key_id")
+echo $result | jq
+check_response "$result" "\"subject\": \"$test_root_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id\""
+check_response "$result" "\"vid\": $test_root_cert_vid"
+
+test_divider
 
 echo "Propose add root_certificate"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx pki propose-add-x509-root-cert --certificate="$root_cert_path_new" --vid="$root_cert_path_new_random_vid" --from=$trustee_account_1 --yes)
