@@ -70,7 +70,7 @@ localnet_clean: localnet_stop
 	rm -rf $(HOME)/.dcl
 
 
-localnet_rebuild: localnet_clean localnet_init
+localnet_rebuild: localnet_clean localnet_init localnet_start
 
 
 test_deploy_env_build:
