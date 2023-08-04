@@ -38,6 +38,9 @@ export interface PkiCertificate {
   approvals?: PkiGrant[];
   subjectAsText?: string;
   rejects?: PkiGrant[];
+
+  /** @format int32 */
+  vid?: number;
 }
 
 export interface PkiCertificateIdentifier {
@@ -66,6 +69,8 @@ export type PkiMsgAddX509CertResponse = object;
 export type PkiMsgApproveAddX509RootCertResponse = object;
 
 export type PkiMsgApproveRevokeX509RootCertResponse = object;
+
+export type PkiMsgAssignVidResponse = object;
 
 export type PkiMsgDeletePkiRevocationDistributionPointResponse = object;
 
@@ -116,6 +121,9 @@ export interface PkiProposedCertificate {
   approvals?: PkiGrant[];
   subjectAsText?: string;
   rejects?: PkiGrant[];
+
+  /** @format int32 */
+  vid?: number;
 }
 
 export interface PkiProposedCertificateRevocation {

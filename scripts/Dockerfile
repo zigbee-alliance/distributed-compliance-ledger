@@ -6,7 +6,7 @@ FROM node
 
 # Install golang
 ARG GO_VERSION
-ENV GO_VERSION=${GO_VERSION:-1.17.2}
+ENV GO_VERSION=${GO_VERSION:-1.18}
 ENV BASH_ENV=/etc/bashrc
 ENV PATH="${PATH}:/usr/local/go/bin"
 RUN curl -L https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz -o /tmp/go.tar.gz \
@@ -41,7 +41,7 @@ RUN npm install -g swagger-combine
 
 # Install starport
 ARG STARPORT_VERSION
-ENV STARPORT_VERSION=${STARPORT_VERSION:-0.19.3}
+ENV STARPORT_VERSION=${STARPORT_VERSION:-0.19.5}
 #ENV STARPORT_VERSION=${STARPORT_VERSION:-dev}
 
 RUN if [ "$STARPORT_VERSION" = "dev" ]; then \
