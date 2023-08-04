@@ -13,6 +13,8 @@ paa_cert_with_numeric_vid1_path="integration_tests/constants/paa_cert_numeric_vi
 paa_cert_with_numeric_vid1_subject="MDAxGDAWBgNVBAMMD01hdHRlciBUZXN0IFBBQTEUMBIGCisGAQQBgqJ8AgEMBEZGRjI="
 paa_cert_with_numeric_vid1_subject_key_id="7F:1D:AA:F2:44:98:B9:86:68:0E:A0:8F:C1:89:21:E8:48:48:9D:17"
 
+pai_cert_vid_path="integration_tests/constants/pai_cert_vid"
+pai_cert_with_numeric_vid_path="integration_tests/constants/pai_cert_numeric_vid"
 pai_cert_with_numeric_vid_pid_path="integration_tests/constants/pai_cert_numeric_vid_pid"
 
 root_cert_path="integration_tests/constants/root_cert"
@@ -214,32 +216,35 @@ test_divider
 
 echo "11. ADD REVOCATION POINT FOR PAI"
 
-result=$(dcld tx pki add-revocation-point --vid=$vid --pid=$pid --is-paa="false" --certificate="$pai_cert_with_numeric_vid_pid_path" --label="$label_pai" --data-url="$data_url" --issuer-subject-key-id=$issuer_subject_key_id --revocation-type=1 --from=$vendor_account --yes)
+result=$(dcld tx pki add-revocation-point --vid=$vid_65522 --is-paa="false" --certificate="$pai_cert_with_numeric_vid_path" --label="$label_pai" --data-url="$data_url" --issuer-subject-key-id=$issuer_subject_key_id --revocation-type=1 --from=$vendor_account_65522 --yes)
 check_response "$result" "\"code\": 0"
 echo $result
 
 result=$(dcld query pki all-revocation-points)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"label\": \"$label\""
-check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
 check_response "$result" "\"vid\": $vid_non_vid_scoped"
 check_response "$result" "\"label\": \"$label_non_vid_scoped\""
+check_response "$result" "\"vid\": $vid_65522"
 check_response "$result" "\"label\": \"$label_pai\""
+check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
 
 result=$(dcld query pki revocation-points --issuer-subject-key-id=$issuer_subject_key_id)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"label\": \"$label\""
-check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
 check_response "$result" "\"vid\": $vid_non_vid_scoped"
 check_response "$result" "\"label\": \"$label_non_vid_scoped\""
-check_response "$result" "\"label\": \"$label_pai\""
-
-result=$(dcld query pki revocation-point --vid=$vid --label=$label_pai --issuer-subject-key-id=$issuer_subject_key_id)
-check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"vid\": $vid_65522"
 check_response "$result" "\"label\": \"$label_pai\""
 check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
+
+result=$(dcld query pki revocation-point --vid=$vid_65522 --label=$label_pai --issuer-subject-key-id=$issuer_subject_key_id)
+check_response "$result" "\"vid\": $vid_65522"
+check_response "$result" "\"label\": \"$label_pai\""
+check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
+response_does_not_contain "$result" "\"vid\": $vid"
 response_does_not_contain "$result" "\"label\": \"$label\""
-response_does_not_contain "$result" "\"label\": \"$label_non_vid_scoped\""
+response_does_not_contain "$result" "\"vid\": \"$label_non_vid_scoped\""
 response_does_not_contain "$result" "\"label\": \"$vid_non_vid_scoped\""
 
 test_divider
@@ -304,19 +309,25 @@ result=$(dcld tx pki update-revocation-point --vid=$vid_non_vid_scoped --certifi
 check_response "$result" "\"code\": 0"
 echo $result
 
-result=$(dcld query pki revocation-point --vid=$vid --label=$label --issuer-subject-key-id=$issuer_subject_key_id)
+result=$(dcld query pki revocation-point --vid=$vid_non_vid_scoped --label=$label_non_vid_scoped --issuer-subject-key-id=$issuer_subject_key_id)
 check_response "$result" "\"CrlSignerCertificate\": $(<$test_root_cert_path)"
-check_response "$result" "\"vid\": $vid"
-check_response "$result" "\"label\": \"$label\""
+check_response "$result" "\"vid\": $vid_non_vid_scoped"
+check_response "$result" "\"label\": \"$label_non_vid_scoped\""
 check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
 
 test_divider
 
 echo "19. UPDATE REVOCATION POINT FOR PAI"
 
-result=$(dcld tx pki update-revocation-point --vid=$vid --certificate="$pai_cert_with_numeric_vid_pid_path" --label="$label_pai" --data-url="$data_url" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account --yes)
+result=$(dcld tx pki update-revocation-point --vid=$vid_65522 --certificate="$pai_cert_vid_path" --label="$label_pai" --data-url="$data_url" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account_65522 --yes)
 check_response "$result" "\"code\": 0"
 echo $result
+
+result=$(dcld query pki revocation-point --vid=$vid_65522 --label=$label_pai --issuer-subject-key-id=$issuer_subject_key_id)
+check_response "$result" "\"CrlSignerCertificate\": $(<$pai_cert_vid_path)"
+check_response "$result" "\"vid\": $vid_65522"
+check_response "$result" "\"label\": \"$label_pai\""
+check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
 
 test_divider
 
@@ -333,11 +344,11 @@ test_divider
 
 echo "22. DELETE REVOCATION PAI"
 
-result=$(dcld tx pki delete-revocation-point --vid=$vid --label="$label_pai" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account --yes)
+result=$(dcld tx pki delete-revocation-point --vid=$vid_65522 --label="$label_pai" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account_65522 --yes)
 check_response "$result" "\"code\": 0"
 echo $result
 
-result=$(dcld query pki revocation-point --vid=$vid --label=$label_pai --issuer-subject-key-id=$issuer_subject_key_id)
+result=$(dcld query pki revocation-point --vid=$vid_65522 --label=$label_pai --issuer-subject-key-id=$issuer_subject_key_id)
 check_response "$result" "Not Found"
 
 test_divider
