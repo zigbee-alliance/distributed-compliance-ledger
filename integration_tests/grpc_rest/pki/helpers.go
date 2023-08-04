@@ -649,6 +649,21 @@ func Demo(suite *utils.TestSuite) {
 	)
 	require.NotNil(suite.T, vendorAccount)
 
+	// Register new Vendor Admin account
+	vendorAdminName := utils.RandString()
+	vendorAdminAccount := test_dclauth.CreateAccount(
+		suite,
+		vendorAdminName,
+		dclauthtypes.AccountRoles{dclauthtypes.VendorAdmin},
+		0,
+		aliceName,
+		aliceAccount,
+		jackName,
+		jackAccount,
+		testconstants.Info,
+	)
+	require.NotNil(suite.T, vendorAdminAccount)
+
 	// Vendor (Not Trustee) propose Root certificate
 	msgProposeAddX509RootCert := pkitypes.MsgProposeAddX509RootCert{
 		Cert:   testconstants.RootCertPem,
@@ -709,6 +724,17 @@ func Demo(suite *utils.TestSuite) {
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&secondMsgApproveAddX509RootCert}, aliceName, aliceAccount)
 	require.NoError(suite.T, err)
+
+	// Assign VID to Root certificate that already has VID
+	msgAssignVid := pkitypes.MsgAssignVid{
+		Signer:       vendorAdminAccount.Address,
+		Subject:      testconstants.RootSubject,
+		SubjectKeyId: testconstants.RootSubjectKeyID,
+		Vid:          testconstants.Vid,
+	}
+
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAssignVid}, vendorAdminName, vendorAdminAccount)
+	require.ErrorContains(suite.T, err, "vid is not empty")
 
 	// Request all proposed Root certificates
 	proposedCertificates, _ = GetAllProposedX509RootCerts(suite)

@@ -82,6 +82,7 @@ var (
 	ProductURL                                        = "https://url.producturl.dclmodel"
 	LsfURL                                            = "https://url.lsfurl.dclmodel"
 	DataURL                                           = "https://url.data.dclmodel"
+	DataURL2                                          = "https://url.data.dclmodel2"
 	URLWithoutProtocol                                = "url.dclmodel"
 	LsfRevision                                int32  = 1
 	EmptyLsfRevision                           int32
@@ -262,6 +263,7 @@ mUkpxyqvChVI1A0DTVFLJd4=
 -----END CERTIFICATE-----`
 	PAACertWithNumericVidSubject      = "MDAxGDAWBgNVBAMMD01hdHRlciBUZXN0IFBBQTEUMBIGCisGAQQBgqJ8AgEMBEZGRjE="
 	PAACertWithNumericVidSubjectKeyID = "6A:FD:22:77:1F:51:1F:EC:BF:16:41:97:67:10:DC:DC:31:A1:71:7E"
+	PAACertWithNumericVidVid          = 65521
 
 	PAACertNoVid = `
 -----BEGIN CERTIFICATE-----

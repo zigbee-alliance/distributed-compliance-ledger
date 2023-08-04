@@ -18,6 +18,7 @@ export interface Certificate {
   approvals: Grant[]
   subjectAsText: string
   rejects: Grant[]
+  vid: number
 }
 
 const baseCertificate: object = {
@@ -31,7 +32,8 @@ const baseCertificate: object = {
   owner: '',
   subject: '',
   subjectKeyId: '',
-  subjectAsText: ''
+  subjectAsText: '',
+  vid: 0
 }
 
 export const Certificate = {
@@ -74,6 +76,9 @@ export const Certificate = {
     }
     for (const v of message.rejects) {
       Grant.encode(v!, writer.uint32(106).fork()).ldelim()
+    }
+    if (message.vid !== 0) {
+      writer.uint32(112).int32(message.vid)
     }
     return writer
   },
@@ -125,6 +130,9 @@ export const Certificate = {
           break
         case 13:
           message.rejects.push(Grant.decode(reader, reader.uint32()))
+          break
+        case 14:
+          message.vid = reader.int32()
           break
         default:
           reader.skipType(tag & 7)
@@ -203,6 +211,11 @@ export const Certificate = {
         message.rejects.push(Grant.fromJSON(e))
       }
     }
+    if (object.vid !== undefined && object.vid !== null) {
+      message.vid = Number(object.vid)
+    } else {
+      message.vid = 0
+    }
     return message
   },
 
@@ -229,6 +242,7 @@ export const Certificate = {
     } else {
       obj.rejects = []
     }
+    message.vid !== undefined && (obj.vid = message.vid)
     return obj
   },
 
@@ -300,6 +314,11 @@ export const Certificate = {
       for (const e of object.rejects) {
         message.rejects.push(Grant.fromPartial(e))
       }
+    }
+    if (object.vid !== undefined && object.vid !== null) {
+      message.vid = object.vid
+    } else {
+      message.vid = 0
     }
     return message
   }
