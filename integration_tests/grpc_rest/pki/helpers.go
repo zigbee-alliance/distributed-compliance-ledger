@@ -482,6 +482,105 @@ func GetRejectedX509RootCert(suite *utils.TestSuite, subject string, subjectKeyI
 	return &res, nil
 }
 
+func GetAllPkiRevocationDistributionPoints(suite *utils.TestSuite) (res []pkitypes.PkiRevocationDistributionPoint, err error) {
+	if suite.Rest {
+		var resp pkitypes.QueryAllPkiRevocationDistributionPointResponse
+		err := suite.QueryREST("/dcl/pki/revocation-points", &resp)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetPkiRevocationDistributionPoint()
+	} else {
+		grpcConn := suite.GetGRPCConn()
+		defer grpcConn.Close()
+
+		pkiClient := pkitypes.NewQueryClient(grpcConn)
+		resp, err := pkiClient.PkiRevocationDistributionPointAll(
+			context.Background(),
+			&pkitypes.QueryAllPkiRevocationDistributionPointRequest{},
+		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetPkiRevocationDistributionPoint()
+	}
+
+	return res, nil
+}
+
+func GetPkiRevocationDistributionPointsBySubject(suite *utils.TestSuite, subjectKeyID string) (*pkitypes.PkiRevocationDistributionPointsByIssuerSubjectKeyID, error) {
+	var res pkitypes.PkiRevocationDistributionPointsByIssuerSubjectKeyID
+	if suite.Rest {
+		var resp pkitypes.QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse
+		err := suite.QueryREST(
+			fmt.Sprintf(
+				"/dcl/pki/revocation-points/%s",
+				url.QueryEscape(subjectKeyID),
+			),
+			&resp,
+		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetPkiRevocationDistributionPointsByIssuerSubjectKeyID()
+	} else {
+		grpcConn := suite.GetGRPCConn()
+		defer grpcConn.Close()
+
+		// This creates a gRPC client to query the x/pki service.
+		pkiClient := pkitypes.NewQueryClient(grpcConn)
+		resp, err := pkiClient.PkiRevocationDistributionPointsByIssuerSubjectKeyID(
+			context.Background(),
+			&pkitypes.QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest{
+				IssuerSubjectKeyID: subjectKeyID,
+			},
+		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetPkiRevocationDistributionPointsByIssuerSubjectKeyID()
+	}
+
+	return &res, nil
+}
+
+func GetPkiRevocationDistributionPoint(suite *utils.TestSuite, vendorID int32, subjectKeyID string, label string) (*pkitypes.PkiRevocationDistributionPoint, error) {
+	var res pkitypes.PkiRevocationDistributionPoint
+	if suite.Rest {
+		var resp pkitypes.QueryGetPkiRevocationDistributionPointResponse
+		err := suite.QueryREST(
+			fmt.Sprintf(
+				"/dcl/pki/revocation-points/%s/%v/%s",
+				url.QueryEscape(subjectKeyID), vendorID, url.QueryEscape(label),
+			),
+			&resp,
+		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetPkiRevocationDistributionPoint()
+	} else {
+		grpcConn := suite.GetGRPCConn()
+		defer grpcConn.Close()
+
+		pkiClient := pkitypes.NewQueryClient(grpcConn)
+		resp, err := pkiClient.PkiRevocationDistributionPoint(
+			context.Background(),
+			&pkitypes.QueryGetPkiRevocationDistributionPointRequest{
+				Vid:                vendorID,
+				Label:              label,
+				IssuerSubjectKeyID: subjectKeyID,
+			},
+		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetPkiRevocationDistributionPoint()
+	}
+
+	return &res, nil
+}
+
 //nolint:funlen
 func Demo(suite *utils.TestSuite) {
 	// All requests return empty or 404 value
@@ -1318,4 +1417,205 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, aliceAccount.Address, rejectedCertificate.Certs[0].Owner)
 	require.Equal(suite.T, jackAccount.Address, rejectedCertificate.Certs[0].Rejects[0].Address)
 	require.Equal(suite.T, aliceAccount.Address, rejectedCertificate.Certs[0].Rejects[1].Address)
+
+	// PKI Revocation Distribution Point tests
+
+	// Create vendor account
+	vendorName = utils.RandString()
+	vendorAccount = test_dclauth.CreateVendorAccount(
+		suite,
+		vendorName,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		65521,
+		aliceName,
+		aliceAccount,
+		jackName,
+		jackAccount,
+		testconstants.Info,
+	)
+	require.NotNil(suite.T, vendorAccount)
+
+	// Jack (Trustee) propose Root certificate
+	msgProposeAddX509RootCert = pkitypes.MsgProposeAddX509RootCert{
+		Cert:   testconstants.PAACertWithNumericVid,
+		Signer: jackAccount.Address,
+		Vid:    vendorAccount.VendorID,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeAddX509RootCert}, jackName, jackAccount)
+	require.NoError(suite.T, err)
+
+	proposedCertificate, err = GetProposedX509RootCert(suite, testconstants.PAACertWithNumericVidSubject, testconstants.PAACertWithNumericVidSubjectKeyID)
+	require.NoError(suite.T, err)
+
+	// Alice (Trustee) approve Root certificate
+	secondMsgApproveAddX509RootCert = pkitypes.MsgApproveAddX509RootCert{
+		Subject:      proposedCertificate.Subject,
+		SubjectKeyId: proposedCertificate.SubjectKeyId,
+		Signer:       aliceAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&secondMsgApproveAddX509RootCert}, aliceName, aliceAccount)
+	require.NoError(suite.T, err)
+
+	// Request all revocation distribution points
+	revDistPoints, _ := GetAllPkiRevocationDistributionPoints(suite)
+	require.Equal(suite.T, 0, len(revDistPoints))
+
+	// Request revocation distribution points
+	_, err = GetPkiRevocationDistributionPoint(suite, testconstants.Vid, testconstants.TestSubjectKeyID, "test")
+	suite.AssertNotFound(err)
+
+	// Request revocation distribution points by Issuer Subject Key ID
+	_, err = GetPkiRevocationDistributionPointsBySubject(suite, testconstants.TestSubjectKeyID)
+	suite.AssertNotFound(err)
+
+	// Add revocation distribution point when sender is not Vendor account
+	msgAddPkiRevDistPoints := pkitypes.MsgAddPkiRevocationDistributionPoint{
+		Signer:               vendorAccount.Address,
+		Vid:                  vendorAccount.VendorID,
+		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+		IsPAA:                true,
+		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
+		Label:                "label",
+		DataURL:              testconstants.DataURL,
+		RevocationType:       1,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddPkiRevDistPoints}, vendorAdminName, vendorAdminAccount)
+	require.Error(suite.T, err)
+
+	// Add revocation distribution point for PAA by Vendor
+	msgAddPkiRevDistPoints = pkitypes.MsgAddPkiRevocationDistributionPoint{
+		Signer:               vendorAccount.Address,
+		Vid:                  vendorAccount.VendorID,
+		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+		IsPAA:                true,
+		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
+		Label:                "label",
+		DataURL:              testconstants.DataURL,
+		RevocationType:       1,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddPkiRevDistPoints}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	revDistPoints, _ = GetAllPkiRevocationDistributionPoints(suite)
+	require.Equal(suite.T, 1, len(revDistPoints))
+	require.Equal(suite.T, vendorAccount.VendorID, revDistPoints[0].Vid)
+	require.Equal(suite.T, "label", revDistPoints[0].Label)
+	require.Equal(suite.T, testconstants.SubjectKeyIDWithoutColons, revDistPoints[0].IssuerSubjectKeyID)
+
+	revDistPoint, _ := GetPkiRevocationDistributionPoint(suite, vendorAccount.VendorID, testconstants.SubjectKeyIDWithoutColons, "label")
+	require.Equal(suite.T, vendorAccount.VendorID, revDistPoint.Vid)
+	require.Equal(suite.T, "label", revDistPoint.Label)
+	require.Equal(suite.T, testconstants.SubjectKeyIDWithoutColons, revDistPoint.IssuerSubjectKeyID)
+
+	revDistPointsBySubj, _ := GetPkiRevocationDistributionPointsBySubject(suite, testconstants.SubjectKeyIDWithoutColons)
+	require.Equal(suite.T, vendorAccount.VendorID, revDistPointsBySubj.Points[0].Vid)
+	require.Equal(suite.T, "label", revDistPointsBySubj.Points[0].Label)
+	require.Equal(suite.T, testconstants.SubjectKeyIDWithoutColons, revDistPointsBySubj.IssuerSubjectKeyID)
+
+	// Add revocation distribution point for PAI by Vendor
+	venName65522 := utils.RandString()
+	venAcc65522 := test_dclauth.CreateVendorAccount(
+		suite,
+		venName65522,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		65522,
+		jackName,
+		jackAccount,
+		aliceName,
+		aliceAccount,
+		testconstants.Info,
+	)
+	require.NotNil(suite.T, venAcc65522)
+
+	// Jack (Trustee) propose Root certificate
+	msgProposeAddX509RootCert = pkitypes.MsgProposeAddX509RootCert{
+		Cert:   testconstants.PAACertNoVid,
+		Signer: jackAccount.Address,
+		Vid:    venAcc65522.VendorID,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeAddX509RootCert}, jackName, jackAccount)
+	require.NoError(suite.T, err)
+
+	proposedCertificate, err = GetProposedX509RootCert(suite, testconstants.PAACertNoVidSubject, testconstants.PAACertNoVidSubjectKeyID)
+	require.NoError(suite.T, err)
+
+	// Alice (Trustee) approve Root certificate
+	secondMsgApproveAddX509RootCert = pkitypes.MsgApproveAddX509RootCert{
+		Subject:      proposedCertificate.Subject,
+		SubjectKeyId: proposedCertificate.SubjectKeyId,
+		Signer:       aliceAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&secondMsgApproveAddX509RootCert}, aliceName, aliceAccount)
+	require.NoError(suite.T, err)
+
+	msgAddPkiRevDistPoints = pkitypes.MsgAddPkiRevocationDistributionPoint{
+		Signer:               venAcc65522.Address,
+		Vid:                  venAcc65522.VendorID,
+		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+		IsPAA:                false,
+		Pid:                  0,
+		CrlSignerCertificate: testconstants.PAICertWithVid,
+		Label:                "label_PAI",
+		DataURL:              testconstants.DataURL,
+		RevocationType:       1,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddPkiRevDistPoints}, venName65522, venAcc65522)
+	require.NoError(suite.T, err)
+
+	revDistPoints, _ = GetAllPkiRevocationDistributionPoints(suite)
+	require.Equal(suite.T, 2, len(revDistPoints))
+
+	revDistPoint, _ = GetPkiRevocationDistributionPoint(suite, venAcc65522.VendorID, testconstants.SubjectKeyIDWithoutColons, "label_PAI")
+	require.Equal(suite.T, venAcc65522.VendorID, revDistPoint.Vid)
+	require.Equal(suite.T, "label_PAI", revDistPoint.Label)
+	require.Equal(suite.T, testconstants.SubjectKeyIDWithoutColons, revDistPoint.IssuerSubjectKeyID)
+
+	revDistPointsBySubj, _ = GetPkiRevocationDistributionPointsBySubject(suite, testconstants.SubjectKeyIDWithoutColons)
+	require.Equal(suite.T, 2, len(revDistPointsBySubj.Points))
+	require.Equal(suite.T, vendorAccount.VendorID, revDistPointsBySubj.Points[0].Vid)
+	require.Equal(suite.T, "label", revDistPointsBySubj.Points[0].Label)
+	require.Equal(suite.T, venAcc65522.VendorID, revDistPointsBySubj.Points[1].Vid)
+	require.Equal(suite.T, "label_PAI", revDistPointsBySubj.Points[1].Label)
+	require.Equal(suite.T, testconstants.SubjectKeyIDWithoutColons, revDistPointsBySubj.IssuerSubjectKeyID)
+
+	// Update revocation distribution point
+	msgUpdPkiRevDistPoint := pkitypes.MsgUpdatePkiRevocationDistributionPoint{
+		Signer:               vendorAccount.Address,
+		Vid:                  vendorAccount.VendorID,
+		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
+		Label:                "label",
+		DataURL:              "https://url2.data.dclmodel",
+	}
+
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgUpdPkiRevDistPoint}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	revDistPoint, _ = GetPkiRevocationDistributionPoint(suite, vendorAccount.VendorID, testconstants.SubjectKeyIDWithoutColons, "label")
+	require.Equal(suite.T, vendorAccount.VendorID, revDistPoint.Vid)
+	require.Equal(suite.T, "https://url2.data.dclmodel", revDistPoint.DataURL)
+	require.Equal(suite.T, testconstants.SubjectKeyIDWithoutColons, revDistPoint.IssuerSubjectKeyID)
+
+	// Delete revocation distribution point
+	msgDelPkiRevDistPoint := pkitypes.MsgDeletePkiRevocationDistributionPoint{
+		Signer:             vendorAccount.Address,
+		Vid:                vendorAccount.VendorID,
+		IssuerSubjectKeyID: testconstants.SubjectKeyIDWithoutColons,
+		Label:              "label",
+	}
+
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgDelPkiRevDistPoint}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	_, err = GetPkiRevocationDistributionPoint(suite, vendorAccount.VendorID, testconstants.SubjectKeyIDWithoutColons, "label")
+	suite.AssertNotFound(err)
+
+	revDistPointsBySubj, _ = GetPkiRevocationDistributionPointsBySubject(suite, testconstants.SubjectKeyIDWithoutColons)
+	require.Equal(suite.T, 1, len(revDistPointsBySubj.Points))
+	require.Equal(suite.T, venAcc65522.VendorID, revDistPointsBySubj.Points[0].Vid)
+	require.Equal(suite.T, "label_PAI", revDistPointsBySubj.Points[0].Label)
+	require.Equal(suite.T, testconstants.SubjectKeyIDWithoutColons, revDistPointsBySubj.IssuerSubjectKeyID)
+
+	revDistPoints, _ = GetAllPkiRevocationDistributionPoints(suite)
+	require.Equal(suite.T, 1, len(revDistPoints))
 }
