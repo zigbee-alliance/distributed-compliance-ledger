@@ -67,7 +67,7 @@ and DACs (leaf certificates) added to DCL if they are revoked in the CRL identif
     - label: `string` -  A label to disambiguate multiple revocation information partitions of a particular issuer.
     - crlSignerCertificate: `string` - The issuer certificate whose revocation information is provided in the distribution point entry, encoded in X.509v3 PEM format. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data.
     - issuerSubjectKeyID: `string` - Uniquely identifies the PAA or PAI for which this revocation distribution point is provided. Must consist of even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters., e.g: `5A880E6C3653D07FB08971A3F473790930E62BDB`.
-    - dataUrl: `string` -  The URL where to obtain the information in the format indicated by the RevocationType field. Must start with either `http` or `https`.
+    - dataUrl: `string` -  The URL where to obtain the information in the format indicated by the RevocationType field. Must start with either `http` or `https`. Must be unique for all pairs of VendorID and IssuerSubjectKeyID.
     - dataFileSize: `optional(uint64)` -  Total size in bytes of the file found at the DataUrl. Must be omitted if RevocationType is 1.
     - dataDigest: `optional(string)` -  Digest of the entire contents of the associated file downloaded from the DataUrl. Must be omitted if RevocationType is 1. Must be provided if and only if the `DataFileSize` field is present.
     - dataDigestType: `optional(uint32)` - The type of digest used in the DataDigest field from the list of [1, 7, 8, 10, 11, 12] (IANA Named Information Hash Algorithm Registry). Must be provided if and only if the `DataDigest` field is present.
@@ -92,7 +92,7 @@ Updates an existing PKI Revocation distribution endpoint owned by the sender.
     - label: `string` -  A label to disambiguate multiple revocation information partitions of a particular issuer.
     - issuerSubjectKeyID: `string` - Uniquely identifies the PAA or PAI for which this revocation distribution point is provided. Must consist of even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters., e.g: `5A880E6C3653D07FB08971A3F473790930E62BDB`.
     - crlSignerCertificate: `optional(string)` - The issuer certificate whose revocation information is provided in the distribution point entry, encoded in X.509v3 PEM format. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data.
-    - dataUrl: `optional(string)` -  The URL where to obtain the information in the format indicated by the RevocationType field. Must start with either `http` or `https`.
+    - dataUrl: `optional(string)` -  The URL where to obtain the information in the format indicated by the RevocationType field. Must start with either `http` or `https`. Must be unique for all pairs of VendorID and IssuerSubjectKeyID.
     - dataFileSize: `optional(uint64)` -  Total size in bytes of the file found at the DataUrl. Must be omitted if RevocationType is 1.
     - dataDigest: `optional(string)` -  Digest of the entire contents of the associated file downloaded from the DataUrl. Must be omitted if RevocationType is 1. Must be provided if and only if the `DataFileSize` field is present.
     - dataDigestType: `optional(uint32)` - The type of digest used in the DataDigest field from the list of [1, 7, 8, 10, 11, 12] (IANA Named Information Hash Algorithm Registry). Must be provided if and only if the `DataDigest` field is present.
@@ -202,7 +202,7 @@ Gets a list of all revocation distribution points.
        - Query for a PAA where `Subject == CRLSignerCertificate.Issuer` and `SubjectKeyID == CRLSignerCertificate.AuthorityKeyId`
        - Build certification path with both elements, verify path
 - Check that (VendorID, IssuerSubjectKeyID, Label) combination is unique when adding the distribution endpoint.
-- Check that (VendorID, IssuerSubjectKeyID, DataUrl) combination is unique when adding the
+- Check that (VendorID, IssuerSubjectKeyID, DataUrl) combination is unique when adding the distribution endpoint.
 
 #### UPDATE_PKI_REVOCATION_DISTRIBUTION_POINT
 
