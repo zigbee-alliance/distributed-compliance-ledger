@@ -1535,7 +1535,9 @@ func Demo(suite *utils.TestSuite) {
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeAddX509RootCert}, jackName, jackAccount)
 	require.NoError(suite.T, err)
+
 	proposedCertificate, err = GetProposedX509RootCert(suite, testconstants.PAACertNoVidSubject, testconstants.PAACertNoVidSubjectKeyID)
+	require.NoError(suite.T, err)
 
 	// Alice (Trustee) approve Root certificate
 	secondMsgApproveAddX509RootCert = pkitypes.MsgApproveAddX509RootCert{
