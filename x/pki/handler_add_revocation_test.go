@@ -11,134 +11,56 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-func createAddRevocationMessageWithPAACertWithNumericVid(signer string) *types.MsgAddPkiRevocationDistributionPoint {
-	return &types.MsgAddPkiRevocationDistributionPoint{
-		Signer:               signer,
-		Vid:                  testconstants.PAACertWithNumericVidVid,
-		IsPAA:                true,
-		Pid:                  0,
-		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
-		Label:                "label",
-		DataURL:              testconstants.DataURL,
-		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
-		RevocationType:       types.CRLRevocationType,
-	}
-}
-
-func createAddRevocationMessageWithPAICertWithNumericVidPid(signer string) *types.MsgAddPkiRevocationDistributionPoint {
-	return &types.MsgAddPkiRevocationDistributionPoint{
-		Signer:               signer,
-		Vid:                  testconstants.PAICertWithNumericPidVid_Vid,
-		IsPAA:                false,
-		Pid:                  testconstants.PAICertWithNumericPidVid_Pid,
-		CrlSignerCertificate: testconstants.PAICertWithNumericPidVid,
-		Label:                "label",
-		DataURL:              testconstants.DataURL,
-		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
-		RevocationType:       types.CRLRevocationType,
-	}
-}
-
-func createAddRevocationMessageWithPAICertWithVidPid(signer string) *types.MsgAddPkiRevocationDistributionPoint {
-	return &types.MsgAddPkiRevocationDistributionPoint{
-		Signer:               signer,
-		Vid:                  testconstants.PAICertWithPidVid_Vid,
-		IsPAA:                false,
-		Pid:                  testconstants.PAICertWithPidVid_Pid,
-		CrlSignerCertificate: testconstants.PAICertWithPidVid,
-		Label:                "label",
-		DataURL:              testconstants.DataURL,
-		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
-		RevocationType:       types.CRLRevocationType,
-	}
-}
-
-func createAddRevocationMessageWithPAACertNoVid(signer string, vid int32) *types.MsgAddPkiRevocationDistributionPoint {
-	return &types.MsgAddPkiRevocationDistributionPoint{
-		Signer:               signer,
-		Vid:                  vid,
-		IsPAA:                false,
-		Pid:                  0,
-		CrlSignerCertificate: testconstants.PAACertNoVid,
-		Label:                "label",
-		DataURL:              testconstants.DataURL,
-		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
-		RevocationType:       types.CRLRevocationType,
-	}
-}
-
-func assertRevocationPointEqual(t *testing.T, expected *types.MsgAddPkiRevocationDistributionPoint, actual *types.PkiRevocationDistributionPoint) {
-	require.Equal(t, expected.CrlSignerCertificate, actual.CrlSignerCertificate)
-	require.Equal(t, expected.CrlSignerCertificate, actual.CrlSignerCertificate)
-	require.Equal(t, expected.DataDigest, actual.DataDigest)
-	require.Equal(t, expected.DataDigestType, actual.DataDigestType)
-	require.Equal(t, expected.DataFileSize, actual.DataFileSize)
-	require.Equal(t, expected.DataURL, actual.DataURL)
-	require.Equal(t, expected.IsPAA, actual.IsPAA)
-	require.Equal(t, expected.IssuerSubjectKeyID, actual.IssuerSubjectKeyID)
-	require.Equal(t, expected.Label, actual.Label)
-	require.Equal(t, expected.Pid, actual.Pid)
-	require.Equal(t, expected.RevocationType, actual.RevocationType)
-	require.Equal(t, expected.Vid, actual.Vid)
-}
-
-func TestHandler_AddPkiRevocationDistributionPoint_SenderNotVendor(t *testing.T) {
-	setup := Setup(t)
-
-	cases := []struct {
-		name          string
-		addRevocation *types.MsgAddPkiRevocationDistributionPoint
-	}{
-		{
-			name:          "PAA",
-			addRevocation: createAddRevocationMessageWithPAACertWithNumericVid(setup.Trustee1.String()),
-		},
-		{
-			name:          "PAI",
-			addRevocation: createAddRevocationMessageWithPAICertWithNumericVidPid(setup.Trustee1.String()),
-		},
-	}
-
-	for _, tc := range cases {
-		t.Run(tc.name, func(t *testing.T) {
-			_, err := setup.Handler(setup.Ctx, tc.addRevocation)
-
-			require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
-		})
-	}
-}
-
 func TestHandler_AddPkiRevocationDistributionPoint_negativeCases(t *testing.T) {
 	accAddress := GenerateAccAddress()
 
 	cases := []struct {
 		name            string
 		accountVid      int32
+		accountRole     dclauthtypes.AccountRole
 		rootCertOptions *rootCertOptions
 		addRevocation   *types.MsgAddPkiRevocationDistributionPoint
 		err             error
 	}{
 		{
+			name:          "PAASenderNotVendor",
+			accountVid:    testconstants.PAACertWithNumericVidVid,
+			accountRole:   dclauthtypes.CertificationCenter,
+			addRevocation: createAddRevocationMessageWithPAACertWithNumericVid(accAddress.String()),
+			err:           sdkerrors.ErrUnauthorized,
+		},
+		{
+			name:          "PAISenderNotVendor",
+			accountVid:    testconstants.PAICertWithNumericPidVid_Vid,
+			accountRole:   dclauthtypes.CertificationCenter,
+			addRevocation: createAddRevocationMessageWithPAICertWithNumericVidPid(accAddress.String()),
+			err:           sdkerrors.ErrUnauthorized,
+		},
+		{
 			name:          "PAACertEncodesVidSenderVidNotEqualVidField",
 			accountVid:    testconstants.Vid,
+			accountRole:   dclauthtypes.Vendor,
 			addRevocation: createAddRevocationMessageWithPAACertWithNumericVid(accAddress.String()),
 			err:           pkitypes.ErrCRLSignerCertificateVidNotEqualAccountVid,
 		},
 		{
 			name:          "PAACertNotFound",
 			accountVid:    testconstants.PAACertWithNumericVidVid,
+			accountRole:   dclauthtypes.Vendor,
 			addRevocation: createAddRevocationMessageWithPAACertWithNumericVid(accAddress.String()),
 			err:           pkitypes.ErrCertificateDoesNotExist,
 		},
 		{
 			name:          "PAINotChainedBackToDCLCerts",
 			accountVid:    testconstants.PAACertWithNumericVidVid,
+			accountRole:   dclauthtypes.Vendor,
 			addRevocation: createAddRevocationMessageWithPAICertWithNumericVidPid(accAddress.String()),
 			err:           pkitypes.ErrCertNotChainedBack,
 		},
 		{
-			name:       "InvalidCertificate",
-			accountVid: testconstants.PAACertWithNumericVidVid,
+			name:        "InvalidCertificate",
+			accountVid:  testconstants.PAACertWithNumericVidVid,
+			accountRole: dclauthtypes.Vendor,
 			addRevocation: &types.MsgAddPkiRevocationDistributionPoint{
 				Signer:               accAddress.String(),
 				Vid:                  testconstants.PAACertWithNumericVidVid,
@@ -155,6 +77,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_negativeCases(t *testing.T) {
 		{
 			name:            "PAANotOnLedger",
 			accountVid:      testconstants.PAACertWithNumericVidVid,
+			accountRole:     dclauthtypes.Vendor,
 			rootCertOptions: createTestRootCertOptions(),
 			addRevocation:   createAddRevocationMessageWithPAACertWithNumericVid(accAddress.String()),
 			err:             pkitypes.ErrCertificateDoesNotExist,
@@ -162,13 +85,15 @@ func TestHandler_AddPkiRevocationDistributionPoint_negativeCases(t *testing.T) {
 		{
 			name:            "PAANoVid_LedgerPAANoVid",
 			accountVid:      testconstants.Vid,
+			accountRole:     dclauthtypes.Vendor,
 			rootCertOptions: createPAACertNoVidOptions(),
 			addRevocation:   createAddRevocationMessageWithPAACertNoVid(accAddress.String(), testconstants.Vid),
 			err:             pkitypes.ErrMessageVidNotEqualRootCertVid,
 		},
 		{
-			name:       "PAANoVid_WrongVID",
-			accountVid: testconstants.Vid,
+			name:        "PAANoVid_WrongVID",
+			accountVid:  testconstants.Vid,
+			accountRole: dclauthtypes.Vendor,
 			rootCertOptions: &rootCertOptions{
 				pemCert:      testconstants.PAACertNoVid,
 				info:         testconstants.Info,
@@ -185,7 +110,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_negativeCases(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			setup := Setup(t)
 
-			setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, tc.accountVid)
+			setup.AddAccount(accAddress, []dclauthtypes.AccountRole{tc.accountRole}, tc.accountVid)
 
 			if tc.rootCertOptions != nil {
 				proposeAndApproveRootCertificate(setup, setup.Trustee1, tc.rootCertOptions)
@@ -209,6 +134,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAAAlreadyExists(t *testing.T
 	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
 	addPkiRevocationDistributionPoint := createAddRevocationMessageWithPAACertWithNumericVid(accAddress.String())
+
 	_, err := setup.Handler(setup.Ctx, addPkiRevocationDistributionPoint)
 	require.NoError(t, err)
 
