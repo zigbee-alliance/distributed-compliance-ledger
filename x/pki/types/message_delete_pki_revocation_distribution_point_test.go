@@ -55,7 +55,7 @@ func TestMsgDeletePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "label empty",
 			msg: MsgDeletePkiRevocationDistributionPoint{
 				Signer: sample.AccAddress(),
-				Vid:    1,
+				Vid:    testconstants.Vid,
 			},
 			err: validator.ErrRequiredFieldMissing,
 		},
@@ -63,7 +63,7 @@ func TestMsgDeletePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "issuerSubjectKeyID empty",
 			msg: MsgDeletePkiRevocationDistributionPoint{
 				Signer: sample.AccAddress(),
-				Vid:    1,
+				Vid:    testconstants.Vid,
 				Label:  "label",
 			},
 			err: validator.ErrRequiredFieldMissing,
@@ -72,7 +72,7 @@ func TestMsgDeletePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "wrong IssuerSubjectKeyID format (not [0-9A-F])",
 			msg: MsgDeletePkiRevocationDistributionPoint{
 				Signer:             sample.AccAddress(),
-				Vid:                1,
+				Vid:                testconstants.Vid,
 				Label:              "label",
 				IssuerSubjectKeyID: "QWERTY",
 			},
@@ -82,7 +82,7 @@ func TestMsgDeletePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "wrong IssuerSubjectKeyID format (not even number of symbols)",
 			msg: MsgDeletePkiRevocationDistributionPoint{
 				Signer:             sample.AccAddress(),
-				Vid:                1,
+				Vid:                testconstants.Vid,
 				Label:              "label",
 				IssuerSubjectKeyID: "123",
 			},
@@ -92,7 +92,7 @@ func TestMsgDeletePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "wrong IssuerSubjectKeyID format (not even number of symbols)",
 			msg: MsgDeletePkiRevocationDistributionPoint{
 				Signer:             sample.AccAddress(),
-				Vid:                1,
+				Vid:                testconstants.Vid,
 				Label:              "label",
 				IssuerSubjectKeyID: "123",
 			},
@@ -108,7 +108,7 @@ func TestMsgDeletePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "example msg",
 			msg: MsgDeletePkiRevocationDistributionPoint{
 				Signer:             sample.AccAddress(),
-				Vid:                65521,
+				Vid:                testconstants.PAACertWithNumericVidVid,
 				Label:              "label",
 				IssuerSubjectKeyID: testconstants.SubjectKeyIDWithoutColons,
 			},

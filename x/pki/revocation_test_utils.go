@@ -59,7 +59,7 @@ func createAddRevocationMessageWithPAACertNoVid(signer string, vid int32) *types
 		IsPAA:                false,
 		Pid:                  0,
 		CrlSignerCertificate: testconstants.PAACertNoVid,
-		Label:                "label",
+		Label:                label,
 		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 		RevocationType:       types.CRLRevocationType,

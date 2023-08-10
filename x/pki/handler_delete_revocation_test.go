@@ -198,6 +198,7 @@ func TestHandler_DeletePkiRevocationDistributionPoint_Multiple_SameIssuerSubject
 	// add Revocation Point PAA VID
 	addRevocationPAAWithVid := createAddRevocationMessageWithPAACertWithNumericVid(vendorAcc.String())
 	addRevocationPAAWithVid.Label = "label2"
+	addRevocationPAAWithVid.DataURL = testconstants.DataURL2
 	_, err = setup.Handler(setup.Ctx, addRevocationPAAWithVid)
 	require.NoError(t, err)
 

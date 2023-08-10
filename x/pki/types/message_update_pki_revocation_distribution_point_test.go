@@ -52,7 +52,7 @@ func TestMsgUpdatePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "label empty",
 			msg: MsgUpdatePkiRevocationDistributionPoint{
 				Signer: sample.AccAddress(),
-				Vid:    1,
+				Vid:    testconstants.Vid,
 			},
 			err: validator.ErrRequiredFieldMissing,
 		},
@@ -60,7 +60,7 @@ func TestMsgUpdatePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "issuerSubjectKeyID empty",
 			msg: MsgUpdatePkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  1,
+				Vid:                  testconstants.Vid,
 				CrlSignerCertificate: testconstants.RootCertPem,
 				Label:                "label",
 			},
@@ -70,7 +70,7 @@ func TestMsgUpdatePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: fmt.Sprintf("dataDigestType is not one of %v", allowedDataDigestTypes),
 			msg: MsgUpdatePkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  1,
+				Vid:                  testconstants.Vid,
 				CrlSignerCertificate: testconstants.RootCertPem,
 				Label:                "label",
 				DataURL:              testconstants.DataURL,
@@ -83,7 +83,7 @@ func TestMsgUpdatePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "dataURL starts not with http or https",
 			msg: MsgUpdatePkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  65521,
+				Vid:                  testconstants.PAACertWithNumericVidVid,
 				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 				Label:                "label",
 				DataURL:              "ftp://" + testconstants.URLWithoutProtocol,
@@ -95,7 +95,7 @@ func TestMsgUpdatePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "dataURL without protocol",
 			msg: MsgUpdatePkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  65521,
+				Vid:                  testconstants.PAACertWithNumericVidVid,
 				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 				Label:                "label",
 				DataURL:              testconstants.URLWithoutProtocol,
@@ -107,7 +107,7 @@ func TestMsgUpdatePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "dataDigest presented, DataFileSize not presented",
 			msg: MsgUpdatePkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  1,
+				Vid:                  testconstants.Vid,
 				CrlSignerCertificate: testconstants.RootCertPem,
 				Label:                "label",
 				DataURL:              testconstants.DataURL,
@@ -120,7 +120,7 @@ func TestMsgUpdatePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "dataDigestType presented, DataDigest not presented",
 			msg: MsgUpdatePkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  1,
+				Vid:                  testconstants.Vid,
 				CrlSignerCertificate: testconstants.RootCertPem,
 				Label:                "label",
 				DataURL:              testconstants.DataURL,
@@ -133,7 +133,7 @@ func TestMsgUpdatePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "dataDigest presented, DataDigestType not presented",
 			msg: MsgUpdatePkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  1,
+				Vid:                  testconstants.Vid,
 				CrlSignerCertificate: testconstants.RootCertPem,
 				Label:                "label",
 				DataURL:              testconstants.DataURL,
@@ -147,7 +147,7 @@ func TestMsgUpdatePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "wrong IssuerSubjectKeyID format (not [0-9A-F])",
 			msg: MsgUpdatePkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  1,
+				Vid:                  testconstants.Vid,
 				CrlSignerCertificate: testconstants.RootCertPem,
 				Label:                "label",
 				DataURL:              testconstants.DataURL,
@@ -159,7 +159,7 @@ func TestMsgUpdatePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "wrong IssuerSubjectKeyID format (not even number of symbols)",
 			msg: MsgUpdatePkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  1,
+				Vid:                  testconstants.Vid,
 				CrlSignerCertificate: testconstants.RootCertPem,
 				Label:                "label",
 				DataURL:              testconstants.DataURL,
@@ -171,7 +171,7 @@ func TestMsgUpdatePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "wrong IssuerSubjectKeyID format (not even number of symbols)",
 			msg: MsgUpdatePkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  1,
+				Vid:                  testconstants.Vid,
 				CrlSignerCertificate: testconstants.RootCertPem,
 				Label:                "label",
 				DataURL:              testconstants.DataURL,
