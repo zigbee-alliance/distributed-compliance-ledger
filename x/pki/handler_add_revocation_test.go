@@ -171,10 +171,10 @@ func TestHandler_AddPkiRevocationDistributionPoint_PositiveCases(t *testing.T) {
 		},
 		{
 			name:            "PAIWithVid",
-			rootCertOptions: createPAACertNoVidOptions(testconstants.PAICertWithVid_Vid),
+			rootCertOptions: createPAACertNoVidOptions(testconstants.PAICertWithVidVid),
 			addRevocation: &types.MsgAddPkiRevocationDistributionPoint{
 				Signer:               vendorAcc.String(),
-				Vid:                  testconstants.PAICertWithVid_Vid,
+				Vid:                  testconstants.PAICertWithVidVid,
 				IsPAA:                false,
 				Pid:                  0,
 				CrlSignerCertificate: testconstants.PAICertWithVid,
