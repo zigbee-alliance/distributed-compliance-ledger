@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -56,6 +57,16 @@ func (k msgServer) AddPkiRevocationDistributionPoint(goCtx context.Context, msg 
 	}
 	if err != nil {
 		return nil, err
+	}
+
+	revocationList, isFound := k.GetPkiRevocationDistributionPointsByIssuerSubjectKeyID(ctx, msg.IssuerSubjectKeyID)
+	if isFound {
+		for _, revocationPoint := range revocationList.Points {
+			if revocationPoint.DataURL == msg.DataURL && revocationPoint.Vid == msg.Vid {
+				return nil, pkitypes.NewErrPkiRevocationDistributionPointAlreadyExists(
+					fmt.Sprintf("PKI revocation distribution point with DataURL (%s) already exist for IssuerID (%s)", msg.DataURL, msg.IssuerSubjectKeyID))
+			}
+		}
 	}
 
 	// add to state
