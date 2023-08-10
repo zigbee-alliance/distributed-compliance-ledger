@@ -207,3 +207,30 @@ func TestHandler_AddPkiRevocationDistributionPoint_PositiveCases(t *testing.T) {
 		})
 	}
 }
+
+func TestHandler_AddPkiRevocationDistributionPoint_DataURLNotUnique(t *testing.T) {
+	setup := Setup(t)
+
+	vendorAcc := GenerateAccAddress()
+	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.PAICertWithPidVid_Vid)
+
+	baseVendorAcc := GenerateAccAddress()
+	setup.AddAccount(baseVendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
+
+	// propose and approve root certificate
+	rootCertOptions := createPAACertNoVidOptions(testconstants.Vid)
+	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+
+	addPkiRevocationDistributionPoint := createAddRevocationMessageWithPAICertWithVidPid(vendorAcc.String())
+	_, err := setup.Handler(setup.Ctx, addPkiRevocationDistributionPoint)
+	require.NoError(t, err)
+
+	addPkiRevocationDistributionPoint = createAddRevocationMessageWithPAICertWithVidPid(vendorAcc.String())
+	addPkiRevocationDistributionPoint.Label = "label-new"
+	_, err = setup.Handler(setup.Ctx, addPkiRevocationDistributionPoint)
+	require.ErrorIs(t, err, pkitypes.ErrPkiRevocationDistributionPointAlreadyExists)
+
+	addPkiRevocationDistributionPoint = createAddRevocationMessageWithPAACertNoVid(baseVendorAcc.String(), testconstants.Vid)
+	_, err = setup.Handler(setup.Ctx, addPkiRevocationDistributionPoint)
+	require.NoError(t, err)
+}

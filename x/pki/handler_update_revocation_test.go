@@ -193,6 +193,74 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_NegativeCases(t *testing.T
 	}
 }
 
+func TestHandler_UpdatePkiRevocationDistributionPoint_NotUniqueDataURLForIssuer(t *testing.T) {
+	setup := Setup(t)
+
+	vendorAcc := GenerateAccAddress()
+	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.PAACertWithNumericVidVid)
+
+	// propose and approve root certificate
+	rootCertOptions := createPAACertWithNumericVidOptions()
+	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+
+	addPkiRevocationDistributionPoint1 := createAddRevocationMessageWithPAACertWithNumericVid(vendorAcc.String())
+	addPkiRevocationDistributionPoint1.Label += "-1"
+	addPkiRevocationDistributionPoint1.DataURL += "/1"
+	_, err := setup.Handler(setup.Ctx, addPkiRevocationDistributionPoint1)
+	require.NoError(t, err)
+
+	addPkiRevocationDistributionPoint2 := createAddRevocationMessageWithPAACertWithNumericVid(vendorAcc.String())
+	addPkiRevocationDistributionPoint2.Label += "-2"
+	addPkiRevocationDistributionPoint2.DataURL += "/2"
+	_, err = setup.Handler(setup.Ctx, addPkiRevocationDistributionPoint2)
+	require.NoError(t, err)
+
+	updatePkiRevocationDistributionPoint := types.MsgUpdatePkiRevocationDistributionPoint{
+		Signer:             addPkiRevocationDistributionPoint1.Signer,
+		Vid:                addPkiRevocationDistributionPoint1.Vid,
+		Label:              addPkiRevocationDistributionPoint1.Label,
+		DataURL:            addPkiRevocationDistributionPoint2.DataURL,
+		IssuerSubjectKeyID: addPkiRevocationDistributionPoint1.IssuerSubjectKeyID,
+	}
+	_, err = setup.Handler(setup.Ctx, &updatePkiRevocationDistributionPoint)
+	require.ErrorIs(t, err, pkitypes.ErrPkiRevocationDistributionPointAlreadyExists)
+}
+
+func TestHandler_UpdatePkiRevocationDistributionPoint_DataURLNotUnique(t *testing.T) {
+	setup := Setup(t)
+
+	vendorAcc := GenerateAccAddress()
+	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, 65522)
+
+	baseVendorAcc := GenerateAccAddress()
+	setup.AddAccount(baseVendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
+
+	// propose and approve root certificate
+	rootCertOptions := createPAACertNoVidOptions(testconstants.Vid)
+	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+
+	addPkiRevocationDistributionPoint1 := createAddRevocationMessageWithPAICertWithVidPid(vendorAcc.String())
+	addPkiRevocationDistributionPoint1.DataURL += "/1"
+	_, err := setup.Handler(setup.Ctx, addPkiRevocationDistributionPoint1)
+	require.NoError(t, err)
+
+	addPkiRevocationDistributionPoint2 := createAddRevocationMessageWithPAACertNoVid(baseVendorAcc.String(), testconstants.Vid)
+	addPkiRevocationDistributionPoint2.DataURL += "/2"
+	_, err = setup.Handler(setup.Ctx, addPkiRevocationDistributionPoint2)
+	require.NoError(t, err)
+
+	updatePkiRevocationDistributionPoint := types.MsgUpdatePkiRevocationDistributionPoint{
+		Signer:               baseVendorAcc.String(),
+		Vid:                  testconstants.Vid,
+		CrlSignerCertificate: testconstants.PAACertNoVid,
+		Label:                "label",
+		DataURL:              addPkiRevocationDistributionPoint1.DataURL,
+		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+	}
+	_, err = setup.Handler(setup.Ctx, &updatePkiRevocationDistributionPoint)
+	require.NoError(t, err)
+}
+
 func TestHandler_UpdatePkiRevocationDistributionPoint_PAI_NotChainedOnLedger(t *testing.T) {
 	setup := Setup(t)
 
