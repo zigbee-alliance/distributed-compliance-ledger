@@ -1862,13 +1862,13 @@ func createPAACertWithNumericVidOptions() *rootCertOptions {
 	}
 }
 
-func createPAACertNoVidOptions() *rootCertOptions {
+func createPAACertNoVidOptions(vid int32) *rootCertOptions {
 	return &rootCertOptions{
 		pemCert:      testconstants.PAACertNoVid,
 		info:         testconstants.Info,
 		subject:      testconstants.PAACertNoVidSubject,
 		subjectKeyID: testconstants.PAACertNoVidSubjectKeyID,
-		vid:          0,
+		vid:          vid,
 	}
 }
 

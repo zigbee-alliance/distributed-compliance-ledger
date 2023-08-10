@@ -11,9 +11,10 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-func TestHandler_DeletePkiRevocationDistributionPoint_negativeCases(t *testing.T) {
+func TestHandler_DeletePkiRevocationDistributionPoint_NegativeCases(t *testing.T) {
 	accAddress := GenerateAccAddress()
 	vendorAcc := GenerateAccAddress()
+	label := "label"
 
 	cases := []struct {
 		name             string
@@ -35,7 +36,7 @@ func TestHandler_DeletePkiRevocationDistributionPoint_negativeCases(t *testing.T
 			deleteRevocation: &types.MsgDeletePkiRevocationDistributionPoint{
 				Signer:             accAddress.String(),
 				Vid:                testconstants.PAACertWithNumericVidVid,
-				Label:              "label",
+				Label:              label,
 				IssuerSubjectKeyID: testconstants.SubjectKeyIDWithoutColons,
 			},
 			err: sdkerrors.ErrUnauthorized,
@@ -50,19 +51,18 @@ func TestHandler_DeletePkiRevocationDistributionPoint_negativeCases(t *testing.T
 			deleteRevocation: &types.MsgDeletePkiRevocationDistributionPoint{
 				Signer:             accAddress.String(),
 				Vid:                testconstants.PAICertWithNumericPidVid_Vid,
-				Label:              "label",
+				Label:              label,
 				IssuerSubjectKeyID: testconstants.SubjectKeyIDWithoutColons,
 			},
 			err: sdkerrors.ErrUnauthorized,
 		},
 		{
-			name:        "RevocationPointNotFound",
-			accountVid:  testconstants.VendorID1,
-			accountRole: dclauthtypes.Vendor,
+			name:         "RevocationPointNotFound",
+			vendorAccVid: testconstants.VendorID1,
 			deleteRevocation: &types.MsgDeletePkiRevocationDistributionPoint{
-				Signer:             accAddress.String(),
+				Signer:             vendorAcc.String(),
 				Vid:                testconstants.VendorID1,
-				Label:              "label",
+				Label:              label,
 				IssuerSubjectKeyID: testconstants.SubjectKeyIDWithoutColons,
 			},
 			err: pkitypes.ErrPkiRevocationDistributionPointDoesNotExists,
@@ -77,7 +77,7 @@ func TestHandler_DeletePkiRevocationDistributionPoint_negativeCases(t *testing.T
 			deleteRevocation: &types.MsgDeletePkiRevocationDistributionPoint{
 				Signer:             accAddress.String(),
 				Vid:                testconstants.PAACertWithNumericVidVid,
-				Label:              "label",
+				Label:              label,
 				IssuerSubjectKeyID: testconstants.SubjectKeyIDWithoutColons,
 			},
 			err: pkitypes.ErrCRLSignerCertificateVidNotEqualAccountVid,
@@ -91,8 +91,8 @@ func TestHandler_DeletePkiRevocationDistributionPoint_negativeCases(t *testing.T
 			addRevocation:   createAddRevocationMessageWithPAICertWithNumericVidPid(vendorAcc.String()),
 			deleteRevocation: &types.MsgDeletePkiRevocationDistributionPoint{
 				Signer:             accAddress.String(),
-				Vid:                testconstants.PAACertWithNumericVidVid,
-				Label:              "label",
+				Vid:                testconstants.PAICertWithNumericPidVid_Vid,
+				Label:              label,
 				IssuerSubjectKeyID: testconstants.SubjectKeyIDWithoutColons,
 			},
 			err: pkitypes.ErrCRLSignerCertificateVidNotEqualAccountVid,
@@ -122,7 +122,7 @@ func TestHandler_DeletePkiRevocationDistributionPoint_negativeCases(t *testing.T
 	}
 }
 
-func TestHandler_DeletePkiRevocationDistributionPoint_positiveCases(t *testing.T) {
+func TestHandler_DeletePkiRevocationDistributionPoint_PositiveCases(t *testing.T) {
 	vendorAcc := GenerateAccAddress()
 	label := "label"
 
@@ -186,8 +186,7 @@ func TestHandler_DeletePkiRevocationDistributionPoint_Multiple_SameIssuerSubject
 	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.PAACertWithNumericVidVid)
 
 	// add PAA NOVID
-	rootCertOptions := createPAACertNoVidOptions()
-	rootCertOptions.vid = testconstants.PAACertWithNumericVidVid
+	rootCertOptions := createPAACertNoVidOptions(testconstants.PAACertWithNumericVidVid)
 	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
 	// add PAA VID

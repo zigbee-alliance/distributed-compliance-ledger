@@ -11,7 +11,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-func TestHandler_AddPkiRevocationDistributionPoint_negativeCases(t *testing.T) {
+func TestHandler_AddPkiRevocationDistributionPoint_NegativeCases(t *testing.T) {
 	accAddress := GenerateAccAddress()
 
 	cases := []struct {
@@ -86,7 +86,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_negativeCases(t *testing.T) {
 			name:            "PAANoVid_LedgerPAANoVid",
 			accountVid:      testconstants.Vid,
 			accountRole:     dclauthtypes.Vendor,
-			rootCertOptions: createPAACertNoVidOptions(),
+			rootCertOptions: createPAACertNoVidOptions(testconstants.VendorID1),
 			addRevocation:   createAddRevocationMessageWithPAACertNoVid(accAddress.String(), testconstants.Vid),
 			err:             pkitypes.ErrMessageVidNotEqualRootCertVid,
 		},
@@ -99,7 +99,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_negativeCases(t *testing.T) {
 				info:         testconstants.Info,
 				subject:      testconstants.PAACertNoVidSubject,
 				subjectKeyID: testconstants.PAACertNoVidSubjectKeyID,
-				vid:          1001,
+				vid:          testconstants.VendorID1,
 			},
 			addRevocation: createAddRevocationMessageWithPAACertNoVid(accAddress.String(), testconstants.Vid),
 			err:           pkitypes.ErrMessageVidNotEqualRootCertVid,
@@ -142,7 +142,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAAAlreadyExists(t *testing.T
 	require.ErrorIs(t, err, pkitypes.ErrPkiRevocationDistributionPointAlreadyExists)
 }
 
-func TestHandler_AddPkiRevocationDistributionPoint_positiveCases(t *testing.T) {
+func TestHandler_AddPkiRevocationDistributionPoint_PositiveCases(t *testing.T) {
 	vendorAcc := GenerateAccAddress()
 
 	cases := []struct {
@@ -162,23 +162,17 @@ func TestHandler_AddPkiRevocationDistributionPoint_positiveCases(t *testing.T) {
 		},
 		{
 			name:            "PAIWithStringVidPid",
-			rootCertOptions: createPAACertNoVidOptions(),
+			rootCertOptions: createPAACertNoVidOptions(testconstants.PAICertWithPidVid_Vid),
 			addRevocation:   createAddRevocationMessageWithPAICertWithVidPid(vendorAcc.String()),
 		},
 		{
-			name: "PAANoVid",
-			rootCertOptions: &rootCertOptions{
-				pemCert:      testconstants.PAACertNoVid,
-				info:         testconstants.Info,
-				subject:      testconstants.PAACertNoVidSubject,
-				subjectKeyID: testconstants.PAACertNoVidSubjectKeyID,
-				vid:          1001,
-			},
-			addRevocation: createAddRevocationMessageWithPAACertNoVid(vendorAcc.String(), 1001),
+			name:            "PAANoVid",
+			rootCertOptions: createPAACertNoVidOptions(testconstants.VendorID1),
+			addRevocation:   createAddRevocationMessageWithPAACertNoVid(vendorAcc.String(), testconstants.VendorID1),
 		},
 		{
 			name:            "PAIWithVid",
-			rootCertOptions: createPAACertNoVidOptions(),
+			rootCertOptions: createPAACertNoVidOptions(testconstants.PAICertWithVid_Vid),
 			addRevocation: &types.MsgAddPkiRevocationDistributionPoint{
 				Signer:               vendorAcc.String(),
 				Vid:                  testconstants.PAICertWithVid_Vid,
