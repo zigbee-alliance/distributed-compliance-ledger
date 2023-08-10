@@ -309,8 +309,8 @@ CU3r1RXsbs8zuBEVIl8yUogwHwYDVR0jBBgwFoAUav0idx9RH+y/FkGXZxDc3DGh
 cX4wCgYIKoZIzj0EAwIDSAAwRQIhAJbJyM8uAYhgBdj1vHLAe3X9mldpWsSRETET
 i+oDPOUDAiAlVJQ75X1T1sR199I+v8/CA2zSm6Y5PsfvrYcUq3GCGQ==
 -----END CERTIFICATE-----`
-	PAICertWithNumericPidVid_Vid = 65521
-	PAICertWithNumericPidVid_Pid = 32768
+	PAICertWithNumericPidVidVid = 65521
+	PAICertWithNumericPidVidPid = 32768
 
 	PAICertWithPidVid = `
 -----BEGIN CERTIFICATE-----
@@ -324,8 +324,8 @@ bs2MFL6AtBCu5AKj8jMX5zQGdDAfBgNVHSMEGDAWgBR4XOcFuGuPTm/Hk6pgy0Pq
 aWiC1TAKBggqhkjOPQQDAgNIADBFAiEA7+WO/UkVZ4DGULOTLIItVhG7rC+mnqJI
 fAuwib9kCRACIFaMCdDo/n+E+hOBXDXVemlbz0znMaLn/KcquoxDIfb7
 -----END CERTIFICATE-----`
-	PAICertWithPidVid_Vid = 65522
-	PAICertWithPidVid_Pid = 32772
+	PAICertWithPidVidVid = 65522
+	PAICertWithPidVidPid = 32772
 
 	PAICertWithNumericVid = `
 -----BEGIN CERTIFICATE-----

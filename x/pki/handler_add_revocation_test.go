@@ -31,7 +31,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_NegativeCases(t *testing.T) {
 		},
 		{
 			name:          "PAISenderNotVendor",
-			accountVid:    testconstants.PAICertWithNumericPidVid_Vid,
+			accountVid:    testconstants.PAICertWithNumericPidVidVid,
 			accountRole:   dclauthtypes.CertificationCenter,
 			addRevocation: createAddRevocationMessageWithPAICertWithNumericVidPid(accAddress.String()),
 			err:           sdkerrors.ErrUnauthorized,
@@ -67,7 +67,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_NegativeCases(t *testing.T) {
 				IsPAA:                true,
 				Pid:                  0,
 				CrlSignerCertificate: "invalidpem",
-				Label:                "label",
+				Label:                label,
 				DataURL:              testconstants.DataURL,
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 				RevocationType:       types.CRLRevocationType,
@@ -118,7 +118,6 @@ func TestHandler_AddPkiRevocationDistributionPoint_NegativeCases(t *testing.T) {
 
 			_, err := setup.Handler(setup.Ctx, tc.addRevocation)
 			require.ErrorIs(t, err, tc.err)
-
 		})
 	}
 }
@@ -162,7 +161,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_PositiveCases(t *testing.T) {
 		},
 		{
 			name:            "PAIWithStringVidPid",
-			rootCertOptions: createPAACertNoVidOptions(testconstants.PAICertWithPidVid_Vid),
+			rootCertOptions: createPAACertNoVidOptions(testconstants.PAICertWithPidVidVid),
 			addRevocation:   createAddRevocationMessageWithPAICertWithVidPid(vendorAcc.String()),
 		},
 		{
@@ -179,7 +178,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_PositiveCases(t *testing.T) {
 				IsPAA:                false,
 				Pid:                  0,
 				CrlSignerCertificate: testconstants.PAICertWithVid,
-				Label:                "label",
+				Label:                label,
 				DataURL:              testconstants.DataURL,
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 				RevocationType:       types.CRLRevocationType,
@@ -197,7 +196,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_PositiveCases(t *testing.T) {
 			_, err := setup.Handler(setup.Ctx, tc.addRevocation)
 			require.NoError(t, err)
 
-			revocationPoint, isFound := setup.Keeper.GetPkiRevocationDistributionPoint(setup.Ctx, tc.addRevocation.Vid, "label", testconstants.SubjectKeyIDWithoutColons)
+			revocationPoint, isFound := setup.Keeper.GetPkiRevocationDistributionPoint(setup.Ctx, tc.addRevocation.Vid, label, testconstants.SubjectKeyIDWithoutColons)
 			require.True(t, isFound)
 			assertRevocationPointEqual(t, tc.addRevocation, &revocationPoint)
 
@@ -212,7 +211,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_DataURLNotUnique(t *testing.T
 	setup := Setup(t)
 
 	vendorAcc := GenerateAccAddress()
-	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.PAICertWithPidVid_Vid)
+	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.PAICertWithPidVidVid)
 
 	baseVendorAcc := GenerateAccAddress()
 	setup.AddAccount(baseVendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)

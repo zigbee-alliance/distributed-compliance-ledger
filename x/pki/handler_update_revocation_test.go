@@ -14,7 +14,6 @@ import (
 func TestHandler_UpdatePkiRevocationDistributionPoint_NegativeCases(t *testing.T) {
 	accAddress := GenerateAccAddress()
 	vendorAcc := GenerateAccAddress()
-	label := "label"
 
 	cases := []struct {
 		name              string
@@ -52,7 +51,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_NegativeCases(t *testing.T
 			addRevocation:   createAddRevocationMessageWithPAICertWithNumericVidPid(vendorAcc.String()),
 			updatedRevocation: &types.MsgUpdatePkiRevocationDistributionPoint{
 				Signer:               accAddress.String(),
-				Vid:                  testconstants.PAICertWithNumericPidVid_Vid,
+				Vid:                  testconstants.PAICertWithNumericPidVidVid,
 				CrlSignerCertificate: testconstants.PAICertWithNumericPidVid,
 				Label:                label,
 				DataURL:              testconstants.DataURL,
@@ -81,12 +80,12 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_NegativeCases(t *testing.T
 			name:            "PAISenderVidNotEqualCertVid",
 			accountVid:      testconstants.VendorID1,
 			accountRole:     dclauthtypes.Vendor,
-			vendorAccVid:    testconstants.PAICertWithPidVid_Vid,
-			rootCertOptions: createPAACertNoVidOptions(testconstants.PAICertWithPidVid_Vid),
+			vendorAccVid:    testconstants.PAICertWithPidVidVid,
+			rootCertOptions: createPAACertNoVidOptions(testconstants.PAICertWithPidVidVid),
 			addRevocation:   createAddRevocationMessageWithPAICertWithVidPid(vendorAcc.String()),
 			updatedRevocation: &types.MsgUpdatePkiRevocationDistributionPoint{
 				Signer:               accAddress.String(),
-				Vid:                  testconstants.PAICertWithPidVid_Vid,
+				Vid:                  testconstants.PAICertWithPidVidVid,
 				CrlSignerCertificate: testconstants.PAICertWithPidVid,
 				Label:                label,
 				DataURL:              testconstants.DataURL,
@@ -96,12 +95,12 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_NegativeCases(t *testing.T
 		},
 		{
 			name:            "PAIPidNotFound",
-			vendorAccVid:    testconstants.PAICertWithPidVid_Vid,
-			rootCertOptions: createPAACertNoVidOptions(testconstants.PAICertWithPidVid_Vid),
+			vendorAccVid:    testconstants.PAICertWithPidVidVid,
+			rootCertOptions: createPAACertNoVidOptions(testconstants.PAICertWithPidVidVid),
 			addRevocation:   createAddRevocationMessageWithPAICertWithVidPid(vendorAcc.String()),
 			updatedRevocation: &types.MsgUpdatePkiRevocationDistributionPoint{
 				Signer:               vendorAcc.String(),
-				Vid:                  testconstants.PAICertWithPidVid_Vid,
+				Vid:                  testconstants.PAICertWithPidVidVid,
 				CrlSignerCertificate: testconstants.PAICertWithVid,
 				Label:                label,
 				DataURL:              testconstants.DataURL,
@@ -159,7 +158,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_NegativeCases(t *testing.T
 			addRevocation:   createAddRevocationMessageWithPAACertWithNumericVid(vendorAcc.String()),
 			updatedRevocation: &types.MsgUpdatePkiRevocationDistributionPoint{
 				Signer:             vendorAcc.String(),
-				Vid:                testconstants.PAICertWithNumericPidVid_Vid,
+				Vid:                testconstants.PAICertWithNumericPidVidVid,
 				Label:              label,
 				DataURL:            testconstants.DataURL + "/new",
 				DataFileSize:       uint64(123),
@@ -605,7 +604,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAIWithoutPid(t *testing.T
 	setup := Setup(t)
 
 	vendorAcc := GenerateAccAddress()
-	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.PAICertWithPidVid_Vid)
+	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.PAICertWithPidVidVid)
 
 	// propose x509 root certificate by account Trustee1
 	rootCertOptions := createPAACertNoVidOptions(testconstants.Vid)
@@ -620,7 +619,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAIWithoutPid(t *testing.T
 		Signer:               vendorAcc.String(),
 		Vid:                  addPkiRevocationDistributionPoint.Vid,
 		CrlSignerCertificate: testconstants.PAICertWithVid,
-		Label:                "label",
+		Label:                label,
 		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 	}
@@ -630,7 +629,6 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAIWithoutPid(t *testing.T
 
 func TestHandler_UpdatePkiRevocationDistributionPoint_CrlSignerCertificateField(t *testing.T) {
 	vendorAcc := GenerateAccAddress()
-	label := "label"
 
 	cases := []struct {
 		name             string

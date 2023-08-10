@@ -8,6 +8,8 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
+const label = "label"
+
 func createAddRevocationMessageWithPAACertWithNumericVid(signer string) *types.MsgAddPkiRevocationDistributionPoint {
 	return &types.MsgAddPkiRevocationDistributionPoint{
 		Signer:               signer,
@@ -15,7 +17,7 @@ func createAddRevocationMessageWithPAACertWithNumericVid(signer string) *types.M
 		IsPAA:                true,
 		Pid:                  0,
 		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
-		Label:                "label",
+		Label:                label,
 		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 		RevocationType:       types.CRLRevocationType,
@@ -25,11 +27,11 @@ func createAddRevocationMessageWithPAACertWithNumericVid(signer string) *types.M
 func createAddRevocationMessageWithPAICertWithNumericVidPid(signer string) *types.MsgAddPkiRevocationDistributionPoint {
 	return &types.MsgAddPkiRevocationDistributionPoint{
 		Signer:               signer,
-		Vid:                  testconstants.PAICertWithNumericPidVid_Vid,
+		Vid:                  testconstants.PAICertWithNumericPidVidVid,
 		IsPAA:                false,
-		Pid:                  testconstants.PAICertWithNumericPidVid_Pid,
+		Pid:                  testconstants.PAICertWithNumericPidVidPid,
 		CrlSignerCertificate: testconstants.PAICertWithNumericPidVid,
-		Label:                "label",
+		Label:                label,
 		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 		RevocationType:       types.CRLRevocationType,
@@ -39,11 +41,11 @@ func createAddRevocationMessageWithPAICertWithNumericVidPid(signer string) *type
 func createAddRevocationMessageWithPAICertWithVidPid(signer string) *types.MsgAddPkiRevocationDistributionPoint {
 	return &types.MsgAddPkiRevocationDistributionPoint{
 		Signer:               signer,
-		Vid:                  testconstants.PAICertWithPidVid_Vid,
+		Vid:                  testconstants.PAICertWithPidVidVid,
 		IsPAA:                false,
-		Pid:                  testconstants.PAICertWithPidVid_Pid,
+		Pid:                  testconstants.PAICertWithPidVidPid,
 		CrlSignerCertificate: testconstants.PAICertWithPidVid,
-		Label:                "label",
+		Label:                label,
 		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 		RevocationType:       types.CRLRevocationType,

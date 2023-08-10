@@ -14,7 +14,6 @@ import (
 func TestHandler_DeletePkiRevocationDistributionPoint_NegativeCases(t *testing.T) {
 	accAddress := GenerateAccAddress()
 	vendorAcc := GenerateAccAddress()
-	label := "label"
 
 	cases := []struct {
 		name             string
@@ -50,7 +49,7 @@ func TestHandler_DeletePkiRevocationDistributionPoint_NegativeCases(t *testing.T
 			addRevocation:   createAddRevocationMessageWithPAICertWithNumericVidPid(vendorAcc.String()),
 			deleteRevocation: &types.MsgDeletePkiRevocationDistributionPoint{
 				Signer:             accAddress.String(),
-				Vid:                testconstants.PAICertWithNumericPidVid_Vid,
+				Vid:                testconstants.PAICertWithNumericPidVidVid,
 				Label:              label,
 				IssuerSubjectKeyID: testconstants.SubjectKeyIDWithoutColons,
 			},
@@ -86,12 +85,12 @@ func TestHandler_DeletePkiRevocationDistributionPoint_NegativeCases(t *testing.T
 			name:            "PAISenderVidNotEqualCertVid",
 			accountVid:      testconstants.VendorID1,
 			accountRole:     dclauthtypes.Vendor,
-			vendorAccVid:    testconstants.PAICertWithNumericPidVid_Vid,
+			vendorAccVid:    testconstants.PAICertWithNumericPidVidVid,
 			rootCertOptions: createPAACertWithNumericVidOptions(),
 			addRevocation:   createAddRevocationMessageWithPAICertWithNumericVidPid(vendorAcc.String()),
 			deleteRevocation: &types.MsgDeletePkiRevocationDistributionPoint{
 				Signer:             accAddress.String(),
-				Vid:                testconstants.PAICertWithNumericPidVid_Vid,
+				Vid:                testconstants.PAICertWithNumericPidVidVid,
 				Label:              label,
 				IssuerSubjectKeyID: testconstants.SubjectKeyIDWithoutColons,
 			},
@@ -117,14 +116,12 @@ func TestHandler_DeletePkiRevocationDistributionPoint_NegativeCases(t *testing.T
 
 			_, err := setup.Handler(setup.Ctx, tc.deleteRevocation)
 			require.ErrorIs(t, err, tc.err)
-
 		})
 	}
 }
 
 func TestHandler_DeletePkiRevocationDistributionPoint_PositiveCases(t *testing.T) {
 	vendorAcc := GenerateAccAddress()
-	label := "label"
 
 	cases := []struct {
 		name             string
@@ -149,7 +146,7 @@ func TestHandler_DeletePkiRevocationDistributionPoint_PositiveCases(t *testing.T
 			addRevocation:   createAddRevocationMessageWithPAICertWithNumericVidPid(vendorAcc.String()),
 			deleteRevocation: &types.MsgDeletePkiRevocationDistributionPoint{
 				Signer:             vendorAcc.String(),
-				Vid:                testconstants.PAICertWithNumericPidVid_Vid,
+				Vid:                testconstants.PAICertWithNumericPidVidVid,
 				Label:              label,
 				IssuerSubjectKeyID: testconstants.SubjectKeyIDWithoutColons,
 			},
