@@ -112,7 +112,7 @@ func getIntValueFromSubject(subjectAsText string, key string) (int32, error) {
 	subjectAsTextMap := subjectAsTextToMap(subjectAsText)
 
 	if strValue, ok := subjectAsTextMap[key]; ok {
-		pid, err := strconv.ParseInt(strings.Trim(strValue, "0x"), 16, 32)
+		pid, err := strconv.ParseInt(strings.TrimPrefix(strValue, "0x"), 16, 32)
 		if err != nil {
 			return 0, err
 		}
