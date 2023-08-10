@@ -342,7 +342,7 @@ check_response "$result" "Not Found"
 
 test_divider
 
-echo "22. DELETE REVOCATION PAI"
+echo "21. DELETE REVOCATION PAI"
 
 result=$(dcld tx pki delete-revocation-point --vid=$vid_65522 --label="$label_pai" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account_65522 --yes)
 check_response "$result" "\"code\": 0"
