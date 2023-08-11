@@ -83,7 +83,7 @@ func Test_DecodeCertificatesWithVID(t *testing.T) {
 func Test_VerifyLeafCertificate(t *testing.T) {
 	certificate, _ := DecodeX509Certificate(testconstants.LeafCertPem)
 	parentCertificate, _ := DecodeX509Certificate(testconstants.IntermediateCertPem)
-	blockTime := time.Date(2022, 22, 22, 22, 22, 22, 22, time.UTC)
+	blockTime := time.Date(2022, 12, 22, 22, 22, 22, 22, time.UTC)
 
 	err := certificate.Verify(parentCertificate, blockTime)
 	require.Nil(t, err)
@@ -91,7 +91,15 @@ func Test_VerifyLeafCertificate(t *testing.T) {
 
 func Test_VerifyRootCertificate(t *testing.T) {
 	certificate, _ := DecodeX509Certificate(testconstants.RootCertPem)
-	blockTime := time.Date(2022, 22, 22, 22, 22, 22, 22, time.UTC)
+	blockTime := time.Date(2022, 12, 22, 22, 22, 22, 22, time.UTC)
+
+	err := certificate.Verify(certificate, blockTime)
+	require.Nil(t, err)
+}
+
+func Test_FastSync_VerifyExpiredRootCertificateWhenBlockTimeInPast(t *testing.T) {
+	certificate, _ := DecodeX509Certificate(testconstants.PAACertExpired)
+	blockTime := time.Date(2022, 5, 4, 22, 22, 22, 22, time.UTC)
 
 	err := certificate.Verify(certificate, blockTime)
 	require.Nil(t, err)
