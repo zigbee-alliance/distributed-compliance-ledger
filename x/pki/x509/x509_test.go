@@ -17,6 +17,7 @@ package x509
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
@@ -82,13 +83,17 @@ func Test_DecodeCertificatesWithVID(t *testing.T) {
 func Test_VerifyLeafCertificate(t *testing.T) {
 	certificate, _ := DecodeX509Certificate(testconstants.LeafCertPem)
 	parentCertificate, _ := DecodeX509Certificate(testconstants.IntermediateCertPem)
-	err := certificate.Verify(parentCertificate)
+	blockTime := time.Date(2022, 22, 22, 22, 22, 22, 22, time.UTC)
+
+	err := certificate.Verify(parentCertificate, blockTime)
 	require.Nil(t, err)
 }
 
 func Test_VerifyRootCertificate(t *testing.T) {
 	certificate, _ := DecodeX509Certificate(testconstants.RootCertPem)
-	err := certificate.Verify(certificate)
+	blockTime := time.Date(2022, 22, 22, 22, 22, 22, 22, time.UTC)
+
+	err := certificate.Verify(certificate, blockTime)
 	require.Nil(t, err)
 }
 
