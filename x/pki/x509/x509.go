@@ -23,6 +23,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 )
@@ -162,11 +163,11 @@ func BytesToHex(bytes []byte) string {
 	return strings.Join(bytesHex, ":")
 }
 
-func (c Certificate) Verify(parent *Certificate) error {
+func (c Certificate) Verify(parent *Certificate, blockTime time.Time) error {
 	roots := x509.NewCertPool()
 	roots.AddCert(parent.Certificate)
 
-	opts := x509.VerifyOptions{Roots: roots}
+	opts := x509.VerifyOptions{Roots: roots, CurrentTime: blockTime}
 
 	if _, err := c.Certificate.Verify(opts); err != nil {
 		return pkitypes.NewErrInvalidCertificate(fmt.Sprintf("Certificate verification failed. Error: %v", err))
