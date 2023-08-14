@@ -21,6 +21,7 @@ import (
 	"encoding/pem"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
@@ -112,11 +113,11 @@ func BytesToHex(bytes []byte) string {
 	return strings.Join(bytesHex, ":")
 }
 
-func (c Certificate) Verify(parent *Certificate) error {
+func (c Certificate) Verify(parent *Certificate, blockTime time.Time) error {
 	roots := x509.NewCertPool()
 	roots.AddCert(parent.Certificate)
 
-	opts := x509.VerifyOptions{Roots: roots}
+	opts := x509.VerifyOptions{Roots: roots, CurrentTime: blockTime}
 
 	if _, err := c.Certificate.Verify(opts); err != nil {
 		return types.NewErrInvalidCertificate(fmt.Sprintf("Certificate verification failed. Error: %v", err))
