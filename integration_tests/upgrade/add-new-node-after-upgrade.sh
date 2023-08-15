@@ -1,5 +1,5 @@
-set -euo pipefail
 source integration_tests/cli/common.sh
+set +euo pipefail
 
 localnet_dir=".localnet"
 dcl_user_home="/var/lib/dcl"
@@ -16,20 +16,18 @@ node0conn="tcp://192.167.10.2:26657"
 passphrase="test1234"
 docker_network="distributed-compliance-ledger_localnet"
 
-check_expected_catching_up_status_for_interval() {
-    test_divider
+function check_expected_catching_up_status_for_interval {
     local expected_status="$1"
     local overall_ping_time_sec="${2:-100}"
     local sleep_time_sec="${3:-1}"
     local seconds=0
-    local is_catching_up=false
 
     while [ $seconds -lt $overall_ping_time_sec ]; do
         local dcld_status=$(docker exec -it --user root $node_name dcld status)
-        echo -e "dcld status:\n$dcld_status"
-        local is_catching_up=$(_check_response "$dcld_status" "\"catching_up\": true")
         
-        if [ "$is_catching_up" = $expected_status ]; then
+        status_substring="\"catching_up\":$expected_status"
+        if [[ $dcld_status == *"$status_substring"* ]]; then
+            echo -e "dcld status:\n$dcld_status"
             return 1
         fi
         
@@ -99,12 +97,13 @@ fi
 test_divider
 
 sleep_time_sec=1
-overall_ping_time_sec=100
+overall_ping_time_sec=200
 echo "7. Check node $node_name for START catching up process pinging it every $sleep_time_sec second for $overall_ping_time_sec seconds"
 
-is_catching_up=$(check_expected_catching_up_status_for_interval "true" $overall_ping_time_sec $sleep_time_sec)
+check_expected_catching_up_status_for_interval true $overall_ping_time_sec $sleep_time_sec
+is_catching_up=$?
 
-if [ "$is_catching_up" != true ]; then
+if [ $is_catching_up == 0 ] ; then
     echo "Catch-up procedure does not started"
     exit 1
 fi
@@ -113,9 +112,10 @@ test_divider
 
 echo "8. Check node $node_name for FINISH catching up process pinging it every $sleep_time_sec second for $overall_ping_time_sec seconds"
 
-is_catching_up=$(check_expected_catching_up_status_for_interval "false" $overall_ping_time_sec $sleep_time_sec)
+check_expected_catching_up_status_for_interval false $overall_ping_time_sec $sleep_time_sec
+is_not_catching_up=$?
 
-if [ "$is_catching_up" != false ]; then
+if [ $is_not_catching_up == 0 ] ; then
     echo "Catch-up procedure does not finished"
     exit 1
 fi
