@@ -265,11 +265,11 @@ func NewErrPkiRevocationDistributionPointWithVidAndLabelAlreadyExists(vid int32,
 	)
 }
 
-func NewErrPkiRevocationDistributionPointWithDataURLAlreadyExists(dataUrl string, issuerSubjectKeyID string) error {
+func NewErrPkiRevocationDistributionPointWithDataURLAlreadyExists(dataURL string, issuerSubjectKeyID string) error {
 	return sdkerrors.Wrapf(
 		ErrPkiRevocationDistributionPointAlreadyExists,
 		"PKI revocation distribution point associated with dataUrl=%s already exist for issuerSubjectKeyID=%s",
-		dataUrl, issuerSubjectKeyID,
+		dataURL, issuerSubjectKeyID,
 	)
 }
 
