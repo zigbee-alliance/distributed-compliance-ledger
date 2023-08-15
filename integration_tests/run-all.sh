@@ -185,6 +185,23 @@ if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "deploy" ]]; then
     fi
 fi
 
+test_add_new_node() {
+  ADD_NEW_NODE="./integration_tests/upgrade/add-new-node-after-upgrade.sh"
+
+  log "*****************************************************************************************"
+  log "Running $ADD_NEW_NODE"
+  log "*****************************************************************************************"
+
+  bash "$ADD_NEW_NODE" &>${DETAILED_OUTPUT_TARGET};
+
+  if bash "$ADD_NEW_NODE" &>${DETAILED_OUTPUT_TARGET}; then
+    log "$ADD_NEW_NODE finished successfully"
+  else
+    log "$ADD_NEW_NODE failed"
+    exit 1
+  fi
+}
+
 # Upgrade procedure tests
 if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "upgrade" ]]; then
     UPGRADE_SHELL_TEST="./integration_tests/upgrade/test-upgrade.sh"
@@ -197,6 +214,7 @@ if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "upgrade" ]]; then
 
     if bash "$UPGRADE_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
       log "$UPGRADE_SHELL_TEST finished successfully"
+      test_add_new_node
     else
       log "$UPGRADE_SHELL_TEST failed"
       exit 1
