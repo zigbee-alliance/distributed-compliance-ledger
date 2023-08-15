@@ -56,7 +56,7 @@ func (k msgServer) AddPkiRevocationDistributionPoint(goCtx context.Context, msg 
 	if isFound {
 		for _, revocationPoint := range revocationList.Points {
 			if revocationPoint.DataURL == msg.DataURL && revocationPoint.Vid == msg.Vid {
-				return nil, pkitypes.NewErrPkiRevocationDistributionPointWithDataUrlAlreadyExists(msg.DataURL, msg.IssuerSubjectKeyID)
+				return nil, pkitypes.NewErrPkiRevocationDistributionPointWithDataURLAlreadyExists(msg.DataURL, msg.IssuerSubjectKeyID)
 			}
 		}
 	}

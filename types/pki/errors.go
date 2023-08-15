@@ -257,27 +257,27 @@ func NewErrPemValuesNotEqual(subject string, subjectKeyID string) error {
 	)
 }
 
-func NewErrPkiRevocationDistributionPointWithVidAndLabelAlreadyExists(vid int32, label string, issuerSubjectKeyId string) error {
+func NewErrPkiRevocationDistributionPointWithVidAndLabelAlreadyExists(vid int32, label string, issuerSubjectKeyID string) error {
 	return sdkerrors.Wrapf(
 		ErrPkiRevocationDistributionPointAlreadyExists,
 		"PKI revocation distribution point associated with vid=%d and label=%s already exist for issuerSubjectKeyID=%s",
-		vid, label, issuerSubjectKeyId,
+		vid, label, issuerSubjectKeyID,
 	)
 }
 
-func NewErrPkiRevocationDistributionPointWithDataUrlAlreadyExists(dataUrl string, issuerSubjectKeyId string) error {
+func NewErrPkiRevocationDistributionPointWithDataURLAlreadyExists(dataUrl string, issuerSubjectKeyID string) error {
 	return sdkerrors.Wrapf(
 		ErrPkiRevocationDistributionPointAlreadyExists,
 		"PKI revocation distribution point associated with dataUrl=%s already exist for issuerSubjectKeyID=%s",
-		dataUrl, issuerSubjectKeyId,
+		dataUrl, issuerSubjectKeyID,
 	)
 }
 
-func NewErrPkiRevocationDistributionPointDoesNotExists(vid int32, label string, issuerSubjectKeyId string) error {
+func NewErrPkiRevocationDistributionPointDoesNotExists(vid int32, label string, issuerSubjectKeyID string) error {
 	return sdkerrors.Wrapf(
 		ErrPkiRevocationDistributionPointDoesNotExists,
 		"PKI revocation distribution point associated with vid=%d and label=%s does not exist for issuerSubjectKeyID=%s",
-		vid, label, issuerSubjectKeyId,
+		vid, label, issuerSubjectKeyID,
 	)
 }
 
