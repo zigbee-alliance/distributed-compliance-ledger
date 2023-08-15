@@ -74,7 +74,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_NegativeCases(t *testing.T
 				DataURL:              testconstants.DataURL,
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 			},
-			err: pkitypes.ErrCRLSignerCertificateVidNotEqualAccountVid,
+			err: pkitypes.ErrMessageVidNotEqualAccountVid,
 		},
 		{
 			name:            "PAISenderVidNotEqualCertVid",
@@ -91,7 +91,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_NegativeCases(t *testing.T
 				DataURL:              testconstants.DataURL,
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 			},
-			err: pkitypes.ErrCRLSignerCertificateVidNotEqualAccountVid,
+			err: pkitypes.ErrMessageVidNotEqualAccountVid,
 		},
 		{
 			name:            "PAIPidNotFound",

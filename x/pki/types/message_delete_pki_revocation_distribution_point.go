@@ -2,7 +2,6 @@ package types
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
@@ -46,7 +45,7 @@ func (msg *MsgDeletePkiRevocationDistributionPoint) GetSignBytes() []byte {
 func (msg *MsgDeletePkiRevocationDistributionPoint) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address (%s)", err)
+		return pkitypes.NewErrInvalidAddress(err)
 	}
 
 	err = validator.Validate(msg)
@@ -57,7 +56,7 @@ func (msg *MsgDeletePkiRevocationDistributionPoint) ValidateBasic() error {
 	match := VerifyRevocationPointIssuerSubjectKeyIDFormat(msg.IssuerSubjectKeyID)
 
 	if !match {
-		return pkitypes.NewErrWrongSubjectKeyIDFormat("Wrong IssuerSubjectKeyID format. It must consist of even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters")
+		return pkitypes.NewErrWrongSubjectKeyIDFormat()
 	}
 
 	return nil
