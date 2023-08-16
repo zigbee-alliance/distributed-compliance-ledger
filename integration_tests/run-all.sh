@@ -34,7 +34,7 @@ else
 fi
 
 cleanup() {
-    make localnet_clean
+  make localnet_clean
 }
 trap cleanup EXIT
 
@@ -185,19 +185,17 @@ if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "deploy" ]]; then
     fi
 fi
 
-test_add_new_node() {
-  ADD_NEW_NODE="./integration_tests/upgrade/add-new-node-after-upgrade.sh"
+test_add_new_node_after_upgrade() {
+  ADD_NEW_NODE_AFTER_UPGRADE="./integration_tests/upgrade/add-new-node-after-upgrade.sh"
 
   log "*****************************************************************************************"
-  log "Running $ADD_NEW_NODE"
+  log "Running $ADD_NEW_NODE_AFTER_UPGRADE"
   log "*****************************************************************************************"
 
-  bash "$ADD_NEW_NODE" &>${DETAILED_OUTPUT_TARGET};
-
-  if bash "$ADD_NEW_NODE" &>${DETAILED_OUTPUT_TARGET}; then
-    log "$ADD_NEW_NODE finished successfully"
+  if bash "$ADD_NEW_NODE_AFTER_UPGRADE" &>${DETAILED_OUTPUT_TARGET}; then
+    log "$ADD_NEW_NODE_AFTER_UPGRADE finished successfully"
   else
-    log "$ADD_NEW_NODE failed"
+    log "$ADD_NEW_NODE_AFTER_UPGRADE failed"
     exit 1
   fi
 }
@@ -213,8 +211,9 @@ if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "upgrade" ]]; then
     log "*****************************************************************************************"
 
     if bash "$UPGRADE_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
+      rm dcld_mainnet_stable
       log "$UPGRADE_SHELL_TEST finished successfully"
-      test_add_new_node
+      test_add_new_node_after_upgrade
     else
       log "$UPGRADE_SHELL_TEST failed"
       exit 1
