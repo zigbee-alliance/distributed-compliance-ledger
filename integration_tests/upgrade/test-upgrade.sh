@@ -202,7 +202,7 @@ trustee_account_2="alice"
 trustee_account_3="bob"
 vendor_account="vendor_account"
 
-plan_name="v1.2.0"
+plan_name="v1.2"
 binary_version="v1.2.0"
 upgrade_checksum="sha256:bceea1cf60260e870001bf958ec7b52d694050d53184c23f13314f3930070df3"
 vid=1
