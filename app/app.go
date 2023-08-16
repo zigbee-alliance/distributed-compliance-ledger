@@ -618,7 +618,7 @@ func New(
 	)
 
 	app.UpgradeKeeper.SetUpgradeHandler(
-		"v1.2.0",
+		"v1.2",
 		func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
 			return make(module.VersionMap), nil
 		},
