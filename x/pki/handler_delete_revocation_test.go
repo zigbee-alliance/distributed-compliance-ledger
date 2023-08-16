@@ -79,7 +79,7 @@ func TestHandler_DeletePkiRevocationDistributionPoint_NegativeCases(t *testing.T
 				Label:              label,
 				IssuerSubjectKeyID: testconstants.SubjectKeyIDWithoutColons,
 			},
-			err: pkitypes.ErrCRLSignerCertificateVidNotEqualAccountVid,
+			err: pkitypes.ErrMessageVidNotEqualAccountVid,
 		},
 		{
 			name:            "PAISenderVidNotEqualCertVid",
@@ -94,7 +94,7 @@ func TestHandler_DeletePkiRevocationDistributionPoint_NegativeCases(t *testing.T
 				Label:              label,
 				IssuerSubjectKeyID: testconstants.SubjectKeyIDWithoutColons,
 			},
-			err: pkitypes.ErrCRLSignerCertificateVidNotEqualAccountVid,
+			err: pkitypes.ErrMessageVidNotEqualAccountVid,
 		},
 	}
 

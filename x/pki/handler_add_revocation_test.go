@@ -41,7 +41,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_NegativeCases(t *testing.T) {
 			accountVid:    testconstants.Vid,
 			accountRole:   dclauthtypes.Vendor,
 			addRevocation: createAddRevocationMessageWithPAACertWithNumericVid(accAddress.String()),
-			err:           pkitypes.ErrCRLSignerCertificateVidNotEqualAccountVid,
+			err:           pkitypes.ErrMessageVidNotEqualAccountVid,
 		},
 		{
 			name:          "PAACertNotFound",

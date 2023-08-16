@@ -4,6 +4,7 @@ package types
 
 import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
 // x/pki module sentinel errors.
@@ -22,30 +23,40 @@ var (
 	ErrNotEmptyPid                                       = sdkerrors.Register(ModuleName, 412, "pid is not empty")
 	ErrNotEmptyVid                                       = sdkerrors.Register(ModuleName, 413, "vid is not empty")
 	ErrRootCertificateIsNotSelfSigned                    = sdkerrors.Register(ModuleName, 414, "Root certificate is not self-signed")
-	ErrCRLSignerCertificatePidNotEqualMsgPid             = sdkerrors.Register(ModuleName, 415, "CRLSignerCertificate pid does not equal message pid")
+	ErrCRLSignerCertificatePidNotEqualRevocationPointPid = sdkerrors.Register(ModuleName, 415, "CRLSignerCertificate pid does not equal revocation point pid")
 	ErrCRLSignerCertificateVidNotEqualRevocationPointVid = sdkerrors.Register(ModuleName, 416, "CRLSignerCertificate vid does not equal revocation point pid")
-	ErrCRLSignerCertificateVidNotEqualMsgVid             = sdkerrors.Register(ModuleName, 417, "CRLSignerCertificate vid does not equal message vid")
-	ErrCRLSignerCertificateVidNotEqualAccountVid         = sdkerrors.Register(ModuleName, 418, "CRLSignerCertificate vid does not equal account vid")
-	ErrNonRootCertificateSelfSigned                      = sdkerrors.Register(ModuleName, 419, "Intermediate or leaf certificate must not be self-signed")
-	ErrEmptyDataFileSize                                 = sdkerrors.Register(ModuleName, 420, "empty data file size")
-	ErrEmptyDataDigest                                   = sdkerrors.Register(ModuleName, 421, "empty data digest")
-	ErrEmptyDataDigestType                               = sdkerrors.Register(ModuleName, 422, "empty data digest type")
-	ErrNotEmptyDataDigestType                            = sdkerrors.Register(ModuleName, 423, "not empty data digest type")
-	ErrDataFieldPresented                                = sdkerrors.Register(ModuleName, 424, "one or more of DataDigest, DataDigestType, DataFileSize fields presented")
-	ErrWrongSubjectKeyIDFormat                           = sdkerrors.Register(ModuleName, 425, "wrong SubjectKeyID format")
-	ErrVidNotFound                                       = sdkerrors.Register(ModuleName, 426, "vid not found")
-	ErrPidNotFound                                       = sdkerrors.Register(ModuleName, 427, "pid not found")
-	ErrPemValuesNotEqual                                 = sdkerrors.Register(ModuleName, 428, "pem values of certificates are not equal")
-	ErrPkiRevocationDistributionPointAlreadyExists       = sdkerrors.Register(ModuleName, 429, "pki revocation distribution point already exists")
-	ErrPkiRevocationDistributionPointDoesNotExists       = sdkerrors.Register(ModuleName, 430, "pki revocaition distribution point does not exist")
-	ErrUnsupportedOperation                              = sdkerrors.Register(ModuleName, 431, "unsupported operation")
-	ErrInvalidVidFormat                                  = sdkerrors.Register(ModuleName, 432, "invalid vid format")
-	ErrInvalidPidFormat                                  = sdkerrors.Register(ModuleName, 433, "invalid pid format")
-	ErrInvalidDataURLFormat                              = sdkerrors.Register(ModuleName, 434, "invalid data url format")
-	ErrCertificateVidNotEqualMsgVid                      = sdkerrors.Register(ModuleName, 435, "certificate's vid is not equal to the message vid")
-	ErrMessageVidNotEqualRootCertVid                     = sdkerrors.Register(ModuleName, 436, "Message vid is not equal to ledger's root certificate vid")
-	ErrCertNotChainedBack                                = sdkerrors.Register(ModuleName, 437, "Certificate is not chained back to a root certificate on DCL")
+	ErrCRLSignerCertificatePidNotEqualMsgPid             = sdkerrors.Register(ModuleName, 417, "CRLSignerCertificate pid does not equal message pid")
+	ErrCRLSignerCertificateVidNotEqualMsgVid             = sdkerrors.Register(ModuleName, 418, "CRLSignerCertificate vid does not equal message vid")
+	ErrMessageVidNotEqualAccountVid                      = sdkerrors.Register(ModuleName, 419, "Message vid does not equal the account vid")
+	ErrNonRootCertificateSelfSigned                      = sdkerrors.Register(ModuleName, 420, "Intermediate or leaf certificate must not be self-signed")
+	ErrEmptyDataFileSize                                 = sdkerrors.Register(ModuleName, 421, "empty data file size")
+	ErrEmptyDataDigest                                   = sdkerrors.Register(ModuleName, 422, "empty data digest")
+	ErrEmptyDataDigestType                               = sdkerrors.Register(ModuleName, 423, "empty data digest type")
+	ErrNotEmptyDataDigestType                            = sdkerrors.Register(ModuleName, 424, "not empty data digest type")
+	ErrDataFieldPresented                                = sdkerrors.Register(ModuleName, 425, "one or more of DataDigest, DataDigestType, DataFileSize fields presented")
+	ErrWrongSubjectKeyIDFormat                           = sdkerrors.Register(ModuleName, 426, "wrong SubjectKeyID format")
+	ErrVidNotFound                                       = sdkerrors.Register(ModuleName, 427, "vid not found")
+	ErrPidNotFound                                       = sdkerrors.Register(ModuleName, 428, "pid not found")
+	ErrPemValuesNotEqual                                 = sdkerrors.Register(ModuleName, 429, "pem values of certificates are not equal")
+	ErrPkiRevocationDistributionPointAlreadyExists       = sdkerrors.Register(ModuleName, 430, "pki revocation distribution point already exists")
+	ErrPkiRevocationDistributionPointDoesNotExists       = sdkerrors.Register(ModuleName, 431, "pki revocaition distribution point does not exist")
+	ErrUnsupportedOperation                              = sdkerrors.Register(ModuleName, 432, "unsupported operation")
+	ErrInvalidVidFormat                                  = sdkerrors.Register(ModuleName, 433, "invalid vid format")
+	ErrInvalidPidFormat                                  = sdkerrors.Register(ModuleName, 434, "invalid pid format")
+	ErrInvalidDataURLFormat                              = sdkerrors.Register(ModuleName, 435, "invalid data url format")
+	ErrCertificateVidNotEqualMsgVid                      = sdkerrors.Register(ModuleName, 436, "certificate's vid is not equal to the message vid")
+	ErrMessageVidNotEqualRootCertVid                     = sdkerrors.Register(ModuleName, 437, "Message vid is not equal to ledger's root certificate vid")
+	ErrCertNotChainedBack                                = sdkerrors.Register(ModuleName, 438, "Certificate is not chained back to a root certificate on DCL")
 )
+
+func NewErrUnauthorizedRole(transactionName string, requiredRole types.AccountRole) error {
+	return sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+		"%s transaction should be signed by an account with the \"%s\" role", transactionName, requiredRole)
+}
+
+func NewErrInvalidAddress(err error) error {
+	return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%v)", err)
+}
 
 func NewErrProposedCertificateAlreadyExists(subject string, subjectKeyID string) error {
 	return sdkerrors.Wrapf(ErrProposedCertificateAlreadyExists,
@@ -74,6 +85,14 @@ func NewErrCertificateDoesNotExist(subject string, subjectKeyID string) error {
 		"No X509 certificate associated with the "+
 			"combination of subject=%v and subjectKeyID=%v on the ledger",
 		subject, subjectKeyID)
+}
+
+func NewErrRootCertificateDoesNotExist(subject string, subjectKeyID string) error {
+	return sdkerrors.Wrapf(ErrCertificateDoesNotExist,
+		"No X509 root certificate associated with the "+
+			"combination of subject=%s and subjectKeyID=%s on the ledger",
+		subject, subjectKeyID,
+	)
 }
 
 func NewErrProposedCertificateRevocationAlreadyExists(subject string, subjectKeyID string) error {
@@ -107,19 +126,24 @@ func NewErrInvalidCertificate(e interface{}) error {
 		e)
 }
 
-func NewErrInvalidDataDigestType(e interface{}) error {
-	return sdkerrors.Wrapf(ErrInvalidDataDigestType, "%v",
-		e)
+func NewErrInvalidDataDigestType(dataDigestType uint32, allowedDataDigestTypes []uint32) error {
+	return sdkerrors.Wrapf(ErrInvalidDataDigestType,
+		"Invalid DataDigestType: %d. Supported types are: %v", dataDigestType, allowedDataDigestTypes)
 }
 
-func NewErrInvalidRevocationType(e interface{}) error {
-	return sdkerrors.Wrapf(ErrInvalidRevocationType, "%v",
-		e)
+func NewErrInvalidRevocationType(revocationType uint32, allowedRevocationTypes []uint32) error {
+	return sdkerrors.Wrapf(ErrInvalidRevocationType,
+		"Invalid RevocationType: %d. Supported types are: %v", revocationType, allowedRevocationTypes)
 }
 
-func NewErrNotEmptyPid(e interface{}) error {
-	return sdkerrors.Wrapf(ErrNotEmptyPid, "%v",
-		e)
+func NewErrNotEmptyPidForRootCertificate() error {
+	return sdkerrors.Wrapf(ErrNotEmptyPid,
+		"Product ID (pid) must be empty for root certificates")
+}
+
+func NewErrNotEmptyPidForNonRootCertificate() error {
+	return sdkerrors.Wrapf(ErrNotEmptyPid,
+		"Product ID (pid) must be empty when it is not found in non-root CRL Signer Certificate")
 }
 
 func NewErrNotEmptyVid(e interface{}) error {
@@ -127,19 +151,34 @@ func NewErrNotEmptyVid(e interface{}) error {
 		e)
 }
 
-func NewErrRootCertificateIsNotSelfSigned(e interface{}) error {
-	return sdkerrors.Wrapf(ErrRootCertificateIsNotSelfSigned, "%v",
-		e)
+func NewErrRootCertificateIsNotSelfSigned() error {
+	return sdkerrors.Wrapf(
+		ErrRootCertificateIsNotSelfSigned,
+		"Provided root certificate must be self-signed",
+	)
 }
 
-func NewErrCRLSignerCertificatePidNotEqualMsgPid(e interface{}) error {
-	return sdkerrors.Wrapf(ErrCRLSignerCertificatePidNotEqualMsgPid, "%v",
-		e)
+func NewErrNonRootCertificateSelfSigned() error {
+	return sdkerrors.Wrapf(
+		ErrNonRootCertificateSelfSigned,
+		"Provided non-root certificate must not be self-signed",
+	)
 }
 
-func NewErrCRLSignerCertificateVidNotEqualMsgVid(e interface{}) error {
-	return sdkerrors.Wrapf(ErrCRLSignerCertificateVidNotEqualMsgVid, "%v",
-		e)
+func NewErrCRLSignerCertificatePidNotEqualMsgPid(certificatePid int32, messagePid int32) error {
+	return sdkerrors.Wrapf(
+		ErrCRLSignerCertificatePidNotEqualMsgPid,
+		"CRL Signer Certificate's pid=%d must be equal to the provided pid=%d in the message",
+		certificatePid, messagePid,
+	)
+}
+
+func NewErrCRLSignerCertificateVidNotEqualMsgVid(certificateVid int32, messageVid int32) error {
+	return sdkerrors.Wrapf(
+		ErrCRLSignerCertificateVidNotEqualMsgVid,
+		"CRL Signer Certificate's vid=%d must be equal to the provided vid=%d in the message",
+		certificateVid, messageVid,
+	)
 }
 
 func NewErrMessageVidNotEqualRootCertVid(vid1 int32, vid2 int32) error {
@@ -148,44 +187,47 @@ func NewErrMessageVidNotEqualRootCertVid(vid1 int32, vid2 int32) error {
 		vid1, vid2)
 }
 
+func NewErrCRLSignerCertificatePidNotEqualRevocationPointPid(certificatePid int32, revocationPointPid int32) error {
+	return sdkerrors.Wrapf(
+		ErrCRLSignerCertificatePidNotEqualRevocationPointPid,
+		"CRL Signer Certificate's pid=%d must be equal to the provided pid=%d in the reovocation point",
+		certificatePid, revocationPointPid)
+}
+
 func NewErrCRLSignerCertificateVidNotEqualRevocationPointVid(vid1 int32, vid2 int32) error {
 	return sdkerrors.Wrapf(ErrCRLSignerCertificateVidNotEqualRevocationPointVid,
 		"CRL Signer Certificate's vid=%d must be equal to the provided vid=%d in the reovocation point", vid1, vid2)
 }
 
-func NewErrNonRootCertificateSelfSigned(e interface{}) error {
-	return sdkerrors.Wrapf(ErrNonRootCertificateSelfSigned, "%v",
-		e)
+func NewErrNonEmptyDataDigest() error {
+	return sdkerrors.Wrapf(ErrEmptyDataFileSize, "Data Digest must be provided only if Data File Size is provided")
 }
 
-func NewErrNonEmptyDataDigest(e interface{}) error {
-	return sdkerrors.Wrapf(ErrEmptyDataFileSize, "%v",
-		e)
+func NewErrNotEmptyDataDigestType() error {
+	return sdkerrors.Wrapf(ErrNotEmptyDataDigestType, "Data Digest Type must be provided only if Data Digest is provided")
 }
 
-func NewErrNotEmptyDataDigestType(e interface{}) error {
-	return sdkerrors.Wrapf(ErrNotEmptyDataDigestType, "%v",
-		e)
+func NewErrEmptyDataDigest() error {
+	return sdkerrors.Wrapf(ErrEmptyDataDigest, "Data Digest must be provided if Data File Size is provided")
 }
 
-func NewErrEmptyDataDigest(e interface{}) error {
-	return sdkerrors.Wrapf(ErrEmptyDataDigest, "%v",
-		e)
+func NewErrEmptyDataDigestType() error {
+	return sdkerrors.Wrapf(ErrEmptyDataDigestType, "Data Digest Type must be provided if Data Digest is provided")
 }
 
-func NewErrEmptyDataDigestType(e interface{}) error {
-	return sdkerrors.Wrapf(ErrEmptyDataDigestType, "%v",
-		e)
+func NewErrDataFieldPresented(revocationType uint32) error {
+	return sdkerrors.Wrapf(
+		ErrDataFieldPresented,
+		"Data Digest, Data File Size and Data Digest Type must be omitted for Revocation Type %d", revocationType,
+	)
 }
 
-func NewErrDataFieldPresented(e interface{}) error {
-	return sdkerrors.Wrapf(ErrDataFieldPresented, "%v",
-		e)
-}
-
-func NewErrWrongSubjectKeyIDFormat(e interface{}) error {
-	return sdkerrors.Wrapf(ErrWrongSubjectKeyIDFormat, "%v",
-		e)
+func NewErrWrongSubjectKeyIDFormat() error {
+	return sdkerrors.Wrapf(
+		ErrWrongSubjectKeyIDFormat,
+		"Wrong IssuerSubjectKeyID format. It must consist of even number of uppercase hexadecimal characters ([0-9A-F]), "+
+			"with no whitespace and no non-hexadecimal characters",
+	)
 }
 
 func NewErrVidNotFound(e interface{}) error {
@@ -193,25 +235,54 @@ func NewErrVidNotFound(e interface{}) error {
 		e)
 }
 
-func NewErrPidNotFound(e interface{}) error {
-	return sdkerrors.Wrapf(ErrPidNotFound, "%v",
-		e)
+func NewErrPidNotFoundInCertificateButProvidedInRevocationPoint() error {
+	return sdkerrors.Wrapf(
+		ErrPidNotFound,
+		"Product ID (pid) not found in CRL Signer Certificate when it is provided in the revocation point",
+	)
 }
 
-func NewErrPemValuesNotEqual(e interface{}) error {
-	return sdkerrors.Wrapf(ErrPemValuesNotEqual, "%v", e)
+func NewErrPidNotFoundInMessage(certificatePid int32) error {
+	return sdkerrors.Wrapf(
+		ErrPidNotFound,
+		"Product ID (pid) must be provided when pid=%d in non-root CRL Signer Certificate", certificatePid,
+	)
 }
 
-func NewErrPkiRevocationDistributionPointAlreadyExists(e interface{}) error {
-	return sdkerrors.Wrapf(ErrPkiRevocationDistributionPointAlreadyExists, "%v", e)
+func NewErrPemValuesNotEqual(subject string, subjectKeyID string) error {
+	return sdkerrors.Wrapf(
+		ErrPemValuesNotEqual,
+		"PEM values of the CRL signer certificate and a certificate found by subject=%s and subjectKeyID=%s are not equal",
+		subject, subjectKeyID,
+	)
 }
 
-func NewErrPkiRevocationDistributionPointDoesNotExists(e interface{}) error {
-	return sdkerrors.Wrapf(ErrPkiRevocationDistributionPointDoesNotExists, "%v", e)
+func NewErrPkiRevocationDistributionPointWithVidAndLabelAlreadyExists(vid int32, label string, issuerSubjectKeyID string) error {
+	return sdkerrors.Wrapf(
+		ErrPkiRevocationDistributionPointAlreadyExists,
+		"PKI revocation distribution point associated with vid=%d and label=%s already exist for issuerSubjectKeyID=%s",
+		vid, label, issuerSubjectKeyID,
+	)
 }
 
-func NewErrCRLSignerCertificateVidNotEqualAccountVid(e interface{}) error {
-	return sdkerrors.Wrapf(ErrCRLSignerCertificateVidNotEqualAccountVid, "%v", e)
+func NewErrPkiRevocationDistributionPointWithDataURLAlreadyExists(dataURL string, issuerSubjectKeyID string) error {
+	return sdkerrors.Wrapf(
+		ErrPkiRevocationDistributionPointAlreadyExists,
+		"PKI revocation distribution point associated with dataUrl=%s already exist for issuerSubjectKeyID=%s",
+		dataURL, issuerSubjectKeyID,
+	)
+}
+
+func NewErrPkiRevocationDistributionPointDoesNotExists(vid int32, label string, issuerSubjectKeyID string) error {
+	return sdkerrors.Wrapf(
+		ErrPkiRevocationDistributionPointDoesNotExists,
+		"PKI revocation distribution point associated with vid=%d and label=%s does not exist for issuerSubjectKeyID=%s",
+		vid, label, issuerSubjectKeyID,
+	)
+}
+
+func NewErrMessageVidNotEqualAccountVid(msgVid int32, accountVid int32) error {
+	return sdkerrors.Wrapf(ErrMessageVidNotEqualAccountVid, "Message vid=%d is not equal to account vid=%d", msgVid, accountVid)
 }
 
 func NewErrUnsupportedOperation(e interface{}) error {
@@ -219,15 +290,15 @@ func NewErrUnsupportedOperation(e interface{}) error {
 }
 
 func NewErrInvalidVidFormat(e interface{}) error {
-	return sdkerrors.Wrapf(ErrInvalidVidFormat, "%v", e)
+	return sdkerrors.Wrapf(ErrInvalidVidFormat, "Could not parse vid: %v", e)
 }
 
 func NewErrInvalidPidFormat(e interface{}) error {
-	return sdkerrors.Wrapf(ErrInvalidPidFormat, "%v", e)
+	return sdkerrors.Wrapf(ErrInvalidPidFormat, "Could not parse pid: %v", e)
 }
 
-func NewErrInvalidDataURLFormat(e interface{}) error {
-	return sdkerrors.Wrapf(ErrInvalidDataURLFormat, "%v", e)
+func NewErrInvalidDataURLSchema() error {
+	return sdkerrors.Wrapf(ErrInvalidDataURLFormat, "Data Url must start with https:// or http://")
 }
 
 func NewErrCertificateVidNotEqualMsgVid(e interface{}) error {
