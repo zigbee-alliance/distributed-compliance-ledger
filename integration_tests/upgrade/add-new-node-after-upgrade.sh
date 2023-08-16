@@ -21,7 +21,7 @@ function check_expected_catching_up_status_for_interval {
     local seconds=0
 
     while [ $seconds -lt $overall_ping_time_sec ]; do
-        local dcld_status=$(docker exec -it --user root $node_name dcld status)
+        local dcld_status=$(docker exec --user root $node_name dcld status 2>&1)
         
         status_substring="\"catching_up\":$expected_status"
         if [[ $dcld_status == *"$status_substring"* ]]; then
