@@ -190,7 +190,7 @@ func NewErrMessageVidNotEqualRootCertVid(vid1 int32, vid2 int32) error {
 func NewErrCRLSignerCertificatePidNotEqualRevocationPointPid(certificatePid int32, revocationPointPid int32) error {
 	return sdkerrors.Wrapf(
 		ErrCRLSignerCertificatePidNotEqualRevocationPointPid,
-		"CRL Signer Certificat'se pid=%d must be equal to the provided pid=%d in the reovocation point",
+		"CRL Signer Certificate's pid=%d must be equal to the provided pid=%d in the reovocation point",
 		certificatePid, revocationPointPid)
 }
 
