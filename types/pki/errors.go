@@ -168,7 +168,7 @@ func NewErrNonRootCertificateSelfSigned() error {
 func NewErrCRLSignerCertificatePidNotEqualMsgPid(certificatePid int32, messagePid int32) error {
 	return sdkerrors.Wrapf(
 		ErrCRLSignerCertificatePidNotEqualMsgPid,
-		"CRL Signer Certificat'se pid=%d must be equal to the provided pid=%d in the message",
+		"CRL Signer Certificate's pid=%d must be equal to the provided pid=%d in the message",
 		certificatePid, messagePid,
 	)
 }
