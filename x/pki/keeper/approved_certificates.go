@@ -122,7 +122,7 @@ func (k Keeper) verifyCertificate(ctx sdk.Context,
 	//nolint:nestif
 	if x509Certificate.IsSelfSigned() {
 		// in this system a certificate is self-signed if and only if it is a root certificate
-		if err := x509Certificate.Verify(x509Certificate); err == nil {
+		if err := x509Certificate.Verify(x509Certificate, ctx.BlockTime()); err == nil {
 			return x509Certificate.Subject, x509Certificate.SubjectKeyID, nil
 		}
 	} else {
@@ -140,7 +140,7 @@ func (k Keeper) verifyCertificate(ctx sdk.Context,
 			}
 
 			// verify certificate against parent
-			if err := x509Certificate.Verify(parentX509Certificate); err != nil {
+			if err := x509Certificate.Verify(parentX509Certificate, ctx.BlockTime()); err != nil {
 				continue
 			}
 

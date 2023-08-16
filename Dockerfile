@@ -24,7 +24,7 @@ FROM ubuntu:20.04 AS builder
 ARG GO_VERSION
 ENV GO_VERSION=1.19.4
 
-RUN apt-get update
+RUN apt-get update --fix-missing
 RUN apt-get install -y wget git gcc
 
 RUN wget -P /tmp "https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz"
