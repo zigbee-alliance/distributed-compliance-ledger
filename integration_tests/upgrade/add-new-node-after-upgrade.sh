@@ -11,7 +11,7 @@ node_name="new-observer"
 node_p2p_port=26670
 node_client_port=26671
 chain_id="dclchain"
-ip="192.167.10.6"
+ip="192.167.10.28"
 docker_network="distributed-compliance-ledger_localnet"
 
 function check_expected_catching_up_status_for_interval {
