@@ -1,11 +1,9 @@
 package types
 
 import (
-	fmt "fmt"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
@@ -54,7 +52,7 @@ func (msg *MsgUpdatePkiRevocationDistributionPoint) GetSignBytes() []byte {
 func (msg *MsgUpdatePkiRevocationDistributionPoint) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address (%s)", err)
+		return pkitypes.NewErrInvalidAddress(err)
 	}
 
 	err = validator.Validate(msg)
@@ -75,33 +73,33 @@ func (msg *MsgUpdatePkiRevocationDistributionPoint) ValidateBasic() error {
 	}
 
 	if msg.DataURL != "" && !strings.HasPrefix(msg.DataURL, "https://") && !strings.HasPrefix(msg.DataURL, "http://") {
-		return pkitypes.NewErrInvalidDataURLFormat("Data Url must start with https:// or http://")
+		return pkitypes.NewErrInvalidDataURLSchema()
 	}
 
 	if !isDataDigestInTypes {
-		return pkitypes.NewErrInvalidDataDigestType(fmt.Sprintf("invalid DataDigestType: %d. Supported types are: %v", msg.DataDigestType, allowedDataDigestTypes))
+		return pkitypes.NewErrInvalidDataDigestType(msg.DataDigestType, allowedDataDigestTypes[:])
 	}
 
 	if msg.DataFileSize == 0 && msg.DataDigest != "" {
-		return pkitypes.NewErrNonEmptyDataDigest("Data Digest must be provided only if Data File Size is provided")
+		return pkitypes.NewErrNonEmptyDataDigest()
 	}
 
 	if msg.DataFileSize != 0 && msg.DataDigest == "" {
-		return pkitypes.NewErrEmptyDataDigest("Data Digest must be provided if Data File Size is provided")
+		return pkitypes.NewErrEmptyDataDigest()
 	}
 
 	if msg.DataDigest == "" && msg.DataDigestType != 0 {
-		return pkitypes.NewErrNotEmptyDataDigestType("Data Digest Type must be provided only if Data Digest is provided")
+		return pkitypes.NewErrNotEmptyDataDigestType()
 	}
 
 	if msg.DataDigest != "" && msg.DataDigestType == 0 {
-		return pkitypes.NewErrEmptyDataDigestType("Data Digest Type must be provided if Data Digest is provided")
+		return pkitypes.NewErrEmptyDataDigestType()
 	}
 
 	match := VerifyRevocationPointIssuerSubjectKeyIDFormat(msg.IssuerSubjectKeyID)
 
 	if !match {
-		return pkitypes.NewErrWrongSubjectKeyIDFormat("Wrong IssuerSubjectKeyID format. It must consist of even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters")
+		return pkitypes.NewErrWrongSubjectKeyIDFormat()
 	}
 
 	return nil

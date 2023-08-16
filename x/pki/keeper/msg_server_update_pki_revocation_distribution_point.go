@@ -2,10 +2,8 @@ package keeper
 
 import (
 	"context"
-	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
@@ -18,27 +16,22 @@ func (k msgServer) UpdatePkiRevocationDistributionPoint(goCtx context.Context, m
 	// check if signer has vendor role
 	signerAddr, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
+		return nil, pkitypes.NewErrInvalidAddress(err)
 	}
-	signerAccount, _ := k.dclauthKeeper.GetAccountO(ctx, signerAddr)
 	if !k.dclauthKeeper.HasRole(ctx, signerAddr, dclauthtypes.Vendor) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
-			"MsgUpdatePkiRevocationDistributionPoint transaction should be signed by an account with the \"%s\" role",
-			dclauthtypes.Vendor,
-		)
+		return nil, pkitypes.NewErrUnauthorizedRole("MsgUpdatePkiRevocationDistributionPoint", dclauthtypes.Vendor)
+	}
+
+	// compare VID in message and Vendor acount
+	signerAccount, _ := k.dclauthKeeper.GetAccountO(ctx, signerAddr)
+	if msg.Vid != signerAccount.VendorID {
+		return nil, pkitypes.NewErrMessageVidNotEqualAccountVid(msg.Vid, signerAccount.VendorID)
 	}
 
 	// check that Revocation Point exists
 	pkiRevocationDistributionPoint, isFound := k.GetPkiRevocationDistributionPoint(ctx, msg.Vid, msg.Label, msg.IssuerSubjectKeyID)
 	if !isFound {
-		return nil, pkitypes.NewErrPkiRevocationDistributionPointDoesNotExists("PKI revocation distribution point does not exist")
-	}
-
-	// check that Vendor has the same VID as the Revocation Point
-	if pkiRevocationDistributionPoint.Vid != signerAccount.VendorID {
-		return nil, sdkerrors.Wrap(pkitypes.ErrCRLSignerCertificateVidNotEqualAccountVid,
-			"MsgUpdatePkiRevocationDistributionPoint signer must have the same vid as provided in an existing certificate from the revocation point",
-		)
+		return nil, pkitypes.NewErrPkiRevocationDistributionPointDoesNotExists(msg.Vid, msg.Label, msg.IssuerSubjectKeyID)
 	}
 
 	// validate and update new values
@@ -50,7 +43,7 @@ func (k msgServer) UpdatePkiRevocationDistributionPoint(goCtx context.Context, m
 	}
 
 	if pkiRevocationDistributionPoint.RevocationType == types.CRLRevocationType && (msg.DataFileSize != 0 || msg.DataDigest != "" || msg.DataDigestType != 0) {
-		return nil, pkitypes.NewErrDataFieldPresented(fmt.Sprintf("Data Digest, Data File Size and Data Digest Type must be omitted for Revocation Type %d", types.CRLRevocationType))
+		return nil, pkitypes.NewErrDataFieldPresented(types.CRLRevocationType)
 	}
 
 	if msg.DataURL != "" {
@@ -73,8 +66,7 @@ func (k msgServer) UpdatePkiRevocationDistributionPoint(goCtx context.Context, m
 	if isFound {
 		for _, revocationPoint := range revocationList.Points {
 			if revocationPoint.DataURL == msg.DataURL && revocationPoint.Vid == msg.Vid && revocationPoint.Label != msg.Label {
-				return nil, pkitypes.NewErrPkiRevocationDistributionPointAlreadyExists(
-					fmt.Sprintf("PKI revocation distribution point with DataURL (%s) already exist for IssuerID (%s)", msg.DataURL, msg.IssuerSubjectKeyID))
+				return nil, pkitypes.NewErrPkiRevocationDistributionPointWithDataURLAlreadyExists(msg.DataURL, msg.IssuerSubjectKeyID)
 			}
 		}
 	}
@@ -113,22 +105,22 @@ func (k msgServer) verifyUpdatedPAA(ctx sdk.Context, newCertificatePem string, r
 
 	// check that it's self-signed
 	if !newCertificate.IsSelfSigned() {
-		return pkitypes.NewErrRootCertificateIsNotSelfSigned("Updated CRL signer certificate must be self-signed since old one was self-signed")
+		return pkitypes.NewErrRootCertificateIsNotSelfSigned()
 	}
 
 	// check that VID is the same
-	newVid, err := x509.GetVidFromSubject(newCertificate.SubjectAsText)
+	newCertificateVid, err := x509.GetVidFromSubject(newCertificate.SubjectAsText)
 	if err != nil {
-		return sdkerrors.Wrapf(pkitypes.ErrInvalidVidFormat, "Could not parse vid: %s", err)
+		return pkitypes.NewErrInvalidVidFormat(err)
 	}
-	if newVid != 0 && newVid != revocationPoint.Vid {
-		return pkitypes.NewErrCRLSignerCertificateVidNotEqualMsgVid("CRL Signer Certificate's vid must be equal to the provided vid in the message")
+	if newCertificateVid != 0 && newCertificateVid != revocationPoint.Vid {
+		return pkitypes.NewErrCRLSignerCertificateVidNotEqualRevocationPointVid(newCertificateVid, revocationPoint.Vid)
 	}
 
 	// find the cert on the ledger
 	approvedCertificates, isFound := k.GetApprovedCertificates(ctx, newCertificate.Subject, newCertificate.SubjectKeyID)
 	if !isFound {
-		return sdkerrors.Wrap(pkitypes.NewErrCertificateDoesNotExist(newCertificate.Subject, newCertificate.SubjectKeyID), "CRL signer Certificate must be a root certificate present on the ledger if isPAA = True")
+		return pkitypes.NewErrRootCertificateDoesNotExist(newCertificate.Subject, newCertificate.SubjectKeyID)
 	}
 
 	// check that it has the same PEM value
@@ -141,14 +133,14 @@ func (k msgServer) verifyUpdatedPAA(ctx sdk.Context, newCertificatePem string, r
 		}
 	}
 	if foundRootCert == nil {
-		return pkitypes.NewErrPemValuesNotEqual("PEM values of the CRL signer certificate and a certificate found by its Subject and SubjectKeyID are not equal")
+		return pkitypes.NewErrPemValuesNotEqual(newCertificate.Subject, newCertificate.SubjectKeyID)
 	}
 
 	// check that new cert has the same VID as in the message if it's non-VID scoped
 	// (vid-scoped has been already checked as part of static validation + equality of PEM values)
 	ledgerRootVid, err := x509.GetVidFromSubject(foundRootCert.SubjectAsText)
 	if err != nil {
-		return sdkerrors.Wrapf(pkitypes.ErrInvalidVidFormat, "Could not parse vid: %s", err)
+		return pkitypes.NewErrInvalidVidFormat(err)
 	}
 	if ledgerRootVid == 0 && revocationPoint.Vid != foundRootCert.Vid {
 		return pkitypes.NewErrMessageVidNotEqualRootCertVid(revocationPoint.Vid, foundRootCert.Vid)
@@ -169,28 +161,28 @@ func (k msgServer) verifyUpdatedPAI(ctx sdk.Context, newCertificatePem string, r
 
 	// check that it's not self-signed
 	if newCertificate.IsSelfSigned() {
-		return pkitypes.NewErrNonRootCertificateSelfSigned("Updated CRL signer certificate must not be self-signed since old one was not self-signed")
+		return pkitypes.NewErrNonRootCertificateSelfSigned()
 	}
 
 	// check that VID is the same
-	newVid, err := x509.GetVidFromSubject(newCertificate.SubjectAsText)
+	newCertificateVid, err := x509.GetVidFromSubject(newCertificate.SubjectAsText)
 	if err != nil {
-		return sdkerrors.Wrapf(pkitypes.ErrInvalidVidFormat, "Could not parse vid: %s", err)
+		return pkitypes.NewErrInvalidVidFormat(err)
 	}
-	if newVid != revocationPoint.Vid {
-		return pkitypes.NewErrCRLSignerCertificateVidNotEqualRevocationPointVid(revocationPoint.Vid, newVid)
+	if newCertificateVid != revocationPoint.Vid {
+		return pkitypes.NewErrCRLSignerCertificateVidNotEqualRevocationPointVid(revocationPoint.Vid, newCertificateVid)
 	}
 
 	// check PID
-	newPid, err := x509.GetPidFromSubject(newCertificate.SubjectAsText)
+	newCertificatePid, err := x509.GetPidFromSubject(newCertificate.SubjectAsText)
 	if err != nil {
-		return sdkerrors.Wrapf(pkitypes.ErrInvalidPidFormat, "Could not parse pid: %s", err)
+		return pkitypes.NewErrInvalidPidFormat(err)
 	}
-	if newPid != 0 && newPid != revocationPoint.Pid {
-		return pkitypes.NewErrCRLSignerCertificatePidNotEqualMsgPid("pid in updated CRL Signer Certificate must be equal to pid in revocation point")
+	if newCertificatePid != 0 && newCertificatePid != revocationPoint.Pid {
+		return pkitypes.NewErrCRLSignerCertificatePidNotEqualRevocationPointPid(newCertificatePid, revocationPoint.Pid)
 	}
-	if newPid == 0 && newPid != revocationPoint.Pid {
-		return pkitypes.NewErrPidNotFound("pid not found in updated CRL Signer Certificate when it is provided in revocation point")
+	if newCertificatePid == 0 && newCertificatePid != revocationPoint.Pid {
+		return pkitypes.NewErrPidNotFoundInCertificateButProvidedInRevocationPoint()
 	}
 
 	// check that it's chained back to a cert on DCL
