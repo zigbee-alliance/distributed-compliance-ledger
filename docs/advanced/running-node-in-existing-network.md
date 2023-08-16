@@ -33,46 +33,69 @@ Possible options when adding Validator, Observer, Sentry or Seed nodes to existi
     > - Do not forget to check firewall and security settings
     > - We do not recommend enabling state sync for `Validator Nodes` for security reasons
 
-- Steps:
-  - Init node:
+  - Steps:
+    - Init node:
 
-    ```bash
-    ./dcld init "<node-name>" --chain-id "<chain-id>"
-    ```
+      ```bash
+      ./dcld init "<node-name>" --chain-id "<chain-id>"
+      ```
 
-  - Enable state sync in config `$HOME/.dcl/config/config.toml`:
+    - Enable state sync in config `$HOME/.dcl/config/config.toml`:
 
-    ```toml
-    [statesync]
-    enable = true
+      ```toml
+      [statesync]
+      enable = true
 
-    # RPC servers (comma-separated) for light client verification of the synced state machine and
-    # retrieval of state data for node bootstrapping. Also needs a trusted height and corresponding
-    # header hash obtained from a trusted source, and a period during which validators can be trusted.
-    #
-    # For Cosmos SDK-based chains, trust_period should usually be about 2/3 of the unbonding time (~2
-    # weeks) during which they can be financially punished (slashed) for misbehavior.
+      # RPC servers (comma-separated) for light client verification of the synced state machine and
+      # retrieval of state data for node bootstrapping. Also needs a trusted height and corresponding
+      # header hash obtained from a trusted source, and a period during which validators can be trusted.
+      #
+      # For Cosmos SDK-based chains, trust_period should usually be about 2/3 of the unbonding time (~2
+      # weeks) during which they can be financially punished (slashed) for misbehavior.
 
-    rpc_servers = "http(s)://<host>:<port>,http(s)://<host>:<port>"
-    trust_height = <trust-height>
-    trust_hash = "<trust-hash>"
-    trust_period = "168h0m0s"
-    ```
+      rpc_servers = "http(s)://<host>:<port>,http(s)://<host>:<port>"
+      trust_height = <trust-height>
+      trust_hash = "<trust-hash>"
+      trust_period = "168h0m0s"
+      ```
 
-    > **_NOTE:_**  You should provide at least 2 addresses for `rpc_servers`. It can be 2 identical addresses
+      > **_NOTE:_**  You should provide at least 2 addresses for `rpc_servers`. It can be 2 identical addresses
 
-    You can use the following command to obtain `<trust-height>` and `<trust-hash>` of your network
+      You can use the following command to obtain `<trust-height>` and `<trust-hash>` of your network
 
-    ```bash
-    curl -s http(s)://<host>:<port>/commit | jq "{height: .result.signed_header.header.height, hash: .result.signed_header.commit.block_id.hash}"
-    ```
+      ```bash
+      curl -s http(s)://<host>:<port>/commit | jq "{height: .result.signed_header.header.height, hash: .result.signed_header.commit.block_id.hash}"
+      ```
 
-    - `<host>` - RPC endpoint host of the network being joined
-    - `<port>` - RPC endpoint port of the network being joined
+      - `<host>` - RPC endpoint host of the network being joined
+      - `<port>` - RPC endpoint port of the network being joined
 
-  - Run the new node (refer to [running-node.md](../running-node.md) for node specific instructions)
+      <details>
+      <summary>Example for Testnet 2.0 (clickable) </summary>
+      
+      ```yaml
+      config:
+        statesync:
+          enable: true
+          rpc_servers: "https://on.test-net.dcl.csa-iot.org:26657,https://on.test-net.dcl.csa-iot.org:26657"
+      ```
+      
+      </details>
+      
+      <details>
+      <summary>Example for Mainnet (clickable) </summary>
+      
+      ```yaml
+      config:
+        statesync:
+          enable: true
+          rpc_servers: "https://on.dcl.csa-iot.org:26657,https://on.dcl.csa-iot.org:26657"
+      ```
+      </details>
+  
+    - Run the new node (refer to [running-node.md](../running-node.md) for node specific instructions)
 
-    > **_NOTE:_** State sync is not attempted if the node has any local state (LastBlockHeight > 0)
+      > **_NOTE:_** State sync is not attempted if the node has any local state (LastBlockHeight > 0)
 
 - Pros:
   - No manual activities are needed (except configuring `$HOME/.dcl/config/config.toml`)
@@ -109,6 +132,7 @@ Possible options when adding Validator, Observer, Sentry or Seed nodes to existi
   - All binary versions used for upgrading (using `cosmovisor`) existing network up to current state must be available
 - Steps:
   - Add a node with a binary version as was at the genesis state
+    - For Main Net: please use [0.12.1](https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/tag/v0.12.1) as a start version.
   - Let the nodes catch-up and play all updates/migrations
 
 - Pros:
