@@ -15,13 +15,29 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (setup *TestSetup) CertifyModel(t *testing.T, vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, signer sdk.AccAddress) *types.MsgCertifyModel {
+func (setup *TestSetup) CertifyModel(vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, signer sdk.AccAddress) (*types.MsgCertifyModel, error) {
 	certifyModelMsg := NewMsgCertifyModel(
 		vid, pid, softwareVersion, softwareVersionString, certificationType, signer)
 	_, err := setup.Handler(setup.Ctx, certifyModelMsg)
-	require.NoError(t, err)
 
-	return certifyModelMsg
+	return certifyModelMsg, err
+}
+
+func (setup *TestSetup) CertifyModelByDate(vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, certificationDate string, signer sdk.AccAddress) (*types.MsgCertifyModel, error) {
+	certifyModelMsg := NewMsgCertifyModel(
+		vid, pid, softwareVersion, softwareVersionString, certificationType, signer)
+	certifyModelMsg.CertificationDate = certificationDate
+	_, err := setup.Handler(setup.Ctx, certifyModelMsg)
+
+	return certifyModelMsg, err
+}
+
+func (setup *TestSetup) CertifyModelAllOptionalFlags(vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, signer sdk.AccAddress) (*types.MsgCertifyModel, error) {
+	certifyModelMsg := NewMsgCertifyModelWithAllOptionalFlags(
+		vid, pid, softwareVersion, softwareVersionString, certificationType, signer)
+	_, err := setup.Handler(setup.Ctx, certifyModelMsg)
+
+	return certifyModelMsg, err
 }
 
 func (setup *TestSetup) UpdateComplianceInfoOneOptionalField(vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, parentChild string, signer sdk.AccAddress) (*types.MsgUpdateComplianceInfo, error) {
@@ -98,7 +114,7 @@ func (setup *TestSetup) CheckDeviceSoftwareComplianceUpdated(t *testing.T, origi
 	}
 
 	// make sure the compliance info in device software compliance did not disappear
-	require.Equal(t, true, isFound)
+	require.True(t, isFound)
 }
 
 func UpdateComplianceInfoSetup(t *testing.T) (*TestSetup, int32, int32, uint32, string, string, string, *dclcompltypes.ComplianceInfo, *types.DeviceSoftwareCompliance) {
@@ -108,7 +124,8 @@ func UpdateComplianceInfoSetup(t *testing.T) (*TestSetup, int32, int32, uint32, 
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
 	certificationType := dclcompltypes.ZigbeeCertificationType
 
-	certifyModelMsg := setup.CertifyModel(t, vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+	certifyModelMsg, certifyModelErr := setup.CertifyModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+	require.NoError(t, certifyModelErr)
 	originalComplianceInfo := queryExistingComplianceInfo(setup, vid, pid, softwareVersion, certificationType)
 	originalDeviceSoftwareCompliance := queryExistingDeviceSoftwareCompliance(setup, certifyModelMsg.CDCertificateId)
 

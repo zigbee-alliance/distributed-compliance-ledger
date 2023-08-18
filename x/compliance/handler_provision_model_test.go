@@ -32,6 +32,15 @@ func (setup *TestSetup) ProvisionModel(vid int32, pid int32, softwareVersion uin
 	return provisionModelMsg, err
 }
 
+func (setup *TestSetup) ProvisionModelByDate(vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, provisionalDate string, signer sdk.AccAddress) (*types.MsgProvisionModel, error) {
+	provisionModelMsg := NewMsgProvisionModel(
+		vid, pid, softwareVersion, softwareVersionString, certificationType, signer)
+	provisionModelMsg.ProvisionalDate = provisionalDate
+	_, err := setup.Handler(setup.Ctx, provisionModelMsg)
+
+	return provisionModelMsg, err
+}
+
 func (setup *TestSetup) ProvisionModelWithAllOptionalFlags(vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, signer sdk.AccAddress) (*types.MsgProvisionModel, error) {
 	provisionModelMsg := NewMsgProvisionModelWithAllOptionalFlags(
 		vid, pid, softwareVersion, softwareVersionString, certificationType, signer)
@@ -122,8 +131,7 @@ func TestHandler_ProvisionModel_ByWrongRoles(t *testing.T) {
 
 		_, provisionModelErr := setup.ProvisionModel(vid, pid, softwareVersion, softwareVersionString, certificationType, accAddress)
 
-		require.Error(t, provisionModelErr)
-		require.True(t, sdkerrors.ErrUnauthorized.Is(provisionModelErr))
+		require.ErrorIs(t, provisionModelErr, sdkerrors.ErrUnauthorized)
 	}
 }
 
@@ -140,11 +148,11 @@ func TestHandler_ProvisionModel_Twice(t *testing.T) {
 func TestHandler_ProvisionModel_AlreadyCertified(t *testing.T) {
 	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := ProvisionModelSetup(t)
 
-	setup.CertifyModel(t, vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+	_, certifyModelErr := setup.CertifyModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+	require.NoError(t, certifyModelErr)
 	_, provisionModelErr := setup.ProvisionModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
 
-	require.Error(t, provisionModelErr)
-	require.True(t, types.ErrAlreadyCertified.Is(provisionModelErr))
+	require.ErrorIs(t, provisionModelErr, types.ErrAlreadyCertified)
 }
 
 func TestHandler_ProvisionModel_AlreadyRevoked(t *testing.T) {
@@ -153,15 +161,14 @@ func TestHandler_ProvisionModel_AlreadyRevoked(t *testing.T) {
 	setup.RevokeModel(t, vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
 	_, provisionModelErr := setup.ProvisionModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
 
-	require.Error(t, provisionModelErr)
-	require.True(t, types.ErrAlreadyRevoked.Is(provisionModelErr))
+	require.ErrorIs(t, provisionModelErr, types.ErrAlreadyRevoked)
 }
 
 func TestHandler_ProvisionModel_MoreThanOneModel(t *testing.T) {
 	setup, _, _, _, _, certificationType := ProvisionModelSetup(t)
-	modelsQuantity := 5
+	modelVersionsQuantity := 5
 
-	for i := 1; i < modelsQuantity; i++ {
+	for i := 1; i < modelVersionsQuantity; i++ {
 		vid := int32(i)
 		pid := int32(i)
 		softwareVersion := uint32(i)
