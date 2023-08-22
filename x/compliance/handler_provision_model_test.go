@@ -15,13 +15,12 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (setup *TestSetup) RevokeModel(t *testing.T, vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, signer sdk.AccAddress) *types.MsgRevokeModel {
+func (setup *TestSetup) RevokeModel(vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, signer sdk.AccAddress) (*types.MsgRevokeModel, error) {
 	revokeModelMsg := NewMsgRevokeModel(
 		vid, pid, softwareVersion, softwareVersionString, certificationType, signer)
 	_, err := setup.Handler(setup.Ctx, revokeModelMsg)
-	require.NoError(t, err)
 
-	return revokeModelMsg
+	return revokeModelMsg, err
 }
 
 func (setup *TestSetup) ProvisionModel(vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, signer sdk.AccAddress) (*types.MsgProvisionModel, error) {
@@ -158,7 +157,8 @@ func TestHandler_ProvisionModel_AlreadyCertified(t *testing.T) {
 func TestHandler_ProvisionModel_AlreadyRevoked(t *testing.T) {
 	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := ProvisionModelSetup(t)
 
-	setup.RevokeModel(t, vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+	_, revokeModelErr := setup.RevokeModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+	require.NoError(t, revokeModelErr)
 	_, provisionModelErr := setup.ProvisionModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
 
 	require.ErrorIs(t, provisionModelErr, types.ErrAlreadyRevoked)

@@ -233,3 +233,26 @@ func TestHandler_CertifyProvisionedModelForCertificationDateBeforeProvisionalDat
 	_, certifyModelErr := setup.CertifyModelByDate(vid, pid, softwareVersion, softwareVersionString, certificationType, certificationDate, setup.CertificationCenter)
 	require.ErrorIs(t, certifyModelErr, types.ErrInconsistentDates)
 }
+
+func TestHandler_CertifyRevokedModel(t *testing.T) {
+	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := CertifyModelSetup(t)
+	certificationTime := time.Now().UTC()
+	certificationDate := certificationTime.Format(time.RFC3339)
+
+	revokeModelMsg, revokeModelErr := setup.RevokeModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+	require.NoError(t, revokeModelErr)
+
+	certifyModelMsg, certifyModelErr := setup.CertifyModelByDate(vid, pid, softwareVersion, softwareVersionString, certificationType, certificationDate, setup.CertificationCenter)
+	require.NoError(t, certifyModelErr)
+
+	receivedComplianceInfo := setup.CheckCertifiedModelDataEqualsMessageData(t, certifyModelMsg)
+	require.Equal(t, 1, len(receivedComplianceInfo.History))
+	require.Equal(t, dclcompltypes.CodeRevoked, receivedComplianceInfo.History[0].SoftwareVersionCertificationStatus)
+	require.Equal(t, revokeModelMsg.RevocationDate, receivedComplianceInfo.History[0].Date)
+
+	receivedDeviceSoftwareCompliance, _ := queryDeviceSoftwareCompliance(setup, testconstants.CDCertificateID)
+	require.Equal(t, receivedDeviceSoftwareCompliance.CDCertificateId, testconstants.CDCertificateID)
+	checkDeviceSoftwareCompliance(t, receivedDeviceSoftwareCompliance.ComplianceInfo[0], receivedComplianceInfo)
+
+	setup.CheckModelStatusChangedToCertified(t, certifyModelMsg)
+}

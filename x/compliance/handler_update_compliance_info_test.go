@@ -23,6 +23,15 @@ func (setup *TestSetup) CertifyModel(vid int32, pid int32, softwareVersion uint3
 	return certifyModelMsg, err
 }
 
+func (setup *TestSetup) CertifyModelCustomCDCertificateID(vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, cDCertificateID string, signer sdk.AccAddress) (*types.MsgCertifyModel, error) {
+	certifyModelMsg := NewMsgCertifyModel(
+		vid, pid, softwareVersion, softwareVersionString, certificationType, signer)
+	certifyModelMsg.CDCertificateId = cDCertificateID
+	_, err := setup.Handler(setup.Ctx, certifyModelMsg)
+
+	return certifyModelMsg, err
+}
+
 func (setup *TestSetup) CertifyModelByDate(vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, certificationDate string, signer sdk.AccAddress) (*types.MsgCertifyModel, error) {
 	certifyModelMsg := NewMsgCertifyModel(
 		vid, pid, softwareVersion, softwareVersionString, certificationType, signer)
@@ -30,6 +39,15 @@ func (setup *TestSetup) CertifyModelByDate(vid int32, pid int32, softwareVersion
 	_, err := setup.Handler(setup.Ctx, certifyModelMsg)
 
 	return certifyModelMsg, err
+}
+
+func (setup *TestSetup) RevokeModelByDate(vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, revocationDate string, signer sdk.AccAddress) (*types.MsgRevokeModel, error) {
+	revokeModelMsg := NewMsgRevokeModel(
+		vid, pid, softwareVersion, softwareVersionString, certificationType, signer)
+	revokeModelMsg.RevocationDate = revocationDate
+	_, err := setup.Handler(setup.Ctx, revokeModelMsg)
+
+	return revokeModelMsg, err
 }
 
 func (setup *TestSetup) CertifyModelAllOptionalFlags(vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, signer sdk.AccAddress) (*types.MsgCertifyModel, error) {
@@ -202,4 +220,52 @@ func TestHandler_UpdateComplianceInfo_NotByCertificationCenter(t *testing.T) {
 	updatedComplianceInfo := queryExistingComplianceInfo(setup, vid, pid, softwareVersion, dclcompltypes.ZigbeeCertificationType)
 
 	require.Equal(t, originalComplianceInfo, updatedComplianceInfo)
+}
+
+func TestHandler_CDCertificateIDUpdateChangesOnlyOneComplianceInfo(t *testing.T) {
+	setup, vid1, pid1, softwareVersion1, softwareVersionString1, certificationType, _, originalComplianceInfo, _ := UpdateComplianceInfoSetup(t)
+	newCDCertificateID := originalComplianceInfo.CDCertificateId + "new"
+
+	vid2, pid2, softwareVersion2, softwareVersionString2 := setup.AddModelVersion(vid1+1, pid1+1, softwareVersion1+1, softwareVersionString1)
+	_, certifyModelErr := setup.CertifyModel(vid2, pid2, softwareVersion2, softwareVersionString2, certificationType, setup.CertificationCenter)
+	require.NoError(t, certifyModelErr)
+
+	updateComplianceInfoMsg, updateComplianceInfoErr := setup.UpdateComplianceInfosCDCertificateID(vid1, pid1, softwareVersion1, softwareVersionString1, certificationType, newCDCertificateID, setup.CertificationCenter)
+	require.NoError(t, updateComplianceInfoErr)
+
+	firstComplianceInfo, err := queryComplianceInfo(setup, vid1, pid1, softwareVersion1, testconstants.CertificationType)
+	require.NoError(t, err)
+
+	secondComplianceInfo, err := queryComplianceInfo(setup, vid2, pid2, softwareVersion2, testconstants.CertificationType)
+	require.NoError(t, err)
+
+	require.Equal(t, updateComplianceInfoMsg.CDCertificateId, firstComplianceInfo.CDCertificateId)
+	require.NotEqual(t, firstComplianceInfo.CDCertificateId, secondComplianceInfo.CDCertificateId)
+}
+
+func TestHandler_UpdateToAnotherCDCertificateID(t *testing.T) {
+	setup, vid1, pid1, softwareVersion1, softwareVersionString1, certificationType, _, originalComplianceInfo, _ := UpdateComplianceInfoSetup(t)
+	cDCertificateID1 := originalComplianceInfo.CDCertificateId
+
+	vid2, pid2, softwareVersion2, softwareVersionString2 := setup.AddModelVersion(vid1+1, pid1+1, softwareVersion1+1, softwareVersionString1)
+	cDCertificateID2 := cDCertificateID1 + "new"
+	_, certifyModelErr := setup.CertifyModelCustomCDCertificateID(vid2, pid2, softwareVersion2, softwareVersionString2, certificationType, cDCertificateID2, setup.CertificationCenter)
+	require.NoError(t, certifyModelErr)
+
+	originalDeviceSoftwareCompliance2, _ := queryDeviceSoftwareCompliance(setup, cDCertificateID2)
+
+	setup.UpdateComplianceInfosCDCertificateID(vid2, pid2, softwareVersion2, softwareVersionString2, certificationType, cDCertificateID1, setup.CertificationCenter)
+
+	newDeviceSoftwareCompliance1, _ := queryDeviceSoftwareCompliance(setup, cDCertificateID1)
+	newDeviceSoftwareCompliance2, _ := queryDeviceSoftwareCompliance(setup, cDCertificateID2)
+	complianceInfo1, _ := queryComplianceInfo(setup, vid1, pid1, softwareVersion1, testconstants.CertificationType)
+	complianceInfo2, _ := queryComplianceInfo(setup, vid2, pid2, softwareVersion2, testconstants.CertificationType)
+
+	require.Equal(t, complianceInfo1.CDCertificateId, complianceInfo2.CDCertificateId)
+	require.Equal(t, cDCertificateID1, newDeviceSoftwareCompliance1.ComplianceInfo[1].CDCertificateId)
+	require.Nil(t, newDeviceSoftwareCompliance2)
+	require.Equal(t, 2, len(newDeviceSoftwareCompliance1.ComplianceInfo))
+	cdCertificateIDExcluded := originalDeviceSoftwareCompliance2.ComplianceInfo[0]
+	cdCertificateIDExcluded.CDCertificateId = cDCertificateID1
+	require.Equal(t, cdCertificateIDExcluded, newDeviceSoftwareCompliance1.ComplianceInfo[1])
 }
