@@ -8,8 +8,8 @@ mainnet_stable_version="0.12.1"
 latest_release_binary_version="1.2.2"
 
 node_name="new-observer"
-node_p2p_port=26670
-node_client_port=26671
+node_p2p_port=26570
+node_client_port=26571
 chain_id="dclchain"
 ip="192.167.10.28"
 docker_network="distributed-compliance-ledger_localnet"
