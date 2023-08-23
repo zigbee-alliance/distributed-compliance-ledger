@@ -402,7 +402,6 @@ func newMsgUpdateComplianceInfo(
 	vid int32,
 	pid int32,
 	softwareVersion uint32,
-	softwareVersionString string,
 	certificationType string,
 ) *types.MsgUpdateComplianceInfo {
 	return &types.MsgUpdateComplianceInfo{
@@ -435,7 +434,6 @@ func newMsgUpdateComplianceInfoWithAllOptionalFlags(
 	vid int32,
 	pid int32,
 	softwareVersion uint32,
-	softwareVersionString string,
 	certificationType string,
 ) *types.MsgUpdateComplianceInfo {
 	return &types.MsgUpdateComplianceInfo{

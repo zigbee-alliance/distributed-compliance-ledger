@@ -74,13 +74,6 @@ func TestHandler_DeleteComplianceInfoForProvisionalModel(t *testing.T) {
 	_, provisionModelErr := setup.provisionModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
 	require.NoError(t, provisionModelErr)
 
-	_, err := queryProvisionalModel(setup, vid, pid, softwareVersion, certificationType)
-
-	_, err = queryCertifiedModel(setup, vid, pid, softwareVersion, certificationType)
-
-	_, err = queryRevokedModel(setup, vid, pid, softwareVersion, certificationType)
-	require.Error(t, err)
-
 	deleteComplInfoMsg, deleteComplInfoError := setup.deleteComplianceInfo(vid, pid, softwareVersion, certificationType, setup.CertificationCenter)
 	require.NoError(t, deleteComplInfoError)
 

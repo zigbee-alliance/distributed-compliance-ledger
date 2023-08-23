@@ -72,6 +72,7 @@ func (setup *TestSetup) CheckRevokedModelInfoEqualsMessageData(t *testing.T, rev
 
 	receivedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, certificationType)
 	checkRevokedModelInfo(t, revokeModelMsg, receivedComplianceInfo)
+
 	return receivedComplianceInfo
 }
 
@@ -171,7 +172,8 @@ func TestHandler_RevokeModelTwice(t *testing.T) {
 }
 
 func TestHandler_RevokeDifferentModels(t *testing.T) {
-	setup, _, _, _, _, certificationType := revokeModelSetup(t)
+	setup := setup(t)
+	certificationType := dclcompltypes.ZigbeeCertificationType
 	modelVersionsQuantity := 5
 
 	for i := 1; i < modelVersionsQuantity; i++ {
@@ -212,7 +214,7 @@ func TestHandler_RevokeProvisionedModelForRevocationDateBeforeProvisionalDate(t 
 	revocationDate := revocationTime.Format(time.RFC3339)
 	provisionalDate := revocationTime.AddDate(0, 0, 1).Format(time.RFC3339)
 
-	_, provisionModelErr := setup.provisionModelByDate(vid, pid, softwareVersion, softwareVersionString, certificationType, provisionalDate, setup.CertificationCenter)
+	provisionModelErr := setup.provisionModelByDate(vid, pid, softwareVersion, softwareVersionString, certificationType, provisionalDate, setup.CertificationCenter)
 	require.NoError(t, provisionModelErr)
 
 	_, revokeModelErr := setup.RevokeModelByDate(vid, pid, softwareVersion, softwareVersionString, certificationType, revocationDate, setup.CertificationCenter)

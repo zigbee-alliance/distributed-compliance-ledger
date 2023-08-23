@@ -48,6 +48,7 @@ func (setup *TestSetup) checkCertifiedModelDataEqualsMessageData(t *testing.T, c
 
 	receivedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, certificationType)
 	checkCertifiedModelInfo(t, certifyModelMsg, receivedComplianceInfo)
+
 	return receivedComplianceInfo
 }
 
@@ -234,7 +235,7 @@ func TestHandler_CertifyProvisionedModelForCertificationDateBeforeProvisionalDat
 	certificationDate := certificationTime.Format(time.RFC3339)
 	provisionalDate := certificationTime.AddDate(0, 0, 1).Format(time.RFC3339)
 
-	_, provisionModelErr := setup.provisionModelByDate(vid, pid, softwareVersion, softwareVersionString, certificationType, provisionalDate, setup.CertificationCenter)
+	provisionModelErr := setup.provisionModelByDate(vid, pid, softwareVersion, softwareVersionString, certificationType, provisionalDate, setup.CertificationCenter)
 	require.NoError(t, provisionModelErr)
 
 	_, certifyModelErr := setup.CertifyModelByDate(vid, pid, softwareVersion, softwareVersionString, certificationType, certificationDate, setup.CertificationCenter)

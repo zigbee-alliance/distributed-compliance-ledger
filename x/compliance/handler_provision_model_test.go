@@ -31,13 +31,13 @@ func (setup *TestSetup) provisionModel(vid int32, pid int32, softwareVersion uin
 	return provisionModelMsg, err
 }
 
-func (setup *TestSetup) provisionModelByDate(vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, provisionalDate string, signer sdk.AccAddress) (*types.MsgProvisionModel, error) {
+func (setup *TestSetup) provisionModelByDate(vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, provisionalDate string, signer sdk.AccAddress) error {
 	provisionModelMsg := newMsgProvisionModel(
 		vid, pid, softwareVersion, softwareVersionString, certificationType, signer)
 	provisionModelMsg.ProvisionalDate = provisionalDate
 	_, err := setup.Handler(setup.Ctx, provisionModelMsg)
 
-	return provisionModelMsg, err
+	return err
 }
 
 func (setup *TestSetup) provisionModelWithAllOptionalFlags(vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, signer sdk.AccAddress) (*types.MsgProvisionModel, error) {
@@ -151,7 +151,8 @@ func TestHandler_ProvisionModel_AlreadyRevoked(t *testing.T) {
 }
 
 func TestHandler_ProvisionModel_MoreThanOneModel(t *testing.T) {
-	setup, _, _, _, _, certificationType := provisionModelSetup(t)
+	setup := setup(t)
+	certificationType := dclcompltypes.ZigbeeCertificationType
 	modelVersionsQuantity := 5
 
 	for i := 1; i < modelVersionsQuantity; i++ {
