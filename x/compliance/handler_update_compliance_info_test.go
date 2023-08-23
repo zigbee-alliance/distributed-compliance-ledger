@@ -11,12 +11,10 @@ import (
 	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 func (setup *TestSetup) CertifyModel(vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, signer sdk.AccAddress) (*types.MsgCertifyModel, error) {
-	certifyModelMsg := NewMsgCertifyModel(
+	certifyModelMsg := newMsgCertifyModel(
 		vid, pid, softwareVersion, softwareVersionString, certificationType, signer)
 	_, err := setup.Handler(setup.Ctx, certifyModelMsg)
 
@@ -24,7 +22,7 @@ func (setup *TestSetup) CertifyModel(vid int32, pid int32, softwareVersion uint3
 }
 
 func (setup *TestSetup) CertifyModelCustomCDCertificateID(vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, cDCertificateID string, signer sdk.AccAddress) (*types.MsgCertifyModel, error) {
-	certifyModelMsg := NewMsgCertifyModel(
+	certifyModelMsg := newMsgCertifyModel(
 		vid, pid, softwareVersion, softwareVersionString, certificationType, signer)
 	certifyModelMsg.CDCertificateId = cDCertificateID
 	_, err := setup.Handler(setup.Ctx, certifyModelMsg)
@@ -33,7 +31,7 @@ func (setup *TestSetup) CertifyModelCustomCDCertificateID(vid int32, pid int32, 
 }
 
 func (setup *TestSetup) CertifyModelByDate(vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, certificationDate string, signer sdk.AccAddress) (*types.MsgCertifyModel, error) {
-	certifyModelMsg := NewMsgCertifyModel(
+	certifyModelMsg := newMsgCertifyModel(
 		vid, pid, softwareVersion, softwareVersionString, certificationType, signer)
 	certifyModelMsg.CertificationDate = certificationDate
 	_, err := setup.Handler(setup.Ctx, certifyModelMsg)
@@ -42,7 +40,7 @@ func (setup *TestSetup) CertifyModelByDate(vid int32, pid int32, softwareVersion
 }
 
 func (setup *TestSetup) RevokeModelByDate(vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, revocationDate string, signer sdk.AccAddress) (*types.MsgRevokeModel, error) {
-	revokeModelMsg := NewMsgRevokeModel(
+	revokeModelMsg := newMsgRevokeModel(
 		vid, pid, softwareVersion, softwareVersionString, certificationType, signer)
 	revokeModelMsg.RevocationDate = revocationDate
 	_, err := setup.Handler(setup.Ctx, revokeModelMsg)
@@ -51,7 +49,7 @@ func (setup *TestSetup) RevokeModelByDate(vid int32, pid int32, softwareVersion 
 }
 
 func (setup *TestSetup) CertifyModelAllOptionalFlags(vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, signer sdk.AccAddress) (*types.MsgCertifyModel, error) {
-	certifyModelMsg := NewMsgCertifyModelWithAllOptionalFlags(
+	certifyModelMsg := newMsgCertifyModelWithAllOptionalFlags(
 		vid, pid, softwareVersion, softwareVersionString, certificationType, signer)
 	_, err := setup.Handler(setup.Ctx, certifyModelMsg)
 
@@ -59,7 +57,7 @@ func (setup *TestSetup) CertifyModelAllOptionalFlags(vid int32, pid int32, softw
 }
 
 func (setup *TestSetup) UpdateComplianceInfoOneOptionalField(vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, parentChild string, signer sdk.AccAddress) (*types.MsgUpdateComplianceInfo, error) {
-	updateComplianceInfoMsg := NewMsgUpdateComplianceInfo(signer, vid, pid, softwareVersion, softwareVersionString, certificationType)
+	updateComplianceInfoMsg := newMsgUpdateComplianceInfo(signer, vid, pid, softwareVersion, softwareVersionString, certificationType)
 	updateComplianceInfoMsg.ParentChild = parentChild
 	_, err := setup.Handler(setup.Ctx, updateComplianceInfoMsg)
 
@@ -67,14 +65,14 @@ func (setup *TestSetup) UpdateComplianceInfoOneOptionalField(vid int32, pid int3
 }
 
 func (setup *TestSetup) UpdateComplianceInfoNoOptionalFields(vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, signer sdk.AccAddress) (*types.MsgUpdateComplianceInfo, error) {
-	updateComplianceInfoMsg := NewMsgUpdateComplianceInfo(signer, vid, pid, softwareVersion, softwareVersionString, certificationType)
+	updateComplianceInfoMsg := newMsgUpdateComplianceInfo(signer, vid, pid, softwareVersion, softwareVersionString, certificationType)
 	_, err := setup.Handler(setup.Ctx, updateComplianceInfoMsg)
 
 	return updateComplianceInfoMsg, err
 }
 
 func (setup *TestSetup) UpdateComplianceInfosCDCertificateID(vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, CDCertificateID string, signer sdk.AccAddress) (*types.MsgUpdateComplianceInfo, error) {
-	updateComplianceInfoMsg := NewMsgUpdateComplianceInfo(signer, vid, pid, softwareVersion, softwareVersionString, certificationType)
+	updateComplianceInfoMsg := newMsgUpdateComplianceInfo(signer, vid, pid, softwareVersion, softwareVersionString, certificationType)
 	updateComplianceInfoMsg.CDCertificateId = CDCertificateID
 	_, err := setup.Handler(setup.Ctx, updateComplianceInfoMsg)
 
@@ -82,7 +80,7 @@ func (setup *TestSetup) UpdateComplianceInfosCDCertificateID(vid int32, pid int3
 }
 
 func (setup *TestSetup) UpdateComplianceInfoWithAllOptionalFlags(vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, signer sdk.AccAddress) (*types.MsgUpdateComplianceInfo, error) {
-	updateComplianceInfoMsg := NewMsgUpdateComplianceInfoWithAllOptionalFlags(signer, vid, pid, softwareVersion, softwareVersionString, certificationType)
+	updateComplianceInfoMsg := newMsgUpdateComplianceInfoWithAllOptionalFlags(signer, vid, pid, softwareVersion, softwareVersionString, certificationType)
 	_, err := setup.Handler(setup.Ctx, updateComplianceInfoMsg)
 
 	return updateComplianceInfoMsg, err
@@ -101,12 +99,10 @@ func (setup *TestSetup) CheckAllComplianceInfoFieldsUpdated(t *testing.T, origin
 	require.NotEqual(t, originalComplianceInfo.Date, updatedComplianceInfo.Date)
 	require.NotEqual(t, originalComplianceInfo.FamilyId, updatedComplianceInfo.FamilyId)
 	require.NotEqual(t, originalComplianceInfo.OSVersion, updatedComplianceInfo.OSVersion)
-	require.NotEqual(t, originalComplianceInfo.Owner, updatedComplianceInfo.Owner)
 	require.NotEqual(t, originalComplianceInfo.ParentChild, updatedComplianceInfo.ParentChild)
 	require.NotEqual(t, originalComplianceInfo.ProgramType, updatedComplianceInfo.ProgramType)
 	require.NotEqual(t, originalComplianceInfo.ProgramTypeVersion, updatedComplianceInfo.ProgramTypeVersion)
 	require.NotEqual(t, originalComplianceInfo.Reason, updatedComplianceInfo.Reason)
-	require.Equal(t, originalComplianceInfo.SoftwareVersionCertificationStatus, updatedComplianceInfo.SoftwareVersionCertificationStatus) // TODO: maybe its needed to be updated too?
 	require.NotEqual(t, originalComplianceInfo.SupportedClusters, updatedComplianceInfo.SupportedClusters)
 	require.NotEqual(t, originalComplianceInfo.Transport, updatedComplianceInfo.Transport)
 }
@@ -136,9 +132,9 @@ func (setup *TestSetup) CheckDeviceSoftwareComplianceUpdated(t *testing.T, origi
 }
 
 func UpdateComplianceInfoSetup(t *testing.T) (*TestSetup, int32, int32, uint32, string, string, string, *dclcompltypes.ComplianceInfo, *types.DeviceSoftwareCompliance) {
-	setup := Setup(t)
+	setup := setup(t)
 
-	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
+	vid, pid, softwareVersion, softwareVersionString := setup.addModelVersion(
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
 	certificationType := dclcompltypes.ZigbeeCertificationType
 
@@ -150,8 +146,7 @@ func UpdateComplianceInfoSetup(t *testing.T) (*TestSetup, int32, int32, uint32, 
 	return setup, vid, pid, softwareVersion, softwareVersionString, certificationType, certifyModelMsg.CDCertificateId, originalComplianceInfo, originalDeviceSoftwareCompliance
 }
 
-func TestHandler_UpdateComplianceInfo_Minimal(t *testing.T) {
-	// only ParentChild field would be updated in this test
+func TestHandler_UpdateComplianceInfo_MinimalOnlyOneParentChildField(t *testing.T) {
 	setup, vid, pid, softwareVersion, softwareVersionString, certificationType, cDCertificateID, originalComplianceInfo, _ := UpdateComplianceInfoSetup(t)
 	parentChild := testconstants.ParentChild1
 	isUpdatedMinimally := true
@@ -191,7 +186,7 @@ func TestHandler_UpdateComplianceInfo_CDCertificateIdChanged(t *testing.T) {
 	updatedDeviceSoftwareCompliance := queryExistingDeviceSoftwareCompliance(setup, updateComplianceInfoMsg.CDCertificateId)
 
 	_, err := queryDeviceSoftwareCompliance(setup, cDCertificateID)
-	require.Equal(t, codes.NotFound, status.Code(err))
+	assertNotFound(t, err)
 
 	require.Equal(t, len(updatedDeviceSoftwareCompliance.ComplianceInfo), len(originalDeviceSoftwareCompliance.ComplianceInfo))
 	require.Equal(t, updatedDeviceSoftwareCompliance.CDCertificateId, updateComplianceInfoMsg.CDCertificateId)
@@ -211,7 +206,7 @@ func TestHandler_UpdateComplianceInfo_ByCertificationCenterNoOptionalFields(t *t
 func TestHandler_UpdateComplianceInfo_NotByCertificationCenter(t *testing.T) {
 	setup, vid, pid, softwareVersion, softwareVersionString, certificationType, _, originalComplianceInfo, _ := UpdateComplianceInfoSetup(t)
 
-	nonCertCenterAddress := GenerateAccAddress()
+	nonCertCenterAddress := generateAccAddress()
 	setup.DclauthKeeper.On("HasRole", mock.Anything, nonCertCenterAddress, dclauthtypes.CertificationCenter).Return(false)
 
 	_, updateComplianceInfoErr := setup.UpdateComplianceInfoWithAllOptionalFlags(vid, pid, softwareVersion, softwareVersionString, certificationType, nonCertCenterAddress)
@@ -226,7 +221,7 @@ func TestHandler_CDCertificateIDUpdateChangesOnlyOneComplianceInfo(t *testing.T)
 	setup, vid1, pid1, softwareVersion1, softwareVersionString1, certificationType, _, originalComplianceInfo, _ := UpdateComplianceInfoSetup(t)
 	newCDCertificateID := originalComplianceInfo.CDCertificateId + "new"
 
-	vid2, pid2, softwareVersion2, softwareVersionString2 := setup.AddModelVersion(vid1+1, pid1+1, softwareVersion1+1, softwareVersionString1)
+	vid2, pid2, softwareVersion2, softwareVersionString2 := setup.addModelVersion(vid1+1, pid1+1, softwareVersion1+1, softwareVersionString1)
 	_, certifyModelErr := setup.CertifyModel(vid2, pid2, softwareVersion2, softwareVersionString2, certificationType, setup.CertificationCenter)
 	require.NoError(t, certifyModelErr)
 
@@ -247,7 +242,7 @@ func TestHandler_UpdateToAnotherCDCertificateID(t *testing.T) {
 	setup, vid1, pid1, softwareVersion1, softwareVersionString1, certificationType, _, originalComplianceInfo, _ := UpdateComplianceInfoSetup(t)
 	cDCertificateID1 := originalComplianceInfo.CDCertificateId
 
-	vid2, pid2, softwareVersion2, softwareVersionString2 := setup.AddModelVersion(vid1+1, pid1+1, softwareVersion1+1, softwareVersionString1)
+	vid2, pid2, softwareVersion2, softwareVersionString2 := setup.addModelVersion(vid1+1, pid1+1, softwareVersion1+1, softwareVersionString1)
 	cDCertificateID2 := cDCertificateID1 + "new"
 	_, certifyModelErr := setup.CertifyModelCustomCDCertificateID(vid2, pid2, softwareVersion2, softwareVersionString2, certificationType, cDCertificateID2, setup.CertificationCenter)
 	require.NoError(t, certifyModelErr)

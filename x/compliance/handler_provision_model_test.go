@@ -11,28 +11,28 @@ import (
 	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
-func (setup *TestSetup) RevokeModel(vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, signer sdk.AccAddress) (*types.MsgRevokeModel, error) {
-	revokeModelMsg := NewMsgRevokeModel(
-		vid, pid, softwareVersion, softwareVersionString, certificationType, signer)
-	_, err := setup.Handler(setup.Ctx, revokeModelMsg)
+func provisionModelSetup(t *testing.T) (*TestSetup, int32, int32, uint32, string, string) {
+	setup := setup(t)
 
-	return revokeModelMsg, err
+	vid, pid, softwareVersion, softwareVersionString := setup.addModelVersion(
+		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
+	certificationType := dclcompltypes.ZigbeeCertificationType
+
+	return setup, vid, pid, softwareVersion, softwareVersionString, certificationType
 }
 
-func (setup *TestSetup) ProvisionModel(vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, signer sdk.AccAddress) (*types.MsgProvisionModel, error) {
-	provisionModelMsg := NewMsgProvisionModel(
+func (setup *TestSetup) provisionModel(vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, signer sdk.AccAddress) (*types.MsgProvisionModel, error) {
+	provisionModelMsg := newMsgProvisionModel(
 		vid, pid, softwareVersion, softwareVersionString, certificationType, signer)
 	_, err := setup.Handler(setup.Ctx, provisionModelMsg)
 
 	return provisionModelMsg, err
 }
 
-func (setup *TestSetup) ProvisionModelByDate(vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, provisionalDate string, signer sdk.AccAddress) (*types.MsgProvisionModel, error) {
-	provisionModelMsg := NewMsgProvisionModel(
+func (setup *TestSetup) provisionModelByDate(vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, provisionalDate string, signer sdk.AccAddress) (*types.MsgProvisionModel, error) {
+	provisionModelMsg := newMsgProvisionModel(
 		vid, pid, softwareVersion, softwareVersionString, certificationType, signer)
 	provisionModelMsg.ProvisionalDate = provisionalDate
 	_, err := setup.Handler(setup.Ctx, provisionModelMsg)
@@ -40,28 +40,26 @@ func (setup *TestSetup) ProvisionModelByDate(vid int32, pid int32, softwareVersi
 	return provisionModelMsg, err
 }
 
-func (setup *TestSetup) ProvisionModelWithAllOptionalFlags(vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, signer sdk.AccAddress) (*types.MsgProvisionModel, error) {
-	provisionModelMsg := NewMsgProvisionModelWithAllOptionalFlags(
+func (setup *TestSetup) provisionModelWithAllOptionalFlags(vid int32, pid int32, softwareVersion uint32, softwareVersionString string, certificationType string, signer sdk.AccAddress) (*types.MsgProvisionModel, error) {
+	provisionModelMsg := newMsgProvisionModelWithAllOptionalFlags(
 		vid, pid, softwareVersion, softwareVersionString, certificationType, signer)
 	_, err := setup.Handler(setup.Ctx, provisionModelMsg)
 
 	return provisionModelMsg, err
 }
 
-func (setup *TestSetup) CheckComplianceInfoEqualsProvisionModelMsgData(t *testing.T, provisionModelMsg *types.MsgProvisionModel) {
+func (setup *TestSetup) checkComplianceInfoEqualsProvisionModelMsgData(t *testing.T, provisionModelMsg *types.MsgProvisionModel) {
 	vid := provisionModelMsg.Vid
 	pid := provisionModelMsg.Pid
 	softwareVersion := provisionModelMsg.SoftwareVersion
 	certificationType := provisionModelMsg.CertificationType
 
-	// query provisional model
 	receivedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, certificationType)
 
-	// check
 	checkProvisionalModelInfo(t, provisionModelMsg, receivedComplianceInfo)
 }
 
-func (setup *TestSetup) CheckProvisionalModelAddedToCorrectStore(t *testing.T, provisionModelMsg *types.MsgProvisionModel) {
+func (setup *TestSetup) checkModelProvisioned(t *testing.T, provisionModelMsg *types.MsgProvisionModel) {
 	vid := provisionModelMsg.Vid
 	pid := provisionModelMsg.Pid
 	softwareVersion := provisionModelMsg.SoftwareVersion
@@ -71,50 +69,38 @@ func (setup *TestSetup) CheckProvisionalModelAddedToCorrectStore(t *testing.T, p
 	require.True(t, provisionalModel.Value)
 
 	_, err := queryCertifiedModel(setup, vid, pid, softwareVersion, certificationType)
-	require.Error(t, err)
-	require.Equal(t, codes.NotFound, status.Code(err))
+	assertNotFound(t, err)
 
 	_, err = queryRevokedModel(setup, vid, pid, softwareVersion, certificationType)
-	require.Error(t, err)
-	require.Equal(t, codes.NotFound, status.Code(err))
-}
-
-func ProvisionModelSetup(t *testing.T) (*TestSetup, int32, int32, uint32, string, string) {
-	setup := Setup(t)
-
-	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
-		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
-	certificationType := dclcompltypes.ZigbeeCertificationType
-
-	return setup, vid, pid, softwareVersion, softwareVersionString, certificationType
+	assertNotFound(t, err)
 }
 
 func TestHandler_ProvisionModel_AllCertificationTypes(t *testing.T) {
-	setup, vid, pid, softwareVersion, softwareVersionString, _ := ProvisionModelSetup(t)
+	setup, vid, pid, softwareVersion, softwareVersionString, _ := provisionModelSetup(t)
 
 	for _, certificationType := range setup.CertificationTypes {
-		provisionModelMsg, provisionModelErr := setup.ProvisionModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+		provisionModelMsg, provisionModelErr := setup.provisionModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
 
 		require.NoError(t, provisionModelErr)
-		setup.CheckComplianceInfoEqualsProvisionModelMsgData(t, provisionModelMsg)
-		setup.CheckProvisionalModelAddedToCorrectStore(t, provisionModelMsg)
+		setup.checkComplianceInfoEqualsProvisionModelMsgData(t, provisionModelMsg)
+		setup.checkModelProvisioned(t, provisionModelMsg)
 	}
 }
 
 func TestHandler_ProvisionModel_WithAllOptionalFlagsForAllCertificationTypes(t *testing.T) {
-	setup, vid, pid, softwareVersion, softwareVersionString, _ := ProvisionModelSetup(t)
+	setup, vid, pid, softwareVersion, softwareVersionString, _ := provisionModelSetup(t)
 
 	for _, certificationType := range setup.CertificationTypes {
-		provisionModelMsg, provisionModelErr := setup.ProvisionModelWithAllOptionalFlags(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+		provisionModelMsg, provisionModelErr := setup.provisionModelWithAllOptionalFlags(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
 
 		require.NoError(t, provisionModelErr)
-		setup.CheckComplianceInfoEqualsProvisionModelMsgData(t, provisionModelMsg)
-		setup.CheckProvisionalModelAddedToCorrectStore(t, provisionModelMsg)
+		setup.checkComplianceInfoEqualsProvisionModelMsgData(t, provisionModelMsg)
+		setup.checkModelProvisioned(t, provisionModelMsg)
 	}
 }
 
 func TestHandler_ProvisionModel_ByWrongRoles(t *testing.T) {
-	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := ProvisionModelSetup(t)
+	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := provisionModelSetup(t)
 
 	accountRoles := []dclauthtypes.AccountRole{
 		dclauthtypes.Vendor,
@@ -122,50 +108,50 @@ func TestHandler_ProvisionModel_ByWrongRoles(t *testing.T) {
 		dclauthtypes.NodeAdmin,
 	}
 
-	setup.SetNoModelVersionForKey(vid, pid, softwareVersion)
+	setup.setNoModelVersionForKey(vid, pid, softwareVersion)
 
 	for _, role := range accountRoles {
-		accAddress := GenerateAccAddress()
-		setup.AddAccount(accAddress, []dclauthtypes.AccountRole{role})
+		accAddress := generateAccAddress()
+		setup.addAccount(accAddress, []dclauthtypes.AccountRole{role})
 
-		_, provisionModelErr := setup.ProvisionModel(vid, pid, softwareVersion, softwareVersionString, certificationType, accAddress)
+		_, provisionModelErr := setup.provisionModel(vid, pid, softwareVersion, softwareVersionString, certificationType, accAddress)
 
 		require.ErrorIs(t, provisionModelErr, sdkerrors.ErrUnauthorized)
 	}
 }
 
 func TestHandler_ProvisionModel_Twice(t *testing.T) {
-	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := ProvisionModelSetup(t)
+	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := provisionModelSetup(t)
 
-	_, provisionModelFisrtTimeErr := setup.ProvisionModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
-	_, provisionModelSecondTimeErr := setup.ProvisionModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+	_, provisionModelFisrtTimeErr := setup.provisionModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+	_, provisionModelSecondTimeErr := setup.provisionModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
 
 	require.NoError(t, provisionModelFisrtTimeErr)
 	require.Error(t, provisionModelSecondTimeErr)
 }
 
 func TestHandler_ProvisionModel_AlreadyCertified(t *testing.T) {
-	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := ProvisionModelSetup(t)
+	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := provisionModelSetup(t)
 
 	_, certifyModelErr := setup.CertifyModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
 	require.NoError(t, certifyModelErr)
-	_, provisionModelErr := setup.ProvisionModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+	_, provisionModelErr := setup.provisionModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
 
 	require.ErrorIs(t, provisionModelErr, types.ErrAlreadyCertified)
 }
 
 func TestHandler_ProvisionModel_AlreadyRevoked(t *testing.T) {
-	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := ProvisionModelSetup(t)
+	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := provisionModelSetup(t)
 
-	_, revokeModelErr := setup.RevokeModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+	_, revokeModelErr := setup.revokeModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
 	require.NoError(t, revokeModelErr)
-	_, provisionModelErr := setup.ProvisionModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+	_, provisionModelErr := setup.provisionModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
 
 	require.ErrorIs(t, provisionModelErr, types.ErrAlreadyRevoked)
 }
 
 func TestHandler_ProvisionModel_MoreThanOneModel(t *testing.T) {
-	setup, _, _, _, _, certificationType := ProvisionModelSetup(t)
+	setup, _, _, _, _, certificationType := provisionModelSetup(t)
 	modelVersionsQuantity := 5
 
 	for i := 1; i < modelVersionsQuantity; i++ {
@@ -174,12 +160,12 @@ func TestHandler_ProvisionModel_MoreThanOneModel(t *testing.T) {
 		softwareVersion := uint32(i)
 		softwareVersionString := fmt.Sprint(i)
 
-		setup.AddModelVersion(vid, pid, softwareVersion, softwareVersionString)
+		setup.addModelVersion(vid, pid, softwareVersion, softwareVersionString)
 
-		provisionModelMsg, provisionModelErr := setup.ProvisionModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+		provisionModelMsg, provisionModelErr := setup.provisionModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
 
 		require.NoError(t, provisionModelErr)
-		setup.CheckComplianceInfoEqualsProvisionModelMsgData(t, provisionModelMsg)
-		setup.CheckProvisionalModelAddedToCorrectStore(t, provisionModelMsg)
+		setup.checkComplianceInfoEqualsProvisionModelMsgData(t, provisionModelMsg)
+		setup.checkModelProvisioned(t, provisionModelMsg)
 	}
 }

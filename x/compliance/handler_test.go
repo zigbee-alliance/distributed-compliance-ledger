@@ -16,6 +16,8 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	modeltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type DclauthKeeperMock struct {
@@ -65,7 +67,7 @@ type TestSetup struct {
 	CertificationTypes  dclcompltypes.CertificationTypes
 }
 
-func (setup *TestSetup) AddAccount(
+func (setup *TestSetup) addAccount(
 	accAddress sdk.AccAddress,
 	roles []dclauthtypes.AccountRole,
 ) {
@@ -77,10 +79,10 @@ func (setup *TestSetup) AddAccount(
 	dclauthKeeper.On("HasRole", mock.Anything, accAddress, mock.Anything).Return(false)
 }
 
-func (setup *TestSetup) AddModelVersion(
+func (setup *TestSetup) addModelVersion(
 	vid int32, pid int32, softwareVersion uint32, softwareVersionString string,
 ) (int32, int32, uint32, string) {
-	modelVersion := NewModelVersion(vid, pid, softwareVersion, softwareVersionString)
+	modelVersion := newModelVersion(vid, pid, softwareVersion, softwareVersionString)
 
 	setup.ModelKeeper.On(
 		"GetModelVersion",
@@ -91,7 +93,7 @@ func (setup *TestSetup) AddModelVersion(
 	return vid, pid, softwareVersion, softwareVersionString
 }
 
-func (setup *TestSetup) SetNoModelVersionForKey(
+func (setup *TestSetup) setNoModelVersionForKey(
 	vid int32,
 	pid int32,
 	softwareVersion uint32,
@@ -102,13 +104,13 @@ func (setup *TestSetup) SetNoModelVersionForKey(
 	).Return(modeltypes.ModelVersion{}, false)
 }
 
-func Setup(t *testing.T) *TestSetup {
+func setup(t *testing.T) *TestSetup {
 	t.Helper()
 	dclauthKeeper := &DclauthKeeperMock{}
 	modelKeeper := &ModelKeeperMock{}
 	keeper, ctx := testkeeper.ComplianceKeeper(t, dclauthKeeper, modelKeeper)
 
-	certificationCenter := GenerateAccAddress()
+	certificationCenter := generateAccAddress()
 
 	certificationTypes := dclcompltypes.CertificationTypes{dclcompltypes.ZigbeeCertificationType, dclcompltypes.MatterCertificationType}
 
@@ -124,7 +126,7 @@ func Setup(t *testing.T) *TestSetup {
 		CertificationTypes:  certificationTypes,
 	}
 
-	setup.AddAccount(certificationCenter, []dclauthtypes.AccountRole{dclauthtypes.CertificationCenter})
+	setup.addAccount(certificationCenter, []dclauthtypes.AccountRole{dclauthtypes.CertificationCenter})
 
 	return setup
 }
@@ -368,7 +370,12 @@ func checkRevokedModelInfo(
 	require.Equal(t, revokeModelMsg.CertificationType, receivedComplianceInfo.CertificationType)
 }
 
-func NewMsgProvisionModel(
+func assertNotFound(t *testing.T, err error) {
+	require.Error(t, err)
+	require.Equal(t, codes.NotFound, status.Code(err))
+}
+
+func newMsgProvisionModel(
 	vid int32,
 	pid int32,
 	softwareVersion uint32,
@@ -390,7 +397,7 @@ func NewMsgProvisionModel(
 	}
 }
 
-func NewMsgUpdateComplianceInfo(
+func newMsgUpdateComplianceInfo(
 	creator sdk.AccAddress,
 	vid int32,
 	pid int32,
@@ -423,7 +430,7 @@ func NewMsgUpdateComplianceInfo(
 	}
 }
 
-func NewMsgUpdateComplianceInfoWithAllOptionalFlags(
+func newMsgUpdateComplianceInfoWithAllOptionalFlags(
 	creator sdk.AccAddress,
 	vid int32,
 	pid int32,
@@ -456,7 +463,7 @@ func NewMsgUpdateComplianceInfoWithAllOptionalFlags(
 	}
 }
 
-func NewMsgProvisionModelWithAllOptionalFlags(
+func newMsgProvisionModelWithAllOptionalFlags(
 	vid int32,
 	pid int32,
 	softwareVersion uint32,
@@ -489,7 +496,7 @@ func NewMsgProvisionModelWithAllOptionalFlags(
 	}
 }
 
-func NewMsgCertifyModel(
+func newMsgCertifyModel(
 	vid int32,
 	pid int32,
 	softwareVersion uint32,
@@ -511,7 +518,7 @@ func NewMsgCertifyModel(
 	}
 }
 
-func NewMsgDeleteComplianceInfo(
+func newMsgDeleteComplianceInfo(
 	vid int32,
 	pid int32,
 	softwareVersion uint32,
@@ -527,7 +534,7 @@ func NewMsgDeleteComplianceInfo(
 	}
 }
 
-func NewMsgCertifyModelWithAllOptionalFlags(
+func newMsgCertifyModelWithAllOptionalFlags(
 	vid int32,
 	pid int32,
 	softwareVersion uint32,
@@ -560,7 +567,7 @@ func NewMsgCertifyModelWithAllOptionalFlags(
 	}
 }
 
-func NewMsgRevokeModel(
+func newMsgRevokeModel(
 	vid int32,
 	pid int32,
 	softwareVersion uint32,
@@ -581,7 +588,7 @@ func NewMsgRevokeModel(
 	}
 }
 
-func NewModelVersion(
+func newModelVersion(
 	vid int32,
 	pid int32,
 	softwareVersion uint32,
@@ -602,11 +609,11 @@ func NewModelVersion(
 		MinApplicableSoftwareVersion: testconstants.MinApplicableSoftwareVersion,
 		MaxApplicableSoftwareVersion: testconstants.MaxApplicableSoftwareVersion,
 		ReleaseNotesUrl:              testconstants.ReleaseNotesURL,
-		Creator:                      GenerateAccAddress().String(),
+		Creator:                      generateAccAddress().String(),
 	}
 }
 
-func GenerateAccAddress() sdk.AccAddress {
+func generateAccAddress() sdk.AccAddress {
 	_, _, accAddress := testdata.KeyTestPubAddr()
 
 	return accAddress

@@ -104,10 +104,6 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 		complianceInfo.Transport = msg.Transport
 	}
 
-	if msg.Owner != "" {
-		complianceInfo.Owner = msg.Owner
-	}
-
 	//nolint:nestif
 	if msg.CDCertificateId != "" && msg.CDCertificateId != complianceInfo.CDCertificateId {
 		// remove the compliance info from a device software compliance with its old cd certificate id

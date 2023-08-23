@@ -8,87 +8,88 @@ import (
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
-func DeleteComplianceInfoSetup(t *testing.T) (*TestSetup, int32, int32, uint32, string, string) {
-	setup := Setup(t)
+func deleteComplianceInfoSetup(t *testing.T) (*TestSetup, int32, int32, uint32, string, string) {
+	setup := setup(t)
 
-	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
+	vid, pid, softwareVersion, softwareVersionString := setup.addModelVersion(
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
 	certificationType := dclcompltypes.ZigbeeCertificationType
 
 	return setup, vid, pid, softwareVersion, softwareVersionString, certificationType
 }
 
-func (setup *TestSetup) DeleteComplianceInfo(vid int32, pid int32, softwareVersion uint32, certificationType string, signer sdk.AccAddress) (*types.MsgDeleteComplianceInfo, error) {
-	deleteComplInfoMsg := NewMsgDeleteComplianceInfo(
+func (setup *TestSetup) deleteComplianceInfo(vid int32, pid int32, softwareVersion uint32, certificationType string, signer sdk.AccAddress) (*types.MsgDeleteComplianceInfo, error) {
+	deleteComplInfoMsg := newMsgDeleteComplianceInfo(
 		vid, pid, softwareVersion, certificationType, signer)
 	_, err := setup.Handler(setup.Ctx, deleteComplInfoMsg)
 
 	return deleteComplInfoMsg, err
 }
 
-func (setup *TestSetup) CheckComplianceInfoDeleted(t *testing.T, deleteComplInfoMsg *types.MsgDeleteComplianceInfo) {
+func (setup *TestSetup) checkComplianceInfoDeleted(t *testing.T, deleteComplInfoMsg *types.MsgDeleteComplianceInfo) {
 	vid := deleteComplInfoMsg.Vid
 	pid := deleteComplInfoMsg.Pid
 	softwareVersion := deleteComplInfoMsg.SoftwareVersion
 	certificationType := deleteComplInfoMsg.CertificationType
 
-	test, err := queryProvisionalModel(setup, vid, pid, softwareVersion, certificationType)
-	require.Error(t, err)
-	require.Equal(t, codes.NotFound, status.Code(err))
-	_ = test
+	_, err := queryProvisionalModel(setup, vid, pid, softwareVersion, certificationType)
+	assertNotFound(t, err)
 
 	_, err = queryCertifiedModel(setup, vid, pid, softwareVersion, certificationType)
-	require.Error(t, err)
-	require.Equal(t, codes.NotFound, status.Code(err))
+	assertNotFound(t, err)
 
 	_, err = queryRevokedModel(setup, vid, pid, softwareVersion, certificationType)
-	require.Error(t, err)
-	require.Equal(t, codes.NotFound, status.Code(err))
+	assertNotFound(t, err)
 }
 
 func TestHandler_DeleteComplianceInfoForRevokedModel(t *testing.T) {
-	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := DeleteComplianceInfoSetup(t)
+	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := deleteComplianceInfoSetup(t)
 
-	_, revokeModelErr := setup.RevokeModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+	_, revokeModelErr := setup.revokeModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
 	require.NoError(t, revokeModelErr)
 
-	deleteComplInfoMsg, deleteComplInfoError := setup.DeleteComplianceInfo(vid, pid, softwareVersion, certificationType, setup.CertificationCenter)
+	deleteComplInfoMsg, deleteComplInfoError := setup.deleteComplianceInfo(vid, pid, softwareVersion, certificationType, setup.CertificationCenter)
 	require.NoError(t, deleteComplInfoError)
 
-	setup.CheckComplianceInfoDeleted(t, deleteComplInfoMsg)
+	setup.checkComplianceInfoDeleted(t, deleteComplInfoMsg)
 }
 
 func TestHandler_DeleteComplianceInfoForCertifiedModel(t *testing.T) {
-	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := DeleteComplianceInfoSetup(t)
+	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := deleteComplianceInfoSetup(t)
 
 	_, certifyModelErr := setup.CertifyModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
 	require.NoError(t, certifyModelErr)
 
-	deleteComplInfoMsg, deleteComplInfoError := setup.DeleteComplianceInfo(vid, pid, softwareVersion, certificationType, setup.CertificationCenter)
+	deleteComplInfoMsg, deleteComplInfoError := setup.deleteComplianceInfo(vid, pid, softwareVersion, certificationType, setup.CertificationCenter)
 	require.NoError(t, deleteComplInfoError)
 
-	setup.CheckComplianceInfoDeleted(t, deleteComplInfoMsg)
+	setup.checkComplianceInfoDeleted(t, deleteComplInfoMsg)
 }
 
 func TestHandler_DeleteComplianceInfoForProvisionalModel(t *testing.T) {
-	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := DeleteComplianceInfoSetup(t)
+	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := deleteComplianceInfoSetup(t)
 
-	_, provisionModelErr := setup.ProvisionModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+	_, provisionModelErr := setup.provisionModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
 	require.NoError(t, provisionModelErr)
 
-	deleteComplInfoMsg, deleteComplInfoError := setup.DeleteComplianceInfo(vid, pid, softwareVersion, certificationType, setup.CertificationCenter)
+	_, err := queryProvisionalModel(setup, vid, pid, softwareVersion, certificationType)
+
+	_, err = queryCertifiedModel(setup, vid, pid, softwareVersion, certificationType)
+
+	_, err = queryRevokedModel(setup, vid, pid, softwareVersion, certificationType)
+	require.Error(t, err)
+
+	deleteComplInfoMsg, deleteComplInfoError := setup.deleteComplianceInfo(vid, pid, softwareVersion, certificationType, setup.CertificationCenter)
 	require.NoError(t, deleteComplInfoError)
 
-	setup.CheckComplianceInfoDeleted(t, deleteComplInfoMsg)
+	setup.checkComplianceInfoDeleted(t, deleteComplInfoMsg)
 }
 
 func TestHandler_DeleteComplianceInfoDoesNotExist(t *testing.T) {
-	setup, vid, pid, softwareVersion, _, certificationType := DeleteComplianceInfoSetup(t)
+	setup, vid, pid, softwareVersion, _, certificationType := deleteComplianceInfoSetup(t)
 
-	_, deleteComplInfoError := setup.DeleteComplianceInfo(vid, pid, softwareVersion, certificationType, setup.CertificationCenter)
+	_, deleteComplInfoError := setup.deleteComplianceInfo(vid, pid, softwareVersion, certificationType, setup.CertificationCenter)
 	require.ErrorIs(t, deleteComplInfoError, types.ErrComplianceInfoDoesNotExist)
 }
