@@ -17,8 +17,8 @@ package testconstants
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	moduletestutil "github.com/cosmos/cosmos-sdk/types/module/testutil"
 )
 
 func strToPubKey(pkStr string, cdc codec.Codec) cryptotypes.PubKey {
@@ -33,7 +33,7 @@ func strToPubKey(pkStr string, cdc codec.Codec) cryptotypes.PubKey {
 var (
 	// default context
 	// TODO issue 99: design test context better.
-	defEncConfig = simapp.MakeTestEncodingConfig()
+	defEncConfig = moduletestutil.MakeTestEncodingConfig()
 
 	// Base constants.
 	JackAccount  = "jack"

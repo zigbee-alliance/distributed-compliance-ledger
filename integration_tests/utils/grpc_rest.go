@@ -24,11 +24,10 @@ import (
 
 	clienttx "github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
-	"github.com/cosmos/cosmos-sdk/simapp"
-	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/tx"
+	sdkparams "github.com/cosmos/cosmos-sdk/x/params"
 
 	//nolint:staticcheck
 	"github.com/golang/protobuf/proto"
@@ -44,7 +43,7 @@ import (
 
 type TestSuite struct {
 	T              *testing.T
-	EncodingConfig simappparams.EncodingConfig
+	EncodingConfig sdkparams.EncodingConfig
 	ChainID        string
 	Kr             keyring.Keyring
 	Txf            clienttx.Factory
@@ -74,7 +73,7 @@ func SetupTest(t *testing.T, chainID string, rest bool) (suite TestSuite) {
 
 	kr, _ := keyring.New(sdk.KeyringServiceName(), keyring.BackendTest, homeDir, inBuf)
 
-	encConfig := simapp.MakeTestEncodingConfig()
+	encConfig := sdkparams.MakeTestEncodingConfig()
 	dclauthtypes.RegisterInterfaces(encConfig.InterfaceRegistry)
 
 	txCfg := encConfig.TxConfig
