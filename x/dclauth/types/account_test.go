@@ -20,6 +20,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	types "github.com/cosmos/cosmos-sdk/x/auth/types"
+	commontypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/common/types"
 )
 
 func TestAccountRole_Validate(t *testing.T) {
@@ -64,11 +65,12 @@ func TestAccountRole_Validate(t *testing.T) {
 
 func TestNewAccount(t *testing.T) {
 	type args struct {
-		ba        *types.BaseAccount
-		roles     AccountRoles
-		approvals []*Grant
-		rejects   []*Grant
-		vendorID  int32
+		ba         *types.BaseAccount
+		roles      AccountRoles
+		approvals  []*Grant
+		rejects    []*Grant
+		vendorID   int32
+		productIDs []*commontypes.Uint16Range
 	}
 	tests := []struct {
 		name string
@@ -78,11 +80,12 @@ func TestNewAccount(t *testing.T) {
 		{
 			name: "valid account all roles",
 			args: args{
-				ba:        &types.BaseAccount{},
-				roles:     []AccountRole{Vendor, CertificationCenter, Trustee, NodeAdmin},
-				approvals: []*Grant{},
-				rejects:   []*Grant{},
-				vendorID:  1,
+				ba:         &types.BaseAccount{},
+				roles:      []AccountRole{Vendor, CertificationCenter, Trustee, NodeAdmin},
+				approvals:  []*Grant{},
+				rejects:    []*Grant{},
+				vendorID:   1,
+				productIDs: []*commontypes.Uint16Range{},
 			},
 			want: &Account{
 				BaseAccount: &types.BaseAccount{},
@@ -90,16 +93,18 @@ func TestNewAccount(t *testing.T) {
 				Approvals:   []*Grant{},
 				Rejects:     []*Grant{},
 				VendorID:    1,
+				ProductIDs:  []*commontypes.Uint16Range{},
 			},
 		},
 		{
 			name: "invalid account vendor role",
 			args: args{
-				ba:        &types.BaseAccount{},
-				roles:     []AccountRole{Vendor},
-				approvals: []*Grant{},
-				rejects:   []*Grant{},
-				vendorID:  2,
+				ba:         &types.BaseAccount{},
+				roles:      []AccountRole{Vendor},
+				approvals:  []*Grant{},
+				rejects:    []*Grant{},
+				vendorID:   2,
+				productIDs: []*commontypes.Uint16Range{},
 			},
 			want: &Account{
 				BaseAccount: &types.BaseAccount{},
@@ -107,13 +112,14 @@ func TestNewAccount(t *testing.T) {
 				Approvals:   []*Grant{},
 				Rejects:     []*Grant{},
 				VendorID:    2,
+				ProductIDs:  []*commontypes.Uint16Range{},
 			},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewAccount(tt.args.ba, tt.args.roles, tt.args.approvals, tt.args.rejects, tt.args.vendorID); !reflect.DeepEqual(got, tt.want) {
+			if got := NewAccount(tt.args.ba, tt.args.roles, tt.args.approvals, tt.args.rejects, tt.args.vendorID, []*commontypes.Uint16Range{}); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewAccount() = %v, want %v", got, tt.want)
 			}
 		})
@@ -342,6 +348,110 @@ func TestAccount_HasRole(t *testing.T) {
 			}
 			if got := acc.HasRole(tt.args.targetRole); got != tt.want {
 				t.Errorf("Account.HasRole() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestAccount_HasRightsToChange(t *testing.T) {
+	type fields struct {
+		BaseAccount *types.BaseAccount
+		Roles       []AccountRole
+		Approvals   []*Grant
+		VendorID    int32
+		ProductIDs  []*commontypes.Uint16Range
+	}
+	type args struct {
+		pid int32
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   bool
+	}{
+		{
+			name: "Account with associated ProductIDs: [1-100], wants to modify product with pid=1",
+			fields: fields{
+				BaseAccount: &types.BaseAccount{},
+				Roles:       []AccountRole{Vendor, Trustee},
+				Approvals:   []*Grant{},
+				VendorID:    1,
+				ProductIDs:  []*commontypes.Uint16Range{{Min: 1, Max: 100}},
+			},
+			args: args{
+				pid: 1,
+			},
+			want: true,
+		},
+		{
+			name: "Account with associated ProductIDs: [1-100,200-300], wants to modify product with pid=300",
+			fields: fields{
+				BaseAccount: &types.BaseAccount{},
+				Roles:       []AccountRole{Vendor, Trustee, NodeAdmin},
+				Approvals:   []*Grant{},
+				VendorID:    1,
+				ProductIDs:  []*commontypes.Uint16Range{{Min: 1, Max: 100}, {Min: 200, Max: 300}},
+			},
+			args: args{
+				pid: 300,
+			},
+			want: true,
+		},
+		{
+			name: "Account with associated ProductIDs: [100-100], wants to modify product with pid=100",
+			fields: fields{
+				BaseAccount: &types.BaseAccount{},
+				Roles:       []AccountRole{Vendor, Trustee, NodeAdmin},
+				Approvals:   []*Grant{},
+				VendorID:    1,
+				ProductIDs:  []*commontypes.Uint16Range{{Min: 100, Max: 100}},
+			},
+			args: args{
+				pid: 100,
+			},
+			want: true,
+		},
+		{
+			name: "Account without associated ProductIDs: [1-100], wants to modify product with pid=101",
+			fields: fields{
+				BaseAccount: &types.BaseAccount{},
+				Roles:       []AccountRole{Vendor, Trustee, NodeAdmin},
+				Approvals:   []*Grant{},
+				VendorID:    1,
+				ProductIDs:  []*commontypes.Uint16Range{{Min: 1, Max: 100}},
+			},
+			args: args{
+				pid: 101,
+			},
+			want: false,
+		},
+		{
+			name: "Account without associated ProductIDs: [100-100], wants to modify product with pid=99",
+			fields: fields{
+				BaseAccount: &types.BaseAccount{},
+				Roles:       []AccountRole{Vendor, Trustee, NodeAdmin},
+				Approvals:   []*Grant{},
+				VendorID:    1,
+				ProductIDs:  []*commontypes.Uint16Range{{Min: 100, Max: 100}},
+			},
+			args: args{
+				pid: 99,
+			},
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			acc := Account{
+				BaseAccount: tt.fields.BaseAccount,
+				Roles:       tt.fields.Roles,
+				Approvals:   tt.fields.Approvals,
+				VendorID:    tt.fields.VendorID,
+				ProductIDs:  tt.fields.ProductIDs,
+			}
+			if got := acc.HasRightsToChange(tt.args.pid); got != tt.want {
+				t.Errorf("Account.HasRightsToChange() = %v, want %v", got, tt.want)
 			}
 		})
 	}

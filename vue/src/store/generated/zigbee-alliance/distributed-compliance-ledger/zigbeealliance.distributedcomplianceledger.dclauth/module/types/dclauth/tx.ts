@@ -2,6 +2,7 @@
 import { Reader, util, configure, Writer } from 'protobufjs/minimal'
 import * as Long from 'long'
 import { Any } from '../google/protobuf/any'
+import { Uint16Range } from '../common/uint16_range'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.dclauth'
 
@@ -13,6 +14,7 @@ export interface MsgProposeAddAccount {
   vendorID: number
   info: string
   time: number
+  productIDs: Uint16Range[]
 }
 
 export interface MsgProposeAddAccountResponse {}
@@ -78,6 +80,9 @@ export const MsgProposeAddAccount = {
     if (message.time !== 0) {
       writer.uint32(56).int64(message.time)
     }
+    for (const v of message.productIDs) {
+      Uint16Range.encode(v!, writer.uint32(66).fork()).ldelim()
+    }
     return writer
   },
 
@@ -86,6 +91,7 @@ export const MsgProposeAddAccount = {
     let end = length === undefined ? reader.len : reader.pos + length
     const message = { ...baseMsgProposeAddAccount } as MsgProposeAddAccount
     message.roles = []
+    message.productIDs = []
     while (reader.pos < end) {
       const tag = reader.uint32()
       switch (tag >>> 3) {
@@ -110,6 +116,9 @@ export const MsgProposeAddAccount = {
         case 7:
           message.time = longToNumber(reader.int64() as Long)
           break
+        case 8:
+          message.productIDs.push(Uint16Range.decode(reader, reader.uint32()))
+          break
         default:
           reader.skipType(tag & 7)
           break
@@ -121,6 +130,7 @@ export const MsgProposeAddAccount = {
   fromJSON(object: any): MsgProposeAddAccount {
     const message = { ...baseMsgProposeAddAccount } as MsgProposeAddAccount
     message.roles = []
+    message.productIDs = []
     if (object.signer !== undefined && object.signer !== null) {
       message.signer = String(object.signer)
     } else {
@@ -156,6 +166,11 @@ export const MsgProposeAddAccount = {
     } else {
       message.time = 0
     }
+    if (object.productIDs !== undefined && object.productIDs !== null) {
+      for (const e of object.productIDs) {
+        message.productIDs.push(Uint16Range.fromJSON(e))
+      }
+    }
     return message
   },
 
@@ -172,12 +187,18 @@ export const MsgProposeAddAccount = {
     message.vendorID !== undefined && (obj.vendorID = message.vendorID)
     message.info !== undefined && (obj.info = message.info)
     message.time !== undefined && (obj.time = message.time)
+    if (message.productIDs) {
+      obj.productIDs = message.productIDs.map((e) => (e ? Uint16Range.toJSON(e) : undefined))
+    } else {
+      obj.productIDs = []
+    }
     return obj
   },
 
   fromPartial(object: DeepPartial<MsgProposeAddAccount>): MsgProposeAddAccount {
     const message = { ...baseMsgProposeAddAccount } as MsgProposeAddAccount
     message.roles = []
+    message.productIDs = []
     if (object.signer !== undefined && object.signer !== null) {
       message.signer = object.signer
     } else {
@@ -212,6 +233,11 @@ export const MsgProposeAddAccount = {
       message.time = object.time
     } else {
       message.time = 0
+    }
+    if (object.productIDs !== undefined && object.productIDs !== null) {
+      for (const e of object.productIDs) {
+        message.productIDs.push(Uint16Range.fromPartial(e))
+      }
     }
     return message
   }

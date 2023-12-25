@@ -5,6 +5,7 @@ option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/
 
 import "gogoproto/gogo.proto";
 import "cosmos/auth/v1beta1/auth.proto";
+import "common/uint16_range.proto";
 import "dclauth/grant.proto";
 
 
@@ -21,5 +22,6 @@ message Account {
   repeated Grant approvals = 3;
   int32 vendorID = 4;
   repeated Grant rejects = 5;
+  repeated common.Uint16Range productIDs = 6;
 }
 

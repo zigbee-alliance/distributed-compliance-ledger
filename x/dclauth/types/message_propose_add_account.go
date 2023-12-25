@@ -2,6 +2,7 @@ package types
 
 import (
 	"bytes"
+	"fmt"
 	"time"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -9,6 +10,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common/types"
 )
 
 const TypeMsgProposeAddAccount = "propose_add_account"
@@ -22,6 +24,7 @@ func NewMsgProposeAddAccount(
 	roles AccountRoles,
 	// roles []string,
 	vendorID int32,
+	productIDs []*types.Uint16Range,
 	info string,
 ) (*MsgProposeAddAccount, error) {
 	var pkAny *codectypes.Any
@@ -33,13 +36,14 @@ func NewMsgProposeAddAccount(
 	}
 
 	return &MsgProposeAddAccount{
-		Signer:   signer.String(),
-		Address:  address.String(),
-		PubKey:   pkAny,
-		Roles:    roles,
-		VendorID: vendorID,
-		Info:     info,
-		Time:     time.Now().Unix(),
+		Signer:     signer.String(),
+		Address:    address.String(),
+		PubKey:     pkAny,
+		Roles:      roles,
+		VendorID:   vendorID,
+		ProductIDs: productIDs,
+		Info:       info,
+		Time:       time.Now().Unix(),
 	}, nil
 }
 
@@ -59,6 +63,21 @@ func (msg *MsgProposeAddAccount) HasRole(targetRole AccountRole) bool {
 	}
 
 	return false
+}
+
+func (msg *MsgProposeAddAccount) HasValidProductIDs() error {
+	var lastMax int32
+	for _, productRange := range msg.ProductIDs {
+		if productRange.Min > productRange.Max {
+			return fmt.Errorf("PID max value must be greater than or equal to PID min value: PID min=%d, PID max=%d", productRange.Min, productRange.Max)
+		}
+		if productRange.Max <= lastMax || productRange.Min <= lastMax {
+			return fmt.Errorf("range items should not overlap")
+		}
+		lastMax = productRange.Max
+	}
+
+	return nil
 }
 
 func (msg *MsgProposeAddAccount) GetSigners() []sdk.AccAddress {
@@ -121,6 +140,11 @@ func (msg *MsgProposeAddAccount) ValidateBasic() error {
 	// can not create Vendor with vid=0 (reserved)
 	if msg.HasRole(Vendor) && msg.VendorID <= 0 {
 		return ErrMissingVendorIDForVendorAccount()
+	}
+
+	err = msg.HasValidProductIDs()
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Invalid ProductID ranges are provided: %s", err)
 	}
 
 	err = validator.Validate(msg)

@@ -97,3 +97,28 @@ func TestDeleteModelVersionCertifiedREST(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, true)
 	model.DeleteModelVersionCertified(&suite)
 }
+
+func TestAddModelByVendorProductIdsREST(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	model.AddModelByVendorWithProductIds(&suite)
+}
+
+func TestUpdateByVendorWithProductIdsREST(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	model.UpdateByVendorWithProductIds(&suite)
+}
+
+func TestAddModelByVendorWithNonAssociatedProductIdsREST(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	model.AddModelByVendorWithNonAssociatedProductIds(&suite)
+}
+
+func TestUpdateModelByVendorWithNonAssociatedProductIdsREST(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	model.UpdateModelByVendorWithNonAssociatedProductIds(&suite)
+}
+
+func TestDeleteModelByVendorWithNonAssociatedProductIdsREST(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	model.DeleteModelByVendorWithNonAssociatedProductIds(&suite)
+}

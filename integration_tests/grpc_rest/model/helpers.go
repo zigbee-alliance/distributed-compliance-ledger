@@ -25,6 +25,7 @@ import (
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	testDclauth "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/grpc_rest/dclauth"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
+	commontypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/common/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	modeltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
@@ -363,6 +364,85 @@ func GetVendorModelsByHexVid(
 	return &res, nil
 }
 
+func AddModelByVendorWithProductIds(suite *utils.TestSuite) {
+	// Alice and Bob are predefined Trustees
+	aliceName := testconstants.AliceAccount
+	aliceKeyInfo, err := suite.Kr.Key(aliceName)
+	require.NoError(suite.T, err)
+	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	bobName := testconstants.BobAccount
+	bobKeyInfo, err := suite.Kr.Key(bobName)
+	require.NoError(suite.T, err)
+	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	// register new account with Vendor role
+	vendorAccountName := utils.RandString()
+	vid := int32(tmrand.Uint16())
+	pid := int32(100)
+	vendorAccount := testDclauth.CreateVendorAccount(
+		suite,
+		vendorAccountName,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		vid,
+		testconstants.ProductIDs100,
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+		testconstants.Info,
+	)
+
+	createModelMsg := NewMsgCreateModel(vid, pid, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelMsg}, vendorAccountName, vendorAccount)
+	require.NoError(suite.T, err)
+}
+
+func UpdateByVendorWithProductIds(suite *utils.TestSuite) {
+	// Alice and Bob are predefined Trustees
+	aliceName := testconstants.AliceAccount
+	aliceKeyInfo, err := suite.Kr.Key(aliceName)
+	require.NoError(suite.T, err)
+	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	bobName := testconstants.BobAccount
+	bobKeyInfo, err := suite.Kr.Key(bobName)
+	require.NoError(suite.T, err)
+	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	// register new account with Vendor role
+	ownerName := utils.RandString()
+	vid := int32(tmrand.Uint16())
+	pid := int32(200)
+	owner := testDclauth.CreateVendorAccount(
+		suite,
+		ownerName,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		vid,
+		testconstants.ProductIDs200,
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+		testconstants.Info,
+	)
+
+	createModelMsg := NewMsgCreateModel(vid, pid, owner.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelMsg}, ownerName, owner)
+	require.NoError(suite.T, err)
+
+	updateModelMsg := NewMsgUpdateModel(vid, pid, owner.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{updateModelMsg}, ownerName, owner)
+	require.NoError(suite.T, err)
+
+	model, _ := GetModel(suite, vid, pid)
+	require.Equal(suite.T, int32(2), model.LsfRevision)
+}
+
 func DeleteModelWithAssociatedModelVersions(suite *utils.TestSuite) {
 	// Alice and Bob are predefined Trustees
 	aliceName := testconstants.AliceAccount
@@ -379,12 +459,14 @@ func DeleteModelWithAssociatedModelVersions(suite *utils.TestSuite) {
 
 	// Register new Vendor account
 	vid := int32(tmrand.Uint16())
+	pid := int32(tmrand.Uint16())
 	vendorName := utils.RandString()
 	vendorAccount := testDclauth.CreateVendorAccount(
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
 		vid,
+		[]*commontypes.Uint16Range{{Min: pid, Max: pid}},
 		aliceName,
 		aliceAccount,
 		bobName,
@@ -394,7 +476,6 @@ func DeleteModelWithAssociatedModelVersions(suite *utils.TestSuite) {
 	require.NotNil(suite.T, vendorAccount)
 
 	// New vendor adds a model
-	pid := int32(tmrand.Uint16())
 	createModelMsg := NewMsgCreateModel(vid, pid, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelMsg}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
@@ -449,6 +530,7 @@ func DeleteModelWithAssociatedModelVersionsCertified(suite *utils.TestSuite) {
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
 		vid,
+		testconstants.ProductIDsEmpty,
 		aliceName,
 		aliceAccount,
 		bobName,
@@ -460,11 +542,13 @@ func DeleteModelWithAssociatedModelVersionsCertified(suite *utils.TestSuite) {
 	// Register new Certification center
 	ccvid := int32(tmrand.Uint16())
 	ccName := utils.RandString()
+	pid := int32(tmrand.Uint16())
 	ccAccount := testDclauth.CreateAccount(
 		suite,
 		ccName,
 		dclauthtypes.AccountRoles{dclauthtypes.CertificationCenter},
 		ccvid,
+		[]*commontypes.Uint16Range{{Min: pid, Max: pid}},
 		aliceName,
 		aliceAccount,
 		bobName,
@@ -474,7 +558,6 @@ func DeleteModelWithAssociatedModelVersionsCertified(suite *utils.TestSuite) {
 	require.NotNil(suite.T, vendorAccount)
 
 	// New vendor adds a model
-	pid := int32(tmrand.Uint16())
 	createModelMsg := NewMsgCreateModel(vid, pid, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelMsg}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
@@ -529,11 +612,13 @@ func DeleteModelVersion(suite *utils.TestSuite) {
 	// Register new Vendor account
 	vid := int32(tmrand.Uint16())
 	vendorName := utils.RandString()
+	pid := int32(tmrand.Uint16())
 	vendorAccount := testDclauth.CreateVendorAccount(
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
 		vid,
+		[]*commontypes.Uint16Range{{Min: pid, Max: pid}},
 		aliceName,
 		aliceAccount,
 		bobName,
@@ -543,7 +628,6 @@ func DeleteModelVersion(suite *utils.TestSuite) {
 	require.NotNil(suite.T, vendorAccount)
 
 	// New vendor adds a model
-	pid := int32(tmrand.Uint16())
 	createModelMsg := NewMsgCreateModel(vid, pid, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelMsg}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
@@ -578,12 +662,14 @@ func DeleteModelVersionDifferentVid(suite *utils.TestSuite) {
 
 	// Register new Vendor account
 	vid := int32(tmrand.Uint16())
+	pid := int32(tmrand.Uint16())
 	vendorName := utils.RandString()
 	vendorAccount := testDclauth.CreateVendorAccount(
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
 		vid,
+		[]*commontypes.Uint16Range{{Min: pid, Max: pid}},
 		aliceName,
 		aliceAccount,
 		bobName,
@@ -593,7 +679,6 @@ func DeleteModelVersionDifferentVid(suite *utils.TestSuite) {
 	require.NotNil(suite.T, vendorAccount)
 
 	// vendor adds a model
-	pid := int32(tmrand.Uint16())
 	createModelMsg := NewMsgCreateModel(vid, pid, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelMsg}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
@@ -610,6 +695,7 @@ func DeleteModelVersionDifferentVid(suite *utils.TestSuite) {
 		vendor2Name,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
 		vid2,
+		testconstants.ProductIDsEmpty,
 		aliceName,
 		aliceAccount,
 		bobName,
@@ -652,6 +738,7 @@ func DeleteModelVersionDoesNotExist(suite *utils.TestSuite) {
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
 		vid,
+		testconstants.ProductIDsEmpty,
 		aliceName,
 		aliceAccount,
 		bobName,
@@ -688,6 +775,7 @@ func DeleteModelVersionNotByCreator(suite *utils.TestSuite) {
 		vendor1Name,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
 		vid1,
+		testconstants.ProductIDsEmpty,
 		aliceName,
 		aliceAccount,
 		bobName,
@@ -704,6 +792,7 @@ func DeleteModelVersionNotByCreator(suite *utils.TestSuite) {
 		vendor2Name,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
 		vid2,
+		testconstants.ProductIDsEmpty,
 		aliceName,
 		aliceAccount,
 		bobName,
@@ -756,6 +845,7 @@ func DeleteModelVersionCertified(suite *utils.TestSuite) {
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
 		vid,
+		testconstants.ProductIDsEmpty,
 		aliceName,
 		aliceAccount,
 		bobName,
@@ -780,6 +870,7 @@ func DeleteModelVersionCertified(suite *utils.TestSuite) {
 		certCenterName,
 		dclauthtypes.AccountRoles{dclauthtypes.CertificationCenter},
 		vid,
+		testconstants.ProductIDsEmpty,
 		aliceName,
 		aliceAccount,
 		bobName,
@@ -834,12 +925,15 @@ func Demo(suite *utils.TestSuite) {
 
 	// Register new Vendor account
 	vid := int32(tmrand.Uint16())
+	var pid1 int32 = 1
+	var pid2 int32 = 2
 	vendorName := utils.RandString()
 	vendorAccount := testDclauth.CreateVendorAccount(
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
 		vid,
+		[]*commontypes.Uint16Range{{Min: pid1, Max: pid2}},
 		aliceName,
 		aliceAccount,
 		bobName,
@@ -853,7 +947,6 @@ func Demo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// New vendor adds first model
-	pid1 := int32(tmrand.Uint16())
 	createFirstModelMsg := NewMsgCreateModel(vid, pid1, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createFirstModelMsg}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
@@ -867,7 +960,6 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, createFirstModelMsg.ProductLabel, receivedModel.ProductLabel)
 
 	// Add second model
-	pid2 := int32(tmrand.Uint16())
 	createSecondModelMsg := NewMsgCreateModel(vid, pid2, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createSecondModelMsg}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
@@ -943,6 +1035,7 @@ func AddModelByNonVendor(suite *utils.TestSuite) {
 		nonVendorAccountName,
 		dclauthtypes.AccountRoles{dclauthtypes.CertificationCenter},
 		vid,
+		testconstants.ProductIDsEmpty,
 		aliceName,
 		aliceAccount,
 		bobName,
@@ -956,6 +1049,150 @@ func AddModelByNonVendor(suite *utils.TestSuite) {
 	pid := int32(tmrand.Uint16())
 	createModelMsg := NewMsgCreateModel(vid, pid, nonVendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelMsg}, nonVendorAccountName, nonVendorAccount)
+	require.Error(suite.T, err)
+	require.True(suite.T, sdkerrors.ErrUnauthorized.Is(err))
+}
+
+func AddModelByVendorWithNonAssociatedProductIds(suite *utils.TestSuite) {
+	// Alice and Bob are predefined Trustees
+	aliceName := testconstants.AliceAccount
+	aliceKeyInfo, err := suite.Kr.Key(aliceName)
+	require.NoError(suite.T, err)
+	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	bobName := testconstants.BobAccount
+	bobKeyInfo, err := suite.Kr.Key(bobName)
+	require.NoError(suite.T, err)
+	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	// register new account with Vendor role
+	vendorAccountName := utils.RandString()
+	vid := int32(tmrand.Uint16())
+	pid := int32(101)
+	vendorAccount := testDclauth.CreateVendorAccount(
+		suite,
+		vendorAccountName,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		vid,
+		testconstants.ProductIDs100,
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+		testconstants.Info,
+	)
+
+	// try to add createModelMsg
+	createModelMsg := NewMsgCreateModel(vid, pid, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelMsg}, vendorAccountName, vendorAccount)
+	require.Error(suite.T, err)
+	require.True(suite.T, sdkerrors.ErrUnauthorized.Is(err))
+}
+
+func UpdateModelByVendorWithNonAssociatedProductIds(suite *utils.TestSuite) {
+	// Alice and Bob are predefined Trustees
+	aliceName := testconstants.AliceAccount
+	aliceKeyInfo, err := suite.Kr.Key(aliceName)
+	require.NoError(suite.T, err)
+	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	bobName := testconstants.BobAccount
+	bobKeyInfo, err := suite.Kr.Key(bobName)
+	require.NoError(suite.T, err)
+	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	// register new account with Vendor role
+	ownerName := utils.RandString()
+	pid := int32(200)
+	owner := testDclauth.CreateVendorAccount(
+		suite,
+		ownerName,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		int32(tmrand.Uint16()),
+		testconstants.ProductIDs200,
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+		testconstants.Info,
+	)
+	vendorName := utils.RandString()
+	vendor := testDclauth.CreateVendorAccount(
+		suite,
+		vendorName,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		int32(tmrand.Uint16()),
+		testconstants.ProductIDs100,
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+		testconstants.Info,
+	)
+
+	createModelMsg := NewMsgCreateModel(owner.VendorID, pid, owner.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelMsg}, ownerName, owner)
+	require.NoError(suite.T, err)
+
+	updateModelMsg := NewMsgUpdateModel(vendor.VendorID, pid, vendor.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{updateModelMsg}, vendorName, vendor)
+	require.Error(suite.T, err)
+	require.True(suite.T, sdkerrors.ErrUnauthorized.Is(err))
+}
+
+func DeleteModelByVendorWithNonAssociatedProductIds(suite *utils.TestSuite) {
+	// Alice and Bob are predefined Trustees
+	aliceName := testconstants.AliceAccount
+	aliceKeyInfo, err := suite.Kr.Key(aliceName)
+	require.NoError(suite.T, err)
+	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	bobName := testconstants.BobAccount
+	bobKeyInfo, err := suite.Kr.Key(bobName)
+	require.NoError(suite.T, err)
+	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	// register new account with Vendor role
+	ownerName := utils.RandString()
+	pid := int32(200)
+	owner := testDclauth.CreateVendorAccount(
+		suite,
+		ownerName,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		int32(tmrand.Uint16()),
+		testconstants.ProductIDs200,
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+		testconstants.Info,
+	)
+	vendorName := utils.RandString()
+	vendor := testDclauth.CreateVendorAccount(
+		suite,
+		vendorName,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		int32(tmrand.Uint16()),
+		testconstants.ProductIDs100,
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+		testconstants.Info,
+	)
+
+	createModelMsg := NewMsgCreateModel(owner.VendorID, pid, owner.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelMsg}, ownerName, owner)
+	require.NoError(suite.T, err)
+
+	deleteModel := NewMsgDeleteModel(vendor.VendorID, pid, vendor.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{deleteModel}, vendorName, vendor)
 	require.Error(suite.T, err)
 	require.True(suite.T, sdkerrors.ErrUnauthorized.Is(err))
 }
@@ -982,6 +1219,7 @@ func AddModelByDifferentVendor(suite *utils.TestSuite) {
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
 		vid+1,
+		testconstants.ProductIDsEmpty,
 		aliceName,
 		aliceAccount,
 		bobName,
@@ -1019,6 +1257,7 @@ func AddModelTwice(suite *utils.TestSuite) {
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
 		vid,
+		testconstants.ProductIDsEmpty,
 		aliceName,
 		aliceAccount,
 		bobName,
@@ -1090,6 +1329,7 @@ func DemoWithHexVidAndPid(suite *utils.TestSuite) {
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
 		vid,
+		testconstants.ProductIDsEmpty,
 		aliceName,
 		aliceAccount,
 		bobName,

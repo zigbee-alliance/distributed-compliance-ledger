@@ -761,6 +761,106 @@ check_response "$result" "\[\]"
 
 test_divider
 
+# Check creating Vendor Account with valid pid ranges: success-case
+pid_ranges="1-100,101-200"
+
+test_divider
+echo "Check creating Vendor Account with valid pid ranges: success-case"
+random_string user
+echo "$user generates keys"
+cmd="(echo $passphrase; echo $passphrase) | dcld keys add $user"
+result="$(bash -c "$cmd")"
+
+test_divider
+
+echo "Get key info for $user"
+result=$(echo $passphrase | dcld keys show $user)
+check_response "$result" "\"name\": \"$user\""
+
+test_divider
+
+user_address=$(echo $passphrase | dcld keys show $user -a)
+user_pubkey=$(echo $passphrase | dcld keys show $user -p)
+
+test_divider
+
+echo "Jack proposes account for $user"
+result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$user_address" --pubkey="$user_pubkey" --roles="Vendor" --vid=$vid --pid_ranges=$pid_ranges --from jack --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Get all active accounts. $user account in the list because has enough approvals"
+result=$(dcld query auth all-accounts)
+check_response "$result" "\"address\": \"$user_address\""
+
+test_divider
+
+echo "Get an account for $user"
+result=$(dcld query auth account --address=$user_address)
+check_response "$result" "\"address\": \"$user_address\""
+check_response_and_report "$result"  $jack_address "json"
+check_response_and_report "$result"  '"info": "Jack is proposing this account"' "json"
+
+test_divider
+
+echo "Get an proposed account for $user is not found"
+result=$(dcld query auth proposed-account --address=$user_address)
+check_response "$result" "Not Found"
+
+test_divider
+
+echo "Get all proposed accounts. $user account is not in the list"
+result=$(dcld query auth all-proposed-accounts)
+check_response "$result" "\[\]"
+
+test_divider
+
+# Check creating Vendor Account with invalid pid ranges: negative-case
+invalid_pid_ranges="100-101,1-200"
+
+test_divider
+echo "Check creating Vendor Account with invalid pid ranges: negative-case"
+random_string user
+echo "$user generates keys"
+cmd="(echo $passphrase; echo $passphrase) | dcld keys add $user"
+result="$(bash -c "$cmd")"
+
+test_divider
+
+echo "Get key info for $user"
+result=$(echo $passphrase | dcld keys show $user)
+check_response "$result" "\"name\": \"$user\""
+
+test_divider
+
+user_address=$(echo $passphrase | dcld keys show $user -a)
+user_pubkey=$(echo $passphrase | dcld keys show $user -p)
+
+test_divider
+
+echo "Jack proposes account for $user"
+result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$user_address" --pubkey="$user_pubkey" --roles="Vendor" --vid=$vid --pid_ranges=$invalid_pid_ranges --from jack --yes 2>&1) || true
+check_response "$result" "invalid PID Range is provided" raw
+
+echo "Get an proposed account for $user is not found"
+result=$(dcld query auth proposed-account --address=$user_address)
+check_response "$result" "Not Found"
+
+test_divider
+
+echo "Get all proposed accounts. $user account is not in the list"
+result=$(dcld query auth all-proposed-accounts)
+check_response "$result" "\[\]"
+
+test_divider
+
+echo "Get all active accounts. $user account is not in the list because has not enough approvals received"
+result=$(dcld query auth all-accounts)
+response_does_not_contain "$result" "\"address\": \"$user_address\""
+
+test_divider
+
 random_string new_trustee1
 echo "$new_trustee1 generates keys"
 cmd="(echo $passphrase; echo $passphrase) | dcld keys add $new_trustee1"
