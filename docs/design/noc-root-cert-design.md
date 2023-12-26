@@ -46,7 +46,7 @@ This transaction revokes a NOC Root Certificate owned by the Vendor.
 
 ## Query
 
-### GET_NOC_X509_ROOT_CERTS
+### GET_NOC_X509_ROOT_CERTS_BY_VID
 
 Retrieve NOC Root Certificates associated with a specific VID. 
 Use `GET_ALL_X509_ROOT_CERTS` to list all NOC certificates by Subject and Subject Key Identifier.
@@ -55,9 +55,21 @@ Use `GET_ALL_X509_ROOT_CERTS` to list all NOC certificates by Subject and Subjec
 - Parameters:
   - vid: `uint16` - Vendor ID (positive non-zero)
 - CLI Command:
-  - `dcld query pki get_noc_x509_root_certs`
+  - `dcld query pki get_noc_x509_root_certs --vid=<uint16>`
 - REST API:
   - GET `/dcl/pki/NocRootCertificates/{vid}`
+
+### GET_ALL_NOC_X509_ROOT_CERTS
+
+Retrieve a list of all of NOC Root Certificates
+
+- Who can send: Any account
+- Parameters:
+  - Common pagination parameters
+- CLI Command:
+  - `dcld query pki get_all_noc_x509_root_certs
+- REST API:
+  - GET `/dcl/pki/NocRootCertificates`
 
 ## Question
 - Should the vendor add a revocation distribution point for NOC certificates?
