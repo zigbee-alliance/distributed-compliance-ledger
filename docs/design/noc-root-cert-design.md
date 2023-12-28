@@ -31,8 +31,8 @@ This transaction adds a NOC Root Certificate owned by the Vendor.
 - CLI Command:
   - `dcld tx pki add-noc-x509-root-cert --certificate=<string-or-path> --from=<account>`
 
-### 2. REVOKE_NOC_X509_ROOT_CERTIFICATE
-This transaction revokes a NOC Root Certificate owned by the Vendor.
+### 2. REMOVE_NOC_X509_ROOT_CERTIFICATE
+This transaction removes a NOC Root Certificate owned by the Vendor.
 
 - Who can send: Vendor account
   - VID-scoped NOC Root Certificate: The `vid` field in the certificate's subject must be equal to the Vendor account's VID.
@@ -46,10 +46,11 @@ This transaction revokes a NOC Root Certificate owned by the Vendor.
 
 ## Query
 
+To retrieve NOC certificates by Subject and Subject Key Identifier, use the [GET_ALL_X509_CERTS](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/transactions.md#get_x509_cert) or [GET_ALL_X509_ROOT_CERTS](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/transactions.md#get_all_x509_root_certs) query.
+
 ### GET_NOC_X509_ROOT_CERTS_BY_VID
 
 Retrieve NOC Root Certificates associated with a specific VID. 
-Use `GET_ALL_X509_ROOT_CERTS` to list all NOC certificates by Subject and Subject Key Identifier.
 
 - Who can send: Any account
 - Parameters:
@@ -71,5 +72,10 @@ Retrieve a list of all of NOC Root Certificates
 - REST API:
   - GET `/dcl/pki/NocRootCertificates`
 
-## Question
+## Questions
 - Should the vendor add a revocation distribution point for NOC certificates?
+- Should the following queries return NOC Certificate?
+  - [GET_ALL_SUBJECT_X509_CERTS](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/transactions.md#get_all_subject_x509_certs)
+  - [GET_ALL_X509_ROOT_CERTS](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/transactions.md#get_all_x509_root_certs)
+  - [GET_ALL_X509_CERTS](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/transactions.md#get_x509_cert)
+- Should a revoked NOC certificate be stored in the revoked list, or should it be completely removed? Additionally, if a NOC root certificate is revoked, should it be saved in the existing revocation list or in a separate
