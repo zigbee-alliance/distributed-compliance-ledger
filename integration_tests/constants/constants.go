@@ -19,6 +19,7 @@ import (
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common/types"
 )
 
 func strToPubKey(pkStr string, cdc codec.Codec) cryptotypes.PubKey {
@@ -130,15 +131,19 @@ var (
 	UpgradePlanInfo         = "Some upgrade info"
 
 	//
-	Address1, _       = sdk.AccAddressFromBech32("cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf")
-	Address2, _       = sdk.AccAddressFromBech32("cosmos1nl4uaesk9gtu7su3n89lne6xpa6lq8gljn79rq")
-	Address3, _       = sdk.AccAddressFromBech32("cosmos12r9vsus5js32pvnayt33zhcd4y9wcqcly45gr9")
-	Address4, _       = sdk.AccAddressFromBech32("cosmos1vvwldfef3yuggm7ge9p34d6dvpz5s74nus6n7g")
-	VendorID1   int32 = 1000
-	VendorID2   int32 = 2000
-	VendorID3   int32 = 3000
-	VendorID4   int32 = 4000
-	PubKey1           = strToPubKey(
+	Address1, _           = sdk.AccAddressFromBech32("cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf")
+	Address2, _           = sdk.AccAddressFromBech32("cosmos1nl4uaesk9gtu7su3n89lne6xpa6lq8gljn79rq")
+	Address3, _           = sdk.AccAddressFromBech32("cosmos12r9vsus5js32pvnayt33zhcd4y9wcqcly45gr9")
+	Address4, _           = sdk.AccAddressFromBech32("cosmos1vvwldfef3yuggm7ge9p34d6dvpz5s74nus6n7g")
+	VendorID1       int32 = 1000
+	VendorID2       int32 = 2000
+	VendorID3       int32 = 3000
+	VendorID4       int32 = 4000
+	ProductIDsEmpty []*types.Uint16Range
+	ProductIDsFull  = append([]*types.Uint16Range{}, &types.Uint16Range{Min: 1, Max: 65535})
+	ProductIDs100   = append([]*types.Uint16Range{}, &types.Uint16Range{Min: 1, Max: 100})
+	ProductIDs200   = append([]*types.Uint16Range{}, &types.Uint16Range{Min: 1, Max: 100}, &types.Uint16Range{Min: 101, Max: 200})
+	PubKey1         = strToPubKey(
 		`{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"Aw1XXHQ8i6JVNKsFQ9eQArJVt2GXEO0EBFsQL6XJ5BxY"}`,
 		defEncConfig.Marshaler,
 	)

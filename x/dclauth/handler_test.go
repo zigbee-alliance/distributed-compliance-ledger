@@ -356,6 +356,7 @@ func TestHandler_ProposeAddAccount_ForExistingActiveAccount(t *testing.T) {
 		pubKey,
 		types.AccountRoles{types.Vendor},
 		testconstants.VendorID1,
+		testconstants.ProductIDsEmpty,
 		testconstants.Info,
 	)
 	require.NoError(t, err)
@@ -385,6 +386,7 @@ func TestHandler_ProposeAddAccount_ForExistingPendingAccount(t *testing.T) {
 		pubKey,
 		types.AccountRoles{types.Vendor},
 		testconstants.VendorID1,
+		testconstants.ProductIDsEmpty,
 		testconstants.Info,
 	)
 	require.NoError(t, err)
@@ -862,6 +864,7 @@ func TestHandler_ProposeAddAccount_VendorIDNotRequiredForNonVendorAccounts(t *te
 		pubKey,
 		types.AccountRoles{types.Trustee},
 		0,
+		testconstants.ProductIDsEmpty,
 		testconstants.Info,
 	)
 	require.NoError(t, err)
@@ -875,6 +878,7 @@ func TestHandler_ProposeAddAccount_VendorIDNotRequiredForNonVendorAccounts(t *te
 		pubKey,
 		types.AccountRoles{types.CertificationCenter},
 		0,
+		testconstants.ProductIDsEmpty,
 		testconstants.Info,
 	)
 	require.NoError(t, err)
@@ -893,6 +897,7 @@ func TestHandler_ProposeAddAccount_VendorIDRequiredForVendorAccounts(t *testing.
 		pubKey,
 		types.AccountRoles{types.Vendor},
 		0,
+		testconstants.ProductIDsEmpty,
 		testconstants.Info,
 	)
 	require.NoError(t, err)
@@ -1262,6 +1267,60 @@ func TestHandler_CreateVendorAccount_OneApprovalIsNeeded(t *testing.T) {
 		// ensure no pending account created
 		require.False(t, setup.Keeper.IsPendingAccountPresent(setup.Ctx, address))
 	}
+}
+
+func TestHandler_CreateVendorAccount_WithProductIds(t *testing.T) {
+	setup := Setup(t)
+
+	// store 4 trustees
+	trustee1 := storeTrustee(setup)
+	trustee2 := storeTrustee(setup)
+	trustee3 := storeTrustee(setup)
+	_ = storeTrustee(setup)
+
+	require.Equal(t, 3, setup.Keeper.AccountApprovalsCount(setup.Ctx, types.AccountApprovalsPercent))
+
+	// trustee1 propose account
+	_, pubKey, address := testdata.KeyTestPubAddr()
+	proposeAddAccount, _ := types.NewMsgProposeAddAccount(
+		trustee1,
+		address,
+		pubKey,
+		types.AccountRoles{types.VendorAdmin},
+		testconstants.VendorID1,
+		testconstants.ProductIDs200,
+		testconstants.Info,
+	)
+	_, err := setup.Handler(setup.Ctx, proposeAddAccount)
+	require.NoError(t, err)
+
+	// trustee2 approves account
+	approveAddAccount := types.NewMsgApproveAddAccount(trustee2, address, testconstants.Info2)
+	_, err = setup.Handler(setup.Ctx, approveAddAccount)
+	require.NoError(t, err)
+
+	// ensure no active account created
+	require.False(t, setup.Keeper.IsAccountPresent(setup.Ctx, address))
+
+	// trustee3 approves account
+	approveAddAccount = types.NewMsgApproveAddAccount(trustee3, address, testconstants.Info3)
+	_, err = setup.Handler(setup.Ctx, approveAddAccount)
+	require.NoError(t, err)
+
+	// active account must be created
+	account := setup.Keeper.GetAccount(setup.Ctx, address)
+	require.Equal(t, address, account.GetAddress())
+	require.Equal(t, pubKey, account.GetPubKey())
+
+	// check for info field and approvals
+	dclAccount, _ := setup.Keeper.GetAccountO(setup.Ctx, address)
+	require.Equal(t, proposeAddAccount.ProductIDs, dclAccount.ProductIDs)
+
+	// ensure pending account removed
+	require.False(t, setup.Keeper.IsPendingAccountPresent(setup.Ctx, address))
+
+	// check that account revoked from entity RevokedAccount
+	require.False(t, setup.Keeper.IsRevokedAccountPresent(setup.Ctx, address))
 }
 
 func TestHandler_CreateVendorAccount_TwoApprovalsAreNeeded(t *testing.T) {
@@ -1761,7 +1820,7 @@ func storeTrustee(setup TestSetup) sdk.AccAddress {
 func storeAccountWithVendorID(setup TestSetup, role types.AccountRole, vendorID int32) sdk.AccAddress {
 	_, pubKey, address := testdata.KeyTestPubAddr()
 	ba := authtypes.NewBaseAccount(address, pubKey, 0, 0)
-	account := types.NewAccount(ba, types.AccountRoles{role}, nil, nil, vendorID)
+	account := types.NewAccount(ba, types.AccountRoles{role}, nil, nil, vendorID, testconstants.ProductIDsEmpty)
 	account.AccountNumber = setup.Keeper.GetNextAccountNumber(setup.Ctx)
 	setup.Keeper.SetAccount(setup.Ctx, account)
 
@@ -1776,6 +1835,7 @@ func proposeAddAccount(setup TestSetup, signer sdk.AccAddress, roles types.Accou
 		pubKey,
 		roles,
 		testconstants.VendorID1,
+		testconstants.ProductIDsEmpty,
 		testconstants.Info,
 	)
 	// TODO check the err here

@@ -4,6 +4,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
@@ -30,7 +31,7 @@ func (k Keeper) SetAccount(ctx sdk.Context, account authtypes.AccountI) {
 		dclAcc.GetAddress(), dclAcc.GetPubKey(),
 		dclAcc.GetAccountNumber(), dclAcc.GetSequence(),
 	)
-	dclAccO := types.NewAccount(ba, dclAcc.GetRoles(), dclAcc.GetApprovals(), dclAcc.GetRejects(), dclAcc.GetVendorID())
+	dclAccO := types.NewAccount(ba, dclAcc.GetRoles(), dclAcc.GetApprovals(), dclAcc.GetRejects(), dclAcc.GetVendorID(), dclAcc.GetProductIDs())
 
 	k.SetAccountO(ctx, *dclAccO)
 }
@@ -141,6 +142,16 @@ func (k Keeper) HasVendorID(ctx sdk.Context, addr sdk.AccAddress, vid int32) boo
 	}
 
 	return false
+}
+
+func (k Keeper) HasRightsToChange(ctx sdk.Context, addr sdk.AccAddress, pid int32) bool {
+	account, found := k.GetAccountO(ctx, addr)
+
+	if !found {
+		return false
+	}
+
+	return account.HasRightsToChange(pid)
 }
 
 // Count account with assigned role.

@@ -33,12 +33,23 @@ test_divider
 echo "Create CertificationCenter account"
 create_new_account zb_account "CertificationCenter"
 
+((vid_with_pids=vid + 1))
+pid_ranges="1-100"
+vendor_account_with_pids=vendor_account_$vid_with_pids
+echo "Create Vendor account - $vid_with_pids with ProductIDs - $pid_ranges"
+create_new_vendor_account $vendor_account_with_pids $vid_with_pids $pid_ranges
+
 # Body
 
 # Ledger side errors
 
 echo "Add Model with VID: $vid PID: $pid: Not Vendor"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from=$certification_house --yes)
+check_response_and_report "$result" "\"code\": 4"
+echo "$result"
+
+echo "Add Model with VID: $vid_with_pids PID: 101 :Vendor with non-associated PID"
+result=$(echo "test1234" | dcld tx model add-model --vid=$vid_with_pids --pid=101 --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from=$vendor_account_with_pids --yes)
 check_response_and_report "$result" "\"code\": 4"
 echo "$result"
 

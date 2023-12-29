@@ -25,6 +25,7 @@ import (
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	modeltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
@@ -333,12 +334,13 @@ func ProposeAddAccount(
 	accKey cryptotypes.PubKey,
 	roles dclauthtypes.AccountRoles,
 	vendorID int32,
+	productIDs []*types.Uint16Range,
 	signerName string,
 	signerAccount *dclauthtypes.Account,
 	info string,
 ) (*sdk.TxResponse, error) {
 	msg, err := dclauthtypes.NewMsgProposeAddAccount(
-		suite.GetAddress(signerName), accAddr, accKey, roles, vendorID, info)
+		suite.GetAddress(signerName), accAddr, accKey, roles, vendorID, productIDs, info)
 	require.NoError(suite.T, err)
 
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
@@ -410,6 +412,7 @@ func CreateAccount(
 	accountName string,
 	roles dclauthtypes.AccountRoles,
 	vendorID int32,
+	productIDs []*types.Uint16Range,
 	proposerName string,
 	proposerAccount *dclauthtypes.Account,
 	approverName string,
@@ -424,6 +427,7 @@ func CreateAccount(
 		accountInfo.GetPubKey(),
 		roles,
 		vendorID,
+		productIDs,
 		proposerName,
 		proposerAccount,
 		info,
@@ -450,6 +454,7 @@ func CreateVendorAccount(
 	accountName string,
 	roles dclauthtypes.AccountRoles,
 	vendorID int32,
+	productIDs []*types.Uint16Range,
 	proposerName string,
 	proposerAccount *dclauthtypes.Account,
 	approverName string,
@@ -464,6 +469,7 @@ func CreateVendorAccount(
 		accountInfo.GetPubKey(),
 		roles,
 		vendorID,
+		productIDs,
 		proposerName,
 		proposerAccount,
 		info,
@@ -565,7 +571,7 @@ func AuthDemo(suite *utils.TestSuite) {
 	_, err = ProposeAddAccount(
 		suite,
 		testAccAddr, testAccPubKey,
-		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, 0,
+		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, 0, testconstants.ProductIDsEmpty,
 		jackName, jackAccount,
 		testconstants.Info,
 	)
@@ -718,7 +724,7 @@ func AuthDemo(suite *utils.TestSuite) {
 	_, err = ProposeAddAccount(
 		suite,
 		testAccAddr, testAccPubKey,
-		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, 0,
+		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, 0, testconstants.ProductIDsEmpty,
 		jackName, jackAccount,
 		testconstants.Info,
 	)
@@ -823,7 +829,7 @@ func AuthDemo(suite *utils.TestSuite) {
 	_, err = ProposeAddAccount(
 		suite,
 		testAccAddr, testAccPubKey,
-		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, 0,
+		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, 0, testconstants.ProductIDsEmpty,
 		jackName, jackAccount,
 		testconstants.Info,
 	)
@@ -964,7 +970,8 @@ func AuthDemo(suite *utils.TestSuite) {
 	_, err = ProposeAddAccount(
 		suite,
 		testAccAddr, testAccPubKey,
-		dclauthtypes.AccountRoles{dclauthtypes.Vendor, dclauthtypes.NodeAdmin}, testconstants.Vid,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor, dclauthtypes.NodeAdmin},
+		testconstants.Vid, testconstants.ProductIDs100,
 		jackName, jackAccount,
 		testconstants.Info,
 	)
@@ -987,6 +994,7 @@ func AuthDemo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 	require.Equal(suite.T, testAccAddr, testProposedVendorAccount.GetAddress())
 	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.Vendor, dclauthtypes.NodeAdmin}, testProposedVendorAccount.GetRoles())
+	require.Equal(suite.T, testconstants.ProductIDs100, testProposedVendorAccount.GetProductIDs())
 
 	// Alice approves new account
 	_, err = ApproveAddAccount(suite, testAccAddr, aliceName, aliceAccount, testconstants.Info)
@@ -1037,7 +1045,8 @@ func AuthDemo(suite *utils.TestSuite) {
 	_, err = ProposeAddAccount(
 		suite,
 		testAccAddr, testAccPubKey,
-		dclauthtypes.AccountRoles{dclauthtypes.Vendor}, testconstants.Vid,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		testconstants.Vid, testconstants.ProductIDsEmpty,
 		jackName, jackAccount,
 		testconstants.Info,
 	)
@@ -1052,6 +1061,7 @@ func AuthDemo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 	require.Equal(suite.T, testAccAddr, testVendorAccount.GetAddress())
 	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testVendorAccount.GetRoles())
+	require.Equal(suite.T, 0, len(testVendorAccount.GetProductIDs()))
 
 	// Query all proposed accounts
 	receivedProposedAccounts, _ = GetProposedAccounts(suite)
@@ -1072,7 +1082,8 @@ func AuthDemo(suite *utils.TestSuite) {
 	_, err = ProposeAddAccount(
 		suite,
 		testAccAddr, testAccPubKey,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, 0,
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee},
+		0, testconstants.ProductIDsEmpty,
 		jackName, jackAccount,
 		testconstants.Info,
 	)
@@ -1095,7 +1106,8 @@ func AuthDemo(suite *utils.TestSuite) {
 	_, err = ProposeAddAccount(
 		suite,
 		testAccAddr, testAccPubKey,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, 0,
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee},
+		0, testconstants.ProductIDsEmpty,
 		jackName, jackAccount,
 		testconstants.Info,
 	)
@@ -1146,7 +1158,8 @@ func AuthDemo(suite *utils.TestSuite) {
 	_, err = ProposeAddAccount(
 		suite,
 		testAccAddr, testAccPubKey,
-		dclauthtypes.AccountRoles{dclauthtypes.Vendor}, testconstants.Vid,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		testconstants.Vid, testconstants.ProductIDsFull,
 		jackName, jackAccount,
 		testconstants.Info,
 	)
@@ -1177,7 +1190,8 @@ func AuthDemo(suite *utils.TestSuite) {
 	_, err = ProposeAddAccount(
 		suite,
 		testAccAddr, testAccPubKey,
-		dclauthtypes.AccountRoles{dclauthtypes.Vendor}, testconstants.Vid,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		testconstants.Vid, testconstants.ProductIDsFull,
 		jackName, jackAccount,
 		testconstants.Info,
 	)
@@ -1200,6 +1214,7 @@ func AuthDemo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 	require.Equal(suite.T, testAccAddr, testProposedVendorAccount.GetAddress())
 	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testProposedVendorAccount.GetRoles())
+	require.Equal(suite.T, testconstants.ProductIDsFull, testProposedVendorAccount.GetProductIDs())
 
 	// Alice approves new account
 	_, err = ApproveAddAccount(suite, testAccAddr, aliceName, aliceAccount, testconstants.Info)
@@ -1218,4 +1233,5 @@ func AuthDemo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 	require.Equal(suite.T, testAccAddr, testVendorAccount.GetAddress())
 	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testVendorAccount.GetRoles())
+	require.Equal(suite.T, testconstants.ProductIDsFull, testVendorAccount.GetProductIDs())
 }

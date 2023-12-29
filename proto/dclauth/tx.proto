@@ -8,6 +8,7 @@ option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/
 import "google/protobuf/any.proto";
 import "gogoproto/gogo.proto";
 import "cosmos_proto/cosmos.proto";
+import "common/uint16_range.proto";
 
 // Msg defines the Msg service.
 service Msg {
@@ -27,6 +28,7 @@ message MsgProposeAddAccount {
   int32 vendorID = 5 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
   string info = 6 [(gogoproto.moretags) = "validate:\"max=4096\""];
   int64 time = 7;
+  repeated common.Uint16Range productIDs = 8;
 }
 
 message MsgProposeAddAccountResponse {
