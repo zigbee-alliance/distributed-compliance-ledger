@@ -1,6 +1,7 @@
 /* eslint-disable */
 import { BaseAccount } from '../cosmos/auth/v1beta1/auth'
 import { Grant } from '../dclauth/grant'
+import { Uint16Range } from '../common/uint16_range'
 import { Writer, Reader } from 'protobufjs/minimal'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.dclauth'
@@ -16,6 +17,7 @@ export interface Account {
   approvals: Grant[]
   vendorID: number
   rejects: Grant[]
+  productIDs: Uint16Range[]
 }
 
 const baseAccount: object = { roles: '', vendorID: 0 }
@@ -37,6 +39,9 @@ export const Account = {
     for (const v of message.rejects) {
       Grant.encode(v!, writer.uint32(42).fork()).ldelim()
     }
+    for (const v of message.productIDs) {
+      Uint16Range.encode(v!, writer.uint32(50).fork()).ldelim()
+    }
     return writer
   },
 
@@ -47,6 +52,7 @@ export const Account = {
     message.roles = []
     message.approvals = []
     message.rejects = []
+    message.productIDs = []
     while (reader.pos < end) {
       const tag = reader.uint32()
       switch (tag >>> 3) {
@@ -65,6 +71,9 @@ export const Account = {
         case 5:
           message.rejects.push(Grant.decode(reader, reader.uint32()))
           break
+        case 6:
+          message.productIDs.push(Uint16Range.decode(reader, reader.uint32()))
+          break
         default:
           reader.skipType(tag & 7)
           break
@@ -78,7 +87,8 @@ export const Account = {
     message.roles = []
     message.approvals = []
     message.rejects = []
-    if (object.baseAccount !== undefined && object.baseAccount !== null) {
+		message.productIDs = []
+		if (object.baseAccount !== undefined && object.baseAccount !== null) {
       message.baseAccount = BaseAccount.fromJSON(object.baseAccount)
     } else {
       message.baseAccount = undefined
@@ -103,6 +113,11 @@ export const Account = {
         message.rejects.push(Grant.fromJSON(e))
       }
     }
+    if (object.productIDs !== undefined && object.productIDs !== null) {
+      for (const e of object.productIDs) {
+        message.productIDs.push(Uint16Range.fromJSON(e))
+      }
+    }
     return message
   },
 
@@ -125,6 +140,11 @@ export const Account = {
     } else {
       obj.rejects = []
     }
+    if (message.productIDs) {
+      obj.productIDs = message.productIDs.map((e) => (e ? Uint16Range.toJSON(e) : undefined))
+    } else {
+      obj.productIDs = []
+    }
     return obj
   },
 
@@ -133,6 +153,7 @@ export const Account = {
     message.roles = []
     message.approvals = []
     message.rejects = []
+		message.productIDs = []
     if (object.baseAccount !== undefined && object.baseAccount !== null) {
       message.baseAccount = BaseAccount.fromPartial(object.baseAccount)
     } else {
@@ -156,6 +177,11 @@ export const Account = {
     if (object.rejects !== undefined && object.rejects !== null) {
       for (const e of object.rejects) {
         message.rejects.push(Grant.fromPartial(e))
+      }
+    }
+    if (object.productIDs !== undefined && object.productIDs !== null) {
+      for (const e of object.productIDs) {
+        message.productIDs.push(Uint16Range.fromPartial(e))
       }
     }
     return message

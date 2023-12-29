@@ -298,6 +298,7 @@ func Demo(suite *utils.TestSuite) {
 		nodeAdminName,
 		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin},
 		vid,
+		testconstants.ProductIDsEmpty,
 		aliceName,
 		aliceAccount,
 		jackName,

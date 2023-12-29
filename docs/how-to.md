@@ -127,7 +127,7 @@ Once approved the account can be used to send transactions. See [use_case_txn_au
 ### 1. Create an Account proposal for the user
 
 ```bash
-dcld tx auth propose-add-account --address=<bench32 encoded string> --pubkey=<protobuf JSON encoded> --roles=<role1,role2,...> --vid=<uint16> --from=<account>
+dcld tx auth propose-add-account --address=<bench32 encoded string> --pubkey=<protobuf JSON encoded> --roles=<role1,role2,...> --vid=<uint16> --pid_ranges=<uint16-range,uint16-range,...> --from=<account>
 ```
 
 ### 2. Approve proposed Account
@@ -211,6 +211,7 @@ Minimal command:
 ```bash
  dcld tx model add-model --vid=<uint16> --pid=<uint16> --deviceTypeID=<uint16> --productName=<string> --from=<account>
 ```
+Note that if `account` was created with product ID ranges then the `pid` must fall within that specified range
 
 Full command:
 
@@ -229,6 +230,7 @@ Minimal command:
 dcld tx model add-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --cdVersionNumber=<uint32>
 --minApplicableSoftwareVersion=<uint32> --maxApplicableSoftwareVersion=<uint32> --from=<account>
 ```
+Note that if `account` was created with product ID ranges then the `pid` must fall within that specified range
 
 Full command:
 
@@ -250,12 +252,14 @@ dcld tx vendorinfo update-vendor --vid=<uint16> ... --from=<account>
 ```bash
 dcld tx model update-model --vid=<uint16> --pid=<uint16> ... --from=<account>
 ```
+Note that if `account` was created with product ID ranges then the `pid` must fall within that specified range
 
 ### 7. Edit Model Version
 
 ```bash
 dcld tx model update-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> ... --from=<account>
 ```
+Note that if `account` was created with product ID ranges then the `pid` must fall within that specified range
 
 ### 8. Add PKI Revocation Distribution Point
 

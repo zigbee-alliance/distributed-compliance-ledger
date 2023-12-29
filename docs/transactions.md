@@ -188,7 +188,7 @@ Should be sent to trusted nodes only.
 
 **Status: Implemented**
 
-Adds a new Model identified by a unique combination of `vid` (vendor ID) and `pid` (product ID).
+Adds a new Model identified by a unique combination of `vid` (vendor ID) and `pid` (product ID). If `account` was created with product ID ranges then the `pid` must fall within that specified range.
 
 Not all fields can be edited (see `EDIT_MODEL`).
 
@@ -234,7 +234,7 @@ dcld tx model add-model --vid=<uint16> --pid=<uint16> --deviceTypeID=<uint16> --
 **Status: Implemented**
 
 Edits an existing Model identified by a unique combination of `vid` (vendor ID) and `pid` (product ID)
-by the vendor account.
+by the vendor account. If `account` was created with product ID ranges then the `pid` must fall within that specified range.
 
 Only the fields listed below (except `vid` and `pid`) can be edited. If other fields need to be edited -
 a new model info with a new `vid` or `pid` can be created.
@@ -266,7 +266,7 @@ All non-edited fields remain the same.
 **Status: Implemented**
 
 Deletes an existing Model identified by a unique combination of `vid` (vendor ID) and `pid` (product ID)
-by the vendor account.
+by the vendor account. If `account` was created with product ID ranges then the `pid` must fall within that specified range.
 
 If one of Model Versions associated with the Model is certified then Model can not be deleted. When Model is deleted, all associated Model Versions will be deleted as well.
 
@@ -284,6 +284,7 @@ If one of Model Versions associated with the Model is certified then Model can n
 **Status: Implemented**
 
 Adds a new Model Software Version identified by a unique combination of `vid` (vendor ID), `pid` (product ID) and `softwareVersion`.
+If `account` was created with product ID ranges then the `pid` must fall within that specified range
 
 Not all Model Software Version fields can be edited (see `EDIT_MODEL_VERSION`).
 
@@ -330,7 +331,7 @@ dcld tx model add-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=
 **Status: Implemented**
 
 Edits an existing Model Software Version identified by a unique combination of `vid` (vendor ID) `pid` (product ID) and `softwareVersion`
-by the vendor.
+by the vendor. If `account` was created with product ID ranges then the `pid` must fall within that specified range.
 
 Only the fields listed below (except `vid` `pid` and `softwareVersion`)  can be edited.
 
@@ -362,7 +363,7 @@ All non-edited fields remain the same.
 **Status: Implemented**
 
 Deletes an existing Model Version identified by a unique combination of `vid` (vendor ID), `pid` (product ID) and `softwareVersion`
-by the vendor account.
+by the vendor account. If `account` was created with product ID ranges then the `pid` must fall within that specified range.
 
 Model Version can be deleted only before it is certified.
 
@@ -1383,6 +1384,7 @@ will be in a pending state until sufficient number of approvals is received.
   - address: `string` - account address; Bech32 encoded
   - pub_key: `string` - account's Protobuf JSON encoded public key
   - vid: `optional(uint16)` - vendor ID (only needed for vendor role)
+  - pid_ranges: `optional(array<uint16 range>)` - the list of product-id ranges (range item separated with "-"), comma-separated, in increasing order, associated with this account: `1-100,201-300...`
   - roles: `array<string>` - the list of roles, comma-separated, assigning to the account. Supported roles: `Vendor`, `TestHouse`, `CertificationCenter`, `Trustee`, `NodeAdmin`, `VendorAdmin`.
   - info: `optional(string)` - information/notes for the proposal
   - time: `optional(int64)` - proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
@@ -1390,7 +1392,7 @@ will be in a pending state until sufficient number of approvals is received.
 - Who can send:
   - Trustee
 - CLI command:
-  - `dcld tx auth propose-add-account --address=<bench32 encoded string> --pubkey=<protobuf JSON encoded> --roles=<role1,role2,...> --vid=<uint16> --from=<account>`
+  - `dcld tx auth propose-add-account --address=<bench32 encoded string> --pubkey=<protobuf JSON encoded> --roles=<role1,role2,...> --vid=<uint16> --pid_ranges=<uint16-range,uint16-range,...> --from=<account>`
 
 ### APPROVE_ADD_ACCOUNT
 

@@ -20,6 +20,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common/types"
 )
 
 /*
@@ -65,16 +67,18 @@ type DCLAccountI interface {
 	GetVendorID() int32
 	GetApprovals() []*Grant
 	GetRejects() []*Grant
+	GetProductIDs() []*types.Uint16Range
 }
 
 // NewAccount creates a new Account object.
-func NewAccount(ba *authtypes.BaseAccount, roles AccountRoles, approvals []*Grant, rejects []*Grant, vendorID int32) *Account {
+func NewAccount(ba *authtypes.BaseAccount, roles AccountRoles, approvals []*Grant, rejects []*Grant, vendorID int32, productIDs []*types.Uint16Range) *Account {
 	return &Account{
 		BaseAccount: ba,
 		Roles:       roles,
 		Approvals:   approvals,
 		Rejects:     rejects,
 		VendorID:    vendorID,
+		ProductIDs:  productIDs,
 	}
 }
 
@@ -111,6 +115,10 @@ func (acc Account) GetRejects() []*Grant {
 	return acc.Rejects
 }
 
+func (acc Account) GetProductIDs() []*types.Uint16Range {
+	return acc.ProductIDs
+}
+
 func (acc Account) GetVendorID() int32 {
 	return acc.VendorID
 }
@@ -128,6 +136,21 @@ func (acc Account) HasRole(targetRole AccountRole) bool {
 func (acc Account) HasOnlyVendorRole(targetRole AccountRole) bool {
 	if len(acc.Roles) == 1 && acc.Roles[0] == targetRole {
 		return true
+	}
+
+	return false
+}
+
+func (acc Account) HasRightsToChange(productID int32) bool {
+	// Account is not associated with any products
+	if len(acc.ProductIDs) == 0 {
+		return true
+	}
+
+	for _, productRange := range acc.ProductIDs {
+		if (productRange.Min <= productID) && (productID <= productRange.Max) {
+			return true
+		}
 	}
 
 	return false

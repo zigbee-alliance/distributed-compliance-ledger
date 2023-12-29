@@ -27,6 +27,7 @@ import (
 	testkeeper "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/testdata"
 	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
+	commontypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/common/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
@@ -36,6 +37,12 @@ import (
 
 type DclauthKeeperMock struct {
 	mock.Mock
+}
+
+func (m *DclauthKeeperMock) HasRightsToChange(ctx sdk.Context, addr sdk.AccAddress, pid int32) bool {
+	args := m.Called(ctx, addr, pid)
+
+	return args.Bool(0)
 }
 
 func (m *DclauthKeeperMock) HasRole(
@@ -88,14 +95,16 @@ type TestSetup struct {
 	ComplianceKeeper *ComplianceKeeperMock
 	Handler          sdk.Handler
 	// Querier     sdk.Querier
-	Vendor   sdk.AccAddress
-	VendorID int32
+	Vendor     sdk.AccAddress
+	VendorID   int32
+	ProductIDs []*commontypes.Uint16Range
 }
 
 func (setup *TestSetup) AddAccount(
 	accAddress sdk.AccAddress,
 	roles []dclauthtypes.AccountRole,
 	vendorID int32,
+	productIDs []*commontypes.Uint16Range,
 ) {
 	dclauthKeeper := setup.DclauthKeeper
 
@@ -106,6 +115,16 @@ func (setup *TestSetup) AddAccount(
 
 	dclauthKeeper.On("HasVendorID", mock.Anything, accAddress, vendorID).Return(true)
 	dclauthKeeper.On("HasVendorID", mock.Anything, accAddress, mock.Anything).Return(false)
+
+	if len(productIDs) == 0 {
+		dclauthKeeper.On("HasRightsToChange", mock.Anything, accAddress, mock.Anything).Return(true)
+	}
+	for _, productIDRange := range productIDs {
+		for productID := productIDRange.Min; productID <= productIDRange.Max; productID++ {
+			dclauthKeeper.On("HasRightsToChange", mock.Anything, accAddress, productID).Return(true)
+		}
+	}
+	dclauthKeeper.On("HasRightsToChange", mock.Anything, accAddress, mock.Anything).Return(false)
 }
 
 func Setup(t *testing.T) *TestSetup {
@@ -116,7 +135,7 @@ func Setup(t *testing.T) *TestSetup {
 
 	vendor := testdata.GenerateAccAddress()
 	vendorID := testconstants.VendorID1
-
+	productIDs := testconstants.ProductIDsEmpty
 	setup := &TestSetup{
 		T:                t,
 		Ctx:              ctx,
@@ -127,9 +146,10 @@ func Setup(t *testing.T) *TestSetup {
 		Handler:          NewHandler(*keeper),
 		Vendor:           vendor,
 		VendorID:         vendorID,
+		ProductIDs:       productIDs,
 	}
 
-	setup.AddAccount(vendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, vendorID)
+	setup.AddAccount(vendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, vendorID, productIDs)
 
 	return setup
 }
@@ -182,6 +202,45 @@ func TestHandler_UpdateModel(t *testing.T) {
 	require.Equal(t, msgUpdateModel.ProductLabel, receivedModel.ProductLabel)
 }
 
+func TestHandler_UpdateModelByVendorWithProductIds(t *testing.T) {
+	setup := Setup(t)
+
+	owner := testdata.GenerateAccAddress()
+	setup.AddAccount(owner, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID1, testconstants.ProductIDs200)
+
+	// add new model
+	msgCreateModel := NewMsgCreateModel(owner)
+	msgCreateModel.Pid = 200
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	anotherVendor := testdata.GenerateAccAddress()
+	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID2, testconstants.ProductIDs100)
+
+	// update existing model by vendor with another VendorID
+	msgUpdateModel := NewMsgUpdateModel(anotherVendor)
+	_, err = setup.Handler(setup.Ctx, msgUpdateModel)
+	require.Error(t, err)
+	require.True(t, sdkerrors.ErrUnauthorized.Is(err))
+
+	// update existing model by owner
+	msgUpdateModel = NewMsgUpdateModel(owner)
+	msgUpdateModel.Pid = 200
+	_, err = setup.Handler(setup.Ctx, msgUpdateModel)
+	require.NoError(t, err)
+
+	vendorWithoutProductIDs := testdata.GenerateAccAddress()
+	setup.AddAccount(vendorWithoutProductIDs, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, setup.VendorID, testconstants.ProductIDsEmpty)
+
+	// update existing model by vendor with the same VendorID as owner's one
+	msgUpdateModel = NewMsgUpdateModel(vendorWithoutProductIDs)
+	msgUpdateModel.Pid = 200
+	msgUpdateModel.ProductLabel += "-updated-once-more"
+	msgUpdateModel.LsfRevision++
+	_, err = setup.Handler(setup.Ctx, msgUpdateModel)
+	require.NoError(t, err)
+}
+
 func TestHandler_OnlyOwnerAndVendorWithSameVidCanUpdateModel(t *testing.T) {
 	setup := Setup(t)
 
@@ -196,7 +255,7 @@ func TestHandler_OnlyOwnerAndVendorWithSameVidCanUpdateModel(t *testing.T) {
 		dclauthtypes.NodeAdmin,
 	} {
 		accAddress := testdata.GenerateAccAddress()
-		setup.AddAccount(accAddress, []dclauthtypes.AccountRole{role}, setup.VendorID)
+		setup.AddAccount(accAddress, []dclauthtypes.AccountRole{role}, setup.VendorID, setup.ProductIDs)
 
 		// update existing model by user without Vendor role
 		msgUpdateModel := NewMsgUpdateModel(accAddress)
@@ -206,7 +265,7 @@ func TestHandler_OnlyOwnerAndVendorWithSameVidCanUpdateModel(t *testing.T) {
 	}
 
 	anotherVendor := testdata.GenerateAccAddress()
-	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID2)
+	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID2, setup.ProductIDs)
 
 	// update existing model by vendor with another VendorID
 	msgUpdateModel := NewMsgUpdateModel(anotherVendor)
@@ -220,7 +279,7 @@ func TestHandler_OnlyOwnerAndVendorWithSameVidCanUpdateModel(t *testing.T) {
 	require.NoError(t, err)
 
 	vendorWithSameVid := testdata.GenerateAccAddress()
-	setup.AddAccount(vendorWithSameVid, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, setup.VendorID)
+	setup.AddAccount(vendorWithSameVid, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, setup.VendorID, setup.ProductIDs)
 
 	// update existing model by vendor with the same VendorID as owner's one
 	msgUpdateModel = NewMsgUpdateModel(vendorWithSameVid)
@@ -353,7 +412,7 @@ func TestHandler_AddModelByNonVendor(t *testing.T) {
 		dclauthtypes.NodeAdmin,
 	} {
 		accAddress := testdata.GenerateAccAddress()
-		setup.AddAccount(accAddress, []dclauthtypes.AccountRole{role}, setup.VendorID)
+		setup.AddAccount(accAddress, []dclauthtypes.AccountRole{role}, setup.VendorID, setup.ProductIDs)
 
 		// add new model
 		model := NewMsgCreateModel(accAddress)
@@ -367,13 +426,42 @@ func TestHandler_AddModelByVendorWithAnotherVendorId(t *testing.T) {
 	setup := Setup(t)
 
 	anotherVendor := testdata.GenerateAccAddress()
-	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID2)
+	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID2, testconstants.ProductIDsEmpty)
 
 	// add new model
 	model := NewMsgCreateModel(anotherVendor)
 	_, err := setup.Handler(setup.Ctx, model)
 	require.Error(t, err)
 	require.True(t, sdkerrors.ErrUnauthorized.Is(err))
+}
+
+func TestHandler_AddModelByVendorWithProductIds(t *testing.T) {
+	setup := Setup(t)
+
+	owner := testdata.GenerateAccAddress()
+	setup.AddAccount(owner, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, setup.VendorID, testconstants.ProductIDs200)
+
+	model := NewMsgCreateModel(owner)
+	model.Pid = 200
+	_, err := setup.Handler(setup.Ctx, model)
+	require.NoError(t, err)
+
+	vendor := testdata.GenerateAccAddress()
+	setup.AddAccount(vendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, setup.VendorID, testconstants.ProductIDs100)
+	model = NewMsgCreateModel(vendor)
+	model.Pid = 101
+	_, err = setup.Handler(setup.Ctx, model)
+	require.Error(t, err)
+	require.True(t, sdkerrors.ErrUnauthorized.Is(err))
+
+	vendorWithSameVid := testdata.GenerateAccAddress()
+	setup.AddAccount(vendorWithSameVid, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, setup.VendorID, testconstants.ProductIDsEmpty)
+
+	// add model by vendor with non-assigned PIDs
+	model = NewMsgCreateModel(vendorWithSameVid)
+	model.Pid = 201
+	_, err = setup.Handler(setup.Ctx, model)
+	require.NoError(t, err)
 }
 
 func TestHandler_PartiallyUpdateModel(t *testing.T) {
@@ -529,6 +617,50 @@ func TestHandler_DeleteModelWithAssociatedModelVersionsCertified(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestHandler_DeleteModelByVendorWitProductIds(t *testing.T) {
+	setup := Setup(t)
+
+	owner := testdata.GenerateAccAddress()
+	setup.AddAccount(owner, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID1, testconstants.ProductIDs200)
+
+	// add new model
+	msgCreateModel := NewMsgCreateModel(owner)
+	msgCreateModel.Pid = 200
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	vendor := testdata.GenerateAccAddress()
+	setup.AddAccount(vendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID2, testconstants.ProductIDs100)
+
+	// delete existing model by vendor with another VendorID
+	msgDeleteModel := NewMsgDeleteModel(vendor)
+	msgDeleteModel.Pid = 200
+	_, err = setup.Handler(setup.Ctx, msgDeleteModel)
+	require.Error(t, err)
+	require.True(t, sdkerrors.ErrUnauthorized.Is(err))
+
+	// delete existing model by owner
+	msgDeleteModel = NewMsgDeleteModel(owner)
+	msgDeleteModel.Pid = 200
+	_, err = setup.Handler(setup.Ctx, msgDeleteModel)
+	require.NoError(t, err)
+
+	// add new model
+	msgCreateModel = NewMsgCreateModel(owner)
+	msgCreateModel.Pid = 199
+	_, err = setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	vendorWithSameVid := testdata.GenerateAccAddress()
+	setup.AddAccount(vendorWithSameVid, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, setup.VendorID, testconstants.ProductIDsEmpty)
+
+	// delete existing model by vendor with non-assigned PIDs
+	msgDeleteModel = NewMsgDeleteModel(vendorWithSameVid)
+	msgDeleteModel.Pid = 199
+	_, err = setup.Handler(setup.Ctx, msgDeleteModel)
+	require.NoError(t, err)
+}
+
 func TestHandler_OnlyOwnerAndVendorWithSameVidCanDeleteModel(t *testing.T) {
 	setup := Setup(t)
 
@@ -543,7 +675,7 @@ func TestHandler_OnlyOwnerAndVendorWithSameVidCanDeleteModel(t *testing.T) {
 		dclauthtypes.NodeAdmin,
 	} {
 		accAddress := testdata.GenerateAccAddress()
-		setup.AddAccount(accAddress, []dclauthtypes.AccountRole{role}, setup.VendorID)
+		setup.AddAccount(accAddress, []dclauthtypes.AccountRole{role}, setup.VendorID, setup.ProductIDs)
 
 		// delete existing model by user without Vendor role
 		msgDeleteModel := NewMsgDeleteModel(accAddress)
@@ -553,7 +685,7 @@ func TestHandler_OnlyOwnerAndVendorWithSameVidCanDeleteModel(t *testing.T) {
 	}
 
 	anotherVendor := testdata.GenerateAccAddress()
-	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID2)
+	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID2, testconstants.ProductIDsEmpty)
 
 	// delete existing model by vendor with another VendorID
 	msgDeleteModel := NewMsgDeleteModel(anotherVendor)
@@ -572,7 +704,7 @@ func TestHandler_OnlyOwnerAndVendorWithSameVidCanDeleteModel(t *testing.T) {
 	require.NoError(t, err)
 
 	vendorWithSameVid := testdata.GenerateAccAddress()
-	setup.AddAccount(vendorWithSameVid, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, setup.VendorID)
+	setup.AddAccount(vendorWithSameVid, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, setup.VendorID, setup.ProductIDs)
 
 	// delete existing model by vendor with the same VendorID as owner's one
 	msgDeleteModel = NewMsgDeleteModel(vendorWithSameVid)
@@ -753,6 +885,51 @@ func TestHandler_UpdateModelVersion(t *testing.T) {
 	require.Equal(t, msgCreateModelVersion.Vid, receivedModelVersions.Vid)
 	require.Equal(t, msgCreateModelVersion.Pid, receivedModelVersions.Pid)
 	require.Equal(t, []uint32{msgCreateModelVersion.SoftwareVersion}, receivedModelVersions.SoftwareVersions)
+}
+
+func TestHandler_UpdateModelVersionByVendorWithProductIds(t *testing.T) {
+	setup := Setup(t)
+
+	owner := testdata.GenerateAccAddress()
+	setup.AddAccount(owner, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID1, testconstants.ProductIDs200)
+
+	// add new model
+	msgCreteModel := NewMsgCreateModel(owner)
+	msgCreteModel.Pid = 200
+	_, err := setup.Handler(setup.Ctx, msgCreteModel)
+	require.NoError(t, err)
+
+	// add new model version
+	msgCreateModelVersion := NewMsgCreateModelVersion(owner, testconstants.SoftwareVersion)
+	msgCreateModelVersion.Pid = 200
+	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion)
+	require.NoError(t, err)
+
+	vendor := testdata.GenerateAccAddress()
+	setup.AddAccount(vendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID2, testconstants.ProductIDs100)
+
+	// update existing model by vendor with another productIDs
+	msgUpdateModelVersion := NewMsgUpdateModelVersion(vendor)
+	msgUpdateModelVersion.Pid = 200
+	_, err = setup.Handler(setup.Ctx, msgUpdateModelVersion)
+	require.Error(t, err)
+	require.True(t, sdkerrors.ErrUnauthorized.Is(err))
+
+	// update existing model version by owner
+	msgUpdateModelVersion = NewMsgUpdateModelVersion(owner)
+	msgUpdateModelVersion.Pid = 200
+	_, err = setup.Handler(setup.Ctx, msgUpdateModelVersion)
+	require.NoError(t, err)
+
+	vendorWithoutProductIDs := testdata.GenerateAccAddress()
+	setup.AddAccount(vendorWithoutProductIDs, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, setup.VendorID, testconstants.ProductIDsEmpty)
+
+	msgUpdateModelVersion = NewMsgUpdateModelVersion(vendorWithoutProductIDs)
+	msgUpdateModelVersion.Pid = 200
+
+	msgUpdateModelVersion.ReleaseNotesUrl += "/updated-once-more"
+	_, err = setup.Handler(setup.Ctx, msgUpdateModelVersion)
+	require.NoError(t, err)
 }
 
 func TestHandler_PartiallyUpdateModelVersion(t *testing.T) {
@@ -1024,7 +1201,6 @@ func TestHandler_UpdateOTAFieldsInitiallySet(t *testing.T) {
 	require.Equal(t, receivedModelVersion.OtaChecksum, msgUpdateModelVersion.OtaChecksum)
 	require.Equal(t, receivedModelVersion.OtaFileSize, msgUpdateModelVersion.OtaFileSize)
 }
-
 func TestHandler_OnlyOwnerAndVendorWithSameVidCanUpdateModelVersion(t *testing.T) {
 	setup := Setup(t)
 
@@ -1044,7 +1220,7 @@ func TestHandler_OnlyOwnerAndVendorWithSameVidCanUpdateModelVersion(t *testing.T
 		dclauthtypes.NodeAdmin,
 	} {
 		accAddress := testdata.GenerateAccAddress()
-		setup.AddAccount(accAddress, []dclauthtypes.AccountRole{role}, setup.VendorID)
+		setup.AddAccount(accAddress, []dclauthtypes.AccountRole{role}, setup.VendorID, setup.ProductIDs)
 
 		// update existing model version by user without Vendor role
 		msgUpdateModelVersion := NewMsgUpdateModelVersion(accAddress)
@@ -1054,7 +1230,7 @@ func TestHandler_OnlyOwnerAndVendorWithSameVidCanUpdateModelVersion(t *testing.T
 	}
 
 	anotherVendor := testdata.GenerateAccAddress()
-	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID2)
+	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID2, testconstants.ProductIDsEmpty)
 
 	// update existing model by vendor with another VendorID
 	msgUpdateModelVersion := NewMsgUpdateModelVersion(anotherVendor)
@@ -1069,7 +1245,7 @@ func TestHandler_OnlyOwnerAndVendorWithSameVidCanUpdateModelVersion(t *testing.T
 	require.NoError(t, err)
 
 	vendorWithSameVid := testdata.GenerateAccAddress()
-	setup.AddAccount(vendorWithSameVid, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, setup.VendorID)
+	setup.AddAccount(vendorWithSameVid, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, setup.VendorID, setup.ProductIDs)
 
 	// update existing model by vendor with the same VendorID as owner's one
 	msgUpdateModelVersion = NewMsgUpdateModelVersion(vendorWithSameVid)
@@ -1112,7 +1288,7 @@ func TestHandler_DeleteModelVersion(t *testing.T) {
 	require.Equal(t, codes.NotFound, status.Code(err))
 }
 
-func TestHandler_DeleteModelVersionDifferendAccSameVid(t *testing.T) {
+func TestHandler_DeleteModelVersionDifferentAccSameVid(t *testing.T) {
 	setup := Setup(t)
 
 	// add new model
@@ -1128,7 +1304,7 @@ func TestHandler_DeleteModelVersionDifferendAccSameVid(t *testing.T) {
 	secondAcc := testdata.GenerateAccAddress()
 	secondAccVid := testconstants.VendorID1
 
-	setup.AddAccount(secondAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, secondAccVid)
+	setup.AddAccount(secondAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, secondAccVid, testconstants.ProductIDsEmpty)
 
 	msgDeleteModelVersion := NewMsgDeleteModelVersion(secondAcc)
 
@@ -1163,14 +1339,13 @@ func TestHandler_DeleteModelVersionNotByVendor(t *testing.T) {
 	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion)
 	require.NoError(t, err)
 
-	setup.AddAccount(testconstants.Address1, []dclauthtypes.AccountRole{dclauthtypes.Trustee}, testconstants.VendorID2)
+	setup.AddAccount(testconstants.Address1, []dclauthtypes.AccountRole{dclauthtypes.Trustee}, testconstants.VendorID2, testconstants.ProductIDsEmpty)
 
 	msgDeleteModelVersion := NewMsgDeleteModelVersion(testconstants.Address1)
 
 	_, err = setup.Handler(setup.Ctx, msgDeleteModelVersion)
 	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
 }
-
 func TestHandler_DeleteModelVersionDifferentVid(t *testing.T) {
 	setup := Setup(t)
 
@@ -1224,7 +1399,7 @@ func TestHandler_DeleteModelVersionNotByCreator(t *testing.T) {
 	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion)
 	require.NoError(t, err)
 
-	setup.AddAccount(testconstants.Address1, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID2)
+	setup.AddAccount(testconstants.Address1, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID2, testconstants.ProductIDsEmpty)
 
 	msgDeleteModelVersion := NewMsgDeleteModelVersion(testconstants.Address1)
 
@@ -1253,6 +1428,53 @@ func TestHandler_DeleteModelVersionCertified(t *testing.T) {
 
 	_, err = setup.Handler(setup.Ctx, msgDeleteModelVersion)
 	require.ErrorIs(t, err, types.ErrModelVersionDeletionCertified)
+}
+
+func TestHandler_DeleteModelVersionByVendorWithProductIds(t *testing.T) {
+	setup := Setup(t)
+
+	owner := testdata.GenerateAccAddress()
+	setup.AddAccount(owner, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID1, testconstants.ProductIDs200)
+
+	// add new model
+	msgCreateModel := NewMsgCreateModel(owner)
+	msgCreateModel.Pid = 200
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// add new model version
+	msgCreateModelVersion := NewMsgCreateModelVersion(owner, testconstants.SoftwareVersion)
+	msgCreateModelVersion.Pid = 200
+	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion)
+	require.NoError(t, err)
+
+	setup.AddAccount(testconstants.Address1, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID1, testconstants.ProductIDs100)
+
+	msgDeleteModelVersion := NewMsgDeleteModelVersion(testconstants.Address1)
+	msgDeleteModelVersion.Pid = 200
+
+	_, err = setup.Handler(setup.Ctx, msgDeleteModelVersion)
+	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
+
+	msgDeleteModelVersion = NewMsgDeleteModelVersion(owner)
+	msgDeleteModelVersion.Pid = 200
+
+	complianceKeeper := setup.ComplianceKeeper
+	complianceKeeper.On("GetComplianceInfo", mock.Anything, msgDeleteModelVersion.Vid, msgDeleteModelVersion.Pid, msgDeleteModelVersion.SoftwareVersion, mock.Anything).Return(false)
+	complianceKeeper.On("GetComplianceInfo", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(true)
+
+	_, err = setup.Handler(setup.Ctx, msgDeleteModelVersion)
+	require.NoError(t, err)
+
+	// query model version
+	_, err = queryModelVersion(
+		setup,
+		msgDeleteModelVersion.Vid,
+		msgDeleteModelVersion.Pid,
+		msgDeleteModelVersion.SoftwareVersion,
+	)
+	require.Error(t, err)
+	require.Equal(t, codes.NotFound, status.Code(err))
 }
 
 func queryModel(

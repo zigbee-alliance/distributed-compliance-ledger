@@ -10,6 +10,7 @@ type DclauthKeeper interface {
 	// Methods imported from dclauth should be defined here
 	HasRole(ctx sdk.Context, addr sdk.AccAddress, roleToCheck types.AccountRole) bool
 	HasVendorID(ctx sdk.Context, addr sdk.AccAddress, vid int32) bool
+	HasRightsToChange(ctx sdk.Context, addr sdk.AccAddress, pid int32) bool
 }
 
 type ComplianceKeeper interface {

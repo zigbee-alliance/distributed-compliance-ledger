@@ -14,6 +14,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
+	commontypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/common/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
@@ -58,6 +59,14 @@ func CmdProposeAddAccount() *cobra.Command {
 				}
 			}
 
+			var pidRanges []*commontypes.Uint16Range
+			if pidStrRanges := viper.GetString(FlagPIDs); len(pidStrRanges) > 0 {
+				pidRanges, err = getPidRanges(pidStrRanges)
+				if err != nil {
+					return err
+				}
+			}
+
 			argInfo := viper.GetString(FlagInfo)
 
 			msg, err := types.NewMsgProposeAddAccount(
@@ -66,6 +75,7 @@ func CmdProposeAddAccount() *cobra.Command {
 				argPubKey,
 				argRoles,
 				argVendorID,
+				pidRanges,
 				argInfo,
 			)
 			if err != nil {
@@ -88,6 +98,7 @@ func CmdProposeAddAccount() *cobra.Command {
 		fmt.Sprintf("The list of roles, comma-separated, assigning to the account (supported roles: %v)",
 			types.Roles))
 	cmd.Flags().String(FlagVID, "", "Vendor ID associated with this account (positive non-zero uint16). Required only for Vendor Roles.")
+	cmd.Flags().String(FlagPIDs, "", "Optional list of Product ID ranges (inclusive numbers split by \"-\") associated with this account (for example: 1-100,200-65535, positive non-zero uint16)")
 	cmd.Flags().String(FlagInfo, "", FlagInfoUsage)
 
 	cli.AddTxFlagsToCmd(cmd)
@@ -97,4 +108,34 @@ func CmdProposeAddAccount() *cobra.Command {
 	_ = cmd.MarkFlagRequired(FlagPubKey)
 
 	return cmd
+}
+
+func getPidRanges(pidStrRanges string) ([]*commontypes.Uint16Range, error) {
+	var pidRanges = make([]*commontypes.Uint16Range, 0)
+	var lastMax int32
+	for _, pidStrRange := range strings.Split(pidStrRanges, ",") {
+		pidRange := strings.Split(pidStrRange, "-")
+		if len(pidRange) != 2 {
+			return nil, fmt.Errorf("failed to parse PID Range")
+		}
+		min, err := cast.ToInt32E(pidRange[0])
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse PID Range: %w", err)
+		}
+		max, err := cast.ToInt32E(pidRange[1])
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse PID Range: %w", err)
+		}
+		if min > max || max <= 0 || min <= 0 {
+			return nil, fmt.Errorf("invalid PID Range is provided: min=%d, max=%d", min, max)
+		}
+		if max <= lastMax || min <= lastMax {
+			return nil, fmt.Errorf("invalid PID Range is provided: {%d-%d}, ranges are overlapped, range items must be provided in increased order", min, max)
+		}
+		pid := commontypes.Uint16Range{Min: min, Max: max}
+		pidRanges = append(pidRanges, &pid)
+		lastMax = max
+	}
+
+	return pidRanges, nil
 }
