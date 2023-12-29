@@ -96,6 +96,6 @@ Retrieve revoked NOC Root Certificates associated with a specific Subject and Su
 - Should the following queries return NOC Certificate?
   - [GET_ALL_SUBJECT_X509_CERTS](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/transactions.md#get_all_subject_x509_certs)
   - [GET_ALL_X509_ROOT_CERTS](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/transactions.md#get_all_x509_root_certs)
-  - [GET_ALL_X509_CERTS](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/transactions.md#get_all_x509_root_certs)
+  - [GET_X509_CERT](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/transactions.md#get_x509_cert)
 - Should an additional field be added to the certificate schema to distinguish NOC certificates from common PAAs/PAIs?
-- Should a revoked NOC certificate be stored in the revoked list, or should it be completely removed? Additionally, if a NOC root certificate is revoked, should it be saved in the existing revocation list or in a separate list?
+- Should a revoked NOC Root Certificate be stored in the revoked list, or should it be completely removed? Additionally, if a NOC Root Certificate is revoked, should it be returned in the existing [GET_ALL_REVOKED_X509_ROOT_CERTS](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/transactions.md#get_all_revoked_x509_root_certs) and [GET_REVOKED_CERT](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/transactions.md#get_revoked_cert) queries?
