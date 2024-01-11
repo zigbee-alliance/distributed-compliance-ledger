@@ -102,3 +102,4 @@ Retrieve a list of all of NOC root certificates
 - How should NOC root certificate be renewed with a new one?
 - Should the `REMOVE_NOC_X509_ROOT_CERTIFICATE` operation also delete revoked certificates?
 - Should a user be able to retrieve all revoked NOC root certificates using the `GET_ALL_REVOKED_X509_NOC_ROOT_CERTS` operation?
+- In the `Joint Fabric Proposal` document, the concept of a `Trust Quotient (TQ)` is introduced as a future consideration. This concept requires adding `Add Trust` and `Revoke Trust` requests for NOCs in the DSL. Should the implementation of these requests be included in the scope of the current task?
