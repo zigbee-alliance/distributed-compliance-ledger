@@ -21,6 +21,7 @@ To distinguesh NOC root certificates from others, an `isNOC` boolean field will 
 This transaction adds a NOC root certificate owned by the Vendor.
 
 - Who can send: Vendor account
+   - `vid` field in the transaction (`VendorID`) must be equal to the Vendor account's VID
 - Validation:
   - The provided certificate must be a root certificate:
     - `Issuer` == `Subject`
@@ -32,6 +33,7 @@ This transaction adds a NOC root certificate owned by the Vendor.
   - The signature (self-signature) and expiration date must be valid.
 - Parameters:
   - cert: `string` - The NOC Root Certificate, encoded in X.509v3 PEM format. Can be a PEM string or a file path.
+  - vid: `uint16` - Vendor ID (positive non-zero)
 - In State:
   - `pki/ApprovedCertificates/value/<Subject>/<SubjectKeyID>`
   - `pki/ApprovedCertificatesBySubject/value/<Subject>`
@@ -41,6 +43,7 @@ This transaction adds a NOC root certificate owned by the Vendor.
 
 ### 2. REVOKE_NOC_X509_ROOT_CERTIFICATE
 This transaction revokes a NOC root certificate owned by the Vendor.
+Revoked NOC root certificates can be re-added using the `ADD_NOC_X509_ROOT_CERTIFICATE` transaction.
 
 - Who can send: Vendor account
   - Vid field associated with the corresponding NOC root certificate on the ledger must be equal to the Vendor account's VID.
@@ -55,7 +58,8 @@ This transaction revokes a NOC root certificate owned by the Vendor.
   - `dcld tx pki revoke-noc-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
 
 ### 3. REMOVE_NOC_X509_ROOT_CERTIFICATE
-This transaction completly removes a NOC root certificate owned by the Vendor.
+This transaction completely removes a NOC root certificate owned by the Vendor. 
+Removed NOC root certificates can be re-added using the `ADD_NOC_X509_ROOT_CERTIFICATE` transaction.
 
 - Who can send: Vendor account
   - Vid field associated with the corresponding NOC root certificate on the ledger must be equal to the Vendor account's VID.
@@ -99,7 +103,8 @@ Retrieve a list of all of NOC root certificates
 
 ## Questions
 - Should a vendor be able to add multiple NOC root certificates with the same Subject and Subject Key Identifier combinations? If so, the vendor may want to remove a specific certificate from the list of certificates with the same Subject and Subject Key Identifier combinations.
+- Should the VID parameter be added to the `ADD_NOC_X509_ROOT_CERTIFICATE` transaction?
 - How should NOC root certificate be renewed with a new one?
-- Should the `REMOVE_NOC_X509_ROOT_CERTIFICATE` operation also delete revoked certificates?
-- Should a user be able to retrieve all revoked NOC root certificates using the `GET_ALL_REVOKED_X509_NOC_ROOT_CERTS` operation?
-- In the `Joint Fabric Proposal` document, the concept of a `Trust Quotient (TQ)` is introduced as a future consideration. This concept requires adding `Add Trust` and `Revoke Trust` requests for NOCs in the DSL. Should the implementation of these requests be included in the scope of the current task?
+- Should the `REMOVE_NOC_X509_ROOT_CERTIFICATE` transaction also delete revoked certificates?
+- Should a user be able to retrieve all revoked NOC root certificates using the `GET_ALL_REVOKED_X509_NOC_ROOT_CERTS` transaction?
+- In the `Joint Fabric Proposal` document, the concept of a `Trust Quotient (TQ)` is introduced as a future consideration. This concept requires adding `Add Trust` and `Revoke Trust` requests for NOCs in the DCL. Should the implementation of these requests be included in the scope of the current task?
