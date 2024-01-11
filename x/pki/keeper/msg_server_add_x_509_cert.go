@@ -99,5 +99,8 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 	// add to subject -> subject key ID map
 	k.AddApprovedCertificateBySubject(ctx, certificate.Subject, certificate.SubjectKeyId)
 
+	// add to subject key ID -> certificates map
+	k.AddApprovedCertificateBySubjectKeyID(ctx, certificate)
+
 	return &types.MsgAddX509CertResponse{}, nil
 }

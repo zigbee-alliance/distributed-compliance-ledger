@@ -6,6 +6,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
+
 	keepertest "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/nullify"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/keeper"
@@ -15,28 +16,22 @@ import (
 // Prevent strconv unused error.
 var _ = strconv.IntSize
 
-func createNApprovedCertificates(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.ApprovedCertificates {
-	items := make([]types.ApprovedCertificates, n)
+func createApprovedCertificatesBySubjectKeyID(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.ApprovedCertificatesBySubjectKeyId {
+	items := make([]types.ApprovedCertificatesBySubjectKeyId, n)
 	for i := range items {
-		items[i].Subject = strconv.Itoa(i)
 		items[i].SubjectKeyId = strconv.Itoa(i)
 
-		keeper.SetApprovedCertificates(ctx, items[i])
-		keeper.SetApprovedCertificatesBySubjectKeyID(ctx, types.ApprovedCertificatesBySubjectKeyId{
-			SubjectKeyId: items[i].SubjectKeyId,
-			Certs:        items[1].Certs,
-		})
+		keeper.SetApprovedCertificatesBySubjectKeyID(ctx, items[i])
 	}
 
 	return items
 }
 
-func TestApprovedCertificatesGet(t *testing.T) {
+func TestApprovedCertificatesBySubjectKeyIdGet(t *testing.T) {
 	keeper, ctx := keepertest.PkiKeeper(t, nil)
-	items := createNApprovedCertificates(keeper, ctx, 10)
+	items := createApprovedCertificatesBySubjectKeyID(keeper, ctx, 10)
 	for _, item := range items {
-		rst, found := keeper.GetApprovedCertificates(ctx,
-			item.Subject,
+		rst, found := keeper.GetApprovedCertificatesBySubjectKeyID(ctx,
 			item.SubjectKeyId,
 		)
 		require.True(t, found)
@@ -46,28 +41,25 @@ func TestApprovedCertificatesGet(t *testing.T) {
 		)
 	}
 }
-
-func TestApprovedCertificatesRemove(t *testing.T) {
+func TestApprovedCertificatesBySubjectKeyIdRemove(t *testing.T) {
 	keeper, ctx := keepertest.PkiKeeper(t, nil)
-	items := createNApprovedCertificates(keeper, ctx, 10)
+	items := createApprovedCertificatesBySubjectKeyID(keeper, ctx, 10)
 	for _, item := range items {
-		keeper.RemoveApprovedCertificates(ctx,
-			item.Subject,
+		keeper.RemoveApprovedCertificatesBySubjectKeyID(ctx,
 			item.SubjectKeyId,
 		)
-		_, found := keeper.GetApprovedCertificates(ctx,
-			item.Subject,
+		_, found := keeper.GetApprovedCertificatesBySubjectKeyID(ctx,
 			item.SubjectKeyId,
 		)
 		require.False(t, found)
 	}
 }
 
-func TestApprovedCertificatesGetAll(t *testing.T) {
+func TestApprovedCertificatesBySubjectKeyIdGetAll(t *testing.T) {
 	keeper, ctx := keepertest.PkiKeeper(t, nil)
-	items := createNApprovedCertificates(keeper, ctx, 10)
+	items := createApprovedCertificatesBySubjectKeyID(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),
-		nullify.Fill(keeper.GetAllApprovedCertificates(ctx)),
+		nullify.Fill(keeper.GetAllApprovedCertificatesBySubjectKeyID(ctx)),
 	)
 }

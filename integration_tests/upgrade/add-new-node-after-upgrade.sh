@@ -5,7 +5,7 @@ localnet_dir=".localnet"
 dcl_user_home="/var/lib/dcl"
 DCL_DIR="$dcl_user_home/.dcl"
 mainnet_stable_version="0.12.1"
-latest_release_binary_version="1.2.2"
+latest_release_binary_version="1.3.0-dev1"
 
 node_name="new-observer"
 node_p2p_port=26670

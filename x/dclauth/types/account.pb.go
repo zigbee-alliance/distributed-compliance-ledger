@@ -8,11 +8,10 @@ import (
 	types "github.com/cosmos/cosmos-sdk/x/auth/types"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
+	types1 "github.com/zigbee-alliance/distributed-compliance-ledger/x/common/types"
 	io "io"
 	math "math"
 	math_bits "math/bits"
-
-	types1 "github.com/zigbee-alliance/distributed-compliance-ledger/x/common/types"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.

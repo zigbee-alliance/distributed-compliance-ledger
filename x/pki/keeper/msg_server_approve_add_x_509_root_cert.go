@@ -89,6 +89,9 @@ func (k msgServer) ApproveAddX509RootCert(goCtx context.Context, msg *types.MsgA
 
 		// add to subject -> subject key ID map
 		k.AddApprovedCertificateBySubject(ctx, rootCertificate.Subject, rootCertificate.SubjectKeyId)
+
+		// add to subject key ID -> certificates map
+		k.AddApprovedCertificateBySubjectKeyID(ctx, rootCertificate)
 	} else {
 		// update proposed certificate
 		k.SetProposedCertificate(ctx, proposedCertificate)

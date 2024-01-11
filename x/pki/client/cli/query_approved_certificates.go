@@ -12,6 +12,7 @@ import (
 )
 
 func CmdListApprovedCertificates() *cobra.Command {
+	var subjectKeyID string
 	cmd := &cobra.Command{
 		Use:   "all-x509-certs",
 		Short: "Gets all certificates (root, intermediate and leaf)",
@@ -26,7 +27,8 @@ func CmdListApprovedCertificates() *cobra.Command {
 			queryClient := types.NewQueryClient(clientCtx)
 
 			params := &types.QueryAllApprovedCertificatesRequest{
-				Pagination: pageReq,
+				Pagination:   pageReq,
+				SubjectKeyId: subjectKeyID,
 			}
 
 			res, err := queryClient.ApprovedCertificatesAll(context.Background(), params)
@@ -42,6 +44,7 @@ func CmdListApprovedCertificates() *cobra.Command {
 	}
 
 	flags.AddPaginationFlagsToCmd(cmd, cmd.Use)
+	cmd.Flags().StringVarP(&subjectKeyID, FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "", "Certificate's subject key id (hex)")
 	flags.AddQueryFlagsToCmd(cmd)
 
 	return cmd

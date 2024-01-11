@@ -49,5 +49,8 @@ func (k msgServer) RevokeX509Cert(goCtx context.Context, msg *types.MsgRevokeX50
 	// remove from subject -> subject key ID map
 	k.RemoveApprovedCertificateBySubject(ctx, msg.Subject, msg.SubjectKeyId)
 
+	// remove from subject key ID -> certificates map
+	k.RemoveApprovedCertificatesBySubjectKeyID(ctx, msg.SubjectKeyId)
+
 	return &types.MsgRevokeX509CertResponse{}, nil
 }

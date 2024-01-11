@@ -76,7 +76,7 @@ func TestApprovedCertificatesQueryPaginated(t *testing.T) {
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNApprovedCertificates(keeper, ctx, 5)
 
-	request := func(next []byte, offset, limit uint64, total bool) *types.QueryAllApprovedCertificatesRequest {
+	request := func(next []byte, offset, limit uint64, total bool, subjectKeyId string) *types.QueryAllApprovedCertificatesRequest {
 		return &types.QueryAllApprovedCertificatesRequest{
 			Pagination: &query.PageRequest{
 				Key:        next,
@@ -84,12 +84,13 @@ func TestApprovedCertificatesQueryPaginated(t *testing.T) {
 				Limit:      limit,
 				CountTotal: total,
 			},
+			SubjectKeyId: subjectKeyId,
 		}
 	}
 	t.Run("ByOffset", func(t *testing.T) {
 		step := 2
 		for i := 0; i < len(msgs); i += step {
-			resp, err := keeper.ApprovedCertificatesAll(wctx, request(nil, uint64(i), uint64(step), false))
+			resp, err := keeper.ApprovedCertificatesAll(wctx, request(nil, uint64(i), uint64(step), false, ""))
 			require.NoError(t, err)
 			require.LessOrEqual(t, len(resp.ApprovedCertificates), step)
 			require.Subset(t,
@@ -102,7 +103,7 @@ func TestApprovedCertificatesQueryPaginated(t *testing.T) {
 		step := 2
 		var next []byte
 		for i := 0; i < len(msgs); i += step {
-			resp, err := keeper.ApprovedCertificatesAll(wctx, request(next, 0, uint64(step), false))
+			resp, err := keeper.ApprovedCertificatesAll(wctx, request(next, 0, uint64(step), false, ""))
 			require.NoError(t, err)
 			require.LessOrEqual(t, len(resp.ApprovedCertificates), step)
 			require.Subset(t,
@@ -113,13 +114,20 @@ func TestApprovedCertificatesQueryPaginated(t *testing.T) {
 		}
 	})
 	t.Run("Total", func(t *testing.T) {
-		resp, err := keeper.ApprovedCertificatesAll(wctx, request(nil, 0, 0, true))
+		resp, err := keeper.ApprovedCertificatesAll(wctx, request(nil, 0, 0, true, ""))
 		require.NoError(t, err)
 		require.Equal(t, len(msgs), int(resp.Pagination.Total))
 		require.ElementsMatch(t,
 			nullify.Fill(msgs),
 			nullify.Fill(resp.ApprovedCertificates),
 		)
+	})
+	t.Run("By subjectkey-id", func(t *testing.T) {
+		resp, err := keeper.ApprovedCertificatesAll(wctx, request(nil, 0, 0, true, "1"))
+		require.NoError(t, err)
+		require.Equal(t, 1, len(resp.ApprovedCertificates))
+		require.Equal(t, msgs[1].SubjectKeyId, resp.ApprovedCertificates[0].SubjectKeyId)
+		require.Equal(t, msgs[1].Certs, resp.ApprovedCertificates[0].Certs)
 	})
 	t.Run("InvalidRequest", func(t *testing.T) {
 		_, err := keeper.ApprovedCertificatesAll(wctx, nil)

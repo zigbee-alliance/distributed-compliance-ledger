@@ -75,6 +75,9 @@ func (k msgServer) ApproveRevokeX509RootCert(goCtx context.Context, msg *types.M
 
 		// remove from subject -> subject key ID map
 		k.RemoveApprovedCertificateBySubject(ctx, msg.Subject, msg.SubjectKeyId)
+
+		// remove from subject key ID -> certificates map
+		k.RemoveApprovedCertificatesBySubjectKeyID(ctx, msg.SubjectKeyId)
 	} else {
 		k.SetProposedCertificateRevocation(ctx, revocation)
 	}

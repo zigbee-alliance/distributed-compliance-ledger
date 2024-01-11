@@ -202,9 +202,9 @@ trustee_account_2="alice"
 trustee_account_3="bob"
 vendor_account="vendor_account"
 
-plan_name="v1.2"
-binary_version="v1.2.2"
-upgrade_checksum="sha256:3f2b2a98b7572c6598383f7798c6bc16b4e432ae5cfd9dc8e84105c3d53b5026"
+plan_name="v1.3"
+binary_version="v1.3.0-dev1"
+upgrade_checksum="sha256:5bbd5a68715fe7dc20e107c0715ce041db2eb62b4bb9d22444c2f866a80f96ed"
 vid=1
 pid_1=1
 pid_2=2
@@ -787,6 +787,10 @@ result=$($DCLD_BIN_NEW query pki all-x509-root-certs)
 check_response "$result" "\"subject\": \"$test_root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id\""
 
+echo "Get all x509 root certificates by subjectKeyId $test_root_cert_subject_key_id"
+result=$($DCLD_BIN_NEW query pki all-x509-certs --subject-key-id="$test_root_cert_subject_key_id")
+check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id\""
+
 echo "Get all revoked x509 root certificates"
 result=$($DCLD_BIN_NEW query pki all-revoked-x509-root-certs)
 check_response "$result" "\"subject\": \"$root_cert_subject\""
@@ -1137,6 +1141,12 @@ test_divider
 echo "Add intermediate_cert"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx pki add-x509-cert --certificate="$intermediate_cert_path_new" --from=$trustee_account_1 --yes)
 check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Get all x509 certificates by subjectKeyId $intermediate_cert_subject_key_id_new"
+result=$($DCLD_BIN_NEW query pki all-x509-certs --subject-key-id="$intermediate_cert_subject_key_id_new")
+check_response "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id_new\""
 
 test_divider
 
