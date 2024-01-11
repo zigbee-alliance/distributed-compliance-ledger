@@ -568,6 +568,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.limit"?: string;
       "pagination.countTotal"?: boolean;
       "pagination.reverse"?: boolean;
+      subjectKeyId?: string;
     },
     params: RequestParams = {},
   ) =>

@@ -29,6 +29,7 @@ starport scaffold --module pki map PKIRevocationDistributionPointByIssuerSubject
 starport scaffold --module pki single ApprovedRootCertificates certs:strings --no-message
 starport scaffold --module pki single RevokedRootCertificates certs:strings --no-message
 starport scaffold --module pki map ApprovedCertificatesBySubject subjectKeyIds:strings --index subject --no-message
+starport scaffold --module pki map ApprovedCertificatesBySubjectKeyId certs:strings --index subjectKeyId --no-message
 starport scaffold --module pki map RejectedCertificate pemCert serialNumber owner approvals:strings --index subject,subjectKeyId --no-message
 #starport scaffold --module pki map AllProposedCertificates --index subject,subjectKeyId --no-message
 

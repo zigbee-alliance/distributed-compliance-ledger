@@ -117,6 +117,13 @@ response_does_not_contain "$result" "\"$root_cert_subject\""
 response_does_not_contain "$result" "\"$root_cert_subject_key_id\""
 echo $result | jq
 
+echo "Request all certificates by subjectKeyId must be empty"
+result=$(dcld query pki x509-cert --subject-key-id="$root_cert_subject_key_id")
+check_response "$result" "Not Found"
+response_does_not_contain "$result" "\"$root_cert_subject\""
+response_does_not_contain "$result" "\"$root_cert_subject_key_id\""
+echo $result | jq
+
 test_divider
 
 echo "Request all approved root certificates must be empty"
@@ -302,10 +309,19 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Certificate must be Approved and contain 2 approvals. Request Root certificate"
+echo "Get Certificates by subject and subjectKeyId must be Approved and contain 2 approvals. Request Root certificate"
 result=$(dcld query pki x509-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
 echo $result | jq
 check_response "$result" "\"subject\": \"$root_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
+check_response "$result" "\"serialNumber\": \"$root_cert_serial_number\""
+check_response "$result" "\"subjectAsText\": \"$root_cert_subject_as_text\""
+check_response "$result" "\"address\": \"$trustee_account_address\""
+check_response "$result" "\"address\": \"$second_trustee_account_address\""
+
+echo "Get Certificates by subjectKeyId must be Approved and contain 2 approvals. Request Root certificate"
+result=$(dcld query pki x509-cert --subject-key-id="$root_cert_subject_key_id")
+echo $result | jq
 check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$root_cert_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$root_cert_subject_as_text\""
@@ -366,10 +382,18 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Request Intermediate certificate - There are no approvals for Intermidiate Certificates"
+echo "Request Intermediate certificate by subject and subjectKeyId - There are no approvals for Intermidiate Certificates"
 result=$(dcld query pki x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id")
 echo $result | jq
 check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
+check_response "$result" "\"serialNumber\": \"$intermediate_cert_serial_number\""
+check_response "$result" "\"subjectAsText\": \"$intermediate_cert_subject_as_text\""
+check_response "$result" "\"approvals\": \\[\\]"
+
+echo "Request Intermediate certificate by subjectKeyId - There are no approvals for Intermidiate Certificates"
+result=$(dcld query pki x509-cert --subject-key-id="$intermediate_cert_subject_key_id")
+echo $result | jq
 check_response "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$intermediate_cert_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$intermediate_cert_subject_as_text\""
@@ -425,10 +449,18 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Request Leaf certificate - There is no approvals on leaf certificate"
+echo "Request Leaf certificate by subject and subjectKeyId - There is no approvals on leaf certificate"
 result=$(dcld query pki x509-cert --subject="$leaf_cert_subject" --subject-key-id="$leaf_cert_subject_key_id")
 echo $result | jq
 check_response "$result" "\"subject\": \"$leaf_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
+check_response "$result" "\"serialNumber\": \"$leaf_cert_serial_number\""
+check_response "$result" "\"subjectAsText\": \"$leaf_cert_subject_as_text\""
+check_response "$result" "\"approvals\": \\[\\]"
+
+echo "Request Leaf certificate by subjectKeyId - There is no approvals on leaf certificate"
+result=$(dcld query pki x509-cert --subject-key-id="$leaf_cert_subject_key_id")
+echo $result | jq
 check_response "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$leaf_cert_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$leaf_cert_subject_as_text\""
@@ -1233,10 +1265,19 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Certificate must be Approved and contain 2 approvals. Request Root certificate"
+echo "Get Certificates by subject and subjectKeyId must be Approved and contain 2 approvals. Request Root certificate"
 result=$(dcld query pki x509-cert --subject="$google_cert_subject" --subject-key-id="$google_cert_subject_key_id")
 echo $result | jq
 check_response "$result" "\"subject\": \"$google_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
+check_response "$result" "\"serialNumber\": \"$google_cert_serial_number\""
+check_response "$result" "\"subjectAsText\": \"$google_cert_subject_as_text\""
+check_response "$result" "\"address\": \"$trustee_account_address\""
+check_response "$result" "\"address\": \"$second_trustee_account_address\""
+
+echo "Get Certificates by subjectKeyId must be Approved and contain 2 approvals. Request Root certificate"
+result=$(dcld query pki x509-cert --subject-key-id="$google_cert_subject_key_id")
+echo $result | jq
 check_response "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$google_cert_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$google_cert_subject_as_text\""
@@ -1473,8 +1514,13 @@ check_response "$result" "Not Found"
 
 test_divider
 
-echo "Certificate not found in x509-cert"
+echo "Get Certificate by subject and subjectKeyId not found in x509-cert"
 result=$(dcld query pki x509-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id")
+echo $result | jq
+check_response "$result" "Not Found"
+
+echo "Get Certificate by subjectKeyId not found in x509-cert"
+result=$(dcld query pki x509-cert --subject-key-id="$test_cert_subject_key_id")
 echo $result | jq
 check_response "$result" "Not Found"
 
@@ -1693,10 +1739,20 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Certificate must be Approved and contains 2 approvals. Request Root certificate"
+echo "Get Certificates by subject must be Approved and contains 2 approvals. Request Root certificate"
 result=$(dcld query pki x509-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id")
 echo $result | jq
 check_response "$result" "\"subject\": \"$test_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$test_cert_subject_key_id\""
+check_response "$result" "\"serialNumber\": \"$test_cert_serial_number\""
+check_response "$result" "\"subjectAsText\": \"$test_cert_subject_as_text\""
+check_response "$result" "\"address\": \"$trustee_account_address\""
+check_response "$result" "\"address\": \"$second_trustee_account_address\""
+check_response "$result" "\"vid\": $test_cert_vid"
+
+echo "Get Certificates by subjectKeyId must be Approved and contains 2 approvals. Request Root certificate"
+result=$(dcld query pki x509-cert --subject-key-id="$test_cert_subject_key_id")
+echo $result | jq
 check_response "$result" "\"subjectKeyId\": \"$test_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$test_cert_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$test_cert_subject_as_text\""

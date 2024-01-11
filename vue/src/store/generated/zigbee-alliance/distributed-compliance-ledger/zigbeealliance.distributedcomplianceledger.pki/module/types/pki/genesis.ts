@@ -11,6 +11,7 @@ import { ApprovedCertificatesBySubject } from '../pki/approved_certificates_by_s
 import { RejectedCertificate } from '../pki/rejected_certificate'
 import { PkiRevocationDistributionPoint } from '../pki/pki_revocation_distribution_point'
 import { PkiRevocationDistributionPointsByIssuerSubjectKeyID } from '../pki/pki_revocation_distribution_points_by_issuer_subject_key_id'
+import { ApprovedCertificatesBySubjectKeyId } from '../pki/approved_certificates_by_subject_key_id'
 import { Writer, Reader } from 'protobufjs/minimal'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.pki'
@@ -28,8 +29,9 @@ export interface GenesisState {
   approvedCertificatesBySubjectList: ApprovedCertificatesBySubject[]
   rejectedCertificateList: RejectedCertificate[]
   PkiRevocationDistributionPointList: PkiRevocationDistributionPoint[]
-  /** this line is used by starport scaffolding # genesis/proto/state */
   pkiRevocationDistributionPointsByIssuerSubjectKeyIDList: PkiRevocationDistributionPointsByIssuerSubjectKeyID[]
+  approvedCertificatesBySubjectKeyIdList: ApprovedCertificatesBySubjectKeyId[]
+  /** this line is used by starport scaffolding # genesis/proto/state */
 }
 
 const baseGenesisState: object = {}
@@ -72,6 +74,9 @@ export const GenesisState = {
     for (const v of message.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList) {
       PkiRevocationDistributionPointsByIssuerSubjectKeyID.encode(v!, writer.uint32(98).fork()).ldelim()
     }
+    for (const v of message.approvedCertificatesBySubjectKeyIdList) {
+      ApprovedCertificatesBySubjectKeyId.encode(v!, writer.uint32(106).fork()).ldelim()
+    }
     return writer
   },
 
@@ -89,6 +94,7 @@ export const GenesisState = {
     message.rejectedCertificateList = []
     message.PkiRevocationDistributionPointList = []
     message.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList = []
+    message.approvedCertificatesBySubjectKeyIdList = []
     while (reader.pos < end) {
       const tag = reader.uint32()
       switch (tag >>> 3) {
@@ -130,6 +136,9 @@ export const GenesisState = {
             PkiRevocationDistributionPointsByIssuerSubjectKeyID.decode(reader, reader.uint32())
           )
           break
+        case 13:
+          message.approvedCertificatesBySubjectKeyIdList.push(ApprovedCertificatesBySubjectKeyId.decode(reader, reader.uint32()))
+          break
         default:
           reader.skipType(tag & 7)
           break
@@ -150,6 +159,7 @@ export const GenesisState = {
     message.rejectedCertificateList = []
     message.PkiRevocationDistributionPointList = []
     message.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList = []
+    message.approvedCertificatesBySubjectKeyIdList = []
     if (object.approvedCertificatesList !== undefined && object.approvedCertificatesList !== null) {
       for (const e of object.approvedCertificatesList) {
         message.approvedCertificatesList.push(ApprovedCertificates.fromJSON(e))
@@ -213,6 +223,11 @@ export const GenesisState = {
         message.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList.push(PkiRevocationDistributionPointsByIssuerSubjectKeyID.fromJSON(e))
       }
     }
+    if (object.approvedCertificatesBySubjectKeyIdList !== undefined && object.approvedCertificatesBySubjectKeyIdList !== null) {
+      for (const e of object.approvedCertificatesBySubjectKeyIdList) {
+        message.approvedCertificatesBySubjectKeyIdList.push(ApprovedCertificatesBySubjectKeyId.fromJSON(e))
+      }
+    }
     return message
   },
 
@@ -274,6 +289,13 @@ export const GenesisState = {
     } else {
       obj.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList = []
     }
+    if (message.approvedCertificatesBySubjectKeyIdList) {
+      obj.approvedCertificatesBySubjectKeyIdList = message.approvedCertificatesBySubjectKeyIdList.map((e) =>
+        e ? ApprovedCertificatesBySubjectKeyId.toJSON(e) : undefined
+      )
+    } else {
+      obj.approvedCertificatesBySubjectKeyIdList = []
+    }
     return obj
   },
 
@@ -289,6 +311,7 @@ export const GenesisState = {
     message.rejectedCertificateList = []
     message.PkiRevocationDistributionPointList = []
     message.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList = []
+    message.approvedCertificatesBySubjectKeyIdList = []
     if (object.approvedCertificatesList !== undefined && object.approvedCertificatesList !== null) {
       for (const e of object.approvedCertificatesList) {
         message.approvedCertificatesList.push(ApprovedCertificates.fromPartial(e))
@@ -350,6 +373,11 @@ export const GenesisState = {
     ) {
       for (const e of object.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList) {
         message.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList.push(PkiRevocationDistributionPointsByIssuerSubjectKeyID.fromPartial(e))
+      }
+    }
+    if (object.approvedCertificatesBySubjectKeyIdList !== undefined && object.approvedCertificatesBySubjectKeyIdList !== null) {
+      for (const e of object.approvedCertificatesBySubjectKeyIdList) {
+        message.approvedCertificatesBySubjectKeyIdList.push(ApprovedCertificatesBySubjectKeyId.fromPartial(e))
       }
     }
     return message

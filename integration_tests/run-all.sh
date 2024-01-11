@@ -131,12 +131,12 @@ if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "light" ]]; then
   CLI_SHELL_TESTS=$(find integration_tests/light_client_proxy -type f -name '*.sh' -not -name "common.sh")
 
   for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
-    init_pool 
+    init_pool
 
     log "*****************************************************************************************"
     log "Running $CLI_SHELL_TEST"
     log "*****************************************************************************************"
-    
+
     if bash "$CLI_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
       log "$CLI_SHELL_TEST finished successfully"
     else
@@ -185,39 +185,23 @@ if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "deploy" ]]; then
     fi
 fi
 
-test_add_new_node_after_upgrade() {
-  ADD_NEW_NODE_AFTER_UPGRADE="./integration_tests/upgrade/add-new-node-after-upgrade.sh"
-
-  log "*****************************************************************************************"
-  log "Running $ADD_NEW_NODE_AFTER_UPGRADE"
-  log "*****************************************************************************************"
-
-  if bash "$ADD_NEW_NODE_AFTER_UPGRADE" &>${DETAILED_OUTPUT_TARGET}; then
-    log "$ADD_NEW_NODE_AFTER_UPGRADE finished successfully"
-  else
-    log "$ADD_NEW_NODE_AFTER_UPGRADE failed"
-    exit 1
-  fi
-}
-
 # Upgrade procedure tests
 if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "upgrade" ]]; then
-    UPGRADE_SHELL_TEST="./integration_tests/upgrade/test-upgrade.sh"
+    UPGRADE_SHELL_TESTS=$(find integration_tests/upgrade -type f -name '*.sh' -not -name "add-new-node-after-upgrade.sh" | sort)
 
-    init_pool "" "localnet_init_latest_stable_release"
+    for UPGRADE_SHELL_TEST in ${UPGRADE_SHELL_TESTS}; do
+          log "*****************************************************************************************"
+          log "Running $UPGRADE_SHELL_TEST"
+          log "*****************************************************************************************"
 
-    log "*****************************************************************************************"
-    log "Running $UPGRADE_SHELL_TEST"
-    log "*****************************************************************************************"
+          if bash "$UPGRADE_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
+            log "$UPGRADE_SHELL_TEST finished successfully"
+          else
+            log "$UPGRADE_SHELL_TEST failed"
+            exit 1
+          fi
 
-    if bash "$UPGRADE_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
-      rm dcld_mainnet_stable
-      log "$UPGRADE_SHELL_TEST finished successfully"
-      test_add_new_node_after_upgrade
-    else
-      log "$UPGRADE_SHELL_TEST failed"
-      exit 1
-    fi
+          cleanup_pool
+    done
 
-    cleanup_pool
 fi

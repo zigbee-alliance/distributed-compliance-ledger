@@ -102,9 +102,16 @@ func GetProposedX509RootCert(suite *utils.TestSuite, subject string, subjectKeyI
 }
 
 func GetAllX509Certs(suite *utils.TestSuite) (res []pkitypes.ApprovedCertificates, err error) {
+	return getAllX509Certs(suite, "")
+}
+func GetAllX509certsBySubjectKeyID(suite *utils.TestSuite, subjectKeyID string) (res []pkitypes.ApprovedCertificates, err error) {
+	return getAllX509Certs(suite, subjectKeyID)
+}
+
+func getAllX509Certs(suite *utils.TestSuite, subjectKeyID string) (res []pkitypes.ApprovedCertificates, err error) {
 	if suite.Rest {
 		var resp pkitypes.QueryAllApprovedCertificatesResponse
-		err := suite.QueryREST("/dcl/pki/certificates", &resp)
+		err := suite.QueryREST(fmt.Sprintf("/dcl/pki/certificates?subjectKeyId=%s", subjectKeyID), &resp)
 		if err != nil {
 			return nil, err
 		}
@@ -117,7 +124,7 @@ func GetAllX509Certs(suite *utils.TestSuite) (res []pkitypes.ApprovedCertificate
 		pkiClient := pkitypes.NewQueryClient(grpcConn)
 		resp, err := pkiClient.ApprovedCertificatesAll(
 			context.Background(),
-			&pkitypes.QueryAllApprovedCertificatesRequest{},
+			&pkitypes.QueryAllApprovedCertificatesRequest{SubjectKeyId: subjectKeyID},
 		)
 		if err != nil {
 			return nil, err
@@ -744,10 +751,13 @@ func Demo(suite *utils.TestSuite) {
 
 	// Request all approved certificates
 	certificates, _ = GetAllX509Certs(suite)
-	require.Equal(suite.T, 1, len(certificates))
-	require.Equal(suite.T, testconstants.RootSubject, certificates[0].Subject)
-	require.Equal(suite.T, testconstants.RootSubjectKeyID, certificates[0].SubjectKeyId)
-	require.Equal(suite.T, testconstants.RootSubjectAsText, certificates[0].Certs[0].SubjectAsText)
+	certsBySubjectKeyID, _ := GetAllX509certsBySubjectKeyID(suite, testconstants.RootSubjectKeyID)
+	for _, certs := range [][]pkitypes.ApprovedCertificates{certificates, certsBySubjectKeyID} {
+		require.Equal(suite.T, 1, len(certs))
+		require.Equal(suite.T, testconstants.RootSubjectKeyID, certs[0].SubjectKeyId)
+		require.Equal(suite.T, testconstants.RootSubject, certs[0].Certs[0].Subject)
+		require.Equal(suite.T, testconstants.RootSubjectAsText, certs[0].Certs[0].SubjectAsText)
+	}
 
 	// Request all approved Root certificates
 	rootCertificates, _ = GetAllRootX509Certs(suite)
@@ -944,10 +954,12 @@ func Demo(suite *utils.TestSuite) {
 
 	// Request all approved certificates
 	certificates, _ = GetAllX509Certs(suite)
-	require.Equal(suite.T, 1, len(certificates))
-	require.Equal(suite.T, testconstants.RootSubject, certificates[0].Subject)
-	require.Equal(suite.T, testconstants.RootSubjectKeyID, certificates[0].SubjectKeyId)
-
+	certsBySubjectKeyID, _ = GetAllX509certsBySubjectKeyID(suite, testconstants.RootSubjectKeyID)
+	for _, certs := range [][]pkitypes.ApprovedCertificates{certificates, certsBySubjectKeyID} {
+		require.Equal(suite.T, 1, len(certs))
+		require.Equal(suite.T, testconstants.RootSubjectKeyID, certs[0].SubjectKeyId)
+		require.Equal(suite.T, testconstants.RootSubject, certs[0].Certs[0].Subject)
+	}
 	// Jack (Trustee) proposes to revoke Root certificate
 	msgProposeRevokeX509RootCert := pkitypes.MsgProposeRevokeX509RootCert{
 		Subject:      testconstants.RootSubject,
@@ -1096,6 +1108,10 @@ func Demo(suite *utils.TestSuite) {
 	certificates, _ = GetAllX509Certs(suite)
 	require.Equal(suite.T, 0, len(certificates))
 
+	// Request all approved certificates by subjectKeyId
+	certificates, _ = GetAllX509certsBySubjectKeyID(suite, testconstants.GoogleSubjectKeyID)
+	require.Equal(suite.T, 0, len(certificates))
+
 	// Request proposed Google Root certificate
 	proposedCertificate, _ = GetProposedX509RootCert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
 	require.Equal(suite.T, testconstants.GoogleCertPem, proposedCertificate.PemCert)
@@ -1121,6 +1137,10 @@ func Demo(suite *utils.TestSuite) {
 	certificates, _ = GetAllX509Certs(suite)
 	require.Equal(suite.T, 0, len(certificates))
 
+	// Request all approved certificates by subjectKeyId
+	certificates, _ = GetAllX509certsBySubjectKeyID(suite, testconstants.RootSubjectKeyID)
+	require.Equal(suite.T, 0, len(certificates))
+
 	// Request proposed Root certificate
 	proposedCertificate, _ = GetProposedX509RootCert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
 	require.Equal(suite.T, testconstants.GoogleCertPem, proposedCertificate.PemCert)
@@ -1142,10 +1162,12 @@ func Demo(suite *utils.TestSuite) {
 
 	// Request all approved certificates
 	certificates, _ = GetAllX509Certs(suite)
-	require.Equal(suite.T, 1, len(certificates))
-	require.Equal(suite.T, testconstants.GoogleSubject, certificates[0].Subject)
-	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, certificates[0].SubjectKeyId)
-
+	certsBySubjectKeyID, _ = GetAllX509certsBySubjectKeyID(suite, testconstants.GoogleSubjectKeyID)
+	for _, certs := range [][]pkitypes.ApprovedCertificates{certificates, certsBySubjectKeyID} {
+		require.Equal(suite.T, 1, len(certs))
+		require.Equal(suite.T, testconstants.GoogleSubjectKeyID, certs[0].SubjectKeyId)
+		require.Equal(suite.T, testconstants.GoogleSubject, certs[0].Certs[0].Subject)
+	}
 	// Request all approved Root certificates
 	rootCertificates, _ = GetAllRootX509Certs(suite)
 	require.Equal(suite.T, 1, len(rootCertificates.Certs))
@@ -1205,10 +1227,13 @@ func Demo(suite *utils.TestSuite) {
 
 	// Request all approved certificates
 	certificates, _ = GetAllX509Certs(suite)
-	require.Equal(suite.T, 1, len(certificates))
-	require.Equal(suite.T, testconstants.GoogleSubject, certificates[0].Subject)
-	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, certificates[0].SubjectKeyId)
-	require.Equal(suite.T, testconstants.GoogleSubjectAsText, certificates[0].Certs[0].SubjectAsText)
+	certsBySubjectKeyID, _ = GetAllX509certsBySubjectKeyID(suite, testconstants.GoogleSubjectKeyID)
+	for _, certs := range [][]pkitypes.ApprovedCertificates{certificates, certsBySubjectKeyID} {
+		require.Equal(suite.T, 1, len(certs))
+		require.Equal(suite.T, testconstants.GoogleSubjectKeyID, certs[0].SubjectKeyId)
+		require.Equal(suite.T, testconstants.GoogleSubject, certs[0].Certs[0].Subject)
+		require.Equal(suite.T, testconstants.GoogleSubjectAsText, certs[0].Certs[0].SubjectAsText)
+	}
 
 	// Alice (Trustee) approves to revoke Google Root certificate
 	msgApproveRevokeX509RootCert = pkitypes.MsgApproveRevokeX509RootCert{
@@ -1261,6 +1286,9 @@ func Demo(suite *utils.TestSuite) {
 	require.True(suite.T, revokedCertificate.Certs[0].IsRoot)
 
 	certificates, _ = GetAllX509Certs(suite)
+	require.Equal(suite.T, 0, len(certificates))
+
+	certificates, _ = GetAllX509certsBySubjectKeyID(suite, testconstants.GoogleSubjectKeyID)
 	require.Equal(suite.T, 0, len(certificates))
 
 	_, err = GetProposedX509RootCert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
