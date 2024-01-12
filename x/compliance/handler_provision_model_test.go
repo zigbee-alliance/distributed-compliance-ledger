@@ -13,7 +13,7 @@ import (
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
-func provisionModelSetup(t *testing.T) (*TestSetup, int32, int32, uint32, string, string) {
+func setupProvisionModel(t *testing.T) (*TestSetup, int32, int32, uint32, string, string) {
 	setup := setup(t)
 
 	vid, pid, softwareVersion, softwareVersionString := setup.addModelVersion(
@@ -76,7 +76,7 @@ func (setup *TestSetup) checkModelProvisioned(t *testing.T, provisionModelMsg *t
 }
 
 func TestHandler_ProvisionModel_AllCertificationTypes(t *testing.T) {
-	setup, vid, pid, softwareVersion, softwareVersionString, _ := provisionModelSetup(t)
+	setup, vid, pid, softwareVersion, softwareVersionString, _ := setupProvisionModel(t)
 
 	for _, certificationType := range setup.CertificationTypes {
 		provisionModelMsg, provisionModelErr := setup.provisionModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
@@ -88,7 +88,7 @@ func TestHandler_ProvisionModel_AllCertificationTypes(t *testing.T) {
 }
 
 func TestHandler_ProvisionModel_WithAllOptionalFlagsForAllCertificationTypes(t *testing.T) {
-	setup, vid, pid, softwareVersion, softwareVersionString, _ := provisionModelSetup(t)
+	setup, vid, pid, softwareVersion, softwareVersionString, _ := setupProvisionModel(t)
 
 	for _, certificationType := range setup.CertificationTypes {
 		provisionModelMsg, provisionModelErr := setup.provisionModelWithAllOptionalFlags(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
@@ -100,7 +100,7 @@ func TestHandler_ProvisionModel_WithAllOptionalFlagsForAllCertificationTypes(t *
 }
 
 func TestHandler_ProvisionModel_ByWrongRoles(t *testing.T) {
-	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := provisionModelSetup(t)
+	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := setupProvisionModel(t)
 
 	accountRoles := []dclauthtypes.AccountRole{
 		dclauthtypes.Vendor,
@@ -121,7 +121,7 @@ func TestHandler_ProvisionModel_ByWrongRoles(t *testing.T) {
 }
 
 func TestHandler_ProvisionModel_Twice(t *testing.T) {
-	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := provisionModelSetup(t)
+	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := setupProvisionModel(t)
 
 	_, provisionModelFisrtTimeErr := setup.provisionModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
 	_, provisionModelSecondTimeErr := setup.provisionModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
@@ -131,9 +131,10 @@ func TestHandler_ProvisionModel_Twice(t *testing.T) {
 }
 
 func TestHandler_ProvisionModel_AlreadyCertified(t *testing.T) {
-	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := provisionModelSetup(t)
+	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := setupProvisionModel(t)
 
-	_, certifyModelErr := setup.CertifyModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+	certifyModelMsg := newMsgCertifyModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+	_, certifyModelErr := setup.Handler(setup.Ctx, certifyModelMsg)
 	require.NoError(t, certifyModelErr)
 	_, provisionModelErr := setup.provisionModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
 
@@ -141,7 +142,7 @@ func TestHandler_ProvisionModel_AlreadyCertified(t *testing.T) {
 }
 
 func TestHandler_ProvisionModel_AlreadyRevoked(t *testing.T) {
-	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := provisionModelSetup(t)
+	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := setupProvisionModel(t)
 
 	_, revokeModelErr := setup.revokeModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
 	require.NoError(t, revokeModelErr)
