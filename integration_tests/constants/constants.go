@@ -116,6 +116,7 @@ var (
 	ProgramType                        = "Some Program Type"
 	ProgramTypeVersion                 = "Some Program Type Version"
 	Transport                          = "Some Transport"
+	SoftwareVersionCertificationStatus = uint32(3)
 	ParentChild1                       = "parent"
 	ParentChild2                       = "child"
 	CertificationIDOfSoftwareComponent = "some certification ID of software component"
