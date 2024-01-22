@@ -197,7 +197,6 @@ wait_for_height() {
 
     if [[ "$mode" == "outage-safe" ]]; then
       current_height="$(dcld status $node 2>/dev/null | jq | grep latest_block_height | awk -F'"' '{print $4}')" || true
-
     else
       current_height="$(dcld status $node | jq | grep latest_block_height | awk -F'"' '{print $4}')"
 

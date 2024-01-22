@@ -1118,6 +1118,22 @@ Use `GET_ALL_REVOKED_X509_CERTS` to get a list of all revoked certificates.
 - REST API:
   - GET `/dcl/pki/certificates/{subject}/{subject_key_id}`
 
+### GET_X509_CERTS_BY_SUBJECT_KEY_ID
+
+**Status: Implemented**
+
+Gets all certificates (root, intermediate and leaf) by the given subject key ID attribute.
+
+Revoked certificates are not returned.
+Use `GET_ALL_REVOKED_X509_CERTS` to get a list of all revoked certificates.
+
+- Parameters:
+  - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
+- CLI command:
+  - `dcld query pki x509-cert --subject-key-id=<hex string>`
+- REST API:
+  - GET `/dcl/pki/certificates?subjectKeyId={subjectKeyId}`
+
 ### GET_ALL_SUBJECT_X509_CERTS
 
 **Status: Implemented**

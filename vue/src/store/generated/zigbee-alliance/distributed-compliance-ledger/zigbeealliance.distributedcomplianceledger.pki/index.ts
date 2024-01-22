@@ -4,6 +4,7 @@ import { SpVuexError } from '@starport/vuex'
 
 import { ApprovedCertificates } from "./module/types/pki/approved_certificates"
 import { ApprovedCertificatesBySubject } from "./module/types/pki/approved_certificates_by_subject"
+import { ApprovedCertificatesBySubjectKeyId } from "./module/types/pki/approved_certificates_by_subject_key_id"
 import { ApprovedRootCertificates } from "./module/types/pki/approved_root_certificates"
 import { Certificate } from "./module/types/pki/certificate"
 import { CertificateIdentifier } from "./module/types/pki/certificate_identifier"
@@ -19,7 +20,7 @@ import { RevokedRootCertificates } from "./module/types/pki/revoked_root_certifi
 import { UniqueCertificate } from "./module/types/pki/unique_certificate"
 
 
-export { ApprovedCertificates, ApprovedCertificatesBySubject, ApprovedRootCertificates, Certificate, CertificateIdentifier, ChildCertificates, Grant, PkiRevocationDistributionPoint, PkiRevocationDistributionPointsByIssuerSubjectKeyID, ProposedCertificate, ProposedCertificateRevocation, RejectedCertificate, RevokedCertificates, RevokedRootCertificates, UniqueCertificate };
+export { ApprovedCertificates, ApprovedCertificatesBySubject, ApprovedCertificatesBySubjectKeyId, ApprovedRootCertificates, Certificate, CertificateIdentifier, ChildCertificates, Grant, PkiRevocationDistributionPoint, PkiRevocationDistributionPointsByIssuerSubjectKeyID, ProposedCertificate, ProposedCertificateRevocation, RejectedCertificate, RevokedCertificates, RevokedRootCertificates, UniqueCertificate };
 
 async function initTxClient(vuexGetters) {
 	return await txClient(vuexGetters['common/wallet/signer'], {
@@ -78,6 +79,7 @@ const getDefaultState = () => {
 				_Structure: {
 						ApprovedCertificates: getStructure(ApprovedCertificates.fromPartial({})),
 						ApprovedCertificatesBySubject: getStructure(ApprovedCertificatesBySubject.fromPartial({})),
+						ApprovedCertificatesBySubjectKeyId: getStructure(ApprovedCertificatesBySubjectKeyId.fromPartial({})),
 						ApprovedRootCertificates: getStructure(ApprovedRootCertificates.fromPartial({})),
 						Certificate: getStructure(Certificate.fromPartial({})),
 						CertificateIdentifier: getStructure(CertificateIdentifier.fromPartial({})),

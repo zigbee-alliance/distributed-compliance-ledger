@@ -26,6 +26,7 @@ export interface QueryGetApprovedCertificatesResponse {
 
 export interface QueryAllApprovedCertificatesRequest {
   pagination: PageRequest | undefined
+  subjectKeyId: string
 }
 
 export interface QueryAllApprovedCertificatesResponse {
@@ -289,12 +290,15 @@ export const QueryGetApprovedCertificatesResponse = {
   }
 }
 
-const baseQueryAllApprovedCertificatesRequest: object = {}
+const baseQueryAllApprovedCertificatesRequest: object = { subjectKeyId: '' }
 
 export const QueryAllApprovedCertificatesRequest = {
   encode(message: QueryAllApprovedCertificatesRequest, writer: Writer = Writer.create()): Writer {
     if (message.pagination !== undefined) {
       PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim()
+    }
+    if (message.subjectKeyId !== '') {
+      writer.uint32(18).string(message.subjectKeyId)
     }
     return writer
   },
@@ -308,6 +312,9 @@ export const QueryAllApprovedCertificatesRequest = {
       switch (tag >>> 3) {
         case 1:
           message.pagination = PageRequest.decode(reader, reader.uint32())
+          break
+        case 2:
+          message.subjectKeyId = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -324,12 +331,18 @@ export const QueryAllApprovedCertificatesRequest = {
     } else {
       message.pagination = undefined
     }
+    if (object.subjectKeyId !== undefined && object.subjectKeyId !== null) {
+      message.subjectKeyId = String(object.subjectKeyId)
+    } else {
+      message.subjectKeyId = ''
+    }
     return message
   },
 
   toJSON(message: QueryAllApprovedCertificatesRequest): unknown {
     const obj: any = {}
     message.pagination !== undefined && (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined)
+    message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId)
     return obj
   },
 
@@ -339,6 +352,11 @@ export const QueryAllApprovedCertificatesRequest = {
       message.pagination = PageRequest.fromPartial(object.pagination)
     } else {
       message.pagination = undefined
+    }
+    if (object.subjectKeyId !== undefined && object.subjectKeyId !== null) {
+      message.subjectKeyId = object.subjectKeyId
+    } else {
+      message.subjectKeyId = ''
     }
     return message
   }

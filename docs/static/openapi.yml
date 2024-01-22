@@ -1493,6 +1493,17 @@ paths:
                             format: int64
                           info:
                             type: string
+                    productIDs:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          min:
+                            type: integer
+                            format: int32
+                          max:
+                            type: integer
+                            format: int32
               pagination:
                 type: object
                 properties:
@@ -2220,6 +2231,17 @@ paths:
                           format: int64
                         info:
                           type: string
+                  productIDs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        min:
+                          type: integer
+                          format: int32
+                        max:
+                          type: integer
+                          format: int32
         default:
           description: An unexpected error response.
           schema:
@@ -2668,6 +2690,17 @@ paths:
                                 format: int64
                               info:
                                 type: string
+                        productIDs:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              min:
+                                type: integer
+                                format: int32
+                              max:
+                                type: integer
+                                format: int32
               pagination:
                 type: object
                 properties:
@@ -3193,6 +3226,17 @@ paths:
                               format: int64
                             info:
                               type: string
+                      productIDs:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            min:
+                              type: integer
+                              format: int32
+                            max:
+                              type: integer
+                              format: int32
         default:
           description: An unexpected error response.
           schema:
@@ -4168,6 +4212,17 @@ paths:
                                 format: int64
                               info:
                                 type: string
+                        productIDs:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              min:
+                                type: integer
+                                format: int32
+                              max:
+                                type: integer
+                                format: int32
               pagination:
                 type: object
                 properties:
@@ -4693,6 +4748,17 @@ paths:
                               format: int64
                             info:
                               type: string
+                      productIDs:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            min:
+                              type: integer
+                              format: int32
+                            max:
+                              type: integer
+                              format: int32
         default:
           description: An unexpected error response.
           schema:
@@ -5141,6 +5207,17 @@ paths:
                                 format: int64
                               info:
                                 type: string
+                        productIDs:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              min:
+                                type: integer
+                                format: int32
+                              max:
+                                type: integer
+                                format: int32
                     revokeApprovals:
                       type: array
                       items:
@@ -5684,6 +5761,17 @@ paths:
                               format: int64
                             info:
                               type: string
+                      productIDs:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            min:
+                              type: integer
+                              format: int32
+                            max:
+                              type: integer
+                              format: int32
                   revokeApprovals:
                     type: array
                     items:
@@ -8951,6 +9039,10 @@ paths:
           in: query
           required: false
           type: boolean
+        - name: subjectKeyId
+          in: query
+          required: false
+          type: string
       tags:
         - Query
   /dcl/pki/certificates/{subject}:
@@ -15192,6 +15284,15 @@ definitions:
       this
 
       type for additional functionality (e.g. vesting).
+  zigbeealliance.distributedcomplianceledger.common.Uint16Range:
+    type: object
+    properties:
+      min:
+        type: integer
+        format: int32
+      max:
+        type: integer
+        format: int32
   zigbeealliance.distributedcomplianceledger.dclauth.Account:
     type: object
     properties:
@@ -15415,6 +15516,17 @@ definitions:
               format: int64
             info:
               type: string
+      productIDs:
+        type: array
+        items:
+          type: object
+          properties:
+            min:
+              type: integer
+              format: int32
+            max:
+              type: integer
+              format: int32
   zigbeealliance.distributedcomplianceledger.dclauth.AccountStat:
     type: object
     properties:
@@ -15663,6 +15775,17 @@ definitions:
                   format: int64
                 info:
                   type: string
+          productIDs:
+            type: array
+            items:
+              type: object
+              properties:
+                min:
+                  type: integer
+                  format: int32
+                max:
+                  type: integer
+                  format: int32
   zigbeealliance.distributedcomplianceledger.dclauth.PendingAccountRevocation:
     type: object
     properties:
@@ -15918,6 +16041,17 @@ definitions:
                     format: int64
                   info:
                     type: string
+            productIDs:
+              type: array
+              items:
+                type: object
+                properties:
+                  min:
+                    type: integer
+                    format: int32
+                  max:
+                    type: integer
+                    format: int32
       pagination:
         type: object
         properties:
@@ -16186,6 +16320,17 @@ definitions:
                         format: int64
                       info:
                         type: string
+                productIDs:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      min:
+                        type: integer
+                        format: int32
+                      max:
+                        type: integer
+                        format: int32
       pagination:
         type: object
         properties:
@@ -16501,6 +16646,17 @@ definitions:
                         format: int64
                       info:
                         type: string
+                productIDs:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      min:
+                        type: integer
+                        format: int32
+                      max:
+                        type: integer
+                        format: int32
       pagination:
         type: object
         properties:
@@ -16769,6 +16925,17 @@ definitions:
                         format: int64
                       info:
                         type: string
+                productIDs:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      min:
+                        type: integer
+                        format: int32
+                      max:
+                        type: integer
+                        format: int32
             revokeApprovals:
               type: array
               items:
@@ -17044,6 +17211,17 @@ definitions:
                   format: int64
                 info:
                   type: string
+          productIDs:
+            type: array
+            items:
+              type: object
+              properties:
+                min:
+                  type: integer
+                  format: int32
+                max:
+                  type: integer
+                  format: int32
   zigbeealliance.distributedcomplianceledger.dclauth.QueryGetAccountStatResponse:
     type: object
     properties:
@@ -17292,6 +17470,17 @@ definitions:
                       format: int64
                     info:
                       type: string
+              productIDs:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    min:
+                      type: integer
+                      format: int32
+                    max:
+                      type: integer
+                      format: int32
   zigbeealliance.distributedcomplianceledger.dclauth.QueryGetPendingAccountRevocationResponse:
     type: object
     properties:
@@ -17551,6 +17740,17 @@ definitions:
                       format: int64
                     info:
                       type: string
+              productIDs:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    min:
+                      type: integer
+                      format: int32
+                    max:
+                      type: integer
+                      format: int32
   zigbeealliance.distributedcomplianceledger.dclauth.QueryGetRevokedAccountResponse:
     type: object
     properties:
@@ -17790,6 +17990,17 @@ definitions:
                       format: int64
                     info:
                       type: string
+              productIDs:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    min:
+                      type: integer
+                      format: int32
+                    max:
+                      type: integer
+                      format: int32
           revokeApprovals:
             type: array
             items:
@@ -18040,6 +18251,17 @@ definitions:
                   format: int64
                 info:
                   type: string
+          productIDs:
+            type: array
+            items:
+              type: object
+              properties:
+                min:
+                  type: integer
+                  format: int32
+                max:
+                  type: integer
+                  format: int32
   zigbeealliance.distributedcomplianceledger.dclauth.RevokedAccount:
     type: object
     properties:
@@ -18272,6 +18494,17 @@ definitions:
                   format: int64
                 info:
                   type: string
+          productIDs:
+            type: array
+            items:
+              type: object
+              properties:
+                min:
+                  type: integer
+                  format: int32
+                max:
+                  type: integer
+                  format: int32
       revokeApprovals:
         type: array
         items:
