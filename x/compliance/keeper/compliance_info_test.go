@@ -8,8 +8,8 @@ import (
 	"github.com/stretchr/testify/require"
 	keepertest "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/nullify"
-	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/keeper"
+	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
 // Prevent strconv unused error.

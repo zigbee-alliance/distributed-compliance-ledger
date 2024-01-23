@@ -1,0 +1,12 @@
+syntax = "proto3";
+package compliance.types;
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types";
+
+import "compliance/types/compliance_info.proto";
+
+message DeviceSoftwareCompliance {
+  string cDCertificateId = 1; 
+  repeated ComplianceInfo complianceInfo = 2; 
+  
+}

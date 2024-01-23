@@ -41,7 +41,7 @@ func TestCreateModel(t *testing.T) {
 	common := []string{
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 		fmt.Sprintf("--%s", flags.FlagSkipConfirmation),
-		fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+		fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
 	}
 
 	for _, tc := range []struct {
@@ -83,7 +83,7 @@ func TestUpdateModel(t *testing.T) {
 	common := []string{
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 		fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-		fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+		fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
 	}
 
 	args := []string{
@@ -169,7 +169,7 @@ func TestDeleteModel(t *testing.T) {
 	common := []string{
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 		fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-		fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+		fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
 	}
 
 	args := []string{

@@ -1,0 +1,17 @@
+syntax = "proto3";
+package dclauth.types;
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types";
+
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+import "dclauth/types/grant.proto";
+
+message PendingAccountRevocation {
+  option (gogoproto.goproto_stringer) = false;
+
+  string address = 1  [(cosmos_proto.scalar) = "cosmos.AddressString"]; 
+  repeated Grant approvals = 2;
+  
+}
+

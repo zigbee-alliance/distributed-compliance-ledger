@@ -5,7 +5,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
+
+	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 

@@ -394,7 +394,7 @@ func New(
 		keys[dclauthmoduletypes.MemStoreKey],
 	)
 
-	dclauthModule := dclauthmodule.NewAppModule(appCodec, app.DclauthKeeper)
+	dclauthModule := dclauthmodule.NewAppModule(appCodec, app.DclauthKeeper, app.BaseauthKeeper)
 
 	app.ValidatorKeeper = *validatormodulekeeper.NewKeeper(
 		appCodec,

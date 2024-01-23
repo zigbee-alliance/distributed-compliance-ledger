@@ -6,7 +6,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
-	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
@@ -15,7 +14,7 @@ func setupDeleteComplianceInfo(t *testing.T) (*TestSetup, int32, int32, uint32, 
 
 	vid, pid, softwareVersion, softwareVersionString := setup.addModelVersion(
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
-	certificationType := dclcompltypes.ZigbeeCertificationType
+	certificationType := types.ZigbeeCertificationType
 
 	return setup, vid, pid, softwareVersion, softwareVersionString, certificationType
 }

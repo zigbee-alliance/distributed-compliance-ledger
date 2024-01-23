@@ -37,7 +37,6 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 		NewInfiniteGasSetUpContextDecorator(), // outermost AnteDecorator. SetUpContext must be called first
 		// authante.NewSetUpContextDecorator(), // outermost AnteDecorator. SetUpContext must be called first
 
-		authante.NewRejectExtensionOptionsDecorator(),
 		authante.NewValidateBasicDecorator(),
 		authante.NewTxTimeoutHeightDecorator(),
 		authante.NewValidateMemoDecorator(options.AccountKeeper),

@@ -17,6 +17,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
+	basekeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/base/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/client/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
@@ -101,13 +102,15 @@ func (AppModuleBasic) GetQueryCmd() *cobra.Command {
 type AppModule struct {
 	AppModuleBasic
 
-	keeper keeper.Keeper
+	keeper     keeper.Keeper
+	basekeeper basekeeper.Keeper
 }
 
-func NewAppModule(cdc codec.Codec, keeper keeper.Keeper) AppModule {
+func NewAppModule(cdc codec.Codec, keeper keeper.Keeper, basekeeper basekeeper.Keeper) AppModule {
 	return AppModule{
 		AppModuleBasic: NewAppModuleBasic(cdc),
 		keeper:         keeper,
+		basekeeper:     basekeeper,
 	}
 }
 
@@ -133,6 +136,7 @@ func (am AppModule) WeightedOperations(_ module.SimulationState) []simtypes.Weig
 func (am AppModule) RegisterServices(cfg module.Configurator) {
 	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
 	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
+	basetypes.RegisterQueryServer(cfg.QueryServer(), am.basekeeper)
 }
 
 // RegisterInvariants registers the dclauth module's invariants.

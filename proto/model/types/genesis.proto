@@ -1,0 +1,20 @@
+syntax = "proto3";
+package model.types;
+
+import "model/types/vendor_products.proto";
+import "model/types/model.proto";
+import "model/types/model_version.proto";
+import "model/types/model_versions.proto";
+// this line is used by starport scaffolding # genesis/proto/import
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types";
+
+// GenesisState defines the model module's genesis state.
+message GenesisState {
+    repeated VendorProducts vendorProductsList = 1 [(gogoproto.nullable) = false];
+  repeated Model modelList = 2 [(gogoproto.nullable) = false];
+  repeated ModelVersion modelVersionList = 3 [(gogoproto.nullable) = false];
+  repeated ModelVersions modelVersionsList = 4 [(gogoproto.nullable) = false];
+  // this line is used by starport scaffolding # genesis/proto/state
+}

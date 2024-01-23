@@ -186,7 +186,6 @@ $ %s gentx my-key-name --home=/path/to/home/dir --keyring-backend=os --chain-id=
 
 	cmd.Flags().String(flags.FlagHome, defaultNodeHome, "The application home directory")
 	cmd.Flags().String(flags.FlagOutputDocument, "", "Write the genesis transaction JSON document to the given file instead of the default location")
-	cmd.Flags().String(flags.FlagChainID, "", "The network chain ID")
 	cmd.Flags().AddFlagSet(fsCreateValidator)
 	cli.AddTxFlagsToCmd(cmd)
 

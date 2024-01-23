@@ -1,0 +1,156 @@
+syntax = "proto3";
+package pki.types;
+
+// this line is used by starport scaffolding # proto/tx/import
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types";
+
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+
+// Msg defines the Msg service.
+service Msg {
+  rpc ProposeAddX509RootCert(MsgProposeAddX509RootCert) returns (MsgProposeAddX509RootCertResponse);
+  rpc ApproveAddX509RootCert(MsgApproveAddX509RootCert) returns (MsgApproveAddX509RootCertResponse);
+  rpc AddX509Cert(MsgAddX509Cert) returns (MsgAddX509CertResponse);
+  rpc ProposeRevokeX509RootCert(MsgProposeRevokeX509RootCert) returns (MsgProposeRevokeX509RootCertResponse);
+  rpc ApproveRevokeX509RootCert(MsgApproveRevokeX509RootCert) returns (MsgApproveRevokeX509RootCertResponse);
+  rpc RevokeX509Cert(MsgRevokeX509Cert) returns (MsgRevokeX509CertResponse);
+  rpc RejectAddX509RootCert(MsgRejectAddX509RootCert) returns (MsgRejectAddX509RootCertResponse);
+  rpc AddPkiRevocationDistributionPoint(MsgAddPkiRevocationDistributionPoint) returns (MsgAddPkiRevocationDistributionPointResponse);
+  rpc UpdatePkiRevocationDistributionPoint(MsgUpdatePkiRevocationDistributionPoint) returns (MsgUpdatePkiRevocationDistributionPointResponse);
+  rpc DeletePkiRevocationDistributionPoint(MsgDeletePkiRevocationDistributionPoint) returns (MsgDeletePkiRevocationDistributionPointResponse);
+  rpc AssignVid(MsgAssignVid) returns (MsgAssignVidResponse);
+// this line is used by starport scaffolding # proto/tx/rpc
+}
+
+message MsgProposeAddX509RootCert {
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  string cert = 2 [(gogoproto.moretags) = "validate:\"required,max=10485760\""];
+  string info = 3 [(gogoproto.moretags) = "validate:\"max=4096\""];
+  int64 time = 4;
+  int32 vid = 5 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535,required\""];
+}
+
+message MsgProposeAddX509RootCertResponse {
+}
+
+message MsgApproveAddX509RootCert {
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  string subject = 2 [(gogoproto.moretags) = "validate:\"required,max=1024\""];
+  string subjectKeyId = 3 [(gogoproto.moretags) = "validate:\"required,max=256\""];
+  string info = 4 [(gogoproto.moretags) = "validate:\"max=4096\""];
+  int64 time = 5;
+}
+
+message MsgApproveAddX509RootCertResponse {
+}
+
+message MsgAddX509Cert {
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  string cert = 2 [(gogoproto.moretags) = "validate:\"required,max=10485760\""];
+  string info = 3 [(gogoproto.moretags) = "validate:\"max=4096\""];
+  int64 time = 4;
+}
+
+message MsgAddX509CertResponse {
+}
+
+message MsgProposeRevokeX509RootCert {
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  string subject = 2 [(gogoproto.moretags) = "validate:\"required,max=1024\""];
+  string subjectKeyId = 3 [(gogoproto.moretags) = "validate:\"required,max=256\""];
+  string info = 4 [(gogoproto.moretags) = "validate:\"max=4096\""];
+  int64 time = 5;
+}
+
+message MsgProposeRevokeX509RootCertResponse {
+}
+
+message MsgApproveRevokeX509RootCert {
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  string subject = 2 [(gogoproto.moretags) = "validate:\"required,max=1024\""];
+  string subjectKeyId = 3 [(gogoproto.moretags) = "validate:\"required,max=256\""];
+  string info = 5 [(gogoproto.moretags) = "validate:\"max=4096\""];
+  int64 time = 6;
+}
+
+message MsgApproveRevokeX509RootCertResponse {
+}
+
+message MsgRevokeX509Cert {
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  string subject = 2 [(gogoproto.moretags) = "validate:\"required,max=1024\""];
+  string subjectKeyId = 3 [(gogoproto.moretags) = "validate:\"required,max=256\""];
+  string info = 4 [(gogoproto.moretags) = "validate:\"max=4096\""];
+  int64 time = 5;
+}
+
+message MsgRevokeX509CertResponse {
+}
+
+message MsgRejectAddX509RootCert {
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  string subject = 2 [(gogoproto.moretags) = "validate:\"required,max=1024\""];
+  string subjectKeyId = 3 [(gogoproto.moretags) = "validate:\"required,max=256\""];
+  string info = 4 [(gogoproto.moretags) = "validate:\"max=4096\""];
+  int64 time = 5;
+}
+
+message MsgRejectAddX509RootCertResponse {
+}
+
+message MsgAddPkiRevocationDistributionPoint {
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  int32 vid = 2 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535,required\""];
+  int32 pid = 3 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
+  bool isPAA = 4;
+  string label = 5 [(gogoproto.moretags) = "validate:\"required\""];
+  string crlSignerCertificate = 6 [(gogoproto.moretags) = "validate:\"required\""];
+  string issuerSubjectKeyID = 7 [(gogoproto.moretags) = "validate:\"required\""];
+  string dataURL = 8 [(gogoproto.moretags) = "validate:\"required,url\""];
+  uint64 dataFileSize = 9;
+  string dataDigest = 10;
+  uint32 dataDigestType = 11;
+  uint32 revocationType = 12 [(gogoproto.moretags) = "validate:\"required\""];
+}
+
+message MsgAddPkiRevocationDistributionPointResponse {
+}
+
+message MsgUpdatePkiRevocationDistributionPoint {
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  int32 vid = 2 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535,required\""];
+  string label = 3 [(gogoproto.moretags) = "validate:\"required\""];
+  string crlSignerCertificate = 4;
+  string issuerSubjectKeyID = 5 [(gogoproto.moretags) = "validate:\"required\""];
+  string dataURL = 6 [(gogoproto.moretags) = "validate:\"omitempty,url\""];
+  uint64 dataFileSize = 7;
+  string dataDigest = 8;
+  uint32 dataDigestType = 9;
+}
+
+message MsgUpdatePkiRevocationDistributionPointResponse {
+}
+
+message MsgDeletePkiRevocationDistributionPoint {
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  int32 vid = 2 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535,required\""];
+  string label = 3 [(gogoproto.moretags) = "validate:\"required\""];
+  string issuerSubjectKeyID = 4 [(gogoproto.moretags) = "validate:\"required\""];
+}
+
+message MsgDeletePkiRevocationDistributionPointResponse {
+}
+
+message MsgAssignVid {
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  string subject = 2 [(gogoproto.moretags) = "validate:\"required,max=1024\""];
+  string subjectKeyId = 3 [(gogoproto.moretags) = "validate:\"required,max=256\""];
+  int32 vid = 4 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535,required\""];
+}
+
+message MsgAssignVidResponse {
+}
+
+// this line is used by starport scaffolding # proto/tx/message

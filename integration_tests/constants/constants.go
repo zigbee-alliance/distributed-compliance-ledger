@@ -18,7 +18,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/app"
+	"github.com/cosmos/cosmos-sdk/types/module/testutil"
+
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common/types"
 )
 
@@ -34,7 +35,7 @@ func strToPubKey(pkStr string, cdc codec.Codec) cryptotypes.PubKey {
 var (
 	// default context
 	// TODO issue 99: design test context better.
-	defEncConfig = app.MakeEncodingConfig()
+	defEncConfig = testutil.MakeTestEncodingConfig()
 
 	// Base constants.
 	JackAccount  = "jack"

@@ -8,7 +8,6 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
-	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	modeltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
@@ -20,7 +19,7 @@ func setupCertifyModel(t *testing.T) (*TestSetup, int32, int32, uint32, string, 
 
 	vid, pid, softwareVersion, softwareVersionString := setup.addModelVersion(
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
-	certificationType := dclcompltypes.ZigbeeCertificationType
+	certificationType := types.ZigbeeCertificationType
 
 	return setup, vid, pid, softwareVersion, softwareVersionString, certificationType
 }
@@ -43,7 +42,7 @@ func (setup *TestSetup) checkModelCertified(t *testing.T, certifyModelMsg *types
 	require.False(t, provisionalModel.Value)
 }
 
-func (setup *TestSetup) checkCertifiedModelMatchesMsg(t *testing.T, certifyModelMsg *types.MsgCertifyModel) *dclcompltypes.ComplianceInfo {
+func (setup *TestSetup) checkCertifiedModelMatchesMsg(t *testing.T, certifyModelMsg *types.MsgCertifyModel) *types.ComplianceInfo {
 	t.Helper()
 
 	vid := certifyModelMsg.Vid
@@ -57,7 +56,7 @@ func (setup *TestSetup) checkCertifiedModelMatchesMsg(t *testing.T, certifyModel
 	return receivedComplianceInfo
 }
 
-func (setup *TestSetup) checkDeviceSoftwareComplianceMatchesComplianceInfo(t *testing.T, complianceInfo *dclcompltypes.ComplianceInfo) {
+func (setup *TestSetup) checkDeviceSoftwareComplianceMatchesComplianceInfo(t *testing.T, complianceInfo *types.ComplianceInfo) {
 	receivedDeviceSoftwareCompliance, _ := queryDeviceSoftwareCompliance(setup, complianceInfo.CDCertificateId)
 	require.Equal(t, receivedDeviceSoftwareCompliance.CDCertificateId, complianceInfo.CDCertificateId)
 	checkDeviceSoftwareCompliance(t, receivedDeviceSoftwareCompliance.ComplianceInfo[0], complianceInfo)
@@ -89,7 +88,7 @@ func TestHandler_CertifyModel_Zigbee_WithAllOptionalFlags(t *testing.T) {
 
 func TestHandler_CertifyModel_Matter(t *testing.T) {
 	setup, vid, pid, softwareVersion, softwareVersionString, _ := setupCertifyModel(t)
-	certificationType := dclcompltypes.MatterCertificationType
+	certificationType := types.MatterCertificationType
 
 	certifyModelMsg := newMsgCertifyModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
 	_, certifyModelErr := setup.Handler(setup.Ctx, certifyModelMsg)
@@ -102,7 +101,7 @@ func TestHandler_CertifyModel_Matter(t *testing.T) {
 
 func TestHandler_CertifyModel_Matter_WithAllOptionalFlags(t *testing.T) {
 	setup, vid, pid, softwareVersion, softwareVersionString, _ := setupCertifyModel(t)
-	certificationType := dclcompltypes.MatterCertificationType
+	certificationType := types.MatterCertificationType
 
 	certifyModelMsg := newMsgCertifyModelWithAllOptionalFlags(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
 	_, certifyModelErr := setup.Handler(setup.Ctx, certifyModelMsg)
@@ -127,7 +126,7 @@ func TestHandler_CertifyProvisionedModel(t *testing.T) {
 	setup.checkModelCertified(t, certifyModelMsg)
 	setup.checkDeviceSoftwareComplianceMatchesComplianceInfo(t, complianceInfo)
 	require.Equal(t, 1, len(complianceInfo.History))
-	require.Equal(t, dclcompltypes.CodeProvisional, complianceInfo.History[0].SoftwareVersionCertificationStatus)
+	require.Equal(t, types.CodeProvisional, complianceInfo.History[0].SoftwareVersionCertificationStatus)
 	require.Equal(t, provisionModelMsg.ProvisionalDate, complianceInfo.History[0].Date)
 }
 
@@ -145,7 +144,7 @@ func TestHandler_CertifyProvisionedModelWithAllOptionalFlags(t *testing.T) {
 	setup.checkModelCertified(t, certifyModelMsg)
 	setup.checkDeviceSoftwareComplianceMatchesComplianceInfo(t, complianceInfo)
 	require.Equal(t, 1, len(complianceInfo.History))
-	require.Equal(t, dclcompltypes.CodeProvisional, complianceInfo.History[0].SoftwareVersionCertificationStatus)
+	require.Equal(t, types.CodeProvisional, complianceInfo.History[0].SoftwareVersionCertificationStatus)
 	require.Equal(t, provisionModelMsg.ProvisionalDate, complianceInfo.History[0].Date)
 }
 
@@ -261,7 +260,7 @@ func TestHandler_CertifyRevokedModel(t *testing.T) {
 
 	receivedComplianceInfo := setup.checkCertifiedModelMatchesMsg(t, certifyModelMsg)
 	require.Equal(t, 1, len(receivedComplianceInfo.History))
-	require.Equal(t, dclcompltypes.CodeRevoked, receivedComplianceInfo.History[0].SoftwareVersionCertificationStatus)
+	require.Equal(t, types.CodeRevoked, receivedComplianceInfo.History[0].SoftwareVersionCertificationStatus)
 	require.Equal(t, revokeModelMsg.RevocationDate, receivedComplianceInfo.History[0].Date)
 
 	receivedDeviceSoftwareCompliance, _ := queryDeviceSoftwareCompliance(setup, testconstants.CDCertificateID)

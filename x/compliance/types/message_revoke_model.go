@@ -5,7 +5,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
 
@@ -69,8 +68,8 @@ func (msg *MsgRevokeModel) ValidateBasic() error {
 		return NewErrInvalidTestDateFormat(msg.RevocationDate)
 	}
 
-	if !dclcompltypes.IsValidCertificationType(msg.CertificationType) {
-		return NewErrInvalidCertificationType(msg.CertificationType, dclcompltypes.CertificationTypesList)
+	if !IsValidCertificationType(msg.CertificationType) {
+		return NewErrInvalidCertificationType(msg.CertificationType, CertificationTypesList)
 	}
 
 	return nil

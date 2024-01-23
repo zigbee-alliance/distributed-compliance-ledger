@@ -6,12 +6,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
-
-	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"google.golang.org/grpc/codes"
-
 	"google.golang.org/grpc/status"
+
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
+	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
 func (k Keeper) ComplianceInfoAll(c context.Context, req *types.QueryAllComplianceInfoRequest) (*types.QueryAllComplianceInfoResponse, error) {

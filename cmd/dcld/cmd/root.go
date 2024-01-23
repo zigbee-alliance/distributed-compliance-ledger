@@ -110,16 +110,16 @@ func NewRootCmd() (*cobra.Command, appparams.EncodingConfig) {
 			// set the default command outputs
 			cmd.SetOut(cmd.OutOrStdout())
 			cmd.SetErr(cmd.ErrOrStderr())
-			initClientCtx, err := client.ReadPersistentCommandFlags(initClientCtx, cmd.Flags())
+			clientCtx, err := client.ReadPersistentCommandFlags(initClientCtx, cmd.Flags())
 			if err != nil {
 				return err
 			}
-			initClientCtx, err = config.ReadFromClientConfig(initClientCtx)
+			clientCtx, err = config.ReadFromClientConfig(clientCtx)
 			if err != nil {
 				return err
 			}
 
-			if err := client.SetCmdClientContextHandler(initClientCtx, cmd); err != nil {
+			if err := client.SetCmdClientContextHandler(clientCtx, cmd); err != nil {
 				return err
 			}
 
@@ -304,15 +304,15 @@ func (a appCreator) newApp(
 	)
 
 	homeDir := cast.ToString(appOpts.Get(flags.FlagHome))
-	chainID := cast.ToString(appOpts.Get(flags.FlagChainID))
-	if chainID == "" {
+	chainID_ := cast.ToString(appOpts.Get(flags.FlagChainID))
+	if chainID_ == "" {
 		// fallback to genesis chain-id
 		appGenesis, err := tmtypes.GenesisDocFromFile(filepath.Join(homeDir, "config", "genesis.json"))
 		if err != nil {
 			panic(err)
 		}
 
-		chainID = appGenesis.ChainID
+		chainID_ = appGenesis.ChainID
 	}
 
 	return app.New(
@@ -335,7 +335,7 @@ func (a appCreator) newApp(
 		baseapp.SetIndexEvents(cast.ToStringSlice(appOpts.Get(server.FlagIndexEvents))),
 		baseapp.SetSnapshot(snapshotStore, snapshotOptions),
 		baseapp.SetIAVLCacheSize(cast.ToInt(appOpts.Get(server.FlagIAVLCacheSize))),
-		baseapp.SetChainID(chainID),
+		baseapp.SetChainID(chainID_),
 	)
 }
 

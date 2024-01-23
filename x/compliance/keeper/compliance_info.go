@@ -3,8 +3,9 @@ package keeper
 import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
+
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
+	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
 // SetComplianceInfo set a specific complianceInfo in the store from its index.
