@@ -16,8 +16,10 @@ func CmdListProposedCertificate() *cobra.Command {
 		Use:   "all-proposed-x509-root-certs",
 		Short: "Gets all proposed but not approved root certificates",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx := client.GetClientContextFromCmd(cmd)
-
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
 			if err != nil {
 				return err
@@ -58,7 +60,10 @@ func CmdShowProposedCertificate() *cobra.Command {
 		Short: "Gets a proposed but not approved root certificate with the given combination of subject and subject-key-id",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
 			var res types.ProposedCertificate
 
 			return cli.QueryWithProof(

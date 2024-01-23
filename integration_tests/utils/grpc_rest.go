@@ -18,14 +18,13 @@ import (
 	"bufio"
 	"context"
 	"errors"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/app"
 	"os"
 	"path/filepath"
 	"testing"
 
 	clienttx "github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
-	"github.com/cosmos/cosmos-sdk/simapp"
-	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/tx"
@@ -33,6 +32,7 @@ import (
 	//nolint:staticcheck
 	"github.com/golang/protobuf/proto"
 	"github.com/stretchr/testify/require"
+	appparams "github.com/zigbee-alliance/distributed-compliance-ledger/app/params"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"google.golang.org/grpc"
 )
@@ -44,7 +44,7 @@ import (
 
 type TestSuite struct {
 	T              *testing.T
-	EncodingConfig simappparams.EncodingConfig
+	EncodingConfig appparams.EncodingConfig
 	ChainID        string
 	Kr             keyring.Keyring
 	Txf            clienttx.Factory
@@ -71,10 +71,10 @@ func SetupTest(t *testing.T, chainID string, rest bool) (suite TestSuite) {
 	require.NoError(t, err)
 
 	homeDir := filepath.Join(userHomeDir, ".dcl")
+	encConfig := app.MakeEncodingConfig()
 
-	kr, _ := keyring.New(sdk.KeyringServiceName(), keyring.BackendTest, homeDir, inBuf)
+	kr, _ := keyring.New(sdk.KeyringServiceName(), keyring.BackendTest, homeDir, inBuf, encConfig.Codec)
 
-	encConfig := simapp.MakeTestEncodingConfig()
 	dclauthtypes.RegisterInterfaces(encConfig.InterfaceRegistry)
 
 	txCfg := encConfig.TxConfig
@@ -98,7 +98,9 @@ func (suite *TestSuite) GetAddress(uid string) sdk.AccAddress {
 	signerInfo, err := suite.Kr.Key(uid)
 	require.NoError(suite.T, err)
 
-	return signerInfo.GetAddress()
+	address, _ := signerInfo.GetAddress()
+
+	return address
 }
 
 // Generates Protobuf-encoded bytes.
@@ -134,21 +136,21 @@ func (suite *TestSuite) BroadcastTx(txBytes []byte) (*sdk.TxResponse, error) {
 	var err error
 
 	body := tx.BroadcastTxRequest{
-		Mode:    tx.BroadcastMode_BROADCAST_MODE_BLOCK,
+		Mode:    tx.BroadcastMode_BROADCAST_MODE_SYNC,
 		TxBytes: txBytes,
 	}
 
 	if suite.Rest {
 		var _resp tx.BroadcastTxResponse
 
-		bodyBytes, err := suite.EncodingConfig.Marshaler.MarshalJSON(&body)
+		bodyBytes, err := suite.EncodingConfig.Codec.MarshalJSON(&body)
 		require.NoError(suite.T, err)
 
 		respBytes, err := SendPostRequest("/cosmos/tx/v1beta1/txs", bodyBytes, "", "")
 		if err != nil {
 			return nil, err
 		}
-		require.NoError(suite.T, suite.EncodingConfig.Marshaler.UnmarshalJSON(respBytes, &_resp))
+		require.NoError(suite.T, suite.EncodingConfig.Codec.UnmarshalJSON(respBytes, &_resp))
 		broadcastResp = &_resp
 	} else {
 		grpcConn := suite.GetGRPCConn()
@@ -188,7 +190,7 @@ func (suite *TestSuite) QueryREST(uri string, resp proto.Message) error {
 		return err
 	}
 
-	require.NoError(suite.T, suite.EncodingConfig.Marshaler.UnmarshalJSON(respBytes, resp))
+	require.NoError(suite.T, suite.EncodingConfig.Codec.UnmarshalJSON(respBytes, resp))
 
 	return nil
 }

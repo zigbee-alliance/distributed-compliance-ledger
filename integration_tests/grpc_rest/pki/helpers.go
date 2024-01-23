@@ -19,9 +19,9 @@ import (
 	"fmt"
 	"net/url"
 
+	tmrand "github.com/cometbft/cometbft/libs/rand"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
-	tmrand "github.com/tendermint/tendermint/libs/rand"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	test_dclauth "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/grpc_rest/dclauth"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
@@ -631,13 +631,17 @@ func Demo(suite *utils.TestSuite) {
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
-	aliceAccount, err := test_dclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	address, err := aliceKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	aliceAccount, err := test_dclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	jackName := testconstants.JackAccount
 	jackKeyInfo, err := suite.Kr.Key(jackName)
 	require.NoError(suite.T, err)
-	jackAccount, err := test_dclauth.GetAccount(suite, jackKeyInfo.GetAddress())
+	address, err = jackKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	jackAccount, err := test_dclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	// Register new Vendor account

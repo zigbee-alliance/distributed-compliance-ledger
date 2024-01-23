@@ -15,7 +15,10 @@ func CmdListRevokedModel() *cobra.Command {
 		Use:   "all-revoked-models",
 		Short: "Query the list of all revoked models",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
 
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
 			if err != nil {
@@ -59,7 +62,11 @@ func CmdShowRevokedModel() *cobra.Command {
 		Short: "Gets a boolean if the given Model (identified by the `vid`, `pid`, `softwareVersion` and `certification_type`) is revoked",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+
 			var res types.RevokedModel
 
 			return cli.QueryWithProof(

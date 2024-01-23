@@ -18,10 +18,10 @@ import (
 	"context"
 	"fmt"
 
+	tmrand "github.com/cometbft/cometbft/libs/rand"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
-	tmrand "github.com/tendermint/tendermint/libs/rand"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	testDclauth "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/grpc_rest/dclauth"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
@@ -369,13 +369,17 @@ func AddModelByVendorWithProductIds(suite *utils.TestSuite) {
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
-	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	address, err := aliceKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	aliceAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	bobName := testconstants.BobAccount
 	bobKeyInfo, err := suite.Kr.Key(bobName)
 	require.NoError(suite.T, err)
-	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	address, err = bobKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	bobAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	// register new account with Vendor role
@@ -405,13 +409,17 @@ func UpdateByVendorWithProductIds(suite *utils.TestSuite) {
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
-	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	address, err := aliceKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	aliceAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	bobName := testconstants.BobAccount
 	bobKeyInfo, err := suite.Kr.Key(bobName)
 	require.NoError(suite.T, err)
-	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	address, err = bobKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	bobAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	// register new account with Vendor role
@@ -448,13 +456,17 @@ func DeleteModelWithAssociatedModelVersions(suite *utils.TestSuite) {
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
-	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	address, err := aliceKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	aliceAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	bobName := testconstants.BobAccount
 	bobKeyInfo, err := suite.Kr.Key(bobName)
 	require.NoError(suite.T, err)
-	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	address, err = bobKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	bobAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	// Register new Vendor account
@@ -513,13 +525,17 @@ func DeleteModelWithAssociatedModelVersionsCertified(suite *utils.TestSuite) {
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
-	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	address, err := aliceKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	aliceAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	bobName := testconstants.BobAccount
 	bobKeyInfo, err := suite.Kr.Key(bobName)
 	require.NoError(suite.T, err)
-	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	address, err = bobKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	bobAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	// Register new Vendor account
@@ -600,13 +616,17 @@ func DeleteModelVersion(suite *utils.TestSuite) {
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
-	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	address, err := aliceKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	aliceAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	bobName := testconstants.BobAccount
 	bobKeyInfo, err := suite.Kr.Key(bobName)
 	require.NoError(suite.T, err)
-	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	address, err = bobKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	bobAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	// Register new Vendor account
@@ -651,13 +671,17 @@ func DeleteModelVersionDifferentVid(suite *utils.TestSuite) {
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
-	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	address, err := aliceKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	aliceAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	bobName := testconstants.BobAccount
 	bobKeyInfo, err := suite.Kr.Key(bobName)
 	require.NoError(suite.T, err)
-	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	address, err = bobKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	bobAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	// Register new Vendor account
@@ -721,13 +745,17 @@ func DeleteModelVersionDoesNotExist(suite *utils.TestSuite) {
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
-	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	address, err := aliceKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	aliceAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	bobName := testconstants.BobAccount
 	bobKeyInfo, err := suite.Kr.Key(bobName)
 	require.NoError(suite.T, err)
-	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	address, err = bobKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	bobAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	// Register new Vendor account
@@ -758,13 +786,17 @@ func DeleteModelVersionNotByCreator(suite *utils.TestSuite) {
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
-	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	address, err := aliceKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	aliceAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	bobName := testconstants.BobAccount
 	bobKeyInfo, err := suite.Kr.Key(bobName)
 	require.NoError(suite.T, err)
-	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	address, err = bobKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	bobAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	// Register new Vendor account
@@ -828,13 +860,17 @@ func DeleteModelVersionCertified(suite *utils.TestSuite) {
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
-	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	address, err := aliceKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	aliceAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	bobName := testconstants.BobAccount
 	bobKeyInfo, err := suite.Kr.Key(bobName)
 	require.NoError(suite.T, err)
-	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	address, err = bobKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	bobAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	// Register new Vendor account
@@ -914,13 +950,17 @@ func Demo(suite *utils.TestSuite) {
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
-	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	address, err := aliceKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	aliceAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	bobName := testconstants.BobAccount
 	bobKeyInfo, err := suite.Kr.Key(bobName)
 	require.NoError(suite.T, err)
-	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	address, err = bobKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	bobAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	// Register new Vendor account
@@ -1018,13 +1058,17 @@ func AddModelByNonVendor(suite *utils.TestSuite) {
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
-	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	address, err := aliceKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	aliceAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	bobName := testconstants.BobAccount
 	bobKeyInfo, err := suite.Kr.Key(bobName)
 	require.NoError(suite.T, err)
-	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	address, err = bobKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	bobAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	// register new account without Vendor role
@@ -1058,13 +1102,17 @@ func AddModelByVendorWithNonAssociatedProductIds(suite *utils.TestSuite) {
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
-	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	address, err := aliceKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	aliceAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	bobName := testconstants.BobAccount
 	bobKeyInfo, err := suite.Kr.Key(bobName)
 	require.NoError(suite.T, err)
-	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	address, err = bobKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	bobAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	// register new account with Vendor role
@@ -1096,13 +1144,17 @@ func UpdateModelByVendorWithNonAssociatedProductIds(suite *utils.TestSuite) {
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
-	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	address, err := aliceKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	aliceAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	bobName := testconstants.BobAccount
 	bobKeyInfo, err := suite.Kr.Key(bobName)
 	require.NoError(suite.T, err)
-	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	address, err = bobKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	bobAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	// register new account with Vendor role
@@ -1149,13 +1201,17 @@ func DeleteModelByVendorWithNonAssociatedProductIds(suite *utils.TestSuite) {
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
-	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	address, err := aliceKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	aliceAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	bobName := testconstants.BobAccount
 	bobKeyInfo, err := suite.Kr.Key(bobName)
 	require.NoError(suite.T, err)
-	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	address, err = bobKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	bobAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	// register new account with Vendor role
@@ -1202,13 +1258,17 @@ func AddModelByDifferentVendor(suite *utils.TestSuite) {
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
-	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	address, err := aliceKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	aliceAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	bobName := testconstants.BobAccount
 	bobKeyInfo, err := suite.Kr.Key(bobName)
 	require.NoError(suite.T, err)
-	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	address, err = bobKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	bobAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	// register new Vendor account
@@ -1240,13 +1300,17 @@ func AddModelTwice(suite *utils.TestSuite) {
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
-	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	address, err := aliceKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	aliceAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	bobName := testconstants.BobAccount
 	bobKeyInfo, err := suite.Kr.Key(bobName)
 	require.NoError(suite.T, err)
-	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	address, err = bobKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	bobAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	// register new Vendor account
@@ -1312,13 +1376,17 @@ func DemoWithHexVidAndPid(suite *utils.TestSuite) {
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
-	aliceAccount, err := testDclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	address, err := aliceKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	aliceAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	bobName := testconstants.BobAccount
 	bobKeyInfo, err := suite.Kr.Key(bobName)
 	require.NoError(suite.T, err)
-	bobAccount, err := testDclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	address, err = bobKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	bobAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	// Register new Vendor account

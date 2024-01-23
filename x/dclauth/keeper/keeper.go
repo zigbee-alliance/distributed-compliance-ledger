@@ -4,24 +4,26 @@ import (
 	"fmt"
 	"math"
 
+	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/codec"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/tendermint/tendermint/libs/log"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
 type (
 	Keeper struct {
 		cdc      codec.BinaryCodec
-		storeKey sdk.StoreKey
-		memKey   sdk.StoreKey
+		storeKey storetypes.StoreKey
+		memKey   storetypes.StoreKey
 	}
 )
 
 func NewKeeper(
 	cdc codec.BinaryCodec,
 	storeKey,
-	memKey sdk.StoreKey,
+	memKey storetypes.StoreKey,
 ) *Keeper {
 	return &Keeper{
 		cdc:      cdc,
@@ -38,11 +40,11 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 //
 //	for tests needs: to link dependent keepers,
 //	need to explore the alternatives
-func (k Keeper) StoreKey() sdk.StoreKey {
+func (k Keeper) StoreKey() storetypes.StoreKey {
 	return k.storeKey
 }
 
-func (k Keeper) MemKey() sdk.StoreKey {
+func (k Keeper) MemKey() storetypes.StoreKey {
 	return k.memKey
 }
 
@@ -57,4 +59,14 @@ func (k Keeper) AccountApprovalsCount(ctx sdk.Context, percent float64) int {
 
 func (k Keeper) AccountRejectApprovalsCount(ctx sdk.Context, percent float64) int {
 	return k.CountAccountsWithRole(ctx, types.Trustee) - k.AccountApprovalsCount(ctx, percent) + 1
+}
+
+func (k Keeper) UnmarshalAccount(bytes []byte) (authtypes.AccountI, error) {
+	var acc authtypes.AccountI
+
+	return acc, k.cdc.UnmarshalInterface(bytes, &acc)
+}
+
+func (k Keeper) GetCodec() codec.BinaryCodec {
+	return k.cdc
 }

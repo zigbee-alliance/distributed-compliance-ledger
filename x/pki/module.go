@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -13,7 +14,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
-	abci "github.com/tendermint/tendermint/abci/types"
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/client/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/keeper"
@@ -111,19 +111,6 @@ func NewAppModule(cdc codec.Codec, keeper keeper.Keeper) AppModule {
 // Name returns the pki module's name.
 func (am AppModule) Name() string {
 	return am.AppModuleBasic.Name()
-}
-
-// Route returns the pki module's message routing key.
-func (am AppModule) Route() sdk.Route {
-	return sdk.NewRoute(pkitypes.RouterKey, NewHandler(am.keeper))
-}
-
-// QuerierRoute returns the pki module's query routing key.
-func (AppModule) QuerierRoute() string { return pkitypes.QuerierRoute }
-
-// LegacyQuerierHandler returns the pki module's Querier.
-func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
-	return nil
 }
 
 // RegisterServices registers a GRPC query service to respond to the

@@ -7,11 +7,11 @@ import (
 	"os"
 	"strings"
 
+	rpctypes "github.com/cometbft/cometbft/rpc/jsonrpc/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/spf13/cobra"
-	rpctypes "github.com/tendermint/tendermint/rpc/jsonrpc/types"
 )
 
 const (
@@ -140,11 +140,11 @@ func AddTxFlagsToCmd(cmd *cobra.Command) {
 	// TODO there might be a better way how to filter that
 	hiddenFlags := []string{
 		flags.FlagFees,
-		flags.FlagFeeAccount,
+		flags.FlagFeeGranter,
 		flags.FlagGasPrices,
 		flags.FlagGasAdjustment,
 		flags.FlagGas,
-		flags.FlagFeeAccount,
+		flags.FlagFeePayer,
 		flags.FlagDryRun, // TODO that flag might be actually useful but relates to gas
 	}
 	for _, f := range hiddenFlags {

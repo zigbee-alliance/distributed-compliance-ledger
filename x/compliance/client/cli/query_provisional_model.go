@@ -15,7 +15,10 @@ func CmdListProvisionalModel() *cobra.Command {
 		Use:   "all-provisional-models",
 		Short: "Query the list of all provisional models",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
 
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
 			if err != nil {
@@ -59,7 +62,11 @@ func CmdShowProvisionalModel() *cobra.Command {
 		Short: "Gets a boolean if the given Model (identified by the `vid`, `pid`, `softwareVersion` and `certification_type`) is in provisional state",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+
 			var res types.ProvisionalModel
 
 			return cli.QueryWithProof(

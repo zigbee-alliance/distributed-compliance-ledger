@@ -15,7 +15,10 @@ func CmdListCertifiedModel() *cobra.Command {
 		Use:   "all-certified-models",
 		Short: "Query the list of all certified models",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
 
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
 			if err != nil {
@@ -60,7 +63,11 @@ func CmdShowCertifiedModel() *cobra.Command {
 			"`certification_type`) is compliant",
 		Args: cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+
 			var res types.CertifiedModel
 
 			return cli.QueryWithProof(

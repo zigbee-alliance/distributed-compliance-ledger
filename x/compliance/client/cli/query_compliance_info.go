@@ -16,7 +16,10 @@ func CmdListComplianceInfo() *cobra.Command {
 		Use:   "all-compliance-info",
 		Short: "Query the list of all compliance info records",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
 
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
 			if err != nil {
@@ -60,7 +63,11 @@ func CmdShowComplianceInfo() *cobra.Command {
 		Short: "Query compliance info for Model (identified by the `vid`, `pid`, 'softwareVersion' and `certification_type`)",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+
 			var res dclcompltypes.ComplianceInfo
 
 			return cli.QueryWithProof(
