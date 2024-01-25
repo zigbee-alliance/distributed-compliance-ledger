@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
@@ -41,7 +42,7 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 		// are not self-signed too, consequently are non-root certificates, before to match issuer and authorityKeyID.
 		if certificates.Certs[0].IsRoot || x509Certificate.Issuer != certificates.Certs[0].Issuer ||
 			x509Certificate.AuthorityKeyID != certificates.Certs[0].AuthorityKeyId {
-			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+			return nil, errors.Wrapf(sdkerrors.ErrUnauthorized,
 				"Issuer and authorityKeyID of new certificate with subject=%v and subjectKeyID=%v "+
 					"must be the same as ones of existing certificates with the same subject and subjectKeyID",
 				x509Certificate.Subject, x509Certificate.SubjectKeyID,
@@ -50,7 +51,7 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 
 		// signer must be same as owner of existing certificates
 		if msg.Signer != certificates.Certs[0].Owner {
-			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+			return nil, errors.Wrapf(sdkerrors.ErrUnauthorized,
 				"Only owner of existing certificates with subject=%v and subjectKeyID=%v "+
 					"can add new certificate with the same subject and subjectKeyID",
 				x509Certificate.Subject, x509Certificate.SubjectKeyID,

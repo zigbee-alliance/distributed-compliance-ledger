@@ -132,8 +132,7 @@ var (
 	)
 
 	// module account permissions.
-	maccPerms = map[string][]string{
-		/*
+	/* maccPerms = map[string][]string{
 			authtypes.FeeCollectorName:     nil,
 			distrtypes.ModuleName:          nil,
 			minttypes.ModuleName:           {authtypes.Minter},
@@ -142,8 +141,8 @@ var (
 			govtypes.ModuleName:            {authtypes.Burner},
 			ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 			// this line is used by starport scaffolding # stargate/app/maccPerms
-		*/
 	}
+	*/
 )
 
 var (
@@ -248,7 +247,6 @@ func New(
 	homePath string,
 	invCheckPeriod uint,
 	encodingConfig appparams.EncodingConfig,
-	appOpts servertypes.AppOptions,
 	baseAppOptions ...func(*baseapp.BaseApp),
 ) *App {
 	appCodec := encodingConfig.Codec
@@ -573,7 +571,7 @@ func New(
 	)
 
 	// app.mm.RegisterInvariants(&app.CrisisKeeper)
-	//app.mm.RegisterRoutes(app.Router(), app.QueryRouter(), encodingConfig.Amino)
+	// app.mm.RegisterRoutes(app.Router(), app.QueryRouter(), encodingConfig.Amino)
 
 	app.configurator = module.NewConfigurator(app.appCodec, app.MsgServiceRouter(), app.GRPCQueryRouter())
 	app.mm.RegisterServices(app.configurator)

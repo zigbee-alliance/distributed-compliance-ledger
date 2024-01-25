@@ -17,7 +17,7 @@ package utils
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 )
@@ -103,5 +103,5 @@ func sendRequest(uri string, method string, body []byte, account string, passphr
 func ReadResponseBody(resp *http.Response) ([]byte, error) {
 	defer resp.Body.Close()
 
-	return ioutil.ReadAll(resp.Body)
+	return io.ReadAll(resp.Body)
 }

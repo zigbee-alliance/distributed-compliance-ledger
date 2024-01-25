@@ -9,7 +9,6 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
-	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	modeltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
@@ -58,7 +57,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 		// and so the test results are not required to be present.
 
 		// check if compliance is already in certified state
-		if complianceInfo.SoftwareVersionCertificationStatus == dclcompltypes.CodeCertified {
+		if complianceInfo.SoftwareVersionCertificationStatus == types.CodeCertified {
 			return nil, types.NewErrAlreadyCertified(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
 		}
 
@@ -82,7 +81,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 	} else {
 		// There is no compliance record yet. So certification will be tracked on ledger.
 
-		complianceInfo = dclcompltypes.ComplianceInfo{
+		complianceInfo = types.ComplianceInfo{
 			Vid:                                msg.Vid,
 			Pid:                                msg.Pid,
 			SoftwareVersion:                    msg.SoftwareVersion,
@@ -91,14 +90,14 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 			Date:                               msg.CertificationDate,
 			Reason:                             msg.Reason,
 			Owner:                              msg.Signer,
-			SoftwareVersionCertificationStatus: dclcompltypes.CodeCertified,
-			History:                            []*dclcompltypes.ComplianceHistoryItem{},
+			SoftwareVersionCertificationStatus: types.CodeCertified,
+			History:                            []*types.ComplianceHistoryItem{},
 			CDVersionNumber:                    msg.CDVersionNumber,
 			CDCertificateId:                    msg.CDCertificateId,
 		}
 	}
 
-	optionalFields := &dclcompltypes.OptionalFields{
+	optionalFields := &types.OptionalFields{
 		ProgramTypeVersion:                 msg.ProgramTypeVersion,
 		FamilyID:                           msg.FamilyId,
 		SupportedClusters:                  msg.SupportedClusters,

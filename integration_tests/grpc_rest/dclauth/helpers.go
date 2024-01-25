@@ -466,8 +466,8 @@ func CreateVendorAccount(
 	productIDs []*types.Uint16Range,
 	proposerName string,
 	proposerAccount *dclauthtypes.Account,
-	approverName string,
-	approverAccount *dclauthtypes.Account,
+	_ string,
+	_ *dclauthtypes.Account,
 	info string,
 ) *dclauthtypes.Account {
 	accountInfo := CreateAccountInfo(suite, accountName)

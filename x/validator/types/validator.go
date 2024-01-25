@@ -1,6 +1,7 @@
 package types
 
 import (
+	"cosmossdk.io/errors"
 	abci "github.com/cometbft/cometbft/abci/types"
 	tmprotocrypto "github.com/cometbft/cometbft/proto/tendermint/crypto"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -194,31 +195,31 @@ const (
 // Ensure the length of a validator's description.
 func (d Description) Validate() error {
 	if len(d.Moniker) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Invalid Description Moniker: it cannot be empty")
+		return errors.Wrap(sdkerrors.ErrUnknownRequest, "Invalid Description Moniker: it cannot be empty")
 	}
 
 	if len(d.Moniker) > MaxNameLength {
-		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
+		return errors.Wrapf(sdkerrors.ErrUnknownRequest,
 			"Invalid Description Moniker: received string of length %v, max is %v", len(d.Moniker), MaxNameLength,
 		)
 	}
 
 	if len(d.Identity) > MaxIdentityLength {
-		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
+		return errors.Wrapf(sdkerrors.ErrUnknownRequest,
 			"Invalid Description Identity: "+
 				"received string of length %v, max is %v", len(d.Identity), MaxIdentityLength,
 		)
 	}
 
 	if len(d.Website) > MaxWebsiteLength {
-		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
+		return errors.Wrapf(sdkerrors.ErrUnknownRequest,
 			"Invalid Description Website: "+
 				"received string of length %v, max is %v", len(d.Website), MaxWebsiteLength,
 		)
 	}
 
 	if len(d.Details) > MaxDetailsLength {
-		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
+		return errors.Wrapf(sdkerrors.ErrUnknownRequest,
 			"Invalid Description Details: received string of length %v, max is %v",
 			len(d.Details), MaxDetailsLength,
 		)

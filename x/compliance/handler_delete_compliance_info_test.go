@@ -10,6 +10,7 @@ import (
 )
 
 func setupDeleteComplianceInfo(t *testing.T) (*TestSetup, int32, int32, uint32, string, string) {
+	t.Helper()
 	setup := setup(t)
 
 	vid, pid, softwareVersion, softwareVersionString := setup.addModelVersion(

@@ -23,8 +23,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
-	test_dclauth "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/grpc_rest/dclauth"
-	test_model "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/grpc_rest/model"
+	testDclauth "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/grpc_rest/dclauth"
+	testModel "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/grpc_rest/model"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 	compliancetypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
@@ -507,7 +507,7 @@ func CDCertificateIDUpdateChangesOnlyOneComplianceInfo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 	address, err := aliceKeyInfo.GetAddress()
 	require.NoError(suite.T, err)
-	aliceAccount, err := test_dclauth.GetAccount(suite, address)
+	aliceAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	jackName := testconstants.JackAccount
@@ -515,13 +515,13 @@ func CDCertificateIDUpdateChangesOnlyOneComplianceInfo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 	address, err = jackKeyInfo.GetAddress()
 	require.NoError(suite.T, err)
-	jackAccount, err := test_dclauth.GetAccount(suite, address)
+	jackAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	// Register new Vendor account
 	vid := int32(tmrand.Uint16())
 	vendorName := utils.RandString()
-	vendorAccount := test_dclauth.CreateVendorAccount(
+	vendorAccount := testDclauth.CreateVendorAccount(
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
@@ -537,7 +537,7 @@ func CDCertificateIDUpdateChangesOnlyOneComplianceInfo(suite *utils.TestSuite) {
 
 	// Register new CertificationCenter account
 	certCenter := utils.RandString()
-	certCenterAccount := test_dclauth.CreateAccount(
+	certCenterAccount := testDclauth.CreateAccount(
 		suite,
 		certCenter,
 		dclauthtypes.AccountRoles{dclauthtypes.CertificationCenter},
@@ -553,21 +553,21 @@ func CDCertificateIDUpdateChangesOnlyOneComplianceInfo(suite *utils.TestSuite) {
 
 	// Publish model info
 	pid := int32(tmrand.Uint16())
-	firstModel := test_model.NewMsgCreateModel(vid, pid, vendorAccount.Address)
+	firstModel := testModel.NewMsgCreateModel(vid, pid, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModel}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	// Publish modelVersion
 	svFirst := tmrand.Uint32()
 	svsFirst := utils.RandString()
-	firstModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, svFirst, svsFirst, vendorAccount.Address)
+	firstModelVersion := testModel.NewMsgCreateModelVersion(vid, pid, svFirst, svsFirst, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModelVersion}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	// Publish second modelVersion
 	svSecond := tmrand.Uint32()
 	svsSecond := utils.RandString()
-	secondModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, svSecond, svsSecond, vendorAccount.Address)
+	secondModelVersion := testModel.NewMsgCreateModelVersion(vid, pid, svSecond, svsSecond, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{secondModelVersion}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
@@ -636,7 +636,7 @@ func DeleteComplianceInfoForAllCertStatuses(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 	address, err := aliceKeyInfo.GetAddress()
 	require.NoError(suite.T, err)
-	aliceAccount, err := test_dclauth.GetAccount(suite, address)
+	aliceAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	jackName := testconstants.JackAccount
@@ -644,13 +644,13 @@ func DeleteComplianceInfoForAllCertStatuses(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 	address, err = jackKeyInfo.GetAddress()
 	require.NoError(suite.T, err)
-	jackAccount, err := test_dclauth.GetAccount(suite, address)
+	jackAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	// Register new Vendor account
 	vid := int32(tmrand.Uint16())
 	vendorName := utils.RandString()
-	vendorAccount := test_dclauth.CreateVendorAccount(
+	vendorAccount := testDclauth.CreateVendorAccount(
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
@@ -666,7 +666,7 @@ func DeleteComplianceInfoForAllCertStatuses(suite *utils.TestSuite) {
 
 	// Register new CertificationCenter account
 	certCenter := utils.RandString()
-	certCenterAccount := test_dclauth.CreateAccount(
+	certCenterAccount := testDclauth.CreateAccount(
 		suite,
 		certCenter,
 		dclauthtypes.AccountRoles{dclauthtypes.CertificationCenter},
@@ -682,14 +682,14 @@ func DeleteComplianceInfoForAllCertStatuses(suite *utils.TestSuite) {
 
 	// Publish model info
 	pid := int32(tmrand.Uint16())
-	firstModel := test_model.NewMsgCreateModel(vid, pid, vendorAccount.Address)
+	firstModel := testModel.NewMsgCreateModel(vid, pid, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModel}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	// Publish modelVersion
 	sv := tmrand.Uint32()
 	svs := utils.RandString()
-	firstModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
+	firstModelVersion := testModel.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModelVersion}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
@@ -728,7 +728,7 @@ func DeleteComplianceInfoForAllCertStatuses(suite *utils.TestSuite) {
 	// Publish modelVersion
 	sv = tmrand.Uint32()
 	svs = utils.RandString()
-	secondModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
+	secondModelVersion := testModel.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{secondModelVersion}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
@@ -766,7 +766,7 @@ func DeleteComplianceInfoForAllCertStatuses(suite *utils.TestSuite) {
 	// Publish modelVersion
 	sv = tmrand.Uint32()
 	svs = utils.RandString()
-	thirdModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
+	thirdModelVersion := testModel.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{thirdModelVersion}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
@@ -831,7 +831,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 	address, err := aliceKeyInfo.GetAddress()
 	require.NoError(suite.T, err)
-	aliceAccount, err := test_dclauth.GetAccount(suite, address)
+	aliceAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	jackName := testconstants.JackAccount
@@ -839,13 +839,13 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 	address, err = jackKeyInfo.GetAddress()
 	require.NoError(suite.T, err)
-	jackAccount, err := test_dclauth.GetAccount(suite, address)
+	jackAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	// Register new Vendor account
 	vid := int32(tmrand.Uint16())
 	vendorName := utils.RandString()
-	vendorAccount := test_dclauth.CreateVendorAccount(
+	vendorAccount := testDclauth.CreateVendorAccount(
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
@@ -861,7 +861,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 
 	// Register new CertificationCenter account
 	certCenter := utils.RandString()
-	certCenterAccount := test_dclauth.CreateAccount(
+	certCenterAccount := testDclauth.CreateAccount(
 		suite,
 		certCenter,
 		dclauthtypes.AccountRoles{dclauthtypes.CertificationCenter},
@@ -877,14 +877,14 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 
 	// Publish model info
 	pid := int32(tmrand.Uint16())
-	firstModel := test_model.NewMsgCreateModel(vid, pid, vendorAccount.Address)
+	firstModel := testModel.NewMsgCreateModel(vid, pid, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModel}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	// Publish modelVersion
 	sv := tmrand.Uint32()
 	svs := utils.RandString()
-	firstModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
+	firstModelVersion := testModel.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModelVersion}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
@@ -1045,14 +1045,14 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 
 	// Publish model info
 	pid = int32(tmrand.Uint16())
-	secondModel := test_model.NewMsgCreateModel(vid, pid, vendorAccount.Address)
+	secondModel := testModel.NewMsgCreateModel(vid, pid, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{secondModel}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	// Publish model version
 	sv = tmrand.Uint32()
 	svs = utils.RandString()
-	secondModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
+	secondModelVersion := testModel.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{secondModelVersion}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
@@ -1164,7 +1164,7 @@ func DemoTrackRevocation(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 	address, err := aliceKeyInfo.GetAddress()
 	require.NoError(suite.T, err)
-	aliceAccount, err := test_dclauth.GetAccount(suite, address)
+	aliceAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	jackName := testconstants.JackAccount
@@ -1172,13 +1172,13 @@ func DemoTrackRevocation(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 	address, err = jackKeyInfo.GetAddress()
 	require.NoError(suite.T, err)
-	jackAccount, err := test_dclauth.GetAccount(suite, address)
+	jackAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	// Register new Vendor account
 	vid := int32(tmrand.Uint16())
 	vendorName := utils.RandString()
-	vendorAccount := test_dclauth.CreateVendorAccount(
+	vendorAccount := testDclauth.CreateVendorAccount(
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
@@ -1194,7 +1194,7 @@ func DemoTrackRevocation(suite *utils.TestSuite) {
 
 	// Register new CertificationCenter account
 	certCenter := utils.RandString()
-	certCenterAccount := test_dclauth.CreateAccount(
+	certCenterAccount := testDclauth.CreateAccount(
 		suite,
 		certCenter,
 		dclauthtypes.AccountRoles{dclauthtypes.CertificationCenter},
@@ -1210,14 +1210,14 @@ func DemoTrackRevocation(suite *utils.TestSuite) {
 
 	// Publish model info
 	pid := int32(tmrand.Uint16())
-	firstModel := test_model.NewMsgCreateModel(vid, pid, vendorAccount.Address)
+	firstModel := testModel.NewMsgCreateModel(vid, pid, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModel}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	// Publish modelVersion
 	sv := tmrand.Uint32()
 	svs := utils.RandString()
-	firstModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
+	firstModelVersion := testModel.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModelVersion}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
@@ -1347,7 +1347,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 	address, err := aliceKeyInfo.GetAddress()
 	require.NoError(suite.T, err)
-	aliceAccount, err := test_dclauth.GetAccount(suite, address)
+	aliceAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	jackName := testconstants.JackAccount
@@ -1355,13 +1355,13 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 	address, err = jackKeyInfo.GetAddress()
 	require.NoError(suite.T, err)
-	jackAccount, err := test_dclauth.GetAccount(suite, address)
+	jackAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	// Register new Vendor account
 	vid := int32(tmrand.Uint16())
 	vendorName := utils.RandString()
-	vendorAccount := test_dclauth.CreateVendorAccount(
+	vendorAccount := testDclauth.CreateVendorAccount(
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
@@ -1377,7 +1377,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 
 	// Register new CertificationCenter account
 	certCenter := utils.RandString()
-	certCenterAccount := test_dclauth.CreateAccount(
+	certCenterAccount := testDclauth.CreateAccount(
 		suite,
 		certCenter,
 		dclauthtypes.AccountRoles{dclauthtypes.CertificationCenter},
@@ -1395,12 +1395,12 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	sv := tmrand.Uint32()
 	svs := utils.RandString()
 
-	firstModel := test_model.NewMsgCreateModel(vid, pid, vendorAccount.Address)
+	firstModel := testModel.NewMsgCreateModel(vid, pid, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModel}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	// Publish modelVersion
-	firstModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
+	firstModelVersion := testModel.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModelVersion}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
@@ -1523,11 +1523,11 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	sv = tmrand.Uint32()
 	svs = utils.RandString()
 
-	secondModel := test_model.NewMsgCreateModel(vid, pid, vendorAccount.Address)
+	secondModel := testModel.NewMsgCreateModel(vid, pid, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{secondModel}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
-	secondModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
+	secondModelVersion := testModel.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{secondModelVersion}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
@@ -1696,7 +1696,7 @@ func DemoTrackComplianceWithHexVidAndPid(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 	address, err := aliceKeyInfo.GetAddress()
 	require.NoError(suite.T, err)
-	aliceAccount, err := test_dclauth.GetAccount(suite, address)
+	aliceAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	jackName := testconstants.JackAccount
@@ -1704,13 +1704,13 @@ func DemoTrackComplianceWithHexVidAndPid(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 	address, err = jackKeyInfo.GetAddress()
 	require.NoError(suite.T, err)
-	jackAccount, err := test_dclauth.GetAccount(suite, address)
+	jackAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	// Register new Vendor account
 	var vid int32 = 0xA13
 	vendorName := utils.RandString()
-	vendorAccount := test_dclauth.CreateVendorAccount(
+	vendorAccount := testDclauth.CreateVendorAccount(
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
@@ -1727,7 +1727,7 @@ func DemoTrackComplianceWithHexVidAndPid(suite *utils.TestSuite) {
 	// Register new CertificationCenter account
 	certCenter := utils.RandString()
 
-	certCenterAccount := test_dclauth.CreateAccount(
+	certCenterAccount := testDclauth.CreateAccount(
 		suite,
 		certCenter,
 		dclauthtypes.AccountRoles{dclauthtypes.CertificationCenter},
@@ -1743,14 +1743,14 @@ func DemoTrackComplianceWithHexVidAndPid(suite *utils.TestSuite) {
 
 	// Publish model info
 	var pid int32 = 0xA11
-	firstModel := test_model.NewMsgCreateModel(vid, pid, vendorAccount.Address)
+	firstModel := testModel.NewMsgCreateModel(vid, pid, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModel}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	// Publish modelVersion
 	sv := tmrand.Uint32()
 	svs := utils.RandString()
-	firstModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
+	firstModelVersion := testModel.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModelVersion}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
@@ -1811,7 +1811,7 @@ func DemoTrackRevocationWithHexVidAndPid(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 	address, err := aliceKeyInfo.GetAddress()
 	require.NoError(suite.T, err)
-	aliceAccount, err := test_dclauth.GetAccount(suite, address)
+	aliceAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	jackName := testconstants.JackAccount
@@ -1819,13 +1819,13 @@ func DemoTrackRevocationWithHexVidAndPid(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 	address, err = jackKeyInfo.GetAddress()
 	require.NoError(suite.T, err)
-	jackAccount, err := test_dclauth.GetAccount(suite, address)
+	jackAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	// Register new Vendor account
 	var vid int32 = 0xA14
 	vendorName := utils.RandString()
-	vendorAccount := test_dclauth.CreateVendorAccount(
+	vendorAccount := testDclauth.CreateVendorAccount(
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
@@ -1842,7 +1842,7 @@ func DemoTrackRevocationWithHexVidAndPid(suite *utils.TestSuite) {
 	// Register new CertificationCenter account
 	certCenter := utils.RandString()
 
-	certCenterAccount := test_dclauth.CreateAccount(
+	certCenterAccount := testDclauth.CreateAccount(
 		suite,
 		certCenter,
 		dclauthtypes.AccountRoles{dclauthtypes.CertificationCenter},
@@ -1858,14 +1858,14 @@ func DemoTrackRevocationWithHexVidAndPid(suite *utils.TestSuite) {
 
 	// Publish model info
 	var pid int32 = 0xA15
-	firstModel := test_model.NewMsgCreateModel(vid, pid, vendorAccount.Address)
+	firstModel := testModel.NewMsgCreateModel(vid, pid, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModel}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	// Publish modelVersion
 	sv := tmrand.Uint32()
 	svs := utils.RandString()
-	firstModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
+	firstModelVersion := testModel.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModelVersion}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
@@ -1950,7 +1950,7 @@ func DemoTrackProvisionByHexVidAndPid(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 	address, err := aliceKeyInfo.GetAddress()
 	require.NoError(suite.T, err)
-	aliceAccount, err := test_dclauth.GetAccount(suite, address)
+	aliceAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	jackName := testconstants.JackAccount
@@ -1958,13 +1958,13 @@ func DemoTrackProvisionByHexVidAndPid(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 	address, err = jackKeyInfo.GetAddress()
 	require.NoError(suite.T, err)
-	jackAccount, err := test_dclauth.GetAccount(suite, address)
+	jackAccount, err := testDclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	// Register new Vendor account
 	var vid int32 = 0xA16
 	vendorName := utils.RandString()
-	vendorAccount := test_dclauth.CreateVendorAccount(
+	vendorAccount := testDclauth.CreateVendorAccount(
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
@@ -1980,7 +1980,7 @@ func DemoTrackProvisionByHexVidAndPid(suite *utils.TestSuite) {
 
 	// Register new CertificationCenter account
 	certCenter := utils.RandString()
-	certCenterAccount := test_dclauth.CreateAccount(
+	certCenterAccount := testDclauth.CreateAccount(
 		suite,
 		certCenter,
 		dclauthtypes.AccountRoles{dclauthtypes.CertificationCenter},
@@ -1999,12 +1999,12 @@ func DemoTrackProvisionByHexVidAndPid(suite *utils.TestSuite) {
 	svs := utils.RandString()
 
 	// Publish model info
-	firstModel := test_model.NewMsgCreateModel(vid, pid, vendorAccount.Address)
+	firstModel := testModel.NewMsgCreateModel(vid, pid, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModel}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	// Publish modelVersion
-	firstModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
+	firstModelVersion := testModel.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModelVersion}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 

@@ -3,11 +3,13 @@ package dclgenutil
 import (
 	"encoding/json"
 
+	"cosmossdk.io/errors"
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclgenutil/types"
 )
@@ -63,7 +65,7 @@ func ValidateAccountInGenesis(
 	}
 
 	if !accountIsInGenesis {
-		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
+		return errors.Wrapf(sdkerrors.ErrUnknownRequest,
 			"Error account %s in not in the app_state.accounts array of genesis.json", addr,
 		)
 	}

@@ -2,15 +2,19 @@ package cmd
 
 import (
 	"errors"
-	tmtypes "github.com/cometbft/cometbft/types"
 	"io"
 	"os"
 	"path/filepath"
+
+	"github.com/spf13/cast"
+	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 
 	rosettaCmd "cosmossdk.io/tools/rosetta/cmd"
 	dbm "github.com/cometbft/cometbft-db"
 	tmcfg "github.com/cometbft/cometbft/config"
 	"github.com/cometbft/cometbft/libs/log"
+	tmtypes "github.com/cometbft/cometbft/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/config"
@@ -27,9 +31,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
 	"github.com/cosmos/cosmos-sdk/x/crisis"
-	"github.com/spf13/cast"
-	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 
 	"github.com/zigbee-alliance/distributed-compliance-ledger/app"
 	appparams "github.com/zigbee-alliance/distributed-compliance-ledger/app/params"
@@ -54,13 +55,7 @@ type rootOptions struct {
 	// envPrefix          string
 }
 
-func newRootOptions(options ...Option) rootOptions {
-	opts := rootOptions{}
-	opts.apply(options...)
-
-	return opts
-}
-
+//nolint:unused
 func (s *rootOptions) apply(options ...Option) {
 	for _, o := range options {
 		o(s)
@@ -143,6 +138,7 @@ func NewRootCmd() (*cobra.Command, appparams.EncodingConfig) {
 // return tmcfg.DefaultConfig if no custom configuration is required for the application.
 func initTendermintConfig() *tmcfg.Config {
 	cfg := tmcfg.DefaultConfig()
+
 	return cfg
 }
 
@@ -304,15 +300,15 @@ func (a appCreator) newApp(
 	)
 
 	homeDir := cast.ToString(appOpts.Get(flags.FlagHome))
-	chainID_ := cast.ToString(appOpts.Get(flags.FlagChainID))
-	if chainID_ == "" {
+	appChainID := cast.ToString(appOpts.Get(flags.FlagChainID))
+	if appChainID == "" {
 		// fallback to genesis chain-id
 		appGenesis, err := tmtypes.GenesisDocFromFile(filepath.Join(homeDir, "config", "genesis.json"))
 		if err != nil {
 			panic(err)
 		}
 
-		chainID_ = appGenesis.ChainID
+		appChainID = appGenesis.ChainID
 	}
 
 	return app.New(
@@ -324,7 +320,6 @@ func (a appCreator) newApp(
 		cast.ToString(appOpts.Get(flags.FlagHome)),
 		cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod)),
 		a.encodingConfig,
-		appOpts,
 		baseapp.SetPruning(pruningOpts),
 		baseapp.SetMinGasPrices(cast.ToString(appOpts.Get(server.FlagMinGasPrices))),
 		baseapp.SetHaltHeight(cast.ToUint64(appOpts.Get(server.FlagHaltHeight))),
@@ -335,7 +330,7 @@ func (a appCreator) newApp(
 		baseapp.SetIndexEvents(cast.ToStringSlice(appOpts.Get(server.FlagIndexEvents))),
 		baseapp.SetSnapshot(snapshotStore, snapshotOptions),
 		baseapp.SetIAVLCacheSize(cast.ToInt(appOpts.Get(server.FlagIAVLCacheSize))),
-		baseapp.SetChainID(chainID_),
+		baseapp.SetChainID(appChainID),
 	)
 }
 
@@ -364,7 +359,6 @@ func (a appCreator) appExport(
 		homePath,
 		uint(1),
 		a.encodingConfig,
-		appOpts,
 	)
 
 	if height != -1 {

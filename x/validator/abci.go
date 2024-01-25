@@ -19,7 +19,7 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 	// (double signing, light client attack, etc.)
 	for _, tmEvidence := range req.ByzantineValidators {
 		switch tmEvidence.Type {
-		case abci.MisbehaviorType_DUPLICATE_VOTE, abci.MisbehaviorType_LIGHT_CLIENT_ATTACK:
+		case abci.MisbehaviorType_DUPLICATE_VOTE, abci.MisbehaviorType_LIGHT_CLIENT_ATTACK: //nolint:nosnakecase
 			evidence := evidencetypes.FromABCIEvidence(tmEvidence)
 			k.HandleDoubleSign(ctx, evidence.(*evidencetypes.Equivocation))
 		default:

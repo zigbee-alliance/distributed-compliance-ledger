@@ -7,7 +7,6 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
-	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	modeltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
@@ -33,11 +32,11 @@ func (k msgServer) ProvisionModel(goCtx context.Context, msg *types.MsgProvision
 	complianceInfo, found := k.GetComplianceInfo(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
 	if found {
 		switch status := complianceInfo.SoftwareVersionCertificationStatus; status {
-		case dclcompltypes.CodeProvisional:
+		case types.CodeProvisional:
 			return nil, types.NewErrAlreadyProvisional(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
-		case dclcompltypes.CodeCertified:
+		case types.CodeCertified:
 			return nil, types.NewErrAlreadyCertified(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
-		case dclcompltypes.CodeRevoked:
+		case types.CodeRevoked:
 			return nil, types.NewErrAlreadyRevoked(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
 		default:
 			return nil, types.NewErrComplianceInfoAlreadyExist(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
@@ -58,7 +57,7 @@ func (k msgServer) ProvisionModel(goCtx context.Context, msg *types.MsgProvision
 		return nil, types.NewErrModelVersionCDVersionNumberDoesNotMatch(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CDVersionNumber)
 	}
 
-	complianceInfo = dclcompltypes.ComplianceInfo{
+	complianceInfo = types.ComplianceInfo{
 		Vid:                                msg.Vid,
 		Pid:                                msg.Pid,
 		SoftwareVersion:                    msg.SoftwareVersion,
@@ -67,8 +66,8 @@ func (k msgServer) ProvisionModel(goCtx context.Context, msg *types.MsgProvision
 		Date:                               msg.ProvisionalDate,
 		Reason:                             msg.Reason,
 		Owner:                              msg.Signer,
-		SoftwareVersionCertificationStatus: dclcompltypes.CodeProvisional,
-		History:                            []*dclcompltypes.ComplianceHistoryItem{},
+		SoftwareVersionCertificationStatus: types.CodeProvisional,
+		History:                            []*types.ComplianceHistoryItem{},
 		CDVersionNumber:                    msg.CDVersionNumber,
 		ProgramTypeVersion:                 msg.ProgramTypeVersion,
 		CDCertificateId:                    msg.CDCertificateId,

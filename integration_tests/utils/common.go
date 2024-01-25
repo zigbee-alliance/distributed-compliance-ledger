@@ -21,6 +21,7 @@ import (
 	"time"
 )
 
+// nolint
 func RandString() string {
 	rand.Seed(time.Now().UnixNano())
 

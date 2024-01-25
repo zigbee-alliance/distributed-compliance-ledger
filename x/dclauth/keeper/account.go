@@ -174,11 +174,11 @@ func (k Keeper) CountAccountsWithRole(ctx sdk.Context, roleToCount types.Account
 }
 
 // just a stub to have AccountKeeper.GetModuleAddress API filled.
-func (k Keeper) GetModuleAddress(moduleName string) sdk.AccAddress {
+func (k Keeper) GetModuleAddress(_ string) sdk.AccAddress {
 	return nil
 }
 
-func (k Keeper) GetParams(ctx sdk.Context) (params authtypes.Params) {
+func (k Keeper) GetParams(_ sdk.Context) (params authtypes.Params) {
 	return authtypes.Params{
 		MaxMemoCharacters:      types.DclMaxMemoCharacters,
 		TxSigLimit:             types.DclTxSigLimit,

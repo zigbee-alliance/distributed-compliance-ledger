@@ -3,7 +3,6 @@ package cli
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 
@@ -74,7 +73,7 @@ func QueryWithProofList(clientCtx client.Context, storeName string, keyPrefix st
 
 func ReadFromFile(target string) (string, error) {
 	if _, err := os.Stat(target); err == nil { // check whether it is a path
-		bytes, err := ioutil.ReadFile(target)
+		bytes, err := os.ReadFile(target)
 		if err != nil {
 			return "", err
 		}

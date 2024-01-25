@@ -78,7 +78,7 @@ func (k Keeper) HandleDoubleSign(ctx sdk.Context, evidence *evidencetypes.Equivo
 		sdk.NewEvent(
 			slashingtypes.EventTypeSlash,
 			sdk.NewAttribute(slashingtypes.AttributeKeyAddress, consAddr.String()),
-			sdk.NewAttribute(slashingtypes.AttributeKeyPower, fmt.Sprintf("%d", evidence.GetValidatorPower())),
+			sdk.NewAttribute(slashingtypes.AttributeKeyPower, fmt.Sprintf("%d", evidence.GetValidatorPower())), //nolint:perfsprint
 			sdk.NewAttribute(slashingtypes.AttributeKeyReason, slashingtypes.AttributeValueDoubleSign),
 			sdk.NewAttribute(slashingtypes.AttributeKeyJailed, consAddr.String()),
 		),
@@ -98,7 +98,7 @@ func (k Keeper) HandleDoubleSign(ctx sdk.Context, evidence *evidencetypes.Equivo
 
 	// Move account to entity revoked account
 	revokedAccount, err := k.dclauthKeeper.AddAccountToRevokedAccount(
-		ctx, accAddr, nil, dclauthTypes.RevokedAccount_MaliciousValidator)
+		ctx, accAddr, nil, dclauthTypes.RevokedAccount_MaliciousValidator) //nolint:nosnakecase
 	if err != nil {
 		logger.Info("Error:", err)
 	} else {

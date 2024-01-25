@@ -18,20 +18,21 @@ import (
 	"bufio"
 	"context"
 	"errors"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/app"
 	"os"
 	"path/filepath"
 	"testing"
 
-	clienttx "github.com/cosmos/cosmos-sdk/client/tx"
-	"github.com/cosmos/cosmos-sdk/crypto/keyring"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/cosmos/cosmos-sdk/types/tx"
-
 	//nolint:staticcheck
 	"github.com/golang/protobuf/proto"
 	"github.com/stretchr/testify/require"
+
+	sdkerrors "cosmossdk.io/errors"
+	clienttx "github.com/cosmos/cosmos-sdk/client/tx"
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/tx"
+
+	"github.com/zigbee-alliance/distributed-compliance-ledger/app"
 	appparams "github.com/zigbee-alliance/distributed-compliance-ledger/app/params"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"google.golang.org/grpc"
@@ -131,12 +132,13 @@ func (suite *TestSuite) BuildTx(
 	return txBytes
 }
 
+//nolint:nosnakecase
 func (suite *TestSuite) BroadcastTx(txBytes []byte) (*sdk.TxResponse, error) {
 	var broadcastResp *tx.BroadcastTxResponse
 	var err error
 
 	body := tx.BroadcastTxRequest{
-		Mode:    tx.BroadcastMode_BROADCAST_MODE_SYNC,
+		Mode:    tx.BroadcastMode_BROADCAST_MODE_SYNC, //nolint:nosnakecase
 		TxBytes: txBytes,
 	}
 
@@ -204,6 +206,7 @@ func (suite *TestSuite) AssertNotFound(err error) {
 		if !errors.As(err, &resterr) {
 			panic("REST error is not RESTError type")
 		}
-		require.Equal(suite.T, resterr.resp.StatusCode, 404)
+
+		require.Equal(suite.T, 404, resterr.resp.StatusCode)
 	}
 }

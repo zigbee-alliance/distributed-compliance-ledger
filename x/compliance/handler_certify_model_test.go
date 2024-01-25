@@ -57,6 +57,7 @@ func (setup *TestSetup) checkCertifiedModelMatchesMsg(t *testing.T, certifyModel
 }
 
 func (setup *TestSetup) checkDeviceSoftwareComplianceMatchesComplianceInfo(t *testing.T, complianceInfo *types.ComplianceInfo) {
+	t.Helper()
 	receivedDeviceSoftwareCompliance, _ := queryDeviceSoftwareCompliance(setup, complianceInfo.CDCertificateId)
 	require.Equal(t, receivedDeviceSoftwareCompliance.CDCertificateId, complianceInfo.CDCertificateId)
 	checkDeviceSoftwareCompliance(t, receivedDeviceSoftwareCompliance.ComplianceInfo[0], complianceInfo)
