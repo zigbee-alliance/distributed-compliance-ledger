@@ -6,7 +6,7 @@ FROM node
 
 # Install golang
 ARG GO_VERSION
-ENV GO_VERSION=${GO_VERSION:-1.18}
+ENV GO_VERSION=${GO_VERSION:-1.20}
 ENV BASH_ENV=/etc/bashrc
 ENV PATH="${PATH}:/usr/local/go/bin"
 RUN curl -L https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz -o /tmp/go.tar.gz \
