@@ -121,7 +121,7 @@ docker exec $container mkdir -p "$DCL_DIR"/cosmovisor/genesis/bin
 docker exec $container cp -f ./dcld "$DCL_DIR"/cosmovisor/genesis/bin/
 
 echo "$account Start Node \"$node_name\""
-docker exec -d $container cosmovisor start
+docker exec -d $container cosmovisor run start
 sleep 10
 
 
