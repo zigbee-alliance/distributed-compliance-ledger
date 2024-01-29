@@ -192,6 +192,7 @@ wait_for_height() {
   fi
 
   while true; do
+    docker logs -n 100 node0
     sleep "${wait_interval}"
     waited=$((waited + wait_interval))
 
