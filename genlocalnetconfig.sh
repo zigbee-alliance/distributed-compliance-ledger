@@ -53,7 +53,7 @@ $DCL_BINARY  config chain-id "$CHAIN_ID"
 $DCL_BINARY  config output json
 $DCL_BINARY  config node "tcp://localhost:26657"
 $DCL_BINARY  config keyring-backend test
-$DCL_BINARY  config broadcast-mode block
+$DCL_BINARY  config broadcast-mode sync
 
 (echo "$KEYPASSWD"; echo "$KEYPASSWD") | $DCL_BINARY  keys add jack
 (echo "$KEYPASSWD"; echo "$KEYPASSWD") | $DCL_BINARY  keys add alice
@@ -197,9 +197,9 @@ function init_light_client_proxy {
 
     $DCL_BINARY  config chain-id "$CHAIN_ID"
     $DCL_BINARY  config node "tcp://localhost:26657"
-    $DCL_BINARY  config broadcast-mode block
+    $DCL_BINARY  config broadcast-mode sync
     $DCL_BINARY  config keyring-backend test
-    $DCL_BINARY  config broadcast-mode block
+    $DCL_BINARY  config broadcast-mode sync
 
     cp -R "$LOCALNET_DIR"/client/* "$DCL_DIR"
 

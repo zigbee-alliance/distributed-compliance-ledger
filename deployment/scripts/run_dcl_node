@@ -230,7 +230,7 @@ function config_cli {
 
     ./dcld config chain-id "$_chain_id"
     ./dcld config output json
-    ./dcld config broadcast-mode block
+    ./dcld config broadcast-mode sync
     if [[ -n "$KEYRING_BACKEND" ]]; then
         ./dcld config keyring-backend "$KEYRING_BACKEND"
     fi

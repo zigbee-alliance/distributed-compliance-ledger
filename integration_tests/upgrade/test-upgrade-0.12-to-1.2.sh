@@ -117,7 +117,7 @@ add_validator_node() {
     ./dcld config output json &&
     ./dcld config node $node0conn &&
     ./dcld config keyring-backend test &&
-    ./dcld config broadcast-mode block"
+    ./dcld config broadcast-mode sync"
 
   test_divider
 
