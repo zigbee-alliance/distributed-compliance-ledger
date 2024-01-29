@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 
+	"cosmossdk.io/errors"
 	tmstrings "github.com/cometbft/cometbft/libs/strings"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -22,7 +23,7 @@ func (k msgServer) CreateValidator(goCtx context.Context, msg *types.MsgCreateVa
 
 	// check if sender has enough rights to create a validator node
 	if !k.dclauthKeeper.HasRole(ctx, sdk.AccAddress(valAddr), dclauthtypes.NodeAdmin) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+		return nil, errors.Wrapf(sdkerrors.ErrUnauthorized,
 			"CreateValidator transaction should be signed by an account with the \"%s\" role",
 			types.EnableDisableValidatorRole,
 		)
@@ -40,7 +41,7 @@ func (k msgServer) CreateValidator(goCtx context.Context, msg *types.MsgCreateVa
 
 	pk, ok := msg.PubKey.GetCachedValue().(cryptotypes.PubKey)
 	if !ok {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidType, "Expecting cryptotypes.PubKey, got %T", pk)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidType, "Expecting cryptotypes.PubKey, got %T", pk)
 	}
 
 	if _, found := k.GetValidatorByConsAddr(ctx, sdk.GetConsAddress(pk)); found {
@@ -55,7 +56,7 @@ func (k msgServer) CreateValidator(goCtx context.Context, msg *types.MsgCreateVa
 	cp := ctx.ConsensusParams()
 	if cp != nil && cp.Validator != nil {
 		if !tmstrings.StringInSlice(pk.Type(), cp.Validator.PubKeyTypes) {
-			return nil, sdkerrors.Wrapf(
+			return nil, errors.Wrapf(
 				sdkstakingtypes.ErrValidatorPubKeyTypeNotSupported,
 				"got: %s, expected: %s", pk.Type(), cp.Validator.PubKeyTypes,
 			)

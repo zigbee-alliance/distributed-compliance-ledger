@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -16,7 +17,7 @@ func (k msgServer) CreateModelVersion(goCtx context.Context, msg *types.MsgCreat
 	// check signer has enough rights to create model version
 	signerAddr, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
 	if err := checkModelRights(ctx, k.Keeper, signerAddr, msg.Vid, msg.Pid, "MsgCreateModelVersion"); err != nil {
 		return nil, err
@@ -79,7 +80,7 @@ func (k msgServer) UpdateModelVersion(goCtx context.Context, msg *types.MsgUpdat
 	// check signer has enough rights to update model version
 	signerAddr, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
 	if err := checkModelRights(ctx, k.Keeper, signerAddr, msg.Vid, msg.Pid, "MsgUpdateModelVersion"); err != nil {
 		return nil, err
@@ -146,7 +147,7 @@ func (k msgServer) DeleteModelVersion(goCtx context.Context, msg *types.MsgDelet
 	// check signer has enough rights to delete model version
 	signerAddr, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
 	if err := checkModelRights(ctx, k.Keeper, signerAddr, msg.Vid, msg.Pid, "MsgDeleteModelVersion"); err != nil {
 		return nil, err

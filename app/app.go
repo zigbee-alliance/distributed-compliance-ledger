@@ -6,7 +6,6 @@ import (
 	"os"
 	"path/filepath"
 
-	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
 	reflectionv1 "cosmossdk.io/api/cosmos/reflection/v1"
 	dbm "github.com/cometbft/cometbft-db"
 	abci "github.com/cometbft/cometbft/abci/types"
@@ -42,7 +41,7 @@ import (
 	dclpkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	compliancemodule "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance"
 	compliancemodulekeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/keeper"
-	compliancetypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
+	dclcompliancetypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	dclauthmodule "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/ante"
 	baseauthmodulekeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/base/keeper"
@@ -55,7 +54,7 @@ import (
 	dclupgrademoduletypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade/types"
 	modelmodule "github.com/zigbee-alliance/distributed-compliance-ledger/x/model"
 	modelmodulekeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/keeper"
-	modelmoduletypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
+	dclmodeltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 	pkimodule "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki"
 	pkimodulekeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/keeper"
 	validatormodule "github.com/zigbee-alliance/distributed-compliance-ledger/x/validator"
@@ -275,8 +274,8 @@ func New(
 		dclupgrademoduletypes.StoreKey,
 		dclpkitypes.StoreKey,
 		vendorinfomoduletypes.StoreKey,
-		modelmoduletypes.StoreKey,
-		compliancetypes.StoreKey,
+		dclmodeltypes.StoreKey,
+		dclcompliancetypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -438,8 +437,8 @@ func New(
 
 	app.ModelKeeper = *modelmodulekeeper.NewKeeper(
 		appCodec,
-		keys[modelmoduletypes.StoreKey],
-		keys[modelmoduletypes.MemStoreKey],
+		keys[dclmodeltypes.StoreKey],
+		keys[dclmodeltypes.MemStoreKey],
 
 		app.DclauthKeeper,
 		app.ComplianceKeeper,
@@ -447,8 +446,8 @@ func New(
 
 	app.ComplianceKeeper = *compliancemodulekeeper.NewKeeper(
 		appCodec,
-		keys[compliancetypes.StoreKey],
-		keys[compliancetypes.MemStoreKey],
+		keys[dclcompliancetypes.StoreKey],
+		keys[dclcompliancetypes.MemStoreKey],
 		app.DclauthKeeper,
 		app.ModelKeeper,
 	)
@@ -529,12 +528,31 @@ func New(
 
 	app.mm.SetOrderBeginBlockers(
 		// TODO [issue 99] verify the order
-		upgradetypes.ModuleName,
+		dclauthmoduletypes.ModuleName,
 		validatormoduletypes.ModuleName,
+		dclgenutilmoduletypes.ModuleName,
+		dclupgrademoduletypes.ModuleName,
+		upgradetypes.ModuleName,
+		dclpkitypes.ModuleName,
+		dclauthmoduletypes.ModuleName,
+		dclmodeltypes.ModuleName,
+		dclcompliancetypes.ModuleName,
+		vendorinfomoduletypes.ModuleName,
+		paramstypes.ModuleName,
 	)
 
 	app.mm.SetOrderEndBlockers(
+		dclauthmoduletypes.ModuleName,
 		validatormoduletypes.ModuleName,
+		dclgenutilmoduletypes.ModuleName,
+		dclupgrademoduletypes.ModuleName,
+		upgradetypes.ModuleName,
+		dclpkitypes.ModuleName,
+		dclauthmoduletypes.ModuleName,
+		dclmodeltypes.ModuleName,
+		dclcompliancetypes.ModuleName,
+		vendorinfomoduletypes.ModuleName,
+		paramstypes.ModuleName,
 	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -565,8 +583,11 @@ func New(
 		dclupgrademoduletypes.ModuleName,
 		dclpkitypes.ModuleName,
 		vendorinfomoduletypes.ModuleName,
-		modelmoduletypes.ModuleName,
-		compliancetypes.ModuleName,
+		dclmodeltypes.ModuleName,
+		dclcompliancetypes.ModuleName,
+		paramstypes.ModuleName,
+		upgradetypes.ModuleName,
+		dclupgrademoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	)
 
@@ -576,7 +597,7 @@ func New(
 	app.configurator = module.NewConfigurator(app.appCodec, app.MsgServiceRouter(), app.GRPCQueryRouter())
 	app.mm.RegisterServices(app.configurator)
 
-	autocliv1.RegisterQueryServer(app.GRPCQueryRouter(), runtimeservices.NewAutoCLIQueryService(app.mm.Modules))
+	// autocliv1.RegisterQueryServer(app.GRPCQueryRouter(), runtimeservices.NewAutoCLIQueryService(app.mm.Modules))
 	reflectionSvc, err := runtimeservices.NewReflectionService()
 	if err != nil {
 		panic(err)
@@ -832,8 +853,8 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(dclupgrademoduletypes.ModuleName)
 	paramsKeeper.Subspace(dclpkitypes.ModuleName)
 	paramsKeeper.Subspace(vendorinfomoduletypes.ModuleName)
-	paramsKeeper.Subspace(modelmoduletypes.ModuleName)
-	paramsKeeper.Subspace(compliancetypes.ModuleName)
+	paramsKeeper.Subspace(dclmodeltypes.ModuleName)
+	paramsKeeper.Subspace(dclcompliancetypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper

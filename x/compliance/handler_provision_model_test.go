@@ -13,6 +13,7 @@ import (
 )
 
 func setupProvisionModel(t *testing.T) (*TestSetup, int32, int32, uint32, string, string) {
+	t.Helper()
 	setup := setup(t)
 
 	vid, pid, softwareVersion, softwareVersionString := setup.addModelVersion(
@@ -48,6 +49,7 @@ func (setup *TestSetup) provisionModelWithAllOptionalFlags(vid int32, pid int32,
 }
 
 func (setup *TestSetup) checkComplianceInfoEqualsProvisionModelMsgData(t *testing.T, provisionModelMsg *types.MsgProvisionModel) {
+	t.Helper()
 	vid := provisionModelMsg.Vid
 	pid := provisionModelMsg.Pid
 	softwareVersion := provisionModelMsg.SoftwareVersion
@@ -59,6 +61,7 @@ func (setup *TestSetup) checkComplianceInfoEqualsProvisionModelMsgData(t *testin
 }
 
 func (setup *TestSetup) checkModelProvisioned(t *testing.T, provisionModelMsg *types.MsgProvisionModel) {
+	t.Helper()
 	vid := provisionModelMsg.Vid
 	pid := provisionModelMsg.Pid
 	softwareVersion := provisionModelMsg.SoftwareVersion

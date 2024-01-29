@@ -1,4 +1,4 @@
-//nolint:blank-imports,staticcheck
+//nolint:staticcheck
 package network
 
 import (
@@ -43,10 +43,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/testutil"
 	"github.com/cosmos/cosmos-sdk/testutil/network"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	_ "github.com/cosmos/cosmos-sdk/x/auth"
+	_ "github.com/cosmos/cosmos-sdk/x/auth" //nolint: nolintlint
 	_ "github.com/cosmos/cosmos-sdk/x/auth/tx/config"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	_ "github.com/cosmos/cosmos-sdk/x/bank"
+	_ "github.com/cosmos/cosmos-sdk/x/bank" //nolint: nolintlint
 	_ "github.com/cosmos/cosmos-sdk/x/consensus"
 	_ "github.com/cosmos/cosmos-sdk/x/params"
 	_ "github.com/cosmos/cosmos-sdk/x/staking"

@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
@@ -15,12 +16,12 @@ func (k msgServer) ProposeAddX509RootCert(goCtx context.Context, msg *types.MsgP
 
 	signerAddr, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
 
 	// check if sender has enough rights to propose a x509 root cert
 	if !k.dclauthKeeper.HasRole(ctx, signerAddr, types.RootCertificateApprovalRole) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+		return nil, errors.Wrapf(sdkerrors.ErrUnauthorized,
 			"MsgProposeAddX509RootCert transaction should be signed by an account with the %s role",
 			types.RootCertificateApprovalRole,
 		)
@@ -62,7 +63,7 @@ func (k msgServer) ProposeAddX509RootCert(goCtx context.Context, msg *types.MsgP
 		// subjectKeyID. Since new certificate is self-signed, we have to ensure that the exisiting certificates are
 		// self-signed too, consequently are root certificates.
 		if !existingCertificates.Certs[0].IsRoot {
-			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+			return nil, errors.Wrapf(sdkerrors.ErrUnauthorized,
 				"Issuer and authorityKeyID of new certificate with subject=%v and subjectKeyID=%v "+
 					"must be the same as ones of existing certificates with the same subject and subjectKeyID",
 				x509Certificate.Subject, x509Certificate.SubjectKeyID)
@@ -70,7 +71,7 @@ func (k msgServer) ProposeAddX509RootCert(goCtx context.Context, msg *types.MsgP
 
 		// signer must be same as owner of existing certificates
 		if msg.Signer != existingCertificates.Certs[0].Owner {
-			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+			return nil, errors.Wrapf(sdkerrors.ErrUnauthorized,
 				"Only owner of existing certificates with subject=%v and subjectKeyID=%v "+
 					"can add new certificate with the same subject and subjectKeyID",
 				x509Certificate.Subject, x509Certificate.SubjectKeyID)

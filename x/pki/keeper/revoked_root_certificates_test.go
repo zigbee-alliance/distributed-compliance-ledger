@@ -11,7 +11,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-func createTestRevokedRootCertificates(keeper *keeper.Keeper, ctx sdk.Context) types.RevokedRootCertificates {
+func createTestRevokedRootCertificates(keeper *keeper.Keeper, ctx sdk.Context) types.RevokedRootCertificates { //nolint:unparam
 	item := types.RevokedRootCertificates{}
 	keeper.SetRevokedRootCertificates(ctx, item)
 

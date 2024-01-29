@@ -370,6 +370,7 @@ func checkRevokedModelInfo(
 }
 
 func assertNotFound(t *testing.T, err error) {
+	t.Helper()
 	require.Error(t, err)
 	require.Equal(t, codes.NotFound, status.Code(err))
 }

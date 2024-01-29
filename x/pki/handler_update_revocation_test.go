@@ -585,6 +585,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAI_VIDPID(t *testing.T) {
 }
 
 func compareUpdatedStringFields(t *testing.T, oldValue string, newValue string, updatedValue string) {
+	t.Helper()
 	if newValue == "" {
 		require.Equal(t, oldValue, updatedValue)
 	} else {
@@ -593,6 +594,7 @@ func compareUpdatedStringFields(t *testing.T, oldValue string, newValue string, 
 }
 
 func compareUpdatedIntFields(t *testing.T, oldValue int, newValue int, updatedValue int) {
+	t.Helper()
 	if newValue == 0 {
 		require.Equal(t, oldValue, updatedValue)
 	} else {

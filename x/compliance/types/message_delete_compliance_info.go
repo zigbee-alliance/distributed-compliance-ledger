@@ -1,6 +1,7 @@
 package types
 
 import (
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
@@ -46,7 +47,7 @@ func (msg *MsgDeleteComplianceInfo) GetSignBytes() []byte {
 func (msg *MsgDeleteComplianceInfo) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address (%s)", err)
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address (%s)", err)
 	}
 
 	err = validator.Validate(msg)

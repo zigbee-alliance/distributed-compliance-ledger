@@ -12,7 +12,7 @@ import (
 )
 
 func SimulateMsgRevokeX509Cert(
-	k keeper.Keeper,
+	_ keeper.Keeper,
 ) simtypes.Operation {
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {

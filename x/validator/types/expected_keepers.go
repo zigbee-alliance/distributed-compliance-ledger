@@ -13,6 +13,6 @@ type DclauthKeeper interface {
 	SetRevokedAccount(ctx sdk.Context, revokedAccount dclauthtypes.RevokedAccount)
 	RemoveAccount(ctx sdk.Context, address sdk.AccAddress)
 	AddAccountToRevokedAccount(
-		ctx sdk.Context, accAddr sdk.AccAddress, approvals []*dclauthtypes.Grant, reason dclauthtypes.RevokedAccount_Reason,
+		ctx sdk.Context, accAddr sdk.AccAddress, approvals []*dclauthtypes.Grant, reason dclauthtypes.RevokedAccount_Reason, //nolint:nosnakecase
 	) (*dclauthtypes.RevokedAccount, error)
 }

@@ -3,8 +3,10 @@ package dclauth
 import (
 	"fmt"
 
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
@@ -41,7 +43,7 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 		default:
 			errMsg := fmt.Sprintf("unrecognized %s message type: %T", types.ModuleName, msg)
 
-			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
+			return nil, errors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
 		}
 	}
 }

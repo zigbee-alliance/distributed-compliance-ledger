@@ -29,6 +29,7 @@ func (setup *TestSetup) deleteComplianceInfo(vid int32, pid int32, softwareVersi
 }
 
 func (setup *TestSetup) checkComplianceInfoDeleted(t *testing.T, deleteComplInfoMsg *types.MsgDeleteComplianceInfo) {
+	t.Helper()
 	vid := deleteComplInfoMsg.Vid
 	pid := deleteComplInfoMsg.Pid
 	softwareVersion := deleteComplInfoMsg.SoftwareVersion

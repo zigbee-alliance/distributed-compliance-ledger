@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
@@ -27,7 +28,7 @@ func (k msgServer) RevokeX509Cert(goCtx context.Context, msg *types.MsgRevokeX50
 	}
 
 	if msg.Signer != certificates.Certs[0].Owner {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+		return nil, errors.Wrapf(sdkerrors.ErrUnauthorized,
 			"Only owner can revoke certificate using `REVOKE_X509_CERT`",
 		)
 	}

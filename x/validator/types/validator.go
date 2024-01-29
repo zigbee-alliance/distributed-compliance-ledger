@@ -46,7 +46,7 @@ func NewValidator(owner sdk.ValAddress, pubKey cryptotypes.PubKey, description D
 func (v Validator) GetConsAddress() (sdk.ConsAddress, error) {
 	pk, ok := v.PubKey.GetCachedValue().(cryptotypes.PubKey)
 	if !ok {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidType, "expecting cryptotypes.PubKey, got %T", pk)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidType, "expecting cryptotypes.PubKey, got %T", pk)
 	}
 
 	return sdk.ConsAddress(pk.Address()), nil
@@ -55,7 +55,7 @@ func (v Validator) GetConsAddress() (sdk.ConsAddress, error) {
 func (v Validator) GetConsPubKey() (cryptotypes.PubKey, error) {
 	pk, ok := v.PubKey.GetCachedValue().(cryptotypes.PubKey)
 	if !ok {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidType, "expecting cryptotypes.PubKey, got %T", pk)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidType, "expecting cryptotypes.PubKey, got %T", pk)
 	}
 
 	return pk, nil
@@ -160,7 +160,7 @@ func (v Validator) TmConsPublicKey() (tmprotocrypto.PublicKey, error) {
 func (v Validator) GetConsAddr() (sdk.ConsAddress, error) {
 	pk, ok := v.PubKey.GetCachedValue().(cryptotypes.PubKey)
 	if !ok {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidType, "expecting cryptotypes.PubKey, got %T", pk)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidType, "expecting cryptotypes.PubKey, got %T", pk)
 	}
 
 	return sdk.ConsAddress(pk.Address()), nil

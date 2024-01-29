@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -16,13 +17,13 @@ func (k msgServer) ProvisionModel(goCtx context.Context, msg *types.MsgProvision
 
 	signerAddr, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
 
 	// check if sender has enough rights to provision model
 	// sender must have CertificationCenter role to certify/revoke model
 	if !k.dclauthKeeper.HasRole(ctx, signerAddr, dclauthtypes.CertificationCenter) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+		return nil, errors.Wrapf(sdkerrors.ErrUnauthorized,
 			"MsgAddTestingResult transaction should be signed by an account with the %s role",
 			dclauthtypes.CertificationCenter,
 		)

@@ -3,8 +3,10 @@ package keeper
 import (
 	"context"
 
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
@@ -14,13 +16,13 @@ func (k msgServer) DeleteComplianceInfo(goCtx context.Context, msg *types.MsgDel
 
 	signerAddr, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
 
 	// check if sender has enough rights to delete model
 	// sender must have CertificationCenter role to certify/revoke model
 	if !k.dclauthKeeper.HasRole(ctx, signerAddr, dclauthtypes.CertificationCenter) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+		return nil, errors.Wrapf(sdkerrors.ErrUnauthorized,
 			"MsgDeleteComplianceInfo transaction should be signed by an account with the %s role",
 			dclauthtypes.CertificationCenter,
 		)

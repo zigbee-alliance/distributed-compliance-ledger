@@ -3,6 +3,7 @@ package types
 import (
 	"time"
 
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
@@ -46,21 +47,21 @@ func (msg *MsgProposeRevokeAccount) GetSignBytes() []byte {
 
 func (msg *MsgProposeRevokeAccount) ValidateBasic() error {
 	if msg.Address == "" {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Account Address: it cannot be empty")
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Account Address: it cannot be empty")
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Address)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Account Address: (%s)", err)
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Account Address: (%s)", err)
 	}
 
 	if msg.Signer == "" {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Signer: it cannot be empty")
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Signer: it cannot be empty")
 	}
 
 	_, err = sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Signer: (%s)", err)
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Signer: (%s)", err)
 	}
 
 	err = validator.Validate(msg)

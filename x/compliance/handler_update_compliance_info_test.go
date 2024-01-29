@@ -12,6 +12,7 @@ import (
 )
 
 func (setup *TestSetup) checkAllComplianceInfoFieldsUpdated(t *testing.T, originalComplianceInfo *types.ComplianceInfo, updatedComplianceInfo *types.ComplianceInfo) {
+	t.Helper()
 	require.Equal(t, originalComplianceInfo.Vid, updatedComplianceInfo.Vid)
 	require.Equal(t, originalComplianceInfo.Pid, updatedComplianceInfo.Pid)
 	require.Equal(t, originalComplianceInfo.SoftwareVersion, updatedComplianceInfo.SoftwareVersion)
@@ -33,6 +34,7 @@ func (setup *TestSetup) checkAllComplianceInfoFieldsUpdated(t *testing.T, origin
 }
 
 func (setup *TestSetup) checkDeviceSoftwareComplianceUpdated(t *testing.T, originalComplianceInfo *types.ComplianceInfo, updatedDeviceSoftwareCompliance *types.DeviceSoftwareCompliance, isUpdatedMinimally bool) {
+	t.Helper()
 	isFound := false
 
 	for _, complianceInfo := range updatedDeviceSoftwareCompliance.ComplianceInfo {
@@ -57,6 +59,7 @@ func (setup *TestSetup) checkDeviceSoftwareComplianceUpdated(t *testing.T, origi
 }
 
 func setupUpdateComplianceInfo(t *testing.T) (*TestSetup, int32, int32, uint32, string, string, *types.ComplianceInfo, *types.DeviceSoftwareCompliance) {
+	t.Helper()
 	setup := setup(t)
 
 	vid, pid, softwareVersion, softwareVersionString := setup.addModelVersion(

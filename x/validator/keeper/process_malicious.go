@@ -3,6 +3,7 @@ package keeper
 import (
 	"fmt"
 
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	evidencetypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
@@ -91,7 +92,7 @@ func (k Keeper) HandleDoubleSign(ctx sdk.Context, evidence *evidencetypes.Equivo
 	// Revoked Account
 	valAddr, err := sdk.ValAddressFromBech32(validator.Owner)
 	if err != nil {
-		logger.Info("Error:", sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err))
+		logger.Info("Error:", errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err))
 	}
 
 	accAddr := sdk.AccAddress(valAddr)

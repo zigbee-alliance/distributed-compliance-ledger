@@ -25,6 +25,8 @@ import (
 	//nolint:staticcheck
 	"github.com/golang/protobuf/proto"
 	"github.com/stretchr/testify/require"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 
 	sdkerrors "cosmossdk.io/errors"
 	clienttx "github.com/cosmos/cosmos-sdk/client/tx"
@@ -35,7 +37,6 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/app"
 	appparams "github.com/zigbee-alliance/distributed-compliance-ledger/app/params"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
-	"google.golang.org/grpc"
 )
 
 // NOTE
@@ -55,8 +56,8 @@ type TestSuite struct {
 func (suite *TestSuite) GetGRPCConn() *grpc.ClientConn {
 	// Create a connection to the gRPC server.
 	grpcConn, err := grpc.Dial(
-		"127.0.0.1:26630",   // Or your gRPC server address.
-		grpc.WithInsecure(), // The SDK doesn't support any transport security mechanism.
+		"127.0.0.1:26630", // Or your gRPC server address.
+		grpc.WithTransportCredentials(insecure.NewCredentials()), // The SDK doesn't support any transport security mechanism.
 	)
 	require.NoError(suite.T, err)
 

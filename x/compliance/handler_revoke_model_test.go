@@ -15,6 +15,7 @@ import (
 )
 
 func setupRevokeModel(t *testing.T) (*TestSetup, int32, int32, uint32, string, string) {
+	t.Helper()
 	setup := setup(t)
 
 	vid, pid, softwareVersion, softwareVersionString := setup.addModelVersion(
@@ -32,6 +33,7 @@ func (setup *TestSetup) revokeModel(vid int32, pid int32, softwareVersion uint32
 }
 
 func (setup *TestSetup) checkModelRevoked(t *testing.T, revokeModelMsg *types.MsgRevokeModel) {
+	t.Helper()
 	vid := revokeModelMsg.Vid
 	pid := revokeModelMsg.Pid
 	softwareVersion := revokeModelMsg.SoftwareVersion
@@ -48,6 +50,7 @@ func (setup *TestSetup) checkModelRevoked(t *testing.T, revokeModelMsg *types.Ms
 }
 
 func (setup *TestSetup) checkModelStatusChangedToRevoked(t *testing.T, revokeModelMsg *types.MsgRevokeModel) {
+	t.Helper()
 	vid := revokeModelMsg.Vid
 	pid := revokeModelMsg.Pid
 	softwareVersion := revokeModelMsg.SoftwareVersion
@@ -64,6 +67,7 @@ func (setup *TestSetup) checkModelStatusChangedToRevoked(t *testing.T, revokeMod
 }
 
 func (setup *TestSetup) checkRevokedModelInfoEqualsMessageData(t *testing.T, revokeModelMsg *types.MsgRevokeModel) *types.ComplianceInfo {
+	t.Helper()
 	vid := revokeModelMsg.Vid
 	pid := revokeModelMsg.Pid
 	softwareVersion := revokeModelMsg.SoftwareVersion
