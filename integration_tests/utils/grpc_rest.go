@@ -18,6 +18,7 @@ import (
 	"bufio"
 	"context"
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -135,7 +136,7 @@ func (suite *TestSuite) BuildTx(
 
 //nolint:nosnakecase
 func (suite *TestSuite) BroadcastTx(txBytes []byte) (*sdk.TxResponse, error) {
-	var broadcastResp *tx.BroadcastTxResponse
+	var txResponse *tx.GetTxResponse
 	var err error
 
 	body := tx.BroadcastTxRequest{
@@ -144,17 +145,20 @@ func (suite *TestSuite) BroadcastTx(txBytes []byte) (*sdk.TxResponse, error) {
 	}
 
 	if suite.Rest {
-		var _resp tx.BroadcastTxResponse
+		var _resp tx.GetTxResponse
 
 		bodyBytes, err := suite.EncodingConfig.Codec.MarshalJSON(&body)
 		require.NoError(suite.T, err)
 
-		respBytes, err := SendPostRequest("/cosmos/tx/v1beta1/txs", bodyBytes, "", "")
+		_, err = SendPostRequest("/cosmos/tx/v1beta1/txs", bodyBytes, "", "")
 		if err != nil {
 			return nil, err
 		}
+
+		respBytes, err := SendGetRequest(fmt.Sprintf("/cosmos/tx/v1beta1/txs/%s", _resp.GetTxResponse().TxHash))
+		require.NoError(suite.T, err)
 		require.NoError(suite.T, suite.EncodingConfig.Codec.UnmarshalJSON(respBytes, &_resp))
-		broadcastResp = &_resp
+		txResponse = &_resp
 	} else {
 		grpcConn := suite.GetGRPCConn()
 		defer grpcConn.Close()
@@ -162,13 +166,18 @@ func (suite *TestSuite) BroadcastTx(txBytes []byte) (*sdk.TxResponse, error) {
 		// Broadcast the tx via gRPC. We create a new client for the Protobuf Tx
 		// service.
 		txClient := tx.NewServiceClient(grpcConn)
-		broadcastResp, err = txClient.BroadcastTx(context.Background(), &body)
+		broadCastResponse, err := txClient.BroadcastTx(context.Background(), &body)
+		if err != nil {
+			return nil, err
+		}
+
+		txResponse, err = txClient.GetTx(context.Background(), &tx.GetTxRequest{Hash: broadCastResponse.GetTxResponse().TxHash})
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	resp := broadcastResp.TxResponse
+	resp := txResponse.TxResponse
 	if resp.Code != 0 {
 		err = sdkerrors.ABCIError(resp.Codespace, resp.Code, resp.RawLog)
 
