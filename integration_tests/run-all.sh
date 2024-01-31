@@ -76,6 +76,7 @@ init_pool() {
   make localnet_start &>${DETAILED_OUTPUT_TARGET}
 
   log "-> Waiting for the second block (needed to request proofs)" >${DETAILED_OUTPUT_TARGET}
+  sleep 10
   wait_for_height 2 20
 }
 

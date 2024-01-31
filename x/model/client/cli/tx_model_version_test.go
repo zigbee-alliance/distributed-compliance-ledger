@@ -6,7 +6,9 @@ import (
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
+	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
 	"github.com/stretchr/testify/require"
+
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	testcli "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/network"
@@ -86,9 +88,13 @@ func TestCreateModelVersion(t *testing.T) {
 			}
 			args = append(args, fields...)
 			args = append(args, common...)
-			_, err := testcli.ExecTestCLITxCmd(t, ctx, cli.CmdCreateModelVersion(), args)
+			txResp, err := testcli.ExecTestCLITxCmd(t, ctx, cli.CmdCreateModelVersion(), args)
+			waitErr := net.WaitForNextBlock()
+			require.NoError(t, waitErr)
 			if tc.err != nil {
-				require.ErrorIs(t, err, tc.err)
+				resp, err := authtx.QueryTx(ctx, txResp.TxHash)
+				require.NoError(t, err)
+				require.Contains(t, resp.RawLog, tc.err.Error())
 			} else {
 				require.NoError(t, err)
 			}
@@ -125,6 +131,8 @@ func TestUpdateModelVersion(t *testing.T) {
 	}
 	args = append(args, common...)
 	_, err := testcli.ExecTestCLITxCmd(t, ctx, cli.CmdCreateModelVersion(), args)
+	require.NoError(t, err)
+	err = net.WaitForNextBlock()
 	require.NoError(t, err)
 
 	fields := []string{
@@ -166,9 +174,13 @@ func TestUpdateModelVersion(t *testing.T) {
 			}
 			args = append(args, fields...)
 			args = append(args, common...)
-			_, err := testcli.ExecTestCLITxCmd(t, ctx, cli.CmdUpdateModelVersion(), args)
+			txResp, err := testcli.ExecTestCLITxCmd(t, ctx, cli.CmdUpdateModelVersion(), args)
+			waitErr := net.WaitForNextBlock()
+			require.NoError(t, waitErr)
 			if tc.err != nil {
-				require.ErrorIs(t, err, tc.err)
+				resp, err := authtx.QueryTx(ctx, txResp.TxHash)
+				require.NoError(t, err)
+				require.Contains(t, resp.RawLog, tc.err.Error())
 			} else {
 				require.NoError(t, err)
 			}

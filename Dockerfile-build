@@ -47,4 +47,4 @@ COPY docs/static ./docs/static/
 
 ARG DCL_VERSION
 ARG DCL_COMMIT
-RUN LEDGER_ENABLED=true make
+RUN LEDGER_ENABLED=false make

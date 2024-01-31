@@ -10,7 +10,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
-	rosettaCmd "cosmossdk.io/tools/rosetta/cmd"
 	dbm "github.com/cometbft/cometbft-db"
 	tmcfg "github.com/cometbft/cometbft/config"
 	"github.com/cometbft/cometbft/libs/log"
@@ -186,7 +185,6 @@ func initRootCmd(
 		keys.Commands(app.DefaultNodeHome),
 	)
 
-	rootCmd.AddCommand(rosettaCmd.RosettaCommand(encodingConfig.InterfaceRegistry, encodingConfig.Codec))
 }
 
 // queryCommand returns the sub-command to send queries to the app.
