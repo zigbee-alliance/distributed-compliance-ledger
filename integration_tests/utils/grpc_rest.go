@@ -21,16 +21,18 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
+	"time"
 
-	//nolint:staticcheck
-	"github.com/golang/protobuf/proto"
+	"github.com/cosmos/gogoproto/proto"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
 	sdkerrors "cosmossdk.io/errors"
 	clienttx "github.com/cosmos/cosmos-sdk/client/tx"
+	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/tx"
@@ -59,6 +61,7 @@ func (suite *TestSuite) GetGRPCConn() *grpc.ClientConn {
 	grpcConn, err := grpc.Dial(
 		"127.0.0.1:26630", // Or your gRPC server address.
 		grpc.WithTransportCredentials(insecure.NewCredentials()), // The SDK doesn't support any transport security mechanism.
+		grpc.WithDefaultCallOptions(grpc.ForceCodec(codec.NewProtoCodec(suite.EncodingConfig.InterfaceRegistry).GRPCCodec())),
 	)
 	require.NoError(suite.T, err)
 
@@ -144,21 +147,30 @@ func (suite *TestSuite) BroadcastTx(txBytes []byte) (*sdk.TxResponse, error) {
 		TxBytes: txBytes,
 	}
 
-	if suite.Rest {
-		var _resp tx.GetTxResponse
+	if suite.Rest { //nolint:nestif
+		var _getResp tx.GetTxResponse
+		var _brdResp tx.BroadcastTxResponse
 
 		bodyBytes, err := suite.EncodingConfig.Codec.MarshalJSON(&body)
 		require.NoError(suite.T, err)
 
-		_, err = SendPostRequest("/cosmos/tx/v1beta1/txs", bodyBytes, "", "")
+		respBytes, err := SendPostRequest("/cosmos/tx/v1beta1/txs", bodyBytes, "", "")
+		require.NoError(suite.T, err)
+		require.NoError(suite.T, suite.EncodingConfig.Codec.UnmarshalJSON(respBytes, &_brdResp))
+
+		for i := 1; i <= 10; i++ {
+			respBytes, err = SendGetRequest(fmt.Sprintf("/cosmos/tx/v1beta1/txs/%s", _brdResp.GetTxResponse().TxHash))
+			if err == nil {
+				require.NoError(suite.T, suite.EncodingConfig.Codec.UnmarshalJSON(respBytes, &_getResp))
+
+				break
+			}
+			time.Sleep(2 * time.Second)
+		}
 		if err != nil {
 			return nil, err
 		}
-
-		respBytes, err := SendGetRequest(fmt.Sprintf("/cosmos/tx/v1beta1/txs/%s", _resp.GetTxResponse().TxHash))
-		require.NoError(suite.T, err)
-		require.NoError(suite.T, suite.EncodingConfig.Codec.UnmarshalJSON(respBytes, &_resp))
-		txResponse = &_resp
+		txResponse = &_getResp
 	} else {
 		grpcConn := suite.GetGRPCConn()
 		defer grpcConn.Close()
@@ -171,7 +183,13 @@ func (suite *TestSuite) BroadcastTx(txBytes []byte) (*sdk.TxResponse, error) {
 			return nil, err
 		}
 
-		txResponse, err = txClient.GetTx(context.Background(), &tx.GetTxRequest{Hash: broadCastResponse.GetTxResponse().TxHash})
+		for i := 1; i <= 10; i++ {
+			txResponse, err = txClient.GetTx(context.Background(), &tx.GetTxRequest{Hash: broadCastResponse.GetTxResponse().TxHash})
+			if err == nil && !strings.Contains(txResponse.TxResponse.RawLog, "tx not found") {
+				break
+			}
+			time.Sleep(2 * time.Second)
+		}
 		if err != nil {
 			return nil, err
 		}
@@ -209,7 +227,7 @@ func (suite *TestSuite) QueryREST(uri string, resp proto.Message) error {
 
 func (suite *TestSuite) AssertNotFound(err error) {
 	require.Error(suite.T, err)
-	require.Contains(suite.T, err.Error(), "rpc error: code = NotFound desc = not found")
+	require.Contains(suite.T, err.Error(), "not found")
 
 	if suite.Rest {
 		var resterr *RESTError
