@@ -122,11 +122,13 @@ create_new_account(){
 
   echo "Jack proposes account for \"$name\" with roles: \"$roles\""
   result=$(echo $passphrase | dcld tx auth propose-add-account --address="$address" --pubkey="$pubkey" --roles=$roles --from jack --yes)
+  result=$(get_txn_result "$result")
   check_response "$result" "\"code\": 0"
   echo "$result"
 
   echo "Alice approves account for \"$name\" with roles: \"$roles\""
   result=$(echo $passphrase | dcld tx auth approve-add-account --address="$address" --from alice --yes)
+  result=$(get_txn_result "$result")
   check_response "$result" "\"code\": 0"
   echo "$result"
 }
@@ -149,6 +151,7 @@ create_new_vendor_account(){
     echo "Jack proposes account for \"$_name\" with Vendor role"
     _result=$(echo $passphrase | dcld tx auth propose-add-account --address="$_address" --pubkey="$_pubkey" --roles=Vendor --vid=$_vid --from jack --yes)
   fi
+  _result=$(get_txn_result "$_result")
   check_response "$_result" "\"code\": 0"
 
 }
@@ -160,8 +163,10 @@ create_model_and_version() {
   local _softwareVersionString="$4"
   local _user_address="$5"
   result=$(echo "$passphrase" | dcld tx model add-model --vid=$_vid --pid=$_pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from=$_user_address --yes)
+  result=$(get_txn_result "$result")
   check_response "$result" "\"code\": 0"
   result=$(echo "$passphrase" | dcld tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$_vid --pid=$_pid --softwareVersion=$_softwareVersion --softwareVersionString=$_softwareVersionString --from=$_user_address --yes)
+  result=$(get_txn_result "$result")
   check_response "$result" "\"code\": 0"
 }
 
@@ -231,6 +236,25 @@ execute_with_retry() {
     if [[ "$(_check_response "$_result" "EOF" "raw")" == true ]]; then
       #echo "EOF detected, re-trying"
       _result=$($_command)
+    else
+      break  
+    fi
+  done
+
+  echo "$_result"
+}
+
+
+get_txn_result() {
+  local _broadcast_result=${1}
+  local _txHash=$(echo "$_broadcast_result" | jq -r '.txhash')
+  local _command="dcld query tx $_txHash"
+  local _result=$($_command 2>&1)
+
+  for i in {1..10}; do
+    if [[ "$(_check_response "$_result" "not found" "raw")" == true ]]; then
+      sleep 2
+      _result=$($_command 2>&1)
     else
       break  
     fi

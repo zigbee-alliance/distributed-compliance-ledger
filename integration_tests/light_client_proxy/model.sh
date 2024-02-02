@@ -77,6 +77,7 @@ test_divider
 productLabel="Device #1"
 echo "Add Model with VID: $vid PID: $pid"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel="$productLabel" --partNumber=1 --commissioningCustomFlow=0 --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
 echo "$result"
 check_response "$result" "\"code\": 0"
 
@@ -84,6 +85,7 @@ test_divider
 
 echo "Create a Device Model Version with VID: $vid PID: $pid SV: $sv"
 result=$(echo 'test1234' | dcld tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=1 --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
 echo "$result"
 check_response "$result" "\"code\": 0"
 
@@ -185,6 +187,7 @@ test_divider
 
 echo "Add Model with VID: $vid PID: $pid"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel="$productLabel" --partNumber=1 --commissioningCustomFlow=0 --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
 echo "$result"
 check_response "$result" "Write requests don't work with a Light Client Proxy"
 

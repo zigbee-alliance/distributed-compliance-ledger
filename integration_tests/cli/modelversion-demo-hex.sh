@@ -32,6 +32,7 @@ create_new_vendor_account $vendor_account $vid_in_hex_format
 
 echo "Add Model with VID: $vid_in_hex_format PID: $pid_in_hex_format"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format --deviceTypeID=1 --productName=TestProduct --productLabel="Test Product" --partNumber=1 --commissioningCustomFlow=0 --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -39,6 +40,7 @@ test_divider
 sv=$RANDOM
 echo "Create a Device Model Version with VID: $vid PID: $pid SV: $sv"
 result=$(echo 'test1234' | dcld tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=1 --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
 echo "$result"
 check_response "$result" "\"code\": 0"
 
@@ -91,6 +93,7 @@ test_divider
 # Update the existing model version
 echo "Update Device Model Version with VID: $vid_in_hex_format PID: $pid_in_hex_format SV: $sv"
 result=$(echo 'test1234' | dcld tx model update-model-version --vid=$vid_in_hex_format --pid=$pid_in_hex_format --minApplicableSoftwareVersion=2 --maxApplicableSoftwareVersion=10 --softwareVersion=$sv --softwareVersionValid=false --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -114,6 +117,7 @@ test_divider
 sv2=$RANDOM
 echo "Create a Second Device Model Version with VID: $vid_in_hex_format PID: $pid_in_hex_format SV: $sv2"
 result=$(echo 'test1234' | dcld tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$vid --pid=$pid --softwareVersion=$sv2 --softwareVersionString=1 --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
 echo "$result"
 check_response "$result" "\"code\": 0"
 
@@ -138,6 +142,7 @@ new_vid_in_hex_format="0xB17"
 different_vendor_account=vendor_account_$new_vid_in_hex_format
 create_new_vendor_account $different_vendor_account $new_vid_in_hex_format
 result=$(echo 'test1234' | dcld tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=1 --from=$different_vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response_and_report "$result" "transaction should be signed by a vendor account containing the vendorID $vid"
 
 test_divider
@@ -145,5 +150,6 @@ test_divider
 # Update model version with vid belonging to another vendor
 echo "Update a Device Model Version with VID: $vid_in_hex_format PID: $pid_in_hex_format SV: $sv from a different vendor account"
 result=$(echo 'test1234' | dcld tx model update-model-version --vid=$vid_in_hex_format --pid=$pid_in_hex_format --softwareVersion=$sv --softwareVersionValid=false --from=$different_vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response_and_report "$result" "transaction should be signed by a vendor account containing the vendorID $vid"
 

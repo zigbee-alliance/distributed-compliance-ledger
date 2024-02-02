@@ -19,12 +19,15 @@ echo "ASSIGN VID TO ROOT CERTIFICATE THAT ALREADY HAS VID"
 
 echo "Propose and approve root certificate"
 result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_cert_subject_path"  --vid "$root_cert_vid" --from $trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 result=$(echo "$passphrase" | dcld tx pki approve-add-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $second_trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Assing VID"
 result=$(dcld tx pki assign-vid --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --vid="$root_cert_vid" --from $vendor_admin_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "vid is not empty"
 
 test_divider

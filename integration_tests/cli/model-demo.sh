@@ -60,6 +60,7 @@ test_divider
 productLabel="Device #1"
 echo "Add Model with VID: $vid PID: $pid"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel="$productLabel" --partNumber=1 --commissioningCustomFlow=0 --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
 
@@ -68,6 +69,7 @@ test_divider
 productLabel="Device #1"
 echo "Add Model with VID: $vid_with_pids PID: $pid"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid_with_pids --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel="$productLabel" --partNumber=1 --commissioningCustomFlow=0 --from=$vendor_account_with_pids --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
 
@@ -86,6 +88,7 @@ sv=1
 cd_version_num=10
 echo "Create Model Versions with VID: $vid PID: $pid SoftwareVersion: $sv"
 result=$(echo "test1234" | dcld tx model add-model-version --vid=$vid --pid=$pid --softwareVersion=$sv --minApplicableSoftwareVersion=1 --maxApplicableSoftwareVersion=15 --softwareVersionString=$sv --cdVersionNumber=$cd_version_num --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
 
@@ -93,6 +96,7 @@ test_divider
 
 echo "Create Model Versions with VID: $vid_with_pids PID: $pid SoftwareVersion: $sv"
 result=$(echo "test1234" | dcld tx model add-model-version --vid=$vid_with_pids --pid=$pid --softwareVersion=$sv --minApplicableSoftwareVersion=1 --maxApplicableSoftwareVersion=15 --softwareVersionString=$sv --cdVersionNumber=$cd_version_num --from=$vendor_account_with_pids --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
 
@@ -116,6 +120,7 @@ test_divider
 echo "Update Model with VID: ${vid} PID: ${pid} with new description"
 description="New Device Description"
 result=$(echo "test1234" | dcld tx model update-model --vid=$vid --pid=$pid --from $vendor_account --yes --productLabel "$description")
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
 
@@ -123,6 +128,7 @@ test_divider
 
 echo "Update Model with VID: ${vid_with_pids} PID: ${pid} with new description"
 result=$(echo "test1234" | dcld tx model update-model --vid=$vid_with_pids --pid=$pid --from $vendor_account_with_pids --yes --productLabel "$description")
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
 
@@ -140,6 +146,7 @@ test_divider
 echo "Update Model with VID: ${vid} PID: ${pid} modifying supportURL"
 supportURL="https://newsupporturl.test"
 result=$(echo "test1234" | dcld tx model update-model --vid=$vid --pid=$pid --from $vendor_account --yes --supportURL "$supportURL")
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
 
@@ -156,12 +163,14 @@ test_divider
 
 echo "Delete Model with VID: ${vid} PID: ${pid}"
 result=$(dcld tx model delete-model --vid=$vid --pid=$pid --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
 echo "$result"
 
 test_divider
 
 echo "Delete Model with VID: ${vid_with_pids} PID: ${pid}"
 result=$(dcld tx model delete-model --vid=$vid_with_pids --pid=$pid --from=$vendor_account_with_pids --yes)
+result=$(get_txn_result "$result")
 echo "$result"
 
 test_divider

@@ -76,7 +76,7 @@ init_pool() {
   make localnet_start &>${DETAILED_OUTPUT_TARGET}
 
   log "-> Waiting for the second block (needed to request proofs)" >${DETAILED_OUTPUT_TARGET}
-  sleep 20
+  execute_with_retry "dcld status"
   wait_for_height 2 20
 }
 
@@ -106,26 +106,26 @@ make image &>${DETAILED_OUTPUT_TARGET}
 cleanup_pool
 
 # Cli shell tests
-#if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "cli" ]]; then
-#  CLI_SHELL_TESTS=$(find integration_tests/cli -type f -name '*.sh' -not -name "common.sh")
-#
-#  for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
-#    init_pool
-#
-#    log "*****************************************************************************************"
-#    log "Running $CLI_SHELL_TEST"
-#    log "*****************************************************************************************"
-#
-#    if bash "$CLI_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
-#      log "$CLI_SHELL_TEST finished successfully"
-#    else
-#      log "$CLI_SHELL_TEST failed"
-#      exit 1
-#    fi
-#
-#    cleanup_pool
-#  done
-#fi
+if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "cli" ]]; then
+  CLI_SHELL_TESTS=$(find integration_tests/cli -type f -name '*.sh' -not -name "common.sh")
+
+  for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
+    init_pool
+
+    log "*****************************************************************************************"
+    log "Running $CLI_SHELL_TEST"
+    log "*****************************************************************************************"
+
+    if bash "$CLI_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
+      log "$CLI_SHELL_TEST finished successfully"
+    else
+      log "$CLI_SHELL_TEST failed"
+      exit 1
+    fi
+
+    cleanup_pool
+  done
+fi
 
 # Light Client Proxy Cli shell tests
 #if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "light" ]]; then
@@ -187,22 +187,22 @@ fi
 #fi
 
 # Upgrade procedure tests
-#if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "upgrade" ]]; then
-#    UPGRADE_SHELL_TESTS=$(find integration_tests/upgrade -type f -name '*.sh' -not -name "add-new-node-after-upgrade.sh" | sort)
-#
-#    for UPGRADE_SHELL_TEST in ${UPGRADE_SHELL_TESTS}; do
-#          log "*****************************************************************************************"
-#          log "Running $UPGRADE_SHELL_TEST"
-#          log "*****************************************************************************************"
-#
-#          if bash "$UPGRADE_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
-#            log "$UPGRADE_SHELL_TEST finished successfully"
-#          else
-#            log "$UPGRADE_SHELL_TEST failed"
-#            exit 1
-#          fi
-#
-#          cleanup_pool
-#    done
-#
-#fi
+if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "upgrade" ]]; then
+    UPGRADE_SHELL_TESTS=$(find integration_tests/upgrade -type f -name '*.sh' -not -name "add-new-node-after-upgrade.sh" | sort)
+
+    for UPGRADE_SHELL_TEST in ${UPGRADE_SHELL_TESTS}; do
+          log "*****************************************************************************************"
+          log "Running $UPGRADE_SHELL_TEST"
+          log "*****************************************************************************************"
+
+          if bash "$UPGRADE_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
+            log "$UPGRADE_SHELL_TEST finished successfully"
+          else
+            log "$UPGRADE_SHELL_TEST failed"
+            exit 1
+          fi
+
+          cleanup_pool
+    done
+
+fi

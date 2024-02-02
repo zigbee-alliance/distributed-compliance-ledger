@@ -168,6 +168,7 @@ add_validator_node() {
       set -eu; echo test1234 | dcld tx validator add-node --pubkey='$vpubkey' --moniker="$node_name" --from="$account" --yes
 EOF
   result="$(docker exec "$container" /bin/sh -c "echo test1234 | ./dcld tx validator add-node --pubkey='$vpubkey' --moniker="$node_name" --from="$account" --yes")"
+  result=$(get_txn_result "$result")
   check_response "$result" "\"code\": 0"
   echo "$result"
 
@@ -590,6 +591,7 @@ test_divider
 echo "Disable node"
 # FIXME: use proper binary (not dcld but $DCLD_BIN_OLD)
 result=$(docker exec "$container" /bin/sh -c "echo test1234  | dcld tx validator disable-node --from=$account --yes")
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -597,6 +599,7 @@ test_divider
 echo "Enable node"
 # FIXME: use proper binary (not dcld but $DCLD_BIN_OLD)
 result=$(docker exec "$container" /bin/sh -c "echo test1234  | dcld tx validator enable-node --from=$account --yes")
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -624,6 +627,7 @@ test_divider
 echo "Enable node"
 # FIXME: use proper binary (not dcld but $DCLD_BIN_OLD)
 result=$(docker exec "$container" /bin/sh -c "echo test1234  | dcld tx validator enable-node --from=$account --yes")
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1340,6 +1344,7 @@ test_divider
 echo "Disable node"
 # FIXME: use proper binary (not dcld but $DCLD_BIN_OLD)
 result=$(docker exec "$container" /bin/sh -c "echo test1234  | dcld tx validator disable-node --from=$account --yes")
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1347,6 +1352,7 @@ test_divider
 echo "Enable node"
 # FIXME: use proper binary (not dcld but $DCLD_BIN_OLD)
 result=$(docker exec "$container" /bin/sh -c "echo test1234  | dcld tx validator enable-node --from=$account --yes")
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1372,6 +1378,7 @@ test_divider
 echo "Enable node"
 # FIXME: use proper binary (not dcld but $DCLD_BIN_OLD)
 result=$(docker exec "$container" /bin/sh -c "echo test1234  | dcld tx validator enable-node --from=$account --yes")
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
