@@ -52,14 +52,20 @@ Revoked NOC root certificates can be re-added using the `ADD_NOC_X509_ROOT_CERTI
 - Parameters:
   - subject: `string` - Base64 encoded subject DER sequence bytes of the certificate.
   - subject_key_id: `string` - Certificate's `Subject Key Id` in hex string format, e.g., `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`.
+  - serial_number: `optional(string)` - Certificate's serial number.
+  - info: `optional(string)` - Information/notes for the revocation
+  - time: `optional(int64)` - Revocation time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State:
   - `pki/RevokedCertificates/value/<subject>/<subject_key_id>`
+  - `pki/RevokedNOCRootCertificates/value/<subject>/<subject_key_id>`
 - CLI Command:
-  - `dcld tx pki revoke-noc-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
+  - `dcld tx pki revoke-noc-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --serial-number=<string> --from=<account>`
 
 ### 3. REMOVE_NOC_X509_ROOT_CERTIFICATE
 This transaction completely removes a NOC root certificate owned by the Vendor. 
 Removed NOC root certificates can be re-added using the `ADD_NOC_X509_ROOT_CERTIFICATE` transaction.
+
+**Node:** Revoked certificates that match the specified parameters will also be removed.
 
 - Who can send: Vendor account
   - Vid field associated with the corresponding NOC root certificate on the ledger must be equal to the Vendor account's VID.
@@ -68,8 +74,9 @@ Removed NOC root certificates can be re-added using the `ADD_NOC_X509_ROOT_CERTI
 - Parameters:
   - subject: `string` - Base64 encoded subject DER sequence bytes of the certificate.
   - subject_key_id: `string` - Certificate's `Subject Key Id` in hex string format, e.g., `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`.
+  - serial_number: `optional(string)` - Certificate's serial number.
 - CLI Command:
-  - `dcld tx pki remove-noc-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
+  - `dcld tx pki remove-noc-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --serial-number=<string> --from=<account>`
 
 ## Query
 
@@ -97,14 +104,18 @@ Retrieve a list of all of NOC root certificates
 - Parameters:
   - Common pagination parameters
 - CLI Command:
-  - `dcld query pki get_all_noc_x509_root_certs
+  - `dcld query pki get_all_noc_x509_root_certs`
 - REST API:
   - GET `/dcl/pki/noc-root-certificates`
 
-## Questions
-- Should a vendor be able to add multiple NOC root certificates with the same Subject and Subject Key Identifier combinations? If so, the vendor may want to remove a specific certificate from the list of certificates with the same Subject and Subject Key Identifier combinations.
-- Should the VID parameter be added to the `ADD_NOC_X509_ROOT_CERTIFICATE` transaction?
-- How should NOC root certificate be renewed with a new one?
-- Should the `REMOVE_NOC_X509_ROOT_CERTIFICATE` transaction also delete revoked certificates?
-- Should a user be able to retrieve all revoked NOC root certificates using the `GET_ALL_REVOKED_X509_NOC_ROOT_CERTS` transaction?
-- In the `Joint Fabric Proposal` document, the concept of a `Trust Quotient (TQ)` is introduced as a future consideration. This concept requires adding `Add Trust` and `Revoke Trust` requests for NOCs in the DCL. Should the implementation of these requests be included in the scope of the current task?
+### GET_ALL_REVOKED_NOC_X509_ROOT_CERTS
+
+Gets all revoked NOC root certificates.
+
+- Who can send: Any account
+- Parameters:
+  - Common pagination parameters
+- CLI command:
+  - `dcld query pki all-revoked-noc-x509-root-certs`
+- REST API:
+  - GET `/dcl/pki/revoked-noc-root-certificates`
