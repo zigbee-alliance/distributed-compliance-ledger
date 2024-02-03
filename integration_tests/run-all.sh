@@ -76,7 +76,7 @@ init_pool() {
   make localnet_start &>${DETAILED_OUTPUT_TARGET}
 
   log "-> Waiting for the second block (needed to request proofs)" >${DETAILED_OUTPUT_TARGET}
-  execute_with_retry "dcld status"
+  execute_with_retry "dcld status" "connection refused"
   wait_for_height 2 20
 }
 

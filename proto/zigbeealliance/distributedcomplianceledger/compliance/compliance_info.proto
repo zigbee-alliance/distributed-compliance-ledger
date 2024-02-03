@@ -1,0 +1,35 @@
+syntax = "proto3";
+package zigbeealliance.distributedcomplianceledger.compliance;
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types";
+
+import "zigbeealliance/distributedcomplianceledger/compliance/compliance_history_item.proto";
+import "cosmos_proto/cosmos.proto";
+
+message ComplianceInfo {
+  int32 vid = 1; 
+  int32 pid = 2; 
+  uint32 softwareVersion = 3; 
+  string certificationType = 4; 
+  string softwareVersionString = 5; 
+  uint32 cDVersionNumber = 6; 
+  uint32 softwareVersionCertificationStatus = 7; 
+  string date = 8; 
+  string reason = 9; 
+  string owner = 10 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  repeated ComplianceHistoryItem history = 11;
+  string cDCertificateId = 12;
+  string certificationRoute = 13;
+  string programType = 14;
+  string programTypeVersion = 15;
+  string compliantPlatformUsed = 16;
+  string compliantPlatformVersion = 17;
+  string transport = 18;
+  string familyId = 19;
+  string supportedClusters = 20;
+  string OSVersion = 21;
+  string parentChild = 22;
+  string certificationIdOfSoftwareComponent = 23;
+  
+}
+

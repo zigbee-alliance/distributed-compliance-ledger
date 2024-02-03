@@ -229,12 +229,13 @@ wait_for_height() {
 # TODO: see https://github.com/zigbee-alliance/distributed-compliance-ledger/issues/203
 execute_with_retry() {
   local _command=${1}
-
+  local _error=${2:-"EOF"}
   local _result=$($_command)
 
   for i in {1..10}; do
-    if [[ "$(_check_response "$_result" "EOF" "raw")" == true ]]; then
+    if [[ "$(_check_response "$_result" "$_error" "raw")" == true ]]; then
       #echo "EOF detected, re-trying"
+      sleep 2
       _result=$($_command)
     else
       break  
@@ -251,7 +252,7 @@ get_txn_result() {
   local _command="dcld query tx $_txHash"
   local _result=$($_command 2>&1)
 
-  for i in {1..10}; do
+  for i in {1..20}; do
     if [[ "$(_check_response "$_result" "not found" "raw")" == true ]]; then
       sleep 2
       _result=$($_command 2>&1)

@@ -88,8 +88,8 @@ bob_address="$(dcld keys show bob -a)"
 jack_address="$(dcld keys show jack -a)"
 echo "Create account for $account and Assign NodeAdmin role"
 echo $passphrase | dcld tx auth propose-add-account --address="$address" --pubkey="$pubkey" --roles="NodeAdmin" --from jack --yes
-echo $passphrase | dcld tx auth approve-add-account --address="$address" --from alice --yes
-
+result=$(echo $passphrase | dcld tx auth approve-add-account --address="$address" --from alice --yes)
+result=$(get_txn_result "$result")
 
 test_divider
 vaddress=$(docker exec $container ./dcld tendermint show-address)
@@ -390,6 +390,7 @@ test_divider
 
 echo "Alice proposes to disable validator $address"
 result=$(dcld tx validator propose-disable-node --address="$validator_address" --from alice --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
 
@@ -414,6 +415,7 @@ test_divider
 
 echo "Bob approves to disable validator $address"
 result=$(dcld tx validator approve-disable-node --address="$validator_address" --from bob --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
 
@@ -421,6 +423,7 @@ test_divider
 
 echo "Bob cannot reject to disable validator $address, because Bob already rejected to disable validator"
 result=$(dcld tx validator reject-disable-node --address="$validator_address" --from bob --yes)
+result=$(get_txn_result "$result")
 response_does_not_contain "$result" "\"code\": 0"
 echo "$result"
 
@@ -471,6 +474,7 @@ test_divider
 
 echo "node admin enables validator"
 result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld tx validator enable-node --from "$account" --yes")
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
 
@@ -496,16 +500,19 @@ test_divider
 
 echo "Jack proposes account for $new_trustee1"
 result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$new_trustee_address1" --pubkey="$new_trustee_pubkey1" --roles="Trustee" --from jack --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Alice approves account for \"$new_trustee1\""
 result=$(echo $passphrase | dcld tx auth approve-add-account --address="$new_trustee_address1" --info="Alice is approving this account" --from alice --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Alice proposes to disable validator $address"
 result=$(dcld tx validator propose-disable-node --address="$validator_address" --from alice --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
 
@@ -513,6 +520,7 @@ test_divider
 
 echo "Bob approves to disable validator $address"
 result=$(dcld tx validator approve-disable-node --address="$validator_address" --from bob --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
 
@@ -520,6 +528,7 @@ test_divider
 
 echo "Bob can revote to reject disable validator $address even if Bob already approves to disable validator"
 result=$(dcld tx validator reject-disable-node --address="$validator_address" --from bob --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
 
@@ -527,19 +536,23 @@ test_divider
 
 echo "Bob approves to disable validator $address"
 result=$(dcld tx validator approve-disable-node --address="$validator_address" --from bob --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
 
 echo "Alice proposes to revoke account for $new_trustee1"
 result=$(echo $passphrase | dcld tx auth propose-revoke-account --address="$new_trustee_address1" --from alice --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Bob approves to revoke account for $new_trustee1"
 result=$(echo $passphrase | dcld tx auth approve-revoke-account --address="$new_trustee_address1" --from bob --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Jack approves to revoke account for $new_trustee1"
 result=$(echo $passphrase | dcld tx auth approve-revoke-account --address="$new_trustee_address1" --from jack --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -570,6 +583,7 @@ test_divider
 
 echo "Bob rejects to disable validator $address"
 result=$(dcld tx validator reject-disable-node --address="$validator_address" --from bob --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
 
@@ -577,6 +591,7 @@ test_divider
 
 echo "Bob cannot reject to disable validator $address, because Bob already rejected to disable validator"
 result=$(dcld tx validator reject-disable-node --address="$validator_address" --from bob --yes)
+result=$(get_txn_result "$result")
 response_does_not_contain "$result" "\"code\": 0"
 echo "$result"
 
@@ -620,6 +635,7 @@ test_divider
 
 echo "Jack rejects to disable validator $address"
 result=$(dcld tx validator reject-disable-node --address="$validator_address" --from jack --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
 
@@ -627,6 +643,7 @@ test_divider
 
 echo "Jack cannot reject to disable validator $address, because Jack already rejected to disable validator"
 result=$(dcld tx validator reject-disable-node --address="$validator_address" --from jack --yes)
+result=$(get_txn_result "$result")
 response_does_not_contain "$result" "\"code\": 0"
 echo "$result"
 
@@ -661,6 +678,7 @@ echo "$result"
 
 echo "Alice proposes to disable validator $address"
 result=$(dcld tx validator propose-disable-node --address="$validator_address" --from alice --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
 
@@ -696,6 +714,7 @@ test_divider
 
 echo "Alice proposes to revoke NodeAdmin $address"
 result=$(dcld tx auth propose-revoke-account --address="$address" --from alice --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
 
@@ -703,6 +722,7 @@ test_divider
 
 echo "Bob approves to revoke NodeAdmin $address"
 result=$(dcld tx auth approve-revoke-account --address="$address" --from bob --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
 

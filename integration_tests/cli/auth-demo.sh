@@ -97,7 +97,6 @@ test_divider
 
 echo "Get an account for $user is not found"
 result=$(dcld query auth account --address=$user_address)
-result=$(get_txn_result "$result")
 check_response "$result" "Not Found"
 
 echo "Get a proposed account for $user and confirm that the approval contains Jack's address"
@@ -560,6 +559,7 @@ test_divider
 
 echo "Bob cannot reject the same account \"$user\" for the second time"
 result=$(echo $passphrase | dcld tx auth reject-add-account --address="$user_address" --info="Bob is rejecting this account" --from bob --yes 2>&1 || true)
+result=$(get_txn_result "$result")
 response_does_not_contain "$result" "\"code\": 0"
 
 test_divider
@@ -629,7 +629,6 @@ pid=$RANDOM
 productName="Device #2"
 echo "$user adds Model with VID: $vid PID: $pid"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --productName="$productName" --productLabel="Device Description" --commissioningCustomFlow=0 --deviceTypeID=12 --partNumber=12 --from=$user_address --yes 2>&1) || true
-result=$(get_txn_result "$result")
 check_response_and_report "$result" "key not found" raw
 
 
@@ -859,7 +858,6 @@ test_divider
 
 echo "Jack proposes account for $user"
 result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$user_address" --pubkey="$user_pubkey" --roles="Vendor" --vid=$vid --pid_ranges=$invalid_pid_ranges --from jack --yes 2>&1) || true
-result=$(get_txn_result "$result")
 check_response "$result" "invalid PID Range is provided" raw
 
 echo "Get an proposed account for $user is not found"

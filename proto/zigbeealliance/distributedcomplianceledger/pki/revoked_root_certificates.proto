@@ -1,0 +1,10 @@
+syntax = "proto3";
+package zigbeealliance.distributedcomplianceledger.pki;
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types";
+
+import "zigbeealliance/distributedcomplianceledger/pki/certificate_identifier.proto";
+
+message RevokedRootCertificates {
+  repeated CertificateIdentifier certs = 1; 
+}

@@ -498,7 +498,6 @@ test_divider
 # Update the model version with maxApplicableSoftwareVersion less then minApplicableSoftwareVersion 
 echo "Update the model version with maxApplicableSoftwareVersion less then minApplicableSoftwareVersion and make sure we get error back VID: $vid_1 PID: $pid_1 SV: $sv_1"
 result=$(echo "test1234" | dcld tx model update-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 --maxApplicableSoftwareVersion=3 --minApplicableSoftwareVersion=5 --from=$vendor_account_1 --yes 2>&1) || true
-result=$(get_txn_result "$result")
 check_response_and_report "$result" "MaxApplicableSoftwareVersion must not be less than MinApplicableSoftwareVersion" raw
 
 test_divider
@@ -506,7 +505,6 @@ test_divider
 # Update the model version with minApplicableSoftwareVersion greater then maxApplicableSoftwareVersion 
 echo "Update the model version with minApplicableSoftwareVersion greater then maxApplicableSoftwareVersion and make sure we get error back VID: $vid_1 PID: $pid_1 SV: $sv_1"
 result=$(echo "test1234" | dcld tx model update-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 --maxApplicableSoftwareVersion=32 --minApplicableSoftwareVersion=33 --from=$vendor_account_1 --yes 2>&1) || true
-result=$(get_txn_result "$result")
 check_response_and_report "$result" "MaxApplicableSoftwareVersion must not be less than MinApplicableSoftwareVersion" raw
 
 test_divider
