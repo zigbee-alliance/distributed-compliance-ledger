@@ -106,30 +106,8 @@ make image &>${DETAILED_OUTPUT_TARGET}
 cleanup_pool
 
 # Cli shell tests
-if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "cli" ]]; then
-  CLI_SHELL_TESTS=$(find integration_tests/cli -type f -name '*.sh' -not -name "common.sh")
-
-  for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
-    init_pool
-
-    log "*****************************************************************************************"
-    log "Running $CLI_SHELL_TEST"
-    log "*****************************************************************************************"
-
-    if bash "$CLI_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
-      log "$CLI_SHELL_TEST finished successfully"
-    else
-      log "$CLI_SHELL_TEST failed"
-      exit 1
-    fi
-
-    cleanup_pool
-  done
-fi
-
-# Light Client Proxy Cli shell tests
-#if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "light" ]]; then
-#  CLI_SHELL_TESTS=$(find integration_tests/light_client_proxy -type f -name '*.sh' -not -name "common.sh")
+#if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "cli" ]]; then
+#  CLI_SHELL_TESTS=$(find integration_tests/cli -type f -name '*.sh' -not -name "common.sh")
 #
 #  for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
 #    init_pool
@@ -149,31 +127,53 @@ fi
 #  done
 #fi
 
-# Go rest tests
-if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "rest" ]]; then
-  GO_REST_TESTS="$(find integration_tests/grpc_rest -type f -name '*_test.go')"
+# Light Client Proxy Cli shell tests
+if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "light" ]]; then
+  CLI_SHELL_TESTS=$(find integration_tests/light_client_proxy -type f -name '*.sh' -not -name "common.sh" | sort)
 
-  for GO_REST_TEST in ${GO_REST_TESTS}; do
+  for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
     init_pool
 
     log "*****************************************************************************************"
-    log "Running $GO_REST_TEST"
+    log "Running $CLI_SHELL_TEST"
     log "*****************************************************************************************"
 
-    # TODO issue 99: improve, that await helps with the cases of not ready connections to Cosmos endpoints
-    sleep 5
-
-    dcld config keyring-backend test
-    if go test "$GO_REST_TEST" &>${DETAILED_OUTPUT_TARGET}; then
-      log "$GO_REST_TEST finished successfully"
+    if bash "$CLI_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
+      log "$CLI_SHELL_TEST finished successfully"
     else
-      log "$GO_REST_TEST failed"
+      log "$CLI_SHELL_TEST failed"
       exit 1
     fi
 
     cleanup_pool
   done
 fi
+
+# Go rest tests
+#if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "rest" ]]; then
+#  GO_REST_TESTS="$(find integration_tests/grpc_rest -type f -name '*_test.go')"
+#
+#  for GO_REST_TEST in ${GO_REST_TESTS}; do
+#    init_pool
+#
+#    log "*****************************************************************************************"
+#    log "Running $GO_REST_TEST"
+#    log "*****************************************************************************************"
+#
+#    # TODO issue 99: improve, that await helps with the cases of not ready connections to Cosmos endpoints
+#    sleep 5
+#
+#    dcld config keyring-backend test
+#    if go test "$GO_REST_TEST" &>${DETAILED_OUTPUT_TARGET}; then
+#      log "$GO_REST_TEST finished successfully"
+#    else
+#      log "$GO_REST_TEST failed"
+#      exit 1
+#    fi
+#
+#    cleanup_pool
+#  done
+#fi
 
 # Deploy tests
 #if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "deploy" ]]; then

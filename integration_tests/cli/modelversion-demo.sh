@@ -148,6 +148,7 @@ test_divider
 # Update model version with vid belonging to another vendor
 echo "Update a Device Model Version with VID: $vid PID: $pid SV: $sv from a different vendor account"
 result=$(echo 'test1234' | dcld tx model update-model-version --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionValid=false --from=$different_vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response_and_report "$result" "transaction should be signed by a vendor account containing the vendorID $vid"
 
 # Delete existing model version

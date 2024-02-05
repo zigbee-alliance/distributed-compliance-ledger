@@ -68,6 +68,7 @@ test_divider
 
 echo "Add Model with VID: $vid PID: $pid: Twice"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from=$vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response_and_report "$result" "\"code\": 501"
@@ -92,7 +93,7 @@ result=$(get_txn_result "$result")
 echo "$result"
 
 echo "Delete Model with VID: ${vid} PID: ${pid}"
-result=$(dcld tx model delete-model --vid=$vid --pid=$pid --from=$vendor_account --yes)
+result=$(echo 'test1234' | dcld tx model delete-model --vid=$vid --pid=$pid --from=$vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 525" # code for model certified error
 
@@ -101,8 +102,8 @@ check_response "$result" "\"code\": 525" # code for model certified error
 
 echo "Add Model with VID: $vid PID: $pid: Unknown account"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from=$vendor_account --yes)
-result=$(dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from "Unknown"  2>&1) || true
 result=$(get_txn_result "$result")
+result=$(dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from "Unknown"  2>&1) || true
 check_response_and_report "$result" "key not found" raw
 
 test_divider
@@ -110,59 +111,48 @@ test_divider
 echo "Add model with invalid VID/PID"
 i="-1" 
 result=$(echo "test1234" | dcld tx model add-model --vid=$i --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from $vendor_account --yes 2>&1) || true
-result=$(get_txn_result "$result")
 check_response_and_report "$result" "Vid must not be less than 1" raw
 
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$i --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from $vendor_account --yes 2>&1) || true
-result=$(get_txn_result "$result")
-heck_response_and_report "$result" "Pid must not be less than 1" raw
+check_response_and_report "$result" "Pid must not be less than 1" raw
 
-i="0" 
+i="0"
 result=$(echo "test1234" | dcld tx model add-model --vid=$i --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from $vendor_account --yes 2>&1) || true
-result=$(get_txn_result "$result")
 check_response_and_report "$result" "Vid must not be less than 1" raw
 
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$i --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from $vendor_account --yes 2>&1) || true
-result=$(get_txn_result "$result")
 check_response_and_report "$result" "Pid must not be less than 1" raw
 
 i="65536"
 result=$(echo "test1234" | dcld tx model add-model --vid=$i --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from $vendor_account --yes 2>&1) || true
-result=$(get_txn_result "$result")
 check_response_and_report "$result" "Vid must not be greater than 65535" raw
 
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$i --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from $vendor_account --yes 2>&1) || true
-result=$(get_txn_result "$result")
 check_response_and_report "$result" "Pid must not be greater than 65535" raw
 
-i="string" 
+i="string"
 result=$(echo "test1234" | dcld tx model add-model --vid=$i --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from $vendor_account --yes 2>&1) || true
-result=$(get_txn_result "$result")
 check_response_and_report "$result" "invalid syntax" raw
 
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$i --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from $vendor_account --yes 2>&1) || true
-result=$(get_txn_result "$result")
 check_response_and_report "$result" "invalid syntax" raw
 
 test_divider
 
 echo "Add model with empty name"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName="" --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0  --from $vendor_account --yes 2>&1) || true
-result=$(get_txn_result "$result")
 check_response_and_report "$result" "ProductName is a required field" raw
 
 test_divider
 
 echo "Add model with empty --from flag"
 result=$(dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0  --from "" --yes 2>&1) || true
-result=$(get_txn_result "$result")
 check_response_and_report "$result" "invalid creator address (empty address string is not allowed)" raw
 
 test_divider
 
 echo "Add model without --from flag"
 result=$(dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0  --yes 2>&1) || true
-result=$(get_txn_result "$result")
 check_response_and_report "$result" "required flag(s) \"from\" not set" raw
 
 test_divider
