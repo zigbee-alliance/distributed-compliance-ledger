@@ -1119,6 +1119,7 @@ test_divider
 # REVOKE ACCOUNT
 echo "Jack approves to revoke account for $user"
 result=$(echo $passphrase | dcld tx auth approve-revoke-account --address="$user_address" --from jack --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
