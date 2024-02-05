@@ -58,7 +58,7 @@ Revoked NOC root certificates can be re-added using the `ADD_NOC_X509_ROOT_CERTI
   - `pki/RevokedCertificates/value/<subject>/<subject_key_id>`
   - `pki/RevokedNOCRootCertificates/value/<subject>/<subject_key_id>`
 - CLI Command:
-  - `dcld tx pki revoke-noc-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --serial-number=<string> --from=<account>`
+  - `dcld tx pki revoke-noc-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --serial-number=<string> --info=<string> --time=<int64> --revokeChild=<bool> --from=<account>`
 
 ### 3. REMOVE_NOC_X509_ROOT_CERTIFICATE
 This transaction completely removes a NOC root certificate owned by the Vendor. 
@@ -78,7 +78,7 @@ The certificates in the chain signed by the removed certificate (intermediate, l
   - serial_number: `optional(string)` - Certificate's serial number. If not provided, the transaction will remove all certificates that match the given `subject` and `subject_key_id` combination.
   - info: `optional(string)` - Information/notes for the removal.
 - CLI Command:
-  - `dcld tx pki remove-noc-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --serial-number=<string> --from=<account>`
+  - `dcld tx pki remove-noc-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --serial-number=<string> --info=<string>  --from=<account>`
 
 ## Query
 
