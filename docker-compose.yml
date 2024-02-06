@@ -113,7 +113,7 @@ services:
     networks:
       localnet:
         ipv4_address: 192.167.10.7
-    command: sh -c "sleep 10 && cometbft light dclchain -p tcp://192.167.10.2:26657 -w tcp://192.167.10.3:26657,tcp://192.167.10.4:26657 --log_level=debug"
+    command: sh -c "sleep 10 && cometbft light dclchain -p tcp://192.167.10.2:26657 -w tcp://192.167.10.3:26657,tcp://192.167.10.4:26657 --laddr=tcp://0.0.0.0:8888 --log_level=debug"
 
 
 networks:
