@@ -147,9 +147,9 @@ wait_for_height 4 30 normal "tcp://$VN_IP:26657"
 result="$(docker_exec "$VN_NAME" ./dcld tx validator add-node --pubkey="$vn_pubkey" --moniker="$VN_NAME" --from="$vn_admin_name" --yes)"
 result=$(get_txn_result "$result")
 
+sleep 10
 echo "Check node \"$VN_NAME\" is in the validator set"
 result=$(docker_exec "$GVN_NAME" ./dcld query validator all-nodes)
-result=$(get_txn_result "$result")
 check_response "$result" "\"moniker\": \"$VN_NAME\""
 check_response "$result" "\"pubKey\":$vn_pubkey" raw
 

@@ -19,7 +19,7 @@ test_divider
 
 # connect to light client proxy
 dcld config node tcp://localhost:26620
-sleep 10
+sleep 20
 
 echo "Query non existent account"
 result=$(execute_with_retry "dcld query auth account --address=$user_address")
@@ -147,7 +147,6 @@ test_divider
 
 echo "Add vendorinfo"
 result=$(echo $passphrase | dcld tx auth propose-add-account --address="$user_address" --pubkey="$user_pubkey" --roles="NodeAdmin" --from $user_address --yes)
-result=$(get_txn_result "$result")
 echo "$result"
 check_response "$result" "Write requests don't work with a Light Client Proxy"
 

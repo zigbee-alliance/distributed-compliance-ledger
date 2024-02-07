@@ -18,7 +18,7 @@
 # The resulting image is used only for getting the build artifacts from
 # a container based on it. Containers based on this image are never run.
 ################################################################################
-FROM golang:bullseye
+FROM golang:1.20.14-bullseye
 
 WORKDIR /go/src/dc-ledger
 COPY app ./app/
@@ -35,4 +35,4 @@ ARG DCL_VERSION
 ARG DCL_COMMIT
 RUN LEDGER_ENABLED=false make
 
-RUN go install github.com/cosmos/cosmos-sdk/cosmovisor/cmd/cosmovisor@v1.0.0
+RUN go install github.com/cosmos/cosmos-sdk/cosmovisor/cmd/cosmovisor@v1.3.0

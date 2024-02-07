@@ -220,7 +220,7 @@ require (
 
 replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
-	github.com/cometbft/cometbft => github.com/Abdulbois/cometbft v0.0.0-20240206095654-1275196800b7
+	github.com/cometbft/cometbft => github.com/zigbee-alliance/cometbft v0.37.5
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.9.0
 	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
 )

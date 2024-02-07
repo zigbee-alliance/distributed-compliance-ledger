@@ -107,22 +107,22 @@ create_new_account(){
   eval $__resultvar="'$name'"
 
   local roles="$2"
-  local dcld = ${3:-dcld}
+  local _dcld="${3:-dcld}"
   echo "Account name: $name"
 
   echo "Generate key for $name"
-  (echo $passphrase; echo $passphrase) | $dcld keys add "$name"
+  (echo $passphrase; echo $passphrase) | $_dcld keys add "$name"
 
-  address=$(echo $passphrase | $dcld keys show $name -a)
-  pubkey=$(echo $passphrase | $dcld keys show $name -p)
+  address=$(echo $passphrase | $_dcld keys show $name -a)
+  pubkey=$(echo $passphrase | $_dcld keys show $name -p)
 
   echo "Jack proposes account for \"$name\" with roles: \"$roles\""
-  result=$(echo $passphrase | $dcld tx auth propose-add-account --address="$address" --pubkey="$pubkey" --roles=$roles --from jack --yes)
+  result=$(echo $passphrase | $_dcld tx auth propose-add-account --address="$address" --pubkey="$pubkey" --roles=$roles --from jack --yes)
   check_response "$result" "\"code\": 0"
   echo "$result"
 
   echo "Alice approves account for \"$name\" with roles: \"$roles\""
-  result=$(echo $passphrase | $dcld tx auth approve-add-account --address="$address" --from alice --yes)
+  result=$(echo $passphrase | $_dcld tx auth approve-add-account --address="$address" --from alice --yes)
   check_response "$result" "\"code\": 0"
   echo "$result"
 }
@@ -131,13 +131,13 @@ create_new_vendor_account(){
 
   local _name="$1"
   local _vid="$2"
-  local dcld = ${3:-dcld}
+  local _dcld="${3:-dcld}"
 
-  echo $passphrase | $dcld keys add "$_name"
-  _address=$(echo $passphrase | $dcld keys show $_name -a)
-  _pubkey=$(echo $passphrase | $dcld keys show $_name -p)
+  echo $passphrase | $_dcld keys add "$_name"
+  _address=$(echo $passphrase | $_dcld keys show $_name -a)
+  _pubkey=$(echo $passphrase | $_dcld keys show $_name -p)
 
-  result=$(echo $passphrase | $dcld tx auth propose-add-account --address="$_address" --pubkey="$_pubkey" --roles=Vendor --vid=$_vid --pid_ranges=$_pid_ranges --from jack --yes)
+  result=$(echo $passphrase | $_dcld tx auth propose-add-account --address="$_address" --pubkey="$_pubkey" --roles=Vendor --vid=$_vid --from jack --yes)
   check_response "$result" "\"code\": 0"
 
 }
@@ -210,7 +210,7 @@ get_txn_result() {
       sleep 2
       _result=$($_command 2>&1)
     else
-      break  
+      break
     fi
   done
 
@@ -233,4 +233,140 @@ execute_with_retry() {
   done
 
   echo "$_result"
+}
+
+log() {
+  echo "${LOG_PREFIX}$1"
+}
+
+  # patch configs properly by having all values >= 1 sec, otherwise headers may start having time from the future and light client verification will fail
+  # if we patch config to have new blocks created in less than 1 sec, the min time in a time header is still 1 sec.
+  # So, new blocks started to be from the future.
+patch_consensus_config() {
+  local NODE_CONFIGS="$(find "$LOCALNET_DIR" -type f -name "config.toml" -wholename "*node*")"
+
+  for NODE_CONFIG in ${NODE_CONFIGS}; do
+    sed -i $SED_EXT 's/timeout_propose = "3s"/timeout_propose = "1s"/g' "${NODE_CONFIG}"
+    #sed -i $SED_EXT 's/timeout_prevote = "1s"/timeout_prevote = "1s"/g' "${NODE_CONFIG}"
+    #sed -i $SED_EXT 's/timeout_precommit = "1s"/timeout_precommit = "1s"/g' "${NODE_CONFIG}"
+    sed -i $SED_EXT 's/timeout_commit = "5s"/timeout_commit = "1s"/g' "${NODE_CONFIG}"
+  done
+}
+
+start_pool() {
+  log "Setting up pool"
+
+  log "-> Generating network configuration" >${DETAILED_OUTPUT_TARGET}
+  make localnet_init_latest_stable_release MAINNET_STABLE_VERSION=$binary_version_old &>${DETAILED_OUTPUT_TARGET}
+
+  patch_consensus_config
+
+  log "-> Running pool" >${DETAILED_OUTPUT_TARGET}
+  make localnet_start &>${DETAILED_OUTPUT_TARGET}
+
+  log "-> Waiting for the second block (needed to request proofs)" >${DETAILED_OUTPUT_TARGET}
+  execute_with_retry "dcld status" "connection"
+  wait_for_height 2 20
+}
+
+cleanup() {
+  if docker container ls -a | grep -q $container; then
+    if docker container inspect $container | grep -q '"Status": "running"'; then
+      echo "Stopping container"
+      docker container kill $container
+    fi
+
+    echo "Removing container"
+    docker container rm -f "$container"
+  fi
+}
+
+container="validator-demo"
+add_validator_node() {
+  # FIXME: as it's called before upgrade, mainnet stable version of dcld needs to be used (not the latest master)
+  # FIXME: check adding new node after upgrade as well
+  random_string account
+  address=""
+  LOCALNET_DIR=".localnet"
+  DCL_USER_HOME="/var/lib/dcl"
+  DCL_DIR="$DCL_USER_HOME/.dcl"
+
+  node_name="node-demo"
+  node_p2p_port=26670
+  node_client_port=26671
+  chain_id="dclchain"
+  ip="192.167.10.6"
+  node0conn="tcp://192.167.10.2:26657"
+  passphrase="test1234"
+  docker_network="distributed-compliance-ledger_localnet"
+
+  docker run -d --name $container --ip $ip -p "$node_p2p_port-$node_client_port:26656-26657" --network $docker_network -i dcledger
+
+  docker cp "$DCLD_BIN_OLD" "$container":"$DCL_USER_HOME"/dcld
+
+  test_divider
+
+  echo "$account Configure CLI"
+  docker exec $container /bin/sh -c "
+    ./dcld config chain-id dclchain &&
+    ./dcld config output json &&
+    ./dcld config node $node0conn &&
+    ./dcld config keyring-backend test &&
+    ./dcld config broadcast-mode block"
+
+  test_divider
+
+  echo "$account Prepare Node configuration files"
+  docker exec $container ./dcld init $node_name --chain-id $chain_id
+  docker cp "$LOCALNET_DIR/node0/config/genesis.json" $container:$DCL_DIR/config
+  peers="$(cat "$LOCALNET_DIR/node0/config/config.toml" | grep -o -E "persistent_peers = \".*\"")"
+  docker exec $container sed -i "s/persistent_peers = \"\"/$peers/g" $DCL_DIR/config/config.toml
+  docker exec $container sed -i 's/laddr = "tcp:\/\/127.0.0.1:26657"/laddr = "tcp:\/\/0.0.0.0:26657"/g' $DCL_DIR/config/config.toml
+
+  test_divider
+
+  echo "Generate keys for $account"
+  cmd="(echo $passphrase; echo $passphrase) | ./dcld keys add $account"
+  docker exec $container /bin/sh -c "$cmd"
+
+  address="$(docker exec $container /bin/sh -c "echo $passphrase | ./dcld keys show $account -a")"
+  pubkey="$(docker exec $container /bin/sh -c "echo $passphrase | ./dcld keys show $account -p")"
+  alice_address="$($DCLD_BIN_OLD keys show alice -a)"
+  bob_address="$($DCLD_BIN_OLD keys show bob -a)"
+  jack_address="$($DCLD_BIN_OLD keys show jack -a)"
+  echo "Create account for $account and Assign NodeAdmin role"
+  echo $passphrase | $DCLD_BIN_OLD tx auth propose-add-account --address="$address" --pubkey="$pubkey" --roles="NodeAdmin" --from jack --yes
+  echo $passphrase | $DCLD_BIN_OLD tx auth approve-add-account --address="$address" --from alice --yes
+  echo $passphrase | $DCLD_BIN_OLD tx auth approve-add-account --address="$address" --from bob --yes
+
+  test_divider
+  vaddress=$(docker exec $container ./dcld tendermint show-address)
+  vpubkey=$(docker exec $container ./dcld tendermint show-validator)
+
+  echo "Check pool response for yet unknown node \"$node_name\""
+  result=$($DCLD_BIN_OLD query validator node --address "$address")
+  check_response "$result" "Not Found"
+  echo "$result"
+  result=$($DCLD_BIN_OLD query validator last-power --address "$address")
+  check_response "$result" "Not Found"
+  echo "$result"
+
+  echo "$account Add Node \"$node_name\" to validator set"
+  cmd="$(docker exec "$container" /bin/sh -c "echo test1234 | ./dcld tx validator add-node --pubkey='$vpubkey' --moniker="$node_name" --from="$account" --yes")"
+  result=$(execute_with_retry "$cmd" "not found")
+  echo "$result"
+
+  test_divider
+
+  echo "Locating the app to $DCL_DIR/cosmovisor/genesis/bin directory"
+  docker exec $container mkdir -p "$DCL_DIR"/cosmovisor/genesis/bin
+  docker exec $container cp -f ./dcld "$DCL_DIR"/cosmovisor/genesis/bin/
+
+  echo "$account Start Node \"$node_name\""
+  docker exec -d $container cosmovisor run start
+  sleep 10
+
+  result=$($DCLD_BIN_OLD query validator node --address "$address")
+  validator_address=$(echo "$result" | jq -r '.owner')
+  echo "$result"
 }

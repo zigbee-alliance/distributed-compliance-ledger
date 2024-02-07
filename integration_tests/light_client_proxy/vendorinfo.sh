@@ -102,7 +102,6 @@ test_divider
 
 echo "Add vendorinfo"
 result=$(echo "test1234" | dcld tx vendorinfo add-vendor --vid=$vid --companyLegalName="$companyLegalName" --vendorName="$vendorName" --from=$vendor_account --yes)
-result=$(get_txn_result "$result")
 echo "$result"
 check_response "$result" "Write requests don't work with a Light Client Proxy"
 
