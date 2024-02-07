@@ -221,15 +221,6 @@ Re-generate cosmos base openapi (service API from cosmos exposed in DCL) using [
 ./scripts/cosmos-swagger-gen.sh tx
 ```
 
-## Update Tendermint Version
-
-Please note, that we depend on the Tendermint fork <https://github.com/zigbee-alliance/tendermint/releases/tag/v0.34.140>
-due to hotfixes for <https://github.com/cometbft/cometbft/issues/7640> and <https://github.com/cometbft/cometbft/issues/7641>
-required for Light Client Proxy.
-Now that fixes are merged to Tendermint master, so check if we still need to depend on the fork.
-
-Also don't forget to update the link to the Tendermint RPC in [Swagger UI](docs/index.html).
-
 ## Other
 
 For more details, please have a look at [Cosmos SDK tutorial](https://tutorials.cosmos.network/).

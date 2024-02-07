@@ -107,22 +107,22 @@ create_new_account(){
   eval $__resultvar="'$name'"
 
   local roles="$2"
-
+  local dcld = ${3:-dcld}
   echo "Account name: $name"
 
   echo "Generate key for $name"
-  (echo $passphrase; echo $passphrase) | dcld keys add "$name"
+  (echo $passphrase; echo $passphrase) | $dcld keys add "$name"
 
-  address=$(echo $passphrase | dcld keys show $name -a)
-  pubkey=$(echo $passphrase | dcld keys show $name -p)
+  address=$(echo $passphrase | $dcld keys show $name -a)
+  pubkey=$(echo $passphrase | $dcld keys show $name -p)
 
   echo "Jack proposes account for \"$name\" with roles: \"$roles\""
-  result=$(echo $passphrase | dcld tx auth propose-add-account --address="$address" --pubkey="$pubkey" --roles=$roles --from jack --yes)
+  result=$(echo $passphrase | $dcld tx auth propose-add-account --address="$address" --pubkey="$pubkey" --roles=$roles --from jack --yes)
   check_response "$result" "\"code\": 0"
   echo "$result"
 
   echo "Alice approves account for \"$name\" with roles: \"$roles\""
-  result=$(echo $passphrase | dcld tx auth approve-add-account --address="$address" --from alice --yes)
+  result=$(echo $passphrase | $dcld tx auth approve-add-account --address="$address" --from alice --yes)
   check_response "$result" "\"code\": 0"
   echo "$result"
 }
@@ -131,20 +131,15 @@ create_new_vendor_account(){
 
   local _name="$1"
   local _vid="$2"
+  local dcld = ${3:-dcld}
 
-  echo $passphrase | dcld keys add "$_name"
-  _address=$(echo $passphrase | dcld keys show $_name -a)
-  _pubkey=$(echo $passphrase | dcld keys show $_name -p)
+  echo $passphrase | $dcld keys add "$_name"
+  _address=$(echo $passphrase | $dcld keys show $_name -a)
+  _pubkey=$(echo $passphrase | $dcld keys show $_name -p)
 
-  local _result=""
-  if [ $# -eq 3 ]; then
-    local _pid_ranges="$3"
-    echo "Jack proposes account for \"$_name\" with Vendor role and with [$_pid_ranges] associated Product IDs"
-    _result=$(echo $passphrase | dcld tx auth propose-add-account --address="$_address" --pubkey="$_pubkey" --roles=Vendor --vid=$_vid --pid_ranges=$_pid_ranges --from jack --yes)
-  else
-    echo "Jack proposes account for \"$_name\" with Vendor role"
-    _result=$(echo $passphrase | dcld tx auth propose-add-account --address="$_address" --pubkey="$_pubkey" --roles=Vendor --vid=$_vid --from jack --yes)
-  fi
+  result=$(echo $passphrase | $dcld tx auth propose-add-account --address="$_address" --pubkey="$_pubkey" --roles=Vendor --vid=$_vid --pid_ranges=$_pid_ranges --from jack --yes)
+  check_response "$result" "\"code\": 0"
+
 }
 
 

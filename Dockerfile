@@ -37,7 +37,6 @@ ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 
 RUN go install github.com/cosmos/cosmos-sdk/cosmovisor/cmd/cosmovisor@v1.3.0
-RUN go install github.com/cometbft/cometbft/cmd/cometbft@v0.37.4
 
 ############################
 # STEP 2 build node image
@@ -45,7 +44,6 @@ RUN go install github.com/cometbft/cometbft/cmd/cometbft@v0.37.4
 FROM ubuntu:20.04
 
 COPY --from=builder /go/bin/cosmovisor /usr/bin/
-COPY --from=builder /go/bin/cometbft /usr/bin/
 
 # test user
 ARG TEST_USER

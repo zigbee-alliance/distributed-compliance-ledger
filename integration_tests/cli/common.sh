@@ -79,6 +79,7 @@ check_response() {
 
     if [[ "$(_check_response "$_result" "$_expected_string" "$_mode")" != true ]]; then
         echo "${GREEN}ERROR:${RESET} command failed. The expected string: '$_expected_string' not found in the result: $_result"
+        docker logs -n 100 lightclient0
         exit 1
     fi
 }

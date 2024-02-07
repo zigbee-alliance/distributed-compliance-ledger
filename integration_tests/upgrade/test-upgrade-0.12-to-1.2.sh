@@ -255,7 +255,7 @@ company_legal_name="LegalCompanyName"
 company_preferred_name="CompanyPreferredName"
 vendor_landing_page_url="https://www.example.com"
 
-dcld config broadcast-mode block
+$DCLD_BIN_OLD config broadcast-mode block
 
 random_string user_1
 echo "$user_1 generates keys"
@@ -279,10 +279,10 @@ user_3_address=$(echo $passphrase | $DCLD_BIN_OLD keys show $user_3 -a)
 user_3_pubkey=$(echo $passphrase | $DCLD_BIN_OLD keys show $user_3 -p)
 
 echo "Create Vendor account $vendor_account"
-create_new_vendor_account $vendor_account $vid
+create_new_vendor_account $vendor_account $vid $DCLD_BIN_OLD
 
 echo "Create CertificationCenter account"
-create_new_account certification_center_account "CertificationCenter"
+create_new_account certification_center_account "CertificationCenter" $DCLD_BIN_OLD
 
 random_string trustee_account_4
 random_string trustee_account_5

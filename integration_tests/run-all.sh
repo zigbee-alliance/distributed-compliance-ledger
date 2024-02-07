@@ -128,26 +128,26 @@ cleanup_pool
 #fi
 
 # Light Client Proxy Cli shell tests
-#if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "light" ]]; then
-#  CLI_SHELL_TESTS=$(find integration_tests/light_client_proxy -type f -name '*.sh' -not -name "common.sh" | sort)
-#
-#  for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
-#    init_pool
-#
-#    log "*****************************************************************************************"
-#    log "Running $CLI_SHELL_TEST"
-#    log "*****************************************************************************************"
-#
-#    if bash "$CLI_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
-#      log "$CLI_SHELL_TEST finished successfully"
-#    else
-#      log "$CLI_SHELL_TEST failed"
-#      exit 1
-#    fi
-#
-#    cleanup_pool
-#  done
-#fi
+if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "light" ]]; then
+  CLI_SHELL_TESTS=$(find integration_tests/light_client_proxy -type f -name '*.sh' -not -name "common.sh" | sort)
+
+  for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
+    init_pool
+
+    log "*****************************************************************************************"
+    log "Running $CLI_SHELL_TEST"
+    log "*****************************************************************************************"
+
+    if bash "$CLI_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
+      log "$CLI_SHELL_TEST finished successfully"
+    else
+      log "$CLI_SHELL_TEST failed"
+      exit 1
+    fi
+
+    cleanup_pool
+  done
+fi
 
 # Go rest tests
 #if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "rest" ]]; then
@@ -176,15 +176,15 @@ cleanup_pool
 #fi
 
 # Deploy tests
-#if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "deploy" ]]; then
-#    DEPLOY_SHELL_TEST="./integration_tests/deploy/test_deploy.sh"
-#    if bash "$DEPLOY_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
-#      log "$DEPLOY_SHELL_TEST finished successfully"
-#    else
-#      log "$DEPLOY_SHELL_TEST failed"
-#      exit 1
-#    fi
-#fi
+if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "deploy" ]]; then
+    DEPLOY_SHELL_TEST="./integration_tests/deploy/test_deploy.sh"
+    if bash "$DEPLOY_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
+      log "$DEPLOY_SHELL_TEST finished successfully"
+    else
+      log "$DEPLOY_SHELL_TEST failed"
+      exit 1
+    fi
+fi
 
 # Upgrade procedure tests
 if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "upgrade" ]]; then

@@ -184,6 +184,8 @@ func initRootCmd(
 		txCommand(),
 		keys.Commands(app.DefaultNodeHome),
 	)
+
+	rootCmd.AddCommand(LightCmd)
 }
 
 // queryCommand returns the sub-command to send queries to the app.

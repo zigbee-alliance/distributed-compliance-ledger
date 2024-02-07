@@ -15,5 +15,4 @@ managed:
     override:
 plugins:
   - name: go-grpc
-    out: ../types
-    opt: paths=source_relative
+    out: ..

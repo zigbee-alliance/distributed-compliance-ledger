@@ -15,47 +15,29 @@ RUN curl -L https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz -o /tmp/go.
     && go version \
     && rm -f /tmp/go.tar.gz
 
-# Install protoc
-ARG PROTOC_VERSION
-ENV PROTOC_VERSION=${PROTOC_VERSION:-3.19.4}
-RUN PROTOC_ZIP=protoc-${PROTOC_VERSION}-linux-x86_64.zip \
-    && curl -OL https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_VERSION}/${PROTOC_ZIP} \
-    && unzip -o $PROTOC_ZIP -d /usr/local bin/protoc \
-    && unzip -o $PROTOC_ZIP -d /usr/local 'include/*' \
-    && rm -f $PROTOC_ZIP
-
-# Install grpc-gateway tools
-ENV PROTOC_GEN_GRPC_GATEWAY_VERSION=v2.8.0
-ENV PROTOC_GEN_OPENAPIV2_VERSION=v2.8.0
+# Install tools
+ENV BUF_BUILD=v1.29.0
+ENV PROTOC_GEN_GRPC_GATEWAY_VERSION=v2.19.0
+ENV PROTOC_GEN_OPENAPIV2_VERSION=v2.19.0
 ENV PROTOC_GEN_SWAGGER_VERSION=v1.16.0
+ENV PROTOC_GEN_GO_COSMOS=v1.4.10
+ENV PROTOC_GEN_GO_PULSAR=v1.0.0-beta.2
+ENV PROTOC_GEN_GO=v1.32.0
+ENV PROTOC_GEN_GO_GRPC=v1.1.0
 
 RUN go install \
-        github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@${PROTOC_GEN_GRPC_GATEWAY_VERSION} \
-        github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@${PROTOC_GEN_OPENAPIV2_VERSION}
+        github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway@${PROTOC_GEN_GRPC_GATEWAY_VERSION} \
+        github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@${PROTOC_GEN_OPENAPIV2_VERSION} \
+        github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger@${PROTOC_GEN_SWAGGER_VERSION} \
 
-RUN go install \
-    github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger@${PROTOC_GEN_SWAGGER_VERSION}
+RUN go install github.com/bufbuild/buf/cmd/buf@${BUF_BUILD}
+RUN go install github.com/cosmos/gogoproto/protoc-gen-gocosmos@${PROTOC_GEN_GO_COSMOS}
+RUN go install github.com/cosmos/cosmos-proto/cmd/protoc-gen-go-pulsar@${PROTOC_GEN_GO_PULSAR}
+RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@${PROTOC_GEN_GO_GO}
+RUN go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@${PROTOC_GEN_GO_GRPC}
 
 RUN npm install -g swagger-combine
 
-
-# Install starport
-ARG STARPORT_VERSION
-ENV STARPORT_VERSION=${STARPORT_VERSION:-0.19.5}
-#ENV STARPORT_VERSION=${STARPORT_VERSION:-dev}
-
-RUN if [ "$STARPORT_VERSION" = "dev" ]; then \
-      curl -L https://github.com/tendermint/starport/archive/refs/heads/develop.zip -o /tmp/starport.zip && \
-      cd /tmp \
-        && unzip starport.zip \
-        && cd starport-develop \
-        && make build \
-        && cp ./dist/starport /usr/local/bin; \
-    else \
-      curl https://get.starport.network/starport@v${STARPORT_VERSION}! -o /tmp/startport \
-      && bash /tmp/startport \
-      && rm /tmp/startport; \
-    fi  
 
 ENV PATH="/root/go/bin:${PATH}"
 ENV PATH="${PATH}:/usr/local/bin"

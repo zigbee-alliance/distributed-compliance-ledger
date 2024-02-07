@@ -2,7 +2,7 @@
     "swagger": "2.0",
     "info": {
       "title": "cosmos/base/tendermint/v1beta1/query.proto",
-      "version": "v0.44.4","description": "A REST interface for base service endpoints"
+      "version": "v0.47.8","description": "A REST interface for base service endpoints"
     },
     "apis": [
       {

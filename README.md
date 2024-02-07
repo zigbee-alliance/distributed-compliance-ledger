@@ -164,8 +164,8 @@ See [Run Light Client Proxy](docs/running-light-client-proxy.md) for details how
 - There are currently no DC Ledger specific API libraries for various platforms and languages,
 but they may be provided in the future.
 - The following libraries can be used as light clients:
-  - [Golang Light Client implementation](https://pkg.go.dev/github.com/cometbft/cometbft/lite2)
-  - [Rust Light Client implementation](https://docs.rs/tendermint-light-client/0.23.3/tendermint_light_client/)
+  - [Golang Light Client implementation](https://pkg.go.dev/github.com/cometbft/cometbft/light)
+  - [Rust Light Client implementation](https://docs.rs/cometbft-light-client/0.1.0-alpha.2/cometbft_light_client/)
 - Refer to [this doc](./docs/tendermint-rpc.md) to see how to [subscribe](./docs/tendermint-rpc.md#subscribe) to a Tendermint WebSocket based events and/or [query](./docs/tendermint-rpc.md#querying-application-components) an application components.
 
 
