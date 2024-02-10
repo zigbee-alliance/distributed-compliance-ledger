@@ -2,56 +2,53 @@
 
 Schema changes can cover a wide range of modifications with varying impacts on application compatibility and data integrity. Below are use cases with strategies to manage schema changes and ensure compatibility.
 
-## Non Breaking Changes
-
-This section provides potential strategies for maintaining backward compatibility for changes that either do not break compatibility or can be converted without loss of information.
+## Multiple versions can live in parallel
 
 ### Strategy for Compatible Changes
 
 For changes that are backward-compatible, such as adding optional fields or extending enumerations:
 
+**Description:**
+
+Add an optional version field to all DCL schema to track the schema version.
+
+This strategy is straightforward and quick to implement, but only suitable for compatible changes.
+
 **Strategy steps:**
 
 - One time actions:
-  - Add an optional version field to all DCL schema to track the schema version.
+  - Add an optional version field to all DCL schema
 - For each update:
   - Update the schema by introducing compatible changes (such as adding a new optional field).
-  - Probably need to update transactions and queries.
+  - Update update transactions and queries if needed.
   - DCL doesn't fulfill the Schema version automatically
   - It will be up to the transaction submitter (Vendor) to specify a correct Schema version
   - If Schema Version is not set - then the initial version (version 0 or 1) is assumed
   - It will be up to the client application to process the Schema version
 
-This strategy is straightforward and quick to implement, but only suitable for compatible changes.
+### Strategy for Non-Compatible Changes
 
-### Strategy for Convertible Changes
+For significant changes that directly impact compatibility, such as adding mandatory fields or removing fields, splitting or merging schemas, changing enumerations:
 
-For changes that affect compatibility but can be converted, like renaming fields, and changing enumerations:
+#### Option 1: Separate Schemas for Each Version
+
+**Description:**
+
+Each version has its distinct schema, state and its own queries/requests. This strategy eliminates the need for data migration and allows different schema versions to coexist seamlessly.
 
 **Strategy steps:**
 
 - For each update:
   - Create a new version of a Schema and state (a new .proto file)
-  - Migrate older states to newer schema version.
-  - Remove the states associated with the older schema versions.
   - Implement transactions and queries for the new schema version.
-  - Update older transactions and queries to converting data between the latest and older schema version,  ensuring backward compatibility.
-  - There will be separated API for each version of the schema, for example::
-    - models/vid/pid
-    - modelsV2/vid/pid
-    - modelsV3/vid/pid
 
-The specific implementation details will vary with each change, each time requires an individual approach.
+#### Option 2: Generic Schema Storage (Not Recommended for Production)
 
-Support for the Light Client feature will not be extended to legacy APIs due to on-the-fly data migration (as the data is not in the State and proofs can be generated).
+**Description:**
 
-## Breaking changes
+Implement a flexible, generic schema structure that can support a wide range of data formats.
 
-This section provides potential strategies for maintaining backward compatibility for breaking changes. However, it is unlikely that these options will be implemented in production, as we do not plan to support backward compatibility for breaking changes.
-
-### Strategy for Handling Non-Convertible Changes
-
-For significant changes that directly impact compatibility, such as adding mandatory fields or removing fields:
+While offering a robust solution for handling radical changes, this method requires careful planning and development, which can potentially take a significant amount of time.
 
 **Strategy steps:**
 
@@ -64,23 +61,38 @@ For significant changes that directly impact compatibility, such as adding manda
   - Create a new Schema version (a new .proto file)
   - Implement transactions and queries that can handle data according to its version, including mechanisms for converting generic values into the corresponding schema version.
 
-While offering a robust solution for handling radical changes, this method requires careful planning and development, which can potentially take a significant amount of time.
+## New version replaces the legacy one (V2 replaces V1)
 
-### Strategy for Structural Changes
+### Strategy for Compatible changes (Not keeping backward compatibility in API)
 
-For major organizational changes to the schema, such as splitting or merging schemas:
+For changes that are backward-compatible, such as adding optional fields or extending enumerations:
+
+**Description:**
+
+This strategy focuses on updating the schema without ensuring backward compatibility at the API level. Since the schemas are compatible, there will likely be no need for migration.
 
 **Strategy steps:**
 
 - For each update:
-  - Create a new version of a Schema and state (a new .proto file)
-  - Migrate older states to newer schema version.
-  - Remove the states associated with the older schema versions.
-  - Implement transactions and queries for the new schema version.
-  - Implement transactions and queries that are backward compatible, specifically designed for the reorganized schema.
+  - Update the schema by introducing compatible changes (such as adding a new optional field).
+  - Migrate old states to the newer if needed.
+  - Update transactions and queries if needed.
 
-These types of changes are relatively rare. Implementing backward compatibility and migration can be complex.
+### Strategy for Non-Compatible changes (Not keeping backward compatibility in API)
+
+For changes that affect compatibility, like adding mandatory fields
+
+**Description:**
+
+This strategy focuses on updating the schema without ensuring backward compatibility at the API level. Since the schemas are not compatible, migration is carried out manually through a special transaction.
+
+**Strategy steps:**
+
+- For each update:
+  - Update the schema by introducing changes.
+  - Update transactions and queries if needed.
+  - Add a new transaction to fulfill new required fields (essentially this is a manual migration via transactions)
 
 ## Conclusion
 
-To lay the foundation for future compatibility improvements, it's a good idea to start by adding a version field to each schema. This step not only provides compatible updates to schemas, but also prepares the schemas for seamless integration with upcoming compatibility enhancements.
+To lay the foundation for future compatibility improvements, it's a good idea to start by adding a version field to each schema. For subsequent changes, we will then select the most appropriate strategy based on the nature of these changes.
