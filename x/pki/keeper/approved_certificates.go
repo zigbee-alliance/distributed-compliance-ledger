@@ -70,6 +70,26 @@ func (k Keeper) RemoveApprovedCertificates(
 	))
 }
 
+func (k Keeper) removeCertFromList(serialNumber string, certs *types.ApprovedCertificates) {
+	certIndex := -1
+
+	for i, cert := range certs.Certs {
+		if cert.SerialNumber == serialNumber {
+			certIndex = i
+
+			break
+		}
+	}
+	if certIndex == -1 {
+		return
+	}
+	if certIndex == len(certs.Certs)-1 {
+		certs.Certs = certs.Certs[:certIndex]
+	} else {
+		certs.Certs = append(certs.Certs[:certIndex], certs.Certs[certIndex+1:]...)
+	}
+}
+
 // GetAllApprovedCertificates returns all approvedCertificates.
 func (k Keeper) GetAllApprovedCertificates(ctx sdk.Context) (list []types.ApprovedCertificates) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ApprovedCertificatesKeyPrefix))
