@@ -14,6 +14,7 @@ import "pki/approved_certificates_by_subject.proto";
 import "pki/rejected_certificate.proto";
 import "pki/pki_revocation_distribution_point.proto";
 import "pki/pki_revocation_distribution_points_by_issuer_subject_key_id.proto";
+import "pki/noc_root_certificates.proto";
 // this line is used by starport scaffolding # 1
 import "gogoproto/gogo.proto";
 
@@ -107,6 +108,16 @@ service Query {
 // Queries a PkiRevocationDistributionPointsByIssuerSubjectKeyID by index.
 	rpc PkiRevocationDistributionPointsByIssuerSubjectKeyID(QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest) returns (QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse) {
 		option (google.api.http).get = "/dcl/pki/revocation-points/{issuerSubjectKeyID}";
+	}
+
+// Queries a NocRootCertificates by index.
+	rpc NocRootCertificates(QueryGetNocRootCertificatesRequest) returns (QueryGetNocRootCertificatesResponse) {
+		option (google.api.http).get = "/dcl/pki/noc_root_certificates/{vid}";
+	}
+
+	// Queries a list of NocRootCertificates items.
+	rpc NocRootCertificatesAll(QueryAllNocRootCertificatesRequest) returns (QueryAllNocRootCertificatesResponse) {
+		option (google.api.http).get = "/dcl/pki/noc_root_certificates";
 	}
 
 // this line is used by starport scaffolding # 2
@@ -264,6 +275,24 @@ message QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest {
 
 message QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse {
 	PkiRevocationDistributionPointsByIssuerSubjectKeyID pkiRevocationDistributionPointsByIssuerSubjectKeyID = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryGetNocRootCertificatesRequest {
+	  uint64 vid = 1;
+
+}
+
+message QueryGetNocRootCertificatesResponse {
+	NocRootCertificates nocRootCertificates = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllNocRootCertificatesRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllNocRootCertificatesResponse {
+	repeated NocRootCertificates nocRootCertificates = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // this line is used by starport scaffolding # 3
