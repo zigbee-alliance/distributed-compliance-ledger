@@ -64,6 +64,7 @@ export interface QueryGetChildCertificatesResponse {
 export interface QueryGetProposedCertificateRevocationRequest {
   subject: string
   subjectKeyId: string
+  serialNumber: string
 }
 
 export interface QueryGetProposedCertificateRevocationResponse {
@@ -831,7 +832,7 @@ export const QueryGetChildCertificatesResponse = {
   }
 }
 
-const baseQueryGetProposedCertificateRevocationRequest: object = { subject: '', subjectKeyId: '' }
+const baseQueryGetProposedCertificateRevocationRequest: object = { subject: '', subjectKeyId: '', serialNumber: '' }
 
 export const QueryGetProposedCertificateRevocationRequest = {
   encode(message: QueryGetProposedCertificateRevocationRequest, writer: Writer = Writer.create()): Writer {
@@ -840,6 +841,9 @@ export const QueryGetProposedCertificateRevocationRequest = {
     }
     if (message.subjectKeyId !== '') {
       writer.uint32(18).string(message.subjectKeyId)
+    }
+    if (message.serialNumber !== '') {
+      writer.uint32(26).string(message.serialNumber)
     }
     return writer
   },
@@ -856,6 +860,9 @@ export const QueryGetProposedCertificateRevocationRequest = {
           break
         case 2:
           message.subjectKeyId = reader.string()
+          break
+        case 3:
+          message.serialNumber = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -877,6 +884,11 @@ export const QueryGetProposedCertificateRevocationRequest = {
     } else {
       message.subjectKeyId = ''
     }
+    if (object.serialNumber !== undefined && object.serialNumber !== null) {
+      message.serialNumber = String(object.serialNumber)
+    } else {
+      message.serialNumber = ''
+    }
     return message
   },
 
@@ -884,6 +896,7 @@ export const QueryGetProposedCertificateRevocationRequest = {
     const obj: any = {}
     message.subject !== undefined && (obj.subject = message.subject)
     message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId)
+    message.serialNumber !== undefined && (obj.serialNumber = message.serialNumber)
     return obj
   },
 
@@ -898,6 +911,11 @@ export const QueryGetProposedCertificateRevocationRequest = {
       message.subjectKeyId = object.subjectKeyId
     } else {
       message.subjectKeyId = ''
+    }
+    if (object.serialNumber !== undefined && object.serialNumber !== null) {
+      message.serialNumber = object.serialNumber
+    } else {
+      message.serialNumber = ''
     }
     return message
   }

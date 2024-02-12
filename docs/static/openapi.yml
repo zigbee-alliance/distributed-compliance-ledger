@@ -9536,6 +9536,8 @@ paths:
                             type: string
                     subjectAsText:
                       type: string
+                    serialNumber:
+                      type: string
               pagination:
                 type: object
                 properties:
@@ -9675,6 +9677,8 @@ paths:
                           type: string
                   subjectAsText:
                     type: string
+                  serialNumber:
+                    type: string
         default:
           description: An unexpected error response.
           schema:
@@ -9705,6 +9709,10 @@ paths:
         - name: subjectKeyId
           in: path
           required: true
+          type: string
+        - name: serialNumber
+          in: query
+          required: false
           type: string
       tags:
         - Query
@@ -20763,6 +20771,8 @@ definitions:
               type: string
       subjectAsText:
         type: string
+      serialNumber:
+        type: string
   zigbeealliance.distributedcomplianceledger.pki.QueryAllApprovedCertificatesResponse:
     type: object
     properties:
@@ -21011,6 +21021,8 @@ definitions:
                   info:
                     type: string
             subjectAsText:
+              type: string
+            serialNumber:
               type: string
       pagination:
         type: object
@@ -21470,6 +21482,8 @@ definitions:
                 info:
                   type: string
           subjectAsText:
+            type: string
+          serialNumber:
             type: string
   zigbeealliance.distributedcomplianceledger.pki.QueryGetRejectedCertificatesResponse:
     type: object

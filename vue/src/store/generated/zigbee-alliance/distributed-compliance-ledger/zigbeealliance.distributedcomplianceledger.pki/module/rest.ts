@@ -24,6 +24,20 @@ export interface PkiApprovedRootCertificates {
   certs?: PkiCertificateIdentifier[];
 }
 
+export interface PkiProposedCertificate {
+  subject?: string;
+  subjectKeyId?: string;
+  pemCert?: string;
+  serialNumber?: string;
+  owner?: string;
+  approvals?: PkiGrant[];
+  subjectAsText?: string;
+  rejects?: PkiGrant[];
+
+  /** @format int32 */
+  vid?: number;
+}
+
 export interface PkiCertificate {
   pemCert?: string;
   serialNumber?: string;
@@ -129,6 +143,7 @@ export interface PkiProposedCertificate {
 export interface PkiProposedCertificateRevocation {
   subject?: string;
   subjectKeyId?: string;
+  serialNumber?: string;
   approvals?: PkiGrant[];
   subjectAsText?: string;
 }
@@ -704,10 +719,16 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @summary Queries a ProposedCertificateRevocation by index.
    * @request GET:/dcl/pki/proposed-revocation-certificates/{subject}/{subjectKeyId}
    */
-  queryProposedCertificateRevocation = (subject: string, subjectKeyId: string, params: RequestParams = {}) =>
+  queryProposedCertificateRevocation = (
+    subject: string,
+    subjectKeyId: string,
+    query?: { serialNumber?: string },
+    params: RequestParams = {},
+  ) =>
     this.request<PkiQueryGetProposedCertificateRevocationResponse, RpcStatus>({
       path: `/dcl/pki/proposed-revocation-certificates/${subject}/${subjectKeyId}`,
       method: "GET",
+      query: query,
       format: "json",
       ...params,
     });

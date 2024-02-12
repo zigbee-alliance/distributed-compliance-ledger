@@ -27,7 +27,7 @@ func (k msgServer) ProposeRevokeX509RootCert(goCtx context.Context, msg *types.M
 	}
 
 	// check that proposed certificate revocation does not exist yet
-	if k.IsProposedCertificateRevocationPresent(ctx, msg.Subject, msg.SubjectKeyId) {
+	if k.IsProposedCertificateRevocationPresent(ctx, msg.Subject, msg.SubjectKeyId, msg.SerialNumber) {
 		return nil, pkitypes.NewErrProposedCertificateRevocationAlreadyExists(msg.Subject, msg.SubjectKeyId)
 	}
 
@@ -44,6 +44,22 @@ func (k msgServer) ProposeRevokeX509RootCert(goCtx context.Context, msg *types.M
 				"is not a root certificate.", msg.Subject, msg.SubjectKeyId),
 		)
 	}
+	// fail if cert with serial number does not exist
+	if msg.SerialNumber != "" {
+		found := false
+		for _, cert := range certificates.Certs {
+			if cert.SerialNumber == msg.SerialNumber {
+				found = true
+
+				break
+			}
+		}
+		if !found {
+			return nil, pkitypes.NewErrCertificateBySerialNumberDoesNotExist(
+				msg.Subject, msg.SubjectKeyId, msg.SerialNumber,
+			)
+		}
+	}
 
 	// create new proposed certificate revocation with approval from signer
 	grant := types.Grant{
@@ -54,6 +70,7 @@ func (k msgServer) ProposeRevokeX509RootCert(goCtx context.Context, msg *types.M
 	revocation := types.ProposedCertificateRevocation{
 		Subject:      msg.Subject,
 		SubjectKeyId: msg.SubjectKeyId,
+		SerialNumber: msg.SerialNumber,
 		Approvals:    []*types.Grant{&grant},
 	}
 
