@@ -83,11 +83,11 @@ func CmdShowApprovedCertificates() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&subject, FlagSubject, FlagSubjectShortcut, "", "Certificate's subject - optional")
+	cmd.Flags().StringVarP(&subject, FlagVid, FlagSubjectShortcut, "", "Certificate's subject - optional")
 	cmd.Flags().StringVarP(&subjectKeyID, FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "", "Certificate's subject key id (hex) - required")
 	flags.AddQueryFlagsToCmd(cmd)
 
-	_ = cmd.MarkFlagRequired(FlagSubjectKeyID)
+	_ = cmd.MarkFlagRequired(FlagVid)
 
 	return cmd
 }

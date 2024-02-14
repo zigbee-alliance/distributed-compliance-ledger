@@ -5,15 +5,16 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
 func CmdListNocRootCertificates() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list-noc-root-certificates",
-		Short: "list all NocRootCertificates",
+		Use:   "all-noc-x509-root-certs",
+		Short: "Gets all NOC root certificates",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
@@ -44,34 +45,33 @@ func CmdListNocRootCertificates() *cobra.Command {
 }
 
 func CmdShowNocRootCertificates() *cobra.Command {
+	var (
+		vid int32
+	)
+
 	cmd := &cobra.Command{
-		Use:   "show-noc-root-certificates [vid]",
-		Short: "shows a NocRootCertificates",
-		Args:  cobra.ExactArgs(1),
+		Use:   "noc-x509-root-certs",
+		Short: "Gets NOC root certificates by VID",
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
-			queryClient := types.NewQueryClient(clientCtx)
+			var res types.NocRootCertificates
 
-			argVid, err := cast.ToInt32E(args[0])
-			if err != nil {
-				return err
-			}
-
-			params := &types.QueryGetNocRootCertificatesRequest{
-				Vid: argVid,
-			}
-
-			res, err := queryClient.NocRootCertificates(context.Background(), params)
-			if err != nil {
-				return err
-			}
-
-			return clientCtx.PrintProto(res)
+			return cli.QueryWithProof(
+				clientCtx,
+				pkitypes.StoreKey,
+				types.NocRootCertificatesKeyPrefix,
+				types.NocRootCertificatesKey(vid),
+				&res,
+			)
 		},
 	}
 
+	cmd.Flags().Int32Var(&vid, FlagVid, 0, "Vendor ID (positive non-zero)")
 	flags.AddQueryFlagsToCmd(cmd)
+
+	_ = cmd.MarkFlagRequired(FlagSubjectKeyID)
 
 	return cmd
 }
