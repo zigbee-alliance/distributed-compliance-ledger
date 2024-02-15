@@ -125,6 +125,15 @@ export interface MsgAssignVid {
 
 export interface MsgAssignVidResponse {}
 
+export interface MsgRemoveX509Cert {
+  signer: string
+  subject: string
+  subjectKeyId: string
+  serialNumber: string
+}
+
+export interface MsgRemoveX509CertResponse {}
+
 const baseMsgProposeAddX509RootCert: object = { signer: '', cert: '', info: '', time: 0, vid: 0 }
 
 export const MsgProposeAddX509RootCert = {
@@ -2106,6 +2115,150 @@ export const MsgAssignVidResponse = {
   }
 }
 
+const baseMsgRemoveX509Cert: object = { signer: '', subject: '', subjectKeyId: '', serialNumber: '' }
+
+export const MsgRemoveX509Cert = {
+  encode(message: MsgRemoveX509Cert, writer: Writer = Writer.create()): Writer {
+    if (message.signer !== '') {
+      writer.uint32(10).string(message.signer)
+    }
+    if (message.subject !== '') {
+      writer.uint32(18).string(message.subject)
+    }
+    if (message.subjectKeyId !== '') {
+      writer.uint32(26).string(message.subjectKeyId)
+    }
+    if (message.serialNumber !== '') {
+      writer.uint32(34).string(message.serialNumber)
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgRemoveX509Cert {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseMsgRemoveX509Cert } as MsgRemoveX509Cert
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.signer = reader.string()
+          break
+        case 2:
+          message.subject = reader.string()
+          break
+        case 3:
+          message.subjectKeyId = reader.string()
+          break
+        case 4:
+          message.serialNumber = reader.string()
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): MsgRemoveX509Cert {
+    const message = { ...baseMsgRemoveX509Cert } as MsgRemoveX509Cert
+    if (object.signer !== undefined && object.signer !== null) {
+      message.signer = String(object.signer)
+    } else {
+      message.signer = ''
+    }
+    if (object.subject !== undefined && object.subject !== null) {
+      message.subject = String(object.subject)
+    } else {
+      message.subject = ''
+    }
+    if (object.subjectKeyId !== undefined && object.subjectKeyId !== null) {
+      message.subjectKeyId = String(object.subjectKeyId)
+    } else {
+      message.subjectKeyId = ''
+    }
+    if (object.serialNumber !== undefined && object.serialNumber !== null) {
+      message.serialNumber = String(object.serialNumber)
+    } else {
+      message.serialNumber = ''
+    }
+    return message
+  },
+
+  toJSON(message: MsgRemoveX509Cert): unknown {
+    const obj: any = {}
+    message.signer !== undefined && (obj.signer = message.signer)
+    message.subject !== undefined && (obj.subject = message.subject)
+    message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId)
+    message.serialNumber !== undefined && (obj.serialNumber = message.serialNumber)
+    return obj
+  },
+
+  fromPartial(object: DeepPartial<MsgRemoveX509Cert>): MsgRemoveX509Cert {
+    const message = { ...baseMsgRemoveX509Cert } as MsgRemoveX509Cert
+    if (object.signer !== undefined && object.signer !== null) {
+      message.signer = object.signer
+    } else {
+      message.signer = ''
+    }
+    if (object.subject !== undefined && object.subject !== null) {
+      message.subject = object.subject
+    } else {
+      message.subject = ''
+    }
+    if (object.subjectKeyId !== undefined && object.subjectKeyId !== null) {
+      message.subjectKeyId = object.subjectKeyId
+    } else {
+      message.subjectKeyId = ''
+    }
+    if (object.serialNumber !== undefined && object.serialNumber !== null) {
+      message.serialNumber = object.serialNumber
+    } else {
+      message.serialNumber = ''
+    }
+    return message
+  }
+}
+
+const baseMsgRemoveX509CertResponse: object = {}
+
+export const MsgRemoveX509CertResponse = {
+  encode(_: MsgRemoveX509CertResponse, writer: Writer = Writer.create()): Writer {
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgRemoveX509CertResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseMsgRemoveX509CertResponse } as MsgRemoveX509CertResponse
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(_: any): MsgRemoveX509CertResponse {
+    const message = { ...baseMsgRemoveX509CertResponse } as MsgRemoveX509CertResponse
+    return message
+  },
+
+  toJSON(_: MsgRemoveX509CertResponse): unknown {
+    const obj: any = {}
+    return obj
+  },
+
+  fromPartial(_: DeepPartial<MsgRemoveX509CertResponse>): MsgRemoveX509CertResponse {
+    const message = { ...baseMsgRemoveX509CertResponse } as MsgRemoveX509CertResponse
+    return message
+  }
+}
+
 /** Msg defines the Msg service. */
 export interface Msg {
   ProposeAddX509RootCert(request: MsgProposeAddX509RootCert): Promise<MsgProposeAddX509RootCertResponse>
@@ -2118,8 +2271,8 @@ export interface Msg {
   AddPkiRevocationDistributionPoint(request: MsgAddPkiRevocationDistributionPoint): Promise<MsgAddPkiRevocationDistributionPointResponse>
   UpdatePkiRevocationDistributionPoint(request: MsgUpdatePkiRevocationDistributionPoint): Promise<MsgUpdatePkiRevocationDistributionPointResponse>
   DeletePkiRevocationDistributionPoint(request: MsgDeletePkiRevocationDistributionPoint): Promise<MsgDeletePkiRevocationDistributionPointResponse>
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   AssignVid(request: MsgAssignVid): Promise<MsgAssignVidResponse>
+  RemoveX509Cert(request: MsgRemoveX509Cert): Promise<MsgRemoveX509CertResponse>
 }
 
 export class MsgClientImpl implements Msg {
@@ -2191,6 +2344,12 @@ export class MsgClientImpl implements Msg {
     const data = MsgAssignVid.encode(request).finish()
     const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Msg', 'AssignVid', data)
     return promise.then((data) => MsgAssignVidResponse.decode(new Reader(data)))
+  }
+
+  RemoveX509Cert(request: MsgRemoveX509Cert): Promise<MsgRemoveX509CertResponse> {
+    const data = MsgRemoveX509Cert.encode(request).finish()
+    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Msg', 'RemoveX509Cert', data)
+    return promise.then((data) => MsgRemoveX509CertResponse.decode(new Reader(data)))
   }
 }
 
