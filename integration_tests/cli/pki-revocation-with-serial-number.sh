@@ -19,7 +19,6 @@ trustee_account="jack"
 second_trustee_account="alice"
 
 echo "Create a VendorAdmin Account"
-create_new_account vendor_admin_account "VendorAdmin"
 
 test_divider
 

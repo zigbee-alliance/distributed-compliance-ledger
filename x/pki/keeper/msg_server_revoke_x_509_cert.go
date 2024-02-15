@@ -39,15 +39,7 @@ func (k msgServer) RevokeX509Cert(goCtx context.Context, msg *types.MsgRevokeX50
 	var certBySerialNumber *types.Certificate
 
 	if msg.SerialNumber != "" {
-		found := false
-		for _, cert := range certificates.Certs {
-			if cert.SerialNumber == msg.SerialNumber {
-				certBySerialNumber = cert
-				found = true
-
-				break
-			}
-		}
+		certBySerialNumber, found = findCertificate(msg.SerialNumber, &certificates.Certs)
 		if !found {
 			return nil, pkitypes.NewErrCertificateBySerialNumberDoesNotExist(msg.Subject, msg.SubjectKeyId, msg.SerialNumber)
 		}
@@ -82,7 +74,7 @@ func (k msgServer) _removeAndRevokeX509CertBySerialNumber(ctx sdk.Context, cert 
 			SubjectKeyId: cert.SubjectKeyId,
 			Certs:        []*types.Certificate{cert},
 		})
-	k.removeCertFromList(cert.SerialNumber, &certificates)
+	k.removeCertFromList(cert.Issuer, cert.SerialNumber, &certificates)
 	if len(certificates.Certs) == 0 {
 		k.RemoveApprovedCertificates(ctx, cert.Subject, cert.SubjectKeyId)
 		// Remove certificate identifier from issuer's ChildCertificates record

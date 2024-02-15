@@ -33,7 +33,7 @@ func (k msgServer) ProposeRevokeX509RootCert(goCtx context.Context, msg *types.M
 
 	// get corresponding approved certificates
 	certificates, found := k.GetApprovedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
-	if !found {
+	if !found || len(certificates.Certs) == 0 {
 		return nil, pkitypes.NewErrCertificateDoesNotExist(msg.Subject, msg.SubjectKeyId)
 	}
 
@@ -46,14 +46,7 @@ func (k msgServer) ProposeRevokeX509RootCert(goCtx context.Context, msg *types.M
 	}
 	// fail if cert with serial number does not exist
 	if msg.SerialNumber != "" {
-		found := false
-		for _, cert := range certificates.Certs {
-			if cert.SerialNumber == msg.SerialNumber {
-				found = true
-
-				break
-			}
-		}
+		_, found = findCertificate(msg.SerialNumber, &certificates.Certs)
 		if !found {
 			return nil, pkitypes.NewErrCertificateBySerialNumberDoesNotExist(
 				msg.Subject, msg.SubjectKeyId, msg.SerialNumber,
