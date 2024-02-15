@@ -71,7 +71,7 @@ func CmdShowNocRootCertificates() *cobra.Command {
 	cmd.Flags().Int32Var(&vid, FlagVid, 0, "Vendor ID (positive non-zero)")
 	flags.AddQueryFlagsToCmd(cmd)
 
-	_ = cmd.MarkFlagRequired(FlagSubjectKeyID)
+	_ = cmd.MarkFlagRequired(FlagVid)
 
 	return cmd
 }

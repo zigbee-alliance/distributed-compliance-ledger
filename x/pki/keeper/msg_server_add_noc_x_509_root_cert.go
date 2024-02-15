@@ -51,7 +51,7 @@ func (k msgServer) AddNocX509RootCert(goCtx context.Context, msg *types.MsgAddNo
 
 	// Get list of certificates for Subject / Subject Key Id combination
 	existingCertificates, found := k.GetApprovedCertificates(ctx, x509Certificate.Subject, x509Certificate.SubjectKeyID)
-	if found {
+	if found && len(existingCertificates.Certs) > 0 {
 		existingCertificate := existingCertificates.Certs[0]
 
 		// Issuer and authorityKeyID must be the same as ones of exisiting certificates with the same subject and
