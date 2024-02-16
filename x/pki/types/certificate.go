@@ -43,22 +43,19 @@ func NewNocRootCertificate(
 	subjectAsText string,
 	subjectKeyID string,
 	serialNumber string,
-	issuer string,
-	authorityKeyID string,
 	owner string,
 	vid int32,
 ) Certificate {
 	return Certificate{
-		PemCert:        pemCert,
-		Subject:        subject,
-		SubjectAsText:  subjectAsText,
-		SubjectKeyId:   subjectKeyID,
-		SerialNumber:   serialNumber,
-		Issuer:         issuer,
-		AuthorityKeyId: authorityKeyID,
-		IsRoot:         true,
-		Owner:          owner,
-		Vid:            vid,
+		PemCert:       pemCert,
+		Subject:       subject,
+		SubjectAsText: subjectAsText,
+		SubjectKeyId:  subjectKeyID,
+		SerialNumber:  serialNumber,
+		IsRoot:        true,
+		Owner:         owner,
+		Vid:           vid,
+		IsNoc:         true,
 	}
 }
 

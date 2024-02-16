@@ -327,6 +327,34 @@ func TestHandler_ProposeAddX509RootCert_CertificateAlreadyExists(t *testing.T) {
 	require.True(t, pkitypes.ErrCertificateAlreadyExists.Is(err))
 }
 
+func TestHandler_ProposeAddX509RootCert_ForNocCertificate(t *testing.T) {
+	setup := Setup(t)
+
+	// Store the NOC root certificate
+	vendorAccAddress := GenerateAccAddress()
+	setup.AddAccount(vendorAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
+
+	nocRootCertificate := rootCertificate(vendorAccAddress)
+	nocRootCertificate.SerialNumber = testconstants.TestSerialNumber
+	nocRootCertificate.IsNoc = true
+	nocRootCertificate.Approvals = nil
+	nocRootCertificate.Rejects = nil
+
+	setup.Keeper.AddApprovedCertificate(setup.Ctx, nocRootCertificate)
+	setup.Keeper.AddNocRootCertificate(setup.Ctx, nocRootCertificate)
+	uniqueCertificate := types.UniqueCertificate{
+		Issuer:       nocRootCertificate.Issuer,
+		SerialNumber: nocRootCertificate.SerialNumber,
+		Present:      true,
+	}
+	setup.Keeper.SetUniqueCertificate(setup.Ctx, uniqueCertificate)
+
+	// propose a new root certificate
+	proposeAddX509RootCert := types.NewMsgProposeAddX509RootCert(setup.Trustee1.String(), testconstants.RootCertPem, testconstants.Info, testconstants.Vid)
+	_, err := setup.Handler(setup.Ctx, proposeAddX509RootCert)
+	require.True(t, pkitypes.ErrInappropriateCertificateType.Is(err))
+}
+
 func TestHandler_ProposeAddX509RootCert_ForDifferentSerialNumber(t *testing.T) {
 	setup := Setup(t)
 
@@ -795,6 +823,36 @@ func TestHandler_AddX509Cert_ForDuplicate(t *testing.T) {
 	_, err = setup.Handler(setup.Ctx, addX509Cert)
 	require.Error(t, err)
 	require.True(t, pkitypes.ErrCertificateAlreadyExists.Is(err))
+}
+
+func TestHandler_AddX509Cert_ForNocCertificate(t *testing.T) {
+	setup := Setup(t)
+
+	// store root certificate
+	rootCertificate := rootCertificate(setup.Trustee1)
+	setup.Keeper.AddApprovedCertificate(setup.Ctx, rootCertificate)
+
+	// Store the NOC certificate
+	vendorAccAddress := GenerateAccAddress()
+	setup.AddAccount(vendorAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
+
+	nocCertificate := intermediateCertificate(vendorAccAddress)
+	nocCertificate.SerialNumber = testconstants.TestSerialNumber
+	nocCertificate.IsNoc = true
+
+	setup.Keeper.AddApprovedCertificate(setup.Ctx, nocCertificate)
+	// TODO: add the certificate to the ICA store after the store is implemented
+	uniqueCertificate := types.UniqueCertificate{
+		Issuer:       nocCertificate.Issuer,
+		SerialNumber: nocCertificate.SerialNumber,
+		Present:      true,
+	}
+	setup.Keeper.SetUniqueCertificate(setup.Ctx, uniqueCertificate)
+
+	// store intermediate certificate
+	addX509Cert := types.NewMsgAddX509Cert(setup.Trustee1.String(), testconstants.IntermediateCertPem)
+	_, err := setup.Handler(setup.Ctx, addX509Cert)
+	require.True(t, pkitypes.ErrInappropriateCertificateType.Is(err))
 }
 
 func TestHandler_AddX509Cert_ForDifferentSerialNumber(t *testing.T) {

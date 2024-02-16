@@ -58,7 +58,12 @@ func (k msgServer) AddNocX509RootCert(goCtx context.Context, msg *types.MsgAddNo
 		// subjectKeyID. Since new certificate is self-signed, we have to ensure that the exisiting certificates are
 		// self-signed too, consequently are root certificates.
 		if !existingCertificate.IsRoot {
-			return nil, pkitypes.NewErrProvidedRootCertButExistingNonRoot(x509Certificate.Subject, x509Certificate.SubjectKeyID)
+			return nil, pkitypes.NewErrUnauthorizedCertIssuer(x509Certificate.Subject, x509Certificate.SubjectKeyID)
+		}
+
+		// Existing certificate must be NOC certificate
+		if !existingCertificate.IsNoc {
+			return nil, pkitypes.NewErrProvidedNocCertButExistingNotNoc(x509Certificate.Subject, x509Certificate.SubjectKeyID)
 		}
 
 		// signer VID must be same as VID of existing certificates
@@ -78,8 +83,6 @@ func (k msgServer) AddNocX509RootCert(goCtx context.Context, msg *types.MsgAddNo
 		x509Certificate.SubjectAsText,
 		x509Certificate.SubjectKeyID,
 		x509Certificate.SerialNumber,
-		x509Certificate.Issuer,
-		x509Certificate.AuthorityKeyID,
 		msg.Signer,
 		signerVid,
 	)

@@ -166,16 +166,36 @@ func NewErrNonRootCertificateSelfSigned() error {
 	)
 }
 
-func NewErrProvidedRootCertButExistingNonRoot(subject string, subjectKeyID string) error {
+func NewErrUnauthorizedCertIssuer(subject string, subjectKeyID string) error {
 	return sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
 		"Issuer and authorityKeyID of new certificate with subject=%v and subjectKeyID=%v "+
 			"must be the same as ones of existing certificates with the same subject and subjectKeyID",
 		subject, subjectKeyID)
 }
 
+func NewErrUnauthorizedCertOwner(subject string, subjectKeyID string) error {
+	return sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+		"Only owner of existing certificates with subject=%v and subjectKeyID=%v "+
+			"can add new certificate with the same subject and subjectKeyID",
+		subject, subjectKeyID)
+}
+
+func NewErrProvidedNocCertButExistingNotNoc(subject string, subjectKeyID string) error {
+	return sdkerrors.Wrapf(ErrInappropriateCertificateType,
+		"The existing certificate with the same combination of subject (%v) and subjectKeyID (%v) is not a NOC certificate",
+		subject, subjectKeyID)
+}
+
+func NewErrProvidedNotNocCertButExistingNoc(subject string, subjectKeyID string) error {
+	return sdkerrors.Wrapf(ErrInappropriateCertificateType,
+		"The existing certificate with the same combination of subject (%v) and subjectKeyID (%v) is a NOC certificate",
+		subject, subjectKeyID)
+}
+
 func NewErrExistingCertVidNotEqualAccountVid(subject string, subjectKeyID string, vid int32) error {
-	return sdkerrors.Wrapf(ErrCertVidNotEqualAccountVid, "Certificate with the same combination of "+
-		"subject=%v and subjectKeyID=%v has already been published by another vendor with VID=%d.",
+	return sdkerrors.Wrapf(ErrCertVidNotEqualAccountVid,
+		"Certificate with the same combination of subject=%v and subjectKeyID=%v "+
+			"has already been published by another vendor with VID=%d.",
 		subject, subjectKeyID, vid)
 }
 

@@ -84,6 +84,7 @@ func TestHandler_AddNocX509RootCert_CertificateExist(t *testing.T) {
 				SubjectKeyId:  testconstants.RootSubjectKeyID,
 				SerialNumber:  testconstants.RootSerialNumber,
 				IsRoot:        true,
+				IsNoc:         true,
 				Vid:           testconstants.Vid,
 			},
 			nocRoorCert: testconstants.RootCertPem,
@@ -92,16 +93,32 @@ func TestHandler_AddNocX509RootCert_CertificateExist(t *testing.T) {
 		{
 			name: "ExistingNonRootCert",
 			existingCert: &types.Certificate{
-				Issuer:        testconstants.GoogleIssuer,
+				Issuer:        testconstants.TestIssuer,
 				Subject:       testconstants.RootSubject,
 				SubjectAsText: testconstants.RootSubjectAsText,
 				SubjectKeyId:  testconstants.RootSubjectKeyID,
-				SerialNumber:  testconstants.GoogleSerialNumber,
+				SerialNumber:  testconstants.TestSerialNumber,
 				IsRoot:        false,
+				IsNoc:         true,
 				Vid:           testconstants.Vid,
 			},
 			nocRoorCert: testconstants.RootCertPem,
 			err:         sdkerrors.ErrUnauthorized,
+		},
+		{
+			name: "ExistingNotNocCert",
+			existingCert: &types.Certificate{
+				Issuer:        testconstants.RootIssuer,
+				Subject:       testconstants.RootSubject,
+				SubjectAsText: testconstants.RootSubjectAsText,
+				SubjectKeyId:  testconstants.RootSubjectKeyID,
+				SerialNumber:  testconstants.TestSerialNumber,
+				IsRoot:        true,
+				IsNoc:         false,
+				Vid:           testconstants.Vid,
+			},
+			nocRoorCert: testconstants.RootCertPem,
+			err:         pkitypes.ErrInappropriateCertificateType,
 		},
 		{
 			name: "ExistingCertWithDifferentVid",
@@ -112,6 +129,7 @@ func TestHandler_AddNocX509RootCert_CertificateExist(t *testing.T) {
 				SubjectKeyId:  testconstants.RootSubjectKeyID,
 				SerialNumber:  testconstants.GoogleSerialNumber,
 				IsRoot:        true,
+				IsNoc:         true,
 				Vid:           testconstants.VendorID1,
 			},
 			nocRoorCert: testconstants.RootCertPem,
@@ -124,7 +142,7 @@ func TestHandler_AddNocX509RootCert_CertificateExist(t *testing.T) {
 			setup := Setup(t)
 			setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
-			// add the existing certificate key
+			// add the existing certificate
 			setup.Keeper.AddApprovedCertificate(setup.Ctx, *tc.existingCert)
 			uniqueCertificate := types.UniqueCertificate{
 				Issuer:       tc.existingCert.Issuer,
@@ -140,33 +158,82 @@ func TestHandler_AddNocX509RootCert_CertificateExist(t *testing.T) {
 	}
 }
 
-func TestHandler_AddNocX509RootCert(t *testing.T) {
+func TestHandler_AddNocX509RootCert_AddNew(t *testing.T) {
 	setup := Setup(t)
 
 	accAddress := GenerateAccAddress()
 	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
-	addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), testconstants.RootCertPem)
+	// new NOC root certificate
+	newNocCertificate := rootCertificate(accAddress)
+	newNocCertificate.IsNoc = true
+	newNocCertificate.Approvals = nil
+	newNocCertificate.Rejects = nil
+
+	// add the new NOC root certificate
+	addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), newNocCertificate.PemCert)
 	_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
 	require.NoError(t, err)
 
 	// query approved certificate
-	approvedCertificate, err := querySingleApprovedCertificate(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	approvedCertificate, err := querySingleApprovedCertificate(setup, newNocCertificate.Subject, newNocCertificate.SubjectKeyId)
 	require.NoError(t, err)
-	require.Equal(t, testconstants.RootCertPem, approvedCertificate.PemCert)
-	require.Equal(t, testconstants.RootSubject, approvedCertificate.Subject)
-	require.Equal(t, testconstants.RootSubjectKeyID, approvedCertificate.SubjectKeyId)
-	require.Equal(t, testconstants.RootSerialNumber, approvedCertificate.SerialNumber)
-	require.Equal(t, testconstants.RootIssuer, approvedCertificate.Issuer)
+	require.Equal(t, &newNocCertificate, approvedCertificate)
 
 	// query noc root certificate by VID
-	rootNocCertificate, err := querySingleNocRootCertificate(setup, testconstants.Vid)
+	nocRootCertificate, err := querySingleNocRootCertificate(setup, testconstants.Vid)
 	require.NoError(t, err)
-	require.Equal(t, testconstants.RootCertPem, rootNocCertificate.PemCert)
-	require.Equal(t, testconstants.RootSubject, rootNocCertificate.Subject)
-	require.Equal(t, testconstants.RootSubjectKeyID, rootNocCertificate.SubjectKeyId)
-	require.Equal(t, testconstants.RootSerialNumber, rootNocCertificate.SerialNumber)
-	require.Equal(t, testconstants.RootIssuer, rootNocCertificate.Issuer)
+	require.Equal(t, &newNocCertificate, nocRootCertificate)
+
+	// check that unique certificate key stays registered
+	require.True(t,
+		setup.Keeper.IsUniqueCertificatePresent(setup.Ctx, testconstants.RootIssuer, testconstants.RootSerialNumber))
+}
+
+func TestHandler_AddNocX509RootCert_Renew(t *testing.T) {
+	setup := Setup(t)
+
+	accAddress := GenerateAccAddress()
+	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
+
+	// Store the NOC root certificate
+	nocRootCertificate := rootCertificate(accAddress)
+	nocRootCertificate.SerialNumber = testconstants.TestSerialNumber
+	nocRootCertificate.IsNoc = true
+	nocRootCertificate.Approvals = nil
+	nocRootCertificate.Rejects = nil
+
+	setup.Keeper.AddApprovedCertificate(setup.Ctx, nocRootCertificate)
+	setup.Keeper.AddNocRootCertificate(setup.Ctx, nocRootCertificate)
+	uniqueCertificate := types.UniqueCertificate{
+		Issuer:       nocRootCertificate.Issuer,
+		SerialNumber: nocRootCertificate.SerialNumber,
+		Present:      true,
+	}
+	setup.Keeper.SetUniqueCertificate(setup.Ctx, uniqueCertificate)
+
+	// new NOC root certificate
+	newNocCertificate := rootCertificate(accAddress)
+	newNocCertificate.IsNoc = true
+	newNocCertificate.Approvals = nil
+	newNocCertificate.Rejects = nil
+
+	// add the new NOC root certificate
+	addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), newNocCertificate.PemCert)
+	_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
+	require.NoError(t, err)
+
+	// query approved certificate
+	approvedCertificates, err := queryApprovedCertificates(setup, newNocCertificate.Subject, newNocCertificate.SubjectKeyId)
+	require.NoError(t, err)
+	require.Equal(t, len(approvedCertificates.Certs), 2)
+	require.Equal(t, &newNocCertificate, approvedCertificates.Certs[1])
+
+	// query noc root certificate by VID
+	nocRootCertificates, err := queryNocRootCertificates(setup, testconstants.Vid)
+	require.NoError(t, err)
+	require.Equal(t, len(nocRootCertificates.Certs), 2)
+	require.Equal(t, &newNocCertificate, nocRootCertificates.Certs[1])
 }
 
 func querySingleNocRootCertificate(
