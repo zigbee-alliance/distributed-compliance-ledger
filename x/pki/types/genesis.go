@@ -66,7 +66,7 @@ func (gs GenesisState) Validate() error {
 	proposedCertificateRevocationIndexMap := make(map[string]struct{})
 
 	for _, elem := range gs.ProposedCertificateRevocationList {
-		index := string(ProposedCertificateRevocationKey(elem.Subject, elem.SubjectKeyId))
+		index := string(ProposedCertificateRevocationKey(elem.Subject, elem.SubjectKeyId, elem.SerialNumber))
 		if _, ok := proposedCertificateRevocationIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for proposedCertificateRevocation")
 		}

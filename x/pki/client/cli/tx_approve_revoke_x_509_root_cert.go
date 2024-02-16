@@ -29,11 +29,13 @@ func CmdApproveRevokeX509RootCert() *cobra.Command {
 			subject := viper.GetString(FlagSubject)
 			subjectKeyID := viper.GetString(FlagSubjectKeyID)
 			info := viper.GetString(FlagInfo)
+			serialNumber := viper.GetString(FlagSerialNumber)
 
 			msg := types.NewMsgApproveRevokeX509RootCert(
 				clientCtx.GetFromAddress().String(),
 				subject,
 				subjectKeyID,
+				serialNumber,
 				info,
 			)
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -48,6 +50,7 @@ func CmdApproveRevokeX509RootCert() *cobra.Command {
 
 	cmd.Flags().StringP(FlagSubject, FlagSubjectShortcut, "", "Certificate's subject")
 	cmd.Flags().StringP(FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "", "Certificate's subject key id (hex)")
+	cmd.Flags().StringP(FlagSerialNumber, FlagSerialNumberShortcut, "", "Certificate's serial number")
 	cmd.Flags().String(FlagInfo, "", FlagInfoUsage)
 	cli.AddTxFlagsToCmd(cmd)
 

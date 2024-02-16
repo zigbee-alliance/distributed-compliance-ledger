@@ -9,9 +9,10 @@ export interface ProposedCertificateRevocation {
   subjectKeyId: string
   approvals: Grant[]
   subjectAsText: string
+  serialNumber: string
 }
 
-const baseProposedCertificateRevocation: object = { subject: '', subjectKeyId: '', subjectAsText: '' }
+const baseProposedCertificateRevocation: object = { subject: '', subjectKeyId: '', subjectAsText: '', serialNumber: '' }
 
 export const ProposedCertificateRevocation = {
   encode(message: ProposedCertificateRevocation, writer: Writer = Writer.create()): Writer {
@@ -26,6 +27,9 @@ export const ProposedCertificateRevocation = {
     }
     if (message.subjectAsText !== '') {
       writer.uint32(34).string(message.subjectAsText)
+    }
+    if (message.serialNumber !== '') {
+      writer.uint32(42).string(message.serialNumber)
     }
     return writer
   },
@@ -49,6 +53,9 @@ export const ProposedCertificateRevocation = {
           break
         case 4:
           message.subjectAsText = reader.string()
+          break
+        case 5:
+          message.serialNumber = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -81,6 +88,11 @@ export const ProposedCertificateRevocation = {
     } else {
       message.subjectAsText = ''
     }
+    if (object.serialNumber !== undefined && object.serialNumber !== null) {
+      message.serialNumber = String(object.serialNumber)
+    } else {
+      message.serialNumber = ''
+    }
     return message
   },
 
@@ -94,6 +106,7 @@ export const ProposedCertificateRevocation = {
       obj.approvals = []
     }
     message.subjectAsText !== undefined && (obj.subjectAsText = message.subjectAsText)
+    message.serialNumber !== undefined && (obj.serialNumber = message.serialNumber)
     return obj
   },
 
@@ -119,6 +132,11 @@ export const ProposedCertificateRevocation = {
       message.subjectAsText = object.subjectAsText
     } else {
       message.subjectAsText = ''
+    }
+    if (object.serialNumber !== undefined && object.serialNumber !== null) {
+      message.serialNumber = object.serialNumber
+    } else {
+      message.serialNumber = ''
     }
     return message
   }

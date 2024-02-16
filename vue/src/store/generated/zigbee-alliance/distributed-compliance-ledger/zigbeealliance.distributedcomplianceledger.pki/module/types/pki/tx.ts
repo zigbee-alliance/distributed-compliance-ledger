@@ -39,6 +39,7 @@ export interface MsgProposeRevokeX509RootCert {
   subjectKeyId: string
   info: string
   time: number
+  serialNumber: string
 }
 
 export interface MsgProposeRevokeX509RootCertResponse {}
@@ -49,6 +50,7 @@ export interface MsgApproveRevokeX509RootCert {
   subjectKeyId: string
   info: string
   time: number
+  serialNumber: string
 }
 
 export interface MsgApproveRevokeX509RootCertResponse {}
@@ -59,6 +61,7 @@ export interface MsgRevokeX509Cert {
   subjectKeyId: string
   info: string
   time: number
+  serialNumber: string
 }
 
 export interface MsgRevokeX509CertResponse {}
@@ -588,7 +591,7 @@ export const MsgAddX509CertResponse = {
   }
 }
 
-const baseMsgProposeRevokeX509RootCert: object = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0 }
+const baseMsgProposeRevokeX509RootCert: object = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0, serialNumber: '' }
 
 export const MsgProposeRevokeX509RootCert = {
   encode(message: MsgProposeRevokeX509RootCert, writer: Writer = Writer.create()): Writer {
@@ -606,6 +609,9 @@ export const MsgProposeRevokeX509RootCert = {
     }
     if (message.time !== 0) {
       writer.uint32(40).int64(message.time)
+    }
+    if (message.serialNumber !== '') {
+      writer.uint32(50).string(message.serialNumber)
     }
     return writer
   },
@@ -631,6 +637,9 @@ export const MsgProposeRevokeX509RootCert = {
           break
         case 5:
           message.time = longToNumber(reader.int64() as Long)
+          break
+        case 6:
+          message.serialNumber = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -667,6 +676,11 @@ export const MsgProposeRevokeX509RootCert = {
     } else {
       message.time = 0
     }
+    if (object.serialNumber !== undefined && object.serialNumber !== null) {
+      message.serialNumber = String(object.serialNumber)
+    } else {
+      message.serialNumber = ''
+    }
     return message
   },
 
@@ -677,6 +691,7 @@ export const MsgProposeRevokeX509RootCert = {
     message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId)
     message.info !== undefined && (obj.info = message.info)
     message.time !== undefined && (obj.time = message.time)
+    message.serialNumber !== undefined && (obj.serialNumber = message.serialNumber)
     return obj
   },
 
@@ -706,6 +721,11 @@ export const MsgProposeRevokeX509RootCert = {
       message.time = object.time
     } else {
       message.time = 0
+    }
+    if (object.serialNumber !== undefined && object.serialNumber !== null) {
+      message.serialNumber = object.serialNumber
+    } else {
+      message.serialNumber = ''
     }
     return message
   }
@@ -749,7 +769,7 @@ export const MsgProposeRevokeX509RootCertResponse = {
   }
 }
 
-const baseMsgApproveRevokeX509RootCert: object = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0 }
+const baseMsgApproveRevokeX509RootCert: object = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0, serialNumber: '' }
 
 export const MsgApproveRevokeX509RootCert = {
   encode(message: MsgApproveRevokeX509RootCert, writer: Writer = Writer.create()): Writer {
@@ -767,6 +787,9 @@ export const MsgApproveRevokeX509RootCert = {
     }
     if (message.time !== 0) {
       writer.uint32(48).int64(message.time)
+    }
+    if (message.serialNumber !== '') {
+      writer.uint32(58).string(message.serialNumber)
     }
     return writer
   },
@@ -792,6 +815,9 @@ export const MsgApproveRevokeX509RootCert = {
           break
         case 6:
           message.time = longToNumber(reader.int64() as Long)
+          break
+        case 7:
+          message.serialNumber = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -828,6 +854,11 @@ export const MsgApproveRevokeX509RootCert = {
     } else {
       message.time = 0
     }
+    if (object.serialNumber !== undefined && object.serialNumber !== null) {
+      message.serialNumber = String(object.serialNumber)
+    } else {
+      message.serialNumber = ''
+    }
     return message
   },
 
@@ -838,6 +869,7 @@ export const MsgApproveRevokeX509RootCert = {
     message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId)
     message.info !== undefined && (obj.info = message.info)
     message.time !== undefined && (obj.time = message.time)
+    message.serialNumber !== undefined && (obj.serialNumber = message.serialNumber)
     return obj
   },
 
@@ -867,6 +899,11 @@ export const MsgApproveRevokeX509RootCert = {
       message.time = object.time
     } else {
       message.time = 0
+    }
+    if (object.serialNumber !== undefined && object.serialNumber !== null) {
+      message.serialNumber = object.serialNumber
+    } else {
+      message.serialNumber = ''
     }
     return message
   }
@@ -910,7 +947,7 @@ export const MsgApproveRevokeX509RootCertResponse = {
   }
 }
 
-const baseMsgRevokeX509Cert: object = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0 }
+const baseMsgRevokeX509Cert: object = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0, serialNumber: '' }
 
 export const MsgRevokeX509Cert = {
   encode(message: MsgRevokeX509Cert, writer: Writer = Writer.create()): Writer {
@@ -928,6 +965,9 @@ export const MsgRevokeX509Cert = {
     }
     if (message.time !== 0) {
       writer.uint32(40).int64(message.time)
+    }
+    if (message.serialNumber !== '') {
+      writer.uint32(50).string(message.serialNumber)
     }
     return writer
   },
@@ -953,6 +993,9 @@ export const MsgRevokeX509Cert = {
           break
         case 5:
           message.time = longToNumber(reader.int64() as Long)
+          break
+        case 6:
+          message.serialNumber = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -989,6 +1032,11 @@ export const MsgRevokeX509Cert = {
     } else {
       message.time = 0
     }
+    if (object.serialNumber !== undefined && object.serialNumber !== null) {
+      message.serialNumber = String(object.serialNumber)
+    } else {
+      message.serialNumber = ''
+    }
     return message
   },
 
@@ -999,6 +1047,7 @@ export const MsgRevokeX509Cert = {
     message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId)
     message.info !== undefined && (obj.info = message.info)
     message.time !== undefined && (obj.time = message.time)
+    message.serialNumber !== undefined && (obj.serialNumber = message.serialNumber)
     return obj
   },
 
@@ -1028,6 +1077,11 @@ export const MsgRevokeX509Cert = {
       message.time = object.time
     } else {
       message.time = 0
+    }
+    if (object.serialNumber !== undefined && object.serialNumber !== null) {
+      message.serialNumber = object.serialNumber
+    } else {
+      message.serialNumber = ''
     }
     return message
   }
