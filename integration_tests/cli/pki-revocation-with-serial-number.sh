@@ -18,8 +18,6 @@ intermediate_cert_subject_key_id="2E:13:3B:44:52:2C:30:E9:EC:FB:45:FA:5D:E5:04:0
 trustee_account="jack"
 second_trustee_account="alice"
 
-echo "Create a VendorAdmin Account"
-
 test_divider
 
 echo "REVOKE CERTIFICATES BY SPECIFYING SERIAL NUMBER"

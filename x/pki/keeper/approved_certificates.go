@@ -52,13 +52,9 @@ func (k Keeper) GetApprovedCertificateBySerialNumber(
 		return val, false
 	}
 
-	for _, cert := range certs.Certs {
-		if cert.SerialNumber == serialNumber {
-			return *cert, true
-		}
-	}
+	cert, found := findCertificate(serialNumber, &certs.Certs)
 
-	return val, false
+	return *cert, found
 }
 
 // RemoveApprovedCertificates removes a approvedCertificates from the store.
