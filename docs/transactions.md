@@ -843,6 +843,7 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
   - no existing `Proposed` certificate with the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination.
   - no existing certificate with the same `<Certificate's Issuer>:<Certificate's Serial Number>` combination.
   - if approved certificates with the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination already exists:
+    - the existing certificate must not be NOC certificate
     - sender must match to the owner of the existing certificates.
   - the signature (self-signature) and expiration date are valid.
 
@@ -919,6 +920,7 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
     - `Authority Key Identifier` != `Subject Key Identifier`
   - no existing certificate with the same `<Certificate's Issuer>:<Certificate's Serial Number>` combination.
   - if certificates with the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination already exist:
+    - the existing certificate must not be NOC certificate
     - sender must match to the owner of the existing certificates.
   - the signature (self-signature) and expiration date are valid.
   - parent certificate must be already stored on the ledger and a valid chain to some root certificate can be built.
@@ -1101,6 +1103,31 @@ Deletes a PKI Revocation distribution endpoint (such as RFC5280 Certificate Revo
 - CLI command:
   - `dcld tx pki delete-revocation-point --vid=<uint16> --issuer-subject-key-id=<string> --label=<string> --from=<account>`
 
+### ADD_NOC_X509_ROOT_CERTIFICATE
+
+**Status: Implemented**
+
+This transaction adds a NOC root certificate owned by the Vendor.
+
+- Who can send: Vendor account
+- Validation:
+  - the provided certificate must be a root certificate:
+    - `Issuer` == `Subject`
+    - `Authority Key Identifier` == `Subject Key Identifier`
+  - no existing certificate with the same `<Certificate's Issuer>:<Certificate's Serial Number>` combination.
+  - if certificates with the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination already exist:
+    - the existing certificate must be NOC root certificate
+    - the sender's VID must match the vid field of the existing certificates.
+  - the signature (self-signature) and expiration date must be valid.
+- Parameters:
+  - cert: `string` - The NOC Root Certificate, encoded in X.509v3 PEM format. Can be a PEM string or a file path.
+- In State:
+  - `pki/ApprovedCertificates/value/<Subject>/<SubjectKeyID>`
+  - `pki/ApprovedCertificatesBySubject/value/<Subject>`
+  - `pki/ApprovedCertificatesBySubjectKeyID/value/<SubjectKeyID>`
+  - `pki/NOCRootCertificates/value/<VID>`
+- CLI Command:
+  - `dcld tx pki add-noc-x509-root-cert --certificate=<string-or-path> --from=<account>`
 
 ### GET_X509_CERT
 
@@ -1384,6 +1411,34 @@ Should be sent to trusted nodes only.
   - `dcld query pki all-revocation-points`
 - REST API:
   - GET `/dcl/pki/revocation-points`
+
+### GET_NOC_X509_ROOT_CERTS_BY_VID
+
+**Status: Implemented**
+
+Retrieve NOC root certificates associated with a specific VID. 
+
+- Who can send: Any account
+- Parameters:
+  - vid: `uint16` - Vendor ID (positive non-zero)
+- CLI Command:
+  - `dcld query pki noc-x509-root-certs --vid=<uint16>`
+- REST API:
+  - GET `/dcl/pki/noc-root-certificates/{vid}`
+
+### GET_ALL_NOC_X509_ROOT_CERTS
+
+**Status: Implemented**
+
+Retrieve a list of all of NOC root certificates
+
+- Who can send: Any account
+- Parameters:
+  - Common pagination parameters
+- CLI Command:
+  - `dcld query pki all-noc-x509-root-certs`
+- REST API:
+  - GET `/dcl/pki/noc-root-certificates`
 
 ## AUTH
 

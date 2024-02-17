@@ -47,7 +47,7 @@ func TestMsgAddNocX509RootCert_ValidateBasic(t *testing.T) {
 		msg  MsgAddNocX509RootCert
 	}{
 		{
-			name: "valid propose add x509cert msg",
+			name: "valid add NOC root cert msg",
 			msg: MsgAddNocX509RootCert{
 				Signer: sample.AccAddress(),
 				Cert:   testconstants.RootCertPem,
