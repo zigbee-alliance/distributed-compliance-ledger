@@ -26,4 +26,5 @@ const (
 	FlagLabel                    = "label"
 	FlagLabelShortcut            = "l"
 	FlagIssuerSubjectKeyID       = "issuer-subject-key-id"
+	FlagRevokeChild              = "revoke-child"
 )

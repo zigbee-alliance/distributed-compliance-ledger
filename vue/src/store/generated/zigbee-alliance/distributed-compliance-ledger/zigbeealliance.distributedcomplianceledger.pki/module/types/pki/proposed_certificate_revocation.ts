@@ -10,9 +10,10 @@ export interface ProposedCertificateRevocation {
   approvals: Grant[]
   subjectAsText: string
   serialNumber: string
+  revokeChild: boolean
 }
 
-const baseProposedCertificateRevocation: object = { subject: '', subjectKeyId: '', subjectAsText: '', serialNumber: '' }
+const baseProposedCertificateRevocation: object = { subject: '', subjectKeyId: '', subjectAsText: '', serialNumber: '', revokeChild: false }
 
 export const ProposedCertificateRevocation = {
   encode(message: ProposedCertificateRevocation, writer: Writer = Writer.create()): Writer {
@@ -30,6 +31,9 @@ export const ProposedCertificateRevocation = {
     }
     if (message.serialNumber !== '') {
       writer.uint32(42).string(message.serialNumber)
+    }
+    if (message.revokeChild === true) {
+      writer.uint32(48).bool(message.revokeChild)
     }
     return writer
   },
@@ -56,6 +60,9 @@ export const ProposedCertificateRevocation = {
           break
         case 5:
           message.serialNumber = reader.string()
+          break
+        case 6:
+          message.revokeChild = reader.bool()
           break
         default:
           reader.skipType(tag & 7)
@@ -93,6 +100,11 @@ export const ProposedCertificateRevocation = {
     } else {
       message.serialNumber = ''
     }
+    if (object.revokeChild !== undefined && object.revokeChild !== null) {
+      message.revokeChild = Boolean(object.revokeChild)
+    } else {
+      message.revokeChild = false
+    }
     return message
   },
 
@@ -107,6 +119,7 @@ export const ProposedCertificateRevocation = {
     }
     message.subjectAsText !== undefined && (obj.subjectAsText = message.subjectAsText)
     message.serialNumber !== undefined && (obj.serialNumber = message.serialNumber)
+    message.revokeChild !== undefined && (obj.revokeChild = message.revokeChild)
     return obj
   },
 
@@ -137,6 +150,11 @@ export const ProposedCertificateRevocation = {
       message.serialNumber = object.serialNumber
     } else {
       message.serialNumber = ''
+    }
+    if (object.revokeChild !== undefined && object.revokeChild !== null) {
+      message.revokeChild = object.revokeChild
+    } else {
+      message.revokeChild = false
     }
     return message
   }

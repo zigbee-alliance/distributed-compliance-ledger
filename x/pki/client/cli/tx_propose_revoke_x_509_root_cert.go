@@ -18,7 +18,8 @@ func CmdProposeRevokeX509RootCert() *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "propose-revoke-x509-root-cert",
 		Short: "Proposes revocation of the given root certificate. " +
-			"All the certificates in the subtree signed by the revoked certificate will be revoked as well.",
+			"If revoke-child flag is set to true then all the certificates in the subtree signed by the revoked " +
+			"certificate will be revoked as well.",
 		Args: cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -30,12 +31,14 @@ func CmdProposeRevokeX509RootCert() *cobra.Command {
 			subjectKeyID := viper.GetString(FlagSubjectKeyID)
 			info := viper.GetString(FlagInfo)
 			serialNumber := viper.GetString(FlagSerialNumber)
+			revokeChild := viper.GetBool(FlagRevokeChild)
 
 			msg := types.NewMsgProposeRevokeX509RootCert(
 				clientCtx.GetFromAddress().String(),
 				subject,
 				subjectKeyID,
 				serialNumber,
+				revokeChild,
 				info,
 			)
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -51,6 +54,7 @@ func CmdProposeRevokeX509RootCert() *cobra.Command {
 	cmd.Flags().StringP(FlagSubject, FlagSubjectShortcut, "", "Certificate's subject")
 	cmd.Flags().StringP(FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "", "Certificate's subject key id (hex)")
 	cmd.Flags().StringP(FlagSerialNumber, FlagSerialNumberShortcut, "", "Certificate's serial number")
+	cmd.Flags().String(FlagRevokeChild, "", "If flag is true then all the certificates in the subtree will be revoked as well - default is false")
 	cmd.Flags().String(FlagInfo, "", FlagInfoUsage)
 	cli.AddTxFlagsToCmd(cmd)
 

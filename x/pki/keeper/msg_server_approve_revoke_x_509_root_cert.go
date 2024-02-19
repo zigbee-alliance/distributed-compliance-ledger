@@ -49,21 +49,27 @@ func (k msgServer) ApproveRevokeX509RootCert(goCtx context.Context, msg *types.M
 	revocation.Approvals = append(revocation.Approvals, &grant)
 
 	// check if proposed certificate revocation has enough approvals
-	if len(revocation.Approvals) >= k.CertificateApprovalsCount(ctx, k.dclauthKeeper) {
+	if len(revocation.Approvals) >= k.CertificateApprovalsCount(ctx, k.dclauthKeeper) { //nolint:nestif
 		certificates, found := k.GetApprovedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
 		if !found {
 			return nil, pkitypes.NewErrCertificateDoesNotExist(msg.Subject, msg.SubjectKeyId)
 		}
+
 		certID := types.CertificateIdentifier{
 			Subject:      msg.Subject,
 			SubjectKeyId: msg.SubjectKeyId,
 		}
 		k.AddRevokedRootCertificate(ctx, certID)
 		k.RemoveProposedCertificateRevocation(ctx, msg.Subject, msg.SubjectKeyId, msg.SerialNumber)
+
 		if msg.SerialNumber != "" {
-			k._removeAndRevokeBySerialNumber(ctx, revocation.Approvals, msg.SerialNumber, certificates)
+			k._makeRootCertRevoked(ctx, revocation.Approvals, msg.SerialNumber, certificates)
 		} else {
-			k._removeAndRevoke(ctx, revocation.Approvals, certificates)
+			k._makeRootCertsRevoked(ctx, revocation.Approvals, certificates)
+		}
+
+		if revocation.RevokeChild {
+			k.RevokeChildCertificates(ctx, certID.Subject, certID.SubjectKeyId)
 		}
 	} else {
 		k.SetProposedCertificateRevocation(ctx, revocation)
@@ -72,7 +78,11 @@ func (k msgServer) ApproveRevokeX509RootCert(goCtx context.Context, msg *types.M
 	return &types.MsgApproveRevokeX509RootCertResponse{}, nil
 }
 
-func (k msgServer) _removeAndRevoke(ctx sdk.Context, approvals []*types.Grant, certificates types.ApprovedCertificates) {
+func (k msgServer) _makeRootCertsRevoked(
+	ctx sdk.Context,
+	approvals []*types.Grant,
+	certificates types.ApprovedCertificates,
+) {
 	// Assign the approvals to the root certificate
 	for _, cert := range certificates.Certs {
 		if cert.IsRoot {
@@ -87,13 +97,17 @@ func (k msgServer) _removeAndRevoke(ctx sdk.Context, approvals []*types.Grant, c
 	k.RemoveApprovedRootCertificate(ctx, certID)
 	k.AddRevokedCertificates(ctx, certificates)
 	k.RemoveApprovedCertificates(ctx, certificates.Subject, certificates.SubjectKeyId)
-	k.RevokeChildCertificates(ctx, certificates.Subject, certificates.SubjectKeyId)
 	// remove from subject -> subject key ID map
 	k.RemoveApprovedCertificateBySubject(ctx, certificates.Subject, certificates.SubjectKeyId)
 	// remove from subject key ID -> certificates map
 	k.RemoveApprovedCertificatesBySubjectKeyID(ctx, certificates.Subject, certificates.SubjectKeyId)
 }
-func (k msgServer) _removeAndRevokeBySerialNumber(ctx sdk.Context, approvals []*types.Grant, serialNumber string, certificates types.ApprovedCertificates) {
+func (k msgServer) _makeRootCertRevoked(
+	ctx sdk.Context,
+	approvals []*types.Grant,
+	serialNumber string,
+	certificates types.ApprovedCertificates,
+) {
 	cert, _ := findCertificate(serialNumber, &certificates.Certs)
 	cert.Approvals = approvals
 
@@ -107,7 +121,6 @@ func (k msgServer) _removeAndRevokeBySerialNumber(ctx sdk.Context, approvals []*
 
 	if len(certificates.Certs) == 0 {
 		k.RemoveApprovedCertificates(ctx, cert.Subject, cert.SubjectKeyId)
-		k.RevokeChildCertificates(ctx, cert.Subject, cert.SubjectKeyId)
 		k.RemoveApprovedRootCertificate(ctx,
 			types.CertificateIdentifier{
 				Subject:      certificates.Subject,

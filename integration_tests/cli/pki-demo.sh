@@ -650,8 +650,8 @@ test_divider
 echo "6. REVOKE INTERMEDIATE (AND HENCE  LEAF) CERTS - No Approvals needed"
 test_divider
 
-echo "$user_account (Not Trustee) revokes Intermediate certificate. This must also revoke its child - Leaf certificate."
-result=$(echo "$passphrase" | dcld tx pki revoke-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --from=$user_account --yes)
+echo "$user_account (Not Trustee) revokes Intermediate certificate with \"revoke-child\"=true. This must also revoke its child - Leaf certificate."
+result=$(echo "$passphrase" | dcld tx pki revoke-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --revoke-child=true --from=$user_account --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -790,8 +790,8 @@ test_divider
 echo "7. PROPOSE REVOCATION OF ROOT CERT"
 test_divider
 
-echo "$trustee_account (Trustee) proposes to revoke Root certificate"
-result=$(echo "$passphrase" | dcld tx pki propose-revoke-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $trustee_account --yes)
+echo "$trustee_account (Trustee) proposes to revoke Root certificate with \"revoke-child\"=true flag"
+result=$(echo "$passphrase" | dcld tx pki propose-revoke-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --revoke-child=true --from $trustee_account --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -902,7 +902,7 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Request all root certificates proposed to revoke. Nothing left in list as the certficate is revoked"
+echo "Request all root certificates proposed to revoke. Nothing left in list as the certificates are revoked"
 result=$(dcld query pki all-proposed-x509-root-certs-to-revoke)
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""

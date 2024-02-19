@@ -936,7 +936,7 @@ Revokes the given X509 certificate (either intermediate or leaf).
 Revocation here just means removing it from the ledger.
 If a Revocation Distribution Point needs to be published (such as RFC5280 Certificate Revocation List), please use [ADD_PKI_REVOCATION_DISTRIBUTION_POINT](#add_pki_revocation_distribution_point).
 
-All the certificates in the chain signed by the revoked certificate will be revoked as well.
+If `revoke-child` flag is set to `true` then all the certificates in the chain signed by the revoked certificate will be revoked as well.
 
 Only the owner (sender) can revoke the certificate.
 Root certificates can not be revoked this way, use  `PROPOSE_X509_CERT_REVOC` and `APPROVE_X509_ROOT_CERT_REVOC` instead.  
@@ -945,6 +945,7 @@ Root certificates can not be revoked this way, use  `PROPOSE_X509_CERT_REVOC` an
   - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
   - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
   - serial-number: `optional(string)`  - certificate's serial number
+  - revoke-child: `optional(bool)`  - to revoke child certificates in the chain - default is false
   - info: `optional(string)` - information/notes for the revocation
   - time: `optional(int64)` - revocation time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State: `pki/RevokedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
@@ -980,7 +981,7 @@ Proposes revocation of the given X509 root certificate by a Trustee.
 Revocation here just means removing it from the ledger.
 If a Revocation Distribution Point needs to be published (such as RFC5280 Certificate Revocation List), please use [ADD_PKI_REVOCATION_DISTRIBUTION_POINT](#add_pki_revocation_distribution_point).
 
-All the certificates in the chain signed by the revoked certificate will be revoked as well.
+If `revoke-child` flag is set to `true` then all the certificates in the chain signed by the revoked certificate will be revoked as well.
 
 If more than 1 Trustee signature is required to revoke a root certificate,
 then the certificate will be in a pending state until sufficient number of other Trustee's approvals is received.
@@ -989,6 +990,7 @@ then the certificate will be in a pending state until sufficient number of other
   - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
   - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
   - serial-number: `optional(string)`  - certificate's serial number
+  - revoke-child: `optional(bool)`  - to revoke child certificates in the chain - default is false
   - info: `optional(string)` - information/notes for the revocation proposal
   - time: `optional(int64)` - revocation proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State: `pki/ProposedCertificateRevocation/value/<Certificate's Subject>/<Certificate's Subject Key ID>`

@@ -143,6 +143,7 @@ export interface PkiProposedCertificateRevocation {
   serialNumber?: string;
   approvals?: PkiGrant[];
   subjectAsText?: string;
+  revokeChild?: boolean;
 }
 
 export interface PkiQueryAllApprovedCertificatesResponse {
