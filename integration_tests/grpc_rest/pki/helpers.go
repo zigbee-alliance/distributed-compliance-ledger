@@ -1844,7 +1844,6 @@ func Demo(suite *utils.TestSuite) {
 	suite.AssertNotFound(err)
 
 	// Remove x509 by subject, subject key id and serial number
-
 	// Add intermediate certificates
 	msgAddX509Cert = pkitypes.MsgAddX509Cert{
 		Cert:   testconstants.IntermediateWithSameSubjectAndSKID1,

@@ -292,6 +292,16 @@ func NewErrMessageVidNotEqualAccountVid(msgVid int32, accountVid int32) error {
 	return sdkerrors.Wrapf(ErrMessageVidNotEqualAccountVid, "Message vid=%d is not equal to account vid=%d", msgVid, accountVid)
 }
 
+func NewErrMessageRemoveRoot(subject string, subjectKeyID string) error {
+	return sdkerrors.Wrapf(ErrInappropriateCertificateType, "Inappropriate Certificate Type: Certificate with subject=%s and subjectKeyID=%s "+
+		"is a root certificate.", subject, subjectKeyID,
+	)
+}
+
+func NewErrMessageOnlyOwnerCanExecute(command string) error {
+	return sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "Only owner can revoke certificate using %s", command)
+}
+
 func NewErrUnsupportedOperation(e interface{}) error {
 	return sdkerrors.Wrapf(ErrUnsupportedOperation, "%v", e)
 }
