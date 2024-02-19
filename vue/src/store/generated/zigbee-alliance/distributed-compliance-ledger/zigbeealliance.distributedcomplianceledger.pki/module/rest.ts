@@ -24,6 +24,12 @@ export interface PkiApprovedRootCertificates {
   certs?: PkiCertificateIdentifier[];
 }
 
+export interface PkiNocRootCertificates {
+  /** @format int32 */
+  vid?: number;
+  certs?: PkiCertificate[];
+}
+
 export interface PkiCertificate {
   pemCert?: string;
   serialNumber?: string;
@@ -41,6 +47,7 @@ export interface PkiCertificate {
 
   /** @format int32 */
   vid?: number;
+  isNoc?: boolean;
 }
 
 export interface PkiCertificateIdentifier {
@@ -61,6 +68,8 @@ export interface PkiGrant {
   time?: string;
   info?: string;
 }
+
+export type PkiMsgAddNocX509RootCertResponse = object;
 
 export type PkiMsgAddPkiRevocationDistributionPointResponse = object;
 
@@ -147,6 +156,22 @@ export interface PkiQueryAllApprovedCertificatesResponse {
    */
   pagination?: V1Beta1PageResponse;
 }
+
+export interface PkiQueryAllNocRootCertificatesResponse {
+  nocRootCertificates?: PkiNocRootCertificates[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
 
 export interface PkiQueryAllPkiRevocationDistributionPointResponse {
   PkiRevocationDistributionPoint?: PkiPkiRevocationDistributionPoint[];
@@ -237,6 +262,10 @@ export interface PkiQueryGetApprovedRootCertificatesResponse {
 
 export interface PkiQueryGetChildCertificatesResponse {
   childCertificates?: PkiChildCertificates;
+}
+
+export interface PkiQueryGetNocRootCertificatesResponse {
+  nocRootCertificates?: PkiNocRootCertificates;
 }
 
 export interface PkiQueryGetPkiRevocationDistributionPointResponse {
@@ -623,6 +652,48 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryChildCertificates = (issuer: string, authorityKeyId: string, params: RequestParams = {}) =>
     this.request<PkiQueryGetChildCertificatesResponse, RpcStatus>({
       path: `/dcl/pki/child-certificates/${issuer}/${authorityKeyId}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryNocRootCertificatesAll
+   * @summary Queries a list of NocRootCertificates items.
+   * @request GET:/dcl/pki/noc_root_certificates
+   */
+  queryNocRootCertificatesAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<PkiQueryAllNocRootCertificatesResponse, RpcStatus>({
+      path: `/dcl/pki/noc_root_certificates`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryNocRootCertificates
+   * @summary Queries a NocRootCertificates by index.
+   * @request GET:/dcl/pki/noc_root_certificates/{vid}
+   */
+  queryNocRootCertificates = (vid: string, params: RequestParams = {}) =>
+    this.request<PkiQueryGetNocRootCertificatesResponse, RpcStatus>({
+      path: `/dcl/pki/noc_root_certificates/${vid}`,
       method: "GET",
       format: "json",
       ...params,
