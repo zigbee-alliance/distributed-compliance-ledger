@@ -1723,6 +1723,12 @@ func TestHandler_RemoveX509Cert_BySubjectAndSKID(t *testing.T) {
 	require.Equal(t, 2, len(allCerts[0].Certs)+len(allCerts[1].Certs))
 	_, err = queryApprovedCertificates(setup, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
 	require.Equal(t, codes.NotFound, status.Code(err))
+	// check that unique certificates does not exists
+	found := setup.Keeper.IsUniqueCertificatePresent(setup.Ctx, testconstants.RootCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKID1SerialNumber)
+	require.Equal(t, false, found)
+	found = setup.Keeper.IsUniqueCertificatePresent(setup.Ctx, testconstants.RootCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKID2SerialNumber)
+	require.Equal(t, false, found)
+
 	leafCerts, _ := queryApprovedCertificates(setup, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
 	require.Equal(t, 1, len(leafCerts.Certs))
 	require.Equal(t, testconstants.LeafCertWithSameSubjectAndSKIDSerialNumber, leafCerts.Certs[0].SerialNumber)
@@ -1796,6 +1802,12 @@ func TestHandler_RemoveX509Cert_BySerialNumber(t *testing.T) {
 	_, err = queryApprovedCertificates(setup, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
+	// check that unique certificates does not exists
+	found := setup.Keeper.IsUniqueCertificatePresent(setup.Ctx, testconstants.RootCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKID1SerialNumber)
+	require.Equal(t, false, found)
+	found = setup.Keeper.IsUniqueCertificatePresent(setup.Ctx, testconstants.RootCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKID2SerialNumber)
+	require.Equal(t, false, found)
+
 	leafCerts, _ = queryApprovedCertificates(setup, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
 	require.Equal(t, 1, len(leafCerts.Certs))
 }
@@ -1862,6 +1874,12 @@ func TestHandler_RemoveX509Cert_RevokedAndApprovedCertificate(t *testing.T) {
 	require.Equal(t, codes.NotFound, status.Code(err))
 	_, err = queryRevokedCertificates(setup, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
 	require.Equal(t, codes.NotFound, status.Code(err))
+
+	// check that unique certificates does not exists
+	found := setup.Keeper.IsUniqueCertificatePresent(setup.Ctx, testconstants.RootCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKID1SerialNumber)
+	require.Equal(t, false, found)
+	found = setup.Keeper.IsUniqueCertificatePresent(setup.Ctx, testconstants.RootCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKID2SerialNumber)
+	require.Equal(t, false, found)
 }
 
 func TestHandler_RemoveX509Cert_RevokedCertificate(t *testing.T) {
@@ -1923,6 +1941,10 @@ func TestHandler_RemoveX509Cert_RevokedCertificate(t *testing.T) {
 	require.Equal(t, codes.NotFound, status.Code(err))
 	_, err = queryRevokedCertificates(setup, testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
 	require.Equal(t, codes.NotFound, status.Code(err))
+
+	// check that unique certificate does not exists
+	found := setup.Keeper.IsUniqueCertificatePresent(setup.Ctx, testconstants.IntermediateIssuer, testconstants.IntermediateSerialNumber)
+	require.Equal(t, false, found)
 }
 
 func TestHandler_RemoveX509Cert_CertificateDoesNotExist(t *testing.T) {

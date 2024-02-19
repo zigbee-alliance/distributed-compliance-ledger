@@ -14,7 +14,7 @@ func (k msgServer) RemoveX509Cert(goCtx context.Context, msg *types.MsgRemoveX50
 
 	aprCerts, foundApproved := k.GetApprovedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
 	revCerts, foundRevoked := k.GetRevokedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
-	certificates := append(aprCerts.Certs, revCerts.Certs...)
+	certificates := append(aprCerts.Certs, revCerts.Certs...) //nolint:gocritic
 	if len(certificates) == 0 {
 		return nil, pkitypes.NewErrCertificateDoesNotExist(msg.Subject, msg.SubjectKeyId)
 	}

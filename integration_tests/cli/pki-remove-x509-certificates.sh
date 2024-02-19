@@ -112,7 +112,7 @@ response_does_not_contain "$result" "\"serialNumber\": \"$intermediate_cert_1_se
 echo "Request all revoked certificates should be empty"
 result=$(dcld query pki all-revoked-x509-certs)
 echo $result | jq
-check_response "$result" "Not Found"
+check_response "$result" "\[\]"
 response_does_not_contain "$result" "\"subject\": \"$intermediate_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$intermediate_cert_1_serial_number\""
