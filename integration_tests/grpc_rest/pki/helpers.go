@@ -1983,4 +1983,130 @@ func Demo(suite *utils.TestSuite) {
 	suite.AssertNotFound(err)
 	_, err = GetX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
 	suite.AssertNotFound(err)
+
+	// Add VID scoped X509 certificate
+
+	// Check that if root cert is VID scoped and RootVID==CertVID==AccountVID then adding x509 should succeed
+	// Add root certificate
+	msgProposeAddX509RootCert = pkitypes.MsgProposeAddX509RootCert{
+		Cert:   testconstants.RootCertWithVid,
+		Vid:    testconstants.RootCertWithVidVid,
+		Signer: aliceAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeAddX509RootCert}, aliceName, aliceAccount)
+	require.NoError(suite.T, err)
+
+	msgApproveAddX509RootCert = pkitypes.MsgApproveAddX509RootCert{
+		Subject:      testconstants.RootCertWithVidSubject,
+		SubjectKeyId: testconstants.RootCertWithVidSubjectKeyID,
+		Signer:       jackAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgApproveAddX509RootCert}, jackName, jackAccount)
+	require.NoError(suite.T, err)
+
+	// Register new Vendor account
+	vendorName = utils.RandString()
+	vendorAccount = test_dclauth.CreateVendorAccount(
+		suite,
+		vendorName,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		testconstants.RootCertWithVidVid,
+		testconstants.ProductIDsEmpty,
+		aliceName,
+		aliceAccount,
+		jackName,
+		jackAccount,
+		testconstants.Info,
+	)
+	require.NotNil(suite.T, vendorAccount)
+
+	// Add an intermediate certificate
+	msgAddX509Cert = pkitypes.MsgAddX509Cert{
+		Cert:   testconstants.IntermediateCertWithVid1,
+		Signer: vendorAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	// Check approved certificates
+	certs, _ = GetX509Cert(suite, testconstants.RootCertWithVidSubject, testconstants.RootCertWithVidSubjectKeyID)
+	require.Equal(suite.T, 1, len(certs.Certs))
+	certs, _ = GetX509Cert(suite, testconstants.IntermediateCertWithVidSubject, testconstants.IntermediateCertWithVidSubjectKeyID)
+	require.Equal(suite.T, 1, len(certs.Certs))
+
+	// Check that if root cert is VID scoped and rootVID != CertVID then adding an intermediate cert should fail
+	// Add an intermediate certificate
+	msgAddX509Cert = pkitypes.MsgAddX509Cert{
+		Cert:   testconstants.IntermediateCertWithVid2,
+		Signer: vendorAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, vendorName, vendorAccount)
+	require.Error(suite.T, err)
+
+	// Check there is only one approved intermediate certificate
+	certs, _ = GetX509Cert(suite, testconstants.IntermediateCertWithVidSubject, testconstants.IntermediateCertWithVidSubjectKeyID)
+	require.Equal(suite.T, 1, len(certs.Certs))
+	require.Equal(suite.T, testconstants.IntermediateCertWithVid1SerialNumber, certs.Certs[0].SerialNumber)
+
+	// Check that if root cert is non-VID scoped and CertVID != AccountVID then adding an intermediate cert should fail
+	// Ensure that there is a non-VID root cert exists
+	certs, _ = GetX509Cert(suite, testconstants.PAACertNoVidSubject, testconstants.PAACertNoVidSubjectKeyID)
+	require.Equal(suite.T, 1, len(certs.Certs))
+
+	// Try to submit txn with another Vendor
+	newVendorName := utils.RandString()
+	newVendorAccount := test_dclauth.CreateVendorAccount(
+		suite,
+		newVendorName,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		1234,
+		testconstants.ProductIDsEmpty,
+		aliceName,
+		aliceAccount,
+		jackName,
+		jackAccount,
+		testconstants.Info,
+	)
+	require.NotNil(suite.T, newVendorAccount)
+
+	// Add an intermediate certificate
+	msgAddX509Cert = pkitypes.MsgAddX509Cert{
+		Cert:   testconstants.PAICertWithNumericVid,
+		Signer: newVendorAccount.Address,
+	}
+
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, newVendorName, newVendorAccount)
+	require.Error(suite.T, err)
+
+	// Check there is no an intermediate certificate
+	_, err = GetX509Cert(suite, testconstants.PAICertWithNumericVidSubject, testconstants.PAICertWithNumericVidSubjectKeyID)
+	suite.AssertNotFound(err)
+
+	// Check that if root cert is non-VID scoped and CertVID==AccountVID then adding x509 should succeed
+	// Create vendor with valid VID
+	newVendorName = utils.RandString()
+	newVendorAccount = test_dclauth.CreateVendorAccount(
+		suite,
+		newVendorName,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		testconstants.IntermediateCertWithVid2Vid,
+		testconstants.ProductIDsEmpty,
+		aliceName,
+		aliceAccount,
+		jackName,
+		jackAccount,
+		testconstants.Info,
+	)
+	require.NotNil(suite.T, newVendorAccount)
+
+	// Add an intermediate certificate
+	msgAddX509Cert = pkitypes.MsgAddX509Cert{
+		Cert:   testconstants.PAICertWithNumericVid,
+		Signer: newVendorAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, newVendorName, newVendorAccount)
+	require.NoError(suite.T, err)
+	// Check there is only one approved intermediate certificate
+	certs, _ = GetX509Cert(suite, testconstants.PAICertWithNumericVidSubject, testconstants.PAICertWithNumericVidSubjectKeyID)
+	require.Equal(suite.T, 1, len(certs.Certs))
 }
