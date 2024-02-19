@@ -175,17 +175,29 @@ func TestHandler_AddNocX509RootCert_AddNew(t *testing.T) {
 	_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
 	require.NoError(t, err)
 
-	// query approved certificate
+	// query noc root certificate by Subject and SKID
 	approvedCertificate, err := querySingleApprovedCertificate(setup, newNocCertificate.Subject, newNocCertificate.SubjectKeyId)
 	require.NoError(t, err)
 	require.Equal(t, &newNocCertificate, approvedCertificate)
+
+	// query noc root certificate by Subject
+	approvedCertificatesBySubject, err := queryApprovedCertificatesBySubject(setup, newNocCertificate.Subject)
+	require.NoError(t, err)
+	require.Equal(t, 1, len(approvedCertificatesBySubject.SubjectKeyIds))
+	require.Equal(t, newNocCertificate.SubjectKeyId, approvedCertificatesBySubject.SubjectKeyIds[0])
+
+	approvedCertificatesBySubjectKeyId, err := queryAllApprovedCertificatesBySubjectKeyID(setup, newNocCertificate.SubjectKeyId)
+	require.NoError(t, err)
+	require.Equal(t, 1, len(approvedCertificatesBySubjectKeyId))
+	require.Equal(t, 1, len(approvedCertificatesBySubjectKeyId[0].Certs))
+	require.Equal(t, &newNocCertificate, approvedCertificatesBySubjectKeyId[0].Certs[0])
 
 	// query noc root certificate by VID
 	nocRootCertificate, err := querySingleNocRootCertificate(setup, testconstants.Vid)
 	require.NoError(t, err)
 	require.Equal(t, &newNocCertificate, nocRootCertificate)
 
-	// check that unique certificate key stays registered
+	// check that unique certificate key registered
 	require.True(t,
 		setup.Keeper.IsUniqueCertificatePresent(setup.Ctx, testconstants.RootIssuer, testconstants.RootSerialNumber))
 }
@@ -223,11 +235,24 @@ func TestHandler_AddNocX509RootCert_Renew(t *testing.T) {
 	_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
 	require.NoError(t, err)
 
-	// query approved certificate
+	// query noc root certificate by Subject and SKID
 	approvedCertificates, err := queryApprovedCertificates(setup, newNocCertificate.Subject, newNocCertificate.SubjectKeyId)
 	require.NoError(t, err)
 	require.Equal(t, len(approvedCertificates.Certs), 2)
 	require.Equal(t, &newNocCertificate, approvedCertificates.Certs[1])
+
+	// query noc root certificate by Subject
+	approvedCertificatesBySubject, err := queryApprovedCertificatesBySubject(setup, newNocCertificate.Subject)
+	require.NoError(t, err)
+	require.Equal(t, 1, len(approvedCertificatesBySubject.SubjectKeyIds))
+	require.Equal(t, newNocCertificate.SubjectKeyId, approvedCertificatesBySubject.SubjectKeyIds[0])
+
+	// query noc root certificate by SKID
+	approvedCertificatesBySubjectKeyId, err := queryAllApprovedCertificatesBySubjectKeyID(setup, newNocCertificate.SubjectKeyId)
+	require.NoError(t, err)
+	require.Equal(t, 1, len(approvedCertificatesBySubjectKeyId))
+	require.Equal(t, 1, len(approvedCertificatesBySubjectKeyId[0].Certs))
+	require.Equal(t, &newNocCertificate, approvedCertificatesBySubjectKeyId[0].Certs[0])
 
 	// query noc root certificate by VID
 	nocRootCertificates, err := queryNocRootCertificates(setup, testconstants.Vid)

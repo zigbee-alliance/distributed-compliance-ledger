@@ -2510,6 +2510,27 @@ func queryApprovedCertificates(
 	return &resp.ApprovedCertificates, nil
 }
 
+func queryApprovedCertificatesBySubject(
+	setup *TestSetup,
+	subject string,
+) (*types.ApprovedCertificatesBySubject, error) {
+	// query certificate
+	req := &types.QueryGetApprovedCertificatesBySubjectRequest{
+		Subject: subject,
+	}
+
+	resp, err := setup.Keeper.ApprovedCertificatesBySubject(setup.Wctx, req)
+	if err != nil {
+		require.Nil(setup.T, resp)
+
+		return nil, err
+	}
+
+	require.NotNil(setup.T, resp)
+
+	return &resp.ApprovedCertificatesBySubject, nil
+}
+
 func queryAllProposedCertificateRevocations(setup *TestSetup) ([]types.ProposedCertificateRevocation, error) {
 	// query all proposed certificate revocations
 	req := &types.QueryAllProposedCertificateRevocationRequest{}
