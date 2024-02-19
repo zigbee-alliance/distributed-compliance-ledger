@@ -95,7 +95,7 @@ test_divider
 echo "Try to add inermidiate cert using add-noc-x509-root-cert command"
 intermediate_path="integration_tests/constants/intermediate_cert"
 result=$(echo "$passphrase" | dcld tx pki add-noc-x509-root-cert --certificate="$intermediate_path" --from $vendor_account --yes)
-check_response "$result" "Root certificate is not self-signed"
+check_response "$result" "\"code\": 414"
 
 echo "Add first NOC root certificate by vendor with VID = $vid"
 result=$(echo "$passphrase" | dcld tx pki add-noc-x509-root-cert --certificate="$noc_root_cert_1_path" --from $vendor_account --yes)

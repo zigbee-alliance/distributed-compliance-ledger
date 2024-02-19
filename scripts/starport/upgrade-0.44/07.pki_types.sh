@@ -16,6 +16,7 @@ starport scaffold --module pki message RejectAddX509RootCert cert --signer signe
 starport scaffold --module pki message add-pki-revocation-distribution-point vid:uint pid:uint isPAA:bool label crlSignerCertificate issuerSubjectKeyID dataURL dataFileSize:uint dataDigest dataDigestType:uint revocationType:uint --signer signer
 starport scaffold --module pki message update-pki-revocation-distribution-point vid:uint label crlSignerCertificate issuerSubjectKeyID dataURL dataFileSize:uint dataDigest dataDigestType:uint --signer signer
 starport scaffold --module pki message delete-pki-revocation-distribution-point vid:uint label issuerSubjectKeyID --signer signer
+starport scaffold --module pki message AddNOCX509RootCert  cert --signer signer
 
 # CRUD data types
 starport scaffold --module pki map ApprovedCertificates certs:strings --index subject,subjectKeyId --no-message
@@ -32,6 +33,7 @@ starport scaffold --module pki map ApprovedCertificatesBySubject subjectKeyIds:s
 starport scaffold --module pki map ApprovedCertificatesBySubjectKeyId certs:strings --index subjectKeyId --no-message
 starport scaffold --module pki map RejectedCertificate pemCert serialNumber owner approvals:strings --index subject,subjectKeyId --no-message
 #starport scaffold --module pki map AllProposedCertificates --index subject,subjectKeyId --no-message
+starport scaffold --module pki map NOCRootCertificates certs:strings --index vid:uint --no-message
 
 # Allow colons (:) in subject ID part in REST URLs
 # TODO: need to copy the generated query.pb.gw.go into the correct folder
