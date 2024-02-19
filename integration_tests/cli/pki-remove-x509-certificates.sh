@@ -55,6 +55,18 @@ check_response "$result" "\"serialNumber\": \"$intermediate_cert_1_serial_number
 check_response "$result" "\"serialNumber\": \"$intermediate_cert_2_serial_number\""
 check_response "$result" "\"serialNumber\": \"$leaf_cert_serial_number\""
 
+echo "Revoke an intermediate certificate with serialNumber 3"
+result=$(echo "$passphrase" | dcld tx pki revoke-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --serial-number="$intermediate_cert_1_serial_number" --from=$trustee_account --yes)
+check_response "$result" "\"code\": 0"
+
+echo "Request all revoked certificates should contain only one intermediate certificate with serialNumber 3"
+result=$(dcld query pki all-revoked-x509-certs)
+echo $result | jq
+check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
+check_response "$result" "\"serialNumber\": \"$intermediate_cert_1_serial_number\""
+response_does_not_contain "$result" "\"serialNumber\": \"$intermediate_cert_2_serial_number\""
+
 echo "Remove intermediate certificate with invalid serialNumber"
 result=$(echo "$passphrase" | dcld tx pki remove-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --serial-number="invalid" --from=$trustee_account --yes)
 check_response "$result" "\"code\": 404"
@@ -83,18 +95,6 @@ check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$intermediate_cert_2_serial_number\""
 response_does_not_contain "$result" "\"serialNumber\": \"$intermediate_cert_1_serial_number\""
-
-echo "Revoke an intermediate certificate with serialNumber 3"
-result=$(echo "$passphrase" | dcld tx pki revoke-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --serial-number="$intermediate_cert_1_serial_number" --from=$trustee_account --yes)
-check_response "$result" "\"code\": 0"
-
-echo "Request all revoked certificates should contain only one intermediate certificate with serialNumber 3"
-result=$(dcld query pki all-revoked-x509-certs)
-echo $result | jq
-check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
-check_response "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
-check_response "$result" "\"serialNumber\": \"$intermediate_cert_1_serial_number\""
-response_does_not_contain "$result" "\"serialNumber\": \"$intermediate_cert_2_serial_number\""
 
 echo "Remove an intermediate certificate with subject and subjectKeyId"
 result=$(echo "$passphrase" | dcld tx pki remove-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --from=$trustee_account --yes)

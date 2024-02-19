@@ -1800,6 +1800,70 @@ func TestHandler_RemoveX509Cert_BySerialNumber(t *testing.T) {
 	require.Equal(t, 1, len(leafCerts.Certs))
 }
 
+func TestHandler_RemoveX509Cert_RevokedAndApprovedCertificate(t *testing.T) {
+	setup := Setup(t)
+	// propose and approve x509 root certificate
+	rootCertOptions := &rootCertOptions{
+		pemCert:      testconstants.RootCertWithSameSubjectAndSKID1,
+		subject:      testconstants.RootCertWithSameSubjectAndSKIDSubject,
+		subjectKeyID: testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID,
+		info:         testconstants.Info,
+		vid:          65521,
+	}
+	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+
+	// Add an intermediate certificate
+	addIntermediateX509Cert := types.NewMsgAddX509Cert(setup.Trustee1.String(), testconstants.IntermediateWithSameSubjectAndSKID1)
+	_, err := setup.Handler(setup.Ctx, addIntermediateX509Cert)
+	require.NoError(t, err)
+
+	// get certificates for further comparison
+	allCerts := setup.Keeper.GetAllApprovedCertificates(setup.Ctx)
+	require.NotNil(t, allCerts)
+	require.Equal(t, 2, len(allCerts))
+	require.Equal(t, 2, len(allCerts[0].Certs)+len(allCerts[1].Certs))
+
+	// revoke an intermediate certificate
+	revokeX509Cert := types.NewMsgRemoveX509Cert(
+		setup.Trustee1.String(),
+		testconstants.IntermediateCertWithSameSubjectAndSKIDSubject,
+		testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID,
+		testconstants.IntermediateCertWithSameSubjectAndSKID1SerialNumber,
+	)
+	_, err = setup.Handler(setup.Ctx, revokeX509Cert)
+	require.NoError(t, err)
+
+	// Add an intermediate certificate with new serial number
+	addIntermediateX509Cert = types.NewMsgAddX509Cert(setup.Trustee1.String(), testconstants.IntermediateWithSameSubjectAndSKID2)
+	_, err = setup.Handler(setup.Ctx, addIntermediateX509Cert)
+	require.NoError(t, err)
+
+	intermediateCerts, _ := queryApprovedCertificates(setup, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
+	require.Equal(t, 1, len(intermediateCerts.Certs))
+	require.Equal(t, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, intermediateCerts.Certs[0].Subject)
+	require.Equal(t, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID, intermediateCerts.Certs[0].SubjectKeyId)
+	require.Equal(t, testconstants.IntermediateCertWithSameSubjectAndSKID2SerialNumber, intermediateCerts.Certs[0].SerialNumber)
+
+	// remove an intermediate certificate
+	removeX509Cert := types.NewMsgRemoveX509Cert(
+		setup.Trustee1.String(),
+		testconstants.IntermediateCertWithSameSubjectAndSKIDSubject,
+		testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID,
+		testconstants.IntermediateCertWithSameSubjectAndSKID2SerialNumber,
+	)
+	_, err = setup.Handler(setup.Ctx, removeX509Cert)
+	require.NoError(t, err)
+
+	// check that only root and leaf certificates exists
+	allCerts, _ = queryAllApprovedCertificates(setup)
+	require.Equal(t, 1, len(allCerts))
+	require.Equal(t, true, allCerts[0].Certs[0].IsRoot)
+	_, err = queryApprovedCertificates(setup, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
+	require.Equal(t, codes.NotFound, status.Code(err))
+	_, err = queryRevokedCertificates(setup, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
+	require.Equal(t, codes.NotFound, status.Code(err))
+}
+
 func TestHandler_RemoveX509Cert_RevokedCertificate(t *testing.T) {
 	setup := Setup(t)
 	// propose and approve x509 root certificate

@@ -14,17 +14,7 @@ func (k msgServer) RemoveX509Cert(goCtx context.Context, msg *types.MsgRemoveX50
 
 	aprCerts, foundApproved := k.GetApprovedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
 	revCerts, foundRevoked := k.GetRevokedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
-	if !foundApproved && !foundRevoked {
-		return nil, pkitypes.NewErrCertificateDoesNotExist(msg.Subject, msg.SubjectKeyId)
-	}
-
-	var certificates []*types.Certificate
-	if foundApproved {
-		certificates = aprCerts.Certs
-	} else {
-		certificates = revCerts.Certs
-	}
-
+	certificates := append(aprCerts.Certs, revCerts.Certs...)
 	if len(certificates) == 0 {
 		return nil, pkitypes.NewErrCertificateDoesNotExist(msg.Subject, msg.SubjectKeyId)
 	}
@@ -57,7 +47,13 @@ func (k msgServer) RemoveX509Cert(goCtx context.Context, msg *types.MsgRemoveX50
 			Certs:        certificates,
 		}
 		k.removeCertFromList(certBySerialNumber.Issuer, certBySerialNumber.SerialNumber, &certs)
-		k._removeX509Cert(ctx, certID, certs, foundRevoked)
+
+		if foundApproved {
+			k._removeApprovedX509Cert(ctx, certID, certs)
+		}
+		if foundRevoked {
+			k._removeRevokedX509Cert(ctx, certID, certs)
+		}
 	} else {
 		k.RemoveApprovedCertificates(ctx, certID.Subject, certID.SubjectKeyId)
 		// remove from subject -> subject key ID map
@@ -75,31 +71,31 @@ func (k msgServer) RemoveX509Cert(goCtx context.Context, msg *types.MsgRemoveX50
 	return &types.MsgRemoveX509CertResponse{}, nil
 }
 
-func (k msgServer) _removeX509Cert(ctx sdk.Context, certID types.CertificateIdentifier, certificates types.ApprovedCertificates, isRevoked bool) {
-	if isRevoked { //nolint:nestif
-		if len(certificates.Certs) == 0 {
-			k.RemoveRevokedCertificates(ctx, certID.Subject, certID.SubjectKeyId)
-		} else {
-			k.SetRevokedCertificates(
-				ctx,
-				types.RevokedCertificates{
-					Subject:      certID.Subject,
-					SubjectKeyId: certID.SubjectKeyId,
-					Certs:        certificates.Certs,
-				},
-			)
-		}
+func (k msgServer) _removeApprovedX509Cert(ctx sdk.Context, certID types.CertificateIdentifier, certificates types.ApprovedCertificates) {
+	if len(certificates.Certs) == 0 {
+		k.RemoveApprovedCertificates(ctx, certID.Subject, certID.SubjectKeyId)
+		k.RemoveApprovedCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
+		k.RemoveApprovedCertificatesBySubjectKeyID(ctx, certID.Subject, certID.SubjectKeyId)
 	} else {
-		if len(certificates.Certs) == 0 {
-			k.RemoveApprovedCertificates(ctx, certID.Subject, certID.SubjectKeyId)
-			k.RemoveApprovedCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
-			k.RemoveApprovedCertificatesBySubjectKeyID(ctx, certID.Subject, certID.SubjectKeyId)
-		} else {
-			k.SetApprovedCertificates(ctx, certificates)
-			k.SetApprovedCertificatesBySubjectKeyID(
-				ctx,
-				types.ApprovedCertificatesBySubjectKeyId{SubjectKeyId: certID.SubjectKeyId, Certs: certificates.Certs},
-			)
-		}
+		k.SetApprovedCertificates(ctx, certificates)
+		k.SetApprovedCertificatesBySubjectKeyID(
+			ctx,
+			types.ApprovedCertificatesBySubjectKeyId{SubjectKeyId: certID.SubjectKeyId, Certs: certificates.Certs},
+		)
+	}
+}
+
+func (k msgServer) _removeRevokedX509Cert(ctx sdk.Context, certID types.CertificateIdentifier, certificates types.ApprovedCertificates) {
+	if len(certificates.Certs) == 0 {
+		k.RemoveRevokedCertificates(ctx, certID.Subject, certID.SubjectKeyId)
+	} else {
+		k.SetRevokedCertificates(
+			ctx,
+			types.RevokedCertificates{
+				Subject:      certID.Subject,
+				SubjectKeyId: certID.SubjectKeyId,
+				Certs:        certificates.Certs,
+			},
+		)
 	}
 }
