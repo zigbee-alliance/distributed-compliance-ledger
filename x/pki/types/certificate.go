@@ -37,6 +37,28 @@ func NewNonRootCertificate(pemCert string, subject string, subjectAsText string,
 	}
 }
 
+func NewNocRootCertificate(
+	pemCert string,
+	subject string,
+	subjectAsText string,
+	subjectKeyID string,
+	serialNumber string,
+	owner string,
+	vid int32,
+) Certificate {
+	return Certificate{
+		PemCert:       pemCert,
+		Subject:       subject,
+		SubjectAsText: subjectAsText,
+		SubjectKeyId:  subjectKeyID,
+		SerialNumber:  serialNumber,
+		IsRoot:        true,
+		Owner:         owner,
+		Vid:           vid,
+		IsNoc:         true,
+	}
+}
+
 func (cert ProposedCertificate) HasApprovalFrom(address string) bool {
 	for _, approval := range cert.Approvals {
 		if approval.Address == address {

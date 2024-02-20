@@ -10,6 +10,7 @@ import { MsgDeletePkiRevocationDistributionPoint } from "./types/pki/tx";
 import { MsgRevokeX509Cert } from "./types/pki/tx";
 import { MsgProposeAddX509RootCert } from "./types/pki/tx";
 import { MsgApproveAddX509RootCert } from "./types/pki/tx";
+import { MsgAddNocX509RootCert } from "./types/pki/tx";
 import { MsgUpdatePkiRevocationDistributionPoint } from "./types/pki/tx";
 import { MsgAddPkiRevocationDistributionPoint } from "./types/pki/tx";
 import { MsgAddX509Cert } from "./types/pki/tx";
@@ -25,6 +26,7 @@ const types = [
   ["/zigbeealliance.distributedcomplianceledger.pki.MsgRevokeX509Cert", MsgRevokeX509Cert],
   ["/zigbeealliance.distributedcomplianceledger.pki.MsgProposeAddX509RootCert", MsgProposeAddX509RootCert],
   ["/zigbeealliance.distributedcomplianceledger.pki.MsgApproveAddX509RootCert", MsgApproveAddX509RootCert],
+  ["/zigbeealliance.distributedcomplianceledger.pki.MsgAddNocX509RootCert", MsgAddNocX509RootCert],
   ["/zigbeealliance.distributedcomplianceledger.pki.MsgUpdatePkiRevocationDistributionPoint", MsgUpdatePkiRevocationDistributionPoint],
   ["/zigbeealliance.distributedcomplianceledger.pki.MsgAddPkiRevocationDistributionPoint", MsgAddPkiRevocationDistributionPoint],
   ["/zigbeealliance.distributedcomplianceledger.pki.MsgAddX509Cert", MsgAddX509Cert],
@@ -68,6 +70,7 @@ const txClient = async (wallet: OfflineSigner, { addr: addr }: TxClientOptions =
     msgRevokeX509Cert: (data: MsgRevokeX509Cert): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgRevokeX509Cert", value: MsgRevokeX509Cert.fromPartial( data ) }),
     msgProposeAddX509RootCert: (data: MsgProposeAddX509RootCert): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgProposeAddX509RootCert", value: MsgProposeAddX509RootCert.fromPartial( data ) }),
     msgApproveAddX509RootCert: (data: MsgApproveAddX509RootCert): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgApproveAddX509RootCert", value: MsgApproveAddX509RootCert.fromPartial( data ) }),
+    msgAddNocX509RootCert: (data: MsgAddNocX509RootCert): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgAddNocX509RootCert", value: MsgAddNocX509RootCert.fromPartial( data ) }),
     msgUpdatePkiRevocationDistributionPoint: (data: MsgUpdatePkiRevocationDistributionPoint): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgUpdatePkiRevocationDistributionPoint", value: MsgUpdatePkiRevocationDistributionPoint.fromPartial( data ) }),
     msgAddPkiRevocationDistributionPoint: (data: MsgAddPkiRevocationDistributionPoint): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgAddPkiRevocationDistributionPoint", value: MsgAddPkiRevocationDistributionPoint.fromPartial( data ) }),
     msgAddX509Cert: (data: MsgAddX509Cert): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgAddX509Cert", value: MsgAddX509Cert.fromPartial( data ) }),
