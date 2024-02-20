@@ -22,6 +22,7 @@ func createNNocRootCertificates(keeper *keeper.Keeper, ctx sdk.Context, n int) [
 
 		keeper.SetNocRootCertificates(ctx, items[i])
 	}
+
 	return items
 }
 

@@ -169,9 +169,9 @@ func NocCertDemo(suite *utils.TestSuite) {
 	nocCertificates, _ := GetNocX509RootCerts(suite, vid1)
 	require.Equal(suite.T, 2, len(nocCertificates.Certs))
 	require.Equal(suite.T, testconstants.NocRootCert1Subject, nocCertificates.Certs[0].Subject)
-	require.Equal(suite.T, testconstants.NocRootCert1SubjectKeyId, nocCertificates.Certs[0].SubjectKeyId)
+	require.Equal(suite.T, testconstants.NocRootCert1SubjectKeyID, nocCertificates.Certs[0].SubjectKeyId)
 	require.Equal(suite.T, testconstants.NocRootCert2Subject, nocCertificates.Certs[1].Subject)
-	require.Equal(suite.T, testconstants.NocRootCert2SubjectKeyId, nocCertificates.Certs[1].SubjectKeyId)
+	require.Equal(suite.T, testconstants.NocRootCert2SubjectKeyID, nocCertificates.Certs[1].SubjectKeyId)
 
 	// Request All NOC root certificate
 	allNocCertificates, _ = GetAllNocX509RootCerts(suite)
@@ -193,16 +193,16 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, 2, len(certsWithVid1))
 	require.Equal(suite.T, 1, len(certsWithVid2))
 	require.Equal(suite.T, testconstants.NocRootCert1Subject, certsWithVid1[0].Subject)
-	require.Equal(suite.T, testconstants.NocRootCert1SubjectKeyId, certsWithVid1[0].SubjectKeyId)
+	require.Equal(suite.T, testconstants.NocRootCert1SubjectKeyID, certsWithVid1[0].SubjectKeyId)
 	require.Equal(suite.T, testconstants.NocRootCert2Subject, certsWithVid1[1].Subject)
-	require.Equal(suite.T, testconstants.NocRootCert2SubjectKeyId, certsWithVid1[1].SubjectKeyId)
+	require.Equal(suite.T, testconstants.NocRootCert2SubjectKeyID, certsWithVid1[1].SubjectKeyId)
 	require.Equal(suite.T, testconstants.NocRootCert3Subject, certsWithVid2[0].Subject)
-	require.Equal(suite.T, testconstants.NocRootCert3SubjectKeyId, certsWithVid2[0].SubjectKeyId)
+	require.Equal(suite.T, testconstants.NocRootCert3SubjectKeyID, certsWithVid2[0].SubjectKeyId)
 
 	// Request NOC root certificate by Subject and SubjectKeyID
-	certificate, _ := GetX509Cert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyId)
+	certificate, _ := GetX509Cert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
 	require.Equal(suite.T, testconstants.NocRootCert1Subject, certificate.Subject)
-	require.Equal(suite.T, testconstants.NocRootCert1SubjectKeyId, certificate.SubjectKeyId)
+	require.Equal(suite.T, testconstants.NocRootCert1SubjectKeyID, certificate.SubjectKeyId)
 	require.Equal(suite.T, testconstants.NocRootCert1SubjectAsText, certificate.Certs[0].SubjectAsText)
 	require.Equal(suite.T, 1, len(certificate.Certs))
 	require.Equal(suite.T, testconstants.NocRootCert1, certificate.Certs[0].PemCert)
@@ -213,13 +213,13 @@ func NocCertDemo(suite *utils.TestSuite) {
 	subjectCertificates, _ := GetAllX509CertsBySubject(suite, testconstants.NocRootCert1Subject)
 	require.Equal(suite.T, testconstants.NocRootCert1Subject, subjectCertificates.Subject)
 	require.Equal(suite.T, 1, len(subjectCertificates.SubjectKeyIds))
-	require.Equal(suite.T, testconstants.NocRootCert1SubjectKeyId, subjectCertificates.SubjectKeyIds[0])
+	require.Equal(suite.T, testconstants.NocRootCert1SubjectKeyID, subjectCertificates.SubjectKeyIds[0])
 
 	// Request NOC root certificate by SubjectKeyID
-	certsBySubjectKeyID, _ := GetAllX509certsBySubjectKeyID(suite, testconstants.NocRootCert1SubjectKeyId)
+	certsBySubjectKeyID, _ := GetAllX509certsBySubjectKeyID(suite, testconstants.NocRootCert1SubjectKeyID)
 	require.Equal(suite.T, 1, len(certsBySubjectKeyID))
 	require.Equal(suite.T, 1, len(certsBySubjectKeyID[0].Certs))
-	require.Equal(suite.T, testconstants.NocRootCert1SubjectKeyId, certsBySubjectKeyID[0].Certs[0].SubjectKeyId)
+	require.Equal(suite.T, testconstants.NocRootCert1SubjectKeyID, certsBySubjectKeyID[0].Certs[0].SubjectKeyId)
 	require.Equal(suite.T, testconstants.NocRootCert1Subject, certsBySubjectKeyID[0].Certs[0].Subject)
 	require.Equal(suite.T, testconstants.NocRootCert1SubjectAsText, certsBySubjectKeyID[0].Certs[0].SubjectAsText)
 }

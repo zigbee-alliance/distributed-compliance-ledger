@@ -7,7 +7,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-// SetNocRootCertificates set a specific nocRootCertificates in the store from its index
+// SetNocRootCertificates set a specific nocRootCertificates in the store from its index.
 func (k Keeper) SetNocRootCertificates(ctx sdk.Context, nocRootCertificates types.NocRootCertificates) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocRootCertificatesKeyPrefix))
 	b := k.cdc.MustMarshal(&nocRootCertificates)
@@ -16,7 +16,7 @@ func (k Keeper) SetNocRootCertificates(ctx sdk.Context, nocRootCertificates type
 	), b)
 }
 
-// GetNocRootCertificates returns a nocRootCertificates from its index
+// GetNocRootCertificates returns a nocRootCertificates from its index.
 func (k Keeper) GetNocRootCertificates(
 	ctx sdk.Context,
 	vid int32,
@@ -32,6 +32,7 @@ func (k Keeper) GetNocRootCertificates(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
@@ -57,7 +58,7 @@ func (k Keeper) AddNocRootCertificate(ctx sdk.Context, nocCertificate types.Cert
 	store.Set(types.NocRootCertificatesKey(nocCertificate.Vid), b)
 }
 
-// RemoveNocRootCertificates removes a nocRootCertificates from the store
+// RemoveNocRootCertificates removes a nocRootCertificates from the store.
 func (k Keeper) RemoveNocRootCertificates(
 	ctx sdk.Context,
 	vid int32,

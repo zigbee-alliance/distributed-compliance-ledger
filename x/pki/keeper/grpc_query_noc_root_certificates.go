@@ -30,6 +30,7 @@ func (k Keeper) NocRootCertificatesAll(c context.Context, req *types.QueryAllNoc
 		}
 
 		nocRootCertificatess = append(nocRootCertificatess, nocRootCertificates)
+
 		return nil
 	})
 
