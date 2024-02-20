@@ -666,7 +666,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryNocRootCertificatesAll
    * @summary Queries a list of NocRootCertificates items.
-   * @request GET:/dcl/pki/noc_root_certificates
+   * @request GET:/dcl/pki/noc-root-certificates
    */
   queryNocRootCertificatesAll = (
     query?: {
@@ -679,7 +679,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     params: RequestParams = {},
   ) =>
     this.request<PkiQueryAllNocRootCertificatesResponse, RpcStatus>({
-      path: `/dcl/pki/noc_root_certificates`,
+      path: `/dcl/pki/noc-root-certificates`,
       method: "GET",
       query: query,
       format: "json",
@@ -692,11 +692,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryNocRootCertificates
    * @summary Queries a NocRootCertificates by index.
-   * @request GET:/dcl/pki/noc_root_certificates/{vid}
+   * @request GET:/dcl/pki/noc-root-certificates/{vid}
    */
   queryNocRootCertificates = (vid: string, params: RequestParams = {}) =>
     this.request<PkiQueryGetNocRootCertificatesResponse, RpcStatus>({
-      path: `/dcl/pki/noc_root_certificates/${vid}`,
+      path: `/dcl/pki/noc-root-certificates/${vid}`,
       method: "GET",
       format: "json",
       ...params,

@@ -9260,7 +9260,7 @@ paths:
           type: string
       tags:
         - Query
-  /dcl/pki/noc_root_certificates:
+  /dcl/pki/noc-root-certificates:
     get:
       summary: Queries a list of NocRootCertificates items.
       operationId: NocRootCertificatesAll
@@ -9442,7 +9442,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /dcl/pki/noc_root_certificates/{vid}:
+  /dcl/pki/noc-root-certificates/{vid}:
     get:
       summary: Queries a NocRootCertificates by index.
       operationId: NocRootCertificates

@@ -112,12 +112,12 @@ service Query {
 
 // Queries a NocRootCertificates by index.
 	rpc NocRootCertificates(QueryGetNocRootCertificatesRequest) returns (QueryGetNocRootCertificatesResponse) {
-		option (google.api.http).get = "/dcl/pki/noc_root_certificates/{vid}";
+		option (google.api.http).get = "/dcl/pki/noc-root-certificates/{vid}";
 	}
 
 	// Queries a list of NocRootCertificates items.
 	rpc NocRootCertificatesAll(QueryAllNocRootCertificatesRequest) returns (QueryAllNocRootCertificatesResponse) {
-		option (google.api.http).get = "/dcl/pki/noc_root_certificates";
+		option (google.api.http).get = "/dcl/pki/noc-root-certificates";
 	}
 
 // this line is used by starport scaffolding # 2
