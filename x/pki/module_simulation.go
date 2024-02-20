@@ -70,7 +70,7 @@ const (
 	defaultWeightMsgAssignVid int = 100
 
 	opWeightMsgAddNocX509RootCert = "op_weight_msg_create_chain"
-	// TODO: Determine the simulation weight value
+	// TODO: Determine the simulation weight value.
 	defaultWeightMsgAddNocX509RootCert int = 100
 
 	opWeightMsgRemoveX509Cert = "op_weight_msg_create_chain"

@@ -186,11 +186,11 @@ func TestHandler_AddNocX509RootCert_AddNew(t *testing.T) {
 	require.Equal(t, 1, len(approvedCertificatesBySubject.SubjectKeyIds))
 	require.Equal(t, newNocCertificate.SubjectKeyId, approvedCertificatesBySubject.SubjectKeyIds[0])
 
-	approvedCertificatesBySubjectKeyId, err := queryAllApprovedCertificatesBySubjectKeyID(setup, newNocCertificate.SubjectKeyId)
+	approvedCertificatesBySubjectKeyID, err := queryAllApprovedCertificatesBySubjectKeyID(setup, newNocCertificate.SubjectKeyId)
 	require.NoError(t, err)
-	require.Equal(t, 1, len(approvedCertificatesBySubjectKeyId))
-	require.Equal(t, 1, len(approvedCertificatesBySubjectKeyId[0].Certs))
-	require.Equal(t, &newNocCertificate, approvedCertificatesBySubjectKeyId[0].Certs[0])
+	require.Equal(t, 1, len(approvedCertificatesBySubjectKeyID))
+	require.Equal(t, 1, len(approvedCertificatesBySubjectKeyID[0].Certs))
+	require.Equal(t, &newNocCertificate, approvedCertificatesBySubjectKeyID[0].Certs[0])
 
 	// query noc root certificate by VID
 	nocRootCertificate, err := querySingleNocRootCertificate(setup, testconstants.Vid)
@@ -248,11 +248,11 @@ func TestHandler_AddNocX509RootCert_Renew(t *testing.T) {
 	require.Equal(t, newNocCertificate.SubjectKeyId, approvedCertificatesBySubject.SubjectKeyIds[0])
 
 	// query noc root certificate by SKID
-	approvedCertificatesBySubjectKeyId, err := queryAllApprovedCertificatesBySubjectKeyID(setup, newNocCertificate.SubjectKeyId)
+	approvedCertificatesBySubjectKeyID, err := queryAllApprovedCertificatesBySubjectKeyID(setup, newNocCertificate.SubjectKeyId)
 	require.NoError(t, err)
-	require.Equal(t, 1, len(approvedCertificatesBySubjectKeyId))
-	require.Equal(t, 1, len(approvedCertificatesBySubjectKeyId[0].Certs))
-	require.Equal(t, &newNocCertificate, approvedCertificatesBySubjectKeyId[0].Certs[0])
+	require.Equal(t, 1, len(approvedCertificatesBySubjectKeyID))
+	require.Equal(t, 1, len(approvedCertificatesBySubjectKeyID[0].Certs))
+	require.Equal(t, &newNocCertificate, approvedCertificatesBySubjectKeyID[0].Certs[0])
 
 	// query noc root certificate by VID
 	nocRootCertificates, err := queryNocRootCertificates(setup, testconstants.Vid)

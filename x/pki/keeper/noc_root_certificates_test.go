@@ -12,7 +12,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-// Prevent strconv unused error
+// Prevent strconv unused error.
 var _ = strconv.IntSize
 
 func createNNocRootCertificates(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.NocRootCertificates {

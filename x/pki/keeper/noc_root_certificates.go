@@ -70,7 +70,7 @@ func (k Keeper) RemoveNocRootCertificates(
 	))
 }
 
-// GetAllNocRootCertificates returns all nocRootCertificates
+// GetAllNocRootCertificates returns all nocRootCertificates.
 func (k Keeper) GetAllNocRootCertificates(ctx sdk.Context) (list []types.NocRootCertificates) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocRootCertificatesKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
