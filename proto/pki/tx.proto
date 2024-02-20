@@ -22,6 +22,7 @@ service Msg {
   rpc DeletePkiRevocationDistributionPoint(MsgDeletePkiRevocationDistributionPoint) returns (MsgDeletePkiRevocationDistributionPointResponse);
   rpc AssignVid(MsgAssignVid) returns (MsgAssignVidResponse);
   rpc AddNocX509RootCert(MsgAddNocX509RootCert) returns (MsgAddNocX509RootCertResponse);
+  rpc RemoveX509Cert(MsgRemoveX509Cert) returns (MsgRemoveX509CertResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -63,6 +64,7 @@ message MsgProposeRevokeX509RootCert {
   string subjectKeyId = 3 [(gogoproto.moretags) = "validate:\"required,max=256\""];
   string info = 4 [(gogoproto.moretags) = "validate:\"max=4096\""];
   int64 time = 5;
+  string serialNumber = 6;
 }
 
 message MsgProposeRevokeX509RootCertResponse {
@@ -74,6 +76,7 @@ message MsgApproveRevokeX509RootCert {
   string subjectKeyId = 3 [(gogoproto.moretags) = "validate:\"required,max=256\""];
   string info = 5 [(gogoproto.moretags) = "validate:\"max=4096\""];
   int64 time = 6;
+  string serialNumber = 7;
 }
 
 message MsgApproveRevokeX509RootCertResponse {
@@ -85,6 +88,7 @@ message MsgRevokeX509Cert {
   string subjectKeyId = 3 [(gogoproto.moretags) = "validate:\"required,max=256\""];
   string info = 4 [(gogoproto.moretags) = "validate:\"max=4096\""];
   int64 time = 5;
+  string serialNumber = 6;
 }
 
 message MsgRevokeX509CertResponse {
@@ -160,6 +164,16 @@ message MsgAddNocX509RootCert {
 }
 
 message MsgAddNocX509RootCertResponse {
+}
+
+message MsgRemoveX509Cert {
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  string subject = 2 [(gogoproto.moretags) = "validate:\"required,max=1024\""];
+  string subjectKeyId = 3 [(gogoproto.moretags) = "validate:\"required,max=256\""];
+  string serialNumber = 4;
+}
+
+message MsgRemoveX509CertResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message

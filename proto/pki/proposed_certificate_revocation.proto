@@ -9,6 +9,7 @@ message ProposedCertificateRevocation {
   string subject = 1; 
   string subjectKeyId = 2; 
   repeated Grant approvals = 3;
-  string subjectAsText = 4; 
+  string subjectAsText = 4;
+  string serialNumber = 5;
 }
 

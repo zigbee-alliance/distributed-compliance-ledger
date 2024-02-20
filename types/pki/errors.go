@@ -88,6 +88,13 @@ func NewErrCertificateDoesNotExist(subject string, subjectKeyID string) error {
 		subject, subjectKeyID)
 }
 
+func NewErrCertificateBySerialNumberDoesNotExist(subject string, subjectKeyID string, serialNumber string) error {
+	return sdkerrors.Wrapf(ErrCertificateDoesNotExist,
+		"No X509 certificate associated with the "+
+			"combination of subject=%v, subjectKeyID=%v and serialNumber=%v on the ledger",
+		subject, subjectKeyID, serialNumber)
+}
+
 func NewErrRootCertificateDoesNotExist(subject string, subjectKeyID string) error {
 	return sdkerrors.Wrapf(ErrCertificateDoesNotExist,
 		"No X509 root certificate associated with the "+
@@ -317,6 +324,16 @@ func NewErrPkiRevocationDistributionPointDoesNotExists(vid int32, label string, 
 
 func NewErrMessageVidNotEqualAccountVid(msgVid int32, accountVid int32) error {
 	return sdkerrors.Wrapf(ErrMessageVidNotEqualAccountVid, "Message vid=%d is not equal to account vid=%d", msgVid, accountVid)
+}
+
+func NewErrMessageRemoveRoot(subject string, subjectKeyID string) error {
+	return sdkerrors.Wrapf(ErrInappropriateCertificateType, "Inappropriate Certificate Type: Certificate with subject=%s and subjectKeyID=%s "+
+		"is a root certificate.", subject, subjectKeyID,
+	)
+}
+
+func NewErrMessageOnlyOwnerCanExecute(command string) error {
+	return sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "Only owner can revoke certificate using %s", command)
 }
 
 func NewErrUnsupportedOperation(e interface{}) error {

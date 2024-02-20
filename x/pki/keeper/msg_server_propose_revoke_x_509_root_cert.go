@@ -27,13 +27,13 @@ func (k msgServer) ProposeRevokeX509RootCert(goCtx context.Context, msg *types.M
 	}
 
 	// check that proposed certificate revocation does not exist yet
-	if k.IsProposedCertificateRevocationPresent(ctx, msg.Subject, msg.SubjectKeyId) {
+	if k.IsProposedCertificateRevocationPresent(ctx, msg.Subject, msg.SubjectKeyId, msg.SerialNumber) {
 		return nil, pkitypes.NewErrProposedCertificateRevocationAlreadyExists(msg.Subject, msg.SubjectKeyId)
 	}
 
 	// get corresponding approved certificates
 	certificates, found := k.GetApprovedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
-	if !found {
+	if !found || len(certificates.Certs) == 0 {
 		return nil, pkitypes.NewErrCertificateDoesNotExist(msg.Subject, msg.SubjectKeyId)
 	}
 
@@ -43,6 +43,15 @@ func (k msgServer) ProposeRevokeX509RootCert(goCtx context.Context, msg *types.M
 			fmt.Sprintf("Inappropriate Certificate Type: Certificate with subject=%v and subjectKeyID=%v "+
 				"is not a root certificate.", msg.Subject, msg.SubjectKeyId),
 		)
+	}
+	// fail if cert with serial number does not exist
+	if msg.SerialNumber != "" {
+		_, found = findCertificate(msg.SerialNumber, &certificates.Certs)
+		if !found {
+			return nil, pkitypes.NewErrCertificateBySerialNumberDoesNotExist(
+				msg.Subject, msg.SubjectKeyId, msg.SerialNumber,
+			)
+		}
 	}
 
 	// create new proposed certificate revocation with approval from signer
@@ -54,6 +63,7 @@ func (k msgServer) ProposeRevokeX509RootCert(goCtx context.Context, msg *types.M
 	revocation := types.ProposedCertificateRevocation{
 		Subject:      msg.Subject,
 		SubjectKeyId: msg.SubjectKeyId,
+		SerialNumber: msg.SerialNumber,
 		Approvals:    []*types.Grant{&grant},
 	}
 

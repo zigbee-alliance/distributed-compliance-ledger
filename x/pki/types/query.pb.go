@@ -522,6 +522,7 @@ func (m *QueryGetChildCertificatesResponse) GetChildCertificates() ChildCertific
 type QueryGetProposedCertificateRevocationRequest struct {
 	Subject      string `protobuf:"bytes,1,opt,name=subject,proto3" json:"subject,omitempty"`
 	SubjectKeyId string `protobuf:"bytes,2,opt,name=subjectKeyId,proto3" json:"subjectKeyId,omitempty"`
+	SerialNumber string `protobuf:"bytes,3,opt,name=serialNumber,proto3" json:"serialNumber,omitempty"`
 }
 
 func (m *QueryGetProposedCertificateRevocationRequest) Reset() {
@@ -571,6 +572,13 @@ func (m *QueryGetProposedCertificateRevocationRequest) GetSubject() string {
 func (m *QueryGetProposedCertificateRevocationRequest) GetSubjectKeyId() string {
 	if m != nil {
 		return m.SubjectKeyId
+	}
+	return ""
+}
+
+func (m *QueryGetProposedCertificateRevocationRequest) GetSerialNumber() string {
+	if m != nil {
+		return m.SerialNumber
 	}
 	return ""
 }
@@ -3199,6 +3207,13 @@ func (m *QueryGetProposedCertificateRevocationRequest) MarshalToSizedBuffer(dAtA
 	_ = i
 	var l int
 	_ = l
+	if len(m.SerialNumber) > 0 {
+		i -= len(m.SerialNumber)
+		copy(dAtA[i:], m.SerialNumber)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.SerialNumber)))
+		i--
+		dAtA[i] = 0x1a
+	}
 	if len(m.SubjectKeyId) > 0 {
 		i -= len(m.SubjectKeyId)
 		copy(dAtA[i:], m.SubjectKeyId)
@@ -4357,6 +4372,10 @@ func (m *QueryGetProposedCertificateRevocationRequest) Size() (n int) {
 		n += 1 + l + sovQuery(uint64(l))
 	}
 	l = len(m.SubjectKeyId)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	l = len(m.SerialNumber)
 	if l > 0 {
 		n += 1 + l + sovQuery(uint64(l))
 	}
@@ -5865,6 +5884,38 @@ func (m *QueryGetProposedCertificateRevocationRequest) Unmarshal(dAtA []byte) er
 				return io.ErrUnexpectedEOF
 			}
 			m.SubjectKeyId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SerialNumber", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SerialNumber = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

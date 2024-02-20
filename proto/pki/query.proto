@@ -173,9 +173,9 @@ message QueryGetChildCertificatesResponse {
 }
 
 message QueryGetProposedCertificateRevocationRequest {
-	  string subject = 1;
+	string subject = 1;
   string subjectKeyId = 2;
-
+	string serialNumber = 3;
 }
 
 message QueryGetProposedCertificateRevocationResponse {

@@ -3,23 +3,24 @@ package cli
 import (
 	"strconv"
 
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
+
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
 var _ = strconv.Itoa(0)
 
-func CmdApproveRevokeX509RootCert() *cobra.Command {
+func CmdRemoveX509Cert() *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "approve-revoke-x509-root-cert",
-		Short: "Approves the proposed revocation of the given root certificate. " +
-			"All the certificates in the subtree signed by the revoked certificate will be revoked as well.",
-		Args: cobra.ExactArgs(0),
+		Use:   "remove-x509-cert",
+		Short: "Removes the given intermediate or leaf certificate.",
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -28,15 +29,13 @@ func CmdApproveRevokeX509RootCert() *cobra.Command {
 
 			subject := viper.GetString(FlagSubject)
 			subjectKeyID := viper.GetString(FlagSubjectKeyID)
-			info := viper.GetString(FlagInfo)
 			serialNumber := viper.GetString(FlagSerialNumber)
 
-			msg := types.NewMsgApproveRevokeX509RootCert(
+			msg := types.NewMsgRemoveX509Cert(
 				clientCtx.GetFromAddress().String(),
 				subject,
 				subjectKeyID,
 				serialNumber,
-				info,
 			)
 			// validate basic will be called in GenerateOrBroadcastTxCLI
 			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
@@ -51,7 +50,6 @@ func CmdApproveRevokeX509RootCert() *cobra.Command {
 	cmd.Flags().StringP(FlagSubject, FlagSubjectShortcut, "", "Certificate's subject")
 	cmd.Flags().StringP(FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "", "Certificate's subject key id (hex)")
 	cmd.Flags().StringP(FlagSerialNumber, FlagSerialNumberShortcut, "", "Certificate's serial number")
-	cmd.Flags().String(FlagInfo, "", FlagInfoUsage)
 	cli.AddTxFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(FlagSubject)

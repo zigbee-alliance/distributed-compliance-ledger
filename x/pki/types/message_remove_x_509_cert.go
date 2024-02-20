@@ -1,38 +1,34 @@
 package types
 
 import (
-	"time"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
 
-const TypeMsgProposeRevokeX509RootCert = "propose_revoke_x_509_root_cert"
+const TypeMsgRemoveX509Cert = "remove_x_509_cert"
 
-var _ sdk.Msg = &MsgProposeRevokeX509RootCert{}
+var _ sdk.Msg = &MsgRemoveX509Cert{}
 
-func NewMsgProposeRevokeX509RootCert(signer string, subject string, subjectKeyID string, serialNumber, info string) *MsgProposeRevokeX509RootCert {
-	return &MsgProposeRevokeX509RootCert{
+func NewMsgRemoveX509Cert(signer string, subject string, subjectKeyID string, serialNumber string) *MsgRemoveX509Cert {
+	return &MsgRemoveX509Cert{
 		Signer:       signer,
 		Subject:      subject,
 		SubjectKeyId: subjectKeyID,
 		SerialNumber: serialNumber,
-		Info:         info,
-		Time:         time.Now().Unix(),
 	}
 }
 
-func (msg *MsgProposeRevokeX509RootCert) Route() string {
+func (msg *MsgRemoveX509Cert) Route() string {
 	return pkitypes.RouterKey
 }
 
-func (msg *MsgProposeRevokeX509RootCert) Type() string {
-	return TypeMsgProposeRevokeX509RootCert
+func (msg *MsgRemoveX509Cert) Type() string {
+	return TypeMsgRemoveX509Cert
 }
 
-func (msg *MsgProposeRevokeX509RootCert) GetSigners() []sdk.AccAddress {
+func (msg *MsgRemoveX509Cert) GetSigners() []sdk.AccAddress {
 	signer, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
 		panic(err)
@@ -41,13 +37,13 @@ func (msg *MsgProposeRevokeX509RootCert) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{signer}
 }
 
-func (msg *MsgProposeRevokeX509RootCert) GetSignBytes() []byte {
+func (msg *MsgRemoveX509Cert) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
 
 	return sdk.MustSortJSON(bz)
 }
 
-func (msg *MsgProposeRevokeX509RootCert) ValidateBasic() error {
+func (msg *MsgRemoveX509Cert) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address (%s)", err)

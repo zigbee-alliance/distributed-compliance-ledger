@@ -16,6 +16,7 @@ import { MsgAddPkiRevocationDistributionPoint } from "./types/pki/tx";
 import { MsgAddX509Cert } from "./types/pki/tx";
 import { MsgApproveRevokeX509RootCert } from "./types/pki/tx";
 import { MsgProposeRevokeX509RootCert } from "./types/pki/tx";
+import { MsgRemoveX509Cert } from "./types/pki/tx";
 
 
 const types = [
@@ -31,7 +32,7 @@ const types = [
   ["/zigbeealliance.distributedcomplianceledger.pki.MsgAddX509Cert", MsgAddX509Cert],
   ["/zigbeealliance.distributedcomplianceledger.pki.MsgApproveRevokeX509RootCert", MsgApproveRevokeX509RootCert],
   ["/zigbeealliance.distributedcomplianceledger.pki.MsgProposeRevokeX509RootCert", MsgProposeRevokeX509RootCert],
-    
+  ["/zigbeealliance.distributedcomplianceledger.pki.MsgRemoveX509Cert", MsgRemoveX509Cert],
 ];
 export const MissingWalletError = new Error("wallet is required");
 
@@ -75,7 +76,7 @@ const txClient = async (wallet: OfflineSigner, { addr: addr }: TxClientOptions =
     msgAddX509Cert: (data: MsgAddX509Cert): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgAddX509Cert", value: MsgAddX509Cert.fromPartial( data ) }),
     msgApproveRevokeX509RootCert: (data: MsgApproveRevokeX509RootCert): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgApproveRevokeX509RootCert", value: MsgApproveRevokeX509RootCert.fromPartial( data ) }),
     msgProposeRevokeX509RootCert: (data: MsgProposeRevokeX509RootCert): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgProposeRevokeX509RootCert", value: MsgProposeRevokeX509RootCert.fromPartial( data ) }),
-        
+    msgRemoveX509Cert: (data: MsgRemoveX509Cert): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgRemoveX509Cert", value: MsgRemoveX509Cert.fromPartial( data ) }),
   };
 };
 

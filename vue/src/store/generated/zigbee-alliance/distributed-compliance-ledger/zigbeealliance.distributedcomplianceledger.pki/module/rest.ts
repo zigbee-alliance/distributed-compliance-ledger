@@ -89,6 +89,8 @@ export type PkiMsgProposeRevokeX509RootCertResponse = object;
 
 export type PkiMsgRejectAddX509RootCertResponse = object;
 
+export type PkiMsgRemoveX509CertResponse = object;
+
 export type PkiMsgRevokeX509CertResponse = object;
 
 export type PkiMsgUpdatePkiRevocationDistributionPointResponse = object;
@@ -138,6 +140,7 @@ export interface PkiProposedCertificate {
 export interface PkiProposedCertificateRevocation {
   subject?: string;
   subjectKeyId?: string;
+  serialNumber?: string;
   approvals?: PkiGrant[];
   subjectAsText?: string;
 }
@@ -775,10 +778,16 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @summary Queries a ProposedCertificateRevocation by index.
    * @request GET:/dcl/pki/proposed-revocation-certificates/{subject}/{subjectKeyId}
    */
-  queryProposedCertificateRevocation = (subject: string, subjectKeyId: string, params: RequestParams = {}) =>
+  queryProposedCertificateRevocation = (
+    subject: string,
+    subjectKeyId: string,
+    query?: { serialNumber?: string },
+    params: RequestParams = {},
+  ) =>
     this.request<PkiQueryGetProposedCertificateRevocationResponse, RpcStatus>({
       path: `/dcl/pki/proposed-revocation-certificates/${subject}/${subjectKeyId}`,
       method: "GET",
+      query: query,
       format: "json",
       ...params,
     });
