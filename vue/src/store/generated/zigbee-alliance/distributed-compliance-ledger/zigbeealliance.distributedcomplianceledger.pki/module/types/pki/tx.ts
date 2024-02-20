@@ -39,6 +39,7 @@ export interface MsgProposeRevokeX509RootCert {
   subjectKeyId: string
   info: string
   time: number
+  serialNumber: string
 }
 
 export interface MsgProposeRevokeX509RootCertResponse {}
@@ -49,6 +50,7 @@ export interface MsgApproveRevokeX509RootCert {
   subjectKeyId: string
   info: string
   time: number
+  serialNumber: string
 }
 
 export interface MsgApproveRevokeX509RootCertResponse {}
@@ -59,6 +61,7 @@ export interface MsgRevokeX509Cert {
   subjectKeyId: string
   info: string
   time: number
+  serialNumber: string
 }
 
 export interface MsgRevokeX509CertResponse {}
@@ -121,6 +124,22 @@ export interface MsgAssignVid {
 }
 
 export interface MsgAssignVidResponse {}
+
+export interface MsgAddNocX509RootCert {
+  signer: string
+  cert: string
+}
+
+export interface MsgAddNocX509RootCertResponse {}
+
+export interface MsgRemoveX509Cert {
+  signer: string
+  subject: string
+  subjectKeyId: string
+  serialNumber: string
+}
+
+export interface MsgRemoveX509CertResponse {}
 
 const baseMsgProposeAddX509RootCert: object = { signer: '', cert: '', info: '', time: 0, vid: 0 }
 
@@ -588,7 +607,7 @@ export const MsgAddX509CertResponse = {
   }
 }
 
-const baseMsgProposeRevokeX509RootCert: object = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0 }
+const baseMsgProposeRevokeX509RootCert: object = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0, serialNumber: '' }
 
 export const MsgProposeRevokeX509RootCert = {
   encode(message: MsgProposeRevokeX509RootCert, writer: Writer = Writer.create()): Writer {
@@ -606,6 +625,9 @@ export const MsgProposeRevokeX509RootCert = {
     }
     if (message.time !== 0) {
       writer.uint32(40).int64(message.time)
+    }
+    if (message.serialNumber !== '') {
+      writer.uint32(50).string(message.serialNumber)
     }
     return writer
   },
@@ -631,6 +653,9 @@ export const MsgProposeRevokeX509RootCert = {
           break
         case 5:
           message.time = longToNumber(reader.int64() as Long)
+          break
+        case 6:
+          message.serialNumber = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -667,6 +692,11 @@ export const MsgProposeRevokeX509RootCert = {
     } else {
       message.time = 0
     }
+    if (object.serialNumber !== undefined && object.serialNumber !== null) {
+      message.serialNumber = String(object.serialNumber)
+    } else {
+      message.serialNumber = ''
+    }
     return message
   },
 
@@ -677,6 +707,7 @@ export const MsgProposeRevokeX509RootCert = {
     message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId)
     message.info !== undefined && (obj.info = message.info)
     message.time !== undefined && (obj.time = message.time)
+    message.serialNumber !== undefined && (obj.serialNumber = message.serialNumber)
     return obj
   },
 
@@ -706,6 +737,11 @@ export const MsgProposeRevokeX509RootCert = {
       message.time = object.time
     } else {
       message.time = 0
+    }
+    if (object.serialNumber !== undefined && object.serialNumber !== null) {
+      message.serialNumber = object.serialNumber
+    } else {
+      message.serialNumber = ''
     }
     return message
   }
@@ -749,7 +785,7 @@ export const MsgProposeRevokeX509RootCertResponse = {
   }
 }
 
-const baseMsgApproveRevokeX509RootCert: object = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0 }
+const baseMsgApproveRevokeX509RootCert: object = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0, serialNumber: '' }
 
 export const MsgApproveRevokeX509RootCert = {
   encode(message: MsgApproveRevokeX509RootCert, writer: Writer = Writer.create()): Writer {
@@ -767,6 +803,9 @@ export const MsgApproveRevokeX509RootCert = {
     }
     if (message.time !== 0) {
       writer.uint32(48).int64(message.time)
+    }
+    if (message.serialNumber !== '') {
+      writer.uint32(58).string(message.serialNumber)
     }
     return writer
   },
@@ -792,6 +831,9 @@ export const MsgApproveRevokeX509RootCert = {
           break
         case 6:
           message.time = longToNumber(reader.int64() as Long)
+          break
+        case 7:
+          message.serialNumber = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -828,6 +870,11 @@ export const MsgApproveRevokeX509RootCert = {
     } else {
       message.time = 0
     }
+    if (object.serialNumber !== undefined && object.serialNumber !== null) {
+      message.serialNumber = String(object.serialNumber)
+    } else {
+      message.serialNumber = ''
+    }
     return message
   },
 
@@ -838,6 +885,7 @@ export const MsgApproveRevokeX509RootCert = {
     message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId)
     message.info !== undefined && (obj.info = message.info)
     message.time !== undefined && (obj.time = message.time)
+    message.serialNumber !== undefined && (obj.serialNumber = message.serialNumber)
     return obj
   },
 
@@ -867,6 +915,11 @@ export const MsgApproveRevokeX509RootCert = {
       message.time = object.time
     } else {
       message.time = 0
+    }
+    if (object.serialNumber !== undefined && object.serialNumber !== null) {
+      message.serialNumber = object.serialNumber
+    } else {
+      message.serialNumber = ''
     }
     return message
   }
@@ -910,7 +963,7 @@ export const MsgApproveRevokeX509RootCertResponse = {
   }
 }
 
-const baseMsgRevokeX509Cert: object = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0 }
+const baseMsgRevokeX509Cert: object = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0, serialNumber: '' }
 
 export const MsgRevokeX509Cert = {
   encode(message: MsgRevokeX509Cert, writer: Writer = Writer.create()): Writer {
@@ -928,6 +981,9 @@ export const MsgRevokeX509Cert = {
     }
     if (message.time !== 0) {
       writer.uint32(40).int64(message.time)
+    }
+    if (message.serialNumber !== '') {
+      writer.uint32(50).string(message.serialNumber)
     }
     return writer
   },
@@ -953,6 +1009,9 @@ export const MsgRevokeX509Cert = {
           break
         case 5:
           message.time = longToNumber(reader.int64() as Long)
+          break
+        case 6:
+          message.serialNumber = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -989,6 +1048,11 @@ export const MsgRevokeX509Cert = {
     } else {
       message.time = 0
     }
+    if (object.serialNumber !== undefined && object.serialNumber !== null) {
+      message.serialNumber = String(object.serialNumber)
+    } else {
+      message.serialNumber = ''
+    }
     return message
   },
 
@@ -999,6 +1063,7 @@ export const MsgRevokeX509Cert = {
     message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId)
     message.info !== undefined && (obj.info = message.info)
     message.time !== undefined && (obj.time = message.time)
+    message.serialNumber !== undefined && (obj.serialNumber = message.serialNumber)
     return obj
   },
 
@@ -1028,6 +1093,11 @@ export const MsgRevokeX509Cert = {
       message.time = object.time
     } else {
       message.time = 0
+    }
+    if (object.serialNumber !== undefined && object.serialNumber !== null) {
+      message.serialNumber = object.serialNumber
+    } else {
+      message.serialNumber = ''
     }
     return message
   }
@@ -2052,6 +2122,260 @@ export const MsgAssignVidResponse = {
   }
 }
 
+const baseMsgAddNocX509RootCert: object = { signer: '', cert: '' }
+
+export const MsgAddNocX509RootCert = {
+  encode(message: MsgAddNocX509RootCert, writer: Writer = Writer.create()): Writer {
+    if (message.signer !== '') {
+      writer.uint32(10).string(message.signer)
+    }
+    if (message.cert !== '') {
+      writer.uint32(18).string(message.cert)
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgAddNocX509RootCert {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseMsgAddNocX509RootCert } as MsgAddNocX509RootCert
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.signer = reader.string()
+          break
+        case 2:
+          message.cert = reader.string()
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): MsgAddNocX509RootCert {
+    const message = { ...baseMsgAddNocX509RootCert } as MsgAddNocX509RootCert
+    if (object.signer !== undefined && object.signer !== null) {
+      message.signer = String(object.signer)
+    } else {
+      message.signer = ''
+    }
+    if (object.cert !== undefined && object.cert !== null) {
+      message.cert = String(object.cert)
+    } else {
+      message.cert = ''
+    }
+    return message
+  },
+
+  toJSON(message: MsgAddNocX509RootCert): unknown {
+    const obj: any = {}
+    message.signer !== undefined && (obj.signer = message.signer)
+    message.cert !== undefined && (obj.cert = message.cert)
+    return obj
+  },
+
+  fromPartial(object: DeepPartial<MsgAddNocX509RootCert>): MsgAddNocX509RootCert {
+    const message = { ...baseMsgAddNocX509RootCert } as MsgAddNocX509RootCert
+    if (object.signer !== undefined && object.signer !== null) {
+      message.signer = object.signer
+    } else {
+      message.signer = ''
+    }
+    if (object.cert !== undefined && object.cert !== null) {
+      message.cert = object.cert
+    } else {
+      message.cert = ''
+    }
+    return message
+  }
+}
+
+const baseMsgAddNocX509RootCertResponse: object = {}
+
+export const MsgAddNocX509RootCertResponse = {
+  encode(_: MsgAddNocX509RootCertResponse, writer: Writer = Writer.create()): Writer {
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgAddNocX509RootCertResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseMsgAddNocX509RootCertResponse } as MsgAddNocX509RootCertResponse
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(_: any): MsgAddNocX509RootCertResponse {
+    const message = { ...baseMsgAddNocX509RootCertResponse } as MsgAddNocX509RootCertResponse
+    return message
+  },
+
+  toJSON(_: MsgAddNocX509RootCertResponse): unknown {
+    const obj: any = {}
+    return obj
+  },
+
+  fromPartial(_: DeepPartial<MsgAddNocX509RootCertResponse>): MsgAddNocX509RootCertResponse {
+    const message = { ...baseMsgAddNocX509RootCertResponse } as MsgAddNocX509RootCertResponse
+    return message
+  }
+}
+
+const baseMsgRemoveX509Cert: object = { signer: '', subject: '', subjectKeyId: '', serialNumber: '' }
+
+export const MsgRemoveX509Cert = {
+  encode(message: MsgRemoveX509Cert, writer: Writer = Writer.create()): Writer {
+    if (message.signer !== '') {
+      writer.uint32(10).string(message.signer)
+    }
+    if (message.subject !== '') {
+      writer.uint32(18).string(message.subject)
+    }
+    if (message.subjectKeyId !== '') {
+      writer.uint32(26).string(message.subjectKeyId)
+    }
+    if (message.serialNumber !== '') {
+      writer.uint32(34).string(message.serialNumber)
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgRemoveX509Cert {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseMsgRemoveX509Cert } as MsgRemoveX509Cert
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.signer = reader.string()
+          break
+        case 2:
+          message.subject = reader.string()
+          break
+        case 3:
+          message.subjectKeyId = reader.string()
+          break
+        case 4:
+          message.serialNumber = reader.string()
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): MsgRemoveX509Cert {
+    const message = { ...baseMsgRemoveX509Cert } as MsgRemoveX509Cert
+    if (object.signer !== undefined && object.signer !== null) {
+      message.signer = String(object.signer)
+    } else {
+      message.signer = ''
+    }
+    if (object.subject !== undefined && object.subject !== null) {
+      message.subject = String(object.subject)
+    } else {
+      message.subject = ''
+    }
+    if (object.subjectKeyId !== undefined && object.subjectKeyId !== null) {
+      message.subjectKeyId = String(object.subjectKeyId)
+    } else {
+      message.subjectKeyId = ''
+    }
+    if (object.serialNumber !== undefined && object.serialNumber !== null) {
+      message.serialNumber = String(object.serialNumber)
+    } else {
+      message.serialNumber = ''
+    }
+    return message
+  },
+
+  toJSON(message: MsgRemoveX509Cert): unknown {
+    const obj: any = {}
+    message.signer !== undefined && (obj.signer = message.signer)
+    message.subject !== undefined && (obj.subject = message.subject)
+    message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId)
+    message.serialNumber !== undefined && (obj.serialNumber = message.serialNumber)
+    return obj
+  },
+
+  fromPartial(object: DeepPartial<MsgRemoveX509Cert>): MsgRemoveX509Cert {
+    const message = { ...baseMsgRemoveX509Cert } as MsgRemoveX509Cert
+    if (object.signer !== undefined && object.signer !== null) {
+      message.signer = object.signer
+    } else {
+      message.signer = ''
+    }
+    if (object.subject !== undefined && object.subject !== null) {
+      message.subject = object.subject
+    } else {
+      message.subject = ''
+    }
+    if (object.subjectKeyId !== undefined && object.subjectKeyId !== null) {
+      message.subjectKeyId = object.subjectKeyId
+    } else {
+      message.subjectKeyId = ''
+    }
+    if (object.serialNumber !== undefined && object.serialNumber !== null) {
+      message.serialNumber = object.serialNumber
+    } else {
+      message.serialNumber = ''
+    }
+    return message
+  }
+}
+
+const baseMsgRemoveX509CertResponse: object = {}
+
+export const MsgRemoveX509CertResponse = {
+  encode(_: MsgRemoveX509CertResponse, writer: Writer = Writer.create()): Writer {
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgRemoveX509CertResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseMsgRemoveX509CertResponse } as MsgRemoveX509CertResponse
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(_: any): MsgRemoveX509CertResponse {
+    const message = { ...baseMsgRemoveX509CertResponse } as MsgRemoveX509CertResponse
+    return message
+  },
+
+  toJSON(_: MsgRemoveX509CertResponse): unknown {
+    const obj: any = {}
+    return obj
+  },
+
+  fromPartial(_: DeepPartial<MsgRemoveX509CertResponse>): MsgRemoveX509CertResponse {
+    const message = { ...baseMsgRemoveX509CertResponse } as MsgRemoveX509CertResponse
+    return message
+  }
+}
+
 /** Msg defines the Msg service. */
 export interface Msg {
   ProposeAddX509RootCert(request: MsgProposeAddX509RootCert): Promise<MsgProposeAddX509RootCertResponse>
@@ -2064,8 +2388,10 @@ export interface Msg {
   AddPkiRevocationDistributionPoint(request: MsgAddPkiRevocationDistributionPoint): Promise<MsgAddPkiRevocationDistributionPointResponse>
   UpdatePkiRevocationDistributionPoint(request: MsgUpdatePkiRevocationDistributionPoint): Promise<MsgUpdatePkiRevocationDistributionPointResponse>
   DeletePkiRevocationDistributionPoint(request: MsgDeletePkiRevocationDistributionPoint): Promise<MsgDeletePkiRevocationDistributionPointResponse>
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   AssignVid(request: MsgAssignVid): Promise<MsgAssignVidResponse>
+  AddNocX509RootCert(request: MsgAddNocX509RootCert): Promise<MsgAddNocX509RootCertResponse>
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  RemoveX509Cert(request: MsgRemoveX509Cert): Promise<MsgRemoveX509CertResponse>
 }
 
 export class MsgClientImpl implements Msg {
@@ -2137,6 +2463,18 @@ export class MsgClientImpl implements Msg {
     const data = MsgAssignVid.encode(request).finish()
     const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Msg', 'AssignVid', data)
     return promise.then((data) => MsgAssignVidResponse.decode(new Reader(data)))
+  }
+
+  AddNocX509RootCert(request: MsgAddNocX509RootCert): Promise<MsgAddNocX509RootCertResponse> {
+    const data = MsgAddNocX509RootCert.encode(request).finish()
+    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Msg', 'AddNocX509RootCert', data)
+    return promise.then((data) => MsgAddNocX509RootCertResponse.decode(new Reader(data)))
+  }
+
+  RemoveX509Cert(request: MsgRemoveX509Cert): Promise<MsgRemoveX509CertResponse> {
+    const data = MsgRemoveX509Cert.encode(request).finish()
+    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Msg', 'RemoveX509Cert', data)
+    return promise.then((data) => MsgRemoveX509CertResponse.decode(new Reader(data)))
   }
 }
 

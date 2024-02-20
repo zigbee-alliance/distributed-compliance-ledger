@@ -4,7 +4,6 @@ import (
 	"context"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/x509"
 
@@ -35,26 +34,25 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 
 	// Get list of certificates for Subject / Subject Key Id combination
 	certificates, found := k.GetApprovedCertificates(ctx, x509Certificate.Subject, x509Certificate.SubjectKeyID)
-	if found {
+	if found && len(certificates.Certs) > 0 {
+		existingCertificate := certificates.Certs[0]
+
 		// Issuer and authorityKeyID must be the same as ones of exisiting certificates with the same subject and
 		// subjectKeyID. Since new certificate is not self-signed, we have to ensure that the exisiting certificates
 		// are not self-signed too, consequently are non-root certificates, before to match issuer and authorityKeyID.
-		if certificates.Certs[0].IsRoot || x509Certificate.Issuer != certificates.Certs[0].Issuer ||
+		if existingCertificate.IsRoot || x509Certificate.Issuer != existingCertificate.Issuer ||
 			x509Certificate.AuthorityKeyID != certificates.Certs[0].AuthorityKeyId {
-			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
-				"Issuer and authorityKeyID of new certificate with subject=%v and subjectKeyID=%v "+
-					"must be the same as ones of existing certificates with the same subject and subjectKeyID",
-				x509Certificate.Subject, x509Certificate.SubjectKeyID,
-			)
+			return nil, pkitypes.NewErrUnauthorizedCertIssuer(x509Certificate.Subject, x509Certificate.SubjectKeyID)
+		}
+
+		// Existing certificate must not be NOC certificate
+		if existingCertificate.IsNoc {
+			return nil, pkitypes.NewErrProvidedNotNocCertButExistingNoc(x509Certificate.Subject, x509Certificate.SubjectKeyID)
 		}
 
 		// signer must be same as owner of existing certificates
-		if msg.Signer != certificates.Certs[0].Owner {
-			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
-				"Only owner of existing certificates with subject=%v and subjectKeyID=%v "+
-					"can add new certificate with the same subject and subjectKeyID",
-				x509Certificate.Subject, x509Certificate.SubjectKeyID,
-			)
+		if msg.Signer != existingCertificate.Owner {
+			return nil, pkitypes.NewErrUnauthorizedCertOwner(x509Certificate.Subject, x509Certificate.SubjectKeyID)
 		}
 	}
 

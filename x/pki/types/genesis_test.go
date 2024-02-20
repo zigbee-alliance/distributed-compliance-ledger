@@ -126,6 +126,14 @@ PkiRevocationDistributionPointsByIssuerSubjectKeyIDList: []types.PkiRevocationDi
 		IssuerSubjectKeyID: "1",
 },
 },
+NocRootCertificatesList: []types.NocRootCertificates{
+	{
+		Vid: 0,
+},
+	{
+		Vid: 1,
+},
+},
 // this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -283,6 +291,20 @@ IssuerSubjectKeyID: "0",
 },
 			{
 				IssuerSubjectKeyID: "0",
+},
+		},
+	},
+	valid:    false,
+},
+{
+	desc:     "duplicated nocRootCertificates",
+	genState: &types.GenesisState{
+		NocRootCertificatesList: []types.NocRootCertificates{
+			{
+				Vid: 0,
+},
+			{
+				Vid: 0,
 },
 		},
 	},

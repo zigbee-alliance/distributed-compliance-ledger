@@ -7,6 +7,8 @@ const (
 	FlagSubjectShortcut          = "u"
 	FlagSubjectKeyID             = "subject-key-id"
 	FlagSubjectKeyIDShortcut     = "k"
+	FlagSerialNumber             = "serial-number"
+	FlagSerialNumberShortcut     = "n"
 	FlagRootSubject              = "root-subject"
 	FlagRootSubjectShortcut      = "r"
 	FlagRootSubjectKeyID         = "root-subject-key-id"

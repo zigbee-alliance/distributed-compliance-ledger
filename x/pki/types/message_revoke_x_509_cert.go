@@ -13,11 +13,12 @@ const TypeMsgRevokeX509Cert = "revoke_x_509_cert"
 
 var _ sdk.Msg = &MsgRevokeX509Cert{}
 
-func NewMsgRevokeX509Cert(signer string, subject string, subjectKeyID string, info string) *MsgRevokeX509Cert {
+func NewMsgRevokeX509Cert(signer string, subject string, subjectKeyID string, serialNumber string, info string) *MsgRevokeX509Cert {
 	return &MsgRevokeX509Cert{
 		Signer:       signer,
 		Subject:      subject,
 		SubjectKeyId: subjectKeyID,
+		SerialNumber: serialNumber,
 		Info:         info,
 		Time:         time.Now().Unix(),
 	}

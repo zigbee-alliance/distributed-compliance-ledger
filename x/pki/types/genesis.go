@@ -23,6 +23,7 @@ func DefaultGenesis() *GenesisState {
 		PkiRevocationDistributionPointList:                      []PkiRevocationDistributionPoint{},
 		PkiRevocationDistributionPointsByIssuerSubjectKeyIDList: []PkiRevocationDistributionPointsByIssuerSubjectKeyID{},
 		ApprovedCertificatesBySubjectKeyIdList:                  []ApprovedCertificatesBySubjectKeyId{},
+		NocRootCertificatesList:                                 []NocRootCertificates{},
 		// this line is used by starport scaffolding # genesis/types/default
 	}
 }
@@ -66,7 +67,7 @@ func (gs GenesisState) Validate() error {
 	proposedCertificateRevocationIndexMap := make(map[string]struct{})
 
 	for _, elem := range gs.ProposedCertificateRevocationList {
-		index := string(ProposedCertificateRevocationKey(elem.Subject, elem.SubjectKeyId))
+		index := string(ProposedCertificateRevocationKey(elem.Subject, elem.SubjectKeyId, elem.SerialNumber))
 		if _, ok := proposedCertificateRevocationIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for proposedCertificateRevocation")
 		}
@@ -141,6 +142,16 @@ func (gs GenesisState) Validate() error {
 			return fmt.Errorf("duplicated index for approvedCertificatesBySubjectKeyId")
 		}
 		approvedCertificatesBySubjectKeyIDIndexMap[index] = struct{}{}
+	}
+	// Check for duplicated index in nocRootCertificates
+	nocRootCertificatesIndexMap := make(map[string]struct{})
+
+	for _, elem := range gs.NocRootCertificatesList {
+		index := string(NocRootCertificatesKey(elem.Vid))
+		if _, ok := nocRootCertificatesIndexMap[index]; ok {
+			return fmt.Errorf("duplicated index for nocRootCertificates")
+		}
+		nocRootCertificatesIndexMap[index] = struct{}{}
 	}
 	// this line is used by starport scaffolding # genesis/types/validate
 

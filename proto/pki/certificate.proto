@@ -24,4 +24,5 @@ message Certificate {
   string subjectAsText = 12; 
   repeated Grant rejects = 13; 
   int32 vid = 14 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
+  bool isNoc = 15; 
 }
