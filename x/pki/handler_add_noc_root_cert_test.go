@@ -11,7 +11,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-func TestHandler_AddNocX509RootCert_SendorNotVendor(t *testing.T) {
+func TestHandler_AddNocX509RootCert_SenderNotVendor(t *testing.T) {
 	setup := Setup(t)
 
 	addNocX509RootCert := types.NewMsgAddNocX509RootCert(setup.Trustee1.String(), testconstants.RootCertPem)

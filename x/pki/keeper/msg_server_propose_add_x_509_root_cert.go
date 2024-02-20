@@ -63,7 +63,7 @@ func (k msgServer) ProposeAddX509RootCert(goCtx context.Context, msg *types.MsgP
 		// Issuer and authorityKeyID must be the same as ones of exisiting certificates with the same subject and
 		// subjectKeyID. Since new certificate is self-signed, we have to ensure that the exisiting certificates are
 		// self-signed too, consequently are root certificates.
-		if !existingCertificates.Certs[0].IsRoot {
+		if !existingCertificate.IsRoot {
 			return nil, pkitypes.NewErrUnauthorizedCertIssuer(x509Certificate.Subject, x509Certificate.SubjectKeyID)
 		}
 
