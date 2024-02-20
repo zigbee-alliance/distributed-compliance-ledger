@@ -400,9 +400,13 @@ export default {
 			try {
 				const key = params ?? {};
 				const queryClient=await initQueryClient(rootGetters)
-				let value= (await queryClient.queryProposedCertificateRevocation( key.subject,  key.subjectKeyId)).data
+				let value= (await queryClient.queryProposedCertificateRevocation( key.subject,  key.subjectKeyId, query)).data
 				
 					
+				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
+					let next_values=(await queryClient.queryProposedCertificateRevocation( key.subject,  key.subjectKeyId, {...query, 'pagination.key':(<any> value).pagination.next_key})).data
+					value = mergeResults(value, next_values);
+				}
 				commit('QUERY', { query: 'ProposedCertificateRevocation', key: { params: {...key}, query}, value })
 				if (subscribe) commit('SUBSCRIBE', { action: 'QueryProposedCertificateRevocation', payload: { options: { all }, params: {...key},query }})
 				return getters['getProposedCertificateRevocation']( { params: {...key}, query}) ?? {}
@@ -669,57 +673,56 @@ export default {
 				
 			}
 		},
-
-		        
-        
-        
-                
-        
-        
-        async QueryNocRootCertificates({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
-            try {
-                const key = params ?? {};
-                const queryClient=await initQueryClient(rootGetters)
-                let value= (await queryClient.queryNocRootCertificates( key.vid)).data
-                
-                    
-                commit('QUERY', { query: 'NocRootCertificates', key: { params: {...key}, query}, value })
-                if (subscribe) commit('SUBSCRIBE', { action: 'QueryNocRootCertificates', payload: { options: { all }, params: {...key},query }})
-                return getters['getNocRootCertificates']( { params: {...key}, query}) ?? {}
-            } catch (e) {
-                throw new Error('QueryClient:QueryNocRootCertificates API Node Unavailable. Could not perform query: ' + e.message)
-                
-            }
-        },
-        
-        
-        
-        
-                
-        
-        
-        async QueryNocRootCertificatesAll({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
-            try {
-                const key = params ?? {};
-                const queryClient=await initQueryClient(rootGetters)
-                let value= (await queryClient.queryNocRootCertificatesAll(query)).data
-                
-                    
-                while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
-                    let next_values=(await queryClient.queryNocRootCertificatesAll({...query, 'pagination.key':(<any> value).pagination.next_key})).data
-                    value = mergeResults(value, next_values);
-                }
-                commit('QUERY', { query: 'NocRootCertificatesAll', key: { params: {...key}, query}, value })
-                if (subscribe) commit('SUBSCRIBE', { action: 'QueryNocRootCertificatesAll', payload: { options: { all }, params: {...key},query }})
-                return getters['getNocRootCertificatesAll']( { params: {...key}, query}) ?? {}
-            } catch (e) {
-                throw new Error('QueryClient:QueryNocRootCertificatesAll API Node Unavailable. Could not perform query: ' + e.message)
-                
-            }
-        },
-
 		
 		
+		
+		
+		 		
+		
+		
+		async QueryNocRootCertificates({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryNocRootCertificates( key.vid)).data
+				
+					
+				commit('QUERY', { query: 'NocRootCertificates', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryNocRootCertificates', payload: { options: { all }, params: {...key},query }})
+				return getters['getNocRootCertificates']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new SpVuexError('QueryClient:QueryNocRootCertificates', 'API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryNocRootCertificatesAll({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryNocRootCertificatesAll(query)).data
+				
+					
+				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
+					let next_values=(await queryClient.queryNocRootCertificatesAll({...query, 'pagination.key':(<any> value).pagination.next_key})).data
+					value = mergeResults(value, next_values);
+				}
+				commit('QUERY', { query: 'NocRootCertificatesAll', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryNocRootCertificatesAll', payload: { options: { all }, params: {...key},query }})
+				return getters['getNocRootCertificatesAll']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new SpVuexError('QueryClient:QueryNocRootCertificatesAll', 'API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+
 		async sendMsgRejectAddX509RootCert({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
@@ -885,6 +888,36 @@ export default {
 				}
 			}
 		},
+		async sendMsgAddNocX509RootCert({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgAddNocX509RootCert(value)
+				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
+	gas: "200000" }, memo})
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new SpVuexError('TxClient:MsgAddNocX509RootCert:Init', 'Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new SpVuexError('TxClient:MsgAddNocX509RootCert:Send', 'Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgRemoveX509Cert({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgRemoveX509Cert(value)
+				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
+	gas: "200000" }, memo})
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new SpVuexError('TxClient:MsgRemoveX509Cert:Init', 'Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new SpVuexError('TxClient:MsgRemoveX509Cert:Send', 'Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
 		
 		async MsgProposeAddX509RootCert({ rootGetters }, { value }) {
 			try {
@@ -896,7 +929,6 @@ export default {
 					throw new SpVuexError('TxClient:MsgProposeAddX509RootCert:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
 					throw new SpVuexError('TxClient:MsgProposeAddX509RootCert:Create', 'Could not create message: ' + e.message)
-
 				}
 			}
 		},
@@ -923,7 +955,6 @@ export default {
 					throw new SpVuexError('TxClient:MsgProposeRevokeX509RootCert:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
 					throw new SpVuexError('TxClient:MsgProposeRevokeX509RootCert:Create', 'Could not create message: ' + e.message)
-
 				}
 			}
 		},
@@ -937,7 +968,6 @@ export default {
 					throw new SpVuexError('TxClient:MsgRevokeX509Cert:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
 					throw new SpVuexError('TxClient:MsgRevokeX509Cert:Create', 'Could not create message: ' + e.message)
-
 				}
 			}
 		},
@@ -951,7 +981,6 @@ export default {
 					throw new SpVuexError('TxClient:MsgApproveRevokeX509RootCert:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
 					throw new SpVuexError('TxClient:MsgApproveRevokeX509RootCert:Create', 'Could not create message: ' + e.message)
-
 				}
 			}
 		},
@@ -965,7 +994,6 @@ export default {
 					throw new SpVuexError('TxClient:MsgUpdatePkiRevocationDistributionPoint:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
 					throw new SpVuexError('TxClient:MsgUpdatePkiRevocationDistributionPoint:Create', 'Could not create message: ' + e.message)
-
 				}
 			}
 		},
@@ -979,7 +1007,6 @@ export default {
 					throw new SpVuexError('TxClient:MsgRejectAddX509RootCert:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
 					throw new SpVuexError('TxClient:MsgRejectAddX509RootCert:Create', 'Could not create message: ' + e.message)
-
 				}
 			}
 		},
@@ -993,7 +1020,6 @@ export default {
 					throw new SpVuexError('TxClient:MsgAddPkiRevocationDistributionPoint:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
 					throw new SpVuexError('TxClient:MsgAddPkiRevocationDistributionPoint:Create', 'Could not create message: ' + e.message)
-
 				}
 			}
 		},
@@ -1007,7 +1033,6 @@ export default {
 					throw new SpVuexError('TxClient:MsgApproveAddX509RootCert:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
 					throw new SpVuexError('TxClient:MsgApproveAddX509RootCert:Create', 'Could not create message: ' + e.message)
-
 				}
 			}
 		},
@@ -1021,7 +1046,6 @@ export default {
 					throw new SpVuexError('TxClient:MsgDeletePkiRevocationDistributionPoint:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
 					throw new SpVuexError('TxClient:MsgDeletePkiRevocationDistributionPoint:Create', 'Could not create message: ' + e.message)
-
 				}
 			}
 		},
@@ -1035,23 +1059,35 @@ export default {
 					throw new SpVuexError('TxClient:MsgAddX509Cert:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
 					throw new SpVuexError('TxClient:MsgAddX509Cert:Create', 'Could not create message: ' + e.message)
-
 				}
 			}
 		},
 		async MsgAddNocX509RootCert({ rootGetters }, { value }) {
-            try {
-                const txClient=await initTxClient(rootGetters)
-                const msg = await txClient.msgAddNocX509RootCert(value)
-                return msg
-            } catch (e) {
-                if (e == MissingWalletError) {
-                    throw new Error('TxClient:MsgAddNocX509RootCert:Init Could not initialize signing client. Wallet is required.')
-                }else{
-                    throw new Error('TxClient:MsgAddNocX509RootCert:Create Could not create message: ' + e.message)
-                }
-            }
-        },
-
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgAddNocX509RootCert(value)
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new SpVuexError('TxClient:MsgAddNocX509RootCert:Init', 'Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new SpVuexError('TxClient:MsgAddNocX509RootCert:Create', 'Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgRemoveX509Cert({ rootGetters }, { value }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgRemoveX509Cert(value)
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new SpVuexError('TxClient:MsgRemoveX509Cert:Init', 'Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new SpVuexError('TxClient:MsgRemoveX509Cert:Create', 'Could not create message: ' + e.message)
+				}
+			}
+		},
+		
 	}
 }

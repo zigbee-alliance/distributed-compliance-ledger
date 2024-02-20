@@ -2390,7 +2390,6 @@ export interface Msg {
   DeletePkiRevocationDistributionPoint(request: MsgDeletePkiRevocationDistributionPoint): Promise<MsgDeletePkiRevocationDistributionPointResponse>
   AssignVid(request: MsgAssignVid): Promise<MsgAssignVidResponse>
   AddNocX509RootCert(request: MsgAddNocX509RootCert): Promise<MsgAddNocX509RootCertResponse>
-  AssignVid(request: MsgAssignVid): Promise<MsgAssignVidResponse>
   /** this line is used by starport scaffolding # proto/tx/rpc */
   RemoveX509Cert(request: MsgRemoveX509Cert): Promise<MsgRemoveX509CertResponse>
 }
