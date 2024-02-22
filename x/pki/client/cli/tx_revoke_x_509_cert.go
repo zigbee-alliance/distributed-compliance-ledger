@@ -54,7 +54,7 @@ func CmdRevokeX509Cert() *cobra.Command {
 	cmd.Flags().StringP(FlagSubject, FlagSubjectShortcut, "", "Certificate's subject")
 	cmd.Flags().StringP(FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "", "Certificate's subject key id (hex)")
 	cmd.Flags().StringP(FlagSerialNumber, FlagSerialNumberShortcut, "", "Certificate's serial number")
-	cmd.Flags().String(FlagRevokeChild, "", "If flag is true then all the certificates in the subtree will be revoked as well - default is false")
+	cmd.Flags().StringP(FlagRevokeChild, FlagRevokeChildShortcut, "", "If flag is true then all the certificates in the subtree will be revoked as well - default is false")
 	cmd.Flags().String(FlagInfo, "", FlagInfoUsage)
 	cli.AddTxFlagsToCmd(cmd)
 
