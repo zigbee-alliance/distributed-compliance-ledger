@@ -546,7 +546,7 @@ func TestHandler_TwoThirdApprovalsNeededForRevokingRootCertification(t *testing.
 
 	// Trustee1 proposes to revoke the certificate
 	proposeRevokeX509RootCert := types.NewMsgProposeRevokeX509RootCert(
-		setup.Trustee1.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, testconstants.Info)
+		setup.Trustee1.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, false, testconstants.Info)
 	_, err = setup.Handler(setup.Ctx, proposeRevokeX509RootCert)
 	require.NoError(t, err)
 
@@ -1103,7 +1103,7 @@ func TestHandler_ProposeRevokeX509RootCert_ByTrusteeOwner(t *testing.T) {
 
 	// propose revocation of x509 root certificate by `setup.Trustee`
 	proposeRevokeX509RootCert := types.NewMsgProposeRevokeX509RootCert(
-		setup.Trustee1.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, testconstants.Info)
+		setup.Trustee1.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, false, testconstants.Info)
 	_, err := setup.Handler(setup.Ctx, proposeRevokeX509RootCert)
 	require.NoError(t, err)
 
@@ -1140,7 +1140,7 @@ func TestHandler_ProposeRevokeX509RootCert_ByTrusteeNotOwner(t *testing.T) {
 
 	// propose revocation of x509 root certificate by new trustee
 	proposeRevokeX509RootCert := types.NewMsgProposeRevokeX509RootCert(
-		anotherTrustee.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, testconstants.Info)
+		anotherTrustee.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, false, testconstants.Info)
 	_, err := setup.Handler(setup.Ctx, proposeRevokeX509RootCert)
 	require.NoError(t, err)
 
@@ -1181,7 +1181,7 @@ func TestHandler_ProposeRevokeX509RootCert_ByNotTrustee(t *testing.T) {
 
 		// propose revocation of x509 root certificate
 		proposeRevokeX509RootCert := types.NewMsgProposeRevokeX509RootCert(
-			accAddress.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, testconstants.Info)
+			accAddress.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, false, testconstants.Info)
 		_, err := setup.Handler(setup.Ctx, proposeRevokeX509RootCert)
 		require.Error(t, err)
 		require.True(t, sdkerrors.ErrUnauthorized.Is(err))
@@ -1193,7 +1193,7 @@ func TestHandler_ProposeRevokeX509RootCert_CertificateDoesNotExist(t *testing.T)
 
 	// propose revocation of not existing certificate
 	proposeRevokeX509RootCert := types.NewMsgProposeRevokeX509RootCert(
-		setup.Trustee1.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, testconstants.Info)
+		setup.Trustee1.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, false, testconstants.Info)
 	_, err := setup.Handler(setup.Ctx, proposeRevokeX509RootCert)
 	require.Error(t, err)
 	require.True(t, pkitypes.ErrCertificateDoesNotExist.Is(err))
@@ -1213,7 +1213,7 @@ func TestHandler_ProposeRevokeX509RootCert_ForProposedCertificate(t *testing.T) 
 
 	// propose revocation of proposed root certificate
 	proposeRevokeX509RootCert := types.NewMsgProposeRevokeX509RootCert(
-		setup.Trustee1.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, testconstants.Info)
+		setup.Trustee1.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, false, testconstants.Info)
 	_, err = setup.Handler(setup.Ctx, proposeRevokeX509RootCert)
 	require.Error(t, err)
 	require.True(t, pkitypes.ErrCertificateDoesNotExist.Is(err))
@@ -1228,7 +1228,7 @@ func TestHandler_ProposeRevokeX509RootCert_ProposedRevocationAlreadyExists(t *te
 
 	// propose revocation of x509 root certificate
 	proposeRevokeX509RootCert := types.NewMsgProposeRevokeX509RootCert(
-		setup.Trustee1.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, testconstants.Info)
+		setup.Trustee1.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, false, testconstants.Info)
 	_, err := setup.Handler(setup.Ctx, proposeRevokeX509RootCert)
 	require.NoError(t, err)
 
@@ -1238,7 +1238,7 @@ func TestHandler_ProposeRevokeX509RootCert_ProposedRevocationAlreadyExists(t *te
 
 	// propose revocation of the same x509 root certificate again
 	proposeRevokeX509RootCert = types.NewMsgProposeRevokeX509RootCert(
-		anotherTrustee.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, testconstants.Info)
+		anotherTrustee.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, false, testconstants.Info)
 	_, err = setup.Handler(setup.Ctx, proposeRevokeX509RootCert)
 	require.Error(t, err)
 	require.True(t, pkitypes.ErrProposedCertificateRevocationAlreadyExists.Is(err))
@@ -1258,7 +1258,7 @@ func TestHandler_ProposeRevokeX509RootCert_ForNonRootCertificate(t *testing.T) {
 
 	// propose revocation of x509 intermediate certificate
 	proposeRevokeX509RootCert := types.NewMsgProposeRevokeX509RootCert(
-		setup.Trustee1.String(), testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID, testconstants.RootSerialNumber, testconstants.Info)
+		setup.Trustee1.String(), testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID, testconstants.RootSerialNumber, false, testconstants.Info)
 	_, err = setup.Handler(setup.Ctx, proposeRevokeX509RootCert)
 	require.Error(t, err)
 	require.True(t, pkitypes.ErrInappropriateCertificateType.Is(err))
@@ -1277,7 +1277,7 @@ func TestHandler_ApproveRevokeX509RootCert_ForNotEnoughApprovals(t *testing.T) {
 
 	// propose revocation of x509 root certificate
 	proposeRevokeX509RootCert := types.NewMsgProposeRevokeX509RootCert(
-		setup.Trustee1.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, testconstants.Info)
+		setup.Trustee1.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, false, testconstants.Info)
 	_, err := setup.Handler(setup.Ctx, proposeRevokeX509RootCert)
 	require.NoError(t, err)
 
@@ -1317,7 +1317,7 @@ func TestHandler_ApproveRevokeX509RootCert_ForEnoughApprovals(t *testing.T) {
 
 	// propose revocation of x509 root certificate
 	proposeRevokeX509RootCert := types.NewMsgProposeRevokeX509RootCert(
-		setup.Trustee1.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, testconstants.Info)
+		setup.Trustee1.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, false, testconstants.Info)
 	_, err := setup.Handler(setup.Ctx, proposeRevokeX509RootCert)
 	require.NoError(t, err)
 
@@ -1380,7 +1380,7 @@ func TestHandler_ApproveRevokeX509RootCert_BySerialNumber(t *testing.T) {
 
 	// propose revocation of root certificate with serial number "1"
 	proposeRevokeX509RootCert := types.NewMsgProposeRevokeX509RootCert(
-		setup.Trustee1.String(), rootSubject, rootSubjectKeyID, "1", testconstants.Info)
+		setup.Trustee1.String(), rootSubject, rootSubjectKeyID, "1", false, testconstants.Info)
 	_, err = setup.Handler(setup.Ctx, proposeRevokeX509RootCert)
 	require.NoError(t, err)
 
@@ -1410,7 +1410,7 @@ func TestHandler_ApproveRevokeX509RootCert_BySerialNumber(t *testing.T) {
 
 	// propose revocation of root certificate with serial number "2"
 	proposeRevokeX509RootCert = types.NewMsgProposeRevokeX509RootCert(
-		setup.Trustee1.String(), rootSubject, rootSubjectKeyID, "2", testconstants.Info)
+		setup.Trustee1.String(), rootSubject, rootSubjectKeyID, "2", true, testconstants.Info)
 	_, err = setup.Handler(setup.Ctx, proposeRevokeX509RootCert)
 	require.NoError(t, err)
 
@@ -1431,11 +1431,20 @@ func TestHandler_ApproveRevokeX509RootCert_BySerialNumber(t *testing.T) {
 	certsAfterRevocationBySubjectID := setup.Keeper.GetAllApprovedCertificatesBySubjectKeyID(setup.Ctx)
 	require.Equal(t, 0, len(certsAfterRevocationBySubjectID))
 
-	// query and check revoked certificate
+	// query all revoked certificates
+	allRevokedCerts, _ := queryAllRevokedCertificates(setup)
+	require.Equal(t, 2, len(allRevokedCerts))
+
+	// query and check revoked root certificates
 	revokedCerts, _ := queryRevokedCertificates(setup, rootSubject, rootSubjectKeyID)
 	require.Equal(t, 2, len(revokedCerts.Certs))
 	require.Equal(t, rootSubject, revokedCerts.Subject)
 	require.Equal(t, rootSubjectKeyID, revokedCerts.SubjectKeyId)
+	// query and check revoked intermediate certificate
+	revokedCerts, _ = queryRevokedCertificates(setup, intermediateSubject, intermediateSubjectKeyID)
+	require.Equal(t, 1, len(revokedCerts.Certs))
+	require.Equal(t, intermediateSubject, revokedCerts.Subject)
+	require.Equal(t, intermediateSubjectKeyID, revokedCerts.SubjectKeyId)
 }
 
 func TestHandler_ApproveRevokeX509RootCert_ByNotTrustee(t *testing.T) {
@@ -1447,7 +1456,7 @@ func TestHandler_ApproveRevokeX509RootCert_ByNotTrustee(t *testing.T) {
 
 	// propose revocation of x509 root certificate
 	proposeRevokeX509RootCert := types.NewMsgProposeRevokeX509RootCert(
-		setup.Trustee1.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, testconstants.Info)
+		setup.Trustee1.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, false, testconstants.Info)
 	_, err := setup.Handler(setup.Ctx, proposeRevokeX509RootCert)
 	require.NoError(t, err)
 
@@ -1492,7 +1501,7 @@ func TestHandler_ApproveRevokeX509RootCert_Twice(t *testing.T) {
 
 	// propose revocation of x509 root certificate
 	proposeRevokeX509RootCert := types.NewMsgProposeRevokeX509RootCert(
-		setup.Trustee1.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, testconstants.Info)
+		setup.Trustee1.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, false, testconstants.Info)
 	_, err := setup.Handler(setup.Ctx, proposeRevokeX509RootCert)
 	require.NoError(t, err)
 
@@ -1523,13 +1532,13 @@ func TestHandler_ApproveRevokeX509RootCert_ForTree(t *testing.T) {
 
 	// propose revocation of x509 root certificate
 	proposeRevokeX509RootCert := types.NewMsgProposeRevokeX509RootCert(
-		setup.Trustee1.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, testconstants.Info)
+		setup.Trustee1.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, "", true, testconstants.Info)
 	_, err = setup.Handler(setup.Ctx, proposeRevokeX509RootCert)
 	require.NoError(t, err)
 
 	// approve
 	approveRevokeX509RootCert := types.NewMsgApproveRevokeX509RootCert(
-		setup.Trustee2.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, testconstants.Info)
+		setup.Trustee2.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, "", testconstants.Info)
 	_, err = setup.Handler(setup.Ctx, approveRevokeX509RootCert)
 	require.NoError(t, err)
 
@@ -1612,7 +1621,7 @@ func TestHandler_RevokeX509Cert(t *testing.T) {
 
 		// revoke x509 certificate
 		revokeX509Cert := types.NewMsgRevokeX509Cert(
-			accAddress.String(), testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID, "", testconstants.Info)
+			accAddress.String(), testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID, "", false, testconstants.Info)
 		_, err = setup.Handler(setup.Ctx, revokeX509Cert)
 		require.NoError(t, err)
 
@@ -1685,9 +1694,9 @@ func TestHandler_RevokeX509Cert_BySerialNumber(t *testing.T) {
 	require.Equal(t, 3, len(allCerts))
 	require.Equal(t, 4, len(allCerts[0].Certs)+len(allCerts[1].Certs)+len(allCerts[2].Certs))
 
-	// revoke intermediate certificate
+	// revoke only an intermediate certificate
 	revokeX509Cert := types.NewMsgRevokeX509Cert(
-		setup.Trustee1.String(), testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID, testconstants.IntermediateSerialNumber, testconstants.Info)
+		setup.Trustee1.String(), testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID, testconstants.IntermediateSerialNumber, false, testconstants.Info)
 	_, err = setup.Handler(setup.Ctx, revokeX509Cert)
 	require.NoError(t, err)
 
@@ -1696,13 +1705,16 @@ func TestHandler_RevokeX509Cert_BySerialNumber(t *testing.T) {
 	require.Error(t, err)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
-	// check that only root and two intermediate certificates exists
+	// check that only root, intermediate and leaf certificates exists
 	allCerts, _ = queryAllApprovedCertificates(setup)
 	require.Equal(t, 3, len(allCerts))
 	require.Equal(t, 3, len(allCerts[0].Certs)+len(allCerts[1].Certs)+len(allCerts[2].Certs))
 	intermediateCerts, _ := queryApprovedCertificates(setup, testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
 	require.Equal(t, 1, len(intermediateCerts.Certs))
 	require.Equal(t, SerialNumber, intermediateCerts.Certs[0].SerialNumber)
+	leafCerts, _ := queryApprovedCertificates(setup, testconstants.LeafSubject, testconstants.LeafSubjectKeyID)
+	require.Equal(t, 1, len(leafCerts.Certs))
+	require.Equal(t, testconstants.LeafSerialNumber, leafCerts.Certs[0].SerialNumber)
 
 	// query and check revoked certificate
 	revokedCertificate, _ := querySingleRevokedCertificate(setup, testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
@@ -1711,9 +1723,9 @@ func TestHandler_RevokeX509Cert_BySerialNumber(t *testing.T) {
 	require.Equal(t, testconstants.IntermediateSubjectKeyID, revokedCertificate.SubjectKeyId)
 	require.Equal(t, testconstants.IntermediateSerialNumber, revokedCertificate.SerialNumber)
 
-	// revoke intermediate certificate
+	// revoke intermediate and leaf certificates
 	revokeX509Cert = types.NewMsgRevokeX509Cert(
-		setup.Trustee1.String(), testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID, SerialNumber, testconstants.Info)
+		setup.Trustee1.String(), testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID, SerialNumber, true, testconstants.Info)
 	_, err = setup.Handler(setup.Ctx, revokeX509Cert)
 	require.NoError(t, err)
 
@@ -1732,6 +1744,12 @@ func TestHandler_RevokeX509Cert_BySerialNumber(t *testing.T) {
 	require.Equal(t, 2, len(revokedCerts.Certs))
 	require.Equal(t, testconstants.IntermediateSubject, revokedCerts.Subject)
 	require.Equal(t, testconstants.IntermediateSubjectKeyID, revokedCerts.SubjectKeyId)
+
+	// query and check revoked certificate
+	revokedCerts, _ = queryRevokedCertificates(setup, testconstants.LeafSubject, testconstants.LeafSubjectKeyID)
+	require.Equal(t, 1, len(revokedCerts.Certs))
+	require.Equal(t, testconstants.LeafSubject, revokedCerts.Subject)
+	require.Equal(t, testconstants.LeafSubjectKeyID, revokedCerts.SubjectKeyId)
 }
 
 func TestHandler_RemoveX509Cert_BySubjectAndSKID(t *testing.T) {
@@ -1968,6 +1986,7 @@ func TestHandler_RemoveX509Cert_RevokedCertificate(t *testing.T) {
 		testconstants.IntermediateSubject,
 		testconstants.IntermediateSubjectKeyID,
 		testconstants.IntermediateSerialNumber,
+		false,
 		testconstants.Info,
 	)
 	_, err = setup.Handler(setup.Ctx, revokeX509Cert)
@@ -2103,7 +2122,7 @@ func TestHandler_RevokeX509RootCertsBySubjectKeyId(t *testing.T) {
 
 	// revoke certificate
 	revokeX509Cert := types.NewMsgProposeRevokeX509RootCert(
-		setup.Trustee1.String(), testconstants.PAACertWithSameSubjectID1Subject, testconstants.PAACertWithSameSubjectIDSubjectID, "", testconstants.Info)
+		setup.Trustee1.String(), testconstants.PAACertWithSameSubjectID1Subject, testconstants.PAACertWithSameSubjectIDSubjectID, "", false, testconstants.Info)
 	_, err := setup.Handler(setup.Ctx, revokeX509Cert)
 	require.NoError(t, err)
 
@@ -2138,7 +2157,7 @@ func TestHandler_RevokeX509CertRoot_CertificateDoesNotExistBySerialNumber(t *tes
 
 	// revoke x509 certificate
 	revokeX509Cert := types.NewMsgProposeRevokeX509RootCert(
-		setup.Trustee1.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, "invalid", testconstants.Info)
+		setup.Trustee1.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, "invalid", false, testconstants.Info)
 	_, err := setup.Handler(setup.Ctx, revokeX509Cert)
 	require.Error(t, err)
 	require.True(t, pkitypes.ErrCertificateDoesNotExist.Is(err))
@@ -2148,7 +2167,7 @@ func TestHandler_RevokeX509Cert_CertificateDoesNotExist(t *testing.T) {
 
 	// revoke x509 certificate
 	revokeX509Cert := types.NewMsgRevokeX509Cert(
-		setup.Trustee1.String(), testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID, testconstants.IntermediateSerialNumber, testconstants.Info)
+		setup.Trustee1.String(), testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID, testconstants.IntermediateSerialNumber, false, testconstants.Info)
 	_, err := setup.Handler(setup.Ctx, revokeX509Cert)
 	require.Error(t, err)
 	require.True(t, pkitypes.ErrCertificateDoesNotExist.Is(err))
@@ -2167,7 +2186,7 @@ func TestHandler_RevokeX509Cert_CertificateDoesNotExistBySerialNumber(t *testing
 
 	// revoke x509 certificate
 	revokeX509Cert := types.NewMsgRevokeX509Cert(
-		setup.Trustee1.String(), testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID, "invalid", testconstants.Info)
+		setup.Trustee1.String(), testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID, "invalid", false, testconstants.Info)
 	_, err = setup.Handler(setup.Ctx, revokeX509Cert)
 	require.Error(t, err)
 	require.True(t, pkitypes.ErrCertificateDoesNotExist.Is(err))
@@ -2182,7 +2201,7 @@ func TestHandler_RevokeX509Cert_ForRootCertificate(t *testing.T) {
 
 	// revoke x509 root certificate
 	revokeX509Cert := types.NewMsgRevokeX509Cert(
-		setup.Trustee1.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, testconstants.Info)
+		setup.Trustee1.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, false, testconstants.Info)
 	_, err := setup.Handler(setup.Ctx, revokeX509Cert)
 	require.Error(t, err)
 	require.True(t, pkitypes.ErrInappropriateCertificateType.Is(err))
@@ -2206,7 +2225,7 @@ func TestHandler_RevokeX509Cert_ByNotOwner(t *testing.T) {
 
 	// revoke x509 certificate by another account
 	revokeX509Cert := types.NewMsgRevokeX509Cert(
-		anotherTrustee.String(), testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID, testconstants.IntermediateSerialNumber, testconstants.Info)
+		anotherTrustee.String(), testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID, testconstants.IntermediateSerialNumber, false, testconstants.Info)
 	_, err = setup.Handler(setup.Ctx, revokeX509Cert)
 	require.Error(t, err)
 	require.True(t, sdkerrors.ErrUnauthorized.Is(err))
@@ -2237,7 +2256,7 @@ func TestHandler_RevokeX509Cert_ForTree(t *testing.T) {
 
 	// revoke x509 certificate
 	revokeX509Cert := types.NewMsgRevokeX509Cert(
-		setup.Trustee1.String(), testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID, "", testconstants.Info)
+		setup.Trustee1.String(), testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID, "", true, testconstants.Info)
 	_, err = setup.Handler(setup.Ctx, revokeX509Cert)
 	require.NoError(t, err)
 

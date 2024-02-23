@@ -40,6 +40,7 @@ export interface MsgProposeRevokeX509RootCert {
   info: string
   time: number
   serialNumber: string
+  revokeChild: boolean
 }
 
 export interface MsgProposeRevokeX509RootCertResponse {}
@@ -62,6 +63,7 @@ export interface MsgRevokeX509Cert {
   info: string
   time: number
   serialNumber: string
+  revokeChild: boolean
 }
 
 export interface MsgRevokeX509CertResponse {}
@@ -607,7 +609,7 @@ export const MsgAddX509CertResponse = {
   }
 }
 
-const baseMsgProposeRevokeX509RootCert: object = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0, serialNumber: '' }
+const baseMsgProposeRevokeX509RootCert: object = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0, serialNumber: '', revokeChild: false }
 
 export const MsgProposeRevokeX509RootCert = {
   encode(message: MsgProposeRevokeX509RootCert, writer: Writer = Writer.create()): Writer {
@@ -628,6 +630,9 @@ export const MsgProposeRevokeX509RootCert = {
     }
     if (message.serialNumber !== '') {
       writer.uint32(50).string(message.serialNumber)
+    }
+    if (message.revokeChild === true) {
+      writer.uint32(56).bool(message.revokeChild)
     }
     return writer
   },
@@ -656,6 +661,9 @@ export const MsgProposeRevokeX509RootCert = {
           break
         case 6:
           message.serialNumber = reader.string()
+          break
+        case 7:
+          message.revokeChild = reader.bool()
           break
         default:
           reader.skipType(tag & 7)
@@ -697,6 +705,11 @@ export const MsgProposeRevokeX509RootCert = {
     } else {
       message.serialNumber = ''
     }
+    if (object.revokeChild !== undefined && object.revokeChild !== null) {
+      message.revokeChild = Boolean(object.revokeChild)
+    } else {
+      message.revokeChild = false
+    }
     return message
   },
 
@@ -708,6 +721,7 @@ export const MsgProposeRevokeX509RootCert = {
     message.info !== undefined && (obj.info = message.info)
     message.time !== undefined && (obj.time = message.time)
     message.serialNumber !== undefined && (obj.serialNumber = message.serialNumber)
+    message.revokeChild !== undefined && (obj.revokeChild = message.revokeChild)
     return obj
   },
 
@@ -742,6 +756,11 @@ export const MsgProposeRevokeX509RootCert = {
       message.serialNumber = object.serialNumber
     } else {
       message.serialNumber = ''
+    }
+    if (object.revokeChild !== undefined && object.revokeChild !== null) {
+      message.revokeChild = object.revokeChild
+    } else {
+      message.revokeChild = false
     }
     return message
   }
@@ -963,7 +982,7 @@ export const MsgApproveRevokeX509RootCertResponse = {
   }
 }
 
-const baseMsgRevokeX509Cert: object = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0, serialNumber: '' }
+const baseMsgRevokeX509Cert: object = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0, serialNumber: '', revokeChild: false }
 
 export const MsgRevokeX509Cert = {
   encode(message: MsgRevokeX509Cert, writer: Writer = Writer.create()): Writer {
@@ -984,6 +1003,9 @@ export const MsgRevokeX509Cert = {
     }
     if (message.serialNumber !== '') {
       writer.uint32(50).string(message.serialNumber)
+    }
+    if (message.revokeChild === true) {
+      writer.uint32(56).bool(message.revokeChild)
     }
     return writer
   },
@@ -1012,6 +1034,9 @@ export const MsgRevokeX509Cert = {
           break
         case 6:
           message.serialNumber = reader.string()
+          break
+        case 7:
+          message.revokeChild = reader.bool()
           break
         default:
           reader.skipType(tag & 7)
@@ -1053,6 +1078,11 @@ export const MsgRevokeX509Cert = {
     } else {
       message.serialNumber = ''
     }
+    if (object.revokeChild !== undefined && object.revokeChild !== null) {
+      message.revokeChild = Boolean(object.revokeChild)
+    } else {
+      message.revokeChild = false
+    }
     return message
   },
 
@@ -1064,6 +1094,7 @@ export const MsgRevokeX509Cert = {
     message.info !== undefined && (obj.info = message.info)
     message.time !== undefined && (obj.time = message.time)
     message.serialNumber !== undefined && (obj.serialNumber = message.serialNumber)
+    message.revokeChild !== undefined && (obj.revokeChild = message.revokeChild)
     return obj
   },
 
@@ -1098,6 +1129,11 @@ export const MsgRevokeX509Cert = {
       message.serialNumber = object.serialNumber
     } else {
       message.serialNumber = ''
+    }
+    if (object.revokeChild !== undefined && object.revokeChild !== null) {
+      message.revokeChild = object.revokeChild
+    } else {
+      message.revokeChild = false
     }
     return message
   }

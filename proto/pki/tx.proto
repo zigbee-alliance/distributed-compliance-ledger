@@ -65,6 +65,7 @@ message MsgProposeRevokeX509RootCert {
   string info = 4 [(gogoproto.moretags) = "validate:\"max=4096\""];
   int64 time = 5;
   string serialNumber = 6;
+  bool revokeChild = 7;
 }
 
 message MsgProposeRevokeX509RootCertResponse {
@@ -89,6 +90,7 @@ message MsgRevokeX509Cert {
   string info = 4 [(gogoproto.moretags) = "validate:\"max=4096\""];
   int64 time = 5;
   string serialNumber = 6;
+  bool revokeChild = 7;
 }
 
 message MsgRevokeX509CertResponse {

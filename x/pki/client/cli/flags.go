@@ -10,7 +10,7 @@ const (
 	FlagSerialNumber             = "serial-number"
 	FlagSerialNumberShortcut     = "n"
 	FlagRootSubject              = "root-subject"
-	FlagRootSubjectShortcut      = "r"
+	FlagRootSubjectShortcut      = "s"
 	FlagRootSubjectKeyID         = "root-subject-key-id"
 	FlagRootSubjectKeyIDShortcut = "i"
 	FlagInfo                     = "info"
@@ -26,4 +26,6 @@ const (
 	FlagLabel                    = "label"
 	FlagLabelShortcut            = "l"
 	FlagIssuerSubjectKeyID       = "issuer-subject-key-id"
+	FlagRevokeChild              = "revoke-child"
+	FlagRevokeChildShortcut      = "r"
 )

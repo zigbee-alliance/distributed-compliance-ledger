@@ -58,46 +58,9 @@ check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
 check_response "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
 check_response "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
-check_response "$result" "\"serialNumber\": \"$root_cert_1_serial_number\""
-check_response "$result" "\"serialNumber\": \"$intermediate_cert_1_serial_number\""
-check_response "$result" "\"serialNumber\": \"$root_cert_2_serial_number\""
-check_response "$result" "\"serialNumber\": \"$intermediate_cert_2_serial_number\""
-check_response "$result" "\"serialNumber\": \"$leaf_cert_serial_number\""
 
-echo "Revoke intermediate certificate with invalid serialNumber"
-result=$(echo "$passphrase" | dcld tx pki revoke-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --serial-number="invalid" --from=$trustee_account --yes)
-check_response "$result" "\"code\": 404"
-
-echo "Revoke intermediate certificate with serialNumber 3 only(child certificates should not be removed)"
-result=$(echo "$passphrase" | dcld tx pki revoke-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --serial-number="$intermediate_cert_1_serial_number" --from=$trustee_account --yes)
-check_response "$result" "\"code\": 0"
-
-echo "Request all revoked certificates should contain one intermediate certificate with serialNumber 3"
-result=$(dcld query pki all-revoked-x509-certs)
-echo $result | jq
-check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
-check_response "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
-check_response "$result" "\"serialNumber\": \"$intermediate_cert_1_serial_number\""
-response_does_not_contain "$result" "\"serialNumber\": \"$intermediate_cert_2_serial_number\""
-response_does_not_contain "$result" "\"serialNumber\": \"$leaf_cert_serial_number\""
-
-echo "Request all approved intermediate certificates should contain only one certificate with serialNumber 4"
-result=$(dcld query pki x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id")
-echo $result | jq
-check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
-check_response "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
-check_response "$result" "\"serialNumber\": \"$intermediate_cert_2_serial_number\""
-response_does_not_contain "$result" "\"serialNumber\": \"$intermediate_cert_1_serial_number\""
-
-echo "Request all approved leaf certificates should contain only one certificate with serialNumber 5"
-result=$(dcld query pki x509-cert --subject="$leaf_cert_subject" --subject-key-id="$leaf_cert_subject_key_id")
-echo $result | jq
-check_response "$result" "\"subject\": \"$leaf_cert_subject\""
-check_response "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
-check_response "$result" "\"serialNumber\": \"$leaf_cert_serial_number\""
-
-echo "Revoke intermediate certificate with serialNumber 4 and its child certificates too"
-result=$(echo "$passphrase" | dcld tx pki revoke-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --serial-number="$intermediate_cert_2_serial_number" --revoke-child=true --from=$trustee_account --yes)
+echo "Revoke intermediate certificates and its child certificates too"
+result=$(echo "$passphrase" | dcld tx pki revoke-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --revoke-child=true --from=$trustee_account --yes)
 check_response "$result" "\"code\": 0"
 
 echo "Request all revoked certificates should contain two intermediate and one leaf certificates"
@@ -142,58 +105,12 @@ echo "Add a leaf certificate with serialNumber 5"
 result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$leaf_cert_path" --from $trustee_account --yes)
 check_response "$result" "\"code\": 0"
 
-echo "Request all approved root certificates."
-result=$(dcld query pki all-x509-certs)
-echo $result | jq
-check_response "$result" "\"subject\": \"$root_cert_subject\""
-check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
-check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
-check_response "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
-check_response "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
-
-echo "$trustee_account (Trustee) proposes to revoke Root certificate with invalid serialNumber"
-result=$(echo "$passphrase" | dcld tx pki propose-revoke-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --serial-number="invalid" --from $trustee_account --yes)
-check_response "$result" "\"code\": 404"
-
-echo "$trustee_account (Trustee) proposes to revoke Root certificate with serialNumber 1 only(child certificates should not be removed)"
-result=$(echo "$passphrase" | dcld tx pki propose-revoke-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --serial-number="$root_cert_1_serial_number" --from $trustee_account --yes)
+echo "$trustee_account (Trustee) proposes to revoke Root certificates and its child certificates too"
+result=$(echo "$passphrase" | dcld tx pki propose-revoke-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --revoke-child=true --from $trustee_account --yes)
 check_response "$result" "\"code\": 0"
 
-echo "$second_trustee_account (Second Trustee) approves to revoke Root certificate with serialNumber 1 only(child certificates should not be removed)"
-result=$(echo "$passphrase" | dcld tx pki approve-revoke-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --serial-number="$root_cert_1_serial_number" --from $second_trustee_account --yes)
-check_response "$result" "\"code\": 0"
-
-echo "Request all revoked certificates should contain one root certificate with serialNumber 1"
-result=$(dcld query pki all-revoked-x509-certs)
-echo $result | jq
-check_response "$result" "\"subject\": \"$root_cert_subject\""
-check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
-check_response "$result" "\"serialNumber\": \"$root_cert_1_serial_number\""
-response_does_not_contain "$result" "\"serialNumber\": \"$root_cert_2_serial_number\""
-response_does_not_contain "$result" "\"serialNumber\": \"$intermediate_cert_1_serial_number"
-response_does_not_contain "$result" "\"serialNumber\": \"$intermediate_cert_2_serial_number"
-response_does_not_contain "$result" "\"serialNumber\": \"$leaf_cert_serial_number"
-
-echo "Request all approved certificates should contain one root certificate with serialNumber 2, one intermediate with serialNumber 4 and one leaf with serialNumber 5"
-result=$(dcld query pki all-x509-certs)
-echo $result | jq
-check_response "$result" "\"subject\": \"$root_cert_subject\""
-check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
-check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
-check_response "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id"
-check_response "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id"
-check_response "$result" "\"serialNumber\": \"$root_cert_2_serial_number\""
-check_response "$result" "\"serialNumber\": \"$intermediate_cert_1_serial_number\""
-check_response "$result" "\"serialNumber\": \"$intermediate_cert_2_serial_number\""
-check_response "$result" "\"serialNumber\": \"$leaf_cert_serial_number"
-response_does_not_contain "$result" "\"serialNumber\": \"$root_cert_1_serial_number\""
-
-echo "$trustee_account (Trustee) proposes to revoke Root certificate with serialNumber 2 and its child certificates too"
-result=$(echo "$passphrase" | dcld tx pki propose-revoke-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --serial-number="$root_cert_2_serial_number" --revoke-child=true --from $trustee_account --yes)
-check_response "$result" "\"code\": 0"
-
-echo "$second_trustee_account (Second Trustee) approves to revoke Root certificate with serialNumber 2"
-result=$(echo "$passphrase" | dcld tx pki approve-revoke-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --serial-number="$root_cert_2_serial_number" --from $second_trustee_account --yes)
+echo "$second_trustee_account (Second Trustee) approves to revoke Root certificate"
+result=$(echo "$passphrase" | dcld tx pki approve-revoke-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $second_trustee_account --yes)
 check_response "$result" "\"code\": 0"
 
 echo "Request all revoked certificates should contain two root, one intermediate and one leaf certificates"

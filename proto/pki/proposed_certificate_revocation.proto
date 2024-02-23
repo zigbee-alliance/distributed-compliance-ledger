@@ -11,5 +11,6 @@ message ProposedCertificateRevocation {
   repeated Grant approvals = 3;
   string subjectAsText = 4;
   string serialNumber = 5;
+  bool revokeChild = 6;
 }
 
