@@ -73,7 +73,7 @@ func (k msgServer) ProposeAddX509RootCert(goCtx context.Context, msg *types.MsgP
 		}
 
 		// signer must be same as owner of existing certificates
-		if msg.Signer != existingCertificates.Certs[0].Owner {
+		if msg.Signer != existingCertificate.Owner {
 			return nil, pkitypes.NewErrUnauthorizedCertOwner(x509Certificate.Subject, x509Certificate.SubjectKeyID)
 		}
 	}

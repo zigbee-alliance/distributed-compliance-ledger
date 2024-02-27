@@ -14,7 +14,8 @@ func (k msgServer) RemoveX509Cert(goCtx context.Context, msg *types.MsgRemoveX50
 
 	aprCerts, foundApproved := k.GetApprovedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
 	revCerts, foundRevoked := k.GetRevokedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
-	certificates := append(aprCerts.Certs, revCerts.Certs...) //nolint:gocritic
+	certificates := aprCerts.Certs
+	certificates = append(certificates, revCerts.Certs...)
 	if len(certificates) == 0 {
 		return nil, pkitypes.NewErrCertificateDoesNotExist(msg.Subject, msg.SubjectKeyId)
 	}
@@ -23,8 +24,8 @@ func (k msgServer) RemoveX509Cert(goCtx context.Context, msg *types.MsgRemoveX50
 		return nil, pkitypes.NewErrMessageRemoveRoot(msg.Subject, msg.SubjectKeyId)
 	}
 
-	if msg.Signer != certificates[0].Owner {
-		return nil, pkitypes.NewErrMessageOnlyOwnerCanExecute("REVOKE_X509_CERT")
+	if err := k.EnsureCertificateOwnership(ctx, certificates[0], msg.Signer); err != nil {
+		return nil, err
 	}
 
 	certID := types.CertificateIdentifier{

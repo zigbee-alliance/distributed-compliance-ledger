@@ -47,7 +47,6 @@ var (
 	ErrCertificateVidNotEqualMsgVid                      = sdkerrors.Register(ModuleName, 436, "certificate's vid is not equal to the message vid")
 	ErrMessageVidNotEqualRootCertVid                     = sdkerrors.Register(ModuleName, 437, "Message vid is not equal to ledger's root certificate vid")
 	ErrCertNotChainedBack                                = sdkerrors.Register(ModuleName, 438, "Certificate is not chained back to a root certificate on DCL")
-	ErrCertVidNotEqualAccountVid                         = sdkerrors.Register(ModuleName, 439, "account's vid is not equal to ledger's certificate vid")
 )
 
 func NewErrUnauthorizedRole(transactionName string, requiredRole types.AccountRole) error {
@@ -182,9 +181,16 @@ func NewErrUnauthorizedCertIssuer(subject string, subjectKeyID string) error {
 
 func NewErrUnauthorizedCertOwner(subject string, subjectKeyID string) error {
 	return sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
-		"Only owner of existing certificates with subject=%v and subjectKeyID=%v "+
-			"can add new certificate with the same subject and subjectKeyID",
+		"Only the owner of certificates with subject=%v and subjectKeyID=%v has the authority "+
+			"to add, remove, or revoke a certificate with the same subject and subjectKeyID",
 		subject, subjectKeyID)
+}
+
+func NewErrUnauthorizedCertVendor(subject string, subjectKeyID string, ownerVid int32) error {
+	return sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+		"Only the vendor accounts with vid=%d, has the authority "+
+			"to add, remove, or revoke a certificate with subject=%v and subjectKeyID=%v",
+		ownerVid, subject, subjectKeyID)
 }
 
 func NewErrProvidedNocCertButExistingNotNoc(subject string, subjectKeyID string) error {
@@ -197,13 +203,6 @@ func NewErrProvidedNotNocCertButExistingNoc(subject string, subjectKeyID string)
 	return sdkerrors.Wrapf(ErrInappropriateCertificateType,
 		"The existing certificate with the same combination of subject (%v) and subjectKeyID (%v) is a NOC certificate",
 		subject, subjectKeyID)
-}
-
-func NewErrExistingCertVidNotEqualAccountVid(subject string, subjectKeyID string, vid int32) error {
-	return sdkerrors.Wrapf(ErrCertVidNotEqualAccountVid,
-		"Certificate with the same combination of subject=%v and subjectKeyID=%v "+
-			"has already been published by another vendor with VID=%d.",
-		subject, subjectKeyID, vid)
 }
 
 func NewErrCRLSignerCertificatePidNotEqualMsgPid(certificatePid int32, messagePid int32) error {
@@ -330,10 +329,6 @@ func NewErrMessageRemoveRoot(subject string, subjectKeyID string) error {
 	return sdkerrors.Wrapf(ErrInappropriateCertificateType, "Inappropriate Certificate Type: Certificate with subject=%s and subjectKeyID=%s "+
 		"is a root certificate.", subject, subjectKeyID,
 	)
-}
-
-func NewErrMessageOnlyOwnerCanExecute(command string) error {
-	return sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "Only owner can revoke certificate using %s", command)
 }
 
 func NewErrUnsupportedOperation(e interface{}) error {

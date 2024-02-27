@@ -50,3 +50,33 @@ func (k Keeper) CertificateApprovalsCount(ctx sdk.Context, authKeeper types.Dcla
 func (k Keeper) CertificateRejectApprovalsCount(ctx sdk.Context, authKeeper types.DclauthKeeper) int {
 	return authKeeper.CountAccountsWithRole(ctx, authTypes.Trustee) - k.CertificateApprovalsCount(ctx, authKeeper) + 1
 }
+
+func (k Keeper) EnsureCertificateOwnership(ctx sdk.Context, certificate *types.Certificate, signer string) error {
+	// get signer VID
+	signerAddr, err := sdk.AccAddressFromBech32(signer)
+	if err != nil {
+		return pkitypes.NewErrInvalidAddress(err)
+	}
+
+	signerAccount, _ := k.dclauthKeeper.GetAccountO(ctx, signerAddr)
+	signerVid := signerAccount.VendorID
+
+	// get owner VID
+	ownerAddr, err := sdk.AccAddressFromBech32(certificate.Owner)
+	if err != nil {
+		return pkitypes.NewErrInvalidAddress(err)
+	}
+
+	ownerAccount, _ := k.dclauthKeeper.GetAccountO(ctx, ownerAddr)
+	ownerVid := ownerAccount.VendorID
+
+	if ownerVid != 0 {
+		if signerVid != ownerVid {
+			return pkitypes.NewErrUnauthorizedCertVendor(certificate.Subject, certificate.SubjectKeyId, ownerVid)
+		}
+	} else if signer != certificate.Owner {
+		return pkitypes.NewErrUnauthorizedCertOwner(certificate.Subject, certificate.SubjectKeyId)
+	}
+
+	return nil
+}

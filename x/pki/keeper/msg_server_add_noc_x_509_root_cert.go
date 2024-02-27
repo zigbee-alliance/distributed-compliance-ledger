@@ -68,7 +68,7 @@ func (k msgServer) AddNocX509RootCert(goCtx context.Context, msg *types.MsgAddNo
 
 		// signer VID must be same as VID of existing certificates
 		if signerVid != existingCertificate.Vid {
-			return nil, pkitypes.NewErrExistingCertVidNotEqualAccountVid(
+			return nil, pkitypes.NewErrUnauthorizedCertVendor(
 				x509Certificate.Subject,
 				x509Certificate.SubjectKeyID,
 				existingCertificate.Vid,

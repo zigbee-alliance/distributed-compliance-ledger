@@ -21,10 +21,7 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 
 	// fail if certificate is self-signed
 	if x509Certificate.IsSelfSigned() {
-		return nil, pkitypes.NewErrInappropriateCertificateType(
-			"Inappropriate Certificate Type: Passed certificate is self-signed, " +
-				"so it cannot be added to the system as a non-root certificate. " +
-				"To propose adding a root certificate please use `PROPOSE_ADD_X509_ROOT_CERT` transaction.")
+		return nil, pkitypes.NewErrNonRootCertificateSelfSigned()
 	}
 
 	// check if certificate with Issuer/Serial Number combination already exists
@@ -50,9 +47,8 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 			return nil, pkitypes.NewErrProvidedNotNocCertButExistingNoc(x509Certificate.Subject, x509Certificate.SubjectKeyID)
 		}
 
-		// signer must be same as owner of existing certificates
-		if msg.Signer != existingCertificate.Owner {
-			return nil, pkitypes.NewErrUnauthorizedCertOwner(x509Certificate.Subject, x509Certificate.SubjectKeyID)
+		if err = k.EnsureCertificateOwnership(ctx, existingCertificate, msg.Signer); err != nil {
+			return nil, err
 		}
 	}
 
