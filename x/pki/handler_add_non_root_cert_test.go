@@ -106,7 +106,7 @@ func TestHandler_AddX509Cert_ForRootCertificate(t *testing.T) {
 	addX509Cert := types.NewMsgAddX509Cert(setup.Trustee1.String(), testconstants.RootCertPem)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
 	require.Error(t, err)
-	require.True(t, pkitypes.ErrInappropriateCertificateType.Is(err))
+	require.True(t, pkitypes.ErrNonRootCertificateSelfSigned.Is(err))
 }
 
 func TestHandler_AddX509Cert_ForDuplicate(t *testing.T) {
@@ -202,11 +202,11 @@ func TestHandler_AddX509Cert_ForDifferentSerialNumberDifferentSigner(t *testing.
 	setup := Setup(t)
 
 	// store root certificate
-	rootCertificate := rootCertificate(testconstants.Address1)
+	rootCertificate := rootCertificate(setup.Trustee1)
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, rootCertificate)
 
 	// store intermediate certificate with different serial number
-	intermediateCertificate := intermediateCertificate(testconstants.Address1)
+	intermediateCertificate := intermediateCertificate(setup.Trustee1)
 	intermediateCertificate.SerialNumber = SerialNumber
 	setup.Keeper.SetUniqueCertificate(
 		setup.Ctx,
@@ -215,7 +215,7 @@ func TestHandler_AddX509Cert_ForDifferentSerialNumberDifferentSigner(t *testing.
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, intermediateCertificate)
 
 	// store intermediate certificate second time
-	addX509Cert := types.NewMsgAddX509Cert(setup.Trustee1.String(), testconstants.IntermediateCertPem)
+	addX509Cert := types.NewMsgAddX509Cert(setup.Trustee2.String(), testconstants.IntermediateCertPem)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
 	require.Error(t, err)
 	require.True(t, sdkerrors.ErrUnauthorized.Is(err))
@@ -399,10 +399,11 @@ func TestHandler_AddX509Cert_EachChildCertRefersToTwoParentCerts(t *testing.T) {
 func TestHandler_AddX509Cert_ByNotOwner(t *testing.T) {
 	setup := Setup(t)
 
+	// store root certificate
 	rootCertificate := rootCertificate(setup.Trustee1)
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, rootCertificate)
 
-	// add an intermidiate certificate from vendor
+	// Store an intermediate certificate with the first trustee as the owner
 	intermediateCertificate := intermediateCertificate(setup.Trustee1)
 	intermediateCertificate.SerialNumber = SerialNumber
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, intermediateCertificate)
@@ -412,7 +413,7 @@ func TestHandler_AddX509Cert_ByNotOwner(t *testing.T) {
 		uniqueCertificate(intermediateCertificate.Issuer, intermediateCertificate.SerialNumber),
 	)
 
-	// add an intermediate certificate with the same subject and SKID from the same vendor but under a different account
+	// add an intermediate certificate with the same subject and SKID by second trustee
 	addX509Cert := types.NewMsgAddX509Cert(setup.Trustee2.String(), testconstants.IntermediateCertPem)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
 	require.Error(t, err)
@@ -422,13 +423,15 @@ func TestHandler_AddX509Cert_ByNotOwner(t *testing.T) {
 func TestHandler_AddX509Cert_ByNotOwnerButSameVendor(t *testing.T) {
 	setup := Setup(t)
 
+	// store root certificate
 	rootCertificate := rootCertificate(setup.Trustee1)
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, rootCertificate)
 
+	// add first vendor account with VID = 1
 	vendorAccAddress1 := GenerateAccAddress()
 	setup.AddAccount(vendorAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
-	// add an intermidiate certificate from vendor
+	// Store an intermediate certificate with the first vendor account as the owner
 	intermediateCertificate := intermediateCertificate(vendorAccAddress1)
 	intermediateCertificate.SerialNumber = SerialNumber
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, intermediateCertificate)
@@ -438,10 +441,11 @@ func TestHandler_AddX509Cert_ByNotOwnerButSameVendor(t *testing.T) {
 		uniqueCertificate(intermediateCertificate.Issuer, intermediateCertificate.SerialNumber),
 	)
 
+	// add second vendor account with VID = 1
 	vendorAccAddress2 := GenerateAccAddress()
 	setup.AddAccount(vendorAccAddress2, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
-	// add an intermediate certificate with the same subject and SKID from the same vendor but under a different account
+	// add an intermediate certificate with the same subject and SKID by second vendor account
 	addX509Cert := types.NewMsgAddX509Cert(vendorAccAddress2.String(), testconstants.IntermediateCertPem)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
 	require.NoError(t, err)
@@ -450,13 +454,15 @@ func TestHandler_AddX509Cert_ByNotOwnerButSameVendor(t *testing.T) {
 func TestHandler_AddX509Cert_ByNotOwnerAndOtherVendor(t *testing.T) {
 	setup := Setup(t)
 
+	// store root certificate
 	rootCertificate := rootCertificate(setup.Trustee1)
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, rootCertificate)
 
+	// add first vendor account with VID = 1
 	vendorAccAddress1 := GenerateAccAddress()
 	setup.AddAccount(vendorAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
-	// add an intermidiate certificate from vendor
+	// Store an intermediate certificate with the first vendor account as the owner
 	intermediateCertificate := intermediateCertificate(vendorAccAddress1)
 	intermediateCertificate.SerialNumber = SerialNumber
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, intermediateCertificate)
@@ -466,10 +472,11 @@ func TestHandler_AddX509Cert_ByNotOwnerAndOtherVendor(t *testing.T) {
 		uniqueCertificate(intermediateCertificate.Issuer, intermediateCertificate.SerialNumber),
 	)
 
+	// add seconf vendor account with VID = 1000
 	vendorAccAddress2 := GenerateAccAddress()
 	setup.AddAccount(vendorAccAddress2, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID1)
 
-	// add an intermediate certificate with the same subject and SKID from the same vendor but under a different account
+	// add an intermediate certificate with the same subject and SKID by second vendor account
 	addX509Cert := types.NewMsgAddX509Cert(vendorAccAddress2.String(), testconstants.IntermediateCertPem)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
 	require.Error(t, err)

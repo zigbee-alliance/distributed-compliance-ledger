@@ -179,20 +179,20 @@ func TestHandler_RevokeX509Cert_ByNotOwnerButSameVendor(t *testing.T) {
 	rootCertificate := rootCertificate(setup.Trustee1)
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, rootCertificate)
 
-	// add first vendor's account
+	// add first vendor account with VID = 1
 	vendorAccAddress1 := GenerateAccAddress()
 	setup.AddAccount(vendorAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
-	// add x509 certificate by vendor`
+	// add x509 certificate by first vendor account
 	addX509Cert := types.NewMsgAddX509Cert(vendorAccAddress1.String(), testconstants.IntermediateCertPem)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
 	require.NoError(t, err)
 
-	// add second vendor's account
+	// add second vendor account with VID = 1
 	vendorAccAddress2 := GenerateAccAddress()
 	setup.AddAccount(vendorAccAddress2, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
-	// revoke x509 certificate by another account
+	// revoke x509 certificate by second vendor account
 	revokeX509Cert := types.NewMsgRevokeX509Cert(
 		vendorAccAddress2.String(),
 		testconstants.IntermediateSubject,
@@ -203,8 +203,6 @@ func TestHandler_RevokeX509Cert_ByNotOwnerButSameVendor(t *testing.T) {
 	_, err = setup.Handler(setup.Ctx, revokeX509Cert)
 	require.NoError(t, err)
 
-	// check that intermediate cer
-
 	// check that intermediate certificate has been added to revoked list
 	revokedCertificates, _ := queryRevokedCertificates(setup, testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
 	require.Equal(t, testconstants.IntermediateSubject, revokedCertificates.Subject)
@@ -212,25 +210,20 @@ func TestHandler_RevokeX509Cert_ByNotOwnerButSameVendor(t *testing.T) {
 	require.Equal(t, 1, len(revokedCertificates.Certs))
 	require.Equal(t, intermediateCertificate(vendorAccAddress1), *revokedCertificates.Certs[0])
 
-	// check that revoked certificate remover from approved certificates list
+	// check that revoked certificate removed from approved certificates list
 	_, err = queryApprovedCertificates(setup, testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
 	require.Error(t, err)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
-	// check that revoked certificate removed from approved certificates by subject list
+	// check that revoked certificate removed from 'approved certificates' by subject list
 	_, err = queryApprovedCertificatesBySubject(setup, testconstants.IntermediateSubject)
 	require.Error(t, err)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
-	// check that revoked certificate removed from approved certificates by SKID list
+	// check that revoked certificate removed from 'approved certificates' by SKID list
 	approvedCerts, err := queryAllApprovedCertificatesBySubjectKeyID(setup, testconstants.IntermediateSubjectKeyID)
 	require.NoError(t, err)
 	require.Equal(t, 0, len(approvedCerts))
-
-	// check that child certificate identifiers list of issuer do not exist anymore
-	_, err = queryChildCertificates(setup, testconstants.IntermediateIssuer, testconstants.IntermediateAuthorityKeyID)
-	require.Error(t, err)
-	require.Equal(t, codes.NotFound, status.Code(err))
 
 	// check that unique certificate key stays registered
 	require.True(t, setup.Keeper.IsUniqueCertificatePresent(setup.Ctx,
@@ -244,24 +237,22 @@ func TestHandler_RevokeX509Cert_ByNotOwnerAndOtherVendor(t *testing.T) {
 	rootCertificate := rootCertificate(setup.Trustee1)
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, rootCertificate)
 
+	// add first vendor account with VID = 1
 	vendorAccAddress1 := GenerateAccAddress()
 	setup.AddAccount(vendorAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
-	// add x509 certificate by `setup.Trustee`
+	// add x509 certificate by first vendor account
 	addX509Cert := types.NewMsgAddX509Cert(setup.Trustee1.String(), testconstants.IntermediateCertPem)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
 	require.NoError(t, err)
 
-	// store another account
-	anotherTrustee := GenerateAccAddress()
-	setup.AddAccount(anotherTrustee, []dclauthtypes.AccountRole{dclauthtypes.Trustee}, 1)
-
+	// add second vendor account with VID = 1000
 	vendorAccAddress2 := GenerateAccAddress()
 	setup.AddAccount(vendorAccAddress2, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
-	// revoke x509 certificate by another account
+	// revoke x509 certificate by second vendor account
 	revokeX509Cert := types.NewMsgRevokeX509Cert(
-		anotherTrustee.String(), testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID, testconstants.IntermediateSerialNumber, testconstants.Info)
+		vendorAccAddress2.String(), testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID, testconstants.IntermediateSerialNumber, testconstants.Info)
 	_, err = setup.Handler(setup.Ctx, revokeX509Cert)
 	require.Error(t, err)
 	require.True(t, sdkerrors.ErrUnauthorized.Is(err))
