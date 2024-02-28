@@ -210,21 +210,21 @@ func NewErrExistingCertVidNotEqualAccountVid(subject string, subjectKeyID string
 func NewErrRootCertVidNotEqualToAccountVidOrCertVid(rootVID int32, accountVID int32, certVID int32) error {
 	if rootVID != certVID {
 		return sdkerrors.Wrapf(ErrCertVidNotEqualToRootVid,
-			"Root certificate is VID scoped: An intermediate certificate must be also VID scoped to the same VID as a root one: "+
+			"Root certificate is VID scoped: A child certificate must be also VID scoped to the same VID as a root one: "+
 				"Root certificate's VID = %v, Certificate's VID = %v",
 			rootVID, certVID)
 	}
 
 	return sdkerrors.Wrapf(ErrCertVidNotEqualAccountVid,
 		"Root certificate is VID scoped: "+
-			"Only a Vendor associated with this VID can add an intermediate certificate: "+
+			"Only a Vendor associated with this VID can add a child certificate: "+
 			"Root certificate's VID = %v, Account VID = %v",
 		rootVID, accountVID)
 }
 
 func NewErrAccountVidNotEqualToCertVid(accountVID int32, certVID int32) error {
 	return sdkerrors.Wrapf(ErrCertVidNotEqualAccountVid,
-		"Certificate is VID scoped: Only a Vendor associated with this VID can add an intermediate certificate: "+
+		"Certificate is VID scoped: Only a vendor associated with this VID can add this certificate "+
 			"Account VID = %v, Certificate's VID = %v",
 		accountVID, certVID)
 }
