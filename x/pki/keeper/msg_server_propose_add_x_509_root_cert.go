@@ -50,7 +50,7 @@ func (k msgServer) ProposeAddX509RootCert(goCtx context.Context, msg *types.MsgP
 	}
 
 	// verify certificate
-	_, _, err = k.verifyCertificate(ctx, x509Certificate)
+	_, err = k.verifyCertificate(ctx, x509Certificate)
 	if err != nil {
 		return nil, err
 	}

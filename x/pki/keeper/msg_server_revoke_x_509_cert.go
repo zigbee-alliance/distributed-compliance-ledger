@@ -35,20 +35,23 @@ func (k msgServer) RevokeX509Cert(goCtx context.Context, msg *types.MsgRevokeX50
 			return nil, pkitypes.NewErrCertificateBySerialNumberDoesNotExist(msg.Subject, msg.SubjectKeyId, msg.SerialNumber)
 		}
 
-		k._revokeX509CertBySerialNumber(ctx, certBySerialNumber, certIdentifier, certificates)
+		k._revokeX509Certificate(ctx, certBySerialNumber, certIdentifier, certificates)
 	} else {
-		k._revokeX509Cert(ctx, certIdentifier, certificates)
+		k._revokeX509Certificates(ctx, certIdentifier, certificates)
+	}
+
+	if msg.RevokeChild {
+		// Remove certificate identifier from issuer's ChildCertificates record
+		k.RevokeChildCertificates(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
 	}
 
 	return &types.MsgRevokeX509CertResponse{}, nil
 }
 
-func (k msgServer) _revokeX509Cert(ctx sdk.Context, certID types.CertificateIdentifier, certificates types.ApprovedCertificates) {
+func (k msgServer) _revokeX509Certificates(ctx sdk.Context, certID types.CertificateIdentifier, certificates types.ApprovedCertificates) {
 	// Revoke certificates with given subject/subjectKeyID
 	k.AddRevokedCertificates(ctx, certificates)
 	k.RemoveApprovedCertificates(ctx, certID.Subject, certID.SubjectKeyId)
-	// Remove certificate identifier from issuer's ChildCertificates record
-	k.RevokeChildCertificates(ctx, certID.Subject, certID.SubjectKeyId)
 	// Remove certificate identifier from issuer's ChildCertificates record
 	k.RemoveChildCertificate(ctx, certificates.Certs[0].Issuer, certificates.Certs[0].AuthorityKeyId, certID)
 	// remove from subject -> subject key ID map
@@ -56,7 +59,7 @@ func (k msgServer) _revokeX509Cert(ctx sdk.Context, certID types.CertificateIden
 	// remove from subject key ID -> certificates map
 	k.RemoveApprovedCertificatesBySubjectKeyID(ctx, certID.Subject, certID.SubjectKeyId)
 }
-func (k msgServer) _revokeX509CertBySerialNumber(ctx sdk.Context, cert *types.Certificate, certID types.CertificateIdentifier, certificates types.ApprovedCertificates) {
+func (k msgServer) _revokeX509Certificate(ctx sdk.Context, cert *types.Certificate, certID types.CertificateIdentifier, certificates types.ApprovedCertificates) {
 	k.AddRevokedCertificates(ctx,
 		types.ApprovedCertificates{
 			Subject:      cert.Subject,
@@ -66,8 +69,6 @@ func (k msgServer) _revokeX509CertBySerialNumber(ctx sdk.Context, cert *types.Ce
 	k.removeCertFromList(cert.Issuer, cert.SerialNumber, &certificates)
 	if len(certificates.Certs) == 0 {
 		k.RemoveApprovedCertificates(ctx, cert.Subject, cert.SubjectKeyId)
-		// Remove certificate identifier from issuer's ChildCertificates record
-		k.RevokeChildCertificates(ctx, cert.Subject, cert.SubjectKeyId)
 		// Remove certificate identifier from issuer's ChildCertificates record
 		k.RemoveChildCertificate(ctx, cert.Issuer, cert.AuthorityKeyId, certID)
 

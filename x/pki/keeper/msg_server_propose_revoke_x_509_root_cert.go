@@ -64,6 +64,7 @@ func (k msgServer) ProposeRevokeX509RootCert(goCtx context.Context, msg *types.M
 		Subject:      msg.Subject,
 		SubjectKeyId: msg.SubjectKeyId,
 		SerialNumber: msg.SerialNumber,
+		RevokeChild:  msg.RevokeChild,
 		Approvals:    []*types.Grant{&grant},
 	}
 

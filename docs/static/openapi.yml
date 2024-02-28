@@ -9826,6 +9826,8 @@ paths:
                       type: string
                     serialNumber:
                       type: string
+                    revokeChild:
+                      type: boolean
               pagination:
                 type: object
                 properties:
@@ -9967,6 +9969,8 @@ paths:
                     type: string
                   serialNumber:
                     type: string
+                  revokeChild:
+                    type: boolean
         default:
           description: An unexpected error response.
           schema:
@@ -21135,6 +21139,8 @@ definitions:
         type: string
       serialNumber:
         type: string
+      revokeChild:
+        type: boolean
   zigbeealliance.distributedcomplianceledger.pki.QueryAllApprovedCertificatesResponse:
     type: object
     properties:
@@ -21480,6 +21486,8 @@ definitions:
               type: string
             serialNumber:
               type: string
+            revokeChild:
+              type: boolean
       pagination:
         type: object
         properties:
@@ -22012,6 +22020,8 @@ definitions:
             type: string
           serialNumber:
             type: string
+          revokeChild:
+            type: boolean
   zigbeealliance.distributedcomplianceledger.pki.QueryGetRejectedCertificatesResponse:
     type: object
     properties:

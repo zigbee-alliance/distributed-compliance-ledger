@@ -4,10 +4,10 @@ import (
 	"context"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/x509"
 
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/x509"
 )
 
 func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert) (*types.MsgAddX509CertResponse, error) {
@@ -53,9 +53,38 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 	}
 
 	// Valid certificate chain must be built for new certificate
-	rootCertificateSubject, rootCertificateSubjectKeyID, err := k.verifyCertificate(ctx, x509Certificate)
+	rootCert, err := k.verifyCertificate(ctx, x509Certificate)
 	if err != nil {
 		return nil, err
+	}
+	// Check Root and Intermediate certs for VID scoping
+	rootVid, err := x509.GetVidFromSubject(x509.ToSubjectAsText(rootCert.SubjectAsText))
+	if err != nil {
+		return nil, pkitypes.NewErrInvalidVidFormat(err)
+	}
+	childVid, err := x509.GetVidFromSubject(x509Certificate.SubjectAsText)
+	if err != nil {
+		return nil, pkitypes.NewErrInvalidVidFormat(err)
+	}
+	signerAddr, err := sdk.AccAddressFromBech32(msg.Signer)
+	if err != nil {
+		return nil, pkitypes.NewErrInvalidAddress(err)
+	}
+
+	signerAccount, _ := k.dclauthKeeper.GetAccountO(ctx, signerAddr)
+	accountVID := signerAccount.VendorID
+
+	if rootVid != 0 {
+		// If added under a VID scoped root CA: Intermediate cert must be also VID scoped to the same VID as a root one.
+		// Only a Vendor associated with this VID can add an intermediate certificate. So `rootVid == childVid == accountVID`
+		// condition must hold
+		if rootVid != childVid || rootVid != accountVID {
+			return nil, pkitypes.NewErrRootCertVidNotEqualToAccountVidOrCertVid(rootVid, accountVID, childVid)
+		}
+		// If added under a non-VID scoped root CA associated with a VID: Intermediate cert must be either VID scoped to the same VID, or non-VID scoped.
+		// Only a Vendor associated with this VID can add an intermediate certificate.
+	} else if childVid != 0 && childVid != accountVID {
+		return nil, pkitypes.NewErrAccountVidNotEqualToCertVid(accountVID, childVid)
 	}
 
 	// create new certificate
@@ -67,8 +96,8 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 		x509Certificate.SerialNumber,
 		x509Certificate.Issuer,
 		x509Certificate.AuthorityKeyID,
-		rootCertificateSubject,
-		rootCertificateSubjectKeyID,
+		rootCert.Subject,
+		rootCert.SubjectKeyID,
 		msg.Signer,
 	)
 
