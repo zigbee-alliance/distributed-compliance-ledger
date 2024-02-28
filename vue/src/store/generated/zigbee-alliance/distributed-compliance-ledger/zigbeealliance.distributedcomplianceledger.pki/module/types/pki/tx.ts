@@ -2427,6 +2427,7 @@ export interface Msg {
   AssignVid(request: MsgAssignVid): Promise<MsgAssignVidResponse>
   AddNocX509RootCert(request: MsgAddNocX509RootCert): Promise<MsgAddNocX509RootCertResponse>
   /** this line is used by starport scaffolding # proto/tx/rpc */
+  /** this line is used by starport scaffolding # proto/tx/rpc */
   RemoveX509Cert(request: MsgRemoveX509Cert): Promise<MsgRemoveX509CertResponse>
 }
 

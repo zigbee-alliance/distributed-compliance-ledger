@@ -787,6 +787,126 @@ func TestHandler_AddX509Cert(t *testing.T) {
 	}
 }
 
+func TestHandler_AddX509Cert_RootVID_Equal_To_CertVID_And_AccountVID(t *testing.T) {
+	setup := Setup(t)
+
+	// store root certificate
+	rootCertOptions := createPAACertWithNumericVidOptions()
+	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+
+	accAddress := GenerateAccAddress()
+	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.PAACertWithNumericVidVid)
+
+	// add x509 certificate
+	addX509Cert := types.NewMsgAddX509Cert(accAddress.String(), testconstants.PAICertWithNumericPidVid)
+	_, err := setup.Handler(setup.Ctx, addX509Cert)
+	require.NoError(t, err)
+
+	// query certificate
+	certs, _ := queryAllApprovedCertificates(setup)
+	require.Equal(t, 2, len(certs))
+	intermediateCerts, _ := queryApprovedCertificates(setup, testconstants.PAICertWithNumericPidVidSubject, testconstants.PAICertWithNumericPidVidSubjectKeyID)
+	require.Equal(t, 1, len(intermediateCerts.Certs))
+	require.Equal(t, testconstants.PAICertWithNumericPidVidSubject, intermediateCerts.Certs[0].Subject)
+	require.Equal(t, testconstants.PAICertWithNumericPidVidSubjectKeyID, intermediateCerts.Certs[0].SubjectKeyId)
+}
+
+func TestHandler_AddX509Cert_Non_VID_Scoped_Root__ChildVID_Equal_To_AccountVID(t *testing.T) {
+	setup := Setup(t)
+	// store root certificate
+	rootCertOptions := &rootCertOptions{
+		pemCert:      testconstants.PAACertNoVid,
+		info:         testconstants.Info,
+		subject:      testconstants.PAACertNoVidSubject,
+		subjectKeyID: testconstants.PAACertNoVidSubjectKeyID,
+	}
+	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+
+	accAddress := GenerateAccAddress()
+	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, 65522)
+
+	// add x509 certificate
+	addX509Cert := types.NewMsgAddX509Cert(accAddress.String(), testconstants.PAICertWithNumericVid)
+	_, err := setup.Handler(setup.Ctx, addX509Cert)
+	require.NoError(t, err)
+
+	// query certificate
+	certs, _ := queryAllApprovedCertificates(setup)
+	require.Equal(t, 2, len(certs))
+	intermediateCerts, _ := queryApprovedCertificates(setup, testconstants.PAICertWithNumericVidSubject, testconstants.PAICertWithNumericVidSubjectKeyID)
+	require.Equal(t, 1, len(intermediateCerts.Certs))
+	require.Equal(t, testconstants.PAICertWithNumericVidSubject, intermediateCerts.Certs[0].Subject)
+	require.Equal(t, testconstants.PAICertWithNumericVidSubjectKeyID, intermediateCerts.Certs[0].SubjectKeyId)
+}
+
+func TestHandler_AddX509Cert_Root_VID_Does_Not_Equal_To_ChildVID(t *testing.T) {
+	setup := Setup(t)
+
+	// store root certificate
+	rootCertOptions := &rootCertOptions{
+		pemCert:      testconstants.RootCertWithVid,
+		info:         testconstants.Info,
+		subject:      testconstants.RootCertWithVidSubject,
+		subjectKeyID: testconstants.RootCertWithVidSubjectKeyID,
+		vid:          testconstants.RootCertWithVidVid,
+	}
+	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+
+	accAddress := GenerateAccAddress()
+	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.RootCertWithVidVid)
+
+	// add x509 certificate
+	addX509Cert := types.NewMsgAddX509Cert(accAddress.String(), testconstants.IntermediateCertWithVid2)
+	_, err := setup.Handler(setup.Ctx, addX509Cert)
+	require.Error(t, err)
+	require.True(t, pkitypes.ErrCertVidNotEqualToRootVid.Is(err))
+}
+
+func TestHandler_AddX509Cert_Root_VID_Does_Not_Equal_To_AccountVID(t *testing.T) {
+	setup := Setup(t)
+
+	// store root certificate
+	rootCertOptions := &rootCertOptions{
+		pemCert:      testconstants.RootCertWithVid,
+		info:         testconstants.Info,
+		subject:      testconstants.RootCertWithVidSubject,
+		subjectKeyID: testconstants.RootCertWithVidSubjectKeyID,
+		vid:          testconstants.RootCertWithVidVid,
+	}
+	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+
+	accAddress := GenerateAccAddress()
+	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, 1111)
+
+	// add x509 certificate
+	addX509Cert := types.NewMsgAddX509Cert(accAddress.String(), testconstants.IntermediateCertWithVid1)
+	_, err := setup.Handler(setup.Ctx, addX509Cert)
+	require.Error(t, err)
+	require.True(t, pkitypes.ErrCertVidNotEqualAccountVid.Is(err))
+}
+
+func TestHandler_AddX509Cert_Non_Root_VID__Child_VID_Does_Not_Equal_To_AccountVID(t *testing.T) {
+	setup := Setup(t)
+
+	// store root certificate
+	rootCertOptions := &rootCertOptions{
+		pemCert:      testconstants.PAACertNoVid,
+		info:         testconstants.Info,
+		subject:      testconstants.PAACertNoVidSubject,
+		subjectKeyID: testconstants.PAACertNoVidSubjectKeyID,
+	}
+	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+
+	accAddress := GenerateAccAddress()
+	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, 1111)
+
+	// add x509 certificate
+	addX509Cert := types.NewMsgAddX509Cert(accAddress.String(), testconstants.PAICertWithNumericVid)
+	_, err := setup.Handler(setup.Ctx, addX509Cert)
+	require.Error(t, err)
+	require.True(t, pkitypes.ErrCertVidNotEqualAccountVid.Is(err))
+}
+
 func TestHandler_AddX509Cert_ForInvalidCertificate(t *testing.T) {
 	setup := Setup(t)
 
