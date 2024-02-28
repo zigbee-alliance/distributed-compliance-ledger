@@ -1984,7 +1984,7 @@ func Demo(suite *utils.TestSuite) {
 	_, err = GetX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
 	suite.AssertNotFound(err)
 
-	// Add VID scoped X509 certificate
+	// Add X509 certificates by Vendor Account
 
 	// Check that if root cert is VID scoped and RootVID==CertVID==AccountVID then adding x509 should succeed
 	// Add root certificate

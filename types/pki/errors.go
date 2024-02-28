@@ -224,7 +224,7 @@ func NewErrRootCertVidNotEqualToAccountVidOrCertVid(rootVID int32, accountVID in
 
 func NewErrAccountVidNotEqualToCertVid(accountVID int32, certVID int32) error {
 	return sdkerrors.Wrapf(ErrCertVidNotEqualAccountVid,
-		"Intermediate certificate is VID scoped: Only a Vendor associated with this VID can add an intermediate certificate: "+
+		"Certificate is VID scoped: Only a Vendor associated with this VID can add an intermediate certificate: "+
 			"Account VID = %v, Certificate's VID = %v",
 		accountVID, certVID)
 }
