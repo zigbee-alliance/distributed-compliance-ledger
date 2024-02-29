@@ -23,6 +23,7 @@ service Msg {
   rpc AssignVid(MsgAssignVid) returns (MsgAssignVidResponse);
   rpc AddNocX509RootCert(MsgAddNocX509RootCert) returns (MsgAddNocX509RootCertResponse);
   rpc RemoveX509Cert(MsgRemoveX509Cert) returns (MsgRemoveX509CertResponse);
+  rpc AddNocX509Cert(MsgAddNocX509Cert) returns (MsgAddNocX509CertResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -176,6 +177,14 @@ message MsgRemoveX509Cert {
 }
 
 message MsgRemoveX509CertResponse {
+}
+
+message MsgAddNocX509Cert {
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  string cert = 2 [(gogoproto.moretags) = "validate:\"required,max=10485760\""];
+}
+
+message MsgAddNocX509CertResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message

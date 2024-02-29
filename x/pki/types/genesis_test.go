@@ -134,6 +134,14 @@ NocRootCertificatesList: []types.NocRootCertificates{
 		Vid: 1,
 },
 },
+NocCertificatesList: []types.NocCertificates{
+	{
+		Vid: 0,
+},
+	{
+		Vid: 1,
+},
+},
 // this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -300,6 +308,20 @@ IssuerSubjectKeyID: "0",
 	desc:     "duplicated nocRootCertificates",
 	genState: &types.GenesisState{
 		NocRootCertificatesList: []types.NocRootCertificates{
+			{
+				Vid: 0,
+},
+			{
+				Vid: 0,
+},
+		},
+	},
+	valid:    false,
+},
+{
+	desc:     "duplicated nocCertificates",
+	genState: &types.GenesisState{
+		NocCertificatesList: []types.NocCertificates{
 			{
 				Vid: 0,
 },

@@ -9260,6 +9260,290 @@ paths:
           type: string
       tags:
         - Query
+  /dcl/pki/noc-certificates:
+    get:
+      summary: Queries a list of NocCertificates items.
+      operationId: NocCertificatesAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              nocCertificates:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    vid:
+                      type: integer
+                      format: int32
+                    certs:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          pemCert:
+                            type: string
+                          serialNumber:
+                            type: string
+                          issuer:
+                            type: string
+                          authorityKeyId:
+                            type: string
+                          rootSubject:
+                            type: string
+                          rootSubjectKeyId:
+                            type: string
+                          isRoot:
+                            type: boolean
+                          owner:
+                            type: string
+                          subject:
+                            type: string
+                          subjectKeyId:
+                            type: string
+                          approvals:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                address:
+                                  type: string
+                                time:
+                                  type: string
+                                  format: int64
+                                info:
+                                  type: string
+                          subjectAsText:
+                            type: string
+                          rejects:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                address:
+                                  type: string
+                                time:
+                                  type: string
+                                  format: int64
+                                info:
+                                  type: string
+                          vid:
+                            type: integer
+                            format: int32
+                          isNoc:
+                            type: boolean
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /dcl/pki/noc-certificates/{vid}:
+    get:
+      summary: Queries a NocCertificates by index.
+      operationId: NocCertificates
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              nocCertificates:
+                type: object
+                properties:
+                  vid:
+                    type: integer
+                    format: int32
+                  certs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        pemCert:
+                          type: string
+                        serialNumber:
+                          type: string
+                        issuer:
+                          type: string
+                        authorityKeyId:
+                          type: string
+                        rootSubject:
+                          type: string
+                        rootSubjectKeyId:
+                          type: string
+                        isRoot:
+                          type: boolean
+                        owner:
+                          type: string
+                        subject:
+                          type: string
+                        subjectKeyId:
+                          type: string
+                        approvals:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                              time:
+                                type: string
+                                format: int64
+                              info:
+                                type: string
+                        subjectAsText:
+                          type: string
+                        rejects:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                              time:
+                                type: string
+                                format: int64
+                              info:
+                                type: string
+                        vid:
+                          type: integer
+                          format: int32
+                        isNoc:
+                          type: boolean
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: vid
+          in: path
+          required: true
+          type: integer
+          format: int32
+      tags:
+        - Query
   /dcl/pki/noc-root-certificates:
     get:
       summary: Queries a list of NocRootCertificates items.
@@ -9540,8 +9824,8 @@ paths:
         - name: vid
           in: path
           required: true
-          type: string
-          format: uint64
+          type: integer
+          format: int32
       tags:
         - Query
   /dcl/pki/proposed-certificates:
@@ -20945,6 +21229,68 @@ definitions:
         format: int64
       info:
         type: string
+  zigbeealliance.distributedcomplianceledger.pki.NocCertificates:
+    type: object
+    properties:
+      vid:
+        type: integer
+        format: int32
+      certs:
+        type: array
+        items:
+          type: object
+          properties:
+            pemCert:
+              type: string
+            serialNumber:
+              type: string
+            issuer:
+              type: string
+            authorityKeyId:
+              type: string
+            rootSubject:
+              type: string
+            rootSubjectKeyId:
+              type: string
+            isRoot:
+              type: boolean
+            owner:
+              type: string
+            subject:
+              type: string
+            subjectKeyId:
+              type: string
+            approvals:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
+            subjectAsText:
+              type: string
+            rejects:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
+            vid:
+              type: integer
+              format: int32
+            isNoc:
+              type: boolean
   zigbeealliance.distributedcomplianceledger.pki.NocRootCertificates:
     type: object
     properties:
@@ -21153,6 +21499,98 @@ definitions:
               type: string
             subjectKeyId:
               type: string
+            certs:
+              type: array
+              items:
+                type: object
+                properties:
+                  pemCert:
+                    type: string
+                  serialNumber:
+                    type: string
+                  issuer:
+                    type: string
+                  authorityKeyId:
+                    type: string
+                  rootSubject:
+                    type: string
+                  rootSubjectKeyId:
+                    type: string
+                  isRoot:
+                    type: boolean
+                  owner:
+                    type: string
+                  subject:
+                    type: string
+                  subjectKeyId:
+                    type: string
+                  approvals:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
+                  subjectAsText:
+                    type: string
+                  rejects:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
+                  vid:
+                    type: integer
+                    format: int32
+                  isNoc:
+                    type: boolean
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  zigbeealliance.distributedcomplianceledger.pki.QueryAllNocCertificatesResponse:
+    type: object
+    properties:
+      nocCertificates:
+        type: array
+        items:
+          type: object
+          properties:
+            vid:
+              type: integer
+              format: int32
             certs:
               type: array
               items:
@@ -21811,6 +22249,71 @@ definitions:
                   type: string
                 subjectKeyId:
                   type: string
+  zigbeealliance.distributedcomplianceledger.pki.QueryGetNocCertificatesResponse:
+    type: object
+    properties:
+      nocCertificates:
+        type: object
+        properties:
+          vid:
+            type: integer
+            format: int32
+          certs:
+            type: array
+            items:
+              type: object
+              properties:
+                pemCert:
+                  type: string
+                serialNumber:
+                  type: string
+                issuer:
+                  type: string
+                authorityKeyId:
+                  type: string
+                rootSubject:
+                  type: string
+                rootSubjectKeyId:
+                  type: string
+                isRoot:
+                  type: boolean
+                owner:
+                  type: string
+                subject:
+                  type: string
+                subjectKeyId:
+                  type: string
+                approvals:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      time:
+                        type: string
+                        format: int64
+                      info:
+                        type: string
+                subjectAsText:
+                  type: string
+                rejects:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      time:
+                        type: string
+                        format: int64
+                      info:
+                        type: string
+                vid:
+                  type: integer
+                  format: int32
+                isNoc:
+                  type: boolean
   zigbeealliance.distributedcomplianceledger.pki.QueryGetNocRootCertificatesResponse:
     type: object
     properties:
