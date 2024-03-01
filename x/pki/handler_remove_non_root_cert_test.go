@@ -189,6 +189,7 @@ func TestHandler_RemoveX509Cert_RevokedCertificate(t *testing.T) {
 		testconstants.IntermediateSubject,
 		testconstants.IntermediateSubjectKeyID,
 		testconstants.IntermediateSerialNumber,
+		false,
 		testconstants.Info,
 	)
 	_, err = setup.Handler(setup.Ctx, revokeX509Cert)

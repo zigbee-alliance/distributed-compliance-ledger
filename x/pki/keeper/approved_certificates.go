@@ -41,22 +41,6 @@ func (k Keeper) GetApprovedCertificates(
 	return val, true
 }
 
-func (k Keeper) GetApprovedCertificateBySerialNumber(
-	ctx sdk.Context,
-	subject string,
-	subjectKeyID string,
-	serialNumber string,
-) (val types.Certificate, found bool) {
-	certs, found := k.GetApprovedCertificates(ctx, subject, subjectKeyID)
-	if !found {
-		return val, false
-	}
-
-	cert, found := findCertificate(serialNumber, &certs.Certs)
-
-	return *cert, found
-}
-
 // RemoveApprovedCertificates removes a approvedCertificates from the store.
 func (k Keeper) RemoveApprovedCertificates(
 	ctx sdk.Context,

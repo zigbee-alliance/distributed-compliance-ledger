@@ -1531,6 +1531,16 @@ func createTestRootCertOptions() *rootCertOptions {
 	}
 }
 
+func createRootWithVidOptions() *rootCertOptions {
+	return &rootCertOptions{
+		pemCert:      testconstants.RootCertWithVid,
+		info:         testconstants.Info,
+		subject:      testconstants.RootCertWithVidSubject,
+		subjectKeyID: testconstants.RootCertWithVidSubjectKeyID,
+		vid:          testconstants.RootCertWithVidVid,
+	}
+}
+
 func createPAACertWithNumericVidOptions() *rootCertOptions {
 	return &rootCertOptions{
 		pemCert:      testconstants.PAACertWithNumericVid,

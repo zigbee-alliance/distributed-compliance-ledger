@@ -2031,7 +2031,7 @@ func Demo(suite *utils.TestSuite) {
 	// Check approved certificates
 	certs, _ = GetX509Cert(suite, testconstants.RootCertWithVidSubject, testconstants.RootCertWithVidSubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
-	certs, _ = GetX509Cert(suite, testconstants.IntermediateCertWithVidSubject, testconstants.IntermediateCertWithVidSubjectKeyID)
+	certs, _ = GetX509Cert(suite, testconstants.IntermediateCertWithVid1Subject, testconstants.IntermediateCertWithVid1SubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
 
 	// Check that if root cert is VID scoped and rootVID != CertVID then adding an intermediate cert should fail
@@ -2044,7 +2044,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Error(suite.T, err)
 
 	// Check there is only one approved intermediate certificate
-	certs, _ = GetX509Cert(suite, testconstants.IntermediateCertWithVidSubject, testconstants.IntermediateCertWithVidSubjectKeyID)
+	certs, _ = GetX509Cert(suite, testconstants.IntermediateCertWithVid1Subject, testconstants.IntermediateCertWithVid1SubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
 	require.Equal(suite.T, testconstants.IntermediateCertWithVid1SerialNumber, certs.Certs[0].SerialNumber)
 

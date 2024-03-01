@@ -20,80 +20,68 @@ func TestHandler_AddX509Cert(t *testing.T) {
 	rootCertificate := rootCertificate(setup.Trustee1)
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, rootCertificate)
 
-	for i, role := range []dclauthtypes.AccountRole{
-		dclauthtypes.Vendor,
-		dclauthtypes.CertificationCenter,
-		dclauthtypes.Trustee,
-		dclauthtypes.NodeAdmin,
-	} {
-		accAddress := GenerateAccAddress()
-		setup.AddAccount(accAddress, []dclauthtypes.AccountRole{role}, 1)
+	accAddress := GenerateAccAddress()
+	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, 1)
 
-		// add x509 certificate
-		addX509Cert := types.NewMsgAddX509Cert(accAddress.String(), testconstants.IntermediateCertPem)
-		_, err := setup.Handler(setup.Ctx, addX509Cert)
-		require.NoError(t, err)
+	// add x509 certificate
+	addX509Cert := types.NewMsgAddX509Cert(accAddress.String(), testconstants.IntermediateCertPem)
+	_, err := setup.Handler(setup.Ctx, addX509Cert)
+	require.NoError(t, err)
 
-		// query certificate
-		certificate, _ := querySingleApprovedCertificate(
-			setup, testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
-		require.Equal(t, intermediateCertificate(accAddress), *certificate)
+	// query certificate
+	certificate, _ := querySingleApprovedCertificate(
+		setup, testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
+	require.Equal(t, intermediateCertificate(accAddress), *certificate)
 
-		certificateBySubjectKeyID, _ := queryAllApprovedCertificatesBySubjectKeyID(setup, testconstants.IntermediateSubjectKeyID)
-		require.Equal(t, 1, len(certificateBySubjectKeyID))
-		require.Equal(t, i+1, len(certificateBySubjectKeyID[0].Certs))
+	certificateBySubjectKeyID, _ := queryAllApprovedCertificatesBySubjectKeyID(setup, testconstants.IntermediateSubjectKeyID)
+	require.Equal(t, 1, len(certificateBySubjectKeyID))
+	require.Equal(t, 1, len(certificateBySubjectKeyID[0].Certs))
 
-		certs := make([]*types.Certificate, 0)
-		certs = append(certs, certificate, certificateBySubjectKeyID[0].Certs[i])
-		for _, cert := range certs {
-			// check
-			require.Equal(t, addX509Cert.Cert, cert.PemCert)
-			require.Equal(t, addX509Cert.Signer, cert.Owner)
-			require.Equal(t, testconstants.IntermediateSubject, cert.Subject)
-			require.Equal(t, testconstants.IntermediateSubjectKeyID, cert.SubjectKeyId)
-			require.Equal(t, testconstants.IntermediateSerialNumber, cert.SerialNumber)
-			require.False(t, cert.IsRoot)
-			require.Equal(t, testconstants.IntermediateIssuer, cert.Issuer)
-			require.Equal(t, testconstants.IntermediateAuthorityKeyID, cert.AuthorityKeyId)
-			require.Equal(t, testconstants.RootSubject, cert.RootSubject)
-			require.Equal(t, testconstants.RootSubjectKeyID, cert.RootSubjectKeyId)
-		}
-
-		// check that unique certificate key is registered
-		require.True(t, setup.Keeper.IsUniqueCertificatePresent(
-			setup.Ctx, testconstants.IntermediateIssuer, testconstants.IntermediateSerialNumber))
-
-		// check that child certificates of issuer contains certificate identifier
-		issuerChildren, _ := queryChildCertificates(
-			setup, testconstants.IntermediateIssuer, testconstants.IntermediateAuthorityKeyID)
-		require.Equal(t, 1, len(issuerChildren.CertIds))
-		require.Equal(t,
-			&types.CertificateIdentifier{
-				Subject:      testconstants.IntermediateSubject,
-				SubjectKeyId: testconstants.IntermediateSubjectKeyID,
-			},
-			issuerChildren.CertIds[0])
-
-		// check that no proposed certificate has been created
-		_, err = queryProposedCertificate(setup, testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
-		require.Error(t, err)
-		require.Equal(t, codes.NotFound, status.Code(err))
-
-		// cleanup for next iteration
-		setup.Keeper.RemoveApprovedCertificates(setup.Ctx,
-			testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
-		setup.Keeper.RemoveUniqueCertificate(setup.Ctx,
-			testconstants.IntermediateIssuer, testconstants.IntermediateSerialNumber)
-		setup.Keeper.RemoveChildCertificates(setup.Ctx,
-			testconstants.IntermediateIssuer, testconstants.IntermediateAuthorityKeyID)
+	certs := make([]*types.Certificate, 0)
+	certs = append(certs, certificate, certificateBySubjectKeyID[0].Certs[0])
+	for _, cert := range certs {
+		// check
+		require.Equal(t, addX509Cert.Cert, cert.PemCert)
+		require.Equal(t, addX509Cert.Signer, cert.Owner)
+		require.Equal(t, testconstants.IntermediateSubject, cert.Subject)
+		require.Equal(t, testconstants.IntermediateSubjectKeyID, cert.SubjectKeyId)
+		require.Equal(t, testconstants.IntermediateSerialNumber, cert.SerialNumber)
+		require.False(t, cert.IsRoot)
+		require.Equal(t, testconstants.IntermediateIssuer, cert.Issuer)
+		require.Equal(t, testconstants.IntermediateAuthorityKeyID, cert.AuthorityKeyId)
+		require.Equal(t, testconstants.RootSubject, cert.RootSubject)
+		require.Equal(t, testconstants.RootSubjectKeyID, cert.RootSubjectKeyId)
 	}
+
+	// check that unique certificate key is registered
+	require.True(t, setup.Keeper.IsUniqueCertificatePresent(
+		setup.Ctx, testconstants.IntermediateIssuer, testconstants.IntermediateSerialNumber))
+
+	// check that child certificates of issuer contains certificate identifier
+	issuerChildren, _ := queryChildCertificates(
+		setup, testconstants.IntermediateIssuer, testconstants.IntermediateAuthorityKeyID)
+	require.Equal(t, 1, len(issuerChildren.CertIds))
+	require.Equal(t,
+		&types.CertificateIdentifier{
+			Subject:      testconstants.IntermediateSubject,
+			SubjectKeyId: testconstants.IntermediateSubjectKeyID,
+		},
+		issuerChildren.CertIds[0])
+
+	// check that no proposed certificate has been created
+	_, err = queryProposedCertificate(setup, testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
+	require.Error(t, err)
+	require.Equal(t, codes.NotFound, status.Code(err))
 }
 
 func TestHandler_AddX509Cert_ForInvalidCertificate(t *testing.T) {
 	setup := Setup(t)
 
+	accAddress := GenerateAccAddress()
+	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, 1)
+
 	// add x509 certificate
-	addX509Cert := types.NewMsgAddX509Cert(setup.Trustee1.String(), testconstants.StubCertPem)
+	addX509Cert := types.NewMsgAddX509Cert(accAddress.String(), testconstants.StubCertPem)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
 	require.Error(t, err)
 	require.True(t, pkitypes.ErrInvalidCertificate.Is(err))
@@ -102,8 +90,11 @@ func TestHandler_AddX509Cert_ForInvalidCertificate(t *testing.T) {
 func TestHandler_AddX509Cert_ForRootCertificate(t *testing.T) {
 	setup := Setup(t)
 
+	accAddress := GenerateAccAddress()
+	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, 1)
+
 	// add root certificate as leaf x509 certificate
-	addX509Cert := types.NewMsgAddX509Cert(setup.Trustee1.String(), testconstants.RootCertPem)
+	addX509Cert := types.NewMsgAddX509Cert(accAddress.String(), testconstants.RootCertPem)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
 	require.Error(t, err)
 	require.True(t, pkitypes.ErrNonRootCertificateSelfSigned.Is(err))
@@ -116,8 +107,11 @@ func TestHandler_AddX509Cert_ForDuplicate(t *testing.T) {
 	rootCertificate := rootCertificate(setup.Trustee1)
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, rootCertificate)
 
+	accAddress := GenerateAccAddress()
+	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, 1)
+
 	// store intermediate certificate
-	addX509Cert := types.NewMsgAddX509Cert(setup.Trustee1.String(), testconstants.IntermediateCertPem)
+	addX509Cert := types.NewMsgAddX509Cert(accAddress.String(), testconstants.IntermediateCertPem)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
 	require.NoError(t, err)
 
@@ -127,17 +121,17 @@ func TestHandler_AddX509Cert_ForDuplicate(t *testing.T) {
 	require.True(t, pkitypes.ErrCertificateAlreadyExists.Is(err))
 }
 
-func TestHandler_AddX509Cert_ForNocCertificate(t *testing.T) {
+func TestHandler_AddX509Cert_ForExistingNocCertificate(t *testing.T) {
 	setup := Setup(t)
 
 	// store root certificate
 	rootCertificate := rootCertificate(setup.Trustee1)
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, rootCertificate)
 
-	// Store the NOC certificate
 	vendorAccAddress := GenerateAccAddress()
 	setup.AddAccount(vendorAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
+	// Store the NOC certificate
 	nocCertificate := intermediateCertificate(vendorAccAddress)
 	nocCertificate.SerialNumber = testconstants.TestSerialNumber
 	nocCertificate.IsNoc = true
@@ -152,9 +146,45 @@ func TestHandler_AddX509Cert_ForNocCertificate(t *testing.T) {
 	setup.Keeper.SetUniqueCertificate(setup.Ctx, uniqueCertificate)
 
 	// store intermediate certificate
-	addX509Cert := types.NewMsgAddX509Cert(setup.Trustee1.String(), testconstants.IntermediateCertPem)
+	addX509Cert := types.NewMsgAddX509Cert(vendorAccAddress.String(), testconstants.IntermediateCertPem)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
+	require.Error(t, err)
 	require.True(t, pkitypes.ErrInappropriateCertificateType.Is(err))
+}
+
+func TestHandler_AddX509Cert_NoRootCert(t *testing.T) {
+	setup := Setup(t)
+
+	vendorAccAddress := GenerateAccAddress()
+	setup.AddAccount(vendorAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
+
+	// add intermediate certificate
+	intermediateCertificate := intermediateCertificate(vendorAccAddress)
+	setup.Keeper.AddApprovedCertificate(setup.Ctx, intermediateCertificate)
+
+	// add leaf x509 certificate
+	addX509Cert := types.NewMsgAddX509Cert(vendorAccAddress.String(), testconstants.LeafCertPem)
+	_, err := setup.Handler(setup.Ctx, addX509Cert)
+	require.Error(t, err)
+	require.True(t, pkitypes.ErrInvalidCertificate.Is(err))
+}
+
+func TestHandler_AddX509Cert_RootIsNoc(t *testing.T) {
+	setup := Setup(t)
+
+	accAddress := GenerateAccAddress()
+	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.IntermediateCertWithVid1Vid)
+
+	// Add NOC root certificate
+	addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), testconstants.RootCertPem)
+	_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
+	require.NoError(t, err)
+
+	// add x509 certificate
+	addX509Cert := types.NewMsgAddX509Cert(accAddress.String(), testconstants.IntermediateCertWithVid1)
+	_, err = setup.Handler(setup.Ctx, addX509Cert)
+	require.Error(t, err)
+	require.True(t, pkitypes.ErrCertVidNotEqualAccountVid.Is(err))
 }
 
 func TestHandler_AddX509Cert_ForDifferentSerialNumber(t *testing.T) {
@@ -164,8 +194,11 @@ func TestHandler_AddX509Cert_ForDifferentSerialNumber(t *testing.T) {
 	rootCertificate := rootCertificate(setup.Trustee1)
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, rootCertificate)
 
+	vendorAccAddress := GenerateAccAddress()
+	setup.AddAccount(vendorAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
+
 	// store intermediate certificate with different serial number
-	intermediateCertificate := intermediateCertificate(setup.Trustee1)
+	intermediateCertificate := intermediateCertificate(vendorAccAddress)
 	intermediateCertificate.SerialNumber = SerialNumber
 	setup.Keeper.SetUniqueCertificate(
 		setup.Ctx,
@@ -174,7 +207,7 @@ func TestHandler_AddX509Cert_ForDifferentSerialNumber(t *testing.T) {
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, intermediateCertificate)
 
 	// store intermediate certificate second time
-	addX509Cert := types.NewMsgAddX509Cert(setup.Trustee1.String(), testconstants.IntermediateCertPem)
+	addX509Cert := types.NewMsgAddX509Cert(vendorAccAddress.String(), testconstants.IntermediateCertPem)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
 	require.NoError(t, err)
 
@@ -198,48 +231,14 @@ func TestHandler_AddX509Cert_ForDifferentSerialNumber(t *testing.T) {
 	}
 }
 
-func TestHandler_AddX509Cert_ForDifferentSerialNumberDifferentSigner(t *testing.T) {
-	setup := Setup(t)
-
-	// store root certificate
-	rootCertificate := rootCertificate(setup.Trustee1)
-	setup.Keeper.AddApprovedCertificate(setup.Ctx, rootCertificate)
-
-	// store intermediate certificate with different serial number
-	intermediateCertificate := intermediateCertificate(setup.Trustee1)
-	intermediateCertificate.SerialNumber = SerialNumber
-	setup.Keeper.SetUniqueCertificate(
-		setup.Ctx,
-		uniqueCertificate(intermediateCertificate.Issuer, intermediateCertificate.SerialNumber),
-	)
-	setup.Keeper.AddApprovedCertificate(setup.Ctx, intermediateCertificate)
-
-	// store intermediate certificate second time
-	addX509Cert := types.NewMsgAddX509Cert(setup.Trustee2.String(), testconstants.IntermediateCertPem)
-	_, err := setup.Handler(setup.Ctx, addX509Cert)
-	require.Error(t, err)
-	require.True(t, sdkerrors.ErrUnauthorized.Is(err))
-}
-
 func TestHandler_AddX509Cert_ForAbsentDirectParentCert(t *testing.T) {
 	setup := Setup(t)
 
+	vendorAccAddress := GenerateAccAddress()
+	setup.AddAccount(vendorAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
+
 	// add intermediate x509 certificate
-	addX509Cert := types.NewMsgAddX509Cert(setup.Trustee1.String(), testconstants.IntermediateCertPem)
-	_, err := setup.Handler(setup.Ctx, addX509Cert)
-	require.Error(t, err)
-	require.True(t, pkitypes.ErrInvalidCertificate.Is(err))
-}
-
-func TestHandler_AddX509Cert_ForNoRootCert(t *testing.T) {
-	setup := Setup(t)
-
-	// add intermediate certificate
-	intermediateCertificate := intermediateCertificate(setup.Trustee1)
-	setup.Keeper.AddApprovedCertificate(setup.Ctx, intermediateCertificate)
-
-	// add leaf x509 certificate
-	addX509Cert := types.NewMsgAddX509Cert(setup.Trustee1.String(), testconstants.LeafCertPem)
+	addX509Cert := types.NewMsgAddX509Cert(vendorAccAddress.String(), testconstants.IntermediateCertPem)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
 	require.Error(t, err)
 	require.True(t, pkitypes.ErrInvalidCertificate.Is(err))
@@ -254,8 +253,11 @@ func TestHandler_AddX509Cert_ForFailedCertificateVerification(t *testing.T) {
 		testconstants.RootSerialNumber, setup.Trustee1.String(), []*types.Grant{}, []*types.Grant{}, testconstants.Vid)
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, invalidRootCertificate)
 
+	vendorAccAddress := GenerateAccAddress()
+	setup.AddAccount(vendorAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
+
 	// add intermediate x509 certificate
-	addX509Cert := types.NewMsgAddX509Cert(setup.Trustee1.String(), testconstants.IntermediateCertPem)
+	addX509Cert := types.NewMsgAddX509Cert(vendorAccAddress.String(), testconstants.IntermediateCertPem)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
 	require.Error(t, err)
 	require.True(t, pkitypes.ErrInvalidCertificate.Is(err))
@@ -268,13 +270,16 @@ func TestHandler_AddX509Cert_ForTree(t *testing.T) {
 	rootCertOptions := createTestRootCertOptions()
 	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
+	vendorAccAddress := GenerateAccAddress()
+	setup.AddAccount(vendorAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
+
 	// add intermediate x509 certificate
-	addIntermediateX509Cert := types.NewMsgAddX509Cert(setup.Trustee1.String(), testconstants.IntermediateCertPem)
+	addIntermediateX509Cert := types.NewMsgAddX509Cert(vendorAccAddress.String(), testconstants.IntermediateCertPem)
 	_, err := setup.Handler(setup.Ctx, addIntermediateX509Cert)
 	require.NoError(t, err)
 
 	// add leaf x509 certificate
-	addLeafX509Cert := types.NewMsgAddX509Cert(setup.Trustee1.String(), testconstants.LeafCertPem)
+	addLeafX509Cert := types.NewMsgAddX509Cert(vendorAccAddress.String(), testconstants.LeafCertPem)
 	_, err = setup.Handler(setup.Ctx, addLeafX509Cert)
 	require.NoError(t, err)
 
@@ -331,8 +336,11 @@ func TestHandler_AddX509Cert_EachChildCertRefersToTwoParentCerts(t *testing.T) {
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, rootCert)
 	setup.Keeper.SetUniqueCertificate(setup.Ctx, uniqueCertificate(rootCert.Subject, rootCert.SerialNumber))
 
+	vendorAccAddress := GenerateAccAddress()
+	setup.AddAccount(vendorAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
+
 	// store intermediate certificate (it refers to two parent certificates)
-	intermediateCertificate := intermediateCertificate(setup.Trustee1)
+	intermediateCertificate := intermediateCertificate(vendorAccAddress)
 	intermediateCertificate.SerialNumber = SerialNumber
 
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, intermediateCertificate)
@@ -350,12 +358,12 @@ func TestHandler_AddX509Cert_EachChildCertRefersToTwoParentCerts(t *testing.T) {
 	setup.Keeper.SetChildCertificates(setup.Ctx, rootChildCertificates)
 
 	// store second intermediate certificate (it refers to two parent certificates)
-	addX509Cert := types.NewMsgAddX509Cert(setup.Trustee1.String(), testconstants.IntermediateCertPem)
+	addX509Cert := types.NewMsgAddX509Cert(vendorAccAddress.String(), testconstants.IntermediateCertPem)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
 	require.NoError(t, err)
 
 	// store leaf certificate (it refers to two parent certificates)
-	addX509Cert = types.NewMsgAddX509Cert(setup.Trustee1.String(), testconstants.LeafCertPem)
+	addX509Cert = types.NewMsgAddX509Cert(vendorAccAddress.String(), testconstants.LeafCertPem)
 	_, err = setup.Handler(setup.Ctx, addX509Cert)
 	require.NoError(t, err)
 
@@ -394,30 +402,6 @@ func TestHandler_AddX509Cert_EachChildCertRefersToTwoParentCerts(t *testing.T) {
 	require.Error(t, err)
 	require.Equal(t, codes.NotFound, status.Code(err))
 	require.Nil(t, leafCertChildren)
-}
-
-func TestHandler_AddX509Cert_ByNotOwner(t *testing.T) {
-	setup := Setup(t)
-
-	// store root certificate
-	rootCertificate := rootCertificate(setup.Trustee1)
-	setup.Keeper.AddApprovedCertificate(setup.Ctx, rootCertificate)
-
-	// Store an intermediate certificate with the first trustee as the owner
-	intermediateCertificate := intermediateCertificate(setup.Trustee1)
-	intermediateCertificate.SerialNumber = SerialNumber
-	setup.Keeper.AddApprovedCertificate(setup.Ctx, intermediateCertificate)
-	setup.Keeper.AddApprovedCertificateBySubjectKeyID(setup.Ctx, intermediateCertificate)
-	setup.Keeper.SetUniqueCertificate(
-		setup.Ctx,
-		uniqueCertificate(intermediateCertificate.Issuer, intermediateCertificate.SerialNumber),
-	)
-
-	// add an intermediate certificate with the same subject and SKID by second trustee
-	addX509Cert := types.NewMsgAddX509Cert(setup.Trustee2.String(), testconstants.IntermediateCertPem)
-	_, err := setup.Handler(setup.Ctx, addX509Cert)
-	require.Error(t, err)
-	require.True(t, sdkerrors.ErrUnauthorized.Is(err))
 }
 
 func TestHandler_AddX509Cert_ByNotOwnerButSameVendor(t *testing.T) {
@@ -481,4 +465,189 @@ func TestHandler_AddX509Cert_ByNotOwnerAndOtherVendor(t *testing.T) {
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
 	require.Error(t, err)
 	require.True(t, sdkerrors.ErrUnauthorized.Is(err))
+}
+
+func TestHandler_AddX509Cert_SendorNotVendor(t *testing.T) {
+	setup := Setup(t)
+
+	// store root certificate
+	rootCertOptions := createRootWithVidOptions()
+	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+
+	// add x509 certificate
+	addX509Cert := types.NewMsgAddX509Cert(setup.Trustee1.String(), testconstants.IntermediateCertWithVid1)
+	_, err := setup.Handler(setup.Ctx, addX509Cert)
+	require.Error(t, err)
+	require.True(t, sdkerrors.ErrUnauthorized.Is(err))
+}
+
+func TestHandler_AddX509Cert_VIDScopedRoot(t *testing.T) {
+	setup := Setup(t)
+
+	// store root certificate
+	rootCertOptions := createPAACertWithNumericVidOptions()
+	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+
+	accAddress := GenerateAccAddress()
+	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.PAACertWithNumericVidVid)
+
+	// add x509 certificate
+	addX509Cert := types.NewMsgAddX509Cert(accAddress.String(), testconstants.PAICertWithNumericPidVid)
+	_, err := setup.Handler(setup.Ctx, addX509Cert)
+	require.NoError(t, err)
+
+	// query certificate
+	certs, _ := queryAllApprovedCertificates(setup)
+	require.Equal(t, 2, len(certs))
+	intermediateCerts, _ := queryApprovedCertificates(setup, testconstants.PAICertWithNumericPidVidSubject, testconstants.PAICertWithNumericPidVidSubjectKeyID)
+	require.Equal(t, 1, len(intermediateCerts.Certs))
+	require.Equal(t, testconstants.PAICertWithNumericPidVidSubject, intermediateCerts.Certs[0].Subject)
+	require.Equal(t, testconstants.PAICertWithNumericPidVidSubjectKeyID, intermediateCerts.Certs[0].SubjectKeyId)
+}
+
+func TestHandler_AddX509Cert_NonVIDScopedRoot(t *testing.T) {
+	accAddress := GenerateAccAddress()
+
+	cases := []struct {
+		name                  string
+		rootCertOptions       *rootCertOptions
+		childCert             string
+		childCertSubject      string
+		childCertSubjectKeyId string
+		accountVid            int32
+	}{
+		{
+			name:                  "VidScopedChild",
+			rootCertOptions:       createPAACertNoVidOptions(testconstants.PAICertWithVidVid),
+			childCert:             testconstants.PAICertWithNumericVid,
+			childCertSubject:      testconstants.PAICertWithNumericVidSubject,
+			childCertSubjectKeyId: testconstants.PAICertWithNumericVidSubjectKeyID,
+			accountVid:            testconstants.PAICertWithVidVid,
+		},
+		{
+			name:                  "NonVidScopedChild",
+			rootCertOptions:       createTestRootCertOptions(),
+			childCert:             testconstants.IntermediateCertPem,
+			childCertSubject:      testconstants.IntermediateSubject,
+			childCertSubjectKeyId: testconstants.IntermediateSubjectKeyID,
+			accountVid:            testconstants.Vid,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			setup := Setup(t)
+			// store root certificate
+			proposeAndApproveRootCertificate(setup, setup.Trustee1, tc.rootCertOptions)
+
+			// add vendor account
+			setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, tc.accountVid)
+
+			// add x509 certificate
+			addX509Cert := types.NewMsgAddX509Cert(accAddress.String(), tc.childCert)
+			_, err := setup.Handler(setup.Ctx, addX509Cert)
+			require.NoError(t, err)
+
+			// query certificate
+			certs, _ := queryAllApprovedCertificates(setup)
+			require.Equal(t, 2, len(certs))
+			intermediateCerts, _ := queryApprovedCertificates(setup, tc.childCertSubject, tc.childCertSubjectKeyId)
+			require.Equal(t, 1, len(intermediateCerts.Certs))
+			require.Equal(t, tc.childCertSubject, intermediateCerts.Certs[0].Subject)
+			require.Equal(t, tc.childCertSubjectKeyId, intermediateCerts.Certs[0].SubjectKeyId)
+		})
+	}
+}
+
+func TestHandler_AddX509Cert_VIDScopedRoot_NegativeCases(t *testing.T) {
+	accAddress := GenerateAccAddress()
+
+	cases := []struct {
+		name            string
+		rootCertOptions *rootCertOptions
+		childCert       string
+		accountVid      int32
+		err             error
+	}{
+		// {
+		// 	name:            "NonVidScopedChild",
+		// 	rootCertOptions: createRootWithVidOptions(),
+		// 	childCert:       testconstants.IntermediateCertPem,
+		// 	accountVid:      testconstants.PAICertWithVidVid,
+		// 	err:             pkitypes.ErrCertVidNotEqualToRootVid,
+		// },
+		{
+			name:            "IncorrectChildVid",
+			rootCertOptions: createRootWithVidOptions(),
+			childCert:       testconstants.IntermediateCertWithVid2,
+			accountVid:      testconstants.RootCertWithVidVid,
+			err:             pkitypes.ErrCertVidNotEqualToRootVid,
+		},
+		{
+			name:            "IncorrectAccountVid",
+			rootCertOptions: createRootWithVidOptions(),
+			childCert:       testconstants.IntermediateCertWithVid1,
+			accountVid:      testconstants.Vid,
+			err:             pkitypes.ErrCertVidNotEqualAccountVid,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			setup := Setup(t)
+			// store root certificate
+			proposeAndApproveRootCertificate(setup, setup.Trustee1, tc.rootCertOptions)
+
+			// add vendor account
+			setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, tc.accountVid)
+
+			// add x509 certificate
+			addX509Cert := types.NewMsgAddX509Cert(accAddress.String(), tc.childCert)
+			_, err := setup.Handler(setup.Ctx, addX509Cert)
+			require.ErrorIs(t, err, tc.err)
+		})
+	}
+}
+
+func TestHandler_AddX509Cert_NonVIDScopedRoot_NegativeCases(t *testing.T) {
+	accAddress := GenerateAccAddress()
+
+	cases := []struct {
+		name            string
+		rootCertOptions *rootCertOptions
+		childCert       string
+		accountVid      int32
+		err             error
+	}{
+		{
+			name:            "IncorrectChildVid",
+			rootCertOptions: createPAACertNoVidOptions(testconstants.Vid),
+			childCert:       testconstants.PAICertWithNumericVid,
+			accountVid:      testconstants.Vid,
+			err:             pkitypes.ErrCertVidNotEqualAccountVid,
+		},
+		{
+			name:            "IncorrectAccountVid",
+			rootCertOptions: createPAACertNoVidOptions(testconstants.PAICertWithVidVid),
+			childCert:       testconstants.PAICertWithNumericVid,
+			accountVid:      testconstants.Vid,
+			err:             pkitypes.ErrCertVidNotEqualAccountVid,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			setup := Setup(t)
+			// store root certificate
+			proposeAndApproveRootCertificate(setup, setup.Trustee1, tc.rootCertOptions)
+
+			// add vendor account
+			setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, tc.accountVid)
+
+			// add x509 certificate
+			addX509Cert := types.NewMsgAddX509Cert(accAddress.String(), tc.childCert)
+			_, err := setup.Handler(setup.Ctx, addX509Cert)
+			require.ErrorIs(t, err, tc.err)
+		})
+	}
 }

@@ -47,7 +47,7 @@ var (
 	ErrCertificateVidNotEqualMsgVid                      = sdkerrors.Register(ModuleName, 436, "certificate's vid is not equal to the message vid")
 	ErrMessageVidNotEqualRootCertVid                     = sdkerrors.Register(ModuleName, 437, "Message vid is not equal to ledger's root certificate vid")
 	ErrCertNotChainedBack                                = sdkerrors.Register(ModuleName, 438, "Certificate is not chained back to a root certificate on DCL")
-	ErrCertVidNotEqualAccountVid                         = sdkerrors.Register(ModuleName, 439, "account's vid is not equal to ledger's certificate vid")
+	ErrCertVidNotEqualAccountVid                         = sdkerrors.Register(ModuleName, 439, "account's vid is not equal to certificate vid")
 	ErrCertVidNotEqualToRootVid                          = sdkerrors.Register(ModuleName, 440, "certificate's vid is not equal to vid of root certificate ")
 )
 
@@ -207,22 +207,21 @@ func NewErrProvidedNotNocCertButExistingNoc(subject string, subjectKeyID string)
 		subject, subjectKeyID)
 }
 
-func NewErrRootCertVidNotEqualToAccountVidOrCertVid(rootVID int32, accountVID int32, certVID int32) error {
-	if rootVID != certVID {
-		return sdkerrors.Wrapf(ErrCertVidNotEqualToRootVid,
-			"Root certificate is VID scoped: A child certificate must be also VID scoped to the same VID as a root one: "+
-				"Root certificate's VID = %v, Certificate's VID = %v",
-			rootVID, certVID)
-	}
+func NewErrRootCertVidNotEqualToCertVid(rootVID int32, certVID int32) error {
+	return sdkerrors.Wrapf(ErrCertVidNotEqualToRootVid,
+		"A child certificate must be also VID scoped to the same VID as a root one: "+
+			"Root certificate's VID = %v, Child certificate's VID = %v",
+		rootVID, certVID)
+}
 
+func NewErrRootCertVidNotEqualToAccountVid(rootVID int32, accountVID int32) error {
 	return sdkerrors.Wrapf(ErrCertVidNotEqualAccountVid,
-		"Root certificate is VID scoped: "+
-			"Only a Vendor associated with this VID can add a child certificate: "+
+		"Only a Vendor associated with root certificate VID can add a child certificate: "+
 			"Root certificate's VID = %v, Account VID = %v",
 		rootVID, accountVID)
 }
 
-func NewErrAccountVidNotEqualToCertVid(accountVID int32, certVID int32) error {
+func NewErrCertVidNotEqualToAccountVid(accountVID int32, certVID int32) error {
 	return sdkerrors.Wrapf(ErrCertVidNotEqualAccountVid,
 		"Certificate is VID scoped: Only a vendor associated with this VID can add this certificate "+
 			"Account VID = %v, Certificate's VID = %v",

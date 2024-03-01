@@ -655,10 +655,12 @@ M6mDL6NurBAW1pJlg8OT
 	RootCertWithVidSubjectKeyID = "CE:A8:92:66:EA:E0:80:BD:2B:B5:68:E4:0B:07:C4:FA:2C:34:6D:31"
 	RootCertWithVidVid          = 65521
 
-	IntermediateCertWithVidSubject       = "MIGuMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlvcmsxETAPBgNVBAcMCE5ldyBZb3JrMRgwFgYDVQQKDA9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsMEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbTEUMBIGCisGAQQBgqJ8AgEMBEZGRjExFDASBgorBgEEAYKifAICDARGRkYx"
-	IntermediateCertWithVidSubjectKeyID  = "0E:8C:E8:C8:B8:AA:50:BC:25:85:56:B9:B1:9C:C2:C7:D9:C5:2F:17"
+	IntermediateCertWithVid1Subject      = "MIGuMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlvcmsxETAPBgNVBAcMCE5ldyBZb3JrMRgwFgYDVQQKDA9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsMEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbTEUMBIGCisGAQQBgqJ8AgEMBEZGRjExFDASBgorBgEEAYKifAICDARGRkYx"
+	IntermediateCertWithVid1SubjectKeyID = "0E:8C:E8:C8:B8:AA:50:BC:25:85:56:B9:B1:9C:C2:C7:D9:C5:2F:17"
 	IntermediateCertWithVid1SerialNumber = "3"
-	IntermediateCertWithVid2SerialNumber = "4"
 	IntermediateCertWithVid1Vid          = 65521
+
+	IntermediateCertWithVid2SubjectKeyID = "0E:8C:E8:C8:B8:AA:50:BC:25:85:56:B9:B1:9C:C2:C7:D9:C5:2F:17"
+	IntermediateCertWithVid2SerialNumber = "4"
 	IntermediateCertWithVid2Vid          = 65522
 )
