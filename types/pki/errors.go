@@ -207,6 +207,10 @@ func NewErrProvidedNotNocCertButExistingNoc(subject string, subjectKeyID string)
 		subject, subjectKeyID)
 }
 
+func NewErrProvidedNotNocCertButRootNoc() error {
+	return sdkerrors.Wrapf(ErrInappropriateCertificateType, "The root is NOC certificate, but the provided certificate is not")
+}
+
 func NewErrRootCertVidNotEqualToCertVid(rootVID int32, certVID int32) error {
 	return sdkerrors.Wrapf(ErrCertVidNotEqualToRootVid,
 		"A child certificate must be also VID scoped to the same VID as a root one: "+

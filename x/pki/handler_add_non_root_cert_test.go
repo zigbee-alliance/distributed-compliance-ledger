@@ -83,8 +83,7 @@ func TestHandler_AddX509Cert_ForInvalidCertificate(t *testing.T) {
 	// add x509 certificate
 	addX509Cert := types.NewMsgAddX509Cert(accAddress.String(), testconstants.StubCertPem)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
-	require.Error(t, err)
-	require.True(t, pkitypes.ErrInvalidCertificate.Is(err))
+	require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
 }
 
 func TestHandler_AddX509Cert_ForRootCertificate(t *testing.T) {
@@ -96,8 +95,7 @@ func TestHandler_AddX509Cert_ForRootCertificate(t *testing.T) {
 	// add root certificate as leaf x509 certificate
 	addX509Cert := types.NewMsgAddX509Cert(accAddress.String(), testconstants.RootCertPem)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
-	require.Error(t, err)
-	require.True(t, pkitypes.ErrNonRootCertificateSelfSigned.Is(err))
+	require.ErrorIs(t, err, pkitypes.ErrNonRootCertificateSelfSigned)
 }
 
 func TestHandler_AddX509Cert_ForDuplicate(t *testing.T) {
@@ -117,8 +115,7 @@ func TestHandler_AddX509Cert_ForDuplicate(t *testing.T) {
 
 	// store intermediate certificate second time
 	_, err = setup.Handler(setup.Ctx, addX509Cert)
-	require.Error(t, err)
-	require.True(t, pkitypes.ErrCertificateAlreadyExists.Is(err))
+	require.ErrorIs(t, err, pkitypes.ErrCertificateAlreadyExists)
 }
 
 func TestHandler_AddX509Cert_ForExistingNocCertificate(t *testing.T) {
@@ -148,8 +145,7 @@ func TestHandler_AddX509Cert_ForExistingNocCertificate(t *testing.T) {
 	// store intermediate certificate
 	addX509Cert := types.NewMsgAddX509Cert(vendorAccAddress.String(), testconstants.IntermediateCertPem)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
-	require.Error(t, err)
-	require.True(t, pkitypes.ErrInappropriateCertificateType.Is(err))
+	require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
 }
 
 func TestHandler_AddX509Cert_NoRootCert(t *testing.T) {
@@ -165,8 +161,7 @@ func TestHandler_AddX509Cert_NoRootCert(t *testing.T) {
 	// add leaf x509 certificate
 	addX509Cert := types.NewMsgAddX509Cert(vendorAccAddress.String(), testconstants.LeafCertPem)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
-	require.Error(t, err)
-	require.True(t, pkitypes.ErrInvalidCertificate.Is(err))
+	require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
 }
 
 func TestHandler_AddX509Cert_RootIsNoc(t *testing.T) {
@@ -181,10 +176,9 @@ func TestHandler_AddX509Cert_RootIsNoc(t *testing.T) {
 	require.NoError(t, err)
 
 	// add x509 certificate
-	addX509Cert := types.NewMsgAddX509Cert(accAddress.String(), testconstants.IntermediateCertWithVid1)
+	addX509Cert := types.NewMsgAddX509Cert(accAddress.String(), testconstants.IntermediateCertPem)
 	_, err = setup.Handler(setup.Ctx, addX509Cert)
-	require.Error(t, err)
-	require.True(t, pkitypes.ErrCertVidNotEqualAccountVid.Is(err))
+	require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
 }
 
 func TestHandler_AddX509Cert_ForDifferentSerialNumber(t *testing.T) {
@@ -240,8 +234,7 @@ func TestHandler_AddX509Cert_ForAbsentDirectParentCert(t *testing.T) {
 	// add intermediate x509 certificate
 	addX509Cert := types.NewMsgAddX509Cert(vendorAccAddress.String(), testconstants.IntermediateCertPem)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
-	require.Error(t, err)
-	require.True(t, pkitypes.ErrInvalidCertificate.Is(err))
+	require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
 }
 
 func TestHandler_AddX509Cert_ForFailedCertificateVerification(t *testing.T) {
@@ -259,8 +252,7 @@ func TestHandler_AddX509Cert_ForFailedCertificateVerification(t *testing.T) {
 	// add intermediate x509 certificate
 	addX509Cert := types.NewMsgAddX509Cert(vendorAccAddress.String(), testconstants.IntermediateCertPem)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
-	require.Error(t, err)
-	require.True(t, pkitypes.ErrInvalidCertificate.Is(err))
+	require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
 }
 
 func TestHandler_AddX509Cert_ForTree(t *testing.T) {
@@ -435,7 +427,7 @@ func TestHandler_AddX509Cert_ByNotOwnerButSameVendor(t *testing.T) {
 	require.NoError(t, err)
 }
 
-func TestHandler_AddX509Cert_ByNotOwnerAndOtherVendor(t *testing.T) {
+func TestHandler_AddX509Cert_ByOtherVendor(t *testing.T) {
 	setup := Setup(t)
 
 	// store root certificate
@@ -463,11 +455,10 @@ func TestHandler_AddX509Cert_ByNotOwnerAndOtherVendor(t *testing.T) {
 	// add an intermediate certificate with the same subject and SKID by second vendor account
 	addX509Cert := types.NewMsgAddX509Cert(vendorAccAddress2.String(), testconstants.IntermediateCertPem)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
-	require.Error(t, err)
-	require.True(t, sdkerrors.ErrUnauthorized.Is(err))
+	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
 }
 
-func TestHandler_AddX509Cert_SendorNotVendor(t *testing.T) {
+func TestHandler_AddX509Cert_SenderNotVendor(t *testing.T) {
 	setup := Setup(t)
 
 	// store root certificate
@@ -477,8 +468,7 @@ func TestHandler_AddX509Cert_SendorNotVendor(t *testing.T) {
 	// add x509 certificate
 	addX509Cert := types.NewMsgAddX509Cert(setup.Trustee1.String(), testconstants.IntermediateCertWithVid1)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
-	require.Error(t, err)
-	require.True(t, sdkerrors.ErrUnauthorized.Is(err))
+	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
 }
 
 func TestHandler_AddX509Cert_VIDScopedRoot(t *testing.T) {
@@ -569,13 +559,6 @@ func TestHandler_AddX509Cert_VIDScopedRoot_NegativeCases(t *testing.T) {
 		accountVid      int32
 		err             error
 	}{
-		// {
-		// 	name:            "NonVidScopedChild",
-		// 	rootCertOptions: createRootWithVidOptions(),
-		// 	childCert:       testconstants.IntermediateCertPem,
-		// 	accountVid:      testconstants.PAICertWithVidVid,
-		// 	err:             pkitypes.ErrCertVidNotEqualToRootVid,
-		// },
 		{
 			name:            "IncorrectChildVid",
 			rootCertOptions: createRootWithVidOptions(),
@@ -624,7 +607,7 @@ func TestHandler_AddX509Cert_NonVIDScopedRoot_NegativeCases(t *testing.T) {
 			rootCertOptions: createPAACertNoVidOptions(testconstants.Vid),
 			childCert:       testconstants.PAICertWithNumericVid,
 			accountVid:      testconstants.Vid,
-			err:             pkitypes.ErrCertVidNotEqualAccountVid,
+			err:             pkitypes.ErrCertVidNotEqualToRootVid,
 		},
 		{
 			name:            "IncorrectAccountVid",

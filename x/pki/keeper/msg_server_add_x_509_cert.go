@@ -78,10 +78,13 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 
 	// Root certificate must not be NOC
 	if rootCert.IsNoc {
-		return nil, pkitypes.NewErrProvidedNotNocCertButExistingNoc(x509Certificate.Subject, x509Certificate.SubjectKeyID)
+		return nil, pkitypes.NewErrProvidedNotNocCertButRootNoc()
 	}
 
-	k.ensureCertsAndSenderVidMatch(ctx, rootCert, x509Certificate, signerAddr)
+	// Provided certificate, root certificate and account VID must match
+	if err = k.ensureCertsAndSenderVidMatch(ctx, rootCert, x509Certificate, signerAddr); err != nil {
+		return nil, err
+	}
 
 	// create new certificate
 	certificate := types.NewNonRootCertificate(
@@ -157,8 +160,8 @@ func (k msgServer) ensureCertsAndSenderVidMatch(
 	} else {
 		// If added under a non-VID scoped root CA:
 		// Child certificate must be either VID scoped to the same VID, or non-VID scoped.
-		if childVid != 0 && childVid != accountVID {
-			return pkitypes.NewErrCertVidNotEqualToAccountVid(accountVID, childVid)
+		if childVid != 0 && childVid != rootCert.Vid {
+			return pkitypes.NewErrRootCertVidNotEqualToCertVid(accountVID, childVid)
 		}
 
 		// Only a Vendor associated with root certificate VID can add an intermediate certificate.
