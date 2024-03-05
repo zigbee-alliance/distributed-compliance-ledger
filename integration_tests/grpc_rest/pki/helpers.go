@@ -21,7 +21,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
-	tmrand "github.com/tendermint/tendermint/libs/rand"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	test_dclauth "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/grpc_rest/dclauth"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
@@ -650,13 +649,12 @@ func Demo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Register new Vendor account
-	vid := int32(tmrand.Uint16())
 	vendorName := utils.RandString()
 	vendorAccount := test_dclauth.CreateVendorAccount(
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
-		vid,
+		testconstants.Vid,
 		testconstants.ProductIDsEmpty,
 		aliceName,
 		aliceAccount,
@@ -784,7 +782,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, jackAccount.Address, certificate.Certs[0].Owner)
 	require.True(suite.T, certificate.Certs[0].IsRoot)
 
-	// User (Not Trustee) add Intermediate certificate
+	// Vandor add Intermediate certificate
 	msgAddX509Cert := pkitypes.MsgAddX509Cert{
 		Cert:   testconstants.IntermediateCertPem,
 		Signer: vendorAccount.Address,
@@ -822,12 +820,12 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, vendorAccount.Address, certificate.Certs[0].Owner)
 	require.False(suite.T, certificate.Certs[0].IsRoot)
 
-	// Alice (Trustee) add Leaf certificate
+	// Vandor add Leaf certificate
 	secondMsgAddX509Cert := pkitypes.MsgAddX509Cert{
 		Cert:   testconstants.LeafCertPem,
-		Signer: aliceAccount.Address,
+		Signer: vendorAccount.Address,
 	}
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&secondMsgAddX509Cert}, aliceName, aliceAccount)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&secondMsgAddX509Cert}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	// Request all proposed Root certificates
@@ -859,7 +857,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.LeafSubjectKeyID, certificate.SubjectKeyId)
 	require.Equal(suite.T, 1, len(certificate.Certs))
 	require.Equal(suite.T, testconstants.LeafCertPem, certificate.Certs[0].PemCert)
-	require.Equal(suite.T, aliceAccount.Address, certificate.Certs[0].Owner)
+	require.Equal(suite.T, vendorAccount.Address, certificate.Certs[0].Owner)
 	require.Equal(suite.T, testconstants.LeafSubject, certificate.Certs[0].Subject)
 	require.Equal(suite.T, testconstants.LeafSubjectKeyID, certificate.Certs[0].SubjectKeyId)
 	require.Equal(suite.T, testconstants.LeafSubjectAsText, certificate.Certs[0].SubjectAsText)
@@ -958,7 +956,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.LeafSubject, revokedCertificate.Certs[0].Subject)
 	require.Equal(suite.T, testconstants.LeafSubjectKeyID, revokedCertificate.Certs[0].SubjectKeyId)
 	require.Equal(suite.T, testconstants.LeafCertPem, revokedCertificate.Certs[0].PemCert)
-	require.Equal(suite.T, aliceAccount.Address, revokedCertificate.Certs[0].Owner)
+	require.Equal(suite.T, vendorAccount.Address, revokedCertificate.Certs[0].Owner)
 	require.Equal(suite.T, testconstants.LeafSubjectAsText, revokedCertificate.Certs[0].SubjectAsText)
 	require.False(suite.T, revokedCertificate.Certs[0].IsRoot)
 
@@ -1701,23 +1699,23 @@ func Demo(suite *utils.TestSuite) {
 	// Add intermediate and leaf certificates
 	msgAddX509Cert = pkitypes.MsgAddX509Cert{
 		Cert:   testconstants.IntermediateWithSameSubjectAndSKID1,
-		Signer: aliceAccount.Address,
+		Signer: vendorAccount.Address,
 	}
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, aliceName, aliceAccount)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	msgAddX509Cert = pkitypes.MsgAddX509Cert{
 		Cert:   testconstants.IntermediateWithSameSubjectAndSKID2,
-		Signer: aliceAccount.Address,
+		Signer: vendorAccount.Address,
 	}
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, aliceName, aliceAccount)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	msgAddX509Cert = pkitypes.MsgAddX509Cert{
 		Cert:   testconstants.LeafCertWithSameSubjectAndSKID,
-		Signer: aliceAccount.Address,
+		Signer: vendorAccount.Address,
 	}
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, aliceName, aliceAccount)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	// Check approved certificate
@@ -1733,14 +1731,14 @@ func Demo(suite *utils.TestSuite) {
 		Subject:      testconstants.IntermediateCertWithSameSubjectAndSKIDSubject,
 		SubjectKeyId: testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID,
 		SerialNumber: "invalid",
-		Signer:       aliceAccount.Address,
+		Signer:       vendorAccount.Address,
 	}
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRevokeX509Cert}, aliceName, aliceAccount)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRevokeX509Cert}, vendorName, vendorAccount)
 	require.Error(suite.T, err)
 
 	// Revoke intermediate certificate with serialNumber 1 only(child certs should not be removed)
 	msgRevokeX509Cert.SerialNumber = testconstants.IntermediateCertWithSameSubjectAndSKID1SerialNumber
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRevokeX509Cert}, aliceName, aliceAccount)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRevokeX509Cert}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	// Request revoked certificate with serialNumber 3
@@ -1813,18 +1811,18 @@ func Demo(suite *utils.TestSuite) {
 		Subject:      testconstants.IntermediateCertWithSameSubjectAndSKIDSubject,
 		SubjectKeyId: testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID,
 		SerialNumber: "invalid",
-		Signer:       aliceAccount.Address,
+		Signer:       vendorAccount.Address,
 	}
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveX509Cert}, aliceName, aliceAccount)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveX509Cert}, vendorName, vendorAccount)
 	require.Error(suite.T, err)
 
 	// Remove revoked x509 certificate by subject and subject key id
 	msgRemoveX509Cert = pkitypes.MsgRemoveX509Cert{
 		Subject:      testconstants.IntermediateCertWithSameSubjectAndSKIDSubject,
 		SubjectKeyId: testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID,
-		Signer:       aliceAccount.Address,
+		Signer:       vendorAccount.Address,
 	}
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveX509Cert}, aliceName, aliceAccount)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveX509Cert}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 	// Check that two intermediate certificates removed
 	_, err = GetRevokedX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
@@ -1836,9 +1834,9 @@ func Demo(suite *utils.TestSuite) {
 	msgRemoveX509Cert = pkitypes.MsgRemoveX509Cert{
 		Subject:      testconstants.LeafCertWithSameSubjectAndSKIDSubject,
 		SubjectKeyId: testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID,
-		Signer:       aliceAccount.Address,
+		Signer:       vendorAccount.Address,
 	}
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveX509Cert}, aliceName, aliceAccount)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveX509Cert}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 	// Check that leaf certificate removed
 	_, err = GetX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
@@ -1848,23 +1846,23 @@ func Demo(suite *utils.TestSuite) {
 	// Add intermediate certificates
 	msgAddX509Cert = pkitypes.MsgAddX509Cert{
 		Cert:   testconstants.IntermediateWithSameSubjectAndSKID1,
-		Signer: aliceAccount.Address,
+		Signer: vendorAccount.Address,
 	}
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, aliceName, aliceAccount)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	msgAddX509Cert = pkitypes.MsgAddX509Cert{
 		Cert:   testconstants.IntermediateWithSameSubjectAndSKID2,
-		Signer: aliceAccount.Address,
+		Signer: vendorAccount.Address,
 	}
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, aliceName, aliceAccount)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	msgAddX509Cert = pkitypes.MsgAddX509Cert{
 		Cert:   testconstants.LeafCertWithSameSubjectAndSKID,
-		Signer: aliceAccount.Address,
+		Signer: vendorAccount.Address,
 	}
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, aliceName, aliceAccount)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	// Remove x509 certificate by serial number
@@ -1872,9 +1870,9 @@ func Demo(suite *utils.TestSuite) {
 		Subject:      testconstants.IntermediateCertWithSameSubjectAndSKIDSubject,
 		SubjectKeyId: testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID,
 		SerialNumber: testconstants.IntermediateCertWithSameSubjectAndSKID1SerialNumber,
-		Signer:       aliceAccount.Address,
+		Signer:       vendorAccount.Address,
 	}
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveX509Cert}, aliceName, aliceAccount)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveX509Cert}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	// Check that leaf and x509 with different serial number is not removed
@@ -1890,9 +1888,9 @@ func Demo(suite *utils.TestSuite) {
 	msgRemoveX509Cert = pkitypes.MsgRemoveX509Cert{
 		Subject:      testconstants.IntermediateCertWithSameSubjectAndSKIDSubject,
 		SubjectKeyId: testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID,
-		Signer:       aliceAccount.Address,
+		Signer:       vendorAccount.Address,
 	}
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveX509Cert}, aliceName, aliceAccount)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveX509Cert}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	_, err = GetX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
@@ -1905,9 +1903,9 @@ func Demo(suite *utils.TestSuite) {
 	msgRemoveX509Cert = pkitypes.MsgRemoveX509Cert{
 		Subject:      testconstants.LeafCertWithSameSubjectAndSKIDSubject,
 		SubjectKeyId: testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID,
-		Signer:       aliceAccount.Address,
+		Signer:       vendorAccount.Address,
 	}
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveX509Cert}, aliceName, aliceAccount)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveX509Cert}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	_, err = GetX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
@@ -1917,16 +1915,16 @@ func Demo(suite *utils.TestSuite) {
 	// Add intermediate and leaf certificates
 	msgAddX509Cert = pkitypes.MsgAddX509Cert{
 		Cert:   testconstants.IntermediateWithSameSubjectAndSKID1,
-		Signer: aliceAccount.Address,
+		Signer: vendorAccount.Address,
 	}
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, aliceName, aliceAccount)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	msgAddX509Cert = pkitypes.MsgAddX509Cert{
 		Cert:   testconstants.LeafCertWithSameSubjectAndSKID,
-		Signer: aliceAccount.Address,
+		Signer: vendorAccount.Address,
 	}
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, aliceName, aliceAccount)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	// Check that certs are added
