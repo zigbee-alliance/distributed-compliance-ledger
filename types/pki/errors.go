@@ -207,7 +207,7 @@ func NewErrProvidedNotNocCertButExistingNoc(subject string, subjectKeyID string)
 		subject, subjectKeyID)
 }
 
-func NewErrProvidedNotNocCertButRootNoc() error {
+func NewErrProvidedNotNocCertButRootIsNoc() error {
 	return sdkerrors.Wrapf(ErrInappropriateCertificateType, "The root is NOC certificate, but the provided certificate is not")
 }
 
@@ -223,13 +223,6 @@ func NewErrRootCertVidNotEqualToAccountVid(rootVID int32, accountVID int32) erro
 		"Only a Vendor associated with root certificate VID can add a child certificate: "+
 			"Root certificate's VID = %v, Account VID = %v",
 		rootVID, accountVID)
-}
-
-func NewErrCertVidNotEqualToAccountVid(accountVID int32, certVID int32) error {
-	return sdkerrors.Wrapf(ErrCertVidNotEqualAccountVid,
-		"Certificate is VID scoped: Only a vendor associated with this VID can add this certificate "+
-			"Account VID = %v, Certificate's VID = %v",
-		accountVID, certVID)
 }
 
 func NewErrCRLSignerCertificatePidNotEqualMsgPid(certificatePid int32, messagePid int32) error {

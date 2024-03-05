@@ -165,8 +165,8 @@ echo "Create Vendor account - $second_vendor_account_65521"
 create_new_vendor_account $second_vendor_account_65521 $vendor_vid_65521
 
 echo "Add second intermediate certificate with same subject and SKID by $second_vendor_account_65521"
-result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_cert_2_path" --from $vendor_account_65523 --yes)
-check_response "$result" "\"code\": 4"
+result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_cert_2_path" --from $vendor_account_65521 --yes)
+check_response "$result" "\"code\": 0"
 
 echo "Request all approved root certificates should contain intermediate cert with serialNumber=$intermediate_cert_2_serial_number"
 result=$(dcld query pki all-x509-certs)

@@ -78,7 +78,7 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 
 	// Root certificate must not be NOC
 	if rootCert.IsNoc {
-		return nil, pkitypes.NewErrProvidedNotNocCertButRootNoc()
+		return nil, pkitypes.NewErrProvidedNotNocCertButRootIsNoc()
 	}
 
 	// Provided certificate, root certificate and account VID must match

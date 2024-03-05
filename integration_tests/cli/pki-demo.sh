@@ -43,6 +43,14 @@ trustee_account_address=$(echo $passphrase | dcld keys show jack -a)
 second_trustee_account_address=$(echo $passphrase | dcld keys show alice -a)
 third_trustee_account_address=$(echo $passphrase | dcld keys show bob -a)
 
+vendor_account=vendor_account_$vid
+echo "Create Vendor account - $vendor_account"
+create_new_vendor_account $vendor_account $vid
+
+vendor_account_65522=vendor_account_65522
+echo "Create Vendor account - $vendor_account_65522"
+create_new_vendor_account $vendor_account_65522 65522
+
 echo "Create regular account"
 create_new_account user_account "CertificationCenter"
 test_divider
@@ -374,9 +382,9 @@ echo "4. ADD INTERMEDIATE CERT"
 test_divider
 
 
-echo "$user_account (Not Trustee) adds Intermediate certificate"
+echo "$vendor_account adds Intermediate certificate"
 intermediate_path="integration_tests/constants/intermediate_cert"
-result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_path" --from $user_account --yes)
+result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_path" --from $vendor_account --yes)
 check_response "$result" "\"code\": 0"
 
 
@@ -442,9 +450,9 @@ test_divider
 echo "5. ADD LEAF CERT"
 test_divider
 
-echo "$trustee_account (Trustee) add Leaf certificate"
+echo "$vendor_account add Leaf certificate"
 leaf_path="integration_tests/constants/leaf_cert"
-result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$leaf_path" --from $trustee_account --yes)
+result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$leaf_path" --from $vendor_account --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -650,8 +658,16 @@ test_divider
 echo "6. REVOKE INTERMEDIATE (AND HENCE  LEAF) CERTS - No Approvals needed"
 test_divider
 
-echo "$user_account (Not Trustee) revokes only Intermediate certificate. This must not revoke its child - Leaf certificate."
+echo "Try to revoke the intermediate certificate using an account that does not have vendor role"
 result=$(echo "$passphrase" | dcld tx pki revoke-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --from=$user_account --yes)
+check_response "$result" "\"code\": 4"
+
+echo "Try to revoke the intermediate certificate using a vendor account with other VID"
+result=$(echo "$passphrase" | dcld tx pki revoke-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --from=$vendor_account_65522 --yes)
+check_response "$result" "\"code\": 4"
+
+echo "$vendor_account (Not Trustee) revokes only Intermediate certificate. This must not revoke its child - Leaf certificate."
+result=$(echo "$passphrase" | dcld tx pki revoke-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --from=$vendor_account --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
