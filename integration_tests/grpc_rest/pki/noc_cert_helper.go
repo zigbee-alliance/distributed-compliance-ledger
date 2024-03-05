@@ -49,6 +49,33 @@ func GetAllNocX509RootCerts(suite *utils.TestSuite) (res []pkitypes.NocRootCerti
 	return res, nil
 }
 
+func GetAllNocX509Certs(suite *utils.TestSuite) (res []pkitypes.NocCertificates, err error) {
+	if suite.Rest {
+		var resp pkitypes.QueryAllNocCertificatesResponse
+		err := suite.QueryREST("/dcl/pki/noc-certificates/", &resp)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetNocCertificates()
+	} else {
+		grpcConn := suite.GetGRPCConn()
+		defer grpcConn.Close()
+
+		// This creates a gRPC client to query the x/pki service.
+		pkiClient := pkitypes.NewQueryClient(grpcConn)
+		resp, err := pkiClient.NocCertificatesAll(
+			context.Background(),
+			&pkitypes.QueryAllNocCertificatesRequest{},
+		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetNocCertificates()
+	}
+
+	return res, nil
+}
+
 func GetNocX509RootCerts(suite *utils.TestSuite, vendorID int32) (*pkitypes.NocRootCertificates, error) {
 	var res pkitypes.NocRootCertificates
 	if suite.Rest {
@@ -72,6 +99,34 @@ func GetNocX509RootCerts(suite *utils.TestSuite, vendorID int32) (*pkitypes.NocR
 			return nil, err
 		}
 		res = resp.GetNocRootCertificates()
+	}
+
+	return &res, nil
+}
+
+func GetNocX509Certs(suite *utils.TestSuite, vendorID int32) (*pkitypes.NocCertificates, error) {
+	var res pkitypes.NocCertificates
+	if suite.Rest {
+		var resp pkitypes.QueryGetNocCertificatesResponse
+		err := suite.QueryREST(fmt.Sprintf("/dcl/pki/noc-certificates/%v", vendorID), &resp)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetNocCertificates()
+	} else {
+		grpcConn := suite.GetGRPCConn()
+		defer grpcConn.Close()
+
+		// This creates a gRPC client to query the x/pki service.
+		pkiClient := pkitypes.NewQueryClient(grpcConn)
+		resp, err := pkiClient.NocCertificates(
+			context.Background(),
+			&pkitypes.QueryGetNocCertificatesRequest{Vid: vendorID},
+		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetNocCertificates()
 	}
 
 	return &res, nil
@@ -133,7 +188,7 @@ func NocCertDemo(suite *utils.TestSuite) {
 	)
 	require.NotNil(suite.T, vendor2Account)
 
-	// Try to add inermidiate cert
+	// Try to add intermediate cert
 	msgAddNocRootCertificate := pkitypes.MsgAddNocX509RootCert{
 		Signer: vendor1Account.Address,
 		Cert:   testconstants.IntermediateCertPem,
@@ -222,4 +277,63 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.NocRootCert1SubjectKeyID, certsBySubjectKeyID[0].Certs[0].SubjectKeyId)
 	require.Equal(suite.T, testconstants.NocRootCert1Subject, certsBySubjectKeyID[0].Certs[0].Subject)
 	require.Equal(suite.T, testconstants.NocRootCert1SubjectAsText, certsBySubjectKeyID[0].Certs[0].SubjectAsText)
+
+	// Add intermediate NOC certificate
+	msgAddNocCertificate := pkitypes.MsgAddNocX509Cert{
+		Signer: vendor1Account.Address,
+		Cert:   testconstants.NocCert1,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddNocCertificate}, vendor1Name, vendor1Account)
+	require.NoError(suite.T, err)
+
+	// Request certificate by VID1
+	nocCert, _ := GetNocX509Certs(suite, vid1)
+	require.Equal(suite.T, 1, len(nocCert.Certs))
+	require.Equal(suite.T, testconstants.NocCert1Subject, nocCert.Certs[0].Subject)
+	require.Equal(suite.T, testconstants.NocCert1SubjectKeyID, nocCert.Certs[0].SubjectKeyId)
+
+	// Request Child certificates list
+	childCertificates, _ := GetAllChildX509Certs(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
+	require.Equal(suite.T, testconstants.NocRootCert1Subject, childCertificates.Issuer)
+	require.Equal(suite.T, testconstants.NocRootCert1SubjectKeyID, childCertificates.AuthorityKeyId)
+	require.Equal(suite.T, testconstants.NocCert1Subject, childCertificates.CertIds[0].Subject)
+	require.Equal(suite.T, testconstants.NocCert1SubjectKeyID, childCertificates.CertIds[0].SubjectKeyId)
+
+	// Try to add third intermediate NOC certificate with different vid
+	msgAddNocCertificate = pkitypes.MsgAddNocX509Cert{
+		Signer: vendor1Account.Address,
+		Cert:   testconstants.NocCert2,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddNocCertificate}, vendor2Name, vendor2Account)
+	require.Error(suite.T, err)
+
+	// Add second intermediate NOC certificate
+	msgAddNocCertificate = pkitypes.MsgAddNocX509Cert{
+		Signer: vendor1Account.Address,
+		Cert:   testconstants.NocCert2,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddNocCertificate}, vendor1Name, vendor1Account)
+	require.NoError(suite.T, err)
+
+	// Request certificate by VID1
+	nocCerts, _ := GetAllNocX509Certs(suite)
+	require.Equal(suite.T, 1, len(nocCerts))
+	require.Equal(suite.T, 2, len(nocCerts[0].Certs))
+
+	// Request NOC certificate by Subject and SubjectKeyID
+	certs, _ := GetX509Cert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	require.Equal(suite.T, testconstants.NocCert1Subject, certs.Subject)
+	require.Equal(suite.T, testconstants.NocCert1SubjectKeyID, certs.SubjectKeyId)
+	require.Equal(suite.T, 1, len(certs.Certs))
+	require.Equal(suite.T, testconstants.NocCert1, certs.Certs[0].PemCert)
+	require.Equal(suite.T, vendor1Account.Address, certs.Certs[0].Owner)
+	require.False(suite.T, certs.Certs[0].IsRoot)
+
+	certs, _ = GetX509Cert(suite, testconstants.NocCert2Subject, testconstants.NocCert2SubjectKeyID)
+	require.Equal(suite.T, testconstants.NocCert2Subject, certs.Subject)
+	require.Equal(suite.T, testconstants.NocCert2SubjectKeyID, certs.SubjectKeyId)
+	require.Equal(suite.T, 1, len(certs.Certs))
+	require.Equal(suite.T, testconstants.NocCert2, certs.Certs[0].PemCert)
+	require.Equal(suite.T, vendor1Account.Address, certs.Certs[0].Owner)
+	require.False(suite.T, certs.Certs[0].IsRoot)
 }

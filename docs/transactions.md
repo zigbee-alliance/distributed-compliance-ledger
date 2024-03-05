@@ -1152,6 +1152,37 @@ This transaction adds a NOC root certificate owned by the Vendor.
 - CLI Command:
   - `dcld tx pki add-noc-x509-root-cert --certificate=<string-or-path> --from=<account>`
 
+### ADD_NOC_X509_CERTIFICATE
+
+**Status: Implemented**
+
+This transaction adds a NOC non-root certificate owned by the Vendor signed by a chain of certificates which must be
+already present on the ledger.
+
+- Who can send: Vendor account
+- Validation:
+  - the provided certificate must be a non-root certificate:
+    - `Issuer` != `Subject`
+    - `Authority Key Identifier` != `Subject Key Identifier`
+  - the root certificate must be a NOC certificate and added by the same vendor
+    - `isNoc` field of the root certificate must be set to true
+    - `VID of root certificate` == `VID of account`
+  - no existing certificate with the same `<Certificate's Issuer>:<Certificate's Serial Number>` combination.
+  - if certificates with the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination already exist:
+    - the existing certificate must be NOC non-root certificate
+    - the sender's VID must match the vid field of the existing certificates.
+  - the signature (self-signature) and expiration date must be valid.
+- Parameters:
+  - cert: `string` - The NOC non-root Certificate, encoded in X.509v3 PEM format. Can be a PEM string or a file path.
+- In State:
+  - `pki/ApprovedCertificates/value/<Subject>/<SubjectKeyID>`
+  - `pki/ApprovedCertificatesBySubject/value/<Subject>`
+  - `pki/ApprovedCertificatesBySubjectKeyID/value/<SubjectKeyID>`
+  - `pki/NOCCertificates/value/<VID>`
+  - `pki/ChildCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
+- CLI Command:
+  - `dcld tx pki add-noc-x509-cert --certificate=<string-or-path> --from=<account>`
+
 ### GET_X509_CERT
 
 **Status: Implemented**
@@ -1463,6 +1494,34 @@ Retrieve a list of all of NOC root certificates
   - `dcld query pki all-noc-x509-root-certs`
 - REST API:
   - GET `/dcl/pki/noc-root-certificates`
+
+### GET_NOC_X509_CERTS_BY_VID
+
+**Status: Implemented**
+
+Retrieve NOC non-root certificates associated with a specific VID. 
+
+- Who can send: Any account
+- Parameters:
+  - vid: `uint16` - Vendor ID (positive non-zero)
+- CLI Command:
+  - `dcld query pki noc-x509-certs --vid=<uint16>`
+- REST API:
+  - GET `/dcl/pki/noc-certificates/{vid}`
+
+### GET_ALL_NOC_X509_CERTS
+
+**Status: Implemented**
+
+Retrieve a list of all of NOC non-root certificates
+
+- Who can send: Any account
+- Parameters:
+  - Common pagination parameters
+- CLI Command:
+  - `dcld query pki all-noc-x509-certs`
+- REST API:
+  - GET `/dcl/pki/noc-certificates`
 
 ## AUTH
 

@@ -194,6 +194,12 @@ func NewErrProvidedNocCertButExistingNotNoc(subject string, subjectKeyID string)
 		subject, subjectKeyID)
 }
 
+func NewErrRootOfNocCertIsNotNoc(subject string, subjectKeyID string) error {
+	return sdkerrors.Wrapf(ErrInappropriateCertificateType,
+		"Root of the provided certificate with subject (%v) and subjectKeyID (%v) is not a NOC certificate",
+		subject, subjectKeyID)
+}
+
 func NewErrProvidedNotNocCertButExistingNoc(subject string, subjectKeyID string) error {
 	return sdkerrors.Wrapf(ErrInappropriateCertificateType,
 		"The existing certificate with the same combination of subject (%v) and subjectKeyID (%v) is a NOC certificate",
