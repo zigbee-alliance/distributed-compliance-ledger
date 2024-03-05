@@ -70,7 +70,7 @@ func TestHandler_AddNocX509Cert_AddNew(t *testing.T) {
 
 	// check that unique certificate key registered
 	require.True(t,
-		setup.Keeper.IsUniqueCertificatePresent(setup.Ctx, testconstants.NocCert1Subject, testconstants.NocCert1SerialNumber))
+		setup.Keeper.IsUniqueCertificatePresent(setup.Ctx, testconstants.NocCert1Issuer, testconstants.NocCert1SerialNumber))
 }
 
 func TestHandler_AddNocX509Cert_Renew(t *testing.T) {
@@ -82,11 +82,6 @@ func TestHandler_AddNocX509Cert_Renew(t *testing.T) {
 
 	// add NOC root certificate
 	addNocRootCertificate(setup, accAddress, testconstants.NocRootCert1, vid)
-
-	// add the new NOC certificate
-	addNocX509Cert := types.NewMsgAddNocX509Cert(accAddress.String(), testconstants.NocCert1)
-	_, err := setup.Handler(setup.Ctx, addNocX509Cert)
-	require.NoError(t, err)
 
 	// Store the NOC certificate
 	newNocCertificate := types.NewNocCertificate(
@@ -115,16 +110,21 @@ func TestHandler_AddNocX509Cert_Renew(t *testing.T) {
 	}
 	setup.Keeper.SetUniqueCertificate(setup.Ctx, uniqueCertificate)
 
+	// add the new NOC certificate
+	addNocX509Cert := types.NewMsgAddNocX509Cert(accAddress.String(), testconstants.NocCert1)
+	_, err := setup.Handler(setup.Ctx, addNocX509Cert)
+	require.NoError(t, err)
+
 	// query noc certificate by Subject and SKID
 	approvedCertificates, err := queryApprovedCertificates(setup, newNocCertificate.Subject, newNocCertificate.SubjectKeyId)
 	require.NoError(t, err)
 	require.Equal(t, len(approvedCertificates.Certs), 2)
-	require.Equal(t, &newNocCertificate, approvedCertificates.Certs[1])
+	require.Equal(t, &newNocCertificate, approvedCertificates.Certs[0])
 
 	// query noc certificate by Subject
 	approvedCertificatesBySubject, err := queryApprovedCertificatesBySubject(setup, newNocCertificate.Subject)
 	require.NoError(t, err)
-	require.Equal(t, 2, len(approvedCertificatesBySubject.SubjectKeyIds))
+	require.Equal(t, 1, len(approvedCertificatesBySubject.SubjectKeyIds))
 
 	// query noc certificate by SKID
 	approvedCertificatesBySubjectKeyID, err := queryAllApprovedCertificatesBySubjectKeyID(setup, newNocCertificate.SubjectKeyId)
@@ -178,20 +178,6 @@ func TestHandler_AddNocX509Cert_ForInvalidCertificate(t *testing.T) {
 	require.True(t, pkitypes.ErrInvalidCertificate.Is(err))
 }
 
-func TestHandler_AddXNoc509Cert_ForRootNonNocCertificate(t *testing.T) {
-	setup := Setup(t)
-
-	accAddress := GenerateAccAddress()
-	vid := testconstants.Vid
-	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, vid)
-
-	// add root certificate as leaf x509 certificate
-	addX509Cert := types.NewMsgAddX509Cert(accAddress.String(), testconstants.RootCertPem)
-	_, err := setup.Handler(setup.Ctx, addX509Cert)
-	require.Error(t, err)
-	require.True(t, pkitypes.ErrInappropriateCertificateType.Is(err))
-}
-
 func TestHandler_AddXNoc509Cert_ForNocRootCertificate(t *testing.T) {
 	setup := Setup(t)
 
@@ -204,6 +190,44 @@ func TestHandler_AddXNoc509Cert_ForNocRootCertificate(t *testing.T) {
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
 	require.Error(t, err)
 	require.True(t, pkitypes.ErrInappropriateCertificateType.Is(err))
+}
+
+func TestHandler_AddXNoc509Cert_ForRootNonNocCertificate(t *testing.T) {
+	setup := Setup(t)
+
+	accAddress := GenerateAccAddress()
+	vid := testconstants.Vid
+	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, vid)
+
+	// store root certificate
+	rootCertOptions := &rootCertOptions{
+		pemCert:      testconstants.RootCertWithVid,
+		info:         testconstants.Info,
+		subject:      testconstants.RootCertWithVidSubject,
+		subjectKeyID: testconstants.RootCertWithVidSubjectKeyID,
+		vid:          testconstants.RootCertWithVidVid,
+	}
+	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+
+	// try to add root certificate x509 certificate
+	addX509Cert := types.NewMsgAddNocX509Cert(accAddress.String(), testconstants.IntermediateCertWithVid1)
+	_, err := setup.Handler(setup.Ctx, addX509Cert)
+	require.Error(t, err)
+	require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+}
+
+func TestHandler_AddXNoc509Cert_WhenNocRootCertIsAbsent(t *testing.T) {
+	setup := Setup(t)
+
+	accAddress := GenerateAccAddress()
+	vid := testconstants.Vid
+	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, vid)
+
+	// add the new NOC certificate
+	addNocX509Cert := types.NewMsgAddNocX509Cert(accAddress.String(), testconstants.NocCert1)
+	_, err := setup.Handler(setup.Ctx, addNocX509Cert)
+
+	require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
 }
 
 func TestHandler_AddNocX509Cert_CertificateExist(t *testing.T) {

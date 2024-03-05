@@ -80,7 +80,7 @@ func (k msgServer) AddNocX509Cert(goCtx context.Context, msg *types.MsgAddNocX50
 		return nil, pkitypes.NewErrRootCertificateDoesNotExist(rootCert.Subject, rootCert.SubjectKeyID)
 	}
 	nocRootCert := rootCerts.Certs[0]
-	// Existing certificate must be NOC certificate
+	// Root certificate must be NOC certificate
 	if !nocRootCert.IsNoc {
 		return nil, pkitypes.NewErrRootOfNocCertIsNotNoc(rootCert.Subject, rootCert.SubjectKeyID)
 	}

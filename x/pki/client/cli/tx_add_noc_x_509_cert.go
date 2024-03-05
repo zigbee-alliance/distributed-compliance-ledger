@@ -18,7 +18,7 @@ var _ = strconv.Itoa(0)
 func CmdAddNocX509Cert() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "add-noc-x509-cert",
-		Short: "Adds NOC certificate",
+		Short: "Adds NOC non-root certificate",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)

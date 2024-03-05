@@ -1152,7 +1152,7 @@ This transaction adds a NOC root certificate owned by the Vendor.
 - CLI Command:
   - `dcld tx pki add-noc-x509-root-cert --certificate=<string-or-path> --from=<account>`
 
-### ADD_X509_ROOT_CERTIFICATE
+### ADD_NOC_X509_CERTIFICATE
 
 **Status: Implemented**
 
@@ -1164,7 +1164,9 @@ already present on the ledger.
   - the provided certificate must be a non-root certificate:
     - `Issuer` != `Subject`
     - `Authority Key Identifier` != `Subject Key Identifier`
-    - `VID of NOC root certificate` == `VID of account`
+  - the root certificate must be a NOC certificate and added by the same vendor
+    - `isNoc` field of the root certificate must be set to true
+    - `VID of root certificate` == `VID of account`
   - no existing certificate with the same `<Certificate's Issuer>:<Certificate's Serial Number>` combination.
   - if certificates with the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination already exist:
     - the existing certificate must be NOC non-root certificate

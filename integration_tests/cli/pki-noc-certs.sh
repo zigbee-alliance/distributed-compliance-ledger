@@ -2,16 +2,16 @@ set -euo pipefail
 source integration_tests/cli/common.sh
 
 noc_root_cert_1_path="integration_tests/constants/noc_root_cert_1"
-noc_root_cert_1_subject="MIGCMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlvcmsxETAPBgNVBAcMCE5ldyBZb3JrMRgwFgYDVQQKDA9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsMEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbQ=="
+noc_root_cert_1_subject="MHoxCzAJBgNVBAYTAlVaMRMwEQYDVQQIDApTb21lIFN0YXRlMREwDwYDVQQHDAhUYXNoa2VudDEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMQ4wDAYDVQQDDAVOT0MtMQ=="
 noc_root_cert_1_subject_key_id="44:EB:4C:62:6B:25:48:CD:A2:B3:1C:87:41:5A:08:E7:2B:B9:83:26"
-noc_root_cert_1_serial_number="1"
-noc_root_cert_1_subject_as_text="CN=www.example.com,OU=Testing Division,O=Example Company,L=New York,ST=New York,C=US"
+noc_root_cert_1_serial_number="47211865327720222621302679792296833381734533449"
+noc_root_cert_1_subject_as_text="CN=NOC-1,OU=Testing Division,O=Example Company,L=Tashkent,ST=Some State,C=UZ"
 
 noc_root_cert_2_path="integration_tests/constants/noc_root_cert_2"
-noc_root_cert_2_subject="MIGCMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlvcmsxETAPBgNVBAcMCE5ldyBZb3JrMRgwFgYDVQQKDA9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsMEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbQ=="
+noc_root_cert_2_subject="MHoxCzAJBgNVBAYTAlVaMRMwEQYDVQQIDApTb21lIFN0YXRlMREwDwYDVQQHDAhUYXNoa2VudDEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMQ4wDAYDVQQDDAVOT0MtMg=="
 noc_root_cert_2_subject_key_id="CF:E6:DD:37:2B:4C:B2:B9:A9:F2:75:30:1C:AA:B1:37:1B:11:7F:1B"
-noc_root_cert_2_serial_number="2"
-noc_root_cert_2_subject_as_text="CN=www.example.com,OU=Testing Division,O=Example Company,L=New York,ST=New York,C=US"
+noc_root_cert_2_serial_number="332802481233145945539125204504842614737181725760"
+noc_root_cert_2_subject_as_text="CN=NOC-2,OU=Testing Division,O=Example Company,L=Tashkent,ST=Some State,C=UZ"
 
 noc_root_cert_3_path="integration_tests/constants/noc_root_cert_3"
 noc_root_cert_3_subject="MFUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQxDjAMBgNVBAMMBU5PQy0z"
@@ -20,14 +20,14 @@ noc_root_cert_3_serial_number="38457288443253426021793906708335409501754677187"
 noc_root_cert_3_subject_as_text="CN=NOC-3,O=Internet Widgits Pty Ltd,ST=Some-State,C=AU"
 
 noc_cert_1_path="integration_tests/constants/noc_cert_1"
-noc_cert_1_subject="MIGCMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlvcmsxETAPBgNVBAcMCE5ldyBZb3JrMRgwFgYDVQQKDA9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsMEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbQ=="
+noc_cert_1_subject="MIGCMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDDAtOT0MtY2hpbGQtMQ=="
 noc_cert_1_subject_key_id="02:72:6E:BC:BB:EF:D6:BD:8D:9B:42:AE:D4:3C:C0:55:5F:66:3A:B3"
-noc_cert_1_serial_number="3"
+noc_cert_1_serial_number="674670448117546613288490437900193266085116131998"
 
 noc_cert_2_path="integration_tests/constants/noc_cert_2"
-noc_cert_2_subject="MIGCMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlvcmsxETAPBgNVBAcMCE5ldyBZb3JrMRgwFgYDVQQKDA9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsMEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbQ=="
+noc_cert_2_subject="MIGCMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDDAtOT0MtY2hpbGQtMg=="
 noc_cert_2_subject_key_id="87:48:A2:33:12:1F:51:5C:93:E6:90:40:4A:2C:AB:9E:D6:19:E5:AD"
-noc_cert_2_serial_number="4"
+noc_cert_2_serial_number="361372967010167010646904372658654439710639340814"
 
 trustee_account="jack"
 second_trustee_account="alice"
