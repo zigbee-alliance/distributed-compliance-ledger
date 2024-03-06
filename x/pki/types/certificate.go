@@ -59,6 +59,36 @@ func NewNocRootCertificate(
 	}
 }
 
+func NewNocCertificate(
+	pemCert string,
+	subject string,
+	subjectAsText string,
+	subjectKeyID string,
+	serialNumber string,
+	issuer string,
+	authorityKeyID string,
+	rootSubject string,
+	rootSubjectKeyID string,
+	owner string,
+	vid int32,
+) Certificate {
+	return Certificate{
+		PemCert:          pemCert,
+		Subject:          subject,
+		SubjectAsText:    subjectAsText,
+		SubjectKeyId:     subjectKeyID,
+		SerialNumber:     serialNumber,
+		Issuer:           issuer,
+		AuthorityKeyId:   authorityKeyID,
+		RootSubject:      rootSubject,
+		RootSubjectKeyId: rootSubjectKeyID,
+		Vid:              vid,
+		Owner:            owner,
+		IsRoot:           false,
+		IsNoc:            true,
+	}
+}
+
 func (cert ProposedCertificate) HasApprovalFrom(address string) bool {
 	for _, approval := range cert.Approvals {
 		if approval.Address == address {
