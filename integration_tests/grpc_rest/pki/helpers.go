@@ -782,8 +782,16 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, jackAccount.Address, certificate.Certs[0].Owner)
 	require.True(suite.T, certificate.Certs[0].IsRoot)
 
-	// Vandor add Intermediate certificate
+	// Try to add Intermediate certificate when sender is not Vendor account
 	msgAddX509Cert := pkitypes.MsgAddX509Cert{
+		Cert:   testconstants.IntermediateCertPem,
+		Signer: aliceAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, aliceName, aliceAccount)
+	require.Error(suite.T, err)
+
+	// Vandor add Intermediate certificate
+	msgAddX509Cert = pkitypes.MsgAddX509Cert{
 		Cert:   testconstants.IntermediateCertPem,
 		Signer: vendorAccount.Address,
 	}
@@ -908,8 +916,18 @@ func Demo(suite *utils.TestSuite) {
 	_, err = GetAllChildX509Certs(suite, testconstants.LeafSubject, testconstants.LeafSubjectKeyID)
 	suite.AssertNotFound(err)
 
-	// User (Not Trustee) revokes Intermediate certificate. With `RevokeChild` set to true, its child must also be revoked - Leaf certificate.
+	// Try to Revoke Intermediate certificate when sender is not Vendor account
 	msgRevokeX509Cert := pkitypes.MsgRevokeX509Cert{
+		Subject:      testconstants.IntermediateSubject,
+		SubjectKeyId: testconstants.IntermediateSubjectKeyID,
+		RevokeChild:  true,
+		Signer:       aliceAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRevokeX509Cert}, aliceName, aliceAccount)
+	require.Error(suite.T, err)
+
+	// Vendor revokes Intermediate certificate. With `RevokeChild` set to true, its child must also be revoked - Leaf certificate.
+	msgRevokeX509Cert = pkitypes.MsgRevokeX509Cert{
 		Subject:      testconstants.IntermediateSubject,
 		SubjectKeyId: testconstants.IntermediateSubjectKeyID,
 		RevokeChild:  true,
@@ -1704,6 +1722,14 @@ func Demo(suite *utils.TestSuite) {
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
+	// Try to add second intermediate certificate with same subject and SKID by another Vendor
+	msgAddX509Cert = pkitypes.MsgAddX509Cert{
+		Cert:   testconstants.IntermediateWithSameSubjectAndSKID2,
+		Signer: venAcc65522.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, venName65522, venAcc65522)
+	require.Error(suite.T, err)
+
 	msgAddX509Cert = pkitypes.MsgAddX509Cert{
 		Cert:   testconstants.IntermediateWithSameSubjectAndSKID2,
 		Signer: vendorAccount.Address,
@@ -1814,6 +1840,16 @@ func Demo(suite *utils.TestSuite) {
 		Signer:       vendorAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveX509Cert}, vendorName, vendorAccount)
+	require.Error(suite.T, err)
+
+	// Try to Remove x509 certificate by subject and subject key id when sender is not Vendor account
+	msgRemoveX509Cert = pkitypes.MsgRemoveX509Cert{
+		Subject:      testconstants.IntermediateCertWithSameSubjectAndSKIDSubject,
+		SubjectKeyId: testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID,
+		SerialNumber: "invalid",
+		Signer:       aliceAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveX509Cert}, aliceName, aliceAccount)
 	require.Error(suite.T, err)
 
 	// Remove revoked x509 certificate by subject and subject key id

@@ -34,6 +34,10 @@ check_response "$result" "\"code\": 0"
 result=$(echo "$passphrase" | dcld tx pki approve-add-x509-root-cert --subject="$root_cert_with_vid_65521_subject" --subject-key-id="$root_cert_with_vid_65521_subject_key_id" --from $second_trustee_account --yes)
 check_response "$result" "\"code\": 0"
 
+echo "Try to add the intermediate certificate using an account that does not have vendor role"
+result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_cert_with_vid_65521_path" --from $trustee_account --yes)
+check_response "$result" "\"code\": 4"
+
 echo "Add an intermediate certificate with vid=$intermediate_cert_with_vid_65521_vid by $vendor_account_65521 with vid=$vendor_vid_65521"
 result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_cert_with_vid_65521_path" --from $vendor_account_65521 --yes)
 check_response "$result" "\"code\": 0"
@@ -146,7 +150,7 @@ check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$intermediate_cert_1_serial_number\""
 
-echo "Try add second intermediate certificate with same subject and SKID by $vendor_account_65523"
+echo "Try to add second intermediate certificate with same subject and SKID by $vendor_account_65523"
 result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_cert_2_path" --from $vendor_account_65523 --yes)
 check_response "$result" "\"code\": 4"
 
