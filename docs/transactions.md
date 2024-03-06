@@ -925,7 +925,7 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
   - no existing certificate with the same `<Certificate's Issuer>:<Certificate's Serial Number>` combination.
   - if certificates with the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination already exist:
     - the existing certificate must not be NOC certificate
-    - the sender's VID must match the vid field of the existing certificates.
+    - the sender's VID must match the `vid` field of the existing certificates.
   - the signature (self-signature) and expiration date are valid.
   - parent certificate must be already stored on the ledger and a valid chain to some root certificate can be built.
 
@@ -942,11 +942,10 @@ If a Revocation Distribution Point needs to be published (such as RFC5280 Certif
 
 If `revoke-child` flag is set to `true` then all the certificates in the chain signed by the revoked certificate will be revoked as well.
 
-Only the owner (sender) can revoke the certificate.
 Root certificates can not be revoked this way, use  `PROPOSE_X509_CERT_REVOC` and `APPROVE_X509_ROOT_CERT_REVOC` instead.  
 
 - Who can send: Vendor account
-  - the sender's VID must match the vid field of the revoking certificates.
+  - the sender's VID must match the `vid` field of the revoking certificates.
 - Parameters:
   - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
   - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
@@ -964,17 +963,14 @@ Root certificates can not be revoked this way, use  `PROPOSE_X509_CERT_REVOC` an
 
 Removes the given X509 certificate (either intermediate or leaf) from approved and revoked certificates list.
 
-Only the owner (sender) can remove the certificate.
 Root certificates can not be removed this way.  
 
 - Who can send: Vendor account
-  - the sender's VID must match the vid field of the removing certificates.
+  - the sender's VID must match the `vid` field of the removing certificates.
 - Parameters:
   - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
   - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
   - serial-number: `optional(string)`  - certificate's serial number
-- Who can send:
-  - Any role; owner
 - CLI command:
   - `dcld tx pki remove-x509-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
 
@@ -1145,7 +1141,7 @@ This transaction adds a NOC root certificate owned by the Vendor.
   - no existing certificate with the same `<Certificate's Issuer>:<Certificate's Serial Number>` combination.
   - if certificates with the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination already exist:
     - the existing certificate must be NOC root certificate
-    - the sender's VID must match the vid field of the existing certificates.
+    - the sender's VID must match the `vid` field of the existing certificates.
   - the signature (self-signature) and expiration date must be valid.
 - Parameters:
   - cert: `string` - The NOC Root Certificate, encoded in X.509v3 PEM format. Can be a PEM string or a file path.
