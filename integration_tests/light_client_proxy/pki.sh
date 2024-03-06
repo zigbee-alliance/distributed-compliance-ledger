@@ -313,7 +313,7 @@ echo "try to write via light client proxy"
 test_divider
 
 echo "Add cert"
-result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_path" --from $user_account --yes)
+result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_path" --from $vendor_account --yes)
 echo "$result"
 check_response "$result" "Write requests don't work with a Light Client Proxy"
 
