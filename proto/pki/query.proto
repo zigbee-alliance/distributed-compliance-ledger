@@ -16,6 +16,7 @@ import "pki/pki_revocation_distribution_point.proto";
 import "pki/pki_revocation_distribution_points_by_issuer_subject_key_id.proto";
 import "pki/noc_root_certificates.proto";
 import "pki/noc_certificates.proto";
+import "pki/revoked_noc_root_certificates.proto";
 // this line is used by starport scaffolding # 1
 import "gogoproto/gogo.proto";
 
@@ -129,6 +130,16 @@ service Query {
 	// Queries a list of NocCertificates items.
 	rpc NocCertificatesAll(QueryAllNocCertificatesRequest) returns (QueryAllNocCertificatesResponse) {
 		option (google.api.http).get = "/dcl/pki/noc-certificates";
+	}
+
+// Queries a RevokedNocRootCertificates by index.
+	rpc RevokedNocRootCertificates(QueryGetRevokedNocRootCertificatesRequest) returns (QueryGetRevokedNocRootCertificatesResponse) {
+		option (google.api.http).get = "/dcl/pki/revoked-noc-root-certificates/{subject}/{subjectKeyId}";
+	}
+
+	// Queries a list of RevokedNocRootCertificates items.
+	rpc RevokedNocRootCertificatesAll(QueryAllRevokedNocRootCertificatesRequest) returns (QueryAllRevokedNocRootCertificatesResponse) {
+		option (google.api.http).get = "/dcl/pki/revoked-noc-root-certificates";
 	}
 
 // this line is used by starport scaffolding # 2
@@ -320,6 +331,24 @@ message QueryAllNocCertificatesRequest {
 
 message QueryAllNocCertificatesResponse {
 	repeated NocCertificates nocCertificates = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetRevokedNocRootCertificatesRequest {
+	string subject = 1;
+	string subjectKeyId = 2;
+}
+
+message QueryGetRevokedNocRootCertificatesResponse {
+	RevokedNocRootCertificates revokedNocRootCertificates = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllRevokedNocRootCertificatesRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllRevokedNocRootCertificatesResponse {
+	repeated RevokedNocRootCertificates revokedNocRootCertificates = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
