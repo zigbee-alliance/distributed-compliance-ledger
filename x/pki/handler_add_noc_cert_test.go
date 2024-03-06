@@ -19,8 +19,7 @@ func TestHandler_AddNocX509Cert_SenderNotVendor(t *testing.T) {
 	addNocX509Cert := types.NewMsgAddNocX509Cert(setup.Trustee1.String(), testconstants.NocCert1)
 	_, err := setup.Handler(setup.Ctx, addNocX509Cert)
 
-	require.Error(t, err)
-	require.True(t, sdkerrors.ErrUnauthorized.Is(err))
+	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
 }
 
 func TestHandler_AddNocX509Cert_AddNew(t *testing.T) {
@@ -160,8 +159,7 @@ func TestHandler_AddNocX509Cert_Root_VID_Does_Not_Equal_To_AccountVID(t *testing
 	// try to add NOC certificate
 	nocX509Cert := types.NewMsgAddNocX509Cert(newAccAddress.String(), testconstants.NocCert1)
 	_, err := setup.Handler(setup.Ctx, nocX509Cert)
-	require.Error(t, err)
-	require.True(t, pkitypes.ErrCertVidNotEqualAccountVid.Is(err))
+	require.ErrorIs(t, err, pkitypes.ErrCertVidNotEqualAccountVid)
 }
 
 func TestHandler_AddNocX509Cert_ForInvalidCertificate(t *testing.T) {
@@ -174,8 +172,7 @@ func TestHandler_AddNocX509Cert_ForInvalidCertificate(t *testing.T) {
 	// add x509 certificate
 	addX509Cert := types.NewMsgAddNocX509Cert(accAddress.String(), testconstants.StubCertPem)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
-	require.Error(t, err)
-	require.True(t, pkitypes.ErrInvalidCertificate.Is(err))
+	require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
 }
 
 func TestHandler_AddXNoc509Cert_ForNocRootCertificate(t *testing.T) {
@@ -188,8 +185,7 @@ func TestHandler_AddXNoc509Cert_ForNocRootCertificate(t *testing.T) {
 	// try to add root certificate x509 certificate
 	addX509Cert := types.NewMsgAddX509Cert(accAddress.String(), testconstants.NocRootCert1)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
-	require.Error(t, err)
-	require.True(t, pkitypes.ErrInappropriateCertificateType.Is(err))
+	require.ErrorIs(t, err, pkitypes.ErrNonRootCertificateSelfSigned)
 }
 
 func TestHandler_AddXNoc509Cert_ForRootNonNocCertificate(t *testing.T) {
@@ -212,7 +208,6 @@ func TestHandler_AddXNoc509Cert_ForRootNonNocCertificate(t *testing.T) {
 	// try to add root certificate x509 certificate
 	addX509Cert := types.NewMsgAddNocX509Cert(accAddress.String(), testconstants.IntermediateCertWithVid1)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
-	require.Error(t, err)
 	require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
 }
 
@@ -333,7 +328,7 @@ func TestHandler_AddNocX509Cert_CertificateExist(t *testing.T) {
 				Vid:            testconstants.VendorID1,
 			},
 			nocCert: testconstants.NocCert1,
-			err:     pkitypes.ErrCertVidNotEqualAccountVid,
+			err:     sdkerrors.ErrUnauthorized,
 		},
 	}
 
