@@ -503,7 +503,7 @@ func TestHandler_AddX509Cert_NonVIDScopedRoot(t *testing.T) {
 		rootCertOptions       *rootCertOptions
 		childCert             string
 		childCertSubject      string
-		childCertSubjectKeyId string
+		childCertSubjectKeyID string
 		accountVid            int32
 	}{
 		{
@@ -511,7 +511,7 @@ func TestHandler_AddX509Cert_NonVIDScopedRoot(t *testing.T) {
 			rootCertOptions:       createPAACertNoVidOptions(testconstants.PAICertWithVidVid),
 			childCert:             testconstants.PAICertWithNumericVid,
 			childCertSubject:      testconstants.PAICertWithNumericVidSubject,
-			childCertSubjectKeyId: testconstants.PAICertWithNumericVidSubjectKeyID,
+			childCertSubjectKeyID: testconstants.PAICertWithNumericVidSubjectKeyID,
 			accountVid:            testconstants.PAICertWithVidVid,
 		},
 		{
@@ -519,7 +519,7 @@ func TestHandler_AddX509Cert_NonVIDScopedRoot(t *testing.T) {
 			rootCertOptions:       createTestRootCertOptions(),
 			childCert:             testconstants.IntermediateCertPem,
 			childCertSubject:      testconstants.IntermediateSubject,
-			childCertSubjectKeyId: testconstants.IntermediateSubjectKeyID,
+			childCertSubjectKeyID: testconstants.IntermediateSubjectKeyID,
 			accountVid:            testconstants.Vid,
 		},
 	}
@@ -541,10 +541,10 @@ func TestHandler_AddX509Cert_NonVIDScopedRoot(t *testing.T) {
 			// query certificate
 			certs, _ := queryAllApprovedCertificates(setup)
 			require.Equal(t, 2, len(certs))
-			intermediateCerts, _ := queryApprovedCertificates(setup, tc.childCertSubject, tc.childCertSubjectKeyId)
+			intermediateCerts, _ := queryApprovedCertificates(setup, tc.childCertSubject, tc.childCertSubjectKeyID)
 			require.Equal(t, 1, len(intermediateCerts.Certs))
 			require.Equal(t, tc.childCertSubject, intermediateCerts.Certs[0].Subject)
-			require.Equal(t, tc.childCertSubjectKeyId, intermediateCerts.Certs[0].SubjectKeyId)
+			require.Equal(t, tc.childCertSubjectKeyID, intermediateCerts.Certs[0].SubjectKeyId)
 		})
 	}
 }

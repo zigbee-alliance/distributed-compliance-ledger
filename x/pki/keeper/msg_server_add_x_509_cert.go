@@ -146,7 +146,7 @@ func (k msgServer) ensureCertsAndSenderVidMatch(
 	signerAccount, _ := k.dclauthKeeper.GetAccountO(ctx, signerAddr)
 	accountVID := signerAccount.VendorID
 
-	if rootVid != 0 {
+	if rootVid != 0 { //nolint:nestif
 		// If added under a VID scoped root CA:
 		// Child certificate must be also VID scoped to the same VID as a root one
 		if rootVid != childVid {
