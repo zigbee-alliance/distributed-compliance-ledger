@@ -752,7 +752,7 @@ func TestHandler_ProposeRevokeX509RootCert_ByTrusteeNotOwner(t *testing.T) {
 	rootCertOptions := createTestRootCertOptions()
 	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
-	// store another trustee
+	// add another trustee
 	anotherTrustee := GenerateAccAddress()
 	setup.AddAccount(anotherTrustee, []dclauthtypes.AccountRole{dclauthtypes.Trustee}, 1)
 
@@ -1211,7 +1211,7 @@ func TestHandler_ApproveRevokeX509RootCert_ForTree(t *testing.T) {
 	require.Equal(t, 1, len(allRevokedCertificates[2].Certs))
 	require.Equal(t, testconstants.IntermediateCertPem, allRevokedCertificates[2].Certs[0].PemCert)
 
-	// check that no certificates stays approved
+	// check that approved certs list is empty
 	allApprovedCertificates, err := queryAllApprovedCertificates(setup)
 	require.NoError(t, err)
 	require.Equal(t, 0, len(allApprovedCertificates))

@@ -51,7 +51,7 @@ func (k Keeper) CertificateRejectApprovalsCount(ctx sdk.Context, authKeeper type
 	return authKeeper.CountAccountsWithRole(ctx, authTypes.Trustee) - k.CertificateApprovalsCount(ctx, authKeeper) + 1
 }
 
-func (k Keeper) EnsureSenderAndOwnerVidMatch(ctx sdk.Context, certificate *types.Certificate, signer string) error {
+func (k Keeper) EnsureVidMatches(ctx sdk.Context, owner string, signer string) error {
 	// get signer VID
 	signerAddr, err := sdk.AccAddressFromBech32(signer)
 	if err != nil {
@@ -62,7 +62,7 @@ func (k Keeper) EnsureSenderAndOwnerVidMatch(ctx sdk.Context, certificate *types
 	signerVid := signerAccount.VendorID
 
 	// get owner VID
-	ownerAddr, err := sdk.AccAddressFromBech32(certificate.Owner)
+	ownerAddr, err := sdk.AccAddressFromBech32(owner)
 	if err != nil {
 		return pkitypes.NewErrInvalidAddress(err)
 	}
@@ -71,7 +71,7 @@ func (k Keeper) EnsureSenderAndOwnerVidMatch(ctx sdk.Context, certificate *types
 	ownerVid := ownerAccount.VendorID
 
 	if signerVid != ownerVid {
-		return pkitypes.NewErrUnauthorizedCertVendor(certificate.Subject, certificate.SubjectKeyId, ownerVid)
+		return pkitypes.NewErrUnauthorizedCertVendor(ownerVid)
 	}
 
 	return nil

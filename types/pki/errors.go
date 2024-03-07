@@ -188,11 +188,11 @@ func NewErrUnauthorizedCertOwner(subject string, subjectKeyID string) error {
 		subject, subjectKeyID)
 }
 
-func NewErrUnauthorizedCertVendor(subject string, subjectKeyID string, ownerVid int32) error {
+func NewErrUnauthorizedCertVendor(ownerVid int32) error {
 	return sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
 		"Only the vendor accounts with vid=%d, has the authority "+
-			"to add, remove, or revoke a certificate with subject=%v and subjectKeyID=%v",
-		ownerVid, subject, subjectKeyID)
+			"to add, remove, or revoke a certificate with provided subject and subjectKeyID",
+		ownerVid)
 }
 
 func NewErrProvidedNocCertButExistingNotNoc(subject string, subjectKeyID string) error {
@@ -226,7 +226,7 @@ func NewErrRootCertVidNotEqualToCertVid(rootVID int32, certVID int32) error {
 
 func NewErrRootCertVidNotEqualToAccountVid(rootVID int32, accountVID int32) error {
 	return sdkerrors.Wrapf(ErrCertVidNotEqualAccountVid,
-		"Only a Vendor associated with root certificate VID can add a child certificate: "+
+		"Only a Vendor associated with VID of root certificate can add a child certificate: "+
 			"Root certificate's VID = %v, Account VID = %v",
 		rootVID, accountVID)
 }

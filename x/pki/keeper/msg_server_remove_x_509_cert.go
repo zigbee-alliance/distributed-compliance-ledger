@@ -20,7 +20,7 @@ func (k msgServer) RemoveX509Cert(goCtx context.Context, msg *types.MsgRemoveX50
 
 	// check if signer has vendor role
 	if !k.dclauthKeeper.HasRole(ctx, signerAddr, dclauthtypes.Vendor) {
-		return nil, pkitypes.NewErrUnauthorizedRole("MsgAddNocX509RootCert", dclauthtypes.Vendor)
+		return nil, pkitypes.NewErrUnauthorizedRole("MsgRemoveX509Cert", dclauthtypes.Vendor)
 	}
 
 	aprCerts, foundApproved := k.GetApprovedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
@@ -35,7 +35,7 @@ func (k msgServer) RemoveX509Cert(goCtx context.Context, msg *types.MsgRemoveX50
 		return nil, pkitypes.NewErrMessageRemoveRoot(msg.Subject, msg.SubjectKeyId)
 	}
 
-	if err := k.EnsureSenderAndOwnerVidMatch(ctx, certificates[0], msg.Signer); err != nil {
+	if err := k.EnsureVidMatches(ctx, certificates[0].Owner, msg.Signer); err != nil {
 		return nil, err
 	}
 

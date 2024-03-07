@@ -62,11 +62,7 @@ func (k msgServer) AddNocX509Cert(goCtx context.Context, msg *types.MsgAddNocX50
 
 		// signer VID must be same as VID of existing certificates
 		if accountVid != existingCertificate.Vid {
-			return nil, pkitypes.NewErrUnauthorizedCertVendor(
-				x509Certificate.Subject,
-				x509Certificate.SubjectKeyID,
-				existingCertificate.Vid,
-			)
+			return nil, pkitypes.NewErrUnauthorizedCertVendor(existingCertificate.Vid)
 		}
 	}
 	// Valid certificate chain must be built for new certificate

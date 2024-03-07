@@ -658,7 +658,7 @@ test_divider
 echo "6. REVOKE INTERMEDIATE (AND HENCE  LEAF) CERTS - No Approvals needed"
 test_divider
 
-echo "Try to revoke the intermediate certificate using an account that does not have vendor role"
+echo "Try to revoke the intermediate certificate when sender is not Vendor account"
 result=$(echo "$passphrase" | dcld tx pki revoke-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --from=$user_account --yes)
 check_response "$result" "\"code\": 4"
 

@@ -79,7 +79,7 @@ echo "Remove intermediate certificate with invalid serialNumber"
 result=$(echo "$passphrase" | dcld tx pki remove-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --serial-number="invalid" --from=$vendor_account_65521 --yes)
 check_response "$result" "\"code\": 404"
 
-echo "Try to remove the intermediate certificate using an account that does not have vendor role"
+echo "Try to remove the intermediate certificate when sender is not Vendor account"
 result=$(echo "$passphrase" | dcld tx pki remove-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --serial-number="$intermediate_cert_1_serial_number" --from=$trustee_account --yes)
 check_response "$result" "\"code\": 4"
 

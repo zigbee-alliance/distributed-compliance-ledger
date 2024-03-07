@@ -21,7 +21,7 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 
 	// check if signer has vendor role
 	if !k.dclauthKeeper.HasRole(ctx, signerAddr, dclauthtypes.Vendor) {
-		return nil, pkitypes.NewErrUnauthorizedRole("MsgAddNocX509RootCert", dclauthtypes.Vendor)
+		return nil, pkitypes.NewErrUnauthorizedRole("MsgAddX509Cert", dclauthtypes.Vendor)
 	}
 
 	// decode pem certificate
@@ -58,7 +58,7 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 			return nil, pkitypes.NewErrProvidedNotNocCertButExistingNoc(x509Certificate.Subject, x509Certificate.SubjectKeyID)
 		}
 
-		if err = k.EnsureSenderAndOwnerVidMatch(ctx, existingCertificate, msg.Signer); err != nil {
+		if err = k.EnsureVidMatches(ctx, existingCertificate.Owner, msg.Signer); err != nil {
 			return nil, err
 		}
 	}
@@ -81,8 +81,8 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 		return nil, pkitypes.NewErrProvidedNotNocCertButRootIsNoc()
 	}
 
-	// Provided certificate, root certificate and account VID must match
-	if err = k.ensureCertsAndSenderVidMatch(ctx, rootCert, x509Certificate, signerAddr); err != nil {
+	// VID of account must match to VID of root and provided child certificates
+	if err = k.ensureVidMatches(ctx, rootCert, x509Certificate, signerAddr); err != nil {
 		return nil, err
 	}
 
@@ -127,7 +127,7 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 	return &types.MsgAddX509CertResponse{}, nil
 }
 
-func (k msgServer) ensureCertsAndSenderVidMatch(
+func (k msgServer) ensureVidMatches(
 	ctx sdk.Context,
 	rootCert *types.Certificate,
 	childCert *x509.Certificate,
