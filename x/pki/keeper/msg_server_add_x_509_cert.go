@@ -6,12 +6,23 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
+	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/x509"
 )
 
 func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert) (*types.MsgAddX509CertResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	signerAddr, err := sdk.AccAddressFromBech32(msg.Signer)
+	if err != nil {
+		return nil, pkitypes.NewErrInvalidAddress(err)
+	}
+
+	// check if signer has vendor role
+	if !k.dclauthKeeper.HasRole(ctx, signerAddr, dclauthtypes.Vendor) {
+		return nil, pkitypes.NewErrUnauthorizedRole("MsgAddX509Cert", dclauthtypes.Vendor)
+	}
 
 	// decode pem certificate
 	x509Certificate, err := x509.DecodeX509Certificate(msg.Cert)
@@ -21,10 +32,7 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 
 	// fail if certificate is self-signed
 	if x509Certificate.IsSelfSigned() {
-		return nil, pkitypes.NewErrInappropriateCertificateType(
-			"Inappropriate Certificate Type: Passed certificate is self-signed, " +
-				"so it cannot be added to the system as a non-root certificate. " +
-				"To propose adding a root certificate please use `PROPOSE_ADD_X509_ROOT_CERT` transaction.")
+		return nil, pkitypes.NewErrNonRootCertificateSelfSigned()
 	}
 
 	// check if certificate with Issuer/Serial Number combination already exists
@@ -50,45 +58,32 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 			return nil, pkitypes.NewErrProvidedNotNocCertButExistingNoc(x509Certificate.Subject, x509Certificate.SubjectKeyID)
 		}
 
-		// signer must be same as owner of existing certificates
-		if msg.Signer != existingCertificate.Owner {
-			return nil, pkitypes.NewErrUnauthorizedCertOwner(x509Certificate.Subject, x509Certificate.SubjectKeyID)
+		if err = k.EnsureVidMatches(ctx, existingCertificate.Owner, msg.Signer); err != nil {
+			return nil, err
 		}
 	}
 
 	// Valid certificate chain must be built for new certificate
-	rootCert, err := k.verifyCertificate(ctx, x509Certificate)
+	decodedRootCert, err := k.verifyCertificate(ctx, x509Certificate)
 	if err != nil {
 		return nil, err
 	}
-	// Check Root and Intermediate certs for VID scoping
-	rootVid, err := x509.GetVidFromSubject(x509.ToSubjectAsText(rootCert.SubjectAsText))
-	if err != nil {
-		return nil, pkitypes.NewErrInvalidVidFormat(err)
+
+	// get the full structure of the root certificate which contains the necessary fields for further validation
+	approvedRootCerts, _ := k.GetApprovedCertificates(ctx, decodedRootCert.Subject, decodedRootCert.SubjectKeyID)
+	if len(approvedRootCerts.Certs) == 0 {
+		return nil, pkitypes.NewErrRootCertificateDoesNotExist(decodedRootCert.Subject, decodedRootCert.SubjectKeyID)
 	}
-	childVid, err := x509.GetVidFromSubject(x509Certificate.SubjectAsText)
-	if err != nil {
-		return nil, pkitypes.NewErrInvalidVidFormat(err)
-	}
-	signerAddr, err := sdk.AccAddressFromBech32(msg.Signer)
-	if err != nil {
-		return nil, pkitypes.NewErrInvalidAddress(err)
+	rootCert := approvedRootCerts.Certs[0]
+
+	// Root certificate must not be NOC
+	if rootCert.IsNoc {
+		return nil, pkitypes.NewErrProvidedNotNocCertButRootIsNoc()
 	}
 
-	signerAccount, _ := k.dclauthKeeper.GetAccountO(ctx, signerAddr)
-	accountVID := signerAccount.VendorID
-
-	if rootVid != 0 {
-		// If added under a VID scoped root CA: Intermediate cert must be also VID scoped to the same VID as a root one.
-		// Only a Vendor associated with this VID can add an intermediate certificate. So `rootVid == childVid == accountVID`
-		// condition must hold
-		if rootVid != childVid || rootVid != accountVID {
-			return nil, pkitypes.NewErrRootCertVidNotEqualToAccountVidOrCertVid(rootVid, accountVID, childVid)
-		}
-		// If added under a non-VID scoped root CA associated with a VID: Intermediate cert must be either VID scoped to the same VID, or non-VID scoped.
-		// Only a Vendor associated with this VID can add an intermediate certificate.
-	} else if childVid != 0 && childVid != accountVID {
-		return nil, pkitypes.NewErrAccountVidNotEqualToCertVid(accountVID, childVid)
+	// VID of account must match to VID of root and provided child certificates
+	if err = k.ensureVidMatches(ctx, rootCert, x509Certificate, signerAddr); err != nil {
+		return nil, err
 	}
 
 	// create new certificate
@@ -101,7 +96,7 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 		x509Certificate.Issuer,
 		x509Certificate.AuthorityKeyID,
 		rootCert.Subject,
-		rootCert.SubjectKeyID,
+		rootCert.SubjectKeyId,
 		msg.Signer,
 	)
 
@@ -130,4 +125,50 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 	k.AddApprovedCertificateBySubjectKeyID(ctx, certificate)
 
 	return &types.MsgAddX509CertResponse{}, nil
+}
+
+func (k msgServer) ensureVidMatches(
+	ctx sdk.Context,
+	rootCert *types.Certificate,
+	childCert *x509.Certificate,
+	signerAddr sdk.AccAddress,
+) error {
+	// Check Root and Intermediate certs for VID scoping
+	rootVid, err := x509.GetVidFromSubject(x509.ToSubjectAsText(rootCert.SubjectAsText))
+	if err != nil {
+		return pkitypes.NewErrInvalidVidFormat(err)
+	}
+	childVid, err := x509.GetVidFromSubject(childCert.SubjectAsText)
+	if err != nil {
+		return pkitypes.NewErrInvalidVidFormat(err)
+	}
+
+	signerAccount, _ := k.dclauthKeeper.GetAccountO(ctx, signerAddr)
+	accountVID := signerAccount.VendorID
+
+	if rootVid != 0 { //nolint:nestif
+		// If added under a VID scoped root CA:
+		// Child certificate must be also VID scoped to the same VID as a root one
+		if rootVid != childVid {
+			return pkitypes.NewErrRootCertVidNotEqualToCertVid(rootVid, childVid)
+		}
+
+		// Only a Vendor associated with root certificate's VID can add an intermediate certificate
+		if rootVid != accountVID {
+			return pkitypes.NewErrRootCertVidNotEqualToAccountVid(rootVid, accountVID)
+		}
+	} else {
+		// If added under a non-VID scoped root CA:
+		// Child certificate must be either VID scoped to the same VID, or non-VID scoped.
+		if childVid != 0 && childVid != rootCert.Vid {
+			return pkitypes.NewErrRootCertVidNotEqualToCertVid(accountVID, childVid)
+		}
+
+		// Only a Vendor associated with root certificate VID can add an intermediate certificate.
+		if rootCert.Vid != accountVID {
+			return pkitypes.NewErrRootCertVidNotEqualToAccountVid(rootCert.Vid, accountVID)
+		}
+	}
+
+	return nil
 }

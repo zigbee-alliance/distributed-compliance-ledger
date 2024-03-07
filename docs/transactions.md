@@ -905,13 +905,17 @@ already present on the ledger.
 
 The certificate is immutable. It can only be revoked by either the owner or a quorum of Trustees.
 
+- Who can send: Vendor account
+  - PAA (Root certificates) are VID-scoped:
+    - the vid field in the subject of the root certificate, as well as in the intermediate/leaf X509 certificates and the Vendor account's VID certificate, must be the same.
+  - Non-VID scoped PAAs (Root certificates):
+    - if the intermediate/leaf X509 certificate is VID-scoped, then the `vid` field in the certificate must match the corresponding PAA's `vid` field on the ledger, or the intermediate/leaf X509 certificate must not be VID-scoped.
+    - `vid` field associated with the corresponding PAA on the ledger must be equal to the Vendor account's VID.
 - Parameters:
   - cert: `string` - PEM encoded certificate. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data.
 - In State:
   - `pki/ApprovedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
   - `pki/ChildCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
-- Who can send:
-  - Any role
 - CLI command:
   - `dcld tx pki add-x509-cert --certificate=<string-or-path> --from=<account>`
 - Validation:
@@ -921,7 +925,7 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
   - no existing certificate with the same `<Certificate's Issuer>:<Certificate's Serial Number>` combination.
   - if certificates with the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination already exist:
     - the existing certificate must not be NOC certificate
-    - sender must match to the owner of the existing certificates.
+    - the sender's VID must match the `vid` field of the existing certificates.
   - the signature (self-signature) and expiration date are valid.
   - parent certificate must be already stored on the ledger and a valid chain to some root certificate can be built.
 
@@ -938,9 +942,10 @@ If a Revocation Distribution Point needs to be published (such as RFC5280 Certif
 
 If `revoke-child` flag is set to `true` then all the certificates in the chain signed by the revoked certificate will be revoked as well.
 
-Only the owner (sender) can revoke the certificate.
 Root certificates can not be revoked this way, use  `PROPOSE_X509_CERT_REVOC` and `APPROVE_X509_ROOT_CERT_REVOC` instead.  
 
+- Who can send: Vendor account
+  - the sender's VID must match the `vid` field of the revoking certificates.
 - Parameters:
   - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
   - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
@@ -949,8 +954,6 @@ Root certificates can not be revoked this way, use  `PROPOSE_X509_CERT_REVOC` an
   - info: `optional(string)` - information/notes for the revocation
   - time: `optional(int64)` - revocation time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State: `pki/RevokedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
-- Who can send:
-  - Any role; owner
 - CLI command:
   - `dcld tx pki revoke-x509-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
 
@@ -960,15 +963,14 @@ Root certificates can not be revoked this way, use  `PROPOSE_X509_CERT_REVOC` an
 
 Removes the given X509 certificate (either intermediate or leaf) from approved and revoked certificates list.
 
-Only the owner (sender) can remove the certificate.
 Root certificates can not be removed this way.  
 
+- Who can send: Vendor account
+  - the sender's VID must match the `vid` field of the removing certificates.
 - Parameters:
   - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
   - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
   - serial-number: `optional(string)`  - certificate's serial number
-- Who can send:
-  - Any role; owner
 - CLI command:
   - `dcld tx pki remove-x509-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
 
@@ -1040,7 +1042,6 @@ If PAI needs to be added to DCL, it should be done via [ADD_X509_CERT](#add_x509
 Publishing the revocation distribution endpoint doesn't automatically remove PAI (Intermediate certificates)
 and DACs (leaf certificates) added to DCL if they are revoked in the CRL identified by this distribution point.
 [REVOKE_X509_CERT](#revoke_x509_cert) needs to be called to remove an intermediate or leaf certificate from the ledger. 
-
 
 - Who can send: Vendor account
   - `vid` field in the transaction (`VendorID`) must be equal to the Vendor account's VID
@@ -1140,7 +1141,7 @@ This transaction adds a NOC root certificate owned by the Vendor.
   - no existing certificate with the same `<Certificate's Issuer>:<Certificate's Serial Number>` combination.
   - if certificates with the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination already exist:
     - the existing certificate must be NOC root certificate
-    - the sender's VID must match the vid field of the existing certificates.
+    - the sender's VID must match the `vid` field of the existing certificates.
   - the signature (self-signature) and expiration date must be valid.
 - Parameters:
   - cert: `string` - The NOC Root Certificate, encoded in X.509v3 PEM format. Can be a PEM string or a file path.

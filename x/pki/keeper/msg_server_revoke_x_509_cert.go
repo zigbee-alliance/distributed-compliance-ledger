@@ -2,50 +2,50 @@ package keeper
 
 import (
 	"context"
-	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
+	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
 func (k msgServer) RevokeX509Cert(goCtx context.Context, msg *types.MsgRevokeX509Cert) (*types.MsgRevokeX509CertResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	certificates, found := k.GetApprovedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
-	if !found {
+	signerAddr, err := sdk.AccAddressFromBech32(msg.Signer)
+	if err != nil {
+		return nil, pkitypes.NewErrInvalidAddress(err)
+	}
+
+	// check if signer has vendor role
+	if !k.dclauthKeeper.HasRole(ctx, signerAddr, dclauthtypes.Vendor) {
+		return nil, pkitypes.NewErrUnauthorizedRole("MsgRevokeX509Cert", dclauthtypes.Vendor)
+	}
+
+	certificates, _ := k.GetApprovedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
+	if len(certificates.Certs) == 0 {
 		return nil, pkitypes.NewErrCertificateDoesNotExist(msg.Subject, msg.SubjectKeyId)
 	}
 
 	if certificates.Certs[0].IsRoot {
-		return nil, pkitypes.NewErrInappropriateCertificateType(
-			fmt.Sprintf("Inappropriate Certificate Type: Certificate with subject=%v and subjectKeyID=%v "+
-				"is a root certificate. To propose revocation of a root certificate please use "+
-				"`PROPOSE_REVOKE_X509_ROOT_CERT` transaction.", msg.Subject, msg.SubjectKeyId),
-		)
+		return nil, pkitypes.NewErrMessageRemoveRoot(msg.Subject, msg.SubjectKeyId)
 	}
 
-	if msg.Signer != certificates.Certs[0].Owner {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
-			"Only owner can revoke certificate using `REVOKE_X509_CERT`",
-		)
+	if err := k.EnsureVidMatches(ctx, certificates.Certs[0].Owner, msg.Signer); err != nil {
+		return nil, err
 	}
 
 	certIdentifier := types.CertificateIdentifier{
 		Subject:      msg.Subject,
 		SubjectKeyId: msg.SubjectKeyId,
 	}
-	var certBySerialNumber *types.Certificate
 
 	if msg.SerialNumber != "" {
-		certBySerialNumber, found = findCertificate(msg.SerialNumber, &certificates.Certs)
+		certBySerialNumber, found := findCertificate(msg.SerialNumber, &certificates.Certs)
 		if !found {
 			return nil, pkitypes.NewErrCertificateBySerialNumberDoesNotExist(msg.Subject, msg.SubjectKeyId, msg.SerialNumber)
 		}
-	}
 
-	if certBySerialNumber != nil {
 		k._revokeX509Certificate(ctx, certBySerialNumber, certIdentifier, certificates)
 	} else {
 		k._revokeX509Certificates(ctx, certIdentifier, certificates)

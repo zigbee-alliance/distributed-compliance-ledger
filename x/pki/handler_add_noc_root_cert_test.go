@@ -133,7 +133,7 @@ func TestHandler_AddNocX509RootCert_CertificateExist(t *testing.T) {
 				Vid:           testconstants.VendorID1,
 			},
 			nocRoorCert: testconstants.RootCertPem,
-			err:         pkitypes.ErrCertVidNotEqualAccountVid,
+			err:         sdkerrors.ErrUnauthorized,
 		},
 	}
 
