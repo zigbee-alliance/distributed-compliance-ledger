@@ -907,7 +907,7 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
 
 - Who can send: Vendor account
   - PAA (Root certificates) are VID-scoped:
-    - the `vid` field in the subject of the intermediate/leaf X509 certificate must be equal to the Vendor account's VID.
+    - the vid field in the subject of the root certificate, as well as in the intermediate/leaf X509 certificates and the Vendor account's VID certificate, must be the same.
   - Non-VID scoped PAAs (Root certificates):
     - if the intermediate/leaf X509 certificate is VID-scoped, then the `vid` field in the certificate must match the corresponding PAA's `vid` field on the ledger, or the intermediate/leaf X509 certificate must not be VID-scoped.
     - `vid` field associated with the corresponding PAA on the ledger must be equal to the Vendor account's VID.
