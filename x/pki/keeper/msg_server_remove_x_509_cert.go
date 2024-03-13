@@ -32,7 +32,7 @@ func (k msgServer) RemoveX509Cert(goCtx context.Context, msg *types.MsgRemoveX50
 	}
 
 	if certificates[0].IsRoot {
-		return nil, pkitypes.NewErrMessageRemoveRoot(msg.Subject, msg.SubjectKeyId)
+		return nil, pkitypes.NewErrMessageExpectedNonRoot(msg.Subject, msg.SubjectKeyId)
 	}
 
 	if err := k.EnsureVidMatches(ctx, certificates[0].Owner, msg.Signer); err != nil {

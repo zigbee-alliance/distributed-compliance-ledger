@@ -27,6 +27,9 @@ noc_cert_1_subject="MIGCMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UE
 noc_cert_1_subject_key_id="02:72:6E:BC:BB:EF:D6:BD:8D:9B:42:AE:D4:3C:C0:55:5F:66:3A:B3"
 noc_cert_1_serial_number="631388393741945881054190991612463928825155142122"
 
+noc_cert_1_copy_path="integration_tests/constants/noc_cert_1_copy"
+noc_cert_1_copy_serial_number="169445068204646961882009388640343665944683778293"
+
 noc_cert_2_path="integration_tests/constants/noc_cert_2"
 noc_cert_2_subject="MIGCMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDDAtOT0MtY2hpbGQtMg=="
 noc_cert_2_subject_key_id="87:48:A2:33:12:1F:51:5C:93:E6:90:40:4A:2C:AB:9E:D6:19:E5:AD"
@@ -221,12 +224,17 @@ echo "Add second NOC certificate by vendor with VID = $vid"
 result=$(echo "$passphrase" | dcld tx pki add-noc-x509-cert --certificate="$noc_cert_2_path" --from $vendor_account --yes)
 check_response "$result" "\"code\": 0"
 
+echo "Add third NOC certificate by vendor with VID = $vid"
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-cert --certificate="$noc_cert_1_copy_path" --from $vendor_account --yes)
+check_response "$result" "\"code\": 0"
+
 echo "Request all NOC certificates"
 result=$(dcld query pki all-noc-x509-certs)
 echo $result | jq
 check_response "$result" "\"subject\": \"$noc_cert_1_subject\""
 check_response "$result" "\"subjectKeyId\": \"$noc_cert_1_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$noc_cert_1_serial_number\""
+check_response "$result" "\"serialNumber\": \"$noc_cert_1_copy_serial_number\""
 check_response "$result" "\"subject\": \"$noc_cert_2_subject\""
 check_response "$result" "\"subjectKeyId\": \"$noc_cert_2_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$noc_cert_2_serial_number\""
@@ -240,6 +248,7 @@ check_response "$result" "\"serialNumber\": \"$noc_root_cert_1_serial_number\""
 check_response "$result" "\"subject\": \"$noc_cert_1_subject\""
 check_response "$result" "\"subjectKeyId\": \"$noc_cert_1_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$noc_cert_1_serial_number\""
+check_response "$result" "\"serialNumber\": \"$noc_cert_1_copy_serial_number\""
 check_response "$result" "\"subject\": \"$noc_cert_2_subject\""
 check_response "$result" "\"subjectKeyId\": \"$noc_cert_2_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$noc_cert_2_serial_number\""
@@ -266,10 +275,11 @@ echo "Request all NOC certificates"
 result=$(dcld query pki all-noc-x509-certs)
 echo $result | jq
 check_response "$result" "\"serialNumber\": \"$noc_cert_1_serial_number\""
+check_response "$result" "\"serialNumber\": \"$noc_cert_1_copy_serial_number\""
 check_response "$result" "\"serialNumber\": \"$noc_cert_2_serial_number\""
 check_response "$result" "\"serialNumber\": \"$noc_leaf_cert_1_serial_number\""
 
-echo "Try to revoke intermediate with different VID = $vid_2"
+echo "Try to revoke NOC root certificate with different VID = $vid_2"
 result=$(echo "$passphrase" | dcld tx pki revoke-noc-x509-root-cert --subject="$noc_root_cert_1_subject" --subject-key-id="$noc_root_cert_1_subject_key_id" --from $vendor_account_2 --yes)
 check_response "$result" "\"code\": 439"
 
@@ -349,6 +359,7 @@ check_response "$result" "\"subject\": \"$noc_leaf_cert_1_subject\""
 check_response "$result" "\"subjectKeyId\": \"$noc_cert_1_subject_key_id\""
 check_response "$result" "\"subjectKeyId\": \"$noc_leaf_cert_1_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$noc_cert_1_serial_number\""
+check_response "$result" "\"serialNumber\": \"$noc_cert_1_copy_serial_number\""
 check_response "$result" "\"serialNumber\": \"$noc_leaf_cert_1_serial_number\""
 
 echo "Request all approved certificates should not contain revoked NOC root certificates"
@@ -356,6 +367,7 @@ result=$(dcld query pki all-x509-certs)
 check_response "$result" "\"subject\": \"$noc_cert_1_subject\""
 check_response "$result" "\"subjectKeyId\": \"$noc_cert_1_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$noc_cert_1_serial_number\""
+check_response "$result" "\"serialNumber\": \"$noc_cert_1_copy_serial_number\""
 check_response "$result" "\"subject\": \"$noc_leaf_cert_1_subject\""
 check_response "$result" "\"subjectKeyId\": \"$noc_leaf_cert_1_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$noc_leaf_cert_1_serial_number\""
@@ -366,3 +378,70 @@ response_does_not_contain "$result" "\"serialNumber\": \"$noc_root_cert_1_copy_s
 echo $result | jq
 
 test_divider
+
+echo "REVOCATION OF NON-ROOT NOC CERTIFICATES"
+
+echo "Try to revoke NOC certificate with different VID = $vid_2"
+result=$(echo "$passphrase" | dcld tx pki revoke-noc-x509-cert --subject="$noc_cert_1_subject" --subject-key-id="$noc_cert_1_subject_key_id" --from $vendor_account_2 --yes)
+check_response "$result" "\"code\": 439"
+
+echo "$vendor_account Vendor revokes only NOC certificates, it should not revoke leaf certificates"
+result=$(echo "$passphrase" | dcld tx pki revoke-noc-x509-cert --subject="$noc_cert_1_subject" --subject-key-id="$noc_cert_1_subject_key_id" --from=$vendor_account --yes)
+check_response "$result" "\"code\": 0"
+
+echo "Request all revoked certificates should not contain leaf certificate"
+result=$(dcld query pki all-revoked-x509-certs)
+echo $result | jq
+check_response "$result" "\"subject\": \"$noc_root_cert_1_subject"
+check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_key_id\""
+check_response "$result" "\"serialNumber\": \"$noc_root_cert_1_serial_number\""
+check_response "$result" "\"serialNumber\": \"$noc_root_cert_1_copy_serial_number\""
+check_response "$result" "\"subject\": \"$noc_cert_1_subject\""
+check_response "$result" "\"subjectKeyId\": \"$noc_cert_1_subject_key_id\""
+check_response "$result" "\"serialNumber\": \"$noc_cert_1_serial_number"
+response_does_not_contain "$result" "\"subject\": \"$noc_leaf_cert_1_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_leaf_cert_1_subject_key_id\""
+response_does_not_contain "$result" "\"serialNumber\": \"$noc_leaf_cert_1_serial_number"
+
+echo "Request all revoked noc root certificates should not contain non-root NOC certificates"
+result=$(dcld query pki all-revoked-noc-x509-root-certs)
+echo $result | jq
+response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_cert_1_subject_key_id"
+response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_leaf_cert_1_subject_key_id\""
+
+echo "Request all certificates by subject must be empty"
+result=$(dcld query pki all-subject-x509-certs --subject="$noc_cert_1_subject")
+response_does_not_contain "$result" "\"subject\": \"$noc_cert_1_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_cert_1_subject_key_id\""
+echo $result | jq
+
+echo "Request all certificates by subjectKeyId must be empty"
+result=$(dcld query pki x509-cert --subject-key-id="$noc_cert_1_subject_key_id")
+check_response "$result" "Not Found"
+response_does_not_contain "$result" "\"subject\": \"$noc_cert_1_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_cert_1_subject_key_id\""
+response_does_not_contain "$result" "\"serialNumber\": \"$noc_cert_1_serial_number\""
+response_does_not_contain "$result" "\"serialNumber\": \"$noc_cert_1_copy_serial_number\""
+echo $result | jq
+
+echo "Request NOC certificate by VID = $vid should contain ony leaf certificate"
+result=$(dcld query pki noc-x509-certs --vid="$vid")
+echo $result | jq
+check_response "$result" "\"subject\": \"$noc_leaf_cert_1_subject\""
+check_response "$result" "\"subjectKeyId\": \"$noc_leaf_cert_1_subject_key_id\""
+response_does_not_contain "$result" "\"subject\": \"$noc_cert_1_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_cert_1_subject_key_id\""
+
+echo "Request all approved certificates should not contain revoked NOC certificates"
+result=$(dcld query pki all-x509-certs)
+check_response "$result" "\"subject\": \"$noc_leaf_cert_1_subject\""
+check_response "$result" "\"subjectKeyId\": \"$noc_leaf_cert_1_subject_key_id\""
+check_response "$result" "\"serialNumber\": \"$noc_leaf_cert_1_serial_number\""
+response_does_not_contain "$result" "\"subject\": \"$noc_cert_1_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_cert_1_subject_key_id\""
+response_does_not_contain "$result" "\"serialNumber\": \"$noc_cert_1_serial_number\""
+response_does_not_contain "$result" "\"subject\": \"$noc_root_cert_1_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_key_id\""
+response_does_not_contain "$result" "\"serialNumber\": \"$noc_root_cert_1_serial_number\""
+response_does_not_contain "$result" "\"serialNumber\": \"$noc_root_cert_1_copy_serial_number\""
+echo $result | jq

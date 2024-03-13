@@ -107,6 +107,8 @@ export type PkiMsgRemoveX509CertResponse = object;
 
 export type PkiMsgRevokeNocRootX509CertResponse = object;
 
+export type PkiMsgRevokeNocX509CertResponse = object;
+
 export type PkiMsgRevokeX509CertResponse = object;
 
 export type PkiMsgUpdatePkiRevocationDistributionPointResponse = object;
