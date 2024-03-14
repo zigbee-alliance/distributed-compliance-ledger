@@ -71,6 +71,27 @@ func (k Keeper) RemoveNocCertificates(
 	))
 }
 
+func (k Keeper) RemoveNocCertificate(ctx sdk.Context, subject, subjectKeyID string, vid int32) {
+	certs, found := k.GetNocCertificates(ctx, vid)
+	if !found {
+		return
+	}
+
+	for i := 0; i < len(certs.Certs); {
+		if certs.Certs[i].Subject == subject && certs.Certs[i].SubjectKeyId == subjectKeyID {
+			certs.Certs = append(certs.Certs[:i], certs.Certs[i+1:]...)
+		} else {
+			i++
+		}
+	}
+
+	if len(certs.Certs) == 0 {
+		k.RemoveNocCertificates(ctx, vid)
+	} else {
+		k.SetNocCertificates(ctx, certs)
+	}
+}
+
 // GetAllNocCertificates returns all nocCertificates.
 func (k Keeper) GetAllNocCertificates(ctx sdk.Context) (list []types.NocCertificates) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocCertificatesKeyPrefix))

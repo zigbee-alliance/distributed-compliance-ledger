@@ -101,7 +101,7 @@ response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subjec
 response_does_not_contain "$result" "\"serialNumber\": \"$noc_root_cert_1_serial_number\""
 echo $result | jq
 
-echo "Request NOC certificate by VID should contain only one root certificate with serialNumber=$noc_root_cert_1_copy_serial_number"
+echo "Request NOC root certificate by VID = $vid should contain only one root certificate with serialNumber=$noc_root_cert_1_copy_serial_number"
 result=$(dcld query pki noc-x509-root-certs --vid="$vid")
 check_response "$result" "\"serialNumber\": \"$noc_root_cert_1_copy_serial_number\""
 check_response "$result" "\"subject\": \"$noc_root_cert_1_subject\""
@@ -192,7 +192,7 @@ response_does_not_contain "$result" "\"serialNumber\": \"$noc_root_cert_1_serial
 response_does_not_contain "$result" "\"serialNumber\": \"$noc_root_cert_1_copy_serial_number\""
 echo $result | jq
 
-echo "Request NOC certificate by VID should be empty"
+echo "Request NOC root certificate by VID = $vid should be empty"
 result=$(dcld query pki noc-x509-root-certs --vid="$vid")
 check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$noc_root_cert_1_subject\""

@@ -315,9 +315,11 @@ response_does_not_contain "$result" "\"serialNumber\": \"$noc_root_cert_1_serial
 response_does_not_contain "$result" "\"serialNumber\": \"$noc_root_cert_1_copy_serial_number\""
 echo $result | jq
 
-echo "Request NOC certificate by VID must not contain revoked root certificates"
+echo "Request NOC root certificate by VID = $vid must not contain revoked root certificates"
 result=$(dcld query pki noc-x509-root-certs --vid="$vid")
-check_response "$result" "Not Found"
+check_response "$result" "\"subject\": \"$noc_root_cert_2_subject\""
+check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_2_subject_key_id\""
+check_response "$result" "\"serialNumber\": \"$noc_root_cert_2_serial_number\""
 response_does_not_contain "$result" "\"subject\": \"$noc_root_cert_1_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$noc_root_cert_1_serial_number\""

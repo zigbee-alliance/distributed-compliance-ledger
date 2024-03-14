@@ -81,7 +81,7 @@ func TestHandler_RevokeNocX509RootCert_CertificateExists(t *testing.T) {
 				Vid:           testconstants.Vid,
 			},
 			nocRoorCert: testconstants.RootCertPem,
-			err:         sdkerrors.ErrUnauthorized,
+			err:         pkitypes.ErrInappropriateCertificateType,
 		},
 		{
 			name: "ExistingNotNocCert",
@@ -235,9 +235,10 @@ func TestHandler_RevokeNocX509RootCert_RevokeDefault(t *testing.T) {
 	require.Equal(t, 0, len(aprCertsBySubjectKeyID))
 
 	// query noc root certificate by VID
-	_, err = queryNocRootCertificates(setup, testconstants.Vid)
-	require.Error(t, err)
-	require.Equal(t, codes.NotFound, status.Code(err))
+	nocRootCerts, err := queryNocRootCertificates(setup, testconstants.Vid)
+	require.NoError(t, err)
+	require.Equal(t, 1, len(nocRootCerts.Certs))
+	require.Equal(t, testconstants.NocRootCert2SubjectKeyID, nocRootCerts.Certs[0].SubjectKeyId)
 
 	// Child certificate should not be revoked
 	_, err = queryRevokedCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)

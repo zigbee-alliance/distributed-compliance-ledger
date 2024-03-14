@@ -100,7 +100,7 @@ response_does_not_contain "$result" "\"serialNumber\": \"$noc_root_cert_1_serial
 response_does_not_contain "$result" "\"serialNumber\": \"$noc_root_cert_1_copy_serial_number\""
 echo $result | jq
 
-echo "Request NOC certificate by VID should be empty"
+echo "Request NOC root certificate by VID = $vid should be empty"
 result=$(dcld query pki noc-x509-root-certs --vid="$vid")
 check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$noc_root_cert_1_subject\""
@@ -109,14 +109,14 @@ response_does_not_contain "$result" "\"serialNumber\": \"$noc_root_cert_1_serial
 response_does_not_contain "$result" "\"serialNumber\": \"$noc_root_cert_1_copy_serial_number\""
 echo $result | jq
 
-echo "Request all certificates by subject should be empty"
+echo "Request all certificates by NOC root certificate's subject should be empty"
 result=$(dcld query pki all-subject-x509-certs --subject="$noc_root_cert_1_subject")
 check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"$noc_root_cert_1_subject\""
 response_does_not_contain "$result" "\"$noc_root_cert_1_subject_key_id\""
 echo $result | jq
 
-echo "Request all certificates by subjectKeyId should be empty"
+echo "Request all certificates by NOC root certificate's subjectKeyId should be empty"
 result=$(dcld query pki x509-cert --subject-key-id="$noc_root_cert_1_subject_key_id")
 check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$noc_root_cert_1_subject\""

@@ -357,6 +357,13 @@ func NewErrMessageRemoveRoot(subject string, subjectKeyID string) error {
 	)
 }
 
+func NewErrMessageExistingCertIsNotRoot(subject string, subjectKeyID string) error {
+	return sdkerrors.Wrapf(ErrInappropriateCertificateType,
+		"The existing certificate with the same combination of subject (%v) and subjectKeyID (%v) is not a root certificate",
+		subject, subjectKeyID,
+	)
+}
+
 func NewErrUnsupportedOperation(e interface{}) error {
 	return sdkerrors.Wrapf(ErrUnsupportedOperation, "%v", e)
 }
