@@ -36,6 +36,7 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdAddNocX509RootCert())
 	cmd.AddCommand(CmdRemoveX509Cert())
 	cmd.AddCommand(CmdAddNocX509Cert())
+	cmd.AddCommand(CmdRevokeNocRootX509Cert())
 	// this line is used by starport scaffolding # 1
 
 	return cmd

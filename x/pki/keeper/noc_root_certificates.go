@@ -70,6 +70,18 @@ func (k Keeper) RemoveNocRootCertificates(
 	))
 }
 
+func (k Keeper) RemoveNocRootCertificate(ctx sdk.Context, vid int32, subject, subjectKeyID string) {
+	k._removeNocRootCertificates(ctx, vid, func(cert *types.Certificate) bool {
+		return cert.Subject == subject && cert.SubjectKeyId == subjectKeyID
+	})
+}
+
+func (k Keeper) RemoveNocRootCertificateBySerialNumber(ctx sdk.Context, vid int32, subject, subjectKeyID, serialNumber string) {
+	k._removeNocRootCertificates(ctx, vid, func(cert *types.Certificate) bool {
+		return cert.Subject == subject && cert.SubjectKeyId == subjectKeyID && cert.SerialNumber == serialNumber
+	})
+}
+
 // GetAllNocRootCertificates returns all nocRootCertificates.
 func (k Keeper) GetAllNocRootCertificates(ctx sdk.Context) (list []types.NocRootCertificates) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocRootCertificatesKeyPrefix))
@@ -84,4 +96,27 @@ func (k Keeper) GetAllNocRootCertificates(ctx sdk.Context) (list []types.NocRoot
 	}
 
 	return
+}
+
+func (k Keeper) _removeNocRootCertificates(ctx sdk.Context, vid int32, filter func(cert *types.Certificate) bool) {
+	certs, found := k.GetNocRootCertificates(ctx, vid)
+	if !found {
+		return
+	}
+
+	numCertsBefore := len(certs.Certs)
+	for i := 0; i < len(certs.Certs); {
+		cert := certs.Certs[i]
+		if filter(cert) {
+			certs.Certs = append(certs.Certs[:i], certs.Certs[i+1:]...)
+		} else {
+			i++
+		}
+	}
+
+	if len(certs.Certs) == 0 {
+		k.RemoveNocRootCertificates(ctx, vid)
+	} else if numCertsBefore > len(certs.Certs) { // Update state only if any certificate is removed
+		k.SetNocRootCertificates(ctx, certs)
+	}
 }

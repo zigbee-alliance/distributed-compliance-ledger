@@ -81,24 +81,19 @@ func (k Keeper) RemoveApprovedCertificatesBySubjectKeyID(
 		return
 	}
 
-	var remainedCerts = certs.Certs
-	for i, cert := range certs.Certs {
-		if cert.Subject == subject {
-			if i+1 != len(certs.Certs) {
-				//nolint:gocritic
-				remainedCerts = append(certs.Certs[:i], certs.Certs[i+1:]...)
-			} else {
-				remainedCerts = remainedCerts[:i]
-			}
+	for i := 0; i < len(certs.Certs); {
+		if certs.Certs[i].Subject == subject {
+			certs.Certs = append(certs.Certs[:i], certs.Certs[i+1:]...)
+		} else {
+			i++
 		}
 	}
 
-	if len(remainedCerts) == 0 {
+	if len(certs.Certs) == 0 {
 		store.Delete(types.ApprovedCertificatesBySubjectKeyIDKey(
 			subjectKeyID,
 		))
 	} else {
-		certs.Certs = remainedCerts
 		k.SetApprovedCertificatesBySubjectKeyID(ctx, certs)
 	}
 }

@@ -36,6 +36,12 @@ export interface PkiNocCertificates {
   certs?: PkiCertificate[];
 }
 
+export interface PkiRevokedNocRootCertificates {
+  subject?: string;
+  subjectKeyId?: string;
+  certs?: PkiCertificate[];
+}
+
 export interface PkiCertificate {
   pemCert?: string;
   serialNumber?: string;
@@ -98,6 +104,8 @@ export type PkiMsgProposeRevokeX509RootCertResponse = object;
 export type PkiMsgRejectAddX509RootCertResponse = object;
 
 export type PkiMsgRemoveX509CertResponse = object;
+
+export type PkiMsgRevokeNocRootX509CertResponse = object;
 
 export type PkiMsgRevokeX509CertResponse = object;
 
@@ -274,6 +282,21 @@ export interface PkiQueryAllRevokedCertificatesResponse {
   pagination?: V1Beta1PageResponse;
 }
 
+export interface PkiQueryAllRevokedNocRootCertificatesResponse {
+  revokedNocRootCertificates?: PkiRevokedNocRootCertificates[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
 export interface PkiQueryGetApprovedCertificatesBySubjectResponse {
   approvedCertificatesBySubject?: PkiApprovedCertificatesBySubject;
 }
@@ -294,6 +317,9 @@ export interface PkiQueryGetNocRootCertificatesResponse {
   nocRootCertificates?: PkiNocRootCertificates;
 }
 
+export interface PkiQueryGetRevokedNocRootCertificatesResponse {
+  revokedNocRootCertificates?: PkiRevokedNocRootCertificates;
+}
 export interface PkiQueryGetNocCertificatesResponse {
   nocCertificates?: PkiNocRootCertificates;
 }
@@ -1003,6 +1029,48 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryRevokedCertificates = (subject: string, subjectKeyId: string, params: RequestParams = {}) =>
     this.request<PkiQueryGetRevokedCertificatesResponse, RpcStatus>({
       path: `/dcl/pki/revoked-certificates/${subject}/${subjectKeyId}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryRevokedNocRootCertificatesAll
+   * @summary Queries a list of RevokedNocRootCertificates items.
+   * @request GET:/dcl/pki/revoked-noc-root-certificates
+   */
+  queryRevokedNocRootCertificatesAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.count_total"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<PkiQueryAllRevokedNocRootCertificatesResponse, RpcStatus>({
+      path: `/dcl/pki/revoked-noc-root-certificates`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryRevokedNocRootCertificates
+   * @summary Queries a RevokedNocRootCertificates by index.
+   * @request GET:/dcl/pki/revoked-noc-root-certificates/{subject}/{subjectKeyId}
+   */
+  queryRevokedNocRootCertificates = (subject: string, subjectKeyId: string, params: RequestParams = {}) =>
+    this.request<PkiQueryGetRevokedNocRootCertificatesResponse, RpcStatus>({
+      path: `/dcl/pki/revoked-noc-root-certificates/${subject}/${subjectKeyId}`,
       method: "GET",
       format: "json",
       ...params,

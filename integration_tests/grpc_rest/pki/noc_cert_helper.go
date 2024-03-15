@@ -336,4 +336,49 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.NocCert2, certs.Certs[0].PemCert)
 	require.Equal(suite.T, vendor1Account.Address, certs.Certs[0].Owner)
 	require.False(suite.T, certs.Certs[0].IsRoot)
+
+	// Check Revocation
+	// Add NOC root certificate with same subject and skid as testconstants.NocCert1 cert
+	msgAddNocRootCert := pkitypes.MsgAddNocX509RootCert{
+		Signer: vendor1Account.Address,
+		Cert:   testconstants.NocRootCert1Copy,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddNocRootCert}, vendor1Name, vendor1Account)
+	require.NoError(suite.T, err)
+
+	// Request NOC root certificate by VID1
+	nocCertificates, _ = GetNocX509RootCerts(suite, vid1)
+	require.Equal(suite.T, 3, len(nocCertificates.Certs))
+
+	// Add NOC leaf certificate
+	msgAddNocCert := pkitypes.MsgAddNocX509Cert{
+		Signer: vendor1Account.Address,
+		Cert:   testconstants.NocLeafCert1,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddNocCert}, vendor1Name, vendor1Account)
+	require.NoError(suite.T, err)
+
+	nocCerts, _ = GetAllNocX509Certs(suite)
+	require.Equal(suite.T, 1, len(nocCerts))
+	require.Equal(suite.T, 3, len(nocCerts[0].Certs))
+
+	// Try to revoke NOC 1 root with different serial number
+	msgRevokeNocRootCert := pkitypes.MsgRevokeNocRootX509Cert{
+		Signer:       vendor1Account.Address,
+		Subject:      testconstants.NocRootCert1Subject,
+		SubjectKeyId: testconstants.NocRootCert1SubjectKeyID,
+		SerialNumber: "1234",
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRevokeNocRootCert}, vendor1Name, vendor1Account)
+	require.Error(suite.T, err)
+
+	// Try to revoke NOC 1 root with another Vendor Account
+	msgRevokeNocRootCert = pkitypes.MsgRevokeNocRootX509Cert{
+		Signer:       vendor2Account.Address,
+		Subject:      testconstants.NocRootCert1Subject,
+		SubjectKeyId: testconstants.NocRootCert1SubjectKeyID,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRevokeNocRootCert}, vendor1Name, vendor1Account)
+	require.Error(suite.T, err)
+	// TODO: Fill with the positive cases after enabling removing of NOC certs
 }
