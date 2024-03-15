@@ -6,6 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/x509"
 )
@@ -94,6 +95,7 @@ func (k msgServer) ProposeAddX509RootCert(goCtx context.Context, msg *types.MsgP
 		Owner:         msg.Signer,
 		Approvals:     []*types.Grant{},
 		Vid:           msg.Vid,
+		SchemaVersion: common.GetSchemaVersionOrDefault(msg),
 	}
 
 	proposedCertificate.Approvals = append(proposedCertificate.Approvals, &grant)

@@ -40,6 +40,7 @@ message MsgCreateModel {
   string supportUrl = 15 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
   string productUrl = 16 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
   string lsfUrl = 17 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
+  uint32 schemaVersion = 18;
 }
 message MsgCreateModelResponse {}
 
@@ -58,7 +59,8 @@ message MsgUpdateModel {
   string supportUrl = 11 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
   string productUrl = 12 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
   string lsfUrl = 13 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
-  int32 lsfRevision = 14 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];  
+  int32 lsfRevision = 14 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
+  uint32 schemaVersion = 15;
 }
 message MsgUpdateModelResponse {}
 
@@ -86,6 +88,7 @@ message MsgCreateModelVersion {
   uint32 minApplicableSoftwareVersion = 13;
   uint32 maxApplicableSoftwareVersion = 14 [(gogoproto.moretags) = "validate:\"gtecsfield=MinApplicableSoftwareVersion\""];
   string releaseNotesUrl = 15 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
+  uint32 schemaVersion = 16;
 }
 message MsgCreateModelVersionResponse {}
 
@@ -102,6 +105,7 @@ message MsgUpdateModelVersion {
   string releaseNotesUrl = 9 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
   uint64 otaFileSize = 10;
   string otaChecksum = 11 [(gogoproto.moretags) = "validate:\"max=64\""];
+  uint32 schemaVersion = 12;
 }
 message MsgUpdateModelVersionResponse {}
 

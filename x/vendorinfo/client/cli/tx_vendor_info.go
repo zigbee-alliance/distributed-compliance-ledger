@@ -6,6 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/spf13/cobra"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo/types"
 )
 
@@ -16,6 +17,7 @@ func CmdCreateVendorInfo() *cobra.Command {
 		companyLegalName     string
 		companyPreferredName string
 		vendorLandingPageURL string
+		schemaVersion        uint32
 	)
 
 	cmd := &cobra.Command{
@@ -35,6 +37,7 @@ func CmdCreateVendorInfo() *cobra.Command {
 				companyLegalName,
 				companyPreferredName,
 				vendorLandingPageURL,
+				schemaVersion,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -58,6 +61,7 @@ func CmdCreateVendorInfo() *cobra.Command {
 	cmd.Flags().StringVarP(&vendorLandingPageURL, FlagVendorLandingPageURL, FlagVendorLandingPageURLShortcut,
 		"", "Landing Page URL for the Vendor")
 	cli.AddTxFlagsToCmd(cmd)
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 1, "Schema version")
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagVendorName)
@@ -74,6 +78,7 @@ func CmdUpdateVendorInfo() *cobra.Command {
 		companyLegalName     string
 		companyPreferredName string
 		vendorLandingPageURL string
+		schemaVersion        uint32
 	)
 
 	cmd := &cobra.Command{
@@ -93,6 +98,7 @@ func CmdUpdateVendorInfo() *cobra.Command {
 				companyLegalName,
 				companyPreferredName,
 				vendorLandingPageURL,
+				schemaVersion,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -115,6 +121,8 @@ func CmdUpdateVendorInfo() *cobra.Command {
 		"", "Company Preferred Name")
 	cmd.Flags().StringVarP(&vendorLandingPageURL, FlagVendorLandingPageURL, FlagVendorLandingPageURLShortcut,
 		"", "Landing Page URL for the Vendor")
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 1, "Schema version")
+
 	cli.AddTxFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(FlagVID)

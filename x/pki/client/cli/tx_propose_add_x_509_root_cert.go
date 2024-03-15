@@ -9,12 +9,17 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
 var _ = strconv.Itoa(0)
 
 func CmdProposeAddX509RootCert() *cobra.Command {
+	var (
+		schemaVersion uint32
+	)
+
 	cmd := &cobra.Command{
 		Use:   "propose-add-x509-root-cert",
 		Short: "Proposes a new self-signed root certificate",
@@ -38,6 +43,7 @@ func CmdProposeAddX509RootCert() *cobra.Command {
 				cert,
 				info,
 				vid,
+				schemaVersion,
 			)
 			// validate basic will be called in GenerateOrBroadcastTxCLI
 			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
@@ -53,6 +59,8 @@ func CmdProposeAddX509RootCert() *cobra.Command {
 		"PEM encoded certificate (string or path to file containing data)")
 	cmd.Flags().String(FlagInfo, "", FlagInfoUsage)
 	cmd.Flags().Int32(FlagVid, 0, "Model vendor ID (positive non-zero uint16)")
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 1, "Schema version")
+
 	cli.AddTxFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(flags.FlagFrom)

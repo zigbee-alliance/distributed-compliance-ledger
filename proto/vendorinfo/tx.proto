@@ -23,6 +23,7 @@ message MsgCreateVendorInfo {
   string companyLegalName = 4 [(gogoproto.moretags) = "validate:\"required,max=256\""];
   string companyPreferredName = 5 [(gogoproto.moretags) = "validate:\"omitempty,max=256\""];
   string vendorLandingPageURL = 6 [(gogoproto.moretags) = "validate:\"omitempty,max=256,url\""];
+  uint32 schemaVersion = 7;
 }
 message MsgCreateVendorInfoResponse {}
 
@@ -34,6 +35,7 @@ message MsgUpdateVendorInfo {
   string companyLegalName = 4 [(gogoproto.moretags) = "validate:\"omitempty,max=256\""];
   string companyPreferredName = 5 [(gogoproto.moretags) = "validate:\"omitempty,max=256\""];
   string vendorLandingPageURL = 6 [(gogoproto.moretags) = "validate:\"omitempty,max=256,url\""];
+  uint32 schemaVersion = 7;
 }
 message MsgUpdateVendorInfoResponse {}
 

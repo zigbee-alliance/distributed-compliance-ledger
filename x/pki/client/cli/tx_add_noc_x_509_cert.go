@@ -10,12 +10,16 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
 var _ = strconv.Itoa(0)
 
 func CmdAddNocX509Cert() *cobra.Command {
+	var (
+		schemaVersion uint32
+	)
 	cmd := &cobra.Command{
 		Use:   "add-noc-x509-cert",
 		Short: "Adds NOC non-root certificate",
@@ -34,6 +38,7 @@ func CmdAddNocX509Cert() *cobra.Command {
 			msg := types.NewMsgAddNocX509Cert(
 				clientCtx.GetFromAddress().String(),
 				cert,
+				schemaVersion,
 			)
 			// validate basic will be called in GenerateOrBroadcastTxCLI
 			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
@@ -47,6 +52,8 @@ func CmdAddNocX509Cert() *cobra.Command {
 
 	cmd.Flags().StringP(FlagCertificate, FlagCertificateShortcut, "",
 		"PEM encoded certificate (string or path to file containing data)")
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 1, "Schema version")
+
 	cli.AddTxFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(flags.FlagFrom)

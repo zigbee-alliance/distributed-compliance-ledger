@@ -377,6 +377,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAA_VID(t *testing.T) {
 				Label:                addedRevocation.Label,
 				DataURL:              addedRevocation.DataURL,
 				IssuerSubjectKeyID:   addedRevocation.IssuerSubjectKeyID,
+				SchemaVersion:        2,
 			},
 		},
 		{
@@ -386,6 +387,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAA_VID(t *testing.T) {
 				Vid:                addedRevocation.Vid,
 				Label:              addedRevocation.Label,
 				IssuerSubjectKeyID: addedRevocation.IssuerSubjectKeyID,
+				SchemaVersion:      2,
 			},
 		},
 		{
@@ -396,6 +398,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAA_VID(t *testing.T) {
 				Label:              addedRevocation.Label,
 				DataURL:            addedRevocation.DataURL + "/new",
 				IssuerSubjectKeyID: addedRevocation.IssuerSubjectKeyID,
+				SchemaVersion:      2,
 			},
 		},
 	}
@@ -424,6 +427,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAA_VID(t *testing.T) {
 			require.Equal(t, updatedPoint.Label, addedRevocation.Label)
 			require.Equal(t, updatedPoint.IssuerSubjectKeyID, addedRevocation.IssuerSubjectKeyID)
 			require.Equal(t, updatedPoint.RevocationType, addedRevocation.RevocationType)
+			require.Equal(t, updatedPoint.SchemaVersion, uint32(2))
 
 			compareUpdatedStringFields(t, addedRevocation.DataURL, tc.updatedRevocation.DataURL, updatedPoint.DataURL)
 			compareUpdatedStringFields(t, addedRevocation.DataDigest, tc.updatedRevocation.DataDigest, updatedPoint.DataDigest)

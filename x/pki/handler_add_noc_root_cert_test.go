@@ -14,7 +14,7 @@ import (
 func TestHandler_AddNocX509RootCert_SenderNotVendor(t *testing.T) {
 	setup := Setup(t)
 
-	addNocX509RootCert := types.NewMsgAddNocX509RootCert(setup.Trustee1.String(), testconstants.RootCertPem)
+	addNocX509RootCert := types.NewMsgAddNocX509RootCert(setup.Trustee1.String(), testconstants.RootCertPem, testconstants.SchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
 
 	require.Error(t, err)
@@ -59,7 +59,7 @@ func TestHandler_AddNocX509RootCert_InvalidCertificate(t *testing.T) {
 			setup := Setup(t)
 			setup.AddAccount(accAddress, []dclauthtypes.AccountRole{tc.accountRole}, tc.accountVid)
 
-			addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), tc.nocRoorCert)
+			addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), tc.nocRoorCert, testconstants.SchemaVersion)
 			_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
 			require.ErrorIs(t, err, tc.err)
 		})
@@ -151,7 +151,7 @@ func TestHandler_AddNocX509RootCert_CertificateExist(t *testing.T) {
 			}
 			setup.Keeper.SetUniqueCertificate(setup.Ctx, uniqueCertificate)
 
-			addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), tc.nocRoorCert)
+			addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), tc.nocRoorCert, testconstants.SchemaVersion)
 			_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
 			require.ErrorIs(t, err, tc.err)
 		})
@@ -171,7 +171,7 @@ func TestHandler_AddNocX509RootCert_AddNew(t *testing.T) {
 	newNocCertificate.Rejects = nil
 
 	// add the new NOC root certificate
-	addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), newNocCertificate.PemCert)
+	addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), newNocCertificate.PemCert, testconstants.SchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
 	require.NoError(t, err)
 
@@ -231,7 +231,7 @@ func TestHandler_AddNocX509RootCert_Renew(t *testing.T) {
 	newNocCertificate.Rejects = nil
 
 	// add the new NOC root certificate
-	addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), newNocCertificate.PemCert)
+	addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), newNocCertificate.PemCert, testconstants.SchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
 	require.NoError(t, err)
 

@@ -28,6 +28,7 @@ export interface ComplianceInfo {
   OSVersion: string
   parentChild: string
   certificationIdOfSoftwareComponent: string
+  schemaVersion: number
 }
 
 const baseComplianceInfo: object = {
@@ -52,7 +53,8 @@ const baseComplianceInfo: object = {
   supportedClusters: '',
   OSVersion: '',
   parentChild: '',
-  certificationIdOfSoftwareComponent: ''
+  certificationIdOfSoftwareComponent: '',
+  schemaVersion: 0
 }
 
 export const ComplianceInfo = {
@@ -125,6 +127,9 @@ export const ComplianceInfo = {
     }
     if (message.certificationIdOfSoftwareComponent !== '') {
       writer.uint32(186).string(message.certificationIdOfSoftwareComponent)
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(192).uint32(message.schemaVersion)
     }
     return writer
   },
@@ -205,6 +210,9 @@ export const ComplianceInfo = {
           break
         case 23:
           message.certificationIdOfSoftwareComponent = reader.string()
+          break
+        case 24:
+          message.schemaVersion = reader.uint32()
           break
         default:
           reader.skipType(tag & 7)
@@ -332,6 +340,11 @@ export const ComplianceInfo = {
     } else {
       message.certificationIdOfSoftwareComponent = ''
     }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = Number(object.schemaVersion)
+    } else {
+      message.schemaVersion = 0
+    }
     return message
   },
 
@@ -364,6 +377,7 @@ export const ComplianceInfo = {
     message.OSVersion !== undefined && (obj.OSVersion = message.OSVersion)
     message.parentChild !== undefined && (obj.parentChild = message.parentChild)
     message.certificationIdOfSoftwareComponent !== undefined && (obj.certificationIdOfSoftwareComponent = message.certificationIdOfSoftwareComponent)
+    message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
     return obj
   },
 
@@ -484,6 +498,11 @@ export const ComplianceInfo = {
       message.certificationIdOfSoftwareComponent = object.certificationIdOfSoftwareComponent
     } else {
       message.certificationIdOfSoftwareComponent = ''
+    }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = object.schemaVersion
+    } else {
+      message.schemaVersion = 0
     }
     return message
   }

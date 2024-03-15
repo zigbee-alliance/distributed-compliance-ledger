@@ -17,5 +17,6 @@ message ProposedCertificate {
   string subjectAsText = 7; 
   repeated Grant rejects = 8;
   int32 vid = 9 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
+  uint32 schemaVersion = 10;
 }
 

@@ -174,6 +174,8 @@ var (
 	ValidHTTPSURL     = "https://valid.url.com"
 	ValidHTTPURL      = "http://valid.url.com"
 	NotAValidURL      = "not a valid url"
+
+	SchemaVersion uint32 = 1
 )
 
 /*

@@ -8,6 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/spf13/cobra"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
@@ -23,6 +24,7 @@ func CmdRevokeModel() *cobra.Command {
 		certificationType     string
 		reason                string
 		cdVersionNumber       uint32
+		schemaVersion         uint32
 	)
 
 	cmd := &cobra.Command{
@@ -45,6 +47,7 @@ func CmdRevokeModel() *cobra.Command {
 				revocationDate,
 				certificationType,
 				reason,
+				schemaVersion,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -71,6 +74,7 @@ func CmdRevokeModel() *cobra.Command {
 		"The date of model revocation (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z")
 	cmd.Flags().StringVar(&reason, FlagReason, "",
 		"Optional comment describing the reason of revocation")
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 1, "Schema version")
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)

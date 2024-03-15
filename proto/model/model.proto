@@ -24,5 +24,6 @@ message Model {
   string lsfUrl = 16;
   int32 lsfRevision = 17;
   string creator = 18 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  uint32 schemaVersion = 19;
 }
 

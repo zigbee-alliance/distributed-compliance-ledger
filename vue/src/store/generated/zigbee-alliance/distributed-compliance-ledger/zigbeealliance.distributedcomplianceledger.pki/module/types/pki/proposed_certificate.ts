@@ -14,9 +14,10 @@ export interface ProposedCertificate {
   subjectAsText: string
   rejects: Grant[]
   vid: number
+  schemaVersion: number
 }
 
-const baseProposedCertificate: object = { subject: '', subjectKeyId: '', pemCert: '', serialNumber: '', owner: '', subjectAsText: '', vid: 0 }
+const baseProposedCertificate: object = { subject: '', subjectKeyId: '', pemCert: '', serialNumber: '', owner: '', subjectAsText: '', vid: 0, schemaVersion: 0 }
 
 export const ProposedCertificate = {
   encode(message: ProposedCertificate, writer: Writer = Writer.create()): Writer {
@@ -46,6 +47,9 @@ export const ProposedCertificate = {
     }
     if (message.vid !== 0) {
       writer.uint32(72).int32(message.vid)
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(80).uint32(message.schemaVersion)
     }
     return writer
   },
@@ -85,6 +89,9 @@ export const ProposedCertificate = {
           break
         case 9:
           message.vid = reader.int32()
+          break
+        case 10:
+          message.schemaVersion = reader.uint32()
           break
         default:
           reader.skipType(tag & 7)
@@ -143,6 +150,11 @@ export const ProposedCertificate = {
     } else {
       message.vid = 0
     }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = Number(object.schemaVersion)
+    } else {
+      message.schemaVersion = 0
+    }
     return message
   },
 
@@ -165,6 +177,7 @@ export const ProposedCertificate = {
       obj.rejects = []
     }
     message.vid !== undefined && (obj.vid = message.vid)
+    message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
     return obj
   },
 
@@ -216,6 +229,11 @@ export const ProposedCertificate = {
       message.vid = object.vid
     } else {
       message.vid = 0
+    }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = object.schemaVersion
+    } else {
+      message.schemaVersion = 0
     }
     return message
   }

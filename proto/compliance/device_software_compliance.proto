@@ -7,6 +7,5 @@ import "compliance/compliance_info.proto";
 
 message DeviceSoftwareCompliance {
   string cDCertificateId = 1; 
-  repeated ComplianceInfo complianceInfo = 2; 
-  
+  repeated ComplianceInfo complianceInfo = 2;
 }

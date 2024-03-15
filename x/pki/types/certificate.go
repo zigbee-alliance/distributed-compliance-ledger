@@ -1,7 +1,7 @@
 package types
 
 func NewRootCertificate(pemCert string, subject string, subjectAsText string, subjectKeyID string,
-	serialNumber string, owner string, approvals []*Grant, rejects []*Grant, vid int32,
+	serialNumber string, owner string, approvals []*Grant, rejects []*Grant, vid int32, schemaVersion uint32,
 ) Certificate {
 	return Certificate{
 		PemCert:       pemCert,
@@ -14,6 +14,7 @@ func NewRootCertificate(pemCert string, subject string, subjectAsText string, su
 		Approvals:     approvals,
 		Rejects:       rejects,
 		Vid:           vid,
+		SchemaVersion: schemaVersion,
 	}
 }
 
@@ -21,6 +22,7 @@ func NewNonRootCertificate(pemCert string, subject string, subjectAsText string,
 	issuer string, authorityKeyID string,
 	rootSubject string, rootSubjectKeyID string,
 	owner string,
+	schemaVersion uint32,
 ) Certificate {
 	return Certificate{
 		PemCert:          pemCert,
@@ -34,6 +36,7 @@ func NewNonRootCertificate(pemCert string, subject string, subjectAsText string,
 		RootSubjectKeyId: rootSubjectKeyID,
 		IsRoot:           false,
 		Owner:            owner,
+		SchemaVersion:    schemaVersion,
 	}
 }
 
@@ -45,6 +48,7 @@ func NewNocRootCertificate(
 	serialNumber string,
 	owner string,
 	vid int32,
+	schemaVersion uint32,
 ) Certificate {
 	return Certificate{
 		PemCert:       pemCert,
@@ -56,6 +60,7 @@ func NewNocRootCertificate(
 		Owner:         owner,
 		Vid:           vid,
 		IsNoc:         true,
+		SchemaVersion: schemaVersion,
 	}
 }
 
@@ -71,6 +76,7 @@ func NewNocCertificate(
 	rootSubjectKeyID string,
 	owner string,
 	vid int32,
+	schemaVersion uint32,
 ) Certificate {
 	return Certificate{
 		PemCert:          pemCert,
@@ -86,6 +92,7 @@ func NewNocCertificate(
 		Owner:            owner,
 		IsRoot:           false,
 		IsNoc:            true,
+		SchemaVersion:    schemaVersion,
 	}
 }
 

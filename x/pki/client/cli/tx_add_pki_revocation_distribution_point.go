@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
@@ -27,6 +28,7 @@ func CmdAddPkiRevocationDistributionPoint() *cobra.Command {
 		dataDigest           string
 		dataDigestType       uint32
 		revocationType       uint32
+		schemaVersion        uint32
 	)
 
 	cmd := &cobra.Command{
@@ -57,6 +59,7 @@ func CmdAddPkiRevocationDistributionPoint() *cobra.Command {
 				dataDigest,
 				dataDigestType,
 				revocationType,
+				schemaVersion,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -82,6 +85,8 @@ func CmdAddPkiRevocationDistributionPoint() *cobra.Command {
 	cmd.Flags().StringVar(&dataDigest, FlagDataDigest, "", "Digest of the entire contents of the associated file downloaded from the DataURL. Must be omitted if RevocationType is 1. Must be provided if and only if the DataFileSize field is present")
 	cmd.Flags().Uint32Var(&dataDigestType, FlagDataDigestType, 0, "The type of digest used in the DataDigest field from the list of [1, 7, 8, 10, 11, 12] (IANA Named Information Hash Algorithm Registry). Must be provided if and only if the DataDigest field is present") //TODO: will give error if omitted
 	cmd.Flags().Uint32Var(&revocationType, FlagRevocationType, 1, "The type of file found at the DataURL for this entry. Supported types: 1 - RFC5280 Certificate Revocation List (CRL)")
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 1, "Schema version")
+
 	flags.AddTxFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(FlagVid)

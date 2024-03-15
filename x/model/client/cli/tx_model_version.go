@@ -6,6 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/spf13/cobra"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
@@ -25,6 +26,7 @@ func CmdCreateModelVersion() *cobra.Command {
 		minApplicableSoftwareVersion uint32
 		maxApplicableSoftwareVersion uint32
 		releaseNotesURL              string
+		schemaVersion                uint32
 	)
 
 	cmd := &cobra.Command{
@@ -52,6 +54,7 @@ func CmdCreateModelVersion() *cobra.Command {
 				minApplicableSoftwareVersion,
 				maxApplicableSoftwareVersion,
 				releaseNotesURL,
+				schemaVersion,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -102,6 +105,7 @@ SoftwareVersion for which this image can be applied`)
 	cmd.Flags().StringVar(&releaseNotesURL, FlagReleaseNotesURL, "",
 		`URL that contains product specific web page that contains 
 release notes for the device model.`)
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 1, "Schema version")
 
 	cli.AddTxFlagsToCmd(cmd)
 
@@ -129,6 +133,7 @@ func CmdUpdateModelVersion() *cobra.Command {
 		minApplicableSoftwareVersion uint32
 		maxApplicableSoftwareVersion uint32
 		releaseNotesURL              string
+		schemaVersion                uint32
 	)
 
 	cmd := &cobra.Command{
@@ -152,6 +157,7 @@ func CmdUpdateModelVersion() *cobra.Command {
 				minApplicableSoftwareVersion,
 				maxApplicableSoftwareVersion,
 				releaseNotesURL,
+				schemaVersion,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -187,6 +193,7 @@ func CmdUpdateModelVersion() *cobra.Command {
 		`MaxApplicableSoftwareVersion should specify the highest SoftwareVersion for which this image can be applied`)
 	cmd.Flags().StringVar(&releaseNotesURL, FlagReleaseNotesURL, "",
 		`URL that contains product specific web page that contains release notes for the device model.`)
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 1, "Schema version")
 
 	cli.AddTxFlagsToCmd(cmd)
 

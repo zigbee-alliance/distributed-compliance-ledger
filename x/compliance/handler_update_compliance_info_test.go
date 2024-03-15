@@ -31,6 +31,7 @@ func (setup *TestSetup) checkAllComplianceInfoFieldsUpdated(t *testing.T, origin
 	require.NotEqual(t, originalComplianceInfo.Reason, updatedComplianceInfo.Reason)
 	require.NotEqual(t, originalComplianceInfo.SupportedClusters, updatedComplianceInfo.SupportedClusters)
 	require.NotEqual(t, originalComplianceInfo.Transport, updatedComplianceInfo.Transport)
+	require.Equal(t, originalComplianceInfo.SchemaVersion, updatedComplianceInfo.SchemaVersion)
 }
 
 func (setup *TestSetup) checkDeviceSoftwareComplianceUpdated(t *testing.T, originalComplianceInfo *dclcompltypes.ComplianceInfo, updatedDeviceSoftwareCompliance *types.DeviceSoftwareCompliance, isUpdatedMinimally bool) {

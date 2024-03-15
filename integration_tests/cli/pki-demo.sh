@@ -187,11 +187,12 @@ test_divider
 
 echo "$user_account (Not Trustee) propose Root certificate"
 root_path="integration_tests/constants/root_cert"
+schema_version_2=2
 result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_path" --from $user_account --vid $vid --yes)
 response_does_not_contain "$result" "\"code\": 0"
 
 echo "$trustee_account (Trustee) propose Root certificate"
-result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_path" --from $trustee_account  --vid $vid --yes)
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_path" --schemaVersion=$schema_version_2 --from $trustee_account   --vid $vid --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -201,7 +202,7 @@ result=$(dcld query pki all-proposed-x509-root-certs)
 echo $result | jq
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
-
+check_response "$result" "\"schemaVersion\": $schema_version_2"
 
 test_divider
 
@@ -384,7 +385,7 @@ test_divider
 
 echo "$vendor_account adds Intermediate certificate"
 intermediate_path="integration_tests/constants/intermediate_cert"
-result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_path" --from $vendor_account --yes)
+result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_path" --schemaVersion=$schema_version_2 --from $vendor_account --yes)
 check_response "$result" "\"code\": 0"
 
 
@@ -397,6 +398,7 @@ check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$intermediate_cert_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$intermediate_cert_subject_as_text\""
+check_response "$result" "\"schemaVersion\": $schema_version_2"
 check_response "$result" "\"approvals\": \\[\\]"
 
 echo "Request Intermediate certificate by subjectKeyId - There are no approvals for Intermidiate Certificates"
@@ -452,6 +454,7 @@ test_divider
 
 echo "$vendor_account add Leaf certificate"
 leaf_path="integration_tests/constants/leaf_cert"
+schema_version_1=1
 result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$leaf_path" --from $vendor_account --yes)
 check_response "$result" "\"code\": 0"
 
@@ -464,6 +467,7 @@ check_response "$result" "\"subject\": \"$leaf_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$leaf_cert_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$leaf_cert_subject_as_text\""
+check_response "$result" "\"schemaVersion\": $schema_version_1"
 check_response "$result" "\"approvals\": \\[\\]"
 
 echo "Request Leaf certificate by subjectKeyId - There is no approvals on leaf certificate"
@@ -1179,6 +1183,7 @@ check_response "$result" "\"address\": \"$trustee_account_address\""
 check_response "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$google_cert_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$google_cert_subject_as_text\""
+check_response "$result" "\"schemaVersion\": $schema_version_1"
 check_response "$result" "\"vid\": $google_cert_vid"
 echo $result | jq
 

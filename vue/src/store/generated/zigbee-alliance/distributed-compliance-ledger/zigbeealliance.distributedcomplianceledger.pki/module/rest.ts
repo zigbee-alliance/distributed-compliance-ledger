@@ -60,6 +60,9 @@ export interface PkiCertificate {
   /** @format int32 */
   vid?: number;
   isNoc?: boolean;
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface PkiCertificateIdentifier {
@@ -153,6 +156,9 @@ export interface PkiProposedCertificate {
 
   /** @format int32 */
   vid?: number;
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface PkiProposedCertificateRevocation {
@@ -162,6 +168,9 @@ export interface PkiProposedCertificateRevocation {
   approvals?: PkiGrant[];
   subjectAsText?: string;
   revokeChild?: boolean;
+   
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface PkiQueryAllApprovedCertificatesResponse {

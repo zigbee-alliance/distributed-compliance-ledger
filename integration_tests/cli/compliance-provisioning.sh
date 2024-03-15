@@ -40,6 +40,8 @@ certification_type_matter="matter"
 provision_date="2020-02-02T02:20:20Z"
 provision_reason="some reason"
 cd_certificate_id="123"
+schema_version_1=1
+schema_version_2=2
 
 test_divider
 
@@ -47,7 +49,7 @@ echo "Add Model and a New Model Version with VID: $vid PID: $pid SV: $sv"
 create_model_and_version $vid $pid $sv $svs $vendor_account
 
 echo "Provision for uncertificate Model with VID: $vid PID: $pid for ZB"
-result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --provisionalDate="$provision_date" --reason "$provision_reason" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=1 --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --provisionalDate="$provision_date" --reason "$provision_reason" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=1 --schemaVersion=$schema_version_2 --from $zb_account --yes)
 check_response "$result" "\"code\": 0"
 echo "$result"
 
@@ -148,6 +150,7 @@ check_response "$result" "\"cDCertificateId\": \"$cd_certificate_id\""
 check_response "$result" "\"date\": \"$provision_date\""
 check_response "$result" "\"reason\": \"$provision_reason\""
 check_response "$result" "\"certificationType\": \"$certification_type_zb\""
+check_response "$result" "\"schemaVersion\": $schema_version_2"
 check_response "$result" "\"history\""
 echo "$result"
 
@@ -162,6 +165,7 @@ check_response "$result" "\"date\": \"$provision_date\""
 check_response "$result" "\"reason\": \"$provision_reason\""
 check_response "$result" "\"certificationType\": \"$certification_type_matter\""
 check_response "$result" "\"history\""
+check_response "$result" "\"schemaVersion\": $schema_version_1"
 echo "$result"
 
 test_divider
