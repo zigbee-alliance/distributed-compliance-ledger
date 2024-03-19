@@ -827,13 +827,14 @@ will be in a pending state until sufficient number of approvals is received.
 
 The certificate is immutable. It can only be revoked by either the owner or a quorum of Trustees.
 
-- Parameters:
-  - cert: `string` - PEM encoded certificate. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data.
-  - info: `optional(string)` - information/notes for the proposal
-  - time: `optional(int64)` - proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
-- In State: `pki/ProposedCertificate/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - Who can send:
   - Trustee
+- Parameters:
+  - cert: `string` - PEM encoded certificate. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data.
+  - info: `optional(string)` - information/notes for the proposal. Can contain up to 4096 characters.
+  - time: `optional(int64)` - proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
+  - vid: `uint16` -  Vendor ID (positive non-zero). Must be the same as Vendor account's VID. The value must be within the range of 1 to 65535.
+- In State: `pki/ProposedCertificate/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - CLI command:
   - `dcld tx pki propose-add-x509-root-cert --certificate=<string-or-path> --from=<account>`
 - Validation:
@@ -855,20 +856,21 @@ Approves the proposed root certificate. It also can be used for revote (i.e. cha
 
 The certificate is not active until sufficient number of Trustees approve it.
 
-- Parameters:
-  - subject: `string`  - proposed certificates's `Subject` is base64 encoded subject DER sequence bytes
-  - subject_key_id: `string`  - proposed certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
-  - info: `optional(string)` - information/notes for the approval
-  - time: `optional(int64)` - approval time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
-- In State: `pki/ApprovedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - Who can send:
   - Trustee
+- Parameters:
+  - subject: `string` - proposed certificates's `Subject` is base64 encoded subject DER sequence bytes.
+  - subject_key_id: `string` - proposed certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`,
+  - info: `optional(string)`- information/notes for the approval. Can contain up to 4096 characters.
+  - time: `optional(int64)` - approval time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
+- In State: `pki/ApprovedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - Number of required approvals:
   - greater than 2/3 of Trustees (proposal by a Trustee is also counted as an approval)
 - CLI command:
   - `dcld tx pki approve-add-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
 - Validation:
-  - the proposed certificate hasn't been approved by the signer yet
+  - the proposal to add a root certificate with the provided subject and subject_key_id, must be submitted first.
+  - the proposed certificate hasn't been approved by the signer yet.
 
 ### REJECT_ADD_X509_ROOT_CERT
 
@@ -880,20 +882,21 @@ If proposed root certificate has only proposer's approval and no rejects then pr
 
 The certificate is not reject until sufficient number of Trustees reject it.
 
+- Who can send:
+  - Trustee
 - Parameters:
   - subject: `string` - proposed certificates's `Subject` is base64 encoded subject DER sequence bytes
   - subject_key_id: `string` - proposed certificates's `Subject Key Id` in hex string format, e.g:
-  `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
-  - info: `optional(string)` - information/notes for the reject
+  `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`.
+  - info: `optional(string)` - information/notes for the reject. Can contain up to 4096 characters.
   - time: `optional(int64)` -- reject time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State: `pki/RejectedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
-- Who can send:
-  - Trustee
 - Number of required rejects:
   - more than 1/3 of Trustees
 - CLI command:
   - `dcld tx pki reject-add-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
 - Validation:
+  - the proposal to add a root certificate with the provided subject and subject_key_id, must be submitted first.
   - the proposed certificate hasn't been rejected by the signer yet
 
 ### ADD_X509_CERT
@@ -902,8 +905,6 @@ The certificate is not reject until sufficient number of Trustees reject it.
 
 Adds an intermediate or leaf X509 certificate signed by a chain of certificates which must be
 already present on the ledger.
-
-The certificate is immutable. It can only be revoked by either the owner or a quorum of Trustees.
 
 - Who can send: Vendor account
   - PAA (Root certificates) are VID-scoped:
@@ -925,9 +926,10 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
   - no existing certificate with the same `<Certificate's Issuer>:<Certificate's Serial Number>` combination.
   - if certificates with the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination already exist:
     - the existing certificate must not be NOC certificate
-    - the sender's VID must match the `vid` field of the existing certificates.
+    - the sender's VID must match the VID of the existing certificate's owner.
   - the signature (self-signature) and expiration date are valid.
   - parent certificate must be already stored on the ledger and a valid chain to some root certificate can be built.
+  - the root certificate must not be NOC root certificate.
 
 > **_Note:_**  Multiple certificates can refer to the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination.
 
@@ -945,13 +947,13 @@ If `revoke-child` flag is set to `true` then all the certificates in the chain s
 Root certificates can not be revoked this way, use  `PROPOSE_X509_CERT_REVOC` and `APPROVE_X509_ROOT_CERT_REVOC` instead.  
 
 - Who can send: Vendor account
-  - the sender's VID must match the `vid` field of the revoking certificates.
+  - the sender's VID must match the VID of the revoking certificate's owner.
 - Parameters:
-  - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
-  - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
-  - serial-number: `optional(string)`  - certificate's serial number
-  - revoke-child: `optional(bool)`  - to revoke child certificates in the chain - default is false
-  - info: `optional(string)` - information/notes for the revocation
+  - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes.
+  - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`.
+  - serial-number: `optional(string)`  - certificate's serial number.
+  - revoke-child: `optional(bool)`  - to revoke child certificates in the chain - default is false.
+  - info: `optional(string)` - information/notes for the revocation. Can contain up to 4096 characters.
   - time: `optional(int64)` - revocation time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State: `pki/RevokedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - CLI command:
@@ -966,11 +968,11 @@ Removes the given X509 certificate (either intermediate or leaf) from approved a
 Root certificates can not be removed this way.  
 
 - Who can send: Vendor account
-  - the sender's VID must match the `vid` field of the removing certificates.
+  - the sender's VID must match the VID of the removng certificate's owner.
 - Parameters:
-  - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
-  - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
-  - serial-number: `optional(string)`  - certificate's serial number
+  - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes.
+  - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`.
+  - serial-number: `optional(string)`  - certificate's serial number.
 - CLI command:
   - `dcld tx pki remove-x509-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
 
@@ -988,19 +990,24 @@ If `revoke-child` flag is set to `true` then all the certificates in the chain s
 If more than 1 Trustee signature is required to revoke a root certificate,
 then the certificate will be in a pending state until sufficient number of other Trustee's approvals is received.
 
+- Who can send:
+  - Trustee
 - Parameters:
   - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
   - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
-  - serial-number: `optional(string)`  - certificate's serial number
+  - serial-number: `optional(string)`  - certificate's serial number. Can contain up to 4096 characters.
   - revoke-child: `optional(bool)`  - to revoke child certificates in the chain - default is false
-  - info: `optional(string)` - information/notes for the revocation proposal
+  - info: `optional(string)` - information/notes for the revocation proposal. Can contain up to 4096 characters.
   - time: `optional(int64)` - revocation proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State: `pki/ProposedCertificateRevocation/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
-- Who can send:
-  - Trustee
 - CLI command:
   - `dcld tx pki propose-revoke-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
-
+- Validation:
+  - revoked certificate must be root:
+    - `Issuer` == `Subject`
+    - `Authority Key Identifier` == `Subject Key Identifier`
+  - no existing `Proposed` certificate with the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination.
+  
 ### APPROVE_REVOKE_X509_ROOT_CERT
 
 **Status: Implemented**
@@ -1013,19 +1020,22 @@ If a Revocation Distribution Point needs to be published (such as RFC5280 Certif
 
 The revocation is not applied until sufficient number of Trustees approve it.
 
+- Who can send:
+  - Trustee
 - Parameters:
   - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
   - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
   - serial-number: `optional(string)`  - certificate's serial number
-  - info: `optional(string)` - information/notes for the revocation approval
+  - info: `optional(string)` - information/notes for the revocation approval. Can contain up to 4096 characters.
   - time: `optional(int64)` - revocation approval time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State: `pki/RevokedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
-- Who can send:
-  - Trustee
 - Number of required approvals:
   - greater than 2/3 of Trustees (proposal by a Trustee is also counted as an approval)
 - CLI command:
   - `dcld tx pki approve-revoke-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
+- Validation:
+  - the proposal to revoke a root certificate with the provided subject and subject_key_id, must be submitted first.
+  - the proposed certificate revocation hasn't been approved by the signer yet.
 
 ### ADD_PKI_REVOCATION_DISTRIBUTION_POINT
 
@@ -1065,21 +1075,6 @@ and DACs (leaf certificates) added to DCL if they are revoked in the CRL identif
 - CLI command:
   - `dcld tx pki add-revocation-point --vid=<uint16> --pid=<uint16> --issuer-subject-key-id=<string> --is-paa=<bool> --label=<string>
     --certificate=<string-or-path> --data-url=<string> --revocation-type=1 --from=<account>`
-
-#### ASSIGN_VID
-
-**Status: Implemented**
-
-Assigns a Vendor ID (VID) to non-VID scoped PAAs (root certificates) already present on the ledger.
-
-- Parameters:
-  - subject: `string` - certificates's `Subject` is base64 encoded subject DER sequence bytes
-  - subject_key_id: `string` - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
-  - vid: `uint16` -  Vendor ID (positive non-zero). Must be the same as `vid` field in the VID-scoped `CRLSignerCertificate`.
-- Who can send:
-  - Vendor Admin
-- CLI command:
-  - `dcld pki assign-vid --subject=<base64 string> --subject-key-id=<hex string> --vid=<uint16> --from=<account>`
 
 ### UPDATE_PKI_REVOCATION_DISTRIBUTION_POINT
 
@@ -1127,22 +1122,32 @@ Deletes a PKI Revocation distribution endpoint (such as RFC5280 Certificate Revo
 - CLI command:
   - `dcld tx pki delete-revocation-point --vid=<uint16> --issuer-subject-key-id=<string> --label=<string> --from=<account>`
 
+#### ASSIGN_VID
+
+**Status: Implemented**
+
+Assigns a Vendor ID (VID) to non-VID scoped PAAs (root certificates) already present on the ledger.
+
+- Who can send:
+  - Vendor Admin
+- Parameters:
+  - subject: `string` - certificates's `Subject` is base64 encoded subject DER sequence bytes.
+  - subject_key_id: `string` - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`.
+  - vid: `uint16` -  Vendor ID (positive non-zero). Must be the same as `vid` field in the VID-scoped `CRLSignerCertificate`. The value must be within the range of 1 to 65535.
+- CLI command:
+  - `dcld pki assign-vid --subject=<base64 string> --subject-key-id=<hex string> --vid=<uint16> --from=<account>`
+- Validation:
+  - PAA Certificate with the provided `subject` and `subject_key_id` must exist in the ledger.
+  - If the PAA is a VID scoped one, then the `vid` field must be equal to the VID value in the PAA's subject.
+
 ### ADD_NOC_X509_ROOT_CERTIFICATE
 
 **Status: Implemented**
 
 This transaction adds a NOC root certificate owned by the Vendor.
 
-- Who can send: Vendor account
-- Validation:
-  - the provided certificate must be a root certificate:
-    - `Issuer` == `Subject`
-    - `Authority Key Identifier` == `Subject Key Identifier`
-  - no existing certificate with the same `<Certificate's Issuer>:<Certificate's Serial Number>` combination.
-  - if certificates with the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination already exist:
-    - the existing certificate must be NOC root certificate
-    - the sender's VID must match the `vid` field of the existing certificates.
-  - the signature (self-signature) and expiration date must be valid.
+- Who can send
+  - Vendor account
 - Parameters:
   - cert: `string` - The NOC Root Certificate, encoded in X.509v3 PEM format. Can be a PEM string or a file path.
 - In State:
@@ -1152,6 +1157,15 @@ This transaction adds a NOC root certificate owned by the Vendor.
   - `pki/NOCRootCertificates/value/<VID>`
 - CLI Command:
   - `dcld tx pki add-noc-x509-root-cert --certificate=<string-or-path> --from=<account>`
+- Validation:
+  - the provided certificate must be a root certificate:
+    - `Issuer` == `Subject`
+    - `Authority Key Identifier` == `Subject Key Identifier`
+  - no existing certificate with the same `<Certificate's Issuer>:<Certificate's Serial Number>` combination.
+  - if certificates with the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination already exist:
+    - the existing certificate must be NOC root certificate
+    - the sender's VID must match the `vid` field of the existing certificates.
+  - the signature (self-signature) and expiration date must be valid.
 
 ### ADD_NOC_X509_CERTIFICATE
 
@@ -1160,7 +1174,18 @@ This transaction adds a NOC root certificate owned by the Vendor.
 This transaction adds a NOC non-root certificate owned by the Vendor signed by a chain of certificates which must be
 already present on the ledger.
 
-- Who can send: Vendor account
+- Who can send
+  - Vendor account
+- Parameters:
+  - cert: `string` - The NOC non-root Certificate, encoded in X.509v3 PEM format. Can be a PEM string or a file path.
+- In State:
+  - `pki/ApprovedCertificates/value/<Subject>/<SubjectKeyID>`
+  - `pki/ApprovedCertificatesBySubject/value/<Subject>`
+  - `pki/ApprovedCertificatesBySubjectKeyID/value/<SubjectKeyID>`
+  - `pki/NOCCertificates/value/<VID>`
+  - `pki/ChildCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
+- CLI Command:
+  - `dcld tx pki add-noc-x509-cert --certificate=<string-or-path> --from=<account>`
 - Validation:
   - the provided certificate must be a non-root certificate:
     - `Issuer` != `Subject`
@@ -1173,16 +1198,6 @@ already present on the ledger.
     - the existing certificate must be NOC non-root certificate
     - the sender's VID must match the vid field of the existing certificates.
   - the signature (self-signature) and expiration date must be valid.
-- Parameters:
-  - cert: `string` - The NOC non-root Certificate, encoded in X.509v3 PEM format. Can be a PEM string or a file path.
-- In State:
-  - `pki/ApprovedCertificates/value/<Subject>/<SubjectKeyID>`
-  - `pki/ApprovedCertificatesBySubject/value/<Subject>`
-  - `pki/ApprovedCertificatesBySubjectKeyID/value/<SubjectKeyID>`
-  - `pki/NOCCertificates/value/<VID>`
-  - `pki/ChildCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
-- CLI Command:
-  - `dcld tx pki add-noc-x509-cert --certificate=<string-or-path> --from=<account>`
 
 ### GET_X509_CERT
 
