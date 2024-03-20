@@ -53,7 +53,7 @@ func (k Keeper) NocCertificates(c context.Context, req *types.QueryGetNocCertifi
 		req.Vid,
 	)
 	if !found {
-		return nil, status.Error(codes.InvalidArgument, "not found")
+		return nil, status.Error(codes.NotFound, "not found")
 	}
 
 	return &types.QueryGetNocCertificatesResponse{NocCertificates: val}, nil

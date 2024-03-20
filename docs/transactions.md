@@ -1199,6 +1199,30 @@ already present on the ledger.
     - the sender's VID must match the vid field of the existing certificates.
   - the signature (self-signature) and expiration date must be valid.
 
+### REVOKE_NOC_X509_ROOT_CERT
+
+**Status: Implemented**
+
+This transaction revokes a NOC root certificate owned by the Vendor.
+Revoked NOC root certificates can be re-added using the `ADD_NOC_X509_ROOT_CERTIFICATE` transaction.
+
+- Who can send: Vendor account
+  - Vid field associated with the corresponding NOC root certificate on the ledger must be equal to the Vendor account's VID.
+- Validation:
+  - a NOC Root Certificate with the provided `subject` and `subject_key_id` must exist in the ledger.
+- Parameters:
+  - subject: `string` - base64 encoded subject DER sequence bytes of the certificate.
+  - subject_key_id: `string` - certificate's `Subject Key Id` in hex string format, e.g., `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`.
+  - serial_number: `optional(string)` - certificate's serial number. If not provided, the transaction will revoke all certificates that match the given `subject` and `subject_key_id` combination.
+  - revoke-child: `optional(bool)` - if true, then all certificates in the chain signed by the revoked certificate (intermediate, leaf) are revoked as well. If false, only the current root cert is revoked (default: false).
+  - info: `optional(string)` - information/notes for the revocation
+  - time: `optional(int64)` - revocation time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
+- In State: 
+  - `pki/RevokedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
+  - `pki/RevokedNOCRootCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
+- CLI command:
+  - `dcld tx pki revoke-noc-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --serial-number=<string> --info=<string> --time=<int64> --revoke-child=<bool> --from=<account>`
+
 ### GET_X509_CERT
 
 **Status: Implemented**
@@ -1538,6 +1562,32 @@ Retrieve a list of all of NOC non-root certificates
   - `dcld query pki all-noc-x509-certs`
 - REST API:
   - GET `/dcl/pki/noc-certificates`
+
+### GET_ALL_REVOKED_NOC_X509_ROOT_CERTS
+
+Gets all revoked NOC root certificates.
+
+- Who can send: Any account
+- Parameters:
+  - Common pagination parameters
+- CLI command:
+  - `dcld query pki all-revoked-noc-x509-root-certs`
+- REST API:
+  - GET `/dcl/pki/revoked-noc-root-certificates`
+
+### GET_REVOKED_NOC_X509_ROOT_CERT
+
+**Status: Implemented**
+
+Gets a revoked NOC root certificate by the given subject and subject key ID attributes.
+
+- Parameters:
+  - subject: `string` - Base64 encoded subject DER sequence bytes of the certificate.
+  - subject_key_id: `string` - Certificate's `Subject Key Id` in hex string format, e.g., `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`.
+- CLI command:
+  - `dcld query pki revoked-noc-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string>`
+- REST API:
+  - GET `/dcl/pki/revoked-noc-root-certificates/{subject}/{subject_key_id}`
 
 ## AUTH
 

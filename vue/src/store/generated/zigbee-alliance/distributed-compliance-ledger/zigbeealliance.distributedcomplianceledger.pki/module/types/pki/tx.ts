@@ -150,6 +150,18 @@ export interface MsgAddNocX509Cert {
 
 export interface MsgAddNocX509CertResponse {}
 
+export interface MsgRevokeNocRootX509Cert {
+  signer: string
+  subject: string
+  subjectKeyId: string
+  serialNumber: string
+  info: string
+  time: number
+  revokeChild: boolean
+}
+
+export interface MsgRevokeNocRootX509CertResponse {}
+
 const baseMsgProposeAddX509RootCert: object = { signer: '', cert: '', info: '', time: 0, vid: 0 }
 
 export const MsgProposeAddX509RootCert = {
@@ -2529,6 +2541,201 @@ export const MsgAddNocX509CertResponse = {
   }
 }
 
+const baseMsgRevokeNocRootX509Cert: object = { signer: '', subject: '', subjectKeyId: '', serialNumber: '', info: '', time: 0, revokeChild: false }
+
+export const MsgRevokeNocRootX509Cert = {
+  encode(message: MsgRevokeNocRootX509Cert, writer: Writer = Writer.create()): Writer {
+    if (message.signer !== '') {
+      writer.uint32(10).string(message.signer)
+    }
+    if (message.subject !== '') {
+      writer.uint32(18).string(message.subject)
+    }
+    if (message.subjectKeyId !== '') {
+      writer.uint32(26).string(message.subjectKeyId)
+    }
+    if (message.serialNumber !== '') {
+      writer.uint32(34).string(message.serialNumber)
+    }
+    if (message.info !== '') {
+      writer.uint32(42).string(message.info)
+    }
+    if (message.time !== 0) {
+      writer.uint32(48).int64(message.time)
+    }
+    if (message.revokeChild === true) {
+      writer.uint32(56).bool(message.revokeChild)
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgRevokeNocRootX509Cert {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseMsgRevokeNocRootX509Cert } as MsgRevokeNocRootX509Cert
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.signer = reader.string()
+          break
+        case 2:
+          message.subject = reader.string()
+          break
+        case 3:
+          message.subjectKeyId = reader.string()
+          break
+        case 4:
+          message.serialNumber = reader.string()
+          break
+        case 5:
+          message.info = reader.string()
+          break
+        case 6:
+          message.time = longToNumber(reader.int64() as Long)
+          break
+        case 7:
+          message.revokeChild = reader.bool()
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): MsgRevokeNocRootX509Cert {
+    const message = { ...baseMsgRevokeNocRootX509Cert } as MsgRevokeNocRootX509Cert
+    if (object.signer !== undefined && object.signer !== null) {
+      message.signer = String(object.signer)
+    } else {
+      message.signer = ''
+    }
+    if (object.subject !== undefined && object.subject !== null) {
+      message.subject = String(object.subject)
+    } else {
+      message.subject = ''
+    }
+    if (object.subjectKeyId !== undefined && object.subjectKeyId !== null) {
+      message.subjectKeyId = String(object.subjectKeyId)
+    } else {
+      message.subjectKeyId = ''
+    }
+    if (object.serialNumber !== undefined && object.serialNumber !== null) {
+      message.serialNumber = String(object.serialNumber)
+    } else {
+      message.serialNumber = ''
+    }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = String(object.info)
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = Number(object.time)
+    } else {
+      message.time = 0
+    }
+    if (object.revokeChild !== undefined && object.revokeChild !== null) {
+      message.revokeChild = Boolean(object.revokeChild)
+    } else {
+      message.revokeChild = false
+    }
+    return message
+  },
+
+  toJSON(message: MsgRevokeNocRootX509Cert): unknown {
+    const obj: any = {}
+    message.signer !== undefined && (obj.signer = message.signer)
+    message.subject !== undefined && (obj.subject = message.subject)
+    message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId)
+    message.serialNumber !== undefined && (obj.serialNumber = message.serialNumber)
+    message.info !== undefined && (obj.info = message.info)
+    message.time !== undefined && (obj.time = message.time)
+    message.revokeChild !== undefined && (obj.revokeChild = message.revokeChild)
+    return obj
+  },
+
+  fromPartial(object: DeepPartial<MsgRevokeNocRootX509Cert>): MsgRevokeNocRootX509Cert {
+    const message = { ...baseMsgRevokeNocRootX509Cert } as MsgRevokeNocRootX509Cert
+    if (object.signer !== undefined && object.signer !== null) {
+      message.signer = object.signer
+    } else {
+      message.signer = ''
+    }
+    if (object.subject !== undefined && object.subject !== null) {
+      message.subject = object.subject
+    } else {
+      message.subject = ''
+    }
+    if (object.subjectKeyId !== undefined && object.subjectKeyId !== null) {
+      message.subjectKeyId = object.subjectKeyId
+    } else {
+      message.subjectKeyId = ''
+    }
+    if (object.serialNumber !== undefined && object.serialNumber !== null) {
+      message.serialNumber = object.serialNumber
+    } else {
+      message.serialNumber = ''
+    }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = object.info
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = object.time
+    } else {
+      message.time = 0
+    }
+    if (object.revokeChild !== undefined && object.revokeChild !== null) {
+      message.revokeChild = object.revokeChild
+    } else {
+      message.revokeChild = false
+    }
+    return message
+  }
+}
+
+const baseMsgRevokeNocRootX509CertResponse: object = {}
+
+export const MsgRevokeNocRootX509CertResponse = {
+  encode(_: MsgRevokeNocRootX509CertResponse, writer: Writer = Writer.create()): Writer {
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgRevokeNocRootX509CertResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseMsgRevokeNocRootX509CertResponse } as MsgRevokeNocRootX509CertResponse
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(_: any): MsgRevokeNocRootX509CertResponse {
+    const message = { ...baseMsgRevokeNocRootX509CertResponse } as MsgRevokeNocRootX509CertResponse
+    return message
+  },
+
+  toJSON(_: MsgRevokeNocRootX509CertResponse): unknown {
+    const obj: any = {}
+    return obj
+  },
+
+  fromPartial(_: DeepPartial<MsgRevokeNocRootX509CertResponse>): MsgRevokeNocRootX509CertResponse {
+    const message = { ...baseMsgRevokeNocRootX509CertResponse } as MsgRevokeNocRootX509CertResponse
+    return message
+  }
+}
+
 /** Msg defines the Msg service. */
 export interface Msg {
   ProposeAddX509RootCert(request: MsgProposeAddX509RootCert): Promise<MsgProposeAddX509RootCertResponse>
@@ -2545,7 +2752,8 @@ export interface Msg {
   AddNocX509RootCert(request: MsgAddNocX509RootCert): Promise<MsgAddNocX509RootCertResponse>
   RemoveX509Cert(request: MsgRemoveX509Cert): Promise<MsgRemoveX509CertResponse>
   AddNocX509Cert(request: MsgAddNocX509Cert): Promise<MsgAddNocX509CertResponse>
-	/** this line is used by starport scaffolding # proto/tx/rpc */
+  RevokeNocRootX509Cert(request: MsgRevokeNocRootX509Cert): Promise<MsgRevokeNocRootX509CertResponse>
+  /** this line is used by starport scaffolding # proto/tx/rpc */
 }
 
 export class MsgClientImpl implements Msg {
@@ -2635,6 +2843,12 @@ export class MsgClientImpl implements Msg {
     const data = MsgAddNocX509Cert.encode(request).finish()
     const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Msg', 'AddNocX509Cert', data)
     return promise.then((data) => MsgAddNocX509CertResponse.decode(new Reader(data)))
+  }
+
+  RevokeNocRootX509Cert(request: MsgRevokeNocRootX509Cert): Promise<MsgRevokeNocRootX509CertResponse> {
+    const data = MsgRevokeNocRootX509Cert.encode(request).finish()
+    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Msg', 'RevokeNocRootX509Cert', data)
+    return promise.then((data) => MsgRevokeNocRootX509CertResponse.decode(new Reader(data)))
   }
 }
 

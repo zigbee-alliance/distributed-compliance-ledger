@@ -2209,6 +2209,22 @@ func queryRevokedCertificates(
 	return &resp.RevokedCertificates, nil
 }
 
+func queryRevokedRootCertificates(setup *TestSetup) (*types.RevokedRootCertificates, error) {
+	// query revoked root certificate
+	req := &types.QueryGetRevokedRootCertificatesRequest{}
+
+	resp, err := setup.Keeper.RevokedRootCertificates(setup.Wctx, req)
+	if err != nil {
+		require.Nil(setup.T, resp)
+
+		return nil, err
+	}
+
+	require.NotNil(setup.T, resp)
+
+	return &resp.RevokedRootCertificates, nil
+}
+
 func queryChildCertificates(
 	setup *TestSetup,
 	issuer string,

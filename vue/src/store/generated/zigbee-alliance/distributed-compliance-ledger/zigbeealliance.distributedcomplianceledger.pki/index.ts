@@ -18,11 +18,12 @@ import { ProposedCertificate } from "./module/types/pki/proposed_certificate"
 import { ProposedCertificateRevocation } from "./module/types/pki/proposed_certificate_revocation"
 import { RejectedCertificate } from "./module/types/pki/rejected_certificate"
 import { RevokedCertificates } from "./module/types/pki/revoked_certificates"
+import { RevokedNocRootCertificates } from "./module/types/pki/revoked_noc_root_certificates"
 import { RevokedRootCertificates } from "./module/types/pki/revoked_root_certificates"
 import { UniqueCertificate } from "./module/types/pki/unique_certificate"
 
 
-export { ApprovedCertificates, ApprovedCertificatesBySubject, ApprovedCertificatesBySubjectKeyId, ApprovedRootCertificates, Certificate, CertificateIdentifier, ChildCertificates, Grant, NocCertificates, NocRootCertificates, PkiRevocationDistributionPoint, PkiRevocationDistributionPointsByIssuerSubjectKeyID, ProposedCertificate, ProposedCertificateRevocation, RejectedCertificate, RevokedCertificates, RevokedRootCertificates, UniqueCertificate };
+export { ApprovedCertificates, ApprovedCertificatesBySubject, ApprovedCertificatesBySubjectKeyId, ApprovedRootCertificates, Certificate, CertificateIdentifier, ChildCertificates, Grant, NocCertificates, NocRootCertificates, PkiRevocationDistributionPoint, PkiRevocationDistributionPointsByIssuerSubjectKeyID, ProposedCertificate, ProposedCertificateRevocation, RejectedCertificate, RevokedCertificates, RevokedNocRootCertificates, RevokedRootCertificates, UniqueCertificate };
 
 async function initTxClient(vuexGetters) {
 	return await txClient(vuexGetters['common/wallet/signer'], {
@@ -81,6 +82,8 @@ const getDefaultState = () => {
 				NocRootCertificatesAll: {},
 				NocCertificates: {},
 				NocCertificatesAll: {},
+				RevokedNocRootCertificates: {},
+				RevokedNocRootCertificatesAll: {},
 				
 				_Structure: {
 						ApprovedCertificates: getStructure(ApprovedCertificates.fromPartial({})),
@@ -99,6 +102,7 @@ const getDefaultState = () => {
 						ProposedCertificateRevocation: getStructure(ProposedCertificateRevocation.fromPartial({})),
 						RejectedCertificate: getStructure(RejectedCertificate.fromPartial({})),
 						RevokedCertificates: getStructure(RevokedCertificates.fromPartial({})),
+						RevokedNocRootCertificates: getStructure(RevokedNocRootCertificates.fromPartial({})),
 						RevokedRootCertificates: getStructure(RevokedRootCertificates.fromPartial({})),
 						UniqueCertificate: getStructure(UniqueCertificate.fromPartial({})),
 						
@@ -254,6 +258,18 @@ export default {
 						(<any> params).query=null
 					}
 			return state.NocCertificatesAll[JSON.stringify(params)] ?? {}
+		},
+				getRevokedNocRootCertificates: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.RevokedNocRootCertificates[JSON.stringify(params)] ?? {}
+		},
+				getRevokedNocRootCertificatesAll: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.RevokedNocRootCertificatesAll[JSON.stringify(params)] ?? {}
 		},
 				
 		getTypeStructure: (state) => (type) => {
@@ -787,7 +803,55 @@ export default {
 		},
 		
 		
-		async sendMsgRevokeX509Cert({ rootGetters }, { value, fee = [], memo = '' }) {
+		
+		
+		 		
+		
+		
+		async QueryRevokedNocRootCertificates({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryRevokedNocRootCertificates( key.subject,  key.subjectKeyId)).data
+				
+					
+				commit('QUERY', { query: 'RevokedNocRootCertificates', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryRevokedNocRootCertificates', payload: { options: { all }, params: {...key},query }})
+				return getters['getRevokedNocRootCertificates']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new SpVuexError('QueryClient:QueryRevokedNocRootCertificates', 'API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryRevokedNocRootCertificatesAll({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryRevokedNocRootCertificatesAll(query)).data
+				
+					
+				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
+					let next_values=(await queryClient.queryRevokedNocRootCertificatesAll({...query, 'pagination.key':(<any> value).pagination.next_key})).data
+					value = mergeResults(value, next_values);
+				}
+				commit('QUERY', { query: 'RevokedNocRootCertificatesAll', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryRevokedNocRootCertificatesAll', payload: { options: { all }, params: {...key},query }})
+				return getters['getRevokedNocRootCertificatesAll']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new SpVuexError('QueryClient:QueryRevokedNocRootCertificatesAll', 'API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+
+		async sendMsgAddNocX509Cert({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
 				const msg = await txClient.msgRejectAddX509RootCert(value)
