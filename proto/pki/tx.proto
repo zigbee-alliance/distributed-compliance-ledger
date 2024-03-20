@@ -25,6 +25,7 @@ service Msg {
   rpc RemoveX509Cert(MsgRemoveX509Cert) returns (MsgRemoveX509CertResponse);
   rpc AddNocX509Cert(MsgAddNocX509Cert) returns (MsgAddNocX509CertResponse);
   rpc RevokeNocRootX509Cert(MsgRevokeNocRootX509Cert) returns (MsgRevokeNocRootX509CertResponse);
+  rpc RevokeNocX509Cert(MsgRevokeNocX509Cert) returns (MsgRevokeNocX509CertResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -199,6 +200,19 @@ message MsgRevokeNocRootX509Cert {
 }
 
 message MsgRevokeNocRootX509CertResponse {
+}
+
+message MsgRevokeNocX509Cert {
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  string subject = 2 [(gogoproto.moretags) = "validate:\"required,max=1024\""];
+  string subjectKeyId = 3 [(gogoproto.moretags) = "validate:\"required,max=256\""];
+  string serialNumber = 4;
+  string info = 5 [(gogoproto.moretags) = "validate:\"max=4096\""];
+  int64 time = 6;
+  bool revokeChild = 7;
+}
+
+message MsgRevokeNocX509CertResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message
