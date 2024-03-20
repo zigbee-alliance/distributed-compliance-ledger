@@ -98,6 +98,12 @@ func (k Keeper) RemoveApprovedCertificatesBySubjectKeyID(
 	}
 }
 
+func (k Keeper) RemoveApprovedCertificatesBySubjectKeyIDAndSerialNumber(ctx sdk.Context, subject, subjectKeyID, serialNumber string) {
+	k._removeCertificatesFromSubjectKeyIDState(ctx, subjectKeyID, func(cert *types.Certificate) bool {
+		return cert.Subject == subject && cert.SubjectKeyId == subjectKeyID && cert.SerialNumber == serialNumber
+	})
+}
+
 // GetAllApprovedCertificatesBySubjectKeyID returns all approvedCertificatesBySubjectKeyId.
 func (k Keeper) GetAllApprovedCertificatesBySubjectKeyID(ctx sdk.Context) (list []types.ApprovedCertificatesBySubjectKeyId) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ApprovedCertificatesBySubjectKeyIDKeyPrefix))
@@ -112,4 +118,30 @@ func (k Keeper) GetAllApprovedCertificatesBySubjectKeyID(ctx sdk.Context) (list 
 	}
 
 	return
+}
+
+func (k Keeper) _removeCertificatesFromSubjectKeyIDState(ctx sdk.Context, subjectKeyID string, filter func(cert *types.Certificate) bool) {
+	certs, found := k.GetApprovedCertificatesBySubjectKeyID(ctx, subjectKeyID)
+	if !found {
+		return
+	}
+
+	numCertsBefore := len(certs.Certs)
+	for i := 0; i < len(certs.Certs); {
+		cert := certs.Certs[i]
+		if filter(cert) {
+			certs.Certs = append(certs.Certs[:i], certs.Certs[i+1:]...)
+		} else {
+			i++
+		}
+	}
+
+	if len(certs.Certs) == 0 {
+		store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ApprovedCertificatesBySubjectKeyIDKeyPrefix))
+		store.Delete(types.ApprovedCertificatesBySubjectKeyIDKey(
+			subjectKeyID,
+		))
+	} else if numCertsBefore > len(certs.Certs) { // Update state only if any certificate is removed
+		k.SetApprovedCertificatesBySubjectKeyID(ctx, certs)
+	}
 }

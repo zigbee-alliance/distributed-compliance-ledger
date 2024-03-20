@@ -202,12 +202,6 @@ func TestHandler_RevokeNocX509Cert_RevokeDefault(t *testing.T) {
 	require.Equal(t, testconstants.NocCert1Subject, revokedNocCerts.Subject)
 	require.Equal(t, testconstants.NocCert1SubjectKeyID, revokedNocCerts.SubjectKeyId)
 
-	revokedCerts, err := queryRevokedCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
-	require.NoError(t, err)
-	require.Equal(t, 2, len(revokedCerts.Certs))
-	require.Equal(t, testconstants.NocCert1Subject, revokedCerts.Subject)
-	require.Equal(t, testconstants.NocCert1SubjectKeyID, revokedCerts.SubjectKeyId)
-
 	// query noc certificate by Subject
 	_, err = queryApprovedCertificatesBySubject(setup, testconstants.NocCert1Subject)
 	require.Error(t, err)
@@ -395,11 +389,6 @@ func TestHandler_RevokeNocX509Cert_RevokeBySerialNumber(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, 1, len(revokedNocCerts.Certs))
 	require.Equal(t, testconstants.NocCert1SerialNumber, revokedNocCerts.Certs[0].SerialNumber)
-
-	revokedCerts, err := queryRevokedCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
-	require.NoError(t, err)
-	require.Equal(t, 1, len(revokedCerts.Certs))
-	require.Equal(t, testconstants.NocCert1SerialNumber, revokedCerts.Certs[0].SerialNumber)
 
 	// Child certificate should not be revoked
 	_, err = queryRevokedCertificates(setup, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)

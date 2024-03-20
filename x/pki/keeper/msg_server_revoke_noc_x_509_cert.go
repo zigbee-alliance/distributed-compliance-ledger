@@ -80,7 +80,7 @@ func (k msgServer) _revokeNocCertificate(
 	}
 	k.AddRevokedCertificates(ctx, revCerts)
 
-	k.removeCertFromList(cert.Issuer, cert.SerialNumber, &certificates)
+	removeCertFromList(cert.Issuer, cert.SerialNumber, &certificates.Certs)
 	if len(certificates.Certs) == 0 {
 		k.RemoveNocCertificate(ctx, certificates.Subject, certificates.SubjectKeyId, vid)
 		k.RemoveApprovedCertificates(ctx, cert.Subject, cert.SubjectKeyId)
@@ -88,10 +88,7 @@ func (k msgServer) _revokeNocCertificate(
 		k.RemoveApprovedCertificatesBySubjectKeyID(ctx, cert.Subject, cert.SubjectKeyId)
 	} else {
 		k.RemoveNocCertificateBySerialNumber(ctx, vid, cert.Subject, cert.SubjectKeyId, serialNumber)
-		k.SetApprovedCertificatesBySubjectKeyID(
-			ctx,
-			types.ApprovedCertificatesBySubjectKeyId{SubjectKeyId: cert.SubjectKeyId, Certs: certificates.Certs},
-		)
+		k.RemoveApprovedCertificatesBySubjectKeyIDAndSerialNumber(ctx, cert.Subject, cert.SubjectKeyId, serialNumber)
 		k.SetApprovedCertificates(ctx, certificates)
 	}
 

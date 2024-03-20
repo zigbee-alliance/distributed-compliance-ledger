@@ -204,7 +204,7 @@ check_response "$result" "\"serialNumber\": \"$noc_cert_2_serial_number\""
 check_response "$result" "\"serialNumber\": \"$noc_cert_2_copy_serial_number\""
 check_response "$result" "\"serialNumber\": \"$noc_leaf_cert_2_serial_number\""
 
-echo "$vendor_account Vendor revokes root NOC certificate by setting \"revoke-child\" flag to true, it should revoke child certificates too"
+echo "$vendor_account Vendor revokes non-root NOC certificate by setting \"revoke-child\" flag to true, it should revoke child certificates too"
 result=$(echo "$passphrase" | dcld tx pki revoke-noc-x509-cert --subject="$noc_cert_2_subject" --subject-key-id="$noc_cert_2_subject_key_id" --revoke-child=true --from=$vendor_account --yes)
 check_response "$result" "\"code\": 0"
 

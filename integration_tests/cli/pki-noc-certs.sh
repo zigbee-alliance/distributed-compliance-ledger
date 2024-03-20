@@ -424,7 +424,7 @@ response_does_not_contain "$result" "\"serialNumber\": \"$noc_cert_1_serial_numb
 response_does_not_contain "$result" "\"serialNumber\": \"$noc_cert_1_copy_serial_number\""
 echo $result | jq
 
-echo "Request NOC certificate by VID = $vid should contain ony leaf certificate"
+echo "Request NOC certificate by VID = $vid should contain one leaf certificate"
 result=$(dcld query pki noc-x509-certs --vid="$vid")
 echo $result | jq
 check_response "$result" "\"subject\": \"$noc_leaf_cert_1_subject\""

@@ -76,3 +76,29 @@ func (k Keeper) EnsureVidMatches(ctx sdk.Context, owner string, signer string) e
 
 	return nil
 }
+
+func removeCertFromList(issuer string, serialNumber string, certs *[]*types.Certificate) {
+	certIndex := -1
+
+	for i, cert := range *certs {
+		if cert.SerialNumber == serialNumber && cert.Issuer == issuer {
+			certIndex = i
+
+			break
+		}
+	}
+	if certIndex == -1 {
+		return
+	}
+	*certs = append((*certs)[:certIndex], (*certs)[certIndex+1:]...)
+}
+
+func findCertificate(serialNumber string, certificates *[]*types.Certificate) (*types.Certificate, bool) {
+	for _, cert := range *certificates {
+		if cert.SerialNumber == serialNumber {
+			return cert, true
+		}
+	}
+
+	return nil, false
+}
