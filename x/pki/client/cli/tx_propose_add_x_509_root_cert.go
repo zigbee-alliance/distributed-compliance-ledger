@@ -59,7 +59,7 @@ func CmdProposeAddX509RootCert() *cobra.Command {
 		"PEM encoded certificate (string or path to file containing data)")
 	cmd.Flags().String(FlagInfo, "", FlagInfoUsage)
 	cmd.Flags().Int32(FlagVid, 0, "Model vendor ID (positive non-zero uint16)")
-	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 1, "Schema version")
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version")
 
 	cli.AddTxFlagsToCmd(cmd)
 

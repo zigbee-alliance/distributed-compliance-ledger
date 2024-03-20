@@ -8,5 +8,4 @@ message Product {
   int32 pid = 1; 
   string name = 2; 
   string partNumber = 3;
-  uint32 schemaVersion = 4;
 }

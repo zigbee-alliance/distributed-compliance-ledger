@@ -6,7 +6,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	modeltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
@@ -105,7 +104,7 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 		complianceInfo.Transport = msg.Transport
 	}
 
-	complianceInfo.SchemaVersion = common.GetSchemaVersionOrDefault(msg)
+	complianceInfo.SchemaVersion = msg.SchemaVersion
 
 	//nolint:nestif
 	if msg.CDCertificateId != "" && msg.CDCertificateId != complianceInfo.CDCertificateId {

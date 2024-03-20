@@ -74,7 +74,7 @@ func CmdRevokeModel() *cobra.Command {
 		"The date of model revocation (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z")
 	cmd.Flags().StringVar(&reason, FlagReason, "",
 		"Optional comment describing the reason of revocation")
-	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 1, "Schema version")
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version")
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)

@@ -175,7 +175,8 @@ var (
 	ValidHTTPURL      = "http://valid.url.com"
 	NotAValidURL      = "not a valid url"
 
-	SchemaVersion uint32 = 1
+	// SchemaVersion initial default value.
+	SchemaVersion uint32
 )
 
 /*

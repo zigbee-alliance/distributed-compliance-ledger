@@ -6,7 +6,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/x509"
@@ -99,7 +98,7 @@ func (k msgServer) AddNocX509Cert(goCtx context.Context, msg *types.MsgAddNocX50
 		rootCert.SubjectKeyID,
 		msg.Signer,
 		accountVid,
-		common.GetSchemaVersionOrDefault(msg),
+		msg.SchemaVersion,
 	)
 
 	// Add a NOC certificate to the list of NOC certificates with the same VID

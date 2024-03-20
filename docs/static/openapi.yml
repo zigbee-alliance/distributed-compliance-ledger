@@ -297,6 +297,9 @@ paths:
                       type: string
                     certificationIdOfSoftwareComponent:
                       type: string
+                    schemaVersion:
+                      type: integer
+                      format: int64
               pagination:
                 type: object
                 properties:
@@ -482,6 +485,9 @@ paths:
                     type: string
                   certificationIdOfSoftwareComponent:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -612,6 +618,9 @@ paths:
                             type: string
                           certificationIdOfSoftwareComponent:
                             type: string
+                          schemaVersion:
+                            type: integer
+                            format: int64
               pagination:
                 type: object
                 properties:
@@ -804,6 +813,9 @@ paths:
                           type: string
                         certificationIdOfSoftwareComponent:
                           type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -8453,6 +8465,9 @@ paths:
                       format: int32
                     creator:
                       type: string
+                    schemaVersion:
+                      type: integer
+                      format: int64
               pagination:
                 type: object
                 properties:
@@ -8675,6 +8690,9 @@ paths:
                     format: int32
                   creator:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -8820,6 +8838,9 @@ paths:
                     type: string
                   creator:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -8935,6 +8956,9 @@ paths:
                             format: int32
                           isNoc:
                             type: boolean
+                          schemaVersion:
+                            type: integer
+                            format: int64
               pagination:
                 type: object
                 properties:
@@ -9168,6 +9192,9 @@ paths:
                           format: int32
                         isNoc:
                           type: boolean
+                        schemaVersion:
+                          type: integer
+                          format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -9334,6 +9361,9 @@ paths:
                             format: int32
                           isNoc:
                             type: boolean
+                          schemaVersion:
+                            type: integer
+                            format: int64
               pagination:
                 type: object
                 properties:
@@ -9514,6 +9544,9 @@ paths:
                           format: int32
                         isNoc:
                           type: boolean
+                        schemaVersion:
+                          type: integer
+                          format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -9618,6 +9651,9 @@ paths:
                             format: int32
                           isNoc:
                             type: boolean
+                          schemaVersion:
+                            type: integer
+                            format: int64
               pagination:
                 type: object
                 properties:
@@ -9798,6 +9834,9 @@ paths:
                           format: int32
                         isNoc:
                           type: boolean
+                        schemaVersion:
+                          type: integer
+                          format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -9882,6 +9921,9 @@ paths:
                     vid:
                       type: integer
                       format: int32
+                    schemaVersion:
+                      type: integer
+                      format: int64
               pagination:
                 type: object
                 properties:
@@ -10042,6 +10084,9 @@ paths:
                   vid:
                     type: integer
                     format: int32
+                  schemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -10367,6 +10412,9 @@ paths:
                             format: int32
                           isNoc:
                             type: boolean
+                          schemaVersion:
+                            type: integer
+                            format: int64
               pagination:
                 type: object
                 properties:
@@ -10548,6 +10596,9 @@ paths:
                           format: int32
                         isNoc:
                           type: boolean
+                        schemaVersion:
+                          type: integer
+                          format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -10621,6 +10672,9 @@ paths:
                       type: integer
                       format: int64
                     revocationType:
+                      type: integer
+                      format: int64
+                    schemaVersion:
                       type: integer
                       format: int64
               pagination:
@@ -10778,6 +10832,9 @@ paths:
                         revocationType:
                           type: integer
                           format: int64
+                        schemaVersion:
+                          type: integer
+                          format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -10845,6 +10902,9 @@ paths:
                     type: integer
                     format: int64
                   revocationType:
+                    type: integer
+                    format: int64
+                  schemaVersion:
                     type: integer
                     format: int64
         default:
@@ -10960,6 +11020,9 @@ paths:
                             format: int32
                           isNoc:
                             type: boolean
+                          schemaVersion:
+                            type: integer
+                            format: int64
               pagination:
                 type: object
                 properties:
@@ -11141,6 +11204,9 @@ paths:
                           format: int32
                         isNoc:
                           type: boolean
+                        schemaVersion:
+                          type: integer
+                          format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -11249,6 +11315,9 @@ paths:
                             format: int32
                           isNoc:
                             type: boolean
+                          schemaVersion:
+                            type: integer
+                            format: int64
               pagination:
                 type: object
                 properties:
@@ -11430,6 +11499,9 @@ paths:
                           format: int32
                         isNoc:
                           type: boolean
+                        schemaVersion:
+                          type: integer
+                          format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -14672,6 +14744,9 @@ paths:
                       type: string
                     creator:
                       type: string
+                    schemaVersion:
+                      type: integer
+                      format: int64
               pagination:
                 type: object
                 properties:
@@ -14806,6 +14881,9 @@ paths:
                     type: string
                   creator:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -15338,6 +15416,9 @@ definitions:
         type: string
       certificationIdOfSoftwareComponent:
         type: string
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.compliance.DeviceSoftwareCompliance:
     type: object
     properties:
@@ -15412,6 +15493,9 @@ definitions:
               type: string
             certificationIdOfSoftwareComponent:
               type: string
+            schemaVersion:
+              type: integer
+              format: int64
   zigbeealliance.distributedcomplianceledger.compliance.ProvisionalModel:
     type: object
     properties:
@@ -15546,6 +15630,9 @@ definitions:
               type: string
             certificationIdOfSoftwareComponent:
               type: string
+            schemaVersion:
+              type: integer
+              format: int64
       pagination:
         type: object
         properties:
@@ -15650,6 +15737,9 @@ definitions:
                     type: string
                   certificationIdOfSoftwareComponent:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
       pagination:
         type: object
         properties:
@@ -15856,6 +15946,9 @@ definitions:
             type: string
           certificationIdOfSoftwareComponent:
             type: string
+          schemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.compliance.QueryGetDeviceSoftwareComplianceResponse:
     type: object
     properties:
@@ -15933,6 +16026,9 @@ definitions:
                   type: string
                 certificationIdOfSoftwareComponent:
                   type: string
+                schemaVersion:
+                  type: integer
+                  format: int64
   zigbeealliance.distributedcomplianceledger.compliance.QueryGetProvisionalModelResponse:
     type: object
     properties:
@@ -21057,6 +21153,9 @@ definitions:
         format: int32
       creator:
         type: string
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.model.ModelVersion:
     type: object
     properties:
@@ -21098,6 +21197,9 @@ definitions:
         type: string
       creator:
         type: string
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.model.ModelVersions:
     type: object
     properties:
@@ -21173,6 +21275,9 @@ definitions:
               format: int32
             creator:
               type: string
+            schemaVersion:
+              type: integer
+              format: int64
       pagination:
         type: object
         properties:
@@ -21247,6 +21352,9 @@ definitions:
             format: int32
           creator:
             type: string
+          schemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.model.QueryGetModelVersionResponse:
     type: object
     properties:
@@ -21291,6 +21399,9 @@ definitions:
             type: string
           creator:
             type: string
+          schemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.model.QueryGetModelVersionsResponse:
     type: object
     properties:
@@ -21410,6 +21521,9 @@ definitions:
               format: int32
             isNoc:
               type: boolean
+            schemaVersion:
+              type: integer
+              format: int64
   zigbeealliance.distributedcomplianceledger.pki.ApprovedCertificatesBySubject:
     type: object
     properties:
@@ -21485,6 +21599,9 @@ definitions:
         format: int32
       isNoc:
         type: boolean
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.pki.CertificateIdentifier:
     type: object
     properties:
@@ -21580,6 +21697,9 @@ definitions:
               format: int32
             isNoc:
               type: boolean
+            schemaVersion:
+              type: integer
+              format: int64
   zigbeealliance.distributedcomplianceledger.pki.NocRootCertificates:
     type: object
     properties:
@@ -21642,6 +21762,9 @@ definitions:
               format: int32
             isNoc:
               type: boolean
+            schemaVersion:
+              type: integer
+              format: int64
   zigbeealliance.distributedcomplianceledger.pki.PkiRevocationDistributionPoint:
     type: object
     properties:
@@ -21670,6 +21793,9 @@ definitions:
         type: integer
         format: int64
       revocationType:
+        type: integer
+        format: int64
+      schemaVersion:
         type: integer
         format: int64
   zigbeealliance.distributedcomplianceledger.pki.PkiRevocationDistributionPointsByIssuerSubjectKeyID:
@@ -21707,6 +21833,9 @@ definitions:
               type: integer
               format: int64
             revocationType:
+              type: integer
+              format: int64
+            schemaVersion:
               type: integer
               format: int64
   zigbeealliance.distributedcomplianceledger.pki.ProposedCertificate:
@@ -21751,6 +21880,9 @@ definitions:
       vid:
         type: integer
         format: int32
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.pki.ProposedCertificateRevocation:
     type: object
     properties:
@@ -21844,6 +21976,9 @@ definitions:
                     format: int32
                   isNoc:
                     type: boolean
+                  schemaVersion:
+                    type: integer
+                    format: int64
       pagination:
         type: object
         properties:
@@ -21936,6 +22071,9 @@ definitions:
                     format: int32
                   isNoc:
                     type: boolean
+                  schemaVersion:
+                    type: integer
+                    format: int64
       pagination:
         type: object
         properties:
@@ -22028,6 +22166,9 @@ definitions:
                     format: int32
                   isNoc:
                     type: boolean
+                  schemaVersion:
+                    type: integer
+                    format: int64
       pagination:
         type: object
         properties:
@@ -22086,6 +22227,9 @@ definitions:
               type: integer
               format: int64
             revocationType:
+              type: integer
+              format: int64
+            schemaVersion:
               type: integer
               format: int64
       pagination:
@@ -22160,6 +22304,9 @@ definitions:
             vid:
               type: integer
               format: int32
+            schemaVersion:
+              type: integer
+              format: int64
       pagination:
         type: object
         properties:
@@ -22308,6 +22455,9 @@ definitions:
                     format: int32
                   isNoc:
                     type: boolean
+                  schemaVersion:
+                    type: integer
+                    format: int64
       pagination:
         type: object
         properties:
@@ -22401,6 +22551,9 @@ definitions:
                     format: int32
                   isNoc:
                     type: boolean
+                  schemaVersion:
+                    type: integer
+                    format: int64
       pagination:
         type: object
         properties:
@@ -22494,6 +22647,9 @@ definitions:
                     format: int32
                   isNoc:
                     type: boolean
+                  schemaVersion:
+                    type: integer
+                    format: int64
       pagination:
         type: object
         properties:
@@ -22597,6 +22753,9 @@ definitions:
                   format: int32
                 isNoc:
                   type: boolean
+                schemaVersion:
+                  type: integer
+                  format: int64
   zigbeealliance.distributedcomplianceledger.pki.QueryGetApprovedRootCertificatesResponse:
     type: object
     properties:
@@ -22696,6 +22855,9 @@ definitions:
                   format: int32
                 isNoc:
                   type: boolean
+                schemaVersion:
+                  type: integer
+                  format: int64
   zigbeealliance.distributedcomplianceledger.pki.QueryGetNocRootCertificatesResponse:
     type: object
     properties:
@@ -22761,6 +22923,9 @@ definitions:
                   format: int32
                 isNoc:
                   type: boolean
+                schemaVersion:
+                  type: integer
+                  format: int64
   zigbeealliance.distributedcomplianceledger.pki.QueryGetPkiRevocationDistributionPointResponse:
     type: object
     properties:
@@ -22792,6 +22957,9 @@ definitions:
             type: integer
             format: int64
           revocationType:
+            type: integer
+            format: int64
+          schemaVersion:
             type: integer
             format: int64
   zigbeealliance.distributedcomplianceledger.pki.QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse:
@@ -22832,6 +23000,9 @@ definitions:
                   type: integer
                   format: int64
                 revocationType:
+                  type: integer
+                  format: int64
+                schemaVersion:
                   type: integer
                   format: int64
   zigbeealliance.distributedcomplianceledger.pki.QueryGetProposedCertificateResponse:
@@ -22879,6 +23050,9 @@ definitions:
           vid:
             type: integer
             format: int32
+          schemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.pki.QueryGetProposedCertificateRevocationResponse:
     type: object
     properties:
@@ -22973,6 +23147,9 @@ definitions:
                   format: int32
                 isNoc:
                   type: boolean
+                schemaVersion:
+                  type: integer
+                  format: int64
   zigbeealliance.distributedcomplianceledger.pki.QueryGetRevokedCertificatesResponse:
     type: object
     properties:
@@ -23039,6 +23216,9 @@ definitions:
                   format: int32
                 isNoc:
                   type: boolean
+                schemaVersion:
+                  type: integer
+                  format: int64
   zigbeealliance.distributedcomplianceledger.pki.QueryGetRevokedNocRootCertificatesResponse:
     type: object
     properties:
@@ -23105,6 +23285,9 @@ definitions:
                   format: int32
                 isNoc:
                   type: boolean
+                schemaVersion:
+                  type: integer
+                  format: int64
   zigbeealliance.distributedcomplianceledger.pki.QueryGetRevokedRootCertificatesResponse:
     type: object
     properties:
@@ -23183,6 +23366,9 @@ definitions:
               format: int32
             isNoc:
               type: boolean
+            schemaVersion:
+              type: integer
+              format: int64
   zigbeealliance.distributedcomplianceledger.pki.RevokedCertificates:
     type: object
     properties:
@@ -23246,6 +23432,9 @@ definitions:
               format: int32
             isNoc:
               type: boolean
+            schemaVersion:
+              type: integer
+              format: int64
   zigbeealliance.distributedcomplianceledger.pki.RevokedNocRootCertificates:
     type: object
     properties:
@@ -23309,6 +23498,9 @@ definitions:
               format: int32
             isNoc:
               type: boolean
+            schemaVersion:
+              type: integer
+              format: int64
   zigbeealliance.distributedcomplianceledger.pki.RevokedRootCertificates:
     type: object
     properties:
@@ -24433,6 +24625,9 @@ definitions:
               type: string
             creator:
               type: string
+            schemaVersion:
+              type: integer
+              format: int64
       pagination:
         type: object
         properties:
@@ -24477,6 +24672,9 @@ definitions:
             type: string
           creator:
             type: string
+          schemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.vendorinfo.VendorInfo:
     type: object
     properties:
@@ -24493,3 +24691,6 @@ definitions:
         type: string
       creator:
         type: string
+      schemaVersion:
+        type: integer
+        format: int64

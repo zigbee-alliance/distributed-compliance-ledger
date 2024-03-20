@@ -619,8 +619,7 @@ func TestHandler_ApproveAddX509RootCert_ForEnoughApprovals(t *testing.T) {
 	require.Equal(t, testconstants.RootSubject, approvedCertificate.Subject)
 	require.Equal(t, testconstants.RootSubjectKeyID, approvedCertificate.SubjectKeyId)
 	require.Equal(t, testconstants.RootSerialNumber, approvedCertificate.SerialNumber)
-	// Check that `schemaVersion` should be changed to 1
-	require.Equal(t, schemaVersion+1, approvedCertificate.SchemaVersion)
+	require.Equal(t, schemaVersion, approvedCertificate.SchemaVersion)
 	require.True(t, approvedCertificate.IsRoot)
 	require.Empty(t, approvedCertificate.RootSubject)
 	require.Empty(t, approvedCertificate.RootSubjectKeyId)

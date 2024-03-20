@@ -6,7 +6,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/x509"
@@ -75,7 +74,7 @@ func (k msgServer) AddPkiRevocationDistributionPoint(goCtx context.Context, msg 
 		DataDigest:           msg.DataDigest,
 		DataDigestType:       msg.DataDigestType,
 		RevocationType:       msg.RevocationType,
-		SchemaVersion:        common.GetSchemaVersionOrDefault(msg),
+		SchemaVersion:        msg.SchemaVersion,
 	}
 
 	k.SetPkiRevocationDistributionPoint(ctx, pkiRevocationDistributionPoint)

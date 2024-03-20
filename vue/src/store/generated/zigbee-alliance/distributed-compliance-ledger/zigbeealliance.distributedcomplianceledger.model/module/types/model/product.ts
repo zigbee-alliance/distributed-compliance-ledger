@@ -7,10 +7,9 @@ export interface Product {
   pid: number
   name: string
   partNumber: string
-  schemaVersion: number
 }
 
-const baseProduct: object = { pid: 0, name: '', partNumber: '', schemaVersion: 0 }
+const baseProduct: object = { pid: 0, name: '', partNumber: '' }
 
 export const Product = {
   encode(message: Product, writer: Writer = Writer.create()): Writer {
@@ -22,9 +21,6 @@ export const Product = {
     }
     if (message.partNumber !== '') {
       writer.uint32(26).string(message.partNumber)
-    }
-    if (message.schemaVersion !== 0) {
-      writer.uint32(32).uint32(message.schemaVersion)
     }
     return writer
   },
@@ -44,9 +40,6 @@ export const Product = {
           break
         case 3:
           message.partNumber = reader.string()
-          break
-        case 4:
-          message.schemaVersion = reader.uint32()
           break
         default:
           reader.skipType(tag & 7)
@@ -73,11 +66,6 @@ export const Product = {
     } else {
       message.partNumber = ''
     }
-    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
-      message.schemaVersion = Number(object.schemaVersion)
-    } else {
-      message.schemaVersion = 0
-    }
     return message
   },
 
@@ -86,7 +74,6 @@ export const Product = {
     message.pid !== undefined && (obj.pid = message.pid)
     message.name !== undefined && (obj.name = message.name)
     message.partNumber !== undefined && (obj.partNumber = message.partNumber)
-    message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
     return obj
   },
 
@@ -106,11 +93,6 @@ export const Product = {
       message.partNumber = object.partNumber
     } else {
       message.partNumber = ''
-    }
-    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
-      message.schemaVersion = object.schemaVersion
-    } else {
-      message.schemaVersion = 0
     }
     return message
   }

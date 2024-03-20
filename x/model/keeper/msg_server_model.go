@@ -5,7 +5,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
@@ -49,7 +48,7 @@ func (k msgServer) CreateModel(goCtx context.Context, msg *types.MsgCreateModel)
 		SupportUrl:    msg.SupportUrl,
 		ProductUrl:    msg.ProductUrl,
 		LsfUrl:        msg.LsfUrl,
-		SchemaVersion: common.GetSchemaVersionOrDefault(msg),
+		SchemaVersion: msg.SchemaVersion,
 	}
 
 	// if LsfUrl is not empty, we set lsfRevision to default value of 1
@@ -65,10 +64,9 @@ func (k msgServer) CreateModel(goCtx context.Context, msg *types.MsgCreateModel)
 
 	// store new product in VendorProducts
 	k.SetVendorProduct(ctx, model.Vid, types.Product{
-		Pid:           model.Pid,
-		Name:          model.ProductName,
-		PartNumber:    model.PartNumber,
-		SchemaVersion: common.GetSchemaVersionOrDefault(msg),
+		Pid:        model.Pid,
+		Name:       model.ProductName,
+		PartNumber: model.PartNumber,
 	})
 
 	return &types.MsgCreateModelResponse{}, nil
@@ -134,7 +132,7 @@ func (k msgServer) UpdateModel(goCtx context.Context, msg *types.MsgUpdateModel)
 		model.ProductUrl = msg.ProductUrl
 	}
 
-	model.SchemaVersion = common.GetSchemaVersionOrDefault(msg)
+	model.SchemaVersion = msg.SchemaVersion
 
 	if msg.LsfRevision > 0 {
 		// If lsfRevision is set but no lsfURL is provided or present in model
@@ -160,10 +158,9 @@ func (k msgServer) UpdateModel(goCtx context.Context, msg *types.MsgUpdateModel)
 
 	// store updated product in VendorProducts
 	k.SetVendorProduct(ctx, model.Vid, types.Product{
-		Pid:           model.Pid,
-		Name:          model.ProductName,
-		PartNumber:    model.PartNumber,
-		SchemaVersion: common.GetSchemaVersionOrDefault(msg),
+		Pid:        model.Pid,
+		Name:       model.ProductName,
+		PartNumber: model.PartNumber,
 	})
 
 	return &types.MsgUpdateModelResponse{}, nil

@@ -128,7 +128,7 @@ Adds a record about a Vendor.
   - companyLegalName: `string` -  Legal name of the vendor company
   - companyPreferredName: `optional(string)` -  Preferred name of the vendor company
   - vendorLandingPageURL: `optional(string)` -  URL of the vendor's landing page
-  - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 1)
+  - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 0)
 - In State: `vendorinfo/VendorInfo/value/<vid>`
 - Who can send:
   - Account with a vendor role who has the matching Vendor ID
@@ -148,7 +148,7 @@ Updates a record about a Vendor.
   - companyLegalName: `optional(string)` -  Legal name of the vendor company
   - companyPreferredName: `optional(string)` -  Preferred name of the vendor company
   - vendorLandingPageURL: `optional(string)` -  URL of the vendor's landing page
-  - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 1)
+  - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 0)
 - In State: `vendorinfo/VendorInfo/value/<vid>`
 - Who can send:
   - Account with a vendor role who has the matching Vendor ID
@@ -211,7 +211,7 @@ Not all fields can be edited (see `EDIT_MODEL`).
   - supportURL: `optional(string)` - URL that contains product specific web page that contains support details for the device model.
   - productURL: `optional(string)` - URL that contains product specific web page that contains details for the device model.
   - lsfURL: `optional(string)` - URL to the Localized String File of this product.
-  - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 1)
+  - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 0)
 - In State:
   - `model/Model/value/<vid>/<pid>`
   - `model/VendorProducts/value/<vid>`
@@ -257,7 +257,7 @@ All non-edited fields remain the same.
   - supportURL: `optional(string)` - URL that contains product specific web page that contains support details for the device model.
   - productURL: `optional(string)` - URL that contains product specific web page that contains details for the device model.  
   - lsfURL: `optional(string)` - URL to the Localized String File of this product.
-  - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 1)
+  - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 0)
 - lsfRevision: `optional(uint32)` - LsfRevision is a monotonically increasing positive integer indicating the latest available version of Localized String File.
 - In State: `model/Model/value/<vid>/<pid>`
 - Who can send:
@@ -309,7 +309,7 @@ If one of `OTA_URl`, `OTA_checksum` or `OTA_checksum_type` fields is set, then t
   - otaChecksum `optional(string)` - Digest of the entire contents of the associated OTA Software Update Image under the OtaUrl attribute, encoded in base64 string representation. The digest SHALL have been computed using the algorithm specified in OtaChecksumType
   - otaChecksumType `optional(string)` - Numeric identifier as defined in IANA Named Information Hash Algorithm Registry for the type of otaChecksum. For example, a value of 1 would match the sha-256 identifier, which maps to the SHA-256 digest algorithm
   - releaseNotesURL `optional(string)` - URL that contains product specific web page that contains release notes for the device model.
-  - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 1)
+  - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 0)
 - In State:
   - `model/ModelVersion/value/<vid>/<pid>/<softwareVersion>`
   - `model/ModelVersions/value/<vid>/<pid>`
@@ -356,7 +356,7 @@ All non-edited fields remain the same.
   - otaURL `optional(string)` - URL where to obtain the OTA image
   - otaFileSize `optional(string)`  - OtaFileSize is the total size of the OTA software image in bytes
   - otaChecksum `optional(string)` - Digest of the entire contents of the associated OTA Software Update Image under the OtaUrl attribute, encoded in base64 string representation. The digest SHALL have been computed using the algorithm specified in OtaChecksumType
-  - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 1)
+  - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 0)
 
 - In State: `model/ModelVersion/value/<vid>/<pid>/<softwareVersion>`
 - Who can send:
@@ -494,7 +494,7 @@ from the revocation list.
   - transport `optional(string)` - optional field describing the transport
   - parentChild `optional(string)` - optional field describing the parent/child - Currently 'parent' and 'child' types are supported
   - certificationIDOfSoftwareComponent `optional(string)` - optional field describing the certification ID of software component
-  - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 1)
+  - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 0)
 - In State:
   - `compliance/ComplianceInfo/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
   - `compliance/CertifiedModel/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
@@ -532,7 +532,7 @@ Updates a compliance info by VID, PID, Software Version and Certification Type.
   - transport `optional(string)` - optional field describing the transport
   - parentChild `optional(string)` - optional field describing the parent/child - Currently 'parent' and 'child' types are supported
   - certificationIDOfSoftwareComponent `optional(string)` - optional field describing the certification ID of software component
-  - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 1)
+  - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 0)
 - Who can send:
   - CertificationCenter
 - CLI command:
@@ -580,7 +580,7 @@ is written on the ledger (`CERTIFY_MODEL` was called), or
   - revocationDate: `string` - The date of model revocation (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
   - certificationType: `string`  - Certification type - Currently 'zigbee' and 'matter', 'access control', 'product security' types are supported
   - reason `optional(string)`  - optional comment describing the reason of revocation
-  - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 1)
+  - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 0)
 - In State:
   - `compliance/ComplianceInfo/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
   - `compliance/RevokedModel/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
@@ -620,7 +620,7 @@ Can not be set if there is already a certification record on the ledger (certifi
   - transport `optional(string)` - optional field describing the transport
   - parentChild `optional(string)` - optional field describing the parent/child - Currently 'parent' and 'child' types are supported
   - certificationIDOfSoftwareComponent `optional(string)` - optional field describing the certification ID of software component
-  - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 1)
+  - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 0)
 - In State:
   - `compliance/ComplianceInfo/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
   - `compliance/ProvisionalModel/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
@@ -841,7 +841,7 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
   - cert: `string` - PEM encoded certificate. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data.
   - info: `optional(string)` - information/notes for the proposal
   - time: `optional(int64)` - proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
-  - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 1)
+  - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 0)
 - In State: `pki/ProposedCertificate/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - Who can send:
   - Trustee
@@ -924,7 +924,7 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
     - `vid` field associated with the corresponding PAA on the ledger must be equal to the Vendor account's VID.
 - Parameters:
   - cert: `string` - PEM encoded certificate. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data.
-  - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 1)
+  - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 0)
 - In State:
   - `pki/ApprovedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
   - `pki/ChildCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
@@ -1157,7 +1157,7 @@ This transaction adds a NOC root certificate owned by the Vendor.
   - the signature (self-signature) and expiration date must be valid.
 - Parameters:
   - cert: `string` - The NOC Root Certificate, encoded in X.509v3 PEM format. Can be a PEM string or a file path.
-  - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 1)
+  - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 0)
 - In State:
   - `pki/ApprovedCertificates/value/<Subject>/<SubjectKeyID>`
   - `pki/ApprovedCertificatesBySubject/value/<Subject>`
@@ -1188,7 +1188,7 @@ already present on the ledger.
   - the signature (self-signature) and expiration date must be valid.
 - Parameters:
   - cert: `string` - The NOC non-root Certificate, encoded in X.509v3 PEM format. Can be a PEM string or a file path.
-  - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 1)
+  - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 0)
 - In State:
   - `pki/ApprovedCertificates/value/<Subject>/<SubjectKeyID>`
   - `pki/ApprovedCertificatesBySubject/value/<Subject>`

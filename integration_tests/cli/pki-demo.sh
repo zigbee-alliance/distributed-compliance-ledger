@@ -454,7 +454,7 @@ test_divider
 
 echo "$vendor_account add Leaf certificate"
 leaf_path="integration_tests/constants/leaf_cert"
-schema_version_1=1
+schema_version_0=0
 result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$leaf_path" --from $vendor_account --yes)
 check_response "$result" "\"code\": 0"
 
@@ -467,7 +467,7 @@ check_response "$result" "\"subject\": \"$leaf_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$leaf_cert_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$leaf_cert_subject_as_text\""
-check_response "$result" "\"schemaVersion\": $schema_version_1"
+check_response "$result" "\"schemaVersion\": $schema_version_0"
 check_response "$result" "\"approvals\": \\[\\]"
 
 echo "Request Leaf certificate by subjectKeyId - There is no approvals on leaf certificate"
@@ -1183,7 +1183,7 @@ check_response "$result" "\"address\": \"$trustee_account_address\""
 check_response "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$google_cert_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$google_cert_subject_as_text\""
-check_response "$result" "\"schemaVersion\": $schema_version_1"
+check_response "$result" "\"schemaVersion\": $schema_version_0"
 check_response "$result" "\"vid\": $google_cert_vid"
 echo $result | jq
 

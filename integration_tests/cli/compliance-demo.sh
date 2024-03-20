@@ -44,7 +44,7 @@ zigbee_certification_type="zigbee"
 matter_certification_type="matter"
 cd_certificate_id="123"
 cd_version_number=1
-schema_version_1=1
+schema_version_0=0
 schema_version_2=2
 echo "Certify unknown Model with VID: $vid PID: $pid  SV: ${sv} with zigbee certification"
 result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --cdCertificateId="$cd_certificate_id" --from $zb_account --yes)
@@ -290,7 +290,7 @@ check_response "$result" "\"softwareVersionCertificationStatus\": 2"
 check_response "$result" "\"cDCertificateId\": \"$cd_certificate_id\""
 check_response "$result" "\"date\": \"$certification_date\""
 check_response "$result" "\"certificationType\": \"$matter_certification_type\""
-check_response "$result" "\"schemaVersion\": $schema_version_1"
+check_response "$result" "\"schemaVersion\": $schema_version_0"
 echo "$result"
 
 test_divider

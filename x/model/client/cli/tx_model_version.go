@@ -105,7 +105,7 @@ SoftwareVersion for which this image can be applied`)
 	cmd.Flags().StringVar(&releaseNotesURL, FlagReleaseNotesURL, "",
 		`URL that contains product specific web page that contains 
 release notes for the device model.`)
-	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 1, "Schema version")
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version")
 
 	cli.AddTxFlagsToCmd(cmd)
 
@@ -193,7 +193,7 @@ func CmdUpdateModelVersion() *cobra.Command {
 		`MaxApplicableSoftwareVersion should specify the highest SoftwareVersion for which this image can be applied`)
 	cmd.Flags().StringVar(&releaseNotesURL, FlagReleaseNotesURL, "",
 		`URL that contains product specific web page that contains release notes for the device model.`)
-	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 1, "Schema version")
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version")
 
 	cli.AddTxFlagsToCmd(cmd)
 

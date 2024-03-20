@@ -6,7 +6,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/x509"
@@ -99,7 +98,7 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 		rootCert.Subject,
 		rootCert.SubjectKeyId,
 		msg.Signer,
-		common.GetSchemaVersionOrDefault(msg),
+		msg.SchemaVersion,
 	)
 
 	// append new certificate to list of certificates with the same Subject/SubjectKeyId combination and store updated list

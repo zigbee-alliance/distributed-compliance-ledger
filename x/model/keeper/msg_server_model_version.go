@@ -6,7 +6,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
@@ -59,7 +58,7 @@ func (k msgServer) CreateModelVersion(goCtx context.Context, msg *types.MsgCreat
 		MinApplicableSoftwareVersion: msg.MinApplicableSoftwareVersion,
 		MaxApplicableSoftwareVersion: msg.MaxApplicableSoftwareVersion,
 		ReleaseNotesUrl:              msg.ReleaseNotesUrl,
-		SchemaVersion:                common.GetSchemaVersionOrDefault(msg),
+		SchemaVersion:                msg.SchemaVersion,
 	}
 
 	// store new model version
@@ -135,7 +134,7 @@ func (k msgServer) UpdateModelVersion(goCtx context.Context, msg *types.MsgUpdat
 		modelVersion.ReleaseNotesUrl = msg.ReleaseNotesUrl
 	}
 
-	modelVersion.SchemaVersion = common.GetSchemaVersionOrDefault(msg)
+	modelVersion.SchemaVersion = msg.SchemaVersion
 
 	// store updated model version
 	k.SetModelVersion(ctx, modelVersion)

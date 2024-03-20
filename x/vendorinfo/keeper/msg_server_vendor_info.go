@@ -5,7 +5,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo/types"
 )
 
@@ -34,7 +33,7 @@ func (k msgServer) CreateVendorInfo(goCtx context.Context, msg *types.MsgCreateV
 		CompanyLegalName:     msg.CompanyLegalName,
 		CompanyPreferredName: msg.CompanyPreferredName,
 		VendorLandingPageURL: msg.VendorLandingPageURL,
-		SchemaVersion:        common.GetSchemaVersionOrDefault(msg),
+		SchemaVersion:        msg.SchemaVersion,
 	}
 
 	k.SetVendorInfo(
@@ -91,7 +90,7 @@ func (k msgServer) UpdateVendorInfo(goCtx context.Context, msg *types.MsgUpdateV
 		vendorInfo.VendorLandingPageURL = msg.VendorLandingPageURL
 	}
 
-	vendorInfo.SchemaVersion = common.GetSchemaVersionOrDefault(msg)
+	vendorInfo.SchemaVersion = msg.SchemaVersion
 
 	k.SetVendorInfo(ctx, vendorInfo)
 

@@ -58,7 +58,7 @@ echo "$result"
 test_divider
 
 productLabel="Device #1"
-schema_version_1=1
+schema_version_0=0
 schema_version_2=2
 echo "Add Model with VID: $vid PID: $pid"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel="$productLabel" --partNumber=1 --commissioningCustomFlow=0 --schemaVersion=$schema_version_2 --from=$vendor_account --yes)
@@ -88,7 +88,7 @@ result=$(dcld query model get-model --vid=$vid_with_pids --pid=$pid)
 check_response "$result" "\"vid\": $vid_with_pids"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"productLabel\": \"$productLabel\""
-check_response "$result" "\"schemaVersion\": $schema_version_1"
+check_response "$result" "\"schemaVersion\": $schema_version_0"
 echo "$result"
 
 test_divider
