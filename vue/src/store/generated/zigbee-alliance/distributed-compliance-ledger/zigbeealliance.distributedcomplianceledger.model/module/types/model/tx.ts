@@ -23,6 +23,7 @@ export interface MsgCreateModel {
   productUrl: string
   lsfUrl: string
   schemaVersion: number
+  commissionerRemoteUiFlowUrl: string
 }
 
 export interface MsgCreateModelResponse {}
@@ -43,6 +44,7 @@ export interface MsgUpdateModel {
   lsfUrl: string
   lsfRevision: number
   schemaVersion: number
+  commissionerRemoteUiFlowUrl: string
 }
 
 export interface MsgUpdateModelResponse {}
@@ -120,7 +122,8 @@ const baseMsgCreateModel: object = {
   supportUrl: '',
   productUrl: '',
   lsfUrl: '',
-  schemaVersion: 0
+  schemaVersion: 0,
+  commissionerRemoteUiFlowUrl: ''
 }
 
 export const MsgCreateModel = {
@@ -178,6 +181,9 @@ export const MsgCreateModel = {
     }
     if (message.schemaVersion !== 0) {
       writer.uint32(144).uint32(message.schemaVersion)
+    }
+    if (message.commissionerRemoteUiFlowUrl !== '') {
+      writer.uint32(154).string(message.commissionerRemoteUiFlowUrl)
     }
     return writer
   },
@@ -242,6 +248,9 @@ export const MsgCreateModel = {
           break
         case 18:
           message.schemaVersion = reader.uint32()
+          break
+        case 19:
+          message.commissionerRemoteUiFlowUrl = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -343,6 +352,11 @@ export const MsgCreateModel = {
     } else {
       message.schemaVersion = 0
     }
+    if (object.commissionerRemoteUiFlowUrl !== undefined && object.commissionerRemoteUiFlowUrl !== null) {
+      message.commissionerRemoteUiFlowUrl = String(object.commissionerRemoteUiFlowUrl)
+    } else {
+      message.commissionerRemoteUiFlowUrl = ''
+    }
     return message
   },
 
@@ -368,6 +382,7 @@ export const MsgCreateModel = {
     message.productUrl !== undefined && (obj.productUrl = message.productUrl)
     message.lsfUrl !== undefined && (obj.lsfUrl = message.lsfUrl)
     message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
+    message.commissionerRemoteUiFlowUrl !== undefined && (obj.commissionerRemoteUiFlowUrl = message.commissionerRemoteUiFlowUrl)
     return obj
   },
 
@@ -463,6 +478,11 @@ export const MsgCreateModel = {
     } else {
       message.schemaVersion = 0
     }
+    if (object.commissionerRemoteUiFlowUrl !== undefined && object.commissionerRemoteUiFlowUrl !== null) {
+      message.commissionerRemoteUiFlowUrl = object.commissionerRemoteUiFlowUrl
+    } else {
+      message.commissionerRemoteUiFlowUrl = ''
+    }
     return message
   }
 }
@@ -520,7 +540,8 @@ const baseMsgUpdateModel: object = {
   productUrl: '',
   lsfUrl: '',
   lsfRevision: 0,
-  schemaVersion: 0
+  schemaVersion: 0,
+  commissionerRemoteUiFlowUrl: ''
 }
 
 export const MsgUpdateModel = {
@@ -569,6 +590,9 @@ export const MsgUpdateModel = {
     }
     if (message.schemaVersion !== 0) {
       writer.uint32(120).uint32(message.schemaVersion)
+    }
+    if (message.commissionerRemoteUiFlowUrl !== '') {
+      writer.uint32(130).string(message.commissionerRemoteUiFlowUrl)
     }
     return writer
   },
@@ -624,6 +648,9 @@ export const MsgUpdateModel = {
           break
         case 15:
           message.schemaVersion = reader.uint32()
+          break
+        case 16:
+          message.commissionerRemoteUiFlowUrl = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -710,6 +737,11 @@ export const MsgUpdateModel = {
     } else {
       message.schemaVersion = 0
     }
+    if (object.commissionerRemoteUiFlowUrl !== undefined && object.commissionerRemoteUiFlowUrl !== null) {
+      message.commissionerRemoteUiFlowUrl = String(object.commissionerRemoteUiFlowUrl)
+    } else {
+      message.commissionerRemoteUiFlowUrl = ''
+    }
     return message
   },
 
@@ -732,6 +764,7 @@ export const MsgUpdateModel = {
     message.lsfUrl !== undefined && (obj.lsfUrl = message.lsfUrl)
     message.lsfRevision !== undefined && (obj.lsfRevision = message.lsfRevision)
     message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
+    message.commissionerRemoteUiFlowUrl !== undefined && (obj.commissionerRemoteUiFlowUrl = message.commissionerRemoteUiFlowUrl)
     return obj
   },
 
@@ -811,6 +844,11 @@ export const MsgUpdateModel = {
       message.schemaVersion = object.schemaVersion
     } else {
       message.schemaVersion = 0
+    }
+    if (object.commissionerRemoteUiFlowUrl !== undefined && object.commissionerRemoteUiFlowUrl !== null) {
+      message.commissionerRemoteUiFlowUrl = object.commissionerRemoteUiFlowUrl
+    } else {
+      message.commissionerRemoteUiFlowUrl = ''
     }
     return message
   }

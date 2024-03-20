@@ -28,6 +28,7 @@ func NewMsgCreateModel(
 	commissioningModeInitialStepsInstruction string,
 	commissioningModeSecondaryStepsHint uint32,
 	commissioningModeSecondaryStepsInstruction string,
+	commissionerRemoteUIFlowURL string,
 	userManualURL string,
 	supportURL string,
 	productURL string,
@@ -48,11 +49,12 @@ func NewMsgCreateModel(
 		CommissioningModeInitialStepsInstruction: commissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsHint:      commissioningModeSecondaryStepsHint,
 		CommissioningModeSecondaryStepsInstruction: commissioningModeSecondaryStepsInstruction,
-		UserManualUrl: userManualURL,
-		SupportUrl:    supportURL,
-		ProductUrl:    productURL,
-		LsfUrl:        lsfURL,
-		SchemaVersion: schemaVersion,
+		CommissionerRemoteUiFlowUrl:                commissionerRemoteUIFlowURL,
+		UserManualUrl:                              userManualURL,
+		SupportUrl:                                 supportURL,
+		ProductUrl:                                 productURL,
+		LsfUrl:                                     lsfURL,
+		SchemaVersion:                              schemaVersion,
 	}
 }
 
@@ -105,6 +107,7 @@ func NewMsgUpdateModel(
 	commissioningCustomFlowURL string,
 	commissioningModeInitialStepsInstruction string,
 	commissioningModeSecondaryStepsInstruction string,
+	commissionerRemoteUIFlowURL string,
 	userManualURL string,
 	supportURL string,
 	productURL string,
@@ -122,12 +125,13 @@ func NewMsgUpdateModel(
 		CommissioningCustomFlowUrl:               commissioningCustomFlowURL,
 		CommissioningModeInitialStepsInstruction: commissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsInstruction: commissioningModeSecondaryStepsInstruction,
-		UserManualUrl: userManualURL,
-		SupportUrl:    supportURL,
-		ProductUrl:    productURL,
-		LsfUrl:        lsfURL,
-		LsfRevision:   lsfRevision,
-		SchemaVersion: schemaVersion,
+		CommissionerRemoteUiFlowUrl:                commissionerRemoteUIFlowURL,
+		UserManualUrl:                              userManualURL,
+		SupportUrl:                                 supportURL,
+		ProductUrl:                                 productURL,
+		LsfUrl:                                     lsfURL,
+		LsfRevision:                                lsfRevision,
+		SchemaVersion:                              schemaVersion,
 	}
 }
 
