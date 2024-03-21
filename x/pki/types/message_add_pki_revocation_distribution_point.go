@@ -1,9 +1,12 @@
 package types
 
 import (
+	x509std "crypto/x509"
+	"encoding/asn1"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/x509"
@@ -14,7 +17,7 @@ const TypeMsgAddPkiRevocationDistributionPoint = "add_pki_revocation_distributio
 var _ sdk.Msg = &MsgAddPkiRevocationDistributionPoint{}
 
 func NewMsgAddPkiRevocationDistributionPoint(signer string, vid int32, pid int32, isPAA bool, label string,
-	crlSignerCertificate string, issuerSubjectKeyID string, dataURL string, dataFileSize uint64, dataDigest string,
+	crlSignerCertificate string, crlSignerDelegator string, issuerSubjectKeyID string, dataURL string, dataFileSize uint64, dataDigest string,
 	dataDigestType uint32, revocationType uint32, schemaVersion uint32) *MsgAddPkiRevocationDistributionPoint {
 	return &MsgAddPkiRevocationDistributionPoint{
 		Signer:               signer,
@@ -23,6 +26,7 @@ func NewMsgAddPkiRevocationDistributionPoint(signer string, vid int32, pid int32
 		IsPAA:                isPAA,
 		Label:                label,
 		CrlSignerCertificate: crlSignerCertificate,
+		CrlSignerDelegator:   crlSignerDelegator,
 		IssuerSubjectKeyID:   issuerSubjectKeyID,
 		DataURL:              dataURL,
 		DataFileSize:         dataFileSize,
@@ -61,8 +65,9 @@ func (msg *MsgAddPkiRevocationDistributionPoint) verifyPAA(cert *x509.Certificat
 		return pkitypes.NewErrNotEmptyPidForRootCertificate()
 	}
 
-	if !cert.IsSelfSigned() {
-		return pkitypes.NewErrRootCertificateIsNotSelfSigned()
+	pid, _ := x509.GetPidFromSubject(cert.SubjectAsText)
+	if pid != 0 {
+		return pkitypes.NewErrNotEmptyPidForNonRootCertificate()
 	}
 
 	// verify VID
@@ -73,6 +78,13 @@ func (msg *MsgAddPkiRevocationDistributionPoint) verifyPAA(cert *x509.Certificat
 
 	if vid > 0 && vid != msg.Vid {
 		return pkitypes.NewErrCRLSignerCertificateVidNotEqualMsgVid(vid, msg.Vid)
+	}
+
+	if !cert.IsSelfSigned() {
+		err = VerifyCRLSignerCertFormat(cert)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -106,6 +118,62 @@ func (msg *MsgAddPkiRevocationDistributionPoint) verifyPAI(cert *x509.Certificat
 	}
 	if pid != msg.Pid {
 		return pkitypes.NewErrCRLSignerCertificatePidNotEqualMsgPid(pid, msg.Pid)
+	}
+
+	if msg.CrlSignerDelegator != "" {
+		if cert.AuthorityKeyID == "" {
+			return pkitypes.NewErrInvalidAuthorityKeyIDFormat()
+		}
+		err = VerifyCRLSignerCertFormat(cert)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func VerifyCRLSignerCertFormat(certificate *x509.Certificate) error {
+	if certificate.SubjectKeyID == "" {
+		return pkitypes.NewErrWrongSubjectKeyIDFormat()
+	}
+
+	cert := certificate.Certificate
+	if cert.Version != 3 {
+		return pkitypes.NewErrCRLSignerCertificateInvalidFormat()
+	}
+
+	if cert.SignatureAlgorithm != x509std.ECDSAWithSHA256 {
+		return pkitypes.NewErrCRLSignerCertificateInvalidFormat()
+	}
+
+	if cert.PublicKeyAlgorithm != x509std.ECDSA {
+		return pkitypes.NewErrCRLSignerCertificateInvalidFormat()
+	}
+	// Basic Constraint extension should be marked critical and have the cA field set to false
+	if !cert.BasicConstraintsValid || cert.IsCA {
+		return pkitypes.NewErrCRLSignerCertificateInvalidFormat()
+	}
+
+	// Key Usage extension should be marked critical
+	oidKeyUsage := asn1.ObjectIdentifier{2, 5, 29, 15}
+	isCritical := false
+	for _, ext := range cert.Extensions {
+		if ext.Id.Equal(oidKeyUsage) {
+			isCritical = ext.Critical
+
+			break
+		}
+	}
+	if !isCritical {
+		return pkitypes.NewErrCRLSignerCertificateInvalidFormat()
+	}
+
+	if cert.KeyUsage&x509std.KeyUsageCRLSign == 0 {
+		return pkitypes.NewErrCRLSignerCertificateInvalidFormat()
+	}
+	if cert.KeyUsage&^(x509std.KeyUsageCRLSign|x509std.KeyUsageDigitalSignature) != 0 {
+		return pkitypes.NewErrCRLSignerCertificateInvalidFormat()
 	}
 
 	return nil
@@ -200,11 +268,11 @@ func (msg *MsgAddPkiRevocationDistributionPoint) ValidateBasic() error {
 		return err
 	}
 
-	if err := msg.verifyFields(); err != nil {
+	if err = msg.verifyFields(); err != nil {
 		return err
 	}
 
-	if err := msg.verifySignerCertificate(); err != nil {
+	if err = msg.verifySignerCertificate(); err != nil {
 		return err
 	}
 

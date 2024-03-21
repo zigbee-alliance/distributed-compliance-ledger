@@ -29,4 +29,5 @@ const (
 	FlagRevokeChild              = "revoke-child"
 	FlagRevokeChildShortcut      = "r"
 	FlagCertificateSchemaVersion = "certificate-schema-version"
+	FlagCertificateDelegator     = "certificate-delegator"
 )

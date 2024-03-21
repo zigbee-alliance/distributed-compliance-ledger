@@ -104,6 +104,63 @@ func TestHandler_AddPkiRevocationDistributionPoint_NegativeCases(t *testing.T) {
 			addRevocation: createAddRevocationMessageWithPAACertNoVid(accAddress.String(), testconstants.Vid),
 			err:           pkitypes.ErrMessageVidNotEqualRootCertVid,
 		},
+		{
+			name:            "Invalid PAI Delegator certificate",
+			accountVid:      testconstants.LeafCertWithVidVid,
+			accountRole:     dclauthtypes.Vendor,
+			rootCertOptions: createRootWithVidOptions(),
+			addRevocation: &types.MsgAddPkiRevocationDistributionPoint{
+				Signer:               accAddress.String(),
+				Vid:                  testconstants.LeafCertWithVidVid,
+				IsPAA:                false,
+				Pid:                  0,
+				CrlSignerCertificate: testconstants.LeafCertWithVid,
+				CrlSignerDelegator:   "invalid",
+				Label:                label,
+				DataURL:              testconstants.DataURL,
+				IssuerSubjectKeyID:   testconstants.IntermediateCertWithVid1SubjectKeyIDWithoutColumns,
+				RevocationType:       types.CRLRevocationType,
+			},
+			err: pkitypes.ErrInvalidCertificate,
+		},
+		{
+			name:            "CRL Signer Certificate is not chained back to Delegator PAI certificate",
+			accountVid:      testconstants.LeafCertWithVidVid,
+			accountRole:     dclauthtypes.Vendor,
+			rootCertOptions: createRootWithVidOptions(),
+			addRevocation: &types.MsgAddPkiRevocationDistributionPoint{
+				Signer:               accAddress.String(),
+				Vid:                  testconstants.LeafCertWithVidVid,
+				IsPAA:                false,
+				Pid:                  0,
+				CrlSignerCertificate: testconstants.LeafCertWithVid,
+				CrlSignerDelegator:   testconstants.IntermediateCertPem,
+				Label:                label,
+				DataURL:              testconstants.DataURL,
+				IssuerSubjectKeyID:   testconstants.IntermediateSubjectKeyIDWithoutColumns,
+				RevocationType:       types.CRLRevocationType,
+			},
+			err: pkitypes.ErrCertNotChainedBack,
+		},
+		{
+			name:            "Delegated CRL Signer Certificate is not chained back to root certificate on DCL",
+			accountVid:      testconstants.LeafCertWithVidVid,
+			accountRole:     dclauthtypes.Vendor,
+			rootCertOptions: createTestRootCertOptions(),
+			addRevocation: &types.MsgAddPkiRevocationDistributionPoint{
+				Signer:               accAddress.String(),
+				Vid:                  testconstants.LeafCertWithVidVid,
+				IsPAA:                false,
+				Pid:                  0,
+				CrlSignerCertificate: testconstants.LeafCertWithVid,
+				CrlSignerDelegator:   testconstants.IntermediateCertWithVid1,
+				Label:                label,
+				DataURL:              testconstants.DataURL,
+				IssuerSubjectKeyID:   testconstants.IntermediateCertWithVid1SubjectKeyIDWithoutColumns,
+				RevocationType:       types.CRLRevocationType,
+			},
+			err: pkitypes.ErrCertNotChainedBack,
+		},
 	}
 
 	for _, tc := range cases {
@@ -172,7 +229,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_PositiveCases(t *testing.T) {
 			name:            "PAANoVid",
 			rootCertOptions: createPAACertNoVidOptions(testconstants.VendorID1),
 			addRevocation:   createAddRevocationMessageWithPAACertNoVid(vendorAcc.String(), testconstants.VendorID1),
-			SchemaVersion:   1000000,
+			SchemaVersion:   65535,
 		},
 		{
 			name:            "PAIWithVid",
@@ -188,7 +245,24 @@ func TestHandler_AddPkiRevocationDistributionPoint_PositiveCases(t *testing.T) {
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 				RevocationType:       types.CRLRevocationType,
 			},
-			SchemaVersion: 999999999,
+			SchemaVersion: testconstants.SchemaVersion,
+		},
+		{
+			name:            "PAIWithDelegatedCert",
+			rootCertOptions: createTestRootCertOptions(),
+			addRevocation: &types.MsgAddPkiRevocationDistributionPoint{
+				Signer:               vendorAcc.String(),
+				Vid:                  65522,
+				IsPAA:                false,
+				Pid:                  0,
+				CrlSignerCertificate: testconstants.LeafCertPem,
+				CrlSignerDelegator:   testconstants.IntermediateCertPem,
+				Label:                label,
+				DataURL:              testconstants.DataURL,
+				IssuerSubjectKeyID:   testconstants.IntermediateSubjectKeyIDWithoutColumns,
+				RevocationType:       types.CRLRevocationType,
+			},
+			SchemaVersion: testconstants.SchemaVersion,
 		},
 	}
 
@@ -202,11 +276,11 @@ func TestHandler_AddPkiRevocationDistributionPoint_PositiveCases(t *testing.T) {
 			_, err := setup.Handler(setup.Ctx, tc.addRevocation)
 			require.NoError(t, err)
 
-			revocationPoint, isFound := setup.Keeper.GetPkiRevocationDistributionPoint(setup.Ctx, tc.addRevocation.Vid, label, testconstants.SubjectKeyIDWithoutColons)
+			revocationPoint, isFound := setup.Keeper.GetPkiRevocationDistributionPoint(setup.Ctx, tc.addRevocation.Vid, label, tc.addRevocation.IssuerSubjectKeyID)
 			require.True(t, isFound)
 			assertRevocationPointEqual(t, tc.addRevocation, &revocationPoint)
 
-			revocationPointBySubjectKeyID, isFound := setup.Keeper.GetPkiRevocationDistributionPointsByIssuerSubjectKeyID(setup.Ctx, testconstants.SubjectKeyIDWithoutColons)
+			revocationPointBySubjectKeyID, isFound := setup.Keeper.GetPkiRevocationDistributionPointsByIssuerSubjectKeyID(setup.Ctx, tc.addRevocation.IssuerSubjectKeyID)
 			require.True(t, isFound)
 			assertRevocationPointEqual(t, tc.addRevocation, revocationPointBySubjectKeyID.Points[0])
 		})

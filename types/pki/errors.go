@@ -49,6 +49,8 @@ var (
 	ErrCertNotChainedBack                                = sdkerrors.Register(ModuleName, 438, "Certificate is not chained back to a root certificate on DCL")
 	ErrCertVidNotEqualAccountVid                         = sdkerrors.Register(ModuleName, 439, "account's vid is not equal to certificate vid")
 	ErrCertVidNotEqualToRootVid                          = sdkerrors.Register(ModuleName, 440, "certificate's vid is not equal to vid of root certificate ")
+	ErrCRLSignerCertificateInvalidFormat                 = sdkerrors.Register(ModuleName, 441, "invalid CRLSignerCertificate certificate")
+	ErrInvalidAuthorityKeyIDFormat                       = sdkerrors.Register(ModuleName, 442, "invalid AuthorityKeyID format")
 )
 
 func NewErrUnauthorizedRole(transactionName string, requiredRole types.AccountRole) error {
@@ -231,6 +233,13 @@ func NewErrRootCertVidNotEqualToAccountVid(rootVID int32, accountVID int32) erro
 		rootVID, accountVID)
 }
 
+func NewErrCRLSignerCertificateInvalidFormat() error {
+	return sdkerrors.Wrapf(
+		ErrCRLSignerCertificateInvalidFormat,
+		"Invalid CRL Signer Certificate format",
+	)
+}
+
 func NewErrCRLSignerCertificatePidNotEqualMsgPid(certificatePid int32, messagePid int32) error {
 	return sdkerrors.Wrapf(
 		ErrCRLSignerCertificatePidNotEqualMsgPid,
@@ -292,6 +301,14 @@ func NewErrWrongSubjectKeyIDFormat() error {
 	return sdkerrors.Wrapf(
 		ErrWrongSubjectKeyIDFormat,
 		"Wrong IssuerSubjectKeyID format. It must consist of even number of uppercase hexadecimal characters ([0-9A-F]), "+
+			"with no whitespace and no non-hexadecimal characters",
+	)
+}
+
+func NewErrInvalidAuthorityKeyIDFormat() error {
+	return sdkerrors.Wrapf(
+		ErrInvalidAuthorityKeyIDFormat,
+		"Invalid AuthorityKeyID format. It must consist of even number of uppercase hexadecimal characters ([0-9A-F]), "+
 			"with no whitespace and no non-hexadecimal characters",
 	)
 }
@@ -386,4 +403,12 @@ func NewErrCertificateVidNotEqualMsgVid(e interface{}) error {
 
 func NewErrCertNotChainedBack() error {
 	return sdkerrors.Wrapf(ErrCertNotChainedBack, "CRL Signer Certificate is not chained back to root certificate on DCL")
+}
+
+func NewErrCRLSignerCertNotChainedBackToDelegator() error {
+	return sdkerrors.Wrapf(ErrCertNotChainedBack, "CRL Signer Certificate is not chained back to delegated PAI CRL Signer certificate")
+}
+
+func NewErrCRLSignerCertDelegatorNotChainedBack() error {
+	return sdkerrors.Wrapf(ErrCertNotChainedBack, "Delegated CRL Signer Certificate is not chained back to root certificate on DCL")
 }
