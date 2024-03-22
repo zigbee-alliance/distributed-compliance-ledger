@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common"
 	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -11,6 +10,7 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 

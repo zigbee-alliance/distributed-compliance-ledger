@@ -16,7 +16,6 @@ import (
 var _ = strconv.Itoa(0)
 
 func CmdRevokeX509Cert() *cobra.Command {
-
 	cmd := &cobra.Command{
 		Use: "revoke-x509-cert",
 		Short: "Revokes the given intermediate or leaf certificate. " +
