@@ -72,11 +72,11 @@ func (k msgServer) ApproveAddX509RootCert(goCtx context.Context, msg *types.MsgA
 			proposedCertificate.Approvals,
 			proposedCertificate.Rejects,
 			proposedCertificate.Vid,
-			proposedCertificate.SchemaVersion,
+			proposedCertificate.CertSchemaVersion,
 		)
 
 		// add approved certificate to stored list of certificates with the same Subject/SubjectKeyId combination
-		k.AddApprovedCertificate(ctx, rootCertificate)
+		k.AddApprovedCertificate(ctx, rootCertificate, proposedCertificate.SchemaVersion)
 
 		// delete proposed certificate
 		k.RemoveProposedCertificate(ctx, msg.Subject, msg.SubjectKeyId)

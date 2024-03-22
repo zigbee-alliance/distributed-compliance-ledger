@@ -11,9 +11,10 @@ export interface ProposedCertificateRevocation {
   subjectAsText: string
   serialNumber: string
   revokeChild: boolean
+  schemaVersion: number
 }
 
-const baseProposedCertificateRevocation: object = { subject: '', subjectKeyId: '', subjectAsText: '', serialNumber: '', revokeChild: false }
+const baseProposedCertificateRevocation: object = { subject: '', subjectKeyId: '', subjectAsText: '', serialNumber: '', revokeChild: false, schemaVersion: 0 }
 
 export const ProposedCertificateRevocation = {
   encode(message: ProposedCertificateRevocation, writer: Writer = Writer.create()): Writer {
@@ -34,6 +35,9 @@ export const ProposedCertificateRevocation = {
     }
     if (message.revokeChild === true) {
       writer.uint32(48).bool(message.revokeChild)
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(56).uint32(message.schemaVersion)
     }
     return writer
   },
@@ -63,6 +67,9 @@ export const ProposedCertificateRevocation = {
           break
         case 6:
           message.revokeChild = reader.bool()
+          break
+        case 7:
+          message.schemaVersion = reader.uint32()
           break
         default:
           reader.skipType(tag & 7)
@@ -105,6 +112,11 @@ export const ProposedCertificateRevocation = {
     } else {
       message.revokeChild = false
     }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = Number(object.schemaVersion)
+    } else {
+      message.schemaVersion = 0
+    }
     return message
   },
 
@@ -120,6 +132,7 @@ export const ProposedCertificateRevocation = {
     message.subjectAsText !== undefined && (obj.subjectAsText = message.subjectAsText)
     message.serialNumber !== undefined && (obj.serialNumber = message.serialNumber)
     message.revokeChild !== undefined && (obj.revokeChild = message.revokeChild)
+    message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
     return obj
   },
 
@@ -155,6 +168,11 @@ export const ProposedCertificateRevocation = {
       message.revokeChild = object.revokeChild
     } else {
       message.revokeChild = false
+    }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = object.schemaVersion
+    } else {
+      message.schemaVersion = 0
     }
     return message
   }

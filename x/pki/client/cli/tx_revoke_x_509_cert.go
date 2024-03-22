@@ -9,12 +9,14 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
 var _ = strconv.Itoa(0)
 
 func CmdRevokeX509Cert() *cobra.Command {
+
 	cmd := &cobra.Command{
 		Use: "revoke-x509-cert",
 		Short: "Revokes the given intermediate or leaf certificate. " +
@@ -32,6 +34,7 @@ func CmdRevokeX509Cert() *cobra.Command {
 			serialNumber := viper.GetString(FlagSerialNumber)
 			revokeChild := viper.GetBool(FlagRevokeChild)
 			infoArg := viper.GetString(FlagInfo)
+			schemaVersion := viper.GetUint32(common.FlagSchemaVersion)
 
 			msg := types.NewMsgRevokeX509Cert(
 				clientCtx.GetFromAddress().String(),
@@ -40,6 +43,7 @@ func CmdRevokeX509Cert() *cobra.Command {
 				serialNumber,
 				revokeChild,
 				infoArg,
+				schemaVersion,
 			)
 			// validate basic will be called in GenerateOrBroadcastTxCLI
 			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
@@ -56,6 +60,7 @@ func CmdRevokeX509Cert() *cobra.Command {
 	cmd.Flags().StringP(FlagSerialNumber, FlagSerialNumberShortcut, "", "Certificate's serial number")
 	cmd.Flags().StringP(FlagRevokeChild, FlagRevokeChildShortcut, "", "If flag is true then all the certificates in the subtree will be revoked as well - default is false")
 	cmd.Flags().String(FlagInfo, "", FlagInfoUsage)
+	cmd.Flags().Uint32(common.FlagSchemaVersion, 0, "Schema version")
 	cli.AddTxFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(FlagSubject)

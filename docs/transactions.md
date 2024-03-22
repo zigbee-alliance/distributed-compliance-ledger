@@ -841,6 +841,7 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
   - cert: `string` - PEM encoded certificate. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data.
   - info: `optional(string)` - information/notes for the proposal
   - time: `optional(int64)` - proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
+  - certificate-schema-version: `optional(uint32)` - Certificate's schema version to support backward/forward compatability(default 0)
   - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 0)
 - In State: `pki/ProposedCertificate/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - Who can send:
@@ -894,6 +895,7 @@ The certificate is not reject until sufficient number of Trustees reject it.
 - Parameters:
   - subject: `string` - proposed certificates's `Subject` is base64 encoded subject DER sequence bytes
   - subject_key_id: `string` - proposed certificates's `Subject Key Id` in hex string format, e.g:
+  - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 0)
   `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
   - info: `optional(string)` - information/notes for the reject
   - time: `optional(int64)` -- reject time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
@@ -924,6 +926,7 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
     - `vid` field associated with the corresponding PAA on the ledger must be equal to the Vendor account's VID.
 - Parameters:
   - cert: `string` - PEM encoded certificate. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data.
+  - certificate-schema-version: `optional(uint32)` - Certificate's schema version to support backward/forward compatability(default 0)
   - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 0)
 - In State:
   - `pki/ApprovedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
@@ -965,6 +968,7 @@ Root certificates can not be revoked this way, use  `PROPOSE_X509_CERT_REVOC` an
   - revoke-child: `optional(bool)`  - to revoke child certificates in the chain - default is false
   - info: `optional(string)` - information/notes for the revocation
   - time: `optional(int64)` - revocation time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
+  - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 0)
 - In State: `pki/RevokedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - CLI command:
   - `dcld tx pki revoke-x509-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
@@ -1007,6 +1011,8 @@ then the certificate will be in a pending state until sufficient number of other
   - revoke-child: `optional(bool)`  - to revoke child certificates in the chain - default is false
   - info: `optional(string)` - information/notes for the revocation proposal
   - time: `optional(int64)` - revocation proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
+  - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 0)
+
 - In State: `pki/ProposedCertificateRevocation/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - Who can send:
   - Trustee
@@ -1071,6 +1077,7 @@ and DACs (leaf certificates) added to DCL if they are revoked in the CRL identif
   - dataDigest: `optional(string)` -  Digest of the entire contents of the associated file downloaded from the DataUrl. Must be omitted if RevocationType is 1. Must be provided if and only if the `DataFileSize` field is present.
   - dataDigestType: `optional(uint32)` - The type of digest used in the DataDigest field from the list of [1, 7, 8, 10, 11, 12] (IANA Named Information Hash Algorithm Registry). Must be provided if and only if the `DataDigest` field is present.
   - revocationType: `uint32` - The type of file found at the DataUrl for this entry. Supported types: 1 - RFC5280 Certificate Revocation List (CRL).
+  - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 0)
 - In State:
   - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>` -> list of Revocation Distribution Points
   - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>/<vid>/<label>`-> Revocation Distribution Point
@@ -1112,6 +1119,7 @@ Updates an existing PKI Revocation distribution endpoint (such as RFC5280 Certif
   - dataFileSize: `optional(uint64)` -  Total size in bytes of the file found at the DataUrl. Must be omitted if RevocationType is 1.
   - dataDigest: `optional(string)` -  Digest of the entire contents of the associated file downloaded from the DataUrl. Must be omitted if RevocationType is 1. Must be provided if and only if the `DataFileSize` field is present.
   - dataDigestType: `optional(uint32)` - The type of digest used in the DataDigest field from the list of [1, 7, 8, 10, 11, 12] (IANA Named Information Hash Algorithm Registry). Must be provided if and only if the `DataDigest` field is present.
+  - schemaVersion: `optional(uint32)` - Schema version to support backward/forward compatability(default 0)
 - In State:
   - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>` -> list of Revocation Distribution Points
   - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>/<vid>/<label>` -> Revocation Distribution Point

@@ -13,6 +13,9 @@ export interface PkiApprovedCertificates {
   subject?: string;
   subjectKeyId?: string;
   certs?: PkiCertificate[];
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface PkiApprovedCertificatesBySubject {
@@ -137,6 +140,9 @@ export interface PkiPkiRevocationDistributionPoint {
 
   /** @format int64 */
   revocationType?: number;
+  
+    /** @format int64 */
+    schemaVersion?: number;
 }
 
 export interface PkiPkiRevocationDistributionPointsByIssuerSubjectKeyID {
@@ -367,12 +373,18 @@ export interface PkiRejectedCertificate {
   subject?: string;
   subjectKeyId?: string;
   certs?: PkiCertificate[];
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface PkiRevokedCertificates {
   subject?: string;
   subjectKeyId?: string;
   certs?: PkiCertificate[];
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface PkiRevokedRootCertificates {

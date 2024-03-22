@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common"
 	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -33,6 +34,7 @@ func CmdRevokeNocX509Cert() *cobra.Command {
 			serialNumber := viper.GetString(FlagSerialNumber)
 			revokeChild := viper.GetBool(FlagRevokeChild)
 			infoArg := viper.GetString(FlagInfo)
+			schemaVersion := viper.GetUint32(common.FlagSchemaVersion)
 
 			msg := types.NewMsgRevokeNocX509Cert(
 				clientCtx.GetFromAddress().String(),
@@ -41,6 +43,7 @@ func CmdRevokeNocX509Cert() *cobra.Command {
 				serialNumber,
 				infoArg,
 				revokeChild,
+				schemaVersion,
 			)
 			// validate basic will be called in GenerateOrBroadcastTxCLI
 			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
@@ -57,6 +60,7 @@ func CmdRevokeNocX509Cert() *cobra.Command {
 	cmd.Flags().StringP(FlagSerialNumber, FlagSerialNumberShortcut, "", "Certificate's serial number")
 	cmd.Flags().StringP(FlagRevokeChild, FlagRevokeChildShortcut, "", "If flag is true then all the certificates in the subtree will be revoked as well - default is false")
 	cmd.Flags().String(FlagInfo, "", FlagInfoUsage)
+	cmd.Flags().Uint32(common.FlagSchemaVersion, 0, "Schema version")
 	cli.AddTxFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(FlagSubject)

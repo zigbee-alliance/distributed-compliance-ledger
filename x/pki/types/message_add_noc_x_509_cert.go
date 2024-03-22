@@ -12,11 +12,12 @@ const TypeMsgAddNocX509Cert = "add_noc_x_509_cert"
 
 var _ sdk.Msg = &MsgAddNocX509Cert{}
 
-func NewMsgAddNocX509Cert(signer string, cert string, schemaVersion uint32) *MsgAddNocX509Cert {
+func NewMsgAddNocX509Cert(signer string, cert string, certSchemaVersion, schemaVersion uint32) *MsgAddNocX509Cert {
 	return &MsgAddNocX509Cert{
-		Signer:        signer,
-		Cert:          cert,
-		SchemaVersion: schemaVersion,
+		Signer:            signer,
+		Cert:              cert,
+		CertSchemaVersion: certSchemaVersion,
+		SchemaVersion:     schemaVersion,
 	}
 }
 

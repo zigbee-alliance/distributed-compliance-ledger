@@ -8,9 +8,10 @@ export interface RevokedCertificates {
   subject: string
   subjectKeyId: string
   certs: Certificate[]
+  schemaVersion: number
 }
 
-const baseRevokedCertificates: object = { subject: '', subjectKeyId: '' }
+const baseRevokedCertificates: object = { subject: '', subjectKeyId: '', schemaVersion: 0 }
 
 export const RevokedCertificates = {
   encode(message: RevokedCertificates, writer: Writer = Writer.create()): Writer {
@@ -22,6 +23,9 @@ export const RevokedCertificates = {
     }
     for (const v of message.certs) {
       Certificate.encode(v!, writer.uint32(26).fork()).ldelim()
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(32).uint32(message.schemaVersion)
     }
     return writer
   },
@@ -42,6 +46,9 @@ export const RevokedCertificates = {
           break
         case 3:
           message.certs.push(Certificate.decode(reader, reader.uint32()))
+          break
+        case 4:
+          message.schemaVersion = reader.uint32()
           break
         default:
           reader.skipType(tag & 7)
@@ -69,6 +76,11 @@ export const RevokedCertificates = {
         message.certs.push(Certificate.fromJSON(e))
       }
     }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = Number(object.schemaVersion)
+    } else {
+      message.schemaVersion = 0
+    }
     return message
   },
 
@@ -81,6 +93,7 @@ export const RevokedCertificates = {
     } else {
       obj.certs = []
     }
+    message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
     return obj
   },
 
@@ -101,6 +114,11 @@ export const RevokedCertificates = {
       for (const e of object.certs) {
         message.certs.push(Certificate.fromPartial(e))
       }
+    }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = object.schemaVersion
+    } else {
+      message.schemaVersion = 0
     }
     return message
   }

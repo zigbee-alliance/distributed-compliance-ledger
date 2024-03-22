@@ -71,7 +71,7 @@ func (k Keeper) GetAllApprovedCertificates(ctx sdk.Context) (list []types.Approv
 }
 
 // Add an approved certificate to the list of approved certificates for the subject/subjectKeyId map.
-func (k Keeper) AddApprovedCertificate(ctx sdk.Context, approvedCertificate types.Certificate) {
+func (k Keeper) AddApprovedCertificate(ctx sdk.Context, approvedCertificate types.Certificate, schemaVersion uint32) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ApprovedCertificatesKeyPrefix))
 
 	approvedCertificatesBytes := store.Get(types.ApprovedCertificatesKey(
@@ -82,9 +82,10 @@ func (k Keeper) AddApprovedCertificate(ctx sdk.Context, approvedCertificate type
 
 	if approvedCertificatesBytes == nil {
 		approvedCertificates = types.ApprovedCertificates{
-			Subject:      approvedCertificate.Subject,
-			SubjectKeyId: approvedCertificate.SubjectKeyId,
-			Certs:        []*types.Certificate{},
+			Subject:       approvedCertificate.Subject,
+			SubjectKeyId:  approvedCertificate.SubjectKeyId,
+			Certs:         []*types.Certificate{},
+			SchemaVersion: schemaVersion,
 		}
 	} else {
 		k.cdc.MustUnmarshal(approvedCertificatesBytes, &approvedCertificates)

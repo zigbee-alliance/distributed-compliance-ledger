@@ -102,7 +102,7 @@ func (k Keeper) AddChildCertificate(ctx sdk.Context, issuer string, authorityKey
 	), b)
 }
 
-func (k msgServer) RevokeChildCertificates(ctx sdk.Context, issuer string, authorityKeyID string) {
+func (k msgServer) RevokeChildCertificates(ctx sdk.Context, issuer string, authorityKeyID string, schemaVersion uint32) {
 	// Get issuer's ChildCertificates record
 	childCertificates, _ := k.GetChildCertificates(ctx, issuer, authorityKeyID)
 
@@ -110,7 +110,7 @@ func (k msgServer) RevokeChildCertificates(ctx sdk.Context, issuer string, autho
 	for _, certIdentifier := range childCertificates.CertIds {
 		// Revoke certificates with this subject/subjectKeyID combination
 		certificates, _ := k.GetApprovedCertificates(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
-		k.AddRevokedCertificates(ctx, certificates)
+		k.AddRevokedCertificates(ctx, certificates, schemaVersion)
 		// FIXME: Below two lines is not in the context of RevokeChildCertificates method. In future current implementation must be refactored
 		if len(certificates.Certs) > 0 {
 			// If cert is NOC then remove it from NOC certificates list
@@ -125,7 +125,7 @@ func (k msgServer) RevokeChildCertificates(ctx sdk.Context, issuer string, autho
 		k.RemoveApprovedCertificatesBySubjectKeyID(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
 
 		// Process child certificates recursively
-		k.RevokeChildCertificates(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
+		k.RevokeChildCertificates(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId, schemaVersion)
 	}
 
 	// Delete entire ChildCertificates record of issuer

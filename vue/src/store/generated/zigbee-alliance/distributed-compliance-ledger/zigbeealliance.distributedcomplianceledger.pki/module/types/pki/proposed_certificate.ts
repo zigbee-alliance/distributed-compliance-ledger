@@ -14,10 +14,21 @@ export interface ProposedCertificate {
   subjectAsText: string
   rejects: Grant[]
   vid: number
+  certSchemaVersion: number
   schemaVersion: number
 }
 
-const baseProposedCertificate: object = { subject: '', subjectKeyId: '', pemCert: '', serialNumber: '', owner: '', subjectAsText: '', vid: 0, schemaVersion: 0 }
+const baseProposedCertificate: object = {
+  subject: '',
+  subjectKeyId: '',
+  pemCert: '',
+  serialNumber: '',
+  owner: '',
+  subjectAsText: '',
+  vid: 0,
+  certSchemaVersion: 0,
+  schemaVersion: 0
+}
 
 export const ProposedCertificate = {
   encode(message: ProposedCertificate, writer: Writer = Writer.create()): Writer {
@@ -48,8 +59,11 @@ export const ProposedCertificate = {
     if (message.vid !== 0) {
       writer.uint32(72).int32(message.vid)
     }
+    if (message.certSchemaVersion !== 0) {
+      writer.uint32(80).uint32(message.certSchemaVersion)
+    }
     if (message.schemaVersion !== 0) {
-      writer.uint32(80).uint32(message.schemaVersion)
+      writer.uint32(88).uint32(message.schemaVersion)
     }
     return writer
   },
@@ -91,6 +105,9 @@ export const ProposedCertificate = {
           message.vid = reader.int32()
           break
         case 10:
+          message.certSchemaVersion = reader.uint32()
+          break
+        case 11:
           message.schemaVersion = reader.uint32()
           break
         default:
@@ -150,6 +167,11 @@ export const ProposedCertificate = {
     } else {
       message.vid = 0
     }
+    if (object.certSchemaVersion !== undefined && object.certSchemaVersion !== null) {
+      message.certSchemaVersion = Number(object.certSchemaVersion)
+    } else {
+      message.certSchemaVersion = 0
+    }
     if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
       message.schemaVersion = Number(object.schemaVersion)
     } else {
@@ -177,6 +199,7 @@ export const ProposedCertificate = {
       obj.rejects = []
     }
     message.vid !== undefined && (obj.vid = message.vid)
+    message.certSchemaVersion !== undefined && (obj.certSchemaVersion = message.certSchemaVersion)
     message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
     return obj
   },
@@ -229,6 +252,11 @@ export const ProposedCertificate = {
       message.vid = object.vid
     } else {
       message.vid = 0
+    }
+    if (object.certSchemaVersion !== undefined && object.certSchemaVersion !== null) {
+      message.certSchemaVersion = object.certSchemaVersion
+    } else {
+      message.certSchemaVersion = 0
     }
     if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
       message.schemaVersion = object.schemaVersion

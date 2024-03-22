@@ -17,7 +17,8 @@ var _ = strconv.Itoa(0)
 
 func CmdAddX509Cert() *cobra.Command {
 	var (
-		schemaVersion uint32
+		certSchemaVersion uint32
+		schemaVersion     uint32
 	)
 
 	cmd := &cobra.Command{
@@ -39,6 +40,7 @@ func CmdAddX509Cert() *cobra.Command {
 			msg := types.NewMsgAddX509Cert(
 				clientCtx.GetFromAddress().String(),
 				cert,
+				certSchemaVersion,
 				schemaVersion,
 			)
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -53,6 +55,7 @@ func CmdAddX509Cert() *cobra.Command {
 
 	cmd.Flags().StringP(FlagCertificate, FlagCertificateShortcut, "",
 		"PEM encoded certificate (string or path to file containing data)")
+	cmd.Flags().Uint32Var(&certSchemaVersion, FlagCertificateSchemaVersion, 0, "Schema version of certificate")
 	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version")
 
 	cli.AddTxFlagsToCmd(cmd)

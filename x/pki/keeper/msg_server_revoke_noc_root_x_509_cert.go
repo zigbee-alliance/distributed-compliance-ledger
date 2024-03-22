@@ -45,12 +45,12 @@ func (k msgServer) RevokeNocRootX509Cert(goCtx context.Context, msg *types.MsgRe
 	}
 
 	if msg.SerialNumber != "" {
-		err = k._revokeNocRootCertificate(ctx, msg.SerialNumber, certificates, cert.Vid)
+		err = k._revokeNocRootCertificate(ctx, msg.SerialNumber, certificates, cert.Vid, msg.SchemaVersion)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		k._revokeNocRootCertificates(ctx, certificates, cert.Vid)
+		k._revokeNocRootCertificates(ctx, certificates, cert.Vid, msg.SchemaVersion)
 	}
 
 	if msg.RevokeChild {
@@ -59,16 +59,20 @@ func (k msgServer) RevokeNocRootX509Cert(goCtx context.Context, msg *types.MsgRe
 			SubjectKeyId: msg.SubjectKeyId,
 		}
 		// Remove certificate identifier from issuer's ChildCertificates record
-		k.RevokeChildCertificates(ctx, certID.Subject, certID.SubjectKeyId)
+		k.RevokeChildCertificates(ctx, certID.Subject, certID.SubjectKeyId, msg.SchemaVersion)
 	}
 
 	return &types.MsgRevokeNocRootX509CertResponse{}, nil
 }
 
-func (k msgServer) _revokeNocRootCertificates(ctx sdk.Context, certificates types.ApprovedCertificates, vid int32) {
+func (k msgServer) _revokeNocRootCertificates(ctx sdk.Context, certificates types.ApprovedCertificates, vid int32, schemaVersion uint32) {
 	// Add certs into revoked lists
-	k.AddRevokedCertificates(ctx, certificates)
-	k.AddRevokedNocRootCertificates(ctx, types.RevokedNocRootCertificates(certificates))
+	k.AddRevokedCertificates(ctx, certificates, schemaVersion)
+	k.AddRevokedNocRootCertificates(ctx, types.RevokedNocRootCertificates{
+		Subject:      certificates.Subject,
+		SubjectKeyId: certificates.SubjectKeyId,
+		Certs:        certificates.Certs,
+	})
 
 	// Remove certs from NOC and approved lists
 	k.RemoveNocRootCertificate(ctx, vid, certificates.Subject, certificates.SubjectKeyId)
@@ -84,6 +88,7 @@ func (k msgServer) _revokeNocRootCertificate(
 	serialNumber string,
 	certificates types.ApprovedCertificates,
 	vid int32,
+	schemaVersion uint32,
 ) error {
 	cert, found := findCertificate(serialNumber, &certificates.Certs)
 	if !found {
@@ -97,7 +102,7 @@ func (k msgServer) _revokeNocRootCertificate(
 		SubjectKeyId: cert.SubjectKeyId,
 		Certs:        []*types.Certificate{cert},
 	}
-	k.AddRevokedCertificates(ctx, revCerts)
+	k.AddRevokedCertificates(ctx, revCerts, schemaVersion)
 	revNocCerts := types.RevokedNocRootCertificates{
 		Subject:      certificates.Subject,
 		SubjectKeyId: certificates.SubjectKeyId,

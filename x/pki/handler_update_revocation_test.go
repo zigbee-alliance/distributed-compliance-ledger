@@ -274,7 +274,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAI_NotChainedOnLedger(t *
 	_, err := setup.Handler(setup.Ctx, addPkiRevocationDistributionPoint)
 	require.NoError(t, err)
 
-	proposeRevokeRootCert := types.NewMsgProposeRevokeX509RootCert(setup.Trustee1.String(), testconstants.PAACertWithNumericVidSubject, testconstants.PAACertWithNumericVidSubjectKeyID, "", false, testconstants.Info)
+	proposeRevokeRootCert := types.NewMsgProposeRevokeX509RootCert(setup.Trustee1.String(), testconstants.PAACertWithNumericVidSubject, testconstants.PAACertWithNumericVidSubjectKeyID, "", false, testconstants.Info, testconstants.SchemaVersion)
 	_, err = setup.Handler(setup.Ctx, proposeRevokeRootCert)
 	require.NoError(t, err)
 

@@ -16,10 +16,6 @@ import (
 var _ = strconv.Itoa(0)
 
 func CmdProposeAddX509RootCert() *cobra.Command {
-	var (
-		schemaVersion uint32
-	)
-
 	cmd := &cobra.Command{
 		Use:   "propose-add-x509-root-cert",
 		Short: "Proposes a new self-signed root certificate",
@@ -37,12 +33,15 @@ func CmdProposeAddX509RootCert() *cobra.Command {
 			vid := viper.GetInt32(FlagVid)
 
 			info := viper.GetString(FlagInfo)
+			certSchemaVersion := viper.GetUint32(FlagCertificateSchemaVersion)
+			schemaVersion := viper.GetUint32(common.FlagSchemaVersion)
 
 			msg := types.NewMsgProposeAddX509RootCert(
 				clientCtx.GetFromAddress().String(),
 				cert,
 				info,
 				vid,
+				certSchemaVersion,
 				schemaVersion,
 			)
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -59,7 +58,8 @@ func CmdProposeAddX509RootCert() *cobra.Command {
 		"PEM encoded certificate (string or path to file containing data)")
 	cmd.Flags().String(FlagInfo, "", FlagInfoUsage)
 	cmd.Flags().Int32(FlagVid, 0, "Model vendor ID (positive non-zero uint16)")
-	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version")
+	cmd.Flags().Uint32(FlagCertificateSchemaVersion, 0, "Schema version of certificate")
+	cmd.Flags().Uint32(common.FlagSchemaVersion, 0, "Schema version")
 
 	cli.AddTxFlagsToCmd(cmd)
 

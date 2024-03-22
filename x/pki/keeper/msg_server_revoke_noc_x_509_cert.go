@@ -44,17 +44,17 @@ func (k msgServer) RevokeNocX509Cert(goCtx context.Context, msg *types.MsgRevoke
 	}
 
 	if msg.SerialNumber != "" {
-		err = k._revokeNocCertificate(ctx, msg.SerialNumber, certificates, cert.Vid)
+		err = k._revokeNocCertificate(ctx, msg.SerialNumber, certificates, cert.Vid, msg.SchemaVersion)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		k._revokeNocCertificates(ctx, certificates, cert.Vid)
+		k._revokeNocCertificates(ctx, certificates, cert.Vid, msg.SchemaVersion)
 	}
 
 	if msg.RevokeChild {
 		// Remove certificate identifier from issuer's ChildCertificates record
-		k.RevokeChildCertificates(ctx, msg.Subject, msg.SubjectKeyId)
+		k.RevokeChildCertificates(ctx, msg.Subject, msg.SubjectKeyId, msg.SchemaVersion)
 	}
 
 	return &types.MsgRevokeNocX509CertResponse{}, nil
@@ -65,6 +65,7 @@ func (k msgServer) _revokeNocCertificate(
 	serialNumber string,
 	certificates types.ApprovedCertificates,
 	vid int32,
+	schemaVersion uint32,
 ) error {
 	cert, found := findCertificate(serialNumber, &certificates.Certs)
 	if !found {
@@ -78,7 +79,7 @@ func (k msgServer) _revokeNocCertificate(
 		SubjectKeyId: cert.SubjectKeyId,
 		Certs:        []*types.Certificate{cert},
 	}
-	k.AddRevokedCertificates(ctx, revCerts)
+	k.AddRevokedCertificates(ctx, revCerts, schemaVersion)
 
 	removeCertFromList(cert.Issuer, cert.SerialNumber, &certificates.Certs)
 	if len(certificates.Certs) == 0 {
@@ -95,9 +96,9 @@ func (k msgServer) _revokeNocCertificate(
 	return nil
 }
 
-func (k msgServer) _revokeNocCertificates(ctx sdk.Context, certificates types.ApprovedCertificates, vid int32) {
+func (k msgServer) _revokeNocCertificates(ctx sdk.Context, certificates types.ApprovedCertificates, vid int32, schemaVersion uint32) {
 	// Add certs into revoked lists
-	k.AddRevokedCertificates(ctx, certificates)
+	k.AddRevokedCertificates(ctx, certificates, schemaVersion)
 	// remove cert from NOC certs list
 	k.RemoveNocCertificate(ctx, certificates.Subject, certificates.SubjectKeyId, vid)
 	// remove cert from approved certs list

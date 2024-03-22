@@ -187,12 +187,13 @@ test_divider
 
 echo "$user_account (Not Trustee) propose Root certificate"
 root_path="integration_tests/constants/root_cert"
+cert_schema_version_1=1
 schema_version_2=2
 result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_path" --from $user_account --vid $vid --yes)
 response_does_not_contain "$result" "\"code\": 0"
 
 echo "$trustee_account (Trustee) propose Root certificate"
-result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_path" --schemaVersion=$schema_version_2 --from $trustee_account   --vid $vid --yes)
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_path" --certificate-schema-version=$cert_schema_version_1 --schemaVersion=$schema_version_2 --from $trustee_account   --vid $vid --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -202,6 +203,7 @@ result=$(dcld query pki all-proposed-x509-root-certs)
 echo $result | jq
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
+check_response "$result" "\"certSchemaVersion\": $cert_schema_version_1"
 check_response "$result" "\"schemaVersion\": $schema_version_2"
 
 test_divider
@@ -385,7 +387,7 @@ test_divider
 
 echo "$vendor_account adds Intermediate certificate"
 intermediate_path="integration_tests/constants/intermediate_cert"
-result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_path" --schemaVersion=$schema_version_2 --from $vendor_account --yes)
+result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_path" --certificate-schema-version=$cert_schema_version_1 --schemaVersion=$schema_version_2 --from $vendor_account --yes)
 check_response "$result" "\"code\": 0"
 
 
@@ -398,6 +400,8 @@ check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$intermediate_cert_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$intermediate_cert_subject_as_text\""
+check_response "$result" "\"schemaVersion\": $cert_schema_version_1"
+check_response "$result" "\"certSchemaVersion\": $cert_schema_version_1"
 check_response "$result" "\"schemaVersion\": $schema_version_2"
 check_response "$result" "\"approvals\": \\[\\]"
 
@@ -454,6 +458,7 @@ test_divider
 
 echo "$vendor_account add Leaf certificate"
 leaf_path="integration_tests/constants/leaf_cert"
+cert_schema_version_0=0
 schema_version_0=0
 result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$leaf_path" --from $vendor_account --yes)
 check_response "$result" "\"code\": 0"
@@ -467,6 +472,7 @@ check_response "$result" "\"subject\": \"$leaf_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$leaf_cert_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$leaf_cert_subject_as_text\""
+check_response "$result" "\"certSchemaVersion\": $cert_schema_version_0"
 check_response "$result" "\"schemaVersion\": $schema_version_0"
 check_response "$result" "\"approvals\": \\[\\]"
 
@@ -670,8 +676,9 @@ echo "Try to revoke the intermediate certificate using a vendor account with oth
 result=$(echo "$passphrase" | dcld tx pki revoke-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --from=$vendor_account_65522 --yes)
 check_response "$result" "\"code\": 4"
 
+revoke_schema_version_3=3
 echo "$vendor_account (Not Trustee) revokes only Intermediate certificate. This must not revoke its child - Leaf certificate."
-result=$(echo "$passphrase" | dcld tx pki revoke-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --from=$vendor_account --yes)
+result=$(echo "$passphrase" | dcld tx pki revoke-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --schemaVersion=$revoke_schema_version_3 --from=$vendor_account --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -700,6 +707,7 @@ result=$(dcld query pki all-revoked-x509-certs)
 echo $result | jq
 check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
+check_response "$result" "\"schemaVersion\": \"$revoke_schema_version_3\""
 response_does_not_contain "$result" "\"subject\": \"$leaf_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
@@ -809,8 +817,9 @@ test_divider
 echo "7. PROPOSE REVOCATION OF ROOT CERT"
 test_divider
 
+revoke_schema_version_4=4
 echo "$trustee_account (Trustee) proposes to revoke only Root certificate(child certificates should not be revoked)"
-result=$(echo "$passphrase" | dcld tx pki propose-revoke-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $trustee_account --yes)
+result=$(echo "$passphrase" | dcld tx pki propose-revoke-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --schemaVersion=$revoke_schema_version_4 --from $trustee_account --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -827,6 +836,7 @@ result=$(dcld query pki all-proposed-x509-root-certs-to-revoke)
 echo $result | jq
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
+check_response "$result" "\"schemaVersion\": \"$revoke_schema_version_4\""
 response_does_not_contain "$result" "\"subject\": \"$intermediate_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
 response_does_not_contain "$result" "\"subject\": \"$leaf_cert_subject\""
@@ -1183,6 +1193,7 @@ check_response "$result" "\"address\": \"$trustee_account_address\""
 check_response "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$google_cert_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$google_cert_subject_as_text\""
+check_response "$result" "\"certSchemaVersion\": $cert_schema_version_0"
 check_response "$result" "\"schemaVersion\": $schema_version_0"
 check_response "$result" "\"vid\": $google_cert_vid"
 echo $result | jq
@@ -1625,6 +1636,7 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
+reject_schema_version_0=0
 echo "$trustee_account (Trustee) cannot reject Root certificate for the second time"
 result=$(echo $passphrase | dcld tx pki reject-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --from $trustee_account --yes 2>&1 || true)
 response_does_not_contain "$result" "\"code\": 0"
@@ -1651,11 +1663,13 @@ response_does_not_contain "$result" "\"subject\": \"$test_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$test_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$test_cert_serial_number\""
 response_does_not_contain "$result" "\"subjectAsText\": \"$test_cert_subject_as_text\""
+check_response "$result" "\"schemaVersion\": $reject_schema_version_0"
 
 test_divider
 
+reject_schema_version_4=4
 echo "$second_trustee_account (Second Trustee) rejects Root certificate"
-result=$(echo "$passphrase" | dcld tx pki reject-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --from $second_trustee_account --yes)
+result=$(echo "$passphrase" | dcld tx pki reject-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --schemaVersion=$reject_schema_version_4 --from $second_trustee_account --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1682,6 +1696,7 @@ check_response "$result" "\"serialNumber\": \"$test_cert_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$test_cert_subject_as_text\""
 check_response "$result" "\"address\": \"$trustee_account_address\""
 check_response "$result" "\"address\": \"$second_trustee_account_address\""
+check_response "$result" "\"schemaVersion\": $reject_schema_version_4"
 
 test_divider
 
