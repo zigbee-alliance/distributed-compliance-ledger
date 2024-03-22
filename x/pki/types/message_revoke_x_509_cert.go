@@ -23,13 +23,14 @@ func NewMsgRevokeX509Cert(
 	schemaVersion uint32,
 ) *MsgRevokeX509Cert {
 	return &MsgRevokeX509Cert{
-		Signer:       signer,
-		Subject:      subject,
-		SubjectKeyId: subjectKeyID,
-		SerialNumber: serialNumber,
-		RevokeChild:  revokeChild,
-		Info:         info,
-		Time:         time.Now().Unix(),
+		Signer:        signer,
+		Subject:       subject,
+		SubjectKeyId:  subjectKeyID,
+		SerialNumber:  serialNumber,
+		RevokeChild:   revokeChild,
+		Info:          info,
+		Time:          time.Now().Unix(),
+		SchemaVersion: schemaVersion,
 	}
 }
 
