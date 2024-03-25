@@ -12,5 +12,6 @@ message ProposedCertificateRevocation {
   string subjectAsText = 4;
   string serialNumber = 5;
   bool revokeChild = 6;
+  uint32 schemaVersion = 7;
 }
 

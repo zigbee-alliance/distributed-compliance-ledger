@@ -98,10 +98,11 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 		rootCert.Subject,
 		rootCert.SubjectKeyId,
 		msg.Signer,
+		msg.CertSchemaVersion,
 	)
 
 	// append new certificate to list of certificates with the same Subject/SubjectKeyId combination and store updated list
-	k.AddApprovedCertificate(ctx, certificate)
+	k.AddApprovedCertificate(ctx, certificate, msg.SchemaVersion)
 
 	// add the certificate identifier to the issuer's Child Certificates record
 	certificateIdentifier := types.CertificateIdentifier{

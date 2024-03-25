@@ -32,6 +32,7 @@ func NewMsgCreateModel(
 	supportURL string,
 	productURL string,
 	lsfURL string,
+	schemaVersion uint32,
 ) *MsgCreateModel {
 	return &MsgCreateModel{
 		Creator:                                  creator,
@@ -51,6 +52,7 @@ func NewMsgCreateModel(
 		SupportUrl:    supportURL,
 		ProductUrl:    productURL,
 		LsfUrl:        lsfURL,
+		SchemaVersion: schemaVersion,
 	}
 }
 
@@ -108,6 +110,7 @@ func NewMsgUpdateModel(
 	productURL string,
 	lsfURL string,
 	lsfRevision int32,
+	schemaVersion uint32,
 ) *MsgUpdateModel {
 	return &MsgUpdateModel{
 		Creator:                                  creator,
@@ -124,6 +127,7 @@ func NewMsgUpdateModel(
 		ProductUrl:    productURL,
 		LsfUrl:        lsfURL,
 		LsfRevision:   lsfRevision,
+		SchemaVersion: schemaVersion,
 	}
 }
 

@@ -10,7 +10,7 @@ import (
 	io "io"
 	math "math"
 	math_bits "math/bits"
-	
+
 	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 )
 
@@ -28,10 +28,10 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 // GenesisState defines the compliance module's genesis state.
 type GenesisState struct {
 	ComplianceInfoList           []dclcompltypes.ComplianceInfo `protobuf:"bytes,1,rep,name=complianceInfoList,proto3" json:"complianceInfoList"`
-	CertifiedModelList           []CertifiedModel           	`protobuf:"bytes,2,rep,name=certifiedModelList,proto3" json:"certifiedModelList"`
-	RevokedModelList             []RevokedModel             	`protobuf:"bytes,3,rep,name=revokedModelList,proto3" json:"revokedModelList"`
-	ProvisionalModelList         []ProvisionalModel         	`protobuf:"bytes,4,rep,name=provisionalModelList,proto3" json:"provisionalModelList"`
-	DeviceSoftwareComplianceList []DeviceSoftwareCompliance 	`protobuf:"bytes,5,rep,name=deviceSoftwareComplianceList,proto3" json:"deviceSoftwareComplianceList"`
+	CertifiedModelList           []CertifiedModel               `protobuf:"bytes,2,rep,name=certifiedModelList,proto3" json:"certifiedModelList"`
+	RevokedModelList             []RevokedModel                 `protobuf:"bytes,3,rep,name=revokedModelList,proto3" json:"revokedModelList"`
+	ProvisionalModelList         []ProvisionalModel             `protobuf:"bytes,4,rep,name=provisionalModelList,proto3" json:"provisionalModelList"`
+	DeviceSoftwareComplianceList []DeviceSoftwareCompliance     `protobuf:"bytes,5,rep,name=deviceSoftwareComplianceList,proto3" json:"deviceSoftwareComplianceList"`
 }
 
 func (m *GenesisState) Reset()         { *m = GenesisState{} }

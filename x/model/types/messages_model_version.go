@@ -30,6 +30,7 @@ func NewMsgCreateModelVersion(
 	minApplicableSoftwareVersion uint32,
 	maxApplicableSoftwareVersion uint32,
 	releaseNotesURL string,
+	schemaVersion uint32,
 ) *MsgCreateModelVersion {
 	return &MsgCreateModelVersion{
 		Creator:                      creator,
@@ -47,6 +48,7 @@ func NewMsgCreateModelVersion(
 		MinApplicableSoftwareVersion: minApplicableSoftwareVersion,
 		MaxApplicableSoftwareVersion: maxApplicableSoftwareVersion,
 		ReleaseNotesUrl:              releaseNotesURL,
+		SchemaVersion:                schemaVersion,
 	}
 }
 
@@ -101,6 +103,7 @@ func NewMsgUpdateModelVersion(
 	minApplicableSoftwareVersion uint32,
 	maxApplicableSoftwareVersion uint32,
 	releaseNotesURL string,
+	schemaVersion uint32,
 ) *MsgUpdateModelVersion {
 	return &MsgUpdateModelVersion{
 		Creator:                      creator,
@@ -114,6 +117,7 @@ func NewMsgUpdateModelVersion(
 		MinApplicableSoftwareVersion: minApplicableSoftwareVersion,
 		MaxApplicableSoftwareVersion: maxApplicableSoftwareVersion,
 		ReleaseNotesUrl:              releaseNotesURL,
+		SchemaVersion:                schemaVersion,
 	}
 }
 

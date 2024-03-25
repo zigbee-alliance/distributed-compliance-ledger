@@ -35,6 +35,8 @@ message MsgProposeAddX509RootCert {
   string info = 3 [(gogoproto.moretags) = "validate:\"max=4096\""];
   int64 time = 4;
   int32 vid = 5 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535,required\""];
+  uint32 certSchemaVersion = 6 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
+  uint32 schemaVersion = 7 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
 }
 
 message MsgProposeAddX509RootCertResponse {
@@ -56,6 +58,8 @@ message MsgAddX509Cert {
   string cert = 2 [(gogoproto.moretags) = "validate:\"required,max=10485760\""];
   string info = 3 [(gogoproto.moretags) = "validate:\"max=4096\""];
   int64 time = 4;
+  uint32 certSchemaVersion = 5 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
+  uint32 schemaVersion = 6 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
 }
 
 message MsgAddX509CertResponse {
@@ -69,6 +73,7 @@ message MsgProposeRevokeX509RootCert {
   int64 time = 5;
   string serialNumber = 6;
   bool revokeChild = 7;
+  uint32 schemaVersion = 8 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
 }
 
 message MsgProposeRevokeX509RootCertResponse {
@@ -94,6 +99,7 @@ message MsgRevokeX509Cert {
   int64 time = 5;
   string serialNumber = 6;
   bool revokeChild = 7;
+  uint32 schemaVersion = 8 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
 }
 
 message MsgRevokeX509CertResponse {
@@ -105,6 +111,7 @@ message MsgRejectAddX509RootCert {
   string subjectKeyId = 3 [(gogoproto.moretags) = "validate:\"required,max=256\""];
   string info = 4 [(gogoproto.moretags) = "validate:\"max=4096\""];
   int64 time = 5;
+  uint32 schemaVersion = 6 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
 }
 
 message MsgRejectAddX509RootCertResponse {
@@ -123,6 +130,7 @@ message MsgAddPkiRevocationDistributionPoint {
   string dataDigest = 10;
   uint32 dataDigestType = 11;
   uint32 revocationType = 12 [(gogoproto.moretags) = "validate:\"required\""];
+  uint32 schemaVersion = 13 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
 }
 
 message MsgAddPkiRevocationDistributionPointResponse {
@@ -138,6 +146,7 @@ message MsgUpdatePkiRevocationDistributionPoint {
   uint64 dataFileSize = 7;
   string dataDigest = 8;
   uint32 dataDigestType = 9;
+  uint32 schemaVersion = 10 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
 }
 
 message MsgUpdatePkiRevocationDistributionPointResponse {
@@ -166,6 +175,8 @@ message MsgAssignVidResponse {
 message MsgAddNocX509RootCert {
   string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
   string cert = 2 [(gogoproto.moretags) = "validate:\"required,max=10485760\""];
+  uint32 certSchemaVersion = 4 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
+  uint32 schemaVersion = 5 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
 }
 
 message MsgAddNocX509RootCertResponse {
@@ -184,6 +195,8 @@ message MsgRemoveX509CertResponse {
 message MsgAddNocX509Cert {
   string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
   string cert = 2 [(gogoproto.moretags) = "validate:\"required,max=10485760\""];
+  uint32 certSchemaVersion = 3 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
+  uint32 schemaVersion = 4 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
 }
 
 message MsgAddNocX509CertResponse {
@@ -197,6 +210,7 @@ message MsgRevokeNocRootX509Cert {
   string info = 5 [(gogoproto.moretags) = "validate:\"max=4096\""];
   int64 time = 6;
   bool revokeChild = 7;
+  uint32 schemaVersion = 8 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
 }
 
 message MsgRevokeNocRootX509CertResponse {
@@ -210,6 +224,7 @@ message MsgRevokeNocX509Cert {
   string info = 5 [(gogoproto.moretags) = "validate:\"max=4096\""];
   int64 time = 6;
   bool revokeChild = 7;
+  uint32 schemaVersion = 8 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
 }
 
 message MsgRevokeNocX509CertResponse {

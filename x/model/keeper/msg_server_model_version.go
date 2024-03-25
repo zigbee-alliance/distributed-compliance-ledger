@@ -58,6 +58,7 @@ func (k msgServer) CreateModelVersion(goCtx context.Context, msg *types.MsgCreat
 		MinApplicableSoftwareVersion: msg.MinApplicableSoftwareVersion,
 		MaxApplicableSoftwareVersion: msg.MaxApplicableSoftwareVersion,
 		ReleaseNotesUrl:              msg.ReleaseNotesUrl,
+		SchemaVersion:                msg.SchemaVersion,
 	}
 
 	// store new model version
@@ -132,6 +133,8 @@ func (k msgServer) UpdateModelVersion(goCtx context.Context, msg *types.MsgUpdat
 	if msg.ReleaseNotesUrl != "" {
 		modelVersion.ReleaseNotesUrl = msg.ReleaseNotesUrl
 	}
+
+	modelVersion.SchemaVersion = msg.SchemaVersion
 
 	// store updated model version
 	k.SetModelVersion(ctx, modelVersion)

@@ -20,6 +20,7 @@ export interface Certificate {
   rejects: Grant[]
   vid: number
   isNoc: boolean
+  schemaVersion: number
 }
 
 const baseCertificate: object = {
@@ -35,7 +36,8 @@ const baseCertificate: object = {
   subjectKeyId: '',
   subjectAsText: '',
   vid: 0,
-  isNoc: false
+  isNoc: false,
+  schemaVersion: 0
 }
 
 export const Certificate = {
@@ -84,6 +86,9 @@ export const Certificate = {
     }
     if (message.isNoc === true) {
       writer.uint32(120).bool(message.isNoc)
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(128).uint32(message.schemaVersion)
     }
     return writer
   },
@@ -141,6 +146,9 @@ export const Certificate = {
           break
         case 15:
           message.isNoc = reader.bool()
+          break
+        case 16:
+          message.schemaVersion = reader.uint32()
           break
         default:
           reader.skipType(tag & 7)
@@ -229,6 +237,11 @@ export const Certificate = {
     } else {
       message.isNoc = false
     }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = Number(object.schemaVersion)
+    } else {
+      message.schemaVersion = 0
+    }
     return message
   },
 
@@ -257,6 +270,7 @@ export const Certificate = {
     }
     message.vid !== undefined && (obj.vid = message.vid)
     message.isNoc !== undefined && (obj.isNoc = message.isNoc)
+    message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
     return obj
   },
 
@@ -338,6 +352,11 @@ export const Certificate = {
       message.isNoc = object.isNoc
     } else {
       message.isNoc = false
+    }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = object.schemaVersion
+    } else {
+      message.schemaVersion = 0
     }
     return message
   }

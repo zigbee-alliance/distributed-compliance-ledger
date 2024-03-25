@@ -41,6 +41,9 @@ export interface ModelModel {
   /** @format int32 */
   lsfRevision?: number;
   creator?: string;
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface ModelModelVersion {
@@ -74,6 +77,9 @@ export interface ModelModelVersion {
   maxApplicableSoftwareVersion?: number;
   releaseNotesUrl?: string;
   creator?: string;
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface ModelModelVersions {

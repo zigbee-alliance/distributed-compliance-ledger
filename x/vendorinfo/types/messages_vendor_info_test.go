@@ -149,6 +149,19 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
+		{
+			name: "schemaVersion > 65535",
+			msg: MsgCreateVendorInfo{
+				Creator:              sample.AccAddress(),
+				VendorID:             testconstants.VendorID1,
+				VendorName:           testconstants.VendorName,
+				CompanyLegalName:     testconstants.CompanyLegalName,
+				CompanyPreferredName: testconstants.CompanyPreferredName,
+				VendorLandingPageURL: testconstants.VendorLandingPageURL,
+				SchemaVersion:        65536,
+			},
+			err: validator.ErrFieldUpperBoundViolated,
+		},
 	}
 
 	positiveTests := []struct {

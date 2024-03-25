@@ -191,6 +191,21 @@ func TestMsgUpdateComplianceInfo_ValidateBasic(t *testing.T) {
 			},
 			err: ErrInvalidUint32ForCdVersionNumber,
 		},
+		{
+			name: "schemaVersion > 65535",
+			msg: MsgUpdateComplianceInfo{
+				Creator:           sample.AccAddress(),
+				Pid:               1,
+				Vid:               1,
+				Date:              testconstants.CertificationDate,
+				CertificationType: "matter",
+				SoftwareVersion:   testconstants.SoftwareVersion,
+				CDVersionNumber:   "312",
+				CDCertificateId:   testconstants.CDCertificateID,
+				SchemaVersion:     65536,
+			},
+			err: validator.ErrFieldUpperBoundViolated,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

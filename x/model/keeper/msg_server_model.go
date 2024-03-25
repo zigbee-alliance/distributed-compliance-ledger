@@ -48,6 +48,7 @@ func (k msgServer) CreateModel(goCtx context.Context, msg *types.MsgCreateModel)
 		SupportUrl:    msg.SupportUrl,
 		ProductUrl:    msg.ProductUrl,
 		LsfUrl:        msg.LsfUrl,
+		SchemaVersion: msg.SchemaVersion,
 	}
 
 	// if LsfUrl is not empty, we set lsfRevision to default value of 1
@@ -130,6 +131,8 @@ func (k msgServer) UpdateModel(goCtx context.Context, msg *types.MsgUpdateModel)
 	if msg.ProductUrl != "" {
 		model.ProductUrl = msg.ProductUrl
 	}
+
+	model.SchemaVersion = msg.SchemaVersion
 
 	if msg.LsfRevision > 0 {
 		// If lsfRevision is set but no lsfURL is provided or present in model

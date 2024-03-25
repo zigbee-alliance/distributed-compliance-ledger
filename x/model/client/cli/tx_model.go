@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
@@ -28,6 +29,7 @@ func CmdCreateModel() *cobra.Command {
 		supportURL                                 string
 		productURL                                 string
 		lsfURL                                     string
+		schemaVersion                              uint32
 	)
 
 	cmd := &cobra.Command{
@@ -63,6 +65,7 @@ func CmdCreateModel() *cobra.Command {
 				supportURL,
 				productURL,
 				lsfURL,
+				schemaVersion,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -125,6 +128,7 @@ and for these values the commissioningModeSecondaryStepInstruction SHALL be set`
 		"URL that contains product specific web page that contains details for the device model.")
 	cmd.Flags().StringVar(&lsfURL, FlagLsfURL, "", "URL to the Localized String File of this product")
 	cli.AddTxFlagsToCmd(cmd)
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version")
 
 	_ = cmd.MarkFlagRequired(FlagVid)
 	_ = cmd.MarkFlagRequired(FlagPid)
@@ -150,6 +154,7 @@ func CmdUpdateModel() *cobra.Command {
 		productURL                                 string
 		lsfURL                                     string
 		lsfRevision                                int32
+		schemaVersion                              uint32
 	)
 
 	cmd := &cobra.Command{
@@ -182,6 +187,7 @@ func CmdUpdateModel() *cobra.Command {
 				productURL,
 				lsfURL,
 				lsfRevision,
+				schemaVersion,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -226,6 +232,8 @@ and for these values the commissioningModeSecondaryStepInstruction SHALL be set`
 	cmd.Flags().StringVar(&lsfURL, FlagLsfURL, "", "URL to the Localized String File of this product")
 	cmd.Flags().Int32Var(&lsfRevision, FlagLsfRevision, 0,
 		"LsfRevision is a monotonically increasing positive integer indicating the latest available version of Localized String File")
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version")
+
 	cli.AddTxFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(FlagVid)

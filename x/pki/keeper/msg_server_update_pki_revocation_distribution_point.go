@@ -62,6 +62,8 @@ func (k msgServer) UpdatePkiRevocationDistributionPoint(goCtx context.Context, m
 		pkiRevocationDistributionPoint.DataDigestType = msg.DataDigestType
 	}
 
+	pkiRevocationDistributionPoint.SchemaVersion = msg.SchemaVersion
+
 	revocationList, isFound := k.GetPkiRevocationDistributionPointsByIssuerSubjectKeyID(ctx, msg.IssuerSubjectKeyID)
 	if isFound {
 		for _, revocationPoint := range revocationList.Points {

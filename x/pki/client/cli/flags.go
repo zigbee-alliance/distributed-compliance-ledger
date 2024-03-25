@@ -28,4 +28,5 @@ const (
 	FlagIssuerSubjectKeyID       = "issuer-subject-key-id"
 	FlagRevokeChild              = "revoke-child"
 	FlagRevokeChildShortcut      = "r"
+	FlagCertificateSchemaVersion = "certificate-schema-version"
 )
