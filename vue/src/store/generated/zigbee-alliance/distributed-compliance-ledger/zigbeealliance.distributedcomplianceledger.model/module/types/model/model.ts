@@ -23,6 +23,7 @@ export interface Model {
   lsfRevision: number
   creator: string
   schemaVersion: number
+  commissionerRemoteUiFlowUrl: string
 }
 
 const baseModel: object = {
@@ -44,7 +45,8 @@ const baseModel: object = {
   lsfUrl: '',
   lsfRevision: 0,
   creator: '',
-  schemaVersion: 0
+  schemaVersion: 0,
+  commissionerRemoteUiFlowUrl: ''
 }
 
 export const Model = {
@@ -105,6 +107,9 @@ export const Model = {
     }
     if (message.schemaVersion !== 0) {
       writer.uint32(152).uint32(message.schemaVersion)
+    }
+    if (message.commissionerRemoteUiFlowUrl !== '') {
+      writer.uint32(162).string(message.commissionerRemoteUiFlowUrl)
     }
     return writer
   },
@@ -172,6 +177,9 @@ export const Model = {
           break
         case 19:
           message.schemaVersion = reader.uint32()
+          break
+        case 20:
+          message.commissionerRemoteUiFlowUrl = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -278,6 +286,11 @@ export const Model = {
     } else {
       message.schemaVersion = 0
     }
+    if (object.commissionerRemoteUiFlowUrl !== undefined && object.commissionerRemoteUiFlowUrl !== null) {
+      message.commissionerRemoteUiFlowUrl = String(object.commissionerRemoteUiFlowUrl)
+    } else {
+      message.commissionerRemoteUiFlowUrl = ''
+    }
     return message
   },
 
@@ -304,6 +317,7 @@ export const Model = {
     message.lsfRevision !== undefined && (obj.lsfRevision = message.lsfRevision)
     message.creator !== undefined && (obj.creator = message.creator)
     message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
+    message.commissionerRemoteUiFlowUrl !== undefined && (obj.commissionerRemoteUiFlowUrl = message.commissionerRemoteUiFlowUrl)
     return obj
   },
 
@@ -403,6 +417,11 @@ export const Model = {
       message.schemaVersion = object.schemaVersion
     } else {
       message.schemaVersion = 0
+    }
+    if (object.commissionerRemoteUiFlowUrl !== undefined && object.commissionerRemoteUiFlowUrl !== null) {
+      message.commissionerRemoteUiFlowUrl = object.commissionerRemoteUiFlowUrl
+    } else {
+      message.commissionerRemoteUiFlowUrl = ''
     }
     return message
   }
