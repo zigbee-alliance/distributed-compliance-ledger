@@ -20,6 +20,7 @@ export interface ModelVersion {
   maxApplicableSoftwareVersion: number
   releaseNotesUrl: string
   creator: string
+  schemaVersion: number
 }
 
 const baseModelVersion: object = {
@@ -37,7 +38,8 @@ const baseModelVersion: object = {
   minApplicableSoftwareVersion: 0,
   maxApplicableSoftwareVersion: 0,
   releaseNotesUrl: '',
-  creator: ''
+  creator: '',
+  schemaVersion: 0
 }
 
 export const ModelVersion = {
@@ -86,6 +88,9 @@ export const ModelVersion = {
     }
     if (message.creator !== '') {
       writer.uint32(122).string(message.creator)
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(128).uint32(message.schemaVersion)
     }
     return writer
   },
@@ -141,6 +146,9 @@ export const ModelVersion = {
           break
         case 15:
           message.creator = reader.string()
+          break
+        case 16:
+          message.schemaVersion = reader.uint32()
           break
         default:
           reader.skipType(tag & 7)
@@ -227,6 +235,11 @@ export const ModelVersion = {
     } else {
       message.creator = ''
     }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = Number(object.schemaVersion)
+    } else {
+      message.schemaVersion = 0
+    }
     return message
   },
 
@@ -247,6 +260,7 @@ export const ModelVersion = {
     message.maxApplicableSoftwareVersion !== undefined && (obj.maxApplicableSoftwareVersion = message.maxApplicableSoftwareVersion)
     message.releaseNotesUrl !== undefined && (obj.releaseNotesUrl = message.releaseNotesUrl)
     message.creator !== undefined && (obj.creator = message.creator)
+    message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
     return obj
   },
 
@@ -326,6 +340,11 @@ export const ModelVersion = {
       message.creator = object.creator
     } else {
       message.creator = ''
+    }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = object.schemaVersion
+    } else {
+      message.schemaVersion = 0
     }
     return message
   }

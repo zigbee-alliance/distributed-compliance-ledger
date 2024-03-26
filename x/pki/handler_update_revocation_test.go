@@ -274,7 +274,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAI_NotChainedOnLedger(t *
 	_, err := setup.Handler(setup.Ctx, addPkiRevocationDistributionPoint)
 	require.NoError(t, err)
 
-	proposeRevokeRootCert := types.NewMsgProposeRevokeX509RootCert(setup.Trustee1.String(), testconstants.PAACertWithNumericVidSubject, testconstants.PAACertWithNumericVidSubjectKeyID, "", false, testconstants.Info)
+	proposeRevokeRootCert := types.NewMsgProposeRevokeX509RootCert(setup.Trustee1.String(), testconstants.PAACertWithNumericVidSubject, testconstants.PAACertWithNumericVidSubjectKeyID, "", false, testconstants.Info, testconstants.SchemaVersion)
 	_, err = setup.Handler(setup.Ctx, proposeRevokeRootCert)
 	require.NoError(t, err)
 
@@ -367,6 +367,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAA_VID(t *testing.T) {
 		name              string
 		updatedRevocation types.MsgUpdatePkiRevocationDistributionPoint
 		err               error
+		schemaVersion     uint32
 	}{
 		{
 			name: "Valid: PAAWithVid",
@@ -378,6 +379,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAA_VID(t *testing.T) {
 				DataURL:              addedRevocation.DataURL,
 				IssuerSubjectKeyID:   addedRevocation.IssuerSubjectKeyID,
 			},
+			schemaVersion: uint32(0),
 		},
 		{
 			name: "Valid: MinimalParams",
@@ -386,7 +388,9 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAA_VID(t *testing.T) {
 				Vid:                addedRevocation.Vid,
 				Label:              addedRevocation.Label,
 				IssuerSubjectKeyID: addedRevocation.IssuerSubjectKeyID,
+				SchemaVersion:      1,
 			},
+			schemaVersion: uint32(1),
 		},
 		{
 			name: "Valid: AllParams",
@@ -396,7 +400,9 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAA_VID(t *testing.T) {
 				Label:              addedRevocation.Label,
 				DataURL:            addedRevocation.DataURL + "/new",
 				IssuerSubjectKeyID: addedRevocation.IssuerSubjectKeyID,
+				SchemaVersion:      999999999,
 			},
+			schemaVersion: uint32(999999999),
 		},
 	}
 	for _, tc := range cases {
@@ -424,6 +430,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAA_VID(t *testing.T) {
 			require.Equal(t, updatedPoint.Label, addedRevocation.Label)
 			require.Equal(t, updatedPoint.IssuerSubjectKeyID, addedRevocation.IssuerSubjectKeyID)
 			require.Equal(t, updatedPoint.RevocationType, addedRevocation.RevocationType)
+			require.Equal(t, updatedPoint.SchemaVersion, tc.schemaVersion)
 
 			compareUpdatedStringFields(t, addedRevocation.DataURL, tc.updatedRevocation.DataURL, updatedPoint.DataURL)
 			compareUpdatedStringFields(t, addedRevocation.DataDigest, tc.updatedRevocation.DataDigest, updatedPoint.DataDigest)

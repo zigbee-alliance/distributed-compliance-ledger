@@ -10,9 +10,18 @@ export interface VendorInfo {
   companyPreferredName: string
   vendorLandingPageURL: string
   creator: string
+  schemaVersion: number
 }
 
-const baseVendorInfo: object = { vendorID: 0, vendorName: '', companyLegalName: '', companyPreferredName: '', vendorLandingPageURL: '', creator: '' }
+const baseVendorInfo: object = {
+  vendorID: 0,
+  vendorName: '',
+  companyLegalName: '',
+  companyPreferredName: '',
+  vendorLandingPageURL: '',
+  creator: '',
+  schemaVersion: 0
+}
 
 export const VendorInfo = {
   encode(message: VendorInfo, writer: Writer = Writer.create()): Writer {
@@ -33,6 +42,9 @@ export const VendorInfo = {
     }
     if (message.creator !== '') {
       writer.uint32(50).string(message.creator)
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(56).uint32(message.schemaVersion)
     }
     return writer
   },
@@ -61,6 +73,9 @@ export const VendorInfo = {
           break
         case 6:
           message.creator = reader.string()
+          break
+        case 7:
+          message.schemaVersion = reader.uint32()
           break
         default:
           reader.skipType(tag & 7)
@@ -102,6 +117,11 @@ export const VendorInfo = {
     } else {
       message.creator = ''
     }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = Number(object.schemaVersion)
+    } else {
+      message.schemaVersion = 0
+    }
     return message
   },
 
@@ -113,6 +133,7 @@ export const VendorInfo = {
     message.companyPreferredName !== undefined && (obj.companyPreferredName = message.companyPreferredName)
     message.vendorLandingPageURL !== undefined && (obj.vendorLandingPageURL = message.vendorLandingPageURL)
     message.creator !== undefined && (obj.creator = message.creator)
+    message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
     return obj
   },
 
@@ -147,6 +168,11 @@ export const VendorInfo = {
       message.creator = object.creator
     } else {
       message.creator = ''
+    }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = object.schemaVersion
+    } else {
+      message.schemaVersion = 0
     }
     return message
   }

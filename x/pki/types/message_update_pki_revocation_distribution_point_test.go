@@ -179,6 +179,22 @@ func TestMsgUpdatePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			},
 			err: pkitypes.ErrWrongSubjectKeyIDFormat,
 		},
+		{
+			name: "schemaVersion > 65535",
+			msg: MsgUpdatePkiRevocationDistributionPoint{
+				Signer:               sample.AccAddress(),
+				Label:                "label",
+				Vid:                  1,
+				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
+				DataURL:              testconstants.DataURL,
+				DataDigest:           testconstants.DataDigest,
+				DataDigestType:       1,
+				DataFileSize:         123,
+				SchemaVersion:        65536,
+			},
+			err: validator.ErrFieldUpperBoundViolated,
+		},
 	}
 
 	positiveTests := []struct {

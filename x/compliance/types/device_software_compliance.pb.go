@@ -9,7 +9,7 @@ import (
 	io "io"
 	math "math"
 	math_bits "math/bits"
-	
+
 	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 )
 
@@ -25,7 +25,7 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type DeviceSoftwareCompliance struct {
-	CDCertificateId string            `protobuf:"bytes,1,opt,name=cDCertificateId,proto3" json:"cDCertificateId,omitempty"`
+	CDCertificateId string                          `protobuf:"bytes,1,opt,name=cDCertificateId,proto3" json:"cDCertificateId,omitempty"`
 	ComplianceInfo  []*dclcompltypes.ComplianceInfo `protobuf:"bytes,2,rep,name=complianceInfo,proto3" json:"complianceInfo,omitempty"`
 }
 

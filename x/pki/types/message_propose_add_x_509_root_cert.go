@@ -15,13 +15,15 @@ const TypeMsgProposeAddX509RootCert = "propose_add_x_509_root_cert"
 
 var _ sdk.Msg = &MsgProposeAddX509RootCert{}
 
-func NewMsgProposeAddX509RootCert(signer string, cert string, info string, vid int32) *MsgProposeAddX509RootCert {
+func NewMsgProposeAddX509RootCert(signer string, cert string, info string, vid int32, certSchemaVersion, schemaVersion uint32) *MsgProposeAddX509RootCert {
 	return &MsgProposeAddX509RootCert{
-		Signer: signer,
-		Cert:   cert,
-		Info:   info,
-		Time:   time.Now().Unix(),
-		Vid:    vid,
+		Signer:            signer,
+		Cert:              cert,
+		Info:              info,
+		Time:              time.Now().Unix(),
+		Vid:               vid,
+		CertSchemaVersion: certSchemaVersion,
+		SchemaVersion:     schemaVersion,
 	}
 }
 

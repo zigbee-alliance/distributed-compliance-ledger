@@ -13,15 +13,16 @@ const TypeMsgRevokeNocRootX509Cert = "revoke_noc_root_x_509_cert"
 
 var _ sdk.Msg = &MsgRevokeNocRootX509Cert{}
 
-func NewMsgRevokeNocRootX509Cert(signer, subject, subjectKeyID, serialNumber, info string, revokeChild bool) *MsgRevokeNocRootX509Cert {
+func NewMsgRevokeNocRootX509Cert(signer, subject, subjectKeyID, serialNumber, info string, revokeChild bool, schemaVersion uint32) *MsgRevokeNocRootX509Cert {
 	return &MsgRevokeNocRootX509Cert{
-		Signer:       signer,
-		Subject:      subject,
-		SubjectKeyId: subjectKeyID,
-		SerialNumber: serialNumber,
-		Info:         info,
-		Time:         time.Now().Unix(),
-		RevokeChild:  revokeChild,
+		Signer:        signer,
+		Subject:       subject,
+		SubjectKeyId:  subjectKeyID,
+		SerialNumber:  serialNumber,
+		Info:          info,
+		Time:          time.Now().Unix(),
+		RevokeChild:   revokeChild,
+		SchemaVersion: schemaVersion,
 	}
 }
 

@@ -436,6 +436,21 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			},
 			err: pkitypes.ErrCRLSignerCertificatePidNotEqualMsgPid,
 		},
+		{
+			name: "schemaVersion > 65535",
+			msg: MsgAddPkiRevocationDistributionPoint{
+				Signer:               sample.AccAddress(),
+				Vid:                  testconstants.PAACertWithNumericVidVid,
+				IsPAA:                true,
+				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
+				Label:                "label",
+				DataURL:              testconstants.DataURL,
+				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+				RevocationType:       1,
+				SchemaVersion:        65536,
+			},
+			err: validator.ErrFieldUpperBoundViolated,
+		},
 	}
 
 	positiveTests := []struct {

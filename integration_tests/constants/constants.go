@@ -174,6 +174,12 @@ var (
 	ValidHTTPSURL     = "https://valid.url.com"
 	ValidHTTPURL      = "http://valid.url.com"
 	NotAValidURL      = "not a valid url"
+
+	// CertSchemaVersion schema version of certificate.
+	CertSchemaVersion uint32
+
+	// SchemaVersion initial default value.
+	SchemaVersion uint32
 )
 
 /*

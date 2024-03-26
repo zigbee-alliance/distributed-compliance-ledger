@@ -71,7 +71,7 @@ func (k Keeper) GetAllApprovedCertificates(ctx sdk.Context) (list []types.Approv
 }
 
 // Add an approved certificate to the list of approved certificates for the subject/subjectKeyId map.
-func (k Keeper) AddApprovedCertificate(ctx sdk.Context, approvedCertificate types.Certificate) {
+func (k Keeper) AddApprovedCertificate(ctx sdk.Context, approvedCertificate types.Certificate, schemaVersion uint32) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ApprovedCertificatesKeyPrefix))
 
 	approvedCertificatesBytes := store.Get(types.ApprovedCertificatesKey(
@@ -82,9 +82,10 @@ func (k Keeper) AddApprovedCertificate(ctx sdk.Context, approvedCertificate type
 
 	if approvedCertificatesBytes == nil {
 		approvedCertificates = types.ApprovedCertificates{
-			Subject:      approvedCertificate.Subject,
-			SubjectKeyId: approvedCertificate.SubjectKeyId,
-			Certs:        []*types.Certificate{},
+			Subject:       approvedCertificate.Subject,
+			SubjectKeyId:  approvedCertificate.SubjectKeyId,
+			Certs:         []*types.Certificate{},
+			SchemaVersion: schemaVersion,
 		}
 	} else {
 		k.cdc.MustUnmarshal(approvedCertificatesBytes, &approvedCertificates)
@@ -154,30 +155,4 @@ func (k Keeper) verifyCertificate(ctx sdk.Context,
 	return nil, pkitypes.NewErrInvalidCertificate(
 		fmt.Sprintf("Certificate verification failed for certificate with subject=%v and subjectKeyID=%v",
 			x509Certificate.Subject, x509Certificate.SubjectKeyID))
-}
-
-func (k Keeper) removeCertFromList(issuer string, serialNumber string, certs *types.ApprovedCertificates) {
-	certIndex := -1
-
-	for i, cert := range certs.Certs {
-		if cert.SerialNumber == serialNumber && cert.Issuer == issuer {
-			certIndex = i
-
-			break
-		}
-	}
-	if certIndex == -1 {
-		return
-	}
-	certs.Certs = append(certs.Certs[:certIndex], certs.Certs[certIndex+1:]...)
-}
-
-func findCertificate(serialNumber string, certificates *[]*types.Certificate) (*types.Certificate, bool) {
-	for _, cert := range *certificates {
-		if cert.SerialNumber == serialNumber {
-			return cert, true
-		}
-	}
-
-	return nil, false
 }

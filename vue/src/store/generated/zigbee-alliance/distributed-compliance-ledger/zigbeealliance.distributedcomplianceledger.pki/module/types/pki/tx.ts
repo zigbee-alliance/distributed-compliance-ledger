@@ -10,6 +10,8 @@ export interface MsgProposeAddX509RootCert {
   info: string
   time: number
   vid: number
+  certSchemaVersion: number
+  schemaVersion: number
 }
 
 export interface MsgProposeAddX509RootCertResponse {}
@@ -29,6 +31,8 @@ export interface MsgAddX509Cert {
   cert: string
   info: string
   time: number
+  certSchemaVersion: number
+  schemaVersion: number
 }
 
 export interface MsgAddX509CertResponse {}
@@ -41,6 +45,7 @@ export interface MsgProposeRevokeX509RootCert {
   time: number
   serialNumber: string
   revokeChild: boolean
+  schemaVersion: number
 }
 
 export interface MsgProposeRevokeX509RootCertResponse {}
@@ -64,6 +69,7 @@ export interface MsgRevokeX509Cert {
   time: number
   serialNumber: string
   revokeChild: boolean
+  schemaVersion: number
 }
 
 export interface MsgRevokeX509CertResponse {}
@@ -74,6 +80,7 @@ export interface MsgRejectAddX509RootCert {
   subjectKeyId: string
   info: string
   time: number
+  schemaVersion: number
 }
 
 export interface MsgRejectAddX509RootCertResponse {}
@@ -91,6 +98,7 @@ export interface MsgAddPkiRevocationDistributionPoint {
   dataDigest: string
   dataDigestType: number
   revocationType: number
+  schemaVersion: number
 }
 
 export interface MsgAddPkiRevocationDistributionPointResponse {}
@@ -105,6 +113,7 @@ export interface MsgUpdatePkiRevocationDistributionPoint {
   dataFileSize: number
   dataDigest: string
   dataDigestType: number
+  schemaVersion: number
 }
 
 export interface MsgUpdatePkiRevocationDistributionPointResponse {}
@@ -130,6 +139,8 @@ export interface MsgAssignVidResponse {}
 export interface MsgAddNocX509RootCert {
   signer: string
   cert: string
+  certSchemaVersion: number
+  schemaVersion: number
 }
 
 export interface MsgAddNocX509RootCertResponse {}
@@ -146,6 +157,8 @@ export interface MsgRemoveX509CertResponse {}
 export interface MsgAddNocX509Cert {
   signer: string
   cert: string
+  certSchemaVersion: number
+  schemaVersion: number
 }
 
 export interface MsgAddNocX509CertResponse {}
@@ -158,11 +171,25 @@ export interface MsgRevokeNocRootX509Cert {
   info: string
   time: number
   revokeChild: boolean
+  schemaVersion: number
 }
 
 export interface MsgRevokeNocRootX509CertResponse {}
 
-const baseMsgProposeAddX509RootCert: object = { signer: '', cert: '', info: '', time: 0, vid: 0 }
+export interface MsgRevokeNocX509Cert {
+  signer: string
+  subject: string
+  subjectKeyId: string
+  serialNumber: string
+  info: string
+  time: number
+  revokeChild: boolean
+  schemaVersion: number
+}
+
+export interface MsgRevokeNocX509CertResponse {}
+
+const baseMsgProposeAddX509RootCert: object = { signer: '', cert: '', info: '', time: 0, vid: 0, certSchemaVersion: 0, schemaVersion: 0 }
 
 export const MsgProposeAddX509RootCert = {
   encode(message: MsgProposeAddX509RootCert, writer: Writer = Writer.create()): Writer {
@@ -180,6 +207,12 @@ export const MsgProposeAddX509RootCert = {
     }
     if (message.vid !== 0) {
       writer.uint32(40).int32(message.vid)
+    }
+    if (message.certSchemaVersion !== 0) {
+      writer.uint32(48).uint32(message.certSchemaVersion)
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(56).uint32(message.schemaVersion)
     }
     return writer
   },
@@ -205,6 +238,12 @@ export const MsgProposeAddX509RootCert = {
           break
         case 5:
           message.vid = reader.int32()
+          break
+        case 6:
+          message.certSchemaVersion = reader.uint32()
+          break
+        case 7:
+          message.schemaVersion = reader.uint32()
           break
         default:
           reader.skipType(tag & 7)
@@ -241,6 +280,16 @@ export const MsgProposeAddX509RootCert = {
     } else {
       message.vid = 0
     }
+    if (object.certSchemaVersion !== undefined && object.certSchemaVersion !== null) {
+      message.certSchemaVersion = Number(object.certSchemaVersion)
+    } else {
+      message.certSchemaVersion = 0
+    }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = Number(object.schemaVersion)
+    } else {
+      message.schemaVersion = 0
+    }
     return message
   },
 
@@ -251,6 +300,8 @@ export const MsgProposeAddX509RootCert = {
     message.info !== undefined && (obj.info = message.info)
     message.time !== undefined && (obj.time = message.time)
     message.vid !== undefined && (obj.vid = message.vid)
+    message.certSchemaVersion !== undefined && (obj.certSchemaVersion = message.certSchemaVersion)
+    message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
     return obj
   },
 
@@ -280,6 +331,16 @@ export const MsgProposeAddX509RootCert = {
       message.vid = object.vid
     } else {
       message.vid = 0
+    }
+    if (object.certSchemaVersion !== undefined && object.certSchemaVersion !== null) {
+      message.certSchemaVersion = object.certSchemaVersion
+    } else {
+      message.certSchemaVersion = 0
+    }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = object.schemaVersion
+    } else {
+      message.schemaVersion = 0
     }
     return message
   }
@@ -484,7 +545,7 @@ export const MsgApproveAddX509RootCertResponse = {
   }
 }
 
-const baseMsgAddX509Cert: object = { signer: '', cert: '', info: '', time: 0 }
+const baseMsgAddX509Cert: object = { signer: '', cert: '', info: '', time: 0, certSchemaVersion: 0, schemaVersion: 0 }
 
 export const MsgAddX509Cert = {
   encode(message: MsgAddX509Cert, writer: Writer = Writer.create()): Writer {
@@ -499,6 +560,12 @@ export const MsgAddX509Cert = {
     }
     if (message.time !== 0) {
       writer.uint32(32).int64(message.time)
+    }
+    if (message.certSchemaVersion !== 0) {
+      writer.uint32(40).uint32(message.certSchemaVersion)
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(48).uint32(message.schemaVersion)
     }
     return writer
   },
@@ -521,6 +588,12 @@ export const MsgAddX509Cert = {
           break
         case 4:
           message.time = longToNumber(reader.int64() as Long)
+          break
+        case 5:
+          message.certSchemaVersion = reader.uint32()
+          break
+        case 6:
+          message.schemaVersion = reader.uint32()
           break
         default:
           reader.skipType(tag & 7)
@@ -552,6 +625,16 @@ export const MsgAddX509Cert = {
     } else {
       message.time = 0
     }
+    if (object.certSchemaVersion !== undefined && object.certSchemaVersion !== null) {
+      message.certSchemaVersion = Number(object.certSchemaVersion)
+    } else {
+      message.certSchemaVersion = 0
+    }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = Number(object.schemaVersion)
+    } else {
+      message.schemaVersion = 0
+    }
     return message
   },
 
@@ -561,6 +644,8 @@ export const MsgAddX509Cert = {
     message.cert !== undefined && (obj.cert = message.cert)
     message.info !== undefined && (obj.info = message.info)
     message.time !== undefined && (obj.time = message.time)
+    message.certSchemaVersion !== undefined && (obj.certSchemaVersion = message.certSchemaVersion)
+    message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
     return obj
   },
 
@@ -585,6 +670,16 @@ export const MsgAddX509Cert = {
       message.time = object.time
     } else {
       message.time = 0
+    }
+    if (object.certSchemaVersion !== undefined && object.certSchemaVersion !== null) {
+      message.certSchemaVersion = object.certSchemaVersion
+    } else {
+      message.certSchemaVersion = 0
+    }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = object.schemaVersion
+    } else {
+      message.schemaVersion = 0
     }
     return message
   }
@@ -628,7 +723,16 @@ export const MsgAddX509CertResponse = {
   }
 }
 
-const baseMsgProposeRevokeX509RootCert: object = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0, serialNumber: '', revokeChild: false }
+const baseMsgProposeRevokeX509RootCert: object = {
+  signer: '',
+  subject: '',
+  subjectKeyId: '',
+  info: '',
+  time: 0,
+  serialNumber: '',
+  revokeChild: false,
+  schemaVersion: 0
+}
 
 export const MsgProposeRevokeX509RootCert = {
   encode(message: MsgProposeRevokeX509RootCert, writer: Writer = Writer.create()): Writer {
@@ -652,6 +756,9 @@ export const MsgProposeRevokeX509RootCert = {
     }
     if (message.revokeChild === true) {
       writer.uint32(56).bool(message.revokeChild)
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(64).uint32(message.schemaVersion)
     }
     return writer
   },
@@ -683,6 +790,9 @@ export const MsgProposeRevokeX509RootCert = {
           break
         case 7:
           message.revokeChild = reader.bool()
+          break
+        case 8:
+          message.schemaVersion = reader.uint32()
           break
         default:
           reader.skipType(tag & 7)
@@ -729,6 +839,11 @@ export const MsgProposeRevokeX509RootCert = {
     } else {
       message.revokeChild = false
     }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = Number(object.schemaVersion)
+    } else {
+      message.schemaVersion = 0
+    }
     return message
   },
 
@@ -741,6 +856,7 @@ export const MsgProposeRevokeX509RootCert = {
     message.time !== undefined && (obj.time = message.time)
     message.serialNumber !== undefined && (obj.serialNumber = message.serialNumber)
     message.revokeChild !== undefined && (obj.revokeChild = message.revokeChild)
+    message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
     return obj
   },
 
@@ -780,6 +896,11 @@ export const MsgProposeRevokeX509RootCert = {
       message.revokeChild = object.revokeChild
     } else {
       message.revokeChild = false
+    }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = object.schemaVersion
+    } else {
+      message.schemaVersion = 0
     }
     return message
   }
@@ -1001,7 +1122,7 @@ export const MsgApproveRevokeX509RootCertResponse = {
   }
 }
 
-const baseMsgRevokeX509Cert: object = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0, serialNumber: '', revokeChild: false }
+const baseMsgRevokeX509Cert: object = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0, serialNumber: '', revokeChild: false, schemaVersion: 0 }
 
 export const MsgRevokeX509Cert = {
   encode(message: MsgRevokeX509Cert, writer: Writer = Writer.create()): Writer {
@@ -1025,6 +1146,9 @@ export const MsgRevokeX509Cert = {
     }
     if (message.revokeChild === true) {
       writer.uint32(56).bool(message.revokeChild)
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(64).uint32(message.schemaVersion)
     }
     return writer
   },
@@ -1056,6 +1180,9 @@ export const MsgRevokeX509Cert = {
           break
         case 7:
           message.revokeChild = reader.bool()
+          break
+        case 8:
+          message.schemaVersion = reader.uint32()
           break
         default:
           reader.skipType(tag & 7)
@@ -1102,6 +1229,11 @@ export const MsgRevokeX509Cert = {
     } else {
       message.revokeChild = false
     }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = Number(object.schemaVersion)
+    } else {
+      message.schemaVersion = 0
+    }
     return message
   },
 
@@ -1114,6 +1246,7 @@ export const MsgRevokeX509Cert = {
     message.time !== undefined && (obj.time = message.time)
     message.serialNumber !== undefined && (obj.serialNumber = message.serialNumber)
     message.revokeChild !== undefined && (obj.revokeChild = message.revokeChild)
+    message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
     return obj
   },
 
@@ -1153,6 +1286,11 @@ export const MsgRevokeX509Cert = {
       message.revokeChild = object.revokeChild
     } else {
       message.revokeChild = false
+    }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = object.schemaVersion
+    } else {
+      message.schemaVersion = 0
     }
     return message
   }
@@ -1196,7 +1334,7 @@ export const MsgRevokeX509CertResponse = {
   }
 }
 
-const baseMsgRejectAddX509RootCert: object = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0 }
+const baseMsgRejectAddX509RootCert: object = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0, schemaVersion: 0 }
 
 export const MsgRejectAddX509RootCert = {
   encode(message: MsgRejectAddX509RootCert, writer: Writer = Writer.create()): Writer {
@@ -1214,6 +1352,9 @@ export const MsgRejectAddX509RootCert = {
     }
     if (message.time !== 0) {
       writer.uint32(40).int64(message.time)
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(48).uint32(message.schemaVersion)
     }
     return writer
   },
@@ -1239,6 +1380,9 @@ export const MsgRejectAddX509RootCert = {
           break
         case 5:
           message.time = longToNumber(reader.int64() as Long)
+          break
+        case 6:
+          message.schemaVersion = reader.uint32()
           break
         default:
           reader.skipType(tag & 7)
@@ -1275,6 +1419,11 @@ export const MsgRejectAddX509RootCert = {
     } else {
       message.time = 0
     }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = Number(object.schemaVersion)
+    } else {
+      message.schemaVersion = 0
+    }
     return message
   },
 
@@ -1285,6 +1434,7 @@ export const MsgRejectAddX509RootCert = {
     message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId)
     message.info !== undefined && (obj.info = message.info)
     message.time !== undefined && (obj.time = message.time)
+    message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
     return obj
   },
 
@@ -1314,6 +1464,11 @@ export const MsgRejectAddX509RootCert = {
       message.time = object.time
     } else {
       message.time = 0
+    }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = object.schemaVersion
+    } else {
+      message.schemaVersion = 0
     }
     return message
   }
@@ -1369,7 +1524,8 @@ const baseMsgAddPkiRevocationDistributionPoint: object = {
   dataFileSize: 0,
   dataDigest: '',
   dataDigestType: 0,
-  revocationType: 0
+  revocationType: 0,
+  schemaVersion: 0
 }
 
 export const MsgAddPkiRevocationDistributionPoint = {
@@ -1409,6 +1565,9 @@ export const MsgAddPkiRevocationDistributionPoint = {
     }
     if (message.revocationType !== 0) {
       writer.uint32(96).uint32(message.revocationType)
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(104).uint32(message.schemaVersion)
     }
     return writer
   },
@@ -1455,6 +1614,9 @@ export const MsgAddPkiRevocationDistributionPoint = {
           break
         case 12:
           message.revocationType = reader.uint32()
+          break
+        case 13:
+          message.schemaVersion = reader.uint32()
           break
         default:
           reader.skipType(tag & 7)
@@ -1526,6 +1688,11 @@ export const MsgAddPkiRevocationDistributionPoint = {
     } else {
       message.revocationType = 0
     }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = Number(object.schemaVersion)
+    } else {
+      message.schemaVersion = 0
+    }
     return message
   },
 
@@ -1543,6 +1710,7 @@ export const MsgAddPkiRevocationDistributionPoint = {
     message.dataDigest !== undefined && (obj.dataDigest = message.dataDigest)
     message.dataDigestType !== undefined && (obj.dataDigestType = message.dataDigestType)
     message.revocationType !== undefined && (obj.revocationType = message.revocationType)
+    message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
     return obj
   },
 
@@ -1608,6 +1776,11 @@ export const MsgAddPkiRevocationDistributionPoint = {
     } else {
       message.revocationType = 0
     }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = object.schemaVersion
+    } else {
+      message.schemaVersion = 0
+    }
     return message
   }
 }
@@ -1659,7 +1832,8 @@ const baseMsgUpdatePkiRevocationDistributionPoint: object = {
   dataURL: '',
   dataFileSize: 0,
   dataDigest: '',
-  dataDigestType: 0
+  dataDigestType: 0,
+  schemaVersion: 0
 }
 
 export const MsgUpdatePkiRevocationDistributionPoint = {
@@ -1690,6 +1864,9 @@ export const MsgUpdatePkiRevocationDistributionPoint = {
     }
     if (message.dataDigestType !== 0) {
       writer.uint32(72).uint32(message.dataDigestType)
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(80).uint32(message.schemaVersion)
     }
     return writer
   },
@@ -1727,6 +1904,9 @@ export const MsgUpdatePkiRevocationDistributionPoint = {
           break
         case 9:
           message.dataDigestType = reader.uint32()
+          break
+        case 10:
+          message.schemaVersion = reader.uint32()
           break
         default:
           reader.skipType(tag & 7)
@@ -1783,6 +1963,11 @@ export const MsgUpdatePkiRevocationDistributionPoint = {
     } else {
       message.dataDigestType = 0
     }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = Number(object.schemaVersion)
+    } else {
+      message.schemaVersion = 0
+    }
     return message
   },
 
@@ -1797,6 +1982,7 @@ export const MsgUpdatePkiRevocationDistributionPoint = {
     message.dataFileSize !== undefined && (obj.dataFileSize = message.dataFileSize)
     message.dataDigest !== undefined && (obj.dataDigest = message.dataDigest)
     message.dataDigestType !== undefined && (obj.dataDigestType = message.dataDigestType)
+    message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
     return obj
   },
 
@@ -1846,6 +2032,11 @@ export const MsgUpdatePkiRevocationDistributionPoint = {
       message.dataDigestType = object.dataDigestType
     } else {
       message.dataDigestType = 0
+    }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = object.schemaVersion
+    } else {
+      message.schemaVersion = 0
     }
     return message
   }
@@ -2177,7 +2368,7 @@ export const MsgAssignVidResponse = {
   }
 }
 
-const baseMsgAddNocX509RootCert: object = { signer: '', cert: '' }
+const baseMsgAddNocX509RootCert: object = { signer: '', cert: '', certSchemaVersion: 0, schemaVersion: 0 }
 
 export const MsgAddNocX509RootCert = {
   encode(message: MsgAddNocX509RootCert, writer: Writer = Writer.create()): Writer {
@@ -2186,6 +2377,12 @@ export const MsgAddNocX509RootCert = {
     }
     if (message.cert !== '') {
       writer.uint32(18).string(message.cert)
+    }
+    if (message.certSchemaVersion !== 0) {
+      writer.uint32(32).uint32(message.certSchemaVersion)
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(40).uint32(message.schemaVersion)
     }
     return writer
   },
@@ -2202,6 +2399,12 @@ export const MsgAddNocX509RootCert = {
           break
         case 2:
           message.cert = reader.string()
+          break
+        case 4:
+          message.certSchemaVersion = reader.uint32()
+          break
+        case 5:
+          message.schemaVersion = reader.uint32()
           break
         default:
           reader.skipType(tag & 7)
@@ -2223,6 +2426,16 @@ export const MsgAddNocX509RootCert = {
     } else {
       message.cert = ''
     }
+    if (object.certSchemaVersion !== undefined && object.certSchemaVersion !== null) {
+      message.certSchemaVersion = Number(object.certSchemaVersion)
+    } else {
+      message.certSchemaVersion = 0
+    }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = Number(object.schemaVersion)
+    } else {
+      message.schemaVersion = 0
+    }
     return message
   },
 
@@ -2230,6 +2443,8 @@ export const MsgAddNocX509RootCert = {
     const obj: any = {}
     message.signer !== undefined && (obj.signer = message.signer)
     message.cert !== undefined && (obj.cert = message.cert)
+    message.certSchemaVersion !== undefined && (obj.certSchemaVersion = message.certSchemaVersion)
+    message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
     return obj
   },
 
@@ -2244,6 +2459,16 @@ export const MsgAddNocX509RootCert = {
       message.cert = object.cert
     } else {
       message.cert = ''
+    }
+    if (object.certSchemaVersion !== undefined && object.certSchemaVersion !== null) {
+      message.certSchemaVersion = object.certSchemaVersion
+    } else {
+      message.certSchemaVersion = 0
+    }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = object.schemaVersion
+    } else {
+      message.schemaVersion = 0
     }
     return message
   }
@@ -2431,7 +2656,7 @@ export const MsgRemoveX509CertResponse = {
   }
 }
 
-const baseMsgAddNocX509Cert: object = { signer: '', cert: '' }
+const baseMsgAddNocX509Cert: object = { signer: '', cert: '', certSchemaVersion: 0, schemaVersion: 0 }
 
 export const MsgAddNocX509Cert = {
   encode(message: MsgAddNocX509Cert, writer: Writer = Writer.create()): Writer {
@@ -2440,6 +2665,12 @@ export const MsgAddNocX509Cert = {
     }
     if (message.cert !== '') {
       writer.uint32(18).string(message.cert)
+    }
+    if (message.certSchemaVersion !== 0) {
+      writer.uint32(24).uint32(message.certSchemaVersion)
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(32).uint32(message.schemaVersion)
     }
     return writer
   },
@@ -2456,6 +2687,12 @@ export const MsgAddNocX509Cert = {
           break
         case 2:
           message.cert = reader.string()
+          break
+        case 3:
+          message.certSchemaVersion = reader.uint32()
+          break
+        case 4:
+          message.schemaVersion = reader.uint32()
           break
         default:
           reader.skipType(tag & 7)
@@ -2477,6 +2714,16 @@ export const MsgAddNocX509Cert = {
     } else {
       message.cert = ''
     }
+    if (object.certSchemaVersion !== undefined && object.certSchemaVersion !== null) {
+      message.certSchemaVersion = Number(object.certSchemaVersion)
+    } else {
+      message.certSchemaVersion = 0
+    }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = Number(object.schemaVersion)
+    } else {
+      message.schemaVersion = 0
+    }
     return message
   },
 
@@ -2484,6 +2731,8 @@ export const MsgAddNocX509Cert = {
     const obj: any = {}
     message.signer !== undefined && (obj.signer = message.signer)
     message.cert !== undefined && (obj.cert = message.cert)
+    message.certSchemaVersion !== undefined && (obj.certSchemaVersion = message.certSchemaVersion)
+    message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
     return obj
   },
 
@@ -2498,6 +2747,16 @@ export const MsgAddNocX509Cert = {
       message.cert = object.cert
     } else {
       message.cert = ''
+    }
+    if (object.certSchemaVersion !== undefined && object.certSchemaVersion !== null) {
+      message.certSchemaVersion = object.certSchemaVersion
+    } else {
+      message.certSchemaVersion = 0
+    }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = object.schemaVersion
+    } else {
+      message.schemaVersion = 0
     }
     return message
   }
@@ -2541,7 +2800,16 @@ export const MsgAddNocX509CertResponse = {
   }
 }
 
-const baseMsgRevokeNocRootX509Cert: object = { signer: '', subject: '', subjectKeyId: '', serialNumber: '', info: '', time: 0, revokeChild: false }
+const baseMsgRevokeNocRootX509Cert: object = {
+  signer: '',
+  subject: '',
+  subjectKeyId: '',
+  serialNumber: '',
+  info: '',
+  time: 0,
+  revokeChild: false,
+  schemaVersion: 0
+}
 
 export const MsgRevokeNocRootX509Cert = {
   encode(message: MsgRevokeNocRootX509Cert, writer: Writer = Writer.create()): Writer {
@@ -2565,6 +2833,9 @@ export const MsgRevokeNocRootX509Cert = {
     }
     if (message.revokeChild === true) {
       writer.uint32(56).bool(message.revokeChild)
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(64).uint32(message.schemaVersion)
     }
     return writer
   },
@@ -2596,6 +2867,9 @@ export const MsgRevokeNocRootX509Cert = {
           break
         case 7:
           message.revokeChild = reader.bool()
+          break
+        case 8:
+          message.schemaVersion = reader.uint32()
           break
         default:
           reader.skipType(tag & 7)
@@ -2642,6 +2916,11 @@ export const MsgRevokeNocRootX509Cert = {
     } else {
       message.revokeChild = false
     }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = Number(object.schemaVersion)
+    } else {
+      message.schemaVersion = 0
+    }
     return message
   },
 
@@ -2654,6 +2933,7 @@ export const MsgRevokeNocRootX509Cert = {
     message.info !== undefined && (obj.info = message.info)
     message.time !== undefined && (obj.time = message.time)
     message.revokeChild !== undefined && (obj.revokeChild = message.revokeChild)
+    message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
     return obj
   },
 
@@ -2693,6 +2973,11 @@ export const MsgRevokeNocRootX509Cert = {
       message.revokeChild = object.revokeChild
     } else {
       message.revokeChild = false
+    }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = object.schemaVersion
+    } else {
+      message.schemaVersion = 0
     }
     return message
   }
@@ -2736,6 +3021,227 @@ export const MsgRevokeNocRootX509CertResponse = {
   }
 }
 
+const baseMsgRevokeNocX509Cert: object = {
+  signer: '',
+  subject: '',
+  subjectKeyId: '',
+  serialNumber: '',
+  info: '',
+  time: 0,
+  revokeChild: false,
+  schemaVersion: 0
+}
+
+export const MsgRevokeNocX509Cert = {
+  encode(message: MsgRevokeNocX509Cert, writer: Writer = Writer.create()): Writer {
+    if (message.signer !== '') {
+      writer.uint32(10).string(message.signer)
+    }
+    if (message.subject !== '') {
+      writer.uint32(18).string(message.subject)
+    }
+    if (message.subjectKeyId !== '') {
+      writer.uint32(26).string(message.subjectKeyId)
+    }
+    if (message.serialNumber !== '') {
+      writer.uint32(34).string(message.serialNumber)
+    }
+    if (message.info !== '') {
+      writer.uint32(42).string(message.info)
+    }
+    if (message.time !== 0) {
+      writer.uint32(48).int64(message.time)
+    }
+    if (message.revokeChild === true) {
+      writer.uint32(56).bool(message.revokeChild)
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(64).uint32(message.schemaVersion)
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgRevokeNocX509Cert {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseMsgRevokeNocX509Cert } as MsgRevokeNocX509Cert
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.signer = reader.string()
+          break
+        case 2:
+          message.subject = reader.string()
+          break
+        case 3:
+          message.subjectKeyId = reader.string()
+          break
+        case 4:
+          message.serialNumber = reader.string()
+          break
+        case 5:
+          message.info = reader.string()
+          break
+        case 6:
+          message.time = longToNumber(reader.int64() as Long)
+          break
+        case 7:
+          message.revokeChild = reader.bool()
+          break
+        case 8:
+          message.schemaVersion = reader.uint32()
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): MsgRevokeNocX509Cert {
+    const message = { ...baseMsgRevokeNocX509Cert } as MsgRevokeNocX509Cert
+    if (object.signer !== undefined && object.signer !== null) {
+      message.signer = String(object.signer)
+    } else {
+      message.signer = ''
+    }
+    if (object.subject !== undefined && object.subject !== null) {
+      message.subject = String(object.subject)
+    } else {
+      message.subject = ''
+    }
+    if (object.subjectKeyId !== undefined && object.subjectKeyId !== null) {
+      message.subjectKeyId = String(object.subjectKeyId)
+    } else {
+      message.subjectKeyId = ''
+    }
+    if (object.serialNumber !== undefined && object.serialNumber !== null) {
+      message.serialNumber = String(object.serialNumber)
+    } else {
+      message.serialNumber = ''
+    }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = String(object.info)
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = Number(object.time)
+    } else {
+      message.time = 0
+    }
+    if (object.revokeChild !== undefined && object.revokeChild !== null) {
+      message.revokeChild = Boolean(object.revokeChild)
+    } else {
+      message.revokeChild = false
+    }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = Number(object.schemaVersion)
+    } else {
+      message.schemaVersion = 0
+    }
+    return message
+  },
+
+  toJSON(message: MsgRevokeNocX509Cert): unknown {
+    const obj: any = {}
+    message.signer !== undefined && (obj.signer = message.signer)
+    message.subject !== undefined && (obj.subject = message.subject)
+    message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId)
+    message.serialNumber !== undefined && (obj.serialNumber = message.serialNumber)
+    message.info !== undefined && (obj.info = message.info)
+    message.time !== undefined && (obj.time = message.time)
+    message.revokeChild !== undefined && (obj.revokeChild = message.revokeChild)
+    message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
+    return obj
+  },
+
+  fromPartial(object: DeepPartial<MsgRevokeNocX509Cert>): MsgRevokeNocX509Cert {
+    const message = { ...baseMsgRevokeNocX509Cert } as MsgRevokeNocX509Cert
+    if (object.signer !== undefined && object.signer !== null) {
+      message.signer = object.signer
+    } else {
+      message.signer = ''
+    }
+    if (object.subject !== undefined && object.subject !== null) {
+      message.subject = object.subject
+    } else {
+      message.subject = ''
+    }
+    if (object.subjectKeyId !== undefined && object.subjectKeyId !== null) {
+      message.subjectKeyId = object.subjectKeyId
+    } else {
+      message.subjectKeyId = ''
+    }
+    if (object.serialNumber !== undefined && object.serialNumber !== null) {
+      message.serialNumber = object.serialNumber
+    } else {
+      message.serialNumber = ''
+    }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = object.info
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = object.time
+    } else {
+      message.time = 0
+    }
+    if (object.revokeChild !== undefined && object.revokeChild !== null) {
+      message.revokeChild = object.revokeChild
+    } else {
+      message.revokeChild = false
+    }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = object.schemaVersion
+    } else {
+      message.schemaVersion = 0
+    }
+    return message
+  }
+}
+
+const baseMsgRevokeNocX509CertResponse: object = {}
+
+export const MsgRevokeNocX509CertResponse = {
+  encode(_: MsgRevokeNocX509CertResponse, writer: Writer = Writer.create()): Writer {
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgRevokeNocX509CertResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseMsgRevokeNocX509CertResponse } as MsgRevokeNocX509CertResponse
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(_: any): MsgRevokeNocX509CertResponse {
+    const message = { ...baseMsgRevokeNocX509CertResponse } as MsgRevokeNocX509CertResponse
+    return message
+  },
+
+  toJSON(_: MsgRevokeNocX509CertResponse): unknown {
+    const obj: any = {}
+    return obj
+  },
+
+  fromPartial(_: DeepPartial<MsgRevokeNocX509CertResponse>): MsgRevokeNocX509CertResponse {
+    const message = { ...baseMsgRevokeNocX509CertResponse } as MsgRevokeNocX509CertResponse
+    return message
+  }
+}
+
 /** Msg defines the Msg service. */
 export interface Msg {
   ProposeAddX509RootCert(request: MsgProposeAddX509RootCert): Promise<MsgProposeAddX509RootCertResponse>
@@ -2754,6 +3260,7 @@ export interface Msg {
   AddNocX509Cert(request: MsgAddNocX509Cert): Promise<MsgAddNocX509CertResponse>
   RevokeNocRootX509Cert(request: MsgRevokeNocRootX509Cert): Promise<MsgRevokeNocRootX509CertResponse>
   /** this line is used by starport scaffolding # proto/tx/rpc */
+  RevokeNocX509Cert(request: MsgRevokeNocX509Cert): Promise<MsgRevokeNocX509CertResponse>
 }
 
 export class MsgClientImpl implements Msg {
@@ -2849,6 +3356,12 @@ export class MsgClientImpl implements Msg {
     const data = MsgRevokeNocRootX509Cert.encode(request).finish()
     const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Msg', 'RevokeNocRootX509Cert', data)
     return promise.then((data) => MsgRevokeNocRootX509CertResponse.decode(new Reader(data)))
+  }
+
+  RevokeNocX509Cert(request: MsgRevokeNocX509Cert): Promise<MsgRevokeNocX509CertResponse> {
+    const data = MsgRevokeNocX509Cert.encode(request).finish()
+    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Msg', 'RevokeNocX509Cert', data)
+    return promise.then((data) => MsgRevokeNocX509CertResponse.decode(new Reader(data)))
   }
 }
 

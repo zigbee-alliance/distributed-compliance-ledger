@@ -50,7 +50,8 @@ test_divider
 echo "Create VendorInfo Record for VID: $vid"
 companyLegalName="XYZ IOT Devices Inc"
 vendorName="XYZ Devices"
-result=$(echo "test1234" | dcld tx vendorinfo add-vendor --vid=$vid --companyLegalName="$companyLegalName" --vendorName="$vendorName" --from=$vendor_account --yes)
+schema_version_2=2
+result=$(echo "test1234" | dcld tx vendorinfo add-vendor --vid=$vid --companyLegalName="$companyLegalName" --vendorName="$vendorName" --schemaVersion=$schema_version_2 --from=$vendor_account --yes)
 check_response "$result" "\"code\": 0"
 echo "$result"
 
@@ -62,6 +63,7 @@ result=$(dcld query vendorinfo vendor --vid=$vid)
 check_response "$result" "\"vendorID\": $vid"
 check_response "$result" "\"companyLegalName\": \"$companyLegalName\""
 check_response "$result" "\"vendorName\": \"$vendorName\""
+check_response "$result" "\"schemaVersion\": $schema_version_2"
 echo "$result"
 
 test_divider
@@ -97,7 +99,8 @@ test_divider
 echo "Update vendor info record for VID: $vid"
 companyLegalName="ABC Subsidiary Corporation"
 vendorLandingPageURL="https://www.w3.org/"
-result=$(echo "test1234" | dcld tx vendorinfo update-vendor --vid=$vid --companyLegalName="$companyLegalName" --vendorLandingPageURL=$vendorLandingPageURL --vendorName="$vendorName" --from=$vendor_account --yes)
+schema_version_3=3
+result=$(echo "test1234" | dcld tx vendorinfo update-vendor --vid=$vid --companyLegalName="$companyLegalName" --vendorLandingPageURL=$vendorLandingPageURL --vendorName="$vendorName" --schemaVersion=$schema_version_3 --from=$vendor_account --yes)
 check_response "$result" "\"code\": 0"
 echo "$result"
 
@@ -110,6 +113,7 @@ check_response "$result" "\"vendorID\": $vid"
 check_response "$result" "\"companyLegalName\": \"$companyLegalName\""
 check_response "$result" "\"vendorName\": \"$vendorName\""
 check_response "$result" "\"vendorLandingPageURL\": \"$vendorLandingPageURL\""
+check_response "$result" "\"schemaVersion\": $schema_version_3"
 echo "$result"
 
 test_divider

@@ -325,6 +325,16 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
+		{
+			name: "schemaVersion > 65535",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.Creator = sample.AccAddress()
+				msg.SchemaVersion = 65536
+
+				return msg
+			}(validMsgCreateModel()),
+			err: validator.ErrFieldUpperBoundViolated,
+		},
 	}
 
 	positiveTests := []struct {
@@ -874,6 +884,16 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "LsfRevision is greater then max uint16",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.LsfRevision = 65536
+
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrFieldUpperBoundViolated,
+		},
+		{
+			name: "schemaVersion > 65535",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.Creator = sample.AccAddress()
+				msg.SchemaVersion = 65536
 
 				return msg
 			}(validMsgUpdateModel()),

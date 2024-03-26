@@ -20,6 +20,7 @@ starport scaffold --module pki message delete-pki-revocation-distribution-point 
 starport scaffold --module pki message AddNocX509RootCert  cert --signer signer
 starport scaffold --module pki message AddNocX509Cert  cert --signer signer
 starport scaffold --module pki message RevokeNocRootX509Cert subject subjectKeyId serialNumber info time:uint revokeChild:bool --signer signer
+starport scaffold --module pki message RevokeNocX509Cert subject subjectKeyId serialNumber info time:uint revokeChild:bool --signer signer
 
 # CRUD data types
 starport scaffold --module pki map ApprovedCertificates certs:strings --index subject,subjectKeyId --no-message
