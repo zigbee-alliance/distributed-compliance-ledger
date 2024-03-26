@@ -845,7 +845,7 @@ The PAA certificate is immutable. It can only be revoked by either the owner or 
   - cert: `string` - PEM encoded certificate. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data.
   - info: `optional(string)` - information/notes for the proposal. Can contain up to 4096 characters.
   - time: `optional(int64)` - proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
-  - vid: `uint16` -  Vendor ID (positive non-zero). Must be equal to the Certificate's `vid` field for for VID-scoped PAA.
+  - vid: `uint16` -  Vendor ID (positive non-zero). Must be equal to the Certificate's `vid` field for VID-scoped PAA.
   - certificate-schema-version: `optional(uint16)` - Certificate's schema version to support backward/forward compatability(default 0)
   - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
 - In State: `pki/ProposedCertificate/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
