@@ -901,10 +901,10 @@ The certificate is not reject until sufficient number of Trustees reject it.
 - Parameters:
   - subject: `string` - proposed certificates's `Subject` is base64 encoded subject DER sequence bytes
   - subject_key_id: `string` - proposed certificates's `Subject Key Id` in hex string format, e.g:
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
   `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
   - info: `optional(string)` - information/notes for the reject. Can contain up to 4096 characters.
   - time: `optional(int64)` - reject time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
 - In State: `pki/RejectedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - Number of required rejects:
   - more than 1/3 of Trustees
@@ -938,7 +938,6 @@ then the certificate will be in a pending state until sufficient number of other
   - info: `optional(string)` - information/notes for the revocation proposal. Can contain up to 4096 characters.
   - time: `optional(int64)` - revocation proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
   - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
-
 - In State: `pki/ProposedCertificateRevocation/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - CLI command:
   - `dcld tx pki propose-revoke-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
