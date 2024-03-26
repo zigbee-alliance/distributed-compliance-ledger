@@ -44,11 +44,12 @@ func (k msgServer) CreateModel(goCtx context.Context, msg *types.MsgCreateModel)
 		CommissioningModeInitialStepsInstruction: msg.CommissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsHint:      msg.CommissioningModeSecondaryStepsHint,
 		CommissioningModeSecondaryStepsInstruction: msg.CommissioningModeSecondaryStepsInstruction,
-		UserManualUrl: msg.UserManualUrl,
-		SupportUrl:    msg.SupportUrl,
-		ProductUrl:    msg.ProductUrl,
-		LsfUrl:        msg.LsfUrl,
-		SchemaVersion: msg.SchemaVersion,
+		CommissionerRemoteUiFlowUrl:                msg.CommissionerRemoteUiFlowUrl,
+		UserManualUrl:                              msg.UserManualUrl,
+		SupportUrl:                                 msg.SupportUrl,
+		ProductUrl:                                 msg.ProductUrl,
+		LsfUrl:                                     msg.LsfUrl,
+		SchemaVersion:                              msg.SchemaVersion,
 	}
 
 	// if LsfUrl is not empty, we set lsfRevision to default value of 1
@@ -118,6 +119,10 @@ func (k msgServer) UpdateModel(goCtx context.Context, msg *types.MsgUpdateModel)
 
 	if msg.CommissioningModeSecondaryStepsInstruction != "" {
 		model.CommissioningModeSecondaryStepsInstruction = msg.CommissioningModeSecondaryStepsInstruction
+	}
+
+	if msg.CommissionerRemoteUiFlowUrl != "" {
+		model.CommissionerRemoteUiFlowUrl = msg.CommissionerRemoteUiFlowUrl
 	}
 
 	if msg.UserManualUrl != "" {

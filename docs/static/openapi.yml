@@ -8468,6 +8468,8 @@ paths:
                     schemaVersion:
                       type: integer
                       format: int64
+                    commissionerRemoteUiFlowUrl:
+                      type: string
               pagination:
                 type: object
                 properties:
@@ -8693,6 +8695,8 @@ paths:
                   schemaVersion:
                     type: integer
                     format: int64
+                  commissionerRemoteUiFlowUrl:
+                    type: string
         default:
           description: An unexpected error response.
           schema:
@@ -21186,6 +21190,8 @@ definitions:
       schemaVersion:
         type: integer
         format: int64
+      commissionerRemoteUiFlowUrl:
+        type: string
   zigbeealliance.distributedcomplianceledger.model.ModelVersion:
     type: object
     properties:
@@ -21308,6 +21314,8 @@ definitions:
             schemaVersion:
               type: integer
               format: int64
+            commissionerRemoteUiFlowUrl:
+              type: string
       pagination:
         type: object
         properties:
@@ -21385,6 +21393,8 @@ definitions:
           schemaVersion:
             type: integer
             format: int64
+          commissionerRemoteUiFlowUrl:
+            type: string
   zigbeealliance.distributedcomplianceledger.model.QueryGetModelVersionResponse:
     type: object
     properties:

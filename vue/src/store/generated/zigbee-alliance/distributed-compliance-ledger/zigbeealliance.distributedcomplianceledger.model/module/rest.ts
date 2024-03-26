@@ -44,6 +44,7 @@ export interface ModelModel {
 
   /** @format int64 */
   schemaVersion?: number;
+  commissionerRemoteUiFlowUrl?: string;
 }
 
 export interface ModelModelVersion {

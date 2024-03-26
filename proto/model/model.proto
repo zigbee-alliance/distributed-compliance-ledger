@@ -25,5 +25,6 @@ message Model {
   int32 lsfRevision = 17;
   string creator = 18 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   uint32 schemaVersion = 19;
+  string commissionerRemoteUiFlowUrl = 20;
 }
 
