@@ -834,7 +834,7 @@ All PKI related methods are based on this restriction.
 
 **Status: Implemented**
 
-Proposes a new PAA certificate.
+Proposes a new PAA (self-signed root certificate).
 
 If more than 1 Trustee signature is required to add the PAA certificate, the PAA certificate
 will be in a pending state until sufficient number of approvals is received.
@@ -868,7 +868,7 @@ The PAA certificate is immutable. It can only be revoked by either the owner or 
 
 **Status: Implemented**
 
-Approves the proposed PAA certificate. It also can be used for revote (i.e. change vote from reject to approve)
+Approves the proposed PAA (self-signed root certificate). It also can be used for revote (i.e. change vote from reject to approve)
 
 The PAA certificate is not active until sufficient number of Trustees approve it.
 
@@ -892,7 +892,7 @@ The PAA certificate is not active until sufficient number of Trustees approve it
 
 **Status: Implemented**
 
-Rejects the proposed PAA certificate. It also can be used for revote (i.e. change vote from approve to reject)
+Rejects the proposed PAA (self-signed root certificate). It also can be used for revote (i.e. change vote from approve to reject)
 
 If proposed PAA certificate has only proposer's approval and no rejects then proposer can send this transaction to remove the proposal
 
@@ -920,9 +920,11 @@ The certificate is not reject until sufficient number of Trustees reject it.
 
 **Status: Implemented**
 
-Proposes revocation of the given PAA certificate by a Trustee.
+Proposes revocation of the given PAA (self-signed root certificate) by a Trustee.
 
-Revocation here just means removing it from the ledger.
+Revocation works as a soft-delete, meaning that the certificates are not entirely removed but moved from the approved list to the revoked list.
+Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revoked_cert) query.
+
 If a Revocation Distribution Point needs to be published (such as RFC5280 Certificate Revocation List), please use [ADD_REVOCATION_DISTRIBUTION_POINT](#add_revocation_distribution_point).
 
 If `revoke-child` flag is set to `true` then all the certificates in the chain signed by the revoked certificate will be revoked as well.
@@ -953,10 +955,11 @@ then the certificate will be in a pending state until sufficient number of other
 
 **Status: Implemented**
 
-Approves the revocation of the given PAA certificate by a Trustee.
-All the certificates in the chain signed by the revoked certificate will be revoked as well.
+Approves the revocation of the given PAA (self-signed root certificate) by a Trustee.
 
-Revocation here just means removing it from the ledger.
+Revocation works as a soft-delete, meaning that the certificates are not entirely removed but moved from the approved list to the revoked list.
+Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revoked_cert) query.
+
 If a Revocation Distribution Point needs to be published (such as RFC5280 Certificate Revocation List), please use [ADD_REVOCATION_DISTRIBUTION_POINT](#add_revocation_distribution_point).
 
 The revocation is not applied until sufficient number of Trustees approve it.
@@ -982,7 +985,7 @@ The revocation is not applied until sufficient number of Trustees approve it.
 
 **Status: Implemented**
 
-Assigns a Vendor ID (VID) to non-VID scoped PAAs (root certificates) already present on the ledger.
+Assigns a Vendor ID (VID) to non-VID scoped PAAs (self-signed root certificate) already present on the ledger.
 
 - Who can send:
   - Vendor Admin
@@ -1087,7 +1090,7 @@ Deletes a PKI Revocation distribution endpoint (such as RFC5280 Certificate Revo
 
 **Status: Implemented**
 
-Adds a PAI certificate signed by a chain of certificates which must be already present on the ledger.
+Adds a PAI (intermediate certificate) signed by a chain of certificates which must be already present on the ledger.
 
 - Who can send:
   - Vendor Account
@@ -1125,9 +1128,12 @@ Adds a PAI certificate signed by a chain of certificates which must be already p
 
 **Status: Implemented**
 
-Revokes the given PAI certificate.
+Revokes the given PAI (intermediate certificate).
 
-Revocation here just means removing it from the ledger.
+Revocation works as a soft-delete, meaning that the certificates are not entirely removed but moved from the approved list to the revoked list.
+Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revoked_cert) query.
+To entirely remove a PAI certificate, please use [REMOVE_PAI](#remove_pai).
+
 If a Revocation Distribution Point needs to be published (such as RFC5280 Certificate Revocation List), please use [ADD_REVOCATION_DISTRIBUTION_POINT](#add_revocation_distribution_point).
 
 If `revoke-child` flag is set to `true` then all the certificates in the chain signed by the revoked certificate will be revoked as well.
@@ -1154,9 +1160,9 @@ Root certificates can not be revoked this way, use  [PROPOSE_REVOKE_PAA](#propos
 
 **Status: Implemented**
 
-Removes the given PAI certificate from approved and revoked certificates list.
+This transaction completely removes the given PAI (intermediate certificate) from both the approved and revoked certificates list.
 
-PAA certificate can not be removed this way.  
+PAA (self-signed root certificate) can not be removed this way.  
 
 - Who can send: Vendor account
   - the sender's VID must match the VID of the removing certificate's owner.
@@ -1375,6 +1381,9 @@ This transaction adds a NOC root certificate owned by the Vendor.
 This transaction revokes a NOC root certificate owned by the Vendor.
 Revoked NOC root certificates can be re-added using the [ADD_NOC_ROOT](#add_noc_root) transaction.
 
+Revocation works as a soft-delete, meaning that the certificates are not entirely removed but moved from the approved list to the revoked list.
+Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revoked_cert) query.
+
 - Who can send: Vendor account
   - Vid field associated with the corresponding NOC root certificate on the ledger must be equal to the Vendor account's VID.
 - Parameters:
@@ -1416,7 +1425,7 @@ already present on the ledger.
 - Parameters:
   - cert: `string` - The NOC non-root Certificate, encoded in X.509v3 PEM format. Can be a PEM string or a file path.
   - certificate-schema-version: `optional(uint16)` - Certificate's schema version to support backward/forward compatability(default 0)
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0) 
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
 - In State:
   - `pki/ApprovedCertificates/value/<Subject>/<SubjectKeyID>`
   - `pki/ApprovedCertificatesBySubject/value/<Subject>`
@@ -1432,6 +1441,9 @@ already present on the ledger.
 
 This transaction revokes a NOC ICA certificate owned by the Vendor.
 Revoked NOC ICA certificates can be re-added using the [ADD_NOC_ICA](#add_noc_ica) transaction.
+
+Revocation works as a soft-delete, meaning that the certificates are not entirely removed but moved from the approved list to the revoked list.
+Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revoked_cert) query.
 
 - Who can send: Vendor account
   - Vid field associated with the corresponding NOC certificate on the ledger must be equal to the Vendor account's VID.
@@ -1456,6 +1468,9 @@ Revoked NOC ICA certificates can be re-added using the [ADD_NOC_ICA](#add_noc_ic
 
 Retrieve NOC root certificates associated with a specific VID.
 
+Revoked NOC root certificates are not returned.
+Use [GET_ALL_REVOKED_NOC_ROOT](#get_revoked_noc_root) to get a list of all revoked NOC root certificates.
+
 - Who can send: Any account
 - Parameters:
   - vid: `uint16` - Vendor ID (positive non-zero)
@@ -1469,6 +1484,9 @@ Retrieve NOC root certificates associated with a specific VID.
 **Status: Implemented**
 
 Retrieve NOC ICA certificates associated with a specific VID.
+
+Revoked certificates are not returned.
+Use [GET_ALL_REVOKED_CERT](#get_all_revoked_certs) to get a list of all revoked certificates.
 
 - Who can send: Any account
 - Parameters:
@@ -1484,6 +1502,8 @@ Retrieve NOC ICA certificates associated with a specific VID.
 
 Gets a revoked NOC root certificate by the given subject and subject key ID attributes.
 
+Revocation works as a soft-delete, meaning that the certificates are not entirely removed but moved from the approved list to the revoked list.
+
 - Parameters:
   - subject: `string` - Base64 encoded subject DER sequence bytes of the certificate.
   - subject_key_id: `string` - Certificate's `Subject Key Id` in hex string format, e.g., `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`.
@@ -1496,7 +1516,10 @@ Gets a revoked NOC root certificate by the given subject and subject key ID attr
 
 **Status: Implemented**
 
-Retrieve a list of all of NOC root certificates
+Retrieve a list of all of NOC root certificates.
+
+Revoked NOC root certificates are not returned.
+Use [GET_ALL_REVOKED_NOC_ROOT](#get_revoked_noc_root) to get a list of all revoked NOC root certificates.
 
 - Who can send: Any account
 - Parameters:
@@ -1512,6 +1535,9 @@ Retrieve a list of all of NOC root certificates
 
 Retrieve a list of all of NOC ICA certificates
 
+Revoked certificates are not returned.
+Use [GET_ALL_REVOKED_CERT](#get_all_revoked_certs) to get a list of all revoked certificates.
+
 - Who can send: Any account
 - Parameters:
   - Common pagination parameters
@@ -1523,6 +1549,8 @@ Retrieve a list of all of NOC ICA certificates
 #### GET_ALL_REVOKED_NOC_ROOT
 
 Gets all revoked NOC root certificates.
+
+Revocation works as a soft-delete, meaning that the certificates are not entirely removed but moved from the approved list to the revoked list.
 
 - Who can send: Any account
 - Parameters:
@@ -1538,9 +1566,9 @@ Gets all revoked NOC root certificates.
 
 **Status: Implemented**
 
-Gets a certificate (either root or non-root) by the given subject and subject key ID attributes.
+Gets a certificate by the given subject and subject key ID attributes. This query works for all types of certificates (PAA, PAI, NOC_ROOT, NOC_ICA).
 Revoked certificates are not returned.
-Use [GET_ALL_REVOKED_CERTS](#get_all_revoked_certs) to get a list of all revoked certificates.
+Use [GET_REVOKED_CERT](#get_revoked_cert) to get a revoked certificate.
 
 - Parameters:
   - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
@@ -1554,9 +1582,9 @@ Use [GET_ALL_REVOKED_CERTS](#get_all_revoked_certs) to get a list of all revoked
 
 **Status: Implemented**
 
-Gets a revoked certificate (either root or non-root) by the given subject and subject key ID attributes.
+Gets a revoked certificate by the given subject and subject key ID attributes. This query works for all types of certificates (PAA, PAI, NOC_ROOT, NOC_ICA).
 
-Revocation here just means removing it from the ledger.
+Revocation works as a soft-delete, meaning that the certificates are not entirely removed but moved from the approved list to the revoked list.
 If a Revocation Distribution Point (such as RFC5280 Certificate Revocation List) published to the ledger needs to be queried, please use [GET_PKI_REVOCATION_DISTRIBUTION_POINT](#get_pki_revocation_distribution_point).
 
 - Parameters:
@@ -1571,7 +1599,7 @@ If a Revocation Distribution Point (such as RFC5280 Certificate Revocation List)
 
 **Status: Implemented**
 
-Gets all certificates (either root or non-root) by the given subject key ID attribute.
+Gets all certificates by the given subject key ID attribute. This query works for all types of certificates (PAA, PAI, NOC_ROOT, NOC_ICA).
 
 Revoked certificates are not returned.
 Use `GET_ALL_REVOKED_CERTS` to get a list of all revoked certificates.
@@ -1587,7 +1615,7 @@ Use `GET_ALL_REVOKED_CERTS` to get a list of all revoked certificates.
 
 **Status: Implemented**
 
-Gets all certificates (either root or non-root) associated with a subject.
+Gets all certificates associated with a subject. This query works for all types of certificates (PAA, PAI, NOC_ROOT, NOC_ICA).
 
 Revoked certificates are not returned.
 Use [GET_ALL_REVOKED_CERTS](#get_all_revoked_certs) to get a list of all revoked certificates.
@@ -1603,7 +1631,7 @@ Use [GET_ALL_REVOKED_CERTS](#get_all_revoked_certs) to get a list of all revoked
 
 **Status: Implemented**
 
-Gets all child certificates for the given certificate.
+Gets all child certificates for the given certificate. This query works for both PAI and NOC_ICA.
 Revoked certificates are not returned.
 
 - Parameters:
@@ -1618,7 +1646,7 @@ Revoked certificates are not returned.
 
 **Status: Implemented**
 
-Gets all certificates (both root and non-root).
+Gets all certificates. This query works for all types of certificates (PAA, PAI, NOC_ROOT, NOC_ICA).
 
 Revoked certificates are not returned.
 Use [GET_ALL_REVOKED_CERTS](#get_all_revoked_certs) to get a list of all revoked certificates.
@@ -1636,9 +1664,9 @@ Should be sent to trusted nodes only.
 
 **Status: Implemented**
 
-Gets all revoked certificates (both root and non-root).
+Gets all revoked certificates. This query works for all types of certificates (PAA, PAI, NOC_ROOT, NOC_ICA).
 
-Revocation here just means removing it from the ledger.
+Revocation works as a soft-delete, meaning that the certificates are not entirely removed but moved from the approved list to the revoked list.
 If a Revocation Distribution Point (such as RFC5280 Certificate Revocation List) published to the ledger needs to be queried, please use [GET_PKI_REVOCATION_DISTRIBUTION_POINT](#get_pki_revocation_distribution_point).
 
 Should be sent to trusted nodes only.
