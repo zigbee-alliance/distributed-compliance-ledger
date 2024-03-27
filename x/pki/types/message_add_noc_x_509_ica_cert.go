@@ -8,12 +8,12 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/x509"
 )
 
-const TypeMsgAddNocX509Cert = "add_noc_x_509_cert"
+const TypeMsgAddNocX509IcaCert = "add_noc_x_509_ica_cert"
 
-var _ sdk.Msg = &MsgAddNocX509Cert{}
+var _ sdk.Msg = &MsgAddNocX509IcaCert{}
 
-func NewMsgAddNocX509Cert(signer string, cert string, certSchemaVersion, schemaVersion uint32) *MsgAddNocX509Cert {
-	return &MsgAddNocX509Cert{
+func NewMsgAddNocX509IcaCert(signer string, cert string, certSchemaVersion, schemaVersion uint32) *MsgAddNocX509IcaCert {
+	return &MsgAddNocX509IcaCert{
 		Signer:            signer,
 		Cert:              cert,
 		CertSchemaVersion: certSchemaVersion,
@@ -21,15 +21,15 @@ func NewMsgAddNocX509Cert(signer string, cert string, certSchemaVersion, schemaV
 	}
 }
 
-func (msg *MsgAddNocX509Cert) Route() string {
+func (msg *MsgAddNocX509IcaCert) Route() string {
 	return pkitypes.RouterKey
 }
 
-func (msg *MsgAddNocX509Cert) Type() string {
-	return TypeMsgAddNocX509Cert
+func (msg *MsgAddNocX509IcaCert) Type() string {
+	return TypeMsgAddNocX509IcaCert
 }
 
-func (msg *MsgAddNocX509Cert) GetSigners() []sdk.AccAddress {
+func (msg *MsgAddNocX509IcaCert) GetSigners() []sdk.AccAddress {
 	signer, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
 		panic(err)
@@ -38,13 +38,13 @@ func (msg *MsgAddNocX509Cert) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{signer}
 }
 
-func (msg *MsgAddNocX509Cert) GetSignBytes() []byte {
+func (msg *MsgAddNocX509IcaCert) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
 
 	return sdk.MustSortJSON(bz)
 }
 
-func (msg *MsgAddNocX509Cert) ValidateBasic() error {
+func (msg *MsgAddNocX509IcaCert) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address (%s)", err)

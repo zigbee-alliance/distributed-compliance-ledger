@@ -135,7 +135,7 @@ func TestHandler_AddX509Cert_ForExistingNocCertificate(t *testing.T) {
 	nocCertificate.IsNoc = true
 
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, nocCertificate, testconstants.SchemaVersion)
-	setup.Keeper.AddNocCertificate(setup.Ctx, nocCertificate)
+	setup.Keeper.AddNocIcaCertificate(setup.Ctx, nocCertificate)
 	uniqueCertificate := types.UniqueCertificate{
 		Issuer:       nocCertificate.Issuer,
 		SerialNumber: nocCertificate.SerialNumber,

@@ -1055,8 +1055,8 @@ func local_request_Query_NocRootCertificatesAll_0(ctx context.Context, marshaler
 
 }
 
-func request_Query_NocCertificates_0(ctx context.Context, marshaler runtime.Marshaler, client QueryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq QueryGetNocCertificatesRequest
+func request_Query_NocIcaCertificates_0(ctx context.Context, marshaler runtime.Marshaler, client QueryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq QueryGetNocIcaCertificatesRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -1077,13 +1077,13 @@ func request_Query_NocCertificates_0(ctx context.Context, marshaler runtime.Mars
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "vid", err)
 	}
 
-	msg, err := client.NocCertificates(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.NocIcaCertificates(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_Query_NocCertificates_0(ctx context.Context, marshaler runtime.Marshaler, server QueryServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq QueryGetNocCertificatesRequest
+func local_request_Query_NocIcaCertificates_0(ctx context.Context, marshaler runtime.Marshaler, server QueryServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq QueryGetNocIcaCertificatesRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -1104,43 +1104,43 @@ func local_request_Query_NocCertificates_0(ctx context.Context, marshaler runtim
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "vid", err)
 	}
 
-	msg, err := server.NocCertificates(ctx, &protoReq)
+	msg, err := server.NocIcaCertificates(ctx, &protoReq)
 	return msg, metadata, err
 
 }
 
 var (
-	filter_Query_NocCertificatesAll_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+	filter_Query_NocIcaCertificatesAll_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 )
 
-func request_Query_NocCertificatesAll_0(ctx context.Context, marshaler runtime.Marshaler, client QueryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq QueryAllNocCertificatesRequest
+func request_Query_NocIcaCertificatesAll_0(ctx context.Context, marshaler runtime.Marshaler, client QueryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq QueryAllNocIcaCertificatesRequest
 	var metadata runtime.ServerMetadata
 
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Query_NocCertificatesAll_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Query_NocIcaCertificatesAll_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := client.NocCertificatesAll(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.NocIcaCertificatesAll(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_Query_NocCertificatesAll_0(ctx context.Context, marshaler runtime.Marshaler, server QueryServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq QueryAllNocCertificatesRequest
+func local_request_Query_NocIcaCertificatesAll_0(ctx context.Context, marshaler runtime.Marshaler, server QueryServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq QueryAllNocIcaCertificatesRequest
 	var metadata runtime.ServerMetadata
 
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Query_NocCertificatesAll_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Query_NocIcaCertificatesAll_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := server.NocCertificatesAll(ctx, &protoReq)
+	msg, err := server.NocIcaCertificatesAll(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -1700,7 +1700,7 @@ func RegisterQueryHandlerServer(ctx context.Context, mux *runtime.ServeMux, serv
 
 	})
 
-	mux.Handle("GET", pattern_Query_NocCertificates_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_Query_NocIcaCertificates_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -1711,7 +1711,7 @@ func RegisterQueryHandlerServer(ctx context.Context, mux *runtime.ServeMux, serv
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Query_NocCertificates_0(rctx, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Query_NocIcaCertificates_0(rctx, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
@@ -1719,11 +1719,11 @@ func RegisterQueryHandlerServer(ctx context.Context, mux *runtime.ServeMux, serv
 			return
 		}
 
-		forward_Query_NocCertificates_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Query_NocIcaCertificates_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("GET", pattern_Query_NocCertificatesAll_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_Query_NocIcaCertificatesAll_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -1734,7 +1734,7 @@ func RegisterQueryHandlerServer(ctx context.Context, mux *runtime.ServeMux, serv
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Query_NocCertificatesAll_0(rctx, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Query_NocIcaCertificatesAll_0(rctx, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
@@ -1742,7 +1742,7 @@ func RegisterQueryHandlerServer(ctx context.Context, mux *runtime.ServeMux, serv
 			return
 		}
 
-		forward_Query_NocCertificatesAll_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Query_NocIcaCertificatesAll_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -2213,7 +2213,7 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 
 	})
 
-	mux.Handle("GET", pattern_Query_NocCertificates_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_Query_NocIcaCertificates_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -2222,18 +2222,18 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Query_NocCertificates_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Query_NocIcaCertificates_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Query_NocCertificates_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Query_NocIcaCertificates_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("GET", pattern_Query_NocCertificatesAll_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_Query_NocIcaCertificatesAll_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -2242,14 +2242,14 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Query_NocCertificatesAll_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Query_NocIcaCertificatesAll_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Query_NocCertificatesAll_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Query_NocIcaCertificatesAll_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -2297,51 +2297,51 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_ApprovedCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "certificates", "subject", "subjectKeyId"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_ApprovedCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "certificates", "subject", "subjectKeyId"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_ApprovedCertificatesAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "certificates"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_ApprovedCertificatesAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "certificates"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_ProposedCertificate_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "proposed-certificates", "subject", "subjectKeyId"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_ProposedCertificate_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "proposed-certificates", "subject", "subjectKeyId"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_ProposedCertificateAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "proposed-certificates"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_ProposedCertificateAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "proposed-certificates"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_ChildCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "child-certificates", "issuer", "authorityKeyId"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_ChildCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "child-certificates", "issuer", "authorityKeyId"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_ProposedCertificateRevocation_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "proposed-revocation-certificates", "subject", "subjectKeyId"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_ProposedCertificateRevocation_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "proposed-revocation-certificates", "subject", "subjectKeyId"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_ProposedCertificateRevocationAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "proposed-revocation-certificates"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_ProposedCertificateRevocationAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "proposed-revocation-certificates"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_RevokedCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "revoked-certificates", "subject", "subjectKeyId"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_RevokedCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "revoked-certificates", "subject", "subjectKeyId"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_RevokedCertificatesAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "revoked-certificates"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_RevokedCertificatesAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "revoked-certificates"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_ApprovedRootCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "root-certificates"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_ApprovedRootCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "root-certificates"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_RevokedRootCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "revoked-root-certificates"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_RevokedRootCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "revoked-root-certificates"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_ApprovedCertificatesBySubject_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "pki", "certificates", "subject"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_ApprovedCertificatesBySubject_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "pki", "certificates", "subject"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_RejectedCertificate_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "rejected-certificates", "subject", "subjectKeyId"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_RejectedCertificate_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "rejected-certificates", "subject", "subjectKeyId"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_RejectedCertificateAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "rejected-certificates"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_RejectedCertificateAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "rejected-certificates"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_PkiRevocationDistributionPoint_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"dcl", "pki", "revocation-points", "issuerSubjectKeyID", "vid", "label"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_PkiRevocationDistributionPoint_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"dcl", "pki", "revocation-points", "issuerSubjectKeyID", "vid", "label"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_PkiRevocationDistributionPointAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "revocation-points"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_PkiRevocationDistributionPointAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "revocation-points"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_PkiRevocationDistributionPointsByIssuerSubjectKeyID_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "pki", "revocation-points", "issuerSubjectKeyID"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_PkiRevocationDistributionPointsByIssuerSubjectKeyID_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "pki", "revocation-points", "issuerSubjectKeyID"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_NocRootCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "pki", "noc-root-certificates", "vid"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_NocRootCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "pki", "noc-root-certificates", "vid"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_NocRootCertificatesAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "noc-root-certificates"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_NocRootCertificatesAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "noc-root-certificates"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_NocCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "pki", "noc-certificates", "vid"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_NocIcaCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "pki", "noc-ica-certificates", "vid"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_NocCertificatesAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "noc-certificates"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_NocIcaCertificatesAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "noc-ica-certificates"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_RevokedNocRootCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "revoked-noc-root-certificates", "subject", "subjectKeyId"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_RevokedNocRootCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "revoked-noc-root-certificates", "subject", "subjectKeyId"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_RevokedNocRootCertificatesAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "revoked-noc-root-certificates"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_RevokedNocRootCertificatesAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "revoked-noc-root-certificates"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (
@@ -2383,9 +2383,9 @@ var (
 
 	forward_Query_NocRootCertificatesAll_0 = runtime.ForwardResponseMessage
 
-	forward_Query_NocCertificates_0 = runtime.ForwardResponseMessage
+	forward_Query_NocIcaCertificates_0 = runtime.ForwardResponseMessage
 
-	forward_Query_NocCertificatesAll_0 = runtime.ForwardResponseMessage
+	forward_Query_NocIcaCertificatesAll_0 = runtime.ForwardResponseMessage
 
 	forward_Query_RevokedNocRootCertificates_0 = runtime.ForwardResponseMessage
 

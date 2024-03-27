@@ -12,18 +12,18 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-func SimulateMsgRevokeNocX509Cert(
+func SimulateMsgRevokeNocRootX509Cert(
 	k keeper.Keeper,
 ) simtypes.Operation {
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 		simAccount, _ := simtypes.RandomAcc(r, accs)
-		msg := &types.MsgRevokeNocX509Cert{
+		msg := &types.MsgRevokeNocX509RootCert{
 			Signer: simAccount.Address.String(),
 		}
 
-		// TODO: Handling the RevokeNocX509Cert simulation
+		// TODO: Handling the RevokeNocRootX509Cert simulation
 
-		return simtypes.NoOpMsg(pkitypes.ModuleName, msg.Type(), "RevokeNocX509Cert simulation not implemented"), nil, nil
+		return simtypes.NoOpMsg(pkitypes.ModuleName, msg.Type(), "RevokeNocRootX509Cert simulation not implemented"), nil, nil
 	}
 }
