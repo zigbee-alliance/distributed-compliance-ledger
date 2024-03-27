@@ -142,7 +142,7 @@ func TestGenesis(t *testing.T) {
 				Vid: 1,
 			},
 		},
-		NocCertificatesList: []types.NocCertificates{
+		NocIcaCertificatesList: []types.NocIcaCertificates{
 			{
 				Vid: 0,
 			},
@@ -182,7 +182,7 @@ func TestGenesis(t *testing.T) {
 	require.ElementsMatch(t, genesisState.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList, got.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList)
 	require.ElementsMatch(t, genesisState.ApprovedCertificatesBySubjectKeyIdList, got.ApprovedCertificatesBySubjectKeyIdList)
 	require.ElementsMatch(t, genesisState.NocRootCertificatesList, got.NocRootCertificatesList)
-	require.ElementsMatch(t, genesisState.NocCertificatesList, got.NocCertificatesList)
+	require.ElementsMatch(t, genesisState.NocIcaCertificatesList, got.NocIcaCertificatesList)
 	require.ElementsMatch(t, genesisState.RevokedNocRootCertificatesList, got.RevokedNocRootCertificatesList)
 	// this line is used by starport scaffolding # genesis/test/assert
 }

@@ -16,22 +16,22 @@ import (
 // Prevent strconv unused error.
 var _ = strconv.IntSize
 
-func createNNocCertificates(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.NocCertificates {
-	items := make([]types.NocCertificates, n)
+func createNNocIcaCertificates(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.NocIcaCertificates {
+	items := make([]types.NocIcaCertificates, n)
 	for i := range items {
 		items[i].Vid = int32(i)
 
-		keeper.SetNocCertificates(ctx, items[i])
+		keeper.SetNocIcaCertificates(ctx, items[i])
 	}
 
 	return items
 }
 
-func TestNocCertificatesGet(t *testing.T) {
+func TestNocIcaCertificatesGet(t *testing.T) {
 	keeper, ctx := keepertest.PkiKeeper(t, nil)
-	items := createNNocCertificates(keeper, ctx, 10)
+	items := createNNocIcaCertificates(keeper, ctx, 10)
 	for _, item := range items {
-		rst, found := keeper.GetNocCertificates(ctx,
+		rst, found := keeper.GetNocIcaCertificates(ctx,
 			item.Vid,
 		)
 		require.True(t, found)
@@ -41,25 +41,25 @@ func TestNocCertificatesGet(t *testing.T) {
 		)
 	}
 }
-func TestNocCertificatesRemove(t *testing.T) {
+func TestNocIcaCertificatesRemove(t *testing.T) {
 	keeper, ctx := keepertest.PkiKeeper(t, nil)
-	items := createNNocCertificates(keeper, ctx, 10)
+	items := createNNocIcaCertificates(keeper, ctx, 10)
 	for _, item := range items {
-		keeper.RemoveNocCertificates(ctx,
+		keeper.RemoveNocIcaCertificates(ctx,
 			item.Vid,
 		)
-		_, found := keeper.GetNocCertificates(ctx,
+		_, found := keeper.GetNocIcaCertificates(ctx,
 			item.Vid,
 		)
 		require.False(t, found)
 	}
 }
 
-func TestNocCertificatesGetAll(t *testing.T) {
+func TestNocIcaCertificatesGetAll(t *testing.T) {
 	keeper, ctx := keepertest.PkiKeeper(t, nil)
-	items := createNNocCertificates(keeper, ctx, 10)
+	items := createNNocIcaCertificates(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),
-		nullify.Fill(keeper.GetAllNocCertificates(ctx)),
+		nullify.Fill(keeper.GetAllNocIcaCertificates(ctx)),
 	)
 }

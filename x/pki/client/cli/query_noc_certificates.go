@@ -12,10 +12,10 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-func CmdListNocCertificates() *cobra.Command {
+func CmdListNocIcaCertificates() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "all-noc-x509-certs",
-		Short: "Gets all NOC non-root certificates",
+		Use:   "all-noc-x509-ica-certs",
+		Short: "Gets all NOC ICA certificates",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
@@ -26,11 +26,11 @@ func CmdListNocCertificates() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.QueryAllNocCertificatesRequest{
+			params := &types.QueryAllNocIcaCertificatesRequest{
 				Pagination: pageReq,
 			}
 
-			res, err := queryClient.NocCertificatesAll(context.Background(), params)
+			res, err := queryClient.NocIcaCertificatesAll(context.Background(), params)
 			if err != nil {
 				return err
 			}
@@ -45,22 +45,22 @@ func CmdListNocCertificates() *cobra.Command {
 	return cmd
 }
 
-func CmdShowNocCertificates() *cobra.Command {
+func CmdShowNocIcaCertificates() *cobra.Command {
 	var vid int32
 	cmd := &cobra.Command{
-		Use:   "noc-x509-certs",
-		Short: "Gets NOC non-root certificates by VID",
+		Use:   "noc-x509-ica-certs",
+		Short: "Gets NOC ICA certificates by VID",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
-			var res types.NocCertificates
+			var res types.NocIcaCertificates
 
 			return cli.QueryWithProof(
 				clientCtx,
 				pkitypes.StoreKey,
-				types.NocCertificatesKeyPrefix,
-				types.NocCertificatesKey(vid),
+				types.NocIcaCertificatesKeyPrefix,
+				types.NocIcaCertificatesKey(vid),
 				&res,
 			)
 		},

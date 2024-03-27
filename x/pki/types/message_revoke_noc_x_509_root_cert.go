@@ -9,12 +9,12 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
 
-const TypeMsgRevokeNocX509Cert = "revoke_noc_x_509_cert"
+const TypeMsgRevokeNocX509CRootert = "revoke_noc_x_509_root_cert"
 
-var _ sdk.Msg = &MsgRevokeNocX509Cert{}
+var _ sdk.Msg = &MsgRevokeNocX509RootCert{}
 
-func NewMsgRevokeNocX509Cert(signer, subject, subjectKeyID, serialNumber, info string, revokeChild bool, schemaVersion uint32) *MsgRevokeNocX509Cert {
-	return &MsgRevokeNocX509Cert{
+func NewMsgRevokeNocX509RootCert(signer, subject, subjectKeyID, serialNumber, info string, revokeChild bool, schemaVersion uint32) *MsgRevokeNocX509RootCert {
+	return &MsgRevokeNocX509RootCert{
 		Signer:        signer,
 		Subject:       subject,
 		SubjectKeyId:  subjectKeyID,
@@ -26,15 +26,15 @@ func NewMsgRevokeNocX509Cert(signer, subject, subjectKeyID, serialNumber, info s
 	}
 }
 
-func (msg *MsgRevokeNocX509Cert) Route() string {
+func (msg *MsgRevokeNocX509RootCert) Route() string {
 	return pkitypes.RouterKey
 }
 
-func (msg *MsgRevokeNocX509Cert) Type() string {
-	return TypeMsgRevokeNocX509Cert
+func (msg *MsgRevokeNocX509RootCert) Type() string {
+	return TypeMsgRevokeNocX509CRootert
 }
 
-func (msg *MsgRevokeNocX509Cert) GetSigners() []sdk.AccAddress {
+func (msg *MsgRevokeNocX509RootCert) GetSigners() []sdk.AccAddress {
 	signer, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
 		panic(err)
@@ -43,13 +43,13 @@ func (msg *MsgRevokeNocX509Cert) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{signer}
 }
 
-func (msg *MsgRevokeNocX509Cert) GetSignBytes() []byte {
+func (msg *MsgRevokeNocX509RootCert) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
 
 	return sdk.MustSortJSON(bz)
 }
 
-func (msg *MsgRevokeNocX509Cert) ValidateBasic() error {
+func (msg *MsgRevokeNocX509RootCert) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address (%s)", err)

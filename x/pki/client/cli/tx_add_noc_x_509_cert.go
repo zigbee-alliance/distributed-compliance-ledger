@@ -16,13 +16,13 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdAddNocX509Cert() *cobra.Command {
+func CmdAddNocX509IcaCert() *cobra.Command {
 	var (
 		certSchemaVersion uint32
 		schemaVersion     uint32
 	)
 	cmd := &cobra.Command{
-		Use:   "add-noc-x509-cert",
+		Use:   "add-noc-x509-ica-cert",
 		Short: "Adds NOC non-root certificate",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -36,7 +36,7 @@ func CmdAddNocX509Cert() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgAddNocX509Cert(
+			msg := types.NewMsgAddNocX509IcaCert(
 				clientCtx.GetFromAddress().String(),
 				cert,
 				certSchemaVersion,

@@ -13,22 +13,22 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
 
-func TestMsgAddNocX509Cert_ValidateBasic(t *testing.T) {
+func TestMsgAddNocX509IcaCert_ValidateBasic(t *testing.T) {
 	negativeTests := []struct {
 		name string
-		msg  MsgAddNocX509Cert
+		msg  MsgAddNocX509IcaCert
 		err  error
 	}{
 		{
 			name: "invalid address",
-			msg: MsgAddNocX509Cert{
+			msg: MsgAddNocX509IcaCert{
 				Signer: "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		},
 		{
 			name: "empty certificate",
-			msg: MsgAddNocX509Cert{
+			msg: MsgAddNocX509IcaCert{
 				Signer: sample.AccAddress(),
 				Cert:   "",
 			},
@@ -36,7 +36,7 @@ func TestMsgAddNocX509Cert_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "invalid certificate",
-			msg: MsgAddNocX509Cert{
+			msg: MsgAddNocX509IcaCert{
 				Signer: sample.AccAddress(),
 				Cert:   testconstants.StubCertPem,
 			},
@@ -44,7 +44,7 @@ func TestMsgAddNocX509Cert_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "cert len > 10485760",
-			msg: MsgAddNocX509Cert{
+			msg: MsgAddNocX509IcaCert{
 				Signer: sample.AccAddress(),
 				Cert:   tmrand.Str(10485761),
 			},
@@ -52,7 +52,7 @@ func TestMsgAddNocX509Cert_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "schemaVersion > 65535",
-			msg: MsgAddNocX509Cert{
+			msg: MsgAddNocX509IcaCert{
 				Signer:            sample.AccAddress(),
 				Cert:              testconstants.NocCert1,
 				CertSchemaVersion: testconstants.CertSchemaVersion,
@@ -62,7 +62,7 @@ func TestMsgAddNocX509Cert_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "certSchemaVersion > 65535",
-			msg: MsgAddNocX509Cert{
+			msg: MsgAddNocX509IcaCert{
 				Signer:            sample.AccAddress(),
 				Cert:              testconstants.NocCert1,
 				CertSchemaVersion: 65536,
@@ -73,11 +73,11 @@ func TestMsgAddNocX509Cert_ValidateBasic(t *testing.T) {
 	}
 	positiveTests := []struct {
 		name string
-		msg  MsgAddNocX509Cert
+		msg  MsgAddNocX509IcaCert
 	}{
 		{
 			name: "valid add NOC cert msg",
-			msg: MsgAddNocX509Cert{
+			msg: MsgAddNocX509IcaCert{
 				Signer: sample.AccAddress(),
 				Cert:   testconstants.NocCert1,
 			},

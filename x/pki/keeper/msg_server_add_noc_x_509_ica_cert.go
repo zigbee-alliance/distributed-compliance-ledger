@@ -11,7 +11,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/x509"
 )
 
-func (k msgServer) AddNocX509Cert(goCtx context.Context, msg *types.MsgAddNocX509Cert) (*types.MsgAddNocX509CertResponse, error) {
+func (k msgServer) AddNocX509IcaCert(goCtx context.Context, msg *types.MsgAddNocX509IcaCert) (*types.MsgAddNocX509IcaCertResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	signerAddr, err := sdk.AccAddressFromBech32(msg.Signer)
@@ -21,7 +21,7 @@ func (k msgServer) AddNocX509Cert(goCtx context.Context, msg *types.MsgAddNocX50
 
 	// check if signer has vendor role
 	if !k.dclauthKeeper.HasRole(ctx, signerAddr, dclauthtypes.Vendor) {
-		return nil, pkitypes.NewErrUnauthorizedRole("MsgAddNocX509Cert", dclauthtypes.Vendor)
+		return nil, pkitypes.NewErrUnauthorizedRole("MsgAddNocX509IcaCert", dclauthtypes.Vendor)
 	}
 
 	// decode pem certificate
@@ -102,7 +102,7 @@ func (k msgServer) AddNocX509Cert(goCtx context.Context, msg *types.MsgAddNocX50
 	)
 
 	// Add a NOC certificate to the list of NOC certificates with the same VID
-	k.AddNocCertificate(ctx, certificate)
+	k.AddNocIcaCertificate(ctx, certificate)
 
 	// append new certificate to list of certificates with the same Subject/SubjectKeyId combination and store updated list
 	k.AddApprovedCertificate(ctx, certificate, msg.SchemaVersion)
@@ -128,5 +128,5 @@ func (k msgServer) AddNocX509Cert(goCtx context.Context, msg *types.MsgAddNocX50
 	// add to subject key ID -> certificates map
 	k.AddApprovedCertificateBySubjectKeyID(ctx, certificate)
 
-	return &types.MsgAddNocX509CertResponse{}, nil
+	return &types.MsgAddNocX509IcaCertResponse{}, nil
 }

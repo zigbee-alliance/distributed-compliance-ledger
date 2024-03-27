@@ -13,24 +13,24 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-func (k Keeper) NocCertificatesAll(c context.Context, req *types.QueryAllNocCertificatesRequest) (*types.QueryAllNocCertificatesResponse, error) {
+func (k Keeper) NocIcaCertificatesAll(c context.Context, req *types.QueryAllNocIcaCertificatesRequest) (*types.QueryAllNocIcaCertificatesResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
-	var nocCertificatess []types.NocCertificates
+	var nocIcaCertificates []types.NocIcaCertificates
 	ctx := sdk.UnwrapSDKContext(c)
 
 	store := ctx.KVStore(k.storeKey)
-	nocCertificatesStore := prefix.NewStore(store, pkitypes.KeyPrefix(types.NocCertificatesKeyPrefix))
+	nocIcaCertificatesStore := prefix.NewStore(store, pkitypes.KeyPrefix(types.NocIcaCertificatesKeyPrefix))
 
-	pageRes, err := query.Paginate(nocCertificatesStore, req.Pagination, func(key []byte, value []byte) error {
-		var nocCertificates types.NocCertificates
+	pageRes, err := query.Paginate(nocIcaCertificatesStore, req.Pagination, func(key []byte, value []byte) error {
+		var nocCertificates types.NocIcaCertificates
 		if err := k.cdc.Unmarshal(value, &nocCertificates); err != nil {
 			return err
 		}
 
-		nocCertificatess = append(nocCertificatess, nocCertificates)
+		nocIcaCertificates = append(nocIcaCertificates, nocCertificates)
 
 		return nil
 	})
@@ -39,16 +39,16 @@ func (k Keeper) NocCertificatesAll(c context.Context, req *types.QueryAllNocCert
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.QueryAllNocCertificatesResponse{NocCertificates: nocCertificatess, Pagination: pageRes}, nil
+	return &types.QueryAllNocIcaCertificatesResponse{NocIcaCertificates: nocIcaCertificates, Pagination: pageRes}, nil
 }
 
-func (k Keeper) NocCertificates(c context.Context, req *types.QueryGetNocCertificatesRequest) (*types.QueryGetNocCertificatesResponse, error) {
+func (k Keeper) NocIcaCertificates(c context.Context, req *types.QueryGetNocIcaCertificatesRequest) (*types.QueryGetNocIcaCertificatesResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 	ctx := sdk.UnwrapSDKContext(c)
 
-	val, found := k.GetNocCertificates(
+	val, found := k.GetNocIcaCertificates(
 		ctx,
 		req.Vid,
 	)
@@ -56,5 +56,5 @@ func (k Keeper) NocCertificates(c context.Context, req *types.QueryGetNocCertifi
 		return nil, status.Error(codes.NotFound, "not found")
 	}
 
-	return &types.QueryGetNocCertificatesResponse{NocCertificates: val}, nil
+	return &types.QueryGetNocIcaCertificatesResponse{NocIcaCertificates: val}, nil
 }

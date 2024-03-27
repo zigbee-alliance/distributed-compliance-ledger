@@ -15,7 +15,7 @@ import "pki/rejected_certificate.proto";
 import "pki/pki_revocation_distribution_point.proto";
 import "pki/pki_revocation_distribution_points_by_issuer_subject_key_id.proto";
 import "pki/noc_root_certificates.proto";
-import "pki/noc_certificates.proto";
+import "pki/noc_ica_certificates.proto";
 import "pki/revoked_noc_root_certificates.proto";
 // this line is used by starport scaffolding # 1
 import "gogoproto/gogo.proto";
@@ -38,7 +38,7 @@ service Query {
 		option (google.api.http).get = "/dcl/pki/certificates";
 	}
 
-// Queries a ProposedCertificate by index.
+	// Queries a ProposedCertificate by index.
 	rpc ProposedCertificate(QueryGetProposedCertificateRequest) returns (QueryGetProposedCertificateResponse) {
 		option (google.api.http).get = "/dcl/pki/proposed-certificates/{subject}/{subjectKeyId}";
 	}
@@ -48,12 +48,12 @@ service Query {
 		option (google.api.http).get = "/dcl/pki/proposed-certificates";
 	}
 
-// Queries a ChildCertificates by index.
+		// Queries a ChildCertificates by index.
 	rpc ChildCertificates(QueryGetChildCertificatesRequest) returns (QueryGetChildCertificatesResponse) {
 		option (google.api.http).get = "/dcl/pki/child-certificates/{issuer}/{authorityKeyId}";
 	}
 
-// Queries a ProposedCertificateRevocation by index.
+	// Queries a ProposedCertificateRevocation by index.
 	rpc ProposedCertificateRevocation(QueryGetProposedCertificateRevocationRequest) returns (QueryGetProposedCertificateRevocationResponse) {
 		option (google.api.http).get = "/dcl/pki/proposed-revocation-certificates/{subject}/{subjectKeyId}";
 	}
@@ -63,7 +63,7 @@ service Query {
 		option (google.api.http).get = "/dcl/pki/proposed-revocation-certificates";
 	}
 
-// Queries a RevokedCertificates by index.
+	// Queries a RevokedCertificates by index.
 	rpc RevokedCertificates(QueryGetRevokedCertificatesRequest) returns (QueryGetRevokedCertificatesResponse) {
 		option (google.api.http).get = "/dcl/pki/revoked-certificates/{subject}/{subjectKeyId}";
 	}
@@ -73,21 +73,21 @@ service Query {
 		option (google.api.http).get = "/dcl/pki/revoked-certificates";
 	}
 
-// Queries a ApprovedRootCertificates by index.
+	// Queries a ApprovedRootCertificates by index.
 	rpc ApprovedRootCertificates(QueryGetApprovedRootCertificatesRequest) returns (QueryGetApprovedRootCertificatesResponse) {
 		option (google.api.http).get = "/dcl/pki/root-certificates";
 	}
-// Queries a RevokedRootCertificates by index.
+	// Queries a RevokedRootCertificates by index.
 	rpc RevokedRootCertificates(QueryGetRevokedRootCertificatesRequest) returns (QueryGetRevokedRootCertificatesResponse) {
 		option (google.api.http).get = "/dcl/pki/revoked-root-certificates";
 	}
-// Queries a ApprovedCertificatesBySubject by index.
+	// Queries a ApprovedCertificatesBySubject by index.
 	rpc ApprovedCertificatesBySubject(QueryGetApprovedCertificatesBySubjectRequest) returns (QueryGetApprovedCertificatesBySubjectResponse) {
 		option (google.api.http).get = "/dcl/pki/certificates/{subject}";
 	}
 
 
-// Queries a RejectedCertificate by index.
+		// Queries a RejectedCertificate by index.
 	rpc RejectedCertificate(QueryGetRejectedCertificatesRequest) returns (QueryGetRejectedCertificatesResponse) {
 		option (google.api.http).get = "/dcl/pki/rejected-certificates/{subject}/{subjectKeyId}";
 	}
@@ -97,7 +97,7 @@ service Query {
 		option (google.api.http).get = "/dcl/pki/rejected-certificates";
 	}
 
-// Queries a PkiRevocationDistributionPoint by index.
+	// Queries a PkiRevocationDistributionPoint by index.
 	rpc PkiRevocationDistributionPoint(QueryGetPkiRevocationDistributionPointRequest) returns (QueryGetPkiRevocationDistributionPointResponse) {
 		option (google.api.http).get = "/dcl/pki/revocation-points/{issuerSubjectKeyID}/{vid}/{label}";
 	}
@@ -107,12 +107,12 @@ service Query {
 		option (google.api.http).get = "/dcl/pki/revocation-points";
 	}
 
-// Queries a PkiRevocationDistributionPointsByIssuerSubjectKeyID by index.
+	// Queries a PkiRevocationDistributionPointsByIssuerSubjectKeyID by index.
 	rpc PkiRevocationDistributionPointsByIssuerSubjectKeyID(QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest) returns (QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse) {
 		option (google.api.http).get = "/dcl/pki/revocation-points/{issuerSubjectKeyID}";
 	}
 
-// Queries a NocRootCertificates by index.
+	// Queries a NocRootCertificates by index.
 	rpc NocRootCertificates(QueryGetNocRootCertificatesRequest) returns (QueryGetNocRootCertificatesResponse) {
 		option (google.api.http).get = "/dcl/pki/noc-root-certificates/{vid}";
 	}
@@ -122,17 +122,17 @@ service Query {
 		option (google.api.http).get = "/dcl/pki/noc-root-certificates";
 	}
 
-// Queries a NocCertificates by index.
-	rpc NocCertificates(QueryGetNocCertificatesRequest) returns (QueryGetNocCertificatesResponse) {
-		option (google.api.http).get = "/dcl/pki/noc-certificates/{vid}";
+	// Queries a NocIcaCertificates by index.
+	rpc NocIcaCertificates(QueryGetNocIcaCertificatesRequest) returns (QueryGetNocIcaCertificatesResponse) {
+		option (google.api.http).get = "/dcl/pki/noc-ica-certificates/{vid}";
 	}
 
-	// Queries a list of NocCertificates items.
-	rpc NocCertificatesAll(QueryAllNocCertificatesRequest) returns (QueryAllNocCertificatesResponse) {
-		option (google.api.http).get = "/dcl/pki/noc-certificates";
+	// Queries a list of NocIcaCertificates items.
+	rpc NocIcaCertificatesAll(QueryAllNocIcaCertificatesRequest) returns (QueryAllNocIcaCertificatesResponse) {
+		option (google.api.http).get = "/dcl/pki/noc-ica-certificates";
 	}
 
-// Queries a RevokedNocRootCertificates by index.
+	// Queries a RevokedNocRootCertificates by index.
 	rpc RevokedNocRootCertificates(QueryGetRevokedNocRootCertificatesRequest) returns (QueryGetRevokedNocRootCertificatesResponse) {
 		option (google.api.http).get = "/dcl/pki/revoked-noc-root-certificates/{subject}/{subjectKeyId}";
 	}
@@ -317,20 +317,20 @@ message QueryAllNocRootCertificatesResponse {
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-message QueryGetNocCertificatesRequest {
+message QueryGetNocIcaCertificatesRequest {
 	  int32 vid = 1;
 }
 
-message QueryGetNocCertificatesResponse {
-	NocCertificates nocCertificates = 1 [(gogoproto.nullable) = false];
+message QueryGetNocIcaCertificatesResponse {
+	NocIcaCertificates nocIcaCertificates = 1 [(gogoproto.nullable) = false];
 }
 
-message QueryAllNocCertificatesRequest {
+message QueryAllNocIcaCertificatesRequest {
 	cosmos.base.query.v1beta1.PageRequest pagination = 1;
 }
 
-message QueryAllNocCertificatesResponse {
-	repeated NocCertificates nocCertificates = 1 [(gogoproto.nullable) = false];
+message QueryAllNocIcaCertificatesResponse {
+	repeated NocIcaCertificates nocIcaCertificates = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 

@@ -16,9 +16,9 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdRevokeNocX509Cert() *cobra.Command {
+func CmdRevokeNocX509IcaCert() *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "revoke-noc-x509-cert",
+		Use: "revoke-noc-x509-ica-cert",
 		Short: "Revokes the given NOC intermediate or leaf certificate. " +
 			"If revoke-child flag is set to true then all the certificates in the subtree signed by the revoked " +
 			"certificate will be revoked as well.",
@@ -36,7 +36,7 @@ func CmdRevokeNocX509Cert() *cobra.Command {
 			infoArg := viper.GetString(FlagInfo)
 			schemaVersion := viper.GetUint32(common.FlagSchemaVersion)
 
-			msg := types.NewMsgRevokeNocX509Cert(
+			msg := types.NewMsgRevokeNocX509IcaCert(
 				clientCtx.GetFromAddress().String(),
 				subject,
 				subjectKeyID,

@@ -4,15 +4,15 @@ import { Writer, Reader } from 'protobufjs/minimal'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.pki'
 
-export interface NocCertificates {
+export interface NocIcaCertificates {
   vid: number
   certs: Certificate[]
 }
 
-const baseNocCertificates: object = { vid: 0 }
+const baseNocIcaCertificates: object = { vid: 0 }
 
-export const NocCertificates = {
-  encode(message: NocCertificates, writer: Writer = Writer.create()): Writer {
+export const NocIcaCertificates = {
+  encode(message: NocIcaCertificates, writer: Writer = Writer.create()): Writer {
     if (message.vid !== 0) {
       writer.uint32(8).int32(message.vid)
     }
@@ -22,10 +22,10 @@ export const NocCertificates = {
     return writer
   },
 
-  decode(input: Reader | Uint8Array, length?: number): NocCertificates {
+  decode(input: Reader | Uint8Array, length?: number): NocIcaCertificates {
     const reader = input instanceof Uint8Array ? new Reader(input) : input
     let end = length === undefined ? reader.len : reader.pos + length
-    const message = { ...baseNocCertificates } as NocCertificates
+    const message = { ...baseNocIcaCertificates } as NocIcaCertificates
     message.certs = []
     while (reader.pos < end) {
       const tag = reader.uint32()
@@ -44,8 +44,8 @@ export const NocCertificates = {
     return message
   },
 
-  fromJSON(object: any): NocCertificates {
-    const message = { ...baseNocCertificates } as NocCertificates
+  fromJSON(object: any): NocIcaCertificates {
+    const message = { ...baseNocIcaCertificates } as NocIcaCertificates
     message.certs = []
     if (object.vid !== undefined && object.vid !== null) {
       message.vid = Number(object.vid)
@@ -60,7 +60,7 @@ export const NocCertificates = {
     return message
   },
 
-  toJSON(message: NocCertificates): unknown {
+  toJSON(message: NocIcaCertificates): unknown {
     const obj: any = {}
     message.vid !== undefined && (obj.vid = message.vid)
     if (message.certs) {
@@ -71,8 +71,8 @@ export const NocCertificates = {
     return obj
   },
 
-  fromPartial(object: DeepPartial<NocCertificates>): NocCertificates {
-    const message = { ...baseNocCertificates } as NocCertificates
+  fromPartial(object: DeepPartial<NocIcaCertificates>): NocIcaCertificates {
+    const message = { ...baseNocIcaCertificates } as NocIcaCertificates
     message.certs = []
     if (object.vid !== undefined && object.vid !== null) {
       message.vid = object.vid

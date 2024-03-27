@@ -18,7 +18,7 @@ func SimulateMsgAddNocX509Cert(
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 		simAccount, _ := simtypes.RandomAcc(r, accs)
-		msg := &types.MsgAddNocX509Cert{
+		msg := &types.MsgAddNocX509IcaCert{
 			Signer: simAccount.Address.String(),
 		}
 

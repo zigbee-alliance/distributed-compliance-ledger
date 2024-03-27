@@ -6,11 +6,11 @@ var _ binary.ByteOrder
 
 const (
 	// NocCertificatesKeyPrefix is the prefix to retrieve all NocCertificates.
-	NocCertificatesKeyPrefix = "NocCertificates/value/"
+	NocIcaCertificatesKeyPrefix = "NocIcaCertificates/value/"
 )
 
 // NocCertificatesKey returns the store key to retrieve a NocCertificates from the index fields.
-func NocCertificatesKey(
+func NocIcaCertificatesKey(
 	vid int32,
 ) []byte {
 	var key []byte
