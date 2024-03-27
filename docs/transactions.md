@@ -881,7 +881,7 @@ The PAA certificate is not active until sufficient number of Trustees approve it
   - time: `optional(int64)` - approval time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State: `pki/ApprovedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`.
 - Number of required approvals:
-  - greater than 2/3 of Trustees (proposal by a Trustee is also counted as an approval)
+  - greater than or equal 2/3 of Trustees (proposal by a Trustee is also counted as an approval)
 - CLI command:
   - `dcld tx pki approve-add-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
 - Validation:
@@ -971,7 +971,7 @@ The revocation is not applied until sufficient number of Trustees approve it.
   - time: `optional(int64)` - revocation approval time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State: `pki/RevokedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - Number of required approvals:
-  - greater than 2/3 of Trustees (proposal by a Trustee is also counted as an approval)
+  - greater than or equal 2/3 of Trustees (proposal by a Trustee is also counted as an approval)
 - CLI command:
   - `dcld tx pki approve-revoke-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
 - Validation:
@@ -1691,7 +1691,7 @@ The account is not active until sufficient number of Trustees approve it.
 - Who can send:
   - Trustee
 - Number of required approvals:
-  - greater than 2/3 of Trustees for account roles: `TestHouse`, `CertificationCenter`, `Trustee`, `NodeAdmin`, `VendorAdmin` (proposal by a Trustee is also counted as an approval)
+  - greater than or equal 2/3 of Trustees for account roles: `TestHouse`, `CertificationCenter`, `Trustee`, `NodeAdmin`, `VendorAdmin` (proposal by a Trustee is also counted as an approval)
   - greater than 1/3 of Trustees for account role: `Vendor` (proposal by a Trustee is also counted as an approval)
 - CLI command:
   - `dcld tx auth approve-add-account --address=<bench32 encoded string> --from=<account>`
@@ -1717,7 +1717,7 @@ The account is not reject until sufficient number of Trustees reject it.
   - Trustee
 - Number of required rejects:
   - greater than 1/3 of Trustees for account roles: `TestHouse`, `CertificationCenter`, `Trustee`, `NodeAdmin`, `VendorAdmin` (proposal by a Trustee is also counted as an approval)
-  - greater than 2/3 of Trustees for account role: `Vendor` (proposal by a Trustee is also counted as an approval)
+  - greater than or equal 2/3 of Trustees for account role: `Vendor` (proposal by a Trustee is also counted as an approval)
 - CLI command:
   - `dcld tx auth reject-add-account --address=<bench32 encoded string> --from=<account>`
 
@@ -1756,7 +1756,7 @@ The account is not revoked until sufficient number of Trustees approve it.
 - Who can send:
   - Trustee
 - Number of required approvals:
-  - greater than 2/3 of Trustees (proposal by a Trustee is also counted as an approval)
+  - greater than or equal 2/3 of Trustees (proposal by a Trustee is also counted as an approval)
 - CLI command:
   - `dcld tx auth approve-revoke-account --address=<bench32 encoded string> --from=<account>`
 
