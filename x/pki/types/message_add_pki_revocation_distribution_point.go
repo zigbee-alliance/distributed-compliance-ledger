@@ -124,6 +124,7 @@ func (msg *MsgAddPkiRevocationDistributionPoint) verifyPAI(cert *x509.Certificat
 		if cert.AuthorityKeyID == "" {
 			return pkitypes.NewErrInvalidAuthorityKeyIDFormat()
 		}
+
 		err = VerifyCRLSignerCertFormat(cert)
 		if err != nil {
 			return err
