@@ -364,7 +364,7 @@ func GetVendorModelsByHexVid(
 	return &res, nil
 }
 
-func AddModelByVendorWithProductIds(suite *utils.TestSuite) {
+func AddModelByVendorWithProductIDs(suite *utils.TestSuite) {
 	// Alice and Bob are predefined Trustees
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
@@ -404,7 +404,7 @@ func AddModelByVendorWithProductIds(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 }
 
-func UpdateByVendorWithProductIds(suite *utils.TestSuite) {
+func UpdateByVendorWithProductIDs(suite *utils.TestSuite) {
 	// Alice and Bob are predefined Trustees
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
@@ -1097,7 +1097,7 @@ func AddModelByNonVendor(suite *utils.TestSuite) {
 	require.True(suite.T, sdkerrors.ErrUnauthorized.Is(err))
 }
 
-func AddModelByVendorWithNonAssociatedProductIds(suite *utils.TestSuite) {
+func AddModelByVendorWithNonAssociatedProductIDs(suite *utils.TestSuite) {
 	// Alice and Bob are predefined Trustees
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
@@ -1139,7 +1139,7 @@ func AddModelByVendorWithNonAssociatedProductIds(suite *utils.TestSuite) {
 	require.True(suite.T, sdkerrors.ErrUnauthorized.Is(err))
 }
 
-func UpdateModelByVendorWithNonAssociatedProductIds(suite *utils.TestSuite) {
+func UpdateModelByVendorWithNonAssociatedProductIDs(suite *utils.TestSuite) {
 	// Alice and Bob are predefined Trustees
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
@@ -1196,7 +1196,7 @@ func UpdateModelByVendorWithNonAssociatedProductIds(suite *utils.TestSuite) {
 	require.True(suite.T, sdkerrors.ErrUnauthorized.Is(err))
 }
 
-func DeleteModelByVendorWithNonAssociatedProductIds(suite *utils.TestSuite) {
+func DeleteModelByVendorWithNonAssociatedProductIDs(suite *utils.TestSuite) {
 	// Alice and Bob are predefined Trustees
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)

@@ -9,12 +9,18 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
 var _ = strconv.Itoa(0)
 
 func CmdAddX509Cert() *cobra.Command {
+	var (
+		certSchemaVersion uint32
+		schemaVersion     uint32
+	)
+
 	cmd := &cobra.Command{
 		Use: "add-x509-cert",
 		Short: "Adds an intermediate or leaf certificate signed by a chain " +
@@ -34,6 +40,8 @@ func CmdAddX509Cert() *cobra.Command {
 			msg := types.NewMsgAddX509Cert(
 				clientCtx.GetFromAddress().String(),
 				cert,
+				certSchemaVersion,
+				schemaVersion,
 			)
 			// validate basic will be called in GenerateOrBroadcastTxCLI
 			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
@@ -47,6 +55,9 @@ func CmdAddX509Cert() *cobra.Command {
 
 	cmd.Flags().StringP(FlagCertificate, FlagCertificateShortcut, "",
 		"PEM encoded certificate (string or path to file containing data)")
+	cmd.Flags().Uint32Var(&certSchemaVersion, FlagCertificateSchemaVersion, 0, "Schema version of certificate")
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version")
+
 	cli.AddTxFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(flags.FlagFrom)

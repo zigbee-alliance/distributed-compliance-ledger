@@ -114,6 +114,9 @@ export interface VendorinfoVendorInfo {
   companyPreferredName?: string;
   vendorLandingPageURL?: string;
   creator?: string;
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export type QueryParamsType = Record<string | number, any>;

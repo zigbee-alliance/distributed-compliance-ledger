@@ -123,6 +123,7 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 			SoftwareVersionCertificationStatus: types.CodeRevoked,
 			History:                            []*types.ComplianceHistoryItem{},
 			CDVersionNumber:                    msg.CDVersionNumber,
+			SchemaVersion:                      msg.SchemaVersion,
 		}
 	}
 

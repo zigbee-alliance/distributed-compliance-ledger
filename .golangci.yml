@@ -55,6 +55,10 @@ linters:
     - godot
     - inamedparam
     - goconst
+    - nosnakecase
+    - perfsprint
+    - unparam
+    - revive
 
 issues:
   exclude-rules:

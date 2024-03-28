@@ -267,6 +267,16 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			}(validMsgCreateModelVersion()),
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
+		{
+			name: "schemaVersion > 65535",
+			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
+				msg.Creator = sample.AccAddress()
+				msg.SchemaVersion = 65536
+
+				return msg
+			}(validMsgCreateModelVersion()),
+			err: validator.ErrFieldUpperBoundViolated,
+		},
 	}
 
 	positiveTests := []struct {
@@ -681,6 +691,16 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 				return msg
 			}(validMsgUpdateModelVersion()),
 			err: validator.ErrFieldMaxLengthExceeded,
+		},
+		{
+			name: "schemaVersion > 65535",
+			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
+				msg.Creator = sample.AccAddress()
+				msg.SchemaVersion = 65536
+
+				return msg
+			}(validMsgUpdateModelVersion()),
+			err: validator.ErrFieldUpperBoundViolated,
 		},
 	}
 

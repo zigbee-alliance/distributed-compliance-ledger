@@ -34,6 +34,7 @@ func TestProposedCertificateRevocationGet(t *testing.T) {
 		rst, found := keeper.GetProposedCertificateRevocation(ctx,
 			item.Subject,
 			item.SubjectKeyId,
+			item.SerialNumber,
 		)
 		require.True(t, found)
 		require.Equal(t,
@@ -50,10 +51,12 @@ func TestProposedCertificateRevocationRemove(t *testing.T) {
 		keeper.RemoveProposedCertificateRevocation(ctx,
 			item.Subject,
 			item.SubjectKeyId,
+			item.SerialNumber,
 		)
 		_, found := keeper.GetProposedCertificateRevocation(ctx,
 			item.Subject,
 			item.SubjectKeyId,
+			item.SerialNumber,
 		)
 		require.False(t, found)
 	}

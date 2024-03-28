@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
@@ -18,7 +19,8 @@ func CmdProposeRevokeX509RootCert() *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "propose-revoke-x509-root-cert",
 		Short: "Proposes revocation of the given root certificate. " +
-			"All the certificates in the subtree signed by the revoked certificate will be revoked as well.",
+			"If revoke-child flag is set to true then all the certificates in the subtree signed by the revoked " +
+			"certificate will be revoked as well.",
 		Args: cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -29,12 +31,18 @@ func CmdProposeRevokeX509RootCert() *cobra.Command {
 			subject := viper.GetString(FlagSubject)
 			subjectKeyID := viper.GetString(FlagSubjectKeyID)
 			info := viper.GetString(FlagInfo)
+			serialNumber := viper.GetString(FlagSerialNumber)
+			revokeChild := viper.GetBool(FlagRevokeChild)
+			schemaVersion := viper.GetUint32(common.FlagSchemaVersion)
 
 			msg := types.NewMsgProposeRevokeX509RootCert(
 				clientCtx.GetFromAddress().String(),
 				subject,
 				subjectKeyID,
+				serialNumber,
+				revokeChild,
 				info,
+				schemaVersion,
 			)
 			// validate basic will be called in GenerateOrBroadcastTxCLI
 			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
@@ -48,7 +56,10 @@ func CmdProposeRevokeX509RootCert() *cobra.Command {
 
 	cmd.Flags().StringP(FlagSubject, FlagSubjectShortcut, "", "Certificate's subject")
 	cmd.Flags().StringP(FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "", "Certificate's subject key id (hex)")
+	cmd.Flags().StringP(FlagSerialNumber, FlagSerialNumberShortcut, "", "Certificate's serial number")
+	cmd.Flags().StringP(FlagRevokeChild, FlagRevokeChildShortcut, "", "If flag is true then all the certificates in the subtree will be revoked as well - default is false")
 	cmd.Flags().String(FlagInfo, "", FlagInfoUsage)
+	cmd.Flags().Uint32(common.FlagSchemaVersion, 0, "Schema version")
 	cli.AddTxFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(FlagSubject)

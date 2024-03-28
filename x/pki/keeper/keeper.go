@@ -51,3 +51,55 @@ func (k Keeper) CertificateApprovalsCount(ctx sdk.Context, authKeeper types.Dcla
 func (k Keeper) CertificateRejectApprovalsCount(ctx sdk.Context, authKeeper types.DclauthKeeper) int {
 	return authKeeper.CountAccountsWithRole(ctx, authTypes.Trustee) - k.CertificateApprovalsCount(ctx, authKeeper) + 1
 }
+
+func (k Keeper) EnsureVidMatches(ctx sdk.Context, owner string, signer string) error {
+	// get signer VID
+	signerAddr, err := sdk.AccAddressFromBech32(signer)
+	if err != nil {
+		return pkitypes.NewErrInvalidAddress(err)
+	}
+
+	signerAccount, _ := k.dclauthKeeper.GetAccountO(ctx, signerAddr)
+	signerVid := signerAccount.VendorID
+
+	// get owner VID
+	ownerAddr, err := sdk.AccAddressFromBech32(owner)
+	if err != nil {
+		return pkitypes.NewErrInvalidAddress(err)
+	}
+
+	ownerAccount, _ := k.dclauthKeeper.GetAccountO(ctx, ownerAddr)
+	ownerVid := ownerAccount.VendorID
+
+	if signerVid != ownerVid {
+		return pkitypes.NewErrUnauthorizedCertVendor(ownerVid)
+	}
+
+	return nil
+}
+
+func removeCertFromList(issuer string, serialNumber string, certs *[]*types.Certificate) {
+	certIndex := -1
+
+	for i, cert := range *certs {
+		if cert.SerialNumber == serialNumber && cert.Issuer == issuer {
+			certIndex = i
+
+			break
+		}
+	}
+	if certIndex == -1 {
+		return
+	}
+	*certs = append((*certs)[:certIndex], (*certs)[certIndex+1:]...)
+}
+
+func findCertificate(serialNumber string, certificates *[]*types.Certificate) (*types.Certificate, bool) {
+	for _, cert := range *certificates {
+		if cert.SerialNumber == serialNumber {
+			return cert, true
+		}
+	}
+
+	return nil, false
+}

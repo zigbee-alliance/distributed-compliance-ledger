@@ -16,6 +16,7 @@ export interface PkiRevocationDistributionPoint {
   dataDigest: string
   dataDigestType: number
   revocationType: number
+  schemaVersion: number
 }
 
 const basePkiRevocationDistributionPoint: object = {
@@ -29,7 +30,8 @@ const basePkiRevocationDistributionPoint: object = {
   dataFileSize: 0,
   dataDigest: '',
   dataDigestType: 0,
-  revocationType: 0
+  revocationType: 0,
+  schemaVersion: 0
 }
 
 export const PkiRevocationDistributionPoint = {
@@ -66,6 +68,9 @@ export const PkiRevocationDistributionPoint = {
     }
     if (message.revocationType !== 0) {
       writer.uint32(88).uint32(message.revocationType)
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(96).uint32(message.schemaVersion)
     }
     return writer
   },
@@ -109,6 +114,9 @@ export const PkiRevocationDistributionPoint = {
           break
         case 11:
           message.revocationType = reader.uint32()
+          break
+        case 12:
+          message.schemaVersion = reader.uint32()
           break
         default:
           reader.skipType(tag & 7)
@@ -175,6 +183,11 @@ export const PkiRevocationDistributionPoint = {
     } else {
       message.revocationType = 0
     }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = Number(object.schemaVersion)
+    } else {
+      message.schemaVersion = 0
+    }
     return message
   },
 
@@ -191,6 +204,7 @@ export const PkiRevocationDistributionPoint = {
     message.dataDigest !== undefined && (obj.dataDigest = message.dataDigest)
     message.dataDigestType !== undefined && (obj.dataDigestType = message.dataDigestType)
     message.revocationType !== undefined && (obj.revocationType = message.revocationType)
+    message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
     return obj
   },
 
@@ -250,6 +264,11 @@ export const PkiRevocationDistributionPoint = {
       message.revocationType = object.revocationType
     } else {
       message.revocationType = 0
+    }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = object.schemaVersion
+    } else {
+      message.schemaVersion = 0
     }
     return message
   }

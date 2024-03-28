@@ -16,6 +16,7 @@ func NewMsgCreateVendorInfo(
 	companyLegalName string,
 	companyPreferredName string,
 	vendorLandingPageURL string,
+	schemaVersion uint32,
 ) *MsgCreateVendorInfo {
 	return &MsgCreateVendorInfo{
 		Creator:              creator,
@@ -24,6 +25,7 @@ func NewMsgCreateVendorInfo(
 		CompanyLegalName:     companyLegalName,
 		CompanyPreferredName: companyPreferredName,
 		VendorLandingPageURL: vendorLandingPageURL,
+		SchemaVersion:        schemaVersion,
 	}
 }
 
@@ -73,6 +75,7 @@ func NewMsgUpdateVendorInfo(
 	companyLegalName string,
 	companyPreferredName string,
 	vendorLandingPageURL string,
+	schemaVersion uint32,
 ) *MsgUpdateVendorInfo {
 	return &MsgUpdateVendorInfo{
 		Creator:              creator,
@@ -81,6 +84,7 @@ func NewMsgUpdateVendorInfo(
 		CompanyLegalName:     companyLegalName,
 		CompanyPreferredName: companyPreferredName,
 		VendorLandingPageURL: vendorLandingPageURL,
+		SchemaVersion:        schemaVersion,
 	}
 }
 

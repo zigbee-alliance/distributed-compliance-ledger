@@ -8,6 +8,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/spf13/cobra"
+
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
@@ -35,6 +37,7 @@ func CmdUpdateComplianceInfo() *cobra.Command {
 		OSVersion                          string
 		parentChild                        string
 		certificationIDOfSoftwareComponent string
+		schemaVersion                      uint32
 	)
 
 	cmd := &cobra.Command{
@@ -69,6 +72,7 @@ func CmdUpdateComplianceInfo() *cobra.Command {
 				OSVersion,
 				parentChild,
 				certificationIDOfSoftwareComponent,
+				schemaVersion,
 			)
 
 			if err := msg.ValidateBasic(); err != nil {
@@ -117,6 +121,7 @@ func CmdUpdateComplianceInfo() *cobra.Command {
 		"Parent or Child  of the PFC certification route")
 	cmd.Flags().StringVar(&certificationIDOfSoftwareComponent, FlagCertificationIDOfSoftwareComponent, "",
 		"certification ID of software component")
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version")
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)

@@ -35,6 +35,7 @@ func (k msgServer) CreateVendorInfo(goCtx context.Context, msg *types.MsgCreateV
 		CompanyLegalName:     msg.CompanyLegalName,
 		CompanyPreferredName: msg.CompanyPreferredName,
 		VendorLandingPageURL: msg.VendorLandingPageURL,
+		SchemaVersion:        msg.SchemaVersion,
 	}
 
 	k.SetVendorInfo(
@@ -90,6 +91,8 @@ func (k msgServer) UpdateVendorInfo(goCtx context.Context, msg *types.MsgUpdateV
 	if msg.VendorLandingPageURL != "" {
 		vendorInfo.VendorLandingPageURL = msg.VendorLandingPageURL
 	}
+
+	vendorInfo.SchemaVersion = msg.SchemaVersion
 
 	k.SetVendorInfo(ctx, vendorInfo)
 

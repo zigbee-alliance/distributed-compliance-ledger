@@ -22,6 +22,8 @@ export interface MsgCreateModel {
   supportUrl: string
   productUrl: string
   lsfUrl: string
+  schemaVersion: number
+  commissionerRemoteUiFlowUrl: string
 }
 
 export interface MsgCreateModelResponse {}
@@ -41,6 +43,8 @@ export interface MsgUpdateModel {
   productUrl: string
   lsfUrl: string
   lsfRevision: number
+  schemaVersion: number
+  commissionerRemoteUiFlowUrl: string
 }
 
 export interface MsgUpdateModelResponse {}
@@ -69,6 +73,7 @@ export interface MsgCreateModelVersion {
   minApplicableSoftwareVersion: number
   maxApplicableSoftwareVersion: number
   releaseNotesUrl: string
+  schemaVersion: number
 }
 
 export interface MsgCreateModelVersionResponse {}
@@ -85,6 +90,7 @@ export interface MsgUpdateModelVersion {
   releaseNotesUrl: string
   otaFileSize: number
   otaChecksum: string
+  schemaVersion: number
 }
 
 export interface MsgUpdateModelVersionResponse {}
@@ -115,7 +121,9 @@ const baseMsgCreateModel: object = {
   userManualUrl: '',
   supportUrl: '',
   productUrl: '',
-  lsfUrl: ''
+  lsfUrl: '',
+  schemaVersion: 0,
+  commissionerRemoteUiFlowUrl: ''
 }
 
 export const MsgCreateModel = {
@@ -170,6 +178,12 @@ export const MsgCreateModel = {
     }
     if (message.lsfUrl !== '') {
       writer.uint32(138).string(message.lsfUrl)
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(144).uint32(message.schemaVersion)
+    }
+    if (message.commissionerRemoteUiFlowUrl !== '') {
+      writer.uint32(154).string(message.commissionerRemoteUiFlowUrl)
     }
     return writer
   },
@@ -231,6 +245,12 @@ export const MsgCreateModel = {
           break
         case 17:
           message.lsfUrl = reader.string()
+          break
+        case 18:
+          message.schemaVersion = reader.uint32()
+          break
+        case 19:
+          message.commissionerRemoteUiFlowUrl = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -327,6 +347,16 @@ export const MsgCreateModel = {
     } else {
       message.lsfUrl = ''
     }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = Number(object.schemaVersion)
+    } else {
+      message.schemaVersion = 0
+    }
+    if (object.commissionerRemoteUiFlowUrl !== undefined && object.commissionerRemoteUiFlowUrl !== null) {
+      message.commissionerRemoteUiFlowUrl = String(object.commissionerRemoteUiFlowUrl)
+    } else {
+      message.commissionerRemoteUiFlowUrl = ''
+    }
     return message
   },
 
@@ -351,6 +381,8 @@ export const MsgCreateModel = {
     message.supportUrl !== undefined && (obj.supportUrl = message.supportUrl)
     message.productUrl !== undefined && (obj.productUrl = message.productUrl)
     message.lsfUrl !== undefined && (obj.lsfUrl = message.lsfUrl)
+    message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
+    message.commissionerRemoteUiFlowUrl !== undefined && (obj.commissionerRemoteUiFlowUrl = message.commissionerRemoteUiFlowUrl)
     return obj
   },
 
@@ -441,6 +473,16 @@ export const MsgCreateModel = {
     } else {
       message.lsfUrl = ''
     }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = object.schemaVersion
+    } else {
+      message.schemaVersion = 0
+    }
+    if (object.commissionerRemoteUiFlowUrl !== undefined && object.commissionerRemoteUiFlowUrl !== null) {
+      message.commissionerRemoteUiFlowUrl = object.commissionerRemoteUiFlowUrl
+    } else {
+      message.commissionerRemoteUiFlowUrl = ''
+    }
     return message
   }
 }
@@ -497,7 +539,9 @@ const baseMsgUpdateModel: object = {
   supportUrl: '',
   productUrl: '',
   lsfUrl: '',
-  lsfRevision: 0
+  lsfRevision: 0,
+  schemaVersion: 0,
+  commissionerRemoteUiFlowUrl: ''
 }
 
 export const MsgUpdateModel = {
@@ -543,6 +587,12 @@ export const MsgUpdateModel = {
     }
     if (message.lsfRevision !== 0) {
       writer.uint32(112).int32(message.lsfRevision)
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(120).uint32(message.schemaVersion)
+    }
+    if (message.commissionerRemoteUiFlowUrl !== '') {
+      writer.uint32(130).string(message.commissionerRemoteUiFlowUrl)
     }
     return writer
   },
@@ -595,6 +645,12 @@ export const MsgUpdateModel = {
           break
         case 14:
           message.lsfRevision = reader.int32()
+          break
+        case 15:
+          message.schemaVersion = reader.uint32()
+          break
+        case 16:
+          message.commissionerRemoteUiFlowUrl = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -676,6 +732,16 @@ export const MsgUpdateModel = {
     } else {
       message.lsfRevision = 0
     }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = Number(object.schemaVersion)
+    } else {
+      message.schemaVersion = 0
+    }
+    if (object.commissionerRemoteUiFlowUrl !== undefined && object.commissionerRemoteUiFlowUrl !== null) {
+      message.commissionerRemoteUiFlowUrl = String(object.commissionerRemoteUiFlowUrl)
+    } else {
+      message.commissionerRemoteUiFlowUrl = ''
+    }
     return message
   },
 
@@ -697,6 +763,8 @@ export const MsgUpdateModel = {
     message.productUrl !== undefined && (obj.productUrl = message.productUrl)
     message.lsfUrl !== undefined && (obj.lsfUrl = message.lsfUrl)
     message.lsfRevision !== undefined && (obj.lsfRevision = message.lsfRevision)
+    message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
+    message.commissionerRemoteUiFlowUrl !== undefined && (obj.commissionerRemoteUiFlowUrl = message.commissionerRemoteUiFlowUrl)
     return obj
   },
 
@@ -771,6 +839,16 @@ export const MsgUpdateModel = {
       message.lsfRevision = object.lsfRevision
     } else {
       message.lsfRevision = 0
+    }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = object.schemaVersion
+    } else {
+      message.schemaVersion = 0
+    }
+    if (object.commissionerRemoteUiFlowUrl !== undefined && object.commissionerRemoteUiFlowUrl !== null) {
+      message.commissionerRemoteUiFlowUrl = object.commissionerRemoteUiFlowUrl
+    } else {
+      message.commissionerRemoteUiFlowUrl = ''
     }
     return message
   }
@@ -956,7 +1034,8 @@ const baseMsgCreateModelVersion: object = {
   otaChecksumType: 0,
   minApplicableSoftwareVersion: 0,
   maxApplicableSoftwareVersion: 0,
-  releaseNotesUrl: ''
+  releaseNotesUrl: '',
+  schemaVersion: 0
 }
 
 export const MsgCreateModelVersion = {
@@ -1005,6 +1084,9 @@ export const MsgCreateModelVersion = {
     }
     if (message.releaseNotesUrl !== '') {
       writer.uint32(122).string(message.releaseNotesUrl)
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(128).uint32(message.schemaVersion)
     }
     return writer
   },
@@ -1060,6 +1142,9 @@ export const MsgCreateModelVersion = {
           break
         case 15:
           message.releaseNotesUrl = reader.string()
+          break
+        case 16:
+          message.schemaVersion = reader.uint32()
           break
         default:
           reader.skipType(tag & 7)
@@ -1146,6 +1231,11 @@ export const MsgCreateModelVersion = {
     } else {
       message.releaseNotesUrl = ''
     }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = Number(object.schemaVersion)
+    } else {
+      message.schemaVersion = 0
+    }
     return message
   },
 
@@ -1166,6 +1256,7 @@ export const MsgCreateModelVersion = {
     message.minApplicableSoftwareVersion !== undefined && (obj.minApplicableSoftwareVersion = message.minApplicableSoftwareVersion)
     message.maxApplicableSoftwareVersion !== undefined && (obj.maxApplicableSoftwareVersion = message.maxApplicableSoftwareVersion)
     message.releaseNotesUrl !== undefined && (obj.releaseNotesUrl = message.releaseNotesUrl)
+    message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
     return obj
   },
 
@@ -1246,6 +1337,11 @@ export const MsgCreateModelVersion = {
     } else {
       message.releaseNotesUrl = ''
     }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = object.schemaVersion
+    } else {
+      message.schemaVersion = 0
+    }
     return message
   }
 }
@@ -1299,7 +1395,8 @@ const baseMsgUpdateModelVersion: object = {
   maxApplicableSoftwareVersion: 0,
   releaseNotesUrl: '',
   otaFileSize: 0,
-  otaChecksum: ''
+  otaChecksum: '',
+  schemaVersion: 0
 }
 
 export const MsgUpdateModelVersion = {
@@ -1336,6 +1433,9 @@ export const MsgUpdateModelVersion = {
     }
     if (message.otaChecksum !== '') {
       writer.uint32(90).string(message.otaChecksum)
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(96).uint32(message.schemaVersion)
     }
     return writer
   },
@@ -1379,6 +1479,9 @@ export const MsgUpdateModelVersion = {
           break
         case 11:
           message.otaChecksum = reader.string()
+          break
+        case 12:
+          message.schemaVersion = reader.uint32()
           break
         default:
           reader.skipType(tag & 7)
@@ -1445,6 +1548,11 @@ export const MsgUpdateModelVersion = {
     } else {
       message.otaChecksum = ''
     }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = Number(object.schemaVersion)
+    } else {
+      message.schemaVersion = 0
+    }
     return message
   },
 
@@ -1461,6 +1569,7 @@ export const MsgUpdateModelVersion = {
     message.releaseNotesUrl !== undefined && (obj.releaseNotesUrl = message.releaseNotesUrl)
     message.otaFileSize !== undefined && (obj.otaFileSize = message.otaFileSize)
     message.otaChecksum !== undefined && (obj.otaChecksum = message.otaChecksum)
+    message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
     return obj
   },
 
@@ -1520,6 +1629,11 @@ export const MsgUpdateModelVersion = {
       message.otaChecksum = object.otaChecksum
     } else {
       message.otaChecksum = ''
+    }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = object.schemaVersion
+    } else {
+      message.schemaVersion = 0
     }
     return message
   }

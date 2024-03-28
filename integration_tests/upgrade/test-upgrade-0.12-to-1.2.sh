@@ -989,13 +989,13 @@ check_response "$result" "\"code\": 0"
 test_divider
 
 echo "Add intermediate_cert"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx pki add-x509-cert --certificate="$intermediate_cert_path_new" --from=$trustee_account_1 --yes)
+result=$(echo $passphrase | $DCLD_BIN_NEW tx pki add-x509-cert --certificate="$intermediate_cert_path_new" --from=$vendor_account --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Revoke intermediate_cert"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx pki revoke-x509-cert --subject="$intermediate_cert_subject_new" --subject-key-id="$intermediate_cert_subject_key_id_new" --from=$trustee_account_1 --yes)
+result=$(echo $passphrase | $DCLD_BIN_NEW tx pki revoke-x509-cert --subject="$intermediate_cert_subject_new" --subject-key-id="$intermediate_cert_subject_key_id_new" --from=$vendor_account --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider

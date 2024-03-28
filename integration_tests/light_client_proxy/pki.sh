@@ -131,15 +131,15 @@ dcld config node tcp://localhost:26657
 trustee_account="jack"
 second_trustee_account="alice"
 
-echo "Create regular account"
-create_new_account user_account "CertificationCenter"
+vendor_account=vendor_account_$vid
+echo "Create Vendor account - $vendor_account"
+create_new_vendor_account $vendor_account $vid
 
 test_divider
 
-echo "$user_account (Not Trustee) propose Root certificate"
+echo "$vendor_account (Not Trustee) propose Root certificate"
 root_path="integration_tests/constants/root_cert"
-result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_path" --vid $vid --from $user_account --yes)
-result=$(get_txn_result "$result")
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_path" --vid $vid --from $vendor_account --yes)
 response_does_not_contain "$result" "\"code\": 0"
 echo "$result"
 
@@ -148,7 +148,6 @@ test_divider
 echo "$trustee_account (Trustee) propose Root certificate"
 root_path="integration_tests/constants/root_cert"
 result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_path" --vid $vid --from $trustee_account --yes)
-result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
 
@@ -156,33 +155,29 @@ test_divider
 
 echo "$second_trustee_account (Trustee) approve Root certificate"
 result=$(echo "$passphrase" | dcld tx pki approve-add-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $second_trustee_account --yes)
-result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
 
 test_divider
 
-echo "$user_account (Not Trustee) add Intermediate certificate"
+echo "$vendor_account (Vendor) add Intermediate certificate"
 intermediate_path="integration_tests/constants/intermediate_cert"
-result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_path" --from $user_account --yes)
-result=$(get_txn_result "$result")
+result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_path" --from $vendor_account --yes)
 check_response "$result" "\"code\": 0"
 echo "$result"
 
 test_divider
 
-echo "$trustee_account (Trustee) add Leaf certificate"
+echo "$vendor_account (Vendor) add Leaf certificate"
 leaf_path="integration_tests/constants/leaf_cert"
-result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$leaf_path" --from $trustee_account --yes)
-result=$(get_txn_result "$result")
+result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$leaf_path" --from $vendor_account --yes)
 check_response "$result" "\"code\": 0"
 echo "$result"
 
 test_divider
 
-echo "$trustee_account (Trustee) revokes Leaf certificate."
-result=$(echo "$passphrase" | dcld tx pki revoke-x509-cert --subject="$leaf_cert_subject" --subject-key-id="$leaf_cert_subject_key_id" --from=$trustee_account --yes)
-result=$(get_txn_result "$result")
+echo "$vendor_account (Vendor) revokes Leaf certificate."
+result=$(echo "$passphrase" | dcld tx pki revoke-x509-cert --subject="$leaf_cert_subject" --subject-key-id="$leaf_cert_subject_key_id" --from=$vendor_account --yes)
 check_response "$result" "\"code\": 0"
 echo "$result"
 
@@ -318,7 +313,7 @@ echo "try to write via light client proxy"
 test_divider
 
 echo "Add cert"
-result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_path" --from $user_account --yes)
+result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_path" --from $vendor_account --yes)
 echo "$result"
 check_response "$result" "Write requests don't work with a Light Client Proxy"
 

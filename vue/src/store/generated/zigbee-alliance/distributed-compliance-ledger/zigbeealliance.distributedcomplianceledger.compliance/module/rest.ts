@@ -65,6 +65,9 @@ export interface ComplianceComplianceInfo {
   OSVersion?: string;
   parentChild?: string;
   certificationIdOfSoftwareComponent?: string;
+
+    /** @format int64 */
+    schemaVersion?: number;
 }
 
 export interface ComplianceDeviceSoftwareCompliance {

@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"net/url"
 
-	tmrand "github.com/cometbft/cometbft/libs/rand"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
@@ -264,13 +263,21 @@ func GetAllProposedRevocationX509Certs(suite *utils.TestSuite) (res []pkitypes.P
 }
 
 func GetProposedRevocationX509Cert(suite *utils.TestSuite, subject string, subjectKeyID string) (*pkitypes.ProposedCertificateRevocation, error) {
+	return getProposedRevocationX509Cert(suite, subject, subjectKeyID, "")
+}
+
+func GetProposedRevocationX509CertBySerialNumber(suite *utils.TestSuite, subject string, subjectKeyID string, serialNumber string) (*pkitypes.ProposedCertificateRevocation, error) {
+	return getProposedRevocationX509Cert(suite, subject, subjectKeyID, serialNumber)
+}
+
+func getProposedRevocationX509Cert(suite *utils.TestSuite, subject string, subjectKeyID string, serialNumber string) (*pkitypes.ProposedCertificateRevocation, error) {
 	var res pkitypes.ProposedCertificateRevocation
 	if suite.Rest {
 		var resp pkitypes.QueryGetProposedCertificateRevocationResponse
 		err := suite.QueryREST(
 			fmt.Sprintf(
-				"/dcl/pki/proposed-revocation-certificates/%s/%s",
-				url.QueryEscape(subject), url.QueryEscape(subjectKeyID),
+				"/dcl/pki/proposed-revocation-certificates/%s/%s?serialNumber=%s",
+				url.QueryEscape(subject), url.QueryEscape(subjectKeyID), url.QueryEscape(serialNumber),
 			),
 			&resp,
 		)
@@ -289,6 +296,7 @@ func GetProposedRevocationX509Cert(suite *utils.TestSuite, subject string, subje
 			&pkitypes.QueryGetProposedCertificateRevocationRequest{
 				Subject:      subject,
 				SubjectKeyId: subjectKeyID,
+				SerialNumber: serialNumber,
 			},
 		)
 		if err != nil {
@@ -645,13 +653,12 @@ func Demo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Register new Vendor account
-	vid := int32(tmrand.Uint16())
 	vendorName := utils.RandString()
 	vendorAccount := test_dclauth.CreateVendorAccount(
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
-		vid,
+		testconstants.Vid,
 		testconstants.ProductIDsEmpty,
 		aliceName,
 		aliceAccount,
@@ -779,8 +786,16 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, jackAccount.Address, certificate.Certs[0].Owner)
 	require.True(suite.T, certificate.Certs[0].IsRoot)
 
-	// User (Not Trustee) add Intermediate certificate
+	// Try to add Intermediate certificate when sender is not Vendor account
 	msgAddX509Cert := pkitypes.MsgAddX509Cert{
+		Cert:   testconstants.IntermediateCertPem,
+		Signer: aliceAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, aliceName, aliceAccount)
+	require.Error(suite.T, err)
+
+	// Vandor add Intermediate certificate
+	msgAddX509Cert = pkitypes.MsgAddX509Cert{
 		Cert:   testconstants.IntermediateCertPem,
 		Signer: vendorAccount.Address,
 	}
@@ -817,12 +832,12 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, vendorAccount.Address, certificate.Certs[0].Owner)
 	require.False(suite.T, certificate.Certs[0].IsRoot)
 
-	// Alice (Trustee) add Leaf certificate
+	// Vandor add Leaf certificate
 	secondMsgAddX509Cert := pkitypes.MsgAddX509Cert{
 		Cert:   testconstants.LeafCertPem,
-		Signer: aliceAccount.Address,
+		Signer: vendorAccount.Address,
 	}
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&secondMsgAddX509Cert}, aliceName, aliceAccount)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&secondMsgAddX509Cert}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	// Request all proposed Root certificates
@@ -854,7 +869,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.LeafSubjectKeyID, certificate.SubjectKeyId)
 	require.Equal(suite.T, 1, len(certificate.Certs))
 	require.Equal(suite.T, testconstants.LeafCertPem, certificate.Certs[0].PemCert)
-	require.Equal(suite.T, aliceAccount.Address, certificate.Certs[0].Owner)
+	require.Equal(suite.T, vendorAccount.Address, certificate.Certs[0].Owner)
 	require.Equal(suite.T, testconstants.LeafSubject, certificate.Certs[0].Subject)
 	require.Equal(suite.T, testconstants.LeafSubjectKeyID, certificate.Certs[0].SubjectKeyId)
 	require.Equal(suite.T, testconstants.LeafSubjectAsText, certificate.Certs[0].SubjectAsText)
@@ -905,10 +920,21 @@ func Demo(suite *utils.TestSuite) {
 	_, err = GetAllChildX509Certs(suite, testconstants.LeafSubject, testconstants.LeafSubjectKeyID)
 	suite.AssertNotFound(err)
 
-	// User (Not Trustee) revokes Intermediate certificate. This must also revoke its child - Leaf certificate.
+	// Try to Revoke Intermediate certificate when sender is not Vendor account
 	msgRevokeX509Cert := pkitypes.MsgRevokeX509Cert{
 		Subject:      testconstants.IntermediateSubject,
 		SubjectKeyId: testconstants.IntermediateSubjectKeyID,
+		RevokeChild:  true,
+		Signer:       aliceAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRevokeX509Cert}, aliceName, aliceAccount)
+	require.Error(suite.T, err)
+
+	// Vendor revokes Intermediate certificate. With `RevokeChild` set to true, its child must also be revoked - Leaf certificate.
+	msgRevokeX509Cert = pkitypes.MsgRevokeX509Cert{
+		Subject:      testconstants.IntermediateSubject,
+		SubjectKeyId: testconstants.IntermediateSubjectKeyID,
+		RevokeChild:  true,
 		Signer:       vendorAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRevokeX509Cert}, vendorName, vendorAccount)
@@ -952,7 +978,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.LeafSubject, revokedCertificate.Certs[0].Subject)
 	require.Equal(suite.T, testconstants.LeafSubjectKeyID, revokedCertificate.Certs[0].SubjectKeyId)
 	require.Equal(suite.T, testconstants.LeafCertPem, revokedCertificate.Certs[0].PemCert)
-	require.Equal(suite.T, aliceAccount.Address, revokedCertificate.Certs[0].Owner)
+	require.Equal(suite.T, vendorAccount.Address, revokedCertificate.Certs[0].Owner)
 	require.Equal(suite.T, testconstants.LeafSubjectAsText, revokedCertificate.Certs[0].SubjectAsText)
 	require.False(suite.T, revokedCertificate.Certs[0].IsRoot)
 
@@ -968,6 +994,7 @@ func Demo(suite *utils.TestSuite) {
 	msgProposeRevokeX509RootCert := pkitypes.MsgProposeRevokeX509RootCert{
 		Subject:      testconstants.RootSubject,
 		SubjectKeyId: testconstants.RootSubjectKeyID,
+		RevokeChild:  true,
 		Signer:       jackAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeRevokeX509RootCert}, jackName, jackAccount)
@@ -995,6 +1022,7 @@ func Demo(suite *utils.TestSuite) {
 	proposedCertificateRevocation, _ := GetProposedRevocationX509Cert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	require.Equal(suite.T, testconstants.RootSubject, proposedCertificateRevocation.Subject)
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, proposedCertificateRevocation.SubjectKeyId)
+	require.Equal(suite.T, true, proposedCertificateRevocation.RevokeChild)
 	require.True(suite.T, proposedCertificateRevocation.HasRevocationFrom(jackAccount.Address))
 
 	// Request all approved certificates
@@ -1654,4 +1682,469 @@ func Demo(suite *utils.TestSuite) {
 
 	revDistPoints, _ = GetAllPkiRevocationDistributionPoints(suite)
 	require.Equal(suite.T, 1, len(revDistPoints))
+
+	// Revoke certificates by serialNumber
+
+	// Add root certificates
+	msgProposeAddX509RootCert = pkitypes.MsgProposeAddX509RootCert{
+		Cert:   testconstants.RootCertWithSameSubjectAndSKID1,
+		Vid:    65521,
+		Signer: aliceAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeAddX509RootCert}, aliceName, aliceAccount)
+	require.NoError(suite.T, err)
+
+	msgApproveAddX509RootCert = pkitypes.MsgApproveAddX509RootCert{
+		Subject:      testconstants.RootCertWithSameSubjectAndSKIDSubject,
+		SubjectKeyId: testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID,
+		Signer:       jackAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgApproveAddX509RootCert}, jackName, jackAccount)
+	require.NoError(suite.T, err)
+
+	msgProposeAddX509RootCert = pkitypes.MsgProposeAddX509RootCert{
+		Cert:   testconstants.RootCertWithSameSubjectAndSKID2,
+		Vid:    65521,
+		Signer: aliceAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeAddX509RootCert}, aliceName, aliceAccount)
+	require.NoError(suite.T, err)
+
+	msgApproveAddX509RootCert = pkitypes.MsgApproveAddX509RootCert{
+		Subject:      testconstants.RootCertWithSameSubjectAndSKIDSubject,
+		SubjectKeyId: testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID,
+		Signer:       jackAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgApproveAddX509RootCert}, jackName, jackAccount)
+	require.NoError(suite.T, err)
+
+	// Add intermediate and leaf certificates
+	msgAddX509Cert = pkitypes.MsgAddX509Cert{
+		Cert:   testconstants.IntermediateWithSameSubjectAndSKID1,
+		Signer: vendorAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	// Try to add second intermediate certificate with same subject and SKID by another Vendor
+	msgAddX509Cert = pkitypes.MsgAddX509Cert{
+		Cert:   testconstants.IntermediateWithSameSubjectAndSKID2,
+		Signer: venAcc65522.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, venName65522, venAcc65522)
+	require.Error(suite.T, err)
+
+	msgAddX509Cert = pkitypes.MsgAddX509Cert{
+		Cert:   testconstants.IntermediateWithSameSubjectAndSKID2,
+		Signer: vendorAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	msgAddX509Cert = pkitypes.MsgAddX509Cert{
+		Cert:   testconstants.LeafCertWithSameSubjectAndSKID,
+		Signer: vendorAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	// Check approved certificate
+	certs, _ := GetX509Cert(suite, testconstants.RootCertWithSameSubjectAndSKIDSubject, testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID)
+	require.Equal(suite.T, 2, len(certs.Certs))
+	certs, _ = GetX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
+	require.Equal(suite.T, 2, len(certs.Certs))
+	certs, _ = GetX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
+	require.Equal(suite.T, 1, len(certs.Certs))
+
+	// Revoke intermediate certificate with invalid serialNumber
+	msgRevokeX509Cert = pkitypes.MsgRevokeX509Cert{
+		Subject:      testconstants.IntermediateCertWithSameSubjectAndSKIDSubject,
+		SubjectKeyId: testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID,
+		SerialNumber: "invalid",
+		Signer:       vendorAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRevokeX509Cert}, vendorName, vendorAccount)
+	require.Error(suite.T, err)
+
+	// Revoke intermediate certificate with serialNumber 1 only(child certs should not be removed)
+	msgRevokeX509Cert.SerialNumber = testconstants.IntermediateCertWithSameSubjectAndSKID1SerialNumber
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRevokeX509Cert}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	// Request revoked certificate with serialNumber 3
+	revokedCertificate, _ = GetRevokedX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
+	require.Equal(suite.T, 1, len(revokedCertificate.Certs))
+	require.Equal(suite.T, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, revokedCertificate.Subject)
+	require.Equal(suite.T, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID, revokedCertificate.SubjectKeyId)
+	require.Equal(suite.T, testconstants.IntermediateCertWithSameSubjectAndSKID1SerialNumber, revokedCertificate.Certs[0].SerialNumber)
+
+	// Check approved certificate
+	certs, _ = GetX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
+	require.Equal(suite.T, 1, len(certs.Certs))
+	require.Equal(suite.T, testconstants.IntermediateCertWithSameSubjectAndSKID2SerialNumber, certs.Certs[0].SerialNumber)
+	certs, _ = GetX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
+	require.Equal(suite.T, 1, len(certs.Certs))
+	require.Equal(suite.T, testconstants.LeafCertWithSameSubjectAndSKIDSerialNumber, certs.Certs[0].SerialNumber)
+
+	// Revoke Root certificate with invalid serialNumber
+	msgProposeRevokeX509RootCert = pkitypes.MsgProposeRevokeX509RootCert{
+		Subject:      testconstants.RootCertWithSameSubjectAndSKIDSubject,
+		SubjectKeyId: testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID,
+		SerialNumber: "invalid",
+		Signer:       jackAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeRevokeX509RootCert}, jackName, jackAccount)
+	require.Error(suite.T, err)
+
+	// Revoke Root certificate with serialNumber 1 only(child certs should not be removed)
+	msgProposeRevokeX509RootCert.SerialNumber = testconstants.RootCertWithSameSubjectAndSKID1SerialNumber
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeRevokeX509RootCert}, jackName, jackAccount)
+	require.NoError(suite.T, err)
+
+	proposedCertificateRevocation, _ = GetProposedRevocationX509CertBySerialNumber(suite, msgProposeRevokeX509RootCert.Subject, msgProposeRevokeX509RootCert.SubjectKeyId, msgProposeRevokeX509RootCert.SerialNumber)
+	require.Equal(suite.T, testconstants.RootCertWithSameSubjectAndSKIDSubject, proposedCertificateRevocation.Subject)
+	require.Equal(suite.T, testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID, proposedCertificateRevocation.SubjectKeyId)
+	require.Equal(suite.T, testconstants.RootCertWithSameSubjectAndSKID1SerialNumber, proposedCertificateRevocation.SerialNumber)
+
+	msgApproveRevokeX509RootCert = pkitypes.MsgApproveRevokeX509RootCert{
+		Subject:      testconstants.RootCertWithSameSubjectAndSKIDSubject,
+		SubjectKeyId: testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID,
+		SerialNumber: testconstants.RootCertWithSameSubjectAndSKID1SerialNumber,
+		Signer:       aliceAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgApproveRevokeX509RootCert}, aliceName, aliceAccount)
+	require.NoError(suite.T, err)
+
+	// Request revoked Root certificate with serialNumber 1
+	revokedCertificate, _ = GetRevokedX509Cert(suite, testconstants.RootCertWithSameSubjectAndSKIDSubject, testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID)
+	require.Equal(suite.T, 1, len(revokedCertificate.Certs))
+	require.Equal(suite.T, testconstants.RootCertWithSameSubjectAndSKIDSubject, revokedCertificate.Subject)
+	require.Equal(suite.T, testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID, revokedCertificate.SubjectKeyId)
+	require.Equal(suite.T, testconstants.RootCertWithSameSubjectAndSKID1SerialNumber, revokedCertificate.Certs[0].SerialNumber)
+	require.True(suite.T, revokedCertificate.Certs[0].IsRoot)
+
+	// Check approved certificate
+	certs, _ = GetX509Cert(suite, testconstants.RootCertWithSameSubjectAndSKIDSubject, testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID)
+	require.Equal(suite.T, 1, len(certs.Certs))
+	require.Equal(suite.T, testconstants.RootCertWithSameSubjectAndSKID2SerialNumber, certs.Certs[0].SerialNumber)
+
+	certs, _ = GetX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
+	require.Equal(suite.T, 1, len(certs.Certs))
+	require.Equal(suite.T, testconstants.IntermediateCertWithSameSubjectAndSKID2SerialNumber, certs.Certs[0].SerialNumber)
+
+	certs, _ = GetX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
+	require.Equal(suite.T, 1, len(certs.Certs))
+	require.Equal(suite.T, testconstants.LeafCertWithSameSubjectAndSKIDSerialNumber, certs.Certs[0].SerialNumber)
+
+	// Remove x509 certificate with invalid serialNumber
+	msgRemoveX509Cert := pkitypes.MsgRemoveX509Cert{
+		Subject:      testconstants.IntermediateCertWithSameSubjectAndSKIDSubject,
+		SubjectKeyId: testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID,
+		SerialNumber: "invalid",
+		Signer:       vendorAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveX509Cert}, vendorName, vendorAccount)
+	require.Error(suite.T, err)
+
+	// Try to Remove x509 certificate by subject and subject key id when sender is not Vendor account
+	msgRemoveX509Cert = pkitypes.MsgRemoveX509Cert{
+		Subject:      testconstants.IntermediateCertWithSameSubjectAndSKIDSubject,
+		SubjectKeyId: testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID,
+		SerialNumber: "invalid",
+		Signer:       aliceAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveX509Cert}, aliceName, aliceAccount)
+	require.Error(suite.T, err)
+
+	// Remove revoked x509 certificate by subject and subject key id
+	msgRemoveX509Cert = pkitypes.MsgRemoveX509Cert{
+		Subject:      testconstants.IntermediateCertWithSameSubjectAndSKIDSubject,
+		SubjectKeyId: testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID,
+		Signer:       vendorAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveX509Cert}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+	// Check that two intermediate certificates removed
+	_, err = GetRevokedX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
+	suite.AssertNotFound(err)
+	_, err = GetX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
+	suite.AssertNotFound(err)
+
+	// Remove leaf x509 certificate by subject and subject key id
+	msgRemoveX509Cert = pkitypes.MsgRemoveX509Cert{
+		Subject:      testconstants.LeafCertWithSameSubjectAndSKIDSubject,
+		SubjectKeyId: testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID,
+		Signer:       vendorAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveX509Cert}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+	// Check that leaf certificate removed
+	_, err = GetX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
+	suite.AssertNotFound(err)
+
+	// Remove x509 by subject, subject key id and serial number
+	// Add intermediate certificates
+	msgAddX509Cert = pkitypes.MsgAddX509Cert{
+		Cert:   testconstants.IntermediateWithSameSubjectAndSKID1,
+		Signer: vendorAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	msgAddX509Cert = pkitypes.MsgAddX509Cert{
+		Cert:   testconstants.IntermediateWithSameSubjectAndSKID2,
+		Signer: vendorAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	msgAddX509Cert = pkitypes.MsgAddX509Cert{
+		Cert:   testconstants.LeafCertWithSameSubjectAndSKID,
+		Signer: vendorAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	// Remove x509 certificate by serial number
+	msgRemoveX509Cert = pkitypes.MsgRemoveX509Cert{
+		Subject:      testconstants.IntermediateCertWithSameSubjectAndSKIDSubject,
+		SubjectKeyId: testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID,
+		SerialNumber: testconstants.IntermediateCertWithSameSubjectAndSKID1SerialNumber,
+		Signer:       vendorAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveX509Cert}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	// Check that leaf and x509 with different serial number is not removed
+	certs, _ = GetX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
+	require.Equal(suite.T, 1, len(certs.Certs))
+	require.Equal(suite.T, testconstants.IntermediateCertWithSameSubjectAndSKID2SerialNumber, certs.Certs[0].SerialNumber)
+
+	certs, _ = GetX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
+	require.Equal(suite.T, 1, len(certs.Certs))
+	require.Equal(suite.T, testconstants.LeafCertWithSameSubjectAndSKIDSerialNumber, certs.Certs[0].SerialNumber)
+
+	// Remove revoked x509 certificate by subject and subject key id
+	msgRemoveX509Cert = pkitypes.MsgRemoveX509Cert{
+		Subject:      testconstants.IntermediateCertWithSameSubjectAndSKIDSubject,
+		SubjectKeyId: testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID,
+		Signer:       vendorAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveX509Cert}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	_, err = GetX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
+	suite.AssertNotFound(err)
+	certs, _ = GetX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
+	require.Equal(suite.T, 1, len(certs.Certs))
+	require.Equal(suite.T, testconstants.LeafCertWithSameSubjectAndSKIDSerialNumber, certs.Certs[0].SerialNumber)
+
+	// Remove leaf x509 certificate by subject and subject key id
+	msgRemoveX509Cert = pkitypes.MsgRemoveX509Cert{
+		Subject:      testconstants.LeafCertWithSameSubjectAndSKIDSubject,
+		SubjectKeyId: testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID,
+		Signer:       vendorAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveX509Cert}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	_, err = GetX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
+	suite.AssertNotFound(err)
+
+	// Revoke Root certificate and its child certificates
+	// Add intermediate and leaf certificates
+	msgAddX509Cert = pkitypes.MsgAddX509Cert{
+		Cert:   testconstants.IntermediateWithSameSubjectAndSKID1,
+		Signer: vendorAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	msgAddX509Cert = pkitypes.MsgAddX509Cert{
+		Cert:   testconstants.LeafCertWithSameSubjectAndSKID,
+		Signer: vendorAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	// Check that certs are added
+	certs, _ = GetX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
+	require.Equal(suite.T, 1, len(certs.Certs))
+	require.Equal(suite.T, testconstants.IntermediateCertWithSameSubjectAndSKID1SerialNumber, certs.Certs[0].SerialNumber)
+
+	certs, _ = GetX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
+	require.Equal(suite.T, 1, len(certs.Certs))
+	require.Equal(suite.T, testconstants.LeafCertWithSameSubjectAndSKIDSerialNumber, certs.Certs[0].SerialNumber)
+
+	// Revoke root cert and its child
+	msgProposeRevokeX509RootCert = pkitypes.MsgProposeRevokeX509RootCert{
+		Subject:      testconstants.RootCertWithSameSubjectAndSKIDSubject,
+		SubjectKeyId: testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID,
+		SerialNumber: testconstants.RootCertWithSameSubjectAndSKID2SerialNumber,
+		RevokeChild:  true,
+		Signer:       jackAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeRevokeX509RootCert}, jackName, jackAccount)
+	require.NoError(suite.T, err)
+
+	msgApproveRevokeX509RootCert = pkitypes.MsgApproveRevokeX509RootCert{
+		Subject:      testconstants.RootCertWithSameSubjectAndSKIDSubject,
+		SubjectKeyId: testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID,
+		SerialNumber: testconstants.RootCertWithSameSubjectAndSKID2SerialNumber,
+		Signer:       aliceAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgApproveRevokeX509RootCert}, aliceName, aliceAccount)
+	require.NoError(suite.T, err)
+
+	// Request revoked certificates
+	revokedCertificate, _ = GetRevokedX509Cert(suite, testconstants.RootCertWithSameSubjectAndSKIDSubject, testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID)
+	require.Equal(suite.T, 2, len(revokedCertificate.Certs))
+	require.Equal(suite.T, testconstants.RootCertWithSameSubjectAndSKIDSubject, revokedCertificate.Subject)
+	require.Equal(suite.T, testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID, revokedCertificate.SubjectKeyId)
+	require.Equal(suite.T, testconstants.RootCertWithSameSubjectAndSKID2SerialNumber, revokedCertificate.Certs[1].SerialNumber)
+	require.True(suite.T, revokedCertificate.Certs[1].IsRoot)
+
+	revokedCertificate, _ = GetRevokedX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
+	require.Equal(suite.T, 1, len(revokedCertificate.Certs))
+	require.Equal(suite.T, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, revokedCertificate.Subject)
+	require.Equal(suite.T, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID, revokedCertificate.SubjectKeyId)
+
+	revokedCertificate, _ = GetRevokedX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
+	require.Equal(suite.T, 1, len(revokedCertificate.Certs))
+	require.Equal(suite.T, testconstants.LeafCertWithSameSubjectAndSKIDSubject, revokedCertificate.Subject)
+	require.Equal(suite.T, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID, revokedCertificate.SubjectKeyId)
+
+	// Check that all certs are removed from approved lists
+	_, err = GetX509Cert(suite, testconstants.RootCertWithSameSubjectAndSKIDSubject, testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID)
+	suite.AssertNotFound(err)
+	_, err = GetX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
+	suite.AssertNotFound(err)
+	_, err = GetX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
+	suite.AssertNotFound(err)
+
+	// Add X509 certificates by Vendor Account
+
+	// Check that if root cert is VID scoped and RootVID==CertVID==AccountVID then adding x509 should succeed
+	// Add root certificate
+	msgProposeAddX509RootCert = pkitypes.MsgProposeAddX509RootCert{
+		Cert:   testconstants.RootCertWithVid,
+		Vid:    testconstants.RootCertWithVidVid,
+		Signer: aliceAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeAddX509RootCert}, aliceName, aliceAccount)
+	require.NoError(suite.T, err)
+
+	msgApproveAddX509RootCert = pkitypes.MsgApproveAddX509RootCert{
+		Subject:      testconstants.RootCertWithVidSubject,
+		SubjectKeyId: testconstants.RootCertWithVidSubjectKeyID,
+		Signer:       jackAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgApproveAddX509RootCert}, jackName, jackAccount)
+	require.NoError(suite.T, err)
+
+	// Register new Vendor account
+	vendorName = utils.RandString()
+	vendorAccount = test_dclauth.CreateVendorAccount(
+		suite,
+		vendorName,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		testconstants.RootCertWithVidVid,
+		testconstants.ProductIDsEmpty,
+		aliceName,
+		aliceAccount,
+		jackName,
+		jackAccount,
+		testconstants.Info,
+	)
+	require.NotNil(suite.T, vendorAccount)
+
+	// Add an intermediate certificate
+	msgAddX509Cert = pkitypes.MsgAddX509Cert{
+		Cert:   testconstants.IntermediateCertWithVid1,
+		Signer: vendorAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	// Check approved certificates
+	certs, _ = GetX509Cert(suite, testconstants.RootCertWithVidSubject, testconstants.RootCertWithVidSubjectKeyID)
+	require.Equal(suite.T, 1, len(certs.Certs))
+	certs, _ = GetX509Cert(suite, testconstants.IntermediateCertWithVid1Subject, testconstants.IntermediateCertWithVid1SubjectKeyID)
+	require.Equal(suite.T, 1, len(certs.Certs))
+
+	// Check that if root cert is VID scoped and rootVID != CertVID then adding an intermediate cert should fail
+	// Add an intermediate certificate
+	msgAddX509Cert = pkitypes.MsgAddX509Cert{
+		Cert:   testconstants.IntermediateCertWithVid2,
+		Signer: vendorAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, vendorName, vendorAccount)
+	require.Error(suite.T, err)
+
+	// Check there is only one approved intermediate certificate
+	certs, _ = GetX509Cert(suite, testconstants.IntermediateCertWithVid1Subject, testconstants.IntermediateCertWithVid1SubjectKeyID)
+	require.Equal(suite.T, 1, len(certs.Certs))
+	require.Equal(suite.T, testconstants.IntermediateCertWithVid1SerialNumber, certs.Certs[0].SerialNumber)
+
+	// Check that if root cert is non-VID scoped and CertVID != AccountVID then adding an intermediate cert should fail
+	// Ensure that there is a non-VID root cert exists
+	certs, _ = GetX509Cert(suite, testconstants.PAACertNoVidSubject, testconstants.PAACertNoVidSubjectKeyID)
+	require.Equal(suite.T, 1, len(certs.Certs))
+
+	// Try to submit txn with another Vendor
+	newVendorName := utils.RandString()
+	newVendorAccount := test_dclauth.CreateVendorAccount(
+		suite,
+		newVendorName,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		1234,
+		testconstants.ProductIDsEmpty,
+		aliceName,
+		aliceAccount,
+		jackName,
+		jackAccount,
+		testconstants.Info,
+	)
+	require.NotNil(suite.T, newVendorAccount)
+
+	// Add an intermediate certificate
+	msgAddX509Cert = pkitypes.MsgAddX509Cert{
+		Cert:   testconstants.PAICertWithNumericVid,
+		Signer: newVendorAccount.Address,
+	}
+
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, newVendorName, newVendorAccount)
+	require.Error(suite.T, err)
+
+	// Check there is no an intermediate certificate
+	_, err = GetX509Cert(suite, testconstants.PAICertWithNumericVidSubject, testconstants.PAICertWithNumericVidSubjectKeyID)
+	suite.AssertNotFound(err)
+
+	// Check that if root cert is non-VID scoped and CertVID==AccountVID then adding x509 should succeed
+	// Create vendor with valid VID
+	newVendorName = utils.RandString()
+	newVendorAccount = test_dclauth.CreateVendorAccount(
+		suite,
+		newVendorName,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		testconstants.IntermediateCertWithVid2Vid,
+		testconstants.ProductIDsEmpty,
+		aliceName,
+		aliceAccount,
+		jackName,
+		jackAccount,
+		testconstants.Info,
+	)
+	require.NotNil(suite.T, newVendorAccount)
+
+	// Add an intermediate certificate
+	msgAddX509Cert = pkitypes.MsgAddX509Cert{
+		Cert:   testconstants.PAICertWithNumericVid,
+		Signer: newVendorAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, newVendorName, newVendorAccount)
+	require.NoError(suite.T, err)
+	// Check there is only one approved intermediate certificate
+	certs, _ = GetX509Cert(suite, testconstants.PAICertWithNumericVidSubject, testconstants.PAICertWithNumericVidSubjectKeyID)
+	require.Equal(suite.T, 1, len(certs.Certs))
 }

@@ -220,6 +220,22 @@ func TestMsgRevokeModel_ValidateBasic(t *testing.T) {
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
+		{
+			name: "schemaVersion > 65535",
+			msg: MsgRevokeModel{
+				Signer:                sample.AccAddress(),
+				SoftwareVersionString: testconstants.SoftwareVersionString,
+				Pid:                   1,
+				Vid:                   1,
+				RevocationDate:        testconstants.CertificationDate,
+				CertificationType:     testconstants.CertificationType,
+				SoftwareVersion:       testconstants.SoftwareVersion,
+				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
+				Reason:                testconstants.Reason,
+				SchemaVersion:         65536,
+			},
+			err: validator.ErrFieldUpperBoundViolated,
+		},
 	}
 
 	positiveTests := []struct {

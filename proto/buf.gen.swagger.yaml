@@ -8,7 +8,6 @@ plugins:
   - name: openapiv2
     out: .
     opt:
-      - paths=source_relative
       - logtostderr=true
       - openapi_naming_strategy=fqn
       - json_names_for_fields=false
