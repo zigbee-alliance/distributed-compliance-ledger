@@ -170,6 +170,7 @@ func TestHandler_AddModel(t *testing.T) {
 	require.Equal(t, msgCreateModel.Vid, receivedModel.Vid)
 	require.Equal(t, msgCreateModel.Pid, receivedModel.Pid)
 	require.Equal(t, msgCreateModel.DeviceTypeId, receivedModel.DeviceTypeId)
+	require.Equal(t, testconstants.SchemaVersion, receivedModel.SchemaVersion)
 }
 
 func TestHandler_UpdateModel(t *testing.T) {
@@ -186,12 +187,19 @@ func TestHandler_UpdateModel(t *testing.T) {
 	_, err = setup.Handler(setup.Ctx, msgCreateModel)
 	require.NoError(t, err)
 
+	// query model
+	receivedModel, err := queryModel(setup, msgUpdateModel.Vid, msgUpdateModel.Pid)
+	require.NoError(t, err)
+	require.Equal(t, testconstants.SchemaVersion, receivedModel.SchemaVersion)
+
 	// update existing model
+	var newSchemaVersion uint32 = 2
+	msgUpdateModel.SchemaVersion = newSchemaVersion
 	_, err = setup.Handler(setup.Ctx, msgUpdateModel)
 	require.NoError(t, err)
 
 	// query updated model
-	receivedModel, err := queryModel(setup, msgUpdateModel.Vid, msgUpdateModel.Pid)
+	receivedModel, err = queryModel(setup, msgUpdateModel.Vid, msgUpdateModel.Pid)
 	require.NoError(t, err)
 
 	// check
@@ -200,6 +208,7 @@ func TestHandler_UpdateModel(t *testing.T) {
 	require.Equal(t, msgUpdateModel.Vid, receivedModel.Vid)
 	require.Equal(t, msgUpdateModel.Pid, receivedModel.Pid)
 	require.Equal(t, msgUpdateModel.ProductLabel, receivedModel.ProductLabel)
+	require.Equal(t, newSchemaVersion, receivedModel.SchemaVersion)
 }
 
 func TestHandler_UpdateModelByVendorWithProductIds(t *testing.T) {
@@ -726,6 +735,7 @@ func TestHandler_AddModelVersion(t *testing.T) {
 
 	// add new model version
 	msgCreateModelVersion := NewMsgCreateModelVersion(setup.Vendor, testconstants.SoftwareVersion)
+	schemaVersion := msgCreateModelVersion.SchemaVersion
 	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion)
 	require.NoError(t, err)
 
@@ -756,6 +766,7 @@ func TestHandler_AddModelVersion(t *testing.T) {
 	require.Equal(t, msgCreateModelVersion.Vid, receivedModelVersions.Vid)
 	require.Equal(t, msgCreateModelVersion.Pid, receivedModelVersions.Pid)
 	require.Equal(t, []uint32{msgCreateModelVersion.SoftwareVersion}, receivedModelVersions.SoftwareVersions)
+	require.Equal(t, schemaVersion, receivedModelVersion.SchemaVersion)
 }
 
 func TestHandler_AddMultipleModelVersions(t *testing.T) {
@@ -830,7 +841,6 @@ func TestHandler_UpdateModelVersion(t *testing.T) {
 
 	// try update not present model version
 	msgUpdateModelVersion := NewMsgUpdateModelVersion(setup.Vendor)
-
 	_, err = setup.Handler(setup.Ctx, msgUpdateModelVersion)
 	require.Error(t, err)
 	require.True(t, types.ErrModelVersionDoesNotExist.Is(err))
@@ -841,6 +851,8 @@ func TestHandler_UpdateModelVersion(t *testing.T) {
 	require.NoError(t, err)
 
 	// update existing model version
+	var newSchemaVersion uint32 = 2
+	msgUpdateModelVersion.SchemaVersion = newSchemaVersion
 	_, err = setup.Handler(setup.Ctx, msgUpdateModelVersion)
 	require.NoError(t, err)
 
@@ -872,6 +884,8 @@ func TestHandler_UpdateModelVersion(t *testing.T) {
 	require.Equal(t, receivedModelVersion.FirmwareInformation, msgCreateModelVersion.FirmwareInformation)
 	require.Equal(t, receivedModelVersion.OtaChecksum, msgCreateModelVersion.OtaChecksum+"updated")
 	require.Equal(t, receivedModelVersion.OtaChecksumType, msgCreateModelVersion.OtaChecksumType)
+	require.Equal(t, receivedModelVersion.OtaChecksumType, msgCreateModelVersion.OtaChecksumType)
+	require.Equal(t, newSchemaVersion, receivedModelVersion.SchemaVersion)
 
 	// query model versions
 	receivedModelVersions, err := queryAllModelVersions(
@@ -1611,6 +1625,7 @@ func NewMsgCreateModelVersion(signer sdk.AccAddress, softwareVersion uint32) *ty
 		MinApplicableSoftwareVersion: testconstants.MinApplicableSoftwareVersion,
 		MaxApplicableSoftwareVersion: testconstants.MaxApplicableSoftwareVersion,
 		ReleaseNotesUrl:              testconstants.ReleaseNotesURL,
+		SchemaVersion:                testconstants.SchemaVersion,
 	}
 }
 

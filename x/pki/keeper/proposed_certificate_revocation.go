@@ -14,6 +14,7 @@ func (k Keeper) SetProposedCertificateRevocation(ctx sdk.Context, proposedCertif
 	store.Set(types.ProposedCertificateRevocationKey(
 		proposedCertificateRevocation.Subject,
 		proposedCertificateRevocation.SubjectKeyId,
+		proposedCertificateRevocation.SerialNumber,
 	), b)
 }
 
@@ -22,12 +23,14 @@ func (k Keeper) GetProposedCertificateRevocation(
 	ctx sdk.Context,
 	subject string,
 	subjectKeyID string,
+	serialNumber string,
 ) (val types.ProposedCertificateRevocation, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ProposedCertificateRevocationKeyPrefix))
 
 	b := store.Get(types.ProposedCertificateRevocationKey(
 		subject,
 		subjectKeyID,
+		serialNumber,
 	))
 	if b == nil {
 		return val, false
@@ -43,11 +46,13 @@ func (k Keeper) RemoveProposedCertificateRevocation(
 	ctx sdk.Context,
 	subject string,
 	subjectKeyID string,
+	serialNumber string,
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ProposedCertificateRevocationKeyPrefix))
 	store.Delete(types.ProposedCertificateRevocationKey(
 		subject,
 		subjectKeyID,
+		serialNumber,
 	))
 }
 
@@ -73,11 +78,13 @@ func (k Keeper) IsProposedCertificateRevocationPresent(
 	ctx sdk.Context,
 	subject string,
 	subjectKeyID string,
+	serialNumber string,
 ) bool {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ProposedCertificateRevocationKeyPrefix))
 
 	return store.Has(types.ProposedCertificateRevocationKey(
 		subject,
 		subjectKeyID,
+		serialNumber,
 	))
 }

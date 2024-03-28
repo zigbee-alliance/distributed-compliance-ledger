@@ -10,6 +10,7 @@ export interface MsgCreateVendorInfo {
   companyLegalName: string
   companyPreferredName: string
   vendorLandingPageURL: string
+  schemaVersion: number
 }
 
 export interface MsgCreateVendorInfoResponse {}
@@ -21,11 +22,20 @@ export interface MsgUpdateVendorInfo {
   companyLegalName: string
   companyPreferredName: string
   vendorLandingPageURL: string
+  schemaVersion: number
 }
 
 export interface MsgUpdateVendorInfoResponse {}
 
-const baseMsgCreateVendorInfo: object = { creator: '', vendorID: 0, vendorName: '', companyLegalName: '', companyPreferredName: '', vendorLandingPageURL: '' }
+const baseMsgCreateVendorInfo: object = {
+  creator: '',
+  vendorID: 0,
+  vendorName: '',
+  companyLegalName: '',
+  companyPreferredName: '',
+  vendorLandingPageURL: '',
+  schemaVersion: 0
+}
 
 export const MsgCreateVendorInfo = {
   encode(message: MsgCreateVendorInfo, writer: Writer = Writer.create()): Writer {
@@ -46,6 +56,9 @@ export const MsgCreateVendorInfo = {
     }
     if (message.vendorLandingPageURL !== '') {
       writer.uint32(50).string(message.vendorLandingPageURL)
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(56).uint32(message.schemaVersion)
     }
     return writer
   },
@@ -74,6 +87,9 @@ export const MsgCreateVendorInfo = {
           break
         case 6:
           message.vendorLandingPageURL = reader.string()
+          break
+        case 7:
+          message.schemaVersion = reader.uint32()
           break
         default:
           reader.skipType(tag & 7)
@@ -115,6 +131,11 @@ export const MsgCreateVendorInfo = {
     } else {
       message.vendorLandingPageURL = ''
     }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = Number(object.schemaVersion)
+    } else {
+      message.schemaVersion = 0
+    }
     return message
   },
 
@@ -126,6 +147,7 @@ export const MsgCreateVendorInfo = {
     message.companyLegalName !== undefined && (obj.companyLegalName = message.companyLegalName)
     message.companyPreferredName !== undefined && (obj.companyPreferredName = message.companyPreferredName)
     message.vendorLandingPageURL !== undefined && (obj.vendorLandingPageURL = message.vendorLandingPageURL)
+    message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
     return obj
   },
 
@@ -160,6 +182,11 @@ export const MsgCreateVendorInfo = {
       message.vendorLandingPageURL = object.vendorLandingPageURL
     } else {
       message.vendorLandingPageURL = ''
+    }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = object.schemaVersion
+    } else {
+      message.schemaVersion = 0
     }
     return message
   }
@@ -203,7 +230,15 @@ export const MsgCreateVendorInfoResponse = {
   }
 }
 
-const baseMsgUpdateVendorInfo: object = { creator: '', vendorID: 0, vendorName: '', companyLegalName: '', companyPreferredName: '', vendorLandingPageURL: '' }
+const baseMsgUpdateVendorInfo: object = {
+  creator: '',
+  vendorID: 0,
+  vendorName: '',
+  companyLegalName: '',
+  companyPreferredName: '',
+  vendorLandingPageURL: '',
+  schemaVersion: 0
+}
 
 export const MsgUpdateVendorInfo = {
   encode(message: MsgUpdateVendorInfo, writer: Writer = Writer.create()): Writer {
@@ -224,6 +259,9 @@ export const MsgUpdateVendorInfo = {
     }
     if (message.vendorLandingPageURL !== '') {
       writer.uint32(50).string(message.vendorLandingPageURL)
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(56).uint32(message.schemaVersion)
     }
     return writer
   },
@@ -252,6 +290,9 @@ export const MsgUpdateVendorInfo = {
           break
         case 6:
           message.vendorLandingPageURL = reader.string()
+          break
+        case 7:
+          message.schemaVersion = reader.uint32()
           break
         default:
           reader.skipType(tag & 7)
@@ -293,6 +334,11 @@ export const MsgUpdateVendorInfo = {
     } else {
       message.vendorLandingPageURL = ''
     }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = Number(object.schemaVersion)
+    } else {
+      message.schemaVersion = 0
+    }
     return message
   },
 
@@ -304,6 +350,7 @@ export const MsgUpdateVendorInfo = {
     message.companyLegalName !== undefined && (obj.companyLegalName = message.companyLegalName)
     message.companyPreferredName !== undefined && (obj.companyPreferredName = message.companyPreferredName)
     message.vendorLandingPageURL !== undefined && (obj.vendorLandingPageURL = message.vendorLandingPageURL)
+    message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
     return obj
   },
 
@@ -338,6 +385,11 @@ export const MsgUpdateVendorInfo = {
       message.vendorLandingPageURL = object.vendorLandingPageURL
     } else {
       message.vendorLandingPageURL = ''
+    }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = object.schemaVersion
+    } else {
+      message.schemaVersion = 0
     }
     return message
   }

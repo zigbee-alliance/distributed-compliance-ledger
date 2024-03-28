@@ -43,6 +43,14 @@ trustee_account_address=$(echo $passphrase | dcld keys show jack -a)
 second_trustee_account_address=$(echo $passphrase | dcld keys show alice -a)
 third_trustee_account_address=$(echo $passphrase | dcld keys show bob -a)
 
+vendor_account=vendor_account_$vid
+echo "Create Vendor account - $vendor_account"
+create_new_vendor_account $vendor_account $vid
+
+vendor_account_65522=vendor_account_65522
+echo "Create Vendor account - $vendor_account_65522"
+create_new_vendor_account $vendor_account_65522 65522
+
 echo "Create regular account"
 create_new_account user_account "CertificationCenter"
 test_divider
@@ -179,12 +187,14 @@ test_divider
 
 echo "$user_account (Not Trustee) propose Root certificate"
 root_path="integration_tests/constants/root_cert"
+cert_schema_version_1=1
+schema_version_2=2
 result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_path" --from $user_account --vid $vid --yes)
 result=$(get_txn_result "$result")
 response_does_not_contain "$result" "\"code\": 0"
 
 echo "$trustee_account (Trustee) propose Root certificate"
-result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_path" --from $trustee_account  --vid $vid --yes)
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_path" --certificate-schema-version=$cert_schema_version_1 --schemaVersion=$schema_version_2 --from $trustee_account   --vid $vid --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -195,7 +205,8 @@ result=$(dcld query pki all-proposed-x509-root-certs)
 echo $result | jq
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
-
+check_response "$result" "\"certSchemaVersion\": $cert_schema_version_1"
+check_response "$result" "\"schemaVersion\": $schema_version_2"
 
 test_divider
 
@@ -377,9 +388,9 @@ echo "4. ADD INTERMEDIATE CERT"
 test_divider
 
 
-echo "$user_account (Not Trustee) adds Intermediate certificate"
+echo "$vendor_account adds Intermediate certificate"
 intermediate_path="integration_tests/constants/intermediate_cert"
-result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_path" --from $user_account --yes)
+result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_path" --certificate-schema-version=$cert_schema_version_1 --schemaVersion=$schema_version_2 --from $vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -393,6 +404,8 @@ check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$intermediate_cert_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$intermediate_cert_subject_as_text\""
+check_response "$result" "\"schemaVersion\": $cert_schema_version_1"
+check_response "$result" "\"schemaVersion\": $schema_version_2"
 check_response "$result" "\"approvals\": \\[\\]"
 
 echo "Request Intermediate certificate by subjectKeyId - There are no approvals for Intermidiate Certificates"
@@ -446,9 +459,10 @@ test_divider
 echo "5. ADD LEAF CERT"
 test_divider
 
-echo "$trustee_account (Trustee) add Leaf certificate"
+echo "$vendor_account add Leaf certificate"
 leaf_path="integration_tests/constants/leaf_cert"
-result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$leaf_path" --from $trustee_account --yes)
+schema_version_0=0
+result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$leaf_path" --from $vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -461,6 +475,7 @@ check_response "$result" "\"subject\": \"$leaf_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$leaf_cert_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$leaf_cert_subject_as_text\""
+check_response "$result" "\"schemaVersion\": $schema_version_0"
 check_response "$result" "\"approvals\": \\[\\]"
 
 echo "Request Leaf certificate by subjectKeyId - There is no approvals on leaf certificate"
@@ -655,8 +670,19 @@ test_divider
 echo "6. REVOKE INTERMEDIATE (AND HENCE  LEAF) CERTS - No Approvals needed"
 test_divider
 
-echo "$user_account (Not Trustee) revokes Intermediate certificate. This must also revoke its child - Leaf certificate."
+echo "Try to revoke the intermediate certificate when sender is not Vendor account"
 result=$(echo "$passphrase" | dcld tx pki revoke-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --from=$user_account --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 4"
+
+echo "Try to revoke the intermediate certificate using a vendor account with other VID"
+result=$(echo "$passphrase" | dcld tx pki revoke-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --from=$vendor_account_65522 --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 4"
+
+revoke_schema_version_3=3
+echo "$vendor_account (Not Trustee) revokes only Intermediate certificate. This must not revoke its child - Leaf certificate."
+result=$(echo "$passphrase" | dcld tx pki revoke-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --schemaVersion=$revoke_schema_version_3 --from=$vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -686,8 +712,9 @@ result=$(dcld query pki all-revoked-x509-certs)
 echo $result | jq
 check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
-check_response "$result" "\"subject\": \"$leaf_cert_subject\""
-check_response "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
+check_response "$result" "\"schemaVersion\": $revoke_schema_version_3"
+response_does_not_contain "$result" "\"subject\": \"$leaf_cert_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
 
@@ -717,21 +744,21 @@ test_divider
 echo "Request revoked Leaf certificate"
 result=$(dcld query pki revoked-x509-cert --subject="$leaf_cert_subject" --subject-key-id="$leaf_cert_subject_key_id")
 echo $result | jq
-check_response "$result" "\"subject\": \"$leaf_cert_subject\""
-check_response "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
-check_response "$result" "\"serialNumber\": \"$leaf_cert_serial_number\""
+response_does_not_contain "$result" "\"subject\": \"$leaf_cert_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
+response_does_not_contain "$result" "\"serialNumber\": \"$leaf_cert_serial_number\""
 
 test_divider
 
 echo "Request all approved certificates"
 result=$(dcld query pki all-x509-certs)
 echo $result | jq
-check_response "$result" "\"subject\": \"$root_cert_subject\""
-check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"subject\": \"$intermediate_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
-response_does_not_contain "$result" "\"subject\": \"$leaf_cert_subject\""
-response_does_not_contain "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
+check_response "$result" "\"subject\": \"$root_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
+check_response "$result" "\"subject\": \"$leaf_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
 
 test_divider
 
@@ -750,12 +777,12 @@ test_divider
 echo "Request all subject certificates"
 result=$(dcld query pki all-subject-x509-certs --subject="$leaf_cert_subject")
 echo $result | jq
+check_response "$result" "\"$leaf_cert_subject\""
+check_response "$result" "\"$leaf_cert_subject_key_id\""
 response_does_not_contain "$result" "\"$root_cert_subject\""
 response_does_not_contain "$result" "\"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"$intermediate_cert_subject\""
 response_does_not_contain "$result" "\"$intermediate_cert_subject_key_id\""
-response_does_not_contain "$result" "\"$leaf_cert_subject\""
-response_does_not_contain "$result" "\"$leaf_cert_subject_key_id\""
 
 test_divider
 
@@ -781,13 +808,12 @@ response_does_not_contain "$result" "\"serialNumber\": \"$intermediate_cert_seri
 
 test_divider
 
-echo "Approved Leaf certificate must be empty"
+echo "Approved Leaf certificate must not be empty"
 result=$(dcld query pki x509-cert --subject="$leaf_cert_subject" --subject-key-id="$leaf_cert_subject_key_id")
 echo $result | jq
-check_response "$result" "Not Found"
-response_does_not_contain "$result" "\"subject\": \"$leaf_cert_subject\""
-response_does_not_contain "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
-response_does_not_contain "$result" "\"serialNumber\": \"$leaf_cert_serial_number\""
+check_response "$result" "\"subject\": \"$leaf_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
+check_response "$result" "\"serialNumber\": \"$leaf_cert_serial_number\""
 
 test_divider
 
@@ -796,8 +822,9 @@ test_divider
 echo "7. PROPOSE REVOCATION OF ROOT CERT"
 test_divider
 
-echo "$trustee_account (Trustee) proposes to revoke Root certificate"
-result=$(echo "$passphrase" | dcld tx pki propose-revoke-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $trustee_account --yes)
+revoke_schema_version_4=4
+echo "$trustee_account (Trustee) proposes to revoke only Root certificate(child certificates should not be revoked)"
+result=$(echo "$passphrase" | dcld tx pki propose-revoke-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --schemaVersion=$revoke_schema_version_4 --from $trustee_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -815,6 +842,7 @@ result=$(dcld query pki all-proposed-x509-root-certs-to-revoke)
 echo $result | jq
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
+check_response "$result" "\"schemaVersion\": $revoke_schema_version_4"
 response_does_not_contain "$result" "\"subject\": \"$intermediate_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
 response_does_not_contain "$result" "\"subject\": \"$leaf_cert_subject\""
@@ -827,8 +855,8 @@ result=$(dcld query pki all-revoked-x509-certs)
 echo $result | jq
 check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
-check_response "$result" "\"subject\": \"$leaf_cert_subject\""
-check_response "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
+response_does_not_contain "$result" "\"subject\": \"$leaf_cert_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
 
@@ -864,10 +892,10 @@ result=$(dcld query pki all-x509-certs)
 echo $result | jq
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
+check_response "$result" "\"subject\": \"$leaf_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
 response_does_not_contain "$result" "\"subject\": \"$intermediate_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
-response_does_not_contain "$result" "\"subject\": \"$leaf_cert_subject\""
-response_does_not_contain "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
 
 
 test_divider
@@ -890,10 +918,10 @@ result=$(dcld query pki all-subject-x509-certs --subject="$root_cert_subject")
 echo $result | jq
 check_response "$result" "\"$root_cert_subject\""
 check_response "$result" "\"$root_cert_subject_key_id\""
-response_does_not_contain "$result" "\"$intermediate_cert_subject\""
-response_does_not_contain "$result" "\"$intermediate_cert_subject_key_id\""
 response_does_not_contain "$result" "\"$leaf_cert_subject\""
 response_does_not_contain "$result" "\"$leaf_cert_subject_key_id\""
+response_does_not_contain "$result" "\"$intermediate_cert_subject\""
+response_does_not_contain "$result" "\"$intermediate_cert_subject_key_id\""
 
 test_divider
 
@@ -910,7 +938,7 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Request all root certificates proposed to revoke. Nothing left in list as the certficate is revoked"
+echo "Request all root certificates proposed to revoke. Nothing left in list as the certificates are revoked"
 result=$(dcld query pki all-proposed-x509-root-certs-to-revoke)
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
@@ -925,14 +953,14 @@ test_divider
 echo "Request all revoked certificates should contain approvals from both trustees"
 result=$(dcld query pki all-revoked-x509-certs)
 echo $result | jq
-check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
-check_response "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
-check_response "$result" "\"subject\": \"$leaf_cert_subject\""
-check_response "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
 check_response "$result" "\"address\": \"$trustee_account_address\""
 check_response "$result" "\"address\": \"$second_trustee_account_address\""
+check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
+response_does_not_contain "$result" "\"subject\": \"$leaf_cert_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
 
 
 test_divider
@@ -966,15 +994,15 @@ check_response "$result" "\"address\": \"$second_trustee_account_address\""
 
 test_divider
 
-echo "Request all approved certificates must be empty"
+echo "Request all approved certificates must not contain root certificate"
 result=$(dcld query pki all-x509-certs)
 echo $result | jq
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"subject\": \"$intermediate_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
-response_does_not_contain "$result" "\"subject\": \"$leaf_cert_subject\""
-response_does_not_contain "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
+check_response "$result" "\"subject\": \"$leaf_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
 
 
 echo "Request all approved root certificates must be empty"
@@ -993,7 +1021,6 @@ test_divider
 echo "Approved Intermediate certificate must be empty"
 result=$(dcld query pki x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id")
 echo $result | jq
-check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$intermediate_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$intermediate_cert_serial_number\""
@@ -1002,14 +1029,13 @@ response_does_not_contain "$result" "\"subjectAsText\": \"$intermediate_cert_sub
 
 test_divider
 
-echo "Approved Leaf certificate must be empty"
+echo "Approved Leaf certificate must not be empty"
 result=$(dcld query pki x509-cert --subject="$leaf_cert_subject" --subject-key-id="$leaf_cert_subject_key_id")
 echo $result | jq
-check_response "$result" "Not Found"
-response_does_not_contain "$result" "\"subject\": \"$leaf_cert_subject\""
-response_does_not_contain "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
-response_does_not_contain "$result" "\"serialNumber\": \"$leaf_cert_serial_number\""
-response_does_not_contain "$result" "\"subjectAsText\": \"$leaf_cert_subject_as_text\""
+check_response "$result" "\"subject\": \"$leaf_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
+check_response "$result" "\"serialNumber\": \"$leaf_cert_serial_number\""
+check_response "$result" "\"subjectAsText\": \"$leaf_cert_subject_as_text\""
 
 
 test_divider
@@ -1057,9 +1083,8 @@ response_does_not_contain "$result" "\"serialNumber\": \"$google_cert_serial_num
 response_does_not_contain "$result" "\"subjectAsText\": \"$google_cert_subject_as_text\""
 echo $result | jq
 
-echo "Request all approved certificates must be empty"
+echo "Request all approved certificates must not contain google certification"
 result=$(dcld query pki all-x509-certs)
-check_response "$result" "\[\]"
 response_does_not_contain "$result" "\"subject\": \"$google_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$google_cert_serial_number\""
@@ -1095,7 +1120,7 @@ response_does_not_contain "$result" "\"subject\": \"$google_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
 echo $result | jq
 
-echo "Request all revoked certificates must be empty"
+echo "Request all revoked certificates must not contain google certification"
 result=$(dcld query pki all-revoked-x509-certs)
 response_does_not_contain "$result" "\"$google_cert_subject\""
 response_does_not_contain "$result" "\"$google_cert_subject_key_id\""
@@ -1155,6 +1180,7 @@ test_divider
 echo "10. PROPOSE GOOGLE ROOT CERT"
 test_divider
 
+cert_schema_version_0=0
 echo "$user_account (Not Trustee) propose Root certificate"
 google_root_path="integration_tests/constants/google_root_cert"
 result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$google_root_path" --from $user_account --vid=$google_cert_vid --yes)
@@ -1177,6 +1203,8 @@ check_response "$result" "\"address\": \"$trustee_account_address\""
 check_response "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$google_cert_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$google_cert_subject_as_text\""
+check_response "$result" "\"certSchemaVersion\": $cert_schema_version_0"
+check_response "$result" "\"schemaVersion\": $schema_version_0"
 check_response "$result" "\"vid\": $google_cert_vid"
 echo $result | jq
 
@@ -1661,8 +1689,9 @@ response_does_not_contain "$result" "\"subjectAsText\": \"$test_cert_subject_as_
 
 test_divider
 
+reject_schema_version_4=4
 echo "$second_trustee_account (Second Trustee) rejects Root certificate"
-result=$(echo "$passphrase" | dcld tx pki reject-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --from $second_trustee_account --yes)
+result=$(echo "$passphrase" | dcld tx pki reject-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --schemaVersion=$reject_schema_version_4 --from $second_trustee_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -1693,6 +1722,7 @@ check_response "$result" "\"serialNumber\": \"$test_cert_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$test_cert_subject_as_text\""
 check_response "$result" "\"address\": \"$trustee_account_address\""
 check_response "$result" "\"address\": \"$second_trustee_account_address\""
+check_response "$result" "\"schemaVersion\": $reject_schema_version_4"
 
 test_divider
 

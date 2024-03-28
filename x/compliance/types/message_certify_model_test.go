@@ -397,6 +397,22 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 			},
 			err: ErrInvalidPFCCertificationRoute,
 		},
+		{
+			name: "schemaVersion > 65535",
+			msg: MsgCertifyModel{
+				Signer:                sample.AccAddress(),
+				SoftwareVersionString: testconstants.SoftwareVersionString,
+				Pid:                   1,
+				Vid:                   1,
+				CertificationDate:     testconstants.CertificationDate,
+				CertificationType:     testconstants.CertificationType,
+				SoftwareVersion:       testconstants.SoftwareVersion,
+				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
+				CDCertificateId:       testconstants.CDCertificateID,
+				SchemaVersion:         65536,
+			},
+			err: validator.ErrFieldUpperBoundViolated,
+		},
 	}
 
 	positiveTests := []struct {

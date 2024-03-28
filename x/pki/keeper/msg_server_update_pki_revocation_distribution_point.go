@@ -62,6 +62,8 @@ func (k msgServer) UpdatePkiRevocationDistributionPoint(goCtx context.Context, m
 		pkiRevocationDistributionPoint.DataDigestType = msg.DataDigestType
 	}
 
+	pkiRevocationDistributionPoint.SchemaVersion = msg.SchemaVersion
+
 	revocationList, isFound := k.GetPkiRevocationDistributionPointsByIssuerSubjectKeyID(ctx, msg.IssuerSubjectKeyID)
 	if isFound {
 		for _, revocationPoint := range revocationList.Points {
@@ -186,7 +188,7 @@ func (k msgServer) verifyUpdatedPAI(ctx sdk.Context, newCertificatePem string, r
 	}
 
 	// check that it's chained back to a cert on DCL
-	if _, _, err := k.verifyCertificate(ctx, newCertificate); err != nil {
+	if _, err = k.verifyCertificate(ctx, newCertificate); err != nil {
 		return pkitypes.NewErrCertNotChainedBack()
 	}
 

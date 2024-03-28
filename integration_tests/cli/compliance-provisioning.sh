@@ -40,6 +40,8 @@ certification_type_matter="matter"
 provision_date="2020-02-02T02:20:20Z"
 provision_reason="some reason"
 cd_certificate_id="123"
+schema_version_0=0
+schema_version_2=2
 
 test_divider
 
@@ -152,6 +154,7 @@ check_response "$result" "\"cDCertificateId\": \"$cd_certificate_id\""
 check_response "$result" "\"date\": \"$provision_date\""
 check_response "$result" "\"reason\": \"$provision_reason\""
 check_response "$result" "\"certificationType\": \"$certification_type_zb\""
+check_response "$result" "\"schemaVersion\": $schema_version_2"
 check_response "$result" "\"history\""
 echo "$result"
 
@@ -166,6 +169,7 @@ check_response "$result" "\"date\": \"$provision_date\""
 check_response "$result" "\"reason\": \"$provision_reason\""
 check_response "$result" "\"certificationType\": \"$certification_type_matter\""
 check_response "$result" "\"history\""
+check_response "$result" "\"schemaVersion\": $schema_version_0"
 echo "$result"
 
 test_divider

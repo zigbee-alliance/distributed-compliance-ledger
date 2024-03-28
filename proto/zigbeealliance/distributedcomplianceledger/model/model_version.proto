@@ -21,5 +21,6 @@ message ModelVersion {
   uint32 maxApplicableSoftwareVersion = 13; 
   string releaseNotesUrl = 14; 
   string creator = 15 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  uint32 schemaVersion = 16;
 }
 

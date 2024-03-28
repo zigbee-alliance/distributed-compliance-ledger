@@ -4,9 +4,9 @@ import (
 	"context"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
-
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/x509"
 )
@@ -74,6 +74,7 @@ func (k msgServer) AddPkiRevocationDistributionPoint(goCtx context.Context, msg 
 		DataDigest:           msg.DataDigest,
 		DataDigestType:       msg.DataDigestType,
 		RevocationType:       msg.RevocationType,
+		SchemaVersion:        msg.SchemaVersion,
 	}
 
 	k.SetPkiRevocationDistributionPoint(ctx, pkiRevocationDistributionPoint)
@@ -117,7 +118,7 @@ func (k msgServer) checkRootCert(ctx sdk.Context, crlSignerCertificate *x509.Cer
 
 func (k msgServer) checkNonRootCert(ctx sdk.Context, crlSignerCertificate *x509.Certificate) error {
 	// check that it's chained back to a cert on DCL
-	if _, _, err := k.verifyCertificate(ctx, crlSignerCertificate); err != nil {
+	if _, err := k.verifyCertificate(ctx, crlSignerCertificate); err != nil {
 		return pkitypes.NewErrCertNotChainedBack()
 	}
 

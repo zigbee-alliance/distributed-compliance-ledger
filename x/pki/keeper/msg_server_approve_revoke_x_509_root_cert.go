@@ -27,7 +27,7 @@ func (k msgServer) ApproveRevokeX509RootCert(goCtx context.Context, msg *types.M
 	}
 
 	// get proposed certificate revocation
-	revocation, found := k.GetProposedCertificateRevocation(ctx, msg.Subject, msg.SubjectKeyId)
+	revocation, found := k.GetProposedCertificateRevocation(ctx, msg.Subject, msg.SubjectKeyId, msg.SerialNumber)
 	if !found {
 		return nil, pkitypes.NewErrProposedCertificateRevocationDoesNotExist(msg.Subject, msg.SubjectKeyId)
 	}
@@ -50,38 +50,89 @@ func (k msgServer) ApproveRevokeX509RootCert(goCtx context.Context, msg *types.M
 	revocation.Approvals = append(revocation.Approvals, &grant)
 
 	// check if proposed certificate revocation has enough approvals
-	if len(revocation.Approvals) >= k.CertificateApprovalsCount(ctx, k.dclauthKeeper) {
+	if len(revocation.Approvals) >= k.CertificateApprovalsCount(ctx, k.dclauthKeeper) { //nolint:nestif
 		certificates, found := k.GetApprovedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
-		// Assign the approvals to the root certificate
-		for _, cert := range certificates.Certs {
-			if cert.IsRoot {
-				cert.Approvals = revocation.Approvals
-			}
-		}
 		if !found {
 			return nil, pkitypes.NewErrCertificateDoesNotExist(msg.Subject, msg.SubjectKeyId)
 		}
-		k.AddRevokedCertificates(ctx, certificates)
-		k.RemoveApprovedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
-		k.RevokeChildCertificates(ctx, msg.Subject, msg.SubjectKeyId)
-		k.RemoveProposedCertificateRevocation(ctx, msg.Subject, msg.SubjectKeyId)
 
-		// remove from root certs index, add to revoked root certs
 		certID := types.CertificateIdentifier{
 			Subject:      msg.Subject,
 			SubjectKeyId: msg.SubjectKeyId,
 		}
-		k.RemoveApprovedRootCertificate(ctx, certID)
 		k.AddRevokedRootCertificate(ctx, certID)
+		k.RemoveProposedCertificateRevocation(ctx, msg.Subject, msg.SubjectKeyId, msg.SerialNumber)
 
-		// remove from subject -> subject key ID map
-		k.RemoveApprovedCertificateBySubject(ctx, msg.Subject, msg.SubjectKeyId)
+		if msg.SerialNumber != "" {
+			k._revokeRootCertificate(ctx, revocation.Approvals, msg.SerialNumber, certificates, revocation.SchemaVersion)
+		} else {
+			k._revokeRootCertificates(ctx, revocation.Approvals, certificates, revocation.SchemaVersion)
+		}
 
-		// remove from subject key ID -> certificates map
-		k.RemoveApprovedCertificatesBySubjectKeyID(ctx, msg.Subject, msg.SubjectKeyId)
+		if revocation.RevokeChild {
+			k.RevokeChildCertificates(ctx, certID.Subject, certID.SubjectKeyId, revocation.SchemaVersion)
+		}
 	} else {
 		k.SetProposedCertificateRevocation(ctx, revocation)
 	}
 
 	return &types.MsgApproveRevokeX509RootCertResponse{}, nil
+}
+
+func (k msgServer) _revokeRootCertificates(
+	ctx sdk.Context,
+	approvals []*types.Grant,
+	certificates types.ApprovedCertificates,
+	schemaVersion uint32,
+) {
+	// Assign the approvals to the root certificate
+	for _, cert := range certificates.Certs {
+		if cert.IsRoot {
+			cert.Approvals = approvals
+		}
+	}
+	certID := types.CertificateIdentifier{
+		Subject:      certificates.Subject,
+		SubjectKeyId: certificates.SubjectKeyId,
+	}
+	// remove from root certs index, add to revoked root certs
+	k.RemoveApprovedRootCertificate(ctx, certID)
+	k.AddRevokedCertificates(ctx, certificates, schemaVersion)
+	k.RemoveApprovedCertificates(ctx, certificates.Subject, certificates.SubjectKeyId)
+	// remove from subject -> subject key ID map
+	k.RemoveApprovedCertificateBySubject(ctx, certificates.Subject, certificates.SubjectKeyId)
+	// remove from subject key ID -> certificates map
+	k.RemoveApprovedCertificatesBySubjectKeyID(ctx, certificates.Subject, certificates.SubjectKeyId)
+}
+func (k msgServer) _revokeRootCertificate(
+	ctx sdk.Context,
+	approvals []*types.Grant,
+	serialNumber string,
+	certificates types.ApprovedCertificates,
+	schemaVersion uint32,
+) {
+	cert, _ := findCertificate(serialNumber, &certificates.Certs)
+	cert.Approvals = approvals
+	revCert := types.ApprovedCertificates{
+		Subject:      cert.Subject,
+		SubjectKeyId: cert.SubjectKeyId,
+		Certs:        []*types.Certificate{cert},
+	}
+	k.AddRevokedCertificates(ctx, revCert, schemaVersion)
+
+	removeCertFromList(cert.Issuer, cert.SerialNumber, &certificates.Certs)
+	if len(certificates.Certs) == 0 {
+		k.RemoveApprovedCertificates(ctx, cert.Subject, cert.SubjectKeyId)
+		k.RemoveApprovedRootCertificate(ctx,
+			types.CertificateIdentifier{
+				Subject:      certificates.Subject,
+				SubjectKeyId: certificates.SubjectKeyId,
+			},
+		)
+		k.RemoveApprovedCertificateBySubject(ctx, cert.Subject, cert.SubjectKeyId)
+		k.RemoveApprovedCertificatesBySubjectKeyID(ctx, cert.Subject, cert.SubjectKeyId)
+	} else {
+		k.SetApprovedCertificates(ctx, certificates)
+		k.RemoveApprovedCertificatesBySubjectKeyIDAndSerialNumber(ctx, cert.Subject, cert.SubjectKeyId, serialNumber)
+	}
 }

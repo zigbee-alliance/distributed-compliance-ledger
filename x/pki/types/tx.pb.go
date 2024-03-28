@@ -30,11 +30,13 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type MsgProposeAddX509RootCert struct {
-	Signer string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty" validate:"required"`
-	Cert   string `protobuf:"bytes,2,opt,name=cert,proto3" json:"cert,omitempty" validate:"required,max=10485760"`
-	Info   string `protobuf:"bytes,3,opt,name=info,proto3" json:"info,omitempty" validate:"max=4096"`
-	Time   int64  `protobuf:"varint,4,opt,name=time,proto3" json:"time,omitempty"`
-	Vid    int32  `protobuf:"varint,5,opt,name=vid,proto3" json:"vid,omitempty" validate:"gte=1,lte=65535,required"`
+	Signer            string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty" validate:"required"`
+	Cert              string `protobuf:"bytes,2,opt,name=cert,proto3" json:"cert,omitempty" validate:"required,max=10485760"`
+	Info              string `protobuf:"bytes,3,opt,name=info,proto3" json:"info,omitempty" validate:"max=4096"`
+	Time              int64  `protobuf:"varint,4,opt,name=time,proto3" json:"time,omitempty"`
+	Vid               int32  `protobuf:"varint,5,opt,name=vid,proto3" json:"vid,omitempty" validate:"gte=1,lte=65535,required"`
+	CertSchemaVersion uint32 `protobuf:"varint,6,opt,name=certSchemaVersion,proto3" json:"certSchemaVersion,omitempty" validate:"gte=0,lte=65535"`
+	SchemaVersion     uint32 `protobuf:"varint,7,opt,name=schemaVersion,proto3" json:"schemaVersion,omitempty" validate:"gte=0,lte=65535"`
 }
 
 func (m *MsgProposeAddX509RootCert) Reset()         { *m = MsgProposeAddX509RootCert{} }
@@ -101,6 +103,20 @@ func (m *MsgProposeAddX509RootCert) GetTime() int64 {
 func (m *MsgProposeAddX509RootCert) GetVid() int32 {
 	if m != nil {
 		return m.Vid
+	}
+	return 0
+}
+
+func (m *MsgProposeAddX509RootCert) GetCertSchemaVersion() uint32 {
+	if m != nil {
+		return m.CertSchemaVersion
+	}
+	return 0
+}
+
+func (m *MsgProposeAddX509RootCert) GetSchemaVersion() uint32 {
+	if m != nil {
+		return m.SchemaVersion
 	}
 	return 0
 }
@@ -254,10 +270,12 @@ func (m *MsgApproveAddX509RootCertResponse) XXX_DiscardUnknown() {
 var xxx_messageInfo_MsgApproveAddX509RootCertResponse proto.InternalMessageInfo
 
 type MsgAddX509Cert struct {
-	Signer string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty" validate:"required"`
-	Cert   string `protobuf:"bytes,2,opt,name=cert,proto3" json:"cert,omitempty" validate:"required,max=10485760"`
-	Info   string `protobuf:"bytes,3,opt,name=info,proto3" json:"info,omitempty" validate:"max=4096"`
-	Time   int64  `protobuf:"varint,4,opt,name=time,proto3" json:"time,omitempty"`
+	Signer            string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty" validate:"required"`
+	Cert              string `protobuf:"bytes,2,opt,name=cert,proto3" json:"cert,omitempty" validate:"required,max=10485760"`
+	Info              string `protobuf:"bytes,3,opt,name=info,proto3" json:"info,omitempty" validate:"max=4096"`
+	Time              int64  `protobuf:"varint,4,opt,name=time,proto3" json:"time,omitempty"`
+	CertSchemaVersion uint32 `protobuf:"varint,5,opt,name=certSchemaVersion,proto3" json:"certSchemaVersion,omitempty" validate:"gte=0,lte=65535"`
+	SchemaVersion     uint32 `protobuf:"varint,6,opt,name=schemaVersion,proto3" json:"schemaVersion,omitempty" validate:"gte=0,lte=65535"`
 }
 
 func (m *MsgAddX509Cert) Reset()         { *m = MsgAddX509Cert{} }
@@ -321,6 +339,20 @@ func (m *MsgAddX509Cert) GetTime() int64 {
 	return 0
 }
 
+func (m *MsgAddX509Cert) GetCertSchemaVersion() uint32 {
+	if m != nil {
+		return m.CertSchemaVersion
+	}
+	return 0
+}
+
+func (m *MsgAddX509Cert) GetSchemaVersion() uint32 {
+	if m != nil {
+		return m.SchemaVersion
+	}
+	return 0
+}
+
 type MsgAddX509CertResponse struct {
 }
 
@@ -358,11 +390,14 @@ func (m *MsgAddX509CertResponse) XXX_DiscardUnknown() {
 var xxx_messageInfo_MsgAddX509CertResponse proto.InternalMessageInfo
 
 type MsgProposeRevokeX509RootCert struct {
-	Signer       string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty" validate:"required"`
-	Subject      string `protobuf:"bytes,2,opt,name=subject,proto3" json:"subject,omitempty" validate:"required,max=1024"`
-	SubjectKeyId string `protobuf:"bytes,3,opt,name=subjectKeyId,proto3" json:"subjectKeyId,omitempty" validate:"required,max=256"`
-	Info         string `protobuf:"bytes,4,opt,name=info,proto3" json:"info,omitempty" validate:"max=4096"`
-	Time         int64  `protobuf:"varint,5,opt,name=time,proto3" json:"time,omitempty"`
+	Signer        string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty" validate:"required"`
+	Subject       string `protobuf:"bytes,2,opt,name=subject,proto3" json:"subject,omitempty" validate:"required,max=1024"`
+	SubjectKeyId  string `protobuf:"bytes,3,opt,name=subjectKeyId,proto3" json:"subjectKeyId,omitempty" validate:"required,max=256"`
+	Info          string `protobuf:"bytes,4,opt,name=info,proto3" json:"info,omitempty" validate:"max=4096"`
+	Time          int64  `protobuf:"varint,5,opt,name=time,proto3" json:"time,omitempty"`
+	SerialNumber  string `protobuf:"bytes,6,opt,name=serialNumber,proto3" json:"serialNumber,omitempty"`
+	RevokeChild   bool   `protobuf:"varint,7,opt,name=revokeChild,proto3" json:"revokeChild,omitempty"`
+	SchemaVersion uint32 `protobuf:"varint,8,opt,name=schemaVersion,proto3" json:"schemaVersion,omitempty" validate:"gte=0,lte=65535"`
 }
 
 func (m *MsgProposeRevokeX509RootCert) Reset()         { *m = MsgProposeRevokeX509RootCert{} }
@@ -433,6 +468,27 @@ func (m *MsgProposeRevokeX509RootCert) GetTime() int64 {
 	return 0
 }
 
+func (m *MsgProposeRevokeX509RootCert) GetSerialNumber() string {
+	if m != nil {
+		return m.SerialNumber
+	}
+	return ""
+}
+
+func (m *MsgProposeRevokeX509RootCert) GetRevokeChild() bool {
+	if m != nil {
+		return m.RevokeChild
+	}
+	return false
+}
+
+func (m *MsgProposeRevokeX509RootCert) GetSchemaVersion() uint32 {
+	if m != nil {
+		return m.SchemaVersion
+	}
+	return 0
+}
+
 type MsgProposeRevokeX509RootCertResponse struct {
 }
 
@@ -475,6 +531,7 @@ type MsgApproveRevokeX509RootCert struct {
 	SubjectKeyId string `protobuf:"bytes,3,opt,name=subjectKeyId,proto3" json:"subjectKeyId,omitempty" validate:"required,max=256"`
 	Info         string `protobuf:"bytes,5,opt,name=info,proto3" json:"info,omitempty" validate:"max=4096"`
 	Time         int64  `protobuf:"varint,6,opt,name=time,proto3" json:"time,omitempty"`
+	SerialNumber string `protobuf:"bytes,7,opt,name=serialNumber,proto3" json:"serialNumber,omitempty"`
 }
 
 func (m *MsgApproveRevokeX509RootCert) Reset()         { *m = MsgApproveRevokeX509RootCert{} }
@@ -545,6 +602,13 @@ func (m *MsgApproveRevokeX509RootCert) GetTime() int64 {
 	return 0
 }
 
+func (m *MsgApproveRevokeX509RootCert) GetSerialNumber() string {
+	if m != nil {
+		return m.SerialNumber
+	}
+	return ""
+}
+
 type MsgApproveRevokeX509RootCertResponse struct {
 }
 
@@ -582,11 +646,14 @@ func (m *MsgApproveRevokeX509RootCertResponse) XXX_DiscardUnknown() {
 var xxx_messageInfo_MsgApproveRevokeX509RootCertResponse proto.InternalMessageInfo
 
 type MsgRevokeX509Cert struct {
-	Signer       string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty" validate:"required"`
-	Subject      string `protobuf:"bytes,2,opt,name=subject,proto3" json:"subject,omitempty" validate:"required,max=1024"`
-	SubjectKeyId string `protobuf:"bytes,3,opt,name=subjectKeyId,proto3" json:"subjectKeyId,omitempty" validate:"required,max=256"`
-	Info         string `protobuf:"bytes,4,opt,name=info,proto3" json:"info,omitempty" validate:"max=4096"`
-	Time         int64  `protobuf:"varint,5,opt,name=time,proto3" json:"time,omitempty"`
+	Signer        string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty" validate:"required"`
+	Subject       string `protobuf:"bytes,2,opt,name=subject,proto3" json:"subject,omitempty" validate:"required,max=1024"`
+	SubjectKeyId  string `protobuf:"bytes,3,opt,name=subjectKeyId,proto3" json:"subjectKeyId,omitempty" validate:"required,max=256"`
+	Info          string `protobuf:"bytes,4,opt,name=info,proto3" json:"info,omitempty" validate:"max=4096"`
+	Time          int64  `protobuf:"varint,5,opt,name=time,proto3" json:"time,omitempty"`
+	SerialNumber  string `protobuf:"bytes,6,opt,name=serialNumber,proto3" json:"serialNumber,omitempty"`
+	RevokeChild   bool   `protobuf:"varint,7,opt,name=revokeChild,proto3" json:"revokeChild,omitempty"`
+	SchemaVersion uint32 `protobuf:"varint,8,opt,name=schemaVersion,proto3" json:"schemaVersion,omitempty" validate:"gte=0,lte=65535"`
 }
 
 func (m *MsgRevokeX509Cert) Reset()         { *m = MsgRevokeX509Cert{} }
@@ -657,6 +724,27 @@ func (m *MsgRevokeX509Cert) GetTime() int64 {
 	return 0
 }
 
+func (m *MsgRevokeX509Cert) GetSerialNumber() string {
+	if m != nil {
+		return m.SerialNumber
+	}
+	return ""
+}
+
+func (m *MsgRevokeX509Cert) GetRevokeChild() bool {
+	if m != nil {
+		return m.RevokeChild
+	}
+	return false
+}
+
+func (m *MsgRevokeX509Cert) GetSchemaVersion() uint32 {
+	if m != nil {
+		return m.SchemaVersion
+	}
+	return 0
+}
+
 type MsgRevokeX509CertResponse struct {
 }
 
@@ -694,11 +782,12 @@ func (m *MsgRevokeX509CertResponse) XXX_DiscardUnknown() {
 var xxx_messageInfo_MsgRevokeX509CertResponse proto.InternalMessageInfo
 
 type MsgRejectAddX509RootCert struct {
-	Signer       string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty" validate:"required"`
-	Subject      string `protobuf:"bytes,2,opt,name=subject,proto3" json:"subject,omitempty" validate:"required,max=1024"`
-	SubjectKeyId string `protobuf:"bytes,3,opt,name=subjectKeyId,proto3" json:"subjectKeyId,omitempty" validate:"required,max=256"`
-	Info         string `protobuf:"bytes,4,opt,name=info,proto3" json:"info,omitempty" validate:"max=4096"`
-	Time         int64  `protobuf:"varint,5,opt,name=time,proto3" json:"time,omitempty"`
+	Signer        string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty" validate:"required"`
+	Subject       string `protobuf:"bytes,2,opt,name=subject,proto3" json:"subject,omitempty" validate:"required,max=1024"`
+	SubjectKeyId  string `protobuf:"bytes,3,opt,name=subjectKeyId,proto3" json:"subjectKeyId,omitempty" validate:"required,max=256"`
+	Info          string `protobuf:"bytes,4,opt,name=info,proto3" json:"info,omitempty" validate:"max=4096"`
+	Time          int64  `protobuf:"varint,5,opt,name=time,proto3" json:"time,omitempty"`
+	SchemaVersion uint32 `protobuf:"varint,6,opt,name=schemaVersion,proto3" json:"schemaVersion,omitempty" validate:"gte=0,lte=65535"`
 }
 
 func (m *MsgRejectAddX509RootCert) Reset()         { *m = MsgRejectAddX509RootCert{} }
@@ -769,6 +858,13 @@ func (m *MsgRejectAddX509RootCert) GetTime() int64 {
 	return 0
 }
 
+func (m *MsgRejectAddX509RootCert) GetSchemaVersion() uint32 {
+	if m != nil {
+		return m.SchemaVersion
+	}
+	return 0
+}
+
 type MsgRejectAddX509RootCertResponse struct {
 }
 
@@ -818,6 +914,7 @@ type MsgAddPkiRevocationDistributionPoint struct {
 	DataDigest           string `protobuf:"bytes,10,opt,name=dataDigest,proto3" json:"dataDigest,omitempty"`
 	DataDigestType       uint32 `protobuf:"varint,11,opt,name=dataDigestType,proto3" json:"dataDigestType,omitempty"`
 	RevocationType       uint32 `protobuf:"varint,12,opt,name=revocationType,proto3" json:"revocationType,omitempty" validate:"required"`
+	SchemaVersion        uint32 `protobuf:"varint,13,opt,name=schemaVersion,proto3" json:"schemaVersion,omitempty" validate:"gte=0,lte=65535"`
 }
 
 func (m *MsgAddPkiRevocationDistributionPoint) Reset()         { *m = MsgAddPkiRevocationDistributionPoint{} }
@@ -937,6 +1034,13 @@ func (m *MsgAddPkiRevocationDistributionPoint) GetRevocationType() uint32 {
 	return 0
 }
 
+func (m *MsgAddPkiRevocationDistributionPoint) GetSchemaVersion() uint32 {
+	if m != nil {
+		return m.SchemaVersion
+	}
+	return 0
+}
+
 type MsgAddPkiRevocationDistributionPointResponse struct {
 }
 
@@ -987,6 +1091,7 @@ type MsgUpdatePkiRevocationDistributionPoint struct {
 	DataFileSize         uint64 `protobuf:"varint,7,opt,name=dataFileSize,proto3" json:"dataFileSize,omitempty"`
 	DataDigest           string `protobuf:"bytes,8,opt,name=dataDigest,proto3" json:"dataDigest,omitempty"`
 	DataDigestType       uint32 `protobuf:"varint,9,opt,name=dataDigestType,proto3" json:"dataDigestType,omitempty"`
+	SchemaVersion        uint32 `protobuf:"varint,10,opt,name=schemaVersion,proto3" json:"schemaVersion,omitempty" validate:"gte=0,lte=65535"`
 }
 
 func (m *MsgUpdatePkiRevocationDistributionPoint) Reset() {
@@ -1083,6 +1188,13 @@ func (m *MsgUpdatePkiRevocationDistributionPoint) GetDataDigest() string {
 func (m *MsgUpdatePkiRevocationDistributionPoint) GetDataDigestType() uint32 {
 	if m != nil {
 		return m.DataDigestType
+	}
+	return 0
+}
+
+func (m *MsgUpdatePkiRevocationDistributionPoint) GetSchemaVersion() uint32 {
+	if m != nil {
+		return m.SchemaVersion
 	}
 	return 0
 }
@@ -1341,6 +1453,590 @@ func (m *MsgAssignVidResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgAssignVidResponse proto.InternalMessageInfo
 
+type MsgAddNocX509RootCert struct {
+	Signer            string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty" validate:"required"`
+	Cert              string `protobuf:"bytes,2,opt,name=cert,proto3" json:"cert,omitempty" validate:"required,max=10485760"`
+	CertSchemaVersion uint32 `protobuf:"varint,4,opt,name=certSchemaVersion,proto3" json:"certSchemaVersion,omitempty" validate:"gte=0,lte=65535"`
+	SchemaVersion     uint32 `protobuf:"varint,5,opt,name=schemaVersion,proto3" json:"schemaVersion,omitempty" validate:"gte=0,lte=65535"`
+}
+
+func (m *MsgAddNocX509RootCert) Reset()         { *m = MsgAddNocX509RootCert{} }
+func (m *MsgAddNocX509RootCert) String() string { return proto.CompactTextString(m) }
+func (*MsgAddNocX509RootCert) ProtoMessage()    {}
+func (*MsgAddNocX509RootCert) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3047b9df3153e42a, []int{22}
+}
+func (m *MsgAddNocX509RootCert) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgAddNocX509RootCert) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgAddNocX509RootCert.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgAddNocX509RootCert) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgAddNocX509RootCert.Merge(m, src)
+}
+func (m *MsgAddNocX509RootCert) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgAddNocX509RootCert) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgAddNocX509RootCert.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgAddNocX509RootCert proto.InternalMessageInfo
+
+func (m *MsgAddNocX509RootCert) GetSigner() string {
+	if m != nil {
+		return m.Signer
+	}
+	return ""
+}
+
+func (m *MsgAddNocX509RootCert) GetCert() string {
+	if m != nil {
+		return m.Cert
+	}
+	return ""
+}
+
+func (m *MsgAddNocX509RootCert) GetCertSchemaVersion() uint32 {
+	if m != nil {
+		return m.CertSchemaVersion
+	}
+	return 0
+}
+
+func (m *MsgAddNocX509RootCert) GetSchemaVersion() uint32 {
+	if m != nil {
+		return m.SchemaVersion
+	}
+	return 0
+}
+
+type MsgAddNocX509RootCertResponse struct {
+}
+
+func (m *MsgAddNocX509RootCertResponse) Reset()         { *m = MsgAddNocX509RootCertResponse{} }
+func (m *MsgAddNocX509RootCertResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgAddNocX509RootCertResponse) ProtoMessage()    {}
+func (*MsgAddNocX509RootCertResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3047b9df3153e42a, []int{23}
+}
+func (m *MsgAddNocX509RootCertResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgAddNocX509RootCertResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgAddNocX509RootCertResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgAddNocX509RootCertResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgAddNocX509RootCertResponse.Merge(m, src)
+}
+func (m *MsgAddNocX509RootCertResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgAddNocX509RootCertResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgAddNocX509RootCertResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgAddNocX509RootCertResponse proto.InternalMessageInfo
+
+type MsgRemoveX509Cert struct {
+	Signer       string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty" validate:"required"`
+	Subject      string `protobuf:"bytes,2,opt,name=subject,proto3" json:"subject,omitempty" validate:"required,max=1024"`
+	SubjectKeyId string `protobuf:"bytes,3,opt,name=subjectKeyId,proto3" json:"subjectKeyId,omitempty" validate:"required,max=256"`
+	SerialNumber string `protobuf:"bytes,4,opt,name=serialNumber,proto3" json:"serialNumber,omitempty"`
+}
+
+func (m *MsgRemoveX509Cert) Reset()         { *m = MsgRemoveX509Cert{} }
+func (m *MsgRemoveX509Cert) String() string { return proto.CompactTextString(m) }
+func (*MsgRemoveX509Cert) ProtoMessage()    {}
+func (*MsgRemoveX509Cert) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3047b9df3153e42a, []int{24}
+}
+func (m *MsgRemoveX509Cert) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgRemoveX509Cert) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgRemoveX509Cert.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgRemoveX509Cert) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRemoveX509Cert.Merge(m, src)
+}
+func (m *MsgRemoveX509Cert) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgRemoveX509Cert) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRemoveX509Cert.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgRemoveX509Cert proto.InternalMessageInfo
+
+func (m *MsgRemoveX509Cert) GetSigner() string {
+	if m != nil {
+		return m.Signer
+	}
+	return ""
+}
+
+func (m *MsgRemoveX509Cert) GetSubject() string {
+	if m != nil {
+		return m.Subject
+	}
+	return ""
+}
+
+func (m *MsgRemoveX509Cert) GetSubjectKeyId() string {
+	if m != nil {
+		return m.SubjectKeyId
+	}
+	return ""
+}
+
+func (m *MsgRemoveX509Cert) GetSerialNumber() string {
+	if m != nil {
+		return m.SerialNumber
+	}
+	return ""
+}
+
+type MsgRemoveX509CertResponse struct {
+}
+
+func (m *MsgRemoveX509CertResponse) Reset()         { *m = MsgRemoveX509CertResponse{} }
+func (m *MsgRemoveX509CertResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgRemoveX509CertResponse) ProtoMessage()    {}
+func (*MsgRemoveX509CertResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3047b9df3153e42a, []int{25}
+}
+func (m *MsgRemoveX509CertResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgRemoveX509CertResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgRemoveX509CertResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgRemoveX509CertResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRemoveX509CertResponse.Merge(m, src)
+}
+func (m *MsgRemoveX509CertResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgRemoveX509CertResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRemoveX509CertResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgRemoveX509CertResponse proto.InternalMessageInfo
+
+type MsgAddNocX509Cert struct {
+	Signer            string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty" validate:"required"`
+	Cert              string `protobuf:"bytes,2,opt,name=cert,proto3" json:"cert,omitempty" validate:"required,max=10485760"`
+	CertSchemaVersion uint32 `protobuf:"varint,3,opt,name=certSchemaVersion,proto3" json:"certSchemaVersion,omitempty" validate:"gte=0,lte=65535"`
+	SchemaVersion     uint32 `protobuf:"varint,4,opt,name=schemaVersion,proto3" json:"schemaVersion,omitempty" validate:"gte=0,lte=65535"`
+}
+
+func (m *MsgAddNocX509Cert) Reset()         { *m = MsgAddNocX509Cert{} }
+func (m *MsgAddNocX509Cert) String() string { return proto.CompactTextString(m) }
+func (*MsgAddNocX509Cert) ProtoMessage()    {}
+func (*MsgAddNocX509Cert) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3047b9df3153e42a, []int{26}
+}
+func (m *MsgAddNocX509Cert) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgAddNocX509Cert) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgAddNocX509Cert.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgAddNocX509Cert) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgAddNocX509Cert.Merge(m, src)
+}
+func (m *MsgAddNocX509Cert) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgAddNocX509Cert) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgAddNocX509Cert.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgAddNocX509Cert proto.InternalMessageInfo
+
+func (m *MsgAddNocX509Cert) GetSigner() string {
+	if m != nil {
+		return m.Signer
+	}
+	return ""
+}
+
+func (m *MsgAddNocX509Cert) GetCert() string {
+	if m != nil {
+		return m.Cert
+	}
+	return ""
+}
+
+func (m *MsgAddNocX509Cert) GetCertSchemaVersion() uint32 {
+	if m != nil {
+		return m.CertSchemaVersion
+	}
+	return 0
+}
+
+func (m *MsgAddNocX509Cert) GetSchemaVersion() uint32 {
+	if m != nil {
+		return m.SchemaVersion
+	}
+	return 0
+}
+
+type MsgAddNocX509CertResponse struct {
+}
+
+func (m *MsgAddNocX509CertResponse) Reset()         { *m = MsgAddNocX509CertResponse{} }
+func (m *MsgAddNocX509CertResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgAddNocX509CertResponse) ProtoMessage()    {}
+func (*MsgAddNocX509CertResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3047b9df3153e42a, []int{27}
+}
+func (m *MsgAddNocX509CertResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgAddNocX509CertResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgAddNocX509CertResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgAddNocX509CertResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgAddNocX509CertResponse.Merge(m, src)
+}
+func (m *MsgAddNocX509CertResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgAddNocX509CertResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgAddNocX509CertResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgAddNocX509CertResponse proto.InternalMessageInfo
+
+type MsgRevokeNocRootX509Cert struct {
+	Signer        string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty" validate:"required"`
+	Subject       string `protobuf:"bytes,2,opt,name=subject,proto3" json:"subject,omitempty" validate:"required,max=1024"`
+	SubjectKeyId  string `protobuf:"bytes,3,opt,name=subjectKeyId,proto3" json:"subjectKeyId,omitempty" validate:"required,max=256"`
+	SerialNumber  string `protobuf:"bytes,4,opt,name=serialNumber,proto3" json:"serialNumber,omitempty"`
+	Info          string `protobuf:"bytes,5,opt,name=info,proto3" json:"info,omitempty" validate:"max=4096"`
+	Time          int64  `protobuf:"varint,6,opt,name=time,proto3" json:"time,omitempty"`
+	RevokeChild   bool   `protobuf:"varint,7,opt,name=revokeChild,proto3" json:"revokeChild,omitempty"`
+	SchemaVersion uint32 `protobuf:"varint,8,opt,name=schemaVersion,proto3" json:"schemaVersion,omitempty" validate:"gte=0,lte=65535"`
+}
+
+func (m *MsgRevokeNocRootX509Cert) Reset()         { *m = MsgRevokeNocRootX509Cert{} }
+func (m *MsgRevokeNocRootX509Cert) String() string { return proto.CompactTextString(m) }
+func (*MsgRevokeNocRootX509Cert) ProtoMessage()    {}
+func (*MsgRevokeNocRootX509Cert) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3047b9df3153e42a, []int{28}
+}
+func (m *MsgRevokeNocRootX509Cert) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgRevokeNocRootX509Cert) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgRevokeNocRootX509Cert.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgRevokeNocRootX509Cert) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRevokeNocRootX509Cert.Merge(m, src)
+}
+func (m *MsgRevokeNocRootX509Cert) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgRevokeNocRootX509Cert) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRevokeNocRootX509Cert.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgRevokeNocRootX509Cert proto.InternalMessageInfo
+
+func (m *MsgRevokeNocRootX509Cert) GetSigner() string {
+	if m != nil {
+		return m.Signer
+	}
+	return ""
+}
+
+func (m *MsgRevokeNocRootX509Cert) GetSubject() string {
+	if m != nil {
+		return m.Subject
+	}
+	return ""
+}
+
+func (m *MsgRevokeNocRootX509Cert) GetSubjectKeyId() string {
+	if m != nil {
+		return m.SubjectKeyId
+	}
+	return ""
+}
+
+func (m *MsgRevokeNocRootX509Cert) GetSerialNumber() string {
+	if m != nil {
+		return m.SerialNumber
+	}
+	return ""
+}
+
+func (m *MsgRevokeNocRootX509Cert) GetInfo() string {
+	if m != nil {
+		return m.Info
+	}
+	return ""
+}
+
+func (m *MsgRevokeNocRootX509Cert) GetTime() int64 {
+	if m != nil {
+		return m.Time
+	}
+	return 0
+}
+
+func (m *MsgRevokeNocRootX509Cert) GetRevokeChild() bool {
+	if m != nil {
+		return m.RevokeChild
+	}
+	return false
+}
+
+func (m *MsgRevokeNocRootX509Cert) GetSchemaVersion() uint32 {
+	if m != nil {
+		return m.SchemaVersion
+	}
+	return 0
+}
+
+type MsgRevokeNocRootX509CertResponse struct {
+}
+
+func (m *MsgRevokeNocRootX509CertResponse) Reset()         { *m = MsgRevokeNocRootX509CertResponse{} }
+func (m *MsgRevokeNocRootX509CertResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgRevokeNocRootX509CertResponse) ProtoMessage()    {}
+func (*MsgRevokeNocRootX509CertResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3047b9df3153e42a, []int{29}
+}
+func (m *MsgRevokeNocRootX509CertResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgRevokeNocRootX509CertResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgRevokeNocRootX509CertResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgRevokeNocRootX509CertResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRevokeNocRootX509CertResponse.Merge(m, src)
+}
+func (m *MsgRevokeNocRootX509CertResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgRevokeNocRootX509CertResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRevokeNocRootX509CertResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgRevokeNocRootX509CertResponse proto.InternalMessageInfo
+
+type MsgRevokeNocX509Cert struct {
+	Signer        string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty" validate:"required"`
+	Subject       string `protobuf:"bytes,2,opt,name=subject,proto3" json:"subject,omitempty" validate:"required,max=1024"`
+	SubjectKeyId  string `protobuf:"bytes,3,opt,name=subjectKeyId,proto3" json:"subjectKeyId,omitempty" validate:"required,max=256"`
+	SerialNumber  string `protobuf:"bytes,4,opt,name=serialNumber,proto3" json:"serialNumber,omitempty"`
+	Info          string `protobuf:"bytes,5,opt,name=info,proto3" json:"info,omitempty" validate:"max=4096"`
+	Time          int64  `protobuf:"varint,6,opt,name=time,proto3" json:"time,omitempty"`
+	RevokeChild   bool   `protobuf:"varint,7,opt,name=revokeChild,proto3" json:"revokeChild,omitempty"`
+	SchemaVersion uint32 `protobuf:"varint,8,opt,name=schemaVersion,proto3" json:"schemaVersion,omitempty" validate:"gte=0,lte=65535"`
+}
+
+func (m *MsgRevokeNocX509Cert) Reset()         { *m = MsgRevokeNocX509Cert{} }
+func (m *MsgRevokeNocX509Cert) String() string { return proto.CompactTextString(m) }
+func (*MsgRevokeNocX509Cert) ProtoMessage()    {}
+func (*MsgRevokeNocX509Cert) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3047b9df3153e42a, []int{30}
+}
+func (m *MsgRevokeNocX509Cert) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgRevokeNocX509Cert) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgRevokeNocX509Cert.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgRevokeNocX509Cert) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRevokeNocX509Cert.Merge(m, src)
+}
+func (m *MsgRevokeNocX509Cert) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgRevokeNocX509Cert) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRevokeNocX509Cert.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgRevokeNocX509Cert proto.InternalMessageInfo
+
+func (m *MsgRevokeNocX509Cert) GetSigner() string {
+	if m != nil {
+		return m.Signer
+	}
+	return ""
+}
+
+func (m *MsgRevokeNocX509Cert) GetSubject() string {
+	if m != nil {
+		return m.Subject
+	}
+	return ""
+}
+
+func (m *MsgRevokeNocX509Cert) GetSubjectKeyId() string {
+	if m != nil {
+		return m.SubjectKeyId
+	}
+	return ""
+}
+
+func (m *MsgRevokeNocX509Cert) GetSerialNumber() string {
+	if m != nil {
+		return m.SerialNumber
+	}
+	return ""
+}
+
+func (m *MsgRevokeNocX509Cert) GetInfo() string {
+	if m != nil {
+		return m.Info
+	}
+	return ""
+}
+
+func (m *MsgRevokeNocX509Cert) GetTime() int64 {
+	if m != nil {
+		return m.Time
+	}
+	return 0
+}
+
+func (m *MsgRevokeNocX509Cert) GetRevokeChild() bool {
+	if m != nil {
+		return m.RevokeChild
+	}
+	return false
+}
+
+func (m *MsgRevokeNocX509Cert) GetSchemaVersion() uint32 {
+	if m != nil {
+		return m.SchemaVersion
+	}
+	return 0
+}
+
+type MsgRevokeNocX509CertResponse struct {
+}
+
+func (m *MsgRevokeNocX509CertResponse) Reset()         { *m = MsgRevokeNocX509CertResponse{} }
+func (m *MsgRevokeNocX509CertResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgRevokeNocX509CertResponse) ProtoMessage()    {}
+func (*MsgRevokeNocX509CertResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3047b9df3153e42a, []int{31}
+}
+func (m *MsgRevokeNocX509CertResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgRevokeNocX509CertResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgRevokeNocX509CertResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgRevokeNocX509CertResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRevokeNocX509CertResponse.Merge(m, src)
+}
+func (m *MsgRevokeNocX509CertResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgRevokeNocX509CertResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRevokeNocX509CertResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgRevokeNocX509CertResponse proto.InternalMessageInfo
+
 func init() {
 	proto.RegisterType((*MsgProposeAddX509RootCert)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgProposeAddX509RootCert")
 	proto.RegisterType((*MsgProposeAddX509RootCertResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgProposeAddX509RootCertResponse")
@@ -1364,6 +2060,16 @@ func init() {
 	proto.RegisterType((*MsgDeletePkiRevocationDistributionPointResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgDeletePkiRevocationDistributionPointResponse")
 	proto.RegisterType((*MsgAssignVid)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgAssignVid")
 	proto.RegisterType((*MsgAssignVidResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgAssignVidResponse")
+	proto.RegisterType((*MsgAddNocX509RootCert)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgAddNocX509RootCert")
+	proto.RegisterType((*MsgAddNocX509RootCertResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgAddNocX509RootCertResponse")
+	proto.RegisterType((*MsgRemoveX509Cert)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgRemoveX509Cert")
+	proto.RegisterType((*MsgRemoveX509CertResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgRemoveX509CertResponse")
+	proto.RegisterType((*MsgAddNocX509Cert)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgAddNocX509Cert")
+	proto.RegisterType((*MsgAddNocX509CertResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgAddNocX509CertResponse")
+	proto.RegisterType((*MsgRevokeNocRootX509Cert)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgRevokeNocRootX509Cert")
+	proto.RegisterType((*MsgRevokeNocRootX509CertResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgRevokeNocRootX509CertResponse")
+	proto.RegisterType((*MsgRevokeNocX509Cert)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgRevokeNocX509Cert")
+	proto.RegisterType((*MsgRevokeNocX509CertResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgRevokeNocX509CertResponse")
 }
 
 func init() {
@@ -1371,80 +2077,100 @@ func init() {
 }
 
 var fileDescriptor_3047b9df3153e42a = []byte{
-	// 1154 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x59, 0xdd, 0x4f, 0xdb, 0xd6,
-	0x1b, 0xc6, 0xf9, 0xe0, 0xe3, 0x2d, 0x3f, 0xf4, 0xdb, 0x19, 0xa3, 0xc6, 0xa0, 0x24, 0x75, 0x51,
-	0x8b, 0x34, 0x48, 0x02, 0x25, 0xb4, 0x54, 0x63, 0x53, 0x68, 0xd4, 0x0e, 0x15, 0x24, 0x66, 0xe8,
-	0x36, 0x4d, 0xd3, 0xaa, 0x24, 0x3e, 0xf5, 0xce, 0x70, 0x72, 0x3c, 0x1f, 0x07, 0x41, 0xff, 0x89,
-	0x4d, 0x9a, 0x76, 0xb3, 0x4d, 0xbd, 0xdb, 0xa4, 0x5d, 0x6f, 0xda, 0xed, 0x6e, 0x77, 0x59, 0x4d,
-	0x93, 0xb6, 0xab, 0xa8, 0x82, 0xff, 0x20, 0xf7, 0x93, 0x26, 0x7f, 0xc4, 0xc6, 0x60, 0x87, 0xc4,
-	0x84, 0x8b, 0x31, 0xee, 0xec, 0xc3, 0xfb, 0x3c, 0xe7, 0x7d, 0x9f, 0xf7, 0x31, 0x3e, 0x6f, 0x0c,
-	0x77, 0x9f, 0x13, 0xa5, 0x82, 0x71, 0x59, 0x55, 0x49, 0xb9, 0x5e, 0xc5, 0x39, 0x99, 0x30, 0x43,
-	0x27, 0x95, 0x86, 0x81, 0xe5, 0x2a, 0xad, 0x69, 0xf6, 0xaa, 0x8a, 0x65, 0x05, 0xeb, 0x39, 0x6d,
-	0x97, 0xe4, 0x8c, 0xfd, 0xac, 0xa6, 0x53, 0x83, 0xa2, 0xac, 0x1f, 0x98, 0xed, 0x00, 0xcc, 0x6a,
-	0xbb, 0x44, 0x98, 0xac, 0x52, 0x56, 0xa3, 0xec, 0xa9, 0x85, 0xce, 0xd9, 0x37, 0x36, 0x95, 0x30,
-	0xae, 0x50, 0x85, 0xda, 0xeb, 0xe6, 0x95, 0xbd, 0x2a, 0x7e, 0x13, 0x83, 0xc9, 0x4d, 0xa6, 0x6c,
-	0xe9, 0x54, 0xa3, 0x0c, 0x17, 0x65, 0xf9, 0xc3, 0x42, 0x7e, 0x45, 0xa2, 0xd4, 0x78, 0x80, 0x75,
-	0x03, 0x3d, 0x82, 0x41, 0x46, 0x94, 0x3a, 0xd6, 0x79, 0x2e, 0xc3, 0xcd, 0x8e, 0xac, 0xe5, 0x5a,
-	0xcd, 0xf4, 0xeb, 0x7b, 0x65, 0x95, 0xc8, 0x65, 0x03, 0xdf, 0x17, 0x75, 0xfc, 0x79, 0x83, 0xe8,
-	0x58, 0x16, 0x7f, 0xff, 0x79, 0x7e, 0xdc, 0xd9, 0xac, 0x28, 0xcb, 0x3a, 0x66, 0x6c, 0xdb, 0xd0,
-	0x49, 0x5d, 0x91, 0x1c, 0x38, 0xba, 0x07, 0x89, 0x2a, 0xd6, 0x0d, 0x3e, 0x66, 0xd1, 0xcc, 0xb4,
-	0x9a, 0xe9, 0xcc, 0x69, 0x9a, 0xb9, 0x5a, 0x79, 0x7f, 0x75, 0x21, 0xbf, 0x74, 0xaf, 0x70, 0x77,
-	0x39, 0x2f, 0x4a, 0x16, 0x02, 0xbd, 0x09, 0x09, 0x52, 0x7f, 0x46, 0xf9, 0xb8, 0x85, 0xbc, 0xee,
-	0x4f, 0xc0, 0x04, 0x2c, 0xe5, 0x57, 0x96, 0x45, 0xc9, 0x0a, 0x42, 0x08, 0x12, 0x06, 0xa9, 0x61,
-	0x3e, 0x91, 0xe1, 0x66, 0xe3, 0x92, 0x75, 0x8d, 0x56, 0x20, 0xbe, 0x47, 0x64, 0x3e, 0x99, 0xe1,
-	0x66, 0x93, 0x6b, 0xb7, 0x5b, 0xcd, 0xf4, 0x4d, 0x0f, 0xaf, 0x18, 0x78, 0x75, 0x61, 0x4e, 0x35,
-	0xf0, 0xea, 0x72, 0xa1, 0x70, 0xa7, 0x30, 0xe7, 0x16, 0x24, 0x99, 0x18, 0xf1, 0x26, 0xdc, 0x08,
-	0xd5, 0x46, 0xc2, 0x4c, 0xa3, 0x75, 0x86, 0xc5, 0x1f, 0x6c, 0x05, 0x8b, 0x9a, 0xa6, 0xd3, 0xbd,
-	0x8b, 0x53, 0xf0, 0x3e, 0x0c, 0xb1, 0x46, 0xe5, 0x33, 0x5c, 0x6d, 0x8b, 0x98, 0x69, 0x35, 0xd3,
-	0xd3, 0xa1, 0x22, 0x2e, 0x2e, 0x89, 0x52, 0x1b, 0x80, 0x1e, 0xc0, 0xa8, 0x73, 0xf9, 0x18, 0x1f,
-	0xac, 0xcb, 0x8e, 0x96, 0xe9, 0x56, 0x33, 0x3d, 0x15, 0x42, 0xb0, 0x58, 0x58, 0x16, 0x25, 0x1f,
-	0xc8, 0x6d, 0x44, 0xa2, 0x97, 0x46, 0x24, 0xbd, 0x46, 0x38, 0x6a, 0x06, 0xeb, 0xe4, 0xaa, 0xf9,
-	0x07, 0x07, 0x63, 0x66, 0x94, 0xfd, 0xe7, 0xcb, 0x62, 0x42, 0x91, 0x87, 0x09, 0x7f, 0x55, 0x6e,
-	0xc1, 0x3f, 0xc6, 0x60, 0xda, 0x33, 0x99, 0x84, 0xf7, 0xe8, 0x2e, 0xbe, 0x72, 0x50, 0xb0, 0x83,
-	0x6e, 0xc1, 0x4c, 0x27, 0xa9, 0x4e, 0x6a, 0xea, 0x58, 0xed, 0x3f, 0xa1, 0x69, 0xb2, 0x17, 0x4d,
-	0x07, 0x4f, 0x69, 0x1a, 0x2a, 0x95, 0xab, 0xe9, 0x8b, 0x18, 0xbc, 0xb6, 0xc9, 0x14, 0x2f, 0xe2,
-	0xca, 0x9c, 0x7e, 0x73, 0x4e, 0x59, 0xaf, 0x01, 0xbf, 0x3e, 0xae, 0x7a, 0xdf, 0xc7, 0x80, 0xb7,
-	0xfe, 0x6a, 0x6e, 0x78, 0xf5, 0x8e, 0x08, 0x15, 0x51, 0x84, 0x4c, 0x98, 0x4c, 0xae, 0x96, 0xdf,
-	0x26, 0x6d, 0xcb, 0xca, 0xf2, 0xd6, 0x2e, 0x31, 0xf5, 0xae, 0x96, 0x0d, 0x42, 0xeb, 0xa5, 0xf6,
-	0xd1, 0x88, 0xd0, 0xfa, 0x16, 0x25, 0xf5, 0x3e, 0xea, 0xea, 0x1c, 0x21, 0x62, 0xbd, 0x1f, 0x21,
-	0x50, 0x1e, 0xe2, 0x1a, 0xb1, 0xd5, 0x4c, 0xae, 0xa5, 0x5a, 0xcd, 0xb4, 0xe0, 0x87, 0xe6, 0x3d,
-	0xa8, 0x28, 0x99, 0xa1, 0x68, 0x1c, 0x92, 0x84, 0x6d, 0x15, 0x8b, 0x96, 0x88, 0xc3, 0x92, 0x7d,
-	0x83, 0xe6, 0x21, 0xa9, 0x96, 0x2b, 0x58, 0x0d, 0x7e, 0xd0, 0xbd, 0x4d, 0xed, 0x28, 0xf4, 0x18,
-	0xc6, 0xab, 0xba, 0xba, 0x6d, 0xa5, 0x6f, 0x8a, 0x47, 0x9e, 0x91, 0x6a, 0xd9, 0xb0, 0x9f, 0xfc,
-	0x0e, 0xe8, 0x40, 0x10, 0x7a, 0x04, 0x88, 0x30, 0xd6, 0xc0, 0xfa, 0xb6, 0xd7, 0xeb, 0x12, 0x3f,
-	0xd4, 0x99, 0x2a, 0x00, 0x82, 0x0a, 0x30, 0x24, 0x97, 0x8d, 0xf2, 0x13, 0x69, 0x83, 0x1f, 0xb6,
-	0xd0, 0x53, 0xad, 0x66, 0xfa, 0x7a, 0x80, 0xbd, 0x1a, 0xba, 0x2a, 0x4a, 0xed, 0x58, 0x24, 0xc2,
-	0xa8, 0x79, 0xf9, 0x90, 0xa8, 0x78, 0x9b, 0x3c, 0xc7, 0xfc, 0x48, 0x86, 0x9b, 0x4d, 0x48, 0xbe,
-	0x35, 0x94, 0x02, 0x30, 0xef, 0x4b, 0x44, 0xc1, 0xcc, 0xe0, 0xc1, 0x64, 0x97, 0x8e, 0xad, 0xa0,
-	0x5b, 0x30, 0xe6, 0xdd, 0xed, 0x1c, 0x68, 0x98, 0xbf, 0x96, 0xe1, 0x66, 0xff, 0x27, 0x9d, 0x58,
-	0x45, 0xef, 0xc0, 0x98, 0xee, 0x5a, 0xca, 0x8a, 0x1b, 0x35, 0xe3, 0xc2, 0xeb, 0x3c, 0x11, 0x2e,
-	0x66, 0x61, 0xae, 0x1b, 0x73, 0xba, 0x6e, 0xfe, 0x3b, 0x0e, 0xb7, 0x37, 0x99, 0xf2, 0x44, 0x33,
-	0x89, 0xff, 0x05, 0x86, 0x76, 0x8d, 0x18, 0xef, 0xca, 0x88, 0x8b, 0x21, 0x46, 0xb4, 0xfe, 0x43,
-	0xf4, 0xe4, 0xb7, 0x64, 0xef, 0x7e, 0x5b, 0xf6, 0xfc, 0x66, 0x1b, 0x7f, 0xba, 0xd5, 0x4c, 0xf3,
-	0x1e, 0x9a, 0xd6, 0x88, 0x81, 0x6b, 0x9a, 0x71, 0x70, 0x86, 0xe1, 0x86, 0xce, 0x34, 0xdc, 0x70,
-	0x17, 0x86, 0x1b, 0x09, 0x32, 0x9c, 0xb8, 0x00, 0xb9, 0x2e, 0xdb, 0x7f, 0xfc, 0x65, 0x62, 0x5a,
-	0xa6, 0x84, 0x55, 0x7c, 0x19, 0x2d, 0x13, 0xdc, 0xfe, 0x44, 0xcf, 0xed, 0x77, 0xa4, 0xed, 0x46,
-	0x26, 0x57, 0xda, 0xaf, 0x62, 0x30, 0x6a, 0x3e, 0xbe, 0xcc, 0xac, 0xfa, 0x7d, 0x22, 0x5f, 0xa2,
-	0x77, 0xb3, 0xd3, 0xc0, 0x44, 0x84, 0x39, 0x78, 0x02, 0xc6, 0x8f, 0x8b, 0xd2, 0x56, 0x6b, 0xf1,
-	0xbb, 0xff, 0x43, 0x7c, 0x93, 0x29, 0xe8, 0x17, 0x0e, 0x26, 0x42, 0x7e, 0x41, 0x58, 0xef, 0xf1,
-	0x17, 0x8c, 0x6c, 0xe8, 0xc0, 0x2d, 0xbc, 0xd7, 0x37, 0xaa, 0x76, 0x01, 0x56, 0xe2, 0x21, 0x83,
-	0x7b, 0x94, 0xc4, 0x83, 0xa9, 0x22, 0x25, 0xde, 0x79, 0x4c, 0x46, 0x5f, 0x73, 0x70, 0xed, 0xf8,
-	0x8c, 0xfc, 0x76, 0x94, 0x2d, 0x3c, 0xbc, 0xf0, 0xf0, 0x7c, 0x78, 0x37, 0xaf, 0x5f, 0x39, 0x98,
-	0x0c, 0x1f, 0x65, 0x37, 0xa2, 0x77, 0xf0, 0x34, 0x9b, 0xb0, 0xd3, 0x4f, 0x36, 0x5f, 0x05, 0xe1,
-	0x83, 0xe3, 0x46, 0xf4, 0x56, 0xf6, 0xa9, 0x82, 0x33, 0x27, 0x35, 0xf4, 0x82, 0x83, 0xb1, 0x13,
-	0x63, 0x5a, 0x31, 0xc2, 0x46, 0x7e, 0x0a, 0x61, 0xfd, 0xdc, 0x14, 0x6e, 0x82, 0x3f, 0x71, 0xf0,
-	0x46, 0xf0, 0x24, 0xf4, 0x6e, 0xa4, 0x4d, 0x02, 0x98, 0x84, 0xad, 0x7e, 0x31, 0xb9, 0x59, 0xff,
-	0xc9, 0xc1, 0x8d, 0xb3, 0x67, 0x8e, 0x9d, 0x68, 0x0f, 0x52, 0x67, 0x56, 0xe1, 0xe3, 0x8b, 0x60,
-	0x75, 0x2b, 0x7b, 0xc5, 0xc1, 0x4c, 0x57, 0xe7, 0xcf, 0x0f, 0x22, 0xa4, 0xd1, 0x0d, 0xb1, 0xf0,
-	0xf4, 0x82, 0x88, 0x7d, 0x25, 0x76, 0x75, 0x5e, 0x8a, 0x52, 0x62, 0x37, 0xc4, 0x91, 0x4a, 0xec,
-	0xe5, 0xe8, 0x82, 0xbe, 0xe0, 0x60, 0xc4, 0x3b, 0xb7, 0xbc, 0x15, 0xc5, 0x31, 0x6d, 0xb4, 0x50,
-	0x3a, 0x0f, 0xba, 0x9d, 0xd1, 0xda, 0x27, 0xbf, 0x1d, 0xa6, 0xb8, 0x97, 0x87, 0x29, 0xee, 0xd5,
-	0x61, 0x8a, 0xfb, 0xf2, 0x28, 0x35, 0xf0, 0xf2, 0x28, 0x35, 0xf0, 0xd7, 0x51, 0x6a, 0xe0, 0xa3,
-	0x92, 0x42, 0x8c, 0x4f, 0x1b, 0x95, 0x6c, 0x95, 0xd6, 0x72, 0xf6, 0x4e, 0xf3, 0x41, 0xdf, 0x46,
-	0xe6, 0xbd, 0xbd, 0xe6, 0x9d, 0xaf, 0x23, 0xfb, 0xf6, 0xf7, 0x91, 0x03, 0x0d, 0xb3, 0xca, 0xa0,
-	0xf5, 0x09, 0xe3, 0xce, 0x3f, 0x01, 0x00, 0x00, 0xff, 0xff, 0xa8, 0xd8, 0xb8, 0x7b, 0x5e, 0x19,
-	0x00, 0x00,
+	// 1485 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x5a, 0x4b, 0x6f, 0xdb, 0x46,
+	0x10, 0x0e, 0xf5, 0xf0, 0x63, 0xe2, 0x18, 0xc8, 0xd6, 0x71, 0x14, 0x25, 0x95, 0x14, 0x26, 0x48,
+	0x0c, 0xd4, 0x96, 0x1c, 0x27, 0x72, 0x1e, 0x68, 0x5a, 0xc8, 0x51, 0xf3, 0x40, 0xec, 0xc0, 0xa5,
+	0x93, 0xb4, 0x28, 0x8a, 0x06, 0x92, 0xb8, 0x61, 0xb6, 0xa6, 0x44, 0x96, 0xa4, 0x8c, 0x38, 0xb7,
+	0xfe, 0x82, 0x16, 0x28, 0x7a, 0xed, 0xad, 0x2d, 0x10, 0xa0, 0x01, 0x8a, 0x3e, 0xae, 0x3d, 0xf4,
+	0xd2, 0x4b, 0x81, 0xa0, 0x97, 0xf6, 0x24, 0xa4, 0xc9, 0xa5, 0x40, 0x6e, 0xfa, 0x05, 0x05, 0x97,
+	0xd4, 0xd2, 0x94, 0x48, 0x59, 0x5a, 0xcb, 0x85, 0xeb, 0xf8, 0x26, 0xae, 0x76, 0xbe, 0x9d, 0x9d,
+	0xef, 0xdb, 0x21, 0x67, 0x48, 0x38, 0xff, 0x88, 0x28, 0x65, 0x8c, 0x4b, 0xaa, 0x4a, 0x4a, 0xb5,
+	0x0a, 0xce, 0xc9, 0xc4, 0xb4, 0x0c, 0x52, 0xae, 0x5b, 0x58, 0xae, 0x68, 0x55, 0xdd, 0x19, 0x55,
+	0xb1, 0xac, 0x60, 0x23, 0xa7, 0xaf, 0x92, 0x9c, 0xf5, 0x30, 0xab, 0x1b, 0x9a, 0xa5, 0xa1, 0xac,
+	0xdf, 0x30, 0xdb, 0xc5, 0x30, 0xab, 0xaf, 0x92, 0xe4, 0x91, 0x8a, 0x66, 0x56, 0x35, 0xf3, 0x1e,
+	0xb5, 0xce, 0x39, 0x17, 0x0e, 0x54, 0x72, 0x42, 0xd1, 0x14, 0xcd, 0x19, 0xb7, 0x7f, 0x39, 0xa3,
+	0xe2, 0x93, 0x28, 0x1c, 0x59, 0x32, 0x95, 0x65, 0x43, 0xd3, 0x35, 0x13, 0x17, 0x64, 0xf9, 0xfd,
+	0xfc, 0xec, 0x45, 0x49, 0xd3, 0xac, 0x2b, 0xd8, 0xb0, 0xd0, 0x35, 0x18, 0x32, 0x89, 0x52, 0xc3,
+	0x46, 0x42, 0xc8, 0x08, 0x53, 0xa3, 0x0b, 0xb9, 0x66, 0x23, 0xfd, 0xda, 0x5a, 0x49, 0x25, 0x72,
+	0xc9, 0xc2, 0x97, 0x44, 0x03, 0x7f, 0x52, 0x27, 0x06, 0x96, 0xc5, 0x3f, 0x7e, 0x9c, 0x99, 0x70,
+	0x17, 0x2b, 0xc8, 0xb2, 0x81, 0x4d, 0x73, 0xc5, 0x32, 0x48, 0x4d, 0x91, 0x5c, 0x73, 0x74, 0x01,
+	0x62, 0x15, 0x6c, 0x58, 0x89, 0x08, 0x85, 0x39, 0xd9, 0x6c, 0xa4, 0x33, 0x9d, 0x30, 0xd3, 0xd5,
+	0xd2, 0xc3, 0xcb, 0x67, 0x66, 0xcf, 0x5d, 0xc8, 0x9f, 0x9f, 0x9f, 0x15, 0x25, 0x6a, 0x81, 0xde,
+	0x80, 0x18, 0xa9, 0xdd, 0xd7, 0x12, 0x51, 0x6a, 0x79, 0xd8, 0xef, 0x80, 0x6d, 0x70, 0x6e, 0xf6,
+	0xe2, 0xbc, 0x28, 0xd1, 0x49, 0x08, 0x41, 0xcc, 0x22, 0x55, 0x9c, 0x88, 0x65, 0x84, 0xa9, 0xa8,
+	0x44, 0x7f, 0xa3, 0x8b, 0x10, 0x5d, 0x23, 0x72, 0x22, 0x9e, 0x11, 0xa6, 0xe2, 0x0b, 0xa7, 0x9b,
+	0x8d, 0xf4, 0x09, 0xcf, 0x5e, 0xb1, 0xf0, 0xe5, 0x33, 0xd3, 0xaa, 0x85, 0x2f, 0xcf, 0xe7, 0xf3,
+	0x67, 0xf3, 0xd3, 0x6c, 0x43, 0x92, 0x6d, 0x83, 0x16, 0xe1, 0xa0, 0xed, 0xc3, 0x4a, 0xe5, 0x01,
+	0xae, 0x96, 0xee, 0x62, 0xc3, 0x24, 0x5a, 0x2d, 0x31, 0x94, 0x11, 0xa6, 0x0e, 0x2c, 0xa4, 0x9a,
+	0x8d, 0x74, 0xd2, 0x0f, 0x34, 0xeb, 0x01, 0x89, 0x52, 0xa7, 0x21, 0x2a, 0xc2, 0x01, 0xd3, 0x87,
+	0x34, 0xdc, 0x13, 0x92, 0xdf, 0x48, 0x3c, 0x01, 0xc7, 0x43, 0xf9, 0x92, 0xb0, 0xa9, 0x6b, 0x35,
+	0x13, 0x8b, 0xdf, 0x44, 0x28, 0xab, 0x05, 0x5d, 0x37, 0xb4, 0xb5, 0xed, 0x63, 0xf5, 0x12, 0x0c,
+	0x9b, 0xf5, 0xf2, 0xc7, 0xb8, 0xd2, 0x22, 0x36, 0xd3, 0x6c, 0xa4, 0x8f, 0x85, 0x12, 0x3b, 0x77,
+	0x4e, 0x94, 0x5a, 0x06, 0xe8, 0x0a, 0x8c, 0xb9, 0x3f, 0x6f, 0xe2, 0xf5, 0x1b, 0xb2, 0xcb, 0x6f,
+	0xba, 0xd9, 0x48, 0x1f, 0x0d, 0x01, 0x98, 0xcb, 0xcf, 0x8b, 0x92, 0xcf, 0x88, 0x89, 0x23, 0xd6,
+	0x8f, 0x38, 0xe2, 0x9e, 0x38, 0xdc, 0x68, 0x06, 0xc7, 0x89, 0x45, 0xf3, 0x9f, 0x08, 0x8c, 0xdb,
+	0xb3, 0x9c, 0xbf, 0x77, 0xcd, 0xc1, 0x08, 0x54, 0x77, 0x7c, 0x60, 0xea, 0x1e, 0xe2, 0x51, 0x77,
+	0x02, 0x26, 0xfd, 0x91, 0x66, 0x24, 0xfc, 0x14, 0x85, 0x63, 0x9e, 0xf0, 0x25, 0xbc, 0xa6, 0xad,
+	0xe2, 0x3d, 0x55, 0x07, 0xaa, 0x1a, 0x89, 0x30, 0x66, 0x62, 0x83, 0x94, 0xd4, 0x5b, 0xf5, 0x6a,
+	0x19, 0x1b, 0x94, 0x8a, 0x51, 0xc9, 0x37, 0x86, 0x32, 0xb0, 0xdf, 0xa0, 0x41, 0xbc, 0xf2, 0x80,
+	0xa8, 0x32, 0xcd, 0x45, 0x23, 0xd2, 0xc6, 0xa1, 0x4e, 0x46, 0x47, 0x78, 0x18, 0x3d, 0x05, 0x27,
+	0xbb, 0xd1, 0xc6, 0xf8, 0xfd, 0x3d, 0x42, 0xf9, 0x75, 0x8f, 0xe2, 0x2b, 0xc1, 0x6f, 0xbc, 0x1f,
+	0x7e, 0x87, 0xba, 0xf0, 0x3b, 0xdc, 0xc9, 0xaf, 0x1b, 0xf7, 0xd0, 0x70, 0xb2, 0xb8, 0x3f, 0x8e,
+	0xc2, 0xc1, 0x25, 0x53, 0xf1, 0x66, 0xec, 0x1d, 0xa6, 0x9d, 0x7b, 0x98, 0x8e, 0xd2, 0xdb, 0xba,
+	0x9f, 0x2b, 0xc6, 0xe4, 0xcb, 0x08, 0x24, 0xe8, 0xbf, 0xf6, 0xe6, 0xf7, 0xee, 0xf9, 0xa1, 0x84,
+	0x0e, 0xe6, 0x4e, 0x25, 0x42, 0x26, 0x2c, 0xd8, 0x8c, 0x91, 0xbf, 0xe3, 0xce, 0x21, 0x94, 0xe5,
+	0xe5, 0x55, 0x62, 0xb3, 0x56, 0x29, 0x59, 0x44, 0xab, 0x15, 0x5b, 0x0f, 0xf1, 0x44, 0xab, 0x2d,
+	0x6b, 0xa4, 0x36, 0x40, 0x76, 0xdc, 0x87, 0xdd, 0x08, 0xc7, 0xc3, 0xee, 0x2c, 0x44, 0x75, 0xe2,
+	0x70, 0x12, 0xdf, 0x34, 0x18, 0xf6, 0x54, 0x34, 0x01, 0x71, 0x62, 0x2e, 0x17, 0x0a, 0x94, 0x8a,
+	0x11, 0xc9, 0xb9, 0x40, 0x33, 0x10, 0x57, 0x4b, 0x65, 0xac, 0x06, 0xa7, 0x37, 0x6f, 0x51, 0x67,
+	0x16, 0xba, 0x09, 0x13, 0x15, 0x43, 0x5d, 0xa1, 0xee, 0xdb, 0xc1, 0x23, 0xf7, 0x49, 0xa5, 0x64,
+	0x39, 0xf9, 0xae, 0x8b, 0x75, 0xa0, 0x11, 0xba, 0x06, 0x88, 0x98, 0x66, 0x1d, 0x1b, 0x2b, 0x9e,
+	0x62, 0x8a, 0x4e, 0x7a, 0x0c, 0x87, 0x0a, 0x30, 0x41, 0x79, 0x18, 0x96, 0x4b, 0x56, 0xe9, 0x8e,
+	0xb4, 0x48, 0x0f, 0xea, 0xe8, 0xc2, 0xd1, 0x66, 0x23, 0x7d, 0x38, 0x40, 0xa4, 0x75, 0x43, 0x15,
+	0xa5, 0xd6, 0x5c, 0x3b, 0x57, 0xd8, 0x3f, 0xaf, 0x12, 0x15, 0xaf, 0x90, 0x47, 0x38, 0x31, 0x9a,
+	0x11, 0xa6, 0x62, 0x92, 0x6f, 0x0c, 0xa5, 0x00, 0xec, 0xeb, 0x22, 0x51, 0xb0, 0x69, 0x25, 0x80,
+	0x66, 0x93, 0x0d, 0x23, 0xe8, 0x14, 0x8c, 0x7b, 0x57, 0xb7, 0xd7, 0x75, 0x9c, 0xd8, 0x6f, 0xeb,
+	0x53, 0x6a, 0x1b, 0x45, 0x6f, 0xc3, 0xb8, 0xc1, 0x24, 0x45, 0xe7, 0x8d, 0x51, 0x1d, 0x87, 0xee,
+	0xb3, 0x6d, 0x7a, 0xe7, 0x39, 0x38, 0xc0, 0x73, 0x0e, 0xb2, 0x30, 0xdd, 0x8b, 0xc4, 0xd9, 0x99,
+	0xf8, 0x35, 0x06, 0xa7, 0x97, 0x4c, 0xe5, 0x8e, 0x6e, 0xc3, 0xff, 0x0f, 0x8e, 0x05, 0x93, 0x73,
+	0xb4, 0x27, 0x39, 0xcf, 0x85, 0xc8, 0x99, 0x66, 0xab, 0xbe, 0x54, 0x1b, 0xef, 0x5f, 0xb5, 0xf3,
+	0x9e, 0x6a, 0x9d, 0xe3, 0x73, 0xac, 0xd9, 0x48, 0x27, 0x3c, 0x6b, 0xad, 0x4a, 0x2c, 0x5c, 0xd5,
+	0xad, 0xf5, 0x4d, 0x64, 0x3b, 0xbc, 0xa9, 0x6c, 0x47, 0x7a, 0x90, 0xed, 0x68, 0xa0, 0x6c, 0x3b,
+	0x54, 0x07, 0x3c, 0xaa, 0x3b, 0x03, 0xb9, 0x1e, 0x45, 0xc4, 0x84, 0xf7, 0x75, 0x84, 0x0a, 0xaf,
+	0x88, 0x55, 0xbc, 0x1b, 0x85, 0x17, 0x2c, 0xa2, 0x58, 0xdf, 0x22, 0x72, 0x43, 0xdb, 0x4b, 0x98,
+	0x58, 0x68, 0xbf, 0x88, 0xc0, 0x98, 0x9d, 0x04, 0x4c, 0x7b, 0xd7, 0x77, 0x89, 0xbc, 0x8b, 0x9e,
+	0x36, 0x5c, 0x02, 0x63, 0xfd, 0x13, 0x28, 0x4e, 0xc2, 0xc4, 0xc6, 0xa0, 0xb0, 0x68, 0x3d, 0x89,
+	0xc0, 0x21, 0x27, 0x65, 0xde, 0xd2, 0x2a, 0x3b, 0xad, 0xdd, 0x16, 0xd8, 0x14, 0x88, 0x0d, 0xac,
+	0x29, 0x10, 0xe7, 0x39, 0xec, 0x69, 0x78, 0x3d, 0x30, 0x5e, 0x2c, 0xa2, 0x9f, 0x46, 0xdc, 0x1a,
+	0xa6, 0xaa, 0xad, 0xed, 0xc6, 0x1a, 0xa6, 0xbd, 0x04, 0x89, 0x05, 0xd4, 0x7b, 0xad, 0xd2, 0x60,
+	0x63, 0x08, 0xbc, 0x22, 0xcf, 0x09, 0x90, 0x17, 0xc2, 0x1d, 0x2d, 0xb7, 0xe8, 0xc0, 0xe4, 0x16,
+	0xe3, 0x2f, 0xb2, 0xfc, 0xb1, 0x62, 0x91, 0xfc, 0x3e, 0xea, 0x16, 0x59, 0x76, 0x09, 0x76, 0x4b,
+	0xab, 0xd8, 0x5a, 0x7c, 0x35, 0x15, 0xb7, 0xf5, 0x36, 0xc6, 0x7f, 0x55, 0x35, 0xb7, 0x4a, 0xb5,
+	0x00, 0xca, 0x18, 0xaf, 0xdf, 0x45, 0x69, 0xb6, 0x66, 0x93, 0xf6, 0x38, 0xdd, 0xd9, 0x9c, 0xa6,
+	0x68, 0xb7, 0xb0, 0x83, 0xae, 0x16, 0x9f, 0x73, 0x2f, 0x27, 0x21, 0xba, 0x64, 0x2a, 0xe8, 0x67,
+	0x01, 0x26, 0x43, 0x5e, 0x6e, 0xdd, 0xe8, 0xf3, 0xe5, 0x5a, 0x36, 0xf4, 0xbd, 0x4b, 0xf2, 0xdd,
+	0x81, 0x41, 0xb5, 0x36, 0x40, 0x1d, 0x0f, 0x79, 0x7f, 0xc3, 0xe3, 0x78, 0x30, 0x14, 0x97, 0xe3,
+	0xdd, 0xdf, 0x96, 0xa0, 0x2f, 0x05, 0xd8, 0xbf, 0xf1, 0x55, 0xc9, 0x5b, 0x3c, 0x4b, 0x78, 0xf6,
+	0xc9, 0xab, 0x5b, 0xb3, 0x67, 0x7e, 0xfd, 0x22, 0xc0, 0x91, 0xf0, 0xb7, 0x07, 0x8b, 0xfc, 0x0c,
+	0x76, 0xa2, 0x25, 0x6f, 0x0f, 0x12, 0xcd, 0xb7, 0x83, 0xf0, 0xfe, 0xf8, 0x22, 0x3f, 0x95, 0x03,
+	0xda, 0xc1, 0xa6, 0xcd, 0x66, 0xf4, 0x95, 0x00, 0xe3, 0x6d, 0x9d, 0xe6, 0x02, 0xc7, 0x42, 0x7e,
+	0x88, 0xe4, 0x8d, 0x2d, 0x43, 0x30, 0x07, 0x7f, 0x10, 0xe0, 0x50, 0x70, 0x03, 0xf5, 0x3a, 0xd7,
+	0x22, 0x01, 0x48, 0xc9, 0xe5, 0x41, 0x21, 0x31, 0xaf, 0xff, 0x14, 0xe0, 0xf8, 0xe6, 0x4d, 0xc6,
+	0xdb, 0x7c, 0x07, 0xa9, 0x3b, 0x6a, 0xf2, 0xc3, 0xed, 0x40, 0x65, 0x3b, 0x7b, 0x26, 0xc0, 0xc9,
+	0x9e, 0x5a, 0x45, 0xef, 0x71, 0xb8, 0xd1, 0x0b, 0x70, 0xf2, 0xde, 0x36, 0x01, 0xfb, 0xb6, 0xd8,
+	0x53, 0x53, 0x82, 0x67, 0x8b, 0xbd, 0x00, 0x73, 0x6d, 0xb1, 0x9f, 0xfe, 0x00, 0xfa, 0x4c, 0x80,
+	0x51, 0xaf, 0x39, 0xf0, 0x26, 0x8f, 0x62, 0x5a, 0xd6, 0xc9, 0xe2, 0x56, 0xac, 0x99, 0x47, 0x8f,
+	0x05, 0x40, 0x01, 0x05, 0xf8, 0x3b, 0x7c, 0x62, 0x6e, 0x83, 0x49, 0x2e, 0x0d, 0x04, 0xa6, 0x2d,
+	0x6b, 0xfa, 0x6a, 0x5b, 0xbe, 0xac, 0xb9, 0x11, 0x82, 0x33, 0x6b, 0x06, 0x95, 0x97, 0xd4, 0xc1,
+	0xb6, 0xda, 0xb2, 0xb0, 0xa5, 0x10, 0x70, 0x3b, 0x18, 0x5c, 0xb5, 0xb9, 0x69, 0x3d, 0xa8, 0x64,
+	0xbb, 0xce, 0x7d, 0xef, 0x68, 0x43, 0xe2, 0x4c, 0xeb, 0x5d, 0x6a, 0x12, 0xf4, 0xad, 0x00, 0x07,
+	0x3b, 0x0b, 0x92, 0xe2, 0x56, 0xd6, 0x61, 0xde, 0x2e, 0x0e, 0x02, 0xa5, 0xe5, 0xe9, 0xc2, 0x47,
+	0xbf, 0x3d, 0x4f, 0x09, 0x4f, 0x9f, 0xa7, 0x84, 0x67, 0xcf, 0x53, 0xc2, 0xe7, 0x2f, 0x52, 0xfb,
+	0x9e, 0xbe, 0x48, 0xed, 0xfb, 0xeb, 0x45, 0x6a, 0xdf, 0x07, 0x45, 0x85, 0x58, 0x0f, 0xea, 0xe5,
+	0x6c, 0x45, 0xab, 0xe6, 0x9c, 0x15, 0x67, 0x82, 0xbe, 0x82, 0x9b, 0xf1, 0xd6, 0x9c, 0x71, 0xbf,
+	0x83, 0x7b, 0xe8, 0x7c, 0x09, 0xb7, 0xae, 0x63, 0xb3, 0x3c, 0x44, 0x3f, 0x56, 0x3b, 0xfb, 0x6f,
+	0x00, 0x00, 0x00, 0xff, 0xff, 0x9a, 0xac, 0x9d, 0x82, 0x48, 0x27, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -1470,6 +2196,11 @@ type MsgClient interface {
 	UpdatePkiRevocationDistributionPoint(ctx context.Context, in *MsgUpdatePkiRevocationDistributionPoint, opts ...grpc.CallOption) (*MsgUpdatePkiRevocationDistributionPointResponse, error)
 	DeletePkiRevocationDistributionPoint(ctx context.Context, in *MsgDeletePkiRevocationDistributionPoint, opts ...grpc.CallOption) (*MsgDeletePkiRevocationDistributionPointResponse, error)
 	AssignVid(ctx context.Context, in *MsgAssignVid, opts ...grpc.CallOption) (*MsgAssignVidResponse, error)
+	AddNocX509RootCert(ctx context.Context, in *MsgAddNocX509RootCert, opts ...grpc.CallOption) (*MsgAddNocX509RootCertResponse, error)
+	RemoveX509Cert(ctx context.Context, in *MsgRemoveX509Cert, opts ...grpc.CallOption) (*MsgRemoveX509CertResponse, error)
+	AddNocX509Cert(ctx context.Context, in *MsgAddNocX509Cert, opts ...grpc.CallOption) (*MsgAddNocX509CertResponse, error)
+	RevokeNocRootX509Cert(ctx context.Context, in *MsgRevokeNocRootX509Cert, opts ...grpc.CallOption) (*MsgRevokeNocRootX509CertResponse, error)
+	RevokeNocX509Cert(ctx context.Context, in *MsgRevokeNocX509Cert, opts ...grpc.CallOption) (*MsgRevokeNocX509CertResponse, error)
 }
 
 type msgClient struct {
@@ -1579,6 +2310,51 @@ func (c *msgClient) AssignVid(ctx context.Context, in *MsgAssignVid, opts ...grp
 	return out, nil
 }
 
+func (c *msgClient) AddNocX509RootCert(ctx context.Context, in *MsgAddNocX509RootCert, opts ...grpc.CallOption) (*MsgAddNocX509RootCertResponse, error) {
+	out := new(MsgAddNocX509RootCertResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Msg/AddNocX509RootCert", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) RemoveX509Cert(ctx context.Context, in *MsgRemoveX509Cert, opts ...grpc.CallOption) (*MsgRemoveX509CertResponse, error) {
+	out := new(MsgRemoveX509CertResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Msg/RemoveX509Cert", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) AddNocX509Cert(ctx context.Context, in *MsgAddNocX509Cert, opts ...grpc.CallOption) (*MsgAddNocX509CertResponse, error) {
+	out := new(MsgAddNocX509CertResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Msg/AddNocX509Cert", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) RevokeNocRootX509Cert(ctx context.Context, in *MsgRevokeNocRootX509Cert, opts ...grpc.CallOption) (*MsgRevokeNocRootX509CertResponse, error) {
+	out := new(MsgRevokeNocRootX509CertResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Msg/RevokeNocRootX509Cert", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) RevokeNocX509Cert(ctx context.Context, in *MsgRevokeNocX509Cert, opts ...grpc.CallOption) (*MsgRevokeNocX509CertResponse, error) {
+	out := new(MsgRevokeNocX509CertResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Msg/RevokeNocX509Cert", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
 	ProposeAddX509RootCert(context.Context, *MsgProposeAddX509RootCert) (*MsgProposeAddX509RootCertResponse, error)
@@ -1592,6 +2368,11 @@ type MsgServer interface {
 	UpdatePkiRevocationDistributionPoint(context.Context, *MsgUpdatePkiRevocationDistributionPoint) (*MsgUpdatePkiRevocationDistributionPointResponse, error)
 	DeletePkiRevocationDistributionPoint(context.Context, *MsgDeletePkiRevocationDistributionPoint) (*MsgDeletePkiRevocationDistributionPointResponse, error)
 	AssignVid(context.Context, *MsgAssignVid) (*MsgAssignVidResponse, error)
+	AddNocX509RootCert(context.Context, *MsgAddNocX509RootCert) (*MsgAddNocX509RootCertResponse, error)
+	RemoveX509Cert(context.Context, *MsgRemoveX509Cert) (*MsgRemoveX509CertResponse, error)
+	AddNocX509Cert(context.Context, *MsgAddNocX509Cert) (*MsgAddNocX509CertResponse, error)
+	RevokeNocRootX509Cert(context.Context, *MsgRevokeNocRootX509Cert) (*MsgRevokeNocRootX509CertResponse, error)
+	RevokeNocX509Cert(context.Context, *MsgRevokeNocX509Cert) (*MsgRevokeNocX509CertResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
@@ -1630,6 +2411,21 @@ func (*UnimplementedMsgServer) DeletePkiRevocationDistributionPoint(ctx context.
 }
 func (*UnimplementedMsgServer) AssignVid(ctx context.Context, req *MsgAssignVid) (*MsgAssignVidResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AssignVid not implemented")
+}
+func (*UnimplementedMsgServer) AddNocX509RootCert(ctx context.Context, req *MsgAddNocX509RootCert) (*MsgAddNocX509RootCertResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddNocX509RootCert not implemented")
+}
+func (*UnimplementedMsgServer) RemoveX509Cert(ctx context.Context, req *MsgRemoveX509Cert) (*MsgRemoveX509CertResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveX509Cert not implemented")
+}
+func (*UnimplementedMsgServer) AddNocX509Cert(ctx context.Context, req *MsgAddNocX509Cert) (*MsgAddNocX509CertResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddNocX509Cert not implemented")
+}
+func (*UnimplementedMsgServer) RevokeNocRootX509Cert(ctx context.Context, req *MsgRevokeNocRootX509Cert) (*MsgRevokeNocRootX509CertResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RevokeNocRootX509Cert not implemented")
+}
+func (*UnimplementedMsgServer) RevokeNocX509Cert(ctx context.Context, req *MsgRevokeNocX509Cert) (*MsgRevokeNocX509CertResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RevokeNocX509Cert not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
@@ -1834,6 +2630,96 @@ func _Msg_AssignVid_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_AddNocX509RootCert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgAddNocX509RootCert)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).AddNocX509RootCert(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Msg/AddNocX509RootCert",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).AddNocX509RootCert(ctx, req.(*MsgAddNocX509RootCert))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_RemoveX509Cert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgRemoveX509Cert)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).RemoveX509Cert(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Msg/RemoveX509Cert",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).RemoveX509Cert(ctx, req.(*MsgRemoveX509Cert))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_AddNocX509Cert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgAddNocX509Cert)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).AddNocX509Cert(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Msg/AddNocX509Cert",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).AddNocX509Cert(ctx, req.(*MsgAddNocX509Cert))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_RevokeNocRootX509Cert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgRevokeNocRootX509Cert)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).RevokeNocRootX509Cert(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Msg/RevokeNocRootX509Cert",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).RevokeNocRootX509Cert(ctx, req.(*MsgRevokeNocRootX509Cert))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_RevokeNocX509Cert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgRevokeNocX509Cert)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).RevokeNocX509Cert(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Msg/RevokeNocX509Cert",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).RevokeNocX509Cert(ctx, req.(*MsgRevokeNocX509Cert))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "zigbeealliance.distributedcomplianceledger.pki.Msg",
 	HandlerType: (*MsgServer)(nil),
@@ -1882,6 +2768,26 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 			MethodName: "AssignVid",
 			Handler:    _Msg_AssignVid_Handler,
 		},
+		{
+			MethodName: "AddNocX509RootCert",
+			Handler:    _Msg_AddNocX509RootCert_Handler,
+		},
+		{
+			MethodName: "RemoveX509Cert",
+			Handler:    _Msg_RemoveX509Cert_Handler,
+		},
+		{
+			MethodName: "AddNocX509Cert",
+			Handler:    _Msg_AddNocX509Cert_Handler,
+		},
+		{
+			MethodName: "RevokeNocRootX509Cert",
+			Handler:    _Msg_RevokeNocRootX509Cert_Handler,
+		},
+		{
+			MethodName: "RevokeNocX509Cert",
+			Handler:    _Msg_RevokeNocX509Cert_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "zigbeealliance/distributedcomplianceledger/pki/tx.proto",
@@ -1907,6 +2813,16 @@ func (m *MsgProposeAddX509RootCert) MarshalToSizedBuffer(dAtA []byte) (int, erro
 	_ = i
 	var l int
 	_ = l
+	if m.SchemaVersion != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.SchemaVersion))
+		i--
+		dAtA[i] = 0x38
+	}
+	if m.CertSchemaVersion != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.CertSchemaVersion))
+		i--
+		dAtA[i] = 0x30
+	}
 	if m.Vid != 0 {
 		i = encodeVarintTx(dAtA, i, uint64(m.Vid))
 		i--
@@ -2063,6 +2979,16 @@ func (m *MsgAddX509Cert) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if m.SchemaVersion != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.SchemaVersion))
+		i--
+		dAtA[i] = 0x30
+	}
+	if m.CertSchemaVersion != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.CertSchemaVersion))
+		i--
+		dAtA[i] = 0x28
+	}
 	if m.Time != 0 {
 		i = encodeVarintTx(dAtA, i, uint64(m.Time))
 		i--
@@ -2135,6 +3061,28 @@ func (m *MsgProposeRevokeX509RootCert) MarshalToSizedBuffer(dAtA []byte) (int, e
 	_ = i
 	var l int
 	_ = l
+	if m.SchemaVersion != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.SchemaVersion))
+		i--
+		dAtA[i] = 0x40
+	}
+	if m.RevokeChild {
+		i--
+		if m.RevokeChild {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x38
+	}
+	if len(m.SerialNumber) > 0 {
+		i -= len(m.SerialNumber)
+		copy(dAtA[i:], m.SerialNumber)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.SerialNumber)))
+		i--
+		dAtA[i] = 0x32
+	}
 	if m.Time != 0 {
 		i = encodeVarintTx(dAtA, i, uint64(m.Time))
 		i--
@@ -2214,6 +3162,13 @@ func (m *MsgApproveRevokeX509RootCert) MarshalToSizedBuffer(dAtA []byte) (int, e
 	_ = i
 	var l int
 	_ = l
+	if len(m.SerialNumber) > 0 {
+		i -= len(m.SerialNumber)
+		copy(dAtA[i:], m.SerialNumber)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.SerialNumber)))
+		i--
+		dAtA[i] = 0x3a
+	}
 	if m.Time != 0 {
 		i = encodeVarintTx(dAtA, i, uint64(m.Time))
 		i--
@@ -2293,6 +3248,28 @@ func (m *MsgRevokeX509Cert) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if m.SchemaVersion != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.SchemaVersion))
+		i--
+		dAtA[i] = 0x40
+	}
+	if m.RevokeChild {
+		i--
+		if m.RevokeChild {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x38
+	}
+	if len(m.SerialNumber) > 0 {
+		i -= len(m.SerialNumber)
+		copy(dAtA[i:], m.SerialNumber)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.SerialNumber)))
+		i--
+		dAtA[i] = 0x32
+	}
 	if m.Time != 0 {
 		i = encodeVarintTx(dAtA, i, uint64(m.Time))
 		i--
@@ -2372,6 +3349,11 @@ func (m *MsgRejectAddX509RootCert) MarshalToSizedBuffer(dAtA []byte) (int, error
 	_ = i
 	var l int
 	_ = l
+	if m.SchemaVersion != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.SchemaVersion))
+		i--
+		dAtA[i] = 0x30
+	}
 	if m.Time != 0 {
 		i = encodeVarintTx(dAtA, i, uint64(m.Time))
 		i--
@@ -2451,6 +3433,11 @@ func (m *MsgAddPkiRevocationDistributionPoint) MarshalToSizedBuffer(dAtA []byte)
 	_ = i
 	var l int
 	_ = l
+	if m.SchemaVersion != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.SchemaVersion))
+		i--
+		dAtA[i] = 0x68
+	}
 	if m.RevocationType != 0 {
 		i = encodeVarintTx(dAtA, i, uint64(m.RevocationType))
 		i--
@@ -2574,6 +3561,11 @@ func (m *MsgUpdatePkiRevocationDistributionPoint) MarshalToSizedBuffer(dAtA []by
 	_ = i
 	var l int
 	_ = l
+	if m.SchemaVersion != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.SchemaVersion))
+		i--
+		dAtA[i] = 0x50
+	}
 	if m.DataDigestType != 0 {
 		i = encodeVarintTx(dAtA, i, uint64(m.DataDigestType))
 		i--
@@ -2801,6 +3793,422 @@ func (m *MsgAssignVidResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *MsgAddNocX509RootCert) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgAddNocX509RootCert) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgAddNocX509RootCert) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.SchemaVersion != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.SchemaVersion))
+		i--
+		dAtA[i] = 0x28
+	}
+	if m.CertSchemaVersion != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.CertSchemaVersion))
+		i--
+		dAtA[i] = 0x20
+	}
+	if len(m.Cert) > 0 {
+		i -= len(m.Cert)
+		copy(dAtA[i:], m.Cert)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Cert)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgAddNocX509RootCertResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgAddNocX509RootCertResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgAddNocX509RootCertResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgRemoveX509Cert) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgRemoveX509Cert) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgRemoveX509Cert) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.SerialNumber) > 0 {
+		i -= len(m.SerialNumber)
+		copy(dAtA[i:], m.SerialNumber)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.SerialNumber)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.SubjectKeyId) > 0 {
+		i -= len(m.SubjectKeyId)
+		copy(dAtA[i:], m.SubjectKeyId)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.SubjectKeyId)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Subject) > 0 {
+		i -= len(m.Subject)
+		copy(dAtA[i:], m.Subject)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Subject)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgRemoveX509CertResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgRemoveX509CertResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgRemoveX509CertResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgAddNocX509Cert) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgAddNocX509Cert) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgAddNocX509Cert) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.SchemaVersion != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.SchemaVersion))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.CertSchemaVersion != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.CertSchemaVersion))
+		i--
+		dAtA[i] = 0x18
+	}
+	if len(m.Cert) > 0 {
+		i -= len(m.Cert)
+		copy(dAtA[i:], m.Cert)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Cert)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgAddNocX509CertResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgAddNocX509CertResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgAddNocX509CertResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgRevokeNocRootX509Cert) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgRevokeNocRootX509Cert) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgRevokeNocRootX509Cert) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.SchemaVersion != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.SchemaVersion))
+		i--
+		dAtA[i] = 0x40
+	}
+	if m.RevokeChild {
+		i--
+		if m.RevokeChild {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x38
+	}
+	if m.Time != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.Time))
+		i--
+		dAtA[i] = 0x30
+	}
+	if len(m.Info) > 0 {
+		i -= len(m.Info)
+		copy(dAtA[i:], m.Info)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Info)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if len(m.SerialNumber) > 0 {
+		i -= len(m.SerialNumber)
+		copy(dAtA[i:], m.SerialNumber)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.SerialNumber)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.SubjectKeyId) > 0 {
+		i -= len(m.SubjectKeyId)
+		copy(dAtA[i:], m.SubjectKeyId)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.SubjectKeyId)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Subject) > 0 {
+		i -= len(m.Subject)
+		copy(dAtA[i:], m.Subject)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Subject)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgRevokeNocRootX509CertResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgRevokeNocRootX509CertResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgRevokeNocRootX509CertResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgRevokeNocX509Cert) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgRevokeNocX509Cert) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgRevokeNocX509Cert) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.SchemaVersion != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.SchemaVersion))
+		i--
+		dAtA[i] = 0x40
+	}
+	if m.RevokeChild {
+		i--
+		if m.RevokeChild {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x38
+	}
+	if m.Time != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.Time))
+		i--
+		dAtA[i] = 0x30
+	}
+	if len(m.Info) > 0 {
+		i -= len(m.Info)
+		copy(dAtA[i:], m.Info)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Info)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if len(m.SerialNumber) > 0 {
+		i -= len(m.SerialNumber)
+		copy(dAtA[i:], m.SerialNumber)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.SerialNumber)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.SubjectKeyId) > 0 {
+		i -= len(m.SubjectKeyId)
+		copy(dAtA[i:], m.SubjectKeyId)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.SubjectKeyId)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Subject) > 0 {
+		i -= len(m.Subject)
+		copy(dAtA[i:], m.Subject)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Subject)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgRevokeNocX509CertResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgRevokeNocX509CertResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgRevokeNocX509CertResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
 	offset -= sovTx(v)
 	base := offset
@@ -2835,6 +4243,12 @@ func (m *MsgProposeAddX509RootCert) Size() (n int) {
 	}
 	if m.Vid != 0 {
 		n += 1 + sovTx(uint64(m.Vid))
+	}
+	if m.CertSchemaVersion != 0 {
+		n += 1 + sovTx(uint64(m.CertSchemaVersion))
+	}
+	if m.SchemaVersion != 0 {
+		n += 1 + sovTx(uint64(m.SchemaVersion))
 	}
 	return n
 }
@@ -2906,6 +4320,12 @@ func (m *MsgAddX509Cert) Size() (n int) {
 	if m.Time != 0 {
 		n += 1 + sovTx(uint64(m.Time))
 	}
+	if m.CertSchemaVersion != 0 {
+		n += 1 + sovTx(uint64(m.CertSchemaVersion))
+	}
+	if m.SchemaVersion != 0 {
+		n += 1 + sovTx(uint64(m.SchemaVersion))
+	}
 	return n
 }
 
@@ -2942,6 +4362,16 @@ func (m *MsgProposeRevokeX509RootCert) Size() (n int) {
 	}
 	if m.Time != 0 {
 		n += 1 + sovTx(uint64(m.Time))
+	}
+	l = len(m.SerialNumber)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.RevokeChild {
+		n += 2
+	}
+	if m.SchemaVersion != 0 {
+		n += 1 + sovTx(uint64(m.SchemaVersion))
 	}
 	return n
 }
@@ -2980,6 +4410,10 @@ func (m *MsgApproveRevokeX509RootCert) Size() (n int) {
 	if m.Time != 0 {
 		n += 1 + sovTx(uint64(m.Time))
 	}
+	l = len(m.SerialNumber)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
 	return n
 }
 
@@ -3017,6 +4451,16 @@ func (m *MsgRevokeX509Cert) Size() (n int) {
 	if m.Time != 0 {
 		n += 1 + sovTx(uint64(m.Time))
 	}
+	l = len(m.SerialNumber)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.RevokeChild {
+		n += 2
+	}
+	if m.SchemaVersion != 0 {
+		n += 1 + sovTx(uint64(m.SchemaVersion))
+	}
 	return n
 }
 
@@ -3053,6 +4497,9 @@ func (m *MsgRejectAddX509RootCert) Size() (n int) {
 	}
 	if m.Time != 0 {
 		n += 1 + sovTx(uint64(m.Time))
+	}
+	if m.SchemaVersion != 0 {
+		n += 1 + sovTx(uint64(m.SchemaVersion))
 	}
 	return n
 }
@@ -3114,6 +4561,9 @@ func (m *MsgAddPkiRevocationDistributionPoint) Size() (n int) {
 	if m.RevocationType != 0 {
 		n += 1 + sovTx(uint64(m.RevocationType))
 	}
+	if m.SchemaVersion != 0 {
+		n += 1 + sovTx(uint64(m.SchemaVersion))
+	}
 	return n
 }
 
@@ -3164,6 +4614,9 @@ func (m *MsgUpdatePkiRevocationDistributionPoint) Size() (n int) {
 	}
 	if m.DataDigestType != 0 {
 		n += 1 + sovTx(uint64(m.DataDigestType))
+	}
+	if m.SchemaVersion != 0 {
+		n += 1 + sovTx(uint64(m.SchemaVersion))
 	}
 	return n
 }
@@ -3235,6 +4688,198 @@ func (m *MsgAssignVid) Size() (n int) {
 }
 
 func (m *MsgAssignVidResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgAddNocX509RootCert) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Cert)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.CertSchemaVersion != 0 {
+		n += 1 + sovTx(uint64(m.CertSchemaVersion))
+	}
+	if m.SchemaVersion != 0 {
+		n += 1 + sovTx(uint64(m.SchemaVersion))
+	}
+	return n
+}
+
+func (m *MsgAddNocX509RootCertResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgRemoveX509Cert) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Subject)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.SubjectKeyId)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.SerialNumber)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgRemoveX509CertResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgAddNocX509Cert) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Cert)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.CertSchemaVersion != 0 {
+		n += 1 + sovTx(uint64(m.CertSchemaVersion))
+	}
+	if m.SchemaVersion != 0 {
+		n += 1 + sovTx(uint64(m.SchemaVersion))
+	}
+	return n
+}
+
+func (m *MsgAddNocX509CertResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgRevokeNocRootX509Cert) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Subject)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.SubjectKeyId)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.SerialNumber)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Info)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.Time != 0 {
+		n += 1 + sovTx(uint64(m.Time))
+	}
+	if m.RevokeChild {
+		n += 2
+	}
+	if m.SchemaVersion != 0 {
+		n += 1 + sovTx(uint64(m.SchemaVersion))
+	}
+	return n
+}
+
+func (m *MsgRevokeNocRootX509CertResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgRevokeNocX509Cert) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Subject)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.SubjectKeyId)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.SerialNumber)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Info)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.Time != 0 {
+		n += 1 + sovTx(uint64(m.Time))
+	}
+	if m.RevokeChild {
+		n += 2
+	}
+	if m.SchemaVersion != 0 {
+		n += 1 + sovTx(uint64(m.SchemaVersion))
+	}
+	return n
+}
+
+func (m *MsgRevokeNocX509CertResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -3408,6 +5053,44 @@ func (m *MsgProposeAddX509RootCert) Unmarshal(dAtA []byte) error {
 				b := dAtA[iNdEx]
 				iNdEx++
 				m.Vid |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 6:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CertSchemaVersion", wireType)
+			}
+			m.CertSchemaVersion = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.CertSchemaVersion |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SchemaVersion", wireType)
+			}
+			m.SchemaVersion = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SchemaVersion |= uint32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3874,6 +5557,44 @@ func (m *MsgAddX509Cert) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CertSchemaVersion", wireType)
+			}
+			m.CertSchemaVersion = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.CertSchemaVersion |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 6:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SchemaVersion", wireType)
+			}
+			m.SchemaVersion = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SchemaVersion |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTx(dAtA[iNdEx:])
@@ -4117,6 +5838,77 @@ func (m *MsgProposeRevokeX509RootCert) Unmarshal(dAtA []byte) error {
 				b := dAtA[iNdEx]
 				iNdEx++
 				m.Time |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SerialNumber", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SerialNumber = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RevokeChild", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.RevokeChild = bool(v != 0)
+		case 8:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SchemaVersion", wireType)
+			}
+			m.SchemaVersion = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SchemaVersion |= uint32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4368,6 +6160,38 @@ func (m *MsgApproveRevokeX509RootCert) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SerialNumber", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SerialNumber = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTx(dAtA[iNdEx:])
@@ -4615,6 +6439,77 @@ func (m *MsgRevokeX509Cert) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SerialNumber", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SerialNumber = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RevokeChild", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.RevokeChild = bool(v != 0)
+		case 8:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SchemaVersion", wireType)
+			}
+			m.SchemaVersion = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SchemaVersion |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTx(dAtA[iNdEx:])
@@ -4858,6 +6753,25 @@ func (m *MsgRejectAddX509RootCert) Unmarshal(dAtA []byte) error {
 				b := dAtA[iNdEx]
 				iNdEx++
 				m.Time |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 6:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SchemaVersion", wireType)
+			}
+			m.SchemaVersion = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SchemaVersion |= uint32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -5269,6 +7183,25 @@ func (m *MsgAddPkiRevocationDistributionPoint) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
+		case 13:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SchemaVersion", wireType)
+			}
+			m.SchemaVersion = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SchemaVersion |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTx(dAtA[iNdEx:])
@@ -5614,6 +7547,25 @@ func (m *MsgUpdatePkiRevocationDistributionPoint) Unmarshal(dAtA []byte) error {
 				b := dAtA[iNdEx]
 				iNdEx++
 				m.DataDigestType |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 10:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SchemaVersion", wireType)
+			}
+			m.SchemaVersion = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SchemaVersion |= uint32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -6096,6 +8048,1274 @@ func (m *MsgAssignVidResponse) Unmarshal(dAtA []byte) error {
 		}
 		if fieldNum <= 0 {
 			return fmt.Errorf("proto: MsgAssignVidResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgAddNocX509RootCert) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgAddNocX509RootCert: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgAddNocX509RootCert: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Cert", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Cert = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CertSchemaVersion", wireType)
+			}
+			m.CertSchemaVersion = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.CertSchemaVersion |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SchemaVersion", wireType)
+			}
+			m.SchemaVersion = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SchemaVersion |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgAddNocX509RootCertResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgAddNocX509RootCertResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgAddNocX509RootCertResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgRemoveX509Cert) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgRemoveX509Cert: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgRemoveX509Cert: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Subject", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Subject = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubjectKeyId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SubjectKeyId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SerialNumber", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SerialNumber = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgRemoveX509CertResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgRemoveX509CertResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgRemoveX509CertResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgAddNocX509Cert) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgAddNocX509Cert: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgAddNocX509Cert: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Cert", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Cert = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CertSchemaVersion", wireType)
+			}
+			m.CertSchemaVersion = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.CertSchemaVersion |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SchemaVersion", wireType)
+			}
+			m.SchemaVersion = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SchemaVersion |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgAddNocX509CertResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgAddNocX509CertResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgAddNocX509CertResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgRevokeNocRootX509Cert) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgRevokeNocRootX509Cert: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgRevokeNocRootX509Cert: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Subject", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Subject = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubjectKeyId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SubjectKeyId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SerialNumber", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SerialNumber = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Info", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Info = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 6:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Time", wireType)
+			}
+			m.Time = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Time |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RevokeChild", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.RevokeChild = bool(v != 0)
+		case 8:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SchemaVersion", wireType)
+			}
+			m.SchemaVersion = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SchemaVersion |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgRevokeNocRootX509CertResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgRevokeNocRootX509CertResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgRevokeNocRootX509CertResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgRevokeNocX509Cert) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgRevokeNocX509Cert: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgRevokeNocX509Cert: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Subject", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Subject = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubjectKeyId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SubjectKeyId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SerialNumber", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SerialNumber = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Info", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Info = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 6:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Time", wireType)
+			}
+			m.Time = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Time |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RevokeChild", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.RevokeChild = bool(v != 0)
+		case 8:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SchemaVersion", wireType)
+			}
+			m.SchemaVersion = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SchemaVersion |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgRevokeNocX509CertResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgRevokeNocX509CertResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgRevokeNocX509CertResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:

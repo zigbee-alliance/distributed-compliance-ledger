@@ -15,7 +15,11 @@ var _ sdk.Msg = &MsgUpdateComplianceInfo{}
 
 const TypeMsgUpdateComplianceInfo = "update_compliance_info"
 
-func NewMsgUpdateComplianceInfo(creator string, vid int32, pid int32, softwareVersion uint32, certificationType string, cDVersionNumber string, date string, reason string, owner string, cDCertificateID string, certificationRoute string, programType string, programTypeVersion string, compliantPlatformUsed string, compliantPlatformVersion string, transport string, familyID string, supportedClusters string, oSVersion string, parentChild string, certificationIDOfSoftwareComponent string) *MsgUpdateComplianceInfo {
+func NewMsgUpdateComplianceInfo(creator string, vid int32, pid int32, softwareVersion uint32, certificationType string,
+	cDVersionNumber string, date string, reason string, owner string, cDCertificateID string, certificationRoute string,
+	programType string, programTypeVersion string, compliantPlatformUsed string, compliantPlatformVersion string,
+	transport string, familyID string, supportedClusters string, oSVersion string, parentChild string,
+	certificationIDOfSoftwareComponent string, schemaVersion uint32) *MsgUpdateComplianceInfo {
 	return &MsgUpdateComplianceInfo{
 		Creator:                            creator,
 		Vid:                                vid,
@@ -38,6 +42,7 @@ func NewMsgUpdateComplianceInfo(creator string, vid int32, pid int32, softwareVe
 		OSVersion:                          oSVersion,
 		ParentChild:                        parentChild,
 		CertificationIdOfSoftwareComponent: certificationIDOfSoftwareComponent,
+		SchemaVersion:                      schemaVersion,
 	}
 }
 

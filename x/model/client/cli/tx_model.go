@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
@@ -24,10 +25,12 @@ func CmdCreateModel() *cobra.Command {
 		commissioningModeInitialStepsInstruction   string
 		commissioningModeSecondaryStepsHint        uint32
 		commissioningModeSecondaryStepsInstruction string
+		commissionerRemoteUIFlowURL                string
 		userManualURL                              string
 		supportURL                                 string
 		productURL                                 string
 		lsfURL                                     string
+		schemaVersion                              uint32
 	)
 
 	cmd := &cobra.Command{
@@ -59,10 +62,12 @@ func CmdCreateModel() *cobra.Command {
 				commissioningModeInitialStepsInstruction,
 				commissioningModeSecondaryStepsHint,
 				commissioningModeSecondaryStepsInstruction,
+				commissionerRemoteUIFlowURL,
 				userManualURL,
 				supportURL,
 				productURL,
 				lsfURL,
+				schemaVersion,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -117,6 +122,8 @@ current CHIP Administrator to put the device into commissioning mode.`)
 of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, 
 as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, 
 and for these values the commissioningModeSecondaryStepInstruction SHALL be set`)
+	cmd.Flags().StringVar(&commissionerRemoteUIFlowURL, FlagCommissionerRemoteUIFlowURL, "",
+		`commissionerRemoteUIFlowURL SHALL identify URL to show a custom flow UI for the commissioner`)
 	cmd.Flags().StringVar(&userManualURL, FlagUserManualURL, "",
 		"URL that contains product specific web page that contains user manual for the device model.")
 	cmd.Flags().StringVar(&supportURL, FlagSupportURL, "",
@@ -125,6 +132,7 @@ and for these values the commissioningModeSecondaryStepInstruction SHALL be set`
 		"URL that contains product specific web page that contains details for the device model.")
 	cmd.Flags().StringVar(&lsfURL, FlagLsfURL, "", "URL to the Localized String File of this product")
 	cli.AddTxFlagsToCmd(cmd)
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version")
 
 	_ = cmd.MarkFlagRequired(FlagVid)
 	_ = cmd.MarkFlagRequired(FlagPid)
@@ -145,11 +153,13 @@ func CmdUpdateModel() *cobra.Command {
 		commissioningCustomFlowURL                 string
 		commissioningModeInitialStepsInstruction   string
 		commissioningModeSecondaryStepsInstruction string
+		commissionerRemoteUIFlowURL                string
 		userManualURL                              string
 		supportURL                                 string
 		productURL                                 string
 		lsfURL                                     string
 		lsfRevision                                int32
+		schemaVersion                              uint32
 	)
 
 	cmd := &cobra.Command{
@@ -177,11 +187,13 @@ func CmdUpdateModel() *cobra.Command {
 				commissioningCustomFlowURL,
 				commissioningModeInitialStepsInstruction,
 				commissioningModeSecondaryStepsInstruction,
+				commissionerRemoteUIFlowURL,
 				userManualURL,
 				supportURL,
 				productURL,
 				lsfURL,
 				lsfRevision,
+				schemaVersion,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -217,6 +229,8 @@ values the commissioningModeInitialStepsInstruction SHALL be set`)
 of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, 
 as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, 
 and for these values the commissioningModeSecondaryStepInstruction SHALL be set`)
+	cmd.Flags().StringVar(&commissionerRemoteUIFlowURL, FlagCommissionerRemoteUIFlowURL, "",
+		`commissionerRemoteUIFlowURL SHALL identify URL to show a custom flow UI for the commissioner`)
 	cmd.Flags().StringVar(&userManualURL, FlagUserManualURL, "",
 		"URL that contains product specific web page that contains user manual for the device model.")
 	cmd.Flags().StringVar(&supportURL, FlagSupportURL, "",
@@ -226,6 +240,8 @@ and for these values the commissioningModeSecondaryStepInstruction SHALL be set`
 	cmd.Flags().StringVar(&lsfURL, FlagLsfURL, "", "URL to the Localized String File of this product")
 	cmd.Flags().Int32Var(&lsfRevision, FlagLsfRevision, 0,
 		"LsfRevision is a monotonically increasing positive integer indicating the latest available version of Localized String File")
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version")
+
 	cli.AddTxFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(FlagVid)

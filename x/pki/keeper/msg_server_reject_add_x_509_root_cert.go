@@ -87,6 +87,7 @@ func (k msgServer) RejectAddX509RootCert(goCtx context.Context, msg *types.MsgRe
 					Rejects:       proposedCertificate.Rejects,
 				},
 			},
+			SchemaVersion: msg.SchemaVersion,
 		}
 
 		k.SetRejectedCertificate(ctx, rejectedRootCertificate)

@@ -33,4 +33,5 @@ import (
 func TestPkiDemoREST(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, true)
 	pki.Demo(&suite)
+	pki.NocCertDemo(&suite)
 }

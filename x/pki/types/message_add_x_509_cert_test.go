@@ -41,6 +41,26 @@ func TestMsgAddX509Cert_ValidateBasic(t *testing.T) {
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
+		{
+			name: "schemaVersion > 65535",
+			msg: MsgAddX509Cert{
+				Signer:            sample.AccAddress(),
+				Cert:              testconstants.RootCertPem,
+				CertSchemaVersion: testconstants.CertSchemaVersion,
+				SchemaVersion:     65536,
+			},
+			err: validator.ErrFieldUpperBoundViolated,
+		},
+		{
+			name: "certSchemaVersion > 65535",
+			msg: MsgAddX509Cert{
+				Signer:            sample.AccAddress(),
+				Cert:              testconstants.RootCertPem,
+				CertSchemaVersion: 65536,
+				SchemaVersion:     testconstants.SchemaVersion,
+			},
+			err: validator.ErrFieldUpperBoundViolated,
+		},
 	}
 
 	positiveTests := []struct {

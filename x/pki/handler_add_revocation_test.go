@@ -148,26 +148,31 @@ func TestHandler_AddPkiRevocationDistributionPoint_PositiveCases(t *testing.T) {
 		name            string
 		rootCertOptions *rootCertOptions
 		addRevocation   *types.MsgAddPkiRevocationDistributionPoint
+		SchemaVersion   uint32
 	}{
 		{
 			name:            "PAAWithVid",
 			rootCertOptions: createPAACertWithNumericVidOptions(),
 			addRevocation:   createAddRevocationMessageWithPAACertWithNumericVid(vendorAcc.String()),
+			SchemaVersion:   0,
 		},
 		{
 			name:            "PAIWithNumericVidPid",
 			rootCertOptions: createPAACertWithNumericVidOptions(),
 			addRevocation:   createAddRevocationMessageWithPAICertWithNumericVidPid(vendorAcc.String()),
+			SchemaVersion:   1,
 		},
 		{
 			name:            "PAIWithStringVidPid",
 			rootCertOptions: createPAACertNoVidOptions(testconstants.PAICertWithPidVidVid),
 			addRevocation:   createAddRevocationMessageWithPAICertWithVidPid(vendorAcc.String()),
+			SchemaVersion:   2,
 		},
 		{
 			name:            "PAANoVid",
 			rootCertOptions: createPAACertNoVidOptions(testconstants.VendorID1),
 			addRevocation:   createAddRevocationMessageWithPAACertNoVid(vendorAcc.String(), testconstants.VendorID1),
+			SchemaVersion:   1000000,
 		},
 		{
 			name:            "PAIWithVid",
@@ -183,6 +188,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_PositiveCases(t *testing.T) {
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 				RevocationType:       types.CRLRevocationType,
 			},
+			SchemaVersion: 999999999,
 		},
 	}
 
@@ -192,7 +198,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_PositiveCases(t *testing.T) {
 			setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, tc.addRevocation.Vid)
 
 			proposeAndApproveRootCertificate(setup, setup.Trustee1, tc.rootCertOptions)
-
+			tc.addRevocation.SchemaVersion = tc.SchemaVersion
 			_, err := setup.Handler(setup.Ctx, tc.addRevocation)
 			require.NoError(t, err)
 

@@ -324,6 +324,25 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
+		{
+			name: "schemaVersion > 65535",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.Creator = sample.AccAddress()
+				msg.SchemaVersion = 65536
+
+				return msg
+			}(validMsgCreateModel()),
+			err: validator.ErrFieldUpperBoundViolated,
+		},
+		{
+			name: "CommissionerRemoteUiFlowUrl length > 256",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.CommissionerRemoteUiFlowUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(257-30) // length = 257
+
+				return msg
+			}(validMsgCreateModel()),
+			err: validator.ErrFieldMaxLengthExceeded,
+		},
 	}
 
 	positiveTests := []struct {
@@ -580,6 +599,22 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "LsfUrl length == 256",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.LsfUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
+
+				return msg
+			}(validMsgCreateModel()),
+		},
+		{
+			name: "CommissionerRemoteUiFlowUrl is omitted",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.CommissionerRemoteUiFlowUrl = ""
+
+				return msg
+			}(validMsgCreateModel()),
+		},
+		{
+			name: "CommissionerRemoteUiFlowUrl length == 256",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.CommissionerRemoteUiFlowUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
 
 				return msg
 			}(validMsgCreateModel()),
@@ -878,6 +913,25 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldUpperBoundViolated,
 		},
+		{
+			name: "schemaVersion > 65535",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.Creator = sample.AccAddress()
+				msg.SchemaVersion = 65536
+
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrFieldUpperBoundViolated,
+		},
+		{
+			name: "CommissionerRemoteUiFlowUrl length > 256",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.CommissionerRemoteUiFlowUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(257-30) // length = 257
+
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrFieldMaxLengthExceeded,
+		},
 	}
 
 	positiveTests := []struct {
@@ -1098,6 +1152,22 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 				return msg
 			}(validMsgUpdateModel()),
 		},
+		{
+			name: "CommissionerRemoteUiFlowUrl is omitted",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.CommissionerRemoteUiFlowUrl = ""
+
+				return msg
+			}(validMsgUpdateModel()),
+		},
+		{
+			name: "CommissionerRemoteUiFlowUrl length == 256",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.CommissionerRemoteUiFlowUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
+
+				return msg
+			}(validMsgUpdateModel()),
+		},
 	}
 
 	for _, tt := range negativeTests {
@@ -1273,10 +1343,11 @@ func validMsgCreateModel() *MsgCreateModel {
 		CommissioningModeInitialStepsInstruction: testconstants.CommissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsHint:      testconstants.CommissioningModeSecondaryStepsHint,
 		CommissioningModeSecondaryStepsInstruction: testconstants.CommissioningModeSecondaryStepsInstruction,
-		UserManualUrl: testconstants.UserManualURL,
-		SupportUrl:    testconstants.SupportURL,
-		ProductUrl:    testconstants.ProductURL,
-		LsfUrl:        testconstants.LsfURL,
+		CommissionerRemoteUiFlowUrl:                testconstants.CommissioningCustomFlowURL,
+		UserManualUrl:                              testconstants.UserManualURL,
+		SupportUrl:                                 testconstants.SupportURL,
+		ProductUrl:                                 testconstants.ProductURL,
+		LsfUrl:                                     testconstants.LsfURL,
 	}
 }
 
@@ -1291,10 +1362,11 @@ func validMsgUpdateModel() *MsgUpdateModel {
 		CommissioningCustomFlowUrl:               testconstants.CommissioningCustomFlowURL + "/updated",
 		CommissioningModeInitialStepsInstruction: testconstants.CommissioningModeInitialStepsInstruction + "-updated",
 		CommissioningModeSecondaryStepsInstruction: testconstants.CommissioningModeSecondaryStepsInstruction + "-updated",
-		UserManualUrl: testconstants.UserManualURL + "/updated",
-		SupportUrl:    testconstants.SupportURL + "/updated",
-		ProductUrl:    testconstants.ProductURL + "/updated",
-		LsfUrl:        testconstants.LsfURL + "/updated",
-		LsfRevision:   testconstants.LsfRevision + 1,
+		CommissionerRemoteUiFlowUrl:                testconstants.CommissioningCustomFlowURL + "-updated",
+		UserManualUrl:                              testconstants.UserManualURL + "/updated",
+		SupportUrl:                                 testconstants.SupportURL + "/updated",
+		ProductUrl:                                 testconstants.ProductURL + "/updated",
+		LsfUrl:                                     testconstants.LsfURL + "/updated",
+		LsfRevision:                                testconstants.LsfRevision + 1,
 	}
 }

@@ -71,7 +71,7 @@ func (k Keeper) GetAllApprovedCertificates(ctx sdk.Context) (list []types.Approv
 }
 
 // Add an approved certificate to the list of approved certificates for the subject/subjectKeyId map.
-func (k Keeper) AddApprovedCertificate(ctx sdk.Context, approvedCertificate types.Certificate) {
+func (k Keeper) AddApprovedCertificate(ctx sdk.Context, approvedCertificate types.Certificate, schemaVersion uint32) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ApprovedCertificatesKeyPrefix))
 
 	approvedCertificatesBytes := store.Get(types.ApprovedCertificatesKey(
@@ -82,9 +82,10 @@ func (k Keeper) AddApprovedCertificate(ctx sdk.Context, approvedCertificate type
 
 	if approvedCertificatesBytes == nil {
 		approvedCertificates = types.ApprovedCertificates{
-			Subject:      approvedCertificate.Subject,
-			SubjectKeyId: approvedCertificate.SubjectKeyId,
-			Certs:        []*types.Certificate{},
+			Subject:       approvedCertificate.Subject,
+			SubjectKeyId:  approvedCertificate.SubjectKeyId,
+			Certs:         []*types.Certificate{},
+			SchemaVersion: schemaVersion,
 		}
 	} else {
 		k.cdc.MustUnmarshal(approvedCertificatesBytes, &approvedCertificates)
@@ -118,17 +119,17 @@ func (k Keeper) IsApprovedCertificatePresent(
 // Returns the RootSubject/RootSubjectKeyID combination or an error in case no valid certificate chain can be built.
 func (k Keeper) verifyCertificate(ctx sdk.Context,
 	x509Certificate *x509.Certificate,
-) (string, string, error) {
+) (*x509.Certificate, error) {
 	//nolint:nestif
 	if x509Certificate.IsSelfSigned() {
 		// in this system a certificate is self-signed if and only if it is a root certificate
 		if err := x509Certificate.Verify(x509Certificate, ctx.BlockTime()); err == nil {
-			return x509Certificate.Subject, x509Certificate.SubjectKeyID, nil
+			return x509Certificate, nil
 		}
 	} else {
 		parentCertificates, found := k.GetApprovedCertificates(ctx, x509Certificate.Issuer, x509Certificate.AuthorityKeyID)
 		if !found {
-			return "", "", pkitypes.NewErrInvalidCertificate(
+			return nil, pkitypes.NewErrInvalidCertificate(
 				fmt.Sprintf("Certificate verification failed for certificate with subject=%v and subjectKeyID=%v",
 					x509Certificate.Subject, x509Certificate.SubjectKeyID))
 		}
@@ -145,13 +146,13 @@ func (k Keeper) verifyCertificate(ctx sdk.Context,
 			}
 
 			// verify parent certificate
-			if subject, subjectKeyID, err := k.verifyCertificate(ctx, parentX509Certificate); err == nil {
-				return subject, subjectKeyID, nil
+			if rootCertificate, err := k.verifyCertificate(ctx, parentX509Certificate); err == nil {
+				return rootCertificate, nil
 			}
 		}
 	}
 
-	return "", "", pkitypes.NewErrInvalidCertificate(
+	return nil, pkitypes.NewErrInvalidCertificate(
 		fmt.Sprintf("Certificate verification failed for certificate with subject=%v and subjectKeyID=%v",
 			x509Certificate.Subject, x509Certificate.SubjectKeyID))
 }

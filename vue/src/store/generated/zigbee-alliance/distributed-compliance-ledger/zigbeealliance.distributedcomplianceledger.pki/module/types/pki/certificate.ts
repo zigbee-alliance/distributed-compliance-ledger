@@ -19,6 +19,8 @@ export interface Certificate {
   subjectAsText: string
   rejects: Grant[]
   vid: number
+  isNoc: boolean
+  schemaVersion: number
 }
 
 const baseCertificate: object = {
@@ -33,7 +35,9 @@ const baseCertificate: object = {
   subject: '',
   subjectKeyId: '',
   subjectAsText: '',
-  vid: 0
+  vid: 0,
+  isNoc: false,
+  schemaVersion: 0
 }
 
 export const Certificate = {
@@ -79,6 +83,12 @@ export const Certificate = {
     }
     if (message.vid !== 0) {
       writer.uint32(112).int32(message.vid)
+    }
+    if (message.isNoc === true) {
+      writer.uint32(120).bool(message.isNoc)
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(128).uint32(message.schemaVersion)
     }
     return writer
   },
@@ -133,6 +143,12 @@ export const Certificate = {
           break
         case 14:
           message.vid = reader.int32()
+          break
+        case 15:
+          message.isNoc = reader.bool()
+          break
+        case 16:
+          message.schemaVersion = reader.uint32()
           break
         default:
           reader.skipType(tag & 7)
@@ -216,6 +232,16 @@ export const Certificate = {
     } else {
       message.vid = 0
     }
+    if (object.isNoc !== undefined && object.isNoc !== null) {
+      message.isNoc = Boolean(object.isNoc)
+    } else {
+      message.isNoc = false
+    }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = Number(object.schemaVersion)
+    } else {
+      message.schemaVersion = 0
+    }
     return message
   },
 
@@ -243,6 +269,8 @@ export const Certificate = {
       obj.rejects = []
     }
     message.vid !== undefined && (obj.vid = message.vid)
+    message.isNoc !== undefined && (obj.isNoc = message.isNoc)
+    message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
     return obj
   },
 
@@ -319,6 +347,16 @@ export const Certificate = {
       message.vid = object.vid
     } else {
       message.vid = 0
+    }
+    if (object.isNoc !== undefined && object.isNoc !== null) {
+      message.isNoc = object.isNoc
+    } else {
+      message.isNoc = false
+    }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = object.schemaVersion
+    } else {
+      message.schemaVersion = 0
     }
     return message
   }

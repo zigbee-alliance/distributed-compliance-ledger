@@ -87,6 +87,7 @@ func TestHandler_AddVendorInfo(t *testing.T) {
 
 	// add new vendorinfo
 	msgCreateVendorInfo := NewMsgCreateVendorInfo(setup.Vendor)
+	msgCreateVendorInfo.SchemaVersion = testconstants.SchemaVersion
 	_, err := setup.Handler(setup.Ctx, msgCreateVendorInfo)
 	require.NoError(t, err)
 
@@ -101,6 +102,7 @@ func TestHandler_AddVendorInfo(t *testing.T) {
 	require.Equal(t, msgCreateVendorInfo.Creator, receivedVendorInfo.Creator)
 	require.Equal(t, msgCreateVendorInfo.VendorLandingPageURL, receivedVendorInfo.VendorLandingPageURL)
 	require.Equal(t, msgCreateVendorInfo.VendorName, receivedVendorInfo.VendorName)
+	require.Equal(t, msgCreateVendorInfo.SchemaVersion, receivedVendorInfo.SchemaVersion)
 }
 
 func queryVendorInfo(
@@ -134,10 +136,12 @@ func TestHandler_UpdateVendorInfo(t *testing.T) {
 
 	// add new vendorinfo
 	msgCreateVendorInfo := NewMsgCreateVendorInfo(setup.Vendor)
+	msgCreateVendorInfo.SchemaVersion = testconstants.SchemaVersion
 	_, err = setup.Handler(setup.Ctx, msgCreateVendorInfo)
 	require.NoError(t, err)
 
 	// update existing vendorinfo
+	msgUpdateVendorInfo.SchemaVersion = 2
 	_, err = setup.Handler(setup.Ctx, msgUpdateVendorInfo)
 	require.NoError(t, err)
 
@@ -152,6 +156,7 @@ func TestHandler_UpdateVendorInfo(t *testing.T) {
 	require.Equal(t, msgUpdateVendorInfo.Creator, receivedVendorInfo.Creator)
 	require.Equal(t, msgUpdateVendorInfo.VendorLandingPageURL, receivedVendorInfo.VendorLandingPageURL)
 	require.Equal(t, msgUpdateVendorInfo.VendorName, receivedVendorInfo.VendorName)
+	require.Equal(t, msgUpdateVendorInfo.SchemaVersion, receivedVendorInfo.SchemaVersion)
 }
 
 func TestHandler_OnlyOwnerCanUpdateVendorInfo(t *testing.T) {

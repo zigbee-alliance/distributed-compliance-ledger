@@ -353,6 +353,7 @@ func checkDeviceSoftwareCompliance(
 	require.Equal(t, info.Transport, receivedComplianceInfo.Transport)
 	require.Equal(t, info.ParentChild, receivedComplianceInfo.ParentChild)
 	require.Equal(t, info.CertificationIdOfSoftwareComponent, receivedComplianceInfo.CertificationIdOfSoftwareComponent)
+	require.Equal(t, info.SchemaVersion, receivedComplianceInfo.SchemaVersion)
 }
 
 func checkRevokedModelInfo(
@@ -426,6 +427,7 @@ func newMsgUpdateComplianceInfo(
 		OSVersion:                          "",
 		ParentChild:                        "",
 		CertificationIdOfSoftwareComponent: "",
+		SchemaVersion:                      testconstants.SchemaVersion,
 	}
 }
 
@@ -458,6 +460,7 @@ func newMsgUpdateComplianceInfoWithAllOptionalFlags(
 		OSVersion:                          "new OSVersion",
 		ParentChild:                        "new ParentChild",
 		CertificationIdOfSoftwareComponent: "new CertificationIdOfSoftwareComponent",
+		SchemaVersion:                      testconstants.SchemaVersion,
 	}
 }
 

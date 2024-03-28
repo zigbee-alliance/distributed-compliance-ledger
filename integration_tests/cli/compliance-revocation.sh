@@ -48,7 +48,9 @@ test_divider
 echo "Revoke Certification for uncertificate Model with VID: $vid PID: $pid"
 revocation_date="2020-02-02T02:20:20Z"
 revocation_reason="some reason"
-result=$(echo "$passphrase" | dcld tx compliance revoke-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type" --revocationDate="$revocation_date" --reason "$revocation_reason" --cdVersionNumber=1 --from $zb_account --yes)
+schema_version_0=0
+schema_version_2=2
+result=$(echo "$passphrase" | dcld tx compliance revoke-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type" --revocationDate="$revocation_date" --reason "$revocation_reason" --cdVersionNumber=1  --schemaVersion=$schema_version_2 --from $zb_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
@@ -133,6 +135,7 @@ check_response "$result" "\"softwareVersionCertificationStatus\": 3"
 check_response "$result" "\"date\": \"$revocation_date\""
 check_response "$result" "\"reason\": \"$revocation_reason\""
 check_response "$result" "\"certificationType\": \"$certification_type\""
+check_response "$result" "\"schemaVersion\": $schema_version_2"
 check_response "$result" "\"history\""
 echo "$result"
 
@@ -146,6 +149,7 @@ check_response "$result" "\"softwareVersionCertificationStatus\": 3"
 check_response "$result" "\"date\": \"$revocation_date\""
 check_response "$result" "\"reason\": \"$revocation_reason\""
 check_response "$result" "\"certificationType\": \"$certification_type_matter\""
+check_response "$result" "\"schemaVersion\": $schema_version_0"
 check_response "$result" "\"history\""
 echo "$result"
 

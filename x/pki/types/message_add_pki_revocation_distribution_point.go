@@ -13,7 +13,9 @@ const TypeMsgAddPkiRevocationDistributionPoint = "add_pki_revocation_distributio
 
 var _ sdk.Msg = &MsgAddPkiRevocationDistributionPoint{}
 
-func NewMsgAddPkiRevocationDistributionPoint(signer string, vid int32, pid int32, isPAA bool, label string, crlSignerCertificate string, issuerSubjectKeyID string, dataURL string, dataFileSize uint64, dataDigest string, dataDigestType uint32, revocationType uint32) *MsgAddPkiRevocationDistributionPoint {
+func NewMsgAddPkiRevocationDistributionPoint(signer string, vid int32, pid int32, isPAA bool, label string,
+	crlSignerCertificate string, issuerSubjectKeyID string, dataURL string, dataFileSize uint64, dataDigest string,
+	dataDigestType uint32, revocationType uint32, schemaVersion uint32) *MsgAddPkiRevocationDistributionPoint {
 	return &MsgAddPkiRevocationDistributionPoint{
 		Signer:               signer,
 		Vid:                  vid,
@@ -27,6 +29,7 @@ func NewMsgAddPkiRevocationDistributionPoint(signer string, vid int32, pid int32
 		DataDigest:           dataDigest,
 		DataDigestType:       dataDigestType,
 		RevocationType:       revocationType,
+		SchemaVersion:        schemaVersion,
 	}
 }
 

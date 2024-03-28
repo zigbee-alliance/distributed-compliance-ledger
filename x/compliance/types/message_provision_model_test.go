@@ -389,6 +389,23 @@ func TestMsgProvisionModel_ValidateBasic(t *testing.T) {
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
+		{
+			name: "schemaVersion > 65535",
+			msg: MsgProvisionModel{
+				Signer:                sample.AccAddress(),
+				SoftwareVersionString: testconstants.SoftwareVersionString,
+				Pid:                   1,
+				Vid:                   1,
+				ProvisionalDate:       testconstants.CertificationDate,
+				CertificationType:     testconstants.CertificationType,
+				SoftwareVersion:       testconstants.SoftwareVersion,
+				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
+				Reason:                testconstants.Reason,
+				CDCertificateId:       testconstants.CDCertificateID,
+				SchemaVersion:         65536,
+			},
+			err: validator.ErrFieldUpperBoundViolated,
+		},
 	}
 
 	positiveTests := []struct {

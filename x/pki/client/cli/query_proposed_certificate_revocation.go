@@ -54,6 +54,7 @@ func CmdShowProposedCertificateRevocation() *cobra.Command {
 	var (
 		subject      string
 		subjectKeyID string
+		serialNumber string
 	)
 
 	cmd := &cobra.Command{
@@ -72,7 +73,7 @@ func CmdShowProposedCertificateRevocation() *cobra.Command {
 				clientCtx,
 				pkitypes.StoreKey,
 				types.ProposedCertificateRevocationKeyPrefix,
-				types.ProposedCertificateRevocationKey(subject, subjectKeyID),
+				types.ProposedCertificateRevocationKey(subject, subjectKeyID, serialNumber),
 				&res,
 			)
 		},
@@ -80,6 +81,7 @@ func CmdShowProposedCertificateRevocation() *cobra.Command {
 
 	cmd.Flags().StringVarP(&subject, FlagSubject, FlagSubjectShortcut, "", "Certificate's subject")
 	cmd.Flags().StringVarP(&subjectKeyID, FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "", "Certificate's subject key id (hex)")
+	cmd.Flags().StringVarP(&serialNumber, FlagSerialNumber, FlagSerialNumberShortcut, "", "Certificate's serial number")
 	flags.AddQueryFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(FlagSubject)
