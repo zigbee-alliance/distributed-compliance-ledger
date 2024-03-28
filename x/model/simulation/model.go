@@ -5,10 +5,11 @@ import (
 	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
+
+	appEncoding "github.com/zigbee-alliance/distributed-compliance-ledger/app"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
@@ -42,7 +43,7 @@ func SimulateMsgCreateModel(
 		txCtx := simulation.OperationInput{
 			R:               r,
 			App:             app,
-			TxGen:           simappparams.MakeTestEncodingConfig().TxConfig,
+			TxGen:           appEncoding.MakeEncodingConfig().TxConfig,
 			Cdc:             nil,
 			Msg:             msg,
 			MsgType:         msg.Type(),
@@ -92,7 +93,7 @@ func SimulateMsgUpdateModel(
 		txCtx := simulation.OperationInput{
 			R:               r,
 			App:             app,
-			TxGen:           simappparams.MakeTestEncodingConfig().TxConfig,
+			TxGen:           appEncoding.MakeEncodingConfig().TxConfig,
 			Cdc:             nil,
 			Msg:             msg,
 			MsgType:         msg.Type(),
@@ -142,7 +143,7 @@ func SimulateMsgDeleteModel(
 		txCtx := simulation.OperationInput{
 			R:               r,
 			App:             app,
-			TxGen:           simappparams.MakeTestEncodingConfig().TxConfig,
+			TxGen:           appEncoding.MakeEncodingConfig().TxConfig,
 			Cdc:             nil,
 			Msg:             msg,
 			MsgType:         msg.Type(),

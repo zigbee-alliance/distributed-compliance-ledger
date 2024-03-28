@@ -7,9 +7,9 @@ import (
 )
 
 // GenTx generates a signed mock transaction.
-func GenTx(txf clienttx.Factory, gen client.TxConfig, msgs []sdk.Msg, signer string) (sdk.Tx, error) {
+func GenTx(txf clienttx.Factory, _ client.TxConfig, msgs []sdk.Msg, signer string) (sdk.Tx, error) {
 	// tx, err := txf.BuildUnsignedTx(msgs...)
-	tx, err := clienttx.BuildUnsignedTx(txf, msgs...)
+	tx, err := txf.BuildUnsignedTx(msgs...)
 	if err != nil {
 		return nil, err
 	}

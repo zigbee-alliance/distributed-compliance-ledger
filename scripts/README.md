@@ -6,8 +6,7 @@
 
 The [Dockerfile](./Dockerfile) might be handy for the following cases:
 
-- when you want to use not yet release (dev) version of `starport`
-- when you don't want to setup starport or swagger dependencies locally by some reason
+- when you don't want to setup Ignite or Swagger dependencies locally by some reason
 
 `[Note]` If you want to install dependencies locally, try to use versions specified in [Dockerfile](./Dockerfile) to avoid errors while running scripts
 
@@ -25,10 +24,10 @@ docker run -it -v "$PWD":/dcl <name[:tag]> /bin/bash
 
 ## Scripts
 
-Build proto (for example `starport chain build`).
+Build proto (for example `buf generate --template buf.gen.gogo.yaml`).
 
 ```bash
-starport chain build
+./scripts/protocgen.sh
 ```
 
 Generate Cosmos base openapi

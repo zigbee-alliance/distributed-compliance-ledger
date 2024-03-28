@@ -5,7 +5,7 @@ The default RPC listen address is tcp://0.0.0.0:26657. See the [docs](https://do
 
 ## WebSocket Events
 
-Full list of Tendermint WebSocket events can be found [here](https://pkg.go.dev/github.com/tendermint/tendermint/types#pkg-constants).
+Full list of Tendermint WebSocket events can be found [here](https://pkg.go.dev/github.com/cometbft/cometbft/types#pkg-constants).
 
 ### Subscribe
 

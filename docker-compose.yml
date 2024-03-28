@@ -30,7 +30,7 @@ services:
     networks:
       localnet:
         ipv4_address: 192.167.10.2
-    command: cosmovisor start
+    command: cosmovisor run start
 
   node1:
     image: dcledger
@@ -46,7 +46,7 @@ services:
     networks:
       localnet:
         ipv4_address: 192.167.10.3
-    command: cosmovisor start
+    command: cosmovisor run start
 
   node2:
     image: dcledger
@@ -62,7 +62,7 @@ services:
     networks:
       localnet:
         ipv4_address: 192.167.10.4
-    command: cosmovisor start
+    command: cosmovisor run start
 
   node3:
     image: dcledger
@@ -78,7 +78,7 @@ services:
     networks:
       localnet:
         ipv4_address: 192.167.10.5
-    command: cosmovisor start
+    command: cosmovisor run start
 
   observer0:
     image: dcledger
@@ -96,7 +96,7 @@ services:
     networks:
       localnet:
         ipv4_address: 192.167.10.6
-    command: cosmovisor start
+    command: cosmovisor run start
 
   lightclient0:
     image: dcledger
@@ -113,7 +113,7 @@ services:
     networks:
       localnet:
         ipv4_address: 192.167.10.7
-    command: cosmovisor light dclchain -p tcp://192.167.10.2:26657 -w tcp://192.167.10.3:26657,tcp://192.167.10.4:26657 --start-timeout=10 --log-level=debug
+    command: cosmovisor run light dclchain -p tcp://192.167.10.2:26657 -w tcp://192.167.10.3:26657,tcp://192.167.10.4:26657 --start-timeout=10 --log-level=debug
 
 
 networks:

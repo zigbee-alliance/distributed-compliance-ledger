@@ -1,0 +1,12 @@
+syntax = "proto3";
+package zigbeealliance.distributedcomplianceledger.pki;
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types";
+
+import "zigbeealliance/distributedcomplianceledger/pki/pki_revocation_distribution_point.proto";
+
+message PkiRevocationDistributionPointsByIssuerSubjectKeyID {
+  string issuerSubjectKeyID = 1; 
+  repeated PkiRevocationDistributionPoint points = 2;
+}
+

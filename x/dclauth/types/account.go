@@ -17,6 +17,7 @@ package types
 import (
 	"encoding/json"
 
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -47,7 +48,7 @@ func (role AccountRole) Validate() error {
 		}
 	}
 
-	return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Invalid Account Role: %v. Supported roles: [%v]", role, Roles)
+	return errors.Wrapf(sdkerrors.ErrUnknownRequest, "Invalid Account Role: %v. Supported roles: [%v]", role, Roles)
 }
 
 /*
@@ -251,7 +252,7 @@ func (revoc PendingAccountRevocation) String() string {
 // Validate checks for errors on the vesting and module account parameters.
 func (revoc PendingAccountRevocation) Validate() error {
 	if revoc.Address == "" {
-		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
+		return errors.Wrapf(sdkerrors.ErrUnknownRequest,
 			"Invalid Pending Account Revocation: Value: %s. Error: Missing Address", revoc.Address,
 		)
 	}

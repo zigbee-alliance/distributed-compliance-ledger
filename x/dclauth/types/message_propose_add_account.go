@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"time"
 
+	"cosmossdk.io/errors"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common/types"
 )
@@ -97,34 +99,34 @@ func (msg *MsgProposeAddAccount) GetSignBytes() []byte {
 
 func (msg *MsgProposeAddAccount) ValidateBasic() error {
 	if msg.Address == "" {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Account Address: it cannot be empty")
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Account Address: it cannot be empty")
 	}
 
 	accAddr, err := sdk.AccAddressFromBech32(msg.Address)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Account Address: (%s)", err)
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Account Address: (%s)", err)
 	}
 
 	if msg.Signer == "" {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Signer: it cannot be empty")
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Signer: it cannot be empty")
 	}
 
 	_, err = sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Signer: (%s)", err)
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Signer: (%s)", err)
 	}
 
 	if msg.PubKey == nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Invalid PublicKey: it cannot be empty")
+		return errors.Wrapf(sdkerrors.ErrUnknownRequest, "Invalid PublicKey: it cannot be empty")
 	}
 
 	pk, err2 := msg.PubKey.GetCachedValue().(cryptotypes.PubKey)
 	if !err2 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidType, "expecting cryptotypes.PubKey for PubKey, got %T", err)
+		return errors.Wrapf(sdkerrors.ErrInvalidType, "expecting cryptotypes.PubKey for PubKey, got %T", err)
 	}
 
 	if !bytes.Equal(pk.Address().Bytes(), accAddr.Bytes()) {
-		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "account address and pubkey address do not match")
+		return errors.Wrapf(sdkerrors.ErrUnknownRequest, "account address and pubkey address do not match")
 	}
 
 	if len(msg.Roles) == 0 {
@@ -144,7 +146,7 @@ func (msg *MsgProposeAddAccount) ValidateBasic() error {
 
 	err = msg.HasValidProductIDs()
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Invalid ProductID ranges are provided: %s", err)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "Invalid ProductID ranges are provided: %s", err)
 	}
 
 	err = validator.Validate(msg)

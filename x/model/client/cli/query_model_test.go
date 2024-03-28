@@ -5,10 +5,10 @@ import (
 	"strconv"
 	"testing"
 
+	tmcli "github.com/cometbft/cometbft/libs/cli"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	"github.com/stretchr/testify/require"
-	tmcli "github.com/tendermint/tendermint/libs/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/network"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/nullify"
 	cliutils "github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"

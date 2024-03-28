@@ -11,7 +11,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
-func createTestAccountStat(keeper *keeper.Keeper, ctx sdk.Context) types.AccountStat {
+func createTestAccountStat(keeper *keeper.Keeper, ctx sdk.Context) types.AccountStat { //nolint:unparam
 	item := types.AccountStat{}
 	keeper.SetAccountStat(ctx, item)
 

@@ -22,7 +22,7 @@
 FROM ubuntu:20.04 AS builder
 
 ARG GO_VERSION
-ENV GO_VERSION=1.19.4
+ENV GO_VERSION=1.20
 
 RUN apt-get update --fix-missing
 RUN apt-get install -y wget git gcc
@@ -36,7 +36,7 @@ ENV GOPATH /go
 ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 
-RUN go install github.com/cosmos/cosmos-sdk/cosmovisor/cmd/cosmovisor@v1.0.0
+RUN go install github.com/cosmos/cosmos-sdk/cosmovisor/cmd/cosmovisor@v1.3.0
 
 ############################
 # STEP 2 build node image

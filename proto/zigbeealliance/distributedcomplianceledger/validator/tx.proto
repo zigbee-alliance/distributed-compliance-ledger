@@ -1,0 +1,80 @@
+syntax = "proto3";
+package zigbeealliance.distributedcomplianceledger.validator;
+
+// this line is used by starport scaffolding # proto/tx/import
+import "zigbeealliance/distributedcomplianceledger/validator/description.proto";
+
+import "google/protobuf/any.proto";
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types";
+
+// Msg defines the Msg service.
+service Msg {
+      rpc CreateValidator(MsgCreateValidator) returns (MsgCreateValidatorResponse);
+  rpc ProposeDisableValidator(MsgProposeDisableValidator) returns (MsgProposeDisableValidatorResponse);
+  rpc ApproveDisableValidator(MsgApproveDisableValidator) returns (MsgApproveDisableValidatorResponse);
+  rpc DisableValidator(MsgDisableValidator) returns (MsgDisableValidatorResponse);
+  rpc EnableValidator(MsgEnableValidator) returns (MsgEnableValidatorResponse);
+  rpc RejectDisableValidator(MsgRejectDisableValidator) returns (MsgRejectDisableValidatorResponse);
+// this line is used by starport scaffolding # proto/tx/rpc
+}
+
+message MsgCreateValidator {
+  option (gogoproto.equal)           = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  google.protobuf.Any pubKey = 2 [(cosmos_proto.accepts_interface) = "cosmos.crypto.PubKey", (gogoproto.moretags) = "validate:\"required\""];
+  Description description = 3 [(gogoproto.nullable) = false];
+}
+
+message MsgCreateValidatorResponse {
+}
+
+message MsgProposeDisableValidator {
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  string address = 2 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  string info = 3 [(gogoproto.moretags) = "validate:\"max=4096\""];
+  int64 time = 4;
+}
+
+message MsgProposeDisableValidatorResponse {
+}
+
+message MsgApproveDisableValidator {
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  string address = 2 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  string info = 3 [(gogoproto.moretags) = "validate:\"max=4096\""];
+  int64 time = 4;
+}
+
+message MsgApproveDisableValidatorResponse {
+}
+
+message MsgDisableValidator {
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+}
+
+message MsgDisableValidatorResponse {
+}
+
+message MsgEnableValidator {
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+}
+
+message MsgEnableValidatorResponse {
+}
+
+message MsgRejectDisableValidator {
+  string creator = 1;
+  string address = 2;
+  string info = 3;
+  int64 time = 4;
+}
+
+message MsgRejectDisableValidatorResponse {
+}
+
+// this line is used by starport scaffolding # proto/tx/message

@@ -17,24 +17,24 @@ package types
 import (
 	"fmt"
 
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"cosmossdk.io/errors"
 )
 
 var (
-	PoolIsFull                               = sdkerrors.Register(ModuleName, 601, "maximum number of active nodes reached")
-	ErrProposedDisableValidatorAlreadyExists = sdkerrors.Register(ModuleName, 602, "disable validator proposal already exists")
-	ErrProposedDisableValidatorDoesNotExist  = sdkerrors.Register(ModuleName, 603, "disable validator proposal does not exist")
-	ErrDisabledValidatorAlreadytExists       = sdkerrors.Register(ModuleName, 604, "disabled validator already exist")
-	ErrDisabledValidatorDoesNotExist         = sdkerrors.Register(ModuleName, 605, "disabled validator does not exist")
+	PoolIsFull                               = errors.Register(ModuleName, 601, "maximum number of active nodes reached")
+	ErrProposedDisableValidatorAlreadyExists = errors.Register(ModuleName, 602, "disable validator proposal already exists")
+	ErrProposedDisableValidatorDoesNotExist  = errors.Register(ModuleName, 603, "disable validator proposal does not exist")
+	ErrDisabledValidatorAlreadytExists       = errors.Register(ModuleName, 604, "disabled validator already exist")
+	ErrDisabledValidatorDoesNotExist         = errors.Register(ModuleName, 605, "disabled validator does not exist")
 )
 
 func ErrPoolIsFull() error {
-	return sdkerrors.Wrapf(PoolIsFull,
+	return errors.Wrapf(PoolIsFull,
 		fmt.Sprintf("Pool ledger already contains maximum number of active nodes: \"%v\"", MaxNodes))
 }
 
 func NewErrProposedDisableValidatorAlreadyExists(name interface{}) error {
-	return sdkerrors.Wrapf(
+	return errors.Wrapf(
 		ErrProposedDisableValidatorAlreadyExists,
 		"Disable proposal with validator address=%v already exists on the ledger",
 		name,
@@ -42,7 +42,7 @@ func NewErrProposedDisableValidatorAlreadyExists(name interface{}) error {
 }
 
 func NewErrProposedDisableValidatorDoesNotExist(name interface{}) error {
-	return sdkerrors.Wrapf(
+	return errors.Wrapf(
 		ErrProposedDisableValidatorDoesNotExist,
 		"Disable proposal with validator address=%v does not exist on the ledger",
 		name,
@@ -50,7 +50,7 @@ func NewErrProposedDisableValidatorDoesNotExist(name interface{}) error {
 }
 
 func NewErrDisabledValidatorAlreadyExists(name interface{}) error {
-	return sdkerrors.Wrapf(
+	return errors.Wrapf(
 		ErrDisabledValidatorAlreadytExists,
 		"Disabled validator with address=%v already exists on the ledger",
 		name,
@@ -58,7 +58,7 @@ func NewErrDisabledValidatorAlreadyExists(name interface{}) error {
 }
 
 func NewErrDisabledValidatorDoesNotExist(name interface{}) error {
-	return sdkerrors.Wrapf(
+	return errors.Wrapf(
 		ErrDisabledValidatorDoesNotExist,
 		"Disabled validator with address=%v does not exist on the ledger",
 		name,

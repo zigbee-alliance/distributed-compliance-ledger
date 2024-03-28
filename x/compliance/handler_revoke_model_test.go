@@ -9,18 +9,18 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
-	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	modeltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
 func setupRevokeModel(t *testing.T) (*TestSetup, int32, int32, uint32, string, string) {
+	t.Helper()
 	setup := setup(t)
 
 	vid, pid, softwareVersion, softwareVersionString := setup.addModelVersion(
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
-	certificationType := dclcompltypes.ZigbeeCertificationType
+	certificationType := types.ZigbeeCertificationType
 
 	return setup, vid, pid, softwareVersion, softwareVersionString, certificationType
 }
@@ -33,6 +33,7 @@ func (setup *TestSetup) revokeModel(vid int32, pid int32, softwareVersion uint32
 }
 
 func (setup *TestSetup) checkModelRevoked(t *testing.T, revokeModelMsg *types.MsgRevokeModel) {
+	t.Helper()
 	vid := revokeModelMsg.Vid
 	pid := revokeModelMsg.Pid
 	softwareVersion := revokeModelMsg.SoftwareVersion
@@ -49,6 +50,7 @@ func (setup *TestSetup) checkModelRevoked(t *testing.T, revokeModelMsg *types.Ms
 }
 
 func (setup *TestSetup) checkModelStatusChangedToRevoked(t *testing.T, revokeModelMsg *types.MsgRevokeModel) {
+	t.Helper()
 	vid := revokeModelMsg.Vid
 	pid := revokeModelMsg.Pid
 	softwareVersion := revokeModelMsg.SoftwareVersion
@@ -64,7 +66,8 @@ func (setup *TestSetup) checkModelStatusChangedToRevoked(t *testing.T, revokeMod
 	require.False(t, certifiedModel.Value)
 }
 
-func (setup *TestSetup) checkRevokedModelInfoEqualsMessageData(t *testing.T, revokeModelMsg *types.MsgRevokeModel) *dclcompltypes.ComplianceInfo {
+func (setup *TestSetup) checkRevokedModelInfoEqualsMessageData(t *testing.T, revokeModelMsg *types.MsgRevokeModel) *types.ComplianceInfo {
+	t.Helper()
 	vid := revokeModelMsg.Vid
 	pid := revokeModelMsg.Pid
 	softwareVersion := revokeModelMsg.SoftwareVersion
@@ -101,7 +104,7 @@ func TestHandler_RevokeCertifiedModel(t *testing.T) {
 
 	complianceInfo := setup.checkRevokedModelInfoEqualsMessageData(t, revokeModelMsg)
 	require.Equal(t, 1, len(complianceInfo.History))
-	require.Equal(t, dclcompltypes.CodeCertified, complianceInfo.History[0].SoftwareVersionCertificationStatus)
+	require.Equal(t, types.CodeCertified, complianceInfo.History[0].SoftwareVersionCertificationStatus)
 	require.Equal(t, certifyModelMsg.CertificationDate, complianceInfo.History[0].Date)
 
 	setup.checkModelStatusChangedToRevoked(t, revokeModelMsg)
@@ -118,7 +121,7 @@ func TestHandler_RevokeProvisionedModel(t *testing.T) {
 
 	complianceInfo := setup.checkRevokedModelInfoEqualsMessageData(t, revokeModelMsg)
 	require.Equal(t, 1, len(complianceInfo.History))
-	require.Equal(t, dclcompltypes.CodeProvisional, complianceInfo.History[0].SoftwareVersionCertificationStatus)
+	require.Equal(t, types.CodeProvisional, complianceInfo.History[0].SoftwareVersionCertificationStatus)
 	require.Equal(t, provisionModelMsg.ProvisionalDate, complianceInfo.History[0].Date)
 
 	setup.checkModelStatusChangedToRevoked(t, revokeModelMsg)
@@ -174,7 +177,7 @@ func TestHandler_RevokeModelTwice(t *testing.T) {
 
 func TestHandler_RevokeDifferentModels(t *testing.T) {
 	setup := setup(t)
-	certificationType := dclcompltypes.ZigbeeCertificationType
+	certificationType := types.ZigbeeCertificationType
 	modelVersionsQuantity := 5
 
 	for i := 1; i < modelVersionsQuantity; i++ {
@@ -271,8 +274,8 @@ func TestHandler_CertifyRevokedModelThatWasCertifiedEarlier(t *testing.T) {
 	setup.checkModelCertified(t, secondCertifyModelMsg)
 
 	require.Equal(t, 2, len(complianceInfo.History))
-	require.Equal(t, dclcompltypes.CodeCertified, complianceInfo.History[0].SoftwareVersionCertificationStatus)
+	require.Equal(t, types.CodeCertified, complianceInfo.History[0].SoftwareVersionCertificationStatus)
 	require.Equal(t, certifyModelMsg.CertificationDate, complianceInfo.History[0].Date)
-	require.Equal(t, dclcompltypes.CodeRevoked, complianceInfo.History[1].SoftwareVersionCertificationStatus)
+	require.Equal(t, types.CodeRevoked, complianceInfo.History[1].SoftwareVersionCertificationStatus)
 	require.Equal(t, revokeModelMsg.RevocationDate, complianceInfo.History[1].Date)
 }

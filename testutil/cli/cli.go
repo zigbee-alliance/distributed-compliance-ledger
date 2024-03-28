@@ -3,10 +3,10 @@ package cli
 import (
 	"testing"
 
+	"cosmossdk.io/errors"
 	"github.com/cosmos/cosmos-sdk/client"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/require"
 )
@@ -22,7 +22,7 @@ func ExecTestCLITxCmd(t *testing.T, clientCtx client.Context, cmd *cobra.Command
 	require.NoError(t, err)
 
 	if resp.Code != 0 {
-		err = sdkerrors.ABCIError(resp.Codespace, resp.Code, resp.RawLog)
+		err = errors.ABCIError(resp.Codespace, resp.Code, resp.RawLog)
 
 		return nil, err
 	}

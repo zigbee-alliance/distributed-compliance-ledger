@@ -44,6 +44,7 @@ pid=2577
 
 echo "Jack proposes account for $user"
 result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$user_address" --pubkey="$user_pubkey" --roles="Vendor" --vid="$vid_in_hex_format" --from jack --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -77,6 +78,7 @@ test_divider
 productName="Device #1"
 echo "$user adds Model with VID: $vid_in_hex_format PID: $pid"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format --productName="$productName" --productLabel="Device Description"   --commissioningCustomFlow=0 --deviceTypeID=12 --partNumber=12 --from=$user_address --yes)
+result=$(get_txn_result "$result")
 check_response_and_report "$result" "\"code\": 0"
 
 test_divider
@@ -85,12 +87,14 @@ vid_plus_one_in_hex_format=0xA14
 vidPlusOne=$((vid_in_hex_format+1))
 echo "$user adds Model with a VID: $vid_plus_one_in_hex_format PID: $pid_in_hex_format, This fails with Permission denied as the VID is not associated with this vendor account."
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid_plus_one_in_hex_format --pid=$pid_in_hex_format --productName="$productName" --productLabel="Device Description"   --commissioningCustomFlow=0 --deviceTypeID=12 --partNumber=12 --from=$user_address --yes 2>&1) || true
+result=$(get_txn_result "$result")
 check_response_and_report "$result" "transaction should be signed by a vendor account containing the vendorID $vidPlusOne"
 
 test_divider
 
 echo "$user updates Model with VID: $vid_in_hex_format PID: $pid_in_hex_format"
 result=$(echo "test1234" | dcld tx model update-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format --productName="$productName" --productLabel="Device Description" --partNumber=12 --from=$user_address --yes)
+result=$(get_txn_result "$result")
 check_response_and_report "$result" "\"code\": 0"
 
 test_divider

@@ -26,8 +26,8 @@ import (
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	testkeeper "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/testdata"
-	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	commontypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/common/types"
+	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
@@ -83,7 +83,7 @@ func (m *ComplianceKeeperMock) GetComplianceInfo(
 	return val, args.Bool(0)
 }
 
-var _ types.ComplianceKeeper = &ComplianceKeeperMock{}
+var _ keeper.ComplianceKeeper = &ComplianceKeeperMock{}
 
 type TestSetup struct {
 	T *testing.T

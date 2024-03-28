@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
@@ -17,12 +18,12 @@ func (k msgServer) AssignVid(goCtx context.Context, msg *types.MsgAssignVid) (*t
 
 	signerAddr, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
 
 	// check if signer has vendor admin role
 	if !k.dclauthKeeper.HasRole(ctx, signerAddr, dclauthtypes.VendorAdmin) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+		return nil, errors.Wrapf(sdkerrors.ErrUnauthorized,
 			"AssignVid transaction should be signed by an account with the \"%s\" role", dclauthtypes.VendorAdmin,
 		)
 	}

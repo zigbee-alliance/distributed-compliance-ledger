@@ -16,7 +16,10 @@ func CmdListDeviceSoftwareCompliance() *cobra.Command {
 		Use:   "all-device-software-compliance",
 		Short: "Query the list of all device software compliances",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
 
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
 			if err != nil {
@@ -50,7 +53,10 @@ func CmdShowDeviceSoftwareCompliance() *cobra.Command {
 		Short: "Query device software compliance for Model (identified by the `cdCertificateId`)",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
 
 			argCDCertificateID := viper.GetString(FlagCDCertificateID)
 

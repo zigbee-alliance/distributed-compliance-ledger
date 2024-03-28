@@ -15,7 +15,10 @@ func CmdShowApprovedRootCertificates() *cobra.Command {
 		Short: "Gets all approved root certificates",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
 			var res types.ApprovedRootCertificates
 
 			return cli.QueryWithProofList(

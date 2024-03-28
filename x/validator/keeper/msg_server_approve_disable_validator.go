@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
@@ -13,17 +14,17 @@ func (k msgServer) ApproveDisableValidator(goCtx context.Context, msg *types.Msg
 
 	creatorAddr, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid creator address: (%s)", err)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid creator address: (%s)", err)
 	}
 
 	validatorAddr, err := sdk.ValAddressFromBech32(msg.Address)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid validator address: (%s)", err)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid validator address: (%s)", err)
 	}
 
 	// check if message creator has enough rights to approve disable validator
 	if !k.dclauthKeeper.HasRole(ctx, creatorAddr, types.VoteForDisableValidatorRole) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+		return nil, errors.Wrapf(sdkerrors.ErrUnauthorized,
 			"MsgApproveDisableValidator transaction should be signed by an account with the %s role",
 			types.VoteForDisableValidatorRole,
 		)
@@ -37,7 +38,7 @@ func (k msgServer) ApproveDisableValidator(goCtx context.Context, msg *types.Msg
 
 	// check if disable validator already has approval form message creator
 	if proposedDisableValidator.HasApprovalFrom(creatorAddr) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+		return nil, errors.Wrapf(sdkerrors.ErrUnauthorized,
 			"Disabled validator with address=%v already has approval from=%v",
 			msg.Address, msg.Creator,
 		)

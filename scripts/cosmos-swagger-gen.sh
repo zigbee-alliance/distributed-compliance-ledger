@@ -6,7 +6,7 @@ echo "Generating Cosmos openapi for '$TYPE'"
 CONFIG_FILE="$PWD/scripts/swagger/config/cosmos-$TYPE-config.json"
 OUTPUT_FILE="$PWD/docs/static/cosmos-$TYPE-openapi.json"
 
-COSMOS_SDK_VERSION="v0.44.4"
+COSMOS_SDK_VERSION="v0.47.8"
 
 rm -rf ./tmp-swagger-gen
 mkdir -p ./tmp-swagger-gen

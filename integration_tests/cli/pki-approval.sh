@@ -58,10 +58,12 @@ fourth_trustee_pubkey=$(echo $passphrase | dcld keys show $fourth_trustee_accoun
 
 echo "$first_trustee_account proposes account for $fourth_trustee_account"
 result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$fourth_trustee_address" --pubkey="$fourth_trustee_pubkey" --roles="Trustee" --from $first_trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "$second_trustee_account approves account for $fourth_trustee_account"
 result=$(echo $passphrase | dcld tx auth approve-add-account --address="$fourth_trustee_address" --from $second_trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Verify that the account is now present"
@@ -80,14 +82,17 @@ fifth_trustee_pubkey=$(echo $passphrase | dcld keys show $fifth_trustee_account 
 
 echo "$first_trustee_account proposes account for $fifth_trustee_account"
 result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$fifth_trustee_address" --pubkey="$fifth_trustee_pubkey" --roles="Trustee" --from $first_trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "$second_trustee_account approves account for $fifth_trustee_account"
 result=$(echo $passphrase | dcld tx auth approve-add-account --address="$fifth_trustee_address" --from $second_trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "$third_trustee_account approves account for $fifth_trustee_account"
 result=$(echo $passphrase | dcld tx auth approve-add-account --address="$fifth_trustee_address" --from $third_trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Verify that fifth account is now present"
@@ -105,18 +110,22 @@ sixth_trustee_pubkey=$(echo $passphrase | dcld keys show $sixth_trustee_account 
 
 echo "$first_trustee_account proposes account for $sixth_trustee_account"
 result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$sixth_trustee_address" --pubkey="$sixth_trustee_pubkey" --roles="Trustee" --from $first_trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "$second_trustee_account approves account for $sixth_trustee_account"
 result=$(echo $passphrase | dcld tx auth approve-add-account --address="$sixth_trustee_address" --from $second_trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "$third_trustee_account approves account for $sixth_trustee_account"
 result=$(echo $passphrase | dcld tx auth approve-add-account --address="$sixth_trustee_address" --from $third_trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "$fourth_trustee_account approves account for $sixth_trustee_account"
 result=$(echo $passphrase | dcld tx auth approve-add-account --address="$sixth_trustee_address" --from $fourth_trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Verify that sixth account is now present"
@@ -129,10 +138,12 @@ echo "PROPOSE ROOT CERT"
 echo "$user_account (Not Trustee) propose Root certificate"
 root_path="integration_tests/constants/root_cert"
 result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_path" --vid $vid --from $user_account --yes)
+result=$(get_txn_result "$result")
 response_does_not_contain "$result" "\"code\": 0"
 
 echo "$fourth_trustee_account (Trustee) propose Root certificate"
 result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_path" --vid $vid --from $fourth_trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -141,6 +152,7 @@ echo "Approve Root certificate now 4 Approvals are needed as we have 6 trustees"
 
 echo "$first_trustee_account (Trustee) approve Root certificate"
 result=$(echo "$passphrase" | dcld tx pki approve-add-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $first_trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -153,6 +165,7 @@ test_divider
 
 echo "$second_trustee_account (Trustee) approve Root certificate"
 result=$(echo "$passphrase" | dcld tx pki approve-add-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $second_trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -165,6 +178,7 @@ test_divider
 
 echo "$third_trustee_account (Trustee) approve Root certificate"
 result=$(echo "$passphrase" | dcld tx pki approve-add-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $third_trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -181,6 +195,7 @@ test_divider
 
 echo "$sixth_trustee_account proposes revoke Root certificate"
 result=$(echo "$passphrase" | dcld tx pki propose-revoke-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $sixth_trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Request root certificate proposed to revoke and verify that it contains approval from $sixth_trustee_account"
@@ -194,6 +209,7 @@ test_divider
 
 echo "$fifth_trustee_account revokes Root certificate"
 result=$(echo "$passphrase" | dcld tx pki approve-revoke-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $fifth_trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Request root certificate proposed to revoke and verify that it contains approval from $fifth_trustee_account"
@@ -206,6 +222,7 @@ check_response "$result" "\"address\": \"$fifth_trustee_address\""
 
 echo "$fourth_trustee_account revokes Root certificate"
 result=$(echo "$passphrase" | dcld tx pki approve-revoke-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $fourth_trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Request root certificate proposed to revoke and verify that it contains approval from $fourth_trustee_account"
@@ -219,6 +236,7 @@ check_response "$result" "\"address\": \"$fourth_trustee_address\""
 
 echo "$third_trustee_account revokes Root certificate"
 result=$(echo "$passphrase" | dcld tx pki approve-revoke-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $third_trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Verify Root certificate is now revoked"

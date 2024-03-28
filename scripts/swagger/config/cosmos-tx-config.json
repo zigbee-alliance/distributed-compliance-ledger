@@ -2,7 +2,7 @@
     "swagger": "2.0",
     "info": {
       "title": "cosmos/tx/v1beta1/service.proto",
-      "version": "v0.44.4","description": "A REST interface for tx service endpoints"
+      "version": "v0.47.8","description": "A REST interface for tx service endpoints"
     },
     "apis": [
       {

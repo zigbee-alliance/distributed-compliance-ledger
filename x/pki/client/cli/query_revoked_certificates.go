@@ -16,7 +16,10 @@ func CmdListRevokedCertificates() *cobra.Command {
 		Use:   "all-revoked-x509-certs",
 		Short: "Gets all revoked certificates (root, intermediate and leaf)",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
 
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
 			if err != nil {
@@ -59,7 +62,10 @@ func CmdShowRevokedCertificates() *cobra.Command {
 			"by the given combination of subject and subject-key-id",
 		Args: cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
 			var res types.RevokedCertificates
 
 			return cli.QueryWithProof(

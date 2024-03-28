@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
@@ -13,12 +14,12 @@ func (k msgServer) ProposeRevokeAccount(goCtx context.Context, msg *types.MsgPro
 
 	signerAddr, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Signer: (%s)", err)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Signer: (%s)", err)
 	}
 
 	// check that sender has enough rights to propose account revocation
 	if !k.HasRole(ctx, signerAddr, types.Trustee) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+		return nil, errors.Wrapf(sdkerrors.ErrUnauthorized,
 			"MsgProposeRevokeAccount transaction should be signed by an account with the %s role",
 			types.Trustee,
 		)
@@ -26,7 +27,7 @@ func (k msgServer) ProposeRevokeAccount(goCtx context.Context, msg *types.MsgPro
 
 	accAddr, err := sdk.AccAddressFromBech32(msg.Address)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
 
 	// check that account exists
@@ -54,7 +55,7 @@ func (k msgServer) ProposeRevokeAccount(goCtx context.Context, msg *types.MsgPro
 
 		// Move account to entity revoked account
 		revokedAccount, err := k.AddAccountToRevokedAccount(
-			ctx, accAddr, revokedApproval, types.RevokedAccount_TrusteeVoting)
+			ctx, accAddr, revokedApproval, types.RevokedAccount_TrusteeVoting) //nolint:nosnakecase
 		if err != nil {
 			return nil, err
 		}

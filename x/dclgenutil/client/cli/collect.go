@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"path/filepath"
 
+	tmtypes "github.com/cometbft/cometbft/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/server"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	tmtypes "github.com/tendermint/tendermint/types"
+
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclgenutil"
 )
@@ -25,7 +26,11 @@ func CollectGenTxsCmd(genAccIterator dclauthtypes.GenesisAccountsIterator, defau
 			serverCtx := server.GetServerContextFromCmd(cmd)
 			config := serverCtx.Config
 
-			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+
 			cdc := clientCtx.Codec
 
 			config.SetRoot(clientCtx.HomeDir)

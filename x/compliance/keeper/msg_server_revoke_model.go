@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"time"
 
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
+
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	modeltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
@@ -18,13 +19,13 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 
 	signerAddr, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
 
 	// check if sender has enough rights to revoke model
 	// sender must have CertificationCenter role to certify/revoke model
 	if !k.dclauthKeeper.HasRole(ctx, signerAddr, dclauthtypes.CertificationCenter) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+		return nil, errors.Wrapf(sdkerrors.ErrUnauthorized,
 			"MsgAddTestingResult transaction should be signed by an account with the %s role",
 			dclauthtypes.CertificationCenter,
 		)
@@ -53,7 +54,7 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 		// 2) We want to revoke certified or provisioned compliance.
 
 		// check if compliance is already in revoked state
-		if complianceInfo.SoftwareVersionCertificationStatus == dclcompltypes.CodeRevoked {
+		if complianceInfo.SoftwareVersionCertificationStatus == types.CodeRevoked {
 			return nil, types.NewErrAlreadyRevoked(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
 		}
 		// if state changes on `revoked` check that revocation date is after certification/provisional date
@@ -110,7 +111,7 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 	} else {
 		// There is no compliance record yet. So only revocation will be tracked on ledger.
 
-		complianceInfo = dclcompltypes.ComplianceInfo{
+		complianceInfo = types.ComplianceInfo{
 			Vid:                                msg.Vid,
 			Pid:                                msg.Pid,
 			SoftwareVersion:                    msg.SoftwareVersion,
@@ -119,8 +120,8 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 			Date:                               msg.RevocationDate,
 			Reason:                             msg.Reason,
 			Owner:                              msg.Signer,
-			SoftwareVersionCertificationStatus: dclcompltypes.CodeRevoked,
-			History:                            []*dclcompltypes.ComplianceHistoryItem{},
+			SoftwareVersionCertificationStatus: types.CodeRevoked,
+			History:                            []*types.ComplianceHistoryItem{},
 			CDVersionNumber:                    msg.CDVersionNumber,
 			SchemaVersion:                      msg.SchemaVersion,
 		}

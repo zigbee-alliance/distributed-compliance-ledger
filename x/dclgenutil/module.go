@@ -11,10 +11,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 
 	// this line is used by starport scaffolding # 1.
+	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
-	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclgenutil/types"
 )
 
@@ -35,7 +35,7 @@ func (AppModuleBasic) Name() string {
 	return types.ModuleName
 }
 
-func (AppModuleBasic) RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {}
+func (AppModuleBasic) RegisterLegacyAminoCodec(_ *codec.LegacyAmino) {}
 
 // RegisterInterfaces registers the module's interface types.
 func (a AppModuleBasic) RegisterInterfaces(_ cdctypes.InterfaceRegistry) {}
@@ -115,7 +115,7 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, gs json.Ra
 }
 
 // ExportGenesis returns the dclgenutil module's exported genesis state as raw JSON bytes.
-func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.RawMessage {
+func (am AppModule) ExportGenesis(_ sdk.Context, cdc codec.JSONCodec) json.RawMessage {
 	return am.DefaultGenesis(cdc)
 }
 

@@ -16,7 +16,10 @@ func CmdListRejectedCertificate() *cobra.Command {
 		Use:   "all-rejected-x509-root-certs",
 		Short: "list all RejectedCertificate",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
 
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
 			if err != nil {
@@ -55,7 +58,10 @@ func CmdShowRejectedCertificate() *cobra.Command {
 		Short: "shows a RejectedCertificate",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
 			var res types.RejectedCertificate
 
 			return cli.QueryWithProof(

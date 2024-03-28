@@ -67,6 +67,7 @@ func createAddRevocationMessageWithPAACertNoVid(signer string, vid int32) *types
 }
 
 func assertRevocationPointEqual(t *testing.T, expected *types.MsgAddPkiRevocationDistributionPoint, actual *types.PkiRevocationDistributionPoint) {
+	t.Helper()
 	require.Equal(t, expected.CrlSignerCertificate, actual.CrlSignerCertificate)
 	require.Equal(t, expected.CrlSignerCertificate, actual.CrlSignerCertificate)
 	require.Equal(t, expected.DataDigest, actual.DataDigest)

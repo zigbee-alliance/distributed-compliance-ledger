@@ -3,6 +3,7 @@ package types
 import (
 	"time"
 
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
@@ -47,12 +48,12 @@ func (msg *MsgProposeDisableValidator) GetSignBytes() []byte {
 func (msg *MsgProposeDisableValidator) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
 	_, err = sdk.ValAddressFromBech32(msg.Address)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid validator address (%s)", err)
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid validator address (%s)", err)
 	}
 
 	err = validator.Validate(msg)

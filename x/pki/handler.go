@@ -3,10 +3,11 @@ package pki
 import (
 	"fmt"
 
-	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
-
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
@@ -87,7 +88,7 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 		default:
 			errMsg := fmt.Sprintf("unrecognized %s message type: %T", pkitypes.ModuleName, msg)
 
-			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
+			return nil, errors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
 		}
 	}
 }

@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 
+	"cosmossdk.io/errors"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -16,12 +17,12 @@ func (k msgServer) ProposeAddAccount(goCtx context.Context, msg *types.MsgPropos
 
 	signerAddr, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Signer: (%s)", err)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Signer: (%s)", err)
 	}
 
 	// check if sender has enough rights to create a validator node
 	if !k.HasRole(ctx, signerAddr, types.Trustee) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+		return nil, errors.Wrapf(sdkerrors.ErrUnauthorized,
 			"MsgProposeAddAccount transaction should be signed by an account with the %s role",
 			types.Trustee,
 		)
@@ -34,7 +35,7 @@ func (k msgServer) ProposeAddAccount(goCtx context.Context, msg *types.MsgPropos
 
 	accAddr, err := sdk.AccAddressFromBech32(msg.Address)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
 
 	// check if active account already exists.
@@ -50,7 +51,7 @@ func (k msgServer) ProposeAddAccount(goCtx context.Context, msg *types.MsgPropos
 	// parse the key.
 	pk, ok := msg.PubKey.GetCachedValue().(cryptotypes.PubKey)
 	if !ok {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidType, "Expecting cryptotypes.PubKey, got %T", pk)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidType, "Expecting cryptotypes.PubKey, got %T", pk)
 	}
 
 	ba := authtypes.NewBaseAccount(accAddr, pk, 0, 0)

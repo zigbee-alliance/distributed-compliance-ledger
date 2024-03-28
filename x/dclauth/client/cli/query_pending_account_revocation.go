@@ -17,7 +17,10 @@ func CmdListPendingAccountRevocation() *cobra.Command {
 		Use:   "all-proposed-accounts-to-revoke",
 		Short: "list all PendingAccountRevocation",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
 
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
 			if err != nil {
@@ -54,7 +57,10 @@ func CmdShowPendingAccountRevocation() *cobra.Command {
 		Short: "shows a PendingAccountRevocation",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
 
 			argAddress, err := sdk.AccAddressFromBech32(viper.GetString(FlagAddress))
 			if err != nil {

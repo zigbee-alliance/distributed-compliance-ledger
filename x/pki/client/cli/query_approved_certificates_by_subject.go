@@ -17,7 +17,11 @@ func CmdShowApprovedCertificatesBySubject() *cobra.Command {
 		Short: "Gets all certificates (root, intermediate and leaf) associated with subject",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+
 			var res types.ApprovedCertificatesBySubject
 
 			return cli.QueryWithProof(

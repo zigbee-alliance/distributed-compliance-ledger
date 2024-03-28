@@ -190,10 +190,12 @@ root_path="integration_tests/constants/root_cert"
 cert_schema_version_1=1
 schema_version_2=2
 result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_path" --from $user_account --vid $vid --yes)
+result=$(get_txn_result "$result")
 response_does_not_contain "$result" "\"code\": 0"
 
 echo "$trustee_account (Trustee) propose Root certificate"
 result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_path" --certificate-schema-version=$cert_schema_version_1 --schemaVersion=$schema_version_2 --from $trustee_account   --vid $vid --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -315,6 +317,7 @@ test_divider
 
 echo "$second_trustee_account (Second Trustee) approves Root certificate"
 result=$(echo "$passphrase" | dcld tx pki approve-add-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $second_trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 
@@ -388,6 +391,7 @@ test_divider
 echo "$vendor_account adds Intermediate certificate"
 intermediate_path="integration_tests/constants/intermediate_cert"
 result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_path" --certificate-schema-version=$cert_schema_version_1 --schemaVersion=$schema_version_2 --from $vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 
@@ -459,6 +463,7 @@ echo "$vendor_account add Leaf certificate"
 leaf_path="integration_tests/constants/leaf_cert"
 schema_version_0=0
 result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$leaf_path" --from $vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -667,15 +672,18 @@ test_divider
 
 echo "Try to revoke the intermediate certificate when sender is not Vendor account"
 result=$(echo "$passphrase" | dcld tx pki revoke-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --from=$user_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 4"
 
 echo "Try to revoke the intermediate certificate using a vendor account with other VID"
 result=$(echo "$passphrase" | dcld tx pki revoke-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --from=$vendor_account_65522 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 4"
 
 revoke_schema_version_3=3
 echo "$vendor_account (Not Trustee) revokes only Intermediate certificate. This must not revoke its child - Leaf certificate."
 result=$(echo "$passphrase" | dcld tx pki revoke-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --schemaVersion=$revoke_schema_version_3 --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -817,6 +825,7 @@ test_divider
 revoke_schema_version_4=4
 echo "$trustee_account (Trustee) proposes to revoke only Root certificate(child certificates should not be revoked)"
 result=$(echo "$passphrase" | dcld tx pki propose-revoke-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --schemaVersion=$revoke_schema_version_4 --from $trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -924,6 +933,7 @@ test_divider
 
 echo "$second_trustee_account (Second Trustee) approves to revoke Root certificate"
 result=$(echo "$passphrase" | dcld tx pki approve-revoke-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $second_trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1174,11 +1184,13 @@ cert_schema_version_0=0
 echo "$user_account (Not Trustee) propose Root certificate"
 google_root_path="integration_tests/constants/google_root_cert"
 result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$google_root_path" --from $user_account --vid=$google_cert_vid --yes)
+result=$(get_txn_result "$result")
 response_does_not_contain "$result" "\"code\": 0"
 
 echo "$trustee_account (Trustee) propose Root certificate"
 google_root_path="integration_tests/constants/google_root_cert"
 result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$google_root_path" --from $trustee_account --vid=$google_cert_vid --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1287,6 +1299,7 @@ test_divider
 
 echo "$second_trustee_account (Second Trustee) approves Root certificate"
 result=$(echo "$passphrase" | dcld tx pki approve-add-x509-root-cert --subject="$google_cert_subject" --subject-key-id="$google_cert_subject_key_id" --from $second_trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1354,6 +1367,7 @@ test_divider
 
 echo "$trustee_account (Trustee) proposes to revoke Root certificate"
 result=$(echo "$passphrase" | dcld tx pki propose-revoke-x509-root-cert --subject="$google_cert_subject" --subject-key-id="$google_cert_subject_key_id" --from $trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1430,6 +1444,7 @@ test_divider
 
 echo "$second_trustee_account (Second Trustee) approves to revoke Root certificate"
 result=$(echo "$passphrase" | dcld tx pki approve-revoke-x509-root-cert --subject="$google_cert_subject" --subject-key-id="$google_cert_subject_key_id" --from $second_trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1518,10 +1533,12 @@ test_divider
 echo "$trustee_account (Trustee) propose Root certificate"
 test_root_path="integration_tests/constants/test_root_cert"
 result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$test_root_path" --vid=$test_cert_vid --from $trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "$trustee_account (Trustee) rejects Root certificate"
 result=$(echo $passphrase | dcld tx pki reject-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --from $trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1558,11 +1575,13 @@ test_divider
 echo "$user_account (Not Trustee) propose Root certificate"
 test_root_path="integration_tests/constants/test_root_cert"
 result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$test_root_path" --vid=$test_cert_vid --from $user_account --yes)
+result=$(get_txn_result "$result")
 response_does_not_contain "$result" "\"code\": 0"
 
 echo "$trustee_account (Trustee) propose Root certificate"
 test_root_path="integration_tests/constants/test_root_cert"
 result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$test_root_path" --vid=$test_cert_vid --from $trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1602,40 +1621,47 @@ test_divider
 
 echo "Jack proposes account for $new_trustee1"
 result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$new_trustee_address1" --pubkey="$new_trustee_pubkey1" --roles="Trustee" --from jack --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Alice approves account for \"$new_trustee1\""
 result=$(echo $passphrase | dcld tx auth approve-add-account --address="$new_trustee_address1" --info="Alice is approving this account" --from alice --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Bob (Trustee) approves Root certificate"
 result=$(echo $passphrase | dcld tx pki approve-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --from bob --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "$trustee_account (Trustee) rejects Root certificate"
 result=$(echo $passphrase | dcld tx pki reject-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --from $trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "$trustee_account (Trustee) can approve Root certificate even if already has rejected"
 result=$(echo $passphrase | dcld tx pki approve-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --from $trustee_account --yes 2>&1 || true)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "$trustee_account (Trustee) rejects Root certificate"
 result=$(echo $passphrase | dcld tx pki reject-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --from $trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "$trustee_account (Trustee) cannot reject Root certificate for the second time"
 result=$(echo $passphrase | dcld tx pki reject-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --from $trustee_account --yes 2>&1 || true)
+result=$(get_txn_result "$result")
 response_does_not_contain "$result" "\"code\": 0"
 
 test_divider
@@ -1666,20 +1692,24 @@ test_divider
 reject_schema_version_4=4
 echo "$second_trustee_account (Second Trustee) rejects Root certificate"
 result=$(echo "$passphrase" | dcld tx pki reject-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --schemaVersion=$reject_schema_version_4 --from $second_trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Alice proposes to revoke account for $new_trustee1"
 result=$(echo $passphrase | dcld tx auth propose-revoke-account --address="$new_trustee_address1" --from alice --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Bob approves to revoke account for $new_trustee1"
 result=$(echo $passphrase | dcld tx auth approve-revoke-account --address="$new_trustee_address1" --from bob --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Jack approves to revoke account for $new_trustee1"
 result=$(echo $passphrase | dcld tx auth approve-revoke-account --address="$new_trustee_address1" --from jack --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 
@@ -1730,11 +1760,13 @@ test_divider
 echo "$user_account (Not Trustee) propose Root certificate"
 test_root_path="integration_tests/constants/test_root_cert"
 result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$test_root_path" --vid $test_cert_vid --from $user_account --yes)
+result=$(get_txn_result "$result")
 response_does_not_contain "$result" "\"code\": 0"
 
 echo "$trustee_account (Trustee) propose Root certificate"
 test_root_path="integration_tests/constants/test_root_cert"
 result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$test_root_path" --vid $test_cert_vid --from $trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1763,6 +1795,7 @@ test_divider
 
 echo "$second_trustee_account (Trustee) approve Root certificate"
 result=$(echo $passphrase | dcld tx pki approve-add-x509-root-cert --subject="$test_cert_subject" --subject-key-id="$test_cert_subject_key_id" --from $second_trustee_account_address --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider

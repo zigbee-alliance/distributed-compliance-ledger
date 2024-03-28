@@ -6,7 +6,9 @@ import (
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
+	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
 	"github.com/stretchr/testify/require"
+
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	testcli "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/network"
@@ -41,7 +43,7 @@ func TestCreateModel(t *testing.T) {
 	common := []string{
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 		fmt.Sprintf("--%s", flags.FlagSkipConfirmation),
-		fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+		fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
 	}
 
 	for _, tc := range []struct {
@@ -65,9 +67,14 @@ func TestCreateModel(t *testing.T) {
 			}
 			args = append(args, fields...)
 			args = append(args, common...)
-			_, err := testcli.ExecTestCLITxCmd(t, ctx, cli.CmdCreateModel(), args)
+			txResp, err := testcli.ExecTestCLITxCmd(t, ctx, cli.CmdCreateModel(), args)
+			require.NoError(t, err)
+			err = net.WaitForNextBlock()
+			require.NoError(t, err)
 			if tc.err != nil {
-				require.ErrorIs(t, err, tc.err)
+				resp, err := authtx.QueryTx(ctx, txResp.TxHash)
+				require.NoError(t, err)
+				require.Contains(t, resp.RawLog, tc.err.Error())
 			} else {
 				require.NoError(t, err)
 			}
@@ -83,7 +90,7 @@ func TestUpdateModel(t *testing.T) {
 	common := []string{
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 		fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-		fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+		fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
 	}
 
 	args := []string{
@@ -106,6 +113,8 @@ func TestUpdateModel(t *testing.T) {
 	}
 	args = append(args, common...)
 	_, err := testcli.ExecTestCLITxCmd(t, ctx, cli.CmdCreateModel(), args)
+	require.NoError(t, err)
+	err = net.WaitForNextBlock()
 	require.NoError(t, err)
 
 	fields := []string{
@@ -150,9 +159,13 @@ func TestUpdateModel(t *testing.T) {
 			}
 			args = append(args, fields...)
 			args = append(args, common...)
-			_, err := testcli.ExecTestCLITxCmd(t, ctx, cli.CmdUpdateModel(), args)
+			txResp, err := testcli.ExecTestCLITxCmd(t, ctx, cli.CmdUpdateModel(), args)
+			require.NoError(t, err)
+			err = net.WaitForNextBlock()
 			if tc.err != nil {
-				require.ErrorIs(t, err, tc.err)
+				resp, err := authtx.QueryTx(ctx, txResp.TxHash)
+				require.NoError(t, err)
+				require.Contains(t, resp.RawLog, tc.err.Error())
 			} else {
 				require.NoError(t, err)
 			}
@@ -169,7 +182,7 @@ func TestDeleteModel(t *testing.T) {
 	common := []string{
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 		fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-		fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+		fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
 	}
 
 	args := []string{
@@ -192,6 +205,8 @@ func TestDeleteModel(t *testing.T) {
 	}
 	args = append(args, common...)
 	_, err := testcli.ExecTestCLITxCmd(t, ctx, cli.CmdCreateModel(), args)
+	require.NoError(t, err)
+	err = net.WaitForNextBlock()
 	require.NoError(t, err)
 
 	for _, tc := range []struct {
@@ -221,9 +236,13 @@ func TestDeleteModel(t *testing.T) {
 				fmt.Sprintf("--%s=%v", cli.FlagPid, tc.idPid),
 			}
 			args = append(args, common...)
-			_, err := testcli.ExecTestCLITxCmd(t, ctx, cli.CmdDeleteModel(), args)
+			txResp, err := testcli.ExecTestCLITxCmd(t, ctx, cli.CmdDeleteModel(), args)
+			waitErr := net.WaitForNextBlock()
+			require.NoError(t, waitErr)
 			if tc.err != nil {
-				require.ErrorIs(t, err, tc.err)
+				resp, err := authtx.QueryTx(ctx, txResp.TxHash)
+				require.NoError(t, err)
+				require.Contains(t, resp.RawLog, tc.err.Error())
 			} else {
 				require.NoError(t, err)
 			}

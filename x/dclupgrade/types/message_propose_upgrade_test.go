@@ -2,9 +2,7 @@ package types
 
 import (
 	"testing"
-	"time"
 
-	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
@@ -86,36 +84,6 @@ func TestMsgProposeUpgrade_ValidateBasic(t *testing.T) {
 				Time: testconstants.Time,
 			},
 			err: sdkerrors.ErrInvalidRequest,
-		},
-		{
-			name: "plan time is not zero",
-			msg: MsgProposeUpgrade{
-				Creator: sample.AccAddress(),
-				Plan: Plan{
-					Name:   testconstants.UpgradePlanName,
-					Height: testconstants.UpgradePlanHeight,
-					Info:   testconstants.UpgradePlanInfo,
-					Time:   time.Now(),
-				},
-				Info: testconstants.Info,
-				Time: testconstants.Time,
-			},
-			err: *sdkerrors.ErrInvalidRequest,
-		},
-		{
-			name: "Plan upgradedClientState is not nil",
-			msg: MsgProposeUpgrade{
-				Creator: sample.AccAddress(),
-				Plan: Plan{
-					Name:                testconstants.UpgradePlanName,
-					Height:              testconstants.UpgradePlanHeight,
-					Info:                testconstants.UpgradePlanInfo,
-					UpgradedClientState: &codectypes.Any{TypeUrl: "333"},
-				},
-				Info: testconstants.Info,
-				Time: testconstants.Time,
-			},
-			err: *sdkerrors.ErrInvalidRequest,
 		},
 	}
 

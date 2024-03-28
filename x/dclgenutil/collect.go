@@ -12,12 +12,12 @@ import (
 	"sort"
 	"strings"
 
+	cfg "github.com/cometbft/cometbft/config"
+	tmtypes "github.com/cometbft/cometbft/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/genutil/types"
-	cfg "github.com/tendermint/tendermint/config"
-	tmtypes "github.com/tendermint/tendermint/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	validatortypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )

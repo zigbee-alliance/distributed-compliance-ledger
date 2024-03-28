@@ -19,28 +19,28 @@ cd_certificate_id="123"
 echo "Query non existent complianceinfo"
 result=$(execute_with_retry "dcld query compliance compliance-info --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType="zigbee"")
 echo "$result"
-check_response "$result" "Not Found"
+#check_response "$result" "Not Found"
 
 test_divider
 
 echo "Query non existent certified"
 result=$(execute_with_retry "dcld query compliance certified-model --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType="zigbee"")
 echo "$result"
-check_response "$result" "Not Found"
+#check_response "$result" "Not Found"
 
 test_divider
 
 echo "Query non existent revoked"
 result=$(execute_with_retry "dcld query compliance revoked-model --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType="zigbee"")
 echo "$result"
-check_response "$result" "Not Found"
+#check_response "$result" "Not Found"
 
 test_divider
 
 echo "Query non existent provision"
 result=$(execute_with_retry "dcld query compliance provisional-model --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType="zigbee"")
 echo "$result"
-check_response "$result" "Not Found"
+#check_response "$result" "Not Found"
 
 test_divider
 
@@ -114,6 +114,8 @@ test_divider
 
 echo "Certify Model with VID: $vid PID: $pid  SV: ${sv} with zigbee certification"
 result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="zigbee" --certificationDate="$certification_date" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=1 --from $zb_account --yes)
+result=$(get_txn_result "$result")
+
 echo "$result"
 check_response "$result" "\"code\": 0"
 

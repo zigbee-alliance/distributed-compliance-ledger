@@ -4,6 +4,7 @@ import (
 	"context"
 	"strconv"
 
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
@@ -18,11 +19,11 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 	signerAddr, err := sdk.AccAddressFromBech32(msg.Creator)
 
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
 
 	if !k.dclauthKeeper.HasRole(ctx, signerAddr, dclauthtypes.CertificationCenter) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "%s transaction should be "+
+		return nil, errors.Wrapf(sdkerrors.ErrUnauthorized, "%s transaction should be "+
 			"signed by an account with the %s role", "MsgUpdateComplianceInfo", dclauthtypes.CertificationCenter)
 	}
 

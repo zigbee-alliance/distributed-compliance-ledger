@@ -3,18 +3,18 @@ package types
 // DONTCOVER
 
 import (
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"cosmossdk.io/errors"
 )
 
 // x/dclupgrade module sentinel errors.
 var (
-	ErrProposedUpgradeAlreadyExists = sdkerrors.Register(ModuleName, 801, "proposed upgrade already exists")
-	ErrProposedUpgradeDoesNotExist  = sdkerrors.Register(ModuleName, 802, "proposed upgrade does not exist")
-	ErrApprovedUpgradeAlreadyExists = sdkerrors.Register(ModuleName, 803, "approved upgrade already exists")
+	ErrProposedUpgradeAlreadyExists = errors.Register(ModuleName, 801, "proposed upgrade already exists")
+	ErrProposedUpgradeDoesNotExist  = errors.Register(ModuleName, 802, "proposed upgrade does not exist")
+	ErrApprovedUpgradeAlreadyExists = errors.Register(ModuleName, 803, "approved upgrade already exists")
 )
 
 func NewErrProposedUpgradeAlreadyExists(name interface{}) error {
-	return sdkerrors.Wrapf(
+	return errors.Wrapf(
 		ErrProposedUpgradeAlreadyExists,
 		"Proposed upgrade with name=%v already exists on the ledger",
 		name,
@@ -22,7 +22,7 @@ func NewErrProposedUpgradeAlreadyExists(name interface{}) error {
 }
 
 func NewErrProposedUpgradeDoesNotExist(name interface{}) error {
-	return sdkerrors.Wrapf(
+	return errors.Wrapf(
 		ErrProposedUpgradeDoesNotExist,
 		"Proposed upgrade with name=%v does not exist on the ledger",
 		name,
@@ -30,7 +30,7 @@ func NewErrProposedUpgradeDoesNotExist(name interface{}) error {
 }
 
 func NewErrApprovedUpgradeAlreadyExists(name interface{}) error {
-	return sdkerrors.Wrapf(
+	return errors.Wrapf(
 		ErrApprovedUpgradeAlreadyExists,
 		"Approved upgrade with name=%v already exists on the ledger",
 		name,

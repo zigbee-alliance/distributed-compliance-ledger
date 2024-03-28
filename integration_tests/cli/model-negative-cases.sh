@@ -45,11 +45,13 @@ create_new_vendor_account $vendor_account_with_pids $vid_with_pids $pid_ranges
 
 echo "Add Model with VID: $vid PID: $pid: Not Vendor"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from=$certification_house --yes)
+result=$(get_txn_result "$result")
 check_response_and_report "$result" "\"code\": 4"
 echo "$result"
 
 echo "Add Model with VID: $vid_with_pids PID: 101 :Vendor with non-associated PID"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid_with_pids --pid=101 --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from=$vendor_account_with_pids --yes)
+result=$(get_txn_result "$result")
 check_response_and_report "$result" "\"code\": 4"
 echo "$result"
 
@@ -58,6 +60,7 @@ test_divider
 vid1=$RANDOM
 echo "Add Model with VID: $vid1 PID: $pid: Vendor ID does not belong to vendor"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid1 --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response_and_report "$result" "\"code\": 4"
 echo "$result"
 
@@ -65,7 +68,9 @@ test_divider
 
 echo "Add Model with VID: $vid PID: $pid: Twice"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response_and_report "$result" "\"code\": 501"
 echo "$result"
 
@@ -75,6 +80,7 @@ sv=$RANDOM
 svs=$RANDOM
 echo "Create a Device Model Version with VID: $vid PID: $pid SV: $sv"
 result=$(echo 'test1234' | dcld tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$softwareVersionString --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
 echo "$result"
 check_response "$result" "\"code\": 0"
 
@@ -83,10 +89,12 @@ zigbee_certification_type="zigbee"
 matter_certification_type="matter"
 cd_certificate_id="123"
 result=$(echo 'test1234' | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --cdVersionNumber=1 --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --softwareVersionString=$softwareVersionString --cdCertificateId="$cd_certificate_id" --from $zb_account --yes)
+result=$(get_txn_result "$result")
 echo "$result"
 
 echo "Delete Model with VID: ${vid} PID: ${pid}"
-result=$(dcld tx model delete-model --vid=$vid --pid=$pid --from=$vendor_account --yes)
+result=$(echo 'test1234' | dcld tx model delete-model --vid=$vid --pid=$pid --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 525" # code for model certified error
 
 
@@ -94,6 +102,7 @@ check_response "$result" "\"code\": 525" # code for model certified error
 
 echo "Add Model with VID: $vid PID: $pid: Unknown account"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
 result=$(dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from "Unknown"  2>&1) || true
 check_response_and_report "$result" "key not found" raw
 
@@ -107,7 +116,7 @@ check_response_and_report "$result" "Vid must not be less than 1" raw
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$i --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from $vendor_account --yes 2>&1) || true
 check_response_and_report "$result" "Pid must not be less than 1" raw
 
-i="0" 
+i="0"
 result=$(echo "test1234" | dcld tx model add-model --vid=$i --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from $vendor_account --yes 2>&1) || true
 check_response_and_report "$result" "Vid must not be less than 1" raw
 
@@ -121,7 +130,7 @@ check_response_and_report "$result" "Vid must not be greater than 65535" raw
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$i --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from $vendor_account --yes 2>&1) || true
 check_response_and_report "$result" "Pid must not be greater than 65535" raw
 
-i="string" 
+i="string"
 result=$(echo "test1234" | dcld tx model add-model --vid=$i --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from $vendor_account --yes 2>&1) || true
 check_response_and_report "$result" "invalid syntax" raw
 

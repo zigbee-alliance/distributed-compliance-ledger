@@ -81,7 +81,7 @@ check_adding_new_node() {
   test_divider
 
   echo "5. Start Node \"$node_name\""
-  docker exec -d $node_name cosmovisor start
+  docker exec -d $node_name cosmovisor run start
 
   test_divider
 

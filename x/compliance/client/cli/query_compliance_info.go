@@ -6,7 +6,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
-	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
@@ -16,7 +15,10 @@ func CmdListComplianceInfo() *cobra.Command {
 		Use:   "all-compliance-info",
 		Short: "Query the list of all compliance info records",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
 
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
 			if err != nil {
@@ -60,8 +62,12 @@ func CmdShowComplianceInfo() *cobra.Command {
 		Short: "Query compliance info for Model (identified by the `vid`, `pid`, 'softwareVersion' and `certification_type`)",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			clientCtx := client.GetClientContextFromCmd(cmd)
-			var res dclcompltypes.ComplianceInfo
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			var res types.ComplianceInfo
 
 			return cli.QueryWithProof(
 				clientCtx,

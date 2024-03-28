@@ -34,20 +34,25 @@ create_new_vendor_account $vendor_account_65522 65522
 
 echo "Propose and approve root certificate 1"
 result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_cert_1_path" --vid "$root_cert_vid" --from $trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 result=$(echo "$passphrase" | dcld tx pki approve-add-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $second_trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Add an intermediate certificate with serialNumber 3"
 result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_cert_1_path" --from $vendor_account_65521 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Add an intermediate certificate with serialNumber 4"
 result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_cert_2_path" --from $vendor_account_65521 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Add a leaf certificate with serialNumber 5"
 result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$leaf_cert_path" --from $vendor_account_65521 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Request all approved root certificates."
@@ -65,6 +70,7 @@ check_response "$result" "\"serialNumber\": \"$leaf_cert_serial_number\""
 
 echo "Revoke an intermediate certificate with serialNumber 3"
 result=$(echo "$passphrase" | dcld tx pki revoke-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --serial-number="$intermediate_cert_1_serial_number" --from=$vendor_account_65521 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Request all revoked certificates should contain only one intermediate certificate with serialNumber 3"
@@ -77,18 +83,22 @@ response_does_not_contain "$result" "\"serialNumber\": \"$intermediate_cert_2_se
 
 echo "Remove intermediate certificate with invalid serialNumber"
 result=$(echo "$passphrase" | dcld tx pki remove-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --serial-number="invalid" --from=$vendor_account_65521 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 404"
 
 echo "Try to remove the intermediate certificate when sender is not Vendor account"
 result=$(echo "$passphrase" | dcld tx pki remove-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --serial-number="$intermediate_cert_1_serial_number" --from=$trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 4"
 
 echo "Try to remove the intermediate certificate using a vendor account with other VID"
 result=$(echo "$passphrase" | dcld tx pki remove-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --serial-number="$intermediate_cert_1_serial_number" --from=$vendor_account_65522 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 4"
 
 echo "Remove intermediate certificate with serialNumber 3"
 result=$(echo "$passphrase" | dcld tx pki remove-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --serial-number="$intermediate_cert_1_serial_number" --from=$vendor_account_65521 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Request all certificates should not contain intermediate certificate with serialNumber 3"
@@ -114,6 +124,7 @@ response_does_not_contain "$result" "\"serialNumber\": \"$intermediate_cert_1_se
 
 echo "Remove an intermediate certificate with subject and subjectKeyId"
 result=$(echo "$passphrase" | dcld tx pki remove-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --from=$vendor_account_65521 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Request approved certificates by an intermediate certificate's subject and subjectKeyId should be empty"
@@ -147,6 +158,7 @@ response_does_not_contain "$result" "\"serialNumber\": \"$intermediate_cert_1_se
 
 echo "Remove leaf certificate"
 result=$(echo "$passphrase" | dcld tx pki remove-x509-cert --subject="$leaf_cert_subject" --subject-key-id="$leaf_cert_subject_key_id" --from=$vendor_account_65521 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Request approved leaf certificates should be empty"

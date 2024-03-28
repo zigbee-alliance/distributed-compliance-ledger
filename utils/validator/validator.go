@@ -18,11 +18,11 @@ import (
 	"fmt"
 	"strings"
 
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"cosmossdk.io/errors"
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
-	en_translations "github.com/go-playground/validator/v10/translations/en"
+	enTranslations "github.com/go-playground/validator/v10/translations/en"
 )
 
 var (
@@ -39,7 +39,7 @@ func Validate(s interface{}) error {
 
 	vl = validator.New()
 
-	_ = en_translations.RegisterDefaultTranslations(vl, trans)
+	_ = enTranslations.RegisterDefaultTranslations(vl, trans)
 
 	_ = vl.RegisterTranslation("required", trans, func(ut ut.Translator) error {
 		return ut.Add("required", "{0} is a required field", true) // see universal-translator for details
@@ -137,27 +137,27 @@ func Validate(s interface{}) error {
 		for _, e := range errs.(validator.ValidationErrors) {
 			if e.Tag() == "required" || e.Tag() == "required_with" ||
 				e.Tag() == "required_if" || e.Tag() == "required_unless" {
-				return sdkerrors.Wrap(ErrRequiredFieldMissing, e.Translate(trans))
+				return errors.Wrap(ErrRequiredFieldMissing, e.Translate(trans))
 			}
 
 			if e.Tag() == "max" {
-				return sdkerrors.Wrap(ErrFieldMaxLengthExceeded, e.Translate(trans))
+				return errors.Wrap(ErrFieldMaxLengthExceeded, e.Translate(trans))
 			}
 
 			if e.Tag() == "min" {
-				return sdkerrors.Wrap(ErrFieldMinLengthNotReached, e.Translate(trans))
+				return errors.Wrap(ErrFieldMinLengthNotReached, e.Translate(trans))
 			}
 
 			if e.Tag() == "url" || e.Tag() == "startsnotwith" || e.Tag() == "gtecsfield" {
-				return sdkerrors.Wrap(ErrFieldNotValid, e.Translate(trans))
+				return errors.Wrap(ErrFieldNotValid, e.Translate(trans))
 			}
 
 			if e.Tag() == "gte" {
-				return sdkerrors.Wrap(ErrFieldLowerBoundViolated, e.Translate(trans))
+				return errors.Wrap(ErrFieldLowerBoundViolated, e.Translate(trans))
 			}
 
 			if e.Tag() == "lte" {
-				return sdkerrors.Wrap(ErrFieldUpperBoundViolated, e.Translate(trans))
+				return errors.Wrap(ErrFieldUpperBoundViolated, e.Translate(trans))
 			}
 		}
 	}

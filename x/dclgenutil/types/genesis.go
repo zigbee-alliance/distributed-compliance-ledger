@@ -5,10 +5,10 @@ import (
 	"errors"
 	"fmt"
 
+	tmos "github.com/cometbft/cometbft/libs/os"
+	tmtypes "github.com/cometbft/cometbft/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	tmos "github.com/tendermint/tendermint/libs/os"
-	tmtypes "github.com/tendermint/tendermint/types"
 	validatortypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 

@@ -19,7 +19,7 @@ test_divider
 
 # connect to light client proxy
 dcld config node tcp://localhost:26620
-sleep 10
+sleep 20
 
 echo "Query non existent account"
 result=$(execute_with_retry "dcld query auth account --address=$user_address")
@@ -82,12 +82,14 @@ vid=$RANDOM
 
 echo "Jack proposes account for $user"
 result=$(echo $passphrase | dcld tx auth propose-add-account --address="$user_address" --pubkey="$user_pubkey" --roles="NodeAdmin" --from jack --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Alice approves account for \"$user\""
 result=$(echo $passphrase | dcld tx auth approve-add-account --address="$user_address" --from alice --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider

@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 
+	tmrand "github.com/cometbft/cometbft/libs/rand"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	"github.com/stretchr/testify/require"
-	tmrand "github.com/tendermint/tendermint/libs/rand"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	test_dclauth "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/grpc_rest/dclauth"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
@@ -254,19 +254,25 @@ func Demo(suite *utils.TestSuite) {
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
-	aliceAccount, err := test_dclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	address, err := aliceKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	aliceAccount, err := test_dclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	bobName := testconstants.BobAccount
 	bobKeyInfo, err := suite.Kr.Key(bobName)
 	require.NoError(suite.T, err)
-	bobAccount, err := test_dclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	address, err = bobKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	bobAccount, err := test_dclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	jackName := testconstants.JackAccount
 	jackKeyInfo, err := suite.Kr.Key(jackName)
 	require.NoError(suite.T, err)
-	jackAccount, err := test_dclauth.GetAccount(suite, jackKeyInfo.GetAddress())
+	address, err = jackKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	jackAccount, err := test_dclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	// trustee proposes upgrade
@@ -426,13 +432,17 @@ func ProposeUpgradeByNonTrustee(suite *utils.TestSuite) {
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
-	aliceAccount, err := test_dclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	address, err := aliceKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	aliceAccount, err := test_dclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	bobName := testconstants.BobAccount
 	bobKeyInfo, err := suite.Kr.Key(bobName)
 	require.NoError(suite.T, err)
-	bobAccount, err := test_dclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	address, err = bobKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	bobAccount, err := test_dclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	// register new account without Trustee role
@@ -466,13 +476,17 @@ func ApproveUpgradeByNonTrustee(suite *utils.TestSuite) {
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
-	aliceAccount, err := test_dclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	address, err := aliceKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	aliceAccount, err := test_dclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	bobName := testconstants.BobAccount
 	bobKeyInfo, err := suite.Kr.Key(bobName)
 	require.NoError(suite.T, err)
-	bobAccount, err := test_dclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	address, err = bobKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	bobAccount, err := test_dclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	// propose upgrade
@@ -511,13 +525,17 @@ func ProposeUpgradeTwice(suite *utils.TestSuite) {
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
-	aliceAccount, err := test_dclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	address, err := aliceKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	aliceAccount, err := test_dclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	bobName := testconstants.BobAccount
-	bobKyInfo, err := suite.Kr.Key(bobName)
+	bobKeyInfo, err := suite.Kr.Key(bobName)
 	require.NoError(suite.T, err)
-	bobAccount, err := test_dclauth.GetAccount(suite, bobKyInfo.GetAddress())
+	address, err = bobKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	bobAccount, err := test_dclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	planName, height, info := utils.RandString(), int64(100000), utils.RandString()
@@ -544,7 +562,9 @@ func ProposeAndRejectUpgrade(suite *utils.TestSuite) {
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
-	aliceAccount, err := test_dclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	address, err := aliceKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	aliceAccount, err := test_dclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	planName, height, info := utils.RandString(), int64(100000), utils.RandString()

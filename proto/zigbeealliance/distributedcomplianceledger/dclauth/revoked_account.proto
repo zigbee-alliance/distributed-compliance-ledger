@@ -1,0 +1,19 @@
+syntax = "proto3";
+package zigbeealliance.distributedcomplianceledger.dclauth;
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types";
+
+import "gogoproto/gogo.proto";
+import "zigbeealliance/distributedcomplianceledger/dclauth/account.proto";
+import "zigbeealliance/distributedcomplianceledger/dclauth/grant.proto";
+
+message RevokedAccount {
+  Account account = 1 [(gogoproto.embed) = true];    
+  repeated Grant revokeApprovals = 2;
+  enum Reason {
+    TrusteeVoting = 0;
+    MaliciousValidator = 1;
+  }
+  Reason reason = 3;
+}
+

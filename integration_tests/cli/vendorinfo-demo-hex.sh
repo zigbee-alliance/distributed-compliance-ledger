@@ -35,6 +35,7 @@ echo "Create VendorInfo Record for VID: $vid_in_hex_format"
 companyLegalName="XYZ IOT Devices Inc"
 vendorName="XYZ Devices"
 result=$(echo "test1234" | dcld tx vendorinfo add-vendor --vid=$vid_in_hex_format --companyLegalName="$companyLegalName" --vendorName="$vendorName" --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
 
@@ -55,6 +56,7 @@ echo "Update vendor info record for VID: $vid_in_hex_format"
 companyLegalName="ABC Subsidiary Corporation"
 vendorLandingPageURL="https://www.w3.org/"
 result=$(echo "test1234" | dcld tx vendorinfo update-vendor --vid=$vid_in_hex_format --companyLegalName="$companyLegalName" --vendorLandingPageURL=$vendorLandingPageURL --vendorName="$vendorName" --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
 
@@ -75,6 +77,7 @@ test_divider
 vid1_in_hex_format=0xA15
 vid1=2581
 result=$(echo "test1234" | dcld tx vendorinfo add-vendor --vid=$vid1_in_hex_format --companyLegalName="$companyLegalName" --vendorName="$vendorName" --from=$vendor_account --yes 2>&1) || true
+result=$(get_txn_result "$result")
 echo "$result"
 check_response_and_report "$result" "transaction should be signed by a vendor account associated with the vendorID $vid1"
 
@@ -82,6 +85,7 @@ test_divider
 
 # Update a vendor info record from a vendor account belonging to another vendor_account
 result=$(echo "test1234" | dcld tx vendorinfo update-vendor --vid=$vid_in_hex_format --companyLegalName="$companyLegalName" --vendorName="$vendorName" --from=$second_vendor_account --yes 2>&1) || true
+result=$(get_txn_result "$result")
 echo "$result"
 check_response_and_report "$result" "transaction should be signed by a vendor account associated with the vendorID $vid"
 

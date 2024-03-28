@@ -17,8 +17,9 @@ package testconstants
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/module/testutil"
+
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common/types"
 )
 
@@ -34,7 +35,7 @@ func strToPubKey(pkStr string, cdc codec.Codec) cryptotypes.PubKey {
 var (
 	// default context
 	// TODO issue 99: design test context better.
-	defEncConfig = simapp.MakeTestEncodingConfig()
+	defEncConfig = testutil.MakeTestEncodingConfig()
 
 	// Base constants.
 	JackAccount  = "jack"
@@ -146,28 +147,28 @@ var (
 	ProductIDs200   = append([]*types.Uint16Range{}, &types.Uint16Range{Min: 1, Max: 100}, &types.Uint16Range{Min: 101, Max: 200})
 	PubKey1         = strToPubKey(
 		`{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"Aw1XXHQ8i6JVNKsFQ9eQArJVt2GXEO0EBFsQL6XJ5BxY"}`,
-		defEncConfig.Marshaler,
+		defEncConfig.Codec,
 	)
 	PubKey2 = strToPubKey(
 		`{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"A2wJ7uOEE5Zm04K52czFTXfDj1qF2mholzi1zOJVlKlr"}`,
-		defEncConfig.Marshaler,
+		defEncConfig.Codec,
 	)
 	PubKey3 = strToPubKey(
 		`{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"A0GnKr6hItYE1A7dzoxNSMwMZuu1zauOLWAqJWen1RzF"}`,
-		defEncConfig.Marshaler,
+		defEncConfig.Codec,
 	)
 	PubKey4 = strToPubKey(
 		`{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"AnQC2MkMN1TOQyAJ0zjakPDcak+5FLtEoL4yBsgFO8Xe"}`,
-		defEncConfig.Marshaler,
+		defEncConfig.Codec,
 	)
 	Signer           = Address1
 	ValidatorPubKey1 = strToPubKey(
 		`{"@type":"/cosmos.crypto.ed25519.PubKey","key":"1e+1/jHGaJi0b2zgCN46eelKCYpKiuTgPN18mL3fzx8="}`,
-		defEncConfig.Marshaler,
+		defEncConfig.Codec,
 	)
 	ValidatorPubKey2 = strToPubKey(
 		`{"@type":"/cosmos.crypto.ed25519.PubKey","key":"NB8hcdxKYDCaPWR67OiUXUSltZfYYOWYryPDUdbWRlA="}`,
-		defEncConfig.Marshaler,
+		defEncConfig.Codec,
 	)
 	ValidatorAddress1 = "cosmosvaloper156dzj776tf3lmsahgmtnrphflaqf7n58kug5qe"
 	ValidatorAddress2 = "cosmosvaloper12tg2p3rjsaczddufmsjjrw9nvhg8wkc4hcz3zw"
