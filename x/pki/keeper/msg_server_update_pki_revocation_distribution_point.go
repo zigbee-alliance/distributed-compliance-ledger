@@ -36,10 +36,13 @@ func (k msgServer) UpdatePkiRevocationDistributionPoint(goCtx context.Context, m
 
 	// validate and update new values
 	if msg.CrlSignerCertificate != "" {
-		if err := k.verifyUpdatedCertificate(ctx, msg.CrlSignerCertificate, &pkiRevocationDistributionPoint); err != nil {
+		err = k.verifyUpdatedCertificate(ctx, msg.CrlSignerCertificate, msg.CrlSignerDelegator, &pkiRevocationDistributionPoint)
+		if err != nil {
 			return nil, err
 		}
+
 		pkiRevocationDistributionPoint.CrlSignerCertificate = msg.CrlSignerCertificate
+		pkiRevocationDistributionPoint.CrlSignerDelegator = msg.CrlSignerDelegator
 	}
 
 	if pkiRevocationDistributionPoint.RevocationType == types.CRLRevocationType && (msg.DataFileSize != 0 || msg.DataDigest != "" || msg.DataDigestType != 0) {
@@ -79,7 +82,7 @@ func (k msgServer) UpdatePkiRevocationDistributionPoint(goCtx context.Context, m
 	return &types.MsgUpdatePkiRevocationDistributionPointResponse{}, nil
 }
 
-func (k msgServer) verifyUpdatedCertificate(ctx sdk.Context, newCertificatePem string, revocationPoint *types.PkiRevocationDistributionPoint) error {
+func (k msgServer) verifyUpdatedCertificate(ctx sdk.Context, newCertificatePem, newDelegatorCertPem string, revocationPoint *types.PkiRevocationDistributionPoint) error {
 	oldCertificate, err := x509.DecodeX509Certificate(revocationPoint.CrlSignerCertificate)
 	if err != nil {
 		return pkitypes.NewErrInvalidCertificate(err)
@@ -88,7 +91,7 @@ func (k msgServer) verifyUpdatedCertificate(ctx sdk.Context, newCertificatePem s
 	if oldCertificate.IsSelfSigned() {
 		err = k.verifyUpdatedPAA(ctx, newCertificatePem, revocationPoint)
 	} else {
-		err = k.verifyUpdatedPAI(ctx, newCertificatePem, revocationPoint)
+		err = k.verifyUpdatedPAI(ctx, newCertificatePem, newDelegatorCertPem, revocationPoint)
 	}
 
 	if err != nil {
@@ -154,7 +157,7 @@ func (k msgServer) verifyUpdatedPAA(ctx sdk.Context, newCertificatePem string, r
 	return nil
 }
 
-func (k msgServer) verifyUpdatedPAI(ctx sdk.Context, newCertificatePem string, revocationPoint *types.PkiRevocationDistributionPoint) error {
+func (k msgServer) verifyUpdatedPAI(ctx sdk.Context, newCertificatePem, newDelegatorCertPem string, revocationPoint *types.PkiRevocationDistributionPoint) error {
 	// decode new cert
 	newCertificate, err := x509.DecodeX509Certificate(newCertificatePem)
 	if err != nil {
@@ -187,9 +190,18 @@ func (k msgServer) verifyUpdatedPAI(ctx sdk.Context, newCertificatePem string, r
 		return pkitypes.NewErrPidNotFoundInCertificateButProvidedInRevocationPoint()
 	}
 
+	// Check for static validation when CRL Signer is a Leaf certificate
+	if revocationPoint.IsPAA || revocationPoint.CrlSignerDelegator != "" {
+		err = types.VerifyCRLSignerCertFormat(newCertificate)
+		if err != nil {
+			return err
+		}
+	}
+
 	// check that it's chained back to a cert on DCL
-	if _, err = k.verifyCertificate(ctx, newCertificate); err != nil {
-		return pkitypes.NewErrCertNotChainedBack()
+	err = k.checkCRLSignerNonRootCert(ctx, newCertificate, newDelegatorCertPem, revocationPoint.IsPAA)
+	if err != nil {
+		return err
 	}
 
 	return nil

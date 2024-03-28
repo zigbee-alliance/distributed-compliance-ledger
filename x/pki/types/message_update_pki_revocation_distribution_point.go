@@ -13,12 +13,14 @@ const TypeMsgUpdatePkiRevocationDistributionPoint = "update_pki_revocation_distr
 var _ sdk.Msg = &MsgUpdatePkiRevocationDistributionPoint{}
 
 func NewMsgUpdatePkiRevocationDistributionPoint(signer string, vid int32, label string, crlSignerCertificate string,
-	issuerSubjectKeyID string, dataURL string, dataFileSize uint64, dataDigest string, dataDigestType uint32, schemaVersion uint32) *MsgUpdatePkiRevocationDistributionPoint {
+	crlSignerDelegator string, issuerSubjectKeyID string, dataURL string, dataFileSize uint64, dataDigest string,
+	dataDigestType uint32, schemaVersion uint32) *MsgUpdatePkiRevocationDistributionPoint {
 	return &MsgUpdatePkiRevocationDistributionPoint{
 		Signer:               signer,
 		Vid:                  vid,
 		Label:                label,
 		CrlSignerCertificate: crlSignerCertificate,
+		CrlSignerDelegator:   crlSignerDelegator,
 		IssuerSubjectKeyID:   issuerSubjectKeyID,
 		DataURL:              dataURL,
 		DataFileSize:         dataFileSize,

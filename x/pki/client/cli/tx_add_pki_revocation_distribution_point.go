@@ -22,6 +22,7 @@ func CmdAddPkiRevocationDistributionPoint() *cobra.Command {
 		isPAA                bool
 		label                string
 		crlSignerCertificate string
+		crlSignerDelegator   string
 		issuerSubjectKeyID   string
 		dataURL              string
 		dataFileSize         uint64
@@ -46,6 +47,11 @@ func CmdAddPkiRevocationDistributionPoint() *cobra.Command {
 				return err
 			}
 
+			crlSignerDelegatorPem, err := cli.ReadFromFile(crlSignerDelegator)
+			if err != nil {
+				return err
+			}
+
 			msg := types.NewMsgAddPkiRevocationDistributionPoint(
 				clientCtx.GetFromAddress().String(),
 				vid,
@@ -53,6 +59,7 @@ func CmdAddPkiRevocationDistributionPoint() *cobra.Command {
 				isPAA,
 				label,
 				cert,
+				crlSignerDelegatorPem,
 				issuerSubjectKeyID,
 				dataURL,
 				dataFileSize,
@@ -79,6 +86,7 @@ func CmdAddPkiRevocationDistributionPoint() *cobra.Command {
 	cmd.Flags().BoolVar(&isPAA, FlagIsPAA, true, "True if the revocation information distribution point relates to a PAA (Root certificate)")
 	cmd.Flags().StringVarP(&label, FlagLabel, FlagLabelShortcut, "", " A label to disambiguate multiple revocation information partitions of a particular issuer")
 	cmd.Flags().StringVarP(&crlSignerCertificate, FlagCertificate, FlagCertificateShortcut, "", "The issuer certificate whose revocation information is provided in the distribution point entry, encoded in X.509v3 PEM format. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data")
+	cmd.Flags().StringVar(&crlSignerDelegator, FlagCertificateDelegator, "", "The delegator certificate of CRL signer Certificate which must be chained back to approved certificate in the ledger, encoded in X.509v3 PEM format. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data")
 	cmd.Flags().StringVar(&issuerSubjectKeyID, FlagIssuerSubjectKeyID, "", "Uniquely identifies the PAA or PAI for which this revocation distribution point is provided. Must consist of even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters., e.g: 5A880E6C3653D07FB08971A3F473790930E62BDB")
 	cmd.Flags().StringVar(&dataURL, FlagDataURL, "", "The URL where to obtain the information in the format indicated by the RevocationType field. Must start with either http or https")
 	cmd.Flags().Uint64Var(&dataFileSize, FlagDataFileSize, 0, "Total size in bytes of the file found at the DataURL. Must be omitted if RevocationType is 1")

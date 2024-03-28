@@ -131,6 +131,7 @@ message MsgAddPkiRevocationDistributionPoint {
   uint32 dataDigestType = 11;
   uint32 revocationType = 12 [(gogoproto.moretags) = "validate:\"required\""];
   uint32 schemaVersion = 13 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
+  string crlSignerDelegator = 14 [(gogoproto.moretags) = "validate:\"max=10485760\""];
 }
 
 message MsgAddPkiRevocationDistributionPointResponse {
@@ -147,6 +148,7 @@ message MsgUpdatePkiRevocationDistributionPoint {
   string dataDigest = 8;
   uint32 dataDigestType = 9;
   uint32 schemaVersion = 10 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
+  string crlSignerDelegator = 11 [(gogoproto.moretags) = "validate:\"max=10485760\""];
 }
 
 message MsgUpdatePkiRevocationDistributionPointResponse {

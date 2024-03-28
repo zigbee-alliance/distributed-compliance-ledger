@@ -10705,6 +10705,8 @@ paths:
                     schemaVersion:
                       type: integer
                       format: int64
+                    crlSignerDelegator:
+                      type: string
               pagination:
                 type: object
                 properties:
@@ -10863,6 +10865,8 @@ paths:
                         schemaVersion:
                           type: integer
                           format: int64
+                        crlSignerDelegator:
+                          type: string
         default:
           description: An unexpected error response.
           schema:
@@ -10935,6 +10939,8 @@ paths:
                   schemaVersion:
                     type: integer
                     format: int64
+                  crlSignerDelegator:
+                    type: string
         default:
           description: An unexpected error response.
           schema:
@@ -21841,6 +21847,8 @@ definitions:
       schemaVersion:
         type: integer
         format: int64
+      crlSignerDelegator:
+        type: string
   zigbeealliance.distributedcomplianceledger.pki.PkiRevocationDistributionPointsByIssuerSubjectKeyID:
     type: object
     properties:
@@ -21881,6 +21889,8 @@ definitions:
             schemaVersion:
               type: integer
               format: int64
+            crlSignerDelegator:
+              type: string
   zigbeealliance.distributedcomplianceledger.pki.ProposedCertificate:
     type: object
     properties:
@@ -22284,6 +22294,8 @@ definitions:
             schemaVersion:
               type: integer
               format: int64
+            crlSignerDelegator:
+              type: string
       pagination:
         type: object
         properties:
@@ -23029,6 +23041,8 @@ definitions:
           schemaVersion:
             type: integer
             format: int64
+          crlSignerDelegator:
+            type: string
   zigbeealliance.distributedcomplianceledger.pki.QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse:
     type: object
     properties:
@@ -23072,6 +23086,8 @@ definitions:
                 schemaVersion:
                   type: integer
                   format: int64
+                crlSignerDelegator:
+                  type: string
   zigbeealliance.distributedcomplianceledger.pki.QueryGetProposedCertificateResponse:
     type: object
     properties:
