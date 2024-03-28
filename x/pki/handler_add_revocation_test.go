@@ -248,7 +248,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_PositiveCases(t *testing.T) {
 			SchemaVersion: testconstants.SchemaVersion,
 		},
 		{
-			name:            "PAIWithDelegatedCert",
+			name:            "CrlSignerDelegatedByPAI",
 			rootCertOptions: createTestRootCertOptions(),
 			addRevocation: &types.MsgAddPkiRevocationDistributionPoint{
 				Signer:               vendorAcc.String(),
@@ -259,7 +259,23 @@ func TestHandler_AddPkiRevocationDistributionPoint_PositiveCases(t *testing.T) {
 				CrlSignerDelegator:   testconstants.IntermediateCertPem,
 				Label:                label,
 				DataURL:              testconstants.DataURL,
-				IssuerSubjectKeyID:   testconstants.IntermediateSubjectKeyIDWithoutColumns,
+				IssuerSubjectKeyID:   testconstants.RootSubjectKeyIDWithoutColumns,
+				RevocationType:       types.CRLRevocationType,
+			},
+			SchemaVersion: testconstants.SchemaVersion,
+		},
+		{
+			name:            "CrlSignerDelegatedByPAA",
+			rootCertOptions: createTestRootCertOptions(),
+			addRevocation: &types.MsgAddPkiRevocationDistributionPoint{
+				Signer:               vendorAcc.String(),
+				Vid:                  65522,
+				IsPAA:                true,
+				Pid:                  0,
+				CrlSignerCertificate: testconstants.IntermediateCertPem,
+				Label:                label,
+				DataURL:              testconstants.DataURL,
+				IssuerSubjectKeyID:   testconstants.RootSubjectKeyIDWithoutColumns,
 				RevocationType:       types.CRLRevocationType,
 			},
 			SchemaVersion: testconstants.SchemaVersion,

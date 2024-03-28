@@ -33,9 +33,9 @@ delegator_cert_with_vid_65521_path="integration_tests/constants/intermediate_cer
 delegator_cert_with_vid_65521_copy_path="integration_tests/constants/intermediate_cert_with_vid_1_copy"
 delegator_cert_with_vid_subject_key_id="0E8CE8C8B8AA50BC258556B9B19CC2C7D9C52F17"
 
-crl_leaf_cert_with_vid_65521_path="integration_tests/constants/leaf_cert_with_vid_65521"
-crl_leaf_cert_with_vid_65522_path="integration_tests/constants/leaf_cert_with_vid_65522"
-crl_leaf_cert_without_vid_path="integration_tests/constants/leaf_cert_without_vid"
+crl_signer_delegated_by_pai_1="integration_tests/constants/leaf_cert_with_vid_65521"
+crl_signer_delegated_by_pai_2="integration_tests/constants/leaf_cert_with_vid_65522"
+crl_signer_delegated_by_paa="integration_tests/constants/leaf_cert_without_vid"
 
 trustee_account="jack"
 second_trustee_account="alice"
@@ -275,9 +275,9 @@ response_does_not_contain "$result" "\"label\": \"$vid_non_vid_scoped\""
 
 test_divider
 
-echo "12. ADD REVOCATION POINT FOR CRL SIGNER LEAF CERTIFICATE WHEN DELEGATOR CERTIFICATE IS PROVIDED"
+echo "12. ADD REVOCATION POINT FOR CRL SIGNER CERTIFICATE DELEGATED BY PAI"
 
-result=$(dcld tx pki add-revocation-point --vid=$vid --is-paa="false" --certificate="$crl_leaf_cert_with_vid_65521_path" --label="$label_leaf_with_delegator" --data-url="$data_url" --issuer-subject-key-id=$delegator_cert_with_vid_subject_key_id --revocation-type=1 --certificate-delegator="$delegator_cert_with_vid_65521_path" --from=$vendor_account --yes)
+result=$(dcld tx pki add-revocation-point --vid=$vid --is-paa="false" --certificate="$crl_signer_delegated_by_pai_1" --label="$label_leaf_with_delegator" --data-url="$data_url" --issuer-subject-key-id=$delegator_cert_with_vid_subject_key_id --revocation-type=1 --certificate-delegator="$delegator_cert_with_vid_65521_path" --from=$vendor_account --yes)
 check_response "$result" "\"code\": 0"
 
 result=$(dcld query pki revocation-point --vid=$vid --label=$label_leaf_with_delegator --issuer-subject-key-id=$delegator_cert_with_vid_subject_key_id)
@@ -289,14 +289,14 @@ echo $result
 
 test_divider
 
-echo "13. ADD REVOCATION POINT FOR CRL SIGNER LEAF CERTIFICATE WHEN IS_PAA=TRUE"
+echo "13. ADD REVOCATION POINT FOR CRL SIGNER CERTIFICATE DELEGATED BY PAA"
 
 echo "Add PAI certificate"
 result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$delegator_cert_with_vid_65521_path" --from $vendor_account --yes)
 check_response "$result" "\"code\": 0"
 
 echo "Add PKI revocation point with IS_PAA=true"
-result=$(dcld tx pki add-revocation-point --vid=$vid_65522 --is-paa="true" --certificate="$crl_leaf_cert_without_vid_path" --label="$label_leaf" --data-url="$data_url" --issuer-subject-key-id=$delegator_cert_with_vid_subject_key_id --revocation-type=1 --from=$vendor_account_65522 --yes)
+result=$(dcld tx pki add-revocation-point --vid=$vid_65522 --is-paa="true" --certificate="$crl_signer_delegated_by_paa" --label="$label_leaf" --data-url="$data_url" --issuer-subject-key-id=$delegator_cert_with_vid_subject_key_id --revocation-type=1 --from=$vendor_account_65522 --yes)
 check_response "$result" "\"code\": 0"
 
 result=$(dcld query pki revocation-point --vid=$vid_65522 --label=$label_leaf --issuer-subject-key-id=$delegator_cert_with_vid_subject_key_id)
@@ -307,9 +307,9 @@ echo $result
 
 test_divider
 
-echo "14. UPDATE REVOCATION POINT FOR CRL SIGNER LEAF CERTIFICATE WHEN DELEGATOR CERTIFICATE IS PROVIDED"
+echo "14. UPDATE REVOCATION POINT FOR CRL SIGNER CERTIFICATE DELEGATED BY PAI"
 data_url_new="$data_url"_new
-result=$(dcld tx pki update-revocation-point --vid=$vid --certificate="$crl_leaf_cert_with_vid_65521_path" --label="$label_leaf_with_delegator" --data-url="$data_url_new" --issuer-subject-key-id=$delegator_cert_with_vid_subject_key_id --certificate-delegator="$delegator_cert_with_vid_65521_copy_path" --from=$vendor_account --yes)
+result=$(dcld tx pki update-revocation-point --vid=$vid --certificate="$crl_signer_delegated_by_pai_1" --label="$label_leaf_with_delegator" --data-url="$data_url_new" --issuer-subject-key-id=$delegator_cert_with_vid_subject_key_id --certificate-delegator="$delegator_cert_with_vid_65521_copy_path" --from=$vendor_account --yes)
 check_response "$result" "\"code\": 0"
 echo $result
 
@@ -318,14 +318,14 @@ check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"label\": \"$label_leaf_with_delegator\""
 check_response "$result" "\"issuerSubjectKeyID\": \"$delegator_cert_with_vid_subject_key_id\""
 check_response "$result" "\"dataURL\": \"$data_url_new\""
-check_response "$result" "\"CrlSignerCertificate\": $(<$crl_leaf_cert_with_vid_65521_path)"
+check_response "$result" "\"CrlSignerCertificate\": $(<$crl_signer_delegated_by_pai_1)"
 check_response "$result" "\"CrlSignerDelegator\": $(<$delegator_cert_with_vid_65521_copy_path)"
 echo $result
 
 test_divider
 
-echo "15. UPDATE REVOCATION POINT FOR CRL SIGNER LEAF CERTIFICATE"
-result=$(dcld tx pki update-revocation-point --vid=$vid_65522 --certificate="$crl_leaf_cert_with_vid_65522_path" --label="$label_leaf" --data-url="$data_url_new" --issuer-subject-key-id=$delegator_cert_with_vid_subject_key_id --from=$vendor_account_65522 --yes)
+echo "15. UPDATE REVOCATION POINT FOR CRL SIGNER CERTIFICATE DELEGATED BY PAA"
+result=$(dcld tx pki update-revocation-point --vid=$vid_65522 --certificate="$crl_signer_delegated_by_pai_2" --label="$label_leaf" --data-url="$data_url_new" --issuer-subject-key-id=$delegator_cert_with_vid_subject_key_id --from=$vendor_account_65522 --yes)
 check_response "$result" "\"code\": 0"
 echo $result
 
@@ -334,7 +334,7 @@ check_response "$result" "\"vid\": $vid_65522"
 check_response "$result" "\"label\": \"$label_leaf\""
 check_response "$result" "\"issuerSubjectKeyID\": \"$delegator_cert_with_vid_subject_key_id\""
 check_response "$result" "\"dataURL\": \"$data_url_new\""
-check_response "$result" "\"CrlSignerCertificate\": $(<$crl_leaf_cert_with_vid_65522_path)"
+check_response "$result" "\"CrlSignerCertificate\": $(<$crl_signer_delegated_by_pai_2)"
 
 echo $result
 
@@ -422,24 +422,13 @@ check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
 
 test_divider
 
-echo "24. DELETE REVOCATION PAA"
+echo "24. DELETE REVOCATION POINT"
 
 result=$(dcld tx pki delete-revocation-point --vid=$vid --label="$label" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account --yes)
 check_response "$result" "\"code\": 0"
 echo $result
 
 result=$(dcld query pki revocation-point --vid=$vid --label=$label --issuer-subject-key-id=$issuer_subject_key_id)
-check_response "$result" "Not Found"
-
-test_divider
-
-echo "25. DELETE REVOCATION PAI"
-
-result=$(dcld tx pki delete-revocation-point --vid=$vid_65522 --label="$label_pai" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account_65522 --yes)
-check_response "$result" "\"code\": 0"
-echo $result
-
-result=$(dcld query pki revocation-point --vid=$vid_65522 --label=$label_pai --issuer-subject-key-id=$issuer_subject_key_id)
 check_response "$result" "Not Found"
 
 test_divider

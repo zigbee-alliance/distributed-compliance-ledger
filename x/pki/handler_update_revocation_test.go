@@ -720,7 +720,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_CrlSignerCertificateField(
 			},
 		},
 		{
-			name:             "PAI_With_Delegated_Certificate",
+			name:             "CrlSignerDelegatedByPAI",
 			rootCertOptions1: createTestRootCertOptions(),
 			rootCertOptions2: createRootWithVidOptions(),
 			addRevocation:    createAddRevocationMessageWithLeafCertWithVid(vendorAcc.String()),
@@ -732,6 +732,27 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_CrlSignerCertificateField(
 				Label:                label,
 				DataURL:              testconstants.DataURL,
 				IssuerSubjectKeyID:   testconstants.IntermediateCertWithVid1SubjectKeyIDWithoutColumns,
+			},
+		},
+		{
+			name:             "CrlSignerDelegatedByPAA",
+			rootCertOptions1: createTestRootCertOptions(),
+			rootCertOptions2: createRootWithVidOptions(),
+			addRevocation: &types.MsgAddPkiRevocationDistributionPoint{
+				Signer:               vendorAcc.String(),
+				IsPAA:                true,
+				CrlSignerCertificate: testconstants.IntermediateCertPem,
+				Label:                label,
+				DataURL:              testconstants.DataURL,
+				IssuerSubjectKeyID:   testconstants.RootSubjectKeyIDWithoutColumns,
+				RevocationType:       types.CRLRevocationType,
+			},
+			updateRevocation: &types.MsgUpdatePkiRevocationDistributionPoint{
+				Signer:               vendorAcc.String(),
+				CrlSignerCertificate: testconstants.IntermediateCertWithoutVidPid,
+				Label:                label,
+				DataURL:              testconstants.DataURL,
+				IssuerSubjectKeyID:   testconstants.RootSubjectKeyIDWithoutColumns,
 			},
 		},
 	}
