@@ -9,11 +9,11 @@ import (
 )
 
 // SetNocIcaCertificates set a specific NocIcaCertificates in the store from its index.
-func (k Keeper) SetNocIcaCertificates(ctx sdk.Context, NocIcaCertificates types.NocIcaCertificates) {
+func (k Keeper) SetNocIcaCertificates(ctx sdk.Context, nocIcaCertificates types.NocIcaCertificates) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocIcaCertificatesKeyPrefix))
-	b := k.cdc.MustMarshal(&NocIcaCertificates)
+	b := k.cdc.MustMarshal(&nocIcaCertificates)
 	store.Set(types.NocIcaCertificatesKey(
-		NocIcaCertificates.Vid,
+		nocIcaCertificates.Vid,
 	), b)
 }
 

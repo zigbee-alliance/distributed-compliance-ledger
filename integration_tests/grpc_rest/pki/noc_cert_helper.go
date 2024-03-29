@@ -52,7 +52,7 @@ func GetAllNocX509RootCerts(suite *utils.TestSuite) (res []pkitypes.NocRootCerti
 func GetAllNocX509IcaCerts(suite *utils.TestSuite) (res []pkitypes.NocIcaCertificates, err error) {
 	if suite.Rest {
 		var resp pkitypes.QueryAllNocIcaCertificatesResponse
-		err := suite.QueryREST("/dcl/pki/noc-certificates/", &resp)
+		err := suite.QueryREST("/dcl/pki/noc-ica-certificates/", &resp)
 		if err != nil {
 			return nil, err
 		}
@@ -108,7 +108,7 @@ func GetNocX509IcaCerts(suite *utils.TestSuite, vendorID int32) (*pkitypes.NocIc
 	var res pkitypes.NocIcaCertificates
 	if suite.Rest {
 		var resp pkitypes.QueryGetNocIcaCertificatesResponse
-		err := suite.QueryREST(fmt.Sprintf("/dcl/pki/noc-certificates/%v", vendorID), &resp)
+		err := suite.QueryREST(fmt.Sprintf("/dcl/pki/noc-ica-certificates/%v", vendorID), &resp)
 		if err != nil {
 			return nil, err
 		}

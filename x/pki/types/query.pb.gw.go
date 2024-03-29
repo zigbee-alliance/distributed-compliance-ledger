@@ -2297,51 +2297,51 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_ApprovedCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "certificates", "subject", "subjectKeyId"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ApprovedCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "certificates", "subject", "subjectKeyId"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_ApprovedCertificatesAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "certificates"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ApprovedCertificatesAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "certificates"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_ProposedCertificate_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "proposed-certificates", "subject", "subjectKeyId"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ProposedCertificate_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "proposed-certificates", "subject", "subjectKeyId"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_ProposedCertificateAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "proposed-certificates"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ProposedCertificateAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "proposed-certificates"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_ChildCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "child-certificates", "issuer", "authorityKeyId"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ChildCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "child-certificates", "issuer", "authorityKeyId"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_ProposedCertificateRevocation_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "proposed-revocation-certificates", "subject", "subjectKeyId"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ProposedCertificateRevocation_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "proposed-revocation-certificates", "subject", "subjectKeyId"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_ProposedCertificateRevocationAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "proposed-revocation-certificates"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ProposedCertificateRevocationAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "proposed-revocation-certificates"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_RevokedCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "revoked-certificates", "subject", "subjectKeyId"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_RevokedCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "revoked-certificates", "subject", "subjectKeyId"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_RevokedCertificatesAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "revoked-certificates"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_RevokedCertificatesAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "revoked-certificates"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_ApprovedRootCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "root-certificates"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ApprovedRootCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "root-certificates"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_RevokedRootCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "revoked-root-certificates"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_RevokedRootCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "revoked-root-certificates"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_ApprovedCertificatesBySubject_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "pki", "certificates", "subject"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ApprovedCertificatesBySubject_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "pki", "certificates", "subject"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_RejectedCertificate_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "rejected-certificates", "subject", "subjectKeyId"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_RejectedCertificate_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "rejected-certificates", "subject", "subjectKeyId"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_RejectedCertificateAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "rejected-certificates"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_RejectedCertificateAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "rejected-certificates"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_PkiRevocationDistributionPoint_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"dcl", "pki", "revocation-points", "issuerSubjectKeyID", "vid", "label"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_PkiRevocationDistributionPoint_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"dcl", "pki", "revocation-points", "issuerSubjectKeyID", "vid", "label"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_PkiRevocationDistributionPointAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "revocation-points"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_PkiRevocationDistributionPointAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "revocation-points"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_PkiRevocationDistributionPointsByIssuerSubjectKeyID_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "pki", "revocation-points", "issuerSubjectKeyID"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_PkiRevocationDistributionPointsByIssuerSubjectKeyID_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "pki", "revocation-points", "issuerSubjectKeyID"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_NocRootCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "pki", "noc-root-certificates", "vid"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_NocRootCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "pki", "noc-root-certificates", "vid"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_NocRootCertificatesAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "noc-root-certificates"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_NocRootCertificatesAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "noc-root-certificates"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_NocIcaCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "pki", "noc-ica-certificates", "vid"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_NocIcaCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "pki", "noc-ica-certificates", "vid"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_NocIcaCertificatesAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "noc-ica-certificates"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_NocIcaCertificatesAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "noc-ica-certificates"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_RevokedNocRootCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "revoked-noc-root-certificates", "subject", "subjectKeyId"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_RevokedNocRootCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "revoked-noc-root-certificates", "subject", "subjectKeyId"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_RevokedNocRootCertificatesAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "revoked-noc-root-certificates"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_RevokedNocRootCertificatesAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "revoked-noc-root-certificates"}, "", runtime.AssumeColonVerbOpt(false)))
 )
 
 var (
