@@ -1433,7 +1433,7 @@ already present on the ledger.
   - `pki/NocIcaCertificates/value/<VID>`
   - `pki/ChildCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - CLI Command:
-  - `dcld tx pki add-noc-x509-cert --certificate=<string-or-path> --from=<account>`
+  - `dcld tx pki add-noc-x509-ica-cert --certificate=<string-or-path> --from=<account>`
 
 #### REVOKE_NOC_ICA
 
@@ -1460,7 +1460,7 @@ Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revok
 - In State:
   - `pki/RevokedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - CLI command:
-  - `dcld tx pki revoke-noc-x509-cert --subject=<base64 string> --subject-key-id=<hex string> --serial-number=<string> --info=<string> --time=<int64> --revoke-child=<bool> --from=<account>`
+  - `dcld tx pki revoke-noc-x509-ica-cert --subject=<base64 string> --subject-key-id=<hex string> --serial-number=<string> --info=<string> --time=<int64> --revoke-child=<bool> --from=<account>`
 
 #### GET_NOC_ROOT_BY_VID
 
@@ -1492,9 +1492,9 @@ Use [GET_ALL_REVOKED_CERT](#get_all_revoked_certs) to get a list of all revoked 
 - Parameters:
   - vid: `uint16` - Vendor ID (positive non-zero)
 - CLI Command:
-  - `dcld query pki noc-x509-certs --vid=<uint16>`
+  - `dcld query pki noc-x509-ica-certs --vid=<uint16>`
 - REST API:
-  - GET `/dcl/pki/noc-certificates/{vid}`
+  - GET `/dcl/pki/noc-ica-certificates/{vid}`
 
 #### GET_REVOKED_NOC_ROOT
 
@@ -1542,9 +1542,9 @@ Use [GET_ALL_REVOKED_CERT](#get_all_revoked_certs) to get a list of all revoked 
 - Parameters:
   - Common pagination parameters
 - CLI Command:
-  - `dcld query pki all-noc-x509-certs`
+  - `dcld query pki all-noc-x509-ica-certs`
 - REST API:
-  - GET `/dcl/pki/noc-certificates`
+  - GET `/dcl/pki/noc-ica-certificates`
 
 #### GET_ALL_REVOKED_NOC_ROOT
 
