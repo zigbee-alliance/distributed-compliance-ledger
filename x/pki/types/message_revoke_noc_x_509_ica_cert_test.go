@@ -12,72 +12,72 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
 
-func TestMsgRevokeNocRootX509Cert_ValidateBasic(t *testing.T) {
+func TestMsgRevokeNocX509IcaCert_ValidateBasic(t *testing.T) {
 	negativeTests := []struct {
 		name string
-		msg  MsgRevokeNocRootX509Cert
+		msg  MsgRevokeNocX509IcaCert
 		err  error
 	}{
 		{
 			name: "invalid address",
-			msg: MsgRevokeNocRootX509Cert{
+			msg: MsgRevokeNocX509IcaCert{
 				Signer: "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		},
 		{
 			name: "empty subject",
-			msg: MsgRevokeNocRootX509Cert{
+			msg: MsgRevokeNocX509IcaCert{
 				Signer:       sample.AccAddress(),
 				Subject:      "",
-				SubjectKeyId: testconstants.RootSubjectKeyID,
+				SubjectKeyId: testconstants.NocCert1SubjectKeyID,
 			},
 			err: validator.ErrRequiredFieldMissing,
 		},
 		{
 			name: "empty SubjectKeyId",
-			msg: MsgRevokeNocRootX509Cert{
+			msg: MsgRevokeNocX509IcaCert{
 				Signer:       sample.AccAddress(),
-				Subject:      testconstants.RootSubject,
+				Subject:      testconstants.NocCert1Subject,
 				SubjectKeyId: "",
 			},
 			err: validator.ErrRequiredFieldMissing,
 		},
 		{
 			name: "subject len > 1024 (1 KB)",
-			msg: MsgRevokeNocRootX509Cert{
+			msg: MsgRevokeNocX509IcaCert{
 				Signer:       sample.AccAddress(),
-				Subject:      testconstants.RootSubject + tmrand.Str(1025-len(testconstants.RootSubject)),
-				SubjectKeyId: testconstants.RootSubjectKeyID,
+				Subject:      testconstants.NocCert1Subject + tmrand.Str(1025-len(testconstants.NocCert1Subject)),
+				SubjectKeyId: testconstants.NocCert1SubjectKeyID,
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
 			name: "subject key id len > 256",
-			msg: MsgRevokeNocRootX509Cert{
+			msg: MsgRevokeNocX509IcaCert{
 				Signer:       sample.AccAddress(),
-				Subject:      testconstants.RootSubject,
-				SubjectKeyId: testconstants.RootSubjectKeyID + tmrand.Str(257-len(testconstants.RootSubjectKeyID)),
+				Subject:      testconstants.NocCert1Subject,
+				SubjectKeyId: testconstants.NocCert1SubjectKeyID + tmrand.Str(257-len(testconstants.NocCert1SubjectKeyID)),
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
 			name: "info len > 4096",
-			msg: MsgRevokeNocRootX509Cert{
+			msg: MsgRevokeNocX509IcaCert{
 				Signer:       sample.AccAddress(),
-				Subject:      testconstants.RootSubject,
-				SubjectKeyId: testconstants.RootSubjectKeyID,
+				Subject:      testconstants.NocCert1Subject,
+				SubjectKeyId: testconstants.NocCert1SubjectKeyID,
 				Info:         tmrand.Str(4097),
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
 			name: "schemaVersion > 65535",
-			msg: MsgRevokeNocRootX509Cert{
+			msg: MsgRevokeNocX509IcaCert{
 				Signer:        sample.AccAddress(),
-				Subject:       testconstants.RootSubject,
-				SubjectKeyId:  testconstants.RootSubjectKeyID,
-				SerialNumber:  testconstants.RootSerialNumber,
+				Subject:       testconstants.NocCert1Subject,
+				SubjectKeyId:  testconstants.NocCert1SubjectKeyID,
+				SerialNumber:  testconstants.NocCert1SerialNumber,
 				Info:          testconstants.Info,
 				Time:          12345,
 				SchemaVersion: 65536,
@@ -87,26 +87,26 @@ func TestMsgRevokeNocRootX509Cert_ValidateBasic(t *testing.T) {
 	}
 	positiveTests := []struct {
 		name string
-		msg  MsgRevokeNocRootX509Cert
+		msg  MsgRevokeNocX509IcaCert
 	}{
 		{
 			name: "valid revoke x509cert msg",
-			msg: MsgRevokeNocRootX509Cert{
+			msg: MsgRevokeNocX509IcaCert{
 				Signer:       sample.AccAddress(),
-				Subject:      testconstants.RootSubject,
-				SubjectKeyId: testconstants.RootSubjectKeyID,
-				SerialNumber: testconstants.RootSerialNumber,
+				Subject:      testconstants.NocCert1Subject,
+				SubjectKeyId: testconstants.NocCert1SubjectKeyID,
+				SerialNumber: testconstants.NocCert1SerialNumber,
 				Info:         testconstants.Info,
 				Time:         12345,
 			},
 		},
 		{
 			name: "valid revoke x509cert msg with revokeChild true flag",
-			msg: MsgRevokeNocRootX509Cert{
+			msg: MsgRevokeNocX509IcaCert{
 				Signer:       sample.AccAddress(),
-				Subject:      testconstants.RootSubject,
-				SubjectKeyId: testconstants.RootSubjectKeyID,
-				SerialNumber: testconstants.RootSerialNumber,
+				Subject:      testconstants.NocCert1Subject,
+				SubjectKeyId: testconstants.NocCert1SubjectKeyID,
+				SerialNumber: testconstants.NocCert1SerialNumber,
 				Info:         testconstants.Info,
 				Time:         12345,
 				RevokeChild:  true,
@@ -114,10 +114,10 @@ func TestMsgRevokeNocRootX509Cert_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "info field is 4096 characters long",
-			msg: MsgRevokeNocRootX509Cert{
+			msg: MsgRevokeNocX509IcaCert{
 				Signer:       sample.AccAddress(),
-				Subject:      testconstants.RootSubject,
-				SubjectKeyId: testconstants.RootSubjectKeyID,
+				Subject:      testconstants.NocCert1Subject,
+				SubjectKeyId: testconstants.NocCert1SubjectKeyID,
 				Info:         tmrand.Str(4096),
 			},
 		},

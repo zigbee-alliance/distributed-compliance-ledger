@@ -57,11 +57,11 @@ result=$(echo "$passphrase" | dcld tx pki add-noc-x509-root-cert --certificate="
 check_response "$result" "\"code\": 0"
 
 echo "Add first NOC certificate by vendor with VID = $vid"
-result=$(echo "$passphrase" | dcld tx pki add-noc-x509-cert --certificate="$noc_cert_1_path" --from $vendor_account --yes)
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$noc_cert_1_path" --from $vendor_account --yes)
 check_response "$result" "\"code\": 0"
 
 echo "Add NOC leaf certificate by vendor with VID = $vid"
-result=$(echo "$passphrase" | dcld tx pki add-noc-x509-cert --certificate="$noc_leaf_cert_1_path" --from $vendor_account --yes)
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$noc_leaf_cert_1_path" --from $vendor_account --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -73,7 +73,7 @@ check_response "$result" "\"serialNumber\": \"$noc_root_cert_1_serial_number\""
 check_response "$result" "\"serialNumber\": \"$noc_root_cert_1_copy_serial_number\""
 
 echo "Request all NOC certificates"
-result=$(dcld query pki all-noc-x509-certs)
+result=$(dcld query pki all-noc-x509-ica-certs)
 echo $result | jq
 check_response "$result" "\"serialNumber\": \"$noc_cert_1_serial_number\""
 check_response "$result" "\"serialNumber\": \"$noc_leaf_cert_1_serial_number\""
@@ -146,7 +146,7 @@ response_does_not_contain "$result" "\"serialNumber\": \"$noc_root_cert_1_serial
 echo $result | jq
 
 echo "Request NOC certificate by VID = $vid should be empty"
-result=$(dcld query pki noc-x509-certs --vid="$vid")
+result=$(dcld query pki noc-x509-ica-certs --vid="$vid")
 echo $result | jq
 check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$noc_cert_1_subject\""
@@ -180,16 +180,16 @@ echo "Add NOC root certificate by vendor with VID = $vid"
 result=$(echo "$passphrase" | dcld tx pki add-noc-x509-root-cert --certificate="$noc_root_cert_2_path" --from $vendor_account --yes)
 check_response "$result" "\"code\": 0"
 
-echo "Add NOC certificate by vendor with VID = $vid"
-result=$(echo "$passphrase" | dcld tx pki add-noc-x509-cert --certificate="$noc_cert_2_path" --from $vendor_account --yes)
+echo "Add intermidiate NOC certificate by vendor with VID = $vid"
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$noc_cert_2_path" --from $vendor_account --yes)
 check_response "$result" "\"code\": 0"
 
-echo "Add second NOC certificate by vendor with VID = $vid"
-result=$(echo "$passphrase" | dcld tx pki add-noc-x509-cert --certificate="$noc_cert_2_copy_path" --from $vendor_account --yes)
+echo "Add second intermidiate NOC certificate by vendor with VID = $vid"
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$noc_cert_2_copy_path" --from $vendor_account --yes)
 check_response "$result" "\"code\": 0"
 
 echo "Add leaf certificate by vendor with VID = $vid"
-result=$(echo "$passphrase" | dcld tx pki add-noc-x509-cert --certificate="$noc_leaf_cert_2_path" --from $vendor_account --yes)
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$noc_leaf_cert_2_path" --from $vendor_account --yes)
 check_response "$result" "\"code\": 0"
 
 echo "Request All NOC root certificate"
@@ -197,15 +197,15 @@ result=$(dcld query pki all-noc-x509-root-certs)
 echo $result | jq
 check_response "$result" "\"serialNumber\": \"$noc_root_cert_2_serial_number\""
 
-echo "Request all NOC certificates"
-result=$(dcld query pki all-noc-x509-certs)
+echo "Request all intermidiate NOC certificates"
+result=$(dcld query pki all-noc-x509-ica-certs)
 echo $result | jq
 check_response "$result" "\"serialNumber\": \"$noc_cert_2_serial_number\""
 check_response "$result" "\"serialNumber\": \"$noc_cert_2_copy_serial_number\""
 check_response "$result" "\"serialNumber\": \"$noc_leaf_cert_2_serial_number\""
 
 echo "$vendor_account Vendor revokes non-root NOC certificate by setting \"revoke-child\" flag to true, it should revoke child certificates too"
-result=$(echo "$passphrase" | dcld tx pki revoke-noc-x509-cert --subject="$noc_cert_2_subject" --subject-key-id="$noc_cert_2_subject_key_id" --revoke-child=true --from=$vendor_account --yes)
+result=$(echo "$passphrase" | dcld tx pki revoke-noc-x509-ica-cert --subject="$noc_cert_2_subject" --subject-key-id="$noc_cert_2_subject_key_id" --revoke-child=true --from=$vendor_account --yes)
 check_response "$result" "\"code\": 0"
 
 echo "Request all revoked certificates should two intermediate and one leaf certificates"
@@ -239,7 +239,7 @@ response_does_not_contain "$result" "\"serialNumber\": \"$noc_cert_2_copy_serial
 echo $result | jq
 
 echo "Request NOC certificate by VID = $vid should not contain intermediate and leaf certificates"
-result=$(dcld query pki noc-x509-certs --vid="$vid")
+result=$(dcld query pki noc-x509-ica-certs --vid="$vid")
 echo $result | jq
 response_does_not_contain "$result" "\"subject\": \"$noc_cert_2_subject\""
 response_does_not_contain "$result" "\"subject\": \"$noc_leaf_cert_2_subject\""

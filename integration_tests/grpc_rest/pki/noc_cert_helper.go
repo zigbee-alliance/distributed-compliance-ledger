@@ -49,28 +49,28 @@ func GetAllNocX509RootCerts(suite *utils.TestSuite) (res []pkitypes.NocRootCerti
 	return res, nil
 }
 
-func GetAllNocX509Certs(suite *utils.TestSuite) (res []pkitypes.NocCertificates, err error) {
+func GetAllNocX509IcaCerts(suite *utils.TestSuite) (res []pkitypes.NocIcaCertificates, err error) {
 	if suite.Rest {
-		var resp pkitypes.QueryAllNocCertificatesResponse
-		err := suite.QueryREST("/dcl/pki/noc-certificates/", &resp)
+		var resp pkitypes.QueryAllNocIcaCertificatesResponse
+		err := suite.QueryREST("/dcl/pki/noc-ica-certificates/", &resp)
 		if err != nil {
 			return nil, err
 		}
-		res = resp.GetNocCertificates()
+		res = resp.GetNocIcaCertificates()
 	} else {
 		grpcConn := suite.GetGRPCConn()
 		defer grpcConn.Close()
 
 		// This creates a gRPC client to query the x/pki service.
 		pkiClient := pkitypes.NewQueryClient(grpcConn)
-		resp, err := pkiClient.NocCertificatesAll(
+		resp, err := pkiClient.NocIcaCertificatesAll(
 			context.Background(),
-			&pkitypes.QueryAllNocCertificatesRequest{},
+			&pkitypes.QueryAllNocIcaCertificatesRequest{},
 		)
 		if err != nil {
 			return nil, err
 		}
-		res = resp.GetNocCertificates()
+		res = resp.GetNocIcaCertificates()
 	}
 
 	return res, nil
@@ -104,29 +104,29 @@ func GetNocX509RootCerts(suite *utils.TestSuite, vendorID int32) (*pkitypes.NocR
 	return &res, nil
 }
 
-func GetNocX509Certs(suite *utils.TestSuite, vendorID int32) (*pkitypes.NocCertificates, error) {
-	var res pkitypes.NocCertificates
+func GetNocX509IcaCerts(suite *utils.TestSuite, vendorID int32) (*pkitypes.NocIcaCertificates, error) {
+	var res pkitypes.NocIcaCertificates
 	if suite.Rest {
-		var resp pkitypes.QueryGetNocCertificatesResponse
-		err := suite.QueryREST(fmt.Sprintf("/dcl/pki/noc-certificates/%v", vendorID), &resp)
+		var resp pkitypes.QueryGetNocIcaCertificatesResponse
+		err := suite.QueryREST(fmt.Sprintf("/dcl/pki/noc-ica-certificates/%v", vendorID), &resp)
 		if err != nil {
 			return nil, err
 		}
-		res = resp.GetNocCertificates()
+		res = resp.GetNocIcaCertificates()
 	} else {
 		grpcConn := suite.GetGRPCConn()
 		defer grpcConn.Close()
 
 		// This creates a gRPC client to query the x/pki service.
 		pkiClient := pkitypes.NewQueryClient(grpcConn)
-		resp, err := pkiClient.NocCertificates(
+		resp, err := pkiClient.NocIcaCertificates(
 			context.Background(),
-			&pkitypes.QueryGetNocCertificatesRequest{Vid: vendorID},
+			&pkitypes.QueryGetNocIcaCertificatesRequest{Vid: vendorID},
 		)
 		if err != nil {
 			return nil, err
 		}
-		res = resp.GetNocCertificates()
+		res = resp.GetNocIcaCertificates()
 	}
 
 	return &res, nil
@@ -279,7 +279,7 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.NocRootCert1SubjectAsText, certsBySubjectKeyID[0].Certs[0].SubjectAsText)
 
 	// Add intermediate NOC certificate
-	msgAddNocCertificate := pkitypes.MsgAddNocX509Cert{
+	msgAddNocCertificate := pkitypes.MsgAddNocX509IcaCert{
 		Signer: vendor1Account.Address,
 		Cert:   testconstants.NocCert1,
 	}
@@ -287,7 +287,7 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Request certificate by VID1
-	nocCert, _ := GetNocX509Certs(suite, vid1)
+	nocCert, _ := GetNocX509IcaCerts(suite, vid1)
 	require.Equal(suite.T, 1, len(nocCert.Certs))
 	require.Equal(suite.T, testconstants.NocCert1Subject, nocCert.Certs[0].Subject)
 	require.Equal(suite.T, testconstants.NocCert1SubjectKeyID, nocCert.Certs[0].SubjectKeyId)
@@ -300,7 +300,7 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.NocCert1SubjectKeyID, childCertificates.CertIds[0].SubjectKeyId)
 
 	// Try to add third intermediate NOC certificate with different vid
-	msgAddNocCertificate = pkitypes.MsgAddNocX509Cert{
+	msgAddNocCertificate = pkitypes.MsgAddNocX509IcaCert{
 		Signer: vendor1Account.Address,
 		Cert:   testconstants.NocCert2,
 	}
@@ -308,7 +308,7 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.Error(suite.T, err)
 
 	// Add second intermediate NOC certificate
-	msgAddNocCertificate = pkitypes.MsgAddNocX509Cert{
+	msgAddNocCertificate = pkitypes.MsgAddNocX509IcaCert{
 		Signer: vendor1Account.Address,
 		Cert:   testconstants.NocCert2,
 	}
@@ -316,7 +316,7 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Request certificate by VID1
-	nocCerts, _ := GetAllNocX509Certs(suite)
+	nocCerts, _ := GetAllNocX509IcaCerts(suite)
 	require.Equal(suite.T, 1, len(nocCerts))
 	require.Equal(suite.T, 2, len(nocCerts[0].Certs))
 
@@ -351,19 +351,19 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, 3, len(nocCertificates.Certs))
 
 	// Add NOC leaf certificate
-	msgAddNocCert := pkitypes.MsgAddNocX509Cert{
+	msgAddNocCert := pkitypes.MsgAddNocX509IcaCert{
 		Signer: vendor1Account.Address,
 		Cert:   testconstants.NocLeafCert1,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddNocCert}, vendor1Name, vendor1Account)
 	require.NoError(suite.T, err)
 
-	nocCerts, _ = GetAllNocX509Certs(suite)
+	nocCerts, _ = GetAllNocX509IcaCerts(suite)
 	require.Equal(suite.T, 1, len(nocCerts))
 	require.Equal(suite.T, 3, len(nocCerts[0].Certs))
 
 	// Try to revoke NOC 1 root with different serial number
-	msgRevokeNocRootCert := pkitypes.MsgRevokeNocRootX509Cert{
+	msgRevokeNocRootCert := pkitypes.MsgRevokeNocX509RootCert{
 		Signer:       vendor1Account.Address,
 		Subject:      testconstants.NocRootCert1Subject,
 		SubjectKeyId: testconstants.NocRootCert1SubjectKeyID,
@@ -373,7 +373,7 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.Error(suite.T, err)
 
 	// Try to revoke NOC 1 root with another Vendor Account
-	msgRevokeNocRootCert = pkitypes.MsgRevokeNocRootX509Cert{
+	msgRevokeNocRootCert = pkitypes.MsgRevokeNocX509RootCert{
 		Signer:       vendor2Account.Address,
 		Subject:      testconstants.NocRootCert1Subject,
 		SubjectKeyId: testconstants.NocRootCert1SubjectKeyID,

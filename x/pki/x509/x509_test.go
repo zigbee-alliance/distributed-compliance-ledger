@@ -73,7 +73,7 @@ func Test_DecodeCertificatesWithVID(t *testing.T) {
 	require.Nil(t, err)
 	require.True(t, certificate.IsSelfSigned())
 	require.Equal(t, testconstants.TestSubject, certificate.Issuer)
-	require.Equal(t, testconstants.TestSubjectAsText, testconstants.TestSubjectAsText)
+	require.Equal(t, testconstants.TestSubjectAsText, certificate.SubjectAsText)
 	require.Equal(t, testconstants.TestSerialNumber, certificate.SerialNumber)
 	require.Equal(t, testconstants.TestSubject, certificate.Subject)
 	require.Equal(t, testconstants.TestSubjectKeyID, certificate.SubjectKeyID)

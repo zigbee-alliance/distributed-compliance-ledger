@@ -200,12 +200,12 @@ check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$noc_root_cert_1_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$noc_root_cert_1_subject_as_text\""
 
-echo "Add first NOC certificate by vendor with VID = $vid"
-result=$(echo "$passphrase" | dcld tx pki add-noc-x509-cert --certificate="$noc_cert_1_path" --from $vendor_account --yes)
+echo "Add first intermidiate NOC certificate by vendor with VID = $vid"
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$noc_cert_1_path" --from $vendor_account --yes)
 check_response "$result" "\"code\": 0"
 
-echo "Request NOC certificate by VID = $vid"
-result=$(dcld query pki noc-x509-certs --vid="$vid")
+echo "Request intermidiate NOC certificate by VID = $vid"
+result=$(dcld query pki noc-x509-ica-certs --vid="$vid")
 echo $result | jq
 check_response "$result" "\"subject\": \"$noc_cert_1_subject\""
 check_response "$result" "\"subjectKeyId\": \"$noc_cert_1_subject_key_id\""
@@ -221,7 +221,7 @@ check_response "$result" "\"subject\": \"$noc_cert_1_subject\""
 check_response "$result" "\"subjectKeyId\": \"$noc_cert_1_subject_key_id\""
 
 echo "Try to add intermediate with different VID = $vid_2"
-result=$(echo "$passphrase" | dcld tx pki add-noc-x509-cert --certificate="$noc_cert_2_path" --from $vendor_account_2 --yes)
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$noc_cert_2_path" --from $vendor_account_2 --yes)
 check_response "$result" "\"code\": 439"
 
 test_divider
@@ -229,15 +229,15 @@ test_divider
 cert_schema_version_3=3
 schema_version_4=4
 echo "Add second NOC certificate by vendor with VID = $vid"
-result=$(echo "$passphrase" | dcld tx pki add-noc-x509-cert --certificate="$noc_cert_2_path" --certificate-schema-version=$cert_schema_version_3 --schemaVersion=$schema_version_4 --from $vendor_account --yes)
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$noc_cert_2_path" --certificate-schema-version=$cert_schema_version_3 --schemaVersion=$schema_version_4 --from $vendor_account --yes)
 check_response "$result" "\"code\": 0"
 
 echo "Add third NOC certificate by vendor with VID = $vid"
-result=$(echo "$passphrase" | dcld tx pki add-noc-x509-cert --certificate="$noc_cert_1_copy_path" --from $vendor_account --yes)
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$noc_cert_1_copy_path" --from $vendor_account --yes)
 check_response "$result" "\"code\": 0"
 
 echo "Request all NOC certificates"
-result=$(dcld query pki all-noc-x509-certs)
+result=$(dcld query pki all-noc-x509-ica-certs)
 echo $result | jq
 check_response "$result" "\"subject\": \"$noc_cert_1_subject\""
 check_response "$result" "\"subjectKeyId\": \"$noc_cert_1_subject_key_id\""
@@ -272,7 +272,7 @@ result=$(echo "$passphrase" | dcld tx pki add-noc-x509-root-cert --certificate="
 check_response "$result" "\"code\": 0"
 
 echo "Add NOC leaf certificate by vendor with VID = $vid"
-result=$(echo "$passphrase" | dcld tx pki add-noc-x509-cert --certificate="$noc_leaf_cert_1_path" --from $vendor_account --yes)
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$noc_leaf_cert_1_path" --from $vendor_account --yes)
 check_response "$result" "\"code\": 0"
 
 echo "Request All NOC root certificate"
@@ -283,7 +283,7 @@ check_response "$result" "\"serialNumber\": \"$noc_root_cert_1_copy_serial_numbe
 check_response "$result" "\"serialNumber\": \"$noc_root_cert_2_serial_number\""
 
 echo "Request all NOC certificates"
-result=$(dcld query pki all-noc-x509-certs)
+result=$(dcld query pki all-noc-x509-ica-certs)
 echo $result | jq
 check_response "$result" "\"serialNumber\": \"$noc_cert_1_serial_number\""
 check_response "$result" "\"serialNumber\": \"$noc_cert_1_copy_serial_number\""
@@ -365,7 +365,7 @@ response_does_not_contain "$result" "\"serialNumber\": \"$noc_root_cert_1_copy_s
 echo $result | jq
 
 echo "Request NOC certificate by VID = $vid should contain intermediate and leaf certificates"
-result=$(dcld query pki noc-x509-certs --vid="$vid")
+result=$(dcld query pki noc-x509-ica-certs --vid="$vid")
 echo $result | jq
 check_response "$result" "\"subject\": \"$noc_cert_1_subject\""
 check_response "$result" "\"subject\": \"$noc_leaf_cert_1_subject\""
@@ -395,12 +395,12 @@ test_divider
 echo "REVOCATION OF NON-ROOT NOC CERTIFICATES"
 
 echo "Try to revoke NOC certificate with different VID = $vid_2"
-result=$(echo "$passphrase" | dcld tx pki revoke-noc-x509-cert --subject="$noc_cert_1_subject" --subject-key-id="$noc_cert_1_subject_key_id" --from $vendor_account_2 --yes)
+result=$(echo "$passphrase" | dcld tx pki revoke-noc-x509-ica-cert --subject="$noc_cert_1_subject" --subject-key-id="$noc_cert_1_subject_key_id" --from $vendor_account_2 --yes)
 check_response "$result" "\"code\": 439"
 
 revoke_schema_version_6=6
 echo "$vendor_account Vendor revokes only NOC certificates, it should not revoke leaf certificates"
-result=$(echo "$passphrase" | dcld tx pki revoke-noc-x509-cert --subject="$noc_cert_1_subject" --subject-key-id="$noc_cert_1_subject_key_id" --schemaVersion=$revoke_schema_version_6 --from=$vendor_account --yes)
+result=$(echo "$passphrase" | dcld tx pki revoke-noc-x509-ica-cert --subject="$noc_cert_1_subject" --subject-key-id="$noc_cert_1_subject_key_id" --schemaVersion=$revoke_schema_version_6 --from=$vendor_account --yes)
 check_response "$result" "\"code\": 0"
 
 echo "Request all revoked certificates should not contain leaf certificate"
@@ -440,7 +440,7 @@ response_does_not_contain "$result" "\"serialNumber\": \"$noc_cert_1_copy_serial
 echo $result | jq
 
 echo "Request NOC certificate by VID = $vid should contain one leaf certificate"
-result=$(dcld query pki noc-x509-certs --vid="$vid")
+result=$(dcld query pki noc-x509-ica-certs --vid="$vid")
 echo $result | jq
 check_response "$result" "\"subject\": \"$noc_leaf_cert_1_subject\""
 check_response "$result" "\"subjectKeyId\": \"$noc_leaf_cert_1_subject_key_id\""

@@ -27,22 +27,113 @@ export interface PkiApprovedRootCertificates {
   certs?: PkiCertificateIdentifier[];
 }
 
+export interface PkiChildCertificates {
+  issuer?: string;
+  authorityKeyId?: string;
+  certIds?: PkiCertificateIdentifier[];
+}
+
+export interface PkiNocIcaCertificates {
+  /** @format int32 */
+  vid?: number;
+  certs?: PkiCertificate[];
+}
+
 export interface PkiNocRootCertificates {
   /** @format int32 */
   vid?: number;
   certs?: PkiCertificate[];
 }
 
-export interface PkiNocCertificates {
+export interface PkiPkiRevocationDistributionPoint {
   /** @format int32 */
   vid?: number;
+  label?: string;
+  issuerSubjectKeyID?: string;
+
+  /** @format int32 */
+  pid?: number;
+  isPAA?: boolean;
+  crlSignerCertificate?: string;
+  dataURL?: string;
+
+  /** @format uint64 */
+  dataFileSize?: string;
+  dataDigest?: string;
+
+  /** @format int64 */
+  dataDigestType?: number;
+
+  /** @format int64 */
+  revocationType?: number;
+
+  /** @format int64 */
+  schemaVersion?: number;
+}
+
+export interface PkiPkiRevocationDistributionPointsByIssuerSubjectKeyID {
+  issuerSubjectKeyID?: string;
+  points?: PkiPkiRevocationDistributionPoint[];
+}
+
+export interface PkiProposedCertificate {
+  subject?: string;
+  subjectKeyId?: string;
+  pemCert?: string;
+  serialNumber?: string;
+  owner?: string;
+  approvals?: PkiGrant[];
+  subjectAsText?: string;
+  rejects?: PkiGrant[];
+
+  /** @format int32 */
+  vid?: number;
+
+  /** @format int64 */
+  certSchemaVersion?: number;
+
+  /** @format int64 */
+  schemaVersion?: number;
+}
+
+export interface PkiProposedCertificateRevocation {
+  subject?: string;
+  subjectKeyId?: string;
+  approvals?: PkiGrant[];
+  subjectAsText?: string;
+  serialNumber?: string;
+  revokeChild?: boolean;
+
+  /** @format int64 */
+  schemaVersion?: number;
+}
+
+export interface PkiRejectedCertificate {
+  subject?: string;
+  subjectKeyId?: string;
   certs?: PkiCertificate[];
+
+  /** @format int64 */
+  schemaVersion?: number;
+}
+
+export interface PkiRevokedCertificates {
+  subject?: string;
+  subjectKeyId?: string;
+  certs?: PkiCertificate[];
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface PkiRevokedNocRootCertificates {
   subject?: string;
   subjectKeyId?: string;
   certs?: PkiCertificate[];
+}
+
+export interface PkiRevokedRootCertificates {
+  certs?: PkiCertificateIdentifier[];
 }
 
 export interface PkiCertificate {
@@ -73,12 +164,6 @@ export interface PkiCertificateIdentifier {
   subjectKeyId?: string;
 }
 
-export interface PkiChildCertificates {
-  issuer?: string;
-  authorityKeyId?: string;
-  certIds?: PkiCertificateIdentifier[];
-}
-
 export interface PkiGrant {
   address?: string;
 
@@ -87,7 +172,7 @@ export interface PkiGrant {
   info?: string;
 }
 
-export type PkiMsgAddNocX509CertResponse = object;
+export type PkiMsgAddNocX509IcaCertResponse = object;
 
 export type PkiMsgAddNocX509RootCertResponse = object;
 
@@ -111,73 +196,13 @@ export type PkiMsgRejectAddX509RootCertResponse = object;
 
 export type PkiMsgRemoveX509CertResponse = object;
 
-export type PkiMsgRevokeNocRootX509CertResponse = object;
+export type PkiMsgRevokeNocX509IcaCertResponse = object;
 
-export type PkiMsgRevokeNocX509CertResponse = object;
+export type PkiMsgRevokeNocX509RootCertResponse = object;
 
 export type PkiMsgRevokeX509CertResponse = object;
 
 export type PkiMsgUpdatePkiRevocationDistributionPointResponse = object;
-
-export interface PkiPkiRevocationDistributionPoint {
-  /** @format int32 */
-  vid?: number;
-  label?: string;
-  issuerSubjectKeyID?: string;
-
-  /** @format int32 */
-  pid?: number;
-  isPAA?: boolean;
-  crlSignerCertificate?: string;
-  dataURL?: string;
-
-  /** @format uint64 */
-  dataFileSize?: string;
-  dataDigest?: string;
-
-  /** @format int64 */
-  dataDigestType?: number;
-
-  /** @format int64 */
-  revocationType?: number;
-  
-    /** @format int64 */
-    schemaVersion?: number;
-}
-
-export interface PkiPkiRevocationDistributionPointsByIssuerSubjectKeyID {
-  issuerSubjectKeyID?: string;
-  points?: PkiPkiRevocationDistributionPoint[];
-}
-
-export interface PkiProposedCertificate {
-  subject?: string;
-  subjectKeyId?: string;
-  pemCert?: string;
-  serialNumber?: string;
-  owner?: string;
-  approvals?: PkiGrant[];
-  subjectAsText?: string;
-  rejects?: PkiGrant[];
-
-  /** @format int32 */
-  vid?: number;
-
-  /** @format int64 */
-  schemaVersion?: number;
-}
-
-export interface PkiProposedCertificateRevocation {
-  subject?: string;
-  subjectKeyId?: string;
-  serialNumber?: string;
-  approvals?: PkiGrant[];
-  subjectAsText?: string;
-  revokeChild?: boolean;
-   
-  /** @format int64 */
-  schemaVersion?: number;
-}
 
 export interface PkiQueryAllApprovedCertificatesResponse {
   approvedCertificates?: PkiApprovedCertificates[];
@@ -194,8 +219,8 @@ export interface PkiQueryAllApprovedCertificatesResponse {
   pagination?: V1Beta1PageResponse;
 }
 
-export interface PkiQueryAllNocRootCertificatesResponse {
-  nocRootCertificates?: PkiNocRootCertificates[];
+export interface PkiQueryAllNocIcaCertificatesResponse {
+  nocIcaCertificates?: PkiNocIcaCertificates[];
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the
@@ -209,8 +234,8 @@ export interface PkiQueryAllNocRootCertificatesResponse {
   pagination?: V1Beta1PageResponse;
 }
 
-export interface PkiQueryAllNocCertificatesResponse {
-  nocCertificates?: PkiNocCertificates[];
+export interface PkiQueryAllNocRootCertificatesResponse {
+  nocRootCertificates?: PkiNocRootCertificates[];
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the
@@ -330,15 +355,12 @@ export interface PkiQueryGetChildCertificatesResponse {
   childCertificates?: PkiChildCertificates;
 }
 
-export interface PkiQueryGetNocRootCertificatesResponse {
-  nocRootCertificates?: PkiNocRootCertificates;
+export interface PkiQueryGetNocIcaCertificatesResponse {
+  nocIcaCertificates?: PkiNocIcaCertificates;
 }
 
-export interface PkiQueryGetRevokedNocRootCertificatesResponse {
-  revokedNocRootCertificates?: PkiRevokedNocRootCertificates;
-}
-export interface PkiQueryGetNocCertificatesResponse {
-  nocCertificates?: PkiNocRootCertificates;
+export interface PkiQueryGetNocRootCertificatesResponse {
+  nocRootCertificates?: PkiNocRootCertificates;
 }
 
 export interface PkiQueryGetPkiRevocationDistributionPointResponse {
@@ -365,30 +387,12 @@ export interface PkiQueryGetRevokedCertificatesResponse {
   revokedCertificates?: PkiRevokedCertificates;
 }
 
+export interface PkiQueryGetRevokedNocRootCertificatesResponse {
+  revokedNocRootCertificates?: PkiRevokedNocRootCertificates;
+}
+
 export interface PkiQueryGetRevokedRootCertificatesResponse {
   revokedRootCertificates?: PkiRevokedRootCertificates;
-}
-
-export interface PkiRejectedCertificate {
-  subject?: string;
-  subjectKeyId?: string;
-  certs?: PkiCertificate[];
-
-  /** @format int64 */
-  schemaVersion?: number;
-}
-
-export interface PkiRevokedCertificates {
-  subject?: string;
-  subjectKeyId?: string;
-  certs?: PkiCertificate[];
-
-  /** @format int64 */
-  schemaVersion?: number;
-}
-
-export interface PkiRevokedRootCertificates {
-  certs?: PkiCertificateIdentifier[];
 }
 
 export interface ProtobufAny {
@@ -740,6 +744,48 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
+   * @name QueryNocIcaCertificatesAll
+   * @summary Queries a list of NocCertificates items.
+   * @request GET:/dcl/pki/noc-ica-certificates
+   */
+  queryNocIcaCertificatesAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<PkiQueryAllNocIcaCertificatesResponse, RpcStatus>({
+      path: `/dcl/pki/noc-ica-certificates`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryNocIcaCertificates
+   * @summary Queries a NocIcaCertificates by index.
+   * @request GET:/dcl/pki/noc-ica-certificates/{vid}
+   */
+  queryNocIcaCertificates = (vid: number, params: RequestParams = {}) =>
+    this.request<PkiQueryGetNocIcaCertificatesResponse, RpcStatus>({
+      path: `/dcl/pki/noc-ica-certificates/${vid}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
    * @name QueryNocRootCertificatesAll
    * @summary Queries a list of NocRootCertificates items.
    * @request GET:/dcl/pki/noc-root-certificates
@@ -770,51 +816,9 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @summary Queries a NocRootCertificates by index.
    * @request GET:/dcl/pki/noc-root-certificates/{vid}
    */
-  queryNocRootCertificates = (vid: string, params: RequestParams = {}) =>
+  queryNocRootCertificates = (vid: number, params: RequestParams = {}) =>
     this.request<PkiQueryGetNocRootCertificatesResponse, RpcStatus>({
       path: `/dcl/pki/noc-root-certificates/${vid}`,
-      method: "GET",
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryNocCertificatesAll
-   * @summary Queries a list of NocCertificates items.
-   * @request GET:/dcl/pki/noc_certificates
-   */
-  queryNocCertificatesAll = (
-    query?: {
-      "pagination.key"?: string;
-      "pagination.offset"?: string;
-      "pagination.limit"?: string;
-      "pagination.countTotal"?: boolean;
-      "pagination.reverse"?: boolean;
-    },
-    params: RequestParams = {},
-  ) =>
-    this.request<PkiQueryAllNocCertificatesResponse, RpcStatus>({
-      path: `/dcl/pki/noc-certificates`,
-      method: "GET",
-      query: query,
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryNocCertificates
-   * @summary Queries a NocCertificates by index.
-   * @request GET:/dcl/pki/noc_certificates/{vid}
-   */
-  queryNocCertificates = (vid: string, params: RequestParams = {}) =>
-    this.request<PkiQueryGetNocCertificatesResponse, RpcStatus>({
-      path: `/dcl/pki/noc-certificates/${vid}`,
       method: "GET",
       format: "json",
       ...params,
@@ -1070,7 +1074,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.key"?: string;
       "pagination.offset"?: string;
       "pagination.limit"?: string;
-      "pagination.count_total"?: boolean;
+      "pagination.countTotal"?: boolean;
       "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},

@@ -154,16 +154,16 @@ export interface MsgRemoveX509Cert {
 
 export interface MsgRemoveX509CertResponse {}
 
-export interface MsgAddNocX509Cert {
+export interface MsgAddNocX509IcaCert {
   signer: string
   cert: string
   certSchemaVersion: number
   schemaVersion: number
 }
 
-export interface MsgAddNocX509CertResponse {}
+export interface MsgAddNocX509IcaCertResponse {}
 
-export interface MsgRevokeNocRootX509Cert {
+export interface MsgRevokeNocX509RootCert {
   signer: string
   subject: string
   subjectKeyId: string
@@ -174,9 +174,9 @@ export interface MsgRevokeNocRootX509Cert {
   schemaVersion: number
 }
 
-export interface MsgRevokeNocRootX509CertResponse {}
+export interface MsgRevokeNocX509RootCertResponse {}
 
-export interface MsgRevokeNocX509Cert {
+export interface MsgRevokeNocX509IcaCert {
   signer: string
   subject: string
   subjectKeyId: string
@@ -187,7 +187,7 @@ export interface MsgRevokeNocX509Cert {
   schemaVersion: number
 }
 
-export interface MsgRevokeNocX509CertResponse {}
+export interface MsgRevokeNocX509IcaCertResponse {}
 
 const baseMsgProposeAddX509RootCert: object = { signer: '', cert: '', info: '', time: 0, vid: 0, certSchemaVersion: 0, schemaVersion: 0 }
 
@@ -2656,10 +2656,10 @@ export const MsgRemoveX509CertResponse = {
   }
 }
 
-const baseMsgAddNocX509Cert: object = { signer: '', cert: '', certSchemaVersion: 0, schemaVersion: 0 }
+const baseMsgAddNocX509IcaCert: object = { signer: '', cert: '', certSchemaVersion: 0, schemaVersion: 0 }
 
-export const MsgAddNocX509Cert = {
-  encode(message: MsgAddNocX509Cert, writer: Writer = Writer.create()): Writer {
+export const MsgAddNocX509IcaCert = {
+  encode(message: MsgAddNocX509IcaCert, writer: Writer = Writer.create()): Writer {
     if (message.signer !== '') {
       writer.uint32(10).string(message.signer)
     }
@@ -2675,10 +2675,10 @@ export const MsgAddNocX509Cert = {
     return writer
   },
 
-  decode(input: Reader | Uint8Array, length?: number): MsgAddNocX509Cert {
+  decode(input: Reader | Uint8Array, length?: number): MsgAddNocX509IcaCert {
     const reader = input instanceof Uint8Array ? new Reader(input) : input
     let end = length === undefined ? reader.len : reader.pos + length
-    const message = { ...baseMsgAddNocX509Cert } as MsgAddNocX509Cert
+    const message = { ...baseMsgAddNocX509IcaCert } as MsgAddNocX509IcaCert
     while (reader.pos < end) {
       const tag = reader.uint32()
       switch (tag >>> 3) {
@@ -2702,8 +2702,8 @@ export const MsgAddNocX509Cert = {
     return message
   },
 
-  fromJSON(object: any): MsgAddNocX509Cert {
-    const message = { ...baseMsgAddNocX509Cert } as MsgAddNocX509Cert
+  fromJSON(object: any): MsgAddNocX509IcaCert {
+    const message = { ...baseMsgAddNocX509IcaCert } as MsgAddNocX509IcaCert
     if (object.signer !== undefined && object.signer !== null) {
       message.signer = String(object.signer)
     } else {
@@ -2727,7 +2727,7 @@ export const MsgAddNocX509Cert = {
     return message
   },
 
-  toJSON(message: MsgAddNocX509Cert): unknown {
+  toJSON(message: MsgAddNocX509IcaCert): unknown {
     const obj: any = {}
     message.signer !== undefined && (obj.signer = message.signer)
     message.cert !== undefined && (obj.cert = message.cert)
@@ -2736,8 +2736,8 @@ export const MsgAddNocX509Cert = {
     return obj
   },
 
-  fromPartial(object: DeepPartial<MsgAddNocX509Cert>): MsgAddNocX509Cert {
-    const message = { ...baseMsgAddNocX509Cert } as MsgAddNocX509Cert
+  fromPartial(object: DeepPartial<MsgAddNocX509IcaCert>): MsgAddNocX509IcaCert {
+    const message = { ...baseMsgAddNocX509IcaCert } as MsgAddNocX509IcaCert
     if (object.signer !== undefined && object.signer !== null) {
       message.signer = object.signer
     } else {
@@ -2762,17 +2762,17 @@ export const MsgAddNocX509Cert = {
   }
 }
 
-const baseMsgAddNocX509CertResponse: object = {}
+const baseMsgAddNocX509IcaCertResponse: object = {}
 
-export const MsgAddNocX509CertResponse = {
-  encode(_: MsgAddNocX509CertResponse, writer: Writer = Writer.create()): Writer {
+export const MsgAddNocX509IcaCertResponse = {
+  encode(_: MsgAddNocX509IcaCertResponse, writer: Writer = Writer.create()): Writer {
     return writer
   },
 
-  decode(input: Reader | Uint8Array, length?: number): MsgAddNocX509CertResponse {
+  decode(input: Reader | Uint8Array, length?: number): MsgAddNocX509IcaCertResponse {
     const reader = input instanceof Uint8Array ? new Reader(input) : input
     let end = length === undefined ? reader.len : reader.pos + length
-    const message = { ...baseMsgAddNocX509CertResponse } as MsgAddNocX509CertResponse
+    const message = { ...baseMsgAddNocX509IcaCertResponse } as MsgAddNocX509IcaCertResponse
     while (reader.pos < end) {
       const tag = reader.uint32()
       switch (tag >>> 3) {
@@ -2784,23 +2784,23 @@ export const MsgAddNocX509CertResponse = {
     return message
   },
 
-  fromJSON(_: any): MsgAddNocX509CertResponse {
-    const message = { ...baseMsgAddNocX509CertResponse } as MsgAddNocX509CertResponse
+  fromJSON(_: any): MsgAddNocX509IcaCertResponse {
+    const message = { ...baseMsgAddNocX509IcaCertResponse } as MsgAddNocX509IcaCertResponse
     return message
   },
 
-  toJSON(_: MsgAddNocX509CertResponse): unknown {
+  toJSON(_: MsgAddNocX509IcaCertResponse): unknown {
     const obj: any = {}
     return obj
   },
 
-  fromPartial(_: DeepPartial<MsgAddNocX509CertResponse>): MsgAddNocX509CertResponse {
-    const message = { ...baseMsgAddNocX509CertResponse } as MsgAddNocX509CertResponse
+  fromPartial(_: DeepPartial<MsgAddNocX509IcaCertResponse>): MsgAddNocX509IcaCertResponse {
+    const message = { ...baseMsgAddNocX509IcaCertResponse } as MsgAddNocX509IcaCertResponse
     return message
   }
 }
 
-const baseMsgRevokeNocRootX509Cert: object = {
+const baseMsgRevokeNocX509RootCert: object = {
   signer: '',
   subject: '',
   subjectKeyId: '',
@@ -2811,8 +2811,8 @@ const baseMsgRevokeNocRootX509Cert: object = {
   schemaVersion: 0
 }
 
-export const MsgRevokeNocRootX509Cert = {
-  encode(message: MsgRevokeNocRootX509Cert, writer: Writer = Writer.create()): Writer {
+export const MsgRevokeNocX509RootCert = {
+  encode(message: MsgRevokeNocX509RootCert, writer: Writer = Writer.create()): Writer {
     if (message.signer !== '') {
       writer.uint32(10).string(message.signer)
     }
@@ -2840,10 +2840,10 @@ export const MsgRevokeNocRootX509Cert = {
     return writer
   },
 
-  decode(input: Reader | Uint8Array, length?: number): MsgRevokeNocRootX509Cert {
+  decode(input: Reader | Uint8Array, length?: number): MsgRevokeNocX509RootCert {
     const reader = input instanceof Uint8Array ? new Reader(input) : input
     let end = length === undefined ? reader.len : reader.pos + length
-    const message = { ...baseMsgRevokeNocRootX509Cert } as MsgRevokeNocRootX509Cert
+    const message = { ...baseMsgRevokeNocX509RootCert } as MsgRevokeNocX509RootCert
     while (reader.pos < end) {
       const tag = reader.uint32()
       switch (tag >>> 3) {
@@ -2879,8 +2879,8 @@ export const MsgRevokeNocRootX509Cert = {
     return message
   },
 
-  fromJSON(object: any): MsgRevokeNocRootX509Cert {
-    const message = { ...baseMsgRevokeNocRootX509Cert } as MsgRevokeNocRootX509Cert
+  fromJSON(object: any): MsgRevokeNocX509RootCert {
+    const message = { ...baseMsgRevokeNocX509RootCert } as MsgRevokeNocX509RootCert
     if (object.signer !== undefined && object.signer !== null) {
       message.signer = String(object.signer)
     } else {
@@ -2924,7 +2924,7 @@ export const MsgRevokeNocRootX509Cert = {
     return message
   },
 
-  toJSON(message: MsgRevokeNocRootX509Cert): unknown {
+  toJSON(message: MsgRevokeNocX509RootCert): unknown {
     const obj: any = {}
     message.signer !== undefined && (obj.signer = message.signer)
     message.subject !== undefined && (obj.subject = message.subject)
@@ -2937,8 +2937,8 @@ export const MsgRevokeNocRootX509Cert = {
     return obj
   },
 
-  fromPartial(object: DeepPartial<MsgRevokeNocRootX509Cert>): MsgRevokeNocRootX509Cert {
-    const message = { ...baseMsgRevokeNocRootX509Cert } as MsgRevokeNocRootX509Cert
+  fromPartial(object: DeepPartial<MsgRevokeNocX509RootCert>): MsgRevokeNocX509RootCert {
+    const message = { ...baseMsgRevokeNocX509RootCert } as MsgRevokeNocX509RootCert
     if (object.signer !== undefined && object.signer !== null) {
       message.signer = object.signer
     } else {
@@ -2983,17 +2983,17 @@ export const MsgRevokeNocRootX509Cert = {
   }
 }
 
-const baseMsgRevokeNocRootX509CertResponse: object = {}
+const baseMsgRevokeNocX509RootCertResponse: object = {}
 
-export const MsgRevokeNocRootX509CertResponse = {
-  encode(_: MsgRevokeNocRootX509CertResponse, writer: Writer = Writer.create()): Writer {
+export const MsgRevokeNocX509RootCertResponse = {
+  encode(_: MsgRevokeNocX509RootCertResponse, writer: Writer = Writer.create()): Writer {
     return writer
   },
 
-  decode(input: Reader | Uint8Array, length?: number): MsgRevokeNocRootX509CertResponse {
+  decode(input: Reader | Uint8Array, length?: number): MsgRevokeNocX509RootCertResponse {
     const reader = input instanceof Uint8Array ? new Reader(input) : input
     let end = length === undefined ? reader.len : reader.pos + length
-    const message = { ...baseMsgRevokeNocRootX509CertResponse } as MsgRevokeNocRootX509CertResponse
+    const message = { ...baseMsgRevokeNocX509RootCertResponse } as MsgRevokeNocX509RootCertResponse
     while (reader.pos < end) {
       const tag = reader.uint32()
       switch (tag >>> 3) {
@@ -3005,23 +3005,23 @@ export const MsgRevokeNocRootX509CertResponse = {
     return message
   },
 
-  fromJSON(_: any): MsgRevokeNocRootX509CertResponse {
-    const message = { ...baseMsgRevokeNocRootX509CertResponse } as MsgRevokeNocRootX509CertResponse
+  fromJSON(_: any): MsgRevokeNocX509RootCertResponse {
+    const message = { ...baseMsgRevokeNocX509RootCertResponse } as MsgRevokeNocX509RootCertResponse
     return message
   },
 
-  toJSON(_: MsgRevokeNocRootX509CertResponse): unknown {
+  toJSON(_: MsgRevokeNocX509RootCertResponse): unknown {
     const obj: any = {}
     return obj
   },
 
-  fromPartial(_: DeepPartial<MsgRevokeNocRootX509CertResponse>): MsgRevokeNocRootX509CertResponse {
-    const message = { ...baseMsgRevokeNocRootX509CertResponse } as MsgRevokeNocRootX509CertResponse
+  fromPartial(_: DeepPartial<MsgRevokeNocX509RootCertResponse>): MsgRevokeNocX509RootCertResponse {
+    const message = { ...baseMsgRevokeNocX509RootCertResponse } as MsgRevokeNocX509RootCertResponse
     return message
   }
 }
 
-const baseMsgRevokeNocX509Cert: object = {
+const baseMsgRevokeNocX509IcaCert: object = {
   signer: '',
   subject: '',
   subjectKeyId: '',
@@ -3032,8 +3032,8 @@ const baseMsgRevokeNocX509Cert: object = {
   schemaVersion: 0
 }
 
-export const MsgRevokeNocX509Cert = {
-  encode(message: MsgRevokeNocX509Cert, writer: Writer = Writer.create()): Writer {
+export const MsgRevokeNocX509IcaCert = {
+  encode(message: MsgRevokeNocX509IcaCert, writer: Writer = Writer.create()): Writer {
     if (message.signer !== '') {
       writer.uint32(10).string(message.signer)
     }
@@ -3061,10 +3061,10 @@ export const MsgRevokeNocX509Cert = {
     return writer
   },
 
-  decode(input: Reader | Uint8Array, length?: number): MsgRevokeNocX509Cert {
+  decode(input: Reader | Uint8Array, length?: number): MsgRevokeNocX509IcaCert {
     const reader = input instanceof Uint8Array ? new Reader(input) : input
     let end = length === undefined ? reader.len : reader.pos + length
-    const message = { ...baseMsgRevokeNocX509Cert } as MsgRevokeNocX509Cert
+    const message = { ...baseMsgRevokeNocX509IcaCert } as MsgRevokeNocX509IcaCert
     while (reader.pos < end) {
       const tag = reader.uint32()
       switch (tag >>> 3) {
@@ -3100,8 +3100,8 @@ export const MsgRevokeNocX509Cert = {
     return message
   },
 
-  fromJSON(object: any): MsgRevokeNocX509Cert {
-    const message = { ...baseMsgRevokeNocX509Cert } as MsgRevokeNocX509Cert
+  fromJSON(object: any): MsgRevokeNocX509IcaCert {
+    const message = { ...baseMsgRevokeNocX509IcaCert } as MsgRevokeNocX509IcaCert
     if (object.signer !== undefined && object.signer !== null) {
       message.signer = String(object.signer)
     } else {
@@ -3145,7 +3145,7 @@ export const MsgRevokeNocX509Cert = {
     return message
   },
 
-  toJSON(message: MsgRevokeNocX509Cert): unknown {
+  toJSON(message: MsgRevokeNocX509IcaCert): unknown {
     const obj: any = {}
     message.signer !== undefined && (obj.signer = message.signer)
     message.subject !== undefined && (obj.subject = message.subject)
@@ -3158,8 +3158,8 @@ export const MsgRevokeNocX509Cert = {
     return obj
   },
 
-  fromPartial(object: DeepPartial<MsgRevokeNocX509Cert>): MsgRevokeNocX509Cert {
-    const message = { ...baseMsgRevokeNocX509Cert } as MsgRevokeNocX509Cert
+  fromPartial(object: DeepPartial<MsgRevokeNocX509IcaCert>): MsgRevokeNocX509IcaCert {
+    const message = { ...baseMsgRevokeNocX509IcaCert } as MsgRevokeNocX509IcaCert
     if (object.signer !== undefined && object.signer !== null) {
       message.signer = object.signer
     } else {
@@ -3204,17 +3204,17 @@ export const MsgRevokeNocX509Cert = {
   }
 }
 
-const baseMsgRevokeNocX509CertResponse: object = {}
+const baseMsgRevokeNocX509IcaCertResponse: object = {}
 
-export const MsgRevokeNocX509CertResponse = {
-  encode(_: MsgRevokeNocX509CertResponse, writer: Writer = Writer.create()): Writer {
+export const MsgRevokeNocX509IcaCertResponse = {
+  encode(_: MsgRevokeNocX509IcaCertResponse, writer: Writer = Writer.create()): Writer {
     return writer
   },
 
-  decode(input: Reader | Uint8Array, length?: number): MsgRevokeNocX509CertResponse {
+  decode(input: Reader | Uint8Array, length?: number): MsgRevokeNocX509IcaCertResponse {
     const reader = input instanceof Uint8Array ? new Reader(input) : input
     let end = length === undefined ? reader.len : reader.pos + length
-    const message = { ...baseMsgRevokeNocX509CertResponse } as MsgRevokeNocX509CertResponse
+    const message = { ...baseMsgRevokeNocX509IcaCertResponse } as MsgRevokeNocX509IcaCertResponse
     while (reader.pos < end) {
       const tag = reader.uint32()
       switch (tag >>> 3) {
@@ -3226,18 +3226,18 @@ export const MsgRevokeNocX509CertResponse = {
     return message
   },
 
-  fromJSON(_: any): MsgRevokeNocX509CertResponse {
-    const message = { ...baseMsgRevokeNocX509CertResponse } as MsgRevokeNocX509CertResponse
+  fromJSON(_: any): MsgRevokeNocX509IcaCertResponse {
+    const message = { ...baseMsgRevokeNocX509IcaCertResponse } as MsgRevokeNocX509IcaCertResponse
     return message
   },
 
-  toJSON(_: MsgRevokeNocX509CertResponse): unknown {
+  toJSON(_: MsgRevokeNocX509IcaCertResponse): unknown {
     const obj: any = {}
     return obj
   },
 
-  fromPartial(_: DeepPartial<MsgRevokeNocX509CertResponse>): MsgRevokeNocX509CertResponse {
-    const message = { ...baseMsgRevokeNocX509CertResponse } as MsgRevokeNocX509CertResponse
+  fromPartial(_: DeepPartial<MsgRevokeNocX509IcaCertResponse>): MsgRevokeNocX509IcaCertResponse {
+    const message = { ...baseMsgRevokeNocX509IcaCertResponse } as MsgRevokeNocX509IcaCertResponse
     return message
   }
 }
@@ -3257,10 +3257,10 @@ export interface Msg {
   AssignVid(request: MsgAssignVid): Promise<MsgAssignVidResponse>
   AddNocX509RootCert(request: MsgAddNocX509RootCert): Promise<MsgAddNocX509RootCertResponse>
   RemoveX509Cert(request: MsgRemoveX509Cert): Promise<MsgRemoveX509CertResponse>
-  AddNocX509Cert(request: MsgAddNocX509Cert): Promise<MsgAddNocX509CertResponse>
-  RevokeNocRootX509Cert(request: MsgRevokeNocRootX509Cert): Promise<MsgRevokeNocRootX509CertResponse>
+  AddNocX509IcaCert(request: MsgAddNocX509IcaCert): Promise<MsgAddNocX509IcaCertResponse>
+  RevokeNocX509RootCert(request: MsgRevokeNocX509RootCert): Promise<MsgRevokeNocX509RootCertResponse>
   /** this line is used by starport scaffolding # proto/tx/rpc */
-  RevokeNocX509Cert(request: MsgRevokeNocX509Cert): Promise<MsgRevokeNocX509CertResponse>
+  RevokeNocX509IcaCert(request: MsgRevokeNocX509IcaCert): Promise<MsgRevokeNocX509IcaCertResponse>
 }
 
 export class MsgClientImpl implements Msg {
@@ -3346,22 +3346,22 @@ export class MsgClientImpl implements Msg {
     return promise.then((data) => MsgRemoveX509CertResponse.decode(new Reader(data)))
   }
 
-  AddNocX509Cert(request: MsgAddNocX509Cert): Promise<MsgAddNocX509CertResponse> {
-    const data = MsgAddNocX509Cert.encode(request).finish()
-    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Msg', 'AddNocX509Cert', data)
-    return promise.then((data) => MsgAddNocX509CertResponse.decode(new Reader(data)))
+  AddNocX509IcaCert(request: MsgAddNocX509IcaCert): Promise<MsgAddNocX509IcaCertResponse> {
+    const data = MsgAddNocX509IcaCert.encode(request).finish()
+    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Msg', 'AddNocX509IcaCert', data)
+    return promise.then((data) => MsgAddNocX509IcaCertResponse.decode(new Reader(data)))
   }
 
-  RevokeNocRootX509Cert(request: MsgRevokeNocRootX509Cert): Promise<MsgRevokeNocRootX509CertResponse> {
-    const data = MsgRevokeNocRootX509Cert.encode(request).finish()
-    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Msg', 'RevokeNocRootX509Cert', data)
-    return promise.then((data) => MsgRevokeNocRootX509CertResponse.decode(new Reader(data)))
+  RevokeNocX509RootCert(request: MsgRevokeNocX509RootCert): Promise<MsgRevokeNocX509RootCertResponse> {
+    const data = MsgRevokeNocX509RootCert.encode(request).finish()
+    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Msg', 'RevokeNocX509RootCert', data)
+    return promise.then((data) => MsgRevokeNocX509RootCertResponse.decode(new Reader(data)))
   }
 
-  RevokeNocX509Cert(request: MsgRevokeNocX509Cert): Promise<MsgRevokeNocX509CertResponse> {
-    const data = MsgRevokeNocX509Cert.encode(request).finish()
-    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Msg', 'RevokeNocX509Cert', data)
-    return promise.then((data) => MsgRevokeNocX509CertResponse.decode(new Reader(data)))
+  RevokeNocX509IcaCert(request: MsgRevokeNocX509IcaCert): Promise<MsgRevokeNocX509IcaCertResponse> {
+    const data = MsgRevokeNocX509IcaCert.encode(request).finish()
+    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Msg', 'RevokeNocX509IcaCert', data)
+    return promise.then((data) => MsgRevokeNocX509IcaCertResponse.decode(new Reader(data)))
   }
 }
 

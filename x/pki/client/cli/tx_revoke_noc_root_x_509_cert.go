@@ -16,7 +16,7 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdRevokeNocRootX509Cert() *cobra.Command {
+func CmdRevokeNocX509RootCert() *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "revoke-noc-x509-root-cert",
 		Short: "Revokes the given noc root certificate. " +
@@ -36,7 +36,7 @@ func CmdRevokeNocRootX509Cert() *cobra.Command {
 			infoArg := viper.GetString(FlagInfo)
 			schemaVersion := viper.GetUint32(common.FlagSchemaVersion)
 
-			msg := types.NewMsgRevokeNocRootX509Cert(
+			msg := types.NewMsgRevokeNocX509RootCert(
 				clientCtx.GetFromAddress().String(),
 				subject,
 				subjectKeyID,
