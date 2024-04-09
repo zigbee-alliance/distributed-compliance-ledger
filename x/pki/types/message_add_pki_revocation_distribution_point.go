@@ -1,6 +1,8 @@
 package types
 
 import (
+	"crypto/ecdsa"
+	"crypto/elliptic"
 	x509std "crypto/x509"
 	"encoding/asn1"
 	"strings"
@@ -15,6 +17,8 @@ import (
 const TypeMsgAddPkiRevocationDistributionPoint = "add_pki_revocation_distribution_point"
 
 var _ sdk.Msg = &MsgAddPkiRevocationDistributionPoint{}
+
+var oidKeyUsage = asn1.ObjectIdentifier{2, 5, 29, 15}
 
 func NewMsgAddPkiRevocationDistributionPoint(signer string, vid int32, pid int32, isPAA bool, label string,
 	crlSignerCertificate string, crlSignerDelegator string, issuerSubjectKeyID string, dataURL string, dataFileSize uint64, dataDigest string,
@@ -67,7 +71,7 @@ func (msg *MsgAddPkiRevocationDistributionPoint) verifyPAA(cert *x509.Certificat
 
 	pid, _ := x509.GetPidFromSubject(cert.SubjectAsText)
 	if pid != 0 {
-		return pkitypes.NewErrNotEmptyPidForNonRootCertificate()
+		return pkitypes.NewErrNotEmptyPidForRootCertificate()
 	}
 
 	// verify VID
@@ -137,23 +141,40 @@ func VerifyCRLSignerCertFormat(certificate *x509.Certificate) error {
 
 	cert := certificate.Certificate
 	if cert.Version != 3 {
-		return pkitypes.NewErrCRLSignerCertificateInvalidFormat()
+		return pkitypes.NewErrCRLSignerCertificateInvalidFormat(
+			"The version field SHALL be set to 2 to indicate v3 certificate",
+		)
 	}
 
 	if cert.SignatureAlgorithm != x509std.ECDSAWithSHA256 {
-		return pkitypes.NewErrCRLSignerCertificateInvalidFormat()
+		return pkitypes.NewErrCRLSignerCertificateInvalidFormat(
+			"The signature field SHALL contain the identifier for signatureAlgorithm ecdsa-with-SHA256",
+		)
 	}
 
-	if cert.PublicKeyAlgorithm != x509std.ECDSA {
-		return pkitypes.NewErrCRLSignerCertificateInvalidFormat()
+	// Type assert to get the ECDSA public key
+	ecdsaPubKey, ok := cert.PublicKey.(*ecdsa.PublicKey)
+	if !ok {
+		return pkitypes.NewErrCRLSignerCertificateInvalidFormat(
+			"Public key is not of type ECDSA",
+		)
 	}
+
+	// Check if the curve parameters match prime256v1 (secp256r1 / P-256)
+	if ecdsaPubKey.Curve != elliptic.P256() {
+		return pkitypes.NewErrCRLSignerCertificateInvalidFormat(
+			"The public key must use prime256v1 curve",
+		)
+	}
+
 	// Basic Constraint extension should be marked critical and have the cA field set to false
 	if !cert.BasicConstraintsValid || cert.IsCA {
-		return pkitypes.NewErrCRLSignerCertificateInvalidFormat()
+		return pkitypes.NewErrCRLSignerCertificateInvalidFormat(
+			"Basic Constraint extension's cA field SHALL be set to FALSE",
+		)
 	}
 
 	// Key Usage extension should be marked critical
-	oidKeyUsage := asn1.ObjectIdentifier{2, 5, 29, 15}
 	isCritical := false
 	for _, ext := range cert.Extensions {
 		if ext.Id.Equal(oidKeyUsage) {
@@ -162,15 +183,17 @@ func VerifyCRLSignerCertFormat(certificate *x509.Certificate) error {
 			break
 		}
 	}
+
 	if !isCritical {
-		return pkitypes.NewErrCRLSignerCertificateInvalidFormat()
+		return pkitypes.NewErrCRLSignerCertificateInvalidFormat("Basic Constraint extension SHALL be marked critical")
 	}
 
 	if cert.KeyUsage&x509std.KeyUsageCRLSign == 0 {
-		return pkitypes.NewErrCRLSignerCertificateInvalidFormat()
+		return pkitypes.NewErrCRLSignerCertificateInvalidFormat("The cRLSign bits SHALL be set in the KeyUsage bitstring")
 	}
+
 	if cert.KeyUsage&^(x509std.KeyUsageCRLSign|x509std.KeyUsageDigitalSignature) != 0 {
-		return pkitypes.NewErrCRLSignerCertificateInvalidFormat()
+		return pkitypes.NewErrCRLSignerCertificateInvalidFormat("The KeyUsage bitstring can only include the cRLSign and digitalSignature bits")
 	}
 
 	return nil
@@ -248,7 +271,7 @@ func (msg *MsgAddPkiRevocationDistributionPoint) verifyFields() error {
 	match := VerifyRevocationPointIssuerSubjectKeyIDFormat(msg.IssuerSubjectKeyID)
 
 	if !match {
-		return pkitypes.NewErrWrongSubjectKeyIDFormat()
+		return pkitypes.NewErrWrongIssuerSubjectKeyIDFormat()
 	}
 
 	return nil

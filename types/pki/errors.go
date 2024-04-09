@@ -233,10 +233,10 @@ func NewErrRootCertVidNotEqualToAccountVid(rootVID int32, accountVID int32) erro
 		rootVID, accountVID)
 }
 
-func NewErrCRLSignerCertificateInvalidFormat() error {
+func NewErrCRLSignerCertificateInvalidFormat(description string) error {
 	return sdkerrors.Wrapf(
-		ErrCRLSignerCertificateInvalidFormat,
-		"Invalid CRL Signer Certificate format",
+		ErrCRLSignerCertificateInvalidFormat, "Invalid CRL Signer Certificate format: %v",
+		description,
 	)
 }
 
@@ -298,6 +298,14 @@ func NewErrDataFieldPresented(revocationType uint32) error {
 }
 
 func NewErrWrongSubjectKeyIDFormat() error {
+	return sdkerrors.Wrapf(
+		ErrWrongSubjectKeyIDFormat,
+		"Wrong SubjectKeyID format. It must consist of even number of uppercase hexadecimal characters ([0-9A-F]), "+
+			"with no whitespace and no non-hexadecimal characters",
+	)
+}
+
+func NewErrWrongIssuerSubjectKeyIDFormat() error {
 	return sdkerrors.Wrapf(
 		ErrWrongSubjectKeyIDFormat,
 		"Wrong IssuerSubjectKeyID format. It must consist of even number of uppercase hexadecimal characters ([0-9A-F]), "+

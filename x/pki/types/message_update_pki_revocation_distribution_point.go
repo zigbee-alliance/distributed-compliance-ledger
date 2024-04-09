@@ -103,7 +103,7 @@ func (msg *MsgUpdatePkiRevocationDistributionPoint) ValidateBasic() error {
 	match := VerifyRevocationPointIssuerSubjectKeyIDFormat(msg.IssuerSubjectKeyID)
 
 	if !match {
-		return pkitypes.NewErrWrongSubjectKeyIDFormat()
+		return pkitypes.NewErrWrongIssuerSubjectKeyIDFormat()
 	}
 
 	return nil

@@ -1058,7 +1058,7 @@ If `crlSignerCertificate` is a PAA (root certificate), then it must be present o
 If `crlSignerCertificate` is a PAI (intermediate certificate) or delegated by PAA, then it must be chained back to a valid PAA (root certificate) present on DCL.
 In this case `crlSignerCertificate` is not required to be present on DCL, and will not be added to DCL as a result of this transaction.
 If PAI needs to be added to DCL, it should be done via [ADD_X509_CERT](#add_x509_cert) transaction.
-If the `crlSignerCertificate` is delegated by a PAI, the delegator certificate must be provided using the `certificate-delegator` field. 
+If the `crlSignerCertificate` is delegated by a PAI, the delegator certificate must be provided using the `crlSignerDelegator` field.
 Additionally, the `crlSignerCertificate` must be chained back to the PAA through the delegator certificate, the PAA must be present on the DCL.
 
 Publishing the revocation distribution endpoint doesn't automatically remove PAI (Intermediate certificates)
@@ -1074,8 +1074,8 @@ and DACs (leaf certificates) added to DCL if they are revoked in the CRL identif
   - pid: `optional(uint16)` -  Product ID (positive non-zero). Must be empty if `IsPAA` is true. Must be equal to a `pid` field in `CRLSignerCertificate`.
   - isPAA: `bool` -  True if the revocation information distribution point relates to a PAA
   - label: `string` -  A label to disambiguate multiple revocation information partitions of a particular issuer.
-  - certificate: `string` - The issuer certificate whose revocation information is provided in the distribution point entry, encoded in X.509v3 PEM format. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data.
-  - certificate-delegator: `optional(string)` - The delegator certificate of CRL signer Certificate which must be chained back to approved certificate in the ledger, encoded in X.509v3 PEM format. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data.
+  - crlSignerCertificate: `string` - The issuer certificate whose revocation information is provided in the distribution point entry, encoded in X.509v3 PEM format. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data. Please note that if crlSignerCertificate is a delegated certificate by a PAI, the delegator certificate must be provided using the `crlSignerDelegator` field.
+  - crlSignerDelegator: `optional(string)` - If crlSignerCertificate is a delegated certificate by a PAI, then crlSignerDelegator must contain the delegator PAI certificate which must be chained back to an approved certificate in the ledger, encoded in X.509v3 PEM format. Otherwise this field can be omitted. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data.
   - issuerSubjectKeyID: `string` - Uniquely identifies the PAA or PAI for which this revocation distribution point is provided. Must consist of even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters., e.g: `5A880E6C3653D07FB08971A3F473790930E62BDB`.
   - dataUrl: `string` -  The URL where to obtain the information in the format indicated by the RevocationType field. Must start with either `http` or `https`. Must be unique for all pairs of VendorID and IssuerSubjectKeyID.
   - dataFileSize: `optional(uint64)` -  Total size in bytes of the file found at the DataUrl. Must be omitted if RevocationType is 1.
@@ -1088,7 +1088,7 @@ and DACs (leaf certificates) added to DCL if they are revoked in the CRL identif
   - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>/<vid>/<label>`-> Revocation Distribution Point
 - CLI command:
   - `dcld tx pki add-revocation-point --vid=<uint16> --pid=<uint16> --issuer-subject-key-id=<string> --is-paa=<bool> --label=<string>
-    --certificate=<string-or-path> --data-url=<string> --revocation-type=1 --from=<account>`
+    --certificate=<string-or-path> --certificate-delegator=<string-or-path> --data-url=<string> --revocation-type=1 --from=<account>`
 
 #### ASSIGN_VID
 
@@ -1119,8 +1119,8 @@ Updates an existing PKI Revocation distribution endpoint (such as RFC5280 Certif
   - vid: `uint16` -  Vendor ID (positive non-zero). Must be the same as Vendor account's VID and `vid` field in the VID-scoped `CRLSignerCertificate`. Must be the same as a `vid` associated with non-VID scoped `CRLSignerCertificate` on the ledger.
   - label: `string` -  A label to disambiguate multiple revocation information partitions of a particular issuer.
   - issuerSubjectKeyID: `string` - Uniquely identifies the PAA or PAI for which this revocation distribution point is provided. Must consist of even number of uppercase hexadecimal characters ([0-9A-F]), with no whitespace and no non-hexadecimal characters., e.g: `5A880E6C3653D07FB08971A3F473790930E62BDB`.
-  - certificate: `optional(string)` - The issuer certificate whose revocation information is provided in the distribution point entry, encoded in X.509v3 PEM format. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data.
-  - certificate-delegator: `optional(string)` - The delegator certificate of CRL signer Certificate which must be chained back to approved certificate in the ledger, encoded in X.509v3 PEM format. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data.
+  - crlSignerCertificate: `optional(string)` - The issuer certificate whose revocation information is provided in the distribution point entry, encoded in X.509v3 PEM format. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data. Please note that if crlSignerCertificate is a delegated certificate by a PAI, the delegator certificate must be provided using the `crlSignerDelegator` field.
+  - crlSignerDelegator: `optional(string)` - If crlSignerCertificate is a delegated certificate by a PAI, then crlSignerDelegator must contain the delegator PAI certificate which must be chained back to an approved certificate in the ledger, encoded in X.509v3 PEM format. Otherwise this field can be omitted. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data.
   - dataUrl: `optional(string)` -  The URL where to obtain the information in the format indicated by the RevocationType field. Must start with either `http` or `https`. Must be unique for all pairs of VendorID and IssuerSubjectKeyID.
   - dataFileSize: `optional(uint64)` -  Total size in bytes of the file found at the DataUrl. Must be omitted if RevocationType is 1.
   - dataDigest: `optional(string)` -  Digest of the entire contents of the associated file downloaded from the DataUrl. Must be omitted if RevocationType is 1. Must be provided if and only if the `DataFileSize` field is present.
@@ -1131,7 +1131,7 @@ Updates an existing PKI Revocation distribution endpoint (such as RFC5280 Certif
   - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>/<vid>/<label>` -> Revocation Distribution Point
 - CLI command:
   - `dcld tx pki update-revocation-point --vid=<uint16> --issuer-subject-key-id=<string> --label=<string>
-    --data-url=<string> --certificate=<string-or-path> --from=<account>`
+    --data-url=<string> --certificate=<string-or-path> --certificate-delegator=<string-or-path> --from=<account>`
 
 ### DELETE_DELETE_PKI_REVOCATION_DISTRIBUTION_POINT
 
