@@ -3203,7 +3203,7 @@ export interface Query {
   NocRootCertificatesAll(request: QueryAllNocRootCertificatesRequest): Promise<QueryAllNocRootCertificatesResponse>
   /** Queries a NocIcaCertificates by index. */
   NocIcaCertificates(request: QueryGetNocIcaCertificatesRequest): Promise<QueryGetNocIcaCertificatesResponse>
-  /** Queries a list of NocCertificates items. */
+  /** Queries a list of NocIcaCertificates items. */
   NocIcaCertificatesAll(request: QueryAllNocIcaCertificatesRequest): Promise<QueryAllNocIcaCertificatesResponse>
   /** Queries a RevokedNocRootCertificates by index. */
   RevokedNocRootCertificates(request: QueryGetRevokedNocRootCertificatesRequest): Promise<QueryGetRevokedNocRootCertificatesResponse>

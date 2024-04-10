@@ -108,7 +108,7 @@ export const GenesisState = {
     message.approvedCertificatesBySubjectList = []
     message.rejectedCertificateList = []
     message.PkiRevocationDistributionPointList = []
-    message.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList = []
+    message.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList = []
     message.approvedCertificatesBySubjectKeyIdList = []
     message.nocRootCertificatesList = []
     message.nocIcaCertificatesList = []
@@ -150,7 +150,7 @@ export const GenesisState = {
           message.PkiRevocationDistributionPointList.push(PkiRevocationDistributionPoint.decode(reader, reader.uint32()))
           break
         case 12:
-          message.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList.push(
+          message.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList.push(
             PkiRevocationDistributionPointsByIssuerSubjectKeyID.decode(reader, reader.uint32())
           )
           break
@@ -185,7 +185,7 @@ export const GenesisState = {
     message.approvedCertificatesBySubjectList = []
     message.rejectedCertificateList = []
     message.PkiRevocationDistributionPointList = []
-    message.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList = []
+    message.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList = []
     message.approvedCertificatesBySubjectKeyIdList = []
     message.nocRootCertificatesList = []
     message.nocIcaCertificatesList = []
@@ -250,7 +250,7 @@ export const GenesisState = {
       object.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList !== null
     ) {
       for (const e of object.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList) {
-        message.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList.push(PkiRevocationDistributionPointsByIssuerSubjectKeyID.fromJSON(e))
+        message.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList.push(PkiRevocationDistributionPointsByIssuerSubjectKeyID.fromJSON(e))
       }
     }
     if (object.approvedCertificatesBySubjectKeyIdList !== undefined && object.approvedCertificatesBySubjectKeyIdList !== null) {
@@ -327,12 +327,12 @@ export const GenesisState = {
     } else {
       obj.PkiRevocationDistributionPointList = []
     }
-    if (message.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList) {
-      obj.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList = message.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList.map((e) =>
+    if (message.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList) {
+      obj.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList = message.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList.map((e) =>
         e ? PkiRevocationDistributionPointsByIssuerSubjectKeyID.toJSON(e) : undefined
       )
     } else {
-      obj.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList = []
+      obj.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList = []
     }
     if (message.approvedCertificatesBySubjectKeyIdList) {
       obj.approvedCertificatesBySubjectKeyIdList = message.approvedCertificatesBySubjectKeyIdList.map((e) =>
@@ -370,7 +370,7 @@ export const GenesisState = {
     message.approvedCertificatesBySubjectList = []
     message.rejectedCertificateList = []
     message.PkiRevocationDistributionPointList = []
-    message.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList = []
+    message.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList = []
     message.approvedCertificatesBySubjectKeyIdList = []
     message.nocRootCertificatesList = []
     message.nocIcaCertificatesList = []
@@ -431,11 +431,11 @@ export const GenesisState = {
       }
     }
     if (
-      object.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList !== undefined &&
-      object.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList !== null
+      object.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList !== undefined &&
+      object.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList !== null
     ) {
-      for (const e of object.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList) {
-        message.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList.push(PkiRevocationDistributionPointsByIssuerSubjectKeyID.fromPartial(e))
+      for (const e of object.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList) {
+        message.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList.push(PkiRevocationDistributionPointsByIssuerSubjectKeyID.fromPartial(e))
       }
     }
     if (object.approvedCertificatesBySubjectKeyIdList !== undefined && object.approvedCertificatesBySubjectKeyIdList !== null) {

@@ -69,6 +69,8 @@ export interface PkiPkiRevocationDistributionPoint {
 
   /** @format int64 */
   schemaVersion?: number;
+
+  crlSignerDelegator?: string;
 }
 
 export interface PkiPkiRevocationDistributionPointsByIssuerSubjectKeyID {
@@ -130,6 +132,9 @@ export interface PkiRevokedNocRootCertificates {
   subject?: string;
   subjectKeyId?: string;
   certs?: PkiCertificate[];
+
+    /** @format int64 */
+    schemaVersion?: number;
 }
 
 export interface PkiRevokedRootCertificates {

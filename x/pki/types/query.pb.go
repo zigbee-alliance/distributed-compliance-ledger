@@ -2505,7 +2505,7 @@ type QueryClient interface {
 	NocRootCertificatesAll(ctx context.Context, in *QueryAllNocRootCertificatesRequest, opts ...grpc.CallOption) (*QueryAllNocRootCertificatesResponse, error)
 	// Queries a NocIcaCertificates by index.
 	NocIcaCertificates(ctx context.Context, in *QueryGetNocIcaCertificatesRequest, opts ...grpc.CallOption) (*QueryGetNocIcaCertificatesResponse, error)
-	// Queries a list of NocCertificates items.
+	// Queries a list of NocIcaCertificates items.
 	NocIcaCertificatesAll(ctx context.Context, in *QueryAllNocIcaCertificatesRequest, opts ...grpc.CallOption) (*QueryAllNocIcaCertificatesResponse, error)
 	// Queries a RevokedNocRootCertificates by index.
 	RevokedNocRootCertificates(ctx context.Context, in *QueryGetRevokedNocRootCertificatesRequest, opts ...grpc.CallOption) (*QueryGetRevokedNocRootCertificatesResponse, error)
@@ -2770,7 +2770,7 @@ type QueryServer interface {
 	NocRootCertificatesAll(context.Context, *QueryAllNocRootCertificatesRequest) (*QueryAllNocRootCertificatesResponse, error)
 	// Queries a NocIcaCertificates by index.
 	NocIcaCertificates(context.Context, *QueryGetNocIcaCertificatesRequest) (*QueryGetNocIcaCertificatesResponse, error)
-	// Queries a list of NocCertificates items.
+	// Queries a list of NocIcaCertificates items.
 	NocIcaCertificatesAll(context.Context, *QueryAllNocIcaCertificatesRequest) (*QueryAllNocIcaCertificatesResponse, error)
 	// Queries a RevokedNocRootCertificates by index.
 	RevokedNocRootCertificates(context.Context, *QueryGetRevokedNocRootCertificatesRequest) (*QueryGetRevokedNocRootCertificatesResponse, error)

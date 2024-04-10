@@ -99,6 +99,7 @@ export interface MsgAddPkiRevocationDistributionPoint {
   dataDigestType: number
   revocationType: number
   schemaVersion: number
+  crlSignerDelegator: string
 }
 
 export interface MsgAddPkiRevocationDistributionPointResponse {}
@@ -114,6 +115,7 @@ export interface MsgUpdatePkiRevocationDistributionPoint {
   dataDigest: string
   dataDigestType: number
   schemaVersion: number
+  crlSignerDelegator: string
 }
 
 export interface MsgUpdatePkiRevocationDistributionPointResponse {}
@@ -1525,7 +1527,8 @@ const baseMsgAddPkiRevocationDistributionPoint: object = {
   dataDigest: '',
   dataDigestType: 0,
   revocationType: 0,
-  schemaVersion: 0
+  schemaVersion: 0,
+  crlSignerDelegator: ''
 }
 
 export const MsgAddPkiRevocationDistributionPoint = {
@@ -1568,6 +1571,9 @@ export const MsgAddPkiRevocationDistributionPoint = {
     }
     if (message.schemaVersion !== 0) {
       writer.uint32(104).uint32(message.schemaVersion)
+    }
+    if (message.crlSignerDelegator !== '') {
+      writer.uint32(114).string(message.crlSignerDelegator)
     }
     return writer
   },
@@ -1617,6 +1623,9 @@ export const MsgAddPkiRevocationDistributionPoint = {
           break
         case 13:
           message.schemaVersion = reader.uint32()
+          break
+        case 14:
+          message.crlSignerDelegator = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -1693,6 +1702,11 @@ export const MsgAddPkiRevocationDistributionPoint = {
     } else {
       message.schemaVersion = 0
     }
+    if (object.crlSignerDelegator !== undefined && object.crlSignerDelegator !== null) {
+      message.crlSignerDelegator = String(object.crlSignerDelegator)
+    } else {
+      message.crlSignerDelegator = ''
+    }
     return message
   },
 
@@ -1711,6 +1725,7 @@ export const MsgAddPkiRevocationDistributionPoint = {
     message.dataDigestType !== undefined && (obj.dataDigestType = message.dataDigestType)
     message.revocationType !== undefined && (obj.revocationType = message.revocationType)
     message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
+    message.crlSignerDelegator !== undefined && (obj.crlSignerDelegator = message.crlSignerDelegator)
     return obj
   },
 
@@ -1781,6 +1796,11 @@ export const MsgAddPkiRevocationDistributionPoint = {
     } else {
       message.schemaVersion = 0
     }
+    if (object.crlSignerDelegator !== undefined && object.crlSignerDelegator !== null) {
+      message.crlSignerDelegator = object.crlSignerDelegator
+    } else {
+      message.crlSignerDelegator = ''
+    }
     return message
   }
 }
@@ -1833,7 +1853,8 @@ const baseMsgUpdatePkiRevocationDistributionPoint: object = {
   dataFileSize: 0,
   dataDigest: '',
   dataDigestType: 0,
-  schemaVersion: 0
+  schemaVersion: 0,
+  crlSignerDelegator: ''
 }
 
 export const MsgUpdatePkiRevocationDistributionPoint = {
@@ -1867,6 +1888,9 @@ export const MsgUpdatePkiRevocationDistributionPoint = {
     }
     if (message.schemaVersion !== 0) {
       writer.uint32(80).uint32(message.schemaVersion)
+    }
+    if (message.crlSignerDelegator !== '') {
+      writer.uint32(90).string(message.crlSignerDelegator)
     }
     return writer
   },
@@ -1907,6 +1931,9 @@ export const MsgUpdatePkiRevocationDistributionPoint = {
           break
         case 10:
           message.schemaVersion = reader.uint32()
+          break
+        case 11:
+          message.crlSignerDelegator = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -1968,6 +1995,11 @@ export const MsgUpdatePkiRevocationDistributionPoint = {
     } else {
       message.schemaVersion = 0
     }
+    if (object.crlSignerDelegator !== undefined && object.crlSignerDelegator !== null) {
+      message.crlSignerDelegator = String(object.crlSignerDelegator)
+    } else {
+      message.crlSignerDelegator = ''
+    }
     return message
   },
 
@@ -1983,6 +2015,7 @@ export const MsgUpdatePkiRevocationDistributionPoint = {
     message.dataDigest !== undefined && (obj.dataDigest = message.dataDigest)
     message.dataDigestType !== undefined && (obj.dataDigestType = message.dataDigestType)
     message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
+    message.crlSignerDelegator !== undefined && (obj.crlSignerDelegator = message.crlSignerDelegator)
     return obj
   },
 
@@ -2037,6 +2070,11 @@ export const MsgUpdatePkiRevocationDistributionPoint = {
       message.schemaVersion = object.schemaVersion
     } else {
       message.schemaVersion = 0
+    }
+    if (object.crlSignerDelegator !== undefined && object.crlSignerDelegator !== null) {
+      message.crlSignerDelegator = object.crlSignerDelegator
+    } else {
+      message.crlSignerDelegator = ''
     }
     return message
   }

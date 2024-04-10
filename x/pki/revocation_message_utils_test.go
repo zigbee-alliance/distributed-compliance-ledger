@@ -66,6 +66,20 @@ func createAddRevocationMessageWithPAACertNoVid(signer string, vid int32) *types
 	}
 }
 
+func createAddRevocationMessageWithLeafCertWithVid(signer string) *types.MsgAddPkiRevocationDistributionPoint {
+	return &types.MsgAddPkiRevocationDistributionPoint{
+		Signer:               signer,
+		Vid:                  testconstants.LeafCertWithVidVid,
+		IsPAA:                false,
+		CrlSignerCertificate: testconstants.LeafCertWithVid,
+		CrlSignerDelegator:   testconstants.IntermediateCertWithVid1,
+		Label:                label,
+		DataURL:              testconstants.DataURL,
+		IssuerSubjectKeyID:   testconstants.IntermediateCertWithVid1SubjectKeyIDWithoutColumns,
+		RevocationType:       types.CRLRevocationType,
+	}
+}
+
 func assertRevocationPointEqual(t *testing.T, expected *types.MsgAddPkiRevocationDistributionPoint, actual *types.PkiRevocationDistributionPoint) {
 	require.Equal(t, expected.CrlSignerCertificate, actual.CrlSignerCertificate)
 	require.Equal(t, expected.CrlSignerCertificate, actual.CrlSignerCertificate)
