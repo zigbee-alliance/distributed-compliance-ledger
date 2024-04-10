@@ -1,6 +1,8 @@
 package types
 
 import (
+	"crypto/ecdsa"
+	"crypto/elliptic"
 	x509std "crypto/x509"
 	"fmt"
 	"testing"
@@ -598,9 +600,11 @@ func TestMsgAddPkiRevocationDistributionPoint_verifyCRLCertFormat(t *testing.T) 
 			err: pkitypes.ErrCRLSignerCertificateInvalidFormat,
 		},
 		{
-			name: "PublicKeyAlgorithm is not ECDSA",
+			name: "PublicKey is not use prime256v1 curve",
 			init: func(certificate *x509.Certificate) {
-				certificate.Certificate.PublicKeyAlgorithm = x509std.Ed25519
+				ecdsaPubKey, _ := certificate.Certificate.PublicKey.(*ecdsa.PublicKey)
+				ecdsaPubKey.Curve = elliptic.P224()
+				certificate.Certificate.PublicKey = ecdsaPubKey
 			},
 			err: pkitypes.ErrCRLSignerCertificateInvalidFormat,
 		},
