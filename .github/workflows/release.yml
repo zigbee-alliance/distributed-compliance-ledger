@@ -40,7 +40,7 @@ jobs:
       - name: Get current version
         id: current_version
         run: |
-          git fetch --all --tags
+          git fetch --all --tags -f
           tag="$(git describe --tags --exact-match)"
           echo "::set-output name=version::${tag#v}"
         shell: bash
