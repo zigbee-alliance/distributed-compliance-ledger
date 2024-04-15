@@ -113,8 +113,8 @@ func (k msgServer) RevokeChildCertificates(ctx sdk.Context, issuer string, autho
 		k.AddRevokedCertificates(ctx, certificates, schemaVersion)
 		// FIXME: Below two lines is not in the context of RevokeChildCertificates method. In future current implementation must be refactored
 		if len(certificates.Certs) > 0 {
-			// If cert is NOC then remove it from NOC certificates list
-			k.RemoveNocCertificate(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId, certificates.Certs[0].Vid)
+			// If cert is NOC then remove it from NOC ICA certificates list
+			k.RemoveNocIcaCertificate(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId, certificates.Certs[0].Vid)
 		}
 		k.RemoveApprovedCertificates(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
 

@@ -1,15 +1,20 @@
 package types
 
 import (
-	fmt "fmt"
+	"crypto/ecdsa"
+	"crypto/elliptic"
+	x509std "crypto/x509"
+	"fmt"
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
+
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/sample"
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/x509"
 )
 
 func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
@@ -366,20 +371,6 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			err: pkitypes.ErrNonRootCertificateSelfSigned,
 		},
 		{
-			name: "IsPAA true, certificate is non-root",
-			msg: MsgAddPkiRevocationDistributionPoint{
-				Signer:               sample.AccAddress(),
-				Vid:                  testconstants.Vid,
-				IsPAA:                true,
-				CrlSignerCertificate: testconstants.IntermediateCertPem,
-				Label:                "label",
-				DataURL:              testconstants.DataURL,
-				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
-				RevocationType:       1,
-			},
-			err: pkitypes.ErrRootCertificateIsNotSelfSigned,
-		},
-		{
 			name: "PAA is true, CRL signer certificate contains vid != msg.vid",
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
@@ -461,12 +452,12 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "minimal msg isPAA true",
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  testconstants.PAACertWithNumericVidVid,
+				Vid:                  testconstants.LeafCertWithVidVid,
 				IsPAA:                true,
-				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
+				CrlSignerCertificate: testconstants.LeafCertWithVid,
 				Label:                "label",
 				DataURL:              testconstants.DataURL,
-				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+				IssuerSubjectKeyID:   testconstants.IntermediateCertWithVid1SubjectKeyIDWithoutColumns,
 				RevocationType:       1,
 			},
 		},
@@ -474,13 +465,12 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "minimal msg isPAA false",
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  testconstants.PAICertWithNumericPidVidVid,
+				Vid:                  testconstants.LeafCertWithVidVid,
 				IsPAA:                false,
-				Pid:                  testconstants.PAICertWithNumericPidVidPid,
-				CrlSignerCertificate: testconstants.PAICertWithNumericPidVid,
+				CrlSignerCertificate: testconstants.LeafCertWithVid,
 				Label:                "label",
 				DataURL:              testconstants.DataURL,
-				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+				IssuerSubjectKeyID:   testconstants.IntermediateCertWithVid1SubjectKeyIDWithoutColumns,
 				RevocationType:       1,
 			},
 		},
@@ -488,12 +478,12 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "vid == cert.vid",
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  testconstants.PAACertWithNumericVidVid,
+				Vid:                  testconstants.LeafCertWithVidVid,
 				IsPAA:                true,
-				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
+				CrlSignerCertificate: testconstants.LeafCertWithVid,
 				Label:                "label",
 				DataURL:              testconstants.DataURL,
-				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+				IssuerSubjectKeyID:   testconstants.IntermediateCertWithVid1SubjectKeyIDWithoutColumns,
 				RevocationType:       1,
 			},
 		},
@@ -501,13 +491,13 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			name: "vid == cert.vid, pid == cert.pid",
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
-				Vid:                  testconstants.PAICertWithNumericPidVidVid,
+				Vid:                  testconstants.LeafCertWithVidPidVid,
 				IsPAA:                false,
-				CrlSignerCertificate: testconstants.PAICertWithNumericPidVid,
+				CrlSignerCertificate: testconstants.LeafCertWithVidPid,
 				Label:                "label",
 				DataURL:              testconstants.DataURL,
-				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
-				Pid:                  testconstants.PAICertWithNumericPidVidPid,
+				IssuerSubjectKeyID:   testconstants.IntermediateCertWithVid1SubjectKeyIDWithoutColumns,
+				Pid:                  testconstants.LeafCertWithVidPidPid,
 				RevocationType:       1,
 			},
 		},
@@ -530,10 +520,10 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 				Signer:               sample.AccAddress(),
 				Vid:                  testconstants.Vid,
 				IsPAA:                true,
-				CrlSignerCertificate: testconstants.RootCertPem,
+				CrlSignerCertificate: testconstants.LeafCertWithoutVidPid,
 				Label:                "label",
 				DataURL:              testconstants.DataURL,
-				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+				IssuerSubjectKeyID:   testconstants.IntermediateCertWithVid1SubjectKeyIDWithoutColumns,
 				RevocationType:       1,
 			},
 		},
@@ -581,4 +571,83 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			require.NoError(t, err)
 		})
 	}
+}
+func TestMsgAddPkiRevocationDistributionPoint_verifyCRLCertFormat(t *testing.T) {
+	negativeTests := []struct {
+		name string
+		init func(*x509.Certificate)
+		err  error
+	}{
+		{
+			name: "empty subject-key-id",
+			init: func(certificate *x509.Certificate) {
+				certificate.SubjectKeyID = ""
+			},
+			err: pkitypes.ErrWrongSubjectKeyIDFormat,
+		},
+		{
+			name: "version is not v3",
+			init: func(certificate *x509.Certificate) {
+				certificate.Certificate.Version = 2
+			},
+			err: pkitypes.ErrCRLSignerCertificateInvalidFormat,
+		},
+		{
+			name: "SignatureAlgorithm is not ECDSAWithSHA256",
+			init: func(certificate *x509.Certificate) {
+				certificate.Certificate.SignatureAlgorithm = x509std.ECDSAWithSHA384
+			},
+			err: pkitypes.ErrCRLSignerCertificateInvalidFormat,
+		},
+		{
+			name: "PublicKey is not use prime256v1 curve",
+			init: func(certificate *x509.Certificate) {
+				ecdsaPubKey, _ := certificate.Certificate.PublicKey.(*ecdsa.PublicKey)
+				ecdsaPubKey.Curve = elliptic.P224()
+				certificate.Certificate.PublicKey = ecdsaPubKey
+			},
+			err: pkitypes.ErrCRLSignerCertificateInvalidFormat,
+		},
+		{
+			name: "Key Usage extension is not critical",
+			init: func(certificate *x509.Certificate) {
+				certificate.Certificate.Extensions[3].Critical = false
+			},
+			err: pkitypes.ErrCRLSignerCertificateInvalidFormat,
+		},
+		{
+			name: "The cRLSign bits is not in the KeyUsage bitstring",
+			init: func(certificate *x509.Certificate) {
+				certificate.Certificate.KeyUsage = x509std.KeyUsageCertSign
+			},
+			err: pkitypes.ErrCRLSignerCertificateInvalidFormat,
+		},
+		{
+			name: "Other Key Usage bits expect KeyUsageCRLSign and KeyUsageDigitalSignature is not be set",
+			init: func(certificate *x509.Certificate) {
+				certificate.Certificate.KeyUsage = x509std.KeyUsageCertSign | x509std.KeyUsageCRLSign | x509std.KeyUsageDigitalSignature
+			},
+			err: pkitypes.ErrCRLSignerCertificateInvalidFormat,
+		},
+	}
+
+	for _, tt := range negativeTests {
+		t.Run(tt.name, func(t *testing.T) {
+			cert, err := x509.DecodeX509Certificate(testconstants.LeafCertWithVid)
+			require.NoError(t, err)
+
+			tt.init(cert)
+
+			err = VerifyCRLSignerCertFormat(cert)
+			require.Error(t, err)
+			require.ErrorIs(t, err, tt.err)
+		})
+	}
+
+	// Positive case
+	cert, err := x509.DecodeX509Certificate(testconstants.LeafCertWithVid)
+	require.NoError(t, err)
+
+	err = VerifyCRLSignerCertFormat(cert)
+	require.NoError(t, err)
 }

@@ -9297,17 +9297,17 @@ paths:
           type: string
       tags:
         - Query
-  /dcl/pki/noc-certificates:
+  /dcl/pki/noc-ica-certificates:
     get:
-      summary: Queries a list of NocCertificates items.
-      operationId: NocCertificatesAll
+      summary: Queries a list of NocIcaCertificates items.
+      operationId: NocIcaCertificatesAll
       responses:
         '200':
           description: A successful response.
           schema:
             type: object
             properties:
-              nocCertificates:
+              nocIcaCertificates:
                 type: array
                 items:
                   type: object
@@ -9482,17 +9482,17 @@ paths:
           type: boolean
       tags:
         - Query
-  /dcl/pki/noc-certificates/{vid}:
+  /dcl/pki/noc-ica-certificates/{vid}:
     get:
-      summary: Queries a NocCertificates by index.
-      operationId: NocCertificates
+      summary: Queries a NocIcaCertificates by index.
+      operationId: NocIcaCertificates
       responses:
         '200':
           description: A successful response.
           schema:
             type: object
             properties:
-              nocCertificates:
+              nocIcaCertificates:
                 type: object
                 properties:
                   vid:
@@ -10705,6 +10705,8 @@ paths:
                     schemaVersion:
                       type: integer
                       format: int64
+                    crlSignerDelegator:
+                      type: string
               pagination:
                 type: object
                 properties:
@@ -10863,6 +10865,8 @@ paths:
                         schemaVersion:
                           type: integer
                           format: int64
+                        crlSignerDelegator:
+                          type: string
         default:
           description: An unexpected error response.
           schema:
@@ -10935,6 +10939,8 @@ paths:
                   schemaVersion:
                     type: integer
                     format: int64
+                  crlSignerDelegator:
+                    type: string
         default:
           description: An unexpected error response.
           schema:
@@ -21678,7 +21684,7 @@ definitions:
         format: int64
       info:
         type: string
-  zigbeealliance.distributedcomplianceledger.pki.NocCertificates:
+  zigbeealliance.distributedcomplianceledger.pki.NocIcaCertificates:
     type: object
     properties:
       vid:
@@ -21841,6 +21847,8 @@ definitions:
       schemaVersion:
         type: integer
         format: int64
+      crlSignerDelegator:
+        type: string
   zigbeealliance.distributedcomplianceledger.pki.PkiRevocationDistributionPointsByIssuerSubjectKeyID:
     type: object
     properties:
@@ -21881,6 +21889,8 @@ definitions:
             schemaVersion:
               type: integer
               format: int64
+            crlSignerDelegator:
+              type: string
   zigbeealliance.distributedcomplianceledger.pki.ProposedCertificate:
     type: object
     properties:
@@ -22056,10 +22066,10 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
-  zigbeealliance.distributedcomplianceledger.pki.QueryAllNocCertificatesResponse:
+  zigbeealliance.distributedcomplianceledger.pki.QueryAllNocIcaCertificatesResponse:
     type: object
     properties:
-      nocCertificates:
+      nocIcaCertificates:
         type: array
         items:
           type: object
@@ -22284,6 +22294,8 @@ definitions:
             schemaVersion:
               type: integer
               format: int64
+            crlSignerDelegator:
+              type: string
       pagination:
         type: object
         properties:
@@ -22857,10 +22869,10 @@ definitions:
                   type: string
                 subjectKeyId:
                   type: string
-  zigbeealliance.distributedcomplianceledger.pki.QueryGetNocCertificatesResponse:
+  zigbeealliance.distributedcomplianceledger.pki.QueryGetNocIcaCertificatesResponse:
     type: object
     properties:
-      nocCertificates:
+      nocIcaCertificates:
         type: object
         properties:
           vid:
@@ -23029,6 +23041,8 @@ definitions:
           schemaVersion:
             type: integer
             format: int64
+          crlSignerDelegator:
+            type: string
   zigbeealliance.distributedcomplianceledger.pki.QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse:
     type: object
     properties:
@@ -23072,6 +23086,8 @@ definitions:
                 schemaVersion:
                   type: integer
                   format: int64
+                crlSignerDelegator:
+                  type: string
   zigbeealliance.distributedcomplianceledger.pki.QueryGetProposedCertificateResponse:
     type: object
     properties:

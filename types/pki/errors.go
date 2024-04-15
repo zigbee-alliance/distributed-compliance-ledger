@@ -51,6 +51,8 @@ var (
 	ErrCertNotChainedBack                                = errors.Register(ModuleName, 438, "Certificate is not chained back to a root certificate on DCL")
 	ErrCertVidNotEqualAccountVid                         = errors.Register(ModuleName, 439, "account's vid is not equal to certificate vid")
 	ErrCertVidNotEqualToRootVid                          = errors.Register(ModuleName, 440, "certificate's vid is not equal to vid of root certificate ")
+	ErrCRLSignerCertificateInvalidFormat                 = errors.Register(ModuleName, 441, "invalid CRLSignerCertificate certificate")
+	ErrInvalidAuthorityKeyIDFormat                       = errors.Register(ModuleName, 442, "invalid AuthorityKeyID format")
 )
 
 func NewErrUnauthorizedRole(transactionName string, requiredRole types.AccountRole) error {
@@ -233,6 +235,13 @@ func NewErrRootCertVidNotEqualToAccountVid(rootVID int32, accountVID int32) erro
 		rootVID, accountVID)
 }
 
+func NewErrCRLSignerCertificateInvalidFormat(description string) error {
+	return errors.Wrapf(
+		ErrCRLSignerCertificateInvalidFormat, "Invalid CRL Signer Certificate format: %v",
+		description,
+	)
+}
+
 func NewErrCRLSignerCertificatePidNotEqualMsgPid(certificatePid int32, messagePid int32) error {
 	return errors.Wrapf(
 		ErrCRLSignerCertificatePidNotEqualMsgPid,
@@ -293,14 +302,29 @@ func NewErrDataFieldPresented(revocationType uint32) error {
 func NewErrWrongSubjectKeyIDFormat() error {
 	return errors.Wrapf(
 		ErrWrongSubjectKeyIDFormat,
+		"Wrong SubjectKeyID format. It must consist of even number of uppercase hexadecimal characters ([0-9A-F]), "+
+			"with no whitespace and no non-hexadecimal characters",
+	)
+}
+
+func NewErrWrongIssuerSubjectKeyIDFormat() error {
+	return errors.Wrapf(
+		ErrWrongSubjectKeyIDFormat,
 		"Wrong IssuerSubjectKeyID format. It must consist of even number of uppercase hexadecimal characters ([0-9A-F]), "+
 			"with no whitespace and no non-hexadecimal characters",
 	)
 }
 
+func NewErrInvalidAuthorityKeyIDFormat() error {
+	return errors.Wrapf(
+		ErrInvalidAuthorityKeyIDFormat,
+		"Invalid AuthorityKeyID format. It must consist of even number of uppercase hexadecimal characters ([0-9A-F]), "+
+			"with no whitespace and no non-hexadecimal characters",
+	)
+}
+
 func NewErrVidNotFound(e interface{}) error {
-	return errors.Wrapf(ErrVidNotFound, "%v",
-		e)
+	return errors.Wrapf(ErrVidNotFound, "%v", e)
 }
 
 func NewErrPidNotFoundInCertificateButProvidedInRevocationPoint() error {
@@ -388,4 +412,12 @@ func NewErrCertificateVidNotEqualMsgVid(e interface{}) error {
 
 func NewErrCertNotChainedBack() error {
 	return errors.Wrapf(ErrCertNotChainedBack, "CRL Signer Certificate is not chained back to root certificate on DCL")
+}
+
+func NewErrCRLSignerCertNotChainedBackToDelegator() error {
+	return errors.Wrapf(ErrCertNotChainedBack, "CRL Signer Certificate is not chained back to delegated PAI CRL Signer certificate")
+}
+
+func NewErrCRLSignerCertDelegatorNotChainedBack() error {
+	return errors.Wrapf(ErrCertNotChainedBack, "Delegated CRL Signer Certificate is not chained back to root certificate on DCL")
 }

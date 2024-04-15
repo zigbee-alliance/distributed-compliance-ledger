@@ -10,12 +10,12 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
 
-const TypeMsgRevokeNocRootX509Cert = "revoke_noc_root_x_509_cert"
+const TypeMsgRevokeNocX509IcaCert = "revoke_noc_x_509_ica_cert"
 
-var _ sdk.Msg = &MsgRevokeNocRootX509Cert{}
+var _ sdk.Msg = &MsgRevokeNocX509IcaCert{}
 
-func NewMsgRevokeNocRootX509Cert(signer, subject, subjectKeyID, serialNumber, info string, revokeChild bool, schemaVersion uint32) *MsgRevokeNocRootX509Cert {
-	return &MsgRevokeNocRootX509Cert{
+func NewMsgRevokeNocX509IcaCert(signer, subject, subjectKeyID, serialNumber, info string, revokeChild bool, schemaVersion uint32) *MsgRevokeNocX509IcaCert {
+	return &MsgRevokeNocX509IcaCert{
 		Signer:        signer,
 		Subject:       subject,
 		SubjectKeyId:  subjectKeyID,
@@ -27,15 +27,15 @@ func NewMsgRevokeNocRootX509Cert(signer, subject, subjectKeyID, serialNumber, in
 	}
 }
 
-func (msg *MsgRevokeNocRootX509Cert) Route() string {
+func (msg *MsgRevokeNocX509IcaCert) Route() string {
 	return pkitypes.RouterKey
 }
 
-func (msg *MsgRevokeNocRootX509Cert) Type() string {
-	return TypeMsgRevokeNocRootX509Cert
+func (msg *MsgRevokeNocX509IcaCert) Type() string {
+	return TypeMsgRevokeNocX509IcaCert
 }
 
-func (msg *MsgRevokeNocRootX509Cert) GetSigners() []sdk.AccAddress {
+func (msg *MsgRevokeNocX509IcaCert) GetSigners() []sdk.AccAddress {
 	signer, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
 		panic(err)
@@ -44,13 +44,13 @@ func (msg *MsgRevokeNocRootX509Cert) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{signer}
 }
 
-func (msg *MsgRevokeNocRootX509Cert) GetSignBytes() []byte {
+func (msg *MsgRevokeNocX509IcaCert) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
 
 	return sdk.MustSortJSON(bz)
 }
 
-func (msg *MsgRevokeNocRootX509Cert) ValidateBasic() error {
+func (msg *MsgRevokeNocX509IcaCert) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
 		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address (%s)", err)

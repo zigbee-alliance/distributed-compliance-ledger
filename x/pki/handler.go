@@ -72,16 +72,16 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.RemoveX509Cert(sdk.WrapSDKContext(ctx), msg)
 
 			return sdk.WrapServiceResult(ctx, res, err)
-		case *types.MsgAddNocX509Cert:
-			res, err := msgServer.AddNocX509Cert(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgAddNocX509IcaCert:
+			res, err := msgServer.AddNocX509IcaCert(sdk.WrapSDKContext(ctx), msg)
 
 			return sdk.WrapServiceResult(ctx, res, err)
-		case *types.MsgRevokeNocRootX509Cert:
-			res, err := msgServer.RevokeNocRootX509Cert(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgRevokeNocX509RootCert:
+			res, err := msgServer.RevokeNocX509RootCert(sdk.WrapSDKContext(ctx), msg)
 
 			return sdk.WrapServiceResult(ctx, res, err)
-		case *types.MsgRevokeNocX509Cert:
-			res, err := msgServer.RevokeNocX509Cert(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgRevokeNocX509IcaCert:
+			res, err := msgServer.RevokeNocX509IcaCert(sdk.WrapSDKContext(ctx), msg)
 
 			return sdk.WrapServiceResult(ctx, res, err)
 			// this line is used by starport scaffolding # 1

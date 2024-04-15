@@ -13,7 +13,7 @@ import { PkiRevocationDistributionPoint } from '../pki/pki_revocation_distributi
 import { PkiRevocationDistributionPointsByIssuerSubjectKeyID } from '../pki/pki_revocation_distribution_points_by_issuer_subject_key_id'
 import { ApprovedCertificatesBySubjectKeyId } from '../pki/approved_certificates_by_subject_key_id'
 import { NocRootCertificates } from '../pki/noc_root_certificates'
-import { NocCertificates } from '../pki/noc_certificates'
+import { NocIcaCertificates } from '../pki/noc_ica_certificates'
 import { RevokedNocRootCertificates } from '../pki/revoked_noc_root_certificates'
 import { Writer, Reader } from 'protobufjs/minimal'
 
@@ -35,9 +35,9 @@ export interface GenesisState {
   pkiRevocationDistributionPointsByIssuerSubjectKeyIDList: PkiRevocationDistributionPointsByIssuerSubjectKeyID[]
   approvedCertificatesBySubjectKeyIdList: ApprovedCertificatesBySubjectKeyId[]
   nocRootCertificatesList: NocRootCertificates[]
-  nocCertificatesList: NocCertificates[]
+  nocIcaCertificatesList: NocIcaCertificates[]
+  /** this line is used by starport scaffolding # genesis/proto/state */
   revokedNocRootCertificatesList: RevokedNocRootCertificates[]
-    /** this line is used by starport scaffolding # genesis/proto/state */
 }
 
 const baseGenesisState: object = {}
@@ -86,8 +86,8 @@ export const GenesisState = {
     for (const v of message.nocRootCertificatesList) {
       NocRootCertificates.encode(v!, writer.uint32(114).fork()).ldelim()
     }
-    for (const v of message.nocCertificatesList) {
-      NocCertificates.encode(v!, writer.uint32(122).fork()).ldelim()
+    for (const v of message.nocIcaCertificatesList) {
+      NocIcaCertificates.encode(v!, writer.uint32(122).fork()).ldelim()
     }
     for (const v of message.revokedNocRootCertificatesList) {
       RevokedNocRootCertificates.encode(v!, writer.uint32(130).fork()).ldelim()
@@ -108,10 +108,10 @@ export const GenesisState = {
     message.approvedCertificatesBySubjectList = []
     message.rejectedCertificateList = []
     message.PkiRevocationDistributionPointList = []
-    message.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList = []
+    message.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList = []
     message.approvedCertificatesBySubjectKeyIdList = []
     message.nocRootCertificatesList = []
-    message.nocCertificatesList = []
+    message.nocIcaCertificatesList = []
     message.revokedNocRootCertificatesList = []
     while (reader.pos < end) {
       const tag = reader.uint32()
@@ -150,7 +150,7 @@ export const GenesisState = {
           message.PkiRevocationDistributionPointList.push(PkiRevocationDistributionPoint.decode(reader, reader.uint32()))
           break
         case 12:
-          message.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList.push(
+          message.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList.push(
             PkiRevocationDistributionPointsByIssuerSubjectKeyID.decode(reader, reader.uint32())
           )
           break
@@ -161,7 +161,7 @@ export const GenesisState = {
           message.nocRootCertificatesList.push(NocRootCertificates.decode(reader, reader.uint32()))
           break
         case 15:
-          message.nocCertificatesList.push(NocCertificates.decode(reader, reader.uint32()))
+          message.nocIcaCertificatesList.push(NocIcaCertificates.decode(reader, reader.uint32()))
           break
         case 16:
           message.revokedNocRootCertificatesList.push(RevokedNocRootCertificates.decode(reader, reader.uint32()))
@@ -185,10 +185,10 @@ export const GenesisState = {
     message.approvedCertificatesBySubjectList = []
     message.rejectedCertificateList = []
     message.PkiRevocationDistributionPointList = []
-    message.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList = []
+    message.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList = []
     message.approvedCertificatesBySubjectKeyIdList = []
     message.nocRootCertificatesList = []
-    message.nocCertificatesList = []
+    message.nocIcaCertificatesList = []
     message.revokedNocRootCertificatesList = []
     if (object.approvedCertificatesList !== undefined && object.approvedCertificatesList !== null) {
       for (const e of object.approvedCertificatesList) {
@@ -246,11 +246,11 @@ export const GenesisState = {
       }
     }
     if (
-      object.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList !== undefined &&
-      object.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList !== null
+      object.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList !== undefined &&
+      object.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList !== null
     ) {
-      for (const e of object.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList) {
-        message.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList.push(PkiRevocationDistributionPointsByIssuerSubjectKeyID.fromJSON(e))
+      for (const e of object.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList) {
+        message.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList.push(PkiRevocationDistributionPointsByIssuerSubjectKeyID.fromJSON(e))
       }
     }
     if (object.approvedCertificatesBySubjectKeyIdList !== undefined && object.approvedCertificatesBySubjectKeyIdList !== null) {
@@ -263,9 +263,9 @@ export const GenesisState = {
         message.nocRootCertificatesList.push(NocRootCertificates.fromJSON(e))
       }
     }
-    if (object.nocCertificatesList !== undefined && object.nocCertificatesList !== null) {
-      for (const e of object.nocCertificatesList) {
-        message.nocCertificatesList.push(NocCertificates.fromJSON(e))
+    if (object.nocIcaCertificatesList !== undefined && object.nocIcaCertificatesList !== null) {
+      for (const e of object.nocIcaCertificatesList) {
+        message.nocIcaCertificatesList.push(NocIcaCertificates.fromJSON(e))
       }
     }
     if (object.revokedNocRootCertificatesList !== undefined && object.revokedNocRootCertificatesList !== null) {
@@ -327,12 +327,12 @@ export const GenesisState = {
     } else {
       obj.PkiRevocationDistributionPointList = []
     }
-    if (message.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList) {
-      obj.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList = message.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList.map((e) =>
+    if (message.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList) {
+      obj.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList = message.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList.map((e) =>
         e ? PkiRevocationDistributionPointsByIssuerSubjectKeyID.toJSON(e) : undefined
       )
     } else {
-      obj.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList = []
+      obj.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList = []
     }
     if (message.approvedCertificatesBySubjectKeyIdList) {
       obj.approvedCertificatesBySubjectKeyIdList = message.approvedCertificatesBySubjectKeyIdList.map((e) =>
@@ -346,10 +346,10 @@ export const GenesisState = {
     } else {
       obj.nocRootCertificatesList = []
     }
-    if (message.nocCertificatesList) {
-      obj.nocCertificatesList = message.nocCertificatesList.map((e) => (e ? NocCertificates.toJSON(e) : undefined))
+    if (message.nocIcaCertificatesList) {
+      obj.nocIcaCertificatesList = message.nocIcaCertificatesList.map((e) => (e ? NocIcaCertificates.toJSON(e) : undefined))
     } else {
-      obj.nocCertificatesList = []
+      obj.nocIcaCertificatesList = []
     }
     if (message.revokedNocRootCertificatesList) {
       obj.revokedNocRootCertificatesList = message.revokedNocRootCertificatesList.map((e) => (e ? RevokedNocRootCertificates.toJSON(e) : undefined))
@@ -370,10 +370,10 @@ export const GenesisState = {
     message.approvedCertificatesBySubjectList = []
     message.rejectedCertificateList = []
     message.PkiRevocationDistributionPointList = []
-    message.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList = []
+    message.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList = []
     message.approvedCertificatesBySubjectKeyIdList = []
     message.nocRootCertificatesList = []
-    message.nocCertificatesList = []
+    message.nocIcaCertificatesList = []
     message.revokedNocRootCertificatesList = []
     if (object.approvedCertificatesList !== undefined && object.approvedCertificatesList !== null) {
       for (const e of object.approvedCertificatesList) {
@@ -431,11 +431,11 @@ export const GenesisState = {
       }
     }
     if (
-      object.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList !== undefined &&
-      object.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList !== null
+      object.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList !== undefined &&
+      object.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList !== null
     ) {
-      for (const e of object.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList) {
-        message.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList.push(PkiRevocationDistributionPointsByIssuerSubjectKeyID.fromPartial(e))
+      for (const e of object.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList) {
+        message.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList.push(PkiRevocationDistributionPointsByIssuerSubjectKeyID.fromPartial(e))
       }
     }
     if (object.approvedCertificatesBySubjectKeyIdList !== undefined && object.approvedCertificatesBySubjectKeyIdList !== null) {
@@ -448,9 +448,9 @@ export const GenesisState = {
         message.nocRootCertificatesList.push(NocRootCertificates.fromPartial(e))
       }
     }
-    if (object.nocCertificatesList !== undefined && object.nocCertificatesList !== null) {
-      for (const e of object.nocCertificatesList) {
-        message.nocCertificatesList.push(NocCertificates.fromPartial(e))
+    if (object.nocIcaCertificatesList !== undefined && object.nocIcaCertificatesList !== null) {
+      for (const e of object.nocIcaCertificatesList) {
+        message.nocIcaCertificatesList.push(NocIcaCertificates.fromPartial(e))
       }
     }
     if (object.revokedNocRootCertificatesList !== undefined && object.revokedNocRootCertificatesList !== null) {

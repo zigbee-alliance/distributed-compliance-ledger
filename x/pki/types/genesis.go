@@ -24,7 +24,7 @@ func DefaultGenesis() *GenesisState {
 		PkiRevocationDistributionPointsByIssuerSubjectKeyIDList: []PkiRevocationDistributionPointsByIssuerSubjectKeyID{},
 		ApprovedCertificatesBySubjectKeyIdList:                  []ApprovedCertificatesBySubjectKeyId{},
 		NocRootCertificatesList:                                 []NocRootCertificates{},
-		NocCertificatesList:                                     []NocCertificates{},
+		NocIcaCertificatesList:                                  []NocIcaCertificates{},
 		RevokedNocRootCertificatesList:                          []RevokedNocRootCertificates{},
 		// this line is used by starport scaffolding # genesis/types/default
 	}
@@ -158,8 +158,8 @@ func (gs GenesisState) Validate() error {
 	// Check for duplicated index in nocCertificates
 	nocCertificatesIndexMap := make(map[string]struct{})
 
-	for _, elem := range gs.NocCertificatesList {
-		index := string(NocCertificatesKey(elem.Vid))
+	for _, elem := range gs.NocIcaCertificatesList {
+		index := string(NocIcaCertificatesKey(elem.Vid))
 		if _, ok := nocCertificatesIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for nocCertificates")
 		}
