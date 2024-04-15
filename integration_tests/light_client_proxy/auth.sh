@@ -19,7 +19,7 @@ test_divider
 
 # connect to light client proxy
 dcld config node tcp://localhost:26620
-sleep 20
+sleep 10
 
 echo "Query non existent account"
 result=$(execute_with_retry "dcld query auth account --address=$user_address")

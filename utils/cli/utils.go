@@ -122,7 +122,7 @@ func IsEmptySubtreeRPCError(err error) bool {
 		return false
 	}
 
-	return strings.Contains(rpcerror.Message, "Internal error") && strings.Contains(rpcerror.Data, "Nonexistence proof has empty Left and Right proof")
+	return strings.Contains(rpcerror.Message, "Internal error") && strings.Contains(rpcerror.Data, "nonexistence proof has empty Left and Right proof")
 }
 
 func isEOFError(err error) bool {
