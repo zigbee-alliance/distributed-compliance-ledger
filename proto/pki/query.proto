@@ -17,6 +17,7 @@ import "pki/pki_revocation_distribution_points_by_issuer_subject_key_id.proto";
 import "pki/noc_root_certificates.proto";
 import "pki/noc_ica_certificates.proto";
 import "pki/revoked_noc_root_certificates.proto";
+import "pki/noc_root_certificates_by_vid_and_skid.proto";
 // this line is used by starport scaffolding # 1
 import "gogoproto/gogo.proto";
 
@@ -115,6 +116,11 @@ service Query {
 	// Queries a NocRootCertificates by index.
 	rpc NocRootCertificates(QueryGetNocRootCertificatesRequest) returns (QueryGetNocRootCertificatesResponse) {
 		option (google.api.http).get = "/dcl/pki/noc-root-certificates/{vid}";
+	}
+
+	// Queries a NocRootCertificatesByVidAndSkid by index.
+	rpc NocRootCertificatesByVidAndSkid(QueryGetNocRootCertificatesByVidAndSkidRequest) returns (QueryGetNocRootCertificatesByVidAndSkidResponse) {
+		option (google.api.http).get = "/dcl/pki/noc_root_certificates/{vid}/{subjectKeyId}";
 	}
 
 	// Queries a list of NocRootCertificates items.
@@ -350,6 +356,16 @@ message QueryAllRevokedNocRootCertificatesRequest {
 message QueryAllRevokedNocRootCertificatesResponse {
 	repeated RevokedNocRootCertificates revokedNocRootCertificates = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetNocRootCertificatesByVidAndSkidRequest {
+	int32 vid = 1;
+    string subjectKeyId = 2;
+
+}
+
+message QueryGetNocRootCertificatesByVidAndSkidResponse {
+	NocRootCertificatesByVidAndSkid nocRootCertificatesByVidAndSkid = 1 [(gogoproto.nullable) = false];
 }
 
 // this line is used by starport scaffolding # 3

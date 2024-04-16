@@ -47,12 +47,25 @@ func CmdListNocIcaCertificates() *cobra.Command {
 
 func CmdShowNocIcaCertificates() *cobra.Command {
 	var vid int32
+	var subject string
 	cmd := &cobra.Command{
 		Use:   "noc-x509-ica-certs",
 		Short: "Gets NOC ICA certificates by VID",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
+
+			if subject != "" {
+				var res types.NocRootCertificatesByVidAndSkid
+
+				return cli.QueryWithProof(
+					clientCtx,
+					pkitypes.StoreKey,
+					types.ApprovedCertificatesKeyPrefix,
+					types.NocRootCertificatesByVidAndSkidKey(vid, subject),
+					&res,
+				)
+			}
 
 			var res types.NocIcaCertificates
 
@@ -67,6 +80,7 @@ func CmdShowNocIcaCertificates() *cobra.Command {
 	}
 
 	cmd.Flags().Int32Var(&vid, FlagVid, 0, "Vendor ID (positive non-zero)")
+	cmd.Flags().StringVarP(&subject, FlagSubject, FlagSubjectShortcut, "", "Certificate's subject - optional")
 	flags.AddQueryFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(FlagVid)

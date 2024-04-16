@@ -152,6 +152,16 @@ SubjectKeyId: "0",
 SubjectKeyId: "1",
 },
 },
+NocRootCertificatesByVidAndSkidList: []types.NocRootCertificatesByVidAndSkid{
+	{
+		Vid: 0,
+SubjectKeyId: "0",
+},
+	{
+		Vid: 1,
+SubjectKeyId: "1",
+},
+},
 // this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -352,6 +362,22 @@ SubjectKeyId: "0",
 },
 			{
 				Subject: "0",
+SubjectKeyId: "0",
+},
+		},
+	},
+	valid:    false,
+},
+{
+	desc:     "duplicated nocRootCertificatesByVidAndSkid",
+	genState: &types.GenesisState{
+		NocRootCertificatesByVidAndSkidList: []types.NocRootCertificatesByVidAndSkid{
+			{
+				Vid: 0,
+SubjectKeyId: "0",
+},
+			{
+				Vid: 0,
 SubjectKeyId: "0",
 },
 		},

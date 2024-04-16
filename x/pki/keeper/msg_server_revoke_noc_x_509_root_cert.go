@@ -81,6 +81,16 @@ func (k msgServer) _revokeNocRootCertificates(ctx sdk.Context, certificates type
 	k.RemoveApprovedCertificateBySubject(ctx, certificates.Subject, certificates.SubjectKeyId)
 	// remove from subject key ID -> certificates map
 	k.RemoveApprovedCertificatesBySubjectKeyID(ctx, certificates.Subject, certificates.SubjectKeyId)
+	// remove from vid, subject key ID -> certificates map
+	// remove from vid, subject key ID -> certificates map
+	k._removeCertificatesFromNocRootCertificatesByVidAndSkid(
+		ctx,
+		vid,
+		certificates.SubjectKeyId,
+		func(cert *types.Certificate) bool {
+			return cert.SubjectKeyId != certificates.Subject
+		},
+	)
 }
 
 func (k msgServer) _revokeNocRootCertificate(
@@ -123,5 +133,32 @@ func (k msgServer) _revokeNocRootCertificate(
 		k.RemoveApprovedCertificatesBySubjectKeyIDAndSerialNumber(ctx, cert.Subject, cert.SubjectKeyId, serialNumber)
 	}
 
+	// remove from vid, subject key ID -> certificates map
+	k._removeCertificatesFromNocRootCertificatesByVidAndSkid(
+		ctx,
+		vid,
+		certificates.SubjectKeyId,
+		func(cert *types.Certificate) bool {
+			return cert.SubjectKeyId != certificates.Subject && cert.SerialNumber != serialNumber
+		},
+	)
+
 	return nil
+}
+
+func (k Keeper) _removeCertificatesFromNocRootCertificatesByVidAndSkid(
+	ctx sdk.Context,
+	vid int32,
+	subjectKeyID string,
+	predicate CertificatePredicate,
+) {
+	nocCertificates, _ := k.GetNocRootCertificatesByVidAndSkid(ctx, vid, subjectKeyID)
+	filteredCertificates := filterCertificates(&nocCertificates.Certs, predicate)
+
+	if len(filteredCertificates) > 0 {
+		nocCertificates.Certs = filteredCertificates
+		k.SetNocRootCertificatesByVidAndSkid(ctx, nocCertificates)
+	} else {
+		k.RemoveNocRootCertificatesByVidAndSkid(ctx, vid, subjectKeyID)
+	}
 }
