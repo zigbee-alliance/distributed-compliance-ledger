@@ -124,13 +124,13 @@ create_new_account(){
 
   echo "Jack proposes account for \"$name\" with roles: \"$roles\""
   result=$(echo $passphrase | dcld tx auth propose-add-account --address="$address" --pubkey="$pubkey" --roles=$roles --from jack --yes)
-  result=$(get_txn_result "$result")
+  _result=$(get_txn_result "$_result")
   check_response "$result" "\"code\": 0"
   echo "$result"
 
   echo "Alice approves account for \"$name\" with roles: \"$roles\""
   result=$(echo $passphrase | dcld tx auth approve-add-account --address="$address" --from alice --yes)
-  result=$(get_txn_result "$result")
+  _result=$(get_txn_result "$_result")
   check_response "$result" "\"code\": 0"
   echo "$result"
 }
@@ -153,6 +153,7 @@ create_new_vendor_account(){
     echo "Jack proposes account for \"$_name\" with Vendor role"
     _result=$(echo $passphrase | dcld tx auth propose-add-account --address="$_address" --pubkey="$_pubkey" --roles=Vendor --vid=$_vid --from jack --yes)
   fi
+
   _result=$(get_txn_result "$_result")
   check_response "$_result" "\"code\": 0"
 }
@@ -224,6 +225,7 @@ wait_for_height() {
 
     echo "Waiting for height: $target_height... Current height: ${current_height:-unavailable}, " \
       "wait time: $waited, time limit: $wait_time." &>${_output}
+    docker logs node0 -n 50
   done
 }
 

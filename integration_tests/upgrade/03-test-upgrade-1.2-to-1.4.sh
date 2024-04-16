@@ -19,9 +19,9 @@ source integration_tests/cli/common.sh
 # Upgrade constants
 
 plan_name="v1.4"
-upgrade_checksum="sha256:d65ffe8eb8b2751a6746d5694c027d40f4ebdd0764549cbf6bb83b358138108f"
+upgrade_checksum="sha256:8bca0978f544f0bb45ed71f6e8ae33e84213ecccd6b1ae40833398f5105d2894"
 binary_version_old="v1.2.2"
-binary_version_new="v1.4.0-dev1"
+binary_version_new="v1.4.0-dev2"
 
 wget -O dcld_old "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version_old/dcld"
 chmod ugo+x dcld_old
@@ -467,7 +467,7 @@ test_divider
 
 echo "Get node"
 # FIXME: use proper binary (not dcld but $DCLD_BIN_OLD)
-result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator all-nodes")
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | ./dcld query validator all-nodes")
 check_response "$result" "\"owner\": \"$validator_address\""
 
 ########################################################################################
@@ -540,9 +540,13 @@ result="$(echo $passphrase | $DCLD_BIN_NEW keys add "$vendor_account_for_1_4")"
 _address=$(echo $passphrase | $DCLD_BIN_NEW keys show $vendor_account_for_1_4 -a)
 _pubkey=$(echo $passphrase | $DCLD_BIN_NEW keys show $vendor_account_for_1_4 -p)
 result="$(echo $passphrase | $DCLD_BIN_NEW tx auth propose-add-account --address="$_address" --pubkey="$_pubkey" --vid="$vid_for_1_4" --roles="Vendor" --from "$trustee_account_1" --yes)"
+result=$(get_txn_result "$result")
 result="$(echo $passphrase | $DCLD_BIN_NEW tx auth approve-add-account --address="$_address" --from "$trustee_account_2" --yes)"
+result=$(get_txn_result "$result")
 result="$(echo $passphrase | $DCLD_BIN_NEW tx auth approve-add-account --address="$_address" --from "$trustee_account_3" --yes)"
+result=$(get_txn_result "$result")
 result="$(echo $passphrase | $DCLD_BIN_NEW tx auth approve-add-account --address="$_address" --from "$trustee_account_4" --yes)"
+result=$(get_txn_result "$result")
 
 random_string user_7
 echo "$user_7 generates keys"
@@ -570,12 +574,14 @@ user_9_pubkey=$(echo $passphrase | $DCLD_BIN_NEW keys show $user_9 -p)
 # VENDOR_INFO
 echo "Add vendor $vendor_name_for_1_4"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx vendorinfo add-vendor --vid=$vid_for_1_4 --vendorName=$vendor_name_for_1_4 --companyLegalName=$company_legal_name_for_1_4 --companyPreferredName=$company_preferred_name_for_1_4 --vendorLandingPageURL=$vendor_landing_page_url_for_1_4 --from=$vendor_account_for_1_4 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Update vendor $vendor_name_for_1_2"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx vendorinfo update-vendor --vid=$vid_for_1_2 --vendorName=$vendor_name_for_1_2 --companyLegalName=$company_legal_name_for_1_2 --companyPreferredName=$company_preferred_name_for_1_4 --vendorLandingPageURL=$vendor_landing_page_url_for_1_4 --from=$vendor_account_for_1_2 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -584,52 +590,61 @@ test_divider
 
 echo "Add model vid=$vid_for_1_4 pid=$pid_1_for_1_4"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model --vid=$vid_for_1_4 --pid=$pid_1_for_1_4 --deviceTypeID=$device_type_id_for_1_4 --productName=$product_name_for_1_4 --productLabel=$product_label_for_1_4 --partNumber=$part_number_for_1_4 --from=$vendor_account_for_1_4 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Add model version vid=$vid_for_1_4 pid=$pid_1_for_1_4"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model-version --vid=$vid_for_1_4 --pid=$pid_1_for_1_4 --softwareVersion=$software_version_for_1_4 --softwareVersionString=$software_version_string_for_1_4 --cdVersionNumber=$cd_version_number_for_1_4 --minApplicableSoftwareVersion=$min_applicable_software_version_for_1_4 --maxApplicableSoftwareVersion=$max_applicable_software_version_for_1_4 --from=$vendor_account_for_1_4 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Add model vid=$vid_for_1_4 pid=$pid_2_for_1_4"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model --vid=$vid_for_1_4 --pid=$pid_2_for_1_4 --deviceTypeID=$device_type_id_for_1_4 --productName=$product_name_for_1_4 --productLabel=$product_label_for_1_4 --partNumber=$part_number_for_1_4 --from=$vendor_account_for_1_4 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Add model version vid=$vid_for_1_4 pid=$pid_2_for_1_4"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model-version --vid=$vid_for_1_4 --pid=$pid_2_for_1_4 --softwareVersion=$software_version_for_1_4 --softwareVersionString=$software_version_string_for_1_4 --cdVersionNumber=$cd_version_number_for_1_4 --minApplicableSoftwareVersion=$min_applicable_software_version_for_1_4 --maxApplicableSoftwareVersion=$max_applicable_software_version_for_1_4 --from=$vendor_account_for_1_4 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Add model vid=$vid_for_1_4 pid=$pid_3_for_1_4"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model --vid=$vid_for_1_4 --pid=$pid_3_for_1_4 --deviceTypeID=$device_type_id_for_1_4 --productName=$product_name_for_1_4 --productLabel=$product_label_for_1_4 --partNumber=$part_number_for_1_4 --from=$vendor_account_for_1_4 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Add model version vid=$vid_for_1_4 pid=$pid_3_for_1_4"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model-version --vid=$vid_for_1_4 --pid=$pid_3_for_1_4 --softwareVersion=$software_version_for_1_4 --softwareVersionString=$software_version_string_for_1_4 --cdVersionNumber=$cd_version_number_for_1_4 --minApplicableSoftwareVersion=$min_applicable_software_version_for_1_4 --maxApplicableSoftwareVersion=$max_applicable_software_version_for_1_4 --from=$vendor_account_for_1_4 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Delete model vid=$vid_for_1_4 pid=$pid_3_for_1_4"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx model delete-model --vid=$vid_for_1_4 --pid=$pid_3_for_1_4 --from=$vendor_account_for_1_4 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Update model vid=$vid pid=$pid_2"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx model update-model --vid=$vid --pid=$pid_2 --productName=$product_name --productLabel=$product_label_for_1_4 --partNumber=$part_number_for_1_4 --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Update model version vid=$vid pid=$pid_2"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx model update-model-version --vid=$vid --pid=$pid_2 --softwareVersion=$software_version --minApplicableSoftwareVersion=$min_applicable_software_version_for_1_4 --maxApplicableSoftwareVersion=$max_applicable_software_version_for_1_4 --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -638,24 +653,28 @@ test_divider
 
 echo "Certify model vid=$vid_for_1_4 pid=$pid_1_for_1_4"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx compliance certify-model --vid=$vid_for_1_4 --pid=$pid_1_for_1_4 --softwareVersion=$software_version_for_1_4 --softwareVersionString=$software_version_string_for_1_4  --certificationType=$certification_type_for_1_4 --certificationDate=$certification_date_for_1_4 --cdCertificateId=$cd_certificate_id_for_1_4 --from=$certification_center_account --cdVersionNumber=$cd_version_number_for_1_4 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Provision model vid=$vid_for_1_4 pid=$pid_2_for_1_4"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx compliance provision-model --vid=$vid_for_1_4 --pid=$pid_2_for_1_4 --softwareVersion=$software_version_for_1_4 --softwareVersionString=$software_version_string_for_1_4 --certificationType=$certification_type_for_1_4 --provisionalDate=$provisional_date_for_1_4 --cdCertificateId=$cd_certificate_id_for_1_4 --from=$certification_center_account --cdVersionNumber=$cd_version_number_for_1_4 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Certify model vid=$vid_for_1_4 pid=$pid_2_for_1_4"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx compliance certify-model --vid=$vid_for_1_4 --pid=$pid_2_for_1_4 --softwareVersion=$software_version_for_1_4 --softwareVersionString=$software_version_string_for_1_4  --certificationType=$certification_type_for_1_4 --certificationDate=$certification_date_for_1_4 --cdCertificateId=$cd_certificate_id_for_1_4 --from=$certification_center_account --cdVersionNumber=$cd_version_number_for_1_4  --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Revoke model certification vid=$vid_for_1_4 pid=$pid_2_for_1_4"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx compliance revoke-model --vid=$vid_for_1_4 --pid=$pid_2_for_1_4 --softwareVersion=$software_version_for_1_4 --softwareVersionString=$software_version_string_for_1_4 --certificationType=$certification_type_for_1_4 --revocationDate=$certification_date_for_1_4 --from=$certification_center_account --cdVersionNumber=$cd_version_number_for_1_4 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -664,126 +683,147 @@ test_divider
 
 echo "Propose add root_cert_with_vid"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx pki propose-add-x509-root-cert --certificate="$root_cert_with_vid_path" --vid="$vid_for_1_4" --from=$trustee_account_1 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Approve add root_cert_with_vid"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx pki approve-add-x509-root-cert --subject="$root_cert_with_vid_subject" --subject-key-id=$root_cert_with_vid_subject_key_id --from=$trustee_account_2 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "reject add root_cert_with_vid"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx pki reject-add-x509-root-cert --subject="$root_cert_with_vid_subject" --subject-key-id=$root_cert_with_vid_subject_key_id --from=$trustee_account_3 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Approve add root_cert_with_vid"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx pki approve-add-x509-root-cert --subject="$root_cert_with_vid_subject" --subject-key-id=$root_cert_with_vid_subject_key_id --from=$trustee_account_4 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Approve add root_cert_with_vid"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx pki approve-add-x509-root-cert --subject="$root_cert_with_vid_subject" --subject-key-id=$root_cert_with_vid_subject_key_id --from=$trustee_account_5 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Propose add paa_cert_no_vid"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx pki propose-add-x509-root-cert --certificate="$paa_cert_no_vid_path" --vid="$vid_for_1_4" --from=$trustee_account_5 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Approve add paa_cert_no_vid"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx pki approve-add-x509-root-cert --subject="$paa_cert_no_vid_subject" --subject-key-id=$paa_cert_no_vid_subject_key_id --from=$trustee_account_1 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Approve add paa_cert_no_vid"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx pki approve-add-x509-root-cert --subject="$paa_cert_no_vid_subject" --subject-key-id=$paa_cert_no_vid_subject_key_id --from=$trustee_account_2 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Approve add paa_cert_no_vid"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx pki approve-add-x509-root-cert --subject="$paa_cert_no_vid_subject" --subject-key-id=$paa_cert_no_vid_subject_key_id --from=$trustee_account_3 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Propose root_cert"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx pki propose-add-x509-root-cert --certificate="$root_cert_path" --vid="$vid_for_1_4" --from=$trustee_account_1 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Add intermediate_cert_with_vid"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx pki add-x509-cert --certificate="$intermediate_cert_with_vid_path" --from=$vendor_account_for_1_4 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Revoke intermediate_cert_with_vid"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx pki revoke-x509-cert --subject="$intermediate_cert_with_vid_subject" --subject-key-id="$intermediate_cert_with_vid_subject_key_id" --serial-number="$intermediate_cert_with_vid_serial_number" --from=$vendor_account_for_1_4 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Propose revoke paa_cert_no_vid"
 result=$(echo "$passphrase" | $DCLD_BIN_NEW tx pki propose-revoke-x509-root-cert --subject="$paa_cert_no_vid_subject" --subject-key-id="$paa_cert_no_vid_subject_key_id" --from="$trustee_account_1" --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Approve revoke paa_cert_no_vid"
 result=$(echo "$passphrase" | $DCLD_BIN_NEW tx pki approve-revoke-x509-root-cert --subject="$paa_cert_no_vid_subject" --subject-key-id="$paa_cert_no_vid_subject_key_id" --from="$trustee_account_2" --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Approve revoke paa_cert_no_vid_path"
 result=$(echo "$passphrase" | $DCLD_BIN_NEW tx pki approve-revoke-x509-root-cert --subject="$paa_cert_no_vid_subject" --subject-key-id="$paa_cert_no_vid_subject_key_id" --from="$trustee_account_3" --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Approve revoke paa_cert_no_vid_path"
 result=$(echo "$passphrase" | $DCLD_BIN_NEW tx pki approve-revoke-x509-root-cert --subject="$paa_cert_no_vid_subject" --subject-key-id="$paa_cert_no_vid_subject_key_id" --from="$trustee_account_4" --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Propose revoke root_cert_with_vid"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx pki propose-revoke-x509-root-cert --subject="$root_cert_with_vid_subject" --subject-key-id="$root_cert_with_vid_subject_key_id" --from $trustee_account_1 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Add NOC Root certificate by vendor with VID = $vid_for_1_4"
 result=$(echo "$passphrase" | $DCLD_BIN_NEW tx pki add-noc-x509-root-cert --certificate="$noc_root_cert_1_path" --from $vendor_account_for_1_4 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Add NOC ICA certificate by vendor with VID = $vid_for_1_4"
 result=$(echo "$passphrase" | $DCLD_BIN_NEW tx pki add-noc-x509-ica-cert --certificate="$noc_ica_cert_1_path" --from $vendor_account_for_1_4 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Revoke NOC root certificate by vendor with VID = $vid_for_1_4"
 result=$(echo "$passphrase" | $DCLD_BIN_NEW tx pki revoke-noc-x509-root-cert --subject="$noc_root_cert_1_subject" --subject-key-id="$noc_root_cert_1_subject_key_id" --from=$vendor_account_for_1_4 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Revoke NOC ICA certificate by vendor with VID = $vid_for_1_4"
 result=$(echo "$passphrase" | $DCLD_BIN_NEW tx pki revoke-noc-x509-ica-cert --subject="$noc_ica_cert_1_subject" --subject-key-id="$noc_ica_cert_1_subject_key_id" --from=$vendor_account_for_1_4 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -792,6 +832,7 @@ test_divider
 
 echo "Add new revocation point for"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx pki add-revocation-point --vid=$vid_for_1_4 --revocation-type=1 --is-paa="true" --certificate="$root_cert_with_vid_path" --label="$product_label_for_1_4" --data-url="$test_data_url_for_1_4" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account_for_1_4 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -799,18 +840,21 @@ test_divider
 
 echo "Update revocation point"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx pki update-revocation-point --vid=$vid_for_1_4 --certificate="$root_cert_with_vid_path" --label="$product_label_for_1_4" --data-url="$test_data_url_for_1_4/new" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account_for_1_4 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Delete revocation point"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx pki delete-revocation-point --vid=$vid_for_1_4 --label="$product_label_for_1_4" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account_for_1_4 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Add new revocation point"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx pki add-revocation-point --vid=$vid_for_1_4 --revocation-type=1 --is-paa="true" --certificate="$root_cert_with_vid_path" --label="$product_label_for_1_4" --data-url="$test_data_url_for_1_4" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account_for_1_4 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -818,96 +862,112 @@ test_divider
 echo "Add revocation point for CRL SIGNER CERTIFICATE delegated by PAI"
 
 result=$(echo $passphrase | $DCLD_BIN_NEW tx pki add-revocation-point --vid=$vid_for_1_4 --is-paa="false" --certificate="$crl_signer_delegated_by_pai_1" --label="$product_label_for_1_4" --data-url="$test_data_url_for_1_4" --issuer-subject-key-id=$delegator_cert_with_vid_subject_key_id --revocation-type=1 --certificate-delegator="$delegator_cert_with_vid_65521_path" --from=$vendor_account_for_1_4 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Update revocation point for CRL SIGNER CERTIFICATE delegated by PAI"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx pki update-revocation-point --vid=$vid_for_1_4 --certificate="$crl_signer_delegated_by_pai_1" --label="$product_label_for_1_4" --data-url="$test_data_url_for_1_4/new" --issuer-subject-key-id=$delegator_cert_with_vid_subject_key_id --certificate-delegator="$delegator_cert_with_vid_65521_path" --from=$vendor_account_for_1_4 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 # AUTH
 
 echo "Propose add account $user_7_address"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx auth propose-add-account --address="$user_7_address" --pubkey="$user_7_pubkey" --roles="CertificationCenter" --from="$trustee_account_1" --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Approve add account $user_7_address"
 result=$($DCLD_BIN_NEW tx auth approve-add-account --address="$user_7_address" --from=$trustee_account_2 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Approve add account $user_7_address"
 result=$($DCLD_BIN_NEW tx auth approve-add-account --address="$user_7_address" --from=$trustee_account_3 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Approve add account $user_7_address"
 result=$($DCLD_BIN_NEW tx auth approve-add-account --address="$user_7_address" --from=$trustee_account_4 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Propose add account $user_8_address"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx auth propose-add-account --address="$user_8_address" --pubkey=$user_8_pubkey --roles=CertificationCenter --from=$trustee_account_1 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Approve add account $user_8_address"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx auth approve-add-account --address="$user_8_address" --from=$trustee_account_2 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Approve add account $user_8_address"
 result=$($DCLD_BIN_NEW tx auth approve-add-account --address="$user_8_address" --from=$trustee_account_3 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Approve add account $user_8_address"
 result=$($DCLD_BIN_NEW tx auth approve-add-account --address="$user_8_address" --from=$trustee_account_4 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Propose add account $user_9_address"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx auth propose-add-account --address="$user_9_address" --pubkey=$user_9_pubkey --roles=CertificationCenter --from=$trustee_account_1 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Propose revoke account $user_7_address"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx auth propose-revoke-account --address="$user_7_address" --from=$trustee_account_1 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Approve revoke account $user_7_address"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx auth approve-revoke-account --address="$user_7_address" --from=$trustee_account_2 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Approve revoke account $user_7_address"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx auth approve-revoke-account --address="$user_7_address" --from=$trustee_account_3 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Approve revoke account $user_7_address"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx auth approve-revoke-account --address="$user_7_address" --from=$trustee_account_4 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Propose revoke account $user_8_address"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx auth propose-revoke-account --address="$user_8_address" --from=$trustee_account_1 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -915,45 +975,49 @@ test_divider
 # VALIDATOR_NODE
 echo "Disable node"
 # FIXME: use proper binary (not dcld but $DCLD_BIN_OLD)
-result=$(docker exec "$container" /bin/sh -c "echo test1234  | dcld tx validator disable-node --from=$account --yes")
+result=$(docker exec "$container" /bin/sh -c "echo test1234  | ./dcld tx validator disable-node --from=$account --yes")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Enable node"
 # FIXME: use proper binary (not dcld but $DCLD_BIN_OLD)
-result=$(docker exec "$container" /bin/sh -c "echo test1234  | dcld tx validator enable-node --from=$account --yes")
+result=$(docker exec "$container" /bin/sh -c "echo test1234  | ./dcld tx validator enable-node --from=$account --yes")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Approve disable node"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx validator approve-disable-node --address=$validator_address --from=$trustee_account_2 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Approve disable node"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx validator approve-disable-node --address=$validator_address --from=$trustee_account_3 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Approve disable node"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx validator approve-disable-node --address=$validator_address --from=$trustee_account_4 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Enable node"
 # FIXME: use proper binary (not dcld but $DCLD_BIN_OLD)
-result=$(docker exec "$container" /bin/sh -c "echo test1234  | dcld tx validator enable-node --from=$account --yes")
+result=$(docker exec "$container" /bin/sh -c "echo test1234  | ./dcld tx validator enable-node --from=$account --yes")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Propose disable node"
 result=$(echo $passphrase | $DCLD_BIN_OLD tx validator propose-disable-node --address=$validator_address --from=$trustee_account_1 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1214,7 +1278,7 @@ test_divider
 
 echo "Get node"
 # FIXME: use proper binary (not dcld but $DCLD_BIN_OLD)
-result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator all-nodes")
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | ./dcld query validator all-nodes")
 check_response "$result" "\"owner\": \"$validator_address\""
 
 test_divider
