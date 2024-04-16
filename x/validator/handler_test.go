@@ -51,7 +51,7 @@ func Setup(t *testing.T) TestSetup {
 	ba := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
 	account := dclauthtypes.NewAccount(
 		ba,
-		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, nil, nil, testconstants.VendorID1,
+		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, nil, nil, testconstants.VendorID1, testconstants.ProductIDsEmpty,
 	)
 	dclauthK.SetAccount(ctx, account)
 
@@ -119,7 +119,7 @@ func TestHandler_CreateValidator_ByNotNodeAdmin(t *testing.T) {
 	for _, role := range []dclauthtypes.AccountRole{dclauthtypes.CertificationCenter, dclauthtypes.Vendor, dclauthtypes.Trustee} {
 		// create signer account
 		ba := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
-		account := dclauthtypes.NewAccount(ba, dclauthtypes.AccountRoles{role}, nil, nil, testconstants.VendorID1)
+		account := dclauthtypes.NewAccount(ba, dclauthtypes.AccountRoles{role}, nil, nil, testconstants.VendorID1, testconstants.ProductIDsEmpty)
 		setup.DclauthKeeper.SetAccount(setup.Ctx, account)
 
 		// try to create validator
@@ -144,7 +144,7 @@ func TestHandler_CreateValidator_TwiceForSameValidatorAddress(t *testing.T) {
 	// create validator
 	ba := authtypes.NewBaseAccount(testconstants.Address2, testconstants.PubKey2, 0, 0)
 	account := dclauthtypes.NewAccount(ba,
-		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, nil, nil, testconstants.VendorID2)
+		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, nil, nil, testconstants.VendorID2, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account)
 
 	msgCreateValidator, err = types.NewMsgCreateValidator(
@@ -198,17 +198,17 @@ func TestHandler_ProposedDisableValidatorExists(t *testing.T) {
 	// create Trustees
 	ba1 := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
 	account1 := dclauthtypes.NewAccount(ba1,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
 
 	ba2 := authtypes.NewBaseAccount(testconstants.Address2, testconstants.PubKey2, 0, 0)
 	account2 := dclauthtypes.NewAccount(ba2,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account2)
 
 	ba3 := authtypes.NewBaseAccount(testconstants.Address3, testconstants.PubKey3, 0, 0)
 	account3 := dclauthtypes.NewAccount(ba3,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account3)
 
 	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
@@ -232,17 +232,17 @@ func TestHandler_ProposeAndRejectDisableValidator(t *testing.T) {
 	// create Trustees
 	ba1 := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
 	account1 := dclauthtypes.NewAccount(ba1,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
 
 	ba2 := authtypes.NewBaseAccount(testconstants.Address2, testconstants.PubKey2, 0, 0)
 	account2 := dclauthtypes.NewAccount(ba2,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account2)
 
 	ba3 := authtypes.NewBaseAccount(testconstants.Address3, testconstants.PubKey3, 0, 0)
 	account3 := dclauthtypes.NewAccount(ba3,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account3)
 
 	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
@@ -268,17 +268,17 @@ func TestHandler_ProposeAndRejectDisableValidator_ByAnotherTrustee(t *testing.T)
 	// create Trustees
 	ba1 := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
 	account1 := dclauthtypes.NewAccount(ba1,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
 
 	ba2 := authtypes.NewBaseAccount(testconstants.Address2, testconstants.PubKey2, 0, 0)
 	account2 := dclauthtypes.NewAccount(ba2,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account2)
 
 	ba3 := authtypes.NewBaseAccount(testconstants.Address3, testconstants.PubKey3, 0, 0)
 	account3 := dclauthtypes.NewAccount(ba3,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account3)
 
 	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
@@ -304,7 +304,7 @@ func TestHandler_OnlyTrusteeCanProposeDisableValidator(t *testing.T) {
 	// create account with non-trustee roles
 	ba1 := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
 	account1 := dclauthtypes.NewAccount(ba1,
-		dclauthtypes.AccountRoles{dclauthtypes.CertificationCenter, dclauthtypes.Vendor, dclauthtypes.NodeAdmin}, nil, nil, testconstants.VendorID1)
+		dclauthtypes.AccountRoles{dclauthtypes.CertificationCenter, dclauthtypes.Vendor, dclauthtypes.NodeAdmin}, nil, nil, testconstants.VendorID1, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
 
 	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
@@ -319,7 +319,7 @@ func TestHandler_OnlyTrusteeCanProposeDisableValidator(t *testing.T) {
 	// create account with trustee roles
 	ba1 = authtypes.NewBaseAccount(testconstants.Address2, testconstants.PubKey2, 0, 0)
 	account1 = dclauthtypes.NewAccount(ba1,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
 
 	// propose new disablevalidator
@@ -334,17 +334,17 @@ func TestHandler_ProposeDisableValidatorWhenSeveralVotesNeeded(t *testing.T) {
 	// create Trustees
 	ba1 := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
 	account1 := dclauthtypes.NewAccount(ba1,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
 
 	ba2 := authtypes.NewBaseAccount(testconstants.Address2, testconstants.PubKey2, 0, 0)
 	account2 := dclauthtypes.NewAccount(ba2,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account2)
 
 	ba3 := authtypes.NewBaseAccount(testconstants.Address3, testconstants.PubKey3, 0, 0)
 	account3 := dclauthtypes.NewAccount(ba3,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account3)
 
 	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
@@ -383,17 +383,17 @@ func TestHandler_DisabledValidator(t *testing.T) {
 	// create Trustees
 	ba1 := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
 	account1 := dclauthtypes.NewAccount(ba1,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
 
 	ba2 := authtypes.NewBaseAccount(testconstants.Address2, testconstants.PubKey2, 0, 0)
 	account2 := dclauthtypes.NewAccount(ba2,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account2)
 
 	ba3 := authtypes.NewBaseAccount(testconstants.Address3, testconstants.PubKey3, 0, 0)
 	account3 := dclauthtypes.NewAccount(ba3,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account3)
 
 	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
@@ -443,12 +443,12 @@ func TestHandler_DisabledValidatorOnPropose(t *testing.T) {
 	// create Trustees
 	ba1 := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
 	account1 := dclauthtypes.NewAccount(ba1,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
 
 	ba2 := authtypes.NewBaseAccount(testconstants.Address2, testconstants.PubKey2, 0, 0)
 	account2 := dclauthtypes.NewAccount(ba2,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account2)
 
 	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
@@ -489,22 +489,22 @@ func TestHandler_OnlyTrusteeCanApproveDisableValidator(t *testing.T) {
 	// create Trustees
 	ba1 := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
 	account1 := dclauthtypes.NewAccount(ba1,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
 
 	ba2 := authtypes.NewBaseAccount(testconstants.Address2, testconstants.PubKey2, 0, 0)
 	account2 := dclauthtypes.NewAccount(ba2,
-		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin, dclauthtypes.CertificationCenter, dclauthtypes.Vendor}, nil, nil, testconstants.VendorID2)
+		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin, dclauthtypes.CertificationCenter, dclauthtypes.Vendor}, nil, nil, testconstants.VendorID2, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account2)
 
 	ba3 := authtypes.NewBaseAccount(testconstants.Address3, testconstants.PubKey3, 0, 0)
 	account3 := dclauthtypes.NewAccount(ba3,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account3)
 
 	ba4 := authtypes.NewBaseAccount(testconstants.Address4, testconstants.PubKey4, 0, 0)
 	account4 := dclauthtypes.NewAccount(ba4,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID4)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID4, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account4)
 
 	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
@@ -527,7 +527,7 @@ func TestHandler_ProposedDisableValidatorDoesNotExist(t *testing.T) {
 	// create Trustees
 	ba1 := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
 	account1 := dclauthtypes.NewAccount(ba1,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
 
 	msgApproveDisableValidator := NewMsgApproveDisableValidator(account1.GetAddress(), sdk.ValAddress(testconstants.ValidatorAddress1))
@@ -542,17 +542,17 @@ func TestHandler_MessageCreatorAlreadyApprovedDisableValidator(t *testing.T) {
 	// create Trustees
 	ba1 := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
 	account1 := dclauthtypes.NewAccount(ba1,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
 
 	ba2 := authtypes.NewBaseAccount(testconstants.Address2, testconstants.PubKey2, 0, 0)
 	account2 := dclauthtypes.NewAccount(ba2,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account2)
 
 	ba3 := authtypes.NewBaseAccount(testconstants.Address3, testconstants.PubKey3, 0, 0)
 	account3 := dclauthtypes.NewAccount(ba3,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account3)
 
 	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
@@ -584,7 +584,7 @@ func TestHandler_NodeAdminCanEnableValidatorDisabledByTrustees(t *testing.T) {
 	// create Trustee and NodeAdmin
 	ba1 := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
 	account1 := dclauthtypes.NewAccount(ba1,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
 
 	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
@@ -592,7 +592,7 @@ func TestHandler_NodeAdminCanEnableValidatorDisabledByTrustees(t *testing.T) {
 
 	ba2 := authtypes.NewBaseAccount(sdk.AccAddress(valAddress), testconstants.PubKey2, 0, 0)
 	account2 := dclauthtypes.NewAccount(ba2,
-		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, nil, nil, testconstants.VendorID2)
+		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, nil, nil, testconstants.VendorID2, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account2)
 
 	// propose and approve new disablevalidator (will be approved because of 1 trustee)
@@ -611,12 +611,12 @@ func TestHandler_DisabledValidatorAlreadyExistsPropose(t *testing.T) {
 	// create Trustees
 	ba1 := authtypes.NewBaseAccount(testconstants.Address3, testconstants.PubKey3, 0, 0)
 	account1 := dclauthtypes.NewAccount(ba1,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
 
 	ba2 := authtypes.NewBaseAccount(testconstants.Address2, testconstants.PubKey2, 0, 0)
 	account2 := dclauthtypes.NewAccount(ba2,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account2)
 
 	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
@@ -668,7 +668,7 @@ func TestHandler_OwnerNodeAdminCanDisabledValidator(t *testing.T) {
 	// create Trustee and NodeAdmin
 	ba1 := authtypes.NewBaseAccount(sdk.AccAddress(valAddress), testconstants.PubKey2, 0, 0)
 	account1 := dclauthtypes.NewAccount(ba1,
-		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, nil, nil, testconstants.VendorID2)
+		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, nil, nil, testconstants.VendorID2, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
 
 	msgDisableValidator := types.NewMsgDisableValidator(valAddress)
@@ -690,7 +690,7 @@ func TestHandler_OwnerNodeAdminCanEnabledValidator(t *testing.T) {
 	// create Trustee and NodeAdmin
 	ba1 := authtypes.NewBaseAccount(sdk.AccAddress(valAddress), testconstants.PubKey2, 0, 0)
 	account1 := dclauthtypes.NewAccount(ba1,
-		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, nil, nil, testconstants.VendorID2)
+		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, nil, nil, testconstants.VendorID2, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
 
 	// node admin disabled validator
@@ -718,17 +718,17 @@ func TestHandler_TrusteeDisabledValidatorOwnerNodeAdminCanEnableValidator(t *tes
 	// create Trustees
 	ba1 := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
 	account1 := dclauthtypes.NewAccount(ba1,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
 
 	ba2 := authtypes.NewBaseAccount(testconstants.Address2, testconstants.PubKey2, 0, 0)
 	account2 := dclauthtypes.NewAccount(ba2,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account2)
 
 	ba3 := authtypes.NewBaseAccount(testconstants.Address3, testconstants.PubKey3, 0, 0)
 	account3 := dclauthtypes.NewAccount(ba3,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account3)
 
 	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
@@ -737,7 +737,7 @@ func TestHandler_TrusteeDisabledValidatorOwnerNodeAdminCanEnableValidator(t *tes
 	// create NodeAdmin
 	ba4 := authtypes.NewBaseAccount(sdk.AccAddress(valAddress), testconstants.PubKey4, 0, 0)
 	account4 := dclauthtypes.NewAccount(ba4,
-		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, nil, nil, testconstants.VendorID4)
+		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, nil, nil, testconstants.VendorID4, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account4)
 
 	// propose new disable validator
@@ -768,7 +768,7 @@ func TestHandler_OwnerNodeAdminDisabledValidatorAndNodeAdminCanNotAddNewValidato
 	// create NodeAdmin
 	ba1 := authtypes.NewBaseAccount(sdk.AccAddress(valAddress), testconstants.PubKey1, 0, 0)
 	account1 := dclauthtypes.NewAccount(ba1,
-		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, nil, nil, testconstants.VendorID1)
+		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, nil, nil, testconstants.VendorID1, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
 
 	// node admin disable validator
@@ -794,17 +794,17 @@ func TestHandler_TrusteeDisabledValidatorAndOwnerNodeAdminCanNotAddNewValidator(
 	// create Trustees
 	ba1 := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
 	account1 := dclauthtypes.NewAccount(ba1,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
 
 	ba2 := authtypes.NewBaseAccount(testconstants.Address2, testconstants.PubKey2, 0, 0)
 	account2 := dclauthtypes.NewAccount(ba2,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account2)
 
 	ba3 := authtypes.NewBaseAccount(testconstants.Address3, testconstants.PubKey3, 0, 0)
 	account3 := dclauthtypes.NewAccount(ba3,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account3)
 
 	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
@@ -813,7 +813,7 @@ func TestHandler_TrusteeDisabledValidatorAndOwnerNodeAdminCanNotAddNewValidator(
 	// create NodeAdmin
 	ba4 := authtypes.NewBaseAccount(sdk.AccAddress(valAddress), testconstants.PubKey4, 0, 0)
 	account4 := dclauthtypes.NewAccount(ba4,
-		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, nil, nil, testconstants.VendorID4)
+		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, nil, nil, testconstants.VendorID4, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account4)
 
 	// propose new disable validator
@@ -847,17 +847,17 @@ func TestHandler_RejectDisableValidator_TwoRejectApprovalsAreNeeded(t *testing.T
 	// create 3 Trustees accounts
 	ba1 := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
 	account1 := dclauthtypes.NewAccount(ba1,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
 
 	ba2 := authtypes.NewBaseAccount(testconstants.Address2, testconstants.PubKey2, 0, 0)
 	account2 := dclauthtypes.NewAccount(ba2,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account2)
 
 	ba3 := authtypes.NewBaseAccount(testconstants.Address3, testconstants.PubKey3, 0, 0)
 	account3 := dclauthtypes.NewAccount(ba3,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account3)
 
 	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
@@ -904,23 +904,23 @@ func TestHandler_RejectDisableValidator_ByNotTrustee(t *testing.T) {
 	// create 3 Trustee accounts
 	ba1 := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
 	account1 := dclauthtypes.NewAccount(ba1,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
 
 	ba2 := authtypes.NewBaseAccount(testconstants.Address2, testconstants.PubKey2, 0, 0)
 	account2 := dclauthtypes.NewAccount(ba2,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account2)
 
 	ba3 := authtypes.NewBaseAccount(testconstants.Address3, testconstants.PubKey3, 0, 0)
 	account3 := dclauthtypes.NewAccount(ba3,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account3)
 
 	// create vendor account
 	ba4 := authtypes.NewBaseAccount(testconstants.Address4, testconstants.PubKey4, 0, 0)
 	account4 := dclauthtypes.NewAccount(ba4,
-		dclauthtypes.AccountRoles{dclauthtypes.Vendor}, nil, nil, testconstants.VendorID4)
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor}, nil, nil, testconstants.VendorID4, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account4)
 
 	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
@@ -947,7 +947,7 @@ func TestHandler_RejectDisableValidator_ForUnknownAccount(t *testing.T) {
 	// create Trustee accounts
 	ba1 := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
 	account1 := dclauthtypes.NewAccount(ba1,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
 
 	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
@@ -965,17 +965,17 @@ func TestHandler_Duplicate_RejectDisableValidatorFromTheSameTrustee(t *testing.T
 	// create 3 Trustee accounts
 	ba1 := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
 	account1 := dclauthtypes.NewAccount(ba1,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
 
 	ba2 := authtypes.NewBaseAccount(testconstants.Address2, testconstants.PubKey2, 0, 0)
 	account2 := dclauthtypes.NewAccount(ba2,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account2)
 
 	ba3 := authtypes.NewBaseAccount(testconstants.Address3, testconstants.PubKey3, 0, 0)
 	account3 := dclauthtypes.NewAccount(ba3,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account3)
 
 	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
@@ -1011,22 +1011,22 @@ func TestHandler_ApproveDisableValidatorAndRejectDisableValidator_FromTheSamerTr
 	// create 4 Trustee accounts
 	ba1 := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
 	account1 := dclauthtypes.NewAccount(ba1,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
 
 	ba2 := authtypes.NewBaseAccount(testconstants.Address2, testconstants.PubKey2, 0, 0)
 	account2 := dclauthtypes.NewAccount(ba2,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account2)
 
 	ba3 := authtypes.NewBaseAccount(testconstants.Address3, testconstants.PubKey3, 0, 0)
 	account3 := dclauthtypes.NewAccount(ba3,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account3)
 
 	ba4 := authtypes.NewBaseAccount(testconstants.Address4, testconstants.PubKey4, 0, 0)
 	account4 := dclauthtypes.NewAccount(ba4,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID4)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID4, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account4)
 
 	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
@@ -1068,22 +1068,22 @@ func TestHandler_RejectDisableValidatorAndApproveDisableValidator_FromTheSameTru
 	// create 4 Trustee accounts
 	ba1 := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
 	account1 := dclauthtypes.NewAccount(ba1,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
 
 	ba2 := authtypes.NewBaseAccount(testconstants.Address2, testconstants.PubKey2, 0, 0)
 	account2 := dclauthtypes.NewAccount(ba2,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account2)
 
 	ba3 := authtypes.NewBaseAccount(testconstants.Address3, testconstants.PubKey3, 0, 0)
 	account3 := dclauthtypes.NewAccount(ba3,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account3)
 
 	ba4 := authtypes.NewBaseAccount(testconstants.Address4, testconstants.PubKey4, 0, 0)
 	account4 := dclauthtypes.NewAccount(ba4,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID4)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID4, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account4)
 
 	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
@@ -1126,17 +1126,17 @@ func TestHandler_DoubleTimeRejectDisableValidator(t *testing.T) {
 	// create 3 Trustee accounts
 	ba1 := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
 	account1 := dclauthtypes.NewAccount(ba1,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
 
 	ba2 := authtypes.NewBaseAccount(testconstants.Address2, testconstants.PubKey2, 0, 0)
 	account2 := dclauthtypes.NewAccount(ba2,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account2)
 
 	ba3 := authtypes.NewBaseAccount(testconstants.Address3, testconstants.PubKey3, 0, 0)
 	account3 := dclauthtypes.NewAccount(ba3,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account3)
 
 	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
@@ -1225,28 +1225,28 @@ func TestHandler_RejectDisableValidator_TwoRejectApprovalsAreNeeded_FiveTrustees
 	// create Trustees
 	ba1 := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
 	account1 := dclauthtypes.NewAccount(ba1,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
 
 	ba2 := authtypes.NewBaseAccount(testconstants.Address2, testconstants.PubKey2, 0, 0)
 	account2 := dclauthtypes.NewAccount(ba2,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account2)
 
 	ba3 := authtypes.NewBaseAccount(testconstants.Address3, testconstants.PubKey3, 0, 0)
 	account3 := dclauthtypes.NewAccount(ba3,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account3)
 
 	ba4 := authtypes.NewBaseAccount(testconstants.Address4, testconstants.PubKey4, 0, 0)
 	account4 := dclauthtypes.NewAccount(ba4,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID4)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID4, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account4)
 
 	_, ba5PubKey, ba5Address := testdata.KeyTestPubAddr()
 	ba5 := authtypes.NewBaseAccount(ba5Address, ba5PubKey, 0, 0)
 	account5 := dclauthtypes.NewAccount(ba5,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID4)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID4, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account5)
 
 	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
@@ -1291,28 +1291,28 @@ func TestHandler_ApproveDisableValidator_FourApprovalsAreNeeded_FiveTrustees(t *
 	// create Trustees
 	ba1 := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
 	account1 := dclauthtypes.NewAccount(ba1,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID1, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
 
 	ba2 := authtypes.NewBaseAccount(testconstants.Address2, testconstants.PubKey2, 0, 0)
 	account2 := dclauthtypes.NewAccount(ba2,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account2)
 
 	ba3 := authtypes.NewBaseAccount(testconstants.Address3, testconstants.PubKey3, 0, 0)
 	account3 := dclauthtypes.NewAccount(ba3,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID3, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account3)
 
 	ba4 := authtypes.NewBaseAccount(testconstants.Address4, testconstants.PubKey4, 0, 0)
 	account4 := dclauthtypes.NewAccount(ba4,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID4)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID4, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account4)
 
 	_, ba5PubKey, ba5Address := testdata.KeyTestPubAddr()
 	ba5 := authtypes.NewBaseAccount(ba5Address, ba5PubKey, 0, 0)
 	account5 := dclauthtypes.NewAccount(ba5,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID4)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID4, testconstants.ProductIDsEmpty)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account5)
 
 	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)

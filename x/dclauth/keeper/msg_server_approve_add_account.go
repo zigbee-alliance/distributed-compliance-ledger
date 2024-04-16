@@ -80,7 +80,7 @@ func (k msgServer) ApproveAddAccount(
 		// create approved account, assign account number and store it
 		// TODO issue 99: create a separate instance of BaseAccount with
 		//		AccountNumber and Sequence set to zero
-		account := types.NewAccount(pendAcc.BaseAccount, pendAcc.Roles, pendAcc.Approvals, pendAcc.Rejects, pendAcc.VendorID)
+		account := types.NewAccount(pendAcc.BaseAccount, pendAcc.Roles, pendAcc.Approvals, pendAcc.Rejects, pendAcc.VendorID, pendAcc.ProductIDs)
 		err = account.SetAccountNumber(k.GetNextAccountNumber(ctx))
 		if err != nil {
 			return nil, err

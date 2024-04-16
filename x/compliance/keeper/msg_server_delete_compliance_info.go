@@ -5,7 +5,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
@@ -48,16 +47,9 @@ func (k msgServer) DeleteComplianceInfo(goCtx context.Context, msg *types.MsgDel
 		k.RemoveDeviceSoftwareCompliance(ctx, deviceSoftwareCompliance.CDCertificateId)
 	}
 
-	switch complianceInfo.SoftwareVersionCertificationStatus {
-	case dclcompltypes.CodeRevoked:
-		k.RemoveRevokedModel(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
-	case dclcompltypes.CodeProvisional:
-		k.RemoveProvisionalModel(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
-	case dclcompltypes.CodeCertified:
-		k.RemoveCertifiedModel(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
-	default:
-		break
-	}
+	k.RemoveRevokedModel(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
+	k.RemoveProvisionalModel(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
+	k.RemoveCertifiedModel(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
 
 	// store compliance info
 	k.RemoveComplianceInfo(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)

@@ -341,6 +341,7 @@ func newNetwork(t *testing.T, cfg Config) *Network {
 			nil,
 			nil,
 			testconstants.Vid,
+			testconstants.ProductIDsEmpty,
 		)
 		genAccounts = append(genAccounts, *account)
 

@@ -130,6 +130,7 @@ func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sd
 func (am AppModule) RegisterServices(cfg module.Configurator) {
 	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
 	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
+	_ = cfg.RegisterMigration(types.ModuleName, 1, func(s sdk.Context) error { return nil })
 }
 
 // RegisterInvariants registers the capability module's invariants.

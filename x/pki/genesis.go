@@ -57,6 +57,22 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	for _, elem := range genState.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList {
 		k.SetPkiRevocationDistributionPointsByIssuerSubjectKeyID(ctx, elem)
 	}
+	// Set all the approvedCertificatesBySubjectKeyId
+	for _, elem := range genState.ApprovedCertificatesBySubjectKeyIdList {
+		k.SetApprovedCertificatesBySubjectKeyID(ctx, elem)
+	}
+	// Set all the nocRootCertificates
+	for _, elem := range genState.NocRootCertificatesList {
+		k.SetNocRootCertificates(ctx, elem)
+	}
+	// Set all the nocIcaCertificates
+	for _, elem := range genState.NocIcaCertificatesList {
+		k.SetNocIcaCertificates(ctx, elem)
+	}
+	// Set all the revokedNocRootCertificates
+	for _, elem := range genState.RevokedNocRootCertificatesList {
+		k.SetRevokedNocRootCertificates(ctx, elem)
+	}
 	// this line is used by starport scaffolding # genesis/module/init
 }
 
@@ -84,6 +100,10 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	genesis.RejectedCertificateList = k.GetAllRejectedCertificate(ctx)
 	genesis.PkiRevocationDistributionPointList = k.GetAllPkiRevocationDistributionPoint(ctx)
 	genesis.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList = k.GetAllPkiRevocationDistributionPointsByIssuerSubjectKeyID(ctx)
+	genesis.ApprovedCertificatesBySubjectKeyIdList = k.GetAllApprovedCertificatesBySubjectKeyID(ctx)
+	genesis.NocRootCertificatesList = k.GetAllNocRootCertificates(ctx)
+	genesis.NocIcaCertificatesList = k.GetAllNocIcaCertificates(ctx)
+	genesis.RevokedNocRootCertificatesList = k.GetAllRevokedNocRootCertificates(ctx)
 	// this line is used by starport scaffolding # genesis/module/export
 
 	return genesis

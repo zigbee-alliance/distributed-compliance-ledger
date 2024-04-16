@@ -28,10 +28,12 @@ func NewMsgCreateModel(
 	commissioningModeInitialStepsInstruction string,
 	commissioningModeSecondaryStepsHint uint32,
 	commissioningModeSecondaryStepsInstruction string,
+	commissionerRemoteUIFlowURL string,
 	userManualURL string,
 	supportURL string,
 	productURL string,
 	lsfURL string,
+	schemaVersion uint32,
 ) *MsgCreateModel {
 	return &MsgCreateModel{
 		Creator:                                  creator,
@@ -47,10 +49,12 @@ func NewMsgCreateModel(
 		CommissioningModeInitialStepsInstruction: commissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsHint:      commissioningModeSecondaryStepsHint,
 		CommissioningModeSecondaryStepsInstruction: commissioningModeSecondaryStepsInstruction,
-		UserManualUrl: userManualURL,
-		SupportUrl:    supportURL,
-		ProductUrl:    productURL,
-		LsfUrl:        lsfURL,
+		CommissionerRemoteUiFlowUrl:                commissionerRemoteUIFlowURL,
+		UserManualUrl:                              userManualURL,
+		SupportUrl:                                 supportURL,
+		ProductUrl:                                 productURL,
+		LsfUrl:                                     lsfURL,
+		SchemaVersion:                              schemaVersion,
 	}
 }
 
@@ -103,11 +107,13 @@ func NewMsgUpdateModel(
 	commissioningCustomFlowURL string,
 	commissioningModeInitialStepsInstruction string,
 	commissioningModeSecondaryStepsInstruction string,
+	commissionerRemoteUIFlowURL string,
 	userManualURL string,
 	supportURL string,
 	productURL string,
 	lsfURL string,
 	lsfRevision int32,
+	schemaVersion uint32,
 ) *MsgUpdateModel {
 	return &MsgUpdateModel{
 		Creator:                                  creator,
@@ -119,11 +125,13 @@ func NewMsgUpdateModel(
 		CommissioningCustomFlowUrl:               commissioningCustomFlowURL,
 		CommissioningModeInitialStepsInstruction: commissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsInstruction: commissioningModeSecondaryStepsInstruction,
-		UserManualUrl: userManualURL,
-		SupportUrl:    supportURL,
-		ProductUrl:    productURL,
-		LsfUrl:        lsfURL,
-		LsfRevision:   lsfRevision,
+		CommissionerRemoteUiFlowUrl:                commissionerRemoteUIFlowURL,
+		UserManualUrl:                              userManualURL,
+		SupportUrl:                                 supportURL,
+		ProductUrl:                                 productURL,
+		LsfUrl:                                     lsfURL,
+		LsfRevision:                                lsfRevision,
+		SchemaVersion:                              schemaVersion,
 	}
 }
 

@@ -13,6 +13,10 @@ import "pki/approved_certificates_by_subject.proto";
 import "pki/rejected_certificate.proto";
 import "pki/pki_revocation_distribution_point.proto";
 import "pki/pki_revocation_distribution_points_by_issuer_subject_key_id.proto";
+import "pki/approved_certificates_by_subject_key_id.proto";
+import "pki/noc_root_certificates.proto";
+import "pki/noc_ica_certificates.proto";
+import "pki/revoked_noc_root_certificates.proto";
 // this line is used by starport scaffolding # genesis/proto/import
 import "gogoproto/gogo.proto";
 
@@ -20,7 +24,7 @@ option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/
 
 // GenesisState defines the pki module's genesis state.
 message GenesisState {
-    repeated ApprovedCertificates approvedCertificatesList = 1 [(gogoproto.nullable) = false];
+  repeated ApprovedCertificates approvedCertificatesList = 1 [(gogoproto.nullable) = false];
   repeated ProposedCertificate proposedCertificateList = 2 [(gogoproto.nullable) = false];
   repeated ChildCertificates childCertificatesList = 3 [(gogoproto.nullable) = false];
   repeated ProposedCertificateRevocation proposedCertificateRevocationList = 4 [(gogoproto.nullable) = false];
@@ -32,5 +36,9 @@ message GenesisState {
   repeated RejectedCertificate rejectedCertificateList = 10 [(gogoproto.nullable) = false];
   repeated PkiRevocationDistributionPoint PkiRevocationDistributionPointList = 11 [(gogoproto.nullable) = false];
   repeated PkiRevocationDistributionPointsByIssuerSubjectKeyID PkiRevocationDistributionPointsByIssuerSubjectKeyIDList = 12 [(gogoproto.nullable) = false];
+  repeated ApprovedCertificatesBySubjectKeyId approvedCertificatesBySubjectKeyIdList = 13 [(gogoproto.nullable) = false];
+  repeated NocRootCertificates nocRootCertificatesList = 14 [(gogoproto.nullable) = false];
+  repeated NocIcaCertificates nocIcaCertificatesList = 15 [(gogoproto.nullable) = false];
+  repeated RevokedNocRootCertificates revokedNocRootCertificatesList = 16 [(gogoproto.nullable) = false];
   // this line is used by starport scaffolding # genesis/proto/state
 }

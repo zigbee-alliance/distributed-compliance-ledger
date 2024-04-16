@@ -22,6 +22,8 @@ export interface Model {
   lsfUrl: string
   lsfRevision: number
   creator: string
+  schemaVersion: number
+  commissionerRemoteUiFlowUrl: string
 }
 
 const baseModel: object = {
@@ -42,7 +44,9 @@ const baseModel: object = {
   productUrl: '',
   lsfUrl: '',
   lsfRevision: 0,
-  creator: ''
+  creator: '',
+  schemaVersion: 0,
+  commissionerRemoteUiFlowUrl: ''
 }
 
 export const Model = {
@@ -100,6 +104,12 @@ export const Model = {
     }
     if (message.creator !== '') {
       writer.uint32(146).string(message.creator)
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(152).uint32(message.schemaVersion)
+    }
+    if (message.commissionerRemoteUiFlowUrl !== '') {
+      writer.uint32(162).string(message.commissionerRemoteUiFlowUrl)
     }
     return writer
   },
@@ -164,6 +174,12 @@ export const Model = {
           break
         case 18:
           message.creator = reader.string()
+          break
+        case 19:
+          message.schemaVersion = reader.uint32()
+          break
+        case 20:
+          message.commissionerRemoteUiFlowUrl = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -265,6 +281,16 @@ export const Model = {
     } else {
       message.creator = ''
     }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = Number(object.schemaVersion)
+    } else {
+      message.schemaVersion = 0
+    }
+    if (object.commissionerRemoteUiFlowUrl !== undefined && object.commissionerRemoteUiFlowUrl !== null) {
+      message.commissionerRemoteUiFlowUrl = String(object.commissionerRemoteUiFlowUrl)
+    } else {
+      message.commissionerRemoteUiFlowUrl = ''
+    }
     return message
   },
 
@@ -290,6 +316,8 @@ export const Model = {
     message.lsfUrl !== undefined && (obj.lsfUrl = message.lsfUrl)
     message.lsfRevision !== undefined && (obj.lsfRevision = message.lsfRevision)
     message.creator !== undefined && (obj.creator = message.creator)
+    message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
+    message.commissionerRemoteUiFlowUrl !== undefined && (obj.commissionerRemoteUiFlowUrl = message.commissionerRemoteUiFlowUrl)
     return obj
   },
 
@@ -384,6 +412,16 @@ export const Model = {
       message.creator = object.creator
     } else {
       message.creator = ''
+    }
+    if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
+      message.schemaVersion = object.schemaVersion
+    } else {
+      message.schemaVersion = 0
+    }
+    if (object.commissionerRemoteUiFlowUrl !== undefined && object.commissionerRemoteUiFlowUrl !== null) {
+      message.commissionerRemoteUiFlowUrl = object.commissionerRemoteUiFlowUrl
+    } else {
+      message.commissionerRemoteUiFlowUrl = ''
     }
     return message
   }

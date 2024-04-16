@@ -54,7 +54,7 @@ func (k msgServer) ProposeAddAccount(goCtx context.Context, msg *types.MsgPropos
 	}
 
 	ba := authtypes.NewBaseAccount(accAddr, pk, 0, 0)
-	account := types.NewAccount(ba, msg.Roles, nil, nil, msg.VendorID)
+	account := types.NewAccount(ba, msg.Roles, nil, nil, msg.VendorID, msg.ProductIDs)
 
 	var percent float64
 	if account.HasOnlyVendorRole(types.Vendor) {

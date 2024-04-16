@@ -50,30 +50,31 @@ func (k msgServer) ProposeAddX509RootCert(goCtx context.Context, msg *types.MsgP
 	}
 
 	// verify certificate
-	_, _, err = k.verifyCertificate(ctx, x509Certificate)
+	_, err = k.verifyCertificate(ctx, x509Certificate)
 	if err != nil {
 		return nil, err
 	}
 
 	// Get list of certificates for Subject / Subject Key Id combination
 	existingCertificates, found := k.GetApprovedCertificates(ctx, x509Certificate.Subject, x509Certificate.SubjectKeyID)
-	if found {
+	if found && len(existingCertificates.Certs) > 0 {
+		existingCertificate := existingCertificates.Certs[0]
+
 		// Issuer and authorityKeyID must be the same as ones of exisiting certificates with the same subject and
 		// subjectKeyID. Since new certificate is self-signed, we have to ensure that the exisiting certificates are
 		// self-signed too, consequently are root certificates.
-		if !existingCertificates.Certs[0].IsRoot {
-			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
-				"Issuer and authorityKeyID of new certificate with subject=%v and subjectKeyID=%v "+
-					"must be the same as ones of existing certificates with the same subject and subjectKeyID",
-				x509Certificate.Subject, x509Certificate.SubjectKeyID)
+		if !existingCertificate.IsRoot {
+			return nil, pkitypes.NewErrUnauthorizedCertIssuer(x509Certificate.Subject, x509Certificate.SubjectKeyID)
+		}
+
+		// Existing certificate must not be NOC certificate
+		if existingCertificate.IsNoc {
+			return nil, pkitypes.NewErrProvidedNotNocCertButExistingNoc(x509Certificate.Subject, x509Certificate.SubjectKeyID)
 		}
 
 		// signer must be same as owner of existing certificates
-		if msg.Signer != existingCertificates.Certs[0].Owner {
-			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
-				"Only owner of existing certificates with subject=%v and subjectKeyID=%v "+
-					"can add new certificate with the same subject and subjectKeyID",
-				x509Certificate.Subject, x509Certificate.SubjectKeyID)
+		if msg.Signer != existingCertificate.Owner {
+			return nil, pkitypes.NewErrUnauthorizedCertOwner(x509Certificate.Subject, x509Certificate.SubjectKeyID)
 		}
 	}
 
@@ -85,14 +86,16 @@ func (k msgServer) ProposeAddX509RootCert(goCtx context.Context, msg *types.MsgP
 
 	// create a new proposed certificate with empty approvals list
 	proposedCertificate := types.ProposedCertificate{
-		Subject:       x509Certificate.Subject,
-		SubjectAsText: x509Certificate.SubjectAsText,
-		SubjectKeyId:  x509Certificate.SubjectKeyID,
-		PemCert:       msg.Cert,
-		SerialNumber:  x509Certificate.SerialNumber,
-		Owner:         msg.Signer,
-		Approvals:     []*types.Grant{},
-		Vid:           msg.Vid,
+		Subject:           x509Certificate.Subject,
+		SubjectAsText:     x509Certificate.SubjectAsText,
+		SubjectKeyId:      x509Certificate.SubjectKeyID,
+		PemCert:           msg.Cert,
+		SerialNumber:      x509Certificate.SerialNumber,
+		Owner:             msg.Signer,
+		Approvals:         []*types.Grant{},
+		Vid:               msg.Vid,
+		CertSchemaVersion: msg.CertSchemaVersion,
+		SchemaVersion:     msg.SchemaVersion,
 	}
 
 	proposedCertificate.Approvals = append(proposedCertificate.Approvals, &grant)

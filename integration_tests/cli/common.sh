@@ -140,8 +140,15 @@ create_new_vendor_account(){
   _address=$(echo $passphrase | dcld keys show $_name -a)
   _pubkey=$(echo $passphrase | dcld keys show $_name -p)
 
-  echo "Jack proposes account for \"$_name\" with Vendor role"
-  _result=$(echo $passphrase | dcld tx auth propose-add-account --address="$_address" --pubkey="$_pubkey" --roles=Vendor --vid=$_vid --from jack --yes)
+  local _result=""
+  if [ $# -eq 3 ]; then
+    local _pid_ranges="$3"
+    echo "Jack proposes account for \"$_name\" with Vendor role and with [$_pid_ranges] associated Product IDs"
+    _result=$(echo $passphrase | dcld tx auth propose-add-account --address="$_address" --pubkey="$_pubkey" --roles=Vendor --vid=$_vid --pid_ranges=$_pid_ranges --from jack --yes)
+  else
+    echo "Jack proposes account for \"$_name\" with Vendor role"
+    _result=$(echo $passphrase | dcld tx auth propose-add-account --address="$_address" --pubkey="$_pubkey" --roles=Vendor --vid=$_vid --from jack --yes)
+  fi
   check_response "$_result" "\"code\": 0"
 
 }
@@ -190,7 +197,6 @@ wait_for_height() {
 
     if [[ "$mode" == "outage-safe" ]]; then
       current_height="$(dcld status $node 2>/dev/null | jq | grep latest_block_height | awk -F'"' '{print $4}')" || true
-
     else
       current_height="$(dcld status $node | jq | grep latest_block_height | awk -F'"' '{print $4}')"
 

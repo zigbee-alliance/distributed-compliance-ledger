@@ -13,13 +13,24 @@ const TypeMsgProposeRevokeX509RootCert = "propose_revoke_x_509_root_cert"
 
 var _ sdk.Msg = &MsgProposeRevokeX509RootCert{}
 
-func NewMsgProposeRevokeX509RootCert(signer string, subject string, subjectKeyID string, info string) *MsgProposeRevokeX509RootCert {
+func NewMsgProposeRevokeX509RootCert(
+	signer string,
+	subject string,
+	subjectKeyID string,
+	serialNumber string,
+	revokeChild bool,
+	info string,
+	schemaVersion uint32,
+) *MsgProposeRevokeX509RootCert {
 	return &MsgProposeRevokeX509RootCert{
-		Signer:       signer,
-		Subject:      subject,
-		SubjectKeyId: subjectKeyID,
-		Info:         info,
-		Time:         time.Now().Unix(),
+		Signer:        signer,
+		Subject:       subject,
+		SubjectKeyId:  subjectKeyID,
+		SerialNumber:  serialNumber,
+		RevokeChild:   revokeChild,
+		Info:          info,
+		Time:          time.Now().Unix(),
+		SchemaVersion: schemaVersion,
 	}
 }
 

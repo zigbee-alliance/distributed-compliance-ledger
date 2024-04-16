@@ -69,6 +69,26 @@ const (
 	// TODO: Determine the simulation weight value.
 	defaultWeightMsgAssignVid int = 100
 
+	opWeightMsgAddNocX509RootCert = "op_weight_msg_create_chain"
+	// TODO: Determine the simulation weight value.
+	defaultWeightMsgAddNocX509RootCert int = 100
+
+	opWeightMsgRemoveX509Cert = "op_weight_msg_create_chain"
+	// TODO: Determine the simulation weight value.
+	defaultWeightMsgRemoveX509Cert int = 100
+
+	opWeightMsgAddNocX509Cert = "op_weight_msg_create_chain"
+	// TODO: Determine the simulation weight value.
+	defaultWeightMsgAddNocX509Cert int = 100
+
+	opWeightMsgRevokeNocRootX509Cert = "op_weight_msg_create_chain"
+	// TODO: Determine the simulation weight value.
+	defaultWeightMsgRevokeNocRootX509Cert int = 100
+
+	opWeightMsgRevokeNocX509Cert = "op_weight_msg_create_chain"
+	// TODO: Determine the simulation weight value.
+	defaultWeightMsgRevokeNocX509Cert int = 100
+
 	// this line is used by starport scaffolding # simapp/module/const.
 )
 
@@ -221,6 +241,61 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	operations = append(operations, simulation.NewWeightedOperation(
 		weightMsgAssignVid,
 		pkisimulation.SimulateMsgAssignVid(am.keeper),
+	))
+
+	var weightMsgAddNocX509RootCert int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgAddNocX509RootCert, &weightMsgAddNocX509RootCert, nil,
+		func(_ *rand.Rand) {
+			weightMsgAddNocX509RootCert = defaultWeightMsgAddNocX509RootCert
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgAddNocX509RootCert,
+		pkisimulation.SimulateMsgAddNocX509RootCert(am.keeper),
+	))
+
+	var weightMsgRemoveX509Cert int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgRemoveX509Cert, &weightMsgRemoveX509Cert, nil,
+		func(_ *rand.Rand) {
+			weightMsgRemoveX509Cert = defaultWeightMsgRemoveX509Cert
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgRemoveX509Cert,
+		pkisimulation.SimulateMsgRemoveX509Cert(am.keeper),
+	))
+
+	var weightMsgAddNocX509Cert int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgAddNocX509Cert, &weightMsgAddNocX509Cert, nil,
+		func(_ *rand.Rand) {
+			weightMsgAddNocX509Cert = defaultWeightMsgAddNocX509Cert
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgAddNocX509Cert,
+		pkisimulation.SimulateMsgAddNocX509Cert(am.keeper),
+	))
+
+	var weightMsgRevokeNocRootX509Cert int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgRevokeNocRootX509Cert, &weightMsgRevokeNocRootX509Cert, nil,
+		func(_ *rand.Rand) {
+			weightMsgRevokeNocRootX509Cert = defaultWeightMsgRevokeNocRootX509Cert
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgRevokeNocRootX509Cert,
+		pkisimulation.SimulateMsgRevokeNocRootX509Cert(am.keeper),
+	))
+
+	var weightMsgRevokeNocX509Cert int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgRevokeNocX509Cert, &weightMsgRevokeNocX509Cert, nil,
+		func(_ *rand.Rand) {
+			weightMsgRevokeNocX509Cert = defaultWeightMsgRevokeNocX509Cert
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgRevokeNocX509Cert,
+		pkisimulation.SimulateMsgRevokeNocX509Cert(am.keeper),
 	))
 
 	// this line is used by starport scaffolding # simapp/module/operation

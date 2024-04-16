@@ -16,7 +16,7 @@ func (k msgServer) CreateModel(goCtx context.Context, msg *types.MsgCreateModel)
 	if err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
-	if err := checkModelRights(ctx, k.Keeper, signerAddr, msg.Vid, "MsgCreateModel"); err != nil {
+	if err := checkModelRights(ctx, k.Keeper, signerAddr, msg.Vid, msg.Pid, "MsgCreateModel"); err != nil {
 		return nil, err
 	}
 
@@ -44,10 +44,12 @@ func (k msgServer) CreateModel(goCtx context.Context, msg *types.MsgCreateModel)
 		CommissioningModeInitialStepsInstruction: msg.CommissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsHint:      msg.CommissioningModeSecondaryStepsHint,
 		CommissioningModeSecondaryStepsInstruction: msg.CommissioningModeSecondaryStepsInstruction,
-		UserManualUrl: msg.UserManualUrl,
-		SupportUrl:    msg.SupportUrl,
-		ProductUrl:    msg.ProductUrl,
-		LsfUrl:        msg.LsfUrl,
+		CommissionerRemoteUiFlowUrl:                msg.CommissionerRemoteUiFlowUrl,
+		UserManualUrl:                              msg.UserManualUrl,
+		SupportUrl:                                 msg.SupportUrl,
+		ProductUrl:                                 msg.ProductUrl,
+		LsfUrl:                                     msg.LsfUrl,
+		SchemaVersion:                              msg.SchemaVersion,
 	}
 
 	// if LsfUrl is not empty, we set lsfRevision to default value of 1
@@ -79,7 +81,7 @@ func (k msgServer) UpdateModel(goCtx context.Context, msg *types.MsgUpdateModel)
 	if err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
-	if err := checkModelRights(ctx, k.Keeper, signerAddr, msg.Vid, "MsgUpdateModel"); err != nil {
+	if err := checkModelRights(ctx, k.Keeper, signerAddr, msg.Vid, msg.Pid, "MsgUpdateModel"); err != nil {
 		return nil, err
 	}
 
@@ -119,6 +121,10 @@ func (k msgServer) UpdateModel(goCtx context.Context, msg *types.MsgUpdateModel)
 		model.CommissioningModeSecondaryStepsInstruction = msg.CommissioningModeSecondaryStepsInstruction
 	}
 
+	if msg.CommissionerRemoteUiFlowUrl != "" {
+		model.CommissionerRemoteUiFlowUrl = msg.CommissionerRemoteUiFlowUrl
+	}
+
 	if msg.UserManualUrl != "" {
 		model.UserManualUrl = msg.UserManualUrl
 	}
@@ -130,6 +136,8 @@ func (k msgServer) UpdateModel(goCtx context.Context, msg *types.MsgUpdateModel)
 	if msg.ProductUrl != "" {
 		model.ProductUrl = msg.ProductUrl
 	}
+
+	model.SchemaVersion = msg.SchemaVersion
 
 	if msg.LsfRevision > 0 {
 		// If lsfRevision is set but no lsfURL is provided or present in model
@@ -172,7 +180,7 @@ func (k msgServer) DeleteModel(goCtx context.Context, msg *types.MsgDeleteModel)
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
 
-	if err := checkModelRights(ctx, k.Keeper, signerAddr, msg.Vid, "MsgDeleteModel"); err != nil {
+	if err := checkModelRights(ctx, k.Keeper, signerAddr, msg.Vid, msg.Pid, "MsgDeleteModel"); err != nil {
 		return nil, err
 	}
 

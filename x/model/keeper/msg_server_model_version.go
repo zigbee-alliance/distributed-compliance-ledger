@@ -17,7 +17,7 @@ func (k msgServer) CreateModelVersion(goCtx context.Context, msg *types.MsgCreat
 	if err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
-	if err := checkModelRights(ctx, k.Keeper, signerAddr, msg.Vid, "MsgCreateModelVersion"); err != nil {
+	if err := checkModelRights(ctx, k.Keeper, signerAddr, msg.Vid, msg.Pid, "MsgCreateModelVersion"); err != nil {
 		return nil, err
 	}
 
@@ -58,6 +58,7 @@ func (k msgServer) CreateModelVersion(goCtx context.Context, msg *types.MsgCreat
 		MinApplicableSoftwareVersion: msg.MinApplicableSoftwareVersion,
 		MaxApplicableSoftwareVersion: msg.MaxApplicableSoftwareVersion,
 		ReleaseNotesUrl:              msg.ReleaseNotesUrl,
+		SchemaVersion:                msg.SchemaVersion,
 	}
 
 	// store new model version
@@ -80,7 +81,7 @@ func (k msgServer) UpdateModelVersion(goCtx context.Context, msg *types.MsgUpdat
 	if err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
-	if err := checkModelRights(ctx, k.Keeper, signerAddr, msg.Vid, "MsgUpdateModelVersion"); err != nil {
+	if err := checkModelRights(ctx, k.Keeper, signerAddr, msg.Vid, msg.Pid, "MsgUpdateModelVersion"); err != nil {
 		return nil, err
 	}
 
@@ -133,6 +134,8 @@ func (k msgServer) UpdateModelVersion(goCtx context.Context, msg *types.MsgUpdat
 		modelVersion.ReleaseNotesUrl = msg.ReleaseNotesUrl
 	}
 
+	modelVersion.SchemaVersion = msg.SchemaVersion
+
 	// store updated model version
 	k.SetModelVersion(ctx, modelVersion)
 
@@ -147,7 +150,7 @@ func (k msgServer) DeleteModelVersion(goCtx context.Context, msg *types.MsgDelet
 	if err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
-	if err := checkModelRights(ctx, k.Keeper, signerAddr, msg.Vid, "MsgDeleteModelVersion"); err != nil {
+	if err := checkModelRights(ctx, k.Keeper, signerAddr, msg.Vid, msg.Pid, "MsgDeleteModelVersion"); err != nil {
 		return nil, err
 	}
 

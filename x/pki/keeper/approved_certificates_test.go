@@ -22,6 +22,10 @@ func createNApprovedCertificates(keeper *keeper.Keeper, ctx sdk.Context, n int) 
 		items[i].SubjectKeyId = strconv.Itoa(i)
 
 		keeper.SetApprovedCertificates(ctx, items[i])
+		keeper.SetApprovedCertificatesBySubjectKeyID(ctx, types.ApprovedCertificatesBySubjectKeyId{
+			SubjectKeyId: items[i].SubjectKeyId,
+			Certs:        items[i].Certs,
+		})
 	}
 
 	return items

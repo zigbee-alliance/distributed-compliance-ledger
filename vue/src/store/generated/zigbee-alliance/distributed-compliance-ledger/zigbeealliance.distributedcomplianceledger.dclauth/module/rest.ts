@@ -14,6 +14,14 @@ export enum RevokedAccountReason {
   MaliciousValidator = "MaliciousValidator",
 }
 
+export interface CommonUint16Range {
+  /** @format int32 */
+  min?: number;
+
+  /** @format int32 */
+  max?: number;
+}
+
 export interface DclauthAccount {
   /**
    * BaseAccount defines a base account type. It contains all the necessary fields
@@ -27,6 +35,7 @@ export interface DclauthAccount {
   /** @format int32 */
   vendorID?: number;
   rejects?: DclauthGrant[];
+  productIDs?: CommonUint16Range[];
 }
 
 export interface DclauthAccountStat {

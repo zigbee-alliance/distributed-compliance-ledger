@@ -19,6 +19,7 @@ import (
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclgenutil"
 	dclgenutiltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclgenutil/types"
@@ -29,6 +30,7 @@ const (
 	FlagPubKey  = "pubkey"
 	FlagRoles   = "roles"
 	FlagVID     = "vid"
+	FlagPIDs    = "pid_ranges"
 )
 
 // AddGenesisAccountCmd returns add-genesis-account cobra Command.
@@ -109,8 +111,36 @@ the address will be looked up in the local Keybase.
 				}
 			}
 
+			var pidRanges []*types.Uint16Range
+			if pidStrRanges := viper.GetString(FlagPIDs); len(pidStrRanges) > 0 { //nolint:nestif
+				var lastMax int32
+				for _, pidStrRange := range strings.Split(pidStrRanges, ",") {
+					pidRange := strings.Split(pidStrRange, "-")
+					if len(pidRange) != 2 {
+						return fmt.Errorf("failed to parse PID Range")
+					}
+					min, err := cast.ToInt32E(pidRange[0])
+					if err != nil {
+						return err
+					}
+					max, err := cast.ToInt32E(pidRange[1])
+					if err != nil {
+						return err
+					}
+					if min > max || max == 0 || min == 0 {
+						return fmt.Errorf("invalid PID Range is provided: min=%d, max=%d", min, max)
+					}
+					if max <= lastMax || min <= lastMax {
+						return fmt.Errorf("invalid PID Range is provided: {%d-%d}, ranges are overlapped, range items must be provided in increased order", min, max)
+					}
+					pid := types.Uint16Range{Min: min, Max: max}
+					pidRanges = append(pidRanges, &pid)
+					lastMax = max
+				}
+			}
+
 			// FIXME issue 99 VendorID
-			genAccount = dclauthtypes.NewAccount(ba, roles, []*dclauthtypes.Grant{}, []*dclauthtypes.Grant{}, vendorID)
+			genAccount = dclauthtypes.NewAccount(ba, roles, []*dclauthtypes.Grant{}, []*dclauthtypes.Grant{}, vendorID, pidRanges)
 
 			if err := genAccount.Validate(); err != nil {
 				return fmt.Errorf("failed to validate new genesis account: %w", err)
@@ -154,6 +184,7 @@ the address will be looked up in the local Keybase.
 	cmd.Flags().String(FlagRoles, "",
 		fmt.Sprintf("The list of roles (split by comma) to assign to account (supported roles: %v)", dclauthtypes.Roles))
 	cmd.Flags().String(FlagVID, "", "Vendor ID associated with this account. Required only for Vendor Roles")
+	cmd.Flags().String(FlagPIDs, "", "The list of Product ID ranges (split by \"-\") associated with this account (for example: 1-101,101-6554)")
 
 	cmd.Flags().String(flags.FlagHome, defaultNodeHome, "The application home directory")
 	cmd.Flags().String(flags.FlagKeyringBackend, flags.DefaultKeyringBackend, "Select keyring's backend (os|file|kwallet|pass|test)")

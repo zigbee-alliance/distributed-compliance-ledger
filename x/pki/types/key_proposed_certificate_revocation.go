@@ -13,6 +13,7 @@ const (
 func ProposedCertificateRevocationKey(
 	subject string,
 	subjectKeyID string,
+	serialNumber string,
 ) []byte {
 	var key []byte
 
@@ -23,6 +24,12 @@ func ProposedCertificateRevocationKey(
 	subjectKeyIDBytes := []byte(subjectKeyID)
 	key = append(key, subjectKeyIDBytes...)
 	key = append(key, []byte("/")...)
+
+	if serialNumber != "" {
+		serialNumberBytes := []byte(serialNumber)
+		key = append(key, serialNumberBytes...)
+		key = append(key, []byte("/")...)
+	}
 
 	return key
 }

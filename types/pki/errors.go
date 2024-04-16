@@ -47,6 +47,10 @@ var (
 	ErrCertificateVidNotEqualMsgVid                      = sdkerrors.Register(ModuleName, 436, "certificate's vid is not equal to the message vid")
 	ErrMessageVidNotEqualRootCertVid                     = sdkerrors.Register(ModuleName, 437, "Message vid is not equal to ledger's root certificate vid")
 	ErrCertNotChainedBack                                = sdkerrors.Register(ModuleName, 438, "Certificate is not chained back to a root certificate on DCL")
+	ErrCertVidNotEqualAccountVid                         = sdkerrors.Register(ModuleName, 439, "account's vid is not equal to certificate vid")
+	ErrCertVidNotEqualToRootVid                          = sdkerrors.Register(ModuleName, 440, "certificate's vid is not equal to vid of root certificate ")
+	ErrCRLSignerCertificateInvalidFormat                 = sdkerrors.Register(ModuleName, 441, "invalid CRLSignerCertificate certificate")
+	ErrInvalidAuthorityKeyIDFormat                       = sdkerrors.Register(ModuleName, 442, "invalid AuthorityKeyID format")
 )
 
 func NewErrUnauthorizedRole(transactionName string, requiredRole types.AccountRole) error {
@@ -85,6 +89,13 @@ func NewErrCertificateDoesNotExist(subject string, subjectKeyID string) error {
 		"No X509 certificate associated with the "+
 			"combination of subject=%v and subjectKeyID=%v on the ledger",
 		subject, subjectKeyID)
+}
+
+func NewErrCertificateBySerialNumberDoesNotExist(subject string, subjectKeyID string, serialNumber string) error {
+	return sdkerrors.Wrapf(ErrCertificateDoesNotExist,
+		"No X509 certificate associated with the "+
+			"combination of subject=%v, subjectKeyID=%v and serialNumber=%v on the ledger",
+		subject, subjectKeyID, serialNumber)
 }
 
 func NewErrRootCertificateDoesNotExist(subject string, subjectKeyID string) error {
@@ -165,6 +176,70 @@ func NewErrNonRootCertificateSelfSigned() error {
 	)
 }
 
+func NewErrUnauthorizedCertIssuer(subject string, subjectKeyID string) error {
+	return sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+		"Issuer and authorityKeyID of new certificate with subject=%v and subjectKeyID=%v "+
+			"must be the same as ones of existing certificates with the same subject and subjectKeyID",
+		subject, subjectKeyID)
+}
+
+func NewErrUnauthorizedCertOwner(subject string, subjectKeyID string) error {
+	return sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+		"Only the owner of certificates with subject=%v and subjectKeyID=%v has the authority "+
+			"to add, remove, or revoke a certificate with the same subject and subjectKeyID",
+		subject, subjectKeyID)
+}
+
+func NewErrUnauthorizedCertVendor(ownerVid int32) error {
+	return sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+		"Only the vendor accounts with vid=%d, has the authority "+
+			"to add, remove, or revoke a certificate with provided subject and subjectKeyID",
+		ownerVid)
+}
+
+func NewErrProvidedNocCertButExistingNotNoc(subject string, subjectKeyID string) error {
+	return sdkerrors.Wrapf(ErrInappropriateCertificateType,
+		"The existing certificate with the same combination of subject (%v) and subjectKeyID (%v) is not a NOC certificate",
+		subject, subjectKeyID)
+}
+
+func NewErrRootOfNocCertIsNotNoc(subject string, subjectKeyID string) error {
+	return sdkerrors.Wrapf(ErrInappropriateCertificateType,
+		"Root of the provided certificate with subject (%v) and subjectKeyID (%v) is not a NOC certificate",
+		subject, subjectKeyID)
+}
+
+func NewErrProvidedNotNocCertButExistingNoc(subject string, subjectKeyID string) error {
+	return sdkerrors.Wrapf(ErrInappropriateCertificateType,
+		"The existing certificate with the same combination of subject (%v) and subjectKeyID (%v) is a NOC certificate",
+		subject, subjectKeyID)
+}
+
+func NewErrProvidedNotNocCertButRootIsNoc() error {
+	return sdkerrors.Wrapf(ErrInappropriateCertificateType, "The root is NOC certificate, but the provided certificate is not")
+}
+
+func NewErrRootCertVidNotEqualToCertVid(rootVID int32, certVID int32) error {
+	return sdkerrors.Wrapf(ErrCertVidNotEqualToRootVid,
+		"A child certificate must be also VID scoped to the same VID as a root one: "+
+			"Root certificate's VID = %v, Child certificate's VID = %v",
+		rootVID, certVID)
+}
+
+func NewErrRootCertVidNotEqualToAccountVid(rootVID int32, accountVID int32) error {
+	return sdkerrors.Wrapf(ErrCertVidNotEqualAccountVid,
+		"Only a Vendor associated with VID of root certificate can add a child certificate: "+
+			"Root certificate's VID = %v, Account VID = %v",
+		rootVID, accountVID)
+}
+
+func NewErrCRLSignerCertificateInvalidFormat(description string) error {
+	return sdkerrors.Wrapf(
+		ErrCRLSignerCertificateInvalidFormat, "Invalid CRL Signer Certificate format: %v",
+		description,
+	)
+}
+
 func NewErrCRLSignerCertificatePidNotEqualMsgPid(certificatePid int32, messagePid int32) error {
 	return sdkerrors.Wrapf(
 		ErrCRLSignerCertificatePidNotEqualMsgPid,
@@ -225,7 +300,23 @@ func NewErrDataFieldPresented(revocationType uint32) error {
 func NewErrWrongSubjectKeyIDFormat() error {
 	return sdkerrors.Wrapf(
 		ErrWrongSubjectKeyIDFormat,
+		"Wrong SubjectKeyID format. It must consist of even number of uppercase hexadecimal characters ([0-9A-F]), "+
+			"with no whitespace and no non-hexadecimal characters",
+	)
+}
+
+func NewErrWrongIssuerSubjectKeyIDFormat() error {
+	return sdkerrors.Wrapf(
+		ErrWrongSubjectKeyIDFormat,
 		"Wrong IssuerSubjectKeyID format. It must consist of even number of uppercase hexadecimal characters ([0-9A-F]), "+
+			"with no whitespace and no non-hexadecimal characters",
+	)
+}
+
+func NewErrInvalidAuthorityKeyIDFormat() error {
+	return sdkerrors.Wrapf(
+		ErrInvalidAuthorityKeyIDFormat,
+		"Invalid AuthorityKeyID format. It must consist of even number of uppercase hexadecimal characters ([0-9A-F]), "+
 			"with no whitespace and no non-hexadecimal characters",
 	)
 }
@@ -285,6 +376,19 @@ func NewErrMessageVidNotEqualAccountVid(msgVid int32, accountVid int32) error {
 	return sdkerrors.Wrapf(ErrMessageVidNotEqualAccountVid, "Message vid=%d is not equal to account vid=%d", msgVid, accountVid)
 }
 
+func NewErrMessageExpectedNonRoot(subject string, subjectKeyID string) error {
+	return sdkerrors.Wrapf(ErrInappropriateCertificateType, "Inappropriate Certificate Type: Certificate with subject=%s and subjectKeyID=%s "+
+		"is a root certificate.", subject, subjectKeyID,
+	)
+}
+
+func NewErrMessageExistingCertIsNotRoot(subject string, subjectKeyID string) error {
+	return sdkerrors.Wrapf(ErrInappropriateCertificateType,
+		"The existing certificate with the same combination of subject (%v) and subjectKeyID (%v) is not a root certificate",
+		subject, subjectKeyID,
+	)
+}
+
 func NewErrUnsupportedOperation(e interface{}) error {
 	return sdkerrors.Wrapf(ErrUnsupportedOperation, "%v", e)
 }
@@ -307,4 +411,12 @@ func NewErrCertificateVidNotEqualMsgVid(e interface{}) error {
 
 func NewErrCertNotChainedBack() error {
 	return sdkerrors.Wrapf(ErrCertNotChainedBack, "CRL Signer Certificate is not chained back to root certificate on DCL")
+}
+
+func NewErrCRLSignerCertNotChainedBackToDelegator() error {
+	return sdkerrors.Wrapf(ErrCertNotChainedBack, "CRL Signer Certificate is not chained back to delegated PAI CRL Signer certificate")
+}
+
+func NewErrCRLSignerCertDelegatorNotChainedBack() error {
+	return sdkerrors.Wrapf(ErrCertNotChainedBack, "Delegated CRL Signer Certificate is not chained back to root certificate on DCL")
 }

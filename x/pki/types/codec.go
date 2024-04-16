@@ -19,6 +19,11 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgUpdatePkiRevocationDistributionPoint{}, "pki/UpdatePkiRevocationDistributionPoint", nil)
 	cdc.RegisterConcrete(&MsgDeletePkiRevocationDistributionPoint{}, "pki/DeletePkiRevocationDistributionPoint", nil)
 	cdc.RegisterConcrete(&MsgAssignVid{}, "pki/AssignVid", nil)
+	cdc.RegisterConcrete(&MsgAddNocX509RootCert{}, "pki/AddNocX509RootCert", nil)
+	cdc.RegisterConcrete(&MsgRemoveX509Cert{}, "pki/RemoveX509Cert", nil)
+	cdc.RegisterConcrete(&MsgAddNocX509IcaCert{}, "pki/AddNocX509Cert", nil)
+	cdc.RegisterConcrete(&MsgRevokeNocX509RootCert{}, "pki/RevokeNocRootX509Cert", nil)
+	cdc.RegisterConcrete(&MsgRevokeNocX509IcaCert{}, "pki/RevokeNocX509Cert", nil)
 	// this line is used by starport scaffolding # 2
 }
 
@@ -55,6 +60,21 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgAssignVid{},
+	)
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgAddNocX509RootCert{},
+	)
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgRemoveX509Cert{},
+	)
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgAddNocX509IcaCert{},
+	)
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgRevokeNocX509RootCert{},
+	)
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgRevokeNocX509IcaCert{},
 	)
 	// this line is used by starport scaffolding # 3
 

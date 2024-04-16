@@ -14,7 +14,8 @@ message PkiRevocationDistributionPoint {
   uint64 dataFileSize = 8; 
   string dataDigest = 9; 
   uint32 dataDigestType = 10; 
-  uint32 revocationType = 11; 
-  
+  uint32 revocationType = 11;
+  uint32 schemaVersion = 12;
+  string crlSignerDelegator = 13;
 }
 

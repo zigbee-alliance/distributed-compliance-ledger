@@ -56,27 +56,37 @@ func CmdShowApprovedCertificates() *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "x509-cert",
 		Short: "Gets certificates (either root, intermediate or leaf) " +
-			"by the given combination of subject and subject-key-id",
+			"by the given combination of subject and subject-key-id or just subject-key-id",
 		Args: cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
-			var res types.ApprovedCertificates
+			if subject != "" {
+				var res types.ApprovedCertificates
+
+				return cli.QueryWithProof(
+					clientCtx,
+					pkitypes.StoreKey,
+					types.ApprovedCertificatesKeyPrefix,
+					types.ApprovedCertificatesKey(subject, subjectKeyID),
+					&res,
+				)
+			}
+			var res types.ApprovedCertificatesBySubjectKeyId
 
 			return cli.QueryWithProof(
 				clientCtx,
 				pkitypes.StoreKey,
-				types.ApprovedCertificatesKeyPrefix,
-				types.ApprovedCertificatesKey(subject, subjectKeyID),
+				types.ApprovedCertificatesBySubjectKeyIDKeyPrefix,
+				types.ApprovedCertificatesBySubjectKeyIDKey(subjectKeyID),
 				&res,
 			)
 		},
 	}
 
-	cmd.Flags().StringVarP(&subject, FlagSubject, FlagSubjectShortcut, "", "Certificate's subject")
-	cmd.Flags().StringVarP(&subjectKeyID, FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "", "Certificate's subject key id (hex)")
+	cmd.Flags().StringVarP(&subject, FlagSubject, FlagSubjectShortcut, "", "Certificate's subject - optional")
+	cmd.Flags().StringVarP(&subjectKeyID, FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "", "Certificate's subject key id (hex) - required")
 	flags.AddQueryFlagsToCmd(cmd)
 
-	_ = cmd.MarkFlagRequired(FlagSubject)
 	_ = cmd.MarkFlagRequired(FlagSubjectKeyID)
 
 	return cmd

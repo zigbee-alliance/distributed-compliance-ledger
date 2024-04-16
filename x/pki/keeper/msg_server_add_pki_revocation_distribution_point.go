@@ -4,9 +4,9 @@ import (
 	"context"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
-
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/x509"
 )
@@ -46,7 +46,7 @@ func (k msgServer) AddPkiRevocationDistributionPoint(goCtx context.Context, msg 
 		err = k.checkRootCert(ctx, crlSignerCertificate, msg)
 	} else {
 		// check that crlSignerCertificate is chained back to a certificate on the ledger
-		err = k.checkNonRootCert(ctx, crlSignerCertificate)
+		err = k.checkCRLSignerNonRootCert(ctx, crlSignerCertificate, msg.CrlSignerDelegator, msg.IsPAA)
 	}
 	if err != nil {
 		return nil, err
@@ -69,11 +69,13 @@ func (k msgServer) AddPkiRevocationDistributionPoint(goCtx context.Context, msg 
 		Pid:                  msg.Pid,
 		IsPAA:                msg.IsPAA,
 		CrlSignerCertificate: msg.CrlSignerCertificate,
+		CrlSignerDelegator:   msg.CrlSignerDelegator,
 		DataURL:              msg.DataURL,
 		DataFileSize:         msg.DataFileSize,
 		DataDigest:           msg.DataDigest,
 		DataDigestType:       msg.DataDigestType,
 		RevocationType:       msg.RevocationType,
+		SchemaVersion:        msg.SchemaVersion,
 	}
 
 	k.SetPkiRevocationDistributionPoint(ctx, pkiRevocationDistributionPoint)
@@ -115,9 +117,28 @@ func (k msgServer) checkRootCert(ctx sdk.Context, crlSignerCertificate *x509.Cer
 	return nil
 }
 
-func (k msgServer) checkNonRootCert(ctx sdk.Context, crlSignerCertificate *x509.Certificate) error {
+func (k msgServer) checkCRLSignerNonRootCert(ctx sdk.Context, crlSignerCertificate *x509.Certificate, crlSignerDelegator string, isPAA bool) error {
+	if crlSignerDelegator != "" && !isPAA {
+		crlSignerDelegatorCert, err := x509.DecodeX509Certificate(crlSignerDelegator)
+		if err != nil {
+			return pkitypes.NewErrInvalidCertificate(err)
+		}
+
+		// verify CRL Signer certificate against Delegated PAI certificate
+		if err = crlSignerCertificate.Verify(crlSignerDelegatorCert, ctx.BlockTime()); err != nil {
+			return pkitypes.NewErrCRLSignerCertNotChainedBackToDelegator()
+		}
+
+		if _, err = k.verifyCertificate(ctx, crlSignerDelegatorCert); err != nil {
+			return pkitypes.NewErrCRLSignerCertDelegatorNotChainedBack()
+		}
+
+		return nil
+	}
+
 	// check that it's chained back to a cert on DCL
-	if _, _, err := k.verifyCertificate(ctx, crlSignerCertificate); err != nil {
+	_, err := k.verifyCertificate(ctx, crlSignerCertificate)
+	if err != nil {
 		return pkitypes.NewErrCertNotChainedBack()
 	}
 
