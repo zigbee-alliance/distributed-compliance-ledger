@@ -153,6 +153,7 @@ create_new_vendor_account(){
     echo "Jack proposes account for \"$_name\" with Vendor role"
     _result=$(echo $passphrase | dcld tx auth propose-add-account --address="$_address" --pubkey="$_pubkey" --roles=Vendor --vid=$_vid --from jack --yes)
   fi
+
   _result=$(get_txn_result "$_result")
   check_response "$_result" "\"code\": 0"
 }
@@ -248,7 +249,9 @@ execute_with_retry() {
 
 
 get_txn_result() {
+  echo "get_txn_result"
   local _broadcast_result=${1}
+  echo "$_broadcast_result"
   local _txHash=$(echo "$_broadcast_result" | jq -r '.txhash')
   local _command="dcld query tx $_txHash"
   local _result=$($_command 2>&1)
