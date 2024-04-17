@@ -82,6 +82,28 @@ echo $result | jq
 
 test_divider
 
+echo "Request NOC root certificate by VID = $vid and SKID = $noc_root_cert_2_subject_key_id must be empty"
+result=$(dcld query pki noc-x509-root-certs --vid="$vid" --subject-key-id="$noc_root_cert_2_subject_key_id")
+check_response "$result" "Not Found"
+response_does_not_contain "$result" "\"subject\": \"$noc_root_cert_2_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_root_cert_2_subject_key_id\""
+response_does_not_contain "$result" "\"serialNumber\": \"$noc_root_cert_2_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$noc_root_cert_2_subject_as_text\""
+echo $result | jq
+
+test_divider
+
+echo "Request NOC root certificate by VID = $vid and SKID = $noc_root_cert_3_subject_key_id must be empty"
+result=$(dcld query pki noc-x509-root-certs --vid="$vid" --subject-key-id="$noc_root_cert_3_subject_key_id")
+check_response "$result" "Not Found"
+response_does_not_contain "$result" "\"subject\": \"$noc_root_cert_3_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_root_cert_3_subject_key_id\""
+response_does_not_contain "$result" "\"serialNumber\": \"$noc_root_cert_3_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$noc_root_cert_3_subject_as_text\""
+echo $result | jq
+
+test_divider
+
 echo "Request all NOC root certificates must be empty"
 result=$(dcld query pki all-noc-x509-root-certs)
 check_response "$result" "\[\]"

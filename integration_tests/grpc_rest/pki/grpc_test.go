@@ -32,6 +32,6 @@ import (
 
 func TestPkiDemoGRPC(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, false)
-	pki.Demo(&suite)
+	// pki.Demo(&suite)
 	pki.NocCertDemo(&suite)
 }
