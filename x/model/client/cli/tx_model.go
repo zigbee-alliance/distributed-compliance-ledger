@@ -247,8 +247,8 @@ and for these values the commissioningModeSecondaryStepInstruction SHALL be set`
 		`commissioningModeInitialStepsHint SHALL 
 identify a hint for the steps that can be used to put into commissioning mode a device that 
 has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. 
-For example, a value of 1 (bit 0 is set) indicates 
-that a device that has not yet been commissioned will enter Commissioning Mode upon a power cycle (default 1).`)
+For example, a value of 1 (bit 0 is set) indicates that a device that has not yet been commissioned 
+will enter Commissioning Mode upon a power cycle. Note that this value cannot be updated to 0. (default 1).`)
 
 	cli.AddTxFlagsToCmd(cmd)
 
