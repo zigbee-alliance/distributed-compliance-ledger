@@ -21,7 +21,7 @@ func (k Keeper) NocRootCertificatesByVidAndSkid(c context.Context, req *types.Qu
 		req.SubjectKeyId,
 	)
 	if !found {
-		return nil, status.Error(codes.InvalidArgument, "not found")
+		return nil, status.Error(codes.NotFound, "not found")
 	}
 
 	return &types.QueryGetNocRootCertificatesByVidAndSkidResponse{NocRootCertificatesByVidAndSkid: val}, nil

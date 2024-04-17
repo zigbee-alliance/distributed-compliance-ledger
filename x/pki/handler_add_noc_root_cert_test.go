@@ -197,6 +197,12 @@ func TestHandler_AddNocX509RootCert_AddNew(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, &newNocCertificate, nocRootCertificate)
 
+	// query noc root certificate by VID and SKID
+	nocRootCertificate, tq, err := querySingleNocRootCertificateByVidAndSkid(setup, newNocCertificate.Vid, newNocCertificate.SubjectKeyId)
+	require.NoError(t, err)
+	require.Equal(t, &newNocCertificate, nocRootCertificate)
+	require.Equal(t, float32(1), tq)
+
 	// check that unique certificate key registered
 	require.True(t,
 		setup.Keeper.IsUniqueCertificatePresent(setup.Ctx, testconstants.RootIssuer, testconstants.RootSerialNumber))
@@ -259,6 +265,12 @@ func TestHandler_AddNocX509RootCert_Renew(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, len(nocRootCertificates.Certs), 2)
 	require.Equal(t, &newNocCertificate, nocRootCertificates.Certs[1])
+
+	// query noc root certificate by VID and SKID
+	renewedNocRootCertificate, tq, err := querySingleNocRootCertificateByVidAndSkid(setup, testconstants.Vid, newNocCertificate.SubjectKeyId)
+	require.NoError(t, err)
+	require.Equal(t, &newNocCertificate, renewedNocRootCertificate)
+	require.Equal(t, float32(1), tq)
 }
 
 func querySingleNocRootCertificate(
@@ -294,4 +306,41 @@ func queryNocRootCertificates(
 	require.NotNil(setup.T, resp)
 
 	return &resp.NocRootCertificates, nil
+}
+
+func querySingleNocRootCertificateByVidAndSkid(
+	setup *TestSetup,
+	vid int32,
+	subjectKeyID string,
+) (*types.Certificate, float32, error) {
+	certificates, err := queryNocRootCertificatesByVidAndSkid(setup, vid, subjectKeyID)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	if len(certificates.Certs) > 1 {
+		require.Fail(setup.T, "More than 1 certificate returned")
+	}
+
+	return certificates.Certs[0], certificates.Tq, nil
+}
+
+func queryNocRootCertificatesByVidAndSkid(
+	setup *TestSetup,
+	vid int32,
+	subjectKeyID string,
+) (*types.NocRootCertificatesByVidAndSkid, error) {
+	// query certificate
+	req := &types.QueryGetNocRootCertificatesByVidAndSkidRequest{Vid: vid, SubjectKeyId: subjectKeyID}
+
+	resp, err := setup.Keeper.NocRootCertificatesByVidAndSkid(setup.Wctx, req)
+	if err != nil {
+		require.Nil(setup.T, resp)
+
+		return nil, err
+	}
+
+	require.NotNil(setup.T, resp)
+
+	return &resp.NocRootCertificatesByVidAndSkid, nil
 }

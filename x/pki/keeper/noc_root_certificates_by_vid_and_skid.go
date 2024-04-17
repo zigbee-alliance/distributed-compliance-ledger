@@ -41,7 +41,7 @@ func (k Keeper) GetNocRootCertificatesByVidAndSkid(
 
 // Add a NOC root certificate to the list of NOC root certificates for the VID map.
 func (k Keeper) AddNocRootCertificatesByVidAndSkid(ctx sdk.Context, nocCertificate types.Certificate) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocRootCertificatesKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocRootCertificatesByVidAndSkidKeyPrefix))
 
 	nocRootCertificatesByVidAndSkidKeyBytes := store.Get(types.NocRootCertificatesByVidAndSkidKey(nocCertificate.Vid, nocCertificate.SubjectKeyId))
 	var nocRootCertificatesByVidAndSkid types.NocRootCertificatesByVidAndSkid
@@ -60,7 +60,7 @@ func (k Keeper) AddNocRootCertificatesByVidAndSkid(ctx sdk.Context, nocCertifica
 	nocRootCertificatesByVidAndSkid.Certs = append(nocRootCertificatesByVidAndSkid.Certs, &nocCertificate)
 
 	b := k.cdc.MustMarshal(&nocRootCertificatesByVidAndSkid)
-	store.Set(types.NocRootCertificatesKey(nocCertificate.Vid), b)
+	store.Set(types.NocRootCertificatesByVidAndSkidKey(nocCertificate.Vid, nocCertificate.SubjectKeyId), b)
 }
 
 // RemoveNocRootCertificatesByVidAndSkid removes a nocRootCertificatesByVidAndSkid from the store
@@ -74,6 +74,26 @@ func (k Keeper) RemoveNocRootCertificatesByVidAndSkid(
 		vid,
 		subjectKeyID,
 	))
+}
+
+// RemoveNocRootCertificatesByVidSkidAndSerialNumber removes root certificate with specified serial number from the list.
+func (k Keeper) RemoveNocRootCertificateByVidSkidAndSerialNumber(
+	ctx sdk.Context,
+	vid int32,
+	subjectKeyID string,
+	serialNumber string,
+) {
+	nocCertificates, _ := k.GetNocRootCertificatesByVidAndSkid(ctx, vid, subjectKeyID)
+	filteredCertificates := filterCertificates(&nocCertificates.Certs, func(cert *types.Certificate) bool {
+		return cert.SerialNumber != serialNumber
+	})
+
+	if len(filteredCertificates) > 0 {
+		nocCertificates.Certs = filteredCertificates
+		k.SetNocRootCertificatesByVidAndSkid(ctx, nocCertificates)
+	} else {
+		k.RemoveNocRootCertificatesByVidAndSkid(ctx, vid, subjectKeyID)
+	}
 }
 
 // GetAllNocRootCertificatesByVidAndSkid returns all nocRootCertificatesByVidAndSkid

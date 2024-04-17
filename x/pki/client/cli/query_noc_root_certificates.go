@@ -46,7 +46,8 @@ func CmdListNocRootCertificates() *cobra.Command {
 
 func CmdShowNocRootCertificates() *cobra.Command {
 	var (
-		vid int32
+		vid     int32
+		subject string
 	)
 
 	cmd := &cobra.Command{
@@ -55,6 +56,18 @@ func CmdShowNocRootCertificates() *cobra.Command {
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
+
+			if subject != "" {
+				var res types.NocRootCertificatesByVidAndSkid
+
+				return cli.QueryWithProof(
+					clientCtx,
+					pkitypes.StoreKey,
+					types.ApprovedCertificatesKeyPrefix,
+					types.NocRootCertificatesByVidAndSkidKey(vid, subject),
+					&res,
+				)
+			}
 
 			var res types.NocRootCertificates
 
@@ -69,6 +82,7 @@ func CmdShowNocRootCertificates() *cobra.Command {
 	}
 
 	cmd.Flags().Int32Var(&vid, FlagVid, 0, "Vendor ID (positive non-zero)")
+	cmd.Flags().StringVarP(&subject, FlagSubject, FlagSubjectShortcut, "", "Certificate's subject - optional")
 	flags.AddQueryFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(FlagVid)
