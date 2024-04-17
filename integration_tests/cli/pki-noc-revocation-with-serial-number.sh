@@ -66,6 +66,14 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
+echo "Request NOC root certificate by VID = $vid and SKID=$noc_root_cert_1_subject_key_id"
+result=$(dcld query pki noc-x509-root-certs --vid="$vid" --subject-key-id="$noc_root_cert_1_subject_key_id")
+check_response "$result" "\"subject\": \"$noc_root_cert_1_subject\""
+check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_key_id\""
+check_response "$result" "\"serialNumber\": \"$noc_root_cert_1_serial_number\""
+check_response "$result" "\"serialNumber\": \"$noc_root_cert_1_copy_serial_number\""
+echo $result | jq
+
 echo "Request All NOC root certificate"
 result=$(dcld query pki all-noc-x509-root-certs)
 echo $result | jq
@@ -126,6 +134,14 @@ result=$(dcld query pki noc-x509-root-certs --vid="$vid")
 check_response "$result" "\"serialNumber\": \"$noc_root_cert_1_copy_serial_number\""
 check_response "$result" "\"subject\": \"$noc_root_cert_1_subject\""
 check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_key_id\""
+response_does_not_contain "$result" "\"serialNumber\": \"$noc_root_cert_1_serial_number\""
+echo $result | jq
+
+echo "Request NOC root certificate by VID = $vid and SKID=$noc_root_cert_1_subject_key_id should contain only one root certificate with serialNumber=$noc_root_cert_1_copy_serial_number"
+result=$(dcld query pki noc-x509-root-certs --vid="$vid" --subject-key-id="$noc_root_cert_1_subject_key_id")
+check_response "$result" "\"subject\": \"$noc_root_cert_1_subject\""
+check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_key_id\""
+check_response "$result" "\"serialNumber\": \"$noc_root_cert_1_copy_serial_number\""
 response_does_not_contain "$result" "\"serialNumber\": \"$noc_root_cert_1_serial_number\""
 echo $result | jq
 

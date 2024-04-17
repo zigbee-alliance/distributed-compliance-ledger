@@ -12,7 +12,7 @@ const (
 // NocRootCertificatesByVidAndSkidKey returns the store key to retrieve a NocRootCertificatesByVidAndSkid from the index fields
 func NocRootCertificatesByVidAndSkidKey(
 	vid int32,
-	subjectKeyId string,
+	subjectKeyID string,
 ) []byte {
 	var key []byte
 
@@ -21,7 +21,7 @@ func NocRootCertificatesByVidAndSkidKey(
 	key = append(key, vidBytes...)
 	key = append(key, []byte("/")...)
 
-	subjectKeyIdBytes := []byte(subjectKeyId)
+	subjectKeyIdBytes := []byte(subjectKeyID)
 	key = append(key, subjectKeyIdBytes...)
 	key = append(key, []byte("/")...)
 
