@@ -45,8 +45,6 @@ random_string() {
     else
       eval $__resultvar="'$(date +%s.%N | sha1sum | fold -w ${length} | head -n 1)'"
   fi
-
-  sleep 1
 }
 
 DEF_OUTPUT_MODE=json
