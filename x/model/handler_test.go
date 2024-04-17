@@ -196,7 +196,7 @@ func TestHandler_AddModel_CheckCommissioningModeInitialStepsHintHandling(t *test
 
 			// add new model
 			msgCreateModel := NewMsgCreateModel(setup.Vendor)
-			msgCreateModel.CommissioningModeInitialStepsHint = tc.expectedCommissioningModeInitialStepsHint
+			msgCreateModel.CommissioningModeInitialStepsHint = tc.commissioningModeInitialStepsHint
 			_, err := setup.Handler(setup.Ctx, msgCreateModel)
 			require.NoError(t, err)
 

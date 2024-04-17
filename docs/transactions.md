@@ -261,7 +261,7 @@ All non-edited fields remain the same.
   - lsfURL: `optional(string)` - URL to the Localized String File of this product.
   - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
   - lsfRevision: `optional(uint32)` - LsfRevision is a monotonically increasing positive integer indicating the latest available version of Localized String File.
-  - commissioningModeInitialStepsHint: `optional(uint32)` - commissioningModeInitialStepsHint SHALL identify a hint for the steps that can be used to put into commissioning mode a device that has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 1 (bit 0 is set) indicates that a device that has not yet been commissioned will enter Commissioning Mode upon a power cycle.
+  - commissioningModeInitialStepsHint: `optional(uint32)` - commissioningModeInitialStepsHint SHALL identify a hint for the steps that can be used to put into commissioning mode a device that has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 1 (bit 0 is set) indicates that a device that has not yet been commissioned will enter Commissioning Mode upon a power cycle. Note that this value cannot be updated to 0.
 - In State: `model/Model/value/<vid>/<pid>`
 - Who can send:
   - Vendor account associated with the same vid who has created the model
