@@ -111,7 +111,7 @@ make image &>${DETAILED_OUTPUT_TARGET}
 
 cleanup_pool
 
-# Upgrade procedure tests
+# Upgrade procedure tests.
 if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "upgrade" ]]; then
     UPGRADE_SHELL_TEST="./integration_tests/upgrade/test-upgrade.sh"
 
