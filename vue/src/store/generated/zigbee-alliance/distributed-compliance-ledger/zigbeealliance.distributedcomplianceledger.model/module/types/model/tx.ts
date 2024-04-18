@@ -45,6 +45,7 @@ export interface MsgUpdateModel {
   lsfRevision: number
   schemaVersion: number
   commissionerRemoteUiFlowUrl: string
+  commissioningModeInitialStepsHint: number
 }
 
 export interface MsgUpdateModelResponse {}
@@ -541,7 +542,8 @@ const baseMsgUpdateModel: object = {
   lsfUrl: '',
   lsfRevision: 0,
   schemaVersion: 0,
-  commissionerRemoteUiFlowUrl: ''
+  commissionerRemoteUiFlowUrl: '',
+  commissioningModeInitialStepsHint: 0
 }
 
 export const MsgUpdateModel = {
@@ -593,6 +595,9 @@ export const MsgUpdateModel = {
     }
     if (message.commissionerRemoteUiFlowUrl !== '') {
       writer.uint32(130).string(message.commissionerRemoteUiFlowUrl)
+    }
+    if (message.commissioningModeInitialStepsHint !== 0) {
+      writer.uint32(136).uint32(message.commissioningModeInitialStepsHint)
     }
     return writer
   },
@@ -651,6 +656,9 @@ export const MsgUpdateModel = {
           break
         case 16:
           message.commissionerRemoteUiFlowUrl = reader.string()
+          break
+        case 17:
+          message.commissioningModeInitialStepsHint = reader.uint32()
           break
         default:
           reader.skipType(tag & 7)
@@ -742,6 +750,11 @@ export const MsgUpdateModel = {
     } else {
       message.commissionerRemoteUiFlowUrl = ''
     }
+    if (object.commissioningModeInitialStepsHint !== undefined && object.commissioningModeInitialStepsHint !== null) {
+      message.commissioningModeInitialStepsHint = Number(object.commissioningModeInitialStepsHint)
+    } else {
+      message.commissioningModeInitialStepsHint = 0
+    }
     return message
   },
 
@@ -765,6 +778,7 @@ export const MsgUpdateModel = {
     message.lsfRevision !== undefined && (obj.lsfRevision = message.lsfRevision)
     message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
     message.commissionerRemoteUiFlowUrl !== undefined && (obj.commissionerRemoteUiFlowUrl = message.commissionerRemoteUiFlowUrl)
+    message.commissioningModeInitialStepsHint !== undefined && (obj.commissioningModeInitialStepsHint = message.commissioningModeInitialStepsHint)
     return obj
   },
 
@@ -849,6 +863,11 @@ export const MsgUpdateModel = {
       message.commissionerRemoteUiFlowUrl = object.commissionerRemoteUiFlowUrl
     } else {
       message.commissionerRemoteUiFlowUrl = ''
+    }
+    if (object.commissioningModeInitialStepsHint !== undefined && object.commissioningModeInitialStepsHint !== null) {
+      message.commissioningModeInitialStepsHint = object.commissioningModeInitialStepsHint
+    } else {
+      message.commissioningModeInitialStepsHint = 0
     }
     return message
   }

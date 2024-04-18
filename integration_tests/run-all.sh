@@ -120,8 +120,7 @@ if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "upgrade" ]]; then
     log "*****************************************************************************************"
     log "Running $UPGRADE_SHELL_TEST"
     log "*****************************************************************************************"
-    export PS4='Line $LINENO: '
-    if bash -x "$UPGRADE_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
+    if bash "$UPGRADE_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
       rm dcld_mainnet_stable
       log "$UPGRADE_SHELL_TEST finished successfully"
       source integration_tests/upgrade/add-new-node-after-upgrade.sh

@@ -1025,7 +1025,9 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, createSecondModelMsg.Pid, vendorModels.Products[1].Pid)
 
 	// Update second model
+	newCommissioningModeInitialStepsHint := uint32(8)
 	updateSecondModelMsg := NewMsgUpdateModel(createSecondModelMsg.Vid, createSecondModelMsg.Pid, vendorAccount.Address)
+	updateSecondModelMsg.CommissioningModeInitialStepsHint = newCommissioningModeInitialStepsHint
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{updateSecondModelMsg}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
@@ -1033,6 +1035,7 @@ func Demo(suite *utils.TestSuite) {
 	receivedModel, err = GetModel(suite, createSecondModelMsg.Vid, createSecondModelMsg.Pid)
 	require.NoError(suite.T, err)
 	require.Equal(suite.T, updateSecondModelMsg.ProductLabel, receivedModel.ProductLabel)
+	require.Equal(suite.T, newCommissioningModeInitialStepsHint, receivedModel.CommissioningModeInitialStepsHint)
 
 	// add new model version
 	createModelVersionMsg := NewMsgCreateModelVersion(createFirstModelMsg.Vid, createFirstModelMsg.Pid, 1, "1", vendorAccount.Address)

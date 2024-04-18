@@ -63,6 +63,7 @@ message MsgUpdateModel {
   int32 lsfRevision = 14 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
   uint32 schemaVersion = 15 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
   string commissionerRemoteUiFlowUrl = 16 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
+  uint32 commissioningModeInitialStepsHint = 17;
 }
 message MsgUpdateModelResponse {}
 

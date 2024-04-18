@@ -247,9 +247,9 @@ execute_with_retry() {
 
 
 get_txn_result() {
-  echo "get_txn_result"
   local _broadcast_result=${1}
-  echo "$_broadcast_result"
+  # Remove parts before the first `{`
+  _broadcast_result=$(echo "$_broadcast_result" | sed -n 's/^[^{]*{\(.*\)/{\1/p')
   local _txHash=$(echo "$_broadcast_result" | jq -r '.txhash')
   local _command="dcld query tx $_txHash"
   local _result=$($_command 2>&1)

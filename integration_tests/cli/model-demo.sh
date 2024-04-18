@@ -130,11 +130,12 @@ echo "$result"
 
 test_divider
 
-echo "Update Model with VID: ${vid} PID: ${pid} with new description and commissionerRemoteUiFlowURL"
+echo "Update Model with VID: ${vid} PID: ${pid} with new description, commissionerRemoteUiFlowURL and commissioningModeInitialStepsHint"
 description="New Device Description"
 schema_version_3=3
 newCommissionerRemoteUiFlowURL="https://commissionerRemoteUiFlowURL.dclmodel.updated"
-result=$(echo "test1234" | dcld tx model update-model --vid=$vid --pid=$pid --from $vendor_account --yes --productLabel "$description" --schemaVersion=$schema_version_3 --commissionerRemoteUiFlowURL="$newCommissionerRemoteUiFlowURL")
+newCommissioningModeInitialStepsHint=8
+result=$(echo "test1234" | dcld tx model update-model --vid=$vid --pid=$pid --from $vendor_account --yes --productLabel "$description" --schemaVersion=$schema_version_3 --commissionerRemoteUiFlowURL="$newCommissionerRemoteUiFlowURL" --commissioningModeInitialStepsHint="$newCommissioningModeInitialStepsHint")
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
@@ -156,6 +157,7 @@ check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"productLabel\": \"$description\""
 check_response "$result" "\"schemaVersion\": $schema_version_3"
 check_response "$result" "\"commissionerRemoteUiFlowUrl\": \"$newCommissionerRemoteUiFlowURL\""
+check_response "$result" "\"commissioningModeInitialStepsHint\": $newCommissioningModeInitialStepsHint"
 echo "$result"
 
 test_divider
@@ -174,6 +176,7 @@ result=$(dcld query model get-model --vid=$vid --pid=$pid)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"supportUrl\": \"$supportURL\""
+check_response "$result" "\"commissioningModeInitialStepsHint\": $newCommissioningModeInitialStepsHint"
 echo "$result"
 
 test_divider
