@@ -9877,7 +9877,7 @@ paths:
           format: int32
       tags:
         - Query
-  /dcl/pki/noc_root_certificates/{vid}/{subjectKeyId}:
+  /dcl/pki/noc-root-certificates/{vid}/{subjectKeyId}:
     get:
       summary: Queries a NocRootCertificatesByVidAndSkid by index.
       operationId: NocRootCertificatesByVidAndSkid

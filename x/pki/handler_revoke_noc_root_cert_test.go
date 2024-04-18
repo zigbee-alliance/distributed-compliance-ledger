@@ -457,7 +457,7 @@ func TestHandler_RevokeNocX509RootCert_RevokeWithSerialNumber(t *testing.T) {
 	require.Equal(t, 1, len(revNocRoot.Certs))
 	require.Equal(t, testconstants.NocRootCert1CopySerialNumber, revNocRoot.Certs[0].SerialNumber)
 
-	// query noc root certificate by VID and SKID should return only one root cert
+	// query noc root certificate by VID and SKID
 	nocRootCertificatesByVidAndSkid, err := queryNocRootCertificatesByVidAndSkid(setup, testconstants.Vid, testconstants.NocRootCert1SubjectKeyID)
 	require.NoError(t, err)
 	require.Equal(t, testconstants.NocRootCert1SubjectKeyID, nocRootCertificatesByVidAndSkid.SubjectKeyId)

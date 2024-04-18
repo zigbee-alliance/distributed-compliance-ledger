@@ -2452,7 +2452,7 @@ var (
 
 	pattern_Query_NocRootCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "pki", "noc-root-certificates", "vid"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_NocRootCertificatesByVidAndSkid_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "noc_root_certificates", "vid", "subjectKeyId"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_NocRootCertificatesByVidAndSkid_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "noc-root-certificates", "vid", "subjectKeyId"}, "", runtime.AssumeColonVerbOpt(false)))
 
 	pattern_Query_NocRootCertificatesAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "noc-root-certificates"}, "", runtime.AssumeColonVerbOpt(false)))
 

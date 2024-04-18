@@ -845,11 +845,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryNocRootCertificatesByVidAndSkid
    * @summary Queries a NocRootCertificatesByVidAndSkid by index.
-   * @request GET:/dcl/pki/noc_root_certificates/{vid}/{subjectKeyId}
+   * @request GET:/dcl/pki/noc-root-certificates/{vid}/{subjectKeyId}
    */
   queryNocRootCertificatesByVidAndSkid = (vid: number, subjectKeyId: string, params: RequestParams = {}) =>
     this.request<PkiQueryGetNocRootCertificatesByVidAndSkidResponse, RpcStatus>({
-      path: `/dcl/pki/noc_root_certificates/${vid}/${subjectKeyId}`,
+      path: `/dcl/pki/noc-root-certificates/${vid}/${subjectKeyId}`,
       method: "GET",
       format: "json",
       ...params,

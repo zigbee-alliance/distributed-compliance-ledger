@@ -8,7 +8,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-// SetNocRootCertificatesByVidAndSkid set a specific nocRootCertificatesByVidAndSkid in the store from its index
+// SetNocRootCertificatesByVidAndSkid set a specific nocRootCertificatesByVidAndSkid in the store from its index.
 func (k Keeper) SetNocRootCertificatesByVidAndSkid(ctx sdk.Context, nocRootCertificatesByVidAndSkid types.NocRootCertificatesByVidAndSkid) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocRootCertificatesByVidAndSkidKeyPrefix))
 	b := k.cdc.MustMarshal(&nocRootCertificatesByVidAndSkid)
@@ -18,7 +18,7 @@ func (k Keeper) SetNocRootCertificatesByVidAndSkid(ctx sdk.Context, nocRootCerti
 	), b)
 }
 
-// GetNocRootCertificatesByVidAndSkid returns a nocRootCertificatesByVidAndSkid from its index
+// GetNocRootCertificatesByVidAndSkid returns a nocRootCertificatesByVidAndSkid from its index.
 func (k Keeper) GetNocRootCertificatesByVidAndSkid(
 	ctx sdk.Context,
 	vid int32,
@@ -36,6 +36,7 @@ func (k Keeper) GetNocRootCertificatesByVidAndSkid(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
@@ -63,7 +64,7 @@ func (k Keeper) AddNocRootCertificatesByVidAndSkid(ctx sdk.Context, nocCertifica
 	store.Set(types.NocRootCertificatesByVidAndSkidKey(nocCertificate.Vid, nocCertificate.SubjectKeyId), b)
 }
 
-// RemoveNocRootCertificatesByVidAndSkid removes a nocRootCertificatesByVidAndSkid from the store
+// RemoveNocRootCertificatesByVidAndSkid removes a nocRootCertificatesByVidAndSkid from the store.
 func (k Keeper) RemoveNocRootCertificatesByVidAndSkid(
 	ctx sdk.Context,
 	vid int32,
@@ -129,7 +130,7 @@ func (k Keeper) _filterAndSetNocRootCertificateByVidAndSkid(
 	}
 }
 
-// GetAllNocRootCertificatesByVidAndSkid returns all nocRootCertificatesByVidAndSkid
+// GetAllNocRootCertificatesByVidAndSkid returns all nocRootCertificatesByVidAndSkid.
 func (k Keeper) GetAllNocRootCertificatesByVidAndSkid(ctx sdk.Context) (list []types.NocRootCertificatesByVidAndSkid) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocRootCertificatesByVidAndSkidKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})

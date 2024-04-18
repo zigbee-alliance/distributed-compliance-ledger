@@ -5,11 +5,11 @@ import "encoding/binary"
 var _ binary.ByteOrder
 
 const (
-	// NocRootCertificatesByVidAndSkidKeyPrefix is the prefix to retrieve all NocRootCertificatesByVidAndSkid
+	// NocRootCertificatesByVidAndSkidKeyPrefix is the prefix to retrieve all NocRootCertificatesByVidAndSkid.
 	NocRootCertificatesByVidAndSkidKeyPrefix = "NocRootCertificatesByVidAndSkid/value/"
 )
 
-// NocRootCertificatesByVidAndSkidKey returns the store key to retrieve a NocRootCertificatesByVidAndSkid from the index fields
+// NocRootCertificatesByVidAndSkidKey returns the store key to retrieve a NocRootCertificatesByVidAndSkid from the index fields.
 func NocRootCertificatesByVidAndSkidKey(
 	vid int32,
 	subjectKeyID string,
@@ -21,8 +21,8 @@ func NocRootCertificatesByVidAndSkidKey(
 	key = append(key, vidBytes...)
 	key = append(key, []byte("/")...)
 
-	subjectKeyIdBytes := []byte(subjectKeyID)
-	key = append(key, subjectKeyIdBytes...)
+	subjectKeyIDBytes := []byte(subjectKeyID)
+	key = append(key, subjectKeyIDBytes...)
 	key = append(key, []byte("/")...)
 
 	return key

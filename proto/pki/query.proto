@@ -120,7 +120,7 @@ service Query {
 
 	// Queries a NocRootCertificatesByVidAndSkid by index.
 	rpc NocRootCertificatesByVidAndSkid(QueryGetNocRootCertificatesByVidAndSkidRequest) returns (QueryGetNocRootCertificatesByVidAndSkidResponse) {
-		option (google.api.http).get = "/dcl/pki/noc_root_certificates/{vid}/{subjectKeyId}";
+		option (google.api.http).get = "/dcl/pki/noc-root-certificates/{vid}/{subjectKeyId}";
 	}
 
 	// Queries a list of NocRootCertificates items.

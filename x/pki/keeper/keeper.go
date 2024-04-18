@@ -106,10 +106,12 @@ func findCertificate(serialNumber string, certificates *[]*types.Certificate) (*
 
 func filterCertificates(certificates *[]*types.Certificate, predicate CertificatePredicate) []*types.Certificate {
 	var result []*types.Certificate
+
 	for _, s := range *certificates {
 		if predicate(s) {
 			result = append(result, s)
 		}
 	}
+
 	return result
 }
