@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -euo pipefail
+#set -euo pipefail
 source integration_tests/cli/common.sh
 
 # Upgrade constants
@@ -26,11 +26,11 @@ binary_version_new="v1.4.0-dev3"
 wget -O dcld_old "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version_old/dcld"
 chmod ugo+x dcld_old
 
-wget -O dcld "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version_new/dcld"
-chmod ugo+x dcld
+wget -O dcld_new "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version_new/dcld"
+chmod ugo+x dcld_new
 
 DCLD_BIN_OLD="./dcld_old"
-DCLD_BIN_NEW="./dcld"
+DCLD_BIN_NEW="./dcld_new"
 $DCLD_BIN_NEW config broadcast-mode sync
 ########################################################################################
 
@@ -976,21 +976,38 @@ check_response "$result" "\"code\": 0"
 test_divider
 
 # VALIDATOR_NODE
-#echo "Disable node"
-## FIXME: use proper binary (not dcld but $DCLD_BIN_OLD)
-#result=$(docker exec "$container" /bin/sh -c "echo test1234  | ./dcld tx validator disable-node --from=$account --yes")
-#docker logs node0 -n 50
-#check_response "$result" "\"code\": 0"
-#
-#test_divider
+docker cp $DCLD_BIN_NEW "$container":"$DCL_USER_HOME"/dcld
 
-#echo "Enable node"
-## FIXME: use proper binary (not dcld but $DCLD_BIN_OLD)
-#result=$(docker exec "$container" /bin/sh -c "echo test1234  | ./dcld tx validator enable-node --from=$account --yes")
-#check_response "$result" "\"code\": 0"
-#
-#test_divider
-#
+echo "Disable node"
+result=$(docker exec node0 /bin/sh -c "echo test1234  | dcld status")
+echo "Node0 status $result"
+
+result=$(docker exec node0 /bin/sh -c "echo test1234  | dcld version")
+echo "Node0 version $result"
+
+# FIXME: use proper binary (not dcld but $DCLD_BIN_OLD)
+result=$(docker exec "$container" /bin/sh -c "echo test1234  | ./dcld status")
+echo "Validator status $result"
+
+result=$(docker exec "$container" /bin/sh -c "echo test1234  | dcld status")
+echo "Validator status 2 $result"
+
+result=$(docker exec "$container" /bin/sh -c "echo test1234  | ./dcld version")
+echo "Validator version $result"
+result=$(docker exec "$container" /bin/sh -c "echo test1234  | ./dcld tx validator disable-node --from=$account --yes")
+docker logs node0 -n 50
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+
+echo "Enable node"
+# FIXME: use proper binary (not dcld but $DCLD_BIN_OLD)
+result=$(docker exec "$container" /bin/sh -c "echo test1234  | ./dcld tx validator enable-node --from=$account --yes")
+check_response "$result" "\"code\": 0"
+
+test_divider
+
 echo "Approve disable node"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx validator approve-disable-node --address=$validator_address --from=$trustee_account_2 --yes)
 result=$(get_txn_result "$result")
@@ -1012,12 +1029,12 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
-#echo "Enable node"
+echo "Enable node"
 ## FIXME: use proper binary (not dcld but $DCLD_BIN_OLD)
-#result=$(docker exec "$container" /bin/sh -c "echo test1234  | ./dcld tx validator enable-node --from=$account --yes")
-#check_response "$result" "\"code\": 0"
-#
-#test_divider
+result=$(docker exec "$container" /bin/sh -c "echo test1234  | ./dcld tx validator enable-node --from=$account --yes")
+check_response "$result" "\"code\": 0"
+
+test_divider
 
 echo "Propose disable node"
 result=$(echo $passphrase | $DCLD_BIN_OLD tx validator propose-disable-node --address=$validator_address --from=$trustee_account_1 --yes)
