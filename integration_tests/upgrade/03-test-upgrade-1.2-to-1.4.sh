@@ -467,7 +467,7 @@ test_divider
 
 echo "Get node"
 # FIXME: use proper binary (not dcld but $DCLD_BIN_OLD)
-result=$(docker exec "$container" /bin/sh -c "echo test1234 | ./dcld query validator all-nodes")
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator all-nodes")
 check_response "$result" "\"owner\": \"$validator_address\""
 
 ########################################################################################
@@ -976,34 +976,18 @@ check_response "$result" "\"code\": 0"
 test_divider
 
 # VALIDATOR_NODE
-docker cp $DCLD_BIN_NEW "$container":"$DCL_USER_HOME"/dcld
+result=$(docker exec "$container" /bin/sh -c "echo test1234  | dcld config broadcast-mode sync")
 
 echo "Disable node"
-result=$(docker exec node0 /bin/sh -c "echo test1234  | dcld status")
-echo "Node0 status $result"
-
-result=$(docker exec node0 /bin/sh -c "echo test1234  | dcld version")
-echo "Node0 version $result"
-
-# FIXME: use proper binary (not dcld but $DCLD_BIN_OLD)
-result=$(docker exec "$container" /bin/sh -c "echo test1234  | ./dcld status")
-echo "Validator status $result"
-
-result=$(docker exec "$container" /bin/sh -c "echo test1234  | dcld status")
-echo "Validator status 2 $result"
-
-result=$(docker exec "$container" /bin/sh -c "echo test1234  | ./dcld version")
-echo "Validator version $result"
-result=$(docker exec "$container" /bin/sh -c "echo test1234  | ./dcld tx validator disable-node --from=$account --yes")
-docker logs node0 -n 50
+result=$(docker exec "$container" /bin/sh -c "echo test1234  | dcld tx validator disable-node --from=$account --yes")
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
-
 echo "Enable node"
-# FIXME: use proper binary (not dcld but $DCLD_BIN_OLD)
-result=$(docker exec "$container" /bin/sh -c "echo test1234  | ./dcld tx validator enable-node --from=$account --yes")
+result=$(docker exec "$container" /bin/sh -c "echo test1234  | dcld tx validator enable-node --from=$account --yes")
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1030,14 +1014,14 @@ check_response "$result" "\"code\": 0"
 test_divider
 
 echo "Enable node"
-## FIXME: use proper binary (not dcld but $DCLD_BIN_OLD)
-result=$(docker exec "$container" /bin/sh -c "echo test1234  | ./dcld tx validator enable-node --from=$account --yes")
+result=$(docker exec "$container" /bin/sh -c "echo test1234  | dcld tx validator enable-node --from=$account --yes")
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Propose disable node"
-result=$(echo $passphrase | $DCLD_BIN_OLD tx validator propose-disable-node --address=$validator_address --from=$trustee_account_1 --yes)
+result=$(echo $passphrase | $DCLD_BIN_NEW tx validator propose-disable-node --address=$validator_address --from=$trustee_account_1 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -1299,7 +1283,7 @@ test_divider
 
 echo "Get node"
 # FIXME: use proper binary (not dcld but $DCLD_BIN_OLD)
-result=$(docker exec "$container" /bin/sh -c "echo test1234 | ./dcld query validator all-nodes")
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator all-nodes")
 check_response "$result" "\"owner\": \"$validator_address\""
 
 test_divider

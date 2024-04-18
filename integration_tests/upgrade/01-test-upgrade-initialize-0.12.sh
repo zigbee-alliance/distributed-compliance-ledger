@@ -110,7 +110,7 @@ EOF
   docker exec $container cp -f ./dcld "$DCL_DIR"/cosmovisor/genesis/bin/
 
   echo "$account Start Node \"$node_name\""
-  docker exec -d $container cosmovisor start
+  docker exec -d $container cosmovisor run start
   sleep 10
 
   result=$($DCLD_BIN query validator node --address "$address")
@@ -472,14 +472,14 @@ test_divider
 
 echo "Disable node"
 # FIXME: use proper binary (not dcld but $DCLD_BIN)
-result=$(docker exec "$container" /bin/sh -c "echo test1234  | ./dcld tx validator disable-node --from=$account --yes")
+result=$(docker exec "$container" /bin/sh -c "echo test1234  | dcld tx validator disable-node --from=$account --yes")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Enable node"
 # FIXME: use proper binary (not dcld but $DCLD_BIN)
-result=$(docker exec "$container" /bin/sh -c "echo test1234  | ./dcld tx validator enable-node --from=$account --yes")
+result=$(docker exec "$container" /bin/sh -c "echo test1234  | dcld tx validator enable-node --from=$account --yes")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -504,7 +504,7 @@ test_divider
 
 echo "Enable node"
 # FIXME: use proper binary (not dcld but $DCLD_BIN)
-result=$(docker exec "$container" /bin/sh -c "echo test1234  | ./dcld tx validator enable-node --from=$account --yes")
+result=$(docker exec "$container" /bin/sh -c "echo test1234  | dcld tx validator enable-node --from=$account --yes")
 check_response "$result" "\"code\": 0"
 
 test_divider
