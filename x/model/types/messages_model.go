@@ -114,6 +114,7 @@ func NewMsgUpdateModel(
 	lsfURL string,
 	lsfRevision int32,
 	schemaVersion uint32,
+	commissioningModeInitialStepsHint uint32,
 ) *MsgUpdateModel {
 	return &MsgUpdateModel{
 		Creator:                                  creator,
@@ -132,6 +133,7 @@ func NewMsgUpdateModel(
 		LsfUrl:                                     lsfURL,
 		LsfRevision:                                lsfRevision,
 		SchemaVersion:                              schemaVersion,
+		CommissioningModeInitialStepsHint:          commissioningModeInitialStepsHint,
 	}
 }
 

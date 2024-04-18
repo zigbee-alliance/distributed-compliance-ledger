@@ -57,6 +57,12 @@ func (k msgServer) CreateModel(goCtx context.Context, msg *types.MsgCreateModel)
 		model.LsfRevision = 1
 	}
 
+	// If CommissioningModeInitialStepsHint is 0, then set it to the default value of 1
+	// Relevant issue: https://github.com/zigbee-alliance/distributed-compliance-ledger/issues/522
+	if model.CommissioningModeInitialStepsHint == 0 {
+		model.CommissioningModeInitialStepsHint = 1
+	}
+
 	// store new model
 	k.SetModel(
 		ctx,
@@ -156,6 +162,10 @@ func (k msgServer) UpdateModel(goCtx context.Context, msg *types.MsgUpdateModel)
 		if model.LsfRevision == 0 {
 			model.LsfRevision = 1
 		}
+	}
+
+	if msg.CommissioningModeInitialStepsHint != 0 {
+		model.CommissioningModeInitialStepsHint = msg.CommissioningModeInitialStepsHint
 	}
 
 	// store updated model
