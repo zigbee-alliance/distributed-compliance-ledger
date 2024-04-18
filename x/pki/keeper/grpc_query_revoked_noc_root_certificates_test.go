@@ -50,7 +50,7 @@ func TestRevokedNocRootCertificatesQuerySingle(t *testing.T) {
 				Subject:      strconv.Itoa(100000),
 				SubjectKeyId: strconv.Itoa(100000),
 			},
-			err: status.Error(codes.InvalidArgument, "not found"),
+			err: status.Error(codes.NotFound, "not found"),
 		},
 		{
 			desc: "InvalidRequest",

@@ -76,17 +76,50 @@ func (k Keeper) RemoveNocRootCertificatesByVidAndSkid(
 	))
 }
 
-// RemoveNocRootCertificatesByVidSkidAndSerialNumber removes root certificate with specified serial number from the list.
-func (k Keeper) RemoveNocRootCertificateByVidSkidAndSerialNumber(
+// RemoveNocRootCertificateByVidSkidSubjectAndSerialNumber removes root certificate with specified subject from the list.
+func (k Keeper) RemoveNocRootCertificateByVidSubjectAndSkid(
 	ctx sdk.Context,
 	vid int32,
+	subject string,
+	subjectKeyID string,
+) {
+	k._filterAndSetNocRootCertificateByVidAndSkid(
+		ctx,
+		vid,
+		subjectKeyID,
+		func(cert *types.Certificate) bool {
+			return cert.Subject != subject
+		},
+	)
+}
+
+// RemoveNocRootCertificateByVidSkidSubjectAndSerialNumber removes root certificate with specified subject and serial number from the list.
+func (k Keeper) RemoveNocRootCertificateByVidSubjectSkidAndSerialNumber(
+	ctx sdk.Context,
+	vid int32,
+	subject string,
 	subjectKeyID string,
 	serialNumber string,
 ) {
+	k._filterAndSetNocRootCertificateByVidAndSkid(
+		ctx,
+		vid,
+		subjectKeyID,
+		func(cert *types.Certificate) bool {
+			return !(cert.Subject == subject && cert.SerialNumber == serialNumber)
+		},
+	)
+}
+
+// RemoveNocRootCertificateByVidSkidSubjectAndSerialNumber removes root certificate with specified subject and serial number from the list.
+func (k Keeper) _filterAndSetNocRootCertificateByVidAndSkid(
+	ctx sdk.Context,
+	vid int32,
+	subjectKeyID string,
+	predicate CertificatePredicate,
+) {
 	nocCertificates, _ := k.GetNocRootCertificatesByVidAndSkid(ctx, vid, subjectKeyID)
-	filteredCertificates := filterCertificates(&nocCertificates.Certs, func(cert *types.Certificate) bool {
-		return cert.SerialNumber != serialNumber
-	})
+	filteredCertificates := filterCertificates(&nocCertificates.Certs, predicate)
 
 	if len(filteredCertificates) > 0 {
 		nocCertificates.Certs = filteredCertificates
