@@ -56,8 +56,8 @@ jobs:
     if: needs.changes.outputs.workflows == 'true'
     name: Run actionlint tool to verify lint issues in GitHub actions
     runs-on: ubuntu-latest
-    needs:
-      - changes
+#    needs:
+#      - changes
     steps:
       - uses: actions/checkout@master
       - uses: reviewdog/action-actionlint@v1

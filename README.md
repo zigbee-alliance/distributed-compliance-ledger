@@ -166,7 +166,7 @@ but they may be provided in the future.
 - The following libraries can be used as light clients:
   - [Golang Light Client implementation](https://pkg.go.dev/github.com/cometbft/cometbft/light)
   - [Rust Light Client implementation](https://docs.rs/cometbft-light-client/0.1.0-alpha.2/cometbft_light_client/)
-- Refer to [this doc](./docs/cometbtf-rpc.md) to see how to [subscribe](./docs/cometbtf-rpc.md#subscribe) to a CometBFT WebSocket based events and/or [query](./docs/cometbtf-rpc.md#querying-application-components) an application components.
+- Refer to [this doc](./docs/cometbft-rpc.md) to see how to [subscribe](./docs/cometbft-rpc.md#subscribe) to a CometBFT WebSocket based events and/or [query](./docs/cometbft-rpc.md#querying-application-components) an application components.
 
 
 ### Instructions

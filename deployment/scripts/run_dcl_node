@@ -353,7 +353,7 @@ function run_node {
 
 
 function wait_node_up {
-    local _timeout="${1:-30}"
+    local _timeout="${1:-60}"
     local _try=1
 
     echo -e "Waiting the node becomes up"

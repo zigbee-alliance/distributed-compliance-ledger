@@ -111,6 +111,17 @@ make image &>${DETAILED_OUTPUT_TARGET}
 
 cleanup_pool
 
+# Deploy tests
+if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "deploy" ]]; then
+    DEPLOY_SHELL_TEST="./integration_tests/deploy/test_deploy.sh"
+    if bash "$DEPLOY_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
+      log "$DEPLOY_SHELL_TEST finished successfully"
+    else
+      log "$DEPLOY_SHELL_TEST failed"
+      exit 1
+    fi
+fi
+
 # Cli shell tests
 if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "cli" ]]; then
   CLI_SHELL_TESTS=$(find integration_tests/cli -type f -name '*.sh' -not -name "common.sh")
@@ -179,17 +190,6 @@ if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "rest" ]]; then
 
     cleanup_pool
   done
-fi
-
-# Deploy tests
-if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "deploy" ]]; then
-    DEPLOY_SHELL_TEST="./integration_tests/deploy/test_deploy.sh"
-    if bash "$DEPLOY_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
-      log "$DEPLOY_SHELL_TEST finished successfully"
-    else
-      log "$DEPLOY_SHELL_TEST failed"
-      exit 1
-    fi
 fi
 
 # Upgrade procedure tests

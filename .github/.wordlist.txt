@@ -85,3 +85,5 @@ pdf
 ul
 WebSocket
 cometbft
+CometBFT
+CometBFT's
