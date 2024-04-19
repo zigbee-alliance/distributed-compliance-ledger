@@ -18,7 +18,7 @@ DC Ledger is a public permissioned Ledger which can be used for two main use cas
 
 More information about use cases can be found in [DC Ledger Overview](./docs/design/DCL-Overview.pdf) and [Use Case Diagrams](docs/use_cases).
 
-DC Ledger is based on [Tendermint](https://tendermint.com/) and [Cosmos SDK](https://cosmos.network/sdk).
+DC Ledger is based on [CometBFT](https://cometbft.com/) and [Cosmos SDK](https://cosmos.network/sdk).
 
 DC Ledger is a public permissioned ledger in the following sense:
 
@@ -40,7 +40,7 @@ In order to send write transactions to the ledger you need:
 
 ### Pool of Nodes
 
-- A network of Tendermint-based validator nodes (Validators and Observers) maintaining the ledger.
+- A network of CometBFT-based validator nodes (Validators and Observers) maintaining the ledger.
 - Every validator node (`dcld` binary) runs DC Ledger application code (based on Cosmos SDK) implementing the use cases.
 - See the proposed deployment in [deployment](docs/deployment.png) and [deployment-detailed](docs/deployment-detailed.png).
 - See recommended design for DCL MainNet deployment on AWS in [aws deployment](./docs/deployment-design-aws.md)
@@ -54,7 +54,7 @@ In order to send write transactions to the ledger you need:
     - **Private Sentry Node:** a full node to connect other Validator or Sentry nodes only; should not be accessed by clients.
     - **Public Sentry Node:** a full node to connect other external full nodes (possibly observer nodes).
   - **Observer Node (ON):** a full node that doesn't participate in consensus. Should be used to receive read/write requests from the clients.
-- **Light Client Proxy Node**: doesn't contain a full replication of data. Can be used as a proxy to untrusted Full nodes for single-value query requests sent via CLI or Tendermint RPC.
+- **Light Client Proxy Node**: doesn't contain a full replication of data. Can be used as a proxy to untrusted Full nodes for single-value query requests sent via CLI or CometBFT RPC.
   It will verify all state proofs automatically.
 - **Seed Node**: provides a list of peers which a node can connect to.
 
@@ -64,7 +64,7 @@ See
 - [Deployment-detailed](docs/deployment-detailed.png).
 - [Deployment Recommendations](https://github.com/zigbee-alliance/distributed-compliance-ledger/wiki/DCL-MainNet-Deployment)
 - [Deployment Recommendations for AWS](./docs/deployment-design-aws.md)
-- <https://docs.tendermint.com/v0.34/tendermint-core/validators.html>
+- <https://docs.cometbft.com/v0.37/core/validators>
 - [Run Light Client Proxy](docs/running-light-client-proxy.md)
 
 ### Clients
@@ -79,7 +79,7 @@ A Light Client Proxy can be connected to multiple nodes and will verify the stat
 - [CLI](#cli)  
 - [REST](#rest)
 - [gRPC](#grpc)
-- [Tendermint RPC and Light Client](#tendermint-rpc-and-light-client)
+- [CometBFT RPC and Light Client](#cometbft-rpc-and-light-client)
 
 **Please note, that multi-value queries don't have state proofs support and should be sent to trusted nodes only.**
 
@@ -126,7 +126,7 @@ See [Run local pool](README-DEV.md#run-local-pool) section in [README-DEV.md](RE
 
 Should be used if there are no trusted Observer or Validator nodes to connect.
 
-It can be a proxy for CLI or direct requests from code done via Tendermint RPC.
+It can be a proxy for CLI or direct requests from code done via CometBFT RPC.
 
 Please note, that CLI can use a Light Client proxy only for single-value query requests.
 A Full Node (Validator or Observer) should be used for multi-value query requests and write requests.
@@ -139,7 +139,7 @@ See [Run Light Client Proxy](docs/running-light-client-proxy.md) for details how
 
 - **There are no state proofs in REST, so REST queries should be sent to trusted Validator or Observer nodes only.**
 - OpenAPI specification: <https://zigbee-alliance.github.io/distributed-compliance-ledger/>.
-- Any running node exposes a REST API at port `1317`. See <https://docs.cosmos.network/v0.45/core/grpc_rest.html>.
+- Any running node exposes a REST API at port `1317`. See <https://docs.cosmos.network/v0.47/learn/advanced/grpc_rest>.
 - See [transactions](docs/transactions.md) for a full list of endpoints.
 - REST HTTP(S) queries can be directly used for read requests.
   See [How to read from the Ledger](docs/transactions.md#how-to-read-from-the-ledger).
@@ -150,15 +150,15 @@ See [Run Light Client Proxy](docs/running-light-client-proxy.md) for details how
 ### gRPC
 
 - **There are no state proofs in gRPC, so gRPC queries should be sent to trusted Validator or Observer nodes only.**
-- Any running node exposes a REST API at port `9090`. See <https://docs.cosmos.network/v0.45/core/grpc_rest.html>.
+- Any running node exposes a REST API at port `9090`. See <https://docs.cosmos.network/v0.47/learn/advanced/grpc_rest>.
 - A client code can be generated for all popular languages from the proto files [proto](proto), see <https://grpc.io/docs/languages/>.
 - The generated client code can be used for read and write requests, i.e. generation and signing of transactions
   See [How to read from the Ledger](docs/transactions.md#how-to-read-from-the-ledger) and [How to write to the Ledger](docs/transactions.md#how-to-write-to-the-ledger) for details.
 
-### Tendermint RPC and Light Client
+### CometBFT RPC and Light Client
 
-- Tendermint RPC is exposed by every running node  at port `26657`. See <https://docs.cosmos.network/v0.45/core/grpc_rest.html#tendermint-rpc>.
-- Tendermint RPC supports state proofs. Tendermint's Light Client library can be used to verify the state proofs.
+- CometBFT RPC is exposed by every running node  at port `26657`. See <https://docs.cosmos.network/v0.47/learn/advanced/grpc_rest#cometbft-rpc>.
+- CometBFT RPC supports state proofs. CometBFT's Light Client library can be used to verify the state proofs.
     So, if Light Client API is used, then it's possible to communicate with non-trusted nodes.
 - Please note, that multi-value queries don't have state proofs support and should be sent to trusted nodes only.
 - There are currently no DC Ledger specific API libraries for various platforms and languages,
@@ -166,7 +166,7 @@ but they may be provided in the future.
 - The following libraries can be used as light clients:
   - [Golang Light Client implementation](https://pkg.go.dev/github.com/cometbft/cometbft/light)
   - [Rust Light Client implementation](https://docs.rs/cometbft-light-client/0.1.0-alpha.2/cometbft_light_client/)
-- Refer to [this doc](./docs/tendermint-rpc.md) to see how to [subscribe](./docs/tendermint-rpc.md#subscribe) to a Tendermint WebSocket based events and/or [query](./docs/tendermint-rpc.md#querying-application-components) an application components.
+- Refer to [this doc](./docs/cometbtf-rpc.md) to see how to [subscribe](./docs/cometbtf-rpc.md#subscribe) to a CometBFT WebSocket based events and/or [query](./docs/cometbtf-rpc.md#querying-application-components) an application components.
 
 
 ### Instructions
@@ -227,5 +227,5 @@ the following instructions from [how-to.md](docs/how-to.md) can be used for ever
 - [Running Node](docs/running-node.md)
 - [Pool Upgrade](docs/pool-upgrade.md)
 - [Pool Upgrade How To Guide](docs/pool-upgrade-how-to.md)
-- [Tendermint](https://tendermint.com/)
+- [CometBFT](https://cometbft.com/)
 - [Cosmos SDK](https://cosmos.network/sdk)

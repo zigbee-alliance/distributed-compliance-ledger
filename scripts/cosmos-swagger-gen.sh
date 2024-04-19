@@ -14,9 +14,22 @@ mkdir -p ./tmp-swagger-gen
 # clone cosmos-sdk repo
 git clone -b $COSMOS_SDK_VERSION --depth 1 https://github.com/cosmos/cosmos-sdk.git ./tmp-swagger-gen/cosmos-sdk
 
-# generate openapi
-pushd ./tmp-swagger-gen/cosmos-sdk
-../../scripts/swagger/protoc-swagger-gen.sh $CONFIG_FILE $OUTPUT_FILE
-popd
+cd ./tmp-swagger-gen/cosmos-sdk/proto
+pwd
+proto_dirs=$(find ./cosmos -path -prune -o -name '*.proto' -print0 | xargs -0 -n1 dirname | sort | uniq)
+for dir in $proto_dirs; do
+  # generate swagger files (filter query files)
+  query_file=$(find "${dir}" -maxdepth 2 \( -name 'query.proto' -o -name 'service.proto' \))
+  if [[ ! -z "$query_file" ]]; then
+    buf generate --template buf.gen.swagger.yaml $query_file
+  fi
+done
 
+cd ..
+# combine swagger files
+# uses nodejs package `swagger-combine`.
+# all the individual swagger files need to be configured in `config.json` for merging
+swagger-combine $CONFIG_FILE -o $OUTPUT_FILE --continueOnConflictingPaths true --includeDefinitions true
+cd ../..
+# clean swagger files
 rm -rf ./tmp-swagger-gen

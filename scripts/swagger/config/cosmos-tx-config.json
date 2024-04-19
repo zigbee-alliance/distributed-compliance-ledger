@@ -6,7 +6,7 @@
     },
     "apis": [
       {
-        "url": "cosmos/tx/v1beta1/service.swagger.json",
+        "url": "./tmp-swagger-gen/cosmos/tx/v1beta1/service.swagger.json",
         "dereference": {
           "circular": "ignore"
         }

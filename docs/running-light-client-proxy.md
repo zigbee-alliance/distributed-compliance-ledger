@@ -2,14 +2,14 @@
 
 Light Client Proxy can be used if there are no trusted Full Nodes (Validator or Observers) a client can connect to.
 
-It can be a proxy for CLI or direct requests from code done via Tendermint RPC.
+It can be a proxy for CLI or direct requests from code done via CometBFT RPC.
 
 Please note, that CLI can use a Light Client proxy only for single-value query requests.
 A Full Node (Validator or Observer) should be used for multi-value query requests and write requests.
 
 See the following links for details about a Light Client:
 
-- <https://docs.tendermint.com/v0.34/tendermint-core/light-client.html>
+- <https://docs.cometbft.com/main/explanation/core/light-client>
 
 ## Running Light Client Proxy - Short
 
@@ -21,7 +21,7 @@ dcld config node tcp://<light-client-proxy-host>:8888
 
 ## Running Light Client Proxy - Detailed
 
-See <https://docs.tendermint.com/v0.34/tendermint-core/light-client.html> for details
+See <https://docs.cometbft.com/main/explanation/core/light-client> for details
 
 ### 1. Choose Semi-trusted or Non-trusted Nodes for Connection
 
@@ -36,7 +36,7 @@ dcld light <chain-id> -p tcp://<primary-host>:26657 -w tcp://<witness1-host>:266
 
 Light Client Proxy is started at port `8888` by default. It can be changed with `--laddr` argument.
 
-Light Client Proxy will write some information (about headers) to disk. Default location is `~/.tendermint-light`.
+Light Client Proxy will write some information (about headers) to disk. Default location is `~/.cometbft-light`.
 It can be changed with `--dir` argument.
 
 Light Client needs initial height and hash it trusts. If no `--height` and `--hash` arguments provided,

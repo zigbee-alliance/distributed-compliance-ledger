@@ -49,7 +49,8 @@ an Account or sign the request.
     - Build transaction by CLI 1: `dcld tx ... --generate-only`
     - Fetch `account number` and `sequence` by CLI 1:  `dcld query auth account --address <address>`
     - Sign transaction by CLI 2: `dcld tx sign txn.json --from <from> --account-number <int> --sequence <int> --gas "auto" --offline --output-document txn.json`
-    - Broadcat transaction by CLI 1: `dcld tx broadcast txn.json`
+    - Broadcast transaction by CLI 1: `dcld tx broadcast txn.json`
+    - To get the actual result of transaction, `dcld query tx=txHash` call must be executed, where `txHash` is the hash of previously executed transaction.
 - gRPC:
   - Generate a client code from the proto files [proto](../proto) for the client language (see <https://grpc.io/docs/languages/>)
   - Build, sign, and broadcast the message (transaction).
@@ -96,7 +97,7 @@ Please make sure that TLS is enabled in gRPC, REST or Light Client Proxy for sec
   - Tendermint RPC supports state proofs. Tendermint's Light Client library can be used to verify the state proofs.
     So, if Light Client API is used, then it's possible to communicate with non-trusted nodes.
   - Please note, that multi-value queries don't have state proofs support and should be sent to trusted nodes only.
-  - Refer to [this doc](./tendermint-rpc.md) to see how to [subscribe](./tendermint-rpc.md#subscribe) to a Tendermint WebSocket based events and/or [query](./tendermint-rpc.md#querying-application-components) an application components. 
+  - Refer to [this doc](./cometbtf-rpc.md) to see how to [subscribe](./cometbtf-rpc.md#subscribe) to a Tendermint WebSocket based events and/or [query](./cometbtf-rpc.md#querying-application-components) an application components. 
 
 `NotFound` (404 code) is returned if an entry is not found on the ledger.
 

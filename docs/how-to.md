@@ -47,7 +47,8 @@ Here is the list of supported settings:
 - `chain-id <chain id>` - unique chain ID of the network you are going to connect to
 - `output <type>` - Output format (text/json)
 - `node <node-ip>` - Address `<host>:<port>` of the node to connect.
-- `broadcast-mode <mode>` - Write transaction broadcast mode to use (one of: `sync`, `async`, `block`. `block` is default).
+- `broadcast-mode <mode>` - Write transaction broadcast mode to use (one of: `sync`, `async`. `sync` is default). 
+  - Note: In `sync` broadcast mode, to get the actual result of transaction(`dcld tx ..`) one more query call with `txHash` must be executed(`dcld query tx=txHash`)
 
 In order to connect the CLI to a DC Ledger Network (Chain), the following parameters should be used:
 
@@ -336,5 +337,5 @@ Node will be jailed and removed from the active validator set in the following c
 
 Note that jailed node will not be removed from the main index to track validator nodes.
 So it is not possible to create a new node with the same `validator address`.
-In order to unjail the node and return it to the active tendermint validator set the sufficient number of Trustee's approvals is needed
+In order to unjail the node and return it to the active cometbft validator set the sufficient number of Trustee's approvals is needed
 (see authorization rules).
