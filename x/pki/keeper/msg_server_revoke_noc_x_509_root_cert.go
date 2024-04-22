@@ -81,6 +81,8 @@ func (k msgServer) _revokeNocRootCertificates(ctx sdk.Context, certificates type
 	k.RemoveApprovedCertificateBySubject(ctx, certificates.Subject, certificates.SubjectKeyId)
 	// remove from subject key ID -> certificates map
 	k.RemoveApprovedCertificatesBySubjectKeyID(ctx, certificates.Subject, certificates.SubjectKeyId)
+	// remove from vid, subject key ID -> certificates map
+	k.RemoveNocRootCertificateByVidSubjectAndSkid(ctx, vid, certificates.Subject, certificates.SubjectKeyId)
 }
 
 func (k msgServer) _revokeNocRootCertificate(
@@ -122,6 +124,9 @@ func (k msgServer) _revokeNocRootCertificate(
 		k.SetApprovedCertificates(ctx, certificates)
 		k.RemoveApprovedCertificatesBySubjectKeyIDAndSerialNumber(ctx, cert.Subject, cert.SubjectKeyId, serialNumber)
 	}
+
+	// remove from vid, subject key ID -> certificates map
+	k.RemoveNocRootCertificateByVidSubjectSkidAndSerialNumber(ctx, vid, cert.Subject, cert.SubjectKeyId, serialNumber)
 
 	return nil
 }

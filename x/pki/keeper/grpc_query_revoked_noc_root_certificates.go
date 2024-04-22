@@ -54,7 +54,7 @@ func (k Keeper) RevokedNocRootCertificates(c context.Context, req *types.QueryGe
 		req.SubjectKeyId,
 	)
 	if !found {
-		return nil, status.Error(codes.InvalidArgument, "not found")
+		return nil, status.Error(codes.NotFound, "not found")
 	}
 
 	return &types.QueryGetRevokedNocRootCertificatesResponse{RevokedNocRootCertificates: val}, nil

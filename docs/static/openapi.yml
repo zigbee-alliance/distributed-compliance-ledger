@@ -9877,6 +9877,120 @@ paths:
           format: int32
       tags:
         - Query
+  /dcl/pki/noc-root-certificates/{vid}/{subjectKeyId}:
+    get:
+      summary: Queries a NocRootCertificatesByVidAndSkid by index.
+      operationId: NocRootCertificatesByVidAndSkid
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              nocRootCertificatesByVidAndSkid:
+                type: object
+                properties:
+                  vid:
+                    type: integer
+                    format: int32
+                  subjectKeyId:
+                    type: string
+                  certs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        pemCert:
+                          type: string
+                        serialNumber:
+                          type: string
+                        issuer:
+                          type: string
+                        authorityKeyId:
+                          type: string
+                        rootSubject:
+                          type: string
+                        rootSubjectKeyId:
+                          type: string
+                        isRoot:
+                          type: boolean
+                        owner:
+                          type: string
+                        subject:
+                          type: string
+                        subjectKeyId:
+                          type: string
+                        approvals:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                              time:
+                                type: string
+                                format: int64
+                              info:
+                                type: string
+                        subjectAsText:
+                          type: string
+                        rejects:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                              time:
+                                type: string
+                                format: int64
+                              info:
+                                type: string
+                        vid:
+                          type: integer
+                          format: int32
+                        isNoc:
+                          type: boolean
+                        schemaVersion:
+                          type: integer
+                          format: int64
+                  tq:
+                    type: number
+                    format: float
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: vid
+          in: path
+          required: true
+          type: integer
+          format: int32
+        - name: subjectKeyId
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
   /dcl/pki/proposed-certificates:
     get:
       summary: Queries a list of ProposedCertificate items.
@@ -21814,6 +21928,76 @@ definitions:
             schemaVersion:
               type: integer
               format: int64
+  zigbeealliance.distributedcomplianceledger.pki.NocRootCertificatesByVidAndSkid:
+    type: object
+    properties:
+      vid:
+        type: integer
+        format: int32
+      subjectKeyId:
+        type: string
+      certs:
+        type: array
+        items:
+          type: object
+          properties:
+            pemCert:
+              type: string
+            serialNumber:
+              type: string
+            issuer:
+              type: string
+            authorityKeyId:
+              type: string
+            rootSubject:
+              type: string
+            rootSubjectKeyId:
+              type: string
+            isRoot:
+              type: boolean
+            owner:
+              type: string
+            subject:
+              type: string
+            subjectKeyId:
+              type: string
+            approvals:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
+            subjectAsText:
+              type: string
+            rejects:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
+            vid:
+              type: integer
+              format: int32
+            isNoc:
+              type: boolean
+            schemaVersion:
+              type: integer
+              format: int64
+      tq:
+        type: number
+        format: float
   zigbeealliance.distributedcomplianceledger.pki.PkiRevocationDistributionPoint:
     type: object
     properties:
@@ -22937,6 +23121,79 @@ definitions:
                 schemaVersion:
                   type: integer
                   format: int64
+  zigbeealliance.distributedcomplianceledger.pki.QueryGetNocRootCertificatesByVidAndSkidResponse:
+    type: object
+    properties:
+      nocRootCertificatesByVidAndSkid:
+        type: object
+        properties:
+          vid:
+            type: integer
+            format: int32
+          subjectKeyId:
+            type: string
+          certs:
+            type: array
+            items:
+              type: object
+              properties:
+                pemCert:
+                  type: string
+                serialNumber:
+                  type: string
+                issuer:
+                  type: string
+                authorityKeyId:
+                  type: string
+                rootSubject:
+                  type: string
+                rootSubjectKeyId:
+                  type: string
+                isRoot:
+                  type: boolean
+                owner:
+                  type: string
+                subject:
+                  type: string
+                subjectKeyId:
+                  type: string
+                approvals:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      time:
+                        type: string
+                        format: int64
+                      info:
+                        type: string
+                subjectAsText:
+                  type: string
+                rejects:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      time:
+                        type: string
+                        format: int64
+                      info:
+                        type: string
+                vid:
+                  type: integer
+                  format: int32
+                isNoc:
+                  type: boolean
+                schemaVersion:
+                  type: integer
+                  format: int64
+          tq:
+            type: number
+            format: float
   zigbeealliance.distributedcomplianceledger.pki.QueryGetNocRootCertificatesResponse:
     type: object
     properties:

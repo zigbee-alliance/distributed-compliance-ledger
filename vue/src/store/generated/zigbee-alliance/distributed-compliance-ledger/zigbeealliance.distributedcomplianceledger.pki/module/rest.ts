@@ -45,6 +45,16 @@ export interface PkiNocRootCertificates {
   certs?: PkiCertificate[];
 }
 
+export interface PkiNocRootCertificatesByVidAndSkid {
+  /** @format int32 */
+  vid?: number;
+  subjectKeyId?: string;
+  certs?: PkiCertificate[];
+
+  /** @format float */
+  tq?: number;
+}
+
 export interface PkiPkiRevocationDistributionPoint {
   /** @format int32 */
   vid?: number;
@@ -69,7 +79,6 @@ export interface PkiPkiRevocationDistributionPoint {
 
   /** @format int64 */
   schemaVersion?: number;
-
   crlSignerDelegator?: string;
 }
 
@@ -132,9 +141,6 @@ export interface PkiRevokedNocRootCertificates {
   subject?: string;
   subjectKeyId?: string;
   certs?: PkiCertificate[];
-
-    /** @format int64 */
-    schemaVersion?: number;
 }
 
 export interface PkiRevokedRootCertificates {
@@ -362,6 +368,10 @@ export interface PkiQueryGetChildCertificatesResponse {
 
 export interface PkiQueryGetNocIcaCertificatesResponse {
   nocIcaCertificates?: PkiNocIcaCertificates;
+}
+
+export interface PkiQueryGetNocRootCertificatesByVidAndSkidResponse {
+  nocRootCertificatesByVidAndSkid?: PkiNocRootCertificatesByVidAndSkid;
 }
 
 export interface PkiQueryGetNocRootCertificatesResponse {
@@ -750,7 +760,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    *
    * @tags Query
    * @name QueryNocIcaCertificatesAll
-   * @summary Queries a list of NocCertificates items.
+   * @summary Queries a list of NocIcaCertificates items.
    * @request GET:/dcl/pki/noc-ica-certificates
    */
   queryNocIcaCertificatesAll = (
@@ -824,6 +834,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryNocRootCertificates = (vid: number, params: RequestParams = {}) =>
     this.request<PkiQueryGetNocRootCertificatesResponse, RpcStatus>({
       path: `/dcl/pki/noc-root-certificates/${vid}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryNocRootCertificatesByVidAndSkid
+   * @summary Queries a NocRootCertificatesByVidAndSkid by index.
+   * @request GET:/dcl/pki/noc-root-certificates/{vid}/{subjectKeyId}
+   */
+  queryNocRootCertificatesByVidAndSkid = (vid: number, subjectKeyId: string, params: RequestParams = {}) =>
+    this.request<PkiQueryGetNocRootCertificatesByVidAndSkidResponse, RpcStatus>({
+      path: `/dcl/pki/noc-root-certificates/${vid}/${subjectKeyId}`,
       method: "GET",
       format: "json",
       ...params,

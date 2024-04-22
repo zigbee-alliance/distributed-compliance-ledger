@@ -17,6 +17,7 @@ import "pki/approved_certificates_by_subject_key_id.proto";
 import "pki/noc_root_certificates.proto";
 import "pki/noc_ica_certificates.proto";
 import "pki/revoked_noc_root_certificates.proto";
+import "pki/noc_root_certificates_by_vid_and_skid.proto";
 // this line is used by starport scaffolding # genesis/proto/import
 import "gogoproto/gogo.proto";
 
@@ -40,5 +41,6 @@ message GenesisState {
   repeated NocRootCertificates nocRootCertificatesList = 14 [(gogoproto.nullable) = false];
   repeated NocIcaCertificates nocIcaCertificatesList = 15 [(gogoproto.nullable) = false];
   repeated RevokedNocRootCertificates revokedNocRootCertificatesList = 16 [(gogoproto.nullable) = false];
+  repeated NocRootCertificatesByVidAndSkid nocRootCertificatesByVidAndSkidList = 17 [(gogoproto.nullable) = false];
   // this line is used by starport scaffolding # genesis/proto/state
 }
