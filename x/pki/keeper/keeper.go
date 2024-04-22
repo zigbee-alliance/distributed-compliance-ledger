@@ -21,6 +21,7 @@ type (
 
 		dclauthKeeper types.DclauthKeeper
 	}
+	CertificatePredicate func(*types.Certificate) bool
 )
 
 func NewKeeper(
@@ -102,4 +103,16 @@ func findCertificate(serialNumber string, certificates *[]*types.Certificate) (*
 	}
 
 	return nil, false
+}
+
+func filterCertificates(certificates *[]*types.Certificate, predicate CertificatePredicate) []*types.Certificate {
+	var result []*types.Certificate
+
+	for _, s := range *certificates {
+		if predicate(s) {
+			result = append(result, s)
+		}
+	}
+
+	return result
 }

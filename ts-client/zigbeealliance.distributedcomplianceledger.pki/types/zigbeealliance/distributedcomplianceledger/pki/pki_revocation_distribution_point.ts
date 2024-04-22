@@ -17,6 +17,7 @@ export interface PkiRevocationDistributionPoint {
   dataDigestType: number;
   revocationType: number;
   schemaVersion: number;
+  crlSignerDelegator: string;
 }
 
 function createBasePkiRevocationDistributionPoint(): PkiRevocationDistributionPoint {
@@ -33,6 +34,7 @@ function createBasePkiRevocationDistributionPoint(): PkiRevocationDistributionPo
     dataDigestType: 0,
     revocationType: 0,
     schemaVersion: 0,
+    crlSignerDelegator: "",
   };
 }
 
@@ -73,6 +75,9 @@ export const PkiRevocationDistributionPoint = {
     }
     if (message.schemaVersion !== 0) {
       writer.uint32(96).uint32(message.schemaVersion);
+    }
+    if (message.crlSignerDelegator !== "") {
+      writer.uint32(106).string(message.crlSignerDelegator);
     }
     return writer;
   },
@@ -120,6 +125,9 @@ export const PkiRevocationDistributionPoint = {
         case 12:
           message.schemaVersion = reader.uint32();
           break;
+        case 13:
+          message.crlSignerDelegator = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -142,6 +150,7 @@ export const PkiRevocationDistributionPoint = {
       dataDigestType: isSet(object.dataDigestType) ? Number(object.dataDigestType) : 0,
       revocationType: isSet(object.revocationType) ? Number(object.revocationType) : 0,
       schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
+      crlSignerDelegator: isSet(object.crlSignerDelegator) ? String(object.crlSignerDelegator) : "",
     };
   },
 
@@ -159,6 +168,7 @@ export const PkiRevocationDistributionPoint = {
     message.dataDigestType !== undefined && (obj.dataDigestType = Math.round(message.dataDigestType));
     message.revocationType !== undefined && (obj.revocationType = Math.round(message.revocationType));
     message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
+    message.crlSignerDelegator !== undefined && (obj.crlSignerDelegator = message.crlSignerDelegator);
     return obj;
   },
 
@@ -178,6 +188,7 @@ export const PkiRevocationDistributionPoint = {
     message.dataDigestType = object.dataDigestType ?? 0;
     message.revocationType = object.revocationType ?? 0;
     message.schemaVersion = object.schemaVersion ?? 0;
+    message.crlSignerDelegator = object.crlSignerDelegator ?? "";
     return message;
   },
 };

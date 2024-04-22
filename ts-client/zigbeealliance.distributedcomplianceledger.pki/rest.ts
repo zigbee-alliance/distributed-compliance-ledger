@@ -33,7 +33,7 @@ export interface DistributedcomplianceledgerpkiChildCertificates {
   certIds?: PkiCertificateIdentifier[];
 }
 
-export interface DistributedcomplianceledgerpkiNocCertificates {
+export interface DistributedcomplianceledgerpkiNocIcaCertificates {
   /** @format int32 */
   vid?: number;
   certs?: PkiCertificate[];
@@ -43,6 +43,16 @@ export interface DistributedcomplianceledgerpkiNocRootCertificates {
   /** @format int32 */
   vid?: number;
   certs?: PkiCertificate[];
+}
+
+export interface DistributedcomplianceledgerpkiNocRootCertificatesByVidAndSkid {
+  /** @format int32 */
+  vid?: number;
+  subjectKeyId?: string;
+  certs?: PkiCertificate[];
+
+  /** @format float */
+  tq?: number;
 }
 
 export interface DistributedcomplianceledgerpkiPkiRevocationDistributionPoint {
@@ -69,6 +79,7 @@ export interface DistributedcomplianceledgerpkiPkiRevocationDistributionPoint {
 
   /** @format int64 */
   schemaVersion?: number;
+  crlSignerDelegator?: string;
 }
 
 export interface DistributedcomplianceledgerpkiPkiRevocationDistributionPointsByIssuerSubjectKeyID {
@@ -175,7 +186,7 @@ export interface PkiGrant {
   info?: string;
 }
 
-export type PkiMsgAddNocX509CertResponse = object;
+export type PkiMsgAddNocX509IcaCertResponse = object;
 
 export type PkiMsgAddNocX509RootCertResponse = object;
 
@@ -199,9 +210,9 @@ export type PkiMsgRejectAddX509RootCertResponse = object;
 
 export type PkiMsgRemoveX509CertResponse = object;
 
-export type PkiMsgRevokeNocRootX509CertResponse = object;
+export type PkiMsgRevokeNocX509IcaCertResponse = object;
 
-export type PkiMsgRevokeNocX509CertResponse = object;
+export type PkiMsgRevokeNocX509RootCertResponse = object;
 
 export type PkiMsgRevokeX509CertResponse = object;
 
@@ -222,8 +233,8 @@ export interface PkiQueryAllApprovedCertificatesResponse {
   pagination?: V1Beta1PageResponse;
 }
 
-export interface PkiQueryAllNocCertificatesResponse {
-  nocCertificates?: DistributedcomplianceledgerpkiNocCertificates[];
+export interface PkiQueryAllNocIcaCertificatesResponse {
+  nocIcaCertificates?: DistributedcomplianceledgerpkiNocIcaCertificates[];
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the
@@ -358,8 +369,12 @@ export interface PkiQueryGetChildCertificatesResponse {
   childCertificates?: DistributedcomplianceledgerpkiChildCertificates;
 }
 
-export interface PkiQueryGetNocCertificatesResponse {
-  nocCertificates?: DistributedcomplianceledgerpkiNocCertificates;
+export interface PkiQueryGetNocIcaCertificatesResponse {
+  nocIcaCertificates?: DistributedcomplianceledgerpkiNocIcaCertificates;
+}
+
+export interface PkiQueryGetNocRootCertificatesByVidAndSkidResponse {
+  nocRootCertificatesByVidAndSkid?: DistributedcomplianceledgerpkiNocRootCertificatesByVidAndSkid;
 }
 
 export interface PkiQueryGetNocRootCertificatesResponse {
@@ -685,11 +700,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
-   * @name QueryNocCertificatesAll
-   * @summary Queries a list of NocCertificates items.
-   * @request GET:/dcl/pki/noc-certificates
+   * @name QueryNocIcaCertificatesAll
+   * @summary Queries a list of NocIcaCertificates items.
+   * @request GET:/dcl/pki/noc-ica-certificates
    */
-  queryNocCertificatesAll = (
+  queryNocIcaCertificatesAll = (
     query?: {
       "pagination.key"?: string;
       "pagination.offset"?: string;
@@ -699,8 +714,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     },
     params: RequestParams = {},
   ) =>
-    this.request<PkiQueryAllNocCertificatesResponse, RpcStatus>({
-      path: `/dcl/pki/noc-certificates`,
+    this.request<PkiQueryAllNocIcaCertificatesResponse, RpcStatus>({
+      path: `/dcl/pki/noc-ica-certificates`,
       method: "GET",
       query: query,
       format: "json",
@@ -711,13 +726,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
-   * @name QueryNocCertificates
-   * @summary Queries a NocCertificates by index.
-   * @request GET:/dcl/pki/noc-certificates/{vid}
+   * @name QueryNocIcaCertificates
+   * @summary Queries a NocIcaCertificates by index.
+   * @request GET:/dcl/pki/noc-ica-certificates/{vid}
    */
-  queryNocCertificates = (vid: number, params: RequestParams = {}) =>
-    this.request<PkiQueryGetNocCertificatesResponse, RpcStatus>({
-      path: `/dcl/pki/noc-certificates/${vid}`,
+  queryNocIcaCertificates = (vid: number, params: RequestParams = {}) =>
+    this.request<PkiQueryGetNocIcaCertificatesResponse, RpcStatus>({
+      path: `/dcl/pki/noc-ica-certificates/${vid}`,
       method: "GET",
       format: "json",
       ...params,
@@ -760,6 +775,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryNocRootCertificates = (vid: number, params: RequestParams = {}) =>
     this.request<PkiQueryGetNocRootCertificatesResponse, RpcStatus>({
       path: `/dcl/pki/noc-root-certificates/${vid}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryNocRootCertificatesByVidAndSkid
+   * @summary Queries a NocRootCertificatesByVidAndSkid by index.
+   * @request GET:/dcl/pki/noc-root-certificates/{vid}/{subjectKeyId}
+   */
+  queryNocRootCertificatesByVidAndSkid = (vid: number, subjectKeyId: string, params: RequestParams = {}) =>
+    this.request<PkiQueryGetNocRootCertificatesByVidAndSkidResponse, RpcStatus>({
+      path: `/dcl/pki/noc-root-certificates/${vid}/${subjectKeyId}`,
       method: "GET",
       format: "json",
       ...params,

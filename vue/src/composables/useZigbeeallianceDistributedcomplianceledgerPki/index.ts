@@ -195,6 +195,14 @@ export default function useZigbeeallianceDistributedcomplianceledgerPki() {
     }, options);
   }
   
+  const QueryNocRootCertificatesByVidAndSkid = (vid: string, subjectKeyId: string,  options: any) => {
+    const key = { type: 'QueryNocRootCertificatesByVidAndSkid',  vid,  subjectKeyId };    
+    return useQuery([key], () => {
+      const { vid,  subjectKeyId } = key
+      return  client.ZigbeeallianceDistributedcomplianceledgerPki.query.queryNocRootCertificatesByVidAndSkid(vid, subjectKeyId).then( res => res.data );
+    }, options);
+  }
+  
   const QueryNocRootCertificatesAll = (query: any, options: any, perPage: number) => {
     const key = { type: 'QueryNocRootCertificatesAll', query };    
     return useInfiniteQuery([key], ({pageParam = 1}: { pageParam?: number}) => {
@@ -211,23 +219,23 @@ export default function useZigbeeallianceDistributedcomplianceledgerPki() {
     );
   }
   
-  const QueryNocCertificates = (vid: string,  options: any) => {
-    const key = { type: 'QueryNocCertificates',  vid };    
+  const QueryNocIcaCertificates = (vid: string,  options: any) => {
+    const key = { type: 'QueryNocIcaCertificates',  vid };    
     return useQuery([key], () => {
       const { vid } = key
-      return  client.ZigbeeallianceDistributedcomplianceledgerPki.query.queryNocCertificates(vid).then( res => res.data );
+      return  client.ZigbeeallianceDistributedcomplianceledgerPki.query.queryNocIcaCertificates(vid).then( res => res.data );
     }, options);
   }
   
-  const QueryNocCertificatesAll = (query: any, options: any, perPage: number) => {
-    const key = { type: 'QueryNocCertificatesAll', query };    
+  const QueryNocIcaCertificatesAll = (query: any, options: any, perPage: number) => {
+    const key = { type: 'QueryNocIcaCertificatesAll', query };    
     return useInfiniteQuery([key], ({pageParam = 1}: { pageParam?: number}) => {
       const {query } = key
 
       query['pagination.limit']=perPage;
       query['pagination.offset']= (pageParam-1)*perPage;
       query['pagination.count_total']= true;
-      return  client.ZigbeeallianceDistributedcomplianceledgerPki.query.queryNocCertificatesAll(query ?? undefined).then( res => ({...res.data,pageParam}) );
+      return  client.ZigbeeallianceDistributedcomplianceledgerPki.query.queryNocIcaCertificatesAll(query ?? undefined).then( res => ({...res.data,pageParam}) );
     }, {...options,
       getNextPageParam: (lastPage, allPages) => { if ((lastPage.pagination?.total ?? 0) >((lastPage.pageParam ?? 0) * perPage)) {return lastPage.pageParam+1 } else {return undefined}},
       getPreviousPageParam: (firstPage, allPages) => { if (firstPage.pageParam==1) { return undefined } else { return firstPage.pageParam-1}}
@@ -259,6 +267,6 @@ export default function useZigbeeallianceDistributedcomplianceledgerPki() {
     );
   }
   
-  return {QueryApprovedCertificates,QueryApprovedCertificatesAll,QueryProposedCertificate,QueryProposedCertificateAll,QueryChildCertificates,QueryProposedCertificateRevocation,QueryProposedCertificateRevocationAll,QueryRevokedCertificates,QueryRevokedCertificatesAll,QueryApprovedRootCertificates,QueryRevokedRootCertificates,QueryApprovedCertificatesBySubject,QueryRejectedCertificate,QueryRejectedCertificateAll,QueryPkiRevocationDistributionPoint,QueryPkiRevocationDistributionPointAll,QueryPkiRevocationDistributionPointsByIssuerSubjectKeyID,QueryNocRootCertificates,QueryNocRootCertificatesAll,QueryNocCertificates,QueryNocCertificatesAll,QueryRevokedNocRootCertificates,QueryRevokedNocRootCertificatesAll,
+  return {QueryApprovedCertificates,QueryApprovedCertificatesAll,QueryProposedCertificate,QueryProposedCertificateAll,QueryChildCertificates,QueryProposedCertificateRevocation,QueryProposedCertificateRevocationAll,QueryRevokedCertificates,QueryRevokedCertificatesAll,QueryApprovedRootCertificates,QueryRevokedRootCertificates,QueryApprovedCertificatesBySubject,QueryRejectedCertificate,QueryRejectedCertificateAll,QueryPkiRevocationDistributionPoint,QueryPkiRevocationDistributionPointAll,QueryPkiRevocationDistributionPointsByIssuerSubjectKeyID,QueryNocRootCertificates,QueryNocRootCertificatesByVidAndSkid,QueryNocRootCertificatesAll,QueryNocIcaCertificates,QueryNocIcaCertificatesAll,QueryRevokedNocRootCertificates,QueryRevokedNocRootCertificatesAll,
   }
 }

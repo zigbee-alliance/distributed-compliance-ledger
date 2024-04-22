@@ -3,6 +3,7 @@ package pki
 import (
 	"context"
 	"fmt"
+	"net/url"
 
 	tmrand "github.com/cometbft/cometbft/libs/rand"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -104,6 +105,34 @@ func GetNocX509RootCerts(suite *utils.TestSuite, vendorID int32) (*pkitypes.NocR
 	return &res, nil
 }
 
+func GetNocX509RootCertsByVidAndSkid(suite *utils.TestSuite, vendorID int32, subjectKeyID string) (*pkitypes.NocRootCertificatesByVidAndSkid, error) {
+	var res pkitypes.NocRootCertificatesByVidAndSkid
+	if suite.Rest {
+		var resp pkitypes.QueryGetNocRootCertificatesByVidAndSkidResponse
+		err := suite.QueryREST(fmt.Sprintf("/dcl/pki/noc-root-certificates/%v/%s", vendorID, url.QueryEscape(subjectKeyID)), &resp)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetNocRootCertificatesByVidAndSkid()
+	} else {
+		grpcConn := suite.GetGRPCConn()
+		defer grpcConn.Close()
+
+		// This creates a gRPC client to query the x/pki service.
+		pkiClient := pkitypes.NewQueryClient(grpcConn)
+		resp, err := pkiClient.NocRootCertificatesByVidAndSkid(
+			context.Background(),
+			&pkitypes.QueryGetNocRootCertificatesByVidAndSkidRequest{Vid: vendorID, SubjectKeyId: subjectKeyID},
+		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetNocRootCertificatesByVidAndSkid()
+	}
+
+	return &res, nil
+}
+
 func GetNocX509IcaCerts(suite *utils.TestSuite, vendorID int32) (*pkitypes.NocIcaCertificates, error) {
 	var res pkitypes.NocIcaCertificates
 	if suite.Rest {
@@ -134,11 +163,22 @@ func GetNocX509IcaCerts(suite *utils.TestSuite, vendorID int32) (*pkitypes.NocIc
 
 //nolint:funlen
 func NocCertDemo(suite *utils.TestSuite) {
+	// Generate VIDs
+	vid1 := int32(tmrand.Uint16())
+	vid2 := int32(tmrand.Uint16())
+
 	// All requests return empty or 404 value
 	allNocCertificates, _ := GetAllNocX509RootCerts(suite)
 	require.Equal(suite.T, 0, len(allNocCertificates))
 
 	_, err := GetNocX509RootCerts(suite, testconstants.Vid)
+	suite.AssertNotFound(err)
+
+	_, err = GetNocX509RootCertsByVidAndSkid(suite, vid1, testconstants.NocRootCert1SubjectKeyID)
+	suite.AssertNotFound(err)
+	_, err = GetNocX509RootCertsByVidAndSkid(suite, vid1, testconstants.NocRootCert2SubjectKeyID)
+	suite.AssertNotFound(err)
+	_, err = GetNocX509RootCertsByVidAndSkid(suite, vid2, testconstants.NocRootCert3SubjectKeyID)
 	suite.AssertNotFound(err)
 
 	// Alice and Jack are predefined Trustees
@@ -159,7 +199,6 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Register first Vendor account
-	vid1 := int32(tmrand.Uint16())
 	vendor1Name := utils.RandString()
 	vendor1Account := test_dclauth.CreateVendorAccount(
 		suite,
@@ -176,7 +215,6 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.NotNil(suite.T, vendor1Account)
 
 	// Register second Vendor account
-	vid2 := int32(tmrand.Uint16())
 	vendor2Name := utils.RandString()
 	vendor2Account := test_dclauth.CreateVendorAccount(
 		suite,
@@ -231,6 +269,27 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.NocRootCert1SubjectKeyID, nocCertificates.Certs[0].SubjectKeyId)
 	require.Equal(suite.T, testconstants.NocRootCert2Subject, nocCertificates.Certs[1].Subject)
 	require.Equal(suite.T, testconstants.NocRootCert2SubjectKeyID, nocCertificates.Certs[1].SubjectKeyId)
+
+	// Request NOC root certificate by VID1 and SKID1
+	nocCertificatesByVidAndSkid, _ := GetNocX509RootCertsByVidAndSkid(suite, vid1, testconstants.NocRootCert1SubjectKeyID)
+	require.Equal(suite.T, 1, len(nocCertificatesByVidAndSkid.Certs))
+	require.Equal(suite.T, testconstants.NocRootCert1Subject, nocCertificatesByVidAndSkid.Certs[0].Subject)
+	require.Equal(suite.T, testconstants.NocRootCert1SubjectKeyID, nocCertificatesByVidAndSkid.Certs[0].SubjectKeyId)
+	require.Equal(suite.T, float32(1), nocCertificatesByVidAndSkid.Tq)
+
+	// Request NOC root certificate by VID1 and SKID2
+	nocCertificatesByVidAndSkid, _ = GetNocX509RootCertsByVidAndSkid(suite, vid1, testconstants.NocRootCert2SubjectKeyID)
+	require.Equal(suite.T, 1, len(nocCertificatesByVidAndSkid.Certs))
+	require.Equal(suite.T, testconstants.NocRootCert2Subject, nocCertificatesByVidAndSkid.Certs[0].Subject)
+	require.Equal(suite.T, testconstants.NocRootCert2SubjectKeyID, nocCertificatesByVidAndSkid.Certs[0].SubjectKeyId)
+	require.Equal(suite.T, float32(1), nocCertificatesByVidAndSkid.Tq)
+
+	// Request NOC root certificate by VID2 and SKID3
+	nocCertificatesByVidAndSkid, _ = GetNocX509RootCertsByVidAndSkid(suite, vid2, testconstants.NocRootCert3SubjectKeyID)
+	require.Equal(suite.T, 1, len(nocCertificatesByVidAndSkid.Certs))
+	require.Equal(suite.T, testconstants.NocRootCert3Subject, nocCertificatesByVidAndSkid.Certs[0].Subject)
+	require.Equal(suite.T, testconstants.NocRootCert3SubjectKeyID, nocCertificatesByVidAndSkid.Certs[0].SubjectKeyId)
+	require.Equal(suite.T, float32(1), nocCertificatesByVidAndSkid.Tq)
 
 	// Request All NOC root certificate
 	allNocCertificates, _ = GetAllNocX509RootCerts(suite)
@@ -353,6 +412,13 @@ func NocCertDemo(suite *utils.TestSuite) {
 	// Request NOC root certificate by VID1
 	nocCertificates, _ = GetNocX509RootCerts(suite, vid1)
 	require.Equal(suite.T, 3, len(nocCertificates.Certs))
+
+	// Request NOC root certificate by VID1 and SKID1
+	nocCertificatesByVidAndSkid, _ = GetNocX509RootCertsByVidAndSkid(suite, vid1, testconstants.NocRootCert1SubjectKeyID)
+	require.Equal(suite.T, 2, len(nocCertificatesByVidAndSkid.Certs))
+	require.Equal(suite.T, testconstants.NocRootCert1Subject, nocCertificatesByVidAndSkid.Certs[0].Subject)
+	require.Equal(suite.T, testconstants.NocRootCert1SubjectKeyID, nocCertificatesByVidAndSkid.Certs[0].SubjectKeyId)
+	require.Equal(suite.T, float32(1), nocCertificatesByVidAndSkid.Tq)
 
 	// Add NOC leaf certificate
 	msgAddNocCert := pkitypes.MsgAddNocX509IcaCert{

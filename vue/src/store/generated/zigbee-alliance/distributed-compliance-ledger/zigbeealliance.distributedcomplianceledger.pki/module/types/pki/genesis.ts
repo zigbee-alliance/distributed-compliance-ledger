@@ -15,6 +15,7 @@ import { ApprovedCertificatesBySubjectKeyId } from '../pki/approved_certificates
 import { NocRootCertificates } from '../pki/noc_root_certificates'
 import { NocIcaCertificates } from '../pki/noc_ica_certificates'
 import { RevokedNocRootCertificates } from '../pki/revoked_noc_root_certificates'
+import { NocRootCertificatesByVidAndSkid } from '../pki/noc_root_certificates_by_vid_and_skid'
 import { Writer, Reader } from 'protobufjs/minimal'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.pki'
@@ -36,8 +37,9 @@ export interface GenesisState {
   approvedCertificatesBySubjectKeyIdList: ApprovedCertificatesBySubjectKeyId[]
   nocRootCertificatesList: NocRootCertificates[]
   nocIcaCertificatesList: NocIcaCertificates[]
-  /** this line is used by starport scaffolding # genesis/proto/state */
   revokedNocRootCertificatesList: RevokedNocRootCertificates[]
+  /** this line is used by starport scaffolding # genesis/proto/state */
+  nocRootCertificatesByVidAndSkidList: NocRootCertificatesByVidAndSkid[]
 }
 
 const baseGenesisState: object = {}
@@ -92,6 +94,9 @@ export const GenesisState = {
     for (const v of message.revokedNocRootCertificatesList) {
       RevokedNocRootCertificates.encode(v!, writer.uint32(130).fork()).ldelim()
     }
+    for (const v of message.nocRootCertificatesByVidAndSkidList) {
+      NocRootCertificatesByVidAndSkid.encode(v!, writer.uint32(138).fork()).ldelim()
+    }
     return writer
   },
 
@@ -108,11 +113,12 @@ export const GenesisState = {
     message.approvedCertificatesBySubjectList = []
     message.rejectedCertificateList = []
     message.PkiRevocationDistributionPointList = []
-    message.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList = []
+    message.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList = []
     message.approvedCertificatesBySubjectKeyIdList = []
     message.nocRootCertificatesList = []
     message.nocIcaCertificatesList = []
     message.revokedNocRootCertificatesList = []
+    message.nocRootCertificatesByVidAndSkidList = []
     while (reader.pos < end) {
       const tag = reader.uint32()
       switch (tag >>> 3) {
@@ -150,7 +156,7 @@ export const GenesisState = {
           message.PkiRevocationDistributionPointList.push(PkiRevocationDistributionPoint.decode(reader, reader.uint32()))
           break
         case 12:
-          message.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList.push(
+          message.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList.push(
             PkiRevocationDistributionPointsByIssuerSubjectKeyID.decode(reader, reader.uint32())
           )
           break
@@ -165,6 +171,9 @@ export const GenesisState = {
           break
         case 16:
           message.revokedNocRootCertificatesList.push(RevokedNocRootCertificates.decode(reader, reader.uint32()))
+          break
+        case 17:
+          message.nocRootCertificatesByVidAndSkidList.push(NocRootCertificatesByVidAndSkid.decode(reader, reader.uint32()))
           break
         default:
           reader.skipType(tag & 7)
@@ -185,11 +194,12 @@ export const GenesisState = {
     message.approvedCertificatesBySubjectList = []
     message.rejectedCertificateList = []
     message.PkiRevocationDistributionPointList = []
-    message.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList = []
+    message.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList = []
     message.approvedCertificatesBySubjectKeyIdList = []
     message.nocRootCertificatesList = []
     message.nocIcaCertificatesList = []
     message.revokedNocRootCertificatesList = []
+    message.nocRootCertificatesByVidAndSkidList = []
     if (object.approvedCertificatesList !== undefined && object.approvedCertificatesList !== null) {
       for (const e of object.approvedCertificatesList) {
         message.approvedCertificatesList.push(ApprovedCertificates.fromJSON(e))
@@ -250,7 +260,7 @@ export const GenesisState = {
       object.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList !== null
     ) {
       for (const e of object.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList) {
-        message.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList.push(PkiRevocationDistributionPointsByIssuerSubjectKeyID.fromJSON(e))
+        message.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList.push(PkiRevocationDistributionPointsByIssuerSubjectKeyID.fromJSON(e))
       }
     }
     if (object.approvedCertificatesBySubjectKeyIdList !== undefined && object.approvedCertificatesBySubjectKeyIdList !== null) {
@@ -271,6 +281,11 @@ export const GenesisState = {
     if (object.revokedNocRootCertificatesList !== undefined && object.revokedNocRootCertificatesList !== null) {
       for (const e of object.revokedNocRootCertificatesList) {
         message.revokedNocRootCertificatesList.push(RevokedNocRootCertificates.fromJSON(e))
+      }
+    }
+    if (object.nocRootCertificatesByVidAndSkidList !== undefined && object.nocRootCertificatesByVidAndSkidList !== null) {
+      for (const e of object.nocRootCertificatesByVidAndSkidList) {
+        message.nocRootCertificatesByVidAndSkidList.push(NocRootCertificatesByVidAndSkid.fromJSON(e))
       }
     }
     return message
@@ -327,7 +342,7 @@ export const GenesisState = {
     } else {
       obj.PkiRevocationDistributionPointList = []
     }
-    if (message.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList) {
+    if (message.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList) {
       obj.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList = message.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList.map((e) =>
         e ? PkiRevocationDistributionPointsByIssuerSubjectKeyID.toJSON(e) : undefined
       )
@@ -356,6 +371,13 @@ export const GenesisState = {
     } else {
       obj.revokedNocRootCertificatesList = []
     }
+    if (message.nocRootCertificatesByVidAndSkidList) {
+      obj.nocRootCertificatesByVidAndSkidList = message.nocRootCertificatesByVidAndSkidList.map((e) =>
+        e ? NocRootCertificatesByVidAndSkid.toJSON(e) : undefined
+      )
+    } else {
+      obj.nocRootCertificatesByVidAndSkidList = []
+    }
     return obj
   },
 
@@ -370,11 +392,12 @@ export const GenesisState = {
     message.approvedCertificatesBySubjectList = []
     message.rejectedCertificateList = []
     message.PkiRevocationDistributionPointList = []
-    message.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList = []
+    message.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList = []
     message.approvedCertificatesBySubjectKeyIdList = []
     message.nocRootCertificatesList = []
     message.nocIcaCertificatesList = []
     message.revokedNocRootCertificatesList = []
+    message.nocRootCertificatesByVidAndSkidList = []
     if (object.approvedCertificatesList !== undefined && object.approvedCertificatesList !== null) {
       for (const e of object.approvedCertificatesList) {
         message.approvedCertificatesList.push(ApprovedCertificates.fromPartial(e))
@@ -431,11 +454,11 @@ export const GenesisState = {
       }
     }
     if (
-      object.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList !== undefined &&
-      object.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList !== null
+      object.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList !== undefined &&
+      object.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList !== null
     ) {
-      for (const e of object.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList) {
-        message.PkiRevocationDistributionPointsByIssuerSubjectKeyIDList.push(PkiRevocationDistributionPointsByIssuerSubjectKeyID.fromPartial(e))
+      for (const e of object.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList) {
+        message.pkiRevocationDistributionPointsByIssuerSubjectKeyIDList.push(PkiRevocationDistributionPointsByIssuerSubjectKeyID.fromPartial(e))
       }
     }
     if (object.approvedCertificatesBySubjectKeyIdList !== undefined && object.approvedCertificatesBySubjectKeyIdList !== null) {
@@ -456,6 +479,11 @@ export const GenesisState = {
     if (object.revokedNocRootCertificatesList !== undefined && object.revokedNocRootCertificatesList !== null) {
       for (const e of object.revokedNocRootCertificatesList) {
         message.revokedNocRootCertificatesList.push(RevokedNocRootCertificates.fromPartial(e))
+      }
+    }
+    if (object.nocRootCertificatesByVidAndSkidList !== undefined && object.nocRootCertificatesByVidAndSkidList !== null) {
+      for (const e of object.nocRootCertificatesByVidAndSkidList) {
+        message.nocRootCertificatesByVidAndSkidList.push(NocRootCertificatesByVidAndSkid.fromPartial(e))
       }
     }
     return message

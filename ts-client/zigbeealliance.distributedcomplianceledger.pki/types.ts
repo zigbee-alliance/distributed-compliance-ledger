@@ -6,8 +6,9 @@ import { Certificate } from "./types/zigbeealliance/distributedcomplianceledger/
 import { CertificateIdentifier } from "./types/zigbeealliance/distributedcomplianceledger/pki/certificate_identifier"
 import { ChildCertificates } from "./types/zigbeealliance/distributedcomplianceledger/pki/child_certificates"
 import { Grant } from "./types/zigbeealliance/distributedcomplianceledger/pki/grant"
-import { NocCertificates } from "./types/zigbeealliance/distributedcomplianceledger/pki/noc_certificates"
+import { NocIcaCertificates } from "./types/zigbeealliance/distributedcomplianceledger/pki/noc_ica_certificates"
 import { NocRootCertificates } from "./types/zigbeealliance/distributedcomplianceledger/pki/noc_root_certificates"
+import { NocRootCertificatesByVidAndSkid } from "./types/zigbeealliance/distributedcomplianceledger/pki/noc_root_certificates_by_vid_and_skid"
 import { PkiRevocationDistributionPoint } from "./types/zigbeealliance/distributedcomplianceledger/pki/pki_revocation_distribution_point"
 import { PkiRevocationDistributionPointsByIssuerSubjectKeyID } from "./types/zigbeealliance/distributedcomplianceledger/pki/pki_revocation_distribution_points_by_issuer_subject_key_id"
 import { ProposedCertificate } from "./types/zigbeealliance/distributedcomplianceledger/pki/proposed_certificate"
@@ -28,8 +29,9 @@ export {
     CertificateIdentifier,
     ChildCertificates,
     Grant,
-    NocCertificates,
+    NocIcaCertificates,
     NocRootCertificates,
+    NocRootCertificatesByVidAndSkid,
     PkiRevocationDistributionPoint,
     PkiRevocationDistributionPointsByIssuerSubjectKeyID,
     ProposedCertificate,

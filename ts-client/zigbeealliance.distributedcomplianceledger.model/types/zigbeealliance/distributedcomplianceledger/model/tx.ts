@@ -46,6 +46,7 @@ export interface MsgUpdateModel {
   lsfRevision: number;
   schemaVersion: number;
   commissionerRemoteUiFlowUrl: string;
+  commissioningModeInitialStepsHint: number;
 }
 
 export interface MsgUpdateModelResponse {
@@ -417,6 +418,7 @@ function createBaseMsgUpdateModel(): MsgUpdateModel {
     lsfRevision: 0,
     schemaVersion: 0,
     commissionerRemoteUiFlowUrl: "",
+    commissioningModeInitialStepsHint: 0,
   };
 }
 
@@ -469,6 +471,9 @@ export const MsgUpdateModel = {
     }
     if (message.commissionerRemoteUiFlowUrl !== "") {
       writer.uint32(130).string(message.commissionerRemoteUiFlowUrl);
+    }
+    if (message.commissioningModeInitialStepsHint !== 0) {
+      writer.uint32(136).uint32(message.commissioningModeInitialStepsHint);
     }
     return writer;
   },
@@ -528,6 +533,9 @@ export const MsgUpdateModel = {
         case 16:
           message.commissionerRemoteUiFlowUrl = reader.string();
           break;
+        case 17:
+          message.commissioningModeInitialStepsHint = reader.uint32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -562,6 +570,9 @@ export const MsgUpdateModel = {
       commissionerRemoteUiFlowUrl: isSet(object.commissionerRemoteUiFlowUrl)
         ? String(object.commissionerRemoteUiFlowUrl)
         : "",
+      commissioningModeInitialStepsHint: isSet(object.commissioningModeInitialStepsHint)
+        ? Number(object.commissioningModeInitialStepsHint)
+        : 0,
     };
   },
 
@@ -587,6 +598,8 @@ export const MsgUpdateModel = {
     message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     message.commissionerRemoteUiFlowUrl !== undefined
       && (obj.commissionerRemoteUiFlowUrl = message.commissionerRemoteUiFlowUrl);
+    message.commissioningModeInitialStepsHint !== undefined
+      && (obj.commissioningModeInitialStepsHint = Math.round(message.commissioningModeInitialStepsHint));
     return obj;
   },
 
@@ -608,6 +621,7 @@ export const MsgUpdateModel = {
     message.lsfRevision = object.lsfRevision ?? 0;
     message.schemaVersion = object.schemaVersion ?? 0;
     message.commissionerRemoteUiFlowUrl = object.commissionerRemoteUiFlowUrl ?? "";
+    message.commissioningModeInitialStepsHint = object.commissioningModeInitialStepsHint ?? 0;
     return message;
   },
 };

@@ -15,6 +15,7 @@ import { PkiRevocationDistributionPointsByIssuerSubjectKeyID } from '../pki/pki_
 import { NocRootCertificates } from '../pki/noc_root_certificates'
 import { NocIcaCertificates } from '../pki/noc_ica_certificates'
 import { RevokedNocRootCertificates } from '../pki/revoked_noc_root_certificates'
+import { NocRootCertificatesByVidAndSkid } from '../pki/noc_root_certificates_by_vid_and_skid'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.pki'
 
@@ -216,6 +217,15 @@ export interface QueryAllRevokedNocRootCertificatesRequest {
 export interface QueryAllRevokedNocRootCertificatesResponse {
   revokedNocRootCertificates: RevokedNocRootCertificates[]
   pagination: PageResponse | undefined
+}
+
+export interface QueryGetNocRootCertificatesByVidAndSkidRequest {
+  vid: number
+  subjectKeyId: string
+}
+
+export interface QueryGetNocRootCertificatesByVidAndSkidResponse {
+  nocRootCertificatesByVidAndSkid: NocRootCertificatesByVidAndSkid | undefined
 }
 
 const baseQueryGetApprovedCertificatesRequest: object = { subject: '', subjectKeyId: '' }
@@ -3159,6 +3169,136 @@ export const QueryAllRevokedNocRootCertificatesResponse = {
   }
 }
 
+const baseQueryGetNocRootCertificatesByVidAndSkidRequest: object = { vid: 0, subjectKeyId: '' }
+
+export const QueryGetNocRootCertificatesByVidAndSkidRequest = {
+  encode(message: QueryGetNocRootCertificatesByVidAndSkidRequest, writer: Writer = Writer.create()): Writer {
+    if (message.vid !== 0) {
+      writer.uint32(8).int32(message.vid)
+    }
+    if (message.subjectKeyId !== '') {
+      writer.uint32(18).string(message.subjectKeyId)
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetNocRootCertificatesByVidAndSkidRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseQueryGetNocRootCertificatesByVidAndSkidRequest } as QueryGetNocRootCertificatesByVidAndSkidRequest
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.vid = reader.int32()
+          break
+        case 2:
+          message.subjectKeyId = reader.string()
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): QueryGetNocRootCertificatesByVidAndSkidRequest {
+    const message = { ...baseQueryGetNocRootCertificatesByVidAndSkidRequest } as QueryGetNocRootCertificatesByVidAndSkidRequest
+    if (object.vid !== undefined && object.vid !== null) {
+      message.vid = Number(object.vid)
+    } else {
+      message.vid = 0
+    }
+    if (object.subjectKeyId !== undefined && object.subjectKeyId !== null) {
+      message.subjectKeyId = String(object.subjectKeyId)
+    } else {
+      message.subjectKeyId = ''
+    }
+    return message
+  },
+
+  toJSON(message: QueryGetNocRootCertificatesByVidAndSkidRequest): unknown {
+    const obj: any = {}
+    message.vid !== undefined && (obj.vid = message.vid)
+    message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId)
+    return obj
+  },
+
+  fromPartial(object: DeepPartial<QueryGetNocRootCertificatesByVidAndSkidRequest>): QueryGetNocRootCertificatesByVidAndSkidRequest {
+    const message = { ...baseQueryGetNocRootCertificatesByVidAndSkidRequest } as QueryGetNocRootCertificatesByVidAndSkidRequest
+    if (object.vid !== undefined && object.vid !== null) {
+      message.vid = object.vid
+    } else {
+      message.vid = 0
+    }
+    if (object.subjectKeyId !== undefined && object.subjectKeyId !== null) {
+      message.subjectKeyId = object.subjectKeyId
+    } else {
+      message.subjectKeyId = ''
+    }
+    return message
+  }
+}
+
+const baseQueryGetNocRootCertificatesByVidAndSkidResponse: object = {}
+
+export const QueryGetNocRootCertificatesByVidAndSkidResponse = {
+  encode(message: QueryGetNocRootCertificatesByVidAndSkidResponse, writer: Writer = Writer.create()): Writer {
+    if (message.nocRootCertificatesByVidAndSkid !== undefined) {
+      NocRootCertificatesByVidAndSkid.encode(message.nocRootCertificatesByVidAndSkid, writer.uint32(10).fork()).ldelim()
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetNocRootCertificatesByVidAndSkidResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseQueryGetNocRootCertificatesByVidAndSkidResponse } as QueryGetNocRootCertificatesByVidAndSkidResponse
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.nocRootCertificatesByVidAndSkid = NocRootCertificatesByVidAndSkid.decode(reader, reader.uint32())
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): QueryGetNocRootCertificatesByVidAndSkidResponse {
+    const message = { ...baseQueryGetNocRootCertificatesByVidAndSkidResponse } as QueryGetNocRootCertificatesByVidAndSkidResponse
+    if (object.nocRootCertificatesByVidAndSkid !== undefined && object.nocRootCertificatesByVidAndSkid !== null) {
+      message.nocRootCertificatesByVidAndSkid = NocRootCertificatesByVidAndSkid.fromJSON(object.nocRootCertificatesByVidAndSkid)
+    } else {
+      message.nocRootCertificatesByVidAndSkid = undefined
+    }
+    return message
+  },
+
+  toJSON(message: QueryGetNocRootCertificatesByVidAndSkidResponse): unknown {
+    const obj: any = {}
+    message.nocRootCertificatesByVidAndSkid !== undefined &&
+      (obj.nocRootCertificatesByVidAndSkid = message.nocRootCertificatesByVidAndSkid
+        ? NocRootCertificatesByVidAndSkid.toJSON(message.nocRootCertificatesByVidAndSkid)
+        : undefined)
+    return obj
+  },
+
+  fromPartial(object: DeepPartial<QueryGetNocRootCertificatesByVidAndSkidResponse>): QueryGetNocRootCertificatesByVidAndSkidResponse {
+    const message = { ...baseQueryGetNocRootCertificatesByVidAndSkidResponse } as QueryGetNocRootCertificatesByVidAndSkidResponse
+    if (object.nocRootCertificatesByVidAndSkid !== undefined && object.nocRootCertificatesByVidAndSkid !== null) {
+      message.nocRootCertificatesByVidAndSkid = NocRootCertificatesByVidAndSkid.fromPartial(object.nocRootCertificatesByVidAndSkid)
+    } else {
+      message.nocRootCertificatesByVidAndSkid = undefined
+    }
+    return message
+  }
+}
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Queries a ApprovedCertificates by index. */
@@ -3199,6 +3339,8 @@ export interface Query {
   ): Promise<QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse>
   /** Queries a NocRootCertificates by index. */
   NocRootCertificates(request: QueryGetNocRootCertificatesRequest): Promise<QueryGetNocRootCertificatesResponse>
+  /** Queries a NocRootCertificatesByVidAndSkid by index. */
+  NocRootCertificatesByVidAndSkid(request: QueryGetNocRootCertificatesByVidAndSkidRequest): Promise<QueryGetNocRootCertificatesByVidAndSkidResponse>
   /** Queries a list of NocRootCertificates items. */
   NocRootCertificatesAll(request: QueryAllNocRootCertificatesRequest): Promise<QueryAllNocRootCertificatesResponse>
   /** Queries a NocIcaCertificates by index. */
@@ -3324,6 +3466,12 @@ export class QueryClientImpl implements Query {
     const data = QueryGetNocRootCertificatesRequest.encode(request).finish()
     const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Query', 'NocRootCertificates', data)
     return promise.then((data) => QueryGetNocRootCertificatesResponse.decode(new Reader(data)))
+  }
+
+  NocRootCertificatesByVidAndSkid(request: QueryGetNocRootCertificatesByVidAndSkidRequest): Promise<QueryGetNocRootCertificatesByVidAndSkidResponse> {
+    const data = QueryGetNocRootCertificatesByVidAndSkidRequest.encode(request).finish()
+    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Query', 'NocRootCertificatesByVidAndSkid', data)
+    return promise.then((data) => QueryGetNocRootCertificatesByVidAndSkidResponse.decode(new Reader(data)))
   }
 
   NocRootCertificatesAll(request: QueryAllNocRootCertificatesRequest): Promise<QueryAllNocRootCertificatesResponse> {
