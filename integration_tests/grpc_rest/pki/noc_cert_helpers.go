@@ -8,6 +8,7 @@ import (
 	tmrand "github.com/cometbft/cometbft/libs/rand"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
+
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	test_dclauth "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/grpc_rest/dclauth"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
@@ -159,6 +160,20 @@ func GetNocX509IcaCerts(suite *utils.TestSuite, vendorID int32) (*pkitypes.NocIc
 	}
 
 	return &res, nil
+}
+
+func GetNocX509IcaCertsBySubjectAndSKID(suite *utils.TestSuite, vendorID int32, subject, subjectKeyID string) []*pkitypes.Certificate {
+	certs, _ := GetNocX509IcaCerts(suite, vendorID)
+	for i := 0; i < len(certs.Certs); {
+		cert := certs.Certs[i]
+		if cert.Subject != subject || cert.SubjectKeyId != subjectKeyID {
+			certs.Certs = append(certs.Certs[:i], certs.Certs[i+1:]...)
+		} else {
+			i++
+		}
+	}
+
+	return certs.Certs
 }
 
 //nolint:funlen
@@ -448,7 +463,208 @@ func NocCertDemo(suite *utils.TestSuite) {
 		Subject:      testconstants.NocRootCert1Subject,
 		SubjectKeyId: testconstants.NocRootCert1SubjectKeyID,
 	}
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRevokeNocRootCert}, vendor1Name, vendor1Account)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRevokeNocRootCert}, vendor2Name, vendor2Account)
 	require.Error(suite.T, err)
-	// TODO: Fill with the positive cases after enabling removing of NOC certs
+
+	// Add ICA certificate
+	msgAddNocCert = pkitypes.MsgAddNocX509IcaCert{
+		Signer: vendor1Account.Address,
+		Cert:   testconstants.NocCert1Copy,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddNocCert}, vendor1Name, vendor1Account)
+	require.NoError(suite.T, err)
+
+	// Revoke intermediate certificate with invalid serialNumber
+	msgRevokeCert := pkitypes.MsgRevokeNocX509IcaCert{
+		Subject:      testconstants.NocCert1Subject,
+		SubjectKeyId: testconstants.NocCert1SubjectKeyID,
+		SerialNumber: "invalid",
+		Signer:       vendor1Account.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRevokeCert}, vendor1Name, vendor1Account)
+	require.Error(suite.T, err)
+
+	// Revoke intermediate certificate with serialNumber 1 only(child certs should not be removed)
+	msgRevokeCert.SerialNumber = testconstants.NocCert1SerialNumber
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRevokeCert}, vendor1Name, vendor1Account)
+	require.NoError(suite.T, err)
+
+	// Request revoked certificate
+	revokedCerts, _ := GetRevokedX509Cert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	require.Equal(suite.T, 1, len(revokedCerts.Certs))
+	require.Equal(suite.T, testconstants.NocCert1Subject, revokedCerts.Subject)
+	require.Equal(suite.T, testconstants.NocCert1SubjectKeyID, revokedCerts.SubjectKeyId)
+	require.Equal(suite.T, testconstants.NocCert1SerialNumber, revokedCerts.Certs[0].SerialNumber)
+
+	// Check approved certificates
+	certs, _ = GetX509Cert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	require.Equal(suite.T, 1, len(certs.Certs))
+	require.Equal(suite.T, testconstants.NocCert1CopySerialNumber, certs.Certs[0].SerialNumber)
+	certs, _ = GetX509Cert(suite, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
+	require.Equal(suite.T, 1, len(certs.Certs))
+	require.Equal(suite.T, testconstants.NocLeafCert1SerialNumber, certs.Certs[0].SerialNumber)
+
+	icaCerts, _ := GetNocX509IcaCerts(suite, vid1)
+	require.Equal(suite.T, 3, len(icaCerts.Certs))
+
+	// Revoke Root certificate with serialNumber(child certs should not be removed)
+	msgRevokeRootCert := pkitypes.MsgRevokeNocX509RootCert{
+		Signer:       vendor1Account.Address,
+		Subject:      testconstants.NocRootCert1Subject,
+		SubjectKeyId: testconstants.NocRootCert1SubjectKeyID,
+		SerialNumber: testconstants.NocRootCert1SerialNumber,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRevokeRootCert}, vendor1Name, vendor1Account)
+	require.NoError(suite.T, err)
+
+	// Request revoked root certificate
+	revokedCerts, _ = GetRevokedX509Cert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
+	require.Equal(suite.T, 1, len(revokedCerts.Certs))
+	require.Equal(suite.T, testconstants.NocRootCert1Subject, revokedCerts.Subject)
+	require.Equal(suite.T, testconstants.NocRootCert1SubjectKeyID, revokedCerts.SubjectKeyId)
+	require.Equal(suite.T, testconstants.NocRootCert1SerialNumber, revokedCerts.Certs[0].SerialNumber)
+
+	// Check approved certificate
+	certs, _ = GetX509Cert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
+	require.Equal(suite.T, 1, len(certs.Certs))
+	require.Equal(suite.T, testconstants.NocRootCert1CopySerialNumber, certs.Certs[0].SerialNumber)
+	certs, _ = GetX509Cert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	require.Equal(suite.T, 1, len(certs.Certs))
+	require.Equal(suite.T, testconstants.NocCert1CopySerialNumber, certs.Certs[0].SerialNumber)
+
+	nocRootCerts, _ := GetNocX509RootCertsByVidAndSkid(suite, vid1, testconstants.NocRootCert1SubjectKeyID)
+	require.Equal(suite.T, 1, len(nocRootCerts.Certs))
+	require.Equal(suite.T, testconstants.NocRootCert1CopySerialNumber, nocRootCerts.Certs[0].SerialNumber)
+
+	// Remove ICA certificate with invalid serialNumber
+	msgRemoveCert := pkitypes.MsgRemoveNocX509IcaCert{
+		Signer:       vendor1Account.Address,
+		Subject:      testconstants.NocCert1Subject,
+		SubjectKeyId: testconstants.NocCert1SubjectKeyID,
+		SerialNumber: "invalid",
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveCert}, vendor1Name, vendor1Account)
+	require.Error(suite.T, err)
+
+	// Try to Remove ICA certificate by subject and subject key id when sender is not Vendor account
+	msgRemoveCert = pkitypes.MsgRemoveNocX509IcaCert{
+		Signer:       aliceAccount.Address,
+		Subject:      testconstants.NocCert1Subject,
+		SubjectKeyId: testconstants.NocCert1SubjectKeyID,
+		SerialNumber: testconstants.NocCert1CopySerialNumber,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveCert}, aliceName, aliceAccount)
+	require.Error(suite.T, err)
+
+	// Remove revoked ICA certificate by subject and subject key id
+	msgRemoveCert = pkitypes.MsgRemoveNocX509IcaCert{
+		Signer:       vendor1Account.Address,
+		Subject:      testconstants.NocCert1Subject,
+		SubjectKeyId: testconstants.NocCert1SubjectKeyID,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveCert}, vendor1Name, vendor1Account)
+	require.NoError(suite.T, err)
+
+	// Check that two intermediate ICA certificates are removed
+	_, err = GetRevokedX509Cert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	suite.AssertNotFound(err)
+	_, err = GetX509Cert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	suite.AssertNotFound(err)
+
+	certificates := GetNocX509IcaCertsBySubjectAndSKID(suite, vid1, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	require.Empty(suite.T, certificates)
+
+	// Remove leaf ICA certificate by subject and subject key id
+	msgRemoveCert = pkitypes.MsgRemoveNocX509IcaCert{
+		Signer:       vendor1Account.Address,
+		Subject:      testconstants.NocLeafCert1Subject,
+		SubjectKeyId: testconstants.NocLeafCert1SubjectKeyID,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveCert}, vendor1Name, vendor1Account)
+	require.NoError(suite.T, err)
+
+	// Check that leaf ICA certificate is removed
+	_, err = GetX509Cert(suite, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
+	suite.AssertNotFound(err)
+
+	certificates = GetNocX509IcaCertsBySubjectAndSKID(suite, vid1, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
+	require.Empty(suite.T, certificates)
+
+	// Remove ICA certificates by subject, subject key id and serial number
+	// Add ICA certificates
+	msgAddNocCert = pkitypes.MsgAddNocX509IcaCert{
+		Signer: vendor1Account.Address,
+		Cert:   testconstants.NocCert1,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddNocCert}, vendor1Name, vendor1Account)
+	require.NoError(suite.T, err)
+
+	msgAddNocCert = pkitypes.MsgAddNocX509IcaCert{
+		Signer: vendor1Account.Address,
+		Cert:   testconstants.NocCert1Copy,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddNocCert}, vendor1Name, vendor1Account)
+	require.NoError(suite.T, err)
+
+	msgAddNocCert = pkitypes.MsgAddNocX509IcaCert{
+		Signer: vendor1Account.Address,
+		Cert:   testconstants.NocLeafCert1,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddNocCert}, vendor1Name, vendor1Account)
+	require.NoError(suite.T, err)
+
+	// Remove ICA certificate by serial number
+	msgRemoveCert = pkitypes.MsgRemoveNocX509IcaCert{
+		Signer:       vendor1Account.Address,
+		Subject:      testconstants.NocCert1Subject,
+		SubjectKeyId: testconstants.NocCert1SubjectKeyID,
+		SerialNumber: testconstants.NocCert1SerialNumber,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveCert}, vendor1Name, vendor1Account)
+	require.NoError(suite.T, err)
+
+	// Check that leaf and ICA with different serial number is not removed
+	certs, _ = GetX509Cert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	require.Equal(suite.T, 1, len(certs.Certs))
+	require.Equal(suite.T, testconstants.NocCert1CopySerialNumber, certs.Certs[0].SerialNumber)
+	certs, _ = GetX509Cert(suite, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
+	require.Equal(suite.T, 1, len(certs.Certs))
+
+	certificates = GetNocX509IcaCertsBySubjectAndSKID(suite, vid1, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	require.Equal(suite.T, 1, len(certificates))
+	require.Equal(suite.T, testconstants.NocCert1CopySerialNumber, certificates[0].SerialNumber)
+	certificates = GetNocX509IcaCertsBySubjectAndSKID(suite, vid1, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
+	require.Equal(suite.T, 1, len(certificates))
+
+	// Revoke root cert and its child
+	msgRevokeRootCert = pkitypes.MsgRevokeNocX509RootCert{
+		Signer:       vendor1Account.Address,
+		Subject:      testconstants.NocRootCert1Subject,
+		SubjectKeyId: testconstants.NocRootCert1SubjectKeyID,
+		RevokeChild:  true,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRevokeRootCert}, vendor1Name, vendor1Account)
+	require.NoError(suite.T, err)
+
+	// Check that all 3 certificates are revoked
+	revokedCerts, _ = GetRevokedX509Cert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
+	require.Equal(suite.T, 2, len(revokedCerts.Certs))
+	revokedCerts, _ = GetRevokedX509Cert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	require.Equal(suite.T, 1, len(revokedCerts.Certs))
+	revokedCerts, _ = GetRevokedX509Cert(suite, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
+	require.Equal(suite.T, 1, len(revokedCerts.Certs))
+
+	_, err = GetX509Cert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
+	suite.AssertNotFound(err)
+	_, err = GetX509Cert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	suite.AssertNotFound(err)
+	_, err = GetX509Cert(suite, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
+	suite.AssertNotFound(err)
+
+	_, err = GetNocX509RootCertsByVidAndSkid(suite, vid1, testconstants.NocRootCert1SubjectKeyID)
+	suite.AssertNotFound(err)
+	certificates = GetNocX509IcaCertsBySubjectAndSKID(suite, vid1, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	require.Empty(suite.T, certificates)
+	certificates = GetNocX509IcaCertsBySubjectAndSKID(suite, vid1, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
+	require.Empty(suite.T, certificates)
 }

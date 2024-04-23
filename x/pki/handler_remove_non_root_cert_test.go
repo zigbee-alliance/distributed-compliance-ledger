@@ -481,3 +481,26 @@ func TestHandler_RemoveX509Cert_BySubjectAndSKID(t *testing.T) {
 	require.Equal(t, 1, len(leafCerts.Certs))
 	require.Equal(t, testconstants.LeafCertWithSameSubjectAndSKIDSerialNumber, leafCerts.Certs[0].SerialNumber)
 }
+
+func TestHandler_RemoveX509Cert_ForNocIcaCertificate(t *testing.T) {
+	setup := Setup(t)
+
+	// Add vendor account
+	vid := testconstants.Vid
+	vendorAccAddress := GenerateAccAddress()
+	setup.AddAccount(vendorAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, vid)
+
+	// add NOC root certificate
+	addNocRootCertificate(setup, vendorAccAddress, testconstants.NocRootCert1, vid)
+
+	// Add ICA certificate
+	addX509Cert := types.NewMsgAddNocX509IcaCert(vendorAccAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion, testconstants.SchemaVersion)
+	_, err := setup.Handler(setup.Ctx, addX509Cert)
+	require.NoError(t, err)
+
+	removeX509Cert := types.NewMsgRemoveX509Cert(
+		vendorAccAddress.String(), testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID, testconstants.NocCert1SerialNumber)
+	_, err = setup.Handler(setup.Ctx, removeX509Cert)
+	require.Error(t, err)
+	require.True(t, pkitypes.ErrInappropriateCertificateType.Is(err))
+}
