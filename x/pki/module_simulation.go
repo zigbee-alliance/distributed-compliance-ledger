@@ -91,6 +91,10 @@ const (
 	// TODO: Determine the simulation weight value.
 	defaultWeightMsgRemoveNocX509IcaCert int = 100
 
+	opWeightMsgRemoveNocX509RootCert = "op_weight_msg_remove_noc_x_509_root_cert"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgRemoveNocX509RootCert int = 100
+
 	// this line is used by starport scaffolding # simapp/module/const.
 )
 
@@ -304,6 +308,17 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	operations = append(operations, simulation.NewWeightedOperation(
 		weightMsgRemoveNocX509IcaCert,
 		pkisimulation.SimulateMsgRemoveNocX509IcaCert(am.keeper),
+	))
+
+	var weightMsgRemoveNocX509RootCert int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgRemoveNocX509RootCert, &weightMsgRemoveNocX509RootCert, nil,
+		func(_ *rand.Rand) {
+			weightMsgRemoveNocX509RootCert = defaultWeightMsgRemoveNocX509RootCert
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgRemoveNocX509RootCert,
+		pkisimulation.SimulateMsgRemoveNocX509RootCert(am.keeper),
 	))
 
 	// this line is used by starport scaffolding # simapp/module/operation
