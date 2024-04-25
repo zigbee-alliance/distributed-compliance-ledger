@@ -1406,6 +1406,26 @@ Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revok
 - Validation:
   - a NOC Root Certificate with the provided `subject` and `subject_key_id` must exist in the ledger.
 
+#### REMOVE_NOC_ROOT
+
+**Status: Implemented**
+
+This transaction completely removes the given NOC root certificate owned by the Vendor from the ledger.
+Removed NOC root certificates can be re-added using the [ADD_NOC_ROOT](#add_noc_root) transaction.
+
+- Who can send: Vendor account
+  - Vid field associated with the corresponding NOC certificate on the ledger must be equal to the Vendor account's VID.
+- Validation:
+  - a NOC Root Certificate with the provided `subject` and `subject_key_id` must exist in the ledger.
+- Parameters:
+  - subject: `string` - base64 encoded subject DER sequence bytes of the certificate.
+  - subject_key_id: `string` - certificate's `Subject Key Id` in hex string format, e.g., `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`.
+  - serial_number: `optional(string)` - certificate's serial number. If not provided, the transaction will remove all certificates that match the given `subject` and `subject_key_id` combination.
+- CLI command:
+  - `dcld tx pki remove-noc-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
+
+
+
 #### ADD_NOC_ICA
 
 **Status: Implemented**
@@ -1466,7 +1486,7 @@ Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revok
 - CLI command:
   - `dcld tx pki revoke-noc-x509-ica-cert --subject=<base64 string> --subject-key-id=<hex string> --serial-number=<string> --info=<string> --time=<int64> --revoke-child=<bool> --from=<account>`
 
-#### REMOVE_NOC_IC
+#### REMOVE_NOC_ICA
 
 **Status: Implemented**
 

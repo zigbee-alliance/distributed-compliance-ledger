@@ -210,6 +210,8 @@ export type PkiMsgRejectAddX509RootCertResponse = object;
 
 export type PkiMsgRemoveNocX509IcaCertResponse = object;
 
+export type PkiMsgRemoveNocX509RootCertResponse = object;
+
 export type PkiMsgRemoveX509CertResponse = object;
 
 export type PkiMsgRevokeNocX509IcaCertResponse = object;
