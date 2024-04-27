@@ -29,6 +29,11 @@ Build proto (for example `buf generate --template buf.gen.gogo.yaml`).
 ```bash
 ./scripts/protocgen.sh
 ```
+or 
+
+```bash
+ignite chain build
+```
 
 Generate Cosmos base openapi
 

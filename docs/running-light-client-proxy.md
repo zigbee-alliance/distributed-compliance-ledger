@@ -9,7 +9,7 @@ A Full Node (Validator or Observer) should be used for multi-value query request
 
 See the following links for details about a Light Client:
 
-- <https://docs.cometbft.com/main/explanation/core/light-client>
+- <https://docs.cometbft.com/v0.37/core/light-client>
 
 ## Running Light Client Proxy - Short
 
@@ -21,7 +21,7 @@ dcld config node tcp://<light-client-proxy-host>:8888
 
 ## Running Light Client Proxy - Detailed
 
-See <https://docs.cometbft.com/main/explanation/core/light-client> for details
+See <https://docs.cometbft.com/v0.37/core/light-client> for details
 
 ### 1. Choose Semi-trusted or Non-trusted Nodes for Connection
 

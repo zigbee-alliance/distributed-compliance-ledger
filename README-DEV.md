@@ -157,8 +157,12 @@ Please take into account the following when sending a PR:
   Consider using a docker container built from the provided [Dockerfile](scripts/Dockerfile) to have a predictable version of ignite. See [README.md](scripts/README.md).
 - Have a look at the scripts and commands used for generation of existing modules, messages and CRUD operations and do it in a similar way
   (for example [PKI module commands](scripts/starport/upgrade-0.44/07.pki_types.sh)).
-  Note: On previous scaffolding of modules `starport` cli used instead of `ignite`. 
-         While generating new module, command structure will the same except it must start with `ignite`.
+  - 
+    **Note**:
+    1. On previous scaffolding of modules `starport` cli used instead of `ignite`. 
+               While generating new module, command structure will the same except it must start with `ignite`.
+    2. After execution of command `ignite scaffold ...` generated `.proto` files will be added into `proto/distributedcoplianceledger/{module}/{proto}`
+    . So make sure to put contents of generated proto files into related folders inside `proto/zigbeealliance/..` folder.
 - If a new transaction with a new data in state (key-value) and new queries needs to be created, then both message and CRUD commands need to be executed.
 - If just a message to update existing state values need to be created, then a message command is enough.  
 - Adjust the generated code
