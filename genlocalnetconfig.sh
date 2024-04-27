@@ -175,8 +175,6 @@ for node_name in node0 node1 node2 node3 observer0; do
         sed -i $SED_EXT 's/laddr = "tcp:\/\/127.0.0.1:26657"/laddr = "tcp:\/\/0.0.0.0:26657"/g' "$LOCALNET_DIR/${node_name}/config/config.toml"
         # Make REST endpoints available externally
         sed -i $SED_EXT 's/address = "tcp:\/\/localhost:1317"/address = "tcp:\/\/0.0.0.0:1317"/g' "$LOCALNET_DIR/${node_name}/config/app.toml"
-        # Make gRPC endpoints available externally
-        sed -i $SED_EXT 's/address = "localhost:9090"/address = "0.0.0.0:9090"/g' "$LOCALNET_DIR/${node_name}/config/app.toml"
 
         # Make REST endpoints available externally
         sed -i $SED_EXT 's/address = "tcp:\/\/localhost:1317"/address = "tcp:\/\/0.0.0.0:1317"/g' "$LOCALNET_DIR/${node_name}/config/app.toml"
