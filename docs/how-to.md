@@ -48,7 +48,7 @@ Here is the list of supported settings:
 - `output <type>` - Output format (text/json)
 - `node <node-ip>` - Address `<host>:<port>` of the node to connect.
 - `broadcast-mode <mode>` - Write transaction broadcast mode to use (one of: `sync`, `async`. `sync` is default). 
-  - Note: In `sync` broadcast mode, to get the actual result of transaction(`dcld tx ..`) one more query call with `txHash` must be executed(`dcld query tx=txHash`)
+  - Note: To get the actual result of transaction(`dcld tx ..`) one more query call with the `txHash` must be executed(`dcld query tx txHash`)
 
 In order to connect the CLI to a DC Ledger Network (Chain), the following parameters should be used:
 

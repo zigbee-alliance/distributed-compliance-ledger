@@ -87,3 +87,5 @@ WebSocket
 cometbft
 CometBFT
 CometBFT's
+distributedcoplianceledger
+zigbeealliance
