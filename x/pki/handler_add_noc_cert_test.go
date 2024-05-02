@@ -224,7 +224,7 @@ func TestHandler_AddXNoc509Cert_WhenNocRootCertIsAbsent(t *testing.T) {
 	addNocX509Cert := types.NewMsgAddNocX509IcaCert(accAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion, testconstants.SchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addNocX509Cert)
 
-	require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
+	require.ErrorIs(t, err, pkitypes.ErrCertificateDoesNotExist)
 }
 
 func TestHandler_AddNocX509Cert_CertificateExist(t *testing.T) {

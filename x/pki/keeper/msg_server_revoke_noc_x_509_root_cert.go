@@ -41,7 +41,7 @@ func (k msgServer) RevokeNocX509RootCert(goCtx context.Context, msg *types.MsgRe
 	signerVid := signerAccount.VendorID
 	// signer VID must be same as VID of existing certificates
 	if signerVid != cert.Vid {
-		return nil, pkitypes.NewErrRootCertVidNotEqualToAccountVid(cert.Vid, signerVid)
+		return nil, pkitypes.NewErrRevokeRootCertVidNotEqualToAccountVid(cert.Vid, signerVid)
 	}
 
 	if msg.SerialNumber != "" {

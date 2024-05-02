@@ -75,7 +75,7 @@ func NewErrProposedCertificateDoesNotExist(subject string, subjectKeyID string) 
 	return errors.Wrapf(ErrProposedCertificateDoesNotExist,
 		"No proposed X509 root certificate associated "+
 			"with the combination of subject=%v and subjectKeyID=%v on the ledger. "+
-			"The cerificate either does not exists or already approved.",
+			"The certificate either does not exists, already approved or rejected",
 		subject, subjectKeyID)
 }
 
@@ -115,11 +115,15 @@ func NewErrProposedCertificateRevocationAlreadyExists(subject string, subjectKey
 		subject, subjectKeyID)
 }
 
-func NewErrProposedCertificateRevocationDoesNotExist(subject string, subjectKeyID string) error {
+func NewErrProposedCertificateRevocationDoesNotExist(subject string, subjectKeyID string, serialNumber string) error {
+	if serialNumber != "" {
+		serialNumber = " and serialNumber=" + serialNumber
+	}
+
 	return errors.Wrapf(ErrProposedCertificateRevocationDoesNotExist,
 		"No proposed X509 root certificate revocation associated "+
-			"with the combination of subject=%v and subjectKeyID=%v on the ledger.",
-		subject, subjectKeyID)
+			"with the combination of subject=%v, subjectKeyID=%v%v on the ledger.",
+		subject, subjectKeyID, serialNumber)
 }
 
 func NewErrRevokedCertificateDoesNotExist(subject string, subjectKeyID string) error {
@@ -232,6 +236,20 @@ func NewErrRootCertVidNotEqualToAccountVid(rootVID int32, accountVID int32) erro
 	return errors.Wrapf(ErrCertVidNotEqualAccountVid,
 		"Only a Vendor associated with VID of root certificate can add a child certificate: "+
 			"Root certificate's VID = %v, Account VID = %v",
+		rootVID, accountVID)
+}
+
+func NewErrRevokeRootCertVidNotEqualToAccountVid(rootVID int32, accountVID int32) error {
+	return errors.Wrapf(ErrCertVidNotEqualAccountVid,
+		"Only a Vendor associated with VID of root certificate can revoke certificate: "+
+			"Root certificate's VID = %v, Account VID = %v",
+		rootVID, accountVID)
+}
+
+func NewErrRevokeCertVidNotEqualToAccountVid(rootVID int32, accountVID int32) error {
+	return errors.Wrapf(ErrCertVidNotEqualAccountVid,
+		"Only a Vendor associated with VID of certificate can revoke certificate: "+
+			"Certificate's VID = %v, Account VID = %v",
 		rootVID, accountVID)
 }
 
