@@ -6,13 +6,15 @@
 
 Download and install Ledger Live: Go to the [Ledger Live download page](https://www.ledger.com/ledger-live) and select the version suitable for your operating system. Follow the on-screen instructions to install it.
 
+<!-- markdown-link-check-disable -->
 ### Step 2: Set Up Your Ledger Device
 
-Initialize Your Ledger Device: If this is your first time using your Ledger, you will need to configure it. Follow the instructions to choose a PIN and securely write down the mnemonic seed phrase that appears. This seed is crucial for recovery and is compatible with DCL. Detailed instructions are available [here](https://support.ledger.com/hc/en-us/articles/4416927988625-Set-up-your-Ledger-Nano-S-Plus?docs=true).
+Initialize Your Ledger Device: If this is your first time using your Ledger, you will need to configure it. Follow the instructions to choose a PIN and securely write down the mnemonic seed phrase that appears. This seed is crucial for recovery and is compatible with D∂CL. Detailed instructions are available [here](https://support.ledger.com/hc/en-us/articles/4416927988625-Set-up-your-Ledger-Nano-S-Plus?docs=true).
 
 ### Step 3: Install the Cosmos (ATOM) app on your Ledger device
 
 To use the Ledger Nano with DCL, you first need to install the Cosmos (ATOM) application. Connect your Ledger device to your computer, open Ledger Live, and navigate to the 'Manager' tab. Allow the manager on your Ledger device, find the Cosmos (ATOM) app in the catalog, and click 'Install'. For detailed instructions, visit the [Cosmos (ATOM) documentation page](https://support.ledger.com/hc/en-us/articles/360013713840-Cosmos-ATOM?docs=true).
+<!-- markdown-link-check-enable -->
 
 ## Using Ledger Device with DCL CLI
 
