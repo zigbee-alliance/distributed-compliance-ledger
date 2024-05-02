@@ -24,6 +24,7 @@ echo "Create Trustee account"
 create_new_account trustee_account "Trustee"
 random_string upgrade_name
 propose=$(dcld tx dclupgrade propose-upgrade --name=$upgrade_name --upgrade-height=$upgrade_height --upgrade-info=$upgrade_info --from $trustee_account --yes)
+propose=$(get_txn_result "$propose")
 echo "propose upgrade response: $propose"
 check_response "$propose" "\"code\": 0"
 
@@ -34,14 +35,17 @@ check_response_and_report "$proposed_dclupgrade_query" "\"height\": \"$upgrade_h
 check_response_and_report "$proposed_dclupgrade_query" "\"info\": \"$upgrade_info\""
 
 approve=$(dcld tx dclupgrade approve-upgrade --name=$upgrade_name --from alice --yes)
+approve=$(get_txn_result "$approve")
 echo "approve upgrade response: $approve"
 check_response "$approve" "\"code\": 0"
 
 reject=$(dcld tx dclupgrade reject-upgrade --name=$upgrade_name --from alice --yes)
+reject=$(get_txn_result "$reject")
 echo "reject upgrade response: $reject"
 check_response "$reject" "\"code\": 0"
 
 approve=$(dcld tx dclupgrade approve-upgrade --name=$upgrade_name --from alice --yes)
+approve=$(get_txn_result "$approve")
 echo "approve upgrade response: $approve"
 check_response "$approve" "\"code\": 0"
 
@@ -59,6 +63,7 @@ plan_query=$(dcld query upgrade plan 2>&1) || true
 check_response "$plan_query" "no upgrade scheduled" raw
 
 approve=$(dcld tx dclupgrade approve-upgrade --name=$upgrade_name --from bob --yes)
+approve=$(get_txn_result "$approve")
 echo "approve upgrade response: $approve"
 check_response "$approve" "\"code\": 0"
 
@@ -85,10 +90,12 @@ test_divider
 echo "proposer cannot approve upgrade"
 random_string upgrade_name
 propose=$(dcld tx dclupgrade propose-upgrade --name=$upgrade_name --upgrade-height=$upgrade_height --upgrade-info=$upgrade_info --from alice --yes)
+propose=$(get_txn_result "$propose")
 echo "propose upgrade response: $propose"
 check_response "$propose" "\"code\": 0"
 
 approve=$(dcld tx dclupgrade approve-upgrade --name=$upgrade_name --from alice --yes)
+approve=$(get_txn_result "$approve")
 echo "approve upgrade response: $approve"
 check_response_and_report "$approve" "unauthorized" raw
 
@@ -99,14 +106,17 @@ test_divider
 echo "cannot approve upgrade twice"
 random_string upgrade_name
 propose=$(dcld tx dclupgrade propose-upgrade --name=$upgrade_name --upgrade-height=$upgrade_height --upgrade-info=$upgrade_info --from alice --yes)
+propose=$(get_txn_result "$propose")
 echo "propose upgrade response: $propose"
 check_response "$propose" "\"code\": 0"
 
 approve=$(dcld tx dclupgrade approve-upgrade --name=$upgrade_name --from bob --yes)
+approve=$(get_txn_result "$approve")
 echo "approve upgrade response: $approve"
 check_response "$approve" "\"code\": 0"
 
 second_approve=$(dcld tx dclupgrade approve-upgrade --name=$upgrade_name --from bob --yes)
+second_approve=$(get_txn_result "$second_approve")
 echo "second approve upgrade response: $second_approve"
 check_response_and_report "$second_approve" "unauthorized" raw
 
@@ -116,10 +126,12 @@ test_divider
 echo "cannot propose upgrade twice"
 random_string upgrade_name
 propose=$(dcld tx dclupgrade propose-upgrade --name=$upgrade_name --upgrade-height=$upgrade_height --upgrade-info=$upgrade_info --from alice --yes)
+propose=$(get_txn_result "$propose")
 echo "propose upgrade response: $propose"
 check_response "$propose" "\"code\": 0"
 
 second_propose=$(dcld tx dclupgrade propose-upgrade --name=$upgrade_name --upgrade-height=$upgrade_height --upgrade-info=$upgrade_info --from alice --yes)
+second_propose=$(get_txn_result "$second_propose")
 echo "second propose upgrade response: $second_propose"
 check_response_and_report "$second_propose" "proposed upgrade already exists" raw
 
@@ -131,6 +143,7 @@ echo "upgrade height < current height"
 random_string upgrade_name
 height=1
 propose=$(dcld tx dclupgrade propose-upgrade --name=$upgrade_name --upgrade-height=$height --upgrade-info=$upgrade_info --from alice --yes)
+propose=$(get_txn_result "$propose")
 echo "propose upgrade response: $propose"
 check_response_and_report "$propose" "upgrade cannot be scheduled in the past" raw
 
@@ -143,12 +156,14 @@ random_string upgrade_info
 echo "propose and reject upgrade"
 random_string upgrade_name
 propose=$(dcld tx dclupgrade propose-upgrade --name=$upgrade_name --upgrade-height=$upgrade_height --upgrade-info=$upgrade_info --from $trustee_account --yes)
+propose=$(get_txn_result "$propose")
 echo "propose upgrade response: $propose"
 check_response "$propose" "\"code\": 0"
 
 test_divider
 
 approve=$(dcld tx dclupgrade approve-upgrade --name=$upgrade_name --from alice --yes)
+approve=$(get_txn_result "$approve")
 echo "approve upgrade response: $approve"
 check_response "$approve" "\"code\": 0"
 
@@ -163,24 +178,28 @@ check_response_and_report "$proposed_dclupgrade_query" "\"info\": \"$upgrade_inf
 test_divider
 
 reject=$(dcld tx dclupgrade reject-upgrade --name=$upgrade_name --from $trustee_account --yes)
+reject=$(get_txn_result "$reject")
 echo "reject upgrade response: $reject"
 check_response "$reject" "\"code\": 0"
 
 test_divider
 
 approve=$(dcld tx dclupgrade approve-upgrade --name=$upgrade_name --from $trustee_account --yes)
+approve=$(get_txn_result "$approve")
 echo "approve upgrade response: $approve"
 check_response "$approve" "\"code\": 0"
 
 test_divider
 
 reject=$(dcld tx dclupgrade reject-upgrade --name=$upgrade_name --from alice --yes)
+reject=$(get_txn_result "$reject")
 echo "reject upgrade response: $reject"
 check_response "$reject" "\"code\": 0"
 
 test_divider
 
 second_reject=$(dcld tx dclupgrade reject-upgrade --name=$upgrade_name --from alice --yes)
+second_reject=$(get_txn_result "$second_reject")
 echo "second_reject upgrade response: $reject"
 response_does_not_contain "$second_reject" "\"code\": 0"
 
@@ -215,6 +234,7 @@ check_response "$approved_dclupgrade_query" "Not Found"
 test_divider
 
 reject=$(dcld tx dclupgrade reject-upgrade --name=$upgrade_name --from bob --yes)
+reject=$(get_txn_result "$reject")
 echo "reject upgrade response: $reject"
 check_response "$reject" "\"code\": 0"
 
@@ -251,6 +271,7 @@ random_string upgrade_info
 
 echo "propose upgrade's plan height bigger than block height"
 propose=$(dcld tx dclupgrade propose-upgrade --name=$upgrade_name --upgrade-height=$plan_height --upgrade-info=$upgrade_info --from jack --yes)
+propose=$(get_txn_result "$propose")
 echo "propose upgrade response: $propose"
 check_response "$propose" "\"code\": 0"
 
@@ -266,6 +287,7 @@ echo "Current height is $current_height"
 
 echo "approve upgrade's plan height less than block height"
 approve=$(dcld tx dclupgrade approve-upgrade --name=$upgrade_name --from alice --yes)
+approve=$(get_txn_result "$approve")
 echo "approve upgrade response: $approve"
 check_response_and_report "$approve" "upgrade cannot be scheduled in the past" raw
 
@@ -275,6 +297,7 @@ plan_height=$(expr $current_height + 3)
 
 echo "re-propose upgrade's plan height bigger than block height"
 propose=$(dcld tx dclupgrade propose-upgrade --name=$upgrade_name --upgrade-height=$plan_height --upgrade-info=$upgrade_info --from jack --yes)
+propose=$(get_txn_result "$propose")
 echo "propose upgrade response: $propose"
 check_response "$propose" "\"code\": 0"
 
@@ -297,6 +320,7 @@ random_string upgrade_info
 
 echo "propose upgrade's plan height bigger than block height"
 propose=$(dcld tx dclupgrade propose-upgrade --name=$upgrade_name --upgrade-height=$plan_height --upgrade-info=$upgrade_info --from jack --yes)
+propose=$(get_txn_result "$propose")
 echo "propose upgrade response: $propose"
 check_response "$propose" "\"code\": 0"
 
@@ -312,11 +336,13 @@ echo "Current height is $current_height"
 
 echo "approve upgrade's plan height less than block height"
 approve=$(dcld tx dclupgrade approve-upgrade --name=$upgrade_name --from alice --yes)
+approve=$(get_txn_result "$approve")
 echo "approve upgrade response: $approve"
 check_response_and_report "$approve" "upgrade cannot be scheduled in the past" raw
 
 echo "re-propose upgrade's plan height bigger than block height"
 propose=$(dcld tx dclupgrade propose-upgrade --name=$upgrade_name --upgrade-height=$plan_height --upgrade-info=$upgrade_info --from jack --yes)
+propose=$(get_txn_result "$propose")
 echo "propose upgrade response: $propose"
 check_response_and_report "$propose" "upgrade cannot be scheduled in the past" raw
 ###########################################################################################################################################
@@ -334,10 +360,12 @@ test_divider
 
 echo "jack (Trustee) propose upgrade"
 result=$(dcld tx dclupgrade propose-upgrade --name=$upgrade_name --upgrade-height=$plan_height --upgrade-info=$upgrade_info --from jack --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "jack (Trustee) rejects upgrade"
 result=$(dcld tx dclupgrade reject-upgrade --name=$upgrade_name --from jack --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider

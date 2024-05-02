@@ -4,9 +4,10 @@ import (
 	"strconv"
 	"time"
 
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
+
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
 
@@ -72,7 +73,7 @@ func (msg *MsgUpdateComplianceInfo) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
 	err = validator.Validate(msg)
@@ -97,16 +98,16 @@ func (msg *MsgUpdateComplianceInfo) ValidateBasic() error {
 		}
 
 		if cdVersionNumber > 65535 {
-			return sdkerrors.Wrap(validator.ErrFieldUpperBoundViolated, "CDVersionNumber must not be greater than 65535: field upper bound violatedError")
+			return errors.Wrap(validator.ErrFieldUpperBoundViolated, "CDVersionNumber must not be greater than 65535: field upper bound violatedError")
 		}
 	}
 
-	if !dclcompltypes.IsValidCertificationType(msg.CertificationType) {
-		return NewErrInvalidCertificationType(msg.CertificationType, dclcompltypes.CertificationTypesList)
+	if !IsValidCertificationType(msg.CertificationType) {
+		return NewErrInvalidCertificationType(msg.CertificationType, CertificationTypesList)
 	}
 
-	if !dclcompltypes.IsValidPFCCertificationRoute(msg.ParentChild) {
-		return NewErrInvalidPFCCertificationRoute(msg.ParentChild, dclcompltypes.PFCCertificationRouteList)
+	if !IsValidPFCCertificationRoute(msg.ParentChild) {
+		return NewErrInvalidPFCCertificationRoute(msg.ParentChild, PFCCertificationRouteList)
 	}
 
 	return nil

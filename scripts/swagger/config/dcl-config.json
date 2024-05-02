@@ -9,7 +9,7 @@
         "url": "https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/LICENSE"
       },
 
-      "description": "A REST interface for state queries. \nTendermint RPC endpoints are available here: https://docs.tendermint.com/v0.34/rpc/."
+      "description": "A REST interface for state queries. \nCometBFT RPC endpoints are available here: https://docs.cometbft.com/v0.37/rpc/."
     },
     "apis": [
       {

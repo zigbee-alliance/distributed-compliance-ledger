@@ -153,10 +153,16 @@ Please take into account the following when sending a PR:
 
 ## How To Add a new Module or Transaction
 
-- Use [starport](https://github.com/tendermint/starport) command to scaffold the module.
-  Consider using a docker container built from the provided [Dockerfile](scripts/Dockerfile) to have a predictable version of starport. See [README.md](scripts/README.md).
+- Use [ignite v0.27.1](https://github.com/ignite/cli) command to scaffold the module.
+  Consider using a docker container built from the provided [Dockerfile](scripts/Dockerfile) to have a predictable version of ignite. See [README.md](scripts/README.md).
 - Have a look at the scripts and commands used for generation of existing modules, messages and CRUD operations and do it in a similar way
   (for example [PKI module commands](scripts/starport/upgrade-0.44/07.pki_types.sh)).
+  - 
+    **Note**:
+    1. On previous scaffolding of modules `starport` cli used instead of `ignite`. 
+               While generating new module, command structure will the same except it must start with `ignite`.
+    2. After execution of command `ignite scaffold ...` generated `.proto` files will be added into `proto/distributedcoplianceledger/{module}/{proto}`
+    . So make sure to put contents of generated proto files into related folders inside `proto/zigbeealliance/..` folder.
 - If a new transaction with a new data in state (key-value) and new queries needs to be created, then both message and CRUD commands need to be executed.
 - If just a message to update existing state values need to be created, then a message command is enough.  
 - Adjust the generated code
@@ -166,19 +172,18 @@ Please take into account the following when sending a PR:
   - add `(cosmos_proto.scalar) = "cosmos.AddressString"` annotation for all fields with address/account type (such as `signer` or `owner`).
   - fix types if needed in `proto/<module>/<entity>.proto` files
     - Note1: `unit64` will be returned as string if the output is a JSON format. So, it's better to use `uint64` only when it's really `uint64`.
-    - Note2: for `uint16` type: use `int32` during starport scaffolding, and add custom validation (annotations above) to check the lower and upper bounds.
-    - Note3: for `uint32` type: use `int32` during starport scaffolding, then replace it by `uint32` in .proto files, re-generate the code and fix compilation errors.
-  - build proto (for example `starport chain build`). Fix compilation errors if any.
+    - Note2: for `uint16` type: use `int32` during ignite scaffolding, and add custom validation (annotations above) to check the lower and upper bounds.
+    - Note3: for `uint32` type: use `int32` during ignite scaffolding, then replace it by `uint32` in .proto files, re-generate the code and fix compilation errors.
+  - build proto (for example `ignite chain build`). Fix compilation errors if any.
   - generate openapi docs from proto using (`scripts/dcl-swagger-gen.sh`). It's recommended to run from container built from [Dockerfile](scripts/Dockerfile)
 
   - **Note1**: colons (`:`) are part of subject-id in PKI module, but colons are not allowed in gRPC REST URLs by default.
     `allow_colon_final_segments=true` should be used as a workaround.
     So, make sure that `runtime.AssumeColonVerbOpt(false)` in `/x/pki/types/query.pb.gw.go`.
     It's usually sufficient to revert the generated changes in `/x/pki/types/query.pb.gw.go`.
-  - **Note2**: move `compliance_info.pb.go` and `compliance_history_item.pb.go` to `types/compliance` and adjust the import in other places accordingly.
     It may be easier just to revert changes in all  `*.pb.go` files not affected by your changes in `.proto`
-  - **Note3**: `starport chain build` needs to be called only if you made manual changes in `.proto` files.
-    There is no need to call `starport chain build` again once all errors and adjustments above are done. It's sufficient just to build the project via usual ways (such as `make build`)  
+  - **Note3**: `ignite chain build` needs to be called only if you made manual changes in `.proto` files.
+    There is no need to call `ignite chain build` again once all errors and adjustments above are done. It's sufficient just to build the project via usual ways (such as `make build`)  
 - Add static validation for new messages:
   - Call `validator.Validate(msg)` in `ValidateBasic` methods for all generated messages
   - Add additional checks to `ValidateBasic` that do not depend on the state (key-value) and order of transactions
@@ -195,10 +200,10 @@ Please take into account the following when sending a PR:
 
 ## How To Make Changes in Data Model for Existing Modules
 
-- Use [starport](https://github.com/tendermint/starport) command to scaffold the module.
-  Consider using the provided [Dockerfile](scripts/Dockerfile) to have a predictable version of starport. See [README.md](scripts/README.md).
+- Use [ignite](https://github.com/ignite/cli) command to scaffold the module.
+  Consider using the provided [Dockerfile](scripts/Dockerfile) to have a predictable version of ignite. See [README.md](scripts/README.md).
 - **Never change `.pb` files manually**. Do the changes in `.proto` files.
-- Every time `.proto` files change, re-generate the code (for example `starport chain build`) and fix compilation errors if any.
+- Every time `.proto` files change, re-generate the code (for example `ignite chain build`) and fix compilation errors if any.
 - Update openapi docs from proto using (`scripts/dcl-swagger-gen.sh`). It's recommended to run from container built from [Dockerfile](scripts/Dockerfile).
 - **Note1**: colons (`:`) are part of subject-id in PKI module, but colons are not allowed in gRPC REST URLs by default.
   `allow_colon_final_segments=true` should be used as a workaround.
@@ -206,8 +211,8 @@ Please take into account the following when sending a PR:
   It's usually sufficient to revert the generated changes in `/x/pki/types/query.pb.gw.go`.
 - **Note2**: move `compliance_info.pb.go` and `compliance_history_item.pb.go` to `types/compliance` and adjust the import in other places accordingly.
   It may be easier just to revert changes in all  `*.pb.go` files not affected by your changes in `.proto`
-- **Note3**: `starport chain build` needs to be called only if you made manual changes in `.proto` files.
-  There is no need to call `starport chain build` again once all errors and adjustments above are done. It's sufficient just to build the project via usual ways (such as `make build`)
+- **Note3**: `ignite chain build` needs to be called only if you made manual changes in `.proto` files.
+  There is no need to call `ignite chain build` again once all errors and adjustments above are done. It's sufficient just to build the project via usual ways (such as `make build`)
 
 
 ## Update Cosmos-sdk Version
@@ -221,14 +226,12 @@ Re-generate cosmos base openapi (service API from cosmos exposed in DCL) using [
 ./scripts/cosmos-swagger-gen.sh tx
 ```
 
-## Update Tendermint Version
-
-Please note, that we depend on the Tendermint fork <https://github.com/zigbee-alliance/tendermint/releases/tag/v0.34.140>
-due to hotfixes for <https://github.com/tendermint/tendermint/issues/7640> and <https://github.com/tendermint/tendermint/issues/7641>
+## Update CometBFT Version
+Please note, that we depend on the CometBFT fork https://github.com/zigbee-alliance/cometbft/releases/tag/v0.37.5
+due to hotfixes for https://github.com/tendermint/tendermint/issues/7640 and https://github.com/tendermint/tendermint/issues/7641
 required for Light Client Proxy.
-Now that fixes are merged to Tendermint master, so check if we still need to depend on the fork.
 
-Also don't forget to update the link to the Tendermint RPC in [Swagger UI](docs/index.html).
+Also don't forget to update the link to the CometBFT RPC in [Swagger UI](docs/index.html).
 
 ## Other
 

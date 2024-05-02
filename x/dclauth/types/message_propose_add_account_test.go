@@ -5,6 +5,7 @@ import (
 	fmt "fmt"
 	"testing"
 
+	"cosmossdk.io/errors"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -90,7 +91,7 @@ func TestValidateMsgProposeAddAccount(t *testing.T) {
 			valid: false,
 			msg: NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
 				AccountRoles{}, 1, testconstants.ProductIDsEmpty), // no roles provided
-			err: sdkerrors.Wrapf(MissingRoles,
+			err: errors.Wrapf(MissingRoles,
 				"No roles provided"),
 		},
 		// zero VID with Vendor role - error - can not create Vendor with vid=0 (reserved)
@@ -98,7 +99,7 @@ func TestValidateMsgProposeAddAccount(t *testing.T) {
 			valid: false,
 			msg: NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
 				AccountRoles{Vendor, NodeAdmin}, 0, testconstants.ProductIDsEmpty),
-			err: sdkerrors.Wrapf(MissingVendorIDForVendorAccount,
+			err: errors.Wrapf(MissingVendorIDForVendorAccount,
 				"No Vendor ID is provided in the Vendor Role for the new account"),
 		},
 		// negative VID - error
@@ -106,7 +107,7 @@ func TestValidateMsgProposeAddAccount(t *testing.T) {
 			valid: false,
 			msg: NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
 				AccountRoles{Vendor, NodeAdmin}, -1, testconstants.ProductIDsEmpty),
-			err: sdkerrors.Wrapf(MissingVendorIDForVendorAccount,
+			err: errors.Wrapf(MissingVendorIDForVendorAccount,
 				"No Vendor ID is provided in the Vendor Role for the new account"),
 		},
 		// too large VID - error

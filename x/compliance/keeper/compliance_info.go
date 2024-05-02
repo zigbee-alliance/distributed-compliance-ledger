@@ -3,12 +3,12 @@ package keeper
 import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
+
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
 // SetComplianceInfo set a specific complianceInfo in the store from its index.
-func (k Keeper) SetComplianceInfo(ctx sdk.Context, complianceInfo dclcompltypes.ComplianceInfo) {
+func (k Keeper) SetComplianceInfo(ctx sdk.Context, complianceInfo types.ComplianceInfo) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ComplianceInfoKeyPrefix))
 	b := k.cdc.MustMarshal(&complianceInfo)
 	store.Set(types.ComplianceInfoKey(
@@ -26,7 +26,7 @@ func (k Keeper) GetComplianceInfo(
 	pid int32,
 	softwareVersion uint32,
 	certificationType string,
-) (val dclcompltypes.ComplianceInfo, found bool) {
+) (val types.ComplianceInfo, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ComplianceInfoKeyPrefix))
 
 	b := store.Get(types.ComplianceInfoKey(
@@ -62,14 +62,14 @@ func (k Keeper) RemoveComplianceInfo(
 }
 
 // GetAllComplianceInfo returns all complianceInfo.
-func (k Keeper) GetAllComplianceInfo(ctx sdk.Context) (list []dclcompltypes.ComplianceInfo) {
+func (k Keeper) GetAllComplianceInfo(ctx sdk.Context) (list []types.ComplianceInfo) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ComplianceInfoKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
-		var val dclcompltypes.ComplianceInfo
+		var val types.ComplianceInfo
 		k.cdc.MustUnmarshal(iterator.Value(), &val)
 		list = append(list, val)
 	}

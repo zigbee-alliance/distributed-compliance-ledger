@@ -64,15 +64,15 @@ func (k Keeper) RemoveValidator(
 	if err != nil {
 		// TODO ??? issue 99: the best way to deal with that
 		panic(err)
-	} else {
-		store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ValidatorByConsAddrKeyPrefix))
-		store.Delete(types.ValidatorByConsAddrKey(
-			valConsAddr,
-		))
 	}
 
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ValidatorByConsAddrKeyPrefix))
+	store.Delete(types.ValidatorByConsAddrKey(
+		valConsAddr,
+	))
+
 	// FIXME issue 99: owner should be a key here
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.LastValidatorPowerKeyPrefix))
+	store = prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.LastValidatorPowerKeyPrefix))
 	store.Delete(types.LastValidatorPowerKey(owner))
 
 	store = prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ValidatorKeyPrefix))

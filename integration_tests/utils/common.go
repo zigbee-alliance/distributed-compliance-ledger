@@ -22,7 +22,7 @@ import (
 )
 
 func RandString() string {
-	rand.Seed(time.Now().UnixNano())
+	rand.Seed(time.Now().UnixNano()) //nolint:staticcheck
 
 	chars := []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 

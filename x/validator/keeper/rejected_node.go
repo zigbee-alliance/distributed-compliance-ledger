@@ -10,8 +10,12 @@ import (
 func (k Keeper) SetRejectedNode(ctx sdk.Context, rejectedDisableValidator types.RejectedDisableValidator) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RejectedNodeKeyPrefix))
 	b := k.cdc.MustMarshal(&rejectedDisableValidator)
+	address, err := sdk.ValAddressFromBech32(rejectedDisableValidator.GetAddress())
+	if err != nil {
+		return
+	}
 	store.Set(types.RejectedNodeKey(
-		rejectedDisableValidator.GetAddress(),
+		address,
 	), b)
 }
 

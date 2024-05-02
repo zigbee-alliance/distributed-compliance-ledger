@@ -65,6 +65,6 @@ func (k Keeper) IterateAccounts(ctx sdk.Context, cb func(account types.Account) 
 }
 
 // just a stub to have AccountKeeper.GetModuleAddress API filled.
-func (k Keeper) GetModuleAddress(moduleName string) sdk.AccAddress {
+func (k Keeper) GetModuleAddress(_ string) sdk.AccAddress {
 	return nil
 }

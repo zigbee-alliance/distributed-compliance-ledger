@@ -5,14 +5,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 	keepertest "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
-	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
 func TestGenesis(t *testing.T) {
 	genesisState := types.GenesisState{
-		ComplianceInfoList: []dclcompltypes.ComplianceInfo{
+		ComplianceInfoList: []types.ComplianceInfo{
 			{
 				Vid:               0,
 				Pid:               0,

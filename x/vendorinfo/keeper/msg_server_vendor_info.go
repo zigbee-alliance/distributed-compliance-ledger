@@ -3,8 +3,10 @@ package keeper
 import (
 	"context"
 
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo/types"
 )
 
@@ -23,7 +25,7 @@ func (k msgServer) CreateVendorInfo(goCtx context.Context, msg *types.MsgCreateV
 	)
 
 	if isFound {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "index already set")
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, "index already set")
 	}
 
 	vendorInfo := types.VendorInfo{
@@ -59,7 +61,7 @@ func (k msgServer) UpdateVendorInfo(goCtx context.Context, msg *types.MsgUpdateV
 	)
 
 	if !isFound {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, "index not set")
+		return nil, errors.Wrap(sdkerrors.ErrKeyNotFound, "index not set")
 	}
 
 	// check if creator has enough rights to update vendorinfo
@@ -109,7 +111,7 @@ func (k msgServer) UpdateVendorInfo(goCtx context.Context, msg *types.MsgUpdateV
 // 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, "index not set")
 // 	}
 
-// 	// Checks if the the msg creator is the same as the current owner
+// 	// Checks if the msg creator is the same as the current owner
 // 	if msg.Creator != valFound.Creator {
 // 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 // 	}

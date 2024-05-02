@@ -7,12 +7,12 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
-	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
-func (setup *TestSetup) checkAllComplianceInfoFieldsUpdated(t *testing.T, originalComplianceInfo *dclcompltypes.ComplianceInfo, updatedComplianceInfo *dclcompltypes.ComplianceInfo) {
+func (setup *TestSetup) checkAllComplianceInfoFieldsUpdated(t *testing.T, originalComplianceInfo *types.ComplianceInfo, updatedComplianceInfo *types.ComplianceInfo) {
+	t.Helper()
 	require.Equal(t, originalComplianceInfo.Vid, updatedComplianceInfo.Vid)
 	require.Equal(t, originalComplianceInfo.Pid, updatedComplianceInfo.Pid)
 	require.Equal(t, originalComplianceInfo.SoftwareVersion, updatedComplianceInfo.SoftwareVersion)
@@ -34,7 +34,8 @@ func (setup *TestSetup) checkAllComplianceInfoFieldsUpdated(t *testing.T, origin
 	require.Equal(t, originalComplianceInfo.SchemaVersion, updatedComplianceInfo.SchemaVersion)
 }
 
-func (setup *TestSetup) checkDeviceSoftwareComplianceUpdated(t *testing.T, originalComplianceInfo *dclcompltypes.ComplianceInfo, updatedDeviceSoftwareCompliance *types.DeviceSoftwareCompliance, isUpdatedMinimally bool) {
+func (setup *TestSetup) checkDeviceSoftwareComplianceUpdated(t *testing.T, originalComplianceInfo *types.ComplianceInfo, updatedDeviceSoftwareCompliance *types.DeviceSoftwareCompliance, isUpdatedMinimally bool) {
+	t.Helper()
 	isFound := false
 
 	for _, complianceInfo := range updatedDeviceSoftwareCompliance.ComplianceInfo {
@@ -58,12 +59,13 @@ func (setup *TestSetup) checkDeviceSoftwareComplianceUpdated(t *testing.T, origi
 	require.True(t, isFound)
 }
 
-func setupUpdateComplianceInfo(t *testing.T) (*TestSetup, int32, int32, uint32, string, string, *dclcompltypes.ComplianceInfo, *types.DeviceSoftwareCompliance) {
+func setupUpdateComplianceInfo(t *testing.T) (*TestSetup, int32, int32, uint32, string, string, *types.ComplianceInfo, *types.DeviceSoftwareCompliance) {
+	t.Helper()
 	setup := setup(t)
 
 	vid, pid, softwareVersion, softwareVersionString := setup.addModelVersion(
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
-	certificationType := dclcompltypes.ZigbeeCertificationType
+	certificationType := types.ZigbeeCertificationType
 
 	certifyModelMsg := newMsgCertifyModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
 	_, certifyModelErr := setup.Handler(setup.Ctx, certifyModelMsg)
@@ -148,7 +150,7 @@ func TestHandler_UpdateComplianceInfo_NotByCertificationCenter(t *testing.T) {
 	_, updateComplianceInfoErr := setup.Handler(setup.Ctx, updateComplianceInfoMsg)
 	require.ErrorIs(t, updateComplianceInfoErr, sdkerrors.ErrUnauthorized)
 
-	updatedComplianceInfo := queryExistingComplianceInfo(setup, vid, pid, softwareVersion, dclcompltypes.ZigbeeCertificationType)
+	updatedComplianceInfo := queryExistingComplianceInfo(setup, vid, pid, softwareVersion, types.ZigbeeCertificationType)
 
 	require.Equal(t, originalComplianceInfo, updatedComplianceInfo)
 }

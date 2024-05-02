@@ -13,22 +13,22 @@ import (
 	"syscall"
 	"time"
 
+	dbm "github.com/cometbft/cometbft-db"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	"github.com/spf13/cobra"
-	dbm "github.com/tendermint/tm-db"
 
-	tmcfg "github.com/tendermint/tendermint/config"
-	"github.com/tendermint/tendermint/libs/log"
-	tmmath "github.com/tendermint/tendermint/libs/math"
-	"github.com/tendermint/tendermint/light"
-	lproxy "github.com/tendermint/tendermint/light/proxy"
-	lrpc "github.com/tendermint/tendermint/light/rpc"
-	dbs "github.com/tendermint/tendermint/light/store/db"
-	rpchttp "github.com/tendermint/tendermint/rpc/client/http"
-	rpcserver "github.com/tendermint/tendermint/rpc/jsonrpc/server"
+	tmcfg "github.com/cometbft/cometbft/config"
+	"github.com/cometbft/cometbft/libs/log"
+	tmmath "github.com/cometbft/cometbft/libs/math"
+	"github.com/cometbft/cometbft/light"
+	lproxy "github.com/cometbft/cometbft/light/proxy"
+	lrpc "github.com/cometbft/cometbft/light/rpc"
+	dbs "github.com/cometbft/cometbft/light/store/db"
+	rpchttp "github.com/cometbft/cometbft/rpc/client/http"
+	rpcserver "github.com/cometbft/cometbft/rpc/jsonrpc/server"
 )
 
-// mostly copied from https://github.com/tendermint/tendermint/blob/master/cmd/tendermint/commands/light.go
+// mostly copied from https://github.com/cometbft/cometbft/blob/master/cmd/tendermint/commands/light.go
 
 const (
 	FlagListenAddr       = "laddr"
@@ -238,7 +238,7 @@ func runProxy(cmd *cobra.Command, args []string) error {
 	cfg.MaxOpenConnections = maxOpenConnections
 	// If necessary adjust global WriteTimeout to ensure it's greater than
 	// TimeoutBroadcastTxCommit.
-	// See https://github.com/tendermint/tendermint/issues/3435
+	// See https://github.com/cometbft/cometbft/issues/3435
 	if cfg.WriteTimeout <= config.RPC.TimeoutBroadcastTxCommit {
 		cfg.WriteTimeout = config.RPC.TimeoutBroadcastTxCommit + 10*time.Second
 	}

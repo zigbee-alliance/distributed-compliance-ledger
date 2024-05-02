@@ -84,6 +84,7 @@ test_divider
 
 echo "Jack proposes account for $user"
 result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$user_address" --pubkey="$user_pubkey" --roles="NodeAdmin" --from jack --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -122,12 +123,14 @@ test_divider
 
 echo "Alice approves account for \"$user\""
 result=$(echo $passphrase | dcld tx auth approve-add-account --address="$user_address" --info="Alice is approving this account" --from alice --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Alice cannot reject account for  \"$user\""
 result=$(echo $passphrase | dcld tx auth reject-add-account --address="$user_address" --info="Alice is rejecting this account" --from alice --yes 2>&1 || true)
+result=$(get_txn_result "$result")
 response_does_not_contain "$result" "\"code\": 0"
 
 test_divider
@@ -184,6 +187,7 @@ test_divider
 
 echo "Alice proposes to revoke account for $user"
 result=$(echo $passphrase | dcld tx auth propose-revoke-account --address="$user_address" --info="Alice proposes to revoke account" --from alice --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 
@@ -227,6 +231,7 @@ test_divider
 
 echo "Bob approves to revoke account for $user"
 result=$(echo $passphrase | dcld tx auth approve-revoke-account --address="$user_address" --from bob --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -279,6 +284,7 @@ test_divider
 
 echo "Jack proposes account for $user"
 result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$user_address" --pubkey="$user_pubkey" --roles="NodeAdmin" --from jack --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -323,6 +329,7 @@ test_divider
 
 echo "Alice approves account for \"$user\""
 result=$(echo $passphrase | dcld tx auth approve-add-account --address="$user_address" --info="Alice is approving this account" --from alice --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -377,6 +384,7 @@ test_divider
 
 echo "Alice proposes to revoke account for $user"
 result=$(echo $passphrase | dcld tx auth propose-revoke-account --address="$user_address" --info="Alice proposes to revoke account" --from alice --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 
@@ -420,6 +428,7 @@ test_divider
 
 echo "Bob approves to revoke account for $user"
 result=$(echo $passphrase | dcld tx auth approve-revoke-account --address="$user_address" --from bob --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -462,6 +471,7 @@ test_divider
 
 echo "Jack proposes account for $user"
 result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$user_address" --pubkey="$user_pubkey" --roles="NodeAdmin" --from jack --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -477,6 +487,7 @@ test_divider
 
 echo "Alice rejects account for \"$user\""
 result=$(echo $passphrase | dcld tx auth reject-add-account --address="$user_address" --info="Alice is rejecting this account" --from alice --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -541,12 +552,14 @@ test_divider
 
 echo "Bob rejects account for \"$user\""
 result=$(echo $passphrase | dcld tx auth reject-add-account --address="$user_address" --info="Bob is rejecting this account" --from bob --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Bob cannot reject the same account \"$user\" for the second time"
 result=$(echo $passphrase | dcld tx auth reject-add-account --address="$user_address" --info="Bob is rejecting this account" --from bob --yes 2>&1 || true)
+result=$(get_txn_result "$result")
 response_does_not_contain "$result" "\"code\": 0"
 
 test_divider
@@ -642,6 +655,7 @@ test_divider
 
 echo "Jack proposes account for $user"
 result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$user_address" --pubkey="$user_pubkey" --roles="Vendor,NodeAdmin" --vid=$vid --from jack --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -674,6 +688,7 @@ test_divider
 
 echo "Alice approves account for \"$user\""
 result=$(echo $passphrase | dcld tx auth approve-add-account --address="$user_address" --info="Alice is approving this account" --from alice --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -731,6 +746,7 @@ test_divider
 
 echo "Jack proposes account for $user"
 result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$user_address" --pubkey="$user_pubkey" --roles="Vendor" --vid=$vid --from jack --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -786,6 +802,7 @@ test_divider
 
 echo "Jack proposes account for $user"
 result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$user_address" --pubkey="$user_pubkey" --roles="Vendor" --vid=$vid --pid_ranges=$pid_ranges --from jack --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -881,10 +898,12 @@ test_divider
 
 echo "Jack proposes account for $new_trustee1"
 result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$new_trustee_address1" --pubkey="$new_trustee_pubkey1" --roles="Trustee" --from jack --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Alice approves account for \"$new_trustee1\""
 result=$(echo $passphrase | dcld tx auth approve-add-account --address="$new_trustee_address1" --info="Alice is approving this account" --from alice --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -909,24 +928,29 @@ test_divider
 
 echo "Jack proposes account for $new_trustee2"
 result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$new_trustee_address2" --pubkey="$new_trustee_pubkey2" --roles="Trustee" --from jack --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Alice approves account for \"$new_trustee2\""
 result=$(echo $passphrase | dcld tx auth approve-add-account --address="$new_trustee_address2" --info="Alice is approving this account" --from alice --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Jack can reject account for \"$user\" even if Jack already approved account"
 result=$(echo $passphrase | dcld tx auth reject-add-account --address="$new_trustee_address2" --info="Jack is rejecting this account" --from jack --yes 2>&1 || true)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Jack re-approves account for \"$user\""
 result=$(echo $passphrase | dcld tx auth approve-add-account --address="$new_trustee_address2" --info="Jack is proposing this account" --from jack --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Bob approves account for \"$new_trustee2\""
 result=$(echo $passphrase | dcld tx auth approve-add-account --address="$new_trustee_address2" --info="Bob is approving this account" --from bob --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -954,6 +978,7 @@ test_divider
 
 echo "Jack proposes account for $user"
 result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$user_address" --pubkey="$user_pubkey" --roles="Vendor" --vid=$vid --from jack --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -986,6 +1011,7 @@ test_divider
 
 echo "Alice approves account for \"$user\""
 result=$(echo $passphrase | dcld tx auth approve-add-account --address="$user_address" --info="Alice is approving this account" --from alice --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1034,6 +1060,7 @@ test_divider
 # REVOKE ACCOUNT, WE NEED 4 TRUSTEE'S APPROVALS, BECAUSE WE HAVE 5 TRUSTEES
 echo "Alice proposes to revoke account for $user"
 result=$(echo $passphrase | dcld tx auth propose-revoke-account --address="$user_address" --info="Alice proposes to revoke account" --from alice --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1048,6 +1075,7 @@ test_divider
 
 echo "Bob approves to revoke account for $user"
 result=$(echo $passphrase | dcld tx auth approve-revoke-account --address="$user_address" --from bob --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1063,18 +1091,22 @@ test_divider
 # REMOVE TRUSTEE ACCOUNT
 echo "Alice proposes to revoke account for $new_trustee1"
 result=$(echo $passphrase | dcld tx auth propose-revoke-account --address="$new_trustee_address1" --from alice --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Bob approves to revoke account for $new_trustee1"
 result=$(echo $passphrase | dcld tx auth approve-revoke-account --address="$new_trustee_address1" --from bob --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Jack approves to revoke account for $new_trustee1"
 result=$(echo $passphrase | dcld tx auth approve-revoke-account --address="$new_trustee_address1" --from jack --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "$new_trustee1 approves to revoke account for $new_trustee1"
 result=$(echo $passphrase | dcld tx auth approve-revoke-account --address="$new_trustee_address1" --from $new_trustee1 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Get revoked account $new_trustee1"
@@ -1087,6 +1119,7 @@ test_divider
 # REVOKE ACCOUNT
 echo "Jack approves to revoke account for $user"
 result=$(echo $passphrase | dcld tx auth approve-revoke-account --address="$user_address" --from jack --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1103,6 +1136,7 @@ test_divider
 # REJECT A NEW ACCOUNT, WE NEED 3 TRUSTEE'S REJECTS, BECAUSE WE HAVE 4 TRUSTEES
 echo "Jack proposes account for $user"
 result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$user_address" --pubkey="$user_pubkey" --roles="Vendor,NodeAdmin" --vid=$vid --from jack --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1118,6 +1152,7 @@ test_divider
 
 echo "Bob rejects account for \"$user\""
 result=$(echo $passphrase | dcld tx auth reject-add-account --address="$user_address" --info="Bob is rejecting this account" --from bob --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1135,14 +1170,17 @@ test_divider
 # WE REMOVE TRUSTEE ACCOUNT
 echo "Alice proposes to revoke account for $new_trustee2"
 result=$(echo $passphrase | dcld tx auth propose-revoke-account --address="$new_trustee_address2" --from alice --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Bob approves to revoke account for $new_trustee2"
 result=$(echo $passphrase | dcld tx auth approve-revoke-account --address="$new_trustee_address2" --from bob --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Jack approves to revoke account for $new_trustee2"
 result=$(echo $passphrase | dcld tx auth approve-revoke-account --address="$new_trustee_address2" --from jack --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Get revoked account $new_trustee2"
@@ -1155,6 +1193,7 @@ test_divider
 # REJECT A NEW ACCOUNT
 echo "Alice rejects account for \"$user\""
 result=$(echo $passphrase | dcld tx auth reject-add-account --address="$user_address" --info="Alice is rejecting this account" --from alice --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1194,10 +1233,12 @@ new_trustee_pubkey=$(echo $passphrase | dcld keys show $new_trustee -p)
 
 echo "Jack proposes account for $new_trustee"
 result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$new_trustee_address" --pubkey="$new_trustee_pubkey" --roles="Trustee" --from jack --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Alice approves account for \"$new_trustee\""
 result=$(echo $passphrase | dcld tx auth approve-add-account --address="$new_trustee_address" --info="Alice is approving this account" --from alice --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1205,6 +1246,7 @@ test_divider
 # ADD A NEW ACCOUNT, WE NEED 3 TRUSTEE'S APPROVALS, BECAUSE WE HAVE 4 TRUSTEES
 echo "Jack proposes account for $user"
 result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$user_address" --pubkey="$user_pubkey" --roles="Vendor,NodeAdmin" --vid=$vid --from jack --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1219,6 +1261,7 @@ test_divider
 
 echo "Bob approves account for \"$new_trustee\""
 result=$(echo $passphrase | dcld tx auth approve-add-account --info="Bob is approving this account" --address="$user_address" --from bob --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1236,14 +1279,17 @@ test_divider
 # WE REMOVE TRUSTEE ACCOUNT
 echo "Alice proposes to revoke account for $new_trustee"
 result=$(echo $passphrase | dcld tx auth propose-revoke-account --address="$new_trustee_address" --from alice --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Bob approves to revoke account for $new_trustee"
 result=$(echo $passphrase | dcld tx auth approve-revoke-account --address="$new_trustee_address" --from bob --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Jack approves to revoke account for $new_trustee"
 result=$(echo $passphrase | dcld tx auth approve-revoke-account --address="$new_trustee_address" --from jack --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Get revoked account $new_trustee"
@@ -1256,6 +1302,7 @@ test_divider
 # ADD A NEW ACCOUNT
 echo "Alice approves account for \"$user\""
 result=$(echo $passphrase | dcld tx auth approve-add-account --address="$user_address" --info="Alice is approving this account" --from alice --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -1289,6 +1336,7 @@ test_divider
 productName="Device #1"
 echo "$user adds Model with VID: $vid PID: $pid"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --productName="$productName" --productLabel="Device Description"   --commissioningCustomFlow=0 --deviceTypeID=12 --partNumber=12 --from=$user_address --yes)
+result=$(get_txn_result "$result")
 check_response_and_report "$result" "\"code\": 0"
 
 test_divider
@@ -1296,11 +1344,13 @@ test_divider
 vidPlusOne=$((vid+1))
 echo "$user adds Model with a VID: $vidPlusOne PID: $pid, This fails with Permission denied as the VID is not associated with this vendor account."
 result=$(echo "test1234" | dcld tx model add-model --vid=$vidPlusOne --pid=$pid --productName="$productName" --productLabel="Device Description"   --commissioningCustomFlow=0 --deviceTypeID=12 --partNumber=12 --from=$user_address --yes 2>&1) || true
+result=$(get_txn_result "$result")
 check_response_and_report "$result" "transaction should be signed by a vendor account containing the vendorID $vidPlusOne"
 
 test_divider
 echo "$user updates Model with VID: $vid PID: $pid"
 result=$(echo "test1234" | dcld tx model update-model --vid=$vid --pid=$pid --productName="$productName" --productLabel="Device Description" --partNumber=12 --from=$user_address --yes)
+result=$(get_txn_result "$result")
 check_response_and_report "$result" "\"code\": 0"
 
 test_divider
@@ -1332,10 +1382,12 @@ user_pubkey=$(echo $passphrase | dcld keys show $user -p)
 
 echo "jack (Trustee) propose account"
 result=$(dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$user_address" --pubkey="$user_pubkey" --roles="NodeAdmin" --from jack --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "jack (Trustee) rejects account"
 result=$(dcld tx auth reject-add-account --address="$user_address" --info="Jack is rejecting this account" --from jack --yes 2>&1 || true)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider

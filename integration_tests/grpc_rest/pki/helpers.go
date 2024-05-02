@@ -639,13 +639,17 @@ func Demo(suite *utils.TestSuite) {
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
-	aliceAccount, err := test_dclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	address, err := aliceKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	aliceAccount, err := test_dclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	jackName := testconstants.JackAccount
 	jackKeyInfo, err := suite.Kr.Key(jackName)
 	require.NoError(suite.T, err)
-	jackAccount, err := test_dclauth.GetAccount(suite, jackKeyInfo.GetAddress())
+	address, err = jackKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	jackAccount, err := test_dclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	// Register new Vendor account

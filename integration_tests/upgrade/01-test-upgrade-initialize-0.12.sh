@@ -22,10 +22,10 @@ wget -O dcld-initial "https://github.com/zigbee-alliance/distributed-compliance-
 chmod ugo+x dcld-initial
 
 DCLD_BIN="./dcld-initial"
+$DCLD_BIN config broadcast-mode block
 
 container="validator-demo"
 add_validator_node() {
-  # FIXME: as it's called before upgrade, mainnet stable version of dcld needs to be used (not the latest master)
   random_string account
   address=""
   LOCALNET_DIR=".localnet"
@@ -41,15 +41,9 @@ add_validator_node() {
   passphrase="test1234"
   docker_network="distributed-compliance-ledger_localnet"
 
-  docker build -f Dockerfile-build -t dcld-build .
-  docker container create --name dcld-build-inst dcld-build
-  docker cp dcld-build-inst:/go/bin/dcld ./
-  docker rm dcld-build-inst
-
   docker run -d --name $container --ip $ip -p "$node_p2p_port-$node_client_port:26656-26657" --network $docker_network -i dcledger
 
-  docker cp ./dcld "$container":"$DCL_USER_HOME"/
-  rm -f ./dcld
+  docker cp $DCLD_BIN "$container":"$DCL_USER_HOME"/dcld
 
   test_divider
 
@@ -78,30 +72,30 @@ add_validator_node() {
 
   address="$(docker exec $container /bin/sh -c "echo $passphrase | ./dcld keys show $account -a")"
   pubkey="$(docker exec $container /bin/sh -c "echo $passphrase | ./dcld keys show $account -p")"
-  alice_address="$(dcld keys show alice -a)"
-  bob_address="$(dcld keys show bob -a)"
-  jack_address="$(dcld keys show jack -a)"
+  alice_address="$($DCLD_BIN keys show alice -a)"
+  bob_address="$($DCLD_BIN keys show bob -a)"
+  jack_address="$($DCLD_BIN keys show jack -a)"
   echo "Create account for $account and Assign NodeAdmin role"
-  echo $passphrase | dcld tx auth propose-add-account --address="$address" --pubkey="$pubkey" --roles="NodeAdmin" --from jack --yes
-  echo $passphrase | dcld tx auth approve-add-account --address="$address" --from alice --yes
-  echo $passphrase | dcld tx auth approve-add-account --address="$address" --from bob --yes
+  echo $passphrase | $DCLD_BIN tx auth propose-add-account --address="$address" --pubkey="$pubkey" --roles="NodeAdmin" --from jack --yes
+  echo $passphrase | $DCLD_BIN tx auth approve-add-account --address="$address" --from alice --yes
+  echo $passphrase | $DCLD_BIN tx auth approve-add-account --address="$address" --from bob --yes
 
   test_divider
   vaddress=$(docker exec $container ./dcld tendermint show-address)
   vpubkey=$(docker exec $container ./dcld tendermint show-validator)
 
   echo "Check pool response for yet unknown node \"$node_name\""
-  result=$(dcld query validator node --address "$address")
+  result=$($DCLD_BIN query validator node --address "$address")
   check_response "$result" "Not Found"
   echo "$result"
-  result=$(dcld query validator last-power --address "$address")
+  result=$($DCLD_BIN query validator last-power --address "$address")
   check_response "$result" "Not Found"
   echo "$result"
 
   echo "$account Add Node \"$node_name\" to validator set"
 
   ! read -r -d '' _script << EOF
-      set -eu; echo test1234 | dcld tx validator add-node --pubkey='$vpubkey' --moniker="$node_name" --from="$account" --yes
+      set -eu; echo test1234 | $DCLD_BIN tx validator add-node --pubkey='$vpubkey' --moniker="$node_name" --from="$account" --yes
 EOF
   result="$(docker exec "$container" /bin/sh -c "echo test1234 | ./dcld tx validator add-node --pubkey='$vpubkey' --moniker="$node_name" --from="$account" --yes")"
   check_response "$result" "\"code\": 0"
@@ -116,10 +110,10 @@ EOF
   docker exec $container cp -f ./dcld "$DCL_DIR"/cosmovisor/genesis/bin/
 
   echo "$account Start Node \"$node_name\""
-  docker exec -d $container cosmovisor start
+  docker exec -d $container cosmovisor run start
   sleep 10
 
-  result=$(dcld query validator node --address "$address")
+  result=$($DCLD_BIN query validator node --address "$address")
   validator_address=$(echo "$result" | jq -r '.owner')
   echo "$result"
 }
@@ -199,10 +193,18 @@ user_3_address=$(echo $passphrase | $DCLD_BIN keys show $user_3 -a)
 user_3_pubkey=$(echo $passphrase | $DCLD_BIN keys show $user_3 -p)
 
 echo "Create Vendor account $vendor_account"
-create_new_vendor_account $vendor_account $vid
+result="$(echo $passphrase | $DCLD_BIN keys add "$vendor_account")"
+_address=$(echo $passphrase | $DCLD_BIN keys show $vendor_account -a)
+_pubkey=$(echo $passphrase | $DCLD_BIN keys show $vendor_account -p)
+result="$(echo $passphrase | $DCLD_BIN tx auth propose-add-account --address="$_address" --pubkey="$_pubkey" --vid="$vid" --roles="Vendor" --from jack --yes)"
 
 echo "Create CertificationCenter account"
-create_new_account certification_center_account "CertificationCenter"
+certification_center_account="certification_center_account_"
+result="$(echo $passphrase | $DCLD_BIN keys add $certification_center_account)"
+_address=$(echo $passphrase | $DCLD_BIN keys show $certification_center_account -a)
+_pubkey=$(echo $passphrase | $DCLD_BIN keys show $certification_center_account -p)
+result="$(echo $passphrase | $DCLD_BIN tx auth propose-add-account --address="$_address" --pubkey="$_pubkey" --roles="CertificationCenter"  --from jack --yes)"
+result="$(echo $passphrase | $DCLD_BIN tx auth approve-add-account --address="$_address" --from alice --yes)"
 
 random_string trustee_account_4
 random_string trustee_account_5

@@ -1,0 +1,22 @@
+syntax = "proto3";
+package zigbeealliance.distributedcomplianceledger.validator;
+
+import "zigbeealliance/distributedcomplianceledger/validator/validator.proto";
+import "zigbeealliance/distributedcomplianceledger/validator/last_validator_power.proto";
+import "zigbeealliance/distributedcomplianceledger/validator/proposed_disable_validator.proto";
+import "zigbeealliance/distributedcomplianceledger/validator/disabled_validator.proto";
+import "zigbeealliance/distributedcomplianceledger/validator/rejected_validator.proto";
+// this line is used by starport scaffolding # genesis/proto/import
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types";
+
+// GenesisState defines the validator module's genesis state.
+message GenesisState {
+    repeated Validator validatorList = 1 [(gogoproto.nullable) = false];
+  repeated LastValidatorPower lastValidatorPowerList = 2 [(gogoproto.nullable) = false];
+  repeated ProposedDisableValidator proposedDisableValidatorList = 3 [(gogoproto.nullable) = false];
+  repeated DisabledValidator disabledValidatorList = 4 [(gogoproto.nullable) = false];
+  repeated RejectedDisableValidator rejectedValidatorList = 5 [(gogoproto.nullable) = false];
+  // this line is used by starport scaffolding # genesis/proto/state
+}

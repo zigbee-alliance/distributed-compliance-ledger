@@ -1,0 +1,1687 @@
+swagger: '2.0'
+info:
+  title: HTTP API Console zigbeealliance.distributedcomplianceledger.compliance
+  name: ''
+  description: ''
+paths:
+  /dcl/compliance/certified-models:
+    get:
+      operationId: CertifiedModelAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              certifiedModel:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    vid:
+                      type: integer
+                      format: int32
+                    pid:
+                      type: integer
+                      format: int32
+                    softwareVersion:
+                      type: integer
+                      format: int64
+                    certificationType:
+                      type: string
+                    value:
+                      type: boolean
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                  total:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /dcl/compliance/certified-models/{vid}/{pid}/{softwareVersion}/{certificationType}:
+    get:
+      operationId: CertifiedModel
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              certifiedModel:
+                type: object
+                properties:
+                  vid:
+                    type: integer
+                    format: int32
+                  pid:
+                    type: integer
+                    format: int32
+                  softwareVersion:
+                    type: integer
+                    format: int64
+                  certificationType:
+                    type: string
+                  value:
+                    type: boolean
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: vid
+          in: path
+          required: true
+          type: integer
+          format: int32
+        - name: pid
+          in: path
+          required: true
+          type: integer
+          format: int32
+        - name: softwareVersion
+          in: path
+          required: true
+          type: integer
+          format: int64
+        - name: certificationType
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /dcl/compliance/compliance-info:
+    get:
+      operationId: ComplianceInfoAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              complianceInfo:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    vid:
+                      type: integer
+                      format: int32
+                    pid:
+                      type: integer
+                      format: int32
+                    softwareVersion:
+                      type: integer
+                      format: int64
+                    certificationType:
+                      type: string
+                    softwareVersionString:
+                      type: string
+                    cDVersionNumber:
+                      type: integer
+                      format: int64
+                    softwareVersionCertificationStatus:
+                      type: integer
+                      format: int64
+                    date:
+                      type: string
+                    reason:
+                      type: string
+                    owner:
+                      type: string
+                    history:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          softwareVersionCertificationStatus:
+                            type: integer
+                            format: int64
+                          date:
+                            type: string
+                          reason:
+                            type: string
+                          cDVersionNumber:
+                            type: integer
+                            format: int64
+                    cDCertificateId:
+                      type: string
+                    certificationRoute:
+                      type: string
+                    programType:
+                      type: string
+                    programTypeVersion:
+                      type: string
+                    compliantPlatformUsed:
+                      type: string
+                    compliantPlatformVersion:
+                      type: string
+                    transport:
+                      type: string
+                    familyId:
+                      type: string
+                    supportedClusters:
+                      type: string
+                    OSVersion:
+                      type: string
+                    parentChild:
+                      type: string
+                    certificationIdOfSoftwareComponent:
+                      type: string
+                    schemaVersion:
+                      type: integer
+                      format: int64
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                  total:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /dcl/compliance/compliance-info/{vid}/{pid}/{softwareVersion}/{certificationType}:
+    get:
+      operationId: ComplianceInfo
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              complianceInfo:
+                type: object
+                properties:
+                  vid:
+                    type: integer
+                    format: int32
+                  pid:
+                    type: integer
+                    format: int32
+                  softwareVersion:
+                    type: integer
+                    format: int64
+                  certificationType:
+                    type: string
+                  softwareVersionString:
+                    type: string
+                  cDVersionNumber:
+                    type: integer
+                    format: int64
+                  softwareVersionCertificationStatus:
+                    type: integer
+                    format: int64
+                  date:
+                    type: string
+                  reason:
+                    type: string
+                  owner:
+                    type: string
+                  history:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        softwareVersionCertificationStatus:
+                          type: integer
+                          format: int64
+                        date:
+                          type: string
+                        reason:
+                          type: string
+                        cDVersionNumber:
+                          type: integer
+                          format: int64
+                  cDCertificateId:
+                    type: string
+                  certificationRoute:
+                    type: string
+                  programType:
+                    type: string
+                  programTypeVersion:
+                    type: string
+                  compliantPlatformUsed:
+                    type: string
+                  compliantPlatformVersion:
+                    type: string
+                  transport:
+                    type: string
+                  familyId:
+                    type: string
+                  supportedClusters:
+                    type: string
+                  OSVersion:
+                    type: string
+                  parentChild:
+                    type: string
+                  certificationIdOfSoftwareComponent:
+                    type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: vid
+          in: path
+          required: true
+          type: integer
+          format: int32
+        - name: pid
+          in: path
+          required: true
+          type: integer
+          format: int32
+        - name: softwareVersion
+          in: path
+          required: true
+          type: integer
+          format: int64
+        - name: certificationType
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /dcl/compliance/device-software-compliance:
+    get:
+      operationId: DeviceSoftwareComplianceAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              deviceSoftwareCompliance:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    cDCertificateId:
+                      type: string
+                    complianceInfo:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          vid:
+                            type: integer
+                            format: int32
+                          pid:
+                            type: integer
+                            format: int32
+                          softwareVersion:
+                            type: integer
+                            format: int64
+                          certificationType:
+                            type: string
+                          softwareVersionString:
+                            type: string
+                          cDVersionNumber:
+                            type: integer
+                            format: int64
+                          softwareVersionCertificationStatus:
+                            type: integer
+                            format: int64
+                          date:
+                            type: string
+                          reason:
+                            type: string
+                          owner:
+                            type: string
+                          history:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                softwareVersionCertificationStatus:
+                                  type: integer
+                                  format: int64
+                                date:
+                                  type: string
+                                reason:
+                                  type: string
+                                cDVersionNumber:
+                                  type: integer
+                                  format: int64
+                          cDCertificateId:
+                            type: string
+                          certificationRoute:
+                            type: string
+                          programType:
+                            type: string
+                          programTypeVersion:
+                            type: string
+                          compliantPlatformUsed:
+                            type: string
+                          compliantPlatformVersion:
+                            type: string
+                          transport:
+                            type: string
+                          familyId:
+                            type: string
+                          supportedClusters:
+                            type: string
+                          OSVersion:
+                            type: string
+                          parentChild:
+                            type: string
+                          certificationIdOfSoftwareComponent:
+                            type: string
+                          schemaVersion:
+                            type: integer
+                            format: int64
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                  total:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /dcl/compliance/device-software-compliance/{cDCertificateId}:
+    get:
+      operationId: DeviceSoftwareCompliance
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              deviceSoftwareCompliance:
+                type: object
+                properties:
+                  cDCertificateId:
+                    type: string
+                  complianceInfo:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        vid:
+                          type: integer
+                          format: int32
+                        pid:
+                          type: integer
+                          format: int32
+                        softwareVersion:
+                          type: integer
+                          format: int64
+                        certificationType:
+                          type: string
+                        softwareVersionString:
+                          type: string
+                        cDVersionNumber:
+                          type: integer
+                          format: int64
+                        softwareVersionCertificationStatus:
+                          type: integer
+                          format: int64
+                        date:
+                          type: string
+                        reason:
+                          type: string
+                        owner:
+                          type: string
+                        history:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              softwareVersionCertificationStatus:
+                                type: integer
+                                format: int64
+                              date:
+                                type: string
+                              reason:
+                                type: string
+                              cDVersionNumber:
+                                type: integer
+                                format: int64
+                        cDCertificateId:
+                          type: string
+                        certificationRoute:
+                          type: string
+                        programType:
+                          type: string
+                        programTypeVersion:
+                          type: string
+                        compliantPlatformUsed:
+                          type: string
+                        compliantPlatformVersion:
+                          type: string
+                        transport:
+                          type: string
+                        familyId:
+                          type: string
+                        supportedClusters:
+                          type: string
+                        OSVersion:
+                          type: string
+                        parentChild:
+                          type: string
+                        certificationIdOfSoftwareComponent:
+                          type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: cDCertificateId
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /dcl/compliance/provisional-models:
+    get:
+      operationId: ProvisionalModelAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              provisionalModel:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    vid:
+                      type: integer
+                      format: int32
+                    pid:
+                      type: integer
+                      format: int32
+                    softwareVersion:
+                      type: integer
+                      format: int64
+                    certificationType:
+                      type: string
+                    value:
+                      type: boolean
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                  total:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /dcl/compliance/provisional-models/{vid}/{pid}/{softwareVersion}/{certificationType}:
+    get:
+      operationId: ProvisionalModel
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              provisionalModel:
+                type: object
+                properties:
+                  vid:
+                    type: integer
+                    format: int32
+                  pid:
+                    type: integer
+                    format: int32
+                  softwareVersion:
+                    type: integer
+                    format: int64
+                  certificationType:
+                    type: string
+                  value:
+                    type: boolean
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: vid
+          in: path
+          required: true
+          type: integer
+          format: int32
+        - name: pid
+          in: path
+          required: true
+          type: integer
+          format: int32
+        - name: softwareVersion
+          in: path
+          required: true
+          type: integer
+          format: int64
+        - name: certificationType
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /dcl/compliance/revoked-models:
+    get:
+      operationId: RevokedModelAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              revokedModel:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    vid:
+                      type: integer
+                      format: int32
+                    pid:
+                      type: integer
+                      format: int32
+                    softwareVersion:
+                      type: integer
+                      format: int64
+                    certificationType:
+                      type: string
+                    value:
+                      type: boolean
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                  total:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /dcl/compliance/revoked-models/{vid}/{pid}/{softwareVersion}/{certificationType}:
+    get:
+      operationId: RevokedModel
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              revokedModel:
+                type: object
+                properties:
+                  vid:
+                    type: integer
+                    format: int32
+                  pid:
+                    type: integer
+                    format: int32
+                  softwareVersion:
+                    type: integer
+                    format: int64
+                  certificationType:
+                    type: string
+                  value:
+                    type: boolean
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: vid
+          in: path
+          required: true
+          type: integer
+          format: int32
+        - name: pid
+          in: path
+          required: true
+          type: integer
+          format: int32
+        - name: softwareVersion
+          in: path
+          required: true
+          type: integer
+          format: int64
+        - name: certificationType
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+definitions:
+  Any:
+    type: object
+    properties:
+      '@type':
+        type: string
+    additionalProperties: {}
+  Status:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      details:
+        type: array
+        items:
+          type: object
+          properties:
+            '@type':
+              type: string
+          additionalProperties: {}
+  ComplianceHistoryItem:
+    type: object
+    properties:
+      softwareVersionCertificationStatus:
+        type: integer
+        format: int64
+      date:
+        type: string
+      reason:
+        type: string
+      cDVersionNumber:
+        type: integer
+        format: int64
+  PageRequest:
+    type: object
+    properties:
+      key:
+        type: string
+        format: byte
+      offset:
+        type: string
+        format: uint64
+      limit:
+        type: string
+        format: uint64
+      count_total:
+        type: boolean
+      reverse:
+        type: boolean
+  PageResponse:
+    type: object
+    properties:
+      next_key:
+        type: string
+        format: byte
+      total:
+        type: string
+        format: uint64
+  QueryAllCertifiedModelResponse:
+    type: object
+    properties:
+      certifiedModel:
+        type: array
+        items:
+          type: object
+          properties:
+            vid:
+              type: integer
+              format: int32
+            pid:
+              type: integer
+              format: int32
+            softwareVersion:
+              type: integer
+              format: int64
+            certificationType:
+              type: string
+            value:
+              type: boolean
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+          total:
+            type: string
+            format: uint64
+  QueryAllComplianceInfoResponse:
+    type: object
+    properties:
+      complianceInfo:
+        type: array
+        items:
+          type: object
+          properties:
+            vid:
+              type: integer
+              format: int32
+            pid:
+              type: integer
+              format: int32
+            softwareVersion:
+              type: integer
+              format: int64
+            certificationType:
+              type: string
+            softwareVersionString:
+              type: string
+            cDVersionNumber:
+              type: integer
+              format: int64
+            softwareVersionCertificationStatus:
+              type: integer
+              format: int64
+            date:
+              type: string
+            reason:
+              type: string
+            owner:
+              type: string
+            history:
+              type: array
+              items:
+                type: object
+                properties:
+                  softwareVersionCertificationStatus:
+                    type: integer
+                    format: int64
+                  date:
+                    type: string
+                  reason:
+                    type: string
+                  cDVersionNumber:
+                    type: integer
+                    format: int64
+            cDCertificateId:
+              type: string
+            certificationRoute:
+              type: string
+            programType:
+              type: string
+            programTypeVersion:
+              type: string
+            compliantPlatformUsed:
+              type: string
+            compliantPlatformVersion:
+              type: string
+            transport:
+              type: string
+            familyId:
+              type: string
+            supportedClusters:
+              type: string
+            OSVersion:
+              type: string
+            parentChild:
+              type: string
+            certificationIdOfSoftwareComponent:
+              type: string
+            schemaVersion:
+              type: integer
+              format: int64
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+          total:
+            type: string
+            format: uint64
+  QueryAllDeviceSoftwareComplianceResponse:
+    type: object
+    properties:
+      deviceSoftwareCompliance:
+        type: array
+        items:
+          type: object
+          properties:
+            cDCertificateId:
+              type: string
+            complianceInfo:
+              type: array
+              items:
+                type: object
+                properties:
+                  vid:
+                    type: integer
+                    format: int32
+                  pid:
+                    type: integer
+                    format: int32
+                  softwareVersion:
+                    type: integer
+                    format: int64
+                  certificationType:
+                    type: string
+                  softwareVersionString:
+                    type: string
+                  cDVersionNumber:
+                    type: integer
+                    format: int64
+                  softwareVersionCertificationStatus:
+                    type: integer
+                    format: int64
+                  date:
+                    type: string
+                  reason:
+                    type: string
+                  owner:
+                    type: string
+                  history:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        softwareVersionCertificationStatus:
+                          type: integer
+                          format: int64
+                        date:
+                          type: string
+                        reason:
+                          type: string
+                        cDVersionNumber:
+                          type: integer
+                          format: int64
+                  cDCertificateId:
+                    type: string
+                  certificationRoute:
+                    type: string
+                  programType:
+                    type: string
+                  programTypeVersion:
+                    type: string
+                  compliantPlatformUsed:
+                    type: string
+                  compliantPlatformVersion:
+                    type: string
+                  transport:
+                    type: string
+                  familyId:
+                    type: string
+                  supportedClusters:
+                    type: string
+                  OSVersion:
+                    type: string
+                  parentChild:
+                    type: string
+                  certificationIdOfSoftwareComponent:
+                    type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+          total:
+            type: string
+            format: uint64
+  QueryAllProvisionalModelResponse:
+    type: object
+    properties:
+      provisionalModel:
+        type: array
+        items:
+          type: object
+          properties:
+            vid:
+              type: integer
+              format: int32
+            pid:
+              type: integer
+              format: int32
+            softwareVersion:
+              type: integer
+              format: int64
+            certificationType:
+              type: string
+            value:
+              type: boolean
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+          total:
+            type: string
+            format: uint64
+  QueryAllRevokedModelResponse:
+    type: object
+    properties:
+      revokedModel:
+        type: array
+        items:
+          type: object
+          properties:
+            vid:
+              type: integer
+              format: int32
+            pid:
+              type: integer
+              format: int32
+            softwareVersion:
+              type: integer
+              format: int64
+            certificationType:
+              type: string
+            value:
+              type: boolean
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+          total:
+            type: string
+            format: uint64
+  QueryGetCertifiedModelResponse:
+    type: object
+    properties:
+      certifiedModel:
+        type: object
+        properties:
+          vid:
+            type: integer
+            format: int32
+          pid:
+            type: integer
+            format: int32
+          softwareVersion:
+            type: integer
+            format: int64
+          certificationType:
+            type: string
+          value:
+            type: boolean
+  QueryGetComplianceInfoResponse:
+    type: object
+    properties:
+      complianceInfo:
+        type: object
+        properties:
+          vid:
+            type: integer
+            format: int32
+          pid:
+            type: integer
+            format: int32
+          softwareVersion:
+            type: integer
+            format: int64
+          certificationType:
+            type: string
+          softwareVersionString:
+            type: string
+          cDVersionNumber:
+            type: integer
+            format: int64
+          softwareVersionCertificationStatus:
+            type: integer
+            format: int64
+          date:
+            type: string
+          reason:
+            type: string
+          owner:
+            type: string
+          history:
+            type: array
+            items:
+              type: object
+              properties:
+                softwareVersionCertificationStatus:
+                  type: integer
+                  format: int64
+                date:
+                  type: string
+                reason:
+                  type: string
+                cDVersionNumber:
+                  type: integer
+                  format: int64
+          cDCertificateId:
+            type: string
+          certificationRoute:
+            type: string
+          programType:
+            type: string
+          programTypeVersion:
+            type: string
+          compliantPlatformUsed:
+            type: string
+          compliantPlatformVersion:
+            type: string
+          transport:
+            type: string
+          familyId:
+            type: string
+          supportedClusters:
+            type: string
+          OSVersion:
+            type: string
+          parentChild:
+            type: string
+          certificationIdOfSoftwareComponent:
+            type: string
+          schemaVersion:
+            type: integer
+            format: int64
+  QueryGetDeviceSoftwareComplianceResponse:
+    type: object
+    properties:
+      deviceSoftwareCompliance:
+        type: object
+        properties:
+          cDCertificateId:
+            type: string
+          complianceInfo:
+            type: array
+            items:
+              type: object
+              properties:
+                vid:
+                  type: integer
+                  format: int32
+                pid:
+                  type: integer
+                  format: int32
+                softwareVersion:
+                  type: integer
+                  format: int64
+                certificationType:
+                  type: string
+                softwareVersionString:
+                  type: string
+                cDVersionNumber:
+                  type: integer
+                  format: int64
+                softwareVersionCertificationStatus:
+                  type: integer
+                  format: int64
+                date:
+                  type: string
+                reason:
+                  type: string
+                owner:
+                  type: string
+                history:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      softwareVersionCertificationStatus:
+                        type: integer
+                        format: int64
+                      date:
+                        type: string
+                      reason:
+                        type: string
+                      cDVersionNumber:
+                        type: integer
+                        format: int64
+                cDCertificateId:
+                  type: string
+                certificationRoute:
+                  type: string
+                programType:
+                  type: string
+                programTypeVersion:
+                  type: string
+                compliantPlatformUsed:
+                  type: string
+                compliantPlatformVersion:
+                  type: string
+                transport:
+                  type: string
+                familyId:
+                  type: string
+                supportedClusters:
+                  type: string
+                OSVersion:
+                  type: string
+                parentChild:
+                  type: string
+                certificationIdOfSoftwareComponent:
+                  type: string
+                schemaVersion:
+                  type: integer
+                  format: int64
+  QueryGetProvisionalModelResponse:
+    type: object
+    properties:
+      provisionalModel:
+        type: object
+        properties:
+          vid:
+            type: integer
+            format: int32
+          pid:
+            type: integer
+            format: int32
+          softwareVersion:
+            type: integer
+            format: int64
+          certificationType:
+            type: string
+          value:
+            type: boolean
+  QueryGetRevokedModelResponse:
+    type: object
+    properties:
+      revokedModel:
+        type: object
+        properties:
+          vid:
+            type: integer
+            format: int32
+          pid:
+            type: integer
+            format: int32
+          softwareVersion:
+            type: integer
+            format: int64
+          certificationType:
+            type: string
+          value:
+            type: boolean
+  compliance.CertifiedModel:
+    type: object
+    properties:
+      vid:
+        type: integer
+        format: int32
+      pid:
+        type: integer
+        format: int32
+      softwareVersion:
+        type: integer
+        format: int64
+      certificationType:
+        type: string
+      value:
+        type: boolean
+  compliance.ComplianceInfo:
+    type: object
+    properties:
+      vid:
+        type: integer
+        format: int32
+      pid:
+        type: integer
+        format: int32
+      softwareVersion:
+        type: integer
+        format: int64
+      certificationType:
+        type: string
+      softwareVersionString:
+        type: string
+      cDVersionNumber:
+        type: integer
+        format: int64
+      softwareVersionCertificationStatus:
+        type: integer
+        format: int64
+      date:
+        type: string
+      reason:
+        type: string
+      owner:
+        type: string
+      history:
+        type: array
+        items:
+          type: object
+          properties:
+            softwareVersionCertificationStatus:
+              type: integer
+              format: int64
+            date:
+              type: string
+            reason:
+              type: string
+            cDVersionNumber:
+              type: integer
+              format: int64
+      cDCertificateId:
+        type: string
+      certificationRoute:
+        type: string
+      programType:
+        type: string
+      programTypeVersion:
+        type: string
+      compliantPlatformUsed:
+        type: string
+      compliantPlatformVersion:
+        type: string
+      transport:
+        type: string
+      familyId:
+        type: string
+      supportedClusters:
+        type: string
+      OSVersion:
+        type: string
+      parentChild:
+        type: string
+      certificationIdOfSoftwareComponent:
+        type: string
+      schemaVersion:
+        type: integer
+        format: int64
+  compliance.DeviceSoftwareCompliance:
+    type: object
+    properties:
+      cDCertificateId:
+        type: string
+      complianceInfo:
+        type: array
+        items:
+          type: object
+          properties:
+            vid:
+              type: integer
+              format: int32
+            pid:
+              type: integer
+              format: int32
+            softwareVersion:
+              type: integer
+              format: int64
+            certificationType:
+              type: string
+            softwareVersionString:
+              type: string
+            cDVersionNumber:
+              type: integer
+              format: int64
+            softwareVersionCertificationStatus:
+              type: integer
+              format: int64
+            date:
+              type: string
+            reason:
+              type: string
+            owner:
+              type: string
+            history:
+              type: array
+              items:
+                type: object
+                properties:
+                  softwareVersionCertificationStatus:
+                    type: integer
+                    format: int64
+                  date:
+                    type: string
+                  reason:
+                    type: string
+                  cDVersionNumber:
+                    type: integer
+                    format: int64
+            cDCertificateId:
+              type: string
+            certificationRoute:
+              type: string
+            programType:
+              type: string
+            programTypeVersion:
+              type: string
+            compliantPlatformUsed:
+              type: string
+            compliantPlatformVersion:
+              type: string
+            transport:
+              type: string
+            familyId:
+              type: string
+            supportedClusters:
+              type: string
+            OSVersion:
+              type: string
+            parentChild:
+              type: string
+            certificationIdOfSoftwareComponent:
+              type: string
+            schemaVersion:
+              type: integer
+              format: int64
+  compliance.ProvisionalModel:
+    type: object
+    properties:
+      vid:
+        type: integer
+        format: int32
+      pid:
+        type: integer
+        format: int32
+      softwareVersion:
+        type: integer
+        format: int64
+      certificationType:
+        type: string
+      value:
+        type: boolean
+  compliance.RevokedModel:
+    type: object
+    properties:
+      vid:
+        type: integer
+        format: int32
+      pid:
+        type: integer
+        format: int32
+      softwareVersion:
+        type: integer
+        format: int64
+      certificationType:
+        type: string
+      value:
+        type: boolean
+  MsgCertifyModelResponse:
+    type: object
+  MsgDeleteComplianceInfoResponse:
+    type: object
+  MsgProvisionModelResponse:
+    type: object
+  MsgRevokeModelResponse:
+    type: object
+  MsgUpdateComplianceInfoResponse:
+    type: object

@@ -15,7 +15,10 @@ func CmdListRejectedUpgrade() *cobra.Command {
 		Use:   "all-rejected-upgrades",
 		Short: "Query the list of all rejected upgrades",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
 
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
 			if err != nil {
@@ -51,7 +54,10 @@ func CmdShowRejectedUpgrade() *cobra.Command {
 		Short: "Query rejected upgrade by name",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
 
 			var res types.RejectedUpgrade
 

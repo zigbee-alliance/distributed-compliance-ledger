@@ -114,6 +114,8 @@ test_divider
 
 echo "Certify Model with VID: $vid PID: $pid  SV: ${sv} with zigbee certification"
 result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="zigbee" --certificationDate="$certification_date" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=1 --from $zb_account --yes)
+result=$(get_txn_result "$result")
+
 echo "$result"
 check_response "$result" "\"code\": 0"
 

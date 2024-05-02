@@ -3,6 +3,7 @@ package keeper
 import (
 	"fmt"
 
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	evidencetypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
@@ -78,7 +79,7 @@ func (k Keeper) HandleDoubleSign(ctx sdk.Context, evidence *evidencetypes.Equivo
 		sdk.NewEvent(
 			slashingtypes.EventTypeSlash,
 			sdk.NewAttribute(slashingtypes.AttributeKeyAddress, consAddr.String()),
-			sdk.NewAttribute(slashingtypes.AttributeKeyPower, fmt.Sprintf("%d", evidence.GetValidatorPower())),
+			sdk.NewAttribute(slashingtypes.AttributeKeyPower, fmt.Sprintf("%d", evidence.GetValidatorPower())), //nolint:perfsprint
 			sdk.NewAttribute(slashingtypes.AttributeKeyReason, slashingtypes.AttributeValueDoubleSign),
 			sdk.NewAttribute(slashingtypes.AttributeKeyJailed, consAddr.String()),
 		),
@@ -91,14 +92,14 @@ func (k Keeper) HandleDoubleSign(ctx sdk.Context, evidence *evidencetypes.Equivo
 	// Revoked Account
 	valAddr, err := sdk.ValAddressFromBech32(validator.Owner)
 	if err != nil {
-		logger.Info("Error:", sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err))
+		logger.Info("Error:", errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err))
 	}
 
 	accAddr := sdk.AccAddress(valAddr)
 
 	// Move account to entity revoked account
 	revokedAccount, err := k.dclauthKeeper.AddAccountToRevokedAccount(
-		ctx, accAddr, nil, dclauthTypes.RevokedAccount_MaliciousValidator)
+		ctx, accAddr, nil, dclauthTypes.RevokedAccount_MaliciousValidator) //nolint:nosnakecase
 	if err != nil {
 		logger.Info("Error:", err)
 	} else {

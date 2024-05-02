@@ -1,16 +1,5 @@
 {
-  "name": "@starport/template",
-  "version": "0.1.53",
-  "description": "A Vue 3 boilerplate project utilizing @starport/vue and @starport/vuex",
-  "author": "Tendermint, Inc <hello@tendermint.com>",
-  "private": true,
-  "scripts": {
-    "serve": "vue-cli-service serve --mode=production",
-    "dev": "vue-cli-service serve",
-    "lint": "vue-cli-service lint",
-    "build": "vue-cli-service build",
-    "test": "echo \"Error: run tests from root\" && exit 1"
-  },
+  "author": "Tendermint, Inc \u003chello@tendermint.com\u003e",
   "dependencies": {
     "@cosmjs/launchpad": "0.25.0",
     "@cosmjs/proto-signing": "0.25.0",
@@ -25,8 +14,10 @@
     "vue": "^3.0.11",
     "vue-router": "^4.0.3",
     "vue-uuid": "^2.0.2",
-    "vuex": "^4.0.0"
+    "vuex": "^4.0.0",
+    "zigbee-alliance-distributed-compliance-ledger-client-ts": "file:../ts-client"
   },
+  "description": "A Vue 3 boilerplate project utilizing @starport/vue and @starport/vuex",
   "devDependencies": {
     "@babel/core": "^7.14.0",
     "@babel/node": "^7.13.13",
@@ -43,5 +34,15 @@
     "prettier": "^2.2.1",
     "protobufjs": "^6.11.2",
     "sass-loader": "^8.0.2"
-  }
+  },
+  "name": "@starport/template",
+  "private": true,
+  "scripts": {
+    "build": "vue-cli-service build",
+    "dev": "vue-cli-service serve",
+    "lint": "vue-cli-service lint",
+    "serve": "vue-cli-service serve --mode=production",
+    "test": "echo \"Error: run tests from root\" \u0026\u0026 exit 1"
+  },
+  "version": "0.1.53"
 }

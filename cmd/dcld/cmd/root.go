@@ -6,6 +6,14 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/spf13/cast"
+	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
+
+	dbm "github.com/cometbft/cometbft-db"
+	tmcfg "github.com/cometbft/cometbft/config"
+	"github.com/cometbft/cometbft/libs/log"
+	tmtypes "github.com/cometbft/cometbft/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/config"
@@ -17,18 +25,14 @@ import (
 	serverconfig "github.com/cosmos/cosmos-sdk/server/config"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
 	"github.com/cosmos/cosmos-sdk/snapshots"
+	snapshottypes "github.com/cosmos/cosmos-sdk/snapshots/types"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/module"
 	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
 	"github.com/cosmos/cosmos-sdk/x/crisis"
-	"github.com/spf13/cast"
-	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
-	"github.com/tendermint/spm/cosmoscmd"
-	tmcli "github.com/tendermint/tendermint/libs/cli"
-	"github.com/tendermint/tendermint/libs/log"
-	dbm "github.com/tendermint/tm-db"
+
+	"github.com/zigbee-alliance/distributed-compliance-ledger/app"
+	appparams "github.com/zigbee-alliance/distributed-compliance-ledger/app/params"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	dclgenutilcli "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclgenutil/client/cli"
 )
@@ -36,8 +40,7 @@ import (
 type (
 	// appCreator is an app creator.
 	appCreator struct {
-		encodingConfig cosmoscmd.EncodingConfig
-		buildApp       cosmoscmd.AppBuilder
+		encodingConfig appparams.EncodingConfig
 	}
 )
 
@@ -51,13 +54,7 @@ type rootOptions struct {
 	// envPrefix          string
 }
 
-func newRootOptions(options ...Option) rootOptions {
-	opts := rootOptions{}
-	opts.apply(options...)
-
-	return opts
-}
-
+//nolint:unused
 func (s *rootOptions) apply(options ...Option) {
 	for _, o := range options {
 		o(s)
@@ -88,136 +85,111 @@ func WithEnvPrefix(envPrefix string) Option {
 */
 
 // NewRootCmd creates a new root command for a Cosmos SDK application.
-func NewRootCmd(
-	appName,
-	accountAddressPrefix,
-	defaultNodeHome,
-	defaultChainID string,
-	moduleBasics module.BasicManager,
-	buildApp cosmoscmd.AppBuilder,
-	options ...Option,
-) (*cobra.Command, cosmoscmd.EncodingConfig) {
-	rootOptions := newRootOptions(options...)
-
-	// Set config for prefixes
-	cosmoscmd.SetPrefixes(accountAddressPrefix)
-
-	encodingConfig := cosmoscmd.MakeEncodingConfig(moduleBasics)
+func NewRootCmd() (*cobra.Command, appparams.EncodingConfig) {
+	encodingConfig := app.MakeEncodingConfig()
 	initClientCtx := client.Context{}.
-		WithCodec(encodingConfig.Marshaler).
+		WithCodec(encodingConfig.Codec).
 		WithInterfaceRegistry(encodingConfig.InterfaceRegistry).
 		WithTxConfig(encodingConfig.TxConfig).
 		WithLegacyAmino(encodingConfig.Amino).
 		WithInput(os.Stdin).
 		WithAccountRetriever(dclauthtypes.AccountRetriever{}).
-		WithBroadcastMode(flags.BroadcastBlock).
-		WithHomeDir(defaultNodeHome).
+		WithHomeDir(app.DefaultNodeHome).
 		WithViper("")
 
 	rootCmd := &cobra.Command{
-		Use:   appName + "d",
+		Use:   app.Name + "d",
 		Short: "DCLedger App",
 		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
 			// set the default command outputs
 			cmd.SetOut(cmd.OutOrStdout())
 			cmd.SetErr(cmd.ErrOrStderr())
-			initClientCtx, err := client.ReadPersistentCommandFlags(initClientCtx, cmd.Flags())
+			clientCtx, err := client.ReadPersistentCommandFlags(initClientCtx, cmd.Flags())
 			if err != nil {
 				return err
 			}
-			initClientCtx, err = config.ReadFromClientConfig(initClientCtx)
+			clientCtx, err = config.ReadFromClientConfig(clientCtx)
 			if err != nil {
 				return err
 			}
 
-			if err := client.SetCmdClientContextHandler(initClientCtx, cmd); err != nil {
+			if err := client.SetCmdClientContextHandler(clientCtx, cmd); err != nil {
 				return err
 			}
 
 			customAppTemplate, customAppConfig := initAppConfig()
+			customTMConfig := initTendermintConfig()
 
-			return server.InterceptConfigsPreRunHandler(cmd, customAppTemplate, customAppConfig)
+			return server.InterceptConfigsPreRunHandler(cmd, customAppTemplate, customAppConfig, customTMConfig)
 		},
 	}
 
-	initRootCmd(
-		rootCmd,
-		encodingConfig,
-		defaultNodeHome,
-		moduleBasics,
-		buildApp,
-		rootOptions,
-	)
+	initRootCmd(rootCmd, encodingConfig)
 	overwriteFlagDefaults(rootCmd, map[string]string{
-		flags.FlagChainID:        defaultChainID,
+		flags.FlagChainID:        app.Name,
 		flags.FlagKeyringBackend: "test",
 	})
 
 	return rootCmd, encodingConfig
 }
 
+// initTendermintConfig helps to override default Tendermint Config values.
+// return tmcfg.DefaultConfig if no custom configuration is required for the application.
+func initTendermintConfig() *tmcfg.Config {
+	cfg := tmcfg.DefaultConfig()
+
+	return cfg
+}
+
 func initRootCmd(
 	rootCmd *cobra.Command,
-	encodingConfig cosmoscmd.EncodingConfig,
-	defaultNodeHome string,
-	moduleBasics module.BasicManager,
-	buildApp cosmoscmd.AppBuilder,
-	options rootOptions,
+	encodingConfig appparams.EncodingConfig,
 ) {
+	cfg := sdk.GetConfig()
+	cfg.Seal()
+
 	rootCmd.AddCommand(
-		dclgenutilcli.InitCmd(moduleBasics, defaultNodeHome),
-		dclgenutilcli.CollectGenTxsCmd(dclauthtypes.GenesisAccountsIterator{}, defaultNodeHome),
+		dclgenutilcli.InitCmd(app.ModuleBasics, app.DefaultNodeHome),
+		dclgenutilcli.CollectGenTxsCmd(dclauthtypes.GenesisAccountsIterator{}, app.DefaultNodeHome),
 		// dclgenutilcli.MigrateGenesisCmd(), TODO issue 99: review, do we need that
 		dclgenutilcli.GenTxCmd(
-			moduleBasics,
+			app.ModuleBasics,
 			encodingConfig.TxConfig,
 			dclauthtypes.GenesisAccountsIterator{},
-			defaultNodeHome,
+			app.DefaultNodeHome,
 		),
-		dclgenutilcli.ValidateGenesisCmd(moduleBasics),
-		AddGenesisAccountCmd(defaultNodeHome),
-		tmcli.NewCompletionCmd(rootCmd, true),
+		dclgenutilcli.ValidateGenesisCmd(app.ModuleBasics),
+		AddGenesisAccountCmd(app.DefaultNodeHome),
 		debug.Cmd(),
 		config.Cmd(),
 	)
 
 	a := appCreator{
 		encodingConfig,
-		buildApp,
 	}
 
 	// add server commands
 	server.AddCommands(
 		rootCmd,
-		defaultNodeHome,
+		app.DefaultNodeHome,
 		a.newApp,
 		a.appExport,
-		func(cmd *cobra.Command) {
-			addModuleInitFlags(cmd)
-
-			if options.startCmdCustomizer != nil {
-				options.startCmdCustomizer(cmd)
-			}
-		},
+		addModuleInitFlags,
 	)
 
 	// add keybase, auxiliary RPC, query, and tx child commands
 	rootCmd.AddCommand(
 		rpc.StatusCommand(),
-		queryCommand(moduleBasics),
-		txCommand(moduleBasics),
-		keys.Commands(defaultNodeHome),
+		queryCommand(),
+		txCommand(),
+		keys.Commands(app.DefaultNodeHome),
 	)
 
-	// add user given sub commands.
-	for _, cmd := range options.addSubCmds {
-		rootCmd.AddCommand(cmd)
-	}
 	rootCmd.AddCommand(LightCmd)
 }
 
 // queryCommand returns the sub-command to send queries to the app.
-func queryCommand(moduleBasics module.BasicManager) *cobra.Command {
+func queryCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                        "query",
 		Aliases:                    []string{"q"},
@@ -235,14 +207,14 @@ func queryCommand(moduleBasics module.BasicManager) *cobra.Command {
 		authcmd.QueryTxCmd(),
 	)
 
-	moduleBasics.AddQueryCommands(cmd)
+	app.ModuleBasics.AddQueryCommands(cmd)
 	cmd.PersistentFlags().String(flags.FlagChainID, "", "The network chain ID")
 
 	return cmd
 }
 
 // txCommand returns the sub-command to send transactions to the app.
-func txCommand(moduleBasics module.BasicManager) *cobra.Command {
+func txCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                        "tx",
 		Short:                      "Transactions subcommands",
@@ -262,7 +234,7 @@ func txCommand(moduleBasics module.BasicManager) *cobra.Command {
 		authcmd.GetDecodeCommand(),
 	)
 
-	moduleBasics.AddTxCommands(cmd)
+	app.ModuleBasics.AddTxCommands(cmd)
 	cmd.PersistentFlags().String(flags.FlagChainID, "", "The network chain ID")
 
 	return cmd
@@ -312,7 +284,7 @@ func (a appCreator) newApp(
 	}
 
 	snapshotDir := filepath.Join(cast.ToString(appOpts.Get(flags.FlagHome)), "data", "snapshots")
-	snapshotDB, err := sdk.NewLevelDB("metadata", snapshotDir)
+	snapshotDB, err := dbm.NewDB("metadata", dbm.GoLevelDBBackend, snapshotDir)
 	if err != nil {
 		panic(err)
 	}
@@ -321,7 +293,24 @@ func (a appCreator) newApp(
 		panic(err)
 	}
 
-	return a.buildApp(
+	snapshotOptions := snapshottypes.NewSnapshotOptions(
+		cast.ToUint64(appOpts.Get(server.FlagStateSyncSnapshotInterval)),
+		cast.ToUint32(appOpts.Get(server.FlagStateSyncSnapshotKeepRecent)),
+	)
+
+	homeDir := cast.ToString(appOpts.Get(flags.FlagHome))
+	appChainID := cast.ToString(appOpts.Get(flags.FlagChainID))
+	if appChainID == "" {
+		// fallback to genesis chain-id
+		appGenesis, err := tmtypes.GenesisDocFromFile(filepath.Join(homeDir, "config", "genesis.json"))
+		if err != nil {
+			panic(err)
+		}
+
+		appChainID = appGenesis.ChainID
+	}
+
+	return app.New(
 		logger,
 		db,
 		traceStore,
@@ -330,18 +319,17 @@ func (a appCreator) newApp(
 		cast.ToString(appOpts.Get(flags.FlagHome)),
 		cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod)),
 		a.encodingConfig,
-		appOpts,
 		baseapp.SetPruning(pruningOpts),
 		baseapp.SetMinGasPrices(cast.ToString(appOpts.Get(server.FlagMinGasPrices))),
-		baseapp.SetMinRetainBlocks(cast.ToUint64(appOpts.Get(server.FlagMinRetainBlocks))),
 		baseapp.SetHaltHeight(cast.ToUint64(appOpts.Get(server.FlagHaltHeight))),
 		baseapp.SetHaltTime(cast.ToUint64(appOpts.Get(server.FlagHaltTime))),
+		baseapp.SetMinRetainBlocks(cast.ToUint64(appOpts.Get(server.FlagMinRetainBlocks))),
 		baseapp.SetInterBlockCache(cache),
 		baseapp.SetTrace(cast.ToBool(appOpts.Get(server.FlagTrace))),
 		baseapp.SetIndexEvents(cast.ToStringSlice(appOpts.Get(server.FlagIndexEvents))),
-		baseapp.SetSnapshotStore(snapshotStore),
-		baseapp.SetSnapshotInterval(cast.ToUint64(appOpts.Get(server.FlagStateSyncSnapshotInterval))),
-		baseapp.SetSnapshotKeepRecent(cast.ToUint32(appOpts.Get(server.FlagStateSyncSnapshotKeepRecent))),
+		baseapp.SetSnapshot(snapshotStore, snapshotOptions),
+		baseapp.SetIAVLCacheSize(cast.ToInt(appOpts.Get(server.FlagIAVLCacheSize))),
+		baseapp.SetChainID(appChainID),
 	)
 }
 
@@ -354,15 +342,14 @@ func (a appCreator) appExport(
 	forZeroHeight bool,
 	jailAllowedAddrs []string,
 	appOpts servertypes.AppOptions,
+	modulesToExport []string,
 ) (servertypes.ExportedApp, error) {
-	var exportableApp cosmoscmd.ExportableApp
-
 	homePath, ok := appOpts.Get(flags.FlagHome).(string)
 	if !ok || homePath == "" {
 		return servertypes.ExportedApp{}, errors.New("application home not set")
 	}
 
-	exportableApp = a.buildApp(
+	app := app.New(
 		logger,
 		db,
 		traceStore,
@@ -371,16 +358,15 @@ func (a appCreator) appExport(
 		homePath,
 		uint(1),
 		a.encodingConfig,
-		appOpts,
 	)
 
 	if height != -1 {
-		if err := exportableApp.LoadHeight(height); err != nil {
+		if err := app.LoadHeight(height); err != nil {
 			return servertypes.ExportedApp{}, err
 		}
 	}
 
-	return exportableApp.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs)
+	return app.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs, modulesToExport)
 }
 
 // initAppConfig helps to override default appConfig template and configs.

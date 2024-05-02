@@ -64,7 +64,7 @@ func (k Keeper) GetAllRevokedAccount(ctx sdk.Context) (list []types.RevokedAccou
 func (k Keeper) AddAccountToRevokedAccount(
 	ctx sdk.Context, accAddr sdk.AccAddress,
 	approvals []*types.Grant,
-	reason types.RevokedAccount_Reason,
+	reason types.RevokedAccount_Reason, //nolint:nosnakecase
 ) (*types.RevokedAccount, error) {
 	// get account
 	account, ok := k.GetAccountO(ctx, accAddr)

@@ -33,6 +33,7 @@ test_divider
 # Create a new model with minimum fields
 echo "Add Model with minimum required fields with VID: $vid_1 PID: $pid_1"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid_1 --pid=$pid_1 --deviceTypeID=1 --productName=TestProduct --productLabel="Test Product" --partNumber=1 --from=$vendor_account_1 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -55,6 +56,7 @@ result=$(echo "test1234" | dcld tx model add-model --vid=$vid_1 --pid=$pid_2 --d
 --commissioningModeInitialStepsHint=1  --commissioningModeInitialStepsInstruction="Initial Instructions" \
 --commissioningModeSecondaryStepsHint=2 --commissioningModeSecondaryStepsInstruction="Secondary Steps Instruction" \
 --userManualURL="https://usermanual.url" --productURL="https://product.url.info" --lsfURL="https://lsf.url.info" --supportURL="https://support.url.info"   --from=$vendor_account_1 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -90,6 +92,7 @@ result=$(echo "test1234" | dcld tx model add-model --vid=$vid_1 --pid=$pid_3 --d
 --commissioningModeInitialStepsHint=1  --commissioningModeInitialStepsInstruction="Initial Instructions" \
 --commissioningModeSecondaryStepsHint=2 --commissioningModeSecondaryStepsInstruction="Secondary Steps Instruction" \
 --from=$vendor_account_1 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -118,6 +121,7 @@ test_divider
 # Update model with mutable fields and make sure they are updated properly
 echo "Update model with mutable fields and make sure they are updated properly VID: $vid_1 PID: $pid_1"
 result=$(echo "test1234" | dcld tx model update-model --vid=$vid_1 --pid=$pid_1 --productName="Updated Product Name" --productLabel="Updated Test Product" --partNumber="2" --lsfURL="https://lsf.url.info?v=1" --lsfRevision=1 --from=$vendor_account_1 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -138,6 +142,7 @@ test_divider
 # Update model with just one mutable fields and make sure they are updated properly
 echo "Update model with just one mutable field and make sure they are updated properly VID: $vid_1 PID: $pid_1"
 result=$(echo "test1234" | dcld tx model update-model --vid=$vid_1 --pid=$pid_1  --productLabel="Updated Test Product V2" --from=$vendor_account_1 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -159,6 +164,7 @@ result=$(echo "test1234" | dcld tx model update-model --vid=$vid_1 --pid=$pid_1 
 --productLabel="Updated Test Product V3" --commissioningModeInitialStepsInstruction="Instructions updated v3" \
 --commissioningModeSecondaryStepsInstruction="Secondary Instructions v3" --userManualURL="https://userManual.info/v3" \
 --supportURL="https://support.url.info/v3" --productURL="https://product.landingpage.url" --lsfURL="https://lsf.url.info?v=2" --lsfRevision=2 --from=$vendor_account_1 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -185,6 +191,7 @@ test_divider
 # Update model with just one mutable fields and make sure they are updated properly
 echo "Update model with just one mutable field and make sure all other mutated fields are still the same for VID: $vid_1 PID: $pid_1"
 result=$(echo "test1234" | dcld tx model update-model --vid=$vid_1 --pid=$pid_1  --productLabel="Updated Test Product V4" --from=$vendor_account_1 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -210,6 +217,7 @@ test_divider
 # Update model with just one mutable fields and make sure they are updated properly
 echo "Update model with no fields are still the same for VID: $vid_1 PID: $pid_1"
 result=$(echo "test1234" | dcld tx model update-model --vid=$vid_1 --pid=$pid_1 --from=$vendor_account_1 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -237,12 +245,14 @@ test_divider
 # Update the model with lsfRevision equal to the existing lsfRevision 
 echo "Update the model with lsfRevision equal to the existing lsfRevision make sure we get error back VID: $vid_1 PID: $pid_1"
 result=$(echo "test1234" | dcld tx model update-model --vid=$vid_1 --pid=$pid_1 --lsfURL="https://lsf.url.info?v=3" --lsfRevision=2 --from=$vendor_account_1 --yes 2>&1) || true
+result=$(get_txn_result "$result")
 check_response_and_report "$result" "LsfRevision should monotonically increase by 1" raw
 
 test_divider
 
 echo "Update the model with lsfRevision less then the existing lsfRevision make sure we get error back VID: $vid_1 PID: $pid_1"
 result=$(echo "test1234" | dcld tx model update-model --vid=$vid_1 --pid=$pid_1 --lsfURL="https://lsf.url.info?v=3" --lsfRevision=1 --from=$vendor_account_1 --yes 2>&1) || true
+result=$(get_txn_result "$result")
 check_response_and_report "$result" "LsfRevision should monotonically increase by 1" raw
 
 test_divider
@@ -255,6 +265,7 @@ sv_1=$RANDOM
 # Create a new model version
 echo "Create a Device Model Version with minimum mandatory fields for VID: $vid_1 PID: $pid_1 SV: $sv_1"
 result=$(echo 'test1234' | dcld tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=20 --minApplicableSoftwareVersion=10 --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 --softwareVersionString=1 --from=$vendor_account_1 --yes)
+result=$(get_txn_result "$result")
 echo "$result"
 check_response_and_report "$result" "\"code\": 0"
 
@@ -278,6 +289,7 @@ test_divider
 # Update the model version with only one mutable field and make sure all other fields are still the same
 echo "Update Device Model Version with only one mutable field and make sure all other fields are still the same for VID: $vid_1 PID: $pid_1 SV: $sv_1"
 result=$(echo "test1234" | dcld tx model update-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 --softwareVersionValid=false --from=$vendor_account_1 --yes)
+result=$(get_txn_result "$result")
 check_response_and_report "$result" "\"code\": 0"
 
 test_divider
@@ -301,6 +313,7 @@ test_divider
 echo "Update Device Model Version with few mutable fields and make sure all other fields are still the same for VID: $vid_1 PID: $pid_1 SV: $sv_1"
 result=$(echo "test1234" | dcld tx model update-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 --softwareVersionValid=true \
 --releaseNotesURL="https://release.url.info" --otaURL="https://ota.url.com" --otaFileSize=123 --otaChecksum="123123123" --minApplicableSoftwareVersion=2 --maxApplicableSoftwareVersion=20 --from=$vendor_account_1 --yes)
+result=$(get_txn_result "$result")
 check_response_and_report "$result" "\"code\": 0"
 
 test_divider
@@ -332,6 +345,7 @@ result=$(echo 'test1234' | dcld tx model add-model-version --vid=$vid_1 --pid=$p
 --softwareVersionValid=true --otaURL="https://ota.url.info" --otaFileSize=123456789 \
 --otaChecksum="123456789012345678901234567890123456789012345678901234567890123" --releaseNotesURL="https://release.notes.url.info" \
 --otaChecksumType=1 --maxApplicableSoftwareVersion=32 --minApplicableSoftwareVersion=5   --from=$vendor_account_1 --yes)
+result=$(get_txn_result "$result")
 echo "$result"
 check_response_and_report "$result" "\"code\": 0"
 
@@ -361,6 +375,7 @@ test_divider
 # Update the model version with minimum fields i.e. no update at all 
 echo "Update Device Model Version with only one mutable field and make sure all other fields are still the same for VID: $vid_1 PID: $pid_1 SV: $sv_1"
 result=$(echo "test1234" | dcld tx model update-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 --from=$vendor_account_1 --yes)
+result=$(get_txn_result "$result")
 check_response_and_report "$result" "\"code\": 0"
 
 test_divider
@@ -389,6 +404,7 @@ test_divider
 # Update the model version with only one mutable field and make sure all other fields are still the same
 echo "Update Device Model Version with only one mutable field and make sure all other fields are still the same for VID: $vid_1 PID: $pid_1 SV: $sv_1"
 result=$(echo "test1234" | dcld tx model update-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 --softwareVersionValid=false --from=$vendor_account_1 --yes)
+result=$(get_txn_result "$result")
 check_response_and_report "$result" "\"code\": 0"
 
 test_divider
@@ -418,6 +434,7 @@ echo "Update Device Model Version with all mutable fields for VID: $vid_1 PID: $
 result=$(echo 'test1234' | dcld tx model update-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 \
 --softwareVersionValid=true --otaURL="https://updated.ota.url.info" --releaseNotesURL="https://updated.release.notes.url.info" \
 --maxApplicableSoftwareVersion=25 --minApplicableSoftwareVersion=15 --from=$vendor_account_1 --yes)
+result=$(get_txn_result "$result")
 echo "$result"
 check_response_and_report "$result" "\"code\": 0"
 
@@ -450,6 +467,7 @@ result=$(echo 'test1234' | dcld tx model add-model-version --vid=$vid_1 --pid=$p
 --softwareVersionValid=true --otaURL="https://ota.url.info" --otaFileSize=123456789 \
 --otaChecksum="123456789012345678901234567890123456789012345678901234567890123" \
 --otaChecksumType=1 --maxApplicableSoftwareVersion=32 --minApplicableSoftwareVersion=5   --from=$vendor_account_1 --yes)
+result=$(get_txn_result "$result")
 echo "$result"
 check_response_and_report "$result" "\"code\": 0"
 

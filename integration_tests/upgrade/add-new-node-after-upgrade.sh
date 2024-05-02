@@ -50,7 +50,7 @@ trap cleanup EXIT
 
 check_adding_new_node() {
   local stable_binary_version="${1:-0.12.1}"
-  local latest_binary_version="${2:-1.4.0-dev1}"
+  local latest_binary_version="${2:-1.4.0-dev3}"
 
   echo "1. run $node_name container"
   docker run -d --name $node_name --ip $ip -p "$node_p2p_port-$node_client_port:26656-26657" --network $docker_network -i dcledger
@@ -81,7 +81,7 @@ check_adding_new_node() {
   test_divider
 
   echo "5. Start Node \"$node_name\""
-  docker exec -d $node_name cosmovisor start
+  docker exec -d $node_name cosmovisor run start
 
   test_divider
 

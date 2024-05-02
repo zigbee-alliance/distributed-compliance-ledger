@@ -50,18 +50,22 @@ test_divider
 
 echo "Add first NOC root certificate by vendor with VID = $vid"
 result=$(echo "$passphrase" | dcld tx pki add-noc-x509-root-cert --certificate="$noc_root_cert_1_path" --from $vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Add second NOC root certificate by vendor with VID = $vid"
 result=$(echo "$passphrase" | dcld tx pki add-noc-x509-root-cert --certificate="$noc_root_cert_1_copy_path" --from $vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Add intermidiate NOC certificate by vendor with VID = $vid"
 result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$noc_cert_1_path" --from $vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Add NOC leaf certificate by vendor with VID = $vid"
 result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$noc_leaf_cert_1_path" --from $vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -88,10 +92,12 @@ check_response "$result" "\"serialNumber\": \"$noc_leaf_cert_1_serial_number\""
 
 echo "Try to revoke intermediate with invalid serialNumber"
 result=$(echo "$passphrase" | dcld tx pki revoke-noc-x509-root-cert --subject="$noc_root_cert_1_subject" --subject-key-id="$noc_root_cert_1_subject_key_id" --serial-number="invalid" --from $vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 404"
 
 echo "$vendor_account Vendor revokes root NOC certificate with serialNumber=$noc_root_cert_1_serial_number only, it should not revoke child certificates"
 result=$(echo "$passphrase" | dcld tx pki revoke-noc-x509-root-cert --subject="$noc_root_cert_1_subject" --subject-key-id="$noc_root_cert_1_subject_key_id" --serial-number="$noc_root_cert_1_serial_number" --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Request all revoked certificates should contain root certificate with serialNumber=$noc_root_cert_1_serial_number"
@@ -188,6 +194,7 @@ test_divider
 
 echo "$vendor_account Vendor revokes second root NOC certificate by serialNumber with \"revoke-child\" flag set to true, it should remove child certificates too"
 result=$(echo "$passphrase" | dcld tx pki revoke-noc-x509-root-cert --subject="$noc_root_cert_1_subject" --subject-key-id="$noc_root_cert_1_subject_key_id" --serial-number="$noc_root_cert_1_copy_serial_number" --revoke-child=true --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Request all revoked certificates should contain two root, one intermediate and one leaf certificates"
@@ -286,18 +293,22 @@ echo "REVOCATION OF NOC NON-ROOT CERTIFICATES"
 
 echo "Add NOC root certificate by vendor with VID = $vid"
 result=$(echo "$passphrase" | dcld tx pki add-noc-x509-root-cert --certificate="$noc_root_cert_2_path" --from $vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Add first intermidiate NOC certificate by vendor with VID = $vid"
 result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$noc_cert_2_path" --from $vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Add second intermidiate NOC certificate by vendor with VID = $vid"
 result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$noc_cert_2_copy_path" --from $vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Add leaf certificate by vendor with VID = $vid"
 result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$noc_leaf_cert_2_path" --from $vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Request All NOC root certificate"
@@ -314,10 +325,12 @@ check_response "$result" "\"serialNumber\": \"$noc_leaf_cert_2_serial_number\""
 
 echo "Try to revoke intermediate with invalid serialNumber"
 result=$(echo "$passphrase" | dcld tx pki revoke-noc-x509-ica-cert --subject="$noc_cert_2_subject" --subject-key-id="$noc_cert_2_subject_key_id" --serial-number="invalid" --from $vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 404"
 
 echo "$vendor_account Vendor revokes NOC certificate with serialNumber=$noc_cert_2_serial_number only, it should not revoke child certificates"
 result=$(echo "$passphrase" | dcld tx pki revoke-noc-x509-ica-cert --subject="$noc_cert_2_subject" --subject-key-id="$noc_cert_2_subject_key_id" --serial-number="$noc_cert_2_serial_number" --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Request all revoked certificates should contain one intermediate certificate only"
@@ -370,6 +383,7 @@ echo $result | jq
 
 echo "$vendor_account Vendor revokes NOC certificate with serialNumber=$noc_cert_2_serial_number with \"revoke-child\" flag set to true, it should revoke child certificates too"
 result=$(echo "$passphrase" | dcld tx pki revoke-noc-x509-ica-cert --subject="$noc_cert_2_subject" --subject-key-id="$noc_cert_2_subject_key_id" --serial-number="$noc_cert_2_copy_serial_number" --revoke-child=true --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Request all revoked certificates should contain two intermediate and one leaf certificates"

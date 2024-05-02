@@ -16,7 +16,10 @@ func CmdListPkiRevocationDistributionPoint() *cobra.Command {
 		Use:   "all-revocation-points",
 		Short: "Gets all PKI revocation distribution points",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
 
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
 			if err != nil {
@@ -59,7 +62,10 @@ func CmdShowPkiRevocationDistributionPoint() *cobra.Command {
 		Short: "Gets a PKI revocation distribution point",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
 
 			var res types.PkiRevocationDistributionPoint
 

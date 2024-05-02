@@ -53,7 +53,7 @@ $DCL_BINARY  config chain-id "$CHAIN_ID"
 $DCL_BINARY  config output json
 $DCL_BINARY  config node "tcp://localhost:26657"
 $DCL_BINARY  config keyring-backend test
-$DCL_BINARY  config broadcast-mode block
+$DCL_BINARY  config broadcast-mode sync
 
 (echo "$KEYPASSWD"; echo "$KEYPASSWD") | $DCL_BINARY  keys add jack
 (echo "$KEYPASSWD"; echo "$KEYPASSWD") | $DCL_BINARY  keys add alice
@@ -173,6 +173,8 @@ for node_name in node0 node1 node2 node3 observer0; do
     if [[ -d "$LOCALNET_DIR/${node_name}" ]]; then
         # Make RPC endpoints available externally
         sed -i $SED_EXT 's/laddr = "tcp:\/\/127.0.0.1:26657"/laddr = "tcp:\/\/0.0.0.0:26657"/g' "$LOCALNET_DIR/${node_name}/config/config.toml"
+        # Make REST endpoints available externally
+        sed -i $SED_EXT 's/address = "tcp:\/\/localhost:1317"/address = "tcp:\/\/0.0.0.0:1317"/g' "$LOCALNET_DIR/${node_name}/config/app.toml"
 
         # Make REST endpoints available externally
         sed -i $SED_EXT 's/address = "tcp:\/\/localhost:1317"/address = "tcp:\/\/0.0.0.0:1317"/g' "$LOCALNET_DIR/${node_name}/config/app.toml"
@@ -202,9 +204,9 @@ function init_light_client_proxy {
 
     $DCL_BINARY  config chain-id "$CHAIN_ID"
     $DCL_BINARY  config node "tcp://localhost:26657"
-    $DCL_BINARY  config broadcast-mode block
+    $DCL_BINARY  config broadcast-mode sync
     $DCL_BINARY  config keyring-backend test
-    $DCL_BINARY  config broadcast-mode block
+    $DCL_BINARY  config broadcast-mode sync
 
     cp -R "$LOCALNET_DIR"/client/* "$DCL_DIR"
 
@@ -216,6 +218,7 @@ if [[ -n "$DCL_LIGHT_CLIENT_PROXY" ]]; then
     init_light_client_proxy lightclient0
 fi
 
+chmod 777 -R $DCL_DIR
 #if [ -n "$MAINNET_STABLE_VERSION" ]; then
 #    rm dcld
 #fi

@@ -84,3 +84,8 @@ md
 pdf
 ul
 WebSocket
+cometbft
+CometBFT
+CometBFT's
+distributedcoplianceledger
+zigbeealliance

@@ -1,10 +1,12 @@
 package types
 
 import (
+	"cosmossdk.io/errors"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
 
@@ -60,24 +62,24 @@ func (msg *MsgCreateValidator) GetSignBytes() []byte {
 func (msg *MsgCreateValidator) ValidateBasic() error {
 	accAddr, err := sdk.ValAddressFromBech32(msg.Signer)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address (%s)", err)
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address (%s)", err)
 	}
 
 	if accAddr.Empty() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid Signer: it cannot be empty")
+		return errors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid Signer: it cannot be empty")
 	}
 
 	if msg.PubKey == nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidPubKey, "Invalid Validator PubKey: it cannot be empty")
+		return errors.Wrap(sdkerrors.ErrInvalidPubKey, "Invalid Validator PubKey: it cannot be empty")
 	}
 
 	_, err2 := msg.PubKey.GetCachedValue().(cryptotypes.PubKey)
 	if !err2 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidType, "expecting cryptotypes.PubKey for PubKey, got %T", err)
+		return errors.Wrapf(sdkerrors.ErrInvalidType, "expecting cryptotypes.PubKey for PubKey, got %T", err)
 	}
 
 	if msg.Description == (Description{}) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "empty description")
+		return errors.Wrap(sdkerrors.ErrInvalidRequest, "empty description")
 	}
 
 	if err := msg.Description.Validate(); err != nil {

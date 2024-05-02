@@ -515,7 +515,7 @@ export interface Evidence {
   /**
    * Total voting power of the validator set in case the ABCI application does
    * not store historical validators.
-   * https://github.com/tendermint/tendermint/issues/4581
+   * https://github.com/cometbft/cometbft/issues/4581
    */
   totalVotingPower: number
 }

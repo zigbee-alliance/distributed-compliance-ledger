@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
@@ -16,12 +17,12 @@ func (k msgServer) ApproveAddAccount(
 
 	signerAddr, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Signer: (%s)", err)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Signer: (%s)", err)
 	}
 
 	// check if sender has enough rights to create a validator node
 	if !k.HasRole(ctx, signerAddr, types.Trustee) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+		return nil, errors.Wrapf(sdkerrors.ErrUnauthorized,
 			"MsgApproveAddAccount transaction should be signed by an account with the %s role",
 			types.Trustee,
 		)
@@ -29,7 +30,7 @@ func (k msgServer) ApproveAddAccount(
 
 	accAddr, err := sdk.AccAddressFromBech32(msg.Address)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
 
 	// check if pending account exists
@@ -42,7 +43,7 @@ func (k msgServer) ApproveAddAccount(
 
 	// check if pending account already has approval from signer
 	if pendAcc.HasApprovalFrom(signerAddr) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+		return nil, errors.Wrapf(sdkerrors.ErrUnauthorized,
 			"Pending account associated with the address=%v already has approval from=%v",
 			msg.Address,
 			msg.Signer,
