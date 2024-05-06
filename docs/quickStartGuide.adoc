@@ -17,7 +17,7 @@ MacOS
     https://www.jajaldoang.com/post/how-to-update-golang
 
 ==== Download Pre Compiled `dcld`
-A pre-built version of DCL for Ubuntu can be found at: https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/{latest}/dcld, so there's no need to clone the repository and run 'make' at all. Ensure to replace {latest} with the latest version of dcld.
+A pre-built version of DCL for Ubuntu can be found at: https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/{latest}/dcld, so no need to clone the repository and run 'make' command at all. Ensure to replace {latest} with the latest version of dcld.
 
 ==== Download DCL Source Code from repo
 .DCL CLI Build
