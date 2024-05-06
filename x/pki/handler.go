@@ -84,6 +84,10 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.RevokeNocX509IcaCert(sdk.WrapSDKContext(ctx), msg)
 
 			return sdk.WrapServiceResult(ctx, res, err)
+		case *types.MsgRemoveNocX509IcaCert:
+			res, err := msgServer.RemoveNocX509IcaCert(sdk.WrapSDKContext(ctx), msg)
+
+			return sdk.WrapServiceResult(ctx, res, err)
 			// this line is used by starport scaffolding # 1
 		default:
 			errMsg := fmt.Sprintf("unrecognized %s message type: %T", pkitypes.ModuleName, msg)

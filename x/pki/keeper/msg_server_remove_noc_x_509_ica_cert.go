@@ -10,7 +10,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-func (k msgServer) RemoveX509Cert(goCtx context.Context, msg *types.MsgRemoveX509Cert) (*types.MsgRemoveX509CertResponse, error) {
+func (k msgServer) RemoveNocX509IcaCert(goCtx context.Context, msg *types.MsgRemoveNocX509IcaCert) (*types.MsgRemoveNocX509IcaCertResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	signerAddr, err := sdk.AccAddressFromBech32(msg.Signer)
@@ -20,27 +20,26 @@ func (k msgServer) RemoveX509Cert(goCtx context.Context, msg *types.MsgRemoveX50
 
 	// check if signer has vendor role
 	if !k.dclauthKeeper.HasRole(ctx, signerAddr, dclauthtypes.Vendor) {
-		return nil, pkitypes.NewErrUnauthorizedRole("MsgRemoveX509Cert", dclauthtypes.Vendor)
+		return nil, pkitypes.NewErrUnauthorizedRole("MsgRemoveNocX509IcaCert", dclauthtypes.Vendor)
 	}
 
-	aprCerts, foundApproved := k.GetApprovedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
+	signerAccount, _ := k.dclauthKeeper.GetAccountO(ctx, signerAddr)
+	accountVid := signerAccount.VendorID
+
+	icaCerts, foundActive := k.GetNocIcaCertificatesBySubjectAndSKID(ctx, accountVid, msg.Subject, msg.SubjectKeyId)
 	revCerts, foundRevoked := k.GetRevokedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
-	certificates := aprCerts.Certs
+	certificates := icaCerts.Certs
 	certificates = append(certificates, revCerts.Certs...)
 	if len(certificates) == 0 {
 		return nil, pkitypes.NewErrCertificateDoesNotExist(msg.Subject, msg.SubjectKeyId)
 	}
 
-	if certificates[0].IsRoot {
-		return nil, pkitypes.NewErrMessageExpectedNonRoot(msg.Subject, msg.SubjectKeyId)
+	// Existing certificate must be NOC certificate
+	if !certificates[0].IsNoc {
+		return nil, pkitypes.NewErrProvidedNocCertButExistingNotNoc(msg.Subject, msg.SubjectKeyId)
 	}
 
-	// Existing certificate must not be NOC certificate
-	if certificates[0].IsNoc {
-		return nil, pkitypes.NewErrProvidedNotNocCertButExistingNoc(msg.Subject, msg.SubjectKeyId)
-	}
-
-	if err := k.EnsureVidMatches(ctx, certificates[0].Owner, msg.Signer); err != nil {
+	if err = k.EnsureVidMatches(ctx, certificates[0].Owner, msg.Signer); err != nil {
 		return nil, err
 	}
 
@@ -58,15 +57,22 @@ func (k msgServer) RemoveX509Cert(goCtx context.Context, msg *types.MsgRemoveX50
 		// remove from subject with serialNumber map
 		k.RemoveUniqueCertificate(ctx, certBySerialNumber.Issuer, certBySerialNumber.SerialNumber)
 
-		if foundApproved {
+		if foundActive {
+			// Remove from Approved lists
+			aprCerts, _ := k.GetApprovedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
 			removeCertFromList(certBySerialNumber.Issuer, certBySerialNumber.SerialNumber, &aprCerts.Certs)
 			k.removeApprovedX509Cert(ctx, certID, &aprCerts, msg.SerialNumber)
+
+			// Remove from ICA lists
+			k.RemoveNocIcaCertificateBySerialNumber(ctx, icaCerts.Vid, certID.Subject, certID.SubjectKeyId, msg.SerialNumber)
 		}
 		if foundRevoked {
 			removeCertFromList(certBySerialNumber.Issuer, certBySerialNumber.SerialNumber, &revCerts.Certs)
 			k.removeOrUpdateRevokedX509Cert(ctx, certID, &revCerts)
 		}
 	} else {
+		k.RemoveNocIcaCertificate(ctx, certID.Subject, certID.SubjectKeyId, icaCerts.Vid)
+		// remove from approved list
 		k.RemoveApprovedCertificates(ctx, certID.Subject, certID.SubjectKeyId)
 		// remove from subject -> subject key ID map
 		k.RemoveApprovedCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
@@ -80,5 +86,5 @@ func (k msgServer) RemoveX509Cert(goCtx context.Context, msg *types.MsgRemoveX50
 		}
 	}
 
-	return &types.MsgRemoveX509CertResponse{}, nil
+	return &types.MsgRemoveNocX509IcaCertResponse{}, nil
 }

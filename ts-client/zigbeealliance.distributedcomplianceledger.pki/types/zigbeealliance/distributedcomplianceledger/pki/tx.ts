@@ -207,6 +207,16 @@ export interface MsgRevokeNocX509IcaCert {
 export interface MsgRevokeNocX509IcaCertResponse {
 }
 
+export interface MsgRemoveNocX509IcaCert {
+  signer: string;
+  subject: string;
+  subjectKeyId: string;
+  serialNumber: string;
+}
+
+export interface MsgRemoveNocX509IcaCertResponse {
+}
+
 function createBaseMsgProposeAddX509RootCert(): MsgProposeAddX509RootCert {
   return { signer: "", cert: "", info: "", time: 0, vid: 0, certSchemaVersion: 0, schemaVersion: 0 };
 }
@@ -2521,6 +2531,121 @@ export const MsgRevokeNocX509IcaCertResponse = {
   },
 };
 
+function createBaseMsgRemoveNocX509IcaCert(): MsgRemoveNocX509IcaCert {
+  return { signer: "", subject: "", subjectKeyId: "", serialNumber: "" };
+}
+
+export const MsgRemoveNocX509IcaCert = {
+  encode(message: MsgRemoveNocX509IcaCert, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.signer !== "") {
+      writer.uint32(10).string(message.signer);
+    }
+    if (message.subject !== "") {
+      writer.uint32(18).string(message.subject);
+    }
+    if (message.subjectKeyId !== "") {
+      writer.uint32(26).string(message.subjectKeyId);
+    }
+    if (message.serialNumber !== "") {
+      writer.uint32(34).string(message.serialNumber);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgRemoveNocX509IcaCert {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgRemoveNocX509IcaCert();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.signer = reader.string();
+          break;
+        case 2:
+          message.subject = reader.string();
+          break;
+        case 3:
+          message.subjectKeyId = reader.string();
+          break;
+        case 4:
+          message.serialNumber = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgRemoveNocX509IcaCert {
+    return {
+      signer: isSet(object.signer) ? String(object.signer) : "",
+      subject: isSet(object.subject) ? String(object.subject) : "",
+      subjectKeyId: isSet(object.subjectKeyId) ? String(object.subjectKeyId) : "",
+      serialNumber: isSet(object.serialNumber) ? String(object.serialNumber) : "",
+    };
+  },
+
+  toJSON(message: MsgRemoveNocX509IcaCert): unknown {
+    const obj: any = {};
+    message.signer !== undefined && (obj.signer = message.signer);
+    message.subject !== undefined && (obj.subject = message.subject);
+    message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId);
+    message.serialNumber !== undefined && (obj.serialNumber = message.serialNumber);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgRemoveNocX509IcaCert>, I>>(object: I): MsgRemoveNocX509IcaCert {
+    const message = createBaseMsgRemoveNocX509IcaCert();
+    message.signer = object.signer ?? "";
+    message.subject = object.subject ?? "";
+    message.subjectKeyId = object.subjectKeyId ?? "";
+    message.serialNumber = object.serialNumber ?? "";
+    return message;
+  },
+};
+
+function createBaseMsgRemoveNocX509IcaCertResponse(): MsgRemoveNocX509IcaCertResponse {
+  return {};
+}
+
+export const MsgRemoveNocX509IcaCertResponse = {
+  encode(_: MsgRemoveNocX509IcaCertResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgRemoveNocX509IcaCertResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgRemoveNocX509IcaCertResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgRemoveNocX509IcaCertResponse {
+    return {};
+  },
+
+  toJSON(_: MsgRemoveNocX509IcaCertResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgRemoveNocX509IcaCertResponse>, I>>(_: I): MsgRemoveNocX509IcaCertResponse {
+    const message = createBaseMsgRemoveNocX509IcaCertResponse();
+    return message;
+  },
+};
+
 /** Msg defines the Msg service. */
 export interface Msg {
   ProposeAddX509RootCert(request: MsgProposeAddX509RootCert): Promise<MsgProposeAddX509RootCertResponse>;
@@ -2544,8 +2669,9 @@ export interface Msg {
   RemoveX509Cert(request: MsgRemoveX509Cert): Promise<MsgRemoveX509CertResponse>;
   AddNocX509IcaCert(request: MsgAddNocX509IcaCert): Promise<MsgAddNocX509IcaCertResponse>;
   RevokeNocX509RootCert(request: MsgRevokeNocX509RootCert): Promise<MsgRevokeNocX509RootCertResponse>;
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   RevokeNocX509IcaCert(request: MsgRevokeNocX509IcaCert): Promise<MsgRevokeNocX509IcaCertResponse>;
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  RemoveNocX509IcaCert(request: MsgRemoveNocX509IcaCert): Promise<MsgRemoveNocX509IcaCertResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -2568,6 +2694,7 @@ export class MsgClientImpl implements Msg {
     this.AddNocX509IcaCert = this.AddNocX509IcaCert.bind(this);
     this.RevokeNocX509RootCert = this.RevokeNocX509RootCert.bind(this);
     this.RevokeNocX509IcaCert = this.RevokeNocX509IcaCert.bind(this);
+    this.RemoveNocX509IcaCert = this.RemoveNocX509IcaCert.bind(this);
   }
   ProposeAddX509RootCert(request: MsgProposeAddX509RootCert): Promise<MsgProposeAddX509RootCertResponse> {
     const data = MsgProposeAddX509RootCert.encode(request).finish();
@@ -2709,6 +2836,16 @@ export class MsgClientImpl implements Msg {
       data,
     );
     return promise.then((data) => MsgRevokeNocX509IcaCertResponse.decode(new _m0.Reader(data)));
+  }
+
+  RemoveNocX509IcaCert(request: MsgRemoveNocX509IcaCert): Promise<MsgRemoveNocX509IcaCertResponse> {
+    const data = MsgRemoveNocX509IcaCert.encode(request).finish();
+    const promise = this.rpc.request(
+      "zigbeealliance.distributedcomplianceledger.pki.Msg",
+      "RemoveNocX509IcaCert",
+      data,
+    );
+    return promise.then((data) => MsgRemoveNocX509IcaCertResponse.decode(new _m0.Reader(data)));
   }
 }
 

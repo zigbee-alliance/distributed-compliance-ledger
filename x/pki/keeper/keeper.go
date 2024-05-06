@@ -116,3 +116,14 @@ func filterCertificates(certificates *[]*types.Certificate, predicate Certificat
 
 	return result
 }
+
+func (k msgServer) removeApprovedX509Cert(ctx sdk.Context, certID types.CertificateIdentifier, certificates *types.ApprovedCertificates, serialNumber string) {
+	if len(certificates.Certs) == 0 {
+		k.RemoveApprovedCertificates(ctx, certID.Subject, certID.SubjectKeyId)
+		k.RemoveApprovedCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
+		k.RemoveApprovedCertificatesBySubjectKeyID(ctx, certID.Subject, certID.SubjectKeyId)
+	} else {
+		k.SetApprovedCertificates(ctx, *certificates)
+		k.RemoveApprovedCertificatesBySubjectKeyIDAndSerialNumber(ctx, certID.Subject, certID.SubjectKeyId, serialNumber)
+	}
+}

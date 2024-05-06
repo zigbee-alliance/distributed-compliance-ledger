@@ -37,6 +37,30 @@ func (k Keeper) GetNocIcaCertificates(
 	return val, true
 }
 
+// GetNocIcaCertificatesBySubjectAndSKID returns a NocIcaCertificates by subject and SKID from its index.
+func (k Keeper) GetNocIcaCertificatesBySubjectAndSKID(
+	ctx sdk.Context,
+	vid int32,
+	subject string,
+	subjectKeyID string,
+) (types.NocIcaCertificates, bool) {
+	certs, found := k.GetNocIcaCertificates(ctx, vid)
+	if !found {
+		return certs, found
+	}
+
+	for i := 0; i < len(certs.Certs); {
+		cert := certs.Certs[i]
+		if cert.Subject != subject || cert.SubjectKeyId != subjectKeyID {
+			certs.Certs = append(certs.Certs[:i], certs.Certs[i+1:]...)
+		} else {
+			i++
+		}
+	}
+
+	return certs, len(certs.Certs) > 0
+}
+
 // AddNocIcaCertificates adds a NOC certificate to the list of NOC certificates for the VID map.
 func (k Keeper) AddNocIcaCertificate(ctx sdk.Context, nocIcaCertificates types.Certificate) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocIcaCertificatesKeyPrefix))
