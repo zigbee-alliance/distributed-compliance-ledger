@@ -9,7 +9,7 @@ Download and install Ledger Live: Go to the [Ledger Live download page](https://
 <!-- markdown-link-check-disable -->
 ### Step 2: Set Up Your Ledger Device
 
-Initialize Your Ledger Device: If this is your first time using your Ledger, you will need to configure it. Follow the instructions to choose a PIN and securely write down the mnemonic seed phrase that appears. This seed is crucial for recovery and is compatible with D∂CL. Detailed instructions are available [here](https://support.ledger.com/hc/en-us/articles/4416927988625-Set-up-your-Ledger-Nano-S-Plus?docs=true).
+Initialize Your Ledger Device: If this is your first time using your Ledger, you will need to configure it. Follow the instructions to choose a PIN and securely write down the mnemonic seed phrase that appears. This seed is crucial for recovery and is compatible with DCL. Detailed instructions are available [here](https://support.ledger.com/hc/en-us/articles/4416927988625-Set-up-your-Ledger-Nano-S-Plus?docs=true).
 
 ### Step 3: Install the Cosmos (ATOM) app on your Ledger device
 
