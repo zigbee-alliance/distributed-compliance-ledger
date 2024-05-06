@@ -1466,7 +1466,7 @@ Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revok
 - CLI command:
   - `dcld tx pki revoke-noc-x509-ica-cert --subject=<base64 string> --subject-key-id=<hex string> --serial-number=<string> --info=<string> --time=<int64> --revoke-child=<bool> --from=<account>`
 
-#### REMOVE_NOC_IC
+#### REMOVE_NOC_ICA
 
 **Status: Implemented**
 
