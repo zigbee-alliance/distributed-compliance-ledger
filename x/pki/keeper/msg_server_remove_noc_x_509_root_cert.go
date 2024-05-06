@@ -52,7 +52,7 @@ func (k msgServer) RemoveNocX509RootCert(goCtx context.Context, msg *types.MsgRe
 			// Remove from Approved lists
 			aprCerts, _ := k.GetApprovedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
 			removeCertFromList(certBySerialNumber.Issuer, certBySerialNumber.SerialNumber, &aprCerts.Certs)
-			k._removeApprovedX509Cert(ctx, certID, &aprCerts, msg.SerialNumber)
+			k.removeApprovedX509Cert(ctx, certID, &aprCerts, msg.SerialNumber)
 
 			// Remove from NOC lists
 			removeCertFromList(certBySerialNumber.Issuer, certBySerialNumber.SerialNumber, &nocCerts.Certs)

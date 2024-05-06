@@ -61,15 +61,14 @@ func (k msgServer) RemoveNocX509IcaCert(goCtx context.Context, msg *types.MsgRem
 			// Remove from Approved lists
 			aprCerts, _ := k.GetApprovedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
 			removeCertFromList(certBySerialNumber.Issuer, certBySerialNumber.SerialNumber, &aprCerts.Certs)
-			k._removeApprovedX509Cert(ctx, certID, &aprCerts, msg.SerialNumber)
+			k.removeApprovedX509Cert(ctx, certID, &aprCerts, msg.SerialNumber)
 
 			// Remove from ICA lists
-			removeCertFromList(certBySerialNumber.Issuer, certBySerialNumber.SerialNumber, &icaCerts.Certs)
-			k._removeNocX509IcaCert(ctx, certID, &icaCerts, msg.SerialNumber)
+			k.RemoveNocIcaCertificateBySerialNumber(ctx, icaCerts.Vid, certID.Subject, certID.SubjectKeyId, msg.SerialNumber)
 		}
 		if foundRevoked {
 			removeCertFromList(certBySerialNumber.Issuer, certBySerialNumber.SerialNumber, &revCerts.Certs)
-			k._removeRevokedX509Cert(ctx, certID, &revCerts)
+			k.removeOrUpdateRevokedX509Cert(ctx, certID, &revCerts)
 		}
 	} else {
 		k.RemoveNocIcaCertificate(ctx, certID.Subject, certID.SubjectKeyId, icaCerts.Vid)
@@ -88,12 +87,4 @@ func (k msgServer) RemoveNocX509IcaCert(goCtx context.Context, msg *types.MsgRem
 	}
 
 	return &types.MsgRemoveNocX509IcaCertResponse{}, nil
-}
-
-func (k msgServer) _removeNocX509IcaCert(ctx sdk.Context, certID types.CertificateIdentifier, certificates *types.NocIcaCertificates, serialNumber string) {
-	if len(certificates.Certs) == 0 {
-		k.RemoveNocIcaCertificate(ctx, certID.Subject, certID.SubjectKeyId, certificates.Vid)
-	} else {
-		k.RemoveNocIcaCertificateBySerialNumber(ctx, certificates.Vid, certID.Subject, certID.SubjectKeyId, serialNumber)
-	}
 }
