@@ -60,11 +60,11 @@ func (k msgServer) RemoveX509Cert(goCtx context.Context, msg *types.MsgRemoveX50
 
 		if foundApproved {
 			removeCertFromList(certBySerialNumber.Issuer, certBySerialNumber.SerialNumber, &aprCerts.Certs)
-			k._removeApprovedX509Cert(ctx, certID, &aprCerts, msg.SerialNumber)
+			k.removeApprovedX509Cert(ctx, certID, &aprCerts, msg.SerialNumber)
 		}
 		if foundRevoked {
 			removeCertFromList(certBySerialNumber.Issuer, certBySerialNumber.SerialNumber, &revCerts.Certs)
-			k._removeRevokedX509Cert(ctx, certID, &revCerts)
+			k.removeOrUpdateRevokedX509Cert(ctx, certID, &revCerts)
 		}
 	} else {
 		k.RemoveApprovedCertificates(ctx, certID.Subject, certID.SubjectKeyId)
@@ -81,26 +81,4 @@ func (k msgServer) RemoveX509Cert(goCtx context.Context, msg *types.MsgRemoveX50
 	}
 
 	return &types.MsgRemoveX509CertResponse{}, nil
-}
-
-func (k msgServer) _removeApprovedX509Cert(ctx sdk.Context, certID types.CertificateIdentifier, certificates *types.ApprovedCertificates, serialNumber string) {
-	if len(certificates.Certs) == 0 {
-		k.RemoveApprovedCertificates(ctx, certID.Subject, certID.SubjectKeyId)
-		k.RemoveApprovedCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
-		k.RemoveApprovedCertificatesBySubjectKeyID(ctx, certID.Subject, certID.SubjectKeyId)
-	} else {
-		k.SetApprovedCertificates(ctx, *certificates)
-		k.RemoveApprovedCertificatesBySubjectKeyIDAndSerialNumber(ctx, certID.Subject, certID.SubjectKeyId, serialNumber)
-	}
-}
-
-func (k msgServer) _removeRevokedX509Cert(ctx sdk.Context, certID types.CertificateIdentifier, certificates *types.RevokedCertificates) {
-	if len(certificates.Certs) == 0 {
-		k.RemoveRevokedCertificates(ctx, certID.Subject, certID.SubjectKeyId)
-	} else {
-		k.SetRevokedCertificates(
-			ctx,
-			*certificates,
-		)
-	}
 }
