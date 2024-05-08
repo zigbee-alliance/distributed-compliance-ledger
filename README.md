@@ -229,3 +229,4 @@ the following instructions from [how-to.md](docs/how-to.md) can be used for ever
 - [Pool Upgrade How To Guide](docs/pool-upgrade-how-to.md)
 - [CometBFT](https://cometbft.com/)
 - [Cosmos SDK](https://cosmos.network/sdk)
+- [Ledger Nano Support](docs/ledger-nano.md)

@@ -52,11 +52,11 @@ func (k msgServer) RemoveNocX509RootCert(goCtx context.Context, msg *types.MsgRe
 			// Remove from Approved lists
 			aprCerts, _ := k.GetApprovedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
 			removeCertFromList(certBySerialNumber.Issuer, certBySerialNumber.SerialNumber, &aprCerts.Certs)
-			k._removeApprovedX509Cert(ctx, certID, &aprCerts, msg.SerialNumber)
+			k.removeApprovedX509Cert(ctx, certID, &aprCerts, msg.SerialNumber)
 
 			// Remove from NOC lists
-			removeCertFromList(certBySerialNumber.Issuer, certBySerialNumber.SerialNumber, &nocCerts.Certs)
-			k._removeNocX509RootCert(ctx, certID, &nocCerts, msg.SerialNumber)
+			k.RemoveNocRootCertificateBySerialNumber(ctx, nocCerts.Vid, certID.Subject, certID.SubjectKeyId, msg.SerialNumber)
+			k.RemoveNocRootCertificateByVidSubjectSkidAndSerialNumber(ctx, nocCerts.Vid, certID.Subject, certID.SubjectKeyId, msg.SerialNumber)
 		}
 
 		if foundRevoked {
@@ -84,16 +84,6 @@ func (k msgServer) RemoveNocX509RootCert(goCtx context.Context, msg *types.MsgRe
 	}
 
 	return &types.MsgRemoveNocX509RootCertResponse{}, nil
-}
-
-func (k msgServer) _removeNocX509RootCert(ctx sdk.Context, certID types.CertificateIdentifier, certificates *types.NocRootCertificatesByVidAndSkid, serialNumber string) {
-	if len(certificates.Certs) == 0 {
-		k.RemoveNocRootCertificate(ctx, certificates.Vid, certID.Subject, certID.SubjectKeyId)
-		k.RemoveNocRootCertificatesByVidAndSkid(ctx, certificates.Vid, certID.SubjectKeyId)
-	} else {
-		k.RemoveNocRootCertificateBySerialNumber(ctx, certificates.Vid, certID.Subject, certID.SubjectKeyId, serialNumber)
-		k.RemoveNocRootCertificateByVidSubjectSkidAndSerialNumber(ctx, certificates.Vid, certID.Subject, certID.SubjectKeyId, serialNumber)
-	}
 }
 
 func (k msgServer) _removeRevokedNocX509RootCert(ctx sdk.Context, certID types.CertificateIdentifier, certificates *types.RevokedNocRootCertificates) {
