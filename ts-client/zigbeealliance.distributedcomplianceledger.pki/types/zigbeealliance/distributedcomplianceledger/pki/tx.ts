@@ -217,6 +217,16 @@ export interface MsgRemoveNocX509IcaCert {
 export interface MsgRemoveNocX509IcaCertResponse {
 }
 
+export interface MsgRemoveNocX509RootCert {
+  signer: string;
+  subject: string;
+  subjectKeyId: string;
+  serialNumber: string;
+}
+
+export interface MsgRemoveNocX509RootCertResponse {
+}
+
 function createBaseMsgProposeAddX509RootCert(): MsgProposeAddX509RootCert {
   return { signer: "", cert: "", info: "", time: 0, vid: 0, certSchemaVersion: 0, schemaVersion: 0 };
 }
@@ -2646,6 +2656,123 @@ export const MsgRemoveNocX509IcaCertResponse = {
   },
 };
 
+function createBaseMsgRemoveNocX509RootCert(): MsgRemoveNocX509RootCert {
+  return { signer: "", subject: "", subjectKeyId: "", serialNumber: "" };
+}
+
+export const MsgRemoveNocX509RootCert = {
+  encode(message: MsgRemoveNocX509RootCert, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.signer !== "") {
+      writer.uint32(10).string(message.signer);
+    }
+    if (message.subject !== "") {
+      writer.uint32(18).string(message.subject);
+    }
+    if (message.subjectKeyId !== "") {
+      writer.uint32(26).string(message.subjectKeyId);
+    }
+    if (message.serialNumber !== "") {
+      writer.uint32(34).string(message.serialNumber);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgRemoveNocX509RootCert {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgRemoveNocX509RootCert();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.signer = reader.string();
+          break;
+        case 2:
+          message.subject = reader.string();
+          break;
+        case 3:
+          message.subjectKeyId = reader.string();
+          break;
+        case 4:
+          message.serialNumber = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgRemoveNocX509RootCert {
+    return {
+      signer: isSet(object.signer) ? String(object.signer) : "",
+      subject: isSet(object.subject) ? String(object.subject) : "",
+      subjectKeyId: isSet(object.subjectKeyId) ? String(object.subjectKeyId) : "",
+      serialNumber: isSet(object.serialNumber) ? String(object.serialNumber) : "",
+    };
+  },
+
+  toJSON(message: MsgRemoveNocX509RootCert): unknown {
+    const obj: any = {};
+    message.signer !== undefined && (obj.signer = message.signer);
+    message.subject !== undefined && (obj.subject = message.subject);
+    message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId);
+    message.serialNumber !== undefined && (obj.serialNumber = message.serialNumber);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgRemoveNocX509RootCert>, I>>(object: I): MsgRemoveNocX509RootCert {
+    const message = createBaseMsgRemoveNocX509RootCert();
+    message.signer = object.signer ?? "";
+    message.subject = object.subject ?? "";
+    message.subjectKeyId = object.subjectKeyId ?? "";
+    message.serialNumber = object.serialNumber ?? "";
+    return message;
+  },
+};
+
+function createBaseMsgRemoveNocX509RootCertResponse(): MsgRemoveNocX509RootCertResponse {
+  return {};
+}
+
+export const MsgRemoveNocX509RootCertResponse = {
+  encode(_: MsgRemoveNocX509RootCertResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgRemoveNocX509RootCertResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgRemoveNocX509RootCertResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgRemoveNocX509RootCertResponse {
+    return {};
+  },
+
+  toJSON(_: MsgRemoveNocX509RootCertResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgRemoveNocX509RootCertResponse>, I>>(
+    _: I,
+  ): MsgRemoveNocX509RootCertResponse {
+    const message = createBaseMsgRemoveNocX509RootCertResponse();
+    return message;
+  },
+};
+
 /** Msg defines the Msg service. */
 export interface Msg {
   ProposeAddX509RootCert(request: MsgProposeAddX509RootCert): Promise<MsgProposeAddX509RootCertResponse>;
@@ -2670,8 +2797,9 @@ export interface Msg {
   AddNocX509IcaCert(request: MsgAddNocX509IcaCert): Promise<MsgAddNocX509IcaCertResponse>;
   RevokeNocX509RootCert(request: MsgRevokeNocX509RootCert): Promise<MsgRevokeNocX509RootCertResponse>;
   RevokeNocX509IcaCert(request: MsgRevokeNocX509IcaCert): Promise<MsgRevokeNocX509IcaCertResponse>;
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   RemoveNocX509IcaCert(request: MsgRemoveNocX509IcaCert): Promise<MsgRemoveNocX509IcaCertResponse>;
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  RemoveNocX509RootCert(request: MsgRemoveNocX509RootCert): Promise<MsgRemoveNocX509RootCertResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -2695,6 +2823,7 @@ export class MsgClientImpl implements Msg {
     this.RevokeNocX509RootCert = this.RevokeNocX509RootCert.bind(this);
     this.RevokeNocX509IcaCert = this.RevokeNocX509IcaCert.bind(this);
     this.RemoveNocX509IcaCert = this.RemoveNocX509IcaCert.bind(this);
+    this.RemoveNocX509RootCert = this.RemoveNocX509RootCert.bind(this);
   }
   ProposeAddX509RootCert(request: MsgProposeAddX509RootCert): Promise<MsgProposeAddX509RootCertResponse> {
     const data = MsgProposeAddX509RootCert.encode(request).finish();
@@ -2846,6 +2975,16 @@ export class MsgClientImpl implements Msg {
       data,
     );
     return promise.then((data) => MsgRemoveNocX509IcaCertResponse.decode(new _m0.Reader(data)));
+  }
+
+  RemoveNocX509RootCert(request: MsgRemoveNocX509RootCert): Promise<MsgRemoveNocX509RootCertResponse> {
+    const data = MsgRemoveNocX509RootCert.encode(request).finish();
+    const promise = this.rpc.request(
+      "zigbeealliance.distributedcomplianceledger.pki.Msg",
+      "RemoveNocX509RootCert",
+      data,
+    );
+    return promise.then((data) => MsgRemoveNocX509RootCertResponse.decode(new _m0.Reader(data)));
   }
 }
 

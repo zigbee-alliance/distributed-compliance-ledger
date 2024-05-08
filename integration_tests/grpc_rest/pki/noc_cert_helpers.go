@@ -667,4 +667,85 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.Empty(suite.T, certificates)
 	certificates = GetNocX509IcaCertsBySubjectAndSKID(suite, vid1, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
 	require.Empty(suite.T, certificates)
+
+	// Remove revoked NOC root certificate by invalid serial number
+	msgRemoveRootCert := pkitypes.MsgRemoveNocX509RootCert{
+		Signer:       vendor1Account.Address,
+		Subject:      testconstants.NocRootCert1Subject,
+		SubjectKeyId: testconstants.NocRootCert1SubjectKeyID,
+		SerialNumber: "invalid",
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveRootCert}, vendor1Name, vendor1Account)
+	require.Error(suite.T, err)
+
+	// Remove revoked NOC root certificate by serial number
+	msgRemoveRootCert = pkitypes.MsgRemoveNocX509RootCert{
+		Signer:       vendor1Account.Address,
+		Subject:      testconstants.NocRootCert1Subject,
+		SubjectKeyId: testconstants.NocRootCert1SubjectKeyID,
+		SerialNumber: testconstants.NocRootCert1SerialNumber,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveRootCert}, vendor1Name, vendor1Account)
+	require.NoError(suite.T, err)
+
+	// Check that NOC root certificate is removed
+	revokedCerts, _ = GetRevokedX509Cert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
+	require.Equal(suite.T, 1, len(revokedCerts.Certs))
+	require.Equal(suite.T, testconstants.NocRootCert1CopySerialNumber, revokedCerts.Certs[0].SerialNumber)
+	_, err = GetX509Cert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
+	suite.AssertNotFound(err)
+
+	// Add root NOC certificate
+	msgAddNocRootCert = pkitypes.MsgAddNocX509RootCert{
+		Signer: vendor1Account.Address,
+		Cert:   testconstants.NocRootCert1,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddNocRootCert}, vendor1Name, vendor1Account)
+	require.NoError(suite.T, err)
+
+	// Remove revoked ICA certificate to re-add it again
+	msgRemoveCert = pkitypes.MsgRemoveNocX509IcaCert{
+		Signer:       vendor1Account.Address,
+		Subject:      testconstants.NocCert1Subject,
+		SubjectKeyId: testconstants.NocCert1SubjectKeyID,
+		SerialNumber: "",
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveCert}, vendor1Name, vendor1Account)
+	require.NoError(suite.T, err)
+
+	// Add ICA certificates
+	msgAddNocCert = pkitypes.MsgAddNocX509IcaCert{
+		Signer: vendor1Account.Address,
+		Cert:   testconstants.NocCert1,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddNocCert}, vendor1Name, vendor1Account)
+	require.NoError(suite.T, err)
+
+	certs, _ = GetX509Cert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
+	require.Equal(suite.T, 1, len(certs.Certs))
+
+	// Remove revoked NOC root certificates
+	msgRemoveRootCert = pkitypes.MsgRemoveNocX509RootCert{
+		Signer:       vendor1Account.Address,
+		Subject:      testconstants.NocRootCert1Subject,
+		SubjectKeyId: testconstants.NocRootCert1SubjectKeyID,
+		SerialNumber: "",
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveRootCert}, vendor1Name, vendor1Account)
+	require.NoError(suite.T, err)
+
+	// Check that certificates are removed
+	_, err = GetX509Cert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
+	suite.AssertNotFound(err)
+	_, err = GetRevokedX509Cert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
+	suite.AssertNotFound(err)
+	_, err = GetNocX509RootCertsByVidAndSkid(suite, vid1, testconstants.NocRootCert1SubjectKeyID)
+	suite.AssertNotFound(err)
+
+	// Check that child is not removed
+	certs, _ = GetX509Cert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	require.Equal(suite.T, 1, len(certs.Certs))
+	certificates = GetNocX509IcaCertsBySubjectAndSKID(suite, vid1, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	require.Equal(suite.T, 1, len(certificates))
+	require.Equal(suite.T, testconstants.NocCert1SerialNumber, certificates[0].SerialNumber)
 }
