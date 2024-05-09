@@ -129,9 +129,7 @@ func (k Keeper) verifyCertificate(ctx sdk.Context,
 	} else {
 		parentCertificates, found := k.GetApprovedCertificates(ctx, x509Certificate.Issuer, x509Certificate.AuthorityKeyID)
 		if !found {
-			return nil, pkitypes.NewErrInvalidCertificate(
-				fmt.Sprintf("Certificate verification failed for certificate with subject=%v and subjectKeyID=%v",
-					x509Certificate.Subject, x509Certificate.SubjectKeyID))
+			return nil, pkitypes.NewErrRootCertificateDoesNotExist(x509Certificate.Issuer, x509Certificate.AuthorityKeyID)
 		}
 
 		for _, cert := range parentCertificates.Certs {

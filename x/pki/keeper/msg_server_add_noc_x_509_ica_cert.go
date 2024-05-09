@@ -82,7 +82,7 @@ func (k msgServer) AddNocX509IcaCert(goCtx context.Context, msg *types.MsgAddNoc
 	}
 	// Check VID scoping
 	if nocRootCert.Vid != accountVid {
-		return nil, pkitypes.NewErrRootCertVidNotEqualToAccountVid(accountVid, nocRootCert.Vid)
+		return nil, pkitypes.NewErrRootCertVidNotEqualToAccountVid(nocRootCert.Vid, accountVid)
 	}
 
 	// create new certificate

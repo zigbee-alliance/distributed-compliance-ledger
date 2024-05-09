@@ -26,7 +26,7 @@ func (k msgServer) RemoveNocX509IcaCert(goCtx context.Context, msg *types.MsgRem
 	signerAccount, _ := k.dclauthKeeper.GetAccountO(ctx, signerAddr)
 	accountVid := signerAccount.VendorID
 
-	icaCerts, foundActive := k.GetNocIcaCertificatesBySubjectAndSKID(ctx, accountVid, msg.Subject, msg.SubjectKeyId)
+	icaCerts, foundActive := k.GetApprovedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
 	revCerts, foundRevoked := k.GetRevokedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
 	certificates := icaCerts.Certs
 	certificates = append(certificates, revCerts.Certs...)
@@ -34,9 +34,20 @@ func (k msgServer) RemoveNocX509IcaCert(goCtx context.Context, msg *types.MsgRem
 		return nil, pkitypes.NewErrCertificateDoesNotExist(msg.Subject, msg.SubjectKeyId)
 	}
 
+	cert := certificates[0]
+	// Existing certificate must be Root certificate
+	if cert.IsRoot {
+		return nil, pkitypes.NewErrMessageExpectedNonRoot(cert.Subject, cert.SubjectKeyId)
+	}
+
 	// Existing certificate must be NOC certificate
-	if !certificates[0].IsNoc {
+	if !cert.IsNoc {
 		return nil, pkitypes.NewErrProvidedNocCertButExistingNotNoc(msg.Subject, msg.SubjectKeyId)
+	}
+
+	// account VID must be same as VID of existing certificates
+	if accountVid != cert.Vid {
+		return nil, pkitypes.NewErrRevokeCertVidNotEqualToAccountVid(cert.Vid, accountVid)
 	}
 
 	if err = k.EnsureVidMatches(ctx, certificates[0].Owner, msg.Signer); err != nil {
@@ -59,19 +70,18 @@ func (k msgServer) RemoveNocX509IcaCert(goCtx context.Context, msg *types.MsgRem
 
 		if foundActive {
 			// Remove from Approved lists
-			aprCerts, _ := k.GetApprovedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
-			removeCertFromList(certBySerialNumber.Issuer, certBySerialNumber.SerialNumber, &aprCerts.Certs)
-			k.removeApprovedX509Cert(ctx, certID, &aprCerts, msg.SerialNumber)
+			removeCertFromList(certBySerialNumber.Issuer, certBySerialNumber.SerialNumber, &icaCerts.Certs)
+			k.removeApprovedX509Cert(ctx, certID, &icaCerts, msg.SerialNumber)
 
 			// Remove from ICA lists
-			k.RemoveNocIcaCertificateBySerialNumber(ctx, icaCerts.Vid, certID.Subject, certID.SubjectKeyId, msg.SerialNumber)
+			k.RemoveNocIcaCertificateBySerialNumber(ctx, accountVid, certID.Subject, certID.SubjectKeyId, msg.SerialNumber)
 		}
 		if foundRevoked {
 			removeCertFromList(certBySerialNumber.Issuer, certBySerialNumber.SerialNumber, &revCerts.Certs)
 			k.removeOrUpdateRevokedX509Cert(ctx, certID, &revCerts)
 		}
 	} else {
-		k.RemoveNocIcaCertificate(ctx, certID.Subject, certID.SubjectKeyId, icaCerts.Vid)
+		k.RemoveNocIcaCertificate(ctx, certID.Subject, certID.SubjectKeyId, accountVid)
 		// remove from approved list
 		k.RemoveApprovedCertificates(ctx, certID.Subject, certID.SubjectKeyId)
 		// remove from subject -> subject key ID map

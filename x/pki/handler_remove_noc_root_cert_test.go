@@ -491,7 +491,7 @@ func TestHandler_RemoveNocX509RootCert_ByOtherVendor(t *testing.T) {
 		vendorAccAddress2.String(), testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID, testconstants.NocRootCert1SerialNumber)
 	_, err := setup.Handler(setup.Ctx, removeIcaCert)
 	require.Error(t, err)
-	require.True(t, pkitypes.ErrCertificateDoesNotExist.Is(err))
+	require.True(t, pkitypes.ErrCertVidNotEqualAccountVid.Is(err))
 }
 
 func TestHandler_RemoveNocX509RootCert_SenderNotVendor(t *testing.T) {

@@ -235,7 +235,7 @@ func TestHandler_AddX509Cert_ForAbsentDirectParentCert(t *testing.T) {
 	// add intermediate x509 certificate
 	addX509Cert := types.NewMsgAddX509Cert(vendorAccAddress.String(), testconstants.IntermediateCertPem, testconstants.CertSchemaVersion, testconstants.SchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
-	require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
+	require.ErrorIs(t, err, pkitypes.ErrCertificateDoesNotExist)
 }
 
 func TestHandler_AddX509Cert_ForFailedCertificateVerification(t *testing.T) {
