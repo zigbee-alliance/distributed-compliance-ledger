@@ -1541,6 +1541,7 @@ func Demo(suite *utils.TestSuite) {
 		Label:                "label",
 		DataURL:              testconstants.DataURL,
 		RevocationType:       1,
+		SchemaVersion:        1,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddPkiRevDistPoints}, vendorAdminName, vendorAdminAccount)
 	require.Error(suite.T, err)
@@ -1555,6 +1556,7 @@ func Demo(suite *utils.TestSuite) {
 		Label:                "label",
 		DataURL:              testconstants.DataURL,
 		RevocationType:       1,
+		SchemaVersion:        1,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddPkiRevDistPoints}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
@@ -1622,6 +1624,7 @@ func Demo(suite *utils.TestSuite) {
 		Label:                "label_PAI",
 		DataURL:              testconstants.DataURL,
 		RevocationType:       1,
+		SchemaVersion:        1,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddPkiRevDistPoints}, venName65522, venAcc65522)
 	require.NoError(suite.T, err)
@@ -1650,6 +1653,7 @@ func Demo(suite *utils.TestSuite) {
 		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 		Label:                "label",
 		DataURL:              "https://url2.data.dclmodel",
+		SchemaVersion:        2,
 	}
 
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgUpdPkiRevDistPoint}, vendorName, vendorAccount)
