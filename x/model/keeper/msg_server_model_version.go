@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"encoding/base64"
 
 	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -42,6 +43,11 @@ func (k msgServer) CreateModelVersion(goCtx context.Context, msg *types.MsgCreat
 	)
 	if isModelVersionFound {
 		return nil, types.NewErrModelVersionAlreadyExists(msg.Vid, msg.Pid, msg.SoftwareVersion)
+	}
+
+	_, err = base64.StdEncoding.DecodeString(msg.OtaChecksum)
+	if err != nil {
+		return nil, types.NewErrOtaChecksumIsNotValid(msg.OtaChecksum)
 	}
 
 	modelVersion := types.ModelVersion{
