@@ -342,7 +342,7 @@ func TestHandler_ProposeAddX509RootCert_ForNocCertificate(t *testing.T) {
 	nocRootCertificate.Rejects = nil
 
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, nocRootCertificate, testconstants.SchemaVersion)
-	setup.Keeper.AddNocRootCertificate(setup.Ctx, nocRootCertificate)
+	setup.Keeper.AddNocRootCertificate(setup.Ctx, nocRootCertificate, testconstants.SchemaVersion)
 	uniqueCertificate := types.UniqueCertificate{
 		Issuer:       nocRootCertificate.Issuer,
 		SerialNumber: nocRootCertificate.SerialNumber,

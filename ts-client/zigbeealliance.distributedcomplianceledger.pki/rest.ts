@@ -37,12 +37,18 @@ export interface DistributedcomplianceledgerpkiNocIcaCertificates {
   /** @format int32 */
   vid?: number;
   certs?: PkiCertificate[];
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface DistributedcomplianceledgerpkiNocRootCertificates {
   /** @format int32 */
   vid?: number;
   certs?: PkiCertificate[];
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface DistributedcomplianceledgerpkiNocRootCertificatesByVidAndSkid {

@@ -103,7 +103,7 @@ func TestHandler_AddNocX509Cert_Renew(t *testing.T) {
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, newNocCertificate, testconstants.SchemaVersion)
 	setup.Keeper.AddApprovedCertificateBySubjectKeyID(setup.Ctx, newNocCertificate)
 	setup.Keeper.AddApprovedCertificateBySubject(setup.Ctx, newNocCertificate.Subject, newNocCertificate.SubjectKeyId)
-	setup.Keeper.AddNocIcaCertificate(setup.Ctx, newNocCertificate)
+	setup.Keeper.AddNocIcaCertificate(setup.Ctx, newNocCertificate, testconstants.SchemaVersion)
 	uniqueCertificate := types.UniqueCertificate{
 		Issuer:       newNocCertificate.Issuer,
 		SerialNumber: newNocCertificate.SerialNumber,

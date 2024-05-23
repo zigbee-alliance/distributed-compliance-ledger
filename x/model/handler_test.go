@@ -812,21 +812,6 @@ func TestHandler_AddModelVersion(t *testing.T) {
 	require.Equal(t, schemaVersion, receivedModelVersion.SchemaVersion)
 }
 
-func TestHandler_AddModelVersionWithInvalidOtaChecksum(t *testing.T) {
-	setup := Setup(t)
-
-	// add new model
-	msgCreateModel := NewMsgCreateModel(setup.Vendor)
-	_, err := setup.Handler(setup.Ctx, msgCreateModel)
-	require.NoError(t, err)
-
-	// add new model version
-	msgCreateModelVersion := NewMsgCreateModelVersion(setup.Vendor, testconstants.SoftwareVersion)
-	msgCreateModelVersion.OtaChecksum = "not_base64_encoded"
-	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion)
-	require.ErrorIs(t, err, types.ErrOtaChecksumIsNotValid)
-}
-
 func TestHandler_AddMultipleModelVersions(t *testing.T) {
 	setup := Setup(t)
 

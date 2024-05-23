@@ -9480,6 +9480,9 @@ paths:
                           schemaVersion:
                             type: integer
                             format: int64
+                    schemaVersion:
+                      type: integer
+                      format: int64
               pagination:
                 type: object
                 properties:
@@ -9666,6 +9669,9 @@ paths:
                         schemaVersion:
                           type: integer
                           format: int64
+                  schemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -9775,6 +9781,9 @@ paths:
                           schemaVersion:
                             type: integer
                             format: int64
+                    schemaVersion:
+                      type: integer
+                      format: int64
               pagination:
                 type: object
                 properties:
@@ -9961,6 +9970,9 @@ paths:
                         schemaVersion:
                           type: integer
                           format: int64
+                  schemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -10040,6 +10052,9 @@ paths:
                               time:
                                 type: string
                                 format: int64
+                                title: >-
+                                  number of nanoseconds elapsed since January 1,
+                                  1970 UTC
                               info:
                                 type: string
                         subjectAsText:
@@ -10054,6 +10069,9 @@ paths:
                               time:
                                 type: string
                                 format: int64
+                                title: >-
+                                  number of nanoseconds elapsed since January 1,
+                                  1970 UTC
                               info:
                                 type: string
                         vid:
@@ -10072,8 +10090,6 @@ paths:
           schema:
             type: object
             properties:
-              error:
-                type: string
               code:
                 type: integer
                 format: int32
@@ -10084,11 +10100,9 @@ paths:
                 items:
                   type: object
                   properties:
-                    type_url:
+                    '@type':
                       type: string
-                    value:
-                      type: string
-                      format: byte
+                  additionalProperties: {}
       parameters:
         - name: vid
           in: path
@@ -22149,6 +22163,9 @@ definitions:
             schemaVersion:
               type: integer
               format: int64
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.pki.NocRootCertificates:
     type: object
     properties:
@@ -22216,6 +22233,9 @@ definitions:
             schemaVersion:
               type: integer
               format: int64
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.pki.NocRootCertificatesByVidAndSkid:
     type: object
     properties:
@@ -22259,6 +22279,7 @@ definitions:
                   time:
                     type: string
                     format: int64
+                    title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
             subjectAsText:
@@ -22273,6 +22294,7 @@ definitions:
                   time:
                     type: string
                     format: int64
+                    title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
             vid:
@@ -22624,6 +22646,9 @@ definitions:
                   schemaVersion:
                     type: integer
                     format: int64
+            schemaVersion:
+              type: integer
+              format: int64
       pagination:
         type: object
         properties:
@@ -22726,6 +22751,9 @@ definitions:
                   schemaVersion:
                     type: integer
                     format: int64
+            schemaVersion:
+              type: integer
+              format: int64
       pagination:
         type: object
         properties:
@@ -23472,6 +23500,9 @@ definitions:
                 schemaVersion:
                   type: integer
                   format: int64
+          schemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.pki.QueryGetNocRootCertificatesByVidAndSkidResponse:
     type: object
     properties:
@@ -23518,6 +23549,9 @@ definitions:
                       time:
                         type: string
                         format: int64
+                        title: >-
+                          number of nanoseconds elapsed since January 1, 1970
+                          UTC
                       info:
                         type: string
                 subjectAsText:
@@ -23532,6 +23566,9 @@ definitions:
                       time:
                         type: string
                         format: int64
+                        title: >-
+                          number of nanoseconds elapsed since January 1, 1970
+                          UTC
                       info:
                         type: string
                 vid:
@@ -23619,6 +23656,9 @@ definitions:
                 schemaVersion:
                   type: integer
                   format: int64
+          schemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.pki.QueryGetPkiRevocationDistributionPointResponse:
     type: object
     properties:

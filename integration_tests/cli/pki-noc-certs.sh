@@ -186,6 +186,7 @@ check_response "$result" "\"serialNumber\": \"$noc_root_cert_2_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$noc_root_cert_2_subject_as_text\""
 check_response "$result" "\"schemaVersion\": $cert_schema_version_0"
 check_response "$result" "\"schemaVersion\": $cert_schema_version_1"
+check_response "$result" "\"schemaVersion\": $schema_version_0"
 check_response "$result" "\"vid\": $vid"
 
 test_divider
@@ -294,12 +295,12 @@ test_divider
 cert_schema_version_3=3
 schema_version_4=4
 echo "Add second NOC certificate by vendor with VID = $vid"
-result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$noc_cert_2_path" --certificate-schema-version=$cert_schema_version_3 --schemaVersion=$schema_version_4 --from $vendor_account --yes)
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$noc_cert_2_path" --certificate-schema-version=$cert_schema_version_3 --from $vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Add third NOC certificate by vendor with VID = $vid"
-result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$noc_cert_1_copy_path" --from $vendor_account --yes)
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$noc_cert_1_copy_path" --schemaVersion=$schema_version_4 --from $vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -316,6 +317,7 @@ check_response "$result" "\"serialNumber\": \"$noc_cert_2_serial_number\""
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"schemaVersion\": $cert_schema_version_0"
 check_response "$result" "\"schemaVersion\": $cert_schema_version_3"
+check_response "$result" "\"schemaVersion\": $schema_version_4"
 
 
 echo "Request all approved certificates"
