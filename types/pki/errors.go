@@ -93,6 +93,13 @@ func NewErrCertificateDoesNotExist(subject string, subjectKeyID string) error {
 		subject, subjectKeyID)
 }
 
+func NewErrNocRootCertificateDoesNotExist(subject string, subjectKeyID string) error {
+	return errors.Wrapf(ErrCertificateDoesNotExist,
+		"No X509 NOC root certificate associated with the "+
+			"combination of subject=%v and subjectKeyID=%v on the ledger",
+		subject, subjectKeyID)
+}
+
 func NewErrCertificateBySerialNumberDoesNotExist(subject string, subjectKeyID string, serialNumber string) error {
 	return errors.Wrapf(ErrCertificateDoesNotExist,
 		"No X509 certificate associated with the "+
