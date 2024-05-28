@@ -31,7 +31,7 @@ func (k msgServer) RemoveNocX509RootCert(goCtx context.Context, msg *types.MsgRe
 	certificates := nocCerts.Certs
 	certificates = append(certificates, revCerts.Certs...)
 	if len(certificates) == 0 {
-		return nil, pkitypes.NewErrCertificateDoesNotExist(msg.Subject, msg.SubjectKeyId)
+		return nil, pkitypes.NewErrNocRootCertificateDoesNotExist(msg.Subject, msg.SubjectKeyId)
 	}
 
 	cert := certificates[0]
