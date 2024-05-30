@@ -6,5 +6,5 @@ option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/
 message CertificateIdentifier {
   
   string subject = 1; 
-  string subjectKeyId = 2; 
+  string subjectKeyId = 2;
 }

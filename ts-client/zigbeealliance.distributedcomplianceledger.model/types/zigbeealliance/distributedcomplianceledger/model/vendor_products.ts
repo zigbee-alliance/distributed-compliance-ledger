@@ -7,10 +7,11 @@ export const protobufPackage = "zigbeealliance.distributedcomplianceledger.model
 export interface VendorProducts {
   vid: number;
   products: Product[];
+  schemaVersion: number;
 }
 
 function createBaseVendorProducts(): VendorProducts {
-  return { vid: 0, products: [] };
+  return { vid: 0, products: [], schemaVersion: 0 };
 }
 
 export const VendorProducts = {
@@ -20,6 +21,9 @@ export const VendorProducts = {
     }
     for (const v of message.products) {
       Product.encode(v!, writer.uint32(18).fork()).ldelim();
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(24).uint32(message.schemaVersion);
     }
     return writer;
   },
@@ -37,6 +41,9 @@ export const VendorProducts = {
         case 2:
           message.products.push(Product.decode(reader, reader.uint32()));
           break;
+        case 3:
+          message.schemaVersion = reader.uint32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -49,6 +56,7 @@ export const VendorProducts = {
     return {
       vid: isSet(object.vid) ? Number(object.vid) : 0,
       products: Array.isArray(object?.products) ? object.products.map((e: any) => Product.fromJSON(e)) : [],
+      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
@@ -60,6 +68,7 @@ export const VendorProducts = {
     } else {
       obj.products = [];
     }
+    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
@@ -67,6 +76,7 @@ export const VendorProducts = {
     const message = createBaseVendorProducts();
     message.vid = object.vid ?? 0;
     message.products = object.products?.map((e) => Product.fromPartial(e)) || [];
+    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };

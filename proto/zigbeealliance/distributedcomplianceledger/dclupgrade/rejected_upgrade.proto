@@ -13,5 +13,6 @@ message RejectedUpgrade {
   string creator = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"]; 
   repeated Grant approvals = 3; 
   repeated Grant rejects = 4;
+  uint32 schemaVersion = 5;
 }
 

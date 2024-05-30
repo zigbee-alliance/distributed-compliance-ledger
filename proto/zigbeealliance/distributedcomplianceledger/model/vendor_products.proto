@@ -6,7 +6,7 @@ import "zigbeealliance/distributedcomplianceledger/model/product.proto";
 
 message VendorProducts {
   int32 vid = 1; 
-  repeated Product products = 2; 
-  
+  repeated Product products = 2;
+  uint32 schemaVersion = 3;
 }
 

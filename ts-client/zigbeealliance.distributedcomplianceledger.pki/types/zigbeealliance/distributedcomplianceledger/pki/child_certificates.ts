@@ -8,10 +8,11 @@ export interface ChildCertificates {
   issuer: string;
   authorityKeyId: string;
   certIds: CertificateIdentifier[];
+  schemaVersion: number;
 }
 
 function createBaseChildCertificates(): ChildCertificates {
-  return { issuer: "", authorityKeyId: "", certIds: [] };
+  return { issuer: "", authorityKeyId: "", certIds: [], schemaVersion: 0 };
 }
 
 export const ChildCertificates = {
@@ -24,6 +25,9 @@ export const ChildCertificates = {
     }
     for (const v of message.certIds) {
       CertificateIdentifier.encode(v!, writer.uint32(26).fork()).ldelim();
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(32).uint32(message.schemaVersion);
     }
     return writer;
   },
@@ -44,6 +48,9 @@ export const ChildCertificates = {
         case 3:
           message.certIds.push(CertificateIdentifier.decode(reader, reader.uint32()));
           break;
+        case 4:
+          message.schemaVersion = reader.uint32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -57,6 +64,7 @@ export const ChildCertificates = {
       issuer: isSet(object.issuer) ? String(object.issuer) : "",
       authorityKeyId: isSet(object.authorityKeyId) ? String(object.authorityKeyId) : "",
       certIds: Array.isArray(object?.certIds) ? object.certIds.map((e: any) => CertificateIdentifier.fromJSON(e)) : [],
+      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
@@ -69,6 +77,7 @@ export const ChildCertificates = {
     } else {
       obj.certIds = [];
     }
+    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
@@ -77,6 +86,7 @@ export const ChildCertificates = {
     message.issuer = object.issuer ?? "";
     message.authorityKeyId = object.authorityKeyId ?? "";
     message.certIds = object.certIds?.map((e) => CertificateIdentifier.fromPartial(e)) || [];
+    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };

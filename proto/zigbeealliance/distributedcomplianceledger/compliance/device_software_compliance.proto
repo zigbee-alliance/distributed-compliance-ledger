@@ -8,4 +8,5 @@ import "zigbeealliance/distributedcomplianceledger/compliance/compliance_info.pr
 message DeviceSoftwareCompliance {
   string cDCertificateId = 1; 
   repeated ComplianceInfo complianceInfo = 2;
+  uint32 schemaVersion = 3;
 }

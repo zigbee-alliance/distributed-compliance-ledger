@@ -9,7 +9,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
@@ -29,14 +28,12 @@ func CmdRejectAddX509RootCert() *cobra.Command {
 			subject := viper.GetString(FlagSubject)
 			subjectKeyID := viper.GetString(FlagSubjectKeyID)
 			info := viper.GetString(FlagInfo)
-			schemaVersion := viper.GetUint32(common.FlagSchemaVersion)
 
 			msg := types.NewMsgRejectAddX509RootCert(
 				clientCtx.GetFromAddress().String(),
 				subject,
 				subjectKeyID,
 				info,
-				schemaVersion,
 			)
 			// validate basic will be called in GenerateOrBroadcastTxCLI
 			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
@@ -51,7 +48,7 @@ func CmdRejectAddX509RootCert() *cobra.Command {
 	cmd.Flags().StringP(FlagSubject, FlagSubjectShortcut, "", "Certificate's subject")
 	cmd.Flags().StringP(FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "", "Certificate's subject key id (hex)")
 	cmd.Flags().String(FlagInfo, "", FlagInfoUsage)
-	cmd.Flags().Uint32(common.FlagSchemaVersion, 0, "Schema version")
+
 	cli.AddTxFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(FlagSubject)

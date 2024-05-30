@@ -7,10 +7,11 @@ export interface UniqueCertificate {
   issuer: string;
   serialNumber: string;
   present: boolean;
+  schemaVersion: number;
 }
 
 function createBaseUniqueCertificate(): UniqueCertificate {
-  return { issuer: "", serialNumber: "", present: false };
+  return { issuer: "", serialNumber: "", present: false, schemaVersion: 0 };
 }
 
 export const UniqueCertificate = {
@@ -23,6 +24,9 @@ export const UniqueCertificate = {
     }
     if (message.present === true) {
       writer.uint32(24).bool(message.present);
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(32).uint32(message.schemaVersion);
     }
     return writer;
   },
@@ -43,6 +47,9 @@ export const UniqueCertificate = {
         case 3:
           message.present = reader.bool();
           break;
+        case 4:
+          message.schemaVersion = reader.uint32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -56,6 +63,7 @@ export const UniqueCertificate = {
       issuer: isSet(object.issuer) ? String(object.issuer) : "",
       serialNumber: isSet(object.serialNumber) ? String(object.serialNumber) : "",
       present: isSet(object.present) ? Boolean(object.present) : false,
+      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
@@ -64,6 +72,7 @@ export const UniqueCertificate = {
     message.issuer !== undefined && (obj.issuer = message.issuer);
     message.serialNumber !== undefined && (obj.serialNumber = message.serialNumber);
     message.present !== undefined && (obj.present = message.present);
+    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
@@ -72,6 +81,7 @@ export const UniqueCertificate = {
     message.issuer = object.issuer ?? "";
     message.serialNumber = object.serialNumber ?? "";
     message.present = object.present ?? false;
+    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };

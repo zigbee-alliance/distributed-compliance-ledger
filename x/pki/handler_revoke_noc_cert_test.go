@@ -21,7 +21,7 @@ func TestHandler_RevokeNocX509Cert_SenderNotVendor(t *testing.T) {
 	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
 	// add the new NOC root certificate
-	addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), testconstants.NocRootCert1, testconstants.CertSchemaVersion, testconstants.SchemaVersion)
+	addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), testconstants.NocRootCert1, testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
 	require.NoError(t, err)
 
@@ -32,7 +32,6 @@ func TestHandler_RevokeNocX509Cert_SenderNotVendor(t *testing.T) {
 		testconstants.NocCert1SerialNumber,
 		"",
 		false,
-		testconstants.SchemaVersion,
 	)
 	_, err = setup.Handler(setup.Ctx, revokeCert)
 
@@ -53,7 +52,6 @@ func TestHandler_RevokeNocX509Cert_CertificateDoesNotExist(t *testing.T) {
 		testconstants.NocCert1SerialNumber,
 		"",
 		false,
-		testconstants.SchemaVersion,
 	)
 	_, err := setup.Handler(setup.Ctx, revokeCert)
 
@@ -138,7 +136,7 @@ func TestHandler_RevokeNocX509Cert_CertificateExists(t *testing.T) {
 			setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
 			// add the existing certificate
-			setup.Keeper.AddApprovedCertificate(setup.Ctx, *tc.existingCert, testconstants.SchemaVersion)
+			setup.Keeper.AddApprovedCertificate(setup.Ctx, *tc.existingCert)
 			uniqueCertificate := types.UniqueCertificate{
 				Issuer:       tc.existingCert.Issuer,
 				SerialNumber: tc.existingCert.SerialNumber,
@@ -153,7 +151,6 @@ func TestHandler_RevokeNocX509Cert_CertificateExists(t *testing.T) {
 				testconstants.NocCert1SerialNumber,
 				"",
 				false,
-				testconstants.SchemaVersion,
 			)
 			_, err := setup.Handler(setup.Ctx, revokeCert)
 			require.ErrorIs(t, err, tc.err)
@@ -168,22 +165,22 @@ func TestHandler_RevokeNocX509Cert_RevokeDefault(t *testing.T) {
 	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
 	// add the first NOC root certificate
-	addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), testconstants.NocRootCert1, testconstants.CertSchemaVersion, testconstants.SchemaVersion)
+	addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), testconstants.NocRootCert1, testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
 	require.NoError(t, err)
 
 	// add the first NOC non-root certificate
-	addNocX509Cert := types.NewMsgAddNocX509IcaCert(accAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion, testconstants.SchemaVersion)
+	addNocX509Cert := types.NewMsgAddNocX509IcaCert(accAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion)
 	_, err = setup.Handler(setup.Ctx, addNocX509Cert)
 	require.NoError(t, err)
 
 	// add the second NOC non-root certificate
-	addNocX509Cert = types.NewMsgAddNocX509IcaCert(accAddress.String(), testconstants.NocCert1Copy, testconstants.CertSchemaVersion, testconstants.SchemaVersion)
+	addNocX509Cert = types.NewMsgAddNocX509IcaCert(accAddress.String(), testconstants.NocCert1Copy, testconstants.CertSchemaVersion)
 	_, err = setup.Handler(setup.Ctx, addNocX509Cert)
 	require.NoError(t, err)
 
 	// add the NOC leaf certificate
-	addNocX509Cert = types.NewMsgAddNocX509IcaCert(accAddress.String(), testconstants.NocLeafCert1, testconstants.CertSchemaVersion, testconstants.SchemaVersion)
+	addNocX509Cert = types.NewMsgAddNocX509IcaCert(accAddress.String(), testconstants.NocLeafCert1, testconstants.CertSchemaVersion)
 	_, err = setup.Handler(setup.Ctx, addNocX509Cert)
 	require.NoError(t, err)
 
@@ -195,7 +192,6 @@ func TestHandler_RevokeNocX509Cert_RevokeDefault(t *testing.T) {
 		"",
 		testconstants.Info,
 		false,
-		testconstants.SchemaVersion,
 	)
 	_, err = setup.Handler(setup.Ctx, revokeCert)
 	require.NoError(t, err)
@@ -257,22 +253,22 @@ func TestHandler_RevokeNocX509Cert_RevokeWithChild(t *testing.T) {
 	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
 	// add the first NOC root certificate
-	addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), testconstants.NocRootCert1, testconstants.CertSchemaVersion, testconstants.SchemaVersion)
+	addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), testconstants.NocRootCert1, testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
 	require.NoError(t, err)
 
 	// add the first NOC non-root certificate
-	addNocX509Cert := types.NewMsgAddNocX509IcaCert(accAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion, testconstants.SchemaVersion)
+	addNocX509Cert := types.NewMsgAddNocX509IcaCert(accAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion)
 	_, err = setup.Handler(setup.Ctx, addNocX509Cert)
 	require.NoError(t, err)
 
 	// add the second NOC non-root certificate
-	addNocX509Cert = types.NewMsgAddNocX509IcaCert(accAddress.String(), testconstants.NocCert1Copy, testconstants.CertSchemaVersion, testconstants.SchemaVersion)
+	addNocX509Cert = types.NewMsgAddNocX509IcaCert(accAddress.String(), testconstants.NocCert1Copy, testconstants.CertSchemaVersion)
 	_, err = setup.Handler(setup.Ctx, addNocX509Cert)
 	require.NoError(t, err)
 
 	// add the NOC leaf certificate
-	addNocX509Cert = types.NewMsgAddNocX509IcaCert(accAddress.String(), testconstants.NocLeafCert1, testconstants.CertSchemaVersion, testconstants.SchemaVersion)
+	addNocX509Cert = types.NewMsgAddNocX509IcaCert(accAddress.String(), testconstants.NocLeafCert1, testconstants.CertSchemaVersion)
 	_, err = setup.Handler(setup.Ctx, addNocX509Cert)
 	require.NoError(t, err)
 
@@ -284,7 +280,6 @@ func TestHandler_RevokeNocX509Cert_RevokeWithChild(t *testing.T) {
 		"",
 		testconstants.Info,
 		true,
-		testconstants.SchemaVersion,
 	)
 	_, err = setup.Handler(setup.Ctx, revokeCert)
 	require.NoError(t, err)
@@ -359,22 +354,22 @@ func TestHandler_RevokeNocX509Cert_RevokeBySerialNumber(t *testing.T) {
 	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
 	// add the first NOC root certificate
-	addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), testconstants.NocRootCert1, testconstants.CertSchemaVersion, testconstants.SchemaVersion)
+	addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), testconstants.NocRootCert1, testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
 	require.NoError(t, err)
 
 	// add the first NOC non-root certificate
-	addNocX509Cert := types.NewMsgAddNocX509IcaCert(accAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion, testconstants.SchemaVersion)
+	addNocX509Cert := types.NewMsgAddNocX509IcaCert(accAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion)
 	_, err = setup.Handler(setup.Ctx, addNocX509Cert)
 	require.NoError(t, err)
 
 	// add the second NOC non-root certificate
-	addNocX509Cert = types.NewMsgAddNocX509IcaCert(accAddress.String(), testconstants.NocCert1Copy, testconstants.CertSchemaVersion, testconstants.SchemaVersion)
+	addNocX509Cert = types.NewMsgAddNocX509IcaCert(accAddress.String(), testconstants.NocCert1Copy, testconstants.CertSchemaVersion)
 	_, err = setup.Handler(setup.Ctx, addNocX509Cert)
 	require.NoError(t, err)
 
 	// add the NOC leaf certificate
-	addNocX509Cert = types.NewMsgAddNocX509IcaCert(accAddress.String(), testconstants.NocLeafCert1, testconstants.CertSchemaVersion, testconstants.SchemaVersion)
+	addNocX509Cert = types.NewMsgAddNocX509IcaCert(accAddress.String(), testconstants.NocLeafCert1, testconstants.CertSchemaVersion)
 	_, err = setup.Handler(setup.Ctx, addNocX509Cert)
 	require.NoError(t, err)
 
@@ -386,7 +381,6 @@ func TestHandler_RevokeNocX509Cert_RevokeBySerialNumber(t *testing.T) {
 		testconstants.NocCert1SerialNumber,
 		testconstants.Info,
 		false,
-		testconstants.SchemaVersion,
 	)
 	_, err = setup.Handler(setup.Ctx, revokeCert)
 	require.NoError(t, err)
@@ -448,22 +442,22 @@ func TestHandler_RevokeNocX509Cert_RevokeBySerialNumberAndWithChild(t *testing.T
 	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
 	// add the first NOC root certificate
-	addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), testconstants.NocRootCert1, testconstants.SchemaVersion, testconstants.SchemaVersion)
+	addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), testconstants.NocRootCert1, testconstants.SchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
 	require.NoError(t, err)
 
 	// add the first NOC non-root certificate
-	addNocX509Cert := types.NewMsgAddNocX509IcaCert(accAddress.String(), testconstants.NocCert1, testconstants.SchemaVersion, testconstants.SchemaVersion)
+	addNocX509Cert := types.NewMsgAddNocX509IcaCert(accAddress.String(), testconstants.NocCert1, testconstants.SchemaVersion)
 	_, err = setup.Handler(setup.Ctx, addNocX509Cert)
 	require.NoError(t, err)
 
 	// add the second NOC non-root certificate
-	addNocX509Cert = types.NewMsgAddNocX509IcaCert(accAddress.String(), testconstants.NocCert1Copy, testconstants.SchemaVersion, testconstants.SchemaVersion)
+	addNocX509Cert = types.NewMsgAddNocX509IcaCert(accAddress.String(), testconstants.NocCert1Copy, testconstants.SchemaVersion)
 	_, err = setup.Handler(setup.Ctx, addNocX509Cert)
 	require.NoError(t, err)
 
 	// add the NOC leaf certificate
-	addNocX509Cert = types.NewMsgAddNocX509IcaCert(accAddress.String(), testconstants.NocLeafCert1, testconstants.SchemaVersion, testconstants.SchemaVersion)
+	addNocX509Cert = types.NewMsgAddNocX509IcaCert(accAddress.String(), testconstants.NocLeafCert1, testconstants.SchemaVersion)
 	_, err = setup.Handler(setup.Ctx, addNocX509Cert)
 	require.NoError(t, err)
 
@@ -475,7 +469,6 @@ func TestHandler_RevokeNocX509Cert_RevokeBySerialNumberAndWithChild(t *testing.T
 		testconstants.NocCert1SerialNumber,
 		testconstants.Info,
 		true,
-		testconstants.CertSchemaVersion,
 	)
 	_, err = setup.Handler(setup.Ctx, revokeCert)
 	require.NoError(t, err)

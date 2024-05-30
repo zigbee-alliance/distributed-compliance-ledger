@@ -10,10 +10,11 @@ export interface ProposedUpgrade {
   creator: string;
   approvals: Grant[];
   rejects: Grant[];
+  schemaVersion: number;
 }
 
 function createBaseProposedUpgrade(): ProposedUpgrade {
-  return { plan: undefined, creator: "", approvals: [], rejects: [] };
+  return { plan: undefined, creator: "", approvals: [], rejects: [], schemaVersion: 0 };
 }
 
 export const ProposedUpgrade = {
@@ -29,6 +30,9 @@ export const ProposedUpgrade = {
     }
     for (const v of message.rejects) {
       Grant.encode(v!, writer.uint32(34).fork()).ldelim();
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(40).uint32(message.schemaVersion);
     }
     return writer;
   },
@@ -52,6 +56,9 @@ export const ProposedUpgrade = {
         case 4:
           message.rejects.push(Grant.decode(reader, reader.uint32()));
           break;
+        case 5:
+          message.schemaVersion = reader.uint32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -66,6 +73,7 @@ export const ProposedUpgrade = {
       creator: isSet(object.creator) ? String(object.creator) : "",
       approvals: Array.isArray(object?.approvals) ? object.approvals.map((e: any) => Grant.fromJSON(e)) : [],
       rejects: Array.isArray(object?.rejects) ? object.rejects.map((e: any) => Grant.fromJSON(e)) : [],
+      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
@@ -83,6 +91,7 @@ export const ProposedUpgrade = {
     } else {
       obj.rejects = [];
     }
+    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
@@ -92,6 +101,7 @@ export const ProposedUpgrade = {
     message.creator = object.creator ?? "";
     message.approvals = object.approvals?.map((e) => Grant.fromPartial(e)) || [];
     message.rejects = object.rejects?.map((e) => Grant.fromPartial(e)) || [];
+    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };

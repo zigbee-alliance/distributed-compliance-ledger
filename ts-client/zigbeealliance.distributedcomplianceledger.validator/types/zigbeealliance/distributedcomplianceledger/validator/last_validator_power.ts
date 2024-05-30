@@ -6,10 +6,11 @@ export const protobufPackage = "zigbeealliance.distributedcomplianceledger.valid
 export interface LastValidatorPower {
   owner: string;
   power: number;
+  schemaVersion: number;
 }
 
 function createBaseLastValidatorPower(): LastValidatorPower {
-  return { owner: "", power: 0 };
+  return { owner: "", power: 0, schemaVersion: 0 };
 }
 
 export const LastValidatorPower = {
@@ -19,6 +20,9 @@ export const LastValidatorPower = {
     }
     if (message.power !== 0) {
       writer.uint32(16).int32(message.power);
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(24).uint32(message.schemaVersion);
     }
     return writer;
   },
@@ -36,6 +40,9 @@ export const LastValidatorPower = {
         case 2:
           message.power = reader.int32();
           break;
+        case 3:
+          message.schemaVersion = reader.uint32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -48,6 +55,7 @@ export const LastValidatorPower = {
     return {
       owner: isSet(object.owner) ? String(object.owner) : "",
       power: isSet(object.power) ? Number(object.power) : 0,
+      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
@@ -55,6 +63,7 @@ export const LastValidatorPower = {
     const obj: any = {};
     message.owner !== undefined && (obj.owner = message.owner);
     message.power !== undefined && (obj.power = Math.round(message.power));
+    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
@@ -62,6 +71,7 @@ export const LastValidatorPower = {
     const message = createBaseLastValidatorPower();
     message.owner = object.owner ?? "";
     message.power = object.power ?? 0;
+    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };

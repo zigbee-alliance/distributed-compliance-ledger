@@ -25,7 +25,7 @@ message Validator {
   // has the validator been removed from validator set
   bool jailed = 5; 
   // the reason of validator jailing
-  string jailedReason = 6; 
-  
+  string jailedReason = 6;
+  uint32 schemaVersion = 7;
 }
 

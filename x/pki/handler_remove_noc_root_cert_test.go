@@ -26,7 +26,7 @@ func TestHandler_RemoveNocX509RootCert_BySubjectAndSKID(t *testing.T) {
 	addNocRootCertificate(setup, vendorAccAddress, testconstants.NocRootCert1Copy, vid)
 
 	// Add two intermediate certificates
-	addIcaCert := types.NewMsgAddNocX509IcaCert(vendorAccAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion, testconstants.SchemaVersion)
+	addIcaCert := types.NewMsgAddNocX509IcaCert(vendorAccAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addIcaCert)
 	require.NoError(t, err)
 
@@ -89,7 +89,7 @@ func TestHandler_RemoveNocX509RootCert_BySerialNumber(t *testing.T) {
 	addNocRootCertificate(setup, vendorAccAddress, testconstants.NocRootCert1Copy, vid)
 
 	// Add ICA certificates
-	addIcaCert := types.NewMsgAddNocX509IcaCert(vendorAccAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion, testconstants.SchemaVersion)
+	addIcaCert := types.NewMsgAddNocX509IcaCert(vendorAccAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addIcaCert)
 	require.NoError(t, err)
 
@@ -186,7 +186,7 @@ func TestHandler_RemoveNocX509RootCert_RevokedAndApprovedCertificate(t *testing.
 	addNocRootCertificate(setup, vendorAccAddress, testconstants.NocRootCert1, vid)
 
 	// Add an intermediate certificate
-	addIcaCert := types.NewMsgAddNocX509IcaCert(vendorAccAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion, testconstants.SchemaVersion)
+	addIcaCert := types.NewMsgAddNocX509IcaCert(vendorAccAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addIcaCert)
 	require.NoError(t, err)
 
@@ -203,7 +203,6 @@ func TestHandler_RemoveNocX509RootCert_RevokedAndApprovedCertificate(t *testing.
 		testconstants.NocRootCert1SerialNumber,
 		testconstants.Info,
 		false,
-		testconstants.SchemaVersion,
 	)
 	_, err = setup.Handler(setup.Ctx, revokeX509Cert)
 	require.NoError(t, err)
@@ -307,7 +306,7 @@ func TestHandler_RemoveNocX509RootCert_RevokedCertificate(t *testing.T) {
 	addNocRootCertificate(setup, vendorAccAddress, testconstants.NocRootCert1Copy, vid)
 
 	// Add an intermediate certificate
-	addIcaCert := types.NewMsgAddNocX509IcaCert(vendorAccAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion, testconstants.SchemaVersion)
+	addIcaCert := types.NewMsgAddNocX509IcaCert(vendorAccAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addIcaCert)
 	require.NoError(t, err)
 
@@ -324,7 +323,6 @@ func TestHandler_RemoveNocX509RootCert_RevokedCertificate(t *testing.T) {
 		"",
 		testconstants.Info,
 		false,
-		testconstants.SchemaVersion,
 	)
 	_, err = setup.Handler(setup.Ctx, revokeX509Cert)
 	require.NoError(t, err)

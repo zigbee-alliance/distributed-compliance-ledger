@@ -20,10 +20,19 @@ export interface Account {
   vendorID: number;
   rejects: Grant[];
   productIDs: Uint16Range[];
+  schemaVersion: number;
 }
 
 function createBaseAccount(): Account {
-  return { baseAccount: undefined, roles: [], approvals: [], vendorID: 0, rejects: [], productIDs: [] };
+  return {
+    baseAccount: undefined,
+    roles: [],
+    approvals: [],
+    vendorID: 0,
+    rejects: [],
+    productIDs: [],
+    schemaVersion: 0,
+  };
 }
 
 export const Account = {
@@ -45,6 +54,9 @@ export const Account = {
     }
     for (const v of message.productIDs) {
       Uint16Range.encode(v!, writer.uint32(50).fork()).ldelim();
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(56).uint32(message.schemaVersion);
     }
     return writer;
   },
@@ -74,6 +86,9 @@ export const Account = {
         case 6:
           message.productIDs.push(Uint16Range.decode(reader, reader.uint32()));
           break;
+        case 7:
+          message.schemaVersion = reader.uint32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -90,6 +105,7 @@ export const Account = {
       vendorID: isSet(object.vendorID) ? Number(object.vendorID) : 0,
       rejects: Array.isArray(object?.rejects) ? object.rejects.map((e: any) => Grant.fromJSON(e)) : [],
       productIDs: Array.isArray(object?.productIDs) ? object.productIDs.map((e: any) => Uint16Range.fromJSON(e)) : [],
+      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
@@ -118,6 +134,7 @@ export const Account = {
     } else {
       obj.productIDs = [];
     }
+    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
@@ -131,6 +148,7 @@ export const Account = {
     message.vendorID = object.vendorID ?? 0;
     message.rejects = object.rejects?.map((e) => Grant.fromPartial(e)) || [];
     message.productIDs = object.productIDs?.map((e) => Uint16Range.fromPartial(e)) || [];
+    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };

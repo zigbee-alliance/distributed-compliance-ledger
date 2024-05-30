@@ -12,6 +12,7 @@ message ApprovedUpgrade {
   cosmos.upgrade.v1beta1.Plan plan = 1 [(gogoproto.nullable) = false]; 
   string creator = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"]; 
   repeated Grant approvals = 3; 
-  repeated Grant rejects = 4; 
+  repeated Grant rejects = 4;
+  uint32 schemaVersion = 5;
 }
 

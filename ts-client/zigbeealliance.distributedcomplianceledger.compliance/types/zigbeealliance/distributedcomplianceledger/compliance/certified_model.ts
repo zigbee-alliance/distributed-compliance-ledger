@@ -9,10 +9,11 @@ export interface CertifiedModel {
   softwareVersion: number;
   certificationType: string;
   value: boolean;
+  schemaVersion: number;
 }
 
 function createBaseCertifiedModel(): CertifiedModel {
-  return { vid: 0, pid: 0, softwareVersion: 0, certificationType: "", value: false };
+  return { vid: 0, pid: 0, softwareVersion: 0, certificationType: "", value: false, schemaVersion: 0 };
 }
 
 export const CertifiedModel = {
@@ -31,6 +32,9 @@ export const CertifiedModel = {
     }
     if (message.value === true) {
       writer.uint32(40).bool(message.value);
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(48).uint32(message.schemaVersion);
     }
     return writer;
   },
@@ -57,6 +61,9 @@ export const CertifiedModel = {
         case 5:
           message.value = reader.bool();
           break;
+        case 6:
+          message.schemaVersion = reader.uint32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -72,6 +79,7 @@ export const CertifiedModel = {
       softwareVersion: isSet(object.softwareVersion) ? Number(object.softwareVersion) : 0,
       certificationType: isSet(object.certificationType) ? String(object.certificationType) : "",
       value: isSet(object.value) ? Boolean(object.value) : false,
+      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
@@ -82,6 +90,7 @@ export const CertifiedModel = {
     message.softwareVersion !== undefined && (obj.softwareVersion = Math.round(message.softwareVersion));
     message.certificationType !== undefined && (obj.certificationType = message.certificationType);
     message.value !== undefined && (obj.value = message.value);
+    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
@@ -92,6 +101,7 @@ export const CertifiedModel = {
     message.softwareVersion = object.softwareVersion ?? 0;
     message.certificationType = object.certificationType ?? "";
     message.value = object.value ?? false;
+    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };

@@ -62,7 +62,7 @@ func (k Keeper) GetNocIcaCertificatesBySubjectAndSKID(
 }
 
 // AddNocIcaCertificates adds a NOC certificate to the list of NOC certificates for the VID map.
-func (k Keeper) AddNocIcaCertificate(ctx sdk.Context, nocIcaCertificates types.Certificate, schemaVersion uint32) {
+func (k Keeper) AddNocIcaCertificate(ctx sdk.Context, nocIcaCertificates types.Certificate) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocIcaCertificatesKeyPrefix))
 
 	NocIcaCertificatesBytes := store.Get(types.NocIcaCertificatesKey(nocIcaCertificates.Vid))
@@ -70,16 +70,14 @@ func (k Keeper) AddNocIcaCertificate(ctx sdk.Context, nocIcaCertificates types.C
 
 	if NocIcaCertificatesBytes == nil {
 		NocIcaCertificates = types.NocIcaCertificates{
-			Vid:           nocIcaCertificates.Vid,
-			Certs:         []*types.Certificate{},
-			SchemaVersion: schemaVersion,
+			Vid:   nocIcaCertificates.Vid,
+			Certs: []*types.Certificate{},
 		}
 	} else {
 		k.cdc.MustUnmarshal(NocIcaCertificatesBytes, &NocIcaCertificates)
 	}
 
 	NocIcaCertificates.Certs = append(NocIcaCertificates.Certs, &nocIcaCertificates)
-	NocIcaCertificates.SchemaVersion = schemaVersion
 
 	b := k.cdc.MustMarshal(&NocIcaCertificates)
 	store.Set(types.NocIcaCertificatesKey(nocIcaCertificates.Vid), b)

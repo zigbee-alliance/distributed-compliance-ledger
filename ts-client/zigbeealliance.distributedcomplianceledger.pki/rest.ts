@@ -21,16 +21,25 @@ export interface DistributedcomplianceledgerpkiApprovedCertificates {
 export interface DistributedcomplianceledgerpkiApprovedCertificatesBySubject {
   subject?: string;
   subjectKeyIds?: string[];
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface DistributedcomplianceledgerpkiApprovedRootCertificates {
   certs?: PkiCertificateIdentifier[];
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface DistributedcomplianceledgerpkiChildCertificates {
   issuer?: string;
   authorityKeyId?: string;
   certIds?: PkiCertificateIdentifier[];
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface DistributedcomplianceledgerpkiNocIcaCertificates {
@@ -59,6 +68,9 @@ export interface DistributedcomplianceledgerpkiNocRootCertificatesByVidAndSkid {
 
   /** @format float */
   tq?: number;
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface DistributedcomplianceledgerpkiPkiRevocationDistributionPoint {
@@ -91,6 +103,9 @@ export interface DistributedcomplianceledgerpkiPkiRevocationDistributionPoint {
 export interface DistributedcomplianceledgerpkiPkiRevocationDistributionPointsByIssuerSubjectKeyID {
   issuerSubjectKeyID?: string;
   points?: DistributedcomplianceledgerpkiPkiRevocationDistributionPoint[];
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface DistributedcomplianceledgerpkiProposedCertificate {
@@ -147,10 +162,16 @@ export interface DistributedcomplianceledgerpkiRevokedNocRootCertificates {
   subject?: string;
   subjectKeyId?: string;
   certs?: PkiCertificate[];
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface DistributedcomplianceledgerpkiRevokedRootCertificates {
   certs?: PkiCertificateIdentifier[];
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface PkiCertificate {

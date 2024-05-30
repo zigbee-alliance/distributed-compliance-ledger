@@ -17,6 +17,9 @@ export interface ComplianceComplianceHistoryItem {
 
   /** @format int64 */
   cDVersionNumber?: number;
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export type ComplianceMsgCertifyModelResponse = object;
@@ -135,6 +138,9 @@ export interface DistributedcomplianceledgercomplianceCertifiedModel {
   softwareVersion?: number;
   certificationType?: string;
   value?: boolean;
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface DistributedcomplianceledgercomplianceComplianceInfo {
@@ -178,6 +184,9 @@ export interface DistributedcomplianceledgercomplianceComplianceInfo {
 export interface DistributedcomplianceledgercomplianceDeviceSoftwareCompliance {
   cDCertificateId?: string;
   complianceInfo?: DistributedcomplianceledgercomplianceComplianceInfo[];
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface DistributedcomplianceledgercomplianceProvisionalModel {
@@ -191,6 +200,9 @@ export interface DistributedcomplianceledgercomplianceProvisionalModel {
   softwareVersion?: number;
   certificationType?: string;
   value?: boolean;
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface DistributedcomplianceledgercomplianceRevokedModel {
@@ -204,6 +216,9 @@ export interface DistributedcomplianceledgercomplianceRevokedModel {
   softwareVersion?: number;
   certificationType?: string;
   value?: boolean;
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface ProtobufAny {

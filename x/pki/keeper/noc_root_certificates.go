@@ -37,7 +37,7 @@ func (k Keeper) GetNocRootCertificates(
 }
 
 // Add a NOC root certificate to the list of NOC root certificates for the VID map.
-func (k Keeper) AddNocRootCertificate(ctx sdk.Context, nocCertificate types.Certificate, schemaVersion uint32) {
+func (k Keeper) AddNocRootCertificate(ctx sdk.Context, nocCertificate types.Certificate) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocRootCertificatesKeyPrefix))
 
 	nocCertificatesBytes := store.Get(types.NocRootCertificatesKey(nocCertificate.Vid))
@@ -45,16 +45,14 @@ func (k Keeper) AddNocRootCertificate(ctx sdk.Context, nocCertificate types.Cert
 
 	if nocCertificatesBytes == nil {
 		nocCertificates = types.NocRootCertificates{
-			Vid:           nocCertificate.Vid,
-			Certs:         []*types.Certificate{},
-			SchemaVersion: schemaVersion,
+			Vid:   nocCertificate.Vid,
+			Certs: []*types.Certificate{},
 		}
 	} else {
 		k.cdc.MustUnmarshal(nocCertificatesBytes, &nocCertificates)
 	}
 
 	nocCertificates.Certs = append(nocCertificates.Certs, &nocCertificate)
-	nocCertificates.SchemaVersion = schemaVersion
 
 	b := k.cdc.MustMarshal(&nocCertificates)
 	store.Set(types.NocRootCertificatesKey(nocCertificate.Vid), b)

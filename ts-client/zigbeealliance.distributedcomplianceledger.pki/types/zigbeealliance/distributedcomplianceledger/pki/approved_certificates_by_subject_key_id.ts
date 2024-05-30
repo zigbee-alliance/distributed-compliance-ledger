@@ -7,10 +7,11 @@ export const protobufPackage = "zigbeealliance.distributedcomplianceledger.pki";
 export interface ApprovedCertificatesBySubjectKeyId {
   subjectKeyId: string;
   certs: Certificate[];
+  schemaVersion: number;
 }
 
 function createBaseApprovedCertificatesBySubjectKeyId(): ApprovedCertificatesBySubjectKeyId {
-  return { subjectKeyId: "", certs: [] };
+  return { subjectKeyId: "", certs: [], schemaVersion: 0 };
 }
 
 export const ApprovedCertificatesBySubjectKeyId = {
@@ -20,6 +21,9 @@ export const ApprovedCertificatesBySubjectKeyId = {
     }
     for (const v of message.certs) {
       Certificate.encode(v!, writer.uint32(18).fork()).ldelim();
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(24).uint32(message.schemaVersion);
     }
     return writer;
   },
@@ -37,6 +41,9 @@ export const ApprovedCertificatesBySubjectKeyId = {
         case 2:
           message.certs.push(Certificate.decode(reader, reader.uint32()));
           break;
+        case 3:
+          message.schemaVersion = reader.uint32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -49,6 +56,7 @@ export const ApprovedCertificatesBySubjectKeyId = {
     return {
       subjectKeyId: isSet(object.subjectKeyId) ? String(object.subjectKeyId) : "",
       certs: Array.isArray(object?.certs) ? object.certs.map((e: any) => Certificate.fromJSON(e)) : [],
+      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
@@ -60,6 +68,7 @@ export const ApprovedCertificatesBySubjectKeyId = {
     } else {
       obj.certs = [];
     }
+    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
@@ -69,6 +78,7 @@ export const ApprovedCertificatesBySubjectKeyId = {
     const message = createBaseApprovedCertificatesBySubjectKeyId();
     message.subjectKeyId = object.subjectKeyId ?? "";
     message.certs = object.certs?.map((e) => Certificate.fromPartial(e)) || [];
+    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };

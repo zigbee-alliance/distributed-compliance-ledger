@@ -11,7 +11,6 @@ export interface MsgProposeAddX509RootCert {
   time: number;
   vid: number;
   certSchemaVersion: number;
-  schemaVersion: number;
 }
 
 export interface MsgProposeAddX509RootCertResponse {
@@ -34,7 +33,6 @@ export interface MsgAddX509Cert {
   info: string;
   time: number;
   certSchemaVersion: number;
-  schemaVersion: number;
 }
 
 export interface MsgAddX509CertResponse {
@@ -48,7 +46,6 @@ export interface MsgProposeRevokeX509RootCert {
   time: number;
   serialNumber: string;
   revokeChild: boolean;
-  schemaVersion: number;
 }
 
 export interface MsgProposeRevokeX509RootCertResponse {
@@ -74,7 +71,6 @@ export interface MsgRevokeX509Cert {
   time: number;
   serialNumber: string;
   revokeChild: boolean;
-  schemaVersion: number;
 }
 
 export interface MsgRevokeX509CertResponse {
@@ -86,7 +82,6 @@ export interface MsgRejectAddX509RootCert {
   subjectKeyId: string;
   info: string;
   time: number;
-  schemaVersion: number;
 }
 
 export interface MsgRejectAddX509RootCertResponse {
@@ -153,7 +148,6 @@ export interface MsgAddNocX509RootCert {
   signer: string;
   cert: string;
   certSchemaVersion: number;
-  schemaVersion: number;
 }
 
 export interface MsgAddNocX509RootCertResponse {
@@ -173,7 +167,6 @@ export interface MsgAddNocX509IcaCert {
   signer: string;
   cert: string;
   certSchemaVersion: number;
-  schemaVersion: number;
 }
 
 export interface MsgAddNocX509IcaCertResponse {
@@ -187,7 +180,6 @@ export interface MsgRevokeNocX509RootCert {
   info: string;
   time: number;
   revokeChild: boolean;
-  schemaVersion: number;
 }
 
 export interface MsgRevokeNocX509RootCertResponse {
@@ -201,7 +193,6 @@ export interface MsgRevokeNocX509IcaCert {
   info: string;
   time: number;
   revokeChild: boolean;
-  schemaVersion: number;
 }
 
 export interface MsgRevokeNocX509IcaCertResponse {
@@ -228,7 +219,7 @@ export interface MsgRemoveNocX509RootCertResponse {
 }
 
 function createBaseMsgProposeAddX509RootCert(): MsgProposeAddX509RootCert {
-  return { signer: "", cert: "", info: "", time: 0, vid: 0, certSchemaVersion: 0, schemaVersion: 0 };
+  return { signer: "", cert: "", info: "", time: 0, vid: 0, certSchemaVersion: 0 };
 }
 
 export const MsgProposeAddX509RootCert = {
@@ -250,9 +241,6 @@ export const MsgProposeAddX509RootCert = {
     }
     if (message.certSchemaVersion !== 0) {
       writer.uint32(48).uint32(message.certSchemaVersion);
-    }
-    if (message.schemaVersion !== 0) {
-      writer.uint32(56).uint32(message.schemaVersion);
     }
     return writer;
   },
@@ -282,9 +270,6 @@ export const MsgProposeAddX509RootCert = {
         case 6:
           message.certSchemaVersion = reader.uint32();
           break;
-        case 7:
-          message.schemaVersion = reader.uint32();
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -301,7 +286,6 @@ export const MsgProposeAddX509RootCert = {
       time: isSet(object.time) ? Number(object.time) : 0,
       vid: isSet(object.vid) ? Number(object.vid) : 0,
       certSchemaVersion: isSet(object.certSchemaVersion) ? Number(object.certSchemaVersion) : 0,
-      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
@@ -313,7 +297,6 @@ export const MsgProposeAddX509RootCert = {
     message.time !== undefined && (obj.time = Math.round(message.time));
     message.vid !== undefined && (obj.vid = Math.round(message.vid));
     message.certSchemaVersion !== undefined && (obj.certSchemaVersion = Math.round(message.certSchemaVersion));
-    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
@@ -325,7 +308,6 @@ export const MsgProposeAddX509RootCert = {
     message.time = object.time ?? 0;
     message.vid = object.vid ?? 0;
     message.certSchemaVersion = object.certSchemaVersion ?? 0;
-    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };
@@ -498,7 +480,7 @@ export const MsgApproveAddX509RootCertResponse = {
 };
 
 function createBaseMsgAddX509Cert(): MsgAddX509Cert {
-  return { signer: "", cert: "", info: "", time: 0, certSchemaVersion: 0, schemaVersion: 0 };
+  return { signer: "", cert: "", info: "", time: 0, certSchemaVersion: 0 };
 }
 
 export const MsgAddX509Cert = {
@@ -517,9 +499,6 @@ export const MsgAddX509Cert = {
     }
     if (message.certSchemaVersion !== 0) {
       writer.uint32(40).uint32(message.certSchemaVersion);
-    }
-    if (message.schemaVersion !== 0) {
-      writer.uint32(48).uint32(message.schemaVersion);
     }
     return writer;
   },
@@ -546,9 +525,6 @@ export const MsgAddX509Cert = {
         case 5:
           message.certSchemaVersion = reader.uint32();
           break;
-        case 6:
-          message.schemaVersion = reader.uint32();
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -564,7 +540,6 @@ export const MsgAddX509Cert = {
       info: isSet(object.info) ? String(object.info) : "",
       time: isSet(object.time) ? Number(object.time) : 0,
       certSchemaVersion: isSet(object.certSchemaVersion) ? Number(object.certSchemaVersion) : 0,
-      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
@@ -575,7 +550,6 @@ export const MsgAddX509Cert = {
     message.info !== undefined && (obj.info = message.info);
     message.time !== undefined && (obj.time = Math.round(message.time));
     message.certSchemaVersion !== undefined && (obj.certSchemaVersion = Math.round(message.certSchemaVersion));
-    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
@@ -586,7 +560,6 @@ export const MsgAddX509Cert = {
     message.info = object.info ?? "";
     message.time = object.time ?? 0;
     message.certSchemaVersion = object.certSchemaVersion ?? 0;
-    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };
@@ -631,16 +604,7 @@ export const MsgAddX509CertResponse = {
 };
 
 function createBaseMsgProposeRevokeX509RootCert(): MsgProposeRevokeX509RootCert {
-  return {
-    signer: "",
-    subject: "",
-    subjectKeyId: "",
-    info: "",
-    time: 0,
-    serialNumber: "",
-    revokeChild: false,
-    schemaVersion: 0,
-  };
+  return { signer: "", subject: "", subjectKeyId: "", info: "", time: 0, serialNumber: "", revokeChild: false };
 }
 
 export const MsgProposeRevokeX509RootCert = {
@@ -665,9 +629,6 @@ export const MsgProposeRevokeX509RootCert = {
     }
     if (message.revokeChild === true) {
       writer.uint32(56).bool(message.revokeChild);
-    }
-    if (message.schemaVersion !== 0) {
-      writer.uint32(64).uint32(message.schemaVersion);
     }
     return writer;
   },
@@ -700,9 +661,6 @@ export const MsgProposeRevokeX509RootCert = {
         case 7:
           message.revokeChild = reader.bool();
           break;
-        case 8:
-          message.schemaVersion = reader.uint32();
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -720,7 +678,6 @@ export const MsgProposeRevokeX509RootCert = {
       time: isSet(object.time) ? Number(object.time) : 0,
       serialNumber: isSet(object.serialNumber) ? String(object.serialNumber) : "",
       revokeChild: isSet(object.revokeChild) ? Boolean(object.revokeChild) : false,
-      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
@@ -733,7 +690,6 @@ export const MsgProposeRevokeX509RootCert = {
     message.time !== undefined && (obj.time = Math.round(message.time));
     message.serialNumber !== undefined && (obj.serialNumber = message.serialNumber);
     message.revokeChild !== undefined && (obj.revokeChild = message.revokeChild);
-    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
@@ -746,7 +702,6 @@ export const MsgProposeRevokeX509RootCert = {
     message.time = object.time ?? 0;
     message.serialNumber = object.serialNumber ?? "";
     message.revokeChild = object.revokeChild ?? false;
-    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };
@@ -928,16 +883,7 @@ export const MsgApproveRevokeX509RootCertResponse = {
 };
 
 function createBaseMsgRevokeX509Cert(): MsgRevokeX509Cert {
-  return {
-    signer: "",
-    subject: "",
-    subjectKeyId: "",
-    info: "",
-    time: 0,
-    serialNumber: "",
-    revokeChild: false,
-    schemaVersion: 0,
-  };
+  return { signer: "", subject: "", subjectKeyId: "", info: "", time: 0, serialNumber: "", revokeChild: false };
 }
 
 export const MsgRevokeX509Cert = {
@@ -962,9 +908,6 @@ export const MsgRevokeX509Cert = {
     }
     if (message.revokeChild === true) {
       writer.uint32(56).bool(message.revokeChild);
-    }
-    if (message.schemaVersion !== 0) {
-      writer.uint32(64).uint32(message.schemaVersion);
     }
     return writer;
   },
@@ -997,9 +940,6 @@ export const MsgRevokeX509Cert = {
         case 7:
           message.revokeChild = reader.bool();
           break;
-        case 8:
-          message.schemaVersion = reader.uint32();
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1017,7 +957,6 @@ export const MsgRevokeX509Cert = {
       time: isSet(object.time) ? Number(object.time) : 0,
       serialNumber: isSet(object.serialNumber) ? String(object.serialNumber) : "",
       revokeChild: isSet(object.revokeChild) ? Boolean(object.revokeChild) : false,
-      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
@@ -1030,7 +969,6 @@ export const MsgRevokeX509Cert = {
     message.time !== undefined && (obj.time = Math.round(message.time));
     message.serialNumber !== undefined && (obj.serialNumber = message.serialNumber);
     message.revokeChild !== undefined && (obj.revokeChild = message.revokeChild);
-    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
@@ -1043,7 +981,6 @@ export const MsgRevokeX509Cert = {
     message.time = object.time ?? 0;
     message.serialNumber = object.serialNumber ?? "";
     message.revokeChild = object.revokeChild ?? false;
-    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };
@@ -1088,7 +1025,7 @@ export const MsgRevokeX509CertResponse = {
 };
 
 function createBaseMsgRejectAddX509RootCert(): MsgRejectAddX509RootCert {
-  return { signer: "", subject: "", subjectKeyId: "", info: "", time: 0, schemaVersion: 0 };
+  return { signer: "", subject: "", subjectKeyId: "", info: "", time: 0 };
 }
 
 export const MsgRejectAddX509RootCert = {
@@ -1107,9 +1044,6 @@ export const MsgRejectAddX509RootCert = {
     }
     if (message.time !== 0) {
       writer.uint32(40).int64(message.time);
-    }
-    if (message.schemaVersion !== 0) {
-      writer.uint32(48).uint32(message.schemaVersion);
     }
     return writer;
   },
@@ -1136,9 +1070,6 @@ export const MsgRejectAddX509RootCert = {
         case 5:
           message.time = longToNumber(reader.int64() as Long);
           break;
-        case 6:
-          message.schemaVersion = reader.uint32();
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1154,7 +1085,6 @@ export const MsgRejectAddX509RootCert = {
       subjectKeyId: isSet(object.subjectKeyId) ? String(object.subjectKeyId) : "",
       info: isSet(object.info) ? String(object.info) : "",
       time: isSet(object.time) ? Number(object.time) : 0,
-      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
@@ -1165,7 +1095,6 @@ export const MsgRejectAddX509RootCert = {
     message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId);
     message.info !== undefined && (obj.info = message.info);
     message.time !== undefined && (obj.time = Math.round(message.time));
-    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
@@ -1176,7 +1105,6 @@ export const MsgRejectAddX509RootCert = {
     message.subjectKeyId = object.subjectKeyId ?? "";
     message.info = object.info ?? "";
     message.time = object.time ?? 0;
-    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };
@@ -1875,7 +1803,7 @@ export const MsgAssignVidResponse = {
 };
 
 function createBaseMsgAddNocX509RootCert(): MsgAddNocX509RootCert {
-  return { signer: "", cert: "", certSchemaVersion: 0, schemaVersion: 0 };
+  return { signer: "", cert: "", certSchemaVersion: 0 };
 }
 
 export const MsgAddNocX509RootCert = {
@@ -1888,9 +1816,6 @@ export const MsgAddNocX509RootCert = {
     }
     if (message.certSchemaVersion !== 0) {
       writer.uint32(32).uint32(message.certSchemaVersion);
-    }
-    if (message.schemaVersion !== 0) {
-      writer.uint32(40).uint32(message.schemaVersion);
     }
     return writer;
   },
@@ -1911,9 +1836,6 @@ export const MsgAddNocX509RootCert = {
         case 4:
           message.certSchemaVersion = reader.uint32();
           break;
-        case 5:
-          message.schemaVersion = reader.uint32();
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1927,7 +1849,6 @@ export const MsgAddNocX509RootCert = {
       signer: isSet(object.signer) ? String(object.signer) : "",
       cert: isSet(object.cert) ? String(object.cert) : "",
       certSchemaVersion: isSet(object.certSchemaVersion) ? Number(object.certSchemaVersion) : 0,
-      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
@@ -1936,7 +1857,6 @@ export const MsgAddNocX509RootCert = {
     message.signer !== undefined && (obj.signer = message.signer);
     message.cert !== undefined && (obj.cert = message.cert);
     message.certSchemaVersion !== undefined && (obj.certSchemaVersion = Math.round(message.certSchemaVersion));
-    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
@@ -1945,7 +1865,6 @@ export const MsgAddNocX509RootCert = {
     message.signer = object.signer ?? "";
     message.cert = object.cert ?? "";
     message.certSchemaVersion = object.certSchemaVersion ?? 0;
-    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };
@@ -2105,7 +2024,7 @@ export const MsgRemoveX509CertResponse = {
 };
 
 function createBaseMsgAddNocX509IcaCert(): MsgAddNocX509IcaCert {
-  return { signer: "", cert: "", certSchemaVersion: 0, schemaVersion: 0 };
+  return { signer: "", cert: "", certSchemaVersion: 0 };
 }
 
 export const MsgAddNocX509IcaCert = {
@@ -2118,9 +2037,6 @@ export const MsgAddNocX509IcaCert = {
     }
     if (message.certSchemaVersion !== 0) {
       writer.uint32(24).uint32(message.certSchemaVersion);
-    }
-    if (message.schemaVersion !== 0) {
-      writer.uint32(32).uint32(message.schemaVersion);
     }
     return writer;
   },
@@ -2141,9 +2057,6 @@ export const MsgAddNocX509IcaCert = {
         case 3:
           message.certSchemaVersion = reader.uint32();
           break;
-        case 4:
-          message.schemaVersion = reader.uint32();
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -2157,7 +2070,6 @@ export const MsgAddNocX509IcaCert = {
       signer: isSet(object.signer) ? String(object.signer) : "",
       cert: isSet(object.cert) ? String(object.cert) : "",
       certSchemaVersion: isSet(object.certSchemaVersion) ? Number(object.certSchemaVersion) : 0,
-      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
@@ -2166,7 +2078,6 @@ export const MsgAddNocX509IcaCert = {
     message.signer !== undefined && (obj.signer = message.signer);
     message.cert !== undefined && (obj.cert = message.cert);
     message.certSchemaVersion !== undefined && (obj.certSchemaVersion = Math.round(message.certSchemaVersion));
-    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
@@ -2175,7 +2086,6 @@ export const MsgAddNocX509IcaCert = {
     message.signer = object.signer ?? "";
     message.cert = object.cert ?? "";
     message.certSchemaVersion = object.certSchemaVersion ?? 0;
-    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };
@@ -2220,16 +2130,7 @@ export const MsgAddNocX509IcaCertResponse = {
 };
 
 function createBaseMsgRevokeNocX509RootCert(): MsgRevokeNocX509RootCert {
-  return {
-    signer: "",
-    subject: "",
-    subjectKeyId: "",
-    serialNumber: "",
-    info: "",
-    time: 0,
-    revokeChild: false,
-    schemaVersion: 0,
-  };
+  return { signer: "", subject: "", subjectKeyId: "", serialNumber: "", info: "", time: 0, revokeChild: false };
 }
 
 export const MsgRevokeNocX509RootCert = {
@@ -2254,9 +2155,6 @@ export const MsgRevokeNocX509RootCert = {
     }
     if (message.revokeChild === true) {
       writer.uint32(56).bool(message.revokeChild);
-    }
-    if (message.schemaVersion !== 0) {
-      writer.uint32(64).uint32(message.schemaVersion);
     }
     return writer;
   },
@@ -2289,9 +2187,6 @@ export const MsgRevokeNocX509RootCert = {
         case 7:
           message.revokeChild = reader.bool();
           break;
-        case 8:
-          message.schemaVersion = reader.uint32();
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -2309,7 +2204,6 @@ export const MsgRevokeNocX509RootCert = {
       info: isSet(object.info) ? String(object.info) : "",
       time: isSet(object.time) ? Number(object.time) : 0,
       revokeChild: isSet(object.revokeChild) ? Boolean(object.revokeChild) : false,
-      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
@@ -2322,7 +2216,6 @@ export const MsgRevokeNocX509RootCert = {
     message.info !== undefined && (obj.info = message.info);
     message.time !== undefined && (obj.time = Math.round(message.time));
     message.revokeChild !== undefined && (obj.revokeChild = message.revokeChild);
-    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
@@ -2335,7 +2228,6 @@ export const MsgRevokeNocX509RootCert = {
     message.info = object.info ?? "";
     message.time = object.time ?? 0;
     message.revokeChild = object.revokeChild ?? false;
-    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };
@@ -2382,16 +2274,7 @@ export const MsgRevokeNocX509RootCertResponse = {
 };
 
 function createBaseMsgRevokeNocX509IcaCert(): MsgRevokeNocX509IcaCert {
-  return {
-    signer: "",
-    subject: "",
-    subjectKeyId: "",
-    serialNumber: "",
-    info: "",
-    time: 0,
-    revokeChild: false,
-    schemaVersion: 0,
-  };
+  return { signer: "", subject: "", subjectKeyId: "", serialNumber: "", info: "", time: 0, revokeChild: false };
 }
 
 export const MsgRevokeNocX509IcaCert = {
@@ -2416,9 +2299,6 @@ export const MsgRevokeNocX509IcaCert = {
     }
     if (message.revokeChild === true) {
       writer.uint32(56).bool(message.revokeChild);
-    }
-    if (message.schemaVersion !== 0) {
-      writer.uint32(64).uint32(message.schemaVersion);
     }
     return writer;
   },
@@ -2451,9 +2331,6 @@ export const MsgRevokeNocX509IcaCert = {
         case 7:
           message.revokeChild = reader.bool();
           break;
-        case 8:
-          message.schemaVersion = reader.uint32();
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -2471,7 +2348,6 @@ export const MsgRevokeNocX509IcaCert = {
       info: isSet(object.info) ? String(object.info) : "",
       time: isSet(object.time) ? Number(object.time) : 0,
       revokeChild: isSet(object.revokeChild) ? Boolean(object.revokeChild) : false,
-      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
@@ -2484,7 +2360,6 @@ export const MsgRevokeNocX509IcaCert = {
     message.info !== undefined && (obj.info = message.info);
     message.time !== undefined && (obj.time = Math.round(message.time));
     message.revokeChild !== undefined && (obj.revokeChild = message.revokeChild);
-    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
@@ -2497,7 +2372,6 @@ export const MsgRevokeNocX509IcaCert = {
     message.info = object.info ?? "";
     message.time = object.time ?? 0;
     message.revokeChild = object.revokeChild ?? false;
-    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };

@@ -8,10 +8,11 @@ export interface RevokedNocRootCertificates {
   subject: string;
   subjectKeyId: string;
   certs: Certificate[];
+  schemaVersion: number;
 }
 
 function createBaseRevokedNocRootCertificates(): RevokedNocRootCertificates {
-  return { subject: "", subjectKeyId: "", certs: [] };
+  return { subject: "", subjectKeyId: "", certs: [], schemaVersion: 0 };
 }
 
 export const RevokedNocRootCertificates = {
@@ -24,6 +25,9 @@ export const RevokedNocRootCertificates = {
     }
     for (const v of message.certs) {
       Certificate.encode(v!, writer.uint32(26).fork()).ldelim();
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(32).uint32(message.schemaVersion);
     }
     return writer;
   },
@@ -44,6 +48,9 @@ export const RevokedNocRootCertificates = {
         case 3:
           message.certs.push(Certificate.decode(reader, reader.uint32()));
           break;
+        case 4:
+          message.schemaVersion = reader.uint32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -57,6 +64,7 @@ export const RevokedNocRootCertificates = {
       subject: isSet(object.subject) ? String(object.subject) : "",
       subjectKeyId: isSet(object.subjectKeyId) ? String(object.subjectKeyId) : "",
       certs: Array.isArray(object?.certs) ? object.certs.map((e: any) => Certificate.fromJSON(e)) : [],
+      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
@@ -69,6 +77,7 @@ export const RevokedNocRootCertificates = {
     } else {
       obj.certs = [];
     }
+    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
@@ -77,6 +86,7 @@ export const RevokedNocRootCertificates = {
     message.subject = object.subject ?? "";
     message.subjectKeyId = object.subjectKeyId ?? "";
     message.certs = object.certs?.map((e) => Certificate.fromPartial(e)) || [];
+    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };

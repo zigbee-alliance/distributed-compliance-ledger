@@ -71,19 +71,6 @@ func TestMsgRevokeNocX509RootCert_ValidateBasic(t *testing.T) {
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
-		{
-			name: "schemaVersion > 65535",
-			msg: MsgRevokeNocX509RootCert{
-				Signer:        sample.AccAddress(),
-				Subject:       testconstants.RootSubject,
-				SubjectKeyId:  testconstants.RootSubjectKeyID,
-				SerialNumber:  testconstants.RootSerialNumber,
-				Info:          testconstants.Info,
-				Time:          12345,
-				SchemaVersion: 65536,
-			},
-			err: validator.ErrFieldUpperBoundViolated,
-		},
 	}
 	positiveTests := []struct {
 		name string

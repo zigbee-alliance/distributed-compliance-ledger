@@ -6,16 +6,20 @@ export const protobufPackage = "zigbeealliance.distributedcomplianceledger.dclau
 
 export interface AccountStat {
   number: number;
+  schemaVersion: number;
 }
 
 function createBaseAccountStat(): AccountStat {
-  return { number: 0 };
+  return { number: 0, schemaVersion: 0 };
 }
 
 export const AccountStat = {
   encode(message: AccountStat, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.number !== 0) {
       writer.uint32(8).uint64(message.number);
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(16).uint32(message.schemaVersion);
     }
     return writer;
   },
@@ -30,6 +34,9 @@ export const AccountStat = {
         case 1:
           message.number = longToNumber(reader.uint64() as Long);
           break;
+        case 2:
+          message.schemaVersion = reader.uint32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -39,18 +46,23 @@ export const AccountStat = {
   },
 
   fromJSON(object: any): AccountStat {
-    return { number: isSet(object.number) ? Number(object.number) : 0 };
+    return {
+      number: isSet(object.number) ? Number(object.number) : 0,
+      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
+    };
   },
 
   toJSON(message: AccountStat): unknown {
     const obj: any = {};
     message.number !== undefined && (obj.number = Math.round(message.number));
+    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<AccountStat>, I>>(object: I): AccountStat {
     const message = createBaseAccountStat();
     message.number = object.number ?? 0;
+    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };

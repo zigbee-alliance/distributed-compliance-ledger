@@ -9,6 +9,7 @@ export interface RevokedAccount {
   account: Account | undefined;
   revokeApprovals: Grant[];
   reason: RevokedAccount_Reason;
+  revokedAccountSchemaVersion: number;
 }
 
 export enum RevokedAccount_Reason {
@@ -45,7 +46,7 @@ export function revokedAccount_ReasonToJSON(object: RevokedAccount_Reason): stri
 }
 
 function createBaseRevokedAccount(): RevokedAccount {
-  return { account: undefined, revokeApprovals: [], reason: 0 };
+  return { account: undefined, revokeApprovals: [], reason: 0, revokedAccountSchemaVersion: 0 };
 }
 
 export const RevokedAccount = {
@@ -58,6 +59,9 @@ export const RevokedAccount = {
     }
     if (message.reason !== 0) {
       writer.uint32(24).int32(message.reason);
+    }
+    if (message.revokedAccountSchemaVersion !== 0) {
+      writer.uint32(32).uint32(message.revokedAccountSchemaVersion);
     }
     return writer;
   },
@@ -78,6 +82,9 @@ export const RevokedAccount = {
         case 3:
           message.reason = reader.int32() as any;
           break;
+        case 4:
+          message.revokedAccountSchemaVersion = reader.uint32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -93,6 +100,9 @@ export const RevokedAccount = {
         ? object.revokeApprovals.map((e: any) => Grant.fromJSON(e))
         : [],
       reason: isSet(object.reason) ? revokedAccount_ReasonFromJSON(object.reason) : 0,
+      revokedAccountSchemaVersion: isSet(object.revokedAccountSchemaVersion)
+        ? Number(object.revokedAccountSchemaVersion)
+        : 0,
     };
   },
 
@@ -105,6 +115,8 @@ export const RevokedAccount = {
       obj.revokeApprovals = [];
     }
     message.reason !== undefined && (obj.reason = revokedAccount_ReasonToJSON(message.reason));
+    message.revokedAccountSchemaVersion !== undefined
+      && (obj.revokedAccountSchemaVersion = Math.round(message.revokedAccountSchemaVersion));
     return obj;
   },
 
@@ -115,6 +127,7 @@ export const RevokedAccount = {
       : undefined;
     message.revokeApprovals = object.revokeApprovals?.map((e) => Grant.fromPartial(e)) || [];
     message.reason = object.reason ?? 0;
+    message.revokedAccountSchemaVersion = object.revokedAccountSchemaVersion ?? 0;
     return message;
   },
 };

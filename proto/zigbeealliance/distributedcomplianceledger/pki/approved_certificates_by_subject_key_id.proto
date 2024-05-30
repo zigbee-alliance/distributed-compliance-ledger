@@ -8,4 +8,5 @@ import "zigbeealliance/distributedcomplianceledger/pki/certificate.proto";
 message ApprovedCertificatesBySubjectKeyId {
   string subjectKeyId = 1;
   repeated Certificate certs = 2;
+  uint32 schemaVersion = 3;
 }

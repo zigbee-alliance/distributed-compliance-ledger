@@ -13,7 +13,7 @@ message LastValidatorPower {
   option (gogoproto.goproto_getters)  = false;
 
   string owner = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"]; 
-  int32 power = 2; 
-  
+  int32 power = 2;
+  uint32 schemaVersion = 3;
 }
 

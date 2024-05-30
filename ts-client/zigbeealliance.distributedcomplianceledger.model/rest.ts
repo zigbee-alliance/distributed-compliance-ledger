@@ -90,12 +90,18 @@ export interface DistributedcomplianceledgermodelModelVersions {
   /** @format int32 */
   pid?: number;
   softwareVersions?: number[];
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface DistributedcomplianceledgermodelVendorProducts {
   /** @format int32 */
   vid?: number;
   products?: ModelProduct[];
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export type ModelMsgCreateModelResponse = object;
