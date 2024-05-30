@@ -9,4 +9,5 @@ message Grant {
   string address = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"]; 
   int64 time = 2; // number of nanoseconds elapsed since January 1, 1970 UTC
   string info = 3;
+  uint32 schemaVersion = 4;
 }

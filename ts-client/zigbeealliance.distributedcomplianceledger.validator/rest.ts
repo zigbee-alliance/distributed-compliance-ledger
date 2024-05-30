@@ -339,6 +339,9 @@ export interface ValidatorDescription {
 
   /** optional details. */
   details?: string;
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface ValidatorGrant {
@@ -350,6 +353,9 @@ export interface ValidatorGrant {
    */
   time?: string;
   info?: string;
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export type ValidatorMsgApproveDisableValidatorResponse = object;

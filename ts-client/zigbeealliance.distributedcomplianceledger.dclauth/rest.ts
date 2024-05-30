@@ -31,6 +31,9 @@ export interface DclauthGrant {
    */
   time?: string;
   info?: string;
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export type DclauthMsgApproveAddAccountResponse = object;

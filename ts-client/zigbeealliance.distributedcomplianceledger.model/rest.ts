@@ -121,6 +121,9 @@ export interface ModelProduct {
   pid?: number;
   name?: string;
   partNumber?: string;
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface ModelQueryAllModelResponse {

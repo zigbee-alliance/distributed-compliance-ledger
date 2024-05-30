@@ -200,6 +200,9 @@ export interface PkiCertificate {
 export interface PkiCertificateIdentifier {
   subject?: string;
   subjectKeyId?: string;
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface PkiGrant {
@@ -211,6 +214,9 @@ export interface PkiGrant {
    */
   time?: string;
   info?: string;
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export type PkiMsgAddNocX509IcaCertResponse = object;
