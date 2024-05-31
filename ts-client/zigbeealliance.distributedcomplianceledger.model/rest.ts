@@ -44,7 +44,7 @@ export interface DistributedcomplianceledgermodelModel {
 
   /** @format int64 */
   schemaVersion?: number;
-  commissionerRemoteUiFlowUrl?: string;
+  managedAclExtensionRequestFlowUrl?: string;
 }
 
 export interface DistributedcomplianceledgermodelModelVersion {

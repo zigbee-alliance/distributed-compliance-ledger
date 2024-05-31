@@ -1498,6 +1498,9 @@ paths:
                               1970 UTC
                           info:
                             type: string
+                          schemaVersion:
+                            type: integer
+                            format: int64
                     vendorID:
                       type: integer
                       format: int32
@@ -1516,6 +1519,9 @@ paths:
                               1970 UTC
                           info:
                             type: string
+                          schemaVersion:
+                            type: integer
+                            format: int64
                     productIDs:
                       type: array
                       items:
@@ -2257,6 +2263,9 @@ paths:
                             UTC
                         info:
                           type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   vendorID:
                     type: integer
                     format: int32
@@ -2275,6 +2284,9 @@ paths:
                             UTC
                         info:
                           type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   productIDs:
                     type: array
                     items:
@@ -2732,6 +2744,9 @@ paths:
                                   1970 UTC
                               info:
                                 type: string
+                              schemaVersion:
+                                type: integer
+                                format: int64
                         vendorID:
                           type: integer
                           format: int32
@@ -2750,6 +2765,9 @@ paths:
                                   1970 UTC
                               info:
                                 type: string
+                              schemaVersion:
+                                type: integer
+                                format: int64
                         productIDs:
                           type: array
                           items:
@@ -3291,6 +3309,9 @@ paths:
                                 1970 UTC
                             info:
                               type: string
+                            schemaVersion:
+                              type: integer
+                              format: int64
                       vendorID:
                         type: integer
                         format: int32
@@ -3309,6 +3330,9 @@ paths:
                                 1970 UTC
                             info:
                               type: string
+                            schemaVersion:
+                              type: integer
+                              format: int64
                       productIDs:
                         type: array
                         items:
@@ -3560,6 +3584,9 @@ paths:
                               1970 UTC
                           info:
                             type: string
+                          schemaVersion:
+                            type: integer
+                            format: int64
                     schemaVersion:
                       type: integer
                       format: int64
@@ -3871,6 +3898,9 @@ paths:
                             UTC
                         info:
                           type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   schemaVersion:
                     type: integer
                     format: int64
@@ -4317,6 +4347,9 @@ paths:
                                   1970 UTC
                               info:
                                 type: string
+                              schemaVersion:
+                                type: integer
+                                format: int64
                         vendorID:
                           type: integer
                           format: int32
@@ -4335,6 +4368,9 @@ paths:
                                   1970 UTC
                               info:
                                 type: string
+                              schemaVersion:
+                                type: integer
+                                format: int64
                         productIDs:
                           type: array
                           items:
@@ -4872,6 +4908,9 @@ paths:
                                 1970 UTC
                             info:
                               type: string
+                            schemaVersion:
+                              type: integer
+                              format: int64
                       vendorID:
                         type: integer
                         format: int32
@@ -4890,6 +4929,9 @@ paths:
                                 1970 UTC
                             info:
                               type: string
+                            schemaVersion:
+                              type: integer
+                              format: int64
                       productIDs:
                         type: array
                         items:
@@ -5350,6 +5392,9 @@ paths:
                                   1970 UTC
                               info:
                                 type: string
+                              schemaVersion:
+                                type: integer
+                                format: int64
                         vendorID:
                           type: integer
                           format: int32
@@ -5368,6 +5413,9 @@ paths:
                                   1970 UTC
                               info:
                                 type: string
+                              schemaVersion:
+                                type: integer
+                                format: int64
                         productIDs:
                           type: array
                           items:
@@ -5397,6 +5445,9 @@ paths:
                               1970 UTC
                           info:
                             type: string
+                          schemaVersion:
+                            type: integer
+                            format: int64
                     reason:
                       type: string
                       enum:
@@ -5926,6 +5977,9 @@ paths:
                                 1970 UTC
                             info:
                               type: string
+                            schemaVersion:
+                              type: integer
+                              format: int64
                       vendorID:
                         type: integer
                         format: int32
@@ -5944,6 +5998,9 @@ paths:
                                 1970 UTC
                             info:
                               type: string
+                            schemaVersion:
+                              type: integer
+                              format: int64
                       productIDs:
                         type: array
                         items:
@@ -5973,6 +6030,9 @@ paths:
                             UTC
                         info:
                           type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   reason:
                     type: string
                     enum:
@@ -6334,6 +6394,9 @@ paths:
                               1970 UTC
                           info:
                             type: string
+                          schemaVersion:
+                            type: integer
+                            format: int64
                     rejects:
                       type: array
                       items:
@@ -6349,6 +6412,9 @@ paths:
                               1970 UTC
                           info:
                             type: string
+                          schemaVersion:
+                            type: integer
+                            format: int64
                     schemaVersion:
                       type: integer
                       format: int64
@@ -6782,6 +6848,9 @@ paths:
                             UTC
                         info:
                           type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   rejects:
                     type: array
                     items:
@@ -6797,6 +6866,9 @@ paths:
                             UTC
                         info:
                           type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   schemaVersion:
                     type: integer
                     format: int64
@@ -7152,6 +7224,9 @@ paths:
                               1970 UTC
                           info:
                             type: string
+                          schemaVersion:
+                            type: integer
+                            format: int64
                     rejects:
                       type: array
                       items:
@@ -7167,6 +7242,9 @@ paths:
                               1970 UTC
                           info:
                             type: string
+                          schemaVersion:
+                            type: integer
+                            format: int64
                     schemaVersion:
                       type: integer
                       format: int64
@@ -7600,6 +7678,9 @@ paths:
                             UTC
                         info:
                           type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   rejects:
                     type: array
                     items:
@@ -7615,6 +7696,9 @@ paths:
                             UTC
                         info:
                           type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   schemaVersion:
                     type: integer
                     format: int64
@@ -7970,6 +8054,9 @@ paths:
                               1970 UTC
                           info:
                             type: string
+                          schemaVersion:
+                            type: integer
+                            format: int64
                     rejects:
                       type: array
                       items:
@@ -7985,6 +8072,9 @@ paths:
                               1970 UTC
                           info:
                             type: string
+                          schemaVersion:
+                            type: integer
+                            format: int64
                     schemaVersion:
                       type: integer
                       format: int64
@@ -8418,6 +8508,9 @@ paths:
                             UTC
                         info:
                           type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   rejects:
                     type: array
                     items:
@@ -8433,6 +8526,9 @@ paths:
                             UTC
                         info:
                           type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   schemaVersion:
                     type: integer
                     format: int64
@@ -8695,7 +8791,7 @@ paths:
                     schemaVersion:
                       type: integer
                       format: int64
-                    commissionerRemoteUiFlowUrl:
+                    managedAclExtensionRequestFlowUrl:
                       type: string
               pagination:
                 type: object
@@ -8830,6 +8926,9 @@ paths:
                           type: string
                         partNumber:
                           type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   schemaVersion:
                     type: integer
                     format: int64
@@ -8918,7 +9017,7 @@ paths:
                   schemaVersion:
                     type: integer
                     format: int64
-                  commissionerRemoteUiFlowUrl:
+                  managedAclExtensionRequestFlowUrl:
                     type: string
         default:
           description: An unexpected error response.
@@ -9158,6 +9257,9 @@ paths:
                                     1, 1970 UTC
                                 info:
                                   type: string
+                                schemaVersion:
+                                  type: integer
+                                  format: int64
                           subjectAsText:
                             type: string
                           rejects:
@@ -9175,6 +9277,9 @@ paths:
                                     1, 1970 UTC
                                 info:
                                   type: string
+                                schemaVersion:
+                                  type: integer
+                                  format: int64
                           vid:
                             type: integer
                             format: int32
@@ -9399,6 +9504,9 @@ paths:
                                   1970 UTC
                               info:
                                 type: string
+                              schemaVersion:
+                                type: integer
+                                format: int64
                         subjectAsText:
                           type: string
                         rejects:
@@ -9416,6 +9524,9 @@ paths:
                                   1970 UTC
                               info:
                                 type: string
+                              schemaVersion:
+                                type: integer
+                                format: int64
                         vid:
                           type: integer
                           format: int32
@@ -9572,6 +9683,9 @@ paths:
                                     1, 1970 UTC
                                 info:
                                   type: string
+                                schemaVersion:
+                                  type: integer
+                                  format: int64
                           subjectAsText:
                             type: string
                           rejects:
@@ -9589,6 +9703,9 @@ paths:
                                     1, 1970 UTC
                                 info:
                                   type: string
+                                schemaVersion:
+                                  type: integer
+                                  format: int64
                           vid:
                             type: integer
                             format: int32
@@ -9761,6 +9878,9 @@ paths:
                                   1970 UTC
                               info:
                                 type: string
+                              schemaVersion:
+                                type: integer
+                                format: int64
                         subjectAsText:
                           type: string
                         rejects:
@@ -9778,6 +9898,9 @@ paths:
                                   1970 UTC
                               info:
                                 type: string
+                              schemaVersion:
+                                type: integer
+                                format: int64
                         vid:
                           type: integer
                           format: int32
@@ -9873,6 +9996,9 @@ paths:
                                     1, 1970 UTC
                                 info:
                                   type: string
+                                schemaVersion:
+                                  type: integer
+                                  format: int64
                           subjectAsText:
                             type: string
                           rejects:
@@ -9890,6 +10016,9 @@ paths:
                                     1, 1970 UTC
                                 info:
                                   type: string
+                                schemaVersion:
+                                  type: integer
+                                  format: int64
                           vid:
                             type: integer
                             format: int32
@@ -10062,6 +10191,9 @@ paths:
                                   1970 UTC
                               info:
                                 type: string
+                              schemaVersion:
+                                type: integer
+                                format: int64
                         subjectAsText:
                           type: string
                         rejects:
@@ -10079,6 +10211,9 @@ paths:
                                   1970 UTC
                               info:
                                 type: string
+                              schemaVersion:
+                                type: integer
+                                format: int64
                         vid:
                           type: integer
                           format: int32
@@ -10174,6 +10309,9 @@ paths:
                                   1970 UTC
                               info:
                                 type: string
+                              schemaVersion:
+                                type: integer
+                                format: int64
                         subjectAsText:
                           type: string
                         rejects:
@@ -10191,6 +10329,9 @@ paths:
                                   1970 UTC
                               info:
                                 type: string
+                              schemaVersion:
+                                type: integer
+                                format: int64
                         vid:
                           type: integer
                           format: int32
@@ -10275,6 +10416,9 @@ paths:
                               1970 UTC
                           info:
                             type: string
+                          schemaVersion:
+                            type: integer
+                            format: int64
                     subjectAsText:
                       type: string
                     rejects:
@@ -10292,6 +10436,9 @@ paths:
                               1970 UTC
                           info:
                             type: string
+                          schemaVersion:
+                            type: integer
+                            format: int64
                     vid:
                       type: integer
                       format: int32
@@ -10444,6 +10591,9 @@ paths:
                             UTC
                         info:
                           type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   subjectAsText:
                     type: string
                   rejects:
@@ -10461,6 +10611,9 @@ paths:
                             UTC
                         info:
                           type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   vid:
                     type: integer
                     format: int32
@@ -10533,6 +10686,9 @@ paths:
                               1970 UTC
                           info:
                             type: string
+                          schemaVersion:
+                            type: integer
+                            format: int64
                     subjectAsText:
                       type: string
                     serialNumber:
@@ -10679,6 +10835,9 @@ paths:
                             UTC
                         info:
                           type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   subjectAsText:
                     type: string
                   serialNumber:
@@ -10780,6 +10939,9 @@ paths:
                                     1, 1970 UTC
                                 info:
                                   type: string
+                                schemaVersion:
+                                  type: integer
+                                  format: int64
                           subjectAsText:
                             type: string
                           rejects:
@@ -10797,6 +10959,9 @@ paths:
                                     1, 1970 UTC
                                 info:
                                   type: string
+                                schemaVersion:
+                                  type: integer
+                                  format: int64
                           vid:
                             type: integer
                             format: int32
@@ -10970,6 +11135,9 @@ paths:
                                   1970 UTC
                               info:
                                 type: string
+                              schemaVersion:
+                                type: integer
+                                format: int64
                         subjectAsText:
                           type: string
                         rejects:
@@ -10987,6 +11155,9 @@ paths:
                                   1970 UTC
                               info:
                                 type: string
+                              schemaVersion:
+                                type: integer
+                                format: int64
                         vid:
                           type: integer
                           format: int32
@@ -11397,6 +11568,9 @@ paths:
                                     1, 1970 UTC
                                 info:
                                   type: string
+                                schemaVersion:
+                                  type: integer
+                                  format: int64
                           subjectAsText:
                             type: string
                           rejects:
@@ -11414,6 +11588,9 @@ paths:
                                     1, 1970 UTC
                                 info:
                                   type: string
+                                schemaVersion:
+                                  type: integer
+                                  format: int64
                           vid:
                             type: integer
                             format: int32
@@ -11587,6 +11764,9 @@ paths:
                                   1970 UTC
                               info:
                                 type: string
+                              schemaVersion:
+                                type: integer
+                                format: int64
                         subjectAsText:
                           type: string
                         rejects:
@@ -11604,6 +11784,9 @@ paths:
                                   1970 UTC
                               info:
                                 type: string
+                              schemaVersion:
+                                type: integer
+                                format: int64
                         vid:
                           type: integer
                           format: int32
@@ -11703,6 +11886,9 @@ paths:
                                     1, 1970 UTC
                                 info:
                                   type: string
+                                schemaVersion:
+                                  type: integer
+                                  format: int64
                           subjectAsText:
                             type: string
                           rejects:
@@ -11720,6 +11906,9 @@ paths:
                                     1, 1970 UTC
                                 info:
                                   type: string
+                                schemaVersion:
+                                  type: integer
+                                  format: int64
                           vid:
                             type: integer
                             format: int32
@@ -11893,6 +12082,9 @@ paths:
                                   1970 UTC
                               info:
                                 type: string
+                              schemaVersion:
+                                type: integer
+                                format: int64
                         subjectAsText:
                           type: string
                         rejects:
@@ -11910,6 +12102,9 @@ paths:
                                   1970 UTC
                               info:
                                 type: string
+                              schemaVersion:
+                                type: integer
+                                format: int64
                         vid:
                           type: integer
                           format: int32
@@ -12074,6 +12269,9 @@ paths:
                               1970 UTC
                           info:
                             type: string
+                          schemaVersion:
+                            type: integer
+                            format: int64
                     disabledByNodeAdmin:
                       type: boolean
                     rejects:
@@ -12091,6 +12289,9 @@ paths:
                               1970 UTC
                           info:
                             type: string
+                          schemaVersion:
+                            type: integer
+                            format: int64
                     schemaVersion:
                       type: integer
                       format: int64
@@ -12404,6 +12605,9 @@ paths:
                             UTC
                         info:
                           type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   disabledByNodeAdmin:
                     type: boolean
                   rejects:
@@ -12421,6 +12625,9 @@ paths:
                             UTC
                         info:
                           type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   schemaVersion:
                     type: integer
                     format: int64
@@ -14106,6 +14313,9 @@ paths:
                               1970 UTC
                           info:
                             type: string
+                          schemaVersion:
+                            type: integer
+                            format: int64
                     rejects:
                       type: array
                       items:
@@ -14121,6 +14331,9 @@ paths:
                               1970 UTC
                           info:
                             type: string
+                          schemaVersion:
+                            type: integer
+                            format: int64
                     schemaVersion:
                       type: integer
                       format: int64
@@ -14434,6 +14647,9 @@ paths:
                             UTC
                         info:
                           type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   rejects:
                     type: array
                     items:
@@ -14449,6 +14665,9 @@ paths:
                             UTC
                         info:
                           type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   schemaVersion:
                     type: integer
                     format: int64
@@ -14684,6 +14903,9 @@ paths:
                               1970 UTC
                           info:
                             type: string
+                          schemaVersion:
+                            type: integer
+                            format: int64
                     rejects:
                       type: array
                       items:
@@ -14699,6 +14921,9 @@ paths:
                               1970 UTC
                           info:
                             type: string
+                          schemaVersion:
+                            type: integer
+                            format: int64
                     schemaVersion:
                       type: integer
                       format: int64
@@ -15012,6 +15237,9 @@ paths:
                             UTC
                         info:
                           type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   rejects:
                     type: array
                     items:
@@ -15027,6 +15255,9 @@ paths:
                             UTC
                         info:
                           type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   schemaVersion:
                     type: integer
                     format: int64
@@ -17061,6 +17292,9 @@ definitions:
               title: number of nanoseconds elapsed since January 1, 1970 UTC
             info:
               type: string
+            schemaVersion:
+              type: integer
+              format: int64
       vendorID:
         type: integer
         format: int32
@@ -17077,6 +17311,9 @@ definitions:
               title: number of nanoseconds elapsed since January 1, 1970 UTC
             info:
               type: string
+            schemaVersion:
+              type: integer
+              format: int64
       productIDs:
         type: array
         items:
@@ -17111,6 +17348,9 @@ definitions:
         title: number of nanoseconds elapsed since January 1, 1970 UTC
       info:
         type: string
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.dclauth.PendingAccount:
     type: object
     properties:
@@ -17333,6 +17573,9 @@ definitions:
                   title: number of nanoseconds elapsed since January 1, 1970 UTC
                 info:
                   type: string
+                schemaVersion:
+                  type: integer
+                  format: int64
           vendorID:
             type: integer
             format: int32
@@ -17349,6 +17592,9 @@ definitions:
                   title: number of nanoseconds elapsed since January 1, 1970 UTC
                 info:
                   type: string
+                schemaVersion:
+                  type: integer
+                  format: int64
           productIDs:
             type: array
             items:
@@ -17388,6 +17634,9 @@ definitions:
               title: number of nanoseconds elapsed since January 1, 1970 UTC
             info:
               type: string
+            schemaVersion:
+              type: integer
+              format: int64
       schemaVersion:
         type: integer
         format: int64
@@ -17619,6 +17868,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
             vendorID:
               type: integer
               format: int32
@@ -17635,6 +17887,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
             productIDs:
               type: array
               items:
@@ -17910,6 +18165,9 @@ definitions:
                           UTC
                       info:
                         type: string
+                      schemaVersion:
+                        type: integer
+                        format: int64
                 vendorID:
                   type: integer
                   format: int32
@@ -17928,6 +18186,9 @@ definitions:
                           UTC
                       info:
                         type: string
+                      schemaVersion:
+                        type: integer
+                        format: int64
                 productIDs:
                   type: array
                   items:
@@ -17998,6 +18259,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
             schemaVersion:
               type: integer
               format: int64
@@ -18262,6 +18526,9 @@ definitions:
                           UTC
                       info:
                         type: string
+                      schemaVersion:
+                        type: integer
+                        format: int64
                 vendorID:
                   type: integer
                   format: int32
@@ -18280,6 +18547,9 @@ definitions:
                           UTC
                       info:
                         type: string
+                      schemaVersion:
+                        type: integer
+                        format: int64
                 productIDs:
                   type: array
                   items:
@@ -18558,6 +18828,9 @@ definitions:
                           UTC
                       info:
                         type: string
+                      schemaVersion:
+                        type: integer
+                        format: int64
                 vendorID:
                   type: integer
                   format: int32
@@ -18576,6 +18849,9 @@ definitions:
                           UTC
                       info:
                         type: string
+                      schemaVersion:
+                        type: integer
+                        format: int64
                 productIDs:
                   type: array
                   items:
@@ -18603,6 +18879,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
             reason:
               type: string
               enum:
@@ -18860,6 +19139,9 @@ definitions:
                   title: number of nanoseconds elapsed since January 1, 1970 UTC
                 info:
                   type: string
+                schemaVersion:
+                  type: integer
+                  format: int64
           vendorID:
             type: integer
             format: int32
@@ -18876,6 +19158,9 @@ definitions:
                   title: number of nanoseconds elapsed since January 1, 1970 UTC
                 info:
                   type: string
+                schemaVersion:
+                  type: integer
+                  format: int64
           productIDs:
             type: array
             items:
@@ -19131,6 +19416,9 @@ definitions:
                       title: number of nanoseconds elapsed since January 1, 1970 UTC
                     info:
                       type: string
+                    schemaVersion:
+                      type: integer
+                      format: int64
               vendorID:
                 type: integer
                 format: int32
@@ -19147,6 +19435,9 @@ definitions:
                       title: number of nanoseconds elapsed since January 1, 1970 UTC
                     info:
                       type: string
+                    schemaVersion:
+                      type: integer
+                      format: int64
               productIDs:
                 type: array
                 items:
@@ -19189,6 +19480,9 @@ definitions:
                   title: number of nanoseconds elapsed since January 1, 1970 UTC
                 info:
                   type: string
+                schemaVersion:
+                  type: integer
+                  format: int64
           schemaVersion:
             type: integer
             format: int64
@@ -19421,6 +19715,9 @@ definitions:
                       title: number of nanoseconds elapsed since January 1, 1970 UTC
                     info:
                       type: string
+                    schemaVersion:
+                      type: integer
+                      format: int64
               vendorID:
                 type: integer
                 format: int32
@@ -19437,6 +19734,9 @@ definitions:
                       title: number of nanoseconds elapsed since January 1, 1970 UTC
                     info:
                       type: string
+                    schemaVersion:
+                      type: integer
+                      format: int64
               productIDs:
                 type: array
                 items:
@@ -19683,6 +19983,9 @@ definitions:
                       title: number of nanoseconds elapsed since January 1, 1970 UTC
                     info:
                       type: string
+                    schemaVersion:
+                      type: integer
+                      format: int64
               vendorID:
                 type: integer
                 format: int32
@@ -19699,6 +20002,9 @@ definitions:
                       title: number of nanoseconds elapsed since January 1, 1970 UTC
                     info:
                       type: string
+                    schemaVersion:
+                      type: integer
+                      format: int64
               productIDs:
                 type: array
                 items:
@@ -19726,6 +20032,9 @@ definitions:
                   title: number of nanoseconds elapsed since January 1, 1970 UTC
                 info:
                   type: string
+                schemaVersion:
+                  type: integer
+                  format: int64
           reason:
             type: string
             enum:
@@ -19957,6 +20266,9 @@ definitions:
                   title: number of nanoseconds elapsed since January 1, 1970 UTC
                 info:
                   type: string
+                schemaVersion:
+                  type: integer
+                  format: int64
           vendorID:
             type: integer
             format: int32
@@ -19973,6 +20285,9 @@ definitions:
                   title: number of nanoseconds elapsed since January 1, 1970 UTC
                 info:
                   type: string
+                schemaVersion:
+                  type: integer
+                  format: int64
           productIDs:
             type: array
             items:
@@ -20212,6 +20527,9 @@ definitions:
                   title: number of nanoseconds elapsed since January 1, 1970 UTC
                 info:
                   type: string
+                schemaVersion:
+                  type: integer
+                  format: int64
           vendorID:
             type: integer
             format: int32
@@ -20228,6 +20546,9 @@ definitions:
                   title: number of nanoseconds elapsed since January 1, 1970 UTC
                 info:
                   type: string
+                schemaVersion:
+                  type: integer
+                  format: int64
           productIDs:
             type: array
             items:
@@ -20255,6 +20576,9 @@ definitions:
               title: number of nanoseconds elapsed since January 1, 1970 UTC
             info:
               type: string
+            schemaVersion:
+              type: integer
+              format: int64
       reason:
         type: string
         enum:
@@ -20517,6 +20841,9 @@ definitions:
               title: number of nanoseconds elapsed since January 1, 1970 UTC
             info:
               type: string
+            schemaVersion:
+              type: integer
+              format: int64
       rejects:
         type: array
         items:
@@ -20530,6 +20857,9 @@ definitions:
               title: number of nanoseconds elapsed since January 1, 1970 UTC
             info:
               type: string
+            schemaVersion:
+              type: integer
+              format: int64
       schemaVersion:
         type: integer
         format: int64
@@ -20544,6 +20874,9 @@ definitions:
         title: number of nanoseconds elapsed since January 1, 1970 UTC
       info:
         type: string
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.dclupgrade.ProposedUpgrade:
     type: object
     properties:
@@ -20680,6 +21013,9 @@ definitions:
               title: number of nanoseconds elapsed since January 1, 1970 UTC
             info:
               type: string
+            schemaVersion:
+              type: integer
+              format: int64
       rejects:
         type: array
         items:
@@ -20693,6 +21029,9 @@ definitions:
               title: number of nanoseconds elapsed since January 1, 1970 UTC
             info:
               type: string
+            schemaVersion:
+              type: integer
+              format: int64
       schemaVersion:
         type: integer
         format: int64
@@ -20841,6 +21180,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
             rejects:
               type: array
               items:
@@ -20854,6 +21196,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
             schemaVersion:
               type: integer
               format: int64
@@ -21028,6 +21373,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
             rejects:
               type: array
               items:
@@ -21041,6 +21389,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
             schemaVersion:
               type: integer
               format: int64
@@ -21215,6 +21566,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
             rejects:
               type: array
               items:
@@ -21228,6 +21582,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
             schemaVersion:
               type: integer
               format: int64
@@ -21398,6 +21755,9 @@ definitions:
                   title: number of nanoseconds elapsed since January 1, 1970 UTC
                 info:
                   type: string
+                schemaVersion:
+                  type: integer
+                  format: int64
           rejects:
             type: array
             items:
@@ -21411,6 +21771,9 @@ definitions:
                   title: number of nanoseconds elapsed since January 1, 1970 UTC
                 info:
                   type: string
+                schemaVersion:
+                  type: integer
+                  format: int64
           schemaVersion:
             type: integer
             format: int64
@@ -21555,6 +21918,9 @@ definitions:
                   title: number of nanoseconds elapsed since January 1, 1970 UTC
                 info:
                   type: string
+                schemaVersion:
+                  type: integer
+                  format: int64
           rejects:
             type: array
             items:
@@ -21568,6 +21934,9 @@ definitions:
                   title: number of nanoseconds elapsed since January 1, 1970 UTC
                 info:
                   type: string
+                schemaVersion:
+                  type: integer
+                  format: int64
           schemaVersion:
             type: integer
             format: int64
@@ -21712,6 +22081,9 @@ definitions:
                   title: number of nanoseconds elapsed since January 1, 1970 UTC
                 info:
                   type: string
+                schemaVersion:
+                  type: integer
+                  format: int64
           rejects:
             type: array
             items:
@@ -21725,6 +22097,9 @@ definitions:
                   title: number of nanoseconds elapsed since January 1, 1970 UTC
                 info:
                   type: string
+                schemaVersion:
+                  type: integer
+                  format: int64
           schemaVersion:
             type: integer
             format: int64
@@ -21864,6 +22239,9 @@ definitions:
               title: number of nanoseconds elapsed since January 1, 1970 UTC
             info:
               type: string
+            schemaVersion:
+              type: integer
+              format: int64
       rejects:
         type: array
         items:
@@ -21877,6 +22255,9 @@ definitions:
               title: number of nanoseconds elapsed since January 1, 1970 UTC
             info:
               type: string
+            schemaVersion:
+              type: integer
+              format: int64
       schemaVersion:
         type: integer
         format: int64
@@ -21929,7 +22310,7 @@ definitions:
       schemaVersion:
         type: integer
         format: int64
-      commissionerRemoteUiFlowUrl:
+      managedAclExtensionRequestFlowUrl:
         type: string
   zigbeealliance.distributedcomplianceledger.model.ModelVersion:
     type: object
@@ -22002,6 +22383,9 @@ definitions:
         type: string
       partNumber:
         type: string
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.model.QueryAllModelResponse:
     type: object
     properties:
@@ -22056,7 +22440,7 @@ definitions:
             schemaVersion:
               type: integer
               format: int64
-            commissionerRemoteUiFlowUrl:
+            managedAclExtensionRequestFlowUrl:
               type: string
       pagination:
         type: object
@@ -22136,7 +22520,7 @@ definitions:
           schemaVersion:
             type: integer
             format: int64
-          commissionerRemoteUiFlowUrl:
+          managedAclExtensionRequestFlowUrl:
             type: string
   zigbeealliance.distributedcomplianceledger.model.QueryGetModelVersionResponse:
     type: object
@@ -22226,6 +22610,9 @@ definitions:
                   type: string
                 partNumber:
                   type: string
+                schemaVersion:
+                  type: integer
+                  format: int64
           schemaVersion:
             type: integer
             format: int64
@@ -22247,6 +22634,9 @@ definitions:
               type: string
             partNumber:
               type: string
+            schemaVersion:
+              type: integer
+              format: int64
       schemaVersion:
         type: integer
         format: int64
@@ -22295,6 +22685,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
             subjectAsText:
               type: string
             rejects:
@@ -22310,6 +22703,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
             vid:
               type: integer
               format: int32
@@ -22384,6 +22780,9 @@ definitions:
               title: number of nanoseconds elapsed since January 1, 1970 UTC
             info:
               type: string
+            schemaVersion:
+              type: integer
+              format: int64
       subjectAsText:
         type: string
       rejects:
@@ -22399,6 +22798,9 @@ definitions:
               title: number of nanoseconds elapsed since January 1, 1970 UTC
             info:
               type: string
+            schemaVersion:
+              type: integer
+              format: int64
       vid:
         type: integer
         format: int32
@@ -22444,6 +22846,9 @@ definitions:
         title: number of nanoseconds elapsed since January 1, 1970 UTC
       info:
         type: string
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.pki.NocIcaCertificates:
     type: object
     properties:
@@ -22488,6 +22893,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
             subjectAsText:
               type: string
             rejects:
@@ -22503,6 +22911,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
             vid:
               type: integer
               format: int32
@@ -22558,6 +22969,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
             subjectAsText:
               type: string
             rejects:
@@ -22573,6 +22987,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
             vid:
               type: integer
               format: int32
@@ -22630,6 +23047,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
             subjectAsText:
               type: string
             rejects:
@@ -22645,6 +23065,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
             vid:
               type: integer
               format: int32
@@ -22765,6 +23188,9 @@ definitions:
               title: number of nanoseconds elapsed since January 1, 1970 UTC
             info:
               type: string
+            schemaVersion:
+              type: integer
+              format: int64
       subjectAsText:
         type: string
       rejects:
@@ -22780,6 +23206,9 @@ definitions:
               title: number of nanoseconds elapsed since January 1, 1970 UTC
             info:
               type: string
+            schemaVersion:
+              type: integer
+              format: int64
       vid:
         type: integer
         format: int32
@@ -22809,6 +23238,9 @@ definitions:
               title: number of nanoseconds elapsed since January 1, 1970 UTC
             info:
               type: string
+            schemaVersion:
+              type: integer
+              format: int64
       subjectAsText:
         type: string
       serialNumber:
@@ -22870,6 +23302,9 @@ definitions:
                             UTC
                         info:
                           type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   subjectAsText:
                     type: string
                   rejects:
@@ -22887,6 +23322,9 @@ definitions:
                             UTC
                         info:
                           type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   vid:
                     type: integer
                     format: int32
@@ -22975,6 +23413,9 @@ definitions:
                             UTC
                         info:
                           type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   subjectAsText:
                     type: string
                   rejects:
@@ -22992,6 +23433,9 @@ definitions:
                             UTC
                         info:
                           type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   vid:
                     type: integer
                     format: int32
@@ -23080,6 +23524,9 @@ definitions:
                             UTC
                         info:
                           type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   subjectAsText:
                     type: string
                   rejects:
@@ -23097,6 +23544,9 @@ definitions:
                             UTC
                         info:
                           type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   vid:
                     type: integer
                     format: int32
@@ -23231,6 +23681,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
             subjectAsText:
               type: string
             rejects:
@@ -23246,6 +23699,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
             vid:
               type: integer
               format: int32
@@ -23306,6 +23762,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
             subjectAsText:
               type: string
             serialNumber:
@@ -23393,6 +23852,9 @@ definitions:
                             UTC
                         info:
                           type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   subjectAsText:
                     type: string
                   rejects:
@@ -23410,6 +23872,9 @@ definitions:
                             UTC
                         info:
                           type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   vid:
                     type: integer
                     format: int32
@@ -23499,6 +23964,9 @@ definitions:
                             UTC
                         info:
                           type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   subjectAsText:
                     type: string
                   rejects:
@@ -23516,6 +23984,9 @@ definitions:
                             UTC
                         info:
                           type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   vid:
                     type: integer
                     format: int32
@@ -23605,6 +24076,9 @@ definitions:
                             UTC
                         info:
                           type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   subjectAsText:
                     type: string
                   rejects:
@@ -23622,6 +24096,9 @@ definitions:
                             UTC
                         info:
                           type: string
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   vid:
                     type: integer
                     format: int32
@@ -23724,6 +24201,9 @@ definitions:
                           UTC
                       info:
                         type: string
+                      schemaVersion:
+                        type: integer
+                        format: int64
                 subjectAsText:
                   type: string
                 rejects:
@@ -23741,6 +24221,9 @@ definitions:
                           UTC
                       info:
                         type: string
+                      schemaVersion:
+                        type: integer
+                        format: int64
                 vid:
                   type: integer
                   format: int32
@@ -23841,6 +24324,9 @@ definitions:
                           UTC
                       info:
                         type: string
+                      schemaVersion:
+                        type: integer
+                        format: int64
                 subjectAsText:
                   type: string
                 rejects:
@@ -23858,6 +24344,9 @@ definitions:
                           UTC
                       info:
                         type: string
+                      schemaVersion:
+                        type: integer
+                        format: int64
                 vid:
                   type: integer
                   format: int32
@@ -23920,6 +24409,9 @@ definitions:
                           UTC
                       info:
                         type: string
+                      schemaVersion:
+                        type: integer
+                        format: int64
                 subjectAsText:
                   type: string
                 rejects:
@@ -23937,6 +24429,9 @@ definitions:
                           UTC
                       info:
                         type: string
+                      schemaVersion:
+                        type: integer
+                        format: int64
                 vid:
                   type: integer
                   format: int32
@@ -24000,6 +24495,9 @@ definitions:
                           UTC
                       info:
                         type: string
+                      schemaVersion:
+                        type: integer
+                        format: int64
                 subjectAsText:
                   type: string
                 rejects:
@@ -24017,6 +24515,9 @@ definitions:
                           UTC
                       info:
                         type: string
+                      schemaVersion:
+                        type: integer
+                        format: int64
                 vid:
                   type: integer
                   format: int32
@@ -24143,6 +24644,9 @@ definitions:
                   title: number of nanoseconds elapsed since January 1, 1970 UTC
                 info:
                   type: string
+                schemaVersion:
+                  type: integer
+                  format: int64
           subjectAsText:
             type: string
           rejects:
@@ -24158,6 +24662,9 @@ definitions:
                   title: number of nanoseconds elapsed since January 1, 1970 UTC
                 info:
                   type: string
+                schemaVersion:
+                  type: integer
+                  format: int64
           vid:
             type: integer
             format: int32
@@ -24190,6 +24697,9 @@ definitions:
                   title: number of nanoseconds elapsed since January 1, 1970 UTC
                 info:
                   type: string
+                schemaVersion:
+                  type: integer
+                  format: int64
           subjectAsText:
             type: string
           serialNumber:
@@ -24249,6 +24759,9 @@ definitions:
                           UTC
                       info:
                         type: string
+                      schemaVersion:
+                        type: integer
+                        format: int64
                 subjectAsText:
                   type: string
                 rejects:
@@ -24266,6 +24779,9 @@ definitions:
                           UTC
                       info:
                         type: string
+                      schemaVersion:
+                        type: integer
+                        format: int64
                 vid:
                   type: integer
                   format: int32
@@ -24327,6 +24843,9 @@ definitions:
                           UTC
                       info:
                         type: string
+                      schemaVersion:
+                        type: integer
+                        format: int64
                 subjectAsText:
                   type: string
                 rejects:
@@ -24344,6 +24863,9 @@ definitions:
                           UTC
                       info:
                         type: string
+                      schemaVersion:
+                        type: integer
+                        format: int64
                 vid:
                   type: integer
                   format: int32
@@ -24405,6 +24927,9 @@ definitions:
                           UTC
                       info:
                         type: string
+                      schemaVersion:
+                        type: integer
+                        format: int64
                 subjectAsText:
                   type: string
                 rejects:
@@ -24422,6 +24947,9 @@ definitions:
                           UTC
                       info:
                         type: string
+                      schemaVersion:
+                        type: integer
+                        format: int64
                 vid:
                   type: integer
                   format: int32
@@ -24496,6 +25024,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
             subjectAsText:
               type: string
             rejects:
@@ -24511,6 +25042,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
             vid:
               type: integer
               format: int32
@@ -24567,6 +25101,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
             subjectAsText:
               type: string
             rejects:
@@ -24582,6 +25119,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
             vid:
               type: integer
               format: int32
@@ -24638,6 +25178,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
             subjectAsText:
               type: string
             rejects:
@@ -24653,6 +25196,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
             vid:
               type: integer
               format: int32
@@ -24714,6 +25260,9 @@ definitions:
               title: number of nanoseconds elapsed since January 1, 1970 UTC
             info:
               type: string
+            schemaVersion:
+              type: integer
+              format: int64
       disabledByNodeAdmin:
         type: boolean
       rejects:
@@ -24729,6 +25278,9 @@ definitions:
               title: number of nanoseconds elapsed since January 1, 1970 UTC
             info:
               type: string
+            schemaVersion:
+              type: integer
+              format: int64
       schemaVersion:
         type: integer
         format: int64
@@ -24743,6 +25295,9 @@ definitions:
         title: number of nanoseconds elapsed since January 1, 1970 UTC
       info:
         type: string
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.validator.LastValidatorPower:
     type: object
     properties:
@@ -24774,6 +25329,9 @@ definitions:
               title: number of nanoseconds elapsed since January 1, 1970 UTC
             info:
               type: string
+            schemaVersion:
+              type: integer
+              format: int64
       rejects:
         type: array
         items:
@@ -24787,6 +25345,9 @@ definitions:
               title: number of nanoseconds elapsed since January 1, 1970 UTC
             info:
               type: string
+            schemaVersion:
+              type: integer
+              format: int64
       schemaVersion:
         type: integer
         format: int64
@@ -24815,6 +25376,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
             disabledByNodeAdmin:
               type: boolean
             rejects:
@@ -24830,6 +25394,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
             schemaVersion:
               type: integer
               format: int64
@@ -24926,6 +25493,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
             rejects:
               type: array
               items:
@@ -24939,6 +25509,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
             schemaVersion:
               type: integer
               format: int64
@@ -24993,6 +25566,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
             rejects:
               type: array
               items:
@@ -25006,6 +25582,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
             schemaVersion:
               type: integer
               format: int64
@@ -25298,6 +25877,9 @@ definitions:
                   title: number of nanoseconds elapsed since January 1, 1970 UTC
                 info:
                   type: string
+                schemaVersion:
+                  type: integer
+                  format: int64
           disabledByNodeAdmin:
             type: boolean
           rejects:
@@ -25313,6 +25895,9 @@ definitions:
                   title: number of nanoseconds elapsed since January 1, 1970 UTC
                 info:
                   type: string
+                schemaVersion:
+                  type: integer
+                  format: int64
           schemaVersion:
             type: integer
             format: int64
@@ -25353,6 +25938,9 @@ definitions:
                   title: number of nanoseconds elapsed since January 1, 1970 UTC
                 info:
                   type: string
+                schemaVersion:
+                  type: integer
+                  format: int64
           rejects:
             type: array
             items:
@@ -25366,6 +25954,9 @@ definitions:
                   title: number of nanoseconds elapsed since January 1, 1970 UTC
                 info:
                   type: string
+                schemaVersion:
+                  type: integer
+                  format: int64
           schemaVersion:
             type: integer
             format: int64
@@ -25392,6 +25983,9 @@ definitions:
                   title: number of nanoseconds elapsed since January 1, 1970 UTC
                 info:
                   type: string
+                schemaVersion:
+                  type: integer
+                  format: int64
           rejects:
             type: array
             items:
@@ -25405,6 +25999,9 @@ definitions:
                   title: number of nanoseconds elapsed since January 1, 1970 UTC
                 info:
                   type: string
+                schemaVersion:
+                  type: integer
+                  format: int64
           schemaVersion:
             type: integer
             format: int64
@@ -25636,6 +26233,9 @@ definitions:
               title: number of nanoseconds elapsed since January 1, 1970 UTC
             info:
               type: string
+            schemaVersion:
+              type: integer
+              format: int64
       rejects:
         type: array
         items:
@@ -25649,6 +26249,9 @@ definitions:
               title: number of nanoseconds elapsed since January 1, 1970 UTC
             info:
               type: string
+            schemaVersion:
+              type: integer
+              format: int64
       schemaVersion:
         type: integer
         format: int64

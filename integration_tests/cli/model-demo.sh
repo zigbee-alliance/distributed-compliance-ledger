@@ -60,9 +60,9 @@ test_divider
 productLabel="Device #1"
 schema_version_0=0
 schema_version_2=2
-commissionerRemoteUiFlowURL="https://commissionerRemoteUiFlowURL.dclmodel"
+managedAclExtensionRequestFlowUrl="https://managedAclExtensionRequestFlowUrl.dclmodel"
 echo "Add Model with VID: $vid PID: $pid"
-result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel="$productLabel" --partNumber=1 --commissioningCustomFlow=0 --commissionerRemoteUiFlowURL="$commissionerRemoteUiFlowURL" --schemaVersion=$schema_version_2 --from=$vendor_account --yes)
+result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel="$productLabel" --partNumber=1 --commissioningCustomFlow=0 --managedAclExtensionRequestFlowUrl="$managedAclExtensionRequestFlowUrl" --schemaVersion=$schema_version_2 --from=$vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
@@ -84,7 +84,7 @@ check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"productLabel\": \"$productLabel\""
 check_response "$result" "\"schemaVersion\": $schema_version_2"
-check_response "$result" "\"commissionerRemoteUiFlowUrl\": \"$commissionerRemoteUiFlowURL\""
+check_response "$result" "\"managedAclExtensionRequestFlowUrl\": \"$managedAclExtensionRequestFlowUrl\""
 echo "$result"
 
 echo "Get Model with VID: $vid_with_pids PID: $pid"
@@ -130,12 +130,12 @@ echo "$result"
 
 test_divider
 
-echo "Update Model with VID: ${vid} PID: ${pid} with new description, commissionerRemoteUiFlowURL and commissioningModeInitialStepsHint"
+echo "Update Model with VID: ${vid} PID: ${pid} with new description, managedAclExtensionRequestFlowUrl and commissioningModeInitialStepsHint"
 description="New Device Description"
 schema_version_3=3
-newCommissionerRemoteUiFlowURL="https://commissionerRemoteUiFlowURL.dclmodel.updated"
+newManagedAclExtensionRequestFlowUrl="https://managedAclExtensionRequestFlowUrl.dclmodel.updated"
 newCommissioningModeInitialStepsHint=8
-result=$(echo "test1234" | dcld tx model update-model --vid=$vid --pid=$pid --from $vendor_account --yes --productLabel "$description" --schemaVersion=$schema_version_3 --commissionerRemoteUiFlowURL="$newCommissionerRemoteUiFlowURL" --commissioningModeInitialStepsHint="$newCommissioningModeInitialStepsHint")
+result=$(echo "test1234" | dcld tx model update-model --vid=$vid --pid=$pid --from $vendor_account --yes --productLabel "$description" --schemaVersion=$schema_version_3 --managedAclExtensionRequestFlowUrl="$newManagedAclExtensionRequestFlowUrl" --commissioningModeInitialStepsHint="$newCommissioningModeInitialStepsHint")
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
@@ -156,7 +156,7 @@ check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"productLabel\": \"$description\""
 check_response "$result" "\"schemaVersion\": $schema_version_3"
-check_response "$result" "\"commissionerRemoteUiFlowUrl\": \"$newCommissionerRemoteUiFlowURL\""
+check_response "$result" "\"managedAclExtensionRequestFlowUrl\": \"$newManagedAclExtensionRequestFlowUrl\""
 check_response "$result" "\"commissioningModeInitialStepsHint\": $newCommissioningModeInitialStepsHint"
 echo "$result"
 

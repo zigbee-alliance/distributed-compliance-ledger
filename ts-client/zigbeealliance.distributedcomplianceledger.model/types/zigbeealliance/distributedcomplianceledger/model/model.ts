@@ -23,7 +23,7 @@ export interface Model {
   lsfRevision: number;
   creator: string;
   schemaVersion: number;
-  commissionerRemoteUiFlowUrl: string;
+  managedAclExtensionRequestFlowUrl: string;
 }
 
 function createBaseModel(): Model {
@@ -47,7 +47,7 @@ function createBaseModel(): Model {
     lsfRevision: 0,
     creator: "",
     schemaVersion: 0,
-    commissionerRemoteUiFlowUrl: "",
+    managedAclExtensionRequestFlowUrl: "",
   };
 }
 
@@ -110,8 +110,8 @@ export const Model = {
     if (message.schemaVersion !== 0) {
       writer.uint32(152).uint32(message.schemaVersion);
     }
-    if (message.commissionerRemoteUiFlowUrl !== "") {
-      writer.uint32(162).string(message.commissionerRemoteUiFlowUrl);
+    if (message.managedAclExtensionRequestFlowUrl !== "") {
+      writer.uint32(162).string(message.managedAclExtensionRequestFlowUrl);
     }
     return writer;
   },
@@ -181,7 +181,7 @@ export const Model = {
           message.schemaVersion = reader.uint32();
           break;
         case 20:
-          message.commissionerRemoteUiFlowUrl = reader.string();
+          message.managedAclExtensionRequestFlowUrl = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -222,8 +222,8 @@ export const Model = {
       lsfRevision: isSet(object.lsfRevision) ? Number(object.lsfRevision) : 0,
       creator: isSet(object.creator) ? String(object.creator) : "",
       schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
-      commissionerRemoteUiFlowUrl: isSet(object.commissionerRemoteUiFlowUrl)
-        ? String(object.commissionerRemoteUiFlowUrl)
+      managedAclExtensionRequestFlowUrl: isSet(object.managedAclExtensionRequestFlowUrl)
+        ? String(object.managedAclExtensionRequestFlowUrl)
         : "",
     };
   },
@@ -255,8 +255,8 @@ export const Model = {
     message.lsfRevision !== undefined && (obj.lsfRevision = Math.round(message.lsfRevision));
     message.creator !== undefined && (obj.creator = message.creator);
     message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
-    message.commissionerRemoteUiFlowUrl !== undefined
-      && (obj.commissionerRemoteUiFlowUrl = message.commissionerRemoteUiFlowUrl);
+    message.managedAclExtensionRequestFlowUrl !== undefined
+      && (obj.managedAclExtensionRequestFlowUrl = message.managedAclExtensionRequestFlowUrl);
     return obj;
   },
 
@@ -281,7 +281,7 @@ export const Model = {
     message.lsfRevision = object.lsfRevision ?? 0;
     message.creator = object.creator ?? "";
     message.schemaVersion = object.schemaVersion ?? 0;
-    message.commissionerRemoteUiFlowUrl = object.commissionerRemoteUiFlowUrl ?? "";
+    message.managedAclExtensionRequestFlowUrl = object.managedAclExtensionRequestFlowUrl ?? "";
     return message;
   },
 };

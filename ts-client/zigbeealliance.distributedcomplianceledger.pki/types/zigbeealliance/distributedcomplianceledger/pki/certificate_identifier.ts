@@ -6,11 +6,10 @@ export const protobufPackage = "zigbeealliance.distributedcomplianceledger.pki";
 export interface CertificateIdentifier {
   subject: string;
   subjectKeyId: string;
-  schemaVersion: number;
 }
 
 function createBaseCertificateIdentifier(): CertificateIdentifier {
-  return { subject: "", subjectKeyId: "", schemaVersion: 0 };
+  return { subject: "", subjectKeyId: "" };
 }
 
 export const CertificateIdentifier = {
@@ -20,9 +19,6 @@ export const CertificateIdentifier = {
     }
     if (message.subjectKeyId !== "") {
       writer.uint32(18).string(message.subjectKeyId);
-    }
-    if (message.schemaVersion !== 0) {
-      writer.uint32(24).uint32(message.schemaVersion);
     }
     return writer;
   },
@@ -40,9 +36,6 @@ export const CertificateIdentifier = {
         case 2:
           message.subjectKeyId = reader.string();
           break;
-        case 3:
-          message.schemaVersion = reader.uint32();
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -55,7 +48,6 @@ export const CertificateIdentifier = {
     return {
       subject: isSet(object.subject) ? String(object.subject) : "",
       subjectKeyId: isSet(object.subjectKeyId) ? String(object.subjectKeyId) : "",
-      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
@@ -63,7 +55,6 @@ export const CertificateIdentifier = {
     const obj: any = {};
     message.subject !== undefined && (obj.subject = message.subject);
     message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId);
-    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
@@ -71,7 +62,6 @@ export const CertificateIdentifier = {
     const message = createBaseCertificateIdentifier();
     message.subject = object.subject ?? "";
     message.subjectKeyId = object.subjectKeyId ?? "";
-    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };

@@ -200,9 +200,6 @@ export interface PkiCertificate {
 export interface PkiCertificateIdentifier {
   subject?: string;
   subjectKeyId?: string;
-
-  /** @format int64 */
-  schemaVersion?: number;
 }
 
 export interface PkiGrant {

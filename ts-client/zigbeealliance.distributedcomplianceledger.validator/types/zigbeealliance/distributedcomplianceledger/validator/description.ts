@@ -12,11 +12,10 @@ export interface Description {
   website: string;
   /** optional details. */
   details: string;
-  schemaVersion: number;
 }
 
 function createBaseDescription(): Description {
-  return { moniker: "", identity: "", website: "", details: "", schemaVersion: 0 };
+  return { moniker: "", identity: "", website: "", details: "" };
 }
 
 export const Description = {
@@ -32,9 +31,6 @@ export const Description = {
     }
     if (message.details !== "") {
       writer.uint32(34).string(message.details);
-    }
-    if (message.schemaVersion !== 0) {
-      writer.uint32(40).uint32(message.schemaVersion);
     }
     return writer;
   },
@@ -58,9 +54,6 @@ export const Description = {
         case 4:
           message.details = reader.string();
           break;
-        case 5:
-          message.schemaVersion = reader.uint32();
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -75,7 +68,6 @@ export const Description = {
       identity: isSet(object.identity) ? String(object.identity) : "",
       website: isSet(object.website) ? String(object.website) : "",
       details: isSet(object.details) ? String(object.details) : "",
-      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
@@ -85,7 +77,6 @@ export const Description = {
     message.identity !== undefined && (obj.identity = message.identity);
     message.website !== undefined && (obj.website = message.website);
     message.details !== undefined && (obj.details = message.details);
-    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
@@ -95,7 +86,6 @@ export const Description = {
     message.identity = object.identity ?? "";
     message.website = object.website ?? "";
     message.details = object.details ?? "";
-    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };

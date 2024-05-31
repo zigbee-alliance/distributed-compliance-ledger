@@ -335,9 +335,9 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldUpperBoundViolated,
 		},
 		{
-			name: "CommissionerRemoteUiFlowUrl length > 256",
+			name: "ManagedAclExtensionRequestFlowUrl length > 256",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
-				msg.CommissionerRemoteUiFlowUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(257-30) // length = 257
+				msg.ManagedAclExtensionRequestFlowUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(257-30) // length = 257
 
 				return msg
 			}(validMsgCreateModel()),
@@ -604,17 +604,17 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			}(validMsgCreateModel()),
 		},
 		{
-			name: "CommissionerRemoteUiFlowUrl is omitted",
+			name: "ManagedAclExtensionRequestFlowUrl is omitted",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
-				msg.CommissionerRemoteUiFlowUrl = ""
+				msg.ManagedAclExtensionRequestFlowUrl = ""
 
 				return msg
 			}(validMsgCreateModel()),
 		},
 		{
-			name: "CommissionerRemoteUiFlowUrl length == 256",
+			name: "ManagedAclExtensionRequestFlowUrl length == 256",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
-				msg.CommissionerRemoteUiFlowUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
+				msg.ManagedAclExtensionRequestFlowUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
 
 				return msg
 			}(validMsgCreateModel()),
@@ -924,9 +924,9 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldUpperBoundViolated,
 		},
 		{
-			name: "CommissionerRemoteUiFlowUrl length > 256",
+			name: "ManagedAclExtensionRequestFlowUrl length > 256",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
-				msg.CommissionerRemoteUiFlowUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(257-30) // length = 257
+				msg.ManagedAclExtensionRequestFlowUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(257-30) // length = 257
 
 				return msg
 			}(validMsgUpdateModel()),
@@ -1153,17 +1153,17 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			}(validMsgUpdateModel()),
 		},
 		{
-			name: "CommissionerRemoteUiFlowUrl is omitted",
+			name: "ManagedAclExtensionRequestFlowUrl is omitted",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
-				msg.CommissionerRemoteUiFlowUrl = ""
+				msg.ManagedAclExtensionRequestFlowUrl = ""
 
 				return msg
 			}(validMsgUpdateModel()),
 		},
 		{
-			name: "CommissionerRemoteUiFlowUrl length == 256",
+			name: "ManagedAclExtensionRequestFlowUrl length == 256",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
-				msg.CommissionerRemoteUiFlowUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
+				msg.ManagedAclExtensionRequestFlowUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
 
 				return msg
 			}(validMsgUpdateModel()),
@@ -1343,7 +1343,7 @@ func validMsgCreateModel() *MsgCreateModel {
 		CommissioningModeInitialStepsInstruction: testconstants.CommissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsHint:      testconstants.CommissioningModeSecondaryStepsHint,
 		CommissioningModeSecondaryStepsInstruction: testconstants.CommissioningModeSecondaryStepsInstruction,
-		CommissionerRemoteUiFlowUrl:                testconstants.CommissioningCustomFlowURL,
+		ManagedAclExtensionRequestFlowUrl:          testconstants.CommissioningCustomFlowURL,
 		UserManualUrl:                              testconstants.UserManualURL,
 		SupportUrl:                                 testconstants.SupportURL,
 		ProductUrl:                                 testconstants.ProductURL,
@@ -1362,7 +1362,7 @@ func validMsgUpdateModel() *MsgUpdateModel {
 		CommissioningCustomFlowUrl:               testconstants.CommissioningCustomFlowURL + "/updated",
 		CommissioningModeInitialStepsInstruction: testconstants.CommissioningModeInitialStepsInstruction + "-updated",
 		CommissioningModeSecondaryStepsInstruction: testconstants.CommissioningModeSecondaryStepsInstruction + "-updated",
-		CommissionerRemoteUiFlowUrl:                testconstants.CommissioningCustomFlowURL + "-updated",
+		ManagedAclExtensionRequestFlowUrl:          testconstants.CommissioningCustomFlowURL + "-updated",
 		UserManualUrl:                              testconstants.UserManualURL + "/updated",
 		SupportUrl:                                 testconstants.SupportURL + "/updated",
 		ProductUrl:                                 testconstants.ProductURL + "/updated",
