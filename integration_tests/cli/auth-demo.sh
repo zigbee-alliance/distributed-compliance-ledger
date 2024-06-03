@@ -628,7 +628,7 @@ vid=$RANDOM
 pid=$RANDOM
 productName="Device #2"
 echo "$user adds Model with VID: $vid PID: $pid"
-result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --productName="$productName" --productLabel="Device Description" --commissioningCustomFlow=0 --deviceTypeID=12 --partNumber=12 --from=$user_address --yes 2>&1) || true
+result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --productName="$productName" --productLabel="Device Description" --commissioningCustomFlow=0 --deviceTypeID=12 --partNumber=12 --enhancedSetupFlowOptions=1 --from=$user_address --yes 2>&1) || true
 check_response_and_report "$result" "key not found" raw
 
 
@@ -1335,7 +1335,7 @@ test_divider
 
 productName="Device #1"
 echo "$user adds Model with VID: $vid PID: $pid"
-result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --productName="$productName" --productLabel="Device Description"   --commissioningCustomFlow=0 --deviceTypeID=12 --partNumber=12 --from=$user_address --yes)
+result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --productName="$productName" --productLabel="Device Description"   --commissioningCustomFlow=0 --deviceTypeID=12 --partNumber=12 --enhancedSetupFlowOptions=1 --from=$user_address --yes)
 result=$(get_txn_result "$result")
 check_response_and_report "$result" "\"code\": 0"
 
@@ -1343,13 +1343,13 @@ test_divider
 
 vidPlusOne=$((vid+1))
 echo "$user adds Model with a VID: $vidPlusOne PID: $pid, This fails with Permission denied as the VID is not associated with this vendor account."
-result=$(echo "test1234" | dcld tx model add-model --vid=$vidPlusOne --pid=$pid --productName="$productName" --productLabel="Device Description"   --commissioningCustomFlow=0 --deviceTypeID=12 --partNumber=12 --from=$user_address --yes 2>&1) || true
+result=$(echo "test1234" | dcld tx model add-model --vid=$vidPlusOne --pid=$pid --productName="$productName" --productLabel="Device Description"   --commissioningCustomFlow=0 --deviceTypeID=12 --partNumber=12 --enhancedSetupFlowOptions=1 --from=$user_address --yes 2>&1) || true
 result=$(get_txn_result "$result")
 check_response_and_report "$result" "transaction should be signed by a vendor account containing the vendorID $vidPlusOne"
 
 test_divider
 echo "$user updates Model with VID: $vid PID: $pid"
-result=$(echo "test1234" | dcld tx model update-model --vid=$vid --pid=$pid --productName="$productName" --productLabel="Device Description" --partNumber=12 --from=$user_address --yes)
+result=$(echo "test1234" | dcld tx model update-model --vid=$vid --pid=$pid --productName="$productName" --productLabel="Device Description" --partNumber=12 --enhancedSetupFlowOptions=2 --from=$user_address --yes)
 result=$(get_txn_result "$result")
 check_response_and_report "$result" "\"code\": 0"
 

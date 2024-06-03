@@ -56,7 +56,7 @@ check_response "$result" "No model version"
 test_divider
 
 echo "Add Model with VID: $vid PID: $pid"
-result=$(echo "$passphrase" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0  --from $vendor_account --yes)
+result=$(echo "$passphrase" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --enhancedSetupFlowOptions=1  --from $vendor_account --yes)
 result=$(get_txn_result "$result")
 echo $result
 check_response "$result" "\"code\": 0"
@@ -551,7 +551,7 @@ svs=$RANDOM
 
 # ADD MODEL
 echo "Add Model with VID: $vid PID: $pid"
-result=$(echo "$passphrase" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0  --from $vendor_account --yes)
+result=$(echo "$passphrase" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --enhancedSetupFlowOptions=1 --commissioningCustomFlow=0  --from $vendor_account --yes)
 result=$(get_txn_result "$result")
 echo $result
 check_response "$result" "\"code\": 0"

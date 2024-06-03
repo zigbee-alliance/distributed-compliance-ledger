@@ -22,6 +22,12 @@ const (
 	FlagProductURL                                 = "productURL"
 	FlagLsfURL                                     = "lsfURL"
 	FlagLsfRevision                                = "lsfRevision"
+	FlagEnhancedSetupFlowOptions                   = "enhancedSetupFlowOptions"
+	FlagEnhancedSetupFlowTCURL                     = "enhancedSetupFlowTCUrl"
+	FlagEnhancedSetupFlowTCRevision                = "enhancedSetupFlowTCRevision"
+	FlagEnhancedSetupFlowTCDigest                  = "enhancedSetupFlowTCDigest"
+	FlagEnhancedSetupFlowTCFileSize                = "enhancedSetupFlowTCFileSize"
+	FlagMaintenanceURL                             = "maintenanceUrl"
 
 	// Flags for ModelVersion.
 	FlagSoftwareVersion              = "softwareVersion"
