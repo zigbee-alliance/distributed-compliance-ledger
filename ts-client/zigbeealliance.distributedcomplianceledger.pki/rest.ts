@@ -211,6 +211,9 @@ export interface PkiGrant {
    */
   time?: string;
   info?: string;
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export type PkiMsgAddNocX509IcaCertResponse = object;

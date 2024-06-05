@@ -16,7 +16,7 @@ const (
 	FlagCommissioningModeInitialStepsInstruction   = "commissioningModeInitialStepsInstruction"
 	FlagCommissioningModeSecondaryStepsHint        = "commissioningModeSecondaryStepsHint"
 	FlagCommissioningModeSecondaryStepsInstruction = "commissioningModeSecondaryStepsInstruction"
-	FlagCommissionerRemoteUIFlowURL                = "commissionerRemoteUiFlowURL"
+	FlagManagedACLExtensionRequestFlowURL          = "managedAclExtensionRequestFlowUrl"
 	FlagUserManualURL                              = "userManualURL"
 	FlagSupportURL                                 = "supportURL"
 	FlagProductURL                                 = "productURL"

@@ -23,7 +23,7 @@ export interface MsgCreateModel {
   productUrl: string;
   lsfUrl: string;
   schemaVersion: number;
-  commissionerRemoteUiFlowUrl: string;
+  managedAclExtensionRequestFlowUrl: string;
 }
 
 export interface MsgCreateModelResponse {
@@ -45,7 +45,7 @@ export interface MsgUpdateModel {
   lsfUrl: string;
   lsfRevision: number;
   schemaVersion: number;
-  commissionerRemoteUiFlowUrl: string;
+  managedAclExtensionRequestFlowUrl: string;
   commissioningModeInitialStepsHint: number;
 }
 
@@ -131,7 +131,7 @@ function createBaseMsgCreateModel(): MsgCreateModel {
     productUrl: "",
     lsfUrl: "",
     schemaVersion: 0,
-    commissionerRemoteUiFlowUrl: "",
+    managedAclExtensionRequestFlowUrl: "",
   };
 }
 
@@ -191,8 +191,8 @@ export const MsgCreateModel = {
     if (message.schemaVersion !== 0) {
       writer.uint32(144).uint32(message.schemaVersion);
     }
-    if (message.commissionerRemoteUiFlowUrl !== "") {
-      writer.uint32(154).string(message.commissionerRemoteUiFlowUrl);
+    if (message.managedAclExtensionRequestFlowUrl !== "") {
+      writer.uint32(154).string(message.managedAclExtensionRequestFlowUrl);
     }
     return writer;
   },
@@ -259,7 +259,7 @@ export const MsgCreateModel = {
           message.schemaVersion = reader.uint32();
           break;
         case 19:
-          message.commissionerRemoteUiFlowUrl = reader.string();
+          message.managedAclExtensionRequestFlowUrl = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -299,8 +299,8 @@ export const MsgCreateModel = {
       productUrl: isSet(object.productUrl) ? String(object.productUrl) : "",
       lsfUrl: isSet(object.lsfUrl) ? String(object.lsfUrl) : "",
       schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
-      commissionerRemoteUiFlowUrl: isSet(object.commissionerRemoteUiFlowUrl)
-        ? String(object.commissionerRemoteUiFlowUrl)
+      managedAclExtensionRequestFlowUrl: isSet(object.managedAclExtensionRequestFlowUrl)
+        ? String(object.managedAclExtensionRequestFlowUrl)
         : "",
     };
   },
@@ -331,8 +331,8 @@ export const MsgCreateModel = {
     message.productUrl !== undefined && (obj.productUrl = message.productUrl);
     message.lsfUrl !== undefined && (obj.lsfUrl = message.lsfUrl);
     message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
-    message.commissionerRemoteUiFlowUrl !== undefined
-      && (obj.commissionerRemoteUiFlowUrl = message.commissionerRemoteUiFlowUrl);
+    message.managedAclExtensionRequestFlowUrl !== undefined
+      && (obj.managedAclExtensionRequestFlowUrl = message.managedAclExtensionRequestFlowUrl);
     return obj;
   },
 
@@ -356,7 +356,7 @@ export const MsgCreateModel = {
     message.productUrl = object.productUrl ?? "";
     message.lsfUrl = object.lsfUrl ?? "";
     message.schemaVersion = object.schemaVersion ?? 0;
-    message.commissionerRemoteUiFlowUrl = object.commissionerRemoteUiFlowUrl ?? "";
+    message.managedAclExtensionRequestFlowUrl = object.managedAclExtensionRequestFlowUrl ?? "";
     return message;
   },
 };
@@ -417,7 +417,7 @@ function createBaseMsgUpdateModel(): MsgUpdateModel {
     lsfUrl: "",
     lsfRevision: 0,
     schemaVersion: 0,
-    commissionerRemoteUiFlowUrl: "",
+    managedAclExtensionRequestFlowUrl: "",
     commissioningModeInitialStepsHint: 0,
   };
 }
@@ -469,8 +469,8 @@ export const MsgUpdateModel = {
     if (message.schemaVersion !== 0) {
       writer.uint32(120).uint32(message.schemaVersion);
     }
-    if (message.commissionerRemoteUiFlowUrl !== "") {
-      writer.uint32(130).string(message.commissionerRemoteUiFlowUrl);
+    if (message.managedAclExtensionRequestFlowUrl !== "") {
+      writer.uint32(130).string(message.managedAclExtensionRequestFlowUrl);
     }
     if (message.commissioningModeInitialStepsHint !== 0) {
       writer.uint32(136).uint32(message.commissioningModeInitialStepsHint);
@@ -531,7 +531,7 @@ export const MsgUpdateModel = {
           message.schemaVersion = reader.uint32();
           break;
         case 16:
-          message.commissionerRemoteUiFlowUrl = reader.string();
+          message.managedAclExtensionRequestFlowUrl = reader.string();
           break;
         case 17:
           message.commissioningModeInitialStepsHint = reader.uint32();
@@ -567,8 +567,8 @@ export const MsgUpdateModel = {
       lsfUrl: isSet(object.lsfUrl) ? String(object.lsfUrl) : "",
       lsfRevision: isSet(object.lsfRevision) ? Number(object.lsfRevision) : 0,
       schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
-      commissionerRemoteUiFlowUrl: isSet(object.commissionerRemoteUiFlowUrl)
-        ? String(object.commissionerRemoteUiFlowUrl)
+      managedAclExtensionRequestFlowUrl: isSet(object.managedAclExtensionRequestFlowUrl)
+        ? String(object.managedAclExtensionRequestFlowUrl)
         : "",
       commissioningModeInitialStepsHint: isSet(object.commissioningModeInitialStepsHint)
         ? Number(object.commissioningModeInitialStepsHint)
@@ -596,8 +596,8 @@ export const MsgUpdateModel = {
     message.lsfUrl !== undefined && (obj.lsfUrl = message.lsfUrl);
     message.lsfRevision !== undefined && (obj.lsfRevision = Math.round(message.lsfRevision));
     message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
-    message.commissionerRemoteUiFlowUrl !== undefined
-      && (obj.commissionerRemoteUiFlowUrl = message.commissionerRemoteUiFlowUrl);
+    message.managedAclExtensionRequestFlowUrl !== undefined
+      && (obj.managedAclExtensionRequestFlowUrl = message.managedAclExtensionRequestFlowUrl);
     message.commissioningModeInitialStepsHint !== undefined
       && (obj.commissioningModeInitialStepsHint = Math.round(message.commissioningModeInitialStepsHint));
     return obj;
@@ -620,7 +620,7 @@ export const MsgUpdateModel = {
     message.lsfUrl = object.lsfUrl ?? "";
     message.lsfRevision = object.lsfRevision ?? 0;
     message.schemaVersion = object.schemaVersion ?? 0;
-    message.commissionerRemoteUiFlowUrl = object.commissionerRemoteUiFlowUrl ?? "";
+    message.managedAclExtensionRequestFlowUrl = object.managedAclExtensionRequestFlowUrl ?? "";
     message.commissioningModeInitialStepsHint = object.commissioningModeInitialStepsHint ?? 0;
     return message;
   },

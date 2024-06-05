@@ -7,10 +7,11 @@ export interface Product {
   pid: number;
   name: string;
   partNumber: string;
+  schemaVersion: number;
 }
 
 function createBaseProduct(): Product {
-  return { pid: 0, name: "", partNumber: "" };
+  return { pid: 0, name: "", partNumber: "", schemaVersion: 0 };
 }
 
 export const Product = {
@@ -23,6 +24,9 @@ export const Product = {
     }
     if (message.partNumber !== "") {
       writer.uint32(26).string(message.partNumber);
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(32).uint32(message.schemaVersion);
     }
     return writer;
   },
@@ -43,6 +47,9 @@ export const Product = {
         case 3:
           message.partNumber = reader.string();
           break;
+        case 4:
+          message.schemaVersion = reader.uint32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -56,6 +63,7 @@ export const Product = {
       pid: isSet(object.pid) ? Number(object.pid) : 0,
       name: isSet(object.name) ? String(object.name) : "",
       partNumber: isSet(object.partNumber) ? String(object.partNumber) : "",
+      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
@@ -64,6 +72,7 @@ export const Product = {
     message.pid !== undefined && (obj.pid = Math.round(message.pid));
     message.name !== undefined && (obj.name = message.name);
     message.partNumber !== undefined && (obj.partNumber = message.partNumber);
+    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
@@ -72,6 +81,7 @@ export const Product = {
     message.pid = object.pid ?? 0;
     message.name = object.name ?? "";
     message.partNumber = object.partNumber ?? "";
+    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };

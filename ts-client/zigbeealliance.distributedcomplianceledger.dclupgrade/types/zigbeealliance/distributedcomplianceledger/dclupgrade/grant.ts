@@ -9,10 +9,11 @@ export interface Grant {
   /** number of nanoseconds elapsed since January 1, 1970 UTC */
   time: number;
   info: string;
+  schemaVersion: number;
 }
 
 function createBaseGrant(): Grant {
-  return { address: "", time: 0, info: "" };
+  return { address: "", time: 0, info: "", schemaVersion: 0 };
 }
 
 export const Grant = {
@@ -25,6 +26,9 @@ export const Grant = {
     }
     if (message.info !== "") {
       writer.uint32(26).string(message.info);
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(32).uint32(message.schemaVersion);
     }
     return writer;
   },
@@ -45,6 +49,9 @@ export const Grant = {
         case 3:
           message.info = reader.string();
           break;
+        case 4:
+          message.schemaVersion = reader.uint32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -58,6 +65,7 @@ export const Grant = {
       address: isSet(object.address) ? String(object.address) : "",
       time: isSet(object.time) ? Number(object.time) : 0,
       info: isSet(object.info) ? String(object.info) : "",
+      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
@@ -66,6 +74,7 @@ export const Grant = {
     message.address !== undefined && (obj.address = message.address);
     message.time !== undefined && (obj.time = Math.round(message.time));
     message.info !== undefined && (obj.info = message.info);
+    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
@@ -74,6 +83,7 @@ export const Grant = {
     message.address = object.address ?? "";
     message.time = object.time ?? 0;
     message.info = object.info ?? "";
+    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };

@@ -45,7 +45,7 @@ func (k msgServer) CreateModel(goCtx context.Context, msg *types.MsgCreateModel)
 		CommissioningModeInitialStepsInstruction: msg.CommissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsHint:      msg.CommissioningModeSecondaryStepsHint,
 		CommissioningModeSecondaryStepsInstruction: msg.CommissioningModeSecondaryStepsInstruction,
-		CommissionerRemoteUiFlowUrl:                msg.CommissionerRemoteUiFlowUrl,
+		ManagedAclExtensionRequestFlowUrl:          msg.ManagedAclExtensionRequestFlowUrl,
 		UserManualUrl:                              msg.UserManualUrl,
 		SupportUrl:                                 msg.SupportUrl,
 		ProductUrl:                                 msg.ProductUrl,
@@ -128,8 +128,8 @@ func (k msgServer) UpdateModel(goCtx context.Context, msg *types.MsgUpdateModel)
 		model.CommissioningModeSecondaryStepsInstruction = msg.CommissioningModeSecondaryStepsInstruction
 	}
 
-	if msg.CommissionerRemoteUiFlowUrl != "" {
-		model.CommissionerRemoteUiFlowUrl = msg.CommissionerRemoteUiFlowUrl
+	if msg.ManagedAclExtensionRequestFlowUrl != "" {
+		model.ManagedAclExtensionRequestFlowUrl = msg.ManagedAclExtensionRequestFlowUrl
 	}
 
 	if msg.UserManualUrl != "" {

@@ -18,6 +18,9 @@ export interface DclupgradeGrant {
    */
   time?: string;
   info?: string;
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export type DclupgradeMsgApproveUpgradeResponse = object;
