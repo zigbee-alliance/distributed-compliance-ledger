@@ -8793,6 +8793,21 @@ paths:
                       format: int64
                     managedAclExtensionRequestFlowUrl:
                       type: string
+                    enhancedSetupFlowOptions:
+                      type: integer
+                      format: int32
+                    enhancedSetupFlowTCUrl:
+                      type: string
+                    enhancedSetupFlowTCRevision:
+                      type: integer
+                      format: int32
+                    enhancedSetupFlowTCDigest:
+                      type: string
+                    enhancedSetupFlowTCFileSize:
+                      type: integer
+                      format: int64
+                    maintenanceUrl:
+                      type: string
               pagination:
                 type: object
                 properties:
@@ -9018,6 +9033,21 @@ paths:
                     type: integer
                     format: int64
                   managedAclExtensionRequestFlowUrl:
+                    type: string
+                  enhancedSetupFlowOptions:
+                    type: integer
+                    format: int32
+                  enhancedSetupFlowTCUrl:
+                    type: string
+                  enhancedSetupFlowTCRevision:
+                    type: integer
+                    format: int32
+                  enhancedSetupFlowTCDigest:
+                    type: string
+                  enhancedSetupFlowTCFileSize:
+                    type: integer
+                    format: int64
+                  maintenanceUrl:
                     type: string
         default:
           description: An unexpected error response.
@@ -22312,6 +22342,21 @@ definitions:
         format: int64
       managedAclExtensionRequestFlowUrl:
         type: string
+      enhancedSetupFlowOptions:
+        type: integer
+        format: int32
+      enhancedSetupFlowTCUrl:
+        type: string
+      enhancedSetupFlowTCRevision:
+        type: integer
+        format: int32
+      enhancedSetupFlowTCDigest:
+        type: string
+      enhancedSetupFlowTCFileSize:
+        type: integer
+        format: int64
+      maintenanceUrl:
+        type: string
   zigbeealliance.distributedcomplianceledger.model.ModelVersion:
     type: object
     properties:
@@ -22442,6 +22487,21 @@ definitions:
               format: int64
             managedAclExtensionRequestFlowUrl:
               type: string
+            enhancedSetupFlowOptions:
+              type: integer
+              format: int32
+            enhancedSetupFlowTCUrl:
+              type: string
+            enhancedSetupFlowTCRevision:
+              type: integer
+              format: int32
+            enhancedSetupFlowTCDigest:
+              type: string
+            enhancedSetupFlowTCFileSize:
+              type: integer
+              format: int64
+            maintenanceUrl:
+              type: string
       pagination:
         type: object
         properties:
@@ -22521,6 +22581,21 @@ definitions:
             type: integer
             format: int64
           managedAclExtensionRequestFlowUrl:
+            type: string
+          enhancedSetupFlowOptions:
+            type: integer
+            format: int32
+          enhancedSetupFlowTCUrl:
+            type: string
+          enhancedSetupFlowTCRevision:
+            type: integer
+            format: int32
+          enhancedSetupFlowTCDigest:
+            type: string
+          enhancedSetupFlowTCFileSize:
+            type: integer
+            format: int64
+          maintenanceUrl:
             type: string
   zigbeealliance.distributedcomplianceledger.model.QueryGetModelVersionResponse:
     type: object

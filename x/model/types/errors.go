@@ -26,7 +26,7 @@ var (
 	ErrLsfRevisionIsNotAllowed       = errors.Register(ModuleName, 523, "LsfRevision is not allowed if LsfURL is not present")
 	ErrModelVersionDeletionCertified = errors.Register(ModuleName, 524, "model version has a compliance record and can not be deleted")
 	ErrModelDeletionCertified        = errors.Register(ModuleName, 525, "model has a model version that has a compliance record and  correcponding model can not be deleted")
-	ErrOtaChecksumIsNotValid         = errors.Register(ModuleName, 526, "OTA Checksum is not base64 encoded")
+	ErrFieldIsNotBase64Encoded       = errors.Register(ModuleName, 526, "Field is not base64 encoded string")
 )
 
 func NewErrModelAlreadyExists(vid interface{}, pid interface{}) error {
@@ -134,6 +134,11 @@ func NewErrModelVersionDeletionCertified(vid interface{}, pid interface{}, softw
 }
 
 func NewErrOtaChecksumIsNotBase64Encoded(otaChecksum string) error {
-	return errors.Wrapf(ErrOtaChecksumIsNotValid,
+	return errors.Wrapf(ErrFieldIsNotBase64Encoded,
 		"OtaChecksum %v is not base64 encoded", otaChecksum)
+}
+
+func NewErrEnhancedSetupFlowTCDigestIsNotBase64Encoded(enhancedSetupFlowTCDigest string) error {
+	return errors.Wrapf(ErrFieldIsNotBase64Encoded,
+		"EnhancedSetupFlowTCDigest %v is not base64 encoded", enhancedSetupFlowTCDigest)
 }

@@ -24,6 +24,12 @@ export interface MsgCreateModel {
   lsfUrl: string;
   schemaVersion: number;
   managedAclExtensionRequestFlowUrl: string;
+  enhancedSetupFlowOptions: number;
+  enhancedSetupFlowTCUrl: string;
+  enhancedSetupFlowTCRevision: number;
+  enhancedSetupFlowTCDigest: string;
+  enhancedSetupFlowTCFileSize: number;
+  maintenanceUrl: string;
 }
 
 export interface MsgCreateModelResponse {
@@ -47,6 +53,12 @@ export interface MsgUpdateModel {
   schemaVersion: number;
   managedAclExtensionRequestFlowUrl: string;
   commissioningModeInitialStepsHint: number;
+  enhancedSetupFlowOptions: number;
+  enhancedSetupFlowTCUrl: string;
+  enhancedSetupFlowTCRevision: number;
+  enhancedSetupFlowTCDigest: string;
+  enhancedSetupFlowTCFileSize: number;
+  maintenanceUrl: string;
 }
 
 export interface MsgUpdateModelResponse {
@@ -132,6 +144,12 @@ function createBaseMsgCreateModel(): MsgCreateModel {
     lsfUrl: "",
     schemaVersion: 0,
     managedAclExtensionRequestFlowUrl: "",
+    enhancedSetupFlowOptions: 0,
+    enhancedSetupFlowTCUrl: "",
+    enhancedSetupFlowTCRevision: 0,
+    enhancedSetupFlowTCDigest: "",
+    enhancedSetupFlowTCFileSize: 0,
+    maintenanceUrl: "",
   };
 }
 
@@ -193,6 +211,24 @@ export const MsgCreateModel = {
     }
     if (message.managedAclExtensionRequestFlowUrl !== "") {
       writer.uint32(154).string(message.managedAclExtensionRequestFlowUrl);
+    }
+    if (message.enhancedSetupFlowOptions !== 0) {
+      writer.uint32(160).int32(message.enhancedSetupFlowOptions);
+    }
+    if (message.enhancedSetupFlowTCUrl !== "") {
+      writer.uint32(170).string(message.enhancedSetupFlowTCUrl);
+    }
+    if (message.enhancedSetupFlowTCRevision !== 0) {
+      writer.uint32(176).int32(message.enhancedSetupFlowTCRevision);
+    }
+    if (message.enhancedSetupFlowTCDigest !== "") {
+      writer.uint32(186).string(message.enhancedSetupFlowTCDigest);
+    }
+    if (message.enhancedSetupFlowTCFileSize !== 0) {
+      writer.uint32(192).uint32(message.enhancedSetupFlowTCFileSize);
+    }
+    if (message.maintenanceUrl !== "") {
+      writer.uint32(202).string(message.maintenanceUrl);
     }
     return writer;
   },
@@ -261,6 +297,24 @@ export const MsgCreateModel = {
         case 19:
           message.managedAclExtensionRequestFlowUrl = reader.string();
           break;
+        case 20:
+          message.enhancedSetupFlowOptions = reader.int32();
+          break;
+        case 21:
+          message.enhancedSetupFlowTCUrl = reader.string();
+          break;
+        case 22:
+          message.enhancedSetupFlowTCRevision = reader.int32();
+          break;
+        case 23:
+          message.enhancedSetupFlowTCDigest = reader.string();
+          break;
+        case 24:
+          message.enhancedSetupFlowTCFileSize = reader.uint32();
+          break;
+        case 25:
+          message.maintenanceUrl = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -302,6 +356,18 @@ export const MsgCreateModel = {
       managedAclExtensionRequestFlowUrl: isSet(object.managedAclExtensionRequestFlowUrl)
         ? String(object.managedAclExtensionRequestFlowUrl)
         : "",
+      enhancedSetupFlowOptions: isSet(object.enhancedSetupFlowOptions) ? Number(object.enhancedSetupFlowOptions) : 0,
+      enhancedSetupFlowTCUrl: isSet(object.enhancedSetupFlowTCUrl) ? String(object.enhancedSetupFlowTCUrl) : "",
+      enhancedSetupFlowTCRevision: isSet(object.enhancedSetupFlowTCRevision)
+        ? Number(object.enhancedSetupFlowTCRevision)
+        : 0,
+      enhancedSetupFlowTCDigest: isSet(object.enhancedSetupFlowTCDigest)
+        ? String(object.enhancedSetupFlowTCDigest)
+        : "",
+      enhancedSetupFlowTCFileSize: isSet(object.enhancedSetupFlowTCFileSize)
+        ? Number(object.enhancedSetupFlowTCFileSize)
+        : 0,
+      maintenanceUrl: isSet(object.maintenanceUrl) ? String(object.maintenanceUrl) : "",
     };
   },
 
@@ -333,6 +399,16 @@ export const MsgCreateModel = {
     message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     message.managedAclExtensionRequestFlowUrl !== undefined
       && (obj.managedAclExtensionRequestFlowUrl = message.managedAclExtensionRequestFlowUrl);
+    message.enhancedSetupFlowOptions !== undefined
+      && (obj.enhancedSetupFlowOptions = Math.round(message.enhancedSetupFlowOptions));
+    message.enhancedSetupFlowTCUrl !== undefined && (obj.enhancedSetupFlowTCUrl = message.enhancedSetupFlowTCUrl);
+    message.enhancedSetupFlowTCRevision !== undefined
+      && (obj.enhancedSetupFlowTCRevision = Math.round(message.enhancedSetupFlowTCRevision));
+    message.enhancedSetupFlowTCDigest !== undefined
+      && (obj.enhancedSetupFlowTCDigest = message.enhancedSetupFlowTCDigest);
+    message.enhancedSetupFlowTCFileSize !== undefined
+      && (obj.enhancedSetupFlowTCFileSize = Math.round(message.enhancedSetupFlowTCFileSize));
+    message.maintenanceUrl !== undefined && (obj.maintenanceUrl = message.maintenanceUrl);
     return obj;
   },
 
@@ -357,6 +433,12 @@ export const MsgCreateModel = {
     message.lsfUrl = object.lsfUrl ?? "";
     message.schemaVersion = object.schemaVersion ?? 0;
     message.managedAclExtensionRequestFlowUrl = object.managedAclExtensionRequestFlowUrl ?? "";
+    message.enhancedSetupFlowOptions = object.enhancedSetupFlowOptions ?? 0;
+    message.enhancedSetupFlowTCUrl = object.enhancedSetupFlowTCUrl ?? "";
+    message.enhancedSetupFlowTCRevision = object.enhancedSetupFlowTCRevision ?? 0;
+    message.enhancedSetupFlowTCDigest = object.enhancedSetupFlowTCDigest ?? "";
+    message.enhancedSetupFlowTCFileSize = object.enhancedSetupFlowTCFileSize ?? 0;
+    message.maintenanceUrl = object.maintenanceUrl ?? "";
     return message;
   },
 };
@@ -419,6 +501,12 @@ function createBaseMsgUpdateModel(): MsgUpdateModel {
     schemaVersion: 0,
     managedAclExtensionRequestFlowUrl: "",
     commissioningModeInitialStepsHint: 0,
+    enhancedSetupFlowOptions: 0,
+    enhancedSetupFlowTCUrl: "",
+    enhancedSetupFlowTCRevision: 0,
+    enhancedSetupFlowTCDigest: "",
+    enhancedSetupFlowTCFileSize: 0,
+    maintenanceUrl: "",
   };
 }
 
@@ -474,6 +562,24 @@ export const MsgUpdateModel = {
     }
     if (message.commissioningModeInitialStepsHint !== 0) {
       writer.uint32(136).uint32(message.commissioningModeInitialStepsHint);
+    }
+    if (message.enhancedSetupFlowOptions !== 0) {
+      writer.uint32(144).int32(message.enhancedSetupFlowOptions);
+    }
+    if (message.enhancedSetupFlowTCUrl !== "") {
+      writer.uint32(154).string(message.enhancedSetupFlowTCUrl);
+    }
+    if (message.enhancedSetupFlowTCRevision !== 0) {
+      writer.uint32(160).int32(message.enhancedSetupFlowTCRevision);
+    }
+    if (message.enhancedSetupFlowTCDigest !== "") {
+      writer.uint32(170).string(message.enhancedSetupFlowTCDigest);
+    }
+    if (message.enhancedSetupFlowTCFileSize !== 0) {
+      writer.uint32(176).uint32(message.enhancedSetupFlowTCFileSize);
+    }
+    if (message.maintenanceUrl !== "") {
+      writer.uint32(186).string(message.maintenanceUrl);
     }
     return writer;
   },
@@ -536,6 +642,24 @@ export const MsgUpdateModel = {
         case 17:
           message.commissioningModeInitialStepsHint = reader.uint32();
           break;
+        case 18:
+          message.enhancedSetupFlowOptions = reader.int32();
+          break;
+        case 19:
+          message.enhancedSetupFlowTCUrl = reader.string();
+          break;
+        case 20:
+          message.enhancedSetupFlowTCRevision = reader.int32();
+          break;
+        case 21:
+          message.enhancedSetupFlowTCDigest = reader.string();
+          break;
+        case 22:
+          message.enhancedSetupFlowTCFileSize = reader.uint32();
+          break;
+        case 23:
+          message.maintenanceUrl = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -573,6 +697,18 @@ export const MsgUpdateModel = {
       commissioningModeInitialStepsHint: isSet(object.commissioningModeInitialStepsHint)
         ? Number(object.commissioningModeInitialStepsHint)
         : 0,
+      enhancedSetupFlowOptions: isSet(object.enhancedSetupFlowOptions) ? Number(object.enhancedSetupFlowOptions) : 0,
+      enhancedSetupFlowTCUrl: isSet(object.enhancedSetupFlowTCUrl) ? String(object.enhancedSetupFlowTCUrl) : "",
+      enhancedSetupFlowTCRevision: isSet(object.enhancedSetupFlowTCRevision)
+        ? Number(object.enhancedSetupFlowTCRevision)
+        : 0,
+      enhancedSetupFlowTCDigest: isSet(object.enhancedSetupFlowTCDigest)
+        ? String(object.enhancedSetupFlowTCDigest)
+        : "",
+      enhancedSetupFlowTCFileSize: isSet(object.enhancedSetupFlowTCFileSize)
+        ? Number(object.enhancedSetupFlowTCFileSize)
+        : 0,
+      maintenanceUrl: isSet(object.maintenanceUrl) ? String(object.maintenanceUrl) : "",
     };
   },
 
@@ -600,6 +736,16 @@ export const MsgUpdateModel = {
       && (obj.managedAclExtensionRequestFlowUrl = message.managedAclExtensionRequestFlowUrl);
     message.commissioningModeInitialStepsHint !== undefined
       && (obj.commissioningModeInitialStepsHint = Math.round(message.commissioningModeInitialStepsHint));
+    message.enhancedSetupFlowOptions !== undefined
+      && (obj.enhancedSetupFlowOptions = Math.round(message.enhancedSetupFlowOptions));
+    message.enhancedSetupFlowTCUrl !== undefined && (obj.enhancedSetupFlowTCUrl = message.enhancedSetupFlowTCUrl);
+    message.enhancedSetupFlowTCRevision !== undefined
+      && (obj.enhancedSetupFlowTCRevision = Math.round(message.enhancedSetupFlowTCRevision));
+    message.enhancedSetupFlowTCDigest !== undefined
+      && (obj.enhancedSetupFlowTCDigest = message.enhancedSetupFlowTCDigest);
+    message.enhancedSetupFlowTCFileSize !== undefined
+      && (obj.enhancedSetupFlowTCFileSize = Math.round(message.enhancedSetupFlowTCFileSize));
+    message.maintenanceUrl !== undefined && (obj.maintenanceUrl = message.maintenanceUrl);
     return obj;
   },
 
@@ -622,6 +768,12 @@ export const MsgUpdateModel = {
     message.schemaVersion = object.schemaVersion ?? 0;
     message.managedAclExtensionRequestFlowUrl = object.managedAclExtensionRequestFlowUrl ?? "";
     message.commissioningModeInitialStepsHint = object.commissioningModeInitialStepsHint ?? 0;
+    message.enhancedSetupFlowOptions = object.enhancedSetupFlowOptions ?? 0;
+    message.enhancedSetupFlowTCUrl = object.enhancedSetupFlowTCUrl ?? "";
+    message.enhancedSetupFlowTCRevision = object.enhancedSetupFlowTCRevision ?? 0;
+    message.enhancedSetupFlowTCDigest = object.enhancedSetupFlowTCDigest ?? "";
+    message.enhancedSetupFlowTCFileSize = object.enhancedSetupFlowTCFileSize ?? 0;
+    message.maintenanceUrl = object.maintenanceUrl ?? "";
     return message;
   },
 };

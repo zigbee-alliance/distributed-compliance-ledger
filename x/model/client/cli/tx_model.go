@@ -30,6 +30,12 @@ func CmdCreateModel() *cobra.Command {
 		supportURL                                 string
 		productURL                                 string
 		lsfURL                                     string
+		enhancedSetupFlowOptions                   int32
+		enhancedSetupFlowTCURL                     string
+		enhancedSetupFlowTCRevision                int32
+		enhancedSetupFlowTCDigest                  string
+		enhancedSetupFlowTCFileSize                uint32
+		maintenanceURL                             string
 		schemaVersion                              uint32
 	)
 
@@ -68,6 +74,12 @@ func CmdCreateModel() *cobra.Command {
 				productURL,
 				lsfURL,
 				schemaVersion,
+				enhancedSetupFlowOptions,
+				enhancedSetupFlowTCURL,
+				enhancedSetupFlowTCRevision,
+				enhancedSetupFlowTCDigest,
+				enhancedSetupFlowTCFileSize,
+				maintenanceURL,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -132,7 +144,19 @@ and for these values the commissioningModeSecondaryStepInstruction SHALL be set`
 		"URL that contains product specific web page that contains details for the device model.")
 	cmd.Flags().StringVar(&lsfURL, FlagLsfURL, "", "URL to the Localized String File of this product")
 	cli.AddTxFlagsToCmd(cmd)
-	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version")
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 1, "Schema version - default value is 1")
+	cmd.Flags().Int32Var(&enhancedSetupFlowOptions, FlagEnhancedSetupFlowOptions, 0,
+		"enhancedSetupFlowOptions SHALL identify the configuration options for the Enhanced Setup Flow.")
+	cmd.Flags().StringVar(&enhancedSetupFlowTCURL, FlagEnhancedSetupFlowTCURL, "",
+		"enhancedSetupFlowTCURL SHALL identify a link to the Enhanced Setup Flow Terms and Condition File for this product. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
+	cmd.Flags().Int32Var(&enhancedSetupFlowTCRevision, FlagEnhancedSetupFlowTCRevision, 0,
+		"enhancedSetupFlowTCRevision is an increasing positive integer indicating the latest available version of the Enhanced Setup Flow Terms and Conditions file. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
+	cmd.Flags().StringVar(&enhancedSetupFlowTCDigest, FlagEnhancedSetupFlowTCDigest, "",
+		"enhancedSetupFlowTCDigest SHALL contain the digest of the entire contents of the associated file downloaded from the EnhancedSetupFlowTCUrl field, encoded in base64 string representation and SHALL be used to ensure the contents of the downloaded file are authentic. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
+	cmd.Flags().Uint32Var(&enhancedSetupFlowTCFileSize, FlagEnhancedSetupFlowTCFileSize, 0,
+		"enhancedSetupFlowTCFileSize SHALL indicate the total size of the Enhanced Setup Flow Terms and Conditions file in bytes, and SHALL be used to ensure the downloaded file size is within the bounds of EnhancedSetupFlowTCFileSize. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
+	cmd.Flags().StringVar(&maintenanceURL, FlagMaintenanceURL, "",
+		"maintenanceURL SHALL identify a link to a vendor-specific URL which SHALL provide a manufacturer specific means to resolve any functionality limitations indicated by the TERMS_AND_CONDITIONS_CHANGED status code. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
 
 	_ = cmd.MarkFlagRequired(FlagVid)
 	_ = cmd.MarkFlagRequired(FlagPid)
@@ -161,6 +185,12 @@ func CmdUpdateModel() *cobra.Command {
 		lsfRevision                                int32
 		schemaVersion                              uint32
 		commissioningModeInitialStepsHint          uint32
+		enhancedSetupFlowOptions                   int32
+		enhancedSetupFlowTCURL                     string
+		enhancedSetupFlowTCRevision                int32
+		enhancedSetupFlowTCDigest                  string
+		enhancedSetupFlowTCFileSize                uint32
+		maintenanceURL                             string
 	)
 
 	cmd := &cobra.Command{
@@ -196,6 +226,12 @@ func CmdUpdateModel() *cobra.Command {
 				lsfRevision,
 				schemaVersion,
 				commissioningModeInitialStepsHint,
+				enhancedSetupFlowOptions,
+				enhancedSetupFlowTCURL,
+				enhancedSetupFlowTCRevision,
+				enhancedSetupFlowTCDigest,
+				enhancedSetupFlowTCFileSize,
+				maintenanceURL,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -242,13 +278,25 @@ and for these values the commissioningModeSecondaryStepInstruction SHALL be set`
 	cmd.Flags().StringVar(&lsfURL, FlagLsfURL, "", "URL to the Localized String File of this product")
 	cmd.Flags().Int32Var(&lsfRevision, FlagLsfRevision, 0,
 		"LsfRevision is a monotonically increasing positive integer indicating the latest available version of Localized String File")
-	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version")
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 1, "Schema version")
 	cmd.Flags().Uint32Var(&commissioningModeInitialStepsHint, FlagCommissioningModeInitialStepsHint, 0,
 		`commissioningModeInitialStepsHint SHALL 
 identify a hint for the steps that can be used to put into commissioning mode a device that 
 has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. 
 For example, a value of 1 (bit 0 is set) indicates that a device that has not yet been commissioned 
 will enter Commissioning Mode upon a power cycle. Note that this value cannot be updated to 0. (default 1).`)
+	cmd.Flags().Int32Var(&enhancedSetupFlowOptions, FlagEnhancedSetupFlowOptions, 0,
+		"enhancedSetupFlowOptions SHALL identify the configuration options for the Enhanced Setup Flow.")
+	cmd.Flags().StringVar(&enhancedSetupFlowTCURL, FlagEnhancedSetupFlowTCURL, "",
+		"enhancedSetupFlowTCURL SHALL identify a link to the Enhanced Setup Flow Terms and Condition File for this product. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
+	cmd.Flags().Int32Var(&enhancedSetupFlowTCRevision, FlagEnhancedSetupFlowTCRevision, 0,
+		"enhancedSetupFlowTCRevision is an increasing positive integer indicating the latest available version of the Enhanced Setup Flow Terms and Conditions file. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
+	cmd.Flags().StringVar(&enhancedSetupFlowTCDigest, FlagEnhancedSetupFlowTCDigest, "",
+		"enhancedSetupFlowTCDigest SHALL contain the digest of the entire contents of the associated file downloaded from the EnhancedSetupFlowTCUrl field, encoded in base64 string representation and SHALL be used to ensure the contents of the downloaded file are authentic. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
+	cmd.Flags().Uint32Var(&enhancedSetupFlowTCFileSize, FlagEnhancedSetupFlowTCFileSize, 0,
+		"enhancedSetupFlowTCFileSize SHALL indicate the total size of the Enhanced Setup Flow Terms and Conditions file in bytes, and SHALL be used to ensure the downloaded file size is within the bounds of EnhancedSetupFlowTCFileSize. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
+	cmd.Flags().StringVar(&maintenanceURL, FlagMaintenanceURL, "",
+		"maintenanceURL SHALL identify a link to a vendor-specific URL which SHALL provide a manufacturer specific means to resolve any functionality limitations indicated by the TERMS_AND_CONDITIONS_CHANGED status code. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
 
 	cli.AddTxFlagsToCmd(cmd)
 

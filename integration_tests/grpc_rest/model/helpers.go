@@ -54,10 +54,11 @@ func NewMsgCreateModel(vid int32, pid int32, signer string) *modeltypes.MsgCreat
 		CommissioningModeInitialStepsInstruction: testconstants.CommissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsHint:      testconstants.CommissioningModeSecondaryStepsHint,
 		CommissioningModeSecondaryStepsInstruction: testconstants.CommissioningModeSecondaryStepsInstruction,
-		UserManualUrl: testconstants.UserManualURL,
-		SupportUrl:    testconstants.SupportURL,
-		ProductUrl:    testconstants.ProductURL,
-		LsfUrl:        testconstants.LsfURL,
+		UserManualUrl:            testconstants.UserManualURL,
+		SupportUrl:               testconstants.SupportURL,
+		ProductUrl:               testconstants.ProductURL,
+		LsfUrl:                   testconstants.LsfURL,
+		EnhancedSetupFlowOptions: testconstants.EnhancedSetupFlowOptions,
 	}
 }
 
@@ -73,6 +74,7 @@ func NewMsgUpdateModel(vid int32, pid int32, signer string) *modeltypes.MsgUpdat
 		ProductUrl:                 testconstants.ProductURL + "/new",
 		LsfUrl:                     testconstants.LsfURL + "/new",
 		LsfRevision:                testconstants.LsfRevision + 1,
+		EnhancedSetupFlowOptions:   testconstants.EnhancedSetupFlowOptions + 1,
 	}
 }
 

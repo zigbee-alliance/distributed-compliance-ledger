@@ -39,6 +39,7 @@ func TestCreateModel(t *testing.T) {
 		fmt.Sprintf("--%s=%v", cli.FlagSupportURL, testconstants.SupportURL),
 		fmt.Sprintf("--%s=%v", cli.FlagProductURL, testconstants.ProductURL),
 		fmt.Sprintf("--%s=%v", cli.FlagLsfURL, testconstants.LsfURL),
+		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowOptions, testconstants.EnhancedSetupFlowOptions),
 	}
 	common := []string{
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
@@ -110,6 +111,7 @@ func TestUpdateModel(t *testing.T) {
 		fmt.Sprintf("--%s=%v", cli.FlagSupportURL, testconstants.SupportURL),
 		fmt.Sprintf("--%s=%v", cli.FlagProductURL, testconstants.ProductURL),
 		fmt.Sprintf("--%s=%v", cli.FlagLsfURL, testconstants.LsfURL),
+		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowOptions, testconstants.EnhancedSetupFlowOptions),
 	}
 	args = append(args, common...)
 	_, err := testcli.ExecTestCLITxCmd(t, ctx, cli.CmdCreateModel(), args)
@@ -129,6 +131,7 @@ func TestUpdateModel(t *testing.T) {
 		fmt.Sprintf("--%s=%v", cli.FlagProductURL, testconstants.ProductURL) + "/updated",
 		fmt.Sprintf("--%s=%v", cli.FlagLsfURL, testconstants.LsfURL) + "/updated",
 		fmt.Sprintf("--%s=%v", cli.FlagLsfRevision, testconstants.LsfRevision+1),
+		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowOptions, 2),
 	}
 
 	for _, tc := range []struct {
@@ -202,6 +205,7 @@ func TestDeleteModel(t *testing.T) {
 		fmt.Sprintf("--%s=%v", cli.FlagSupportURL, testconstants.SupportURL),
 		fmt.Sprintf("--%s=%v", cli.FlagProductURL, testconstants.ProductURL),
 		fmt.Sprintf("--%s=%v", cli.FlagLsfURL, testconstants.LsfURL),
+		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowOptions, testconstants.EnhancedSetupFlowOptions),
 	}
 	args = append(args, common...)
 	_, err := testcli.ExecTestCLITxCmd(t, ctx, cli.CmdCreateModel(), args)

@@ -50,6 +50,7 @@ func (k msgServer) CreateModel(goCtx context.Context, msg *types.MsgCreateModel)
 		SupportUrl:                                 msg.SupportUrl,
 		ProductUrl:                                 msg.ProductUrl,
 		LsfUrl:                                     msg.LsfUrl,
+		EnhancedSetupFlowOptions:                   msg.EnhancedSetupFlowOptions,
 		SchemaVersion:                              msg.SchemaVersion,
 	}
 
@@ -62,6 +63,14 @@ func (k msgServer) CreateModel(goCtx context.Context, msg *types.MsgCreateModel)
 	// Relevant issue: https://github.com/zigbee-alliance/distributed-compliance-ledger/issues/522
 	if model.CommissioningModeInitialStepsHint == 0 {
 		model.CommissioningModeInitialStepsHint = 1
+	}
+
+	if model.EnhancedSetupFlowOptions == 0 {
+		model.EnhancedSetupFlowTCUrl = msg.EnhancedSetupFlowTCUrl
+		model.EnhancedSetupFlowTCRevision = msg.EnhancedSetupFlowTCRevision
+		model.EnhancedSetupFlowTCDigest = msg.EnhancedSetupFlowTCDigest
+		model.EnhancedSetupFlowTCFileSize = msg.EnhancedSetupFlowTCFileSize
+		model.MaintenanceUrl = msg.MaintenanceUrl
 	}
 
 	// store new model
@@ -142,6 +151,21 @@ func (k msgServer) UpdateModel(goCtx context.Context, msg *types.MsgUpdateModel)
 
 	if msg.ProductUrl != "" {
 		model.ProductUrl = msg.ProductUrl
+	}
+
+	model.EnhancedSetupFlowOptions = msg.EnhancedSetupFlowOptions
+	if msg.EnhancedSetupFlowOptions == 0 {
+		model.EnhancedSetupFlowTCUrl = msg.EnhancedSetupFlowTCUrl
+		model.EnhancedSetupFlowTCRevision = msg.EnhancedSetupFlowTCRevision
+		model.EnhancedSetupFlowTCDigest = msg.EnhancedSetupFlowTCDigest
+		model.EnhancedSetupFlowTCFileSize = msg.EnhancedSetupFlowTCFileSize
+		model.MaintenanceUrl = msg.MaintenanceUrl
+	} else {
+		model.EnhancedSetupFlowTCUrl = ""
+		model.EnhancedSetupFlowTCRevision = 0
+		model.EnhancedSetupFlowTCDigest = ""
+		model.EnhancedSetupFlowTCFileSize = 0
+		model.MaintenanceUrl = ""
 	}
 
 	model.SchemaVersion = msg.SchemaVersion

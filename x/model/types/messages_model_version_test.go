@@ -198,7 +198,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 
 				return msg
 			}(validMsgCreateModelVersion()),
-			err: ErrOtaChecksumIsNotValid,
+			err: ErrFieldIsNotBase64Encoded,
 		},
 		{
 			name: "OtaChecksumType == 0 when OtaUrl is set",
@@ -672,7 +672,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 
 				return msg
 			}(validMsgUpdateModelVersion()),
-			err: ErrOtaChecksumIsNotValid,
+			err: ErrFieldIsNotBase64Encoded,
 		},
 		{
 			name: "MinApplicableSoftwareVersion and MaxApplicableSoftwareVersion are set " +

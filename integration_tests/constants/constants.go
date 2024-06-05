@@ -87,6 +87,7 @@ var (
 	DataURL2                                          = "https://url.data.dclmodel2"
 	URLWithoutProtocol                                = "url.dclmodel"
 	LsfRevision                                int32  = 1
+	EnhancedSetupFlowOptions                   int32  = 1
 	EmptyLsfRevision                           int32
 	ChipBlob                                          = "Chip Blob Text"
 	VendorBlob                                        = "Vendor Blob Text"

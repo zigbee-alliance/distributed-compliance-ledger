@@ -1,6 +1,8 @@
 package types
 
 import (
+	"encoding/base64"
+
 	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -36,6 +38,12 @@ func NewMsgCreateModel(
 	productURL string,
 	lsfURL string,
 	schemaVersion uint32,
+	enhancedSetupFlowOptions int32,
+	enhancedSetupFlowTCURL string,
+	enhancedSetupFlowTCRevision int32,
+	enhancedSetupFlowTCDigest string,
+	enhancedSetupFlowTCFileSize uint32,
+	maintenanceURL string,
 ) *MsgCreateModel {
 	return &MsgCreateModel{
 		Creator:                                  creator,
@@ -56,6 +64,12 @@ func NewMsgCreateModel(
 		SupportUrl:                                 supportURL,
 		ProductUrl:                                 productURL,
 		LsfUrl:                                     lsfURL,
+		EnhancedSetupFlowOptions:                   enhancedSetupFlowOptions,
+		EnhancedSetupFlowTCUrl:                     enhancedSetupFlowTCURL,
+		EnhancedSetupFlowTCRevision:                enhancedSetupFlowTCRevision,
+		EnhancedSetupFlowTCDigest:                  enhancedSetupFlowTCDigest,
+		EnhancedSetupFlowTCFileSize:                enhancedSetupFlowTCFileSize,
+		MaintenanceUrl:                             maintenanceURL,
 		SchemaVersion:                              schemaVersion,
 	}
 }
@@ -94,6 +108,13 @@ func (msg *MsgCreateModel) ValidateBasic() error {
 		return err
 	}
 
+	if msg.EnhancedSetupFlowOptions == 0 {
+		_, err = base64.StdEncoding.DecodeString(msg.EnhancedSetupFlowTCDigest)
+		if err != nil {
+			return NewErrEnhancedSetupFlowTCDigestIsNotBase64Encoded(msg.EnhancedSetupFlowTCDigest)
+		}
+	}
+
 	return nil
 }
 
@@ -117,6 +138,13 @@ func NewMsgUpdateModel(
 	lsfRevision int32,
 	schemaVersion uint32,
 	commissioningModeInitialStepsHint uint32,
+	enhancedSetupFlowOptions int32,
+	enhancedSetupFlowTCURL string,
+	enhancedSetupFlowTCRevision int32,
+	enhancedSetupFlowTCDigest string,
+	enhancedSetupFlowTCFileSize uint32,
+	maintenanceURL string,
+
 ) *MsgUpdateModel {
 	return &MsgUpdateModel{
 		Creator:                                  creator,
@@ -134,8 +162,14 @@ func NewMsgUpdateModel(
 		ProductUrl:                                 productURL,
 		LsfUrl:                                     lsfURL,
 		LsfRevision:                                lsfRevision,
-		SchemaVersion:                              schemaVersion,
 		CommissioningModeInitialStepsHint:          commissioningModeInitialStepsHint,
+		EnhancedSetupFlowOptions:                   enhancedSetupFlowOptions,
+		EnhancedSetupFlowTCUrl:                     enhancedSetupFlowTCURL,
+		EnhancedSetupFlowTCRevision:                enhancedSetupFlowTCRevision,
+		EnhancedSetupFlowTCDigest:                  enhancedSetupFlowTCDigest,
+		EnhancedSetupFlowTCFileSize:                enhancedSetupFlowTCFileSize,
+		MaintenanceUrl:                             maintenanceURL,
+		SchemaVersion:                              schemaVersion,
 	}
 }
 
@@ -171,6 +205,13 @@ func (msg *MsgUpdateModel) ValidateBasic() error {
 	err = validator.Validate(msg)
 	if err != nil {
 		return err
+	}
+
+	if msg.EnhancedSetupFlowOptions == 0 {
+		_, err = base64.StdEncoding.DecodeString(msg.EnhancedSetupFlowTCDigest)
+		if err != nil {
+			return NewErrEnhancedSetupFlowTCDigestIsNotBase64Encoded(msg.EnhancedSetupFlowTCDigest)
+		}
 	}
 
 	return nil

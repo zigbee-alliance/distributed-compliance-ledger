@@ -45,6 +45,18 @@ export interface DistributedcomplianceledgermodelModel {
   /** @format int64 */
   schemaVersion?: number;
   managedAclExtensionRequestFlowUrl?: string;
+
+  /** @format int32 */
+  enhancedSetupFlowOptions?: number;
+  enhancedSetupFlowTCUrl?: string;
+
+  /** @format int32 */
+  enhancedSetupFlowTCRevision?: number;
+  enhancedSetupFlowTCDigest?: string;
+
+  /** @format int64 */
+  enhancedSetupFlowTCFileSize?: number;
+  maintenanceUrl?: string;
 }
 
 export interface DistributedcomplianceledgermodelModelVersion {
