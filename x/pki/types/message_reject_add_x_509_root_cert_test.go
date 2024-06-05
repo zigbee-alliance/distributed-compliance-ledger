@@ -73,17 +73,6 @@ func TestMsgRejectAddX509RootCert_ValidateBasic(t *testing.T) {
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
-		{
-			name: "schemaVersion > 65535",
-			msg: MsgRejectAddX509RootCert{
-				Signer:        sample.AccAddress(),
-				Subject:       testconstants.RootSubject,
-				SubjectKeyId:  testconstants.RootSubjectKeyID,
-				Info:          testconstants.Info,
-				SchemaVersion: 65536,
-			},
-			err: validator.ErrFieldUpperBoundViolated,
-		},
 	}
 
 	positiveTests := []struct {

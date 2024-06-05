@@ -7,10 +7,11 @@ export interface ModelVersions {
   vid: number;
   pid: number;
   softwareVersions: number[];
+  schemaVersion: number;
 }
 
 function createBaseModelVersions(): ModelVersions {
-  return { vid: 0, pid: 0, softwareVersions: [] };
+  return { vid: 0, pid: 0, softwareVersions: [], schemaVersion: 0 };
 }
 
 export const ModelVersions = {
@@ -26,6 +27,9 @@ export const ModelVersions = {
       writer.uint32(v);
     }
     writer.ldelim();
+    if (message.schemaVersion !== 0) {
+      writer.uint32(32).uint32(message.schemaVersion);
+    }
     return writer;
   },
 
@@ -52,6 +56,9 @@ export const ModelVersions = {
             message.softwareVersions.push(reader.uint32());
           }
           break;
+        case 4:
+          message.schemaVersion = reader.uint32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -67,6 +74,7 @@ export const ModelVersions = {
       softwareVersions: Array.isArray(object?.softwareVersions)
         ? object.softwareVersions.map((e: any) => Number(e))
         : [],
+      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
@@ -79,6 +87,7 @@ export const ModelVersions = {
     } else {
       obj.softwareVersions = [];
     }
+    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
@@ -87,6 +96,7 @@ export const ModelVersions = {
     message.vid = object.vid ?? 0;
     message.pid = object.pid ?? 0;
     message.softwareVersions = object.softwareVersions?.map((e) => e) || [];
+    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };

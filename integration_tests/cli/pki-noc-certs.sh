@@ -153,9 +153,8 @@ result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 414"
 
 cert_schema_version_1=1
-schema_version_2=2
 echo "Add first NOC root certificate by vendor with VID = $vid"
-result=$(echo "$passphrase" | dcld tx pki add-noc-x509-root-cert --certificate="$noc_root_cert_1_path" --certificate-schema-version=$cert_schema_version_1 --schemaVersion=$schema_version_2 --from $vendor_account --yes)
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-root-cert --certificate="$noc_root_cert_1_path" --schemaVersion=$cert_schema_version_1 --from $vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -186,6 +185,7 @@ check_response "$result" "\"serialNumber\": \"$noc_root_cert_2_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$noc_root_cert_2_subject_as_text\""
 check_response "$result" "\"schemaVersion\": $cert_schema_version_0"
 check_response "$result" "\"schemaVersion\": $cert_schema_version_1"
+check_response "$result" "\"schemaVersion\": $schema_version_0"
 check_response "$result" "\"vid\": $vid"
 
 test_divider
@@ -292,9 +292,8 @@ check_response "$result" "\"code\": 439"
 test_divider
 
 cert_schema_version_3=3
-schema_version_4=4
 echo "Add second NOC certificate by vendor with VID = $vid"
-result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$noc_cert_2_path" --certificate-schema-version=$cert_schema_version_3 --schemaVersion=$schema_version_4 --from $vendor_account --yes)
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$noc_cert_2_path" --schemaVersion=$cert_schema_version_3 --from $vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -316,6 +315,7 @@ check_response "$result" "\"serialNumber\": \"$noc_cert_2_serial_number\""
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"schemaVersion\": $cert_schema_version_0"
 check_response "$result" "\"schemaVersion\": $cert_schema_version_3"
+check_response "$result" "\"schemaVersion\": $schema_version_0"
 
 
 echo "Request all approved certificates"
@@ -364,9 +364,8 @@ result=$(echo "$passphrase" | dcld tx pki revoke-noc-x509-root-cert --subject="$
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 439"
 
-revoke_schema_version_5=5
 echo "$vendor_account Vendor revokes only root certificate, it should not revoke intermediate certificates"
-result=$(echo "$passphrase" | dcld tx pki revoke-noc-x509-root-cert --subject="$noc_root_cert_1_subject" --subject-key-id="$noc_root_cert_1_subject_key_id" --schemaVersion=$revoke_schema_version_5 --from=$vendor_account --yes)
+result=$(echo "$passphrase" | dcld tx pki revoke-noc-x509-root-cert --subject="$noc_root_cert_1_subject" --subject-key-id="$noc_root_cert_1_subject_key_id" --from=$vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -377,7 +376,7 @@ check_response "$result" "\"subject\": \"$noc_root_cert_1_subject"
 check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$noc_root_cert_1_serial_number\""
 check_response "$result" "\"serialNumber\": \"$noc_root_cert_1_copy_serial_number\""
-check_response "$result" "\"schemaVersion\": $revoke_schema_version_5"
+check_response "$result" "\"schemaVersion\": $schema_version_0"
 response_does_not_contain "$result" "\"subject\": \"$noc_cert_1_subject\""
 response_does_not_contain "$result" "\"subject\": \"$noc_leaf_cert_1_subject\""
 
@@ -490,9 +489,8 @@ result=$(echo "$passphrase" | dcld tx pki revoke-noc-x509-ica-cert --subject="$n
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 439"
 
-revoke_schema_version_6=6
 echo "$vendor_account Vendor revokes only NOC certificates, it should not revoke leaf certificates"
-result=$(echo "$passphrase" | dcld tx pki revoke-noc-x509-ica-cert --subject="$noc_cert_1_subject" --subject-key-id="$noc_cert_1_subject_key_id" --schemaVersion=$revoke_schema_version_6 --from=$vendor_account --yes)
+result=$(echo "$passphrase" | dcld tx pki revoke-noc-x509-ica-cert --subject="$noc_cert_1_subject" --subject-key-id="$noc_cert_1_subject_key_id" --from=$vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -506,7 +504,7 @@ check_response "$result" "\"serialNumber\": \"$noc_root_cert_1_copy_serial_numbe
 check_response "$result" "\"subject\": \"$noc_cert_1_subject\""
 check_response "$result" "\"subjectKeyId\": \"$noc_cert_1_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$noc_cert_1_serial_number"
-check_response "$result" "\"schemaVersion\": $revoke_schema_version_6"
+check_response "$result" "\"schemaVersion\": $schema_version_0"
 response_does_not_contain "$result" "\"subject\": \"$noc_leaf_cert_1_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_leaf_cert_1_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$noc_leaf_cert_1_serial_number"

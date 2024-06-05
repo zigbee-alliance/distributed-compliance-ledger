@@ -50,22 +50,11 @@ func TestMsgAddNocX509RootCert_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
-			name: "schemaVersion > 65535",
-			msg: MsgAddNocX509RootCert{
-				Signer:            sample.AccAddress(),
-				Cert:              testconstants.NocRootCert1,
-				CertSchemaVersion: testconstants.CertSchemaVersion,
-				SchemaVersion:     65536,
-			},
-			err: validator.ErrFieldUpperBoundViolated,
-		},
-		{
 			name: "certSchemaVersion > 65535",
 			msg: MsgAddNocX509RootCert{
 				Signer:            sample.AccAddress(),
 				Cert:              testconstants.NocRootCert1,
 				CertSchemaVersion: 65536,
-				SchemaVersion:     testconstants.SchemaVersion,
 			},
 			err: validator.ErrFieldUpperBoundViolated,
 		},

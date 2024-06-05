@@ -17,5 +17,5 @@ message Description {
   // optional website link.
   string website = 3; 
   // optional details.
-  string details = 4; 
+  string details = 4;
 }

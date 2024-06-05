@@ -8,5 +8,6 @@ message ComplianceHistoryItem {
   uint32 softwareVersionCertificationStatus = 1; 
   string date = 2; 
   string reason = 3; 
-  uint32 cDVersionNumber = 4; 
+  uint32 cDVersionNumber = 4;
+  uint32 schemaVersion = 5;
 }

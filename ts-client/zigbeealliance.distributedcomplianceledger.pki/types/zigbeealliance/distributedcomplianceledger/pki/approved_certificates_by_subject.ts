@@ -6,10 +6,11 @@ export const protobufPackage = "zigbeealliance.distributedcomplianceledger.pki";
 export interface ApprovedCertificatesBySubject {
   subject: string;
   subjectKeyIds: string[];
+  schemaVersion: number;
 }
 
 function createBaseApprovedCertificatesBySubject(): ApprovedCertificatesBySubject {
-  return { subject: "", subjectKeyIds: [] };
+  return { subject: "", subjectKeyIds: [], schemaVersion: 0 };
 }
 
 export const ApprovedCertificatesBySubject = {
@@ -19,6 +20,9 @@ export const ApprovedCertificatesBySubject = {
     }
     for (const v of message.subjectKeyIds) {
       writer.uint32(18).string(v!);
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(24).uint32(message.schemaVersion);
     }
     return writer;
   },
@@ -36,6 +40,9 @@ export const ApprovedCertificatesBySubject = {
         case 2:
           message.subjectKeyIds.push(reader.string());
           break;
+        case 3:
+          message.schemaVersion = reader.uint32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -48,6 +55,7 @@ export const ApprovedCertificatesBySubject = {
     return {
       subject: isSet(object.subject) ? String(object.subject) : "",
       subjectKeyIds: Array.isArray(object?.subjectKeyIds) ? object.subjectKeyIds.map((e: any) => String(e)) : [],
+      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
@@ -59,6 +67,7 @@ export const ApprovedCertificatesBySubject = {
     } else {
       obj.subjectKeyIds = [];
     }
+    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
@@ -68,6 +77,7 @@ export const ApprovedCertificatesBySubject = {
     const message = createBaseApprovedCertificatesBySubject();
     message.subject = object.subject ?? "";
     message.subjectKeyIds = object.subjectKeyIds?.map((e) => e) || [];
+    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };

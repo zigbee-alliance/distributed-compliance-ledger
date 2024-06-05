@@ -8,7 +8,7 @@ import "zigbeealliance/distributedcomplianceledger/pki/certificate.proto";
 
 message NocRootCertificates {
   int32 vid = 1 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""]; 
-  repeated Certificate certs = 2; 
-  
+  repeated Certificate certs = 2;
+  uint32 schemaVersion = 3 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
 }
 

@@ -22,10 +22,19 @@ export interface Validator {
   jailed: boolean;
   /** the reason of validator jailing */
   jailedReason: string;
+  schemaVersion: number;
 }
 
 function createBaseValidator(): Validator {
-  return { owner: "", description: undefined, pubKey: undefined, power: 0, jailed: false, jailedReason: "" };
+  return {
+    owner: "",
+    description: undefined,
+    pubKey: undefined,
+    power: 0,
+    jailed: false,
+    jailedReason: "",
+    schemaVersion: 0,
+  };
 }
 
 export const Validator = {
@@ -47,6 +56,9 @@ export const Validator = {
     }
     if (message.jailedReason !== "") {
       writer.uint32(50).string(message.jailedReason);
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(56).uint32(message.schemaVersion);
     }
     return writer;
   },
@@ -76,6 +88,9 @@ export const Validator = {
         case 6:
           message.jailedReason = reader.string();
           break;
+        case 7:
+          message.schemaVersion = reader.uint32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -92,6 +107,7 @@ export const Validator = {
       power: isSet(object.power) ? Number(object.power) : 0,
       jailed: isSet(object.jailed) ? Boolean(object.jailed) : false,
       jailedReason: isSet(object.jailedReason) ? String(object.jailedReason) : "",
+      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
@@ -104,6 +120,7 @@ export const Validator = {
     message.power !== undefined && (obj.power = Math.round(message.power));
     message.jailed !== undefined && (obj.jailed = message.jailed);
     message.jailedReason !== undefined && (obj.jailedReason = message.jailedReason);
+    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
@@ -119,6 +136,7 @@ export const Validator = {
     message.power = object.power ?? 0;
     message.jailed = object.jailed ?? false;
     message.jailedReason = object.jailedReason ?? "";
+    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };

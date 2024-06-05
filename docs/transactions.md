@@ -850,8 +850,7 @@ The PAA certificate is immutable. It can only be revoked by either the owner or 
   - info: `optional(string)` - information/notes for the proposal. Can contain up to 4096 characters.
   - time: `optional(int64)` - proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
   - vid: `uint16` -  Vendor ID (positive non-zero). Must be equal to the Certificate's `vid` field for VID-scoped PAA.
-  - certificate-schema-version: `optional(uint16)` - Certificate's schema version to support backward/forward compatability(default 0)
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
+  - schemaVersion: `optional(uint16)` - Certificate's schema version to support backward/forward compatability(default 0)
 - In State: `pki/ProposedCertificate/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - CLI command:
   - `dcld tx pki propose-add-x509-root-cert --certificate=<string-or-path> --from=<account>`
@@ -908,7 +907,6 @@ The certificate is not reject until sufficient number of Trustees reject it.
   `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
   - info: `optional(string)` - information/notes for the reject. Can contain up to 4096 characters.
   - time: `optional(int64)` - reject time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
 - In State: `pki/RejectedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - Number of required rejects:
   - more than 1/3 of Trustees
@@ -943,7 +941,6 @@ then the certificate will be in a pending state until sufficient number of other
   - revoke-child: `optional(bool)`  - to revoke child certificates in the chain - default is false.
   - info: `optional(string)` - information/notes for the revocation proposal. Can contain up to 4096 characters.
   - time: `optional(int64)` - revocation proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
 - In State: `pki/ProposedCertificateRevocation/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - CLI command:
   - `dcld tx pki propose-revoke-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
@@ -1101,7 +1098,6 @@ Adds a PAI (intermediate certificate) signed by a chain of certificates which mu
 - Parameters:
   - cert: `string` - PEM encoded certificate. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data.
   - certificate-schema-version: `optional(uint16)` - Certificate's schema version to support backward/forward compatability(default 0)
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
 - In State:
   - `pki/ApprovedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
   - `pki/ChildCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
@@ -1153,7 +1149,6 @@ Root certificates can not be revoked this way, use  [PROPOSE_REVOKE_PAA](#propos
   - revoke-child: `optional(bool)` - to revoke child certificates in the chain - default is false.
   - info: `optional(string)` - information/notes for the revocation. Can contain up to 4096 characters.
   - time: `optional(int64)` - revocation time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
 - In State: `pki/RevokedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - CLI command:
   - `dcld tx pki revoke-x509-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
@@ -1359,8 +1354,7 @@ This transaction adds a NOC root certificate owned by the Vendor.
   - Vendor account
 - Parameters:
   - cert: `string` - The NOC Root Certificate, encoded in X.509v3 PEM format. Can be a PEM string or a file path.
-  - certificate-schema-version: `optional(uint16)` - Certificate's schema version to support backward/forward compatability(default 0)
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
+  - schemaVersion: `optional(uint16)` - Certificate's schema version to support backward/forward compatability(default 0)
 - In State:
   - `pki/ApprovedCertificates/value/<Subject>/<SubjectKeyID>`
   - `pki/ApprovedCertificatesBySubject/value/<Subject>`
@@ -1397,7 +1391,6 @@ Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revok
   - revoke-child: `optional(bool)` - if true, then all certificates in the chain signed by the revoked certificate (intermediate, leaf) are revoked as well. If false, only the current root cert is revoked (default: false).
   - info: `optional(string)` - information/notes for the revocation. Can contain up to 4096 characters.
   - time: `optional(int64)` - revocation time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
 - In State:
   - `pki/RevokedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
   - `pki/RevokedNocRootCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
@@ -1449,7 +1442,6 @@ already present on the ledger.
 - Parameters:
   - cert: `string` - The NOC non-root Certificate, encoded in X.509v3 PEM format. Can be a PEM string or a file path.
   - certificate-schema-version: `optional(uint16)` - Certificate's schema version to support backward/forward compatability(default 0)
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
 - In State:
   - `pki/ApprovedCertificates/value/<Subject>/<SubjectKeyID>`
   - `pki/ApprovedCertificatesBySubject/value/<Subject>`
@@ -1480,7 +1472,6 @@ Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revok
   - revoke-child: `optional(bool)` - if true, then all certificates in the chain signed by the revoked certificate (leaf) are revoked as well. If false, only the current cert is revoked (default: false).
   - info: `optional(string)` - information/notes for the revocation. Can contain up to 4096 characters.
   - time: `optional(int64)` - revocation time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
 - In State:
   - `pki/RevokedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - CLI command:

@@ -8,5 +8,6 @@ import "zigbeealliance/distributedcomplianceledger/pki/pki_revocation_distributi
 message PkiRevocationDistributionPointsByIssuerSubjectKeyID {
   string issuerSubjectKeyID = 1; 
   repeated PkiRevocationDistributionPoint points = 2;
+  uint32 schemaVersion = 3;
 }
 

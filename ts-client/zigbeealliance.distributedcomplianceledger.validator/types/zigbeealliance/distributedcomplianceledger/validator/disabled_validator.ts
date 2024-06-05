@@ -10,10 +10,11 @@ export interface DisabledValidator {
   approvals: Grant[];
   disabledByNodeAdmin: boolean;
   rejects: Grant[];
+  schemaVersion: number;
 }
 
 function createBaseDisabledValidator(): DisabledValidator {
-  return { address: "", creator: "", approvals: [], disabledByNodeAdmin: false, rejects: [] };
+  return { address: "", creator: "", approvals: [], disabledByNodeAdmin: false, rejects: [], schemaVersion: 0 };
 }
 
 export const DisabledValidator = {
@@ -32,6 +33,9 @@ export const DisabledValidator = {
     }
     for (const v of message.rejects) {
       Grant.encode(v!, writer.uint32(42).fork()).ldelim();
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(48).uint32(message.schemaVersion);
     }
     return writer;
   },
@@ -58,6 +62,9 @@ export const DisabledValidator = {
         case 5:
           message.rejects.push(Grant.decode(reader, reader.uint32()));
           break;
+        case 6:
+          message.schemaVersion = reader.uint32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -73,6 +80,7 @@ export const DisabledValidator = {
       approvals: Array.isArray(object?.approvals) ? object.approvals.map((e: any) => Grant.fromJSON(e)) : [],
       disabledByNodeAdmin: isSet(object.disabledByNodeAdmin) ? Boolean(object.disabledByNodeAdmin) : false,
       rejects: Array.isArray(object?.rejects) ? object.rejects.map((e: any) => Grant.fromJSON(e)) : [],
+      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
@@ -91,6 +99,7 @@ export const DisabledValidator = {
     } else {
       obj.rejects = [];
     }
+    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
@@ -101,6 +110,7 @@ export const DisabledValidator = {
     message.approvals = object.approvals?.map((e) => Grant.fromPartial(e)) || [];
     message.disabledByNodeAdmin = object.disabledByNodeAdmin ?? false;
     message.rejects = object.rejects?.map((e) => Grant.fromPartial(e)) || [];
+    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };

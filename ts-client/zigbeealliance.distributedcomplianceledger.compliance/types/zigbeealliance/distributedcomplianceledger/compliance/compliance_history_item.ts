@@ -8,10 +8,11 @@ export interface ComplianceHistoryItem {
   date: string;
   reason: string;
   cDVersionNumber: number;
+  schemaVersion: number;
 }
 
 function createBaseComplianceHistoryItem(): ComplianceHistoryItem {
-  return { softwareVersionCertificationStatus: 0, date: "", reason: "", cDVersionNumber: 0 };
+  return { softwareVersionCertificationStatus: 0, date: "", reason: "", cDVersionNumber: 0, schemaVersion: 0 };
 }
 
 export const ComplianceHistoryItem = {
@@ -27,6 +28,9 @@ export const ComplianceHistoryItem = {
     }
     if (message.cDVersionNumber !== 0) {
       writer.uint32(32).uint32(message.cDVersionNumber);
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(40).uint32(message.schemaVersion);
     }
     return writer;
   },
@@ -50,6 +54,9 @@ export const ComplianceHistoryItem = {
         case 4:
           message.cDVersionNumber = reader.uint32();
           break;
+        case 5:
+          message.schemaVersion = reader.uint32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -66,6 +73,7 @@ export const ComplianceHistoryItem = {
       date: isSet(object.date) ? String(object.date) : "",
       reason: isSet(object.reason) ? String(object.reason) : "",
       cDVersionNumber: isSet(object.cDVersionNumber) ? Number(object.cDVersionNumber) : 0,
+      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
@@ -76,6 +84,7 @@ export const ComplianceHistoryItem = {
     message.date !== undefined && (obj.date = message.date);
     message.reason !== undefined && (obj.reason = message.reason);
     message.cDVersionNumber !== undefined && (obj.cDVersionNumber = Math.round(message.cDVersionNumber));
+    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
@@ -85,6 +94,7 @@ export const ComplianceHistoryItem = {
     message.date = object.date ?? "";
     message.reason = object.reason ?? "";
     message.cDVersionNumber = object.cDVersionNumber ?? 0;
+    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };

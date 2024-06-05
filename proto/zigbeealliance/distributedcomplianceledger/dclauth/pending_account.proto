@@ -11,5 +11,6 @@ message PendingAccount {
   // option (gogoproto.goproto_getters)  = false;
   // option (gogoproto.goproto_stringer) = false;
 
-  Account account = 1 [(gogoproto.embed) = true];   
+  Account account = 1 [(gogoproto.embed) = true];
+  uint32 pendingAccountSchemaVersion = 2;
 }

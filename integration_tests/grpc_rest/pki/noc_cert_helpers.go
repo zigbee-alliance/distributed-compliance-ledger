@@ -282,8 +282,10 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, 2, len(nocCertificates.Certs))
 	require.Equal(suite.T, testconstants.NocRootCert1Subject, nocCertificates.Certs[0].Subject)
 	require.Equal(suite.T, testconstants.NocRootCert1SubjectKeyID, nocCertificates.Certs[0].SubjectKeyId)
+	require.Equal(suite.T, testconstants.SchemaVersion, nocCertificates.Certs[0].SchemaVersion)
 	require.Equal(suite.T, testconstants.NocRootCert2Subject, nocCertificates.Certs[1].Subject)
 	require.Equal(suite.T, testconstants.NocRootCert2SubjectKeyID, nocCertificates.Certs[1].SubjectKeyId)
+	require.Equal(suite.T, testconstants.SchemaVersion, nocCertificates.SchemaVersion)
 
 	// Request NOC root certificate by VID1 and SKID1
 	nocCertificatesByVidAndSkid, _ := GetNocX509RootCertsByVidAndSkid(suite, vid1, testconstants.NocRootCert1SubjectKeyID)

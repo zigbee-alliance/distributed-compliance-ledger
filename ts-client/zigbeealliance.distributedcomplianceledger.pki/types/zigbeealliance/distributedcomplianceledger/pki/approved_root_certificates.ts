@@ -6,16 +6,20 @@ export const protobufPackage = "zigbeealliance.distributedcomplianceledger.pki";
 
 export interface ApprovedRootCertificates {
   certs: CertificateIdentifier[];
+  schemaVersion: number;
 }
 
 function createBaseApprovedRootCertificates(): ApprovedRootCertificates {
-  return { certs: [] };
+  return { certs: [], schemaVersion: 0 };
 }
 
 export const ApprovedRootCertificates = {
   encode(message: ApprovedRootCertificates, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     for (const v of message.certs) {
       CertificateIdentifier.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(16).uint32(message.schemaVersion);
     }
     return writer;
   },
@@ -30,6 +34,9 @@ export const ApprovedRootCertificates = {
         case 1:
           message.certs.push(CertificateIdentifier.decode(reader, reader.uint32()));
           break;
+        case 2:
+          message.schemaVersion = reader.uint32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -41,6 +48,7 @@ export const ApprovedRootCertificates = {
   fromJSON(object: any): ApprovedRootCertificates {
     return {
       certs: Array.isArray(object?.certs) ? object.certs.map((e: any) => CertificateIdentifier.fromJSON(e)) : [],
+      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
@@ -51,12 +59,14 @@ export const ApprovedRootCertificates = {
     } else {
       obj.certs = [];
     }
+    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<ApprovedRootCertificates>, I>>(object: I): ApprovedRootCertificates {
     const message = createBaseApprovedRootCertificates();
     message.certs = object.certs?.map((e) => CertificateIdentifier.fromPartial(e)) || [];
+    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };
@@ -71,3 +81,7 @@ export type DeepPartial<T> = T extends Builtin ? T
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 export type Exact<P, I extends P> = P extends Builtin ? P
   : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+
+function isSet(value: any): boolean {
+  return value !== null && value !== undefined;
+}

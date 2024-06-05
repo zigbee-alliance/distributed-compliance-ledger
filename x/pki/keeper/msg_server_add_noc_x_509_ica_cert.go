@@ -105,7 +105,7 @@ func (k msgServer) AddNocX509IcaCert(goCtx context.Context, msg *types.MsgAddNoc
 	k.AddNocIcaCertificate(ctx, certificate)
 
 	// append new certificate to list of certificates with the same Subject/SubjectKeyId combination and store updated list
-	k.AddApprovedCertificate(ctx, certificate, msg.SchemaVersion)
+	k.AddApprovedCertificate(ctx, certificate)
 
 	// add the certificate identifier to the issuer's Child Certificates record
 	certificateIdentifier := types.CertificateIdentifier{

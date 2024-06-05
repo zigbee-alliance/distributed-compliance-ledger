@@ -7,10 +7,11 @@ export const protobufPackage = "zigbeealliance.distributedcomplianceledger.compl
 export interface DeviceSoftwareCompliance {
   cDCertificateId: string;
   complianceInfo: ComplianceInfo[];
+  schemaVersion: number;
 }
 
 function createBaseDeviceSoftwareCompliance(): DeviceSoftwareCompliance {
-  return { cDCertificateId: "", complianceInfo: [] };
+  return { cDCertificateId: "", complianceInfo: [], schemaVersion: 0 };
 }
 
 export const DeviceSoftwareCompliance = {
@@ -20,6 +21,9 @@ export const DeviceSoftwareCompliance = {
     }
     for (const v of message.complianceInfo) {
       ComplianceInfo.encode(v!, writer.uint32(18).fork()).ldelim();
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(24).uint32(message.schemaVersion);
     }
     return writer;
   },
@@ -37,6 +41,9 @@ export const DeviceSoftwareCompliance = {
         case 2:
           message.complianceInfo.push(ComplianceInfo.decode(reader, reader.uint32()));
           break;
+        case 3:
+          message.schemaVersion = reader.uint32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -51,6 +58,7 @@ export const DeviceSoftwareCompliance = {
       complianceInfo: Array.isArray(object?.complianceInfo)
         ? object.complianceInfo.map((e: any) => ComplianceInfo.fromJSON(e))
         : [],
+      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
@@ -62,6 +70,7 @@ export const DeviceSoftwareCompliance = {
     } else {
       obj.complianceInfo = [];
     }
+    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
@@ -69,6 +78,7 @@ export const DeviceSoftwareCompliance = {
     const message = createBaseDeviceSoftwareCompliance();
     message.cDCertificateId = object.cDCertificateId ?? "";
     message.complianceInfo = object.complianceInfo?.map((e) => ComplianceInfo.fromPartial(e)) || [];
+    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };

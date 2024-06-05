@@ -89,6 +89,9 @@ export interface DistributedcomplianceledgerdclupgradeApprovedUpgrade {
   creator?: string;
   approvals?: DclupgradeGrant[];
   rejects?: DclupgradeGrant[];
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface DistributedcomplianceledgerdclupgradeProposedUpgrade {
@@ -97,6 +100,9 @@ export interface DistributedcomplianceledgerdclupgradeProposedUpgrade {
   creator?: string;
   approvals?: DclupgradeGrant[];
   rejects?: DclupgradeGrant[];
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface DistributedcomplianceledgerdclupgradeRejectedUpgrade {
@@ -105,6 +111,9 @@ export interface DistributedcomplianceledgerdclupgradeRejectedUpgrade {
   creator?: string;
   approvals?: DclupgradeGrant[];
   rejects?: DclupgradeGrant[];
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 /**

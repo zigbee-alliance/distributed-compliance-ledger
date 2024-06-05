@@ -8,7 +8,7 @@ import "zigbeealliance/distributedcomplianceledger/pki/certificate_identifier.pr
 message ChildCertificates {
   string issuer = 1; 
   string authorityKeyId = 2; 
-  repeated CertificateIdentifier certIds = 3; 
-  
+  repeated CertificateIdentifier certIds = 3;
+  uint32 schemaVersion = 4;
 }
 

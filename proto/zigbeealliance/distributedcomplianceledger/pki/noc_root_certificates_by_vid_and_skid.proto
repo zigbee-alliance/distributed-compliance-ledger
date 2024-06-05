@@ -10,7 +10,7 @@ message NocRootCertificatesByVidAndSkid {
   int32 vid = 1 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
   string subjectKeyId = 2; 
   repeated Certificate certs = 3; 
-  float tq = 4; 
-  
+  float tq = 4;
+  uint32 schemaVersion = 5;
 }
 

@@ -23,5 +23,6 @@ message Account {
   int32 vendorID = 4;
   repeated Grant rejects = 5;
   repeated common.Uint16Range productIDs = 6;
+  uint32 schemaVersion = 7;
 }
 

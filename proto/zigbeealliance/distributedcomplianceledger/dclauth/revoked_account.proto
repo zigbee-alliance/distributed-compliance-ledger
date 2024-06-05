@@ -15,5 +15,6 @@ message RevokedAccount {
     MaliciousValidator = 1;
   }
   Reason reason = 3;
+  uint32 revokedAccountSchemaVersion = 4;
 }
 

@@ -51,22 +51,11 @@ func TestMsgAddNocX509IcaCert_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
-			name: "schemaVersion > 65535",
-			msg: MsgAddNocX509IcaCert{
-				Signer:            sample.AccAddress(),
-				Cert:              testconstants.NocCert1,
-				CertSchemaVersion: testconstants.CertSchemaVersion,
-				SchemaVersion:     65536,
-			},
-			err: validator.ErrFieldUpperBoundViolated,
-		},
-		{
 			name: "certSchemaVersion > 65535",
 			msg: MsgAddNocX509IcaCert{
 				Signer:            sample.AccAddress(),
 				Cert:              testconstants.NocCert1,
 				CertSchemaVersion: 65536,
-				SchemaVersion:     testconstants.SchemaVersion,
 			},
 			err: validator.ErrFieldUpperBoundViolated,
 		},

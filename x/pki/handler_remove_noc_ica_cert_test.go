@@ -25,15 +25,15 @@ func TestHandler_RemoveNocX509IcaCert_BySubjectAndSKID(t *testing.T) {
 	addNocRootCertificate(setup, vendorAccAddress, testconstants.NocRootCert1, vid)
 
 	// Add two intermediate certificates
-	addIcaCert := types.NewMsgAddNocX509IcaCert(vendorAccAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion, testconstants.SchemaVersion)
+	addIcaCert := types.NewMsgAddNocX509IcaCert(vendorAccAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addIcaCert)
 	require.NoError(t, err)
-	addIcaCert = types.NewMsgAddNocX509IcaCert(vendorAccAddress.String(), testconstants.NocCert1Copy, testconstants.CertSchemaVersion, testconstants.SchemaVersion)
+	addIcaCert = types.NewMsgAddNocX509IcaCert(vendorAccAddress.String(), testconstants.NocCert1Copy, testconstants.CertSchemaVersion)
 	_, err = setup.Handler(setup.Ctx, addIcaCert)
 	require.NoError(t, err)
 
 	// Add a leaf certificate
-	addIcaLeafCert := types.NewMsgAddNocX509IcaCert(vendorAccAddress.String(), testconstants.NocLeafCert1, testconstants.CertSchemaVersion, testconstants.SchemaVersion)
+	addIcaLeafCert := types.NewMsgAddNocX509IcaCert(vendorAccAddress.String(), testconstants.NocLeafCert1, testconstants.CertSchemaVersion)
 	_, err = setup.Handler(setup.Ctx, addIcaLeafCert)
 	require.NoError(t, err)
 
@@ -89,17 +89,17 @@ func TestHandler_RemoveNocX509IcaCert_BySerialNumber(t *testing.T) {
 	addNocRootCertificate(setup, vendorAccAddress, testconstants.NocRootCert1, vid)
 
 	// Add ICA certificates
-	addIcaCert := types.NewMsgAddNocX509IcaCert(vendorAccAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion, testconstants.SchemaVersion)
+	addIcaCert := types.NewMsgAddNocX509IcaCert(vendorAccAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addIcaCert)
 	require.NoError(t, err)
 
 	// Add ICA certificates with sam subject and SKID but different serial number
-	addIcaCert = types.NewMsgAddNocX509IcaCert(vendorAccAddress.String(), testconstants.NocCert1Copy, testconstants.CertSchemaVersion, testconstants.SchemaVersion)
+	addIcaCert = types.NewMsgAddNocX509IcaCert(vendorAccAddress.String(), testconstants.NocCert1Copy, testconstants.CertSchemaVersion)
 	_, err = setup.Handler(setup.Ctx, addIcaCert)
 	require.NoError(t, err)
 
 	// Add a leaf certificate
-	addIcaLeafCert := types.NewMsgAddNocX509IcaCert(vendorAccAddress.String(), testconstants.NocLeafCert1, testconstants.CertSchemaVersion, testconstants.SchemaVersion)
+	addIcaLeafCert := types.NewMsgAddNocX509IcaCert(vendorAccAddress.String(), testconstants.NocLeafCert1, testconstants.CertSchemaVersion)
 	_, err = setup.Handler(setup.Ctx, addIcaLeafCert)
 	require.NoError(t, err)
 
@@ -175,7 +175,7 @@ func TestHandler_RemoveNocX509IcaCert_RevokedAndApprovedCertificate(t *testing.T
 	addNocRootCertificate(setup, vendorAccAddress, testconstants.NocRootCert1, vid)
 
 	// Add an intermediate certificate
-	addIcaCert := types.NewMsgAddNocX509IcaCert(vendorAccAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion, testconstants.SchemaVersion)
+	addIcaCert := types.NewMsgAddNocX509IcaCert(vendorAccAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addIcaCert)
 	require.NoError(t, err)
 
@@ -193,13 +193,12 @@ func TestHandler_RemoveNocX509IcaCert_RevokedAndApprovedCertificate(t *testing.T
 		testconstants.NocCert1SerialNumber,
 		testconstants.Info,
 		false,
-		testconstants.SchemaVersion,
 	)
 	_, err = setup.Handler(setup.Ctx, revokeX509Cert)
 	require.NoError(t, err)
 
 	// Add an intermediate certificate with new serial number
-	addIcaCert = types.NewMsgAddNocX509IcaCert(vendorAccAddress.String(), testconstants.NocCert1Copy, testconstants.CertSchemaVersion, testconstants.SchemaVersion)
+	addIcaCert = types.NewMsgAddNocX509IcaCert(vendorAccAddress.String(), testconstants.NocCert1Copy, testconstants.CertSchemaVersion)
 	_, err = setup.Handler(setup.Ctx, addIcaCert)
 	require.NoError(t, err)
 
@@ -251,7 +250,7 @@ func TestHandler_RemoveNocX509IcaCert_RevokedCertificate(t *testing.T) {
 	addNocRootCertificate(setup, vendorAccAddress, testconstants.NocRootCert1, vid)
 
 	// Add an intermediate certificate
-	addIcaCert := types.NewMsgAddNocX509IcaCert(vendorAccAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion, testconstants.SchemaVersion)
+	addIcaCert := types.NewMsgAddNocX509IcaCert(vendorAccAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addIcaCert)
 	require.NoError(t, err)
 
@@ -268,7 +267,6 @@ func TestHandler_RemoveNocX509IcaCert_RevokedCertificate(t *testing.T) {
 		testconstants.NocCert1SerialNumber,
 		testconstants.Info,
 		false,
-		testconstants.SchemaVersion,
 	)
 	_, err = setup.Handler(setup.Ctx, revokeX509Cert)
 	require.NoError(t, err)
@@ -325,7 +323,7 @@ func TestHandler_RemoveNocX509IcaCert_ByNotOwnerButSameVendor(t *testing.T) {
 	setup.AddAccount(vendorAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
 	// add ICA certificate by fist vendor account
-	addIcaCert := types.NewMsgAddNocX509IcaCert(vendorAccAddress1.String(), testconstants.NocCert1, testconstants.CertSchemaVersion, testconstants.SchemaVersion)
+	addIcaCert := types.NewMsgAddNocX509IcaCert(vendorAccAddress1.String(), testconstants.NocCert1, testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addIcaCert)
 	require.NoError(t, err)
 
@@ -423,7 +421,7 @@ func TestHandler_RemoveNocX509IcaCert_ByOtherVendor(t *testing.T) {
 	setup.AddAccount(vendorAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
 	// add x509 certificate by `setup.Trustee`
-	addX509Cert := types.NewMsgAddNocX509IcaCert(vendorAccAddress1.String(), testconstants.NocCert1, testconstants.CertSchemaVersion, testconstants.SchemaVersion)
+	addX509Cert := types.NewMsgAddNocX509IcaCert(vendorAccAddress1.String(), testconstants.NocCert1, testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
 	require.NoError(t, err)
 
@@ -451,7 +449,7 @@ func TestHandler_RemoveNocX509IcaCert_SenderNotVendor(t *testing.T) {
 	addNocRootCertificate(setup, vendorAccAddress, testconstants.NocRootCert1, vid)
 
 	// add x509 certificate
-	addX509Cert := types.NewMsgAddNocX509IcaCert(vendorAccAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion, testconstants.SchemaVersion)
+	addX509Cert := types.NewMsgAddNocX509IcaCert(vendorAccAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
 	require.NoError(t, err)
 
@@ -496,7 +494,7 @@ func TestHandler_RemoveNocX509IcaCert_InvalidSerialNumber(t *testing.T) {
 	// add NOC root certificate
 	addNocRootCertificate(setup, vendorAccAddress, testconstants.NocRootCert1, vid)
 
-	addX509Cert := types.NewMsgAddNocX509IcaCert(vendorAccAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion, testconstants.SchemaVersion)
+	addX509Cert := types.NewMsgAddNocX509IcaCert(vendorAccAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
 	require.NoError(t, err)
 

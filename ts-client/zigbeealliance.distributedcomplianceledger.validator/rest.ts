@@ -15,6 +15,9 @@ export interface DistributedcomplianceledgervalidatorDisabledValidator {
   approvals?: ValidatorGrant[];
   disabledByNodeAdmin?: boolean;
   rejects?: ValidatorGrant[];
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface DistributedcomplianceledgervalidatorLastValidatorPower {
@@ -22,6 +25,9 @@ export interface DistributedcomplianceledgervalidatorLastValidatorPower {
 
   /** @format int32 */
   power?: number;
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface DistributedcomplianceledgervalidatorProposedDisableValidator {
@@ -29,6 +35,9 @@ export interface DistributedcomplianceledgervalidatorProposedDisableValidator {
   creator?: string;
   approvals?: ValidatorGrant[];
   rejects?: ValidatorGrant[];
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface DistributedcomplianceledgervalidatorRejectedDisableValidator {
@@ -36,6 +45,9 @@ export interface DistributedcomplianceledgervalidatorRejectedDisableValidator {
   creator?: string;
   approvals?: ValidatorGrant[];
   rejects?: ValidatorGrant[];
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface DistributedcomplianceledgervalidatorValidator {
@@ -117,6 +129,9 @@ export interface DistributedcomplianceledgervalidatorValidator {
 
   /** the reason of validator jailing */
   jailedReason?: string;
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 /**

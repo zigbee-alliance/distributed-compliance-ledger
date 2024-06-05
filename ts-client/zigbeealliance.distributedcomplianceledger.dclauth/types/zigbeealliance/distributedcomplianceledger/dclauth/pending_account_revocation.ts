@@ -7,10 +7,11 @@ export const protobufPackage = "zigbeealliance.distributedcomplianceledger.dclau
 export interface PendingAccountRevocation {
   address: string;
   approvals: Grant[];
+  schemaVersion: number;
 }
 
 function createBasePendingAccountRevocation(): PendingAccountRevocation {
-  return { address: "", approvals: [] };
+  return { address: "", approvals: [], schemaVersion: 0 };
 }
 
 export const PendingAccountRevocation = {
@@ -20,6 +21,9 @@ export const PendingAccountRevocation = {
     }
     for (const v of message.approvals) {
       Grant.encode(v!, writer.uint32(18).fork()).ldelim();
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(24).uint32(message.schemaVersion);
     }
     return writer;
   },
@@ -37,6 +41,9 @@ export const PendingAccountRevocation = {
         case 2:
           message.approvals.push(Grant.decode(reader, reader.uint32()));
           break;
+        case 3:
+          message.schemaVersion = reader.uint32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -49,6 +56,7 @@ export const PendingAccountRevocation = {
     return {
       address: isSet(object.address) ? String(object.address) : "",
       approvals: Array.isArray(object?.approvals) ? object.approvals.map((e: any) => Grant.fromJSON(e)) : [],
+      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
@@ -60,6 +68,7 @@ export const PendingAccountRevocation = {
     } else {
       obj.approvals = [];
     }
+    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
@@ -67,6 +76,7 @@ export const PendingAccountRevocation = {
     const message = createBasePendingAccountRevocation();
     message.address = object.address ?? "";
     message.approvals = object.approvals?.map((e) => Grant.fromPartial(e)) || [];
+    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };

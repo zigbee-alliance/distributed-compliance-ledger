@@ -11,16 +11,20 @@ export const protobufPackage = "zigbeealliance.distributedcomplianceledger.dclau
  */
 export interface PendingAccount {
   account: Account | undefined;
+  pendingAccountSchemaVersion: number;
 }
 
 function createBasePendingAccount(): PendingAccount {
-  return { account: undefined };
+  return { account: undefined, pendingAccountSchemaVersion: 0 };
 }
 
 export const PendingAccount = {
   encode(message: PendingAccount, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.account !== undefined) {
       Account.encode(message.account, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.pendingAccountSchemaVersion !== 0) {
+      writer.uint32(16).uint32(message.pendingAccountSchemaVersion);
     }
     return writer;
   },
@@ -35,6 +39,9 @@ export const PendingAccount = {
         case 1:
           message.account = Account.decode(reader, reader.uint32());
           break;
+        case 2:
+          message.pendingAccountSchemaVersion = reader.uint32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -44,12 +51,19 @@ export const PendingAccount = {
   },
 
   fromJSON(object: any): PendingAccount {
-    return { account: isSet(object.account) ? Account.fromJSON(object.account) : undefined };
+    return {
+      account: isSet(object.account) ? Account.fromJSON(object.account) : undefined,
+      pendingAccountSchemaVersion: isSet(object.pendingAccountSchemaVersion)
+        ? Number(object.pendingAccountSchemaVersion)
+        : 0,
+    };
   },
 
   toJSON(message: PendingAccount): unknown {
     const obj: any = {};
     message.account !== undefined && (obj.account = message.account ? Account.toJSON(message.account) : undefined);
+    message.pendingAccountSchemaVersion !== undefined
+      && (obj.pendingAccountSchemaVersion = Math.round(message.pendingAccountSchemaVersion));
     return obj;
   },
 
@@ -58,6 +72,7 @@ export const PendingAccount = {
     message.account = (object.account !== undefined && object.account !== null)
       ? Account.fromPartial(object.account)
       : undefined;
+    message.pendingAccountSchemaVersion = object.pendingAccountSchemaVersion ?? 0;
     return message;
   },
 };

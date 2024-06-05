@@ -8,5 +8,6 @@ import "zigbeealliance/distributedcomplianceledger/pki/certificate.proto";
 message RevokedNocRootCertificates {
   string subject = 1; 
   string subjectKeyId = 2; 
-  repeated Certificate certs = 3; 
+  repeated Certificate certs = 3;
+  uint32 schemaVersion = 4;
 }

@@ -21,17 +21,15 @@ func NewMsgProposeRevokeX509RootCert(
 	serialNumber string,
 	revokeChild bool,
 	info string,
-	schemaVersion uint32,
 ) *MsgProposeRevokeX509RootCert {
 	return &MsgProposeRevokeX509RootCert{
-		Signer:        signer,
-		Subject:       subject,
-		SubjectKeyId:  subjectKeyID,
-		SerialNumber:  serialNumber,
-		RevokeChild:   revokeChild,
-		Info:          info,
-		Time:          time.Now().Unix(),
-		SchemaVersion: schemaVersion,
+		Signer:       signer,
+		Subject:      subject,
+		SubjectKeyId: subjectKeyID,
+		SerialNumber: serialNumber,
+		RevokeChild:  revokeChild,
+		Info:         info,
+		Time:         time.Now().Unix(),
 	}
 }
 

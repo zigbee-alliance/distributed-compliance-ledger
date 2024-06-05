@@ -7,10 +7,11 @@ export const protobufPackage = "zigbeealliance.distributedcomplianceledger.pki";
 export interface PkiRevocationDistributionPointsByIssuerSubjectKeyID {
   issuerSubjectKeyID: string;
   points: PkiRevocationDistributionPoint[];
+  schemaVersion: number;
 }
 
 function createBasePkiRevocationDistributionPointsByIssuerSubjectKeyID(): PkiRevocationDistributionPointsByIssuerSubjectKeyID {
-  return { issuerSubjectKeyID: "", points: [] };
+  return { issuerSubjectKeyID: "", points: [], schemaVersion: 0 };
 }
 
 export const PkiRevocationDistributionPointsByIssuerSubjectKeyID = {
@@ -23,6 +24,9 @@ export const PkiRevocationDistributionPointsByIssuerSubjectKeyID = {
     }
     for (const v of message.points) {
       PkiRevocationDistributionPoint.encode(v!, writer.uint32(18).fork()).ldelim();
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(24).uint32(message.schemaVersion);
     }
     return writer;
   },
@@ -40,6 +44,9 @@ export const PkiRevocationDistributionPointsByIssuerSubjectKeyID = {
         case 2:
           message.points.push(PkiRevocationDistributionPoint.decode(reader, reader.uint32()));
           break;
+        case 3:
+          message.schemaVersion = reader.uint32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -54,6 +61,7 @@ export const PkiRevocationDistributionPointsByIssuerSubjectKeyID = {
       points: Array.isArray(object?.points)
         ? object.points.map((e: any) => PkiRevocationDistributionPoint.fromJSON(e))
         : [],
+      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
@@ -65,6 +73,7 @@ export const PkiRevocationDistributionPointsByIssuerSubjectKeyID = {
     } else {
       obj.points = [];
     }
+    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
@@ -74,6 +83,7 @@ export const PkiRevocationDistributionPointsByIssuerSubjectKeyID = {
     const message = createBasePkiRevocationDistributionPointsByIssuerSubjectKeyID();
     message.issuerSubjectKeyID = object.issuerSubjectKeyID ?? "";
     message.points = object.points?.map((e) => PkiRevocationDistributionPoint.fromPartial(e)) || [];
+    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };

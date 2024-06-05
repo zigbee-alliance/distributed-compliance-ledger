@@ -8,5 +8,6 @@ import "zigbeealliance/distributedcomplianceledger/dclauth/account.proto";
 
 message RejectedAccount {
   Account account = 1 [(gogoproto.embed) = true];
+  uint32 rejectedAccountSchemaVersion = 2;
 }
 

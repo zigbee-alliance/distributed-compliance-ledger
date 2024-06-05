@@ -6,16 +6,20 @@ export const protobufPackage = "zigbeealliance.distributedcomplianceledger.dclau
 
 export interface RejectedAccount {
   account: Account | undefined;
+  rejectedAccountSchemaVersion: number;
 }
 
 function createBaseRejectedAccount(): RejectedAccount {
-  return { account: undefined };
+  return { account: undefined, rejectedAccountSchemaVersion: 0 };
 }
 
 export const RejectedAccount = {
   encode(message: RejectedAccount, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.account !== undefined) {
       Account.encode(message.account, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.rejectedAccountSchemaVersion !== 0) {
+      writer.uint32(16).uint32(message.rejectedAccountSchemaVersion);
     }
     return writer;
   },
@@ -30,6 +34,9 @@ export const RejectedAccount = {
         case 1:
           message.account = Account.decode(reader, reader.uint32());
           break;
+        case 2:
+          message.rejectedAccountSchemaVersion = reader.uint32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -39,12 +46,19 @@ export const RejectedAccount = {
   },
 
   fromJSON(object: any): RejectedAccount {
-    return { account: isSet(object.account) ? Account.fromJSON(object.account) : undefined };
+    return {
+      account: isSet(object.account) ? Account.fromJSON(object.account) : undefined,
+      rejectedAccountSchemaVersion: isSet(object.rejectedAccountSchemaVersion)
+        ? Number(object.rejectedAccountSchemaVersion)
+        : 0,
+    };
   },
 
   toJSON(message: RejectedAccount): unknown {
     const obj: any = {};
     message.account !== undefined && (obj.account = message.account ? Account.toJSON(message.account) : undefined);
+    message.rejectedAccountSchemaVersion !== undefined
+      && (obj.rejectedAccountSchemaVersion = Math.round(message.rejectedAccountSchemaVersion));
     return obj;
   },
 
@@ -53,6 +67,7 @@ export const RejectedAccount = {
     message.account = (object.account !== undefined && object.account !== null)
       ? Account.fromPartial(object.account)
       : undefined;
+    message.rejectedAccountSchemaVersion = object.rejectedAccountSchemaVersion ?? 0;
     return message;
   },
 };

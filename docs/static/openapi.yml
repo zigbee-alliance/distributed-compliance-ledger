@@ -40,6 +40,9 @@ paths:
                       type: string
                     value:
                       type: boolean
+                    schemaVersion:
+                      type: integer
+                      format: int64
               pagination:
                 type: object
                 properties:
@@ -171,6 +174,9 @@ paths:
                     type: string
                   value:
                     type: boolean
+                  schemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -264,6 +270,9 @@ paths:
                           reason:
                             type: string
                           cDVersionNumber:
+                            type: integer
+                            format: int64
+                          schemaVersion:
                             type: integer
                             format: int64
                     cDCertificateId:
@@ -451,6 +460,9 @@ paths:
                         cDVersionNumber:
                           type: integer
                           format: int64
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   cDCertificateId:
                     type: string
                   certificationRoute:
@@ -580,6 +592,9 @@ paths:
                                 cDVersionNumber:
                                   type: integer
                                   format: int64
+                                schemaVersion:
+                                  type: integer
+                                  format: int64
                           cDCertificateId:
                             type: string
                           certificationRoute:
@@ -607,6 +622,9 @@ paths:
                           schemaVersion:
                             type: integer
                             format: int64
+                    schemaVersion:
+                      type: integer
+                      format: int64
               pagination:
                 type: object
                 properties:
@@ -772,6 +790,9 @@ paths:
                               cDVersionNumber:
                                 type: integer
                                 format: int64
+                              schemaVersion:
+                                type: integer
+                                format: int64
                         cDCertificateId:
                           type: string
                         certificationRoute:
@@ -799,6 +820,9 @@ paths:
                         schemaVersion:
                           type: integer
                           format: int64
+                  schemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -852,6 +876,9 @@ paths:
                       type: string
                     value:
                       type: boolean
+                    schemaVersion:
+                      type: integer
+                      format: int64
               pagination:
                 type: object
                 properties:
@@ -983,6 +1010,9 @@ paths:
                     type: string
                   value:
                     type: boolean
+                  schemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -1051,6 +1081,9 @@ paths:
                       type: string
                     value:
                       type: boolean
+                    schemaVersion:
+                      type: integer
+                      format: int64
               pagination:
                 type: object
                 properties:
@@ -1182,6 +1215,9 @@ paths:
                     type: string
                   value:
                     type: boolean
+                  schemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -1491,6 +1527,9 @@ paths:
                           max:
                             type: integer
                             format: int32
+                    schemaVersion:
+                      type: integer
+                      format: int64
               pagination:
                 type: object
                 properties:
@@ -1785,6 +1824,9 @@ paths:
                   number:
                     type: string
                     format: uint64
+                  schemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -2244,6 +2286,9 @@ paths:
                         max:
                           type: integer
                           format: int32
+                  schemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -2716,6 +2761,12 @@ paths:
                               max:
                                 type: integer
                                 format: int32
+                        schemaVersion:
+                          type: integer
+                          format: int64
+                    pendingAccountSchemaVersion:
+                      type: integer
+                      format: int64
                   title: |-
                     TODO issue 99: do we need that ???
                      option (gogoproto.goproto_getters)  = false;
@@ -3269,6 +3320,12 @@ paths:
                             max:
                               type: integer
                               format: int32
+                      schemaVersion:
+                        type: integer
+                        format: int64
+                  pendingAccountSchemaVersion:
+                    type: integer
+                    format: int64
                 title: |-
                   TODO issue 99: do we need that ???
                    option (gogoproto.goproto_getters)  = false;
@@ -3503,6 +3560,9 @@ paths:
                               1970 UTC
                           info:
                             type: string
+                    schemaVersion:
+                      type: integer
+                      format: int64
               pagination:
                 type: object
                 properties:
@@ -3811,6 +3871,9 @@ paths:
                             UTC
                         info:
                           type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -4283,6 +4346,12 @@ paths:
                               max:
                                 type: integer
                                 format: int32
+                        schemaVersion:
+                          type: integer
+                          format: int64
+                    rejectedAccountSchemaVersion:
+                      type: integer
+                      format: int64
               pagination:
                 type: object
                 properties:
@@ -4832,6 +4901,12 @@ paths:
                             max:
                               type: integer
                               format: int32
+                      schemaVersion:
+                        type: integer
+                        format: int64
+                  rejectedAccountSchemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -5304,6 +5379,9 @@ paths:
                               max:
                                 type: integer
                                 format: int32
+                        schemaVersion:
+                          type: integer
+                          format: int64
                     revokeApprovals:
                       type: array
                       items:
@@ -5325,6 +5403,9 @@ paths:
                         - TrusteeVoting
                         - MaliciousValidator
                       default: TrusteeVoting
+                    revokedAccountSchemaVersion:
+                      type: integer
+                      format: int64
               pagination:
                 type: object
                 properties:
@@ -5874,6 +5955,9 @@ paths:
                             max:
                               type: integer
                               format: int32
+                      schemaVersion:
+                        type: integer
+                        format: int64
                   revokeApprovals:
                     type: array
                     items:
@@ -5895,6 +5979,9 @@ paths:
                       - TrusteeVoting
                       - MaliciousValidator
                     default: TrusteeVoting
+                  revokedAccountSchemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -6262,6 +6349,9 @@ paths:
                               1970 UTC
                           info:
                             type: string
+                    schemaVersion:
+                      type: integer
+                      format: int64
               pagination:
                 type: object
                 properties:
@@ -6707,6 +6797,9 @@ paths:
                             UTC
                         info:
                           type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -7074,6 +7167,9 @@ paths:
                               1970 UTC
                           info:
                             type: string
+                    schemaVersion:
+                      type: integer
+                      format: int64
               pagination:
                 type: object
                 properties:
@@ -7519,6 +7615,9 @@ paths:
                             UTC
                         info:
                           type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -7886,6 +7985,9 @@ paths:
                               1970 UTC
                           info:
                             type: string
+                    schemaVersion:
+                      type: integer
+                      format: int64
               pagination:
                 type: object
                 properties:
@@ -8331,6 +8433,9 @@ paths:
                             UTC
                         info:
                           type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -8725,6 +8830,9 @@ paths:
                           type: string
                         partNumber:
                           type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -8867,6 +8975,9 @@ paths:
                     items:
                       type: integer
                       format: int64
+                  schemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -9203,6 +9314,9 @@ paths:
                     type: array
                     items:
                       type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -9368,6 +9482,9 @@ paths:
                           type: string
                         subjectKeyId:
                           type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -9480,6 +9597,9 @@ paths:
                           schemaVersion:
                             type: integer
                             format: int64
+                    schemaVersion:
+                      type: integer
+                      format: int64
               pagination:
                 type: object
                 properties:
@@ -9666,6 +9786,9 @@ paths:
                         schemaVersion:
                           type: integer
                           format: int64
+                  schemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -9775,6 +9898,9 @@ paths:
                           schemaVersion:
                             type: integer
                             format: int64
+                    schemaVersion:
+                      type: integer
+                      format: int64
               pagination:
                 type: object
                 properties:
@@ -9961,6 +10087,9 @@ paths:
                         schemaVersion:
                           type: integer
                           format: int64
+                  schemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -10040,6 +10169,9 @@ paths:
                               time:
                                 type: string
                                 format: int64
+                                title: >-
+                                  number of nanoseconds elapsed since January 1,
+                                  1970 UTC
                               info:
                                 type: string
                         subjectAsText:
@@ -10054,6 +10186,9 @@ paths:
                               time:
                                 type: string
                                 format: int64
+                                title: >-
+                                  number of nanoseconds elapsed since January 1,
+                                  1970 UTC
                               info:
                                 type: string
                         vid:
@@ -10067,13 +10202,14 @@ paths:
                   tq:
                     type: number
                     format: float
+                  schemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
             type: object
             properties:
-              error:
-                type: string
               code:
                 type: integer
                 format: int32
@@ -10084,11 +10220,9 @@ paths:
                 items:
                   type: object
                   properties:
-                    type_url:
+                    '@type':
                       type: string
-                    value:
-                      type: string
-                      format: byte
+                  additionalProperties: {}
       parameters:
         - name: vid
           in: path
@@ -11097,6 +11231,9 @@ paths:
                           format: int64
                         crlSignerDelegator:
                           type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -11591,6 +11728,9 @@ paths:
                           schemaVersion:
                             type: integer
                             format: int64
+                    schemaVersion:
+                      type: integer
+                      format: int64
               pagination:
                 type: object
                 properties:
@@ -11778,6 +11918,9 @@ paths:
                         schemaVersion:
                           type: integer
                           format: int64
+                  schemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -11829,6 +11972,9 @@ paths:
                           type: string
                         subjectKeyId:
                           type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -11871,6 +12017,9 @@ paths:
                           type: string
                         subjectKeyId:
                           type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -11942,6 +12091,9 @@ paths:
                               1970 UTC
                           info:
                             type: string
+                    schemaVersion:
+                      type: integer
+                      format: int64
               pagination:
                 type: object
                 properties:
@@ -12269,6 +12421,9 @@ paths:
                             UTC
                         info:
                           type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -12487,6 +12642,9 @@ paths:
                     power:
                       type: integer
                       format: int32
+                    schemaVersion:
+                      type: integer
+                      format: int64
               pagination:
                 type: object
                 properties:
@@ -12783,6 +12941,9 @@ paths:
                   power:
                     type: integer
                     format: int32
+                  schemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -13207,6 +13368,9 @@ paths:
                     jailedReason:
                       type: string
                       title: the reason of validator jailing
+                    schemaVersion:
+                      type: integer
+                      format: int64
               pagination:
                 type: object
                 properties:
@@ -13707,6 +13871,9 @@ paths:
                   jailedReason:
                     type: string
                     title: the reason of validator jailing
+                  schemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -13954,6 +14121,9 @@ paths:
                               1970 UTC
                           info:
                             type: string
+                    schemaVersion:
+                      type: integer
+                      format: int64
               pagination:
                 type: object
                 properties:
@@ -14279,6 +14449,9 @@ paths:
                             UTC
                         info:
                           type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -14526,6 +14699,9 @@ paths:
                               1970 UTC
                           info:
                             type: string
+                    schemaVersion:
+                      type: integer
+                      format: int64
               pagination:
                 type: object
                 properties:
@@ -14851,6 +15027,9 @@ paths:
                             UTC
                         info:
                           type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -15669,6 +15848,9 @@ definitions:
         type: string
       value:
         type: boolean
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.compliance.ComplianceHistoryItem:
     type: object
     properties:
@@ -15680,6 +15862,9 @@ definitions:
       reason:
         type: string
       cDVersionNumber:
+        type: integer
+        format: int64
+      schemaVersion:
         type: integer
         format: int64
   zigbeealliance.distributedcomplianceledger.compliance.ComplianceInfo:
@@ -15723,6 +15908,9 @@ definitions:
             reason:
               type: string
             cDVersionNumber:
+              type: integer
+              format: int64
+            schemaVersion:
               type: integer
               format: int64
       cDCertificateId:
@@ -15802,6 +15990,9 @@ definitions:
                   cDVersionNumber:
                     type: integer
                     format: int64
+                  schemaVersion:
+                    type: integer
+                    format: int64
             cDCertificateId:
               type: string
             certificationRoute:
@@ -15829,6 +16020,9 @@ definitions:
             schemaVersion:
               type: integer
               format: int64
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.compliance.ProvisionalModel:
     type: object
     properties:
@@ -15845,6 +16039,9 @@ definitions:
         type: string
       value:
         type: boolean
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.compliance.QueryAllCertifiedModelResponse:
     type: object
     properties:
@@ -15866,6 +16063,9 @@ definitions:
               type: string
             value:
               type: boolean
+            schemaVersion:
+              type: integer
+              format: int64
       pagination:
         type: object
         properties:
@@ -15938,6 +16138,9 @@ definitions:
                   reason:
                     type: string
                   cDVersionNumber:
+                    type: integer
+                    format: int64
+                  schemaVersion:
                     type: integer
                     format: int64
             cDCertificateId:
@@ -16048,6 +16251,9 @@ definitions:
                         cDVersionNumber:
                           type: integer
                           format: int64
+                        schemaVersion:
+                          type: integer
+                          format: int64
                   cDCertificateId:
                     type: string
                   certificationRoute:
@@ -16075,6 +16281,9 @@ definitions:
                   schemaVersion:
                     type: integer
                     format: int64
+            schemaVersion:
+              type: integer
+              format: int64
       pagination:
         type: object
         properties:
@@ -16122,6 +16331,9 @@ definitions:
               type: string
             value:
               type: boolean
+            schemaVersion:
+              type: integer
+              format: int64
       pagination:
         type: object
         properties:
@@ -16169,6 +16381,9 @@ definitions:
               type: string
             value:
               type: boolean
+            schemaVersion:
+              type: integer
+              format: int64
       pagination:
         type: object
         properties:
@@ -16214,6 +16429,9 @@ definitions:
             type: string
           value:
             type: boolean
+          schemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.compliance.QueryGetComplianceInfoResponse:
     type: object
     properties:
@@ -16258,6 +16476,9 @@ definitions:
                 reason:
                   type: string
                 cDVersionNumber:
+                  type: integer
+                  format: int64
+                schemaVersion:
                   type: integer
                   format: int64
           cDCertificateId:
@@ -16340,6 +16561,9 @@ definitions:
                       cDVersionNumber:
                         type: integer
                         format: int64
+                      schemaVersion:
+                        type: integer
+                        format: int64
                 cDCertificateId:
                   type: string
                 certificationRoute:
@@ -16367,6 +16591,9 @@ definitions:
                 schemaVersion:
                   type: integer
                   format: int64
+          schemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.compliance.QueryGetProvisionalModelResponse:
     type: object
     properties:
@@ -16386,6 +16613,9 @@ definitions:
             type: string
           value:
             type: boolean
+          schemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.compliance.QueryGetRevokedModelResponse:
     type: object
     properties:
@@ -16405,6 +16635,9 @@ definitions:
             type: string
           value:
             type: boolean
+          schemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.compliance.RevokedModel:
     type: object
     properties:
@@ -16421,6 +16654,9 @@ definitions:
         type: string
       value:
         type: boolean
+      schemaVersion:
+        type: integer
+        format: int64
   cosmos.auth.v1beta1.BaseAccount:
     type: object
     properties:
@@ -16852,12 +17088,18 @@ definitions:
             max:
               type: integer
               format: int32
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.dclauth.AccountStat:
     type: object
     properties:
       number:
         type: string
         format: uint64
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.dclauth.Grant:
     type: object
     properties:
@@ -17118,6 +17360,12 @@ definitions:
                 max:
                   type: integer
                   format: int32
+          schemaVersion:
+            type: integer
+            format: int64
+      pendingAccountSchemaVersion:
+        type: integer
+        format: int64
     title: |-
       TODO issue 99: do we need that ???
        option (gogoproto.goproto_getters)  = false;
@@ -17140,6 +17388,9 @@ definitions:
               title: number of nanoseconds elapsed since January 1, 1970 UTC
             info:
               type: string
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.dclauth.QueryAllAccountResponse:
     type: object
     properties:
@@ -17395,6 +17646,9 @@ definitions:
                   max:
                     type: integer
                     format: int32
+            schemaVersion:
+              type: integer
+              format: int64
       pagination:
         type: object
         properties:
@@ -17685,6 +17939,12 @@ definitions:
                       max:
                         type: integer
                         format: int32
+                schemaVersion:
+                  type: integer
+                  format: int64
+            pendingAccountSchemaVersion:
+              type: integer
+              format: int64
           title: |-
             TODO issue 99: do we need that ???
              option (gogoproto.goproto_getters)  = false;
@@ -17738,6 +17998,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+            schemaVersion:
+              type: integer
+              format: int64
       pagination:
         type: object
         properties:
@@ -18028,6 +18291,12 @@ definitions:
                       max:
                         type: integer
                         format: int32
+                schemaVersion:
+                  type: integer
+                  format: int64
+            rejectedAccountSchemaVersion:
+              type: integer
+              format: int64
       pagination:
         type: object
         properties:
@@ -18318,6 +18587,9 @@ definitions:
                       max:
                         type: integer
                         format: int32
+                schemaVersion:
+                  type: integer
+                  format: int64
             revokeApprovals:
               type: array
               items:
@@ -18337,6 +18609,9 @@ definitions:
                 - TrusteeVoting
                 - MaliciousValidator
               default: TrusteeVoting
+            revokedAccountSchemaVersion:
+              type: integer
+              format: int64
       pagination:
         type: object
         properties:
@@ -18612,6 +18887,9 @@ definitions:
                 max:
                   type: integer
                   format: int32
+          schemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.dclauth.QueryGetAccountStatResponse:
     type: object
     properties:
@@ -18621,6 +18899,9 @@ definitions:
           number:
             type: string
             format: uint64
+          schemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.dclauth.QueryGetPendingAccountResponse:
     type: object
     properties:
@@ -18877,6 +19158,12 @@ definitions:
                     max:
                       type: integer
                       format: int32
+              schemaVersion:
+                type: integer
+                format: int64
+          pendingAccountSchemaVersion:
+            type: integer
+            format: int64
         title: |-
           TODO issue 99: do we need that ???
            option (gogoproto.goproto_getters)  = false;
@@ -18902,6 +19189,9 @@ definitions:
                   title: number of nanoseconds elapsed since January 1, 1970 UTC
                 info:
                   type: string
+          schemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.dclauth.QueryGetRejectedAccountResponse:
     type: object
     properties:
@@ -19158,6 +19448,12 @@ definitions:
                     max:
                       type: integer
                       format: int32
+              schemaVersion:
+                type: integer
+                format: int64
+          rejectedAccountSchemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.dclauth.QueryGetRevokedAccountResponse:
     type: object
     properties:
@@ -19414,6 +19710,9 @@ definitions:
                     max:
                       type: integer
                       format: int32
+              schemaVersion:
+                type: integer
+                format: int64
           revokeApprovals:
             type: array
             items:
@@ -19433,6 +19732,9 @@ definitions:
               - TrusteeVoting
               - MaliciousValidator
             default: TrusteeVoting
+          revokedAccountSchemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.dclauth.RejectedAccount:
     type: object
     properties:
@@ -19682,6 +19984,12 @@ definitions:
                 max:
                   type: integer
                   format: int32
+          schemaVersion:
+            type: integer
+            format: int64
+      rejectedAccountSchemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.dclauth.RevokedAccount:
     type: object
     properties:
@@ -19931,6 +20239,9 @@ definitions:
                 max:
                   type: integer
                   format: int32
+          schemaVersion:
+            type: integer
+            format: int64
       revokeApprovals:
         type: array
         items:
@@ -19950,6 +20261,9 @@ definitions:
           - TrusteeVoting
           - MaliciousValidator
         default: TrusteeVoting
+      revokedAccountSchemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.dclauth.RevokedAccount.Reason:
     type: string
     enum:
@@ -20216,6 +20530,9 @@ definitions:
               title: number of nanoseconds elapsed since January 1, 1970 UTC
             info:
               type: string
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.dclupgrade.Grant:
     type: object
     properties:
@@ -20376,6 +20693,9 @@ definitions:
               title: number of nanoseconds elapsed since January 1, 1970 UTC
             info:
               type: string
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.dclupgrade.QueryAllApprovedUpgradeResponse:
     type: object
     properties:
@@ -20534,6 +20854,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+            schemaVersion:
+              type: integer
+              format: int64
       pagination:
         type: object
         properties:
@@ -20718,6 +21041,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+            schemaVersion:
+              type: integer
+              format: int64
       pagination:
         type: object
         properties:
@@ -20902,6 +21228,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+            schemaVersion:
+              type: integer
+              format: int64
       pagination:
         type: object
         properties:
@@ -21082,6 +21411,9 @@ definitions:
                   title: number of nanoseconds elapsed since January 1, 1970 UTC
                 info:
                   type: string
+          schemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.dclupgrade.QueryGetProposedUpgradeResponse:
     type: object
     properties:
@@ -21236,6 +21568,9 @@ definitions:
                   title: number of nanoseconds elapsed since January 1, 1970 UTC
                 info:
                   type: string
+          schemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.dclupgrade.QueryGetRejectedUpgradeResponse:
     type: object
     properties:
@@ -21390,6 +21725,9 @@ definitions:
                   title: number of nanoseconds elapsed since January 1, 1970 UTC
                 info:
                   type: string
+          schemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.dclupgrade.RejectedUpgrade:
     type: object
     properties:
@@ -21539,6 +21877,9 @@ definitions:
               title: number of nanoseconds elapsed since January 1, 1970 UTC
             info:
               type: string
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.model.Model:
     type: object
     properties:
@@ -21648,6 +21989,9 @@ definitions:
         items:
           type: integer
           format: int64
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.model.Product:
     type: object
     properties:
@@ -21858,6 +22202,9 @@ definitions:
             items:
               type: integer
               format: int64
+          schemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.model.QueryGetVendorProductsResponse:
     type: object
     properties:
@@ -21879,6 +22226,9 @@ definitions:
                   type: string
                 partNumber:
                   type: string
+          schemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.model.VendorProducts:
     type: object
     properties:
@@ -21897,6 +22247,9 @@ definitions:
               type: string
             partNumber:
               type: string
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.pki.ApprovedCertificates:
     type: object
     properties:
@@ -21977,6 +22330,9 @@ definitions:
         type: array
         items:
           type: string
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.pki.ApprovedRootCertificates:
     type: object
     properties:
@@ -21989,6 +22345,9 @@ definitions:
               type: string
             subjectKeyId:
               type: string
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.pki.Certificate:
     type: object
     properties:
@@ -22071,6 +22430,9 @@ definitions:
               type: string
             subjectKeyId:
               type: string
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.pki.Grant:
     type: object
     properties:
@@ -22149,6 +22511,9 @@ definitions:
             schemaVersion:
               type: integer
               format: int64
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.pki.NocRootCertificates:
     type: object
     properties:
@@ -22216,6 +22581,9 @@ definitions:
             schemaVersion:
               type: integer
               format: int64
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.pki.NocRootCertificatesByVidAndSkid:
     type: object
     properties:
@@ -22259,6 +22627,7 @@ definitions:
                   time:
                     type: string
                     format: int64
+                    title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
             subjectAsText:
@@ -22273,6 +22642,7 @@ definitions:
                   time:
                     type: string
                     format: int64
+                    title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
             vid:
@@ -22286,6 +22656,9 @@ definitions:
       tq:
         type: number
         format: float
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.pki.PkiRevocationDistributionPoint:
     type: object
     properties:
@@ -22363,6 +22736,9 @@ definitions:
               format: int64
             crlSignerDelegator:
               type: string
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.pki.ProposedCertificate:
     type: object
     properties:
@@ -22624,6 +23000,9 @@ definitions:
                   schemaVersion:
                     type: integer
                     format: int64
+            schemaVersion:
+              type: integer
+              format: int64
       pagination:
         type: object
         properties:
@@ -22726,6 +23105,9 @@ definitions:
                   schemaVersion:
                     type: integer
                     format: int64
+            schemaVersion:
+              type: integer
+              format: int64
       pagination:
         type: object
         properties:
@@ -23248,6 +23630,9 @@ definitions:
                   schemaVersion:
                     type: integer
                     format: int64
+            schemaVersion:
+              type: integer
+              format: int64
       pagination:
         type: object
         properties:
@@ -23286,6 +23671,9 @@ definitions:
             type: array
             items:
               type: string
+          schemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.pki.QueryGetApprovedCertificatesResponse:
     type: object
     properties:
@@ -23379,6 +23767,9 @@ definitions:
                   type: string
                 subjectKeyId:
                   type: string
+          schemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.pki.QueryGetChildCertificatesResponse:
     type: object
     properties:
@@ -23398,6 +23789,9 @@ definitions:
                   type: string
                 subjectKeyId:
                   type: string
+          schemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.pki.QueryGetNocIcaCertificatesResponse:
     type: object
     properties:
@@ -23472,6 +23866,9 @@ definitions:
                 schemaVersion:
                   type: integer
                   format: int64
+          schemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.pki.QueryGetNocRootCertificatesByVidAndSkidResponse:
     type: object
     properties:
@@ -23518,6 +23915,9 @@ definitions:
                       time:
                         type: string
                         format: int64
+                        title: >-
+                          number of nanoseconds elapsed since January 1, 1970
+                          UTC
                       info:
                         type: string
                 subjectAsText:
@@ -23532,6 +23932,9 @@ definitions:
                       time:
                         type: string
                         format: int64
+                        title: >-
+                          number of nanoseconds elapsed since January 1, 1970
+                          UTC
                       info:
                         type: string
                 vid:
@@ -23545,6 +23948,9 @@ definitions:
           tq:
             type: number
             format: float
+          schemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.pki.QueryGetNocRootCertificatesResponse:
     type: object
     properties:
@@ -23619,6 +24025,9 @@ definitions:
                 schemaVersion:
                   type: integer
                   format: int64
+          schemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.pki.QueryGetPkiRevocationDistributionPointResponse:
     type: object
     properties:
@@ -23702,6 +24111,9 @@ definitions:
                   format: int64
                 crlSignerDelegator:
                   type: string
+          schemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.pki.QueryGetProposedCertificateResponse:
     type: object
     properties:
@@ -24018,6 +24430,9 @@ definitions:
                 schemaVersion:
                   type: integer
                   format: int64
+          schemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.pki.QueryGetRevokedRootCertificatesResponse:
     type: object
     properties:
@@ -24033,6 +24448,9 @@ definitions:
                   type: string
                 subjectKeyId:
                   type: string
+          schemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.pki.RejectedCertificate:
     type: object
     properties:
@@ -24243,6 +24661,9 @@ definitions:
             schemaVersion:
               type: integer
               format: int64
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.pki.RevokedRootCertificates:
     type: object
     properties:
@@ -24255,6 +24676,9 @@ definitions:
               type: string
             subjectKeyId:
               type: string
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.validator.Description:
     type: object
     properties:
@@ -24305,6 +24729,9 @@ definitions:
               title: number of nanoseconds elapsed since January 1, 1970 UTC
             info:
               type: string
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.validator.Grant:
     type: object
     properties:
@@ -24324,6 +24751,9 @@ definitions:
       power:
         type: integer
         format: int32
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.validator.ProposedDisableValidator:
     type: object
     properties:
@@ -24357,6 +24787,9 @@ definitions:
               title: number of nanoseconds elapsed since January 1, 1970 UTC
             info:
               type: string
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.validator.QueryAllDisabledValidatorResponse:
     type: object
     properties:
@@ -24397,6 +24830,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+            schemaVersion:
+              type: integer
+              format: int64
       pagination:
         type: object
         properties:
@@ -24436,6 +24872,9 @@ definitions:
             power:
               type: integer
               format: int32
+            schemaVersion:
+              type: integer
+              format: int64
       pagination:
         type: object
         properties:
@@ -24500,6 +24939,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+            schemaVersion:
+              type: integer
+              format: int64
       pagination:
         type: object
         properties:
@@ -24564,6 +25006,9 @@ definitions:
                     title: number of nanoseconds elapsed since January 1, 1970 UTC
                   info:
                     type: string
+            schemaVersion:
+              type: integer
+              format: int64
       pagination:
         type: object
         properties:
@@ -24801,6 +25246,9 @@ definitions:
             jailedReason:
               type: string
               title: the reason of validator jailing
+            schemaVersion:
+              type: integer
+              format: int64
       pagination:
         type: object
         properties:
@@ -24865,6 +25313,9 @@ definitions:
                   title: number of nanoseconds elapsed since January 1, 1970 UTC
                 info:
                   type: string
+          schemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.validator.QueryGetLastValidatorPowerResponse:
     type: object
     properties:
@@ -24876,6 +25327,9 @@ definitions:
           power:
             type: integer
             format: int32
+          schemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.validator.QueryGetProposedDisableValidatorResponse:
     type: object
     properties:
@@ -24912,6 +25366,9 @@ definitions:
                   title: number of nanoseconds elapsed since January 1, 1970 UTC
                 info:
                   type: string
+          schemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.validator.QueryGetRejectedDisableValidatorResponse:
     type: object
     properties:
@@ -24948,6 +25405,9 @@ definitions:
                   title: number of nanoseconds elapsed since January 1, 1970 UTC
                 info:
                   type: string
+          schemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.validator.QueryGetValidatorResponse:
     type: object
     properties:
@@ -25153,6 +25613,9 @@ definitions:
           jailedReason:
             type: string
             title: the reason of validator jailing
+          schemaVersion:
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.validator.RejectedDisableValidator:
     type: object
     properties:
@@ -25186,6 +25649,9 @@ definitions:
               title: number of nanoseconds elapsed since January 1, 1970 UTC
             info:
               type: string
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.validator.Validator:
     type: object
     properties:
@@ -25382,6 +25848,9 @@ definitions:
       jailedReason:
         type: string
         title: the reason of validator jailing
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.vendorinfo.QueryAllVendorInfoResponse:
     type: object
     properties:

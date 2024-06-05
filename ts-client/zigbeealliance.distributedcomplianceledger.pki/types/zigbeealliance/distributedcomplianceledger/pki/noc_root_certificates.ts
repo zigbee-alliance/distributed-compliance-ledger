@@ -7,10 +7,11 @@ export const protobufPackage = "zigbeealliance.distributedcomplianceledger.pki";
 export interface NocRootCertificates {
   vid: number;
   certs: Certificate[];
+  schemaVersion: number;
 }
 
 function createBaseNocRootCertificates(): NocRootCertificates {
-  return { vid: 0, certs: [] };
+  return { vid: 0, certs: [], schemaVersion: 0 };
 }
 
 export const NocRootCertificates = {
@@ -20,6 +21,9 @@ export const NocRootCertificates = {
     }
     for (const v of message.certs) {
       Certificate.encode(v!, writer.uint32(18).fork()).ldelim();
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(24).uint32(message.schemaVersion);
     }
     return writer;
   },
@@ -37,6 +41,9 @@ export const NocRootCertificates = {
         case 2:
           message.certs.push(Certificate.decode(reader, reader.uint32()));
           break;
+        case 3:
+          message.schemaVersion = reader.uint32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -49,6 +56,7 @@ export const NocRootCertificates = {
     return {
       vid: isSet(object.vid) ? Number(object.vid) : 0,
       certs: Array.isArray(object?.certs) ? object.certs.map((e: any) => Certificate.fromJSON(e)) : [],
+      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
@@ -60,6 +68,7 @@ export const NocRootCertificates = {
     } else {
       obj.certs = [];
     }
+    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
@@ -67,6 +76,7 @@ export const NocRootCertificates = {
     const message = createBaseNocRootCertificates();
     message.vid = object.vid ?? 0;
     message.certs = object.certs?.map((e) => Certificate.fromPartial(e)) || [];
+    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };

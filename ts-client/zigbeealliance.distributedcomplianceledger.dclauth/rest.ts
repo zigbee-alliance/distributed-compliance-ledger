@@ -162,30 +162,48 @@ export interface DistributedcomplianceledgerdclauthAccount {
   vendorID?: number;
   rejects?: DclauthGrant[];
   productIDs?: CommonUint16Range[];
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface DistributedcomplianceledgerdclauthAccountStat {
   /** @format uint64 */
   number?: string;
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface DistributedcomplianceledgerdclauthPendingAccount {
   account?: DistributedcomplianceledgerdclauthAccount;
+
+  /** @format int64 */
+  pendingAccountSchemaVersion?: number;
 }
 
 export interface DistributedcomplianceledgerdclauthPendingAccountRevocation {
   address?: string;
   approvals?: DclauthGrant[];
+
+  /** @format int64 */
+  schemaVersion?: number;
 }
 
 export interface DistributedcomplianceledgerdclauthRejectedAccount {
   account?: DistributedcomplianceledgerdclauthAccount;
+
+  /** @format int64 */
+  rejectedAccountSchemaVersion?: number;
 }
 
 export interface DistributedcomplianceledgerdclauthRevokedAccount {
   account?: DistributedcomplianceledgerdclauthAccount;
   revokeApprovals?: DclauthGrant[];
   reason?: RevokedAccountReason;
+
+  /** @format int64 */
+  revokedAccountSchemaVersion?: number;
 }
 
 /**

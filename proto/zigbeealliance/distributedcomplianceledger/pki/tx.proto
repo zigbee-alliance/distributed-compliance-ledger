@@ -38,7 +38,6 @@ message MsgProposeAddX509RootCert {
   int64 time = 4;
   int32 vid = 5 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535,required\""];
   uint32 certSchemaVersion = 6 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
-  uint32 schemaVersion = 7 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
 }
 
 message MsgProposeAddX509RootCertResponse {
@@ -61,7 +60,6 @@ message MsgAddX509Cert {
   string info = 3 [(gogoproto.moretags) = "validate:\"max=4096\""];
   int64 time = 4;
   uint32 certSchemaVersion = 5 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
-  uint32 schemaVersion = 6 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
 }
 
 message MsgAddX509CertResponse {
@@ -75,7 +73,6 @@ message MsgProposeRevokeX509RootCert {
   int64 time = 5;
   string serialNumber = 6;
   bool revokeChild = 7;
-  uint32 schemaVersion = 8 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
 }
 
 message MsgProposeRevokeX509RootCertResponse {
@@ -101,7 +98,6 @@ message MsgRevokeX509Cert {
   int64 time = 5;
   string serialNumber = 6;
   bool revokeChild = 7;
-  uint32 schemaVersion = 8 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
 }
 
 message MsgRevokeX509CertResponse {
@@ -113,7 +109,6 @@ message MsgRejectAddX509RootCert {
   string subjectKeyId = 3 [(gogoproto.moretags) = "validate:\"required,max=256\""];
   string info = 4 [(gogoproto.moretags) = "validate:\"max=4096\""];
   int64 time = 5;
-  uint32 schemaVersion = 6 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
 }
 
 message MsgRejectAddX509RootCertResponse {
@@ -180,7 +175,6 @@ message MsgAddNocX509RootCert {
   string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
   string cert = 2 [(gogoproto.moretags) = "validate:\"required,max=10485760\""];
   uint32 certSchemaVersion = 4 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
-  uint32 schemaVersion = 5 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
 }
 
 message MsgAddNocX509RootCertResponse {
@@ -200,7 +194,6 @@ message MsgAddNocX509IcaCert {
   string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
   string cert = 2 [(gogoproto.moretags) = "validate:\"required,max=10485760\""];
   uint32 certSchemaVersion = 3 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
-  uint32 schemaVersion = 4 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
 }
 
 message MsgAddNocX509IcaCertResponse {
@@ -214,7 +207,6 @@ message MsgRevokeNocX509RootCert {
   string info = 5 [(gogoproto.moretags) = "validate:\"max=4096\""];
   int64 time = 6;
   bool revokeChild = 7;
-  uint32 schemaVersion = 8 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
 }
 
 message MsgRevokeNocX509RootCertResponse {
@@ -228,7 +220,6 @@ message MsgRevokeNocX509IcaCert {
   string info = 5 [(gogoproto.moretags) = "validate:\"max=4096\""];
   int64 time = 6;
   bool revokeChild = 7;
-  uint32 schemaVersion = 8 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
 }
 
 message MsgRevokeNocX509IcaCertResponse {

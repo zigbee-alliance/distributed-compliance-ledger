@@ -9,10 +9,11 @@ export interface NocRootCertificatesByVidAndSkid {
   subjectKeyId: string;
   certs: Certificate[];
   tq: number;
+  schemaVersion: number;
 }
 
 function createBaseNocRootCertificatesByVidAndSkid(): NocRootCertificatesByVidAndSkid {
-  return { vid: 0, subjectKeyId: "", certs: [], tq: 0 };
+  return { vid: 0, subjectKeyId: "", certs: [], tq: 0, schemaVersion: 0 };
 }
 
 export const NocRootCertificatesByVidAndSkid = {
@@ -28,6 +29,9 @@ export const NocRootCertificatesByVidAndSkid = {
     }
     if (message.tq !== 0) {
       writer.uint32(37).float(message.tq);
+    }
+    if (message.schemaVersion !== 0) {
+      writer.uint32(40).uint32(message.schemaVersion);
     }
     return writer;
   },
@@ -51,6 +55,9 @@ export const NocRootCertificatesByVidAndSkid = {
         case 4:
           message.tq = reader.float();
           break;
+        case 5:
+          message.schemaVersion = reader.uint32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -65,6 +72,7 @@ export const NocRootCertificatesByVidAndSkid = {
       subjectKeyId: isSet(object.subjectKeyId) ? String(object.subjectKeyId) : "",
       certs: Array.isArray(object?.certs) ? object.certs.map((e: any) => Certificate.fromJSON(e)) : [],
       tq: isSet(object.tq) ? Number(object.tq) : 0,
+      schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
@@ -78,6 +86,7 @@ export const NocRootCertificatesByVidAndSkid = {
       obj.certs = [];
     }
     message.tq !== undefined && (obj.tq = message.tq);
+    message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
@@ -89,6 +98,7 @@ export const NocRootCertificatesByVidAndSkid = {
     message.subjectKeyId = object.subjectKeyId ?? "";
     message.certs = object.certs?.map((e) => Certificate.fromPartial(e)) || [];
     message.tq = object.tq ?? 0;
+    message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
 };

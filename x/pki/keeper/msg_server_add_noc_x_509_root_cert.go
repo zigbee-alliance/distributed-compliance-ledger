@@ -88,7 +88,7 @@ func (k msgServer) AddNocX509RootCert(goCtx context.Context, msg *types.MsgAddNo
 	k.AddNocRootCertificate(ctx, certificate)
 
 	// append new certificate to list of certificates with the same Subject/SubjectKeyId combination and store updated list
-	k.AddApprovedCertificate(ctx, certificate, msg.SchemaVersion)
+	k.AddApprovedCertificate(ctx, certificate)
 
 	// register the unique certificate key
 	uniqueCertificate := types.UniqueCertificate{
