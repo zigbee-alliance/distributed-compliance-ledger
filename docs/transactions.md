@@ -315,7 +315,7 @@ If one of `OTA_URl`, `OTA_checksum` or `OTA_checksum_type` fields is set, then t
   - pid: `uint16` -  model product ID (positive non-zero)
   - softwareVersion: `uint32` - model software version
   - softwareVersionSting: `string` - model software version string
-  - cdVersionNumber `uint32` - CD Version Number of the certification
+  - cdVersionNumber `uint16` - CD Version Number of the certification
   - minApplicableSoftwareVersion `uint32` - MinApplicableSoftwareVersion should specify the lowest SoftwareVersion for which this image can be applied
   - maxApplicableSoftwareVersion `uint32` - MaxApplicableSoftwareVersion should specify the highest SoftwareVersion for which this image can be applied
   - firmwareInformation `optional(string)` - FirmwareInformation field included in the Device Attestation response when this Software Image boots on the device
@@ -860,7 +860,7 @@ The PAA certificate is immutable. It can only be revoked by either the owner or 
 - Parameters:
   - cert: `string` - PEM encoded certificate. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data.
   - info: `optional(string)` - information/notes for the proposal. Can contain up to 4096 characters.
-  - time: `optional(int64)` - proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
+  - time: `optional(int64)` - proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). This field cannot be specified using a CLI command and will use the current time by default.
   - vid: `uint16` -  Vendor ID (positive non-zero). Must be equal to the Certificate's `vid` field for VID-scoped PAA.
   - schemaVersion: `optional(uint16)` - Certificate's schema version to support backward/forward compatability(default 0)
 - In State: `pki/ProposedCertificate/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
@@ -891,7 +891,7 @@ The PAA certificate is not active until sufficient number of Trustees approve it
   - subject: `string`  - proposed certificates's `Subject` is base64 encoded subject DER sequence bytes.
   - subject_key_id: `string`  - proposed certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`.
   - info: `optional(string)` - information/notes for the approval. Can contain up to 4096 characters.
-  - time: `optional(int64)` - approval time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
+  - time: `optional(int64)` - proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). This field cannot be specified using a CLI command and will use the current time by default.
 - In State: `pki/ApprovedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`.
 - Number of required approvals:
   - greater than or equal 2/3 of Trustees (proposal by a Trustee is also counted as an approval)
@@ -918,7 +918,7 @@ The certificate is not reject until sufficient number of Trustees reject it.
   - subject_key_id: `string` - proposed certificates's `Subject Key Id` in hex string format, e.g:
   `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
   - info: `optional(string)` - information/notes for the reject. Can contain up to 4096 characters.
-  - time: `optional(int64)` - reject time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
+  - time: `optional(int64)` - reject time (number of nanoseconds elapsed since January 1, 1970 UTC). This field cannot be specified using a CLI command and will use the current time by default.
 - In State: `pki/RejectedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - Number of required rejects:
   - more than 1/3 of Trustees
@@ -952,7 +952,7 @@ then the certificate will be in a pending state until sufficient number of other
   - serial-number: `optional(string)`  - certificate's serial number.
   - revoke-child: `optional(bool)`  - to revoke child certificates in the chain - default is false.
   - info: `optional(string)` - information/notes for the revocation proposal. Can contain up to 4096 characters.
-  - time: `optional(int64)` - revocation proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
+  - time: `optional(int64)` - revocation proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). This field cannot be specified using a CLI command and will use the current time by default.
 - In State: `pki/ProposedCertificateRevocation/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - CLI command:
   - `dcld tx pki propose-revoke-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
@@ -982,7 +982,7 @@ The revocation is not applied until sufficient number of Trustees approve it.
   - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`.
   - serial-number: `optional(string)` - certificate's serial number.
   - info: `optional(string)` - information/notes for the revocation approval. Can contain up to 4096 characters.
-  - time: `optional(int64)` - revocation approval time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
+  - time: `optional(int64)` - revocation approval time (number of nanoseconds elapsed since January 1, 1970 UTC). This field cannot be specified using a CLI command and will use the current time by default.
 - In State: `pki/RevokedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - Number of required approvals:
   - greater than or equal 2/3 of Trustees (proposal by a Trustee is also counted as an approval)
@@ -1005,7 +1005,7 @@ Assigns a Vendor ID (VID) to non-VID scoped PAAs (self-signed root certificate) 
   - subject_key_id: `string` - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`.
   - vid: `uint16` - Vendor ID (positive non-zero). Must be the same as `vid` field in the VID-scoped PAA certificate.
 - CLI command:
-  - `dcld pki assign-vid --subject=<base64 string> --subject-key-id=<hex string> --vid=<uint16> --from=<account>`
+  - `dcld tx pki assign-vid --subject=<base64 string> --subject-key-id=<hex string> --vid=<uint16> --from=<account>`
 - Validation:
   - PAA Certificate with the provided `subject` and `subject_key_id` must exist in the ledger.
   - If the PAA is a VID scoped one, then the `vid` field must be equal to the VID value in the PAA's subject.
@@ -1160,7 +1160,7 @@ Root certificates can not be revoked this way, use  [PROPOSE_REVOKE_PAA](#propos
   - serial-number: `optional(string)` - certificate's serial number.
   - revoke-child: `optional(bool)` - to revoke child certificates in the chain - default is false.
   - info: `optional(string)` - information/notes for the revocation. Can contain up to 4096 characters.
-  - time: `optional(int64)` - revocation time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
+  - time: `optional(int64)` - revocation time (number of nanoseconds elapsed since January 1, 1970 UTC). This field cannot be specified using a CLI command and will use the current time by default.
 - In State: `pki/RevokedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - CLI command:
   - `dcld tx pki revoke-x509-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
@@ -1402,7 +1402,7 @@ Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revok
   - serial_number: `optional(string)` - certificate's serial number. If not provided, the transaction will revoke all certificates that match the given `subject` and `subject_key_id` combination.
   - revoke-child: `optional(bool)` - if true, then all certificates in the chain signed by the revoked certificate (intermediate, leaf) are revoked as well. If false, only the current root cert is revoked (default: false).
   - info: `optional(string)` - information/notes for the revocation. Can contain up to 4096 characters.
-  - time: `optional(int64)` - revocation time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
+  - time: `optional(int64)` - revocation time (number of nanoseconds elapsed since January 1, 1970 UTC). This field cannot be specified using a CLI command and will use the current time by default.
 - In State:
   - `pki/RevokedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
   - `pki/RevokedNocRootCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
@@ -1483,7 +1483,7 @@ Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revok
   - serial_number: `optional(string)` - certificate's serial number. If not provided, the transaction will revoke all certificates that match the given `subject` and `subject_key_id` combination.
   - revoke-child: `optional(bool)` - if true, then all certificates in the chain signed by the revoked certificate (leaf) are revoked as well. If false, only the current cert is revoked (default: false).
   - info: `optional(string)` - information/notes for the revocation. Can contain up to 4096 characters.
-  - time: `optional(int64)` - revocation time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
+  - time: `optional(int64)` - revocation time (number of nanoseconds elapsed since January 1, 1970 UTC). This field cannot be specified using a CLI command and will use the current time by default.
 - In State:
   - `pki/RevokedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - CLI command:
@@ -1761,12 +1761,12 @@ will be in a pending state until sufficient number of approvals is received.
   - pid_ranges: `optional(array<uint16 range>)` - the list of product-id ranges (range item separated with "-"), comma-separated, in increasing order, associated with this account: `1-100,201-300...`
   - roles: `array<string>` - the list of roles, comma-separated, assigning to the account. Supported roles: `Vendor`, `TestHouse`, `CertificationCenter`, `Trustee`, `NodeAdmin`, `VendorAdmin`.
   - info: `optional(string)` - information/notes for the proposal
-  - time: `optional(int64)` - proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
+  - time: `optional(int64)` - proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). This field cannot be specified using a CLI command and will use the current time by default.
 - In State: `dclauth/PendingAccount/value/<address>`
 - Who can send:
   - Trustee
 - CLI command:
-  - `dcld tx auth propose-add-account --address=<bench32 encoded string> --pubkey=<protobuf JSON encoded> --roles=<role1,role2,...> --vid=<uint16> --pid_ranges=<uint16-range,uint16-range,...> --from=<account>`
+  - `dcld tx auth propose-add-account --address=<bench32 encoded string> --pubkey='<protobuf JSON encoded>' --roles=<role1,role2,...> --vid=<uint16> --pid_ranges=<uint16-range,uint16-range,...> --from=<account>`
 
 ### APPROVE_ADD_ACCOUNT
 
@@ -1779,7 +1779,7 @@ The account is not active until sufficient number of Trustees approve it.
 - Parameters:
   - address: `string` - account address; Bech32 encoded
   - info: `optional(string)` - information/notes for the approval
-  - time: `optional(int64)` - approval time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
+  - time: `optional(int64)` - approval time (number of nanoseconds elapsed since January 1, 1970 UTC). This field cannot be specified using a CLI command and will use the current time by default.
 - In State: `dclauth/Account/value/<address>`
 - Who can send:
   - Trustee
@@ -1804,7 +1804,7 @@ The account is not reject until sufficient number of Trustees reject it.
 - Parameters:
   - address: `string` - account address; Bech32 encoded
   - info: `optional(string)` - information/notes for the reject
-  - time: `optional(int64)` - reject time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
+  - time: `optional(int64)` - reject time (number of nanoseconds elapsed since January 1, 1970 UTC). This field cannot be specified using a CLI command and will use the current time by default.
 - In State: `dclauth/RejectedAccount/value/<address>`
 - Who can send:
   - Trustee
@@ -1826,7 +1826,7 @@ will be in a pending state until sufficient number of approvals is received.
 - Parameters:
   - address: `string` - account address; Bech32 encoded
   - info: `optional(string)` - information/notes for the revocation proposal
-  - time: `optional(int64)` - revocation proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
+  - time: `optional(int64)` - revocation proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). This field cannot be specified using a CLI command and will use the current time by default.
 - In State: `dclauth/Account/value/<address>`
 - Who can send:
   - Trustee
@@ -1844,7 +1844,7 @@ The account is not revoked until sufficient number of Trustees approve it.
 - Parameters:
   - address: `string` - account address; Bech32 encoded
   - info: `optional(string)` - information/notes for the revocation approval
-  - time: `optional(int64)` - revocation approval time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
+  - time: `optional(int64)` - revocation approval time (number of nanoseconds elapsed since January 1, 1970 UTC). This field cannot be specified using a CLI command and will use the current time by default.
 - In State: `dclauth/Account/value/<address>`
 - Who can send:
   - Trustee
@@ -2025,7 +2025,7 @@ Adds a new Validator node.
 - Who can send:
   - NodeAdmin
 - CLI command:
-  - `dcld tx validator add-node --pubkey=<protobuf JSON encoded> --moniker=<string> --from=<account>`
+  - `dcld tx validator add-node --pubkey='<protobuf JSON encoded>' --moniker=<string> --from=<account>`
 
 ### DISABLE_VALIDATOR_NODE
 
