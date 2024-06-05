@@ -1,0 +1,14 @@
+syntax = "proto3";
+package zigbeealliance.distributedcomplianceledger.compliance;
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types";
+
+message RevokedModel {
+  int32 vid = 1; 
+  int32 pid = 2; 
+  uint32 softwareVersion = 3; 
+  string certificationType = 4; 
+  bool value = 5;
+  uint32 schemaVersion = 6;
+}
+

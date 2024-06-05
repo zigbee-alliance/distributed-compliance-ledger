@@ -1,0 +1,1322 @@
+swagger: '2.0'
+info:
+  title: HTTP API Console zigbeealliance.distributedcomplianceledger.validator
+  name: ''
+  description: ''
+paths:
+  /dcl/validator/disabled-nodes:
+    get:
+      operationId: DisabledValidatorAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              disabledValidator:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    address:
+                      type: string
+                    creator:
+                      type: string
+                    approvals:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          address:
+                            type: string
+                          time:
+                            type: string
+                            format: int64
+                          info:
+                            type: string
+                    disabledByNodeAdmin:
+                      type: boolean
+                    rejects:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          address:
+                            type: string
+                          time:
+                            type: string
+                            format: int64
+                          info:
+                            type: string
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                  total:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /dcl/validator/disabled-nodes/{address}:
+    get:
+      operationId: DisabledValidator
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              disabledValidator:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  creator:
+                    type: string
+                  approvals:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
+                  disabledByNodeAdmin:
+                    type: boolean
+                  rejects:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: address
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /dcl/validator/last-powers:
+    get:
+      operationId: LastValidatorPowerAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              lastValidatorPower:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    owner:
+                      type: string
+                    power:
+                      type: integer
+                      format: int32
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                  total:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /dcl/validator/last-powers/{owner}:
+    get:
+      operationId: LastValidatorPower
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              lastValidatorPower:
+                type: object
+                properties:
+                  owner:
+                    type: string
+                  power:
+                    type: integer
+                    format: int32
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: owner
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /dcl/validator/nodes:
+    get:
+      operationId: ValidatorAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              validator:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    owner:
+                      type: string
+                    description:
+                      type: object
+                      properties:
+                        moniker:
+                          type: string
+                        identity:
+                          type: string
+                        website:
+                          type: string
+                        details:
+                          type: string
+                    pubKey:
+                      type: object
+                      properties:
+                        '@type':
+                          type: string
+                      additionalProperties: {}
+                    power:
+                      type: integer
+                      format: int32
+                    jailed:
+                      type: boolean
+                    jailedReason:
+                      type: string
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                  total:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /dcl/validator/nodes/{owner}:
+    get:
+      operationId: Validator
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              validator:
+                type: object
+                properties:
+                  owner:
+                    type: string
+                  description:
+                    type: object
+                    properties:
+                      moniker:
+                        type: string
+                      identity:
+                        type: string
+                      website:
+                        type: string
+                      details:
+                        type: string
+                  pubKey:
+                    type: object
+                    properties:
+                      '@type':
+                        type: string
+                    additionalProperties: {}
+                  power:
+                    type: integer
+                    format: int32
+                  jailed:
+                    type: boolean
+                  jailedReason:
+                    type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: owner
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /dcl/validator/proposed-disable-nodes:
+    get:
+      operationId: ProposedDisableValidatorAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              proposedDisableValidator:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    address:
+                      type: string
+                    creator:
+                      type: string
+                    approvals:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          address:
+                            type: string
+                          time:
+                            type: string
+                            format: int64
+                          info:
+                            type: string
+                    rejects:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          address:
+                            type: string
+                          time:
+                            type: string
+                            format: int64
+                          info:
+                            type: string
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                  total:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /dcl/validator/proposed-disable-nodes/{address}:
+    get:
+      operationId: ProposedDisableValidator
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              proposedDisableValidator:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  creator:
+                    type: string
+                  approvals:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
+                  rejects:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: address
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /dcl/validator/rejected-disable-nodes:
+    get:
+      operationId: RejectedDisableValidatorAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              rejectedValidator:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    address:
+                      type: string
+                    creator:
+                      type: string
+                    approvals:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          address:
+                            type: string
+                          time:
+                            type: string
+                            format: int64
+                          info:
+                            type: string
+                    rejects:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          address:
+                            type: string
+                          time:
+                            type: string
+                            format: int64
+                          info:
+                            type: string
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                  total:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /dcl/validator/rejected-disable-nodes/{owner}:
+    get:
+      operationId: RejectedDisableValidator
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              rejectedValidator:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  creator:
+                    type: string
+                  approvals:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
+                  rejects:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: owner
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+definitions:
+  Any:
+    type: object
+    properties:
+      '@type':
+        type: string
+    additionalProperties: {}
+  Status:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      details:
+        type: array
+        items:
+          type: object
+          properties:
+            '@type':
+              type: string
+          additionalProperties: {}
+  Description:
+    type: object
+    properties:
+      moniker:
+        type: string
+      identity:
+        type: string
+      website:
+        type: string
+      details:
+        type: string
+  Grant:
+    type: object
+    properties:
+      address:
+        type: string
+      time:
+        type: string
+        format: int64
+      info:
+        type: string
+  PageRequest:
+    type: object
+    properties:
+      key:
+        type: string
+        format: byte
+      offset:
+        type: string
+        format: uint64
+      limit:
+        type: string
+        format: uint64
+      count_total:
+        type: boolean
+      reverse:
+        type: boolean
+  PageResponse:
+    type: object
+    properties:
+      next_key:
+        type: string
+        format: byte
+      total:
+        type: string
+        format: uint64
+  QueryAllDisabledValidatorResponse:
+    type: object
+    properties:
+      disabledValidator:
+        type: array
+        items:
+          type: object
+          properties:
+            address:
+              type: string
+            creator:
+              type: string
+            approvals:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
+            disabledByNodeAdmin:
+              type: boolean
+            rejects:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+          total:
+            type: string
+            format: uint64
+  QueryAllLastValidatorPowerResponse:
+    type: object
+    properties:
+      lastValidatorPower:
+        type: array
+        items:
+          type: object
+          properties:
+            owner:
+              type: string
+            power:
+              type: integer
+              format: int32
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+          total:
+            type: string
+            format: uint64
+  QueryAllProposedDisableValidatorResponse:
+    type: object
+    properties:
+      proposedDisableValidator:
+        type: array
+        items:
+          type: object
+          properties:
+            address:
+              type: string
+            creator:
+              type: string
+            approvals:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
+            rejects:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+          total:
+            type: string
+            format: uint64
+  QueryAllRejectedDisableValidatorResponse:
+    type: object
+    properties:
+      rejectedValidator:
+        type: array
+        items:
+          type: object
+          properties:
+            address:
+              type: string
+            creator:
+              type: string
+            approvals:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
+            rejects:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+          total:
+            type: string
+            format: uint64
+  QueryAllValidatorResponse:
+    type: object
+    properties:
+      validator:
+        type: array
+        items:
+          type: object
+          properties:
+            owner:
+              type: string
+            description:
+              type: object
+              properties:
+                moniker:
+                  type: string
+                identity:
+                  type: string
+                website:
+                  type: string
+                details:
+                  type: string
+            pubKey:
+              type: object
+              properties:
+                '@type':
+                  type: string
+              additionalProperties: {}
+            power:
+              type: integer
+              format: int32
+            jailed:
+              type: boolean
+            jailedReason:
+              type: string
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+          total:
+            type: string
+            format: uint64
+  QueryGetDisabledValidatorResponse:
+    type: object
+    properties:
+      disabledValidator:
+        type: object
+        properties:
+          address:
+            type: string
+          creator:
+            type: string
+          approvals:
+            type: array
+            items:
+              type: object
+              properties:
+                address:
+                  type: string
+                time:
+                  type: string
+                  format: int64
+                info:
+                  type: string
+          disabledByNodeAdmin:
+            type: boolean
+          rejects:
+            type: array
+            items:
+              type: object
+              properties:
+                address:
+                  type: string
+                time:
+                  type: string
+                  format: int64
+                info:
+                  type: string
+  QueryGetLastValidatorPowerResponse:
+    type: object
+    properties:
+      lastValidatorPower:
+        type: object
+        properties:
+          owner:
+            type: string
+          power:
+            type: integer
+            format: int32
+  QueryGetProposedDisableValidatorResponse:
+    type: object
+    properties:
+      proposedDisableValidator:
+        type: object
+        properties:
+          address:
+            type: string
+          creator:
+            type: string
+          approvals:
+            type: array
+            items:
+              type: object
+              properties:
+                address:
+                  type: string
+                time:
+                  type: string
+                  format: int64
+                info:
+                  type: string
+          rejects:
+            type: array
+            items:
+              type: object
+              properties:
+                address:
+                  type: string
+                time:
+                  type: string
+                  format: int64
+                info:
+                  type: string
+  QueryGetRejectedDisableValidatorResponse:
+    type: object
+    properties:
+      rejectedValidator:
+        type: object
+        properties:
+          address:
+            type: string
+          creator:
+            type: string
+          approvals:
+            type: array
+            items:
+              type: object
+              properties:
+                address:
+                  type: string
+                time:
+                  type: string
+                  format: int64
+                info:
+                  type: string
+          rejects:
+            type: array
+            items:
+              type: object
+              properties:
+                address:
+                  type: string
+                time:
+                  type: string
+                  format: int64
+                info:
+                  type: string
+  QueryGetValidatorResponse:
+    type: object
+    properties:
+      validator:
+        type: object
+        properties:
+          owner:
+            type: string
+          description:
+            type: object
+            properties:
+              moniker:
+                type: string
+              identity:
+                type: string
+              website:
+                type: string
+              details:
+                type: string
+          pubKey:
+            type: object
+            properties:
+              '@type':
+                type: string
+            additionalProperties: {}
+          power:
+            type: integer
+            format: int32
+          jailed:
+            type: boolean
+          jailedReason:
+            type: string
+  validator.DisabledValidator:
+    type: object
+    properties:
+      address:
+        type: string
+      creator:
+        type: string
+      approvals:
+        type: array
+        items:
+          type: object
+          properties:
+            address:
+              type: string
+            time:
+              type: string
+              format: int64
+            info:
+              type: string
+      disabledByNodeAdmin:
+        type: boolean
+      rejects:
+        type: array
+        items:
+          type: object
+          properties:
+            address:
+              type: string
+            time:
+              type: string
+              format: int64
+            info:
+              type: string
+  validator.LastValidatorPower:
+    type: object
+    properties:
+      owner:
+        type: string
+      power:
+        type: integer
+        format: int32
+  validator.ProposedDisableValidator:
+    type: object
+    properties:
+      address:
+        type: string
+      creator:
+        type: string
+      approvals:
+        type: array
+        items:
+          type: object
+          properties:
+            address:
+              type: string
+            time:
+              type: string
+              format: int64
+            info:
+              type: string
+      rejects:
+        type: array
+        items:
+          type: object
+          properties:
+            address:
+              type: string
+            time:
+              type: string
+              format: int64
+            info:
+              type: string
+  validator.RejectedDisableValidator:
+    type: object
+    properties:
+      address:
+        type: string
+      creator:
+        type: string
+      approvals:
+        type: array
+        items:
+          type: object
+          properties:
+            address:
+              type: string
+            time:
+              type: string
+              format: int64
+            info:
+              type: string
+      rejects:
+        type: array
+        items:
+          type: object
+          properties:
+            address:
+              type: string
+            time:
+              type: string
+              format: int64
+            info:
+              type: string
+  validator.Validator:
+    type: object
+    properties:
+      owner:
+        type: string
+      description:
+        type: object
+        properties:
+          moniker:
+            type: string
+          identity:
+            type: string
+          website:
+            type: string
+          details:
+            type: string
+      pubKey:
+        type: object
+        properties:
+          '@type':
+            type: string
+        additionalProperties: {}
+      power:
+        type: integer
+        format: int32
+      jailed:
+        type: boolean
+      jailedReason:
+        type: string
+  MsgApproveDisableValidatorResponse:
+    type: object
+  MsgCreateValidatorResponse:
+    type: object
+  MsgDisableValidatorResponse:
+    type: object
+  MsgEnableValidatorResponse:
+    type: object
+  MsgProposeDisableValidatorResponse:
+    type: object
+  MsgRejectDisableValidatorResponse:
+    type: object

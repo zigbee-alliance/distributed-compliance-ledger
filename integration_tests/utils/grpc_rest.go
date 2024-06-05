@@ -18,23 +18,28 @@ import (
 	"bufio"
 	"context"
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
+	"time"
 
+	"github.com/cosmos/gogoproto/proto"
+	"github.com/stretchr/testify/require"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+
+	sdkerrors "cosmossdk.io/errors"
 	clienttx "github.com/cosmos/cosmos-sdk/client/tx"
+	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
-	"github.com/cosmos/cosmos-sdk/simapp"
-	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/tx"
 
-	//nolint:staticcheck
-	"github.com/golang/protobuf/proto"
-	"github.com/stretchr/testify/require"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/app"
+	appparams "github.com/zigbee-alliance/distributed-compliance-ledger/app/params"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
-	"google.golang.org/grpc"
 )
 
 // NOTE
@@ -44,7 +49,7 @@ import (
 
 type TestSuite struct {
 	T              *testing.T
-	EncodingConfig simappparams.EncodingConfig
+	EncodingConfig appparams.EncodingConfig
 	ChainID        string
 	Kr             keyring.Keyring
 	Txf            clienttx.Factory
@@ -54,8 +59,9 @@ type TestSuite struct {
 func (suite *TestSuite) GetGRPCConn() *grpc.ClientConn {
 	// Create a connection to the gRPC server.
 	grpcConn, err := grpc.Dial(
-		"127.0.0.1:26630",   // Or your gRPC server address.
-		grpc.WithInsecure(), // The SDK doesn't support any transport security mechanism.
+		"127.0.0.1:26630", // Or your gRPC server address.
+		grpc.WithTransportCredentials(insecure.NewCredentials()), // The SDK doesn't support any transport security mechanism.
+		grpc.WithDefaultCallOptions(grpc.ForceCodec(codec.NewProtoCodec(suite.EncodingConfig.InterfaceRegistry).GRPCCodec())),
 	)
 	require.NoError(suite.T, err)
 
@@ -71,10 +77,10 @@ func SetupTest(t *testing.T, chainID string, rest bool) (suite TestSuite) {
 	require.NoError(t, err)
 
 	homeDir := filepath.Join(userHomeDir, ".dcl")
+	encConfig := app.MakeEncodingConfig()
 
-	kr, _ := keyring.New(sdk.KeyringServiceName(), keyring.BackendTest, homeDir, inBuf)
+	kr, _ := keyring.New(sdk.KeyringServiceName(), keyring.BackendTest, homeDir, inBuf, encConfig.Codec)
 
-	encConfig := simapp.MakeTestEncodingConfig()
 	dclauthtypes.RegisterInterfaces(encConfig.InterfaceRegistry)
 
 	txCfg := encConfig.TxConfig
@@ -98,7 +104,9 @@ func (suite *TestSuite) GetAddress(uid string) sdk.AccAddress {
 	signerInfo, err := suite.Kr.Key(uid)
 	require.NoError(suite.T, err)
 
-	return signerInfo.GetAddress()
+	address, _ := signerInfo.GetAddress()
+
+	return address
 }
 
 // Generates Protobuf-encoded bytes.
@@ -129,27 +137,40 @@ func (suite *TestSuite) BuildTx(
 	return txBytes
 }
 
+//nolint:nosnakecase
 func (suite *TestSuite) BroadcastTx(txBytes []byte) (*sdk.TxResponse, error) {
-	var broadcastResp *tx.BroadcastTxResponse
+	var txResponse *tx.GetTxResponse
 	var err error
 
 	body := tx.BroadcastTxRequest{
-		Mode:    tx.BroadcastMode_BROADCAST_MODE_BLOCK,
+		Mode:    tx.BroadcastMode_BROADCAST_MODE_SYNC, //nolint:nosnakecase
 		TxBytes: txBytes,
 	}
 
-	if suite.Rest {
-		var _resp tx.BroadcastTxResponse
+	if suite.Rest { //nolint:nestif
+		var _getResp tx.GetTxResponse
+		var _brdResp tx.BroadcastTxResponse
 
-		bodyBytes, err := suite.EncodingConfig.Marshaler.MarshalJSON(&body)
+		bodyBytes, err := suite.EncodingConfig.Codec.MarshalJSON(&body)
 		require.NoError(suite.T, err)
 
 		respBytes, err := SendPostRequest("/cosmos/tx/v1beta1/txs", bodyBytes, "", "")
+		require.NoError(suite.T, err)
+		require.NoError(suite.T, suite.EncodingConfig.Codec.UnmarshalJSON(respBytes, &_brdResp))
+
+		for i := 1; i <= 10; i++ {
+			respBytes, err = SendGetRequest(fmt.Sprintf("/cosmos/tx/v1beta1/txs/%s", _brdResp.GetTxResponse().TxHash))
+			if err == nil {
+				require.NoError(suite.T, suite.EncodingConfig.Codec.UnmarshalJSON(respBytes, &_getResp))
+
+				break
+			}
+			time.Sleep(2 * time.Second)
+		}
 		if err != nil {
 			return nil, err
 		}
-		require.NoError(suite.T, suite.EncodingConfig.Marshaler.UnmarshalJSON(respBytes, &_resp))
-		broadcastResp = &_resp
+		txResponse = &_getResp
 	} else {
 		grpcConn := suite.GetGRPCConn()
 		defer grpcConn.Close()
@@ -157,13 +178,24 @@ func (suite *TestSuite) BroadcastTx(txBytes []byte) (*sdk.TxResponse, error) {
 		// Broadcast the tx via gRPC. We create a new client for the Protobuf Tx
 		// service.
 		txClient := tx.NewServiceClient(grpcConn)
-		broadcastResp, err = txClient.BroadcastTx(context.Background(), &body)
+		broadCastResponse, err := txClient.BroadcastTx(context.Background(), &body)
+		if err != nil {
+			return nil, err
+		}
+
+		for i := 1; i <= 10; i++ {
+			txResponse, err = txClient.GetTx(context.Background(), &tx.GetTxRequest{Hash: broadCastResponse.GetTxResponse().TxHash})
+			if err == nil && !strings.Contains(txResponse.TxResponse.RawLog, "tx not found") {
+				break
+			}
+			time.Sleep(2 * time.Second)
+		}
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	resp := broadcastResp.TxResponse
+	resp := txResponse.TxResponse
 	if resp.Code != 0 {
 		err = sdkerrors.ABCIError(resp.Codespace, resp.Code, resp.RawLog)
 
@@ -188,20 +220,21 @@ func (suite *TestSuite) QueryREST(uri string, resp proto.Message) error {
 		return err
 	}
 
-	require.NoError(suite.T, suite.EncodingConfig.Marshaler.UnmarshalJSON(respBytes, resp))
+	require.NoError(suite.T, suite.EncodingConfig.Codec.UnmarshalJSON(respBytes, resp))
 
 	return nil
 }
 
 func (suite *TestSuite) AssertNotFound(err error) {
 	require.Error(suite.T, err)
-	require.Contains(suite.T, err.Error(), "rpc error: code = NotFound desc = not found")
+	require.Contains(suite.T, err.Error(), "not found")
 
 	if suite.Rest {
 		var resterr *RESTError
 		if !errors.As(err, &resterr) {
 			panic("REST error is not RESTError type")
 		}
-		require.Equal(suite.T, resterr.resp.StatusCode, 404)
+
+		require.Equal(suite.T, 404, resterr.resp.StatusCode)
 	}
 }

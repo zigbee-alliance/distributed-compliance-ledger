@@ -1,12 +1,13 @@
 {
     "swagger": "2.0",
     "info": {
-      "title": "cosmos/base/tendermint/v1beta1/query.proto",
-      "version": "v0.44.4","description": "A REST interface for base service endpoints"
+      "title": "Cosmos SDK - gRPC Gateway docs",
+      "description": "A REST interface for state queries",
+      "version": "1.0.0"
     },
     "apis": [
       {
-        "url": "cosmos/base/tendermint/v1beta1/query.swagger.json",
+        "url": "./tmp-swagger-gen/cosmos/base/tendermint/v1beta1/query.swagger.json",
         "operationIds": {
           "rename": {
             "Params": "BaseParams"

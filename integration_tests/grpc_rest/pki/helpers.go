@@ -639,13 +639,17 @@ func Demo(suite *utils.TestSuite) {
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
-	aliceAccount, err := test_dclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	address, err := aliceKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	aliceAccount, err := test_dclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	jackName := testconstants.JackAccount
 	jackKeyInfo, err := suite.Kr.Key(jackName)
 	require.NoError(suite.T, err)
-	jackAccount, err := test_dclauth.GetAccount(suite, jackKeyInfo.GetAddress())
+	address, err = jackKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	jackAccount, err := test_dclauth.GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	// Register new Vendor account
@@ -1537,6 +1541,7 @@ func Demo(suite *utils.TestSuite) {
 		Label:                "label",
 		DataURL:              testconstants.DataURL,
 		RevocationType:       1,
+		SchemaVersion:        1,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddPkiRevDistPoints}, vendorAdminName, vendorAdminAccount)
 	require.Error(suite.T, err)
@@ -1551,6 +1556,7 @@ func Demo(suite *utils.TestSuite) {
 		Label:                "label",
 		DataURL:              testconstants.DataURL,
 		RevocationType:       1,
+		SchemaVersion:        1,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddPkiRevDistPoints}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
@@ -1618,6 +1624,7 @@ func Demo(suite *utils.TestSuite) {
 		Label:                "label_PAI",
 		DataURL:              testconstants.DataURL,
 		RevocationType:       1,
+		SchemaVersion:        1,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddPkiRevDistPoints}, venName65522, venAcc65522)
 	require.NoError(suite.T, err)
@@ -1646,6 +1653,7 @@ func Demo(suite *utils.TestSuite) {
 		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 		Label:                "label",
 		DataURL:              "https://url2.data.dclmodel",
+		SchemaVersion:        2,
 	}
 
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgUpdPkiRevDistPoint}, vendorName, vendorAccount)

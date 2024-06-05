@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
@@ -14,12 +15,12 @@ func (k msgServer) RejectAddX509RootCert(goCtx context.Context, msg *types.MsgRe
 
 	signerAddr, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
 
 	// check if signer has root certificate approval role
 	if !k.dclauthKeeper.HasRole(ctx, signerAddr, types.RootCertificateApprovalRole) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+		return nil, errors.Wrapf(sdkerrors.ErrUnauthorized,
 			"MsgApproveAddX509RootCert transaction should be signed by an account with the \"%s\" role",
 			types.RootCertificateApprovalRole,
 		)
@@ -33,7 +34,7 @@ func (k msgServer) RejectAddX509RootCert(goCtx context.Context, msg *types.MsgRe
 
 	// check if proposed certificate already has reject approval form signer
 	if proposedCertificate.HasRejectFrom(signerAddr.String()) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+		return nil, errors.Wrapf(sdkerrors.ErrUnauthorized,
 			"Certificate associated with subject=%v and subjectKeyID=%v combination "+
 				"already has reject approval from=%v",
 			msg.Subject, msg.SubjectKeyId, msg.Signer,
@@ -86,7 +87,6 @@ func (k msgServer) RejectAddX509RootCert(goCtx context.Context, msg *types.MsgRe
 					Rejects:       proposedCertificate.Rejects,
 				},
 			},
-			SchemaVersion: msg.SchemaVersion,
 		}
 
 		k.SetRejectedCertificate(ctx, rejectedRootCertificate)

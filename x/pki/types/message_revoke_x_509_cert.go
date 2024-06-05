@@ -3,6 +3,7 @@ package types
 import (
 	"time"
 
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
@@ -20,17 +21,15 @@ func NewMsgRevokeX509Cert(
 	serialNumber string,
 	revokeChild bool,
 	info string,
-	schemaVersion uint32,
 ) *MsgRevokeX509Cert {
 	return &MsgRevokeX509Cert{
-		Signer:        signer,
-		Subject:       subject,
-		SubjectKeyId:  subjectKeyID,
-		SerialNumber:  serialNumber,
-		RevokeChild:   revokeChild,
-		Info:          info,
-		Time:          time.Now().Unix(),
-		SchemaVersion: schemaVersion,
+		Signer:       signer,
+		Subject:      subject,
+		SubjectKeyId: subjectKeyID,
+		SerialNumber: serialNumber,
+		RevokeChild:  revokeChild,
+		Info:         info,
+		Time:         time.Now().Unix(),
 	}
 }
 
@@ -60,7 +59,7 @@ func (msg *MsgRevokeX509Cert) GetSignBytes() []byte {
 func (msg *MsgRevokeX509Cert) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address (%s)", err)
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address (%s)", err)
 	}
 
 	err = validator.Validate(msg)

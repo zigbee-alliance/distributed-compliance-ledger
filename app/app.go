@@ -1,43 +1,47 @@
 package app
 
 import (
+	"encoding/json"
 	"io"
-	"net/http"
 	"os"
 	"path/filepath"
 
+	reflectionv1 "cosmossdk.io/api/cosmos/reflection/v1"
+	dbm "github.com/cometbft/cometbft-db"
+	abci "github.com/cometbft/cometbft/abci/types"
+	"github.com/cometbft/cometbft/libs/log"
+	tmos "github.com/cometbft/cometbft/libs/os"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
+	nodeservice "github.com/cosmos/cosmos-sdk/client/grpc/node"
 	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
-	"github.com/cosmos/cosmos-sdk/client/rpc"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/cosmos/cosmos-sdk/runtime"
+	runtimeservices "github.com/cosmos/cosmos-sdk/runtime/services"
+	"github.com/cosmos/cosmos-sdk/server"
 	"github.com/cosmos/cosmos-sdk/server/api"
 	"github.com/cosmos/cosmos-sdk/server/config"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/version"
-	authrest "github.com/cosmos/cosmos-sdk/x/auth/client/rest"
 	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	consensusparamkeeper "github.com/cosmos/cosmos-sdk/x/consensus/keeper"
 	"github.com/cosmos/cosmos-sdk/x/params"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-	"github.com/tendermint/spm/cosmoscmd"
-	"github.com/tendermint/spm/openapiconsole"
-	abci "github.com/tendermint/tendermint/abci/types"
-	tmjson "github.com/tendermint/tendermint/libs/json"
-	"github.com/tendermint/tendermint/libs/log"
-	tmos "github.com/tendermint/tendermint/libs/os"
-	dbm "github.com/tendermint/tm-db"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/docs"
+
+	appparams "github.com/zigbee-alliance/distributed-compliance-ledger/app/params"
 	dclpkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	compliancemodule "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance"
 	compliancemodulekeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/keeper"
-	compliancetypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
+	dclcompliancetypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	dclauthmodule "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/ante"
 	baseauthmodulekeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/base/keeper"
@@ -50,7 +54,7 @@ import (
 	dclupgrademoduletypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade/types"
 	modelmodule "github.com/zigbee-alliance/distributed-compliance-ledger/x/model"
 	modelmodulekeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/keeper"
-	modelmoduletypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
+	dclmodeltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 	pkimodule "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki"
 	pkimodulekeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/keeper"
 	validatormodule "github.com/zigbee-alliance/distributed-compliance-ledger/x/validator"
@@ -127,8 +131,7 @@ var (
 	)
 
 	// module account permissions.
-	maccPerms = map[string][]string{
-		/*
+	/* maccPerms = map[string][]string{
 			authtypes.FeeCollectorName:     nil,
 			distrtypes.ModuleName:          nil,
 			minttypes.ModuleName:           {authtypes.Minter},
@@ -137,12 +140,12 @@ var (
 			govtypes.ModuleName:            {authtypes.Burner},
 			ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 			// this line is used by starport scaffolding # stargate/app/maccPerms
-		*/
 	}
+	*/
 )
 
 var (
-	_ cosmoscmd.CosmosApp     = (*App)(nil)
+	_ runtime.AppI            = (*App)(nil)
 	_ servertypes.Application = (*App)(nil)
 )
 
@@ -164,13 +167,14 @@ type App struct {
 	cdc               *codec.LegacyAmino
 	appCodec          codec.Codec
 	interfaceRegistry types.InterfaceRegistry
+	txConfig          client.TxConfig
 
 	invCheckPeriod uint
 
 	// keys to access the substores
-	keys    map[string]*sdk.KVStoreKey
-	tkeys   map[string]*sdk.TransientStoreKey
-	memKeys map[string]*sdk.MemoryStoreKey
+	keys    map[string]*storetypes.KVStoreKey
+	tkeys   map[string]*storetypes.TransientStoreKey
+	memKeys map[string]*storetypes.MemoryStoreKey
 
 	// keepers
 	/*
@@ -184,7 +188,7 @@ type App struct {
 		GovKeeper        govkeeper.Keeper
 		CrisisKeeper     crisiskeeper.Keeper
 	*/
-	UpgradeKeeper upgradekeeper.Keeper
+	UpgradeKeeper *upgradekeeper.Keeper
 	ParamsKeeper  paramskeeper.Keeper
 	/*
 		IBCKeeper        *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
@@ -212,10 +216,24 @@ type App struct {
 	ModelKeeper modelmodulekeeper.Keeper
 
 	ComplianceKeeper compliancemodulekeeper.Keeper
+
+	ConsensusParamsKeeper consensusparamkeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// the module manager
 	mm *module.Manager
+
+	// sm is the simulation manager
+	sm           *module.SimulationManager
+	configurator module.Configurator
+}
+
+func (app *App) RegisterNodeService(clientCtx client.Context) {
+	nodeservice.RegisterNodeService(clientCtx, app.GRPCQueryRouter())
+}
+
+func (app *App) SimulationManager() *module.SimulationManager {
+	return app.sm
 }
 
 // New returns a reference to an initialized Gaia.
@@ -227,18 +245,19 @@ func New(
 	skipUpgradeHeights map[int64]bool,
 	homePath string,
 	invCheckPeriod uint,
-	encodingConfig cosmoscmd.EncodingConfig,
-	appOpts servertypes.AppOptions,
+	encodingConfig appparams.EncodingConfig,
 	baseAppOptions ...func(*baseapp.BaseApp),
-) cosmoscmd.App {
-	appCodec := encodingConfig.Marshaler
+) *App {
+	appCodec := encodingConfig.Codec
 	cdc := encodingConfig.Amino
 	interfaceRegistry := encodingConfig.InterfaceRegistry
+	txConfig := encodingConfig.TxConfig
 
 	bApp := baseapp.NewBaseApp(Name, logger, db, encodingConfig.TxConfig.TxDecoder(), baseAppOptions...)
 	bApp.SetCommitMultiStoreTracer(traceStore)
 	bApp.SetVersion(version.Version)
 	bApp.SetInterfaceRegistry(interfaceRegistry)
+	bApp.SetTxEncoder(txConfig.TxEncoder())
 
 	keys := sdk.NewKVStoreKeys(
 		paramstypes.StoreKey,
@@ -255,8 +274,8 @@ func New(
 		dclupgrademoduletypes.StoreKey,
 		dclpkitypes.StoreKey,
 		vendorinfomoduletypes.StoreKey,
-		modelmoduletypes.StoreKey,
-		compliancetypes.StoreKey,
+		dclmodeltypes.StoreKey,
+		dclcompliancetypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -267,6 +286,7 @@ func New(
 		cdc:               cdc,
 		appCodec:          appCodec,
 		interfaceRegistry: interfaceRegistry,
+		txConfig:          txConfig,
 		invCheckPeriod:    invCheckPeriod,
 		keys:              keys,
 		tkeys:             tkeys,
@@ -276,8 +296,8 @@ func New(
 	app.ParamsKeeper = initParamsKeeper(appCodec, cdc, keys[paramstypes.StoreKey], tkeys[paramstypes.TStoreKey])
 
 	// set the BaseApp's parameter store
-	bApp.SetParamStore(app.ParamsKeeper.Subspace(baseapp.Paramspace).WithKeyTable(paramskeeper.ConsensusParamsKeyTable()))
-	// add capability keeper and ScopeToModule for ibc module
+	app.ConsensusParamsKeeper = consensusparamkeeper.NewKeeper(appCodec, keys[upgradetypes.StoreKey], authtypes.NewModuleAddress(authtypes.ModuleName).String())
+	bApp.SetParamStore(&app.ConsensusParamsKeeper) // add capability keeper and ScopeToModule for ibc module
 	// app.CapabilityKeeper = capabilitykeeper.NewKeeper(appCodec, keys[capabilitytypes.StoreKey], memKeys[capabilitytypes.MemStoreKey])
 
 	/*
@@ -315,7 +335,7 @@ func New(
 
 		app.FeeGrantKeeper = feegrantkeeper.NewKeeper(appCodec, keys[feegrant.StoreKey], app.AccountKeeper)
 	*/
-	app.UpgradeKeeper = upgradekeeper.NewKeeper(skipUpgradeHeights, keys[upgradetypes.StoreKey], appCodec, homePath, app.BaseApp)
+	app.UpgradeKeeper = upgradekeeper.NewKeeper(skipUpgradeHeights, keys[upgradetypes.StoreKey], appCodec, homePath, app.BaseApp, authtypes.NewModuleAddress(upgradetypes.ModuleName).String())
 	/*
 		// register the staking hooks
 		// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
@@ -417,8 +437,8 @@ func New(
 
 	app.ModelKeeper = *modelmodulekeeper.NewKeeper(
 		appCodec,
-		keys[modelmoduletypes.StoreKey],
-		keys[modelmoduletypes.MemStoreKey],
+		keys[dclmodeltypes.StoreKey],
+		keys[dclmodeltypes.MemStoreKey],
 
 		app.DclauthKeeper,
 		app.ComplianceKeeper,
@@ -426,8 +446,8 @@ func New(
 
 	app.ComplianceKeeper = *compliancemodulekeeper.NewKeeper(
 		appCodec,
-		keys[compliancetypes.StoreKey],
-		keys[compliancetypes.MemStoreKey],
+		keys[dclcompliancetypes.StoreKey],
+		keys[dclcompliancetypes.MemStoreKey],
 		app.DclauthKeeper,
 		app.ModelKeeper,
 	)
@@ -508,12 +528,31 @@ func New(
 
 	app.mm.SetOrderBeginBlockers(
 		// TODO [issue 99] verify the order
-		upgradetypes.ModuleName,
+		dclauthmoduletypes.ModuleName,
 		validatormoduletypes.ModuleName,
+		dclgenutilmoduletypes.ModuleName,
+		dclupgrademoduletypes.ModuleName,
+		upgradetypes.ModuleName,
+		dclpkitypes.ModuleName,
+		dclauthmoduletypes.ModuleName,
+		dclmodeltypes.ModuleName,
+		dclcompliancetypes.ModuleName,
+		vendorinfomoduletypes.ModuleName,
+		paramstypes.ModuleName,
 	)
 
 	app.mm.SetOrderEndBlockers(
+		dclauthmoduletypes.ModuleName,
 		validatormoduletypes.ModuleName,
+		dclgenutilmoduletypes.ModuleName,
+		dclupgrademoduletypes.ModuleName,
+		upgradetypes.ModuleName,
+		dclpkitypes.ModuleName,
+		dclauthmoduletypes.ModuleName,
+		dclmodeltypes.ModuleName,
+		dclcompliancetypes.ModuleName,
+		vendorinfomoduletypes.ModuleName,
+		paramstypes.ModuleName,
 	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -544,16 +583,32 @@ func New(
 		dclupgrademoduletypes.ModuleName,
 		dclpkitypes.ModuleName,
 		vendorinfomoduletypes.ModuleName,
-		modelmoduletypes.ModuleName,
-		compliancetypes.ModuleName,
+		dclmodeltypes.ModuleName,
+		dclcompliancetypes.ModuleName,
+		paramstypes.ModuleName,
+		upgradetypes.ModuleName,
+		dclupgrademoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	)
 
 	// app.mm.RegisterInvariants(&app.CrisisKeeper)
-	app.mm.RegisterRoutes(app.Router(), app.QueryRouter(), encodingConfig.Amino)
+	// app.mm.RegisterRoutes(app.Router(), app.QueryRouter(), encodingConfig.Amino)
 
-	cfg := module.NewConfigurator(app.appCodec, app.MsgServiceRouter(), app.GRPCQueryRouter())
-	app.mm.RegisterServices(cfg)
+	app.configurator = module.NewConfigurator(app.appCodec, app.MsgServiceRouter(), app.GRPCQueryRouter())
+	app.mm.RegisterServices(app.configurator)
+
+	// autocliv1.RegisterQueryServer(app.GRPCQueryRouter(), runtimeservices.NewAutoCLIQueryService(app.mm.Modules))
+	reflectionSvc, err := runtimeservices.NewReflectionService()
+	if err != nil {
+		panic(err)
+	}
+	reflectionv1.RegisterReflectionServiceServer(app.GRPCQueryRouter(), reflectionSvc)
+
+	// create the simulation manager and define the order of the modules for deterministic simulations
+	overrideModules := map[string]module.AppModuleSimulation{
+		dclauthmoduletypes.ModuleName: dclauthModule}
+	app.sm = module.NewSimulationManagerFromAppModules(app.mm.Modules, overrideModules)
+	app.sm.RegisterStoreDecoders()
 
 	// initialize stores
 	app.MountKVStores(keys)
@@ -625,9 +680,9 @@ func New(
 	)
 
 	app.UpgradeKeeper.SetUpgradeHandler(
-		"v1.3",
+		"v1.4",
 		func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
-			return app.mm.RunMigrations(ctx, cfg, fromVM)
+			return app.mm.RunMigrations(ctx, app.configurator, fromVM)
 		},
 	)
 
@@ -650,7 +705,7 @@ func (app *App) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abci.Respo
 // InitChainer application update at chain initialization.
 func (app *App) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
 	var genesisState GenesisState
-	if err := tmjson.Unmarshal(req.AppStateBytes, &genesisState); err != nil {
+	if err := json.Unmarshal(req.AppStateBytes, &genesisState); err != nil {
 		panic(err)
 	}
 	app.UpgradeKeeper.SetModuleVersionMap(ctx, app.mm.GetVersionMap())
@@ -699,21 +754,21 @@ func (app *App) InterfaceRegistry() types.InterfaceRegistry {
 // GetKey returns the KVStoreKey for the provided store key.
 //
 // NOTE: This is solely to be used for testing purposes.
-func (app *App) GetKey(storeKey string) *sdk.KVStoreKey {
+func (app *App) GetKey(storeKey string) *storetypes.KVStoreKey {
 	return app.keys[storeKey]
 }
 
 // GetTKey returns the TransientStoreKey for the provided store key.
 //
 // NOTE: This is solely to be used for testing purposes.
-func (app *App) GetTKey(storeKey string) *sdk.TransientStoreKey {
+func (app *App) GetTKey(storeKey string) *storetypes.TransientStoreKey {
 	return app.tkeys[storeKey]
 }
 
 // GetMemKey returns the MemStoreKey for the provided mem key.
 //
 // NOTE: This is solely used for testing purposes.
-func (app *App) GetMemKey(storeKey string) *sdk.MemoryStoreKey {
+func (app *App) GetMemKey(storeKey string) *storetypes.MemoryStoreKey {
 	return app.memKeys[storeKey]
 }
 
@@ -730,10 +785,6 @@ func (app *App) GetSubspace(moduleName string) paramstypes.Subspace {
 // API server.
 func (app *App) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig) {
 	clientCtx := apiSvr.ClientCtx
-	rpc.RegisterRoutes(clientCtx, apiSvr.Router)
-
-	// Register legacy tx routes.
-	authrest.RegisterTxRoutes(clientCtx, apiSvr.Router)
 	// Register new tx routes from grpc-gateway.
 	authtx.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
 
@@ -741,12 +792,12 @@ func (app *App) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig
 	tmservice.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
 
 	// Register legacy and grpc-gateway routes for all modules.
-	ModuleBasics.RegisterRESTRoutes(clientCtx, apiSvr.Router)
 	ModuleBasics.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
 
-	// register app's OpenAPI routes.
-	apiSvr.Router.Handle("/static/openapi.yml", http.FileServer(http.FS(docs.Docs)))
-	apiSvr.Router.HandleFunc("/", openapiconsole.Handler(Name, "/static/openapi.yml"))
+	// register swagger API from root so that other applications can override easily
+	if err := server.RegisterSwaggerAPI(apiSvr.ClientCtx, apiSvr.Router, apiConfig.Swagger); err != nil {
+		panic(err)
+	}
 }
 
 // RegisterTxService implements the Application.RegisterTxService method.
@@ -756,21 +807,31 @@ func (app *App) RegisterTxService(clientCtx client.Context) {
 
 // RegisterTendermintService implements the Application.RegisterTendermintService method.
 func (app *App) RegisterTendermintService(clientCtx client.Context) {
-	tmservice.RegisterTendermintService(app.BaseApp.GRPCQueryRouter(), clientCtx, app.interfaceRegistry)
+	tmservice.RegisterTendermintService(
+		clientCtx,
+		app.BaseApp.GRPCQueryRouter(),
+		app.interfaceRegistry,
+		app.Query,
+	)
 }
 
-// GetMaccPerms returns a copy of the module account permissions.
-func GetMaccPerms() map[string][]string {
-	dupMaccPerms := make(map[string][]string)
-	for k, v := range maccPerms {
-		dupMaccPerms[k] = v
-	}
+// TxConfig returns App's TxConfig.
+func (app *App) TxConfig() client.TxConfig {
+	return app.txConfig
+}
 
-	return dupMaccPerms
+// Configurator get app configurator
+func (app *App) Configurator() module.Configurator {
+	return app.configurator
+}
+
+// ModuleManager returns the app ModuleManager
+func (app *App) ModuleManager() *module.Manager {
+	return app.mm
 }
 
 // initParamsKeeper init params keeper and its subspaces.
-func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino, key, tkey sdk.StoreKey) paramskeeper.Keeper {
+func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino, key, tkey storetypes.StoreKey) paramskeeper.Keeper {
 	paramsKeeper := paramskeeper.NewKeeper(appCodec, legacyAmino, key, tkey)
 
 	paramsKeeper.Subspace(upgradetypes.ModuleName)
@@ -792,8 +853,8 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(dclupgrademoduletypes.ModuleName)
 	paramsKeeper.Subspace(dclpkitypes.ModuleName)
 	paramsKeeper.Subspace(vendorinfomoduletypes.ModuleName)
-	paramsKeeper.Subspace(modelmoduletypes.ModuleName)
-	paramsKeeper.Subspace(compliancetypes.ModuleName)
+	paramsKeeper.Subspace(dclmodeltypes.ModuleName)
+	paramsKeeper.Subspace(dclcompliancetypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper

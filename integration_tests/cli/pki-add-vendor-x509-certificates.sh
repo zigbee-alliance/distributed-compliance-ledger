@@ -30,16 +30,20 @@ create_new_vendor_account $vendor_account_65521 $vendor_vid_65521
 
 echo "Propose and approve root certificate with vid=$root_cert_with_vid_65521_vid"
 result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_cert_with_vid_65521_path" --vid "$root_cert_with_vid_65521_vid" --from $trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 result=$(echo "$passphrase" | dcld tx pki approve-add-x509-root-cert --subject="$root_cert_with_vid_65521_subject" --subject-key-id="$root_cert_with_vid_65521_subject_key_id" --from $second_trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Try to add the intermediate certificate using an account that does not have vendor role"
 result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_cert_with_vid_65521_path" --from $trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 4"
 
 echo "Add an intermediate certificate with vid=$intermediate_cert_with_vid_65521_vid by $vendor_account_65521 with vid=$vendor_vid_65521"
 result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_cert_with_vid_65521_path" --from $vendor_account_65521 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Request all approved root certificates."
@@ -53,6 +57,7 @@ check_response "$result" "\"serialNumber\": \"$intermediate_cert_with_vid_65521_
 
 echo "Try to add an intermediate certificate with vid=$intermediate_cert_with_vid_65522_vid by $vendor_account_65521 with vid=$vendor_vid_65521"
 result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_cert_with_vid_65522_path" --from $vendor_account_65521 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 440"
 
 echo "Request all approved root certificates should not contain intermediate cert with serialNumber=$intermediate_cert_with_vid_65522_serial_number"
@@ -77,8 +82,10 @@ intermediate_cert_with_vid_65522_serial_number="4428370313154203676"
 
 echo "Propose and approve non-vid root certificate"
 result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_cert_with_no_vid_path" --vid "65522" --from $trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 result=$(echo "$passphrase" | dcld tx pki approve-add-x509-root-cert --subject="$root_cert_with_no_vid_subject" --subject-key-id="$root_cert_with_no_vid_subject_key_id" --from $second_trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 vendor_vid_65523=65523
@@ -88,6 +95,7 @@ create_new_vendor_account $vendor_account_65523 $vendor_vid_65523
 
 echo "Try to add an intermediate certificate with vid=$intermediate_cert_with_vid_65522_vid by $vendor_account_65523 with vid=$vendor_vid_65523"
 result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_cert_with_vid_65522_path" --from $vendor_account_65523 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 439"
 
 echo "Request all approved root certificates should not contain intermediate cert with serialNumber=$intermediate_cert_with_vid_65522_serial_number"
@@ -106,6 +114,7 @@ create_new_vendor_account $vendor_account_65522 $vendor_vid_65522
 
 echo "Add an intermediate certificate with vid=$intermediate_cert_with_vid_65522_vid by $vendor_account_65522 with vid=$vendor_vid_65522"
 result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_cert_with_vid_65522_path" --from $vendor_account_65522 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Request all approved root certificates should contain intermediate cert with serialNumber=$intermediate_cert_with_vid_65522_serial_number"
@@ -133,12 +142,15 @@ intermediate_cert_2_serial_number="4"
 
 echo "Propose and approve root certificate"
 result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_cert_path" --vid "$vendor_vid_65521" --from $trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 result=$(echo "$passphrase" | dcld tx pki approve-add-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $second_trustee_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Add first intermediate certificate by $vendor_account_65521"
 result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_cert_1_path" --from $vendor_account_65521 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Request all approved root certificates."
@@ -152,6 +164,7 @@ check_response "$result" "\"serialNumber\": \"$intermediate_cert_1_serial_number
 
 echo "Try to add second intermediate certificate with same subject and SKID by $vendor_account_65523"
 result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_cert_2_path" --from $vendor_account_65523 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 4"
 
 echo "Request all approved root certificates should not contain intermediate cert with serialNumber=$intermediate_cert_2_serial_number"
@@ -170,6 +183,7 @@ create_new_vendor_account $second_vendor_account_65521 $vendor_vid_65521
 
 echo "Add second intermediate certificate with same subject and SKID by $second_vendor_account_65521"
 result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_cert_2_path" --from $vendor_account_65521 --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Request all approved root certificates should contain intermediate cert with serialNumber=$intermediate_cert_2_serial_number"

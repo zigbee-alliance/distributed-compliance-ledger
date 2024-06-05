@@ -1,0 +1,2191 @@
+swagger: '2.0'
+info:
+  title: HTTP API Console zigbeealliance.distributedcomplianceledger.dclauth
+  name: ''
+  description: ''
+paths:
+  /dcl/auth/accounts:
+    get:
+      operationId: AccountAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              account:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    base_account:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        pub_key:
+                          type: object
+                          properties:
+                            '@type':
+                              type: string
+                          additionalProperties: {}
+                        account_number:
+                          type: string
+                          format: uint64
+                        sequence:
+                          type: string
+                          format: uint64
+                    roles:
+                      type: array
+                      items:
+                        type: string
+                    approvals:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          address:
+                            type: string
+                          time:
+                            type: string
+                            format: int64
+                          info:
+                            type: string
+                    vendorID:
+                      type: integer
+                      format: int32
+                    rejects:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          address:
+                            type: string
+                          time:
+                            type: string
+                            format: int64
+                          info:
+                            type: string
+                    productIDs:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          min:
+                            type: integer
+                            format: int32
+                          max:
+                            type: integer
+                            format: int32
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                  total:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /dcl/auth/accounts/stat:
+    get:
+      operationId: AccountStat
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              AccountStat:
+                type: object
+                properties:
+                  number:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
+  /dcl/auth/accounts/{address}:
+    get:
+      operationId: Account
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              account:
+                type: object
+                properties:
+                  base_account:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      pub_key:
+                        type: object
+                        properties:
+                          '@type':
+                            type: string
+                        additionalProperties: {}
+                      account_number:
+                        type: string
+                        format: uint64
+                      sequence:
+                        type: string
+                        format: uint64
+                  roles:
+                    type: array
+                    items:
+                      type: string
+                  approvals:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
+                  vendorID:
+                    type: integer
+                    format: int32
+                  rejects:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
+                  productIDs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        min:
+                          type: integer
+                          format: int32
+                        max:
+                          type: integer
+                          format: int32
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: address
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /dcl/auth/proposed-accounts:
+    get:
+      operationId: PendingAccountAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              pendingAccount:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    account:
+                      type: object
+                      properties:
+                        base_account:
+                          type: object
+                          properties:
+                            address:
+                              type: string
+                            pub_key:
+                              type: object
+                              properties:
+                                '@type':
+                                  type: string
+                              additionalProperties: {}
+                            account_number:
+                              type: string
+                              format: uint64
+                            sequence:
+                              type: string
+                              format: uint64
+                        roles:
+                          type: array
+                          items:
+                            type: string
+                        approvals:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                              time:
+                                type: string
+                                format: int64
+                              info:
+                                type: string
+                        vendorID:
+                          type: integer
+                          format: int32
+                        rejects:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                              time:
+                                type: string
+                                format: int64
+                              info:
+                                type: string
+                        productIDs:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              min:
+                                type: integer
+                                format: int32
+                              max:
+                                type: integer
+                                format: int32
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                  total:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /dcl/auth/proposed-accounts/{address}:
+    get:
+      operationId: PendingAccount
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              pendingAccount:
+                type: object
+                properties:
+                  account:
+                    type: object
+                    properties:
+                      base_account:
+                        type: object
+                        properties:
+                          address:
+                            type: string
+                          pub_key:
+                            type: object
+                            properties:
+                              '@type':
+                                type: string
+                            additionalProperties: {}
+                          account_number:
+                            type: string
+                            format: uint64
+                          sequence:
+                            type: string
+                            format: uint64
+                      roles:
+                        type: array
+                        items:
+                          type: string
+                      approvals:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            address:
+                              type: string
+                            time:
+                              type: string
+                              format: int64
+                            info:
+                              type: string
+                      vendorID:
+                        type: integer
+                        format: int32
+                      rejects:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            address:
+                              type: string
+                            time:
+                              type: string
+                              format: int64
+                            info:
+                              type: string
+                      productIDs:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            min:
+                              type: integer
+                              format: int32
+                            max:
+                              type: integer
+                              format: int32
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: address
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /dcl/auth/proposed-revocation-accounts:
+    get:
+      operationId: PendingAccountRevocationAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              pendingAccountRevocation:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    address:
+                      type: string
+                    approvals:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          address:
+                            type: string
+                          time:
+                            type: string
+                            format: int64
+                          info:
+                            type: string
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                  total:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /dcl/auth/proposed-revocation-accounts/{address}:
+    get:
+      operationId: PendingAccountRevocation
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              pendingAccountRevocation:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  approvals:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: address
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /dcl/auth/rejected-accounts:
+    get:
+      operationId: RejectedAccountAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              rejectedAccount:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    account:
+                      type: object
+                      properties:
+                        base_account:
+                          type: object
+                          properties:
+                            address:
+                              type: string
+                            pub_key:
+                              type: object
+                              properties:
+                                '@type':
+                                  type: string
+                              additionalProperties: {}
+                            account_number:
+                              type: string
+                              format: uint64
+                            sequence:
+                              type: string
+                              format: uint64
+                        roles:
+                          type: array
+                          items:
+                            type: string
+                        approvals:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                              time:
+                                type: string
+                                format: int64
+                              info:
+                                type: string
+                        vendorID:
+                          type: integer
+                          format: int32
+                        rejects:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                              time:
+                                type: string
+                                format: int64
+                              info:
+                                type: string
+                        productIDs:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              min:
+                                type: integer
+                                format: int32
+                              max:
+                                type: integer
+                                format: int32
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                  total:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /dcl/auth/rejected-accounts/{address}:
+    get:
+      operationId: RejectedAccount
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              rejectedAccount:
+                type: object
+                properties:
+                  account:
+                    type: object
+                    properties:
+                      base_account:
+                        type: object
+                        properties:
+                          address:
+                            type: string
+                          pub_key:
+                            type: object
+                            properties:
+                              '@type':
+                                type: string
+                            additionalProperties: {}
+                          account_number:
+                            type: string
+                            format: uint64
+                          sequence:
+                            type: string
+                            format: uint64
+                      roles:
+                        type: array
+                        items:
+                          type: string
+                      approvals:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            address:
+                              type: string
+                            time:
+                              type: string
+                              format: int64
+                            info:
+                              type: string
+                      vendorID:
+                        type: integer
+                        format: int32
+                      rejects:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            address:
+                              type: string
+                            time:
+                              type: string
+                              format: int64
+                            info:
+                              type: string
+                      productIDs:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            min:
+                              type: integer
+                              format: int32
+                            max:
+                              type: integer
+                              format: int32
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: address
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /dcl/auth/revoked-accounts:
+    get:
+      operationId: RevokedAccountAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              revokedAccount:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    account:
+                      type: object
+                      properties:
+                        base_account:
+                          type: object
+                          properties:
+                            address:
+                              type: string
+                            pub_key:
+                              type: object
+                              properties:
+                                '@type':
+                                  type: string
+                              additionalProperties: {}
+                            account_number:
+                              type: string
+                              format: uint64
+                            sequence:
+                              type: string
+                              format: uint64
+                        roles:
+                          type: array
+                          items:
+                            type: string
+                        approvals:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                              time:
+                                type: string
+                                format: int64
+                              info:
+                                type: string
+                        vendorID:
+                          type: integer
+                          format: int32
+                        rejects:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                              time:
+                                type: string
+                                format: int64
+                              info:
+                                type: string
+                        productIDs:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              min:
+                                type: integer
+                                format: int32
+                              max:
+                                type: integer
+                                format: int32
+                    revokeApprovals:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          address:
+                            type: string
+                          time:
+                            type: string
+                            format: int64
+                          info:
+                            type: string
+                    reason:
+                      type: string
+                      enum:
+                        - TrusteeVoting
+                        - MaliciousValidator
+                      default: TrusteeVoting
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                  total:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /dcl/auth/revoked-accounts/{address}:
+    get:
+      operationId: RevokedAccount
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              revokedAccount:
+                type: object
+                properties:
+                  account:
+                    type: object
+                    properties:
+                      base_account:
+                        type: object
+                        properties:
+                          address:
+                            type: string
+                          pub_key:
+                            type: object
+                            properties:
+                              '@type':
+                                type: string
+                            additionalProperties: {}
+                          account_number:
+                            type: string
+                            format: uint64
+                          sequence:
+                            type: string
+                            format: uint64
+                      roles:
+                        type: array
+                        items:
+                          type: string
+                      approvals:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            address:
+                              type: string
+                            time:
+                              type: string
+                              format: int64
+                            info:
+                              type: string
+                      vendorID:
+                        type: integer
+                        format: int32
+                      rejects:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            address:
+                              type: string
+                            time:
+                              type: string
+                              format: int64
+                            info:
+                              type: string
+                      productIDs:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            min:
+                              type: integer
+                              format: int32
+                            max:
+                              type: integer
+                              format: int32
+                  revokeApprovals:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
+                  reason:
+                    type: string
+                    enum:
+                      - TrusteeVoting
+                      - MaliciousValidator
+                    default: TrusteeVoting
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: address
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+definitions:
+  Any:
+    type: object
+    properties:
+      '@type':
+        type: string
+    additionalProperties: {}
+  Status:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      details:
+        type: array
+        items:
+          type: object
+          properties:
+            '@type':
+              type: string
+          additionalProperties: {}
+  BaseAccount:
+    type: object
+    properties:
+      address:
+        type: string
+      pub_key:
+        type: object
+        properties:
+          '@type':
+            type: string
+        additionalProperties: {}
+      account_number:
+        type: string
+        format: uint64
+      sequence:
+        type: string
+        format: uint64
+  Grant:
+    type: object
+    properties:
+      address:
+        type: string
+      time:
+        type: string
+        format: int64
+      info:
+        type: string
+  PageRequest:
+    type: object
+    properties:
+      key:
+        type: string
+        format: byte
+      offset:
+        type: string
+        format: uint64
+      limit:
+        type: string
+        format: uint64
+      count_total:
+        type: boolean
+      reverse:
+        type: boolean
+  PageResponse:
+    type: object
+    properties:
+      next_key:
+        type: string
+        format: byte
+      total:
+        type: string
+        format: uint64
+  QueryAllAccountResponse:
+    type: object
+    properties:
+      account:
+        type: array
+        items:
+          type: object
+          properties:
+            base_account:
+              type: object
+              properties:
+                address:
+                  type: string
+                pub_key:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+                account_number:
+                  type: string
+                  format: uint64
+                sequence:
+                  type: string
+                  format: uint64
+            roles:
+              type: array
+              items:
+                type: string
+            approvals:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
+            vendorID:
+              type: integer
+              format: int32
+            rejects:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
+            productIDs:
+              type: array
+              items:
+                type: object
+                properties:
+                  min:
+                    type: integer
+                    format: int32
+                  max:
+                    type: integer
+                    format: int32
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+          total:
+            type: string
+            format: uint64
+  QueryAllPendingAccountResponse:
+    type: object
+    properties:
+      pendingAccount:
+        type: array
+        items:
+          type: object
+          properties:
+            account:
+              type: object
+              properties:
+                base_account:
+                  type: object
+                  properties:
+                    address:
+                      type: string
+                    pub_key:
+                      type: object
+                      properties:
+                        '@type':
+                          type: string
+                      additionalProperties: {}
+                    account_number:
+                      type: string
+                      format: uint64
+                    sequence:
+                      type: string
+                      format: uint64
+                roles:
+                  type: array
+                  items:
+                    type: string
+                approvals:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      time:
+                        type: string
+                        format: int64
+                      info:
+                        type: string
+                vendorID:
+                  type: integer
+                  format: int32
+                rejects:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      time:
+                        type: string
+                        format: int64
+                      info:
+                        type: string
+                productIDs:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      min:
+                        type: integer
+                        format: int32
+                      max:
+                        type: integer
+                        format: int32
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+          total:
+            type: string
+            format: uint64
+  QueryAllPendingAccountRevocationResponse:
+    type: object
+    properties:
+      pendingAccountRevocation:
+        type: array
+        items:
+          type: object
+          properties:
+            address:
+              type: string
+            approvals:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+          total:
+            type: string
+            format: uint64
+  QueryAllRejectedAccountResponse:
+    type: object
+    properties:
+      rejectedAccount:
+        type: array
+        items:
+          type: object
+          properties:
+            account:
+              type: object
+              properties:
+                base_account:
+                  type: object
+                  properties:
+                    address:
+                      type: string
+                    pub_key:
+                      type: object
+                      properties:
+                        '@type':
+                          type: string
+                      additionalProperties: {}
+                    account_number:
+                      type: string
+                      format: uint64
+                    sequence:
+                      type: string
+                      format: uint64
+                roles:
+                  type: array
+                  items:
+                    type: string
+                approvals:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      time:
+                        type: string
+                        format: int64
+                      info:
+                        type: string
+                vendorID:
+                  type: integer
+                  format: int32
+                rejects:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      time:
+                        type: string
+                        format: int64
+                      info:
+                        type: string
+                productIDs:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      min:
+                        type: integer
+                        format: int32
+                      max:
+                        type: integer
+                        format: int32
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+          total:
+            type: string
+            format: uint64
+  QueryAllRevokedAccountResponse:
+    type: object
+    properties:
+      revokedAccount:
+        type: array
+        items:
+          type: object
+          properties:
+            account:
+              type: object
+              properties:
+                base_account:
+                  type: object
+                  properties:
+                    address:
+                      type: string
+                    pub_key:
+                      type: object
+                      properties:
+                        '@type':
+                          type: string
+                      additionalProperties: {}
+                    account_number:
+                      type: string
+                      format: uint64
+                    sequence:
+                      type: string
+                      format: uint64
+                roles:
+                  type: array
+                  items:
+                    type: string
+                approvals:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      time:
+                        type: string
+                        format: int64
+                      info:
+                        type: string
+                vendorID:
+                  type: integer
+                  format: int32
+                rejects:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      time:
+                        type: string
+                        format: int64
+                      info:
+                        type: string
+                productIDs:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      min:
+                        type: integer
+                        format: int32
+                      max:
+                        type: integer
+                        format: int32
+            revokeApprovals:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
+            reason:
+              type: string
+              enum:
+                - TrusteeVoting
+                - MaliciousValidator
+              default: TrusteeVoting
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+          total:
+            type: string
+            format: uint64
+  QueryGetAccountResponse:
+    type: object
+    properties:
+      account:
+        type: object
+        properties:
+          base_account:
+            type: object
+            properties:
+              address:
+                type: string
+              pub_key:
+                type: object
+                properties:
+                  '@type':
+                    type: string
+                additionalProperties: {}
+              account_number:
+                type: string
+                format: uint64
+              sequence:
+                type: string
+                format: uint64
+          roles:
+            type: array
+            items:
+              type: string
+          approvals:
+            type: array
+            items:
+              type: object
+              properties:
+                address:
+                  type: string
+                time:
+                  type: string
+                  format: int64
+                info:
+                  type: string
+          vendorID:
+            type: integer
+            format: int32
+          rejects:
+            type: array
+            items:
+              type: object
+              properties:
+                address:
+                  type: string
+                time:
+                  type: string
+                  format: int64
+                info:
+                  type: string
+          productIDs:
+            type: array
+            items:
+              type: object
+              properties:
+                min:
+                  type: integer
+                  format: int32
+                max:
+                  type: integer
+                  format: int32
+  QueryGetAccountStatResponse:
+    type: object
+    properties:
+      AccountStat:
+        type: object
+        properties:
+          number:
+            type: string
+            format: uint64
+  QueryGetPendingAccountResponse:
+    type: object
+    properties:
+      pendingAccount:
+        type: object
+        properties:
+          account:
+            type: object
+            properties:
+              base_account:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  pub_key:
+                    type: object
+                    properties:
+                      '@type':
+                        type: string
+                    additionalProperties: {}
+                  account_number:
+                    type: string
+                    format: uint64
+                  sequence:
+                    type: string
+                    format: uint64
+              roles:
+                type: array
+                items:
+                  type: string
+              approvals:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    address:
+                      type: string
+                    time:
+                      type: string
+                      format: int64
+                    info:
+                      type: string
+              vendorID:
+                type: integer
+                format: int32
+              rejects:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    address:
+                      type: string
+                    time:
+                      type: string
+                      format: int64
+                    info:
+                      type: string
+              productIDs:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    min:
+                      type: integer
+                      format: int32
+                    max:
+                      type: integer
+                      format: int32
+  QueryGetPendingAccountRevocationResponse:
+    type: object
+    properties:
+      pendingAccountRevocation:
+        type: object
+        properties:
+          address:
+            type: string
+          approvals:
+            type: array
+            items:
+              type: object
+              properties:
+                address:
+                  type: string
+                time:
+                  type: string
+                  format: int64
+                info:
+                  type: string
+  QueryGetRejectedAccountResponse:
+    type: object
+    properties:
+      rejectedAccount:
+        type: object
+        properties:
+          account:
+            type: object
+            properties:
+              base_account:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  pub_key:
+                    type: object
+                    properties:
+                      '@type':
+                        type: string
+                    additionalProperties: {}
+                  account_number:
+                    type: string
+                    format: uint64
+                  sequence:
+                    type: string
+                    format: uint64
+              roles:
+                type: array
+                items:
+                  type: string
+              approvals:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    address:
+                      type: string
+                    time:
+                      type: string
+                      format: int64
+                    info:
+                      type: string
+              vendorID:
+                type: integer
+                format: int32
+              rejects:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    address:
+                      type: string
+                    time:
+                      type: string
+                      format: int64
+                    info:
+                      type: string
+              productIDs:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    min:
+                      type: integer
+                      format: int32
+                    max:
+                      type: integer
+                      format: int32
+  QueryGetRevokedAccountResponse:
+    type: object
+    properties:
+      revokedAccount:
+        type: object
+        properties:
+          account:
+            type: object
+            properties:
+              base_account:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  pub_key:
+                    type: object
+                    properties:
+                      '@type':
+                        type: string
+                    additionalProperties: {}
+                  account_number:
+                    type: string
+                    format: uint64
+                  sequence:
+                    type: string
+                    format: uint64
+              roles:
+                type: array
+                items:
+                  type: string
+              approvals:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    address:
+                      type: string
+                    time:
+                      type: string
+                      format: int64
+                    info:
+                      type: string
+              vendorID:
+                type: integer
+                format: int32
+              rejects:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    address:
+                      type: string
+                    time:
+                      type: string
+                      format: int64
+                    info:
+                      type: string
+              productIDs:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    min:
+                      type: integer
+                      format: int32
+                    max:
+                      type: integer
+                      format: int32
+          revokeApprovals:
+            type: array
+            items:
+              type: object
+              properties:
+                address:
+                  type: string
+                time:
+                  type: string
+                  format: int64
+                info:
+                  type: string
+          reason:
+            type: string
+            enum:
+              - TrusteeVoting
+              - MaliciousValidator
+            default: TrusteeVoting
+  Reason:
+    type: string
+    enum:
+      - TrusteeVoting
+      - MaliciousValidator
+    default: TrusteeVoting
+  Uint16Range:
+    type: object
+    properties:
+      min:
+        type: integer
+        format: int32
+      max:
+        type: integer
+        format: int32
+  dclauth.Account:
+    type: object
+    properties:
+      base_account:
+        type: object
+        properties:
+          address:
+            type: string
+          pub_key:
+            type: object
+            properties:
+              '@type':
+                type: string
+            additionalProperties: {}
+          account_number:
+            type: string
+            format: uint64
+          sequence:
+            type: string
+            format: uint64
+      roles:
+        type: array
+        items:
+          type: string
+      approvals:
+        type: array
+        items:
+          type: object
+          properties:
+            address:
+              type: string
+            time:
+              type: string
+              format: int64
+            info:
+              type: string
+      vendorID:
+        type: integer
+        format: int32
+      rejects:
+        type: array
+        items:
+          type: object
+          properties:
+            address:
+              type: string
+            time:
+              type: string
+              format: int64
+            info:
+              type: string
+      productIDs:
+        type: array
+        items:
+          type: object
+          properties:
+            min:
+              type: integer
+              format: int32
+            max:
+              type: integer
+              format: int32
+  dclauth.AccountStat:
+    type: object
+    properties:
+      number:
+        type: string
+        format: uint64
+  dclauth.PendingAccount:
+    type: object
+    properties:
+      account:
+        type: object
+        properties:
+          base_account:
+            type: object
+            properties:
+              address:
+                type: string
+              pub_key:
+                type: object
+                properties:
+                  '@type':
+                    type: string
+                additionalProperties: {}
+              account_number:
+                type: string
+                format: uint64
+              sequence:
+                type: string
+                format: uint64
+          roles:
+            type: array
+            items:
+              type: string
+          approvals:
+            type: array
+            items:
+              type: object
+              properties:
+                address:
+                  type: string
+                time:
+                  type: string
+                  format: int64
+                info:
+                  type: string
+          vendorID:
+            type: integer
+            format: int32
+          rejects:
+            type: array
+            items:
+              type: object
+              properties:
+                address:
+                  type: string
+                time:
+                  type: string
+                  format: int64
+                info:
+                  type: string
+          productIDs:
+            type: array
+            items:
+              type: object
+              properties:
+                min:
+                  type: integer
+                  format: int32
+                max:
+                  type: integer
+                  format: int32
+  dclauth.PendingAccountRevocation:
+    type: object
+    properties:
+      address:
+        type: string
+      approvals:
+        type: array
+        items:
+          type: object
+          properties:
+            address:
+              type: string
+            time:
+              type: string
+              format: int64
+            info:
+              type: string
+  dclauth.RejectedAccount:
+    type: object
+    properties:
+      account:
+        type: object
+        properties:
+          base_account:
+            type: object
+            properties:
+              address:
+                type: string
+              pub_key:
+                type: object
+                properties:
+                  '@type':
+                    type: string
+                additionalProperties: {}
+              account_number:
+                type: string
+                format: uint64
+              sequence:
+                type: string
+                format: uint64
+          roles:
+            type: array
+            items:
+              type: string
+          approvals:
+            type: array
+            items:
+              type: object
+              properties:
+                address:
+                  type: string
+                time:
+                  type: string
+                  format: int64
+                info:
+                  type: string
+          vendorID:
+            type: integer
+            format: int32
+          rejects:
+            type: array
+            items:
+              type: object
+              properties:
+                address:
+                  type: string
+                time:
+                  type: string
+                  format: int64
+                info:
+                  type: string
+          productIDs:
+            type: array
+            items:
+              type: object
+              properties:
+                min:
+                  type: integer
+                  format: int32
+                max:
+                  type: integer
+                  format: int32
+  dclauth.RevokedAccount:
+    type: object
+    properties:
+      account:
+        type: object
+        properties:
+          base_account:
+            type: object
+            properties:
+              address:
+                type: string
+              pub_key:
+                type: object
+                properties:
+                  '@type':
+                    type: string
+                additionalProperties: {}
+              account_number:
+                type: string
+                format: uint64
+              sequence:
+                type: string
+                format: uint64
+          roles:
+            type: array
+            items:
+              type: string
+          approvals:
+            type: array
+            items:
+              type: object
+              properties:
+                address:
+                  type: string
+                time:
+                  type: string
+                  format: int64
+                info:
+                  type: string
+          vendorID:
+            type: integer
+            format: int32
+          rejects:
+            type: array
+            items:
+              type: object
+              properties:
+                address:
+                  type: string
+                time:
+                  type: string
+                  format: int64
+                info:
+                  type: string
+          productIDs:
+            type: array
+            items:
+              type: object
+              properties:
+                min:
+                  type: integer
+                  format: int32
+                max:
+                  type: integer
+                  format: int32
+      revokeApprovals:
+        type: array
+        items:
+          type: object
+          properties:
+            address:
+              type: string
+            time:
+              type: string
+              format: int64
+            info:
+              type: string
+      reason:
+        type: string
+        enum:
+          - TrusteeVoting
+          - MaliciousValidator
+        default: TrusteeVoting
+  MsgApproveAddAccountResponse:
+    type: object
+  MsgApproveRevokeAccountResponse:
+    type: object
+  MsgProposeAddAccountResponse:
+    type: object
+  MsgProposeRevokeAccountResponse:
+    type: object
+  MsgRejectAddAccountResponse:
+    type: object

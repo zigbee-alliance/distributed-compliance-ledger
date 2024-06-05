@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
@@ -15,10 +16,10 @@ func (k msgServer) ApproveRevokeX509RootCert(goCtx context.Context, msg *types.M
 	// check if signer has root certificate approval role
 	signerAddr, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
 	if !k.dclauthKeeper.HasRole(ctx, signerAddr, types.RootCertificateApprovalRole) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+		return nil, errors.Wrapf(sdkerrors.ErrUnauthorized,
 			"MsgApproveRevokeX509RootCert transaction should be signed by "+
 				"an account with the \"%s\" role",
 			types.RootCertificateApprovalRole,
@@ -28,12 +29,12 @@ func (k msgServer) ApproveRevokeX509RootCert(goCtx context.Context, msg *types.M
 	// get proposed certificate revocation
 	revocation, found := k.GetProposedCertificateRevocation(ctx, msg.Subject, msg.SubjectKeyId, msg.SerialNumber)
 	if !found {
-		return nil, pkitypes.NewErrProposedCertificateRevocationDoesNotExist(msg.Subject, msg.SubjectKeyId)
+		return nil, pkitypes.NewErrProposedCertificateRevocationDoesNotExist(msg.Subject, msg.SubjectKeyId, msg.SerialNumber)
 	}
 
 	// check if proposed certificate revocation already has approval form signer
 	if revocation.HasApprovalFrom(signerAddr.String()) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+		return nil, errors.Wrapf(sdkerrors.ErrUnauthorized,
 			"Certificate revocation associated with subject=%v and subjectKeyID=%v combination "+
 				"already has approval from=%v",
 			msg.Subject, msg.SubjectKeyId, msg.Signer,
@@ -69,7 +70,7 @@ func (k msgServer) ApproveRevokeX509RootCert(goCtx context.Context, msg *types.M
 		}
 
 		if revocation.RevokeChild {
-			k.RevokeChildCertificates(ctx, certID.Subject, certID.SubjectKeyId, revocation.SchemaVersion)
+			k.RevokeChildCertificates(ctx, certID.Subject, certID.SubjectKeyId)
 		}
 	} else {
 		k.SetProposedCertificateRevocation(ctx, revocation)
@@ -96,7 +97,7 @@ func (k msgServer) _revokeRootCertificates(
 	}
 	// remove from root certs index, add to revoked root certs
 	k.RemoveApprovedRootCertificate(ctx, certID)
-	k.AddRevokedCertificates(ctx, certificates, schemaVersion)
+	k.AddRevokedCertificates(ctx, certificates)
 	k.RemoveApprovedCertificates(ctx, certificates.Subject, certificates.SubjectKeyId)
 	// remove from subject -> subject key ID map
 	k.RemoveApprovedCertificateBySubject(ctx, certificates.Subject, certificates.SubjectKeyId)
@@ -117,7 +118,7 @@ func (k msgServer) _revokeRootCertificate(
 		SubjectKeyId: cert.SubjectKeyId,
 		Certs:        []*types.Certificate{cert},
 	}
-	k.AddRevokedCertificates(ctx, revCert, schemaVersion)
+	k.AddRevokedCertificates(ctx, revCert)
 
 	removeCertFromList(cert.Issuer, cert.SerialNumber, &certificates.Certs)
 	if len(certificates.Certs) == 0 {

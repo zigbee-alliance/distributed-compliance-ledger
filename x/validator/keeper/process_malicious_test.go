@@ -9,8 +9,8 @@ package keeper_test
 // 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 // 	"github.com/stretchr/testify/require"
 
-// 	// abci "github.com/tendermint/tendermint/abci/types"
-// 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
+// 	// abci "github.com/cometbft/cometbft/abci/types"
+// 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 // 	testkeeper "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
 // 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 // )

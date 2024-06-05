@@ -1,0 +1,4244 @@
+swagger: '2.0'
+info:
+  title: HTTP API Console zigbeealliance.distributedcomplianceledger.pki
+  name: ''
+  description: ''
+paths:
+  /dcl/pki/certificates:
+    get:
+      operationId: ApprovedCertificatesAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              approvedCertificates:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    subject:
+                      type: string
+                    subjectKeyId:
+                      type: string
+                    certs:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          pemCert:
+                            type: string
+                          serialNumber:
+                            type: string
+                          issuer:
+                            type: string
+                          authorityKeyId:
+                            type: string
+                          rootSubject:
+                            type: string
+                          rootSubjectKeyId:
+                            type: string
+                          isRoot:
+                            type: boolean
+                          owner:
+                            type: string
+                          subject:
+                            type: string
+                          subjectKeyId:
+                            type: string
+                          approvals:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                address:
+                                  type: string
+                                time:
+                                  type: string
+                                  format: int64
+                                info:
+                                  type: string
+                          subjectAsText:
+                            type: string
+                          rejects:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                address:
+                                  type: string
+                                time:
+                                  type: string
+                                  format: int64
+                                info:
+                                  type: string
+                          vid:
+                            type: integer
+                            format: int32
+                          isNoc:
+                            type: boolean
+                          schemaVersion:
+                            type: integer
+                            format: int64
+                    schemaVersion:
+                      type: integer
+                      format: int64
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                  total:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          in: query
+          required: false
+          type: boolean
+        - name: subjectKeyId
+          in: query
+          required: false
+          type: string
+      tags:
+        - Query
+  /dcl/pki/certificates/{subject}:
+    get:
+      operationId: ApprovedCertificatesBySubject
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              approvedCertificatesBySubject:
+                type: object
+                properties:
+                  subject:
+                    type: string
+                  subjectKeyIds:
+                    type: array
+                    items:
+                      type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: subject
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /dcl/pki/certificates/{subject}/{subjectKeyId}:
+    get:
+      operationId: ApprovedCertificates
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              approvedCertificates:
+                type: object
+                properties:
+                  subject:
+                    type: string
+                  subjectKeyId:
+                    type: string
+                  certs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        pemCert:
+                          type: string
+                        serialNumber:
+                          type: string
+                        issuer:
+                          type: string
+                        authorityKeyId:
+                          type: string
+                        rootSubject:
+                          type: string
+                        rootSubjectKeyId:
+                          type: string
+                        isRoot:
+                          type: boolean
+                        owner:
+                          type: string
+                        subject:
+                          type: string
+                        subjectKeyId:
+                          type: string
+                        approvals:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                              time:
+                                type: string
+                                format: int64
+                              info:
+                                type: string
+                        subjectAsText:
+                          type: string
+                        rejects:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                              time:
+                                type: string
+                                format: int64
+                              info:
+                                type: string
+                        vid:
+                          type: integer
+                          format: int32
+                        isNoc:
+                          type: boolean
+                        schemaVersion:
+                          type: integer
+                          format: int64
+                  schemaVersion:
+                    type: integer
+                    format: int64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: subject
+          in: path
+          required: true
+          type: string
+        - name: subjectKeyId
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /dcl/pki/child-certificates/{issuer}/{authorityKeyId}:
+    get:
+      operationId: ChildCertificates
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              childCertificates:
+                type: object
+                properties:
+                  issuer:
+                    type: string
+                  authorityKeyId:
+                    type: string
+                  certIds:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        subject:
+                          type: string
+                        subjectKeyId:
+                          type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: issuer
+          in: path
+          required: true
+          type: string
+        - name: authorityKeyId
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /dcl/pki/noc-certificates:
+    get:
+      operationId: NocCertificatesAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              nocCertificates:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    vid:
+                      type: integer
+                      format: int32
+                    certs:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          pemCert:
+                            type: string
+                          serialNumber:
+                            type: string
+                          issuer:
+                            type: string
+                          authorityKeyId:
+                            type: string
+                          rootSubject:
+                            type: string
+                          rootSubjectKeyId:
+                            type: string
+                          isRoot:
+                            type: boolean
+                          owner:
+                            type: string
+                          subject:
+                            type: string
+                          subjectKeyId:
+                            type: string
+                          approvals:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                address:
+                                  type: string
+                                time:
+                                  type: string
+                                  format: int64
+                                info:
+                                  type: string
+                          subjectAsText:
+                            type: string
+                          rejects:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                address:
+                                  type: string
+                                time:
+                                  type: string
+                                  format: int64
+                                info:
+                                  type: string
+                          vid:
+                            type: integer
+                            format: int32
+                          isNoc:
+                            type: boolean
+                          schemaVersion:
+                            type: integer
+                            format: int64
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                  total:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /dcl/pki/noc-certificates/{vid}:
+    get:
+      operationId: NocCertificates
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              nocCertificates:
+                type: object
+                properties:
+                  vid:
+                    type: integer
+                    format: int32
+                  certs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        pemCert:
+                          type: string
+                        serialNumber:
+                          type: string
+                        issuer:
+                          type: string
+                        authorityKeyId:
+                          type: string
+                        rootSubject:
+                          type: string
+                        rootSubjectKeyId:
+                          type: string
+                        isRoot:
+                          type: boolean
+                        owner:
+                          type: string
+                        subject:
+                          type: string
+                        subjectKeyId:
+                          type: string
+                        approvals:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                              time:
+                                type: string
+                                format: int64
+                              info:
+                                type: string
+                        subjectAsText:
+                          type: string
+                        rejects:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                              time:
+                                type: string
+                                format: int64
+                              info:
+                                type: string
+                        vid:
+                          type: integer
+                          format: int32
+                        isNoc:
+                          type: boolean
+                        schemaVersion:
+                          type: integer
+                          format: int64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: vid
+          in: path
+          required: true
+          type: integer
+          format: int32
+      tags:
+        - Query
+  /dcl/pki/noc-root-certificates:
+    get:
+      operationId: NocRootCertificatesAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              nocRootCertificates:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    vid:
+                      type: integer
+                      format: int32
+                    certs:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          pemCert:
+                            type: string
+                          serialNumber:
+                            type: string
+                          issuer:
+                            type: string
+                          authorityKeyId:
+                            type: string
+                          rootSubject:
+                            type: string
+                          rootSubjectKeyId:
+                            type: string
+                          isRoot:
+                            type: boolean
+                          owner:
+                            type: string
+                          subject:
+                            type: string
+                          subjectKeyId:
+                            type: string
+                          approvals:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                address:
+                                  type: string
+                                time:
+                                  type: string
+                                  format: int64
+                                info:
+                                  type: string
+                          subjectAsText:
+                            type: string
+                          rejects:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                address:
+                                  type: string
+                                time:
+                                  type: string
+                                  format: int64
+                                info:
+                                  type: string
+                          vid:
+                            type: integer
+                            format: int32
+                          isNoc:
+                            type: boolean
+                          schemaVersion:
+                            type: integer
+                            format: int64
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                  total:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /dcl/pki/noc-root-certificates/{vid}:
+    get:
+      operationId: NocRootCertificates
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              nocRootCertificates:
+                type: object
+                properties:
+                  vid:
+                    type: integer
+                    format: int32
+                  certs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        pemCert:
+                          type: string
+                        serialNumber:
+                          type: string
+                        issuer:
+                          type: string
+                        authorityKeyId:
+                          type: string
+                        rootSubject:
+                          type: string
+                        rootSubjectKeyId:
+                          type: string
+                        isRoot:
+                          type: boolean
+                        owner:
+                          type: string
+                        subject:
+                          type: string
+                        subjectKeyId:
+                          type: string
+                        approvals:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                              time:
+                                type: string
+                                format: int64
+                              info:
+                                type: string
+                        subjectAsText:
+                          type: string
+                        rejects:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                              time:
+                                type: string
+                                format: int64
+                              info:
+                                type: string
+                        vid:
+                          type: integer
+                          format: int32
+                        isNoc:
+                          type: boolean
+                        schemaVersion:
+                          type: integer
+                          format: int64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: vid
+          in: path
+          required: true
+          type: integer
+          format: int32
+      tags:
+        - Query
+  /dcl/pki/proposed-certificates:
+    get:
+      operationId: ProposedCertificateAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              proposedCertificate:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    subject:
+                      type: string
+                    subjectKeyId:
+                      type: string
+                    pemCert:
+                      type: string
+                    serialNumber:
+                      type: string
+                    owner:
+                      type: string
+                    approvals:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          address:
+                            type: string
+                          time:
+                            type: string
+                            format: int64
+                          info:
+                            type: string
+                    subjectAsText:
+                      type: string
+                    rejects:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          address:
+                            type: string
+                          time:
+                            type: string
+                            format: int64
+                          info:
+                            type: string
+                    vid:
+                      type: integer
+                      format: int32
+                    certSchemaVersion:
+                      type: integer
+                      format: int64
+                    schemaVersion:
+                      type: integer
+                      format: int64
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                  total:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /dcl/pki/proposed-certificates/{subject}/{subjectKeyId}:
+    get:
+      operationId: ProposedCertificate
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              proposedCertificate:
+                type: object
+                properties:
+                  subject:
+                    type: string
+                  subjectKeyId:
+                    type: string
+                  pemCert:
+                    type: string
+                  serialNumber:
+                    type: string
+                  owner:
+                    type: string
+                  approvals:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
+                  subjectAsText:
+                    type: string
+                  rejects:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
+                  vid:
+                    type: integer
+                    format: int32
+                  certSchemaVersion:
+                    type: integer
+                    format: int64
+                  schemaVersion:
+                    type: integer
+                    format: int64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: subject
+          in: path
+          required: true
+          type: string
+        - name: subjectKeyId
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /dcl/pki/proposed-revocation-certificates:
+    get:
+      operationId: ProposedCertificateRevocationAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              proposedCertificateRevocation:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    subject:
+                      type: string
+                    subjectKeyId:
+                      type: string
+                    approvals:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          address:
+                            type: string
+                          time:
+                            type: string
+                            format: int64
+                          info:
+                            type: string
+                    subjectAsText:
+                      type: string
+                    serialNumber:
+                      type: string
+                    revokeChild:
+                      type: boolean
+                    schemaVersion:
+                      type: integer
+                      format: int64
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                  total:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /dcl/pki/proposed-revocation-certificates/{subject}/{subjectKeyId}:
+    get:
+      operationId: ProposedCertificateRevocation
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              proposedCertificateRevocation:
+                type: object
+                properties:
+                  subject:
+                    type: string
+                  subjectKeyId:
+                    type: string
+                  approvals:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
+                  subjectAsText:
+                    type: string
+                  serialNumber:
+                    type: string
+                  revokeChild:
+                    type: boolean
+                  schemaVersion:
+                    type: integer
+                    format: int64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: subject
+          in: path
+          required: true
+          type: string
+        - name: subjectKeyId
+          in: path
+          required: true
+          type: string
+        - name: serialNumber
+          in: query
+          required: false
+          type: string
+      tags:
+        - Query
+  /dcl/pki/rejected-certificates:
+    get:
+      operationId: RejectedCertificateAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              rejectedCertificate:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    subject:
+                      type: string
+                    subjectKeyId:
+                      type: string
+                    certs:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          pemCert:
+                            type: string
+                          serialNumber:
+                            type: string
+                          issuer:
+                            type: string
+                          authorityKeyId:
+                            type: string
+                          rootSubject:
+                            type: string
+                          rootSubjectKeyId:
+                            type: string
+                          isRoot:
+                            type: boolean
+                          owner:
+                            type: string
+                          subject:
+                            type: string
+                          subjectKeyId:
+                            type: string
+                          approvals:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                address:
+                                  type: string
+                                time:
+                                  type: string
+                                  format: int64
+                                info:
+                                  type: string
+                          subjectAsText:
+                            type: string
+                          rejects:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                address:
+                                  type: string
+                                time:
+                                  type: string
+                                  format: int64
+                                info:
+                                  type: string
+                          vid:
+                            type: integer
+                            format: int32
+                          isNoc:
+                            type: boolean
+                          schemaVersion:
+                            type: integer
+                            format: int64
+                    schemaVersion:
+                      type: integer
+                      format: int64
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                  total:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /dcl/pki/rejected-certificates/{subject}/{subjectKeyId}:
+    get:
+      operationId: RejectedCertificate
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              rejectedCertificate:
+                type: object
+                properties:
+                  subject:
+                    type: string
+                  subjectKeyId:
+                    type: string
+                  certs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        pemCert:
+                          type: string
+                        serialNumber:
+                          type: string
+                        issuer:
+                          type: string
+                        authorityKeyId:
+                          type: string
+                        rootSubject:
+                          type: string
+                        rootSubjectKeyId:
+                          type: string
+                        isRoot:
+                          type: boolean
+                        owner:
+                          type: string
+                        subject:
+                          type: string
+                        subjectKeyId:
+                          type: string
+                        approvals:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                              time:
+                                type: string
+                                format: int64
+                              info:
+                                type: string
+                        subjectAsText:
+                          type: string
+                        rejects:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                              time:
+                                type: string
+                                format: int64
+                              info:
+                                type: string
+                        vid:
+                          type: integer
+                          format: int32
+                        isNoc:
+                          type: boolean
+                        schemaVersion:
+                          type: integer
+                          format: int64
+                  schemaVersion:
+                    type: integer
+                    format: int64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: subject
+          in: path
+          required: true
+          type: string
+        - name: subjectKeyId
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /dcl/pki/revocation-points:
+    get:
+      operationId: PkiRevocationDistributionPointAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              PkiRevocationDistributionPoint:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    vid:
+                      type: integer
+                      format: int32
+                    label:
+                      type: string
+                    issuerSubjectKeyID:
+                      type: string
+                    pid:
+                      type: integer
+                      format: int32
+                    isPAA:
+                      type: boolean
+                    crlSignerCertificate:
+                      type: string
+                    dataURL:
+                      type: string
+                    dataFileSize:
+                      type: string
+                      format: uint64
+                    dataDigest:
+                      type: string
+                    dataDigestType:
+                      type: integer
+                      format: int64
+                    revocationType:
+                      type: integer
+                      format: int64
+                    schemaVersion:
+                      type: integer
+                      format: int64
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                  total:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /dcl/pki/revocation-points/{issuerSubjectKeyID}:
+    get:
+      operationId: PkiRevocationDistributionPointsByIssuerSubjectKeyID
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              pkiRevocationDistributionPointsByIssuerSubjectKeyID:
+                type: object
+                properties:
+                  issuerSubjectKeyID:
+                    type: string
+                  points:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        vid:
+                          type: integer
+                          format: int32
+                        label:
+                          type: string
+                        issuerSubjectKeyID:
+                          type: string
+                        pid:
+                          type: integer
+                          format: int32
+                        isPAA:
+                          type: boolean
+                        crlSignerCertificate:
+                          type: string
+                        dataURL:
+                          type: string
+                        dataFileSize:
+                          type: string
+                          format: uint64
+                        dataDigest:
+                          type: string
+                        dataDigestType:
+                          type: integer
+                          format: int64
+                        revocationType:
+                          type: integer
+                          format: int64
+                        schemaVersion:
+                          type: integer
+                          format: int64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: issuerSubjectKeyID
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /dcl/pki/revocation-points/{issuerSubjectKeyID}/{vid}/{label}:
+    get:
+      operationId: PkiRevocationDistributionPoint
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              PkiRevocationDistributionPoint:
+                type: object
+                properties:
+                  vid:
+                    type: integer
+                    format: int32
+                  label:
+                    type: string
+                  issuerSubjectKeyID:
+                    type: string
+                  pid:
+                    type: integer
+                    format: int32
+                  isPAA:
+                    type: boolean
+                  crlSignerCertificate:
+                    type: string
+                  dataURL:
+                    type: string
+                  dataFileSize:
+                    type: string
+                    format: uint64
+                  dataDigest:
+                    type: string
+                  dataDigestType:
+                    type: integer
+                    format: int64
+                  revocationType:
+                    type: integer
+                    format: int64
+                  schemaVersion:
+                    type: integer
+                    format: int64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: issuerSubjectKeyID
+          in: path
+          required: true
+          type: string
+        - name: vid
+          in: path
+          required: true
+          type: integer
+          format: int32
+        - name: label
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /dcl/pki/revoked-certificates:
+    get:
+      operationId: RevokedCertificatesAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              revokedCertificates:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    subject:
+                      type: string
+                    subjectKeyId:
+                      type: string
+                    certs:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          pemCert:
+                            type: string
+                          serialNumber:
+                            type: string
+                          issuer:
+                            type: string
+                          authorityKeyId:
+                            type: string
+                          rootSubject:
+                            type: string
+                          rootSubjectKeyId:
+                            type: string
+                          isRoot:
+                            type: boolean
+                          owner:
+                            type: string
+                          subject:
+                            type: string
+                          subjectKeyId:
+                            type: string
+                          approvals:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                address:
+                                  type: string
+                                time:
+                                  type: string
+                                  format: int64
+                                info:
+                                  type: string
+                          subjectAsText:
+                            type: string
+                          rejects:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                address:
+                                  type: string
+                                time:
+                                  type: string
+                                  format: int64
+                                info:
+                                  type: string
+                          vid:
+                            type: integer
+                            format: int32
+                          isNoc:
+                            type: boolean
+                          schemaVersion:
+                            type: integer
+                            format: int64
+                    schemaVersion:
+                      type: integer
+                      format: int64
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                  total:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /dcl/pki/revoked-certificates/{subject}/{subjectKeyId}:
+    get:
+      operationId: RevokedCertificates
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              revokedCertificates:
+                type: object
+                properties:
+                  subject:
+                    type: string
+                  subjectKeyId:
+                    type: string
+                  certs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        pemCert:
+                          type: string
+                        serialNumber:
+                          type: string
+                        issuer:
+                          type: string
+                        authorityKeyId:
+                          type: string
+                        rootSubject:
+                          type: string
+                        rootSubjectKeyId:
+                          type: string
+                        isRoot:
+                          type: boolean
+                        owner:
+                          type: string
+                        subject:
+                          type: string
+                        subjectKeyId:
+                          type: string
+                        approvals:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                              time:
+                                type: string
+                                format: int64
+                              info:
+                                type: string
+                        subjectAsText:
+                          type: string
+                        rejects:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                              time:
+                                type: string
+                                format: int64
+                              info:
+                                type: string
+                        vid:
+                          type: integer
+                          format: int32
+                        isNoc:
+                          type: boolean
+                        schemaVersion:
+                          type: integer
+                          format: int64
+                  schemaVersion:
+                    type: integer
+                    format: int64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: subject
+          in: path
+          required: true
+          type: string
+        - name: subjectKeyId
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /dcl/pki/revoked-noc-root-certificates:
+    get:
+      operationId: RevokedNocRootCertificatesAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              revokedNocRootCertificates:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    subject:
+                      type: string
+                    subjectKeyId:
+                      type: string
+                    certs:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          pemCert:
+                            type: string
+                          serialNumber:
+                            type: string
+                          issuer:
+                            type: string
+                          authorityKeyId:
+                            type: string
+                          rootSubject:
+                            type: string
+                          rootSubjectKeyId:
+                            type: string
+                          isRoot:
+                            type: boolean
+                          owner:
+                            type: string
+                          subject:
+                            type: string
+                          subjectKeyId:
+                            type: string
+                          approvals:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                address:
+                                  type: string
+                                time:
+                                  type: string
+                                  format: int64
+                                info:
+                                  type: string
+                          subjectAsText:
+                            type: string
+                          rejects:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                address:
+                                  type: string
+                                time:
+                                  type: string
+                                  format: int64
+                                info:
+                                  type: string
+                          vid:
+                            type: integer
+                            format: int32
+                          isNoc:
+                            type: boolean
+                          schemaVersion:
+                            type: integer
+                            format: int64
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                  total:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /dcl/pki/revoked-noc-root-certificates/{subject}/{subjectKeyId}:
+    get:
+      operationId: RevokedNocRootCertificates
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              revokedNocRootCertificates:
+                type: object
+                properties:
+                  subject:
+                    type: string
+                  subjectKeyId:
+                    type: string
+                  certs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        pemCert:
+                          type: string
+                        serialNumber:
+                          type: string
+                        issuer:
+                          type: string
+                        authorityKeyId:
+                          type: string
+                        rootSubject:
+                          type: string
+                        rootSubjectKeyId:
+                          type: string
+                        isRoot:
+                          type: boolean
+                        owner:
+                          type: string
+                        subject:
+                          type: string
+                        subjectKeyId:
+                          type: string
+                        approvals:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                              time:
+                                type: string
+                                format: int64
+                              info:
+                                type: string
+                        subjectAsText:
+                          type: string
+                        rejects:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                              time:
+                                type: string
+                                format: int64
+                              info:
+                                type: string
+                        vid:
+                          type: integer
+                          format: int32
+                        isNoc:
+                          type: boolean
+                        schemaVersion:
+                          type: integer
+                          format: int64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: subject
+          in: path
+          required: true
+          type: string
+        - name: subjectKeyId
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /dcl/pki/revoked-root-certificates:
+    get:
+      operationId: RevokedRootCertificates
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              revokedRootCertificates:
+                type: object
+                properties:
+                  certs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        subject:
+                          type: string
+                        subjectKeyId:
+                          type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
+  /dcl/pki/root-certificates:
+    get:
+      operationId: ApprovedRootCertificates
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              approvedRootCertificates:
+                type: object
+                properties:
+                  certs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        subject:
+                          type: string
+                        subjectKeyId:
+                          type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
+definitions:
+  Any:
+    type: object
+    properties:
+      '@type':
+        type: string
+    additionalProperties: {}
+  Status:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      details:
+        type: array
+        items:
+          type: object
+          properties:
+            '@type':
+              type: string
+          additionalProperties: {}
+  Certificate:
+    type: object
+    properties:
+      pemCert:
+        type: string
+      serialNumber:
+        type: string
+      issuer:
+        type: string
+      authorityKeyId:
+        type: string
+      rootSubject:
+        type: string
+      rootSubjectKeyId:
+        type: string
+      isRoot:
+        type: boolean
+      owner:
+        type: string
+      subject:
+        type: string
+      subjectKeyId:
+        type: string
+      approvals:
+        type: array
+        items:
+          type: object
+          properties:
+            address:
+              type: string
+            time:
+              type: string
+              format: int64
+            info:
+              type: string
+      subjectAsText:
+        type: string
+      rejects:
+        type: array
+        items:
+          type: object
+          properties:
+            address:
+              type: string
+            time:
+              type: string
+              format: int64
+            info:
+              type: string
+      vid:
+        type: integer
+        format: int32
+      isNoc:
+        type: boolean
+      schemaVersion:
+        type: integer
+        format: int64
+  CertificateIdentifier:
+    type: object
+    properties:
+      subject:
+        type: string
+      subjectKeyId:
+        type: string
+  Grant:
+    type: object
+    properties:
+      address:
+        type: string
+      time:
+        type: string
+        format: int64
+      info:
+        type: string
+  PageRequest:
+    type: object
+    properties:
+      key:
+        type: string
+        format: byte
+      offset:
+        type: string
+        format: uint64
+      limit:
+        type: string
+        format: uint64
+      count_total:
+        type: boolean
+      reverse:
+        type: boolean
+  PageResponse:
+    type: object
+    properties:
+      next_key:
+        type: string
+        format: byte
+      total:
+        type: string
+        format: uint64
+  QueryAllApprovedCertificatesResponse:
+    type: object
+    properties:
+      approvedCertificates:
+        type: array
+        items:
+          type: object
+          properties:
+            subject:
+              type: string
+            subjectKeyId:
+              type: string
+            certs:
+              type: array
+              items:
+                type: object
+                properties:
+                  pemCert:
+                    type: string
+                  serialNumber:
+                    type: string
+                  issuer:
+                    type: string
+                  authorityKeyId:
+                    type: string
+                  rootSubject:
+                    type: string
+                  rootSubjectKeyId:
+                    type: string
+                  isRoot:
+                    type: boolean
+                  owner:
+                    type: string
+                  subject:
+                    type: string
+                  subjectKeyId:
+                    type: string
+                  approvals:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
+                  subjectAsText:
+                    type: string
+                  rejects:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
+                  vid:
+                    type: integer
+                    format: int32
+                  isNoc:
+                    type: boolean
+                  schemaVersion:
+                    type: integer
+                    format: int64
+            schemaVersion:
+              type: integer
+              format: int64
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+          total:
+            type: string
+            format: uint64
+  QueryAllNocCertificatesResponse:
+    type: object
+    properties:
+      nocCertificates:
+        type: array
+        items:
+          type: object
+          properties:
+            vid:
+              type: integer
+              format: int32
+            certs:
+              type: array
+              items:
+                type: object
+                properties:
+                  pemCert:
+                    type: string
+                  serialNumber:
+                    type: string
+                  issuer:
+                    type: string
+                  authorityKeyId:
+                    type: string
+                  rootSubject:
+                    type: string
+                  rootSubjectKeyId:
+                    type: string
+                  isRoot:
+                    type: boolean
+                  owner:
+                    type: string
+                  subject:
+                    type: string
+                  subjectKeyId:
+                    type: string
+                  approvals:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
+                  subjectAsText:
+                    type: string
+                  rejects:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
+                  vid:
+                    type: integer
+                    format: int32
+                  isNoc:
+                    type: boolean
+                  schemaVersion:
+                    type: integer
+                    format: int64
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+          total:
+            type: string
+            format: uint64
+  QueryAllNocRootCertificatesResponse:
+    type: object
+    properties:
+      nocRootCertificates:
+        type: array
+        items:
+          type: object
+          properties:
+            vid:
+              type: integer
+              format: int32
+            certs:
+              type: array
+              items:
+                type: object
+                properties:
+                  pemCert:
+                    type: string
+                  serialNumber:
+                    type: string
+                  issuer:
+                    type: string
+                  authorityKeyId:
+                    type: string
+                  rootSubject:
+                    type: string
+                  rootSubjectKeyId:
+                    type: string
+                  isRoot:
+                    type: boolean
+                  owner:
+                    type: string
+                  subject:
+                    type: string
+                  subjectKeyId:
+                    type: string
+                  approvals:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
+                  subjectAsText:
+                    type: string
+                  rejects:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
+                  vid:
+                    type: integer
+                    format: int32
+                  isNoc:
+                    type: boolean
+                  schemaVersion:
+                    type: integer
+                    format: int64
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+          total:
+            type: string
+            format: uint64
+  QueryAllPkiRevocationDistributionPointResponse:
+    type: object
+    properties:
+      PkiRevocationDistributionPoint:
+        type: array
+        items:
+          type: object
+          properties:
+            vid:
+              type: integer
+              format: int32
+            label:
+              type: string
+            issuerSubjectKeyID:
+              type: string
+            pid:
+              type: integer
+              format: int32
+            isPAA:
+              type: boolean
+            crlSignerCertificate:
+              type: string
+            dataURL:
+              type: string
+            dataFileSize:
+              type: string
+              format: uint64
+            dataDigest:
+              type: string
+            dataDigestType:
+              type: integer
+              format: int64
+            revocationType:
+              type: integer
+              format: int64
+            schemaVersion:
+              type: integer
+              format: int64
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+          total:
+            type: string
+            format: uint64
+  QueryAllProposedCertificateResponse:
+    type: object
+    properties:
+      proposedCertificate:
+        type: array
+        items:
+          type: object
+          properties:
+            subject:
+              type: string
+            subjectKeyId:
+              type: string
+            pemCert:
+              type: string
+            serialNumber:
+              type: string
+            owner:
+              type: string
+            approvals:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
+            subjectAsText:
+              type: string
+            rejects:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
+            vid:
+              type: integer
+              format: int32
+            certSchemaVersion:
+              type: integer
+              format: int64
+            schemaVersion:
+              type: integer
+              format: int64
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+          total:
+            type: string
+            format: uint64
+  QueryAllProposedCertificateRevocationResponse:
+    type: object
+    properties:
+      proposedCertificateRevocation:
+        type: array
+        items:
+          type: object
+          properties:
+            subject:
+              type: string
+            subjectKeyId:
+              type: string
+            approvals:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
+            subjectAsText:
+              type: string
+            serialNumber:
+              type: string
+            revokeChild:
+              type: boolean
+            schemaVersion:
+              type: integer
+              format: int64
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+          total:
+            type: string
+            format: uint64
+  QueryAllRejectedCertificatesResponse:
+    type: object
+    properties:
+      rejectedCertificate:
+        type: array
+        items:
+          type: object
+          properties:
+            subject:
+              type: string
+            subjectKeyId:
+              type: string
+            certs:
+              type: array
+              items:
+                type: object
+                properties:
+                  pemCert:
+                    type: string
+                  serialNumber:
+                    type: string
+                  issuer:
+                    type: string
+                  authorityKeyId:
+                    type: string
+                  rootSubject:
+                    type: string
+                  rootSubjectKeyId:
+                    type: string
+                  isRoot:
+                    type: boolean
+                  owner:
+                    type: string
+                  subject:
+                    type: string
+                  subjectKeyId:
+                    type: string
+                  approvals:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
+                  subjectAsText:
+                    type: string
+                  rejects:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
+                  vid:
+                    type: integer
+                    format: int32
+                  isNoc:
+                    type: boolean
+                  schemaVersion:
+                    type: integer
+                    format: int64
+            schemaVersion:
+              type: integer
+              format: int64
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+          total:
+            type: string
+            format: uint64
+  QueryAllRevokedCertificatesResponse:
+    type: object
+    properties:
+      revokedCertificates:
+        type: array
+        items:
+          type: object
+          properties:
+            subject:
+              type: string
+            subjectKeyId:
+              type: string
+            certs:
+              type: array
+              items:
+                type: object
+                properties:
+                  pemCert:
+                    type: string
+                  serialNumber:
+                    type: string
+                  issuer:
+                    type: string
+                  authorityKeyId:
+                    type: string
+                  rootSubject:
+                    type: string
+                  rootSubjectKeyId:
+                    type: string
+                  isRoot:
+                    type: boolean
+                  owner:
+                    type: string
+                  subject:
+                    type: string
+                  subjectKeyId:
+                    type: string
+                  approvals:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
+                  subjectAsText:
+                    type: string
+                  rejects:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
+                  vid:
+                    type: integer
+                    format: int32
+                  isNoc:
+                    type: boolean
+                  schemaVersion:
+                    type: integer
+                    format: int64
+            schemaVersion:
+              type: integer
+              format: int64
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+          total:
+            type: string
+            format: uint64
+  QueryAllRevokedNocRootCertificatesResponse:
+    type: object
+    properties:
+      revokedNocRootCertificates:
+        type: array
+        items:
+          type: object
+          properties:
+            subject:
+              type: string
+            subjectKeyId:
+              type: string
+            certs:
+              type: array
+              items:
+                type: object
+                properties:
+                  pemCert:
+                    type: string
+                  serialNumber:
+                    type: string
+                  issuer:
+                    type: string
+                  authorityKeyId:
+                    type: string
+                  rootSubject:
+                    type: string
+                  rootSubjectKeyId:
+                    type: string
+                  isRoot:
+                    type: boolean
+                  owner:
+                    type: string
+                  subject:
+                    type: string
+                  subjectKeyId:
+                    type: string
+                  approvals:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
+                  subjectAsText:
+                    type: string
+                  rejects:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
+                  vid:
+                    type: integer
+                    format: int32
+                  isNoc:
+                    type: boolean
+                  schemaVersion:
+                    type: integer
+                    format: int64
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+          total:
+            type: string
+            format: uint64
+  QueryGetApprovedCertificatesBySubjectResponse:
+    type: object
+    properties:
+      approvedCertificatesBySubject:
+        type: object
+        properties:
+          subject:
+            type: string
+          subjectKeyIds:
+            type: array
+            items:
+              type: string
+  QueryGetApprovedCertificatesResponse:
+    type: object
+    properties:
+      approvedCertificates:
+        type: object
+        properties:
+          subject:
+            type: string
+          subjectKeyId:
+            type: string
+          certs:
+            type: array
+            items:
+              type: object
+              properties:
+                pemCert:
+                  type: string
+                serialNumber:
+                  type: string
+                issuer:
+                  type: string
+                authorityKeyId:
+                  type: string
+                rootSubject:
+                  type: string
+                rootSubjectKeyId:
+                  type: string
+                isRoot:
+                  type: boolean
+                owner:
+                  type: string
+                subject:
+                  type: string
+                subjectKeyId:
+                  type: string
+                approvals:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      time:
+                        type: string
+                        format: int64
+                      info:
+                        type: string
+                subjectAsText:
+                  type: string
+                rejects:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      time:
+                        type: string
+                        format: int64
+                      info:
+                        type: string
+                vid:
+                  type: integer
+                  format: int32
+                isNoc:
+                  type: boolean
+                schemaVersion:
+                  type: integer
+                  format: int64
+          schemaVersion:
+            type: integer
+            format: int64
+  QueryGetApprovedRootCertificatesResponse:
+    type: object
+    properties:
+      approvedRootCertificates:
+        type: object
+        properties:
+          certs:
+            type: array
+            items:
+              type: object
+              properties:
+                subject:
+                  type: string
+                subjectKeyId:
+                  type: string
+  QueryGetChildCertificatesResponse:
+    type: object
+    properties:
+      childCertificates:
+        type: object
+        properties:
+          issuer:
+            type: string
+          authorityKeyId:
+            type: string
+          certIds:
+            type: array
+            items:
+              type: object
+              properties:
+                subject:
+                  type: string
+                subjectKeyId:
+                  type: string
+  QueryGetNocCertificatesResponse:
+    type: object
+    properties:
+      nocCertificates:
+        type: object
+        properties:
+          vid:
+            type: integer
+            format: int32
+          certs:
+            type: array
+            items:
+              type: object
+              properties:
+                pemCert:
+                  type: string
+                serialNumber:
+                  type: string
+                issuer:
+                  type: string
+                authorityKeyId:
+                  type: string
+                rootSubject:
+                  type: string
+                rootSubjectKeyId:
+                  type: string
+                isRoot:
+                  type: boolean
+                owner:
+                  type: string
+                subject:
+                  type: string
+                subjectKeyId:
+                  type: string
+                approvals:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      time:
+                        type: string
+                        format: int64
+                      info:
+                        type: string
+                subjectAsText:
+                  type: string
+                rejects:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      time:
+                        type: string
+                        format: int64
+                      info:
+                        type: string
+                vid:
+                  type: integer
+                  format: int32
+                isNoc:
+                  type: boolean
+                schemaVersion:
+                  type: integer
+                  format: int64
+  QueryGetNocRootCertificatesResponse:
+    type: object
+    properties:
+      nocRootCertificates:
+        type: object
+        properties:
+          vid:
+            type: integer
+            format: int32
+          certs:
+            type: array
+            items:
+              type: object
+              properties:
+                pemCert:
+                  type: string
+                serialNumber:
+                  type: string
+                issuer:
+                  type: string
+                authorityKeyId:
+                  type: string
+                rootSubject:
+                  type: string
+                rootSubjectKeyId:
+                  type: string
+                isRoot:
+                  type: boolean
+                owner:
+                  type: string
+                subject:
+                  type: string
+                subjectKeyId:
+                  type: string
+                approvals:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      time:
+                        type: string
+                        format: int64
+                      info:
+                        type: string
+                subjectAsText:
+                  type: string
+                rejects:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      time:
+                        type: string
+                        format: int64
+                      info:
+                        type: string
+                vid:
+                  type: integer
+                  format: int32
+                isNoc:
+                  type: boolean
+                schemaVersion:
+                  type: integer
+                  format: int64
+  QueryGetPkiRevocationDistributionPointResponse:
+    type: object
+    properties:
+      PkiRevocationDistributionPoint:
+        type: object
+        properties:
+          vid:
+            type: integer
+            format: int32
+          label:
+            type: string
+          issuerSubjectKeyID:
+            type: string
+          pid:
+            type: integer
+            format: int32
+          isPAA:
+            type: boolean
+          crlSignerCertificate:
+            type: string
+          dataURL:
+            type: string
+          dataFileSize:
+            type: string
+            format: uint64
+          dataDigest:
+            type: string
+          dataDigestType:
+            type: integer
+            format: int64
+          revocationType:
+            type: integer
+            format: int64
+          schemaVersion:
+            type: integer
+            format: int64
+  QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse:
+    type: object
+    properties:
+      pkiRevocationDistributionPointsByIssuerSubjectKeyID:
+        type: object
+        properties:
+          issuerSubjectKeyID:
+            type: string
+          points:
+            type: array
+            items:
+              type: object
+              properties:
+                vid:
+                  type: integer
+                  format: int32
+                label:
+                  type: string
+                issuerSubjectKeyID:
+                  type: string
+                pid:
+                  type: integer
+                  format: int32
+                isPAA:
+                  type: boolean
+                crlSignerCertificate:
+                  type: string
+                dataURL:
+                  type: string
+                dataFileSize:
+                  type: string
+                  format: uint64
+                dataDigest:
+                  type: string
+                dataDigestType:
+                  type: integer
+                  format: int64
+                revocationType:
+                  type: integer
+                  format: int64
+                schemaVersion:
+                  type: integer
+                  format: int64
+  QueryGetProposedCertificateResponse:
+    type: object
+    properties:
+      proposedCertificate:
+        type: object
+        properties:
+          subject:
+            type: string
+          subjectKeyId:
+            type: string
+          pemCert:
+            type: string
+          serialNumber:
+            type: string
+          owner:
+            type: string
+          approvals:
+            type: array
+            items:
+              type: object
+              properties:
+                address:
+                  type: string
+                time:
+                  type: string
+                  format: int64
+                info:
+                  type: string
+          subjectAsText:
+            type: string
+          rejects:
+            type: array
+            items:
+              type: object
+              properties:
+                address:
+                  type: string
+                time:
+                  type: string
+                  format: int64
+                info:
+                  type: string
+          vid:
+            type: integer
+            format: int32
+          certSchemaVersion:
+            type: integer
+            format: int64
+          schemaVersion:
+            type: integer
+            format: int64
+  QueryGetProposedCertificateRevocationResponse:
+    type: object
+    properties:
+      proposedCertificateRevocation:
+        type: object
+        properties:
+          subject:
+            type: string
+          subjectKeyId:
+            type: string
+          approvals:
+            type: array
+            items:
+              type: object
+              properties:
+                address:
+                  type: string
+                time:
+                  type: string
+                  format: int64
+                info:
+                  type: string
+          subjectAsText:
+            type: string
+          serialNumber:
+            type: string
+          revokeChild:
+            type: boolean
+          schemaVersion:
+            type: integer
+            format: int64
+  QueryGetRejectedCertificatesResponse:
+    type: object
+    properties:
+      rejectedCertificate:
+        type: object
+        properties:
+          subject:
+            type: string
+          subjectKeyId:
+            type: string
+          certs:
+            type: array
+            items:
+              type: object
+              properties:
+                pemCert:
+                  type: string
+                serialNumber:
+                  type: string
+                issuer:
+                  type: string
+                authorityKeyId:
+                  type: string
+                rootSubject:
+                  type: string
+                rootSubjectKeyId:
+                  type: string
+                isRoot:
+                  type: boolean
+                owner:
+                  type: string
+                subject:
+                  type: string
+                subjectKeyId:
+                  type: string
+                approvals:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      time:
+                        type: string
+                        format: int64
+                      info:
+                        type: string
+                subjectAsText:
+                  type: string
+                rejects:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      time:
+                        type: string
+                        format: int64
+                      info:
+                        type: string
+                vid:
+                  type: integer
+                  format: int32
+                isNoc:
+                  type: boolean
+                schemaVersion:
+                  type: integer
+                  format: int64
+          schemaVersion:
+            type: integer
+            format: int64
+  QueryGetRevokedCertificatesResponse:
+    type: object
+    properties:
+      revokedCertificates:
+        type: object
+        properties:
+          subject:
+            type: string
+          subjectKeyId:
+            type: string
+          certs:
+            type: array
+            items:
+              type: object
+              properties:
+                pemCert:
+                  type: string
+                serialNumber:
+                  type: string
+                issuer:
+                  type: string
+                authorityKeyId:
+                  type: string
+                rootSubject:
+                  type: string
+                rootSubjectKeyId:
+                  type: string
+                isRoot:
+                  type: boolean
+                owner:
+                  type: string
+                subject:
+                  type: string
+                subjectKeyId:
+                  type: string
+                approvals:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      time:
+                        type: string
+                        format: int64
+                      info:
+                        type: string
+                subjectAsText:
+                  type: string
+                rejects:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      time:
+                        type: string
+                        format: int64
+                      info:
+                        type: string
+                vid:
+                  type: integer
+                  format: int32
+                isNoc:
+                  type: boolean
+                schemaVersion:
+                  type: integer
+                  format: int64
+          schemaVersion:
+            type: integer
+            format: int64
+  QueryGetRevokedNocRootCertificatesResponse:
+    type: object
+    properties:
+      revokedNocRootCertificates:
+        type: object
+        properties:
+          subject:
+            type: string
+          subjectKeyId:
+            type: string
+          certs:
+            type: array
+            items:
+              type: object
+              properties:
+                pemCert:
+                  type: string
+                serialNumber:
+                  type: string
+                issuer:
+                  type: string
+                authorityKeyId:
+                  type: string
+                rootSubject:
+                  type: string
+                rootSubjectKeyId:
+                  type: string
+                isRoot:
+                  type: boolean
+                owner:
+                  type: string
+                subject:
+                  type: string
+                subjectKeyId:
+                  type: string
+                approvals:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      time:
+                        type: string
+                        format: int64
+                      info:
+                        type: string
+                subjectAsText:
+                  type: string
+                rejects:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      time:
+                        type: string
+                        format: int64
+                      info:
+                        type: string
+                vid:
+                  type: integer
+                  format: int32
+                isNoc:
+                  type: boolean
+                schemaVersion:
+                  type: integer
+                  format: int64
+  QueryGetRevokedRootCertificatesResponse:
+    type: object
+    properties:
+      revokedRootCertificates:
+        type: object
+        properties:
+          certs:
+            type: array
+            items:
+              type: object
+              properties:
+                subject:
+                  type: string
+                subjectKeyId:
+                  type: string
+  pki.ApprovedCertificates:
+    type: object
+    properties:
+      subject:
+        type: string
+      subjectKeyId:
+        type: string
+      certs:
+        type: array
+        items:
+          type: object
+          properties:
+            pemCert:
+              type: string
+            serialNumber:
+              type: string
+            issuer:
+              type: string
+            authorityKeyId:
+              type: string
+            rootSubject:
+              type: string
+            rootSubjectKeyId:
+              type: string
+            isRoot:
+              type: boolean
+            owner:
+              type: string
+            subject:
+              type: string
+            subjectKeyId:
+              type: string
+            approvals:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
+            subjectAsText:
+              type: string
+            rejects:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
+            vid:
+              type: integer
+              format: int32
+            isNoc:
+              type: boolean
+            schemaVersion:
+              type: integer
+              format: int64
+      schemaVersion:
+        type: integer
+        format: int64
+  pki.ApprovedCertificatesBySubject:
+    type: object
+    properties:
+      subject:
+        type: string
+      subjectKeyIds:
+        type: array
+        items:
+          type: string
+  pki.ApprovedRootCertificates:
+    type: object
+    properties:
+      certs:
+        type: array
+        items:
+          type: object
+          properties:
+            subject:
+              type: string
+            subjectKeyId:
+              type: string
+  pki.ChildCertificates:
+    type: object
+    properties:
+      issuer:
+        type: string
+      authorityKeyId:
+        type: string
+      certIds:
+        type: array
+        items:
+          type: object
+          properties:
+            subject:
+              type: string
+            subjectKeyId:
+              type: string
+  pki.NocCertificates:
+    type: object
+    properties:
+      vid:
+        type: integer
+        format: int32
+      certs:
+        type: array
+        items:
+          type: object
+          properties:
+            pemCert:
+              type: string
+            serialNumber:
+              type: string
+            issuer:
+              type: string
+            authorityKeyId:
+              type: string
+            rootSubject:
+              type: string
+            rootSubjectKeyId:
+              type: string
+            isRoot:
+              type: boolean
+            owner:
+              type: string
+            subject:
+              type: string
+            subjectKeyId:
+              type: string
+            approvals:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
+            subjectAsText:
+              type: string
+            rejects:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
+            vid:
+              type: integer
+              format: int32
+            isNoc:
+              type: boolean
+            schemaVersion:
+              type: integer
+              format: int64
+  pki.NocRootCertificates:
+    type: object
+    properties:
+      vid:
+        type: integer
+        format: int32
+      certs:
+        type: array
+        items:
+          type: object
+          properties:
+            pemCert:
+              type: string
+            serialNumber:
+              type: string
+            issuer:
+              type: string
+            authorityKeyId:
+              type: string
+            rootSubject:
+              type: string
+            rootSubjectKeyId:
+              type: string
+            isRoot:
+              type: boolean
+            owner:
+              type: string
+            subject:
+              type: string
+            subjectKeyId:
+              type: string
+            approvals:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
+            subjectAsText:
+              type: string
+            rejects:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
+            vid:
+              type: integer
+              format: int32
+            isNoc:
+              type: boolean
+            schemaVersion:
+              type: integer
+              format: int64
+  pki.PkiRevocationDistributionPoint:
+    type: object
+    properties:
+      vid:
+        type: integer
+        format: int32
+      label:
+        type: string
+      issuerSubjectKeyID:
+        type: string
+      pid:
+        type: integer
+        format: int32
+      isPAA:
+        type: boolean
+      crlSignerCertificate:
+        type: string
+      dataURL:
+        type: string
+      dataFileSize:
+        type: string
+        format: uint64
+      dataDigest:
+        type: string
+      dataDigestType:
+        type: integer
+        format: int64
+      revocationType:
+        type: integer
+        format: int64
+      schemaVersion:
+        type: integer
+        format: int64
+  pki.PkiRevocationDistributionPointsByIssuerSubjectKeyID:
+    type: object
+    properties:
+      issuerSubjectKeyID:
+        type: string
+      points:
+        type: array
+        items:
+          type: object
+          properties:
+            vid:
+              type: integer
+              format: int32
+            label:
+              type: string
+            issuerSubjectKeyID:
+              type: string
+            pid:
+              type: integer
+              format: int32
+            isPAA:
+              type: boolean
+            crlSignerCertificate:
+              type: string
+            dataURL:
+              type: string
+            dataFileSize:
+              type: string
+              format: uint64
+            dataDigest:
+              type: string
+            dataDigestType:
+              type: integer
+              format: int64
+            revocationType:
+              type: integer
+              format: int64
+            schemaVersion:
+              type: integer
+              format: int64
+  pki.ProposedCertificate:
+    type: object
+    properties:
+      subject:
+        type: string
+      subjectKeyId:
+        type: string
+      pemCert:
+        type: string
+      serialNumber:
+        type: string
+      owner:
+        type: string
+      approvals:
+        type: array
+        items:
+          type: object
+          properties:
+            address:
+              type: string
+            time:
+              type: string
+              format: int64
+            info:
+              type: string
+      subjectAsText:
+        type: string
+      rejects:
+        type: array
+        items:
+          type: object
+          properties:
+            address:
+              type: string
+            time:
+              type: string
+              format: int64
+            info:
+              type: string
+      vid:
+        type: integer
+        format: int32
+      certSchemaVersion:
+        type: integer
+        format: int64
+      schemaVersion:
+        type: integer
+        format: int64
+  pki.ProposedCertificateRevocation:
+    type: object
+    properties:
+      subject:
+        type: string
+      subjectKeyId:
+        type: string
+      approvals:
+        type: array
+        items:
+          type: object
+          properties:
+            address:
+              type: string
+            time:
+              type: string
+              format: int64
+            info:
+              type: string
+      subjectAsText:
+        type: string
+      serialNumber:
+        type: string
+      revokeChild:
+        type: boolean
+      schemaVersion:
+        type: integer
+        format: int64
+  pki.RejectedCertificate:
+    type: object
+    properties:
+      subject:
+        type: string
+      subjectKeyId:
+        type: string
+      certs:
+        type: array
+        items:
+          type: object
+          properties:
+            pemCert:
+              type: string
+            serialNumber:
+              type: string
+            issuer:
+              type: string
+            authorityKeyId:
+              type: string
+            rootSubject:
+              type: string
+            rootSubjectKeyId:
+              type: string
+            isRoot:
+              type: boolean
+            owner:
+              type: string
+            subject:
+              type: string
+            subjectKeyId:
+              type: string
+            approvals:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
+            subjectAsText:
+              type: string
+            rejects:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
+            vid:
+              type: integer
+              format: int32
+            isNoc:
+              type: boolean
+            schemaVersion:
+              type: integer
+              format: int64
+      schemaVersion:
+        type: integer
+        format: int64
+  pki.RevokedCertificates:
+    type: object
+    properties:
+      subject:
+        type: string
+      subjectKeyId:
+        type: string
+      certs:
+        type: array
+        items:
+          type: object
+          properties:
+            pemCert:
+              type: string
+            serialNumber:
+              type: string
+            issuer:
+              type: string
+            authorityKeyId:
+              type: string
+            rootSubject:
+              type: string
+            rootSubjectKeyId:
+              type: string
+            isRoot:
+              type: boolean
+            owner:
+              type: string
+            subject:
+              type: string
+            subjectKeyId:
+              type: string
+            approvals:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
+            subjectAsText:
+              type: string
+            rejects:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
+            vid:
+              type: integer
+              format: int32
+            isNoc:
+              type: boolean
+            schemaVersion:
+              type: integer
+              format: int64
+      schemaVersion:
+        type: integer
+        format: int64
+  pki.RevokedNocRootCertificates:
+    type: object
+    properties:
+      subject:
+        type: string
+      subjectKeyId:
+        type: string
+      certs:
+        type: array
+        items:
+          type: object
+          properties:
+            pemCert:
+              type: string
+            serialNumber:
+              type: string
+            issuer:
+              type: string
+            authorityKeyId:
+              type: string
+            rootSubject:
+              type: string
+            rootSubjectKeyId:
+              type: string
+            isRoot:
+              type: boolean
+            owner:
+              type: string
+            subject:
+              type: string
+            subjectKeyId:
+              type: string
+            approvals:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
+            subjectAsText:
+              type: string
+            rejects:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
+            vid:
+              type: integer
+              format: int32
+            isNoc:
+              type: boolean
+            schemaVersion:
+              type: integer
+              format: int64
+  pki.RevokedRootCertificates:
+    type: object
+    properties:
+      certs:
+        type: array
+        items:
+          type: object
+          properties:
+            subject:
+              type: string
+            subjectKeyId:
+              type: string
+  MsgAddNocX509CertResponse:
+    type: object
+  MsgAddNocX509RootCertResponse:
+    type: object
+  MsgAddPkiRevocationDistributionPointResponse:
+    type: object
+  MsgAddX509CertResponse:
+    type: object
+  MsgApproveAddX509RootCertResponse:
+    type: object
+  MsgApproveRevokeX509RootCertResponse:
+    type: object
+  MsgAssignVidResponse:
+    type: object
+  MsgDeletePkiRevocationDistributionPointResponse:
+    type: object
+  MsgProposeAddX509RootCertResponse:
+    type: object
+  MsgProposeRevokeX509RootCertResponse:
+    type: object
+  MsgRejectAddX509RootCertResponse:
+    type: object
+  MsgRemoveX509CertResponse:
+    type: object
+  MsgRevokeNocRootX509CertResponse:
+    type: object
+  MsgRevokeNocX509CertResponse:
+    type: object
+  MsgRevokeX509CertResponse:
+    type: object
+  MsgUpdatePkiRevocationDistributionPointResponse:
+    type: object

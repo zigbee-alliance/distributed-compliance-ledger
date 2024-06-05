@@ -3,15 +3,14 @@ package cli
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 
+	rpctypes "github.com/cometbft/cometbft/rpc/jsonrpc/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/spf13/cobra"
-	rpctypes "github.com/tendermint/tendermint/rpc/jsonrpc/types"
 )
 
 const (
@@ -74,7 +73,7 @@ func QueryWithProofList(clientCtx client.Context, storeName string, keyPrefix st
 
 func ReadFromFile(target string) (string, error) {
 	if _, err := os.Stat(target); err == nil { // check whether it is a path
-		bytes, err := ioutil.ReadFile(target)
+		bytes, err := os.ReadFile(target)
 		if err != nil {
 			return "", err
 		}
@@ -123,7 +122,7 @@ func IsEmptySubtreeRPCError(err error) bool {
 		return false
 	}
 
-	return strings.Contains(rpcerror.Message, "Internal error") && strings.Contains(rpcerror.Data, "Nonexistence proof has empty Left and Right proof")
+	return strings.Contains(rpcerror.Message, "Internal error") && strings.Contains(rpcerror.Data, "nonexistence proof has empty Left and Right proof")
 }
 
 func isEOFError(err error) bool {
@@ -140,11 +139,11 @@ func AddTxFlagsToCmd(cmd *cobra.Command) {
 	// TODO there might be a better way how to filter that
 	hiddenFlags := []string{
 		flags.FlagFees,
-		flags.FlagFeeAccount,
+		flags.FlagFeeGranter,
 		flags.FlagGasPrices,
 		flags.FlagGasAdjustment,
 		flags.FlagGas,
-		flags.FlagFeeAccount,
+		flags.FlagFeePayer,
 		flags.FlagDryRun, // TODO that flag might be actually useful but relates to gas
 	}
 	for _, f := range hiddenFlags {

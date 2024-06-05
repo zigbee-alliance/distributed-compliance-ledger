@@ -4,6 +4,7 @@ import (
 	fmt "fmt"
 	"time"
 
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
@@ -15,7 +16,7 @@ const TypeMsgProposeAddX509RootCert = "propose_add_x_509_root_cert"
 
 var _ sdk.Msg = &MsgProposeAddX509RootCert{}
 
-func NewMsgProposeAddX509RootCert(signer string, cert string, info string, vid int32, certSchemaVersion, schemaVersion uint32) *MsgProposeAddX509RootCert {
+func NewMsgProposeAddX509RootCert(signer string, cert string, info string, vid int32, certSchemaVersion uint32) *MsgProposeAddX509RootCert {
 	return &MsgProposeAddX509RootCert{
 		Signer:            signer,
 		Cert:              cert,
@@ -23,7 +24,6 @@ func NewMsgProposeAddX509RootCert(signer string, cert string, info string, vid i
 		Time:              time.Now().Unix(),
 		Vid:               vid,
 		CertSchemaVersion: certSchemaVersion,
-		SchemaVersion:     schemaVersion,
 	}
 }
 
@@ -53,7 +53,7 @@ func (msg *MsgProposeAddX509RootCert) GetSignBytes() []byte {
 func (msg *MsgProposeAddX509RootCert) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address (%s)", err)
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address (%s)", err)
 	}
 
 	err = validator.Validate(msg)

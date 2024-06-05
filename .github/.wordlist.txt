@@ -36,6 +36,7 @@ lldbout
 localnet
 MainNet
 multiclient
+Nano
 NotFound
 ol
 openapi
@@ -84,3 +85,8 @@ md
 pdf
 ul
 WebSocket
+cometbft
+CometBFT
+CometBFT's
+distributedcoplianceledger
+zigbeealliance

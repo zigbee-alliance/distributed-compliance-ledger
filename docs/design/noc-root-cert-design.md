@@ -13,7 +13,7 @@ A Vendor with DCL write privilege can submit a transaction to remove a NOC root 
 
 ## Certificate Schema
 
-To distinguesh NOC root certificates from others, an `isNOC` boolean field will be added to the [certificates](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/proto/pki/certificate.proto) schema 
+To distinguesh NOC root certificates from others, an `isNOC` boolean field will be added to the [certificates](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/proto/zigbeealliance/distributedcomplianceledger/pki/certificate.proto) schema.
 
 ## Transactions
 

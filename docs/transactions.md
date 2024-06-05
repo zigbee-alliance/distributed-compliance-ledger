@@ -49,7 +49,8 @@ an Account or sign the request.
     - Build transaction by CLI 1: `dcld tx ... --generate-only`
     - Fetch `account number` and `sequence` by CLI 1:  `dcld query auth account --address <address>`
     - Sign transaction by CLI 2: `dcld tx sign txn.json --from <from> --account-number <int> --sequence <int> --gas "auto" --offline --output-document txn.json`
-    - Broadcat transaction by CLI 1: `dcld tx broadcast txn.json`
+    - Broadcast transaction by CLI 1: `dcld tx broadcast txn.json`
+    - To get the actual result of transaction, `dcld query tx=txHash` call must be executed, where `txHash` is the hash of previously executed transaction.
 - gRPC:
   - Generate a client code from the proto files [proto](../proto) for the client language (see <https://grpc.io/docs/languages/>)
   - Build, sign, and broadcast the message (transaction).
@@ -96,7 +97,7 @@ Please make sure that TLS is enabled in gRPC, REST or Light Client Proxy for sec
   - Tendermint RPC supports state proofs. Tendermint's Light Client library can be used to verify the state proofs.
     So, if Light Client API is used, then it's possible to communicate with non-trusted nodes.
   - Please note, that multi-value queries don't have state proofs support and should be sent to trusted nodes only.
-  - Refer to [this doc](./tendermint-rpc.md) to see how to [subscribe](./tendermint-rpc.md#subscribe) to a Tendermint WebSocket based events and/or [query](./tendermint-rpc.md#querying-application-components) an application components. 
+  - Refer to [this doc](./cometbft-rpc.md) to see how to [subscribe](./cometbft-rpc.md#subscribe) to a Tendermint WebSocket based events and/or [query](./cometbft-rpc.md#querying-application-components) an application components. 
 
 `NotFound` (404 code) is returned if an entry is not found on the ledger.
 
@@ -203,7 +204,7 @@ Not all fields can be edited (see `EDIT_MODEL`).
   - partNumber: `optional(string)` -  stock keeping unit
   - commissioningCustomFlow: `optional(uint8)` - A value of 1 indicates that user interaction with the device (pressing a button, for example) is required before commissioning can take place. When CommissioningCustomflow is set to a value of 2, the commissioner SHOULD attempt to obtain a URL which MAY be used to provide an end user with the necessary details for how to configure the product for initial commissioning
   - commissioningCustomFlowURL: `optional(string)` - commissioningCustomFlowURL SHALL identify a vendor specific commissioning URL for the device model when the commissioningCustomFlow field is set to '2'
-  - commissioningModeInitialStepsHint: `optional(uint32)` - commissioningModeInitialStepsHint SHALL identify a hint for the steps that can be used to put into commissioning mode a device that has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 1 (bit 0 is set) indicates that a device that has not yet been commissioned will enter Commissioning Mode upon a power cycle.
+  - commissioningModeInitialStepsHint: `optional(uint32)` - commissioningModeInitialStepsHint SHALL identify a hint for the steps that can be used to put into commissioning mode a device that has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 1 (bit 0 is set) indicates that a device that has not yet been commissioned will enter Commissioning Mode upon a power cycle (default 1).
   - commissioningModeInitialStepsInstruction: `optional(string)` - commissioningModeInitialStepsInstruction SHALL contain text which relates to specific values of CommissioningModeInitialStepsHint. Certain values of CommissioningModeInitialStepsHint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioningModeInitialStepsInstruction SHALL be set
   - commissioningModeSecondaryStepsHint: `optional(uint32)` - commissioningModeSecondaryStepsHint SHALL identify a hint for steps that can be used to put into commissioning mode a device that has already been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 4 (bit 2 is set) indicates that a device that has already been commissioned will require the user to visit a current CHIP Administrator to put the device into commissioning mode.
   - commissioningModeSecondaryStepInstruction: `optional(string)` - commissioningModeSecondaryStepInstruction SHALL contain text which relates to specific values of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioningModeSecondaryStepInstruction SHALL be set
@@ -260,7 +261,8 @@ All non-edited fields remain the same.
   - productURL: `optional(string)` - URL that contains product specific web page that contains details for the device model.  
   - lsfURL: `optional(string)` - URL to the Localized String File of this product.
   - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
-- lsfRevision: `optional(uint32)` - LsfRevision is a monotonically increasing positive integer indicating the latest available version of Localized String File.
+  - lsfRevision: `optional(uint32)` - LsfRevision is a monotonically increasing positive integer indicating the latest available version of Localized String File.
+  - commissioningModeInitialStepsHint: `optional(uint32)` - commissioningModeInitialStepsHint SHALL identify a hint for the steps that can be used to put into commissioning mode a device that has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 1 (bit 0 is set) indicates that a device that has not yet been commissioned will enter Commissioning Mode upon a power cycle. Note that this value cannot be updated to 0.
 - In State: `model/Model/value/<vid>/<pid>`
 - Who can send:
   - Vendor account associated with the same vid who has created the model
@@ -848,8 +850,7 @@ The PAA certificate is immutable. It can only be revoked by either the owner or 
   - info: `optional(string)` - information/notes for the proposal. Can contain up to 4096 characters.
   - time: `optional(int64)` - proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
   - vid: `uint16` -  Vendor ID (positive non-zero). Must be equal to the Certificate's `vid` field for VID-scoped PAA.
-  - certificate-schema-version: `optional(uint16)` - Certificate's schema version to support backward/forward compatability(default 0)
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
+  - schemaVersion: `optional(uint16)` - Certificate's schema version to support backward/forward compatability(default 0)
 - In State: `pki/ProposedCertificate/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - CLI command:
   - `dcld tx pki propose-add-x509-root-cert --certificate=<string-or-path> --from=<account>`
@@ -906,7 +907,6 @@ The certificate is not reject until sufficient number of Trustees reject it.
   `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
   - info: `optional(string)` - information/notes for the reject. Can contain up to 4096 characters.
   - time: `optional(int64)` - reject time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
 - In State: `pki/RejectedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - Number of required rejects:
   - more than 1/3 of Trustees
@@ -941,7 +941,6 @@ then the certificate will be in a pending state until sufficient number of other
   - revoke-child: `optional(bool)`  - to revoke child certificates in the chain - default is false.
   - info: `optional(string)` - information/notes for the revocation proposal. Can contain up to 4096 characters.
   - time: `optional(int64)` - revocation proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
 - In State: `pki/ProposedCertificateRevocation/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - CLI command:
   - `dcld tx pki propose-revoke-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
@@ -1032,7 +1031,7 @@ and DACs (leaf certificates) added to DCL if they are revoked in the CRL identif
   - dataDigest: `optional(string)` -  Digest of the entire contents of the associated file downloaded from the DataUrl. Must be omitted if RevocationType is 1. Must be provided if and only if the `DataFileSize` field is present.
   - dataDigestType: `optional(uint32)` - The type of digest used in the DataDigest field from the list of [1, 7, 8, 10, 11, 12] (IANA Named Information Hash Algorithm Registry). Must be provided if and only if the `DataDigest` field is present.
   - revocationType: `uint32` - The type of file found at the DataUrl for this entry. Supported types: 1 - RFC5280 Certificate Revocation List (CRL).
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatibility (default is 1, the minimum value should be greater than or equal to 1)
 - In State:
   - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>` -> list of Revocation Distribution Points
   - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>/<vid>/<label>`-> Revocation Distribution Point
@@ -1060,7 +1059,7 @@ Updates an existing PKI Revocation distribution endpoint (such as RFC5280 Certif
   - dataFileSize: `optional(uint64)` -  Total size in bytes of the file found at the DataUrl. Must be omitted if RevocationType is 1.
   - dataDigest: `optional(string)` -  Digest of the entire contents of the associated file downloaded from the DataUrl. Must be omitted if RevocationType is 1. Must be provided if and only if the `DataFileSize` field is present.
   - dataDigestType: `optional(uint32)` - The type of digest used in the DataDigest field from the list of [1, 7, 8, 10, 11, 12] (IANA Named Information Hash Algorithm Registry). Must be provided if and only if the `DataDigest` field is present.
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatibility (default is 1, the minimum value should be greater than or equal to 1)
 - In State:
   - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>` -> list of Revocation Distribution Points
   - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>/<vid>/<label>` -> Revocation Distribution Point
@@ -1099,7 +1098,6 @@ Adds a PAI (intermediate certificate) signed by a chain of certificates which mu
 - Parameters:
   - cert: `string` - PEM encoded certificate. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data.
   - certificate-schema-version: `optional(uint16)` - Certificate's schema version to support backward/forward compatability(default 0)
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
 - In State:
   - `pki/ApprovedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
   - `pki/ChildCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
@@ -1151,7 +1149,6 @@ Root certificates can not be revoked this way, use  [PROPOSE_REVOKE_PAA](#propos
   - revoke-child: `optional(bool)` - to revoke child certificates in the chain - default is false.
   - info: `optional(string)` - information/notes for the revocation. Can contain up to 4096 characters.
   - time: `optional(int64)` - revocation time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
 - In State: `pki/RevokedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - CLI command:
   - `dcld tx pki revoke-x509-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
@@ -1357,8 +1354,7 @@ This transaction adds a NOC root certificate owned by the Vendor.
   - Vendor account
 - Parameters:
   - cert: `string` - The NOC Root Certificate, encoded in X.509v3 PEM format. Can be a PEM string or a file path.
-  - certificate-schema-version: `optional(uint16)` - Certificate's schema version to support backward/forward compatability(default 0)
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
+  - schemaVersion: `optional(uint16)` - Certificate's schema version to support backward/forward compatability(default 0)
 - In State:
   - `pki/ApprovedCertificates/value/<Subject>/<SubjectKeyID>`
   - `pki/ApprovedCertificatesBySubject/value/<Subject>`
@@ -1395,7 +1391,6 @@ Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revok
   - revoke-child: `optional(bool)` - if true, then all certificates in the chain signed by the revoked certificate (intermediate, leaf) are revoked as well. If false, only the current root cert is revoked (default: false).
   - info: `optional(string)` - information/notes for the revocation. Can contain up to 4096 characters.
   - time: `optional(int64)` - revocation time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
 - In State:
   - `pki/RevokedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
   - `pki/RevokedNocRootCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
@@ -1403,6 +1398,26 @@ Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revok
   - `dcld tx pki revoke-noc-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --serial-number=<string> --info=<string> --time=<int64> --revoke-child=<bool> --from=<account>`
 - Validation:
   - a NOC Root Certificate with the provided `subject` and `subject_key_id` must exist in the ledger.
+
+#### REMOVE_NOC_ROOT
+
+**Status: Implemented**
+
+This transaction completely removes the given NOC root certificate owned by the Vendor from the ledger.
+Removed NOC root certificates can be re-added using the [ADD_NOC_ROOT](#add_noc_root) transaction.
+
+- Who can send: Vendor account
+  - Vid field associated with the corresponding NOC certificate on the ledger must be equal to the Vendor account's VID.
+- Validation:
+  - a NOC Root Certificate with the provided `subject` and `subject_key_id` must exist in the ledger.
+- Parameters:
+  - subject: `string` - base64 encoded subject DER sequence bytes of the certificate.
+  - subject_key_id: `string` - certificate's `Subject Key Id` in hex string format, e.g., `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`.
+  - serial_number: `optional(string)` - certificate's serial number. If not provided, the transaction will remove all certificates that match the given `subject` and `subject_key_id` combination.
+- CLI command:
+  - `dcld tx pki remove-noc-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
+
+
 
 #### ADD_NOC_ICA
 
@@ -1427,7 +1442,6 @@ already present on the ledger.
 - Parameters:
   - cert: `string` - The NOC non-root Certificate, encoded in X.509v3 PEM format. Can be a PEM string or a file path.
   - certificate-schema-version: `optional(uint16)` - Certificate's schema version to support backward/forward compatability(default 0)
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
 - In State:
   - `pki/ApprovedCertificates/value/<Subject>/<SubjectKeyID>`
   - `pki/ApprovedCertificatesBySubject/value/<Subject>`
@@ -1458,11 +1472,29 @@ Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revok
   - revoke-child: `optional(bool)` - if true, then all certificates in the chain signed by the revoked certificate (leaf) are revoked as well. If false, only the current cert is revoked (default: false).
   - info: `optional(string)` - information/notes for the revocation. Can contain up to 4096 characters.
   - time: `optional(int64)` - revocation time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
 - In State:
   - `pki/RevokedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - CLI command:
   - `dcld tx pki revoke-noc-x509-ica-cert --subject=<base64 string> --subject-key-id=<hex string> --serial-number=<string> --info=<string> --time=<int64> --revoke-child=<bool> --from=<account>`
+
+#### REMOVE_NOC_ICA
+
+**Status: Implemented**
+
+This transaction completely removes the given NOC ICA owned by the Vendor from the ledger.
+Removed NOC ICA certificates can be re-added using the [ADD_NOC_ICA](#add_noc_ica) transaction.
+
+- Who can send: Vendor account
+  - Vid field associated with the corresponding NOC certificate on the ledger must be equal to the Vendor account's VID.
+- Validation:
+  - a NOC ICA Certificate with the provided `subject` and `subject_key_id` must exist in the ledger.
+- Parameters:
+  - subject: `string` - base64 encoded subject DER sequence bytes of the certificate.
+  - subject_key_id: `string` - certificate's `Subject Key Id` in hex string format, e.g., `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`.
+  - serial_number: `optional(string)` - certificate's serial number. If not provided, the transaction will remove all certificates that match the given `subject` and `subject_key_id` combination.
+- CLI command:
+  - `dcld tx pki remove-noc-x509-ica-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
+
 
 #### GET_NOC_ROOT_BY_VID
 
@@ -1480,6 +1512,25 @@ Use [GET_ALL_REVOKED_NOC_ROOT](#get_revoked_noc_root) to get a list of all revok
   - `dcld query pki noc-x509-root-certs --vid=<uint16>`
 - REST API:
   - GET `/dcl/pki/noc-root-certificates/{vid}`
+
+#### GET_NOC_ROOT_BY_VID_AND_SKID
+
+**Status: Implemented**
+
+Retrieve NOC root certificates associated with a specific VID and subject key ID.
+This request also returns the Trust Quotient (TQ) value of the certificate
+
+Revoked NOC root certificates are not returned.
+Use [GET_ALL_REVOKED_NOC_ROOT](#get_revoked_noc_root) to get a list of all revoked NOC root certificates.
+
+- Who can send: Any account
+- Parameters:
+  - vid: `uint16` - Vendor ID (positive non-zero)
+  - subject_key_id: `string` - Certificate's `Subject Key Id` in hex string format, e.g., `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
+- CLI Command:
+  - `dcld query pki noc-x509-root-certs --vid=<uint16> --subject-key-id=<hex string>`
+- REST API:
+  - GET `/dcl/pki/noc-root-certificates/{vid}/{subject_key_id}`
 
 #### GET_NOC_ICA_BY_VID
 

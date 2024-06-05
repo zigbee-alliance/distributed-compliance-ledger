@@ -20,7 +20,10 @@ func CmdShowChildCertificates() *cobra.Command {
 		Short: "Gets all child certificates for the given certificate",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
 			var res types.ChildCertificates
 
 			return cli.QueryWithProof(

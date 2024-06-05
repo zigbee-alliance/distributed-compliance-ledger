@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -14,12 +15,12 @@ func (k msgServer) ApproveRevokeAccount(goCtx context.Context, msg *types.MsgApp
 
 	signerAddr, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Signer: (%s)", err)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Signer: (%s)", err)
 	}
 
 	// check that sender has enough rights to approve account revocation
 	if !k.HasRole(ctx, signerAddr, types.Trustee) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+		return nil, errors.Wrapf(sdkerrors.ErrUnauthorized,
 			"MsgApproveRevokeAccount transaction should be signed by an account with the %s role",
 			types.Trustee,
 		)
@@ -27,7 +28,7 @@ func (k msgServer) ApproveRevokeAccount(goCtx context.Context, msg *types.MsgApp
 
 	accAddr, err := sdk.AccAddressFromBech32(msg.Address)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
 
 	// check that pending account revocation exists
@@ -40,7 +41,7 @@ func (k msgServer) ApproveRevokeAccount(goCtx context.Context, msg *types.MsgApp
 
 	// check if pending account revocation already has approval from signer
 	if revoc.HasRevocationFrom(signerAddr) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+		return nil, errors.Wrapf(sdkerrors.ErrUnauthorized,
 			"Pending account revocation associated with the address=%v already has approval from=%v",
 			msg.Address,
 			msg.Signer,
@@ -58,7 +59,7 @@ func (k msgServer) ApproveRevokeAccount(goCtx context.Context, msg *types.MsgApp
 	if len(revoc.Approvals) >= k.AccountApprovalsCount(ctx, types.AccountApprovalsPercent) {
 		// Move account to entity revoked account
 		revokedAccount, err := k.AddAccountToRevokedAccount(
-			ctx, accAddr, revoc.Approvals, types.RevokedAccount_TrusteeVoting)
+			ctx, accAddr, revoc.Approvals, types.RevokedAccount_TrusteeVoting) //nolint:nosnakecase
 		if err != nil {
 			return nil, err
 		}

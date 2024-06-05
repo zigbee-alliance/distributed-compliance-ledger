@@ -3,9 +3,9 @@ package types
 import (
 	"testing"
 
+	tmrand "github.com/cometbft/cometbft/libs/rand"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
-	tmrand "github.com/tendermint/tendermint/libs/rand"
 
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/sample"
@@ -72,17 +72,6 @@ func TestMsgRejectAddX509RootCert_ValidateBasic(t *testing.T) {
 				Info:         tmrand.Str(4097),
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
-		},
-		{
-			name: "schemaVersion > 65535",
-			msg: MsgRejectAddX509RootCert{
-				Signer:        sample.AccAddress(),
-				Subject:       testconstants.RootSubject,
-				SubjectKeyId:  testconstants.RootSubjectKeyID,
-				Info:          testconstants.Info,
-				SchemaVersion: 65536,
-			},
-			err: validator.ErrFieldUpperBoundViolated,
 		},
 	}
 

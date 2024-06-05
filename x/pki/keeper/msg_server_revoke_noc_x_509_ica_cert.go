@@ -40,21 +40,21 @@ func (k msgServer) RevokeNocX509IcaCert(goCtx context.Context, msg *types.MsgRev
 	signerVid := signerAccount.VendorID
 	// signer VID must be same as VID of existing certificates
 	if signerVid != cert.Vid {
-		return nil, pkitypes.NewErrRootCertVidNotEqualToAccountVid(cert.Vid, signerVid)
+		return nil, pkitypes.NewErrRevokeCertVidNotEqualToAccountVid(cert.Vid, signerVid)
 	}
 
 	if msg.SerialNumber != "" {
-		err = k._revokeNocCertificate(ctx, msg.SerialNumber, certificates, cert.Vid, msg.SchemaVersion)
+		err = k._revokeNocCertificate(ctx, msg.SerialNumber, certificates, cert.Vid)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		k._revokeNocCertificates(ctx, certificates, cert.Vid, msg.SchemaVersion)
+		k._revokeNocCertificates(ctx, certificates, cert.Vid)
 	}
 
 	if msg.RevokeChild {
 		// Remove certificate identifier from issuer's ChildCertificates record
-		k.RevokeChildCertificates(ctx, msg.Subject, msg.SubjectKeyId, msg.SchemaVersion)
+		k.RevokeChildCertificates(ctx, msg.Subject, msg.SubjectKeyId)
 	}
 
 	return &types.MsgRevokeNocX509IcaCertResponse{}, nil
@@ -65,7 +65,6 @@ func (k msgServer) _revokeNocCertificate(
 	serialNumber string,
 	certificates types.ApprovedCertificates,
 	vid int32,
-	schemaVersion uint32,
 ) error {
 	cert, found := findCertificate(serialNumber, &certificates.Certs)
 	if !found {
@@ -79,7 +78,7 @@ func (k msgServer) _revokeNocCertificate(
 		SubjectKeyId: cert.SubjectKeyId,
 		Certs:        []*types.Certificate{cert},
 	}
-	k.AddRevokedCertificates(ctx, revCerts, schemaVersion)
+	k.AddRevokedCertificates(ctx, revCerts)
 
 	removeCertFromList(cert.Issuer, cert.SerialNumber, &certificates.Certs)
 	if len(certificates.Certs) == 0 {
@@ -96,9 +95,9 @@ func (k msgServer) _revokeNocCertificate(
 	return nil
 }
 
-func (k msgServer) _revokeNocCertificates(ctx sdk.Context, certificates types.ApprovedCertificates, vid int32, schemaVersion uint32) {
+func (k msgServer) _revokeNocCertificates(ctx sdk.Context, certificates types.ApprovedCertificates, vid int32) {
 	// Add certs into revoked lists
-	k.AddRevokedCertificates(ctx, certificates, schemaVersion)
+	k.AddRevokedCertificates(ctx, certificates)
 	// remove cert from NOC certs list
 	k.RemoveNocIcaCertificate(ctx, certificates.Subject, certificates.SubjectKeyId, vid)
 	// remove cert from approved certs list

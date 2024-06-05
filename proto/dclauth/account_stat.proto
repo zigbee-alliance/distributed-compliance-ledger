@@ -1,9 +1,0 @@
-syntax = "proto3";
-package zigbeealliance.distributedcomplianceledger.dclauth;
-
-option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types";
-
-message AccountStat {
-  uint64 number = 1; 
-  
-}

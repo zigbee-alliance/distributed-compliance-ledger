@@ -16,7 +16,10 @@ func CmdListProposedDisableValidator() *cobra.Command {
 		Use:   "all-proposed-disable-nodes",
 		Short: "Query the list of all proposed disable validators",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
 
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
 			if err != nil {
@@ -55,7 +58,10 @@ func CmdShowProposedDisableValidator() *cobra.Command {
 		Short: "Query proposed disable validator by address",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
 
 			var res types.ProposedDisableValidator
 

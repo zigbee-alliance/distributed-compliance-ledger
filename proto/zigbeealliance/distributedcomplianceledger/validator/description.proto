@@ -1,0 +1,21 @@
+syntax = "proto3";
+package zigbeealliance.distributedcomplianceledger.validator;
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types";
+
+import "gogoproto/gogo.proto";
+
+
+message Description {
+  option (gogoproto.equal)            = true;
+  option (gogoproto.goproto_stringer) = false;
+
+  // a human-readable name for the validator.
+  string moniker = 1; 
+  // optional identity signature.
+  string identity = 2; 
+  // optional website link.
+  string website = 3; 
+  // optional details.
+  string details = 4;
+}

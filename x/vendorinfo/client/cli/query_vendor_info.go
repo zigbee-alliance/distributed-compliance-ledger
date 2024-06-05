@@ -15,7 +15,10 @@ func CmdListVendorInfo() *cobra.Command {
 		Use:   "all-vendors",
 		Short: "Get information about all vendors",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
 
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
 			if err != nil {
@@ -54,7 +57,10 @@ func CmdShowVendorInfo() *cobra.Command {
 		Short: "Get vendor details for the given vendorID",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
 			var res types.VendorInfo
 
 			return cli.QueryWithProof(

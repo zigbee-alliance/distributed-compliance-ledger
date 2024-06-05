@@ -4,7 +4,6 @@ import (
 	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
@@ -19,7 +18,6 @@ import (
 var (
 	_ = sample.AccAddress
 	_ = pkisimulation.FindAccount
-	_ = simappparams.StakePerAccount
 	_ = simulation.MsgEntryKind
 	_ = baseapp.Paramspace
 )
@@ -89,6 +87,14 @@ const (
 	// TODO: Determine the simulation weight value.
 	defaultWeightMsgRevokeNocX509Cert int = 100
 
+	opWeightMsgRemoveNocX509IcaCert = "op_weight_msg_remove_noc_x_509_ica_cert"
+	// TODO: Determine the simulation weight value.
+	defaultWeightMsgRemoveNocX509IcaCert int = 100
+
+	opWeightMsgRemoveNocX509RootCert = "op_weight_msg_remove_noc_x_509_root_cert"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgRemoveNocX509RootCert int = 100
+
 	// this line is used by starport scaffolding # simapp/module/const.
 )
 
@@ -105,13 +111,8 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 }
 
 // ProposalContents doesn't return any content functions for governance proposals.
-func (AppModule) ProposalContents(_ module.SimulationState) []simtypes.WeightedProposalContent {
+func (AppModule) ProposalContents(_ module.SimulationState) []simtypes.WeightedProposalContent { //nolint:staticcheck
 	return nil
-}
-
-// RandomizedParams creates randomized  param changes for the simulator.
-func (am AppModule) RandomizedParams(_ *rand.Rand) []simtypes.ParamChange {
-	return []simtypes.ParamChange{}
 }
 
 // RegisterStoreDecoder registers a decoder.
@@ -296,6 +297,28 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	operations = append(operations, simulation.NewWeightedOperation(
 		weightMsgRevokeNocX509Cert,
 		pkisimulation.SimulateMsgRevokeNocX509Cert(am.keeper),
+	))
+
+	var weightMsgRemoveNocX509IcaCert int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgRemoveNocX509IcaCert, &weightMsgRemoveNocX509IcaCert, nil,
+		func(_ *rand.Rand) {
+			weightMsgRemoveNocX509IcaCert = defaultWeightMsgRemoveNocX509IcaCert
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgRemoveNocX509IcaCert,
+		pkisimulation.SimulateMsgRemoveNocX509IcaCert(am.keeper),
+	))
+
+	var weightMsgRemoveNocX509RootCert int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgRemoveNocX509RootCert, &weightMsgRemoveNocX509RootCert, nil,
+		func(_ *rand.Rand) {
+			weightMsgRemoveNocX509RootCert = defaultWeightMsgRemoveNocX509RootCert
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgRemoveNocX509RootCert,
+		pkisimulation.SimulateMsgRemoveNocX509RootCert(am.keeper),
 	))
 
 	// this line is used by starport scaffolding # simapp/module/operation

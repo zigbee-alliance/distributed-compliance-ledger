@@ -26,8 +26,8 @@ import (
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	testkeeper "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/testdata"
-	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
 	commontypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/common/types"
+	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
@@ -83,7 +83,7 @@ func (m *ComplianceKeeperMock) GetComplianceInfo(
 	return val, args.Bool(0)
 }
 
-var _ types.ComplianceKeeper = &ComplianceKeeperMock{}
+var _ keeper.ComplianceKeeper = &ComplianceKeeperMock{}
 
 type TestSetup struct {
 	T *testing.T
@@ -170,7 +170,47 @@ func TestHandler_AddModel(t *testing.T) {
 	require.Equal(t, msgCreateModel.Vid, receivedModel.Vid)
 	require.Equal(t, msgCreateModel.Pid, receivedModel.Pid)
 	require.Equal(t, msgCreateModel.DeviceTypeId, receivedModel.DeviceTypeId)
-	require.Equal(t, testconstants.SchemaVersion, receivedModel.SchemaVersion)
+}
+
+func TestHandler_AddModel_CheckCommissioningModeInitialStepsHintHandling(t *testing.T) {
+	cases := []struct {
+		name                                      string
+		commissioningModeInitialStepsHint         uint32
+		expectedCommissioningModeInitialStepsHint uint32
+	}{
+		{
+			name:                              "CommissioningModeInitialStepsHint=0 Sets Default 1",
+			commissioningModeInitialStepsHint: 0,
+			expectedCommissioningModeInitialStepsHint: 1,
+		},
+		{
+			name:                              "CommissioningModeInitialStepsHint=2 Remains 2",
+			commissioningModeInitialStepsHint: 2,
+			expectedCommissioningModeInitialStepsHint: 2,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			setup := Setup(t)
+
+			// add new model
+			msgCreateModel := NewMsgCreateModel(setup.Vendor)
+			msgCreateModel.CommissioningModeInitialStepsHint = tc.commissioningModeInitialStepsHint
+			_, err := setup.Handler(setup.Ctx, msgCreateModel)
+			require.NoError(t, err)
+
+			// query model
+			receivedModel, err := queryModel(setup, msgCreateModel.Vid, msgCreateModel.Pid)
+			require.NoError(t, err)
+
+			// check
+			require.Equal(t, msgCreateModel.Vid, receivedModel.Vid)
+			require.Equal(t, msgCreateModel.Pid, receivedModel.Pid)
+			require.Equal(t, msgCreateModel.DeviceTypeId, receivedModel.DeviceTypeId)
+			require.Equal(t, tc.expectedCommissioningModeInitialStepsHint, receivedModel.CommissioningModeInitialStepsHint)
+		})
+	}
 }
 
 func TestHandler_UpdateModel(t *testing.T) {
@@ -194,7 +234,9 @@ func TestHandler_UpdateModel(t *testing.T) {
 
 	// update existing model
 	var newSchemaVersion uint32 = 2
+	var newCommissioningModeInitialStepsHint uint32 = 8
 	msgUpdateModel.SchemaVersion = newSchemaVersion
+	msgUpdateModel.CommissioningModeInitialStepsHint = newCommissioningModeInitialStepsHint
 	_, err = setup.Handler(setup.Ctx, msgUpdateModel)
 	require.NoError(t, err)
 
@@ -208,6 +250,7 @@ func TestHandler_UpdateModel(t *testing.T) {
 	require.Equal(t, msgUpdateModel.Vid, receivedModel.Vid)
 	require.Equal(t, msgUpdateModel.Pid, receivedModel.Pid)
 	require.Equal(t, msgUpdateModel.ProductLabel, receivedModel.ProductLabel)
+	require.Equal(t, newCommissioningModeInitialStepsHint, receivedModel.CommissioningModeInitialStepsHint)
 	require.Equal(t, newSchemaVersion, receivedModel.SchemaVersion)
 }
 

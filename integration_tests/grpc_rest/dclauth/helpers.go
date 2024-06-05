@@ -394,7 +394,7 @@ func RejectAddAccount(
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
 
-func CreateAccountInfo(suite *utils.TestSuite, accountName string) keyring.Info {
+func CreateAccountInfo(suite *utils.TestSuite, accountName string) keyring.Record {
 	entropySeed, err := bip39.NewEntropy(256)
 	require.NoError(suite.T, err)
 
@@ -404,7 +404,7 @@ func CreateAccountInfo(suite *utils.TestSuite, accountName string) keyring.Info 
 	accountInfo, err := suite.Kr.NewAccount(accountName, mnemonic, testconstants.Passphrase, sdk.FullFundraiserPath, hd.Secp256k1)
 	require.NoError(suite.T, err)
 
-	return accountInfo
+	return *accountInfo
 }
 
 func CreateAccount(
@@ -420,11 +420,15 @@ func CreateAccount(
 	info string,
 ) *dclauthtypes.Account {
 	accountInfo := CreateAccountInfo(suite, accountName)
+	address, err := accountInfo.GetAddress()
+	require.NoError(suite.T, err)
+	pubKey, err := accountInfo.GetPubKey()
+	require.NoError(suite.T, err)
 
-	_, err := ProposeAddAccount(
+	_, err = ProposeAddAccount(
 		suite,
-		accountInfo.GetAddress(),
-		accountInfo.GetPubKey(),
+		address,
+		pubKey,
 		roles,
 		vendorID,
 		productIDs,
@@ -434,16 +438,21 @@ func CreateAccount(
 	)
 	require.NoError(suite.T, err)
 
+	address, err = accountInfo.GetAddress()
+	require.NoError(suite.T, err)
 	_, err = ApproveAddAccount(
 		suite,
-		accountInfo.GetAddress(),
+		address,
 		approverName,
 		approverAccount,
 		info,
 	)
 	require.NoError(suite.T, err)
 
-	account, err := GetAccount(suite, accountInfo.GetAddress())
+	address, err = accountInfo.GetAddress()
+	require.NoError(suite.T, err)
+
+	account, err := GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	return account
@@ -457,16 +466,20 @@ func CreateVendorAccount(
 	productIDs []*types.Uint16Range,
 	proposerName string,
 	proposerAccount *dclauthtypes.Account,
-	approverName string,
-	approverAccount *dclauthtypes.Account,
+	_ string,
+	_ *dclauthtypes.Account,
 	info string,
 ) *dclauthtypes.Account {
 	accountInfo := CreateAccountInfo(suite, accountName)
+	address, err := accountInfo.GetAddress()
+	require.NoError(suite.T, err)
+	pubKey, err := accountInfo.GetPubKey()
+	require.NoError(suite.T, err)
 
-	_, err := ProposeAddAccount(
+	_, err = ProposeAddAccount(
 		suite,
-		accountInfo.GetAddress(),
-		accountInfo.GetPubKey(),
+		address,
+		pubKey,
 		roles,
 		vendorID,
 		productIDs,
@@ -476,7 +489,10 @@ func CreateVendorAccount(
 	)
 	require.NoError(suite.T, err)
 
-	account, err := GetAccount(suite, accountInfo.GetAddress())
+	address, err = accountInfo.GetAddress()
+	require.NoError(suite.T, err)
+
+	account, err := GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	return account
@@ -512,19 +528,25 @@ func AuthDemo(suite *utils.TestSuite) {
 	jackName := testconstants.JackAccount
 	jackKeyInfo, err := suite.Kr.Key(jackName)
 	require.NoError(suite.T, err)
-	jackAccount, err := GetAccount(suite, jackKeyInfo.GetAddress())
+	address, err := jackKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	jackAccount, err := GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
-	aliceAccount, err := GetAccount(suite, aliceKeyInfo.GetAddress())
+	address, err = aliceKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	aliceAccount, err := GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	bobName := testconstants.BobAccount
 	bobKeyInfo, err := suite.Kr.Key(bobName)
 	require.NoError(suite.T, err)
-	bobAccount, err := GetAccount(suite, bobKeyInfo.GetAddress())
+	address, err = bobKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	bobAccount, err := GetAccount(suite, address)
 	require.NoError(suite.T, err)
 
 	// Query all active accounts
@@ -548,8 +570,10 @@ func AuthDemo(suite *utils.TestSuite) {
 
 	accountName := utils.RandString()
 	accountInfo := CreateAccountInfo(suite, accountName)
-	testAccPubKey := accountInfo.GetPubKey()
-	testAccAddr := accountInfo.GetAddress()
+	testAccPubKey, err := accountInfo.GetPubKey()
+	require.NoError(suite.T, err)
+	testAccAddr, err := accountInfo.GetAddress()
+	require.NoError(suite.T, err)
 
 	// Query unknown account
 	_, err = GetAccount(suite, testAccAddr)
@@ -947,8 +971,10 @@ func AuthDemo(suite *utils.TestSuite) {
 
 	accountName = utils.RandString()
 	accountInfo = CreateAccountInfo(suite, accountName)
-	testAccPubKey = accountInfo.GetPubKey()
-	testAccAddr = accountInfo.GetAddress()
+	testAccPubKey, err = accountInfo.GetPubKey()
+	require.NoError(suite.T, err)
+	testAccAddr, err = accountInfo.GetAddress()
+	require.NoError(suite.T, err)
 
 	// Query unknown account
 	_, err = GetAccount(suite, testAccAddr)
@@ -1022,8 +1048,10 @@ func AuthDemo(suite *utils.TestSuite) {
 
 	accountName = utils.RandString()
 	accountInfo = CreateAccountInfo(suite, accountName)
-	testAccPubKey = accountInfo.GetPubKey()
-	testAccAddr = accountInfo.GetAddress()
+	testAccPubKey, err = accountInfo.GetPubKey()
+	require.NoError(suite.T, err)
+	testAccAddr, err = accountInfo.GetAddress()
+	require.NoError(suite.T, err)
 
 	// Query unknown account
 	_, err = GetAccount(suite, testAccAddr)
@@ -1075,8 +1103,10 @@ func AuthDemo(suite *utils.TestSuite) {
 
 	accountName = utils.RandString()
 	accountInfo = CreateAccountInfo(suite, accountName)
-	testAccPubKey = accountInfo.GetPubKey()
-	testAccAddr = accountInfo.GetAddress()
+	testAccPubKey, err = accountInfo.GetPubKey()
+	require.NoError(suite.T, err)
+	testAccAddr, err = accountInfo.GetAddress()
+	require.NoError(suite.T, err)
 
 	// Jack proposes new account
 	_, err = ProposeAddAccount(
@@ -1099,8 +1129,10 @@ func AuthDemo(suite *utils.TestSuite) {
 
 	accountName = utils.RandString()
 	accountInfo = CreateAccountInfo(suite, accountName)
-	testAccPubKey = accountInfo.GetPubKey()
-	testAccAddr = accountInfo.GetAddress()
+	testAccPubKey, err = accountInfo.GetPubKey()
+	require.NoError(suite.T, err)
+	testAccAddr, err = accountInfo.GetAddress()
+	require.NoError(suite.T, err)
 
 	// Jack proposes new account
 	_, err = ProposeAddAccount(
@@ -1135,8 +1167,10 @@ func AuthDemo(suite *utils.TestSuite) {
 
 	accountName = utils.RandString()
 	accountInfo = CreateAccountInfo(suite, accountName)
-	testAccPubKey = accountInfo.GetPubKey()
-	testAccAddr = accountInfo.GetAddress()
+	testAccPubKey, err = accountInfo.GetPubKey()
+	require.NoError(suite.T, err)
+	testAccAddr, err = accountInfo.GetAddress()
+	require.NoError(suite.T, err)
 
 	// Query unknown account
 	_, err = GetAccount(suite, testAccAddr)

@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"time"
 
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	dclcompltypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/compliance"
+
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	modeltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
@@ -18,13 +19,13 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 
 	signerAddr, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
 
 	// check if sender has enough rights to certify model
 	// sender must have CertificationCenter role to certify/revoke model
 	if !k.dclauthKeeper.HasRole(ctx, signerAddr, dclauthtypes.CertificationCenter) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+		return nil, errors.Wrapf(sdkerrors.ErrUnauthorized,
 			"MsgAddTestingResult transaction should be signed by an account with the %s role",
 			dclauthtypes.CertificationCenter,
 		)
@@ -57,7 +58,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 		// and so the test results are not required to be present.
 
 		// check if compliance is already in certified state
-		if complianceInfo.SoftwareVersionCertificationStatus == dclcompltypes.CodeCertified {
+		if complianceInfo.SoftwareVersionCertificationStatus == types.CodeCertified {
 			return nil, types.NewErrAlreadyCertified(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
 		}
 
@@ -81,7 +82,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 	} else {
 		// There is no compliance record yet. So certification will be tracked on ledger.
 
-		complianceInfo = dclcompltypes.ComplianceInfo{
+		complianceInfo = types.ComplianceInfo{
 			Vid:                                msg.Vid,
 			Pid:                                msg.Pid,
 			SoftwareVersion:                    msg.SoftwareVersion,
@@ -90,15 +91,15 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 			Date:                               msg.CertificationDate,
 			Reason:                             msg.Reason,
 			Owner:                              msg.Signer,
-			SoftwareVersionCertificationStatus: dclcompltypes.CodeCertified,
-			History:                            []*dclcompltypes.ComplianceHistoryItem{},
+			SoftwareVersionCertificationStatus: types.CodeCertified,
+			History:                            []*types.ComplianceHistoryItem{},
 			CDVersionNumber:                    msg.CDVersionNumber,
 			CDCertificateId:                    msg.CDCertificateId,
 			SchemaVersion:                      msg.SchemaVersion,
 		}
 	}
 
-	optionalFields := &dclcompltypes.OptionalFields{
+	optionalFields := &types.OptionalFields{
 		ProgramTypeVersion:                 msg.ProgramTypeVersion,
 		FamilyID:                           msg.FamilyId,
 		SupportedClusters:                  msg.SupportedClusters,

@@ -1,0 +1,16 @@
+syntax = "proto3";
+package zigbeealliance.distributedcomplianceledger.pki;
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types";
+
+import "gogoproto/gogo.proto";
+import "zigbeealliance/distributedcomplianceledger/pki/certificate.proto";
+
+message NocRootCertificatesByVidAndSkid {
+  int32 vid = 1 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
+  string subjectKeyId = 2; 
+  repeated Certificate certs = 3; 
+  float tq = 4;
+  uint32 schemaVersion = 5;
+}
+

@@ -20,5 +20,5 @@ WORKDIR /home/locust
 RUN dcld config node ${DCLD_NODE}
 RUN dcld config chain-id ${DCLD_CHAIN_ID}
 RUN dcld config keyring-backend test
-RUN dcld config broadcast-mode block
+RUN dcld config broadcast-mode sync
 RUN dcld config output json

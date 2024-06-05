@@ -1,0 +1,14 @@
+syntax = "proto3";
+package zigbeealliance.distributedcomplianceledger.pki;
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types";
+
+import "zigbeealliance/distributedcomplianceledger/pki/certificate_identifier.proto";
+
+message ChildCertificates {
+  string issuer = 1; 
+  string authorityKeyId = 2; 
+  repeated CertificateIdentifier certIds = 3;
+  uint32 schemaVersion = 4;
+}
+

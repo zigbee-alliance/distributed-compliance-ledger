@@ -50,3 +50,34 @@ linters:
     - nonamedreturns
     - exhaustruct
     - gofumpt
+    - depguard
+    - deadcode
+    - godot
+    - inamedparam
+    - goconst
+    - nosnakecase
+    - perfsprint
+    - unparam
+    - revive
+
+issues:
+  exclude-rules:
+    - path: _test\.go$
+      linters:
+        - goconst
+        - stylecheck
+        - testifylint
+        - nosnakecase
+        - perfsprint
+        - dupword
+        - testifylint
+    - path: helpers\.go$
+      linters:
+        - goconst
+        - stylecheck
+        - testifylint
+        - nosnakecase
+        - perfsprint
+        - dupword
+        - testifylint
+

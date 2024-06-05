@@ -1,8 +1,10 @@
 package types
 
 import (
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
 
@@ -84,7 +86,7 @@ func (msg *MsgCreateModel) GetSignBytes() []byte {
 func (msg *MsgCreateModel) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
 	err = validator.Validate(msg)
@@ -114,6 +116,7 @@ func NewMsgUpdateModel(
 	lsfURL string,
 	lsfRevision int32,
 	schemaVersion uint32,
+	commissioningModeInitialStepsHint uint32,
 ) *MsgUpdateModel {
 	return &MsgUpdateModel{
 		Creator:                                  creator,
@@ -132,6 +135,7 @@ func NewMsgUpdateModel(
 		LsfUrl:                                     lsfURL,
 		LsfRevision:                                lsfRevision,
 		SchemaVersion:                              schemaVersion,
+		CommissioningModeInitialStepsHint:          commissioningModeInitialStepsHint,
 	}
 }
 
@@ -161,7 +165,7 @@ func (msg *MsgUpdateModel) GetSignBytes() []byte {
 func (msg *MsgUpdateModel) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
 	err = validator.Validate(msg)
@@ -212,7 +216,7 @@ func (msg *MsgDeleteModel) GetSignBytes() []byte {
 func (msg *MsgDeleteModel) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
 	err = validator.Validate(msg)

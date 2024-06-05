@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"math"
 
+	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/codec"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/tendermint/tendermint/libs/log"
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	authTypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
@@ -15,17 +16,18 @@ import (
 type (
 	Keeper struct {
 		cdc      codec.BinaryCodec
-		storeKey sdk.StoreKey
-		memKey   sdk.StoreKey
+		storeKey storetypes.StoreKey
+		memKey   storetypes.StoreKey
 
 		dclauthKeeper types.DclauthKeeper
 	}
+	CertificatePredicate func(*types.Certificate) bool
 )
 
 func NewKeeper(
 	cdc codec.BinaryCodec,
 	storeKey,
-	memKey sdk.StoreKey,
+	memKey storetypes.StoreKey,
 
 	dclauthKeeper types.DclauthKeeper,
 ) *Keeper {
@@ -101,4 +103,27 @@ func findCertificate(serialNumber string, certificates *[]*types.Certificate) (*
 	}
 
 	return nil, false
+}
+
+func filterCertificates(certificates *[]*types.Certificate, predicate CertificatePredicate) []*types.Certificate {
+	var result []*types.Certificate
+
+	for _, s := range *certificates {
+		if predicate(s) {
+			result = append(result, s)
+		}
+	}
+
+	return result
+}
+
+func (k msgServer) removeApprovedX509Cert(ctx sdk.Context, certID types.CertificateIdentifier, certificates *types.ApprovedCertificates, serialNumber string) {
+	if len(certificates.Certs) == 0 {
+		k.RemoveApprovedCertificates(ctx, certID.Subject, certID.SubjectKeyId)
+		k.RemoveApprovedCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
+		k.RemoveApprovedCertificatesBySubjectKeyID(ctx, certID.Subject, certID.SubjectKeyId)
+	} else {
+		k.SetApprovedCertificates(ctx, *certificates)
+		k.RemoveApprovedCertificatesBySubjectKeyIDAndSerialNumber(ctx, certID.Subject, certID.SubjectKeyId, serialNumber)
+	}
 }

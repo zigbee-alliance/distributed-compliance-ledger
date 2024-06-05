@@ -29,6 +29,7 @@ create_new_vendor_account $vendor_account $vid
 # Create a new model version
 echo "Add Model with VID: $vid PID: $pid"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel="Test Product" --partNumber=1 --commissioningCustomFlow=0 --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -37,6 +38,7 @@ sv=$RANDOM
 schema_version_2=2
 echo "Create a Device Model Version with VID: $vid PID: $pid SV: $sv"
 result=$(echo 'test1234' | dcld tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=1   --schemaVersion=$schema_version_2 --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
 echo "$result"
 check_response "$result" "\"code\": 0"
 
@@ -91,6 +93,7 @@ schema_version_3=3
 # Update the existing model version
 echo "Update Device Model Version with VID: $vid PID: $pid SV: $sv"
 result=$(echo 'test1234' | dcld tx model update-model-version --vid=$vid --pid=$pid --minApplicableSoftwareVersion=2 --maxApplicableSoftwareVersion=10 --softwareVersion=$sv --softwareVersionValid=false  --schemaVersion=$schema_version_3 --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -115,6 +118,7 @@ test_divider
 sv2=$RANDOM
 echo "Create a Second Device Model Version with VID: $vid PID: $pid SV: $sv2"
 result=$(echo 'test1234' | dcld tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$vid --pid=$pid --softwareVersion=$sv2 --softwareVersionString=1 --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
 echo "$result"
 check_response "$result" "\"code\": 0"
 
@@ -139,6 +143,7 @@ newvid=$RANDOM
 different_vendor_account=vendor_account_$newvid
 create_new_vendor_account $different_vendor_account $newvid
 result=$(echo 'test1234' | dcld tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=1 --from=$different_vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response_and_report "$result" "transaction should be signed by a vendor account containing the vendorID $vid"
 
 test_divider
@@ -146,11 +151,13 @@ test_divider
 # Update model version with vid belonging to another vendor
 echo "Update a Device Model Version with VID: $vid PID: $pid SV: $sv from a different vendor account"
 result=$(echo 'test1234' | dcld tx model update-model-version --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionValid=false --from=$different_vendor_account --yes)
+result=$(get_txn_result "$result")
 check_response_and_report "$result" "transaction should be signed by a vendor account containing the vendorID $vid"
 
 # Delete existing model version
 echo "Delete a Device Model Version with VID: $vid PID: $pid SV: $sv"
 result=$(echo 'test1234' | dcld tx model delete-model-version --vid=$vid --pid=$pid --softwareVersion=$sv --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
 echo "$result"
 check_response "$result" "\"code\": 0"
 

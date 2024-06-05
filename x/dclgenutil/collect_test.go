@@ -15,8 +15,8 @@ import (
 	bankexported "github.com/cosmos/cosmos-sdk/x/bank/exported"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	gtypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
-	"github.com/gogo/protobuf/proto"
-	tmtypes "github.com/tendermint/tendermint/types"
+	"github.com/cosmos/gogoproto/proto"
+	tmtypes "github.com/cometbft/cometbft/types"
 )
 
 type doNothingUnmarshalJSON struct {

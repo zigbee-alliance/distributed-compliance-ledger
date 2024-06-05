@@ -28,6 +28,6 @@ client:
   # <host>:<port> to Tendermint RPC interface for this chain
   node: "tcp://localhost:26657"
   # Transaction broadcasting mode (sync|async|block)
-  broadcast-mode: block
+  broadcast-mode: sync
 config: {}
 app: {}

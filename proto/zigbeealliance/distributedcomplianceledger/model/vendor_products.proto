@@ -1,0 +1,12 @@
+syntax = "proto3";
+package zigbeealliance.distributedcomplianceledger.model;
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types";
+import "zigbeealliance/distributedcomplianceledger/model/product.proto";
+
+message VendorProducts {
+  int32 vid = 1; 
+  repeated Product products = 2;
+  uint32 schemaVersion = 3;
+}
+

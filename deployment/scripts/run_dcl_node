@@ -230,7 +230,7 @@ function config_cli {
 
     ./dcld config chain-id "$_chain_id"
     ./dcld config output json
-    ./dcld config broadcast-mode block
+    ./dcld config broadcast-mode sync
     if [[ -n "$KEYRING_BACKEND" ]]; then
         ./dcld config keyring-backend "$KEYRING_BACKEND"
     fi
@@ -346,14 +346,14 @@ function run_node {
         echo -e "\tUse 'systemctl status cosmovisor' to get the node service status."
         echo "Use 'journalctl -u cosmovisor.service -f' to see node logs."
     else
-        cosmovisor start >./cosmovisor.log 2>&1 &
+        cosmovisor run start >./cosmovisor.log 2>&1 &
         echo "Node has been stared in the backgroud."
     fi
 }
 
 
 function wait_node_up {
-    local _timeout="${1:-5}"
+    local _timeout="${1:-60}"
     local _try=1
 
     echo -e "Waiting the node becomes up"

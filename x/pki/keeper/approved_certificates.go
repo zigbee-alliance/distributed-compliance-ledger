@@ -71,7 +71,7 @@ func (k Keeper) GetAllApprovedCertificates(ctx sdk.Context) (list []types.Approv
 }
 
 // Add an approved certificate to the list of approved certificates for the subject/subjectKeyId map.
-func (k Keeper) AddApprovedCertificate(ctx sdk.Context, approvedCertificate types.Certificate, schemaVersion uint32) {
+func (k Keeper) AddApprovedCertificate(ctx sdk.Context, approvedCertificate types.Certificate) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ApprovedCertificatesKeyPrefix))
 
 	approvedCertificatesBytes := store.Get(types.ApprovedCertificatesKey(
@@ -82,10 +82,9 @@ func (k Keeper) AddApprovedCertificate(ctx sdk.Context, approvedCertificate type
 
 	if approvedCertificatesBytes == nil {
 		approvedCertificates = types.ApprovedCertificates{
-			Subject:       approvedCertificate.Subject,
-			SubjectKeyId:  approvedCertificate.SubjectKeyId,
-			Certs:         []*types.Certificate{},
-			SchemaVersion: schemaVersion,
+			Subject:      approvedCertificate.Subject,
+			SubjectKeyId: approvedCertificate.SubjectKeyId,
+			Certs:        []*types.Certificate{},
 		}
 	} else {
 		k.cdc.MustUnmarshal(approvedCertificatesBytes, &approvedCertificates)
@@ -129,9 +128,7 @@ func (k Keeper) verifyCertificate(ctx sdk.Context,
 	} else {
 		parentCertificates, found := k.GetApprovedCertificates(ctx, x509Certificate.Issuer, x509Certificate.AuthorityKeyID)
 		if !found {
-			return nil, pkitypes.NewErrInvalidCertificate(
-				fmt.Sprintf("Certificate verification failed for certificate with subject=%v and subjectKeyID=%v",
-					x509Certificate.Subject, x509Certificate.SubjectKeyID))
+			return nil, pkitypes.NewErrRootCertificateDoesNotExist(x509Certificate.Issuer, x509Certificate.AuthorityKeyID)
 		}
 
 		for _, cert := range parentCertificates.Certs {

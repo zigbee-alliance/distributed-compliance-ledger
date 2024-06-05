@@ -61,11 +61,17 @@ patch_consensus_config() {
 init_pool() {
   local _patch_config="${1:-yes}";
   local _localnet_init_target=${2:-localnet_init}
+  local _binary_version=${3:-""}
 
   log "Setting up pool"
 
-  log "-> Generating network configuration" >${DETAILED_OUTPUT_TARGET}
-  make ${_localnet_init_target} &>${DETAILED_OUTPUT_TARGET}
+  if [ -n "$_binary_version" ]; then
+    log "-> Generating network configuration with binary version=$_binary_version" >${DETAILED_OUTPUT_TARGET}
+    make ${_localnet_init_target} MAINNET_STABLE_VERSION=$_binary_version &>${DETAILED_OUTPUT_TARGET}
+  else
+    log "-> Generating network configuration" >${DETAILED_OUTPUT_TARGET}
+    make ${_localnet_init_target} &>${DETAILED_OUTPUT_TARGET}
+  fi
 
   if [ "$_patch_config" = "yes" ];
   then
@@ -76,6 +82,7 @@ init_pool() {
   make localnet_start &>${DETAILED_OUTPUT_TARGET}
 
   log "-> Waiting for the second block (needed to request proofs)" >${DETAILED_OUTPUT_TARGET}
+  execute_with_retry "dcld status" "connection"
   wait_for_height 2 20
 }
 
@@ -103,6 +110,40 @@ log "Building docker image"
 make image &>${DETAILED_OUTPUT_TARGET}
 
 cleanup_pool
+
+# Upgrade procedure tests
+if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "upgrade" ]]; then
+    UPGRADE_SHELL_TEST="./integration_tests/upgrade/test-upgrade.sh"
+
+    init_pool yes localnet_init_latest_stable_release "v0.12.0"
+
+    log "*****************************************************************************************"
+    log "Running $UPGRADE_SHELL_TEST"
+    log "*****************************************************************************************"
+
+    if bash "$UPGRADE_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
+      rm dcld_mainnet_stable
+      log "$UPGRADE_SHELL_TEST finished successfully"
+      source integration_tests/upgrade/add-new-node-after-upgrade.sh
+      check_adding_new_node
+    else
+      log "$UPGRADE_SHELL_TEST failed"
+      exit 1
+    fi
+
+    cleanup_pool
+fi
+
+# Deploy tests
+if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "deploy" ]]; then
+    DEPLOY_SHELL_TEST="./integration_tests/deploy/test_deploy.sh"
+    if bash "$DEPLOY_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
+      log "$DEPLOY_SHELL_TEST finished successfully"
+    else
+      log "$DEPLOY_SHELL_TEST failed"
+      exit 1
+    fi
+fi
 
 # Cli shell tests
 if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "cli" ]]; then
@@ -172,36 +213,4 @@ if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "rest" ]]; then
 
     cleanup_pool
   done
-fi
-
-# Deploy tests
-if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "deploy" ]]; then
-    DEPLOY_SHELL_TEST="./integration_tests/deploy/test_deploy.sh"
-    if bash "$DEPLOY_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
-      log "$DEPLOY_SHELL_TEST finished successfully"
-    else
-      log "$DEPLOY_SHELL_TEST failed"
-      exit 1
-    fi
-fi
-
-# Upgrade procedure tests
-if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "upgrade" ]]; then
-    UPGRADE_SHELL_TESTS=$(find integration_tests/upgrade -type f -name '*.sh' -not -name "add-new-node-after-upgrade.sh" | sort)
-
-    for UPGRADE_SHELL_TEST in ${UPGRADE_SHELL_TESTS}; do
-          log "*****************************************************************************************"
-          log "Running $UPGRADE_SHELL_TEST"
-          log "*****************************************************************************************"
-
-          if bash "$UPGRADE_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
-            log "$UPGRADE_SHELL_TEST finished successfully"
-          else
-            log "$UPGRADE_SHELL_TEST failed"
-            exit 1
-          fi
-
-          cleanup_pool
-    done
-
 fi

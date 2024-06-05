@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"time"
 
+	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	evidencetypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
-	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
@@ -19,7 +19,7 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 	// (double signing, light client attack, etc.)
 	for _, tmEvidence := range req.ByzantineValidators {
 		switch tmEvidence.Type {
-		case abci.EvidenceType_DUPLICATE_VOTE, abci.EvidenceType_LIGHT_CLIENT_ATTACK:
+		case abci.MisbehaviorType_DUPLICATE_VOTE, abci.MisbehaviorType_LIGHT_CLIENT_ATTACK: //nolint:nosnakecase
 			evidence := evidencetypes.FromABCIEvidence(tmEvidence)
 			k.HandleDoubleSign(ctx, evidence.(*evidencetypes.Equivocation))
 		default:
