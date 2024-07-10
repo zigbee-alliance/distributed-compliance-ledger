@@ -47,7 +47,7 @@ an Account or sign the request.
       - CLI 1: Is connected to the network of nodes. Doesn't have access to private keys.
       - CLI 2: Stores private key. Does not have a connection to the network of nodes.
     - Build transaction by CLI 1: `dcld tx ... --generate-only`
-    - Fetch `account number` and `sequence` by CLI 1:  `dcld query auth account --address <address>`
+    - Fetch `account-number` and `sequence` by CLI 1:  `dcld query auth account --address <address>`
     - Sign transaction by CLI 2: `dcld tx sign txn.json --from <from> --account-number <int> --sequence <int> --gas "auto" --offline --output-document txn.json`
     - Broadcast transaction by CLI 1: `dcld tx broadcast txn.json`
     - To get the actual result of transaction, `dcld query tx=txHash` call must be executed, where `txHash` is the hash of previously executed transaction.
