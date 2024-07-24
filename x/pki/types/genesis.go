@@ -26,7 +26,7 @@ func DefaultGenesis() *GenesisState {
 		NocRootCertificatesList:                                 []NocRootCertificates{},
 		NocIcaCertificatesList:                                  []NocIcaCertificates{},
 		RevokedNocRootCertificatesList:                          []RevokedNocRootCertificates{},
-		NocRootCertificatesByVidAndSkidList:                     []NocRootCertificatesByVidAndSkid{},
+		NocCertificatesByVidAndSkidList:                         []NocCertificatesByVidAndSkid{},
 		// this line is used by starport scaffolding # genesis/types/default
 	}
 }
@@ -179,8 +179,8 @@ func (gs GenesisState) Validate() error { //nolint:gocyclo,vet
 	// Check for duplicated index in nocRootCertificatesByVidAndSkid
 	nocRootCertificatesByVidAndSkidIndexMap := make(map[string]struct{})
 
-	for _, elem := range gs.NocRootCertificatesByVidAndSkidList {
-		index := string(NocRootCertificatesByVidAndSkidKey(elem.Vid, elem.SubjectKeyId))
+	for _, elem := range gs.NocCertificatesByVidAndSkidList {
+		index := string(NocCertificatesByVidAndSkidKey(elem.Vid, elem.SubjectKeyId))
 		if _, ok := nocRootCertificatesByVidAndSkidIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for nocRootCertificatesByVidAndSkid")
 		}

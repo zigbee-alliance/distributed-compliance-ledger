@@ -74,8 +74,8 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 		k.SetRevokedNocRootCertificates(ctx, elem)
 	}
 	// Set all the nocRootCertificatesByVidAndSkid
-	for _, elem := range genState.NocRootCertificatesByVidAndSkidList {
-		k.SetNocRootCertificatesByVidAndSkid(ctx, elem)
+	for _, elem := range genState.NocCertificatesByVidAndSkidList {
+		k.SetNocCertificatesByVidAndSkid(ctx, elem)
 	}
 	// this line is used by starport scaffolding # genesis/module/init
 }
@@ -108,7 +108,7 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	genesis.NocRootCertificatesList = k.GetAllNocRootCertificates(ctx)
 	genesis.NocIcaCertificatesList = k.GetAllNocIcaCertificates(ctx)
 	genesis.RevokedNocRootCertificatesList = k.GetAllRevokedNocRootCertificates(ctx)
-	genesis.NocRootCertificatesByVidAndSkidList = k.GetAllNocRootCertificatesByVidAndSkid(ctx)
+	genesis.NocCertificatesByVidAndSkidList = k.GetAllNocCertificatesByVidAndSkid(ctx)
 	// this line is used by starport scaffolding # genesis/module/export
 
 	return genesis

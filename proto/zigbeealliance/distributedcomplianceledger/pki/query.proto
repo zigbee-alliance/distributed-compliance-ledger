@@ -17,7 +17,7 @@ import "zigbeealliance/distributedcomplianceledger/pki/pki_revocation_distributi
 import "zigbeealliance/distributedcomplianceledger/pki/noc_root_certificates.proto";
 import "zigbeealliance/distributedcomplianceledger/pki/noc_ica_certificates.proto";
 import "zigbeealliance/distributedcomplianceledger/pki/revoked_noc_root_certificates.proto";
-import "zigbeealliance/distributedcomplianceledger/pki/noc_root_certificates_by_vid_and_skid.proto";
+import "zigbeealliance/distributedcomplianceledger/pki/noc_certificates_by_vid_and_skid.proto";
 // this line is used by starport scaffolding # 1
 import "gogoproto/gogo.proto";
 
@@ -118,9 +118,9 @@ service Query {
 		option (google.api.http).get = "/dcl/pki/noc-root-certificates/{vid}";
 	}
 
-	// Queries a NocRootCertificatesByVidAndSkid by index.
-	rpc NocRootCertificatesByVidAndSkid(QueryGetNocRootCertificatesByVidAndSkidRequest) returns (QueryGetNocRootCertificatesByVidAndSkidResponse) {
-		option (google.api.http).get = "/dcl/pki/noc-root-certificates/{vid}/{subjectKeyId}";
+	// Queries a NocCertificatesByVidAndSkid by index.
+	rpc NocCertificatesByVidAndSkid(QueryGetNocCertificatesByVidAndSkidRequest) returns (QueryGetNocCertificatesByVidAndSkidResponse) {
+		option (google.api.http).get = "/dcl/pki/noc-certificates/{vid}/{subjectKeyId}";
 	}
 
 	// Queries a list of NocRootCertificates items.
@@ -358,14 +358,14 @@ message QueryAllRevokedNocRootCertificatesResponse {
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-message QueryGetNocRootCertificatesByVidAndSkidRequest {
+message QueryGetNocCertificatesByVidAndSkidRequest {
 	int32 vid = 1;
     string subjectKeyId = 2;
 
 }
 
-message QueryGetNocRootCertificatesByVidAndSkidResponse {
-	NocRootCertificatesByVidAndSkid nocRootCertificatesByVidAndSkid = 1 [(gogoproto.nullable) = false];
+message QueryGetNocCertificatesByVidAndSkidResponse {
+	NocCertificatesByVidAndSkid nocCertificatesByVidAndSkid = 1 [(gogoproto.nullable) = false];
 }
 
 // this line is used by starport scaffolding # 3

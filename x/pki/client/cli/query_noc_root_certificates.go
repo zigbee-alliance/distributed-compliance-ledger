@@ -58,13 +58,13 @@ func CmdShowNocRootCertificates() *cobra.Command {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
 			if subjectKeyID != "" {
-				var res types.NocRootCertificatesByVidAndSkid
+				var res types.NocCertificatesByVidAndSkid
 
 				return cli.QueryWithProof(
 					clientCtx,
 					pkitypes.StoreKey,
-					types.NocRootCertificatesByVidAndSkidKeyPrefix,
-					types.NocRootCertificatesByVidAndSkidKey(vid, subjectKeyID),
+					types.NocCertificatesByVidAndSkidKeyPrefix,
+					types.NocCertificatesByVidAndSkidKey(vid, subjectKeyID),
 					&res,
 				)
 			}

@@ -106,29 +106,29 @@ func GetNocX509RootCerts(suite *utils.TestSuite, vendorID int32) (*pkitypes.NocR
 	return &res, nil
 }
 
-func GetNocX509RootCertsByVidAndSkid(suite *utils.TestSuite, vendorID int32, subjectKeyID string) (*pkitypes.NocRootCertificatesByVidAndSkid, error) {
-	var res pkitypes.NocRootCertificatesByVidAndSkid
+func GetNocX509RootCertsByVidAndSkid(suite *utils.TestSuite, vendorID int32, subjectKeyID string) (*pkitypes.NocCertificatesByVidAndSkid, error) {
+	var res pkitypes.NocCertificatesByVidAndSkid
 	if suite.Rest {
-		var resp pkitypes.QueryGetNocRootCertificatesByVidAndSkidResponse
+		var resp pkitypes.QueryGetNocCertificatesByVidAndSkidResponse
 		err := suite.QueryREST(fmt.Sprintf("/dcl/pki/noc-root-certificates/%v/%s", vendorID, url.QueryEscape(subjectKeyID)), &resp)
 		if err != nil {
 			return nil, err
 		}
-		res = resp.GetNocRootCertificatesByVidAndSkid()
+		res = resp.GetNocCertificatesByVidAndSkid()
 	} else {
 		grpcConn := suite.GetGRPCConn()
 		defer grpcConn.Close()
 
 		// This creates a gRPC client to query the x/pki service.
 		pkiClient := pkitypes.NewQueryClient(grpcConn)
-		resp, err := pkiClient.NocRootCertificatesByVidAndSkid(
+		resp, err := pkiClient.NocCertificatesByVidAndSkid(
 			context.Background(),
-			&pkitypes.QueryGetNocRootCertificatesByVidAndSkidRequest{Vid: vendorID, SubjectKeyId: subjectKeyID},
+			&pkitypes.QueryGetNocCertificatesByVidAndSkidRequest{Vid: vendorID, SubjectKeyId: subjectKeyID},
 		)
 		if err != nil {
 			return nil, err
 		}
-		res = resp.GetNocRootCertificatesByVidAndSkid()
+		res = resp.GetNocCertificatesByVidAndSkid()
 	}
 
 	return &res, nil

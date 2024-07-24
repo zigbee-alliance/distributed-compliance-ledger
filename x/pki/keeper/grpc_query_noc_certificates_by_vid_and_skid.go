@@ -9,13 +9,13 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (k Keeper) NocRootCertificatesByVidAndSkid(c context.Context, req *types.QueryGetNocRootCertificatesByVidAndSkidRequest) (*types.QueryGetNocRootCertificatesByVidAndSkidResponse, error) {
+func (k Keeper) NocCertificatesByVidAndSkid(c context.Context, req *types.QueryGetNocCertificatesByVidAndSkidRequest) (*types.QueryGetNocCertificatesByVidAndSkidResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 	ctx := sdk.UnwrapSDKContext(c)
 
-	val, found := k.GetNocRootCertificatesByVidAndSkid(
+	val, found := k.GetNocCertificatesByVidAndSkid(
 		ctx,
 		req.Vid,
 		req.SubjectKeyId,
@@ -24,5 +24,5 @@ func (k Keeper) NocRootCertificatesByVidAndSkid(c context.Context, req *types.Qu
 		return nil, status.Error(codes.NotFound, "not found")
 	}
 
-	return &types.QueryGetNocRootCertificatesByVidAndSkidResponse{NocRootCertificatesByVidAndSkid: val}, nil
+	return &types.QueryGetNocCertificatesByVidAndSkidResponse{NocCertificatesByVidAndSkid: val}, nil
 }

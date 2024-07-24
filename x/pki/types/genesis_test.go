@@ -152,7 +152,7 @@ SubjectKeyId: "0",
 SubjectKeyId: "1",
 },
 },
-NocRootCertificatesByVidAndSkidList: []types.NocRootCertificatesByVidAndSkid{
+NocCertificatesByVidAndSkidList: []types.NocCertificatesByVidAndSkid{
 	{
 		Vid: 0,
 SubjectKeyId: "0",
@@ -371,7 +371,7 @@ SubjectKeyId: "0",
 {
 	desc:     "duplicated nocRootCertificatesByVidAndSkid",
 	genState: &types.GenesisState{
-		NocRootCertificatesByVidAndSkidList: []types.NocRootCertificatesByVidAndSkid{
+		NocCertificatesByVidAndSkidList: []types.NocCertificatesByVidAndSkid{
 			{
 				Vid: 0,
 SubjectKeyId: "0",

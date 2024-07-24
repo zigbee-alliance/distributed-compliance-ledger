@@ -8,26 +8,26 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-// SetNocRootCertificatesByVidAndSkid set a specific nocRootCertificatesByVidAndSkid in the store from its index.
-func (k Keeper) SetNocRootCertificatesByVidAndSkid(ctx sdk.Context, nocRootCertificatesByVidAndSkid types.NocRootCertificatesByVidAndSkid) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocRootCertificatesByVidAndSkidKeyPrefix))
+// SetNocCertificatesByVidAndSkid set a specific nocRootCertificatesByVidAndSkid in the store from its index.
+func (k Keeper) SetNocCertificatesByVidAndSkid(ctx sdk.Context, nocRootCertificatesByVidAndSkid types.NocCertificatesByVidAndSkid) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocCertificatesByVidAndSkidKeyPrefix))
 	b := k.cdc.MustMarshal(&nocRootCertificatesByVidAndSkid)
-	store.Set(types.NocRootCertificatesByVidAndSkidKey(
+	store.Set(types.NocCertificatesByVidAndSkidKey(
 		nocRootCertificatesByVidAndSkid.Vid,
 		nocRootCertificatesByVidAndSkid.SubjectKeyId,
 	), b)
 }
 
-// GetNocRootCertificatesByVidAndSkid returns a nocRootCertificatesByVidAndSkid from its index.
-func (k Keeper) GetNocRootCertificatesByVidAndSkid(
+// GetNocCertificatesByVidAndSkid returns a nocRootCertificatesByVidAndSkid from its index.
+func (k Keeper) GetNocCertificatesByVidAndSkid(
 	ctx sdk.Context,
 	vid int32,
 	subjectKeyID string,
 
-) (val types.NocRootCertificatesByVidAndSkid, found bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocRootCertificatesByVidAndSkidKeyPrefix))
+) (val types.NocCertificatesByVidAndSkid, found bool) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocCertificatesByVidAndSkidKeyPrefix))
 
-	b := store.Get(types.NocRootCertificatesByVidAndSkidKey(
+	b := store.Get(types.NocCertificatesByVidAndSkidKey(
 		vid,
 		subjectKeyID,
 	))
@@ -41,14 +41,14 @@ func (k Keeper) GetNocRootCertificatesByVidAndSkid(
 }
 
 // Add a NOC root certificate to the list of NOC root certificates for the VID map.
-func (k Keeper) AddNocRootCertificatesByVidAndSkid(ctx sdk.Context, nocCertificate types.Certificate) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocRootCertificatesByVidAndSkidKeyPrefix))
+func (k Keeper) AddNocCertificatesByVidAndSkid(ctx sdk.Context, nocCertificate types.Certificate) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocCertificatesByVidAndSkidKeyPrefix))
 
-	nocRootCertificatesByVidAndSkidKeyBytes := store.Get(types.NocRootCertificatesByVidAndSkidKey(nocCertificate.Vid, nocCertificate.SubjectKeyId))
-	var nocRootCertificatesByVidAndSkid types.NocRootCertificatesByVidAndSkid
+	nocRootCertificatesByVidAndSkidKeyBytes := store.Get(types.NocCertificatesByVidAndSkidKey(nocCertificate.Vid, nocCertificate.SubjectKeyId))
+	var nocRootCertificatesByVidAndSkid types.NocCertificatesByVidAndSkid
 
 	if nocRootCertificatesByVidAndSkidKeyBytes == nil {
-		nocRootCertificatesByVidAndSkid = types.NocRootCertificatesByVidAndSkid{
+		nocRootCertificatesByVidAndSkid = types.NocCertificatesByVidAndSkid{
 			Vid:          nocCertificate.Vid,
 			SubjectKeyId: nocCertificate.SubjectKeyId,
 			Certs:        []*types.Certificate{},
@@ -61,17 +61,17 @@ func (k Keeper) AddNocRootCertificatesByVidAndSkid(ctx sdk.Context, nocCertifica
 	nocRootCertificatesByVidAndSkid.Certs = append(nocRootCertificatesByVidAndSkid.Certs, &nocCertificate)
 
 	b := k.cdc.MustMarshal(&nocRootCertificatesByVidAndSkid)
-	store.Set(types.NocRootCertificatesByVidAndSkidKey(nocCertificate.Vid, nocCertificate.SubjectKeyId), b)
+	store.Set(types.NocCertificatesByVidAndSkidKey(nocCertificate.Vid, nocCertificate.SubjectKeyId), b)
 }
 
-// RemoveNocRootCertificatesByVidAndSkid removes a nocRootCertificatesByVidAndSkid from the store.
-func (k Keeper) RemoveNocRootCertificatesByVidAndSkid(
+// RemoveNocCertificatesByVidAndSkid removes a nocRootCertificatesByVidAndSkid from the store.
+func (k Keeper) RemoveNocCertificatesByVidAndSkid(
 	ctx sdk.Context,
 	vid int32,
 	subjectKeyID string,
 ) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocRootCertificatesByVidAndSkidKeyPrefix))
-	store.Delete(types.NocRootCertificatesByVidAndSkidKey(
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocCertificatesByVidAndSkidKeyPrefix))
+	store.Delete(types.NocCertificatesByVidAndSkidKey(
 		vid,
 		subjectKeyID,
 	))
@@ -84,7 +84,7 @@ func (k Keeper) RemoveNocRootCertificateByVidSubjectAndSkid(
 	subject string,
 	subjectKeyID string,
 ) {
-	k._filterAndSetNocRootCertificateByVidAndSkid(
+	k._filterAndSetNocCertificateByVidAndSkid(
 		ctx,
 		vid,
 		subjectKeyID,
@@ -102,7 +102,7 @@ func (k Keeper) RemoveNocRootCertificateByVidSubjectSkidAndSerialNumber(
 	subjectKeyID string,
 	serialNumber string,
 ) {
-	k._filterAndSetNocRootCertificateByVidAndSkid(
+	k._filterAndSetNocCertificateByVidAndSkid(
 		ctx,
 		vid,
 		subjectKeyID,
@@ -113,32 +113,32 @@ func (k Keeper) RemoveNocRootCertificateByVidSubjectSkidAndSerialNumber(
 }
 
 // RemoveNocRootCertificateByVidSkidSubjectAndSerialNumber removes root certificate with specified subject and serial number from the list.
-func (k Keeper) _filterAndSetNocRootCertificateByVidAndSkid(
+func (k Keeper) _filterAndSetNocCertificateByVidAndSkid(
 	ctx sdk.Context,
 	vid int32,
 	subjectKeyID string,
 	predicate CertificatePredicate,
 ) {
-	nocCertificates, _ := k.GetNocRootCertificatesByVidAndSkid(ctx, vid, subjectKeyID)
+	nocCertificates, _ := k.GetNocCertificatesByVidAndSkid(ctx, vid, subjectKeyID)
 	filteredCertificates := filterCertificates(&nocCertificates.Certs, predicate)
 
 	if len(filteredCertificates) > 0 {
 		nocCertificates.Certs = filteredCertificates
-		k.SetNocRootCertificatesByVidAndSkid(ctx, nocCertificates)
+		k.SetNocCertificatesByVidAndSkid(ctx, nocCertificates)
 	} else {
-		k.RemoveNocRootCertificatesByVidAndSkid(ctx, vid, subjectKeyID)
+		k.RemoveNocCertificatesByVidAndSkid(ctx, vid, subjectKeyID)
 	}
 }
 
-// GetAllNocRootCertificatesByVidAndSkid returns all nocRootCertificatesByVidAndSkid.
-func (k Keeper) GetAllNocRootCertificatesByVidAndSkid(ctx sdk.Context) (list []types.NocRootCertificatesByVidAndSkid) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocRootCertificatesByVidAndSkidKeyPrefix))
+// GetAllNocCertificatesByVidAndSkid returns all nocRootCertificatesByVidAndSkid.
+func (k Keeper) GetAllNocCertificatesByVidAndSkid(ctx sdk.Context) (list []types.NocCertificatesByVidAndSkid) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocCertificatesByVidAndSkidKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
-		var val types.NocRootCertificatesByVidAndSkid
+		var val types.NocCertificatesByVidAndSkid
 		k.cdc.MustUnmarshal(iterator.Value(), &val)
 		list = append(list, val)
 	}

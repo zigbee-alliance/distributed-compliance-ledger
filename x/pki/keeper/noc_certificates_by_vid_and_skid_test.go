@@ -15,23 +15,23 @@ import (
 // Prevent strconv unused error.
 var _ = strconv.IntSize
 
-func createNNocRootCertificatesByVidAndSkid(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.NocRootCertificatesByVidAndSkid {
-	items := make([]types.NocRootCertificatesByVidAndSkid, n)
+func createNNocCertificatesByVidAndSkid(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.NocCertificatesByVidAndSkid {
+	items := make([]types.NocCertificatesByVidAndSkid, n)
 	for i := range items {
 		items[i].Vid = int32(i)
 		items[i].SubjectKeyId = strconv.Itoa(i)
 
-		keeper.SetNocRootCertificatesByVidAndSkid(ctx, items[i])
+		keeper.SetNocCertificatesByVidAndSkid(ctx, items[i])
 	}
 
 	return items
 }
 
-func TestNocRootCertificatesByVidAndSkidGet(t *testing.T) {
+func TestNocCertificatesByVidAndSkidGet(t *testing.T) {
 	keeper, ctx := keepertest.PkiKeeper(t, nil)
-	items := createNNocRootCertificatesByVidAndSkid(keeper, ctx, 10)
+	items := createNNocCertificatesByVidAndSkid(keeper, ctx, 10)
 	for _, item := range items {
-		rst, found := keeper.GetNocRootCertificatesByVidAndSkid(ctx,
+		rst, found := keeper.GetNocCertificatesByVidAndSkid(ctx,
 			item.Vid,
 			item.SubjectKeyId,
 		)
@@ -42,15 +42,15 @@ func TestNocRootCertificatesByVidAndSkidGet(t *testing.T) {
 		)
 	}
 }
-func TestNocRootCertificatesByVidAndSkidRemove(t *testing.T) {
+func TestNocCertificatesByVidAndSkidRemove(t *testing.T) {
 	keeper, ctx := keepertest.PkiKeeper(t, nil)
-	items := createNNocRootCertificatesByVidAndSkid(keeper, ctx, 10)
+	items := createNNocCertificatesByVidAndSkid(keeper, ctx, 10)
 	for _, item := range items {
-		keeper.RemoveNocRootCertificatesByVidAndSkid(ctx,
+		keeper.RemoveNocCertificatesByVidAndSkid(ctx,
 			item.Vid,
 			item.SubjectKeyId,
 		)
-		_, found := keeper.GetNocRootCertificatesByVidAndSkid(ctx,
+		_, found := keeper.GetNocCertificatesByVidAndSkid(ctx,
 			item.Vid,
 			item.SubjectKeyId,
 		)
@@ -58,11 +58,11 @@ func TestNocRootCertificatesByVidAndSkidRemove(t *testing.T) {
 	}
 }
 
-func TestNocRootCertificatesByVidAndSkidGetAll(t *testing.T) {
+func TestNocCertificatesByVidAndSkidGetAll(t *testing.T) {
 	keeper, ctx := keepertest.PkiKeeper(t, nil)
-	items := createNNocRootCertificatesByVidAndSkid(keeper, ctx, 10)
+	items := createNNocCertificatesByVidAndSkid(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),
-		nullify.Fill(keeper.GetAllNocRootCertificatesByVidAndSkid(ctx)),
+		nullify.Fill(keeper.GetAllNocCertificatesByVidAndSkid(ctx)),
 	)
 }

@@ -66,7 +66,7 @@ func TestHandler_RemoveNocX509RootCert_BySubjectAndSKID(t *testing.T) {
 	require.Empty(t, certsBySKID)
 	_, err = queryNocRootCertificates(setup, vid)
 	require.Equal(t, codes.NotFound, status.Code(err))
-	_, err = queryNocRootCertificatesByVidAndSkid(setup, vid, testconstants.NocRootCert1SubjectKeyID)
+	_, err = queryNocCertificatesByVidAndSkid(setup, vid, testconstants.NocRootCert1SubjectKeyID)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
 	// check that unique certificates does not exists
@@ -164,7 +164,7 @@ func TestHandler_RemoveNocX509RootCert_BySerialNumber(t *testing.T) {
 	require.Empty(t, certsBySKID)
 	_, err = queryNocRootCertificates(setup, vid)
 	require.Equal(t, codes.NotFound, status.Code(err))
-	_, err = queryNocRootCertificatesByVidAndSkid(setup, vid, testconstants.NocRootCert1SubjectKeyID)
+	_, err = queryNocCertificatesByVidAndSkid(setup, vid, testconstants.NocRootCert1SubjectKeyID)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
 	// check that unique certificates does not exists
@@ -283,7 +283,7 @@ func TestHandler_RemoveNocX509RootCert_RevokedAndApprovedCertificate(t *testing.
 	require.Empty(t, certsBySKID)
 	_, err = queryNocRootCertificates(setup, vid)
 	require.Equal(t, codes.NotFound, status.Code(err))
-	_, err = queryNocRootCertificatesByVidAndSkid(setup, vid, testconstants.NocRootCert1SubjectKeyID)
+	_, err = queryNocCertificatesByVidAndSkid(setup, vid, testconstants.NocRootCert1SubjectKeyID)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
 	// check that unique certificates does not exists
@@ -365,7 +365,7 @@ func TestHandler_RemoveNocX509RootCert_RevokedCertificate(t *testing.T) {
 	require.Equal(t, codes.NotFound, status.Code(err))
 	_, err = queryNocRootCertificates(setup, vid)
 	require.Equal(t, codes.NotFound, status.Code(err))
-	_, err = queryNocRootCertificatesByVidAndSkid(setup, vid, testconstants.NocRootCert1SubjectKeyID)
+	_, err = queryNocCertificatesByVidAndSkid(setup, vid, testconstants.NocRootCert1SubjectKeyID)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
 	// check that unique certificate does not exists

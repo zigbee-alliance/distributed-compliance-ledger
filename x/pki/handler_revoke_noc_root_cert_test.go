@@ -241,11 +241,11 @@ func TestHandler_RevokeNocX509RootCert_RevokeDefault(t *testing.T) {
 	require.Equal(t, testconstants.NocRootCert2SubjectKeyID, nocRootCerts.Certs[0].SubjectKeyId)
 
 	// query noc root certificate by VID and SKID
-	_, err = queryNocRootCertificatesByVidAndSkid(setup, testconstants.Vid, testconstants.NocRootCert1SubjectKeyID)
+	_, err = queryNocCertificatesByVidAndSkid(setup, testconstants.Vid, testconstants.NocRootCert1SubjectKeyID)
 	require.Error(t, err)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
-	nocRootCertificatesByVidAndSkid, err := queryNocRootCertificatesByVidAndSkid(setup, testconstants.Vid, testconstants.NocRootCert2SubjectKeyID)
+	nocRootCertificatesByVidAndSkid, err := queryNocCertificatesByVidAndSkid(setup, testconstants.Vid, testconstants.NocRootCert2SubjectKeyID)
 	require.NoError(t, err)
 	require.Equal(t, testconstants.NocRootCert2SubjectKeyID, nocRootCertificatesByVidAndSkid.SubjectKeyId)
 	require.Equal(t, 1, len(nocRootCerts.Certs))
@@ -343,7 +343,7 @@ func TestHandler_RevokeNocX509RootCert_RevokeWithChild(t *testing.T) {
 	require.Equal(t, codes.NotFound, status.Code(err))
 
 	// query noc root certificate by VID and SKID
-	_, err = queryNocRootCertificatesByVidAndSkid(setup, testconstants.Vid, testconstants.NocRootCert1SubjectKeyID)
+	_, err = queryNocCertificatesByVidAndSkid(setup, testconstants.Vid, testconstants.NocRootCert1SubjectKeyID)
 	require.Error(t, err)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
@@ -452,7 +452,7 @@ func TestHandler_RevokeNocX509RootCert_RevokeWithSerialNumber(t *testing.T) {
 	require.Equal(t, testconstants.NocRootCert1CopySerialNumber, revNocRoot.Certs[0].SerialNumber)
 
 	// query noc root certificate by VID and SKID
-	nocRootCertificatesByVidAndSkid, err := queryNocRootCertificatesByVidAndSkid(setup, testconstants.Vid, testconstants.NocRootCert1SubjectKeyID)
+	nocRootCertificatesByVidAndSkid, err := queryNocCertificatesByVidAndSkid(setup, testconstants.Vid, testconstants.NocRootCert1SubjectKeyID)
 	require.NoError(t, err)
 	require.Equal(t, testconstants.NocRootCert1SubjectKeyID, nocRootCertificatesByVidAndSkid.SubjectKeyId)
 	require.Equal(t, 1, len(revNocRoot.Certs))
