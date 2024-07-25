@@ -40,8 +40,8 @@ func (k Keeper) GetNocCertificatesByVidAndSkid(
 	return val, true
 }
 
-// Add a NOC root certificate to the list of NOC root certificates for the VID map.
-func (k Keeper) AddNocCertificatesByVidAndSkid(ctx sdk.Context, nocCertificate types.Certificate) {
+// Add a NOC certificate to the list of NOC certificates for the VID map.
+func (k Keeper) AddNocCertificateByVidAndSkid(ctx sdk.Context, nocCertificate types.Certificate) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocCertificatesByVidAndSkidKeyPrefix))
 
 	nocRootCertificatesByVidAndSkidKeyBytes := store.Get(types.NocCertificatesByVidAndSkidKey(nocCertificate.Vid, nocCertificate.SubjectKeyId))
