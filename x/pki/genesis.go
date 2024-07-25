@@ -73,7 +73,7 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	for _, elem := range genState.RevokedNocRootCertificatesList {
 		k.SetRevokedNocRootCertificates(ctx, elem)
 	}
-	// Set all the nocRootCertificatesByVidAndSkid
+	// Set all the nocCertificatesByVidAndSkid
 	for _, elem := range genState.NocCertificatesByVidAndSkidList {
 		k.SetNocCertificatesByVidAndSkid(ctx, elem)
 	}

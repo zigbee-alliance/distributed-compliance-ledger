@@ -8,17 +8,17 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-// SetNocCertificatesByVidAndSkid set a specific nocRootCertificatesByVidAndSkid in the store from its index.
-func (k Keeper) SetNocCertificatesByVidAndSkid(ctx sdk.Context, nocRootCertificatesByVidAndSkid types.NocCertificatesByVidAndSkid) {
+// SetNocCertificatesByVidAndSkid set a specific nocCertificatesByVidAndSkid in the store from its index.
+func (k Keeper) SetNocCertificatesByVidAndSkid(ctx sdk.Context, nocCertificatesByVidAndSkid types.NocCertificatesByVidAndSkid) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocCertificatesByVidAndSkidKeyPrefix))
-	b := k.cdc.MustMarshal(&nocRootCertificatesByVidAndSkid)
+	b := k.cdc.MustMarshal(&nocCertificatesByVidAndSkid)
 	store.Set(types.NocCertificatesByVidAndSkidKey(
-		nocRootCertificatesByVidAndSkid.Vid,
-		nocRootCertificatesByVidAndSkid.SubjectKeyId,
+		nocCertificatesByVidAndSkid.Vid,
+		nocCertificatesByVidAndSkid.SubjectKeyId,
 	), b)
 }
 
-// GetNocCertificatesByVidAndSkid returns a nocRootCertificatesByVidAndSkid from its index.
+// GetNocCertificatesByVidAndSkid returns a nocCertificatesByVidAndSkid from its index.
 func (k Keeper) GetNocCertificatesByVidAndSkid(
 	ctx sdk.Context,
 	vid int32,
@@ -44,27 +44,27 @@ func (k Keeper) GetNocCertificatesByVidAndSkid(
 func (k Keeper) AddNocCertificateByVidAndSkid(ctx sdk.Context, nocCertificate types.Certificate) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocCertificatesByVidAndSkidKeyPrefix))
 
-	nocRootCertificatesByVidAndSkidKeyBytes := store.Get(types.NocCertificatesByVidAndSkidKey(nocCertificate.Vid, nocCertificate.SubjectKeyId))
-	var nocRootCertificatesByVidAndSkid types.NocCertificatesByVidAndSkid
+	nocCertificatesByVidAndSkidKeyBytes := store.Get(types.NocCertificatesByVidAndSkidKey(nocCertificate.Vid, nocCertificate.SubjectKeyId))
+	var nocCertificatesByVidAndSkid types.NocCertificatesByVidAndSkid
 
-	if nocRootCertificatesByVidAndSkidKeyBytes == nil {
-		nocRootCertificatesByVidAndSkid = types.NocCertificatesByVidAndSkid{
+	if nocCertificatesByVidAndSkidKeyBytes == nil {
+		nocCertificatesByVidAndSkid = types.NocCertificatesByVidAndSkid{
 			Vid:          nocCertificate.Vid,
 			SubjectKeyId: nocCertificate.SubjectKeyId,
 			Certs:        []*types.Certificate{},
 			Tq:           1,
 		}
 	} else {
-		k.cdc.MustUnmarshal(nocRootCertificatesByVidAndSkidKeyBytes, &nocRootCertificatesByVidAndSkid)
+		k.cdc.MustUnmarshal(nocCertificatesByVidAndSkidKeyBytes, &nocCertificatesByVidAndSkid)
 	}
 
-	nocRootCertificatesByVidAndSkid.Certs = append(nocRootCertificatesByVidAndSkid.Certs, &nocCertificate)
+	nocCertificatesByVidAndSkid.Certs = append(nocCertificatesByVidAndSkid.Certs, &nocCertificate)
 
-	b := k.cdc.MustMarshal(&nocRootCertificatesByVidAndSkid)
+	b := k.cdc.MustMarshal(&nocCertificatesByVidAndSkid)
 	store.Set(types.NocCertificatesByVidAndSkidKey(nocCertificate.Vid, nocCertificate.SubjectKeyId), b)
 }
 
-// RemoveNocCertificatesByVidAndSkid removes a nocRootCertificatesByVidAndSkid from the store.
+// RemoveNocCertificatesByVidAndSkid removes a nocCertificatesByVidAndSkid from the store.
 func (k Keeper) RemoveNocCertificatesByVidAndSkid(
 	ctx sdk.Context,
 	vid int32,
@@ -130,7 +130,7 @@ func (k Keeper) _filterAndSetNocCertificateByVidAndSkid(
 	}
 }
 
-// GetAllNocCertificatesByVidAndSkid returns all nocRootCertificatesByVidAndSkid.
+// GetAllNocCertificatesByVidAndSkid returns all nocCertificatesByVidAndSkid.
 func (k Keeper) GetAllNocCertificatesByVidAndSkid(ctx sdk.Context) (list []types.NocCertificatesByVidAndSkid) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocCertificatesByVidAndSkidKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})

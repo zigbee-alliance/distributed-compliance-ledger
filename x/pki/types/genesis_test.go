@@ -369,7 +369,7 @@ SubjectKeyId: "0",
 	valid:    false,
 },
 {
-	desc:     "duplicated nocRootCertificatesByVidAndSkid",
+	desc:     "duplicated nocCertificatesByVidAndSkid",
 	genState: &types.GenesisState{
 		NocCertificatesByVidAndSkidList: []types.NocCertificatesByVidAndSkid{
 			{

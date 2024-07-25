@@ -245,11 +245,11 @@ func TestHandler_RevokeNocX509RootCert_RevokeDefault(t *testing.T) {
 	require.Error(t, err)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
-	nocRootCertificatesByVidAndSkid, err := queryNocCertificatesByVidAndSkid(setup, testconstants.Vid, testconstants.NocRootCert2SubjectKeyID)
+	nocCertificatesByVidAndSkid, err := queryNocCertificatesByVidAndSkid(setup, testconstants.Vid, testconstants.NocRootCert2SubjectKeyID)
 	require.NoError(t, err)
-	require.Equal(t, testconstants.NocRootCert2SubjectKeyID, nocRootCertificatesByVidAndSkid.SubjectKeyId)
+	require.Equal(t, testconstants.NocRootCert2SubjectKeyID, nocCertificatesByVidAndSkid.SubjectKeyId)
 	require.Equal(t, 1, len(nocRootCerts.Certs))
-	require.Equal(t, float32(1), nocRootCertificatesByVidAndSkid.Tq)
+	require.Equal(t, float32(1), nocCertificatesByVidAndSkid.Tq)
 
 	// Child certificate should not be revoked
 	_, err = queryRevokedCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
@@ -452,12 +452,12 @@ func TestHandler_RevokeNocX509RootCert_RevokeWithSerialNumber(t *testing.T) {
 	require.Equal(t, testconstants.NocRootCert1CopySerialNumber, revNocRoot.Certs[0].SerialNumber)
 
 	// query noc root certificate by VID and SKID
-	nocRootCertificatesByVidAndSkid, err := queryNocCertificatesByVidAndSkid(setup, testconstants.Vid, testconstants.NocRootCert1SubjectKeyID)
+	nocCertificatesByVidAndSkid, err := queryNocCertificatesByVidAndSkid(setup, testconstants.Vid, testconstants.NocRootCert1SubjectKeyID)
 	require.NoError(t, err)
-	require.Equal(t, testconstants.NocRootCert1SubjectKeyID, nocRootCertificatesByVidAndSkid.SubjectKeyId)
+	require.Equal(t, testconstants.NocRootCert1SubjectKeyID, nocCertificatesByVidAndSkid.SubjectKeyId)
 	require.Equal(t, 1, len(revNocRoot.Certs))
-	require.Equal(t, float32(1), nocRootCertificatesByVidAndSkid.Tq)
-	require.Equal(t, testconstants.NocRootCert1CopySerialNumber, nocRootCertificatesByVidAndSkid.Certs[0].SerialNumber)
+	require.Equal(t, float32(1), nocCertificatesByVidAndSkid.Tq)
+	require.Equal(t, testconstants.NocRootCert1CopySerialNumber, nocCertificatesByVidAndSkid.Certs[0].SerialNumber)
 
 	// Child certificate should not be revoked
 	_, err = queryRevokedCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)

@@ -176,15 +176,15 @@ func (gs GenesisState) Validate() error { //nolint:gocyclo,vet
 		}
 		revokedNocRootCertificatesIndexMap[index] = struct{}{}
 	}
-	// Check for duplicated index in nocRootCertificatesByVidAndSkid
-	nocRootCertificatesByVidAndSkidIndexMap := make(map[string]struct{})
+	// Check for duplicated index in nocCertificatesByVidAndSkid
+	nocCertificatesByVidAndSkidIndexMap := make(map[string]struct{})
 
 	for _, elem := range gs.NocCertificatesByVidAndSkidList {
 		index := string(NocCertificatesByVidAndSkidKey(elem.Vid, elem.SubjectKeyId))
-		if _, ok := nocRootCertificatesByVidAndSkidIndexMap[index]; ok {
-			return fmt.Errorf("duplicated index for nocRootCertificatesByVidAndSkid")
+		if _, ok := nocCertificatesByVidAndSkidIndexMap[index]; ok {
+			return fmt.Errorf("duplicated index for nocCertificatesByVidAndSkid")
 		}
-		nocRootCertificatesByVidAndSkidIndexMap[index] = struct{}{}
+		nocCertificatesByVidAndSkidIndexMap[index] = struct{}{}
 	}
 	// this line is used by starport scaffolding # genesis/types/validate
 
