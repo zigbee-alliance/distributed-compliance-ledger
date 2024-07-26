@@ -77,8 +77,8 @@ func (k Keeper) RemoveNocCertificatesByVidAndSkid(
 	))
 }
 
-// RemoveNocRootCertificateByVidSkidSubjectAndSerialNumber removes root certificate with specified subject from the list.
-func (k Keeper) RemoveNocRootCertificateByVidSubjectAndSkid(
+// RemoveNocCertificateByVidSkidSubjectAndSerialNumber removes certificate with specified subject from the list.
+func (k Keeper) RemoveNocCertificateByVidSubjectAndSkid(
 	ctx sdk.Context,
 	vid int32,
 	subject string,
@@ -94,8 +94,8 @@ func (k Keeper) RemoveNocRootCertificateByVidSubjectAndSkid(
 	)
 }
 
-// RemoveNocRootCertificateByVidSkidSubjectAndSerialNumber removes root certificate with specified subject and serial number from the list.
-func (k Keeper) RemoveNocRootCertificateByVidSubjectSkidAndSerialNumber(
+// RemoveNocCertificateByVidSkidSubjectAndSerialNumber removes certificate with specified subject and serial number from the list.
+func (k Keeper) RemoveNocCertificateByVidSubjectSkidAndSerialNumber(
 	ctx sdk.Context,
 	vid int32,
 	subject string,
@@ -112,7 +112,7 @@ func (k Keeper) RemoveNocRootCertificateByVidSubjectSkidAndSerialNumber(
 	)
 }
 
-// RemoveNocRootCertificateByVidSkidSubjectAndSerialNumber removes root certificate with specified subject and serial number from the list.
+// RemoveNocCertificateByVidSkidSubjectAndSerialNumber removes certificate with specified subject and serial number from the list.
 func (k Keeper) _filterAndSetNocCertificateByVidAndSkid(
 	ctx sdk.Context,
 	vid int32,

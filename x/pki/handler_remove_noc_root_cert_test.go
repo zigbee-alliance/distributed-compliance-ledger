@@ -31,10 +31,10 @@ func TestHandler_RemoveNocX509RootCert_BySubjectAndSKID(t *testing.T) {
 	require.NoError(t, err)
 
 	// get certificates for further comparison
-	allCerts := setup.Keeper.GetAllApprovedCertificates(setup.Ctx)
-	require.NotNil(t, allCerts)
-	require.Equal(t, 2, len(allCerts))
-	require.Equal(t, 3, len(allCerts[0].Certs)+len(allCerts[1].Certs))
+	approvedCerts := setup.Keeper.GetAllApprovedCertificates(setup.Ctx)
+	require.NotNil(t, approvedCerts)
+	require.Equal(t, 2, len(approvedCerts))
+	require.Equal(t, 3, len(approvedCerts[0].Certs)+len(approvedCerts[1].Certs))
 
 	// remove all root nOC certificates but IAC certificate
 	removeIcaCert := types.NewMsgRemoveNocX509RootCert(
@@ -47,15 +47,21 @@ func TestHandler_RemoveNocX509RootCert_BySubjectAndSKID(t *testing.T) {
 	require.NoError(t, err)
 
 	// check that only IAC certificate exists
-	allCerts, _ = queryAllApprovedCertificates(setup)
-	require.Equal(t, 1, len(allCerts))
-	require.Equal(t, 1, len(allCerts[0].Certs))
-	require.Equal(t, testconstants.NocCert1SerialNumber, allCerts[0].Certs[0].SerialNumber)
+	approvedCerts, _ = queryAllApprovedCertificates(setup)
+	require.Equal(t, 1, len(approvedCerts))
+	require.Equal(t, 1, len(approvedCerts[0].Certs))
+	require.Equal(t, testconstants.NocCert1SerialNumber, approvedCerts[0].Certs[0].SerialNumber)
 
 	nocCertificates, err := queryNocCertificates(setup, vid)
 	require.NoError(t, err)
 	require.Equal(t, len(nocCertificates.Certs), 1)
 	require.Equal(t, testconstants.NocCert1SerialNumber, nocCertificates.Certs[0].SerialNumber)
+
+	// check that IAC certificates can be queried by vid+skid
+	certsByVidSkid, _ := queryNocCertificatesByVidAndSkid(setup, vid, testconstants.NocCert1SubjectKeyID)
+	require.NoError(t, err)
+	require.Equal(t, 1, len(certsByVidSkid.Certs))
+	require.Equal(t, testconstants.NocCert1SerialNumber, certsByVidSkid.Certs[0].SerialNumber)
 
 	// check that root certs removed
 	_, err = queryApprovedCertificates(setup, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
@@ -108,8 +114,8 @@ func TestHandler_RemoveNocX509RootCert_BySerialNumber(t *testing.T) {
 	_, err = setup.Handler(setup.Ctx, removeIcaCert)
 	require.NoError(t, err)
 
-	allCerts, _ := queryAllApprovedCertificates(setup)
-	require.Equal(t, 2, len(allCerts))
+	approvedCerts, _ := queryAllApprovedCertificates(setup)
+	require.Equal(t, 2, len(approvedCerts))
 
 	rootCerts, _ := queryApprovedCertificates(setup, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
 	require.Equal(t, 1, len(rootCerts.Certs))
@@ -145,15 +151,20 @@ func TestHandler_RemoveNocX509RootCert_BySerialNumber(t *testing.T) {
 	_, err = setup.Handler(setup.Ctx, removeIcaCert)
 	require.NoError(t, err)
 
-	allCerts, _ = queryAllApprovedCertificates(setup)
-	require.Equal(t, 1, len(allCerts))
-	require.Equal(t, 1, len(allCerts[0].Certs))
-	require.Equal(t, testconstants.NocCert1SerialNumber, allCerts[0].Certs[0].SerialNumber)
+	approvedCerts, _ = queryAllApprovedCertificates(setup)
+	require.Equal(t, 1, len(approvedCerts))
+	require.Equal(t, 1, len(approvedCerts[0].Certs))
+	require.Equal(t, testconstants.NocCert1SerialNumber, approvedCerts[0].Certs[0].SerialNumber)
 
 	nocCertificates, err = queryNocCertificates(setup, vid)
 	require.NoError(t, err)
 	require.Equal(t, len(nocCertificates.Certs), 1)
 	require.Equal(t, testconstants.NocCert1SerialNumber, nocCertificates.Certs[0].SerialNumber)
+
+	// check that IAC certificates can be queried by vid+skid
+	certsByVidSkid, _ := queryNocCertificatesByVidAndSkid(setup, vid, testconstants.NocCert1SubjectKeyID)
+	require.Equal(t, 1, len(certsByVidSkid.Certs))
+	require.Equal(t, testconstants.NocCert1SerialNumber, certsByVidSkid.Certs[0].SerialNumber)
 
 	// check that root certs removed
 	_, err = queryApprovedCertificates(setup, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
@@ -191,9 +202,9 @@ func TestHandler_RemoveNocX509RootCert_RevokedAndApprovedCertificate(t *testing.
 	require.NoError(t, err)
 
 	// get certificates for further comparison
-	allCerts := setup.Keeper.GetAllApprovedCertificates(setup.Ctx)
-	require.NotNil(t, allCerts)
-	require.Equal(t, 2, len(allCerts))
+	approvedCerts := setup.Keeper.GetAllApprovedCertificates(setup.Ctx)
+	require.NotNil(t, approvedCerts)
+	require.Equal(t, 2, len(approvedCerts))
 
 	// revoke an intermediate certificate
 	revokeX509Cert := types.NewMsgRevokeNocX509RootCert(
@@ -225,8 +236,8 @@ func TestHandler_RemoveNocX509RootCert_RevokedAndApprovedCertificate(t *testing.
 	require.NoError(t, err)
 
 	// check that only one root and IAC certificates exists
-	allCerts, _ = queryAllApprovedCertificates(setup)
-	require.Equal(t, 2, len(allCerts))
+	approvedCerts, _ = queryAllApprovedCertificates(setup)
+	require.Equal(t, 2, len(approvedCerts))
 
 	certs, _ = queryApprovedCertificates(setup, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
 	require.Equal(t, testconstants.NocRootCert1CopySerialNumber, certs.Certs[0].SerialNumber)
@@ -264,15 +275,20 @@ func TestHandler_RemoveNocX509RootCert_RevokedAndApprovedCertificate(t *testing.
 	_, err = setup.Handler(setup.Ctx, removeIcaCert)
 	require.NoError(t, err)
 
-	allCerts, _ = queryAllApprovedCertificates(setup)
-	require.Equal(t, 1, len(allCerts))
-	require.Equal(t, 1, len(allCerts[0].Certs))
-	require.Equal(t, testconstants.NocCert1SerialNumber, allCerts[0].Certs[0].SerialNumber)
+	approvedCerts, _ = queryAllApprovedCertificates(setup)
+	require.Equal(t, 1, len(approvedCerts))
+	require.Equal(t, 1, len(approvedCerts[0].Certs))
+	require.Equal(t, testconstants.NocCert1SerialNumber, approvedCerts[0].Certs[0].SerialNumber)
 
 	nocCertificates, err = queryNocCertificates(setup, vid)
 	require.NoError(t, err)
 	require.Equal(t, len(nocCertificates.Certs), 1)
 	require.Equal(t, testconstants.NocCert1SerialNumber, nocCertificates.Certs[0].SerialNumber)
+
+	// check that IAC certificates can be queried by vid+skid
+	certsByVidSkid, _ := queryNocCertificatesByVidAndSkid(setup, vid, testconstants.NocCert1SubjectKeyID)
+	require.Equal(t, 1, len(certsByVidSkid.Certs))
+	require.Equal(t, testconstants.NocCert1SerialNumber, certsByVidSkid.Certs[0].SerialNumber)
 
 	// check that root certs removed
 	_, err = queryApprovedCertificates(setup, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
@@ -353,6 +369,11 @@ func TestHandler_RemoveNocX509RootCert_RevokedCertificate(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, len(nocCertificates.Certs), 1)
 	require.Equal(t, testconstants.NocCert1SerialNumber, nocCertificates.Certs[0].SerialNumber)
+
+	// check that IAC certificates can be queried by vid+skid
+	certsByVidSkid, _ := queryNocCertificatesByVidAndSkid(setup, vid, testconstants.NocCert1SubjectKeyID)
+	require.Equal(t, 1, len(certsByVidSkid.Certs))
+	require.Equal(t, testconstants.NocCert1SerialNumber, certsByVidSkid.Certs[0].SerialNumber)
 
 	// check that root certs are removed
 	_, err = queryApprovedCertificates(setup, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)

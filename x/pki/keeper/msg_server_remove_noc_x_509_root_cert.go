@@ -71,7 +71,7 @@ func (k msgServer) RemoveNocX509RootCert(goCtx context.Context, msg *types.MsgRe
 
 			// Remove from NOC lists
 			k.RemoveNocRootCertificateBySerialNumber(ctx, accountVid, certID.Subject, certID.SubjectKeyId, msg.SerialNumber)
-			k.RemoveNocRootCertificateByVidSubjectSkidAndSerialNumber(ctx, accountVid, certID.Subject, certID.SubjectKeyId, msg.SerialNumber)
+			k.RemoveNocCertificateByVidSubjectSkidAndSerialNumber(ctx, accountVid, certID.Subject, certID.SubjectKeyId, msg.SerialNumber)
 		}
 
 		if foundRevoked {

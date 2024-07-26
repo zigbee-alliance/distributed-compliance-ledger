@@ -240,7 +240,7 @@ func TestHandler_RevokeNocX509RootCert_RevokeDefault(t *testing.T) {
 	require.Equal(t, 1, len(nocRootCerts.Certs))
 	require.Equal(t, testconstants.NocRootCert2SubjectKeyID, nocRootCerts.Certs[0].SubjectKeyId)
 
-	// query noc root certificate by VID and SKID
+	// query noc certificate by VID and SKID
 	_, err = queryNocCertificatesByVidAndSkid(setup, testconstants.Vid, testconstants.NocRootCert1SubjectKeyID)
 	require.Error(t, err)
 	require.Equal(t, codes.NotFound, status.Code(err))
@@ -342,7 +342,7 @@ func TestHandler_RevokeNocX509RootCert_RevokeWithChild(t *testing.T) {
 	require.Error(t, err)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
-	// query noc root certificate by VID and SKID
+	// query noc certificate by VID and SKID
 	_, err = queryNocCertificatesByVidAndSkid(setup, testconstants.Vid, testconstants.NocRootCert1SubjectKeyID)
 	require.Error(t, err)
 	require.Equal(t, codes.NotFound, status.Code(err))
@@ -451,7 +451,7 @@ func TestHandler_RevokeNocX509RootCert_RevokeWithSerialNumber(t *testing.T) {
 	require.Equal(t, 1, len(revNocRoot.Certs))
 	require.Equal(t, testconstants.NocRootCert1CopySerialNumber, revNocRoot.Certs[0].SerialNumber)
 
-	// query noc root certificate by VID and SKID
+	// query noc certificate by VID and SKID
 	nocCertificatesByVidAndSkid, err := queryNocCertificatesByVidAndSkid(setup, testconstants.Vid, testconstants.NocRootCert1SubjectKeyID)
 	require.NoError(t, err)
 	require.Equal(t, testconstants.NocRootCert1SubjectKeyID, nocCertificatesByVidAndSkid.SubjectKeyId)
