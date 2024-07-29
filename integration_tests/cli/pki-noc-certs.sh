@@ -539,12 +539,12 @@ response_does_not_contain "$result" "\"subject\": \"$noc_cert_1_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_cert_1_subject_key_id\""
 
 echo "Request NOC certificate by VID = $vid and SKID = $noc_cert_1_subject_key_id should be empty"
-result=$(dcld query pki noc-x509-certs --vid="$vid" --skid="$noc_cert_1_subject_key_id")
+result=$(dcld query pki noc-x509-certs --vid="$vid" --subject-key-id="$noc_cert_1_subject_key_id")
 echo $result | jq
 check_response "$result" "Not Found"
 
 echo "Request NOC certificate by VID = $vid and SKID = $noc_leaf_cert_1_subject_key_id should contain one leaf certificate"
-result=$(dcld query pki noc-x509-certs --vid="$vid" --skid="$noc_leaf_cert_1_subject_key_id")
+result=$(dcld query pki noc-x509-certs --vid="$vid" --subject-key-id="$noc_leaf_cert_1_subject_key_id")
 echo $result | jq
 check_response "$result" "\"subject\": \"$noc_leaf_cert_1_subject\""
 check_response "$result" "\"subjectKeyId\": \"$noc_leaf_cert_1_subject_key_id\""

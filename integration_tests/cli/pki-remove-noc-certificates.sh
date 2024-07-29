@@ -314,12 +314,12 @@ response_does_not_contain "$result" "\"serialNumber\": \"$root_cert_1_serial_num
 response_does_not_contain "$result" "\"serialNumber\": \"$root_cert_1_copy_serial_number"
 
 echo "Request NOC certificate by VID = $vid and SKID = $intermediate_cert_subject_key_id should not be empty"
-result=$(dcld query pki noc-x509-certs --vid="$vid" --skid="$intermediate_cert_subject_key_id")
+result=$(dcld query pki noc-x509-certs --vid="$vid" --subject-key-id="$intermediate_cert_subject_key_id")
 echo $result | jq
 check_response "$result" "\"serialNumber\": \"$intermediate_cert_1_serial_number\""
 
 echo "Request NOC certificate by VID = $vid and SKID = $root_cert_subject_key_id should be empty"
-result=$(dcld query pki noc-x509-certs --vid="$vid" --skid="$root_cert_subject_key_id")
+result=$(dcld query pki noc-x509-certs --vid="$vid" --subject-key-id="$root_cert_subject_key_id")
 echo $result | jq
 check_response "$result" "Not Found"
 
