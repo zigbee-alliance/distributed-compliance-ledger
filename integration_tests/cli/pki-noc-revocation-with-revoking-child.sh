@@ -279,7 +279,7 @@ response_does_not_contain "$result" "\"serialNumber\": \"$noc_cert_2_copy_serial
 response_does_not_contain "$result" "\"serialNumber\": \"$noc_leaf_cert_2_serial_number\""
 echo $result | jq
 
-echo "Request NOC certificate by VID = $vid and SKID = $noc_cnoc_root_cert_2_subject_key_idert_2_subject_key_id should not be empty"
+echo "Request NOC certificate by VID = $vid and SKID = $noc_root_cert_2_subject_key_id should not be empty"
 result=$(dcld query pki noc-x509-certs --vid="$vid" --subject-key-id="$noc_root_cert_2_subject_key_id")
 echo $result | jq
 check_response "$result" "\"subject\": \"$noc_root_cert_2_subject\""
