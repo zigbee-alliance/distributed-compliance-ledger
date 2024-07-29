@@ -110,7 +110,7 @@ func GetNocX509CertsByVidAndSkid(suite *utils.TestSuite, vendorID int32, subject
 	var res pkitypes.NocCertificatesByVidAndSkid
 	if suite.Rest {
 		var resp pkitypes.QueryGetNocCertificatesByVidAndSkidResponse
-		err := suite.QueryREST(fmt.Sprintf("/dcl/pki/noc-root-certificates/%v/%s", vendorID, url.QueryEscape(subjectKeyID)), &resp)
+		err := suite.QueryREST(fmt.Sprintf("/dcl/pki/noc-certificates/%v/%s", vendorID, url.QueryEscape(subjectKeyID)), &resp)
 		if err != nil {
 			return nil, err
 		}
@@ -372,6 +372,12 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.NocCert1Subject, nocCert.Certs[0].Subject)
 	require.Equal(suite.T, testconstants.NocCert1SubjectKeyID, nocCert.Certs[0].SubjectKeyId)
 
+	// Request NOC ICA certificate by VID1
+	nocCertificatesByVidAndSkid, _ = GetNocX509CertsByVidAndSkid(suite, vid1, testconstants.NocCert1SubjectKeyID)
+	require.Equal(suite.T, 1, len(nocCertificatesByVidAndSkid.Certs))
+	require.Equal(suite.T, testconstants.NocCert1Subject, nocCertificatesByVidAndSkid.Certs[0].Subject)
+	require.Equal(suite.T, testconstants.NocCert1SubjectKeyID, nocCertificatesByVidAndSkid.Certs[0].SubjectKeyId)
+
 	// Request Child certificates list
 	childCertificates, _ := GetAllChildX509Certs(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
 	require.Equal(suite.T, testconstants.NocRootCert1Subject, childCertificates.Issuer)
@@ -498,6 +504,10 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.NocCert1SubjectKeyID, revokedCerts.SubjectKeyId)
 	require.Equal(suite.T, testconstants.NocCert1SerialNumber, revokedCerts.Certs[0].SerialNumber)
 
+	// Request NOC ICA certificate by VID1
+	_, err = GetNocX509CertsByVidAndSkid(suite, vid1, testconstants.NocCert1SubjectKeyID)
+	suite.AssertNotFound(err)
+
 	// Check approved certificates
 	certs, _ = GetX509Cert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
@@ -525,6 +535,10 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.NocRootCert1Subject, revokedCerts.Subject)
 	require.Equal(suite.T, testconstants.NocRootCert1SubjectKeyID, revokedCerts.SubjectKeyId)
 	require.Equal(suite.T, testconstants.NocRootCert1SerialNumber, revokedCerts.Certs[0].SerialNumber)
+
+	// Request NOC ICA certificate by VID1
+	_, err = GetNocX509CertsByVidAndSkid(suite, vid1, testconstants.NocRootCert1Subject)
+	suite.AssertNotFound(err)
 
 	// Check approved certificate
 	certs, _ = GetX509Cert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
@@ -567,6 +581,10 @@ func NocCertDemo(suite *utils.TestSuite) {
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveCert}, vendor1Name, vendor1Account)
 	require.NoError(suite.T, err)
 
+	// Request NOC ICA certificate by VID1
+	_, err = GetNocX509CertsByVidAndSkid(suite, vid1, testconstants.NocCert1Subject)
+	suite.AssertNotFound(err)
+
 	// Check that two intermediate ICA certificates are removed
 	_, err = GetRevokedX509Cert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	suite.AssertNotFound(err)
@@ -587,6 +605,10 @@ func NocCertDemo(suite *utils.TestSuite) {
 
 	// Check that leaf ICA certificate is removed
 	_, err = GetX509Cert(suite, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
+	suite.AssertNotFound(err)
+
+	// Request NOC ICA certificate by VID1
+	_, err = GetNocX509CertsByVidAndSkid(suite, vid1, testconstants.NocLeafCert1SubjectKeyID)
 	suite.AssertNotFound(err)
 
 	certificates = GetNocX509IcaCertsBySubjectAndSKID(suite, vid1, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
@@ -625,6 +647,10 @@ func NocCertDemo(suite *utils.TestSuite) {
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveCert}, vendor1Name, vendor1Account)
 	require.NoError(suite.T, err)
 
+	// Request NOC ICA certificate by VID1
+	_, err = GetNocX509CertsByVidAndSkid(suite, vid1, testconstants.NocCert1SubjectKeyID)
+	suite.AssertNotFound(err)
+
 	// Check that leaf and ICA with different serial number is not removed
 	certs, _ = GetX509Cert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
@@ -661,6 +687,13 @@ func NocCertDemo(suite *utils.TestSuite) {
 	_, err = GetX509Cert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	suite.AssertNotFound(err)
 	_, err = GetX509Cert(suite, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
+	suite.AssertNotFound(err)
+
+	_, err = GetNocX509CertsByVidAndSkid(suite, vid1, testconstants.NocRootCert1SubjectKeyID)
+	suite.AssertNotFound(err)
+	_, err = GetNocX509CertsByVidAndSkid(suite, vid1, testconstants.NocCert1SubjectKeyID)
+	suite.AssertNotFound(err)
+	_, err = GetNocX509CertsByVidAndSkid(suite, vid1, testconstants.NocLeafCert1SubjectKeyID)
 	suite.AssertNotFound(err)
 
 	_, err = GetNocX509CertsByVidAndSkid(suite, vid1, testconstants.NocRootCert1SubjectKeyID)
