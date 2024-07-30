@@ -198,7 +198,7 @@ func TestHandler_AddNocX509RootCert_AddNew(t *testing.T) {
 	require.Equal(t, &newNocCertificate, nocRootCertificate)
 
 	// query noc root certificate by VID and SKID
-	nocRootCertificate, tq, err := querySingleNocRootCertificateByVidAndSkid(setup, newNocCertificate.Vid, newNocCertificate.SubjectKeyId)
+	nocRootCertificate, tq, err := querySingleNocCertificateByVidAndSkid(setup, newNocCertificate.Vid, newNocCertificate.SubjectKeyId)
 	require.NoError(t, err)
 	require.Equal(t, &newNocCertificate, nocRootCertificate)
 	require.Equal(t, float32(1), tq)
@@ -267,7 +267,7 @@ func TestHandler_AddNocX509RootCert_Renew(t *testing.T) {
 	require.Equal(t, &newNocCertificate, nocRootCertificates.Certs[1])
 
 	// query noc root certificate by VID and SKID
-	renewedNocRootCertificate, tq, err := querySingleNocRootCertificateByVidAndSkid(setup, testconstants.Vid, newNocCertificate.SubjectKeyId)
+	renewedNocRootCertificate, tq, err := querySingleNocCertificateByVidAndSkid(setup, testconstants.Vid, newNocCertificate.SubjectKeyId)
 	require.NoError(t, err)
 	require.Equal(t, &newNocCertificate, renewedNocRootCertificate)
 	require.Equal(t, float32(1), tq)
@@ -308,12 +308,12 @@ func queryNocRootCertificates(
 	return &resp.NocRootCertificates, nil
 }
 
-func querySingleNocRootCertificateByVidAndSkid(
+func querySingleNocCertificateByVidAndSkid(
 	setup *TestSetup,
 	vid int32,
 	subjectKeyID string,
 ) (*types.Certificate, float32, error) {
-	certificates, err := queryNocRootCertificatesByVidAndSkid(setup, vid, subjectKeyID)
+	certificates, err := queryNocCertificatesByVidAndSkid(setup, vid, subjectKeyID)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -325,15 +325,15 @@ func querySingleNocRootCertificateByVidAndSkid(
 	return certificates.Certs[0], certificates.Tq, nil
 }
 
-func queryNocRootCertificatesByVidAndSkid(
+func queryNocCertificatesByVidAndSkid(
 	setup *TestSetup,
 	vid int32,
 	subjectKeyID string,
-) (*types.NocRootCertificatesByVidAndSkid, error) {
+) (*types.NocCertificatesByVidAndSkid, error) {
 	// query certificate
-	req := &types.QueryGetNocRootCertificatesByVidAndSkidRequest{Vid: vid, SubjectKeyId: subjectKeyID}
+	req := &types.QueryGetNocCertificatesByVidAndSkidRequest{Vid: vid, SubjectKeyId: subjectKeyID}
 
-	resp, err := setup.Keeper.NocRootCertificatesByVidAndSkid(setup.Wctx, req)
+	resp, err := setup.Keeper.NocCertificatesByVidAndSkid(setup.Wctx, req)
 	if err != nil {
 		require.Nil(setup.T, resp)
 
@@ -342,5 +342,5 @@ func queryNocRootCertificatesByVidAndSkid(
 
 	require.NotNil(setup.T, resp)
 
-	return &resp.NocRootCertificatesByVidAndSkid, nil
+	return &resp.NocCertificatesByVidAndSkid, nil
 }

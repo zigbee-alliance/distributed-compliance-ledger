@@ -17,35 +17,35 @@ import (
 // Prevent strconv unused error.
 var _ = strconv.IntSize
 
-func TestNocRootCertificatesByVidAndSkidQuerySingle(t *testing.T) {
+func TestNocCertificatesByVidAndSkidQuerySingle(t *testing.T) {
 	keeper, ctx := keepertest.PkiKeeper(t, nil)
 	wctx := sdk.WrapSDKContext(ctx)
-	msgs := createNNocRootCertificatesByVidAndSkid(keeper, ctx, 2)
+	msgs := createNNocCertificatesByVidAndSkid(keeper, ctx, 2)
 	for _, tc := range []struct {
 		desc     string
-		request  *types.QueryGetNocRootCertificatesByVidAndSkidRequest
-		response *types.QueryGetNocRootCertificatesByVidAndSkidResponse
+		request  *types.QueryGetNocCertificatesByVidAndSkidRequest
+		response *types.QueryGetNocCertificatesByVidAndSkidResponse
 		err      error
 	}{
 		{
 			desc: "First",
-			request: &types.QueryGetNocRootCertificatesByVidAndSkidRequest{
+			request: &types.QueryGetNocCertificatesByVidAndSkidRequest{
 				Vid:          msgs[0].Vid,
 				SubjectKeyId: msgs[0].SubjectKeyId,
 			},
-			response: &types.QueryGetNocRootCertificatesByVidAndSkidResponse{NocRootCertificatesByVidAndSkid: msgs[0]},
+			response: &types.QueryGetNocCertificatesByVidAndSkidResponse{NocCertificatesByVidAndSkid: msgs[0]},
 		},
 		{
 			desc: "Second",
-			request: &types.QueryGetNocRootCertificatesByVidAndSkidRequest{
+			request: &types.QueryGetNocCertificatesByVidAndSkidRequest{
 				Vid:          msgs[1].Vid,
 				SubjectKeyId: msgs[1].SubjectKeyId,
 			},
-			response: &types.QueryGetNocRootCertificatesByVidAndSkidResponse{NocRootCertificatesByVidAndSkid: msgs[1]},
+			response: &types.QueryGetNocCertificatesByVidAndSkidResponse{NocCertificatesByVidAndSkid: msgs[1]},
 		},
 		{
 			desc: "KeyNotFound",
-			request: &types.QueryGetNocRootCertificatesByVidAndSkidRequest{
+			request: &types.QueryGetNocCertificatesByVidAndSkidRequest{
 				Vid:          100000,
 				SubjectKeyId: strconv.Itoa(100000),
 			},
@@ -57,7 +57,7 @@ func TestNocRootCertificatesByVidAndSkidQuerySingle(t *testing.T) {
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
-			response, err := keeper.NocRootCertificatesByVidAndSkid(wctx, tc.request)
+			response, err := keeper.NocCertificatesByVidAndSkid(wctx, tc.request)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
 			} else {

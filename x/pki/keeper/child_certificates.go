@@ -115,6 +115,8 @@ func (k msgServer) RevokeChildCertificates(ctx sdk.Context, issuer string, autho
 		if len(certificates.Certs) > 0 {
 			// If cert is NOC then remove it from NOC ICA certificates list
 			k.RemoveNocIcaCertificate(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId, certificates.Certs[0].Vid)
+			// remove from vid, subject key ID -> certificates map
+			k.RemoveNocCertificateByVidSubjectAndSkid(ctx, certificates.Certs[0].Vid, certIdentifier.Subject, certificates.SubjectKeyId)
 		}
 		k.RemoveApprovedCertificates(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
 
