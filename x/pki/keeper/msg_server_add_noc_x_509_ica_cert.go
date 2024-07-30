@@ -122,6 +122,9 @@ func (k msgServer) AddNocX509IcaCert(goCtx context.Context, msg *types.MsgAddNoc
 	}
 	k.SetUniqueCertificate(ctx, uniqueCertificate)
 
+	// add to vid, subject -> certificates map
+	k.AddNocCertificateByVidAndSkid(ctx, certificate)
+
 	// add to subject -> subject key ID map
 	k.AddApprovedCertificateBySubject(ctx, certificate.Subject, certificate.SubjectKeyId)
 

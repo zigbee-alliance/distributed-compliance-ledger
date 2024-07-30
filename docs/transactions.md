@@ -1525,14 +1525,14 @@ Use [GET_ALL_REVOKED_NOC_ROOT](#get_revoked_noc_root) to get a list of all revok
 - REST API:
   - GET `/dcl/pki/noc-root-certificates/{vid}`
 
-#### GET_NOC_ROOT_BY_VID_AND_SKID
+#### GET_NOC_BY_VID_AND_SKID
 
 **Status: Implemented**
 
-Retrieve NOC root certificates associated with a specific VID and subject key ID.
+Retrieve NOC (Root/ICA) certificates associated with a specific VID and subject key ID.
 This request also returns the Trust Quotient (TQ) value of the certificate
 
-Revoked NOC root certificates are not returned.
+Revoked NOC certificates are not returned.
 Use [GET_ALL_REVOKED_NOC_ROOT](#get_revoked_noc_root) to get a list of all revoked NOC root certificates.
 
 - Who can send: Any account
@@ -1540,9 +1540,9 @@ Use [GET_ALL_REVOKED_NOC_ROOT](#get_revoked_noc_root) to get a list of all revok
   - vid: `uint16` - Vendor ID (positive non-zero)
   - subject_key_id: `string` - Certificate's `Subject Key Id` in hex string format, e.g., `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
 - CLI Command:
-  - `dcld query pki noc-x509-root-certs --vid=<uint16> --subject-key-id=<hex string>`
+  - `dcld query pki noc-x509-certs --vid=<uint16> --subject-key-id=<hex string>`
 - REST API:
-  - GET `/dcl/pki/noc-root-certificates/{vid}/{subject_key_id}`
+  - GET `/dcl/pki/noc-certificates/{vid}/{subject_key_id}`
 
 #### GET_NOC_ICA_BY_VID
 

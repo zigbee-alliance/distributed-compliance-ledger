@@ -92,6 +92,9 @@ func (k msgServer) _revokeNocCertificate(
 		k.SetApprovedCertificates(ctx, certificates)
 	}
 
+	// remove from vid, subject key ID -> certificates map
+	k.RemoveNocCertificateByVidSubjectSkidAndSerialNumber(ctx, vid, cert.Subject, cert.SubjectKeyId, serialNumber)
+
 	return nil
 }
 
@@ -106,4 +109,6 @@ func (k msgServer) _revokeNocCertificates(ctx sdk.Context, certificates types.Ap
 	k.RemoveApprovedCertificateBySubject(ctx, certificates.Subject, certificates.SubjectKeyId)
 	// remove from subject key ID -> certificates map
 	k.RemoveApprovedCertificatesBySubjectKeyID(ctx, certificates.Subject, certificates.SubjectKeyId)
+	// remove from vid, subject key ID -> certificates map
+	k.RemoveNocCertificateByVidSubjectAndSkid(ctx, vid, certificates.Subject, certificates.SubjectKeyId)
 }
