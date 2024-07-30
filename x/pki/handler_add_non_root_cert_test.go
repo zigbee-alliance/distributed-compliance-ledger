@@ -31,7 +31,7 @@ func TestHandler_AddX509Cert(t *testing.T) {
 	// query certificate
 	certificate, _ := querySingleApprovedCertificate(
 		setup, testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
-	require.Equal(t, intermediateCertificate(accAddress), *certificate)
+	require.Equal(t, intermediateCertificateNoVid(accAddress), *certificate)
 
 	certificateBySubjectKeyID, _ := queryAllApprovedCertificatesBySubjectKeyID(setup, testconstants.IntermediateSubjectKeyID)
 	require.Equal(t, 1, len(certificateBySubjectKeyID))
@@ -130,7 +130,7 @@ func TestHandler_AddX509Cert_ForExistingNocCertificate(t *testing.T) {
 	setup.AddAccount(vendorAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
 	// Store the NOC certificate
-	nocCertificate := intermediateCertificate(vendorAccAddress)
+	nocCertificate := intermediateCertificateNoVid(vendorAccAddress)
 	nocCertificate.SerialNumber = testconstants.TestSerialNumber
 	nocCertificate.IsNoc = true
 
@@ -156,7 +156,7 @@ func TestHandler_AddX509Cert_NoRootCert(t *testing.T) {
 	setup.AddAccount(vendorAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
 	// add intermediate certificate
-	intermediateCertificate := intermediateCertificate(vendorAccAddress)
+	intermediateCertificate := intermediateCertificateNoVid(vendorAccAddress)
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, intermediateCertificate)
 
 	// add leaf x509 certificate
@@ -193,7 +193,7 @@ func TestHandler_AddX509Cert_ForDifferentSerialNumber(t *testing.T) {
 	setup.AddAccount(vendorAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
 	// store intermediate certificate with different serial number
-	intermediateCertificate := intermediateCertificate(vendorAccAddress)
+	intermediateCertificate := intermediateCertificateNoVid(vendorAccAddress)
 	intermediateCertificate.SerialNumber = SerialNumber
 	setup.Keeper.SetUniqueCertificate(
 		setup.Ctx,
@@ -333,7 +333,7 @@ func TestHandler_AddX509Cert_EachChildCertRefersToTwoParentCerts(t *testing.T) {
 	setup.AddAccount(vendorAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
 	// store intermediate certificate (it refers to two parent certificates)
-	intermediateCertificate := intermediateCertificate(vendorAccAddress)
+	intermediateCertificate := intermediateCertificateNoVid(vendorAccAddress)
 	intermediateCertificate.SerialNumber = SerialNumber
 
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, intermediateCertificate)
@@ -409,7 +409,7 @@ func TestHandler_AddX509Cert_ByNotOwnerButSameVendor(t *testing.T) {
 	setup.AddAccount(vendorAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
 	// Store an intermediate certificate with the first vendor account as the owner
-	intermediateCertificate := intermediateCertificate(vendorAccAddress1)
+	intermediateCertificate := intermediateCertificateNoVid(vendorAccAddress1)
 	intermediateCertificate.SerialNumber = SerialNumber
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, intermediateCertificate)
 	setup.Keeper.AddApprovedCertificateBySubjectKeyID(setup.Ctx, intermediateCertificate)
@@ -440,7 +440,7 @@ func TestHandler_AddX509Cert_ByOtherVendor(t *testing.T) {
 	setup.AddAccount(vendorAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
 	// Store an intermediate certificate with the first vendor account as the owner
-	intermediateCertificate := intermediateCertificate(vendorAccAddress1)
+	intermediateCertificate := intermediateCertificateNoVid(vendorAccAddress1)
 	intermediateCertificate.SerialNumber = SerialNumber
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, intermediateCertificate)
 	setup.Keeper.AddApprovedCertificateBySubjectKeyID(setup.Ctx, intermediateCertificate)
