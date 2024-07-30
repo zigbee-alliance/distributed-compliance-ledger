@@ -182,6 +182,29 @@ func TestHandler_AddX509Cert_RootIsNoc(t *testing.T) {
 	require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
 }
 
+func TestHandler_AddX509Cert_VIDScoped(t *testing.T) {
+	setup := Setup(t)
+
+	// // store root certificate
+	rootCertOptions := createPAACertWithNumericVidOptions()
+	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+
+	accAddress := GenerateAccAddress()
+	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.PAACertWithNumericVidVid)
+
+	// add x509 certificate
+	addX509Cert := types.NewMsgAddX509Cert(accAddress.String(), testconstants.PAICertWithNumericPidVid, testconstants.CertSchemaVersion)
+	_, err := setup.Handler(setup.Ctx, addX509Cert)
+	require.NoError(t, err)
+
+	// query certificate
+	intermediateCerts, _ := queryApprovedCertificates(setup, testconstants.PAICertWithNumericPidVidSubject, testconstants.PAICertWithNumericPidVidSubjectKeyID)
+	require.Equal(t, 1, len(intermediateCerts.Certs))
+	require.Equal(t, testconstants.PAICertWithNumericPidVidSubject, intermediateCerts.Certs[0].Subject)
+	require.Equal(t, testconstants.PAICertWithNumericPidVidSubjectKeyID, intermediateCerts.Certs[0].SubjectKeyId)
+	require.Equal(t, int32(testconstants.PAICertWithNumericPidVidVid), intermediateCerts.Certs[0].Vid)
+}
+
 func TestHandler_AddX509Cert_ForDifferentSerialNumber(t *testing.T) {
 	setup := Setup(t)
 

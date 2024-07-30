@@ -55,6 +55,12 @@ check_response "$result" "\"subject\": \"$intermediate_cert_with_vid_65521_subje
 check_response "$result" "\"subjectKeyId\": \"$intermediate_cert_with_vid_65521_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$intermediate_cert_with_vid_65521_serial_number\""
 
+echo "Request intermediate certificate by subject=$intermediate_cert_with_vid_65521_subject and skid=$intermediate_cert_with_vid_65521_subject_key_id."
+result=$(dcld query pki x509-cert --subject="$intermediate_cert_with_vid_65521_subject" --subject-key-id="$intermediate_cert_with_vid_65521_subject_key_id")
+echo $result | jq
+check_response "$result" "\"serialNumber\": \"$intermediate_cert_with_vid_65521_serial_number\""
+check_response "$result" "\"vid\": \"$intermediate_cert_with_vid_65521_vid\""
+
 echo "Try to add an intermediate certificate with vid=$intermediate_cert_with_vid_65522_vid by $vendor_account_65521 with vid=$vendor_vid_65521"
 result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_cert_with_vid_65522_path" --from $vendor_account_65521 --yes)
 result=$(get_txn_result "$result")
