@@ -335,15 +335,6 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldUpperBoundViolated,
 		},
 		{
-			name: "ManagedAclExtensionRequestFlowUrl length > 256",
-			msg: func(msg *MsgCreateModel) *MsgCreateModel {
-				msg.ManagedAclExtensionRequestFlowUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(257-30) // length = 257
-
-				return msg
-			}(validMsgCreateModel()),
-			err: validator.ErrFieldMaxLengthExceeded,
-		},
-		{
 			name: "EnhancedSetupFlowOptions > 65535",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.Creator = sample.AccAddress()
@@ -685,22 +676,6 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			}(validMsgCreateModel()),
 		},
 		{
-			name: "ManagedAclExtensionRequestFlowUrl is omitted",
-			msg: func(msg *MsgCreateModel) *MsgCreateModel {
-				msg.ManagedAclExtensionRequestFlowUrl = ""
-
-				return msg
-			}(validMsgCreateModel()),
-		},
-		{
-			name: "ManagedAclExtensionRequestFlowUrl length == 256",
-			msg: func(msg *MsgCreateModel) *MsgCreateModel {
-				msg.ManagedAclExtensionRequestFlowUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
-
-				return msg
-			}(validMsgCreateModel()),
-		},
-		{
 			name: "EnhancedSetupFlowOptions == 1 and EnhancedSetupFlowTCUrl, EnhancedSetupFlowTCRevision, EnhancedSetupFlowTCDigest, EnhancedSetupFlowTCFileSize and MaintenanceUrl are omitted",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.EnhancedSetupFlowOptions = 1
@@ -1026,15 +1001,6 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldUpperBoundViolated,
 		},
 		{
-			name: "ManagedAclExtensionRequestFlowUrl length > 256",
-			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
-				msg.ManagedAclExtensionRequestFlowUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(257-30) // length = 257
-
-				return msg
-			}(validMsgUpdateModel()),
-			err: validator.ErrFieldMaxLengthExceeded,
-		},
-		{
 			name: "EnhancedSetupFlowOptions > 65535",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.EnhancedSetupFlowOptions = 65536
@@ -1335,22 +1301,6 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			}(validMsgUpdateModel()),
 		},
 		{
-			name: "ManagedAclExtensionRequestFlowUrl is omitted",
-			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
-				msg.ManagedAclExtensionRequestFlowUrl = ""
-
-				return msg
-			}(validMsgUpdateModel()),
-		},
-		{
-			name: "ManagedAclExtensionRequestFlowUrl length == 256",
-			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
-				msg.ManagedAclExtensionRequestFlowUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
-
-				return msg
-			}(validMsgUpdateModel()),
-		},
-		{
 			name: "EnhancedSetupFlowOptions is valid and EnhancedSetupFlowTCUrl, EnhancedSetupFlowTCRevision, EnhancedSetupFlowTCDigest, EnhancedSetupFlowTCFileSize and MaintenanceUrl are omitted",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				return msg
@@ -1544,12 +1494,11 @@ func validMsgCreateModel() *MsgCreateModel {
 		CommissioningModeInitialStepsInstruction: testconstants.CommissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsHint:      testconstants.CommissioningModeSecondaryStepsHint,
 		CommissioningModeSecondaryStepsInstruction: testconstants.CommissioningModeSecondaryStepsInstruction,
-		ManagedAclExtensionRequestFlowUrl:          testconstants.CommissioningCustomFlowURL,
-		UserManualUrl:                              testconstants.UserManualURL,
-		SupportUrl:                                 testconstants.SupportURL,
-		ProductUrl:                                 testconstants.ProductURL,
-		LsfUrl:                                     testconstants.LsfURL,
-		EnhancedSetupFlowOptions:                   testconstants.EnhancedSetupFlowOptions,
+		UserManualUrl:            testconstants.UserManualURL,
+		SupportUrl:               testconstants.SupportURL,
+		ProductUrl:               testconstants.ProductURL,
+		LsfUrl:                   testconstants.LsfURL,
+		EnhancedSetupFlowOptions: testconstants.EnhancedSetupFlowOptions,
 	}
 }
 
@@ -1564,12 +1513,11 @@ func validMsgUpdateModel() *MsgUpdateModel {
 		CommissioningCustomFlowUrl:               testconstants.CommissioningCustomFlowURL + "/updated",
 		CommissioningModeInitialStepsInstruction: testconstants.CommissioningModeInitialStepsInstruction + "-updated",
 		CommissioningModeSecondaryStepsInstruction: testconstants.CommissioningModeSecondaryStepsInstruction + "-updated",
-		ManagedAclExtensionRequestFlowUrl:          testconstants.CommissioningCustomFlowURL + "-updated",
-		UserManualUrl:                              testconstants.UserManualURL + "/updated",
-		SupportUrl:                                 testconstants.SupportURL + "/updated",
-		ProductUrl:                                 testconstants.ProductURL + "/updated",
-		LsfUrl:                                     testconstants.LsfURL + "/updated",
-		LsfRevision:                                testconstants.LsfRevision + 1,
-		EnhancedSetupFlowOptions:                   testconstants.EnhancedSetupFlowOptions + 1,
+		UserManualUrl:            testconstants.UserManualURL + "/updated",
+		SupportUrl:               testconstants.SupportURL + "/updated",
+		ProductUrl:               testconstants.ProductURL + "/updated",
+		LsfUrl:                   testconstants.LsfURL + "/updated",
+		LsfRevision:              testconstants.LsfRevision + 1,
+		EnhancedSetupFlowOptions: testconstants.EnhancedSetupFlowOptions + 1,
 	}
 }
