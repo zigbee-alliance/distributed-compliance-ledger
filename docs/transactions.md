@@ -1354,7 +1354,7 @@ Should be sent to trusted nodes only.
 
 ### E2E (NOC)
 
-#### ADD_NOC_ROOT
+#### ADD_NOC_ROOT (RCAC)
 
 **Status: Implemented**
 
@@ -1382,7 +1382,7 @@ This transaction adds a NOC root certificate (RCAC) owned by the Vendor.
     - the sender's VID must match the `vid` field of the existing certificates.
   - the signature (self-signature) and expiration date must be valid.
 
-#### REVOKE_NOC_ROOT
+#### REVOKE_NOC_ROOT (RCAC)
 
 **Status: Implemented**
 
@@ -1409,7 +1409,7 @@ Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revok
 - Validation:
   - a NOC Root Certificate (RCAC) with the provided `subject` and `subject_key_id` must exist in the ledger.
 
-#### REMOVE_NOC_ROOT
+#### REMOVE_NOC_ROOT (RCAC)
 
 **Status: Implemented**
 
@@ -1429,7 +1429,7 @@ Removed NOC root certificates (RCACs) can be re-added using the [ADD_NOC_ROOT](#
 
 
 
-#### ADD_NOC_ICA
+#### ADD_NOC_ICA (ICAC)
 
 **Status: Implemented**
 
@@ -1461,7 +1461,7 @@ already present on the ledger.
 - CLI Command:
   - `dcld tx pki add-noc-x509-ica-cert --certificate=<string-or-path> --from=<account>`
 
-#### REVOKE_NOC_ICA
+#### REVOKE_NOC_ICA (ICAC)
 
 **Status: Implemented**
 
@@ -1487,7 +1487,7 @@ Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revok
 - CLI command:
   - `dcld tx pki revoke-noc-x509-ica-cert --subject=<base64 string> --subject-key-id=<hex string> --serial-number=<string> --info=<string> --time=<int64> --revoke-child=<bool> --from=<account>`
 
-#### REMOVE_NOC_ICA
+#### REMOVE_NOC_ICA (ICAC)
 
 **Status: Implemented**
 
@@ -1506,7 +1506,7 @@ Removed NOC ICA certificates (ICACs) can be re-added using the [ADD_NOC_ICA](#ad
   - `dcld tx pki remove-noc-x509-ica-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
 
 
-#### GET_NOC_ROOT_BY_VID
+#### GET_NOC_ROOT_BY_VID (RCACs)
 
 **Status: Implemented**
 
@@ -1523,7 +1523,7 @@ Use [GET_ALL_REVOKED_NOC_ROOT](#get_revoked_noc_root) to get a list of all revok
 - REST API:
   - GET `/dcl/pki/noc-root-certificates/{vid}`
 
-#### GET_NOC_BY_VID_AND_SKID
+#### GET_NOC_BY_VID_AND_SKID (RCACs/ICACs)
 
 **Status: Implemented**
 
@@ -1542,7 +1542,7 @@ Use [GET_ALL_REVOKED_CERT](#get_all_revoked_certs) to get a list of all revoked 
 - REST API:
   - GET `/dcl/pki/noc-certificates/{vid}/{subject_key_id}`
 
-#### GET_NOC_ICA_BY_VID
+#### GET_NOC_ICA_BY_VID (ICACs)
 
 **Status: Implemented**
 
@@ -1559,7 +1559,7 @@ Use [GET_ALL_REVOKED_CERT](#get_all_revoked_certs) to get a list of all revoked 
 - REST API:
   - GET `/dcl/pki/noc-ica-certificates/{vid}`
 
-#### GET_REVOKED_NOC_ROOT
+#### GET_REVOKED_NOC_ROOT (RCAC)
 
 **Status: Implemented**
 
@@ -1575,7 +1575,7 @@ Revocation works as a soft-delete, meaning that the certificates are not entirel
 - REST API:
   - GET `/dcl/pki/revoked-noc-root-certificates/{subject}/{subject_key_id}`
 
-#### GET_ALL_NOC_ROOT
+#### GET_ALL_NOC_ROOT (RCACs)
 
 **Status: Implemented**
 
@@ -1592,7 +1592,7 @@ Use [GET_ALL_REVOKED_NOC_ROOT](#get_revoked_noc_root) to get a list of all revok
 - REST API:
   - GET `/dcl/pki/noc-root-certificates`
 
-#### GET_ALL_NOC_ICA
+#### GET_ALL_NOC_ICA (ICACs)
 
 **Status: Implemented**
 
@@ -1609,7 +1609,7 @@ Use [GET_ALL_REVOKED_CERT](#get_all_revoked_certs) to get a list of all revoked 
 - REST API:
   - GET `/dcl/pki/noc-ica-certificates`
 
-#### GET_ALL_REVOKED_NOC_ROOT
+#### GET_ALL_REVOKED_NOC_ROOT (RCACs)
 
 Gets all revoked NOC root certificates (RCACs).
 
