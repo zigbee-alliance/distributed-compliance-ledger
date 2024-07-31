@@ -1358,12 +1358,12 @@ Should be sent to trusted nodes only.
 
 **Status: Implemented**
 
-This transaction adds a NOC root certificate owned by the Vendor.
+This transaction adds a NOC root certificate (RCAC) owned by the Vendor.
 
 - Who can send
   - Vendor account
 - Parameters:
-  - cert: `string` - The NOC Root Certificate, encoded in X.509v3 PEM format. Can be a PEM string or a file path.
+  - cert: `string` - The NOC Root Certificate (RCAC), encoded in X.509v3 PEM format. Can be a PEM string or a file path.
   - schemaVersion: `optional(uint16)` - Certificate's schema version to support backward/forward compatability(default 0)
 - In State:
   - `pki/ApprovedCertificates/value/<Subject>/<SubjectKeyID>`
@@ -1373,12 +1373,12 @@ This transaction adds a NOC root certificate owned by the Vendor.
 - CLI Command:
   - `dcld tx pki add-noc-x509-root-cert --certificate=<string-or-path> --from=<account>`
 - Validation:
-  - the provided certificate must be a root certificate:
+  - the provided certificate must be a root certificate (RCAC):
     - `Issuer` == `Subject`
     - `Authority Key Identifier` == `Subject Key Identifier`
   - no existing certificate with the same `<Certificate's Issuer>:<Certificate's Serial Number>` combination.
   - if certificates with the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination already exist:
-    - the existing certificate must be NOC root certificate
+    - the existing certificate must be NOC root certificate (RCAC)
     - the sender's VID must match the `vid` field of the existing certificates.
   - the signature (self-signature) and expiration date must be valid.
 
@@ -1386,14 +1386,14 @@ This transaction adds a NOC root certificate owned by the Vendor.
 
 **Status: Implemented**
 
-This transaction revokes a NOC root certificate owned by the Vendor.
-Revoked NOC root certificates can be re-added using the [ADD_NOC_ROOT](#add_noc_root) transaction.
+This transaction revokes a NOC root certificate (RCAC) owned by the Vendor.
+Revoked NOC root certificates (RCACs) can be re-added using the [ADD_NOC_ROOT](#add_noc_root) transaction.
 
 Revocation works as a soft-delete, meaning that the certificates are not entirely removed but moved from the approved list to the revoked list.
 Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revoked_cert) query.
 
 - Who can send: Vendor account
-  - Vid field associated with the corresponding NOC root certificate on the ledger must be equal to the Vendor account's VID.
+  - Vid field associated with the corresponding NOC root certificate (RCAC) on the ledger must be equal to the Vendor account's VID.
 - Parameters:
   - subject: `string` - base64 encoded subject DER sequence bytes of the certificate.
   - subject_key_id: `string` - certificate's `Subject Key Id` in hex string format, e.g., `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`.
@@ -1407,19 +1407,19 @@ Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revok
 - CLI command:
   - `dcld tx pki revoke-noc-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --serial-number=<string> --info=<string> --time=<int64> --revoke-child=<bool> --from=<account>`
 - Validation:
-  - a NOC Root Certificate with the provided `subject` and `subject_key_id` must exist in the ledger.
+  - a NOC Root Certificate (RCAC) with the provided `subject` and `subject_key_id` must exist in the ledger.
 
 #### REMOVE_NOC_ROOT
 
 **Status: Implemented**
 
-This transaction completely removes the given NOC root certificate owned by the Vendor from the ledger.
-Removed NOC root certificates can be re-added using the [ADD_NOC_ROOT](#add_noc_root) transaction.
+This transaction completely removes the given NOC root certificate (RCAC) owned by the Vendor from the ledger.
+Removed NOC root certificates (RCACs) can be re-added using the [ADD_NOC_ROOT](#add_noc_root) transaction.
 
 - Who can send: Vendor account
   - Vid field associated with the corresponding NOC certificate on the ledger must be equal to the Vendor account's VID.
 - Validation:
-  - a NOC Root Certificate with the provided `subject` and `subject_key_id` must exist in the ledger.
+  - a NOC Root Certificate (RCAC) with the provided `subject` and `subject_key_id` must exist in the ledger.
 - Parameters:
   - subject: `string` - base64 encoded subject DER sequence bytes of the certificate.
   - subject_key_id: `string` - certificate's `Subject Key Id` in hex string format, e.g., `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`.
@@ -1433,7 +1433,7 @@ Removed NOC root certificates can be re-added using the [ADD_NOC_ROOT](#add_noc_
 
 **Status: Implemented**
 
-This transaction adds a NOC ICA certificate owned by the Vendor signed by a chain of certificates which must be
+This transaction adds a NOC ICA certificate (ICAC) owned by the Vendor signed by a chain of certificates which must be
 already present on the ledger.
 
 - Who can send: Vendor account
@@ -1465,8 +1465,8 @@ already present on the ledger.
 
 **Status: Implemented**
 
-This transaction revokes a NOC ICA certificate owned by the Vendor.
-Revoked NOC ICA certificates can be re-added using the [ADD_NOC_ICA](#add_noc_ica) transaction.
+This transaction revokes a NOC ICA certificate (ICAC) owned by the Vendor.
+Revoked NOC ICA certificates (ICACs) can be re-added using the [ADD_NOC_ICA](#add_noc_ica) transaction.
 
 Revocation works as a soft-delete, meaning that the certificates are not entirely removed but moved from the approved list to the revoked list.
 Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revoked_cert) query.
@@ -1491,13 +1491,13 @@ Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revok
 
 **Status: Implemented**
 
-This transaction completely removes the given NOC ICA owned by the Vendor from the ledger.
-Removed NOC ICA certificates can be re-added using the [ADD_NOC_ICA](#add_noc_ica) transaction.
+This transaction completely removes the given NOC ICA (ICAC) owned by the Vendor from the ledger.
+Removed NOC ICA certificates (ICACs) can be re-added using the [ADD_NOC_ICA](#add_noc_ica) transaction.
 
 - Who can send: Vendor account
   - Vid field associated with the corresponding NOC certificate on the ledger must be equal to the Vendor account's VID.
 - Validation:
-  - a NOC ICA Certificate with the provided `subject` and `subject_key_id` must exist in the ledger.
+  - a NOC ICA Certificate (ICAC) with the provided `subject` and `subject_key_id` must exist in the ledger.
 - Parameters:
   - subject: `string` - base64 encoded subject DER sequence bytes of the certificate.
   - subject_key_id: `string` - certificate's `Subject Key Id` in hex string format, e.g., `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`.
@@ -1510,10 +1510,10 @@ Removed NOC ICA certificates can be re-added using the [ADD_NOC_ICA](#add_noc_ic
 
 **Status: Implemented**
 
-Retrieve NOC root certificates associated with a specific VID.
+Retrieve NOC root certificates (RCACs) associated with a specific VID.
 
-Revoked NOC root certificates are not returned.
-Use [GET_ALL_REVOKED_NOC_ROOT](#get_revoked_noc_root) to get a list of all revoked NOC root certificates.
+Revoked NOC root certificates (RCACs) are not returned.
+Use [GET_ALL_REVOKED_NOC_ROOT](#get_revoked_noc_root) to get a list of all revoked NOC root certificates (RCACs).
 
 - Who can send: Any account
 - Parameters:
@@ -1527,11 +1527,11 @@ Use [GET_ALL_REVOKED_NOC_ROOT](#get_revoked_noc_root) to get a list of all revok
 
 **Status: Implemented**
 
-Retrieve NOC (Root/ICA) certificates associated with a specific VID and subject key ID.
+Retrieve NOC (Root/ICA) certificates (RCACs/ICACs) associated with a specific VID and subject key ID.
 This request also returns the Trust Quotient (TQ) value of the certificate
 
 Revoked NOC certificates are not returned.
-Use [GET_ALL_REVOKED_NOC_ROOT](#get_revoked_noc_root) to get a list of all revoked NOC root certificates.
+Use [GET_ALL_REVOKED_CERT](#get_all_revoked_certs) to get a list of all revoked certificates.
 
 - Who can send: Any account
 - Parameters:
@@ -1546,7 +1546,7 @@ Use [GET_ALL_REVOKED_NOC_ROOT](#get_revoked_noc_root) to get a list of all revok
 
 **Status: Implemented**
 
-Retrieve NOC ICA certificates associated with a specific VID.
+Retrieve NOC ICA certificates (ICACs) associated with a specific VID.
 
 Revoked certificates are not returned.
 Use [GET_ALL_REVOKED_CERT](#get_all_revoked_certs) to get a list of all revoked certificates.
@@ -1563,7 +1563,7 @@ Use [GET_ALL_REVOKED_CERT](#get_all_revoked_certs) to get a list of all revoked 
 
 **Status: Implemented**
 
-Gets a revoked NOC root certificate by the given subject and subject key ID attributes.
+Gets a revoked NOC root certificate (RCAC) by the given subject and subject key ID attributes.
 
 Revocation works as a soft-delete, meaning that the certificates are not entirely removed but moved from the approved list to the revoked list.
 
@@ -1579,10 +1579,10 @@ Revocation works as a soft-delete, meaning that the certificates are not entirel
 
 **Status: Implemented**
 
-Retrieve a list of all of NOC root certificates.
+Retrieve a list of all of NOC root certificates (RCACs).
 
-Revoked NOC root certificates are not returned.
-Use [GET_ALL_REVOKED_NOC_ROOT](#get_revoked_noc_root) to get a list of all revoked NOC root certificates.
+Revoked NOC root certificates (RCACs) are not returned.
+Use [GET_ALL_REVOKED_NOC_ROOT](#get_revoked_noc_root) to get a list of all revoked NOC root certificates (RCACs).
 
 - Who can send: Any account
 - Parameters:
@@ -1596,7 +1596,7 @@ Use [GET_ALL_REVOKED_NOC_ROOT](#get_revoked_noc_root) to get a list of all revok
 
 **Status: Implemented**
 
-Retrieve a list of all of NOC ICA certificates
+Retrieve a list of all of NOC ICA certificates (ICACs).
 
 Revoked certificates are not returned.
 Use [GET_ALL_REVOKED_CERT](#get_all_revoked_certs) to get a list of all revoked certificates.
@@ -1611,7 +1611,7 @@ Use [GET_ALL_REVOKED_CERT](#get_all_revoked_certs) to get a list of all revoked 
 
 #### GET_ALL_REVOKED_NOC_ROOT
 
-Gets all revoked NOC root certificates.
+Gets all revoked NOC root certificates (RCACs).
 
 Revocation works as a soft-delete, meaning that the certificates are not entirely removed but moved from the approved list to the revoked list.
 
