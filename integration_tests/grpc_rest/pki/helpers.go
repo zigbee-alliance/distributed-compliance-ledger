@@ -2151,5 +2151,5 @@ func Demo(suite *utils.TestSuite) {
 	// Check there is only one approved intermediate certificate
 	certs, _ = GetX509Cert(suite, testconstants.PAICertWithNumericVidSubject, testconstants.PAICertWithNumericVidSubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
-	require.Equal(suite.T, testconstants.PAICertWithNumericVidVid, certs.Certs[0].Vid)
+	require.Equal(suite.T, int32(testconstants.PAICertWithNumericVidVid), certs.Certs[0].Vid)
 }
