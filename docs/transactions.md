@@ -1387,7 +1387,7 @@ This transaction adds a NOC root certificate (RCAC) owned by the Vendor.
 **Status: Implemented**
 
 This transaction revokes a NOC root certificate (RCAC) owned by the Vendor.
-Revoked NOC root certificates (RCACs) can be re-added using the [ADD_NOC_ROOT](#add_noc_root) transaction.
+Revoked NOC root certificates (RCACs) can be re-added using the [ADD_NOC_ROOT](#add_noc_root-(rcac)) transaction.
 
 Revocation works as a soft-delete, meaning that the certificates are not entirely removed but moved from the approved list to the revoked list.
 Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revoked_cert) query.
@@ -1414,7 +1414,7 @@ Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revok
 **Status: Implemented**
 
 This transaction completely removes the given NOC root certificate (RCAC) owned by the Vendor from the ledger.
-Removed NOC root certificates (RCACs) can be re-added using the [ADD_NOC_ROOT](#add_noc_root) transaction.
+Removed NOC root certificates (RCACs) can be re-added using the [ADD_NOC_ROOT](#add_noc_root-(rcac)) transaction.
 
 - Who can send: Vendor account
   - Vid field associated with the corresponding NOC certificate on the ledger must be equal to the Vendor account's VID.
@@ -1466,7 +1466,7 @@ already present on the ledger.
 **Status: Implemented**
 
 This transaction revokes a NOC ICA certificate (ICAC) owned by the Vendor.
-Revoked NOC ICA certificates (ICACs) can be re-added using the [ADD_NOC_ICA](#add_noc_ica) transaction.
+Revoked NOC ICA certificates (ICACs) can be re-added using the [ADD_NOC_ICA](#add_noc_ica-(icac)) transaction.
 
 Revocation works as a soft-delete, meaning that the certificates are not entirely removed but moved from the approved list to the revoked list.
 Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revoked_cert) query.
@@ -1492,7 +1492,7 @@ Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revok
 **Status: Implemented**
 
 This transaction completely removes the given NOC ICA (ICAC) owned by the Vendor from the ledger.
-Removed NOC ICA certificates (ICACs) can be re-added using the [ADD_NOC_ICA](#add_noc_ica) transaction.
+Removed NOC ICA certificates (ICACs) can be re-added using the [ADD_NOC_ICA](#add_noc_ica-(icac)) transaction.
 
 - Who can send: Vendor account
   - Vid field associated with the corresponding NOC certificate on the ledger must be equal to the Vendor account's VID.
@@ -1513,7 +1513,7 @@ Removed NOC ICA certificates (ICACs) can be re-added using the [ADD_NOC_ICA](#ad
 Retrieve NOC root certificates (RCACs) associated with a specific VID.
 
 Revoked NOC root certificates (RCACs) are not returned.
-Use [GET_ALL_REVOKED_NOC_ROOT](#get_revoked_noc_root) to get a list of all revoked NOC root certificates (RCACs).
+Use [GET_ALL_REVOKED_NOC_ROOT](#get_all_revoked_noc_root-(rcacs)) to get a list of all revoked NOC root certificates (RCACs).
 
 - Who can send: Any account
 - Parameters:
@@ -1531,7 +1531,8 @@ Retrieve NOC (Root/ICA) certificates (RCACs/ICACs) associated with a specific VI
 This request also returns the Trust Quotient (TQ) value of the certificate
 
 Revoked NOC certificates are not returned.
-Use [GET_ALL_REVOKED_NOC_ROOT](#get_revoked_noc_root) to get a list of all revoked NOC root certificates.
+Use [GET_ALL_REVOKED_NOC_ROOT](#get_all_revoked_noc_root-(rcacs)) to get a list of all revoked NOC root certificates.
+Use [GET_ALL_REVOKED_CERT](#get_all_revoked_certs) to get a list of all revoked certificates (including ICACs).
 
 - Who can send: Any account
 - Parameters:
@@ -1582,7 +1583,7 @@ Revocation works as a soft-delete, meaning that the certificates are not entirel
 Retrieve a list of all of NOC root certificates (RCACs).
 
 Revoked NOC root certificates (RCACs) are not returned.
-Use [GET_ALL_REVOKED_NOC_ROOT](#get_revoked_noc_root) to get a list of all revoked NOC root certificates (RCACs).
+Use [GET_ALL_REVOKED_NOC_ROOT](#get_all_revoked_noc_root-(rcacs)) to get a list of all revoked NOC root certificates (RCACs).
 
 - Who can send: Any account
 - Parameters:
