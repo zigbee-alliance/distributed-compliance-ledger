@@ -1531,7 +1531,7 @@ Retrieve NOC (Root/ICA) certificates (RCACs/ICACs) associated with a specific VI
 This request also returns the Trust Quotient (TQ) value of the certificate
 
 Revoked NOC certificates are not returned.
-Use [GET_ALL_REVOKED_CERT](#get_all_revoked_certs) to get a list of all revoked certificates.
+Use [GET_ALL_REVOKED_NOC_ROOT](#get_revoked_noc_root) to get a list of all revoked NOC root certificates.
 
 - Who can send: Any account
 - Parameters:
