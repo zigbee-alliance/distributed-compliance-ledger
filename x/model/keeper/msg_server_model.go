@@ -45,13 +45,12 @@ func (k msgServer) CreateModel(goCtx context.Context, msg *types.MsgCreateModel)
 		CommissioningModeInitialStepsInstruction: msg.CommissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsHint:      msg.CommissioningModeSecondaryStepsHint,
 		CommissioningModeSecondaryStepsInstruction: msg.CommissioningModeSecondaryStepsInstruction,
-		ManagedAclExtensionRequestFlowUrl:          msg.ManagedAclExtensionRequestFlowUrl,
-		UserManualUrl:                              msg.UserManualUrl,
-		SupportUrl:                                 msg.SupportUrl,
-		ProductUrl:                                 msg.ProductUrl,
-		LsfUrl:                                     msg.LsfUrl,
-		EnhancedSetupFlowOptions:                   msg.EnhancedSetupFlowOptions,
-		SchemaVersion:                              msg.SchemaVersion,
+		UserManualUrl:            msg.UserManualUrl,
+		SupportUrl:               msg.SupportUrl,
+		ProductUrl:               msg.ProductUrl,
+		LsfUrl:                   msg.LsfUrl,
+		EnhancedSetupFlowOptions: msg.EnhancedSetupFlowOptions,
+		SchemaVersion:            msg.SchemaVersion,
 	}
 
 	// if LsfUrl is not empty, we set lsfRevision to default value of 1
@@ -135,10 +134,6 @@ func (k msgServer) UpdateModel(goCtx context.Context, msg *types.MsgUpdateModel)
 
 	if msg.CommissioningModeSecondaryStepsInstruction != "" {
 		model.CommissioningModeSecondaryStepsInstruction = msg.CommissioningModeSecondaryStepsInstruction
-	}
-
-	if msg.ManagedAclExtensionRequestFlowUrl != "" {
-		model.ManagedAclExtensionRequestFlowUrl = msg.ManagedAclExtensionRequestFlowUrl
 	}
 
 	if msg.UserManualUrl != "" {
