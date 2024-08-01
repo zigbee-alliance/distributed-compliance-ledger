@@ -31,6 +31,6 @@ message Model {
   int32 enhancedSetupFlowTCRevision = 22 [(gogoproto.moretags) = "validate:\"required_if_bit_0_set=EnhancedSetupFlowOptions,gte=0,lte=65535\""];
   string enhancedSetupFlowTCDigest = 23 [(gogoproto.moretags) = "validate:\"required_if_bit_0_set=EnhancedSetupFlowOptions,omitempty,max=128\""];
   uint32 enhancedSetupFlowTCFileSize = 24 [(gogoproto.moretags) = "validate:\"required_with=EnhancedSetupFlowTCUrl\""];;
-  string maintenanceUrl = 25 [(gogoproto.moretags) = "validate:\"required_if=EnhancedSetupFlowOptions 0,omitempty,url,startswith=https:,max=256\""];
+  string maintenanceUrl = 25 [(gogoproto.moretags) = "validate:\"required_if_bit_0_set=EnhancedSetupFlowOptions,omitempty,url,startswith=https:,max=256\""];
 }
 
