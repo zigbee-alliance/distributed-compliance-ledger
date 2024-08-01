@@ -131,6 +131,14 @@ func Validate(s interface{}) error {
 		return t
 	})
 
+	vl.RegisterTranslation("startswith", trans, func(ut ut.Translator) error {
+		return ut.Add("startswith", "Field {0} : {1} is not a valid url", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("startswith", fe.Field(), fmt.Sprintf("%v", fe.Value()))
+
+		return t
+	})
+
 	vl.RegisterTranslation("gtecsfield", trans, func(ut ut.Translator) error {
 		return ut.Add("gtecsfield", "{0} must not be less than {1}", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
@@ -159,7 +167,7 @@ func Validate(s interface{}) error {
 				return errors.Wrap(ErrFieldMinLengthNotReached, e.Translate(trans))
 			}
 
-			if e.Tag() == "url" || e.Tag() == "startsnotwith" || e.Tag() == "gtecsfield" {
+			if e.Tag() == "url" || e.Tag() == "startsnotwith" || e.Tag() == "startswith" || e.Tag() == "gtecsfield" {
 				return errors.Wrap(ErrFieldNotValid, e.Translate(trans))
 			}
 

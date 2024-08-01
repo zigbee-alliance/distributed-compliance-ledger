@@ -39,6 +39,7 @@ func (k msgServer) CreateModel(goCtx context.Context, msg *types.MsgCreateModel)
 		ProductName:                              msg.ProductName,
 		ProductLabel:                             msg.ProductLabel,
 		PartNumber:                               msg.PartNumber,
+		DiscoveryCapabilitiesBitmask:             msg.DiscoveryCapabilitiesBitmask,
 		CommissioningCustomFlow:                  msg.CommissioningCustomFlow,
 		CommissioningCustomFlowUrl:               msg.CommissioningCustomFlowUrl,
 		CommissioningModeInitialStepsHint:        msg.CommissioningModeInitialStepsHint,

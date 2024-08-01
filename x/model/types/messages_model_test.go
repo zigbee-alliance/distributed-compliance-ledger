@@ -144,6 +144,24 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
+			name: "DiscoveryCapabilitiesBitmask < 0",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.DiscoveryCapabilitiesBitmask = -1
+
+				return msg
+			}(validMsgCreateModel()),
+			err: validator.ErrFieldLowerBoundViolated,
+		},
+		{
+			name: "DiscoveryCapabilitiesBitmask > 14",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.DiscoveryCapabilitiesBitmask = 15
+
+				return msg
+			}(validMsgCreateModel()),
+			err: validator.ErrFieldUpperBoundViolated,
+		},
+		{
 			name: "CommissioningCustomFlow < 0",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.CommissioningCustomFlow = -1
@@ -506,6 +524,22 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "PartNumber length == 32",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.PartNumber = tmrand.Str(32)
+
+				return msg
+			}(validMsgCreateModel()),
+		},
+		{
+			name: "DiscoveryCapabilitiesBitmask == 0",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.DiscoveryCapabilitiesBitmask = 0
+
+				return msg
+			}(validMsgCreateModel()),
+		},
+		{
+			name: "DiscoveryCapabilitiesBitmask == 14",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.DiscoveryCapabilitiesBitmask = 14
 
 				return msg
 			}(validMsgCreateModel()),
