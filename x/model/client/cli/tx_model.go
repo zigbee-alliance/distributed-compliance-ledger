@@ -19,6 +19,7 @@ func CmdCreateModel() *cobra.Command {
 		productName                                string
 		productLabel                               string
 		partNumber                                 string
+		discoveryCapabilitiesBitmask               int32
 		commissioningCustomFlow                    int32
 		commissioningCustomFlowURL                 string
 		commissioningModeInitialStepsHint          uint32
@@ -61,6 +62,7 @@ func CmdCreateModel() *cobra.Command {
 				productName,
 				productLabel,
 				partNumber,
+				discoveryCapabilitiesBitmask,
 				commissioningCustomFlow,
 				commissioningCustomFlowURL,
 				commissioningModeInitialStepsHint,
@@ -102,6 +104,8 @@ func CmdCreateModel() *cobra.Command {
 		"Model description (string or path to file containing data)")
 	cmd.Flags().StringVar(&partNumber, FlagPartNumber, "",
 		"Model Part Number (or sku)")
+	cmd.Flags().Int32Var(&discoveryCapabilitiesBitmask, FlagDiscoveryCapabilitiesBitmask, 0,
+		"This field identifies the device's available technologies for device discovery")
 	cmd.Flags().Int32Var(&commissioningCustomFlow, FlagCommissioningCustomFlow, 0,
 		`A value of 1 indicates that user interaction with the device (pressing a button, for example) is 
 required before commissioning can take place. When CommissioningCustomflow is set to a value of 2, 

@@ -10,6 +10,7 @@ const (
 	FlagProductLabel                               = "productLabel"
 	FlagProductLabelShortcut                       = "d"
 	FlagPartNumber                                 = "partNumber"
+	FlagDiscoveryCapabilitiesBitmask               = "discoveryCapabilitiesBitmask"
 	FlagCommissioningCustomFlow                    = "commissioningCustomFlow"
 	FlagCommissioningCustomFlowURL                 = "commissioningCustomFlowURL"
 	FlagCommissioningModeInitialStepsHint          = "commissioningModeInitialStepsHint"
@@ -27,7 +28,6 @@ const (
 	FlagEnhancedSetupFlowTCDigest                  = "enhancedSetupFlowTCDigest"
 	FlagEnhancedSetupFlowTCFileSize                = "enhancedSetupFlowTCFileSize"
 	FlagMaintenanceURL                             = "maintenanceUrl"
-
 	// Flags for ModelVersion.
 	FlagSoftwareVersion              = "softwareVersion"
 	FlagSoftwareVersionShortcut      = "v"
