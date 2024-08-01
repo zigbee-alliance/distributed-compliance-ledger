@@ -73,6 +73,14 @@ func Validate(s interface{}) error {
 		return t
 	})
 
+	_ = vl.RegisterTranslation("required_if_bit_0_set", trans, func(ut ut.Translator) error {
+		return ut.Add("required_if_bit_0_set", "{0} is required if {1} 0th bit is set", true) // see universal-translator for details
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("required_if_bit_0_set", fe.Field(), fe.Param())
+
+		return t
+	})
+
 	vl.RegisterTranslation("gte", trans, func(ut ut.Translator) error {
 		return ut.Add("gte", "{0} must not be less than {1}", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
@@ -131,12 +139,15 @@ func Validate(s interface{}) error {
 		return t
 	})
 
+	vl.RegisterValidation("required_if_bit_0_set", requiredIfBit0Set)
+
 	//nolint:nestif
 	if errs := vl.Struct(s); errs != nil {
 		//nolint:errorlint
 		for _, e := range errs.(validator.ValidationErrors) {
 			if e.Tag() == "required" || e.Tag() == "required_with" ||
-				e.Tag() == "required_if" || e.Tag() == "required_unless" {
+				e.Tag() == "required_if" || e.Tag() == "required_unless" ||
+				e.Tag() == "required_if_bit_0_set" {
 				return errors.Wrap(ErrRequiredFieldMissing, e.Translate(trans))
 			}
 
