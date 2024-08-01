@@ -40,11 +40,11 @@ func TestCreateModel(t *testing.T) {
 		fmt.Sprintf("--%s=%v", cli.FlagProductURL, testconstants.ProductURL),
 		fmt.Sprintf("--%s=%v", cli.FlagLsfURL, testconstants.LsfURL),
 		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowOptions, testconstants.EnhancedSetupFlowOptions),
-		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCURL, testconstants.EnhancedSetupFlowTCUrl),
+		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCURL, testconstants.EnhancedSetupFlowTCURL),
 		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCRevision, testconstants.EnhancedSetupFlowTCRevision),
 		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCDigest, testconstants.EnhancedSetupFlowTCDigest),
 		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCFileSize, testconstants.EnhancedSetupFlowTCFileSize),
-		fmt.Sprintf("--%s=%v", cli.FlagMaintenanceURL, testconstants.MaintenanceUrl),
+		fmt.Sprintf("--%s=%v", cli.FlagMaintenanceURL, testconstants.MaintenanceURL),
 	}
 	common := []string{
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
@@ -117,11 +117,11 @@ func TestUpdateModel(t *testing.T) {
 		fmt.Sprintf("--%s=%v", cli.FlagProductURL, testconstants.ProductURL),
 		fmt.Sprintf("--%s=%v", cli.FlagLsfURL, testconstants.LsfURL),
 		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowOptions, testconstants.EnhancedSetupFlowOptions),
-		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCURL, testconstants.EnhancedSetupFlowTCUrl),
+		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCURL, testconstants.EnhancedSetupFlowTCURL),
 		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCRevision, testconstants.EnhancedSetupFlowTCRevision),
 		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCDigest, testconstants.EnhancedSetupFlowTCDigest),
 		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCFileSize, testconstants.EnhancedSetupFlowTCFileSize),
-		fmt.Sprintf("--%s=%v", cli.FlagMaintenanceURL, testconstants.MaintenanceUrl),
+		fmt.Sprintf("--%s=%v", cli.FlagMaintenanceURL, testconstants.MaintenanceURL),
 	}
 	args = append(args, common...)
 	_, err := testcli.ExecTestCLITxCmd(t, ctx, cli.CmdCreateModel(), args)
@@ -142,11 +142,11 @@ func TestUpdateModel(t *testing.T) {
 		fmt.Sprintf("--%s=%v", cli.FlagLsfURL, testconstants.LsfURL) + "/updated",
 		fmt.Sprintf("--%s=%v", cli.FlagLsfRevision, testconstants.LsfRevision+1),
 		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowOptions, 3),
-		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCURL, testconstants.EnhancedSetupFlowTCUrl+"/updated"),
+		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCURL, testconstants.EnhancedSetupFlowTCURL+"/updated"),
 		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCRevision, int32(testconstants.EnhancedSetupFlowTCRevision+1)),
 		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCDigest, testconstants.EnhancedSetupFlowTCDigest),
 		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCFileSize, uint32(testconstants.EnhancedSetupFlowTCFileSize+1)),
-		fmt.Sprintf("--%s=%v", cli.FlagMaintenanceURL, testconstants.MaintenanceUrl+"/updated"),
+		fmt.Sprintf("--%s=%v", cli.FlagMaintenanceURL, testconstants.MaintenanceURL+"/updated"),
 	}
 
 	for _, tc := range []struct {
@@ -221,11 +221,11 @@ func TestDeleteModel(t *testing.T) {
 		fmt.Sprintf("--%s=%v", cli.FlagProductURL, testconstants.ProductURL),
 		fmt.Sprintf("--%s=%v", cli.FlagLsfURL, testconstants.LsfURL),
 		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowOptions, testconstants.EnhancedSetupFlowOptions),
-		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCURL, testconstants.EnhancedSetupFlowTCUrl),
+		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCURL, testconstants.EnhancedSetupFlowTCURL),
 		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCRevision, testconstants.EnhancedSetupFlowTCRevision),
 		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCDigest, testconstants.EnhancedSetupFlowTCDigest),
 		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCFileSize, testconstants.EnhancedSetupFlowTCFileSize),
-		fmt.Sprintf("--%s=%v", cli.FlagMaintenanceURL, testconstants.MaintenanceUrl),
+		fmt.Sprintf("--%s=%v", cli.FlagMaintenanceURL, testconstants.MaintenanceURL),
 	}
 	args = append(args, common...)
 	_, err := testcli.ExecTestCLITxCmd(t, ctx, cli.CmdCreateModel(), args)

@@ -1543,11 +1543,11 @@ func validMsgCreateModel() *MsgCreateModel {
 		ProductUrl:                  testconstants.ProductURL,
 		LsfUrl:                      testconstants.LsfURL,
 		EnhancedSetupFlowOptions:    testconstants.EnhancedSetupFlowOptions,
-		EnhancedSetupFlowTCUrl:      testconstants.EnhancedSetupFlowTCUrl,
+		EnhancedSetupFlowTCUrl:      testconstants.EnhancedSetupFlowTCURL,
 		EnhancedSetupFlowTCRevision: int32(testconstants.EnhancedSetupFlowTCRevision),
 		EnhancedSetupFlowTCDigest:   testconstants.EnhancedSetupFlowTCDigest,
 		EnhancedSetupFlowTCFileSize: uint32(testconstants.EnhancedSetupFlowTCFileSize),
-		MaintenanceUrl:              testconstants.MaintenanceUrl,
+		MaintenanceUrl:              testconstants.MaintenanceURL,
 	}
 }
 
@@ -1568,10 +1568,10 @@ func validMsgUpdateModel() *MsgUpdateModel {
 		LsfUrl:                      testconstants.LsfURL + "/updated",
 		LsfRevision:                 testconstants.LsfRevision + 1,
 		EnhancedSetupFlowOptions:    testconstants.EnhancedSetupFlowOptions + 2,
-		EnhancedSetupFlowTCUrl:      testconstants.EnhancedSetupFlowTCUrl + "/updated",
+		EnhancedSetupFlowTCUrl:      testconstants.EnhancedSetupFlowTCURL + "/updated",
 		EnhancedSetupFlowTCRevision: int32(testconstants.EnhancedSetupFlowTCRevision + 1),
 		EnhancedSetupFlowTCDigest:   testconstants.EnhancedSetupFlowTCDigest,
 		EnhancedSetupFlowTCFileSize: uint32(testconstants.EnhancedSetupFlowTCFileSize + 1),
-		MaintenanceUrl:              testconstants.MaintenanceUrl + "/updated",
+		MaintenanceUrl:              testconstants.MaintenanceURL + "/updated",
 	}
 }
