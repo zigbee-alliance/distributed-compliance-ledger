@@ -18,7 +18,7 @@ var _ = strconv.Itoa(0)
 func CmdRemoveNocX509RootCert() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "remove-noc-x509-root-cert",
-		Short: "Removes the given NOC root certificate from the ledger.",
+		Short: "Removes the given NOC root certificate (RCAC) from the ledger.",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)
