@@ -21,7 +21,7 @@ func CmdAddNocX509RootCert() *cobra.Command {
 	)
 	cmd := &cobra.Command{
 		Use:   "add-noc-x509-root-cert",
-		Short: "Adds NOC root certificate",
+		Short: "Adds NOC root certificate (RCAC)",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)

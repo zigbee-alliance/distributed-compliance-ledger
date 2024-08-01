@@ -41,13 +41,12 @@ message MsgCreateModel {
   string productUrl = 16 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
   string lsfUrl = 17 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
   uint32 schemaVersion = 18 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
-  string managedAclExtensionRequestFlowUrl = 19 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
-  int32 enhancedSetupFlowOptions = 20 [(gogoproto.moretags) = "validate:\"omitempty,gte=0,lte=65535\""];
-  string enhancedSetupFlowTCUrl = 21 [(gogoproto.moretags) = "validate:\"required_if=EnhancedSetupFlowOptions 0,omitempty,url,startsnotwith=http:,max=256\""];
-  int32 enhancedSetupFlowTCRevision = 22 [(gogoproto.moretags) = "validate:\"required_if=EnhancedSetupFlowOptions 0,gte=0,lte=65535\""];
-  string enhancedSetupFlowTCDigest = 23 [(gogoproto.moretags) = "validate:\"required_if=EnhancedSetupFlowOptions 0,omitempty,max=128\""];
-  uint32 enhancedSetupFlowTCFileSize = 24 [(gogoproto.moretags) = "validate:\"required_with=EnhancedSetupFlowTCUrl\""];;
-  string maintenanceUrl = 25 [(gogoproto.moretags) = "validate:\"required_if=EnhancedSetupFlowOptions 0,omitempty,url,startsnotwith=http:,max=256\""];
+  int32 enhancedSetupFlowOptions = 19 [(gogoproto.moretags) = "validate:\"omitempty,gte=0,lte=65535\""];
+  string enhancedSetupFlowTCUrl = 20 [(gogoproto.moretags) = "validate:\"required_if=EnhancedSetupFlowOptions 0,omitempty,url,startsnotwith=http:,max=256\""];
+  int32 enhancedSetupFlowTCRevision = 21 [(gogoproto.moretags) = "validate:\"required_if=EnhancedSetupFlowOptions 0,gte=0,lte=65535\""];
+  string enhancedSetupFlowTCDigest = 22 [(gogoproto.moretags) = "validate:\"required_if=EnhancedSetupFlowOptions 0,omitempty,max=128\""];
+  uint32 enhancedSetupFlowTCFileSize = 23 [(gogoproto.moretags) = "validate:\"required_with=EnhancedSetupFlowTCUrl\""];;
+  string maintenanceUrl = 24 [(gogoproto.moretags) = "validate:\"required_if=EnhancedSetupFlowOptions 0,omitempty,url,startsnotwith=http:,max=256\""];
 }
 message MsgCreateModelResponse {}
 
@@ -68,14 +67,13 @@ message MsgUpdateModel {
   string lsfUrl = 13 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
   int32 lsfRevision = 14 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
   uint32 schemaVersion = 15 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
-  string managedAclExtensionRequestFlowUrl = 16 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
-  uint32 commissioningModeInitialStepsHint = 17;
-  int32 enhancedSetupFlowOptions = 18 [(gogoproto.moretags) = "validate:\"omitempty,gte=0,lte=65535\""];
-  string enhancedSetupFlowTCUrl = 19 [(gogoproto.moretags) = "validate:\"required_if=EnhancedSetupFlowOptions 0,omitempty,url,startsnotwith=http:,max=256\""];
-  int32 enhancedSetupFlowTCRevision = 20 [(gogoproto.moretags) = "validate:\"required_if=EnhancedSetupFlowOptions 0,gte=0,lte=65535\""];
-  string enhancedSetupFlowTCDigest = 21 [(gogoproto.moretags) = "validate:\"required_if=EnhancedSetupFlowOptions 0,omitempty,max=128\""];
-  uint32 enhancedSetupFlowTCFileSize = 22 [(gogoproto.moretags) = "validate:\"required_with=EnhancedSetupFlowTCUrl\""];;
-  string maintenanceUrl = 23 [(gogoproto.moretags) = "validate:\"required_if=EnhancedSetupFlowOptions 0,omitempty,url,startsnotwith=http:,max=256\""];
+  uint32 commissioningModeInitialStepsHint = 16;
+  int32 enhancedSetupFlowOptions = 17 [(gogoproto.moretags) = "validate:\"omitempty,gte=0,lte=65535\""];
+  string enhancedSetupFlowTCUrl = 18 [(gogoproto.moretags) = "validate:\"required_if=EnhancedSetupFlowOptions 0,omitempty,url,startsnotwith=http:,max=256\""];
+  int32 enhancedSetupFlowTCRevision = 19 [(gogoproto.moretags) = "validate:\"required_if=EnhancedSetupFlowOptions 0,gte=0,lte=65535\""];
+  string enhancedSetupFlowTCDigest = 20 [(gogoproto.moretags) = "validate:\"required_if=EnhancedSetupFlowOptions 0,omitempty,max=128\""];
+  uint32 enhancedSetupFlowTCFileSize = 21 [(gogoproto.moretags) = "validate:\"required_with=EnhancedSetupFlowTCUrl\""];;
+  string maintenanceUrl = 22 [(gogoproto.moretags) = "validate:\"required_if=EnhancedSetupFlowOptions 0,omitempty,url,startsnotwith=http:,max=256\""];
 }
 message MsgUpdateModelResponse {}
 

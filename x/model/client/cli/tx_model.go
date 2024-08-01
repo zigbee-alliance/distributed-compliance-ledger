@@ -25,7 +25,6 @@ func CmdCreateModel() *cobra.Command {
 		commissioningModeInitialStepsInstruction   string
 		commissioningModeSecondaryStepsHint        uint32
 		commissioningModeSecondaryStepsInstruction string
-		managedACLExtensionRequestFlowURL          string
 		userManualURL                              string
 		supportURL                                 string
 		productURL                                 string
@@ -68,7 +67,6 @@ func CmdCreateModel() *cobra.Command {
 				commissioningModeInitialStepsInstruction,
 				commissioningModeSecondaryStepsHint,
 				commissioningModeSecondaryStepsInstruction,
-				managedACLExtensionRequestFlowURL,
 				userManualURL,
 				supportURL,
 				productURL,
@@ -134,8 +132,6 @@ current CHIP Administrator to put the device into commissioning mode.`)
 of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, 
 as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, 
 and for these values the commissioningModeSecondaryStepInstruction SHALL be set`)
-	cmd.Flags().StringVar(&managedACLExtensionRequestFlowURL, FlagManagedACLExtensionRequestFlowURL, "",
-		`managedACLExtensionRequestFlowURL SHALL identify URL to show a custom flow UI for the commissioner`)
 	cmd.Flags().StringVar(&userManualURL, FlagUserManualURL, "",
 		"URL that contains product specific web page that contains user manual for the device model.")
 	cmd.Flags().StringVar(&supportURL, FlagSupportURL, "",
@@ -177,7 +173,6 @@ func CmdUpdateModel() *cobra.Command {
 		commissioningCustomFlowURL                 string
 		commissioningModeInitialStepsInstruction   string
 		commissioningModeSecondaryStepsInstruction string
-		managedACLExtensionRequestFlowURL          string
 		userManualURL                              string
 		supportURL                                 string
 		productURL                                 string
@@ -218,7 +213,6 @@ func CmdUpdateModel() *cobra.Command {
 				commissioningCustomFlowURL,
 				commissioningModeInitialStepsInstruction,
 				commissioningModeSecondaryStepsInstruction,
-				managedACLExtensionRequestFlowURL,
 				userManualURL,
 				supportURL,
 				productURL,
@@ -267,8 +261,6 @@ values the commissioningModeInitialStepsInstruction SHALL be set`)
 of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, 
 as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, 
 and for these values the commissioningModeSecondaryStepInstruction SHALL be set`)
-	cmd.Flags().StringVar(&managedACLExtensionRequestFlowURL, FlagManagedACLExtensionRequestFlowURL, "",
-		`managedACLExtensionRequestFlowURL SHALL identify URL to show a custom flow UI for the commissioner`)
 	cmd.Flags().StringVar(&userManualURL, FlagUserManualURL, "",
 		"URL that contains product specific web page that contains user manual for the device model.")
 	cmd.Flags().StringVar(&supportURL, FlagSupportURL, "",
