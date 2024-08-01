@@ -15,6 +15,8 @@
 package validator
 
 import (
+	"reflect"
+
 	"github.com/go-playground/validator/v10"
 )
 
@@ -26,15 +28,31 @@ func requiredIfBit0Set(fl validator.FieldLevel) bool {
 	}
 
 	// Use reflection to access the specified parent field
-	parentField := fl.Top().FieldByName(param)
-	if !parentField.IsZero() {
+	parentStruct := fl.Top()
+	if parentStruct.Kind() == reflect.Ptr {
+		parentStruct = parentStruct.Elem() // Dereference the pointer
+	}
+
+	// Use reflection to access the specified parent field
+	parentField := parentStruct.FieldByName(param)
+	if !parentField.IsValid() {
 		return false // Return false if the parent field is not found
 	}
 
 	// Check if the parent field's 0th bit is set
 	parentValue := parentField.Interface()
 	if parentValueInt, ok := parentValue.(int32); ok && (parentValueInt&1 == 1) {
-		return fl.Field().Len() > 0 // Field must not be empty if the bit is set
+		field := fl.Field()
+		switch field.Kind() {
+		case reflect.String:
+			return field.Len() > 0 // Field must not be empty if the bit is set and is a string
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			return field.Int() != 0 // Field must not be zero if the bit is set and is an integer
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			return field.Uint() != 0 // Field must not be zero if the bit is set and is an unsigned integer
+		default:
+			return false // Unsupported field type for this validation
+		}
 	}
 
 	return true // Field is not required if the condition is not met
