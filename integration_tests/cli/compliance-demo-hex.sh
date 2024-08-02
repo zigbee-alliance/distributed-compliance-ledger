@@ -47,7 +47,7 @@ matter_certification_type="matter"
 cd_certificate_id="some ID"
 
 echo "Add Model with VID: $vid_in_hex_format PID: $pid_in_hex_format"
-result=$(echo "$passphrase" | dcld tx model add-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --enhancedSetupFlowOptions=1  --from $vendor_account --yes)
+result=$(echo "$passphrase" | dcld tx model add-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --enhancedSetupFlowOptions=0  --from $vendor_account --yes)
 result=$(get_txn_result "$result")
 echo $result
 check_response "$result" "\"code\": 0"

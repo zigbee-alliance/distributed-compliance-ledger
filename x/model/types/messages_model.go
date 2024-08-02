@@ -26,6 +26,7 @@ func NewMsgCreateModel(
 	productName string,
 	productLabel string,
 	partNumber string,
+	discoveryCapabilitiesBitmask uint32,
 	commissioningCustomFlow int32,
 	commissioningCustomFlowURL string,
 	commissioningModeInitialStepsHint uint32,
@@ -52,6 +53,7 @@ func NewMsgCreateModel(
 		ProductName:                              productName,
 		ProductLabel:                             productLabel,
 		PartNumber:                               partNumber,
+		DiscoveryCapabilitiesBitmask:             discoveryCapabilitiesBitmask,
 		CommissioningCustomFlow:                  commissioningCustomFlow,
 		CommissioningCustomFlowUrl:               commissioningCustomFlowURL,
 		CommissioningModeInitialStepsHint:        commissioningModeInitialStepsHint,
@@ -106,7 +108,7 @@ func (msg *MsgCreateModel) ValidateBasic() error {
 		return err
 	}
 
-	if msg.EnhancedSetupFlowOptions == 0 {
+	if msg.EnhancedSetupFlowOptions&1 == 1 {
 		_, err = base64.StdEncoding.DecodeString(msg.EnhancedSetupFlowTCDigest)
 		if err != nil {
 			return NewErrEnhancedSetupFlowTCDigestIsNotBase64Encoded(msg.EnhancedSetupFlowTCDigest)
@@ -203,7 +205,7 @@ func (msg *MsgUpdateModel) ValidateBasic() error {
 		return err
 	}
 
-	if msg.EnhancedSetupFlowOptions == 0 {
+	if msg.EnhancedSetupFlowOptions&1 == 1 {
 		_, err = base64.StdEncoding.DecodeString(msg.EnhancedSetupFlowTCDigest)
 		if err != nil {
 			return NewErrEnhancedSetupFlowTCDigestIsNotBase64Encoded(msg.EnhancedSetupFlowTCDigest)

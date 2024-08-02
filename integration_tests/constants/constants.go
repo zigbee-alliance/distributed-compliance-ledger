@@ -82,6 +82,11 @@ var (
 	UserManualURL                                     = "https://url.usermanual.dclmodel"
 	SupportURL                                        = "https://url.supporturl.dclmodel"
 	ProductURL                                        = "https://url.producturl.dclmodel"
+	EnhancedSetupFlowTCURL                            = "https://url.enhansedsetupflowurl.dclmodel"
+	EnhancedSetupFlowTCRevision                       = 1
+	EnhancedSetupFlowTCDigest                         = "MmNmMjRkYmE1ZmIwYTMwZTI2ZTgzYjJhYzViOWUyOWUxYjE2MWU1YzFmYTc0MjVlNzMwNDMzNjI5MzhiOTgyNA=="
+	EnhancedSetupFlowTCFileSize                       = 1
+	MaintenanceURL                                    = "https://url.maintenanceurl.dclmodel"
 	LsfURL                                            = "https://url.lsfurl.dclmodel"
 	DataURL                                           = "https://url.data.dclmodel"
 	DataURL2                                          = "https://url.data.dclmodel2"
