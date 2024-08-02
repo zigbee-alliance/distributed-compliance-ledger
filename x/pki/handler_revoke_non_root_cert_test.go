@@ -212,7 +212,7 @@ func TestHandler_RevokeX509Cert_ByNotOwnerButSameVendor(t *testing.T) {
 	require.Equal(t, testconstants.IntermediateSubject, revokedCertificates.Subject)
 	require.Equal(t, testconstants.IntermediateSubjectKeyID, revokedCertificates.SubjectKeyId)
 	require.Equal(t, 1, len(revokedCertificates.Certs))
-	require.Equal(t, intermediateCertificate(vendorAccAddress1), *revokedCertificates.Certs[0])
+	require.Equal(t, intermediateCertificateNoVid(vendorAccAddress1), *revokedCertificates.Certs[0])
 
 	// check that revoked certificate removed from approved certificates list
 	_, err = queryApprovedCertificates(setup, testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
@@ -380,7 +380,7 @@ func TestHandler_RevokeX509Cert_BySerialNumber(t *testing.T) {
 	addIntermediateX509Cert := types.NewMsgAddX509Cert(vendorAccAddress.String(), testconstants.IntermediateCertPem, testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addIntermediateX509Cert)
 	require.NoError(t, err)
-	intermediateCertificate := intermediateCertificate(vendorAccAddress)
+	intermediateCertificate := intermediateCertificateNoVid(vendorAccAddress)
 	intermediateCertificate.SerialNumber = SerialNumber
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, intermediateCertificate)
 	setup.Keeper.AddApprovedCertificateBySubjectKeyID(setup.Ctx, intermediateCertificate)
