@@ -162,7 +162,7 @@ newEnhancedSetupFlowTCDigest="MWRjM2E0MTA0MWRjYWYxMTU0NWI3NTQzZGZlOTQyZjQ3NDJmNT
 newEnhancedSetupFlowTCFileSize=2048
 newMaintenanceUrl="https://example2.org"
 echo "Update Model with VID: ${vid_with_pids} PID: ${pid} with new description, enhancedSetupFlowTCUrl, enhancedSetupFlowTCRevision, enhancedSetupFlowTCDigest, enhancedSetupFlowTCFileSize and maintenanceUrl"
-result=$(echo "test1234" | dcld tx model update-model --vid=$vid_with_pids --pid=$pid --from $vendor_account_with_pids --yes --productLabel "$description" \
+result=$(echo "test1234" | dcld tx model update-model --vid=$vid_with_pids --pid=$pid --from $vendor_account_with_pids --yes --productLabel "$description" --enhancedSetupFlowOptions=$enhancedSetupFlowOptions_1 \
     --enhancedSetupFlowTCUrl=$newEnhancedSetupFlowTCUrl --enhancedSetupFlowTCRevision=$newEnhancedSetupFlowTCRevision --enhancedSetupFlowTCDigest=$newEnhancedSetupFlowTCDigest --enhancedSetupFlowTCFileSize=$newEnhancedSetupFlowTCFileSize --maintenanceUrl=$newMaintenanceUrl --from=$vendor_account_with_pids --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
