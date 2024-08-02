@@ -19,7 +19,7 @@ source integration_tests/cli/common.sh
 # Upgrade constants
 
 plan_name="v1.4"
-upgrade_checksum="TBD"
+upgrade_checksum="ac8dc75bcbebda04fbef644ddbcee4b852d721a3522ccf06ff5d1bb8464949c6"
 binary_version_old="v1.2.2"
 binary_version_new="v1.4.1-pre"
 
