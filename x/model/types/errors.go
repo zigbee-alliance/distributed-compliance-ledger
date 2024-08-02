@@ -142,3 +142,8 @@ func NewErrEnhancedSetupFlowTCDigestIsNotBase64Encoded(enhancedSetupFlowTCDigest
 	return errors.Wrapf(ErrFieldIsNotBase64Encoded,
 		"EnhancedSetupFlowTCDigest %v is not base64 encoded", enhancedSetupFlowTCDigest)
 }
+
+func NewErrEnhancedSetupFlowTCRevisionInvalidIncrement(newEnhancedSetupFlowTCRevision int32, prevEnhancedSetupFlowTCRevision int32) error {
+	return errors.Wrapf(ErrFieldIsNotBase64Encoded,
+		"EnhancedSetupFlowTCRevision %v is not correctly incremented to %v", prevEnhancedSetupFlowTCRevision, newEnhancedSetupFlowTCRevision)
+}
