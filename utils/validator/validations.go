@@ -40,11 +40,8 @@ func requiredIfBit0Set(fl validator.FieldLevel) bool {
 	if parentValueInt, ok := parentValue.(int32); ok {
 		field := fl.Field()
 
-		if parentValueInt&1 == 1 {
-			return !field.IsZero()
-		} else {
-			return field.IsZero()
-		}
+		// field must be specified IF AND ONLY IF parentValueInt&1 == 1
+		return (parentValueInt&1 == 1) != field.IsZero()
 	}
 
 	return true
