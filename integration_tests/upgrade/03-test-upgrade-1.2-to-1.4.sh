@@ -511,7 +511,6 @@ intermediate_cert_with_vid_path="integration_tests/constants/intermediate_cert_w
 intermediate_cert_with_vid_serial_number="3"
 intermediate_cert_with_vid_65521_vid=65521
 
-
 noc_root_cert_1_path="integration_tests/constants/noc_root_cert_1"
 noc_root_cert_1_subject="MHoxCzAJBgNVBAYTAlVaMRMwEQYDVQQIDApTb21lIFN0YXRlMREwDwYDVQQHDAhUYXNoa2VudDEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMQ4wDAYDVQQDDAVOT0MtMQ=="
 noc_root_cert_1_subject_key_id="44:EB:4C:62:6B:25:48:CD:A2:B3:1C:87:41:5A:08:E7:2B:B9:83:26"
