@@ -19,7 +19,7 @@ source integration_tests/cli/common.sh
 # Upgrade constants
 
 plan_name="v1.4"
-upgrade_checksum="e34f8293329d986ca1b33b07c7143fd75cde8fa138f5f612253ac448b54ec453"
+upgrade_checksum="sha256:fec6bc3dc92b61a09d5f80cfc1490060e2085172ee1dbc8f972d06a79381e64e"
 binary_version_old="v1.2.2"
 binary_version_new="v1.4.1-pre"
 
