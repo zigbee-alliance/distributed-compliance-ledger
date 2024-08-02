@@ -28,7 +28,7 @@ func requiredIfBit0Set(fl validator.FieldLevel) bool {
 
 	parentStruct := fl.Top()
 	if parentStruct.Kind() == reflect.Ptr {
-		parentStruct = parentStruct.Elem() // Dereference the pointer
+		parentStruct = parentStruct.Elem()
 	}
 
 	parentField := parentStruct.FieldByName(param)

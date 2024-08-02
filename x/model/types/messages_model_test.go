@@ -438,6 +438,15 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrRequiredFieldMissing,
 		},
 		{
+			name: "EnhancedSetupFlowTCUrl, EnhancedSetupFlowTCRevision, EnhancedSetupFlowTCDigest, EnhancedSetupFlowTCFileSize and MaintenanceUrl are specified when EnhancedSetupFlowOptions&1 == 0",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.EnhancedSetupFlowOptions = 0
+
+				return msg
+			}(validMsgCreateModel()),
+			err: validator.ErrRequiredFieldMissing,
+		},
+		{
 			name: "EnhancedSetupFlowTCDigest is not base64 encoded string",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.EnhancedSetupFlowOptions = 1
@@ -759,6 +768,11 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "EnhancedSetupFlowOptions&1 == 0 and EnhancedSetupFlowTCUrl, EnhancedSetupFlowTCRevision, EnhancedSetupFlowTCDigest, EnhancedSetupFlowTCFileSize and MaintenanceUrl are omitted",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.EnhancedSetupFlowOptions = 0
+				msg.EnhancedSetupFlowTCUrl = ""
+				msg.EnhancedSetupFlowTCRevision = 0
+				msg.EnhancedSetupFlowTCDigest = ""
+				msg.EnhancedSetupFlowTCFileSize = 0
+				msg.MaintenanceUrl = ""
 
 				return msg
 			}(validMsgCreateModel()),
@@ -1168,6 +1182,15 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.EnhancedSetupFlowOptions = 1
 				msg.MaintenanceUrl = ""
+
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrRequiredFieldMissing,
+		},
+		{
+			name: "EnhancedSetupFlowTCUrl, EnhancedSetupFlowTCRevision, EnhancedSetupFlowTCDigest, EnhancedSetupFlowTCFileSize and MaintenanceUrl are specified when EnhancedSetupFlowOptions&1 == 0",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.EnhancedSetupFlowOptions = 0
 
 				return msg
 			}(validMsgUpdateModel()),
