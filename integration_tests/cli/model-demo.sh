@@ -60,7 +60,7 @@ test_divider
 productLabel="Device #1"
 schema_version_1=1
 schema_version_2=2
-enhancedSetupFlowOptions_1=1
+enhancedSetupFlowOptions_1=0
 echo "Add Model with VID: $vid PID: $pid"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel="$productLabel" --partNumber=1 --commissioningCustomFlow=0 --enhancedSetupFlowOptions=$enhancedSetupFlowOptions_1 --schemaVersion=$schema_version_2 --from=$vendor_account --yes)
 result=$(get_txn_result "$result")
@@ -70,7 +70,7 @@ echo "$result"
 test_divider
 
 productLabel="Device #1"
-enhancedSetupFlowOptions_0=0
+enhancedSetupFlowOptions_0=1
 enhancedSetupFlowTCUrl="https://example.org/file.txt"
 enhancedSetupFlowTCRevision=1
 enhancedSetupFlowTCDigest="MWRjNGE0NDA0MWRjYWYxMTU0NWI3NTQzZGZlOTQyZjQ3NDJmNTY4YmU2OGZlZTI3NTQ0MWIwOTJiYjYwZGVlZA=="
