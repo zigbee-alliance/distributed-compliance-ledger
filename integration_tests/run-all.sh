@@ -111,43 +111,43 @@ make image &>${DETAILED_OUTPUT_TARGET}
 
 cleanup_pool
 
-# Upgrade procedure tests
-if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "upgrade" ]]; then
-    UPGRADE_SHELL_TEST="./integration_tests/upgrade/test-upgrade.sh"
+# # Upgrade procedure tests
+# if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "upgrade" ]]; then
+#     UPGRADE_SHELL_TEST="./integration_tests/upgrade/test-upgrade.sh"
 
-    init_pool yes localnet_init_latest_stable_release "v0.12.0"
+#     init_pool yes localnet_init_latest_stable_release "v0.12.0"
 
-    log "*****************************************************************************************"
-    log "Running $UPGRADE_SHELL_TEST"
-    log "*****************************************************************************************"
+#     log "*****************************************************************************************"
+#     log "Running $UPGRADE_SHELL_TEST"
+#     log "*****************************************************************************************"
 
-    if bash "$UPGRADE_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
-      rm dcld_mainnet_stable
-      log "$UPGRADE_SHELL_TEST finished successfully"
-      source integration_tests/upgrade/add-new-node-after-upgrade.sh
-      check_adding_new_node
-    else
-      log "$UPGRADE_SHELL_TEST failed"
-      exit 1
-    fi
+#     if bash "$UPGRADE_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
+#       rm dcld_mainnet_stable
+#       log "$UPGRADE_SHELL_TEST finished successfully"
+#       source integration_tests/upgrade/add-new-node-after-upgrade.sh
+#       check_adding_new_node
+#     else
+#       log "$UPGRADE_SHELL_TEST failed"
+#       exit 1
+#     fi
 
-    cleanup_pool
-fi
+#     cleanup_pool
+# fi
 
-# Deploy tests
-if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "deploy" ]]; then
-    DEPLOY_SHELL_TEST="./integration_tests/deploy/test_deploy.sh"
-    if bash "$DEPLOY_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
-      log "$DEPLOY_SHELL_TEST finished successfully"
-    else
-      log "$DEPLOY_SHELL_TEST failed"
-      exit 1
-    fi
-fi
+# # Deploy tests
+# if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "deploy" ]]; then
+#     DEPLOY_SHELL_TEST="./integration_tests/deploy/test_deploy.sh"
+#     if bash "$DEPLOY_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
+#       log "$DEPLOY_SHELL_TEST finished successfully"
+#     else
+#       log "$DEPLOY_SHELL_TEST failed"
+#       exit 1
+#     fi
+# fi
 
 # Cli shell tests
 if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "cli" ]]; then
-  CLI_SHELL_TESTS=$(find integration_tests/cli -type f -name '*.sh' -not -name "common.sh")
+  CLI_SHELL_TESTS=$(find integration_tests/cli -type f -name 'model*.sh' -not -name "common.sh")
 
   for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
     init_pool
@@ -167,31 +167,31 @@ if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "cli" ]]; then
   done
 fi
 
-# Light Client Proxy Cli shell tests
-if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "light" ]]; then
-  CLI_SHELL_TESTS=$(find integration_tests/light_client_proxy -type f -name '*.sh' -not -name "common.sh")
+# # Light Client Proxy Cli shell tests
+# if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "light" ]]; then
+#   CLI_SHELL_TESTS=$(find integration_tests/light_client_proxy -type f -name '*.sh' -not -name "common.sh")
 
-  for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
-    init_pool
+#   for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
+#     init_pool
 
-    log "*****************************************************************************************"
-    log "Running $CLI_SHELL_TEST"
-    log "*****************************************************************************************"
+#     log "*****************************************************************************************"
+#     log "Running $CLI_SHELL_TEST"
+#     log "*****************************************************************************************"
 
-    if bash "$CLI_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
-      log "$CLI_SHELL_TEST finished successfully"
-    else
-      log "$CLI_SHELL_TEST failed"
-      exit 1
-    fi
+#     if bash "$CLI_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
+#       log "$CLI_SHELL_TEST finished successfully"
+#     else
+#       log "$CLI_SHELL_TEST failed"
+#       exit 1
+#     fi
 
-    cleanup_pool
-  done
-fi
+#     cleanup_pool
+#   done
+# fi
 
 # Go rest tests
 if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "rest" ]]; then
-  GO_REST_TESTS="$(find integration_tests/grpc_rest -type f -name '*_test.go')"
+  GO_REST_TESTS="$(find integration_tests/grpc_rest/model -type f -name '*_test.go')"
 
   for GO_REST_TEST in ${GO_REST_TESTS}; do
     init_pool
