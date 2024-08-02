@@ -37,17 +37,13 @@ func requiredIfBit0Set(fl validator.FieldLevel) bool {
 	}
 
 	parentValue := parentField.Interface()
-	if parentValueInt, ok := parentValue.(int32); ok && (parentValueInt&1 == 1) {
+	if parentValueInt, ok := parentValue.(int32); ok {
 		field := fl.Field()
-		switch field.Kind() {
-		case reflect.String:
-			return field.Len() > 0
-		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-			return field.Int() != 0
-		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-			return field.Uint() != 0
-		default:
-			return false
+
+		if parentValueInt&1 == 1 {
+			return !field.IsZero()
+		} else {
+			return field.IsZero()
 		}
 	}
 
