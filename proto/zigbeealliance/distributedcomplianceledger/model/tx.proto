@@ -30,24 +30,24 @@ message MsgCreateModel {
   string productName = 5 [(gogoproto.moretags) = "validate:\"required,max=128\""];
   string productLabel = 6 [(gogoproto.moretags) = "validate:\"max=256\""];
   string partNumber = 7 [(gogoproto.moretags) = "validate:\"max=32\""];
-  int32 discoveryCapabilitiesBitmask = 8 [(gogoproto.moretags) = "validate:\"gte=0,lte=14\""];
-  int32 commissioningCustomFlow = 9 [(gogoproto.moretags) = "validate:\"gte=0,lte=2\""];
-  string commissioningCustomFlowUrl = 10 [(gogoproto.moretags) = "validate:\"required_if=CommissioningCustomFlow 2,omitempty,url,startsnotwith=http:,max=256\""];
-  uint32 commissioningModeInitialStepsHint = 11;
-  string commissioningModeInitialStepsInstruction = 12 [(gogoproto.moretags) = "validate:\"max=1024\""];
-  uint32 commissioningModeSecondaryStepsHint = 13;
-  string commissioningModeSecondaryStepsInstruction = 14 [(gogoproto.moretags) = "validate:\"max=1024\""];
-  string userManualUrl = 15 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
-  string supportUrl = 16 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
-  string productUrl = 17 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
-  string lsfUrl = 18 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
-  uint32 schemaVersion = 19 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
-  int32 enhancedSetupFlowOptions = 20 [(gogoproto.moretags) = "validate:\"omitempty,gte=0,lte=65535\""];
-  string enhancedSetupFlowTCUrl = 21 [(gogoproto.moretags) = "validate:\"required_if_bit_0_set=EnhancedSetupFlowOptions,omitempty,url,startswith=https:,max=256\""];
-  int32 enhancedSetupFlowTCRevision = 22 [(gogoproto.moretags) = "validate:\"required_if_bit_0_set=EnhancedSetupFlowOptions,gte=0,lte=65535\""];
-  string enhancedSetupFlowTCDigest = 23 [(gogoproto.moretags) = "validate:\"required_if_bit_0_set=EnhancedSetupFlowOptions,omitempty,max=128\""];
-  uint32 enhancedSetupFlowTCFileSize = 24 [(gogoproto.moretags) = "validate:\"required_with=EnhancedSetupFlowTCUrl\""];;
-  string maintenanceUrl = 25 [(gogoproto.moretags) = "validate:\"required_if_bit_0_set=EnhancedSetupFlowOptions,omitempty,url,startswith=https:,max=256\""];
+  int32 commissioningCustomFlow = 8 [(gogoproto.moretags) = "validate:\"gte=0,lte=2\""];
+  string commissioningCustomFlowUrl = 9 [(gogoproto.moretags) = "validate:\"required_if=CommissioningCustomFlow 2,omitempty,url,startsnotwith=http:,max=256\""];
+  uint32 commissioningModeInitialStepsHint = 10;
+  string commissioningModeInitialStepsInstruction = 11 [(gogoproto.moretags) = "validate:\"max=1024\""];
+  uint32 commissioningModeSecondaryStepsHint = 12;
+  string commissioningModeSecondaryStepsInstruction = 13 [(gogoproto.moretags) = "validate:\"max=1024\""];
+  string userManualUrl = 14 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
+  string supportUrl = 15 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
+  string productUrl = 16 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
+  string lsfUrl = 17 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
+  uint32 schemaVersion = 18 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
+  int32 enhancedSetupFlowOptions = 19 [(gogoproto.moretags) = "validate:\"omitempty,gte=0,lte=65535\""];
+  string enhancedSetupFlowTCUrl = 20 [(gogoproto.moretags) = "validate:\"required_if_bit_0_set=EnhancedSetupFlowOptions,omitempty,url,startswith=https:,max=256\""];
+  int32 enhancedSetupFlowTCRevision = 21 [(gogoproto.moretags) = "validate:\"required_if_bit_0_set=EnhancedSetupFlowOptions,gte=0,lte=65535\""];
+  string enhancedSetupFlowTCDigest = 22 [(gogoproto.moretags) = "validate:\"required_if_bit_0_set=EnhancedSetupFlowOptions,omitempty,max=128\""];
+  uint32 enhancedSetupFlowTCFileSize = 23 [(gogoproto.moretags) = "validate:\"required_with=EnhancedSetupFlowTCUrl\""];;
+  string maintenanceUrl = 24 [(gogoproto.moretags) = "validate:\"required_if_bit_0_set=EnhancedSetupFlowOptions,omitempty,url,startswith=https:,max=256\""];
+  uint32 discoveryCapabilitiesBitmask = 25 [(gogoproto.moretags) = "validate:\"gte=0,lte=14\""];
 }
 message MsgCreateModelResponse {}
 
