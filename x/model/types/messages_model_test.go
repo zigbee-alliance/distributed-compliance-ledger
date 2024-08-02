@@ -144,15 +144,6 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
-			name: "DiscoveryCapabilitiesBitmask < 0",
-			msg: func(msg *MsgCreateModel) *MsgCreateModel {
-				msg.DiscoveryCapabilitiesBitmask = -1
-
-				return msg
-			}(validMsgCreateModel()),
-			err: validator.ErrFieldLowerBoundViolated,
-		},
-		{
 			name: "DiscoveryCapabilitiesBitmask > 14",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.DiscoveryCapabilitiesBitmask = 15
@@ -390,6 +381,56 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 				msg.EnhancedSetupFlowTCRevision = 0
 				msg.EnhancedSetupFlowTCDigest = ""
 				msg.EnhancedSetupFlowTCFileSize = 0
+				msg.MaintenanceUrl = ""
+
+				return msg
+			}(validMsgCreateModel()),
+			err: validator.ErrRequiredFieldMissing,
+		},
+		{
+			name: "EnhancedSetupFlowTCUrl is omitted when EnhancedSetupFlowOptions&1 == 1",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.EnhancedSetupFlowOptions = 1
+				msg.EnhancedSetupFlowTCUrl = ""
+
+				return msg
+			}(validMsgCreateModel()),
+			err: validator.ErrRequiredFieldMissing,
+		},
+		{
+			name: "EnhancedSetupFlowTCRevision is omitted when EnhancedSetupFlowOptions&1 == 1",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.EnhancedSetupFlowOptions = 1
+				msg.EnhancedSetupFlowTCRevision = 0
+
+				return msg
+			}(validMsgCreateModel()),
+			err: validator.ErrRequiredFieldMissing,
+		},
+		{
+			name: "EnhancedSetupFlowTCDigest is omitted when EnhancedSetupFlowOptions&1 == 1",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.EnhancedSetupFlowOptions = 1
+				msg.EnhancedSetupFlowTCDigest = ""
+
+				return msg
+			}(validMsgCreateModel()),
+			err: validator.ErrRequiredFieldMissing,
+		},
+		{
+			name: "EnhancedSetupFlowTCFileSize is omitted when EnhancedSetupFlowOptions&1 == 1",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.EnhancedSetupFlowOptions = 1
+				msg.EnhancedSetupFlowTCFileSize = 0
+
+				return msg
+			}(validMsgCreateModel()),
+			err: validator.ErrRequiredFieldMissing,
+		},
+		{
+			name: "MaintenanceUrl is omitted when EnhancedSetupFlowOptions&1 == 1",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.EnhancedSetupFlowOptions = 1
 				msg.MaintenanceUrl = ""
 
 				return msg
@@ -1076,6 +1117,56 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 				msg.EnhancedSetupFlowTCRevision = 0
 				msg.EnhancedSetupFlowTCDigest = ""
 				msg.EnhancedSetupFlowTCFileSize = 0
+				msg.MaintenanceUrl = ""
+
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrRequiredFieldMissing,
+		},
+		{
+			name: "EnhancedSetupFlowTCUrl is omitted when EnhancedSetupFlowOptions&1 == 1",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.EnhancedSetupFlowOptions = 1
+				msg.EnhancedSetupFlowTCUrl = ""
+
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrRequiredFieldMissing,
+		},
+		{
+			name: "EnhancedSetupFlowTCRevision is omitted when EnhancedSetupFlowOptions&1 == 1",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.EnhancedSetupFlowOptions = 1
+				msg.EnhancedSetupFlowTCRevision = 0
+
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrRequiredFieldMissing,
+		},
+		{
+			name: "EnhancedSetupFlowTCDigest is omitted when EnhancedSetupFlowOptions&1 == 1",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.EnhancedSetupFlowOptions = 1
+				msg.EnhancedSetupFlowTCDigest = ""
+
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrRequiredFieldMissing,
+		},
+		{
+			name: "EnhancedSetupFlowTCFileSize is omitted when EnhancedSetupFlowOptions&1 == 1",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.EnhancedSetupFlowOptions = 1
+				msg.EnhancedSetupFlowTCFileSize = 0
+
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrRequiredFieldMissing,
+		},
+		{
+			name: "MaintenanceUrl is omitted when EnhancedSetupFlowOptions&1 == 1",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.EnhancedSetupFlowOptions = 1
 				msg.MaintenanceUrl = ""
 
 				return msg
