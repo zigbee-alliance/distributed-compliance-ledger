@@ -19,9 +19,9 @@ source integration_tests/cli/common.sh
 # Upgrade constants
 
 plan_name="v1.4"
-upgrade_checksum="sha256:1dc4a44041dcaf11545b7543dfe942f4742f568be68fee275441b092bb60deed"
+upgrade_checksum="TBD"
 binary_version_old="v1.2.2"
-binary_version_new="v1.4.0-dev3"
+binary_version_new="v1.4.1-pre"
 
 wget -O dcld_old "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version_old/dcld"
 chmod ugo+x dcld_old
@@ -509,6 +509,8 @@ intermediate_cert_with_vid_subject="MIGuMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlv
 intermediate_cert_with_vid_subject_key_id="0E:8C:E8:C8:B8:AA:50:BC:25:85:56:B9:B1:9C:C2:C7:D9:C5:2F:17"
 intermediate_cert_with_vid_path="integration_tests/constants/intermediate_cert_with_vid_1"
 intermediate_cert_with_vid_serial_number="3"
+intermediate_cert_with_vid_65521_vid=65521
+
 
 noc_root_cert_1_path="integration_tests/constants/noc_root_cert_1"
 noc_root_cert_1_subject="MHoxCzAJBgNVBAYTAlVaMRMwEQYDVQQIDApTb21lIFN0YXRlMREwDwYDVQQHDAhUYXNoa2VudDEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMQ4wDAYDVQQDDAVOT0MtMQ=="
@@ -516,10 +518,21 @@ noc_root_cert_1_subject_key_id="44:EB:4C:62:6B:25:48:CD:A2:B3:1C:87:41:5A:08:E7:
 noc_root_cert_1_serial_number="47211865327720222621302679792296833381734533449"
 noc_root_cert_1_subject_as_text="CN=NOC-1,OU=Testing Division,O=Example Company,L=Tashkent,ST=Some State,C=UZ"
 
+noc_root_cert_2_path="integration_tests/constants/noc_root_cert_2"
+noc_root_cert_2_subject="MHoxCzAJBgNVBAYTAlVaMRMwEQYDVQQIDApTb21lIFN0YXRlMREwDwYDVQQHDAhUYXNoa2VudDEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMQ4wDAYDVQQDDAVOT0MtMg=="
+noc_root_cert_2_subject_key_id="CF:E6:DD:37:2B:4C:B2:B9:A9:F2:75:30:1C:AA:B1:37:1B:11:7F:1B"
+noc_root_cert_2_serial_number="332802481233145945539125204504842614737181725760"
+noc_root_cert_2_subject_as_text="CN=NOC-2,OU=Testing Division,O=Example Company,L=Tashkent,ST=Some State,C=UZ"
+
 noc_ica_cert_1_path="integration_tests/constants/noc_cert_1"
 noc_ica_cert_1_subject="MIGCMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDDAtOT0MtY2hpbGQtMQ=="
 noc_ica_cert_1_subject_key_id="02:72:6E:BC:BB:EF:D6:BD:8D:9B:42:AE:D4:3C:C0:55:5F:66:3A:B3"
 noc_ica_cert_1_serial_number="631388393741945881054190991612463928825155142122"
+
+noc_ica_cert_2_path="integration_tests/constants/noc_cert_2"
+noc_ica_cert_2_subject="MIGCMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDDAtOT0MtY2hpbGQtMg=="
+noc_ica_cert_2_subject_key_id="87:48:A2:33:12:1F:51:5C:93:E6:90:40:4A:2C:AB:9E:D6:19:E5:AD"
+noc_ica_cert_2_serial_number="361372967010167010646904372658654439710639340814"
 
 crl_signer_delegated_by_pai_1="integration_tests/constants/leaf_cert_with_vid_65521"
 delegator_cert_with_vid_65521_path="integration_tests/constants/intermediate_cert_with_vid_1"
@@ -812,6 +825,20 @@ test_divider
 
 echo "Add NOC ICA certificate by vendor with VID = $vid_for_1_4"
 result=$(echo "$passphrase" | $DCLD_BIN_NEW tx pki add-noc-x509-ica-cert --certificate="$noc_ica_cert_1_path" --from $vendor_account_for_1_4 --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Add NOC Root certificate by vendor with VID = $vid_for_1_4"
+result=$(echo "$passphrase" | $DCLD_BIN_NEW tx pki add-noc-x509-root-cert --certificate="$noc_root_cert_2_path" --from $vendor_account_for_1_4 --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Add NOC ICA certificate by vendor with VID = $vid_for_1_4"
+result=$(echo "$passphrase" | $DCLD_BIN_NEW tx pki add-noc-x509-ica-cert --certificate="$noc_ica_cert_2_path" --from $vendor_account_for_1_4 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -1214,6 +1241,7 @@ echo "Get revoked x509 certificate"
 result=$($DCLD_BIN_NEW query pki revoked-x509-cert --subject=$intermediate_cert_with_vid_subject --subject-key-id=$intermediate_cert_with_vid_subject_key_id)
 check_response "$result" "\"subject\": \"$intermediate_cert_with_vid_subject\""
 check_response "$result" "\"subjectKeyId\": \"$intermediate_cert_with_vid_subject_key_id\""
+check_response "$result" "\"vid\": $intermediate_cert_with_vid_65521_vid"
 
 echo "Get proposed x509 root certificate to revoke"
 result=$($DCLD_BIN_NEW query pki proposed-x509-root-cert-to-revoke --subject=$root_cert_with_vid_subject --subject-key-id=$root_cert_with_vid_subject_key_id)
@@ -1240,6 +1268,21 @@ check_response "$result" "\"vid\": $vid_for_1_4"
 check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
 check_response "$result" "\"label\": \"$product_label_for_1_4\""
 check_response "$result" "\"dataURL\": \"$test_data_url_for_1_4\""
+
+echo "Get all noc x509 root certificates by vid $vid_for_1_4"
+result=$($DCLD_BIN_NEW query pki noc-x509-root-certs --vid=$vid_for_1_4)
+check_response "$result" "\"subject\": \"$noc_root_cert_2_subject\""
+check_response "$result" "$noc_root_cert_2_subject_key_id"
+
+echo "Get all noc x509 root certificates by vid=$vid_for_1_4 and skid=$noc_root_cert_2_subject_key_id"
+result=$($DCLD_BIN_NEW query pki noc-x509-certs --vid=$vid_for_1_4 --subject-key-id=$noc_root_cert_2_subject_key_id)
+check_response "$result" "\"subject\": \"$noc_root_cert_2_subject\""
+check_response "$result" "$noc_root_cert_2_subject_key_id"
+
+echo "Get all noc x509 root certificates by vid $vid_for_1_4 and skid=$noc_ica_cert_2_subject_key_id"
+result=$($DCLD_BIN_NEW query pki noc-x509-certs --vid=$vid_for_1_4 --subject-key-id=$noc_ica_cert_2_subject_key_id)
+check_response "$result" "\"subject\": \"$noc_ica_cert_2_subject\""
+check_response "$result" "$noc_ica_cert_2_subject_key_id"
 
 test_divider
 
