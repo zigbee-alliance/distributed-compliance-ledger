@@ -26,7 +26,7 @@ func NewMsgCreateModel(
 	productName string,
 	productLabel string,
 	partNumber string,
-	discoveryCapabilitiesBitmask int32,
+	discoveryCapabilitiesBitmask uint32,
 	commissioningCustomFlow int32,
 	commissioningCustomFlowURL string,
 	commissioningModeInitialStepsHint uint32,
