@@ -10,7 +10,6 @@ const (
 	FlagProductLabel                               = "productLabel"
 	FlagProductLabelShortcut                       = "d"
 	FlagPartNumber                                 = "partNumber"
-	FlagDiscoveryCapabilitiesBitmask               = "discoveryCapabilitiesBitmask"
 	FlagCommissioningCustomFlow                    = "commissioningCustomFlow"
 	FlagCommissioningCustomFlowURL                 = "commissioningCustomFlowURL"
 	FlagCommissioningModeInitialStepsHint          = "commissioningModeInitialStepsHint"

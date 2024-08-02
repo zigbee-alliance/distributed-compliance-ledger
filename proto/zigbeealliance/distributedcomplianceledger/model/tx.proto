@@ -47,7 +47,6 @@ message MsgCreateModel {
   string enhancedSetupFlowTCDigest = 22 [(gogoproto.moretags) = "validate:\"required_if_bit_0_set=EnhancedSetupFlowOptions,omitempty,max=128\""];
   uint32 enhancedSetupFlowTCFileSize = 23 [(gogoproto.moretags) = "validate:\"required_with=EnhancedSetupFlowTCUrl\""];;
   string maintenanceUrl = 24 [(gogoproto.moretags) = "validate:\"required_if_bit_0_set=EnhancedSetupFlowOptions,omitempty,url,startswith=https:,max=256\""];
-  uint32 discoveryCapabilitiesBitmask = 25 [(gogoproto.moretags) = "validate:\"gte=0,lte=14\""];
 }
 message MsgCreateModelResponse {}
 
