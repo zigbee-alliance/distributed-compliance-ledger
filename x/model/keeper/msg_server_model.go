@@ -155,12 +155,6 @@ func (k msgServer) UpdateModel(goCtx context.Context, msg *types.MsgUpdateModel)
 		model.EnhancedSetupFlowTCDigest = msg.EnhancedSetupFlowTCDigest
 		model.EnhancedSetupFlowTCFileSize = msg.EnhancedSetupFlowTCFileSize
 		model.MaintenanceUrl = msg.MaintenanceUrl
-	} else {
-		model.EnhancedSetupFlowTCUrl = ""
-		model.EnhancedSetupFlowTCRevision = 0
-		model.EnhancedSetupFlowTCDigest = ""
-		model.EnhancedSetupFlowTCFileSize = 0
-		model.MaintenanceUrl = ""
 	}
 
 	model.SchemaVersion = msg.SchemaVersion
