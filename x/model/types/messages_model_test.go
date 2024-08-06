@@ -355,6 +355,16 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldNotValid,
 		},
 		{
+			name: "EnhancedSetupFlowTCUrl starts with non-http:",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.EnhancedSetupFlowOptions = 1
+				msg.EnhancedSetupFlowTCUrl = "ftp://sampleflowurl.dclmodel"
+
+				return msg
+			}(validMsgCreateModel()),
+			err: validator.ErrFieldNotValid,
+		},
+		{
 			name: "EnhancedSetupFlowTCUrl length > 256",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.EnhancedSetupFlowOptions = 1
@@ -460,6 +470,20 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 				msg.EnhancedSetupFlowTCUrl = "https://sampleflowurl.dclauth/"
 				msg.EnhancedSetupFlowTCDigest = "=="
 				msg.MaintenanceUrl = "http://sampleflowurl.dclmodel"
+
+				return msg
+			}(validMsgCreateModel()),
+			err: validator.ErrFieldNotValid,
+		},
+		{
+			name: "MaintenanceUrl starts with non-http",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.EnhancedSetupFlowOptions = 1
+				msg.EnhancedSetupFlowTCFileSize = 1
+				msg.EnhancedSetupFlowTCRevision = 1
+				msg.EnhancedSetupFlowTCUrl = "https://sampleflowurl.dclauth/"
+				msg.EnhancedSetupFlowTCDigest = "=="
+				msg.MaintenanceUrl = "ftp://sampleflowurl.dclmodel"
 
 				return msg
 			}(validMsgCreateModel()),
@@ -761,6 +785,46 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 				msg.EnhancedSetupFlowTCDigest = "MWRjNGE0NDA0MWRjYWYxMTU0NWI3NTQzZGZlOTQyZjQ3NDJmNTY4YmU2OGZlZTI3NTQ0MWIwOTJiYjYwZGVlZA=="
 				msg.EnhancedSetupFlowTCFileSize = 1024
 				msg.MaintenanceUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
+
+				return msg
+			}(validMsgCreateModel()),
+		},
+		{
+			name: "CommissioningCustomFlowUrl can start with non-http URLs",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.CommissioningCustomFlowUrl = "ftp://sampleflowurl.dclmodel"
+
+				return msg
+			}(validMsgCreateModel()),
+		},
+		{
+			name: "UserManualUrl can start with non-http URLs",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.UserManualUrl = "ftp://sampleflowurl.dclmodel"
+
+				return msg
+			}(validMsgCreateModel()),
+		},
+		{
+			name: "SupportUrl can start with non-http URLs",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.SupportUrl = "ftp://sampleflowurl.dclmodel"
+
+				return msg
+			}(validMsgCreateModel()),
+		},
+		{
+			name: "ProductUrl can start with non-http URLs",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.ProductUrl = "ftp://sampleflowurl.dclmodel"
+
+				return msg
+			}(validMsgCreateModel()),
+		},
+		{
+			name: "LsfUrl can start with non-http URLs",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.LsfUrl = "ftp://sampleflowurl.dclmodel"
 
 				return msg
 			}(validMsgCreateModel()),
@@ -1089,6 +1153,16 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldNotValid,
 		},
 		{
+			name: "EnhancedSetupFlowTCUrl starts with non-http",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.EnhancedSetupFlowOptions = 1
+				msg.EnhancedSetupFlowTCUrl = "ftp://sampleflowurl.dclmodel"
+
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrFieldNotValid,
+		},
+		{
 			name: "EnhancedSetupFlowTCUrl length > 256",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.EnhancedSetupFlowOptions = 1
@@ -1172,6 +1246,56 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrRequiredFieldMissing,
 		},
 		{
+			name: "EnhancedSetupFlowOptions = 0, but EnhancedSetupFlowTCUrl is set",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.EnhancedSetupFlowOptions = 0
+				msg.EnhancedSetupFlowTCUrl = "https://sampleflowurl.dclauth/"
+
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrRequiredFieldMissing,
+		},
+		{
+			name: "EnhancedSetupFlowOptions = 0, but EnhancedSetupFlowTCFileSize is set",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.EnhancedSetupFlowOptions = 0
+				msg.EnhancedSetupFlowTCFileSize = 1
+
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrRequiredFieldMissing,
+		},
+		{
+			name: "EnhancedSetupFlowOptions = 0, but EnhancedSetupFlowTCRevision is set",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.EnhancedSetupFlowOptions = 0
+				msg.EnhancedSetupFlowTCRevision = 1
+
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrRequiredFieldMissing,
+		},
+		{
+			name: "EnhancedSetupFlowOptions = 0, but MaintenanceUrl is set",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.EnhancedSetupFlowOptions = 0
+				msg.MaintenanceUrl = "https://sampleflowurl.dclmodel"
+
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrRequiredFieldMissing,
+		},
+		{
+			name: "EnhancedSetupFlowOptions = 0, but EnhancedSetupFlowTCDigest is set",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.EnhancedSetupFlowOptions = 0
+				msg.EnhancedSetupFlowTCDigest = "--"
+
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrRequiredFieldMissing,
+		},
+		{
 			name: "EnhancedSetupFlowTCDigest is not base64 encoded string",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.EnhancedSetupFlowOptions = 1
@@ -1194,6 +1318,20 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 				msg.EnhancedSetupFlowTCUrl = "https://sampleflowurl.dclauth/"
 				msg.EnhancedSetupFlowTCDigest = "=="
 				msg.MaintenanceUrl = "http://sampleflowurl.dclmodel"
+
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrFieldNotValid,
+		},
+		{
+			name: "MaintenanceUrl starts with non-http:",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.EnhancedSetupFlowOptions = 1
+				msg.EnhancedSetupFlowTCFileSize = 1
+				msg.EnhancedSetupFlowTCRevision = 1
+				msg.EnhancedSetupFlowTCUrl = "https://sampleflowurl.dclauth/"
+				msg.EnhancedSetupFlowTCDigest = "=="
+				msg.MaintenanceUrl = "ftp://sampleflowurl.dclmodel"
 
 				return msg
 			}(validMsgUpdateModel()),
@@ -1448,6 +1586,59 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 				msg.EnhancedSetupFlowTCDigest = "MWRjNGE0NDA0MWRjYWYxMTU0NWI3NTQzZGZlOTQyZjQ3NDJmNTY4YmU2OGZlZTI3NTQ0MWIwOTJiYjYwZGVlZA=="
 				msg.EnhancedSetupFlowTCFileSize = 1024
 				msg.MaintenanceUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
+
+				return msg
+			}(validMsgUpdateModel()),
+		},
+		{
+			name: "EnhancedSetupFlowOptions&1 == 0 and EnhancedSetupFlowTCUrl, EnhancedSetupFlowTCRevision, EnhancedSetupFlowTCDigest, EnhancedSetupFlowTCFileSize and MaintenanceUrl are not set",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.EnhancedSetupFlowOptions = 0
+				msg.EnhancedSetupFlowTCUrl = ""
+				msg.EnhancedSetupFlowTCRevision = 0
+				msg.EnhancedSetupFlowTCDigest = ""
+				msg.EnhancedSetupFlowTCFileSize = 0
+				msg.MaintenanceUrl = ""
+
+				return msg
+			}(validMsgUpdateModel()),
+		},
+		{
+			name: "CommissioningCustomFlowUrl can start with non-http URLs",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.CommissioningCustomFlowUrl = "ftp://sampleflowurl.dclmodel"
+
+				return msg
+			}(validMsgUpdateModel()),
+		},
+		{
+			name: "UserManualUrl can start with non-http URLs",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.UserManualUrl = "ftp://sampleflowurl.dclmodel"
+
+				return msg
+			}(validMsgUpdateModel()),
+		},
+		{
+			name: "SupportUrl can start with non-http URLs",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.SupportUrl = "ftp://sampleflowurl.dclmodel"
+
+				return msg
+			}(validMsgUpdateModel()),
+		},
+		{
+			name: "ProductUrl can start with non-http URLs",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.ProductUrl = "ftp://sampleflowurl.dclmodel"
+
+				return msg
+			}(validMsgUpdateModel()),
+		},
+		{
+			name: "LsfUrl can start with non-http URLs",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.LsfUrl = "ftp://sampleflowurl.dclmodel"
 
 				return msg
 			}(validMsgUpdateModel()),
