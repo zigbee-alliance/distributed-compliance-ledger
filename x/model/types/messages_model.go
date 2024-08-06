@@ -106,7 +106,7 @@ func (msg *MsgCreateModel) ValidateBasic() error {
 		return err
 	}
 
-	if msg.EnhancedSetupFlowOptions == 0 {
+	if msg.EnhancedSetupFlowOptions&1 == 1 {
 		_, err = base64.StdEncoding.DecodeString(msg.EnhancedSetupFlowTCDigest)
 		if err != nil {
 			return NewErrEnhancedSetupFlowTCDigestIsNotBase64Encoded(msg.EnhancedSetupFlowTCDigest)
@@ -203,7 +203,7 @@ func (msg *MsgUpdateModel) ValidateBasic() error {
 		return err
 	}
 
-	if msg.EnhancedSetupFlowOptions == 0 {
+	if msg.EnhancedSetupFlowOptions&1 == 1 {
 		_, err = base64.StdEncoding.DecodeString(msg.EnhancedSetupFlowTCDigest)
 		if err != nil {
 			return NewErrEnhancedSetupFlowTCDigestIsNotBase64Encoded(msg.EnhancedSetupFlowTCDigest)

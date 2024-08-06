@@ -27,10 +27,11 @@ message Model {
   string creator = 18 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   uint32 schemaVersion = 19;
   int32 enhancedSetupFlowOptions = 20 [(gogoproto.moretags) = "validate:\"omitempty,gte=0,lte=65535\""];
-  string enhancedSetupFlowTCUrl = 21 [(gogoproto.moretags) = "validate:\"required_if=EnhancedSetupFlowOptions 0,omitempty,url,startsnotwith=http:,max=256\""];
-  int32 enhancedSetupFlowTCRevision = 22 [(gogoproto.moretags) = "validate:\"required_if=EnhancedSetupFlowOptions 0,gte=0,lte=65535\""];
-  string enhancedSetupFlowTCDigest = 23 [(gogoproto.moretags) = "validate:\"required_if=EnhancedSetupFlowOptions 0,omitempty,max=128\""];
+  string enhancedSetupFlowTCUrl = 21 [(gogoproto.moretags) = "validate:\"required_if_bit_0_set=EnhancedSetupFlowOptions,omitempty,url,startswith=https:,max=256\""];
+  int32 enhancedSetupFlowTCRevision = 22 [(gogoproto.moretags) = "validate:\"required_if_bit_0_set=EnhancedSetupFlowOptions,gte=0,lte=65535\""];
+  string enhancedSetupFlowTCDigest = 23 [(gogoproto.moretags) = "validate:\"required_if_bit_0_set=EnhancedSetupFlowOptions,omitempty,max=128\""];
   uint32 enhancedSetupFlowTCFileSize = 24 [(gogoproto.moretags) = "validate:\"required_with=EnhancedSetupFlowTCUrl\""];;
-  string maintenanceUrl = 25 [(gogoproto.moretags) = "validate:\"required_if=EnhancedSetupFlowOptions 0,omitempty,url,startsnotwith=http:,max=256\""];
+  string maintenanceUrl = 25 [(gogoproto.moretags) = "validate:\"required_if_bit_0_set=EnhancedSetupFlowOptions,omitempty,url,startswith=https:,max=256\""];
+
 }
 
