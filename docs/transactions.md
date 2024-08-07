@@ -251,6 +251,8 @@ a new model info with a new `vid` or `pid` can be created.
 
 All non-edited fields remain the same.
 
+If one of EnhancedSetupFlow or MaintenanceUrl fields needs to be updated, ALL EnhancedSetupFlow fields MUST be specified, and EnhancedSetupFlowOptions field must have bit 0 set.
+
 - Parameters:
   - vid: `uint16` -  model vendor ID (positive non-zero)
   - pid: `uint16` -  model product ID (positive non-zero)
