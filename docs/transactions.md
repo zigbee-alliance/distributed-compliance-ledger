@@ -10,6 +10,8 @@ See use case sequence diagrams for the examples of how transaction can be used.
 5. [Model and Model Version](#model-and-model_version)
 6. [Compliance](#certify_device_compliance)
 7. [X509 PKI](#x509-pki)
+    - [Device Attestation (DA): PAA, PAI](#device-attestation-certificates-da-paa-pai)
+    - [E2E (NOC): RCAC, ICAC](#e2e-noc-rcac-icac)
 8. [Auth](#auth)
 9. [Validator Node](#validator_node)
 10. [Upgrade](#upgrade)
@@ -842,7 +844,7 @@ Should be sent to trusted nodes only.
 **NOTE**: X.509 v3 certificates are only supported (all certificates MUST contain `Subject Key ID` field).
 All PKI related methods are based on this restriction.
 
-### Device Attestation Certificates (DA)
+### Device Attestation Certificates (DA): PAA, PAI
 
 #### PROPOSE_ADD_PAA
 
@@ -1354,7 +1356,7 @@ Should be sent to trusted nodes only.
 - REST API:
   - GET `/dcl/pki/proposed-revocation-certificates`
 
-### E2E (NOC)
+### E2E (NOC): RCAC, ICAC
 
 #### ADD_NOC_ROOT (RCAC)
 

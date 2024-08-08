@@ -8791,8 +8791,6 @@ paths:
                     schemaVersion:
                       type: integer
                       format: int64
-                    managedAclExtensionRequestFlowUrl:
-                      type: string
                     enhancedSetupFlowOptions:
                       type: integer
                       format: int32
@@ -9032,8 +9030,6 @@ paths:
                   schemaVersion:
                     type: integer
                     format: int64
-                  managedAclExtensionRequestFlowUrl:
-                    type: string
                   enhancedSetupFlowOptions:
                     type: integer
                     format: int32
@@ -9650,6 +9646,131 @@ paths:
           required: true
           type: string
         - name: authorityKeyId
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /dcl/pki/noc-certificates/{vid}/{subjectKeyId}:
+    get:
+      summary: Queries a NocCertificatesByVidAndSkid by index.
+      operationId: NocCertificatesByVidAndSkid
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              nocCertificatesByVidAndSkid:
+                type: object
+                properties:
+                  vid:
+                    type: integer
+                    format: int32
+                  subjectKeyId:
+                    type: string
+                  certs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        pemCert:
+                          type: string
+                        serialNumber:
+                          type: string
+                        issuer:
+                          type: string
+                        authorityKeyId:
+                          type: string
+                        rootSubject:
+                          type: string
+                        rootSubjectKeyId:
+                          type: string
+                        isRoot:
+                          type: boolean
+                        owner:
+                          type: string
+                        subject:
+                          type: string
+                        subjectKeyId:
+                          type: string
+                        approvals:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                              time:
+                                type: string
+                                format: int64
+                                title: >-
+                                  number of nanoseconds elapsed since January 1,
+                                  1970 UTC
+                              info:
+                                type: string
+                              schemaVersion:
+                                type: integer
+                                format: int64
+                        subjectAsText:
+                          type: string
+                        rejects:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                              time:
+                                type: string
+                                format: int64
+                                title: >-
+                                  number of nanoseconds elapsed since January 1,
+                                  1970 UTC
+                              info:
+                                type: string
+                              schemaVersion:
+                                type: integer
+                                format: int64
+                        vid:
+                          type: integer
+                          format: int32
+                        isNoc:
+                          type: boolean
+                        schemaVersion:
+                          type: integer
+                          format: int64
+                  tq:
+                    type: number
+                    format: float
+                  schemaVersion:
+                    type: integer
+                    format: int64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: vid
+          in: path
+          required: true
+          type: integer
+          format: int32
+        - name: subjectKeyId
           in: path
           required: true
           type: string
@@ -10279,131 +10400,6 @@ paths:
           required: true
           type: integer
           format: int32
-      tags:
-        - Query
-  /dcl/pki/noc-root-certificates/{vid}/{subjectKeyId}:
-    get:
-      summary: Queries a NocRootCertificatesByVidAndSkid by index.
-      operationId: NocRootCertificatesByVidAndSkid
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              nocRootCertificatesByVidAndSkid:
-                type: object
-                properties:
-                  vid:
-                    type: integer
-                    format: int32
-                  subjectKeyId:
-                    type: string
-                  certs:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        pemCert:
-                          type: string
-                        serialNumber:
-                          type: string
-                        issuer:
-                          type: string
-                        authorityKeyId:
-                          type: string
-                        rootSubject:
-                          type: string
-                        rootSubjectKeyId:
-                          type: string
-                        isRoot:
-                          type: boolean
-                        owner:
-                          type: string
-                        subject:
-                          type: string
-                        subjectKeyId:
-                          type: string
-                        approvals:
-                          type: array
-                          items:
-                            type: object
-                            properties:
-                              address:
-                                type: string
-                              time:
-                                type: string
-                                format: int64
-                                title: >-
-                                  number of nanoseconds elapsed since January 1,
-                                  1970 UTC
-                              info:
-                                type: string
-                              schemaVersion:
-                                type: integer
-                                format: int64
-                        subjectAsText:
-                          type: string
-                        rejects:
-                          type: array
-                          items:
-                            type: object
-                            properties:
-                              address:
-                                type: string
-                              time:
-                                type: string
-                                format: int64
-                                title: >-
-                                  number of nanoseconds elapsed since January 1,
-                                  1970 UTC
-                              info:
-                                type: string
-                              schemaVersion:
-                                type: integer
-                                format: int64
-                        vid:
-                          type: integer
-                          format: int32
-                        isNoc:
-                          type: boolean
-                        schemaVersion:
-                          type: integer
-                          format: int64
-                  tq:
-                    type: number
-                    format: float
-                  schemaVersion:
-                    type: integer
-                    format: int64
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: vid
-          in: path
-          required: true
-          type: integer
-          format: int32
-        - name: subjectKeyId
-          in: path
-          required: true
-          type: string
       tags:
         - Query
   /dcl/pki/proposed-certificates:
@@ -22340,8 +22336,6 @@ definitions:
       schemaVersion:
         type: integer
         format: int64
-      managedAclExtensionRequestFlowUrl:
-        type: string
       enhancedSetupFlowOptions:
         type: integer
         format: int32
@@ -22485,8 +22479,6 @@ definitions:
             schemaVersion:
               type: integer
               format: int64
-            managedAclExtensionRequestFlowUrl:
-              type: string
             enhancedSetupFlowOptions:
               type: integer
               format: int32
@@ -22580,8 +22572,6 @@ definitions:
           schemaVersion:
             type: integer
             format: int64
-          managedAclExtensionRequestFlowUrl:
-            type: string
           enhancedSetupFlowOptions:
             type: integer
             format: int32
@@ -22924,6 +22914,87 @@ definitions:
       schemaVersion:
         type: integer
         format: int64
+  zigbeealliance.distributedcomplianceledger.pki.NocCertificatesByVidAndSkid:
+    type: object
+    properties:
+      vid:
+        type: integer
+        format: int32
+      subjectKeyId:
+        type: string
+      certs:
+        type: array
+        items:
+          type: object
+          properties:
+            pemCert:
+              type: string
+            serialNumber:
+              type: string
+            issuer:
+              type: string
+            authorityKeyId:
+              type: string
+            rootSubject:
+              type: string
+            rootSubjectKeyId:
+              type: string
+            isRoot:
+              type: boolean
+            owner:
+              type: string
+            subject:
+              type: string
+            subjectKeyId:
+              type: string
+            approvals:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                    title: number of nanoseconds elapsed since January 1, 1970 UTC
+                  info:
+                    type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
+            subjectAsText:
+              type: string
+            rejects:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                    title: number of nanoseconds elapsed since January 1, 1970 UTC
+                  info:
+                    type: string
+                  schemaVersion:
+                    type: integer
+                    format: int64
+            vid:
+              type: integer
+              format: int32
+            isNoc:
+              type: boolean
+            schemaVersion:
+              type: integer
+              format: int64
+      tq:
+        type: number
+        format: float
+      schemaVersion:
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.pki.NocIcaCertificates:
     type: object
     properties:
@@ -23073,87 +23144,6 @@ definitions:
             schemaVersion:
               type: integer
               format: int64
-      schemaVersion:
-        type: integer
-        format: int64
-  zigbeealliance.distributedcomplianceledger.pki.NocRootCertificatesByVidAndSkid:
-    type: object
-    properties:
-      vid:
-        type: integer
-        format: int32
-      subjectKeyId:
-        type: string
-      certs:
-        type: array
-        items:
-          type: object
-          properties:
-            pemCert:
-              type: string
-            serialNumber:
-              type: string
-            issuer:
-              type: string
-            authorityKeyId:
-              type: string
-            rootSubject:
-              type: string
-            rootSubjectKeyId:
-              type: string
-            isRoot:
-              type: boolean
-            owner:
-              type: string
-            subject:
-              type: string
-            subjectKeyId:
-              type: string
-            approvals:
-              type: array
-              items:
-                type: object
-                properties:
-                  address:
-                    type: string
-                  time:
-                    type: string
-                    format: int64
-                    title: number of nanoseconds elapsed since January 1, 1970 UTC
-                  info:
-                    type: string
-                  schemaVersion:
-                    type: integer
-                    format: int64
-            subjectAsText:
-              type: string
-            rejects:
-              type: array
-              items:
-                type: object
-                properties:
-                  address:
-                    type: string
-                  time:
-                    type: string
-                    format: int64
-                    title: number of nanoseconds elapsed since January 1, 1970 UTC
-                  info:
-                    type: string
-                  schemaVersion:
-                    type: integer
-                    format: int64
-            vid:
-              type: integer
-              format: int32
-            isNoc:
-              type: boolean
-            schemaVersion:
-              type: integer
-              format: int64
-      tq:
-        type: number
-        format: float
       schemaVersion:
         type: integer
         format: int64
@@ -24350,93 +24340,10 @@ definitions:
           schemaVersion:
             type: integer
             format: int64
-  zigbeealliance.distributedcomplianceledger.pki.QueryGetNocIcaCertificatesResponse:
+  zigbeealliance.distributedcomplianceledger.pki.QueryGetNocCertificatesByVidAndSkidResponse:
     type: object
     properties:
-      nocIcaCertificates:
-        type: object
-        properties:
-          vid:
-            type: integer
-            format: int32
-          certs:
-            type: array
-            items:
-              type: object
-              properties:
-                pemCert:
-                  type: string
-                serialNumber:
-                  type: string
-                issuer:
-                  type: string
-                authorityKeyId:
-                  type: string
-                rootSubject:
-                  type: string
-                rootSubjectKeyId:
-                  type: string
-                isRoot:
-                  type: boolean
-                owner:
-                  type: string
-                subject:
-                  type: string
-                subjectKeyId:
-                  type: string
-                approvals:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      address:
-                        type: string
-                      time:
-                        type: string
-                        format: int64
-                        title: >-
-                          number of nanoseconds elapsed since January 1, 1970
-                          UTC
-                      info:
-                        type: string
-                      schemaVersion:
-                        type: integer
-                        format: int64
-                subjectAsText:
-                  type: string
-                rejects:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      address:
-                        type: string
-                      time:
-                        type: string
-                        format: int64
-                        title: >-
-                          number of nanoseconds elapsed since January 1, 1970
-                          UTC
-                      info:
-                        type: string
-                      schemaVersion:
-                        type: integer
-                        format: int64
-                vid:
-                  type: integer
-                  format: int32
-                isNoc:
-                  type: boolean
-                schemaVersion:
-                  type: integer
-                  format: int64
-          schemaVersion:
-            type: integer
-            format: int64
-  zigbeealliance.distributedcomplianceledger.pki.QueryGetNocRootCertificatesByVidAndSkidResponse:
-    type: object
-    properties:
-      nocRootCertificatesByVidAndSkid:
+      nocCertificatesByVidAndSkid:
         type: object
         properties:
           vid:
@@ -24518,6 +24425,89 @@ definitions:
           tq:
             type: number
             format: float
+          schemaVersion:
+            type: integer
+            format: int64
+  zigbeealliance.distributedcomplianceledger.pki.QueryGetNocIcaCertificatesResponse:
+    type: object
+    properties:
+      nocIcaCertificates:
+        type: object
+        properties:
+          vid:
+            type: integer
+            format: int32
+          certs:
+            type: array
+            items:
+              type: object
+              properties:
+                pemCert:
+                  type: string
+                serialNumber:
+                  type: string
+                issuer:
+                  type: string
+                authorityKeyId:
+                  type: string
+                rootSubject:
+                  type: string
+                rootSubjectKeyId:
+                  type: string
+                isRoot:
+                  type: boolean
+                owner:
+                  type: string
+                subject:
+                  type: string
+                subjectKeyId:
+                  type: string
+                approvals:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      time:
+                        type: string
+                        format: int64
+                        title: >-
+                          number of nanoseconds elapsed since January 1, 1970
+                          UTC
+                      info:
+                        type: string
+                      schemaVersion:
+                        type: integer
+                        format: int64
+                subjectAsText:
+                  type: string
+                rejects:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      time:
+                        type: string
+                        format: int64
+                        title: >-
+                          number of nanoseconds elapsed since January 1, 1970
+                          UTC
+                      info:
+                        type: string
+                      schemaVersion:
+                        type: integer
+                        format: int64
+                vid:
+                  type: integer
+                  format: int32
+                isNoc:
+                  type: boolean
+                schemaVersion:
+                  type: integer
+                  format: int64
           schemaVersion:
             type: integer
             format: int64
