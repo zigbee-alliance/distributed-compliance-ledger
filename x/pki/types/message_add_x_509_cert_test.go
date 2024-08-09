@@ -42,13 +42,13 @@ func TestMsgAddX509Cert_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
-			name: "certSchemaVersion > 65535",
+			name: "certSchemaVersion != 0",
 			msg: MsgAddX509Cert{
 				Signer:            sample.AccAddress(),
 				Cert:              testconstants.RootCertPem,
-				CertSchemaVersion: 65536,
+				CertSchemaVersion: 5,
 			},
-			err: validator.ErrFieldUpperBoundViolated,
+			err: validator.ErrFieldEqualBoundViolated,
 		},
 	}
 

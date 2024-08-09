@@ -83,7 +83,7 @@ func CmdUpdatePkiRevocationDistributionPoint() *cobra.Command {
 	cmd.Flags().Uint64Var(&dataFileSize, FlagDataFileSize, 0, "Total size in bytes of the file found at the DataURL. Must be omitted if RevocationType is 1")
 	cmd.Flags().StringVar(&dataDigest, FlagDataDigest, "", "Digest of the entire contents of the associated file downloaded from the DataURL. Must be omitted if RevocationType is 1. Must be provided if and only if the DataFileSize field is present")
 	cmd.Flags().Uint32Var(&dataDigestType, FlagDataDigestType, 0, "The type of digest used in the DataDigest field from the list of [1, 7, 8, 10, 11, 12] (IANA Named Information Hash Algorithm Registry). Must be provided if and only if the DataDigest field is present") //TODO: will give error if omitted
-	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 1, "Schema version - default is 1, the minimum value should be greater than or equal to 1")
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version - default is 0, the value should be equal to 0")
 
 	flags.AddTxFlagsToCmd(cmd)
 

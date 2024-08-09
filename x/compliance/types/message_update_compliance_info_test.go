@@ -192,7 +192,7 @@ func TestMsgUpdateComplianceInfo_ValidateBasic(t *testing.T) {
 			err: ErrInvalidUint32ForCdVersionNumber,
 		},
 		{
-			name: "schemaVersion > 65535",
+			name: "schemaVersion != 0",
 			msg: MsgUpdateComplianceInfo{
 				Creator:           sample.AccAddress(),
 				Pid:               1,
@@ -202,9 +202,9 @@ func TestMsgUpdateComplianceInfo_ValidateBasic(t *testing.T) {
 				SoftwareVersion:   testconstants.SoftwareVersion,
 				CDVersionNumber:   "312",
 				CDCertificateId:   testconstants.CDCertificateID,
-				SchemaVersion:     65536,
+				SchemaVersion:     5,
 			},
-			err: validator.ErrFieldUpperBoundViolated,
+			err: validator.ErrFieldEqualBoundViolated,
 		},
 	}
 	for _, tt := range tests {

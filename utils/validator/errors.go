@@ -29,4 +29,5 @@ var (
 	ErrFieldLowerBoundViolated  = errors.Register(Codespace, 903, "field lower bound violated")
 	ErrFieldUpperBoundViolated  = errors.Register(Codespace, 904, "field upper bound violated")
 	ErrFieldMinLengthNotReached = errors.Register(Codespace, 905, "field min length not reached")
+	ErrFieldEqualBoundViolated  = errors.Register(Codespace, 906, "field not equal pre-defined value")
 )

@@ -131,7 +131,7 @@ Adds a record about a Vendor.
   - companyLegalName: `string` -  Legal name of the vendor company
   - companyPreferredName: `optional(string)` -  Preferred name of the vendor company
   - vendorLandingPageURL: `optional(string)` -  URL of the vendor's landing page
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - In State: `vendorinfo/VendorInfo/value/<vid>`
 - Who can send:
   - Account with a vendor role who has the matching Vendor ID
@@ -151,7 +151,7 @@ Updates a record about a Vendor.
   - companyLegalName: `optional(string)` -  Legal name of the vendor company
   - companyPreferredName: `optional(string)` -  Preferred name of the vendor company
   - vendorLandingPageURL: `optional(string)` -  URL of the vendor's landing page
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - In State: `vendorinfo/VendorInfo/value/<vid>`
 - Who can send:
   - Account with a vendor role who has the matching Vendor ID
@@ -220,7 +220,7 @@ Not all fields can be edited (see `EDIT_MODEL`).
   - enhancedSetupFlowTCDigest: `optional(string)` - enhancedSetupFlowTCDigest SHALL contain the digest of the entire contents of the associated file downloaded from the EnhancedSetupFlowTCUrl field, encoded in base64 string representation and SHALL be used to ensure the contents of the downloaded file are authentic. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.
   - enhancedSetupFlowTCFileSize: `optional(uint32)` - enhancedSetupFlowTCFileSize SHALL indicate the total size of the Enhanced Setup Flow Terms and Conditions file in bytes, and SHALL be used to ensure the downloaded file size is within the bounds of EnhancedSetupFlowTCFileSize. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.
   - maintenanceUrl: `optional(string)` - maintenanceUrl SHALL identify a link to a vendor-specific URL which SHALL provide a manufacturer specific means to resolve any functionality limitations indicated by the TERMS_AND_CONDITIONS_CHANGED status code. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 1)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - In State:
   - `model/Model/value/<vid>/<pid>`
   - `model/VendorProducts/value/<vid>`
@@ -276,7 +276,7 @@ If one of EnhancedSetupFlow or MaintenanceUrl fields needs to be updated, ALL En
   - enhancedSetupFlowTCDigest: `optional(string)` - enhancedSetupFlowTCDigest SHALL contain the digest of the entire contents of the associated file downloaded from the EnhancedSetupFlowTCUrl field, encoded in base64 string representation and SHALL be used to ensure the contents of the downloaded file are authentic. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.
   - enhancedSetupFlowTCFileSize: `optional(uint32)` - enhancedSetupFlowTCFileSize SHALL indicate the total size of the Enhanced Setup Flow Terms and Conditions file in bytes, and SHALL be used to ensure the downloaded file size is within the bounds of EnhancedSetupFlowTCFileSize. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.
   - maintenanceUrl: `optional(string)` - maintenanceUrl SHALL identify a link to a vendor-specific URL which SHALL provide a manufacturer specific means to resolve any functionality limitations indicated by the TERMS_AND_CONDITIONS_CHANGED status code. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 1)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - In State: `model/Model/value/<vid>/<pid>`
 - Who can send:
   - Vendor account associated with the same vid who has created the model
@@ -327,7 +327,7 @@ If one of `OTA_URl`, `OTA_checksum` or `OTA_checksum_type` fields is set, then t
   - otaChecksum `optional(string)` - Digest of the entire contents of the associated OTA Software Update Image under the OtaUrl attribute, encoded in base64 string representation. The digest SHALL have been computed using the algorithm specified in OtaChecksumType
   - otaChecksumType `optional(string)` - Numeric identifier as defined in IANA Named Information Hash Algorithm Registry for the type of otaChecksum. For example, a value of 1 would match the sha-256 identifier, which maps to the SHA-256 digest algorithm
   - releaseNotesURL `optional(string)` - URL that contains product specific web page that contains release notes for the device model.
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - In State:
   - `model/ModelVersion/value/<vid>/<pid>/<softwareVersion>`
   - `model/ModelVersions/value/<vid>/<pid>`
@@ -374,7 +374,7 @@ All non-edited fields remain the same.
   - otaURL `optional(string)` - URL where to obtain the OTA image
   - otaFileSize `optional(string)`  - OtaFileSize is the total size of the OTA software image in bytes
   - otaChecksum `optional(string)` - Digest of the entire contents of the associated OTA Software Update Image under the OtaUrl attribute, encoded in base64 string representation. The digest SHALL have been computed using the algorithm specified in OtaChecksumType
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 
 - In State: `model/ModelVersion/value/<vid>/<pid>/<softwareVersion>`
 - Who can send:
@@ -512,7 +512,7 @@ from the revocation list.
   - transport `optional(string)` - optional field describing the transport
   - parentChild `optional(string)` - optional field describing the parent/child - Currently 'parent' and 'child' types are supported
   - certificationIDOfSoftwareComponent `optional(string)` - optional field describing the certification ID of software component
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - In State:
   - `compliance/ComplianceInfo/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
   - `compliance/CertifiedModel/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
@@ -550,7 +550,7 @@ Updates a compliance info by VID, PID, Software Version and Certification Type.
   - transport `optional(string)` - optional field describing the transport
   - parentChild `optional(string)` - optional field describing the parent/child - Currently 'parent' and 'child' types are supported
   - certificationIDOfSoftwareComponent `optional(string)` - optional field describing the certification ID of software component
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - Who can send:
   - CertificationCenter
 - CLI command:
@@ -598,7 +598,7 @@ is written on the ledger (`CERTIFY_MODEL` was called), or
   - revocationDate: `string` - The date of model revocation (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
   - certificationType: `string`  - Certification type - Currently 'zigbee' and 'matter', 'access control', 'product security' types are supported
   - reason `optional(string)`  - optional comment describing the reason of revocation
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - In State:
   - `compliance/ComplianceInfo/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
   - `compliance/RevokedModel/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
@@ -638,7 +638,7 @@ Can not be set if there is already a certification record on the ledger (certifi
   - transport `optional(string)` - optional field describing the transport
   - parentChild `optional(string)` - optional field describing the parent/child - Currently 'parent' and 'child' types are supported
   - certificationIDOfSoftwareComponent `optional(string)` - optional field describing the certification ID of software component
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - In State:
   - `compliance/ComplianceInfo/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
   - `compliance/ProvisionalModel/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
@@ -864,7 +864,7 @@ The PAA certificate is immutable. It can only be revoked by either the owner or 
   - info: `optional(string)` - information/notes for the proposal. Can contain up to 4096 characters.
   - time: `optional(int64)` - proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). This field cannot be specified using a CLI command and will use the current time by default.
   - vid: `uint16` -  Vendor ID (positive non-zero). Must be equal to the Certificate's `vid` field for VID-scoped PAA.
-  - schemaVersion: `optional(uint16)` - Certificate's schema version to support backward/forward compatability(default 0)
+  - schemaVersion: `optional(uint16)` - Certificate's schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - In State: `pki/ProposedCertificate/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - CLI command:
   - `dcld tx pki propose-add-x509-root-cert --certificate=<string-or-path> --from=<account>`
@@ -1045,7 +1045,7 @@ and DACs (leaf certificates) added to DCL if they are revoked in the CRL identif
   - dataDigest: `optional(string)` -  Digest of the entire contents of the associated file downloaded from the DataUrl. Must be omitted if RevocationType is 1. Must be provided if and only if the `DataFileSize` field is present.
   - dataDigestType: `optional(uint32)` - The type of digest used in the DataDigest field from the list of [1, 7, 8, 10, 11, 12] (IANA Named Information Hash Algorithm Registry). Must be provided if and only if the `DataDigest` field is present.
   - revocationType: `uint32` - The type of file found at the DataUrl for this entry. Supported types: 1 - RFC5280 Certificate Revocation List (CRL).
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatibility (default is 1, the minimum value should be greater than or equal to 1)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatibility. Should be equal to 0 (default 0)
 - In State:
   - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>` -> list of Revocation Distribution Points
   - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>/<vid>/<label>`-> Revocation Distribution Point
@@ -1073,7 +1073,7 @@ Updates an existing PKI Revocation distribution endpoint (such as RFC5280 Certif
   - dataFileSize: `optional(uint64)` -  Total size in bytes of the file found at the DataUrl. Must be omitted if RevocationType is 1.
   - dataDigest: `optional(string)` -  Digest of the entire contents of the associated file downloaded from the DataUrl. Must be omitted if RevocationType is 1. Must be provided if and only if the `DataFileSize` field is present.
   - dataDigestType: `optional(uint32)` - The type of digest used in the DataDigest field from the list of [1, 7, 8, 10, 11, 12] (IANA Named Information Hash Algorithm Registry). Must be provided if and only if the `DataDigest` field is present.
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatibility (default is 1, the minimum value should be greater than or equal to 1)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatibility. Should be equal to 0 (default 0)
 - In State:
   - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>` -> list of Revocation Distribution Points
   - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>/<vid>/<label>` -> Revocation Distribution Point
@@ -1368,7 +1368,7 @@ This transaction adds a NOC root certificate (RCAC) owned by the Vendor.
   - Vendor account
 - Parameters:
   - cert: `string` - The NOC Root Certificate (RCAC), encoded in X.509v3 PEM format. Can be a PEM string or a file path.
-  - schemaVersion: `optional(uint16)` - Certificate's schema version to support backward/forward compatability(default 0)
+  - schemaVersion: `optional(uint16)` - Certificate's schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - In State:
   - `pki/ApprovedCertificates/value/<Subject>/<SubjectKeyID>`
   - `pki/ApprovedCertificatesBySubject/value/<Subject>`

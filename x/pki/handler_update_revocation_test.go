@@ -39,7 +39,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_NegativeCases(t *testing.T
 				Label:                label,
 				DataURL:              testconstants.DataURL,
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
-				SchemaVersion:        1,
+				SchemaVersion:        0,
 			},
 			err: sdkerrors.ErrUnauthorized,
 		},
@@ -57,7 +57,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_NegativeCases(t *testing.T
 				Label:                label,
 				DataURL:              testconstants.DataURL,
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
-				SchemaVersion:        1,
+				SchemaVersion:        0,
 			},
 			err: sdkerrors.ErrUnauthorized,
 		},
@@ -75,7 +75,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_NegativeCases(t *testing.T
 				Label:                label,
 				DataURL:              testconstants.DataURL,
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
-				SchemaVersion:        1,
+				SchemaVersion:        0,
 			},
 			err: pkitypes.ErrMessageVidNotEqualAccountVid,
 		},
@@ -93,7 +93,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_NegativeCases(t *testing.T
 				Label:                label,
 				DataURL:              testconstants.DataURL,
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
-				SchemaVersion:        1,
+				SchemaVersion:        0,
 			},
 			err: pkitypes.ErrMessageVidNotEqualAccountVid,
 		},
@@ -109,7 +109,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_NegativeCases(t *testing.T
 				Label:                label,
 				DataURL:              testconstants.DataURL,
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
-				SchemaVersion:        1,
+				SchemaVersion:        0,
 			},
 			err: pkitypes.ErrPidNotFound,
 		},
@@ -123,7 +123,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_NegativeCases(t *testing.T
 				Label:                label,
 				DataURL:              testconstants.DataURL,
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
-				SchemaVersion:        1,
+				SchemaVersion:        0,
 			},
 			err: pkitypes.ErrPkiRevocationDistributionPointDoesNotExists,
 		},
@@ -139,7 +139,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_NegativeCases(t *testing.T
 				Label:                label,
 				DataURL:              testconstants.DataURL,
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
-				SchemaVersion:        1,
+				SchemaVersion:        0,
 			},
 			err: pkitypes.ErrRootCertificateIsNotSelfSigned,
 		},
@@ -155,7 +155,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_NegativeCases(t *testing.T
 				Label:                label,
 				DataURL:              testconstants.DataURL,
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
-				SchemaVersion:        1,
+				SchemaVersion:        0,
 			},
 			err: pkitypes.ErrCertificateDoesNotExist,
 		},
@@ -173,7 +173,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_NegativeCases(t *testing.T
 				DataDigest:         testconstants.DataDigest + "new",
 				DataDigestType:     1,
 				IssuerSubjectKeyID: testconstants.SubjectKeyIDWithoutColons,
-				SchemaVersion:      1,
+				SchemaVersion:      0,
 			},
 			err: pkitypes.ErrDataFieldPresented,
 		},
@@ -192,7 +192,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_NegativeCases(t *testing.T
 				Label:                label,
 				DataURL:              testconstants.DataURL,
 				IssuerSubjectKeyID:   testconstants.IntermediateCertWithVid1SubjectKeyIDWithoutColumns,
-				SchemaVersion:        1,
+				SchemaVersion:        0,
 			},
 			err: pkitypes.ErrInvalidCertificate,
 		},
@@ -211,7 +211,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_NegativeCases(t *testing.T
 				Label:                label,
 				DataURL:              testconstants.DataURL,
 				IssuerSubjectKeyID:   testconstants.IntermediateCertWithVid1SubjectKeyIDWithoutColumns,
-				SchemaVersion:        1,
+				SchemaVersion:        0,
 			},
 			err: pkitypes.ErrCertNotChainedBack,
 		},
@@ -303,7 +303,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_DataURLNotUnique(t *testin
 		Label:                "label",
 		DataURL:              addPkiRevocationDistributionPoint1.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
-		SchemaVersion:        1,
+		SchemaVersion:        0,
 	}
 	_, err = setup.Handler(setup.Ctx, &updatePkiRevocationDistributionPoint)
 	require.NoError(t, err)
@@ -339,7 +339,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAI_NotChainedOnLedger(t *
 		Label:                "label",
 		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
-		SchemaVersion:        1,
+		SchemaVersion:        0,
 	}
 	_, err = setup.Handler(setup.Ctx, &updatePkiRevocationDistributionPoint)
 	require.ErrorIs(t, err, pkitypes.ErrCertNotChainedBack)
@@ -372,7 +372,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAI_VID_TO_PAI_NOVID(t *te
 		CrlSignerCertificate: testconstants.IntermediateCertPem,
 		Label:                addPkiRevocationDistributionPoint.Label,
 		IssuerSubjectKeyID:   addPkiRevocationDistributionPoint.IssuerSubjectKeyID,
-		SchemaVersion:        1,
+		SchemaVersion:        0,
 	}
 	_, err = setup.Handler(setup.Ctx, &updatePkiRevocationDistributionPoint)
 	require.ErrorIs(t, err, pkitypes.ErrCRLSignerCertificateVidNotEqualRevocationPointVid)
@@ -405,7 +405,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAA_NOVID_DifferentVID(t *
 		CrlSignerCertificate: testconstants.RootCertPem,
 		Label:                addPkiRevocationDistributionPoint.Label,
 		IssuerSubjectKeyID:   addPkiRevocationDistributionPoint.IssuerSubjectKeyID,
-		SchemaVersion:        1,
+		SchemaVersion:        0,
 	}
 	_, err = setup.Handler(setup.Ctx, &updatePkiRevocationDistributionPoint)
 	require.ErrorIs(t, err, pkitypes.ErrMessageVidNotEqualRootCertVid)
@@ -432,7 +432,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAA_VID(t *testing.T) {
 				IssuerSubjectKeyID:   addedRevocation.IssuerSubjectKeyID,
 				SchemaVersion:        addedRevocation.SchemaVersion,
 			},
-			schemaVersion: uint32(1),
+			schemaVersion: uint32(0),
 		},
 		{
 			name: "Valid: MinimalParams",
@@ -441,9 +441,9 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAA_VID(t *testing.T) {
 				Vid:                addedRevocation.Vid,
 				Label:              addedRevocation.Label,
 				IssuerSubjectKeyID: addedRevocation.IssuerSubjectKeyID,
-				SchemaVersion:      1,
+				SchemaVersion:      0,
 			},
-			schemaVersion: uint32(1),
+			schemaVersion: uint32(0),
 		},
 		{
 			name: "Valid: AllParams",
@@ -453,9 +453,9 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAA_VID(t *testing.T) {
 				Label:              addedRevocation.Label,
 				DataURL:            addedRevocation.DataURL + "/new",
 				IssuerSubjectKeyID: addedRevocation.IssuerSubjectKeyID,
-				SchemaVersion:      999999999,
+				SchemaVersion:      0,
 			},
-			schemaVersion: uint32(999999999),
+			schemaVersion: uint32(0),
 		},
 	}
 	for _, tc := range cases {
@@ -512,7 +512,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAA_NOVID(t *testing.T) {
 				Label:                addedRevocation.Label,
 				DataURL:              addedRevocation.DataURL,
 				IssuerSubjectKeyID:   addedRevocation.IssuerSubjectKeyID,
-				SchemaVersion:        1,
+				SchemaVersion:        0,
 			},
 		},
 		{
@@ -522,7 +522,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAA_NOVID(t *testing.T) {
 				Vid:                addedRevocation.Vid,
 				Label:              addedRevocation.Label,
 				IssuerSubjectKeyID: addedRevocation.IssuerSubjectKeyID,
-				SchemaVersion:      1,
+				SchemaVersion:      0,
 			},
 		},
 		{
@@ -533,7 +533,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAA_NOVID(t *testing.T) {
 				Label:              addedRevocation.Label,
 				DataURL:            addedRevocation.DataURL + "/new",
 				IssuerSubjectKeyID: addedRevocation.IssuerSubjectKeyID,
-				SchemaVersion:      1,
+				SchemaVersion:      0,
 			},
 		},
 	}
@@ -690,7 +690,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAIWithoutPid(t *testing.T
 		Label:                label,
 		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
-		SchemaVersion:        1,
+		SchemaVersion:        0,
 	}
 	_, err = setup.Handler(setup.Ctx, &updatePkiRevocationDistributionPoint)
 	require.NoError(t, err)
@@ -717,7 +717,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_CrlSignerCertificateField(
 				CrlSignerCertificate: testconstants.RootCertPem,
 				Label:                label,
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
-				SchemaVersion:        1,
+				SchemaVersion:        0,
 			},
 		},
 		{
@@ -731,7 +731,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_CrlSignerCertificateField(
 				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 				Label:                label,
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
-				SchemaVersion:        1,
+				SchemaVersion:        0,
 			},
 		},
 		{
@@ -745,7 +745,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_CrlSignerCertificateField(
 				CrlSignerCertificate: testconstants.PAACertNoVid,
 				Label:                label,
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
-				SchemaVersion:        1,
+				SchemaVersion:        0,
 			},
 		},
 		{
@@ -761,7 +761,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_CrlSignerCertificateField(
 				Label:                label,
 				DataURL:              testconstants.DataURL,
 				IssuerSubjectKeyID:   testconstants.IntermediateCertWithVid1SubjectKeyIDWithoutColumns,
-				SchemaVersion:        1,
+				SchemaVersion:        0,
 			},
 		},
 		{
@@ -776,7 +776,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_CrlSignerCertificateField(
 				DataURL:              testconstants.DataURL,
 				IssuerSubjectKeyID:   testconstants.RootSubjectKeyIDWithoutColumns,
 				RevocationType:       types.CRLRevocationType,
-				SchemaVersion:        1,
+				SchemaVersion:        0,
 			},
 			updateRevocation: &types.MsgUpdatePkiRevocationDistributionPoint{
 				Signer:               vendorAcc.String(),
@@ -784,7 +784,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_CrlSignerCertificateField(
 				Label:                label,
 				DataURL:              testconstants.DataURL,
 				IssuerSubjectKeyID:   testconstants.RootSubjectKeyIDWithoutColumns,
-				SchemaVersion:        1,
+				SchemaVersion:        0,
 			},
 		},
 	}

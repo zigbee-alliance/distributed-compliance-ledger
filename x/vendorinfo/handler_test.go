@@ -141,7 +141,7 @@ func TestHandler_UpdateVendorInfo(t *testing.T) {
 	require.NoError(t, err)
 
 	// update existing vendorinfo
-	msgUpdateVendorInfo.SchemaVersion = 2
+	msgUpdateVendorInfo.SchemaVersion = 0
 	_, err = setup.Handler(setup.Ctx, msgUpdateVendorInfo)
 	require.NoError(t, err)
 

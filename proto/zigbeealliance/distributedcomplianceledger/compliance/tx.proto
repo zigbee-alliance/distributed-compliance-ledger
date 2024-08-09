@@ -40,7 +40,7 @@ message MsgCertifyModel {
   string transport = 19 [(gogoproto.moretags) = "validate:\"max=64\""];
   string parentChild = 20 [(gogoproto.moretags) = "validate:\"max=64\""];
   string certificationIdOfSoftwareComponent = 21 [(gogoproto.moretags) = "validate:\"max=64\""];
-  uint32 schemaVersion = 22 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
+  uint32 schemaVersion = 22 [(gogoproto.moretags) = "validate:\"eq=0\""];
 }
 
 message MsgCertifyModelResponse {
@@ -56,7 +56,7 @@ message MsgRevokeModel {
   string revocationDate = 7 [(gogoproto.moretags) = "validate:\"required\""];
   string certificationType = 8 [(gogoproto.moretags) = "validate:\"required,max=100\""];
   string reason = 9 [(gogoproto.moretags) = "validate:\"max=102400\""];
-  uint32 schemaVersion = 10 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
+  uint32 schemaVersion = 10 [(gogoproto.moretags) = "validate:\"eq=0\""];
 }
 
 message MsgRevokeModelResponse {
@@ -84,7 +84,7 @@ message MsgProvisionModel {
   string transport = 19 [(gogoproto.moretags) = "validate:\"max=64\""];
   string parentChild = 20 [(gogoproto.moretags) = "validate:\"max=64\""];
   string certificationIdOfSoftwareComponent = 21 [(gogoproto.moretags) = "validate:\"max=64\""];
-  uint32 schemaVersion = 22 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
+  uint32 schemaVersion = 22 [(gogoproto.moretags) = "validate:\"eq=0\""];
 }
 
 message MsgProvisionModelResponse {
@@ -112,7 +112,7 @@ message MsgUpdateComplianceInfo {
   string OSVersion = 19 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
   string parentChild = 20 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
   string certificationIdOfSoftwareComponent = 21 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
-  uint32 schemaVersion = 22 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
+  uint32 schemaVersion = 22 [(gogoproto.moretags) = "validate:\"eq=0\""];
 }
 
 message MsgUpdateComplianceInfoResponse {
