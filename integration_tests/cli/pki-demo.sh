@@ -193,6 +193,7 @@ result=$(get_txn_result "$result")
 response_does_not_contain "$result" "\"code\": 0"
 
 echo "$trustee_account (Trustee) propose Root certificate"
+cert_schema_version_0=0
 result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_path" --schemaVersion=$cert_schema_version_0 --from $trustee_account   --vid $vid --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
@@ -460,7 +461,6 @@ test_divider
 
 echo "$vendor_account add Leaf certificate"
 leaf_path="integration_tests/constants/leaf_cert"
-schema_version_0=0
 result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$leaf_path" --from $vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
@@ -1175,7 +1175,6 @@ test_divider
 echo "10. PROPOSE GOOGLE ROOT CERT"
 test_divider
 
-cert_schema_version_0=0
 echo "$user_account (Not Trustee) propose Root certificate"
 google_root_path="integration_tests/constants/google_root_cert"
 result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$google_root_path" --from $user_account --vid=$google_cert_vid --yes)

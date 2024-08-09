@@ -153,11 +153,11 @@ result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 414"
 
 echo "Add first NOC root certificate by vendor with VID = $vid"
+cert_schema_version_0=0
 result=$(echo "$passphrase" | dcld tx pki add-noc-x509-root-cert --certificate="$noc_root_cert_1_path" --schemaVersion=$cert_schema_version_0 --from $vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
-cert_schema_version_0=0
 schema_version_0=0
 echo "Add second NOC root certificate by vendor with VID = $vid"
 result=$(echo "$passphrase" | dcld tx pki add-noc-x509-root-cert --certificate="$noc_root_cert_2_path" --from $vendor_account --yes)
