@@ -97,6 +97,14 @@ func Validate(s interface{}) error {
 		return t
 	})
 
+	vl.RegisterTranslation("eq", trans, func(ut ut.Translator) error {
+		return ut.Add("eq", "{0} must be equal {1}", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("eq", fe.Field(), fe.Param())
+
+		return t
+	})
+
 	// Please note that we use `max` tag for fields of `string` type only
 	vl.RegisterTranslation("max", trans, func(ut ut.Translator) error {
 		return ut.Add("max", "maximum length for {0} allowed is {1}", true)
@@ -177,6 +185,10 @@ func Validate(s interface{}) error {
 
 			if e.Tag() == "lte" {
 				return errors.Wrap(ErrFieldUpperBoundViolated, e.Translate(trans))
+			}
+
+			if e.Tag() == "eq" {
+				return errors.Wrap(ErrFieldEqualBoundViolated, e.Translate(trans))
 			}
 		}
 	}

@@ -325,14 +325,14 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
-			name: "schemaVersion > 65535",
+			name: "schemaVersion != 0",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.Creator = sample.AccAddress()
-				msg.SchemaVersion = 65536
+				msg.SchemaVersion = 5
 
 				return msg
 			}(validMsgCreateModel()),
-			err: validator.ErrFieldUpperBoundViolated,
+			err: validator.ErrFieldEqualBoundViolated,
 		},
 		{
 			name: "EnhancedSetupFlowOptions > 65535",
@@ -1124,14 +1124,14 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldUpperBoundViolated,
 		},
 		{
-			name: "schemaVersion > 65535",
+			name: "schemaVersion != 0",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.Creator = sample.AccAddress()
-				msg.SchemaVersion = 65536
+				msg.SchemaVersion = 5
 
 				return msg
 			}(validMsgUpdateModel()),
-			err: validator.ErrFieldUpperBoundViolated,
+			err: validator.ErrFieldEqualBoundViolated,
 		},
 		{
 			name: "EnhancedSetupFlowOptions > 65535",

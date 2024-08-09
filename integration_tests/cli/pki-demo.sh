@@ -187,14 +187,13 @@ test_divider
 
 echo "$user_account (Not Trustee) propose Root certificate"
 root_path="integration_tests/constants/root_cert"
-cert_schema_version_1=1
 schema_version_0=0
 result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_path" --from $user_account --vid $vid --yes)
 result=$(get_txn_result "$result")
 response_does_not_contain "$result" "\"code\": 0"
 
 echo "$trustee_account (Trustee) propose Root certificate"
-result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_path" --schemaVersion=$cert_schema_version_1 --from $trustee_account   --vid $vid --yes)
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_path" --schemaVersion=$cert_schema_version_0 --from $trustee_account   --vid $vid --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -205,7 +204,7 @@ result=$(dcld query pki all-proposed-x509-root-certs)
 echo $result | jq
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
-check_response "$result" "\"certSchemaVersion\": $cert_schema_version_1"
+check_response "$result" "\"certSchemaVersion\": $cert_schema_version_0"
 check_response "$result" "\"schemaVersion\": $schema_version_0"
 
 test_divider
@@ -390,7 +389,7 @@ test_divider
 
 echo "$vendor_account adds Intermediate certificate"
 intermediate_path="integration_tests/constants/intermediate_cert"
-result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_path" --schemaVersion=$cert_schema_version_1 --from $vendor_account --yes)
+result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_path" --schemaVersion=$cert_schema_version_0 --from $vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -404,7 +403,7 @@ check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$intermediate_cert_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$intermediate_cert_subject_as_text\""
-check_response "$result" "\"schemaVersion\": $cert_schema_version_1"
+check_response "$result" "\"schemaVersion\": $cert_schema_version_0"
 check_response "$result" "\"schemaVersion\": 0"
 check_response "$result" "\"approvals\": \\[\\]"
 

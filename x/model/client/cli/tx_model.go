@@ -140,7 +140,7 @@ and for these values the commissioningModeSecondaryStepInstruction SHALL be set`
 		"URL that contains product specific web page that contains details for the device model.")
 	cmd.Flags().StringVar(&lsfURL, FlagLsfURL, "", "URL to the Localized String File of this product")
 	cli.AddTxFlagsToCmd(cmd)
-	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 1, "Schema version - default value is 1")
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version - default value is 1")
 	cmd.Flags().Int32Var(&enhancedSetupFlowOptions, FlagEnhancedSetupFlowOptions, 0,
 		"enhancedSetupFlowOptions SHALL identify the configuration options for the Enhanced Setup Flow.")
 	cmd.Flags().StringVar(&enhancedSetupFlowTCURL, FlagEnhancedSetupFlowTCURL, "",
