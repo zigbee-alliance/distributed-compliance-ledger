@@ -50,6 +50,7 @@ test_divider
 echo "Create VendorInfo Record for VID: $vid"
 companyLegalName="XYZ IOT Devices Inc"
 vendorName="XYZ Devices"
+schema_version_0=0
 result=$(echo "test1234" | dcld tx vendorinfo add-vendor --vid=$vid --companyLegalName="$companyLegalName" --vendorName="$vendorName" --schemaVersion=$schema_version_0 --from=$vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
