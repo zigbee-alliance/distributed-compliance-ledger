@@ -278,14 +278,14 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
-			name: "schemaVersion > 65535",
+			name: "schemaVersion !=0",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.Creator = sample.AccAddress()
-				msg.SchemaVersion = 65536
+				msg.SchemaVersion = 5
 
 				return msg
 			}(validMsgCreateModelVersion()),
-			err: validator.ErrFieldUpperBoundViolated,
+			err: validator.ErrFieldEqualBoundViolated,
 		},
 	}
 
@@ -713,14 +713,14 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
-			name: "schemaVersion > 65535",
+			name: "schemaVersion != 0",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.Creator = sample.AccAddress()
-				msg.SchemaVersion = 65536
+				msg.SchemaVersion = 5
 
 				return msg
 			}(validMsgUpdateModelVersion()),
-			err: validator.ErrFieldUpperBoundViolated,
+			err: validator.ErrFieldEqualBoundViolated,
 		},
 	}
 

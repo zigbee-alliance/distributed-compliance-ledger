@@ -162,7 +162,7 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldNotValid,
 		},
 		{
-			name: "schemaVersion > 65535",
+			name: "schemaVersion != 0",
 			msg: MsgCreateVendorInfo{
 				Creator:              sample.AccAddress(),
 				VendorID:             testconstants.VendorID1,
@@ -170,9 +170,9 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 				CompanyLegalName:     testconstants.CompanyLegalName,
 				CompanyPreferredName: testconstants.CompanyPreferredName,
 				VendorLandingPageURL: testconstants.VendorLandingPageURL,
-				SchemaVersion:        65536,
+				SchemaVersion:        5,
 			},
-			err: validator.ErrFieldUpperBoundViolated,
+			err: validator.ErrFieldEqualBoundViolated,
 		},
 	}
 

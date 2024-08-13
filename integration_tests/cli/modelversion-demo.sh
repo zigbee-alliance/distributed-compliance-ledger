@@ -35,9 +35,9 @@ check_response "$result" "\"code\": 0"
 test_divider
 
 sv=$RANDOM
-schema_version_2=2
+schema_version_0=0
 echo "Create a Device Model Version with VID: $vid PID: $pid SV: $sv"
-result=$(echo 'test1234' | dcld tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=1   --schemaVersion=$schema_version_2 --from=$vendor_account --yes)
+result=$(echo 'test1234' | dcld tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=1   --schemaVersion=$schema_version_0 --from=$vendor_account --yes)
 result=$(get_txn_result "$result")
 echo "$result"
 check_response "$result" "\"code\": 0"
@@ -56,7 +56,7 @@ check_response "$result" "\"cdVersionNumber\": 1"
 check_response "$result" "\"softwareVersionValid\": true"
 check_response "$result" "\"minApplicableSoftwareVersion\": 1"
 check_response "$result" "\"maxApplicableSoftwareVersion\": 10"
-check_response "$result" "\"schemaVersion\": $schema_version_2"
+check_response "$result" "\"schemaVersion\": $schema_version_0"
 
 test_divider
 
@@ -89,10 +89,9 @@ check_response "$result" "Not Found"
 
 test_divider
 
-schema_version_3=3
 # Update the existing model version
 echo "Update Device Model Version with VID: $vid PID: $pid SV: $sv"
-result=$(echo 'test1234' | dcld tx model update-model-version --vid=$vid --pid=$pid --minApplicableSoftwareVersion=2 --maxApplicableSoftwareVersion=10 --softwareVersion=$sv --softwareVersionValid=false  --schemaVersion=$schema_version_3 --from=$vendor_account --yes)
+result=$(echo 'test1234' | dcld tx model update-model-version --vid=$vid --pid=$pid --minApplicableSoftwareVersion=2 --maxApplicableSoftwareVersion=10 --softwareVersion=$sv --softwareVersionValid=false  --schemaVersion=$schema_version_0 --from=$vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -110,7 +109,7 @@ check_response "$result" "\"cdVersionNumber\": 1"
 check_response "$result" "\"softwareVersionValid\": false"
 check_response "$result" "\"minApplicableSoftwareVersion\": 2"
 check_response "$result" "\"maxApplicableSoftwareVersion\": 10"
-check_response "$result" "\"schemaVersion\": $schema_version_3"
+check_response "$result" "\"schemaVersion\": $schema_version_0"
 
 test_divider
 

@@ -191,8 +191,8 @@ test_divider
 
 echo "9. ADD REVOCATION POINT FOR VID-SCOPED PAA"
 
-schema_version_2=2
-result=$(dcld tx pki add-revocation-point --vid=$vid --is-paa="true" --certificate="$paa_cert_with_numeric_vid_path" --label="$label" --data-url="$data_url" --issuer-subject-key-id=$issuer_subject_key_id --revocation-type=1 --schemaVersion=$schema_version_2 --from=$vendor_account --yes)
+schema_version_0=0
+result=$(dcld tx pki add-revocation-point --vid=$vid --is-paa="true" --certificate="$paa_cert_with_numeric_vid_path" --label="$label" --data-url="$data_url" --issuer-subject-key-id=$issuer_subject_key_id --revocation-type=1 --schemaVersion=$schema_version_0 --from=$vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo $result
@@ -201,7 +201,7 @@ result=$(dcld query pki all-revocation-points)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"label\": \"$label\""
 check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
-check_response "$result" "\"schemaVersion\": $schema_version_2"
+check_response "$result" "\"schemaVersion\": $schema_version_0"
 
 result=$(dcld query pki revocation-points --issuer-subject-key-id=$issuer_subject_key_id)
 check_response "$result" "\"vid\": $vid"
@@ -409,8 +409,7 @@ echo $result
 test_divider
 
 echo "21. UPDATE REVOCATION POINT FOR VID-SCOPED PAA"
-schema_version_3=3
-result=$(dcld tx pki update-revocation-point --vid=$vid --certificate="$root_cert_path" --label="$label" --data-url="$data_url" --issuer-subject-key-id=$issuer_subject_key_id --schemaVersion=$schema_version_3 --from=$vendor_account --yes)
+result=$(dcld tx pki update-revocation-point --vid=$vid --certificate="$root_cert_path" --label="$label" --data-url="$data_url" --issuer-subject-key-id=$issuer_subject_key_id --schemaVersion=$schema_version_0 --from=$vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo $result
@@ -420,7 +419,7 @@ check_response "$result" "\"CrlSignerCertificate\": $(<$root_cert_path)"
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"label\": \"$label\""
 check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
-check_response "$result" "\"schemaVersion\": $schema_version_3"
+check_response "$result" "\"schemaVersion\": $schema_version_0"
 test_divider
 
 echo "22. UPDATE REVOCATION POINT FOR NON-VID SCOPED PAA"

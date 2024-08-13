@@ -76,16 +76,16 @@ func TestMsgProposeAddX509RootCert_ValidateBasic(t *testing.T) {
 			err: pkitypes.ErrCertificateVidNotEqualMsgVid,
 		},
 		{
-			name: "certSchemaVersion > 65535",
+			name: "certSchemaVersion != 0",
 			msg: MsgProposeAddX509RootCert{
 				Signer:            sample.AccAddress(),
 				Cert:              testconstants.RootCertPem,
 				Info:              testconstants.Info,
 				Time:              12345,
 				Vid:               testconstants.Vid,
-				CertSchemaVersion: 65536,
+				CertSchemaVersion: 5,
 			},
-			err: validator.ErrFieldUpperBoundViolated,
+			err: validator.ErrFieldEqualBoundViolated,
 		},
 	}
 
