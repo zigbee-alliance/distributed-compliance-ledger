@@ -139,6 +139,7 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
 	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
 	basetypes.RegisterQueryServer(cfg.QueryServer(), am.basekeeper)
+	_ = cfg.RegisterMigration(types.ModuleName, 1, func(s sdk.Context) error { return nil })
 }
 
 // RegisterInvariants registers the dclauth module's invariants.
