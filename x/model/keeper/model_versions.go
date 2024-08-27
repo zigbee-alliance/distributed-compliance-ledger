@@ -86,3 +86,39 @@ func (k Keeper) AddModelVersion(ctx sdk.Context, vid int32, pid int32, softwareV
 
 	k.SetModelVersions(ctx, modelVersions)
 }
+
+// RemoveSoftwareVersion deletes a softwareVersion from existing ModelVersions.
+func (k Keeper) RemoveSoftwareVersion(ctx sdk.Context, vid int32, pid int32, softwareVersion uint32) {
+	modelVersions, found := k.GetModelVersions(ctx, vid, pid)
+
+	if !found {
+		return
+	}
+
+	// Find the index of the softwareVersion to delete
+	index := -1
+	for i, value := range modelVersions.SoftwareVersions {
+		if value == softwareVersion {
+			index = i
+			break
+		}
+	}
+
+	// If the softwareVersion is not found, no need to proceed
+	if index == -1 {
+		return
+	}
+
+	modelVersions.SoftwareVersions = append(
+		modelVersions.SoftwareVersions[:index],
+		modelVersions.SoftwareVersions[index+1:]...,
+	)
+
+	// Delete modelVersions if there are no softwareVersions left
+	if len(modelVersions.SoftwareVersions) == 0 {
+		k.RemoveModelVersions(ctx, vid, pid)
+		return
+	}
+
+	k.SetModelVersions(ctx, modelVersions)
+}
