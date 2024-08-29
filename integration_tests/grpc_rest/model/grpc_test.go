@@ -68,6 +68,11 @@ func TestDeleteModelVersionGRPC(t *testing.T) {
 	model.DeleteModelVersion(&suite)
 }
 
+func TestDeleteModelVersionBeforeDeletingModelGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	model.DeleteModelVersionBeforeDeletingModel(&suite)
+}
+
 func TestDeleteModelVersionDifferentVidGRPC(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, false)
 	model.DeleteModelVersionDifferentVid(&suite)
