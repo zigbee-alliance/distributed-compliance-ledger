@@ -100,6 +100,7 @@ func (k Keeper) RemoveSoftwareVersion(ctx sdk.Context, vid int32, pid int32, sof
 	for i, value := range modelVersions.SoftwareVersions {
 		if value == softwareVersion {
 			index = i
+
 			break
 		}
 	}
@@ -117,6 +118,7 @@ func (k Keeper) RemoveSoftwareVersion(ctx sdk.Context, vid int32, pid int32, sof
 	// Delete modelVersions if there are no softwareVersions left
 	if len(modelVersions.SoftwareVersions) == 0 {
 		k.RemoveModelVersions(ctx, vid, pid)
+
 		return
 	}
 
