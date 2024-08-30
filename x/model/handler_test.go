@@ -1389,6 +1389,52 @@ func TestHandler_DeleteModelVersion(t *testing.T) {
 	require.Equal(t, codes.NotFound, status.Code(err))
 }
 
+func TestHandler_DeleteOneOfTwoModelVersions(t *testing.T) {
+	setup := Setup(t)
+
+	// add new model
+	msgCreateModel := NewMsgCreateModel(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// add two new model versions
+	msgCreateModelVersion1 := NewMsgCreateModelVersion(setup.Vendor, testconstants.SoftwareVersion)
+	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion1)
+	require.NoError(t, err)
+
+	msgCreateModelVersion2 := NewMsgCreateModelVersion(setup.Vendor, testconstants.SoftwareVersion+1)
+	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion2)
+	require.NoError(t, err)
+
+	// mock model versions not to be certified
+	complianceKeeper := setup.ComplianceKeeper
+	complianceKeeper.On("GetComplianceInfo", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(false)
+
+	msgDeleteModelVersion := NewMsgDeleteModelVersion(setup.Vendor)
+	_, err = setup.Handler(setup.Ctx, msgDeleteModelVersion)
+	require.NoError(t, err)
+
+	// query deleted model version
+	_, err = queryModelVersion(
+		setup,
+		msgCreateModelVersion1.Vid,
+		msgCreateModelVersion1.Pid,
+		msgCreateModelVersion1.SoftwareVersion,
+	)
+	require.Error(t, err)
+	require.Equal(t, codes.NotFound, status.Code(err))
+
+	// query not deleted model version
+	modelVersion, err := queryModelVersion(
+		setup,
+		msgCreateModelVersion2.Vid,
+		msgCreateModelVersion2.Pid,
+		msgCreateModelVersion2.SoftwareVersion,
+	)
+	require.NoError(t, err)
+	require.NotNil(t, modelVersion)
+}
+
 func TestHandler_DeleteModelVersionDifferentAccSameVid(t *testing.T) {
 	setup := Setup(t)
 
