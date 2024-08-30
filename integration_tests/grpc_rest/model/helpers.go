@@ -721,21 +721,16 @@ func DeleteModelVersionBeforeDeletingModel(suite *utils.TestSuite) {
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{deleteModelVersionMsg}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
-	// check if the first modelVersion is deleted but the second is not
-	modelVersion, err := GetModelVersion(suite, createModelVersion1Msg.Vid, createModelVersion1Msg.Pid, createModelVersion1Msg.SoftwareVersion)
-	require.Error(suite.T, err)
-	require.Nil(suite.T, modelVersion)
-
-	modelVersion, err = GetModelVersion(suite, createModelVersion2Msg.Vid, createModelVersion2Msg.Pid, createModelVersion2Msg.SoftwareVersion)
-	require.NoError(suite.T, err)
-	require.NotNil(suite.T, modelVersion)
-
 	deleteModelMsg := NewMsgDeleteModel(vid, pid, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{deleteModelMsg}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
-	// check if second modelVersion is deleted
-	modelVersion, err = GetModelVersion(suite, createModelVersion1Msg.Vid, createModelVersion1Msg.Pid, createModelVersion2Msg.SoftwareVersion)
+	// check if modelVersions are deleted
+	modelVersion, err := GetModelVersion(suite, deleteModelVersionMsg.Vid, deleteModelVersionMsg.Pid, createModelVersion1Msg.SoftwareVersion)
+	require.Error(suite.T, err)
+	require.Nil(suite.T, modelVersion)
+
+	modelVersion, err = GetModelVersion(suite, deleteModelVersionMsg.Vid, deleteModelVersionMsg.Pid, createModelVersion2Msg.SoftwareVersion)
 	require.Error(suite.T, err)
 	require.Nil(suite.T, modelVersion)
 
