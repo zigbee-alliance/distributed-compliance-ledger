@@ -1687,6 +1687,21 @@ func Demo(suite *utils.TestSuite) {
 	revDistPoints, _ = GetAllPkiRevocationDistributionPoints(suite)
 	require.Equal(suite.T, 1, len(revDistPoints))
 
+	// Add revocation distribution point for PAA by Vendor with certificate with different whitespaces
+	msgAddPkiRevDistPoints = pkitypes.MsgAddPkiRevocationDistributionPoint{
+		Signer:               vendorAccount.Address,
+		Vid:                  vendorAccount.VendorID,
+		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+		IsPAA:                true,
+		CrlSignerCertificate: testconstants.PAACertWithNumericVidDifferentWhitespaces,
+		Label:                "label" + "-new",
+		DataURL:              testconstants.DataURL + "-new",
+		RevocationType:       1,
+		SchemaVersion:        0,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddPkiRevDistPoints}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
 	// Revoke certificates by serialNumber
 
 	// Add root certificates
