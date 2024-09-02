@@ -35,3 +35,8 @@ func TestPkiDemoREST(t *testing.T) {
 	pki.Demo(&suite)
 	pki.NocCertDemo(&suite)
 }
+
+func TestAddUpdateRevocationPointForSameCertificateWithDifferentWhitespacesREST(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
+	pki.AddUpdateRevocationPointForSameCertificateWithDifferentWhitespaces(&suite)
+}
