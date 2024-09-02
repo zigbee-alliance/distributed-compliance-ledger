@@ -2212,15 +2212,6 @@ func AddUpdateRevocationPointForSameCertificateWithDifferentWhitespaces(suite *u
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeAddX509RootCert}, jackName, jackAccount)
 	require.NoError(suite.T, err)
 
-	// Approve
-	msgApproveAddX509RootCert := pkitypes.MsgApproveAddX509RootCert{
-		Subject:      testconstants.PAACertWithNumericVidSubject,
-		SubjectKeyId: testconstants.PAACertWithNumericVidSubjectKeyID,
-		Signer:       aliceAccount.Address,
-	}
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgApproveAddX509RootCert}, aliceName, aliceAccount)
-	require.NoError(suite.T, err)
-
 	// Add revocation distribution point
 	msgAddPkiRevocationDistributionPoint := pkitypes.MsgAddPkiRevocationDistributionPoint{
 		Signer:               vendorAccount.Address,
