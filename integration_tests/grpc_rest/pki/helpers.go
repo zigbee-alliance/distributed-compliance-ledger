@@ -2193,7 +2193,7 @@ func AddUpdateRevocationPointForSameCertificateWithDifferentWhitespaces(suite *u
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
-		testconstants.PAACertWithNumericVidVid,
+		testconstants.PAACertWithNumericVid1Vid,
 		testconstants.ProductIDsEmpty,
 		aliceName,
 		aliceAccount,
@@ -2203,16 +2203,35 @@ func AddUpdateRevocationPointForSameCertificateWithDifferentWhitespaces(suite *u
 	)
 	require.NotNil(suite.T, vendorAccount)
 
+	// Propose
+	msgProposeAddX509RootCert := pkitypes.MsgProposeAddX509RootCert{
+		Cert:   testconstants.PAACertWithNumericVid1,
+		Signer: jackAccount.Address,
+		Vid:    testconstants.PAACertWithNumericVid1Vid,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeAddX509RootCert}, jackName, jackAccount)
+	require.NoError(suite.T, err)
+
+	// Approve
+	msgApproveAddX509RootCert := pkitypes.MsgApproveAddX509RootCert{
+		Subject:      testconstants.PAACertWithNumericVid1Subject,
+		SubjectKeyId: testconstants.PAACertWithNumericVid1SubjectKeyID,
+		Signer:       aliceAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgApproveAddX509RootCert}, aliceName, aliceAccount)
+	require.NoError(suite.T, err)
+
 	// Add revocation distribution point
 	label := "label-add-update"
+	dataURL := testconstants.DataURL + "add-update"
 	msgAddPkiRevocationDistributionPoint := pkitypes.MsgAddPkiRevocationDistributionPoint{
 		Signer:               vendorAccount.Address,
 		Vid:                  vendorAccount.VendorID,
 		IsPAA:                true,
 		Pid:                  8,
-		CrlSignerCertificate: testconstants.PAACertWithNumericVidDifferentWhitespaces,
+		CrlSignerCertificate: testconstants.PAACertWithNumericVid1DifferentWhitespaces,
 		Label:                label,
-		DataURL:              testconstants.DataURL + "/1",
+		DataURL:              dataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 		RevocationType:       1,
 	}
@@ -2229,9 +2248,9 @@ func AddUpdateRevocationPointForSameCertificateWithDifferentWhitespaces(suite *u
 		Signer:               vendorAccount.Address,
 		Vid:                  vendorAccount.VendorID,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
-		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
+		CrlSignerCertificate: testconstants.PAACertWithNumericVid1,
 		Label:                label,
-		DataURL:              testconstants.DataURL + "/new",
+		DataURL:              dataURL + "/new",
 		SchemaVersion:        0,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgUpdatePkiRevocationDistributionPoint}, vendorName, vendorAccount)
@@ -2240,6 +2259,6 @@ func AddUpdateRevocationPointForSameCertificateWithDifferentWhitespaces(suite *u
 	revocationPointBySubjectKeyID, err = GetPkiRevocationDistributionPointsBySubject(suite, testconstants.SubjectKeyIDWithoutColons)
 	require.NoError(suite.T, err)
 	require.Equal(suite.T, 1, len(revocationPointBySubjectKeyID.Points))
-	require.Equal(suite.T, msgAddPkiRevocationDistributionPoint.CrlSignerCertificate, revocationPointBySubjectKeyID.Points[0].CrlSignerCertificate)
+	require.Equal(suite.T, msgUpdatePkiRevocationDistributionPoint.CrlSignerCertificate, revocationPointBySubjectKeyID.Points[0].CrlSignerCertificate)
 	require.Equal(suite.T, msgUpdatePkiRevocationDistributionPoint.DataURL, revocationPointBySubjectKeyID.Points[0].DataURL)
 }
