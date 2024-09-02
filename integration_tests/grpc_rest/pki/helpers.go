@@ -2238,8 +2238,8 @@ func AddUpdateRevocationPointForSameCertificateWithDifferentWhitespaces(suite *u
 
 	revocationPointBySubjectKeyID, err := GetPkiRevocationDistributionPointsBySubject(suite, testconstants.SubjectKeyIDWithoutColons)
 	require.NoError(suite.T, err)
-	require.Equal(suite.T, len(revocationPointBySubjectKeyID.Points), 1)
-	require.Equal(suite.T, revocationPointBySubjectKeyID.Points[0].CrlSignerCertificate, msgAddPkiRevocationDistributionPoint.CrlSignerCertificate)
+	require.Equal(suite.T, 1, len(revocationPointBySubjectKeyID.Points))
+	require.Equal(suite.T, msgAddPkiRevocationDistributionPoint.CrlSignerCertificate, revocationPointBySubjectKeyID.Points[0].CrlSignerCertificate)
 
 	// Update revocation distribution point
 	msgUpdatePkiRevocationDistributionPoint := pkitypes.MsgUpdatePkiRevocationDistributionPoint{
@@ -2256,7 +2256,7 @@ func AddUpdateRevocationPointForSameCertificateWithDifferentWhitespaces(suite *u
 
 	revocationPointBySubjectKeyID, err = GetPkiRevocationDistributionPointsBySubject(suite, testconstants.SubjectKeyIDWithoutColons)
 	require.NoError(suite.T, err)
-	require.Equal(suite.T, len(revocationPointBySubjectKeyID.Points), 1)
-	require.Equal(suite.T, revocationPointBySubjectKeyID.Points[0].CrlSignerCertificate, msgAddPkiRevocationDistributionPoint.CrlSignerCertificate)
-	require.Equal(suite.T, revocationPointBySubjectKeyID.Points[0].DataURL, msgUpdatePkiRevocationDistributionPoint.DataURL)
+	require.Equal(suite.T, 1, len(revocationPointBySubjectKeyID.Points))
+	require.Equal(suite.T, msgAddPkiRevocationDistributionPoint.CrlSignerCertificate, revocationPointBySubjectKeyID.Points[0].CrlSignerCertificate)
+	require.Equal(suite.T, msgUpdatePkiRevocationDistributionPoint.DataURL, revocationPointBySubjectKeyID.Points[0].DataURL)
 }
