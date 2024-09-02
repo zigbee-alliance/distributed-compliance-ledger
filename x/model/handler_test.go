@@ -1433,6 +1433,10 @@ func TestHandler_DeleteOneOfTwoModelVersions(t *testing.T) {
 	)
 	require.NoError(t, err)
 	require.NotNil(t, modelVersion)
+
+	modelVersions, err := queryAllModelVersions(setup, msgCreateModel.Vid, msgCreateModel.Pid)
+	require.NoError(t, err)
+	require.Equal(t, []uint32{msgCreateModelVersion2.SoftwareVersion}, modelVersions.SoftwareVersions)
 }
 
 func TestHandler_DeleteModelVersionDifferentAccSameVid(t *testing.T) {
