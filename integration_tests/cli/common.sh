@@ -162,7 +162,7 @@ create_model_and_version() {
   local _softwareVersion="$3"
   local _softwareVersionString="$4"
   local _user_address="$5"
-  result=$(echo "$passphrase" | dcld tx model add-model --vid=$_vid --pid=$_pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --enhancedSetupFlowOptions=1 --from=$_user_address --yes)
+  result=$(echo "$passphrase" | dcld tx model add-model --vid=$_vid --pid=$_pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --enhancedSetupFlowOptions=0 --from=$_user_address --yes)
   result=$(get_txn_result "$result")
   check_response "$result" "\"code\": 0"
   result=$(echo "$passphrase" | dcld tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$_vid --pid=$_pid --softwareVersion=$_softwareVersion --softwareVersionString=$_softwareVersionString --from=$_user_address --yes)

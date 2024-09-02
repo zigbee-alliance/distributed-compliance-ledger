@@ -32,7 +32,6 @@ func NewMsgCreateModel(
 	commissioningModeInitialStepsInstruction string,
 	commissioningModeSecondaryStepsHint uint32,
 	commissioningModeSecondaryStepsInstruction string,
-	managedACLExtensionRequestFlowURL string,
 	userManualURL string,
 	supportURL string,
 	productURL string,
@@ -59,18 +58,17 @@ func NewMsgCreateModel(
 		CommissioningModeInitialStepsInstruction: commissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsHint:      commissioningModeSecondaryStepsHint,
 		CommissioningModeSecondaryStepsInstruction: commissioningModeSecondaryStepsInstruction,
-		ManagedAclExtensionRequestFlowUrl:          managedACLExtensionRequestFlowURL,
-		UserManualUrl:                              userManualURL,
-		SupportUrl:                                 supportURL,
-		ProductUrl:                                 productURL,
-		LsfUrl:                                     lsfURL,
-		EnhancedSetupFlowOptions:                   enhancedSetupFlowOptions,
-		EnhancedSetupFlowTCUrl:                     enhancedSetupFlowTCURL,
-		EnhancedSetupFlowTCRevision:                enhancedSetupFlowTCRevision,
-		EnhancedSetupFlowTCDigest:                  enhancedSetupFlowTCDigest,
-		EnhancedSetupFlowTCFileSize:                enhancedSetupFlowTCFileSize,
-		MaintenanceUrl:                             maintenanceURL,
-		SchemaVersion:                              schemaVersion,
+		UserManualUrl:               userManualURL,
+		SupportUrl:                  supportURL,
+		ProductUrl:                  productURL,
+		LsfUrl:                      lsfURL,
+		EnhancedSetupFlowOptions:    enhancedSetupFlowOptions,
+		EnhancedSetupFlowTCUrl:      enhancedSetupFlowTCURL,
+		EnhancedSetupFlowTCRevision: enhancedSetupFlowTCRevision,
+		EnhancedSetupFlowTCDigest:   enhancedSetupFlowTCDigest,
+		EnhancedSetupFlowTCFileSize: enhancedSetupFlowTCFileSize,
+		MaintenanceUrl:              maintenanceURL,
+		SchemaVersion:               schemaVersion,
 	}
 }
 
@@ -108,7 +106,7 @@ func (msg *MsgCreateModel) ValidateBasic() error {
 		return err
 	}
 
-	if msg.EnhancedSetupFlowOptions == 0 {
+	if msg.EnhancedSetupFlowOptions&1 == 1 {
 		_, err = base64.StdEncoding.DecodeString(msg.EnhancedSetupFlowTCDigest)
 		if err != nil {
 			return NewErrEnhancedSetupFlowTCDigestIsNotBase64Encoded(msg.EnhancedSetupFlowTCDigest)
@@ -130,7 +128,6 @@ func NewMsgUpdateModel(
 	commissioningCustomFlowURL string,
 	commissioningModeInitialStepsInstruction string,
 	commissioningModeSecondaryStepsInstruction string,
-	managedACLExtensionRequestFlowURL string,
 	userManualURL string,
 	supportURL string,
 	productURL string,
@@ -156,20 +153,19 @@ func NewMsgUpdateModel(
 		CommissioningCustomFlowUrl:               commissioningCustomFlowURL,
 		CommissioningModeInitialStepsInstruction: commissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsInstruction: commissioningModeSecondaryStepsInstruction,
-		ManagedAclExtensionRequestFlowUrl:          managedACLExtensionRequestFlowURL,
-		UserManualUrl:                              userManualURL,
-		SupportUrl:                                 supportURL,
-		ProductUrl:                                 productURL,
-		LsfUrl:                                     lsfURL,
-		LsfRevision:                                lsfRevision,
-		CommissioningModeInitialStepsHint:          commissioningModeInitialStepsHint,
-		EnhancedSetupFlowOptions:                   enhancedSetupFlowOptions,
-		EnhancedSetupFlowTCUrl:                     enhancedSetupFlowTCURL,
-		EnhancedSetupFlowTCRevision:                enhancedSetupFlowTCRevision,
-		EnhancedSetupFlowTCDigest:                  enhancedSetupFlowTCDigest,
-		EnhancedSetupFlowTCFileSize:                enhancedSetupFlowTCFileSize,
-		MaintenanceUrl:                             maintenanceURL,
-		SchemaVersion:                              schemaVersion,
+		UserManualUrl:                     userManualURL,
+		SupportUrl:                        supportURL,
+		ProductUrl:                        productURL,
+		LsfUrl:                            lsfURL,
+		LsfRevision:                       lsfRevision,
+		CommissioningModeInitialStepsHint: commissioningModeInitialStepsHint,
+		EnhancedSetupFlowOptions:          enhancedSetupFlowOptions,
+		EnhancedSetupFlowTCUrl:            enhancedSetupFlowTCURL,
+		EnhancedSetupFlowTCRevision:       enhancedSetupFlowTCRevision,
+		EnhancedSetupFlowTCDigest:         enhancedSetupFlowTCDigest,
+		EnhancedSetupFlowTCFileSize:       enhancedSetupFlowTCFileSize,
+		MaintenanceUrl:                    maintenanceURL,
+		SchemaVersion:                     schemaVersion,
 	}
 }
 
@@ -207,7 +203,7 @@ func (msg *MsgUpdateModel) ValidateBasic() error {
 		return err
 	}
 
-	if msg.EnhancedSetupFlowOptions == 0 {
+	if msg.EnhancedSetupFlowOptions&1 == 1 {
 		_, err = base64.StdEncoding.DecodeString(msg.EnhancedSetupFlowTCDigest)
 		if err != nil {
 			return NewErrEnhancedSetupFlowTCDigestIsNotBase64Encoded(msg.EnhancedSetupFlowTCDigest)

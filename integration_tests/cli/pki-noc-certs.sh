@@ -72,7 +72,7 @@ echo $result | jq
 test_divider
 
 echo "Request NOC root certificate by VID = $vid and SKID = $noc_root_cert_1_subject_key_id must be empty"
-result=$(dcld query pki noc-x509-root-certs --vid="$vid" --subject-key-id="$noc_root_cert_1_subject_key_id")
+result=$(dcld query pki noc-x509-certs --vid="$vid" --subject-key-id="$noc_root_cert_1_subject_key_id")
 check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$noc_root_cert_1_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_key_id\""
@@ -83,7 +83,7 @@ echo $result | jq
 test_divider
 
 echo "Request NOC root certificate by VID = $vid and SKID = $noc_root_cert_2_subject_key_id must be empty"
-result=$(dcld query pki noc-x509-root-certs --vid="$vid" --subject-key-id="$noc_root_cert_2_subject_key_id")
+result=$(dcld query pki noc-x509-certs --vid="$vid" --subject-key-id="$noc_root_cert_2_subject_key_id")
 check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$noc_root_cert_2_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_root_cert_2_subject_key_id\""
@@ -94,7 +94,7 @@ echo $result | jq
 test_divider
 
 echo "Request NOC root certificate by VID = $vid and SKID = $noc_root_cert_3_subject_key_id must be empty"
-result=$(dcld query pki noc-x509-root-certs --vid="$vid" --subject-key-id="$noc_root_cert_3_subject_key_id")
+result=$(dcld query pki noc-x509-certs --vid="$vid" --subject-key-id="$noc_root_cert_3_subject_key_id")
 check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$noc_root_cert_3_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_root_cert_3_subject_key_id\""
@@ -152,13 +152,12 @@ result=$(echo "$passphrase" | dcld tx pki add-noc-x509-root-cert --certificate="
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 414"
 
-cert_schema_version_1=1
 echo "Add first NOC root certificate by vendor with VID = $vid"
-result=$(echo "$passphrase" | dcld tx pki add-noc-x509-root-cert --certificate="$noc_root_cert_1_path" --schemaVersion=$cert_schema_version_1 --from $vendor_account --yes)
+cert_schema_version_0=0
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-root-cert --certificate="$noc_root_cert_1_path" --schemaVersion=$cert_schema_version_0 --from $vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
-cert_schema_version_0=0
 schema_version_0=0
 echo "Add second NOC root certificate by vendor with VID = $vid"
 result=$(echo "$passphrase" | dcld tx pki add-noc-x509-root-cert --certificate="$noc_root_cert_2_path" --from $vendor_account --yes)
@@ -184,27 +183,27 @@ check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_2_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$noc_root_cert_2_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$noc_root_cert_2_subject_as_text\""
 check_response "$result" "\"schemaVersion\": $cert_schema_version_0"
-check_response "$result" "\"schemaVersion\": $cert_schema_version_1"
+check_response "$result" "\"schemaVersion\": $cert_schema_version_0"
 check_response "$result" "\"schemaVersion\": $schema_version_0"
 check_response "$result" "\"vid\": $vid"
 
 test_divider
 
 echo "Request NOC root certificate by VID = "$vid" and SKID = $noc_root_cert_1_subject_key_id"
-result=$(dcld query pki noc-x509-root-certs --vid="$vid" --subject-key-id="$noc_root_cert_1_subject_key_id")
+result=$(dcld query pki noc-x509-certs --vid="$vid" --subject-key-id="$noc_root_cert_1_subject_key_id")
 echo $result | jq
 check_response "$result" "\"subject\": \"$noc_root_cert_1_subject\""
 check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$noc_root_cert_1_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$noc_root_cert_1_subject_as_text\""
-check_response "$result" "\"schemaVersion\": $cert_schema_version_1"
+check_response "$result" "\"schemaVersion\": $cert_schema_version_0"
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"tq\": 1"
 
 test_divider
 
 echo "Request NOC root certificate by VID = "$vid" and SKID = $noc_root_cert_2_subject_key_id"
-result=$(dcld query pki noc-x509-root-certs --vid="$vid" --subject-key-id="$noc_root_cert_2_subject_key_id")
+result=$(dcld query pki noc-x509-certs --vid="$vid" --subject-key-id="$noc_root_cert_2_subject_key_id")
 echo $result | jq
 check_response "$result" "\"subject\": \"$noc_root_cert_2_subject\""
 check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_2_subject_key_id\""
@@ -291,9 +290,8 @@ check_response "$result" "\"code\": 439"
 
 test_divider
 
-cert_schema_version_3=3
 echo "Add second NOC certificate by vendor with VID = $vid"
-result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$noc_cert_2_path" --schemaVersion=$cert_schema_version_3 --from $vendor_account --yes)
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$noc_cert_2_path" --schemaVersion=$cert_schema_version_0 --from $vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -314,7 +312,7 @@ check_response "$result" "\"subjectKeyId\": \"$noc_cert_2_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$noc_cert_2_serial_number\""
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"schemaVersion\": $cert_schema_version_0"
-check_response "$result" "\"schemaVersion\": $cert_schema_version_3"
+check_response "$result" "\"schemaVersion\": $cert_schema_version_0"
 check_response "$result" "\"schemaVersion\": $schema_version_0"
 
 
@@ -420,7 +418,7 @@ response_does_not_contain "$result" "\"serialNumber\": \"$noc_root_cert_1_copy_s
 echo $result | jq
 
 echo "Request NOC root certificate by VID = $vid and SKID = $noc_root_cert_1_subject must be empty"
-result=$(dcld query pki noc-x509-root-certs --vid="$vid" --subject-key-id="$noc_root_cert_1_subject_key_id")
+result=$(dcld query pki noc-x509-certs --vid="$vid" --subject-key-id="$noc_root_cert_1_subject_key_id")
 check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$noc_root_cert_1_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_key_id\""
@@ -429,7 +427,7 @@ response_does_not_contain "$result" "\"subjectAsText\": \"$noc_root_cert_1_subje
 echo $result | jq
 
 echo "Request NOC root certificate by VID = "$vid" and SKID = $noc_root_cert_2_subject_key_id"
-result=$(dcld query pki noc-x509-root-certs --vid="$vid" --subject-key-id="$noc_root_cert_2_subject_key_id")
+result=$(dcld query pki noc-x509-certs --vid="$vid" --subject-key-id="$noc_root_cert_2_subject_key_id")
 check_response "$result" "\"subject\": \"$noc_root_cert_2_subject\""
 check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_2_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$noc_root_cert_2_serial_number\""
@@ -537,6 +535,17 @@ check_response "$result" "\"subject\": \"$noc_leaf_cert_1_subject\""
 check_response "$result" "\"subjectKeyId\": \"$noc_leaf_cert_1_subject_key_id\""
 response_does_not_contain "$result" "\"subject\": \"$noc_cert_1_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_cert_1_subject_key_id\""
+
+echo "Request NOC certificate by VID = $vid and SKID = $noc_cert_1_subject_key_id should be empty"
+result=$(dcld query pki noc-x509-certs --vid="$vid" --subject-key-id="$noc_cert_1_subject_key_id")
+echo $result | jq
+check_response "$result" "Not Found"
+
+echo "Request NOC certificate by VID = $vid and SKID = $noc_leaf_cert_1_subject_key_id should contain one leaf certificate"
+result=$(dcld query pki noc-x509-certs --vid="$vid" --subject-key-id="$noc_leaf_cert_1_subject_key_id")
+echo $result | jq
+check_response "$result" "\"subject\": \"$noc_leaf_cert_1_subject\""
+check_response "$result" "\"subjectKeyId\": \"$noc_leaf_cert_1_subject_key_id\""
 
 echo "Request all approved certificates should not contain revoked NOC certificates"
 result=$(dcld query pki all-x509-certs)

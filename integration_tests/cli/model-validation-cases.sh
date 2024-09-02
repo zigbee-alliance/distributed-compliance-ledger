@@ -32,7 +32,7 @@ test_divider
 
 # Create a new model with minimum fields
 echo "Add Model with minimum required fields with VID: $vid_1 PID: $pid_1"
-result=$(echo "test1234" | dcld tx model add-model --vid=$vid_1 --pid=$pid_1 --deviceTypeID=1 --productName=TestProduct --productLabel="Test Product" --partNumber=1 --enhancedSetupFlowOptions=1 --from=$vendor_account_1 --yes)
+result=$(echo "test1234" | dcld tx model add-model --vid=$vid_1 --pid=$pid_1 --deviceTypeID=1 --productName=TestProduct --productLabel="Test Product" --partNumber=1 --enhancedSetupFlowOptions=0 --from=$vendor_account_1 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -55,7 +55,7 @@ result=$(echo "test1234" | dcld tx model add-model --vid=$vid_1 --pid=$pid_2 --d
 --partNumber="23.456" --commissioningCustomFlow=1 --commissioningCustomFlowURL="https://customflow.url.info" \
 --commissioningModeInitialStepsHint=1  --commissioningModeInitialStepsInstruction="Initial Instructions" \
 --commissioningModeSecondaryStepsHint=2 --commissioningModeSecondaryStepsInstruction="Secondary Steps Instruction" \
---userManualURL="https://usermanual.url" --productURL="https://product.url.info" --lsfURL="https://lsf.url.info" --supportURL="https://support.url.info" --enhancedSetupFlowOptions=1 --from=$vendor_account_1 --yes)
+--userManualURL="https://usermanual.url" --productURL="https://product.url.info" --lsfURL="https://lsf.url.info" --supportURL="https://support.url.info" --enhancedSetupFlowOptions=0 --from=$vendor_account_1 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -90,7 +90,7 @@ echo "Add Model with mandatory and some non mandatory fields with VID: $vid_1 PI
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid_1 --pid=$pid_3 --deviceTypeID=2 --productName="Test Product with All Fields" --productLabel="Test Product with All fields" \
 --partNumber="23.456" --commissioningCustomFlow=1 --commissioningCustomFlowURL="https://customflow.url.info" \
 --commissioningModeInitialStepsHint=1  --commissioningModeInitialStepsInstruction="Initial Instructions" \
---commissioningModeSecondaryStepsHint=2 --commissioningModeSecondaryStepsInstruction="Secondary Steps Instruction" --enhancedSetupFlowOptions=1 \
+--commissioningModeSecondaryStepsHint=2 --commissioningModeSecondaryStepsInstruction="Secondary Steps Instruction" --enhancedSetupFlowOptions=0 \
 --from=$vendor_account_1 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
@@ -120,7 +120,7 @@ test_divider
 
 # Update model with mutable fields and make sure they are updated properly
 echo "Update model with mutable fields and make sure they are updated properly VID: $vid_1 PID: $pid_1"
-result=$(echo "test1234" | dcld tx model update-model --vid=$vid_1 --pid=$pid_1 --productName="Updated Product Name" --productLabel="Updated Test Product" --partNumber="2" --lsfURL="https://lsf.url.info?v=1" --lsfRevision=1 --enhancedSetupFlowOptions=1 --from=$vendor_account_1 --yes)
+result=$(echo "test1234" | dcld tx model update-model --vid=$vid_1 --pid=$pid_1 --productName="Updated Product Name" --productLabel="Updated Test Product" --partNumber="2" --lsfURL="https://lsf.url.info?v=1" --lsfRevision=1 --enhancedSetupFlowOptions=0 --from=$vendor_account_1 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -141,7 +141,7 @@ check_response_and_report "$result" "\"lsfRevision\": 1"
 test_divider
 # Update model with just one mutable fields and make sure they are updated properly
 echo "Update model with just one mutable field and make sure they are updated properly VID: $vid_1 PID: $pid_1"
-result=$(echo "test1234" | dcld tx model update-model --vid=$vid_1 --pid=$pid_1  --productLabel="Updated Test Product V2" --enhancedSetupFlowOptions=1 --from=$vendor_account_1 --yes)
+result=$(echo "test1234" | dcld tx model update-model --vid=$vid_1 --pid=$pid_1  --productLabel="Updated Test Product V2" --enhancedSetupFlowOptions=0 --from=$vendor_account_1 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -163,7 +163,7 @@ result=$(echo "test1234" | dcld tx model update-model --vid=$vid_1 --pid=$pid_1 
 --partNumber="V3" --commissioningCustomFlowURL="https://updated.url.info" \
 --productLabel="Updated Test Product V3" --commissioningModeInitialStepsInstruction="Instructions updated v3" \
 --commissioningModeSecondaryStepsInstruction="Secondary Instructions v3" --userManualURL="https://userManual.info/v3" \
---supportURL="https://support.url.info/v3" --productURL="https://product.landingpage.url" --lsfURL="https://lsf.url.info?v=2" --lsfRevision=2 --enhancedSetupFlowOptions=1 --from=$vendor_account_1 --yes)
+--supportURL="https://support.url.info/v3" --productURL="https://product.landingpage.url" --lsfURL="https://lsf.url.info?v=2" --lsfRevision=2 --enhancedSetupFlowOptions=0 --from=$vendor_account_1 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -190,7 +190,7 @@ check_response_and_report "$result" "\"lsfRevision\": 2"
 test_divider
 # Update model with just one mutable fields and make sure they are updated properly
 echo "Update model with just one mutable field and make sure all other mutated fields are still the same for VID: $vid_1 PID: $pid_1"
-result=$(echo "test1234" | dcld tx model update-model --vid=$vid_1 --pid=$pid_1  --productLabel="Updated Test Product V4" --enhancedSetupFlowOptions=1 --from=$vendor_account_1 --yes)
+result=$(echo "test1234" | dcld tx model update-model --vid=$vid_1 --pid=$pid_1  --productLabel="Updated Test Product V4" --enhancedSetupFlowOptions=0 --from=$vendor_account_1 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -216,7 +216,7 @@ check_response_and_report "$result" "\"lsfRevision\": 2"
 test_divider
 # Update model with just one mutable fields and make sure they are updated properly
 echo "Update model with no fields are still the same for VID: $vid_1 PID: $pid_1"
-result=$(echo "test1234" | dcld tx model update-model --vid=$vid_1 --pid=$pid_1 --enhancedSetupFlowOptions=1 --from=$vendor_account_1 --yes)
+result=$(echo "test1234" | dcld tx model update-model --vid=$vid_1 --pid=$pid_1 --enhancedSetupFlowOptions=0 --from=$vendor_account_1 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -244,14 +244,14 @@ test_divider
 
 # Update the model with lsfRevision equal to the existing lsfRevision 
 echo "Update the model with lsfRevision equal to the existing lsfRevision make sure we get error back VID: $vid_1 PID: $pid_1"
-result=$(echo "test1234" | dcld tx model update-model --vid=$vid_1 --pid=$pid_1 --lsfURL="https://lsf.url.info?v=3" --lsfRevision=2 --enhancedSetupFlowOptions=1 --from=$vendor_account_1 --yes 2>&1) || true
+result=$(echo "test1234" | dcld tx model update-model --vid=$vid_1 --pid=$pid_1 --lsfURL="https://lsf.url.info?v=3" --lsfRevision=2 --enhancedSetupFlowOptions=0 --from=$vendor_account_1 --yes 2>&1) || true
 result=$(get_txn_result "$result")
 check_response_and_report "$result" "LsfRevision should monotonically increase by 1" raw
 
 test_divider
 
 echo "Update the model with lsfRevision less then the existing lsfRevision make sure we get error back VID: $vid_1 PID: $pid_1"
-result=$(echo "test1234" | dcld tx model update-model --vid=$vid_1 --pid=$pid_1 --lsfURL="https://lsf.url.info?v=3" --lsfRevision=1 --enhancedSetupFlowOptions=1 --from=$vendor_account_1 --yes 2>&1) || true
+result=$(echo "test1234" | dcld tx model update-model --vid=$vid_1 --pid=$pid_1 --lsfURL="https://lsf.url.info?v=3" --lsfRevision=1 --enhancedSetupFlowOptions=0 --from=$vendor_account_1 --yes 2>&1) || true
 result=$(get_txn_result "$result")
 check_response_and_report "$result" "LsfRevision should monotonically increase by 1" raw
 

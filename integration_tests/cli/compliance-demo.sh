@@ -45,7 +45,6 @@ matter_certification_type="matter"
 cd_certificate_id="123"
 cd_version_number=1
 schema_version_0=0
-schema_version_2=2
 echo "Certify unknown Model with VID: $vid PID: $pid  SV: ${sv} with zigbee certification"
 result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --cdCertificateId="$cd_certificate_id" --from $zb_account --yes)
 result=$(get_txn_result "$result")
@@ -56,7 +55,7 @@ check_response "$result" "No model version"
 test_divider
 
 echo "Add Model with VID: $vid PID: $pid"
-result=$(echo "$passphrase" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --enhancedSetupFlowOptions=1  --from $vendor_account --yes)
+result=$(echo "$passphrase" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --enhancedSetupFlowOptions=0  --from $vendor_account --yes)
 result=$(get_txn_result "$result")
 echo $result
 check_response "$result" "\"code\": 0"
@@ -189,7 +188,7 @@ check_response "$result" "ledger does not have matching CDVersionNumber=0: model
 test_divider
 
 echo "Certify Model with VID: $vid PID: $pid  SV: ${sv} with zigbee certification"
-result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=$cd_version_number --schemaVersion=$schema_version_2 --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=$cd_version_number --schemaVersion=$schema_version_0 --from $zb_account --yes)
 result=$(get_txn_result "$result")
 echo "$result"
 check_response "$result" "\"code\": 0"
@@ -287,7 +286,7 @@ check_response "$result" "\"softwareVersionCertificationStatus\": 2"
 check_response "$result" "\"cDCertificateId\": \"$cd_certificate_id\""
 check_response "$result" "\"date\": \"$certification_date\""
 check_response "$result" "\"certificationType\": \"$zigbee_certification_type\""
-check_response "$result" "\"schemaVersion\": $schema_version_2"
+check_response "$result" "\"schemaVersion\": $schema_version_0"
 echo "$result"
 
 test_divider
@@ -551,7 +550,7 @@ svs=$RANDOM
 
 # ADD MODEL
 echo "Add Model with VID: $vid PID: $pid"
-result=$(echo "$passphrase" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --enhancedSetupFlowOptions=1 --commissioningCustomFlow=0  --from $vendor_account --yes)
+result=$(echo "$passphrase" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --enhancedSetupFlowOptions=0 --commissioningCustomFlow=0  --from $vendor_account --yes)
 result=$(get_txn_result "$result")
 echo $result
 check_response "$result" "\"code\": 0"
@@ -750,10 +749,9 @@ upd_supported_clusters="brand_new_clusters"
 upd_os_version="brand_new_os_version"
 upd_parent_child="parent"
 upd_certification_id_of_software_component="brand_new_component"
-schema_version_3=3
 
 echo "Update Compliance Info for Model with VID: ${vid} PID: ${pid} SV: ${sv} for $zigbee_certification_type with all optional fields set"
-result=$(echo "$passphrase" | dcld tx compliance update-compliance-info --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType=$zigbee_certification_type --cdVersionNumber=$upd_cd_version_number --certificationDate=$upd_certification_date --reason=$upd_reason --cdCertificateId=$upd_cd_certificate_id --certificationRoute=$upd_certification_route --programType=$upd_program_type --programTypeVersion=$upd_program_type_version --compliantPlatformUsed=$upd_compliant_platform_used --compliantPlatformVersion=$upd_compliant_platform_version --transport=$upd_transport --familyId=$upd_familyID --supportedClusters=$upd_supported_clusters --OSVersion=$upd_os_version --parentChild=$upd_parent_child --certificationIDOfSoftwareComponent=$upd_certification_id_of_software_component --schemaVersion=$schema_version_3 --from=$zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance update-compliance-info --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType=$zigbee_certification_type --cdVersionNumber=$upd_cd_version_number --certificationDate=$upd_certification_date --reason=$upd_reason --cdCertificateId=$upd_cd_certificate_id --certificationRoute=$upd_certification_route --programType=$upd_program_type --programTypeVersion=$upd_program_type_version --compliantPlatformUsed=$upd_compliant_platform_used --compliantPlatformVersion=$upd_compliant_platform_version --transport=$upd_transport --familyId=$upd_familyID --supportedClusters=$upd_supported_clusters --OSVersion=$upd_os_version --parentChild=$upd_parent_child --certificationIDOfSoftwareComponent=$upd_certification_id_of_software_component --schemaVersion=$schema_version_0 --from=$zb_account --yes)
 result=$(get_txn_result "$result")
 echo "$result"
 
@@ -778,7 +776,7 @@ check_response "$result" "\"supportedClusters\": \"$upd_supported_clusters\""
 check_response "$result" "\"OSVersion\": \"$upd_os_version\""
 check_response "$result" "\"parentChild\": \"$upd_parent_child\""
 check_response "$result" "\"certificationIdOfSoftwareComponent\": \"$upd_certification_id_of_software_component\""
-check_response "$result" "\"schemaVersion\": $schema_version_3"
+check_response "$result" "\"schemaVersion\": $schema_version_0"
 
 
 test_divider

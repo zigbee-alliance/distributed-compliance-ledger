@@ -45,13 +45,12 @@ func (k msgServer) CreateModel(goCtx context.Context, msg *types.MsgCreateModel)
 		CommissioningModeInitialStepsInstruction: msg.CommissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsHint:      msg.CommissioningModeSecondaryStepsHint,
 		CommissioningModeSecondaryStepsInstruction: msg.CommissioningModeSecondaryStepsInstruction,
-		ManagedAclExtensionRequestFlowUrl:          msg.ManagedAclExtensionRequestFlowUrl,
-		UserManualUrl:                              msg.UserManualUrl,
-		SupportUrl:                                 msg.SupportUrl,
-		ProductUrl:                                 msg.ProductUrl,
-		LsfUrl:                                     msg.LsfUrl,
-		EnhancedSetupFlowOptions:                   msg.EnhancedSetupFlowOptions,
-		SchemaVersion:                              msg.SchemaVersion,
+		UserManualUrl:            msg.UserManualUrl,
+		SupportUrl:               msg.SupportUrl,
+		ProductUrl:               msg.ProductUrl,
+		LsfUrl:                   msg.LsfUrl,
+		EnhancedSetupFlowOptions: msg.EnhancedSetupFlowOptions,
+		SchemaVersion:            msg.SchemaVersion,
 	}
 
 	// if LsfUrl is not empty, we set lsfRevision to default value of 1
@@ -65,7 +64,7 @@ func (k msgServer) CreateModel(goCtx context.Context, msg *types.MsgCreateModel)
 		model.CommissioningModeInitialStepsHint = 1
 	}
 
-	if model.EnhancedSetupFlowOptions == 0 {
+	if model.EnhancedSetupFlowOptions&1 == 1 {
 		model.EnhancedSetupFlowTCUrl = msg.EnhancedSetupFlowTCUrl
 		model.EnhancedSetupFlowTCRevision = msg.EnhancedSetupFlowTCRevision
 		model.EnhancedSetupFlowTCDigest = msg.EnhancedSetupFlowTCDigest
@@ -137,10 +136,6 @@ func (k msgServer) UpdateModel(goCtx context.Context, msg *types.MsgUpdateModel)
 		model.CommissioningModeSecondaryStepsInstruction = msg.CommissioningModeSecondaryStepsInstruction
 	}
 
-	if msg.ManagedAclExtensionRequestFlowUrl != "" {
-		model.ManagedAclExtensionRequestFlowUrl = msg.ManagedAclExtensionRequestFlowUrl
-	}
-
 	if msg.UserManualUrl != "" {
 		model.UserManualUrl = msg.UserManualUrl
 	}
@@ -154,18 +149,18 @@ func (k msgServer) UpdateModel(goCtx context.Context, msg *types.MsgUpdateModel)
 	}
 
 	model.EnhancedSetupFlowOptions = msg.EnhancedSetupFlowOptions
-	if msg.EnhancedSetupFlowOptions == 0 {
+	if msg.EnhancedSetupFlowOptions&1 == 1 {
 		model.EnhancedSetupFlowTCUrl = msg.EnhancedSetupFlowTCUrl
-		model.EnhancedSetupFlowTCRevision = msg.EnhancedSetupFlowTCRevision
 		model.EnhancedSetupFlowTCDigest = msg.EnhancedSetupFlowTCDigest
 		model.EnhancedSetupFlowTCFileSize = msg.EnhancedSetupFlowTCFileSize
 		model.MaintenanceUrl = msg.MaintenanceUrl
-	} else {
-		model.EnhancedSetupFlowTCUrl = ""
-		model.EnhancedSetupFlowTCRevision = 0
-		model.EnhancedSetupFlowTCDigest = ""
-		model.EnhancedSetupFlowTCFileSize = 0
-		model.MaintenanceUrl = ""
+
+		if model.EnhancedSetupFlowTCRevision == 0 ||
+			msg.EnhancedSetupFlowTCRevision == model.EnhancedSetupFlowTCRevision+1 {
+			model.EnhancedSetupFlowTCRevision = msg.EnhancedSetupFlowTCRevision
+		} else {
+			return nil, types.NewErrEnhancedSetupFlowTCRevisionInvalidIncrement(msg.EnhancedSetupFlowTCRevision, model.EnhancedSetupFlowTCRevision)
+		}
 	}
 
 	model.SchemaVersion = msg.SchemaVersion

@@ -10,6 +10,8 @@ See use case sequence diagrams for the examples of how transaction can be used.
 5. [Model and Model Version](#model-and-model_version)
 6. [Compliance](#certify_device_compliance)
 7. [X509 PKI](#x509-pki)
+    - [Device Attestation (DA): PAA, PAI](#device-attestation-certificates-da-paa-pai)
+    - [E2E (NOC): RCAC, ICAC](#e2e-noc-rcac-icac)
 8. [Auth](#auth)
 9. [Validator Node](#validator_node)
 10. [Upgrade](#upgrade)
@@ -47,7 +49,7 @@ an Account or sign the request.
       - CLI 1: Is connected to the network of nodes. Doesn't have access to private keys.
       - CLI 2: Stores private key. Does not have a connection to the network of nodes.
     - Build transaction by CLI 1: `dcld tx ... --generate-only`
-    - Fetch `account number` and `sequence` by CLI 1:  `dcld query auth account --address <address>`
+    - Fetch `account-number` and `sequence` by CLI 1:  `dcld query auth account --address <address>`
     - Sign transaction by CLI 2: `dcld tx sign txn.json --from <from> --account-number <int> --sequence <int> --gas "auto" --offline --output-document txn.json`
     - Broadcast transaction by CLI 1: `dcld tx broadcast txn.json`
     - To get the actual result of transaction, `dcld query tx=txHash` call must be executed, where `txHash` is the hash of previously executed transaction.
@@ -129,7 +131,7 @@ Adds a record about a Vendor.
   - companyLegalName: `string` -  Legal name of the vendor company
   - companyPreferredName: `optional(string)` -  Preferred name of the vendor company
   - vendorLandingPageURL: `optional(string)` -  URL of the vendor's landing page
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - In State: `vendorinfo/VendorInfo/value/<vid>`
 - Who can send:
   - Account with a vendor role who has the matching Vendor ID
@@ -149,7 +151,7 @@ Updates a record about a Vendor.
   - companyLegalName: `optional(string)` -  Legal name of the vendor company
   - companyPreferredName: `optional(string)` -  Preferred name of the vendor company
   - vendorLandingPageURL: `optional(string)` -  URL of the vendor's landing page
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - In State: `vendorinfo/VendorInfo/value/<vid>`
 - Who can send:
   - Account with a vendor role who has the matching Vendor ID
@@ -208,7 +210,6 @@ Not all fields can be edited (see `EDIT_MODEL`).
   - commissioningModeInitialStepsInstruction: `optional(string)` - commissioningModeInitialStepsInstruction SHALL contain text which relates to specific values of CommissioningModeInitialStepsHint. Certain values of CommissioningModeInitialStepsHint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioningModeInitialStepsInstruction SHALL be set
   - commissioningModeSecondaryStepsHint: `optional(uint32)` - commissioningModeSecondaryStepsHint SHALL identify a hint for steps that can be used to put into commissioning mode a device that has already been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 4 (bit 2 is set) indicates that a device that has already been commissioned will require the user to visit a current CHIP Administrator to put the device into commissioning mode.
   - commissioningModeSecondaryStepInstruction: `optional(string)` - commissioningModeSecondaryStepInstruction SHALL contain text which relates to specific values of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioningModeSecondaryStepInstruction SHALL be set
-  - managedAclExtensionRequestFlowUrl `optional(string)` - managedAclExtensionRequestFlowUrl SHALL identify a vendor-specific URL that can be used to request additional access to what is currently provided by the optional ManagedACL attribute
   - userManualURL: `optional(string)` - URL that contains product specific web page that contains user manual for the device model.
   - supportURL: `optional(string)` - URL that contains product specific web page that contains support details for the device model.
   - productURL: `optional(string)` - URL that contains product specific web page that contains details for the device model.
@@ -219,7 +220,7 @@ Not all fields can be edited (see `EDIT_MODEL`).
   - enhancedSetupFlowTCDigest: `optional(string)` - enhancedSetupFlowTCDigest SHALL contain the digest of the entire contents of the associated file downloaded from the EnhancedSetupFlowTCUrl field, encoded in base64 string representation and SHALL be used to ensure the contents of the downloaded file are authentic. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.
   - enhancedSetupFlowTCFileSize: `optional(uint32)` - enhancedSetupFlowTCFileSize SHALL indicate the total size of the Enhanced Setup Flow Terms and Conditions file in bytes, and SHALL be used to ensure the downloaded file size is within the bounds of EnhancedSetupFlowTCFileSize. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.
   - maintenanceUrl: `optional(string)` - maintenanceUrl SHALL identify a link to a vendor-specific URL which SHALL provide a manufacturer specific means to resolve any functionality limitations indicated by the TERMS_AND_CONDITIONS_CHANGED status code. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 1)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - In State:
   - `model/Model/value/<vid>/<pid>`
   - `model/VendorProducts/value/<vid>`
@@ -252,6 +253,8 @@ a new model info with a new `vid` or `pid` can be created.
 
 All non-edited fields remain the same.
 
+If one of EnhancedSetupFlow or MaintenanceUrl fields needs to be updated, ALL EnhancedSetupFlow fields MUST be specified, and EnhancedSetupFlowOptions field must have bit 0 set.
+
 - Parameters:
   - vid: `uint16` -  model vendor ID (positive non-zero)
   - pid: `uint16` -  model product ID (positive non-zero)
@@ -261,7 +264,6 @@ All non-edited fields remain the same.
   - commissioningCustomFlowURL: `optional(string)` - commissioningCustomFlowURL SHALL identify a vendor specific commissioning URL for the device model when the commissioningCustomFlow field is set to '2'
   - commissioningModeInitialStepsInstruction: `optional(string)` - commissioningModeInitialStepsInstruction SHALL contain text which relates to specific values of CommissioningModeInitialStepsHint. Certain values of CommissioningModeInitialStepsHint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioningModeInitialStepsInstruction SHALL be set
   - commissioningModeSecondaryStepInstruction: `optional(string)` - commissioningModeSecondaryStepInstruction SHALL contain text which relates to specific values of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioningModeSecondaryStepInstruction SHALL be set
-  - managedAclExtensionRequestFlowUrl `optional(string)` - managedAclExtensionRequestFlowUrl SHALL identify a vendor-specific URL that can be used to request additional access to what is currently provided by the optional ManagedACL attribute
   - userManualURL: `optional(string)` - URL that contains product specific web page that contains user manual for the device model.
   - supportURL: `optional(string)` - URL that contains product specific web page that contains support details for the device model.
   - productURL: `optional(string)` - URL that contains product specific web page that contains details for the device model.  
@@ -274,7 +276,7 @@ All non-edited fields remain the same.
   - enhancedSetupFlowTCDigest: `optional(string)` - enhancedSetupFlowTCDigest SHALL contain the digest of the entire contents of the associated file downloaded from the EnhancedSetupFlowTCUrl field, encoded in base64 string representation and SHALL be used to ensure the contents of the downloaded file are authentic. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.
   - enhancedSetupFlowTCFileSize: `optional(uint32)` - enhancedSetupFlowTCFileSize SHALL indicate the total size of the Enhanced Setup Flow Terms and Conditions file in bytes, and SHALL be used to ensure the downloaded file size is within the bounds of EnhancedSetupFlowTCFileSize. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.
   - maintenanceUrl: `optional(string)` - maintenanceUrl SHALL identify a link to a vendor-specific URL which SHALL provide a manufacturer specific means to resolve any functionality limitations indicated by the TERMS_AND_CONDITIONS_CHANGED status code. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 1)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - In State: `model/Model/value/<vid>/<pid>`
 - Who can send:
   - Vendor account associated with the same vid who has created the model
@@ -325,7 +327,7 @@ If one of `OTA_URl`, `OTA_checksum` or `OTA_checksum_type` fields is set, then t
   - otaChecksum `optional(string)` - Digest of the entire contents of the associated OTA Software Update Image under the OtaUrl attribute, encoded in base64 string representation. The digest SHALL have been computed using the algorithm specified in OtaChecksumType
   - otaChecksumType `optional(string)` - Numeric identifier as defined in IANA Named Information Hash Algorithm Registry for the type of otaChecksum. For example, a value of 1 would match the sha-256 identifier, which maps to the SHA-256 digest algorithm
   - releaseNotesURL `optional(string)` - URL that contains product specific web page that contains release notes for the device model.
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - In State:
   - `model/ModelVersion/value/<vid>/<pid>/<softwareVersion>`
   - `model/ModelVersions/value/<vid>/<pid>`
@@ -372,7 +374,7 @@ All non-edited fields remain the same.
   - otaURL `optional(string)` - URL where to obtain the OTA image
   - otaFileSize `optional(string)`  - OtaFileSize is the total size of the OTA software image in bytes
   - otaChecksum `optional(string)` - Digest of the entire contents of the associated OTA Software Update Image under the OtaUrl attribute, encoded in base64 string representation. The digest SHALL have been computed using the algorithm specified in OtaChecksumType
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 
 - In State: `model/ModelVersion/value/<vid>/<pid>/<softwareVersion>`
 - Who can send:
@@ -510,7 +512,7 @@ from the revocation list.
   - transport `optional(string)` - optional field describing the transport
   - parentChild `optional(string)` - optional field describing the parent/child - Currently 'parent' and 'child' types are supported
   - certificationIDOfSoftwareComponent `optional(string)` - optional field describing the certification ID of software component
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - In State:
   - `compliance/ComplianceInfo/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
   - `compliance/CertifiedModel/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
@@ -548,7 +550,7 @@ Updates a compliance info by VID, PID, Software Version and Certification Type.
   - transport `optional(string)` - optional field describing the transport
   - parentChild `optional(string)` - optional field describing the parent/child - Currently 'parent' and 'child' types are supported
   - certificationIDOfSoftwareComponent `optional(string)` - optional field describing the certification ID of software component
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - Who can send:
   - CertificationCenter
 - CLI command:
@@ -596,7 +598,7 @@ is written on the ledger (`CERTIFY_MODEL` was called), or
   - revocationDate: `string` - The date of model revocation (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
   - certificationType: `string`  - Certification type - Currently 'zigbee' and 'matter', 'access control', 'product security' types are supported
   - reason `optional(string)`  - optional comment describing the reason of revocation
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - In State:
   - `compliance/ComplianceInfo/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
   - `compliance/RevokedModel/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
@@ -636,7 +638,7 @@ Can not be set if there is already a certification record on the ledger (certifi
   - transport `optional(string)` - optional field describing the transport
   - parentChild `optional(string)` - optional field describing the parent/child - Currently 'parent' and 'child' types are supported
   - certificationIDOfSoftwareComponent `optional(string)` - optional field describing the certification ID of software component
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability(default 0)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - In State:
   - `compliance/ComplianceInfo/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
   - `compliance/ProvisionalModel/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
@@ -842,7 +844,7 @@ Should be sent to trusted nodes only.
 **NOTE**: X.509 v3 certificates are only supported (all certificates MUST contain `Subject Key ID` field).
 All PKI related methods are based on this restriction.
 
-### Device Attestation Certificates (DA)
+### Device Attestation Certificates (DA): PAA, PAI
 
 #### PROPOSE_ADD_PAA
 
@@ -862,7 +864,7 @@ The PAA certificate is immutable. It can only be revoked by either the owner or 
   - info: `optional(string)` - information/notes for the proposal. Can contain up to 4096 characters.
   - time: `optional(int64)` - proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). This field cannot be specified using a CLI command and will use the current time by default.
   - vid: `uint16` -  Vendor ID (positive non-zero). Must be equal to the Certificate's `vid` field for VID-scoped PAA.
-  - schemaVersion: `optional(uint16)` - Certificate's schema version to support backward/forward compatability(default 0)
+  - schemaVersion: `optional(uint16)` - Certificate's schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - In State: `pki/ProposedCertificate/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - CLI command:
   - `dcld tx pki propose-add-x509-root-cert --certificate=<string-or-path> --from=<account>`
@@ -1043,7 +1045,7 @@ and DACs (leaf certificates) added to DCL if they are revoked in the CRL identif
   - dataDigest: `optional(string)` -  Digest of the entire contents of the associated file downloaded from the DataUrl. Must be omitted if RevocationType is 1. Must be provided if and only if the `DataFileSize` field is present.
   - dataDigestType: `optional(uint32)` - The type of digest used in the DataDigest field from the list of [1, 7, 8, 10, 11, 12] (IANA Named Information Hash Algorithm Registry). Must be provided if and only if the `DataDigest` field is present.
   - revocationType: `uint32` - The type of file found at the DataUrl for this entry. Supported types: 1 - RFC5280 Certificate Revocation List (CRL).
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatibility (default is 1, the minimum value should be greater than or equal to 1)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatibility. Should be equal to 0 (default 0)
 - In State:
   - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>` -> list of Revocation Distribution Points
   - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>/<vid>/<label>`-> Revocation Distribution Point
@@ -1071,7 +1073,7 @@ Updates an existing PKI Revocation distribution endpoint (such as RFC5280 Certif
   - dataFileSize: `optional(uint64)` -  Total size in bytes of the file found at the DataUrl. Must be omitted if RevocationType is 1.
   - dataDigest: `optional(string)` -  Digest of the entire contents of the associated file downloaded from the DataUrl. Must be omitted if RevocationType is 1. Must be provided if and only if the `DataFileSize` field is present.
   - dataDigestType: `optional(uint32)` - The type of digest used in the DataDigest field from the list of [1, 7, 8, 10, 11, 12] (IANA Named Information Hash Algorithm Registry). Must be provided if and only if the `DataDigest` field is present.
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatibility (default is 1, the minimum value should be greater than or equal to 1)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatibility. Should be equal to 0 (default 0)
 - In State:
   - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>` -> list of Revocation Distribution Points
   - `pki/RevocationDistributionPoint/value/<IssuerSubjectKeyID>/<vid>/<label>` -> Revocation Distribution Point
@@ -1354,19 +1356,19 @@ Should be sent to trusted nodes only.
 - REST API:
   - GET `/dcl/pki/proposed-revocation-certificates`
 
-### E2E (NOC)
+### E2E (NOC): RCAC, ICAC
 
-#### ADD_NOC_ROOT
+#### ADD_NOC_ROOT (RCAC)
 
 **Status: Implemented**
 
-This transaction adds a NOC root certificate owned by the Vendor.
+This transaction adds a NOC root certificate (RCAC) owned by the Vendor.
 
 - Who can send
   - Vendor account
 - Parameters:
-  - cert: `string` - The NOC Root Certificate, encoded in X.509v3 PEM format. Can be a PEM string or a file path.
-  - schemaVersion: `optional(uint16)` - Certificate's schema version to support backward/forward compatability(default 0)
+  - cert: `string` - The NOC Root Certificate (RCAC), encoded in X.509v3 PEM format. Can be a PEM string or a file path.
+  - schemaVersion: `optional(uint16)` - Certificate's schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - In State:
   - `pki/ApprovedCertificates/value/<Subject>/<SubjectKeyID>`
   - `pki/ApprovedCertificatesBySubject/value/<Subject>`
@@ -1375,27 +1377,27 @@ This transaction adds a NOC root certificate owned by the Vendor.
 - CLI Command:
   - `dcld tx pki add-noc-x509-root-cert --certificate=<string-or-path> --from=<account>`
 - Validation:
-  - the provided certificate must be a root certificate:
+  - the provided certificate must be a root certificate (RCAC):
     - `Issuer` == `Subject`
     - `Authority Key Identifier` == `Subject Key Identifier`
   - no existing certificate with the same `<Certificate's Issuer>:<Certificate's Serial Number>` combination.
   - if certificates with the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination already exist:
-    - the existing certificate must be NOC root certificate
+    - the existing certificate must be NOC root certificate (RCAC)
     - the sender's VID must match the `vid` field of the existing certificates.
   - the signature (self-signature) and expiration date must be valid.
 
-#### REVOKE_NOC_ROOT
+#### REVOKE_NOC_ROOT (RCAC)
 
 **Status: Implemented**
 
-This transaction revokes a NOC root certificate owned by the Vendor.
-Revoked NOC root certificates can be re-added using the [ADD_NOC_ROOT](#add_noc_root) transaction.
+This transaction revokes a NOC root certificate (RCAC) owned by the Vendor.
+Revoked NOC root certificates (RCACs) can be re-added using the [ADD_NOC_ROOT](#add_noc_root-(rcac)) transaction.
 
 Revocation works as a soft-delete, meaning that the certificates are not entirely removed but moved from the approved list to the revoked list.
 Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revoked_cert) query.
 
 - Who can send: Vendor account
-  - Vid field associated with the corresponding NOC root certificate on the ledger must be equal to the Vendor account's VID.
+  - Vid field associated with the corresponding NOC root certificate (RCAC) on the ledger must be equal to the Vendor account's VID.
 - Parameters:
   - subject: `string` - base64 encoded subject DER sequence bytes of the certificate.
   - subject_key_id: `string` - certificate's `Subject Key Id` in hex string format, e.g., `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`.
@@ -1409,19 +1411,19 @@ Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revok
 - CLI command:
   - `dcld tx pki revoke-noc-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --serial-number=<string> --info=<string> --time=<int64> --revoke-child=<bool> --from=<account>`
 - Validation:
-  - a NOC Root Certificate with the provided `subject` and `subject_key_id` must exist in the ledger.
+  - a NOC Root Certificate (RCAC) with the provided `subject` and `subject_key_id` must exist in the ledger.
 
-#### REMOVE_NOC_ROOT
+#### REMOVE_NOC_ROOT (RCAC)
 
 **Status: Implemented**
 
-This transaction completely removes the given NOC root certificate owned by the Vendor from the ledger.
-Removed NOC root certificates can be re-added using the [ADD_NOC_ROOT](#add_noc_root) transaction.
+This transaction completely removes the given NOC root certificate (RCAC) owned by the Vendor from the ledger.
+Removed NOC root certificates (RCACs) can be re-added using the [ADD_NOC_ROOT](#add_noc_root-(rcac)) transaction.
 
 - Who can send: Vendor account
   - Vid field associated with the corresponding NOC certificate on the ledger must be equal to the Vendor account's VID.
 - Validation:
-  - a NOC Root Certificate with the provided `subject` and `subject_key_id` must exist in the ledger.
+  - a NOC Root Certificate (RCAC) with the provided `subject` and `subject_key_id` must exist in the ledger.
 - Parameters:
   - subject: `string` - base64 encoded subject DER sequence bytes of the certificate.
   - subject_key_id: `string` - certificate's `Subject Key Id` in hex string format, e.g., `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`.
@@ -1431,11 +1433,11 @@ Removed NOC root certificates can be re-added using the [ADD_NOC_ROOT](#add_noc_
 
 
 
-#### ADD_NOC_ICA
+#### ADD_NOC_ICA (ICAC)
 
 **Status: Implemented**
 
-This transaction adds a NOC ICA certificate owned by the Vendor signed by a chain of certificates which must be
+This transaction adds a NOC ICA certificate (ICAC) owned by the Vendor signed by a chain of certificates which must be
 already present on the ledger.
 
 - Who can send: Vendor account
@@ -1463,12 +1465,12 @@ already present on the ledger.
 - CLI Command:
   - `dcld tx pki add-noc-x509-ica-cert --certificate=<string-or-path> --from=<account>`
 
-#### REVOKE_NOC_ICA
+#### REVOKE_NOC_ICA (ICAC)
 
 **Status: Implemented**
 
-This transaction revokes a NOC ICA certificate owned by the Vendor.
-Revoked NOC ICA certificates can be re-added using the [ADD_NOC_ICA](#add_noc_ica) transaction.
+This transaction revokes a NOC ICA certificate (ICAC) owned by the Vendor.
+Revoked NOC ICA certificates (ICACs) can be re-added using the [ADD_NOC_ICA](#add_noc_ica-(icac)) transaction.
 
 Revocation works as a soft-delete, meaning that the certificates are not entirely removed but moved from the approved list to the revoked list.
 Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revoked_cert) query.
@@ -1489,17 +1491,17 @@ Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revok
 - CLI command:
   - `dcld tx pki revoke-noc-x509-ica-cert --subject=<base64 string> --subject-key-id=<hex string> --serial-number=<string> --info=<string> --time=<int64> --revoke-child=<bool> --from=<account>`
 
-#### REMOVE_NOC_ICA
+#### REMOVE_NOC_ICA (ICAC)
 
 **Status: Implemented**
 
-This transaction completely removes the given NOC ICA owned by the Vendor from the ledger.
-Removed NOC ICA certificates can be re-added using the [ADD_NOC_ICA](#add_noc_ica) transaction.
+This transaction completely removes the given NOC ICA (ICAC) owned by the Vendor from the ledger.
+Removed NOC ICA certificates (ICACs) can be re-added using the [ADD_NOC_ICA](#add_noc_ica-(icac)) transaction.
 
 - Who can send: Vendor account
   - Vid field associated with the corresponding NOC certificate on the ledger must be equal to the Vendor account's VID.
 - Validation:
-  - a NOC ICA Certificate with the provided `subject` and `subject_key_id` must exist in the ledger.
+  - a NOC ICA Certificate (ICAC) with the provided `subject` and `subject_key_id` must exist in the ledger.
 - Parameters:
   - subject: `string` - base64 encoded subject DER sequence bytes of the certificate.
   - subject_key_id: `string` - certificate's `Subject Key Id` in hex string format, e.g., `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`.
@@ -1508,14 +1510,14 @@ Removed NOC ICA certificates can be re-added using the [ADD_NOC_ICA](#add_noc_ic
   - `dcld tx pki remove-noc-x509-ica-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
 
 
-#### GET_NOC_ROOT_BY_VID
+#### GET_NOC_ROOT_BY_VID (RCACs)
 
 **Status: Implemented**
 
-Retrieve NOC root certificates associated with a specific VID.
+Retrieve NOC root certificates (RCACs) associated with a specific VID.
 
-Revoked NOC root certificates are not returned.
-Use [GET_ALL_REVOKED_NOC_ROOT](#get_revoked_noc_root) to get a list of all revoked NOC root certificates.
+Revoked NOC root certificates (RCACs) are not returned.
+Use [GET_ALL_REVOKED_NOC_ROOT](#get_all_revoked_noc_root-(rcacs)) to get a list of all revoked NOC root certificates (RCACs).
 
 - Who can send: Any account
 - Parameters:
@@ -1525,30 +1527,31 @@ Use [GET_ALL_REVOKED_NOC_ROOT](#get_revoked_noc_root) to get a list of all revok
 - REST API:
   - GET `/dcl/pki/noc-root-certificates/{vid}`
 
-#### GET_NOC_ROOT_BY_VID_AND_SKID
+#### GET_NOC_BY_VID_AND_SKID (RCACs/ICACs)
 
 **Status: Implemented**
 
-Retrieve NOC root certificates associated with a specific VID and subject key ID.
+Retrieve NOC (Root/ICA) certificates (RCACs/ICACs) associated with a specific VID and subject key ID.
 This request also returns the Trust Quotient (TQ) value of the certificate
 
-Revoked NOC root certificates are not returned.
-Use [GET_ALL_REVOKED_NOC_ROOT](#get_revoked_noc_root) to get a list of all revoked NOC root certificates.
+Revoked NOC certificates are not returned.
+Use [GET_ALL_REVOKED_NOC_ROOT](#get_all_revoked_noc_root-(rcacs)) to get a list of all revoked NOC root certificates.
+Use [GET_ALL_REVOKED_CERT](#get_all_revoked_certs) to get a list of all revoked certificates (including ICACs).
 
 - Who can send: Any account
 - Parameters:
   - vid: `uint16` - Vendor ID (positive non-zero)
   - subject_key_id: `string` - Certificate's `Subject Key Id` in hex string format, e.g., `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
 - CLI Command:
-  - `dcld query pki noc-x509-root-certs --vid=<uint16> --subject-key-id=<hex string>`
+  - `dcld query pki noc-x509-certs --vid=<uint16> --subject-key-id=<hex string>`
 - REST API:
-  - GET `/dcl/pki/noc-root-certificates/{vid}/{subject_key_id}`
+  - GET `/dcl/pki/noc-certificates/{vid}/{subject_key_id}`
 
-#### GET_NOC_ICA_BY_VID
+#### GET_NOC_ICA_BY_VID (ICACs)
 
 **Status: Implemented**
 
-Retrieve NOC ICA certificates associated with a specific VID.
+Retrieve NOC ICA certificates (ICACs) associated with a specific VID.
 
 Revoked certificates are not returned.
 Use [GET_ALL_REVOKED_CERT](#get_all_revoked_certs) to get a list of all revoked certificates.
@@ -1561,11 +1564,11 @@ Use [GET_ALL_REVOKED_CERT](#get_all_revoked_certs) to get a list of all revoked 
 - REST API:
   - GET `/dcl/pki/noc-ica-certificates/{vid}`
 
-#### GET_REVOKED_NOC_ROOT
+#### GET_REVOKED_NOC_ROOT (RCAC)
 
 **Status: Implemented**
 
-Gets a revoked NOC root certificate by the given subject and subject key ID attributes.
+Gets a revoked NOC root certificate (RCAC) by the given subject and subject key ID attributes.
 
 Revocation works as a soft-delete, meaning that the certificates are not entirely removed but moved from the approved list to the revoked list.
 
@@ -1577,14 +1580,14 @@ Revocation works as a soft-delete, meaning that the certificates are not entirel
 - REST API:
   - GET `/dcl/pki/revoked-noc-root-certificates/{subject}/{subject_key_id}`
 
-#### GET_ALL_NOC_ROOT
+#### GET_ALL_NOC_ROOT (RCACs)
 
 **Status: Implemented**
 
-Retrieve a list of all of NOC root certificates.
+Retrieve a list of all of NOC root certificates (RCACs).
 
-Revoked NOC root certificates are not returned.
-Use [GET_ALL_REVOKED_NOC_ROOT](#get_revoked_noc_root) to get a list of all revoked NOC root certificates.
+Revoked NOC root certificates (RCACs) are not returned.
+Use [GET_ALL_REVOKED_NOC_ROOT](#get_all_revoked_noc_root-(rcacs)) to get a list of all revoked NOC root certificates (RCACs).
 
 - Who can send: Any account
 - Parameters:
@@ -1594,11 +1597,11 @@ Use [GET_ALL_REVOKED_NOC_ROOT](#get_revoked_noc_root) to get a list of all revok
 - REST API:
   - GET `/dcl/pki/noc-root-certificates`
 
-#### GET_ALL_NOC_ICA
+#### GET_ALL_NOC_ICA (ICACs)
 
 **Status: Implemented**
 
-Retrieve a list of all of NOC ICA certificates
+Retrieve a list of all of NOC ICA certificates (ICACs).
 
 Revoked certificates are not returned.
 Use [GET_ALL_REVOKED_CERT](#get_all_revoked_certs) to get a list of all revoked certificates.
@@ -1611,9 +1614,9 @@ Use [GET_ALL_REVOKED_CERT](#get_all_revoked_certs) to get a list of all revoked 
 - REST API:
   - GET `/dcl/pki/noc-ica-certificates`
 
-#### GET_ALL_REVOKED_NOC_ROOT
+#### GET_ALL_REVOKED_NOC_ROOT (RCACs)
 
-Gets all revoked NOC root certificates.
+Gets all revoked NOC root certificates (RCACs).
 
 Revocation works as a soft-delete, meaning that the certificates are not entirely removed but moved from the approved list to the revoked list.
 

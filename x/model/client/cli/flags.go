@@ -16,7 +16,6 @@ const (
 	FlagCommissioningModeInitialStepsInstruction   = "commissioningModeInitialStepsInstruction"
 	FlagCommissioningModeSecondaryStepsHint        = "commissioningModeSecondaryStepsHint"
 	FlagCommissioningModeSecondaryStepsInstruction = "commissioningModeSecondaryStepsInstruction"
-	FlagManagedACLExtensionRequestFlowURL          = "managedAclExtensionRequestFlowUrl"
 	FlagUserManualURL                              = "userManualURL"
 	FlagSupportURL                                 = "supportURL"
 	FlagProductURL                                 = "productURL"
@@ -28,7 +27,6 @@ const (
 	FlagEnhancedSetupFlowTCDigest                  = "enhancedSetupFlowTCDigest"
 	FlagEnhancedSetupFlowTCFileSize                = "enhancedSetupFlowTCFileSize"
 	FlagMaintenanceURL                             = "maintenanceUrl"
-
 	// Flags for ModelVersion.
 	FlagSoftwareVersion              = "softwareVersion"
 	FlagSoftwareVersionShortcut      = "v"

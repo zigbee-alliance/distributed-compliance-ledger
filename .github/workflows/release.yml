@@ -89,7 +89,7 @@ jobs:
           fi
           if [[ -z "$asset_macos_tgz_url" ]]; then
             # bin, service file and deploy script are not considered for macos job
-            included+=("macos-11|-||-|-|-|.macos.tar.gz")
+            included+=("macos-14|-||-|-|-|.macos.tar.gz")
           fi
 
           matrix_os="$(jq -ncR '

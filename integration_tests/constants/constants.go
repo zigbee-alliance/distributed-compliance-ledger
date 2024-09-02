@@ -82,6 +82,11 @@ var (
 	UserManualURL                                     = "https://url.usermanual.dclmodel"
 	SupportURL                                        = "https://url.supporturl.dclmodel"
 	ProductURL                                        = "https://url.producturl.dclmodel"
+	EnhancedSetupFlowTCURL                            = "https://url.enhansedsetupflowurl.dclmodel"
+	EnhancedSetupFlowTCRevision                       = 1
+	EnhancedSetupFlowTCDigest                         = "MmNmMjRkYmE1ZmIwYTMwZTI2ZTgzYjJhYzViOWUyOWUxYjE2MWU1YzFmYTc0MjVlNzMwNDMzNjI5MzhiOTgyNA=="
+	EnhancedSetupFlowTCFileSize                       = 1
+	MaintenanceURL                                    = "https://url.maintenanceurl.dclmodel"
 	LsfURL                                            = "https://url.lsfurl.dclmodel"
 	DataURL                                           = "https://url.data.dclmodel"
 	DataURL2                                          = "https://url.data.dclmodel2"
@@ -356,7 +361,7 @@ FGE90Ic1XvCLrgHkxpqPxz2sjH39MB8GA1UdIwQYMBaAFHhc5wW4a49Ob8eTqmDL
 Q+ppaILVMAoGCCqGSM49BAMCA0gAMEUCIQDfwJ3oS/qVbWDW/vTirREL3iIqMogw
 pn4/F7keUYUaeAIgce2XGOSIsrjPlUQ1zj/zLqUFVhQ8TyycBaIK8z7Uytk=
 -----END CERTIFICATE-----`
-
+	PAICertWithNumericVidVid          = 65522
 	PAICertWithNumericVidSubject      = "MDAxGDAWBgNVBAMMD01hdHRlciBUZXN0IFBBSTEUMBIGCisGAQQBgqJ8AgEMBEZGRjI="
 	PAICertWithNumericVidSubjectKeyID = "61:3D:D0:87:35:5E:F0:8B:AE:01:E4:C6:9A:8F:C7:3D:AC:8C:7D:FD"
 

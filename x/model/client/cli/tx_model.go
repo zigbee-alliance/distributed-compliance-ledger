@@ -25,7 +25,6 @@ func CmdCreateModel() *cobra.Command {
 		commissioningModeInitialStepsInstruction   string
 		commissioningModeSecondaryStepsHint        uint32
 		commissioningModeSecondaryStepsInstruction string
-		managedACLExtensionRequestFlowURL          string
 		userManualURL                              string
 		supportURL                                 string
 		productURL                                 string
@@ -68,7 +67,6 @@ func CmdCreateModel() *cobra.Command {
 				commissioningModeInitialStepsInstruction,
 				commissioningModeSecondaryStepsHint,
 				commissioningModeSecondaryStepsInstruction,
-				managedACLExtensionRequestFlowURL,
 				userManualURL,
 				supportURL,
 				productURL,
@@ -134,8 +132,6 @@ current CHIP Administrator to put the device into commissioning mode.`)
 of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, 
 as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, 
 and for these values the commissioningModeSecondaryStepInstruction SHALL be set`)
-	cmd.Flags().StringVar(&managedACLExtensionRequestFlowURL, FlagManagedACLExtensionRequestFlowURL, "",
-		`managedACLExtensionRequestFlowURL SHALL identify URL to show a custom flow UI for the commissioner`)
 	cmd.Flags().StringVar(&userManualURL, FlagUserManualURL, "",
 		"URL that contains product specific web page that contains user manual for the device model.")
 	cmd.Flags().StringVar(&supportURL, FlagSupportURL, "",
@@ -144,7 +140,7 @@ and for these values the commissioningModeSecondaryStepInstruction SHALL be set`
 		"URL that contains product specific web page that contains details for the device model.")
 	cmd.Flags().StringVar(&lsfURL, FlagLsfURL, "", "URL to the Localized String File of this product")
 	cli.AddTxFlagsToCmd(cmd)
-	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 1, "Schema version - default value is 1")
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version - default is 0, the value should be equal to 0")
 	cmd.Flags().Int32Var(&enhancedSetupFlowOptions, FlagEnhancedSetupFlowOptions, 0,
 		"enhancedSetupFlowOptions SHALL identify the configuration options for the Enhanced Setup Flow.")
 	cmd.Flags().StringVar(&enhancedSetupFlowTCURL, FlagEnhancedSetupFlowTCURL, "",
@@ -177,7 +173,6 @@ func CmdUpdateModel() *cobra.Command {
 		commissioningCustomFlowURL                 string
 		commissioningModeInitialStepsInstruction   string
 		commissioningModeSecondaryStepsInstruction string
-		managedACLExtensionRequestFlowURL          string
 		userManualURL                              string
 		supportURL                                 string
 		productURL                                 string
@@ -218,7 +213,6 @@ func CmdUpdateModel() *cobra.Command {
 				commissioningCustomFlowURL,
 				commissioningModeInitialStepsInstruction,
 				commissioningModeSecondaryStepsInstruction,
-				managedACLExtensionRequestFlowURL,
 				userManualURL,
 				supportURL,
 				productURL,
@@ -267,8 +261,6 @@ values the commissioningModeInitialStepsInstruction SHALL be set`)
 of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, 
 as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, 
 and for these values the commissioningModeSecondaryStepInstruction SHALL be set`)
-	cmd.Flags().StringVar(&managedACLExtensionRequestFlowURL, FlagManagedACLExtensionRequestFlowURL, "",
-		`managedACLExtensionRequestFlowURL SHALL identify URL to show a custom flow UI for the commissioner`)
 	cmd.Flags().StringVar(&userManualURL, FlagUserManualURL, "",
 		"URL that contains product specific web page that contains user manual for the device model.")
 	cmd.Flags().StringVar(&supportURL, FlagSupportURL, "",
@@ -278,7 +270,7 @@ and for these values the commissioningModeSecondaryStepInstruction SHALL be set`
 	cmd.Flags().StringVar(&lsfURL, FlagLsfURL, "", "URL to the Localized String File of this product")
 	cmd.Flags().Int32Var(&lsfRevision, FlagLsfRevision, 0,
 		"LsfRevision is a monotonically increasing positive integer indicating the latest available version of Localized String File")
-	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 1, "Schema version")
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version")
 	cmd.Flags().Uint32Var(&commissioningModeInitialStepsHint, FlagCommissioningModeInitialStepsHint, 0,
 		`commissioningModeInitialStepsHint SHALL 
 identify a hint for the steps that can be used to put into commissioning mode a device that 
