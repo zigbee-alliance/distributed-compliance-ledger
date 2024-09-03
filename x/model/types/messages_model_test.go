@@ -1376,6 +1376,33 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
+		{
+			name: "CommissioningFallbackUrl is not valid URL",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.CommissioningFallbackUrl = "not valid URL"
+
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrFieldNotValid,
+		},
+		{
+			name: "CommissioningFallbackUrl starts with http:",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.CommissioningFallbackUrl = "http://sampleflowurl.dclmodel"
+
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrFieldNotValid,
+		},
+		{
+			name: "CommissioningFallbackUrl length > 256",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.CommissioningFallbackUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(257-30) // length = 257
+
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrFieldMaxLengthExceeded,
+		},
 	}
 
 	positiveTests := []struct {
@@ -1664,6 +1691,22 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "LsfUrl can start with non-http URLs",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.LsfUrl = "ftp://sampleflowurl.dclmodel"
+
+				return msg
+			}(validMsgUpdateModel()),
+		},
+		{
+			name: "CommissioningFallbackUrl is omitted",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.CommissioningFallbackUrl = ""
+
+				return msg
+			}(validMsgUpdateModel()),
+		},
+		{
+			name: "CommissioningFallbackUrl length == 256",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.CommissioningFallbackUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
 
 				return msg
 			}(validMsgUpdateModel()),
