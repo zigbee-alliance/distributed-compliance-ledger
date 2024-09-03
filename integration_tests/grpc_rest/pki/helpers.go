@@ -2193,7 +2193,7 @@ func AddUpdateRevocationPointForSameCertificateWithDifferentWhitespaces(suite *u
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
-		testconstants.PAACertWithNumericVid1Vid,
+		testconstants.RootCertWithVidVid,
 		testconstants.ProductIDsEmpty,
 		aliceName,
 		aliceAccount,
@@ -2205,17 +2205,17 @@ func AddUpdateRevocationPointForSameCertificateWithDifferentWhitespaces(suite *u
 
 	// Propose
 	msgProposeAddX509RootCert := pkitypes.MsgProposeAddX509RootCert{
-		Cert:   testconstants.PAACertWithNumericVid1,
+		Cert:   testconstants.RootCertWithVid,
 		Signer: jackAccount.Address,
-		Vid:    testconstants.PAACertWithNumericVid1Vid,
+		Vid:    testconstants.RootCertWithVidVid,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeAddX509RootCert}, jackName, jackAccount)
 	require.NoError(suite.T, err)
 
 	// Approve
 	msgApproveAddX509RootCert := pkitypes.MsgApproveAddX509RootCert{
-		Subject:      testconstants.PAACertWithNumericVid1Subject,
-		SubjectKeyId: testconstants.PAACertWithNumericVid1SubjectKeyID,
+		Subject:      testconstants.RootCertWithVidSubject,
+		SubjectKeyId: testconstants.RootCertWithVidSubjectKeyID,
 		Signer:       aliceAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgApproveAddX509RootCert}, aliceName, aliceAccount)
@@ -2229,7 +2229,7 @@ func AddUpdateRevocationPointForSameCertificateWithDifferentWhitespaces(suite *u
 		Vid:                  vendorAccount.VendorID,
 		IsPAA:                true,
 		Pid:                  8,
-		CrlSignerCertificate: testconstants.PAACertWithNumericVid1DifferentWhitespaces,
+		CrlSignerCertificate: testconstants.RootCertWithVidDifferentWhitespaces,
 		Label:                label,
 		DataURL:              dataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
@@ -2248,7 +2248,7 @@ func AddUpdateRevocationPointForSameCertificateWithDifferentWhitespaces(suite *u
 		Signer:               vendorAccount.Address,
 		Vid:                  vendorAccount.VendorID,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
-		CrlSignerCertificate: testconstants.PAACertWithNumericVid1,
+		CrlSignerCertificate: testconstants.RootCertWithVid,
 		Label:                label,
 		DataURL:              dataURL + "/new",
 		SchemaVersion:        0,
