@@ -45,6 +45,7 @@ func TestCreateModel(t *testing.T) {
 		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCDigest, testconstants.EnhancedSetupFlowTCDigest),
 		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCFileSize, testconstants.EnhancedSetupFlowTCFileSize),
 		fmt.Sprintf("--%s=%v", cli.FlagMaintenanceURL, testconstants.MaintenanceURL),
+		fmt.Sprintf("--%s=%v", cli.FlagCommissioningFallbackUrl, testconstants.CommissioningFallbackUrl),
 	}
 	common := []string{
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
@@ -122,6 +123,7 @@ func TestUpdateModel(t *testing.T) {
 		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCDigest, testconstants.EnhancedSetupFlowTCDigest),
 		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCFileSize, testconstants.EnhancedSetupFlowTCFileSize),
 		fmt.Sprintf("--%s=%v", cli.FlagMaintenanceURL, testconstants.MaintenanceURL),
+		fmt.Sprintf("--%s=%v", cli.FlagCommissioningFallbackUrl, testconstants.CommissioningFallbackUrl),
 	}
 	args = append(args, common...)
 	_, err := testcli.ExecTestCLITxCmd(t, ctx, cli.CmdCreateModel(), args)
@@ -147,6 +149,7 @@ func TestUpdateModel(t *testing.T) {
 		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCDigest, testconstants.EnhancedSetupFlowTCDigest),
 		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCFileSize, uint32(testconstants.EnhancedSetupFlowTCFileSize+1)),
 		fmt.Sprintf("--%s=%v", cli.FlagMaintenanceURL, testconstants.MaintenanceURL+"/updated"),
+		fmt.Sprintf("--%s=%v", cli.FlagCommissioningFallbackUrl, testconstants.CommissioningFallbackUrl+"/updated"),
 	}
 
 	for _, tc := range []struct {

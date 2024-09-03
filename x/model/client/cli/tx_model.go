@@ -36,6 +36,7 @@ func CmdCreateModel() *cobra.Command {
 		enhancedSetupFlowTCDigest                  string
 		enhancedSetupFlowTCFileSize                uint32
 		maintenanceURL                             string
+		commissioningFallbackUrl                   string
 		schemaVersion                              uint32
 	)
 
@@ -80,6 +81,7 @@ func CmdCreateModel() *cobra.Command {
 				enhancedSetupFlowTCDigest,
 				enhancedSetupFlowTCFileSize,
 				maintenanceURL,
+				commissioningFallbackUrl,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -157,6 +159,8 @@ and for these values the commissioningModeSecondaryStepInstruction SHALL be set`
 		"enhancedSetupFlowTCFileSize SHALL indicate the total size of the Enhanced Setup Flow Terms and Conditions file in bytes, and SHALL be used to ensure the downloaded file size is within the bounds of EnhancedSetupFlowTCFileSize. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
 	cmd.Flags().StringVar(&maintenanceURL, FlagMaintenanceURL, "",
 		"maintenanceURL SHALL identify a link to a vendor-specific URL which SHALL provide a manufacturer specific means to resolve any functionality limitations indicated by the TERMS_AND_CONDITIONS_CHANGED status code. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
+	cmd.Flags().StringVar(&commissioningFallbackUrl, FlagCommissioningFallbackUrl, "",
+		"This field SHALL identify a vendor-specific commissioning-fallback URL for the device model, which can be used by a Commissioner in case commissioning fails to direct the user to a manufacturer-provided mechanism to provide resolution to commissioning issues.")
 
 	_ = cmd.MarkFlagRequired(FlagVid)
 	_ = cmd.MarkFlagRequired(FlagPid)
@@ -190,6 +194,7 @@ func CmdUpdateModel() *cobra.Command {
 		enhancedSetupFlowTCDigest                  string
 		enhancedSetupFlowTCFileSize                uint32
 		maintenanceURL                             string
+		commissioningFallbackUrl                   string
 	)
 
 	cmd := &cobra.Command{
@@ -230,6 +235,7 @@ func CmdUpdateModel() *cobra.Command {
 				enhancedSetupFlowTCDigest,
 				enhancedSetupFlowTCFileSize,
 				maintenanceURL,
+				commissioningFallbackUrl,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -293,6 +299,8 @@ will enter Commissioning Mode upon a power cycle. Note that this value cannot be
 		"enhancedSetupFlowTCFileSize SHALL indicate the total size of the Enhanced Setup Flow Terms and Conditions file in bytes, and SHALL be used to ensure the downloaded file size is within the bounds of EnhancedSetupFlowTCFileSize. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
 	cmd.Flags().StringVar(&maintenanceURL, FlagMaintenanceURL, "",
 		"maintenanceURL SHALL identify a link to a vendor-specific URL which SHALL provide a manufacturer specific means to resolve any functionality limitations indicated by the TERMS_AND_CONDITIONS_CHANGED status code. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
+	cmd.Flags().StringVar(&commissioningFallbackUrl, FlagCommissioningFallbackUrl, "",
+		"This field SHALL identify a vendor-specific commissioning-fallback URL for the device model, which can be used by a Commissioner in case commissioning fails to direct the user to a manufacturer-provided mechanism to provide resolution to commissioning issues.")
 
 	cli.AddTxFlagsToCmd(cmd)
 
