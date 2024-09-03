@@ -64,7 +64,7 @@ func NewMsgCreateModel(vid int32, pid int32, signer string) *modeltypes.MsgCreat
 		EnhancedSetupFlowTCDigest:   testconstants.EnhancedSetupFlowTCDigest,
 		EnhancedSetupFlowTCFileSize: uint32(testconstants.EnhancedSetupFlowTCFileSize),
 		MaintenanceUrl:              testconstants.MaintenanceURL,
-		CommissioningFallbackUrl:    testconstants.CommissioningFallbackUrl,
+		CommissioningFallbackUrl:    testconstants.CommissioningFallbackURL,
 	}
 }
 
