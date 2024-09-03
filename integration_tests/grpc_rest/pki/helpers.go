@@ -1688,19 +1688,46 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, 1, len(revDistPoints))
 
 	// Add revocation distribution point for PAA by Vendor with certificate with different whitespaces
+	label := "label-add-update"
+	dataURL := testconstants.DataURL + "add-update"
+
 	msgAddPkiRevDistPoints = pkitypes.MsgAddPkiRevocationDistributionPoint{
 		Signer:               vendorAccount.Address,
 		Vid:                  vendorAccount.VendorID,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 		IsPAA:                true,
 		CrlSignerCertificate: testconstants.PAACertWithNumericVidDifferentWhitespaces,
-		Label:                "label" + "-new",
-		DataURL:              testconstants.DataURL + "-new",
+		Label:                label,
+		DataURL:              dataURL,
 		RevocationType:       1,
 		SchemaVersion:        0,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddPkiRevDistPoints}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
+
+	revocationPointBySubjectKeyID, err := GetPkiRevocationDistributionPointsBySubject(suite, testconstants.SubjectKeyIDWithoutColons)
+	require.NoError(suite.T, err)
+	require.Equal(suite.T, 2, len(revocationPointBySubjectKeyID.Points))
+	require.Equal(suite.T, msgAddPkiRevDistPoints.CrlSignerCertificate, revocationPointBySubjectKeyID.Points[1].CrlSignerCertificate)
+
+	// Update revocation distribution point
+	msgUpdatePkiRevocationDistributionPoint := pkitypes.MsgUpdatePkiRevocationDistributionPoint{
+		Signer:               vendorAccount.Address,
+		Vid:                  vendorAccount.VendorID,
+		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
+		Label:                label,
+		DataURL:              dataURL + "/new",
+		SchemaVersion:        0,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgUpdatePkiRevocationDistributionPoint}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	revocationPointBySubjectKeyID, err = GetPkiRevocationDistributionPointsBySubject(suite, testconstants.SubjectKeyIDWithoutColons)
+	require.NoError(suite.T, err)
+	require.Equal(suite.T, 2, len(revocationPointBySubjectKeyID.Points))
+	require.Equal(suite.T, msgUpdatePkiRevocationDistributionPoint.CrlSignerCertificate, revocationPointBySubjectKeyID.Points[1].CrlSignerCertificate)
+	require.Equal(suite.T, msgUpdatePkiRevocationDistributionPoint.DataURL, revocationPointBySubjectKeyID.Points[1].DataURL)
 
 	// Revoke certificates by serialNumber
 
@@ -2167,98 +2194,5 @@ func Demo(suite *utils.TestSuite) {
 	certs, _ = GetX509Cert(suite, testconstants.PAICertWithNumericVidSubject, testconstants.PAICertWithNumericVidSubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
 	require.Equal(suite.T, int32(testconstants.PAICertWithNumericVidVid), certs.Certs[0].Vid)
-}
 
-func AddUpdateRevocationPointForSameCertificateWithDifferentWhitespaces(suite *utils.TestSuite) {
-	// Alice and Jack are predefined Trustees
-	aliceName := testconstants.AliceAccount
-	aliceKeyInfo, err := suite.Kr.Key(aliceName)
-	require.NoError(suite.T, err)
-	address, err := aliceKeyInfo.GetAddress()
-	require.NoError(suite.T, err)
-	aliceAccount, err := test_dclauth.GetAccount(suite, address)
-	require.NoError(suite.T, err)
-
-	jackName := testconstants.JackAccount
-	jackKeyInfo, err := suite.Kr.Key(jackName)
-	require.NoError(suite.T, err)
-	address, err = jackKeyInfo.GetAddress()
-	require.NoError(suite.T, err)
-	jackAccount, err := test_dclauth.GetAccount(suite, address)
-	require.NoError(suite.T, err)
-
-	// Register new Vendor account
-	vendorName := utils.RandString()
-	vendorAccount := test_dclauth.CreateVendorAccount(
-		suite,
-		vendorName,
-		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
-		testconstants.RootCertWithVidVid,
-		testconstants.ProductIDsEmpty,
-		aliceName,
-		aliceAccount,
-		jackName,
-		jackAccount,
-		testconstants.Info,
-	)
-	require.NotNil(suite.T, vendorAccount)
-
-	// Propose
-	msgProposeAddX509RootCert := pkitypes.MsgProposeAddX509RootCert{
-		Cert:   testconstants.RootCertWithVid,
-		Signer: jackAccount.Address,
-		Vid:    testconstants.RootCertWithVidVid,
-	}
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeAddX509RootCert}, jackName, jackAccount)
-	require.NoError(suite.T, err)
-
-	// Approve
-	msgApproveAddX509RootCert := pkitypes.MsgApproveAddX509RootCert{
-		Subject:      testconstants.RootCertWithVidSubject,
-		SubjectKeyId: testconstants.RootCertWithVidSubjectKeyID,
-		Signer:       aliceAccount.Address,
-	}
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgApproveAddX509RootCert}, aliceName, aliceAccount)
-	require.NoError(suite.T, err)
-
-	// Add revocation distribution point
-	label := "label-add-update"
-	dataURL := testconstants.DataURL + "add-update"
-	msgAddPkiRevocationDistributionPoint := pkitypes.MsgAddPkiRevocationDistributionPoint{
-		Signer:               vendorAccount.Address,
-		Vid:                  vendorAccount.VendorID,
-		IsPAA:                true,
-		Pid:                  8,
-		CrlSignerCertificate: testconstants.RootCertWithVidDifferentWhitespaces,
-		Label:                label,
-		DataURL:              dataURL,
-		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
-		RevocationType:       1,
-	}
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddPkiRevocationDistributionPoint}, vendorName, vendorAccount)
-	require.NoError(suite.T, err)
-
-	revocationPointBySubjectKeyID, err := GetPkiRevocationDistributionPointsBySubject(suite, testconstants.SubjectKeyIDWithoutColons)
-	require.NoError(suite.T, err)
-	require.Equal(suite.T, 1, len(revocationPointBySubjectKeyID.Points))
-	require.Equal(suite.T, msgAddPkiRevocationDistributionPoint.CrlSignerCertificate, revocationPointBySubjectKeyID.Points[0].CrlSignerCertificate)
-
-	// Update revocation distribution point
-	msgUpdatePkiRevocationDistributionPoint := pkitypes.MsgUpdatePkiRevocationDistributionPoint{
-		Signer:               vendorAccount.Address,
-		Vid:                  vendorAccount.VendorID,
-		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
-		CrlSignerCertificate: testconstants.RootCertWithVid,
-		Label:                label,
-		DataURL:              dataURL + "/new",
-		SchemaVersion:        0,
-	}
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgUpdatePkiRevocationDistributionPoint}, vendorName, vendorAccount)
-	require.NoError(suite.T, err)
-
-	revocationPointBySubjectKeyID, err = GetPkiRevocationDistributionPointsBySubject(suite, testconstants.SubjectKeyIDWithoutColons)
-	require.NoError(suite.T, err)
-	require.Equal(suite.T, 1, len(revocationPointBySubjectKeyID.Points))
-	require.Equal(suite.T, msgUpdatePkiRevocationDistributionPoint.CrlSignerCertificate, revocationPointBySubjectKeyID.Points[0].CrlSignerCertificate)
-	require.Equal(suite.T, msgUpdatePkiRevocationDistributionPoint.DataURL, revocationPointBySubjectKeyID.Points[0].DataURL)
 }

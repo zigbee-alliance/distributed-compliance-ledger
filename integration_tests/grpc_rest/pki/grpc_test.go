@@ -35,8 +35,3 @@ func TestPkiDemoGRPC(t *testing.T) {
 	pki.Demo(&suite)
 	pki.NocCertDemo(&suite)
 }
-
-func TestAddUpdateRevocationPointForSameCertificateWithDifferentWhitespacesGRPC(t *testing.T) {
-	suite := utils.SetupTest(t, testconstants.ChainID, false)
-	pki.AddUpdateRevocationPointForSameCertificateWithDifferentWhitespaces(&suite)
-}
