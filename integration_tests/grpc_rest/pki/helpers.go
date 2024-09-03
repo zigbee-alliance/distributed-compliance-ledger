@@ -2194,5 +2194,4 @@ func Demo(suite *utils.TestSuite) {
 	certs, _ = GetX509Cert(suite, testconstants.PAICertWithNumericVidSubject, testconstants.PAICertWithNumericVidSubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
 	require.Equal(suite.T, int32(testconstants.PAICertWithNumericVidVid), certs.Certs[0].Vid)
-
 }
