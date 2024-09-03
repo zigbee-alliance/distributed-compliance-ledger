@@ -2308,7 +2308,7 @@ func rootCertificate(address sdk.AccAddress) types.Certificate {
 	)
 }
 
-func intermediateCertificate(address sdk.AccAddress) types.Certificate {
+func intermediateCertificateNoVid(address sdk.AccAddress) types.Certificate {
 	return types.NewNonRootCertificate(
 		testconstants.IntermediateCertPem,
 		testconstants.IntermediateSubject,
@@ -2320,6 +2320,7 @@ func intermediateCertificate(address sdk.AccAddress) types.Certificate {
 		testconstants.RootSubject,
 		testconstants.RootSubjectKeyID,
 		address.String(),
+		0,
 		testconstants.SchemaVersion,
 	)
 }

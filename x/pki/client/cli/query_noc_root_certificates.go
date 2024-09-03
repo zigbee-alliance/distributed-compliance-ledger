@@ -14,7 +14,7 @@ import (
 func CmdListNocRootCertificates() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "all-noc-x509-root-certs",
-		Short: "Gets all NOC root certificates",
+		Short: "Gets all NOC root certificates (RCACs)",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
@@ -51,7 +51,7 @@ func CmdShowNocRootCertificates() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "noc-x509-root-certs",
-		Short: "Gets NOC root certificates by VID",
+		Short: "Gets NOC root certificates (RCACs) by VID",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)

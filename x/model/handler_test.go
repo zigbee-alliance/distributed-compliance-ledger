@@ -263,6 +263,7 @@ func TestHandler_UpdateModelByVendorWithProductIds(t *testing.T) {
 	// add new model
 	msgCreateModel := NewMsgCreateModel(owner)
 	msgCreateModel.Pid = 200
+	enhancedSetupFlowTCRevision := msgCreateModel.EnhancedSetupFlowTCRevision
 	_, err := setup.Handler(setup.Ctx, msgCreateModel)
 	require.NoError(t, err)
 
@@ -276,8 +277,10 @@ func TestHandler_UpdateModelByVendorWithProductIds(t *testing.T) {
 	require.True(t, sdkerrors.ErrUnauthorized.Is(err))
 
 	// update existing model by owner
+	enhancedSetupFlowTCRevision++
 	msgUpdateModel = NewMsgUpdateModel(owner)
 	msgUpdateModel.Pid = 200
+	msgUpdateModel.EnhancedSetupFlowTCRevision = enhancedSetupFlowTCRevision
 	_, err = setup.Handler(setup.Ctx, msgUpdateModel)
 	require.NoError(t, err)
 
@@ -285,7 +288,9 @@ func TestHandler_UpdateModelByVendorWithProductIds(t *testing.T) {
 	setup.AddAccount(vendorWithoutProductIDs, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, setup.VendorID, testconstants.ProductIDsEmpty)
 
 	// update existing model by vendor with the same VendorID as owner's one
+	enhancedSetupFlowTCRevision++
 	msgUpdateModel = NewMsgUpdateModel(vendorWithoutProductIDs)
+	msgUpdateModel.EnhancedSetupFlowTCRevision = enhancedSetupFlowTCRevision
 	msgUpdateModel.Pid = 200
 	msgUpdateModel.ProductLabel += "-updated-once-more"
 	msgUpdateModel.LsfRevision++
@@ -300,6 +305,7 @@ func TestHandler_OnlyOwnerAndVendorWithSameVidCanUpdateModel(t *testing.T) {
 	msgCreateModel := NewMsgCreateModel(setup.Vendor)
 	_, err := setup.Handler(setup.Ctx, msgCreateModel)
 	require.NoError(t, err)
+	enhancedSetupFlowTCRevision := msgCreateModel.EnhancedSetupFlowTCRevision
 
 	for _, role := range []dclauthtypes.AccountRole{
 		dclauthtypes.CertificationCenter,
@@ -326,7 +332,9 @@ func TestHandler_OnlyOwnerAndVendorWithSameVidCanUpdateModel(t *testing.T) {
 	require.True(t, sdkerrors.ErrUnauthorized.Is(err))
 
 	// update existing model by owner
+	enhancedSetupFlowTCRevision++
 	msgUpdateModel = NewMsgUpdateModel(setup.Vendor)
+	msgUpdateModel.EnhancedSetupFlowTCRevision = enhancedSetupFlowTCRevision
 	_, err = setup.Handler(setup.Ctx, msgUpdateModel)
 	require.NoError(t, err)
 
@@ -334,7 +342,9 @@ func TestHandler_OnlyOwnerAndVendorWithSameVidCanUpdateModel(t *testing.T) {
 	setup.AddAccount(vendorWithSameVid, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, setup.VendorID, setup.ProductIDs)
 
 	// update existing model by vendor with the same VendorID as owner's one
+	enhancedSetupFlowTCRevision++
 	msgUpdateModel = NewMsgUpdateModel(vendorWithSameVid)
+	msgUpdateModel.EnhancedSetupFlowTCRevision = enhancedSetupFlowTCRevision
 	msgUpdateModel.ProductLabel += "-updated-once-more"
 	msgUpdateModel.LsfRevision++
 	_, err = setup.Handler(setup.Ctx, msgUpdateModel)
@@ -349,6 +359,7 @@ func TestHandler_LsfUpdateValidations(t *testing.T) {
 	msgCreateModel.LsfUrl = ""
 	_, err := setup.Handler(setup.Ctx, msgCreateModel)
 	require.NoError(t, err)
+	enhancedSetupFlowTCRevision := msgCreateModel.EnhancedSetupFlowTCRevision
 
 	// query model
 	receivedModel, err := queryModel(setup, msgCreateModel.Vid, msgCreateModel.Pid)
@@ -380,7 +391,9 @@ func TestHandler_LsfUpdateValidations(t *testing.T) {
 	require.True(t, types.ErrLsfRevisionIsNotValid.Is(err))
 
 	// Update model with valid LsfUrl and LsfRevision set to 1
+	enhancedSetupFlowTCRevision++
 	msgUpdateModel = NewMsgUpdateModel(setup.Vendor)
+	msgUpdateModel.EnhancedSetupFlowTCRevision = enhancedSetupFlowTCRevision
 	msgUpdateModel.LsfUrl = "https://example.com/lsf.json"
 	msgUpdateModel.LsfRevision = testconstants.LsfRevision
 	_, err = setup.Handler(setup.Ctx, msgUpdateModel)
@@ -394,7 +407,9 @@ func TestHandler_LsfUpdateValidations(t *testing.T) {
 	require.Equal(t, msgUpdateModel.LsfRevision, receivedModel.LsfRevision)
 
 	// Increase LsfRevision by 1
+	enhancedSetupFlowTCRevision++
 	msgUpdateModel = NewMsgUpdateModel(setup.Vendor)
+	msgUpdateModel.EnhancedSetupFlowTCRevision = enhancedSetupFlowTCRevision
 	msgUpdateModel.LsfUrl = ""
 	msgUpdateModel.LsfRevision = testconstants.LsfRevision + 1
 	_, err = setup.Handler(setup.Ctx, msgUpdateModel)
@@ -408,7 +423,9 @@ func TestHandler_LsfUpdateValidations(t *testing.T) {
 	require.Equal(t, msgUpdateModel.LsfRevision, receivedModel.LsfRevision)
 
 	// Increase LsfRevision by more then 1
+	enhancedSetupFlowTCRevision++
 	msgUpdateModel = NewMsgUpdateModel(setup.Vendor)
+	msgUpdateModel.EnhancedSetupFlowTCRevision = enhancedSetupFlowTCRevision
 	msgUpdateModel.LsfUrl = ""
 	msgUpdateModel.LsfRevision = testconstants.LsfRevision + 3
 	_, err = setup.Handler(setup.Ctx, msgUpdateModel)
@@ -543,6 +560,79 @@ func TestHandler_PartiallyUpdateModel(t *testing.T) {
 	require.Equal(t, msgUpdateModel.ProductLabel, receivedModel.ProductLabel)
 }
 
+func TestHandler_UpdateModelEnhancedSetupFlowTCRevisionUnsetIncrement(t *testing.T) {
+	setup := Setup(t)
+
+	// add new model
+	msgAddModel := NewMsgCreateModel(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgAddModel)
+	require.NoError(t, err)
+
+	// update EnhancedSetupFlowTCRevision of existing model
+	msgUpdateModel := NewMsgUpdateModel(setup.Vendor)
+
+	_, err = setup.Handler(setup.Ctx, msgUpdateModel)
+	require.NoError(t, err)
+
+	// query model
+	receivedModel, err := queryModel(setup, msgUpdateModel.Vid, msgUpdateModel.Pid)
+	require.NoError(t, err)
+
+	// check
+	require.Equal(t, msgUpdateModel.EnhancedSetupFlowTCRevision, receivedModel.EnhancedSetupFlowTCRevision)
+}
+
+func TestHandler_UpdateModelEnhancedSetupFlowTCRevisionIncrement(t *testing.T) {
+	setup := Setup(t)
+
+	// add new model
+	msgAddModel := NewMsgCreateModel(setup.Vendor)
+	msgAddModel.EnhancedSetupFlowOptions = testconstants.EnhancedSetupFlowOptions
+	msgAddModel.EnhancedSetupFlowTCUrl = testconstants.EnhancedSetupFlowTCURL
+	msgAddModel.EnhancedSetupFlowTCRevision = int32(testconstants.EnhancedSetupFlowTCRevision)
+	msgAddModel.EnhancedSetupFlowTCDigest = testconstants.EnhancedSetupFlowTCDigest
+	msgAddModel.EnhancedSetupFlowTCFileSize = uint32(testconstants.EnhancedSetupFlowTCFileSize)
+	msgAddModel.MaintenanceUrl = testconstants.MaintenanceURL
+	_, err := setup.Handler(setup.Ctx, msgAddModel)
+	require.NoError(t, err)
+
+	// update EnhancedSetupFlowTCRevision of existing model
+	msgUpdateModel := NewMsgUpdateModel(setup.Vendor)
+
+	_, err = setup.Handler(setup.Ctx, msgUpdateModel)
+	require.NoError(t, err)
+
+	// query model
+	receivedModel, err := queryModel(setup, msgUpdateModel.Vid, msgUpdateModel.Pid)
+	require.NoError(t, err)
+
+	// check
+	require.Equal(t, msgAddModel.EnhancedSetupFlowTCRevision+1, msgUpdateModel.EnhancedSetupFlowTCRevision)
+	require.Equal(t, msgUpdateModel.EnhancedSetupFlowTCRevision, receivedModel.EnhancedSetupFlowTCRevision)
+}
+
+func TestHandler_UpdateModelEnhancedSetupFlowTCRevisionIncorrectIncrement(t *testing.T) {
+	setup := Setup(t)
+
+	// add new model
+	msgAddModel := NewMsgCreateModel(setup.Vendor)
+	msgAddModel.EnhancedSetupFlowOptions = testconstants.EnhancedSetupFlowOptions
+	msgAddModel.EnhancedSetupFlowTCUrl = testconstants.EnhancedSetupFlowTCURL
+	msgAddModel.EnhancedSetupFlowTCRevision = int32(testconstants.EnhancedSetupFlowTCRevision)
+	msgAddModel.EnhancedSetupFlowTCDigest = testconstants.EnhancedSetupFlowTCDigest
+	msgAddModel.EnhancedSetupFlowTCFileSize = uint32(testconstants.EnhancedSetupFlowTCFileSize)
+	msgAddModel.MaintenanceUrl = testconstants.MaintenanceURL
+	_, err := setup.Handler(setup.Ctx, msgAddModel)
+	require.NoError(t, err)
+
+	// update EnhancedSetupFlowTCRevision of existing model
+	msgUpdateModel := NewMsgUpdateModel(setup.Vendor)
+	msgUpdateModel.EnhancedSetupFlowTCRevision = msgAddModel.EnhancedSetupFlowTCRevision + 2
+	_, err = setup.Handler(setup.Ctx, msgUpdateModel)
+	require.Error(t, err)
+	require.ErrorIs(t, err, types.ErrEnhancedSetupFlowTCRevisionInvalid)
+}
+
 func TestHandler_DeleteModel(t *testing.T) {
 	setup := Setup(t)
 
@@ -557,6 +647,41 @@ func TestHandler_DeleteModel(t *testing.T) {
 	_, err = setup.Handler(setup.Ctx, msgCreateModel)
 	require.NoError(t, err)
 
+	// delete existing model
+	_, err = setup.Handler(setup.Ctx, msgDeleteModel)
+	require.NoError(t, err)
+
+	// query deleted model
+	_, err = queryModel(setup, msgDeleteModel.Vid, msgDeleteModel.Pid)
+	require.Error(t, err)
+	require.Equal(t, codes.NotFound, status.Code(err))
+}
+
+func TestHandler_DeleteModelAfterDeletingModelVersion(t *testing.T) {
+	setup := Setup(t)
+
+	// add new model
+	msgCreateModel := NewMsgCreateModel(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// add two new model versions
+	msgCreateModelVersion1 := NewMsgCreateModelVersion(setup.Vendor, testconstants.SoftwareVersion)
+	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion1)
+	require.NoError(t, err)
+
+	msgCreateModelVersion2 := NewMsgCreateModelVersion(setup.Vendor, testconstants.SoftwareVersion+1)
+	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion2)
+	require.NoError(t, err)
+
+	complianceKeeper := setup.ComplianceKeeper
+	complianceKeeper.On("GetComplianceInfo", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(false)
+
+	msgDeleteModelVersion1 := NewMsgDeleteModelVersion(setup.Vendor)
+	_, err = setup.Handler(setup.Ctx, msgDeleteModelVersion1)
+	require.NoError(t, err)
+
+	msgDeleteModel := NewMsgDeleteModel(setup.Vendor)
 	// delete existing model
 	_, err = setup.Handler(setup.Ctx, msgDeleteModel)
 	require.NoError(t, err)
@@ -1343,6 +1468,65 @@ func TestHandler_DeleteModelVersion(t *testing.T) {
 	)
 	require.Error(t, err)
 	require.Equal(t, codes.NotFound, status.Code(err))
+
+	// query model versions
+	_, err = queryAllModelVersions(
+		setup,
+		msgDeleteModelVersion.Vid,
+		msgDeleteModelVersion.Pid,
+	)
+	require.Error(t, err)
+	require.Equal(t, codes.NotFound, status.Code(err))
+}
+
+func TestHandler_DeleteOneOfTwoModelVersions(t *testing.T) {
+	setup := Setup(t)
+
+	// add new model
+	msgCreateModel := NewMsgCreateModel(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// add two new model versions
+	msgCreateModelVersion1 := NewMsgCreateModelVersion(setup.Vendor, testconstants.SoftwareVersion)
+	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion1)
+	require.NoError(t, err)
+
+	msgCreateModelVersion2 := NewMsgCreateModelVersion(setup.Vendor, testconstants.SoftwareVersion+1)
+	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion2)
+	require.NoError(t, err)
+
+	// mock model versions not to be certified
+	complianceKeeper := setup.ComplianceKeeper
+	complianceKeeper.On("GetComplianceInfo", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(false)
+
+	msgDeleteModelVersion := NewMsgDeleteModelVersion(setup.Vendor)
+	_, err = setup.Handler(setup.Ctx, msgDeleteModelVersion)
+	require.NoError(t, err)
+
+	// query deleted model version
+	_, err = queryModelVersion(
+		setup,
+		msgCreateModelVersion1.Vid,
+		msgCreateModelVersion1.Pid,
+		msgCreateModelVersion1.SoftwareVersion,
+	)
+	require.Error(t, err)
+	require.Equal(t, codes.NotFound, status.Code(err))
+
+	// query not deleted model version
+	modelVersion, err := queryModelVersion(
+		setup,
+		msgCreateModelVersion2.Vid,
+		msgCreateModelVersion2.Pid,
+		msgCreateModelVersion2.SoftwareVersion,
+	)
+	require.NoError(t, err)
+	require.NotNil(t, modelVersion)
+
+	modelVersions, err := queryAllModelVersions(setup, msgCreateModel.Vid, msgCreateModel.Pid)
+	require.NoError(t, err)
+	require.Equal(t, []uint32{msgCreateModelVersion2.SoftwareVersion}, modelVersions.SoftwareVersions)
 }
 
 func TestHandler_DeleteModelVersionDifferentAccSameVid(t *testing.T) {
@@ -1635,11 +1819,17 @@ func NewMsgUpdateModel(signer sdk.AccAddress) *types.MsgUpdateModel {
 		CommissioningCustomFlowUrl:               testconstants.CommissioningCustomFlowURL + "/updated",
 		CommissioningModeInitialStepsInstruction: testconstants.CommissioningModeInitialStepsInstruction + "-updated",
 		CommissioningModeSecondaryStepsInstruction: testconstants.CommissioningModeSecondaryStepsInstruction + "-updated",
-		UserManualUrl: testconstants.UserManualURL + "/updated",
-		SupportUrl:    testconstants.SupportURL + "/updated",
-		ProductUrl:    testconstants.ProductURL + "/updated",
-		LsfUrl:        testconstants.LsfURL + "/updated",
-		LsfRevision:   testconstants.LsfRevision + 1,
+		UserManualUrl:               testconstants.UserManualURL + "/updated",
+		SupportUrl:                  testconstants.SupportURL + "/updated",
+		ProductUrl:                  testconstants.ProductURL + "/updated",
+		LsfUrl:                      testconstants.LsfURL + "/updated",
+		LsfRevision:                 testconstants.LsfRevision + 1,
+		EnhancedSetupFlowOptions:    testconstants.EnhancedSetupFlowOptions + 2,
+		EnhancedSetupFlowTCUrl:      testconstants.EnhancedSetupFlowTCURL + "/updated",
+		EnhancedSetupFlowTCRevision: int32(testconstants.EnhancedSetupFlowTCRevision + 1),
+		EnhancedSetupFlowTCDigest:   testconstants.EnhancedSetupFlowTCDigest,
+		EnhancedSetupFlowTCFileSize: uint32(testconstants.EnhancedSetupFlowTCFileSize + 1),
+		MaintenanceUrl:              testconstants.MaintenanceURL + "/updated",
 	}
 }
 

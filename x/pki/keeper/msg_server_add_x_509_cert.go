@@ -86,6 +86,11 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 		return nil, err
 	}
 
+	subjectVid, err := x509.GetVidFromSubject(x509Certificate.SubjectAsText)
+	if err != nil {
+		return nil, pkitypes.NewErrInvalidCertificate(err)
+	}
+
 	// create new certificate
 	certificate := types.NewNonRootCertificate(
 		msg.Cert,
@@ -98,6 +103,7 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 		rootCert.Subject,
 		rootCert.SubjectKeyId,
 		msg.Signer,
+		subjectVid,
 		msg.CertSchemaVersion,
 	)
 

@@ -21,7 +21,7 @@ func createAddRevocationMessageWithPAACertWithNumericVid(signer string) *types.M
 		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 		RevocationType:       types.CRLRevocationType,
-		SchemaVersion:        1,
+		SchemaVersion:        0,
 	}
 }
 
@@ -36,7 +36,7 @@ func createAddRevocationMessageWithPAICertWithNumericVidPid(signer string) *type
 		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 		RevocationType:       types.CRLRevocationType,
-		SchemaVersion:        1,
+		SchemaVersion:        0,
 	}
 }
 
@@ -51,7 +51,7 @@ func createAddRevocationMessageWithPAICertWithVidPid(signer string) *types.MsgAd
 		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 		RevocationType:       types.CRLRevocationType,
-		SchemaVersion:        1,
+		SchemaVersion:        0,
 	}
 }
 
@@ -66,7 +66,7 @@ func createAddRevocationMessageWithPAACertNoVid(signer string, vid int32) *types
 		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 		RevocationType:       types.CRLRevocationType,
-		SchemaVersion:        1,
+		SchemaVersion:        0,
 	}
 }
 
@@ -81,7 +81,7 @@ func createAddRevocationMessageWithLeafCertWithVid(signer string) *types.MsgAddP
 		DataURL:              testconstants.DataURL,
 		IssuerSubjectKeyID:   testconstants.IntermediateCertWithVid1SubjectKeyIDWithoutColumns,
 		RevocationType:       types.CRLRevocationType,
-		SchemaVersion:        1,
+		SchemaVersion:        0,
 	}
 }
 

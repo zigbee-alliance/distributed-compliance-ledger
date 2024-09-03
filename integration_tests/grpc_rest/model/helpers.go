@@ -678,6 +678,78 @@ func DeleteModelVersion(suite *utils.TestSuite) {
 	require.Nil(suite.T, model)
 }
 
+func DeleteModelVersionBeforeDeletingModel(suite *utils.TestSuite) {
+	// Alice and Bob are predefined Trustees
+	aliceName := testconstants.AliceAccount
+	aliceKeyInfo, err := suite.Kr.Key(aliceName)
+	require.NoError(suite.T, err)
+	address, err := aliceKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	aliceAccount, err := testDclauth.GetAccount(suite, address)
+	require.NoError(suite.T, err)
+
+	bobName := testconstants.BobAccount
+	bobKeyInfo, err := suite.Kr.Key(bobName)
+	require.NoError(suite.T, err)
+	address, err = bobKeyInfo.GetAddress()
+	require.NoError(suite.T, err)
+	bobAccount, err := testDclauth.GetAccount(suite, address)
+	require.NoError(suite.T, err)
+
+	// Register new Vendor account
+	vid := int32(tmrand.Uint16())
+	vendorName := utils.RandString()
+	pid := int32(tmrand.Uint16())
+	vendorAccount := testDclauth.CreateVendorAccount(
+		suite,
+		vendorName,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		vid,
+		[]*commontypes.Uint16Range{{Min: pid, Max: pid}},
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+		testconstants.Info,
+	)
+	require.NotNil(suite.T, vendorAccount)
+
+	// New vendor adds a model
+	createModelMsg := NewMsgCreateModel(vid, pid, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelMsg}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	createModelVersion1Msg := NewMsgCreateModelVersion(vid, pid, 1, "1", vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelVersion1Msg}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	createModelVersion2Msg := NewMsgCreateModelVersion(vid, pid, 2, "2", vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelVersion2Msg}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	deleteModelVersionMsg := NewMsgDeleteModelVersion(vid, pid, createModelVersion1Msg.SoftwareVersion, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{deleteModelVersionMsg}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	deleteModelMsg := NewMsgDeleteModel(vid, pid, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{deleteModelMsg}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	// check if modelVersions are deleted
+	modelVersion, err := GetModelVersion(suite, deleteModelVersionMsg.Vid, deleteModelVersionMsg.Pid, createModelVersion1Msg.SoftwareVersion)
+	require.Error(suite.T, err)
+	require.Nil(suite.T, modelVersion)
+
+	modelVersion, err = GetModelVersion(suite, deleteModelVersionMsg.Vid, deleteModelVersionMsg.Pid, createModelVersion2Msg.SoftwareVersion)
+	require.Error(suite.T, err)
+	require.Nil(suite.T, modelVersion)
+
+	// check if model is deleted
+	model, err := GetModel(suite, deleteModelVersionMsg.Vid, deleteModelVersionMsg.Pid)
+	require.Error(suite.T, err)
+	require.Nil(suite.T, model)
+}
+
 func DeleteModelVersionDifferentVid(suite *utils.TestSuite) {
 	// Alice and Bob are predefined Trustees
 	aliceName := testconstants.AliceAccount

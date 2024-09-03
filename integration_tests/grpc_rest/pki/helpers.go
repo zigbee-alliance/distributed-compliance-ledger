@@ -1541,7 +1541,7 @@ func Demo(suite *utils.TestSuite) {
 		Label:                "label",
 		DataURL:              testconstants.DataURL,
 		RevocationType:       1,
-		SchemaVersion:        1,
+		SchemaVersion:        0,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddPkiRevDistPoints}, vendorAdminName, vendorAdminAccount)
 	require.Error(suite.T, err)
@@ -1556,7 +1556,7 @@ func Demo(suite *utils.TestSuite) {
 		Label:                "label",
 		DataURL:              testconstants.DataURL,
 		RevocationType:       1,
-		SchemaVersion:        1,
+		SchemaVersion:        0,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddPkiRevDistPoints}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
@@ -1624,7 +1624,7 @@ func Demo(suite *utils.TestSuite) {
 		Label:                "label_PAI",
 		DataURL:              testconstants.DataURL,
 		RevocationType:       1,
-		SchemaVersion:        1,
+		SchemaVersion:        0,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddPkiRevDistPoints}, venName65522, venAcc65522)
 	require.NoError(suite.T, err)
@@ -1653,7 +1653,7 @@ func Demo(suite *utils.TestSuite) {
 		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 		Label:                "label",
 		DataURL:              "https://url2.data.dclmodel",
-		SchemaVersion:        2,
+		SchemaVersion:        0,
 	}
 
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgUpdPkiRevDistPoint}, vendorName, vendorAccount)
@@ -2151,4 +2151,5 @@ func Demo(suite *utils.TestSuite) {
 	// Check there is only one approved intermediate certificate
 	certs, _ = GetX509Cert(suite, testconstants.PAICertWithNumericVidSubject, testconstants.PAICertWithNumericVidSubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
+	require.Equal(suite.T, int32(testconstants.PAICertWithNumericVidVid), certs.Certs[0].Vid)
 }
