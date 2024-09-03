@@ -44,6 +44,7 @@ func NewMsgCreateModel(
 	enhancedSetupFlowTCDigest string,
 	enhancedSetupFlowTCFileSize uint32,
 	maintenanceURL string,
+	commissioningFallbackUrl string,
 ) *MsgCreateModel {
 	return &MsgCreateModel{
 		Creator:                                  creator,
@@ -71,6 +72,7 @@ func NewMsgCreateModel(
 		EnhancedSetupFlowTCFileSize: enhancedSetupFlowTCFileSize,
 		MaintenanceUrl:              maintenanceURL,
 		SchemaVersion:               schemaVersion,
+		CommissioningFallbackUrl:    commissioningFallbackUrl,
 	}
 }
 
@@ -143,6 +145,7 @@ func NewMsgUpdateModel(
 	enhancedSetupFlowTCDigest string,
 	enhancedSetupFlowTCFileSize uint32,
 	maintenanceURL string,
+	commissioningFallbackUrl string,
 
 ) *MsgUpdateModel {
 	return &MsgUpdateModel{
@@ -168,6 +171,7 @@ func NewMsgUpdateModel(
 		EnhancedSetupFlowTCFileSize:       enhancedSetupFlowTCFileSize,
 		MaintenanceUrl:                    maintenanceURL,
 		SchemaVersion:                     schemaVersion,
+		CommissioningFallbackUrl:          commissioningFallbackUrl,
 	}
 }
 

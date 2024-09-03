@@ -52,6 +52,7 @@ func (k msgServer) CreateModel(goCtx context.Context, msg *types.MsgCreateModel)
 		LsfUrl:                   msg.LsfUrl,
 		EnhancedSetupFlowOptions: msg.EnhancedSetupFlowOptions,
 		SchemaVersion:            msg.SchemaVersion,
+		CommissioningFallbackUrl: msg.CommissioningFallbackUrl,
 	}
 
 	// if LsfUrl is not empty, we set lsfRevision to default value of 1
@@ -147,6 +148,10 @@ func (k msgServer) UpdateModel(goCtx context.Context, msg *types.MsgUpdateModel)
 
 	if msg.ProductUrl != "" {
 		model.ProductUrl = msg.ProductUrl
+	}
+
+	if msg.CommissioningFallbackUrl != "" {
+		model.CommissioningFallbackUrl = msg.CommissioningFallbackUrl
 	}
 
 	model.EnhancedSetupFlowOptions = msg.EnhancedSetupFlowOptions
