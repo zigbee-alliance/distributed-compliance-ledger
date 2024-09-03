@@ -170,6 +170,7 @@ func TestHandler_AddModel(t *testing.T) {
 	require.Equal(t, msgCreateModel.Vid, receivedModel.Vid)
 	require.Equal(t, msgCreateModel.Pid, receivedModel.Pid)
 	require.Equal(t, msgCreateModel.DeviceTypeId, receivedModel.DeviceTypeId)
+	require.Equal(t, msgCreateModel.CommissioningFallbackUrl, receivedModel.CommissioningFallbackUrl)
 }
 
 func TestHandler_AddModel_CheckCommissioningModeInitialStepsHintHandling(t *testing.T) {
@@ -252,6 +253,7 @@ func TestHandler_UpdateModel(t *testing.T) {
 	require.Equal(t, msgUpdateModel.ProductLabel, receivedModel.ProductLabel)
 	require.Equal(t, newCommissioningModeInitialStepsHint, receivedModel.CommissioningModeInitialStepsHint)
 	require.Equal(t, newSchemaVersion, receivedModel.SchemaVersion)
+	require.Equal(t, msgUpdateModel.CommissioningFallbackUrl, receivedModel.CommissioningFallbackUrl)
 }
 
 func TestHandler_UpdateModelByVendorWithProductIds(t *testing.T) {
@@ -1801,10 +1803,11 @@ func NewMsgCreateModel(signer sdk.AccAddress) *types.MsgCreateModel {
 		CommissioningModeInitialStepsInstruction: testconstants.CommissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsHint:      testconstants.CommissioningModeSecondaryStepsHint,
 		CommissioningModeSecondaryStepsInstruction: testconstants.CommissioningModeSecondaryStepsInstruction,
-		UserManualUrl: testconstants.UserManualURL,
-		SupportUrl:    testconstants.SupportURL,
-		ProductUrl:    testconstants.ProductURL,
-		LsfUrl:        testconstants.LsfURL,
+		UserManualUrl:            testconstants.UserManualURL,
+		SupportUrl:               testconstants.SupportURL,
+		ProductUrl:               testconstants.ProductURL,
+		LsfUrl:                   testconstants.LsfURL,
+		CommissioningFallbackUrl: testconstants.CommissioningFallbackURL,
 	}
 }
 
@@ -1830,6 +1833,7 @@ func NewMsgUpdateModel(signer sdk.AccAddress) *types.MsgUpdateModel {
 		EnhancedSetupFlowTCDigest:   testconstants.EnhancedSetupFlowTCDigest,
 		EnhancedSetupFlowTCFileSize: uint32(testconstants.EnhancedSetupFlowTCFileSize + 1),
 		MaintenanceUrl:              testconstants.MaintenanceURL + "/updated",
+		CommissioningFallbackUrl:    testconstants.CommissioningFallbackURL + "/updated",
 	}
 }
 
