@@ -175,6 +175,7 @@ func (k msgServer) DeleteModelVersion(goCtx context.Context, msg *types.MsgDelet
 
 	// store updated model version
 	k.RemoveModelVersion(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion)
+	k.RemoveSoftwareVersion(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion)
 
 	return &types.MsgDeleteModelVersionResponse{}, nil
 }
