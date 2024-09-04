@@ -179,7 +179,6 @@ check_response "$result" "\"productLabel\": \"$description\""
 check_response "$result" "\"schemaVersion\": $schema_version_0"
 check_response "$result" "\"commissioningModeInitialStepsHint\": $newCommissioningModeInitialStepsHint"
 check_response "$result" "\"enhancedSetupFlowOptions\": $enhancedSetupFlowOptions_2"
-check_response "$result" "\"commissioningFallbackUrl\": \"$newCommissioningFallbackUrl\""
 echo "$result"
 
 echo "Get Model with VID: $vid_with_pids PID: $pid"
@@ -193,6 +192,7 @@ check_response "$result" "\"enhancedSetupFlowTCRevision\": $newEnhancedSetupFlow
 check_response "$result" "\"enhancedSetupFlowTCDigest\": \"$newEnhancedSetupFlowTCDigest\""
 check_response "$result" "\"enhancedSetupFlowTCFileSize\": $newEnhancedSetupFlowTCFileSize"
 check_response "$result" "\"maintenanceUrl\": \"$newMaintenanceUrl\""
+check_response "$result" "\"commissioningFallbackUrl\": \"$newCommissioningFallbackUrl\""
 echo "$result"
 
 test_divider
