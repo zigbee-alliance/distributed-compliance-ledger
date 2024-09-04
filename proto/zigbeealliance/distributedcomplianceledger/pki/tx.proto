@@ -122,7 +122,7 @@ message MsgAddPkiRevocationDistributionPoint {
   string label = 5 [(gogoproto.moretags) = "validate:\"required\""];
   string crlSignerCertificate = 6 [(gogoproto.moretags) = "validate:\"required\""];
   string issuerSubjectKeyID = 7 [(gogoproto.moretags) = "validate:\"required\""];
-  string dataURL = 8 [(gogoproto.moretags) = "validate:\"required,url\""];
+  string dataURL = 8 [(gogoproto.moretags) = "validate:\"required,url,regexp=^https?://\""];
   uint64 dataFileSize = 9;
   string dataDigest = 10;
   uint32 dataDigestType = 11;
@@ -140,7 +140,7 @@ message MsgUpdatePkiRevocationDistributionPoint {
   string label = 3 [(gogoproto.moretags) = "validate:\"required\""];
   string crlSignerCertificate = 4;
   string issuerSubjectKeyID = 5 [(gogoproto.moretags) = "validate:\"required\""];
-  string dataURL = 6 [(gogoproto.moretags) = "validate:\"omitempty,url\""];
+  string dataURL = 6 [(gogoproto.moretags) = "validate:\"omitempty,url,regexp=^https?://\""];
   uint64 dataFileSize = 7;
   string dataDigest = 8;
   uint32 dataDigestType = 9;
