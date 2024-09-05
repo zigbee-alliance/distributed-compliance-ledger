@@ -191,7 +191,7 @@ fi
 
 # Go rest tests
 if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "rest" ]]; then
-  GO_REST_TESTS="$(find integration_tests/grpc_rest/model -type f -name '*_test.go')"
+  GO_REST_TESTS="$(find integration_tests/grpc_rest -type f -name '*_test.go')"
 
   for GO_REST_TEST in ${GO_REST_TESTS}; do
     init_pool
