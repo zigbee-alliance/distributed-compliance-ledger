@@ -130,6 +130,7 @@ func TestUpdateModel(t *testing.T) {
 		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCFileSize, testconstants.EnhancedSetupFlowTCFileSize),
 		fmt.Sprintf("--%s=%v", cli.FlagMaintenanceURL, testconstants.MaintenanceURL),
 		fmt.Sprintf("--%s=%v", cli.FlagCommissioningFallbackURL, testconstants.CommissioningFallbackURL),
+		fmt.Sprintf("--%s=%v", cli.FlagDiscoveryCapabilitiesBitmask, testconstants.DiscoveryCapabilitiesBitmask),
 	}
 	args = append(args, common...)
 	_, err := testcli.ExecTestCLITxCmd(t, ctx, cli.CmdCreateModel(), args)
