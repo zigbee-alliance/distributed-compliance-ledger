@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
+	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
 	"github.com/stretchr/testify/require"
 
@@ -45,8 +46,6 @@ func TestCreateModel(t *testing.T) {
 		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCDigest, testconstants.EnhancedSetupFlowTCDigest),
 		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCFileSize, testconstants.EnhancedSetupFlowTCFileSize),
 		fmt.Sprintf("--%s=%v", cli.FlagMaintenanceURL, testconstants.MaintenanceURL),
-		fmt.Sprintf("--%s=%v", cli.FlagCommissioningFallbackURL, testconstants.CommissioningFallbackURL),
-		fmt.Sprintf("--%s=%v", cli.FlagDiscoveryCapabilitiesBitmask, testconstants.DiscoveryCapabilitiesBitmask),
 	}
 	common := []string{
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
@@ -64,11 +63,6 @@ func TestCreateModel(t *testing.T) {
 		err error
 	}{
 		{
-			desc:  "valid",
-			idVid: testconstants.Vid,
-			idPid: testconstants.Pid,
-		},
-		{
 			desc:                         "discoveryCapabilitiesBitmask must be provided when commissioningFallbackURL is provided",
 			idVid:                        testconstants.Vid,
 			idPid:                        testconstants.Pid,
@@ -76,6 +70,11 @@ func TestCreateModel(t *testing.T) {
 			commissioningFallbackURL:     testconstants.CommissioningFallbackURL,
 
 			err: types.ErrFallbackURLRequiresBitmask,
+		},
+		{
+			desc:  "valid",
+			idVid: testconstants.Vid,
+			idPid: testconstants.Pid,
 		},
 	} {
 		tc := tc
@@ -88,17 +87,10 @@ func TestCreateModel(t *testing.T) {
 			}
 			args = append(args, fields...)
 			args = append(args, common...)
-			txResp, err := testcli.ExecTestCLITxCmd(t, ctx, cli.CmdCreateModel(), args)
-			require.NoError(t, err)
+			_, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdCreateModel(), args)
+			require.ErrorIs(t, err, tc.err)
 			err = net.WaitForNextBlock()
 			require.NoError(t, err)
-			if tc.err != nil {
-				resp, err := authtx.QueryTx(ctx, txResp.TxHash)
-				require.NoError(t, err)
-				require.Contains(t, resp.RawLog, tc.err.Error())
-			} else {
-				require.NoError(t, err)
-			}
 		})
 	}
 }
