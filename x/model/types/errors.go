@@ -6,9 +6,10 @@ import (
 
 var (
 	// Model Error Codes.
-	ErrModelAlreadyExists       = errors.Register(ModuleName, 501, "model already exists")
-	ErrModelDoesNotExist        = errors.Register(ModuleName, 502, "model does not exist")
-	ErrVendorProductsDoNotExist = errors.Register(ModuleName, 504, "vendor products do not exist")
+	ErrModelAlreadyExists         = errors.Register(ModuleName, 501, "model already exists")
+	ErrModelDoesNotExist          = errors.Register(ModuleName, 502, "model does not exist")
+	ErrVendorProductsDoNotExist   = errors.Register(ModuleName, 504, "vendor products do not exist")
+	ErrFallbackURLRequiresBitmask = errors.Register(ModuleName, 505, "CommissioningFallbackUrl requires DiscoveryCapabilitiesBitmask")
 
 	// Model Version Error Codes.
 	ErrSoftwareVersionStringInvalid       = errors.Register(ModuleName, 511, "software version string invalid")

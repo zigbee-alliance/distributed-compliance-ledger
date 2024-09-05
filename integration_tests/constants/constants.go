@@ -88,6 +88,7 @@ var (
 	EnhancedSetupFlowTCFileSize                       = 1
 	MaintenanceURL                                    = "https://url.maintenanceurl.dclmodel"
 	CommissioningFallbackURL                          = "https://url.commissioningfallbackurl.dclmodel"
+	DiscoveryCapabilitiesBitmask               uint32 = 1
 	LsfURL                                            = "https://url.lsfurl.dclmodel"
 	DataURL                                           = "https://url.data.dclmodel"
 	DataURL2                                          = "https://url.data.dclmodel2"

@@ -45,6 +45,10 @@ func CmdCreateModel() *cobra.Command {
 		Short: "Add new Model",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
+			if commissioningFallbackURL != "" && discoveryCapabilitiesBitmask == 0 {
+				return types.ErrFallbackURLRequiresBitmask
+			}
+
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
@@ -107,7 +111,8 @@ func CmdCreateModel() *cobra.Command {
 	cmd.Flags().StringVar(&partNumber, FlagPartNumber, "",
 		"Model Part Number (or sku)")
 	cmd.Flags().Uint32Var(&discoveryCapabilitiesBitmask, FlagDiscoveryCapabilitiesBitmask, 0,
-		"This field identifies the device's available technologies for device discovery")
+		`This field identifies the device's available technologies for device discovery. 
+This field SHALL be populated if CommissioningFallbackUrl is populated`)
 	cmd.Flags().Int32Var(&commissioningCustomFlow, FlagCommissioningCustomFlow, 0,
 		`A value of 1 indicates that user interaction with the device (pressing a button, for example) is 
 required before commissioning can take place. When CommissioningCustomflow is set to a value of 2, 

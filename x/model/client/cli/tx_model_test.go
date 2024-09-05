@@ -46,6 +46,7 @@ func TestCreateModel(t *testing.T) {
 		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCFileSize, testconstants.EnhancedSetupFlowTCFileSize),
 		fmt.Sprintf("--%s=%v", cli.FlagMaintenanceURL, testconstants.MaintenanceURL),
 		fmt.Sprintf("--%s=%v", cli.FlagCommissioningFallbackURL, testconstants.CommissioningFallbackURL),
+		fmt.Sprintf("--%s=%v", cli.FlagDiscoveryCapabilitiesBitmask, testconstants.DiscoveryCapabilitiesBitmask),
 	}
 	common := []string{
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
@@ -54,9 +55,11 @@ func TestCreateModel(t *testing.T) {
 	}
 
 	for _, tc := range []struct {
-		desc  string
-		idVid int32
-		idPid int32
+		desc                         string
+		idVid                        int32
+		idPid                        int32
+		discoveryCapabilitiesBitmask uint32
+		commissioningFallbackURL     string
 
 		err error
 	}{
@@ -65,12 +68,23 @@ func TestCreateModel(t *testing.T) {
 			idVid: testconstants.Vid,
 			idPid: testconstants.Pid,
 		},
+		{
+			desc:                         "discoveryCapabilitiesBitmask must be provided when commissioningFallbackURL is provided",
+			idVid:                        testconstants.Vid,
+			idPid:                        testconstants.Pid,
+			discoveryCapabilitiesBitmask: 0,
+			commissioningFallbackURL:     testconstants.CommissioningFallbackURL,
+
+			err: types.ErrFallbackURLRequiresBitmask,
+		},
 	} {
 		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
 			args := []string{
 				fmt.Sprintf("--%s=%v", cli.FlagVid, tc.idVid),
 				fmt.Sprintf("--%s=%v", cli.FlagPid, tc.idPid),
+				fmt.Sprintf("--%s=%v", cli.FlagDiscoveryCapabilitiesBitmask, tc.discoveryCapabilitiesBitmask),
+				fmt.Sprintf("--%s=%v", cli.FlagCommissioningFallbackURL, tc.commissioningFallbackURL),
 			}
 			args = append(args, fields...)
 			args = append(args, common...)
