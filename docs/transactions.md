@@ -221,6 +221,8 @@ Not all fields can be edited (see `EDIT_MODEL`).
   - enhancedSetupFlowTCFileSize: `optional(uint32)` - enhancedSetupFlowTCFileSize SHALL indicate the total size of the Enhanced Setup Flow Terms and Conditions file in bytes, and SHALL be used to ensure the downloaded file size is within the bounds of EnhancedSetupFlowTCFileSize. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.
   - maintenanceUrl: `optional(string)` - maintenanceUrl SHALL identify a link to a vendor-specific URL which SHALL provide a manufacturer specific means to resolve any functionality limitations indicated by the TERMS_AND_CONDITIONS_CHANGED status code. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.
   - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
+  - discoveryCapabilitiesBitmask: `optional(uint16)` - Identifies the device's available technologies for device discovery (default 0)
+  - commissioningFallbackURL: `optional(string)` - This field SHALL identify a vendor-specific commissioning-fallback URL for the device model, which can be used by a Commissioner in case commissioning fails to direct the user to a manufacturer-provided mechanism to provide resolution to commissioning issues.
 - In State:
   - `model/Model/value/<vid>/<pid>`
   - `model/VendorProducts/value/<vid>`
@@ -237,7 +239,7 @@ dcld tx model add-model --vid=<uint16> --pid=<uint16> --deviceTypeID=<uint16> --
 ```bash
 dcld tx model add-model --vid=<uint16> --pid=<uint16> --deviceTypeID=<uint16> --productName=<string> --productLabel=<string or path> --partNumber=<string> 
     --commissioningCustomFlow=<uint8> --commissioningCustomFlowUrl=<string> --commissioningModeInitialStepsHint=<uint32> --commissioningModeInitialStepsInstruction=<string>
-    --commissioningModeSecondaryStepsHint=<uint32> --commissioningModeSecondaryStepsInstruction=<string> --userManualURL=<string> --supportURL=<string> --productURL=<string> --lsfURL=<string>
+    --commissioningModeSecondaryStepsHint=<uint32> --commissioningModeSecondaryStepsInstruction=<string> --userManualURL=<string> --supportURL=<string> --productURL=<string> --lsfURL=<string> --discoveryCapabilitiesBitmask=<uint16> --commissioningFallbackURL<string>
     --from=<account>
 ```
 
@@ -277,6 +279,7 @@ If one of EnhancedSetupFlow or MaintenanceUrl fields needs to be updated, ALL En
   - enhancedSetupFlowTCFileSize: `optional(uint32)` - enhancedSetupFlowTCFileSize SHALL indicate the total size of the Enhanced Setup Flow Terms and Conditions file in bytes, and SHALL be used to ensure the downloaded file size is within the bounds of EnhancedSetupFlowTCFileSize. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.
   - maintenanceUrl: `optional(string)` - maintenanceUrl SHALL identify a link to a vendor-specific URL which SHALL provide a manufacturer specific means to resolve any functionality limitations indicated by the TERMS_AND_CONDITIONS_CHANGED status code. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.
   - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
+  - commissioningFallbackURL: `optional(string)` - This field SHALL identify a vendor-specific commissioning-fallback URL for the device model, which can be used by a Commissioner in case commissioning fails to direct the user to a manufacturer-provided mechanism to provide resolution to commissioning issues.
 - In State: `model/Model/value/<vid>/<pid>`
 - Who can send:
   - Vendor account associated with the same vid who has created the model
