@@ -190,7 +190,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldNotValid,
 		},
 		{
-			name: "CommissioningCustomFlowUrl starts with http:",
+			name: "CommissioningCustomFlowUrl starts not with https:",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.CommissioningCustomFlowUrl = "http://sampleflowurl.dclmodel"
 
@@ -235,7 +235,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldNotValid,
 		},
 		{
-			name: "UserManualUrl starts with http:",
+			name: "UserManualUrl starts not with https:",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.UserManualUrl = "http://sampleflowurl.dclmodel"
 
@@ -262,7 +262,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldNotValid,
 		},
 		{
-			name: "SupportUrl starts with http:",
+			name: "SupportUrl starts not with https:",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.SupportUrl = "http://sampleflowurl.dclmodel"
 
@@ -289,7 +289,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldNotValid,
 		},
 		{
-			name: "ProductUrl starts with http:",
+			name: "ProductUrl starts not with https:",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.ProductUrl = "http://sampleflowurl.dclmodel"
 
@@ -316,7 +316,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldNotValid,
 		},
 		{
-			name: "LsfUrl starts with http:",
+			name: "LsfUrl starts not with https:",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.LsfUrl = "http://sampleflowurl.dclmodel"
 
@@ -354,7 +354,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldUpperBoundViolated,
 		},
 		{
-			name: "EnhancedSetupFlowTCUrl starts with http:",
+			name: "EnhancedSetupFlowTCUrl starts not with https:",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.EnhancedSetupFlowOptions = 1
 				msg.EnhancedSetupFlowTCUrl = "http://sampleflowurl.dclmodel"
@@ -471,7 +471,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			err: ErrFieldIsNotBase64Encoded,
 		},
 		{
-			name: "MaintenanceUrl starts with http:",
+			name: "MaintenanceUrl starts not with https:",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.EnhancedSetupFlowOptions = 1
 				msg.EnhancedSetupFlowTCFileSize = 1
@@ -511,6 +511,51 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldMaxLengthExceeded,
+		},
+		{
+			name: "CommissioningCustomFlowUrl can't start with non-https URLs",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.CommissioningCustomFlowUrl = "ftp://sampleflowurl.dclmodel"
+
+				return msg
+			}(validMsgCreateModel()),
+			err: validator.ErrFieldNotValid,
+		},
+		{
+			name: "UserManualUrl can't start with non-https URLs",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.UserManualUrl = "ftp://sampleflowurl.dclmodel"
+
+				return msg
+			}(validMsgCreateModel()),
+			err: validator.ErrFieldNotValid,
+		},
+		{
+			name: "SupportUrl can't start with non-https URLs",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.SupportUrl = "ftp://sampleflowurl.dclmodel"
+
+				return msg
+			}(validMsgCreateModel()),
+			err: validator.ErrFieldNotValid,
+		},
+		{
+			name: "ProductUrl can't start with non-https URLs",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.ProductUrl = "ftp://sampleflowurl.dclmodel"
+
+				return msg
+			}(validMsgCreateModel()),
+			err: validator.ErrFieldNotValid,
+		},
+		{
+			name: "LsfUrl can't start with non-https URLs",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.LsfUrl = "ftp://sampleflowurl.dclmodel"
+
+				return msg
+			}(validMsgCreateModel()),
+			err: validator.ErrFieldNotValid,
 		},
 	}
 
@@ -814,46 +859,6 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 				return msg
 			}(validMsgCreateModel()),
 		},
-		{
-			name: "CommissioningCustomFlowUrl can start with non-http URLs",
-			msg: func(msg *MsgCreateModel) *MsgCreateModel {
-				msg.CommissioningCustomFlowUrl = "ftp://sampleflowurl.dclmodel"
-
-				return msg
-			}(validMsgCreateModel()),
-		},
-		{
-			name: "UserManualUrl can start with non-http URLs",
-			msg: func(msg *MsgCreateModel) *MsgCreateModel {
-				msg.UserManualUrl = "ftp://sampleflowurl.dclmodel"
-
-				return msg
-			}(validMsgCreateModel()),
-		},
-		{
-			name: "SupportUrl can start with non-http URLs",
-			msg: func(msg *MsgCreateModel) *MsgCreateModel {
-				msg.SupportUrl = "ftp://sampleflowurl.dclmodel"
-
-				return msg
-			}(validMsgCreateModel()),
-		},
-		{
-			name: "ProductUrl can start with non-http URLs",
-			msg: func(msg *MsgCreateModel) *MsgCreateModel {
-				msg.ProductUrl = "ftp://sampleflowurl.dclmodel"
-
-				return msg
-			}(validMsgCreateModel()),
-		},
-		{
-			name: "LsfUrl can start with non-http URLs",
-			msg: func(msg *MsgCreateModel) *MsgCreateModel {
-				msg.LsfUrl = "ftp://sampleflowurl.dclmodel"
-
-				return msg
-			}(validMsgCreateModel()),
-		},
 	}
 
 	for _, tt := range negativeTests {
@@ -987,7 +992,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldNotValid,
 		},
 		{
-			name: "CommissioningCustomFlowUrl starts with http:",
+			name: "CommissioningCustomFlowUrl starts not with https:",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.CommissioningCustomFlowUrl = "http://sampleflowurl.dclmodel"
 
@@ -1032,7 +1037,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldNotValid,
 		},
 		{
-			name: "UserManualUrl starts with http:",
+			name: "UserManualUrl starts not with https:",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.UserManualUrl = "http://sampleflowurl.dclmodel"
 
@@ -1059,7 +1064,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldNotValid,
 		},
 		{
-			name: "SupportUrl starts with http:",
+			name: "SupportUrl starts not with https:",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.SupportUrl = "http://sampleflowurl.dclmodel"
 
@@ -1086,7 +1091,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldNotValid,
 		},
 		{
-			name: "ProductUrl starts with http:",
+			name: "ProductUrl starts not with https:",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.ProductUrl = "http://sampleflowurl.dclmodel"
 
@@ -1113,7 +1118,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldNotValid,
 		},
 		{
-			name: "LsfUrl starts with http:",
+			name: "LsfUrl starts not with https:",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.LsfUrl = "http://sampleflowurl.dclmodel"
 
@@ -1168,7 +1173,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldUpperBoundViolated,
 		},
 		{
-			name: "EnhancedSetupFlowTCUrl starts with http:",
+			name: "EnhancedSetupFlowTCUrl starts not with https:",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.EnhancedSetupFlowOptions = 1
 				msg.EnhancedSetupFlowTCUrl = "http://sampleflowurl.dclmodel"
@@ -1335,7 +1340,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			err: ErrFieldIsNotBase64Encoded,
 		},
 		{
-			name: "MaintenanceUrl starts with http:",
+			name: "MaintenanceUrl starts not with https:",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.EnhancedSetupFlowOptions = 1
 				msg.EnhancedSetupFlowTCFileSize = 1
@@ -1377,31 +1382,49 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
-			name: "CommissioningFallbackUrl is not valid URL",
+			name: "CommissioningCustomFlowUrl can't start with non-https URLs",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
-				msg.CommissioningFallbackUrl = "not valid URL"
+				msg.CommissioningCustomFlowUrl = "ftp://sampleflowurl.dclmodel"
 
 				return msg
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldNotValid,
 		},
 		{
-			name: "CommissioningFallbackUrl starts with http:",
+			name: "UserManualUrl can't start with non-https URLs",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
-				msg.CommissioningFallbackUrl = "http://sampleflowurl.dclmodel"
+				msg.UserManualUrl = "ftp://sampleflowurl.dclmodel"
 
 				return msg
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldNotValid,
 		},
 		{
-			name: "CommissioningFallbackUrl length > 256",
+			name: "SupportUrl can't start with non-https URLs",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
-				msg.CommissioningFallbackUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(257-30) // length = 257
+				msg.SupportUrl = "ftp://sampleflowurl.dclmodel"
 
 				return msg
 			}(validMsgUpdateModel()),
-			err: validator.ErrFieldMaxLengthExceeded,
+			err: validator.ErrFieldNotValid,
+		},
+		{
+			name: "ProductUrl can't start with non-https URLs",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.ProductUrl = "ftp://sampleflowurl.dclmodel"
+
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrFieldNotValid,
+		},
+		{
+			name: "LsfUrl can't start with non-https URLs",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.LsfUrl = "ftp://sampleflowurl.dclmodel"
+
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrFieldNotValid,
 		},
 	}
 
@@ -1651,62 +1674,6 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 				msg.EnhancedSetupFlowTCDigest = ""
 				msg.EnhancedSetupFlowTCFileSize = 0
 				msg.MaintenanceUrl = ""
-
-				return msg
-			}(validMsgUpdateModel()),
-		},
-		{
-			name: "CommissioningCustomFlowUrl can start with non-http URLs",
-			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
-				msg.CommissioningCustomFlowUrl = "ftp://sampleflowurl.dclmodel"
-
-				return msg
-			}(validMsgUpdateModel()),
-		},
-		{
-			name: "UserManualUrl can start with non-http URLs",
-			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
-				msg.UserManualUrl = "ftp://sampleflowurl.dclmodel"
-
-				return msg
-			}(validMsgUpdateModel()),
-		},
-		{
-			name: "SupportUrl can start with non-http URLs",
-			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
-				msg.SupportUrl = "ftp://sampleflowurl.dclmodel"
-
-				return msg
-			}(validMsgUpdateModel()),
-		},
-		{
-			name: "ProductUrl can start with non-http URLs",
-			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
-				msg.ProductUrl = "ftp://sampleflowurl.dclmodel"
-
-				return msg
-			}(validMsgUpdateModel()),
-		},
-		{
-			name: "LsfUrl can start with non-http URLs",
-			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
-				msg.LsfUrl = "ftp://sampleflowurl.dclmodel"
-
-				return msg
-			}(validMsgUpdateModel()),
-		},
-		{
-			name: "CommissioningFallbackUrl is omitted",
-			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
-				msg.CommissioningFallbackUrl = ""
-
-				return msg
-			}(validMsgUpdateModel()),
-		},
-		{
-			name: "CommissioningFallbackUrl length == 256",
-			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
-				msg.CommissioningFallbackUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
 
 				return msg
 			}(validMsgUpdateModel()),

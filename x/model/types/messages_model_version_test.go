@@ -144,7 +144,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldNotValid,
 		},
 		{
-			name: "OtaUrl starts with http:",
+			name: "OtaUrl starts not with https:",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.OtaUrl = "http://sampleflowurl.dclmodel"
 
@@ -260,7 +260,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldNotValid,
 		},
 		{
-			name: "ReleaseNotesUrl starts with http:",
+			name: "ReleaseNotesUrl starts not with https:",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.ReleaseNotesUrl = "http://sampleflowurl.dclmodel"
 
@@ -647,7 +647,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldNotValid,
 		},
 		{
-			name: "OtaUrl starts with http:",
+			name: "OtaUrl starts not with https:",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.OtaUrl = "http://sampleflowurl.dclmodel"
 
@@ -695,7 +695,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldNotValid,
 		},
 		{
-			name: "ReleaseNotesUrl starts with http:",
+			name: "ReleaseNotesUrl starts not with https:",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.ReleaseNotesUrl = "http://sampleflowurl.dclmodel"
 
