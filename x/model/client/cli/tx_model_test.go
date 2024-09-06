@@ -54,20 +54,27 @@ func TestCreateModel(t *testing.T) {
 	}
 
 	for _, tc := range []struct {
-		desc                         string
-		idVid                        int32
-		idPid                        int32
-		discoveryCapabilitiesBitmask uint32
-		commissioningFallbackURL     string
+		desc                     string
+		idVid                    int32
+		idPid                    int32
+		isBitmaskSet             bool
+		commissioningFallbackURL string
 
 		err error
 	}{
 		{
-			desc:                         "discoveryCapabilitiesBitmask must be provided when commissioningFallbackURL is provided",
-			idVid:                        testconstants.Vid,
-			idPid:                        testconstants.Pid,
-			discoveryCapabilitiesBitmask: 0,
-			commissioningFallbackURL:     testconstants.CommissioningFallbackURL,
+			desc:                     "discoveryCapabilitiesBitmask is provided when commissioningFallbackURL is provided",
+			idVid:                    testconstants.Vid,
+			idPid:                    testconstants.Pid,
+			isBitmaskSet:             true,
+			commissioningFallbackURL: testconstants.CommissioningFallbackURL,
+		},
+		{
+			desc:                     "discoveryCapabilitiesBitmask is not provided when commissioningFallbackURL is provided",
+			idVid:                    testconstants.Vid,
+			idPid:                    testconstants.Pid,
+			isBitmaskSet:             false,
+			commissioningFallbackURL: testconstants.CommissioningFallbackURL,
 
 			err: types.ErrFallbackURLRequiresBitmask,
 		},
@@ -82,9 +89,16 @@ func TestCreateModel(t *testing.T) {
 			args := []string{
 				fmt.Sprintf("--%s=%v", cli.FlagVid, tc.idVid),
 				fmt.Sprintf("--%s=%v", cli.FlagPid, tc.idPid),
-				fmt.Sprintf("--%s=%v", cli.FlagDiscoveryCapabilitiesBitmask, tc.discoveryCapabilitiesBitmask),
-				fmt.Sprintf("--%s=%v", cli.FlagCommissioningFallbackURL, tc.commissioningFallbackURL),
 			}
+
+			if tc.isBitmaskSet {
+				args = append(args, fmt.Sprintf("--%s=%v", cli.FlagDiscoveryCapabilitiesBitmask, testconstants.DiscoveryCapabilitiesBitmask))
+			}
+
+			if tc.commissioningFallbackURL != "" {
+				args = append(args, fmt.Sprintf("--%s=%v", cli.FlagCommissioningFallbackURL, tc.commissioningFallbackURL))
+			}
+
 			args = append(args, fields...)
 			args = append(args, common...)
 			_, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdCreateModel(), args)
