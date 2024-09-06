@@ -26,6 +26,7 @@ func NewMsgCreateModel(
 	productName string,
 	productLabel string,
 	partNumber string,
+	discoveryCapabilitiesBitmask uint32,
 	commissioningCustomFlow int32,
 	commissioningCustomFlowURL string,
 	commissioningModeInitialStepsHint uint32,
@@ -43,6 +44,7 @@ func NewMsgCreateModel(
 	enhancedSetupFlowTCDigest string,
 	enhancedSetupFlowTCFileSize uint32,
 	maintenanceURL string,
+	commissioningFallbackURL string,
 ) *MsgCreateModel {
 	return &MsgCreateModel{
 		Creator:                                  creator,
@@ -52,6 +54,7 @@ func NewMsgCreateModel(
 		ProductName:                              productName,
 		ProductLabel:                             productLabel,
 		PartNumber:                               partNumber,
+		DiscoveryCapabilitiesBitmask:             discoveryCapabilitiesBitmask,
 		CommissioningCustomFlow:                  commissioningCustomFlow,
 		CommissioningCustomFlowUrl:               commissioningCustomFlowURL,
 		CommissioningModeInitialStepsHint:        commissioningModeInitialStepsHint,
@@ -69,6 +72,7 @@ func NewMsgCreateModel(
 		EnhancedSetupFlowTCFileSize: enhancedSetupFlowTCFileSize,
 		MaintenanceUrl:              maintenanceURL,
 		SchemaVersion:               schemaVersion,
+		CommissioningFallbackUrl:    commissioningFallbackURL,
 	}
 }
 
@@ -141,6 +145,7 @@ func NewMsgUpdateModel(
 	enhancedSetupFlowTCDigest string,
 	enhancedSetupFlowTCFileSize uint32,
 	maintenanceURL string,
+	commissioningFallbackURL string,
 
 ) *MsgUpdateModel {
 	return &MsgUpdateModel{
@@ -166,6 +171,7 @@ func NewMsgUpdateModel(
 		EnhancedSetupFlowTCFileSize:       enhancedSetupFlowTCFileSize,
 		MaintenanceUrl:                    maintenanceURL,
 		SchemaVersion:                     schemaVersion,
+		CommissioningFallbackUrl:          commissioningFallbackURL,
 	}
 }
 

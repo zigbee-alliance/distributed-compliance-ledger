@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
+	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
 	"github.com/stretchr/testify/require"
 
@@ -53,12 +54,30 @@ func TestCreateModel(t *testing.T) {
 	}
 
 	for _, tc := range []struct {
-		desc  string
-		idVid int32
-		idPid int32
+		desc                     string
+		idVid                    int32
+		idPid                    int32
+		isBitmaskSet             bool
+		commissioningFallbackURL string
 
 		err error
 	}{
+		{
+			desc:                     "discoveryCapabilitiesBitmask is provided when commissioningFallbackURL is provided",
+			idVid:                    testconstants.Vid,
+			idPid:                    testconstants.Pid,
+			isBitmaskSet:             true,
+			commissioningFallbackURL: testconstants.CommissioningFallbackURL,
+		},
+		{
+			desc:                     "discoveryCapabilitiesBitmask is not provided when commissioningFallbackURL is provided",
+			idVid:                    testconstants.Vid,
+			idPid:                    testconstants.Pid,
+			isBitmaskSet:             false,
+			commissioningFallbackURL: testconstants.CommissioningFallbackURL,
+
+			err: types.ErrFallbackURLRequiresBitmask,
+		},
 		{
 			desc:  "valid",
 			idVid: testconstants.Vid,
@@ -71,19 +90,21 @@ func TestCreateModel(t *testing.T) {
 				fmt.Sprintf("--%s=%v", cli.FlagVid, tc.idVid),
 				fmt.Sprintf("--%s=%v", cli.FlagPid, tc.idPid),
 			}
+
+			if tc.isBitmaskSet {
+				args = append(args, fmt.Sprintf("--%s=%v", cli.FlagDiscoveryCapabilitiesBitmask, testconstants.DiscoveryCapabilitiesBitmask))
+			}
+
+			if tc.commissioningFallbackURL != "" {
+				args = append(args, fmt.Sprintf("--%s=%v", cli.FlagCommissioningFallbackURL, tc.commissioningFallbackURL))
+			}
+
 			args = append(args, fields...)
 			args = append(args, common...)
-			txResp, err := testcli.ExecTestCLITxCmd(t, ctx, cli.CmdCreateModel(), args)
-			require.NoError(t, err)
+			_, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdCreateModel(), args)
+			require.ErrorIs(t, err, tc.err)
 			err = net.WaitForNextBlock()
 			require.NoError(t, err)
-			if tc.err != nil {
-				resp, err := authtx.QueryTx(ctx, txResp.TxHash)
-				require.NoError(t, err)
-				require.Contains(t, resp.RawLog, tc.err.Error())
-			} else {
-				require.NoError(t, err)
-			}
 		})
 	}
 }
@@ -122,6 +143,8 @@ func TestUpdateModel(t *testing.T) {
 		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCDigest, testconstants.EnhancedSetupFlowTCDigest),
 		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCFileSize, testconstants.EnhancedSetupFlowTCFileSize),
 		fmt.Sprintf("--%s=%v", cli.FlagMaintenanceURL, testconstants.MaintenanceURL),
+		fmt.Sprintf("--%s=%v", cli.FlagCommissioningFallbackURL, testconstants.CommissioningFallbackURL),
+		fmt.Sprintf("--%s=%v", cli.FlagDiscoveryCapabilitiesBitmask, testconstants.DiscoveryCapabilitiesBitmask),
 	}
 	args = append(args, common...)
 	_, err := testcli.ExecTestCLITxCmd(t, ctx, cli.CmdCreateModel(), args)
@@ -147,6 +170,7 @@ func TestUpdateModel(t *testing.T) {
 		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCDigest, testconstants.EnhancedSetupFlowTCDigest),
 		fmt.Sprintf("--%s=%v", cli.FlagEnhancedSetupFlowTCFileSize, uint32(testconstants.EnhancedSetupFlowTCFileSize+1)),
 		fmt.Sprintf("--%s=%v", cli.FlagMaintenanceURL, testconstants.MaintenanceURL+"/updated"),
+		fmt.Sprintf("--%s=%v", cli.FlagCommissioningFallbackURL, testconstants.CommissioningFallbackURL+"/updated"),
 	}
 
 	for _, tc := range []struct {
