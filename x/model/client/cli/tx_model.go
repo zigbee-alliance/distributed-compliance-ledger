@@ -45,7 +45,10 @@ func CmdCreateModel() *cobra.Command {
 		Short: "Add new Model",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			if commissioningFallbackURL != "" && discoveryCapabilitiesBitmask == 0 {
+			isCommissioningFallbackURLSpecified := cmd.Flags().Changed(FlagCommissioningFallbackURL)
+			isDiscoveryCapabilitiesBitmaskSpecified := cmd.Flags().Changed(FlagDiscoveryCapabilitiesBitmask)
+
+			if isCommissioningFallbackURLSpecified && !isDiscoveryCapabilitiesBitmaskSpecified {
 				return types.ErrFallbackURLRequiresBitmask
 			}
 
