@@ -8806,6 +8806,11 @@ paths:
                       format: int64
                     maintenanceUrl:
                       type: string
+                    discoveryCapabilitiesBitmask:
+                      type: integer
+                      format: int64
+                    commissioningFallbackUrl:
+                      type: string
               pagination:
                 type: object
                 properties:
@@ -9044,6 +9049,11 @@ paths:
                     type: integer
                     format: int64
                   maintenanceUrl:
+                    type: string
+                  discoveryCapabilitiesBitmask:
+                    type: integer
+                    format: int64
+                  commissioningFallbackUrl:
                     type: string
         default:
           description: An unexpected error response.
@@ -22351,6 +22361,11 @@ definitions:
         format: int64
       maintenanceUrl:
         type: string
+      discoveryCapabilitiesBitmask:
+        type: integer
+        format: int64
+      commissioningFallbackUrl:
+        type: string
   zigbeealliance.distributedcomplianceledger.model.ModelVersion:
     type: object
     properties:
@@ -22494,6 +22509,11 @@ definitions:
               format: int64
             maintenanceUrl:
               type: string
+            discoveryCapabilitiesBitmask:
+              type: integer
+              format: int64
+            commissioningFallbackUrl:
+              type: string
       pagination:
         type: object
         properties:
@@ -22586,6 +22606,11 @@ definitions:
             type: integer
             format: int64
           maintenanceUrl:
+            type: string
+          discoveryCapabilitiesBitmask:
+            type: integer
+            format: int64
+          commissioningFallbackUrl:
             type: string
   zigbeealliance.distributedcomplianceledger.model.QueryGetModelVersionResponse:
     type: object
