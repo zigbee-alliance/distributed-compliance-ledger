@@ -239,6 +239,11 @@ func TestHandler_RevokeNocX509Cert_RevokeDefault(t *testing.T) {
 	require.Equal(t, 1, len(nocCerts.Certs))
 	require.Equal(t, testconstants.NocLeafCert1SubjectKeyID, nocCerts.Certs[0].SubjectKeyId)
 
+	// check that leaf certificate can be queried by vid+skid
+	certsByVidSkid, _ := queryNocCertificatesByVidAndSkid(setup, testconstants.Vid, testconstants.NocLeafCert1SubjectKeyID)
+	require.Equal(t, 1, len(certsByVidSkid.Certs))
+	require.Equal(t, testconstants.NocLeafCert1SerialNumber, certsByVidSkid.Certs[0].SerialNumber)
+
 	// check that unique certificate key is removed
 	require.False(t,
 		setup.Keeper.IsUniqueCertificatePresent(setup.Ctx, testconstants.NocCert1, testconstants.NocCert1SerialNumber))
@@ -324,6 +329,11 @@ func TestHandler_RevokeNocX509Cert_RevokeWithChild(t *testing.T) {
 
 	// query noc certificate by VID
 	_, err = queryNocCertificates(setup, testconstants.Vid)
+	require.Error(t, err)
+	require.Equal(t, codes.NotFound, status.Code(err))
+
+	// check that leaf certificate can not be queried by vid+skid
+	_, err = queryNocCertificatesByVidAndSkid(setup, testconstants.Vid, testconstants.NocLeafCert1SubjectKeyID)
 	require.Error(t, err)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
@@ -430,6 +440,11 @@ func TestHandler_RevokeNocX509Cert_RevokeBySerialNumber(t *testing.T) {
 	require.Equal(t, 1, len(childCerts.Certs))
 	require.Equal(t, testconstants.NocLeafCert1SubjectKeyID, childCerts.SubjectKeyId)
 
+	// check that leaf certificate can be queried by vid+skid
+	certsByVidSkid, _ := queryNocCertificatesByVidAndSkid(setup, testconstants.Vid, testconstants.NocLeafCert1SubjectKeyID)
+	require.Equal(t, 1, len(certsByVidSkid.Certs))
+	require.Equal(t, testconstants.NocLeafCert1SerialNumber, certsByVidSkid.Certs[0].SerialNumber)
+
 	// check that unique certificate key is removed
 	require.False(t,
 		setup.Keeper.IsUniqueCertificatePresent(setup.Ctx, testconstants.NocCert1, testconstants.NocCert1SerialNumber))
@@ -529,6 +544,11 @@ func TestHandler_RevokeNocX509Cert_RevokeBySerialNumberAndWithChild(t *testing.T
 	require.NoError(t, err)
 	require.Equal(t, 1, len(nocCerts.Certs))
 	require.Equal(t, testconstants.NocCert1CopySerialNumber, nocCerts.Certs[0].SerialNumber)
+
+	// check that leaf certificate can be queried by vid+skid
+	certsByVidSkid, _ := queryNocCertificatesByVidAndSkid(setup, testconstants.Vid, testconstants.NocCert1SubjectKeyID)
+	require.Equal(t, 1, len(certsByVidSkid.Certs))
+	require.Equal(t, testconstants.NocCert1CopySerialNumber, certsByVidSkid.Certs[0].SerialNumber)
 
 	// check that unique certificate key is removed
 	require.False(t,

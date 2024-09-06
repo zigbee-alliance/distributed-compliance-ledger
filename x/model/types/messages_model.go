@@ -26,13 +26,13 @@ func NewMsgCreateModel(
 	productName string,
 	productLabel string,
 	partNumber string,
+	discoveryCapabilitiesBitmask uint32,
 	commissioningCustomFlow int32,
 	commissioningCustomFlowURL string,
 	commissioningModeInitialStepsHint uint32,
 	commissioningModeInitialStepsInstruction string,
 	commissioningModeSecondaryStepsHint uint32,
 	commissioningModeSecondaryStepsInstruction string,
-	managedACLExtensionRequestFlowURL string,
 	userManualURL string,
 	supportURL string,
 	productURL string,
@@ -44,6 +44,7 @@ func NewMsgCreateModel(
 	enhancedSetupFlowTCDigest string,
 	enhancedSetupFlowTCFileSize uint32,
 	maintenanceURL string,
+	commissioningFallbackURL string,
 ) *MsgCreateModel {
 	return &MsgCreateModel{
 		Creator:                                  creator,
@@ -53,24 +54,25 @@ func NewMsgCreateModel(
 		ProductName:                              productName,
 		ProductLabel:                             productLabel,
 		PartNumber:                               partNumber,
+		DiscoveryCapabilitiesBitmask:             discoveryCapabilitiesBitmask,
 		CommissioningCustomFlow:                  commissioningCustomFlow,
 		CommissioningCustomFlowUrl:               commissioningCustomFlowURL,
 		CommissioningModeInitialStepsHint:        commissioningModeInitialStepsHint,
 		CommissioningModeInitialStepsInstruction: commissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsHint:      commissioningModeSecondaryStepsHint,
 		CommissioningModeSecondaryStepsInstruction: commissioningModeSecondaryStepsInstruction,
-		ManagedAclExtensionRequestFlowUrl:          managedACLExtensionRequestFlowURL,
-		UserManualUrl:                              userManualURL,
-		SupportUrl:                                 supportURL,
-		ProductUrl:                                 productURL,
-		LsfUrl:                                     lsfURL,
-		EnhancedSetupFlowOptions:                   enhancedSetupFlowOptions,
-		EnhancedSetupFlowTCUrl:                     enhancedSetupFlowTCURL,
-		EnhancedSetupFlowTCRevision:                enhancedSetupFlowTCRevision,
-		EnhancedSetupFlowTCDigest:                  enhancedSetupFlowTCDigest,
-		EnhancedSetupFlowTCFileSize:                enhancedSetupFlowTCFileSize,
-		MaintenanceUrl:                             maintenanceURL,
-		SchemaVersion:                              schemaVersion,
+		UserManualUrl:               userManualURL,
+		SupportUrl:                  supportURL,
+		ProductUrl:                  productURL,
+		LsfUrl:                      lsfURL,
+		EnhancedSetupFlowOptions:    enhancedSetupFlowOptions,
+		EnhancedSetupFlowTCUrl:      enhancedSetupFlowTCURL,
+		EnhancedSetupFlowTCRevision: enhancedSetupFlowTCRevision,
+		EnhancedSetupFlowTCDigest:   enhancedSetupFlowTCDigest,
+		EnhancedSetupFlowTCFileSize: enhancedSetupFlowTCFileSize,
+		MaintenanceUrl:              maintenanceURL,
+		SchemaVersion:               schemaVersion,
+		CommissioningFallbackUrl:    commissioningFallbackURL,
 	}
 }
 
@@ -108,7 +110,7 @@ func (msg *MsgCreateModel) ValidateBasic() error {
 		return err
 	}
 
-	if msg.EnhancedSetupFlowOptions == 0 {
+	if msg.EnhancedSetupFlowOptions&1 == 1 {
 		_, err = base64.StdEncoding.DecodeString(msg.EnhancedSetupFlowTCDigest)
 		if err != nil {
 			return NewErrEnhancedSetupFlowTCDigestIsNotBase64Encoded(msg.EnhancedSetupFlowTCDigest)
@@ -130,7 +132,6 @@ func NewMsgUpdateModel(
 	commissioningCustomFlowURL string,
 	commissioningModeInitialStepsInstruction string,
 	commissioningModeSecondaryStepsInstruction string,
-	managedACLExtensionRequestFlowURL string,
 	userManualURL string,
 	supportURL string,
 	productURL string,
@@ -144,6 +145,7 @@ func NewMsgUpdateModel(
 	enhancedSetupFlowTCDigest string,
 	enhancedSetupFlowTCFileSize uint32,
 	maintenanceURL string,
+	commissioningFallbackURL string,
 
 ) *MsgUpdateModel {
 	return &MsgUpdateModel{
@@ -156,20 +158,20 @@ func NewMsgUpdateModel(
 		CommissioningCustomFlowUrl:               commissioningCustomFlowURL,
 		CommissioningModeInitialStepsInstruction: commissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsInstruction: commissioningModeSecondaryStepsInstruction,
-		ManagedAclExtensionRequestFlowUrl:          managedACLExtensionRequestFlowURL,
-		UserManualUrl:                              userManualURL,
-		SupportUrl:                                 supportURL,
-		ProductUrl:                                 productURL,
-		LsfUrl:                                     lsfURL,
-		LsfRevision:                                lsfRevision,
-		CommissioningModeInitialStepsHint:          commissioningModeInitialStepsHint,
-		EnhancedSetupFlowOptions:                   enhancedSetupFlowOptions,
-		EnhancedSetupFlowTCUrl:                     enhancedSetupFlowTCURL,
-		EnhancedSetupFlowTCRevision:                enhancedSetupFlowTCRevision,
-		EnhancedSetupFlowTCDigest:                  enhancedSetupFlowTCDigest,
-		EnhancedSetupFlowTCFileSize:                enhancedSetupFlowTCFileSize,
-		MaintenanceUrl:                             maintenanceURL,
-		SchemaVersion:                              schemaVersion,
+		UserManualUrl:                     userManualURL,
+		SupportUrl:                        supportURL,
+		ProductUrl:                        productURL,
+		LsfUrl:                            lsfURL,
+		LsfRevision:                       lsfRevision,
+		CommissioningModeInitialStepsHint: commissioningModeInitialStepsHint,
+		EnhancedSetupFlowOptions:          enhancedSetupFlowOptions,
+		EnhancedSetupFlowTCUrl:            enhancedSetupFlowTCURL,
+		EnhancedSetupFlowTCRevision:       enhancedSetupFlowTCRevision,
+		EnhancedSetupFlowTCDigest:         enhancedSetupFlowTCDigest,
+		EnhancedSetupFlowTCFileSize:       enhancedSetupFlowTCFileSize,
+		MaintenanceUrl:                    maintenanceURL,
+		SchemaVersion:                     schemaVersion,
+		CommissioningFallbackUrl:          commissioningFallbackURL,
 	}
 }
 
@@ -207,7 +209,7 @@ func (msg *MsgUpdateModel) ValidateBasic() error {
 		return err
 	}
 
-	if msg.EnhancedSetupFlowOptions == 0 {
+	if msg.EnhancedSetupFlowOptions&1 == 1 {
 		_, err = base64.StdEncoding.DecodeString(msg.EnhancedSetupFlowTCDigest)
 		if err != nil {
 			return NewErrEnhancedSetupFlowTCDigestIsNotBase64Encoded(msg.EnhancedSetupFlowTCDigest)

@@ -21,7 +21,7 @@ func NewRootCertificate(pemCert string, subject string, subjectAsText string, su
 func NewNonRootCertificate(pemCert string, subject string, subjectAsText string, subjectKeyID string, serialNumber string,
 	issuer string, authorityKeyID string,
 	rootSubject string, rootSubjectKeyID string,
-	owner string,
+	owner string, vid int32,
 	schemaVersion uint32,
 ) Certificate {
 	return Certificate{
@@ -36,6 +36,7 @@ func NewNonRootCertificate(pemCert string, subject string, subjectAsText string,
 		RootSubjectKeyId: rootSubjectKeyID,
 		IsRoot:           false,
 		Owner:            owner,
+		Vid:              vid,
 		SchemaVersion:    schemaVersion,
 	}
 }

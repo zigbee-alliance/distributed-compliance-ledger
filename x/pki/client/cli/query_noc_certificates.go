@@ -15,7 +15,7 @@ import (
 func CmdListNocIcaCertificates() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "all-noc-x509-ica-certs",
-		Short: "Gets all NOC ICA certificates",
+		Short: "Gets all NOC ICA certificates (ICACs)",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
@@ -49,7 +49,7 @@ func CmdShowNocIcaCertificates() *cobra.Command {
 	var vid int32
 	cmd := &cobra.Command{
 		Use:   "noc-x509-ica-certs",
-		Short: "Gets NOC ICA certificates by VID",
+		Short: "Gets NOC ICA certificates (ICACs) by VID",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)

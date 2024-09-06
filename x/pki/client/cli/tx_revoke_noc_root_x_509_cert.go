@@ -18,7 +18,7 @@ var _ = strconv.Itoa(0)
 func CmdRevokeNocX509RootCert() *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "revoke-noc-x509-root-cert",
-		Short: "Revokes the given noc root certificate. " +
+		Short: "Revokes the given noc root certificate (RCAC). " +
 			"If revoke-child flag is set to true then all the noc certificates in the subtree signed by the revoked " +
 			"certificate will be revoked as well.",
 		Args: cobra.ExactArgs(0),

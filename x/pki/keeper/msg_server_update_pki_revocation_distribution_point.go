@@ -131,7 +131,7 @@ func (k msgServer) verifyUpdatedPAA(ctx sdk.Context, newCertificatePem string, r
 	// check that it has the same PEM value
 	var foundRootCert *types.Certificate
 	for _, approvedCertificate := range approvedCertificates.Certs {
-		if approvedCertificate.PemCert == newCertificatePem {
+		if x509.RemoveWhitespaces(approvedCertificate.PemCert) == x509.RemoveWhitespaces(newCertificatePem) {
 			foundRootCert = approvedCertificate
 
 			break

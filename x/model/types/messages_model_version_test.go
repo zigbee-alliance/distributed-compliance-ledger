@@ -144,7 +144,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldNotValid,
 		},
 		{
-			name: "OtaUrl starts with http:",
+			name: "OtaUrl starts not with https:",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.OtaUrl = "http://sampleflowurl.dclmodel"
 
@@ -260,7 +260,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldNotValid,
 		},
 		{
-			name: "ReleaseNotesUrl starts with http:",
+			name: "ReleaseNotesUrl starts not with https:",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.ReleaseNotesUrl = "http://sampleflowurl.dclmodel"
 
@@ -278,14 +278,14 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
-			name: "schemaVersion > 65535",
+			name: "schemaVersion !=0",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.Creator = sample.AccAddress()
-				msg.SchemaVersion = 65536
+				msg.SchemaVersion = 5
 
 				return msg
 			}(validMsgCreateModelVersion()),
-			err: validator.ErrFieldUpperBoundViolated,
+			err: validator.ErrFieldEqualBoundViolated,
 		},
 	}
 
@@ -647,7 +647,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldNotValid,
 		},
 		{
-			name: "OtaUrl starts with http:",
+			name: "OtaUrl starts not with https:",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.OtaUrl = "http://sampleflowurl.dclmodel"
 
@@ -695,7 +695,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldNotValid,
 		},
 		{
-			name: "ReleaseNotesUrl starts with http:",
+			name: "ReleaseNotesUrl starts not with https:",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.ReleaseNotesUrl = "http://sampleflowurl.dclmodel"
 
@@ -713,14 +713,14 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
-			name: "schemaVersion > 65535",
+			name: "schemaVersion != 0",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.Creator = sample.AccAddress()
-				msg.SchemaVersion = 65536
+				msg.SchemaVersion = 5
 
 				return msg
 			}(validMsgUpdateModelVersion()),
-			err: validator.ErrFieldUpperBoundViolated,
+			err: validator.ErrFieldEqualBoundViolated,
 		},
 	}
 

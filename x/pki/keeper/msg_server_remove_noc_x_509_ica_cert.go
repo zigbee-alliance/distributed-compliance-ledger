@@ -75,6 +75,7 @@ func (k msgServer) RemoveNocX509IcaCert(goCtx context.Context, msg *types.MsgRem
 
 			// Remove from ICA lists
 			k.RemoveNocIcaCertificateBySerialNumber(ctx, accountVid, certID.Subject, certID.SubjectKeyId, msg.SerialNumber)
+			k.RemoveNocCertificateByVidSubjectSkidAndSerialNumber(ctx, accountVid, certID.Subject, certID.SubjectKeyId, msg.SerialNumber)
 		}
 		if foundRevoked {
 			removeCertFromList(certBySerialNumber.Issuer, certBySerialNumber.SerialNumber, &revCerts.Certs)
@@ -82,6 +83,8 @@ func (k msgServer) RemoveNocX509IcaCert(goCtx context.Context, msg *types.MsgRem
 		}
 	} else {
 		k.RemoveNocIcaCertificate(ctx, certID.Subject, certID.SubjectKeyId, accountVid)
+		// remove from vid, subject key id map
+		k.RemoveNocCertificatesByVidAndSkid(ctx, accountVid, certID.SubjectKeyId)
 		// remove from approved list
 		k.RemoveApprovedCertificates(ctx, certID.Subject, certID.SubjectKeyId)
 		// remove from subject -> subject key ID map

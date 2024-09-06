@@ -82,6 +82,13 @@ var (
 	UserManualURL                                     = "https://url.usermanual.dclmodel"
 	SupportURL                                        = "https://url.supporturl.dclmodel"
 	ProductURL                                        = "https://url.producturl.dclmodel"
+	EnhancedSetupFlowTCURL                            = "https://url.enhansedsetupflowurl.dclmodel"
+	EnhancedSetupFlowTCRevision                       = 1
+	EnhancedSetupFlowTCDigest                         = "MmNmMjRkYmE1ZmIwYTMwZTI2ZTgzYjJhYzViOWUyOWUxYjE2MWU1YzFmYTc0MjVlNzMwNDMzNjI5MzhiOTgyNA=="
+	EnhancedSetupFlowTCFileSize                       = 1
+	MaintenanceURL                                    = "https://url.maintenanceurl.dclmodel"
+	CommissioningFallbackURL                          = "https://url.commissioningfallbackurl.dclmodel"
+	DiscoveryCapabilitiesBitmask               uint32 = 0
 	LsfURL                                            = "https://url.lsfurl.dclmodel"
 	DataURL                                           = "https://url.data.dclmodel"
 	DataURL2                                          = "https://url.data.dclmodel2"
@@ -275,9 +282,25 @@ HSMEGDAWgBRq/SJ3H1Ef7L8WQZdnENzcMaFxfjAKBggqhkjOPQQDAgNHADBEAiBQ
 qoAC9NkyqaAFOPZTaK0P/8jvu8m+t9pWmDXPmqdRDgIgI7rI/g8j51RFtlM5CBpH
 mUkpxyqvChVI1A0DTVFLJd4=
 -----END CERTIFICATE-----`
-	PAACertWithNumericVidSubject      = "MDAxGDAWBgNVBAMMD01hdHRlciBUZXN0IFBBQTEUMBIGCisGAQQBgqJ8AgEMBEZGRjE="
-	PAACertWithNumericVidSubjectKeyID = "6A:FD:22:77:1F:51:1F:EC:BF:16:41:97:67:10:DC:DC:31:A1:71:7E"
-	PAACertWithNumericVidVid          = 65521
+	PAACertWithNumericVidSubject              = "MDAxGDAWBgNVBAMMD01hdHRlciBUZXN0IFBBQTEUMBIGCisGAQQBgqJ8AgEMBEZGRjE="
+	PAACertWithNumericVidSubjectKeyID         = "6A:FD:22:77:1F:51:1F:EC:BF:16:41:97:67:10:DC:DC:31:A1:71:7E"
+	PAACertWithNumericVidVid                  = 65521
+	PAACertWithNumericVidDifferentWhitespaces = `
+-----BEGIN CERTIFICATE-----
+MIIBvTCCAWSgAwIBAgIITqjoMY
+LUHBwwCgYIKoZIzj0EAwIwMDEYMBYGA1UEAwwP
+TWF0dGVyIFRlc3QgUEFBMRQ
+wEgYKKwYBBAGConwCAQwERkZGMTAgFw0yMTA2Mjgx
+ND  IzNDNaGA85OTk5MTI
+zMTIzNTk1OVowMDEYMBYGA1UEAwwPTWF0dGVyIFRlc3Qg
+UEFBMRQwEgYKKwYBBAGConwCAQwERkZGMTBZMBMGByqGSM49AgEGCCqGSM49AwEH
+A0IABLbLY3KIfyko9brIGqnZOuJDHK2p154kL2UXfvnO2TKijs0Duq9qj8oYShpQ
+NUKWDUU/	MD8fGUIddR6Pjxqam3WjZjBkMBIGA1UdEwEB/wQIMAYBAf8CAQEwDgYD
+VR0PAQH/BAQDAgEGMB0GA1Ud     DgQWBBRq/SJ3H1Ef7L8WQZdnENzcMaFxfjAfBgNV
+HSMEGDAWgBRq/SJ3H1Ef7L8WQZdnENzcMaFxfjAKBggqhkjOPQQDAgNHADBEAiBQ
+qoAC9NkyqaAFOPZTaK0P/8jvu8m+t9pWmDXPmqdRDgIgI7rI/g8j51RFtlM5CBpH
+mUkpxyqvChVI1A0DTVFLJd4=
+-----END CERTIFICATE-----`
 
 	PAACertNoVid = `
 -----BEGIN CERTIFICATE-----
@@ -309,6 +332,7 @@ NbKsuLiNm8I5idctQg3eaw==
 -----END CERTIFICATE-----`
 	PAACertWithNumericVid1Subject      = "MDAxGDAWBgNVBAMMD01hdHRlciBUZXN0IFBBQTEUMBIGCisGAQQBgqJ8AgEMBEZGRjI="
 	PAACertWithNumericVid1SubjectKeyID = "7F:1D:AA:F2:44:98:B9:86:68:0E:A0:8F:C1:89:21:E8:48:48:9D:17"
+	PAACertWithNumericVid1Vid          = 65522
 
 	PAICertWithNumericPidVid = `
 -----BEGIN CERTIFICATE-----
@@ -356,7 +380,7 @@ FGE90Ic1XvCLrgHkxpqPxz2sjH39MB8GA1UdIwQYMBaAFHhc5wW4a49Ob8eTqmDL
 Q+ppaILVMAoGCCqGSM49BAMCA0gAMEUCIQDfwJ3oS/qVbWDW/vTirREL3iIqMogw
 pn4/F7keUYUaeAIgce2XGOSIsrjPlUQ1zj/zLqUFVhQ8TyycBaIK8z7Uytk=
 -----END CERTIFICATE-----`
-
+	PAICertWithNumericVidVid          = 65522
 	PAICertWithNumericVidSubject      = "MDAxGDAWBgNVBAMMD01hdHRlciBUZXN0IFBBSTEUMBIGCisGAQQBgqJ8AgEMBEZGRjI="
 	PAICertWithNumericVidSubjectKeyID = "61:3D:D0:87:35:5E:F0:8B:AE:01:E4:C6:9A:8F:C7:3D:AC:8C:7D:FD"
 
@@ -545,7 +569,8 @@ al/8sTx3xx7fWpS+rJ3jviCpHgP+cGV/ANg8hOlyr68u0FE+x6pye00TmxcFzDuo
 2Vciq5eYOIi+PlP+HI5QzlZYxSqFjJrFcfzYCJ4=
 -----END CERTIFICATE-----`
 
-	RootCertWithVid = `-----BEGIN CERTIFICATE-----
+	RootCertWithVid = `
+-----BEGIN CERTIFICATE-----
 MIICdDCCAhmgAwIBAgIBATAKBggqhkjOPQQDAjCBmDELMAkGA1UEBhMCVVMxETAP
 BgNVBAgMCE5ldyBZb3JrMREwDwYDVQQHDAhOZXcgWW9yazEYMBYGA1UECgwPRXhh
 bXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRgwFgYDVQQD

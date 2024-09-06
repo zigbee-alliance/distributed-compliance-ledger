@@ -18,7 +18,7 @@ var _ = strconv.Itoa(0)
 func CmdRevokeNocX509IcaCert() *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "revoke-noc-x509-ica-cert",
-		Short: "Revokes the given NOC intermediate or leaf certificate. " +
+		Short: "Revokes the given NOC intermediate or leaf certificate (ICAC). " +
 			"If revoke-child flag is set to true then all the certificates in the subtree signed by the revoked " +
 			"certificate will be revoked as well.",
 		Args: cobra.ExactArgs(0),

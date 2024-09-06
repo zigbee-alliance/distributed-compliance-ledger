@@ -19,13 +19,13 @@ func CmdCreateModel() *cobra.Command {
 		productName                                string
 		productLabel                               string
 		partNumber                                 string
+		discoveryCapabilitiesBitmask               uint32
 		commissioningCustomFlow                    int32
 		commissioningCustomFlowURL                 string
 		commissioningModeInitialStepsHint          uint32
 		commissioningModeInitialStepsInstruction   string
 		commissioningModeSecondaryStepsHint        uint32
 		commissioningModeSecondaryStepsInstruction string
-		managedACLExtensionRequestFlowURL          string
 		userManualURL                              string
 		supportURL                                 string
 		productURL                                 string
@@ -36,6 +36,7 @@ func CmdCreateModel() *cobra.Command {
 		enhancedSetupFlowTCDigest                  string
 		enhancedSetupFlowTCFileSize                uint32
 		maintenanceURL                             string
+		commissioningFallbackURL                   string
 		schemaVersion                              uint32
 	)
 
@@ -44,6 +45,13 @@ func CmdCreateModel() *cobra.Command {
 		Short: "Add new Model",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
+			isCommissioningFallbackURLSpecified := cmd.Flags().Changed(FlagCommissioningFallbackURL)
+			isDiscoveryCapabilitiesBitmaskSpecified := cmd.Flags().Changed(FlagDiscoveryCapabilitiesBitmask)
+
+			if isCommissioningFallbackURLSpecified && !isDiscoveryCapabilitiesBitmaskSpecified {
+				return types.ErrFallbackURLRequiresBitmask
+			}
+
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
@@ -62,13 +70,13 @@ func CmdCreateModel() *cobra.Command {
 				productName,
 				productLabel,
 				partNumber,
+				discoveryCapabilitiesBitmask,
 				commissioningCustomFlow,
 				commissioningCustomFlowURL,
 				commissioningModeInitialStepsHint,
 				commissioningModeInitialStepsInstruction,
 				commissioningModeSecondaryStepsHint,
 				commissioningModeSecondaryStepsInstruction,
-				managedACLExtensionRequestFlowURL,
 				userManualURL,
 				supportURL,
 				productURL,
@@ -80,6 +88,7 @@ func CmdCreateModel() *cobra.Command {
 				enhancedSetupFlowTCDigest,
 				enhancedSetupFlowTCFileSize,
 				maintenanceURL,
+				commissioningFallbackURL,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -104,6 +113,9 @@ func CmdCreateModel() *cobra.Command {
 		"Model description (string or path to file containing data)")
 	cmd.Flags().StringVar(&partNumber, FlagPartNumber, "",
 		"Model Part Number (or sku)")
+	cmd.Flags().Uint32Var(&discoveryCapabilitiesBitmask, FlagDiscoveryCapabilitiesBitmask, 0,
+		`This field identifies the device's available technologies for device discovery. 
+This field SHALL be populated if CommissioningFallbackUrl is populated`)
 	cmd.Flags().Int32Var(&commissioningCustomFlow, FlagCommissioningCustomFlow, 0,
 		`A value of 1 indicates that user interaction with the device (pressing a button, for example) is 
 required before commissioning can take place. When CommissioningCustomflow is set to a value of 2, 
@@ -134,8 +146,6 @@ current CHIP Administrator to put the device into commissioning mode.`)
 of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, 
 as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, 
 and for these values the commissioningModeSecondaryStepInstruction SHALL be set`)
-	cmd.Flags().StringVar(&managedACLExtensionRequestFlowURL, FlagManagedACLExtensionRequestFlowURL, "",
-		`managedACLExtensionRequestFlowURL SHALL identify URL to show a custom flow UI for the commissioner`)
 	cmd.Flags().StringVar(&userManualURL, FlagUserManualURL, "",
 		"URL that contains product specific web page that contains user manual for the device model.")
 	cmd.Flags().StringVar(&supportURL, FlagSupportURL, "",
@@ -144,7 +154,7 @@ and for these values the commissioningModeSecondaryStepInstruction SHALL be set`
 		"URL that contains product specific web page that contains details for the device model.")
 	cmd.Flags().StringVar(&lsfURL, FlagLsfURL, "", "URL to the Localized String File of this product")
 	cli.AddTxFlagsToCmd(cmd)
-	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 1, "Schema version - default value is 1")
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version - default is 0, the value should be equal to 0")
 	cmd.Flags().Int32Var(&enhancedSetupFlowOptions, FlagEnhancedSetupFlowOptions, 0,
 		"enhancedSetupFlowOptions SHALL identify the configuration options for the Enhanced Setup Flow.")
 	cmd.Flags().StringVar(&enhancedSetupFlowTCURL, FlagEnhancedSetupFlowTCURL, "",
@@ -157,6 +167,8 @@ and for these values the commissioningModeSecondaryStepInstruction SHALL be set`
 		"enhancedSetupFlowTCFileSize SHALL indicate the total size of the Enhanced Setup Flow Terms and Conditions file in bytes, and SHALL be used to ensure the downloaded file size is within the bounds of EnhancedSetupFlowTCFileSize. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
 	cmd.Flags().StringVar(&maintenanceURL, FlagMaintenanceURL, "",
 		"maintenanceURL SHALL identify a link to a vendor-specific URL which SHALL provide a manufacturer specific means to resolve any functionality limitations indicated by the TERMS_AND_CONDITIONS_CHANGED status code. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
+	cmd.Flags().StringVar(&commissioningFallbackURL, FlagCommissioningFallbackURL, "",
+		"This field SHALL identify a vendor-specific commissioning-fallback URL for the device model, which can be used by a Commissioner in case commissioning fails to direct the user to a manufacturer-provided mechanism to provide resolution to commissioning issues.")
 
 	_ = cmd.MarkFlagRequired(FlagVid)
 	_ = cmd.MarkFlagRequired(FlagPid)
@@ -177,7 +189,6 @@ func CmdUpdateModel() *cobra.Command {
 		commissioningCustomFlowURL                 string
 		commissioningModeInitialStepsInstruction   string
 		commissioningModeSecondaryStepsInstruction string
-		managedACLExtensionRequestFlowURL          string
 		userManualURL                              string
 		supportURL                                 string
 		productURL                                 string
@@ -191,6 +202,7 @@ func CmdUpdateModel() *cobra.Command {
 		enhancedSetupFlowTCDigest                  string
 		enhancedSetupFlowTCFileSize                uint32
 		maintenanceURL                             string
+		commissioningFallbackURL                   string
 	)
 
 	cmd := &cobra.Command{
@@ -218,7 +230,6 @@ func CmdUpdateModel() *cobra.Command {
 				commissioningCustomFlowURL,
 				commissioningModeInitialStepsInstruction,
 				commissioningModeSecondaryStepsInstruction,
-				managedACLExtensionRequestFlowURL,
 				userManualURL,
 				supportURL,
 				productURL,
@@ -232,6 +243,7 @@ func CmdUpdateModel() *cobra.Command {
 				enhancedSetupFlowTCDigest,
 				enhancedSetupFlowTCFileSize,
 				maintenanceURL,
+				commissioningFallbackURL,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -267,8 +279,6 @@ values the commissioningModeInitialStepsInstruction SHALL be set`)
 of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, 
 as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, 
 and for these values the commissioningModeSecondaryStepInstruction SHALL be set`)
-	cmd.Flags().StringVar(&managedACLExtensionRequestFlowURL, FlagManagedACLExtensionRequestFlowURL, "",
-		`managedACLExtensionRequestFlowURL SHALL identify URL to show a custom flow UI for the commissioner`)
 	cmd.Flags().StringVar(&userManualURL, FlagUserManualURL, "",
 		"URL that contains product specific web page that contains user manual for the device model.")
 	cmd.Flags().StringVar(&supportURL, FlagSupportURL, "",
@@ -278,7 +288,7 @@ and for these values the commissioningModeSecondaryStepInstruction SHALL be set`
 	cmd.Flags().StringVar(&lsfURL, FlagLsfURL, "", "URL to the Localized String File of this product")
 	cmd.Flags().Int32Var(&lsfRevision, FlagLsfRevision, 0,
 		"LsfRevision is a monotonically increasing positive integer indicating the latest available version of Localized String File")
-	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 1, "Schema version")
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version")
 	cmd.Flags().Uint32Var(&commissioningModeInitialStepsHint, FlagCommissioningModeInitialStepsHint, 0,
 		`commissioningModeInitialStepsHint SHALL 
 identify a hint for the steps that can be used to put into commissioning mode a device that 
@@ -297,6 +307,8 @@ will enter Commissioning Mode upon a power cycle. Note that this value cannot be
 		"enhancedSetupFlowTCFileSize SHALL indicate the total size of the Enhanced Setup Flow Terms and Conditions file in bytes, and SHALL be used to ensure the downloaded file size is within the bounds of EnhancedSetupFlowTCFileSize. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
 	cmd.Flags().StringVar(&maintenanceURL, FlagMaintenanceURL, "",
 		"maintenanceURL SHALL identify a link to a vendor-specific URL which SHALL provide a manufacturer specific means to resolve any functionality limitations indicated by the TERMS_AND_CONDITIONS_CHANGED status code. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
+	cmd.Flags().StringVar(&commissioningFallbackURL, FlagCommissioningFallbackURL, "",
+		"This field SHALL identify a vendor-specific commissioning-fallback URL for the device model, which can be used by a Commissioner in case commissioning fails to direct the user to a manufacturer-provided mechanism to provide resolution to commissioning issues.")
 
 	cli.AddTxFlagsToCmd(cmd)
 

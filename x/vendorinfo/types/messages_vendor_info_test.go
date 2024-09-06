@@ -150,7 +150,19 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
-			name: "schemaVersion > 65535",
+			name: "vendor landing page URL starts not with https:",
+			msg: MsgCreateVendorInfo{
+				Creator:              sample.AccAddress(),
+				VendorID:             testconstants.VendorID1,
+				VendorName:           testconstants.VendorName,
+				CompanyLegalName:     testconstants.CompanyPreferredName,
+				VendorLandingPageURL: "http://www.example.com",
+				CompanyPreferredName: testconstants.CompanyPreferredName,
+			},
+			err: validator.ErrFieldNotValid,
+		},
+		{
+			name: "schemaVersion != 0",
 			msg: MsgCreateVendorInfo{
 				Creator:              sample.AccAddress(),
 				VendorID:             testconstants.VendorID1,
@@ -158,9 +170,21 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 				CompanyLegalName:     testconstants.CompanyLegalName,
 				CompanyPreferredName: testconstants.CompanyPreferredName,
 				VendorLandingPageURL: testconstants.VendorLandingPageURL,
-				SchemaVersion:        65536,
+				SchemaVersion:        5,
 			},
-			err: validator.ErrFieldUpperBoundViolated,
+			err: validator.ErrFieldEqualBoundViolated,
+		},
+		{
+			name: "VendorLandingPageURL can't be non-http",
+			msg: MsgCreateVendorInfo{
+				Creator:              sample.AccAddress(),
+				VendorID:             testconstants.VendorID1,
+				VendorName:           testconstants.VendorName,
+				CompanyLegalName:     testconstants.CompanyLegalName,
+				CompanyPreferredName: testconstants.CompanyPreferredName,
+				VendorLandingPageURL: "ftp://example.com",
+			},
+			err: validator.ErrFieldNotValid,
 		},
 	}
 
@@ -299,6 +323,18 @@ func TestMsgUpdateVendorInfo_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldNotValid,
 		},
 		{
+			name: "vendor landing page URL starts not with https:",
+			msg: MsgUpdateVendorInfo{
+				Creator:              sample.AccAddress(),
+				VendorID:             testconstants.VendorID1,
+				VendorName:           testconstants.VendorName,
+				CompanyLegalName:     testconstants.CompanyPreferredName,
+				VendorLandingPageURL: "http:/example.com",
+				CompanyPreferredName: testconstants.CompanyPreferredName,
+			},
+			err: validator.ErrFieldNotValid,
+		},
+		{
 			name: "vendor landing page URL len > 256",
 			msg: MsgUpdateVendorInfo{
 				Creator:              sample.AccAddress(),
@@ -309,6 +345,18 @@ func TestMsgUpdateVendorInfo_ValidateBasic(t *testing.T) {
 				CompanyPreferredName: testconstants.CompanyPreferredName,
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
+		},
+		{
+			name: "vendor landing page URL can't be non-HTTP",
+			msg: MsgUpdateVendorInfo{
+				Creator:              sample.AccAddress(),
+				VendorID:             testconstants.VendorID1,
+				VendorName:           testconstants.VendorName,
+				CompanyLegalName:     testconstants.CompanyLegalName,
+				CompanyPreferredName: testconstants.CompanyPreferredName,
+				VendorLandingPageURL: "ftp://example.com",
+			},
+			err: validator.ErrFieldNotValid,
 		},
 	}
 

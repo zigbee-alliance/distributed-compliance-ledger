@@ -24,6 +24,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode"
 
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 )
@@ -161,6 +162,18 @@ func BytesToHex(bytes []byte) string {
 	}
 
 	return strings.Join(bytesHex, ":")
+}
+
+func RemoveWhitespaces(pem string) string {
+	var builder strings.Builder
+
+	for _, r := range pem {
+		if !unicode.IsSpace(r) {
+			builder.WriteRune(r)
+		}
+	}
+
+	return builder.String()
 }
 
 func (c Certificate) Verify(parent *Certificate, blockTime time.Time) error {
