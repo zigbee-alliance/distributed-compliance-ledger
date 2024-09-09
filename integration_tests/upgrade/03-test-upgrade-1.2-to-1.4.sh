@@ -19,9 +19,9 @@ source integration_tests/cli/common.sh
 # Upgrade constants
 
 plan_name="v1.4"
-upgrade_checksum="sha256:9b01af171b65c31765c48e9da5a0381ba0405674cba89daaa4f6e2a474a2e20a"
+upgrade_checksum="sha256:135eb3d3200d53894b16a9d56c4437ae36aaf2ee663a6cbfb594c2a47b89bf6e"
 binary_version_old="v1.2.2"
-binary_version_new="v1.4.2-pre1"
+binary_version_new="v1.4.3-pre1"
 
 wget -O dcld_old "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version_old/dcld"
 chmod ugo+x dcld_old
