@@ -69,7 +69,7 @@ func (k msgServer) ProposeAddX509RootCert(goCtx context.Context, msg *types.MsgP
 		}
 
 		// Existing certificate must not be NOC certificate
-		if existingCertificate.IsNoc {
+		if existingCertificate.CertificateType == types.CertificateType_OperationalPKI {
 			return nil, pkitypes.NewErrProvidedNotNocCertButExistingNoc(x509Certificate.Subject, x509Certificate.SubjectKeyID)
 		}
 

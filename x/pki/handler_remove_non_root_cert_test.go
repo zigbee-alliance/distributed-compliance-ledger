@@ -285,6 +285,7 @@ func TestHandler_RemoveX509Cert_ByNotOwnerButSameVendor(t *testing.T) {
 
 	// store root certificate
 	rootCertificate := rootCertificate(setup.Trustee1)
+	setup.Keeper.AddAllCertificate(setup.Ctx, rootCertificate)
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, rootCertificate)
 
 	// add first vendor account with VID = 1
@@ -335,6 +336,7 @@ func TestHandler_RemoveX509Cert_ByOtherVendor(t *testing.T) {
 
 	// store root certificate
 	rootCertificate := rootCertificate(setup.Trustee1)
+	setup.Keeper.AddAllCertificate(setup.Ctx, rootCertificate)
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, rootCertificate)
 
 	// add fist vendor account with VID = 1
@@ -501,5 +503,5 @@ func TestHandler_RemoveX509Cert_ForNocIcaCertificate(t *testing.T) {
 		vendorAccAddress.String(), testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID, testconstants.NocCert1SerialNumber)
 	_, err = setup.Handler(setup.Ctx, removeX509Cert)
 	require.Error(t, err)
-	require.True(t, pkitypes.ErrInappropriateCertificateType.Is(err))
+	require.True(t, pkitypes.ErrCertificateDoesNotExist.Is(err))
 }

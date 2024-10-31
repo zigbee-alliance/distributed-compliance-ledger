@@ -38,22 +38,22 @@ func TestHandler_AddNocX509Cert_AddNew(t *testing.T) {
 	require.NoError(t, err)
 
 	// query noc root certificate by Subject and SKID
-	approvedCertificate, err := querySingleApprovedCertificate(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	nocCertificate, err := querySingleNocCertificate(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.NoError(t, err)
-	require.Equal(t, testconstants.NocCert1Subject, approvedCertificate.Subject)
-	require.Equal(t, testconstants.NocCert1SubjectKeyID, approvedCertificate.SubjectKeyId)
-	require.Equal(t, testconstants.NocCert1SerialNumber, approvedCertificate.SerialNumber)
-	require.Equal(t, testconstants.SchemaVersion, approvedCertificate.SchemaVersion)
+	require.Equal(t, testconstants.NocCert1Subject, nocCertificate.Subject)
+	require.Equal(t, testconstants.NocCert1SubjectKeyID, nocCertificate.SubjectKeyId)
+	require.Equal(t, testconstants.NocCert1SerialNumber, nocCertificate.SerialNumber)
+	require.Equal(t, testconstants.SchemaVersion, nocCertificate.SchemaVersion)
 
 	// query noc root certificate by SubjectKeyID
-	approvedCertificatesBySubjectKeyID, err := queryAllApprovedCertificatesBySubjectKeyID(setup, testconstants.NocCert1SubjectKeyID)
+	nocCertificatesBySubjectKeyID, err := queryAllNocCertificatesBySubjectKeyID(setup, testconstants.NocCert1SubjectKeyID)
 	require.NoError(t, err)
-	require.Equal(t, 1, len(approvedCertificatesBySubjectKeyID))
-	require.Equal(t, 1, len(approvedCertificatesBySubjectKeyID[0].Certs))
-	require.Equal(t, testconstants.NocCert1SerialNumber, approvedCertificatesBySubjectKeyID[0].Certs[0].SerialNumber)
+	require.Equal(t, 1, len(nocCertificatesBySubjectKeyID))
+	require.Equal(t, 1, len(nocCertificatesBySubjectKeyID[0].Certs))
+	require.Equal(t, testconstants.NocCert1SerialNumber, nocCertificatesBySubjectKeyID[0].Certs[0].SerialNumber)
 
 	// query noc root certificate by VID
-	nocRootCertificate, err := querySingleNocCertificate(setup, vid)
+	nocRootCertificate, err := querySingleNocCertificateByVid(setup, vid)
 	require.NoError(t, err)
 	require.Equal(t, testconstants.NocCert1SerialNumber, nocRootCertificate.SerialNumber)
 
@@ -100,9 +100,9 @@ func TestHandler_AddNocX509Cert_Renew(t *testing.T) {
 	)
 	newNocCertificate.SerialNumber = testconstants.TestSerialNumber
 
-	setup.Keeper.AddApprovedCertificate(setup.Ctx, newNocCertificate)
-	setup.Keeper.AddApprovedCertificateBySubjectKeyID(setup.Ctx, newNocCertificate)
-	setup.Keeper.AddApprovedCertificateBySubject(setup.Ctx, newNocCertificate.Subject, newNocCertificate.SubjectKeyId)
+	setup.Keeper.AddNocCertificate(setup.Ctx, newNocCertificate)
+	setup.Keeper.AddNocCertificateBySubjectKeyID(setup.Ctx, newNocCertificate)
+	setup.Keeper.AddNocCertificateBySubject(setup.Ctx, newNocCertificate)
 	setup.Keeper.AddNocIcaCertificate(setup.Ctx, newNocCertificate)
 	uniqueCertificate := types.UniqueCertificate{
 		Issuer:       newNocCertificate.Issuer,
@@ -117,32 +117,32 @@ func TestHandler_AddNocX509Cert_Renew(t *testing.T) {
 	require.NoError(t, err)
 
 	// query noc certificate by Subject and SKID
-	approvedCertificates, err := queryApprovedCertificates(setup, newNocCertificate.Subject, newNocCertificate.SubjectKeyId)
-	require.NoError(t, err)
-	require.Equal(t, len(approvedCertificates.Certs), 2)
-	require.Equal(t, &newNocCertificate, approvedCertificates.Certs[0])
-
-	// query noc certificate by Subject
-	approvedCertificatesBySubject, err := queryApprovedCertificatesBySubject(setup, newNocCertificate.Subject)
-	require.NoError(t, err)
-	require.Equal(t, 1, len(approvedCertificatesBySubject.SubjectKeyIds))
-
-	// query noc certificate by SKID
-	approvedCertificatesBySubjectKeyID, err := queryAllApprovedCertificatesBySubjectKeyID(setup, newNocCertificate.SubjectKeyId)
-	require.NoError(t, err)
-	require.Equal(t, 1, len(approvedCertificatesBySubjectKeyID))
-	require.Equal(t, 2, len(approvedCertificatesBySubjectKeyID[0].Certs))
-	require.Equal(t, testconstants.NocCert1Subject, approvedCertificatesBySubjectKeyID[0].Certs[0].Subject)
-	require.Equal(t, testconstants.NocCert1SubjectKeyID, approvedCertificatesBySubjectKeyID[0].Certs[0].SubjectKeyId)
-	require.Equal(t, vid, approvedCertificatesBySubjectKeyID[0].Certs[0].Vid)
-
-	// query noc certificate by VID
-	nocCertificates, err := queryNocCertificates(setup, testconstants.Vid)
+	nocCertificates, err := queryNocCertificates(setup, newNocCertificate.Subject, newNocCertificate.SubjectKeyId)
 	require.NoError(t, err)
 	require.Equal(t, len(nocCertificates.Certs), 2)
-	require.Equal(t, testconstants.NocCert1Subject, nocCertificates.Certs[0].Subject)
-	require.Equal(t, testconstants.NocCert1SubjectKeyID, nocCertificates.Certs[0].SubjectKeyId)
-	require.Equal(t, vid, nocCertificates.Certs[0].Vid)
+	require.Equal(t, &newNocCertificate, nocCertificates.Certs[0])
+
+	// query noc certificate by Subject
+	nocCertificatesBySubject, err := queryNocCertificatesBySubject(setup, newNocCertificate.Subject)
+	require.NoError(t, err)
+	require.Equal(t, 1, len(nocCertificatesBySubject.SubjectKeyIds))
+
+	// query noc certificate by SKID
+	nocCertificatesBySubjectKeyID, err := queryAllNocCertificatesBySubjectKeyID(setup, newNocCertificate.SubjectKeyId)
+	require.NoError(t, err)
+	require.Equal(t, 1, len(nocCertificatesBySubjectKeyID))
+	require.Equal(t, 2, len(nocCertificatesBySubjectKeyID[0].Certs))
+	require.Equal(t, testconstants.NocCert1Subject, nocCertificatesBySubjectKeyID[0].Certs[0].Subject)
+	require.Equal(t, testconstants.NocCert1SubjectKeyID, nocCertificatesBySubjectKeyID[0].Certs[0].SubjectKeyId)
+	require.Equal(t, vid, nocCertificatesBySubjectKeyID[0].Certs[0].Vid)
+
+	// query noc certificate by VID
+	nocCertificatesByVid, err := queryNocCertificatesByVid(setup, testconstants.Vid)
+	require.NoError(t, err)
+	require.Equal(t, len(nocCertificatesByVid.Certs), 2)
+	require.Equal(t, testconstants.NocCert1Subject, nocCertificatesByVid.Certs[0].Subject)
+	require.Equal(t, testconstants.NocCert1SubjectKeyID, nocCertificatesByVid.Certs[0].SubjectKeyId)
+	require.Equal(t, vid, nocCertificatesByVid.Certs[0].Vid)
 }
 
 func TestHandler_AddNocX509Cert_Root_VID_Does_Not_Equal_To_AccountVID(t *testing.T) {
@@ -239,15 +239,15 @@ func TestHandler_AddNocX509Cert_CertificateExist(t *testing.T) {
 		{
 			name: "Duplicate",
 			existingCert: &types.Certificate{
-				Issuer:         testconstants.NocRootCert1Subject,
-				AuthorityKeyId: testconstants.NocRootCert1SubjectKeyID,
-				Subject:        testconstants.NocCert1Subject,
-				SubjectAsText:  testconstants.NocCert1SubjectAsText,
-				SubjectKeyId:   testconstants.NocCert1SubjectKeyID,
-				SerialNumber:   testconstants.NocCert1SerialNumber,
-				IsRoot:         false,
-				IsNoc:          true,
-				Vid:            testconstants.Vid,
+				Issuer:          testconstants.NocRootCert1Subject,
+				AuthorityKeyId:  testconstants.NocRootCert1SubjectKeyID,
+				Subject:         testconstants.NocCert1Subject,
+				SubjectAsText:   testconstants.NocCert1SubjectAsText,
+				SubjectKeyId:    testconstants.NocCert1SubjectKeyID,
+				SerialNumber:    testconstants.NocCert1SerialNumber,
+				IsRoot:          false,
+				CertificateType: types.CertificateType_OperationalPKI,
+				Vid:             testconstants.Vid,
 			},
 			nocCert: testconstants.NocCert1,
 			err:     pkitypes.ErrCertificateAlreadyExists,
@@ -255,15 +255,15 @@ func TestHandler_AddNocX509Cert_CertificateExist(t *testing.T) {
 		{
 			name: "ExistingIsRootCert",
 			existingCert: &types.Certificate{
-				Issuer:         testconstants.NocRootCert1Subject,
-				AuthorityKeyId: testconstants.NocRootCert1SubjectKeyID,
-				Subject:        testconstants.NocCert1Subject,
-				SubjectAsText:  testconstants.NocCert1SubjectAsText,
-				SubjectKeyId:   testconstants.NocCert1SubjectKeyID,
-				SerialNumber:   testconstants.NocRootCert1SerialNumber,
-				IsRoot:         true,
-				IsNoc:          true,
-				Vid:            testconstants.Vid,
+				Issuer:          testconstants.NocRootCert1Subject,
+				AuthorityKeyId:  testconstants.NocRootCert1SubjectKeyID,
+				Subject:         testconstants.NocCert1Subject,
+				SubjectAsText:   testconstants.NocCert1SubjectAsText,
+				SubjectKeyId:    testconstants.NocCert1SubjectKeyID,
+				SerialNumber:    testconstants.NocRootCert1SerialNumber,
+				IsRoot:          true,
+				CertificateType: types.CertificateType_OperationalPKI,
+				Vid:             testconstants.Vid,
 			},
 			nocCert: testconstants.NocCert1,
 			err:     sdkerrors.ErrUnauthorized,
@@ -271,15 +271,15 @@ func TestHandler_AddNocX509Cert_CertificateExist(t *testing.T) {
 		{
 			name: "ExistingWithDifferentIssuer",
 			existingCert: &types.Certificate{
-				Issuer:         testconstants.RootIssuer,
-				AuthorityKeyId: testconstants.NocRootCert1SubjectKeyID,
-				Subject:        testconstants.NocCert1Subject,
-				SubjectAsText:  testconstants.NocCert1SubjectAsText,
-				SubjectKeyId:   testconstants.NocCert1SubjectKeyID,
-				SerialNumber:   "1234",
-				IsRoot:         false,
-				IsNoc:          true,
-				Vid:            testconstants.Vid,
+				Issuer:          testconstants.RootIssuer,
+				AuthorityKeyId:  testconstants.NocRootCert1SubjectKeyID,
+				Subject:         testconstants.NocCert1Subject,
+				SubjectAsText:   testconstants.NocCert1SubjectAsText,
+				SubjectKeyId:    testconstants.NocCert1SubjectKeyID,
+				SerialNumber:    "1234",
+				IsRoot:          false,
+				CertificateType: types.CertificateType_OperationalPKI,
+				Vid:             testconstants.Vid,
 			},
 			nocCert: testconstants.NocCert1,
 			err:     sdkerrors.ErrUnauthorized,
@@ -287,15 +287,15 @@ func TestHandler_AddNocX509Cert_CertificateExist(t *testing.T) {
 		{
 			name: "ExistingWithDifferentAuthorityKeyId",
 			existingCert: &types.Certificate{
-				Issuer:         testconstants.NocRootCert1Subject,
-				AuthorityKeyId: testconstants.RootSubjectKeyID,
-				Subject:        testconstants.NocCert1Subject,
-				SubjectAsText:  testconstants.NocCert1SubjectAsText,
-				SubjectKeyId:   testconstants.NocCert1SubjectKeyID,
-				SerialNumber:   "1234",
-				IsRoot:         false,
-				IsNoc:          true,
-				Vid:            testconstants.Vid,
+				Issuer:          testconstants.NocRootCert1Subject,
+				AuthorityKeyId:  testconstants.RootSubjectKeyID,
+				Subject:         testconstants.NocCert1Subject,
+				SubjectAsText:   testconstants.NocCert1SubjectAsText,
+				SubjectKeyId:    testconstants.NocCert1SubjectKeyID,
+				SerialNumber:    "1234",
+				IsRoot:          false,
+				CertificateType: types.CertificateType_OperationalPKI,
+				Vid:             testconstants.Vid,
 			},
 			nocCert: testconstants.NocCert1,
 			err:     sdkerrors.ErrUnauthorized,
@@ -303,15 +303,15 @@ func TestHandler_AddNocX509Cert_CertificateExist(t *testing.T) {
 		{
 			name: "ExistingNotNocCert",
 			existingCert: &types.Certificate{
-				Issuer:         testconstants.NocRootCert1Subject,
-				AuthorityKeyId: testconstants.NocRootCert1SubjectKeyID,
-				Subject:        testconstants.NocCert1Subject,
-				SubjectAsText:  testconstants.NocCert1SubjectAsText,
-				SubjectKeyId:   testconstants.NocCert1SubjectKeyID,
-				SerialNumber:   "1234",
-				IsRoot:         false,
-				IsNoc:          false,
-				Vid:            testconstants.Vid,
+				Issuer:          testconstants.NocRootCert1Subject,
+				AuthorityKeyId:  testconstants.NocRootCert1SubjectKeyID,
+				Subject:         testconstants.NocCert1Subject,
+				SubjectAsText:   testconstants.NocCert1SubjectAsText,
+				SubjectKeyId:    testconstants.NocCert1SubjectKeyID,
+				SerialNumber:    "1234",
+				IsRoot:          false,
+				CertificateType: types.CertificateType_DeviceAttestationPKI,
+				Vid:             testconstants.Vid,
 			},
 			nocCert: testconstants.NocCert1,
 			err:     pkitypes.ErrInappropriateCertificateType,
@@ -319,15 +319,15 @@ func TestHandler_AddNocX509Cert_CertificateExist(t *testing.T) {
 		{
 			name: "ExistingCertWithDifferentVid",
 			existingCert: &types.Certificate{
-				Issuer:         testconstants.NocRootCert1Subject,
-				AuthorityKeyId: testconstants.NocRootCert1SubjectKeyID,
-				Subject:        testconstants.NocCert1Subject,
-				SubjectAsText:  testconstants.NocCert1SubjectAsText,
-				SubjectKeyId:   testconstants.NocCert1SubjectKeyID,
-				SerialNumber:   "1234",
-				IsRoot:         false,
-				IsNoc:          true,
-				Vid:            testconstants.VendorID1,
+				Issuer:          testconstants.NocRootCert1Subject,
+				AuthorityKeyId:  testconstants.NocRootCert1SubjectKeyID,
+				Subject:         testconstants.NocCert1Subject,
+				SubjectAsText:   testconstants.NocCert1SubjectAsText,
+				SubjectKeyId:    testconstants.NocCert1SubjectKeyID,
+				SerialNumber:    "1234",
+				IsRoot:          false,
+				CertificateType: types.CertificateType_OperationalPKI,
+				Vid:             testconstants.VendorID1,
 			},
 			nocCert: testconstants.NocCert1,
 			err:     sdkerrors.ErrUnauthorized,
@@ -344,7 +344,7 @@ func TestHandler_AddNocX509Cert_CertificateExist(t *testing.T) {
 			addNocRootCertificate(setup, accAddress, testconstants.NocRootCert1, vid)
 
 			// add the existing certificate
-			setup.Keeper.AddApprovedCertificate(setup.Ctx, *tc.existingCert)
+			setup.Keeper.AddAllCertificate(setup.Ctx, *tc.existingCert)
 			uniqueCertificate := types.UniqueCertificate{
 				Issuer:       tc.existingCert.Issuer,
 				SerialNumber: tc.existingCert.SerialNumber,
@@ -369,39 +369,4 @@ func addNocRootCertificate(setup *TestSetup, address sdk.AccAddress, pemCert str
 	nocCerts, err := queryNocRootCertificates(setup, vid)
 	require.NoError(setup.T, err)
 	require.NotNil(setup.T, nocCerts)
-}
-
-func querySingleNocCertificate(
-	setup *TestSetup,
-	vid int32,
-) (*types.Certificate, error) {
-	certificates, err := queryNocCertificates(setup, vid)
-	if err != nil {
-		return nil, err
-	}
-
-	if len(certificates.Certs) > 1 {
-		require.Fail(setup.T, "More than 1 certificate returned")
-	}
-
-	return certificates.Certs[0], nil
-}
-
-func queryNocCertificates(
-	setup *TestSetup,
-	vid int32,
-) (*types.NocIcaCertificates, error) {
-	// query certificate
-	req := &types.QueryGetNocIcaCertificatesRequest{Vid: vid}
-
-	resp, err := setup.Keeper.NocIcaCertificates(setup.Wctx, req)
-	if err != nil {
-		require.Nil(setup.T, resp)
-
-		return nil, err
-	}
-
-	require.NotNil(setup.T, resp)
-
-	return &resp.NocIcaCertificates, nil
 }

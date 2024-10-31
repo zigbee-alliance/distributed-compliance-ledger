@@ -36,7 +36,7 @@ func (k msgServer) RemoveX509Cert(goCtx context.Context, msg *types.MsgRemoveX50
 	}
 
 	// Existing certificate must not be NOC certificate
-	if certificates[0].IsNoc {
+	if certificates[0].CertificateType == types.CertificateType_OperationalPKI {
 		return nil, pkitypes.NewErrProvidedNotNocCertButExistingNoc(msg.Subject, msg.SubjectKeyId)
 	}
 
@@ -67,6 +67,9 @@ func (k msgServer) RemoveX509Cert(goCtx context.Context, msg *types.MsgRemoveX50
 			k.removeOrUpdateRevokedX509Cert(ctx, certID, &revCerts)
 		}
 	} else {
+		// remove from global certificates map
+		k.RemoveAllCertificates(ctx, certID.Subject, certID.SubjectKeyId)
+		// remove from approved certificates map
 		k.RemoveApprovedCertificates(ctx, certID.Subject, certID.SubjectKeyId)
 		// remove from subject -> subject key ID map
 		k.RemoveApprovedCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)

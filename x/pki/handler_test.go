@@ -335,10 +335,11 @@ func TestHandler_ProposeAddX509RootCert_ForNocCertificate(t *testing.T) {
 
 	nocRootCertificate := rootCertificate(vendorAccAddress)
 	nocRootCertificate.SerialNumber = testconstants.TestSerialNumber
-	nocRootCertificate.IsNoc = true
+	nocRootCertificate.CertificateType = types.CertificateType_OperationalPKI
 	nocRootCertificate.Approvals = nil
 	nocRootCertificate.Rejects = nil
 
+	setup.Keeper.AddAllCertificate(setup.Ctx, nocRootCertificate)
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, nocRootCertificate)
 	setup.Keeper.AddNocRootCertificate(setup.Ctx, nocRootCertificate)
 	uniqueCertificate := types.UniqueCertificate{
@@ -394,6 +395,7 @@ func TestHandler_ProposeAddX509RootCert_ForDifferentSerialNumberDifferentSigner(
 		setup.Ctx,
 		uniqueCertificate(rootCertificate.Subject, rootCertificate.SerialNumber),
 	)
+	setup.Keeper.AddAllCertificate(setup.Ctx, rootCertificate)
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, rootCertificate)
 
 	// propose second root certificate
@@ -888,6 +890,7 @@ func TestHandler_ProposeRevokeX509RootCert_ForNonRootCertificate(t *testing.T) {
 
 	// store x509 root certificate
 	rootCertificate := rootCertificate(setup.Trustee1)
+	setup.Keeper.AddAllCertificate(setup.Ctx, rootCertificate)
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, rootCertificate)
 
 	// Add vendor account
@@ -2104,6 +2107,11 @@ func queryAllApprovedCertificates(setup *TestSetup) ([]types.ApprovedCertificate
 	return _queryAllApprovedCertificates(setup, "")
 }
 
+func queryAllNocCertificates(setup *TestSetup) ([]types.NocCertificates, error) {
+	// query all certificates
+	return _queryAllNocCertificates(setup, "")
+}
+
 func queryAllApprovedCertificatesBySubjectKeyID(setup *TestSetup, subjectKeyID string) ([]types.ApprovedCertificates, error) {
 	// query all certificates
 	return _queryAllApprovedCertificates(setup, subjectKeyID)
@@ -2381,6 +2389,197 @@ func queryRejectedCertificates(
 	require.NotNil(setup.T, resp)
 
 	return &resp.RejectedCertificate, nil
+}
+
+func queryAllNocCertificatesBySubjectKeyID(setup *TestSetup, subjectKeyID string) ([]types.NocCertificates, error) {
+	// query all noc certificates
+	return _queryAllNocCertificates(setup, subjectKeyID)
+}
+
+func _queryAllNocCertificates(setup *TestSetup, subjectKeyID string) ([]types.NocCertificates, error) {
+	// query all certificates
+	req := &types.QueryNocCertificatesRequest{
+		SubjectKeyId: subjectKeyID,
+	}
+
+	resp, err := setup.Keeper.NocCertificatesAll(setup.Wctx, req)
+	if err != nil {
+		require.Nil(setup.T, resp)
+
+		return nil, err
+	}
+
+	require.NotNil(setup.T, resp)
+
+	return resp.NocCertificates, nil
+}
+
+func querySingleNocCertificate(
+	setup *TestSetup,
+	subject string,
+	subjectKeyID string,
+) (*types.Certificate, error) {
+	certificates, err := queryNocCertificates(setup, subject, subjectKeyID)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(certificates.Certs) > 1 {
+		require.Fail(setup.T, "More than 1 certificate returned")
+	}
+
+	return certificates.Certs[0], nil
+}
+
+func querySingleNocCertificateByVid(
+	setup *TestSetup,
+	vid int32,
+) (*types.Certificate, error) {
+	certificates, err := queryNocCertificatesByVid(setup, vid)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(certificates.Certs) > 1 {
+		require.Fail(setup.T, "More than 1 certificate returned")
+	}
+
+	return certificates.Certs[0], nil
+}
+
+func queryNocCertificatesByVid(
+	setup *TestSetup,
+	vid int32,
+) (*types.NocIcaCertificates, error) {
+	// query certificate
+	req := &types.QueryGetNocIcaCertificatesRequest{Vid: vid}
+
+	resp, err := setup.Keeper.NocIcaCertificates(setup.Wctx, req)
+	if err != nil {
+		require.Nil(setup.T, resp)
+
+		return nil, err
+	}
+
+	require.NotNil(setup.T, resp)
+
+	return &resp.NocIcaCertificates, nil
+}
+
+func queryNocCertificates(
+	setup *TestSetup,
+	subject string,
+	subjectKeyID string,
+) (*types.NocCertificates, error) {
+	// query certificate
+	req := &types.QueryGetNocCertificatesRequest{
+		Subject:      subject,
+		SubjectKeyId: subjectKeyID,
+	}
+
+	resp, err := setup.Keeper.NocCertificates(setup.Wctx, req)
+	if err != nil {
+		require.Nil(setup.T, resp)
+
+		return nil, err
+	}
+
+	require.NotNil(setup.T, resp)
+
+	return &resp.NocCertificates, nil
+}
+
+func queryNocCertificatesBySubject(
+	setup *TestSetup,
+	subject string,
+) (*types.NocCertificatesBySubject, error) {
+	// query certificate
+	req := &types.QueryGetNocCertificatesBySubjectRequest{
+		Subject: subject,
+	}
+
+	resp, err := setup.Keeper.NocCertificatesBySubject(setup.Wctx, req)
+	if err != nil {
+		require.Nil(setup.T, resp)
+
+		return nil, err
+	}
+
+	require.NotNil(setup.T, resp)
+
+	return &resp.NocCertificatesBySubject, nil
+}
+
+func querySingleNocCertificateByVidAndSkid(
+	setup *TestSetup,
+	vid int32,
+	subjectKeyID string,
+) (*types.Certificate, float32, error) {
+	certificates, err := queryNocCertificatesByVidAndSkid(setup, vid, subjectKeyID)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	if len(certificates.Certs) > 1 {
+		require.Fail(setup.T, "More than 1 certificate returned")
+	}
+
+	return certificates.Certs[0], certificates.Tq, nil
+}
+
+func queryNocCertificatesByVidAndSkid(
+	setup *TestSetup,
+	vid int32,
+	subjectKeyID string,
+) (*types.NocCertificatesByVidAndSkid, error) {
+	// query certificate
+	req := &types.QueryGetNocCertificatesByVidAndSkidRequest{Vid: vid, SubjectKeyId: subjectKeyID}
+
+	resp, err := setup.Keeper.NocCertificatesByVidAndSkid(setup.Wctx, req)
+	if err != nil {
+		require.Nil(setup.T, resp)
+
+		return nil, err
+	}
+
+	require.NotNil(setup.T, resp)
+
+	return &resp.NocCertificatesByVidAndSkid, nil
+}
+
+func querySingleNocRootCertificate(
+	setup *TestSetup,
+	vid int32,
+) (*types.Certificate, error) {
+	certificates, err := queryNocRootCertificates(setup, vid)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(certificates.Certs) > 1 {
+		require.Fail(setup.T, "More than 1 certificate returned")
+	}
+
+	return certificates.Certs[0], nil
+}
+
+func queryNocRootCertificates(
+	setup *TestSetup,
+	vid int32,
+) (*types.NocRootCertificates, error) {
+	// query certificate
+	req := &types.QueryGetNocRootCertificatesRequest{Vid: vid}
+
+	resp, err := setup.Keeper.NocRootCertificates(setup.Wctx, req)
+	if err != nil {
+		require.Nil(setup.T, resp)
+
+		return nil, err
+	}
+
+	require.NotNil(setup.T, resp)
+
+	return &resp.NocRootCertificates, nil
 }
 
 func rootCertificate(address sdk.AccAddress) types.Certificate {

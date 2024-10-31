@@ -180,6 +180,7 @@ func TestHandler_RevokeX509Cert_ByNotOwnerButSameVendor(t *testing.T) {
 
 	// store root certificate
 	rootCertificate := rootCertificate(setup.Trustee1)
+	setup.Keeper.AddAllCertificate(setup.Ctx, rootCertificate)
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, rootCertificate)
 
 	// add first vendor account with VID = 1
@@ -239,6 +240,7 @@ func TestHandler_RevokeX509Cert_ByOtherVendor(t *testing.T) {
 
 	// store root certificate
 	rootCertificate := rootCertificate(setup.Trustee1)
+	setup.Keeper.AddAllCertificate(setup.Ctx, rootCertificate)
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, rootCertificate)
 
 	// add first vendor account with VID = 1
@@ -302,6 +304,7 @@ func TestHandler_RevokeX509Cert(t *testing.T) {
 
 	// store root certificate
 	rootCertificate := rootCertificate(setup.Trustee1)
+	setup.Keeper.AddAllCertificate(setup.Ctx, rootCertificate)
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, rootCertificate)
 
 	// Add vendor account
@@ -382,6 +385,7 @@ func TestHandler_RevokeX509Cert_BySerialNumber(t *testing.T) {
 	require.NoError(t, err)
 	intermediateCertificate := intermediateCertificateNoVid(vendorAccAddress)
 	intermediateCertificate.SerialNumber = SerialNumber
+	setup.Keeper.AddAllCertificate(setup.Ctx, intermediateCertificate)
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, intermediateCertificate)
 	setup.Keeper.AddApprovedCertificateBySubjectKeyID(setup.Ctx, intermediateCertificate)
 	setup.Keeper.SetUniqueCertificate(

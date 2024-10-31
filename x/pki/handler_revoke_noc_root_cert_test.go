@@ -71,14 +71,14 @@ func TestHandler_RevokeNocX509RootCert_CertificateExists(t *testing.T) {
 		{
 			name: "ExistingNonRootCert",
 			existingCert: &types.Certificate{
-				Issuer:        testconstants.NocRootCert1Subject,
-				Subject:       testconstants.NocRootCert1Subject,
-				SubjectAsText: testconstants.NocRootCert1SubjectAsText,
-				SubjectKeyId:  testconstants.NocRootCert1SubjectKeyID,
-				SerialNumber:  testconstants.NocRootCert1SerialNumber,
-				IsRoot:        false,
-				IsNoc:         true,
-				Vid:           testconstants.Vid,
+				Issuer:          testconstants.NocRootCert1Subject,
+				Subject:         testconstants.NocRootCert1Subject,
+				SubjectAsText:   testconstants.NocRootCert1SubjectAsText,
+				SubjectKeyId:    testconstants.NocRootCert1SubjectKeyID,
+				SerialNumber:    testconstants.NocRootCert1SerialNumber,
+				IsRoot:          false,
+				CertificateType: types.CertificateType_OperationalPKI,
+				Vid:             testconstants.Vid,
 			},
 			nocRoorCert: testconstants.RootCertPem,
 			err:         pkitypes.ErrInappropriateCertificateType,
@@ -86,14 +86,14 @@ func TestHandler_RevokeNocX509RootCert_CertificateExists(t *testing.T) {
 		{
 			name: "ExistingNotNocCert",
 			existingCert: &types.Certificate{
-				Issuer:        testconstants.NocRootCert1Subject,
-				Subject:       testconstants.NocRootCert1Subject,
-				SubjectAsText: testconstants.NocRootCert1SubjectAsText,
-				SubjectKeyId:  testconstants.NocRootCert1SubjectKeyID,
-				SerialNumber:  testconstants.NocRootCert1SerialNumber,
-				IsRoot:        true,
-				IsNoc:         false,
-				Vid:           testconstants.Vid,
+				Issuer:          testconstants.NocRootCert1Subject,
+				Subject:         testconstants.NocRootCert1Subject,
+				SubjectAsText:   testconstants.NocRootCert1SubjectAsText,
+				SubjectKeyId:    testconstants.NocRootCert1SubjectKeyID,
+				SerialNumber:    testconstants.NocRootCert1SerialNumber,
+				IsRoot:          true,
+				CertificateType: types.CertificateType_DeviceAttestationPKI,
+				Vid:             testconstants.Vid,
 			},
 			nocRoorCert: testconstants.RootCertPem,
 			err:         pkitypes.ErrInappropriateCertificateType,
@@ -101,14 +101,14 @@ func TestHandler_RevokeNocX509RootCert_CertificateExists(t *testing.T) {
 		{
 			name: "ExistingCertWithDifferentVid",
 			existingCert: &types.Certificate{
-				Issuer:        testconstants.NocRootCert1Subject,
-				Subject:       testconstants.NocRootCert1Subject,
-				SubjectAsText: testconstants.NocRootCert1SubjectAsText,
-				SubjectKeyId:  testconstants.NocRootCert1SubjectKeyID,
-				SerialNumber:  testconstants.NocRootCert1SerialNumber,
-				IsRoot:        true,
-				IsNoc:         true,
-				Vid:           testconstants.VendorID1,
+				Issuer:          testconstants.NocRootCert1Subject,
+				Subject:         testconstants.NocRootCert1Subject,
+				SubjectAsText:   testconstants.NocRootCert1SubjectAsText,
+				SubjectKeyId:    testconstants.NocRootCert1SubjectKeyID,
+				SerialNumber:    testconstants.NocRootCert1SerialNumber,
+				IsRoot:          true,
+				CertificateType: types.CertificateType_OperationalPKI,
+				Vid:             testconstants.VendorID1,
 			},
 			nocRoorCert: testconstants.RootCertPem,
 			err:         pkitypes.ErrCertVidNotEqualAccountVid,
@@ -116,14 +116,14 @@ func TestHandler_RevokeNocX509RootCert_CertificateExists(t *testing.T) {
 		{
 			name: "ExistingCertWithDifferentSerialNumber",
 			existingCert: &types.Certificate{
-				Issuer:        testconstants.NocRootCert1Subject,
-				Subject:       testconstants.NocRootCert1Subject,
-				SubjectAsText: testconstants.NocRootCert1SubjectAsText,
-				SubjectKeyId:  testconstants.NocRootCert1SubjectKeyID,
-				SerialNumber:  "1234567",
-				IsRoot:        true,
-				IsNoc:         true,
-				Vid:           testconstants.Vid,
+				Issuer:          testconstants.NocRootCert1Subject,
+				Subject:         testconstants.NocRootCert1Subject,
+				SubjectAsText:   testconstants.NocRootCert1SubjectAsText,
+				SubjectKeyId:    testconstants.NocRootCert1SubjectKeyID,
+				SerialNumber:    "1234567",
+				IsRoot:          true,
+				CertificateType: types.CertificateType_OperationalPKI,
+				Vid:             testconstants.Vid,
 			},
 			nocRoorCert: testconstants.RootCertPem,
 			err:         pkitypes.ErrCertificateDoesNotExist,
@@ -136,7 +136,7 @@ func TestHandler_RevokeNocX509RootCert_CertificateExists(t *testing.T) {
 			setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
 			// add the existing certificate
-			setup.Keeper.AddApprovedCertificate(setup.Ctx, *tc.existingCert)
+			setup.Keeper.AddNocCertificate(setup.Ctx, *tc.existingCert)
 			uniqueCertificate := types.UniqueCertificate{
 				Issuer:       tc.existingCert.Issuer,
 				SerialNumber: tc.existingCert.SerialNumber,
@@ -202,7 +202,7 @@ func TestHandler_RevokeNocX509RootCert_RevokeDefault(t *testing.T) {
 	require.NoError(t, err)
 
 	// query all certs
-	certs, err := queryAllApprovedCertificates(setup)
+	certs, err := queryAllNocCertificates(setup)
 	require.NoError(t, err)
 	require.Equal(t, 3, len(certs))
 	require.NotEqual(t, testconstants.NocRootCert1SubjectKeyID, certs[0].SubjectKeyId)
@@ -215,23 +215,17 @@ func TestHandler_RevokeNocX509RootCert_RevokeDefault(t *testing.T) {
 	require.Equal(t, testconstants.NocRootCert1Subject, revokedNocCerts.Subject)
 	require.Equal(t, testconstants.NocRootCert1SubjectKeyID, revokedNocCerts.SubjectKeyId)
 
-	revokedCerts, err := queryRevokedCertificates(setup, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
-	require.NoError(t, err)
-	require.Equal(t, 2, len(revokedCerts.Certs))
-	require.Equal(t, testconstants.NocRootCert1Subject, revokedCerts.Subject)
-	require.Equal(t, testconstants.NocRootCert1SubjectKeyID, revokedCerts.SubjectKeyId)
-
 	// query that noc root certificate is not added to x509 revoked root certs
 	revokedRootCerts, _ := queryRevokedRootCertificates(setup)
 	require.Equal(t, 0, len(revokedRootCerts.Certs))
 
 	// query noc root certificate by Subject
-	_, err = queryApprovedCertificatesBySubject(setup, testconstants.NocRootCert1Subject)
+	_, err = queryNocCertificatesBySubject(setup, testconstants.NocRootCert1Subject)
 	require.Error(t, err)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
 	// query noc root certificate by Subject Key ID
-	aprCertsBySubjectKeyID, _ := queryAllApprovedCertificatesBySubjectKeyID(setup, testconstants.NocRootCert1SubjectKeyID)
+	aprCertsBySubjectKeyID, _ := queryAllNocCertificatesBySubjectKeyID(setup, testconstants.NocRootCert1SubjectKeyID)
 	require.Equal(t, 0, len(aprCertsBySubjectKeyID))
 
 	// query noc root certificate by VID
@@ -252,16 +246,16 @@ func TestHandler_RevokeNocX509RootCert_RevokeDefault(t *testing.T) {
 	require.Equal(t, float32(1), nocCertificatesByVidAndSkid.Tq)
 
 	// Child certificate should not be revoked
-	_, err = queryRevokedCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	_, err = queryRevokedNocIcaCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
 	// query child of revoked certificate, they should not be revoked
-	childCerts, _ := queryApprovedCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	childCerts, _ := queryNocCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.Equal(t, 1, len(childCerts.Certs))
 	require.Equal(t, testconstants.NocCert1SubjectKeyID, childCerts.SubjectKeyId)
 
 	// check that child cert is not removed
-	nocCerts, err := queryNocCertificates(setup, testconstants.Vid)
+	nocCerts, err := queryNocCertificatesByVid(setup, testconstants.Vid)
 	require.NoError(t, err)
 	require.Equal(t, 2, len(nocCerts.Certs))
 	require.Equal(t, testconstants.NocCert1SubjectKeyID, nocCerts.Certs[0].SubjectKeyId)
@@ -307,7 +301,7 @@ func TestHandler_RevokeNocX509RootCert_RevokeWithChild(t *testing.T) {
 	require.NoError(t, err)
 
 	// query all certs
-	certs, err := queryAllApprovedCertificates(setup)
+	certs, err := queryAllNocCertificates(setup)
 	require.NoError(t, err)
 	require.Equal(t, 0, len(certs))
 
@@ -317,23 +311,17 @@ func TestHandler_RevokeNocX509RootCert_RevokeWithChild(t *testing.T) {
 	require.Equal(t, testconstants.NocRootCert1Subject, revokedNocCerts.Subject)
 	require.Equal(t, testconstants.NocRootCert1SubjectKeyID, revokedNocCerts.SubjectKeyId)
 
-	revokedCerts, err := queryRevokedCertificates(setup, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
-	require.NoError(t, err)
-	require.Equal(t, 2, len(revokedCerts.Certs))
-	require.Equal(t, testconstants.NocRootCert1Subject, revokedNocCerts.Subject)
-	require.Equal(t, testconstants.NocRootCert1SubjectKeyID, revokedNocCerts.SubjectKeyId)
-
 	// query that noc root certificate is not added to x509 revoked root certs
 	revokedRootCerts, _ := queryRevokedRootCertificates(setup)
 	require.Equal(t, 0, len(revokedRootCerts.Certs))
 
 	// query noc root certificate by Subject
-	_, err = queryApprovedCertificatesBySubject(setup, testconstants.NocRootCert1Subject)
+	_, err = queryNocCertificatesBySubject(setup, testconstants.NocRootCert1Subject)
 	require.Error(t, err)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
 	// query child noc certificate by Subject
-	_, err = queryApprovedCertificatesBySubject(setup, testconstants.NocCert1Subject)
+	_, err = queryNocCertificatesBySubject(setup, testconstants.NocCert1Subject)
 	require.Error(t, err)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
@@ -348,25 +336,25 @@ func TestHandler_RevokeNocX509RootCert_RevokeWithChild(t *testing.T) {
 	require.Equal(t, codes.NotFound, status.Code(err))
 
 	// query noc root certificate by Subject Key ID
-	aprCertsBySubjectKeyID, _ := queryAllApprovedCertificatesBySubjectKeyID(setup, testconstants.NocRootCert1SubjectKeyID)
+	aprCertsBySubjectKeyID, _ := queryAllNocCertificatesBySubjectKeyID(setup, testconstants.NocRootCert1SubjectKeyID)
 	require.Equal(t, 0, len(aprCertsBySubjectKeyID))
 
 	// Child certificate should be revoked as well
-	revokedCerts, err = queryRevokedCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	revokedChildCerts, err := queryRevokedNocIcaCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.NoError(t, err)
-	require.Equal(t, 1, len(revokedCerts.Certs))
-	require.Equal(t, testconstants.NocCert1SubjectKeyID, revokedCerts.SubjectKeyId)
+	require.Equal(t, 1, len(revokedChildCerts.Certs))
+	require.Equal(t, testconstants.NocCert1SubjectKeyID, revokedChildCerts.SubjectKeyId)
 
 	// query child noc certificate by Subject Key ID
-	aprCertsBySubjectKeyID, _ = queryAllApprovedCertificatesBySubjectKeyID(setup, testconstants.NocCert1SubjectKeyID)
+	aprCertsBySubjectKeyID, _ = queryAllNocCertificatesBySubjectKeyID(setup, testconstants.NocCert1SubjectKeyID)
 	require.Equal(t, 0, len(aprCertsBySubjectKeyID))
 
-	_, err = queryApprovedCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	_, err = queryNocCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.Error(t, err)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
 	// check that child noc cert also removed
-	_, err = queryNocCertificates(setup, testconstants.Vid)
+	_, err = queryNocCertificatesByVid(setup, testconstants.Vid)
 	require.Error(t, err)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
@@ -420,28 +408,23 @@ func TestHandler_RevokeNocX509RootCert_RevokeWithSerialNumber(t *testing.T) {
 	require.Equal(t, 1, len(revokedNocCerts.Certs))
 	require.Equal(t, testconstants.NocRootCert1SerialNumber, revokedNocCerts.Certs[0].SerialNumber)
 
-	revokedCerts, err := queryRevokedCertificates(setup, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
-	require.NoError(t, err)
-	require.Equal(t, 1, len(revokedCerts.Certs))
-	require.Equal(t, testconstants.NocRootCert1SerialNumber, revokedCerts.Certs[0].SerialNumber)
-
 	// query that noc root certificate is not added to x509 revoked root certs
 	revokedRootCerts, _ := queryRevokedRootCertificates(setup)
 	require.Equal(t, 0, len(revokedRootCerts.Certs))
 
-	// Check that cert is removed from approved lists
-	rootCerts, err := queryApprovedCertificates(setup, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
+	// Check that cert is removed from noc lists
+	rootCerts, err := queryNocCertificates(setup, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
 	require.NoError(t, err)
 	require.Equal(t, 1, len(rootCerts.Certs))
 	require.Equal(t, testconstants.NocRootCert1CopySerialNumber, rootCerts.Certs[0].SerialNumber)
 
 	// Check that root with different serial number still exits
-	certsBySubject, err := queryApprovedCertificatesBySubject(setup, testconstants.NocRootCert1Subject)
+	certsBySubject, err := queryNocCertificatesBySubject(setup, testconstants.NocRootCert1Subject)
 	require.NoError(t, err)
 	require.Equal(t, 1, len(certsBySubject.SubjectKeyIds))
 	require.Equal(t, testconstants.NocRootCert1Subject, certsBySubject.Subject)
 
-	aprCertsBySubjectKeyID, _ := queryAllApprovedCertificatesBySubjectKeyID(setup, testconstants.NocRootCert1SubjectKeyID)
+	aprCertsBySubjectKeyID, _ := queryAllNocCertificatesBySubjectKeyID(setup, testconstants.NocRootCert1SubjectKeyID)
 	require.Equal(t, 1, len(aprCertsBySubjectKeyID))
 	require.Equal(t, testconstants.NocRootCert1CopySerialNumber, aprCertsBySubjectKeyID[0].Certs[0].SerialNumber)
 
@@ -460,16 +443,16 @@ func TestHandler_RevokeNocX509RootCert_RevokeWithSerialNumber(t *testing.T) {
 	require.Equal(t, testconstants.NocRootCert1CopySerialNumber, nocCertificatesByVidAndSkid.Certs[0].SerialNumber)
 
 	// Child certificate should not be revoked
-	_, err = queryRevokedCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	_, err = queryRevokedNocIcaCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
 	// query child of revoked certificate, they should not be revoked
-	childCerts, _ := queryApprovedCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	childCerts, _ := queryNocCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.Equal(t, 1, len(childCerts.Certs))
 	require.Equal(t, testconstants.NocCert1SubjectKeyID, childCerts.SubjectKeyId)
 
 	// check that child cert is not removed
-	nocCerts, err := queryNocCertificates(setup, testconstants.Vid)
+	nocCerts, err := queryNocCertificatesByVid(setup, testconstants.Vid)
 	require.NoError(t, err)
 	require.Equal(t, 1, len(nocCerts.Certs))
 	require.Equal(t, testconstants.NocCert1SubjectKeyID, nocCerts.Certs[0].SubjectKeyId)
@@ -518,27 +501,22 @@ func TestHandler_RevokeNocX509RootCert_RevokeWithSerialNumberAndChild(t *testing
 	require.Equal(t, 1, len(revokedNocCerts.Certs))
 	require.Equal(t, testconstants.NocRootCert1SerialNumber, revokedNocCerts.Certs[0].SerialNumber)
 
-	revokedCerts, err := queryRevokedCertificates(setup, testconstants.NocRootCert1Subject, testconstants.NocRootCert1CopySubjectKeyID)
-	require.NoError(t, err)
-	require.Equal(t, 1, len(revokedCerts.Certs))
-	require.Equal(t, testconstants.NocRootCert1SerialNumber, revokedCerts.Certs[0].SerialNumber)
-
 	// query that noc root certificate is not added to x509 revoked root certs
 	revokedRootCerts, _ := queryRevokedRootCertificates(setup)
 	require.Equal(t, 0, len(revokedRootCerts.Certs))
 
 	// Check that root with different serial number still exits
-	rootCerts, err := queryApprovedCertificates(setup, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
+	rootCerts, err := queryNocCertificates(setup, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
 	require.NoError(t, err)
 	require.Equal(t, 1, len(rootCerts.Certs))
 	require.Equal(t, testconstants.NocRootCert1CopySerialNumber, rootCerts.Certs[0].SerialNumber)
 
-	certsBySubject, err := queryApprovedCertificatesBySubject(setup, testconstants.NocRootCert1Subject)
+	certsBySubject, err := queryNocCertificatesBySubject(setup, testconstants.NocRootCert1Subject)
 	require.NoError(t, err)
 	require.Equal(t, 1, len(certsBySubject.SubjectKeyIds))
 	require.Equal(t, testconstants.NocRootCert1Subject, certsBySubject.Subject)
 
-	aprCertsBySubjectKeyID, _ := queryAllApprovedCertificatesBySubjectKeyID(setup, testconstants.NocRootCert1SubjectKeyID)
+	aprCertsBySubjectKeyID, _ := queryAllNocCertificatesBySubjectKeyID(setup, testconstants.NocRootCert1SubjectKeyID)
 	require.Equal(t, 1, len(aprCertsBySubjectKeyID))
 	require.Equal(t, testconstants.NocRootCert1CopySerialNumber, aprCertsBySubjectKeyID[0].Certs[0].SerialNumber)
 
@@ -549,22 +527,22 @@ func TestHandler_RevokeNocX509RootCert_RevokeWithSerialNumberAndChild(t *testing
 	require.Equal(t, testconstants.NocRootCert1CopySerialNumber, revNocRoot.Certs[0].SerialNumber)
 
 	// Child certificate should be revoked as well
-	revokedCerts, err = queryRevokedCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	revokedCerts, err := queryRevokedNocIcaCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.NoError(t, err)
 	require.Equal(t, 1, len(revokedCerts.Certs))
 	require.Equal(t, testconstants.NocCert1SubjectKeyID, revokedCerts.SubjectKeyId)
 
 	// query child of revoked certificate, they should be removed as well
-	_, err = queryApprovedCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	_, err = queryNocCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
-	_, err = queryApprovedCertificatesBySubject(setup, testconstants.NocCert1Subject)
+	_, err = queryNocCertificatesBySubject(setup, testconstants.NocCert1Subject)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
-	aprCertsBySubjectKeyID, _ = queryAllApprovedCertificatesBySubjectKeyID(setup, testconstants.NocCert1Subject)
+	aprCertsBySubjectKeyID, _ = queryAllNocCertificatesBySubjectKeyID(setup, testconstants.NocCert1Subject)
 	require.Equal(t, 0, len(aprCertsBySubjectKeyID))
 
-	_, err = queryNocCertificates(setup, testconstants.Vid)
+	_, err = queryNocCertificatesByVid(setup, testconstants.Vid)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
 	// check that unique certificate key is removed
@@ -588,4 +566,36 @@ func queryRevokedNocRootCertificates(setup *TestSetup, subject, subjectKeyID str
 	require.NotNil(setup.T, resp)
 
 	return &resp.RevokedNocRootCertificates, nil
+}
+
+func queryAllRevokedNocIcaCertificates(setup *TestSetup) ([]types.RevokedNocIcaCertificates, error) { //nolint:unparam
+	// query certificate
+	req := &types.QueryAllRevokedNocIcaCertificatesRequest{}
+
+	resp, err := setup.Keeper.RevokedNocIcaCertificatesAll(setup.Wctx, req)
+	if err != nil {
+		require.Nil(setup.T, resp)
+
+		return nil, err
+	}
+
+	require.NotNil(setup.T, resp)
+
+	return resp.RevokedNocIcaCertificates, nil
+}
+
+func queryRevokedNocIcaCertificates(setup *TestSetup, subject, subjectKeyID string) (*types.RevokedNocIcaCertificates, error) { //nolint:unparam
+	// query certificate
+	req := &types.QueryGetRevokedNocIcaCertificatesRequest{Subject: subject, SubjectKeyId: subjectKeyID}
+
+	resp, err := setup.Keeper.RevokedNocIcaCertificates(setup.Wctx, req)
+	if err != nil {
+		require.Nil(setup.T, resp)
+
+		return nil, err
+	}
+
+	require.NotNil(setup.T, resp)
+
+	return &resp.RevokedNocIcaCertificates, nil
 }

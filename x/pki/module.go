@@ -122,6 +122,7 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 	m := keeper.NewMigrator(am.keeper)
 	_ = cfg.RegisterMigration(pkitypes.ModuleName, 1, m.Migrate1to2)
 	_ = cfg.RegisterMigration(pkitypes.ModuleName, 2, m.Migrate2to3)
+	_ = cfg.RegisterMigration(pkitypes.ModuleName, 3, m.Migrate3to4)
 }
 
 // RegisterInvariants registers the pki module's invariants.
@@ -147,7 +148,7 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 }
 
 // ConsensusVersion implements ConsensusVersion.
-func (AppModule) ConsensusVersion() uint64 { return 3 }
+func (AppModule) ConsensusVersion() uint64 { return 4 }
 
 // BeginBlock executes all ABCI BeginBlock logic respective to the pki module.
 func (am AppModule) BeginBlock(_ sdk.Context, _ abci.RequestBeginBlock) {}

@@ -41,7 +41,7 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 	}
 
 	// Get list of certificates for Subject / Subject Key Id combination
-	certificates, found := k.GetApprovedCertificates(ctx, x509Certificate.Subject, x509Certificate.SubjectKeyID)
+	certificates, found := k.GetAllCertificates(ctx, x509Certificate.Subject, x509Certificate.SubjectKeyID)
 	if found && len(certificates.Certs) > 0 {
 		existingCertificate := certificates.Certs[0]
 
@@ -54,7 +54,7 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 		}
 
 		// Existing certificate must not be NOC certificate
-		if existingCertificate.IsNoc {
+		if existingCertificate.CertificateType == types.CertificateType_OperationalPKI {
 			return nil, pkitypes.NewErrProvidedNotNocCertButExistingNoc(x509Certificate.Subject, x509Certificate.SubjectKeyID)
 		}
 
@@ -70,14 +70,14 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 	}
 
 	// get the full structure of the root certificate which contains the necessary fields for further validation
-	approvedRootCerts, _ := k.GetApprovedCertificates(ctx, decodedRootCert.Subject, decodedRootCert.SubjectKeyID)
-	if len(approvedRootCerts.Certs) == 0 {
+	rootCerts, _ := k.GetAllCertificates(ctx, decodedRootCert.Subject, decodedRootCert.SubjectKeyID)
+	if len(rootCerts.Certs) == 0 {
 		return nil, pkitypes.NewErrRootCertificateDoesNotExist(decodedRootCert.Subject, decodedRootCert.SubjectKeyID)
 	}
-	rootCert := approvedRootCerts.Certs[0]
+	rootCert := rootCerts.Certs[0]
 
 	// Root certificate must not be NOC
-	if rootCert.IsNoc {
+	if rootCert.CertificateType == types.CertificateType_OperationalPKI {
 		return nil, pkitypes.NewErrProvidedNotNocCertButRootIsNoc()
 	}
 
@@ -106,6 +106,9 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 		subjectVid,
 		msg.CertSchemaVersion,
 	)
+
+	// append to global list of certificates
+	k.AddAllCertificate(ctx, certificate)
 
 	// append new certificate to list of certificates with the same Subject/SubjectKeyId combination and store updated list
 	k.AddApprovedCertificate(ctx, certificate)

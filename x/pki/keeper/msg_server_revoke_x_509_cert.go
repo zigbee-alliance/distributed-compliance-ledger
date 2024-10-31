@@ -53,7 +53,7 @@ func (k msgServer) RevokeX509Cert(goCtx context.Context, msg *types.MsgRevokeX50
 
 	if msg.RevokeChild {
 		// Remove certificate identifier from issuer's ChildCertificates record
-		k.RevokeChildCertificates(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
+		k.RevokeApprovedChildCertificates(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
 	}
 
 	return &types.MsgRevokeX509CertResponse{}, nil
@@ -61,7 +61,17 @@ func (k msgServer) RevokeX509Cert(goCtx context.Context, msg *types.MsgRevokeX50
 
 func (k msgServer) _revokeX509Certificates(ctx sdk.Context, certID types.CertificateIdentifier, certificates types.ApprovedCertificates) {
 	// Revoke certificates with given subject/subjectKeyID
-	k.AddRevokedCertificates(ctx, certificates)
+	revCerts := types.RevokedCertificates{
+		Subject:       certificates.Subject,
+		SubjectKeyId:  certificates.SubjectKeyId,
+		Certs:         certificates.Certs,
+		SchemaVersion: certificates.SchemaVersion,
+	}
+	k.AddRevokedCertificates(ctx, revCerts)
+
+	// Remove certificate from global list
+	k.RemoveAllCertificates(ctx, certID.Subject, certID.SubjectKeyId)
+	// Remove certificate from approved list
 	k.RemoveApprovedCertificates(ctx, certID.Subject, certID.SubjectKeyId)
 	// Remove certificate identifier from issuer's ChildCertificates record
 	k.RemoveChildCertificate(ctx, certificates.Certs[0].Issuer, certificates.Certs[0].AuthorityKeyId, certID)
@@ -70,24 +80,26 @@ func (k msgServer) _revokeX509Certificates(ctx sdk.Context, certID types.Certifi
 	// remove from subject key ID -> certificates map
 	k.RemoveApprovedCertificatesBySubjectKeyID(ctx, certID.Subject, certID.SubjectKeyId)
 }
+
 func (k msgServer) _revokeX509Certificate(ctx sdk.Context, cert *types.Certificate, certID types.CertificateIdentifier, certificates types.ApprovedCertificates) {
-	certToRevoke := types.ApprovedCertificates{
-		Subject:      cert.Subject,
-		SubjectKeyId: cert.SubjectKeyId,
-		Certs:        []*types.Certificate{cert},
+	revCerts := types.RevokedCertificates{
+		Subject:       cert.Subject,
+		SubjectKeyId:  cert.SubjectKeyId,
+		Certs:         []*types.Certificate{cert},
+		SchemaVersion: cert.SchemaVersion,
 	}
-	k.AddRevokedCertificates(ctx, certToRevoke)
+	k.AddRevokedCertificates(ctx, revCerts)
 
 	removeCertFromList(cert.Issuer, cert.SerialNumber, &certificates.Certs)
 	if len(certificates.Certs) == 0 {
+		k.RemoveAllCertificates(ctx, cert.Subject, cert.SubjectKeyId)
 		k.RemoveApprovedCertificates(ctx, cert.Subject, cert.SubjectKeyId)
-		// Remove certificate identifier from issuer's ChildCertificates record
-		k.RemoveChildCertificate(ctx, cert.Issuer, cert.AuthorityKeyId, certID)
-
 		k.RemoveApprovedCertificateBySubject(ctx, cert.Subject, cert.SubjectKeyId)
 		k.RemoveApprovedCertificatesBySubjectKeyID(ctx, cert.Subject, cert.SubjectKeyId)
+		k.RemoveChildCertificate(ctx, cert.Issuer, cert.AuthorityKeyId, certID)
 	} else {
-		k.SetApprovedCertificates(ctx, certificates)
-		k.RemoveApprovedCertificatesBySubjectKeyIDAndSerialNumber(ctx, cert.Subject, cert.SubjectKeyId, cert.SerialNumber)
+		k.RemoveAllCertificatesBySerialNumber(ctx, cert.Subject, cert.SubjectKeyId, cert.SerialNumber)
+		k.RemoveApprovedCertificatesBySerialNumber(ctx, cert.Subject, cert.SubjectKeyId, cert.SerialNumber)
+		k.RemoveApprovedCertificatesBySubjectKeyIdBySerialNumber(ctx, cert.Subject, cert.SubjectKeyId, cert.SerialNumber)
 	}
 }

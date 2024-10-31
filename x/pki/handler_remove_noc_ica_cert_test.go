@@ -38,10 +38,10 @@ func TestHandler_RemoveNocX509IcaCert_BySubjectAndSKID(t *testing.T) {
 	require.NoError(t, err)
 
 	// get certificates for further comparison
-	allCerts := setup.Keeper.GetAllApprovedCertificates(setup.Ctx)
-	require.NotNil(t, allCerts)
-	require.Equal(t, 3, len(allCerts))
-	require.Equal(t, 4, len(allCerts[0].Certs)+len(allCerts[1].Certs)+len(allCerts[2].Certs))
+	nocCerts := setup.Keeper.GetAllNocCertificates(setup.Ctx)
+	require.NotNil(t, nocCerts)
+	require.Equal(t, 3, len(nocCerts))
+	require.Equal(t, 4, len(nocCerts[0].Certs)+len(nocCerts[1].Certs)+len(nocCerts[2].Certs))
 
 	// remove all intermediate certificates but leave leaf certificate
 	removeIcaCert := types.NewMsgRemoveNocX509IcaCert(
@@ -54,10 +54,10 @@ func TestHandler_RemoveNocX509IcaCert_BySubjectAndSKID(t *testing.T) {
 	require.NoError(t, err)
 
 	// check that only root and leaf certificates exists
-	allCerts, _ = queryAllApprovedCertificates(setup)
-	require.Equal(t, 2, len(allCerts))
-	require.Equal(t, 2, len(allCerts[0].Certs)+len(allCerts[1].Certs))
-	_, err = queryApprovedCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	nocCerts, _ = queryAllNocCertificates(setup)
+	require.Equal(t, 2, len(nocCerts))
+	require.Equal(t, 2, len(nocCerts[0].Certs)+len(nocCerts[1].Certs))
+	_, err = queryNocCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.Equal(t, codes.NotFound, status.Code(err))
 	// check that unique certificates does not exists
 	found := setup.Keeper.IsUniqueCertificatePresent(setup.Ctx, testconstants.NocCert1Issuer, testconstants.NocCert1SerialNumber)
@@ -70,12 +70,12 @@ func TestHandler_RemoveNocX509IcaCert_BySubjectAndSKID(t *testing.T) {
 	require.Error(t, err)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
-	leafCerts, _ := queryApprovedCertificates(setup, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
+	leafCerts, _ := queryNocCertificates(setup, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
 	require.Equal(t, 1, len(leafCerts.Certs))
 	require.Equal(t, testconstants.NocLeafCert1SerialNumber, leafCerts.Certs[0].SerialNumber)
 
 	// query noc certificate by VID
-	nocCertificates, err := queryNocCertificates(setup, vid)
+	nocCertificates, err := queryNocCertificatesByVid(setup, vid)
 	require.NoError(t, err)
 	require.Equal(t, len(nocCertificates.Certs), 1)
 	require.Equal(t, testconstants.NocLeafCert1Subject, nocCertificates.Certs[0].Subject)
@@ -108,7 +108,7 @@ func TestHandler_RemoveNocX509IcaCert_BySerialNumber(t *testing.T) {
 	_, err = setup.Handler(setup.Ctx, addIcaLeafCert)
 	require.NoError(t, err)
 
-	intermediateCerts, _ := queryApprovedCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	intermediateCerts, _ := queryNocCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.Equal(t, 2, len(intermediateCerts.Certs))
 	require.Equal(t, testconstants.NocCert1Subject, intermediateCerts.Certs[0].Subject)
 	require.Equal(t, testconstants.NocCert1SubjectKeyID, intermediateCerts.Certs[0].SubjectKeyId)
@@ -124,13 +124,13 @@ func TestHandler_RemoveNocX509IcaCert_BySerialNumber(t *testing.T) {
 	require.NoError(t, err)
 
 	// check that only root, intermediate(with serial number 3) and leaf certificates exists
-	allCerts, _ := queryAllApprovedCertificates(setup)
+	allCerts, _ := queryAllNocCertificates(setup)
 	require.Equal(t, 3, len(allCerts))
 	require.Equal(t, 3, len(allCerts[0].Certs)+len(allCerts[1].Certs)+len(allCerts[2].Certs))
-	leafCerts, _ := queryApprovedCertificates(setup, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
+	leafCerts, _ := queryNocCertificates(setup, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
 	require.Equal(t, 1, len(leafCerts.Certs))
 
-	intermediateCerts, _ = queryApprovedCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	intermediateCerts, _ = queryNocCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.Equal(t, 1, len(intermediateCerts.Certs))
 	require.Equal(t, testconstants.NocCert1CopySerialNumber, intermediateCerts.Certs[0].SerialNumber)
 
@@ -144,11 +144,11 @@ func TestHandler_RemoveNocX509IcaCert_BySerialNumber(t *testing.T) {
 	_, err = setup.Handler(setup.Ctx, removeIcaCert)
 	require.NoError(t, err)
 
-	allCerts, _ = queryAllApprovedCertificates(setup)
+	allCerts, _ = queryAllNocCertificates(setup)
 	require.Equal(t, 2, len(allCerts))
 	require.Equal(t, 2, len(allCerts[0].Certs)+len(allCerts[1].Certs))
 
-	_, err = queryApprovedCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	_, err = queryNocCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
 	// check that unique certificates does not exists
@@ -162,18 +162,18 @@ func TestHandler_RemoveNocX509IcaCert_BySerialNumber(t *testing.T) {
 	require.Error(t, err)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
-	leafCerts, _ = queryApprovedCertificates(setup, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
+	leafCerts, _ = queryNocCertificates(setup, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
 	require.Equal(t, 1, len(leafCerts.Certs))
 
 	// query noc certificate by VID
-	nocCertificates, err := queryNocCertificates(setup, vid)
+	nocCertificates, err := queryNocCertificatesByVid(setup, vid)
 	require.NoError(t, err)
 	require.Equal(t, len(nocCertificates.Certs), 1)
 	require.Equal(t, testconstants.NocLeafCert1Subject, nocCertificates.Certs[0].Subject)
 	require.Equal(t, testconstants.NocLeafCert1SubjectKeyID, nocCertificates.Certs[0].SubjectKeyId)
 }
 
-func TestHandler_RemoveNocX509IcaCert_RevokedAndApprovedCertificate(t *testing.T) {
+func TestHandler_RemoveNocX509IcaCert_RevokedAndActiveCertificate(t *testing.T) {
 	setup := Setup(t)
 
 	// Add vendor account
@@ -190,7 +190,7 @@ func TestHandler_RemoveNocX509IcaCert_RevokedAndApprovedCertificate(t *testing.T
 	require.NoError(t, err)
 
 	// get certificates for further comparison
-	allCerts := setup.Keeper.GetAllApprovedCertificates(setup.Ctx)
+	allCerts := setup.Keeper.GetAllNocCertificates(setup.Ctx)
 	require.NotNil(t, allCerts)
 	require.Equal(t, 2, len(allCerts))
 	require.Equal(t, 2, len(allCerts[0].Certs)+len(allCerts[1].Certs))
@@ -212,7 +212,7 @@ func TestHandler_RemoveNocX509IcaCert_RevokedAndApprovedCertificate(t *testing.T
 	_, err = setup.Handler(setup.Ctx, addIcaCert)
 	require.NoError(t, err)
 
-	intermediateCerts, _ := queryApprovedCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	intermediateCerts, _ := queryNocCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.Equal(t, 1, len(intermediateCerts.Certs))
 	require.Equal(t, testconstants.NocCert1Subject, intermediateCerts.Certs[0].Subject)
 	require.Equal(t, testconstants.NocCert1SubjectKeyID, intermediateCerts.Certs[0].SubjectKeyId)
@@ -229,12 +229,12 @@ func TestHandler_RemoveNocX509IcaCert_RevokedAndApprovedCertificate(t *testing.T
 	require.NoError(t, err)
 
 	// check that only root and leaf certificates exists
-	allCerts, _ = queryAllApprovedCertificates(setup)
+	allCerts, _ = queryAllNocCertificates(setup)
 	require.Equal(t, 1, len(allCerts))
 	require.Equal(t, true, allCerts[0].Certs[0].IsRoot)
-	_, err = queryApprovedCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	_, err = queryNocCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.Equal(t, codes.NotFound, status.Code(err))
-	_, err = queryRevokedCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	_, err = queryRevokedNocIcaCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
 	// check that unique certificates does not exists
@@ -249,7 +249,7 @@ func TestHandler_RemoveNocX509IcaCert_RevokedAndApprovedCertificate(t *testing.T
 	require.Equal(t, codes.NotFound, status.Code(err))
 
 	// query noc certificate by VID
-	_, err = queryNocCertificates(setup, vid)
+	_, err = queryNocCertificatesByVid(setup, vid)
 	require.Equal(t, codes.NotFound, status.Code(err))
 }
 
@@ -269,7 +269,7 @@ func TestHandler_RemoveNocX509IcaCert_RevokedCertificate(t *testing.T) {
 	_, err := setup.Handler(setup.Ctx, addIcaCert)
 	require.NoError(t, err)
 
-	intermediateCerts, _ := queryApprovedCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	intermediateCerts, _ := queryNocCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.Equal(t, 1, len(intermediateCerts.Certs))
 	require.Equal(t, testconstants.NocCert1Subject, intermediateCerts.Certs[0].Subject)
 	require.Equal(t, testconstants.NocCert1SubjectKeyID, intermediateCerts.Certs[0].SubjectKeyId)
@@ -286,10 +286,10 @@ func TestHandler_RemoveNocX509IcaCert_RevokedCertificate(t *testing.T) {
 	_, err = setup.Handler(setup.Ctx, revokeX509Cert)
 	require.NoError(t, err)
 
-	_, err = queryApprovedCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	_, err = queryNocCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
-	revokedCerts, _ := queryRevokedCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	revokedCerts, _ := queryRevokedNocIcaCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.Equal(t, 1, len(revokedCerts.Certs))
 	require.Equal(t, testconstants.NocCert1Subject, revokedCerts.Certs[0].Subject)
 	require.Equal(t, testconstants.NocCert1SubjectKeyID, revokedCerts.Certs[0].SubjectKeyId)
@@ -304,13 +304,13 @@ func TestHandler_RemoveNocX509IcaCert_RevokedCertificate(t *testing.T) {
 	_, err = setup.Handler(setup.Ctx, removeIcaCert)
 	require.NoError(t, err)
 
-	allCerts, _ := queryAllApprovedCertificates(setup)
+	allCerts, _ := queryAllNocCertificates(setup)
 	require.Equal(t, 1, len(allCerts))
 	require.Equal(t, true, allCerts[0].Certs[0].IsRoot)
 
-	_, err = queryApprovedCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	_, err = queryNocCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.Equal(t, codes.NotFound, status.Code(err))
-	_, err = queryRevokedCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	_, err = queryRevokedNocIcaCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
 	// check that unique certificate does not exists
@@ -323,7 +323,7 @@ func TestHandler_RemoveNocX509IcaCert_RevokedCertificate(t *testing.T) {
 	require.Equal(t, codes.NotFound, status.Code(err))
 
 	// query noc certificate by VID
-	_, err = queryNocCertificates(setup, vid)
+	_, err = queryNocCertificatesByVid(setup, vid)
 	require.Equal(t, codes.NotFound, status.Code(err))
 }
 
@@ -361,23 +361,23 @@ func TestHandler_RemoveNocX509IcaCert_ByNotOwnerButSameVendor(t *testing.T) {
 	_, err = setup.Handler(setup.Ctx, removeIcaCert)
 	require.NoError(t, err)
 
-	// check that certificate removed from 'approved certificates' list
-	_, err = queryApprovedCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	// check that certificate removed from 'noc certificates' list
+	_, err = queryNocCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.Error(t, err)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
-	// check that certificate removed from 'approved certificates by subject' list
-	_, err = queryApprovedCertificatesBySubject(setup, testconstants.NocCert1Subject)
+	// check that certificate removed from 'noc certificates by subject' list
+	_, err = queryNocCertificatesBySubject(setup, testconstants.NocCert1Subject)
 	require.Error(t, err)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
-	// check that certificate removed from 'approved certificates by SKID' list
-	approvedCerts, err := queryAllApprovedCertificatesBySubjectKeyID(setup, testconstants.NocCert1SubjectKeyID)
+	// check that certificate removed from 'noc certificates by SKID' list
+	nocCerts, err := queryAllNocCertificatesBySubjectKeyID(setup, testconstants.NocCert1SubjectKeyID)
 	require.NoError(t, err)
-	require.Equal(t, 0, len(approvedCerts))
+	require.Equal(t, 0, len(nocCerts))
 
 	// query noc certificate by VID
-	_, err = queryNocCertificates(setup, vid)
+	_, err = queryNocCertificatesByVid(setup, vid)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
 	// check that unique certificate key is not registered
@@ -497,7 +497,9 @@ func TestHandler_RemoveNocX509IcaCert_ForNonIcaCertificate(t *testing.T) {
 		types.RevokedCertificates{
 			Subject:      testconstants.IntermediateSubject,
 			SubjectKeyId: testconstants.IntermediateSubjectKeyID,
-			Certs:        []*types.Certificate{{IsNoc: false}},
+			Certs: []*types.Certificate{{
+				CertificateType: types.CertificateType_DeviceAttestationPKI,
+			}},
 		},
 	)
 
@@ -505,7 +507,7 @@ func TestHandler_RemoveNocX509IcaCert_ForNonIcaCertificate(t *testing.T) {
 		vendorAccAddress.String(), testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID, "")
 	_, err := setup.Handler(setup.Ctx, removeIcaCert)
 	require.Error(t, err)
-	require.True(t, pkitypes.ErrInappropriateCertificateType.Is(err))
+	require.True(t, pkitypes.ErrCertificateDoesNotExist.Is(err))
 }
 
 func TestHandler_RemoveNocX509IcaCert_InvalidSerialNumber(t *testing.T) {

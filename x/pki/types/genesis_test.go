@@ -162,6 +162,54 @@ SubjectKeyId: "0",
 SubjectKeyId: "1",
 },
 },
+NocCertificatesBySubjectKeyIdList: []types.NocCertificatesBySubjectKeyId{
+	{
+		Vid: 0,
+SubjectKeyId: "0",
+},
+	{
+		Vid: 1,
+SubjectKeyId: "1",
+},
+},
+NocCertificatesList: []types.NocCertificates{
+	{
+		Subject: "0",
+SubjectKeyId: "0",
+},
+	{
+		Subject: "1",
+SubjectKeyId: "1",
+},
+},
+NocCertificatesBySubjectList: []types.NocCertificatesBySubject{
+	{
+		Subject: "0",
+},
+	{
+		Subject: "1",
+},
+},
+CertificatesList: []types.AllCertificates{
+	{
+		Subject: "0",
+SubjectKeyId: "0",
+},
+	{
+		Subject: "1",
+SubjectKeyId: "1",
+},
+},
+RevokedNocIcaCertificatesList: []types.RevokedNocIcaCertificates{
+	{
+		Subject: "0",
+SubjectKeyId: "0",
+},
+	{
+		Subject: "1",
+SubjectKeyId: "1",
+},
+},
 // this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -378,6 +426,84 @@ SubjectKeyId: "0",
 },
 			{
 				Vid: 0,
+SubjectKeyId: "0",
+},
+		},
+	},
+	valid:    false,
+},
+{
+	desc:     "duplicated nocCertificatesBySubjectKeyId",
+	genState: &types.GenesisState{
+		NocCertificatesBySubjectKeyIdList: []types.NocCertificatesBySubjectKeyId{
+			{
+				Vid: 0,
+SubjectKeyId: "0",
+},
+			{
+				Vid: 0,
+SubjectKeyId: "0",
+},
+		},
+	},
+	valid:    false,
+},
+{
+	desc:     "duplicated nocCertificates",
+	genState: &types.GenesisState{
+		NocCertificatesList: []types.NocCertificates{
+			{
+				Subject: "0",
+SubjectKeyId: "0",
+},
+			{
+				Subject: "0",
+SubjectKeyId: "0",
+},
+		},
+	},
+	valid:    false,
+},
+{
+	desc:     "duplicated nocCertificatesBySubject",
+	genState: &types.GenesisState{
+		NocCertificatesBySubjectList: []types.NocCertificatesBySubject{
+			{
+				Subject: "0",
+},
+			{
+				Subject: "0",
+},
+		},
+	},
+	valid:    false,
+},
+{
+	desc:     "duplicated certificates",
+	genState: &types.GenesisState{
+		CertificatesList: []types.AllCertificates{
+			{
+				Subject: "0",
+SubjectKeyId: "0",
+},
+			{
+				Subject: "0",
+SubjectKeyId: "0",
+},
+		},
+	},
+	valid:    false,
+},
+{
+	desc:     "duplicated revokedNocIcaCertificates",
+	genState: &types.GenesisState{
+		RevokedNocIcaCertificatesList: []types.RevokedNocIcaCertificates{
+			{
+				Subject: "0",
+SubjectKeyId: "0",
+},
+			{
+				Subject: "0",
 SubjectKeyId: "0",
 },
 		},

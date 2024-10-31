@@ -116,7 +116,7 @@ echo $result | jq
 test_divider
 
 echo "Request approved certificate must be empty"
-result=$(dcld query pki x509-cert --subject="$noc_root_cert_1_subject" --subject-key-id="$noc_root_cert_1_subject_key_id")
+result=$(dcld query pki noc-x509-cert --subject="$noc_root_cert_1_subject" --subject-key-id="$noc_root_cert_1_subject_key_id")
 check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$noc_root_cert_1_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_key_id\""
@@ -127,7 +127,7 @@ echo $result | jq
 test_divider
 
 echo "Request all certificates by subject must be empty"
-result=$(dcld query pki all-subject-x509-certs --subject="$noc_root_cert_1_subject")
+result=$(dcld query pki all-noc-subject-x509-certs --subject="$noc_root_cert_1_subject")
 check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$noc_root_cert_1_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_key_id\""
@@ -136,7 +136,7 @@ echo $result | jq
 test_divider
 
 echo "Request all certificates by subjectKeyId must be empty"
-result=$(dcld query pki x509-cert --subject-key-id="$noc_root_cert_1_subject_key_id")
+result=$(dcld query pki noc-x509-cert --subject-key-id="$noc_root_cert_1_subject_key_id")
 check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$noc_root_cert_1_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_key_id\""
@@ -235,8 +235,17 @@ check_response "$result" "\"vid\": $vid_2"
 
 test_divider
 
-echo "Request NOC root certificate by Subject and SubjectKeyID"
-result=$(dcld query pki x509-cert --subject="$noc_root_cert_1_subject" --subject-key-id="$noc_root_cert_1_subject_key_id")
+echo "Request NOC root certificate by Subject and SubjectKeyID (using noc-x509-cert command)"
+result=$(dcld query pki noc-x509-cert --subject="$noc_root_cert_1_subject" --subject-key-id="$noc_root_cert_1_subject_key_id")
+echo $result | jq
+check_response "$result" "\"subject\": \"$noc_root_cert_1_subject\""
+check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_key_id\""
+check_response "$result" "\"serialNumber\": \"$noc_root_cert_1_serial_number\""
+check_response "$result" "\"subjectAsText\": \"$noc_root_cert_1_subject_as_text\""
+check_response "$result" "\"approvals\": \\[\\]"
+
+echo "Request NOC root certificate by Subject and SubjectKeyID (using cert command)"
+result=$(dcld query pki cert --subject="$noc_root_cert_1_subject" --subject-key-id="$noc_root_cert_1_subject_key_id")
 echo $result | jq
 check_response "$result" "\"subject\": \"$noc_root_cert_1_subject\""
 check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_key_id\""
@@ -246,8 +255,8 @@ check_response "$result" "\"approvals\": \\[\\]"
 
 test_divider
 
-echo "Request NOC root certificate by Subject"
-result=$(dcld query pki all-subject-x509-certs --subject="$noc_root_cert_1_subject")
+echo "Request NOC root certificate by Subject "
+result=$(dcld query pki all-noc-subject-x509-certs --subject="$noc_root_cert_1_subject")
 echo $result | jq
 check_response "$result" "\"$noc_root_cert_1_subject\""
 check_response "$result" "\"$noc_root_cert_1_subject_key_id\""
@@ -255,7 +264,7 @@ check_response "$result" "\"$noc_root_cert_1_subject_key_id\""
 test_divider
 
 echo "Request NOC root certificate by SubjectKeyID"
-result=$(dcld query pki x509-cert --subject-key-id="$noc_root_cert_1_subject_key_id")
+result=$(dcld query pki noc-x509-cert --subject-key-id="$noc_root_cert_1_subject_key_id")
 echo $result | jq
 check_response "$result" "\"subject\": \"$noc_root_cert_1_subject\""
 check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_key_id\""
@@ -315,9 +324,18 @@ check_response "$result" "\"schemaVersion\": $cert_schema_version_0"
 check_response "$result" "\"schemaVersion\": $cert_schema_version_0"
 check_response "$result" "\"schemaVersion\": $schema_version_0"
 
-
-echo "Request all approved certificates"
+echo "Request all approved certificates (Must be empty)"
 result=$(dcld query pki all-x509-certs)
+check_response "$result" "\[\]"
+response_does_not_contain "$result" "\"subject\": \"$noc_root_cert_1_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_key_id\""
+response_does_not_contain "$result" "\"serialNumber\": \"$noc_root_cert_1_serial_number\""
+response_does_not_contain "$result" "\"subject\": \"$noc_cert_1_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_cert_1_subject_key_id\""
+response_does_not_contain "$result" "\"serialNumber\": \"$noc_cert_1_serial_number\""
+
+echo "Request all Noc certificates"
+result=$(dcld query pki all-noc-x509-certs)
 check_response "$result" "\"subject\": \"$noc_root_cert_1_subject\""
 check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$noc_root_cert_1_serial_number\""
@@ -366,17 +384,6 @@ echo "$vendor_account Vendor revokes only root certificate, it should not revoke
 result=$(echo "$passphrase" | dcld tx pki revoke-noc-x509-root-cert --subject="$noc_root_cert_1_subject" --subject-key-id="$noc_root_cert_1_subject_key_id" --from=$vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
-
-echo "Request all revoked certificates should contain two root certificates only"
-result=$(dcld query pki all-revoked-x509-certs)
-echo $result | jq
-check_response "$result" "\"subject\": \"$noc_root_cert_1_subject"
-check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_key_id\""
-check_response "$result" "\"serialNumber\": \"$noc_root_cert_1_serial_number\""
-check_response "$result" "\"serialNumber\": \"$noc_root_cert_1_copy_serial_number\""
-check_response "$result" "\"schemaVersion\": $schema_version_0"
-response_does_not_contain "$result" "\"subject\": \"$noc_cert_1_subject\""
-response_does_not_contain "$result" "\"subject\": \"$noc_leaf_cert_1_subject\""
 
 echo "Request all revoked noc root certificates should contain two root certificates"
 result=$(dcld query pki all-revoked-noc-x509-root-certs)
@@ -438,13 +445,13 @@ check_response "$result" "\"tq\": 1"
 echo $result | jq
 
 echo "Request all certificates by subject must be empty"
-result=$(dcld query pki all-subject-x509-certs --subject="$noc_root_cert_1_subject")
+result=$(dcld query pki all-noc-subject-x509-certs --subject="$noc_root_cert_1_subject")
 response_does_not_contain "$result" "\"subject\": \"$noc_root_cert_1_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_key_id\""
 echo $result | jq
 
 echo "Request all certificates by subjectKeyId must be empty"
-result=$(dcld query pki x509-cert --subject-key-id="$noc_root_cert_1_subject_key_id")
+result=$(dcld query pki noc-x509-cert --subject-key-id="$noc_root_cert_1_subject_key_id")
 check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$noc_root_cert_1_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_key_id\""
@@ -463,8 +470,8 @@ check_response "$result" "\"serialNumber\": \"$noc_cert_1_serial_number\""
 check_response "$result" "\"serialNumber\": \"$noc_cert_1_copy_serial_number\""
 check_response "$result" "\"serialNumber\": \"$noc_leaf_cert_1_serial_number\""
 
-echo "Request all approved certificates should not contain revoked NOC root certificates"
-result=$(dcld query pki all-x509-certs)
+echo "Request all noc certificates should not contain revoked NOC root certificates"
+result=$(dcld query pki all-noc-x509-certs)
 check_response "$result" "\"subject\": \"$noc_cert_1_subject\""
 check_response "$result" "\"subjectKeyId\": \"$noc_cert_1_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$noc_cert_1_serial_number\""
@@ -493,7 +500,7 @@ result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Request all revoked certificates should not contain leaf certificate"
-result=$(dcld query pki all-revoked-x509-certs)
+result=$(dcld query pki all-revoked-noc-x509-ica-certs)
 echo $result | jq
 check_response "$result" "\"subject\": \"$noc_root_cert_1_subject"
 check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_key_id\""
@@ -514,13 +521,13 @@ response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_cert_1_subject_key
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_leaf_cert_1_subject_key_id\""
 
 echo "Request all certificates by subject must be empty"
-result=$(dcld query pki all-subject-x509-certs --subject="$noc_cert_1_subject")
+result=$(dcld query pki all-noc-subject-x509-certs --subject="$noc_cert_1_subject")
 response_does_not_contain "$result" "\"subject\": \"$noc_cert_1_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_cert_1_subject_key_id\""
 echo $result | jq
 
 echo "Request all certificates by subjectKeyId must be empty"
-result=$(dcld query pki x509-cert --subject-key-id="$noc_cert_1_subject_key_id")
+result=$(dcld query pki noc-x509-cert --subject-key-id="$noc_cert_1_subject_key_id")
 check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$noc_cert_1_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_cert_1_subject_key_id\""
@@ -548,7 +555,7 @@ check_response "$result" "\"subject\": \"$noc_leaf_cert_1_subject\""
 check_response "$result" "\"subjectKeyId\": \"$noc_leaf_cert_1_subject_key_id\""
 
 echo "Request all approved certificates should not contain revoked NOC certificates"
-result=$(dcld query pki all-x509-certs)
+result=$(dcld query pki all-noc-x509-certs)
 check_response "$result" "\"subject\": \"$noc_leaf_cert_1_subject\""
 check_response "$result" "\"subjectKeyId\": \"$noc_leaf_cert_1_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$noc_leaf_cert_1_serial_number\""

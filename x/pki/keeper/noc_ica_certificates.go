@@ -91,13 +91,13 @@ func (k Keeper) RemoveNocIcaCertificates(ctx sdk.Context, vid int32) {
 	))
 }
 
-func (k Keeper) RemoveNocIcaCertificate(ctx sdk.Context, subject, subjectKeyID string, vid int32) {
+func (k Keeper) RemoveNocIcaCertificate(ctx sdk.Context, subject string, subjectKeyID string, vid int32) {
 	k._removeNocIcaCertificates(ctx, vid, func(cert *types.Certificate) bool {
 		return cert.Subject == subject && cert.SubjectKeyId == subjectKeyID
 	})
 }
 
-func (k Keeper) RemoveNocIcaCertificateBySerialNumber(ctx sdk.Context, vid int32, subject, subjectKeyID, serialNumber string) {
+func (k Keeper) RemoveNocIcaCertificateBySerialNumber(ctx sdk.Context, subject string, subjectKeyID string, vid int32, serialNumber string) {
 	k._removeNocIcaCertificates(ctx, vid, func(cert *types.Certificate) bool {
 		return cert.Subject == subject && cert.SubjectKeyId == subjectKeyID && cert.SerialNumber == serialNumber
 	})

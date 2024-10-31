@@ -24,6 +24,114 @@ import (
 	TODO: provide tests for error cases
 */
 
+func GetNocX509Cert(suite *utils.TestSuite, subject string, subjectKeyID string) (*pkitypes.NocCertificates, error) {
+	var res pkitypes.NocCertificates
+	if suite.Rest {
+		var resp pkitypes.QueryGetNocCertificatesResponse
+		err := suite.QueryREST(
+			fmt.Sprintf(
+				"/dcl/pki/noc-certificates/%s/%s",
+				url.QueryEscape(subject), url.QueryEscape(subjectKeyID),
+			),
+			&resp,
+		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetNocCertificates()
+	} else {
+		grpcConn := suite.GetGRPCConn()
+		defer grpcConn.Close()
+
+		// This creates a gRPC client to query the x/pki service.
+		pkiClient := pkitypes.NewQueryClient(grpcConn)
+		resp, err := pkiClient.NocCertificates(
+			context.Background(),
+			&pkitypes.QueryGetNocCertificatesRequest{
+				Subject:      subject,
+				SubjectKeyId: subjectKeyID,
+			},
+		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetNocCertificates()
+	}
+
+	return &res, nil
+}
+
+func GetAllNocX509CertsBySubject(suite *utils.TestSuite, subject string) (*pkitypes.NocCertificatesBySubject, error) {
+	var res pkitypes.NocCertificatesBySubject
+	if suite.Rest {
+		var resp pkitypes.QueryGetNocCertificatesBySubjectResponse
+		err := suite.QueryREST(
+			fmt.Sprintf(
+				"/dcl/pki/noc-certificates/%s",
+				url.QueryEscape(subject),
+			),
+			&resp,
+		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetNocCertificatesBySubject()
+	} else {
+		grpcConn := suite.GetGRPCConn()
+		defer grpcConn.Close()
+
+		// This creates a gRPC client to query the x/pki service.
+		pkiClient := pkitypes.NewQueryClient(grpcConn)
+		resp, err := pkiClient.NocCertificatesBySubject(
+			context.Background(),
+			&pkitypes.QueryGetNocCertificatesBySubjectRequest{
+				Subject: subject,
+			},
+		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetNocCertificatesBySubject()
+	}
+
+	return &res, nil
+}
+
+func GetAllNocX509Certs(suite *utils.TestSuite) (res []pkitypes.NocCertificates, err error) {
+	return getAllNocX509Certs(suite, "")
+}
+
+func GetAllNocX509certsBySubjectKeyID(suite *utils.TestSuite, subjectKeyID string) (res []pkitypes.NocCertificates, err error) {
+	return getAllNocX509Certs(suite, subjectKeyID)
+}
+
+func getAllNocX509Certs(suite *utils.TestSuite, subjectKeyID string) (res []pkitypes.NocCertificates, err error) {
+	if suite.Rest {
+		var resp pkitypes.QueryNocCertificatesResponse
+		err := suite.QueryREST(fmt.Sprintf("/dcl/pki/noc-certificates?subjectKeyId=%s", subjectKeyID), &resp)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetNocCertificates()
+	} else {
+		grpcConn := suite.GetGRPCConn()
+		defer grpcConn.Close()
+
+		// This creates a gRPC client to query the x/pki service.
+		pkiClient := pkitypes.NewQueryClient(grpcConn)
+		resp, err := pkiClient.NocCertificatesAll(
+			context.Background(),
+			&pkitypes.QueryNocCertificatesRequest{SubjectKeyId: subjectKeyID},
+		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetNocCertificates()
+	}
+
+	return res, nil
+}
+
 func GetAllNocX509RootCerts(suite *utils.TestSuite) (res []pkitypes.NocRootCertificates, err error) {
 	if suite.Rest {
 		var resp pkitypes.QueryAllNocRootCertificatesResponse
@@ -174,6 +282,80 @@ func GetNocX509IcaCertsBySubjectAndSKID(suite *utils.TestSuite, vendorID int32, 
 	}
 
 	return certs.Certs
+}
+
+func GetRevokedNocX509RootCert(suite *utils.TestSuite, subject string, subjectKeyID string) (*pkitypes.RevokedNocRootCertificates, error) {
+	var res pkitypes.RevokedNocRootCertificates
+	if suite.Rest {
+		var resp pkitypes.QueryGetRevokedNocRootCertificatesResponse
+		err := suite.QueryREST(
+			fmt.Sprintf(
+				"/dcl/pki/evoked-noc-root-certificates/%s/%s",
+				url.QueryEscape(subject), url.QueryEscape(subjectKeyID),
+			),
+			&resp,
+		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetRevokedNocRootCertificates()
+	} else {
+		grpcConn := suite.GetGRPCConn()
+		defer grpcConn.Close()
+
+		// This creates a gRPC client to query the x/pki service.
+		pkiClient := pkitypes.NewQueryClient(grpcConn)
+		resp, err := pkiClient.RevokedNocRootCertificates(
+			context.Background(),
+			&pkitypes.QueryGetRevokedNocRootCertificatesRequest{
+				Subject:      subject,
+				SubjectKeyId: subjectKeyID,
+			},
+		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetRevokedNocRootCertificates()
+	}
+
+	return &res, nil
+}
+
+func GetRevokedNocX509IcaCert(suite *utils.TestSuite, subject string, subjectKeyID string) (*pkitypes.RevokedNocIcaCertificates, error) {
+	var res pkitypes.RevokedNocIcaCertificates
+	if suite.Rest {
+		var resp pkitypes.QueryGetRevokedNocIcaCertificatesResponse
+		err := suite.QueryREST(
+			fmt.Sprintf(
+				"/dcl/pki/evoked-noc-ica-certificates/%s/%s",
+				url.QueryEscape(subject), url.QueryEscape(subjectKeyID),
+			),
+			&resp,
+		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetRevokedNocIcaCertificates()
+	} else {
+		grpcConn := suite.GetGRPCConn()
+		defer grpcConn.Close()
+
+		// This creates a gRPC client to query the x/pki service.
+		pkiClient := pkitypes.NewQueryClient(grpcConn)
+		resp, err := pkiClient.RevokedNocIcaCertificates(
+			context.Background(),
+			&pkitypes.QueryGetRevokedNocIcaCertificatesRequest{
+				Subject:      subject,
+				SubjectKeyId: subjectKeyID,
+			},
+		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetRevokedNocIcaCertificates()
+	}
+
+	return &res, nil
 }
 
 //nolint:funlen
@@ -335,7 +517,7 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.NocRootCert3SubjectKeyID, certsWithVid2[0].SubjectKeyId)
 
 	// Request NOC root certificate by Subject and SubjectKeyID
-	certificate, _ := GetX509Cert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
+	certificate, _ := GetNocX509Cert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
 	require.Equal(suite.T, testconstants.NocRootCert1Subject, certificate.Subject)
 	require.Equal(suite.T, testconstants.NocRootCert1SubjectKeyID, certificate.SubjectKeyId)
 	require.Equal(suite.T, testconstants.NocRootCert1SubjectAsText, certificate.Certs[0].SubjectAsText)
@@ -345,13 +527,13 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.True(suite.T, certificate.Certs[0].IsRoot)
 
 	// Request NOC root certificate by Subject
-	subjectCertificates, _ := GetAllX509CertsBySubject(suite, testconstants.NocRootCert1Subject)
+	subjectCertificates, _ := GetAllNocX509CertsBySubject(suite, testconstants.NocRootCert1Subject)
 	require.Equal(suite.T, testconstants.NocRootCert1Subject, subjectCertificates.Subject)
 	require.Equal(suite.T, 1, len(subjectCertificates.SubjectKeyIds))
 	require.Equal(suite.T, testconstants.NocRootCert1SubjectKeyID, subjectCertificates.SubjectKeyIds[0])
 
 	// Request NOC root certificate by SubjectKeyID
-	certsBySubjectKeyID, _ := GetAllX509certsBySubjectKeyID(suite, testconstants.NocRootCert1SubjectKeyID)
+	certsBySubjectKeyID, _ := GetAllNocX509certsBySubjectKeyID(suite, testconstants.NocRootCert1SubjectKeyID)
 	require.Equal(suite.T, 1, len(certsBySubjectKeyID))
 	require.Equal(suite.T, 1, len(certsBySubjectKeyID[0].Certs))
 	require.Equal(suite.T, testconstants.NocRootCert1SubjectKeyID, certsBySubjectKeyID[0].Certs[0].SubjectKeyId)
@@ -407,7 +589,7 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, 2, len(nocCerts[0].Certs))
 
 	// Request NOC certificate by Subject and SubjectKeyID
-	certs, _ := GetX509Cert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	certs, _ := GetNocX509Cert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.Equal(suite.T, testconstants.NocCert1Subject, certs.Subject)
 	require.Equal(suite.T, testconstants.NocCert1SubjectKeyID, certs.SubjectKeyId)
 	require.Equal(suite.T, 1, len(certs.Certs))
@@ -415,7 +597,7 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, vendor1Account.Address, certs.Certs[0].Owner)
 	require.False(suite.T, certs.Certs[0].IsRoot)
 
-	certs, _ = GetX509Cert(suite, testconstants.NocCert2Subject, testconstants.NocCert2SubjectKeyID)
+	certs, _ = GetNocX509Cert(suite, testconstants.NocCert2Subject, testconstants.NocCert2SubjectKeyID)
 	require.Equal(suite.T, testconstants.NocCert2Subject, certs.Subject)
 	require.Equal(suite.T, testconstants.NocCert2SubjectKeyID, certs.SubjectKeyId)
 	require.Equal(suite.T, 1, len(certs.Certs))
@@ -498,17 +680,17 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Request revoked certificate
-	revokedCerts, _ := GetRevokedX509Cert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	revokedCerts, _ := GetRevokedNocX509IcaCert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.Equal(suite.T, 1, len(revokedCerts.Certs))
 	require.Equal(suite.T, testconstants.NocCert1Subject, revokedCerts.Subject)
 	require.Equal(suite.T, testconstants.NocCert1SubjectKeyID, revokedCerts.SubjectKeyId)
 	require.Equal(suite.T, testconstants.NocCert1SerialNumber, revokedCerts.Certs[0].SerialNumber)
 
 	// Check approved certificates
-	certs, _ = GetX509Cert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	certs, _ = GetNocX509Cert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
 	require.Equal(suite.T, testconstants.NocCert1CopySerialNumber, certs.Certs[0].SerialNumber)
-	certs, _ = GetX509Cert(suite, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
+	certs, _ = GetNocX509Cert(suite, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
 	require.Equal(suite.T, testconstants.NocLeafCert1SerialNumber, certs.Certs[0].SerialNumber)
 
@@ -526,17 +708,17 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Request revoked root certificate
-	revokedCerts, _ = GetRevokedX509Cert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
-	require.Equal(suite.T, 1, len(revokedCerts.Certs))
-	require.Equal(suite.T, testconstants.NocRootCert1Subject, revokedCerts.Subject)
-	require.Equal(suite.T, testconstants.NocRootCert1SubjectKeyID, revokedCerts.SubjectKeyId)
-	require.Equal(suite.T, testconstants.NocRootCert1SerialNumber, revokedCerts.Certs[0].SerialNumber)
+	revokedRootCerts, _ := GetRevokedNocX509RootCert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
+	require.Equal(suite.T, 1, len(revokedRootCerts.Certs))
+	require.Equal(suite.T, testconstants.NocRootCert1Subject, revokedRootCerts.Subject)
+	require.Equal(suite.T, testconstants.NocRootCert1SubjectKeyID, revokedRootCerts.SubjectKeyId)
+	require.Equal(suite.T, testconstants.NocRootCert1SerialNumber, revokedRootCerts.Certs[0].SerialNumber)
 
 	// Check approved certificate
-	certs, _ = GetX509Cert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
+	certs, _ = GetNocX509Cert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
 	require.Equal(suite.T, testconstants.NocRootCert1CopySerialNumber, certs.Certs[0].SerialNumber)
-	certs, _ = GetX509Cert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	certs, _ = GetNocX509Cert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
 	require.Equal(suite.T, testconstants.NocCert1CopySerialNumber, certs.Certs[0].SerialNumber)
 
@@ -578,9 +760,9 @@ func NocCertDemo(suite *utils.TestSuite) {
 	suite.AssertNotFound(err)
 
 	// Check that two intermediate ICA certificates are removed
-	_, err = GetRevokedX509Cert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	_, err = GetRevokedNocX509IcaCert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	suite.AssertNotFound(err)
-	_, err = GetX509Cert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	_, err = GetNocX509Cert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	suite.AssertNotFound(err)
 
 	certificates := GetNocX509IcaCertsBySubjectAndSKID(suite, vid1, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
@@ -596,7 +778,7 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Check that leaf ICA certificate is removed
-	_, err = GetX509Cert(suite, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
+	_, err = GetNocX509Cert(suite, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
 	suite.AssertNotFound(err)
 
 	// Request NOC ICA certificate by VID1
@@ -640,10 +822,10 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Check that leaf and ICA with different serial number is not removed
-	certs, _ = GetX509Cert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	certs, _ = GetNocX509Cert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
 	require.Equal(suite.T, testconstants.NocCert1CopySerialNumber, certs.Certs[0].SerialNumber)
-	certs, _ = GetX509Cert(suite, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
+	certs, _ = GetNocX509Cert(suite, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
 
 	certificates = GetNocX509IcaCertsBySubjectAndSKID(suite, vid1, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
@@ -663,18 +845,18 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Check that all 3 certificates are revoked
-	revokedCerts, _ = GetRevokedX509Cert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
-	require.Equal(suite.T, 2, len(revokedCerts.Certs))
-	revokedCerts, _ = GetRevokedX509Cert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	revokedRootCerts, _ = GetRevokedNocX509RootCert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
+	require.Equal(suite.T, 2, len(revokedRootCerts.Certs))
+	revokedCerts, _ = GetRevokedNocX509IcaCert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.Equal(suite.T, 1, len(revokedCerts.Certs))
-	revokedCerts, _ = GetRevokedX509Cert(suite, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
+	revokedCerts, _ = GetRevokedNocX509IcaCert(suite, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
 	require.Equal(suite.T, 1, len(revokedCerts.Certs))
 
-	_, err = GetX509Cert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
+	_, err = GetNocX509Cert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
 	suite.AssertNotFound(err)
-	_, err = GetX509Cert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	_, err = GetNocX509Cert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	suite.AssertNotFound(err)
-	_, err = GetX509Cert(suite, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
+	_, err = GetNocX509Cert(suite, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
 	suite.AssertNotFound(err)
 
 	_, err = GetNocX509CertsByVidAndSkid(suite, vid1, testconstants.NocRootCert1SubjectKeyID)
@@ -712,10 +894,10 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Check that NOC root certificate is removed
-	revokedCerts, _ = GetRevokedX509Cert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
-	require.Equal(suite.T, 1, len(revokedCerts.Certs))
-	require.Equal(suite.T, testconstants.NocRootCert1CopySerialNumber, revokedCerts.Certs[0].SerialNumber)
-	_, err = GetX509Cert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
+	revokedRootCerts, _ = GetRevokedNocX509RootCert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
+	require.Equal(suite.T, 1, len(revokedRootCerts.Certs))
+	require.Equal(suite.T, testconstants.NocRootCert1CopySerialNumber, revokedRootCerts.Certs[0].SerialNumber)
+	_, err = GetNocX509Cert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
 	suite.AssertNotFound(err)
 
 	// Add root NOC certificate
@@ -744,7 +926,7 @@ func NocCertDemo(suite *utils.TestSuite) {
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddNocCert}, vendor1Name, vendor1Account)
 	require.NoError(suite.T, err)
 
-	certs, _ = GetX509Cert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
+	certs, _ = GetNocX509Cert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
 
 	// Remove revoked NOC root certificates
@@ -758,16 +940,18 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Check that certificates are removed
-	_, err = GetX509Cert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
+	_, err = GetNocX509Cert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
 	suite.AssertNotFound(err)
-	_, err = GetRevokedX509Cert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
+	_, err = GetRevokedNocX509RootCert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
 	suite.AssertNotFound(err)
 	_, err = GetNocX509CertsByVidAndSkid(suite, vid1, testconstants.NocRootCert1SubjectKeyID)
 	suite.AssertNotFound(err)
 
 	// Check that child is not removed
-	certs, _ = GetX509Cert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	certs, _ = GetNocX509Cert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
+	_, err = GetRevokedNocX509IcaCert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	suite.AssertNotFound(err)
 	certificates = GetNocX509IcaCertsBySubjectAndSKID(suite, vid1, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.Equal(suite.T, 1, len(certificates))
 	require.Equal(suite.T, testconstants.NocCert1SerialNumber, certificates[0].SerialNumber)

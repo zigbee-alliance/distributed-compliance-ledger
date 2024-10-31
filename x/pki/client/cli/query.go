@@ -42,10 +42,17 @@ func GetQueryCmd(_ string) *cobra.Command {
 	cmd.AddCommand(CmdListNocRootCertificates())
 	cmd.AddCommand(CmdShowNocRootCertificates())
 	cmd.AddCommand(CmdShowNocCertificatesByVidAndSkid())
+	cmd.AddCommand(CmdListNocCertificates())
+	cmd.AddCommand(CmdShowNocCertificates())
+	cmd.AddCommand(CmdShowNocCertificatesBySubject())
 	cmd.AddCommand(CmdListNocIcaCertificates())
 	cmd.AddCommand(CmdShowNocIcaCertificates())
 	cmd.AddCommand(CmdListRevokedNocRootCertificates())
 	cmd.AddCommand(CmdShowRevokedNocRootCertificates())
+	cmd.AddCommand(CmdListCertificates())
+	cmd.AddCommand(CmdShowCertificates())
+	cmd.AddCommand(CmdListRevokedNocIcaCertificates())
+	cmd.AddCommand(CmdShowRevokedNocIcaCertificates())
 	// this line is used by starport scaffolding # 1
 
 	return cmd
