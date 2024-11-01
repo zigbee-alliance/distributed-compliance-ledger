@@ -36,3 +36,16 @@ func (m Migrator) Migrate3to4(ctx sdk.Context) error {
 
 	return nil
 }
+
+// Migrate2to4 migrates from version 2 to 4.
+func (m Migrator) Migrate2to4(ctx sdk.Context) error {
+	err := m.Migrate2to3(ctx)
+	if err != nil {
+		return err
+	}
+	err = m.Migrate3to4(ctx)
+	if err != nil {
+		return err
+	}
+	return nil
+}

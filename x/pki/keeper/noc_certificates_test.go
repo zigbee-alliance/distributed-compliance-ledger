@@ -22,6 +22,10 @@ func createNNocCertificates(keeper *keeper.Keeper, ctx sdk.Context, n int) []typ
 		items[i].SubjectKeyId = strconv.Itoa(i)
 
 		keeper.SetNocCertificates(ctx, items[i])
+		keeper.SetNocCertificatesBySubjectKeyId(ctx, types.NocCertificatesBySubjectKeyId{
+			SubjectKeyId: items[i].SubjectKeyId,
+			Certs:        items[i].Certs,
+		})
 	}
 	return items
 }
