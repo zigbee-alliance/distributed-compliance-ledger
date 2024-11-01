@@ -125,7 +125,7 @@ Start a local pool as described above, and then just execute
 dcld
 ```
 
-Have a look at [How To](docs/how-to.md) and [transactions](docs/transactions.md) for instructions how to configure and use the CLI.
+Have a look at [How To](docs/how-to.md) and [transactions](docs/transactions/transactions.md) for instructions how to configure and use the CLI.
 
 ## REST
 
@@ -133,7 +133,7 @@ Start a local pool as described above.
 
 Every node exposes a REST API at `http://<node-host>:1317` (see <https://docs.cosmos.network/v0.45/core/grpc_rest.html>).
 
-Have a look at [transactions](docs/transactions.md) for a full list of REST endpoints.
+Have a look at [transactions](docs/transactions/transactions.md) for a full list of REST endpoints.
 
 ## Contributing
 
