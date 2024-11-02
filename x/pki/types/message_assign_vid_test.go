@@ -35,7 +35,7 @@ func TestMsgAssignVid_ValidateBasic(t *testing.T) {
 			err: validator.ErrRequiredFieldMissing,
 		},
 		{
-			name: "empty SubjectKeyId",
+			name: "empty SubjectKeyID",
 			msg: MsgAssignVid{
 				Signer:       sample.AccAddress(),
 				Subject:      testconstants.PAACertWithNumericVidSubject,

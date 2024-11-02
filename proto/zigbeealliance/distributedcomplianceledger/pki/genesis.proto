@@ -47,7 +47,7 @@ message GenesisState {
   repeated NocIcaCertificates nocIcaCertificatesList = 15 [(gogoproto.nullable) = false];
   repeated RevokedNocRootCertificates revokedNocRootCertificatesList = 16 [(gogoproto.nullable) = false];
   repeated NocCertificatesByVidAndSkid nocCertificatesByVidAndSkidList = 17 [(gogoproto.nullable) = false];
-  repeated NocCertificatesBySubjectKeyId nocCertificatesBySubjectKeyIdList = 18 [(gogoproto.nullable) = false];
+  repeated NocCertificatesBySubjectKeyID NocCertificatesBySubjectKeyIDList = 18 [(gogoproto.nullable) = false];
   repeated NocCertificates          nocCertificatesList          = 19 [(gogoproto.nullable) = false];
   repeated NocCertificatesBySubject nocCertificatesBySubjectList = 20 [(gogoproto.nullable) = false];
   repeated AllCertificates certificatesList = 21 [(gogoproto.nullable) = false];

@@ -47,5 +47,6 @@ func (m Migrator) Migrate2to4(ctx sdk.Context) error {
 	if err != nil {
 		return err
 	}
+
 	return nil
 }

@@ -170,7 +170,7 @@ func TestGenesis(t *testing.T) {
 				SubjectKeyId: "1",
 			},
 		},
-		NocCertificatesBySubjectKeyIdList: []types.NocCertificatesBySubjectKeyId{
+		NocCertificatesBySubjectKeyIDList: []types.NocCertificatesBySubjectKeyID{
 			{
 				SubjectKeyId: "0",
 			},
@@ -241,7 +241,7 @@ func TestGenesis(t *testing.T) {
 	require.ElementsMatch(t, genesisState.NocIcaCertificatesList, got.NocIcaCertificatesList)
 	require.ElementsMatch(t, genesisState.RevokedNocRootCertificatesList, got.RevokedNocRootCertificatesList)
 	require.ElementsMatch(t, genesisState.NocCertificatesByVidAndSkidList, got.NocCertificatesByVidAndSkidList)
-	require.ElementsMatch(t, genesisState.NocCertificatesBySubjectKeyIdList, got.NocCertificatesBySubjectKeyIdList)
+	require.ElementsMatch(t, genesisState.NocCertificatesBySubjectKeyIDList, got.NocCertificatesBySubjectKeyIDList)
 	require.ElementsMatch(t, genesisState.NocCertificatesList, got.NocCertificatesList)
 	require.ElementsMatch(t, genesisState.NocCertificatesBySubjectList, got.NocCertificatesBySubjectList)
 	require.ElementsMatch(t, genesisState.CertificatesList, got.CertificatesList)

@@ -37,7 +37,7 @@ func TestMsgRemoveX509Cert_ValidateBasic(t *testing.T) {
 			err: validator.ErrRequiredFieldMissing,
 		},
 		{
-			name: "empty SubjectKeyId",
+			name: "empty SubjectKeyID",
 			msg: MsgRemoveX509Cert{
 				Signer:       sample.AccAddress(),
 				Subject:      testconstants.RootSubject,

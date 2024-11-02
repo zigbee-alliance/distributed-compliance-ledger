@@ -98,13 +98,7 @@ func (k msgServer) _revokeRootCertificates(
 	}
 
 	// remove from root certs index, add to revoked root certs
-	revCerts := types.RevokedCertificates{
-		Subject:       certificates.Subject,
-		SubjectKeyId:  certificates.SubjectKeyId,
-		Certs:         certificates.Certs,
-		SchemaVersion: certificates.SchemaVersion,
-	}
-	k.AddRevokedCertificates(ctx, revCerts)
+	k.AddRevokedCertificates(ctx, types.RevokedCertificates(certificates))
 
 	k.RemoveApprovedRootCertificate(ctx, certID)
 	k.RemoveAllCertificates(ctx, certificates.Subject, certificates.SubjectKeyId)
@@ -147,6 +141,6 @@ func (k msgServer) _revokeRootCertificate(
 	} else {
 		k.SetApprovedCertificates(ctx, certificates)
 		k.RemoveAllCertificatesBySerialNumber(ctx, cert.Subject, cert.SubjectKeyId, serialNumber)
-		k.RemoveApprovedCertificatesBySubjectKeyIdBySerialNumber(ctx, cert.Subject, cert.SubjectKeyId, serialNumber)
+		k.RemoveApprovedCertificatesBySubjectKeyIDBySerialNumber(ctx, cert.Subject, cert.SubjectKeyId, serialNumber)
 	}
 }

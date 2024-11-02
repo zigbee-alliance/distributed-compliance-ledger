@@ -126,7 +126,7 @@ func (k msgServer) removeApprovedX509Cert(ctx sdk.Context, certID types.Certific
 	} else {
 		k.RemoveAllCertificatesBySerialNumber(ctx, certID.Subject, certID.SubjectKeyId, serialNumber)
 		k.RemoveApprovedCertificatesBySerialNumber(ctx, certID.Subject, certID.SubjectKeyId, serialNumber)
-		k.RemoveApprovedCertificatesBySubjectKeyIdBySerialNumber(ctx, certID.Subject, certID.SubjectKeyId, serialNumber)
+		k.RemoveApprovedCertificatesBySubjectKeyIDBySerialNumber(ctx, certID.Subject, certID.SubjectKeyId, serialNumber)
 	}
 }
 
@@ -138,11 +138,11 @@ func (k msgServer) removeNocX509Cert(
 	serialNumber string,
 	isRoot bool,
 ) {
-	if len(certificates.Certs) == 0 {
+	if len(certificates.Certs) == 0 { //nolint:nestif
 		k.RemoveAllCertificates(ctx, certID.Subject, certID.SubjectKeyId)
 		k.RemoveNocCertificates(ctx, certID.Subject, certID.SubjectKeyId)
 		k.RemoveNocCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
-		k.RemoveNocCertificatesBySubjectKeyID(ctx, certID.Subject, certID.SubjectKeyId)
+		k.RemoveNocCertificatesBySubjectAndSubjectKeyID(ctx, certID.Subject, certID.SubjectKeyId)
 		k.RemoveNocCertificatesByVidAndSkid(ctx, accountVid, certID.SubjectKeyId)
 
 		if isRoot {
@@ -153,7 +153,7 @@ func (k msgServer) removeNocX509Cert(
 	} else {
 		k.RemoveAllCertificatesBySerialNumber(ctx, certID.Subject, certID.SubjectKeyId, serialNumber)
 		k.RemoveNocCertificatesBySerialNumber(ctx, certID.Subject, certID.SubjectKeyId, serialNumber)
-		k.RemoveNocCertificatesBySubjectKeyIdBySerialNumber(ctx, certID.Subject, certID.SubjectKeyId, serialNumber)
+		k.RemoveNocCertificatesBySubjectKeyIDBySerialNumber(ctx, certID.Subject, certID.SubjectKeyId, serialNumber)
 		k.RemoveNocCertificatesByVidAndSkidBySerialNumber(ctx, accountVid, certID.Subject, certID.SubjectKeyId, serialNumber)
 
 		if isRoot {

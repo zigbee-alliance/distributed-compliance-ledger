@@ -40,7 +40,7 @@ func (k msgServer) ProposeAddX509RootCert(goCtx context.Context, msg *types.MsgP
 				"so it cannot be used as a root certificate.")
 	}
 
-	// check if `Proposed` certificate with the same Subject/SubjectKeyId combination already exists
+	// check if `Proposed` certificate with the same Subject/SubjectKeyID combination already exists
 	if k.IsProposedCertificatePresent(ctx, x509Certificate.Subject, x509Certificate.SubjectKeyID) {
 		return nil, pkitypes.NewErrProposedCertificateAlreadyExists(x509Certificate.Subject, x509Certificate.SubjectKeyID)
 	}

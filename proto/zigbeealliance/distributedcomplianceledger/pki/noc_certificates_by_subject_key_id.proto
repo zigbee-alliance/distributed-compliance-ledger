@@ -5,7 +5,7 @@ option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/
 
 import "zigbeealliance/distributedcomplianceledger/pki/certificate.proto";
 
-message NocCertificatesBySubjectKeyId {
+message NocCertificatesBySubjectKeyID {
   string subjectKeyId = 1;
   repeated Certificate certs = 2;
   float tq = 3;

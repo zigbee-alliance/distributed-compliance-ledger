@@ -64,6 +64,7 @@ func (k Keeper) GetRevokedNocIcaCertificates(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
@@ -71,13 +72,13 @@ func (k Keeper) GetRevokedNocIcaCertificates(
 func (k Keeper) RemoveRevokedNocIcaCertificates(
 	ctx sdk.Context,
 	subject string,
-	subjectKeyId string,
+	subjectKeyID string,
 
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.RevokedNocIcaCertificatesKeyPrefix))
 	store.Delete(types.RevokedNocIcaCertificatesKey(
 		subject,
-		subjectKeyId,
+		subjectKeyID,
 	))
 }
 

@@ -90,7 +90,7 @@ func (k msgServer) RemoveNocX509IcaCert(goCtx context.Context, msg *types.MsgRem
 		// remove from subject -> subject key ID map
 		k.RemoveNocCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
 		// remove from subject key ID -> certificates map
-		k.RemoveNocCertificatesBySubjectKeyID(ctx, certID.Subject, certID.SubjectKeyId)
+		k.RemoveNocCertificatesBySubjectAndSubjectKeyID(ctx, certID.Subject, certID.SubjectKeyId)
 		// remove from revoked list
 		k.RemoveRevokedNocIcaCertificates(ctx, certID.Subject, certID.SubjectKeyId)
 		// remove from subject with serialNumber map

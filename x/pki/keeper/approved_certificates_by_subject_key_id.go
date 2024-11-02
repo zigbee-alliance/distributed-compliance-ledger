@@ -98,7 +98,7 @@ func (k Keeper) RemoveApprovedCertificatesBySubjectKeyID(
 	}
 }
 
-func (k Keeper) RemoveApprovedCertificatesBySubjectKeyIdBySerialNumber(ctx sdk.Context, subject, subjectKeyID, serialNumber string) {
+func (k Keeper) RemoveApprovedCertificatesBySubjectKeyIDBySerialNumber(ctx sdk.Context, subject, subjectKeyID, serialNumber string) {
 	k._removeApprovedCertificatesFromSubjectKeyIDState(ctx, subjectKeyID, func(cert *types.Certificate) bool {
 		return cert.Subject == subject && cert.SubjectKeyId == subjectKeyID && cert.SerialNumber == serialNumber
 	})

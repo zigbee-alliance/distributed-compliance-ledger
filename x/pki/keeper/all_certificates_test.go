@@ -23,6 +23,7 @@ func createNCertificates(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.
 
 		keeper.SetAllCertificates(ctx, items[i])
 	}
+
 	return items
 }
 

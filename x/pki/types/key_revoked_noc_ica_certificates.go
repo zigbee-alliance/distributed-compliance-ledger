@@ -12,7 +12,7 @@ const (
 // RevokedNocIcaCertificatesKey returns the store key to retrieve a RevokedNocIcaCertificates from the index fields
 func RevokedNocIcaCertificatesKey(
 	subject string,
-	subjectKeyId string,
+	subjectKeyID string,
 ) []byte {
 	var key []byte
 
@@ -20,8 +20,8 @@ func RevokedNocIcaCertificatesKey(
 	key = append(key, subjectBytes...)
 	key = append(key, []byte("/")...)
 
-	subjectKeyIdBytes := []byte(subjectKeyId)
-	key = append(key, subjectKeyIdBytes...)
+	subjectKeyIDBytes := []byte(subjectKeyID)
+	key = append(key, subjectKeyIDBytes...)
 	key = append(key, []byte("/")...)
 
 	return key

@@ -639,15 +639,15 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_VendorProducts_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "model", "models", "vid"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_VendorProducts_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "model", "models", "vid"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_Model_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "model", "models", "vid", "pid"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_Model_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "model", "models", "vid", "pid"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_ModelAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "model", "models"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_ModelAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "model", "models"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_ModelVersion_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"dcl", "model", "versions", "vid", "pid", "softwareVersion"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_ModelVersion_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"dcl", "model", "versions", "vid", "pid", "softwareVersion"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_ModelVersions_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "model", "versions", "vid", "pid"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_ModelVersions_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "model", "versions", "vid", "pid"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (

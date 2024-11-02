@@ -61,13 +61,7 @@ func (k msgServer) RevokeX509Cert(goCtx context.Context, msg *types.MsgRevokeX50
 
 func (k msgServer) _revokeX509Certificates(ctx sdk.Context, certID types.CertificateIdentifier, certificates types.ApprovedCertificates) {
 	// Revoke certificates with given subject/subjectKeyID
-	revCerts := types.RevokedCertificates{
-		Subject:       certificates.Subject,
-		SubjectKeyId:  certificates.SubjectKeyId,
-		Certs:         certificates.Certs,
-		SchemaVersion: certificates.SchemaVersion,
-	}
-	k.AddRevokedCertificates(ctx, revCerts)
+	k.AddRevokedCertificates(ctx, types.RevokedCertificates(certificates))
 
 	// Remove certificate from global list
 	k.RemoveAllCertificates(ctx, certID.Subject, certID.SubjectKeyId)
@@ -100,6 +94,6 @@ func (k msgServer) _revokeX509Certificate(ctx sdk.Context, cert *types.Certifica
 	} else {
 		k.RemoveAllCertificatesBySerialNumber(ctx, cert.Subject, cert.SubjectKeyId, cert.SerialNumber)
 		k.RemoveApprovedCertificatesBySerialNumber(ctx, cert.Subject, cert.SubjectKeyId, cert.SerialNumber)
-		k.RemoveApprovedCertificatesBySubjectKeyIdBySerialNumber(ctx, cert.Subject, cert.SubjectKeyId, cert.SerialNumber)
+		k.RemoveApprovedCertificatesBySubjectKeyIDBySerialNumber(ctx, cert.Subject, cert.SubjectKeyId, cert.SerialNumber)
 	}
 }

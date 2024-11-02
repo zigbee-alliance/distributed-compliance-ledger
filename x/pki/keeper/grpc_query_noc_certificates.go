@@ -27,7 +27,7 @@ func (k Keeper) NocCertificatesAll(c context.Context, req *types.QueryNocCertifi
 	ctx := sdk.UnwrapSDKContext(c)
 
 	if req.SubjectKeyId != "" {
-		nocCerts, found := k.GetNocCertificatesBySubjectKeyId(
+		nocCerts, found := k.GetNocCertificatesBySubjectKeyID(
 			ctx,
 			req.SubjectKeyId,
 		)

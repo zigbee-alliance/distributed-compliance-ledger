@@ -17,4 +17,4 @@ set -euo pipefail
 
 source integration_tests/upgrade/01-test-upgrade-initialize-0.12.sh
 source integration_tests/upgrade/02-test-upgrade-0.12-to-1.2.sh
-source integration_tests/upgrade/03-test-upgrade-1.2-to-1.4.sh
+source integration_tests/upgrade/03-test-upgrade-1.2-to-1.4.3.sh

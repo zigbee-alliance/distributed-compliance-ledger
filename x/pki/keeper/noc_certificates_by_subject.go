@@ -50,6 +50,7 @@ func (k Keeper) GetNocCertificatesBySubject(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 

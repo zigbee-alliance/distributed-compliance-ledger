@@ -31,7 +31,7 @@ func networkWithRejectedCertificateObjects(t *testing.T, n int) (*network.Networ
 	for i := 0; i < n; i++ {
 		rejectedCertificate := types.RejectedCertificate{
 			Subject:      strconv.Itoa(i),
-			SubjectKeyId: strconv.Itoa(i),
+			SubjectKeyID: strconv.Itoa(i),
 		}
 		nullify.Fill(&rejectedCertificate)
 		state.RejectedCertificateList = append(state.RejectedCertificateList, rejectedCertificate)
@@ -62,7 +62,7 @@ func TestShowRejectedCertificate(t *testing.T) {
 		{
 			desc:           "found",
 			idSubject:      objs[0].Subject,
-			idSubjectKeyID: objs[0].SubjectKeyId,
+			idSubjectKeyID: objs[0].SubjectKeyID,
 
 			args: common,
 			obj:  objs[0],
