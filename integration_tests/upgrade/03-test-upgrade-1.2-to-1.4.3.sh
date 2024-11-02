@@ -1190,7 +1190,7 @@ test_divider
 # PKI
 
 echo "Get x509 root certificate"
-result=$($DCLD_BIN_NEW query pki x509-cert --subject=$root_cert_with_vid_subject_for_1_4_3 --subject-key-id=$root_cert_with_vid_subject_for_1_4_3_key_id)
+result=$($DCLD_BIN_NEW query pki x509-cert --subject=$root_cert_with_vid_subject_for_1_4_3 --subject-key-id=$root_cert_with_vid_subject_key_id_for_1_4_3)
 check_response "$result" "\"subject\": \"$root_cert_with_vid_subject_for_1_4_3\""
 check_response "$result" "\"subjectKeyId\": \"$root_cert_with_vid_subject_key_id_for_1_4_3\""
 check_response "$result" "\"vid\": $vid_for_1_4_3"
@@ -1251,7 +1251,7 @@ response_does_not_contain "$result" "$noc_ica_cert_1_subject_key_id_for_1_4_3"
 
 echo "Get all noc x509 root certificates"
 result=$($DCLD_BIN_NEW query pki noc-x509-root-certs --vid=$vid_for_1_4_3)
-check_response "$result" "\[\]"
+check_response "$result" "Not Found"
 response_does_not_contain "$result" "$noc_root_cert_1_subject_key_id_for_1_4_3"
 
 echo "Get all noc x509 root certificates by vid $vid_for_1_4_3 (must be empty)"
