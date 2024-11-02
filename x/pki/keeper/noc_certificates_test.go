@@ -27,6 +27,7 @@ func createNNocCertificates(keeper *keeper.Keeper, ctx sdk.Context, n int) []typ
 			Certs:        items[i].Certs,
 		})
 	}
+
 	return items
 }
 

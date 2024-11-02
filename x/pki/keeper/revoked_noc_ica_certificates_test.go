@@ -23,6 +23,7 @@ func createNRevokedNocIcaCertificates(keeper *keeper.Keeper, ctx sdk.Context, n 
 
 		keeper.SetRevokedNocIcaCertificates(ctx, items[i])
 	}
+
 	return items
 }
 

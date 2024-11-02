@@ -100,7 +100,7 @@ package cli_test
 //	}
 //}
 //
-//func TestListRevokedNocIcaCertificates(t *testing.T) {
+// func TestListRevokedNocIcaCertificates(t *testing.T) {
 //	net, objs := networkWithRevokedNocIcaCertificatesObjects(t, 5)
 //
 //	ctx := net.Validators[0].ClientCtx
