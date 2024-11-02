@@ -1,4 +1,4 @@
-# Upgrade Module
+# Upgrade
 
 <!-- markdownlint-disable MD036 -->
 

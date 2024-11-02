@@ -1,4 +1,4 @@
-# Model and Model Version Module
+# Model and Model Version
 
 <!-- markdownlint-disable MD036 -->
 

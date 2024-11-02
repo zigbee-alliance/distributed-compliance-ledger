@@ -1,4 +1,4 @@
-# Vendor Info Module
+# Vendor Info
 
 <!-- markdownlint-disable MD036 -->
 

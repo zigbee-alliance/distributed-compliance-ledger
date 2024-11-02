@@ -1,8 +1,6 @@
-# Validator Node Module
+# Validator Node
 
 <!-- markdownlint-disable MD036 -->
-
-## VALIDATOR_NODE
 
 ### ADD_VALIDATOR_NODE
 

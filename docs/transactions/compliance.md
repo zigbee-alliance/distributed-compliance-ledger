@@ -1,4 +1,4 @@
-# Compliance Module
+# Compliance
 
 <!-- markdownlint-disable MD036 -->
 
@@ -356,7 +356,7 @@ Should be sent to trusted nodes only.
 
 **Status: Implemented**
 
-Gets all stored device software compliances.
+Gets all stored device software compliance's.
 
 Should be sent to trusted nodes only.
 

@@ -1,4 +1,4 @@
-## AUTH Module
+## AUTH
 
 <!-- markdownlint-disable MD036 -->
 

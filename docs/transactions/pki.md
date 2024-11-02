@@ -1,4 +1,4 @@
-# X509 PKI Module
+# X509 PKI
 
 <!-- markdownlint-disable MD036 -->
 
