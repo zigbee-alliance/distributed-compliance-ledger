@@ -1633,7 +1633,7 @@ Use [GET_REVOKED_NOC_ICA](#get_revoked_noc_ica-icac) to get a revoked ica certif
 - CLI command:
   - `dcld query pki noc-x509-cert --subject=<base64 string> --subject-key-id=<hex string>`
 - REST API:
-  - GET `/dcl/pki/noc-certificates/{subject}/{subject_key_id}`
+  - GET `/dcl/pki/all-noc-certificates/{subject}/{subject_key_id}`
 
 #### GET_NOC_ROOT_BY_VID (RCACs)
 
@@ -1704,7 +1704,7 @@ Use [GET_ALL_REVOKED_NOC_ICA](#get_all_revoked_noc_ica-icacs) to get a list of a
 - CLI command:
   - `dcld query pki all-noc-subject-x509-certs --subject=<base64 string>`
 - REST API:
-  - GET `/dcl/pki/noc-certificates/{subject}`
+  - GET `/dcl/pki/all-noc-certificates/{subject}`
 
 #### GET_REVOKED_NOC_ROOT (RCAC)
 

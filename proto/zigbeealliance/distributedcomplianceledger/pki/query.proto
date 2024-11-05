@@ -130,15 +130,15 @@ service Query {
 
   // Queries a list of NocCertificates items.
   rpc NocCertificatesAll(QueryNocCertificatesRequest) returns (QueryNocCertificatesResponse) {
-    option (google.api.http).get = "/dcl/pki/noc-certificates";
+    option (google.api.http).get = "/dcl/pki/all-noc-certificates";
   }
   // Queries a NocCertificatesBySubject by index.
   rpc NocCertificatesBySubject(QueryGetNocCertificatesBySubjectRequest) returns (QueryGetNocCertificatesBySubjectResponse) {
-    option (google.api.http).get = "/dcl/pki/noc-certificates/{subject}";
+    option (google.api.http).get = "/dcl/pki/all-noc-certificates/{subject}";
   }
   // Queries a NocCertificates by index.
   rpc NocCertificates(QueryGetNocCertificatesRequest) returns (QueryGetNocCertificatesResponse) {
-    option (google.api.http).get = "/dcl/pki/noc-certificates/{subject}/{subjectKeyId}";
+    option (google.api.http).get = "/dcl/pki/all-noc-certificates/{subject}/{subjectKeyId}";
   }
 
   // Queries a NocCertificatesByVidAndSkid by index.

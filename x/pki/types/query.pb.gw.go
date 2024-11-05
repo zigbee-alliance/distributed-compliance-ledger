@@ -3145,11 +3145,11 @@ var (
 
 	pattern_Query_PkiRevocationDistributionPointsByIssuerSubjectKeyID_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "pki", "revocation-points", "issuerSubjectKeyID"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_NocCertificatesAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "noc-certificates"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_NocCertificatesAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "all-noc-certificates"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_NocCertificatesBySubject_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "pki", "noc-certificates", "subject"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_NocCertificatesBySubject_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "pki", "all-noc-certificates", "subject"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_NocCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "noc-certificates", "subject", "subjectKeyId"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_NocCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "all-noc-certificates", "subject", "subjectKeyId"}, "", runtime.AssumeColonVerbOpt(false)))
 
 	pattern_Query_NocCertificatesByVidAndSkid_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "noc-certificates", "vid", "subjectKeyId"}, "", runtime.AssumeColonVerbOpt(false)))
 
