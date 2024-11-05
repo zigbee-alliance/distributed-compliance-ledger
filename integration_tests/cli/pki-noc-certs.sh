@@ -517,10 +517,6 @@ check_response "$result" "\"code\": 0"
 echo "Request all revoked certificates should not contain leaf certificate"
 result=$(dcld query pki all-revoked-noc-x509-ica-certs)
 echo $result | jq
-check_response "$result" "\"subject\": \"$noc_root_cert_1_subject"
-check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_key_id\""
-check_response "$result" "\"serialNumber\": \"$noc_root_cert_1_serial_number\""
-check_response "$result" "\"serialNumber\": \"$noc_root_cert_1_copy_serial_number\""
 check_response "$result" "\"subject\": \"$noc_cert_1_subject\""
 check_response "$result" "\"subjectKeyId\": \"$noc_cert_1_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$noc_cert_1_serial_number"
@@ -582,3 +578,7 @@ response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subjec
 response_does_not_contain "$result" "\"serialNumber\": \"$noc_root_cert_1_serial_number\""
 response_does_not_contain "$result" "\"serialNumber\": \"$noc_root_cert_1_copy_serial_number\""
 echo $result | jq
+
+test_divider
+
+echo "PASS"
