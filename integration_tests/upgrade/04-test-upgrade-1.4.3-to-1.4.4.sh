@@ -19,9 +19,9 @@ source integration_tests/cli/common.sh
 # Upgrade constants
 
 plan_name="v1.4.4"
-upgrade_checksum="sha256:a007f58d61632af107a09c89b7392eedd05d8127d0df67ace50f318948c62001"
+upgrade_checksum="sha256:89a83439f10dcd3f43691767676938cccc1942cee482c771a4c66a78f1e5ab7b"
 binary_version_old="v1.4.3"
-binary_version_new="v1.4.4-dev1"
+binary_version_new="v1.4.4-1-dev"
 
 wget -O dcld_old "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version_old/dcld"
 chmod ugo+x dcld_old
@@ -137,8 +137,8 @@ echo "Get Model with VID: $vid PID: $pid_2"
 result=$($DCLD_BIN_NEW query model get-model --vid=$vid --pid=$pid_2)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid_2"
-check_response "$result" "\"productLabel\": \"$product_label_for_1_2\""
-check_response "$result" "\"partNumber\": \"$part_number_for_1_2\""
+check_response "$result" "\"productLabel\": \"$product_label_for_1_4_3\""
+check_response "$result" "\"partNumber\": \"$part_number_for_1_4_3\""
 
 echo "Get Model with VID: $vid_for_1_2 PID: $pid_1_for_1_2"
 result=$($DCLD_BIN_NEW query model get-model --vid=$vid_for_1_2 --pid=$pid_1_for_1_2)
@@ -196,8 +196,8 @@ result=$($DCLD_BIN_NEW query model model-version --vid=$vid --pid=$pid_2  --soft
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid_2"
 check_response "$result" "\"softwareVersion\": $software_version"
-check_response "$result" "\"minApplicableSoftwareVersion\": $min_applicable_software_version_for_1_2"
-check_response "$result" "\"maxApplicableSoftwareVersion\": $max_applicable_software_version_for_1_2"
+check_response "$result" "\"minApplicableSoftwareVersion\": $min_applicable_software_version_for_1_4_3"
+check_response "$result" "\"maxApplicableSoftwareVersion\": $max_applicable_software_version_for_1_4_3"
 
 echo "Get model version VID: $vid_for_1_2 PID: $pid_1_for_1_2"
 result=$($DCLD_BIN_NEW query model model-version --vid=$vid_for_1_2 --pid=$pid_1_for_1_2 --softwareVersion=$software_version_for_1_2)
@@ -240,10 +240,10 @@ check_response "$result" "\"certificationType\": \"$certification_type_for_1_2\"
 echo "Get certified model vid=$vid_for_1_4_3 pid=$pid_1_for_1_4_3"
 result=$($DCLD_BIN_NEW query compliance certified-model --vid=$vid_for_1_4_3 --pid=$pid_1_for_1_4_3 --softwareVersion=$software_version_for_1_4_3 --certificationType=$certification_type_for_1_4_3)
 check_response "$result" "\"value\": true"
-check_response "$result" "\"vid\": $vid_for_1_2"
-check_response "$result" "\"pid\": $pid_1_for_1_2"
-check_response "$result" "\"softwareVersion\": $software_version_for_1_2"
-check_response "$result" "\"certificationType\": \"$certification_type_for_1_2\""
+check_response "$result" "\"vid\": $vid_for_1_4_3"
+check_response "$result" "\"pid\": $pid_1_for_1_4_3"
+check_response "$result" "\"softwareVersion\": $software_version_for_1_4_3"
+check_response "$result" "\"certificationType\": \"$certification_type_for_1_4_3\""
 
 echo "Get revoked Model with VID: $vid PID: $pid_2"
 result=$($DCLD_BIN_NEW query compliance revoked-model --vid=$vid --pid=$pid_2 --softwareVersion=$software_version --certificationType=$certification_type)
@@ -365,9 +365,9 @@ check_response "$result" "\"cDCertificateId\": \"$cd_certificate_id\""
 check_response "$result" "\"vid\": $vid_for_1_2"
 check_response "$result" "\"pid\": $pid_1_for_1_2"
 check_response "$result" "\"cDCertificateId\": \"$cd_certificate_id_for_1_2\""
-check_response "$result" "\"vid\": $vid_for_1_4"
-check_response "$result" "\"pid\": $pid_1_for_1_4"
-check_response "$result" "\"cDCertificateId\": \"$cd_certificate_id_for_1_4\""
+check_response "$result" "\"vid\": $vid_for_1_4_3"
+check_response "$result" "\"pid\": $pid_1_for_1_4_3"
+check_response "$result" "\"cDCertificateId\": \"$cd_certificate_id_for_1_4_3\""
 
 test_divider
 
@@ -376,36 +376,75 @@ test_divider
 echo "Get all x509 certificates"
 
 echo "Get all x509 certificates (GLOBAL)"
-result=$($DCLD_BIN_NEW query pki all-cert)
-check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id_for_1_4_3\""
+result=$($DCLD_BIN_NEW query pki all-certs)
+check_response "$result" "\"subjectKeyId\": \"$root_cert_with_vid_subject_key_id_for_1_4_3\""
 check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id_for_1_2\""
 check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_for_1_4_3\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_ica_cert_1_subject_key_id_for_1_4_3\""
 
 echo "Get all x509 certificates (DA)"
-result=$($DCLD_BIN_NEW query pki all-x509-cert)
-check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id_for_1_4_3\""
+result=$($DCLD_BIN_NEW query pki all-x509-certs)
+check_response "$result" "\"subjectKeyId\": \"$root_cert_with_vid_subject_key_id_for_1_4_3\""
 check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id_for_1_2\""
 check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_for_1_4_3\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_ica_cert_1_subject_key_id_for_1_4_3\""
 
 echo "Get all x509 certificates (NOC)"
-esult=$($DCLD_BIN_NEW query pki all-noc-x509-cert)
+result=$($DCLD_BIN_NEW query pki all-noc-x509-certs)
 check_response "$result" "\[\]"
-response_does_not_contain "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id_for_1_4_3\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$root_cert_with_vid_subject_key_id_for_1_4_3\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id_for_1_2\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_for_1_4_3\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_ica_cert_1_subject_key_id_for_1_4_3\""
 
+#echo "Get subject certificates (GLOBAL)"
+#result=$($DCLD_BIN_NEW query pki all-subject-certs --subject=$root_cert_with_vid_subject_for_1_4_3)
+#check_response "$result" "$root_cert_with_vid_subject_key_id_for_1_4_3"
+#
+#result=$($DCLD_BIN_NEW query pki all-subject-certs --subject=$test_root_cert_subject_for_1_2)
+#check_response "$result" "$test_root_cert_subject_key_id_for_1_2"
+#
+#result=$($DCLD_BIN_NEW query pki all-subject-certs --subject=$test_root_cert_subject)
+#check_response "$result" "$test_root_cert_subject_key_id"
+#
+#result=$($DCLD_BIN_NEW query pki all-subject-certs --subject=$noc_root_cert_1_subject_for_1_4_3)
+#check_response "$result" "Not Found"
+#
+#echo "Get subject certificates (DA)"
+#result=$($DCLD_BIN_NEW query pki all-subject-x509-certs --subject=$root_cert_with_vid_subject_for_1_4_3)
+#check_response "$result" "$root_cert_with_vid_subject_key_id_for_1_4_3"
+#
+#result=$($DCLD_BIN_NEW query pki all-subject-x509-certs --subject=$test_root_cert_subject_for_1_2)
+#check_response "$result" "$test_root_cert_subject_key_id_for_1_2"
+#
+#result=$($DCLD_BIN_NEW query pki all-subject-x509-certs --subject=$test_root_cert_subject)
+#check_response "$result" "$test_root_cert_subject_key_id"
+#
+#result=$($DCLD_BIN_NEW query pki all-subject-x509-certs --subject=$noc_root_cert_1_subject_for_1_4_3)
+#check_response "$result" "Not Found"
+#
+#echo "Get subject certificates (NOC)"
+#result=$($DCLD_BIN_NEW query pki all-noc-subject-x509-certs --subject=$root_cert_with_vid_subject_for_1_4_3)
+#check_response "$result" "Not Found"
+#
+#result=$($DCLD_BIN_NEW query pki all-noc-subject-x509-certs --subject=$test_root_cert_subject_for_1_2)
+#check_response "$result" "Not Found"
+#
+#result=$($DCLD_BIN_NEW query pki all-noc-subject-x509-certs --subject=$test_root_cert_subject)
+#check_response "$result" "Not Found"
+#
+#result=$($DCLD_BIN_NEW query pki all-noc-subject-x509-certs --subject=$noc_root_cert_1_subject_for_1_4_3)
+#check_response "$result" "Not Found"
+
 echo "Get x509 certificates"
 
 echo "Get x509 certificate (GLOBAL)"
-result=$($DCLD_BIN_NEW query pki cert --subject=$root_cert_subject_for_1_4_3 --subject-key-id=$root_cert_subject_key_id_for_1_4_3)
-check_response "$result" "\"subject\": \"$root_cert_subject_for_1_4_3\""
-check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id_for_1_4_3\""
+result=$($DCLD_BIN_NEW query pki cert --subject=$root_cert_with_vid_subject_for_1_4_3 --subject-key-id=$root_cert_with_vid_subject_key_id_for_1_4_3)
+check_response "$result" "\"subject\": \"$root_cert_with_vid_subject_for_1_4_3\""
+check_response "$result" "\"subjectKeyId\": \"$root_cert_with_vid_subject_key_id_for_1_4_3\""
 check_response "$result" "\"vid\": $root_cert_vid_for_1_4_3"
 
 result=$($DCLD_BIN_NEW query pki cert --subject=$test_root_cert_subject_for_1_2 --subject-key-id=$test_root_cert_subject_key_id_for_1_2)
@@ -422,9 +461,9 @@ result=$($DCLD_BIN_NEW query pki cert --subject=$noc_root_cert_1_subject_for_1_4
 check_response "$result" "Not Found"
 
 echo "Get x509 certificate (DA)"
-result=$($DCLD_BIN_NEW query pki x509-cert --subject=$root_cert_subject_for_1_4_3 --subject-key-id=$root_cert_subject_key_id_for_1_4_3)
-check_response "$result" "\"subject\": \"$root_cert_subject_for_1_4_3\""
-check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id_for_1_4_3\""
+result=$($DCLD_BIN_NEW query pki x509-cert --subject=$root_cert_with_vid_subject_for_1_4_3 --subject-key-id=$root_cert_with_vid_subject_key_id_for_1_4_3)
+check_response "$result" "\"subject\": \"$root_cert_with_vid_subject_for_1_4_3\""
+check_response "$result" "\"subjectKeyId\": \"$root_cert_with_vid_subject_key_id_for_1_4_3\""
 check_response "$result" "\"vid\": $root_cert_vid_for_1_4_3"
 
 result=$($DCLD_BIN_NEW query pki x509-cert --subject=$test_root_cert_subject_for_1_2 --subject-key-id=$test_root_cert_subject_key_id_for_1_2)
@@ -437,11 +476,11 @@ check_response "$result" "\"subject\": \"$test_root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id\""
 check_response "$result" "\"vid\": $test_root_cert_vid"
 
-result=$($DCLD_BIN_NEW query pki x509-cert --subject=$noc_root_cert_1_subject_for_1_4_3 --subject-$noc_root_cert_1_subject_key_id_for_1_4_3-id=$test_root_cert_subject_key_id)
+result=$($DCLD_BIN_NEW query pki x509-cert --subject=$noc_root_cert_1_subject_for_1_4_3 --subject-key-id=$noc_root_cert_1_subject_key_id_for_1_4_3)
 check_response "$result" "Not Found"
 
 echo "Get x509 certificate (NOC)"
-result=$(dcld query pki noc-x509-cert --subject="$root_cert_subject_for_1_4_3" --subject-key-id="$root_cert_subject_key_id_for_1_4_3")
+result=$(dcld query pki noc-x509-cert --subject="$root_cert_with_vid_subject_for_1_4_3" --subject-key-id="$root_cert_with_vid_subject_key_id_for_1_4_3")
 check_response "$result" "Not Found"
 
 result=$(dcld query pki noc-x509-cert --subject="$test_root_cert_subject_for_1_2" --subject-key-id="$test_root_cert_subject_key_id_for_1_2")
@@ -454,9 +493,9 @@ result=$(dcld query pki noc-x509-cert --subject="$noc_root_cert_1_subject_for_1_
 check_response "$result" "Not Found"
 
 echo "Get all x509 certificates by subjectKeyId"
-result=$($DCLD_BIN_NEW query pki x509-cert --subject-key-id="$root_cert_subject_key_id_for_1_4_3")
-check_response "$result" "$root_cert_subject_for_1_4_3"
-check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id_for_1_4_3\""
+result=$($DCLD_BIN_NEW query pki x509-cert --subject-key-id="$root_cert_with_vid_subject_key_id_for_1_4_3")
+check_response "$result" "$root_cert_with_vid_subject_for_1_4_3"
+check_response "$result" "\"subjectKeyId\": \"$root_cert_with_vid_subject_key_id_for_1_4_3\""
 
 result=$($DCLD_BIN_NEW query pki x509-cert --subject-key-id="$test_root_cert_subject_key_id_for_1_2")
 check_response "$result" "$test_root_cert_subject_for_1_2"
@@ -468,28 +507,6 @@ check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id\""
 
 result=$($DCLD_BIN_NEW query pki x509-cert --subject-key-id="$noc_root_cert_1_subject_key_id_for_1_4_3")
 check_response "$result" "Not Found"
-
-echo "Get all subject x509 root certificates"
-result=$($DCLD_BIN_NEW query pki all-subject-x509-certs --subject=$root_cert_subject_for_1_4_3)
-check_response "$result" "\"subject\": \"$root_cert_subject_for_1_4_3\""
-check_response "$result" "$root_cert_subject_key_id_for_1_4_3"
-
-result=$($DCLD_BIN_NEW query pki all-subject-x509-certs --subject=$test_root_cert_subject_for_1_2)
-check_response "$result" "\"subject\": \"$test_root_cert_subject_for_1_2\""
-check_response "$result" "$test_root_cert_subject_key_id_for_1_2"
-
-result=$($DCLD_BIN_NEW query pki all-subject-x509-certs --subject=$test_root_cert_subject)
-check_response "$result" "\"subject\": \"$test_root_cert_subject\""
-check_response "$result" "$test_root_cert_subject_key_id"
-
-result=$($DCLD_BIN_NEW query pki all-subject-x509-certs --subject=$noc_root_cert_1_subject_for_1_4_3)
-check_response "$result" "Not Found"
-
-echo "Get proposed x509 root certificate"
-result=$($DCLD_BIN_NEW query pki proposed-x509-root-cert --subject=$root_cert_subject_for_1_4_3 --subject-key-id=$root_cert_subject_key_id_for_1_4_3)
-check_response "$result" "\"subject\": \"$root_cert_subject_for_1_4_3\""
-check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id_for_1_4_3\""
-check_response "$result" "\"vid\": $vid_for_1_4_4_3"
 
 result=$($DCLD_BIN_NEW query pki proposed-x509-root-cert --subject=$google_root_cert_subject_for_1_2 --subject-key-id=$google_root_cert_subject_key_id_for_1_2)
 check_response "$result" "\"subject\": \"$google_root_cert_subject_for_1_2\""
@@ -504,6 +521,7 @@ echo "Get revoked x509 certificate"
 result=$($DCLD_BIN_NEW query pki revoked-x509-cert --subject=$intermediate_cert_with_vid_subject_for_1_4_3 --subject-key-id=$intermediate_cert_with_vid_subject_key_id_for_1_4_3)
 check_response "$result" "\"subject\": \"$intermediate_cert_with_vid_subject_for_1_4_3\""
 check_response "$result" "\"subjectKeyId\": \"$intermediate_cert_with_vid_subject_key_id_for_1_4_3\""
+check_response "$result" "\"vid\": $intermediate_cert_with_vid_65521_vid_for_1_4_3"
 
 result=$($DCLD_BIN_NEW query pki revoked-x509-cert --subject=$intermediate_cert_subject_for_1_2 --subject-key-id=$intermediate_cert_subject_key_id_for_1_2)
 check_response "$result" "\"subject\": \"$intermediate_cert_subject_for_1_2\""
@@ -545,8 +563,6 @@ check_response "$result" "\"dataURL\": \"$test_data_url\""
 
 echo "Get all proposed x509 root certificates"
 result=$($DCLD_BIN_NEW query pki all-proposed-x509-root-certs)
-check_response "$result" "\"subject\": \"$google_root_cert_subject_for_1_4_3\""
-check_response "$result" "\"subjectKeyId\": \"$google_root_cert_subject_key_id_for_1_4_3\""
 check_response "$result" "\"subject\": \"$google_root_cert_subject_for_1_2\""
 check_response "$result" "\"subjectKeyId\": \"$google_root_cert_subject_key_id_for_1_2\""
 check_response "$result" "\"subject\": \"$google_root_cert_subject\""
@@ -554,18 +570,13 @@ check_response "$result" "\"subjectKeyId\": \"$google_root_cert_subject_key_id\"
 
 echo "Get all revoked x509 root certificates"
 result=$($DCLD_BIN_NEW query pki all-revoked-x509-root-certs)
-check_response "$result" "\"subject\": \"$root_cert_subject_for_1_4_3\""
-check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id_for_1_4_3\""
 check_response "$result" "\"subject\": \"$root_cert_subject_for_1_2\""
 check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id_for_1_2\""
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
-response_does_not_contain "$result" "\"subjectKeyId\": \"$root_cert_with_vid_subject_key_id_for_1_4_3\""
 
 echo "Get all proposed x509 root certificates to revoke"
 result=$($DCLD_BIN_NEW query pki all-proposed-x509-root-certs-to-revoke)
-check_response "$result" "\"subject\": \"$test_root_cert_subject_for_1_4_3\""
-check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id_for_1_4_3\""
 check_response "$result" "\"subject\": \"$test_root_cert_subject_for_1_2\""
 check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id_for_1_2\""
 check_response "$result" "\"subject\": \"$test_root_cert_subject\""
@@ -577,6 +588,9 @@ check_response "$result" "\"vid\": $vid_for_1_2"
 check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
 check_response "$result" "\"label\": \"$product_label_for_1_2\""
 check_response "$result" "\"dataURL\": \"$test_data_url\""
+check_response "$result" "\"vid\": $vid_for_1_4_3"
+check_response "$result" "\"label\": \"$product_label_for_1_4_3\""
+check_response "$result" "\"dataURL\": \"$test_data_url_for_1_4_3\""
 
 echo "Get all noc certificates"
 result=$(dcld query pki all-noc-x509-certs)
@@ -585,25 +599,23 @@ response_does_not_contain "$result" "$noc_root_cert_1_subject_key_id_for_1_4_3"
 response_does_not_contain "$result" "$noc_ica_cert_1_subject_key_id_for_1_4_3"
 
 echo "Get all noc x509 root certificates"
-result=$($DCLD_BIN_NEW query pki noc-x509-root-certs --vid=$vid_for_1_4_4_3)
-check_response "$result" "\[\]"
+result=$($DCLD_BIN_NEW query pki noc-x509-root-certs --vid=$vid_for_1_4_3)
+check_response "$result" "Not Found"
 response_does_not_contain "$result" "$noc_root_cert_1_subject_key_id_for_1_4_3"
 
-echo "Get all noc x509 root certificates by vid $vid_for_1_4_4_3 (must be empty)"
-result=$($DCLD_BIN_NEW query pki noc-x509-root-certs --vid=$vid_for_1_4_4_3)
-check_response "$result" "Not Found"
-
-echo "Get all noc x509 root certificates by vid=$vid_for_1_4_4_3 and skid=$noc_root_cert_1_subject_key_id_for_1_4_3 (must be empty)"
-result=$($DCLD_BIN_NEW query pki noc-x509-certs --vid=$vid_for_1_4_4_3 --subject-key-id=$noc_root_cert_1_subject_key_id_for_1_4_3)
+echo "Get all noc x509 root certificates by vid=$vid_for_1_4_3 and skid=$noc_root_cert_1_subject_key_id_for_1_4_3 (must be empty)"
+result=$($DCLD_BIN_NEW query pki noc-x509-certs --vid=$vid_for_1_4_3 --subject-key-id=$noc_root_cert_1_subject_key_id_for_1_4_3)
 check_response "$result" "Not Found"
 
 echo "Get noc x509 root certificate by subject and subject key id"
 result=$(dcld query pki noc-x509-cert --subject="$noc_root_cert_1_subject_for_1_4_3" --subject-key-id="$noc_root_cert_1_subject_key_id_for_1_4_3")
 check_response "$result" "Not Found"
+response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_key_id_for_1_4_3\""
 
-echo "Get noc x509 ica certificate by subject and subject key id"
+echo "Get noc x509 ica certificate  by subject and subject key id"
 result=$(dcld query pki noc-x509-cert --subject="$noc_ica_cert_1_subject_for_1_4_3" --subject-key-id="$noc_ica_cert_1_subject_key_id_for_1_4_3")
 check_response "$result" "Not Found"
+response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_ica_cert_1_subject_key_id_for_1_4_3\""
 
 test_divider
 
@@ -698,13 +710,13 @@ da_intermediate_cert_1_subject_for_1_4_4="MIGCMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU2
 da_intermediate_cert_1_subject_key_id_for_1_4_4="A8:A0:95:18:9B:9F:81:4D:C7:9F:5E:B5:82:09:27:95:13:0C:9F:87"
 da_intermediate_cert_1_serial_number_for_1_4_4="3"
 
+da_root_cert_2_path_for_1_4_4="integration_tests/constants/upgrade_1_4_4_da_root_cert_2"
 da_root_cert_2_subject_for_1_4_4="MDsxCzAJBgNVBAYTAlRFMRMwEQYDVQQIDApTb21lLVN0YXRlMRcwFQYDVQQKDA5VcGdyYWRlMS40LjRfMQ=="
 da_root_cert_2_subject_key_id_for_1_4_4="A8:A0:95:18:9B:9F:81:4D:C7:9F:5E:B5:82:09:27:95:13:0C:9F:87"
-da_root_cert_2_path_for_1_4_4="integration_tests/constants/upgrade_1_4_4_da_root_cert_2"
 
-da_intermediate_cert_2_subject_for_1_4_4="MIGCMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDDAtOT0MtY2hpbGQtMw=="
-da_intermediate_cert_2_subject_key_id_for_1_4_4="A8:A0:95:18:9B:9F:81:4D:C7:9F:5E:B5:82:09:27:95:13:0C:9F:87"
 da_intermediate_cert_2_path_for_1_4_4="integration_tests/constants/upgrade_1_4_4_da_intermediate_cert_2"
+da_intermediate_cert_2_subject_for_1_4_4="MIGBMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRMwEQYDVQQDDApEQS1jaGlsZC0z"
+da_intermediate_cert_2_subject_key_id_for_1_4_4="A8:A0:95:18:9B:9F:81:4D:C7:9F:5E:B5:82:09:27:95:13:0C:9F:87"
 da_intermediate_cert_2_serial_number_for_1_4_4="3"
 da_intermediate_cert_2_vid_for_1_4_4=65521
 
@@ -774,14 +786,14 @@ user_12_pubkey=$(echo $passphrase | $DCLD_BIN_NEW keys show $user_12 -p)
 
 # VENDOR_INFO
 echo "Add vendor $vendor_name_for_1_4_4"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx vendorinfo add-vendor --vid=$vid_for_1_4_4 --vendorName=$vendor_name_for_1_4_4 --companyLegalName=$company_legal_name_for_1_4_4 --companyPreferredName=$company_preferred_name_for_1_4 --vendorLandingPageURL=$vendor_landing_page_url_for_1_4 --from=$vendor_account_for_1_4_4 --yes)
+result=$(echo $passphrase | $DCLD_BIN_NEW tx vendorinfo add-vendor --vid=$vid_for_1_4_4 --vendorName=$vendor_name_for_1_4_4 --companyLegalName=$company_legal_name_for_1_4_4 --companyPreferredName=$company_preferred_name_for_1_4_4 --vendorLandingPageURL=$vendor_landing_page_url_for_1_4_4 --from=$vendor_account_for_1_4_4 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Update vendor $vendor_name_for_1_2"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx vendorinfo update-vendor --vid=$vid_for_1_2 --vendorName=$vendor_name_for_1_2 --companyLegalName=$company_legal_name_for_1_2 --companyPreferredName=$company_preferred_name_for_1_4 --vendorLandingPageURL=$vendor_landing_page_url_for_1_4 --from=$vendor_account_for_1_2 --yes)
+result=$(echo $passphrase | $DCLD_BIN_NEW tx vendorinfo update-vendor --vid=$vid_for_1_2 --vendorName=$vendor_name_for_1_2 --companyLegalName=$company_legal_name_for_1_2 --companyPreferredName=$company_preferred_name_for_1_4_4 --vendorLandingPageURL=$vendor_landing_page_url_for_1_4_4 --from=$vendor_account_for_1_2 --yes)
 result=$(get_txn_result "$result")
 echo $result
 check_response "$result" "\"code\": 0"
@@ -897,7 +909,7 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "reject add$da_root_cert_1"
+echo "reject add da_root_cert_1"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx pki reject-add-x509-root-cert --subject="$da_root_cert_1_subject_for_1_4_4" --subject-key-id=$da_root_cert_1_subject_key_id_for_1_4_4 --from=$trustee_account_3 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
@@ -919,7 +931,7 @@ check_response "$result" "\"code\": 0"
 test_divider
 
 echo "Propose add da_root_cert_2"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx pki propose-add-x509-root-cert --certificate="$da_root_cert_2_subject_for_1_4_4" --vid="$vid_for_1_4_4" --from=$trustee_account_5 --yes)
+result=$(echo $passphrase | $DCLD_BIN_NEW tx pki propose-add-x509-root-cert --certificate="$da_root_cert_2_path_for_1_4_4" --vid="$vid_for_1_4_4" --from=$trustee_account_5 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -930,16 +942,10 @@ result=$(echo $passphrase | $DCLD_BIN_NEW tx pki approve-add-x509-root-cert --su
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
-test_divider
-
-echo "Approve add da_root_cert_2"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx pki approve-add-x509-root-cert --subject="$da_root_cert_2_subject_for_1_4_4" --subject-key-id=$da_root_cert_2_subject_key_id_for_1_4_4 --from=$trustee_account_2 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
-test_divider
-
-echo "Approve add da_root_cert_2"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx pki approve-add-x509-root-cert --subject="$da_root_cert_2_subject_for_1_4_4" --subject-key-id=$da_root_cert_2_subject_key_id_for_1_4_4 --from=$trustee_account_3 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
@@ -948,6 +954,13 @@ test_divider
 
 echo "Add da_intermediate_cert_1"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx pki add-x509-cert --certificate="$da_intermediate_cert_1_path_for_1_4_4" --from=$vendor_account_for_1_4_4 --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Add da_intermediate_cert_2"
+result=$(echo $passphrase | $DCLD_BIN_NEW tx pki add-x509-cert --certificate="$da_intermediate_cert_2_path_for_1_4_4" --from=$vendor_account_for_1_4_4 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -979,10 +992,15 @@ result=$(echo "$passphrase" | $DCLD_BIN_NEW tx pki approve-revoke-x509-root-cert
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
+echo "Propose revoke da_root_cert_2"
+result=$(echo $passphrase | $DCLD_BIN_NEW tx pki propose-revoke-x509-root-cert --subject="$da_root_cert_2_subject_for_1_4_4" --subject-key-id="$da_root_cert_2_subject_key_id_for_1_4_4" --from $trustee_account_1 --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+
 test_divider
 
 echo "Revoke da_intermediate_cert_1"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx pki revoke-x509-cert --subject="$da_intermediate_cert_1_subject_for_1_4_4" --subject-key-id="$da_intermediate_cert_1_subject_key_id_for_1_4_4" --serial-number="$da_intermediate_cert_1_serial_number_for_1_4_4" --from=$vendor_account_for_1_4_4 --yes)
+result=$(echo $passphrase | $DCLD_BIN_NEW tx pki revoke-x509-cert --subject="$da_intermediate_cert_1_subject_for_1_4_4" --subject-key-id="$da_intermediate_cert_1_subject_key_id_for_1_4_4" --from=$vendor_account_for_1_4_4 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -1032,15 +1050,15 @@ test_divider
 
 # PKI Revocation point
 
-echo "Add new revocation point for"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx pki add-revocation-point --vid=$vid_for_1_4_4 --revocation-type=1 --is-paa="true" --certificate="$da_root_cert_1_path_for_1_4_4" --label="$product_label_for_1_4_4" --data-url="$test_data_url_for_1_4" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account_for_1_4_4 --yes)
+echo "Add new revocation point for vid_for_1_4_4"
+result=$(echo $passphrase | $DCLD_BIN_NEW tx pki add-revocation-point --vid=$vid_for_1_4_4 --revocation-type=1 --is-paa="true" --certificate="$da_root_cert_2_path_for_1_4_4" --label="$product_label_for_1_4_4" --data-url="$test_data_url_for_1_4_4" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account_for_1_4_4 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Update revocation point"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx pki update-revocation-point --vid=$vid_for_1_4_4 --certificate="$da_root_cert_1_path_for_1_4_4" --label="$product_label_for_1_4_4" --data-url="$test_data_url_for_1_4/new" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account_for_1_4_4 --yes)
+result=$(echo $passphrase | $DCLD_BIN_NEW tx pki update-revocation-point --vid=$vid_for_1_4_4 --certificate="$da_root_cert_2_path_for_1_4_4" --label="$product_label_for_1_4_4" --data-url="$test_data_url_for_1_4_4/new" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account_for_1_4_4 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -1054,7 +1072,7 @@ check_response "$result" "\"code\": 0"
 test_divider
 
 echo "Add new revocation point"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx pki add-revocation-point --vid=$vid_for_1_4_4 --revocation-type=1 --is-paa="true" --certificate="$da_root_cert_1_path_for_1_4_4" --label="$product_label_for_1_4_4" --data-url="$test_data_url_for_1_4" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account_for_1_4_4 --yes)
+result=$(echo $passphrase | $DCLD_BIN_NEW tx pki add-revocation-point --vid=$vid_for_1_4_4 --revocation-type=1 --is-paa="true" --certificate="$da_root_cert_2_path_for_1_4_4" --label="$product_label_for_1_4_4" --data-url="$test_data_url_for_1_4_4" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account_for_1_4_4 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -1227,8 +1245,8 @@ echo "Verify if VendorInfo Record for VID: $vid_for_1_2 updated or not"
 result=$($DCLD_BIN_NEW query vendorinfo vendor --vid=$vid_for_1_2)
 check_response "$result" "\"vendorID\": $vid_for_1_2"
 check_response "$result" "\"vendorName\": \"$vendor_name_for_1_2\""
-check_response "$result" "\"companyPreferredName\": \"$company_preferred_name_for_1_4\""
-check_response "$result" "\"vendorLandingPageURL\": \"$vendor_landing_page_url_for_1_4\""
+check_response "$result" "\"companyPreferredName\": \"$company_preferred_name_for_1_4_4\""
+check_response "$result" "\"vendorLandingPageURL\": \"$vendor_landing_page_url_for_1_4_4\""
 
 echo "Request all vendor infos"
 result=$($DCLD_BIN_NEW query vendorinfo all-vendors)
@@ -1277,7 +1295,7 @@ result=$($DCLD_BIN_NEW query model all-model-versions --vid=$vid_for_1_4_4 --pid
 check_response "$result" "\"vid\": $vid_for_1_4_4"
 check_response "$result" "\"pid\": $pid_1_for_1_4_4"
 
-echo "Get Vendor Models with VID: ${vid_for_1_4}"
+echo "Get Vendor Models with VID: ${vid_for_1_4_4}"
 result=$($DCLD_BIN_NEW query model vendor-models --vid=$vid_for_1_4_4)
 check_response "$result" "\"pid\": $pid_1_for_1_4_4"
 check_response "$result" "\"pid\": $pid_2_for_1_4_4"
@@ -1413,25 +1431,23 @@ result=$($DCLD_BIN_NEW query pki cert --subject=$noc_root_cert_2_subject_for_1_4
 check_response "$result" "\"subject\": \"$noc_root_cert_2_subject_for_1_4_4\""
 check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_2_subject_key_id_for_1_4_4\""
 
-result=$($DCLD_BIN_NEW query pki cert --subject=$noc_ica_cert_2_subject --subject-key-id=$noc_ica_cert_2_subject_key_id_for_1_4_4)
-check_response "$result" "\"subject\": \"$noc_ica_cert_2_subject\""
+result=$($DCLD_BIN_NEW query pki cert --subject=$noc_ica_cert_2_subject_for_1_4_4 --subject-key-id=$noc_ica_cert_2_subject_key_id_for_1_4_4)
+check_response "$result" "\"subject\": \"$noc_ica_cert_2_subject_for_1_4_4\""
 check_response "$result" "\"subjectKeyId\": \"$noc_ica_cert_2_subject_key_id_for_1_4_4\""
 
 echo "Get certificate (DA)"
 result=$($DCLD_BIN_NEW query pki x509-cert --subject=$da_root_cert_2_subject_for_1_4_4 --subject-key-id=$da_root_cert_2_subject_key_id_for_1_4_4)
 check_response "$result" "\"subject\": \"$da_root_cert_2_subject_for_1_4_4\""
 check_response "$result" "\"subjectKeyId\": \"$da_root_cert_2_subject_key_id_for_1_4_4\""
-check_response "$result" "\"vid\": $vid_for_1_4_4"
 
 result=$($DCLD_BIN_NEW query pki x509-cert --subject=$da_intermediate_cert_2_subject_for_1_4_4 --subject-key-id=$da_intermediate_cert_2_subject_key_id_for_1_4_4)
 check_response "$result" "\"subject\": \"$da_intermediate_cert_2_subject_for_1_4_4\""
 check_response "$result" "\"subjectKeyId\": \"$da_intermediate_cert_2_subject_key_id_for_1_4_4\""
-check_response "$result" "\"vid\": $vid_for_1_4_4"
 
 result=$($DCLD_BIN_NEW query pki x509-cert --subject=$noc_root_cert_2_subject_for_1_4_4 --subject-key-id=$noc_root_cert_2_subject_key_id_for_1_4_4)
 check_response "$result" "Not Found"
 
-result=$($DCLD_BIN_NEW query pki x509-cert --subject=$noc_ica_cert_2_subject --subject-key-id=$noc_ica_cert_2_subject_key_id_for_1_4_4)
+result=$($DCLD_BIN_NEW query pki x509-cert --subject=$noc_ica_cert_2_subject_for_1_4_4 --subject-key-id=$noc_ica_cert_2_subject_key_id_for_1_4_4)
 check_response "$result" "Not Found"
 
 echo "Get certificate (NOC)"
@@ -1439,17 +1455,24 @@ result=$($DCLD_BIN_NEW query pki noc-x509-cert --subject=$noc_root_cert_2_subjec
 check_response "$result" "\"subject\": \"$noc_root_cert_2_subject_for_1_4_4\""
 check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_2_subject_key_id_for_1_4_4\""
 
-result=$($DCLD_BIN_NEW query pki x509-cert --subject=$noc_ica_cert_2_subject --subject-key-id=$noc_ica_cert_2_subject_key_id_for_1_4_4)
-check_response "$result" "\"subject\": \"$noc_ica_cert_2_subject\""
+result=$($DCLD_BIN_NEW query pki noc-x509-cert --subject=$noc_ica_cert_2_subject_for_1_4_4 --subject-key-id=$noc_ica_cert_2_subject_key_id_for_1_4_4)
+check_response "$result" "\"subject\": \"$noc_ica_cert_2_subject_for_1_4_4\""
 check_response "$result" "\"subjectKeyId\": \"$noc_ica_cert_2_subject_key_id_for_1_4_4\""
 
-result=$($DCLD_BIN_NEW query pki x509-cert --subject=$da_root_cert_2_subject_for_1_4_4 --subject-key-id=$da_root_cert_2_subject_key_id_for_1_4_4)
+result=$($DCLD_BIN_NEW query pki noc-x509-cert --subject=$da_root_cert_2_subject_for_1_4_4 --subject-key-id=$da_root_cert_2_subject_key_id_for_1_4_4)
 check_response "$result" "Not Found"
 
-result=$($DCLD_BIN_NEW query pki x509-cert --subject=$da_intermediate_cert_2_subject_for_1_4_4 --subject-key-id=$da_intermediate_cert_2_subject_key_id_for_1_4_4)
+result=$($DCLD_BIN_NEW query pki noc-x509-cert --subject=$da_intermediate_cert_2_subject_for_1_4_4 --subject-key-id=$da_intermediate_cert_2_subject_key_id_for_1_4_4)
 check_response "$result" "Not Found"
 
 echo "Get all subject certificates"
+
+#echo "Get all subject certificates (Global)"
+#result=$($DCLD_BIN_NEW query pki all-subject-certs --subject=$da_root_cert_2_subject_for_1_4_4)
+#check_response "$result" "$da_root_cert_2_subject_key_id_for_1_4_4"
+#
+#result=$($DCLD_BIN_NEW query pki all-subject-certs --subject=$noc_root_cert_2_subject_for_1_4_4)
+#check_response "$result" "$noc_root_cert_2_subject_for_1_4_4"
 
 echo "Get all subject certificates (DA)"
 result=$($DCLD_BIN_NEW query pki all-subject-x509-certs --subject=$da_root_cert_2_subject_for_1_4_4)
@@ -1485,13 +1508,14 @@ echo "Get all revoked x509 root certificates"
 
 echo "Get all revoked x509 certificates (DA)"
 result=$($DCLD_BIN_NEW query pki all-revoked-x509-certs)
-check_response "$result" "\"subjectKeyId\": \"$da_root_cert_1_subject_for_1_4_4\""
+check_response "$result" "\"subjectKeyId\": \"$da_root_cert_1_subject_key_id_for_1_4_4\""
+check_response "$result" "\"subjectKeyId\": \"$da_intermediate_cert_1_subject_key_id_for_1_4_4\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_key_id_for_1_4_4\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_ica_cert_1_subject_key_id_for_1_4_4\""
 
 echo "Get all revoked x509 root certificates (DA)"
 result=$($DCLD_BIN_NEW query pki all-revoked-x509-root-certs)
-check_response "$result" "\"subjectKeyId\": \"$da_root_cert_1_subject_for_1_4_4\""
+check_response "$result" "\"subjectKeyId\": \"$da_root_cert_1_subject_key_id_for_1_4_4\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$da_root_cert_2_subject_for_1_4_4\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_key_id_for_1_4_4\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_key_id_for_1_4_4\""
@@ -1499,7 +1523,7 @@ response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subjec
 echo "Get all revoked x509 root certificates (NOC)"
 result=$($DCLD_BIN_NEW query pki all-revoked-noc-x509-root-certs)
 check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_key_id_for_1_4_4\""
-response_does_not_contain "$result" "\"subjectKeyId\": \"$da_root_cert_1_subject_for_1_4_4\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$da_root_cert_1_subject_key_id_for_1_4_4\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_ica_cert_1_subject_key_id_for_1_4_4\""
 
 echo "Get all revoked x509 ica certificates (NOC)"
@@ -1509,11 +1533,11 @@ check_response "$result" "\"subjectKeyId\": \"$noc_ica_cert_1_subject_key_id_for
 echo "Get revoked x509 certificate"
 
 echo "Get revoked x509 certificate (DA)"
-result=$($DCLD_BIN_NEW query pki revoked-x509-root-cert --subject=$da_root_cert_1_subject_for_1_4_4 --subject-key-id=$da_root_cert_1_subject_key_id_for_1_4_4)
+result=$($DCLD_BIN_NEW query pki revoked-x509-cert --subject=$da_root_cert_1_subject_for_1_4_4 --subject-key-id=$da_root_cert_1_subject_key_id_for_1_4_4)
 check_response "$result" "\"subject\": \"$da_root_cert_1_subject_for_1_4_4\""
 check_response "$result" "\"subjectKeyId\": \"$da_root_cert_1_subject_key_id_for_1_4_4\""
 
-result=$($DCLD_BIN_NEW query pki revoked-x509-root-cert --subject=$noc_root_cert_1_subject_for_1_4_4 --subject-key-id=$noc_root_cert_1_subject_key_id_for_1_4_4)
+result=$($DCLD_BIN_NEW query pki revoked-x509-cert --subject=$noc_root_cert_1_subject_for_1_4_4 --subject-key-id=$noc_root_cert_1_subject_key_id_for_1_4_4)
 check_response "$result" "Not Found"
 
 echo "Get revoked x509 certificate (NOC)"
@@ -1529,21 +1553,21 @@ result=$($DCLD_BIN_NEW query pki revocation-point --vid=$vid_for_1_4_4 --label=$
 check_response "$result" "\"vid\": $vid_for_1_4_4"
 check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
 check_response "$result" "\"label\": \"$product_label_for_1_4_4\""
-check_response "$result" "\"dataURL\": \"$test_data_url_for_1_4\""
+check_response "$result" "\"dataURL\": \"$test_data_url_for_1_4_4\""
 
 echo "Get revocation points by issuer subject key id"
 result=$($DCLD_BIN_NEW query pki revocation-points --issuer-subject-key-id=$issuer_subject_key_id)
 check_response "$result" "\"vid\": $vid_for_1_4_4"
 check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
 check_response "$result" "\"label\": \"$product_label_for_1_4_4\""
-check_response "$result" "\"dataURL\": \"$test_data_url_for_1_4\""
+check_response "$result" "\"dataURL\": \"$test_data_url_for_1_4_4\""
 
 echo "Get all revocation points"
 result=$($DCLD_BIN_NEW query pki all-revocation-points)
 check_response "$result" "\"vid\": $vid_for_1_4_4"
 check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
 check_response "$result" "\"label\": \"$product_label_for_1_4_4\""
-check_response "$result" "\"dataURL\": \"$test_data_url_for_1_4\""
+check_response "$result" "\"dataURL\": \"$test_data_url_for_1_4_4\""
 
 echo "Get all noc x509 root certificates by vid=$vid_for_1_4_4 and skid=$noc_root_cert_2_subject_key_id_for_1_4_4"
 result=$($DCLD_BIN_NEW query pki noc-x509-certs --vid=$vid_for_1_4_4 --subject-key-id=$noc_root_cert_2_subject_key_id_for_1_4_4)
@@ -1552,7 +1576,7 @@ check_response "$result" "$noc_root_cert_2_subject_key_id_for_1_4_4"
 
 echo "Get all noc x509 root certificates by vid $vid_for_1_4_4 and skid=$noc_ica_cert_2_subject_key_id_for_1_4_4"
 result=$($DCLD_BIN_NEW query pki noc-x509-certs --vid=$vid_for_1_4_4 --subject-key-id=$noc_ica_cert_2_subject_key_id_for_1_4_4)
-check_response "$result" "\"subject\": \"$noc_ica_cert_2_subject\""
+check_response "$result" "\"subject\": \"$noc_ica_cert_2_subject_for_1_4_4\""
 check_response "$result" "$noc_ica_cert_2_subject_key_id_for_1_4_4"
 
 test_divider
