@@ -19,9 +19,9 @@ source integration_tests/cli/common.sh
 # Upgrade constants
 
 plan_name="v1.4.4"
-upgrade_checksum="sha256:89a83439f10dcd3f43691767676938cccc1942cee482c771a4c66a78f1e5ab7b"
+upgrade_checksum="sha256:d196eafbe663658ac6efc9f4147e28ac9a41a9bcea348c105bedb589fb2a10e4"
 binary_version_old="v1.4.3"
-binary_version_new="v1.4.4-1-dev"
+binary_version_new="v1.4.4-2-dev"
 
 wget -O dcld_old "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version_old/dcld"
 chmod ugo+x dcld_old
@@ -400,44 +400,44 @@ response_does_not_contain "$result" "\"subjectKeyId\": \"$test_root_cert_subject
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_for_1_4_3\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_ica_cert_1_subject_key_id_for_1_4_3\""
 
-#echo "Get subject certificates (GLOBAL)"
-#result=$($DCLD_BIN_NEW query pki all-subject-certs --subject=$root_cert_with_vid_subject_for_1_4_3)
-#check_response "$result" "$root_cert_with_vid_subject_key_id_for_1_4_3"
-#
-#result=$($DCLD_BIN_NEW query pki all-subject-certs --subject=$test_root_cert_subject_for_1_2)
-#check_response "$result" "$test_root_cert_subject_key_id_for_1_2"
-#
-#result=$($DCLD_BIN_NEW query pki all-subject-certs --subject=$test_root_cert_subject)
-#check_response "$result" "$test_root_cert_subject_key_id"
-#
-#result=$($DCLD_BIN_NEW query pki all-subject-certs --subject=$noc_root_cert_1_subject_for_1_4_3)
-#check_response "$result" "Not Found"
-#
-#echo "Get subject certificates (DA)"
-#result=$($DCLD_BIN_NEW query pki all-subject-x509-certs --subject=$root_cert_with_vid_subject_for_1_4_3)
-#check_response "$result" "$root_cert_with_vid_subject_key_id_for_1_4_3"
-#
-#result=$($DCLD_BIN_NEW query pki all-subject-x509-certs --subject=$test_root_cert_subject_for_1_2)
-#check_response "$result" "$test_root_cert_subject_key_id_for_1_2"
-#
-#result=$($DCLD_BIN_NEW query pki all-subject-x509-certs --subject=$test_root_cert_subject)
-#check_response "$result" "$test_root_cert_subject_key_id"
-#
-#result=$($DCLD_BIN_NEW query pki all-subject-x509-certs --subject=$noc_root_cert_1_subject_for_1_4_3)
-#check_response "$result" "Not Found"
-#
-#echo "Get subject certificates (NOC)"
-#result=$($DCLD_BIN_NEW query pki all-noc-subject-x509-certs --subject=$root_cert_with_vid_subject_for_1_4_3)
-#check_response "$result" "Not Found"
-#
-#result=$($DCLD_BIN_NEW query pki all-noc-subject-x509-certs --subject=$test_root_cert_subject_for_1_2)
-#check_response "$result" "Not Found"
-#
-#result=$($DCLD_BIN_NEW query pki all-noc-subject-x509-certs --subject=$test_root_cert_subject)
-#check_response "$result" "Not Found"
-#
-#result=$($DCLD_BIN_NEW query pki all-noc-subject-x509-certs --subject=$noc_root_cert_1_subject_for_1_4_3)
-#check_response "$result" "Not Found"
+echo "Get subject certificates (GLOBAL)"
+result=$($DCLD_BIN_NEW query pki all-subject-certs --subject=$root_cert_with_vid_subject_for_1_4_3)
+check_response "$result" "$root_cert_with_vid_subject_key_id_for_1_4_3"
+
+result=$($DCLD_BIN_NEW query pki all-subject-certs --subject=$test_root_cert_subject_for_1_2)
+check_response "$result" "$test_root_cert_subject_key_id_for_1_2"
+
+result=$($DCLD_BIN_NEW query pki all-subject-certs --subject=$test_root_cert_subject)
+check_response "$result" "$test_root_cert_subject_key_id"
+
+result=$($DCLD_BIN_NEW query pki all-subject-certs --subject=$noc_root_cert_1_subject_for_1_4_3)
+check_response "$result" "Not Found"
+
+echo "Get subject certificates (DA)"
+result=$($DCLD_BIN_NEW query pki all-subject-x509-certs --subject=$root_cert_with_vid_subject_for_1_4_3)
+check_response "$result" "$root_cert_with_vid_subject_key_id_for_1_4_3"
+
+result=$($DCLD_BIN_NEW query pki all-subject-x509-certs --subject=$test_root_cert_subject_for_1_2)
+check_response "$result" "$test_root_cert_subject_key_id_for_1_2"
+
+result=$($DCLD_BIN_NEW query pki all-subject-x509-certs --subject=$test_root_cert_subject)
+check_response "$result" "$test_root_cert_subject_key_id"
+
+result=$($DCLD_BIN_NEW query pki all-subject-x509-certs --subject=$noc_root_cert_1_subject_for_1_4_3)
+check_response "$result" "Not Found"
+
+echo "Get subject certificates (NOC)"
+result=$($DCLD_BIN_NEW query pki all-noc-subject-x509-certs --subject=$root_cert_with_vid_subject_for_1_4_3)
+check_response "$result" "Not Found"
+
+result=$($DCLD_BIN_NEW query pki all-noc-subject-x509-certs --subject=$test_root_cert_subject_for_1_2)
+check_response "$result" "Not Found"
+
+result=$($DCLD_BIN_NEW query pki all-noc-subject-x509-certs --subject=$test_root_cert_subject)
+check_response "$result" "Not Found"
+
+result=$($DCLD_BIN_NEW query pki all-noc-subject-x509-certs --subject=$noc_root_cert_1_subject_for_1_4_3)
+check_response "$result" "Not Found"
 
 echo "Get x509 certificates"
 
@@ -1467,12 +1467,12 @@ check_response "$result" "Not Found"
 
 echo "Get all subject certificates"
 
-#echo "Get all subject certificates (Global)"
-#result=$($DCLD_BIN_NEW query pki all-subject-certs --subject=$da_root_cert_2_subject_for_1_4_4)
-#check_response "$result" "$da_root_cert_2_subject_key_id_for_1_4_4"
-#
-#result=$($DCLD_BIN_NEW query pki all-subject-certs --subject=$noc_root_cert_2_subject_for_1_4_4)
-#check_response "$result" "$noc_root_cert_2_subject_for_1_4_4"
+echo "Get all subject certificates (Global)"
+result=$($DCLD_BIN_NEW query pki all-subject-certs --subject=$da_root_cert_2_subject_for_1_4_4)
+check_response "$result" "$da_root_cert_2_subject_key_id_for_1_4_4"
+
+result=$($DCLD_BIN_NEW query pki all-subject-certs --subject=$noc_root_cert_2_subject_for_1_4_4)
+check_response "$result" "$noc_root_cert_2_subject_for_1_4_4"
 
 echo "Get all subject certificates (DA)"
 result=$($DCLD_BIN_NEW query pki all-subject-x509-certs --subject=$da_root_cert_2_subject_for_1_4_4)
