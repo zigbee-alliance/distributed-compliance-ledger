@@ -1,45 +1,36 @@
 /* eslint-disable */
 import _m0 from "protobufjs/minimal";
-import { Certificate } from "./certificate";
 
 export const protobufPackage = "zigbeealliance.distributedcomplianceledger.pki";
 
-export interface NocCertificates {
+export interface NocCertificatesBySubject {
   subject: string;
-  subjectKeyId: string;
-  certs: Certificate[];
-  tq: number;
+  subjectKeyIds: string[];
   schemaVersion: number;
 }
 
-function createBaseNocCertificates(): NocCertificates {
-  return { subject: "", subjectKeyId: "", certs: [], tq: 0, schemaVersion: 0 };
+function createBaseNocCertificatesBySubject(): NocCertificatesBySubject {
+  return { subject: "", subjectKeyIds: [], schemaVersion: 0 };
 }
 
-export const NocCertificates = {
-  encode(message: NocCertificates, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+export const NocCertificatesBySubject = {
+  encode(message: NocCertificatesBySubject, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.subject !== "") {
       writer.uint32(10).string(message.subject);
     }
-    if (message.subjectKeyId !== "") {
-      writer.uint32(18).string(message.subjectKeyId);
-    }
-    for (const v of message.certs) {
-      Certificate.encode(v!, writer.uint32(26).fork()).ldelim();
-    }
-    if (message.tq !== 0) {
-      writer.uint32(37).float(message.tq);
+    for (const v of message.subjectKeyIds) {
+      writer.uint32(18).string(v!);
     }
     if (message.schemaVersion !== 0) {
-      writer.uint32(40).uint32(message.schemaVersion);
+      writer.uint32(24).uint32(message.schemaVersion);
     }
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): NocCertificates {
+  decode(input: _m0.Reader | Uint8Array, length?: number): NocCertificatesBySubject {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseNocCertificates();
+    const message = createBaseNocCertificatesBySubject();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -47,15 +38,9 @@ export const NocCertificates = {
           message.subject = reader.string();
           break;
         case 2:
-          message.subjectKeyId = reader.string();
+          message.subjectKeyIds.push(reader.string());
           break;
         case 3:
-          message.certs.push(Certificate.decode(reader, reader.uint32()));
-          break;
-        case 4:
-          message.tq = reader.float();
-          break;
-        case 5:
           message.schemaVersion = reader.uint32();
           break;
         default:
@@ -66,36 +51,30 @@ export const NocCertificates = {
     return message;
   },
 
-  fromJSON(object: any): NocCertificates {
+  fromJSON(object: any): NocCertificatesBySubject {
     return {
       subject: isSet(object.subject) ? String(object.subject) : "",
-      subjectKeyId: isSet(object.subjectKeyId) ? String(object.subjectKeyId) : "",
-      certs: Array.isArray(object?.certs) ? object.certs.map((e: any) => Certificate.fromJSON(e)) : [],
-      tq: isSet(object.tq) ? Number(object.tq) : 0,
+      subjectKeyIds: Array.isArray(object?.subjectKeyIds) ? object.subjectKeyIds.map((e: any) => String(e)) : [],
       schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
-  toJSON(message: NocCertificates): unknown {
+  toJSON(message: NocCertificatesBySubject): unknown {
     const obj: any = {};
     message.subject !== undefined && (obj.subject = message.subject);
-    message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId);
-    if (message.certs) {
-      obj.certs = message.certs.map((e) => e ? Certificate.toJSON(e) : undefined);
+    if (message.subjectKeyIds) {
+      obj.subjectKeyIds = message.subjectKeyIds.map((e) => e);
     } else {
-      obj.certs = [];
+      obj.subjectKeyIds = [];
     }
-    message.tq !== undefined && (obj.tq = message.tq);
     message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<NocCertificates>, I>>(object: I): NocCertificates {
-    const message = createBaseNocCertificates();
+  fromPartial<I extends Exact<DeepPartial<NocCertificatesBySubject>, I>>(object: I): NocCertificatesBySubject {
+    const message = createBaseNocCertificatesBySubject();
     message.subject = object.subject ?? "";
-    message.subjectKeyId = object.subjectKeyId ?? "";
-    message.certs = object.certs?.map((e) => Certificate.fromPartial(e)) || [];
-    message.tq = object.tq ?? 0;
+    message.subjectKeyIds = object.subjectKeyIds?.map((e) => e) || [];
     message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },

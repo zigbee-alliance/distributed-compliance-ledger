@@ -122,7 +122,6 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 	m := keeper.NewMigrator(am.keeper)
 	_ = cfg.RegisterMigration(pkitypes.ModuleName, 1, m.Migrate1to2)
 	_ = cfg.RegisterMigration(pkitypes.ModuleName, 2, m.Migrate2to3)
-	_ = cfg.RegisterMigration(pkitypes.ModuleName, 2, m.Migrate2to4)
 	_ = cfg.RegisterMigration(pkitypes.ModuleName, 3, m.Migrate3to4)
 }
 

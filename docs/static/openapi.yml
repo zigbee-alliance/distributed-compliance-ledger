@@ -10209,7 +10209,7 @@ paths:
           type: string
       tags:
         - Query
-  /dcl/pki/noc-certificates/{subject}:
+  /dcl/pki/all-noc-certificates/{subject}:
     get:
       summary: Queries a NocCertificatesBySubject by index.
       operationId: NocCertificatesBySubject
@@ -10256,7 +10256,7 @@ paths:
           type: string
       tags:
         - Query
-  /dcl/pki/noc-certificates/{subject}/{subjectKeyId}:
+  /dcl/pki/all-noc-certificates/{subject}/{subjectKeyId}:
     get:
       summary: Queries a NocCertificates by index.
       operationId: NocCertificates
@@ -10384,7 +10384,7 @@ paths:
           type: string
       tags:
         - Query
-  /dcl/pki/noc-certificates/{vid}/{subjectKeyId}:
+  /dcl/pki/noc-vid-certificates/{vid}/{subjectKeyId}:
     get:
       summary: Queries a NocCertificatesByVidAndSkid by index.
       operationId: NocCertificatesByVidAndSkid
@@ -10716,7 +10716,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /dcl/pki/noc-ica-certificates/{vid}:
+  /dcl/pki/noc-vid-ica-certificates/{vid}:
     get:
       summary: Queries a NocIcaCertificates by index.
       operationId: NocIcaCertificates
@@ -11039,7 +11039,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /dcl/pki/noc-root-certificates/{vid}:
+  /dcl/pki/noc-vid-root-certificates/{vid}:
     get:
       summary: Queries a NocRootCertificates by index.
       operationId: NocRootCertificates

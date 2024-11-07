@@ -15,6 +15,7 @@ import "zigbeealliance/distributedcomplianceledger/pki/rejected_certificate.prot
 import "zigbeealliance/distributedcomplianceledger/pki/pki_revocation_distribution_point.proto";
 import "zigbeealliance/distributedcomplianceledger/pki/pki_revocation_distribution_points_by_issuer_subject_key_id.proto";
 import "zigbeealliance/distributedcomplianceledger/pki/all_certificates.proto";
+import "zigbeealliance/distributedcomplianceledger/pki/all_certificates_by_subject.proto";
 import "zigbeealliance/distributedcomplianceledger/pki/noc_certificates.proto";
 import "zigbeealliance/distributedcomplianceledger/pki/noc_root_certificates.proto";
 import "zigbeealliance/distributedcomplianceledger/pki/noc_ica_certificates.proto";
@@ -36,6 +37,11 @@ service Query {
   // Queries a list of Certificates items.
   rpc CertificatesAll(QueryAllCertificatesRequest) returns (QueryAllCertificatesResponse) {
     option (google.api.http).get = "/dcl/pki/all-certificates";
+  }
+
+  // Queries a AllCertificatesBySubject by index.
+  rpc AllCertificatesBySubject(QueryGetAllCertificatesBySubjectRequest) returns (QueryGetAllCertificatesBySubjectResponse) {
+    option (google.api.http).get = "/dcl/pki/all-certificates/{subject}";
   }
 
   // Queries a Certificates by index.
@@ -143,12 +149,12 @@ service Query {
 
   // Queries a NocCertificatesByVidAndSkid by index.
   rpc NocCertificatesByVidAndSkid(QueryGetNocCertificatesByVidAndSkidRequest) returns (QueryGetNocCertificatesByVidAndSkidResponse) {
-    option (google.api.http).get = "/dcl/pki/noc-certificates/{vid}/{subjectKeyId}";
+    option (google.api.http).get = "/dcl/pki/noc-vid-certificates/{vid}/{subjectKeyId}";
   }
 
   // Queries a NocRootCertificates by index.
   rpc NocRootCertificates(QueryGetNocRootCertificatesRequest) returns (QueryGetNocRootCertificatesResponse) {
-    option (google.api.http).get = "/dcl/pki/noc-root-certificates/{vid}";
+    option (google.api.http).get = "/dcl/pki/noc-vid-root-certificates/{vid}";
   }
 
   // Queries a list of NocRootCertificates items.
@@ -158,7 +164,7 @@ service Query {
 
   // Queries a NocIcaCertificates by index.
   rpc NocIcaCertificates(QueryGetNocIcaCertificatesRequest) returns (QueryGetNocIcaCertificatesResponse) {
-    option (google.api.http).get = "/dcl/pki/noc-ica-certificates/{vid}";
+    option (google.api.http).get = "/dcl/pki/noc-vid-ica-certificates/{vid}";
   }
 
   // Queries a list of NocIcaCertificates items.
@@ -196,6 +202,14 @@ message QueryAllCertificatesRequest {
 message QueryAllCertificatesResponse {
   repeated AllCertificates certificates = 1 [(gogoproto.nullable) = false];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetAllCertificatesBySubjectRequest {
+  string subject = 1;
+}
+
+  message QueryGetAllCertificatesBySubjectResponse {
+  AllCertificatesBySubject allCertificatesBySubject = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryGetCertificatesRequest {
@@ -305,7 +319,6 @@ message QueryGetRevokedRootCertificatesResponse {
 }
 message QueryGetApprovedCertificatesBySubjectRequest {
   string subject = 1;
-
 }
 
 message QueryGetApprovedCertificatesBySubjectResponse {

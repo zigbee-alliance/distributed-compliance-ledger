@@ -110,6 +110,9 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 	// append to global list of certificates
 	k.AddAllCertificate(ctx, certificate)
 
+	// append to global list of certificates indexed by subject
+	k.AddAllCertificateBySubject(ctx, certificate.Subject, certificate.SubjectKeyId)
+
 	// append new certificate to list of certificates with the same Subject/SubjectKeyID combination and store updated list
 	k.AddApprovedCertificate(ctx, certificate)
 

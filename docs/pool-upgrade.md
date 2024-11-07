@@ -27,10 +27,10 @@ Any upgrade plan has the following fields:
 ## Workflow
 
 Initially an upgrade plan is proposed by one of trustees using
-[propose-upgrade](transactions/transactions.md#propose_upgrade) command. Then the proposed
+[propose-upgrade](transactions.md) command. Then the proposed
 upgrade plan has to be approved by the majority of trustees (2/3 including the
 trustee who has proposed it) using
-[approve-upgrade](transactions/transactions.md#approve_upgrade) command. When the necessary
+[approve-upgrade](transactions.md#approve_upgrade) command. When the necessary
 count of approvals is gathered, the upgrade plan turns into the approved state
 and is actually scheduled.
 
@@ -81,5 +81,5 @@ checksum when the URL is provided in the specified format. If the downloaded
 file checksum does not equal to the checksum provided in the URL, `go-getter`
 reports that checksums did not match. To view `Info` field value of an upgrade
 plan, just execute an appropriate query command from `dclupgrade` or `upgrade`
-module. See [Upgrade CLI commands reference](transactions/transactions.md#upgrade) for
+module. See [Upgrade CLI commands reference](transactions.md#upgrade) for
 details.

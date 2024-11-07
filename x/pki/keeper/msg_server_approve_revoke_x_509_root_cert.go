@@ -102,6 +102,7 @@ func (k msgServer) _revokeRootCertificates(
 
 	k.RemoveApprovedRootCertificate(ctx, certID)
 	k.RemoveAllCertificates(ctx, certificates.Subject, certificates.SubjectKeyId)
+	k.RemoveAllCertificateBySubject(ctx, certificates.Subject, certificates.SubjectKeyId)
 	k.RemoveApprovedCertificates(ctx, certificates.Subject, certificates.SubjectKeyId)
 	// remove from subject -> subject key ID map
 	k.RemoveApprovedCertificateBySubject(ctx, certificates.Subject, certificates.SubjectKeyId)
@@ -129,6 +130,7 @@ func (k msgServer) _revokeRootCertificate(
 
 	if len(certificates.Certs) == 0 {
 		k.RemoveAllCertificates(ctx, cert.Subject, cert.SubjectKeyId)
+		k.RemoveAllCertificateBySubject(ctx, cert.Subject, cert.SubjectKeyId)
 		k.RemoveApprovedCertificates(ctx, cert.Subject, cert.SubjectKeyId)
 		k.RemoveApprovedRootCertificate(ctx,
 			types.CertificateIdentifier{

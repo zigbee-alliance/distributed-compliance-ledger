@@ -21,7 +21,7 @@ See use case sequence diagrams for the examples of how transaction can be used.
 
 - Every writer to the Ledger must  
   - Have a private/public key pair.
-  - Have an Account created on the ledger via `ACCOUNT` transaction (see [Use Case Txn Auth](../use_cases/use_cases_txn_auth.puml)).
+  - Have an Account created on the ledger via `ACCOUNT` transaction (see [Use Case Txn Auth](use_cases/use_cases_txn_auth.puml)).
     - The Account stores the public part of the key
     - The Account has an associated role. The role is used for authorization policies.
   - Sign every transaction by the private key.
@@ -38,9 +38,9 @@ an Account or sign the request.
 
 - Local CLI
   - Configure the CLI before using.
-      See `CLI Configuration` section in [how-to.md](../how-to.md#cli-configuration).
+      See `CLI Configuration` section in [how-to.md](how-to.md#cli-configuration).
   - Generate and store a private key for the Account to be used for sending.
-      See `Getting Account` section in [how-to.md](../how-to.md#getting-account).
+      See `Getting Account` section in [how-to.md](how-to.md#getting-account).
   - Send transactions to the ledger from the Account (`--from`).
     - it will automatically build a request, sign it by the account's key, and broadcast to the ledger.
   - See `CLI` sub-sections for every write request (transaction).
@@ -54,9 +54,9 @@ an Account or sign the request.
     - Broadcast transaction by CLI 1: `dcld tx broadcast txn.json`
     - To get the actual result of transaction, `dcld query tx=txHash` call must be executed, where `txHash` is the hash of previously executed transaction.
 - gRPC:
-  - Generate a client code from the proto files [proto](../../proto) for the client language (see <https://grpc.io/docs/languages/>)
+  - Generate a client code from the proto files [proto](../proto) for the client language (see <https://grpc.io/docs/languages/>)
   - Build, sign, and broadcast the message (transaction).
-      See [grpc/rest integration tests](../../integration_tests/grpc_rest) as an example.
+      See [grpc/rest integration tests](../integration_tests/grpc_rest) as an example.
 - REST API
   - Build and sign a transaction by one of the following ways
     - In code via gRPC (see above)
@@ -81,17 +81,17 @@ Please make sure that TLS is enabled in gRPC, REST or Light Client Proxy for sec
 
 - Local CLI
   - See `CLI` section for every read request.
-  - If there are no trusted Observer or Validator nodes to connect a CLI, then a [Light Client Proxy](../running-light-client-proxy.md) can be used.
+  - If there are no trusted Observer or Validator nodes to connect a CLI, then a [Light Client Proxy](running-light-client-proxy.md) can be used.
 - REST API
   - OpenAPI specification: <https://zigbee-alliance.github.io/distributed-compliance-ledger/>.
   - Any running node exposes a REST API at port `1317`. See <https://docs.cosmos.network/v0.45/core/grpc_rest.html>.
   - See `REST API` section for every read request.
-  - See [grpc/rest integration tests](../../integration_tests/grpc_rest) as an example.
+  - See [grpc/rest integration tests](../integration_tests/grpc_rest) as an example.
   - There are no state proofs in REST, so REST queries should be sent to trusted Validator or Observer nodes only.
 - gRPC
   - Any running node exposes a REST API at port `9090`. See <https://docs.cosmos.network/v0.45/core/grpc_rest.html>.
-  - Generate a client code from the proto files [proto](../../proto) for the client language (see <https://grpc.io/docs/languages/>).
-  - See [grpc/rest integration tests](../../integration_tests/grpc_rest) as an example.
+  - Generate a client code from the proto files [proto](../proto) for the client language (see <https://grpc.io/docs/languages/>).
+  - See [grpc/rest integration tests](../integration_tests/grpc_rest) as an example.
   - There are no state proofs in gRPC, so gRPC queries should be sent to trusted Validator or Observer nodes only.
 - Tendermint RPC
   - Tendermint RPC OpenAPI specification can be found in <https://zigbee-alliance.github.io/distributed-compliance-ledger/>.
@@ -99,7 +99,7 @@ Please make sure that TLS is enabled in gRPC, REST or Light Client Proxy for sec
   - Tendermint RPC supports state proofs. Tendermint's Light Client library can be used to verify the state proofs.
     So, if Light Client API is used, then it's possible to communicate with non-trusted nodes.
   - Please note, that multi-value queries don't have state proofs support and should be sent to trusted nodes only.
-  - Refer to [this doc](../cometbft-rpc.md) to see how to [subscribe](../cometbft-rpc.md#subscribe) to a Tendermint WebSocket based events and/or [query](../cometbft-rpc.md#querying-application-components) an application components. 
+  - Refer to [this doc](cometbft-rpc.md) to see how to [subscribe](cometbft-rpc.md#subscribe) to a Tendermint WebSocket based events and/or [query](cometbft-rpc.md#querying-application-components) an application components. 
 
 `NotFound` (404 code) is returned if an entry is not found on the ledger.
 
@@ -1650,7 +1650,7 @@ Use [GET_ALL_REVOKED_NOC_ROOT](#get_all_revoked_noc_root-rcacs) to get a list of
 - CLI Command:
   - `dcld query pki noc-x509-root-certs --vid=<uint16>`
 - REST API:
-  - GET `/dcl/pki/noc-root-certificates/{vid}`
+  - GET `/dcl/pki/noc-vid-root-certificates/{vid}`
 
 #### GET_NOC_BY_VID_AND_SKID (RCACs/ICACs)
 
@@ -1670,7 +1670,7 @@ Use [GET_ALL_REVOKED_NOC_ICA](#get_all_revoked_noc_ica-icacs) to get a list of a
 - CLI Command:
   - `dcld query pki noc-x509-certs --vid=<uint16> --subject-key-id=<hex string>`
 - REST API:
-  - GET `/dcl/pki/noc-certificates/{vid}/{subject_key_id}`
+  - GET `/dcl/pki/noc-vid-certificates/{vid}/{subject_key_id}`
 
 #### GET_NOC_ICA_BY_VID (ICACs)
 
@@ -1687,7 +1687,7 @@ Use [GET_ALL_REVOKED_CERT](#get_all_revoked_certs) to get a list of all revoked 
 - CLI Command:
   - `dcld query pki noc-x509-ica-certs --vid=<uint16>`
 - REST API:
-  - GET `/dcl/pki/noc-ica-certificates/{vid}`
+  - GET `/dcl/pki/noc-vid-ica-certificates/{vid}`
 
 #### GET_NOC_CERTS_BY_SUBJECT
 
@@ -1857,6 +1857,24 @@ Should be sent to trusted nodes only.
   - `dcld query pki all-certs`
 - REST API:
   - GET `/dcl/pki/all-certificates`
+
+#### GET_CERTS_BY_SUBJECT
+
+**Status: Implemented**
+
+Gets all certificates associated with a subject. This query works for all types of certificates (PAA, PAI, RCAC, ICAC).
+
+Revoked certificates are not returned.
+Use [GET_ALL_REVOKED_DA_CERTS](#get_all_revoked_da_certs) to get a list of all revoked DA certificates.
+Use [GET_ALL_REVOKED_NOC_ROOT_CERTS](#get_all_revoked_noc_root-rcacs) to get a list of all revoked Noc Root certificates.
+Use [GET_ALL_REVOKED_NOC_ICA_CERTS](#get_all_revoked_noc_ica-icacs) to get a list of all revoked Noc ICA certificates.
+
+- Parameters:
+  - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
+- CLI command:
+  - `dcld query pki all-subject-certs --subject=<base64 string>`
+- REST API:
+  - GET `/dcl/pki/all-certificates/{subject}`
 
 #### GET_CHILD_CERTS
 

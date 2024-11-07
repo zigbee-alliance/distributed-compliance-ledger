@@ -4,20 +4,19 @@ import { Certificate } from "./certificate";
 
 export const protobufPackage = "zigbeealliance.distributedcomplianceledger.pki";
 
-export interface NocCertificates {
+export interface RevokedNocIcaCertificates {
   subject: string;
   subjectKeyId: string;
   certs: Certificate[];
-  tq: number;
   schemaVersion: number;
 }
 
-function createBaseNocCertificates(): NocCertificates {
-  return { subject: "", subjectKeyId: "", certs: [], tq: 0, schemaVersion: 0 };
+function createBaseRevokedNocIcaCertificates(): RevokedNocIcaCertificates {
+  return { subject: "", subjectKeyId: "", certs: [], schemaVersion: 0 };
 }
 
-export const NocCertificates = {
-  encode(message: NocCertificates, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+export const RevokedNocIcaCertificates = {
+  encode(message: RevokedNocIcaCertificates, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.subject !== "") {
       writer.uint32(10).string(message.subject);
     }
@@ -27,19 +26,16 @@ export const NocCertificates = {
     for (const v of message.certs) {
       Certificate.encode(v!, writer.uint32(26).fork()).ldelim();
     }
-    if (message.tq !== 0) {
-      writer.uint32(37).float(message.tq);
-    }
     if (message.schemaVersion !== 0) {
-      writer.uint32(40).uint32(message.schemaVersion);
+      writer.uint32(32).uint32(message.schemaVersion);
     }
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): NocCertificates {
+  decode(input: _m0.Reader | Uint8Array, length?: number): RevokedNocIcaCertificates {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseNocCertificates();
+    const message = createBaseRevokedNocIcaCertificates();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -53,9 +49,6 @@ export const NocCertificates = {
           message.certs.push(Certificate.decode(reader, reader.uint32()));
           break;
         case 4:
-          message.tq = reader.float();
-          break;
-        case 5:
           message.schemaVersion = reader.uint32();
           break;
         default:
@@ -66,17 +59,16 @@ export const NocCertificates = {
     return message;
   },
 
-  fromJSON(object: any): NocCertificates {
+  fromJSON(object: any): RevokedNocIcaCertificates {
     return {
       subject: isSet(object.subject) ? String(object.subject) : "",
       subjectKeyId: isSet(object.subjectKeyId) ? String(object.subjectKeyId) : "",
       certs: Array.isArray(object?.certs) ? object.certs.map((e: any) => Certificate.fromJSON(e)) : [],
-      tq: isSet(object.tq) ? Number(object.tq) : 0,
       schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
 
-  toJSON(message: NocCertificates): unknown {
+  toJSON(message: RevokedNocIcaCertificates): unknown {
     const obj: any = {};
     message.subject !== undefined && (obj.subject = message.subject);
     message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId);
@@ -85,17 +77,15 @@ export const NocCertificates = {
     } else {
       obj.certs = [];
     }
-    message.tq !== undefined && (obj.tq = message.tq);
     message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<NocCertificates>, I>>(object: I): NocCertificates {
-    const message = createBaseNocCertificates();
+  fromPartial<I extends Exact<DeepPartial<RevokedNocIcaCertificates>, I>>(object: I): RevokedNocIcaCertificates {
+    const message = createBaseRevokedNocIcaCertificates();
     message.subject = object.subject ?? "";
     message.subjectKeyId = object.subjectKeyId ?? "";
     message.certs = object.certs?.map((e) => Certificate.fromPartial(e)) || [];
-    message.tq = object.tq ?? 0;
     message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },

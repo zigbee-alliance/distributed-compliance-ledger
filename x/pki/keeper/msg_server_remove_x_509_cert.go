@@ -69,6 +69,8 @@ func (k msgServer) RemoveX509Cert(goCtx context.Context, msg *types.MsgRemoveX50
 	} else {
 		// remove from global certificates map
 		k.RemoveAllCertificates(ctx, certID.Subject, certID.SubjectKeyId)
+		// remove from global subject -> subject key ID map
+		k.RemoveAllCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
 		// remove from approved certificates map
 		k.RemoveApprovedCertificates(ctx, certID.Subject, certID.SubjectKeyId)
 		// remove from subject -> subject key ID map

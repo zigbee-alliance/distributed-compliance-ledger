@@ -81,6 +81,8 @@ func (k msgServer) RemoveNocX509IcaCert(goCtx context.Context, msg *types.MsgRem
 	} else {
 		// remove from global certificates map
 		k.RemoveAllCertificates(ctx, certID.Subject, certID.SubjectKeyId)
+		// remove from global subject -> subject key ID map
+		k.RemoveAllCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
 		// remove from noc certificates map
 		k.RemoveNocCertificates(ctx, certID.Subject, certID.SubjectKeyId)
 		// remove from noc ica certificates map

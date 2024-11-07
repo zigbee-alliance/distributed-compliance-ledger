@@ -23,6 +23,7 @@ import "zigbeealliance/distributedcomplianceledger/pki/noc_certificates_by_subje
 import "zigbeealliance/distributedcomplianceledger/pki/noc_certificates_by_vid_and_skid.proto";
 import "zigbeealliance/distributedcomplianceledger/pki/noc_certificates_by_subject.proto";
 import "zigbeealliance/distributedcomplianceledger/pki/all_certificates.proto";
+import "zigbeealliance/distributedcomplianceledger/pki/all_certificates_by_subject.proto";
 // this line is used by starport scaffolding # genesis/proto/import
 import "gogoproto/gogo.proto";
 
@@ -52,5 +53,6 @@ message GenesisState {
   repeated NocCertificatesBySubject nocCertificatesBySubjectList = 20 [(gogoproto.nullable) = false];
   repeated AllCertificates certificatesList = 21 [(gogoproto.nullable) = false];
   repeated RevokedNocIcaCertificates revokedNocIcaCertificatesList = 22 [(gogoproto.nullable) = false];
+  repeated AllCertificatesBySubject allCertificatesBySubjectList = 23 [(gogoproto.nullable) = false];
   // this line is used by starport scaffolding # genesis/proto/state
 }

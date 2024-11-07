@@ -4,22 +4,22 @@ import { Certificate } from "./certificate";
 
 export const protobufPackage = "zigbeealliance.distributedcomplianceledger.pki";
 
-export interface NocCertificates {
-  subject: string;
+export interface NocCertificatesByVidAndSkid {
+  vid: number;
   subjectKeyId: string;
   certs: Certificate[];
   tq: number;
   schemaVersion: number;
 }
 
-function createBaseNocCertificates(): NocCertificates {
-  return { subject: "", subjectKeyId: "", certs: [], tq: 0, schemaVersion: 0 };
+function createBaseNocCertificatesByVidAndSkid(): NocCertificatesByVidAndSkid {
+  return { vid: 0, subjectKeyId: "", certs: [], tq: 0, schemaVersion: 0 };
 }
 
-export const NocCertificates = {
-  encode(message: NocCertificates, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.subject !== "") {
-      writer.uint32(10).string(message.subject);
+export const NocCertificatesByVidAndSkid = {
+  encode(message: NocCertificatesByVidAndSkid, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.vid !== 0) {
+      writer.uint32(8).int32(message.vid);
     }
     if (message.subjectKeyId !== "") {
       writer.uint32(18).string(message.subjectKeyId);
@@ -36,15 +36,15 @@ export const NocCertificates = {
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): NocCertificates {
+  decode(input: _m0.Reader | Uint8Array, length?: number): NocCertificatesByVidAndSkid {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseNocCertificates();
+    const message = createBaseNocCertificatesByVidAndSkid();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.subject = reader.string();
+          message.vid = reader.int32();
           break;
         case 2:
           message.subjectKeyId = reader.string();
@@ -66,9 +66,9 @@ export const NocCertificates = {
     return message;
   },
 
-  fromJSON(object: any): NocCertificates {
+  fromJSON(object: any): NocCertificatesByVidAndSkid {
     return {
-      subject: isSet(object.subject) ? String(object.subject) : "",
+      vid: isSet(object.vid) ? Number(object.vid) : 0,
       subjectKeyId: isSet(object.subjectKeyId) ? String(object.subjectKeyId) : "",
       certs: Array.isArray(object?.certs) ? object.certs.map((e: any) => Certificate.fromJSON(e)) : [],
       tq: isSet(object.tq) ? Number(object.tq) : 0,
@@ -76,9 +76,9 @@ export const NocCertificates = {
     };
   },
 
-  toJSON(message: NocCertificates): unknown {
+  toJSON(message: NocCertificatesByVidAndSkid): unknown {
     const obj: any = {};
-    message.subject !== undefined && (obj.subject = message.subject);
+    message.vid !== undefined && (obj.vid = Math.round(message.vid));
     message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId);
     if (message.certs) {
       obj.certs = message.certs.map((e) => e ? Certificate.toJSON(e) : undefined);
@@ -90,9 +90,9 @@ export const NocCertificates = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<NocCertificates>, I>>(object: I): NocCertificates {
-    const message = createBaseNocCertificates();
-    message.subject = object.subject ?? "";
+  fromPartial<I extends Exact<DeepPartial<NocCertificatesByVidAndSkid>, I>>(object: I): NocCertificatesByVidAndSkid {
+    const message = createBaseNocCertificatesByVidAndSkid();
+    message.vid = object.vid ?? 0;
     message.subjectKeyId = object.subjectKeyId ?? "";
     message.certs = object.certs?.map((e) => Certificate.fromPartial(e)) || [];
     message.tq = object.tq ?? 0;

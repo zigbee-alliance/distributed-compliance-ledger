@@ -283,6 +283,18 @@ response_does_not_contain "$result" "\"subjectKeyId\": \"$da_root_subject_key_id
 
 test_divider
 
+echo "Request DA certificates by subject using global command"
+result=$(dcld query pki all-subject-certs --subject=$da_root_subject)
+echo $result | jq
+check_response "$result" "\"$da_root_subject\""
+check_response "$result" "\"$da_root_subject_key_id\""
+
+echo "Request NOC certificates by subject using global command"
+result=$(dcld query pki all-subject-certs --subject=$noc_root_subject)
+echo $result | jq
+check_response "$result" "\"$noc_root_subject\""
+check_response "$result" "\"$noc_root_subject_key_id\""
+
 echo "Request all DA certificates by subject must be empty"
 result=$(dcld query pki all-subject-x509-certs --subject="$da_root_subject")
 echo $result | jq

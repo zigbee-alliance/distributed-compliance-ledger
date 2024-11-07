@@ -22,8 +22,8 @@ DC Ledger is based on [CometBFT](https://cometbft.com/) and [Cosmos SDK](https:/
 
 DC Ledger is a public permissioned ledger in the following sense:
 
-- Anyone can read from the ledger (that's why it's public). See [How to read from the Ledger](docs/transactions/transactions.md#how-to-read-from-the-ledger).
-- Writes to the ledger are permissioned. See [How to write to the Ledger](docs/transactions/transactions.md#how-to-write-to-the-ledger) for details.
+- Anyone can read from the ledger (that's why it's public). See [How to read from the Ledger](docs/transactions.md#how-to-read-from-the-ledger).
+- Writes to the ledger are permissioned. See [How to write to the Ledger](docs/transactions.md#how-to-write-to-the-ledger) for details.
 - PoA (proof of authority) approach is used for adding new validator nodes to the network
  (see [Add New Node Use Case](docs/use_cases/use_cases_add_validator_node.png)) and
   [Running Node](docs/running-node.md).
@@ -117,7 +117,7 @@ See [Run local pool](README-DEV.md#run-local-pool) section in [README-DEV.md](RE
 ### CLI
 
 - The same `dcld` binary as a Node
-- A full list of all CLI commands can be found there: [transactions.md](docs/transactions/transactions.md).
+- A full list of all CLI commands can be found there: [transactions.md](docs/transactions.md).
 - CLI can be used for write and read requests.
 - Please configure the CLI before using (see [how-to.md](docs/how-to.md#cli-configuration)).
 - **If there are no trusted Observer or Validator nodes to connect a CLI, then a [Light Client Proxy](#light-client-proxy) can be used.**
@@ -140,12 +140,12 @@ See [Run Light Client Proxy](docs/running-light-client-proxy.md) for details how
 - **There are no state proofs in REST, so REST queries should be sent to trusted Validator or Observer nodes only.**
 - OpenAPI specification: <https://zigbee-alliance.github.io/distributed-compliance-ledger/>.
 - Any running node exposes a REST API at port `1317`. See <https://docs.cosmos.network/v0.47/learn/advanced/grpc_rest>.
-- See [transactions](docs/transactions/transactions.md) for a full list of endpoints.
+- See [transactions](docs/transactions.md) for a full list of endpoints.
 - REST HTTP(S) queries can be directly used for read requests.
-  See [How to read from the Ledger](docs/transactions/transactions.md#how-to-read-from-the-ledger).
+  See [How to read from the Ledger](docs/transactions.md#how-to-read-from-the-ledger).
 - REST HTTP(S) queries can be directly used to broadcast generated and signed transaction.
 - Generation and signing of transactions need to be done in code or via CLI.
-  See [How to write to the Ledger](docs/transactions/transactions.md#how-to-write-to-the-ledger).
+  See [How to write to the Ledger](docs/transactions.md#how-to-write-to-the-ledger).
 
 ### gRPC
 
@@ -153,7 +153,7 @@ See [Run Light Client Proxy](docs/running-light-client-proxy.md) for details how
 - Any running node exposes a REST API at port `9090`. See <https://docs.cosmos.network/v0.47/learn/advanced/grpc_rest>.
 - A client code can be generated for all popular languages from the proto files [proto](proto), see <https://grpc.io/docs/languages/>.
 - The generated client code can be used for read and write requests, i.e. generation and signing of transactions
-  See [How to read from the Ledger](docs/transactions/transactions.md#how-to-read-from-the-ledger) and [How to write to the Ledger](docs/transactions/transactions.md#how-to-write-to-the-ledger) for details.
+  See [How to read from the Ledger](docs/transactions.md#how-to-read-from-the-ledger) and [How to write to the Ledger](docs/transactions.md#how-to-write-to-the-ledger) for details.
 
 ### CometBFT RPC and Light Client
 
@@ -209,7 +209,7 @@ the following instructions from [how-to.md](docs/how-to.md) can be used for ever
 
 - [OpenAPI specification](https://zigbee-alliance.github.io/distributed-compliance-ledger/)
 - [Quick Start](docs/quickStartGuide.adoc)
-- [List of Transactions, Queries, CLI command, REST API](docs/transactions/transactions.md)
+- [List of Transactions, Queries, CLI command, REST API](docs/transactions.md)
 - [How To Guide](docs/how-to.md)
 - [Use Case Diagrams](docs/use_cases)
   - [PKI](docs/use_cases/use_cases_pki.png)

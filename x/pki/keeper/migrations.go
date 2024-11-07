@@ -33,19 +33,9 @@ func (m Migrator) Migrate3to4(ctx sdk.Context) error {
 	for _, cert := range approvedCertificates {
 		m.keeper.AddAllCertificates(ctx, cert.Subject, cert.SubjectKeyId, cert.SchemaVersion, cert.Certs)
 	}
-
-	return nil
-}
-
-// Migrate2to4 migrates from version 2 to 4.
-func (m Migrator) Migrate2to4(ctx sdk.Context) error {
-	err := m.Migrate2to3(ctx)
-	if err != nil {
-		return err
-	}
-	err = m.Migrate3to4(ctx)
-	if err != nil {
-		return err
+	approvedCertificatesBySubject := m.keeper.GetAllApprovedCertificatesBySubject(ctx)
+	for _, cert := range approvedCertificatesBySubject {
+		m.keeper.AddAllCertificatesBySubject(ctx, cert.Subject, cert.SchemaVersion, cert.SubjectKeyIds)
 	}
 
 	return nil
