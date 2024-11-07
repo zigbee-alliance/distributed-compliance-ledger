@@ -170,6 +170,60 @@ func TestGenesis(t *testing.T) {
 				SubjectKeyId: "1",
 			},
 		},
+		NocCertificatesBySubjectKeyIDList: []types.NocCertificatesBySubjectKeyID{
+			{
+				SubjectKeyId: "0",
+			},
+			{
+				SubjectKeyId: "1",
+			},
+		},
+		NocCertificatesList: []types.NocCertificates{
+			{
+				Subject:      "0",
+				SubjectKeyId: "0",
+			},
+			{
+				Subject:      "1",
+				SubjectKeyId: "1",
+			},
+		},
+		NocCertificatesBySubjectList: []types.NocCertificatesBySubject{
+			{
+				Subject: "0",
+			},
+			{
+				Subject: "1",
+			},
+		},
+		CertificatesList: []types.AllCertificates{
+			{
+				Subject:      "0",
+				SubjectKeyId: "0",
+			},
+			{
+				Subject:      "1",
+				SubjectKeyId: "1",
+			},
+		},
+		RevokedNocIcaCertificatesList: []types.RevokedNocIcaCertificates{
+			{
+				Subject:      "0",
+				SubjectKeyId: "0",
+			},
+			{
+				Subject:      "1",
+				SubjectKeyId: "1",
+			},
+		},
+		AllCertificatesBySubjectList: []types.AllCertificatesBySubject{
+			{
+				Subject: "0",
+			},
+			{
+				Subject: "1",
+			},
+		},
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -195,5 +249,11 @@ func TestGenesis(t *testing.T) {
 	require.ElementsMatch(t, genesisState.NocIcaCertificatesList, got.NocIcaCertificatesList)
 	require.ElementsMatch(t, genesisState.RevokedNocRootCertificatesList, got.RevokedNocRootCertificatesList)
 	require.ElementsMatch(t, genesisState.NocCertificatesByVidAndSkidList, got.NocCertificatesByVidAndSkidList)
+	require.ElementsMatch(t, genesisState.NocCertificatesBySubjectKeyIDList, got.NocCertificatesBySubjectKeyIDList)
+	require.ElementsMatch(t, genesisState.NocCertificatesList, got.NocCertificatesList)
+	require.ElementsMatch(t, genesisState.NocCertificatesBySubjectList, got.NocCertificatesBySubjectList)
+	require.ElementsMatch(t, genesisState.CertificatesList, got.CertificatesList)
+	require.ElementsMatch(t, genesisState.RevokedNocIcaCertificatesList, got.RevokedNocIcaCertificatesList)
+	require.ElementsMatch(t, genesisState.AllCertificatesBySubjectList, got.AllCertificatesBySubjectList)
 	// this line is used by starport scaffolding # genesis/test/assert
 }

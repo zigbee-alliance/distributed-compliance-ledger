@@ -8,10 +8,10 @@ import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
 import { MsgProposeAddAccount } from "./types/zigbeealliance/distributedcomplianceledger/dclauth/tx";
-import { MsgApproveAddAccount } from "./types/zigbeealliance/distributedcomplianceledger/dclauth/tx";
-import { MsgRejectAddAccount } from "./types/zigbeealliance/distributedcomplianceledger/dclauth/tx";
 import { MsgApproveRevokeAccount } from "./types/zigbeealliance/distributedcomplianceledger/dclauth/tx";
 import { MsgProposeRevokeAccount } from "./types/zigbeealliance/distributedcomplianceledger/dclauth/tx";
+import { MsgRejectAddAccount } from "./types/zigbeealliance/distributedcomplianceledger/dclauth/tx";
+import { MsgApproveAddAccount } from "./types/zigbeealliance/distributedcomplianceledger/dclauth/tx";
 
 import { Account as typeAccount} from "./types"
 import { AccountStat as typeAccountStat} from "./types"
@@ -21,22 +21,10 @@ import { PendingAccountRevocation as typePendingAccountRevocation} from "./types
 import { RejectedAccount as typeRejectedAccount} from "./types"
 import { RevokedAccount as typeRevokedAccount} from "./types"
 
-export { MsgProposeAddAccount, MsgApproveAddAccount, MsgRejectAddAccount, MsgApproveRevokeAccount, MsgProposeRevokeAccount };
+export { MsgProposeAddAccount, MsgApproveRevokeAccount, MsgProposeRevokeAccount, MsgRejectAddAccount, MsgApproveAddAccount };
 
 type sendMsgProposeAddAccountParams = {
   value: MsgProposeAddAccount,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgApproveAddAccountParams = {
-  value: MsgApproveAddAccount,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgRejectAddAccountParams = {
-  value: MsgRejectAddAccount,
   fee?: StdFee,
   memo?: string
 };
@@ -53,17 +41,21 @@ type sendMsgProposeRevokeAccountParams = {
   memo?: string
 };
 
+type sendMsgRejectAddAccountParams = {
+  value: MsgRejectAddAccount,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgApproveAddAccountParams = {
+  value: MsgApproveAddAccount,
+  fee?: StdFee,
+  memo?: string
+};
+
 
 type msgProposeAddAccountParams = {
   value: MsgProposeAddAccount,
-};
-
-type msgApproveAddAccountParams = {
-  value: MsgApproveAddAccount,
-};
-
-type msgRejectAddAccountParams = {
-  value: MsgRejectAddAccount,
 };
 
 type msgApproveRevokeAccountParams = {
@@ -72,6 +64,14 @@ type msgApproveRevokeAccountParams = {
 
 type msgProposeRevokeAccountParams = {
   value: MsgProposeRevokeAccount,
+};
+
+type msgRejectAddAccountParams = {
+  value: MsgRejectAddAccount,
+};
+
+type msgApproveAddAccountParams = {
+  value: MsgApproveAddAccount,
 };
 
 
@@ -118,34 +118,6 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		async sendMsgApproveAddAccount({ value, fee, memo }: sendMsgApproveAddAccountParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgApproveAddAccount: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgApproveAddAccount({ value: MsgApproveAddAccount.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgApproveAddAccount: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgRejectAddAccount({ value, fee, memo }: sendMsgRejectAddAccountParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgRejectAddAccount: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgRejectAddAccount({ value: MsgRejectAddAccount.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgRejectAddAccount: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
 		async sendMsgApproveRevokeAccount({ value, fee, memo }: sendMsgApproveRevokeAccountParams): Promise<DeliverTxResponse> {
 			if (!signer) {
 					throw new Error('TxClient:sendMsgApproveRevokeAccount: Unable to sign Tx. Signer is not present.')
@@ -174,28 +146,40 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
+		async sendMsgRejectAddAccount({ value, fee, memo }: sendMsgRejectAddAccountParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgRejectAddAccount: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgRejectAddAccount({ value: MsgRejectAddAccount.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgRejectAddAccount: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgApproveAddAccount({ value, fee, memo }: sendMsgApproveAddAccountParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgApproveAddAccount: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgApproveAddAccount({ value: MsgApproveAddAccount.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgApproveAddAccount: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
 		
 		msgProposeAddAccount({ value }: msgProposeAddAccountParams): EncodeObject {
 			try {
 				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.dclauth.MsgProposeAddAccount", value: MsgProposeAddAccount.fromPartial( value ) }  
 			} catch (e: any) {
 				throw new Error('TxClient:MsgProposeAddAccount: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgApproveAddAccount({ value }: msgApproveAddAccountParams): EncodeObject {
-			try {
-				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.dclauth.MsgApproveAddAccount", value: MsgApproveAddAccount.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgApproveAddAccount: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgRejectAddAccount({ value }: msgRejectAddAccountParams): EncodeObject {
-			try {
-				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.dclauth.MsgRejectAddAccount", value: MsgRejectAddAccount.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgRejectAddAccount: Could not create message: ' + e.message)
 			}
 		},
 		
@@ -212,6 +196,22 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.dclauth.MsgProposeRevokeAccount", value: MsgProposeRevokeAccount.fromPartial( value ) }  
 			} catch (e: any) {
 				throw new Error('TxClient:MsgProposeRevokeAccount: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgRejectAddAccount({ value }: msgRejectAddAccountParams): EncodeObject {
+			try {
+				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.dclauth.MsgRejectAddAccount", value: MsgRejectAddAccount.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgRejectAddAccount: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgApproveAddAccount({ value }: msgApproveAddAccountParams): EncodeObject {
+			try {
+				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.dclauth.MsgApproveAddAccount", value: MsgApproveAddAccount.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgApproveAddAccount: Could not create message: ' + e.message)
 			}
 		},
 		

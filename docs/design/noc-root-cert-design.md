@@ -96,7 +96,7 @@ Retrieve NOC root certificates associated with a specific VID.
 - CLI Command:
   - `dcld query pki get_noc_x509_root_certs --vid=<uint16>`
 - REST API:
-  - GET `/dcl/pki/noc-root-certificates/{vid}`
+  - GET `/dcl/pki/noc-vid-root-certificates/{vid}`
 
 ### GET_ALL_NOC_X509_ROOT_CERTS
 

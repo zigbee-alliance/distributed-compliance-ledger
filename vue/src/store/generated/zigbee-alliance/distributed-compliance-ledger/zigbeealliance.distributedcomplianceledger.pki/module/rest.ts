@@ -787,11 +787,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryNocIcaCertificates
    * @summary Queries a NocIcaCertificates by index.
-   * @request GET:/dcl/pki/noc-ica-certificates/{vid}
+   * @request GET:/dcl/pki/noc-vid-ica-certificates/{vid}
    */
   queryNocIcaCertificates = (vid: number, params: RequestParams = {}) =>
     this.request<PkiQueryGetNocIcaCertificatesResponse, RpcStatus>({
-      path: `/dcl/pki/noc-ica-certificates/${vid}`,
+      path: `/dcl/pki/noc-vid-ica-certificates/${vid}`,
       method: "GET",
       format: "json",
       ...params,
@@ -829,11 +829,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryNocRootCertificates
    * @summary Queries a NocRootCertificates by index.
-   * @request GET:/dcl/pki/noc-root-certificates/{vid}
+   * @request GET:/dcl/pki/noc-vid-root-certificates/{vid}
    */
   queryNocRootCertificates = (vid: number, params: RequestParams = {}) =>
     this.request<PkiQueryGetNocRootCertificatesResponse, RpcStatus>({
-      path: `/dcl/pki/noc-root-certificates/${vid}`,
+      path: `/dcl/pki/noc-vid-root-certificates/${vid}`,
       method: "GET",
       format: "json",
       ...params,
@@ -845,11 +845,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryNocRootCertificatesByVidAndSkid
    * @summary Queries a NocRootCertificatesByVidAndSkid by index.
-   * @request GET:/dcl/pki/noc-root-certificates/{vid}/{subjectKeyId}
+   * @request GET:/dcl/pki/noc-vid-root-certificates/{vid}/{subjectKeyId}
    */
   queryNocRootCertificatesByVidAndSkid = (vid: number, subjectKeyId: string, params: RequestParams = {}) =>
     this.request<PkiQueryGetNocRootCertificatesByVidAndSkidResponse, RpcStatus>({
-      path: `/dcl/pki/noc-root-certificates/${vid}/${subjectKeyId}`,
+      path: `/dcl/pki/noc-vid-root-certificates/${vid}/${subjectKeyId}`,
       method: "GET",
       format: "json",
       ...params,

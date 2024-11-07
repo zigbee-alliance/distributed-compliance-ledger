@@ -67,8 +67,8 @@ func (k Keeper) GetAllRevokedCertificates(ctx sdk.Context) (list []types.Revoked
 	return
 }
 
-// Add revoked certificates to the list of revoked certificates for the subject/subjectKeyId map.
-func (k Keeper) AddRevokedCertificates(ctx sdk.Context, approvedCertificates types.ApprovedCertificates) {
+// AddRevokedCertificates Add revoked certificates to the list of revoked certificates for the subject/subjectKeyId map.
+func (k Keeper) AddRevokedCertificates(ctx sdk.Context, approvedCertificates types.RevokedCertificates) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.RevokedCertificatesKeyPrefix))
 
 	revokedCertificatesBytes := store.Get(types.RevokedCertificatesKey(

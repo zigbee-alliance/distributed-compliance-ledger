@@ -4,6 +4,45 @@ import { Grant } from "./grant";
 
 export const protobufPackage = "zigbeealliance.distributedcomplianceledger.pki";
 
+export enum CertificateType {
+  DeviceAttestationPKI = 0,
+  OperationalPKI = 1,
+  VIDSignerPKI = 2,
+  UNRECOGNIZED = -1,
+}
+
+export function certificateTypeFromJSON(object: any): CertificateType {
+  switch (object) {
+    case 0:
+    case "DeviceAttestationPKI":
+      return CertificateType.DeviceAttestationPKI;
+    case 1:
+    case "OperationalPKI":
+      return CertificateType.OperationalPKI;
+    case 2:
+    case "VIDSignerPKI":
+      return CertificateType.VIDSignerPKI;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return CertificateType.UNRECOGNIZED;
+  }
+}
+
+export function certificateTypeToJSON(object: CertificateType): string {
+  switch (object) {
+    case CertificateType.DeviceAttestationPKI:
+      return "DeviceAttestationPKI";
+    case CertificateType.OperationalPKI:
+      return "OperationalPKI";
+    case CertificateType.VIDSignerPKI:
+      return "VIDSignerPKI";
+    case CertificateType.UNRECOGNIZED:
+    default:
+      return "UNRECOGNIZED";
+  }
+}
+
 export interface Certificate {
   pemCert: string;
   serialNumber: string;
@@ -19,7 +58,7 @@ export interface Certificate {
   subjectAsText: string;
   rejects: Grant[];
   vid: number;
-  isNoc: boolean;
+  certificateType: CertificateType;
   schemaVersion: number;
 }
 
@@ -39,7 +78,7 @@ function createBaseCertificate(): Certificate {
     subjectAsText: "",
     rejects: [],
     vid: 0,
-    isNoc: false,
+    certificateType: 0,
     schemaVersion: 0,
   };
 }
@@ -88,8 +127,8 @@ export const Certificate = {
     if (message.vid !== 0) {
       writer.uint32(112).int32(message.vid);
     }
-    if (message.isNoc === true) {
-      writer.uint32(120).bool(message.isNoc);
+    if (message.certificateType !== 0) {
+      writer.uint32(120).int32(message.certificateType);
     }
     if (message.schemaVersion !== 0) {
       writer.uint32(128).uint32(message.schemaVersion);
@@ -147,7 +186,7 @@ export const Certificate = {
           message.vid = reader.int32();
           break;
         case 15:
-          message.isNoc = reader.bool();
+          message.certificateType = reader.int32() as any;
           break;
         case 16:
           message.schemaVersion = reader.uint32();
@@ -176,7 +215,7 @@ export const Certificate = {
       subjectAsText: isSet(object.subjectAsText) ? String(object.subjectAsText) : "",
       rejects: Array.isArray(object?.rejects) ? object.rejects.map((e: any) => Grant.fromJSON(e)) : [],
       vid: isSet(object.vid) ? Number(object.vid) : 0,
-      isNoc: isSet(object.isNoc) ? Boolean(object.isNoc) : false,
+      certificateType: isSet(object.certificateType) ? certificateTypeFromJSON(object.certificateType) : 0,
       schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
@@ -205,7 +244,7 @@ export const Certificate = {
       obj.rejects = [];
     }
     message.vid !== undefined && (obj.vid = Math.round(message.vid));
-    message.isNoc !== undefined && (obj.isNoc = message.isNoc);
+    message.certificateType !== undefined && (obj.certificateType = certificateTypeToJSON(message.certificateType));
     message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
@@ -226,7 +265,7 @@ export const Certificate = {
     message.subjectAsText = object.subjectAsText ?? "";
     message.rejects = object.rejects?.map((e) => Grant.fromPartial(e)) || [];
     message.vid = object.vid ?? 0;
-    message.isNoc = object.isNoc ?? false;
+    message.certificateType = object.certificateType ?? 0;
     message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },

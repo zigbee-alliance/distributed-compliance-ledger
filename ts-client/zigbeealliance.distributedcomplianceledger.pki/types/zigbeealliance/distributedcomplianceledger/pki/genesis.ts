@@ -1,19 +1,25 @@
 /* eslint-disable */
 import _m0 from "protobufjs/minimal";
+import { AllCertificates } from "./all_certificates";
+import { AllCertificatesBySubject } from "./all_certificates_by_subject";
 import { ApprovedCertificates } from "./approved_certificates";
 import { ApprovedCertificatesBySubject } from "./approved_certificates_by_subject";
 import { ApprovedCertificatesBySubjectKeyId } from "./approved_certificates_by_subject_key_id";
 import { ApprovedRootCertificates } from "./approved_root_certificates";
 import { ChildCertificates } from "./child_certificates";
+import { NocCertificates } from "./noc_certificates";
+import { NocCertificatesBySubject } from "./noc_certificates_by_subject";
+import { NocCertificatesBySubjectKeyID } from "./noc_certificates_by_subject_key_id";
+import { NocCertificatesByVidAndSkid } from "./noc_certificates_by_vid_and_skid";
 import { NocIcaCertificates } from "./noc_ica_certificates";
 import { NocRootCertificates } from "./noc_root_certificates";
-import { NocRootCertificatesByVidAndSkid } from "./noc_root_certificates_by_vid_and_skid";
 import { PkiRevocationDistributionPoint } from "./pki_revocation_distribution_point";
 import { PkiRevocationDistributionPointsByIssuerSubjectKeyID } from "./pki_revocation_distribution_points_by_issuer_subject_key_id";
 import { ProposedCertificate } from "./proposed_certificate";
 import { ProposedCertificateRevocation } from "./proposed_certificate_revocation";
 import { RejectedCertificate } from "./rejected_certificate";
 import { RevokedCertificates } from "./revoked_certificates";
+import { RevokedNocIcaCertificates } from "./revoked_noc_ica_certificates";
 import { RevokedNocRootCertificates } from "./revoked_noc_root_certificates";
 import { RevokedRootCertificates } from "./revoked_root_certificates";
 import { UniqueCertificate } from "./unique_certificate";
@@ -38,8 +44,14 @@ export interface GenesisState {
   nocRootCertificatesList: NocRootCertificates[];
   nocIcaCertificatesList: NocIcaCertificates[];
   revokedNocRootCertificatesList: RevokedNocRootCertificates[];
+  nocCertificatesByVidAndSkidList: NocCertificatesByVidAndSkid[];
+  NocCertificatesBySubjectKeyIDList: NocCertificatesBySubjectKeyID[];
+  nocCertificatesList: NocCertificates[];
+  nocCertificatesBySubjectList: NocCertificatesBySubject[];
+  certificatesList: AllCertificates[];
+  revokedNocIcaCertificatesList: RevokedNocIcaCertificates[];
   /** this line is used by starport scaffolding # genesis/proto/state */
-  nocRootCertificatesByVidAndSkidList: NocRootCertificatesByVidAndSkid[];
+  allCertificatesBySubjectList: AllCertificatesBySubject[];
 }
 
 function createBaseGenesisState(): GenesisState {
@@ -60,7 +72,13 @@ function createBaseGenesisState(): GenesisState {
     nocRootCertificatesList: [],
     nocIcaCertificatesList: [],
     revokedNocRootCertificatesList: [],
-    nocRootCertificatesByVidAndSkidList: [],
+    nocCertificatesByVidAndSkidList: [],
+    NocCertificatesBySubjectKeyIDList: [],
+    nocCertificatesList: [],
+    nocCertificatesBySubjectList: [],
+    certificatesList: [],
+    revokedNocIcaCertificatesList: [],
+    allCertificatesBySubjectList: [],
   };
 }
 
@@ -114,8 +132,26 @@ export const GenesisState = {
     for (const v of message.revokedNocRootCertificatesList) {
       RevokedNocRootCertificates.encode(v!, writer.uint32(130).fork()).ldelim();
     }
-    for (const v of message.nocRootCertificatesByVidAndSkidList) {
-      NocRootCertificatesByVidAndSkid.encode(v!, writer.uint32(138).fork()).ldelim();
+    for (const v of message.nocCertificatesByVidAndSkidList) {
+      NocCertificatesByVidAndSkid.encode(v!, writer.uint32(138).fork()).ldelim();
+    }
+    for (const v of message.NocCertificatesBySubjectKeyIDList) {
+      NocCertificatesBySubjectKeyID.encode(v!, writer.uint32(146).fork()).ldelim();
+    }
+    for (const v of message.nocCertificatesList) {
+      NocCertificates.encode(v!, writer.uint32(154).fork()).ldelim();
+    }
+    for (const v of message.nocCertificatesBySubjectList) {
+      NocCertificatesBySubject.encode(v!, writer.uint32(162).fork()).ldelim();
+    }
+    for (const v of message.certificatesList) {
+      AllCertificates.encode(v!, writer.uint32(170).fork()).ldelim();
+    }
+    for (const v of message.revokedNocIcaCertificatesList) {
+      RevokedNocIcaCertificates.encode(v!, writer.uint32(178).fork()).ldelim();
+    }
+    for (const v of message.allCertificatesBySubjectList) {
+      AllCertificatesBySubject.encode(v!, writer.uint32(186).fork()).ldelim();
     }
     return writer;
   },
@@ -182,9 +218,25 @@ export const GenesisState = {
           message.revokedNocRootCertificatesList.push(RevokedNocRootCertificates.decode(reader, reader.uint32()));
           break;
         case 17:
-          message.nocRootCertificatesByVidAndSkidList.push(
-            NocRootCertificatesByVidAndSkid.decode(reader, reader.uint32()),
-          );
+          message.nocCertificatesByVidAndSkidList.push(NocCertificatesByVidAndSkid.decode(reader, reader.uint32()));
+          break;
+        case 18:
+          message.NocCertificatesBySubjectKeyIDList.push(NocCertificatesBySubjectKeyID.decode(reader, reader.uint32()));
+          break;
+        case 19:
+          message.nocCertificatesList.push(NocCertificates.decode(reader, reader.uint32()));
+          break;
+        case 20:
+          message.nocCertificatesBySubjectList.push(NocCertificatesBySubject.decode(reader, reader.uint32()));
+          break;
+        case 21:
+          message.certificatesList.push(AllCertificates.decode(reader, reader.uint32()));
+          break;
+        case 22:
+          message.revokedNocIcaCertificatesList.push(RevokedNocIcaCertificates.decode(reader, reader.uint32()));
+          break;
+        case 23:
+          message.allCertificatesBySubjectList.push(AllCertificatesBySubject.decode(reader, reader.uint32()));
           break;
         default:
           reader.skipType(tag & 7);
@@ -247,8 +299,26 @@ export const GenesisState = {
       revokedNocRootCertificatesList: Array.isArray(object?.revokedNocRootCertificatesList)
         ? object.revokedNocRootCertificatesList.map((e: any) => RevokedNocRootCertificates.fromJSON(e))
         : [],
-      nocRootCertificatesByVidAndSkidList: Array.isArray(object?.nocRootCertificatesByVidAndSkidList)
-        ? object.nocRootCertificatesByVidAndSkidList.map((e: any) => NocRootCertificatesByVidAndSkid.fromJSON(e))
+      nocCertificatesByVidAndSkidList: Array.isArray(object?.nocCertificatesByVidAndSkidList)
+        ? object.nocCertificatesByVidAndSkidList.map((e: any) => NocCertificatesByVidAndSkid.fromJSON(e))
+        : [],
+      NocCertificatesBySubjectKeyIDList: Array.isArray(object?.NocCertificatesBySubjectKeyIDList)
+        ? object.NocCertificatesBySubjectKeyIDList.map((e: any) => NocCertificatesBySubjectKeyID.fromJSON(e))
+        : [],
+      nocCertificatesList: Array.isArray(object?.nocCertificatesList)
+        ? object.nocCertificatesList.map((e: any) => NocCertificates.fromJSON(e))
+        : [],
+      nocCertificatesBySubjectList: Array.isArray(object?.nocCertificatesBySubjectList)
+        ? object.nocCertificatesBySubjectList.map((e: any) => NocCertificatesBySubject.fromJSON(e))
+        : [],
+      certificatesList: Array.isArray(object?.certificatesList)
+        ? object.certificatesList.map((e: any) => AllCertificates.fromJSON(e))
+        : [],
+      revokedNocIcaCertificatesList: Array.isArray(object?.revokedNocIcaCertificatesList)
+        ? object.revokedNocIcaCertificatesList.map((e: any) => RevokedNocIcaCertificates.fromJSON(e))
+        : [],
+      allCertificatesBySubjectList: Array.isArray(object?.allCertificatesBySubjectList)
+        ? object.allCertificatesBySubjectList.map((e: any) => AllCertificatesBySubject.fromJSON(e))
         : [],
     };
   },
@@ -356,12 +426,50 @@ export const GenesisState = {
     } else {
       obj.revokedNocRootCertificatesList = [];
     }
-    if (message.nocRootCertificatesByVidAndSkidList) {
-      obj.nocRootCertificatesByVidAndSkidList = message.nocRootCertificatesByVidAndSkidList.map((e) =>
-        e ? NocRootCertificatesByVidAndSkid.toJSON(e) : undefined
+    if (message.nocCertificatesByVidAndSkidList) {
+      obj.nocCertificatesByVidAndSkidList = message.nocCertificatesByVidAndSkidList.map((e) =>
+        e ? NocCertificatesByVidAndSkid.toJSON(e) : undefined
       );
     } else {
-      obj.nocRootCertificatesByVidAndSkidList = [];
+      obj.nocCertificatesByVidAndSkidList = [];
+    }
+    if (message.NocCertificatesBySubjectKeyIDList) {
+      obj.NocCertificatesBySubjectKeyIDList = message.NocCertificatesBySubjectKeyIDList.map((e) =>
+        e ? NocCertificatesBySubjectKeyID.toJSON(e) : undefined
+      );
+    } else {
+      obj.NocCertificatesBySubjectKeyIDList = [];
+    }
+    if (message.nocCertificatesList) {
+      obj.nocCertificatesList = message.nocCertificatesList.map((e) => e ? NocCertificates.toJSON(e) : undefined);
+    } else {
+      obj.nocCertificatesList = [];
+    }
+    if (message.nocCertificatesBySubjectList) {
+      obj.nocCertificatesBySubjectList = message.nocCertificatesBySubjectList.map((e) =>
+        e ? NocCertificatesBySubject.toJSON(e) : undefined
+      );
+    } else {
+      obj.nocCertificatesBySubjectList = [];
+    }
+    if (message.certificatesList) {
+      obj.certificatesList = message.certificatesList.map((e) => e ? AllCertificates.toJSON(e) : undefined);
+    } else {
+      obj.certificatesList = [];
+    }
+    if (message.revokedNocIcaCertificatesList) {
+      obj.revokedNocIcaCertificatesList = message.revokedNocIcaCertificatesList.map((e) =>
+        e ? RevokedNocIcaCertificates.toJSON(e) : undefined
+      );
+    } else {
+      obj.revokedNocIcaCertificatesList = [];
+    }
+    if (message.allCertificatesBySubjectList) {
+      obj.allCertificatesBySubjectList = message.allCertificatesBySubjectList.map((e) =>
+        e ? AllCertificatesBySubject.toJSON(e) : undefined
+      );
+    } else {
+      obj.allCertificatesBySubjectList = [];
     }
     return obj;
   },
@@ -404,8 +512,18 @@ export const GenesisState = {
     message.nocIcaCertificatesList = object.nocIcaCertificatesList?.map((e) => NocIcaCertificates.fromPartial(e)) || [];
     message.revokedNocRootCertificatesList =
       object.revokedNocRootCertificatesList?.map((e) => RevokedNocRootCertificates.fromPartial(e)) || [];
-    message.nocRootCertificatesByVidAndSkidList =
-      object.nocRootCertificatesByVidAndSkidList?.map((e) => NocRootCertificatesByVidAndSkid.fromPartial(e)) || [];
+    message.nocCertificatesByVidAndSkidList =
+      object.nocCertificatesByVidAndSkidList?.map((e) => NocCertificatesByVidAndSkid.fromPartial(e)) || [];
+    message.NocCertificatesBySubjectKeyIDList =
+      object.NocCertificatesBySubjectKeyIDList?.map((e) => NocCertificatesBySubjectKeyID.fromPartial(e)) || [];
+    message.nocCertificatesList = object.nocCertificatesList?.map((e) => NocCertificates.fromPartial(e)) || [];
+    message.nocCertificatesBySubjectList =
+      object.nocCertificatesBySubjectList?.map((e) => NocCertificatesBySubject.fromPartial(e)) || [];
+    message.certificatesList = object.certificatesList?.map((e) => AllCertificates.fromPartial(e)) || [];
+    message.revokedNocIcaCertificatesList =
+      object.revokedNocIcaCertificatesList?.map((e) => RevokedNocIcaCertificates.fromPartial(e)) || [];
+    message.allCertificatesBySubjectList =
+      object.allCertificatesBySubjectList?.map((e) => AllCertificatesBySubject.fromPartial(e)) || [];
     return message;
   },
 };

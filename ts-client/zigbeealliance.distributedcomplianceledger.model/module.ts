@@ -7,12 +7,12 @@ import { msgTypes } from './registry';
 import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
-import { MsgCreateModel } from "./types/zigbeealliance/distributedcomplianceledger/model/tx";
 import { MsgUpdateModel } from "./types/zigbeealliance/distributedcomplianceledger/model/tx";
 import { MsgDeleteModelVersion } from "./types/zigbeealliance/distributedcomplianceledger/model/tx";
-import { MsgCreateModelVersion } from "./types/zigbeealliance/distributedcomplianceledger/model/tx";
 import { MsgUpdateModelVersion } from "./types/zigbeealliance/distributedcomplianceledger/model/tx";
 import { MsgDeleteModel } from "./types/zigbeealliance/distributedcomplianceledger/model/tx";
+import { MsgCreateModel } from "./types/zigbeealliance/distributedcomplianceledger/model/tx";
+import { MsgCreateModelVersion } from "./types/zigbeealliance/distributedcomplianceledger/model/tx";
 
 import { Model as typeModel} from "./types"
 import { ModelVersion as typeModelVersion} from "./types"
@@ -20,13 +20,7 @@ import { ModelVersions as typeModelVersions} from "./types"
 import { Product as typeProduct} from "./types"
 import { VendorProducts as typeVendorProducts} from "./types"
 
-export { MsgCreateModel, MsgUpdateModel, MsgDeleteModelVersion, MsgCreateModelVersion, MsgUpdateModelVersion, MsgDeleteModel };
-
-type sendMsgCreateModelParams = {
-  value: MsgCreateModel,
-  fee?: StdFee,
-  memo?: string
-};
+export { MsgUpdateModel, MsgDeleteModelVersion, MsgUpdateModelVersion, MsgDeleteModel, MsgCreateModel, MsgCreateModelVersion };
 
 type sendMsgUpdateModelParams = {
   value: MsgUpdateModel,
@@ -36,12 +30,6 @@ type sendMsgUpdateModelParams = {
 
 type sendMsgDeleteModelVersionParams = {
   value: MsgDeleteModelVersion,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgCreateModelVersionParams = {
-  value: MsgCreateModelVersion,
   fee?: StdFee,
   memo?: string
 };
@@ -58,10 +46,18 @@ type sendMsgDeleteModelParams = {
   memo?: string
 };
 
-
-type msgCreateModelParams = {
+type sendMsgCreateModelParams = {
   value: MsgCreateModel,
+  fee?: StdFee,
+  memo?: string
 };
+
+type sendMsgCreateModelVersionParams = {
+  value: MsgCreateModelVersion,
+  fee?: StdFee,
+  memo?: string
+};
+
 
 type msgUpdateModelParams = {
   value: MsgUpdateModel,
@@ -71,16 +67,20 @@ type msgDeleteModelVersionParams = {
   value: MsgDeleteModelVersion,
 };
 
-type msgCreateModelVersionParams = {
-  value: MsgCreateModelVersion,
-};
-
 type msgUpdateModelVersionParams = {
   value: MsgUpdateModelVersion,
 };
 
 type msgDeleteModelParams = {
   value: MsgDeleteModel,
+};
+
+type msgCreateModelParams = {
+  value: MsgCreateModel,
+};
+
+type msgCreateModelVersionParams = {
+  value: MsgCreateModelVersion,
 };
 
 
@@ -113,20 +113,6 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 
   return {
 		
-		async sendMsgCreateModel({ value, fee, memo }: sendMsgCreateModelParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgCreateModel: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgCreateModel({ value: MsgCreateModel.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgCreateModel: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
 		async sendMsgUpdateModel({ value, fee, memo }: sendMsgUpdateModelParams): Promise<DeliverTxResponse> {
 			if (!signer) {
 					throw new Error('TxClient:sendMsgUpdateModel: Unable to sign Tx. Signer is not present.')
@@ -152,20 +138,6 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
 				throw new Error('TxClient:sendMsgDeleteModelVersion: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgCreateModelVersion({ value, fee, memo }: sendMsgCreateModelVersionParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgCreateModelVersion: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgCreateModelVersion({ value: MsgCreateModelVersion.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgCreateModelVersion: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -197,14 +169,34 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		
-		msgCreateModel({ value }: msgCreateModelParams): EncodeObject {
-			try {
-				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgCreateModel", value: MsgCreateModel.fromPartial( value ) }  
+		async sendMsgCreateModel({ value, fee, memo }: sendMsgCreateModelParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgCreateModel: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgCreateModel({ value: MsgCreateModel.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:MsgCreateModel: Could not create message: ' + e.message)
+				throw new Error('TxClient:sendMsgCreateModel: Could not broadcast Tx: '+ e.message)
 			}
 		},
+		
+		async sendMsgCreateModelVersion({ value, fee, memo }: sendMsgCreateModelVersionParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgCreateModelVersion: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgCreateModelVersion({ value: MsgCreateModelVersion.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgCreateModelVersion: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
 		
 		msgUpdateModel({ value }: msgUpdateModelParams): EncodeObject {
 			try {
@@ -222,14 +214,6 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		msgCreateModelVersion({ value }: msgCreateModelVersionParams): EncodeObject {
-			try {
-				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgCreateModelVersion", value: MsgCreateModelVersion.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgCreateModelVersion: Could not create message: ' + e.message)
-			}
-		},
-		
 		msgUpdateModelVersion({ value }: msgUpdateModelVersionParams): EncodeObject {
 			try {
 				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgUpdateModelVersion", value: MsgUpdateModelVersion.fromPartial( value ) }  
@@ -243,6 +227,22 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgDeleteModel", value: MsgDeleteModel.fromPartial( value ) }  
 			} catch (e: any) {
 				throw new Error('TxClient:MsgDeleteModel: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgCreateModel({ value }: msgCreateModelParams): EncodeObject {
+			try {
+				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgCreateModel", value: MsgCreateModel.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgCreateModel: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgCreateModelVersion({ value }: msgCreateModelVersionParams): EncodeObject {
+			try {
+				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgCreateModelVersion", value: MsgCreateModelVersion.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgCreateModelVersion: Could not create message: ' + e.message)
 			}
 		},
 		
