@@ -46,6 +46,24 @@ Should be sent to trusted nodes only.
 - REST API:
   - GET `/dcl/pki/all-certificates`
 
+#### GET_ALL_CERTS_BY_SUBJECT
+
+**Status: Implemented**
+
+Gets all certificates associated with a subject. This query works for all types certificates (PAA, PAI, RCAC, ICAC).
+
+Revoked certificates are not returned.
+Use [GET_ALL_REVOKED_DA_CERTS](#get_all_revoked_da_certs) to get a list of all revoked DA certificates.
+Use [GET_ALL_REVOKED_NOC_ROOT_CERTS](#get_all_revoked_noc_root-rcacs) to get a list of all revoked Noc Root certificates.
+Use [GET_ALL_REVOKED_NOC_ICA_CERTS](#get_all_revoked_noc_ica-icacs) to get a list of all revoked Noc ICA certificates.
+
+- Parameters:
+  - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
+- CLI command:
+  - `dcld query pki all-subject-certs --subject=<base64 string>`
+- REST API:
+  - GET `/dcl/pki/all-certificates/{subject}`
+
 #### GET_CHILD_CERTS
 
 **Status: Implemented**
@@ -113,6 +131,7 @@ The PAA certificate is not active until sufficient number of Trustees approve it
   - time: `optional(int64)` - proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). This field cannot be specified using a CLI command and will use the current time by default.
 - In State:
   - `pki/AllCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`.
+  - `pki/AllCertificatesBySubject/value/<Subject>`.
   - `pki/ApprovedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`.
   - `pki/ApprovedCertificatesBySubject/value/<Certificate's Subject>`
   - `pki/ApprovedCertificatesBySubjectKeyId/value/<Certificate's Subject Key ID>`.
@@ -693,6 +712,7 @@ This transaction adds a NOC root certificate (RCAC) owned by the Vendor.
   - schemaVersion: `optional(uint16)` - Certificate's schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - In State:
   - `pki/AllCertificates/value/<Subject>/<SubjectKeyID>`
+  - `pki/AllCertificatesBySubject/value/<Subject>`
   - `pki/NocCertificates/value/<Subject>/<SubjectKeyID>`
   - `pki/NocRootCertificates/value/<VID>`
   - `pki/NocCertificatesBySubject/value/<Subject>`
@@ -779,6 +799,7 @@ already present on the ledger.
   - certificate-schema-version: `optional(uint16)` - Certificate's schema version to support backward/forward compatability(default 0)
 - In State:
   - `pki/AllCertificates/value/<Subject>/<SubjectKeyID>`
+  - `pki/AllCertificatesBySubject/value/<Subject>`
   - `pki/NocCertificates/value/<Subject>/<SubjectKeyID>`
   - `pki/NocIcaCertificates/value/<VID>`
   - `pki/NocCertificatesBySubject/value/<Subject>`
@@ -847,7 +868,7 @@ Use [GET_REVOKED_NOC_ICA](#get_revoked_noc_ica-icac) to get a revoked ica certif
 - CLI command:
   - `dcld query pki noc-x509-cert --subject=<base64 string> --subject-key-id=<hex string>`
 - REST API:
-  - GET `/dcl/pki/noc-certificates/{subject}/{subject_key_id}`
+  - GET `/dcl/pki/all-noc-certificates/{subject}/{subject_key_id}`
 
 #### GET_NOC_ROOT_BY_VID (RCACs)
 
@@ -864,7 +885,7 @@ Use [GET_ALL_REVOKED_NOC_ROOT](#get_all_revoked_noc_root-rcacs) to get a list of
 - CLI Command:
   - `dcld query pki noc-x509-root-certs --vid=<uint16>`
 - REST API:
-  - GET `/dcl/pki/noc-root-certificates/{vid}`
+  - GET `/dcl/pki/noc-vid-root-certificates/{vid}`
 
 #### GET_NOC_BY_VID_AND_SKID (RCACs/ICACs)
 
@@ -884,7 +905,7 @@ Use [GET_ALL_REVOKED_NOC_ICA](#get_all_revoked_noc_ica-icacs) to get a list of a
 - CLI Command:
   - `dcld query pki noc-x509-certs --vid=<uint16> --subject-key-id=<hex string>`
 - REST API:
-  - GET `/dcl/pki/noc-certificates/{vid}/{subject_key_id}`
+  - GET `/dcl/pki/noc-vid-certificates/{vid}/{subject_key_id}`
 
 #### GET_NOC_ICA_BY_VID (ICACs)
 
@@ -901,7 +922,7 @@ Use [GET_ALL_REVOKED_CERT](#get_all_revoked_certs) to get a list of all revoked 
 - CLI Command:
   - `dcld query pki noc-x509-ica-certs --vid=<uint16>`
 - REST API:
-  - GET `/dcl/pki/noc-ica-certificates/{vid}`
+  - GET `/dcl/pki/noc-vid-ica-certificates/{vid}`
 
 #### GET_NOC_CERTS_BY_SUBJECT
 
@@ -918,7 +939,7 @@ Use [GET_ALL_REVOKED_NOC_ICA](#get_all_revoked_noc_ica-icacs) to get a list of a
 - CLI command:
   - `dcld query pki all-noc-subject-x509-certs --subject=<base64 string>`
 - REST API:
-  - GET `/dcl/pki/noc-certificates/{subject}`
+  - GET `/dcl/pki/all-noc-certificates/{subject}`
 
 #### GET_REVOKED_NOC_ROOT (RCAC)
 
@@ -968,7 +989,7 @@ Use [GET_ALL_REVOKED_NOC_ICA](#get_all_revoked_noc_ica-icacs) to get a list of a
 - CLI Command:
   - `dcld query pki all-noc-x509-certs`
 - REST API:
-  - GET `/dcl/pki/noc-certificates`
+  - GET `/dcl/pki/all-noc-certificates`
 
 #### GET_ALL_NOC_ROOT (RCACs)
 
