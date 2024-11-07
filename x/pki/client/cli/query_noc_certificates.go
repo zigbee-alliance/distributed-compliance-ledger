@@ -78,13 +78,13 @@ func CmdShowNocCertificates() *cobra.Command {
 					&res,
 				)
 			}
-			var res types.NocCertificatesBySubjectKeyId
+			var res types.NocCertificatesBySubjectKeyID
 
 			return cli.QueryWithProof(
 				clientCtx,
 				pkitypes.StoreKey,
-				types.NocCertificatesBySubjectKeyIdKeyPrefix,
-				types.NocCertificatesBySubjectKeyIdKey(subjectKeyID),
+				types.NocCertificatesBySubjectKeyIDKeyPrefix,
+				types.NocCertificatesBySubjectKeyIDKey(subjectKeyID),
 				&res,
 			)
 		},

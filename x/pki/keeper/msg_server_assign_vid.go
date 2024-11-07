@@ -71,25 +71,23 @@ func (k msgServer) AssignVid(goCtx context.Context, msg *types.MsgAssignVid) (*t
 	// assign VID to certificates in approved list
 	approvedCertificates, found := k.GetApprovedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
 	if !found {
-
 		return nil, pkitypes.NewErrCertificateDoesNotExist(msg.Subject, msg.SubjectKeyId)
 	}
 	k.assignVid(&approvedCertificates.Certs, msg.Vid)
 
 	// assign VID to certificates in list indexed by subject key id
-	certificatesBySubjectKeyId, found := k.GetApprovedCertificatesBySubjectKeyID(ctx, msg.SubjectKeyId)
+	certificatesBySubjectKeyID, found := k.GetApprovedCertificatesBySubjectKeyID(ctx, msg.SubjectKeyId)
 	if !found {
-
 		return nil, pkitypes.NewErrCertificateDoesNotExist(msg.Subject, msg.SubjectKeyId)
 	}
-	k.assignVid(&certificatesBySubjectKeyId.Certs, msg.Vid)
+	k.assignVid(&certificatesBySubjectKeyID.Certs, msg.Vid)
 
 	// update global certificates list
 	k.SetAllCertificates(ctx, certificates)
 	// update approved certificates list
 	k.SetApprovedCertificates(ctx, approvedCertificates)
 	// update certificates list indexed by subject key id
-	k.SetApprovedCertificatesBySubjectKeyID(ctx, certificatesBySubjectKeyId)
+	k.SetApprovedCertificatesBySubjectKeyID(ctx, certificatesBySubjectKeyID)
 
 	return &types.MsgAssignVidResponse{}, nil
 }

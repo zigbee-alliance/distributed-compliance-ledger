@@ -6,7 +6,7 @@ This document contains tutorials demonstrating how to accomplish common tasks us
 - If write requests to the Ledger needs to be sent, please make sure that you have
 an Account created on the Ledger with an appropriate role (see [Getting Account](#getting-account) section in [how-to.md](how-to.md)).
 - Sending read requests to the Ledger doesn't require an Account (Ledger is public for reads).
-- A full list of all CLI commands with all parameters can be found there: [transactions](transactions/transactions.md).
+- A full list of all CLI commands with all parameters can be found there: [transactions](transactions.md).
 - After the CLI is configured and Account with an appropriate role is created,
 the following instructions can be used for every role (see [Use Case Diagrams](use_cases)):
   - [Trustee](#trustee-instructions)

@@ -47,20 +47,21 @@ func (k Keeper) AddNocCertificate(ctx sdk.Context, nocCertificate types.Certific
 func (k Keeper) GetNocCertificates(
 	ctx sdk.Context,
 	subject string,
-	subjectKeyId string,
+	subjectKeyID string,
 
 ) (val types.NocCertificates, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocCertificatesKeyPrefix))
 
 	b := store.Get(types.NocCertificatesKey(
 		subject,
-		subjectKeyId,
+		subjectKeyID,
 	))
 	if b == nil {
 		return val, false
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
@@ -84,13 +85,13 @@ func (k Keeper) GetAllNocCertificates(ctx sdk.Context) (list []types.NocCertific
 func (k Keeper) RemoveNocCertificates(
 	ctx sdk.Context,
 	subject string,
-	subjectKeyId string,
+	subjectKeyID string,
 
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocCertificatesKeyPrefix))
 	store.Delete(types.NocCertificatesKey(
 		subject,
-		subjectKeyId,
+		subjectKeyID,
 	))
 }
 

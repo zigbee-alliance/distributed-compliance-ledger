@@ -30,7 +30,7 @@ func networkWithProposedCertificateRevocationObjects(t *testing.T, n int) (*netw
 	for i := 0; i < n; i++ {
 		proposedCertificateRevocation := types.ProposedCertificateRevocation{
 			Subject:      strconv.Itoa(i),
-			SubjectKeyId: strconv.Itoa(i),
+			SubjectKeyID: strconv.Itoa(i),
 		}
 		nullify.Fill(&proposedCertificateRevocation)
 		state.ProposedCertificateRevocationList = append(state.ProposedCertificateRevocationList, proposedCertificateRevocation)
@@ -60,7 +60,7 @@ func TestShowProposedCertificateRevocation(t *testing.T) {
 		{
 			desc:           "found",
 			idSubject:      objs[0].Subject,
-			idSubjectKeyId: objs[0].SubjectKeyId,
+			idSubjectKeyId: objs[0].SubjectKeyID,
 
 			args: common,
 			obj:  objs[0],

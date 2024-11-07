@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
@@ -58,20 +59,21 @@ func (k Keeper) _addAllCertificates(ctx sdk.Context, subject string, subjectKeyI
 func (k Keeper) GetAllCertificates(
 	ctx sdk.Context,
 	subject string,
-	subjectKeyId string,
+	subjectKeyID string,
 
 ) (val types.AllCertificates, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.AllCertificatesKeyPrefix))
 
 	b := store.Get(types.AllCertificatesKey(
 		subject,
-		subjectKeyId,
+		subjectKeyID,
 	))
 	if b == nil {
 		return val, false
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
@@ -95,13 +97,13 @@ func (k Keeper) GetAllAllCertificates(ctx sdk.Context) (list []types.AllCertific
 func (k Keeper) RemoveAllCertificates(
 	ctx sdk.Context,
 	subject string,
-	subjectKeyId string,
+	subjectKeyID string,
 
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.AllCertificatesKeyPrefix))
 	store.Delete(types.AllCertificatesKey(
 		subject,
-		subjectKeyId,
+		subjectKeyID,
 	))
 }
 

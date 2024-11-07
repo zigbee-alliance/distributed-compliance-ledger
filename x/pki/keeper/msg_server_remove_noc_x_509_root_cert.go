@@ -77,6 +77,8 @@ func (k msgServer) RemoveNocX509RootCert(goCtx context.Context, msg *types.MsgRe
 	} else {
 		// remove from global certificates map
 		k.RemoveAllCertificates(ctx, certID.Subject, certID.SubjectKeyId)
+		// remove from global subject -> subject key ID map
+		k.RemoveAllCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
 		// remove from noc certificates map
 		k.RemoveNocCertificates(ctx, certID.Subject, certID.SubjectKeyId)
 		// remove from noc root certificates map
@@ -86,7 +88,7 @@ func (k msgServer) RemoveNocX509RootCert(goCtx context.Context, msg *types.MsgRe
 		// remove from subject -> subject key ID map
 		k.RemoveNocCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
 		// remove from subject key ID -> certificates map
-		k.RemoveNocCertificatesBySubjectKeyID(ctx, certID.Subject, certID.SubjectKeyId)
+		k.RemoveNocCertificatesBySubjectAndSubjectKeyID(ctx, certID.Subject, certID.SubjectKeyId)
 		// remove from revoked noc root certs
 		k.RemoveRevokedNocRootCertificates(ctx, certID.Subject, certID.SubjectKeyId)
 		// remove from subject with serialNumber map

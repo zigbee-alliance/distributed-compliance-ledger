@@ -61,16 +61,12 @@ func (k msgServer) RevokeX509Cert(goCtx context.Context, msg *types.MsgRevokeX50
 
 func (k msgServer) _revokeX509Certificates(ctx sdk.Context, certID types.CertificateIdentifier, certificates types.ApprovedCertificates) {
 	// Revoke certificates with given subject/subjectKeyID
-	revCerts := types.RevokedCertificates{
-		Subject:       certificates.Subject,
-		SubjectKeyId:  certificates.SubjectKeyId,
-		Certs:         certificates.Certs,
-		SchemaVersion: certificates.SchemaVersion,
-	}
-	k.AddRevokedCertificates(ctx, revCerts)
+	k.AddRevokedCertificates(ctx, types.RevokedCertificates(certificates))
 
 	// Remove certificate from global list
 	k.RemoveAllCertificates(ctx, certID.Subject, certID.SubjectKeyId)
+	// Remove certificate from global list -> subject key ID map
+	k.RemoveAllCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
 	// Remove certificate from approved list
 	k.RemoveApprovedCertificates(ctx, certID.Subject, certID.SubjectKeyId)
 	// Remove certificate identifier from issuer's ChildCertificates record
@@ -93,6 +89,7 @@ func (k msgServer) _revokeX509Certificate(ctx sdk.Context, cert *types.Certifica
 	removeCertFromList(cert.Issuer, cert.SerialNumber, &certificates.Certs)
 	if len(certificates.Certs) == 0 {
 		k.RemoveAllCertificates(ctx, cert.Subject, cert.SubjectKeyId)
+		k.RemoveAllCertificateBySubject(ctx, cert.Subject, cert.SubjectKeyId)
 		k.RemoveApprovedCertificates(ctx, cert.Subject, cert.SubjectKeyId)
 		k.RemoveApprovedCertificateBySubject(ctx, cert.Subject, cert.SubjectKeyId)
 		k.RemoveApprovedCertificatesBySubjectKeyID(ctx, cert.Subject, cert.SubjectKeyId)
@@ -100,6 +97,6 @@ func (k msgServer) _revokeX509Certificate(ctx sdk.Context, cert *types.Certifica
 	} else {
 		k.RemoveAllCertificatesBySerialNumber(ctx, cert.Subject, cert.SubjectKeyId, cert.SerialNumber)
 		k.RemoveApprovedCertificatesBySerialNumber(ctx, cert.Subject, cert.SubjectKeyId, cert.SerialNumber)
-		k.RemoveApprovedCertificatesBySubjectKeyIdBySerialNumber(ctx, cert.Subject, cert.SubjectKeyId, cert.SerialNumber)
+		k.RemoveApprovedCertificatesBySubjectKeyIDBySerialNumber(ctx, cert.Subject, cert.SubjectKeyId, cert.SerialNumber)
 	}
 }

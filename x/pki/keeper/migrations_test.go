@@ -27,6 +27,17 @@ func _createNApprovedCertificates(keeper *keeper.Keeper, ctx sdk.Context, n int)
 	return items
 }
 
+func _createNApprovedCertificatesBySubject(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.ApprovedCertificatesBySubject {
+	items := make([]types.ApprovedCertificatesBySubject, n)
+	for i := range items {
+		items[i].Subject = strconv.Itoa(i)
+		items[i].SubjectKeyIds = []string{strconv.Itoa(i)}
+		keeper.SetApprovedCertificatesBySubject(ctx, items[i])
+	}
+
+	return items
+}
+
 func TestMigrator_Migrate2to3(t *testing.T) {
 	_keeper, ctx := keepertest.PkiKeeper(t, nil)
 	msg := _createNApprovedCertificates(_keeper, ctx, 5)
@@ -47,11 +58,13 @@ func TestMigrator_Migrate2to3(t *testing.T) {
 func TestMigrator_Migrate3to4(t *testing.T) {
 	_keeper, ctx := keepertest.PkiKeeper(t, nil)
 	msg := _createNApprovedCertificates(_keeper, ctx, 5)
+	_createNApprovedCertificatesBySubject(_keeper, ctx, 5)
 
 	migrator := keeper.NewMigrator(*_keeper)
 	err := migrator.Migrate3to4(ctx)
 	require.NoError(t, err)
 
+	// check that all certificates migrated
 	subject := "0"
 	subjectKeyID := "0"
 	list, found := _keeper.GetAllCertificates(ctx, subject, subjectKeyID)
@@ -63,4 +76,10 @@ func TestMigrator_Migrate3to4(t *testing.T) {
 
 	allList := _keeper.GetAllAllCertificates(ctx)
 	require.Equal(t, 5, len(allList))
+
+	// check that all certificates by subject migrated
+	subjList, found := _keeper.GetAllCertificatesBySubject(ctx, subject)
+	require.True(t, found)
+	require.Equal(t, subject, subjList.Subject)
+	require.Equal(t, 1, len(subjList.SubjectKeyIds))
 }

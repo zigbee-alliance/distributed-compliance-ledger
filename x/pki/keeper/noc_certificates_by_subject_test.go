@@ -22,6 +22,7 @@ func createNNocCertificatesBySubject(keeper *keeper.Keeper, ctx sdk.Context, n i
 
 		keeper.SetNocCertificatesBySubject(ctx, items[i])
 	}
+
 	return items
 }
 

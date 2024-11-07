@@ -15,13 +15,14 @@ import (
 // Prevent strconv unused error
 var _ = strconv.IntSize
 
-func createNNocCertificatesBySubjectKeyId(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.NocCertificatesBySubjectKeyId {
-	items := make([]types.NocCertificatesBySubjectKeyId, n)
+func createNNocCertificatesBySubjectKeyId(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.NocCertificatesBySubjectKeyID {
+	items := make([]types.NocCertificatesBySubjectKeyID, n)
 	for i := range items {
 		items[i].SubjectKeyId = strconv.Itoa(i)
 
-		keeper.SetNocCertificatesBySubjectKeyId(ctx, items[i])
+		keeper.SetNocCertificatesBySubjectKeyID(ctx, items[i])
 	}
+
 	return items
 }
 
@@ -29,7 +30,7 @@ func TestNocCertificatesBySubjectKeyIdGet(t *testing.T) {
 	keeper, ctx := keepertest.PkiKeeper(t, nil)
 	items := createNNocCertificatesBySubjectKeyId(keeper, ctx, 10)
 	for _, item := range items {
-		rst, found := keeper.GetNocCertificatesBySubjectKeyId(ctx,
+		rst, found := keeper.GetNocCertificatesBySubjectKeyID(ctx,
 			item.SubjectKeyId,
 		)
 		require.True(t, found)
@@ -43,10 +44,10 @@ func TestNocCertificatesBySubjectKeyIdRemove(t *testing.T) {
 	keeper, ctx := keepertest.PkiKeeper(t, nil)
 	items := createNNocCertificatesBySubjectKeyId(keeper, ctx, 10)
 	for _, item := range items {
-		keeper.RemoveNocCertificatesBySubjectKeyId(ctx,
+		keeper.RemoveNocCertificatesBySubjectKeyID(ctx,
 			item.SubjectKeyId,
 		)
-		_, found := keeper.GetNocCertificatesBySubjectKeyId(ctx,
+		_, found := keeper.GetNocCertificatesBySubjectKeyID(ctx,
 			item.SubjectKeyId,
 		)
 		require.False(t, found)
@@ -58,6 +59,6 @@ func TestNocCertificatesBySubjectKeyIdGetAll(t *testing.T) {
 	items := createNNocCertificatesBySubjectKeyId(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),
-		nullify.Fill(keeper.GetAllNocCertificatesBySubjectKeyId(ctx)),
+		nullify.Fill(keeper.GetAllNocCertificatesBySubjectKeyID(ctx)),
 	)
 }

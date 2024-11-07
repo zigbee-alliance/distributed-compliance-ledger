@@ -110,16 +110,13 @@ func (k msgServer) RevokeApprovedChildCertificates(ctx sdk.Context, issuer strin
 	for _, certIdentifier := range childCertificates.CertIds {
 		// Revoke certificates with this subject/subjectKeyID combination
 		certificates, _ := k.GetApprovedCertificates(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
-		revCerts := types.RevokedCertificates{
-			Subject:       certificates.Subject,
-			SubjectKeyId:  certificates.SubjectKeyId,
-			Certs:         certificates.Certs,
-			SchemaVersion: certificates.SchemaVersion,
-		}
-		k.AddRevokedCertificates(ctx, revCerts)
+		k.AddRevokedCertificates(ctx, types.RevokedCertificates(certificates))
 
 		// Remove certificate from global certificates list
 		k.RemoveAllCertificates(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
+
+		// remove from global subject -> subject key ID map
+		k.RemoveAllCertificateBySubject(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
 
 		// Remove certificate from approved certificates list
 		k.RemoveApprovedCertificates(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
@@ -156,6 +153,9 @@ func (k msgServer) RevokeNocChildCertificates(ctx sdk.Context, issuer string, au
 		// Remove certificate from global certificates list
 		k.RemoveAllCertificates(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
 
+		// remove from global subject -> subject key ID map
+		k.RemoveAllCertificateBySubject(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
+
 		// Remove certificate from noc certificates list
 		k.RemoveNocCertificates(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
 
@@ -169,7 +169,7 @@ func (k msgServer) RevokeNocChildCertificates(ctx sdk.Context, issuer string, au
 		k.RemoveNocCertificateBySubject(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
 
 		// remove from subject key ID -> certificates map
-		k.RemoveNocCertificatesBySubjectKeyID(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
+		k.RemoveNocCertificatesBySubjectAndSubjectKeyID(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
 
 		// Process child certificates recursively
 		k.RevokeNocChildCertificates(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)

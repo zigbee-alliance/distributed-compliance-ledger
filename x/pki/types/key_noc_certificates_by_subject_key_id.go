@@ -5,12 +5,12 @@ import "encoding/binary"
 var _ binary.ByteOrder
 
 const (
-	// NocCertificatesBySubjectKeyIdKeyPrefix is the prefix to retrieve all NocCertificatesBySubjectKeyId
-	NocCertificatesBySubjectKeyIdKeyPrefix = "NocCertificatesBySubjectKeyId/value/"
+	// NocCertificatesBySubjectKeyIDKeyPrefix is the prefix to retrieve all NocCertificatesBySubjectKeyID
+	NocCertificatesBySubjectKeyIDKeyPrefix = "NocCertificatesBySubjectKeyID/value/"
 )
 
-// NocCertificatesBySubjectKeyIdKey returns the store key to retrieve a NocCertificatesBySubjectKeyId from the index fields
-func NocCertificatesBySubjectKeyIdKey(
+// NocCertificatesBySubjectKeyIDKey returns the store key to retrieve a NocCertificatesBySubjectKeyID from the index fields
+func NocCertificatesBySubjectKeyIDKey(
 	subjectKeyID string,
 ) []byte {
 	var key []byte

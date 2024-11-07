@@ -1,6 +1,6 @@
 package cli_test
 
-//import (
+// import (
 //	"fmt"
 //	"strconv"
 //	"testing"
@@ -19,16 +19,16 @@ package cli_test
 //)
 //
 //// Prevent strconv unused error
-//var _ = strconv.IntSize
+// var _ = strconv.IntSize
 //
-//func networkWithRevokedNocIcaCertificatesObjects(t *testing.T, n int) (*network.Network, []types.RevokedNocIcaCertificates) {
+// func networkWithRevokedNocIcaCertificatesObjects(t *testing.T, n int) (*network.Network, []types.RevokedNocIcaCertificates) {
 //	t.Helper()
 //	cfg := network.DefaultConfig()
 //	state := types.GenesisState{}
 //	for i := 0; i < n; i++ {
 //	revokedNocIcaCertificates := types.RevokedNocIcaCertificates{
 //			Subject: strconv.Itoa(i),
-//			SubjectKeyId: strconv.Itoa(i),
+//			SubjectKeyID: strconv.Itoa(i),
 //
 //		}
 //		nullify.Fill(&revokedNocIcaCertificates)
@@ -40,7 +40,7 @@ package cli_test
 //	return network.New(t, cfg), state.RevokedNocIcaCertificatesList
 //}
 //
-//func TestShowRevokedNocIcaCertificates(t *testing.T) {
+// func TestShowRevokedNocIcaCertificates(t *testing.T) {
 //	net, objs := networkWithRevokedNocIcaCertificatesObjects(t, 2)
 //
 //	ctx := net.Validators[0].ClientCtx
@@ -59,7 +59,7 @@ package cli_test
 //		{
 //			desc: "found",
 //			idSubject: objs[0].Subject,
-//            idSubjectKeyId: objs[0].SubjectKeyId,
+//            idSubjectKeyId: objs[0].SubjectKeyID,
 //
 //			args: common,
 //			obj:  objs[0],
@@ -100,7 +100,7 @@ package cli_test
 //	}
 //}
 //
-//func TestListRevokedNocIcaCertificates(t *testing.T) {
+// func TestListRevokedNocIcaCertificates(t *testing.T) {
 //	net, objs := networkWithRevokedNocIcaCertificatesObjects(t, 5)
 //
 //	ctx := net.Validators[0].ClientCtx

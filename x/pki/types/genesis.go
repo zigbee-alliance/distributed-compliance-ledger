@@ -27,11 +27,12 @@ func DefaultGenesis() *GenesisState {
 		NocIcaCertificatesList:                                  []NocIcaCertificates{},
 		RevokedNocRootCertificatesList:                          []RevokedNocRootCertificates{},
 		NocCertificatesByVidAndSkidList:                         []NocCertificatesByVidAndSkid{},
-		NocCertificatesBySubjectKeyIdList:                       []NocCertificatesBySubjectKeyId{},
+		NocCertificatesBySubjectKeyIDList:                       []NocCertificatesBySubjectKeyID{},
 		NocCertificatesList:                                     []NocCertificates{},
 		NocCertificatesBySubjectList:                            []NocCertificatesBySubject{},
 		CertificatesList:                                        []AllCertificates{},
 		RevokedNocIcaCertificatesList:                           []RevokedNocIcaCertificates{},
+		AllCertificatesBySubjectList:                            []AllCertificatesBySubject{},
 		// this line is used by starport scaffolding # genesis/types/default
 	}
 }
@@ -192,14 +193,14 @@ func (gs GenesisState) Validate() error { //nolint:gocyclo,vet
 		nocCertificatesByVidAndSkidIndexMap[index] = struct{}{}
 	}
 	// Check for duplicated index in nocCertificatesBySubjectKeyId
-	nocCertificatesBySubjectKeyIdIndexMap := make(map[string]struct{})
+	nocCertificatesBySubjectKeyIDIndexMap := make(map[string]struct{})
 
-	for _, elem := range gs.NocCertificatesBySubjectKeyIdList {
-		index := string(NocCertificatesBySubjectKeyIdKey(elem.SubjectKeyId))
-		if _, ok := nocCertificatesBySubjectKeyIdIndexMap[index]; ok {
+	for _, elem := range gs.NocCertificatesBySubjectKeyIDList {
+		index := string(NocCertificatesBySubjectKeyIDKey(elem.SubjectKeyId))
+		if _, ok := nocCertificatesBySubjectKeyIDIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for nocCertificatesBySubjectKeyId")
 		}
-		nocCertificatesBySubjectKeyIdIndexMap[index] = struct{}{}
+		nocCertificatesBySubjectKeyIDIndexMap[index] = struct{}{}
 	}
 
 	// Check for duplicated index in nocCertificatesBySubject
@@ -231,6 +232,16 @@ func (gs GenesisState) Validate() error { //nolint:gocyclo,vet
 			return fmt.Errorf("duplicated index for revokedNocIcaCertificates")
 		}
 		revokedNocIcaCertificatesIndexMap[index] = struct{}{}
+	}
+	// Check for duplicated index in allCertificatesBySubject
+	allCertificatesBySubjectIndexMap := make(map[string]struct{})
+
+	for _, elem := range gs.AllCertificatesBySubjectList {
+		index := string(AllCertificatesBySubjectKey(elem.Subject))
+		if _, ok := allCertificatesBySubjectIndexMap[index]; ok {
+			return fmt.Errorf("duplicated index for allCertificatesBySubject")
+		}
+		allCertificatesBySubjectIndexMap[index] = struct{}{}
 	}
 	// this line is used by starport scaffolding # genesis/types/validate
 

@@ -35,7 +35,7 @@ func TestMsgRevokeNocX509RootCert_ValidateBasic(t *testing.T) {
 			err: validator.ErrRequiredFieldMissing,
 		},
 		{
-			name: "empty SubjectKeyId",
+			name: "empty SubjectKeyID",
 			msg: MsgRevokeNocX509RootCert{
 				Signer:       sample.AccAddress(),
 				Subject:      testconstants.RootSubject,

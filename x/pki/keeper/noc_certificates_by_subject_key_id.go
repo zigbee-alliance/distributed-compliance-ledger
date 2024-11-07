@@ -8,12 +8,12 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-// SetNocCertificatesBySubjectKeyId set a specific nocCertificatesBySubjectKeyId in the store from its index
-func (k Keeper) SetNocCertificatesBySubjectKeyId(ctx sdk.Context, nocCertificatesBySubjectKeyId types.NocCertificatesBySubjectKeyId) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocCertificatesBySubjectKeyIdKeyPrefix))
-	b := k.cdc.MustMarshal(&nocCertificatesBySubjectKeyId)
-	store.Set(types.NocCertificatesBySubjectKeyIdKey(
-		nocCertificatesBySubjectKeyId.SubjectKeyId,
+// SetNocCertificatesBySubjectKeyID set a specific nocCertificatesBySubjectKeyId in the store from its index
+func (k Keeper) SetNocCertificatesBySubjectKeyID(ctx sdk.Context, nocCertificatesBySubjectKeyID types.NocCertificatesBySubjectKeyID) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocCertificatesBySubjectKeyIDKeyPrefix))
+	b := k.cdc.MustMarshal(&nocCertificatesBySubjectKeyID)
+	store.Set(types.NocCertificatesBySubjectKeyIDKey(
+		nocCertificatesBySubjectKeyID.SubjectKeyId,
 	), b)
 }
 
@@ -27,34 +27,35 @@ func (k Keeper) AddNocCertificatesBySubjectKeyID(ctx sdk.Context, nocCertificate
 	k._addNocCertificates(ctx, nocCertificate.SubjectKeyId, nocCertificate.Certs)
 }
 
-// GetNocCertificatesBySubjectKeyId returns a nocCertificatesBySubjectKeyId from its index
-func (k Keeper) GetNocCertificatesBySubjectKeyId(
+// GetNocCertificatesBySubjectKeyID returns a nocCertificatesBySubjectKeyId from its index
+func (k Keeper) GetNocCertificatesBySubjectKeyID(
 	ctx sdk.Context,
-	subjectKeyId string,
+	subjectKeyID string,
 
-) (val types.NocCertificatesBySubjectKeyId, found bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocCertificatesBySubjectKeyIdKeyPrefix))
+) (val types.NocCertificatesBySubjectKeyID, found bool) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocCertificatesBySubjectKeyIDKeyPrefix))
 
-	b := store.Get(types.NocCertificatesBySubjectKeyIdKey(
-		subjectKeyId,
+	b := store.Get(types.NocCertificatesBySubjectKeyIDKey(
+		subjectKeyID,
 	))
 	if b == nil {
 		return val, false
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
-// GetAllNocCertificatesBySubjectKeyId returns all nocCertificatesBySubjectKeyId
-func (k Keeper) GetAllNocCertificatesBySubjectKeyId(ctx sdk.Context) (list []types.NocCertificatesBySubjectKeyId) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocCertificatesBySubjectKeyIdKeyPrefix))
+// GetAllNocCertificatesBySubjectKeyID returns all nocCertificatesBySubjectKeyId
+func (k Keeper) GetAllNocCertificatesBySubjectKeyID(ctx sdk.Context) (list []types.NocCertificatesBySubjectKeyID) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocCertificatesBySubjectKeyIDKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
-		var val types.NocCertificatesBySubjectKeyId
+		var val types.NocCertificatesBySubjectKeyID
 		k.cdc.MustUnmarshal(iterator.Value(), &val)
 		list = append(list, val)
 	}
@@ -62,14 +63,14 @@ func (k Keeper) GetAllNocCertificatesBySubjectKeyId(ctx sdk.Context) (list []typ
 	return
 }
 
-// RemoveNocCertificatesBySubjectKeyID removes a nocCertificatesBySubjectKeyId from the store.
-func (k Keeper) RemoveNocCertificatesBySubjectKeyID(
+// RemoveNocCertificatesBySubjectAndSubjectKeyID removes a nocCertificatesBySubjectKeyId from the store.
+func (k Keeper) RemoveNocCertificatesBySubjectAndSubjectKeyID(
 	ctx sdk.Context,
 	subject string,
 	subjectKeyID string,
 ) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocCertificatesBySubjectKeyIdKeyPrefix))
-	certs, found := k.GetNocCertificatesBySubjectKeyId(ctx, subjectKeyID)
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocCertificatesBySubjectKeyIDKeyPrefix))
+	certs, found := k.GetNocCertificatesBySubjectKeyID(ctx, subjectKeyID)
 	if !found {
 		return
 	}
@@ -83,42 +84,41 @@ func (k Keeper) RemoveNocCertificatesBySubjectKeyID(
 	}
 
 	if len(certs.Certs) == 0 {
-		store.Delete(types.NocCertificatesBySubjectKeyIdKey(
+		store.Delete(types.NocCertificatesBySubjectKeyIDKey(
 			subjectKeyID,
 		))
 	} else {
-		k.SetNocCertificatesBySubjectKeyId(ctx, certs)
+		k.SetNocCertificatesBySubjectKeyID(ctx, certs)
 	}
 }
 
-// RemoveNocCertificatesBySubjectKeyId removes a nocCertificatesBySubjectKeyId from the store
-func (k Keeper) RemoveNocCertificatesBySubjectKeyId(
+// RemoveNocCertificatesBySubjectKeyID removes a nocCertificatesBySubjectKeyId from the store
+func (k Keeper) RemoveNocCertificatesBySubjectKeyID(
 	ctx sdk.Context,
-	subjectKeyId string,
-
+	subjectKeyID string,
 ) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocCertificatesBySubjectKeyIdKeyPrefix))
-	store.Delete(types.NocCertificatesBySubjectKeyIdKey(
-		subjectKeyId,
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocCertificatesBySubjectKeyIDKeyPrefix))
+	store.Delete(types.NocCertificatesBySubjectKeyIDKey(
+		subjectKeyID,
 	))
 }
 
-func (k Keeper) RemoveNocCertificatesBySubjectKeyIdBySerialNumber(ctx sdk.Context, subject, subjectKeyID, serialNumber string) {
+func (k Keeper) RemoveNocCertificatesBySubjectKeyIDBySerialNumber(ctx sdk.Context, subject, subjectKeyID, serialNumber string) {
 	k._removeNocCertificatesBySubjectKeyIDBySerialNumber(ctx, subjectKeyID, func(cert *types.Certificate) bool {
 		return cert.Subject == subject && cert.SubjectKeyId == subjectKeyID && cert.SerialNumber == serialNumber
 	})
 }
 
 func (k Keeper) _addNocCertificates(ctx sdk.Context, subjectKeyID string, certs []*types.Certificate) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocCertificatesBySubjectKeyIdKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocCertificatesBySubjectKeyIDKeyPrefix))
 
 	nocCertificatesBytes := store.Get(types.NocCertificatesBySubjectKey(
 		subjectKeyID,
 	))
-	var nocCertificates types.NocCertificatesBySubjectKeyId
+	var nocCertificates types.NocCertificatesBySubjectKeyID
 
 	if nocCertificatesBytes == nil {
-		nocCertificates = types.NocCertificatesBySubjectKeyId{
+		nocCertificates = types.NocCertificatesBySubjectKeyID{
 			SubjectKeyId: subjectKeyID,
 			Certs:        []*types.Certificate{},
 		}
@@ -128,11 +128,11 @@ func (k Keeper) _addNocCertificates(ctx sdk.Context, subjectKeyID string, certs 
 
 	nocCertificates.Certs = append(nocCertificates.Certs, certs...)
 
-	k.SetNocCertificatesBySubjectKeyId(ctx, nocCertificates)
+	k.SetNocCertificatesBySubjectKeyID(ctx, nocCertificates)
 }
 
 func (k Keeper) _removeNocCertificatesBySubjectKeyIDBySerialNumber(ctx sdk.Context, subjectKeyID string, filter func(cert *types.Certificate) bool) {
-	certs, found := k.GetNocCertificatesBySubjectKeyId(ctx, subjectKeyID)
+	certs, found := k.GetNocCertificatesBySubjectKeyID(ctx, subjectKeyID)
 	if !found {
 		return
 	}
@@ -148,11 +148,11 @@ func (k Keeper) _removeNocCertificatesBySubjectKeyIDBySerialNumber(ctx sdk.Conte
 	}
 
 	if len(certs.Certs) == 0 {
-		store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocCertificatesBySubjectKeyIdKeyPrefix))
-		store.Delete(types.NocCertificatesBySubjectKeyIdKey(
+		store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocCertificatesBySubjectKeyIDKeyPrefix))
+		store.Delete(types.NocCertificatesBySubjectKeyIDKey(
 			subjectKeyID,
 		))
 	} else if numCertsBefore > len(certs.Certs) { // Update state only if any certificate is removed
-		k.SetNocCertificatesBySubjectKeyId(ctx, certs)
+		k.SetNocCertificatesBySubjectKeyID(ctx, certs)
 	}
 }
