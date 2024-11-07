@@ -5,11 +5,35 @@ import type { Ref } from 'vue'
 
 export default function useZigbeeallianceDistributedcomplianceledgerPki() {
   const client = useClient();
-  const QueryApprovedCertificates = (subject: string, subjectKeyId: string,  options: any) => {
-    const key = { type: 'QueryApprovedCertificates',  subject,  subjectKeyId };    
+  const QueryCertificatesAll = (query: any, options: any, perPage: number) => {
+    const key = { type: 'QueryCertificatesAll', query };    
+    return useInfiniteQuery([key], ({pageParam = 1}: { pageParam?: number}) => {
+      const {query } = key
+
+      query['pagination.limit']=perPage;
+      query['pagination.offset']= (pageParam-1)*perPage;
+      query['pagination.count_total']= true;
+      return  client.ZigbeeallianceDistributedcomplianceledgerPki.query.queryCertificatesAll(query ?? undefined).then( res => ({...res.data,pageParam}) );
+    }, {...options,
+      getNextPageParam: (lastPage, allPages) => { if ((lastPage.pagination?.total ?? 0) >((lastPage.pageParam ?? 0) * perPage)) {return lastPage.pageParam+1 } else {return undefined}},
+      getPreviousPageParam: (firstPage, allPages) => { if (firstPage.pageParam==1) { return undefined } else { return firstPage.pageParam-1}}
+    }
+    );
+  }
+  
+  const QueryAllCertificatesBySubject = (subject: string,  options: any) => {
+    const key = { type: 'QueryAllCertificatesBySubject',  subject };    
+    return useQuery([key], () => {
+      const { subject } = key
+      return  client.ZigbeeallianceDistributedcomplianceledgerPki.query.queryAllCertificatesBySubject(subject).then( res => res.data );
+    }, options);
+  }
+  
+  const QueryCertificates = (subject: string, subjectKeyId: string,  options: any) => {
+    const key = { type: 'QueryCertificates',  subject,  subjectKeyId };    
     return useQuery([key], () => {
       const { subject,  subjectKeyId } = key
-      return  client.ZigbeeallianceDistributedcomplianceledgerPki.query.queryApprovedCertificates(subject, subjectKeyId).then( res => res.data );
+      return  client.ZigbeeallianceDistributedcomplianceledgerPki.query.queryCertificates(subject, subjectKeyId).then( res => res.data );
     }, options);
   }
   
@@ -27,6 +51,22 @@ export default function useZigbeeallianceDistributedcomplianceledgerPki() {
       getPreviousPageParam: (firstPage, allPages) => { if (firstPage.pageParam==1) { return undefined } else { return firstPage.pageParam-1}}
     }
     );
+  }
+  
+  const QueryApprovedCertificatesBySubject = (subject: string,  options: any) => {
+    const key = { type: 'QueryApprovedCertificatesBySubject',  subject };    
+    return useQuery([key], () => {
+      const { subject } = key
+      return  client.ZigbeeallianceDistributedcomplianceledgerPki.query.queryApprovedCertificatesBySubject(subject).then( res => res.data );
+    }, options);
+  }
+  
+  const QueryApprovedCertificates = (subject: string, subjectKeyId: string,  options: any) => {
+    const key = { type: 'QueryApprovedCertificates',  subject,  subjectKeyId };    
+    return useQuery([key], () => {
+      const { subject,  subjectKeyId } = key
+      return  client.ZigbeeallianceDistributedcomplianceledgerPki.query.queryApprovedCertificates(subject, subjectKeyId).then( res => res.data );
+    }, options);
   }
   
   const QueryProposedCertificate = (subject: string, subjectKeyId: string,  options: any) => {
@@ -123,14 +163,6 @@ export default function useZigbeeallianceDistributedcomplianceledgerPki() {
     }, options);
   }
   
-  const QueryApprovedCertificatesBySubject = (subject: string,  options: any) => {
-    const key = { type: 'QueryApprovedCertificatesBySubject',  subject };    
-    return useQuery([key], () => {
-      const { subject } = key
-      return  client.ZigbeeallianceDistributedcomplianceledgerPki.query.queryApprovedCertificatesBySubject(subject).then( res => res.data );
-    }, options);
-  }
-  
   const QueryRejectedCertificate = (subject: string, subjectKeyId: string,  options: any) => {
     const key = { type: 'QueryRejectedCertificate',  subject,  subjectKeyId };    
     return useQuery([key], () => {
@@ -187,19 +219,51 @@ export default function useZigbeeallianceDistributedcomplianceledgerPki() {
     }, options);
   }
   
+  const QueryNocCertificatesAll = (query: any, options: any, perPage: number) => {
+    const key = { type: 'QueryNocCertificatesAll', query };    
+    return useInfiniteQuery([key], ({pageParam = 1}: { pageParam?: number}) => {
+      const {query } = key
+
+      query['pagination.limit']=perPage;
+      query['pagination.offset']= (pageParam-1)*perPage;
+      query['pagination.count_total']= true;
+      return  client.ZigbeeallianceDistributedcomplianceledgerPki.query.queryNocCertificatesAll(query ?? undefined).then( res => ({...res.data,pageParam}) );
+    }, {...options,
+      getNextPageParam: (lastPage, allPages) => { if ((lastPage.pagination?.total ?? 0) >((lastPage.pageParam ?? 0) * perPage)) {return lastPage.pageParam+1 } else {return undefined}},
+      getPreviousPageParam: (firstPage, allPages) => { if (firstPage.pageParam==1) { return undefined } else { return firstPage.pageParam-1}}
+    }
+    );
+  }
+  
+  const QueryNocCertificatesBySubject = (subject: string,  options: any) => {
+    const key = { type: 'QueryNocCertificatesBySubject',  subject };    
+    return useQuery([key], () => {
+      const { subject } = key
+      return  client.ZigbeeallianceDistributedcomplianceledgerPki.query.queryNocCertificatesBySubject(subject).then( res => res.data );
+    }, options);
+  }
+  
+  const QueryNocCertificates = (subject: string, subjectKeyId: string,  options: any) => {
+    const key = { type: 'QueryNocCertificates',  subject,  subjectKeyId };    
+    return useQuery([key], () => {
+      const { subject,  subjectKeyId } = key
+      return  client.ZigbeeallianceDistributedcomplianceledgerPki.query.queryNocCertificates(subject, subjectKeyId).then( res => res.data );
+    }, options);
+  }
+  
+  const QueryNocCertificatesByVidAndSkid = (vid: string, subjectKeyId: string,  options: any) => {
+    const key = { type: 'QueryNocCertificatesByVidAndSkid',  vid,  subjectKeyId };    
+    return useQuery([key], () => {
+      const { vid,  subjectKeyId } = key
+      return  client.ZigbeeallianceDistributedcomplianceledgerPki.query.queryNocCertificatesByVidAndSkid(vid, subjectKeyId).then( res => res.data );
+    }, options);
+  }
+  
   const QueryNocRootCertificates = (vid: string,  options: any) => {
     const key = { type: 'QueryNocRootCertificates',  vid };    
     return useQuery([key], () => {
       const { vid } = key
       return  client.ZigbeeallianceDistributedcomplianceledgerPki.query.queryNocRootCertificates(vid).then( res => res.data );
-    }, options);
-  }
-  
-  const QueryNocRootCertificatesByVidAndSkid = (vid: string, subjectKeyId: string,  options: any) => {
-    const key = { type: 'QueryNocRootCertificatesByVidAndSkid',  vid,  subjectKeyId };    
-    return useQuery([key], () => {
-      const { vid,  subjectKeyId } = key
-      return  client.ZigbeeallianceDistributedcomplianceledgerPki.query.queryNocRootCertificatesByVidAndSkid(vid, subjectKeyId).then( res => res.data );
     }, options);
   }
   
@@ -267,6 +331,30 @@ export default function useZigbeeallianceDistributedcomplianceledgerPki() {
     );
   }
   
-  return {QueryApprovedCertificates,QueryApprovedCertificatesAll,QueryProposedCertificate,QueryProposedCertificateAll,QueryChildCertificates,QueryProposedCertificateRevocation,QueryProposedCertificateRevocationAll,QueryRevokedCertificates,QueryRevokedCertificatesAll,QueryApprovedRootCertificates,QueryRevokedRootCertificates,QueryApprovedCertificatesBySubject,QueryRejectedCertificate,QueryRejectedCertificateAll,QueryPkiRevocationDistributionPoint,QueryPkiRevocationDistributionPointAll,QueryPkiRevocationDistributionPointsByIssuerSubjectKeyID,QueryNocRootCertificates,QueryNocRootCertificatesByVidAndSkid,QueryNocRootCertificatesAll,QueryNocIcaCertificates,QueryNocIcaCertificatesAll,QueryRevokedNocRootCertificates,QueryRevokedNocRootCertificatesAll,
+  const QueryRevokedNocIcaCertificates = (subject: string, subjectKeyId: string,  options: any) => {
+    const key = { type: 'QueryRevokedNocIcaCertificates',  subject,  subjectKeyId };    
+    return useQuery([key], () => {
+      const { subject,  subjectKeyId } = key
+      return  client.ZigbeeallianceDistributedcomplianceledgerPki.query.queryRevokedNocIcaCertificates(subject, subjectKeyId).then( res => res.data );
+    }, options);
+  }
+  
+  const QueryRevokedNocIcaCertificatesAll = (query: any, options: any, perPage: number) => {
+    const key = { type: 'QueryRevokedNocIcaCertificatesAll', query };    
+    return useInfiniteQuery([key], ({pageParam = 1}: { pageParam?: number}) => {
+      const {query } = key
+
+      query['pagination.limit']=perPage;
+      query['pagination.offset']= (pageParam-1)*perPage;
+      query['pagination.count_total']= true;
+      return  client.ZigbeeallianceDistributedcomplianceledgerPki.query.queryRevokedNocIcaCertificatesAll(query ?? undefined).then( res => ({...res.data,pageParam}) );
+    }, {...options,
+      getNextPageParam: (lastPage, allPages) => { if ((lastPage.pagination?.total ?? 0) >((lastPage.pageParam ?? 0) * perPage)) {return lastPage.pageParam+1 } else {return undefined}},
+      getPreviousPageParam: (firstPage, allPages) => { if (firstPage.pageParam==1) { return undefined } else { return firstPage.pageParam-1}}
+    }
+    );
+  }
+  
+  return {QueryCertificatesAll,QueryAllCertificatesBySubject,QueryCertificates,QueryApprovedCertificatesAll,QueryApprovedCertificatesBySubject,QueryApprovedCertificates,QueryProposedCertificate,QueryProposedCertificateAll,QueryChildCertificates,QueryProposedCertificateRevocation,QueryProposedCertificateRevocationAll,QueryRevokedCertificates,QueryRevokedCertificatesAll,QueryApprovedRootCertificates,QueryRevokedRootCertificates,QueryRejectedCertificate,QueryRejectedCertificateAll,QueryPkiRevocationDistributionPoint,QueryPkiRevocationDistributionPointAll,QueryPkiRevocationDistributionPointsByIssuerSubjectKeyID,QueryNocCertificatesAll,QueryNocCertificatesBySubject,QueryNocCertificates,QueryNocCertificatesByVidAndSkid,QueryNocRootCertificates,QueryNocRootCertificatesAll,QueryNocIcaCertificates,QueryNocIcaCertificatesAll,QueryRevokedNocRootCertificates,QueryRevokedNocRootCertificatesAll,QueryRevokedNocIcaCertificates,QueryRevokedNocIcaCertificatesAll,
   }
 }

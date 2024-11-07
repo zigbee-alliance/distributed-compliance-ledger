@@ -22,6 +22,7 @@ func createNAllCertificatesBySubject(keeper *keeper.Keeper, ctx sdk.Context, n i
 
 		keeper.SetAllCertificatesBySubject(ctx, items[i])
 	}
+
 	return items
 }
 

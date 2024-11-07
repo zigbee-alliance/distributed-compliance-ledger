@@ -73,6 +73,7 @@ func (k Keeper) GetAllCertificatesBySubject(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
