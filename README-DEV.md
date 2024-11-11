@@ -214,6 +214,11 @@ Please take into account the following when sending a PR:
 - **Note3**: `ignite chain build` needs to be called only if you made manual changes in `.proto` files.
   There is no need to call `ignite chain build` again once all errors and adjustments above are done. It's sufficient just to build the project via usual ways (such as `make build`)
 
+## Update Typescript bindings [ts-client](./ts-client)
+
+```
+ignite generate composables
+```
 
 ## Update Cosmos-sdk Version
 
