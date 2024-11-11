@@ -84,21 +84,6 @@ func (k msgServer) AddNocX509RootCert(goCtx context.Context, msg *types.MsgAddNo
 		msg.CertSchemaVersion,
 	)
 
-	// Add to the global list of certificates
-	k.AddAllCertificate(ctx, certificate)
-
-	// append to global list of certificates indexed by subject
-	k.AddAllCertificateBySubject(ctx, certificate.Subject, certificate.SubjectKeyId)
-
-	// add to global list of certificates indexed by skid
-	k.AddAllCertificateBySubjectKeyID(ctx, certificate)
-
-	// Add to the list of all NOC certificates
-	k.AddNocCertificate(ctx, certificate)
-
-	// Add to the list of NOC root certificates with the same VID
-	k.AddNocRootCertificate(ctx, certificate)
-
 	// register the unique certificate key
 	uniqueCertificate := types.UniqueCertificate{
 		Issuer:       x509Certificate.Issuer,
@@ -107,14 +92,11 @@ func (k msgServer) AddNocX509RootCert(goCtx context.Context, msg *types.MsgAddNo
 	}
 	k.SetUniqueCertificate(ctx, uniqueCertificate)
 
-	// add to certificates map indexed by { vid, subject key id }
-	k.AddNocCertificateByVidAndSkid(ctx, certificate)
+	// Add to the indexes for global certificates list
+	k.AddCertificateToAllCertificateIndexes(ctx, certificate)
 
-	// add to certificates map indexed by { subject }
-	k.AddNocCertificateBySubject(ctx, certificate)
-
-	// add to certificates map indexed by { subject key id }
-	k.AddNocCertificateBySubjectKeyID(ctx, certificate)
+	// Add to the indexes for noc certificates list
+	k.AddCertificateToNocCertificateIndexes(ctx, certificate, true)
 
 	return &types.MsgAddNocX509RootCertResponse{}, nil
 }

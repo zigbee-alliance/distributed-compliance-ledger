@@ -60,7 +60,7 @@ func (k msgServer) RemoveX509Cert(goCtx context.Context, msg *types.MsgRemoveX50
 
 		if foundApproved {
 			removeCertFromList(certBySerialNumber.Issuer, certBySerialNumber.SerialNumber, &aprCerts.Certs)
-			k.removeApprovedX509Cert(ctx, certID, &aprCerts, msg.SerialNumber)
+			k.removeDaX509Cert(ctx, certID, &aprCerts, msg.SerialNumber)
 		}
 		if foundRevoked {
 			removeCertFromList(certBySerialNumber.Issuer, certBySerialNumber.SerialNumber, &revCerts.Certs)
@@ -68,19 +68,12 @@ func (k msgServer) RemoveX509Cert(goCtx context.Context, msg *types.MsgRemoveX50
 		}
 	} else {
 		// remove from global certificates map
-		k.RemoveAllCertificates(ctx, certID.Subject, certID.SubjectKeyId)
-		// remove from global subject -> subject map
-		k.RemoveAllCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
-		// remove from global subject -> subject key ID map
-		k.RemoveAllCertificatesBySubjectKeyID(ctx, certID.Subject, certID.SubjectKeyId)
-		// remove from approved certificates map
-		k.RemoveApprovedCertificates(ctx, certID.Subject, certID.SubjectKeyId)
-		// remove from subject -> subject key ID map
-		k.RemoveApprovedCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
-		// remove from subject key ID -> certificates map
-		k.RemoveApprovedCertificatesBySubjectKeyID(ctx, certID.Subject, certID.SubjectKeyId)
+		k.RemoveCertificateFromAllCertificateIndexes(ctx, certID)
+		// remove from noc certificates map
+		k.RemoveCertificateFromDaCertificateIndexes(ctx, certID, false)
 		// remove from revoked list
 		k.RemoveRevokedCertificates(ctx, certID.Subject, certID.SubjectKeyId)
+
 		// remove from subject with serialNumber map
 		for _, cert := range certificates {
 			k.RemoveUniqueCertificate(ctx, cert.Issuer, cert.SerialNumber)

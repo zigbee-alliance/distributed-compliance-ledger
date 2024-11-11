@@ -45,7 +45,7 @@ func (k msgServer) RevokeNocX509RootCert(goCtx context.Context, msg *types.MsgRe
 	}
 
 	if msg.SerialNumber != "" {
-		err = k._revokeNocRootCertificate(ctx, msg.SerialNumber, certificates, cert.Vid)
+		err = k._revokeNocRootCertificateBySerialNumber(ctx, msg.SerialNumber, certificates, cert.Vid)
 		if err != nil {
 			return nil, err
 		}
@@ -65,7 +65,7 @@ func (k msgServer) RevokeNocX509RootCert(goCtx context.Context, msg *types.MsgRe
 	return &types.MsgRevokeNocX509RootCertResponse{}, nil
 }
 
-func (k msgServer) _revokeNocRootCertificate(
+func (k msgServer) _revokeNocRootCertificateBySerialNumber(
 	ctx sdk.Context,
 	serialNumber string,
 	certificates types.NocCertificates,
@@ -87,18 +87,18 @@ func (k msgServer) _revokeNocRootCertificate(
 
 	removeCertFromList(cert.Issuer, cert.SerialNumber, &certificates.Certs)
 
+	certID := types.CertificateIdentifier{
+		Subject:      cert.Subject,
+		SubjectKeyId: cert.SubjectKeyId,
+	}
+
 	if len(certificates.Certs) == 0 {
-		k.RemoveAllCertificates(ctx, certificates.Subject, certificates.SubjectKeyId)
-		k.RemoveAllCertificateBySubject(ctx, certificates.Subject, certificates.SubjectKeyId)
-		k.RemoveAllCertificatesBySubjectKeyID(ctx, certificates.Subject, certificates.SubjectKeyId)
-		k.RemoveNocCertificates(ctx, certificates.Subject, certificates.SubjectKeyId)
-		k.RemoveNocRootCertificate(ctx, certificates.Subject, certificates.SubjectKeyId, vid)
-		k.RemoveNocCertificatesByVidAndSkid(ctx, vid, cert.SubjectKeyId)
-		k.RemoveNocCertificateBySubject(ctx, cert.Subject, cert.SubjectKeyId)
-		k.RemoveNocCertificatesBySubjectAndSubjectKeyID(ctx, cert.Subject, cert.SubjectKeyId)
+		// Remove certificate from global list
+		k.RemoveCertificateFromAllCertificateIndexes(ctx, certID)
+		// Remove certificate from noc list
+		k.RemoveCertificateFromNocCertificateIndexes(ctx, certID, vid, true)
 	} else {
 		k.RemoveAllCertificatesBySerialNumber(ctx, cert.Subject, cert.SubjectKeyId, serialNumber)
-		k.RemoveAllCertificatesBySubjectKeyIDBySerialNumber(ctx, cert.Subject, cert.SubjectKeyId, serialNumber)
 		k.RemoveNocCertificatesBySerialNumber(ctx, cert.Subject, cert.SubjectKeyId, serialNumber)
 		k.RemoveNocRootCertificateBySerialNumber(ctx, cert.Subject, cert.SubjectKeyId, vid, serialNumber)
 		k.RemoveNocCertificatesByVidAndSkidBySerialNumber(ctx, vid, cert.Subject, cert.SubjectKeyId, serialNumber)
@@ -116,20 +116,12 @@ func (k msgServer) _revokeNocRootCertificates(ctx sdk.Context, certificates type
 		Certs:        certificates.Certs,
 	})
 
-	// remove cert from global certs list
-	k.RemoveAllCertificates(ctx, certificates.Subject, certificates.SubjectKeyId)
-	// remove cert from global certs list -> subject map
-	k.RemoveAllCertificateBySubject(ctx, certificates.Subject, certificates.SubjectKeyId)
-	// remove cert from global certs list -> subject key ID map
-	k.RemoveAllCertificatesBySubjectKeyID(ctx, certificates.Subject, certificates.SubjectKeyId)
-	// remove cert from NOC certs list
-	k.RemoveNocCertificates(ctx, certificates.Subject, certificates.SubjectKeyId)
-	// remove cert from NOC ica certs list
-	k.RemoveNocRootCertificate(ctx, certificates.Subject, certificates.SubjectKeyId, vid)
-	// remove from subject -> subject key ID map
-	k.RemoveNocCertificateBySubject(ctx, certificates.Subject, certificates.SubjectKeyId)
-	// remove from subject key ID -> certificates map
-	k.RemoveNocCertificatesBySubjectAndSubjectKeyID(ctx, certificates.Subject, certificates.SubjectKeyId)
-	// remove from vid, subject key ID -> certificates map
-	k.RemoveNocCertificateByVidSubjectAndSkid(ctx, vid, certificates.Subject, certificates.SubjectKeyId)
+	certID := types.CertificateIdentifier{
+		Subject:      certificates.Subject,
+		SubjectKeyId: certificates.SubjectKeyId,
+	}
+	// Remove certificate from global list
+	k.RemoveCertificateFromAllCertificateIndexes(ctx, certID)
+	// Remove certificate from noc list
+	k.RemoveCertificateFromNocCertificateIndexes(ctx, certID, vid, true)
 }

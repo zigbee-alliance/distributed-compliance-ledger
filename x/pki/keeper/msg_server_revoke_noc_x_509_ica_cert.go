@@ -82,18 +82,18 @@ func (k msgServer) _revokeNocCertificate(
 
 	removeCertFromList(cert.Issuer, cert.SerialNumber, &certificates.Certs)
 
+	certID := types.CertificateIdentifier{
+		Subject:      certificates.Subject,
+		SubjectKeyId: certificates.SubjectKeyId,
+	}
+
 	if len(certificates.Certs) == 0 {
-		k.RemoveAllCertificates(ctx, certificates.Subject, certificates.SubjectKeyId)
-		k.RemoveAllCertificateBySubject(ctx, certificates.Subject, certificates.SubjectKeyId)
-		k.RemoveAllCertificatesBySubjectKeyID(ctx, certificates.Subject, certificates.SubjectKeyId)
-		k.RemoveNocCertificates(ctx, certificates.Subject, certificates.SubjectKeyId)
-		k.RemoveNocIcaCertificate(ctx, certificates.Subject, certificates.SubjectKeyId, vid)
-		k.RemoveNocCertificatesByVidAndSkid(ctx, vid, cert.SubjectKeyId)
-		k.RemoveNocCertificateBySubject(ctx, cert.Subject, cert.SubjectKeyId)
-		k.RemoveNocCertificatesBySubjectAndSubjectKeyID(ctx, cert.Subject, cert.SubjectKeyId)
+		// Remove certificate from global list
+		k.RemoveCertificateFromAllCertificateIndexes(ctx, certID)
+		// Remove certificate from noc list
+		k.RemoveCertificateFromNocCertificateIndexes(ctx, certID, vid, false)
 	} else {
 		k.RemoveAllCertificatesBySerialNumber(ctx, cert.Subject, cert.SubjectKeyId, serialNumber)
-		k.RemoveAllCertificatesBySubjectKeyIDBySerialNumber(ctx, cert.Subject, cert.SubjectKeyId, serialNumber)
 		k.RemoveNocCertificatesBySerialNumber(ctx, cert.Subject, cert.SubjectKeyId, serialNumber)
 		k.RemoveNocIcaCertificateBySerialNumber(ctx, cert.Subject, cert.SubjectKeyId, vid, serialNumber)
 		k.RemoveNocCertificatesByVidAndSkidBySerialNumber(ctx, vid, cert.Subject, cert.SubjectKeyId, serialNumber)
@@ -112,10 +112,8 @@ func (k msgServer) _revokeNocIcaCertificates(ctx sdk.Context, certificates types
 	})
 	// remove cert from global certs list
 	k.RemoveAllCertificates(ctx, certificates.Subject, certificates.SubjectKeyId)
-	// remove cert from global certs list -> subject map
-	k.RemoveAllCertificateBySubject(ctx, certificates.Subject, certificates.SubjectKeyId)
 	// remove cert from global certs list -> subject key ID map
-	k.RemoveAllCertificatesBySubjectKeyID(ctx, certificates.Subject, certificates.SubjectKeyId)
+	k.RemoveAllCertificateBySubject(ctx, certificates.Subject, certificates.SubjectKeyId)
 	// remove cert from NOC certs list
 	k.RemoveNocCertificates(ctx, certificates.Subject, certificates.SubjectKeyId)
 	// remove cert from NOC ica certs list

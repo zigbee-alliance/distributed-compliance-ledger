@@ -72,25 +72,13 @@ func (k msgServer) RemoveNocX509RootCert(goCtx context.Context, msg *types.MsgRe
 
 		if foundRevoked {
 			removeCertFromList(certBySerialNumber.Issuer, certBySerialNumber.SerialNumber, &revCerts.Certs)
-			k._removeRevokedNocX509RootCert(ctx, certID, &revCerts)
+			k.removeRevokedNocX509RootCert(ctx, certID, &revCerts)
 		}
 	} else {
 		// remove from global certificates map
-		k.RemoveAllCertificates(ctx, certID.Subject, certID.SubjectKeyId)
-		// remove from global subject -> subject key ID map
-		k.RemoveAllCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
-		// remove from global subject -> subject key ID map
-		k.RemoveAllCertificatesBySubjectKeyID(ctx, certID.Subject, certID.SubjectKeyId)
+		k.RemoveCertificateFromAllCertificateIndexes(ctx, certID)
 		// remove from noc certificates map
-		k.RemoveNocCertificates(ctx, certID.Subject, certID.SubjectKeyId)
-		// remove from noc root certificates map
-		k.RemoveNocRootCertificate(ctx, certID.Subject, certID.SubjectKeyId, accountVid)
-		// remove from vid, subject key id map
-		k.RemoveNocCertificatesByVidAndSkid(ctx, accountVid, certID.SubjectKeyId)
-		// remove from subject -> subject key ID map
-		k.RemoveNocCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
-		// remove from subject key ID -> certificates map
-		k.RemoveNocCertificatesBySubjectAndSubjectKeyID(ctx, certID.Subject, certID.SubjectKeyId)
+		k.RemoveCertificateFromNocCertificateIndexes(ctx, certID, accountVid, true)
 		// remove from revoked noc root certs
 		k.RemoveRevokedNocRootCertificates(ctx, certID.Subject, certID.SubjectKeyId)
 		// remove from subject with serialNumber map
@@ -102,7 +90,7 @@ func (k msgServer) RemoveNocX509RootCert(goCtx context.Context, msg *types.MsgRe
 	return &types.MsgRemoveNocX509RootCertResponse{}, nil
 }
 
-func (k msgServer) _removeRevokedNocX509RootCert(ctx sdk.Context, certID types.CertificateIdentifier, certificates *types.RevokedNocRootCertificates) {
+func (k msgServer) removeRevokedNocX509RootCert(ctx sdk.Context, certID types.CertificateIdentifier, certificates *types.RevokedNocRootCertificates) {
 	if len(certificates.Certs) == 0 {
 		k.RemoveRevokedNocRootCertificates(ctx, certID.Subject, certID.SubjectKeyId)
 	} else {

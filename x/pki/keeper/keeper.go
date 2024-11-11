@@ -117,17 +117,119 @@ func filterCertificates(certificates *[]*types.Certificate, predicate Certificat
 	return result
 }
 
-func (k msgServer) removeApprovedX509Cert(ctx sdk.Context, certID types.CertificateIdentifier, certificates *types.ApprovedCertificates, serialNumber string) {
+func (k msgServer) AddCertificateToAllCertificateIndexes(ctx sdk.Context, certificate types.Certificate) {
+	// Add to the global list of certificates
+	k.AddAllCertificate(ctx, certificate)
+
+	// append to global list of certificates indexed by subject
+	k.AddAllCertificateBySubject(ctx, certificate.Subject, certificate.SubjectKeyId)
+}
+
+func (k msgServer) AddCertificateToDaCertificateIndexes(
+	ctx sdk.Context,
+	certificate types.Certificate,
+	isRoot bool) {
+	// append new certificate to list of certificates with the same Subject/SubjectKeyID combination and store updated list
+	k.AddApprovedCertificate(ctx, certificate)
+
+	// add to subject -> subject key ID map
+	k.AddApprovedCertificateBySubject(ctx, certificate.Subject, certificate.SubjectKeyId)
+
+	// add to subject key ID -> certificates map
+	k.AddApprovedCertificateBySubjectKeyID(ctx, certificate)
+
+	if isRoot {
+		// add to root certificates index
+		k.AddApprovedRootCertificate(ctx, certificate)
+	} else {
+		// add the certificate identifier to the issuer's Child Certificates record
+		k.AddChildCertificate(ctx, certificate)
+	}
+}
+
+func (k msgServer) AddCertificateToNocCertificateIndexes(
+	ctx sdk.Context,
+	certificate types.Certificate,
+	isRoot bool) {
+	// Add to the list of all NOC certificates
+	k.AddNocCertificate(ctx, certificate)
+
+	// add to certificates map indexed by { vid, subject key id }
+	k.AddNocCertificateByVidAndSkid(ctx, certificate)
+
+	// add to certificates map indexed by { subject }
+	k.AddNocCertificateBySubject(ctx, certificate)
+
+	// add to certificates map indexed by { subject key id }
+	k.AddNocCertificateBySubjectKeyID(ctx, certificate)
+
+	if isRoot {
+		// Add to the list of NOC root certificates with the same VID
+		k.AddNocRootCertificate(ctx, certificate)
+	} else {
+		// Add to the list of NOC ica certificates with the same VID
+		k.AddNocIcaCertificate(ctx, certificate)
+		// add the certificate identifier to the issuer's Child Certificates record
+		k.AddChildCertificate(ctx, certificate)
+	}
+}
+
+func (k msgServer) RemoveCertificateFromAllCertificateIndexes(ctx sdk.Context, certID types.CertificateIdentifier) {
+	// remove from global certificates map
+	k.RemoveAllCertificates(ctx, certID.Subject, certID.SubjectKeyId)
+	// remove from global subject -> subject key ID map
+	k.RemoveAllCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
+}
+
+func (k msgServer) RemoveCertificateFromDaCertificateIndexes(
+	ctx sdk.Context,
+	certID types.CertificateIdentifier,
+	isRoot bool) {
+	// remove from approved certificates map
+	k.RemoveApprovedCertificates(ctx, certID.Subject, certID.SubjectKeyId)
+	// remove from subject -> subject key ID map
+	k.RemoveApprovedCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
+	// remove from subject key ID -> certificates map
+	k.RemoveApprovedCertificatesBySubjectKeyID(ctx, certID.Subject, certID.SubjectKeyId)
+	if isRoot {
+		k.RemoveApprovedRootCertificate(ctx, certID)
+	}
+}
+
+func (k msgServer) RemoveCertificateFromNocCertificateIndexes(
+	ctx sdk.Context,
+	certID types.CertificateIdentifier,
+	accountVid int32,
+	isRoot bool) {
+	// remove from noc certificates map
+	k.RemoveNocCertificates(ctx, certID.Subject, certID.SubjectKeyId)
+	// remove from vid, subject key id map
+	k.RemoveNocCertificatesByVidAndSkid(ctx, accountVid, certID.SubjectKeyId)
+	// remove from subject -> subject key ID map
+	k.RemoveNocCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
+	// remove from subject key ID -> certificates map
+	k.RemoveNocCertificatesBySubjectAndSubjectKeyID(ctx, certID.Subject, certID.SubjectKeyId)
+	if isRoot {
+		// remove from noc root certificates map
+		k.RemoveNocRootCertificate(ctx, certID.Subject, certID.SubjectKeyId, accountVid)
+	} else {
+		// remove from noc ica certificates map
+		k.RemoveNocIcaCertificate(ctx, certID.Subject, certID.SubjectKeyId, accountVid)
+	}
+}
+
+func (k msgServer) removeDaX509Cert(
+	ctx sdk.Context,
+	certID types.CertificateIdentifier,
+	certificates *types.ApprovedCertificates,
+	serialNumber string) {
 	if len(certificates.Certs) == 0 {
-		k.RemoveAllCertificates(ctx, certID.Subject, certID.SubjectKeyId)
-		k.RemoveAllCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
-		k.RemoveAllCertificatesBySubjectKeyID(ctx, certID.Subject, certID.SubjectKeyId)
-		k.RemoveApprovedCertificates(ctx, certID.Subject, certID.SubjectKeyId)
-		k.RemoveApprovedCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
-		k.RemoveApprovedCertificatesBySubjectKeyID(ctx, certID.Subject, certID.SubjectKeyId)
+		// remove from global certificates map
+		k.RemoveCertificateFromAllCertificateIndexes(ctx, certID)
+		// remove from noc certificates map
+		k.RemoveCertificateFromDaCertificateIndexes(ctx, certID, false)
 	} else {
 		k.RemoveAllCertificatesBySerialNumber(ctx, certID.Subject, certID.SubjectKeyId, serialNumber)
-		k.RemoveAllCertificatesBySubjectKeyIDBySerialNumber(ctx, certID.Subject, certID.SubjectKeyId, serialNumber)
 		k.RemoveApprovedCertificatesBySerialNumber(ctx, certID.Subject, certID.SubjectKeyId, serialNumber)
 		k.RemoveApprovedCertificatesBySubjectKeyIDBySerialNumber(ctx, certID.Subject, certID.SubjectKeyId, serialNumber)
 	}
@@ -142,22 +244,12 @@ func (k msgServer) removeNocX509Cert(
 	isRoot bool,
 ) {
 	if len(certificates.Certs) == 0 { //nolint:nestif
-		k.RemoveAllCertificates(ctx, certID.Subject, certID.SubjectKeyId)
-		k.RemoveAllCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
-		k.RemoveAllCertificatesBySubjectKeyID(ctx, certID.Subject, certID.SubjectKeyId)
-		k.RemoveNocCertificates(ctx, certID.Subject, certID.SubjectKeyId)
-		k.RemoveNocCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
-		k.RemoveNocCertificatesBySubjectAndSubjectKeyID(ctx, certID.Subject, certID.SubjectKeyId)
-		k.RemoveNocCertificatesByVidAndSkid(ctx, accountVid, certID.SubjectKeyId)
-
-		if isRoot {
-			k.RemoveNocRootCertificate(ctx, certID.Subject, certID.SubjectKeyId, accountVid)
-		} else {
-			k.RemoveNocIcaCertificate(ctx, certID.Subject, certID.SubjectKeyId, accountVid)
-		}
+		// remove from global certificates map
+		k.RemoveCertificateFromAllCertificateIndexes(ctx, certID)
+		// remove from noc certificates map
+		k.RemoveCertificateFromNocCertificateIndexes(ctx, certID, accountVid, isRoot)
 	} else {
 		k.RemoveAllCertificatesBySerialNumber(ctx, certID.Subject, certID.SubjectKeyId, serialNumber)
-		k.RemoveAllCertificatesBySubjectKeyIDBySerialNumber(ctx, certID.Subject, certID.SubjectKeyId, serialNumber)
 		k.RemoveNocCertificatesBySerialNumber(ctx, certID.Subject, certID.SubjectKeyId, serialNumber)
 		k.RemoveNocCertificatesBySubjectKeyIDBySerialNumber(ctx, certID.Subject, certID.SubjectKeyId, serialNumber)
 		k.RemoveNocCertificatesByVidAndSkidBySerialNumber(ctx, accountVid, certID.Subject, certID.SubjectKeyId, serialNumber)

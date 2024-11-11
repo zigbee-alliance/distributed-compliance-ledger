@@ -76,27 +76,16 @@ func (k msgServer) RemoveNocX509IcaCert(goCtx context.Context, msg *types.MsgRem
 
 		if foundRevoked {
 			removeCertFromList(certBySerialNumber.Issuer, certBySerialNumber.SerialNumber, &revCerts.Certs)
-			k._removeRevokedNocX509IcaCert(ctx, certID, &revCerts)
+			k.removeRevokedNocX509IcaCert(ctx, certID, &revCerts)
 		}
 	} else {
 		// remove from global certificates map
-		k.RemoveAllCertificates(ctx, certID.Subject, certID.SubjectKeyId)
-		// remove from global subject -> subject map
-		k.RemoveAllCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
-		// remove from global certificates -> subject key ID map
-		k.RemoveAllCertificatesBySubjectKeyID(ctx, certID.Subject, certID.SubjectKeyId)
+		k.RemoveCertificateFromAllCertificateIndexes(ctx, certID)
 		// remove from noc certificates map
-		k.RemoveNocCertificates(ctx, certID.Subject, certID.SubjectKeyId)
-		// remove from noc ica certificates map
-		k.RemoveNocIcaCertificate(ctx, certID.Subject, certID.SubjectKeyId, accountVid)
-		// remove from vid, subject key id map
-		k.RemoveNocCertificatesByVidAndSkid(ctx, accountVid, certID.SubjectKeyId)
-		// remove from subject -> subject key ID map
-		k.RemoveNocCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
-		// remove from subject key ID -> certificates map
-		k.RemoveNocCertificatesBySubjectAndSubjectKeyID(ctx, certID.Subject, certID.SubjectKeyId)
+		k.RemoveCertificateFromNocCertificateIndexes(ctx, certID, accountVid, false)
 		// remove from revoked list
 		k.RemoveRevokedNocIcaCertificates(ctx, certID.Subject, certID.SubjectKeyId)
+
 		// remove from subject with serialNumber map
 		for _, cert := range certificates {
 			k.RemoveUniqueCertificate(ctx, cert.Issuer, cert.SerialNumber)
@@ -106,7 +95,7 @@ func (k msgServer) RemoveNocX509IcaCert(goCtx context.Context, msg *types.MsgRem
 	return &types.MsgRemoveNocX509IcaCertResponse{}, nil
 }
 
-func (k msgServer) _removeRevokedNocX509IcaCert(ctx sdk.Context, certID types.CertificateIdentifier, certificates *types.RevokedNocIcaCertificates) {
+func (k msgServer) removeRevokedNocX509IcaCert(ctx sdk.Context, certID types.CertificateIdentifier, certificates *types.RevokedNocIcaCertificates) {
 	if len(certificates.Certs) == 0 {
 		k.RemoveRevokedNocIcaCertificates(ctx, certID.Subject, certID.SubjectKeyId)
 	} else {
