@@ -82,14 +82,16 @@ func (k msgServer) _revokeNocCertificate(
 
 	removeCertFromList(cert.Issuer, cert.SerialNumber, &certificates.Certs)
 
+	certID := types.CertificateIdentifier{
+		Subject:      certificates.Subject,
+		SubjectKeyId: certificates.SubjectKeyId,
+	}
+
 	if len(certificates.Certs) == 0 {
-		k.RemoveAllCertificates(ctx, certificates.Subject, certificates.SubjectKeyId)
-		k.RemoveAllCertificateBySubject(ctx, certificates.Subject, certificates.SubjectKeyId)
-		k.RemoveNocCertificates(ctx, certificates.Subject, certificates.SubjectKeyId)
-		k.RemoveNocIcaCertificate(ctx, certificates.Subject, certificates.SubjectKeyId, vid)
-		k.RemoveNocCertificatesByVidAndSkid(ctx, vid, cert.SubjectKeyId)
-		k.RemoveNocCertificateBySubject(ctx, cert.Subject, cert.SubjectKeyId)
-		k.RemoveNocCertificatesBySubjectAndSubjectKeyID(ctx, cert.Subject, cert.SubjectKeyId)
+		// Remove certificate from global list
+		k.RemoveCertificateFromAllCertificateIndexes(ctx, certID)
+		// Remove certificate from noc list
+		k.RemoveCertificateFromNocCertificateIndexes(ctx, certID, vid, false)
 	} else {
 		k.RemoveAllCertificatesBySerialNumber(ctx, cert.Subject, cert.SubjectKeyId, serialNumber)
 		k.RemoveNocCertificatesBySerialNumber(ctx, cert.Subject, cert.SubjectKeyId, serialNumber)
