@@ -365,7 +365,7 @@ Should be sent to trusted nodes only.
 - CLI command:
   - `dcld query compliance all-device-software-compliance`
 - REST API:
-  - `/dcl/compliance/device-software-compliance`
+  - GET `/dcl/compliance/device-software-compliance`
 
 <!-- markdownlint-enable MD036 -->
 
