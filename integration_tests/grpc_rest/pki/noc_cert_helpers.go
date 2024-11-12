@@ -378,6 +378,9 @@ func NocCertDemo(suite *utils.TestSuite) {
 	_, err = GetNocX509CertsByVidAndSkid(suite, vid2, testconstants.NocRootCert3SubjectKeyID)
 	suite.AssertNotFound(err)
 
+	_, err = GetCert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
+	suite.AssertNotFound(err)
+
 	// Alice and Jack are predefined Trustees
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
@@ -539,6 +542,22 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.NocRootCert1SubjectKeyID, certsBySubjectKeyID[0].Certs[0].SubjectKeyId)
 	require.Equal(suite.T, testconstants.NocRootCert1Subject, certsBySubjectKeyID[0].Certs[0].Subject)
 	require.Equal(suite.T, testconstants.NocRootCert1SubjectAsText, certsBySubjectKeyID[0].Certs[0].SubjectAsText)
+
+	// Request NOC root certificate by Subject and SubjectKeyID (using global command)
+	globalCertificate, _ := GetCert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
+	require.Equal(suite.T, testconstants.NocRootCert1Subject, globalCertificate.Subject)
+	require.Equal(suite.T, testconstants.NocRootCert1SubjectKeyID, globalCertificate.SubjectKeyId)
+	require.Equal(suite.T, testconstants.NocRootCert1SubjectAsText, globalCertificate.Certs[0].SubjectAsText)
+	require.Equal(suite.T, 1, len(globalCertificate.Certs))
+	require.Equal(suite.T, testconstants.NocRootCert1, globalCertificate.Certs[0].PemCert)
+	require.Equal(suite.T, vendor1Account.Address, globalCertificate.Certs[0].Owner)
+	require.True(suite.T, globalCertificate.Certs[0].IsRoot)
+
+	// Request NOC root certificate by Subject (using global command)
+	globalSubjectCertificates, _ := GetAllCertsBySubject(suite, testconstants.NocRootCert1Subject)
+	require.Equal(suite.T, testconstants.NocRootCert1Subject, globalSubjectCertificates.Subject)
+	require.Equal(suite.T, 1, len(globalSubjectCertificates.SubjectKeyIds))
+	require.Equal(suite.T, testconstants.NocRootCert1SubjectKeyID, globalSubjectCertificates.SubjectKeyIds[0])
 
 	// Add intermediate NOC certificate
 	msgAddNocCertificate := pkitypes.MsgAddNocX509IcaCert{
@@ -946,6 +965,8 @@ func NocCertDemo(suite *utils.TestSuite) {
 	suite.AssertNotFound(err)
 	_, err = GetNocX509CertsByVidAndSkid(suite, vid1, testconstants.NocRootCert1SubjectKeyID)
 	suite.AssertNotFound(err)
+	_, err = GetCert(suite, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
+	suite.AssertNotFound(err)
 
 	// Check that child is not removed
 	certs, _ = GetNocX509Cert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
@@ -955,4 +976,6 @@ func NocCertDemo(suite *utils.TestSuite) {
 	certificates = GetNocX509IcaCertsBySubjectAndSKID(suite, vid1, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.Equal(suite.T, 1, len(certificates))
 	require.Equal(suite.T, testconstants.NocCert1SerialNumber, certificates[0].SerialNumber)
+	globalCerts, _ := GetCert(suite, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	require.Equal(suite.T, 1, len(globalCerts.Certs))
 }

@@ -116,6 +116,12 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 	// append new certificate to list of certificates with the same Subject/SubjectKeyID combination and store updated list
 	k.AddApprovedCertificate(ctx, certificate)
 
+	// add to subject -> subject key ID map
+	k.AddApprovedCertificateBySubject(ctx, certificate.Subject, certificate.SubjectKeyId)
+
+	// add to subject key ID -> certificates map
+	k.AddApprovedCertificateBySubjectKeyID(ctx, certificate)
+
 	// add the certificate identifier to the issuer's Child Certificates record
 	certificateIdentifier := types.CertificateIdentifier{
 		Subject:      certificate.Subject,
@@ -130,12 +136,6 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 		Present:      true,
 	}
 	k.SetUniqueCertificate(ctx, uniqueCertificate)
-
-	// add to subject -> subject key ID map
-	k.AddApprovedCertificateBySubject(ctx, certificate.Subject, certificate.SubjectKeyId)
-
-	// add to subject key ID -> certificates map
-	k.AddApprovedCertificateBySubjectKeyID(ctx, certificate)
 
 	return &types.MsgAddX509CertResponse{}, nil
 }

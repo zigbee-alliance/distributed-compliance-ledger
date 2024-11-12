@@ -604,7 +604,7 @@ check_response "$result" "Not Found"
 response_does_not_contain "$result" "$noc_root_cert_1_subject_key_id_for_1_4_3"
 
 echo "Get all noc x509 root certificates by vid=$vid_for_1_4_3 and skid=$noc_root_cert_1_subject_key_id_for_1_4_3 (must be empty)"
-result=$($DCLD_BIN_NEW query pki noc-x509-certs --vid=$vid_for_1_4_3 --subject-key-id=$noc_root_cert_1_subject_key_id_for_1_4_3)
+result=$($DCLD_BIN_NEW query pki noc-x509-cert --vid=$vid_for_1_4_3 --subject-key-id=$noc_root_cert_1_subject_key_id_for_1_4_3)
 check_response "$result" "Not Found"
 
 echo "Get noc x509 root certificate by subject and subject key id"
@@ -1570,12 +1570,12 @@ check_response "$result" "\"label\": \"$product_label_for_1_4_4\""
 check_response "$result" "\"dataURL\": \"$test_data_url_for_1_4_4\""
 
 echo "Get all noc x509 root certificates by vid=$vid_for_1_4_4 and skid=$noc_root_cert_2_subject_key_id_for_1_4_4"
-result=$($DCLD_BIN_NEW query pki noc-x509-certs --vid=$vid_for_1_4_4 --subject-key-id=$noc_root_cert_2_subject_key_id_for_1_4_4)
+result=$($DCLD_BIN_NEW query pki noc-x509-cert --vid=$vid_for_1_4_4 --subject-key-id=$noc_root_cert_2_subject_key_id_for_1_4_4)
 check_response "$result" "\"subject\": \"$noc_root_cert_2_subject_for_1_4_4\""
 check_response "$result" "$noc_root_cert_2_subject_key_id_for_1_4_4"
 
 echo "Get all noc x509 root certificates by vid $vid_for_1_4_4 and skid=$noc_ica_cert_2_subject_key_id_for_1_4_4"
-result=$($DCLD_BIN_NEW query pki noc-x509-certs --vid=$vid_for_1_4_4 --subject-key-id=$noc_ica_cert_2_subject_key_id_for_1_4_4)
+result=$($DCLD_BIN_NEW query pki noc-x509-cert --vid=$vid_for_1_4_4 --subject-key-id=$noc_ica_cert_2_subject_key_id_for_1_4_4)
 check_response "$result" "\"subject\": \"$noc_ica_cert_2_subject_for_1_4_4\""
 check_response "$result" "$noc_ica_cert_2_subject_key_id_for_1_4_4"
 

@@ -282,10 +282,10 @@ HSMEGDAWgBRq/SJ3H1Ef7L8WQZdnENzcMaFxfjAKBggqhkjOPQQDAgNHADBEAiBQ
 qoAC9NkyqaAFOPZTaK0P/8jvu8m+t9pWmDXPmqdRDgIgI7rI/g8j51RFtlM5CBpH
 mUkpxyqvChVI1A0DTVFLJd4=
 -----END CERTIFICATE-----`
-	PAACertWithNumericVidSubject              = "MDAxGDAWBgNVBAMMD01hdHRlciBUZXN0IFBBQTEUMBIGCisGAQQBgqJ8AgEMBEZGRjE="
-	PAACertWithNumericVidSubjectKeyID         = "6A:FD:22:77:1F:51:1F:EC:BF:16:41:97:67:10:DC:DC:31:A1:71:7E"
-	PAACertWithNumericVidVid                  = 65521
-	PAACertWithNumericVidDifferentWhitespaces = `
+	PAACertWithNumericVidSubject                    = "MDAxGDAWBgNVBAMMD01hdHRlciBUZXN0IFBBQTEUMBIGCisGAQQBgqJ8AgEMBEZGRjE="
+	PAACertWithNumericVidSubjectKeyID               = "6A:FD:22:77:1F:51:1F:EC:BF:16:41:97:67:10:DC:DC:31:A1:71:7E"
+	PAACertWithNumericVidVid                  int32 = 65521
+	PAACertWithNumericVidDifferentWhitespaces       = `
 -----BEGIN CERTIFICATE-----
 MIIBvTCCAWSgAwIBAgIITqjoMY
 LUHBwwCgYIKoZIzj0EAwIwMDEYMBYGA1UEAwwP
@@ -705,7 +705,9 @@ eujhLsD51w==
 	RootCertWithSameSubjectAndSKID2SerialNumber   = "2"
 	IntermediateCertWithSameSubjectAndSKIDSubject = "MEUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQ="
 
+	IntermediateCertWithSameSubjectIssuer               = RootCertWithSameSubjectAndSKIDSubject
 	IntermediateCertWithSameSubjectAndSKIDSubjectKeyID  = "2E:13:3B:44:52:2C:30:E9:EC:FB:45:FA:5D:E5:04:0A:C1:C6:E6:B9"
+	IntermediateCertWithSameSubjectAndSKIDIssuer        = RootCertWithSameSubjectAndSKIDSubject
 	IntermediateCertWithSameSubjectAndSKID1SerialNumber = "3"
 	IntermediateCertWithSameSubjectAndSKID2SerialNumber = "4"
 	LeafCertWithSameSubjectAndSKIDSubject               = "MEUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQ="
@@ -761,13 +763,16 @@ eujhLsD51w==
 	RootCertWithVidSubjectKeyID               = "CE:A8:92:66:EA:E0:80:BD:2B:B5:68:E4:0B:07:C4:FA:2C:34:6D:31"
 	RootCertWithVidSubjectKeyIDWithoutColumns = "CEA89266EAE080BD2BB568E40B07C4FA2C346D31"
 	RootCertWithVidVid                        = 65521
+	RootCertWithVidSerialNumber               = "1"
 
+	IntermediateCertWithVidIssuer                      = RootCertWithVidSubject
 	IntermediateCertWithVid1Subject                    = "MIGuMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlvcmsxETAPBgNVBAcMCE5ldyBZb3JrMRgwFgYDVQQKDA9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsMEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbTEUMBIGCisGAQQBgqJ8AgEMBEZGRjExFDASBgorBgEEAYKifAICDARGRkYx"
 	IntermediateCertWithVid1SubjectKeyID               = "0E:8C:E8:C8:B8:AA:50:BC:25:85:56:B9:B1:9C:C2:C7:D9:C5:2F:17"
 	IntermediateCertWithVid1SubjectKeyIDWithoutColumns = "0E8CE8C8B8AA50BC258556B9B19CC2C7D9C52F17"
 	IntermediateCertWithVid1SerialNumber               = "3"
 	IntermediateCertWithVid1Vid                        = 65521
 
+	IntermediateCertWithVid2Subject      = "MIGuMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlvcmsxETAPBgNVBAcMCE5ldyBZb3JrMRgwFgYDVQQKDA9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsMEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbTEUMBIGCisGAQQBgqJ8AgEMBEZGRjExFDASBgorBgEEAYKifAICDARGRkYx"
 	IntermediateCertWithVid2SubjectKeyID = "0E:8C:E8:C8:B8:AA:50:BC:25:85:56:B9:B1:9C:C2:C7:D9:C5:2F:17"
 	IntermediateCertWithVid2SerialNumber = "4"
 	IntermediateCertWithVid2Vid          = 65522
@@ -776,6 +781,7 @@ eujhLsD51w==
 	IntermediateCertWithoutVidPidSubjectKeyID = "0E:8C:E8:C8:B8:AA:50:BC:25:85:56:B9:B1:9C:C2:C7:D9:C5:2F:17"
 	IntermediateCertWithoutVidPidSerialNumber = "14875121728167018569770528052537472929544450473"
 
+	LeafCertWithVidIssuer         = IntermediateCertWithVid1Subject
 	LeafCertWithVidSubject        = "MIGaMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlvcmsxETAPBgNVBAcMCE5ldyBZb3JrMRowGAYDVQQKDBFDUkwtbGVhZiB3aXRoIFZJRDEZMBcGA1UECwwQVGVzdGluZyBEaXZpc2lvbjEYMBYGA1UEAwwPd3d3LmV4YW1wbGUuY29tMRQwEgYKKwYBBAGConwCAQwERkZGMQ=="
 	LeafCertWithVidSubjectAsText  = "CN=www.example.com,OU=Testing Division,O=CRL-leaf with VID,L=New York,ST=New York,C=US,vid=0xFFF1"
 	LeafCertWithVidSubjectKeyID   = "D6:98:26:10:BE:AC:23:74:09:0A:40:0B:CD:39:65:53:F1:76:B0:F5"
