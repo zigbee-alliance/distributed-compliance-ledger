@@ -25,21 +25,21 @@ func TestGenesisState_Validate(t *testing.T) {
 				ApprovedCertificatesList: []types.ApprovedCertificates{
 					{
 						Subject:      "0",
-						SubjectKeyId: "0",
+						SubjectKeyID: "0",
 					},
 					{
 						Subject:      "1",
-						SubjectKeyId: "1",
+						SubjectKeyID: "1",
 					},
 				},
 				ProposedCertificateList: []types.ProposedCertificate{
 					{
 						Subject:      "0",
-						SubjectKeyId: "0",
+						SubjectKeyID: "0",
 					},
 					{
 						Subject:      "1",
-						SubjectKeyId: "1",
+						SubjectKeyID: "1",
 					},
 				},
 				ChildCertificatesList: []types.ChildCertificates{
@@ -55,21 +55,21 @@ func TestGenesisState_Validate(t *testing.T) {
 				ProposedCertificateRevocationList: []types.ProposedCertificateRevocation{
 					{
 						Subject:      "0",
-						SubjectKeyId: "0",
+						SubjectKeyID: "0",
 					},
 					{
 						Subject:      "1",
-						SubjectKeyId: "1",
+						SubjectKeyID: "1",
 					},
 				},
 				RevokedCertificatesList: []types.RevokedCertificates{
 					{
 						Subject:      "0",
-						SubjectKeyId: "0",
+						SubjectKeyID: "0",
 					},
 					{
 						Subject:      "1",
-						SubjectKeyId: "1",
+						SubjectKeyID: "1",
 					},
 				},
 				UniqueCertificateList: []types.UniqueCertificate{
@@ -99,11 +99,11 @@ func TestGenesisState_Validate(t *testing.T) {
 				RejectedCertificateList: []types.RejectedCertificate{
 					{
 						Subject:      "0",
-						SubjectKeyId: "0",
+						SubjectKeyID: "0",
 					},
 					{
 						Subject:      "1",
-						SubjectKeyId: "1",
+						SubjectKeyID: "1",
 					},
 				},
 				PKIRevocationDistributionPointList: []types.PKIRevocationDistributionPoint{
@@ -145,21 +145,77 @@ NocCertificatesList: []types.NocCertificates{
 RevokedNocRootCertificatesList: []types.RevokedNocRootCertificates{
 	{
 		Subject: "0",
-SubjectKeyId: "0",
+SubjectKeyID: "0",
 },
 	{
 		Subject: "1",
-SubjectKeyId: "1",
+SubjectKeyID: "1",
 },
 },
 NocCertificatesByVidAndSkidList: []types.NocCertificatesByVidAndSkid{
 	{
 		Vid: 0,
-SubjectKeyId: "0",
+SubjectKeyID: "0",
 },
 	{
 		Vid: 1,
-SubjectKeyId: "1",
+SubjectKeyID: "1",
+},
+},
+NocCertificatesBySubjectKeyIDList: []types.NocCertificatesBySubjectKeyID{
+	{
+		Vid: 0,
+SubjectKeyID: "0",
+},
+	{
+		Vid: 1,
+SubjectKeyID: "1",
+},
+},
+NocCertificatesList: []types.NocCertificates{
+	{
+		Subject: "0",
+SubjectKeyID: "0",
+},
+	{
+		Subject: "1",
+SubjectKeyID: "1",
+},
+},
+NocCertificatesBySubjectList: []types.NocCertificatesBySubject{
+	{
+		Subject: "0",
+},
+	{
+		Subject: "1",
+},
+},
+CertificatesList: []types.AllCertificates{
+	{
+		Subject: "0",
+SubjectKeyID: "0",
+},
+	{
+		Subject: "1",
+SubjectKeyID: "1",
+},
+},
+RevokedNocIcaCertificatesList: []types.RevokedNocIcaCertificates{
+	{
+		Subject: "0",
+SubjectKeyID: "0",
+},
+	{
+		Subject: "1",
+SubjectKeyID: "1",
+},
+},
+AllCertificatesBySubjectList: []types.AllCertificatesBySubject{
+	{
+		Subject: "0",
+},
+	{
+		Subject: "1",
 },
 },
 // this line is used by starport scaffolding # types/genesis/validField
@@ -172,11 +228,11 @@ SubjectKeyId: "1",
 				ApprovedCertificatesList: []types.ApprovedCertificates{
 					{
 						Subject:      "0",
-						SubjectKeyId: "0",
+						SubjectKeyID: "0",
 					},
 					{
 						Subject:      "0",
-						SubjectKeyId: "0",
+						SubjectKeyID: "0",
 					},
 				},
 			},
@@ -188,11 +244,11 @@ SubjectKeyId: "1",
 				ProposedCertificateList: []types.ProposedCertificate{
 					{
 						Subject:      "0",
-						SubjectKeyId: "0",
+						SubjectKeyID: "0",
 					},
 					{
 						Subject:      "0",
-						SubjectKeyId: "0",
+						SubjectKeyID: "0",
 					},
 				},
 			},
@@ -220,11 +276,11 @@ SubjectKeyId: "1",
 				ProposedCertificateRevocationList: []types.ProposedCertificateRevocation{
 					{
 						Subject:      "0",
-						SubjectKeyId: "0",
+						SubjectKeyID: "0",
 					},
 					{
 						Subject:      "0",
-						SubjectKeyId: "0",
+						SubjectKeyID: "0",
 					},
 				},
 			},
@@ -236,11 +292,11 @@ SubjectKeyId: "1",
 				RevokedCertificatesList: []types.RevokedCertificates{
 					{
 						Subject:      "0",
-						SubjectKeyId: "0",
+						SubjectKeyID: "0",
 					},
 					{
 						Subject:      "0",
-						SubjectKeyId: "0",
+						SubjectKeyID: "0",
 					},
 				},
 			},
@@ -282,11 +338,11 @@ SubjectKeyId: "1",
 				RejectedCertificateList: []types.RejectedCertificate{
 					{
 						Subject:      "0",
-						SubjectKeyId: "0",
+						SubjectKeyID: "0",
 					},
 					{
 						Subject:      "0",
-						SubjectKeyId: "0",
+						SubjectKeyID: "0",
 					},
 				},
 			},
@@ -358,11 +414,11 @@ IssuerSubjectKeyID: "0",
 		RevokedNocRootCertificatesList: []types.RevokedNocRootCertificates{
 			{
 				Subject: "0",
-SubjectKeyId: "0",
+SubjectKeyID: "0",
 },
 			{
 				Subject: "0",
-SubjectKeyId: "0",
+SubjectKeyID: "0",
 },
 		},
 	},
@@ -374,11 +430,103 @@ SubjectKeyId: "0",
 		NocCertificatesByVidAndSkidList: []types.NocCertificatesByVidAndSkid{
 			{
 				Vid: 0,
-SubjectKeyId: "0",
+SubjectKeyID: "0",
 },
 			{
 				Vid: 0,
-SubjectKeyId: "0",
+SubjectKeyID: "0",
+},
+		},
+	},
+	valid:    false,
+},
+{
+	desc:     "duplicated nocCertificatesBySubjectKeyId",
+	genState: &types.GenesisState{
+		NocCertificatesBySubjectKeyIDList: []types.NocCertificatesBySubjectKeyID{
+			{
+				Vid: 0,
+SubjectKeyID: "0",
+},
+			{
+				Vid: 0,
+SubjectKeyID: "0",
+},
+		},
+	},
+	valid:    false,
+},
+{
+	desc:     "duplicated nocCertificates",
+	genState: &types.GenesisState{
+		NocCertificatesList: []types.NocCertificates{
+			{
+				Subject: "0",
+SubjectKeyID: "0",
+},
+			{
+				Subject: "0",
+SubjectKeyID: "0",
+},
+		},
+	},
+	valid:    false,
+},
+{
+	desc:     "duplicated nocCertificatesBySubject",
+	genState: &types.GenesisState{
+		NocCertificatesBySubjectList: []types.NocCertificatesBySubject{
+			{
+				Subject: "0",
+},
+			{
+				Subject: "0",
+},
+		},
+	},
+	valid:    false,
+},
+{
+	desc:     "duplicated certificates",
+	genState: &types.GenesisState{
+		CertificatesList: []types.AllCertificates{
+			{
+				Subject: "0",
+SubjectKeyID: "0",
+},
+			{
+				Subject: "0",
+SubjectKeyID: "0",
+},
+		},
+	},
+	valid:    false,
+},
+{
+	desc:     "duplicated revokedNocIcaCertificates",
+	genState: &types.GenesisState{
+		RevokedNocIcaCertificatesList: []types.RevokedNocIcaCertificates{
+			{
+				Subject: "0",
+SubjectKeyID: "0",
+},
+			{
+				Subject: "0",
+SubjectKeyID: "0",
+},
+		},
+	},
+	valid:    false,
+},
+{
+	desc:     "duplicated allCertificatesBySubject",
+	genState: &types.GenesisState{
+		AllCertificatesBySubjectList: []types.AllCertificatesBySubject{
+			{
+				Subject: "0",
+},
+			{
+				Subject: "0",
 },
 		},
 	},

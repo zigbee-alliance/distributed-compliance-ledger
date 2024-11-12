@@ -474,7 +474,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /dcl/pki/noc-certificates/{vid}:
+  /dcl/pki/noc-vid-certificates/{vid}:
     get:
       operationId: NocCertificates
       responses:
@@ -703,7 +703,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /dcl/pki/noc-root-certificates/{vid}:
+  /dcl/pki/noc-vid-root-certificates/{vid}:
     get:
       operationId: NocRootCertificates
       responses:

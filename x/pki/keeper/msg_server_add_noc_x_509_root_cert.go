@@ -50,7 +50,7 @@ func (k msgServer) AddNocX509RootCert(goCtx context.Context, msg *types.MsgAddNo
 	signerVid := signerAccount.VendorID
 
 	// Get list of certificates for Subject / Subject Key Id combination
-	existingCertificates, found := k.GetApprovedCertificates(ctx, x509Certificate.Subject, x509Certificate.SubjectKeyID)
+	existingCertificates, found := k.GetAllCertificates(ctx, x509Certificate.Subject, x509Certificate.SubjectKeyID)
 	if found && len(existingCertificates.Certs) > 0 {
 		existingCertificate := existingCertificates.Certs[0]
 
@@ -62,7 +62,7 @@ func (k msgServer) AddNocX509RootCert(goCtx context.Context, msg *types.MsgAddNo
 		}
 
 		// Existing certificate must be NOC certificate
-		if !existingCertificate.IsNoc {
+		if existingCertificate.CertificateType != types.CertificateType_OperationalPKI {
 			return nil, pkitypes.NewErrProvidedNocCertButExistingNotNoc(x509Certificate.Subject, x509Certificate.SubjectKeyID)
 		}
 
@@ -84,12 +84,6 @@ func (k msgServer) AddNocX509RootCert(goCtx context.Context, msg *types.MsgAddNo
 		msg.CertSchemaVersion,
 	)
 
-	// Add a NOC root certificate to the list of NOC root certificates with the same VID
-	k.AddNocRootCertificate(ctx, certificate)
-
-	// append new certificate to list of certificates with the same Subject/SubjectKeyId combination and store updated list
-	k.AddApprovedCertificate(ctx, certificate)
-
 	// register the unique certificate key
 	uniqueCertificate := types.UniqueCertificate{
 		Issuer:       x509Certificate.Issuer,
@@ -98,14 +92,11 @@ func (k msgServer) AddNocX509RootCert(goCtx context.Context, msg *types.MsgAddNo
 	}
 	k.SetUniqueCertificate(ctx, uniqueCertificate)
 
-	// add to vid, subject -> certificates map
-	k.AddNocCertificateByVidAndSkid(ctx, certificate)
+	// Add to the indexes for global certificates list
+	k.AddCertificateToAllCertificateIndexes(ctx, certificate)
 
-	// add to subject -> subject key ID map
-	k.AddApprovedCertificateBySubject(ctx, certificate.Subject, certificate.SubjectKeyId)
-
-	// add to subject key ID -> certificates map
-	k.AddApprovedCertificateBySubjectKeyID(ctx, certificate)
+	// Add to the indexes for noc certificates list
+	k.AddCertificateToNocCertificateIndexes(ctx, certificate, true)
 
 	return &types.MsgAddNocX509RootCertResponse{}, nil
 }

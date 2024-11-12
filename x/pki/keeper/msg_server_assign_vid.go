@@ -28,8 +28,8 @@ func (k msgServer) AssignVid(goCtx context.Context, msg *types.MsgAssignVid) (*t
 		)
 	}
 
-	// get corresponding approved certificates
-	certificates, found := k.GetApprovedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
+	// get corresponding certificates
+	certificates, found := k.GetAllCertificates(ctx, msg.Subject, msg.SubjectKeyId)
 	if !found {
 		return nil, pkitypes.NewErrCertificateDoesNotExist(msg.Subject, msg.SubjectKeyId)
 	}
@@ -44,6 +44,14 @@ func (k msgServer) AssignVid(goCtx context.Context, msg *types.MsgAssignVid) (*t
 		)
 	}
 
+	// Existing certificate must not be NOC certificate
+	if certificate.CertificateType == types.CertificateType_OperationalPKI {
+		return nil, pkitypes.NewErrInappropriateCertificateType(
+			fmt.Sprintf("Inappropriate Certificate Type: Certificate with subject=%v and subjectKeyID=%v "+
+				"is NOC certificate.", msg.Subject, msg.SubjectKeyId),
+		)
+	}
+
 	// check that the certificate VID and Message VID are equal
 	subjectVid, err := x509.GetVidFromSubject(certificate.SubjectAsText)
 	if err != nil {
@@ -53,25 +61,50 @@ func (k msgServer) AssignVid(goCtx context.Context, msg *types.MsgAssignVid) (*t
 		return nil, pkitypes.NewErrCertificateVidNotEqualMsgVid(fmt.Sprintf("Certificate VID=%d is not equal to the msg VID=%d", subjectVid, msg.Vid))
 	}
 
+	// assign VID to certificates in global list
+	hasCertificateWithoutVid := k.assignVid(&certificates.Certs, msg.Vid)
+	// check that the VID has been set for at least one certificate
+	if !hasCertificateWithoutVid {
+		return nil, pkitypes.NewErrNotEmptyVid("Vendor ID (VID) already present in certificates")
+	}
+
+	// assign VID to certificates in approved list
+	approvedCertificates, found := k.GetApprovedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
+	if !found {
+		return nil, pkitypes.NewErrCertificateDoesNotExist(msg.Subject, msg.SubjectKeyId)
+	}
+	k.assignVid(&approvedCertificates.Certs, msg.Vid)
+
+	// assign VID to certificates in list indexed by subject key id
+	certificatesBySubjectKeyID, found := k.GetApprovedCertificatesBySubjectKeyID(ctx, msg.SubjectKeyId)
+	if !found {
+		return nil, pkitypes.NewErrCertificateDoesNotExist(msg.Subject, msg.SubjectKeyId)
+	}
+	k.assignVid(&certificatesBySubjectKeyID.Certs, msg.Vid)
+
+	// update global certificates list
+	k.SetAllCertificates(ctx, certificates)
+	// update approved certificates list
+	k.SetApprovedCertificates(ctx, approvedCertificates)
+	// update certificates list indexed by subject key id
+	k.SetApprovedCertificatesBySubjectKeyID(ctx, certificatesBySubjectKeyID)
+
+	return &types.MsgAssignVidResponse{}, nil
+}
+
+func (k msgServer) assignVid(certificates *[]*types.Certificate, vid int32) bool {
 	hasCertificateWithoutVid := false
 
 	// assign the VID to certificates that don't have it
-	for _, certificate := range certificates.Certs {
+	for _, certificate := range *certificates {
 		if certificate.Vid != 0 {
 			continue
 		}
 
 		hasCertificateWithoutVid = true
 
-		certificate.Vid = msg.Vid
+		certificate.Vid = vid
 	}
 
-	// check that the VID has been set for at least one certificate
-	if !hasCertificateWithoutVid {
-		return nil, pkitypes.NewErrNotEmptyVid("Vendor ID (VID) already present in certificates")
-	}
-
-	k.SetApprovedCertificates(ctx, certificates)
-
-	return &types.MsgAssignVidResponse{}, nil
+	return hasCertificateWithoutVid
 }

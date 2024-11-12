@@ -70,13 +70,13 @@ func (k Keeper) RemoveNocRootCertificates(
 	))
 }
 
-func (k Keeper) RemoveNocRootCertificate(ctx sdk.Context, vid int32, subject, subjectKeyID string) {
+func (k Keeper) RemoveNocRootCertificate(ctx sdk.Context, subject string, subjectKeyID string, vid int32) {
 	k._removeNocRootCertificates(ctx, vid, func(cert *types.Certificate) bool {
 		return cert.Subject == subject && cert.SubjectKeyId == subjectKeyID
 	})
 }
 
-func (k Keeper) RemoveNocRootCertificateBySerialNumber(ctx sdk.Context, vid int32, subject, subjectKeyID, serialNumber string) {
+func (k Keeper) RemoveNocRootCertificateBySerialNumber(ctx sdk.Context, subject string, subjectKeyID string, vid int32, serialNumber string) {
 	k._removeNocRootCertificates(ctx, vid, func(cert *types.Certificate) bool {
 		return cert.Subject == subject && cert.SubjectKeyId == subjectKeyID && cert.SerialNumber == serialNumber
 	})

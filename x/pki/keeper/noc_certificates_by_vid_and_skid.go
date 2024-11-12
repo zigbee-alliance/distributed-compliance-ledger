@@ -94,8 +94,8 @@ func (k Keeper) RemoveNocCertificateByVidSubjectAndSkid(
 	)
 }
 
-// RemoveNocCertificateByVidSkidSubjectAndSerialNumber removes certificate with specified subject and serial number from the list.
-func (k Keeper) RemoveNocCertificateByVidSubjectSkidAndSerialNumber(
+// RemoveNocCertificatesByVidAndSkidBySerialNumber removes certificate with specified subject and serial number from the list.
+func (k Keeper) RemoveNocCertificatesByVidAndSkidBySerialNumber(
 	ctx sdk.Context,
 	vid int32,
 	subject string,
@@ -107,7 +107,7 @@ func (k Keeper) RemoveNocCertificateByVidSubjectSkidAndSerialNumber(
 		vid,
 		subjectKeyID,
 		func(cert *types.Certificate) bool {
-			return !(cert.Subject == subject && cert.SerialNumber == serialNumber)
+			return !(cert.Subject == subject && cert.SubjectKeyId == subjectKeyID && cert.SerialNumber == serialNumber)
 		},
 	)
 }

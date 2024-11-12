@@ -26,7 +26,7 @@ func (k msgServer) RemoveNocX509RootCert(goCtx context.Context, msg *types.MsgRe
 	signerAccount, _ := k.dclauthKeeper.GetAccountO(ctx, signerAddr)
 	accountVid := signerAccount.VendorID
 
-	nocCerts, foundActive := k.GetApprovedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
+	nocCerts, foundActive := k.GetNocCertificates(ctx, msg.Subject, msg.SubjectKeyId)
 	revCerts, foundRevoked := k.GetRevokedNocRootCertificates(ctx, msg.Subject, msg.SubjectKeyId)
 	certificates := nocCerts.Certs
 	certificates = append(certificates, revCerts.Certs...)
@@ -41,7 +41,7 @@ func (k msgServer) RemoveNocX509RootCert(goCtx context.Context, msg *types.MsgRe
 	}
 
 	// Existing certificate must be NOC certificate
-	if !cert.IsNoc {
+	if cert.CertificateType != types.CertificateType_OperationalPKI {
 		return nil, pkitypes.NewErrProvidedNocCertButExistingNotNoc(msg.Subject, msg.SubjectKeyId)
 	}
 
@@ -65,33 +65,22 @@ func (k msgServer) RemoveNocX509RootCert(goCtx context.Context, msg *types.MsgRe
 		k.RemoveUniqueCertificate(ctx, certBySerialNumber.Subject, certBySerialNumber.SerialNumber)
 
 		if foundActive {
-			// Remove from Approved lists
+			// Remove from lists
 			removeCertFromList(certBySerialNumber.Issuer, certBySerialNumber.SerialNumber, &nocCerts.Certs)
-			k.removeApprovedX509Cert(ctx, certID, &nocCerts, msg.SerialNumber)
-
-			// Remove from NOC lists
-			k.RemoveNocRootCertificateBySerialNumber(ctx, accountVid, certID.Subject, certID.SubjectKeyId, msg.SerialNumber)
-			k.RemoveNocCertificateByVidSubjectSkidAndSerialNumber(ctx, accountVid, certID.Subject, certID.SubjectKeyId, msg.SerialNumber)
+			k.removeNocX509Cert(ctx, certID, &nocCerts, accountVid, msg.SerialNumber, true)
 		}
 
 		if foundRevoked {
 			removeCertFromList(certBySerialNumber.Issuer, certBySerialNumber.SerialNumber, &revCerts.Certs)
-			k._removeRevokedNocX509RootCert(ctx, certID, &revCerts)
+			k.removeRevokedNocX509RootCert(ctx, certID, &revCerts)
 		}
 	} else {
-		k.RemoveNocRootCertificate(ctx, accountVid, certID.Subject, certID.SubjectKeyId)
-		// remove from vid, subject key id map
-		k.RemoveNocCertificatesByVidAndSkid(ctx, accountVid, certID.SubjectKeyId)
+		// remove from global certificates map
+		k.RemoveCertificateFromAllCertificateIndexes(ctx, certID)
+		// remove from noc certificates map
+		k.RemoveCertificateFromNocCertificateIndexes(ctx, certID, accountVid, true)
 		// remove from revoked noc root certs
 		k.RemoveRevokedNocRootCertificates(ctx, certID.Subject, certID.SubjectKeyId)
-		// remove from revoked list
-		k.RemoveRevokedCertificates(ctx, certID.Subject, certID.SubjectKeyId)
-		// remove from approved list
-		k.RemoveApprovedCertificates(ctx, certID.Subject, certID.SubjectKeyId)
-		// remove from subject -> subject key ID map
-		k.RemoveApprovedCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
-		// remove from subject key ID -> certificates map
-		k.RemoveApprovedCertificatesBySubjectKeyID(ctx, certID.Subject, certID.SubjectKeyId)
 		// remove from subject with serialNumber map
 		for _, cert := range certificates {
 			k.RemoveUniqueCertificate(ctx, cert.Subject, cert.SerialNumber)
@@ -101,19 +90,10 @@ func (k msgServer) RemoveNocX509RootCert(goCtx context.Context, msg *types.MsgRe
 	return &types.MsgRemoveNocX509RootCertResponse{}, nil
 }
 
-func (k msgServer) _removeRevokedNocX509RootCert(ctx sdk.Context, certID types.CertificateIdentifier, certificates *types.RevokedNocRootCertificates) {
+func (k msgServer) removeRevokedNocX509RootCert(ctx sdk.Context, certID types.CertificateIdentifier, certificates *types.RevokedNocRootCertificates) {
 	if len(certificates.Certs) == 0 {
 		k.RemoveRevokedNocRootCertificates(ctx, certID.Subject, certID.SubjectKeyId)
-		k.RemoveRevokedCertificates(ctx, certID.Subject, certID.SubjectKeyId)
 	} else {
 		k.SetRevokedNocRootCertificates(ctx, *certificates)
-		k.SetRevokedCertificates(
-			ctx,
-			types.RevokedCertificates{
-				Subject:      certificates.Subject,
-				SubjectKeyId: certificates.SubjectKeyId,
-				Certs:        certificates.Certs,
-			},
-		)
 	}
 }
