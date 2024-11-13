@@ -43,6 +43,7 @@ func GetQueryCmd(_ string) *cobra.Command {
 	cmd.AddCommand(CmdShowNocRootCertificates())
 	cmd.AddCommand(CmdListNocCertificates())
 	cmd.AddCommand(CmdShowNocCertificates())
+	cmd.AddCommand(CmdShowNocCertificatesByVidAndSkid())
 	cmd.AddCommand(CmdShowNocCertificatesBySubject())
 	cmd.AddCommand(CmdListNocIcaCertificates())
 	cmd.AddCommand(CmdShowNocIcaCertificates())
