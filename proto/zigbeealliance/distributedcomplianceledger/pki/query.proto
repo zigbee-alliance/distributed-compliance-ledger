@@ -197,6 +197,7 @@ service Query {
 
 message QueryAllCertificatesRequest {
   cosmos.base.query.v1beta1.PageRequest pagination = 1;
+  string subjectKeyId = 2;
 }
 
 message QueryAllCertificatesResponse {

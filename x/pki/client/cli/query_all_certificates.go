@@ -58,7 +58,7 @@ func CmdShowCertificates() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use: "cert",
-		Short: "Gets certificate by the given combination of subject and subject-key-id. " +
+		Short: "Gets certificate by the given combination of subject and subject-key-id or just subject-key-id. " +
 			"This query works for all types of certificates (PAA, PAI, RCAC, ICAC).",
 		Args: cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -67,13 +67,24 @@ func CmdShowCertificates() *cobra.Command {
 				return err
 			}
 
-			var res types.AllCertificates
+			if subject != "" {
+				var res types.AllCertificates
+
+				return cli.QueryWithProof(
+					clientCtx,
+					pkitypes.StoreKey,
+					types.AllCertificatesKeyPrefix,
+					types.AllCertificatesKey(subject, subjectKeyID),
+					&res,
+				)
+			}
+			var res types.AllCertificatesBySubjectKeyId
 
 			return cli.QueryWithProof(
 				clientCtx,
 				pkitypes.StoreKey,
-				types.AllCertificatesKeyPrefix,
-				types.AllCertificatesKey(subject, subjectKeyID),
+				types.AllCertificatesBySubjectKeyIDKeyPrefix,
+				types.AllCertificatesBySubjectKeyIDKey(subjectKeyID),
 				&res,
 			)
 		},
