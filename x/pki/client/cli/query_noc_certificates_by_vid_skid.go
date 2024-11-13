@@ -16,9 +16,10 @@ func CmdShowNocCertificatesByVidAndSkid() *cobra.Command {
 	)
 
 	cmd := &cobra.Command{
-		Use:   "noc-x509-certs",
-		Short: "Gets NOC (Root/ICA) certificates (RCAC/ICAC) by VID and Skid",
-		Args:  cobra.ExactArgs(0),
+		Use:        "noc-x509-certs",
+		Short:      "Gets NOC (Root/ICA) certificates (RCAC/ICAC) by VID and Skid",
+		Deprecated: "Command is deprecated in favour of 'noc-x509-cert'",
+		Args:       cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
