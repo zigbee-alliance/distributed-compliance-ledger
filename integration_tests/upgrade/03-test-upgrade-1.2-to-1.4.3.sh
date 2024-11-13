@@ -1254,13 +1254,13 @@ result=$($DCLD_BIN_NEW query pki noc-x509-root-certs --vid=$vid_for_1_4_3)
 check_response "$result" "Not Found"
 response_does_not_contain "$result" "$noc_root_cert_1_subject_key_id_for_1_4_3"
 
-echo "Get all noc x509 root certificates by vid=$vid_for_1_4_3 and skid=$noc_root_cert_1_subject_key_id_for_1_4_3 (must be empty)"
+echo "Get noc x509 root certificates by vid=$vid_for_1_4_3 and skid=$noc_root_cert_1_subject_key_id_for_1_4_3 (must be empty)"
 result=$($DCLD_BIN_NEW query pki noc-x509-certs --vid=$vid_for_1_4_3 --subject-key-id=$noc_root_cert_1_subject_key_id_for_1_4_3)
 check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$noc_root_cert_1_subject_for_1_4_3\""
 response_does_not_contain "$result" "$noc_root_cert_1_subject_key_id_for_1_4_3"
 
-echo "Get noc x509 ica certificate  by subject and subject key id"
+echo "Get noc x509 ica certificates by vid=$vid_for_1_4_3 and skid=$noc_ica_cert_1_subject_key_id_for_1_4_3 (must be empty)"
 result=$(dcld query pki noc-x509-certs --vid=$vid_for_1_4_3 --subject-key-id="$noc_ica_cert_1_subject_key_id_for_1_4_3")
 check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$noc_ica_cert_1_subject_for_1_4_3\""
