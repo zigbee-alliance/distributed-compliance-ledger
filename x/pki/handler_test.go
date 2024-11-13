@@ -225,14 +225,14 @@ func queryProposedCertificate(
 	return &resp.ProposedCertificate, nil
 }
 
-func queryAllApprovedCertificates(setup *TestSetup) ([]types.ApprovedCertificates, error) {
-	// query all certificates
-	return _queryAllApprovedCertificates(setup, "")
-}
-
 func queryAllNocCertificates(setup *TestSetup) ([]types.NocCertificates, error) {
 	// query all certificates
 	return _queryAllNocCertificates(setup, "")
+}
+
+func queryAllApprovedCertificates(setup *TestSetup) ([]types.ApprovedCertificates, error) {
+	// query all certificates
+	return _queryAllApprovedCertificates(setup, "")
 }
 
 func queryAllApprovedCertificatesBySubjectKeyID(setup *TestSetup, subjectKeyID string) ([]types.ApprovedCertificates, error) {
@@ -772,6 +772,29 @@ func queryRevokedNocIcaCertificates(setup *TestSetup, subject, subjectKeyID stri
 	return &resp.RevokedNocIcaCertificates, nil
 }
 
+func queryAllCertificatesBySubjectKeyID(setup *TestSetup, subjectKeyID string) ([]types.AllCertificates, error) {
+	// query all certificates
+	return _queryAllCertificates(setup, subjectKeyID)
+}
+
+func _queryAllCertificates(setup *TestSetup, subjectKeyID string) ([]types.AllCertificates, error) {
+	// query all certificates
+	req := &types.QueryAllCertificatesRequest{
+		SubjectKeyId: subjectKeyID,
+	}
+
+	resp, err := setup.Keeper.CertificatesAll(setup.Wctx, req)
+	if err != nil {
+		require.Nil(setup.T, resp)
+
+		return nil, err
+	}
+
+	require.NotNil(setup.T, resp)
+
+	return resp.Certificates, nil
+}
+
 func queryCertificatesFromAllCertificatesIndex(
 	setup *TestSetup,
 	subject string,
@@ -897,11 +920,16 @@ func ensureCertificatePresentInGlobalCertificateIndexes(
 	require.Equal(t, subjectKeyID, allCertificate.SubjectKeyId)
 	require.Equal(t, serialNumber, allCertificate.SerialNumber)
 
+	// AllCertificate: SKID
+	certificateBySubjectKeyID, _ := queryAllCertificatesBySubjectKeyID(setup, subjectKeyID)
+	require.Len(t, certificateBySubjectKeyID, 1)
+	require.Len(t, certificateBySubjectKeyID[0].Certs, 1)
+
 	if !skipCheckForSubject {
 		// AllCertificate: Subject
 		allCertificatesBySubject, err := queryCertificatesBySubjectFromAllCertificatesIndex(setup, subject)
 		require.NoError(t, err)
-		require.Len(t, 1, len(allCertificatesBySubject.SubjectKeyIds))
+		require.Len(t, allCertificatesBySubject.SubjectKeyIds, 1)
 		require.Equal(t, subjectKeyID, allCertificatesBySubject.SubjectKeyIds[0])
 	}
 }
@@ -920,6 +948,10 @@ func ensureCertificateNotPresentInGlobalCertificateIndexes(
 	// AllCertificate: Subject and SKID
 	_, err := querySingleCertificateFromAllCertificatesIndex(setup, subject, subjectKeyID)
 	require.Equal(t, codes.NotFound, status.Code(err))
+
+	// DaCertificates: SubjectKeyID
+	certificatesBySubjectKeyID, _ := queryAllCertificatesBySubjectKeyID(setup, subjectKeyID)
+	require.Empty(t, certificatesBySubjectKeyID)
 
 	if !skipCheckForSubject {
 		// AllCertificate: Subject
@@ -948,14 +980,14 @@ func ensureCertificatePresentInDaCertificateIndexes(
 
 	// DaCertificates: SKID
 	certificateBySubjectKeyID, _ := queryAllApprovedCertificatesBySubjectKeyID(setup, subjectKeyID)
-	require.Len(t, 1, len(certificateBySubjectKeyID))
-	require.Len(t, 1, len(certificateBySubjectKeyID[0].Certs))
+	require.Len(t, certificateBySubjectKeyID, 1)
+	require.Len(t, certificateBySubjectKeyID[0].Certs, 1)
 
 	if !skipCheckForSubject {
 		// DACertificates: Subject
 		certificatesBySubject, err := queryApprovedCertificatesBySubject(setup, subject)
 		require.NoError(t, err)
-		require.Len(t, 1, len(certificatesBySubject.SubjectKeyIds))
+		require.Len(t, certificatesBySubject.SubjectKeyIds, 1)
 		require.Equal(t, subjectKeyID, certificatesBySubject.SubjectKeyIds[0])
 	}
 }
@@ -985,14 +1017,14 @@ func ensureCertificatePresentInNocCertificateIndexes(
 	// NocCertificates: SubjectKeyID
 	nocCertificatesBySubjectKeyID, err := queryAllNocCertificatesBySubjectKeyID(setup, subjectKeyID)
 	require.NoError(t, err)
-	require.Len(t, 1, len(nocCertificatesBySubjectKeyID))
-	require.Len(t, 1, len(nocCertificatesBySubjectKeyID[0].Certs))
+	require.Len(t, nocCertificatesBySubjectKeyID, 1)
+	require.Len(t, nocCertificatesBySubjectKeyID[0].Certs, 1)
 	require.Equal(t, serialNumber, nocCertificatesBySubjectKeyID[0].Certs[0].SerialNumber)
 
 	// NocCertificates: Subject
 	nocCertificatesBySubject, err := queryNocCertificatesBySubject(setup, subject)
 	require.NoError(t, err)
-	require.Len(t, 1, len(nocCertificatesBySubject.SubjectKeyIds))
+	require.Len(t, nocCertificatesBySubject.SubjectKeyIds, 1)
 	require.Equal(t, subjectKeyID, nocCertificatesBySubject.SubjectKeyIds[0])
 
 	// NocCertificates: VID and SKID

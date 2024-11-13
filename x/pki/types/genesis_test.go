@@ -218,6 +218,22 @@ AllCertificatesBySubjectList: []types.AllCertificatesBySubject{
 		Subject: "1",
 },
 },
+AllCertificatesBySubjectKeyIdList: []types.AllCertificatesBySubjectKeyId{
+	{
+		SubjectKeyId: "0",
+},
+	{
+		SubjectKeyId: "1",
+},
+},
+AllCertificatesBySubjectKeyIdList: []types.AllCertificatesBySubjectKeyId{
+	{
+		SubjectKeyId: "0",
+},
+	{
+		SubjectKeyId: "1",
+},
+},
 // this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -527,6 +543,34 @@ SubjectKeyID: "0",
 },
 			{
 				Subject: "0",
+},
+		},
+	},
+	valid:    false,
+},
+{
+	desc:     "duplicated allCertificatesBySubjectKeyId",
+	genState: &types.GenesisState{
+		AllCertificatesBySubjectKeyIdList: []types.AllCertificatesBySubjectKeyId{
+			{
+				SubjectKeyId: "0",
+},
+			{
+				SubjectKeyId: "0",
+},
+		},
+	},
+	valid:    false,
+},
+{
+	desc:     "duplicated allCertificatesBySubjectKeyId",
+	genState: &types.GenesisState{
+		AllCertificatesBySubjectKeyIdList: []types.AllCertificatesBySubjectKeyId{
+			{
+				SubjectKeyId: "0",
+},
+			{
+				SubjectKeyId: "0",
 },
 		},
 	},

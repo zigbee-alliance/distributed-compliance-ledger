@@ -69,7 +69,6 @@ func TestMigrator_Migrate3to4(t *testing.T) {
 	subjectKeyID := "0"
 	list, found := _keeper.GetAllCertificates(ctx, subject, subjectKeyID)
 	require.True(t, found)
-
 	require.Equal(t, 1, len(list.Certs))
 	require.Equal(t, subjectKeyID, list.SubjectKeyId)
 	require.Equal(t, msg[0].Certs, list.Certs)
@@ -82,4 +81,11 @@ func TestMigrator_Migrate3to4(t *testing.T) {
 	require.True(t, found)
 	require.Equal(t, subject, subjList.Subject)
 	require.Equal(t, 1, len(subjList.SubjectKeyIds))
+
+	// check that all certificates by subject key id migrated
+	certificatesBySubjectKeyId, found := _keeper.GetAllCertificatesBySubjectKeyID(ctx, subjectKeyID)
+	require.True(t, found)
+	require.Equal(t, 1, len(certificatesBySubjectKeyId.Certs))
+	require.Equal(t, subjectKeyID, certificatesBySubjectKeyId.SubjectKeyId)
+	require.Equal(t, msg[0].Certs, certificatesBySubjectKeyId.Certs)
 }

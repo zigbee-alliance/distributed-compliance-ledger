@@ -118,6 +118,9 @@ func (k msgServer) RevokeApprovedChildCertificates(ctx sdk.Context, issuer strin
 		// remove from global subject -> subject key ID map
 		k.RemoveAllCertificateBySubject(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
 
+		// remove from global certificate -> subject key ID map
+		k.RemoveAllCertificatesBySubjectKeyID(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
+
 		// Remove certificate from approved certificates list
 		k.RemoveApprovedCertificates(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
 
@@ -155,6 +158,9 @@ func (k msgServer) RevokeNocChildCertificates(ctx sdk.Context, issuer string, au
 
 		// remove from global subject -> subject key ID map
 		k.RemoveAllCertificateBySubject(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
+
+		// remove from global subject -> subject key ID map
+		k.RemoveAllCertificatesBySubjectKeyID(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
 
 		// Remove certificate from noc certificates list
 		k.RemoveNocCertificates(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
