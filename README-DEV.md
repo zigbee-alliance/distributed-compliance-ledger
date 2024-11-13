@@ -216,11 +216,7 @@ Please take into account the following when sending a PR:
 
 ## Update TypeScript bindings
 
-Re-generate TypeScript bindings located at [ts-client](./ts-client) folder using the following command from the project root:
-
-```bash
-ignite generate composables
-```
+Re-generate TypeScript bindings located at [ts-client](./ts-client) folder using the following command `ignite generate composables` from the project root:
 
 ## Update Cosmos-sdk Version
 
