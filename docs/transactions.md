@@ -1668,7 +1668,7 @@ Use [GET_ALL_REVOKED_NOC_ICA](#get_all_revoked_noc_ica-icacs) to get a list of a
   - vid: `uint16` - Vendor ID (positive non-zero)
   - subject_key_id: `string` - Certificate's `Subject Key Id` in hex string format, e.g., `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
 - CLI Command:
-  - `dcld query pki noc-x509-certs --vid=<uint16> --subject-key-id=<hex string>`
+  - `dcld query pki noc-x509-cert --vid=<uint16> --subject-key-id=<hex string>`
 - REST API:
   - GET `/dcl/pki/noc-vid-certificates/{vid}/{subject_key_id}`
 
