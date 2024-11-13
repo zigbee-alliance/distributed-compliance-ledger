@@ -901,7 +901,7 @@ func ensureCertificatePresentInGlobalCertificateIndexes(
 		// AllCertificate: Subject
 		allCertificatesBySubject, err := queryCertificatesBySubjectFromAllCertificatesIndex(setup, subject)
 		require.NoError(t, err)
-		require.Len(t, 1, len(allCertificatesBySubject.SubjectKeyIds))
+		require.Len(t, allCertificatesBySubject.SubjectKeyIds, 1)
 		require.Equal(t, subjectKeyID, allCertificatesBySubject.SubjectKeyIds[0])
 	}
 }
@@ -948,14 +948,14 @@ func ensureCertificatePresentInDaCertificateIndexes(
 
 	// DaCertificates: SKID
 	certificateBySubjectKeyID, _ := queryAllApprovedCertificatesBySubjectKeyID(setup, subjectKeyID)
-	require.Len(t, 1, len(certificateBySubjectKeyID))
-	require.Len(t, 1, len(certificateBySubjectKeyID[0].Certs))
+	require.Len(t, certificateBySubjectKeyID, 1)
+	require.Len(t, certificateBySubjectKeyID[0].Certs, 1)
 
 	if !skipCheckForSubject {
 		// DACertificates: Subject
 		certificatesBySubject, err := queryApprovedCertificatesBySubject(setup, subject)
 		require.NoError(t, err)
-		require.Len(t, 1, len(certificatesBySubject.SubjectKeyIds))
+		require.Len(t, certificatesBySubject.SubjectKeyIds, 1)
 		require.Equal(t, subjectKeyID, certificatesBySubject.SubjectKeyIds[0])
 	}
 }
@@ -985,14 +985,14 @@ func ensureCertificatePresentInNocCertificateIndexes(
 	// NocCertificates: SubjectKeyID
 	nocCertificatesBySubjectKeyID, err := queryAllNocCertificatesBySubjectKeyID(setup, subjectKeyID)
 	require.NoError(t, err)
-	require.Len(t, 1, len(nocCertificatesBySubjectKeyID))
-	require.Len(t, 1, len(nocCertificatesBySubjectKeyID[0].Certs))
+	require.Len(t, nocCertificatesBySubjectKeyID, 1)
+	require.Len(t, nocCertificatesBySubjectKeyID[0].Certs, 1)
 	require.Equal(t, serialNumber, nocCertificatesBySubjectKeyID[0].Certs[0].SerialNumber)
 
 	// NocCertificates: Subject
 	nocCertificatesBySubject, err := queryNocCertificatesBySubject(setup, subject)
 	require.NoError(t, err)
-	require.Len(t, 1, len(nocCertificatesBySubject.SubjectKeyIds))
+	require.Len(t, nocCertificatesBySubject.SubjectKeyIds, 1)
 	require.Equal(t, subjectKeyID, nocCertificatesBySubject.SubjectKeyIds[0])
 
 	// NocCertificates: VID and SKID
