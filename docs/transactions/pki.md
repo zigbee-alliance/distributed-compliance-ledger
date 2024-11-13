@@ -5,6 +5,9 @@
 **NOTE**: X.509 v3 certificates are only supported (all certificates MUST contain `Subject Key ID` field).
 All PKI related methods are based on this restriction.
 
+* [All Certificates (DA, NOC)](#all-certificates-da-noc)
+* [Device Attestation Certificates (DA): PAA, PAI](#device-attestation-certificates-da-paa-pai)
+* [E2E (NOC): RCAC, ICAC](#e2e-noc-rcac-icac)
 
 ### All Certificates (DA, NOC)
 
@@ -75,7 +78,7 @@ Revoked certificates are not returned.
   - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
   - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
 - CLI command:
-  - `dcld query pki all-child-x509-certs (--subject=<base64 string> --subject-key-id=<hex string>`
+  - `dcld query pki all-child-x509-certs --subject=<base64 string> --subject-key-id=<hex string>`
 - REST API:
   - GET `/dcl/pki/child-certificates/{subject}/{subject_key_id}`
 
