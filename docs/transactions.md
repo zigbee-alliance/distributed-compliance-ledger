@@ -8,11 +8,11 @@ See use case sequence diagrams for the examples of how transaction can be used.
 3. [How to read from the Ledger](#how-to-read-from-the-ledger)
 4. [Modules](#modules)
    * [Vendor Info](#vendor-info)
-   * [Model and Model Version](#model-and-model_version)
-   * [Compliance](#certify_device_compliance)
+   * [Model and Model Version](#model-and-model-version)
+   * [Compliance](#compliance)
    * [X509 PKI](#x509-pki)
    * [Auth](#auth)
-   * [Validator Node](#validator_node)
+   * [Validator Node](#validator-node)
    * [Upgrade](#upgrade)
 5. [Extensions](#extensions)
 
@@ -118,7 +118,7 @@ Please make sure that TLS is enabled in gRPC, REST or Light Client Proxy for sec
 
 ## Modules
 
-### [VENDOR INFO](transactions/vendor-info.md)
+### [Vendor Info](transactions/vendor-info.md)
 
 | Method                                                                                                                          | CLI command / REST API                                                                                                                                                                                                                                                                                                            |
 |---------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -127,7 +127,7 @@ Please make sure that TLS is enabled in gRPC, REST or Light Client Proxy for sec
 | [GET_VENDOR_INFO](transactions/vendor-info.md#get_vendor_info) <br><br> Gets a Vendor Info for the given `vid` (vendor ID)      | CLI `dcld query vendorinfo vendor --vid=<uint16>` <br><br> GET `/dcl/vendorinfo/vendors/{vid}`                                                                                                                                                                                                                                    |
 | [GET_ALL_VENDOR_INFO](transactions/vendor-info.md#get_all_vendor_info) <br><br> Gets information about all vendors for all VIDs | CLI `dcld query vendorinfo all-vendors` <br><br> GET `/dcl/vendorinfo/vendors`                                                                                                                                                                                                                                                    |
 
-### [MODEL and MODEL_VERSION](transactions/model.md)
+### [Model and Model Version](transactions/model.md)
 
 | Method                                                                                                                            | CLI command / REST API                                                                                                                                                                                                                                                                                                       |
 |-----------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -143,7 +143,7 @@ Please make sure that TLS is enabled in gRPC, REST or Light Client Proxy for sec
 | [GET_ALL_VENDOR_MODELS](transactions/model.md#GET_ALL_VENDOR_MODELS) <br><br> Gets all Model Infos by the given Vendor            | CLI `dcld query model vendor-models --vid=<uint16>`  <br><br> GET `/dcl/model/models/{vid}`                                                                                                                                                                                                                                  |
 | [GET_ALL_MODEL_VERSIONS](transactions/model.md#GET_ALL_MODEL_VERSIONS) <br><br> Gets all Model Software Versions for vid and pid  | CLI `dcld query model all-model-versions --vid=<uint16> --pid=<uint16>` <br><br> GET `/dcl/model/versions/{vid}/{pid}`                                                                                                                                                                                                       |
 
-### [CERTIFY_DEVICE_COMPLIANCE](transactions/compliance.md)
+### [Compliance](transactions/compliance.md)
 
 | Method                                                                                                                                                  | CLI command / REST API                                                                                                                                                                                                                                                                                                                                             |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -221,7 +221,7 @@ Please make sure that TLS is enabled in gRPC, REST or Light Client Proxy for sec
 | [GET_ALL_REVOKED_NOC_ROOT](transactions/pki.md#get_all_revoked_noc_root-rcacs) <br><br> Gets all revoked NOC root certificates (RCACs)                                              | CLI `dcld query pki all-revoked-noc-x509-root-certs` <br><br> GET `/dcl/pki/revoked-noc-root-certificates`                                                                                                                                                                                                                                |
 | [GET_ALL_REVOKED_NOC_ICA](transactions/pki.md#get_all_revoked_noc_ica-icacs) <br><br> Gets all revoked NOC ica certificates (ICACs)                                                 | CLI `dcld query pki all-revoked-noc-x509-ica-certs` <br><br> GET `/dcl/pki/revoked-noc-ica-certificates`                                                                                                                                                                                                                                  |
 
-### [AUTH](transactions/auth.md)
+### [Auth](transactions/auth.md)
 
 | Method                                                                                                                                                         | CLI command / REST API                                                                                                                                                                                                                                                                             |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -241,7 +241,7 @@ Please make sure that TLS is enabled in gRPC, REST or Light Client Proxy for sec
 | [GET_ALL_PROPOSED_ACCS_TO_REVOKE](transactions/auth.md#get_all_proposed_accounts_to_revoke) <br><br> Gets all proposed but not approved accounts to be revoked | CLI `dcld query auth all-proposed-accounts-to-revoke` <br><br> GET `/dcl/auth/proposed-revocation-accounts`                                                                                                                                                                                        |
 | [GET_ALL_REVOKED_ACCOUNTS](transactions/auth.md#get_all_revoked_accounts) <br><br> Gets all revoked accounts                                                   | CLI `dcld query auth all-revoked-accounts` <br><br> GET `/dcl/auth/revoked-accounts`                                                                                                                                                                                                               |
 
-### [VALIDATOR_NODE](transactions/validator-node.md)
+### [Validator Node](transactions/validator-node.md)
 
 | Method                                                                                                                                                                   | CLI command / REST API                                                                                                                                                                                                                                                                         |
 |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -263,7 +263,7 @@ Please make sure that TLS is enabled in gRPC, REST or Light Client Proxy for sec
 | [GET_ALL_LAST_VALIDATORS_POWER](transactions/validator-node.md#get_all_last_validators_power) <br><br> Gets the list of all last validator nodes power                   | CLI `dcld query validator all-last-powers` <br><br> GET `/dcl/validator/last-powers`                                                                                                                                                                                                           |
 | [UPDATE_VALIDATOR_NODE](transactions/validator-node.md#update_validator_node) <br><br> Updates the Validator node by the owner                                           |                                                                                                                                                                                                                                                                                                |
 
-### [UPGRADE](transactions/upgrade.md)
+### [Upgrade](transactions/upgrade.md)
 
 | Method                                                                                                                                           | CLI command / REST API                                                                                                                                                                                                                                                                                   |
 |--------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
