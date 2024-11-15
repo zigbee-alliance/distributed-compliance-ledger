@@ -596,6 +596,106 @@ func GetPkiRevocationDistributionPoint(suite *utils.TestSuite, vendorID int32, s
 	return &res, nil
 }
 
+func GetAllCerts(suite *utils.TestSuite) (res []pkitypes.AllCertificates, err error) {
+	if suite.Rest {
+		var resp pkitypes.QueryAllCertificatesResponse
+		err := suite.QueryREST("/dcl/pki/all-certificates", &resp)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetCertificates()
+	} else {
+		grpcConn := suite.GetGRPCConn()
+		defer grpcConn.Close()
+
+		// This creates a gRPC client to query the x/pki service.
+		pkiClient := pkitypes.NewQueryClient(grpcConn)
+		resp, err := pkiClient.CertificatesAll(
+			context.Background(),
+			&pkitypes.QueryAllCertificatesRequest{},
+		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetCertificates()
+	}
+
+	return res, nil
+}
+
+func GetCert(suite *utils.TestSuite, subject string, subjectKeyID string) (*pkitypes.AllCertificates, error) {
+	var res pkitypes.AllCertificates
+	if suite.Rest {
+		var resp pkitypes.QueryGetCertificatesResponse
+		err := suite.QueryREST(
+			fmt.Sprintf(
+				"/dcl/pki/all-certificates/%s/%s",
+				url.QueryEscape(subject), url.QueryEscape(subjectKeyID),
+			),
+			&resp,
+		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetCertificates()
+	} else {
+		grpcConn := suite.GetGRPCConn()
+		defer grpcConn.Close()
+
+		// This creates a gRPC client to query the x/pki service.
+		pkiClient := pkitypes.NewQueryClient(grpcConn)
+		resp, err := pkiClient.Certificates(
+			context.Background(),
+			&pkitypes.QueryGetCertificatesRequest{
+				Subject:      subject,
+				SubjectKeyId: subjectKeyID,
+			},
+		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetCertificates()
+	}
+
+	return &res, nil
+}
+
+func GetAllCertsBySubject(suite *utils.TestSuite, subject string) (*pkitypes.AllCertificatesBySubject, error) {
+	var res pkitypes.AllCertificatesBySubject
+	if suite.Rest {
+		var resp pkitypes.QueryGetAllCertificatesBySubjectResponse
+		err := suite.QueryREST(
+			fmt.Sprintf(
+				"/dcl/pki/all-certificates/%s",
+				url.QueryEscape(subject),
+			),
+			&resp,
+		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetAllCertificatesBySubject()
+	} else {
+		grpcConn := suite.GetGRPCConn()
+		defer grpcConn.Close()
+
+		// This creates a gRPC client to query the x/pki service.
+		pkiClient := pkitypes.NewQueryClient(grpcConn)
+		resp, err := pkiClient.AllCertificatesBySubject(
+			context.Background(),
+			&pkitypes.QueryGetAllCertificatesBySubjectRequest{
+				Subject: subject,
+			},
+		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetAllCertificatesBySubject()
+	}
+
+	return &res, nil
+}
+
 //nolint:funlen
 func Demo(suite *utils.TestSuite) {
 	// All requests return empty or 404 value
@@ -633,6 +733,12 @@ func Demo(suite *utils.TestSuite) {
 	suite.AssertNotFound(err)
 
 	_, err = GetAllX509CertsBySubject(suite, testconstants.RootSubject)
+	suite.AssertNotFound(err)
+
+	allCertificates, _ := GetAllCerts(suite)
+	require.Equal(suite.T, 0, len(allCertificates))
+
+	_, err = GetAllCertsBySubject(suite, testconstants.RootSubject)
 	suite.AssertNotFound(err)
 
 	// Alice and Jack are predefined Trustees
@@ -919,6 +1025,26 @@ func Demo(suite *utils.TestSuite) {
 
 	_, err = GetAllChildX509Certs(suite, testconstants.LeafSubject, testconstants.LeafSubjectKeyID)
 	suite.AssertNotFound(err)
+
+	// Request all certificates
+	allCertificates, _ = GetAllCerts(suite)
+	require.Equal(suite.T, 3, len(allCertificates))
+
+	// Request all Subject certificates
+	allSubjectCertificates, _ := GetAllCertsBySubject(suite, testconstants.LeafSubject)
+	require.Equal(suite.T, testconstants.LeafSubject, allSubjectCertificates.Subject)
+	require.Equal(suite.T, 1, len(allSubjectCertificates.SubjectKeyIds))
+	require.Equal(suite.T, testconstants.LeafSubjectKeyID, allSubjectCertificates.SubjectKeyIds[0])
+
+	allSubjectCertificates, _ = GetAllCertsBySubject(suite, testconstants.IntermediateSubject)
+	require.Equal(suite.T, testconstants.IntermediateSubject, allSubjectCertificates.Subject)
+	require.Equal(suite.T, 1, len(allSubjectCertificates.SubjectKeyIds))
+	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, allSubjectCertificates.SubjectKeyIds[0])
+
+	allSubjectCertificates, _ = GetAllCertsBySubject(suite, testconstants.RootSubject)
+	require.Equal(suite.T, testconstants.RootSubject, allSubjectCertificates.Subject)
+	require.Equal(suite.T, 1, len(allSubjectCertificates.SubjectKeyIds))
+	require.Equal(suite.T, testconstants.RootSubjectKeyID, allSubjectCertificates.SubjectKeyIds[0])
 
 	// Try to Revoke Intermediate certificate when sender is not Vendor account
 	msgRevokeX509Cert := pkitypes.MsgRevokeX509Cert{
@@ -2022,6 +2148,10 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, 1, len(certs.Certs))
 	require.Equal(suite.T, testconstants.LeafCertWithSameSubjectAndSKIDSerialNumber, certs.Certs[0].SerialNumber)
 
+	allCerts, _ := GetCert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
+	require.Equal(suite.T, 1, len(allCerts.Certs))
+	require.Equal(suite.T, testconstants.LeafCertWithSameSubjectAndSKIDSerialNumber, allCerts.Certs[0].SerialNumber)
+
 	// Revoke root cert and its child
 	msgProposeRevokeX509RootCert = pkitypes.MsgProposeRevokeX509RootCert{
 		Subject:      testconstants.RootCertWithSameSubjectAndSKIDSubject,
@@ -2117,6 +2247,12 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, 1, len(certs.Certs))
 	certs, _ = GetX509Cert(suite, testconstants.IntermediateCertWithVid1Subject, testconstants.IntermediateCertWithVid1SubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
+
+	// Check certificates (using global collection)
+	allCerts, _ = GetCert(suite, testconstants.RootCertWithVidSubject, testconstants.RootCertWithVidSubjectKeyID)
+	require.Equal(suite.T, 1, len(allCerts.Certs))
+	allCerts, _ = GetCert(suite, testconstants.IntermediateCertWithVid1Subject, testconstants.IntermediateCertWithVid1SubjectKeyID)
+	require.Equal(suite.T, 1, len(allCerts.Certs))
 
 	// Check that if root cert is VID scoped and rootVID != CertVID then adding an intermediate cert should fail
 	// Add an intermediate certificate

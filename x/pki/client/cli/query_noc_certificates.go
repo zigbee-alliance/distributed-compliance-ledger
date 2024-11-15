@@ -52,14 +52,15 @@ func CmdListNocCertificates() *cobra.Command {
 
 func CmdShowNocCertificates() *cobra.Command {
 	var (
+		vid          int32
 		subject      string
 		subjectKeyID string
 	)
 
 	cmd := &cobra.Command{
 		Use: "noc-x509-cert",
-		Short: "Gets certificates (either root or ica) " +
-			"by the given combination of subject and subject-key-id or just subject-key-id",
+		Short: "Gets certificates (either root or ica) by one of property combinations: " +
+			"'subject + subject-key-id' or 'VID and subject-key-id' or just 'subject-key-id'",
 		Args: cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientQueryContext(cmd)
@@ -67,7 +68,7 @@ func CmdShowNocCertificates() *cobra.Command {
 				return err
 			}
 
-			if subject != "" {
+			if subject != "" && subjectKeyID != "" {
 				var res types.NocCertificates
 
 				return cli.QueryWithProof(
@@ -78,6 +79,19 @@ func CmdShowNocCertificates() *cobra.Command {
 					&res,
 				)
 			}
+
+			if vid != 0 && subjectKeyID != "" {
+				var res types.NocCertificatesByVidAndSkid
+
+				return cli.QueryWithProof(
+					clientCtx,
+					pkitypes.StoreKey,
+					types.NocCertificatesByVidAndSkidKeyPrefix,
+					types.NocCertificatesByVidAndSkidKey(vid, subjectKeyID),
+					&res,
+				)
+			}
+
 			var res types.NocCertificatesBySubjectKeyID
 
 			return cli.QueryWithProof(
@@ -90,6 +104,7 @@ func CmdShowNocCertificates() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().Int32Var(&vid, FlagVid, 0, "Vendor ID (positive non-zero) - optional")
 	cmd.Flags().StringVarP(&subject, FlagSubject, FlagSubjectShortcut, "", "Certificate's subject - optional")
 	cmd.Flags().StringVarP(&subjectKeyID, FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "", "Certificate's subject key id (hex) - required")
 	flags.AddQueryFlagsToCmd(cmd)

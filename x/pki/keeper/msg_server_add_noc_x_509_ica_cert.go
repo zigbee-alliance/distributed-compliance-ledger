@@ -106,11 +106,23 @@ func (k msgServer) AddNocX509IcaCert(goCtx context.Context, msg *types.MsgAddNoc
 	// Add to the global list of certificates
 	k.AddAllCertificate(ctx, certificate)
 
+	// append to global list of certificates indexed by subject
+	k.AddAllCertificateBySubject(ctx, certificate.Subject, certificate.SubjectKeyId)
+
 	// Add to the list of all NOC certificates
 	k.AddNocCertificate(ctx, certificate)
 
 	// Add to the list of NOC ica certificates with the same VID
 	k.AddNocIcaCertificate(ctx, certificate)
+
+	// add to certificates map indexed by { vid, subject key id }
+	k.AddNocCertificateByVidAndSkid(ctx, certificate)
+
+	// add to certificates map indexed by { subject }
+	k.AddNocCertificateBySubject(ctx, certificate)
+
+	// add to certificates map indexed by { subject key id }
+	k.AddNocCertificateBySubjectKeyID(ctx, certificate)
 
 	// add the certificate identifier to the issuer's Child Certificates record
 	certificateIdentifier := types.CertificateIdentifier{
@@ -126,15 +138,6 @@ func (k msgServer) AddNocX509IcaCert(goCtx context.Context, msg *types.MsgAddNoc
 		Present:      true,
 	}
 	k.SetUniqueCertificate(ctx, uniqueCertificate)
-
-	// add to certificates map indexed by { vid, subject key id }
-	k.AddNocCertificateByVidAndSkid(ctx, certificate)
-
-	// add to certificates map indexed by { subject }
-	k.AddNocCertificateBySubject(ctx, certificate)
-
-	// add to certificates map indexed by { subject key id }
-	k.AddNocCertificateBySubjectKeyID(ctx, certificate)
 
 	return &types.MsgAddNocX509IcaCertResponse{}, nil
 }

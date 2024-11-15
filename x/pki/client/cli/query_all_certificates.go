@@ -14,7 +14,7 @@ import (
 func CmdListCertificates() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "all-certs",
-		Short: "Gets all certificates",
+		Short: "Gets all certificates. This query returns all types of certificates (PAA, PAI, RCAC, ICAC).",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -57,9 +57,10 @@ func CmdShowCertificates() *cobra.Command {
 	)
 
 	cmd := &cobra.Command{
-		Use:   "cert",
-		Short: "Gets certificates by the given combination of subject and subject-key-id",
-		Args:  cobra.ExactArgs(0),
+		Use: "cert",
+		Short: "Gets certificate by the given combination of subject and subject-key-id. " +
+			"This query works for all types of certificates (PAA, PAI, RCAC, ICAC).",
+		Args: cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {

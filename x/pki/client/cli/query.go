@@ -41,7 +41,6 @@ func GetQueryCmd(_ string) *cobra.Command {
 	cmd.AddCommand(CmdShowPkiRevocationDistributionPointsByIssuerSubjectKeyID())
 	cmd.AddCommand(CmdListNocRootCertificates())
 	cmd.AddCommand(CmdShowNocRootCertificates())
-	cmd.AddCommand(CmdShowNocCertificatesByVidAndSkid())
 	cmd.AddCommand(CmdListNocCertificates())
 	cmd.AddCommand(CmdShowNocCertificates())
 	cmd.AddCommand(CmdShowNocCertificatesBySubject())

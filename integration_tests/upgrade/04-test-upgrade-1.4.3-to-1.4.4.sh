@@ -19,9 +19,9 @@ source integration_tests/cli/common.sh
 # Upgrade constants
 
 plan_name="v1.4.4"
-upgrade_checksum="sha256:d196eafbe663658ac6efc9f4147e28ac9a41a9bcea348c105bedb589fb2a10e4"
+upgrade_checksum="sha256:b4293d404ea454334b23969a6d7f3b58515ea8c0296ccb3f3a7095f728366925"
 binary_version_old="v1.4.3"
-binary_version_new="v1.4.4-2-dev"
+binary_version_new="v1.4.4-4-dev"
 
 wget -O dcld_old "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version_old/dcld"
 chmod ugo+x dcld_old
@@ -480,16 +480,16 @@ result=$($DCLD_BIN_NEW query pki x509-cert --subject=$noc_root_cert_1_subject_fo
 check_response "$result" "Not Found"
 
 echo "Get x509 certificate (NOC)"
-result=$(dcld query pki noc-x509-cert --subject="$root_cert_with_vid_subject_for_1_4_3" --subject-key-id="$root_cert_with_vid_subject_key_id_for_1_4_3")
+result=$($DCLD_BIN_NEW query pki noc-x509-cert --subject="$root_cert_with_vid_subject_for_1_4_3" --subject-key-id="$root_cert_with_vid_subject_key_id_for_1_4_3")
 check_response "$result" "Not Found"
 
-result=$(dcld query pki noc-x509-cert --subject="$test_root_cert_subject_for_1_2" --subject-key-id="$test_root_cert_subject_key_id_for_1_2")
+result=$($DCLD_BIN_NEW query pki noc-x509-cert --subject="$test_root_cert_subject_for_1_2" --subject-key-id="$test_root_cert_subject_key_id_for_1_2")
 check_response "$result" "Not Found"
 
-result=$(dcld query pki noc-x509-cert --subject="$test_root_cert_subject" --subject-key-id="$test_root_cert_subject_key_id")
+result=$($DCLD_BIN_NEW query pki noc-x509-cert --subject="$test_root_cert_subject" --subject-key-id="$test_root_cert_subject_key_id")
 check_response "$result" "Not Found"
 
-result=$(dcld query pki noc-x509-cert --subject="$noc_root_cert_1_subject_for_1_4_3" --subject-key-id="$noc_root_cert_1_subject_key_id_for_1_4_3")
+result=$($DCLD_BIN_NEW query pki noc-x509-cert --subject="$noc_root_cert_1_subject_for_1_4_3" --subject-key-id="$noc_root_cert_1_subject_key_id_for_1_4_3")
 check_response "$result" "Not Found"
 
 echo "Get all x509 certificates by subjectKeyId"
@@ -593,7 +593,7 @@ check_response "$result" "\"label\": \"$product_label_for_1_4_3\""
 check_response "$result" "\"dataURL\": \"$test_data_url_for_1_4_3\""
 
 echo "Get all noc certificates"
-result=$(dcld query pki all-noc-x509-certs)
+result=$($DCLD_BIN_NEW query pki all-noc-x509-certs)
 check_response "$result" "\[\]"
 response_does_not_contain "$result" "$noc_root_cert_1_subject_key_id_for_1_4_3"
 response_does_not_contain "$result" "$noc_ica_cert_1_subject_key_id_for_1_4_3"
@@ -604,16 +604,16 @@ check_response "$result" "Not Found"
 response_does_not_contain "$result" "$noc_root_cert_1_subject_key_id_for_1_4_3"
 
 echo "Get all noc x509 root certificates by vid=$vid_for_1_4_3 and skid=$noc_root_cert_1_subject_key_id_for_1_4_3 (must be empty)"
-result=$($DCLD_BIN_NEW query pki noc-x509-certs --vid=$vid_for_1_4_3 --subject-key-id=$noc_root_cert_1_subject_key_id_for_1_4_3)
+result=$($DCLD_BIN_NEW query pki noc-x509-cert --vid=$vid_for_1_4_3 --subject-key-id=$noc_root_cert_1_subject_key_id_for_1_4_3)
 check_response "$result" "Not Found"
 
 echo "Get noc x509 root certificate by subject and subject key id"
-result=$(dcld query pki noc-x509-cert --subject="$noc_root_cert_1_subject_for_1_4_3" --subject-key-id="$noc_root_cert_1_subject_key_id_for_1_4_3")
+result=$($DCLD_BIN_NEW query pki noc-x509-cert --subject="$noc_root_cert_1_subject_for_1_4_3" --subject-key-id="$noc_root_cert_1_subject_key_id_for_1_4_3")
 check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_key_id_for_1_4_3\""
 
 echo "Get noc x509 ica certificate  by subject and subject key id"
-result=$(dcld query pki noc-x509-cert --subject="$noc_ica_cert_1_subject_for_1_4_3" --subject-key-id="$noc_ica_cert_1_subject_key_id_for_1_4_3")
+result=$($DCLD_BIN_NEW query pki noc-x509-cert --subject="$noc_ica_cert_1_subject_for_1_4_3" --subject-key-id="$noc_ica_cert_1_subject_key_id_for_1_4_3")
 check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_ica_cert_1_subject_key_id_for_1_4_3\""
 
@@ -1394,7 +1394,7 @@ test_divider
 echo "Get certificates"
 
 echo "Get certificates (ALL)"
-result=$(dcld query pki all-certs)
+result=$($DCLD_BIN_NEW query pki all-certs)
 echo $result | jq
 check_response "$result" "\"subjectKeyId\": \"$da_root_cert_2_subject_key_id_for_1_4_4\""
 check_response "$result" "\"subjectKeyId\": \"$da_intermediate_cert_2_subject_key_id_for_1_4_4\""
@@ -1570,12 +1570,12 @@ check_response "$result" "\"label\": \"$product_label_for_1_4_4\""
 check_response "$result" "\"dataURL\": \"$test_data_url_for_1_4_4\""
 
 echo "Get all noc x509 root certificates by vid=$vid_for_1_4_4 and skid=$noc_root_cert_2_subject_key_id_for_1_4_4"
-result=$($DCLD_BIN_NEW query pki noc-x509-certs --vid=$vid_for_1_4_4 --subject-key-id=$noc_root_cert_2_subject_key_id_for_1_4_4)
+result=$($DCLD_BIN_NEW query pki noc-x509-cert --vid=$vid_for_1_4_4 --subject-key-id=$noc_root_cert_2_subject_key_id_for_1_4_4)
 check_response "$result" "\"subject\": \"$noc_root_cert_2_subject_for_1_4_4\""
 check_response "$result" "$noc_root_cert_2_subject_key_id_for_1_4_4"
 
 echo "Get all noc x509 root certificates by vid $vid_for_1_4_4 and skid=$noc_ica_cert_2_subject_key_id_for_1_4_4"
-result=$($DCLD_BIN_NEW query pki noc-x509-certs --vid=$vid_for_1_4_4 --subject-key-id=$noc_ica_cert_2_subject_key_id_for_1_4_4)
+result=$($DCLD_BIN_NEW query pki noc-x509-cert --vid=$vid_for_1_4_4 --subject-key-id=$noc_ica_cert_2_subject_key_id_for_1_4_4)
 check_response "$result" "\"subject\": \"$noc_ica_cert_2_subject_for_1_4_4\""
 check_response "$result" "$noc_ica_cert_2_subject_key_id_for_1_4_4"
 
