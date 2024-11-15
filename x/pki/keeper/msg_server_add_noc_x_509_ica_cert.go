@@ -43,7 +43,7 @@ func (k msgServer) AddNocX509IcaCert(goCtx context.Context, msg *types.MsgAddNoc
 	accountVid := signerAccount.VendorID
 
 	// Get list of certificates for Subject / Subject Key Id combination
-	certificates, _ := k.GetApprovedCertificates(ctx, x509Certificate.Subject, x509Certificate.SubjectKeyID)
+	certificates, _ := k.GetAllCertificates(ctx, x509Certificate.Subject, x509Certificate.SubjectKeyID)
 	if len(certificates.Certs) > 0 {
 		existingCertificate := certificates.Certs[0]
 
@@ -56,7 +56,7 @@ func (k msgServer) AddNocX509IcaCert(goCtx context.Context, msg *types.MsgAddNoc
 		}
 
 		// Existing certificate must be NOC certificate
-		if !existingCertificate.IsNoc {
+		if existingCertificate.CertificateType != types.CertificateType_OperationalPKI {
 			return nil, pkitypes.NewErrProvidedNocCertButExistingNotNoc(x509Certificate.Subject, x509Certificate.SubjectKeyID)
 		}
 
@@ -65,19 +65,21 @@ func (k msgServer) AddNocX509IcaCert(goCtx context.Context, msg *types.MsgAddNoc
 			return nil, pkitypes.NewErrUnauthorizedCertVendor(existingCertificate.Vid)
 		}
 	}
+
 	// Valid certificate chain must be built for new certificate
 	rootCert, err := k.verifyCertificate(ctx, x509Certificate)
 	if err != nil {
 		return nil, err
 	}
 	// Check Root and Intermediate certs for VID scoping
-	rootCerts, _ := k.GetApprovedCertificates(ctx, rootCert.Subject, rootCert.SubjectKeyID)
+	rootCerts, _ := k.GetAllCertificates(ctx, rootCert.Subject, rootCert.SubjectKeyID)
 	if len(rootCerts.Certs) == 0 {
 		return nil, pkitypes.NewErrRootCertificateDoesNotExist(rootCert.Subject, rootCert.SubjectKeyID)
 	}
 	nocRootCert := rootCerts.Certs[0]
+
 	// Root certificate must be NOC certificate
-	if !nocRootCert.IsNoc {
+	if nocRootCert.CertificateType != types.CertificateType_OperationalPKI {
 		return nil, pkitypes.NewErrRootOfNocCertIsNotNoc(rootCert.Subject, rootCert.SubjectKeyID)
 	}
 	// Check VID scoping
@@ -101,11 +103,26 @@ func (k msgServer) AddNocX509IcaCert(goCtx context.Context, msg *types.MsgAddNoc
 		msg.CertSchemaVersion,
 	)
 
-	// Add a NOC certificate to the list of NOC certificates with the same VID
+	// Add to the global list of certificates
+	k.AddAllCertificate(ctx, certificate)
+
+	// append to global list of certificates indexed by subject
+	k.AddAllCertificateBySubject(ctx, certificate.Subject, certificate.SubjectKeyId)
+
+	// Add to the list of all NOC certificates
+	k.AddNocCertificate(ctx, certificate)
+
+	// Add to the list of NOC ica certificates with the same VID
 	k.AddNocIcaCertificate(ctx, certificate)
 
-	// append new certificate to list of certificates with the same Subject/SubjectKeyId combination and store updated list
-	k.AddApprovedCertificate(ctx, certificate)
+	// add to certificates map indexed by { vid, subject key id }
+	k.AddNocCertificateByVidAndSkid(ctx, certificate)
+
+	// add to certificates map indexed by { subject }
+	k.AddNocCertificateBySubject(ctx, certificate)
+
+	// add to certificates map indexed by { subject key id }
+	k.AddNocCertificateBySubjectKeyID(ctx, certificate)
 
 	// add the certificate identifier to the issuer's Child Certificates record
 	certificateIdentifier := types.CertificateIdentifier{
@@ -121,15 +138,6 @@ func (k msgServer) AddNocX509IcaCert(goCtx context.Context, msg *types.MsgAddNoc
 		Present:      true,
 	}
 	k.SetUniqueCertificate(ctx, uniqueCertificate)
-
-	// add to vid, subject -> certificates map
-	k.AddNocCertificateByVidAndSkid(ctx, certificate)
-
-	// add to subject -> subject key ID map
-	k.AddApprovedCertificateBySubject(ctx, certificate.Subject, certificate.SubjectKeyId)
-
-	// add to subject key ID -> certificates map
-	k.AddApprovedCertificateBySubjectKeyID(ctx, certificate)
 
 	return &types.MsgAddNocX509IcaCertResponse{}, nil
 }

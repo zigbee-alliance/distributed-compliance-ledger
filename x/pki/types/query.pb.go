@@ -31,6 +31,290 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
+type QueryAllCertificatesRequest struct {
+	Pagination *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllCertificatesRequest) Reset()         { *m = QueryAllCertificatesRequest{} }
+func (m *QueryAllCertificatesRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryAllCertificatesRequest) ProtoMessage()    {}
+func (*QueryAllCertificatesRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_db6ffa8ae459ba1c, []int{0}
+}
+func (m *QueryAllCertificatesRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllCertificatesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllCertificatesRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllCertificatesRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllCertificatesRequest.Merge(m, src)
+}
+func (m *QueryAllCertificatesRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllCertificatesRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllCertificatesRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllCertificatesRequest proto.InternalMessageInfo
+
+func (m *QueryAllCertificatesRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryAllCertificatesResponse struct {
+	Certificates []AllCertificates   `protobuf:"bytes,1,rep,name=certificates,proto3" json:"certificates"`
+	Pagination   *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllCertificatesResponse) Reset()         { *m = QueryAllCertificatesResponse{} }
+func (m *QueryAllCertificatesResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryAllCertificatesResponse) ProtoMessage()    {}
+func (*QueryAllCertificatesResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_db6ffa8ae459ba1c, []int{1}
+}
+func (m *QueryAllCertificatesResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllCertificatesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllCertificatesResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllCertificatesResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllCertificatesResponse.Merge(m, src)
+}
+func (m *QueryAllCertificatesResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllCertificatesResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllCertificatesResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllCertificatesResponse proto.InternalMessageInfo
+
+func (m *QueryAllCertificatesResponse) GetCertificates() []AllCertificates {
+	if m != nil {
+		return m.Certificates
+	}
+	return nil
+}
+
+func (m *QueryAllCertificatesResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryGetAllCertificatesBySubjectRequest struct {
+	Subject string `protobuf:"bytes,1,opt,name=subject,proto3" json:"subject,omitempty"`
+}
+
+func (m *QueryGetAllCertificatesBySubjectRequest) Reset() {
+	*m = QueryGetAllCertificatesBySubjectRequest{}
+}
+func (m *QueryGetAllCertificatesBySubjectRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryGetAllCertificatesBySubjectRequest) ProtoMessage()    {}
+func (*QueryGetAllCertificatesBySubjectRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_db6ffa8ae459ba1c, []int{2}
+}
+func (m *QueryGetAllCertificatesBySubjectRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetAllCertificatesBySubjectRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetAllCertificatesBySubjectRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetAllCertificatesBySubjectRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetAllCertificatesBySubjectRequest.Merge(m, src)
+}
+func (m *QueryGetAllCertificatesBySubjectRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetAllCertificatesBySubjectRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetAllCertificatesBySubjectRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetAllCertificatesBySubjectRequest proto.InternalMessageInfo
+
+func (m *QueryGetAllCertificatesBySubjectRequest) GetSubject() string {
+	if m != nil {
+		return m.Subject
+	}
+	return ""
+}
+
+type QueryGetAllCertificatesBySubjectResponse struct {
+	AllCertificatesBySubject AllCertificatesBySubject `protobuf:"bytes,1,opt,name=allCertificatesBySubject,proto3" json:"allCertificatesBySubject"`
+}
+
+func (m *QueryGetAllCertificatesBySubjectResponse) Reset() {
+	*m = QueryGetAllCertificatesBySubjectResponse{}
+}
+func (m *QueryGetAllCertificatesBySubjectResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryGetAllCertificatesBySubjectResponse) ProtoMessage()    {}
+func (*QueryGetAllCertificatesBySubjectResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_db6ffa8ae459ba1c, []int{3}
+}
+func (m *QueryGetAllCertificatesBySubjectResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetAllCertificatesBySubjectResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetAllCertificatesBySubjectResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetAllCertificatesBySubjectResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetAllCertificatesBySubjectResponse.Merge(m, src)
+}
+func (m *QueryGetAllCertificatesBySubjectResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetAllCertificatesBySubjectResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetAllCertificatesBySubjectResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetAllCertificatesBySubjectResponse proto.InternalMessageInfo
+
+func (m *QueryGetAllCertificatesBySubjectResponse) GetAllCertificatesBySubject() AllCertificatesBySubject {
+	if m != nil {
+		return m.AllCertificatesBySubject
+	}
+	return AllCertificatesBySubject{}
+}
+
+type QueryGetCertificatesRequest struct {
+	Subject      string `protobuf:"bytes,1,opt,name=subject,proto3" json:"subject,omitempty"`
+	SubjectKeyId string `protobuf:"bytes,2,opt,name=subjectKeyId,proto3" json:"subjectKeyId,omitempty"`
+}
+
+func (m *QueryGetCertificatesRequest) Reset()         { *m = QueryGetCertificatesRequest{} }
+func (m *QueryGetCertificatesRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryGetCertificatesRequest) ProtoMessage()    {}
+func (*QueryGetCertificatesRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_db6ffa8ae459ba1c, []int{4}
+}
+func (m *QueryGetCertificatesRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetCertificatesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetCertificatesRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetCertificatesRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetCertificatesRequest.Merge(m, src)
+}
+func (m *QueryGetCertificatesRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetCertificatesRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetCertificatesRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetCertificatesRequest proto.InternalMessageInfo
+
+func (m *QueryGetCertificatesRequest) GetSubject() string {
+	if m != nil {
+		return m.Subject
+	}
+	return ""
+}
+
+func (m *QueryGetCertificatesRequest) GetSubjectKeyId() string {
+	if m != nil {
+		return m.SubjectKeyId
+	}
+	return ""
+}
+
+type QueryGetCertificatesResponse struct {
+	Certificates AllCertificates `protobuf:"bytes,1,opt,name=certificates,proto3" json:"certificates"`
+}
+
+func (m *QueryGetCertificatesResponse) Reset()         { *m = QueryGetCertificatesResponse{} }
+func (m *QueryGetCertificatesResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryGetCertificatesResponse) ProtoMessage()    {}
+func (*QueryGetCertificatesResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_db6ffa8ae459ba1c, []int{5}
+}
+func (m *QueryGetCertificatesResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetCertificatesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetCertificatesResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetCertificatesResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetCertificatesResponse.Merge(m, src)
+}
+func (m *QueryGetCertificatesResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetCertificatesResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetCertificatesResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetCertificatesResponse proto.InternalMessageInfo
+
+func (m *QueryGetCertificatesResponse) GetCertificates() AllCertificates {
+	if m != nil {
+		return m.Certificates
+	}
+	return AllCertificates{}
+}
+
 type QueryGetApprovedCertificatesRequest struct {
 	Subject      string `protobuf:"bytes,1,opt,name=subject,proto3" json:"subject,omitempty"`
 	SubjectKeyId string `protobuf:"bytes,2,opt,name=subjectKeyId,proto3" json:"subjectKeyId,omitempty"`
@@ -40,7 +324,7 @@ func (m *QueryGetApprovedCertificatesRequest) Reset()         { *m = QueryGetApp
 func (m *QueryGetApprovedCertificatesRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryGetApprovedCertificatesRequest) ProtoMessage()    {}
 func (*QueryGetApprovedCertificatesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{0}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{6}
 }
 func (m *QueryGetApprovedCertificatesRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -91,7 +375,7 @@ func (m *QueryGetApprovedCertificatesResponse) Reset()         { *m = QueryGetAp
 func (m *QueryGetApprovedCertificatesResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryGetApprovedCertificatesResponse) ProtoMessage()    {}
 func (*QueryGetApprovedCertificatesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{1}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{7}
 }
 func (m *QueryGetApprovedCertificatesResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -136,7 +420,7 @@ func (m *QueryAllApprovedCertificatesRequest) Reset()         { *m = QueryAllApp
 func (m *QueryAllApprovedCertificatesRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryAllApprovedCertificatesRequest) ProtoMessage()    {}
 func (*QueryAllApprovedCertificatesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{2}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{8}
 }
 func (m *QueryAllApprovedCertificatesRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -188,7 +472,7 @@ func (m *QueryAllApprovedCertificatesResponse) Reset()         { *m = QueryAllAp
 func (m *QueryAllApprovedCertificatesResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryAllApprovedCertificatesResponse) ProtoMessage()    {}
 func (*QueryAllApprovedCertificatesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{3}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{9}
 }
 func (m *QueryAllApprovedCertificatesResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -240,7 +524,7 @@ func (m *QueryGetProposedCertificateRequest) Reset()         { *m = QueryGetProp
 func (m *QueryGetProposedCertificateRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryGetProposedCertificateRequest) ProtoMessage()    {}
 func (*QueryGetProposedCertificateRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{4}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{10}
 }
 func (m *QueryGetProposedCertificateRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -291,7 +575,7 @@ func (m *QueryGetProposedCertificateResponse) Reset()         { *m = QueryGetPro
 func (m *QueryGetProposedCertificateResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryGetProposedCertificateResponse) ProtoMessage()    {}
 func (*QueryGetProposedCertificateResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{5}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{11}
 }
 func (m *QueryGetProposedCertificateResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -335,7 +619,7 @@ func (m *QueryAllProposedCertificateRequest) Reset()         { *m = QueryAllProp
 func (m *QueryAllProposedCertificateRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryAllProposedCertificateRequest) ProtoMessage()    {}
 func (*QueryAllProposedCertificateRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{6}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{12}
 }
 func (m *QueryAllProposedCertificateRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -380,7 +664,7 @@ func (m *QueryAllProposedCertificateResponse) Reset()         { *m = QueryAllPro
 func (m *QueryAllProposedCertificateResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryAllProposedCertificateResponse) ProtoMessage()    {}
 func (*QueryAllProposedCertificateResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{7}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{13}
 }
 func (m *QueryAllProposedCertificateResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -432,7 +716,7 @@ func (m *QueryGetChildCertificatesRequest) Reset()         { *m = QueryGetChildC
 func (m *QueryGetChildCertificatesRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryGetChildCertificatesRequest) ProtoMessage()    {}
 func (*QueryGetChildCertificatesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{8}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{14}
 }
 func (m *QueryGetChildCertificatesRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -483,7 +767,7 @@ func (m *QueryGetChildCertificatesResponse) Reset()         { *m = QueryGetChild
 func (m *QueryGetChildCertificatesResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryGetChildCertificatesResponse) ProtoMessage()    {}
 func (*QueryGetChildCertificatesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{9}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{15}
 }
 func (m *QueryGetChildCertificatesResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -533,7 +817,7 @@ func (m *QueryGetProposedCertificateRevocationRequest) String() string {
 }
 func (*QueryGetProposedCertificateRevocationRequest) ProtoMessage() {}
 func (*QueryGetProposedCertificateRevocationRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{10}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{16}
 }
 func (m *QueryGetProposedCertificateRevocationRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -595,7 +879,7 @@ func (m *QueryGetProposedCertificateRevocationResponse) String() string {
 }
 func (*QueryGetProposedCertificateRevocationResponse) ProtoMessage() {}
 func (*QueryGetProposedCertificateRevocationResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{11}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{17}
 }
 func (m *QueryGetProposedCertificateRevocationResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -643,7 +927,7 @@ func (m *QueryAllProposedCertificateRevocationRequest) String() string {
 }
 func (*QueryAllProposedCertificateRevocationRequest) ProtoMessage() {}
 func (*QueryAllProposedCertificateRevocationRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{12}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{18}
 }
 func (m *QueryAllProposedCertificateRevocationRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -692,7 +976,7 @@ func (m *QueryAllProposedCertificateRevocationResponse) String() string {
 }
 func (*QueryAllProposedCertificateRevocationResponse) ProtoMessage() {}
 func (*QueryAllProposedCertificateRevocationResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{13}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{19}
 }
 func (m *QueryAllProposedCertificateRevocationResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -744,7 +1028,7 @@ func (m *QueryGetRevokedCertificatesRequest) Reset()         { *m = QueryGetRevo
 func (m *QueryGetRevokedCertificatesRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryGetRevokedCertificatesRequest) ProtoMessage()    {}
 func (*QueryGetRevokedCertificatesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{14}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{20}
 }
 func (m *QueryGetRevokedCertificatesRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -795,7 +1079,7 @@ func (m *QueryGetRevokedCertificatesResponse) Reset()         { *m = QueryGetRev
 func (m *QueryGetRevokedCertificatesResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryGetRevokedCertificatesResponse) ProtoMessage()    {}
 func (*QueryGetRevokedCertificatesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{15}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{21}
 }
 func (m *QueryGetRevokedCertificatesResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -839,7 +1123,7 @@ func (m *QueryAllRevokedCertificatesRequest) Reset()         { *m = QueryAllRevo
 func (m *QueryAllRevokedCertificatesRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryAllRevokedCertificatesRequest) ProtoMessage()    {}
 func (*QueryAllRevokedCertificatesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{16}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{22}
 }
 func (m *QueryAllRevokedCertificatesRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -884,7 +1168,7 @@ func (m *QueryAllRevokedCertificatesResponse) Reset()         { *m = QueryAllRev
 func (m *QueryAllRevokedCertificatesResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryAllRevokedCertificatesResponse) ProtoMessage()    {}
 func (*QueryAllRevokedCertificatesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{17}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{23}
 }
 func (m *QueryAllRevokedCertificatesResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -936,7 +1220,7 @@ func (m *QueryGetApprovedRootCertificatesRequest) Reset() {
 func (m *QueryGetApprovedRootCertificatesRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryGetApprovedRootCertificatesRequest) ProtoMessage()    {}
 func (*QueryGetApprovedRootCertificatesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{18}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{24}
 }
 func (m *QueryGetApprovedRootCertificatesRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -975,7 +1259,7 @@ func (m *QueryGetApprovedRootCertificatesResponse) Reset() {
 func (m *QueryGetApprovedRootCertificatesResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryGetApprovedRootCertificatesResponse) ProtoMessage()    {}
 func (*QueryGetApprovedRootCertificatesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{19}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{25}
 }
 func (m *QueryGetApprovedRootCertificatesResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1020,7 +1304,7 @@ func (m *QueryGetRevokedRootCertificatesRequest) Reset() {
 func (m *QueryGetRevokedRootCertificatesRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryGetRevokedRootCertificatesRequest) ProtoMessage()    {}
 func (*QueryGetRevokedRootCertificatesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{20}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{26}
 }
 func (m *QueryGetRevokedRootCertificatesRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1059,7 +1343,7 @@ func (m *QueryGetRevokedRootCertificatesResponse) Reset() {
 func (m *QueryGetRevokedRootCertificatesResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryGetRevokedRootCertificatesResponse) ProtoMessage()    {}
 func (*QueryGetRevokedRootCertificatesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{21}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{27}
 }
 func (m *QueryGetRevokedRootCertificatesResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1107,7 +1391,7 @@ func (m *QueryGetApprovedCertificatesBySubjectRequest) String() string {
 }
 func (*QueryGetApprovedCertificatesBySubjectRequest) ProtoMessage() {}
 func (*QueryGetApprovedCertificatesBySubjectRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{22}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{28}
 }
 func (m *QueryGetApprovedCertificatesBySubjectRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1155,7 +1439,7 @@ func (m *QueryGetApprovedCertificatesBySubjectResponse) String() string {
 }
 func (*QueryGetApprovedCertificatesBySubjectResponse) ProtoMessage() {}
 func (*QueryGetApprovedCertificatesBySubjectResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{23}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{29}
 }
 func (m *QueryGetApprovedCertificatesBySubjectResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1200,7 +1484,7 @@ func (m *QueryGetRejectedCertificatesRequest) Reset()         { *m = QueryGetRej
 func (m *QueryGetRejectedCertificatesRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryGetRejectedCertificatesRequest) ProtoMessage()    {}
 func (*QueryGetRejectedCertificatesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{24}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{30}
 }
 func (m *QueryGetRejectedCertificatesRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1251,7 +1535,7 @@ func (m *QueryGetRejectedCertificatesResponse) Reset()         { *m = QueryGetRe
 func (m *QueryGetRejectedCertificatesResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryGetRejectedCertificatesResponse) ProtoMessage()    {}
 func (*QueryGetRejectedCertificatesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{25}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{31}
 }
 func (m *QueryGetRejectedCertificatesResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1295,7 +1579,7 @@ func (m *QueryAllRejectedCertificatesRequest) Reset()         { *m = QueryAllRej
 func (m *QueryAllRejectedCertificatesRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryAllRejectedCertificatesRequest) ProtoMessage()    {}
 func (*QueryAllRejectedCertificatesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{26}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{32}
 }
 func (m *QueryAllRejectedCertificatesRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1340,7 +1624,7 @@ func (m *QueryAllRejectedCertificatesResponse) Reset()         { *m = QueryAllRe
 func (m *QueryAllRejectedCertificatesResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryAllRejectedCertificatesResponse) ProtoMessage()    {}
 func (*QueryAllRejectedCertificatesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{27}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{33}
 }
 func (m *QueryAllRejectedCertificatesResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1397,7 +1681,7 @@ func (m *QueryGetPkiRevocationDistributionPointRequest) String() string {
 }
 func (*QueryGetPkiRevocationDistributionPointRequest) ProtoMessage() {}
 func (*QueryGetPkiRevocationDistributionPointRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{28}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{34}
 }
 func (m *QueryGetPkiRevocationDistributionPointRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1459,7 +1743,7 @@ func (m *QueryGetPkiRevocationDistributionPointResponse) String() string {
 }
 func (*QueryGetPkiRevocationDistributionPointResponse) ProtoMessage() {}
 func (*QueryGetPkiRevocationDistributionPointResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{29}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{35}
 }
 func (m *QueryGetPkiRevocationDistributionPointResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1507,7 +1791,7 @@ func (m *QueryAllPkiRevocationDistributionPointRequest) String() string {
 }
 func (*QueryAllPkiRevocationDistributionPointRequest) ProtoMessage() {}
 func (*QueryAllPkiRevocationDistributionPointRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{30}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{36}
 }
 func (m *QueryAllPkiRevocationDistributionPointRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1556,7 +1840,7 @@ func (m *QueryAllPkiRevocationDistributionPointResponse) String() string {
 }
 func (*QueryAllPkiRevocationDistributionPointResponse) ProtoMessage() {}
 func (*QueryAllPkiRevocationDistributionPointResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{31}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{37}
 }
 func (m *QueryAllPkiRevocationDistributionPointResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1611,7 +1895,7 @@ func (m *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest) Str
 }
 func (*QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest) ProtoMessage() {}
 func (*QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{32}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{38}
 }
 func (m *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1659,7 +1943,7 @@ func (m *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse) St
 }
 func (*QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse) ProtoMessage() {}
 func (*QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{33}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{39}
 }
 func (m *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1703,7 +1987,7 @@ func (m *QueryGetNocRootCertificatesRequest) Reset()         { *m = QueryGetNocR
 func (m *QueryGetNocRootCertificatesRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryGetNocRootCertificatesRequest) ProtoMessage()    {}
 func (*QueryGetNocRootCertificatesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{34}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{40}
 }
 func (m *QueryGetNocRootCertificatesRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1747,7 +2031,7 @@ func (m *QueryGetNocRootCertificatesResponse) Reset()         { *m = QueryGetNoc
 func (m *QueryGetNocRootCertificatesResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryGetNocRootCertificatesResponse) ProtoMessage()    {}
 func (*QueryGetNocRootCertificatesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{35}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{41}
 }
 func (m *QueryGetNocRootCertificatesResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1791,7 +2075,7 @@ func (m *QueryAllNocRootCertificatesRequest) Reset()         { *m = QueryAllNocR
 func (m *QueryAllNocRootCertificatesRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryAllNocRootCertificatesRequest) ProtoMessage()    {}
 func (*QueryAllNocRootCertificatesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{36}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{42}
 }
 func (m *QueryAllNocRootCertificatesRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1836,7 +2120,7 @@ func (m *QueryAllNocRootCertificatesResponse) Reset()         { *m = QueryAllNoc
 func (m *QueryAllNocRootCertificatesResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryAllNocRootCertificatesResponse) ProtoMessage()    {}
 func (*QueryAllNocRootCertificatesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{37}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{43}
 }
 func (m *QueryAllNocRootCertificatesResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1887,7 +2171,7 @@ func (m *QueryGetNocIcaCertificatesRequest) Reset()         { *m = QueryGetNocIc
 func (m *QueryGetNocIcaCertificatesRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryGetNocIcaCertificatesRequest) ProtoMessage()    {}
 func (*QueryGetNocIcaCertificatesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{38}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{44}
 }
 func (m *QueryGetNocIcaCertificatesRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1931,7 +2215,7 @@ func (m *QueryGetNocIcaCertificatesResponse) Reset()         { *m = QueryGetNocI
 func (m *QueryGetNocIcaCertificatesResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryGetNocIcaCertificatesResponse) ProtoMessage()    {}
 func (*QueryGetNocIcaCertificatesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{39}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{45}
 }
 func (m *QueryGetNocIcaCertificatesResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1975,7 +2259,7 @@ func (m *QueryAllNocIcaCertificatesRequest) Reset()         { *m = QueryAllNocIc
 func (m *QueryAllNocIcaCertificatesRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryAllNocIcaCertificatesRequest) ProtoMessage()    {}
 func (*QueryAllNocIcaCertificatesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{40}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{46}
 }
 func (m *QueryAllNocIcaCertificatesRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2020,7 +2304,7 @@ func (m *QueryAllNocIcaCertificatesResponse) Reset()         { *m = QueryAllNocI
 func (m *QueryAllNocIcaCertificatesResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryAllNocIcaCertificatesResponse) ProtoMessage()    {}
 func (*QueryAllNocIcaCertificatesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{41}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{47}
 }
 func (m *QueryAllNocIcaCertificatesResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2076,7 +2360,7 @@ func (m *QueryGetRevokedNocRootCertificatesRequest) String() string {
 }
 func (*QueryGetRevokedNocRootCertificatesRequest) ProtoMessage() {}
 func (*QueryGetRevokedNocRootCertificatesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{42}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{48}
 }
 func (m *QueryGetRevokedNocRootCertificatesRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2131,7 +2415,7 @@ func (m *QueryGetRevokedNocRootCertificatesResponse) String() string {
 }
 func (*QueryGetRevokedNocRootCertificatesResponse) ProtoMessage() {}
 func (*QueryGetRevokedNocRootCertificatesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{43}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{49}
 }
 func (m *QueryGetRevokedNocRootCertificatesResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2179,7 +2463,7 @@ func (m *QueryAllRevokedNocRootCertificatesRequest) String() string {
 }
 func (*QueryAllRevokedNocRootCertificatesRequest) ProtoMessage() {}
 func (*QueryAllRevokedNocRootCertificatesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{44}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{50}
 }
 func (m *QueryAllRevokedNocRootCertificatesRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2228,7 +2512,7 @@ func (m *QueryAllRevokedNocRootCertificatesResponse) String() string {
 }
 func (*QueryAllRevokedNocRootCertificatesResponse) ProtoMessage() {}
 func (*QueryAllRevokedNocRootCertificatesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{45}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{51}
 }
 func (m *QueryAllRevokedNocRootCertificatesResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2271,6 +2555,210 @@ func (m *QueryAllRevokedNocRootCertificatesResponse) GetPagination() *query.Page
 	return nil
 }
 
+type QueryGetRevokedNocIcaCertificatesRequest struct {
+	Subject      string `protobuf:"bytes,1,opt,name=subject,proto3" json:"subject,omitempty"`
+	SubjectKeyId string `protobuf:"bytes,2,opt,name=subjectKeyId,proto3" json:"subjectKeyId,omitempty"`
+}
+
+func (m *QueryGetRevokedNocIcaCertificatesRequest) Reset() {
+	*m = QueryGetRevokedNocIcaCertificatesRequest{}
+}
+func (m *QueryGetRevokedNocIcaCertificatesRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryGetRevokedNocIcaCertificatesRequest) ProtoMessage()    {}
+func (*QueryGetRevokedNocIcaCertificatesRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_db6ffa8ae459ba1c, []int{52}
+}
+func (m *QueryGetRevokedNocIcaCertificatesRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetRevokedNocIcaCertificatesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetRevokedNocIcaCertificatesRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetRevokedNocIcaCertificatesRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetRevokedNocIcaCertificatesRequest.Merge(m, src)
+}
+func (m *QueryGetRevokedNocIcaCertificatesRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetRevokedNocIcaCertificatesRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetRevokedNocIcaCertificatesRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetRevokedNocIcaCertificatesRequest proto.InternalMessageInfo
+
+func (m *QueryGetRevokedNocIcaCertificatesRequest) GetSubject() string {
+	if m != nil {
+		return m.Subject
+	}
+	return ""
+}
+
+func (m *QueryGetRevokedNocIcaCertificatesRequest) GetSubjectKeyId() string {
+	if m != nil {
+		return m.SubjectKeyId
+	}
+	return ""
+}
+
+type QueryGetRevokedNocIcaCertificatesResponse struct {
+	RevokedNocIcaCertificates RevokedNocIcaCertificates `protobuf:"bytes,1,opt,name=revokedNocIcaCertificates,proto3" json:"revokedNocIcaCertificates"`
+}
+
+func (m *QueryGetRevokedNocIcaCertificatesResponse) Reset() {
+	*m = QueryGetRevokedNocIcaCertificatesResponse{}
+}
+func (m *QueryGetRevokedNocIcaCertificatesResponse) String() string {
+	return proto.CompactTextString(m)
+}
+func (*QueryGetRevokedNocIcaCertificatesResponse) ProtoMessage() {}
+func (*QueryGetRevokedNocIcaCertificatesResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_db6ffa8ae459ba1c, []int{53}
+}
+func (m *QueryGetRevokedNocIcaCertificatesResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetRevokedNocIcaCertificatesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetRevokedNocIcaCertificatesResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetRevokedNocIcaCertificatesResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetRevokedNocIcaCertificatesResponse.Merge(m, src)
+}
+func (m *QueryGetRevokedNocIcaCertificatesResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetRevokedNocIcaCertificatesResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetRevokedNocIcaCertificatesResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetRevokedNocIcaCertificatesResponse proto.InternalMessageInfo
+
+func (m *QueryGetRevokedNocIcaCertificatesResponse) GetRevokedNocIcaCertificates() RevokedNocIcaCertificates {
+	if m != nil {
+		return m.RevokedNocIcaCertificates
+	}
+	return RevokedNocIcaCertificates{}
+}
+
+type QueryAllRevokedNocIcaCertificatesRequest struct {
+	Pagination *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllRevokedNocIcaCertificatesRequest) Reset() {
+	*m = QueryAllRevokedNocIcaCertificatesRequest{}
+}
+func (m *QueryAllRevokedNocIcaCertificatesRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryAllRevokedNocIcaCertificatesRequest) ProtoMessage()    {}
+func (*QueryAllRevokedNocIcaCertificatesRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_db6ffa8ae459ba1c, []int{54}
+}
+func (m *QueryAllRevokedNocIcaCertificatesRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllRevokedNocIcaCertificatesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllRevokedNocIcaCertificatesRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllRevokedNocIcaCertificatesRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllRevokedNocIcaCertificatesRequest.Merge(m, src)
+}
+func (m *QueryAllRevokedNocIcaCertificatesRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllRevokedNocIcaCertificatesRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllRevokedNocIcaCertificatesRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllRevokedNocIcaCertificatesRequest proto.InternalMessageInfo
+
+func (m *QueryAllRevokedNocIcaCertificatesRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryAllRevokedNocIcaCertificatesResponse struct {
+	RevokedNocIcaCertificates []RevokedNocIcaCertificates `protobuf:"bytes,1,rep,name=revokedNocIcaCertificates,proto3" json:"revokedNocIcaCertificates"`
+	Pagination                *query.PageResponse         `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllRevokedNocIcaCertificatesResponse) Reset() {
+	*m = QueryAllRevokedNocIcaCertificatesResponse{}
+}
+func (m *QueryAllRevokedNocIcaCertificatesResponse) String() string {
+	return proto.CompactTextString(m)
+}
+func (*QueryAllRevokedNocIcaCertificatesResponse) ProtoMessage() {}
+func (*QueryAllRevokedNocIcaCertificatesResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_db6ffa8ae459ba1c, []int{55}
+}
+func (m *QueryAllRevokedNocIcaCertificatesResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllRevokedNocIcaCertificatesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllRevokedNocIcaCertificatesResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllRevokedNocIcaCertificatesResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllRevokedNocIcaCertificatesResponse.Merge(m, src)
+}
+func (m *QueryAllRevokedNocIcaCertificatesResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllRevokedNocIcaCertificatesResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllRevokedNocIcaCertificatesResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllRevokedNocIcaCertificatesResponse proto.InternalMessageInfo
+
+func (m *QueryAllRevokedNocIcaCertificatesResponse) GetRevokedNocIcaCertificates() []RevokedNocIcaCertificates {
+	if m != nil {
+		return m.RevokedNocIcaCertificates
+	}
+	return nil
+}
+
+func (m *QueryAllRevokedNocIcaCertificatesResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
 type QueryGetNocCertificatesByVidAndSkidRequest struct {
 	Vid          int32  `protobuf:"varint,1,opt,name=vid,proto3" json:"vid,omitempty"`
 	SubjectKeyId string `protobuf:"bytes,2,opt,name=subjectKeyId,proto3" json:"subjectKeyId,omitempty"`
@@ -2284,7 +2772,7 @@ func (m *QueryGetNocCertificatesByVidAndSkidRequest) String() string {
 }
 func (*QueryGetNocCertificatesByVidAndSkidRequest) ProtoMessage() {}
 func (*QueryGetNocCertificatesByVidAndSkidRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{46}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{56}
 }
 func (m *QueryGetNocCertificatesByVidAndSkidRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2339,7 +2827,7 @@ func (m *QueryGetNocCertificatesByVidAndSkidResponse) String() string {
 }
 func (*QueryGetNocCertificatesByVidAndSkidResponse) ProtoMessage() {}
 func (*QueryGetNocCertificatesByVidAndSkidResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_db6ffa8ae459ba1c, []int{47}
+	return fileDescriptor_db6ffa8ae459ba1c, []int{57}
 }
 func (m *QueryGetNocCertificatesByVidAndSkidResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2375,7 +2863,305 @@ func (m *QueryGetNocCertificatesByVidAndSkidResponse) GetNocCertificatesByVidAnd
 	return NocCertificatesByVidAndSkid{}
 }
 
+type QueryNocCertificatesRequest struct {
+	Pagination   *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	SubjectKeyId string             `protobuf:"bytes,2,opt,name=subjectKeyId,proto3" json:"subjectKeyId,omitempty"`
+}
+
+func (m *QueryNocCertificatesRequest) Reset()         { *m = QueryNocCertificatesRequest{} }
+func (m *QueryNocCertificatesRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryNocCertificatesRequest) ProtoMessage()    {}
+func (*QueryNocCertificatesRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_db6ffa8ae459ba1c, []int{58}
+}
+func (m *QueryNocCertificatesRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryNocCertificatesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryNocCertificatesRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryNocCertificatesRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryNocCertificatesRequest.Merge(m, src)
+}
+func (m *QueryNocCertificatesRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryNocCertificatesRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryNocCertificatesRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryNocCertificatesRequest proto.InternalMessageInfo
+
+func (m *QueryNocCertificatesRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+func (m *QueryNocCertificatesRequest) GetSubjectKeyId() string {
+	if m != nil {
+		return m.SubjectKeyId
+	}
+	return ""
+}
+
+type QueryNocCertificatesResponse struct {
+	NocCertificates []NocCertificates   `protobuf:"bytes,1,rep,name=nocCertificates,proto3" json:"nocCertificates"`
+	Pagination      *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryNocCertificatesResponse) Reset()         { *m = QueryNocCertificatesResponse{} }
+func (m *QueryNocCertificatesResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryNocCertificatesResponse) ProtoMessage()    {}
+func (*QueryNocCertificatesResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_db6ffa8ae459ba1c, []int{59}
+}
+func (m *QueryNocCertificatesResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryNocCertificatesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryNocCertificatesResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryNocCertificatesResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryNocCertificatesResponse.Merge(m, src)
+}
+func (m *QueryNocCertificatesResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryNocCertificatesResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryNocCertificatesResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryNocCertificatesResponse proto.InternalMessageInfo
+
+func (m *QueryNocCertificatesResponse) GetNocCertificates() []NocCertificates {
+	if m != nil {
+		return m.NocCertificates
+	}
+	return nil
+}
+
+func (m *QueryNocCertificatesResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryGetNocCertificatesBySubjectRequest struct {
+	Subject string `protobuf:"bytes,1,opt,name=subject,proto3" json:"subject,omitempty"`
+}
+
+func (m *QueryGetNocCertificatesBySubjectRequest) Reset() {
+	*m = QueryGetNocCertificatesBySubjectRequest{}
+}
+func (m *QueryGetNocCertificatesBySubjectRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryGetNocCertificatesBySubjectRequest) ProtoMessage()    {}
+func (*QueryGetNocCertificatesBySubjectRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_db6ffa8ae459ba1c, []int{60}
+}
+func (m *QueryGetNocCertificatesBySubjectRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetNocCertificatesBySubjectRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetNocCertificatesBySubjectRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetNocCertificatesBySubjectRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetNocCertificatesBySubjectRequest.Merge(m, src)
+}
+func (m *QueryGetNocCertificatesBySubjectRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetNocCertificatesBySubjectRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetNocCertificatesBySubjectRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetNocCertificatesBySubjectRequest proto.InternalMessageInfo
+
+func (m *QueryGetNocCertificatesBySubjectRequest) GetSubject() string {
+	if m != nil {
+		return m.Subject
+	}
+	return ""
+}
+
+type QueryGetNocCertificatesBySubjectResponse struct {
+	NocCertificatesBySubject NocCertificatesBySubject `protobuf:"bytes,1,opt,name=nocCertificatesBySubject,proto3" json:"nocCertificatesBySubject"`
+}
+
+func (m *QueryGetNocCertificatesBySubjectResponse) Reset() {
+	*m = QueryGetNocCertificatesBySubjectResponse{}
+}
+func (m *QueryGetNocCertificatesBySubjectResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryGetNocCertificatesBySubjectResponse) ProtoMessage()    {}
+func (*QueryGetNocCertificatesBySubjectResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_db6ffa8ae459ba1c, []int{61}
+}
+func (m *QueryGetNocCertificatesBySubjectResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetNocCertificatesBySubjectResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetNocCertificatesBySubjectResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetNocCertificatesBySubjectResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetNocCertificatesBySubjectResponse.Merge(m, src)
+}
+func (m *QueryGetNocCertificatesBySubjectResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetNocCertificatesBySubjectResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetNocCertificatesBySubjectResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetNocCertificatesBySubjectResponse proto.InternalMessageInfo
+
+func (m *QueryGetNocCertificatesBySubjectResponse) GetNocCertificatesBySubject() NocCertificatesBySubject {
+	if m != nil {
+		return m.NocCertificatesBySubject
+	}
+	return NocCertificatesBySubject{}
+}
+
+type QueryGetNocCertificatesRequest struct {
+	Subject      string `protobuf:"bytes,1,opt,name=subject,proto3" json:"subject,omitempty"`
+	SubjectKeyId string `protobuf:"bytes,2,opt,name=subjectKeyId,proto3" json:"subjectKeyId,omitempty"`
+}
+
+func (m *QueryGetNocCertificatesRequest) Reset()         { *m = QueryGetNocCertificatesRequest{} }
+func (m *QueryGetNocCertificatesRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryGetNocCertificatesRequest) ProtoMessage()    {}
+func (*QueryGetNocCertificatesRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_db6ffa8ae459ba1c, []int{62}
+}
+func (m *QueryGetNocCertificatesRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetNocCertificatesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetNocCertificatesRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetNocCertificatesRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetNocCertificatesRequest.Merge(m, src)
+}
+func (m *QueryGetNocCertificatesRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetNocCertificatesRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetNocCertificatesRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetNocCertificatesRequest proto.InternalMessageInfo
+
+func (m *QueryGetNocCertificatesRequest) GetSubject() string {
+	if m != nil {
+		return m.Subject
+	}
+	return ""
+}
+
+func (m *QueryGetNocCertificatesRequest) GetSubjectKeyId() string {
+	if m != nil {
+		return m.SubjectKeyId
+	}
+	return ""
+}
+
+type QueryGetNocCertificatesResponse struct {
+	NocCertificates NocCertificates `protobuf:"bytes,1,opt,name=nocCertificates,proto3" json:"nocCertificates"`
+}
+
+func (m *QueryGetNocCertificatesResponse) Reset()         { *m = QueryGetNocCertificatesResponse{} }
+func (m *QueryGetNocCertificatesResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryGetNocCertificatesResponse) ProtoMessage()    {}
+func (*QueryGetNocCertificatesResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_db6ffa8ae459ba1c, []int{63}
+}
+func (m *QueryGetNocCertificatesResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetNocCertificatesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetNocCertificatesResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetNocCertificatesResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetNocCertificatesResponse.Merge(m, src)
+}
+func (m *QueryGetNocCertificatesResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetNocCertificatesResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetNocCertificatesResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetNocCertificatesResponse proto.InternalMessageInfo
+
+func (m *QueryGetNocCertificatesResponse) GetNocCertificates() NocCertificates {
+	if m != nil {
+		return m.NocCertificates
+	}
+	return NocCertificates{}
+}
+
 func init() {
+	proto.RegisterType((*QueryAllCertificatesRequest)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryAllCertificatesRequest")
+	proto.RegisterType((*QueryAllCertificatesResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryAllCertificatesResponse")
+	proto.RegisterType((*QueryGetAllCertificatesBySubjectRequest)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetAllCertificatesBySubjectRequest")
+	proto.RegisterType((*QueryGetAllCertificatesBySubjectResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetAllCertificatesBySubjectResponse")
+	proto.RegisterType((*QueryGetCertificatesRequest)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetCertificatesRequest")
+	proto.RegisterType((*QueryGetCertificatesResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetCertificatesResponse")
 	proto.RegisterType((*QueryGetApprovedCertificatesRequest)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetApprovedCertificatesRequest")
 	proto.RegisterType((*QueryGetApprovedCertificatesResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetApprovedCertificatesResponse")
 	proto.RegisterType((*QueryAllApprovedCertificatesRequest)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryAllApprovedCertificatesRequest")
@@ -2422,8 +3208,18 @@ func init() {
 	proto.RegisterType((*QueryGetRevokedNocRootCertificatesResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetRevokedNocRootCertificatesResponse")
 	proto.RegisterType((*QueryAllRevokedNocRootCertificatesRequest)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryAllRevokedNocRootCertificatesRequest")
 	proto.RegisterType((*QueryAllRevokedNocRootCertificatesResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryAllRevokedNocRootCertificatesResponse")
+	proto.RegisterType((*QueryGetRevokedNocIcaCertificatesRequest)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetRevokedNocIcaCertificatesRequest")
+	proto.RegisterType((*QueryGetRevokedNocIcaCertificatesResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetRevokedNocIcaCertificatesResponse")
+	proto.RegisterType((*QueryAllRevokedNocIcaCertificatesRequest)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryAllRevokedNocIcaCertificatesRequest")
+	proto.RegisterType((*QueryAllRevokedNocIcaCertificatesResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryAllRevokedNocIcaCertificatesResponse")
 	proto.RegisterType((*QueryGetNocCertificatesByVidAndSkidRequest)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetNocCertificatesByVidAndSkidRequest")
 	proto.RegisterType((*QueryGetNocCertificatesByVidAndSkidResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetNocCertificatesByVidAndSkidResponse")
+	proto.RegisterType((*QueryNocCertificatesRequest)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryNocCertificatesRequest")
+	proto.RegisterType((*QueryNocCertificatesResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryNocCertificatesResponse")
+	proto.RegisterType((*QueryGetNocCertificatesBySubjectRequest)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetNocCertificatesBySubjectRequest")
+	proto.RegisterType((*QueryGetNocCertificatesBySubjectResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetNocCertificatesBySubjectResponse")
+	proto.RegisterType((*QueryGetNocCertificatesRequest)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetNocCertificatesRequest")
+	proto.RegisterType((*QueryGetNocCertificatesResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetNocCertificatesResponse")
 }
 
 func init() {
@@ -2431,141 +3227,172 @@ func init() {
 }
 
 var fileDescriptor_db6ffa8ae459ba1c = []byte{
-	// 2131 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x5b, 0x4d, 0x8c, 0x23, 0x47,
-	0x15, 0xde, 0x6a, 0xb3, 0x41, 0x14, 0x08, 0x91, 0xda, 0xcd, 0xee, 0xe0, 0x64, 0xbc, 0xbb, 0x95,
-	0xcd, 0xec, 0xec, 0x6c, 0xc6, 0x9d, 0xc9, 0x2a, 0xbb, 0x80, 0x14, 0x56, 0xf3, 0x03, 0x93, 0xd9,
-	0x88, 0x61, 0xc6, 0x93, 0x6c, 0xc8, 0x12, 0x62, 0xb5, 0xdb, 0x8d, 0xb7, 0x71, 0x8f, 0xbb, 0xd3,
-	0xdd, 0x1e, 0x62, 0x46, 0x83, 0x04, 0x12, 0x09, 0xe2, 0x80, 0x16, 0xc2, 0x01, 0x50, 0xc4, 0x81,
-	0x48, 0x11, 0x77, 0x0e, 0x1c, 0x39, 0x70, 0x89, 0xc4, 0x81, 0x48, 0x1c, 0x82, 0x84, 0x84, 0xd0,
-	0x0e, 0x08, 0x50, 0x22, 0x21, 0x2e, 0x20, 0x2e, 0x10, 0x75, 0xf7, 0xf3, 0x74, 0xdb, 0x5d, 0x55,
-	0x6e, 0x97, 0xcb, 0x93, 0x9b, 0xdd, 0x55, 0xfd, 0x5e, 0xbd, 0xef, 0x7d, 0xf5, 0xde, 0xab, 0x7a,
-	0x36, 0xfe, 0xcc, 0x37, 0xec, 0x56, 0xc3, 0xb2, 0x0c, 0xc7, 0xb1, 0x8d, 0x8e, 0x69, 0xe9, 0x4d,
-	0x3b, 0x08, 0x7d, 0xbb, 0xd1, 0x0d, 0xad, 0xa6, 0xe9, 0xee, 0x7a, 0xc9, 0x53, 0xc7, 0x6a, 0xb6,
-	0x2c, 0x5f, 0xf7, 0xda, 0xb6, 0xfe, 0x52, 0xd7, 0xf2, 0x7b, 0x55, 0xcf, 0x77, 0x43, 0x97, 0x54,
-	0x07, 0xdf, 0xad, 0x0a, 0xde, 0xad, 0x7a, 0x6d, 0xbb, 0xfc, 0x50, 0xcb, 0x75, 0x5b, 0x8e, 0xa5,
-	0x1b, 0x9e, 0xad, 0x1b, 0x9d, 0x8e, 0x1b, 0x1a, 0xa1, 0xed, 0x76, 0x82, 0x44, 0x5a, 0x79, 0xc1,
-	0x74, 0x83, 0x5d, 0x37, 0xd0, 0x1b, 0x46, 0x60, 0x25, 0x6a, 0xf4, 0xbd, 0xa5, 0x86, 0x15, 0x1a,
-	0x4b, 0xba, 0x67, 0xb4, 0xec, 0x4e, 0x3c, 0x19, 0xe6, 0xde, 0x1c, 0x73, 0xd5, 0x86, 0xe7, 0xf9,
-	0xee, 0x9e, 0xd5, 0xac, 0x9b, 0x96, 0x1f, 0xda, 0x5f, 0xb5, 0x4d, 0x23, 0xb4, 0xfa, 0x7a, 0x37,
-	0xc6, 0x94, 0xe5, 0xf9, 0xae, 0xe7, 0x06, 0x83, 0xb2, 0x40, 0xd4, 0xfa, 0x98, 0xa2, 0xcc, 0x3b,
-	0xb6, 0xc3, 0x5c, 0xd3, 0x33, 0x0a, 0xd6, 0x54, 0xf7, 0xad, 0x3d, 0xd7, 0xcc, 0xa2, 0x36, 0xae,
-	0xa5, 0x91, 0x80, 0x36, 0x1b, 0xb4, 0x2f, 0xca, 0x3a, 0xc0, 0x77, 0xdd, 0x90, 0x25, 0x70, 0x53,
-	0x72, 0x6d, 0x3c, 0x79, 0xcf, 0xaa, 0x60, 0x48, 0xbd, 0xd1, 0xab, 0x07, 0xdd, 0xc6, 0xd7, 0x2c,
-	0x33, 0x94, 0x86, 0x30, 0x7a, 0x99, 0x49, 0x96, 0x5b, 0xe3, 0xfa, 0xb8, 0x6d, 0x67, 0x5c, 0x5a,
-	0x3f, 0x9a, 0x1e, 0x7d, 0xf1, 0x5c, 0xbb, 0xd3, 0x5f, 0xa2, 0xa7, 0x5a, 0x6e, 0x0c, 0x83, 0x1d,
-	0x04, 0x5d, 0xcb, 0xef, 0xa3, 0x51, 0x6f, 0x5b, 0xbd, 0xba, 0xdd, 0x94, 0xdc, 0x8d, 0x1d, 0xd7,
-	0xe4, 0xfa, 0x6d, 0x43, 0x42, 0x96, 0x6d, 0x1a, 0x2c, 0x51, 0x35, 0x49, 0x4a, 0x89, 0x96, 0xf7,
-	0xac, 0xc4, 0xf2, 0x86, 0x19, 0xb5, 0x67, 0x37, 0xeb, 0x46, 0xa7, 0x59, 0x0f, 0xda, 0x47, 0x08,
-	0x9e, 0x6e, 0xb9, 0x2d, 0x37, 0xfe, 0xa8, 0x47, 0x9f, 0xe0, 0xe9, 0x27, 0x93, 0x88, 0x58, 0x4f,
-	0x06, 0x92, 0x2f, 0xc9, 0x10, 0x35, 0xf1, 0xc3, 0xdb, 0x51, 0x88, 0x5c, 0xb7, 0xc2, 0x65, 0x60,
-	0xee, 0x6a, 0x46, 0x4d, 0xcd, 0x7a, 0xa9, 0x6b, 0x05, 0x21, 0x99, 0xc1, 0x1f, 0x06, 0x8f, 0xcd,
-	0xa0, 0xf3, 0x68, 0xfe, 0x23, 0xb5, 0xfe, 0x57, 0x42, 0xf1, 0xc7, 0xe0, 0xe3, 0xd3, 0x56, 0x6f,
-	0xa3, 0x39, 0xa3, 0xc5, 0xc3, 0x03, 0xcf, 0xe8, 0x9b, 0x08, 0x5f, 0x14, 0x6b, 0x09, 0x3c, 0xb7,
-	0x13, 0x58, 0xe4, 0x9b, 0xf8, 0xb4, 0xc1, 0x18, 0x8f, 0x75, 0x7e, 0xf4, 0xf1, 0xb5, 0x31, 0xf3,
-	0x44, 0x95, 0xa5, 0x6b, 0xe5, 0x43, 0x6f, 0xfd, 0xe9, 0xdc, 0x89, 0x1a, 0x53, 0x0f, 0xfd, 0x01,
-	0x02, 0x38, 0x96, 0x1d, 0x47, 0x04, 0xc7, 0xe7, 0x31, 0x4e, 0x53, 0x09, 0xac, 0x6e, 0xae, 0x0a,
-	0xc0, 0x46, 0x79, 0xa7, 0x9a, 0xa4, 0x37, 0xc8, 0x3b, 0xd5, 0x2d, 0xa3, 0x65, 0xc1, 0xbb, 0xb5,
-	0xcc, 0x9b, 0x85, 0xc0, 0xfb, 0x67, 0x1f, 0x3c, 0xee, 0x9a, 0x46, 0x82, 0x57, 0x3a, 0x0e, 0xf0,
-	0xc8, 0xfa, 0x00, 0x28, 0x5a, 0x0c, 0xca, 0xa5, 0x91, 0xa0, 0x24, 0x8b, 0xcf, 0xa2, 0x42, 0x1b,
-	0x98, 0xf6, 0xd9, 0xb2, 0x05, 0xf9, 0x28, 0xa3, 0x48, 0x0d, 0x25, 0x7f, 0x8e, 0x52, 0xe2, 0x33,
-	0x95, 0x00, 0xa8, 0xfb, 0xf8, 0x94, 0x97, 0x1f, 0x06, 0x97, 0xaf, 0x8e, 0x8b, 0x29, 0x43, 0x13,
-	0x40, 0xca, 0xd2, 0x42, 0x1d, 0x00, 0x62, 0xd9, 0x71, 0x04, 0x40, 0x28, 0x22, 0x23, 0x7d, 0x37,
-	0x43, 0x7e, 0x29, 0x48, 0x4a, 0xd3, 0x87, 0x44, 0x25, 0xc9, 0xce, 0xf7, 0xfd, 0xbf, 0x1a, 0x55,
-	0x4f, 0xac, 0x6d, 0x7e, 0x06, 0xdf, 0x97, 0xa4, 0x2b, 0x60, 0x18, 0x7c, 0x23, 0x73, 0xf8, 0xe3,
-	0x46, 0x37, 0xbc, 0xe3, 0xfa, 0x76, 0xd8, 0xcb, 0x52, 0x6c, 0xe8, 0x29, 0xfd, 0x29, 0xc2, 0x17,
-	0x04, 0x4a, 0x00, 0xcf, 0x2e, 0xbe, 0xdf, 0x1c, 0x1e, 0x04, 0x37, 0x2e, 0x8f, 0x8b, 0x66, 0x4e,
-	0x0b, 0x60, 0x99, 0xd7, 0x40, 0xef, 0x22, 0xfc, 0xa8, 0x70, 0x07, 0xf4, 0x33, 0xb9, 0x92, 0x0d,
-	0x17, 0xcf, 0xb1, 0x7c, 0xdb, 0x70, 0x36, 0xbb, 0xbb, 0x0d, 0xcb, 0x9f, 0x29, 0xc1, 0x9c, 0xcc,
-	0x33, 0xfa, 0x5b, 0x84, 0x17, 0x0b, 0x2e, 0x09, 0xb0, 0xfb, 0x09, 0xc2, 0xb3, 0x9e, 0x68, 0x26,
-	0x00, 0xf9, 0x05, 0x05, 0xb4, 0x4c, 0x85, 0x02, 0xa8, 0x62, 0xcd, 0x74, 0x0f, 0xf0, 0xe5, 0x6d,
-	0xa7, 0x61, 0x7c, 0x55, 0xed, 0xe3, 0x1f, 0x69, 0x80, 0xe2, 0x68, 0xc5, 0x63, 0xa0, 0x58, 0xfa,
-	0x60, 0x50, 0x9c, 0x4a, 0x56, 0xa9, 0x25, 0x05, 0x9a, 0xfa, 0x42, 0x27, 0x9b, 0x55, 0x98, 0x4a,
-	0xd2, 0x10, 0xea, 0xe7, 0x87, 0x65, 0xb3, 0x0a, 0x43, 0x53, 0x3f, 0x84, 0x32, 0xb4, 0x64, 0xb3,
-	0x8a, 0x00, 0x88, 0x69, 0x64, 0x15, 0x29, 0x48, 0x4a, 0xd3, 0x87, 0x44, 0x1d, 0xc9, 0x2e, 0xe3,
-	0x4b, 0xc3, 0x85, 0x6e, 0xcd, 0x75, 0x43, 0x06, 0xc0, 0xf4, 0x57, 0x08, 0xcf, 0x8f, 0x9e, 0x0b,
-	0xe8, 0x7c, 0x0f, 0xe1, 0x19, 0x83, 0x33, 0x09, 0x9c, 0xf3, 0x94, 0x6c, 0x81, 0x37, 0x2c, 0x0f,
-	0x80, 0xe2, 0xea, 0xa3, 0xf3, 0x78, 0x6e, 0x88, 0xe4, 0x3c, 0x1b, 0x7f, 0x89, 0x52, 0x3c, 0xb8,
-	0x53, 0xc1, 0xc4, 0x57, 0x11, 0x3e, 0xeb, 0xb3, 0xe7, 0x80, 0x85, 0xeb, 0x92, 0x2c, 0xe0, 0x18,
-	0xc8, 0xd3, 0x46, 0x9f, 0x4a, 0x13, 0x23, 0xb3, 0x08, 0xee, 0xed, 0x24, 0x7b, 0x7e, 0x64, 0xcc,
-	0x18, 0x48, 0x68, 0x23, 0x44, 0x65, 0x42, 0xb1, 0x21, 0x9a, 0x29, 0x9b, 0xd0, 0x84, 0xea, 0xfb,
-	0xa1, 0x58, 0xa8, 0x39, 0x7b, 0x56, 0xac, 0xc1, 0x75, 0x84, 0xfa, 0x10, 0xfa, 0x46, 0xe6, 0xac,
-	0xc8, 0xd6, 0x92, 0x0d, 0x18, 0xb9, 0x71, 0xf9, 0x18, 0x9a, 0x13, 0x95, 0x06, 0x8c, 0xdc, 0x10,
-	0xdd, 0xcd, 0x06, 0x35, 0x3e, 0x14, 0xaa, 0x82, 0xe8, 0x7b, 0x99, 0x33, 0xa0, 0x1c, 0x28, 0xa5,
-	0xe9, 0x83, 0xa2, 0x2e, 0x8a, 0xbe, 0x9a, 0xad, 0x03, 0xdb, 0x76, 0x5a, 0x0d, 0xac, 0x65, 0xee,
-	0x94, 0xb6, 0x5c, 0xbb, 0x73, 0xb4, 0x05, 0x3f, 0x81, 0x4b, 0x7b, 0x76, 0x33, 0x46, 0xf8, 0x64,
-	0x2d, 0xfa, 0x48, 0x4e, 0xe3, 0x93, 0x8e, 0xd1, 0xb0, 0x1c, 0x20, 0x59, 0xf2, 0x85, 0x54, 0x31,
-	0x49, 0x6a, 0xf8, 0x9d, 0x94, 0x73, 0x6b, 0x50, 0x8b, 0x32, 0x46, 0xe8, 0xef, 0x10, 0xae, 0x16,
-	0x5d, 0x09, 0xb8, 0xe0, 0x75, 0x84, 0x2b, 0xe2, 0xa9, 0x40, 0x84, 0xcd, 0xb1, 0xab, 0x29, 0xa1,
-	0x54, 0xf0, 0xcc, 0x08, 0xdd, 0xf4, 0xeb, 0x99, 0xe2, 0xb0, 0x10, 0xb4, 0xaa, 0x38, 0xfc, 0x63,
-	0x0d, 0xa0, 0x2c, 0xa0, 0x79, 0x1c, 0x28, 0x4b, 0x1f, 0x14, 0x94, 0xea, 0xf8, 0x1e, 0xe2, 0x95,
-	0x62, 0x24, 0x0b, 0x56, 0x7a, 0x1b, 0x39, 0x92, 0xf6, 0x1d, 0xc5, 0xe6, 0x36, 0xe2, 0x72, 0xfb,
-	0x0d, 0x0d, 0xaf, 0x4e, 0xa4, 0x16, 0xbc, 0xf4, 0x47, 0x84, 0xaf, 0x7a, 0xe3, 0xbf, 0x0f, 0x54,
-	0x32, 0xd5, 0xba, 0x8e, 0xa9, 0x0a, 0xfc, 0x29, 0xb3, 0x4a, 0x7a, 0x2d, 0x3d, 0x36, 0x6c, 0xba,
-	0x26, 0xa7, 0xd0, 0xc9, 0xc7, 0x9f, 0x81, 0xa3, 0x00, 0xf3, 0xc5, 0x34, 0x62, 0x77, 0xf2, 0xc3,
-	0xb2, 0x69, 0x8c, 0xa1, 0xa9, 0x1f, 0xb1, 0x19, 0x5a, 0xb2, 0x47, 0x01, 0x81, 0x71, 0xd3, 0x38,
-	0x0a, 0x48, 0x41, 0x52, 0x9a, 0x3e, 0x24, 0xea, 0x36, 0xf5, 0x13, 0xe9, 0xdd, 0xcf, 0xa6, 0x6b,
-	0x6e, 0x98, 0x46, 0x31, 0xde, 0xfc, 0x0c, 0x0d, 0x10, 0x2e, 0xf7, 0x1e, 0x60, 0xf4, 0x32, 0x26,
-	0x9d, 0xdc, 0x28, 0xf8, 0x66, 0x45, 0x02, 0xa2, 0x21, 0x49, 0x80, 0x10, 0x43, 0x07, 0x6d, 0x83,
-	0x5d, 0x89, 0x13, 0x39, 0x76, 0xa9, 0xa2, 0xcc, 0xdf, 0xd0, 0x00, 0x43, 0xc7, 0x45, 0xa3, 0x34,
-	0x6d, 0x34, 0xd4, 0xd1, 0xc5, 0xc6, 0x97, 0x87, 0x4e, 0x4a, 0x82, 0x1d, 0x39, 0x59, 0x89, 0xfd,
-	0x6b, 0x84, 0x17, 0x8a, 0xe8, 0x02, 0x70, 0xef, 0x22, 0x5c, 0xf6, 0xb9, 0xd3, 0xc0, 0xb9, 0x37,
-	0x25, 0xcf, 0x66, 0xfc, 0xdd, 0x29, 0xd0, 0x49, 0x03, 0x00, 0x2b, 0xbd, 0x53, 0x38, 0x86, 0xf0,
-	0xf5, 0x5d, 0x0d, 0x60, 0x1b, 0xa1, 0xb5, 0x28, 0x6c, 0xa5, 0xe3, 0x86, 0x4d, 0xe5, 0x5d, 0xda,
-	0x42, 0x26, 0x46, 0x0d, 0x9e, 0x16, 0x6f, 0xd9, 0xcd, 0xe5, 0x4e, 0x73, 0xa7, 0x6d, 0x37, 0xf9,
-	0xc5, 0x79, 0x11, 0x96, 0xfe, 0x06, 0xe1, 0x2b, 0x85, 0x94, 0x00, 0xde, 0xaf, 0x21, 0xfc, 0x60,
-	0x87, 0x3f, 0x0f, 0x1c, 0xff, 0xb4, 0x44, 0x34, 0xe0, 0x89, 0x04, 0xc4, 0x45, 0x5a, 0x1f, 0x7f,
-	0xe7, 0x31, 0x7c, 0x32, 0xb6, 0x82, 0xfc, 0x17, 0xe1, 0xd3, 0xac, 0x43, 0x38, 0xd9, 0x19, 0x77,
-	0x49, 0x05, 0x1a, 0xb6, 0xe5, 0x67, 0xd4, 0x0a, 0x4d, 0x30, 0xa6, 0xd7, 0xbe, 0xfd, 0xfb, 0xbf,
-	0xbc, 0xa6, 0x3d, 0x46, 0xaa, 0x7a, 0xd3, 0x74, 0x92, 0x5f, 0x9e, 0x64, 0xa6, 0xe9, 0xfb, 0xe0,
-	0xc0, 0x83, 0xa3, 0x4f, 0xb1, 0x2b, 0x0f, 0xc8, 0x21, 0xc2, 0x67, 0x59, 0x82, 0x97, 0x1d, 0x47,
-	0xd2, 0x7c, 0x71, 0x83, 0x56, 0xd2, 0xfc, 0x11, 0x1d, 0x56, 0x3a, 0x1b, 0x9b, 0x7f, 0x96, 0x3c,
-	0xc0, 0x34, 0x9f, 0xfc, 0x1f, 0xe1, 0x53, 0x8c, 0x1b, 0x6f, 0x52, 0x93, 0xf5, 0x05, 0xbf, 0xe9,
-	0x57, 0xde, 0x51, 0x2a, 0x13, 0xec, 0xbb, 0x11, 0xdb, 0xf7, 0x69, 0x72, 0xfd, 0xc8, 0xbe, 0xfe,
-	0xdd, 0xfc, 0x62, 0x31, 0x3f, 0xff, 0x03, 0xe1, 0x33, 0x0c, 0x05, 0x91, 0x9b, 0x6b, 0xb2, 0x1e,
-	0x51, 0x0e, 0x82, 0xb8, 0xbd, 0x49, 0xe7, 0x62, 0x10, 0xce, 0x93, 0x8a, 0x18, 0x04, 0xf2, 0x1f,
-	0x84, 0xef, 0xcf, 0xb5, 0xdb, 0xc8, 0x96, 0xac, 0x5f, 0x78, 0x4d, 0xc8, 0xf2, 0xb6, 0x42, 0x89,
-	0x60, 0xe2, 0x93, 0xb1, 0x89, 0xd7, 0xc9, 0x13, 0x29, 0x8f, 0xa3, 0xb9, 0x43, 0x4e, 0x4e, 0x8e,
-	0x8c, 0x07, 0xfa, 0xfe, 0x60, 0x57, 0xf3, 0x80, 0xfc, 0x42, 0xc3, 0xb3, 0xc2, 0xce, 0x0e, 0x79,
-	0x41, 0x29, 0x3b, 0x87, 0x1a, 0x65, 0xe5, 0xaf, 0x4c, 0x49, 0x3a, 0xa0, 0x73, 0x33, 0x46, 0x67,
-	0x8d, 0xac, 0xe4, 0x09, 0x90, 0xfe, 0xbc, 0xa9, 0xe0, 0x86, 0xf8, 0xa1, 0x86, 0xcf, 0x0b, 0xb5,
-	0x46, 0x5b, 0xe3, 0x05, 0xa5, 0x34, 0x56, 0x83, 0x56, 0xd1, 0xde, 0x21, 0x5d, 0x8a, 0xd1, 0xba,
-	0x42, 0x2e, 0x17, 0x46, 0x8b, 0xfc, 0x0f, 0xe1, 0x53, 0x8c, 0x06, 0x8d, 0x7c, 0x9c, 0xe4, 0xb7,
-	0xb1, 0xe4, 0xe3, 0xa4, 0xa0, 0x57, 0x45, 0x3f, 0x1b, 0xdb, 0xfc, 0x29, 0x72, 0xed, 0xc8, 0x66,
-	0x28, 0xba, 0x0a, 0xb2, 0xe2, 0xef, 0x08, 0x9f, 0x61, 0xc8, 0x9f, 0x28, 0x4c, 0x2a, 0xc7, 0x40,
-	0xdc, 0xaf, 0xa3, 0x8f, 0xc4, 0x18, 0x9c, 0x23, 0xb3, 0x42, 0x0c, 0xc8, 0xbf, 0x10, 0x9e, 0xe1,
-	0x35, 0x9a, 0xc8, 0x73, 0x93, 0x16, 0x29, 0x9c, 0x92, 0xbf, 0xfc, 0x25, 0xf5, 0x82, 0xc1, 0x6c,
-	0x1a, 0x9b, 0xfd, 0x10, 0x29, 0xa7, 0x66, 0xbb, 0x6e, 0x38, 0x68, 0xf3, 0xbf, 0x11, 0x3e, 0xcb,
-	0x69, 0x3d, 0x91, 0x5b, 0x13, 0xf2, 0x91, 0x67, 0xf1, 0x73, 0xca, 0xe5, 0x82, 0xc1, 0x0b, 0xb1,
-	0xc1, 0x17, 0x09, 0xcd, 0xf9, 0x39, 0x6f, 0xf8, 0x77, 0x34, 0x3c, 0x2b, 0xec, 0x33, 0xc9, 0x27,
-	0x86, 0x22, 0x8d, 0x38, 0xf9, 0xc4, 0x50, 0xa8, 0x37, 0x47, 0x2f, 0xc5, 0x50, 0x5c, 0x20, 0xe7,
-	0x46, 0x54, 0xbf, 0xe4, 0x5b, 0x5a, 0x14, 0xe0, 0xf2, 0x0d, 0x92, 0x09, 0x82, 0x11, 0xb7, 0xc7,
-	0x24, 0x5f, 0xe9, 0x8b, 0x1a, 0x49, 0x8c, 0x52, 0xb0, 0xdf, 0xf1, 0x29, 0x18, 0xe3, 0xde, 0x8d,
-	0x63, 0x5c, 0x4e, 0xc3, 0x44, 0x15, 0xbf, 0x7a, 0x18, 0x46, 0xf4, 0xd3, 0x18, 0xc5, 0x20, 0x13,
-	0x06, 0xf2, 0xa6, 0x36, 0xaa, 0x53, 0x41, 0xe4, 0xab, 0x96, 0x22, 0x6d, 0x9a, 0xf2, 0x8b, 0xd3,
-	0x12, 0x0f, 0x48, 0x7c, 0x2e, 0x46, 0xe2, 0x06, 0x79, 0x72, 0x20, 0x0e, 0x40, 0x7a, 0x4f, 0x7e,
-	0xde, 0xdd, 0x2f, 0x19, 0xb3, 0xf7, 0xe7, 0x07, 0xfa, 0xfe, 0x9e, 0xdd, 0x3c, 0xd0, 0xf7, 0xe3,
-	0xfe, 0xdb, 0x01, 0x79, 0x45, 0xc3, 0x17, 0xc4, 0x1a, 0x23, 0x86, 0xc8, 0xd7, 0x2c, 0x53, 0xc4,
-	0xaa, 0x70, 0xdf, 0x8a, 0x95, 0x24, 0x86, 0xb1, 0x22, 0xef, 0x68, 0xf8, 0xaa, 0x44, 0x2b, 0x83,
-	0xf8, 0xd3, 0xf1, 0xb3, 0xa8, 0xb3, 0x54, 0x0e, 0x8e, 0x55, 0x27, 0x80, 0x78, 0x3d, 0x06, 0x71,
-	0x89, 0xe8, 0x63, 0x12, 0x8e, 0xbc, 0x87, 0xf0, 0x29, 0xd6, 0xed, 0x97, 0x74, 0x79, 0xc9, 0xbf,
-	0x5b, 0x94, 0x2f, 0x2f, 0x05, 0x37, 0x87, 0xf4, 0xd1, 0xd8, 0xf2, 0x39, 0x72, 0xf1, 0xc8, 0xf2,
-	0x8e, 0x6b, 0xe6, 0xd3, 0x6d, 0xb2, 0xb3, 0xc8, 0xf7, 0x35, 0xfc, 0xa0, 0xe0, 0x92, 0x8a, 0xdc,
-	0x9e, 0x60, 0x89, 0x23, 0x6e, 0xf6, 0xca, 0x5f, 0x9e, 0x8a, 0x6c, 0xee, 0x65, 0x53, 0x04, 0x43,
-	0x1e, 0x01, 0xd6, 0x25, 0x04, 0x03, 0xde, 0x89, 0xaa, 0x6b, 0xe5, 0x14, 0x10, 0xb7, 0xc0, 0x18,
-	0x79, 0x87, 0x49, 0x81, 0xe8, 0x24, 0x41, 0xf2, 0xfd, 0x0a, 0xb2, 0x3d, 0x81, 0x5f, 0xd8, 0x1d,
-	0x9d, 0x72, 0x4d, 0xa5, 0x48, 0xb0, 0xf2, 0x4a, 0x6c, 0xe5, 0x23, 0xe4, 0xe1, 0x01, 0x2b, 0x6d,
-	0xd3, 0x60, 0xf1, 0xfc, 0xaf, 0x08, 0x3f, 0x90, 0x97, 0x15, 0x79, 0x75, 0x7b, 0x02, 0x0f, 0x28,
-	0xb5, 0x56, 0xd8, 0xa4, 0x62, 0x9c, 0x98, 0x58, 0xd6, 0x92, 0xd7, 0x35, 0x5c, 0xe6, 0xdf, 0xf2,
-	0x93, 0xe7, 0x27, 0x2c, 0xf4, 0x05, 0x4c, 0xbe, 0x3d, 0x0d, 0xd1, 0x60, 0xfc, 0x7a, 0x6c, 0xfc,
-	0x32, 0xb9, 0x91, 0x3b, 0x46, 0x70, 0x62, 0x1b, 0xaf, 0xae, 0x7c, 0x45, 0xc3, 0xb3, 0x7c, 0x7d,
-	0x11, 0x1d, 0x9e, 0x9f, 0xf0, 0xb8, 0xab, 0x1c, 0xa1, 0x42, 0xfd, 0x22, 0x5a, 0x8d, 0x11, 0x9a,
-	0x27, 0x73, 0xc5, 0x10, 0x5a, 0x79, 0xf1, 0xad, 0x7b, 0x15, 0xf4, 0xf6, 0xbd, 0x0a, 0xfa, 0xf3,
-	0xbd, 0x0a, 0xba, 0x7b, 0x58, 0x39, 0xf1, 0xf6, 0x61, 0xe5, 0xc4, 0x1f, 0x0e, 0x2b, 0x27, 0x6e,
-	0xaf, 0xb5, 0xec, 0xf0, 0x4e, 0xb7, 0x51, 0x35, 0xdd, 0x5d, 0x3d, 0x59, 0xef, 0x22, 0xeb, 0x7f,
-	0x66, 0x8b, 0xe9, 0x8a, 0x17, 0xe1, 0x9f, 0x66, 0x2f, 0xc7, 0x7a, 0xc3, 0x9e, 0x67, 0x05, 0x8d,
-	0xfb, 0xe2, 0x3f, 0x88, 0x5d, 0x7d, 0x3f, 0x00, 0x00, 0xff, 0xff, 0x89, 0x78, 0x22, 0xeb, 0xd9,
-	0x3b, 0x00, 0x00,
+	// 2629 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x5c, 0x5f, 0x6c, 0x5c, 0x47,
+	0xf5, 0xce, 0xec, 0xfe, 0xd2, 0x9f, 0x3a, 0x8d, 0x08, 0x9d, 0xa4, 0x89, 0xb3, 0x89, 0x1d, 0x67,
+	0xda, 0xd8, 0x8e, 0x83, 0x77, 0x9b, 0x84, 0x26, 0x50, 0xa9, 0x4d, 0xed, 0xb8, 0x75, 0x9d, 0x80,
+	0x6b, 0xaf, 0xdb, 0x34, 0x49, 0x4b, 0x56, 0x77, 0xef, 0x5e, 0x9c, 0x8b, 0xaf, 0xf7, 0x6e, 0x77,
+	0xd7, 0xa6, 0xc6, 0x32, 0x12, 0x15, 0xb4, 0x04, 0x09, 0x29, 0xb4, 0x3c, 0x14, 0x54, 0xf1, 0x40,
+	0xa5, 0x8a, 0x77, 0x1e, 0x78, 0xe0, 0x81, 0x07, 0x5e, 0x2a, 0xf1, 0xd0, 0x0a, 0x24, 0xa8, 0x84,
+	0x84, 0x50, 0x42, 0x05, 0xa8, 0x95, 0xf8, 0xf3, 0x00, 0x82, 0x07, 0x40, 0x77, 0xee, 0xb9, 0xbb,
+	0xf7, 0xcf, 0xcc, 0xec, 0xdd, 0xb9, 0xb3, 0xce, 0xdb, 0xee, 0xde, 0xd9, 0x73, 0xe6, 0xfb, 0xce,
+	0x37, 0x67, 0xce, 0xcc, 0x1e, 0x1b, 0x3f, 0xfa, 0x15, 0x7b, 0xa5, 0x6a, 0x59, 0x86, 0xe3, 0xd8,
+	0x46, 0xdd, 0xb4, 0x4a, 0x35, 0xbb, 0xd5, 0x6e, 0xda, 0xd5, 0xf5, 0xb6, 0x55, 0x33, 0xdd, 0xb5,
+	0x86, 0xff, 0xa9, 0x63, 0xd5, 0x56, 0xac, 0x66, 0xa9, 0xb1, 0x6a, 0x97, 0x5e, 0x5a, 0xb7, 0x9a,
+	0x9b, 0xc5, 0x46, 0xd3, 0x6d, 0xbb, 0xa4, 0x18, 0xfd, 0x6e, 0x51, 0xf2, 0xdd, 0x62, 0x63, 0xd5,
+	0x2e, 0x1c, 0x59, 0x71, 0xdd, 0x15, 0xc7, 0x2a, 0x19, 0x0d, 0xbb, 0x64, 0xd4, 0xeb, 0x6e, 0xdb,
+	0x68, 0xdb, 0x6e, 0xbd, 0xe5, 0x5b, 0x2b, 0x4c, 0x9a, 0x6e, 0x6b, 0xcd, 0x6d, 0x95, 0xaa, 0x46,
+	0xcb, 0xf2, 0xdd, 0x94, 0x36, 0x4e, 0x55, 0xad, 0xb6, 0x71, 0xaa, 0xd4, 0x30, 0x56, 0xec, 0x3a,
+	0x1b, 0x0c, 0x63, 0x2f, 0xf6, 0x39, 0x6b, 0xa3, 0xd1, 0x68, 0xba, 0x1b, 0x56, 0xad, 0x62, 0x5a,
+	0xcd, 0xb6, 0xfd, 0x45, 0xdb, 0x34, 0xda, 0x56, 0xe0, 0x77, 0xbe, 0x4f, 0x5b, 0x8d, 0xa6, 0xdb,
+	0x70, 0x5b, 0x51, 0x5b, 0x60, 0x6a, 0xae, 0x4f, 0x53, 0xe6, 0x0d, 0xdb, 0xe1, 0xce, 0xe9, 0x59,
+	0x0d, 0x73, 0xaa, 0x34, 0xad, 0x0d, 0xd7, 0x0c, 0xb3, 0xd6, 0x2f, 0x52, 0xcf, 0xc0, 0x2a, 0x9f,
+	0xb4, 0x67, 0x54, 0x03, 0xd0, 0x74, 0xdd, 0x36, 0xcf, 0xe0, 0x82, 0xe2, 0xdc, 0x44, 0xf6, 0x9e,
+	0xd3, 0xa1, 0x90, 0x4a, 0x75, 0xb3, 0xd2, 0x5a, 0xaf, 0x7e, 0xc9, 0x32, 0xdb, 0xca, 0x14, 0x7a,
+	0x5f, 0xe6, 0x8a, 0xe5, 0x72, 0xbf, 0x31, 0x5e, 0xb5, 0x43, 0x21, 0xad, 0x74, 0x86, 0x7b, 0x6f,
+	0x1a, 0xae, 0x5d, 0x0f, 0xa6, 0xd8, 0xd0, 0x6d, 0x97, 0xd1, 0x60, 0xb7, 0x5a, 0xeb, 0x56, 0x33,
+	0x60, 0xa3, 0xb2, 0x6a, 0x6d, 0x56, 0xec, 0x1a, 0x78, 0x7c, 0xb2, 0x5f, 0xae, 0x1d, 0x87, 0x17,
+	0xb2, 0xc5, 0x8c, 0x66, 0x92, 0xd1, 0xea, 0x77, 0x62, 0x75, 0xd7, 0xe4, 0x4d, 0xec, 0xa2, 0x82,
+	0x19, 0x91, 0x2e, 0xe7, 0x15, 0x6c, 0xd9, 0xa6, 0xc1, 0x33, 0x55, 0x56, 0x5c, 0x32, 0xb2, 0xe9,
+	0x2d, 0x65, 0xb0, 0x29, 0x98, 0xe6, 0x73, 0x19, 0x83, 0xe0, 0x85, 0x75, 0xc3, 0xae, 0x55, 0x8c,
+	0x7a, 0xad, 0xd2, 0x5a, 0xed, 0x88, 0x6e, 0x51, 0x83, 0xd9, 0xa8, 0x5a, 0xf6, 0xaf, 0xb8, 0x2b,
+	0x2e, 0x7b, 0x59, 0xf2, 0x5e, 0xc1, 0xa7, 0x87, 0xfc, 0x6d, 0xa9, 0xe2, 0x3f, 0xf0, 0xdf, 0xf8,
+	0x8f, 0xa8, 0x85, 0x0f, 0x2f, 0x79, 0xfb, 0xd4, 0xb4, 0xe3, 0x5c, 0x08, 0x59, 0x2e, 0x5b, 0x2f,
+	0xad, 0x5b, 0xad, 0x36, 0x79, 0x0a, 0xe3, 0xee, 0xc6, 0x35, 0x84, 0x46, 0xd1, 0xc4, 0x7d, 0xa7,
+	0xc7, 0x8a, 0x60, 0xc1, 0xdb, 0xe5, 0x8a, 0xfe, 0x66, 0x0a, 0xbb, 0x5c, 0x71, 0xd1, 0x58, 0xb1,
+	0xe0, 0xbb, 0xe5, 0xd0, 0x37, 0xe9, 0x2f, 0x11, 0x3e, 0xc2, 0xf7, 0xd3, 0x6a, 0xb8, 0xf5, 0x96,
+	0x45, 0x6c, 0xbc, 0x27, 0x8c, 0x6c, 0x08, 0x8d, 0xe6, 0x27, 0xee, 0x3b, 0x7d, 0xbe, 0xcf, 0xed,
+	0xb9, 0x18, 0x33, 0x3f, 0xf3, 0x7f, 0xef, 0xfe, 0xee, 0xe8, 0xae, 0x72, 0xc4, 0x34, 0x99, 0x8b,
+	0x60, 0xca, 0x31, 0x4c, 0xe3, 0x3d, 0x31, 0xf9, 0xf3, 0x8c, 0x80, 0xba, 0x80, 0xc7, 0x19, 0xa6,
+	0x39, 0xab, 0x1d, 0xf7, 0xbb, 0xb9, 0xec, 0x87, 0x25, 0xe0, 0x71, 0x08, 0xff, 0x3f, 0x04, 0x8a,
+	0x91, 0x78, 0x6f, 0x39, 0x78, 0x4b, 0x7f, 0x82, 0xf0, 0x44, 0x6f, 0x2b, 0xc0, 0xd2, 0xb7, 0x10,
+	0x1e, 0x32, 0x04, 0x83, 0x20, 0x3a, 0x4f, 0x67, 0xa5, 0x2c, 0xb0, 0x07, 0xdc, 0x09, 0xfd, 0xd1,
+	0x17, 0x40, 0x3a, 0x73, 0x56, 0x9b, 0x27, 0x1d, 0x21, 0x64, 0x42, 0xf1, 0x1e, 0x78, 0x79, 0xc9,
+	0xda, 0x9c, 0xaf, 0xb1, 0x10, 0xdc, 0x5b, 0x8e, 0x7c, 0x46, 0x6f, 0x06, 0x82, 0x49, 0x58, 0x17,
+	0x0a, 0x06, 0x0d, 0x48, 0x30, 0xd4, 0xc4, 0x0f, 0x76, 0x22, 0x04, 0x5b, 0xac, 0x7e, 0xc0, 0xef,
+	0x20, 0xfc, 0x90, 0xdc, 0x0b, 0x00, 0xff, 0x2a, 0xde, 0x6f, 0x70, 0x9e, 0x03, 0x01, 0xb3, 0x7d,
+	0x13, 0xc0, 0xb1, 0x05, 0x2c, 0x70, 0xfd, 0xd0, 0xef, 0x20, 0xa0, 0x63, 0xda, 0x71, 0x64, 0x74,
+	0x68, 0x4a, 0x1d, 0xa9, 0xc8, 0xfb, 0x4b, 0x40, 0x9e, 0x70, 0x4e, 0x3d, 0xc9, 0xcb, 0xef, 0x04,
+	0x79, 0xfa, 0x72, 0x4f, 0x15, 0xd3, 0x40, 0x2d, 0x8b, 0x50, 0x38, 0x87, 0x1c, 0xe9, 0x91, 0xe4,
+	0x0f, 0x51, 0x57, 0xf8, 0x5c, 0x27, 0x40, 0xea, 0x16, 0xde, 0xd7, 0x48, 0x3e, 0x86, 0x90, 0x5f,
+	0xe8, 0x97, 0x53, 0x8e, 0x27, 0xa0, 0x94, 0xe7, 0x85, 0x3a, 0x40, 0xc4, 0xb4, 0xe3, 0x48, 0x88,
+	0xd0, 0xb5, 0x8f, 0x7d, 0x14, 0x12, 0xbf, 0x12, 0x25, 0xf9, 0xc1, 0x53, 0xa2, 0x53, 0x64, 0xa3,
+	0x9d, 0x1c, 0xec, 0x1d, 0xf3, 0x78, 0xcb, 0xfc, 0x00, 0xbe, 0xc7, 0xaf, 0xab, 0x41, 0x61, 0xf0,
+	0x8e, 0x8c, 0xe1, 0x4f, 0x18, 0xeb, 0xed, 0x1b, 0x6e, 0xd3, 0x6e, 0x6f, 0x86, 0x25, 0x16, 0xfb,
+	0x94, 0x7e, 0x1f, 0xe1, 0x63, 0x12, 0x27, 0xc0, 0xe7, 0x3a, 0xbe, 0xdf, 0x8c, 0x3f, 0x84, 0x30,
+	0x4e, 0xf7, 0xcb, 0x66, 0xc2, 0x0b, 0x70, 0x99, 0xf4, 0x40, 0x6f, 0x21, 0xfc, 0x29, 0xe9, 0x0a,
+	0x08, 0x8e, 0x1c, 0x5a, 0x16, 0x1c, 0x1b, 0x63, 0x35, 0x6d, 0xc3, 0x59, 0x58, 0x5f, 0xab, 0x5a,
+	0xcd, 0xa1, 0x3c, 0x8c, 0x09, 0x7d, 0x46, 0x7f, 0x81, 0xf0, 0x54, 0xca, 0x29, 0x01, 0x77, 0xdf,
+	0x43, 0x78, 0xb8, 0x21, 0x1b, 0x09, 0x44, 0x7e, 0x5e, 0x83, 0x2c, 0xbb, 0x46, 0x81, 0x54, 0xb9,
+	0x67, 0xba, 0x01, 0xfc, 0x8a, 0x96, 0x53, 0x9c, 0x5f, 0x5d, 0xeb, 0xf8, 0xbb, 0x39, 0x60, 0xb1,
+	0xb7, 0xe3, 0x3e, 0x58, 0xcc, 0xdf, 0x1d, 0x16, 0x07, 0xb2, 0xab, 0x94, 0xfd, 0x53, 0x91, 0xfe,
+	0x42, 0x27, 0xbc, 0xab, 0x70, 0x9d, 0x74, 0x53, 0x68, 0x33, 0xf9, 0x58, 0x75, 0x57, 0xe1, 0x78,
+	0x0a, 0x52, 0x28, 0xc7, 0x4b, 0x78, 0x57, 0x91, 0x10, 0x31, 0x88, 0x5d, 0x45, 0x89, 0x92, 0xfc,
+	0xe0, 0x29, 0xd1, 0x27, 0xb2, 0x13, 0xa1, 0x63, 0x13, 0xd4, 0x48, 0x65, 0xd7, 0xe5, 0x9d, 0x21,
+	0xa2, 0x87, 0x23, 0xe1, 0xd8, 0xf0, 0xe1, 0x48, 0x30, 0x48, 0xf9, 0x70, 0x24, 0xb0, 0xd7, 0x39,
+	0x1c, 0x09, 0x9e, 0xd3, 0x09, 0x3c, 0x16, 0x13, 0xb9, 0x08, 0xe3, 0x8f, 0x51, 0x97, 0x0f, 0xe1,
+	0x50, 0x80, 0xf8, 0x1a, 0xc2, 0x07, 0x9b, 0xfc, 0x31, 0x80, 0x70, 0x4e, 0x51, 0x05, 0x02, 0x80,
+	0x22, 0x6f, 0xf4, 0xe9, 0xee, 0xc6, 0xc8, 0x2d, 0x82, 0xd3, 0x1f, 0x80, 0xc3, 0x1b, 0x5a, 0x0f,
+	0x53, 0xa1, 0x54, 0x6c, 0xc8, 0x46, 0xaa, 0x6e, 0x68, 0x52, 0xf7, 0x41, 0x2a, 0x96, 0x7a, 0x0e,
+	0x9f, 0x15, 0xcb, 0x70, 0x6f, 0xaa, 0x3f, 0x85, 0xbe, 0x1d, 0x3a, 0x2b, 0xf2, 0xbd, 0x84, 0x13,
+	0x46, 0xe2, 0xb9, 0x7a, 0x0e, 0x4d, 0x98, 0xea, 0x26, 0x8c, 0xc4, 0x23, 0xba, 0x16, 0x4e, 0x6a,
+	0x62, 0x2a, 0x74, 0x25, 0xd1, 0x8f, 0x43, 0x67, 0x40, 0x35, 0x52, 0xf2, 0x83, 0x27, 0x45, 0x5f,
+	0x16, 0x7d, 0x2d, 0x5c, 0x07, 0xae, 0xda, 0xdd, 0x6a, 0x60, 0x36, 0x74, 0xf9, 0xbd, 0xe8, 0xda,
+	0xf5, 0xce, 0x12, 0xfc, 0x24, 0xce, 0x6f, 0xd8, 0x35, 0xc6, 0xf0, 0xee, 0xb2, 0xf7, 0x92, 0xec,
+	0xc7, 0xbb, 0x1d, 0xa3, 0x6a, 0x39, 0x20, 0x32, 0xff, 0x0d, 0x29, 0x62, 0xe2, 0xd7, 0xf0, 0xcb,
+	0x5d, 0xcd, 0xcd, 0x42, 0x2d, 0xca, 0x79, 0x42, 0xdf, 0x43, 0xb8, 0x98, 0x76, 0x26, 0x10, 0x82,
+	0xb7, 0x10, 0x1e, 0x91, 0x0f, 0x05, 0x21, 0x2c, 0xf4, 0x5d, 0x4d, 0x49, 0xad, 0x42, 0x64, 0x7a,
+	0xf8, 0xa6, 0x5f, 0x0e, 0x15, 0x87, 0xa9, 0xa8, 0xd5, 0xa5, 0xe1, 0x37, 0x73, 0x40, 0x65, 0x0a,
+	0xcf, 0xfd, 0x50, 0x99, 0xbf, 0x5b, 0x54, 0xea, 0xd3, 0x7b, 0x1b, 0xcf, 0xa4, 0x13, 0x59, 0x6b,
+	0x66, 0x73, 0x3e, 0x21, 0xd2, 0x20, 0x50, 0x7c, 0x6d, 0x23, 0xa1, 0xb6, 0xdf, 0xce, 0xe1, 0x0b,
+	0x99, 0xdc, 0x42, 0x94, 0x7e, 0x8b, 0xf0, 0x99, 0x46, 0xff, 0xdf, 0x07, 0x29, 0x99, 0x7a, 0x43,
+	0xc7, 0x75, 0x05, 0xf1, 0x54, 0x99, 0x25, 0x3d, 0xdb, 0x3d, 0x36, 0x2c, 0xb8, 0xa6, 0xa0, 0xd0,
+	0x49, 0xe6, 0x9f, 0xc8, 0x51, 0x80, 0xfb, 0xc5, 0x6e, 0xc6, 0xae, 0x27, 0x1f, 0xab, 0x6e, 0x63,
+	0x1c, 0x4f, 0x41, 0xc6, 0xe6, 0x78, 0x09, 0x1f, 0x05, 0x24, 0xe0, 0x06, 0x71, 0x14, 0x50, 0xa2,
+	0x24, 0x3f, 0x78, 0x4a, 0xf4, 0x2d, 0xea, 0x47, 0xba, 0x77, 0x3f, 0x0b, 0xae, 0x39, 0x6f, 0x1a,
+	0xe9, 0x74, 0xf3, 0x03, 0x14, 0x11, 0x5c, 0xe2, 0x7b, 0xc0, 0xd1, 0xcb, 0x98, 0xd4, 0x13, 0x4f,
+	0x21, 0x36, 0x33, 0x0a, 0x14, 0xc5, 0x2c, 0x01, 0x43, 0x1c, 0x1f, 0x74, 0x15, 0x70, 0xf9, 0x41,
+	0x14, 0xe0, 0xd2, 0x25, 0x99, 0x3f, 0xa2, 0x88, 0x42, 0xfb, 0x65, 0x23, 0x3f, 0x68, 0x36, 0xf4,
+	0xc9, 0xc5, 0xc6, 0x27, 0x62, 0x27, 0x25, 0xc9, 0x8a, 0xcc, 0x56, 0x62, 0xff, 0x0c, 0xe1, 0xc9,
+	0x34, 0xbe, 0x80, 0xdc, 0x5b, 0x08, 0x17, 0x9a, 0xc2, 0x61, 0x10, 0xdc, 0x8b, 0x8a, 0x67, 0x33,
+	0xf1, 0xea, 0x94, 0xf8, 0xa4, 0x2d, 0x20, 0xab, 0x7b, 0xa7, 0xb0, 0x03, 0xe9, 0xeb, 0x9b, 0x39,
+	0xa0, 0xad, 0x87, 0xd7, 0xb4, 0xb4, 0xe5, 0x77, 0x9a, 0x36, 0x7d, 0x62, 0xbd, 0xd1, 0xbd, 0xba,
+	0xe8, 0x4e, 0x48, 0x90, 0x0a, 0xb2, 0x69, 0xf5, 0xa7, 0x88, 0xb7, 0x2e, 0x44, 0x79, 0xe0, 0xdb,
+	0x08, 0x1f, 0x6a, 0x8a, 0x46, 0x41, 0xe8, 0xe7, 0xd5, 0x29, 0xe7, 0xa7, 0x05, 0xb1, 0x47, 0xda,
+	0x04, 0x9e, 0x22, 0x8a, 0x19, 0x70, 0xca, 0xfc, 0x7a, 0x8e, 0xb7, 0x38, 0x54, 0x19, 0xcb, 0xef,
+	0x2c, 0x63, 0x3a, 0xaf, 0x7b, 0x27, 0x43, 0xdb, 0x68, 0xf4, 0x42, 0xe3, 0xb2, 0x5d, 0x9b, 0xae,
+	0xd7, 0x96, 0x57, 0xed, 0x9a, 0xf8, 0xfc, 0x98, 0x46, 0x9c, 0x3f, 0x47, 0xf8, 0x64, 0x2a, 0x27,
+	0x40, 0xf6, 0x1b, 0x08, 0x1f, 0xae, 0x8b, 0xc7, 0x41, 0xd0, 0x2f, 0x29, 0x6c, 0x58, 0x22, 0x93,
+	0x40, 0xb8, 0xcc, 0x2b, 0xbd, 0x89, 0xa0, 0xd9, 0x21, 0x66, 0xe7, 0x6e, 0xfc, 0xd8, 0xfd, 0x41,
+	0xd0, 0x1a, 0x91, 0x98, 0x0b, 0x50, 0xe8, 0xe2, 0xbd, 0x31, 0x2c, 0xaa, 0xed, 0x34, 0x71, 0xd6,
+	0x7c, 0xa6, 0xe2, 0xd6, 0x07, 0xd2, 0x51, 0x93, 0x08, 0x98, 0x52, 0x47, 0x8d, 0xd8, 0x4a, 0xe8,
+	0xd2, 0xb8, 0x2e, 0x18, 0xa4, 0x7a, 0x69, 0x2c, 0x72, 0x1a, 0x5c, 0x1a, 0x8b, 0xfc, 0xd1, 0xeb,
+	0x78, 0x44, 0x30, 0x71, 0x3d, 0x1b, 0xc5, 0xeb, 0x08, 0x1f, 0x15, 0x3a, 0x90, 0x89, 0x07, 0x0d,
+	0x4e, 0x3c, 0xa7, 0x6f, 0x3e, 0x81, 0x77, 0xb3, 0x49, 0x91, 0xf7, 0x10, 0xde, 0x1b, 0x7e, 0x34,
+	0xed, 0x38, 0xa4, 0xef, 0x85, 0x2e, 0xe9, 0x66, 0x2b, 0x7c, 0x4e, 0x8f, 0x31, 0x9f, 0x29, 0x7a,
+	0xec, 0x95, 0x5f, 0xfd, 0xe1, 0x8d, 0xdc, 0x61, 0x72, 0xa8, 0x54, 0x33, 0x9d, 0xa0, 0x9b, 0x73,
+	0x2a, 0xd2, 0x6a, 0xf6, 0x6f, 0x84, 0x87, 0x44, 0xfd, 0x55, 0xe4, 0x79, 0xa5, 0xd9, 0xf4, 0x6e,
+	0x36, 0x2b, 0x5c, 0xd1, 0x6f, 0x18, 0x20, 0x9f, 0x64, 0x90, 0x8f, 0x93, 0x07, 0x85, 0x90, 0x4b,
+	0x5b, 0xa0, 0xb8, 0x6d, 0xf2, 0x21, 0xc2, 0x7b, 0x22, 0x69, 0xe2, 0x92, 0xea, 0xbc, 0xf4, 0xc5,
+	0x52, 0xd0, 0x4d, 0x46, 0x1f, 0x65, 0xc0, 0x3e, 0x4d, 0x4e, 0xa7, 0x00, 0xd6, 0x79, 0xc5, 0x16,
+	0xd5, 0x36, 0xb9, 0x83, 0xf0, 0x41, 0xde, 0x2f, 0x07, 0x9e, 0x7c, 0x97, 0x55, 0x15, 0x27, 0xe9,
+	0xac, 0x2a, 0x3c, 0xab, 0xd7, 0x28, 0x50, 0x30, 0xcc, 0x28, 0x38, 0x48, 0x1e, 0xe8, 0x50, 0x10,
+	0x91, 0xf2, 0x37, 0x72, 0x78, 0x58, 0xfa, 0xfb, 0x08, 0x79, 0x51, 0x59, 0x76, 0x29, 0x7e, 0x40,
+	0x2a, 0x7c, 0x61, 0x40, 0xd6, 0x01, 0xfd, 0x38, 0x43, 0x7f, 0x8c, 0x1c, 0xe5, 0xa2, 0x0f, 0xa9,
+	0xfa, 0x5f, 0x08, 0xef, 0xe7, 0x99, 0x54, 0x0c, 0xb5, 0xbc, 0xa7, 0x50, 0x31, 0xd4, 0x3d, 0x5a,
+	0x08, 0xe9, 0x59, 0x06, 0xf6, 0x61, 0x52, 0xec, 0x01, 0x36, 0xae, 0xf4, 0xff, 0x22, 0xbc, 0x8f,
+	0xd3, 0xae, 0x40, 0xca, 0xaa, 0xb3, 0x14, 0x77, 0x6c, 0x15, 0x96, 0xb5, 0xda, 0x04, 0xe0, 0xe7,
+	0x19, 0xf0, 0xcf, 0x92, 0x73, 0x1d, 0xe0, 0x41, 0x63, 0x45, 0xca, 0xb5, 0xfe, 0x67, 0x84, 0x0f,
+	0x70, 0x1c, 0x78, 0x4b, 0xbd, 0xac, 0xba, 0x2a, 0xb5, 0x93, 0x20, 0xef, 0x4d, 0xa3, 0x63, 0x8c,
+	0x84, 0x51, 0x32, 0x22, 0x27, 0x81, 0xfc, 0x13, 0xe1, 0xfb, 0x13, 0xbd, 0x52, 0x64, 0x51, 0x39,
+	0xef, 0x0a, 0x3a, 0xc8, 0x0a, 0x4b, 0x1a, 0x2d, 0x02, 0xc4, 0xc7, 0x18, 0xc4, 0x73, 0xe4, 0x91,
+	0xae, 0xc0, 0xbd, 0xb1, 0xb1, 0x20, 0xfb, 0xf7, 0xfd, 0xdb, 0xa5, 0xad, 0x68, 0x4b, 0xda, 0x36,
+	0xf9, 0x51, 0x0e, 0x0f, 0x4b, 0xdb, 0x72, 0xd4, 0x73, 0x5d, 0x9a, 0x2e, 0x27, 0xf5, 0x5c, 0x97,
+	0xaa, 0x95, 0x89, 0x5e, 0x64, 0xec, 0xcc, 0x92, 0x99, 0xa4, 0x00, 0xba, 0x7f, 0x44, 0x93, 0x72,
+	0x41, 0xbc, 0x9e, 0xc3, 0xa3, 0x52, 0xaf, 0xde, 0xd2, 0x78, 0x51, 0xab, 0x8c, 0xf5, 0xb0, 0x95,
+	0xb6, 0xf1, 0x8b, 0x9e, 0x62, 0x6c, 0x9d, 0x24, 0x27, 0x52, 0xb3, 0x45, 0xfe, 0x83, 0xf0, 0x3e,
+	0x4e, 0x77, 0x8d, 0x7a, 0x9e, 0x14, 0xf7, 0x20, 0xa9, 0xe7, 0x49, 0x49, 0xa3, 0x11, 0x7d, 0x9c,
+	0x61, 0xfe, 0x0c, 0x39, 0xdb, 0xc1, 0x0c, 0xb7, 0x11, 0x29, 0x55, 0xf1, 0x27, 0x84, 0x0f, 0x70,
+	0xec, 0x67, 0x4a, 0x93, 0xda, 0x39, 0x90, 0x37, 0x5b, 0xd1, 0xe3, 0x8c, 0x83, 0xa3, 0x64, 0x58,
+	0xca, 0x01, 0xf9, 0x9b, 0x57, 0xe2, 0x0b, 0xba, 0x80, 0x32, 0x94, 0xf8, 0xf2, 0xc6, 0xa8, 0x0c,
+	0x25, 0x7e, 0x8f, 0x2e, 0x2a, 0x4a, 0x19, 0xec, 0x23, 0xa4, 0xd0, 0x85, 0xed, 0xba, 0xed, 0x28,
+	0xe6, 0x7f, 0x20, 0x7c, 0x50, 0xd0, 0x37, 0x44, 0x2e, 0x67, 0xd4, 0xa3, 0x08, 0xf1, 0xf3, 0xda,
+	0xed, 0x02, 0xe0, 0x49, 0x06, 0xf8, 0x21, 0x42, 0x13, 0x71, 0x4e, 0x02, 0xff, 0x5a, 0xce, 0x5b,
+	0xd8, 0xc9, 0xae, 0x8e, 0x0c, 0x8b, 0x50, 0xd8, 0x18, 0xa3, 0x5e, 0xfb, 0xc9, 0xba, 0x5f, 0x38,
+	0x25, 0x50, 0xd0, 0xa6, 0x92, 0x72, 0x6d, 0x7f, 0xc4, 0xd6, 0x76, 0xc2, 0x43, 0xa6, 0xd3, 0x8e,
+	0x7e, 0x1a, 0x7a, 0x34, 0x01, 0x71, 0x8a, 0x20, 0x2e, 0x0d, 0xe4, 0x9d, 0x5c, 0xaf, 0xf6, 0x0a,
+	0xa2, 0xbe, 0x5b, 0xa7, 0xe9, 0x2d, 0x29, 0x5c, 0x1f, 0x94, 0x79, 0x60, 0xe2, 0x49, 0xc6, 0xc4,
+	0x79, 0xf2, 0x58, 0x44, 0xff, 0xb0, 0xad, 0xf9, 0x7f, 0x3c, 0x1b, 0x94, 0x4a, 0xe1, 0x1f, 0xfd,
+	0xb7, 0x4b, 0x5b, 0x1b, 0x76, 0x6d, 0xbb, 0xb4, 0xc5, 0x9a, 0x86, 0xb6, 0xc9, 0xab, 0x39, 0x7c,
+	0x4c, 0xee, 0xd1, 0x53, 0x88, 0xfa, 0x5e, 0x3d, 0x40, 0xae, 0x52, 0x37, 0xdb, 0xf0, 0x92, 0x63,
+	0x9c, 0x2b, 0xf2, 0x9b, 0x1c, 0x3e, 0xa3, 0xd0, 0x7f, 0x41, 0x9a, 0x83, 0x89, 0xb3, 0xac, 0x1d,
+	0xa6, 0xd0, 0xda, 0x51, 0x9f, 0x40, 0xe2, 0x39, 0x46, 0xe2, 0x29, 0x52, 0xea, 0x53, 0x70, 0xe4,
+	0xd7, 0x08, 0x93, 0xd8, 0xa5, 0xa2, 0xfa, 0x15, 0x21, 0xff, 0x82, 0x55, 0xf1, 0x5a, 0x49, 0x70,
+	0x99, 0xca, 0xa9, 0x21, 0x0c, 0xc7, 0x99, 0xaa, 0xbb, 0x66, 0xa2, 0x5e, 0x1c, 0x12, 0x5d, 0x1a,
+	0xab, 0xd7, 0x10, 0x3d, 0x6e, 0xd0, 0xd5, 0x6b, 0x88, 0x5e, 0x97, 0xea, 0xb4, 0xc4, 0x60, 0x9f,
+	0x20, 0xe3, 0x52, 0xd8, 0xa1, 0x4b, 0x95, 0xbf, 0x23, 0xbc, 0x37, 0x66, 0x95, 0x2c, 0x68, 0x9a,
+	0x5e, 0x00, 0xf7, 0x19, 0x6d, 0xf6, 0x84, 0x45, 0xb2, 0x1c, 0x25, 0xe7, 0xe8, 0x74, 0x58, 0xf2,
+	0xb3, 0x14, 0xb9, 0xa6, 0x2d, 0x3e, 0x89, 0xdf, 0xf2, 0x0a, 0x2f, 0x0c, 0xc4, 0xb6, 0xf0, 0x32,
+	0xd5, 0x23, 0x65, 0xc3, 0x8e, 0x57, 0x18, 0xfe, 0xfe, 0x11, 0x25, 0xe5, 0xaf, 0x08, 0xef, 0xe3,
+	0xfd, 0x2c, 0x5f, 0xce, 0x30, 0x61, 0x51, 0x49, 0xb9, 0xac, 0xd5, 0x26, 0x80, 0x7f, 0x98, 0x81,
+	0x9f, 0x24, 0x13, 0x09, 0xf0, 0x89, 0x72, 0xd2, 0x67, 0x80, 0xdd, 0x29, 0x71, 0x2c, 0x66, 0x3a,
+	0x2c, 0x69, 0x47, 0x2d, 0x6f, 0x47, 0xe3, 0x94, 0x53, 0x1e, 0xea, 0x64, 0x01, 0xfd, 0xb1, 0x9f,
+	0xc2, 0xe3, 0xbf, 0x68, 0x2f, 0x65, 0x88, 0x04, 0xbf, 0x55, 0xa0, 0x50, 0xd6, 0x69, 0x52, 0x98,
+	0xd7, 0x82, 0xd8, 0xda, 0xa6, 0xc1, 0x0b, 0xed, 0x87, 0x08, 0x3f, 0x90, 0xb4, 0xe7, 0x45, 0x76,
+	0x29, 0x43, 0x14, 0xb4, 0x22, 0x96, 0x36, 0x8d, 0x71, 0x36, 0x30, 0x0f, 0x71, 0x1c, 0x2d, 0x79,
+	0x2b, 0x87, 0x0b, 0xe2, 0xae, 0x1b, 0x72, 0x35, 0xe3, 0xd9, 0x4d, 0xa2, 0xe6, 0x6b, 0x83, 0x30,
+	0x0d, 0xe0, 0xe7, 0x18, 0xf8, 0x69, 0x72, 0x3e, 0x71, 0x32, 0xe4, 0x8a, 0x5b, 0x9c, 0xe9, 0x5f,
+	0xcd, 0xe1, 0x61, 0xb1, 0x3f, 0x4f, 0x0e, 0x57, 0x33, 0xde, 0x60, 0x68, 0x67, 0x28, 0x55, 0xff,
+	0x16, 0x2d, 0x32, 0x86, 0x26, 0xc8, 0x58, 0x3a, 0x86, 0xc8, 0x9b, 0x39, 0x7c, 0x48, 0xd8, 0xf8,
+	0x42, 0xae, 0x64, 0x8f, 0xa5, 0x60, 0x69, 0x5c, 0x1d, 0x80, 0x65, 0xa0, 0xe0, 0x29, 0x46, 0xc1,
+	0x13, 0xe4, 0x71, 0x2e, 0x05, 0xc9, 0xbc, 0x20, 0xd2, 0xc8, 0x2b, 0x39, 0x7c, 0x44, 0xe8, 0xcd,
+	0x93, 0xc8, 0x95, 0xec, 0x71, 0xd4, 0xca, 0x4e, 0x9a, 0xd6, 0x29, 0x3a, 0xc5, 0xd8, 0x19, 0x27,
+	0xc7, 0x53, 0xb1, 0x33, 0x73, 0xfd, 0xdd, 0xdb, 0x23, 0xe8, 0xfd, 0xdb, 0x23, 0xe8, 0xf7, 0xb7,
+	0x47, 0xd0, 0xad, 0x3b, 0x23, 0xbb, 0xde, 0xbf, 0x33, 0xb2, 0xeb, 0x83, 0x3b, 0x23, 0xbb, 0xae,
+	0xcd, 0xae, 0xd8, 0xed, 0x1b, 0xeb, 0xd5, 0xa2, 0xe9, 0xae, 0x95, 0xfc, 0xd9, 0x4e, 0xf1, 0xfe,
+	0x6d, 0xce, 0x54, 0x77, 0xbe, 0x53, 0xf0, 0x8f, 0x73, 0x5e, 0x66, 0x6e, 0xdb, 0x9b, 0x0d, 0xab,
+	0x55, 0xbd, 0x87, 0xfd, 0xd3, 0x9b, 0x33, 0xff, 0x0b, 0x00, 0x00, 0xff, 0xff, 0x88, 0x3d, 0x13,
+	0x23, 0x32, 0x4e, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -2580,10 +3407,18 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type QueryClient interface {
-	// Queries a ApprovedCertificates by index.
-	ApprovedCertificates(ctx context.Context, in *QueryGetApprovedCertificatesRequest, opts ...grpc.CallOption) (*QueryGetApprovedCertificatesResponse, error)
+	// Queries a list of Certificates items.
+	CertificatesAll(ctx context.Context, in *QueryAllCertificatesRequest, opts ...grpc.CallOption) (*QueryAllCertificatesResponse, error)
+	// Queries a AllCertificatesBySubject by index.
+	AllCertificatesBySubject(ctx context.Context, in *QueryGetAllCertificatesBySubjectRequest, opts ...grpc.CallOption) (*QueryGetAllCertificatesBySubjectResponse, error)
+	// Queries a Certificates by index.
+	Certificates(ctx context.Context, in *QueryGetCertificatesRequest, opts ...grpc.CallOption) (*QueryGetCertificatesResponse, error)
 	// Queries a list of ApprovedCertificates items.
 	ApprovedCertificatesAll(ctx context.Context, in *QueryAllApprovedCertificatesRequest, opts ...grpc.CallOption) (*QueryAllApprovedCertificatesResponse, error)
+	// Queries a ApprovedCertificatesBySubject by index.
+	ApprovedCertificatesBySubject(ctx context.Context, in *QueryGetApprovedCertificatesBySubjectRequest, opts ...grpc.CallOption) (*QueryGetApprovedCertificatesBySubjectResponse, error)
+	// Queries a ApprovedCertificates by index.
+	ApprovedCertificates(ctx context.Context, in *QueryGetApprovedCertificatesRequest, opts ...grpc.CallOption) (*QueryGetApprovedCertificatesResponse, error)
 	// Queries a ProposedCertificate by index.
 	ProposedCertificate(ctx context.Context, in *QueryGetProposedCertificateRequest, opts ...grpc.CallOption) (*QueryGetProposedCertificateResponse, error)
 	// Queries a list of ProposedCertificate items.
@@ -2602,8 +3437,6 @@ type QueryClient interface {
 	ApprovedRootCertificates(ctx context.Context, in *QueryGetApprovedRootCertificatesRequest, opts ...grpc.CallOption) (*QueryGetApprovedRootCertificatesResponse, error)
 	// Queries a RevokedRootCertificates by index.
 	RevokedRootCertificates(ctx context.Context, in *QueryGetRevokedRootCertificatesRequest, opts ...grpc.CallOption) (*QueryGetRevokedRootCertificatesResponse, error)
-	// Queries a ApprovedCertificatesBySubject by index.
-	ApprovedCertificatesBySubject(ctx context.Context, in *QueryGetApprovedCertificatesBySubjectRequest, opts ...grpc.CallOption) (*QueryGetApprovedCertificatesBySubjectResponse, error)
 	// Queries a RejectedCertificate by index.
 	RejectedCertificate(ctx context.Context, in *QueryGetRejectedCertificatesRequest, opts ...grpc.CallOption) (*QueryGetRejectedCertificatesResponse, error)
 	// Queries a list of RejectedCertificate items.
@@ -2614,10 +3447,16 @@ type QueryClient interface {
 	PkiRevocationDistributionPointAll(ctx context.Context, in *QueryAllPkiRevocationDistributionPointRequest, opts ...grpc.CallOption) (*QueryAllPkiRevocationDistributionPointResponse, error)
 	// Queries a PkiRevocationDistributionPointsByIssuerSubjectKeyID by index.
 	PkiRevocationDistributionPointsByIssuerSubjectKeyID(ctx context.Context, in *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest, opts ...grpc.CallOption) (*QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse, error)
-	// Queries a NocRootCertificates by index.
-	NocRootCertificates(ctx context.Context, in *QueryGetNocRootCertificatesRequest, opts ...grpc.CallOption) (*QueryGetNocRootCertificatesResponse, error)
+	// Queries a list of NocCertificates items.
+	NocCertificatesAll(ctx context.Context, in *QueryNocCertificatesRequest, opts ...grpc.CallOption) (*QueryNocCertificatesResponse, error)
+	// Queries a NocCertificatesBySubject by index.
+	NocCertificatesBySubject(ctx context.Context, in *QueryGetNocCertificatesBySubjectRequest, opts ...grpc.CallOption) (*QueryGetNocCertificatesBySubjectResponse, error)
+	// Queries a NocCertificates by index.
+	NocCertificates(ctx context.Context, in *QueryGetNocCertificatesRequest, opts ...grpc.CallOption) (*QueryGetNocCertificatesResponse, error)
 	// Queries a NocCertificatesByVidAndSkid by index.
 	NocCertificatesByVidAndSkid(ctx context.Context, in *QueryGetNocCertificatesByVidAndSkidRequest, opts ...grpc.CallOption) (*QueryGetNocCertificatesByVidAndSkidResponse, error)
+	// Queries a NocRootCertificates by index.
+	NocRootCertificates(ctx context.Context, in *QueryGetNocRootCertificatesRequest, opts ...grpc.CallOption) (*QueryGetNocRootCertificatesResponse, error)
 	// Queries a list of NocRootCertificates items.
 	NocRootCertificatesAll(ctx context.Context, in *QueryAllNocRootCertificatesRequest, opts ...grpc.CallOption) (*QueryAllNocRootCertificatesResponse, error)
 	// Queries a NocIcaCertificates by index.
@@ -2628,6 +3467,10 @@ type QueryClient interface {
 	RevokedNocRootCertificates(ctx context.Context, in *QueryGetRevokedNocRootCertificatesRequest, opts ...grpc.CallOption) (*QueryGetRevokedNocRootCertificatesResponse, error)
 	// Queries a list of RevokedNocRootCertificates items.
 	RevokedNocRootCertificatesAll(ctx context.Context, in *QueryAllRevokedNocRootCertificatesRequest, opts ...grpc.CallOption) (*QueryAllRevokedNocRootCertificatesResponse, error)
+	// Queries a RevokedNocIcaCertificates by index.
+	RevokedNocIcaCertificates(ctx context.Context, in *QueryGetRevokedNocIcaCertificatesRequest, opts ...grpc.CallOption) (*QueryGetRevokedNocIcaCertificatesResponse, error)
+	// Queries a list of RevokedNocIcaCertificates items.
+	RevokedNocIcaCertificatesAll(ctx context.Context, in *QueryAllRevokedNocIcaCertificatesRequest, opts ...grpc.CallOption) (*QueryAllRevokedNocIcaCertificatesResponse, error)
 }
 
 type queryClient struct {
@@ -2638,9 +3481,27 @@ func NewQueryClient(cc grpc1.ClientConn) QueryClient {
 	return &queryClient{cc}
 }
 
-func (c *queryClient) ApprovedCertificates(ctx context.Context, in *QueryGetApprovedCertificatesRequest, opts ...grpc.CallOption) (*QueryGetApprovedCertificatesResponse, error) {
-	out := new(QueryGetApprovedCertificatesResponse)
-	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Query/ApprovedCertificates", in, out, opts...)
+func (c *queryClient) CertificatesAll(ctx context.Context, in *QueryAllCertificatesRequest, opts ...grpc.CallOption) (*QueryAllCertificatesResponse, error) {
+	out := new(QueryAllCertificatesResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Query/CertificatesAll", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) AllCertificatesBySubject(ctx context.Context, in *QueryGetAllCertificatesBySubjectRequest, opts ...grpc.CallOption) (*QueryGetAllCertificatesBySubjectResponse, error) {
+	out := new(QueryGetAllCertificatesBySubjectResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Query/AllCertificatesBySubject", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) Certificates(ctx context.Context, in *QueryGetCertificatesRequest, opts ...grpc.CallOption) (*QueryGetCertificatesResponse, error) {
+	out := new(QueryGetCertificatesResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Query/Certificates", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2650,6 +3511,24 @@ func (c *queryClient) ApprovedCertificates(ctx context.Context, in *QueryGetAppr
 func (c *queryClient) ApprovedCertificatesAll(ctx context.Context, in *QueryAllApprovedCertificatesRequest, opts ...grpc.CallOption) (*QueryAllApprovedCertificatesResponse, error) {
 	out := new(QueryAllApprovedCertificatesResponse)
 	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Query/ApprovedCertificatesAll", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) ApprovedCertificatesBySubject(ctx context.Context, in *QueryGetApprovedCertificatesBySubjectRequest, opts ...grpc.CallOption) (*QueryGetApprovedCertificatesBySubjectResponse, error) {
+	out := new(QueryGetApprovedCertificatesBySubjectResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Query/ApprovedCertificatesBySubject", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) ApprovedCertificates(ctx context.Context, in *QueryGetApprovedCertificatesRequest, opts ...grpc.CallOption) (*QueryGetApprovedCertificatesResponse, error) {
+	out := new(QueryGetApprovedCertificatesResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Query/ApprovedCertificates", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2737,15 +3616,6 @@ func (c *queryClient) RevokedRootCertificates(ctx context.Context, in *QueryGetR
 	return out, nil
 }
 
-func (c *queryClient) ApprovedCertificatesBySubject(ctx context.Context, in *QueryGetApprovedCertificatesBySubjectRequest, opts ...grpc.CallOption) (*QueryGetApprovedCertificatesBySubjectResponse, error) {
-	out := new(QueryGetApprovedCertificatesBySubjectResponse)
-	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Query/ApprovedCertificatesBySubject", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *queryClient) RejectedCertificate(ctx context.Context, in *QueryGetRejectedCertificatesRequest, opts ...grpc.CallOption) (*QueryGetRejectedCertificatesResponse, error) {
 	out := new(QueryGetRejectedCertificatesResponse)
 	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Query/RejectedCertificate", in, out, opts...)
@@ -2791,9 +3661,27 @@ func (c *queryClient) PkiRevocationDistributionPointsByIssuerSubjectKeyID(ctx co
 	return out, nil
 }
 
-func (c *queryClient) NocRootCertificates(ctx context.Context, in *QueryGetNocRootCertificatesRequest, opts ...grpc.CallOption) (*QueryGetNocRootCertificatesResponse, error) {
-	out := new(QueryGetNocRootCertificatesResponse)
-	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Query/NocRootCertificates", in, out, opts...)
+func (c *queryClient) NocCertificatesAll(ctx context.Context, in *QueryNocCertificatesRequest, opts ...grpc.CallOption) (*QueryNocCertificatesResponse, error) {
+	out := new(QueryNocCertificatesResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Query/NocCertificatesAll", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) NocCertificatesBySubject(ctx context.Context, in *QueryGetNocCertificatesBySubjectRequest, opts ...grpc.CallOption) (*QueryGetNocCertificatesBySubjectResponse, error) {
+	out := new(QueryGetNocCertificatesBySubjectResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Query/NocCertificatesBySubject", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) NocCertificates(ctx context.Context, in *QueryGetNocCertificatesRequest, opts ...grpc.CallOption) (*QueryGetNocCertificatesResponse, error) {
+	out := new(QueryGetNocCertificatesResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Query/NocCertificates", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2803,6 +3691,15 @@ func (c *queryClient) NocRootCertificates(ctx context.Context, in *QueryGetNocRo
 func (c *queryClient) NocCertificatesByVidAndSkid(ctx context.Context, in *QueryGetNocCertificatesByVidAndSkidRequest, opts ...grpc.CallOption) (*QueryGetNocCertificatesByVidAndSkidResponse, error) {
 	out := new(QueryGetNocCertificatesByVidAndSkidResponse)
 	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Query/NocCertificatesByVidAndSkid", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) NocRootCertificates(ctx context.Context, in *QueryGetNocRootCertificatesRequest, opts ...grpc.CallOption) (*QueryGetNocRootCertificatesResponse, error) {
+	out := new(QueryGetNocRootCertificatesResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Query/NocRootCertificates", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2854,12 +3751,38 @@ func (c *queryClient) RevokedNocRootCertificatesAll(ctx context.Context, in *Que
 	return out, nil
 }
 
+func (c *queryClient) RevokedNocIcaCertificates(ctx context.Context, in *QueryGetRevokedNocIcaCertificatesRequest, opts ...grpc.CallOption) (*QueryGetRevokedNocIcaCertificatesResponse, error) {
+	out := new(QueryGetRevokedNocIcaCertificatesResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Query/RevokedNocIcaCertificates", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) RevokedNocIcaCertificatesAll(ctx context.Context, in *QueryAllRevokedNocIcaCertificatesRequest, opts ...grpc.CallOption) (*QueryAllRevokedNocIcaCertificatesResponse, error) {
+	out := new(QueryAllRevokedNocIcaCertificatesResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Query/RevokedNocIcaCertificatesAll", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 type QueryServer interface {
-	// Queries a ApprovedCertificates by index.
-	ApprovedCertificates(context.Context, *QueryGetApprovedCertificatesRequest) (*QueryGetApprovedCertificatesResponse, error)
+	// Queries a list of Certificates items.
+	CertificatesAll(context.Context, *QueryAllCertificatesRequest) (*QueryAllCertificatesResponse, error)
+	// Queries a AllCertificatesBySubject by index.
+	AllCertificatesBySubject(context.Context, *QueryGetAllCertificatesBySubjectRequest) (*QueryGetAllCertificatesBySubjectResponse, error)
+	// Queries a Certificates by index.
+	Certificates(context.Context, *QueryGetCertificatesRequest) (*QueryGetCertificatesResponse, error)
 	// Queries a list of ApprovedCertificates items.
 	ApprovedCertificatesAll(context.Context, *QueryAllApprovedCertificatesRequest) (*QueryAllApprovedCertificatesResponse, error)
+	// Queries a ApprovedCertificatesBySubject by index.
+	ApprovedCertificatesBySubject(context.Context, *QueryGetApprovedCertificatesBySubjectRequest) (*QueryGetApprovedCertificatesBySubjectResponse, error)
+	// Queries a ApprovedCertificates by index.
+	ApprovedCertificates(context.Context, *QueryGetApprovedCertificatesRequest) (*QueryGetApprovedCertificatesResponse, error)
 	// Queries a ProposedCertificate by index.
 	ProposedCertificate(context.Context, *QueryGetProposedCertificateRequest) (*QueryGetProposedCertificateResponse, error)
 	// Queries a list of ProposedCertificate items.
@@ -2878,8 +3801,6 @@ type QueryServer interface {
 	ApprovedRootCertificates(context.Context, *QueryGetApprovedRootCertificatesRequest) (*QueryGetApprovedRootCertificatesResponse, error)
 	// Queries a RevokedRootCertificates by index.
 	RevokedRootCertificates(context.Context, *QueryGetRevokedRootCertificatesRequest) (*QueryGetRevokedRootCertificatesResponse, error)
-	// Queries a ApprovedCertificatesBySubject by index.
-	ApprovedCertificatesBySubject(context.Context, *QueryGetApprovedCertificatesBySubjectRequest) (*QueryGetApprovedCertificatesBySubjectResponse, error)
 	// Queries a RejectedCertificate by index.
 	RejectedCertificate(context.Context, *QueryGetRejectedCertificatesRequest) (*QueryGetRejectedCertificatesResponse, error)
 	// Queries a list of RejectedCertificate items.
@@ -2890,10 +3811,16 @@ type QueryServer interface {
 	PkiRevocationDistributionPointAll(context.Context, *QueryAllPkiRevocationDistributionPointRequest) (*QueryAllPkiRevocationDistributionPointResponse, error)
 	// Queries a PkiRevocationDistributionPointsByIssuerSubjectKeyID by index.
 	PkiRevocationDistributionPointsByIssuerSubjectKeyID(context.Context, *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest) (*QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse, error)
-	// Queries a NocRootCertificates by index.
-	NocRootCertificates(context.Context, *QueryGetNocRootCertificatesRequest) (*QueryGetNocRootCertificatesResponse, error)
+	// Queries a list of NocCertificates items.
+	NocCertificatesAll(context.Context, *QueryNocCertificatesRequest) (*QueryNocCertificatesResponse, error)
+	// Queries a NocCertificatesBySubject by index.
+	NocCertificatesBySubject(context.Context, *QueryGetNocCertificatesBySubjectRequest) (*QueryGetNocCertificatesBySubjectResponse, error)
+	// Queries a NocCertificates by index.
+	NocCertificates(context.Context, *QueryGetNocCertificatesRequest) (*QueryGetNocCertificatesResponse, error)
 	// Queries a NocCertificatesByVidAndSkid by index.
 	NocCertificatesByVidAndSkid(context.Context, *QueryGetNocCertificatesByVidAndSkidRequest) (*QueryGetNocCertificatesByVidAndSkidResponse, error)
+	// Queries a NocRootCertificates by index.
+	NocRootCertificates(context.Context, *QueryGetNocRootCertificatesRequest) (*QueryGetNocRootCertificatesResponse, error)
 	// Queries a list of NocRootCertificates items.
 	NocRootCertificatesAll(context.Context, *QueryAllNocRootCertificatesRequest) (*QueryAllNocRootCertificatesResponse, error)
 	// Queries a NocIcaCertificates by index.
@@ -2904,17 +3831,33 @@ type QueryServer interface {
 	RevokedNocRootCertificates(context.Context, *QueryGetRevokedNocRootCertificatesRequest) (*QueryGetRevokedNocRootCertificatesResponse, error)
 	// Queries a list of RevokedNocRootCertificates items.
 	RevokedNocRootCertificatesAll(context.Context, *QueryAllRevokedNocRootCertificatesRequest) (*QueryAllRevokedNocRootCertificatesResponse, error)
+	// Queries a RevokedNocIcaCertificates by index.
+	RevokedNocIcaCertificates(context.Context, *QueryGetRevokedNocIcaCertificatesRequest) (*QueryGetRevokedNocIcaCertificatesResponse, error)
+	// Queries a list of RevokedNocIcaCertificates items.
+	RevokedNocIcaCertificatesAll(context.Context, *QueryAllRevokedNocIcaCertificatesRequest) (*QueryAllRevokedNocIcaCertificatesResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
 type UnimplementedQueryServer struct {
 }
 
-func (*UnimplementedQueryServer) ApprovedCertificates(ctx context.Context, req *QueryGetApprovedCertificatesRequest) (*QueryGetApprovedCertificatesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ApprovedCertificates not implemented")
+func (*UnimplementedQueryServer) CertificatesAll(ctx context.Context, req *QueryAllCertificatesRequest) (*QueryAllCertificatesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CertificatesAll not implemented")
+}
+func (*UnimplementedQueryServer) AllCertificatesBySubject(ctx context.Context, req *QueryGetAllCertificatesBySubjectRequest) (*QueryGetAllCertificatesBySubjectResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AllCertificatesBySubject not implemented")
+}
+func (*UnimplementedQueryServer) Certificates(ctx context.Context, req *QueryGetCertificatesRequest) (*QueryGetCertificatesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Certificates not implemented")
 }
 func (*UnimplementedQueryServer) ApprovedCertificatesAll(ctx context.Context, req *QueryAllApprovedCertificatesRequest) (*QueryAllApprovedCertificatesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ApprovedCertificatesAll not implemented")
+}
+func (*UnimplementedQueryServer) ApprovedCertificatesBySubject(ctx context.Context, req *QueryGetApprovedCertificatesBySubjectRequest) (*QueryGetApprovedCertificatesBySubjectResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ApprovedCertificatesBySubject not implemented")
+}
+func (*UnimplementedQueryServer) ApprovedCertificates(ctx context.Context, req *QueryGetApprovedCertificatesRequest) (*QueryGetApprovedCertificatesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ApprovedCertificates not implemented")
 }
 func (*UnimplementedQueryServer) ProposedCertificate(ctx context.Context, req *QueryGetProposedCertificateRequest) (*QueryGetProposedCertificateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ProposedCertificate not implemented")
@@ -2943,9 +3886,6 @@ func (*UnimplementedQueryServer) ApprovedRootCertificates(ctx context.Context, r
 func (*UnimplementedQueryServer) RevokedRootCertificates(ctx context.Context, req *QueryGetRevokedRootCertificatesRequest) (*QueryGetRevokedRootCertificatesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RevokedRootCertificates not implemented")
 }
-func (*UnimplementedQueryServer) ApprovedCertificatesBySubject(ctx context.Context, req *QueryGetApprovedCertificatesBySubjectRequest) (*QueryGetApprovedCertificatesBySubjectResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ApprovedCertificatesBySubject not implemented")
-}
 func (*UnimplementedQueryServer) RejectedCertificate(ctx context.Context, req *QueryGetRejectedCertificatesRequest) (*QueryGetRejectedCertificatesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RejectedCertificate not implemented")
 }
@@ -2961,11 +3901,20 @@ func (*UnimplementedQueryServer) PkiRevocationDistributionPointAll(ctx context.C
 func (*UnimplementedQueryServer) PkiRevocationDistributionPointsByIssuerSubjectKeyID(ctx context.Context, req *QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDRequest) (*QueryGetPkiRevocationDistributionPointsByIssuerSubjectKeyIDResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PkiRevocationDistributionPointsByIssuerSubjectKeyID not implemented")
 }
-func (*UnimplementedQueryServer) NocRootCertificates(ctx context.Context, req *QueryGetNocRootCertificatesRequest) (*QueryGetNocRootCertificatesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method NocRootCertificates not implemented")
+func (*UnimplementedQueryServer) NocCertificatesAll(ctx context.Context, req *QueryNocCertificatesRequest) (*QueryNocCertificatesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NocCertificatesAll not implemented")
+}
+func (*UnimplementedQueryServer) NocCertificatesBySubject(ctx context.Context, req *QueryGetNocCertificatesBySubjectRequest) (*QueryGetNocCertificatesBySubjectResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NocCertificatesBySubject not implemented")
+}
+func (*UnimplementedQueryServer) NocCertificates(ctx context.Context, req *QueryGetNocCertificatesRequest) (*QueryGetNocCertificatesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NocCertificates not implemented")
 }
 func (*UnimplementedQueryServer) NocCertificatesByVidAndSkid(ctx context.Context, req *QueryGetNocCertificatesByVidAndSkidRequest) (*QueryGetNocCertificatesByVidAndSkidResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method NocCertificatesByVidAndSkid not implemented")
+}
+func (*UnimplementedQueryServer) NocRootCertificates(ctx context.Context, req *QueryGetNocRootCertificatesRequest) (*QueryGetNocRootCertificatesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NocRootCertificates not implemented")
 }
 func (*UnimplementedQueryServer) NocRootCertificatesAll(ctx context.Context, req *QueryAllNocRootCertificatesRequest) (*QueryAllNocRootCertificatesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method NocRootCertificatesAll not implemented")
@@ -2982,25 +3931,67 @@ func (*UnimplementedQueryServer) RevokedNocRootCertificates(ctx context.Context,
 func (*UnimplementedQueryServer) RevokedNocRootCertificatesAll(ctx context.Context, req *QueryAllRevokedNocRootCertificatesRequest) (*QueryAllRevokedNocRootCertificatesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RevokedNocRootCertificatesAll not implemented")
 }
+func (*UnimplementedQueryServer) RevokedNocIcaCertificates(ctx context.Context, req *QueryGetRevokedNocIcaCertificatesRequest) (*QueryGetRevokedNocIcaCertificatesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RevokedNocIcaCertificates not implemented")
+}
+func (*UnimplementedQueryServer) RevokedNocIcaCertificatesAll(ctx context.Context, req *QueryAllRevokedNocIcaCertificatesRequest) (*QueryAllRevokedNocIcaCertificatesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RevokedNocIcaCertificatesAll not implemented")
+}
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
 	s.RegisterService(&_Query_serviceDesc, srv)
 }
 
-func _Query_ApprovedCertificates_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryGetApprovedCertificatesRequest)
+func _Query_CertificatesAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryAllCertificatesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).ApprovedCertificates(ctx, in)
+		return srv.(QueryServer).CertificatesAll(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Query/ApprovedCertificates",
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Query/CertificatesAll",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).ApprovedCertificates(ctx, req.(*QueryGetApprovedCertificatesRequest))
+		return srv.(QueryServer).CertificatesAll(ctx, req.(*QueryAllCertificatesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_AllCertificatesBySubject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetAllCertificatesBySubjectRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).AllCertificatesBySubject(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Query/AllCertificatesBySubject",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).AllCertificatesBySubject(ctx, req.(*QueryGetAllCertificatesBySubjectRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_Certificates_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetCertificatesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).Certificates(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Query/Certificates",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).Certificates(ctx, req.(*QueryGetCertificatesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3019,6 +4010,42 @@ func _Query_ApprovedCertificatesAll_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(QueryServer).ApprovedCertificatesAll(ctx, req.(*QueryAllApprovedCertificatesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_ApprovedCertificatesBySubject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetApprovedCertificatesBySubjectRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).ApprovedCertificatesBySubject(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Query/ApprovedCertificatesBySubject",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).ApprovedCertificatesBySubject(ctx, req.(*QueryGetApprovedCertificatesBySubjectRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_ApprovedCertificates_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetApprovedCertificatesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).ApprovedCertificates(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Query/ApprovedCertificates",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).ApprovedCertificates(ctx, req.(*QueryGetApprovedCertificatesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3185,24 +4212,6 @@ func _Query_RevokedRootCertificates_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Query_ApprovedCertificatesBySubject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryGetApprovedCertificatesBySubjectRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(QueryServer).ApprovedCertificatesBySubject(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Query/ApprovedCertificatesBySubject",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).ApprovedCertificatesBySubject(ctx, req.(*QueryGetApprovedCertificatesBySubjectRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Query_RejectedCertificate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryGetRejectedCertificatesRequest)
 	if err := dec(in); err != nil {
@@ -3293,20 +4302,56 @@ func _Query_PkiRevocationDistributionPointsByIssuerSubjectKeyID_Handler(srv inte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Query_NocRootCertificates_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryGetNocRootCertificatesRequest)
+func _Query_NocCertificatesAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryNocCertificatesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).NocRootCertificates(ctx, in)
+		return srv.(QueryServer).NocCertificatesAll(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Query/NocRootCertificates",
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Query/NocCertificatesAll",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).NocRootCertificates(ctx, req.(*QueryGetNocRootCertificatesRequest))
+		return srv.(QueryServer).NocCertificatesAll(ctx, req.(*QueryNocCertificatesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_NocCertificatesBySubject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetNocCertificatesBySubjectRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).NocCertificatesBySubject(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Query/NocCertificatesBySubject",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).NocCertificatesBySubject(ctx, req.(*QueryGetNocCertificatesBySubjectRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_NocCertificates_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetNocCertificatesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).NocCertificates(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Query/NocCertificates",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).NocCertificates(ctx, req.(*QueryGetNocCertificatesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3325,6 +4370,24 @@ func _Query_NocCertificatesByVidAndSkid_Handler(srv interface{}, ctx context.Con
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(QueryServer).NocCertificatesByVidAndSkid(ctx, req.(*QueryGetNocCertificatesByVidAndSkidRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_NocRootCertificates_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetNocRootCertificatesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).NocRootCertificates(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Query/NocRootCertificates",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).NocRootCertificates(ctx, req.(*QueryGetNocRootCertificatesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3419,17 +4482,69 @@ func _Query_RevokedNocRootCertificatesAll_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_RevokedNocIcaCertificates_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetRevokedNocIcaCertificatesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).RevokedNocIcaCertificates(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Query/RevokedNocIcaCertificates",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).RevokedNocIcaCertificates(ctx, req.(*QueryGetRevokedNocIcaCertificatesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_RevokedNocIcaCertificatesAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryAllRevokedNocIcaCertificatesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).RevokedNocIcaCertificatesAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Query/RevokedNocIcaCertificatesAll",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).RevokedNocIcaCertificatesAll(ctx, req.(*QueryAllRevokedNocIcaCertificatesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Query_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "zigbeealliance.distributedcomplianceledger.pki.Query",
 	HandlerType: (*QueryServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "ApprovedCertificates",
-			Handler:    _Query_ApprovedCertificates_Handler,
+			MethodName: "CertificatesAll",
+			Handler:    _Query_CertificatesAll_Handler,
+		},
+		{
+			MethodName: "AllCertificatesBySubject",
+			Handler:    _Query_AllCertificatesBySubject_Handler,
+		},
+		{
+			MethodName: "Certificates",
+			Handler:    _Query_Certificates_Handler,
 		},
 		{
 			MethodName: "ApprovedCertificatesAll",
 			Handler:    _Query_ApprovedCertificatesAll_Handler,
+		},
+		{
+			MethodName: "ApprovedCertificatesBySubject",
+			Handler:    _Query_ApprovedCertificatesBySubject_Handler,
+		},
+		{
+			MethodName: "ApprovedCertificates",
+			Handler:    _Query_ApprovedCertificates_Handler,
 		},
 		{
 			MethodName: "ProposedCertificate",
@@ -3468,10 +4583,6 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Query_RevokedRootCertificates_Handler,
 		},
 		{
-			MethodName: "ApprovedCertificatesBySubject",
-			Handler:    _Query_ApprovedCertificatesBySubject_Handler,
-		},
-		{
 			MethodName: "RejectedCertificate",
 			Handler:    _Query_RejectedCertificate_Handler,
 		},
@@ -3492,12 +4603,24 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Query_PkiRevocationDistributionPointsByIssuerSubjectKeyID_Handler,
 		},
 		{
-			MethodName: "NocRootCertificates",
-			Handler:    _Query_NocRootCertificates_Handler,
+			MethodName: "NocCertificatesAll",
+			Handler:    _Query_NocCertificatesAll_Handler,
+		},
+		{
+			MethodName: "NocCertificatesBySubject",
+			Handler:    _Query_NocCertificatesBySubject_Handler,
+		},
+		{
+			MethodName: "NocCertificates",
+			Handler:    _Query_NocCertificates_Handler,
 		},
 		{
 			MethodName: "NocCertificatesByVidAndSkid",
 			Handler:    _Query_NocCertificatesByVidAndSkid_Handler,
+		},
+		{
+			MethodName: "NocRootCertificates",
+			Handler:    _Query_NocRootCertificates_Handler,
 		},
 		{
 			MethodName: "NocRootCertificatesAll",
@@ -3519,9 +4642,234 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 			MethodName: "RevokedNocRootCertificatesAll",
 			Handler:    _Query_RevokedNocRootCertificatesAll_Handler,
 		},
+		{
+			MethodName: "RevokedNocIcaCertificates",
+			Handler:    _Query_RevokedNocIcaCertificates_Handler,
+		},
+		{
+			MethodName: "RevokedNocIcaCertificatesAll",
+			Handler:    _Query_RevokedNocIcaCertificatesAll_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "zigbeealliance/distributedcomplianceledger/pki/query.proto",
+}
+
+func (m *QueryAllCertificatesRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllCertificatesRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllCertificatesRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllCertificatesResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllCertificatesResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllCertificatesResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Certificates) > 0 {
+		for iNdEx := len(m.Certificates) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Certificates[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetAllCertificatesBySubjectRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetAllCertificatesBySubjectRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetAllCertificatesBySubjectRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Subject) > 0 {
+		i -= len(m.Subject)
+		copy(dAtA[i:], m.Subject)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Subject)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetAllCertificatesBySubjectResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetAllCertificatesBySubjectResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetAllCertificatesBySubjectResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.AllCertificatesBySubject.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetCertificatesRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetCertificatesRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetCertificatesRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.SubjectKeyId) > 0 {
+		i -= len(m.SubjectKeyId)
+		copy(dAtA[i:], m.SubjectKeyId)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.SubjectKeyId)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Subject) > 0 {
+		i -= len(m.Subject)
+		copy(dAtA[i:], m.Subject)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Subject)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetCertificatesResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetCertificatesResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetCertificatesResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.Certificates.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
 }
 
 func (m *QueryGetApprovedCertificatesRequest) Marshal() (dAtA []byte, err error) {
@@ -5219,6 +6567,160 @@ func (m *QueryAllRevokedNocRootCertificatesResponse) MarshalToSizedBuffer(dAtA [
 	return len(dAtA) - i, nil
 }
 
+func (m *QueryGetRevokedNocIcaCertificatesRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetRevokedNocIcaCertificatesRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetRevokedNocIcaCertificatesRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.SubjectKeyId) > 0 {
+		i -= len(m.SubjectKeyId)
+		copy(dAtA[i:], m.SubjectKeyId)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.SubjectKeyId)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Subject) > 0 {
+		i -= len(m.Subject)
+		copy(dAtA[i:], m.Subject)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Subject)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetRevokedNocIcaCertificatesResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetRevokedNocIcaCertificatesResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetRevokedNocIcaCertificatesResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.RevokedNocIcaCertificates.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllRevokedNocIcaCertificatesRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllRevokedNocIcaCertificatesRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllRevokedNocIcaCertificatesRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllRevokedNocIcaCertificatesResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllRevokedNocIcaCertificatesResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllRevokedNocIcaCertificatesResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.RevokedNocIcaCertificates) > 0 {
+		for iNdEx := len(m.RevokedNocIcaCertificates) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.RevokedNocIcaCertificates[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
 func (m *QueryGetNocCertificatesByVidAndSkidRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -5287,6 +6789,230 @@ func (m *QueryGetNocCertificatesByVidAndSkidResponse) MarshalToSizedBuffer(dAtA 
 	return len(dAtA) - i, nil
 }
 
+func (m *QueryNocCertificatesRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryNocCertificatesRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryNocCertificatesRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.SubjectKeyId) > 0 {
+		i -= len(m.SubjectKeyId)
+		copy(dAtA[i:], m.SubjectKeyId)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.SubjectKeyId)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryNocCertificatesResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryNocCertificatesResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryNocCertificatesResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.NocCertificates) > 0 {
+		for iNdEx := len(m.NocCertificates) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.NocCertificates[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetNocCertificatesBySubjectRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetNocCertificatesBySubjectRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetNocCertificatesBySubjectRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Subject) > 0 {
+		i -= len(m.Subject)
+		copy(dAtA[i:], m.Subject)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Subject)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetNocCertificatesBySubjectResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetNocCertificatesBySubjectResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetNocCertificatesBySubjectResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.NocCertificatesBySubject.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetNocCertificatesRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetNocCertificatesRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetNocCertificatesRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.SubjectKeyId) > 0 {
+		i -= len(m.SubjectKeyId)
+		copy(dAtA[i:], m.SubjectKeyId)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.SubjectKeyId)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Subject) > 0 {
+		i -= len(m.Subject)
+		copy(dAtA[i:], m.Subject)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Subject)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetNocCertificatesResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetNocCertificatesResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetNocCertificatesResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.NocCertificates.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintQuery(dAtA []byte, offset int, v uint64) int {
 	offset -= sovQuery(v)
 	base := offset
@@ -5298,6 +7024,90 @@ func encodeVarintQuery(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
+func (m *QueryAllCertificatesRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryAllCertificatesResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Certificates) > 0 {
+		for _, e := range m.Certificates {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetAllCertificatesBySubjectRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Subject)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetAllCertificatesBySubjectResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.AllCertificatesBySubject.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	return n
+}
+
+func (m *QueryGetCertificatesRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Subject)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	l = len(m.SubjectKeyId)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetCertificatesResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.Certificates.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	return n
+}
+
 func (m *QueryGetApprovedCertificatesRequest) Size() (n int) {
 	if m == nil {
 		return 0
@@ -5955,6 +7765,66 @@ func (m *QueryAllRevokedNocRootCertificatesResponse) Size() (n int) {
 	return n
 }
 
+func (m *QueryGetRevokedNocIcaCertificatesRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Subject)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	l = len(m.SubjectKeyId)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetRevokedNocIcaCertificatesResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.RevokedNocIcaCertificates.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	return n
+}
+
+func (m *QueryAllRevokedNocIcaCertificatesRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryAllRevokedNocIcaCertificatesResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.RevokedNocIcaCertificates) > 0 {
+		for _, e := range m.RevokedNocIcaCertificates {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
 func (m *QueryGetNocCertificatesByVidAndSkidRequest) Size() (n int) {
 	if m == nil {
 		return 0
@@ -5982,11 +7852,667 @@ func (m *QueryGetNocCertificatesByVidAndSkidResponse) Size() (n int) {
 	return n
 }
 
+func (m *QueryNocCertificatesRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	l = len(m.SubjectKeyId)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryNocCertificatesResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.NocCertificates) > 0 {
+		for _, e := range m.NocCertificates {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetNocCertificatesBySubjectRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Subject)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetNocCertificatesBySubjectResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.NocCertificatesBySubject.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	return n
+}
+
+func (m *QueryGetNocCertificatesRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Subject)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	l = len(m.SubjectKeyId)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetNocCertificatesResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.NocCertificates.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	return n
+}
+
 func sovQuery(x uint64) (n int) {
 	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozQuery(x uint64) (n int) {
 	return sovQuery(uint64((x << 1) ^ uint64((int64(x) >> 63))))
+}
+func (m *QueryAllCertificatesRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllCertificatesRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllCertificatesRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllCertificatesResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllCertificatesResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllCertificatesResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Certificates", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Certificates = append(m.Certificates, AllCertificates{})
+			if err := m.Certificates[len(m.Certificates)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetAllCertificatesBySubjectRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetAllCertificatesBySubjectRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetAllCertificatesBySubjectRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Subject", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Subject = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetAllCertificatesBySubjectResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetAllCertificatesBySubjectResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetAllCertificatesBySubjectResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AllCertificatesBySubject", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.AllCertificatesBySubject.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetCertificatesRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetCertificatesRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetCertificatesRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Subject", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Subject = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubjectKeyId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SubjectKeyId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetCertificatesResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetCertificatesResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetCertificatesResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Certificates", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.Certificates.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
 }
 func (m *QueryGetApprovedCertificatesRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
@@ -10401,6 +12927,409 @@ func (m *QueryAllRevokedNocRootCertificatesResponse) Unmarshal(dAtA []byte) erro
 	}
 	return nil
 }
+func (m *QueryGetRevokedNocIcaCertificatesRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetRevokedNocIcaCertificatesRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetRevokedNocIcaCertificatesRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Subject", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Subject = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubjectKeyId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SubjectKeyId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetRevokedNocIcaCertificatesResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetRevokedNocIcaCertificatesResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetRevokedNocIcaCertificatesResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RevokedNocIcaCertificates", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RevokedNocIcaCertificates.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllRevokedNocIcaCertificatesRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllRevokedNocIcaCertificatesRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllRevokedNocIcaCertificatesRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllRevokedNocIcaCertificatesResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllRevokedNocIcaCertificatesResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllRevokedNocIcaCertificatesResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RevokedNocIcaCertificates", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.RevokedNocIcaCertificates = append(m.RevokedNocIcaCertificates, RevokedNocIcaCertificates{})
+			if err := m.RevokedNocIcaCertificates[len(m.RevokedNocIcaCertificates)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func (m *QueryGetNocCertificatesByVidAndSkidRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -10561,6 +13490,606 @@ func (m *QueryGetNocCertificatesByVidAndSkidResponse) Unmarshal(dAtA []byte) err
 				return io.ErrUnexpectedEOF
 			}
 			if err := m.NocCertificatesByVidAndSkid.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryNocCertificatesRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryNocCertificatesRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryNocCertificatesRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubjectKeyId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SubjectKeyId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryNocCertificatesResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryNocCertificatesResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryNocCertificatesResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field NocCertificates", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.NocCertificates = append(m.NocCertificates, NocCertificates{})
+			if err := m.NocCertificates[len(m.NocCertificates)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetNocCertificatesBySubjectRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetNocCertificatesBySubjectRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetNocCertificatesBySubjectRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Subject", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Subject = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetNocCertificatesBySubjectResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetNocCertificatesBySubjectResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetNocCertificatesBySubjectResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field NocCertificatesBySubject", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.NocCertificatesBySubject.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetNocCertificatesRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetNocCertificatesRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetNocCertificatesRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Subject", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Subject = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubjectKeyId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SubjectKeyId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetNocCertificatesResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetNocCertificatesResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetNocCertificatesResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field NocCertificates", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.NocCertificates.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex

@@ -119,11 +119,49 @@ func filterCertificates(certificates *[]*types.Certificate, predicate Certificat
 
 func (k msgServer) removeApprovedX509Cert(ctx sdk.Context, certID types.CertificateIdentifier, certificates *types.ApprovedCertificates, serialNumber string) {
 	if len(certificates.Certs) == 0 {
+		k.RemoveAllCertificates(ctx, certID.Subject, certID.SubjectKeyId)
+		k.RemoveAllCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
 		k.RemoveApprovedCertificates(ctx, certID.Subject, certID.SubjectKeyId)
 		k.RemoveApprovedCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
 		k.RemoveApprovedCertificatesBySubjectKeyID(ctx, certID.Subject, certID.SubjectKeyId)
 	} else {
-		k.SetApprovedCertificates(ctx, *certificates)
-		k.RemoveApprovedCertificatesBySubjectKeyIDAndSerialNumber(ctx, certID.Subject, certID.SubjectKeyId, serialNumber)
+		k.RemoveAllCertificatesBySerialNumber(ctx, certID.Subject, certID.SubjectKeyId, serialNumber)
+		k.RemoveApprovedCertificatesBySerialNumber(ctx, certID.Subject, certID.SubjectKeyId, serialNumber)
+		k.RemoveApprovedCertificatesBySubjectKeyIDBySerialNumber(ctx, certID.Subject, certID.SubjectKeyId, serialNumber)
+	}
+}
+
+func (k msgServer) removeNocX509Cert(
+	ctx sdk.Context,
+	certID types.CertificateIdentifier,
+	certificates *types.NocCertificates,
+	accountVid int32,
+	serialNumber string,
+	isRoot bool,
+) {
+	if len(certificates.Certs) == 0 { //nolint:nestif
+		k.RemoveAllCertificates(ctx, certID.Subject, certID.SubjectKeyId)
+		k.RemoveAllCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
+		k.RemoveNocCertificates(ctx, certID.Subject, certID.SubjectKeyId)
+		k.RemoveNocCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
+		k.RemoveNocCertificatesBySubjectAndSubjectKeyID(ctx, certID.Subject, certID.SubjectKeyId)
+		k.RemoveNocCertificatesByVidAndSkid(ctx, accountVid, certID.SubjectKeyId)
+
+		if isRoot {
+			k.RemoveNocRootCertificate(ctx, certID.Subject, certID.SubjectKeyId, accountVid)
+		} else {
+			k.RemoveNocIcaCertificate(ctx, certID.Subject, certID.SubjectKeyId, accountVid)
+		}
+	} else {
+		k.RemoveAllCertificatesBySerialNumber(ctx, certID.Subject, certID.SubjectKeyId, serialNumber)
+		k.RemoveNocCertificatesBySerialNumber(ctx, certID.Subject, certID.SubjectKeyId, serialNumber)
+		k.RemoveNocCertificatesBySubjectKeyIDBySerialNumber(ctx, certID.Subject, certID.SubjectKeyId, serialNumber)
+		k.RemoveNocCertificatesByVidAndSkidBySerialNumber(ctx, accountVid, certID.Subject, certID.SubjectKeyId, serialNumber)
+
+		if isRoot {
+			k.RemoveNocRootCertificateBySerialNumber(ctx, certID.Subject, certID.SubjectKeyId, accountVid, serialNumber)
+		} else {
+			k.RemoveNocIcaCertificateBySerialNumber(ctx, certID.Subject, certID.SubjectKeyId, accountVid, serialNumber)
+		}
 	}
 }

@@ -22,7 +22,7 @@ func (k msgServer) RevokeNocX509IcaCert(goCtx context.Context, msg *types.MsgRev
 		return nil, pkitypes.NewErrUnauthorizedRole("MsgRevokeNocX509Cert", dclauthtypes.Vendor)
 	}
 
-	certificates, _ := k.GetApprovedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
+	certificates, _ := k.GetNocCertificates(ctx, msg.Subject, msg.SubjectKeyId)
 	if len(certificates.Certs) == 0 {
 		return nil, pkitypes.NewErrCertificateDoesNotExist(msg.Subject, msg.SubjectKeyId)
 	}
@@ -32,7 +32,7 @@ func (k msgServer) RevokeNocX509IcaCert(goCtx context.Context, msg *types.MsgRev
 		return nil, pkitypes.NewErrMessageExpectedNonRoot(msg.Subject, msg.SubjectKeyId)
 	}
 	// Existing certificate must be NOC certificate
-	if !cert.IsNoc {
+	if cert.CertificateType != types.CertificateType_OperationalPKI {
 		return nil, pkitypes.NewErrProvidedNocCertButExistingNotNoc(cert.Subject, cert.SubjectKeyId)
 	}
 
@@ -49,12 +49,12 @@ func (k msgServer) RevokeNocX509IcaCert(goCtx context.Context, msg *types.MsgRev
 			return nil, err
 		}
 	} else {
-		k._revokeNocCertificates(ctx, certificates, cert.Vid)
+		k._revokeNocIcaCertificates(ctx, certificates, cert.Vid)
 	}
 
 	if msg.RevokeChild {
 		// Remove certificate identifier from issuer's ChildCertificates record
-		k.RevokeChildCertificates(ctx, msg.Subject, msg.SubjectKeyId)
+		k.RevokeNocChildCertificates(ctx, msg.Subject, msg.SubjectKeyId)
 	}
 
 	return &types.MsgRevokeNocX509IcaCertResponse{}, nil
@@ -63,7 +63,7 @@ func (k msgServer) RevokeNocX509IcaCert(goCtx context.Context, msg *types.MsgRev
 func (k msgServer) _revokeNocCertificate(
 	ctx sdk.Context,
 	serialNumber string,
-	certificates types.ApprovedCertificates,
+	certificates types.NocCertificates,
 	vid int32,
 ) error {
 	cert, found := findCertificate(serialNumber, &certificates.Certs)
@@ -73,42 +73,53 @@ func (k msgServer) _revokeNocCertificate(
 		)
 	}
 
-	revCerts := types.ApprovedCertificates{
+	revCerts := types.RevokedNocIcaCertificates{
 		Subject:      cert.Subject,
 		SubjectKeyId: cert.SubjectKeyId,
 		Certs:        []*types.Certificate{cert},
 	}
-	k.AddRevokedCertificates(ctx, revCerts)
+	k.AddRevokedNocIcaCertificates(ctx, revCerts)
 
 	removeCertFromList(cert.Issuer, cert.SerialNumber, &certificates.Certs)
-	if len(certificates.Certs) == 0 {
-		k.RemoveNocIcaCertificate(ctx, certificates.Subject, certificates.SubjectKeyId, vid)
-		k.RemoveApprovedCertificates(ctx, cert.Subject, cert.SubjectKeyId)
-		k.RemoveApprovedCertificateBySubject(ctx, cert.Subject, cert.SubjectKeyId)
-		k.RemoveApprovedCertificatesBySubjectKeyID(ctx, cert.Subject, cert.SubjectKeyId)
-	} else {
-		k.RemoveNocIcaCertificateBySerialNumber(ctx, vid, cert.Subject, cert.SubjectKeyId, serialNumber)
-		k.RemoveApprovedCertificatesBySubjectKeyIDAndSerialNumber(ctx, cert.Subject, cert.SubjectKeyId, serialNumber)
-		k.SetApprovedCertificates(ctx, certificates)
-	}
 
-	// remove from vid, subject key ID -> certificates map
-	k.RemoveNocCertificateByVidSubjectSkidAndSerialNumber(ctx, vid, cert.Subject, cert.SubjectKeyId, serialNumber)
+	if len(certificates.Certs) == 0 {
+		k.RemoveAllCertificates(ctx, certificates.Subject, certificates.SubjectKeyId)
+		k.RemoveAllCertificateBySubject(ctx, certificates.Subject, certificates.SubjectKeyId)
+		k.RemoveNocCertificates(ctx, certificates.Subject, certificates.SubjectKeyId)
+		k.RemoveNocIcaCertificate(ctx, certificates.Subject, certificates.SubjectKeyId, vid)
+		k.RemoveNocCertificatesByVidAndSkid(ctx, vid, cert.SubjectKeyId)
+		k.RemoveNocCertificateBySubject(ctx, cert.Subject, cert.SubjectKeyId)
+		k.RemoveNocCertificatesBySubjectAndSubjectKeyID(ctx, cert.Subject, cert.SubjectKeyId)
+	} else {
+		k.RemoveAllCertificatesBySerialNumber(ctx, cert.Subject, cert.SubjectKeyId, serialNumber)
+		k.RemoveNocCertificatesBySerialNumber(ctx, cert.Subject, cert.SubjectKeyId, serialNumber)
+		k.RemoveNocIcaCertificateBySerialNumber(ctx, cert.Subject, cert.SubjectKeyId, vid, serialNumber)
+		k.RemoveNocCertificatesByVidAndSkidBySerialNumber(ctx, vid, cert.Subject, cert.SubjectKeyId, serialNumber)
+		k.RemoveNocCertificatesBySubjectKeyIDBySerialNumber(ctx, cert.Subject, cert.SubjectKeyId, serialNumber)
+	}
 
 	return nil
 }
 
-func (k msgServer) _revokeNocCertificates(ctx sdk.Context, certificates types.ApprovedCertificates, vid int32) {
+func (k msgServer) _revokeNocIcaCertificates(ctx sdk.Context, certificates types.NocCertificates, vid int32) {
 	// Add certs into revoked lists
-	k.AddRevokedCertificates(ctx, certificates)
+	k.AddRevokedNocIcaCertificates(ctx, types.RevokedNocIcaCertificates{
+		Subject:      certificates.Subject,
+		SubjectKeyId: certificates.SubjectKeyId,
+		Certs:        certificates.Certs,
+	})
+	// remove cert from global certs list
+	k.RemoveAllCertificates(ctx, certificates.Subject, certificates.SubjectKeyId)
+	// remove cert from global certs list -> subject key ID map
+	k.RemoveAllCertificateBySubject(ctx, certificates.Subject, certificates.SubjectKeyId)
 	// remove cert from NOC certs list
+	k.RemoveNocCertificates(ctx, certificates.Subject, certificates.SubjectKeyId)
+	// remove cert from NOC ica certs list
 	k.RemoveNocIcaCertificate(ctx, certificates.Subject, certificates.SubjectKeyId, vid)
-	// remove cert from approved certs list
-	k.RemoveApprovedCertificates(ctx, certificates.Subject, certificates.SubjectKeyId)
 	// remove from subject -> subject key ID map
-	k.RemoveApprovedCertificateBySubject(ctx, certificates.Subject, certificates.SubjectKeyId)
+	k.RemoveNocCertificateBySubject(ctx, certificates.Subject, certificates.SubjectKeyId)
 	// remove from subject key ID -> certificates map
-	k.RemoveApprovedCertificatesBySubjectKeyID(ctx, certificates.Subject, certificates.SubjectKeyId)
+	k.RemoveNocCertificatesBySubjectAndSubjectKeyID(ctx, certificates.Subject, certificates.SubjectKeyId)
 	// remove from vid, subject key ID -> certificates map
 	k.RemoveNocCertificateByVidSubjectAndSkid(ctx, vid, certificates.Subject, certificates.SubjectKeyId)
 }

@@ -102,7 +102,7 @@ func (k Keeper) AddChildCertificate(ctx sdk.Context, issuer string, authorityKey
 	), b)
 }
 
-func (k msgServer) RevokeChildCertificates(ctx sdk.Context, issuer string, authorityKeyID string) {
+func (k msgServer) RevokeApprovedChildCertificates(ctx sdk.Context, issuer string, authorityKeyID string) {
 	// Get issuer's ChildCertificates record
 	childCertificates, _ := k.GetChildCertificates(ctx, issuer, authorityKeyID)
 
@@ -110,14 +110,15 @@ func (k msgServer) RevokeChildCertificates(ctx sdk.Context, issuer string, autho
 	for _, certIdentifier := range childCertificates.CertIds {
 		// Revoke certificates with this subject/subjectKeyID combination
 		certificates, _ := k.GetApprovedCertificates(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
-		k.AddRevokedCertificates(ctx, certificates)
-		// FIXME: Below two lines is not in the context of RevokeChildCertificates method. In future current implementation must be refactored
-		if len(certificates.Certs) > 0 {
-			// If cert is NOC then remove it from NOC ICA certificates list
-			k.RemoveNocIcaCertificate(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId, certificates.Certs[0].Vid)
-			// remove from vid, subject key ID -> certificates map
-			k.RemoveNocCertificateByVidSubjectAndSkid(ctx, certificates.Certs[0].Vid, certIdentifier.Subject, certificates.SubjectKeyId)
-		}
+		k.AddRevokedCertificates(ctx, types.RevokedCertificates(certificates))
+
+		// Remove certificate from global certificates list
+		k.RemoveAllCertificates(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
+
+		// remove from global subject -> subject key ID map
+		k.RemoveAllCertificateBySubject(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
+
+		// Remove certificate from approved certificates list
 		k.RemoveApprovedCertificates(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
 
 		// remove from subject -> subject key ID map
@@ -127,7 +128,51 @@ func (k msgServer) RevokeChildCertificates(ctx sdk.Context, issuer string, autho
 		k.RemoveApprovedCertificatesBySubjectKeyID(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
 
 		// Process child certificates recursively
-		k.RevokeChildCertificates(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
+		k.RevokeApprovedChildCertificates(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
+	}
+
+	// Delete entire ChildCertificates record of issuer
+	k.RemoveChildCertificates(ctx, issuer, authorityKeyID)
+}
+
+func (k msgServer) RevokeNocChildCertificates(ctx sdk.Context, issuer string, authorityKeyID string) {
+	// Get issuer's ChildCertificates record
+	childCertificates, _ := k.GetChildCertificates(ctx, issuer, authorityKeyID)
+
+	// For each child certificate subject/subjectKeyID combination
+	for _, certIdentifier := range childCertificates.CertIds {
+		// Revoke certificates with this subject/subjectKeyID combination
+		certificates, _ := k.GetNocCertificates(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
+
+		k.AddRevokedNocIcaCertificates(ctx, types.RevokedNocIcaCertificates{
+			Subject:      certificates.Subject,
+			SubjectKeyId: certificates.SubjectKeyId,
+			Certs:        certificates.Certs,
+		})
+
+		// Remove certificate from global certificates list
+		k.RemoveAllCertificates(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
+
+		// remove from global subject -> subject key ID map
+		k.RemoveAllCertificateBySubject(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
+
+		// Remove certificate from noc certificates list
+		k.RemoveNocCertificates(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
+
+		// Remove it from NOC ICA certificates list
+		k.RemoveNocIcaCertificate(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId, certificates.Certs[0].Vid)
+
+		// Remove from vid, subject key ID -> certificates map
+		k.RemoveNocCertificateByVidSubjectAndSkid(ctx, certificates.Certs[0].Vid, certIdentifier.Subject, certificates.SubjectKeyId)
+
+		// remove from subject -> subject key ID map
+		k.RemoveNocCertificateBySubject(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
+
+		// remove from subject key ID -> certificates map
+		k.RemoveNocCertificatesBySubjectAndSubjectKeyID(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
+
+		// Process child certificates recursively
+		k.RevokeNocChildCertificates(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
 	}
 
 	// Delete entire ChildCertificates record of issuer

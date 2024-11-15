@@ -61,6 +61,7 @@ func (k msgServer) ApproveRevokeX509RootCert(goCtx context.Context, msg *types.M
 			SubjectKeyId: msg.SubjectKeyId,
 		}
 		k.AddRevokedRootCertificate(ctx, certID)
+
 		k.RemoveProposedCertificateRevocation(ctx, msg.Subject, msg.SubjectKeyId, msg.SerialNumber)
 
 		if msg.SerialNumber != "" {
@@ -70,7 +71,7 @@ func (k msgServer) ApproveRevokeX509RootCert(goCtx context.Context, msg *types.M
 		}
 
 		if revocation.RevokeChild {
-			k.RevokeChildCertificates(ctx, certID.Subject, certID.SubjectKeyId)
+			k.RevokeApprovedChildCertificates(ctx, certID.Subject, certID.SubjectKeyId)
 		}
 	} else {
 		k.SetProposedCertificateRevocation(ctx, revocation)
@@ -95,9 +96,13 @@ func (k msgServer) _revokeRootCertificates(
 		Subject:      certificates.Subject,
 		SubjectKeyId: certificates.SubjectKeyId,
 	}
+
 	// remove from root certs index, add to revoked root certs
+	k.AddRevokedCertificates(ctx, types.RevokedCertificates(certificates))
+
 	k.RemoveApprovedRootCertificate(ctx, certID)
-	k.AddRevokedCertificates(ctx, certificates)
+	k.RemoveAllCertificates(ctx, certificates.Subject, certificates.SubjectKeyId)
+	k.RemoveAllCertificateBySubject(ctx, certificates.Subject, certificates.SubjectKeyId)
 	k.RemoveApprovedCertificates(ctx, certificates.Subject, certificates.SubjectKeyId)
 	// remove from subject -> subject key ID map
 	k.RemoveApprovedCertificateBySubject(ctx, certificates.Subject, certificates.SubjectKeyId)
@@ -113,15 +118,19 @@ func (k msgServer) _revokeRootCertificate(
 ) {
 	cert, _ := findCertificate(serialNumber, &certificates.Certs)
 	cert.Approvals = approvals
-	revCert := types.ApprovedCertificates{
-		Subject:      cert.Subject,
-		SubjectKeyId: cert.SubjectKeyId,
-		Certs:        []*types.Certificate{cert},
+	revCert := types.RevokedCertificates{
+		Subject:       cert.Subject,
+		SubjectKeyId:  cert.SubjectKeyId,
+		Certs:         []*types.Certificate{cert},
+		SchemaVersion: cert.SchemaVersion,
 	}
 	k.AddRevokedCertificates(ctx, revCert)
 
 	removeCertFromList(cert.Issuer, cert.SerialNumber, &certificates.Certs)
+
 	if len(certificates.Certs) == 0 {
+		k.RemoveAllCertificates(ctx, cert.Subject, cert.SubjectKeyId)
+		k.RemoveAllCertificateBySubject(ctx, cert.Subject, cert.SubjectKeyId)
 		k.RemoveApprovedCertificates(ctx, cert.Subject, cert.SubjectKeyId)
 		k.RemoveApprovedRootCertificate(ctx,
 			types.CertificateIdentifier{
@@ -133,6 +142,7 @@ func (k msgServer) _revokeRootCertificate(
 		k.RemoveApprovedCertificatesBySubjectKeyID(ctx, cert.Subject, cert.SubjectKeyId)
 	} else {
 		k.SetApprovedCertificates(ctx, certificates)
-		k.RemoveApprovedCertificatesBySubjectKeyIDAndSerialNumber(ctx, cert.Subject, cert.SubjectKeyId, serialNumber)
+		k.RemoveAllCertificatesBySerialNumber(ctx, cert.Subject, cert.SubjectKeyId, serialNumber)
+		k.RemoveApprovedCertificatesBySubjectKeyIDBySerialNumber(ctx, cert.Subject, cert.SubjectKeyId, serialNumber)
 	}
 }

@@ -1,3 +1,18 @@
+#!/bin/bash
+# Copyright 2020 DSR Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 set -euo pipefail
 source integration_tests/cli/common.sh
 
@@ -58,7 +73,7 @@ result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Request all approved certificates."
-result=$(dcld query pki all-x509-certs)
+result=$(dcld query pki all-noc-x509-certs)
 echo $result | jq
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
@@ -76,7 +91,7 @@ result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Request all revoked certificates should contain only one intermediate ICA certificate with serialNumber $intermediate_cert_1_serial_number"
-result=$(dcld query pki all-revoked-x509-certs)
+result=$(dcld query pki all-revoked-noc-x509-ica-certs)
 echo $result | jq
 check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
@@ -104,7 +119,7 @@ result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Request all certificates should not contain intermediate ICA certificate with serialNumber $intermediate_cert_1_serial_number"
-result=$(dcld query pki all-x509-certs)
+result=$(dcld query pki all-noc-x509-certs)
 echo $result | jq
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
@@ -126,7 +141,7 @@ check_response "$result" "\"serialNumber\": \"$intermediate_cert_2_serial_number
 response_does_not_contain "$result" "\"serialNumber\": \"$intermediate_cert_1_serial_number\""
 
 echo "Request approved certificates by an intermediate certificate's subject and subjectKeyId should contain only one certificate with serialNumber $intermediate_cert_2_serial_number"
-result=$(dcld query pki x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id")
+result=$(dcld query pki noc-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id")
 echo $result | jq
 check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
@@ -139,7 +154,7 @@ result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Request approved certificates by an intermediate certificate's subject and subjectKeyId should be empty"
-result=$(dcld query pki x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id")
+result=$(dcld query pki noc-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id")
 echo $result | jq
 check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$intermediate_cert_subject\""
@@ -158,7 +173,7 @@ response_does_not_contain "$result" "\"serialNumber\": \"$intermediate_cert_2_se
 response_does_not_contain "$result" "\"serialNumber\": \"$intermediate_cert_1_serial_number\""
 
 echo "Request all revoked certificates should be empty"
-result=$(dcld query pki all-revoked-x509-certs)
+result=$(dcld query pki all-revoked-noc-x509-ica-certs)
 echo $result | jq
 check_response "$result" "\[\]"
 response_does_not_contain "$result" "\"subject\": \"$intermediate_cert_subject\""
@@ -167,7 +182,7 @@ response_does_not_contain "$result" "\"serialNumber\": \"$intermediate_cert_1_se
 response_does_not_contain "$result" "\"serialNumber\": \"$intermediate_cert_2_serial_number\""
 
 echo "Request all certificates should contain only root and leaf certificates"
-result=$(dcld query pki all-x509-certs)
+result=$(dcld query pki all-noc-x509-certs)
 echo $result | jq
 check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
 check_response "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
@@ -183,7 +198,7 @@ result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Request approved leaf certificates should be empty"
-result=$(dcld query pki x509-cert --subject="$leaf_cert_subject" --subject-key-id="$leaf_cert_subject_key_id")
+result=$(dcld query pki noc-x509-cert --subject="$leaf_cert_subject" --subject-key-id="$leaf_cert_subject_key_id")
 echo $result | jq
 check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$leaf_cert_subject\""
@@ -202,7 +217,7 @@ response_does_not_contain "$result" "\"serialNumber\": \"$intermediate_cert_2_se
 response_does_not_contain "$result" "\"serialNumber\": \"$leaf_cert_serial_number"
 
 echo "Request all certificates should contain only root certificate"
-result=$(dcld query pki all-x509-certs)
+result=$(dcld query pki all-noc-x509-certs)
 echo $result | jq
 check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$root_cert_1_serial_number\""
@@ -223,7 +238,7 @@ result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Check that root cert is added. Request all approved certificates."
-result=$(dcld query pki all-x509-certs)
+result=$(dcld query pki all-noc-x509-certs)
 echo $result | jq
 check_response "$result" "\"serialNumber\": \"$root_cert_1_serial_number\""
 check_response "$result" "\"serialNumber\": \"$root_cert_1_copy_serial_number\""
@@ -249,7 +264,7 @@ result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Request all revoked certificates should contain NOC root certificate with serialNumber $root_cert_1_serial_number"
-result=$(dcld query pki all-revoked-x509-certs)
+result=$(dcld query pki all-revoked-noc-x509-root-certs)
 echo $result | jq
 check_response "$result" "\"serialNumber\": \"$root_cert_1_serial_number\""
 
@@ -259,7 +274,7 @@ result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Request all certificates should contain only one NOC root certificate"
-result=$(dcld query pki all-x509-certs)
+result=$(dcld query pki all-noc-x509-certs)
 echo $result | jq
 check_response "$result" "\"serialNumber\": \"$root_cert_1_copy_serial_number\""
 check_response "$result" "\"serialNumber\": \"$intermediate_cert_1_serial_number\""
@@ -272,7 +287,7 @@ check_response "$result" "\"serialNumber\": \"$root_cert_1_copy_serial_number\""
 response_does_not_contain "$result" "\"serialNumber\": \"$root_cert_1_serial_number\""
 
 echo "Request approved certificates by NOC root's subject and subjectKeyId should contain only one root certificate"
-result=$(dcld query pki x509-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
+result=$(dcld query pki noc-x509-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
 echo $result | jq
 check_response "$result" "\"serialNumber\": \"$root_cert_1_copy_serial_number\""
 response_does_not_contain "$result" "\"serialNumber\": \"$root_cert_1_serial_number\""
@@ -283,7 +298,7 @@ result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Check that root cert is added. Request all approved certificates."
-result=$(dcld query pki all-x509-certs)
+result=$(dcld query pki all-noc-x509-certs)
 echo $result | jq
 check_response "$result" "\"serialNumber\": \"$root_cert_1_serial_number\""
 check_response "$result" "\"serialNumber\": \"$root_cert_1_copy_serial_number\""
@@ -294,7 +309,7 @@ result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Request approved NOC root certificates should be empty"
-result=$(dcld query pki x509-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
+result=$(dcld query pki noc-x509-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
 echo $result | jq
 check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"serialNumber\": \"$root_cert_1_serial_number"
@@ -307,19 +322,19 @@ response_does_not_contain "$result" "\"serialNumber\": \"$root_cert_1_serial_num
 response_does_not_contain "$result" "\"serialNumber\": \"$root_cert_1_copy_serial_number"
 
 echo "Request all certificates should contain only ICA certificate"
-result=$(dcld query pki all-x509-certs)
+result=$(dcld query pki all-noc-x509-certs)
 echo $result | jq
 check_response "$result" "\"serialNumber\": \"$intermediate_cert_1_serial_number\""
 response_does_not_contain "$result" "\"serialNumber\": \"$root_cert_1_serial_number"
 response_does_not_contain "$result" "\"serialNumber\": \"$root_cert_1_copy_serial_number"
 
 echo "Request NOC certificate by VID = $root_cert_vid and SKID = $intermediate_cert_subject_key_id should not be empty"
-result=$(dcld query pki noc-x509-certs --vid="$root_cert_vid" --subject-key-id="$intermediate_cert_subject_key_id")
+result=$(dcld query pki noc-x509-cert --vid="$root_cert_vid" --subject-key-id="$intermediate_cert_subject_key_id")
 echo $result | jq
 check_response "$result" "\"serialNumber\": \"$intermediate_cert_1_serial_number\""
 
 echo "Request NOC certificate by VID = $root_cert_vid and SKID = $root_cert_subject_key_id should be empty"
-result=$(dcld query pki noc-x509-certs --vid="$root_cert_vid" --subject-key-id="$root_cert_subject_key_id")
+result=$(dcld query pki noc-x509-cert --vid="$root_cert_vid" --subject-key-id="$root_cert_subject_key_id")
 echo $result | jq
 check_response "$result" "Not Found"
 

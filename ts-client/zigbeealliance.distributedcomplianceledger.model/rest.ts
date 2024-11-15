@@ -44,7 +44,6 @@ export interface DistributedcomplianceledgermodelModel {
 
   /** @format int64 */
   schemaVersion?: number;
-  managedAclExtensionRequestFlowUrl?: string;
 
   /** @format int32 */
   enhancedSetupFlowOptions?: number;
@@ -57,6 +56,10 @@ export interface DistributedcomplianceledgermodelModel {
   /** @format int64 */
   enhancedSetupFlowTCFileSize?: number;
   maintenanceUrl?: string;
+
+  /** @format int64 */
+  discoveryCapabilitiesBitmask?: number;
+  commissioningFallbackUrl?: string;
 }
 
 export interface DistributedcomplianceledgermodelModelVersion {

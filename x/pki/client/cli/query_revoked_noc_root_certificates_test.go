@@ -32,7 +32,7 @@ func networkWithRevokedNocRootCertificatesObjects(t *testing.T, n int) (*network
 	for i := 0; i < n; i++ {
 		revokedNocRootCertificates := types.RevokedNocRootCertificates{
 			Subject:      strconv.Itoa(i),
-			SubjectKeyId: strconv.Itoa(i),
+			SubjectKeyID: strconv.Itoa(i),
 		}
 		nullify.Fill(&revokedNocRootCertificates)
 		state.RevokedNocRootCertificatesList = append(state.RevokedNocRootCertificatesList, revokedNocRootCertificates)
@@ -63,7 +63,7 @@ func TestShowRevokedNocRootCertificates(t *testing.T) {
 		{
 			desc:           "found",
 			idSubject:      objs[0].Subject,
-			idSubjectKeyID: objs[0].SubjectKeyId,
+			idSubjectKeyID: objs[0].SubjectKeyID,
 
 			args: common,
 			obj:  objs[0],

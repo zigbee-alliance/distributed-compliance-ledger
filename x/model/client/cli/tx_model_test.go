@@ -189,8 +189,7 @@ func TestUpdateModel(t *testing.T) {
 			desc:  "model does not exist",
 			idVid: testconstants.Vid,
 			idPid: testconstants.Pid + 1,
-
-			err: types.ErrModelDoesNotExist,
+			err:   types.ErrModelDoesNotExist,
 		},
 	} {
 		tc := tc

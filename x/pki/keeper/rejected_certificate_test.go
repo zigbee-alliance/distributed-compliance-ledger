@@ -20,7 +20,7 @@ func createNRejectedCertificate(keeper *keeper.Keeper, ctx sdk.Context, n int) [
 	items := make([]types.RejectedCertificate, n)
 	for i := range items {
 		items[i].Subject = strconv.Itoa(i)
-		items[i].SubjectKeyId = strconv.Itoa(i)
+		items[i].SubjectKeyID = strconv.Itoa(i)
 
 		keeper.SetRejectedCertificate(ctx, items[i])
 	}
@@ -33,7 +33,7 @@ func TestRejectedCertificateGet(t *testing.T) {
 	for _, item := range items {
 		rst, found := keeper.GetRejectedCertificate(ctx,
 			item.Subject,
-			item.SubjectKeyId,
+			item.SubjectKeyID,
 		)
 		require.True(t, found)
 		require.Equal(t,
@@ -48,11 +48,11 @@ func TestRejectedCertificateRemove(t *testing.T) {
 	for _, item := range items {
 		keeper.RemoveRejectedCertificate(ctx,
 			item.Subject,
-			item.SubjectKeyId,
+			item.SubjectKeyID,
 		)
 		_, found := keeper.GetRejectedCertificate(ctx,
 			item.Subject,
-			item.SubjectKeyId,
+			item.SubjectKeyID,
 		)
 		require.False(t, found)
 	}

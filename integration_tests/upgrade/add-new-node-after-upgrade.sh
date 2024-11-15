@@ -1,3 +1,18 @@
+#!/bin/bash
+# Copyright 2020 DSR Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 source integration_tests/cli/common.sh
 set +euo pipefail
 
@@ -50,7 +65,7 @@ trap cleanup EXIT
 
 check_adding_new_node() {
   local stable_binary_version="${1:-0.12.1}"
-  local latest_binary_version="${2:-1.4.3}"
+  local latest_binary_version="${2:-1.4.4-4-dev}"
 
   echo "1. run $node_name container"
   docker run -d --name $node_name --ip $ip -p "$node_p2p_port-$node_client_port:26656-26657" --network $docker_network -i dcledger

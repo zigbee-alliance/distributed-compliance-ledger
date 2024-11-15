@@ -6,18 +6,20 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
-
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-func CmdListNocIcaCertificates() *cobra.Command {
+func CmdListNocCertificates() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "all-noc-x509-ica-certs",
-		Short: "Gets all NOC ICA certificates (ICACs)",
+		Use:   "all-noc-x509-certs",
+		Short: "Gets all noc certificates (root and ica)",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
 
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
 			if err != nil {
@@ -26,11 +28,14 @@ func CmdListNocIcaCertificates() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.QueryAllNocIcaCertificatesRequest{
+			params := &types.QueryNocCertificatesRequest{
 				Pagination: pageReq,
 			}
 
-			res, err := queryClient.NocIcaCertificatesAll(context.Background(), params)
+			res, err := queryClient.NocCertificatesAll(context.Background(), params)
+			if cli.IsKeyNotFoundRPCError(err) {
+				return clientCtx.PrintString(cli.LightClientProxyForListQueries)
+			}
 			if err != nil {
 				return err
 			}
@@ -45,31 +50,66 @@ func CmdListNocIcaCertificates() *cobra.Command {
 	return cmd
 }
 
-func CmdShowNocIcaCertificates() *cobra.Command {
-	var vid int32
-	cmd := &cobra.Command{
-		Use:   "noc-x509-ica-certs",
-		Short: "Gets NOC ICA certificates (ICACs) by VID",
-		Args:  cobra.ExactArgs(0),
-		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			clientCtx := client.GetClientContextFromCmd(cmd)
+func CmdShowNocCertificates() *cobra.Command {
+	var (
+		vid          int32
+		subject      string
+		subjectKeyID string
+	)
 
-			var res types.NocIcaCertificates
+	cmd := &cobra.Command{
+		Use: "noc-x509-cert",
+		Short: "Gets certificates (either root or ica) by one of property combinations: " +
+			"'subject + subject-key-id' or 'VID and subject-key-id' or just 'subject-key-id'",
+		Args: cobra.ExactArgs(0),
+		RunE: func(cmd *cobra.Command, args []string) (err error) {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			if subject != "" && subjectKeyID != "" {
+				var res types.NocCertificates
+
+				return cli.QueryWithProof(
+					clientCtx,
+					pkitypes.StoreKey,
+					types.NocCertificatesKeyPrefix,
+					types.NocCertificatesKey(subject, subjectKeyID),
+					&res,
+				)
+			}
+
+			if vid != 0 && subjectKeyID != "" {
+				var res types.NocCertificatesByVidAndSkid
+
+				return cli.QueryWithProof(
+					clientCtx,
+					pkitypes.StoreKey,
+					types.NocCertificatesByVidAndSkidKeyPrefix,
+					types.NocCertificatesByVidAndSkidKey(vid, subjectKeyID),
+					&res,
+				)
+			}
+
+			var res types.NocCertificatesBySubjectKeyID
 
 			return cli.QueryWithProof(
 				clientCtx,
 				pkitypes.StoreKey,
-				types.NocIcaCertificatesKeyPrefix,
-				types.NocIcaCertificatesKey(vid),
+				types.NocCertificatesBySubjectKeyIDKeyPrefix,
+				types.NocCertificatesBySubjectKeyIDKey(subjectKeyID),
 				&res,
 			)
 		},
 	}
 
-	cmd.Flags().Int32Var(&vid, FlagVid, 0, "Vendor ID (positive non-zero)")
+	cmd.Flags().Int32Var(&vid, FlagVid, 0, "Vendor ID (positive non-zero) - optional")
+	cmd.Flags().StringVarP(&subject, FlagSubject, FlagSubjectShortcut, "", "Certificate's subject - optional")
+	cmd.Flags().StringVarP(&subjectKeyID, FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "", "Certificate's subject key id (hex) - required")
 	flags.AddQueryFlagsToCmd(cmd)
 
-	_ = cmd.MarkFlagRequired(FlagVid)
+	_ = cmd.MarkFlagRequired(FlagSubjectKeyID)
 
 	return cmd
 }

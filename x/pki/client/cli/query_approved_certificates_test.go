@@ -30,7 +30,7 @@ func networkWithApprovedCertificatesObjects(t *testing.T, n int) (*network.Netwo
 	for i := 0; i < n; i++ {
 		approvedCertificates := types.ApprovedCertificates{
 			Subject:      strconv.Itoa(i),
-			SubjectKeyId: strconv.Itoa(i),
+			SubjectKeyID: strconv.Itoa(i),
 		}
 		nullify.Fill(&approvedCertificates)
 		state.ApprovedCertificatesList = append(state.ApprovedCertificatesList, approvedCertificates)
@@ -60,7 +60,7 @@ func TestShowApprovedCertificates(t *testing.T) {
 		{
 			desc:           "found",
 			idSubject:      objs[0].Subject,
-			idSubjectKeyId: objs[0].SubjectKeyId,
+			idSubjectKeyId: objs[0].SubjectKeyID,
 
 			args: common,
 			obj:  objs[0],

@@ -99,7 +99,7 @@ Please make sure that TLS is enabled in gRPC, REST or Light Client Proxy for sec
   - Tendermint RPC supports state proofs. Tendermint's Light Client library can be used to verify the state proofs.
     So, if Light Client API is used, then it's possible to communicate with non-trusted nodes.
   - Please note, that multi-value queries don't have state proofs support and should be sent to trusted nodes only.
-  - Refer to [this doc](./cometbft-rpc.md) to see how to [subscribe](./cometbft-rpc.md#subscribe) to a Tendermint WebSocket based events and/or [query](./cometbft-rpc.md#querying-application-components) an application components. 
+  - Refer to [this doc](cometbft-rpc.md) to see how to [subscribe](cometbft-rpc.md#subscribe) to a Tendermint WebSocket based events and/or [query](cometbft-rpc.md#querying-application-components) an application components. 
 
 `NotFound` (404 code) is returned if an entry is not found on the ledger.
 
@@ -897,7 +897,11 @@ The PAA certificate is not active until sufficient number of Trustees approve it
   - subject_key_id: `string`  - proposed certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`.
   - info: `optional(string)` - information/notes for the approval. Can contain up to 4096 characters.
   - time: `optional(int64)` - proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). This field cannot be specified using a CLI command and will use the current time by default.
-- In State: `pki/ApprovedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`.
+- In State:
+  - `pki/AllCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`.
+  - `pki/ApprovedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`.
+  - `pki/ApprovedCertificatesBySubject/value/<Certificate's Subject>`
+  - `pki/ApprovedCertificatesBySubjectKeyId/value/<Certificate's Subject Key ID>`.
 - Number of required approvals:
   - greater than or equal 2/3 of Trustees (proposal by a Trustee is also counted as an approval)
 - CLI command:
@@ -940,7 +944,7 @@ The certificate is not reject until sufficient number of Trustees reject it.
 Proposes revocation of the given PAA (self-signed root certificate) by a Trustee.
 
 Revocation works as a soft-delete, meaning that the certificates are not entirely removed but moved from the approved list to the revoked list.
-Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revoked_cert) query.
+Revoked certificates can be retrieved by using the [GET_REVOKED_DA_CERT](#get_revoked_da_cert) query.
 
 If a Revocation Distribution Point needs to be published (such as RFC5280 Certificate Revocation List), please use [ADD_REVOCATION_DISTRIBUTION_POINT](#add_revocation_distribution_point).
 
@@ -974,7 +978,7 @@ then the certificate will be in a pending state until sufficient number of other
 Approves the revocation of the given PAA (self-signed root certificate) by a Trustee.
 
 Revocation works as a soft-delete, meaning that the certificates are not entirely removed but moved from the approved list to the revoked list.
-Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revoked_cert) query.
+Revoked certificates can be retrieved by using the [GET_REVOKED_DA_CERT](#get_revoked_da_cert) query.
 
 If a Revocation Distribution Point needs to be published (such as RFC5280 Certificate Revocation List), please use [ADD_REVOCATION_DISTRIBUTION_POINT](#add_revocation_distribution_point).
 
@@ -1148,7 +1152,7 @@ Adds a PAI (intermediate certificate) signed by a chain of certificates which mu
 Revokes the given PAI (intermediate certificate).
 
 Revocation works as a soft-delete, meaning that the certificates are not entirely removed but moved from the approved list to the revoked list.
-Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revoked_cert) query.
+Revoked certificates can be retrieved by using the [GET_REVOKED_DA_CERT](#get_revoked_da_cert) query.
 To entirely remove a PAI certificate, please use [REMOVE_PAI](#remove_pai).
 
 If a Revocation Distribution Point needs to be published (such as RFC5280 Certificate Revocation List), please use [ADD_REVOCATION_DISTRIBUTION_POINT](#add_revocation_distribution_point).
@@ -1190,6 +1194,107 @@ PAA (self-signed root certificate) can not be removed this way.
   - `dcld tx pki remove-x509-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
 - Validation:
   - a PAI Certificate with the provided `subject` and `subject_key_id` must exist in the ledger.
+
+#### GET_DA_CERT
+
+**Status: Implemented**
+
+Gets a DA certificate by the given subject and subject key ID attributes. This query works for all types of DA certificates (PAA, PAI).
+Revoked certificates are not returned.
+Use [GET_REVOKED_DA_CERT](#get_revoked_da_cert) to get a revoked certificate.
+
+- Parameters:
+  - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
+  - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
+- CLI command:
+  - `dcld query pki x509-cert --subject=<base64 string> --subject-key-id=<hex string>`
+- REST API:
+  - GET `/dcl/pki/certificates/{subject}/{subject_key_id}`
+
+#### GET_REVOKED_DA_CERT
+
+**Status: Implemented**
+
+Gets a revoked DA certificate by the given subject and subject key ID attributes. This query works for all types of DA certificates (PAA, PAI).
+
+Revocation works as a soft-delete, meaning that the certificates are not entirely removed but moved from the approved list to the revoked list.
+If a Revocation Distribution Point (such as RFC5280 Certificate Revocation List) published to the ledger needs to be queried, please use [GET_PKI_REVOCATION_DISTRIBUTION_POINT](#get_pki_revocation_distribution_point).
+
+- Parameters:
+  - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
+  - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
+- CLI command:
+  - `dcld query pki revoked-x509-cert --subject=<base64 string> --subject-key-id=<hex string>`
+- REST API:
+  - GET `/dcl/pki/revoked-certificates/{subject}/{subject_key_id}`
+
+#### GET_DA_CERTS_BY_SKID
+
+**Status: Implemented**
+
+Gets all DA certificates by the given subject key ID attribute. This query works for all types of DA certificates (PAA, PAI).
+
+Revoked certificates are not returned.
+Use [GET_ALL_REVOKED_DA_CERTS](#get_all_revoked_da_cert) to get a revoked certificate.
+
+- Parameters:
+  - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
+- CLI command:
+  - `dcld query pki x509-cert --subject-key-id=<hex string>`
+- REST API:
+  - GET `/dcl/pki/certificates?subjectKeyId={subjectKeyId}`
+
+#### GET_DA_CERTS_BY_SUBJECT
+
+**Status: Implemented**
+
+Gets all DA certificates associated with a subject. This query works for all types of DA certificates (PAA, PAI).
+
+Revoked certificates are not returned.
+Use [GET_ALL_REVOKED_DA_CERTS](#get_all_revoked_da_certs) to get a list of all revoked certificates.
+
+- Parameters:
+  - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
+- CLI command:
+  - `dcld query pki all-subject-x509-certs --subject=<base64 string>`
+- REST API:
+  - GET `/dcl/pki/certificates/{subject}`
+
+#### GET_ALL_DA_CERTS
+
+**Status: Implemented**
+
+Gets all DA certificates. This query works for all types of DA certificates (PAA, PAI).
+
+Revoked certificates are not returned.
+Use [GET_ALL_REVOKED_DA_CERTS](#get_all_revoked_da_certs) to get a list of all revoked certificates.
+
+Should be sent to trusted nodes only.
+
+- Parameters:
+  - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
+- CLI command:
+  - `dcld query pki all-x509-certs`
+- REST API:
+  - GET `/dcl/pki/certificates`
+
+#### GET_ALL_REVOKED_DA_CERTS
+
+**Status: Implemented**
+
+Gets all revoked DA certificates. This query works for all types of DA certificates (PAA, PAI).
+
+Revocation works as a soft-delete, meaning that the certificates are not entirely removed but moved from the approved list to the revoked list.
+If a Revocation Distribution Point (such as RFC5280 Certificate Revocation List) published to the ledger needs to be queried, please use [GET_PKI_REVOCATION_DISTRIBUTION_POINT](#get_pki_revocation_distribution_point).
+
+Should be sent to trusted nodes only.
+
+- Parameters:
+  - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
+- CLI command:
+  - `dcld query pki all-revoked-x509-certs`
+- REST API:
+  - GET `/dcl/pki/revoked-certificates` 
 
 #### GET_PKI_REVOCATION_DISTRIBUTION_POINT
 
@@ -1373,10 +1478,12 @@ This transaction adds a NOC root certificate (RCAC) owned by the Vendor.
   - cert: `string` - The NOC Root Certificate (RCAC), encoded in X.509v3 PEM format. Can be a PEM string or a file path.
   - schemaVersion: `optional(uint16)` - Certificate's schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - In State:
-  - `pki/ApprovedCertificates/value/<Subject>/<SubjectKeyID>`
-  - `pki/ApprovedCertificatesBySubject/value/<Subject>`
-  - `pki/ApprovedCertificatesBySubjectKeyID/value/<SubjectKeyID>`
+  - `pki/AllCertificates/value/<Subject>/<SubjectKeyID>`
+  - `pki/NocCertificates/value/<Subject>/<SubjectKeyID>`
   - `pki/NocRootCertificates/value/<VID>`
+  - `pki/NocCertificatesBySubject/value/<Subject>`
+  - `pki/NocCertificatesBySubjectKeyId/value/<SubjectKeyID>`
+  - `pki/NocCertificatesByVidAndSkid/value/<VID>/<SubjectKeyID>`
 - CLI Command:
   - `dcld tx pki add-noc-x509-root-cert --certificate=<string-or-path> --from=<account>`
 - Validation:
@@ -1394,10 +1501,10 @@ This transaction adds a NOC root certificate (RCAC) owned by the Vendor.
 **Status: Implemented**
 
 This transaction revokes a NOC root certificate (RCAC) owned by the Vendor.
-Revoked NOC root certificates (RCACs) can be re-added using the [ADD_NOC_ROOT](#add_noc_root-(rcac)) transaction.
+Revoked NOC root certificates (RCACs) can be re-added using the [ADD_NOC_ROOT](#add_noc_root-rcac) transaction.
 
 Revocation works as a soft-delete, meaning that the certificates are not entirely removed but moved from the approved list to the revoked list.
-Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revoked_cert) query.
+Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revoked_noc_root-rcac) query.
 
 - Who can send: Vendor account
   - Vid field associated with the corresponding NOC root certificate (RCAC) on the ledger must be equal to the Vendor account's VID.
@@ -1409,7 +1516,6 @@ Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revok
   - info: `optional(string)` - information/notes for the revocation. Can contain up to 4096 characters.
   - time: `optional(int64)` - revocation time (number of nanoseconds elapsed since January 1, 1970 UTC). This field cannot be specified using a CLI command and will use the current time by default.
 - In State:
-  - `pki/RevokedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
   - `pki/RevokedNocRootCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - CLI command:
   - `dcld tx pki revoke-noc-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --serial-number=<string> --info=<string> --time=<int64> --revoke-child=<bool> --from=<account>`
@@ -1421,7 +1527,7 @@ Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revok
 **Status: Implemented**
 
 This transaction completely removes the given NOC root certificate (RCAC) owned by the Vendor from the ledger.
-Removed NOC root certificates (RCACs) can be re-added using the [ADD_NOC_ROOT](#add_noc_root-(rcac)) transaction.
+Removed NOC root certificates (RCACs) can be re-added using the [ADD_NOC_ROOT](#add_noc_root-rcac) transaction.
 
 - Who can send: Vendor account
   - Vid field associated with the corresponding NOC certificate on the ledger must be equal to the Vendor account's VID.
@@ -1433,8 +1539,6 @@ Removed NOC root certificates (RCACs) can be re-added using the [ADD_NOC_ROOT](#
   - serial_number: `optional(string)` - certificate's serial number. If not provided, the transaction will remove all certificates that match the given `subject` and `subject_key_id` combination.
 - CLI command:
   - `dcld tx pki remove-noc-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
-
-
 
 #### ADD_NOC_ICA (ICAC)
 
@@ -1460,10 +1564,12 @@ already present on the ledger.
   - cert: `string` - The NOC non-root Certificate, encoded in X.509v3 PEM format. Can be a PEM string or a file path.
   - certificate-schema-version: `optional(uint16)` - Certificate's schema version to support backward/forward compatability(default 0)
 - In State:
-  - `pki/ApprovedCertificates/value/<Subject>/<SubjectKeyID>`
-  - `pki/ApprovedCertificatesBySubject/value/<Subject>`
-  - `pki/ApprovedCertificatesBySubjectKeyID/value/<SubjectKeyID>`
+  - `pki/AllCertificates/value/<Subject>/<SubjectKeyID>`
+  - `pki/NocCertificates/value/<Subject>/<SubjectKeyID>`
   - `pki/NocIcaCertificates/value/<VID>`
+  - `pki/NocCertificatesBySubject/value/<Subject>`
+  - `pki/NocCertificatesBySubjectKeyID/value/<SubjectKeyID>`
+  - `pki/NocCertificatesByVidAndSkid/value/<VID>/<SubjectKeyID>`
   - `pki/ChildCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - CLI Command:
   - `dcld tx pki add-noc-x509-ica-cert --certificate=<string-or-path> --from=<account>`
@@ -1473,10 +1579,10 @@ already present on the ledger.
 **Status: Implemented**
 
 This transaction revokes a NOC ICA certificate (ICAC) owned by the Vendor.
-Revoked NOC ICA certificates (ICACs) can be re-added using the [ADD_NOC_ICA](#add_noc_ica-(icac)) transaction.
+Revoked NOC ICA certificates (ICACs) can be re-added using the [ADD_NOC_ICA](#add_noc_ica-icac) transaction.
 
 Revocation works as a soft-delete, meaning that the certificates are not entirely removed but moved from the approved list to the revoked list.
-Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revoked_cert) query.
+Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revoked_noc_ica-icac) query.
 
 - Who can send: Vendor account
   - Vid field associated with the corresponding NOC certificate on the ledger must be equal to the Vendor account's VID.
@@ -1499,7 +1605,7 @@ Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revok
 **Status: Implemented**
 
 This transaction completely removes the given NOC ICA (ICAC) owned by the Vendor from the ledger.
-Removed NOC ICA certificates (ICACs) can be re-added using the [ADD_NOC_ICA](#add_noc_ica-(icac)) transaction.
+Removed NOC ICA certificates (ICACs) can be re-added using the [ADD_NOC_ICA](#add_noc_ica-icac) transaction.
 
 - Who can send: Vendor account
   - Vid field associated with the corresponding NOC certificate on the ledger must be equal to the Vendor account's VID.
@@ -1512,6 +1618,22 @@ Removed NOC ICA certificates (ICACs) can be re-added using the [ADD_NOC_ICA](#ad
 - CLI command:
   - `dcld tx pki remove-noc-x509-ica-cert --subject=<base64 string> --subject-key-id=<hex string> --from=<account>`
 
+#### GET_NOC_CERT
+
+**Status: Implemented**
+
+Gets a NOC certificate by the given subject and subject key ID attributes. This query works for all types of Noc certificates (NOC_ROOT, NOC_ICA).
+Revoked certificates are not returned.
+Use [GET_REVOKED_ROOT_ICA](#get_revoked_noc_root-rcac) to get a revoked root certificate.
+Use [GET_REVOKED_NOC_ICA](#get_revoked_noc_ica-icac) to get a revoked ica certificate.
+
+- Parameters:
+  - subject: `string`  - certificate's `Subject` is base64 encoded subject DER sequence bytes
+  - subject_key_id: `string`  - certificate's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
+- CLI command:
+  - `dcld query pki noc-x509-cert --subject=<base64 string> --subject-key-id=<hex string>`
+- REST API:
+  - GET `/dcl/pki/all-noc-certificates/{subject}/{subject_key_id}`
 
 #### GET_NOC_ROOT_BY_VID (RCACs)
 
@@ -1520,7 +1642,7 @@ Removed NOC ICA certificates (ICACs) can be re-added using the [ADD_NOC_ICA](#ad
 Retrieve NOC root certificates (RCACs) associated with a specific VID.
 
 Revoked NOC root certificates (RCACs) are not returned.
-Use [GET_ALL_REVOKED_NOC_ROOT](#get_all_revoked_noc_root-(rcacs)) to get a list of all revoked NOC root certificates (RCACs).
+Use [GET_ALL_REVOKED_NOC_ROOT](#get_all_revoked_noc_root-rcacs) to get a list of all revoked NOC root certificates (RCACs).
 
 - Who can send: Any account
 - Parameters:
@@ -1528,7 +1650,7 @@ Use [GET_ALL_REVOKED_NOC_ROOT](#get_all_revoked_noc_root-(rcacs)) to get a list 
 - CLI Command:
   - `dcld query pki noc-x509-root-certs --vid=<uint16>`
 - REST API:
-  - GET `/dcl/pki/noc-root-certificates/{vid}`
+  - GET `/dcl/pki/noc-vid-root-certificates/{vid}`
 
 #### GET_NOC_BY_VID_AND_SKID (RCACs/ICACs)
 
@@ -1538,17 +1660,17 @@ Retrieve NOC (Root/ICA) certificates (RCACs/ICACs) associated with a specific VI
 This request also returns the Trust Quotient (TQ) value of the certificate
 
 Revoked NOC certificates are not returned.
-Use [GET_ALL_REVOKED_NOC_ROOT](#get_all_revoked_noc_root-(rcacs)) to get a list of all revoked NOC root certificates.
-Use [GET_ALL_REVOKED_CERT](#get_all_revoked_certs) to get a list of all revoked certificates (including ICACs).
+Use [GET_ALL_REVOKED_NOC_ROOT](#get_all_revoked_noc_root-rcacs) to get a list of all revoked NOC root certificates.
+Use [GET_ALL_REVOKED_NOC_ICA](#get_all_revoked_noc_ica-icacs) to get a list of all revoked NOC ica certificates.
 
 - Who can send: Any account
 - Parameters:
   - vid: `uint16` - Vendor ID (positive non-zero)
   - subject_key_id: `string` - Certificate's `Subject Key Id` in hex string format, e.g., `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
 - CLI Command:
-  - `dcld query pki noc-x509-certs --vid=<uint16> --subject-key-id=<hex string>`
+  - `dcld query pki noc-x509-cert --vid=<uint16> --subject-key-id=<hex string>`
 - REST API:
-  - GET `/dcl/pki/noc-certificates/{vid}/{subject_key_id}`
+  - GET `/dcl/pki/noc-vid-certificates/{vid}/{subject_key_id}`
 
 #### GET_NOC_ICA_BY_VID (ICACs)
 
@@ -1565,7 +1687,24 @@ Use [GET_ALL_REVOKED_CERT](#get_all_revoked_certs) to get a list of all revoked 
 - CLI Command:
   - `dcld query pki noc-x509-ica-certs --vid=<uint16>`
 - REST API:
-  - GET `/dcl/pki/noc-ica-certificates/{vid}`
+  - GET `/dcl/pki/noc-vid-ica-certificates/{vid}`
+
+#### GET_NOC_CERTS_BY_SUBJECT
+
+**Status: Implemented**
+
+Gets all NOC certificates associated with a subject. This query works for both types of certificates (NOC_ROOT, NOC_ICA).
+
+Revoked certificates are not returned.
+Use [GET_ALL_REVOKED_NOC_ROOT](#get_all_revoked_noc_root-rcacs) to get a list of all revoked NOC root certificates.
+Use [GET_ALL_REVOKED_NOC_ICA](#get_all_revoked_noc_ica-icacs) to get a list of all revoked NOC ica certificates.
+
+- Parameters:
+  - subject: `string`  - certificate's `Subject` is base64 encoded subject DER sequence bytes
+- CLI command:
+  - `dcld query pki all-noc-subject-x509-certs --subject=<base64 string>`
+- REST API:
+  - GET `/dcl/pki/all-noc-certificates/{subject}`
 
 #### GET_REVOKED_NOC_ROOT (RCAC)
 
@@ -1583,6 +1722,40 @@ Revocation works as a soft-delete, meaning that the certificates are not entirel
 - REST API:
   - GET `/dcl/pki/revoked-noc-root-certificates/{subject}/{subject_key_id}`
 
+#### GET_REVOKED_NOC_ICA (ICAC)
+
+**Status: Implemented**
+
+Gets a revoked NOC ica certificate (ICAC) by the given subject and subject key ID attributes.
+
+Revocation works as a soft-delete, meaning that the certificates are not entirely removed but moved from the approved list to the revoked list.
+
+- Parameters:
+  - subject: `string` - Base64 encoded subject DER sequence bytes of the certificate.
+  - subject_key_id: `string` - Certificate's `Subject Key Id` in hex string format, e.g., `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`.
+- CLI command:
+  - `dcld query pki revoked-noc-x509-ica-cert --subject=<base64 string> --subject-key-id=<hex string>`
+- REST API:
+  - GET `/dcl/pki/revoked-noc-ica-certificates/{subject}/{subject_key_id}`
+
+#### GET_ALL_NOC (RCACs/ICACs)
+
+**Status: Implemented**
+
+Retrieve a list of all of NOC certificates (RCACs of ICACs).
+
+Revoked NOC certificates (RCACs and ICACs) are not returned.
+Use [GET_ALL_REVOKED_NOC_ROOT](#get_all_revoked_noc_ica-icacs) to get a list of all revoked NOC root certificates (RCACs).
+Use [GET_ALL_REVOKED_NOC_ICA](#get_all_revoked_noc_ica-icacs) to get a list of all revoked NOC ica certificates (ICACs).
+
+- Who can send: Any account
+- Parameters:
+  - Common pagination parameters
+- CLI Command:
+  - `dcld query pki all-noc-x509-certs`
+- REST API:
+  - GET `/dcl/pki/noc-certificates`
+
 #### GET_ALL_NOC_ROOT (RCACs)
 
 **Status: Implemented**
@@ -1590,7 +1763,7 @@ Revocation works as a soft-delete, meaning that the certificates are not entirel
 Retrieve a list of all of NOC root certificates (RCACs).
 
 Revoked NOC root certificates (RCACs) are not returned.
-Use [GET_ALL_REVOKED_NOC_ROOT](#get_all_revoked_noc_root-(rcacs)) to get a list of all revoked NOC root certificates (RCACs).
+Use [GET_ALL_REVOKED_NOC_ROOT](#get_all_revoked_noc_root-rcacs) to get a list of all revoked NOC root certificates (RCACs).
 
 - Who can send: Any account
 - Parameters:
@@ -1607,7 +1780,7 @@ Use [GET_ALL_REVOKED_NOC_ROOT](#get_all_revoked_noc_root-(rcacs)) to get a list 
 Retrieve a list of all of NOC ICA certificates (ICACs).
 
 Revoked certificates are not returned.
-Use [GET_ALL_REVOKED_CERT](#get_all_revoked_certs) to get a list of all revoked certificates.
+Use [GET_ALL_REVOKED_NOC_ICA](#get_all_revoked_noc_ica-icacs) to get a list of all revoked certificates.
 
 - Who can send: Any account
 - Parameters:
@@ -1631,72 +1804,77 @@ Revocation works as a soft-delete, meaning that the certificates are not entirel
 - REST API:
   - GET `/dcl/pki/revoked-noc-root-certificates`
 
-### Common
+#### GET_ALL_REVOKED_NOC_ICA (ICACs)
+
+Gets all revoked NOC ica certificates (ICACs).
+
+Revocation works as a soft-delete, meaning that the certificates are not entirely removed but moved from the approved list to the revoked list.
+
+- Who can send: Any account
+- Parameters:
+  - Common pagination parameters
+- CLI command:
+  - `dcld query pki all-revoked-noc-x509-ica-certs`
+- REST API:
+  - GET `/dcl/pki/revoked-noc-ica-certificates`
+
+### All Certificates (DA, NOC)
 
 #### GET_CERT
 
 **Status: Implemented**
 
-Gets a certificate by the given subject and subject key ID attributes. This query works for all types of certificates (PAA, PAI, NOC_ROOT, NOC_ICA).
+Gets a certificate by the given subject and subject key ID attributes. This query works for all types of certificates (PAA, PAI, RCAC, ICAC).
 Revoked certificates are not returned.
-Use [GET_REVOKED_CERT](#get_revoked_cert) to get a revoked certificate.
+Use [GET_REVOKED_DA_CERT](#get_revoked_da_cert) to get a revoked DA certificate.
+Use [GET_REVOKED_NOC_ROOT_CERT](#get_revoked_noc_root-rcac) to get a revoked Noc Root certificate.
+Use [GET_REVOKED_NOC_ICA_CERT](#get_revoked_noc_ica-icac) to get a revoked Noc ICA certificate.
 
 - Parameters:
   - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
   - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
 - CLI command:
-  - `dcld query pki x509-cert --subject=<base64 string> --subject-key-id=<hex string>`
+  - `dcld query pki cert --subject=<base64 string> --subject-key-id=<hex string>`
 - REST API:
-  - GET `/dcl/pki/certificates/{subject}/{subject_key_id}`
+  - GET `/dcl/pki/all-certificates/{subject}/{subject_key_id}`
 
-#### GET_REVOKED_CERT
+#### GET_ALL_CERTS
 
 **Status: Implemented**
 
-Gets a revoked certificate by the given subject and subject key ID attributes. This query works for all types of certificates (PAA, PAI, NOC_ROOT, NOC_ICA).
-
-Revocation works as a soft-delete, meaning that the certificates are not entirely removed but moved from the approved list to the revoked list.
-If a Revocation Distribution Point (such as RFC5280 Certificate Revocation List) published to the ledger needs to be queried, please use [GET_PKI_REVOCATION_DISTRIBUTION_POINT](#get_pki_revocation_distribution_point).
-
-- Parameters:
-  - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
-  - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
-- CLI command:
-  - `dcld query pki revoked-x509-cert --subject=<base64 string> --subject-key-id=<hex string>`
-- REST API:
-  - GET `/dcl/pki/revoked-certificates/{subject}/{subject_key_id}`
-
-#### GET_CERTS_BY_SKID
-
-**Status: Implemented**
-
-Gets all certificates by the given subject key ID attribute. This query works for all types of certificates (PAA, PAI, NOC_ROOT, NOC_ICA).
+Gets all certificates. This query works for all types of certificates (PAA, PAI, RCAC, ICAC).
 
 Revoked certificates are not returned.
-Use `GET_ALL_REVOKED_CERTS` to get a list of all revoked certificates.
+Use [GET_ALL_REVOKED_DA_CERTS](#get_all_revoked_da_certs) to get a list of all revoked DA certificates.
+Use [GET_ALL_REVOKED_NOC_ROOT_CERTS](#get_all_revoked_noc_root-rcacs) to get a list of all revoked Noc Root certificates.
+Use [GET_ALL_REVOKED_NOC_ICA_CERTS](#get_all_revoked_noc_ica-icacs) to get a list of all revoked Noc ICA certificates.
+
+Should be sent to trusted nodes only.
 
 - Parameters:
-  - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
+  - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
 - CLI command:
-  - `dcld query pki x509-cert --subject-key-id=<hex string>`
+  - `dcld query pki all-certs`
 - REST API:
-  - GET `/dcl/pki/certificates?subjectKeyId={subjectKeyId}`
+  - GET `/dcl/pki/all-certificates`
 
 #### GET_CERTS_BY_SUBJECT
 
 **Status: Implemented**
 
-Gets all certificates associated with a subject. This query works for all types of certificates (PAA, PAI, NOC_ROOT, NOC_ICA).
+Gets all certificates associated with a subject. This query works for all types of certificates (PAA, PAI, RCAC, ICAC).
 
 Revoked certificates are not returned.
-Use [GET_ALL_REVOKED_CERTS](#get_all_revoked_certs) to get a list of all revoked certificates.
+Use [GET_ALL_REVOKED_DA_CERTS](#get_all_revoked_da_certs) to get a list of all revoked DA certificates.
+Use [GET_ALL_REVOKED_NOC_ROOT_CERTS](#get_all_revoked_noc_root-rcacs) to get a list of all revoked Noc Root certificates.
+Use [GET_ALL_REVOKED_NOC_ICA_CERTS](#get_all_revoked_noc_ica-icacs) to get a list of all revoked Noc ICA certificates.
 
 - Parameters:
   - subject: `string`  - certificates's `Subject` is base64 encoded subject DER sequence bytes
 - CLI command:
-  - `dcld query pki all-subject-x509-certs --subject=<base64 string>`
+  - `dcld query pki all-subject-certs --subject=<base64 string>`
 - REST API:
-  - GET `/dcl/pki/certificates/{subject}`
+  - GET `/dcl/pki/all-certificates/{subject}`
 
 #### GET_CHILD_CERTS
 
@@ -1712,42 +1890,6 @@ Revoked certificates are not returned.
   - `dcld query pki all-child-x509-certs (--subject=<base64 string> --subject-key-id=<hex string>`
 - REST API:
   - GET `/dcl/pki/child-certificates/{subject}/{subject_key_id}`
-
-#### GET_ALL_CERTS
-
-**Status: Implemented**
-
-Gets all certificates. This query works for all types of certificates (PAA, PAI, NOC_ROOT, NOC_ICA).
-
-Revoked certificates are not returned.
-Use [GET_ALL_REVOKED_CERTS](#get_all_revoked_certs) to get a list of all revoked certificates.
-
-Should be sent to trusted nodes only.
-
-- Parameters:
-  - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
-- CLI command:
-  - `dcld query pki all-x509-certs`
-- REST API:
-  - GET `/dcl/pki/certificates`
-
-#### GET_ALL_REVOKED_CERTS
-
-**Status: Implemented**
-
-Gets all revoked certificates. This query works for all types of certificates (PAA, PAI, NOC_ROOT, NOC_ICA).
-
-Revocation works as a soft-delete, meaning that the certificates are not entirely removed but moved from the approved list to the revoked list.
-If a Revocation Distribution Point (such as RFC5280 Certificate Revocation List) published to the ledger needs to be queried, please use [GET_PKI_REVOCATION_DISTRIBUTION_POINT](#get_pki_revocation_distribution_point).
-
-Should be sent to trusted nodes only.
-
-- Parameters:
-  - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
-- CLI command:
-  - `dcld query pki all-revoked-x509-certs`
-- REST API:
-  - GET `/dcl/pki/revoked-certificates`
 
 ## AUTH
 
