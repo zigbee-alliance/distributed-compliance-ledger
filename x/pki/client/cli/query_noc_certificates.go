@@ -59,13 +59,19 @@ func CmdShowNocCertificates() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use: "noc-x509-cert",
-		Short: "Gets certificates (either root or ica) by one of property combinations: " +
+		Short: "Gets NOC certificates (either root or ica) by one of property combinations: " +
 			"'subject + subject-key-id' or 'VID and subject-key-id' or just 'subject-key-id'",
 		Args: cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
 				return err
+			}
+
+			if vid != 0 && subject != "" && subjectKeyID != "" {
+				return clientCtx.PrintString("Incorrect parameters combination. " +
+					"You must provide '--subject, --subject-key-id' or '--vid , --subject-key-id' or " +
+					"just '--subject-key-id'")
 			}
 
 			if subject != "" && subjectKeyID != "" {
