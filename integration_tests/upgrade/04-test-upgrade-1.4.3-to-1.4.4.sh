@@ -493,6 +493,21 @@ result=$($DCLD_BIN_NEW query pki noc-x509-cert --subject="$noc_root_cert_1_subje
 check_response "$result" "Not Found"
 
 echo "Get all x509 certificates by subjectKeyId"
+result=$($DCLD_BIN_NEW query pki cert --subject-key-id="$root_cert_with_vid_subject_key_id_for_1_4_3")
+check_response "$result" "$root_cert_with_vid_subject_for_1_4_3"
+check_response "$result" "\"subjectKeyId\": \"$root_cert_with_vid_subject_key_id_for_1_4_3\""
+
+result=$($DCLD_BIN_NEW query pki cert --subject-key-id="$test_root_cert_subject_key_id_for_1_2")
+check_response "$result" "$test_root_cert_subject_for_1_2"
+check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id_for_1_2\""
+
+result=$($DCLD_BIN_NEW query pki cert --subject-key-id="$test_root_cert_subject_key_id")
+check_response "$result" "$test_root_cert_subject"
+check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id\""
+
+result=$($DCLD_BIN_NEW query pki cert --subject-key-id="$noc_root_cert_1_subject_key_id_for_1_4_3")
+check_response "$result" "Not Found"
+
 result=$($DCLD_BIN_NEW query pki x509-cert --subject-key-id="$root_cert_with_vid_subject_key_id_for_1_4_3")
 check_response "$result" "$root_cert_with_vid_subject_for_1_4_3"
 check_response "$result" "\"subjectKeyId\": \"$root_cert_with_vid_subject_key_id_for_1_4_3\""
@@ -1490,11 +1505,18 @@ check_response "$result" "Not Found"
 
 echo "Get all certificates by SKID"
 
+echo "Get all certificates by SKID (Global)"
+result=$($DCLD_BIN_NEW query pki cert --subject-key-id=$da_root_cert_2_subject_key_id_for_1_4_4)
+check_response "$result" "\"subjectKeyId\": \"$da_root_cert_2_subject_key_id_for_1_4_4\""
+
+result=$($DCLD_BIN_NEW query pki cert --subject-key-id=$noc_root_cert_2_subject_key_id_for_1_4_4)
+check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_2_subject_for_1_4_4\""
+
 echo "Get all certificates by SKID (DA)"
 result=$($DCLD_BIN_NEW query pki x509-cert --subject-key-id=$da_root_cert_2_subject_key_id_for_1_4_4)
 check_response "$result" "\"subjectKeyId\": \"$da_root_cert_2_subject_key_id_for_1_4_4\""
 
-result=$($DCLD_BIN_NEW query pki x509-cert --subject-key-id=$noc_root_cert_2_subject_for_1_4_4)
+result=$($DCLD_BIN_NEW query pki x509-cert --subject-key-id=$noc_root_cert_2_subject_key_id_for_1_4_4)
 check_response "$result" "Not Found"
 
 echo "Get all certificates by SKID (NOC)"
