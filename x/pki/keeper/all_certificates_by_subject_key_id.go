@@ -19,18 +19,18 @@ func (k Keeper) SetAllCertificatesBySubjectKeyID(ctx sdk.Context, allCertificate
 
 // Add an All certificate to the list of All certificates with the subjectKeyId map.
 func (k Keeper) AddAllCertificateBySubjectKeyID(ctx sdk.Context, certificate types.Certificate) {
-	k.addAllCertificates(ctx, certificate.SubjectKeyId, []*types.Certificate{&certificate})
+	k.addAllCertificatesBySubjectKeyID(ctx, certificate.SubjectKeyId, []*types.Certificate{&certificate})
 }
 
 // Add an All certificates list to All certificates with the subjectKeyId map.
 func (k Keeper) AddAllCertificatesBySubjectKeyID(ctx sdk.Context, allCertificate types.AllCertificates) {
-	k.addAllCertificates(ctx, allCertificate.SubjectKeyId, allCertificate.Certs)
+	k.addAllCertificatesBySubjectKeyID(ctx, allCertificate.SubjectKeyId, allCertificate.Certs)
 }
 
-func (k Keeper) addAllCertificates(ctx sdk.Context, subjectKeyID string, certs []*types.Certificate) {
+func (k Keeper) addAllCertificatesBySubjectKeyID(ctx sdk.Context, subjectKeyID string, certs []*types.Certificate) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.AllCertificatesBySubjectKeyIDKeyPrefix))
 
-	AllCertificatesBytes := store.Get(types.AllCertificatesBySubjectKey(
+	AllCertificatesBytes := store.Get(types.AllCertificatesBySubjectKeyIDKey(
 		subjectKeyID,
 	))
 	var AllCertificates types.AllCertificatesBySubjectKeyId

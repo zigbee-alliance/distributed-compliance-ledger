@@ -109,7 +109,7 @@ func (k msgServer) AddNocX509IcaCert(goCtx context.Context, msg *types.MsgAddNoc
 	// append to global list of certificates indexed by subject
 	k.AddAllCertificateBySubject(ctx, certificate.Subject, certificate.SubjectKeyId)
 
-	// add to global list of certificates indexed by subject
+	// add to global list of certificates indexed by skid
 	k.AddAllCertificateBySubjectKeyID(ctx, certificate)
 
 	// Add to the list of all NOC certificates

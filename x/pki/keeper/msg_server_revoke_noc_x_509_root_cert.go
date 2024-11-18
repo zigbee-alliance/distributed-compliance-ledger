@@ -118,8 +118,9 @@ func (k msgServer) _revokeNocRootCertificates(ctx sdk.Context, certificates type
 
 	// remove cert from global certs list
 	k.RemoveAllCertificates(ctx, certificates.Subject, certificates.SubjectKeyId)
-	// remove cert from global certs list -> subject key ID map
+	// remove cert from global certs list -> subject map
 	k.RemoveAllCertificateBySubject(ctx, certificates.Subject, certificates.SubjectKeyId)
+	// remove cert from global certs list -> subject key ID map
 	k.RemoveAllCertificatesBySubjectKeyID(ctx, certificates.Subject, certificates.SubjectKeyId)
 	// remove cert from NOC certs list
 	k.RemoveNocCertificates(ctx, certificates.Subject, certificates.SubjectKeyId)

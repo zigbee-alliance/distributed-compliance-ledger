@@ -65,8 +65,9 @@ func (k msgServer) _revokeX509Certificates(ctx sdk.Context, certID types.Certifi
 
 	// Remove certificate from global list
 	k.RemoveAllCertificates(ctx, certID.Subject, certID.SubjectKeyId)
-	// Remove certificate from global list -> subject key ID map
+	// Remove certificate from global list -> subject map
 	k.RemoveAllCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
+	// Remove certificate from global list -> subject key ID map
 	k.RemoveAllCertificatesBySubjectKeyID(ctx, certID.Subject, certID.SubjectKeyId)
 	// Remove certificate from approved list
 	k.RemoveApprovedCertificates(ctx, certID.Subject, certID.SubjectKeyId)

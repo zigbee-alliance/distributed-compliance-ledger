@@ -33,8 +33,6 @@ func (m Migrator) Migrate3to4(ctx sdk.Context) error {
 	approvedCertificates := m.keeper.GetAllApprovedCertificates(ctx)
 	for _, cert := range approvedCertificates {
 		m.keeper.AddAllCertificates(ctx, cert.Subject, cert.SubjectKeyId, cert.SchemaVersion, cert.Certs)
-	}
-	for _, cert := range approvedCertificates {
 		m.keeper.AddAllCertificatesBySubjectKeyID(ctx, pkitypes.AllCertificates(cert))
 	}
 	approvedCertificatesBySubject := m.keeper.GetAllApprovedCertificatesBySubject(ctx)

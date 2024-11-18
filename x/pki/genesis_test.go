@@ -264,6 +264,5 @@ func TestGenesis(t *testing.T) {
 	require.ElementsMatch(t, genesisState.RevokedNocIcaCertificatesList, got.RevokedNocIcaCertificatesList)
 	require.ElementsMatch(t, genesisState.AllCertificatesBySubjectList, got.AllCertificatesBySubjectList)
 	require.ElementsMatch(t, genesisState.AllCertificatesBySubjectKeyIdList, got.AllCertificatesBySubjectKeyIdList)
-	require.ElementsMatch(t, genesisState.AllCertificatesBySubjectKeyIdList, got.AllCertificatesBySubjectKeyIdList)
 	// this line is used by starport scaffolding # genesis/test/assert
 }
