@@ -41,7 +41,7 @@ func (k Keeper) CertificatesAll(c context.Context, req *types.QueryAllCertificat
 		pageRes = &query.PageResponse{Total: 1}
 	} else {
 		store := ctx.KVStore(k.storeKey)
-		allCertificatesStore := prefix.NewStore(store, pkitypes.KeyPrefix(types.AllCertificatesBySubjectKeyIDKeyPrefix))
+		allCertificatesStore := prefix.NewStore(store, pkitypes.KeyPrefix(types.AllCertificatesKeyPrefix))
 
 		pageRes, err = query.Paginate(allCertificatesStore, req.Pagination, func(key []byte, value []byte) error {
 			var certificates types.AllCertificates
