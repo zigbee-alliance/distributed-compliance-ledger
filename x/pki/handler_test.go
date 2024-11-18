@@ -949,7 +949,7 @@ func ensureCertificateNotPresentInGlobalCertificateIndexes(
 	_, err := querySingleCertificateFromAllCertificatesIndex(setup, subject, subjectKeyID)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
-	// DaCertificates: SubjectKeyID
+	// AllCertificate: SKID
 	certificatesBySubjectKeyID, _ := queryAllCertificatesBySubjectKeyID(setup, subjectKeyID)
 	require.Empty(t, certificatesBySubjectKeyID)
 

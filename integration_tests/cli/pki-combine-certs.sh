@@ -285,12 +285,12 @@ test_divider
 
 echo "Request certificates by subject key id"
 echo "Request DA certificate using global command"
-result=$(dcld query pki certs --subject-key-id="$da_root_subject_key_id")
+result=$(dcld query pki cert --subject-key-id="$da_root_subject_key_id")
 echo $result | jq
 check_response "$result" "\"subjectKeyId\": \"$da_root_subject_key_id\""
 
 echo "Request NOC certificate using global command"
-result=$(dcld query pki certs --subject-key-id="$noc_root_subject_key_id")
+result=$(dcld query pki cert --subject-key-id="$noc_root_subject_key_id")
 echo $result | jq
 check_response "$result" "\"subjectKeyId\": \"$noc_root_subject_key_id\""
 

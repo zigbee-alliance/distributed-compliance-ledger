@@ -67,6 +67,24 @@ Use [GET_ALL_REVOKED_NOC_ICA_CERTS](#get_all_revoked_noc_ica-icacs) to get a lis
 - REST API:
   - GET `/dcl/pki/all-certificates/{subject}`
 
+#### GET_ALL_CERTS_BY_SKID
+
+**Status: Implemented**
+
+Gets all certificates by the given subject key ID attribute. This query works for all types certificates (PAA, PAI, RCAC, ICAC).
+
+Revoked certificates are not returned.
+Use [GET_ALL_REVOKED_DA_CERTS](#get_all_revoked_da_certs) to get a list of all revoked DA certificates.
+Use [GET_ALL_REVOKED_NOC_ROOT_CERTS](#get_all_revoked_noc_root-rcacs) to get a list of all revoked Noc Root certificates.
+Use [GET_ALL_REVOKED_NOC_ICA_CERTS](#get_all_revoked_noc_ica-icacs) to get a list of all revoked Noc ICA certificates.
+
+- Parameters:
+  - subject_key_id: `string`  - certificates's `Subject Key Id` in hex string format, e.g: `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`
+- CLI command:
+  - `dcld query pki cert --subject-key-id=<hex string>`
+- REST API:
+  - GET `/dcl/pki/all-certificates?subjectKeyId={subjectKeyId}`
+
 #### GET_CHILD_CERTS
 
 **Status: Implemented**

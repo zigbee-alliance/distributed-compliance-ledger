@@ -36,7 +36,7 @@ import (
 	TODO: provide tests for error cases
 */
 
-func GetAllProposedX509RootCerts(suite *utils.TestSuite) (res []pkitypes.ProposedCertificate, err error) {
+func GetAllProposedDaX509RootCerts(suite *utils.TestSuite) (res []pkitypes.ProposedCertificate, err error) {
 	if suite.Rest {
 		var resp pkitypes.QueryAllProposedCertificateResponse
 		err := suite.QueryREST("/dcl/pki/proposed-certificates", &resp)
@@ -63,7 +63,7 @@ func GetAllProposedX509RootCerts(suite *utils.TestSuite) (res []pkitypes.Propose
 	return res, nil
 }
 
-func GetProposedX509RootCert(suite *utils.TestSuite, subject string, subjectKeyID string) (*pkitypes.ProposedCertificate, error) {
+func GetProposedDaX509RootCert(suite *utils.TestSuite, subject string, subjectKeyID string) (*pkitypes.ProposedCertificate, error) {
 	var res pkitypes.ProposedCertificate
 	if suite.Rest {
 		var resp pkitypes.QueryGetProposedCertificateResponse
@@ -100,14 +100,15 @@ func GetProposedX509RootCert(suite *utils.TestSuite, subject string, subjectKeyI
 	return &res, nil
 }
 
-func GetAllX509Certs(suite *utils.TestSuite) (res []pkitypes.ApprovedCertificates, err error) {
-	return getAllX509Certs(suite, "")
-}
-func GetAllX509certsBySubjectKeyID(suite *utils.TestSuite, subjectKeyID string) (res []pkitypes.ApprovedCertificates, err error) {
-	return getAllX509Certs(suite, subjectKeyID)
+func GetAllDaX509Certs(suite *utils.TestSuite) (res []pkitypes.ApprovedCertificates, err error) {
+	return getAllDaX509Certs(suite, "")
 }
 
-func getAllX509Certs(suite *utils.TestSuite, subjectKeyID string) (res []pkitypes.ApprovedCertificates, err error) {
+func GetAllDaX509certsBySubjectKeyID(suite *utils.TestSuite, subjectKeyID string) (res []pkitypes.ApprovedCertificates, err error) {
+	return getAllDaX509Certs(suite, subjectKeyID)
+}
+
+func getAllDaX509Certs(suite *utils.TestSuite, subjectKeyID string) (res []pkitypes.ApprovedCertificates, err error) {
 	if suite.Rest {
 		var resp pkitypes.QueryAllApprovedCertificatesResponse
 		err := suite.QueryREST(fmt.Sprintf("/dcl/pki/certificates?subjectKeyId=%s", subjectKeyID), &resp)
@@ -134,7 +135,7 @@ func getAllX509Certs(suite *utils.TestSuite, subjectKeyID string) (res []pkitype
 	return res, nil
 }
 
-func GetX509Cert(suite *utils.TestSuite, subject string, subjectKeyID string) (*pkitypes.ApprovedCertificates, error) {
+func GetDaX509Cert(suite *utils.TestSuite, subject string, subjectKeyID string) (*pkitypes.ApprovedCertificates, error) {
 	var res pkitypes.ApprovedCertificates
 	if suite.Rest {
 		var resp pkitypes.QueryGetApprovedCertificatesResponse
@@ -171,7 +172,7 @@ func GetX509Cert(suite *utils.TestSuite, subject string, subjectKeyID string) (*
 	return &res, nil
 }
 
-func GetAllRevokedX509Certs(suite *utils.TestSuite) (res []pkitypes.RevokedCertificates, err error) {
+func GetAllRevokedDaX509Certs(suite *utils.TestSuite) (res []pkitypes.RevokedCertificates, err error) {
 	if suite.Rest {
 		var resp pkitypes.QueryAllRevokedCertificatesResponse
 		err := suite.QueryREST("/dcl/pki/revoked-certificates", &resp)
@@ -198,7 +199,7 @@ func GetAllRevokedX509Certs(suite *utils.TestSuite) (res []pkitypes.RevokedCerti
 	return res, nil
 }
 
-func GetRevokedX509Cert(suite *utils.TestSuite, subject string, subjectKeyID string) (*pkitypes.RevokedCertificates, error) {
+func GetRevokedDaX509Cert(suite *utils.TestSuite, subject string, subjectKeyID string) (*pkitypes.RevokedCertificates, error) {
 	var res pkitypes.RevokedCertificates
 	if suite.Rest {
 		var resp pkitypes.QueryGetRevokedCertificatesResponse
@@ -308,7 +309,7 @@ func getProposedRevocationX509Cert(suite *utils.TestSuite, subject string, subje
 	return &res, nil
 }
 
-func GetAllRootX509Certs(suite *utils.TestSuite) (res pkitypes.ApprovedRootCertificates, err error) {
+func GetAllDaRootX509Certs(suite *utils.TestSuite) (res pkitypes.ApprovedRootCertificates, err error) {
 	if suite.Rest {
 		var resp pkitypes.QueryGetApprovedRootCertificatesResponse
 		err := suite.QueryREST("/dcl/pki/root-certificates", &resp)
@@ -335,7 +336,7 @@ func GetAllRootX509Certs(suite *utils.TestSuite) (res pkitypes.ApprovedRootCerti
 	return res, nil
 }
 
-func GetAllRevokedRootX509Certs(suite *utils.TestSuite) (res pkitypes.RevokedRootCertificates, err error) {
+func GetAllRevokedDaRootX509Certs(suite *utils.TestSuite) (res pkitypes.RevokedRootCertificates, err error) {
 	if suite.Rest {
 		var resp pkitypes.QueryGetRevokedRootCertificatesResponse
 		err := suite.QueryREST("/dcl/pki/revoked-root-certificates", &resp)
@@ -362,7 +363,7 @@ func GetAllRevokedRootX509Certs(suite *utils.TestSuite) (res pkitypes.RevokedRoo
 	return res, nil
 }
 
-func GetAllX509CertsBySubject(suite *utils.TestSuite, subject string) (*pkitypes.ApprovedCertificatesBySubject, error) {
+func GetAllDaX509CertsBySubject(suite *utils.TestSuite, subject string) (*pkitypes.ApprovedCertificatesBySubject, error) {
 	var res pkitypes.ApprovedCertificatesBySubject
 	if suite.Rest {
 		var resp pkitypes.QueryGetApprovedCertificatesBySubjectResponse
@@ -435,7 +436,7 @@ func GetAllChildX509Certs(suite *utils.TestSuite, subject string, subjectKeyID s
 	return &res, nil
 }
 
-func GetAllRejectedX509RootCerts(suite *utils.TestSuite) (res []pkitypes.RejectedCertificate, err error) {
+func GetAllRejectedDaX509RootCerts(suite *utils.TestSuite) (res []pkitypes.RejectedCertificate, err error) {
 	if suite.Rest {
 		var resp pkitypes.QueryAllRejectedCertificatesResponse
 		err := suite.QueryREST("dcl/pki/rejected-certificates", &resp)
@@ -461,7 +462,7 @@ func GetAllRejectedX509RootCerts(suite *utils.TestSuite) (res []pkitypes.Rejecte
 	return res, nil
 }
 
-func GetRejectedX509RootCert(suite *utils.TestSuite, subject string, subjectKeyID string) (*pkitypes.RejectedCertificate, error) {
+func GetRejectedDaX509RootCert(suite *utils.TestSuite, subject string, subjectKeyID string) (*pkitypes.RejectedCertificate, error) {
 	var res pkitypes.RejectedCertificate
 	if suite.Rest {
 		var resp pkitypes.QueryGetRejectedCertificatesResponse
@@ -597,9 +598,17 @@ func GetPkiRevocationDistributionPoint(suite *utils.TestSuite, vendorID int32, s
 }
 
 func GetAllCerts(suite *utils.TestSuite) (res []pkitypes.AllCertificates, err error) {
+	return getAllCerts(suite, "")
+}
+
+func GetAllCertsBySubjectKeyId(suite *utils.TestSuite, subjectKeyID string) (res []pkitypes.AllCertificates, err error) {
+	return getAllCerts(suite, subjectKeyID)
+}
+
+func getAllCerts(suite *utils.TestSuite, subjectKeyID string) (res []pkitypes.AllCertificates, err error) {
 	if suite.Rest {
 		var resp pkitypes.QueryAllCertificatesResponse
-		err := suite.QueryREST("/dcl/pki/all-certificates", &resp)
+		err := suite.QueryREST(fmt.Sprintf("/dcl/pki/all-certificates?subjectKeyId=%s", subjectKeyID), &resp)
 		if err != nil {
 			return nil, err
 		}
@@ -612,7 +621,9 @@ func GetAllCerts(suite *utils.TestSuite) (res []pkitypes.AllCertificates, err er
 		pkiClient := pkitypes.NewQueryClient(grpcConn)
 		resp, err := pkiClient.CertificatesAll(
 			context.Background(),
-			&pkitypes.QueryAllCertificatesRequest{},
+			&pkitypes.QueryAllCertificatesRequest{
+				SubjectKeyId: subjectKeyID,
+			},
 		)
 		if err != nil {
 			return nil, err
@@ -699,22 +710,22 @@ func GetAllCertsBySubject(suite *utils.TestSuite, subject string) (*pkitypes.All
 //nolint:funlen
 func Demo(suite *utils.TestSuite) {
 	// All requests return empty or 404 value
-	proposedCertificates, _ := GetAllProposedX509RootCerts(suite)
+	proposedCertificates, _ := GetAllProposedDaX509RootCerts(suite)
 	require.Equal(suite.T, 0, len(proposedCertificates))
 
-	_, err := GetProposedX509RootCert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	_, err := GetProposedDaX509RootCert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	suite.AssertNotFound(err)
 
-	certificates, _ := GetAllX509Certs(suite)
+	certificates, _ := GetAllDaX509Certs(suite)
 	require.Equal(suite.T, 0, len(certificates))
 
-	_, err = GetX509Cert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	_, err = GetDaX509Cert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	suite.AssertNotFound(err)
 
-	revokedCertificates, _ := GetAllRevokedX509Certs(suite)
+	revokedCertificates, _ := GetAllRevokedDaX509Certs(suite)
 	require.Equal(suite.T, 0, len(revokedCertificates))
 
-	_, err = GetRevokedX509Cert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	_, err = GetRevokedDaX509Cert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	suite.AssertNotFound(err)
 
 	proposedRevocationCertificates, _ := GetAllProposedRevocationX509Certs(suite)
@@ -723,20 +734,23 @@ func Demo(suite *utils.TestSuite) {
 	_, err = GetProposedRevocationX509Cert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	suite.AssertNotFound(err)
 
-	rootCertificates, _ := GetAllRootX509Certs(suite)
+	rootCertificates, _ := GetAllDaRootX509Certs(suite)
 	require.Equal(suite.T, 0, len(rootCertificates.Certs))
 
-	revokedRootCertificates, _ := GetAllRevokedRootX509Certs(suite)
+	revokedRootCertificates, _ := GetAllRevokedDaRootX509Certs(suite)
 	require.Equal(suite.T, 0, len(revokedRootCertificates.Certs))
 
 	_, err = GetAllChildX509Certs(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	suite.AssertNotFound(err)
 
-	_, err = GetAllX509CertsBySubject(suite, testconstants.RootSubject)
+	_, err = GetAllDaX509CertsBySubject(suite, testconstants.RootSubject)
 	suite.AssertNotFound(err)
 
 	allCertificates, _ := GetAllCerts(suite)
 	require.Equal(suite.T, 0, len(allCertificates))
+
+	allCertificatesBySkid, _ := GetAllCertsBySubjectKeyId(suite, testconstants.GoogleSubjectKeyID)
+	require.Equal(suite.T, 0, len(allCertificatesBySkid))
 
 	_, err = GetAllCertsBySubject(suite, testconstants.RootSubject)
 	suite.AssertNotFound(err)
@@ -809,35 +823,35 @@ func Demo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Request all proposed Root certificates
-	proposedCertificates, _ = GetAllProposedX509RootCerts(suite)
+	proposedCertificates, _ = GetAllProposedDaX509RootCerts(suite)
 	require.Equal(suite.T, 1, len(proposedCertificates))
 	require.Equal(suite.T, testconstants.RootSubject, proposedCertificates[0].Subject)
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, proposedCertificates[0].SubjectKeyId)
 	require.Equal(suite.T, testconstants.RootSubjectAsText, proposedCertificates[0].SubjectAsText)
 
 	// Request all approved certificates
-	certificates, _ = GetAllX509Certs(suite)
+	certificates, _ = GetAllDaX509Certs(suite)
 	require.Equal(suite.T, 0, len(certificates))
 
 	// Request proposed Root certificate
-	proposedCertificate, _ := GetProposedX509RootCert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	proposedCertificate, _ := GetProposedDaX509RootCert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	require.Equal(suite.T, testconstants.RootCertPem, proposedCertificate.PemCert)
 	require.Equal(suite.T, jackAccount.Address, proposedCertificate.Owner)
 	require.Equal(suite.T, 1, len(proposedCertificate.Approvals))
 
 	// Request all proposed Root certificates
-	proposedCertificates, _ = GetAllProposedX509RootCerts(suite)
+	proposedCertificates, _ = GetAllProposedDaX509RootCerts(suite)
 	require.Equal(suite.T, 1, len(proposedCertificates))
 	require.Equal(suite.T, testconstants.RootSubject, proposedCertificates[0].Subject)
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, proposedCertificates[0].SubjectKeyId)
 	require.Equal(suite.T, testconstants.RootSubjectAsText, proposedCertificates[0].SubjectAsText)
 
 	// Request all approved certificates
-	certificates, _ = GetAllX509Certs(suite)
+	certificates, _ = GetAllDaX509Certs(suite)
 	require.Equal(suite.T, 0, len(certificates))
 
 	// Request proposed Root certificate
-	proposedCertificate, _ = GetProposedX509RootCert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	proposedCertificate, _ = GetProposedDaX509RootCert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	require.Equal(suite.T, testconstants.RootCertPem, proposedCertificate.PemCert)
 	require.Equal(suite.T, jackAccount.Address, proposedCertificate.Owner)
 	require.True(suite.T, proposedCertificate.HasApprovalFrom(jackAccount.Address))
@@ -863,12 +877,12 @@ func Demo(suite *utils.TestSuite) {
 	require.ErrorContains(suite.T, err, "vid is not empty")
 
 	// Request all proposed Root certificates
-	proposedCertificates, _ = GetAllProposedX509RootCerts(suite)
+	proposedCertificates, _ = GetAllProposedDaX509RootCerts(suite)
 	require.Equal(suite.T, 0, len(proposedCertificates))
 
 	// Request all approved certificates
-	certificates, _ = GetAllX509Certs(suite)
-	certsBySubjectKeyID, _ := GetAllX509certsBySubjectKeyID(suite, testconstants.RootSubjectKeyID)
+	certificates, _ = GetAllDaX509Certs(suite)
+	certsBySubjectKeyID, _ := GetAllDaX509certsBySubjectKeyID(suite, testconstants.RootSubjectKeyID)
 	for _, certs := range [][]pkitypes.ApprovedCertificates{certificates, certsBySubjectKeyID} {
 		require.Equal(suite.T, 1, len(certs))
 		require.Equal(suite.T, testconstants.RootSubjectKeyID, certs[0].SubjectKeyId)
@@ -877,13 +891,13 @@ func Demo(suite *utils.TestSuite) {
 	}
 
 	// Request all approved Root certificates
-	rootCertificates, _ = GetAllRootX509Certs(suite)
+	rootCertificates, _ = GetAllDaRootX509Certs(suite)
 	require.Equal(suite.T, 1, len(rootCertificates.Certs))
 	require.Equal(suite.T, testconstants.RootSubject, rootCertificates.Certs[0].Subject)
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, rootCertificates.Certs[0].SubjectKeyId)
 
 	// Request approved Root certificate
-	certificate, _ := GetX509Cert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	certificate, _ := GetDaX509Cert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	require.Equal(suite.T, testconstants.RootSubject, certificate.Subject)
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, certificate.SubjectKeyId)
 	require.Equal(suite.T, testconstants.RootSubjectAsText, certificate.Certs[0].SubjectAsText)
@@ -909,11 +923,11 @@ func Demo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Request all proposed Root certificates
-	proposedCertificates, _ = GetAllProposedX509RootCerts(suite)
+	proposedCertificates, _ = GetAllProposedDaX509RootCerts(suite)
 	require.Equal(suite.T, 0, len(proposedCertificates))
 
 	// Request all approved certificates
-	certificates, _ = GetAllX509Certs(suite)
+	certificates, _ = GetAllDaX509Certs(suite)
 	require.Equal(suite.T, 2, len(certificates))
 	require.Equal(suite.T, testconstants.RootSubject, certificates[0].Subject)
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, certificates[0].SubjectKeyId)
@@ -923,13 +937,13 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.IntermediateSubjectAsText, certificates[1].Certs[0].SubjectAsText)
 
 	// Request all approved Root certificates
-	rootCertificates, _ = GetAllRootX509Certs(suite)
+	rootCertificates, _ = GetAllDaRootX509Certs(suite)
 	require.Equal(suite.T, 1, len(rootCertificates.Certs))
 	require.Equal(suite.T, testconstants.RootSubject, rootCertificates.Certs[0].Subject)
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, rootCertificates.Certs[0].SubjectKeyId)
 
 	// Request Intermediate certificate
-	certificate, _ = GetX509Cert(suite, testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
+	certificate, _ = GetDaX509Cert(suite, testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
 	require.Equal(suite.T, testconstants.IntermediateSubject, certificate.Subject)
 	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, certificate.SubjectKeyId)
 	require.Equal(suite.T, testconstants.IntermediateSubjectAsText, certificate.Certs[0].SubjectAsText)
@@ -947,11 +961,11 @@ func Demo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Request all proposed Root certificates
-	proposedCertificates, _ = GetAllProposedX509RootCerts(suite)
+	proposedCertificates, _ = GetAllProposedDaX509RootCerts(suite)
 	require.Equal(suite.T, 0, len(proposedCertificates))
 
 	// Request all approved certificates
-	certificates, _ = GetAllX509Certs(suite)
+	certificates, _ = GetAllDaX509Certs(suite)
 	require.Equal(suite.T, 3, len(certificates))
 	require.Equal(suite.T, testconstants.LeafSubject, certificates[0].Subject)
 	require.Equal(suite.T, testconstants.LeafSubjectKeyID, certificates[0].SubjectKeyId)
@@ -964,13 +978,13 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.IntermediateSubjectAsText, certificates[2].Certs[0].SubjectAsText)
 
 	// Request all approved Root certificates
-	rootCertificates, _ = GetAllRootX509Certs(suite)
+	rootCertificates, _ = GetAllDaRootX509Certs(suite)
 	require.Equal(suite.T, 1, len(rootCertificates.Certs))
 	require.Equal(suite.T, testconstants.RootSubject, rootCertificates.Certs[0].Subject)
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, rootCertificates.Certs[0].SubjectKeyId)
 
 	// Request Leaf certificate
-	certificate, _ = GetX509Cert(suite, testconstants.LeafSubject, testconstants.LeafSubjectKeyID)
+	certificate, _ = GetDaX509Cert(suite, testconstants.LeafSubject, testconstants.LeafSubjectKeyID)
 	require.Equal(suite.T, testconstants.LeafSubject, certificate.Subject)
 	require.Equal(suite.T, testconstants.LeafSubjectKeyID, certificate.SubjectKeyId)
 	require.Equal(suite.T, 1, len(certificate.Certs))
@@ -982,17 +996,17 @@ func Demo(suite *utils.TestSuite) {
 	require.False(suite.T, certificate.Certs[0].IsRoot)
 
 	// Request all Subject certificates
-	subjectCertificates, _ := GetAllX509CertsBySubject(suite, testconstants.LeafSubject)
+	subjectCertificates, _ := GetAllDaX509CertsBySubject(suite, testconstants.LeafSubject)
 	require.Equal(suite.T, testconstants.LeafSubject, subjectCertificates.Subject)
 	require.Equal(suite.T, 1, len(subjectCertificates.SubjectKeyIds))
 	require.Equal(suite.T, testconstants.LeafSubjectKeyID, subjectCertificates.SubjectKeyIds[0])
 
-	subjectCertificates, _ = GetAllX509CertsBySubject(suite, testconstants.IntermediateSubject)
+	subjectCertificates, _ = GetAllDaX509CertsBySubject(suite, testconstants.IntermediateSubject)
 	require.Equal(suite.T, testconstants.IntermediateSubject, subjectCertificates.Subject)
 	require.Equal(suite.T, 1, len(subjectCertificates.SubjectKeyIds))
 	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, subjectCertificates.SubjectKeyIds[0])
 
-	subjectCertificates, _ = GetAllX509CertsBySubject(suite, testconstants.RootSubject)
+	subjectCertificates, _ = GetAllDaX509CertsBySubject(suite, testconstants.RootSubject)
 	require.Equal(suite.T, testconstants.RootSubject, subjectCertificates.Subject)
 	require.Equal(suite.T, 1, len(subjectCertificates.SubjectKeyIds))
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, subjectCertificates.SubjectKeyIds[0])
@@ -1002,11 +1016,11 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, 0, len(proposedRevocationCertificates))
 
 	// Request all revoked certificates
-	revokedCertificates, _ = GetAllRevokedX509Certs(suite)
+	revokedCertificates, _ = GetAllRevokedDaX509Certs(suite)
 	require.Equal(suite.T, 0, len(revokedCertificates))
 
 	// Request all revoked Root certificates
-	revokedRootCertificates, _ = GetAllRevokedRootX509Certs(suite)
+	revokedRootCertificates, _ = GetAllRevokedDaRootX509Certs(suite)
 	require.Equal(suite.T, 0, len(revokedRootCertificates.Certs))
 
 	// Get all child certificates
@@ -1029,6 +1043,11 @@ func Demo(suite *utils.TestSuite) {
 	// Request all certificates
 	allCertificates, _ = GetAllCerts(suite)
 	require.Equal(suite.T, 3, len(allCertificates))
+
+	allCertificatesBySkid, _ = GetAllCertsBySubjectKeyId(suite, testconstants.RootSubjectKeyID)
+	require.Equal(suite.T, 1, len(allCertificatesBySkid))
+	require.Equal(suite.T, testconstants.RootSubjectKeyID, allCertificatesBySkid[0].SubjectKeyId)
+	require.Equal(suite.T, testconstants.RootSubject, allCertificatesBySkid[0].Certs[0].Subject)
 
 	// Request all Subject certificates
 	allSubjectCertificates, _ := GetAllCertsBySubject(suite, testconstants.LeafSubject)
@@ -1071,7 +1090,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, 0, len(proposedRevocationCertificates))
 
 	// Request all revoked certificates
-	revokedCertificates, _ = GetAllRevokedX509Certs(suite)
+	revokedCertificates, _ = GetAllRevokedDaX509Certs(suite)
 	require.Equal(suite.T, 2, len(revokedCertificates))
 	require.Equal(suite.T, testconstants.LeafSubject, revokedCertificates[0].Subject)
 	require.Equal(suite.T, testconstants.LeafSubjectKeyID, revokedCertificates[0].SubjectKeyId)
@@ -1081,11 +1100,11 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.IntermediateSubjectAsText, revokedCertificates[1].Certs[0].SubjectAsText)
 
 	// Request all revoked Root certificates
-	revokedRootCertificates, _ = GetAllRevokedRootX509Certs(suite)
+	revokedRootCertificates, _ = GetAllRevokedDaRootX509Certs(suite)
 	require.Equal(suite.T, 0, len(revokedRootCertificates.Certs))
 
 	// Request revoked Intermediate certificate
-	revokedCertificate, _ := GetRevokedX509Cert(suite, testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
+	revokedCertificate, _ := GetRevokedDaX509Cert(suite, testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
 	require.Equal(suite.T, 1, len(revokedCertificate.Certs))
 	require.Equal(suite.T, testconstants.IntermediateSubject, revokedCertificate.Subject)
 	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, revokedCertificate.SubjectKeyId)
@@ -1097,7 +1116,7 @@ func Demo(suite *utils.TestSuite) {
 	require.False(suite.T, revokedCertificate.Certs[0].IsRoot)
 
 	// Request revoked Leaf certificate
-	revokedCertificate, _ = GetRevokedX509Cert(suite, testconstants.LeafSubject, testconstants.LeafSubjectKeyID)
+	revokedCertificate, _ = GetRevokedDaX509Cert(suite, testconstants.LeafSubject, testconstants.LeafSubjectKeyID)
 	require.Equal(suite.T, 1, len(revokedCertificate.Certs))
 	require.Equal(suite.T, testconstants.LeafSubject, revokedCertificate.Subject)
 	require.Equal(suite.T, testconstants.LeafSubjectKeyID, revokedCertificate.SubjectKeyId)
@@ -1109,8 +1128,8 @@ func Demo(suite *utils.TestSuite) {
 	require.False(suite.T, revokedCertificate.Certs[0].IsRoot)
 
 	// Request all approved certificates
-	certificates, _ = GetAllX509Certs(suite)
-	certsBySubjectKeyID, _ = GetAllX509certsBySubjectKeyID(suite, testconstants.RootSubjectKeyID)
+	certificates, _ = GetAllDaX509Certs(suite)
+	certsBySubjectKeyID, _ = GetAllDaX509certsBySubjectKeyID(suite, testconstants.RootSubjectKeyID)
 	for _, certs := range [][]pkitypes.ApprovedCertificates{certificates, certsBySubjectKeyID} {
 		require.Equal(suite.T, 1, len(certs))
 		require.Equal(suite.T, testconstants.RootSubjectKeyID, certs[0].SubjectKeyId)
@@ -1133,7 +1152,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, proposedRevocationCertificates[0].SubjectKeyId)
 
 	// Request all revoked certificates
-	revokedCertificates, _ = GetAllRevokedX509Certs(suite)
+	revokedCertificates, _ = GetAllRevokedDaX509Certs(suite)
 	require.Equal(suite.T, 2, len(revokedCertificates))
 	require.Equal(suite.T, testconstants.LeafSubject, revokedCertificates[0].Subject)
 	require.Equal(suite.T, testconstants.LeafSubjectKeyID, revokedCertificates[0].SubjectKeyId)
@@ -1141,7 +1160,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, revokedCertificates[1].SubjectKeyId)
 
 	// Request all revoked Root certificates
-	revokedRootCertificates, _ = GetAllRevokedRootX509Certs(suite)
+	revokedRootCertificates, _ = GetAllRevokedDaRootX509Certs(suite)
 	require.Equal(suite.T, 0, len(revokedRootCertificates.Certs))
 
 	// Request Root certificate proposed to revoke
@@ -1152,7 +1171,7 @@ func Demo(suite *utils.TestSuite) {
 	require.True(suite.T, proposedCertificateRevocation.HasRevocationFrom(jackAccount.Address))
 
 	// Request all approved certificates
-	certificates, _ = GetAllX509Certs(suite)
+	certificates, _ = GetAllDaX509Certs(suite)
 	require.Equal(suite.T, 1, len(certificates))
 	require.Equal(suite.T, testconstants.RootSubject, certificates[0].Subject)
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, certificates[0].SubjectKeyId)
@@ -1171,7 +1190,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, 0, len(proposedRevocationCertificates))
 
 	// Request all revoked certificates
-	revokedCertificates, _ = GetAllRevokedX509Certs(suite)
+	revokedCertificates, _ = GetAllRevokedDaX509Certs(suite)
 	require.Equal(suite.T, 3, len(revokedCertificates))
 	require.Equal(suite.T, testconstants.LeafSubject, revokedCertificates[0].Subject)
 	require.Equal(suite.T, testconstants.LeafSubjectKeyID, revokedCertificates[0].SubjectKeyId)
@@ -1181,13 +1200,13 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, revokedCertificates[2].SubjectKeyId)
 
 	// Request all revoked Root certificates
-	revokedRootCertificates, _ = GetAllRevokedRootX509Certs(suite)
+	revokedRootCertificates, _ = GetAllRevokedDaRootX509Certs(suite)
 	require.Equal(suite.T, 1, len(revokedRootCertificates.Certs))
 	require.Equal(suite.T, testconstants.RootSubject, revokedRootCertificates.Certs[0].Subject)
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, revokedRootCertificates.Certs[0].SubjectKeyId)
 
 	// Request revoked Root certificate
-	revokedCertificate, _ = GetRevokedX509Cert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	revokedCertificate, _ = GetRevokedDaX509Cert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	require.Equal(suite.T, 1, len(revokedCertificate.Certs))
 	require.Equal(suite.T, testconstants.RootSubject, revokedCertificate.Subject)
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, revokedCertificate.SubjectKeyId)
@@ -1198,19 +1217,19 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.RootSubjectAsText, revokedCertificate.Certs[0].SubjectAsText)
 	require.True(suite.T, revokedCertificate.Certs[0].IsRoot)
 
-	certificates, _ = GetAllX509Certs(suite)
+	certificates, _ = GetAllDaX509Certs(suite)
 	require.Equal(suite.T, 0, len(certificates))
 
-	_, err = GetProposedX509RootCert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	_, err = GetProposedDaX509RootCert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	suite.AssertNotFound(err)
 
-	_, err = GetX509Cert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	_, err = GetDaX509Cert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	suite.AssertNotFound(err)
 
-	_, err = GetX509Cert(suite, testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
+	_, err = GetDaX509Cert(suite, testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
 	suite.AssertNotFound(err)
 
-	_, err = GetX509Cert(suite, testconstants.LeafSubject, testconstants.LeafSubjectKeyID)
+	_, err = GetDaX509Cert(suite, testconstants.LeafSubject, testconstants.LeafSubjectKeyID)
 	suite.AssertNotFound(err)
 
 	proposedRevocationCertificates, _ = GetAllProposedRevocationX509Certs(suite)
@@ -1219,7 +1238,7 @@ func Demo(suite *utils.TestSuite) {
 	_, err = GetProposedRevocationX509Cert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	suite.AssertNotFound(err)
 
-	rootCertificates, _ = GetAllRootX509Certs(suite)
+	rootCertificates, _ = GetAllDaRootX509Certs(suite)
 	require.Equal(suite.T, 0, len(rootCertificates.Certs))
 
 	_, err = GetAllChildX509Certs(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
@@ -1231,17 +1250,17 @@ func Demo(suite *utils.TestSuite) {
 	_, err = GetAllChildX509Certs(suite, testconstants.LeafSubject, testconstants.LeafSubjectKeyID)
 	suite.AssertNotFound(err)
 
-	_, err = GetAllX509CertsBySubject(suite, testconstants.RootSubject)
+	_, err = GetAllDaX509CertsBySubject(suite, testconstants.RootSubject)
 	suite.AssertNotFound(err)
 
-	_, err = GetAllX509CertsBySubject(suite, testconstants.IntermediateSubject)
+	_, err = GetAllDaX509CertsBySubject(suite, testconstants.IntermediateSubject)
 	suite.AssertNotFound(err)
 
-	_, err = GetAllX509CertsBySubject(suite, testconstants.LeafSubject)
+	_, err = GetAllDaX509CertsBySubject(suite, testconstants.LeafSubject)
 	suite.AssertNotFound(err)
 
 	// CHECK GOOGLE ROOT CERTIFICATE WHICH INCLUDES VID
-	_, err = GetRevokedX509Cert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
+	_, err = GetRevokedDaX509Cert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
 	suite.AssertNotFound(err)
 
 	_, err = GetProposedRevocationX509Cert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
@@ -1257,21 +1276,21 @@ func Demo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Request all proposed Root certificate
-	proposedCertificates, _ = GetAllProposedX509RootCerts(suite)
+	proposedCertificates, _ = GetAllProposedDaX509RootCerts(suite)
 	require.Equal(suite.T, 1, len(proposedCertificates))
 	require.Equal(suite.T, testconstants.GoogleSubject, proposedCertificates[0].Subject)
 	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, proposedCertificates[0].SubjectKeyId)
 
 	// Request all approved certificates
-	certificates, _ = GetAllX509Certs(suite)
+	certificates, _ = GetAllDaX509Certs(suite)
 	require.Equal(suite.T, 0, len(certificates))
 
 	// Request all approved certificates by subjectKeyId
-	certificates, _ = GetAllX509certsBySubjectKeyID(suite, testconstants.GoogleSubjectKeyID)
+	certificates, _ = GetAllDaX509certsBySubjectKeyID(suite, testconstants.GoogleSubjectKeyID)
 	require.Equal(suite.T, 0, len(certificates))
 
 	// Request proposed Google Root certificate
-	proposedCertificate, _ = GetProposedX509RootCert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
+	proposedCertificate, _ = GetProposedDaX509RootCert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
 	require.Equal(suite.T, testconstants.GoogleCertPem, proposedCertificate.PemCert)
 	require.Equal(suite.T, aliceAccount.Address, proposedCertificate.Owner)
 	require.Equal(suite.T, 1, len(proposedCertificate.Approvals))
@@ -1286,21 +1305,21 @@ func Demo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Request all proposed Root certificates
-	proposedCertificates, _ = GetAllProposedX509RootCerts(suite)
+	proposedCertificates, _ = GetAllProposedDaX509RootCerts(suite)
 	require.Equal(suite.T, 1, len(proposedCertificates))
 	require.Equal(suite.T, testconstants.GoogleSubject, proposedCertificates[0].Subject)
 	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, proposedCertificates[0].SubjectKeyId)
 
 	// Request all approved certificates
-	certificates, _ = GetAllX509Certs(suite)
+	certificates, _ = GetAllDaX509Certs(suite)
 	require.Equal(suite.T, 0, len(certificates))
 
 	// Request all approved certificates by subjectKeyId
-	certificates, _ = GetAllX509certsBySubjectKeyID(suite, testconstants.RootSubjectKeyID)
+	certificates, _ = GetAllDaX509certsBySubjectKeyID(suite, testconstants.RootSubjectKeyID)
 	require.Equal(suite.T, 0, len(certificates))
 
 	// Request proposed Root certificate
-	proposedCertificate, _ = GetProposedX509RootCert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
+	proposedCertificate, _ = GetProposedDaX509RootCert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
 	require.Equal(suite.T, testconstants.GoogleCertPem, proposedCertificate.PemCert)
 	require.Equal(suite.T, aliceAccount.Address, proposedCertificate.Owner)
 	require.True(suite.T, proposedCertificate.HasApprovalFrom(aliceAccount.Address))
@@ -1315,25 +1334,25 @@ func Demo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Request all proposed Root certificates
-	proposedCertificates, _ = GetAllProposedX509RootCerts(suite)
+	proposedCertificates, _ = GetAllProposedDaX509RootCerts(suite)
 	require.Equal(suite.T, 0, len(proposedCertificates))
 
 	// Request all approved certificates
-	certificates, _ = GetAllX509Certs(suite)
-	certsBySubjectKeyID, _ = GetAllX509certsBySubjectKeyID(suite, testconstants.GoogleSubjectKeyID)
+	certificates, _ = GetAllDaX509Certs(suite)
+	certsBySubjectKeyID, _ = GetAllDaX509certsBySubjectKeyID(suite, testconstants.GoogleSubjectKeyID)
 	for _, certs := range [][]pkitypes.ApprovedCertificates{certificates, certsBySubjectKeyID} {
 		require.Equal(suite.T, 1, len(certs))
 		require.Equal(suite.T, testconstants.GoogleSubjectKeyID, certs[0].SubjectKeyId)
 		require.Equal(suite.T, testconstants.GoogleSubject, certs[0].Certs[0].Subject)
 	}
 	// Request all approved Root certificates
-	rootCertificates, _ = GetAllRootX509Certs(suite)
+	rootCertificates, _ = GetAllDaRootX509Certs(suite)
 	require.Equal(suite.T, 1, len(rootCertificates.Certs))
 	require.Equal(suite.T, testconstants.GoogleSubject, rootCertificates.Certs[0].Subject)
 	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, rootCertificates.Certs[0].SubjectKeyId)
 
 	// Request approved Google Root certificate
-	certificate, _ = GetX509Cert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
+	certificate, _ = GetDaX509Cert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
 	require.Equal(suite.T, testconstants.GoogleSubject, certificate.Subject)
 	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, certificate.SubjectKeyId)
 	require.Equal(suite.T, 1, len(certificate.Certs))
@@ -1359,7 +1378,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, proposedRevocationCertificates[0].SubjectKeyId)
 
 	// Request all revoked certificates
-	revokedCertificates, _ = GetAllRevokedX509Certs(suite)
+	revokedCertificates, _ = GetAllRevokedDaX509Certs(suite)
 	require.Equal(suite.T, 3, len(revokedCertificates))
 	require.Equal(suite.T, testconstants.LeafSubject, revokedCertificates[0].Subject)
 	require.Equal(suite.T, testconstants.LeafSubjectKeyID, revokedCertificates[0].SubjectKeyId)
@@ -1372,7 +1391,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.IntermediateSubjectAsText, revokedCertificates[2].Certs[0].SubjectAsText)
 
 	// Request all revoked Root certificates
-	revokedRootCertificates, _ = GetAllRevokedRootX509Certs(suite)
+	revokedRootCertificates, _ = GetAllRevokedDaRootX509Certs(suite)
 	require.Equal(suite.T, 1, len(revokedRootCertificates.Certs))
 	require.Equal(suite.T, testconstants.RootSubject, revokedRootCertificates.Certs[0].Subject)
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, revokedRootCertificates.Certs[0].SubjectKeyId)
@@ -1384,8 +1403,8 @@ func Demo(suite *utils.TestSuite) {
 	require.True(suite.T, proposedCertificateRevocation.HasRevocationFrom(jackAccount.Address))
 
 	// Request all approved certificates
-	certificates, _ = GetAllX509Certs(suite)
-	certsBySubjectKeyID, _ = GetAllX509certsBySubjectKeyID(suite, testconstants.GoogleSubjectKeyID)
+	certificates, _ = GetAllDaX509Certs(suite)
+	certsBySubjectKeyID, _ = GetAllDaX509certsBySubjectKeyID(suite, testconstants.GoogleSubjectKeyID)
 	for _, certs := range [][]pkitypes.ApprovedCertificates{certificates, certsBySubjectKeyID} {
 		require.Equal(suite.T, 1, len(certs))
 		require.Equal(suite.T, testconstants.GoogleSubjectKeyID, certs[0].SubjectKeyId)
@@ -1408,7 +1427,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, 0, len(proposedRevocationCertificates))
 
 	// Request all revoked certificates
-	revokedCertificates, _ = GetAllRevokedX509Certs(suite)
+	revokedCertificates, _ = GetAllRevokedDaX509Certs(suite)
 	require.Equal(suite.T, 4, len(revokedCertificates))
 	require.Equal(suite.T, testconstants.LeafSubject, revokedCertificates[0].Subject)
 	require.Equal(suite.T, testconstants.LeafSubjectKeyID, revokedCertificates[0].SubjectKeyId)
@@ -1424,7 +1443,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.GoogleSubjectAsText, revokedCertificates[3].Certs[0].SubjectAsText)
 
 	// Request all revoked Root certificates
-	revokedRootCertificates, _ = GetAllRevokedRootX509Certs(suite)
+	revokedRootCertificates, _ = GetAllRevokedDaRootX509Certs(suite)
 	require.Equal(suite.T, 2, len(revokedRootCertificates.Certs))
 	require.Equal(suite.T, testconstants.RootSubject, revokedRootCertificates.Certs[0].Subject)
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, revokedRootCertificates.Certs[0].SubjectKeyId)
@@ -1432,7 +1451,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, revokedRootCertificates.Certs[1].SubjectKeyId)
 
 	// Request revoked Google Root certificate
-	revokedCertificate, _ = GetRevokedX509Cert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
+	revokedCertificate, _ = GetRevokedDaX509Cert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
 	require.Equal(suite.T, 1, len(revokedCertificate.Certs))
 	require.Equal(suite.T, testconstants.GoogleSubject, revokedCertificate.Subject)
 	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, revokedCertificate.SubjectKeyId)
@@ -1443,16 +1462,16 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.GoogleSubjectAsText, revokedCertificate.Certs[0].SubjectAsText)
 	require.True(suite.T, revokedCertificate.Certs[0].IsRoot)
 
-	certificates, _ = GetAllX509Certs(suite)
+	certificates, _ = GetAllDaX509Certs(suite)
 	require.Equal(suite.T, 0, len(certificates))
 
-	certificates, _ = GetAllX509certsBySubjectKeyID(suite, testconstants.GoogleSubjectKeyID)
+	certificates, _ = GetAllDaX509certsBySubjectKeyID(suite, testconstants.GoogleSubjectKeyID)
 	require.Equal(suite.T, 0, len(certificates))
 
-	_, err = GetProposedX509RootCert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
+	_, err = GetProposedDaX509RootCert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
 	suite.AssertNotFound(err)
 
-	_, err = GetX509Cert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
+	_, err = GetDaX509Cert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
 	suite.AssertNotFound(err)
 
 	proposedRevocationCertificates, _ = GetAllProposedRevocationX509Certs(suite)
@@ -1461,20 +1480,20 @@ func Demo(suite *utils.TestSuite) {
 	_, err = GetProposedRevocationX509Cert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
 	suite.AssertNotFound(err)
 
-	rootCertificates, _ = GetAllRootX509Certs(suite)
+	rootCertificates, _ = GetAllDaRootX509Certs(suite)
 	require.Equal(suite.T, 0, len(rootCertificates.Certs))
 
 	_, err = GetAllChildX509Certs(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
 	suite.AssertNotFound(err)
 
-	_, err = GetAllX509CertsBySubject(suite, testconstants.GoogleSubject)
+	_, err = GetAllDaX509CertsBySubject(suite, testconstants.GoogleSubject)
 	suite.AssertNotFound(err)
 
 	// CHECK TEST ROOT CERTIFICATE FOR REJECTING
-	_, err = GetRejectedX509RootCert(suite, testconstants.TestSubject, testconstants.TestSubjectKeyID)
+	_, err = GetRejectedDaX509RootCert(suite, testconstants.TestSubject, testconstants.TestSubjectKeyID)
 	suite.AssertNotFound(err)
 
-	_, err = GetProposedX509RootCert(suite, testconstants.TestSubject, testconstants.TestSubjectKeyID)
+	_, err = GetProposedDaX509RootCert(suite, testconstants.TestSubject, testconstants.TestSubjectKeyID)
 	suite.AssertNotFound(err)
 
 	// Alice (Trustee) propose Test Root certificate
@@ -1487,7 +1506,7 @@ func Demo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Request proposed Test Root certificate
-	proposedCertificate, _ = GetProposedX509RootCert(suite, testconstants.TestSubject, testconstants.TestSubjectKeyID)
+	proposedCertificate, _ = GetProposedDaX509RootCert(suite, testconstants.TestSubject, testconstants.TestSubjectKeyID)
 	require.Equal(suite.T, testconstants.TestCertPem, proposedCertificate.PemCert)
 	require.Equal(suite.T, aliceAccount.Address, proposedCertificate.Owner)
 
@@ -1500,13 +1519,13 @@ func Demo(suite *utils.TestSuite) {
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRejectX509TestRootCert}, aliceName, aliceAccount)
 	require.NoError(suite.T, err)
 
-	_, err = GetProposedX509RootCert(suite, testconstants.TestSubject, testconstants.TestSubjectKeyID)
+	_, err = GetProposedDaX509RootCert(suite, testconstants.TestSubject, testconstants.TestSubjectKeyID)
 	suite.AssertNotFound(err)
 
-	_, err = GetX509Cert(suite, testconstants.TestSubject, testconstants.TestSubjectKeyID)
+	_, err = GetDaX509Cert(suite, testconstants.TestSubject, testconstants.TestSubjectKeyID)
 	suite.AssertNotFound(err)
 
-	_, err = GetRevokedX509Cert(suite, testconstants.TestSubject, testconstants.TestSubjectKeyID)
+	_, err = GetRevokedDaX509Cert(suite, testconstants.TestSubject, testconstants.TestSubjectKeyID)
 	suite.AssertNotFound(err)
 
 	// Alice (Trustee) propose Test Root certificate
@@ -1519,21 +1538,21 @@ func Demo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Request all proposed Root certificates
-	proposedCertificates, _ = GetAllProposedX509RootCerts(suite)
+	proposedCertificates, _ = GetAllProposedDaX509RootCerts(suite)
 	require.Equal(suite.T, 1, len(proposedCertificates))
 	require.Equal(suite.T, testconstants.TestSubject, proposedCertificates[0].Subject)
 	require.Equal(suite.T, testconstants.TestSubjectKeyID, proposedCertificates[0].SubjectKeyId)
 
 	// Request all rejected Root certificates
-	rejectedCertificates, _ := GetAllRejectedX509RootCerts(suite)
+	rejectedCertificates, _ := GetAllRejectedDaX509RootCerts(suite)
 	require.Equal(suite.T, 0, len(rejectedCertificates))
 
 	// Request all approved Root certificates
-	certificates, _ = GetAllX509Certs(suite)
+	certificates, _ = GetAllDaX509Certs(suite)
 	require.Equal(suite.T, 0, len(certificates))
 
 	// Request proposed Test Root certificate
-	proposedCertificate, _ = GetProposedX509RootCert(suite, testconstants.TestSubject, testconstants.TestSubjectKeyID)
+	proposedCertificate, _ = GetProposedDaX509RootCert(suite, testconstants.TestSubject, testconstants.TestSubjectKeyID)
 	require.Equal(suite.T, testconstants.TestCertPem, proposedCertificate.PemCert)
 	require.Equal(suite.T, aliceAccount.Address, proposedCertificate.Owner)
 	require.Equal(suite.T, 1, len(proposedCertificate.Approvals))
@@ -1552,21 +1571,21 @@ func Demo(suite *utils.TestSuite) {
 	require.Error(suite.T, err)
 
 	// Request all proposed Root certificates
-	proposedCertificates, _ = GetAllProposedX509RootCerts(suite)
+	proposedCertificates, _ = GetAllProposedDaX509RootCerts(suite)
 	require.Equal(suite.T, 1, len(proposedCertificates))
 	require.Equal(suite.T, testconstants.TestSubject, proposedCertificates[0].Subject)
 	require.Equal(suite.T, testconstants.TestSubjectKeyID, proposedCertificates[0].SubjectKeyId)
 
 	// Request all rejected Root certificates
-	rejectedCertificates, _ = GetAllRejectedX509RootCerts(suite)
+	rejectedCertificates, _ = GetAllRejectedDaX509RootCerts(suite)
 	require.Equal(suite.T, 0, len(rejectedCertificates))
 
 	// Request all approved Root certificates
-	certificates, _ = GetAllX509Certs(suite)
+	certificates, _ = GetAllDaX509Certs(suite)
 	require.Equal(suite.T, 0, len(certificates))
 
 	// Request proposed Test Root certificate
-	proposedCertificate, _ = GetProposedX509RootCert(suite, testconstants.TestSubject, testconstants.TestSubjectKeyID)
+	proposedCertificate, _ = GetProposedDaX509RootCert(suite, testconstants.TestSubject, testconstants.TestSubjectKeyID)
 	require.Equal(suite.T, testconstants.TestCertPem, proposedCertificate.PemCert)
 	require.Equal(suite.T, aliceAccount.Address, proposedCertificate.Owner)
 	require.Equal(suite.T, 1, len(proposedCertificate.Approvals))
@@ -1582,21 +1601,21 @@ func Demo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Request all proposed Root certificates
-	proposedCertificates, _ = GetAllProposedX509RootCerts(suite)
+	proposedCertificates, _ = GetAllProposedDaX509RootCerts(suite)
 	require.Equal(suite.T, 0, len(proposedCertificates))
 
 	// Request all approved Root certificates
-	certificates, _ = GetAllX509Certs(suite)
+	certificates, _ = GetAllDaX509Certs(suite)
 	require.Equal(suite.T, 0, len(certificates))
 
 	// Request all rejected Root certificates
-	rejectedCertificates, _ = GetAllRejectedX509RootCerts(suite)
+	rejectedCertificates, _ = GetAllRejectedDaX509RootCerts(suite)
 	require.Equal(suite.T, 1, len(rejectedCertificates))
 	require.Equal(suite.T, testconstants.TestSubject, rejectedCertificates[0].Subject)
 	require.Equal(suite.T, testconstants.TestSubjectKeyID, rejectedCertificates[0].SubjectKeyId)
 
 	// Request rejected Test Root certificate
-	rejectedCertificate, _ := GetRejectedX509RootCert(suite, testconstants.TestSubject, testconstants.TestSubjectKeyID)
+	rejectedCertificate, _ := GetRejectedDaX509RootCert(suite, testconstants.TestSubject, testconstants.TestSubjectKeyID)
 	require.Equal(suite.T, testconstants.TestSubject, rejectedCertificate.Subject)
 	require.Equal(suite.T, testconstants.TestSubjectKeyID, rejectedCertificate.SubjectKeyId)
 	require.Equal(suite.T, 1, len(rejectedCertificate.Certs))
@@ -1633,7 +1652,7 @@ func Demo(suite *utils.TestSuite) {
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeAddX509RootCert}, jackName, jackAccount)
 	require.NoError(suite.T, err)
 
-	proposedCertificate, err = GetProposedX509RootCert(suite, testconstants.PAACertWithNumericVidSubject, testconstants.PAACertWithNumericVidSubjectKeyID)
+	proposedCertificate, err = GetProposedDaX509RootCert(suite, testconstants.PAACertWithNumericVidSubject, testconstants.PAACertWithNumericVidSubjectKeyID)
 	require.NoError(suite.T, err)
 
 	// Alice (Trustee) approve Root certificate
@@ -1728,7 +1747,7 @@ func Demo(suite *utils.TestSuite) {
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeAddX509RootCert}, jackName, jackAccount)
 	require.NoError(suite.T, err)
 
-	proposedCertificate, err = GetProposedX509RootCert(suite, testconstants.PAACertNoVidSubject, testconstants.PAACertNoVidSubjectKeyID)
+	proposedCertificate, err = GetProposedDaX509RootCert(suite, testconstants.PAACertNoVidSubject, testconstants.PAACertNoVidSubjectKeyID)
 	require.NoError(suite.T, err)
 
 	// Alice (Trustee) approve Root certificate
@@ -1921,11 +1940,11 @@ func Demo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Check approved certificate
-	certs, _ := GetX509Cert(suite, testconstants.RootCertWithSameSubjectAndSKIDSubject, testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID)
+	certs, _ := GetDaX509Cert(suite, testconstants.RootCertWithSameSubjectAndSKIDSubject, testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID)
 	require.Equal(suite.T, 2, len(certs.Certs))
-	certs, _ = GetX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
+	certs, _ = GetDaX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
 	require.Equal(suite.T, 2, len(certs.Certs))
-	certs, _ = GetX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
+	certs, _ = GetDaX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
 
 	// Revoke intermediate certificate with invalid serialNumber
@@ -1944,17 +1963,17 @@ func Demo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Request revoked certificate with serialNumber 3
-	revokedCertificate, _ = GetRevokedX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
+	revokedCertificate, _ = GetRevokedDaX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
 	require.Equal(suite.T, 1, len(revokedCertificate.Certs))
 	require.Equal(suite.T, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, revokedCertificate.Subject)
 	require.Equal(suite.T, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID, revokedCertificate.SubjectKeyId)
 	require.Equal(suite.T, testconstants.IntermediateCertWithSameSubjectAndSKID1SerialNumber, revokedCertificate.Certs[0].SerialNumber)
 
 	// Check approved certificate
-	certs, _ = GetX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
+	certs, _ = GetDaX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
 	require.Equal(suite.T, testconstants.IntermediateCertWithSameSubjectAndSKID2SerialNumber, certs.Certs[0].SerialNumber)
-	certs, _ = GetX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
+	certs, _ = GetDaX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
 	require.Equal(suite.T, testconstants.LeafCertWithSameSubjectAndSKIDSerialNumber, certs.Certs[0].SerialNumber)
 
@@ -1988,7 +2007,7 @@ func Demo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Request revoked Root certificate with serialNumber 1
-	revokedCertificate, _ = GetRevokedX509Cert(suite, testconstants.RootCertWithSameSubjectAndSKIDSubject, testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID)
+	revokedCertificate, _ = GetRevokedDaX509Cert(suite, testconstants.RootCertWithSameSubjectAndSKIDSubject, testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID)
 	require.Equal(suite.T, 1, len(revokedCertificate.Certs))
 	require.Equal(suite.T, testconstants.RootCertWithSameSubjectAndSKIDSubject, revokedCertificate.Subject)
 	require.Equal(suite.T, testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID, revokedCertificate.SubjectKeyId)
@@ -1996,15 +2015,15 @@ func Demo(suite *utils.TestSuite) {
 	require.True(suite.T, revokedCertificate.Certs[0].IsRoot)
 
 	// Check approved certificate
-	certs, _ = GetX509Cert(suite, testconstants.RootCertWithSameSubjectAndSKIDSubject, testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID)
+	certs, _ = GetDaX509Cert(suite, testconstants.RootCertWithSameSubjectAndSKIDSubject, testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
 	require.Equal(suite.T, testconstants.RootCertWithSameSubjectAndSKID2SerialNumber, certs.Certs[0].SerialNumber)
 
-	certs, _ = GetX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
+	certs, _ = GetDaX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
 	require.Equal(suite.T, testconstants.IntermediateCertWithSameSubjectAndSKID2SerialNumber, certs.Certs[0].SerialNumber)
 
-	certs, _ = GetX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
+	certs, _ = GetDaX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
 	require.Equal(suite.T, testconstants.LeafCertWithSameSubjectAndSKIDSerialNumber, certs.Certs[0].SerialNumber)
 
@@ -2037,9 +2056,9 @@ func Demo(suite *utils.TestSuite) {
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveX509Cert}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 	// Check that two intermediate certificates removed
-	_, err = GetRevokedX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
+	_, err = GetRevokedDaX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
 	suite.AssertNotFound(err)
-	_, err = GetX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
+	_, err = GetDaX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
 	suite.AssertNotFound(err)
 
 	// Remove leaf x509 certificate by subject and subject key id
@@ -2051,7 +2070,7 @@ func Demo(suite *utils.TestSuite) {
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveX509Cert}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 	// Check that leaf certificate removed
-	_, err = GetX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
+	_, err = GetDaX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
 	suite.AssertNotFound(err)
 
 	// Remove x509 by subject, subject key id and serial number
@@ -2088,11 +2107,11 @@ func Demo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Check that leaf and x509 with different serial number is not removed
-	certs, _ = GetX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
+	certs, _ = GetDaX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
 	require.Equal(suite.T, testconstants.IntermediateCertWithSameSubjectAndSKID2SerialNumber, certs.Certs[0].SerialNumber)
 
-	certs, _ = GetX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
+	certs, _ = GetDaX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
 	require.Equal(suite.T, testconstants.LeafCertWithSameSubjectAndSKIDSerialNumber, certs.Certs[0].SerialNumber)
 
@@ -2105,9 +2124,9 @@ func Demo(suite *utils.TestSuite) {
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveX509Cert}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
-	_, err = GetX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
+	_, err = GetDaX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
 	suite.AssertNotFound(err)
-	certs, _ = GetX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
+	certs, _ = GetDaX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
 	require.Equal(suite.T, testconstants.LeafCertWithSameSubjectAndSKIDSerialNumber, certs.Certs[0].SerialNumber)
 
@@ -2120,7 +2139,7 @@ func Demo(suite *utils.TestSuite) {
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRemoveX509Cert}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
-	_, err = GetX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
+	_, err = GetDaX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
 	suite.AssertNotFound(err)
 
 	// Revoke Root certificate and its child certificates
@@ -2140,11 +2159,11 @@ func Demo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Check that certs are added
-	certs, _ = GetX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
+	certs, _ = GetDaX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
 	require.Equal(suite.T, testconstants.IntermediateCertWithSameSubjectAndSKID1SerialNumber, certs.Certs[0].SerialNumber)
 
-	certs, _ = GetX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
+	certs, _ = GetDaX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
 	require.Equal(suite.T, testconstants.LeafCertWithSameSubjectAndSKIDSerialNumber, certs.Certs[0].SerialNumber)
 
@@ -2173,29 +2192,29 @@ func Demo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Request revoked certificates
-	revokedCertificate, _ = GetRevokedX509Cert(suite, testconstants.RootCertWithSameSubjectAndSKIDSubject, testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID)
+	revokedCertificate, _ = GetRevokedDaX509Cert(suite, testconstants.RootCertWithSameSubjectAndSKIDSubject, testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID)
 	require.Equal(suite.T, 2, len(revokedCertificate.Certs))
 	require.Equal(suite.T, testconstants.RootCertWithSameSubjectAndSKIDSubject, revokedCertificate.Subject)
 	require.Equal(suite.T, testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID, revokedCertificate.SubjectKeyId)
 	require.Equal(suite.T, testconstants.RootCertWithSameSubjectAndSKID2SerialNumber, revokedCertificate.Certs[1].SerialNumber)
 	require.True(suite.T, revokedCertificate.Certs[1].IsRoot)
 
-	revokedCertificate, _ = GetRevokedX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
+	revokedCertificate, _ = GetRevokedDaX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
 	require.Equal(suite.T, 1, len(revokedCertificate.Certs))
 	require.Equal(suite.T, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, revokedCertificate.Subject)
 	require.Equal(suite.T, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID, revokedCertificate.SubjectKeyId)
 
-	revokedCertificate, _ = GetRevokedX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
+	revokedCertificate, _ = GetRevokedDaX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
 	require.Equal(suite.T, 1, len(revokedCertificate.Certs))
 	require.Equal(suite.T, testconstants.LeafCertWithSameSubjectAndSKIDSubject, revokedCertificate.Subject)
 	require.Equal(suite.T, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID, revokedCertificate.SubjectKeyId)
 
 	// Check that all certs are removed from approved lists
-	_, err = GetX509Cert(suite, testconstants.RootCertWithSameSubjectAndSKIDSubject, testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID)
+	_, err = GetDaX509Cert(suite, testconstants.RootCertWithSameSubjectAndSKIDSubject, testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID)
 	suite.AssertNotFound(err)
-	_, err = GetX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
+	_, err = GetDaX509Cert(suite, testconstants.IntermediateCertWithSameSubjectAndSKIDSubject, testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID)
 	suite.AssertNotFound(err)
-	_, err = GetX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
+	_, err = GetDaX509Cert(suite, testconstants.LeafCertWithSameSubjectAndSKIDSubject, testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID)
 	suite.AssertNotFound(err)
 
 	// Add X509 certificates by Vendor Account
@@ -2243,9 +2262,9 @@ func Demo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Check approved certificates
-	certs, _ = GetX509Cert(suite, testconstants.RootCertWithVidSubject, testconstants.RootCertWithVidSubjectKeyID)
+	certs, _ = GetDaX509Cert(suite, testconstants.RootCertWithVidSubject, testconstants.RootCertWithVidSubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
-	certs, _ = GetX509Cert(suite, testconstants.IntermediateCertWithVid1Subject, testconstants.IntermediateCertWithVid1SubjectKeyID)
+	certs, _ = GetDaX509Cert(suite, testconstants.IntermediateCertWithVid1Subject, testconstants.IntermediateCertWithVid1SubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
 
 	// Check certificates (using global collection)
@@ -2264,13 +2283,13 @@ func Demo(suite *utils.TestSuite) {
 	require.Error(suite.T, err)
 
 	// Check there is only one approved intermediate certificate
-	certs, _ = GetX509Cert(suite, testconstants.IntermediateCertWithVid1Subject, testconstants.IntermediateCertWithVid1SubjectKeyID)
+	certs, _ = GetDaX509Cert(suite, testconstants.IntermediateCertWithVid1Subject, testconstants.IntermediateCertWithVid1SubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
 	require.Equal(suite.T, testconstants.IntermediateCertWithVid1SerialNumber, certs.Certs[0].SerialNumber)
 
 	// Check that if root cert is non-VID scoped and CertVID != AccountVID then adding an intermediate cert should fail
 	// Ensure that there is a non-VID root cert exists
-	certs, _ = GetX509Cert(suite, testconstants.PAACertNoVidSubject, testconstants.PAACertNoVidSubjectKeyID)
+	certs, _ = GetDaX509Cert(suite, testconstants.PAACertNoVidSubject, testconstants.PAACertNoVidSubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
 
 	// Try to submit txn with another Vendor
@@ -2299,7 +2318,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Error(suite.T, err)
 
 	// Check there is no an intermediate certificate
-	_, err = GetX509Cert(suite, testconstants.PAICertWithNumericVidSubject, testconstants.PAICertWithNumericVidSubjectKeyID)
+	_, err = GetDaX509Cert(suite, testconstants.PAICertWithNumericVidSubject, testconstants.PAICertWithNumericVidSubjectKeyID)
 	suite.AssertNotFound(err)
 
 	// Check that if root cert is non-VID scoped and CertVID==AccountVID then adding x509 should succeed
@@ -2327,7 +2346,7 @@ func Demo(suite *utils.TestSuite) {
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, newVendorName, newVendorAccount)
 	require.NoError(suite.T, err)
 	// Check there is only one approved intermediate certificate
-	certs, _ = GetX509Cert(suite, testconstants.PAICertWithNumericVidSubject, testconstants.PAICertWithNumericVidSubjectKeyID)
+	certs, _ = GetDaX509Cert(suite, testconstants.PAICertWithNumericVidSubject, testconstants.PAICertWithNumericVidSubjectKeyID)
 	require.Equal(suite.T, 1, len(certs.Certs))
 	require.Equal(suite.T, int32(testconstants.PAICertWithNumericVidVid), certs.Certs[0].Vid)
 }
