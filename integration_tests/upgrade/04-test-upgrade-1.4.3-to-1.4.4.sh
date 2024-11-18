@@ -1510,7 +1510,7 @@ result=$($DCLD_BIN_NEW query pki cert --subject-key-id=$da_root_cert_2_subject_k
 check_response "$result" "\"subjectKeyId\": \"$da_root_cert_2_subject_key_id_for_1_4_4\""
 
 result=$($DCLD_BIN_NEW query pki cert --subject-key-id=$noc_root_cert_2_subject_key_id_for_1_4_4)
-check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_2_subject_for_1_4_4\""
+check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_2_subject_key_id_for_1_4_4\""
 
 echo "Get all certificates by SKID (DA)"
 result=$($DCLD_BIN_NEW query pki x509-cert --subject-key-id=$da_root_cert_2_subject_key_id_for_1_4_4)
