@@ -26,6 +26,7 @@ export const protobufPackage = "zigbeealliance.distributedcomplianceledger.pki";
 
 export interface QueryAllCertificatesRequest {
   pagination: PageRequest | undefined;
+  subjectKeyId: string;
 }
 
 export interface QueryAllCertificatesResponse {
@@ -307,13 +308,16 @@ export interface QueryGetNocCertificatesResponse {
 }
 
 function createBaseQueryAllCertificatesRequest(): QueryAllCertificatesRequest {
-  return { pagination: undefined };
+  return { pagination: undefined, subjectKeyId: "" };
 }
 
 export const QueryAllCertificatesRequest = {
   encode(message: QueryAllCertificatesRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.pagination !== undefined) {
       PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.subjectKeyId !== "") {
+      writer.uint32(18).string(message.subjectKeyId);
     }
     return writer;
   },
@@ -328,6 +332,9 @@ export const QueryAllCertificatesRequest = {
         case 1:
           message.pagination = PageRequest.decode(reader, reader.uint32());
           break;
+        case 2:
+          message.subjectKeyId = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -337,13 +344,17 @@ export const QueryAllCertificatesRequest = {
   },
 
   fromJSON(object: any): QueryAllCertificatesRequest {
-    return { pagination: isSet(object.pagination) ? PageRequest.fromJSON(object.pagination) : undefined };
+    return {
+      pagination: isSet(object.pagination) ? PageRequest.fromJSON(object.pagination) : undefined,
+      subjectKeyId: isSet(object.subjectKeyId) ? String(object.subjectKeyId) : "",
+    };
   },
 
   toJSON(message: QueryAllCertificatesRequest): unknown {
     const obj: any = {};
     message.pagination !== undefined
       && (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined);
+    message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId);
     return obj;
   },
 
@@ -352,6 +363,7 @@ export const QueryAllCertificatesRequest = {
     message.pagination = (object.pagination !== undefined && object.pagination !== null)
       ? PageRequest.fromPartial(object.pagination)
       : undefined;
+    message.subjectKeyId = object.subjectKeyId ?? "";
     return message;
   },
 };

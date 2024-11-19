@@ -225,14 +225,14 @@ func queryProposedCertificate(
 	return &resp.ProposedCertificate, nil
 }
 
-func queryAllApprovedCertificates(setup *TestSetup) ([]types.ApprovedCertificates, error) {
-	// query all certificates
-	return _queryAllApprovedCertificates(setup, "")
-}
-
 func queryAllNocCertificates(setup *TestSetup) ([]types.NocCertificates, error) {
 	// query all certificates
 	return _queryAllNocCertificates(setup, "")
+}
+
+func queryAllApprovedCertificates(setup *TestSetup) ([]types.ApprovedCertificates, error) {
+	// query all certificates
+	return _queryAllApprovedCertificates(setup, "")
 }
 
 func queryAllApprovedCertificatesBySubjectKeyID(setup *TestSetup, subjectKeyID string) ([]types.ApprovedCertificates, error) {
@@ -772,6 +772,29 @@ func queryRevokedNocIcaCertificates(setup *TestSetup, subject, subjectKeyID stri
 	return &resp.RevokedNocIcaCertificates, nil
 }
 
+func queryAllCertificatesBySubjectKeyID(setup *TestSetup, subjectKeyID string) ([]types.AllCertificates, error) {
+	// query all certificates
+	return _queryAllCertificates(setup, subjectKeyID)
+}
+
+func _queryAllCertificates(setup *TestSetup, subjectKeyID string) ([]types.AllCertificates, error) {
+	// query all certificates
+	req := &types.QueryAllCertificatesRequest{
+		SubjectKeyId: subjectKeyID,
+	}
+
+	resp, err := setup.Keeper.CertificatesAll(setup.Wctx, req)
+	if err != nil {
+		require.Nil(setup.T, resp)
+
+		return nil, err
+	}
+
+	require.NotNil(setup.T, resp)
+
+	return resp.Certificates, nil
+}
+
 func queryCertificatesFromAllCertificatesIndex(
 	setup *TestSetup,
 	subject string,
@@ -897,6 +920,11 @@ func ensureCertificatePresentInGlobalCertificateIndexes(
 	require.Equal(t, subjectKeyID, allCertificate.SubjectKeyId)
 	require.Equal(t, serialNumber, allCertificate.SerialNumber)
 
+	// AllCertificate: SKID
+	certificateBySubjectKeyID, _ := queryAllCertificatesBySubjectKeyID(setup, subjectKeyID)
+	require.Len(t, certificateBySubjectKeyID, 1)
+	require.Len(t, certificateBySubjectKeyID[0].Certs, 1)
+
 	if !skipCheckForSubject {
 		// AllCertificate: Subject
 		allCertificatesBySubject, err := queryCertificatesBySubjectFromAllCertificatesIndex(setup, subject)
@@ -920,6 +948,10 @@ func ensureCertificateNotPresentInGlobalCertificateIndexes(
 	// AllCertificate: Subject and SKID
 	_, err := querySingleCertificateFromAllCertificatesIndex(setup, subject, subjectKeyID)
 	require.Equal(t, codes.NotFound, status.Code(err))
+
+	// AllCertificate: SKID
+	certificatesBySubjectKeyID, _ := queryAllCertificatesBySubjectKeyID(setup, subjectKeyID)
+	require.Empty(t, certificatesBySubjectKeyID)
 
 	if !skipCheckForSubject {
 		// AllCertificate: Subject

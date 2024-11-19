@@ -19,9 +19,9 @@ source integration_tests/cli/common.sh
 # Upgrade constants
 
 plan_name="v1.4.4"
-upgrade_checksum="sha256:b4293d404ea454334b23969a6d7f3b58515ea8c0296ccb3f3a7095f728366925"
+upgrade_checksum="sha256:f740b65e5b0d417856ea7c8caef0d937e5810d1b448efc58b9842879409d87ff"
 binary_version_old="v1.4.3"
-binary_version_new="v1.4.4-4-dev"
+binary_version_new="v1.4.4-5-dev"
 
 wget -O dcld_old "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version_old/dcld"
 chmod ugo+x dcld_old
@@ -493,6 +493,21 @@ result=$($DCLD_BIN_NEW query pki noc-x509-cert --subject="$noc_root_cert_1_subje
 check_response "$result" "Not Found"
 
 echo "Get all x509 certificates by subjectKeyId"
+result=$($DCLD_BIN_NEW query pki cert --subject-key-id="$root_cert_with_vid_subject_key_id_for_1_4_3")
+check_response "$result" "$root_cert_with_vid_subject_for_1_4_3"
+check_response "$result" "\"subjectKeyId\": \"$root_cert_with_vid_subject_key_id_for_1_4_3\""
+
+result=$($DCLD_BIN_NEW query pki cert --subject-key-id="$test_root_cert_subject_key_id_for_1_2")
+check_response "$result" "$test_root_cert_subject_for_1_2"
+check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id_for_1_2\""
+
+result=$($DCLD_BIN_NEW query pki cert --subject-key-id="$test_root_cert_subject_key_id")
+check_response "$result" "$test_root_cert_subject"
+check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id\""
+
+result=$($DCLD_BIN_NEW query pki cert --subject-key-id="$noc_root_cert_1_subject_key_id_for_1_4_3")
+check_response "$result" "Not Found"
+
 result=$($DCLD_BIN_NEW query pki x509-cert --subject-key-id="$root_cert_with_vid_subject_key_id_for_1_4_3")
 check_response "$result" "$root_cert_with_vid_subject_for_1_4_3"
 check_response "$result" "\"subjectKeyId\": \"$root_cert_with_vid_subject_key_id_for_1_4_3\""
@@ -1490,11 +1505,18 @@ check_response "$result" "Not Found"
 
 echo "Get all certificates by SKID"
 
+echo "Get all certificates by SKID (Global)"
+result=$($DCLD_BIN_NEW query pki cert --subject-key-id=$da_root_cert_2_subject_key_id_for_1_4_4)
+check_response "$result" "\"subjectKeyId\": \"$da_root_cert_2_subject_key_id_for_1_4_4\""
+
+result=$($DCLD_BIN_NEW query pki cert --subject-key-id=$noc_root_cert_2_subject_key_id_for_1_4_4)
+check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_2_subject_key_id_for_1_4_4\""
+
 echo "Get all certificates by SKID (DA)"
 result=$($DCLD_BIN_NEW query pki x509-cert --subject-key-id=$da_root_cert_2_subject_key_id_for_1_4_4)
 check_response "$result" "\"subjectKeyId\": \"$da_root_cert_2_subject_key_id_for_1_4_4\""
 
-result=$($DCLD_BIN_NEW query pki x509-cert --subject-key-id=$noc_root_cert_2_subject_for_1_4_4)
+result=$($DCLD_BIN_NEW query pki x509-cert --subject-key-id=$noc_root_cert_2_subject_key_id_for_1_4_4)
 check_response "$result" "Not Found"
 
 echo "Get all certificates by SKID (NOC)"

@@ -283,6 +283,41 @@ response_does_not_contain "$result" "\"subjectKeyId\": \"$da_root_subject_key_id
 
 test_divider
 
+echo "Request certificates by subject key id"
+echo "Request DA certificate using global command"
+result=$(dcld query pki cert --subject-key-id="$da_root_subject_key_id")
+echo $result | jq
+check_response "$result" "\"subjectKeyId\": \"$da_root_subject_key_id\""
+
+echo "Request NOC certificate using global command"
+result=$(dcld query pki cert --subject-key-id="$noc_root_subject_key_id")
+echo $result | jq
+check_response "$result" "\"subjectKeyId\": \"$noc_root_subject_key_id\""
+
+echo "Request DA certificate"
+result=$(dcld query pki x509-cert --subject-key-id="$da_root_subject_key_id")
+echo $result | jq
+check_response "$result" "\"subjectKeyId\": \"$da_root_subject_key_id\""
+
+echo "Request NOC certificate using DA command (must be empty)"
+result=$(dcld query pki x509-cert --subject="$noc_root_subject" --subject-key-id="$noc_root_subject_key_id")
+echo $result | jq
+check_response "$result" "Not Found"
+response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_root_subject_key_id\""
+
+echo "Request NOC Root certificate"
+result=$(dcld query pki noc-x509-cert --subject="$noc_root_subject" --subject-key-id="$noc_root_subject_key_id")
+echo $result | jq
+check_response "$result" "\"subjectKeyId\": \"$noc_root_subject_key_id\""
+
+echo "Request DA certificate using NOC command (must be empty)"
+result=$(dcld query pki noc-x509-cert --subject="$da_root_subject" --subject-key-id="$da_root_subject_key_id")
+echo $result | jq
+check_response "$result" "Not Found"
+response_does_not_contain "$result" "\"subjectKeyId\": \"$da_root_subject_key_id\""
+
+test_divider
+
 echo "Request DA certificates by subject using global command"
 result=$(dcld query pki all-subject-certs --subject=$da_root_subject)
 echo $result | jq

@@ -8,11 +8,11 @@ import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
 import { MsgUpdateModel } from "./types/zigbeealliance/distributedcomplianceledger/model/tx";
-import { MsgDeleteModelVersion } from "./types/zigbeealliance/distributedcomplianceledger/model/tx";
-import { MsgUpdateModelVersion } from "./types/zigbeealliance/distributedcomplianceledger/model/tx";
-import { MsgDeleteModel } from "./types/zigbeealliance/distributedcomplianceledger/model/tx";
-import { MsgCreateModel } from "./types/zigbeealliance/distributedcomplianceledger/model/tx";
 import { MsgCreateModelVersion } from "./types/zigbeealliance/distributedcomplianceledger/model/tx";
+import { MsgUpdateModelVersion } from "./types/zigbeealliance/distributedcomplianceledger/model/tx";
+import { MsgCreateModel } from "./types/zigbeealliance/distributedcomplianceledger/model/tx";
+import { MsgDeleteModel } from "./types/zigbeealliance/distributedcomplianceledger/model/tx";
+import { MsgDeleteModelVersion } from "./types/zigbeealliance/distributedcomplianceledger/model/tx";
 
 import { Model as typeModel} from "./types"
 import { ModelVersion as typeModelVersion} from "./types"
@@ -20,34 +20,10 @@ import { ModelVersions as typeModelVersions} from "./types"
 import { Product as typeProduct} from "./types"
 import { VendorProducts as typeVendorProducts} from "./types"
 
-export { MsgUpdateModel, MsgDeleteModelVersion, MsgUpdateModelVersion, MsgDeleteModel, MsgCreateModel, MsgCreateModelVersion };
+export { MsgUpdateModel, MsgCreateModelVersion, MsgUpdateModelVersion, MsgCreateModel, MsgDeleteModel, MsgDeleteModelVersion };
 
 type sendMsgUpdateModelParams = {
   value: MsgUpdateModel,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgDeleteModelVersionParams = {
-  value: MsgDeleteModelVersion,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgUpdateModelVersionParams = {
-  value: MsgUpdateModelVersion,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgDeleteModelParams = {
-  value: MsgDeleteModel,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgCreateModelParams = {
-  value: MsgCreateModel,
   fee?: StdFee,
   memo?: string
 };
@@ -58,29 +34,53 @@ type sendMsgCreateModelVersionParams = {
   memo?: string
 };
 
+type sendMsgUpdateModelVersionParams = {
+  value: MsgUpdateModelVersion,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgCreateModelParams = {
+  value: MsgCreateModel,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgDeleteModelParams = {
+  value: MsgDeleteModel,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgDeleteModelVersionParams = {
+  value: MsgDeleteModelVersion,
+  fee?: StdFee,
+  memo?: string
+};
+
 
 type msgUpdateModelParams = {
   value: MsgUpdateModel,
 };
 
-type msgDeleteModelVersionParams = {
-  value: MsgDeleteModelVersion,
+type msgCreateModelVersionParams = {
+  value: MsgCreateModelVersion,
 };
 
 type msgUpdateModelVersionParams = {
   value: MsgUpdateModelVersion,
 };
 
-type msgDeleteModelParams = {
-  value: MsgDeleteModel,
-};
-
 type msgCreateModelParams = {
   value: MsgCreateModel,
 };
 
-type msgCreateModelVersionParams = {
-  value: MsgCreateModelVersion,
+type msgDeleteModelParams = {
+  value: MsgDeleteModel,
+};
+
+type msgDeleteModelVersionParams = {
+  value: MsgDeleteModelVersion,
 };
 
 
@@ -127,17 +127,17 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		async sendMsgDeleteModelVersion({ value, fee, memo }: sendMsgDeleteModelVersionParams): Promise<DeliverTxResponse> {
+		async sendMsgCreateModelVersion({ value, fee, memo }: sendMsgCreateModelVersionParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgDeleteModelVersion: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgCreateModelVersion: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgDeleteModelVersion({ value: MsgDeleteModelVersion.fromPartial(value) })
+				let msg = this.msgCreateModelVersion({ value: MsgCreateModelVersion.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgDeleteModelVersion: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgCreateModelVersion: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -155,20 +155,6 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		async sendMsgDeleteModel({ value, fee, memo }: sendMsgDeleteModelParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgDeleteModel: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgDeleteModel({ value: MsgDeleteModel.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgDeleteModel: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
 		async sendMsgCreateModel({ value, fee, memo }: sendMsgCreateModelParams): Promise<DeliverTxResponse> {
 			if (!signer) {
 					throw new Error('TxClient:sendMsgCreateModel: Unable to sign Tx. Signer is not present.')
@@ -183,17 +169,31 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		async sendMsgCreateModelVersion({ value, fee, memo }: sendMsgCreateModelVersionParams): Promise<DeliverTxResponse> {
+		async sendMsgDeleteModel({ value, fee, memo }: sendMsgDeleteModelParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgCreateModelVersion: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgDeleteModel: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgCreateModelVersion({ value: MsgCreateModelVersion.fromPartial(value) })
+				let msg = this.msgDeleteModel({ value: MsgDeleteModel.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgCreateModelVersion: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgDeleteModel: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgDeleteModelVersion({ value, fee, memo }: sendMsgDeleteModelVersionParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgDeleteModelVersion: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgDeleteModelVersion({ value: MsgDeleteModelVersion.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgDeleteModelVersion: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -206,11 +206,11 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		msgDeleteModelVersion({ value }: msgDeleteModelVersionParams): EncodeObject {
+		msgCreateModelVersion({ value }: msgCreateModelVersionParams): EncodeObject {
 			try {
-				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgDeleteModelVersion", value: MsgDeleteModelVersion.fromPartial( value ) }  
+				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgCreateModelVersion", value: MsgCreateModelVersion.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgDeleteModelVersion: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgCreateModelVersion: Could not create message: ' + e.message)
 			}
 		},
 		
@@ -222,14 +222,6 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		msgDeleteModel({ value }: msgDeleteModelParams): EncodeObject {
-			try {
-				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgDeleteModel", value: MsgDeleteModel.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgDeleteModel: Could not create message: ' + e.message)
-			}
-		},
-		
 		msgCreateModel({ value }: msgCreateModelParams): EncodeObject {
 			try {
 				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgCreateModel", value: MsgCreateModel.fromPartial( value ) }  
@@ -238,11 +230,19 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		msgCreateModelVersion({ value }: msgCreateModelVersionParams): EncodeObject {
+		msgDeleteModel({ value }: msgDeleteModelParams): EncodeObject {
 			try {
-				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgCreateModelVersion", value: MsgCreateModelVersion.fromPartial( value ) }  
+				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgDeleteModel", value: MsgDeleteModel.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgCreateModelVersion: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgDeleteModel: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgDeleteModelVersion({ value }: msgDeleteModelVersionParams): EncodeObject {
+			try {
+				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgDeleteModelVersion", value: MsgDeleteModelVersion.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgDeleteModelVersion: Could not create message: ' + e.message)
 			}
 		},
 		

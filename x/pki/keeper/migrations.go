@@ -2,6 +2,7 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
 // Migrator is a struct for handling in-place store migrations.
@@ -32,6 +33,7 @@ func (m Migrator) Migrate3to4(ctx sdk.Context) error {
 	approvedCertificates := m.keeper.GetAllApprovedCertificates(ctx)
 	for _, cert := range approvedCertificates {
 		m.keeper.AddAllCertificates(ctx, cert.Subject, cert.SubjectKeyId, cert.SchemaVersion, cert.Certs)
+		m.keeper.AddAllCertificatesBySubjectKeyID(ctx, pkitypes.AllCertificates(cert))
 	}
 	approvedCertificatesBySubject := m.keeper.GetAllApprovedCertificatesBySubject(ctx)
 	for _, cert := range approvedCertificatesBySubject {

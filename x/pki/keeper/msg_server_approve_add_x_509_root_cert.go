@@ -85,6 +85,9 @@ func (k msgServer) ApproveAddX509RootCert(goCtx context.Context, msg *types.MsgA
 		// append to global list of certificates indexed by subject
 		k.AddAllCertificateBySubject(ctx, rootCertificate.Subject, rootCertificate.SubjectKeyId)
 
+		// add to global list of certificates indexed by skid
+		k.AddAllCertificateBySubjectKeyID(ctx, rootCertificate)
+
 		// add approved certificate to stored list of certificates with the same Subject/SubjectKeyID combination
 		k.AddApprovedCertificate(ctx, rootCertificate)
 

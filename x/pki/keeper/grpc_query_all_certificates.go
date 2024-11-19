@@ -26,21 +26,36 @@ func (k Keeper) CertificatesAll(c context.Context, req *types.QueryAllCertificat
 	)
 	ctx := sdk.UnwrapSDKContext(c)
 
-	store := ctx.KVStore(k.storeKey)
-	nocCertificatesStore := prefix.NewStore(store, pkitypes.KeyPrefix(types.AllCertificatesKeyPrefix))
+	if req.SubjectKeyId != "" {
+		aprCerts, found := k.GetAllCertificatesBySubjectKeyID(
+			ctx,
+			req.SubjectKeyId,
+		)
 
-	pageRes, err = query.Paginate(nocCertificatesStore, req.Pagination, func(key []byte, value []byte) error {
-		var certificates types.AllCertificates
-		if err := k.cdc.Unmarshal(value, &certificates); err != nil {
-			return err
+		if found {
+			certificatess = append(certificatess, types.AllCertificates{
+				SubjectKeyId: aprCerts.SubjectKeyId,
+				Certs:        aprCerts.Certs,
+			})
 		}
+		pageRes = &query.PageResponse{Total: 1}
+	} else {
+		store := ctx.KVStore(k.storeKey)
+		allCertificatesStore := prefix.NewStore(store, pkitypes.KeyPrefix(types.AllCertificatesKeyPrefix))
 
-		certificatess = append(certificatess, certificates)
+		pageRes, err = query.Paginate(allCertificatesStore, req.Pagination, func(key []byte, value []byte) error {
+			var certificates types.AllCertificates
+			if err := k.cdc.Unmarshal(value, &certificates); err != nil {
+				return err
+			}
 
-		return nil
-	})
-	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
+			certificatess = append(certificatess, certificates)
+
+			return nil
+		})
+		if err != nil {
+			return nil, status.Error(codes.Internal, err.Error())
+		}
 	}
 
 	return &types.QueryAllCertificatesResponse{Certificates: certificatess, Pagination: pageRes}, nil

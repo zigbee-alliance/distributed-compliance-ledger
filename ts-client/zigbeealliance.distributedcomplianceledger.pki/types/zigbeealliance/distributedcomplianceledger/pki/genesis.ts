@@ -2,6 +2,7 @@
 import _m0 from "protobufjs/minimal";
 import { AllCertificates } from "./all_certificates";
 import { AllCertificatesBySubject } from "./all_certificates_by_subject";
+import { AllCertificatesBySubjectKeyId } from "./all_certificates_by_subject_key_id";
 import { ApprovedCertificates } from "./approved_certificates";
 import { ApprovedCertificatesBySubject } from "./approved_certificates_by_subject";
 import { ApprovedCertificatesBySubjectKeyId } from "./approved_certificates_by_subject_key_id";
@@ -50,8 +51,9 @@ export interface GenesisState {
   nocCertificatesBySubjectList: NocCertificatesBySubject[];
   certificatesList: AllCertificates[];
   revokedNocIcaCertificatesList: RevokedNocIcaCertificates[];
-  /** this line is used by starport scaffolding # genesis/proto/state */
   allCertificatesBySubjectList: AllCertificatesBySubject[];
+  /** this line is used by starport scaffolding # genesis/proto/state */
+  allCertificatesBySubjectKeyIdList: AllCertificatesBySubjectKeyId[];
 }
 
 function createBaseGenesisState(): GenesisState {
@@ -79,6 +81,7 @@ function createBaseGenesisState(): GenesisState {
     certificatesList: [],
     revokedNocIcaCertificatesList: [],
     allCertificatesBySubjectList: [],
+    allCertificatesBySubjectKeyIdList: [],
   };
 }
 
@@ -152,6 +155,9 @@ export const GenesisState = {
     }
     for (const v of message.allCertificatesBySubjectList) {
       AllCertificatesBySubject.encode(v!, writer.uint32(186).fork()).ldelim();
+    }
+    for (const v of message.allCertificatesBySubjectKeyIdList) {
+      AllCertificatesBySubjectKeyId.encode(v!, writer.uint32(194).fork()).ldelim();
     }
     return writer;
   },
@@ -238,6 +244,9 @@ export const GenesisState = {
         case 23:
           message.allCertificatesBySubjectList.push(AllCertificatesBySubject.decode(reader, reader.uint32()));
           break;
+        case 24:
+          message.allCertificatesBySubjectKeyIdList.push(AllCertificatesBySubjectKeyId.decode(reader, reader.uint32()));
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -319,6 +328,9 @@ export const GenesisState = {
         : [],
       allCertificatesBySubjectList: Array.isArray(object?.allCertificatesBySubjectList)
         ? object.allCertificatesBySubjectList.map((e: any) => AllCertificatesBySubject.fromJSON(e))
+        : [],
+      allCertificatesBySubjectKeyIdList: Array.isArray(object?.allCertificatesBySubjectKeyIdList)
+        ? object.allCertificatesBySubjectKeyIdList.map((e: any) => AllCertificatesBySubjectKeyId.fromJSON(e))
         : [],
     };
   },
@@ -471,6 +483,13 @@ export const GenesisState = {
     } else {
       obj.allCertificatesBySubjectList = [];
     }
+    if (message.allCertificatesBySubjectKeyIdList) {
+      obj.allCertificatesBySubjectKeyIdList = message.allCertificatesBySubjectKeyIdList.map((e) =>
+        e ? AllCertificatesBySubjectKeyId.toJSON(e) : undefined
+      );
+    } else {
+      obj.allCertificatesBySubjectKeyIdList = [];
+    }
     return obj;
   },
 
@@ -524,6 +543,8 @@ export const GenesisState = {
       object.revokedNocIcaCertificatesList?.map((e) => RevokedNocIcaCertificates.fromPartial(e)) || [];
     message.allCertificatesBySubjectList =
       object.allCertificatesBySubjectList?.map((e) => AllCertificatesBySubject.fromPartial(e)) || [];
+    message.allCertificatesBySubjectKeyIdList =
+      object.allCertificatesBySubjectKeyIdList?.map((e) => AllCertificatesBySubjectKeyId.fromPartial(e)) || [];
     return message;
   },
 };
