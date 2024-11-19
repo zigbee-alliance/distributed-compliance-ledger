@@ -7,10 +7,10 @@ import { msgTypes } from './registry';
 import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
-import { MsgUpdateComplianceInfo } from "./types/zigbeealliance/distributedcomplianceledger/compliance/tx";
-import { MsgCertifyModel } from "./types/zigbeealliance/distributedcomplianceledger/compliance/tx";
 import { MsgDeleteComplianceInfo } from "./types/zigbeealliance/distributedcomplianceledger/compliance/tx";
+import { MsgCertifyModel } from "./types/zigbeealliance/distributedcomplianceledger/compliance/tx";
 import { MsgProvisionModel } from "./types/zigbeealliance/distributedcomplianceledger/compliance/tx";
+import { MsgUpdateComplianceInfo } from "./types/zigbeealliance/distributedcomplianceledger/compliance/tx";
 import { MsgRevokeModel } from "./types/zigbeealliance/distributedcomplianceledger/compliance/tx";
 
 import { CertifiedModel as typeCertifiedModel} from "./types"
@@ -20,10 +20,10 @@ import { DeviceSoftwareCompliance as typeDeviceSoftwareCompliance} from "./types
 import { ProvisionalModel as typeProvisionalModel} from "./types"
 import { RevokedModel as typeRevokedModel} from "./types"
 
-export { MsgUpdateComplianceInfo, MsgCertifyModel, MsgDeleteComplianceInfo, MsgProvisionModel, MsgRevokeModel };
+export { MsgDeleteComplianceInfo, MsgCertifyModel, MsgProvisionModel, MsgUpdateComplianceInfo, MsgRevokeModel };
 
-type sendMsgUpdateComplianceInfoParams = {
-  value: MsgUpdateComplianceInfo,
+type sendMsgDeleteComplianceInfoParams = {
+  value: MsgDeleteComplianceInfo,
   fee?: StdFee,
   memo?: string
 };
@@ -34,14 +34,14 @@ type sendMsgCertifyModelParams = {
   memo?: string
 };
 
-type sendMsgDeleteComplianceInfoParams = {
-  value: MsgDeleteComplianceInfo,
+type sendMsgProvisionModelParams = {
+  value: MsgProvisionModel,
   fee?: StdFee,
   memo?: string
 };
 
-type sendMsgProvisionModelParams = {
-  value: MsgProvisionModel,
+type sendMsgUpdateComplianceInfoParams = {
+  value: MsgUpdateComplianceInfo,
   fee?: StdFee,
   memo?: string
 };
@@ -53,20 +53,20 @@ type sendMsgRevokeModelParams = {
 };
 
 
-type msgUpdateComplianceInfoParams = {
-  value: MsgUpdateComplianceInfo,
+type msgDeleteComplianceInfoParams = {
+  value: MsgDeleteComplianceInfo,
 };
 
 type msgCertifyModelParams = {
   value: MsgCertifyModel,
 };
 
-type msgDeleteComplianceInfoParams = {
-  value: MsgDeleteComplianceInfo,
-};
-
 type msgProvisionModelParams = {
   value: MsgProvisionModel,
+};
+
+type msgUpdateComplianceInfoParams = {
+  value: MsgUpdateComplianceInfo,
 };
 
 type msgRevokeModelParams = {
@@ -103,17 +103,17 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 
   return {
 		
-		async sendMsgUpdateComplianceInfo({ value, fee, memo }: sendMsgUpdateComplianceInfoParams): Promise<DeliverTxResponse> {
+		async sendMsgDeleteComplianceInfo({ value, fee, memo }: sendMsgDeleteComplianceInfoParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgUpdateComplianceInfo: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgDeleteComplianceInfo: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgUpdateComplianceInfo({ value: MsgUpdateComplianceInfo.fromPartial(value) })
+				let msg = this.msgDeleteComplianceInfo({ value: MsgDeleteComplianceInfo.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgUpdateComplianceInfo: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgDeleteComplianceInfo: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -131,20 +131,6 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		async sendMsgDeleteComplianceInfo({ value, fee, memo }: sendMsgDeleteComplianceInfoParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgDeleteComplianceInfo: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgDeleteComplianceInfo({ value: MsgDeleteComplianceInfo.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgDeleteComplianceInfo: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
 		async sendMsgProvisionModel({ value, fee, memo }: sendMsgProvisionModelParams): Promise<DeliverTxResponse> {
 			if (!signer) {
 					throw new Error('TxClient:sendMsgProvisionModel: Unable to sign Tx. Signer is not present.')
@@ -156,6 +142,20 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
 				throw new Error('TxClient:sendMsgProvisionModel: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgUpdateComplianceInfo({ value, fee, memo }: sendMsgUpdateComplianceInfoParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgUpdateComplianceInfo: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgUpdateComplianceInfo({ value: MsgUpdateComplianceInfo.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgUpdateComplianceInfo: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -174,11 +174,11 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 		},
 		
 		
-		msgUpdateComplianceInfo({ value }: msgUpdateComplianceInfoParams): EncodeObject {
+		msgDeleteComplianceInfo({ value }: msgDeleteComplianceInfoParams): EncodeObject {
 			try {
-				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.compliance.MsgUpdateComplianceInfo", value: MsgUpdateComplianceInfo.fromPartial( value ) }  
+				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.compliance.MsgDeleteComplianceInfo", value: MsgDeleteComplianceInfo.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgUpdateComplianceInfo: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgDeleteComplianceInfo: Could not create message: ' + e.message)
 			}
 		},
 		
@@ -190,19 +190,19 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		msgDeleteComplianceInfo({ value }: msgDeleteComplianceInfoParams): EncodeObject {
-			try {
-				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.compliance.MsgDeleteComplianceInfo", value: MsgDeleteComplianceInfo.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgDeleteComplianceInfo: Could not create message: ' + e.message)
-			}
-		},
-		
 		msgProvisionModel({ value }: msgProvisionModelParams): EncodeObject {
 			try {
 				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.compliance.MsgProvisionModel", value: MsgProvisionModel.fromPartial( value ) }  
 			} catch (e: any) {
 				throw new Error('TxClient:MsgProvisionModel: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgUpdateComplianceInfo({ value }: msgUpdateComplianceInfoParams): EncodeObject {
+			try {
+				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.compliance.MsgUpdateComplianceInfo", value: MsgUpdateComplianceInfo.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgUpdateComplianceInfo: Could not create message: ' + e.message)
 			}
 		},
 		

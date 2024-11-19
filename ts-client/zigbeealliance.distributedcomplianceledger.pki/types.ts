@@ -1,5 +1,6 @@
 import { AllCertificates } from "./types/zigbeealliance/distributedcomplianceledger/pki/all_certificates"
 import { AllCertificatesBySubject } from "./types/zigbeealliance/distributedcomplianceledger/pki/all_certificates_by_subject"
+import { AllCertificatesBySubjectKeyId } from "./types/zigbeealliance/distributedcomplianceledger/pki/all_certificates_by_subject_key_id"
 import { ApprovedCertificates } from "./types/zigbeealliance/distributedcomplianceledger/pki/approved_certificates"
 import { ApprovedCertificatesBySubject } from "./types/zigbeealliance/distributedcomplianceledger/pki/approved_certificates_by_subject"
 import { ApprovedCertificatesBySubjectKeyId } from "./types/zigbeealliance/distributedcomplianceledger/pki/approved_certificates_by_subject_key_id"
@@ -29,6 +30,7 @@ import { UniqueCertificate } from "./types/zigbeealliance/distributedcompliancel
 export {     
     AllCertificates,
     AllCertificatesBySubject,
+    AllCertificatesBySubjectKeyId,
     ApprovedCertificates,
     ApprovedCertificatesBySubject,
     ApprovedCertificatesBySubjectKeyId,
