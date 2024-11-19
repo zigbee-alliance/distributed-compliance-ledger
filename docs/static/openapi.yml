@@ -9435,6 +9435,10 @@ paths:
           in: query
           required: false
           type: boolean
+        - name: subjectKeyId
+          in: query
+          required: false
+          type: string
       tags:
         - Query
   /dcl/pki/all-certificates/{subject}:
