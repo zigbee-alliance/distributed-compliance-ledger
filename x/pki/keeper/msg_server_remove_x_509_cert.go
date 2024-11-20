@@ -61,6 +61,7 @@ func (k msgServer) RemoveX509Cert(goCtx context.Context, msg *types.MsgRemoveX50
 				&aprCerts,
 				certBySerialNumber.SerialNumber,
 				certBySerialNumber.Issuer,
+				false,
 			)
 		}
 		if foundRevoked {
@@ -68,23 +69,15 @@ func (k msgServer) RemoveX509Cert(goCtx context.Context, msg *types.MsgRemoveX50
 			k.removeOrUpdateRevokedX509Cert(ctx, msg.Subject, msg.SubjectKeyId, &revCerts)
 		}
 	} else {
-		k.revokeCertificate(ctx, aprCerts)
+		// remove from noc certificates map
+		k.RemoveDaCertificate(ctx, msg.Subject, msg.SubjectKeyId, false)
+		// remove from revoked list
+		k.RemoveRevokedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
+		// remove from subject with serialNumber map
+		for _, cert := range certificates {
+			k.RemoveUniqueCertificate(ctx, cert.Issuer, cert.SerialNumber)
+		}
 	}
 
 	return &types.MsgRemoveX509CertResponse{}, nil
-}
-
-func (k msgServer) revokeCertificate(
-	ctx sdk.Context,
-	certificates types.ApprovedCertificates,
-) {
-	// remove from noc certificates map
-	k.RemoveDaCertificate(ctx, certificates.Subject, certificates.SubjectKeyId, false)
-	// remove from revoked list
-	k.RemoveRevokedCertificates(ctx, certificates.Subject, certificates.SubjectKeyId)
-
-	// remove from subject with serialNumber map
-	for _, cert := range certificates.Certs {
-		k.RemoveUniqueCertificate(ctx, cert.Issuer, cert.SerialNumber)
-	}
 }

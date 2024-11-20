@@ -1,4 +1,4 @@
-package pki
+package tests
 
 import (
 	"testing"

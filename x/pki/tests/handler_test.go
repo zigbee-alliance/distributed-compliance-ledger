@@ -1,7 +1,8 @@
-package pki
+package tests
 
 import (
 	"context"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki"
 	"testing"
 
 	"google.golang.org/grpc/codes"
@@ -119,7 +120,7 @@ func Setup(t *testing.T) *TestSetup {
 		Wctx:          sdk.WrapSDKContext(ctx),
 		Keeper:        keeper,
 		DclauthKeeper: dclauthKeeper,
-		Handler:       NewHandler(*keeper),
+		Handler:       pki.NewHandler(*keeper),
 		Trustee1:      GenerateAccAddress(),
 		Trustee2:      GenerateAccAddress(),
 		Trustee3:      GenerateAccAddress(),

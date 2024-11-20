@@ -131,6 +131,7 @@ func (k msgServer) revokeRootCertificateBySerialNumber(
 		&certificates,
 		cert.SerialNumber,
 		cert.Issuer,
+		true,
 	)
 
 	return nil

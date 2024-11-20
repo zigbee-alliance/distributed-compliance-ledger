@@ -90,6 +90,7 @@ func (k msgServer) revokeDaCertificateBySerialNumber(
 		&certificates,
 		cert.SerialNumber,
 		cert.Issuer,
+		false,
 	)
 
 	if len(certificates.Certs) == 0 {

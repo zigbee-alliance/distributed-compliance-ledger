@@ -159,11 +159,12 @@ func (k msgServer) RemoveDaCertificateBySerialNumber(
 	certificates *types.ApprovedCertificates,
 	serialNumber string,
 	issuer string,
+	isRoot bool,
 ) {
 	RemoveCertFromList(issuer, serialNumber, &certificates.Certs)
 
 	if len(certificates.Certs) == 0 {
-		k.RemoveDaCertificate(ctx, subject, subjectKeyID, false)
+		k.RemoveDaCertificate(ctx, subject, subjectKeyID, isRoot)
 	} else {
 		k.RemoveAllCertificatesBySerialNumber(ctx, subject, subjectKeyID, serialNumber)
 		k.RemoveAllCertificatesBySubjectKeyIDBySerialNumber(ctx, subject, subjectKeyID, serialNumber)
