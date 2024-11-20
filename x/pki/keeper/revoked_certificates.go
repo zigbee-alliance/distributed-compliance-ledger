@@ -96,9 +96,13 @@ func (k Keeper) AddRevokedCertificates(ctx sdk.Context, approvedCertificates typ
 	), b)
 }
 
-func (k msgServer) removeOrUpdateRevokedX509Cert(ctx sdk.Context, certID types.CertificateIdentifier, certificates *types.RevokedCertificates) {
+func (k msgServer) removeOrUpdateRevokedX509Cert(
+	ctx sdk.Context,
+	subject string,
+	subjectKeyID string,
+	certificates *types.RevokedCertificates) {
 	if len(certificates.Certs) == 0 {
-		k.RemoveRevokedCertificates(ctx, certID.Subject, certID.SubjectKeyId)
+		k.RemoveRevokedCertificates(ctx, subject, subjectKeyID)
 	} else {
 		k.SetRevokedCertificates(
 			ctx,

@@ -120,7 +120,7 @@ func (k Keeper) _filterAndSetNocCertificateByVidAndSkid(
 	predicate CertificatePredicate,
 ) {
 	nocCertificates, _ := k.GetNocCertificatesByVidAndSkid(ctx, vid, subjectKeyID)
-	filteredCertificates := filterCertificates(&nocCertificates.Certs, predicate)
+	filteredCertificates := FilterCertificateList(&nocCertificates.Certs, predicate)
 
 	if len(filteredCertificates) > 0 {
 		nocCertificates.Certs = filteredCertificates

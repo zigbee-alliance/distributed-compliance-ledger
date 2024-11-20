@@ -5,6 +5,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/x509"
 )
 
 // SetUniqueCertificate set a specific uniqueCertificate in the store from its index.
@@ -15,6 +16,16 @@ func (k Keeper) SetUniqueCertificate(ctx sdk.Context, uniqueCertificate types.Un
 		uniqueCertificate.Issuer,
 		uniqueCertificate.SerialNumber,
 	), b)
+}
+
+// SetUniqueX509Certificate set a specific x509 certificate in the store from its index.
+func (k Keeper) SetUniqueX509Certificate(ctx sdk.Context, x509Certificate *x509.Certificate) {
+	uniqueCertificate := types.UniqueCertificate{
+		Issuer:       x509Certificate.Issuer,
+		SerialNumber: x509Certificate.SerialNumber,
+		Present:      true,
+	}
+	k.SetUniqueCertificate(ctx, uniqueCertificate)
 }
 
 // GetUniqueCertificate returns a uniqueCertificate from its index.

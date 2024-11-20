@@ -56,7 +56,7 @@ func (k msgServer) RemoveNocX509RootCert(goCtx context.Context, msg *types.MsgRe
 	}
 
 	if msg.SerialNumber != "" {
-		certBySerialNumber, found := findCertificate(msg.SerialNumber, &certificates)
+		certBySerialNumber, found := FindCertificateInList(msg.SerialNumber, &certificates)
 		if !found {
 			return nil, pkitypes.NewErrCertificateBySerialNumberDoesNotExist(msg.Subject, msg.SubjectKeyId, msg.SerialNumber)
 		}
@@ -66,21 +66,27 @@ func (k msgServer) RemoveNocX509RootCert(goCtx context.Context, msg *types.MsgRe
 
 		if foundActive {
 			// Remove from lists
-			removeCertFromList(certBySerialNumber.Issuer, certBySerialNumber.SerialNumber, &nocCerts.Certs)
-			k.removeNocX509Cert(ctx, certID, &nocCerts, accountVid, msg.SerialNumber, true)
+			k.RemoveNocCertBySerialNumber(
+				ctx,
+				certBySerialNumber.Subject,
+				certBySerialNumber.SubjectKeyId,
+				&nocCerts,
+				accountVid,
+				msg.SerialNumber,
+				cert.Issuer,
+				true,
+			)
 		}
 
 		if foundRevoked {
-			removeCertFromList(certBySerialNumber.Issuer, certBySerialNumber.SerialNumber, &revCerts.Certs)
+			RemoveCertFromList(certBySerialNumber.Issuer, certBySerialNumber.SerialNumber, &revCerts.Certs)
 			k.removeRevokedNocX509RootCert(ctx, certID, &revCerts)
 		}
 	} else {
-		// remove from global certificates map
-		k.RemoveCertificateFromAllCertificateIndexes(ctx, certID)
-		// remove from noc certificates map
-		k.RemoveCertificateFromNocCertificateIndexes(ctx, certID, accountVid, true)
 		// remove from revoked noc root certs
 		k.RemoveRevokedNocRootCertificates(ctx, certID.Subject, certID.SubjectKeyId)
+		// remove from noc certificates map
+		k.RemoveNocCertificate(ctx, cert.Subject, cert.SubjectKeyId, accountVid, true)
 		// remove from subject with serialNumber map
 		for _, cert := range certificates {
 			k.RemoveUniqueCertificate(ctx, cert.Subject, cert.SerialNumber)

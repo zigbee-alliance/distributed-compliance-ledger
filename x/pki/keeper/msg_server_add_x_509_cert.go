@@ -108,18 +108,10 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 	)
 
 	// register the unique certificate key
-	uniqueCertificate := types.UniqueCertificate{
-		Issuer:       x509Certificate.Issuer,
-		SerialNumber: x509Certificate.SerialNumber,
-		Present:      true,
-	}
-	k.SetUniqueCertificate(ctx, uniqueCertificate)
+	k.SetUniqueX509Certificate(ctx, x509Certificate)
 
-	// Add to the indexes for global certificates list
-	k.AddCertificateToAllCertificateIndexes(ctx, certificate)
-
-	// Add to the indexes for DA certificates list
-	k.AddCertificateToDaCertificateIndexes(ctx, certificate, false)
+	// store DA certificate in indexes
+	k.StoreDaCertificate(ctx, certificate, false)
 
 	return &types.MsgAddX509CertResponse{}, nil
 }

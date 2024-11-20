@@ -56,7 +56,16 @@ func (k Keeper) AddApprovedRootCertificate(ctx sdk.Context, certificate types.Ce
 }
 
 // Remove root certificate from the list.
-func (k Keeper) RemoveApprovedRootCertificate(ctx sdk.Context, certID types.CertificateIdentifier) {
+func (k Keeper) RemoveApprovedRootCertificate(
+	ctx sdk.Context,
+	subject string,
+	subjectKeyID string,
+) {
+	certID := types.CertificateIdentifier{
+		Subject:      subject,
+		SubjectKeyId: subjectKeyID,
+	}
+
 	rootCertificates, _ := k.GetApprovedRootCertificates(ctx)
 
 	certIDIndex := -1

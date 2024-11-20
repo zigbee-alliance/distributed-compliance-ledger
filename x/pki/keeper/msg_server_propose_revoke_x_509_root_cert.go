@@ -47,7 +47,7 @@ func (k msgServer) ProposeRevokeX509RootCert(goCtx context.Context, msg *types.M
 	}
 	// fail if cert with serial number does not exist
 	if msg.SerialNumber != "" {
-		_, found = findCertificate(msg.SerialNumber, &certificates.Certs)
+		_, found = FindCertificateInList(msg.SerialNumber, &certificates.Certs)
 		if !found {
 			return nil, pkitypes.NewErrCertificateBySerialNumberDoesNotExist(
 				msg.Subject, msg.SubjectKeyId, msg.SerialNumber,

@@ -79,11 +79,8 @@ func (k msgServer) ApproveAddX509RootCert(goCtx context.Context, msg *types.MsgA
 		// delete proposed certificate
 		k.RemoveProposedCertificate(ctx, msg.Subject, msg.SubjectKeyId)
 
-		// Add to the indexes for global certificates list
-		k.AddCertificateToAllCertificateIndexes(ctx, rootCertificate)
-
-		// Add to the indexes for DA certificates list
-		k.AddCertificateToDaCertificateIndexes(ctx, rootCertificate, true)
+		// store DA certificate in indexes
+		k.StoreDaCertificate(ctx, rootCertificate, true)
 	} else {
 		// update proposed certificate
 		k.SetProposedCertificate(ctx, proposedCertificate)

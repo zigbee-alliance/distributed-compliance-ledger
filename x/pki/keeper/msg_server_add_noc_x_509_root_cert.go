@@ -85,18 +85,10 @@ func (k msgServer) AddNocX509RootCert(goCtx context.Context, msg *types.MsgAddNo
 	)
 
 	// register the unique certificate key
-	uniqueCertificate := types.UniqueCertificate{
-		Issuer:       x509Certificate.Issuer,
-		SerialNumber: x509Certificate.SerialNumber,
-		Present:      true,
-	}
-	k.SetUniqueCertificate(ctx, uniqueCertificate)
+	k.SetUniqueX509Certificate(ctx, x509Certificate)
 
-	// Add to the indexes for global certificates list
-	k.AddCertificateToAllCertificateIndexes(ctx, certificate)
-
-	// Add to the indexes for noc certificates list
-	k.AddCertificateToNocCertificateIndexes(ctx, certificate, true)
+	// store Noc certificate in indexes
+	k.StoreNocCertificate(ctx, certificate, true)
 
 	return &types.MsgAddNocX509RootCertResponse{}, nil
 }

@@ -41,14 +41,12 @@ func (k msgServer) RevokeX509Cert(goCtx context.Context, msg *types.MsgRevokeX50
 	}
 
 	if msg.SerialNumber != "" {
-		certBySerialNumber, found := findCertificate(msg.SerialNumber, &certificates.Certs)
-		if !found {
-			return nil, pkitypes.NewErrCertificateBySerialNumberDoesNotExist(msg.Subject, msg.SubjectKeyId, msg.SerialNumber)
+		err = k.revokeDaCertificateBySerialNumber(ctx, msg.SerialNumber, certificates)
+		if err != nil {
+			return nil, err
 		}
-
-		k._revokeX509Certificate(ctx, certBySerialNumber, certIdentifier, certificates)
 	} else {
-		k._revokeX509Certificates(ctx, certIdentifier, certificates)
+		k.revokeDaCertificate(ctx, certIdentifier, certificates)
 	}
 
 	if msg.RevokeChild {
@@ -59,40 +57,47 @@ func (k msgServer) RevokeX509Cert(goCtx context.Context, msg *types.MsgRevokeX50
 	return &types.MsgRevokeX509CertResponse{}, nil
 }
 
-func (k msgServer) _revokeX509Certificates(ctx sdk.Context, certID types.CertificateIdentifier, certificates types.ApprovedCertificates) {
+func (k msgServer) revokeDaCertificate(ctx sdk.Context, certID types.CertificateIdentifier, certificates types.ApprovedCertificates) {
 	// Revoke certificates with given subject/subjectKeyID
 	k.AddRevokedCertificates(ctx, types.RevokedCertificates(certificates))
-
-	// Remove certificate from global list
-	k.RemoveCertificateFromAllCertificateIndexes(ctx, certID)
-
 	// Remove certificate from da list
-	k.RemoveCertificateFromDaCertificateIndexes(ctx, certID, false)
-
+	k.RemoveDaCertificate(ctx, certID.Subject, certID.SubjectKeyId, false)
 	// Remove certificate identifier from issuer's ChildCertificates record
 	k.RemoveChildCertificate(ctx, certificates.Certs[0].Issuer, certificates.Certs[0].AuthorityKeyId, certID)
 }
 
-func (k msgServer) _revokeX509Certificate(ctx sdk.Context, cert *types.Certificate, certID types.CertificateIdentifier, certificates types.ApprovedCertificates) {
-	revCerts := types.RevokedCertificates{
+func (k msgServer) revokeDaCertificateBySerialNumber(
+	ctx sdk.Context,
+	serialNumber string,
+	certificates types.ApprovedCertificates,
+) error {
+	cert, found := FindCertificateInList(serialNumber, &certificates.Certs)
+	if !found {
+		return pkitypes.NewErrCertificateBySerialNumberDoesNotExist(certificates.Subject, certificates.SubjectKeyId, serialNumber)
+	}
+
+	k.AddRevokedCertificates(ctx, types.RevokedCertificates{
 		Subject:       cert.Subject,
 		SubjectKeyId:  cert.SubjectKeyId,
 		Certs:         []*types.Certificate{cert},
 		SchemaVersion: cert.SchemaVersion,
-	}
-	k.AddRevokedCertificates(ctx, revCerts)
+	})
 
-	removeCertFromList(cert.Issuer, cert.SerialNumber, &certificates.Certs)
+	k.RemoveDaCertificateBySerialNumber(
+		ctx,
+		certificates.Subject,
+		certificates.SubjectKeyId,
+		&certificates,
+		cert.SerialNumber,
+		cert.Issuer,
+	)
+
 	if len(certificates.Certs) == 0 {
-		k.RemoveAllCertificates(ctx, cert.Subject, cert.SubjectKeyId)
-		k.RemoveAllCertificateBySubject(ctx, cert.Subject, cert.SubjectKeyId)
-		k.RemoveApprovedCertificates(ctx, cert.Subject, cert.SubjectKeyId)
-		k.RemoveApprovedCertificateBySubject(ctx, cert.Subject, cert.SubjectKeyId)
-		k.RemoveApprovedCertificatesBySubjectKeyID(ctx, cert.Subject, cert.SubjectKeyId)
-		k.RemoveChildCertificate(ctx, cert.Issuer, cert.AuthorityKeyId, certID)
-	} else {
-		k.RemoveAllCertificatesBySerialNumber(ctx, cert.Subject, cert.SubjectKeyId, cert.SerialNumber)
-		k.RemoveApprovedCertificatesBySerialNumber(ctx, cert.Subject, cert.SubjectKeyId, cert.SerialNumber)
-		k.RemoveApprovedCertificatesBySubjectKeyIDBySerialNumber(ctx, cert.Subject, cert.SubjectKeyId, cert.SerialNumber)
+		k.RemoveChildCertificate(ctx, cert.Issuer, cert.AuthorityKeyId, types.CertificateIdentifier{
+			Subject:      certificates.Subject,
+			SubjectKeyId: certificates.SubjectKeyId,
+		})
 	}
+
+	return nil
 }
