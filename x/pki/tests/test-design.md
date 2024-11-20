@@ -10,7 +10,7 @@
       * `All Certificates`: Subject+SKID, SKID, Subject
       * `DA Certificates`: Subject+SKID (approved), Subject+SKID (root), SKID, Subject
   * Tests:
-    * `TestHandler_ProposeAddX509RootCert_ByTrustee`
+    * `TestHandler_ProposeAddDaRootCert`
 * Propose add approve adding of DA root certificate:
   * Indexes:
     * Present:
@@ -20,9 +20,9 @@
     * Missing:
       * `ProposedCertificate`
   * Tests:
-    * `TestHandler_ApproveAddX509RootCert_ForEnoughApprovals`
-    * `TestHandler_TwoThirdApprovalsNeededForAddingRootCertification`
-    * `TestHandler_ApproveX509RootCert_FourApprovalsAreNeeded_FiveTrustees`
+    * `TestHandler_AddDaRootCert`
+    * `TestHandler_AddDaRootCert_TwoThirdApprovalsNeeded`
+    * `TestHandler_AddDaRootCert_FourApprovalsAreNeeded_FiveTrustees`
 
 ### [Add DA Intermediate](./handler_add_pai_cert_test.go)
 
@@ -36,7 +36,7 @@
     * Missing:
       * `ProposedCertificate`
   * Tests:
-    * `TestHandler_AddX509Cert`
+    * `TestHandler_AddDaIntermediateCert`
 
 ### [Revoke DA Root](./handler_revoke_paa_cert_test.go)
 
@@ -50,7 +50,8 @@
     * Missing:
       * `RevokedCertificates`
   * Tests:
-    * `TestHandler_ProposeRevokeX509RootCert_ByTrusteeOwner`
+    * `TestHandler_ProposeRevokeDaRootCert`
+    * `TestHandler_ProposeRevokeDaRootCert_ByTrusteeNotOwner`
 * Propose and approve revocation of DA root certificate:
   * Indexes:
     * Present:
@@ -61,7 +62,7 @@
       * `All Certificates`: Subject+SKID, SKID, Subject
       * `DA Certificates`: Subject+SKID (approved), Subject+SKID (root), SKID, Subject
   * Tests:
-    * `TestHandler_TwoThirdApprovalsNeededForRevokingRootCertification`
+    * `TestHandler_RevokeDaRootCert_TwoThirdApprovalsNeeded`
 
 ### [Revoke DA Intermediate](./handler_revoke_pai_cert_test.go)
 
@@ -77,7 +78,7 @@
       * `DA Certificates`: Subject+SKID (approved), SKID, Subject
       * `ChildCertificates`: for parent
   * Tests:
-    * `TestHandler_RevokeX509Cert`
+    * `TestHandler_RevokeDaIntermediateCert`
 
 ### [Remove DA Intermediate](./handler_remove_pai_cert_test.go)
 
@@ -92,7 +93,7 @@
       * `DA Certificates`: Subject+SKID (approved), SKID, Subject
       * `ChildCertificates`: for parent
   * Tests:
-    * `TestHandler_RemoveX509Cert_BySubjectAndSKID`
+    * `TestHandler_RemoveDaIntermediateCert_BySubjectAndSKID`
 
 ### [Add Noc Root](./handler_add_noc_root_cert_test.go)
 
@@ -105,7 +106,7 @@
     * Missing:
       * -
   * Tests:
-    * `TestHandler_AddNocX509Cert_AddNewRoot`
+    * `TestHandler_AddNocRootCert`
 
 ### [Add Noc Intermediate](./handler_add_noc_ica_cert_test.go)
 
@@ -119,7 +120,7 @@
     * Missing:
       * -
   * Tests:
-    * `TestHandler_AddNocX509Cert_AddNewIca`
+    * `TestHandler_AddNocIntermediateCert`
 
 ### [Revoke Noc Root](./handler_revoke_noc_root_cert_test.go)
 
@@ -133,7 +134,7 @@
       * `All Certificates`: Subject+SKID, SKID, Subject
       * `Noc Certificates`: Subject+SKID, SKID, Subject, VID (root), VID+SKID
   * Tests:
-    * `TestHandler_RevokeNocX509RootCert`
+    * `TestHandler_RevokeNoRootCert`
 
 ### [Revoke Noc Ica](./handler_revoke_noc_ica_cert_test.go)
 
@@ -148,7 +149,7 @@
       * `Noc Certificates`: Subject+SKID, SKID, Subject, VID (ica), VID+SKID
       * `ChildCertificates`: for parent
   * Tests:
-    * `TestHandler_RevokeNocX509Cert`
+    * `TestHandler_RevokeNocIntermediateCert`
 
 ### [Remove Noc Root](./handler_remove_noc_root_cert_test.go)
 
@@ -162,9 +163,9 @@
       * `All Certificates`: Subject+SKID, SKID, Subject
       * `Noc Certificates`: Subject+SKID, SKID, Subject, VID (root), VID+SKID
   * Tests:
-    * `TestHandler_RemoveNocX509RootCert`
+    * `TestHandler_RemoveNocRootCert`
 
-### [Remove Noc Root](./handler_remove_noc_ica_cert_test.go)
+### [Remove Noc Intermediate](./handler_remove_noc_ica_cert_test.go)
 
 * Remove Noc ica certificate by Subject/SKID:
   * Indexes to check:
@@ -177,4 +178,4 @@
       * `Noc Certificates`: Subject+SKID, SKID, Subject, VID (ica), VID+SKID
       * `ChildCertificates`: for parent
   * Tests:
-    * `TestHandler_RemoveNocX509IcaCert`
+    * `TestHandler_RemoveNocIntermediateCert`

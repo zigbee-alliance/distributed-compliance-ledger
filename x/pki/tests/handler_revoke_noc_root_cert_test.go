@@ -16,14 +16,16 @@ import (
 
 // Main
 
-func TestHandler_RevokeNocX509RootCert(t *testing.T) {
+func TestHandler_RevokeNoRootCert(t *testing.T) {
 	setup := Setup(t)
 
-	accAddress := GenerateAccAddress()
-	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
+	accAddress := setup.CreateVendorAccount(testconstants.Vid)
 
 	// add the first NOC root certificate
-	addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), testconstants.NocRootCert1, testconstants.CertSchemaVersion)
+	addNocX509RootCert := types.NewMsgAddNocX509RootCert(
+		accAddress.String(),
+		testconstants.NocRootCert1,
+		testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
 	require.NoError(t, err)
 
@@ -51,7 +53,7 @@ func TestHandler_RevokeNocX509RootCert(t *testing.T) {
 	)
 
 	// Check: All - missing
-	ensureCertificateNotPresentInGlobalCertificateIndexes(
+	ensureGlobalCertificateNotExist(
 		t,
 		setup,
 		testconstants.NocRootCert1Subject,
@@ -60,15 +62,24 @@ func TestHandler_RevokeNocX509RootCert(t *testing.T) {
 	)
 
 	// Check: UniqueCertificate - present
-	found := setup.Keeper.IsUniqueCertificatePresent(setup.Ctx, testconstants.NocRootCert1Issuer, testconstants.NocRootCert1SerialNumber)
+	found := setup.Keeper.IsUniqueCertificatePresent(
+		setup.Ctx,
+		testconstants.NocRootCert1Issuer,
+		testconstants.NocRootCert1SerialNumber)
 	require.True(t, found)
 
 	// Check: RevokedCertificates (root) - present
-	found = setup.Keeper.IsRevokedNocRootCertificatePresent(setup.Ctx, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
+	found = setup.Keeper.IsRevokedNocRootCertificatePresent(
+		setup.Ctx,
+		testconstants.NocRootCert1Subject,
+		testconstants.NocRootCert1SubjectKeyID)
 	require.True(t, found)
 
 	// Check: RevokedCertificates (ica) - missing
-	found = setup.Keeper.IsRevokedNocIcaCertificatePresent(setup.Ctx, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
+	found = setup.Keeper.IsRevokedNocIcaCertificatePresent(
+		setup.Ctx,
+		testconstants.NocRootCert1Subject,
+		testconstants.NocRootCert1SubjectKeyID)
 	require.False(t, found)
 }
 

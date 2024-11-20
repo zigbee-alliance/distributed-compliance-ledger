@@ -15,12 +15,11 @@ import (
 
 // Main
 
-func TestHandler_RevokeX509Cert(t *testing.T) {
+func TestHandler_RevokeDaIntermediateCert(t *testing.T) {
 	setup := Setup(t)
 
 	// Add vendor account
-	vendorAccAddress := GenerateAccAddress()
-	setup.AddAccount(vendorAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.RootCertWithVidVid)
+	vendorAccAddress := setup.CreateVendorAccount(testconstants.RootCertWithVidVid)
 
 	// propose and approve x509 root certificate
 	rootCertOptions := &rootCertOptions{
@@ -33,9 +32,9 @@ func TestHandler_RevokeX509Cert(t *testing.T) {
 	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
 	// Add intermediate certificate
-	addDaPaiCertificate(setup, vendorAccAddress, testconstants.IntermediateCertPem)
+	addDaIntermediateCertificate(setup, vendorAccAddress, testconstants.IntermediateCertPem)
 
-	// revoke x509 certificate
+	// revoke intermediate certificate
 	revokeX509Cert := types.NewMsgRevokeX509Cert(
 		vendorAccAddress.String(),
 		testconstants.IntermediateSubject,
@@ -68,7 +67,7 @@ func TestHandler_RevokeX509Cert(t *testing.T) {
 	require.False(t, found)
 
 	// Check: All - missing
-	ensureCertificateNotPresentInGlobalCertificateIndexes(
+	ensureGlobalCertificateNotExist(
 		t,
 		setup,
 		testconstants.IntermediateSubject,
@@ -83,14 +82,18 @@ func TestHandler_RevokeX509Cert(t *testing.T) {
 		testconstants.IntermediateSubject,
 		testconstants.IntermediateSubjectKeyID,
 		false,
+		false,
 	)
 
 	// Check: child certificate  - missing
-	found = setup.Keeper.IsChildCertificatePresent(setup.Ctx, testconstants.IntermediateIssuer, testconstants.IntermediateAuthorityKeyID)
+	found = setup.Keeper.IsChildCertificatePresent(
+		setup.Ctx,
+		testconstants.IntermediateIssuer,
+		testconstants.IntermediateAuthorityKeyID)
 	require.False(t, found)
 
 	// Check: Root stays approved
-	ensureDaPaaCertificateExist(
+	ensureDaRootCertificateExist(
 		t,
 		setup,
 		testconstants.RootSubject,
@@ -103,18 +106,17 @@ func TestHandler_RevokeX509Cert_ForTree(t *testing.T) {
 	setup := Setup(t)
 
 	// Add vendor account
-	vendorAccAddress := GenerateAccAddress()
-	setup.AddAccount(vendorAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
+	vendorAccAddress := setup.CreateVendorAccount(testconstants.Vid)
 
 	// add root x509 certificate
 	rootCertOptions := createTestRootCertOptions()
 	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
 	// add intermediate x509 certificate
-	addDaPaiCertificate(setup, vendorAccAddress, testconstants.IntermediateCertPem)
+	addDaIntermediateCertificate(setup, vendorAccAddress, testconstants.IntermediateCertPem)
 
 	// add leaf x509 certificate
-	addDaPaiCertificate(setup, vendorAccAddress, testconstants.LeafCertPem)
+	addDaIntermediateCertificate(setup, vendorAccAddress, testconstants.LeafCertPem)
 
 	// revoke x509 certificate
 	revokeX509Cert := types.NewMsgRevokeX509Cert(
@@ -141,7 +143,7 @@ func TestHandler_RevokeX509Cert_ForTree(t *testing.T) {
 	require.Equal(t, testconstants.IntermediateCertPem, allRevokedCertificates[1].Certs[0].PemCert)
 
 	// check that root certificate stays approved
-	ensureDaPaaCertificateExist(
+	ensureDaRootCertificateExist(
 		t,
 		setup,
 		testconstants.RootSubject,
@@ -182,7 +184,7 @@ func TestHandler_RevokeX509Cert_BySerialNumber(t *testing.T) {
 	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
 	// Add two intermediate certificates
-	addDaPaiCertificate(setup, vendorAccAddress, testconstants.IntermediateCertPem)
+	addDaIntermediateCertificate(setup, vendorAccAddress, testconstants.IntermediateCertPem)
 
 	intermediateCertificate := intermediateCertificateNoVid(vendorAccAddress)
 	intermediateCertificate.SerialNumber = SerialNumber
@@ -195,7 +197,7 @@ func TestHandler_RevokeX509Cert_BySerialNumber(t *testing.T) {
 	)
 
 	// Add a leaf certificate
-	addDaPaiCertificate(setup, vendorAccAddress, testconstants.LeafCertPem)
+	addDaIntermediateCertificate(setup, vendorAccAddress, testconstants.LeafCertPem)
 
 	// get certificates for further comparison
 	allCerts := setup.Keeper.GetAllApprovedCertificates(setup.Ctx)

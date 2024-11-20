@@ -18,7 +18,7 @@ import (
 
 // Main
 
-func TestHandler_ProposeRevokeX509RootCert_ByTrusteeOwner(t *testing.T) {
+func TestHandler_ProposeRevokeDaRootCert(t *testing.T) {
 	setup := Setup(t)
 
 	// propose x509 root certificate by `setup.Trustee` and approve by another trustee
@@ -27,7 +27,12 @@ func TestHandler_ProposeRevokeX509RootCert_ByTrusteeOwner(t *testing.T) {
 
 	// propose revocation of x509 root certificate by `setup.Trustee`
 	proposeRevokeX509RootCert := types.NewMsgProposeRevokeX509RootCert(
-		setup.Trustee1.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, false, testconstants.Info)
+		setup.Trustee1.String(),
+		testconstants.RootSubject,
+		testconstants.RootSubjectKeyID,
+		testconstants.RootSerialNumber,
+		false,
+		testconstants.Info)
 	_, err := setup.Handler(setup.Ctx, proposeRevokeX509RootCert)
 	require.NoError(t, err)
 
@@ -38,7 +43,7 @@ func TestHandler_ProposeRevokeX509RootCert_ByTrusteeOwner(t *testing.T) {
 	require.True(t, proposedRevocation.HasRevocationFrom(setup.Trustee1.String()))
 
 	// Check: DA + All + UniqueCertificate
-	ensureDaPaaCertificateExist(
+	ensureDaRootCertificateExist(
 		t,
 		setup,
 		testconstants.RootSubject,
@@ -51,7 +56,7 @@ func TestHandler_ProposeRevokeX509RootCert_ByTrusteeOwner(t *testing.T) {
 		setup.Ctx, testconstants.RootSubject, testconstants.RootSubjectKeyID))
 }
 
-func TestHandler_TwoThirdApprovalsNeededForRevokingRootCertification(t *testing.T) {
+func TestHandler_RevokeDaRootCert_TwoThirdApprovalsNeeded(t *testing.T) {
 	setup := Setup(t)
 
 	// propose x509 root certificate by account without trustee role
@@ -65,11 +70,14 @@ func TestHandler_TwoThirdApprovalsNeededForRevokingRootCertification(t *testing.
 	_, err = setup.Handler(setup.Ctx, approveAddX509RootCert)
 	require.NoError(t, err)
 
-	approvedCertificate, _ := querySingleApprovedCertificate(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
-	require.Equal(t, testconstants.RootIssuer, approvedCertificate.Subject)
-	require.Equal(t, testconstants.RootSerialNumber, approvedCertificate.SerialNumber)
-	require.True(t, approvedCertificate.IsRoot)
-	require.True(t, approvedCertificate.HasApprovalFrom(setup.Trustee1.String()))
+	// Check: DA + All + UniqueCertificate
+	ensureDaRootCertificateExist(
+		t,
+		setup,
+		testconstants.RootSubject,
+		testconstants.RootSubjectKeyID,
+		testconstants.RootIssuer,
+		testconstants.RootSerialNumber)
 
 	// Create an array of trustee account from 1 to 50
 	trusteeAccounts := make([]sdk.AccAddress, 50)
@@ -87,7 +95,12 @@ func TestHandler_TwoThirdApprovalsNeededForRevokingRootCertification(t *testing.
 
 	// Trustee1 proposes to revoke the certificate
 	proposeRevokeX509RootCert := types.NewMsgProposeRevokeX509RootCert(
-		setup.Trustee1.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, false, testconstants.Info)
+		setup.Trustee1.String(),
+		testconstants.RootSubject,
+		testconstants.RootSubjectKeyID,
+		testconstants.RootSerialNumber,
+		false,
+		testconstants.Info)
 	_, err = setup.Handler(setup.Ctx, proposeRevokeX509RootCert)
 	require.NoError(t, err)
 
@@ -96,12 +109,16 @@ func TestHandler_TwoThirdApprovalsNeededForRevokingRootCertification(t *testing.
 	for i := 1; i < twoThirds-1; i++ {
 		// approve the revocation
 		approveRevokeX509RootCert := types.NewMsgApproveRevokeX509RootCert(
-			trusteeAccounts[i].String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, testconstants.Info)
+			trusteeAccounts[i].String(),
+			testconstants.RootSubject,
+			testconstants.RootSubjectKeyID,
+			testconstants.RootSerialNumber,
+			testconstants.Info)
 		_, err = setup.Handler(setup.Ctx, approveRevokeX509RootCert)
 		require.NoError(t, err)
 
 		// check that the certificate is still not revoked
-		ensureDaPaaCertificateExist(
+		ensureDaRootCertificateExist(
 			t,
 			setup,
 			testconstants.RootSubject,
@@ -112,7 +129,11 @@ func TestHandler_TwoThirdApprovalsNeededForRevokingRootCertification(t *testing.
 
 	// One more revoke will revoke the certificate
 	approveRevokeX509RootCert := types.NewMsgApproveRevokeX509RootCert(
-		setup.Trustee2.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, testconstants.Info)
+		setup.Trustee2.String(),
+		testconstants.RootSubject,
+		testconstants.RootSubjectKeyID,
+		testconstants.RootSerialNumber,
+		testconstants.Info)
 	_, err = setup.Handler(setup.Ctx, approveRevokeX509RootCert)
 	require.NoError(t, err)
 
@@ -122,11 +143,12 @@ func TestHandler_TwoThirdApprovalsNeededForRevokingRootCertification(t *testing.
 		setup,
 		testconstants.RootSubject,
 		testconstants.RootSubjectKeyID,
+		true,
 		false,
 	)
 
 	// Check: All - missing
-	ensureCertificateNotPresentInGlobalCertificateIndexes(
+	ensureGlobalCertificateNotExist(
 		t,
 		setup,
 		testconstants.RootSubject,
@@ -161,7 +183,7 @@ func TestHandler_TwoThirdApprovalsNeededForRevokingRootCertification(t *testing.
 	require.Equal(t, revokedCertificate.HasApprovalFrom(setup.Trustee2.String()), true)
 }
 
-func TestHandler_ProposeRevokeX509RootCert_ByTrusteeNotOwner(t *testing.T) {
+func TestHandler_ProposeRevokeDaRootCert_ByTrusteeNotOwner(t *testing.T) {
 	setup := Setup(t)
 
 	// propose x509 root certificate by `setup.Trustee` and approve by another trustee
@@ -174,7 +196,12 @@ func TestHandler_ProposeRevokeX509RootCert_ByTrusteeNotOwner(t *testing.T) {
 
 	// propose revocation of x509 root certificate by new trustee
 	proposeRevokeX509RootCert := types.NewMsgProposeRevokeX509RootCert(
-		anotherTrustee.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, false, testconstants.Info)
+		anotherTrustee.String(),
+		testconstants.RootSubject,
+		testconstants.RootSubjectKeyID,
+		testconstants.RootSerialNumber,
+		false,
+		testconstants.Info)
 	_, err := setup.Handler(setup.Ctx, proposeRevokeX509RootCert)
 	require.NoError(t, err)
 
@@ -185,8 +212,13 @@ func TestHandler_ProposeRevokeX509RootCert_ByTrusteeNotOwner(t *testing.T) {
 	require.True(t, proposedRevocation.HasRevocationFrom(anotherTrustee.String()))
 
 	// check that approved certificate still exists
-	certificate, _ := querySingleApprovedCertificate(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
-	require.NotNil(t, certificate)
+	ensureDaRootCertificateExist(
+		t,
+		setup,
+		testconstants.RootSubject,
+		testconstants.RootSubjectKeyID,
+		testconstants.RootIssuer,
+		testconstants.RootSerialNumber)
 
 	// check that revoked certificate does not exist
 	_, err = queryRevokedCertificates(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
@@ -211,10 +243,10 @@ func TestHandler_ApproveRevokeX509RootCert_ForTree(t *testing.T) {
 	setup.AddAccount(vendorAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
 	// add intermediate x509 certificate
-	addDaPaiCertificate(setup, vendorAccAddress, testconstants.IntermediateCertPem)
+	addDaIntermediateCertificate(setup, vendorAccAddress, testconstants.IntermediateCertPem)
 
 	// add leaf x509 certificate
-	addDaPaiCertificate(setup, vendorAccAddress, testconstants.LeafCertPem)
+	addDaIntermediateCertificate(setup, vendorAccAddress, testconstants.LeafCertPem)
 
 	// propose revocation of x509 root certificate
 	proposeRevokeX509RootCert := types.NewMsgProposeRevokeX509RootCert(
@@ -276,7 +308,7 @@ func TestHandler_ApproveRevokeX509RootCert_ForTree(t *testing.T) {
 	require.Nil(t, leafCertChildren)
 
 	// check that root certificate does not exist
-	ensureDaPaaCertificateDoesNotExist(
+	ensureDaRootCertificateNotExist(
 		t,
 		setup,
 		testconstants.RootSubject,
@@ -286,7 +318,7 @@ func TestHandler_ApproveRevokeX509RootCert_ForTree(t *testing.T) {
 		true)
 
 	// check that intermediate certificate does not exist
-	ensureDaPaiCertificateDoesNotExist(
+	ensureDaIntermediateCertificateNotExist(
 		t,
 		setup,
 		testconstants.IntermediateSubject,
@@ -297,7 +329,7 @@ func TestHandler_ApproveRevokeX509RootCert_ForTree(t *testing.T) {
 		false)
 
 	// check that intermediate certificate does not exist
-	ensureDaPaiCertificateDoesNotExist(
+	ensureDaIntermediateCertificateNotExist(
 		t,
 		setup,
 		testconstants.LeafSubject,

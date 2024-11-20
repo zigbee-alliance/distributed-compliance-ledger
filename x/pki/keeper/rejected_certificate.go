@@ -66,3 +66,17 @@ func (k Keeper) GetAllRejectedCertificate(ctx sdk.Context) (list []types.Rejecte
 
 	return
 }
+
+// Check if the rejected certificate exists.
+func (k Keeper) IsRejectedCertificatePresent(
+	ctx sdk.Context,
+	subject string,
+	subjectKeyID string,
+) bool {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.RejectedCertificateKeyPrefix))
+
+	return store.Has(types.RejectedCertificateKey(
+		subject,
+		subjectKeyID,
+	))
+}

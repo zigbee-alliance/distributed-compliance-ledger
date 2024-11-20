@@ -14,40 +14,38 @@ import (
 
 // Main
 
-func TestHandler_AddNocX509Cert_AddNewIca(t *testing.T) {
+func TestHandler_AddNocIntermediateCert(t *testing.T) {
 	setup := Setup(t)
 
-	accAddress := GenerateAccAddress()
-	vid := testconstants.Vid
-	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, vid)
+	accAddress := setup.CreateVendorAccount(testconstants.Vid)
 
 	// add NOC root certificate
 	addNocRootCertificate(setup, accAddress, testconstants.NocRootCert1)
 
 	// add NOC ICA certificate
-	addNocIcaCertificate(setup, accAddress, testconstants.NocCert1)
+	addNocIntermediateCertificate(setup, accAddress, testconstants.NocCert1)
 
 	// Check: Noc + All + UniqueCertificate
-	ensureNocIcaCertificateExist(
+	ensureNocIntermediateCertificateExist(
 		t,
 		setup,
 		testconstants.NocCert1Subject,
 		testconstants.NocCert1SubjectKeyID,
 		testconstants.NocCert1Issuer,
 		testconstants.NocCert1SerialNumber,
-		vid,
-		false)
+		testconstants.Vid,
+		false,
+	)
 
 	// ChildCertificates: check that child certificates of issuer contains certificate identifier
-	issuerChildren, _ := queryChildCertificates(
-		setup, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
-	require.Equal(t, 1, len(issuerChildren.CertIds))
-	require.Equal(t,
-		&types.CertificateIdentifier{
-			Subject:      testconstants.NocCert1Subject,
-			SubjectKeyId: testconstants.NocCert1SubjectKeyID,
-		},
-		issuerChildren.CertIds[0])
+	ensureChildCertificateExist(
+		t,
+		setup,
+		testconstants.NocRootCert1Subject,
+		testconstants.NocRootCert1SubjectKeyID,
+		testconstants.NocCert1Subject,
+		testconstants.NocCert1SubjectKeyID,
+	)
 }
 
 // Extra cases

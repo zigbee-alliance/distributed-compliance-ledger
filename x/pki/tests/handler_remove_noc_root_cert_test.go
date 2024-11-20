@@ -15,13 +15,11 @@ import (
 
 // Main
 
-func TestHandler_RemoveNocX509RootCert(t *testing.T) {
+func TestHandler_RemoveNocRootCert(t *testing.T) {
 	setup := Setup(t)
 
 	// Add vendor account
-	vid := testconstants.Vid
-	vendorAccAddress := GenerateAccAddress()
-	setup.AddAccount(vendorAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, vid)
+	vendorAccAddress := setup.CreateVendorAccount(testconstants.Vid)
 
 	// add NOC root certificates
 	addNocRootCertificate(setup, vendorAccAddress, testconstants.NocRootCert1)
@@ -48,7 +46,7 @@ func TestHandler_RemoveNocX509RootCert(t *testing.T) {
 	)
 
 	// Check: All - missing
-	ensureCertificateNotPresentInGlobalCertificateIndexes(
+	ensureGlobalCertificateNotExist(
 		t,
 		setup,
 		testconstants.NocRootCert1Subject,
@@ -57,11 +55,17 @@ func TestHandler_RemoveNocX509RootCert(t *testing.T) {
 	)
 
 	// Check: UniqueCertificate - missing
-	found := setup.Keeper.IsUniqueCertificatePresent(setup.Ctx, testconstants.NocRootCert1Issuer, testconstants.NocRootCert1SerialNumber)
+	found := setup.Keeper.IsUniqueCertificatePresent(
+		setup.Ctx,
+		testconstants.NocRootCert1Issuer,
+		testconstants.NocRootCert1SerialNumber)
 	require.False(t, found)
 
 	// Check: RevokedCertificates (root) - missing
-	found = setup.Keeper.IsRevokedNocRootCertificatePresent(setup.Ctx, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
+	found = setup.Keeper.IsRevokedNocRootCertificatePresent(
+		setup.Ctx,
+		testconstants.NocRootCert1Subject,
+		testconstants.NocRootCert1SubjectKeyID)
 	require.False(t, found)
 }
 
@@ -78,7 +82,7 @@ func TestHandler_RemoveNocX509RootCert_BySubjectAndSKID(t *testing.T) {
 	addNocRootCertificate(setup, vendorAccAddress, testconstants.NocRootCert1Copy)
 
 	// Add intermediate certificate
-	addNocIcaCertificate(setup, vendorAccAddress, testconstants.NocCert1)
+	addNocIntermediateCertificate(setup, vendorAccAddress, testconstants.NocCert1)
 
 	// get certificates for further comparison
 	nocCerts := setup.Keeper.GetAllNocCertificates(setup.Ctx)
@@ -103,7 +107,7 @@ func TestHandler_RemoveNocX509RootCert_BySubjectAndSKID(t *testing.T) {
 	require.Equal(t, testconstants.NocCert1SerialNumber, nocCerts[0].Certs[0].SerialNumber)
 
 	// Check that root certificates does not exist
-	ensureNocRootCertificateDoesNotExist(
+	ensureNocRootCertificateNotExist(
 		t,
 		setup,
 		testconstants.NocRootCert1Subject,
@@ -115,7 +119,7 @@ func TestHandler_RemoveNocX509RootCert_BySubjectAndSKID(t *testing.T) {
 		false)
 
 	// Check that root copy certificates does not exist
-	ensureNocRootCertificateDoesNotExist(
+	ensureNocRootCertificateNotExist(
 		t,
 		setup,
 		testconstants.NocRootCert1CopySubject,
@@ -127,7 +131,7 @@ func TestHandler_RemoveNocX509RootCert_BySubjectAndSKID(t *testing.T) {
 		false)
 
 	// Check that intermediate certificates does not exist
-	ensureNocIcaCertificateExist(
+	ensureNocIntermediateCertificateExist(
 		t,
 		setup,
 		testconstants.NocCert1Subject,
@@ -151,7 +155,7 @@ func TestHandler_RemoveNocX509RootCert_BySerialNumber(t *testing.T) {
 	addNocRootCertificate(setup, vendorAccAddress, testconstants.NocRootCert1Copy)
 
 	// Add ICA certificates
-	addNocIcaCertificate(setup, vendorAccAddress, testconstants.NocCert1)
+	addNocIntermediateCertificate(setup, vendorAccAddress, testconstants.NocCert1)
 
 	// remove NOC root certificate by serial number
 	removeIcaCert := types.NewMsgRemoveNocX509RootCert(
@@ -182,7 +186,7 @@ func TestHandler_RemoveNocX509RootCert_BySerialNumber(t *testing.T) {
 		vid)
 
 	// Check that intermediate certificates does not exist
-	ensureNocIcaCertificateExist(
+	ensureNocIntermediateCertificateExist(
 		t,
 		setup,
 		testconstants.NocCert1Subject,
@@ -208,7 +212,7 @@ func TestHandler_RemoveNocX509RootCert_BySerialNumber(t *testing.T) {
 	require.Equal(t, testconstants.NocCert1SerialNumber, nocCerts[0].Certs[0].SerialNumber)
 
 	// Check that root certificates does not exist
-	ensureNocRootCertificateDoesNotExist(
+	ensureNocRootCertificateNotExist(
 		t,
 		setup,
 		testconstants.NocRootCert1Subject,
@@ -220,7 +224,7 @@ func TestHandler_RemoveNocX509RootCert_BySerialNumber(t *testing.T) {
 		false)
 
 	// Check that root copy certificates does not exist
-	ensureNocRootCertificateDoesNotExist(
+	ensureNocRootCertificateNotExist(
 		t,
 		setup,
 		testconstants.NocRootCert1CopySubject,
@@ -232,7 +236,7 @@ func TestHandler_RemoveNocX509RootCert_BySerialNumber(t *testing.T) {
 		false)
 
 	// Check that intermediate certificates does not exist
-	ensureNocIcaCertificateExist(
+	ensureNocIntermediateCertificateExist(
 		t,
 		setup,
 		testconstants.NocCert1Subject,
@@ -256,7 +260,7 @@ func TestHandler_RemoveNocX509RootCert_RevokedCertificate(t *testing.T) {
 	addNocRootCertificate(setup, vendorAccAddress, testconstants.NocRootCert1Copy)
 
 	// Add an intermediate certificate
-	addNocIcaCertificate(setup, vendorAccAddress, testconstants.NocCert1)
+	addNocIntermediateCertificate(setup, vendorAccAddress, testconstants.NocCert1)
 
 	// revoke NOC root certificates
 	revokeX509Cert := types.NewMsgRevokeNocX509RootCert(
@@ -271,7 +275,7 @@ func TestHandler_RemoveNocX509RootCert_RevokedCertificate(t *testing.T) {
 	require.NoError(t, err)
 
 	// Check that root copy certificates does not exist
-	ensureNocRootCertificateDoesNotExist(
+	ensureNocRootCertificateNotExist(
 		t,
 		setup,
 		testconstants.NocRootCert1Subject,
@@ -283,7 +287,7 @@ func TestHandler_RemoveNocX509RootCert_RevokedCertificate(t *testing.T) {
 		true)
 
 	// Check that root copy certificates does not exist
-	ensureNocRootCertificateDoesNotExist(
+	ensureNocRootCertificateNotExist(
 		t,
 		setup,
 		testconstants.NocRootCert1CopySubject,
@@ -302,7 +306,7 @@ func TestHandler_RemoveNocX509RootCert_RevokedCertificate(t *testing.T) {
 	require.Equal(t, testconstants.NocRootCert1CopySubjectKeyID, revokedCerts.Certs[1].SubjectKeyId)
 
 	// Check that intermediate certificates does not exist
-	ensureNocIcaCertificateExist(
+	ensureNocIntermediateCertificateExist(
 		t,
 		setup,
 		testconstants.NocCert1Subject,
@@ -327,7 +331,7 @@ func TestHandler_RemoveNocX509RootCert_RevokedCertificate(t *testing.T) {
 	require.Equal(t, testconstants.NocCert1SerialNumber, allCerts[0].Certs[0].SerialNumber)
 
 	// Check that intermediate certificates does not exist
-	ensureNocIcaCertificateExist(
+	ensureNocIntermediateCertificateExist(
 		t,
 		setup,
 		testconstants.NocCert1Subject,
@@ -338,7 +342,7 @@ func TestHandler_RemoveNocX509RootCert_RevokedCertificate(t *testing.T) {
 		false)
 
 	// Check that root copy certificates does not exist
-	ensureNocRootCertificateDoesNotExist(
+	ensureNocRootCertificateNotExist(
 		t,
 		setup,
 		testconstants.NocRootCert1Subject,
@@ -350,7 +354,7 @@ func TestHandler_RemoveNocX509RootCert_RevokedCertificate(t *testing.T) {
 		true)
 
 	// Check that root copy certificates does not exist
-	ensureNocRootCertificateDoesNotExist(
+	ensureNocRootCertificateNotExist(
 		t,
 		setup,
 		testconstants.NocRootCert1CopySubject,
