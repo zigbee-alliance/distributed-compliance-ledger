@@ -178,3 +178,17 @@ func (k msgServer) RemoveChildCertificate(
 		k.RemoveChildCertificates(ctx, issuer, authorityKeyID)
 	}
 }
+
+// IsChildCertificatePresent Check if the Child Certificate is present in the store.
+func (k Keeper) IsChildCertificatePresent(
+	ctx sdk.Context,
+	issuer string,
+	authorityKeyID string,
+) bool {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ChildCertificatesKeyPrefix))
+
+	return store.Has(types.ChildCertificatesKey(
+		issuer,
+		authorityKeyID,
+	))
+}

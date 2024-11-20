@@ -59,7 +59,7 @@ func (k msgServer) RemoveNocX509IcaCert(goCtx context.Context, msg *types.MsgRem
 		SubjectKeyId: msg.SubjectKeyId,
 	}
 
-	if msg.SerialNumber != "" {
+	if msg.SerialNumber != "" { //nolint:nestif
 		certBySerialNumber, found := FindCertificateInList(msg.SerialNumber, &certificates)
 		if !found {
 			return nil, pkitypes.NewErrCertificateBySerialNumberDoesNotExist(msg.Subject, msg.SubjectKeyId, msg.SerialNumber)
@@ -80,6 +80,12 @@ func (k msgServer) RemoveNocX509IcaCert(goCtx context.Context, msg *types.MsgRem
 				certBySerialNumber.Issuer,
 				false,
 			)
+			if len(icaCerts.Certs) == 0 {
+				k.RemoveChildCertificate(ctx, certBySerialNumber.Issuer, certBySerialNumber.AuthorityKeyId, types.CertificateIdentifier{
+					Subject:      icaCerts.Subject,
+					SubjectKeyId: icaCerts.SubjectKeyId,
+				})
+			}
 		}
 
 		if foundRevoked {
@@ -91,6 +97,8 @@ func (k msgServer) RemoveNocX509IcaCert(goCtx context.Context, msg *types.MsgRem
 		k.RemoveRevokedNocIcaCertificates(ctx, certID.Subject, certID.SubjectKeyId)
 		// remove from noc certificates map
 		k.RemoveNocCertificate(ctx, cert.Subject, cert.SubjectKeyId, accountVid, false)
+		// Remove certificate identifier from issuer's ChildCertificates record
+		k.RemoveChildCertificate(ctx, certificates[0].Issuer, certificates[0].AuthorityKeyId, certID)
 		// remove from subject with serialNumber map
 		for _, cert := range certificates {
 			k.RemoveUniqueCertificate(ctx, cert.Issuer, cert.SerialNumber)

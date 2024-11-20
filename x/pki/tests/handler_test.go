@@ -2,16 +2,16 @@ package tests
 
 import (
 	"context"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki"
 	"testing"
-
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 
 	"github.com/cosmos/cosmos-sdk/testutil/testdata"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	testkeeper "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
@@ -274,6 +274,23 @@ func querySingleApprovedCertificate(
 	}
 
 	return certificates.Certs[0], nil
+}
+
+func querySingleApprovedRootCertificate(
+	setup *TestSetup,
+	subject string,
+	subjectKeyID string,
+) (*types.Certificate, error) {
+	certificates, err := queryApprovedRootCertificates(setup, subject, subjectKeyID)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(certificates) > 1 {
+		require.Fail(setup.T, "More than 1 certificate returned")
+	}
+
+	return certificates[0], nil
 }
 
 func queryApprovedCertificates(
@@ -978,6 +995,15 @@ func ensureCertificatePresentInDaCertificateIndexes(
 	require.Equal(t, subjectKeyID, approvedCertificate.SubjectKeyId)
 	require.Equal(t, serialNumber, approvedCertificate.SerialNumber)
 	require.Equal(t, isRoot, approvedCertificate.IsRoot)
+
+	if isRoot {
+		// DaCertificates: Root Subject and SKID
+		approvedRootCertificate, _ := querySingleApprovedRootCertificate(setup, subject, subjectKeyID)
+		require.Equal(t, subject, approvedRootCertificate.Subject)
+		require.Equal(t, subjectKeyID, approvedRootCertificate.SubjectKeyId)
+		require.Equal(t, serialNumber, approvedRootCertificate.SerialNumber)
+		require.Equal(t, isRoot, approvedRootCertificate.IsRoot)
+	}
 
 	// DaCertificates: SKID
 	certificateBySubjectKeyID, _ := queryAllApprovedCertificatesBySubjectKeyID(setup, subjectKeyID)

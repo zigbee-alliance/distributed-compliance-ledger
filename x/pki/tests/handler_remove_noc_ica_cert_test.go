@@ -15,6 +15,63 @@ import (
 
 // Main
 
+func TestHandler_RemoveNocX509IcaCert(t *testing.T) {
+	setup := Setup(t)
+
+	// Add vendor account
+	vid := testconstants.Vid
+	vendorAccAddress := GenerateAccAddress()
+	setup.AddAccount(vendorAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, vid)
+
+	// add NOC root certificate
+	addNocRootCertificate(setup, vendorAccAddress, testconstants.NocRootCert1)
+
+	// add intermediate certificate
+	addNocIcaCertificate(setup, vendorAccAddress, testconstants.NocCert1)
+
+	// remove intermediate certificate
+	removeIcaCert := types.NewMsgRemoveNocX509IcaCert(
+		vendorAccAddress.String(),
+		testconstants.NocCert1Subject,
+		testconstants.NocCert1SubjectKeyID,
+		"",
+	)
+	_, err := setup.Handler(setup.Ctx, removeIcaCert)
+	require.NoError(t, err)
+
+	// Check: Noc - missing
+	ensureCertificateNotPresentInNocCertificateIndexes(
+		t,
+		setup,
+		testconstants.NocCert1Subject,
+		testconstants.NocCert1SubjectKeyID,
+		testconstants.Vid,
+		false,
+		false,
+	)
+
+	// Check: All - missing
+	ensureCertificateNotPresentInGlobalCertificateIndexes(
+		t,
+		setup,
+		testconstants.NocCert1Subject,
+		testconstants.NocCert1SubjectKeyID,
+		false,
+	)
+
+	// Check: UniqueCertificate - missing
+	found := setup.Keeper.IsUniqueCertificatePresent(setup.Ctx, testconstants.NocCert1Issuer, testconstants.NocCert1SerialNumber)
+	require.False(t, found)
+
+	// Check: RevokedCertificates (ica) - missing
+	found = setup.Keeper.IsRevokedNocIcaCertificatePresent(setup.Ctx, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	require.False(t, found)
+
+	// Check: child certificate  - missing
+	found = setup.Keeper.IsChildCertificatePresent(setup.Ctx, testconstants.NocCert1Issuer, testconstants.NocCert1AuthorityKeyID)
+	require.False(t, found)
+}
+
 func TestHandler_RemoveNocX509IcaCert_BySubjectAndSKID(t *testing.T) {
 	setup := Setup(t)
 

@@ -31,24 +31,24 @@ func TestHandler_ProposeRevokeX509RootCert_ByTrusteeOwner(t *testing.T) {
 	_, err := setup.Handler(setup.Ctx, proposeRevokeX509RootCert)
 	require.NoError(t, err)
 
-	// query and check proposed certificate revocation
+	// Check: ProposedCertificateRevocation - present
 	proposedRevocation, _ := queryProposedCertificateRevocation(setup, testconstants.RootSerialNumber)
 	require.Equal(t, testconstants.RootSubject, proposedRevocation.Subject)
 	require.Equal(t, testconstants.RootSubjectKeyID, proposedRevocation.SubjectKeyId)
 	require.True(t, proposedRevocation.HasRevocationFrom(setup.Trustee1.String()))
 
-	// check that approved certificate still exists
-	certificate, _ := querySingleApprovedCertificate(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
-	require.NotNil(t, certificate)
+	// Check: DA + All + UniqueCertificate
+	ensureDaPaaCertificateExist(
+		t,
+		setup,
+		testconstants.RootSubject,
+		testconstants.RootSubjectKeyID,
+		testconstants.RootIssuer,
+		testconstants.RootSerialNumber)
 
 	// check that revoked certificate does not exist
-	_, err = queryRevokedCertificates(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
-	require.Error(t, err)
-	require.Equal(t, codes.NotFound, status.Code(err))
-
-	// check that unique certificate key stays registered
-	require.True(t,
-		setup.Keeper.IsUniqueCertificatePresent(setup.Ctx, testconstants.RootIssuer, testconstants.RootSerialNumber))
+	require.False(t, setup.Keeper.IsRevokedCertificatePresent(
+		setup.Ctx, testconstants.RootSubject, testconstants.RootSubjectKeyID))
 }
 
 func TestHandler_TwoThirdApprovalsNeededForRevokingRootCertification(t *testing.T) {
@@ -101,10 +101,13 @@ func TestHandler_TwoThirdApprovalsNeededForRevokingRootCertification(t *testing.
 		require.NoError(t, err)
 
 		// check that the certificate is still not revoked
-		approvedCertificate, _ := querySingleApprovedCertificate(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
-		require.Equal(t, testconstants.RootIssuer, approvedCertificate.Subject)
-		require.Equal(t, testconstants.RootSerialNumber, approvedCertificate.SerialNumber)
-		require.True(t, approvedCertificate.IsRoot)
+		ensureDaPaaCertificateExist(
+			t,
+			setup,
+			testconstants.RootSubject,
+			testconstants.RootSubjectKeyID,
+			testconstants.RootIssuer,
+			testconstants.RootSerialNumber)
 	}
 
 	// One more revoke will revoke the certificate
@@ -113,17 +116,38 @@ func TestHandler_TwoThirdApprovalsNeededForRevokingRootCertification(t *testing.
 	_, err = setup.Handler(setup.Ctx, approveRevokeX509RootCert)
 	require.NoError(t, err)
 
-	// Check that the certificate is revoked
-	ensureDaPaaCertificateDoesNotExist(
+	// Check: DA - missing
+	ensureCertificateNotPresentInDaCertificateIndexes(
 		t,
 		setup,
 		testconstants.RootSubject,
 		testconstants.RootSubjectKeyID,
-		testconstants.RootIssuer,
-		testconstants.RootSerialNumber,
-		true)
+		false,
+	)
 
-	// Check that the certificate is revoked
+	// Check: All - missing
+	ensureCertificateNotPresentInGlobalCertificateIndexes(
+		t,
+		setup,
+		testconstants.RootSubject,
+		testconstants.RootSubjectKeyID,
+		false,
+	)
+
+	// Check: ProposedCertificateRevocation - missing
+	found := setup.Keeper.IsProposedCertificateRevocationPresent(
+		setup.Ctx,
+		testconstants.RootSubject,
+		testconstants.RootSubjectKeyID,
+		testconstants.RootSerialNumber,
+	)
+	require.False(t, found)
+
+	// Check: UniqueCertificate - present
+	found = setup.Keeper.IsUniqueCertificatePresent(setup.Ctx, testconstants.RootIssuer, testconstants.RootSerialNumber)
+	require.True(t, found)
+
+	// Check: Revoked - present
 	revokedCertificate, err := querySingleRevokedCertificate(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	require.NoError(t, err)
 	require.Equal(t, testconstants.RootIssuer, revokedCertificate.Subject)

@@ -27,6 +27,7 @@ func TestHandler_AddNocX509Cert_AddNewIca(t *testing.T) {
 	// add NOC ICA certificate
 	addNocIcaCertificate(setup, accAddress, testconstants.NocCert1)
 
+	// Check: Noc + All + UniqueCertificate
 	ensureNocIcaCertificateExist(
 		t,
 		setup,

@@ -32,7 +32,7 @@ func TestHandler_RevokeX509Cert(t *testing.T) {
 	}
 	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
-	// Add two intermediate certificates again
+	// Add intermediate certificate
 	addDaPaiCertificate(setup, vendorAccAddress, testconstants.IntermediateCertPem)
 
 	// revoke x509 certificate
@@ -47,24 +47,49 @@ func TestHandler_RevokeX509Cert(t *testing.T) {
 	_, err := setup.Handler(setup.Ctx, revokeX509Cert)
 	require.NoError(t, err)
 
-	// check that intermediate certificate has been revoked
+	// Check: Revoked - present
 	allRevokedCertificates, _ := queryAllRevokedCertificates(setup)
 	require.Equal(t, 1, len(allRevokedCertificates))
 	require.Equal(t, testconstants.IntermediateSubject, allRevokedCertificates[0].Subject)
 	require.Equal(t, testconstants.IntermediateSubjectKeyID, allRevokedCertificates[0].SubjectKeyId)
 	require.Equal(t, 1, len(allRevokedCertificates[0].Certs))
 
-	ensureDaPaiCertificateDoesNotExist(
+	// Check: UniqueCertificate - present
+	found := setup.Keeper.IsUniqueCertificatePresent(setup.Ctx, testconstants.RootIssuer, testconstants.RootSerialNumber)
+	require.True(t, found)
+
+	// Check: ProposedCertificateRevocation - missing
+	found = setup.Keeper.IsProposedCertificateRevocationPresent(
+		setup.Ctx,
+		testconstants.IntermediateSubject,
+		testconstants.IntermediateSubjectKeyID,
+		testconstants.IntermediateSerialNumber,
+	)
+	require.False(t, found)
+
+	// Check: All - missing
+	ensureCertificateNotPresentInGlobalCertificateIndexes(
 		t,
 		setup,
 		testconstants.IntermediateSubject,
 		testconstants.IntermediateSubjectKeyID,
-		testconstants.IntermediateIssuer,
-		testconstants.IntermediateSerialNumber,
-		true,
-		false)
+		false,
+	)
 
-	// check that root certificate stays approved
+	// Check: DA - missing
+	ensureCertificateNotPresentInDaCertificateIndexes(
+		t,
+		setup,
+		testconstants.IntermediateSubject,
+		testconstants.IntermediateSubjectKeyID,
+		false,
+	)
+
+	// Check: child certificate  - missing
+	found = setup.Keeper.IsChildCertificatePresent(setup.Ctx, testconstants.IntermediateIssuer, testconstants.IntermediateAuthorityKeyID)
+	require.False(t, found)
+
+	// Check: Root stays approved
 	ensureDaPaaCertificateExist(
 		t,
 		setup,
@@ -72,20 +97,6 @@ func TestHandler_RevokeX509Cert(t *testing.T) {
 		testconstants.RootSubjectKeyID,
 		testconstants.RootSubject,
 		testconstants.RootSerialNumber)
-
-	// check that no proposed certificate revocations have been created
-	allProposedCertificateRevocations, _ := queryAllProposedCertificateRevocations(setup)
-	require.NoError(t, err)
-	require.Equal(t, 0, len(allProposedCertificateRevocations))
-
-	// check that child certificate identifiers list of issuer do not exist anymore
-	_, err = queryChildCertificates(setup, testconstants.IntermediateIssuer, testconstants.IntermediateAuthorityKeyID)
-	require.Error(t, err)
-	require.Equal(t, codes.NotFound, status.Code(err))
-
-	// check that unique certificate key stays registered
-	require.True(t, setup.Keeper.IsUniqueCertificatePresent(setup.Ctx,
-		testconstants.IntermediateIssuer, testconstants.IntermediateSerialNumber))
 }
 
 func TestHandler_RevokeX509Cert_ForTree(t *testing.T) {

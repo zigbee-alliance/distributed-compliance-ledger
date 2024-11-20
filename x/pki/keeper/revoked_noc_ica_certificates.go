@@ -97,3 +97,17 @@ func (k Keeper) GetAllRevokedNocIcaCertificates(ctx sdk.Context) (list []types.R
 
 	return
 }
+
+// IsRevokedNocIcaCertificatePresent Check if the Revoked Noc ICA Certificate record associated with a Subject/SubjectKeyID combination is present in the store.
+func (k Keeper) IsRevokedNocIcaCertificatePresent(
+	ctx sdk.Context,
+	subject string,
+	subjectKeyID string,
+) bool {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.RevokedNocIcaCertificatesKeyPrefix))
+
+	return store.Has(types.RevokedNocIcaCertificatesKey(
+		subject,
+		subjectKeyID,
+	))
+}

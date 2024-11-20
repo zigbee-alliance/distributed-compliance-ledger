@@ -15,6 +15,56 @@ import (
 
 // Main
 
+func TestHandler_RemoveNocX509RootCert(t *testing.T) {
+	setup := Setup(t)
+
+	// Add vendor account
+	vid := testconstants.Vid
+	vendorAccAddress := GenerateAccAddress()
+	setup.AddAccount(vendorAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, vid)
+
+	// add NOC root certificates
+	addNocRootCertificate(setup, vendorAccAddress, testconstants.NocRootCert1)
+
+	// remove noc root  certificate
+	removeIcaCert := types.NewMsgRemoveNocX509RootCert(
+		vendorAccAddress.String(),
+		testconstants.NocRootCert1Subject,
+		testconstants.NocRootCert1SubjectKeyID,
+		"",
+	)
+	_, err := setup.Handler(setup.Ctx, removeIcaCert)
+	require.NoError(t, err)
+
+	// Check: Noc - missing
+	ensureCertificateNotPresentInNocCertificateIndexes(
+		t,
+		setup,
+		testconstants.NocRootCert1Subject,
+		testconstants.NocRootCert1SubjectKeyID,
+		testconstants.Vid,
+		true,
+		false,
+	)
+
+	// Check: All - missing
+	ensureCertificateNotPresentInGlobalCertificateIndexes(
+		t,
+		setup,
+		testconstants.NocRootCert1Subject,
+		testconstants.NocRootCert1SubjectKeyID,
+		false,
+	)
+
+	// Check: UniqueCertificate - missing
+	found := setup.Keeper.IsUniqueCertificatePresent(setup.Ctx, testconstants.NocRootCert1Issuer, testconstants.NocRootCert1SerialNumber)
+	require.False(t, found)
+
+	// Check: RevokedCertificates (root) - missing
+	found = setup.Keeper.IsRevokedNocRootCertificatePresent(setup.Ctx, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
+	require.False(t, found)
+}
+
 func TestHandler_RemoveNocX509RootCert_BySubjectAndSKID(t *testing.T) {
 	setup := Setup(t)
 

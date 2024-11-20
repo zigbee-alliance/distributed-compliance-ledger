@@ -16,6 +16,67 @@ import (
 
 // Main
 
+func TestHandler_RevokeNocX509Cert(t *testing.T) {
+	setup := Setup(t)
+
+	accAddress := GenerateAccAddress()
+	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
+
+	// add the first NOC root certificate
+	addNocRootCertificate(setup, accAddress, testconstants.NocRootCert1)
+
+	// add the NOC non-root certificate
+	addNocIcaCertificate(setup, accAddress, testconstants.NocCert1)
+
+	// Revoke NOC with subject and subject key id only
+	revokeCert := types.NewMsgRevokeNocX509IcaCert(
+		accAddress.String(),
+		testconstants.NocCert1Subject,
+		testconstants.NocCert1SubjectKeyID,
+		"",
+		testconstants.Info,
+		false,
+	)
+	_, err := setup.Handler(setup.Ctx, revokeCert)
+	require.NoError(t, err)
+
+	// Check: Noc - missing
+	ensureCertificateNotPresentInNocCertificateIndexes(
+		t,
+		setup,
+		testconstants.NocCert1Subject,
+		testconstants.NocCert1SubjectKeyID,
+		testconstants.Vid,
+		false,
+		false,
+	)
+
+	// Check: All - missing
+	ensureCertificateNotPresentInGlobalCertificateIndexes(
+		t,
+		setup,
+		testconstants.NocCert1Subject,
+		testconstants.NocCert1SubjectKeyID,
+		false,
+	)
+
+	// Check: UniqueCertificate - present
+	found := setup.Keeper.IsUniqueCertificatePresent(setup.Ctx, testconstants.NocCert1Issuer, testconstants.NocCert1SerialNumber)
+	require.True(t, found)
+
+	// Check: RevokedCertificates (ica) - present
+	found = setup.Keeper.IsRevokedNocIcaCertificatePresent(setup.Ctx, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	require.True(t, found)
+
+	// Check: RevokedCertificates (root) - missing
+	found = setup.Keeper.IsRevokedNocRootCertificatePresent(setup.Ctx, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	require.False(t, found)
+
+	// Check: child certificate  - missing
+	found = setup.Keeper.IsChildCertificatePresent(setup.Ctx, testconstants.NocCert1Issuer, testconstants.NocCert1AuthorityKeyID)
+	require.False(t, found)
+}
+
 func TestHandler_RevokeNocX509Cert_RevokeDefault(t *testing.T) {
 	setup := Setup(t)
 

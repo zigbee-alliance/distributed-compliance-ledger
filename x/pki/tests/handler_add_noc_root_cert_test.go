@@ -23,6 +23,7 @@ func TestHandler_AddNocX509Cert_AddNewRoot(t *testing.T) {
 	// add NOC root certificate
 	addNocRootCertificate(setup, accAddress, testconstants.NocRootCert1)
 
+	// Check: Noc + All + UniqueCertificate
 	ensureNocRootCertificateExist(
 		t,
 		setup,
