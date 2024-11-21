@@ -110,3 +110,17 @@ func (k msgServer) removeOrUpdateRevokedX509Cert(
 		)
 	}
 }
+
+// IsRevokedCertificatePresent Check if the Revoked Certificate is present in the store.
+func (k Keeper) IsRevokedCertificatePresent(
+	ctx sdk.Context,
+	subject string,
+	subjectKeyID string,
+) bool {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.RevokedCertificatesKeyPrefix))
+
+	return store.Has(types.RevokedCertificatesKey(
+		subject,
+		subjectKeyID,
+	))
+}
