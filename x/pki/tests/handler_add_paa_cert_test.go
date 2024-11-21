@@ -334,7 +334,7 @@ func TestHandler_AddX509RootCertsBySubjectKeyId(t *testing.T) {
 	require.Equal(t, testconstants.PAACertWithSameSubjectID2Subject, approvedCertificates[0].Certs[1].Subject)
 }
 
-func TestHandler_RejectX509RootCert_TwoRejectApprovalsAreNeeded(t *testing.T) {
+func TestHandler_RejectAddDaRootCert(t *testing.T) {
 	setup := Setup(t)
 
 	// propose x509 root certificate by account Trustee1
@@ -387,6 +387,16 @@ func TestHandler_RejectX509RootCert_TwoRejectApprovalsAreNeeded(t *testing.T) {
 	require.Equal(t, testconstants.Info, rejectedCertificate.Rejects[0].Info)
 	require.Equal(t, setup.Trustee3.String(), rejectedCertificate.Rejects[1].Address)
 	require.Equal(t, testconstants.Info, rejectedCertificate.Rejects[1].Info)
+
+	// Check: Global + Approved DA + UniqueCertificate - missing
+	ensureDaRootCertificateNotExist(
+		t,
+		setup,
+		testconstants.RootSubject,
+		testconstants.RootSubjectKeyID,
+		testconstants.RootSubject,
+		testconstants.RootSerialNumber,
+		false)
 }
 
 func TestHandler_ApproveX509RootCertAndRejectX509RootCert_FromTheSameTrustee(t *testing.T) {
