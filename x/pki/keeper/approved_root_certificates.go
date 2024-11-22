@@ -35,8 +35,13 @@ func (k Keeper) RemoveApprovedRootCertificates(ctx sdk.Context) {
 }
 
 // Add root certificate to the list.
-func (k Keeper) AddApprovedRootCertificate(ctx sdk.Context, certID types.CertificateIdentifier) {
+func (k Keeper) AddApprovedRootCertificate(ctx sdk.Context, certificate types.Certificate) {
 	rootCertificates, _ := k.GetApprovedRootCertificates(ctx)
+
+	certID := types.CertificateIdentifier{
+		Subject:      certificate.Subject,
+		SubjectKeyId: certificate.SubjectKeyId,
+	}
 
 	// Check if the root cert is already there
 	for _, existingCertID := range rootCertificates.Certs {
@@ -51,7 +56,16 @@ func (k Keeper) AddApprovedRootCertificate(ctx sdk.Context, certID types.Certifi
 }
 
 // Remove root certificate from the list.
-func (k Keeper) RemoveApprovedRootCertificate(ctx sdk.Context, certID types.CertificateIdentifier) {
+func (k Keeper) RemoveApprovedRootCertificate(
+	ctx sdk.Context,
+	subject string,
+	subjectKeyID string,
+) {
+	certID := types.CertificateIdentifier{
+		Subject:      subject,
+		SubjectKeyId: subjectKeyID,
+	}
+
 	rootCertificates, _ := k.GetApprovedRootCertificates(ctx)
 
 	certIDIndex := -1

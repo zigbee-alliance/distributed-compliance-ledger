@@ -96,13 +96,31 @@ func (k Keeper) AddRevokedCertificates(ctx sdk.Context, approvedCertificates typ
 	), b)
 }
 
-func (k msgServer) removeOrUpdateRevokedX509Cert(ctx sdk.Context, certID types.CertificateIdentifier, certificates *types.RevokedCertificates) {
+func (k msgServer) removeOrUpdateRevokedX509Cert(
+	ctx sdk.Context,
+	subject string,
+	subjectKeyID string,
+	certificates *types.RevokedCertificates) {
 	if len(certificates.Certs) == 0 {
-		k.RemoveRevokedCertificates(ctx, certID.Subject, certID.SubjectKeyId)
+		k.RemoveRevokedCertificates(ctx, subject, subjectKeyID)
 	} else {
 		k.SetRevokedCertificates(
 			ctx,
 			*certificates,
 		)
 	}
+}
+
+// IsRevokedCertificatePresent Check if the Revoked Certificate is present in the store.
+func (k Keeper) IsRevokedCertificatePresent(
+	ctx sdk.Context,
+	subject string,
+	subjectKeyID string,
+) bool {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.RevokedCertificatesKeyPrefix))
+
+	return store.Has(types.RevokedCertificatesKey(
+		subject,
+		subjectKeyID,
+	))
 }

@@ -44,13 +44,8 @@ func (k msgServer) RemoveX509Cert(goCtx context.Context, msg *types.MsgRemoveX50
 		return nil, err
 	}
 
-	certID := types.CertificateIdentifier{
-		Subject:      msg.Subject,
-		SubjectKeyId: msg.SubjectKeyId,
-	}
-
-	if msg.SerialNumber != "" {
-		certBySerialNumber, found := findCertificate(msg.SerialNumber, &certificates)
+	if msg.SerialNumber != "" { //nolint:nestif
+		certBySerialNumber, found := FindCertificateInList(msg.SerialNumber, &certificates)
 		if !found {
 			return nil, pkitypes.NewErrCertificateBySerialNumberDoesNotExist(msg.Subject, msg.SubjectKeyId, msg.SerialNumber)
 		}
@@ -59,28 +54,37 @@ func (k msgServer) RemoveX509Cert(goCtx context.Context, msg *types.MsgRemoveX50
 		k.RemoveUniqueCertificate(ctx, certBySerialNumber.Issuer, certBySerialNumber.SerialNumber)
 
 		if foundApproved {
-			removeCertFromList(certBySerialNumber.Issuer, certBySerialNumber.SerialNumber, &aprCerts.Certs)
-			k.removeApprovedX509Cert(ctx, certID, &aprCerts, msg.SerialNumber)
+			k.RemoveDaCertificateBySerialNumber(
+				ctx,
+				certBySerialNumber.Subject,
+				certBySerialNumber.SubjectKeyId,
+				&aprCerts,
+				certBySerialNumber.SerialNumber,
+				certBySerialNumber.Issuer,
+				false,
+			)
+			if len(aprCerts.Certs) == 0 {
+				k.RemoveChildCertificate(ctx, certBySerialNumber.Issuer, certBySerialNumber.AuthorityKeyId, types.CertificateIdentifier{
+					Subject:      aprCerts.Subject,
+					SubjectKeyId: aprCerts.SubjectKeyId,
+				})
+			}
 		}
 		if foundRevoked {
-			removeCertFromList(certBySerialNumber.Issuer, certBySerialNumber.SerialNumber, &revCerts.Certs)
-			k.removeOrUpdateRevokedX509Cert(ctx, certID, &revCerts)
+			RemoveCertFromList(certBySerialNumber.Issuer, certBySerialNumber.SerialNumber, &revCerts.Certs)
+			k.removeOrUpdateRevokedX509Cert(ctx, msg.Subject, msg.SubjectKeyId, &revCerts)
 		}
 	} else {
-		// remove from global certificates map
-		k.RemoveAllCertificates(ctx, certID.Subject, certID.SubjectKeyId)
-		// remove from global subject -> subject map
-		k.RemoveAllCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
-		// remove from global subject -> subject key ID map
-		k.RemoveAllCertificatesBySubjectKeyID(ctx, certID.Subject, certID.SubjectKeyId)
-		// remove from approved certificates map
-		k.RemoveApprovedCertificates(ctx, certID.Subject, certID.SubjectKeyId)
-		// remove from subject -> subject key ID map
-		k.RemoveApprovedCertificateBySubject(ctx, certID.Subject, certID.SubjectKeyId)
-		// remove from subject key ID -> certificates map
-		k.RemoveApprovedCertificatesBySubjectKeyID(ctx, certID.Subject, certID.SubjectKeyId)
+		certIdentifier := types.CertificateIdentifier{
+			Subject:      msg.Subject,
+			SubjectKeyId: msg.SubjectKeyId,
+		}
+		// remove from da certificates map
+		k.RemoveDaCertificate(ctx, msg.Subject, msg.SubjectKeyId, false)
 		// remove from revoked list
-		k.RemoveRevokedCertificates(ctx, certID.Subject, certID.SubjectKeyId)
+		k.RemoveRevokedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
+		// Remove certificate identifier from issuer's ChildCertificates record
+		k.RemoveChildCertificate(ctx, certificates[0].Issuer, certificates[0].AuthorityKeyId, certIdentifier)
 		// remove from subject with serialNumber map
 		for _, cert := range certificates {
 			k.RemoveUniqueCertificate(ctx, cert.Issuer, cert.SerialNumber)

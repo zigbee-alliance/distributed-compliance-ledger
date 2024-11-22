@@ -1,4 +1,4 @@
-package pki
+package tests
 
 import (
 	"testing"
@@ -14,148 +14,73 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-func TestHandler_RevokeNocX509RootCert_SenderNotVendor(t *testing.T) {
+// Main
+
+func TestHandler_RevokeNoRootCert(t *testing.T) {
 	setup := Setup(t)
 
-	accAddress := GenerateAccAddress()
-	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
+	accAddress := setup.CreateVendorAccount(testconstants.Vid)
 
-	// add the new NOC root certificate
-	addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), testconstants.NocRootCert1, testconstants.CertSchemaVersion)
+	// add the first NOC root certificate
+	addNocX509RootCert := types.NewMsgAddNocX509RootCert(
+		accAddress.String(),
+		testconstants.NocRootCert1,
+		testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
 	require.NoError(t, err)
 
-	revokeCert := types.NewMsgRevokeNocX509RootCert(
-		setup.Trustee1.String(),
-		testconstants.NocRootCert1Subject,
-		testconstants.NocRootCert1SubjectKeyID,
-		testconstants.NocRootCert1SerialNumber,
-		"",
-		false,
-	)
-	_, err = setup.Handler(setup.Ctx, revokeCert)
-
-	require.Error(t, err)
-	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
-}
-
-func TestHandler_RevokeNocX509RootCert_CertificateDoesNotExist(t *testing.T) {
-	setup := Setup(t)
-
-	accAddress := GenerateAccAddress()
-	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
-
+	// Revoke NOC root with subject and subject key id only
 	revokeCert := types.NewMsgRevokeNocX509RootCert(
 		accAddress.String(),
 		testconstants.NocRootCert1Subject,
 		testconstants.NocRootCert1SubjectKeyID,
-		testconstants.NocRootCert1SerialNumber,
 		"",
+		testconstants.Info,
 		false,
 	)
-	_, err := setup.Handler(setup.Ctx, revokeCert)
+	_, err = setup.Handler(setup.Ctx, revokeCert)
+	require.NoError(t, err)
 
-	require.Error(t, err)
-	require.ErrorIs(t, err, pkitypes.ErrCertificateDoesNotExist)
-}
+	// Check: Noc - missing
+	ensureCertificateNotPresentInNocCertificateIndexes(
+		t,
+		setup,
+		testconstants.NocRootCert1Subject,
+		testconstants.NocRootCert1SubjectKeyID,
+		testconstants.Vid,
+		true,
+		false,
+	)
 
-func TestHandler_RevokeNocX509RootCert_CertificateExists(t *testing.T) {
-	accAddress := GenerateAccAddress()
+	// Check: All - missing
+	ensureGlobalCertificateNotExist(
+		t,
+		setup,
+		testconstants.NocRootCert1Subject,
+		testconstants.NocRootCert1SubjectKeyID,
+		false,
+	)
 
-	cases := []struct {
-		name         string
-		existingCert *types.Certificate
-		nocRoorCert  string
-		err          error
-	}{
-		{
-			name: "ExistingNonRootCert",
-			existingCert: &types.Certificate{
-				Issuer:          testconstants.NocRootCert1Subject,
-				Subject:         testconstants.NocRootCert1Subject,
-				SubjectAsText:   testconstants.NocRootCert1SubjectAsText,
-				SubjectKeyId:    testconstants.NocRootCert1SubjectKeyID,
-				SerialNumber:    testconstants.NocRootCert1SerialNumber,
-				IsRoot:          false,
-				CertificateType: types.CertificateType_OperationalPKI,
-				Vid:             testconstants.Vid,
-			},
-			nocRoorCert: testconstants.RootCertPem,
-			err:         pkitypes.ErrInappropriateCertificateType,
-		},
-		{
-			name: "ExistingNotNocCert",
-			existingCert: &types.Certificate{
-				Issuer:          testconstants.NocRootCert1Subject,
-				Subject:         testconstants.NocRootCert1Subject,
-				SubjectAsText:   testconstants.NocRootCert1SubjectAsText,
-				SubjectKeyId:    testconstants.NocRootCert1SubjectKeyID,
-				SerialNumber:    testconstants.NocRootCert1SerialNumber,
-				IsRoot:          true,
-				CertificateType: types.CertificateType_DeviceAttestationPKI,
-				Vid:             testconstants.Vid,
-			},
-			nocRoorCert: testconstants.RootCertPem,
-			err:         pkitypes.ErrInappropriateCertificateType,
-		},
-		{
-			name: "ExistingCertWithDifferentVid",
-			existingCert: &types.Certificate{
-				Issuer:          testconstants.NocRootCert1Subject,
-				Subject:         testconstants.NocRootCert1Subject,
-				SubjectAsText:   testconstants.NocRootCert1SubjectAsText,
-				SubjectKeyId:    testconstants.NocRootCert1SubjectKeyID,
-				SerialNumber:    testconstants.NocRootCert1SerialNumber,
-				IsRoot:          true,
-				CertificateType: types.CertificateType_OperationalPKI,
-				Vid:             testconstants.VendorID1,
-			},
-			nocRoorCert: testconstants.RootCertPem,
-			err:         pkitypes.ErrCertVidNotEqualAccountVid,
-		},
-		{
-			name: "ExistingCertWithDifferentSerialNumber",
-			existingCert: &types.Certificate{
-				Issuer:          testconstants.NocRootCert1Subject,
-				Subject:         testconstants.NocRootCert1Subject,
-				SubjectAsText:   testconstants.NocRootCert1SubjectAsText,
-				SubjectKeyId:    testconstants.NocRootCert1SubjectKeyID,
-				SerialNumber:    "1234567",
-				IsRoot:          true,
-				CertificateType: types.CertificateType_OperationalPKI,
-				Vid:             testconstants.Vid,
-			},
-			nocRoorCert: testconstants.RootCertPem,
-			err:         pkitypes.ErrCertificateDoesNotExist,
-		},
-	}
+	// Check: UniqueCertificate - present
+	found := setup.Keeper.IsUniqueCertificatePresent(
+		setup.Ctx,
+		testconstants.NocRootCert1Issuer,
+		testconstants.NocRootCert1SerialNumber)
+	require.True(t, found)
 
-	for _, tc := range cases {
-		t.Run(tc.name, func(t *testing.T) {
-			setup := Setup(t)
-			setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
+	// Check: RevokedCertificates (root) - present
+	found = setup.Keeper.IsRevokedNocRootCertificatePresent(
+		setup.Ctx,
+		testconstants.NocRootCert1Subject,
+		testconstants.NocRootCert1SubjectKeyID)
+	require.True(t, found)
 
-			// add the existing certificate
-			setup.Keeper.AddNocCertificate(setup.Ctx, *tc.existingCert)
-			uniqueCertificate := types.UniqueCertificate{
-				Issuer:       tc.existingCert.Issuer,
-				SerialNumber: tc.existingCert.SerialNumber,
-				Present:      true,
-			}
-			setup.Keeper.SetUniqueCertificate(setup.Ctx, uniqueCertificate)
-
-			revokeCert := types.NewMsgRevokeNocX509RootCert(
-				accAddress.String(),
-				testconstants.NocRootCert1Subject,
-				testconstants.NocRootCert1SubjectKeyID,
-				testconstants.NocRootCert1SerialNumber,
-				"",
-				false,
-			)
-			_, err := setup.Handler(setup.Ctx, revokeCert)
-			require.ErrorIs(t, err, tc.err)
-		})
-	}
+	// Check: RevokedCertificates (ica) - missing
+	found = setup.Keeper.IsRevokedNocIcaCertificatePresent(
+		setup.Ctx,
+		testconstants.NocRootCert1Subject,
+		testconstants.NocRootCert1SubjectKeyID)
+	require.False(t, found)
 }
 
 func TestHandler_RevokeNocX509RootCert_RevokeDefault(t *testing.T) {
@@ -550,4 +475,152 @@ func TestHandler_RevokeNocX509RootCert_RevokeWithSerialNumberAndChild(t *testing
 		setup.Keeper.IsUniqueCertificatePresent(setup.Ctx, testconstants.NocRootCert1, testconstants.NocRootCert1SerialNumber))
 	require.False(t,
 		setup.Keeper.IsUniqueCertificatePresent(setup.Ctx, testconstants.NocCert1, testconstants.NocCert1SerialNumber))
+}
+
+// Extra cases
+
+// Error cases
+
+func TestHandler_RevokeNocX509RootCert_SenderNotVendor(t *testing.T) {
+	setup := Setup(t)
+
+	accAddress := GenerateAccAddress()
+	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
+
+	// add the new NOC root certificate
+	addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), testconstants.NocRootCert1, testconstants.CertSchemaVersion)
+	_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
+	require.NoError(t, err)
+
+	revokeCert := types.NewMsgRevokeNocX509RootCert(
+		setup.Trustee1.String(),
+		testconstants.NocRootCert1Subject,
+		testconstants.NocRootCert1SubjectKeyID,
+		testconstants.NocRootCert1SerialNumber,
+		"",
+		false,
+	)
+	_, err = setup.Handler(setup.Ctx, revokeCert)
+
+	require.Error(t, err)
+	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
+}
+
+func TestHandler_RevokeNocX509RootCert_CertificateDoesNotExist(t *testing.T) {
+	setup := Setup(t)
+
+	accAddress := GenerateAccAddress()
+	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
+
+	revokeCert := types.NewMsgRevokeNocX509RootCert(
+		accAddress.String(),
+		testconstants.NocRootCert1Subject,
+		testconstants.NocRootCert1SubjectKeyID,
+		testconstants.NocRootCert1SerialNumber,
+		"",
+		false,
+	)
+	_, err := setup.Handler(setup.Ctx, revokeCert)
+
+	require.Error(t, err)
+	require.ErrorIs(t, err, pkitypes.ErrCertificateDoesNotExist)
+}
+
+func TestHandler_RevokeNocX509RootCert_CertificateExists(t *testing.T) {
+	accAddress := GenerateAccAddress()
+
+	cases := []struct {
+		name         string
+		existingCert *types.Certificate
+		nocRoorCert  string
+		err          error
+	}{
+		{
+			name: "ExistingNonRootCert",
+			existingCert: &types.Certificate{
+				Issuer:          testconstants.NocRootCert1Subject,
+				Subject:         testconstants.NocRootCert1Subject,
+				SubjectAsText:   testconstants.NocRootCert1SubjectAsText,
+				SubjectKeyId:    testconstants.NocRootCert1SubjectKeyID,
+				SerialNumber:    testconstants.NocRootCert1SerialNumber,
+				IsRoot:          false,
+				CertificateType: types.CertificateType_OperationalPKI,
+				Vid:             testconstants.Vid,
+			},
+			nocRoorCert: testconstants.RootCertPem,
+			err:         pkitypes.ErrInappropriateCertificateType,
+		},
+		{
+			name: "ExistingNotNocCert",
+			existingCert: &types.Certificate{
+				Issuer:          testconstants.NocRootCert1Subject,
+				Subject:         testconstants.NocRootCert1Subject,
+				SubjectAsText:   testconstants.NocRootCert1SubjectAsText,
+				SubjectKeyId:    testconstants.NocRootCert1SubjectKeyID,
+				SerialNumber:    testconstants.NocRootCert1SerialNumber,
+				IsRoot:          true,
+				CertificateType: types.CertificateType_DeviceAttestationPKI,
+				Vid:             testconstants.Vid,
+			},
+			nocRoorCert: testconstants.RootCertPem,
+			err:         pkitypes.ErrInappropriateCertificateType,
+		},
+		{
+			name: "ExistingCertWithDifferentVid",
+			existingCert: &types.Certificate{
+				Issuer:          testconstants.NocRootCert1Subject,
+				Subject:         testconstants.NocRootCert1Subject,
+				SubjectAsText:   testconstants.NocRootCert1SubjectAsText,
+				SubjectKeyId:    testconstants.NocRootCert1SubjectKeyID,
+				SerialNumber:    testconstants.NocRootCert1SerialNumber,
+				IsRoot:          true,
+				CertificateType: types.CertificateType_OperationalPKI,
+				Vid:             testconstants.VendorID1,
+			},
+			nocRoorCert: testconstants.RootCertPem,
+			err:         pkitypes.ErrCertVidNotEqualAccountVid,
+		},
+		{
+			name: "ExistingCertWithDifferentSerialNumber",
+			existingCert: &types.Certificate{
+				Issuer:          testconstants.NocRootCert1Subject,
+				Subject:         testconstants.NocRootCert1Subject,
+				SubjectAsText:   testconstants.NocRootCert1SubjectAsText,
+				SubjectKeyId:    testconstants.NocRootCert1SubjectKeyID,
+				SerialNumber:    "1234567",
+				IsRoot:          true,
+				CertificateType: types.CertificateType_OperationalPKI,
+				Vid:             testconstants.Vid,
+			},
+			nocRoorCert: testconstants.RootCertPem,
+			err:         pkitypes.ErrCertificateDoesNotExist,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			setup := Setup(t)
+			setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
+
+			// add the existing certificate
+			setup.Keeper.AddNocCertificate(setup.Ctx, *tc.existingCert)
+			uniqueCertificate := types.UniqueCertificate{
+				Issuer:       tc.existingCert.Issuer,
+				SerialNumber: tc.existingCert.SerialNumber,
+				Present:      true,
+			}
+			setup.Keeper.SetUniqueCertificate(setup.Ctx, uniqueCertificate)
+
+			revokeCert := types.NewMsgRevokeNocX509RootCert(
+				accAddress.String(),
+				testconstants.NocRootCert1Subject,
+				testconstants.NocRootCert1SubjectKeyID,
+				testconstants.NocRootCert1SerialNumber,
+				"",
+				false,
+			)
+			_, err := setup.Handler(setup.Ctx, revokeCert)
+			require.ErrorIs(t, err, tc.err)
+		})
+	}
 }

@@ -109,12 +109,7 @@ func (k msgServer) ProposeAddX509RootCert(goCtx context.Context, msg *types.MsgP
 	}
 
 	// register the unique certificate key
-	uniqueCertificate := types.UniqueCertificate{
-		Issuer:       x509Certificate.Issuer,
-		SerialNumber: x509Certificate.SerialNumber,
-		Present:      true,
-	}
-	k.SetUniqueCertificate(ctx, uniqueCertificate)
+	k.SetUniqueX509Certificate(ctx, x509Certificate)
 
 	return &types.MsgProposeAddX509RootCertResponse{}, nil
 }

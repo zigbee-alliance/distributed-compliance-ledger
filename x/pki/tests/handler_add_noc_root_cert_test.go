@@ -1,4 +1,4 @@
-package pki
+package tests
 
 import (
 	"testing"
@@ -13,16 +13,15 @@ import (
 
 // Main
 
-func TestHandler_AddNocX509Cert_AddNewRoot(t *testing.T) {
+func TestHandler_AddNocRootCert(t *testing.T) {
 	setup := Setup(t)
 
-	accAddress := GenerateAccAddress()
-	vid := testconstants.Vid
-	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, vid)
+	accAddress := setup.CreateVendorAccount(testconstants.Vid)
 
 	// add NOC root certificate
 	addNocRootCertificate(setup, accAddress, testconstants.NocRootCert1)
 
+	// Check: Noc + All + UniqueCertificate
 	ensureNocRootCertificateExist(
 		t,
 		setup,
@@ -30,7 +29,7 @@ func TestHandler_AddNocX509Cert_AddNewRoot(t *testing.T) {
 		testconstants.NocRootCert1SubjectKeyID,
 		testconstants.NocCert1Issuer,
 		testconstants.NocRootCert1SerialNumber,
-		vid)
+		testconstants.Vid)
 }
 
 // Extra cases

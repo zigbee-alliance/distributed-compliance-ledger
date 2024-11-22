@@ -67,8 +67,7 @@ func (k Keeper) GetAllProposedCertificate(ctx sdk.Context) (list []types.Propose
 	return
 }
 
-// Check if the Proposed Certificate record associated with a
-// Subject/SubjectKeyID combination is present in the store.
+// IsProposedCertificatePresent Check if the Proposed Certificate record associated with a Subject/SubjectKeyID combination is present in the store.
 func (k Keeper) IsProposedCertificatePresent(
 	ctx sdk.Context,
 	subject string,

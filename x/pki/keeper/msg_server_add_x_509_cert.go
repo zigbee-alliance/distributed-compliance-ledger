@@ -107,38 +107,11 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 		msg.CertSchemaVersion,
 	)
 
-	// append to global list of certificates
-	k.AddAllCertificate(ctx, certificate)
-
-	// append to global list of certificates indexed by subject
-	k.AddAllCertificateBySubject(ctx, certificate.Subject, certificate.SubjectKeyId)
-
-	// add to global list of certificates indexed by skid
-	k.AddAllCertificateBySubjectKeyID(ctx, certificate)
-
-	// append new certificate to list of certificates with the same Subject/SubjectKeyID combination and store updated list
-	k.AddApprovedCertificate(ctx, certificate)
-
-	// add to subject -> subject key ID map
-	k.AddApprovedCertificateBySubject(ctx, certificate.Subject, certificate.SubjectKeyId)
-
-	// add to subject key ID -> certificates map
-	k.AddApprovedCertificateBySubjectKeyID(ctx, certificate)
-
-	// add the certificate identifier to the issuer's Child Certificates record
-	certificateIdentifier := types.CertificateIdentifier{
-		Subject:      certificate.Subject,
-		SubjectKeyId: certificate.SubjectKeyId,
-	}
-	k.AddChildCertificate(ctx, certificate.Issuer, certificate.AuthorityKeyId, certificateIdentifier)
-
 	// register the unique certificate key
-	uniqueCertificate := types.UniqueCertificate{
-		Issuer:       x509Certificate.Issuer,
-		SerialNumber: x509Certificate.SerialNumber,
-		Present:      true,
-	}
-	k.SetUniqueCertificate(ctx, uniqueCertificate)
+	k.SetUniqueX509Certificate(ctx, x509Certificate)
+
+	// store DA certificate in indexes
+	k.StoreDaCertificate(ctx, certificate, false)
 
 	return &types.MsgAddX509CertResponse{}, nil
 }

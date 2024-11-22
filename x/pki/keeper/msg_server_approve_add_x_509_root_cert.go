@@ -79,30 +79,8 @@ func (k msgServer) ApproveAddX509RootCert(goCtx context.Context, msg *types.MsgA
 		// delete proposed certificate
 		k.RemoveProposedCertificate(ctx, msg.Subject, msg.SubjectKeyId)
 
-		// add approved certificate to stored list of all certificates
-		k.AddAllCertificate(ctx, rootCertificate)
-
-		// append to global list of certificates indexed by subject
-		k.AddAllCertificateBySubject(ctx, rootCertificate.Subject, rootCertificate.SubjectKeyId)
-
-		// add to global list of certificates indexed by skid
-		k.AddAllCertificateBySubjectKeyID(ctx, rootCertificate)
-
-		// add approved certificate to stored list of certificates with the same Subject/SubjectKeyID combination
-		k.AddApprovedCertificate(ctx, rootCertificate)
-
-		// add to root certificates index
-		certID := types.CertificateIdentifier{
-			Subject:      rootCertificate.Subject,
-			SubjectKeyId: rootCertificate.SubjectKeyId,
-		}
-		k.AddApprovedRootCertificate(ctx, certID)
-
-		// add to subject -> subject key ID map
-		k.AddApprovedCertificateBySubject(ctx, rootCertificate.Subject, rootCertificate.SubjectKeyId)
-
-		// add to subject key ID -> certificates map
-		k.AddApprovedCertificateBySubjectKeyID(ctx, rootCertificate)
+		// store DA certificate in indexes
+		k.StoreDaCertificate(ctx, rootCertificate, true)
 	} else {
 		// update proposed certificate
 		k.SetProposedCertificate(ctx, proposedCertificate)

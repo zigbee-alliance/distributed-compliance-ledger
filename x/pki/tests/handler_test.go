@@ -1,16 +1,17 @@
-package pki
+package tests
 
 import (
 	"context"
 	"testing"
 
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-
 	"github.com/cosmos/cosmos-sdk/testutil/testdata"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	testkeeper "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
@@ -74,6 +75,13 @@ func removeItemFromExpectedCalls(expectedCalls []*mock.Call, methodName string) 
 	}
 }
 
+func (setup *TestSetup) CreateVendorAccount(vid int32) sdk.AccAddress {
+	accAddress := GenerateAccAddress()
+	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, vid)
+
+	return accAddress
+}
+
 func (setup *TestSetup) AddAccount(
 	accAddress sdk.AccAddress,
 	roles []dclauthtypes.AccountRole,
@@ -119,7 +127,7 @@ func Setup(t *testing.T) *TestSetup {
 		Wctx:          sdk.WrapSDKContext(ctx),
 		Keeper:        keeper,
 		DclauthKeeper: dclauthKeeper,
-		Handler:       NewHandler(*keeper),
+		Handler:       pki.NewHandler(*keeper),
 		Trustee1:      GenerateAccAddress(),
 		Trustee2:      GenerateAccAddress(),
 		Trustee3:      GenerateAccAddress(),
@@ -273,6 +281,23 @@ func querySingleApprovedCertificate(
 	}
 
 	return certificates.Certs[0], nil
+}
+
+func querySingleApprovedRootCertificate(
+	setup *TestSetup,
+	subject string,
+	subjectKeyID string,
+) (*types.Certificate, error) {
+	certificates, err := queryApprovedRootCertificates(setup, subject, subjectKeyID)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(certificates) > 1 {
+		require.Fail(setup.T, "More than 1 certificate returned")
+	}
+
+	return certificates[0], nil
 }
 
 func queryApprovedCertificates(
@@ -903,7 +928,36 @@ func certificateIdentifier(subject string, subjectKeyID string) types.Certificat
 	}
 }
 
-func ensureCertificatePresentInGlobalCertificateIndexes(
+func ensureUniqueCertificateCertificateExist(
+	t *testing.T,
+	setup *TestSetup,
+	issuer string,
+	serialNumber string,
+) {
+	t.Helper()
+
+	// UniqueCertificate: check that unique certificate key registered
+	require.True(t, setup.Keeper.IsUniqueCertificatePresent(
+		setup.Ctx, issuer, serialNumber))
+}
+
+func ensureUniqueCertificateCertificateNotExist(
+	t *testing.T,
+	setup *TestSetup,
+	issuer string,
+	serialNumber string,
+	skipCheck bool,
+) {
+	t.Helper()
+
+	if !skipCheck {
+		// UniqueCertificate: check that unique certificate key registered
+		found := setup.Keeper.IsUniqueCertificatePresent(setup.Ctx, issuer, serialNumber)
+		require.False(t, found)
+	}
+}
+
+func ensureGlobalCertificateExist(
 	t *testing.T,
 	setup *TestSetup,
 	subject string,
@@ -934,7 +988,7 @@ func ensureCertificatePresentInGlobalCertificateIndexes(
 	}
 }
 
-func ensureCertificateNotPresentInGlobalCertificateIndexes(
+func ensureGlobalCertificateNotExist(
 	t *testing.T,
 	setup *TestSetup,
 	subject string,
@@ -978,6 +1032,15 @@ func ensureCertificatePresentInDaCertificateIndexes(
 	require.Equal(t, serialNumber, approvedCertificate.SerialNumber)
 	require.Equal(t, isRoot, approvedCertificate.IsRoot)
 
+	if isRoot {
+		// DaCertificates: Root Subject and SKID
+		approvedRootCertificate, _ := querySingleApprovedRootCertificate(setup, subject, subjectKeyID)
+		require.Equal(t, subject, approvedRootCertificate.Subject)
+		require.Equal(t, subjectKeyID, approvedRootCertificate.SubjectKeyId)
+		require.Equal(t, serialNumber, approvedRootCertificate.SerialNumber)
+		require.Equal(t, isRoot, approvedRootCertificate.IsRoot)
+	}
+
 	// DaCertificates: SKID
 	certificateBySubjectKeyID, _ := queryAllApprovedCertificatesBySubjectKeyID(setup, subjectKeyID)
 	require.Len(t, certificateBySubjectKeyID, 1)
@@ -989,6 +1052,39 @@ func ensureCertificatePresentInDaCertificateIndexes(
 		require.NoError(t, err)
 		require.Len(t, certificatesBySubject.SubjectKeyIds, 1)
 		require.Equal(t, subjectKeyID, certificatesBySubject.SubjectKeyIds[0])
+	}
+}
+
+func ensureCertificateNotPresentInDaCertificateIndexes(
+	t *testing.T,
+	setup *TestSetup,
+	subject string,
+	subjectKeyID string,
+	isRoot bool,
+	skipCheckForSubject bool, // TODO: FIX constants and eliminate this condition
+) {
+	t.Helper()
+
+	// DA certificates indexes checks
+
+	// DaCertificates: Subject and SKID
+	_, err := querySingleApprovedCertificate(setup, subject, subjectKeyID)
+	require.Equal(t, codes.NotFound, status.Code(err))
+
+	if isRoot {
+		// DaCertificates: Root Subject and SKID
+		_, err := querySingleApprovedRootCertificate(setup, subject, subjectKeyID)
+		require.Equal(t, codes.NotFound, status.Code(err))
+	}
+
+	// DaCertificates: SubjectKeyID
+	certificatesBySubjectKeyID, _ := queryAllApprovedCertificatesBySubjectKeyID(setup, subjectKeyID)
+	require.Empty(t, certificatesBySubjectKeyID)
+
+	if !skipCheckForSubject {
+		// NocCertificates: Subject
+		_, err = queryApprovedCertificatesBySubject(setup, subject)
+		require.Equal(t, codes.NotFound, status.Code(err))
 	}
 }
 
@@ -1050,32 +1146,6 @@ func ensureCertificatePresentInNocCertificateIndexes(
 	}
 }
 
-func ensureCertificateNotPresentInDaCertificateIndexes(
-	t *testing.T,
-	setup *TestSetup,
-	subject string,
-	subjectKeyID string,
-	skipCheckForSubject bool, // TODO: FIX constants and eliminate this condition
-) {
-	t.Helper()
-
-	// DA certificates indexes checks
-
-	// DaCertificates: Subject and SKID
-	_, err := querySingleApprovedCertificate(setup, subject, subjectKeyID)
-	require.Equal(t, codes.NotFound, status.Code(err))
-
-	// DaCertificates: SubjectKeyID
-	certificatesBySubjectKeyID, _ := queryAllApprovedCertificatesBySubjectKeyID(setup, subjectKeyID)
-	require.Empty(t, certificatesBySubjectKeyID)
-
-	if !skipCheckForSubject {
-		// NocCertificates: Subject
-		_, err = queryApprovedCertificatesBySubject(setup, subject)
-		require.Equal(t, codes.NotFound, status.Code(err))
-	}
-}
-
 func ensureCertificateNotPresentInNocCertificateIndexes(
 	t *testing.T,
 	setup *TestSetup,
@@ -1119,36 +1189,7 @@ func ensureCertificateNotPresentInNocCertificateIndexes(
 	}
 }
 
-func ensureCertificatePresentInUniqueCertificateIndexes(
-	t *testing.T,
-	setup *TestSetup,
-	issuer string,
-	serialNumber string,
-) {
-	t.Helper()
-
-	// UniqueCertificate: check that unique certificate key registered
-	require.True(t, setup.Keeper.IsUniqueCertificatePresent(
-		setup.Ctx, issuer, serialNumber))
-}
-
-func ensureCertificateNotPresentInUniqueCertificateIndexes(
-	t *testing.T,
-	setup *TestSetup,
-	issuer string,
-	serialNumber string,
-	skipCheck bool,
-) {
-	t.Helper()
-
-	if !skipCheck {
-		// UniqueCertificate: check that unique certificate key registered
-		found := setup.Keeper.IsUniqueCertificatePresent(setup.Ctx, issuer, serialNumber)
-		require.False(t, found)
-	}
-}
-
-func ensureDaPaaCertificateExist(
+func ensureDaRootCertificateExist(
 	t *testing.T,
 	setup *TestSetup,
 	subject string,
@@ -1162,13 +1203,13 @@ func ensureDaPaaCertificateExist(
 	ensureCertificatePresentInDaCertificateIndexes(t, setup, subject, subjectKeyID, serialNumber, true, false)
 
 	// All certificates indexes checks
-	ensureCertificatePresentInGlobalCertificateIndexes(t, setup, subject, subjectKeyID, serialNumber, false)
+	ensureGlobalCertificateExist(t, setup, subject, subjectKeyID, serialNumber, false)
 
 	// UniqueCertificate: check that unique certificate key registered
-	ensureCertificatePresentInUniqueCertificateIndexes(t, setup, issuer, serialNumber)
+	ensureUniqueCertificateCertificateExist(t, setup, issuer, serialNumber)
 }
 
-func ensureDaPaiCertificateExist(
+func ensureDaIntermediateCertificateExist(
 	t *testing.T,
 	setup *TestSetup,
 	subject string,
@@ -1183,13 +1224,13 @@ func ensureDaPaiCertificateExist(
 	ensureCertificatePresentInDaCertificateIndexes(t, setup, subject, subjectKeyID, serialNumber, false, skipCheckForSubject)
 
 	// All certificates indexes checks
-	ensureCertificatePresentInGlobalCertificateIndexes(t, setup, subject, subjectKeyID, serialNumber, skipCheckForSubject)
+	ensureGlobalCertificateExist(t, setup, subject, subjectKeyID, serialNumber, skipCheckForSubject)
 
 	// UniqueCertificate: check that unique certificate key registered
-	ensureCertificatePresentInUniqueCertificateIndexes(t, setup, issuer, serialNumber)
+	ensureUniqueCertificateCertificateExist(t, setup, issuer, serialNumber)
 }
 
-func ensureDaPaaCertificateDoesNotExist(
+func ensureDaRootCertificateNotExist(
 	t *testing.T,
 	setup *TestSetup,
 	subject string,
@@ -1201,16 +1242,16 @@ func ensureDaPaaCertificateDoesNotExist(
 	t.Helper()
 
 	// DA certificates indexes checks
-	ensureCertificateNotPresentInDaCertificateIndexes(t, setup, subject, subjectKeyID, false)
+	ensureCertificateNotPresentInDaCertificateIndexes(t, setup, subject, subjectKeyID, true, false)
 
 	// All certificates indexes checks
-	ensureCertificateNotPresentInGlobalCertificateIndexes(t, setup, subject, subjectKeyID, false)
+	ensureGlobalCertificateNotExist(t, setup, subject, subjectKeyID, false)
 
 	// UniqueCertificate: check that unique certificate key registered
-	ensureCertificateNotPresentInUniqueCertificateIndexes(t, setup, issuer, serialNumber, isRevoked)
+	ensureUniqueCertificateCertificateNotExist(t, setup, issuer, serialNumber, isRevoked)
 }
 
-func ensureDaPaiCertificateDoesNotExist(
+func ensureDaIntermediateCertificateNotExist(
 	t *testing.T,
 	setup *TestSetup,
 	subject string,
@@ -1223,13 +1264,13 @@ func ensureDaPaiCertificateDoesNotExist(
 	t.Helper()
 
 	// DA certificates indexes checks
-	ensureCertificateNotPresentInDaCertificateIndexes(t, setup, subject, subjectKeyID, skipCheckForSubject)
+	ensureCertificateNotPresentInDaCertificateIndexes(t, setup, subject, subjectKeyID, false, skipCheckForSubject)
 
 	// All certificates indexes checks
-	ensureCertificateNotPresentInGlobalCertificateIndexes(t, setup, subject, subjectKeyID, skipCheckForSubject)
+	ensureGlobalCertificateNotExist(t, setup, subject, subjectKeyID, skipCheckForSubject)
 
 	// UniqueCertificate: check that unique certificate key registered
-	ensureCertificateNotPresentInUniqueCertificateIndexes(t, setup, issuer, serialNumber, skipCheckForUniqueness)
+	ensureUniqueCertificateCertificateNotExist(t, setup, issuer, serialNumber, skipCheckForUniqueness)
 }
 
 func ensureNocRootCertificateExist(
@@ -1247,13 +1288,13 @@ func ensureNocRootCertificateExist(
 	ensureCertificatePresentInNocCertificateIndexes(t, setup, subject, subjectKeyID, serialNumber, vid, true, false)
 
 	// All certificates indexes checks
-	ensureCertificatePresentInGlobalCertificateIndexes(t, setup, subject, subjectKeyID, serialNumber, false)
+	ensureGlobalCertificateExist(t, setup, subject, subjectKeyID, serialNumber, false)
 
 	// UniqueCertificate: check that unique certificate key registered
-	ensureCertificatePresentInUniqueCertificateIndexes(t, setup, issuer, serialNumber)
+	ensureUniqueCertificateCertificateExist(t, setup, issuer, serialNumber)
 }
 
-func ensureNocIcaCertificateExist(
+func ensureNocIntermediateCertificateExist(
 	t *testing.T,
 	setup *TestSetup,
 	subject string,
@@ -1269,13 +1310,13 @@ func ensureNocIcaCertificateExist(
 	ensureCertificatePresentInNocCertificateIndexes(t, setup, subject, subjectKeyID, serialNumber, vid, false, skipCheckByVid)
 
 	// All certificates indexes checks
-	ensureCertificatePresentInGlobalCertificateIndexes(t, setup, subject, subjectKeyID, serialNumber, false)
+	ensureGlobalCertificateExist(t, setup, subject, subjectKeyID, serialNumber, false)
 
 	// UniqueCertificate: check that unique certificate key registered
-	ensureCertificatePresentInUniqueCertificateIndexes(t, setup, issuer, serialNumber)
+	ensureUniqueCertificateCertificateExist(t, setup, issuer, serialNumber)
 }
 
-func ensureNocIcaCertificateDoesNotExist(
+func ensureNocIntermediateCertificateNotExist(
 	t *testing.T,
 	setup *TestSetup,
 	subject string,
@@ -1292,13 +1333,13 @@ func ensureNocIcaCertificateDoesNotExist(
 	ensureCertificateNotPresentInNocCertificateIndexes(t, setup, subject, subjectKeyID, vid, false, skipCheckByVid)
 
 	// All certificates indexes checks
-	ensureCertificateNotPresentInGlobalCertificateIndexes(t, setup, subject, subjectKeyID, false)
+	ensureGlobalCertificateNotExist(t, setup, subject, subjectKeyID, false)
 
 	// UniqueCertificate: check that unique certificate key registered
-	ensureCertificateNotPresentInUniqueCertificateIndexes(t, setup, issuer, serialNumber, skipCheckForUniqueness)
+	ensureUniqueCertificateCertificateNotExist(t, setup, issuer, serialNumber, skipCheckForUniqueness)
 }
 
-func ensureNocRootCertificateDoesNotExist(
+func ensureNocRootCertificateNotExist(
 	t *testing.T,
 	setup *TestSetup,
 	subject string,
@@ -1315,13 +1356,33 @@ func ensureNocRootCertificateDoesNotExist(
 	ensureCertificateNotPresentInNocCertificateIndexes(t, setup, subject, subjectKeyID, vid, true, skipCheckByVid)
 
 	// All certificates indexes checks
-	ensureCertificateNotPresentInGlobalCertificateIndexes(t, setup, subject, subjectKeyID, false)
+	ensureGlobalCertificateNotExist(t, setup, subject, subjectKeyID, false)
 
 	// UniqueCertificate: check that unique certificate key registered
-	ensureCertificateNotPresentInUniqueCertificateIndexes(t, setup, issuer, serialNumber, skipCheckForUniqueness)
+	ensureUniqueCertificateCertificateNotExist(t, setup, issuer, serialNumber, skipCheckForUniqueness)
 }
 
-func addDaPaiCertificate(setup *TestSetup, address sdk.AccAddress, pemCert string) {
+func ensureChildCertificateExist(
+	t *testing.T,
+	setup *TestSetup,
+	subject string,
+	subjectKeyID string,
+	issuer string,
+	authorityKeyId string,
+) {
+	t.Helper()
+
+	issuerChildren, _ := queryChildCertificates(setup, subject, subjectKeyID)
+	require.Equal(t, 1, len(issuerChildren.CertIds))
+
+	certID := types.CertificateIdentifier{
+		Subject:      issuer,
+		SubjectKeyId: authorityKeyId,
+	}
+	require.Equal(t, &certID, issuerChildren.CertIds[0])
+}
+
+func addDaIntermediateCertificate(setup *TestSetup, address sdk.AccAddress, pemCert string) {
 	addX509Cert := types.NewMsgAddX509Cert(address.String(), pemCert, testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
 	require.NoError(setup.T, err)
@@ -1334,7 +1395,7 @@ func addNocRootCertificate(setup *TestSetup, address sdk.AccAddress, pemCert str
 	require.NoError(setup.T, err)
 }
 
-func addNocIcaCertificate(setup *TestSetup, address sdk.AccAddress, pemCert string) {
+func addNocIntermediateCertificate(setup *TestSetup, address sdk.AccAddress, pemCert string) {
 	// add the new NOC root certificate
 	nocX509Cert := types.NewMsgAddNocX509IcaCert(address.String(), pemCert, testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, nocX509Cert)

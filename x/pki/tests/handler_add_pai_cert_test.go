@@ -1,4 +1,4 @@
-package pki
+package tests
 
 import (
 	"testing"
@@ -15,14 +15,12 @@ import (
 
 // Main
 
-func TestHandler_AddX509Cert(t *testing.T) {
+func TestHandler_AddDaIntermediateCert(t *testing.T) {
 	setup := Setup(t)
 
-	accAddress := GenerateAccAddress()
-	vid := testconstants.Vid
-	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, vid)
+	accAddress := setup.CreateVendorAccount(testconstants.Vid)
 
-	// add DA PAA certificate
+	// add DA root certificate
 	rootCertOptions := createTestRootCertOptions()
 	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
@@ -31,8 +29,8 @@ func TestHandler_AddX509Cert(t *testing.T) {
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
 	require.NoError(t, err)
 
-	// Check that root certificate exists
-	ensureDaPaiCertificateExist(
+	// Check: DA + All + UniqueCertificate
+	ensureDaIntermediateCertificateExist(
 		t,
 		setup,
 		testconstants.IntermediateSubject,
@@ -42,20 +40,18 @@ func TestHandler_AddX509Cert(t *testing.T) {
 		false)
 
 	// ChildCertificates: check that child certificates of issuer contains certificate identifier
-	issuerChildren, _ := queryChildCertificates(
-		setup, testconstants.IntermediateIssuer, testconstants.IntermediateAuthorityKeyID)
-	require.Equal(t, 1, len(issuerChildren.CertIds))
-	require.Equal(t,
-		&types.CertificateIdentifier{
-			Subject:      testconstants.IntermediateSubject,
-			SubjectKeyId: testconstants.IntermediateSubjectKeyID,
-		},
-		issuerChildren.CertIds[0])
+	ensureChildCertificateExist(
+		t,
+		setup,
+		testconstants.IntermediateIssuer,
+		testconstants.IntermediateAuthorityKeyID,
+		testconstants.IntermediateSubject,
+		testconstants.IntermediateSubjectKeyID,
+	)
 
-	// check that no proposed certificate has been created
-	_, err = queryProposedCertificate(setup, testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
-	require.Error(t, err)
-	require.Equal(t, codes.NotFound, status.Code(err))
+	// Check: ProposedCertificate - empty
+	require.False(t, setup.Keeper.IsProposedCertificatePresent(
+		setup.Ctx, testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID))
 }
 
 // Extra cases
@@ -63,15 +59,17 @@ func TestHandler_AddX509Cert(t *testing.T) {
 func TestHandler_AddX509Cert_VIDScoped(t *testing.T) {
 	setup := Setup(t)
 
+	accAddress := setup.CreateVendorAccount(testconstants.PAACertWithNumericVidVid)
+
 	// store root certificate
 	rootCertOptions := createPAACertWithNumericVidOptions()
 	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
-	accAddress := GenerateAccAddress()
-	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.PAACertWithNumericVidVid)
-
 	// add x509 certificate
-	addX509Cert := types.NewMsgAddX509Cert(accAddress.String(), testconstants.PAICertWithNumericPidVid, testconstants.CertSchemaVersion)
+	addX509Cert := types.NewMsgAddX509Cert(
+		accAddress.String(),
+		testconstants.PAICertWithNumericPidVid,
+		testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
 	require.NoError(t, err)
 

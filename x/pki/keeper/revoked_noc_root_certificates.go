@@ -97,3 +97,17 @@ func (k Keeper) GetAllRevokedNocRootCertificates(ctx sdk.Context) (list []types.
 
 	return
 }
+
+// IsRevokedNocRootCertificatePresent Check if the Revoked Noc Root Certificate record associated with a Subject/SubjectKeyID combination is present in the store.
+func (k Keeper) IsRevokedNocRootCertificatePresent(
+	ctx sdk.Context,
+	subject string,
+	subjectKeyID string,
+) bool {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.RevokedNocRootCertificatesKeyPrefix))
+
+	return store.Has(types.RevokedNocRootCertificatesKey(
+		subject,
+		subjectKeyID,
+	))
+}

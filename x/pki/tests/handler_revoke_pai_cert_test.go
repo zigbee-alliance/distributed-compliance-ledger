@@ -1,4 +1,4 @@
-package pki
+package tests
 
 import (
 	"testing"
@@ -15,12 +15,11 @@ import (
 
 // Main
 
-func TestHandler_RevokeX509Cert(t *testing.T) {
+func TestHandler_RevokeDaIntermediateCert(t *testing.T) {
 	setup := Setup(t)
 
 	// Add vendor account
-	vendorAccAddress := GenerateAccAddress()
-	setup.AddAccount(vendorAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.RootCertWithVidVid)
+	vendorAccAddress := setup.CreateVendorAccount(testconstants.RootCertWithVidVid)
 
 	// propose and approve x509 root certificate
 	rootCertOptions := &rootCertOptions{
@@ -32,10 +31,10 @@ func TestHandler_RevokeX509Cert(t *testing.T) {
 	}
 	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
-	// Add two intermediate certificates again
-	addDaPaiCertificate(setup, vendorAccAddress, testconstants.IntermediateCertPem)
+	// Add intermediate certificate
+	addDaIntermediateCertificate(setup, vendorAccAddress, testconstants.IntermediateCertPem)
 
-	// revoke x509 certificate
+	// revoke intermediate certificate
 	revokeX509Cert := types.NewMsgRevokeX509Cert(
 		vendorAccAddress.String(),
 		testconstants.IntermediateSubject,
@@ -47,63 +46,77 @@ func TestHandler_RevokeX509Cert(t *testing.T) {
 	_, err := setup.Handler(setup.Ctx, revokeX509Cert)
 	require.NoError(t, err)
 
-	// check that intermediate certificate has been revoked
+	// Check: Revoked - present
 	allRevokedCertificates, _ := queryAllRevokedCertificates(setup)
 	require.Equal(t, 1, len(allRevokedCertificates))
 	require.Equal(t, testconstants.IntermediateSubject, allRevokedCertificates[0].Subject)
 	require.Equal(t, testconstants.IntermediateSubjectKeyID, allRevokedCertificates[0].SubjectKeyId)
 	require.Equal(t, 1, len(allRevokedCertificates[0].Certs))
 
-	ensureDaPaiCertificateDoesNotExist(
+	// Check: UniqueCertificate - present
+	found := setup.Keeper.IsUniqueCertificatePresent(setup.Ctx, testconstants.RootIssuer, testconstants.RootSerialNumber)
+	require.True(t, found)
+
+	// Check: ProposedCertificateRevocation - missing
+	found = setup.Keeper.IsProposedCertificateRevocationPresent(
+		setup.Ctx,
+		testconstants.IntermediateSubject,
+		testconstants.IntermediateSubjectKeyID,
+		testconstants.IntermediateSerialNumber,
+	)
+	require.False(t, found)
+
+	// Check: All - missing
+	ensureGlobalCertificateNotExist(
 		t,
 		setup,
 		testconstants.IntermediateSubject,
 		testconstants.IntermediateSubjectKeyID,
-		testconstants.IntermediateIssuer,
-		testconstants.IntermediateSerialNumber,
-		true,
-		false)
+		false,
+	)
 
-	// check that root certificate stays approved
-	ensureDaPaaCertificateExist(
+	// Check: DA - missing
+	ensureCertificateNotPresentInDaCertificateIndexes(
+		t,
+		setup,
+		testconstants.IntermediateSubject,
+		testconstants.IntermediateSubjectKeyID,
+		false,
+		false,
+	)
+
+	// Check: child certificate  - missing
+	found = setup.Keeper.IsChildCertificatePresent(
+		setup.Ctx,
+		testconstants.IntermediateIssuer,
+		testconstants.IntermediateAuthorityKeyID)
+	require.False(t, found)
+
+	// Check: Root stays approved
+	ensureDaRootCertificateExist(
 		t,
 		setup,
 		testconstants.RootSubject,
 		testconstants.RootSubjectKeyID,
 		testconstants.RootSubject,
 		testconstants.RootSerialNumber)
-
-	// check that no proposed certificate revocations have been created
-	allProposedCertificateRevocations, _ := queryAllProposedCertificateRevocations(setup)
-	require.NoError(t, err)
-	require.Equal(t, 0, len(allProposedCertificateRevocations))
-
-	// check that child certificate identifiers list of issuer do not exist anymore
-	_, err = queryChildCertificates(setup, testconstants.IntermediateIssuer, testconstants.IntermediateAuthorityKeyID)
-	require.Error(t, err)
-	require.Equal(t, codes.NotFound, status.Code(err))
-
-	// check that unique certificate key stays registered
-	require.True(t, setup.Keeper.IsUniqueCertificatePresent(setup.Ctx,
-		testconstants.IntermediateIssuer, testconstants.IntermediateSerialNumber))
 }
 
 func TestHandler_RevokeX509Cert_ForTree(t *testing.T) {
 	setup := Setup(t)
 
 	// Add vendor account
-	vendorAccAddress := GenerateAccAddress()
-	setup.AddAccount(vendorAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
+	vendorAccAddress := setup.CreateVendorAccount(testconstants.Vid)
 
 	// add root x509 certificate
 	rootCertOptions := createTestRootCertOptions()
 	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
 	// add intermediate x509 certificate
-	addDaPaiCertificate(setup, vendorAccAddress, testconstants.IntermediateCertPem)
+	addDaIntermediateCertificate(setup, vendorAccAddress, testconstants.IntermediateCertPem)
 
 	// add leaf x509 certificate
-	addDaPaiCertificate(setup, vendorAccAddress, testconstants.LeafCertPem)
+	addDaIntermediateCertificate(setup, vendorAccAddress, testconstants.LeafCertPem)
 
 	// revoke x509 certificate
 	revokeX509Cert := types.NewMsgRevokeX509Cert(
@@ -130,7 +143,7 @@ func TestHandler_RevokeX509Cert_ForTree(t *testing.T) {
 	require.Equal(t, testconstants.IntermediateCertPem, allRevokedCertificates[1].Certs[0].PemCert)
 
 	// check that root certificate stays approved
-	ensureDaPaaCertificateExist(
+	ensureDaRootCertificateExist(
 		t,
 		setup,
 		testconstants.RootSubject,
@@ -171,7 +184,7 @@ func TestHandler_RevokeX509Cert_BySerialNumber(t *testing.T) {
 	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
 	// Add two intermediate certificates
-	addDaPaiCertificate(setup, vendorAccAddress, testconstants.IntermediateCertPem)
+	addDaIntermediateCertificate(setup, vendorAccAddress, testconstants.IntermediateCertPem)
 
 	intermediateCertificate := intermediateCertificateNoVid(vendorAccAddress)
 	intermediateCertificate.SerialNumber = SerialNumber
@@ -184,7 +197,7 @@ func TestHandler_RevokeX509Cert_BySerialNumber(t *testing.T) {
 	)
 
 	// Add a leaf certificate
-	addDaPaiCertificate(setup, vendorAccAddress, testconstants.LeafCertPem)
+	addDaIntermediateCertificate(setup, vendorAccAddress, testconstants.LeafCertPem)
 
 	// get certificates for further comparison
 	allCerts := setup.Keeper.GetAllApprovedCertificates(setup.Ctx)
