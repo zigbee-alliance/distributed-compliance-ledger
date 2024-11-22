@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/tests/utils"
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -17,15 +18,15 @@ import (
 // Main
 
 func TestHandler_RevokeNocIntermediateCert(t *testing.T) {
-	setup := Setup(t)
+	setup := utils.Setup(t)
 
 	accAddress := setup.CreateVendorAccount(testconstants.Vid)
 
 	// add the first NOC root certificate
-	addNocRootCertificate(setup, accAddress, testconstants.NocRootCert1)
+	utils.AddNocRootCertificate(setup, accAddress, testconstants.NocRootCert1)
 
 	// add the NOC non-root certificate
-	addNocIntermediateCertificate(setup, accAddress, testconstants.NocCert1)
+	utils.AddNocIntermediateCertificate(setup, accAddress, testconstants.NocCert1)
 
 	// Revoke NOC with subject and subject key id only
 	revokeCert := types.NewMsgRevokeNocX509IcaCert(
@@ -40,7 +41,7 @@ func TestHandler_RevokeNocIntermediateCert(t *testing.T) {
 	require.NoError(t, err)
 
 	// Check: Noc - missing
-	ensureCertificateNotPresentInNocCertificateIndexes(
+	utils.EnsureCertificateNotPresentInNocCertificateIndexes(
 		t,
 		setup,
 		testconstants.NocCert1Subject,
@@ -51,11 +52,12 @@ func TestHandler_RevokeNocIntermediateCert(t *testing.T) {
 	)
 
 	// Check: All - missing
-	ensureGlobalCertificateNotExist(
+	utils.EnsureGlobalCertificateNotExist(
 		t,
 		setup,
 		testconstants.NocCert1Subject,
 		testconstants.NocCert1SubjectKeyID,
+		false,
 		false,
 	)
 
@@ -89,22 +91,22 @@ func TestHandler_RevokeNocIntermediateCert(t *testing.T) {
 }
 
 func TestHandler_RevokeNocX509Cert_RevokeDefault(t *testing.T) {
-	setup := Setup(t)
+	setup := utils.Setup(t)
 
-	accAddress := GenerateAccAddress()
+	accAddress := utils.GenerateAccAddress()
 	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
 	// add the first NOC root certificate
-	addNocRootCertificate(setup, accAddress, testconstants.NocRootCert1)
+	utils.AddNocRootCertificate(setup, accAddress, testconstants.NocRootCert1)
 
 	// add the first NOC non-root certificate
-	addNocIntermediateCertificate(setup, accAddress, testconstants.NocCert1)
+	utils.AddNocIntermediateCertificate(setup, accAddress, testconstants.NocCert1)
 
 	// add the second NOC non-root certificate
-	addNocIntermediateCertificate(setup, accAddress, testconstants.NocCert1Copy)
+	utils.AddNocIntermediateCertificate(setup, accAddress, testconstants.NocCert1Copy)
 
 	// add the NOC leaf certificate
-	addNocIntermediateCertificate(setup, accAddress, testconstants.NocLeafCert1)
+	utils.AddNocIntermediateCertificate(setup, accAddress, testconstants.NocLeafCert1)
 
 	// Revoke NOC with subject and subject key id only
 	revokeCert := types.NewMsgRevokeNocX509IcaCert(
@@ -119,14 +121,14 @@ func TestHandler_RevokeNocX509Cert_RevokeDefault(t *testing.T) {
 	require.NoError(t, err)
 
 	// Check that revoked certificates exist
-	revokedNocCerts, err := queryRevokedNocIcaCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	revokedNocCerts, err := utils.QueryNocRevokedIcaCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.NoError(t, err)
 	require.Equal(t, 2, len(revokedNocCerts.Certs))
 	require.Equal(t, testconstants.NocCert1Subject, revokedNocCerts.Subject)
 	require.Equal(t, testconstants.NocCert1SubjectKeyID, revokedNocCerts.SubjectKeyId)
 
 	// Check that intermediate certificates does not exist
-	ensureNocIntermediateCertificateNotExist(
+	utils.EnsureNocIntermediateCertificateNotExist(
 		t,
 		setup,
 		testconstants.NocCert1Subject,
@@ -137,7 +139,7 @@ func TestHandler_RevokeNocX509Cert_RevokeDefault(t *testing.T) {
 		true, // leaf certificate with the same vid exists
 		true)
 
-	ensureNocIntermediateCertificateNotExist(
+	utils.EnsureNocIntermediateCertificateNotExist(
 		t,
 		setup,
 		testconstants.NocCert1CopySubject,
@@ -149,7 +151,7 @@ func TestHandler_RevokeNocX509Cert_RevokeDefault(t *testing.T) {
 		true)
 
 	// Check that leaf certificate exists
-	ensureNocIntermediateCertificateExist(
+	utils.EnsureNocIntermediateCertificateExist(
 		t,
 		setup,
 		testconstants.NocLeafCert1Subject,
@@ -161,22 +163,22 @@ func TestHandler_RevokeNocX509Cert_RevokeDefault(t *testing.T) {
 }
 
 func TestHandler_RevokeNocX509Cert_RevokeWithChild(t *testing.T) {
-	setup := Setup(t)
+	setup := utils.Setup(t)
 
-	accAddress := GenerateAccAddress()
+	accAddress := utils.GenerateAccAddress()
 	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
 	// add the first NOC root certificate
-	addNocRootCertificate(setup, accAddress, testconstants.NocRootCert1)
+	utils.AddNocRootCertificate(setup, accAddress, testconstants.NocRootCert1)
 
 	// add the first NOC non-root certificate
-	addNocIntermediateCertificate(setup, accAddress, testconstants.NocCert1)
+	utils.AddNocIntermediateCertificate(setup, accAddress, testconstants.NocCert1)
 
 	// add the second NOC non-root certificate
-	addNocIntermediateCertificate(setup, accAddress, testconstants.NocCert1Copy)
+	utils.AddNocIntermediateCertificate(setup, accAddress, testconstants.NocCert1Copy)
 
 	// add the NOC leaf certificate
-	addNocIntermediateCertificate(setup, accAddress, testconstants.NocLeafCert1)
+	utils.AddNocIntermediateCertificate(setup, accAddress, testconstants.NocLeafCert1)
 
 	// Revoke noc with subject and subject key id and its child too
 	revokeCert := types.NewMsgRevokeNocX509IcaCert(
@@ -190,25 +192,25 @@ func TestHandler_RevokeNocX509Cert_RevokeWithChild(t *testing.T) {
 	_, err := setup.Handler(setup.Ctx, revokeCert)
 	require.NoError(t, err)
 
-	allRevokedCerts, err := queryAllRevokedNocIcaCertificates(setup)
+	allRevokedCerts, err := utils.QueryAllNocRevokedIcaCertificates(setup)
 	require.NoError(t, err)
 	require.Equal(t, 2, len(allRevokedCerts))
 	require.Equal(t, 3, len(allRevokedCerts[0].Certs)+len(allRevokedCerts[1].Certs))
 
-	revokedNocCerts, err := queryRevokedNocIcaCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	revokedNocCerts, err := utils.QueryNocRevokedIcaCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.NoError(t, err)
 	require.Equal(t, 2, len(revokedNocCerts.Certs))
 	require.Equal(t, testconstants.NocCert1Subject, revokedNocCerts.Subject)
 	require.Equal(t, testconstants.NocCert1SubjectKeyID, revokedNocCerts.SubjectKeyId)
 
 	// query all certs
-	certs, err := queryAllNocCertificates(setup)
+	certs, err := utils.QueryAllNocCertificates(setup)
 	require.NoError(t, err)
 	require.Equal(t, 1, len(certs))
 	require.Equal(t, testconstants.NocRootCert1SubjectKeyID, certs[0].SubjectKeyId)
 
 	// Check that intermediate certificates does not exist
-	ensureNocIntermediateCertificateNotExist(
+	utils.EnsureNocIntermediateCertificateNotExist(
 		t,
 		setup,
 		testconstants.NocCert1Subject,
@@ -219,7 +221,7 @@ func TestHandler_RevokeNocX509Cert_RevokeWithChild(t *testing.T) {
 		false,
 		true)
 
-	ensureNocIntermediateCertificateNotExist(
+	utils.EnsureNocIntermediateCertificateNotExist(
 		t,
 		setup,
 		testconstants.NocCert1CopySubject,
@@ -231,7 +233,7 @@ func TestHandler_RevokeNocX509Cert_RevokeWithChild(t *testing.T) {
 		true)
 
 	// Check that leaf certificate exists
-	ensureNocIntermediateCertificateNotExist(
+	utils.EnsureNocIntermediateCertificateNotExist(
 		t,
 		setup,
 		testconstants.NocLeafCert1Subject,
@@ -244,22 +246,22 @@ func TestHandler_RevokeNocX509Cert_RevokeWithChild(t *testing.T) {
 }
 
 func TestHandler_RevokeNocX509Cert_RevokeBySerialNumber(t *testing.T) {
-	setup := Setup(t)
+	setup := utils.Setup(t)
 
-	accAddress := GenerateAccAddress()
+	accAddress := utils.GenerateAccAddress()
 	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
 	// add the first NOC root certificate
-	addNocRootCertificate(setup, accAddress, testconstants.NocRootCert1)
+	utils.AddNocRootCertificate(setup, accAddress, testconstants.NocRootCert1)
 
 	// add the first NOC non-root certificate
-	addNocIntermediateCertificate(setup, accAddress, testconstants.NocCert1)
+	utils.AddNocIntermediateCertificate(setup, accAddress, testconstants.NocCert1)
 
 	// add the second NOC non-root certificate
-	addNocIntermediateCertificate(setup, accAddress, testconstants.NocCert1Copy)
+	utils.AddNocIntermediateCertificate(setup, accAddress, testconstants.NocCert1Copy)
 
 	// add the NOC leaf certificate
-	addNocIntermediateCertificate(setup, accAddress, testconstants.NocLeafCert1)
+	utils.AddNocIntermediateCertificate(setup, accAddress, testconstants.NocLeafCert1)
 
 	// Revoke NOC by serial number only
 	revokeCert := types.NewMsgRevokeNocX509IcaCert(
@@ -273,35 +275,35 @@ func TestHandler_RevokeNocX509Cert_RevokeBySerialNumber(t *testing.T) {
 	_, err := setup.Handler(setup.Ctx, revokeCert)
 	require.NoError(t, err)
 
-	revokedNocCerts, err := queryRevokedNocIcaCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	revokedNocCerts, err := utils.QueryNocRevokedIcaCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.NoError(t, err)
 	require.Equal(t, 1, len(revokedNocCerts.Certs))
 	require.Equal(t, testconstants.NocCert1SerialNumber, revokedNocCerts.Certs[0].SerialNumber)
 
 	// Child certificate should not be revoked
-	_, err = queryRevokedNocIcaCertificates(setup, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
+	_, err = utils.QueryNocRevokedIcaCertificates(setup, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
 	// query NOC certificate by Subject
-	certsBySubject, err := queryNocCertificatesBySubject(setup, testconstants.NocCert1Subject)
+	certsBySubject, err := utils.QueryNocCertificatesBySubject(setup, testconstants.NocCert1Subject)
 	require.NoError(t, err)
 	require.Equal(t, 1, len(certsBySubject.SubjectKeyIds))
 
 	// query NOC certificate by Subject Key ID
-	aprCertsBySubjectKeyID, _ := queryAllNocCertificatesBySubjectKeyID(setup, testconstants.NocCert1SubjectKeyID)
+	aprCertsBySubjectKeyID, _ := utils.QueryNocCertificatesBySubjectKeyID(setup, testconstants.NocCert1SubjectKeyID)
 	require.Equal(t, 1, len(aprCertsBySubjectKeyID))
 	require.Equal(t, 1, len(aprCertsBySubjectKeyID[0].Certs))
 	require.Equal(t, testconstants.NocCert1CopySerialNumber, aprCertsBySubjectKeyID[0].Certs[0].SerialNumber)
 
 	// query noc certificate by VID
-	nocCerts, err := queryNocIcaCertificatesByVid(setup, testconstants.Vid)
+	nocCerts, err := utils.QueryNocIcaCertificatesByVid(setup, testconstants.Vid)
 	require.NoError(t, err)
 	require.Equal(t, 2, len(nocCerts.Certs))
 	require.NotEqual(t, testconstants.NocCert1SerialNumber, nocCerts.Certs[0].SerialNumber)
 	require.NotEqual(t, testconstants.NocCert1SerialNumber, nocCerts.Certs[1].SerialNumber)
 
 	// query all certs
-	certs, err := queryAllNocCertificates(setup)
+	certs, err := utils.QueryAllNocCertificates(setup)
 	require.NoError(t, err)
 	require.Equal(t, 3, len(certs))
 	require.NotEqual(t, testconstants.NocCert1SerialNumber, certs[0].Certs[0].SerialNumber)
@@ -309,17 +311,17 @@ func TestHandler_RevokeNocX509Cert_RevokeBySerialNumber(t *testing.T) {
 	require.NotEqual(t, testconstants.NocCert1SerialNumber, certs[2].Certs[0].SerialNumber)
 
 	// query noc certificate, cert with different serial number should not be removed
-	noccCerts, _ := queryNocCertificates(setup, testconstants.NocCert1CopySubject, testconstants.NocCert1CopySubjectKeyID)
+	noccCerts, _ := utils.QueryNocCertificates(setup, testconstants.NocCert1CopySubject, testconstants.NocCert1CopySubjectKeyID)
 	require.Equal(t, 1, len(noccCerts.Certs))
 	require.Equal(t, testconstants.NocCert1CopySerialNumber, noccCerts.Certs[0].SerialNumber)
 
 	// query child certificate, they should not be removed
-	childCerts, _ := queryNocCertificates(setup, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
+	childCerts, _ := utils.QueryNocCertificates(setup, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
 	require.Equal(t, 1, len(childCerts.Certs))
 	require.Equal(t, testconstants.NocLeafCert1SubjectKeyID, childCerts.SubjectKeyId)
 
 	// check that leaf certificate can be queried by vid+skid
-	certsByVidSkid, _ := queryNocCertificatesByVidAndSkid(setup, testconstants.Vid, testconstants.NocLeafCert1SubjectKeyID)
+	certsByVidSkid, _ := utils.QueryNocCertificatesByVidAndSkid(setup, testconstants.Vid, testconstants.NocLeafCert1SubjectKeyID)
 	require.Equal(t, 1, len(certsByVidSkid.Certs))
 	require.Equal(t, testconstants.NocLeafCert1SerialNumber, certsByVidSkid.Certs[0].SerialNumber)
 
@@ -329,9 +331,9 @@ func TestHandler_RevokeNocX509Cert_RevokeBySerialNumber(t *testing.T) {
 }
 
 func TestHandler_RevokeNocX509Cert_RevokeBySerialNumberAndWithChild(t *testing.T) {
-	setup := Setup(t)
+	setup := utils.Setup(t)
 
-	accAddress := GenerateAccAddress()
+	accAddress := utils.GenerateAccAddress()
 	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
 	// add the first NOC root certificate
@@ -366,65 +368,65 @@ func TestHandler_RevokeNocX509Cert_RevokeBySerialNumberAndWithChild(t *testing.T
 	_, err = setup.Handler(setup.Ctx, revokeCert)
 	require.NoError(t, err)
 
-	allRevokedCerts, err := queryAllRevokedNocIcaCertificates(setup)
+	allRevokedCerts, err := utils.QueryAllNocRevokedIcaCertificates(setup)
 	require.NoError(t, err)
 	require.Equal(t, 2, len(allRevokedCerts))
 	require.Equal(t, 2, len(allRevokedCerts[0].Certs)+len(allRevokedCerts[1].Certs))
 
-	revokedNocCerts, err := queryRevokedNocIcaCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
+	revokedNocCerts, err := utils.QueryNocRevokedIcaCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
 	require.NoError(t, err)
 	require.Equal(t, 1, len(revokedNocCerts.Certs))
 	require.Equal(t, testconstants.NocCert1SerialNumber, revokedNocCerts.Certs[0].SerialNumber)
 
 	// Child certificate should be revoked
-	revokedNocCerts, err = queryRevokedNocIcaCertificates(setup, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
+	revokedNocCerts, err = utils.QueryNocRevokedIcaCertificates(setup, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
 	require.NoError(t, err)
 	require.Equal(t, 1, len(revokedNocCerts.Certs))
 	require.Equal(t, testconstants.NocLeafCert1SerialNumber, revokedNocCerts.Certs[0].SerialNumber)
 
 	// query child of revoked certificate, they should be revoked
-	_, err = queryNocCertificates(setup, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
+	_, err = utils.QueryNocCertificates(setup, testconstants.NocLeafCert1Subject, testconstants.NocLeafCert1SubjectKeyID)
 	require.Error(t, err)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
 	// query all certs
-	certs, err := queryAllNocCertificates(setup)
+	certs, err := utils.QueryAllNocCertificates(setup)
 	require.NoError(t, err)
 	require.Equal(t, 2, len(certs))
 	require.NotEqual(t, testconstants.NocCert1SerialNumber, certs[0].Certs[0].SerialNumber)
 	require.NotEqual(t, testconstants.NocCert1SerialNumber, certs[1].Certs[0].SerialNumber)
 
 	// query noc certificates
-	aprCerts, err := queryNocCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1CopySubjectKeyID)
+	aprCerts, err := utils.QueryNocCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1CopySubjectKeyID)
 	require.NoError(t, err)
 	require.Equal(t, 1, len(aprCerts.Certs))
 	require.Equal(t, testconstants.NocCert1CopySerialNumber, aprCerts.Certs[0].SerialNumber)
 
 	// query noc certificate by Subject
-	certsBySubject, err := queryNocCertificatesBySubject(setup, testconstants.NocCert1Subject)
+	certsBySubject, err := utils.QueryNocCertificatesBySubject(setup, testconstants.NocCert1Subject)
 	require.NoError(t, err)
 	require.Equal(t, 1, len(certsBySubject.SubjectKeyIds))
 
-	_, err = queryNocCertificatesBySubject(setup, testconstants.NocLeafCert1Subject)
+	_, err = utils.QueryNocCertificatesBySubject(setup, testconstants.NocLeafCert1Subject)
 	require.Error(t, err)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
 	// query noc certificate by Subject Key ID
-	aprCertsBySubjectKeyID, _ := queryAllNocCertificatesBySubjectKeyID(setup, testconstants.NocCert1SubjectKeyID)
+	aprCertsBySubjectKeyID, _ := utils.QueryNocCertificatesBySubjectKeyID(setup, testconstants.NocCert1SubjectKeyID)
 	require.Equal(t, 1, len(aprCertsBySubjectKeyID))
 	require.Equal(t, testconstants.NocCert1CopySerialNumber, aprCertsBySubjectKeyID[0].Certs[0].SerialNumber)
 
-	aprCertsBySubjectKeyID, _ = queryAllNocCertificatesBySubjectKeyID(setup, testconstants.NocLeafCert1SubjectKeyID)
+	aprCertsBySubjectKeyID, _ = utils.QueryNocCertificatesBySubjectKeyID(setup, testconstants.NocLeafCert1SubjectKeyID)
 	require.Equal(t, 0, len(aprCertsBySubjectKeyID))
 
 	// query noc certificate by VID
-	nocCerts, err := queryNocIcaCertificatesByVid(setup, testconstants.Vid)
+	nocCerts, err := utils.QueryNocIcaCertificatesByVid(setup, testconstants.Vid)
 	require.NoError(t, err)
 	require.Equal(t, 1, len(nocCerts.Certs))
 	require.Equal(t, testconstants.NocCert1CopySerialNumber, nocCerts.Certs[0].SerialNumber)
 
 	// check that leaf certificate can be queried by vid+skid
-	certsByVidSkid, _ := queryNocCertificatesByVidAndSkid(setup, testconstants.Vid, testconstants.NocCert1SubjectKeyID)
+	certsByVidSkid, _ := utils.QueryNocCertificatesByVidAndSkid(setup, testconstants.Vid, testconstants.NocCert1SubjectKeyID)
 	require.Equal(t, 1, len(certsByVidSkid.Certs))
 	require.Equal(t, testconstants.NocCert1CopySerialNumber, certsByVidSkid.Certs[0].SerialNumber)
 
@@ -438,9 +440,9 @@ func TestHandler_RevokeNocX509Cert_RevokeBySerialNumberAndWithChild(t *testing.T
 // Error cases
 
 func TestHandler_RevokeNocX509Cert_SenderNotVendor(t *testing.T) {
-	setup := Setup(t)
+	setup := utils.Setup(t)
 
-	accAddress := GenerateAccAddress()
+	accAddress := utils.GenerateAccAddress()
 	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
 	// add the new NOC root certificate
@@ -463,9 +465,9 @@ func TestHandler_RevokeNocX509Cert_SenderNotVendor(t *testing.T) {
 }
 
 func TestHandler_RevokeNocX509Cert_CertificateDoesNotExist(t *testing.T) {
-	setup := Setup(t)
+	setup := utils.Setup(t)
 
-	accAddress := GenerateAccAddress()
+	accAddress := utils.GenerateAccAddress()
 	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
 	revokeCert := types.NewMsgRevokeNocX509IcaCert(
@@ -483,7 +485,7 @@ func TestHandler_RevokeNocX509Cert_CertificateDoesNotExist(t *testing.T) {
 }
 
 func TestHandler_RevokeNocX509Cert_CertificateExists(t *testing.T) {
-	accAddress := GenerateAccAddress()
+	accAddress := utils.GenerateAccAddress()
 
 	cases := []struct {
 		name         string
@@ -555,7 +557,7 @@ func TestHandler_RevokeNocX509Cert_CertificateExists(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			setup := Setup(t)
+			setup := utils.Setup(t)
 			setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
 			// add the existing certificate

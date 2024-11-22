@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/tests/utils"
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -12,15 +13,15 @@ import (
 )
 
 func TestHandler_DeletePkiRevocationDistributionPoint_NegativeCases(t *testing.T) {
-	accAddress := GenerateAccAddress()
-	vendorAcc := GenerateAccAddress()
+	accAddress := utils.GenerateAccAddress()
+	vendorAcc := utils.GenerateAccAddress()
 
 	cases := []struct {
 		name             string
 		accountVid       int32
 		accountRole      dclauthtypes.AccountRole
 		vendorAccVid     int32
-		rootCertOptions  *rootCertOptions
+		rootCertOptions  *utils.RootCertOptions
 		addRevocation    *types.MsgAddPkiRevocationDistributionPoint
 		deleteRevocation *types.MsgDeletePkiRevocationDistributionPoint
 		err              error
@@ -30,7 +31,7 @@ func TestHandler_DeletePkiRevocationDistributionPoint_NegativeCases(t *testing.T
 			accountVid:      testconstants.PAACertWithNumericVidVid,
 			accountRole:     dclauthtypes.CertificationCenter,
 			vendorAccVid:    testconstants.PAACertWithNumericVidVid,
-			rootCertOptions: createPAACertWithNumericVidOptions(),
+			rootCertOptions: utils.CreatePAACertWithNumericVidOptions(),
 			addRevocation:   createAddRevocationMessageWithPAACertWithNumericVid(vendorAcc.String()),
 			deleteRevocation: &types.MsgDeletePkiRevocationDistributionPoint{
 				Signer:             accAddress.String(),
@@ -45,7 +46,7 @@ func TestHandler_DeletePkiRevocationDistributionPoint_NegativeCases(t *testing.T
 			accountVid:      testconstants.PAACertWithNumericVidVid,
 			accountRole:     dclauthtypes.CertificationCenter,
 			vendorAccVid:    testconstants.PAACertWithNumericVidVid,
-			rootCertOptions: createPAACertWithNumericVidOptions(),
+			rootCertOptions: utils.CreatePAACertWithNumericVidOptions(),
 			addRevocation:   createAddRevocationMessageWithPAICertWithNumericVidPid(vendorAcc.String()),
 			deleteRevocation: &types.MsgDeletePkiRevocationDistributionPoint{
 				Signer:             accAddress.String(),
@@ -71,7 +72,7 @@ func TestHandler_DeletePkiRevocationDistributionPoint_NegativeCases(t *testing.T
 			accountVid:      testconstants.VendorID1,
 			accountRole:     dclauthtypes.Vendor,
 			vendorAccVid:    testconstants.PAACertWithNumericVidVid,
-			rootCertOptions: createPAACertWithNumericVidOptions(),
+			rootCertOptions: utils.CreatePAACertWithNumericVidOptions(),
 			addRevocation:   createAddRevocationMessageWithPAICertWithNumericVidPid(vendorAcc.String()),
 			deleteRevocation: &types.MsgDeletePkiRevocationDistributionPoint{
 				Signer:             accAddress.String(),
@@ -86,7 +87,7 @@ func TestHandler_DeletePkiRevocationDistributionPoint_NegativeCases(t *testing.T
 			accountVid:      testconstants.VendorID1,
 			accountRole:     dclauthtypes.Vendor,
 			vendorAccVid:    testconstants.PAICertWithNumericPidVidVid,
-			rootCertOptions: createPAACertWithNumericVidOptions(),
+			rootCertOptions: utils.CreatePAACertWithNumericVidOptions(),
 			addRevocation:   createAddRevocationMessageWithPAICertWithNumericVidPid(vendorAcc.String()),
 			deleteRevocation: &types.MsgDeletePkiRevocationDistributionPoint{
 				Signer:             accAddress.String(),
@@ -100,13 +101,13 @@ func TestHandler_DeletePkiRevocationDistributionPoint_NegativeCases(t *testing.T
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			setup := Setup(t)
+			setup := utils.Setup(t)
 
 			setup.AddAccount(accAddress, []dclauthtypes.AccountRole{tc.accountRole}, tc.accountVid)
 			setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, tc.vendorAccVid)
 
 			if tc.rootCertOptions != nil {
-				proposeAndApproveRootCertificate(setup, setup.Trustee1, tc.rootCertOptions)
+				utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, tc.rootCertOptions)
 			}
 
 			if tc.addRevocation != nil {
@@ -121,17 +122,17 @@ func TestHandler_DeletePkiRevocationDistributionPoint_NegativeCases(t *testing.T
 }
 
 func TestHandler_DeletePkiRevocationDistributionPoint_PositiveCases(t *testing.T) {
-	vendorAcc := GenerateAccAddress()
+	vendorAcc := utils.GenerateAccAddress()
 
 	cases := []struct {
 		name             string
-		rootCertOptions  *rootCertOptions
+		rootCertOptions  *utils.RootCertOptions
 		addRevocation    *types.MsgAddPkiRevocationDistributionPoint
 		deleteRevocation *types.MsgDeletePkiRevocationDistributionPoint
 	}{
 		{
 			name:            "PAA",
-			rootCertOptions: createPAACertWithNumericVidOptions(),
+			rootCertOptions: utils.CreatePAACertWithNumericVidOptions(),
 			addRevocation:   createAddRevocationMessageWithPAACertWithNumericVid(vendorAcc.String()),
 			deleteRevocation: &types.MsgDeletePkiRevocationDistributionPoint{
 				Signer:             vendorAcc.String(),
@@ -142,7 +143,7 @@ func TestHandler_DeletePkiRevocationDistributionPoint_PositiveCases(t *testing.T
 		},
 		{
 			name:            "PAI",
-			rootCertOptions: createPAACertWithNumericVidOptions(),
+			rootCertOptions: utils.CreatePAACertWithNumericVidOptions(),
 			addRevocation:   createAddRevocationMessageWithPAICertWithNumericVidPid(vendorAcc.String()),
 			deleteRevocation: &types.MsgDeletePkiRevocationDistributionPoint{
 				Signer:             vendorAcc.String(),
@@ -155,11 +156,11 @@ func TestHandler_DeletePkiRevocationDistributionPoint_PositiveCases(t *testing.T
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			setup := Setup(t)
+			setup := utils.Setup(t)
 
 			setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, tc.deleteRevocation.Vid)
 
-			proposeAndApproveRootCertificate(setup, setup.Trustee1, tc.rootCertOptions)
+			utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, tc.rootCertOptions)
 
 			_, err := setup.Handler(setup.Ctx, tc.addRevocation)
 			require.NoError(t, err)
@@ -177,18 +178,18 @@ func TestHandler_DeletePkiRevocationDistributionPoint_PositiveCases(t *testing.T
 }
 
 func TestHandler_DeletePkiRevocationDistributionPoint_Multiple_SameIssuerSubjectKeyId(t *testing.T) {
-	setup := Setup(t)
+	setup := utils.Setup(t)
 
-	vendorAcc := GenerateAccAddress()
+	vendorAcc := utils.GenerateAccAddress()
 	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.PAACertWithNumericVidVid)
 
 	// add PAA NOVID
-	rootCertOptions := createPAACertNoVidOptions(testconstants.PAACertWithNumericVidVid)
-	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+	rootCertOptions := utils.CreatePAACertNoVidOptions(testconstants.PAACertWithNumericVidVid)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
 	// add PAA VID
-	rootCertOptions = createPAACertWithNumericVidOptions()
-	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+	rootCertOptions = utils.CreatePAACertWithNumericVidOptions()
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
 	// add Revocation Point PAA NOVID
 	addRevocationPAANoVid := createAddRevocationMessageWithPAACertNoVid(vendorAcc.String(), testconstants.PAACertWithNumericVidVid)

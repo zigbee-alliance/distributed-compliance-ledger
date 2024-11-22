@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/tests/utils"
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -14,20 +15,20 @@ import (
 // Main
 
 func TestHandler_AssignVid_certificateWithoutSubjectVid(t *testing.T) {
-	setup := Setup(t)
+	setup := utils.Setup(t)
 
-	vendorAcc := GenerateAccAddress()
+	vendorAcc := utils.GenerateAccAddress()
 	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, 0)
 
 	// propose and approve x509 root certificate
-	rootCertOptions := createTestRootCertOptions()
-	rootCertOptions.vid = 0
-	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+	rootCertOptions := utils.CreateTestRootCertOptions()
+	rootCertOptions.Vid = 0
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
 	assignVid := types.MsgAssignVid{
 		Signer:       vendorAcc.String(),
-		Subject:      rootCertOptions.subject,
-		SubjectKeyId: rootCertOptions.subjectKeyID,
+		Subject:      rootCertOptions.Subject,
+		SubjectKeyId: rootCertOptions.SubjectKeyID,
 		Vid:          testconstants.Vid,
 	}
 
@@ -37,11 +38,11 @@ func TestHandler_AssignVid_certificateWithoutSubjectVid(t *testing.T) {
 	// DA certificates indexes checks
 
 	// DaCertificates: Subject and SKID
-	approvedCertificate, _ := querySingleApprovedCertificate(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
-	require.Equal(t, testconstants.Vid, approvedCertificate.Vid)
+	approvedCertificate, _ := utils.QueryApprovedCertificates(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	require.Equal(t, testconstants.Vid, approvedCertificate.Certs[0].Vid)
 
 	// DaCertificates: SKID
-	certificateBySubjectKeyID, _ := queryAllApprovedCertificatesBySubjectKeyID(setup, testconstants.RootSubjectKeyID)
+	certificateBySubjectKeyID, _ := utils.QueryApprovedCertificatesBySubjectKeyID(setup, testconstants.RootSubjectKeyID)
 	require.Equal(t, 1, len(certificateBySubjectKeyID))
 	require.Equal(t, 1, len(certificateBySubjectKeyID[0].Certs))
 	require.Equal(t, testconstants.Vid, certificateBySubjectKeyID[0].Certs[0].Vid)
@@ -49,26 +50,31 @@ func TestHandler_AssignVid_certificateWithoutSubjectVid(t *testing.T) {
 	// All certificates indexes checks
 
 	// AllCertificate: Subject and SKID
-	allCertificate, err := querySingleCertificateFromAllCertificatesIndex(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	allCertificate, err := utils.QueryAllCertificates(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	require.NoError(t, err)
-	require.Equal(t, testconstants.Vid, allCertificate.Vid)
+	require.Equal(t, testconstants.Vid, allCertificate.Certs[0].Vid)
+
+	// AllCertificate: SKID
+	allCertificateBySkid, err := utils.QueryAllCertificatesBySubjectKeyID(setup, testconstants.RootSubjectKeyID)
+	require.NoError(t, err)
+	require.Equal(t, testconstants.Vid, allCertificateBySkid[0].Certs[0].Vid)
 }
 
 func TestHandler_AssignVid_certificateWithSubjectVid(t *testing.T) {
-	setup := Setup(t)
+	setup := utils.Setup(t)
 
-	vendorAcc := GenerateAccAddress()
+	vendorAcc := utils.GenerateAccAddress()
 	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, 0)
 
 	// propose and approve x509 root certificate
-	rootCertOptions := createPAACertWithNumericVidOptions()
-	rootCertOptions.vid = 0
-	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+	rootCertOptions := utils.CreatePAACertWithNumericVidOptions()
+	rootCertOptions.Vid = 0
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
 	assignVid := types.MsgAssignVid{
 		Signer:       vendorAcc.String(),
-		Subject:      rootCertOptions.subject,
-		SubjectKeyId: rootCertOptions.subjectKeyID,
+		Subject:      rootCertOptions.Subject,
+		SubjectKeyId: rootCertOptions.SubjectKeyID,
 		Vid:          testconstants.PAACertWithNumericVidVid,
 	}
 
@@ -78,11 +84,11 @@ func TestHandler_AssignVid_certificateWithSubjectVid(t *testing.T) {
 	// DA certificates indexes checks
 
 	// DaCertificates: Subject and SKID
-	approvedCertificate, _ := querySingleApprovedCertificate(setup, rootCertOptions.subject, rootCertOptions.subjectKeyID)
-	require.Equal(t, testconstants.PAACertWithNumericVidVid, approvedCertificate.Vid)
+	approvedCertificate, _ := utils.QueryApprovedCertificates(setup, rootCertOptions.Subject, rootCertOptions.SubjectKeyID)
+	require.Equal(t, testconstants.PAACertWithNumericVidVid, approvedCertificate.Certs[0].Vid)
 
 	// DaCertificates: SKID
-	certificateBySubjectKeyID, _ := queryAllApprovedCertificatesBySubjectKeyID(setup, rootCertOptions.subjectKeyID)
+	certificateBySubjectKeyID, _ := utils.QueryApprovedCertificatesBySubjectKeyID(setup, rootCertOptions.SubjectKeyID)
 	require.Equal(t, 1, len(certificateBySubjectKeyID))
 	require.Equal(t, 1, len(certificateBySubjectKeyID[0].Certs))
 	require.Equal(t, testconstants.PAACertWithNumericVidVid, certificateBySubjectKeyID[0].Certs[0].Vid)
@@ -90,9 +96,14 @@ func TestHandler_AssignVid_certificateWithSubjectVid(t *testing.T) {
 	// All certificates indexes checks
 
 	// AllCertificate: Subject and SKID
-	allCertificate, err := querySingleCertificateFromAllCertificatesIndex(setup, rootCertOptions.subject, rootCertOptions.subjectKeyID)
+	allCertificate, err := utils.QueryAllCertificates(setup, rootCertOptions.Subject, rootCertOptions.SubjectKeyID)
 	require.NoError(t, err)
-	require.Equal(t, testconstants.PAACertWithNumericVidVid, allCertificate.Vid)
+	require.Equal(t, testconstants.PAACertWithNumericVidVid, allCertificate.Certs[0].Vid)
+
+	// AllCertificate: SKID
+	allCertificateBySkid, err := utils.QueryAllCertificatesBySubjectKeyID(setup, rootCertOptions.SubjectKeyID)
+	require.NoError(t, err)
+	require.Equal(t, testconstants.PAACertWithNumericVidVid, allCertificateBySkid[0].Certs[0].Vid)
 }
 
 // Extra cases
@@ -100,7 +111,7 @@ func TestHandler_AssignVid_certificateWithSubjectVid(t *testing.T) {
 // Error cases
 
 func TestHandler_AssignVid_SenderNotVendorAdmin(t *testing.T) {
-	setup := Setup(t)
+	setup := utils.Setup(t)
 
 	assignVid := types.MsgAssignVid{
 		Signer:       setup.Trustee1.String(),
@@ -114,9 +125,9 @@ func TestHandler_AssignVid_SenderNotVendorAdmin(t *testing.T) {
 }
 
 func TestHandler_AssignVid_CertificateDoesNotExist(t *testing.T) {
-	setup := Setup(t)
+	setup := utils.Setup(t)
 
-	vendorAcc := GenerateAccAddress()
+	vendorAcc := utils.GenerateAccAddress()
 	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, 0)
 
 	assignVid := types.MsgAssignVid{
@@ -131,17 +142,17 @@ func TestHandler_AssignVid_CertificateDoesNotExist(t *testing.T) {
 }
 
 func TestHandler_AssignVid_ForNonRootCertificate(t *testing.T) {
-	setup := Setup(t)
+	setup := utils.Setup(t)
 
-	vendorAcc := GenerateAccAddress()
+	vendorAcc := utils.GenerateAccAddress()
 	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, 0)
 
 	// propose and approve x509 root certificate
-	rootCertOptions := createTestRootCertOptions()
-	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+	rootCertOptions := utils.CreateTestRootCertOptions()
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
 	// Add vendor account
-	vendorAccAddress := GenerateAccAddress()
+	vendorAccAddress := utils.GenerateAccAddress()
 	setup.AddAccount(vendorAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
 	// add x509 intermediate certificate
@@ -161,19 +172,19 @@ func TestHandler_AssignVid_ForNonRootCertificate(t *testing.T) {
 }
 
 func TestHandler_AssignVid_CertificateAlreadyHasVid(t *testing.T) {
-	setup := Setup(t)
+	setup := utils.Setup(t)
 
-	vendorAcc := GenerateAccAddress()
+	vendorAcc := utils.GenerateAccAddress()
 	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, 0)
 
 	// propose and approve x509 root certificate
-	rootCertOptions := createPAACertWithNumericVidOptions()
-	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+	rootCertOptions := utils.CreatePAACertWithNumericVidOptions()
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
 	assignVid := types.MsgAssignVid{
 		Signer:       vendorAcc.String(),
-		Subject:      rootCertOptions.subject,
-		SubjectKeyId: rootCertOptions.subjectKeyID,
+		Subject:      rootCertOptions.Subject,
+		SubjectKeyId: rootCertOptions.SubjectKeyID,
 		Vid:          testconstants.PAACertWithNumericVidVid,
 	}
 
@@ -182,20 +193,20 @@ func TestHandler_AssignVid_CertificateAlreadyHasVid(t *testing.T) {
 }
 
 func TestHandler_AssignVid_MessageVidAndCertificateVidNotEqual(t *testing.T) {
-	setup := Setup(t)
+	setup := utils.Setup(t)
 
-	vendorAcc := GenerateAccAddress()
+	vendorAcc := utils.GenerateAccAddress()
 	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, 0)
 
 	// propose and approve x509 root certificate
-	rootCertOptions := createPAACertWithNumericVidOptions()
-	rootCertOptions.vid = 0
-	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+	rootCertOptions := utils.CreatePAACertWithNumericVidOptions()
+	rootCertOptions.Vid = 0
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
 	assignVid := types.MsgAssignVid{
 		Signer:       vendorAcc.String(),
-		Subject:      rootCertOptions.subject,
-		SubjectKeyId: rootCertOptions.subjectKeyID,
+		Subject:      rootCertOptions.Subject,
+		SubjectKeyId: rootCertOptions.SubjectKeyID,
 		Vid:          1,
 	}
 

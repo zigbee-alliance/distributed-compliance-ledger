@@ -93,6 +93,7 @@ Indexes to check:
     * `DA Certificates`: Subject+SKID (approved), Subject+SKID (root), SKID, Subject
 * Missing:
     * `RevokedCertificates`
+    * `RevokedRootCertificates`
 
 Test cases:
 
@@ -108,6 +109,7 @@ Indexes:
 
 * Present:
     * `RevokedCertificates`
+    * `RevokedRootCertificates`
     * `UniqueCertificate`
 * Missing:
     * `ProposedCertificateRevocation`
@@ -117,7 +119,10 @@ Indexes:
 Test cases:
 
 * Positive:
-    * Propose and approve revocation of DA root certificate: `TestHandler_RevokeDaRootCert_TwoThirdApprovalsNeeded`
+    * Propose and approve revocation of DA root certificate by Subject/SKID: `TestHandler_RevokeDaRootCert`,
+      `TestHandler_RevokeDaRootCert_TwoThirdApprovalsNeeded`
+    * Revoke DA root certificate by Subject/SKID when two certs with the same SKID exist:
+      `TestHandler_RevokeDaRootCert_BySubjectAndSkid_WhenTwoCertsWithSameSkidExist`
 * Negative:
     * TBD
 
