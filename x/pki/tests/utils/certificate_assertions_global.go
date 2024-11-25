@@ -1,11 +1,12 @@
 package utils
 
 import (
+	"testing"
+
 	"github.com/stretchr/testify/require"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"testing"
 )
 
 func EnsureUniqueCertificateCertificateExist(
@@ -104,16 +105,16 @@ func EnsureChildCertificateExist(
 	subject string,
 	subjectKeyID string,
 	issuer string,
-	authorityKeyId string,
+	authorityKeyID string,
 ) {
 	t.Helper()
 
 	issuerChildren, _ := QueryChildCertificates(setup, subject, subjectKeyID)
-	require.Equal(t, 1, len(issuerChildren.CertIds))
+	require.Len(t, issuerChildren.CertIds, 1)
 
 	certID := types.CertificateIdentifier{
 		Subject:      issuer,
-		SubjectKeyId: authorityKeyId,
+		SubjectKeyId: authorityKeyID,
 	}
 	require.Equal(t, &certID, issuerChildren.CertIds[0])
 }

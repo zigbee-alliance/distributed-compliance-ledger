@@ -1,11 +1,11 @@
 package tests
 
 import (
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/tests/utils"
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/tests/utils"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 

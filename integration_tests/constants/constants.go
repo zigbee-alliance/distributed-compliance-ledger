@@ -352,6 +352,7 @@ i+oDPOUDAiAlVJQ75X1T1sR199I+v8/CA2zSm6Y5PsfvrYcUq3GCGQ==
 	PAICertWithNumericPidVidSubjectKeyID = "AF:42:B7:09:4D:EB:D5:15:EC:6E:CF:33:B8:11:15:22:5F:32:52:88"
 	PAICertWithNumericPidVidVid          = 65521
 	PAICertWithNumericPidVidPid          = 32768
+	PAICertWithNumericPidVidSerialNumber = "4498223361705918669"
 
 	PAICertWithPidVid = `
 -----BEGIN CERTIFICATE-----

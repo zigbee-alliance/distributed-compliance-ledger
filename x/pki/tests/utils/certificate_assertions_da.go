@@ -1,10 +1,12 @@
 package utils
 
 import (
+	"testing"
+
 	"github.com/stretchr/testify/require"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"testing"
 )
 
 func EnsureCertificatePresentInDaCertificateIndexes(
@@ -15,7 +17,7 @@ func EnsureCertificatePresentInDaCertificateIndexes(
 	serialNumber string,
 	isRoot bool,
 	skipCheckForSubject bool,
-) {
+) *types.ApprovedCertificates {
 	t.Helper()
 
 	// DaCertificates: Subject and SKID
@@ -46,6 +48,8 @@ func EnsureCertificatePresentInDaCertificateIndexes(
 		require.Len(t, certificatesBySubject.SubjectKeyIds, 1)
 		require.Equal(t, subjectKeyID, certificatesBySubject.SubjectKeyIds[0])
 	}
+
+	return approvedCertificates
 }
 
 func EnsureCertificateNotPresentInDaCertificateIndexes(
@@ -91,17 +95,19 @@ func EnsureDaRootCertificateExist(
 	subjectKeyID string,
 	issuer string,
 	serialNumber string,
-) {
+) *types.ApprovedCertificates {
 	t.Helper()
 
 	// DA certificates indexes checks
-	EnsureCertificatePresentInDaCertificateIndexes(t, setup, subject, subjectKeyID, serialNumber, true, false)
+	certificate := EnsureCertificatePresentInDaCertificateIndexes(t, setup, subject, subjectKeyID, serialNumber, true, false)
 
 	// All certificates indexes checks
 	EnsureGlobalCertificateExist(t, setup, subject, subjectKeyID, serialNumber, false)
 
 	// UniqueCertificate: check that unique certificate key registered
 	EnsureUniqueCertificateCertificateExist(t, setup, issuer, serialNumber)
+
+	return certificate
 }
 
 func EnsureDaIntermediateCertificateExist(
@@ -112,17 +118,19 @@ func EnsureDaIntermediateCertificateExist(
 	issuer string,
 	serialNumber string,
 	skipCheckForSubject bool,
-) {
+) *types.ApprovedCertificates {
 	t.Helper()
 
 	// DA certificates indexes checks
-	EnsureCertificatePresentInDaCertificateIndexes(t, setup, subject, subjectKeyID, serialNumber, false, skipCheckForSubject)
+	certificate := EnsureCertificatePresentInDaCertificateIndexes(t, setup, subject, subjectKeyID, serialNumber, false, skipCheckForSubject)
 
 	// All certificates indexes checks
 	EnsureGlobalCertificateExist(t, setup, subject, subjectKeyID, serialNumber, skipCheckForSubject)
 
 	// UniqueCertificate: check that unique certificate key registered
 	EnsureUniqueCertificateCertificateExist(t, setup, issuer, serialNumber)
+
+	return certificate
 }
 
 func EnsureDaRootCertificateNotExist(
@@ -166,4 +174,37 @@ func EnsureDaIntermediateCertificateNotExist(
 
 	// UniqueCertificate: check that unique certificate key registered
 	EnsureUniqueCertificateCertificateNotExist(t, setup, issuer, serialNumber, skipCheckForUniqueness)
+}
+
+func EnsureProposedDaRootCertificateExist(
+	t *testing.T,
+	setup *TestSetup,
+	subject string,
+	subjectKeyID string,
+	serialNumber string,
+) *types.ProposedCertificate {
+	t.Helper()
+
+	proposedCertificate, _ := QueryProposedCertificate(setup, subject, subjectKeyID)
+	require.Equal(t, subject, proposedCertificate.Subject)
+	require.Equal(t, subjectKeyID, proposedCertificate.SubjectKeyId)
+	require.Equal(t, serialNumber, proposedCertificate.SerialNumber)
+
+	return proposedCertificate
+}
+
+func EnsureRejectedDaRootCertificateExist(
+	t *testing.T,
+	setup *TestSetup,
+	subject string,
+	subjectKeyID string,
+) *types.Certificate {
+	t.Helper()
+
+	proposedCertificate, _ := QueryRejectedCertificates(setup, subject, subjectKeyID)
+	require.Equal(t, subject, proposedCertificate.Subject)
+	require.Equal(t, subjectKeyID, proposedCertificate.SubjectKeyId)
+	require.Len(t, proposedCertificate.Certs, 1)
+
+	return proposedCertificate.Certs[0]
 }

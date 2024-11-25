@@ -1,11 +1,12 @@
 package utils
 
 import (
+	"testing"
+
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"testing"
 )
 
 func EnsureCertificatePresentInNocCertificateIndexes(

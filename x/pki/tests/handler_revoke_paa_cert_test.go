@@ -989,6 +989,8 @@ func proposeAndApproveCertificateRevocation(
 	subjectKeyID string,
 	serialNumber string,
 ) {
+	t.Helper()
+
 	// revoke certificate
 	revokeX509Cert := types.NewMsgProposeRevokeX509RootCert(
 		setup.Trustee1.String(),
@@ -1019,6 +1021,8 @@ func ensureDaRootCertificateIsProposedToRevoked(
 	issuer string,
 	revokedBy string,
 ) {
+	t.Helper()
+
 	// Check: ProposedCertificateRevocation - present
 	proposedRevocation, _ := utils.QueryProposedCertificateRevocation(
 		setup,
@@ -1053,6 +1057,8 @@ func ensureDaRootCertificateIsRevoked(
 	skipCheckBySubject bool,
 	skipCheckBySkid bool,
 ) {
+	t.Helper()
+
 	// Check: RevokedCertificates - present
 	found := setup.Keeper.IsRevokedCertificatePresent(
 		setup.Ctx,

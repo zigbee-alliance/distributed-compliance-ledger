@@ -36,9 +36,11 @@ Indexes:
 Test cases:
 
 * Positive:
-    * Propose add approve adding of DA root certificate: `TestHandler_AddDaRootCert`,
+    * Add DA root certificate: `TestHandler_AddDaRootCert`,
       `TestHandler_AddDaRootCert_TwoThirdApprovalsNeeded`,
       `TestHandler_AddDaRootCert_FourApprovalsAreNeeded_FiveTrustees`
+    * Add two DA root certificates with same subject but different SKID:
+      `TestHandler_AddDaRootCerts_SameSubjectButDifferentSubjectKeyId`
 * Negative:
     * TBD
 
@@ -76,7 +78,14 @@ Indexes to check:
 Test cases:
 
 * Positive:
-    * Add DA intermediate certificate: `TestHandler_AddDaIntermediateCert`
+    * Add DA intermediate certificate: `TestHandler_AddDaIntermediateCert`,
+      `TestHandler_AddDaIntermediateCert_VidScoped`
+    * Add two DA intermediate certificates with same Subject/SKID but different Serial Number:
+      `TestHandler_AddDaIntermediateCert_SameSubjectAndSkid_DifferentSerialNumber`
+    * Add tree of DA certificates (root, intermediate, leaf):
+      `TestHandler_AddDaCert_ForTree`
+    * Add intermediate DA certificate but other Vendor with the same VID:
+      `TestHandler_AddDaIntermediateCert_ByNotOwnerButSameVendor`
 * Negative:
     * TBD
 

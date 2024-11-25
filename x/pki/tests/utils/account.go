@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"math/rand"
+
 	"github.com/cosmos/cosmos-sdk/testutil/testdata"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/mock"
@@ -83,4 +85,19 @@ func RemoveItemFromExpectedCalls(expectedCalls []*mock.Call, methodName string) 
 			expectedCalls = append(expectedCalls[:i], expectedCalls[i+1:]...)
 		}
 	}
+}
+
+func (setup *TestSetup) CreateNTrusteeAccounts() ([]sdk.AccAddress, int) {
+	// Create an array of trustee account from 1 to 50
+	trusteeAccounts := make([]sdk.AccAddress, 50)
+	for i := 0; i < 50; i++ {
+		trusteeAccounts[i] = GenerateAccAddress()
+	}
+
+	totalAdditionalTrustees := rand.Intn(50)
+	for i := 0; i < totalAdditionalTrustees; i++ {
+		setup.AddAccount(trusteeAccounts[i], []dclauthtypes.AccountRole{dclauthtypes.Trustee}, 1)
+	}
+
+	return trusteeAccounts, totalAdditionalTrustees
 }

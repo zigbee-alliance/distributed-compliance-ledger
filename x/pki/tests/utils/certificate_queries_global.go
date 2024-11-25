@@ -5,6 +5,23 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
+func QueryAllCertificatesAll(
+	setup *TestSetup,
+) ([]types.AllCertificates, error) {
+	req := &types.QueryAllCertificatesRequest{}
+
+	resp, err := setup.Keeper.CertificatesAll(setup.Wctx, req)
+	if err != nil {
+		require.Nil(setup.T, resp)
+
+		return nil, err
+	}
+
+	require.NotNil(setup.T, resp)
+
+	return resp.Certificates, nil
+}
+
 func QueryAllCertificates(
 	setup *TestSetup,
 	subject string,
