@@ -39,8 +39,8 @@ Test cases:
     * Add DA root certificate: `TestHandler_AddDaRootCert`,
       `TestHandler_AddDaRootCert_TwoThirdApprovalsNeeded`,
       `TestHandler_AddDaRootCert_FourApprovalsAreNeeded_FiveTrustees`
-    * Add two DA root certificates with same subject but different SKID:
-      `TestHandler_AddDaRootCerts_SameSubjectButDifferentSubjectKeyId`
+    * Add two DA root certificates with same SKID but different subject:
+      `TestHandler_AddDaRootCerts_SameSubjectKeyIdButDifferentSubject`
 * Negative:
     * TBD
 

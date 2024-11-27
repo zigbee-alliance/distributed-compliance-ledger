@@ -103,3 +103,15 @@ func (k Keeper) RemoveApprovedCertificateBySubject(ctx sdk.Context, subject stri
 		k.RemoveApprovedCertificatesBySubject(ctx, subject)
 	}
 }
+
+// IsApprovedCertificatesBySubjectPresent Check if the Approved Certificate By Subject is present in the store.
+func (k Keeper) IsApprovedCertificatesBySubjectPresent(
+	ctx sdk.Context,
+	subject string,
+) bool {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ApprovedCertificatesBySubjectKeyPrefix))
+
+	return store.Has(types.ApprovedCertificatesBySubjectKey(
+		subject,
+	))
+}

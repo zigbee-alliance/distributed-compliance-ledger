@@ -25,36 +25,47 @@ func TestHandler_ProposeRevokeDaRootCert(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// propose x509 root certificate by `setup.Trustee` and approve by another trustee
+	rootCertificate := utils.CreateTestRootCert()
 	rootCertOptions := utils.CreateTestRootCertOptions()
 	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
 	// propose revocation of x509 root certificate by `setup.Trustee`
 	proposeRevokeX509RootCert := types.NewMsgProposeRevokeX509RootCert(
 		setup.Trustee1.String(),
-		testconstants.RootSubject,
-		testconstants.RootSubjectKeyID,
-		testconstants.RootSerialNumber,
+		rootCertificate.Subject,
+		rootCertificate.SubjectKeyID,
+		rootCertificate.SerialNumber,
 		false,
 		testconstants.Info)
 	_, err := setup.Handler(setup.Ctx, proposeRevokeX509RootCert)
 	require.NoError(t, err)
 
 	// Check: Certificate is proposed to revoke
-	ensureDaRootCertificateIsProposedToRevoked(
-		t,
-		setup,
-		testconstants.RootSubject,
-		testconstants.RootSubjectKeyID,
-		testconstants.RootSerialNumber,
-		testconstants.RootIssuer,
-		setup.Trustee1.String(),
-	)
+	indexes := []utils.TestIndex{
+		{Key: types.UniqueCertificateKeyPrefix, Exist: true},
+		{Key: types.ProposedCertificateRevocationKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesBySubjectKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
+		{Key: types.ApprovedCertificatesKeyPrefix, Exist: true},
+		{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Exist: true},
+		{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
+		{Key: types.ApprovedRootCertificatesKeyPrefix, Exist: true},
+		{Key: types.ChildCertificatesKeyPrefix, Exist: false},
+		{Key: types.ProposedCertificateKeyPrefix, Exist: false},
+		{Key: types.RevokedCertificatesKeyPrefix, Exist: false},
+	}
+	resolvedCertificates := utils.CheckCertificateStateIndexes(t, setup, rootCertificate, indexes)
+
+	// additional check
+	require.True(t, resolvedCertificates.ProposedRevocation.HasRevocationFrom(setup.Trustee1.String()))
 }
 
 func TestHandler_ProposeRevokeDaRootCert_ByTrusteeNotOwner(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// propose x509 root certificate by `setup.Trustee` and approve by another trustee
+	rootCertificate := utils.CreateTestRootCert()
 	rootCertOptions := utils.CreateTestRootCertOptions()
 	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
@@ -65,24 +76,33 @@ func TestHandler_ProposeRevokeDaRootCert_ByTrusteeNotOwner(t *testing.T) {
 	// propose revocation of x509 root certificate by new trustee
 	proposeRevokeX509RootCert := types.NewMsgProposeRevokeX509RootCert(
 		anotherTrustee.String(),
-		testconstants.RootSubject,
-		testconstants.RootSubjectKeyID,
-		testconstants.RootSerialNumber,
+		rootCertificate.Subject,
+		rootCertificate.SubjectKeyID,
+		rootCertificate.SerialNumber,
 		false,
 		testconstants.Info)
 	_, err := setup.Handler(setup.Ctx, proposeRevokeX509RootCert)
 	require.NoError(t, err)
 
 	// Check: Certificate is proposed to revoke
-	ensureDaRootCertificateIsProposedToRevoked(
-		t,
-		setup,
-		testconstants.RootSubject,
-		testconstants.RootSubjectKeyID,
-		testconstants.RootSerialNumber,
-		testconstants.RootIssuer,
-		anotherTrustee.String(),
-	)
+	indexes := []utils.TestIndex{
+		{Key: types.UniqueCertificateKeyPrefix, Exist: true},
+		{Key: types.ProposedCertificateRevocationKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesBySubjectKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
+		{Key: types.ApprovedCertificatesKeyPrefix, Exist: true},
+		{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Exist: true},
+		{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
+		{Key: types.ApprovedRootCertificatesKeyPrefix, Exist: true},
+		{Key: types.ChildCertificatesKeyPrefix, Exist: false},
+		{Key: types.ProposedCertificateKeyPrefix, Exist: false},
+		{Key: types.RevokedCertificatesKeyPrefix, Exist: false},
+	}
+	resolvedCertificates := utils.CheckCertificateStateIndexes(t, setup, rootCertificate, indexes)
+
+	// additional check
+	require.True(t, resolvedCertificates.ProposedRevocation.HasRevocationFrom(anotherTrustee.String()))
 }
 
 // Propose + Approve
@@ -91,6 +111,7 @@ func TestHandler_RevokeDaRootCert(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// propose x509 root certificate by `setup.Trustee` and approve by another trustee
+	rootCertificate := utils.CreateTestRootCert()
 	rootCertOptions := utils.CreateTestRootCertOptions()
 	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
@@ -98,29 +119,34 @@ func TestHandler_RevokeDaRootCert(t *testing.T) {
 	proposeAndApproveCertificateRevocation(
 		t,
 		setup,
-		testconstants.RootSubject,
-		testconstants.RootSubjectKeyID,
+		rootCertificate.Subject,
+		rootCertificate.SubjectKeyID,
 		"",
 	)
 
-	// Check: Certificate is revoked
-	ensureDaRootCertificateIsRevoked(
-		t,
-		setup,
-		testconstants.RootSubject,
-		testconstants.RootSubjectKeyID,
-		testconstants.RootSerialNumber,
-		testconstants.RootIssuer,
-		true,
-		false,
-		false,
-	)
+	// Check state indexes
+	indexes := []utils.TestIndex{
+		{Key: types.RevokedCertificatesKeyPrefix, Exist: true},
+		{Key: types.UniqueCertificateKeyPrefix, Exist: true},
+		{Key: types.ProposedCertificateRevocationKeyPrefix, Exist: false},
+		{Key: types.AllCertificatesKeyPrefix, Exist: false},
+		{Key: types.AllCertificatesBySubjectKeyPrefix, Exist: false},
+		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: false},
+		{Key: types.ApprovedCertificatesKeyPrefix, Exist: false},
+		{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Exist: false},
+		{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix, Exist: false},
+		{Key: types.ApprovedRootCertificatesKeyPrefix, Exist: false},
+		{Key: types.ChildCertificatesKeyPrefix, Exist: false},
+		{Key: types.ProposedCertificateKeyPrefix, Exist: false},
+	}
+	utils.CheckCertificateStateIndexes(t, setup, rootCertificate, indexes)
 }
 
 func TestHandler_RevokeDaRootCert_BySubjectAndSkid_WhenTwoCertsWithSameSkidExist(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// add root certificates
+	rootCertificate1 := utils.CreateTestRootCertWithSameSubject()
 	rootCert1Options := &utils.RootCertOptions{
 		PemCert:      testconstants.PAACertWithSameSubjectID1,
 		Subject:      testconstants.PAACertWithSameSubjectID1Subject,
@@ -130,6 +156,7 @@ func TestHandler_RevokeDaRootCert_BySubjectAndSkid_WhenTwoCertsWithSameSkidExist
 	}
 	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert1Options)
 
+	rootCertificate2 := utils.CreateTestRootCertWithSameSubject2()
 	rootCert2Options := &utils.RootCertOptions{
 		PemCert:      testconstants.PAACertWithSameSubjectID2,
 		Subject:      testconstants.PAACertWithSameSubjectID2Subject,
@@ -143,37 +170,48 @@ func TestHandler_RevokeDaRootCert_BySubjectAndSkid_WhenTwoCertsWithSameSkidExist
 	proposeAndApproveCertificateRevocation(
 		t,
 		setup,
-		testconstants.PAACertWithSameSubjectID1Subject,
-		testconstants.PAACertWithSameSubjectIDSubjectID,
+		rootCertificate1.Subject,
+		rootCertificate1.SubjectKeyID,
 		"",
 	)
 
-	// Check: Certificate1 is revoked
-	ensureDaRootCertificateIsRevoked(
-		t,
-		setup,
-		testconstants.PAACertWithSameSubjectID1Subject,
-		testconstants.PAACertWithSameSubjectIDSubjectID,
-		testconstants.PAACertWithSameSubjectSerialNumber,
-		testconstants.PAACertWithSameSubjectIssuer,
-		true,
-		false,
-		true,
-	)
+	// Check state indexes
+	indexes := []utils.TestIndex{
+		{Key: types.RevokedCertificatesKeyPrefix, Exist: true},
+		{Key: types.UniqueCertificateKeyPrefix, Exist: true},
+		{Key: types.ProposedCertificateRevocationKeyPrefix, Exist: false},
+		{Key: types.AllCertificatesKeyPrefix, Exist: false},
+		{Key: types.AllCertificatesBySubjectKeyPrefix, Exist: false},
+		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: true}, // another cert with same SKID exists
+		{Key: types.ApprovedCertificatesKeyPrefix, Exist: false},
+		{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Exist: false},
+		{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix, Exist: true}, // another cert with same SKID exist
+		{Key: types.ApprovedRootCertificatesKeyPrefix, Exist: false},
+		{Key: types.ChildCertificatesKeyPrefix, Exist: false},
+	}
+	utils.CheckCertificateStateIndexes(t, setup, rootCertificate1, indexes)
 
-	// Check: Certificate2 exist
-	utils.EnsureDaRootCertificateExist(
-		t,
-		setup,
-		testconstants.PAACertWithSameSubjectID2Subject,
-		testconstants.PAACertWithSameSubjectIDSubjectID,
-		testconstants.PAACertWithSameSubject2Issuer,
-		testconstants.PAACertWithSameSubject2SerialNumber)
+	// second still exists
+	indexes = []utils.TestIndex{
+		{Key: types.RevokedCertificatesKeyPrefix, Exist: false},
+		{Key: types.UniqueCertificateKeyPrefix, Exist: true},
+		{Key: types.ProposedCertificateRevocationKeyPrefix, Exist: false},
+		{Key: types.AllCertificatesKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesBySubjectKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
+		{Key: types.ApprovedCertificatesKeyPrefix, Exist: true},
+		{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Exist: true},
+		{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
+		{Key: types.ApprovedRootCertificatesKeyPrefix, Exist: true},
+		{Key: types.ChildCertificatesKeyPrefix, Exist: false},
+	}
+	utils.CheckCertificateStateIndexes(t, setup, rootCertificate2, indexes)
 }
 
 func TestHandler_RevokeDaRootCert_BySerialNumber_WhenTwoCertsWithSameSubjectAndSkidExist(t *testing.T) {
 	setup := utils.Setup(t)
 
+	rootCertificate1 := utils.CreateTestRootCertWithSameSubjectAndSkid1()
 	rootCert1Opt := &utils.RootCertOptions{
 		PemCert:      testconstants.RootCertWithSameSubjectAndSKID1,
 		Subject:      testconstants.RootCertWithSameSubjectAndSKIDSubject,
@@ -183,6 +221,7 @@ func TestHandler_RevokeDaRootCert_BySerialNumber_WhenTwoCertsWithSameSubjectAndS
 	}
 	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert1Opt)
 
+	rootCertificate2 := utils.CreateTestRootCertWithSameSubjectAndSkid2()
 	rootCert2Opt := &utils.RootCertOptions{
 		PemCert:      testconstants.RootCertWithSameSubjectAndSKID2,
 		Subject:      testconstants.RootCertWithSameSubjectAndSKIDSubject,
@@ -202,98 +241,72 @@ func TestHandler_RevokeDaRootCert_BySerialNumber_WhenTwoCertsWithSameSubjectAndS
 	)
 
 	// Check: Certificate1 - RevokedCertificates - present
-	found := setup.Keeper.IsRevokedCertificatePresent(
-		setup.Ctx,
-		testconstants.RootCertWithSameSubjectAndSKIDSubject,
-		testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID,
-	)
-	require.True(t, found)
-
-	// Check: Certificate1 - RevokedRootCertificates - present
-	found = utils.IsRevokedRootCertificatePresent(
-		setup,
-		testconstants.RootCertWithSameSubjectAndSKIDSubject,
-		testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID,
-	)
-	require.True(t, found)
-
-	// Check: Certificate1 - UniqueCertificate - present
-	found = setup.Keeper.IsUniqueCertificatePresent(
-		setup.Ctx,
-		testconstants.RootCertWithSameSubjectAndSKID1Issuer,
-		testconstants.RootCertWithSameSubjectAndSKID1SerialNumber,
-	)
-	require.True(t, found)
-
-	// Check: Certificate2 - DA + All + UniqueCertificate - present
-	utils.EnsureDaRootCertificateExist(
-		t,
-		setup,
-		testconstants.RootCertWithSameSubjectAndSKIDSubject,
-		testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID,
-		testconstants.RootCertWithSameSubjectAndSKID2Issuer,
-		testconstants.RootCertWithSameSubjectAndSKID2SerialNumber,
-	)
-
-	// DA Approved certificates - only Certificate2
-	approvedCertificates, _ := utils.QueryApprovedCertificates(
-		setup,
-		testconstants.RootCertWithSameSubjectAndSKIDSubject,
-		testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID)
-	require.Len(t, approvedCertificates.Certs, 1)
-	require.Equal(t, testconstants.RootCertWithSameSubjectAndSKID2SerialNumber, approvedCertificates.Certs[0].SerialNumber)
+	indexes := []utils.TestIndex{
+		{Key: types.RevokedCertificatesKeyPrefix, Exist: true},
+		{Key: types.UniqueCertificateKeyPrefix, Exist: true},
+		{Key: types.ProposedCertificateRevocationKeyPrefix, Exist: false},
+		{Key: types.AllCertificatesKeyPrefix, Exist: true, Count: 1},
+		{Key: types.AllCertificatesBySubjectKeyPrefix, Exist: true, Count: 1},
+		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: true, Count: 1},
+		{Key: types.ApprovedCertificatesKeyPrefix, Exist: true, Count: 1},
+		{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Exist: true, Count: 1},
+		{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix, Exist: true, Count: 1},
+		{Key: types.ApprovedRootCertificatesKeyPrefix, Exist: true},
+		{Key: types.ChildCertificatesKeyPrefix, Exist: false},
+	}
+	utils.CheckCertificateStateIndexes(t, setup, rootCertificate1, indexes)
+	utils.CheckCertificateStateIndexes(t, setup, rootCertificate2, indexes)
 
 	// revoke Certificate2 certificate
 	proposeAndApproveCertificateRevocation(
 		t,
 		setup,
-		testconstants.RootCertWithSameSubjectAndSKIDSubject,
-		testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID,
-		testconstants.RootCertWithSameSubjectAndSKID2SerialNumber,
+		rootCertificate2.Subject,
+		rootCertificate2.SubjectKeyID,
+		rootCertificate2.SerialNumber,
 	)
 
 	// Check: Certificate1 is revoked
-	ensureDaRootCertificateIsRevoked(
-		t,
-		setup,
-		testconstants.RootCertWithSameSubjectAndSKIDSubject,
-		testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID,
-		testconstants.RootCertWithSameSubjectAndSKID1SerialNumber,
-		testconstants.RootCertWithSameSubjectAndSKID1Issuer,
-		true,
-		false,
-		false,
-	)
-
-	// Check: Certificate2 is revoked
-	ensureDaRootCertificateIsRevoked(
-		t,
-		setup,
-		testconstants.RootCertWithSameSubjectAndSKIDSubject,
-		testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID,
-		testconstants.RootCertWithSameSubjectAndSKID2SerialNumber,
-		testconstants.RootCertWithSameSubjectAndSKID2Issuer,
-		true,
-		false,
-		false,
-	)
+	indexes = []utils.TestIndex{
+		{Key: types.RevokedCertificatesKeyPrefix, Exist: true},
+		{Key: types.UniqueCertificateKeyPrefix, Exist: true},
+		{Key: types.ProposedCertificateRevocationKeyPrefix, Exist: false},
+		{Key: types.AllCertificatesKeyPrefix, Exist: false},
+		{Key: types.AllCertificatesBySubjectKeyPrefix, Exist: false},
+		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: false},
+		{Key: types.ApprovedCertificatesKeyPrefix, Exist: false},
+		{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Exist: false},
+		{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix, Exist: false},
+		{Key: types.ApprovedRootCertificatesKeyPrefix, Exist: false},
+		{Key: types.ChildCertificatesKeyPrefix, Exist: false},
+	}
+	utils.CheckCertificateStateIndexes(t, setup, rootCertificate2, indexes)
 }
 
 func TestHandler_RevokeDaRootCert_TwoThirdApprovalsNeeded(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// add root x509 certificate
+	rootCertificate := utils.CreateTestRootCert()
 	rootCertOptions := utils.CreateTestRootCertOptions()
 	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
-	// Check: DA + All + UniqueCertificate
-	utils.EnsureDaRootCertificateExist(
-		t,
-		setup,
-		testconstants.RootSubject,
-		testconstants.RootSubjectKeyID,
-		testconstants.RootIssuer,
-		testconstants.RootSerialNumber)
+	// root exists
+	indexes := []utils.TestIndex{
+		{Key: types.UniqueCertificateKeyPrefix, Exist: true},
+		{Key: types.ProposedCertificateRevocationKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesBySubjectKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
+		{Key: types.ApprovedCertificatesKeyPrefix, Exist: true},
+		{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Exist: true},
+		{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
+		{Key: types.ApprovedRootCertificatesKeyPrefix, Exist: true},
+		{Key: types.ChildCertificatesKeyPrefix, Exist: false},
+		{Key: types.ProposedCertificateKeyPrefix, Exist: false},
+		{Key: types.RevokedCertificatesKeyPrefix, Exist: false},
+	}
+	utils.CheckCertificateStateIndexes(t, setup, rootCertificate, indexes)
 
 	// Create an array of trustee account from 1 to 50
 	trusteeAccounts := make([]sdk.AccAddress, 50)
@@ -334,13 +347,7 @@ func TestHandler_RevokeDaRootCert_TwoThirdApprovalsNeeded(t *testing.T) {
 		require.NoError(t, err)
 
 		// check that the certificate is still not revoked
-		utils.EnsureDaRootCertificateExist(
-			t,
-			setup,
-			testconstants.RootSubject,
-			testconstants.RootSubjectKeyID,
-			testconstants.RootIssuer,
-			testconstants.RootSerialNumber)
+		utils.CheckCertificateStateIndexes(t, setup, rootCertificate, indexes)
 	}
 
 	// One more revoke will revoke the certificate
@@ -353,39 +360,22 @@ func TestHandler_RevokeDaRootCert_TwoThirdApprovalsNeeded(t *testing.T) {
 	_, err = setup.Handler(setup.Ctx, approveRevokeX509RootCert)
 	require.NoError(t, err)
 
-	// Check: DA - missing
-	utils.EnsureCertificateNotPresentInDaCertificateIndexes(
-		t,
-		setup,
-		testconstants.RootSubject,
-		testconstants.RootSubjectKeyID,
-		true,
-		false,
-		false,
-	)
-
-	// Check: All - missing
-	utils.EnsureGlobalCertificateNotExist(
-		t,
-		setup,
-		testconstants.RootSubject,
-		testconstants.RootSubjectKeyID,
-		false,
-		false,
-	)
-
-	// Check: ProposedCertificateRevocation - missing
-	found := setup.Keeper.IsProposedCertificateRevocationPresent(
-		setup.Ctx,
-		testconstants.RootSubject,
-		testconstants.RootSubjectKeyID,
-		testconstants.RootSerialNumber,
-	)
-	require.False(t, found)
-
-	// Check: UniqueCertificate - present
-	found = setup.Keeper.IsUniqueCertificatePresent(setup.Ctx, testconstants.RootIssuer, testconstants.RootSerialNumber)
-	require.True(t, found)
+	indexes = []utils.TestIndex{
+		{Key: types.RevokedCertificatesKeyPrefix, Exist: true},
+		{Key: types.RevokedRootCertificatesKeyPrefix, Exist: true},
+		{Key: types.UniqueCertificateKeyPrefix, Exist: true},
+		{Key: types.ProposedCertificateRevocationKeyPrefix, Exist: false},
+		{Key: types.AllCertificatesKeyPrefix, Exist: false},
+		{Key: types.AllCertificatesBySubjectKeyPrefix, Exist: false},
+		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: false},
+		{Key: types.ApprovedCertificatesKeyPrefix, Exist: false},
+		{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Exist: false},
+		{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix, Exist: false},
+		{Key: types.ApprovedRootCertificatesKeyPrefix, Exist: false},
+		{Key: types.ChildCertificatesKeyPrefix, Exist: false},
+		{Key: types.ProposedCertificateKeyPrefix, Exist: false},
+	}
+	utils.CheckCertificateStateIndexes(t, setup, rootCertificate, indexes)
 
 	// Check: Revoked - present
 	revokedCertificate, err := utils.QueryRevokedCertificates(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
@@ -406,110 +396,60 @@ func TestHandler_RevokeDaRootCert_TwoThirdApprovalsNeeded(t *testing.T) {
 func TestHandler_RevokeDaRootCert_ForTree(t *testing.T) {
 	setup := utils.Setup(t)
 
+	// Add vendor account
+	vendorAccAddress := setup.CreateVendorAccount(testconstants.Vid)
+
 	// add root x509 certificate
+	rootCertificate := utils.CreateTestRootCert()
 	rootCertOptions := utils.CreateTestRootCertOptions()
 	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
-	// Add vendor account
-	vendorAccAddress := utils.GenerateAccAddress()
-	setup.AddAccount(vendorAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
-
 	// add intermediate x509 certificate
+	intermediateCertificate := utils.CreateTestIntermediateCert()
 	utils.AddDaIntermediateCertificate(setup, vendorAccAddress, testconstants.IntermediateCertPem)
 
 	// add leaf x509 certificate
+	leafCertificate := utils.CreateTestLeafCert()
 	utils.AddDaIntermediateCertificate(setup, vendorAccAddress, testconstants.LeafCertPem)
 
 	// propose revocation of x509 root certificate
 	proposeRevokeX509RootCert := types.NewMsgProposeRevokeX509RootCert(
-		setup.Trustee1.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, "", true, testconstants.Info)
+		setup.Trustee1.String(),
+		testconstants.RootSubject,
+		testconstants.RootSubjectKeyID,
+		"",
+		true,
+		testconstants.Info)
 	_, err := setup.Handler(setup.Ctx, proposeRevokeX509RootCert)
 	require.NoError(t, err)
 
 	// approve
 	approveRevokeX509RootCert := types.NewMsgApproveRevokeX509RootCert(
-		setup.Trustee2.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, "", testconstants.Info)
+		setup.Trustee2.String(),
+		testconstants.RootSubject,
+		testconstants.RootSubjectKeyID,
+		"",
+		testconstants.Info)
 	_, err = setup.Handler(setup.Ctx, approveRevokeX509RootCert)
 	require.NoError(t, err)
 
-	// check that root, intermediate and leaf certificates have been revoked
-	allRevokedCertificates, _ := utils.QueryAllRevokedCertificates(setup)
-	require.Equal(t, 3, len(allRevokedCertificates))
-	require.Equal(t, testconstants.LeafSubject, allRevokedCertificates[0].Subject)
-	require.Equal(t, testconstants.LeafSubjectKeyID, allRevokedCertificates[0].SubjectKeyId)
-	require.Equal(t, 1, len(allRevokedCertificates[0].Certs))
-	require.Equal(t, testconstants.LeafCertPem, allRevokedCertificates[0].Certs[0].PemCert)
-	require.Equal(t, testconstants.RootSubject, allRevokedCertificates[1].Subject)
-	require.Equal(t, testconstants.RootSubjectKeyID, allRevokedCertificates[1].SubjectKeyId)
-	require.Equal(t, 1, len(allRevokedCertificates[1].Certs))
-	require.Equal(t, testconstants.RootCertPem, allRevokedCertificates[1].Certs[0].PemCert)
-	require.Equal(t, testconstants.IntermediateSubject, allRevokedCertificates[2].Subject)
-	require.Equal(t, testconstants.IntermediateSubjectKeyID, allRevokedCertificates[2].SubjectKeyId)
-	require.Equal(t, 1, len(allRevokedCertificates[2].Certs))
-	require.Equal(t, testconstants.IntermediateCertPem, allRevokedCertificates[2].Certs[0].PemCert)
-
-	// check that approved certs list is empty
-	allApprovedCertificates, err := utils.QueryAllApprovedCertificates(setup)
-	require.NoError(t, err)
-	require.Equal(t, 0, len(allApprovedCertificates))
-
-	// check that no proposed certificate revocations exist
-	allProposedCertificateRevocations, err := utils.QueryAllProposedCertificateRevocations(setup)
-	require.NoError(t, err)
-	require.Equal(t, 0, len(allProposedCertificateRevocations))
-
-	// check that no child certificate identifiers are registered for revoked root certificate
-	rootCertChildren, err := utils.QueryChildCertificates(
-		setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
-	require.Error(t, err)
-	require.Equal(t, codes.NotFound, status.Code(err))
-	require.Nil(t, rootCertChildren)
-
-	// check that no child certificate identifiers are registered for revoked intermediate certificate
-	intermediateCertChildren, err := utils.QueryChildCertificates(
-		setup, testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
-	require.Error(t, err)
-	require.Equal(t, codes.NotFound, status.Code(err))
-	require.Nil(t, intermediateCertChildren)
-
-	// check that no child certificate identifiers are registered for revoked leaf certificate
-	leafCertChildren, err := utils.QueryChildCertificates(
-		setup, testconstants.LeafSubject, testconstants.LeafSubjectKeyID)
-	require.Error(t, err)
-	require.Equal(t, codes.NotFound, status.Code(err))
-	require.Nil(t, leafCertChildren)
-
-	// check that root certificate does not exist
-	utils.EnsureDaRootCertificateNotExist(
-		t,
-		setup,
-		testconstants.RootSubject,
-		testconstants.RootSubjectKeyID,
-		testconstants.RootSubject,
-		testconstants.RootSerialNumber,
-		true)
-
-	// check that intermediate certificate does not exist
-	utils.EnsureDaIntermediateCertificateNotExist(
-		t,
-		setup,
-		testconstants.IntermediateSubject,
-		testconstants.IntermediateSubjectKeyID,
-		testconstants.IntermediateIssuer,
-		testconstants.IntermediateSerialNumber,
-		true,
-		false)
-
-	// check that intermediate certificate does not exist
-	utils.EnsureDaIntermediateCertificateNotExist(
-		t,
-		setup,
-		testconstants.LeafSubject,
-		testconstants.LeafSubjectKeyID,
-		testconstants.LeafIssuer,
-		testconstants.LeafSerialNumber,
-		true,
-		false)
+	indexes := []utils.TestIndex{
+		{Key: types.RevokedCertificatesKeyPrefix, Exist: true},
+		{Key: types.UniqueCertificateKeyPrefix, Exist: true},
+		{Key: types.ProposedCertificateRevocationKeyPrefix, Exist: false},
+		{Key: types.AllCertificatesKeyPrefix, Exist: false},
+		{Key: types.AllCertificatesBySubjectKeyPrefix, Exist: false},
+		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: false},
+		{Key: types.ApprovedCertificatesKeyPrefix, Exist: false},
+		{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Exist: false},
+		{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix, Exist: false},
+		{Key: types.ApprovedRootCertificatesKeyPrefix, Exist: false},
+		{Key: types.ChildCertificatesKeyPrefix, Exist: false},
+		{Key: types.ProposedCertificateKeyPrefix, Exist: false},
+	}
+	utils.CheckCertificateStateIndexes(t, setup, rootCertificate, indexes)
+	utils.CheckCertificateStateIndexes(t, setup, intermediateCertificate, indexes)
+	utils.CheckCertificateStateIndexes(t, setup, leafCertificate, indexes)
 }
 
 // Extra cases
@@ -1010,106 +950,4 @@ func proposeAndApproveCertificateRevocation(
 		testconstants.Info)
 	_, err = setup.Handler(setup.Ctx, aprRevokeX509Cert)
 	require.NoError(t, err)
-}
-
-func ensureDaRootCertificateIsProposedToRevoked(
-	t *testing.T,
-	setup *utils.TestSetup,
-	subject string,
-	subjectKeyID string,
-	serialNumber string,
-	issuer string,
-	revokedBy string,
-) {
-	t.Helper()
-
-	// Check: ProposedCertificateRevocation - present
-	proposedRevocation, _ := utils.QueryProposedCertificateRevocation(
-		setup,
-		subject,
-		subjectKeyID,
-		serialNumber,
-	)
-	require.True(t, proposedRevocation.HasRevocationFrom(revokedBy))
-
-	// Check: DA + All + UniqueCertificate - present
-	utils.EnsureDaRootCertificateExist(
-		t,
-		setup,
-		subject,
-		subjectKeyID,
-		issuer,
-		serialNumber,
-	)
-
-	// Check: RevokedCertificates - missing
-	require.False(t, setup.Keeper.IsRevokedCertificatePresent(setup.Ctx, subject, subjectKeyID))
-}
-
-func ensureDaRootCertificateIsRevoked(
-	t *testing.T,
-	setup *utils.TestSetup,
-	subject string,
-	subjectKeyID string,
-	serialNumber string,
-	issuer string,
-	isRoot bool,
-	skipCheckBySubject bool,
-	skipCheckBySkid bool,
-) {
-	t.Helper()
-
-	// Check: RevokedCertificates - present
-	found := setup.Keeper.IsRevokedCertificatePresent(
-		setup.Ctx,
-		subject,
-		subjectKeyID,
-	)
-	require.True(t, found)
-
-	// Check: RevokedRootCertificates - present
-	found = utils.IsRevokedRootCertificatePresent(
-		setup,
-		subject,
-		subjectKeyID,
-	)
-	require.True(t, found)
-
-	// Check: UniqueCertificate - present
-	found = setup.Keeper.IsUniqueCertificatePresent(
-		setup.Ctx,
-		issuer,
-		serialNumber,
-	)
-	require.True(t, found)
-
-	// Check: DA - missing
-	utils.EnsureCertificateNotPresentInDaCertificateIndexes(
-		t,
-		setup,
-		subject,
-		subjectKeyID,
-		isRoot,
-		skipCheckBySubject,
-		skipCheckBySkid,
-	)
-
-	// Check: All - missing
-	utils.EnsureGlobalCertificateNotExist(
-		t,
-		setup,
-		subject,
-		subjectKeyID,
-		skipCheckBySubject,
-		skipCheckBySkid,
-	)
-
-	// Check: ProposedCertificateRevocation - missing
-	found = setup.Keeper.IsProposedCertificateRevocationPresent(
-		setup.Ctx,
-		subject,
-		subjectKeyID,
-		serialNumber,
-	)
-	require.False(t, found)
 }

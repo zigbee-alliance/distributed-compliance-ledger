@@ -19,7 +19,6 @@ import (
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module/testutil"
-
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common/types"
 )
 
@@ -125,7 +124,9 @@ var (
 	ProgramType                        = "Some Program Type"
 	ProgramTypeVersion                 = "Some Program Type Version"
 	Transport                          = "Some Transport"
-	SoftwareVersionCertificationStatus = uint32(3)
+	SoftwareVersionCertificationStatus = uint32(
+		3,
+	)
 	ParentChild1                       = "parent"
 	ParentChild2                       = "child"
 	CertificationIDOfSoftwareComponent = "some certification ID of software component"
@@ -709,6 +710,7 @@ eujhLsD51w==
 	IntermediateCertWithSameSubjectAndSKIDSubject = "MEUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQ="
 
 	IntermediateCertWithSameSubjectIssuer               = RootCertWithSameSubjectAndSKIDSubject
+	IntermediateCertWithSameSubjectAuthorityKeyID       = RootCertWithSameSubjectAndSKIDSubjectKeyID
 	IntermediateCertWithSameSubjectAndSKIDSubjectKeyID  = "2E:13:3B:44:52:2C:30:E9:EC:FB:45:FA:5D:E5:04:0A:C1:C6:E6:B9"
 	IntermediateCertWithSameSubjectAndSKIDIssuer        = RootCertWithSameSubjectAndSKIDSubject
 	IntermediateCertWithSameSubjectAndSKID1SerialNumber = "3"
@@ -716,6 +718,8 @@ eujhLsD51w==
 	LeafCertWithSameSubjectAndSKIDSubject               = "MEUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQ="
 	LeafCertWithSameSubjectAndSKIDSubjectKeyID          = "12:16:55:8E:5E:2A:DF:04:D7:E6:FE:D1:53:69:61:98:EF:17:2F:03"
 	LeafCertWithSameSubjectAndSKIDSerialNumber          = "5"
+	LeafCertWithSameSubjectIssuer                       = IntermediateCertWithSameSubjectAndSKIDSubject
+	LeafCertWithSameSubjectAuthorityKeyID               = IntermediateCertWithSameSubjectAndSKIDSubjectKeyID
 
 	IntermediateIssuer                     = "MDQxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApzb21lLXN0YXRlMRAwDgYDVQQKDAdyb290LWNh"
 	IntermediateAuthorityKeyID             = "5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB"
@@ -725,8 +729,8 @@ eujhLsD51w==
 	IntermediateSubjectKeyIDWithoutColumns = "4E3B73F4704DC2980DDBC85A5F023BBF8625562B"
 	IntermediateSerialNumber               = "169917617234879872371588777545667947720450185023"
 
-	LeafIssuer         = "MDwxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApzb21lLXN0YXRlMRgwFgYDVQQKDA9pbnRlcm1lZGlhdGUtY2E="
-	LeafAuthorityKeyID = "4E:3B:73:F4:70:4D:C2:98:D:DB:C8:5A:5F:02:3B:BF:86:25:56:2B"
+	LeafIssuer         = IntermediateSubject
+	LeafAuthorityKeyID = IntermediateSubjectKeyID
 	LeafSubject        = "MDExCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApzb21lLXN0YXRlMQ0wCwYDVQQKDARsZWFm"
 	LeafSubjectAsText  = "O=leaf,ST=some-state,C=AU"
 	LeafSubjectKeyID   = "30:F4:65:75:14:20:B2:AF:3D:14:71:17:AC:49:90:93:3E:24:A0:1F"

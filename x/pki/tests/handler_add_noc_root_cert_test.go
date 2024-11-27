@@ -20,17 +20,28 @@ func TestHandler_AddNocRootCert(t *testing.T) {
 	accAddress := setup.CreateVendorAccount(testconstants.Vid)
 
 	// add NOC root certificate
+	rootCertificate := utils.CreateTestNocRoot1Cert()
 	utils.AddNocRootCertificate(setup, accAddress, testconstants.NocRootCert1)
 
-	// Check: Noc + All + UniqueCertificate
-	utils.EnsureNocRootCertificateExist(
-		t,
-		setup,
-		testconstants.NocRootCert1Subject,
-		testconstants.NocRootCert1SubjectKeyID,
-		testconstants.NocCert1Issuer,
-		testconstants.NocRootCert1SerialNumber,
-		testconstants.Vid)
+	// Check indexes
+	indexes := []utils.TestIndex{
+		{Key: types.AllCertificatesKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesBySubjectKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
+		{Key: types.NocCertificatesKeyPrefix, Exist: true},
+		{Key: types.NocCertificatesBySubjectKeyPrefix, Exist: true},
+		{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
+		{Key: types.NocCertificatesByVidAndSkidKeyPrefix, Exist: true},
+		{Key: types.NocRootCertificatesKeyPrefix, Exist: true},
+		{Key: types.NocIcaCertificatesKeyPrefix, Exist: false},
+		{Key: types.UniqueCertificateKeyPrefix, Exist: true},
+		{Key: types.ProposedCertificateKeyPrefix, Exist: false},
+		{Key: types.ApprovedCertificatesKeyPrefix, Exist: false},
+		{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Exist: false},
+		{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix, Exist: false},
+		{Key: types.ApprovedRootCertificatesKeyPrefix, Exist: false},
+	}
+	utils.CheckCertificateStateIndexes(t, setup, rootCertificate, indexes)
 }
 
 // Extra cases
@@ -91,7 +102,7 @@ func TestHandler_AddNocX509RootCert_Renew(t *testing.T) {
 	require.Equal(t, &newNocCertificate, nocCertificatesBySubjectKeyID[0].Certs[0])
 
 	// query noc root certificate by VID
-	nocRootCertificates, err := utils.QueryNocRootCertificates(setup, testconstants.Vid)
+	nocRootCertificates, err := utils.QueryNocRootCertificatesByVid(setup, testconstants.Vid)
 	require.NoError(t, err)
 	require.Equal(t, len(nocRootCertificates.Certs), 2)
 	require.Equal(t, &newNocCertificate, nocRootCertificates.Certs[1])

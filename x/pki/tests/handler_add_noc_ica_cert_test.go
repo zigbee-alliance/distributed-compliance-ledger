@@ -24,29 +24,29 @@ func TestHandler_AddNocIntermediateCert(t *testing.T) {
 	utils.AddNocRootCertificate(setup, accAddress, testconstants.NocRootCert1)
 
 	// add NOC ICA certificate
+	icaCertificate := utils.CreateTestNocIca1Cert()
 	utils.AddNocIntermediateCertificate(setup, accAddress, testconstants.NocCert1)
 
-	// Check: Noc + All + UniqueCertificate
-	utils.EnsureNocIntermediateCertificateExist(
-		t,
-		setup,
-		testconstants.NocCert1Subject,
-		testconstants.NocCert1SubjectKeyID,
-		testconstants.NocCert1Issuer,
-		testconstants.NocCert1SerialNumber,
-		testconstants.Vid,
-		false,
-	)
-
-	// ChildCertificates: check that child certificates of issuer contains certificate identifier
-	utils.EnsureChildCertificateExist(
-		t,
-		setup,
-		testconstants.NocRootCert1Subject,
-		testconstants.NocRootCert1SubjectKeyID,
-		testconstants.NocCert1Subject,
-		testconstants.NocCert1SubjectKeyID,
-	)
+	// Check indexes
+	indexes := []utils.TestIndex{
+		{Key: types.AllCertificatesKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesBySubjectKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
+		{Key: types.NocCertificatesKeyPrefix, Exist: true},
+		{Key: types.NocCertificatesBySubjectKeyPrefix, Exist: true},
+		{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
+		{Key: types.NocCertificatesByVidAndSkidKeyPrefix, Exist: true},
+		{Key: types.NocRootCertificatesKeyPrefix, Exist: true, Count: 1}, // we create root certificate as well but ica should not get there
+		{Key: types.NocIcaCertificatesKeyPrefix, Exist: true},
+		{Key: types.UniqueCertificateKeyPrefix, Exist: true},
+		{Key: types.ChildCertificatesKeyPrefix, Exist: true},
+		{Key: types.ProposedCertificateKeyPrefix, Exist: false},
+		{Key: types.ApprovedCertificatesKeyPrefix, Exist: false},
+		{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Exist: false},
+		{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix, Exist: false},
+		{Key: types.ApprovedRootCertificatesKeyPrefix, Exist: false},
+	}
+	utils.CheckCertificateStateIndexes(t, setup, icaCertificate, indexes)
 }
 
 // Extra cases

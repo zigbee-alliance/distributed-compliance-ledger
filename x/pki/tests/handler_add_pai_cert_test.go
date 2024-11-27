@@ -26,6 +26,8 @@ func TestHandler_AddDaIntermediateCert(t *testing.T) {
 	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
 	// add DA PAI certificate
+	testIntermediateCertificate := utils.CreateTestIntermediateCert()
+
 	addX509Cert := types.NewMsgAddX509Cert(
 		accAddress.String(),
 		testconstants.IntermediateCertPem,
@@ -33,29 +35,21 @@ func TestHandler_AddDaIntermediateCert(t *testing.T) {
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
 	require.NoError(t, err)
 
-	// Check: DA + All + UniqueCertificate
-	utils.EnsureDaIntermediateCertificateExist(
-		t,
-		setup,
-		testconstants.IntermediateSubject,
-		testconstants.IntermediateSubjectKeyID,
-		testconstants.IntermediateIssuer,
-		testconstants.IntermediateSerialNumber,
-		false)
-
-	// ChildCertificates: check that child certificates of issuer contains certificate identifier
-	utils.EnsureChildCertificateExist(
-		t,
-		setup,
-		testconstants.IntermediateIssuer,
-		testconstants.IntermediateAuthorityKeyID,
-		testconstants.IntermediateSubject,
-		testconstants.IntermediateSubjectKeyID,
-	)
-
-	// Check: ProposedCertificate - empty
-	require.False(t, setup.Keeper.IsProposedCertificatePresent(
-		setup.Ctx, testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID))
+	// Check indexes
+	indexes := []utils.TestIndex{
+		{Key: types.UniqueCertificateKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesBySubjectKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
+		{Key: types.ApprovedCertificatesKeyPrefix, Exist: true},
+		{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Exist: true},
+		{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
+		{Key: types.ChildCertificatesKeyPrefix, Exist: true},
+		{Key: types.ApprovedRootCertificatesKeyPrefix, Exist: false},
+		{Key: types.ProposedCertificateKeyPrefix, Exist: false},
+		{Key: types.RejectedCertificateKeyPrefix, Exist: false},
+	}
+	utils.CheckCertificateStateIndexes(t, setup, testIntermediateCertificate, indexes)
 }
 
 // Extra cases
@@ -69,7 +63,9 @@ func TestHandler_AddDaIntermediateCert_VidScoped(t *testing.T) {
 	rootCertOptions := utils.CreatePAACertWithNumericVidOptions()
 	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
-	// add x509 certificate
+	// add intermediate certificate
+	testIntermediateCertificate := utils.CreateTestIntermediateVidScopedCert()
+
 	addX509Cert := types.NewMsgAddX509Cert(
 		accAddress.String(),
 		testconstants.PAICertWithNumericPidVid,
@@ -77,30 +73,21 @@ func TestHandler_AddDaIntermediateCert_VidScoped(t *testing.T) {
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
 	require.NoError(t, err)
 
-	// Check: DA + All + UniqueCertificate
-	intermediateCert := utils.EnsureDaIntermediateCertificateExist(
-		t,
-		setup,
-		testconstants.PAICertWithNumericPidVidSubject,
-		testconstants.PAICertWithNumericPidVidSubjectKeyID,
-		testconstants.PAACertWithNumericVidSubject,
-		testconstants.PAICertWithNumericPidVidSerialNumber,
-		false)
-	require.Equal(t, int32(testconstants.PAICertWithNumericPidVidVid), intermediateCert.Certs[0].Vid)
-
-	// ChildCertificates: check that child certificates of issuer contains certificate identifier
-	utils.EnsureChildCertificateExist(
-		t,
-		setup,
-		testconstants.PAACertWithNumericVidSubject,
-		testconstants.PAACertWithNumericVidSubjectKeyID,
-		testconstants.PAICertWithNumericPidVidSubject,
-		testconstants.PAICertWithNumericPidVidSubjectKeyID,
-	)
-
-	// Check: ProposedCertificate - empty
-	require.False(t, setup.Keeper.IsProposedCertificatePresent(
-		setup.Ctx, testconstants.PAICertWithNumericPidVidSubject, testconstants.PAICertWithNumericPidVidSubjectKeyID))
+	// Check indexes
+	indexes := []utils.TestIndex{
+		{Key: types.UniqueCertificateKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesBySubjectKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
+		{Key: types.ApprovedCertificatesKeyPrefix, Exist: true},
+		{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Exist: true},
+		{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
+		{Key: types.ChildCertificatesKeyPrefix, Exist: true},
+		{Key: types.ApprovedRootCertificatesKeyPrefix, Exist: false},
+		{Key: types.ProposedCertificateKeyPrefix, Exist: false},
+		{Key: types.RejectedCertificateKeyPrefix, Exist: false},
+	}
+	utils.CheckCertificateStateIndexes(t, setup, testIntermediateCertificate, indexes)
 }
 
 func TestHandler_AddDaIntermediateCert_SameSubjectAndSkid_DifferentSerialNumber(t *testing.T) {
@@ -113,6 +100,10 @@ func TestHandler_AddDaIntermediateCert_SameSubjectAndSkid_DifferentSerialNumber(
 	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
 	// store intermediate certificate with different serial number
+	testIntermediateCertificate1 := utils.CreateTestIntermediateCert()
+	testIntermediateCertificate2 := utils.CreateTestIntermediateCert()
+	testIntermediateCertificate2.SerialNumber = utils.SerialNumber
+
 	intermediateCertificate := utils.IntermediateCertificateNoVid(vendorAccAddress)
 	intermediateCertificate.SerialNumber = utils.SerialNumber
 	utils.AddMokedDaCertificate(setup, intermediateCertificate, false)
@@ -133,34 +124,44 @@ func TestHandler_AddDaIntermediateCert_SameSubjectAndSkid_DifferentSerialNumber(
 	allCertificates, _ := utils.QueryAllCertificatesAll(setup)
 	require.Equal(t, 2, len(allCertificates)) // root + intermediate
 
-	// check approved certificate
-	certificate, _ := utils.QueryApprovedCertificates(setup,
-		testconstants.IntermediateSubject,
-		testconstants.IntermediateSubjectKeyID)
-	require.Equal(t, 2, len(certificate.Certs)) // two intermediates
-	require.NotEqual(t, certificate.Certs[0].SerialNumber, certificate.Certs[1].SerialNumber)
+	// Check indexes for certificate1
+	indexes := []utils.TestIndex{
+		{Key: types.UniqueCertificateKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesKeyPrefix, Exist: true, Count: 2},
+		{Key: types.AllCertificatesBySubjectKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: true, Count: 2},
+		{Key: types.ApprovedCertificatesKeyPrefix, Exist: true, Count: 2},
+		{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Exist: true},
+		{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix, Exist: true, Count: 2},
+		{Key: types.ChildCertificatesKeyPrefix, Exist: true, Count: 1},
+		{Key: types.ApprovedRootCertificatesKeyPrefix, Exist: false},
+		{Key: types.ProposedCertificateKeyPrefix, Exist: false},
+		{Key: types.RejectedCertificateKeyPrefix, Exist: false},
+	}
+	resolvedCertificates := utils.CheckCertificateStateIndexes(t, setup, testIntermediateCertificate1, indexes)
 
-	// check global certificate
-	globalCertificate, _ := utils.QueryAllCertificates(setup,
-		testconstants.IntermediateSubject,
-		testconstants.IntermediateSubjectKeyID)
-	require.Equal(t, 2, len(globalCertificate.Certs)) // two intermediates
-	require.NotEqual(t, globalCertificate.Certs[0].SerialNumber, globalCertificate.Certs[1].SerialNumber)
+	// additional checks
+	require.Equal(t, resolvedCertificates.ApprovedCertificates.Certs[0].SerialNumber, testIntermediateCertificate2.SerialNumber)
+	require.Equal(t, resolvedCertificates.ApprovedCertificates.Certs[1].SerialNumber, testIntermediateCertificate1.SerialNumber)
+	require.NotEqual(
+		t,
+		resolvedCertificates.ApprovedCertificates.Certs[0].SerialNumber,
+		resolvedCertificates.ApprovedCertificates.Certs[1].SerialNumber,
+	)
 
-	// Check indexes by subject key id
-	approvedCertificatesBySubjectKeyId, _ := utils.QueryApprovedCertificatesBySubjectKeyID(setup, testconstants.IntermediateSubjectKeyID)
-	require.Equal(t, 1, len(approvedCertificatesBySubjectKeyId))
-	require.Equal(t, 2, len(approvedCertificatesBySubjectKeyId[0].Certs))
+	// Check indexes for certificate2
+	utils.CheckCertificateStateIndexes(t, setup, testIntermediateCertificate2, indexes)
 
-	allCertificatesBySubjectKeyId, _ := utils.QueryAllCertificatesBySubjectKeyID(setup, testconstants.IntermediateSubjectKeyID)
-	require.Equal(t, 1, len(allCertificatesBySubjectKeyId))
-	require.Equal(t, 2, len(allCertificatesBySubjectKeyId[0].Certs))
 }
 
 func TestHandler_AddDaCert_ForTree(t *testing.T) {
 	setup := utils.Setup(t)
 
 	vendorAccAddress := setup.CreateVendorAccount(testconstants.Vid)
+
+	testRootCertificate := utils.CreateTestRootCert()
+	testIntermediateCertificate := utils.CreateTestIntermediateCert()
+	testLeafCertificate := utils.CreateTestLeafCert()
 
 	// add root x509 certificate
 	rootCertOptions := utils.CreateTestRootCertOptions()
@@ -182,55 +183,46 @@ func TestHandler_AddDaCert_ForTree(t *testing.T) {
 	_, err = setup.Handler(setup.Ctx, addLeafX509Cert)
 	require.NoError(t, err)
 
-	// ensure root certificate exist
-	utils.EnsureDaRootCertificateExist(
-		t,
-		setup,
-		testconstants.RootSubject,
-		testconstants.RootSubjectKeyID,
-		testconstants.RootIssuer,
-		testconstants.RootSerialNumber)
+	// Check indexes for root
+	indexes := []utils.TestIndex{
+		{Key: types.UniqueCertificateKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesBySubjectKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
+		{Key: types.ApprovedCertificatesKeyPrefix, Exist: true},
+		{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Exist: true},
+		{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
+		{Key: types.ApprovedRootCertificatesKeyPrefix, Exist: true},
+	}
+	utils.CheckCertificateStateIndexes(t, setup, testRootCertificate, indexes)
 
-	// ensure intermediate certificate exist
-	utils.EnsureDaIntermediateCertificateExist(
-		t,
-		setup,
-		testconstants.IntermediateSubject,
-		testconstants.IntermediateSubjectKeyID,
-		testconstants.IntermediateIssuer,
-		testconstants.IntermediateSerialNumber,
-		false)
+	// Check indexes for intermediate
+	indexes = []utils.TestIndex{
+		{Key: types.UniqueCertificateKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesBySubjectKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
+		{Key: types.ApprovedCertificatesKeyPrefix, Exist: true},
+		{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Exist: true},
+		{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
+		{Key: types.ChildCertificatesKeyPrefix, Exist: true, Count: 1},
+		{Key: types.ApprovedRootCertificatesKeyPrefix, Exist: false},
+	}
+	utils.CheckCertificateStateIndexes(t, setup, testIntermediateCertificate, indexes)
 
-	// ensure leaf certificate exist
-	utils.EnsureDaIntermediateCertificateExist(
-		t,
-		setup,
-		testconstants.LeafSubject,
-		testconstants.LeafSubjectKeyID,
-		testconstants.LeafIssuer,
-		testconstants.LeafSerialNumber,
-		false)
-
-	// check ChildCertificate - root
-	rootCertChildren, _ := utils.QueryChildCertificates(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
-	require.Equal(t, 1, len(rootCertChildren.CertIds))
-	require.Equal(t,
-		utils.CertificateIdentifier(testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID),
-		*rootCertChildren.CertIds[0])
-
-	// check ChildCertificate - intermediate
-	intermediateCertChildren, _ := utils.QueryChildCertificates(
-		setup, testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
-	require.Equal(t, 1, len(intermediateCertChildren.CertIds))
-	require.Equal(t,
-		utils.CertificateIdentifier(testconstants.LeafSubject, testconstants.LeafSubjectKeyID),
-		*intermediateCertChildren.CertIds[0])
-
-	// check child certificate identifiers of leaf certificate
-	leafCertChildren, err := utils.QueryChildCertificates(setup, testconstants.LeafSubject, testconstants.LeafSubjectKeyID)
-	require.Error(t, err)
-	require.Equal(t, codes.NotFound, status.Code(err))
-	require.Nil(t, leafCertChildren)
+	// Check indexes for leaf
+	indexes = []utils.TestIndex{
+		{Key: types.UniqueCertificateKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesBySubjectKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
+		{Key: types.ApprovedCertificatesKeyPrefix, Exist: true},
+		{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Exist: true},
+		{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
+		{Key: types.ChildCertificatesKeyPrefix, Exist: true, Count: 1},
+		{Key: types.ApprovedRootCertificatesKeyPrefix, Exist: false},
+	}
+	utils.CheckCertificateStateIndexes(t, setup, testLeafCertificate, indexes)
 }
 
 //nolint:funlen

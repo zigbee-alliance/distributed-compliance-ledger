@@ -34,6 +34,6 @@ func AddMokedDaCertificate(
 	certificate types.Certificate,
 	isRoot bool,
 ) {
-	setup.Keeper.SetUniqueCertificate(setup.Ctx, UniqueCertificate(certificate.Subject, certificate.SerialNumber))
+	setup.Keeper.SetUniqueCertificate(setup.Ctx, UniqueCertificate(certificate.Issuer, certificate.SerialNumber))
 	setup.Keeper.StoreDaCertificate(setup.Ctx, certificate, isRoot)
 }

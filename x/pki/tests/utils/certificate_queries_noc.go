@@ -89,7 +89,7 @@ func QueryNocCertificatesBySubjectKeyID(
 	return resp.NocCertificates, nil
 }
 
-func QueryNocRootCertificates(
+func QueryNocRootCertificatesByVid(
 	setup *TestSetup,
 	vid int32,
 ) (*types.NocRootCertificates, error) {

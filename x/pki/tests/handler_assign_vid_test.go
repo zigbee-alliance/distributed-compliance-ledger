@@ -21,6 +21,7 @@ func TestHandler_AssignVid_certificateWithoutSubjectVid(t *testing.T) {
 	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, 0)
 
 	// propose and approve x509 root certificate
+	rootCertificate := utils.CreateTestRootCert()
 	rootCertOptions := utils.CreateTestRootCertOptions()
 	rootCertOptions.Vid = 0
 	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
@@ -36,28 +37,25 @@ func TestHandler_AssignVid_certificateWithoutSubjectVid(t *testing.T) {
 	require.NoError(t, err)
 
 	// DA certificates indexes checks
+	// Check indexes
+	indexes := []utils.TestIndex{
+		{Key: types.ProposedCertificateKeyPrefix, Exist: false},
+		{Key: types.UniqueCertificateKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesBySubjectKeyPrefix, Exist: true},
+		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
+		{Key: types.ApprovedCertificatesKeyPrefix, Exist: true},
+		{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Exist: true},
+		{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
+		{Key: types.ApprovedRootCertificatesKeyPrefix, Exist: true},
+	}
+	resolvedCertificates := utils.CheckCertificateStateIndexes(t, setup, rootCertificate, indexes)
 
-	// DaCertificates: Subject and SKID
-	approvedCertificate, _ := utils.QueryApprovedCertificates(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
-	require.Equal(t, testconstants.Vid, approvedCertificate.Certs[0].Vid)
-
-	// DaCertificates: SKID
-	certificateBySubjectKeyID, _ := utils.QueryApprovedCertificatesBySubjectKeyID(setup, testconstants.RootSubjectKeyID)
-	require.Equal(t, 1, len(certificateBySubjectKeyID))
-	require.Equal(t, 1, len(certificateBySubjectKeyID[0].Certs))
-	require.Equal(t, testconstants.Vid, certificateBySubjectKeyID[0].Certs[0].Vid)
-
-	// All certificates indexes checks
-
-	// AllCertificate: Subject and SKID
-	allCertificate, err := utils.QueryAllCertificates(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
-	require.NoError(t, err)
-	require.Equal(t, testconstants.Vid, allCertificate.Certs[0].Vid)
-
-	// AllCertificate: SKID
-	allCertificateBySkid, err := utils.QueryAllCertificatesBySubjectKeyID(setup, testconstants.RootSubjectKeyID)
-	require.NoError(t, err)
-	require.Equal(t, testconstants.Vid, allCertificateBySkid[0].Certs[0].Vid)
+	// Check VID is assigned
+	require.Equal(t, testconstants.Vid, resolvedCertificates.ApprovedCertificates.Certs[0].Vid)
+	require.Equal(t, testconstants.Vid, resolvedCertificates.ApprovedCertificatesBySubjectKeyId[0].Certs[0].Vid)
+	require.Equal(t, testconstants.Vid, resolvedCertificates.AllCertificates.Certs[0].Vid)
+	require.Equal(t, testconstants.Vid, resolvedCertificates.AllCertificatesBySubjectKeyId[0].Certs[0].Vid)
 }
 
 func TestHandler_AssignVid_certificateWithSubjectVid(t *testing.T) {
@@ -95,12 +93,12 @@ func TestHandler_AssignVid_certificateWithSubjectVid(t *testing.T) {
 
 	// All certificates indexes checks
 
-	// AllCertificate: Subject and SKID
+	// AllCertificates: Subject and SKID
 	allCertificate, err := utils.QueryAllCertificates(setup, rootCertOptions.Subject, rootCertOptions.SubjectKeyID)
 	require.NoError(t, err)
 	require.Equal(t, testconstants.PAACertWithNumericVidVid, allCertificate.Certs[0].Vid)
 
-	// AllCertificate: SKID
+	// AllCertificates: SKID
 	allCertificateBySkid, err := utils.QueryAllCertificatesBySubjectKeyID(setup, rootCertOptions.SubjectKeyID)
 	require.NoError(t, err)
 	require.Equal(t, testconstants.PAACertWithNumericVidVid, allCertificateBySkid[0].Certs[0].Vid)

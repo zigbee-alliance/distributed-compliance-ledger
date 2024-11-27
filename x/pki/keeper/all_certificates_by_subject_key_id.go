@@ -145,3 +145,15 @@ func (k Keeper) _removeAllCertificatesFromSubjectKeyIDState(ctx sdk.Context, sub
 		k.SetAllCertificatesBySubjectKeyID(ctx, certs)
 	}
 }
+
+// IsCertificatesBySubjectKeyIdPresent Check if the Certificate By Subject Key ID is present in the store.
+func (k Keeper) IsCertificatesBySubjectKeyIdPresent(
+	ctx sdk.Context,
+	subjectKeyID string,
+) bool {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.AllCertificatesBySubjectKeyIDKeyPrefix))
+
+	return store.Has(types.AllCertificatesBySubjectKeyIDKey(
+		subjectKeyID,
+	))
+}
