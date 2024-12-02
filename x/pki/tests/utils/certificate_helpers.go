@@ -46,3 +46,138 @@ func AddMokedNocCertificate(
 	setup.Keeper.SetUniqueCertificate(setup.Ctx, UniqueCertificate(certificate.Issuer, certificate.SerialNumber))
 	setup.Keeper.StoreNocCertificate(setup.Ctx, certificate, isRoot)
 }
+
+func UniqueCertificate(issuer string, serialNumber string) types.UniqueCertificate {
+	return types.UniqueCertificate{
+		Issuer:       issuer,
+		SerialNumber: serialNumber,
+		Present:      true,
+	}
+}
+
+func CertificateIdentifier(subject string, subjectKeyID string) types.CertificateIdentifier {
+	return types.CertificateIdentifier{
+		Subject:      subject,
+		SubjectKeyId: subjectKeyID,
+	}
+}
+
+func ProposeDaRootCertificate(setup *TestSetup, address sdk.AccAddress, pemCert string) *types.MsgProposeAddX509RootCert {
+	proposeAddX509RootCert := types.NewMsgProposeAddX509RootCert(
+		address.String(),
+		pemCert,
+		testconstants.Info,
+		testconstants.Vid,
+		testconstants.CertSchemaVersion,
+	)
+	_, err := setup.Handler(setup.Ctx, proposeAddX509RootCert)
+	require.NoError(setup.T, err)
+
+	return proposeAddX509RootCert
+}
+
+func ApproveDaRootCertificate(setup *TestSetup, address sdk.AccAddress, subject string, subjectKeyID string) *types.MsgApproveAddX509RootCert {
+	approveAddX509RootCert := types.NewMsgApproveAddX509RootCert(
+		address.String(),
+		subject,
+		subjectKeyID,
+		testconstants.Info,
+	)
+	_, err := setup.Handler(setup.Ctx, approveAddX509RootCert)
+	require.NoError(setup.T, err)
+
+	return approveAddX509RootCert
+}
+
+func RejectDaRootCertificate(setup *TestSetup, address sdk.AccAddress, subject string, subjectKeyID string) *types.MsgRejectAddX509RootCert {
+	rejectAddX509RootCert := types.NewMsgRejectAddX509RootCert(
+		address.String(),
+		subject,
+		subjectKeyID,
+		testconstants.Info,
+	)
+	_, err := setup.Handler(setup.Ctx, rejectAddX509RootCert)
+	require.NoError(setup.T, err)
+
+	return rejectAddX509RootCert
+}
+
+func AddDaIntermediateCertificate(setup *TestSetup, address sdk.AccAddress, pemCert string) *types.MsgAddX509Cert {
+	addX509Cert := types.NewMsgAddX509Cert(address.String(), pemCert, testconstants.CertSchemaVersion)
+	_, err := setup.Handler(setup.Ctx, addX509Cert)
+	require.NoError(setup.T, err)
+
+	return addX509Cert
+}
+
+func AddNocRootCertificate(setup *TestSetup, address sdk.AccAddress, pemCert string) *types.MsgAddNocX509RootCert {
+	addNocX509RootCert := types.NewMsgAddNocX509RootCert(address.String(), pemCert, testconstants.CertSchemaVersion)
+	_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
+	require.NoError(setup.T, err)
+
+	return addNocX509RootCert
+}
+
+func AddNocIntermediateCertificate(setup *TestSetup, address sdk.AccAddress, pemCert string) *types.MsgAddNocX509IcaCert {
+	nocX509Cert := types.NewMsgAddNocX509IcaCert(address.String(), pemCert, testconstants.CertSchemaVersion)
+	_, err := setup.Handler(setup.Ctx, nocX509Cert)
+	require.NoError(setup.T, err)
+
+	return nocX509Cert
+}
+
+func RemoveNocIntermediateCertificate(setup *TestSetup, address sdk.AccAddress, subject string, subjectKeyID string, serialNumber string) *types.MsgRemoveNocX509IcaCert {
+	removeIcaCert := types.NewMsgRemoveNocX509IcaCert(
+		address.String(),
+		subject,
+		subjectKeyID,
+		serialNumber,
+	)
+	_, err := setup.Handler(setup.Ctx, removeIcaCert)
+	require.NoError(setup.T, err)
+
+	return removeIcaCert
+}
+
+func RevokeNocIntermediateCertificate(setup *TestSetup, address sdk.AccAddress, subject string, subjectKeyID string, serialNumber string, revokedChild bool) *types.MsgRevokeNocX509IcaCert {
+	revokeX509Cert := types.NewMsgRevokeNocX509IcaCert(
+		address.String(),
+		subject,
+		subjectKeyID,
+		serialNumber,
+		testconstants.Info,
+		revokedChild,
+	)
+	_, err := setup.Handler(setup.Ctx, revokeX509Cert)
+	require.NoError(setup.T, err)
+
+	return revokeX509Cert
+}
+
+func RemoveNocRootCertificate(setup *TestSetup, address sdk.AccAddress, subject string, subjectKeyID string, serialNumber string) *types.MsgRemoveNocX509RootCert {
+	removeRootCert := types.NewMsgRemoveNocX509RootCert(
+		address.String(),
+		subject,
+		subjectKeyID,
+		serialNumber,
+	)
+	_, err := setup.Handler(setup.Ctx, removeRootCert)
+	require.NoError(setup.T, err)
+
+	return removeRootCert
+}
+
+func RevokeNocRootCertificate(setup *TestSetup, address sdk.AccAddress, subject string, subjectKeyID string, serialNumber string, revokedChild bool) *types.MsgRevokeNocX509RootCert {
+	revokeX509Cert := types.NewMsgRevokeNocX509RootCert(
+		address.String(),
+		subject,
+		subjectKeyID,
+		serialNumber,
+		testconstants.Info,
+		revokedChild,
+	)
+	_, err := setup.Handler(setup.Ctx, revokeX509Cert)
+	require.NoError(setup.T, err)
+
+	return revokeX509Cert
+}

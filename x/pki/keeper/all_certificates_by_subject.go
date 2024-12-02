@@ -128,15 +128,3 @@ func (k Keeper) GetAllAllCertificatesBySubject(ctx sdk.Context) (list []types.Al
 
 	return
 }
-
-// IsCertificatesBySubjectPresent Check if the Certificate By Subject is present in the store.
-func (k Keeper) IsCertificatesBySubjectPresent(
-	ctx sdk.Context,
-	subject string,
-) bool {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.AllCertificatesBySubjectKeyPrefix))
-
-	return store.Has(types.AllCertificatesBySubjectKey(
-		subject,
-	))
-}

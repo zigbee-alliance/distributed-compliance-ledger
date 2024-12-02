@@ -19,22 +19,12 @@ import (
 func TestHandler_RemoveNocRootCert(t *testing.T) {
 	setup := utils.Setup(t)
 
-	// Add vendor account
-	vendorAccAddress := setup.CreateVendorAccount(testconstants.Vid)
-
 	// add NOC root certificates
 	rootCertificate := utils.CreateTestNocRoot1Cert()
-	utils.AddNocRootCertificate(setup, vendorAccAddress, rootCertificate.PEM)
+	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate.PEM)
 
-	// remove noc root  certificate
-	removeIcaCert := types.NewMsgRemoveNocX509RootCert(
-		vendorAccAddress.String(),
-		rootCertificate.Subject,
-		rootCertificate.SubjectKeyID,
-		"",
-	)
-	_, err := setup.Handler(setup.Ctx, removeIcaCert)
-	require.NoError(t, err)
+	// remove noc root certificate
+	utils.RemoveNocRootCertificate(setup, setup.Vendor1, rootCertificate.Subject, rootCertificate.SubjectKeyID, "")
 
 	// Check indexes
 	indexes := utils.TestIndexes{
@@ -62,19 +52,16 @@ func TestHandler_RemoveNocRootCert(t *testing.T) {
 func TestHandler_RemoveNocX509RootCert_BySubjectAndSKID(t *testing.T) {
 	setup := utils.Setup(t)
 
-	// Add vendor account
-	vendorAccAddress := setup.CreateVendorAccount(testconstants.Vid)
-
 	// add NOC root certificates
 	rootCertificate1 := utils.CreateTestNocRoot1Cert()
-	utils.AddNocRootCertificate(setup, vendorAccAddress, rootCertificate1.PEM)
+	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate1.PEM)
 
 	rootCertificate2 := utils.CreateTestNocRoot2Cert()
-	utils.AddNocRootCertificate(setup, vendorAccAddress, rootCertificate2.PEM)
+	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate2.PEM)
 
 	// Add intermediate certificate
 	icaCertificate := utils.CreateTestNocIca1Cert()
-	utils.AddNocIntermediateCertificate(setup, vendorAccAddress, icaCertificate.PEM)
+	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate.PEM)
 
 	// get certificates for further comparison
 	nocCerts := setup.Keeper.GetAllNocCertificates(setup.Ctx)
@@ -83,14 +70,7 @@ func TestHandler_RemoveNocX509RootCert_BySubjectAndSKID(t *testing.T) {
 	require.Equal(t, 3, len(nocCerts[0].Certs)+len(nocCerts[1].Certs))
 
 	// remove all root nOC certificates but IAC certificate
-	removeIcaCert := types.NewMsgRemoveNocX509RootCert(
-		vendorAccAddress.String(),
-		rootCertificate1.Subject,
-		rootCertificate1.SubjectKeyID,
-		"",
-	)
-	_, err := setup.Handler(setup.Ctx, removeIcaCert)
-	require.NoError(t, err)
+	utils.RemoveNocRootCertificate(setup, setup.Vendor1, rootCertificate1.Subject, rootCertificate1.SubjectKeyID, "")
 
 	// check that only IAC certificate exists
 	nocCerts, _ = utils.QueryAllNocCertificates(setup)
@@ -141,29 +121,19 @@ func TestHandler_RemoveNocX509RootCert_BySubjectAndSKID(t *testing.T) {
 func TestHandler_RemoveNocX509RootCert_BySerialNumber(t *testing.T) {
 	setup := utils.Setup(t)
 
-	// Add vendor account
-	vendorAccAddress := setup.CreateVendorAccount(testconstants.Vid)
-
 	// add NOC root certificates
 	rootCertificate1 := utils.CreateTestNocRoot1Cert()
-	utils.AddNocRootCertificate(setup, vendorAccAddress, rootCertificate1.PEM)
+	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate1.PEM)
 
 	rootCertificate2 := utils.CreateTestNocRoot2Cert()
-	utils.AddNocRootCertificate(setup, vendorAccAddress, rootCertificate2.PEM)
+	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate2.PEM)
 
 	// Add ICA certificates
 	icaCertificate := utils.CreateTestNocIca1Cert()
-	utils.AddNocIntermediateCertificate(setup, vendorAccAddress, icaCertificate.PEM)
+	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate.PEM)
 
 	// remove NOC root certificate by serial number
-	removeIcaCert := types.NewMsgRemoveNocX509RootCert(
-		vendorAccAddress.String(),
-		rootCertificate1.Subject,
-		rootCertificate1.SubjectKeyID,
-		rootCertificate1.SerialNumber,
-	)
-	_, err := setup.Handler(setup.Ctx, removeIcaCert)
-	require.NoError(t, err)
+	utils.RemoveNocRootCertificate(setup, setup.Vendor1, rootCertificate1.Subject, rootCertificate1.SubjectKeyID, rootCertificate1.SerialNumber)
 
 	nocCerts, _ := utils.QueryAllNocCertificates(setup)
 	require.Equal(t, 2, len(nocCerts))
@@ -215,14 +185,7 @@ func TestHandler_RemoveNocX509RootCert_BySerialNumber(t *testing.T) {
 	utils.CheckCertificateStateIndexes(t, setup, rootCertificate2, indexes)
 
 	// remove NOC root certificate by serial number and check that IAC cert is not removed
-	removeIcaCert = types.NewMsgRemoveNocX509RootCert(
-		vendorAccAddress.String(),
-		rootCertificate2.Subject,
-		rootCertificate2.SubjectKeyID,
-		rootCertificate2.SerialNumber,
-	)
-	_, err = setup.Handler(setup.Ctx, removeIcaCert)
-	require.NoError(t, err)
+	utils.RemoveNocRootCertificate(setup, setup.Vendor1, rootCertificate2.Subject, rootCertificate2.SubjectKeyID, rootCertificate2.SerialNumber)
 
 	nocCerts, _ = utils.QueryAllNocCertificates(setup)
 	require.Equal(t, 1, len(nocCerts))
@@ -272,31 +235,26 @@ func TestHandler_RemoveNocX509RootCert_BySerialNumber(t *testing.T) {
 func TestHandler_RemoveNocX509RootCert_RevokedCertificate(t *testing.T) {
 	setup := utils.Setup(t)
 
-	// Add vendor account
-	vendorAccAddress := setup.CreateVendorAccount(testconstants.Vid)
-
 	// add NOC root certificate
 	rootCertificate1 := utils.CreateTestNocRoot1Cert()
-	utils.AddNocRootCertificate(setup, vendorAccAddress, testconstants.NocRootCert1)
+	utils.AddNocRootCertificate(setup, setup.Vendor1, testconstants.NocRootCert1)
 
 	rootCertificate2 := utils.CreateTestNocRoot2Cert()
-	utils.AddNocRootCertificate(setup, vendorAccAddress, testconstants.NocRootCert1Copy)
+	utils.AddNocRootCertificate(setup, setup.Vendor1, testconstants.NocRootCert1Copy)
 
 	// Add an intermediate certificate
 	icaCertificate := utils.CreateTestNocIca1Cert()
-	utils.AddNocIntermediateCertificate(setup, vendorAccAddress, testconstants.NocCert1)
+	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, testconstants.NocCert1)
 
 	// revoke NOC root certificates
-	revokeX509Cert := types.NewMsgRevokeNocX509RootCert(
-		vendorAccAddress.String(),
-		rootCertificate1.Subject,
-		rootCertificate1.SubjectKeyID,
+	utils.RevokeNocRootCertificate(
+		setup,
+		setup.Vendor1,
+		rootCertificate2.Subject,
+		rootCertificate2.SubjectKeyID,
 		"",
-		testconstants.Info,
 		false,
 	)
-	_, err := setup.Handler(setup.Ctx, revokeX509Cert)
-	require.NoError(t, err)
 
 	// Check indexes for root certificates
 	indexes := utils.TestIndexes{
@@ -339,14 +297,13 @@ func TestHandler_RemoveNocX509RootCert_RevokedCertificate(t *testing.T) {
 	utils.CheckCertificateStateIndexes(t, setup, icaCertificate, indexes)
 
 	// remove NOC root certificates
-	removeIcaCert := types.NewMsgRemoveNocX509RootCert(
-		vendorAccAddress.String(),
-		rootCertificate1.Subject,
-		rootCertificate1.SubjectKeyID,
+	utils.RemoveNocRootCertificate(
+		setup,
+		setup.Vendor1,
+		rootCertificate2.Subject,
+		rootCertificate2.SubjectKeyID,
 		"",
 	)
-	_, err = setup.Handler(setup.Ctx, removeIcaCert)
-	require.NoError(t, err)
 
 	allCerts, _ := utils.QueryAllNocCertificates(setup)
 	require.Equal(t, 1, len(allCerts))
@@ -394,16 +351,11 @@ func TestHandler_RemoveNocX509RootCert_RevokedCertificate(t *testing.T) {
 func TestHandler_RemoveNocX509RootCert_RevokedAndActiveCertificate(t *testing.T) {
 	setup := utils.Setup(t)
 
-	// Add vendor account
-	vid := testconstants.Vid
-	vendorAccAddress := utils.GenerateAccAddress()
-	setup.AddAccount(vendorAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, vid)
-
 	// add NOC root certificate
-	utils.AddNocRootCertificate(setup, vendorAccAddress, testconstants.NocRootCert1)
+	utils.AddNocRootCertificate(setup, setup.Vendor1, testconstants.NocRootCert1)
 
 	// Add an intermediate certificate
-	addIcaCert := types.NewMsgAddNocX509IcaCert(vendorAccAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion)
+	addIcaCert := types.NewMsgAddNocX509IcaCert(setup.Vendor1.String(), testconstants.NocCert1, testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addIcaCert)
 	require.NoError(t, err)
 
@@ -413,19 +365,17 @@ func TestHandler_RemoveNocX509RootCert_RevokedAndActiveCertificate(t *testing.T)
 	require.Equal(t, 2, len(nocCerts))
 
 	// revoke an intermediate certificate
-	revokeX509Cert := types.NewMsgRevokeNocX509RootCert(
-		vendorAccAddress.String(),
+	utils.RevokeNocRootCertificate(
+		setup,
+		setup.Vendor1,
 		testconstants.NocRootCert1Subject,
 		testconstants.NocRootCert1SubjectKeyID,
 		testconstants.NocRootCert1SerialNumber,
-		testconstants.Info,
 		false,
 	)
-	_, err = setup.Handler(setup.Ctx, revokeX509Cert)
-	require.NoError(t, err)
 
 	// Add NOC root certificate with new serial number
-	utils.AddNocRootCertificate(setup, vendorAccAddress, testconstants.NocRootCert1Copy)
+	utils.AddNocRootCertificate(setup, setup.Vendor1, testconstants.NocRootCert1Copy)
 
 	certs, _ := utils.QueryNocCertificates(setup, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
 	require.Equal(t, 1, len(certs.Certs))
@@ -433,7 +383,7 @@ func TestHandler_RemoveNocX509RootCert_RevokedAndActiveCertificate(t *testing.T)
 
 	// remove NOC root certificate by serial number
 	removeIcaCert := types.NewMsgRemoveNocX509RootCert(
-		vendorAccAddress.String(),
+		setup.Vendor1.String(),
 		testconstants.NocRootCert1Subject,
 		testconstants.NocRootCert1SubjectKeyID,
 		testconstants.NocRootCert1SerialNumber,
@@ -460,20 +410,20 @@ func TestHandler_RemoveNocX509RootCert_RevokedAndActiveCertificate(t *testing.T)
 	require.Equal(t, true, found)
 
 	// query noc certificate by VID
-	nocCertificates, err := utils.QueryNocIcaCertificatesByVid(setup, vid)
+	nocCertificates, err := utils.QueryNocIcaCertificatesByVid(setup, testconstants.Vid)
 	require.NoError(t, err)
 	require.Equal(t, len(nocCertificates.Certs), 1)
 	require.Equal(t, testconstants.NocCert1SerialNumber, nocCertificates.Certs[0].SerialNumber)
 
 	// Add NOC root certificate with new serial number
-	utils.AddNocRootCertificate(setup, vendorAccAddress, testconstants.NocRootCert1)
+	utils.AddNocRootCertificate(setup, setup.Vendor1, testconstants.NocRootCert1)
 
 	certs, _ = utils.QueryNocCertificates(setup, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
 	require.Equal(t, 2, len(certs.Certs))
 
 	// remove NOC root certificates
 	removeIcaCert = types.NewMsgRemoveNocX509RootCert(
-		vendorAccAddress.String(),
+		setup.Vendor1.String(),
 		testconstants.NocRootCert1Subject,
 		testconstants.NocRootCert1SubjectKeyID,
 		"",
@@ -486,13 +436,13 @@ func TestHandler_RemoveNocX509RootCert_RevokedAndActiveCertificate(t *testing.T)
 	require.Equal(t, 1, len(nocCerts[0].Certs))
 	require.Equal(t, testconstants.NocCert1SerialNumber, nocCerts[0].Certs[0].SerialNumber)
 
-	nocCertificates, err = utils.QueryNocIcaCertificatesByVid(setup, vid)
+	nocCertificates, err = utils.QueryNocIcaCertificatesByVid(setup, testconstants.Vid)
 	require.NoError(t, err)
 	require.Equal(t, len(nocCertificates.Certs), 1)
 	require.Equal(t, testconstants.NocCert1SerialNumber, nocCertificates.Certs[0].SerialNumber)
 
 	// check that IAC certificates can be queried by vid+skid
-	certsByVidSkid, _ := utils.QueryNocCertificatesByVidAndSkid(setup, vid, testconstants.NocCert1SubjectKeyID)
+	certsByVidSkid, _ := utils.QueryNocCertificatesByVidAndSkid(setup, testconstants.Vid, testconstants.NocCert1SubjectKeyID)
 	require.Equal(t, 1, len(certsByVidSkid.Certs))
 	require.Equal(t, testconstants.NocCert1SerialNumber, certsByVidSkid.Certs[0].SerialNumber)
 
@@ -503,11 +453,11 @@ func TestHandler_RemoveNocX509RootCert_RevokedAndActiveCertificate(t *testing.T)
 	require.Equal(t, codes.NotFound, status.Code(err))
 	certsBySKID, _ := utils.QueryNocCertificatesBySubjectKeyID(setup, testconstants.NocRootCert1SubjectKeyID)
 	require.Empty(t, certsBySKID)
-	_, err = utils.QueryNocRootCertificatesByVid(setup, vid)
+	_, err = utils.QueryNocRootCertificatesByVid(setup, testconstants.Vid)
 	require.Equal(t, codes.NotFound, status.Code(err))
-	_, err = utils.QueryNocRootCertificatesByVid(setup, vid)
+	_, err = utils.QueryNocRootCertificatesByVid(setup, testconstants.Vid)
 	require.Equal(t, codes.NotFound, status.Code(err))
-	_, err = utils.QueryNocCertificatesByVidAndSkid(setup, vid, testconstants.NocRootCert1SubjectKeyID)
+	_, err = utils.QueryNocCertificatesByVidAndSkid(setup, testconstants.Vid, testconstants.NocRootCert1SubjectKeyID)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
 	// check that unique certificates does not exists
@@ -520,13 +470,8 @@ func TestHandler_RemoveNocX509RootCert_RevokedAndActiveCertificate(t *testing.T)
 func TestHandler_RemoveNocX509RootCert_ByNotOwnerButSameVendor(t *testing.T) {
 	setup := utils.Setup(t)
 
-	// Add vendor account
-	vid := testconstants.Vid
-	vendorAccAddress := utils.GenerateAccAddress()
-	setup.AddAccount(vendorAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, vid)
-
 	// add NOC root certificate
-	utils.AddNocRootCertificate(setup, vendorAccAddress, testconstants.NocRootCert1)
+	utils.AddNocRootCertificate(setup, setup.Vendor1, testconstants.NocRootCert1)
 
 	// add first vendor account with VID = 1
 	vendorAccAddress1 := utils.GenerateAccAddress()
@@ -562,7 +507,7 @@ func TestHandler_RemoveNocX509RootCert_ByNotOwnerButSameVendor(t *testing.T) {
 	require.Equal(t, 0, len(nocCerts))
 
 	// query noc certificate by VID
-	_, err = utils.QueryNocRootCertificatesByVid(setup, vid)
+	_, err = utils.QueryNocRootCertificatesByVid(setup, testconstants.Vid)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
 	// check that unique certificate key is not registered
@@ -574,13 +519,11 @@ func TestHandler_RemoveNocX509RootCert_ByNotOwnerButSameVendor(t *testing.T) {
 func TestHandler_RemoveNocX509RootCert_CertificateDoesNotExist(t *testing.T) {
 	setup := utils.Setup(t)
 
-	// Add vendor account
-	vid := testconstants.Vid
-	vendorAccAddress := utils.GenerateAccAddress()
-	setup.AddAccount(vendorAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, vid)
-
 	removeIcaCert := types.NewMsgRemoveNocX509RootCert(
-		vendorAccAddress.String(), testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID, testconstants.NocRootCert1SerialNumber)
+		setup.Vendor1.String(),
+		testconstants.NocRootCert1Subject,
+		testconstants.NocRootCert1SubjectKeyID,
+		testconstants.NocRootCert1SerialNumber)
 	_, err := setup.Handler(setup.Ctx, removeIcaCert)
 	require.Error(t, err)
 	require.True(t, pkitypes.ErrCertificateDoesNotExist.Is(err))
@@ -589,20 +532,18 @@ func TestHandler_RemoveNocX509RootCert_CertificateDoesNotExist(t *testing.T) {
 func TestHandler_RemoveNocX509RootCert_EmptyCertificatesList(t *testing.T) {
 	setup := utils.Setup(t)
 
-	// Add vendor account
-	vid := testconstants.Vid
-	vendorAccAddress := utils.GenerateAccAddress()
-	setup.AddAccount(vendorAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, vid)
-
 	setup.Keeper.SetNocRootCertificates(
 		setup.Ctx,
 		types.NocRootCertificates{
-			Vid: vid,
+			Vid: testconstants.Vid,
 		},
 	)
 
 	removeIcaCert := types.NewMsgRemoveNocX509RootCert(
-		vendorAccAddress.String(), testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID, "")
+		setup.Vendor1.String(),
+		testconstants.NocRootCert1Subject,
+		testconstants.NocRootCert1SubjectKeyID,
+		"")
 	_, err := setup.Handler(setup.Ctx, removeIcaCert)
 	require.Error(t, err)
 	require.True(t, pkitypes.ErrCertificateDoesNotExist.Is(err))
@@ -611,13 +552,8 @@ func TestHandler_RemoveNocX509RootCert_EmptyCertificatesList(t *testing.T) {
 func TestHandler_RemoveNocX509RootCert_ByOtherVendor(t *testing.T) {
 	setup := utils.Setup(t)
 
-	// Add vendor account
-	vid := testconstants.Vid
-	vendorAccAddress := utils.GenerateAccAddress()
-	setup.AddAccount(vendorAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, vid)
-
 	// add NOC root certificate
-	utils.AddNocRootCertificate(setup, vendorAccAddress, testconstants.NocRootCert1)
+	utils.AddNocRootCertificate(setup, setup.Vendor1, testconstants.NocRootCert1)
 
 	// add fist vendor account with VID = 1
 	vendorAccAddress1 := utils.GenerateAccAddress()
@@ -638,13 +574,8 @@ func TestHandler_RemoveNocX509RootCert_ByOtherVendor(t *testing.T) {
 func TestHandler_RemoveNocX509RootCert_SenderNotVendor(t *testing.T) {
 	setup := utils.Setup(t)
 
-	// Add vendor account
-	vid := testconstants.Vid
-	vendorAccAddress := utils.GenerateAccAddress()
-	setup.AddAccount(vendorAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, vid)
-
 	// add NOC root certificate
-	utils.AddNocRootCertificate(setup, vendorAccAddress, testconstants.NocRootCert1)
+	utils.AddNocRootCertificate(setup, setup.Vendor1, testconstants.NocRootCert1)
 
 	removeIcaCert := types.NewMsgRemoveNocX509RootCert(
 		setup.Trustee1.String(), testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID, "")
@@ -656,16 +587,14 @@ func TestHandler_RemoveNocX509RootCert_SenderNotVendor(t *testing.T) {
 func TestHandler_RemoveNocX509RootCert_InvalidSerialNumber(t *testing.T) {
 	setup := utils.Setup(t)
 
-	// Add vendor account
-	vid := testconstants.Vid
-	vendorAccAddress := utils.GenerateAccAddress()
-	setup.AddAccount(vendorAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, vid)
-
 	// add NOC root certificate
-	utils.AddNocRootCertificate(setup, vendorAccAddress, testconstants.NocRootCert1)
+	utils.AddNocRootCertificate(setup, setup.Vendor1, testconstants.NocRootCert1)
 
 	removeX509Cert := types.NewMsgRemoveNocX509RootCert(
-		vendorAccAddress.String(), testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID, "invalid")
+		setup.Vendor1.String(),
+		testconstants.NocRootCert1Subject,
+		testconstants.NocRootCert1SubjectKeyID,
+		"invalid")
 	_, err := setup.Handler(setup.Ctx, removeX509Cert)
 	require.Error(t, err)
 	require.True(t, pkitypes.ErrCertificateDoesNotExist.Is(err))

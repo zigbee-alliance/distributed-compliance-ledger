@@ -85,15 +85,3 @@ func (k Keeper) RemoveApprovedRootCertificate(
 
 	k.SetApprovedRootCertificates(ctx, rootCertificates)
 }
-
-// IsApprovedRootCertificatePresent Check if the Approved Root Certificate is present in the store.
-func (k Keeper) IsApprovedRootCertificatePresent(
-	ctx sdk.Context,
-	subjectKeyID string,
-) bool {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(pkitypes.ApprovedRootCertificatesKeyPrefix))
-
-	return store.Has(types.ApprovedCertificatesBySubjectKeyIDKey(
-		subjectKeyID,
-	))
-}

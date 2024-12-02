@@ -180,8 +180,7 @@ func TestHandler_DeletePkiRevocationDistributionPoint_PositiveCases(t *testing.T
 func TestHandler_DeletePkiRevocationDistributionPoint_Multiple_SameIssuerSubjectKeyId(t *testing.T) {
 	setup := utils.Setup(t)
 
-	vendorAcc := utils.GenerateAccAddress()
-	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.PAACertWithNumericVidVid)
+	vendorAcc := setup.CreateVendorAccount(testconstants.PAACertWithNumericVidVid)
 
 	// add PAA NOVID
 	rootCertOptions := utils.CreatePAACertNoVidOptions(testconstants.PAACertWithNumericVidVid)

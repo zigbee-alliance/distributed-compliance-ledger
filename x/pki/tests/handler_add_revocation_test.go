@@ -187,8 +187,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_NegativeCases(t *testing.T) {
 func TestHandler_AddPkiRevocationDistributionPoint_PAAAlreadyExists(t *testing.T) {
 	setup := utils.Setup(t)
 
-	accAddress := utils.GenerateAccAddress()
-	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.PAACertWithNumericVidVid)
+	accAddress := setup.CreateVendorAccount(testconstants.PAACertWithNumericVidVid)
 
 	// propose and approve x509 root certificate
 	rootCertOptions := utils.CreatePAACertWithNumericVidOptions()
@@ -314,11 +313,8 @@ func TestHandler_AddPkiRevocationDistributionPoint_PositiveCases(t *testing.T) {
 func TestHandler_AddPkiRevocationDistributionPoint_DataURLNotUnique(t *testing.T) {
 	setup := utils.Setup(t)
 
-	vendorAcc := utils.GenerateAccAddress()
-	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.PAICertWithPidVidVid)
-
-	baseVendorAcc := utils.GenerateAccAddress()
-	setup.AddAccount(baseVendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
+	vendorAcc := setup.CreateVendorAccount(testconstants.PAICertWithPidVidVid)
+	baseVendorAcc := setup.CreateVendorAccount(testconstants.Vid)
 
 	// propose and approve root certificate
 	rootCertOptions := utils.CreatePAACertNoVidOptions(testconstants.Vid)

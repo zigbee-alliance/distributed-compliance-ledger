@@ -11,7 +11,6 @@ import (
 
 type TestIndex struct {
 	Key   string
-	Exist bool
 	Count int
 }
 

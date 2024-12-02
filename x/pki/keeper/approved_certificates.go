@@ -128,17 +128,3 @@ func (k Keeper) AddApprovedCertificate(ctx sdk.Context, approvedCertificate type
 		approvedCertificates.SubjectKeyId,
 	), b)
 }
-
-// IsApprovedCertificatesPresent Check if the Approved Certificate is present in the store.
-func (k Keeper) IsApprovedCertificatesPresent(
-	ctx sdk.Context,
-	subject string,
-	subjectKeyID string,
-) bool {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ApprovedCertificatesKeyPrefix))
-
-	return store.Has(types.ApprovedCertificatesKey(
-		subject,
-		subjectKeyID,
-	))
-}

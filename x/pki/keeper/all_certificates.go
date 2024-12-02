@@ -179,17 +179,3 @@ func (k Keeper) verifyCertificate(ctx sdk.Context,
 		fmt.Sprintf("Certificate verification failed for certificate with subject=%v and subjectKeyID=%v",
 			x509Certificate.Subject, x509Certificate.SubjectKeyID))
 }
-
-// IsAllCertificatePresent Check if the All Certificate is present in the store.
-func (k Keeper) IsAllCertificatePresent(
-	ctx sdk.Context,
-	subject string,
-	subjectKeyID string,
-) bool {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.AllCertificatesKeyPrefix))
-
-	return store.Has(types.AllCertificatesKey(
-		subject,
-		subjectKeyID,
-	))
-}

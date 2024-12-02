@@ -17,8 +17,7 @@ import (
 func TestHandler_AssignVid_certificateWithoutSubjectVid(t *testing.T) {
 	setup := utils.Setup(t)
 
-	vendorAcc := utils.GenerateAccAddress()
-	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, 0)
+	vendorAcc := setup.CreateVendorAdminAccount(0)
 
 	// propose and approve x509 root certificate
 	rootCertificate := utils.CreateTestRootCert()
@@ -65,8 +64,7 @@ func TestHandler_AssignVid_certificateWithoutSubjectVid(t *testing.T) {
 func TestHandler_AssignVid_certificateWithSubjectVid(t *testing.T) {
 	setup := utils.Setup(t)
 
-	vendorAcc := utils.GenerateAccAddress()
-	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, 0)
+	vendorAcc := setup.CreateVendorAdminAccount(0)
 
 	// propose and approve x509 root certificate
 	rootCertOptions := utils.CreatePAACertWithNumericVidOptions()
@@ -129,8 +127,7 @@ func TestHandler_AssignVid_SenderNotVendorAdmin(t *testing.T) {
 func TestHandler_AssignVid_CertificateDoesNotExist(t *testing.T) {
 	setup := utils.Setup(t)
 
-	vendorAcc := utils.GenerateAccAddress()
-	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, 0)
+	vendorAcc := setup.CreateVendorAdminAccount(0)
 
 	assignVid := types.MsgAssignVid{
 		Signer:       vendorAcc.String(),
@@ -146,8 +143,7 @@ func TestHandler_AssignVid_CertificateDoesNotExist(t *testing.T) {
 func TestHandler_AssignVid_ForNonRootCertificate(t *testing.T) {
 	setup := utils.Setup(t)
 
-	vendorAcc := utils.GenerateAccAddress()
-	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, 0)
+	vendorAcc := setup.CreateVendorAdminAccount(0)
 
 	// propose and approve x509 root certificate
 	rootCertOptions := utils.CreateTestRootCertOptions()
@@ -176,8 +172,7 @@ func TestHandler_AssignVid_ForNonRootCertificate(t *testing.T) {
 func TestHandler_AssignVid_CertificateAlreadyHasVid(t *testing.T) {
 	setup := utils.Setup(t)
 
-	vendorAcc := utils.GenerateAccAddress()
-	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, 0)
+	vendorAcc := setup.CreateVendorAdminAccount(0)
 
 	// propose and approve x509 root certificate
 	rootCertOptions := utils.CreatePAACertWithNumericVidOptions()
@@ -197,8 +192,7 @@ func TestHandler_AssignVid_CertificateAlreadyHasVid(t *testing.T) {
 func TestHandler_AssignVid_MessageVidAndCertificateVidNotEqual(t *testing.T) {
 	setup := utils.Setup(t)
 
-	vendorAcc := utils.GenerateAccAddress()
-	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, 0)
+	vendorAcc := setup.CreateVendorAdminAccount(0)
 
 	// propose and approve x509 root certificate
 	rootCertOptions := utils.CreatePAACertWithNumericVidOptions()

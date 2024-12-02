@@ -44,6 +44,20 @@ func (setup *TestSetup) CreateVendorAccount(vid int32) sdk.AccAddress {
 	return accAddress
 }
 
+func (setup *TestSetup) CreateVendorAdminAccount(vid int32) sdk.AccAddress {
+	accAddress := GenerateAccAddress()
+	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, vid)
+
+	return accAddress
+}
+
+func (setup *TestSetup) CreateTrusteeAccount(vid int32) sdk.AccAddress {
+	accAddress := GenerateAccAddress()
+	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Trustee}, vid)
+
+	return accAddress
+}
+
 func (setup *TestSetup) AddAccount(
 	accAddress sdk.AccAddress,
 	roles []dclauthtypes.AccountRole,
