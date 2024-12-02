@@ -42,21 +42,25 @@ func TestHandler_RevokeNocIntermediateCert(t *testing.T) {
 	require.NoError(t, err)
 
 	// Check indexes
-	indexes := []utils.TestIndex{
-		{Key: types.UniqueCertificateKeyPrefix, Exist: true},
-		{Key: types.RevokedNocIcaCertificatesKeyPrefix, Exist: true},
-		{Key: types.AllCertificatesKeyPrefix, Exist: false},
-		{Key: types.AllCertificatesBySubjectKeyPrefix, Exist: false},
-		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: false},
-		{Key: types.NocCertificatesKeyPrefix, Exist: false},
-		{Key: types.NocCertificatesBySubjectKeyPrefix, Exist: false},
-		{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix, Exist: false},
-		{Key: types.NocCertificatesByVidAndSkidKeyPrefix, Exist: false},
-		{Key: types.NocRootCertificatesKeyPrefix, Exist: true, Count: 1}, // root still exits
-		{Key: types.NocIcaCertificatesKeyPrefix, Exist: false},
-		{Key: types.ChildCertificatesKeyPrefix, Exist: false},
-		{Key: types.RevokedNocRootCertificatesKeyPrefix, Exist: false},
-		{Key: types.RevokedCertificatesKeyPrefix, Exist: false},
+	indexes := utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.UniqueCertificateKeyPrefix},
+			{Key: types.RevokedNocIcaCertificatesKeyPrefix},
+			{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // root still exits
+		},
+		Missing: []utils.TestIndex{
+			{Key: types.AllCertificatesKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
+			{Key: types.NocIcaCertificatesKeyPrefix},
+			{Key: types.ChildCertificatesKeyPrefix},
+			{Key: types.RevokedNocRootCertificatesKeyPrefix},
+			{Key: types.RevokedCertificatesKeyPrefix},
+		},
 	}
 	utils.CheckCertificateStateIndexes(t, setup, icaCertificate, indexes)
 }
@@ -102,43 +106,51 @@ func TestHandler_RevokeNocX509Cert_RevokeDefault(t *testing.T) {
 	require.Equal(t, testconstants.NocCert1SubjectKeyID, revokedNocCerts.SubjectKeyId)
 
 	// Check indexes
-	indexes := []utils.TestIndex{
-		{Key: types.UniqueCertificateKeyPrefix, Exist: true},
-		{Key: types.RevokedNocIcaCertificatesKeyPrefix, Exist: true, Count: 2},
-		{Key: types.AllCertificatesKeyPrefix, Exist: false},
-		{Key: types.AllCertificatesBySubjectKeyPrefix, Exist: false},
-		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: false},
-		{Key: types.NocCertificatesKeyPrefix, Exist: false},
-		{Key: types.NocCertificatesBySubjectKeyPrefix, Exist: false},
-		{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix, Exist: false},
-		{Key: types.NocCertificatesByVidAndSkidKeyPrefix, Exist: false},
-		{Key: types.NocRootCertificatesKeyPrefix, Exist: true, Count: 1}, // root still exits
-		{Key: types.NocIcaCertificatesKeyPrefix, Exist: true},            // leaf still exists
-		{Key: types.ChildCertificatesKeyPrefix, Exist: false},
-		{Key: types.RevokedNocRootCertificatesKeyPrefix, Exist: false},
-		{Key: types.RevokedCertificatesKeyPrefix, Exist: false},
+	indexes := utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.UniqueCertificateKeyPrefix},
+			{Key: types.RevokedNocIcaCertificatesKeyPrefix, Count: 2},
+			{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // root still exits
+			{Key: types.NocIcaCertificatesKeyPrefix},            // leaf still exists
+		},
+		Missing: []utils.TestIndex{
+			{Key: types.AllCertificatesKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
+			{Key: types.ChildCertificatesKeyPrefix},
+			{Key: types.RevokedNocRootCertificatesKeyPrefix},
+			{Key: types.RevokedCertificatesKeyPrefix},
+		},
 	}
 	utils.CheckCertificateStateIndexes(t, setup, icaCertificate1, indexes)
 	utils.CheckCertificateStateIndexes(t, setup, icaCertificate2, indexes)
 
 	// Check indexes for leaf
-	indexes = []utils.TestIndex{
-		{Key: types.AllCertificatesKeyPrefix, Exist: true},
-		{Key: types.AllCertificatesBySubjectKeyPrefix, Exist: true},
-		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
-		{Key: types.NocCertificatesKeyPrefix, Exist: true},
-		{Key: types.NocCertificatesBySubjectKeyPrefix, Exist: true},
-		{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
-		{Key: types.NocCertificatesByVidAndSkidKeyPrefix, Exist: true},
-		{Key: types.NocRootCertificatesKeyPrefix, Exist: true, Count: 1}, // root still exits
-		{Key: types.NocIcaCertificatesKeyPrefix, Exist: true, Count: 1},  // only leaf exits
-		{Key: types.UniqueCertificateKeyPrefix, Exist: true},
-		{Key: types.ChildCertificatesKeyPrefix, Exist: true},
-		{Key: types.ProposedCertificateKeyPrefix, Exist: false},
-		{Key: types.ApprovedCertificatesKeyPrefix, Exist: false},
-		{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Exist: false},
-		{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix, Exist: false},
-		{Key: types.ApprovedRootCertificatesKeyPrefix, Exist: false},
+	indexes = utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.AllCertificatesKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
+			{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // root still exits
+			{Key: types.NocIcaCertificatesKeyPrefix, Count: 1},  // only leaf exits
+			{Key: types.UniqueCertificateKeyPrefix},
+			{Key: types.ChildCertificatesKeyPrefix},
+		},
+		Missing: []utils.TestIndex{
+			{Key: types.ProposedCertificateKeyPrefix},
+			{Key: types.ApprovedCertificatesKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ApprovedRootCertificatesKeyPrefix},
+		},
 	}
 	utils.CheckCertificateStateIndexes(t, setup, leafCertificate, indexes)
 }
@@ -182,24 +194,49 @@ func TestHandler_RevokeNocX509Cert_RevokeWithChild(t *testing.T) {
 	require.Equal(t, 3, len(allRevokedCerts[0].Certs)+len(allRevokedCerts[1].Certs))
 
 	// Check indexes
-	indexes := []utils.TestIndex{
-		{Key: types.UniqueCertificateKeyPrefix, Exist: true},
-		{Key: types.RevokedNocIcaCertificatesKeyPrefix, Exist: true},
-		{Key: types.AllCertificatesKeyPrefix, Exist: false},
-		{Key: types.AllCertificatesBySubjectKeyPrefix, Exist: false},
-		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: false},
-		{Key: types.NocCertificatesKeyPrefix, Exist: false},
-		{Key: types.NocCertificatesBySubjectKeyPrefix, Exist: false},
-		{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix, Exist: false},
-		{Key: types.NocCertificatesByVidAndSkidKeyPrefix, Exist: false},
-		{Key: types.NocRootCertificatesKeyPrefix, Exist: true, Count: 1}, // root still exits
-		{Key: types.NocIcaCertificatesKeyPrefix, Exist: false},
-		{Key: types.ChildCertificatesKeyPrefix, Exist: false},
-		{Key: types.RevokedNocRootCertificatesKeyPrefix, Exist: false},
-		{Key: types.RevokedCertificatesKeyPrefix, Exist: false},
+	indexes := utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.UniqueCertificateKeyPrefix},
+			{Key: types.RevokedNocIcaCertificatesKeyPrefix, Count: 2},
+			{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // root still exits
+		},
+		Missing: []utils.TestIndex{
+			{Key: types.AllCertificatesKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
+			{Key: types.NocIcaCertificatesKeyPrefix},
+			{Key: types.ChildCertificatesKeyPrefix},
+			{Key: types.RevokedNocRootCertificatesKeyPrefix},
+			{Key: types.RevokedCertificatesKeyPrefix},
+		},
 	}
 	utils.CheckCertificateStateIndexes(t, setup, icaCertificate1, indexes)
 	utils.CheckCertificateStateIndexes(t, setup, icaCertificate2, indexes)
+
+	indexes = utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.UniqueCertificateKeyPrefix},
+			{Key: types.RevokedNocIcaCertificatesKeyPrefix, Count: 1},
+			{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // root still exits
+		},
+		Missing: []utils.TestIndex{
+			{Key: types.AllCertificatesKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
+			{Key: types.NocIcaCertificatesKeyPrefix},
+			{Key: types.ChildCertificatesKeyPrefix},
+			{Key: types.RevokedNocRootCertificatesKeyPrefix},
+			{Key: types.RevokedCertificatesKeyPrefix},
+		},
+	}
 	utils.CheckCertificateStateIndexes(t, setup, leafCertificate, indexes)
 }
 

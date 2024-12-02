@@ -38,24 +38,28 @@ func TestHandler_AssignVid_certificateWithoutSubjectVid(t *testing.T) {
 
 	// DA certificates indexes checks
 	// Check indexes
-	indexes := []utils.TestIndex{
-		{Key: types.ProposedCertificateKeyPrefix, Exist: false},
-		{Key: types.UniqueCertificateKeyPrefix, Exist: true},
-		{Key: types.AllCertificatesKeyPrefix, Exist: true},
-		{Key: types.AllCertificatesBySubjectKeyPrefix, Exist: true},
-		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
-		{Key: types.ApprovedCertificatesKeyPrefix, Exist: true},
-		{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Exist: true},
-		{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
-		{Key: types.ApprovedRootCertificatesKeyPrefix, Exist: true},
+	indexes := utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.UniqueCertificateKeyPrefix},
+			{Key: types.AllCertificatesKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ApprovedCertificatesKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ApprovedRootCertificatesKeyPrefix},
+		},
+		Missing: []utils.TestIndex{
+			{Key: types.ProposedCertificateKeyPrefix},
+		},
 	}
 	resolvedCertificates := utils.CheckCertificateStateIndexes(t, setup, rootCertificate, indexes)
 
 	// Check VID is assigned
 	require.Equal(t, testconstants.Vid, resolvedCertificates.ApprovedCertificates.Certs[0].Vid)
-	require.Equal(t, testconstants.Vid, resolvedCertificates.ApprovedCertificatesBySubjectKeyId[0].Certs[0].Vid)
+	require.Equal(t, testconstants.Vid, resolvedCertificates.ApprovedCertificatesBySubjectKeyID[0].Certs[0].Vid)
 	require.Equal(t, testconstants.Vid, resolvedCertificates.AllCertificates.Certs[0].Vid)
-	require.Equal(t, testconstants.Vid, resolvedCertificates.AllCertificatesBySubjectKeyId[0].Certs[0].Vid)
+	require.Equal(t, testconstants.Vid, resolvedCertificates.AllCertificatesBySubjectKeyID[0].Certs[0].Vid)
 }
 
 func TestHandler_AssignVid_certificateWithSubjectVid(t *testing.T) {

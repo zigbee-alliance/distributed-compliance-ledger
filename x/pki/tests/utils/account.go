@@ -51,7 +51,7 @@ func (setup *TestSetup) AddAccount(
 ) {
 	dclauthKeeper := setup.DclauthKeeper
 	currentTrusteeCount := 0
-	// if the CountAccountsWithRole is present get the value from the mock call
+	// if the CountAccountsWithRole is Present get the value from the mock call
 	for _, expectedCall := range dclauthKeeper.ExpectedCalls {
 		if expectedCall.Method == "CountAccountsWithRole" {
 			currentTrusteeCount = dclauthKeeper.CountAccountsWithRole(setup.Ctx, dclauthtypes.Trustee)

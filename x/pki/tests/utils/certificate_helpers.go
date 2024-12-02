@@ -37,3 +37,12 @@ func AddMokedDaCertificate(
 	setup.Keeper.SetUniqueCertificate(setup.Ctx, UniqueCertificate(certificate.Issuer, certificate.SerialNumber))
 	setup.Keeper.StoreDaCertificate(setup.Ctx, certificate, isRoot)
 }
+
+func AddMokedNocCertificate(
+	setup *TestSetup,
+	certificate types.Certificate,
+	isRoot bool,
+) {
+	setup.Keeper.SetUniqueCertificate(setup.Ctx, UniqueCertificate(certificate.Issuer, certificate.SerialNumber))
+	setup.Keeper.StoreNocCertificate(setup.Ctx, certificate, isRoot)
+}

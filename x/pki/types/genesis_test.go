@@ -218,7 +218,7 @@ AllCertificatesBySubjectList: []types.AllCertificatesBySubject{
 		Subject: "1",
 },
 },
-AllCertificatesBySubjectKeyIdList: []types.AllCertificatesBySubjectKeyId{
+AllCertificatesBySubjectKeyIdList: []types.AllCertificatesBySubjectKeyID{
 	{
 		SubjectKeyId: "0",
 },
@@ -226,7 +226,7 @@ AllCertificatesBySubjectKeyIdList: []types.AllCertificatesBySubjectKeyId{
 		SubjectKeyId: "1",
 },
 },
-AllCertificatesBySubjectKeyIdList: []types.AllCertificatesBySubjectKeyId{
+AllCertificatesBySubjectKeyIdList: []types.AllCertificatesBySubjectKeyID{
 	{
 		SubjectKeyId: "0",
 },
@@ -551,7 +551,7 @@ SubjectKeyID: "0",
 {
 	desc:     "duplicated allCertificatesBySubjectKeyId",
 	genState: &types.GenesisState{
-		AllCertificatesBySubjectKeyIdList: []types.AllCertificatesBySubjectKeyId{
+		AllCertificatesBySubjectKeyIdList: []types.AllCertificatesBySubjectKeyID{
 			{
 				SubjectKeyId: "0",
 },
@@ -565,7 +565,7 @@ SubjectKeyID: "0",
 {
 	desc:     "duplicated allCertificatesBySubjectKeyId",
 	genState: &types.GenesisState{
-		AllCertificatesBySubjectKeyIdList: []types.AllCertificatesBySubjectKeyId{
+		AllCertificatesBySubjectKeyIdList: []types.AllCertificatesBySubjectKeyID{
 			{
 				SubjectKeyId: "0",
 },

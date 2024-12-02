@@ -45,17 +45,20 @@ func TestHandler_RemoveDaIntermediateCert_BySubjectAndSKID(t *testing.T) {
 	require.Equal(t, 1, len(allCerts))
 
 	// Check indexes for intermediate certificate
-	indexes := []utils.TestIndex{
-		{Key: types.UniqueCertificateKeyPrefix, Exist: false},
-		{Key: types.AllCertificatesKeyPrefix, Exist: false},
-		{Key: types.AllCertificatesBySubjectKeyPrefix, Exist: false},
-		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: false},
-		{Key: types.ApprovedCertificatesKeyPrefix, Exist: false},
-		{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Exist: false},
-		{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix, Exist: false},
-		{Key: types.ApprovedRootCertificatesKeyPrefix, Exist: false},
-		{Key: types.ChildCertificatesKeyPrefix, Exist: false},
-		{Key: types.ProposedCertificateKeyPrefix, Exist: false},
+	indexes := utils.TestIndexes{
+		Present: []utils.TestIndex{},
+		Missing: []utils.TestIndex{
+			{Key: types.UniqueCertificateKeyPrefix},
+			{Key: types.AllCertificatesKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ApprovedCertificatesKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ApprovedRootCertificatesKeyPrefix},
+			{Key: types.ChildCertificatesKeyPrefix},
+			{Key: types.ProposedCertificateKeyPrefix},
+		},
 	}
 	utils.CheckCertificateStateIndexes(t, setup, testIntermediateCertificate, indexes)
 }
@@ -110,33 +113,41 @@ func TestHandler_RemoveX509Cert_BySubjectAndSKID_TwoCerts(t *testing.T) {
 	require.Equal(t, 2, len(allCerts[0].Certs)+len(allCerts[1].Certs))
 
 	// Check indexes for intermediate certificate
-	indexes := []utils.TestIndex{
-		{Key: types.UniqueCertificateKeyPrefix, Exist: false},
-		{Key: types.AllCertificatesKeyPrefix, Exist: false},
-		//{Key: types.AllCertificatesBySubjectKeyPrefix, Exist: true}, // leaf cert has same subject
-		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: false},
-		{Key: types.ApprovedCertificatesKeyPrefix, Exist: false},
-		//{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Exist: true}, // leaf cert has same subject
-		{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix, Exist: false},
-		{Key: types.ApprovedRootCertificatesKeyPrefix, Exist: false},
-		{Key: types.ChildCertificatesKeyPrefix, Exist: false},
-		{Key: types.ProposedCertificateKeyPrefix, Exist: false},
+	indexes := utils.TestIndexes{
+		Present: []utils.TestIndex{
+			// {Key: types.AllCertificatesBySubjectKeyPrefix}, // leaf cert has same subject
+			// {Key: types.ApprovedCertificatesBySubjectKeyPrefix}, // leaf cert has same subject
+		},
+		Missing: []utils.TestIndex{
+			{Key: types.UniqueCertificateKeyPrefix},
+			{Key: types.AllCertificatesKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ApprovedCertificatesKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ApprovedRootCertificatesKeyPrefix},
+			{Key: types.ChildCertificatesKeyPrefix},
+			{Key: types.ProposedCertificateKeyPrefix},
+		},
 	}
 	utils.CheckCertificateStateIndexes(t, setup, testIntermediateCertificate1, indexes)
 	utils.CheckCertificateStateIndexes(t, setup, testIntermediateCertificate2, indexes)
 
 	// check that leaf certificate exists
-	indexes = []utils.TestIndex{
-		{Key: types.UniqueCertificateKeyPrefix, Exist: true},
-		{Key: types.AllCertificatesKeyPrefix, Exist: true},
-		{Key: types.AllCertificatesBySubjectKeyPrefix, Exist: true},
-		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
-		{Key: types.ApprovedCertificatesKeyPrefix, Exist: true},
-		{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Exist: true},
-		{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
-		{Key: types.ApprovedRootCertificatesKeyPrefix, Exist: false},
-		{Key: types.ChildCertificatesKeyPrefix, Exist: true},
-		{Key: types.ProposedCertificateKeyPrefix, Exist: false},
+	indexes = utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.UniqueCertificateKeyPrefix},
+			{Key: types.AllCertificatesKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ApprovedCertificatesKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ChildCertificatesKeyPrefix},
+		},
+		Missing: []utils.TestIndex{
+			{Key: types.ApprovedRootCertificatesKeyPrefix},
+			{Key: types.ProposedCertificateKeyPrefix},
+		},
 	}
 	utils.CheckCertificateStateIndexes(t, setup, testLeafCertificate, indexes)
 }
@@ -185,39 +196,49 @@ func TestHandler_RemoveX509Cert_BySerialNumber_TwoCerts(t *testing.T) {
 	require.Equal(t, 3, len(allCerts[0].Certs)+len(allCerts[1].Certs)+len(allCerts[2].Certs))
 
 	// Check indexes for intermediate certificate 1
-	indexes := []utils.TestIndex{
-		{Key: types.UniqueCertificateKeyPrefix, Exist: false},
-		{Key: types.AllCertificatesKeyPrefix, Exist: true},
-		{Key: types.AllCertificatesBySubjectKeyPrefix, Exist: true, Count: 2}, // inter + leaf
-		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
-		{Key: types.ApprovedCertificatesKeyPrefix, Exist: true},
-		{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Exist: true, Count: 2}, // inter + leaf
-		{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
-		{Key: types.ChildCertificatesKeyPrefix, Exist: true},
+	indexes := utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.AllCertificatesKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyPrefix, Count: 2}, // inter + leaf
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ApprovedCertificatesKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Count: 2}, // inter + leaf
+			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ChildCertificatesKeyPrefix},
+		},
+		Missing: []utils.TestIndex{
+			{Key: types.UniqueCertificateKeyPrefix},
+		},
 	}
 	utils.CheckCertificateStateIndexes(t, setup, testIntermediateCertificate1, indexes)
 
 	// Check indexes for intermediate certificate 2 (all the same but also UniqueCertificate exists)
-	indexes = []utils.TestIndex{
-		{Key: types.UniqueCertificateKeyPrefix, Exist: true},
-		{Key: types.AllCertificatesKeyPrefix, Exist: true},
-		{Key: types.AllCertificatesBySubjectKeyPrefix, Exist: true, Count: 2}, // inter + leaf
-		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
-		{Key: types.ApprovedCertificatesKeyPrefix, Exist: true},
-		{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Exist: true, Count: 2}, // inter + leaf
-		{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
-		{Key: types.ChildCertificatesKeyPrefix, Exist: true},
+	indexes = utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.UniqueCertificateKeyPrefix},
+			{Key: types.AllCertificatesKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyPrefix, Count: 2}, // inter + leaf
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ApprovedCertificatesKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Count: 2}, // inter + leaf
+			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ChildCertificatesKeyPrefix},
+		},
+		Missing: []utils.TestIndex{},
 	}
 	utils.CheckCertificateStateIndexes(t, setup, testIntermediateCertificate2, indexes)
 
 	// check that leaf certificate exists (same as for intermediate 2, skip check by subject)
-	indexes = []utils.TestIndex{
-		{Key: types.UniqueCertificateKeyPrefix, Exist: true},
-		{Key: types.AllCertificatesKeyPrefix, Exist: true},
-		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
-		{Key: types.ApprovedCertificatesKeyPrefix, Exist: true},
-		{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
-		{Key: types.ChildCertificatesKeyPrefix, Exist: true},
+	indexes = utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.UniqueCertificateKeyPrefix},
+			{Key: types.AllCertificatesKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ApprovedCertificatesKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ChildCertificatesKeyPrefix},
+		},
+		Missing: []utils.TestIndex{},
 	}
 	utils.CheckCertificateStateIndexes(t, setup, testLeafCertificate, indexes)
 
@@ -236,29 +257,36 @@ func TestHandler_RemoveX509Cert_BySerialNumber_TwoCerts(t *testing.T) {
 	require.Equal(t, 2, len(allCerts[0].Certs)+len(allCerts[1].Certs))
 
 	// Check indexes for intermediate certificates
-	indexes = []utils.TestIndex{
-		{Key: types.UniqueCertificateKeyPrefix, Exist: false},
-		{Key: types.AllCertificatesKeyPrefix, Exist: false},
-		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: false},
-		{Key: types.ApprovedCertificatesKeyPrefix, Exist: false},
-		{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix, Exist: false},
-		{Key: types.ChildCertificatesKeyPrefix, Exist: false},
-		{Key: types.ProposedCertificateKeyPrefix, Exist: false},
+	indexes = utils.TestIndexes{
+		Present: []utils.TestIndex{},
+		Missing: []utils.TestIndex{
+			{Key: types.UniqueCertificateKeyPrefix},
+			{Key: types.AllCertificatesKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ApprovedCertificatesKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ChildCertificatesKeyPrefix},
+			{Key: types.ProposedCertificateKeyPrefix},
+		},
 	}
 	utils.CheckCertificateStateIndexes(t, setup, testIntermediateCertificate1, indexes)
 	utils.CheckCertificateStateIndexes(t, setup, testIntermediateCertificate2, indexes)
 
 	// check that leaf certificate exists
-	indexes = []utils.TestIndex{
-		{Key: types.UniqueCertificateKeyPrefix, Exist: true},
-		{Key: types.AllCertificatesKeyPrefix, Exist: true},
-		{Key: types.AllCertificatesBySubjectKeyPrefix, Exist: true},
-		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
-		{Key: types.ApprovedCertificatesKeyPrefix, Exist: true},
-		{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Exist: true},
-		{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
-		{Key: types.ChildCertificatesKeyPrefix, Exist: true},
-		{Key: types.ProposedCertificateKeyPrefix, Exist: false},
+	indexes = utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.UniqueCertificateKeyPrefix},
+			{Key: types.AllCertificatesKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ApprovedCertificatesKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ChildCertificatesKeyPrefix},
+		},
+		Missing: []utils.TestIndex{
+			{Key: types.ProposedCertificateKeyPrefix},
+		},
 	}
 	utils.CheckCertificateStateIndexes(t, setup, testLeafCertificate, indexes)
 }
@@ -295,17 +323,21 @@ func TestHandler_RemoveX509Cert_RevokedCertificate(t *testing.T) {
 	_, err := setup.Handler(setup.Ctx, revokeX509Cert)
 	require.NoError(t, err)
 
-	indexes := []utils.TestIndex{
-		{Key: types.UniqueCertificateKeyPrefix, Exist: true},
-		{Key: types.RevokedCertificatesKeyPrefix, Exist: true},
-		{Key: types.AllCertificatesKeyPrefix, Exist: false},
-		{Key: types.AllCertificatesBySubjectKeyPrefix, Exist: false},
-		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: false},
-		{Key: types.ApprovedCertificatesKeyPrefix, Exist: false},
-		{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Exist: false},
-		{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix, Exist: false},
-		{Key: types.ChildCertificatesKeyPrefix, Exist: false},
-		{Key: types.ProposedCertificateKeyPrefix, Exist: false},
+	indexes := utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.UniqueCertificateKeyPrefix},
+			{Key: types.RevokedCertificatesKeyPrefix},
+		},
+		Missing: []utils.TestIndex{
+			{Key: types.AllCertificatesKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ApprovedCertificatesKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ChildCertificatesKeyPrefix},
+			{Key: types.ProposedCertificateKeyPrefix},
+		},
 	}
 	utils.CheckCertificateStateIndexes(t, setup, testIntermediateCertificate, indexes)
 
@@ -319,17 +351,20 @@ func TestHandler_RemoveX509Cert_RevokedCertificate(t *testing.T) {
 	_, err = setup.Handler(setup.Ctx, removeX509Cert)
 	require.NoError(t, err)
 
-	indexes = []utils.TestIndex{
-		{Key: types.UniqueCertificateKeyPrefix, Exist: false},
-		{Key: types.AllCertificatesKeyPrefix, Exist: false},
-		{Key: types.AllCertificatesBySubjectKeyPrefix, Exist: false},
-		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: false},
-		{Key: types.ApprovedCertificatesKeyPrefix, Exist: false},
-		{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Exist: false},
-		{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix, Exist: false},
-		{Key: types.ChildCertificatesKeyPrefix, Exist: false},
-		{Key: types.ProposedCertificateKeyPrefix, Exist: false},
-		{Key: types.RevokedCertificatesKeyPrefix, Exist: false},
+	indexes = utils.TestIndexes{
+		Present: []utils.TestIndex{},
+		Missing: []utils.TestIndex{
+			{Key: types.UniqueCertificateKeyPrefix},
+			{Key: types.AllCertificatesKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ApprovedCertificatesKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ChildCertificatesKeyPrefix},
+			{Key: types.ProposedCertificateKeyPrefix},
+			{Key: types.RevokedCertificatesKeyPrefix},
+		},
 	}
 	utils.CheckCertificateStateIndexes(t, setup, testIntermediateCertificate, indexes)
 }

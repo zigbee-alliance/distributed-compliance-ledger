@@ -86,8 +86,26 @@ func IntermediateCertificateNoVid(address sdk.AccAddress) types.Certificate {
 	)
 }
 
+func NocIntermediateCertificate(address sdk.AccAddress) types.Certificate {
+	return types.NewNocCertificate(
+		testconstants.NocCert1,
+		testconstants.NocCert1Subject,
+		testconstants.NocCert1SubjectAsText,
+		testconstants.NocCert1SubjectKeyID,
+		testconstants.NocCert1SerialNumber,
+		testconstants.NocRootCert1Subject,
+		testconstants.NocRootCert1SubjectKeyID,
+		testconstants.NocRootCert1Subject,
+		testconstants.NocRootCert1SubjectKeyID,
+		address.String(),
+		testconstants.Vid,
+		testconstants.SchemaVersion,
+	)
+}
+
 func CreateTestRootCert() TestCertificate {
 	return TestCertificate{
+		PEM:            testconstants.RootCertPem,
 		Subject:        testconstants.RootSubject,
 		SubjectKeyID:   testconstants.RootSubjectKeyID,
 		SerialNumber:   testconstants.RootSerialNumber,
@@ -99,6 +117,7 @@ func CreateTestRootCert() TestCertificate {
 
 func CreateTestRootCertWithSameSubject() TestCertificate {
 	return TestCertificate{
+		PEM:          testconstants.PAACertWithSameSubjectID1,
 		Subject:      testconstants.PAACertWithSameSubjectID1Subject,
 		SubjectKeyID: testconstants.PAACertWithSameSubjectIDSubjectID,
 		SerialNumber: testconstants.PAACertWithSameSubjectSerialNumber,
@@ -109,6 +128,7 @@ func CreateTestRootCertWithSameSubject() TestCertificate {
 
 func CreateTestRootCertWithSameSubject2() TestCertificate {
 	return TestCertificate{
+		PEM:          testconstants.PAACertWithSameSubjectID2,
 		Subject:      testconstants.PAACertWithSameSubjectID2Subject,
 		SubjectKeyID: testconstants.PAACertWithSameSubjectIDSubjectID,
 		SerialNumber: testconstants.PAACertWithSameSubject2SerialNumber,
@@ -119,6 +139,7 @@ func CreateTestRootCertWithSameSubject2() TestCertificate {
 
 func CreateTestRootCertWithSameSubjectAndSkid1() TestCertificate {
 	return TestCertificate{
+		PEM:            testconstants.RootCertWithSameSubjectAndSKID1,
 		Subject:        testconstants.RootCertWithSameSubjectAndSKIDSubject,
 		SubjectKeyID:   testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID,
 		SerialNumber:   testconstants.RootCertWithSameSubjectAndSKID1SerialNumber,
@@ -130,6 +151,7 @@ func CreateTestRootCertWithSameSubjectAndSkid1() TestCertificate {
 
 func CreateTestRootCertWithSameSubjectAndSkid2() TestCertificate {
 	return TestCertificate{
+		PEM:            testconstants.RootCertWithSameSubjectAndSKID2,
 		Subject:        testconstants.RootCertWithSameSubjectAndSKIDSubject,
 		SubjectKeyID:   testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID,
 		SerialNumber:   testconstants.RootCertWithSameSubjectAndSKID2SerialNumber,
@@ -141,6 +163,7 @@ func CreateTestRootCertWithSameSubjectAndSkid2() TestCertificate {
 
 func CreateTestIntermediateCert() TestCertificate {
 	return TestCertificate{
+		PEM:            testconstants.IntermediateCertPem,
 		Subject:        testconstants.IntermediateSubject,
 		SubjectKeyID:   testconstants.IntermediateSubjectKeyID,
 		SerialNumber:   testconstants.IntermediateSerialNumber,
@@ -152,6 +175,7 @@ func CreateTestIntermediateCert() TestCertificate {
 
 func CreateTestIntermediateVidScopedCert() TestCertificate {
 	return TestCertificate{
+		PEM:            testconstants.PAICertWithNumericPidVid,
 		Subject:        testconstants.PAICertWithNumericPidVidSubject,
 		SubjectKeyID:   testconstants.PAICertWithNumericPidVidSubjectKeyID,
 		SerialNumber:   testconstants.PAICertWithNumericPidVidSerialNumber,
@@ -163,6 +187,7 @@ func CreateTestIntermediateVidScopedCert() TestCertificate {
 
 func CreateTestIntermediateCertWithSameSubjectAndSKID1() TestCertificate {
 	return TestCertificate{
+		PEM:            testconstants.IntermediateWithSameSubjectAndSKID1,
 		Subject:        testconstants.IntermediateCertWithSameSubjectAndSKIDSubject,
 		SubjectKeyID:   testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID,
 		SerialNumber:   testconstants.IntermediateCertWithSameSubjectAndSKID1SerialNumber,
@@ -174,6 +199,7 @@ func CreateTestIntermediateCertWithSameSubjectAndSKID1() TestCertificate {
 
 func CreateTestIntermediateCertWithSameSubjectAndSKID2() TestCertificate {
 	return TestCertificate{
+		PEM:            testconstants.IntermediateWithSameSubjectAndSKID2,
 		Subject:        testconstants.IntermediateCertWithSameSubjectAndSKIDSubject,
 		SubjectKeyID:   testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID,
 		SerialNumber:   testconstants.IntermediateCertWithSameSubjectAndSKID2SerialNumber,
@@ -185,6 +211,7 @@ func CreateTestIntermediateCertWithSameSubjectAndSKID2() TestCertificate {
 
 func CreateTestLeafCertWithSameSubjectAndSKID() TestCertificate {
 	return TestCertificate{
+		PEM:            testconstants.LeafCertWithSameSubjectAndSKID,
 		Subject:        testconstants.LeafCertWithSameSubjectAndSKIDSubject,
 		SubjectKeyID:   testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID,
 		SerialNumber:   testconstants.LeafCertWithSameSubjectAndSKIDSerialNumber,
@@ -196,6 +223,7 @@ func CreateTestLeafCertWithSameSubjectAndSKID() TestCertificate {
 
 func CreateTestLeafCert() TestCertificate {
 	return TestCertificate{
+		PEM:            testconstants.LeafCertPem,
 		Subject:        testconstants.LeafSubject,
 		SubjectKeyID:   testconstants.LeafSubjectKeyID,
 		SerialNumber:   testconstants.LeafSerialNumber,
@@ -207,6 +235,7 @@ func CreateTestLeafCert() TestCertificate {
 
 func CreateTestNocRoot1Cert() TestCertificate {
 	return TestCertificate{
+		PEM:            testconstants.NocRootCert1,
 		Subject:        testconstants.NocRootCert1Subject,
 		SubjectKeyID:   testconstants.NocRootCert1SubjectKeyID,
 		SerialNumber:   testconstants.NocRootCert1SerialNumber,
@@ -219,6 +248,7 @@ func CreateTestNocRoot1Cert() TestCertificate {
 
 func CreateTestNocRoot2Cert() TestCertificate {
 	return TestCertificate{
+		PEM:            testconstants.NocRootCert1Copy,
 		Subject:        testconstants.NocRootCert1CopySubject,
 		SubjectKeyID:   testconstants.NocRootCert1CopySubjectKeyID,
 		SerialNumber:   testconstants.NocRootCert1CopySerialNumber,
@@ -231,6 +261,7 @@ func CreateTestNocRoot2Cert() TestCertificate {
 
 func CreateTestNocIca1Cert() TestCertificate {
 	return TestCertificate{
+		PEM:            testconstants.NocCert1,
 		Subject:        testconstants.NocCert1Subject,
 		SubjectKeyID:   testconstants.NocCert1SubjectKeyID,
 		SerialNumber:   testconstants.NocCert1SerialNumber,
@@ -243,6 +274,7 @@ func CreateTestNocIca1Cert() TestCertificate {
 
 func CreateTestNocIca1CertCopy() TestCertificate {
 	return TestCertificate{
+		PEM:            testconstants.NocCert1Copy,
 		Subject:        testconstants.NocCert1CopySubject,
 		SubjectKeyID:   testconstants.NocCert1CopySubjectKeyID,
 		SerialNumber:   testconstants.NocCert1CopySerialNumber,
@@ -255,6 +287,7 @@ func CreateTestNocIca1CertCopy() TestCertificate {
 
 func CreateTestNocLeafCert() TestCertificate {
 	return TestCertificate{
+		PEM:            testconstants.NocLeafCert1,
 		Subject:        testconstants.NocLeafCert1Subject,
 		SubjectKeyID:   testconstants.NocLeafCert1SubjectKeyID,
 		SerialNumber:   testconstants.NocLeafCert1SerialNumber,

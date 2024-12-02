@@ -21,107 +21,88 @@ func TestHandler_AddNocIntermediateCert(t *testing.T) {
 	accAddress := setup.CreateVendorAccount(testconstants.Vid)
 
 	// add NOC root certificate
-	utils.AddNocRootCertificate(setup, accAddress, testconstants.NocRootCert1)
+	rootCertificate := utils.CreateTestNocRoot1Cert()
+	utils.AddNocRootCertificate(setup, accAddress, rootCertificate.PEM)
 
 	// add NOC ICA certificate
 	icaCertificate := utils.CreateTestNocIca1Cert()
-	utils.AddNocIntermediateCertificate(setup, accAddress, testconstants.NocCert1)
+	utils.AddNocIntermediateCertificate(setup, accAddress, icaCertificate.PEM)
 
 	// Check indexes
-	indexes := []utils.TestIndex{
-		{Key: types.AllCertificatesKeyPrefix, Exist: true},
-		{Key: types.AllCertificatesBySubjectKeyPrefix, Exist: true},
-		{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
-		{Key: types.NocCertificatesKeyPrefix, Exist: true},
-		{Key: types.NocCertificatesBySubjectKeyPrefix, Exist: true},
-		{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix, Exist: true},
-		{Key: types.NocCertificatesByVidAndSkidKeyPrefix, Exist: true},
-		{Key: types.NocRootCertificatesKeyPrefix, Exist: true, Count: 1}, // we create root certificate as well but ica should not get there
-		{Key: types.NocIcaCertificatesKeyPrefix, Exist: true},
-		{Key: types.UniqueCertificateKeyPrefix, Exist: true},
-		{Key: types.ChildCertificatesKeyPrefix, Exist: true},
-		{Key: types.ProposedCertificateKeyPrefix, Exist: false},
-		{Key: types.ApprovedCertificatesKeyPrefix, Exist: false},
-		{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Exist: false},
-		{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix, Exist: false},
-		{Key: types.ApprovedRootCertificatesKeyPrefix, Exist: false},
+	indexes := utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.AllCertificatesKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
+			{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // we create root certificate as well but ica should not be there
+			{Key: types.NocIcaCertificatesKeyPrefix},
+			{Key: types.UniqueCertificateKeyPrefix},
+			{Key: types.ChildCertificatesKeyPrefix},
+		},
+		Missing: []utils.TestIndex{
+			{Key: types.ProposedCertificateKeyPrefix},
+			{Key: types.ApprovedCertificatesKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ApprovedRootCertificatesKeyPrefix},
+		},
 	}
 	utils.CheckCertificateStateIndexes(t, setup, icaCertificate, indexes)
 }
 
 // Extra cases
 
-func TestHandler_AddNocX509Cert_Renew(t *testing.T) {
+func TestHandler_AddNocIntermediateCert_SameSubjectAndSkid_DifferentSerialNumber(t *testing.T) {
 	setup := utils.Setup(t)
 
-	accAddress := utils.GenerateAccAddress()
-	vid := testconstants.Vid
-	setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
+	accAddress := setup.CreateVendorAccount(testconstants.Vid)
 
 	// add NOC root certificate
-	utils.AddNocRootCertificate(setup, accAddress, testconstants.NocRootCert1)
+	rootCertificate := utils.CreateTestNocRoot1Cert()
+	utils.AddNocRootCertificate(setup, accAddress, rootCertificate.PEM)
 
 	// Store the NOC certificate
-	newNocCertificate := types.NewNocCertificate(
-		testconstants.NocCert1,
-		testconstants.NocCert1Subject,
-		testconstants.NocCert1SubjectAsText,
-		testconstants.NocCert1SubjectKeyID,
-		testconstants.NocCert1SerialNumber,
-		testconstants.NocRootCert1Subject,
-		testconstants.NocRootCert1SubjectKeyID,
-		testconstants.NocRootCert1Subject,
-		testconstants.NocRootCert1SubjectKeyID,
-		accAddress.String(),
-		vid,
-		testconstants.SchemaVersion,
-	)
-	newNocCertificate.SerialNumber = testconstants.TestSerialNumber
-
-	setup.Keeper.AddAllCertificate(setup.Ctx, newNocCertificate)
-	setup.Keeper.AddNocCertificate(setup.Ctx, newNocCertificate)
-	setup.Keeper.AddNocCertificateBySubjectKeyID(setup.Ctx, newNocCertificate)
-	setup.Keeper.AddNocCertificateBySubject(setup.Ctx, newNocCertificate)
-	setup.Keeper.AddNocIcaCertificate(setup.Ctx, newNocCertificate)
-	uniqueCertificate := types.UniqueCertificate{
-		Issuer:       newNocCertificate.Issuer,
-		SerialNumber: newNocCertificate.SerialNumber,
-		Present:      true,
-	}
-	setup.Keeper.SetUniqueCertificate(setup.Ctx, uniqueCertificate)
+	icaCertificate := utils.CreateTestNocIca1Cert()
+	intermediateCertificate := utils.NocIntermediateCertificate(accAddress)
+	intermediateCertificate.SerialNumber = testconstants.TestSerialNumber
+	utils.AddMokedNocCertificate(setup, intermediateCertificate, false)
 
 	// add the new NOC certificate
-	addNocX509Cert := types.NewMsgAddNocX509IcaCert(accAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion)
+	addNocX509Cert := types.NewMsgAddNocX509IcaCert(
+		accAddress.String(),
+		icaCertificate.PEM,
+		testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addNocX509Cert)
 	require.NoError(t, err)
 
 	// query noc certificate by Subject and SKID
-	nocCertificates, err := utils.QueryNocCertificates(setup, newNocCertificate.Subject, newNocCertificate.SubjectKeyId)
-	require.NoError(t, err)
-	require.Equal(t, len(nocCertificates.Certs), 2)
-	require.Equal(t, &newNocCertificate, nocCertificates.Certs[0])
-
-	// query noc certificate by Subject
-	nocCertificatesBySubject, err := utils.QueryNocCertificatesBySubject(setup, newNocCertificate.Subject)
-	require.NoError(t, err)
-	require.Equal(t, 1, len(nocCertificatesBySubject.SubjectKeyIds))
-
-	// query noc certificate by SKID
-	nocCertificatesBySubjectKeyID, err := utils.QueryNocCertificatesBySubjectKeyID(setup, newNocCertificate.SubjectKeyId)
-	require.NoError(t, err)
-	require.Equal(t, 1, len(nocCertificatesBySubjectKeyID))
-	require.Equal(t, 2, len(nocCertificatesBySubjectKeyID[0].Certs))
-	require.Equal(t, testconstants.NocCert1Subject, nocCertificatesBySubjectKeyID[0].Certs[0].Subject)
-	require.Equal(t, testconstants.NocCert1SubjectKeyID, nocCertificatesBySubjectKeyID[0].Certs[0].SubjectKeyId)
-	require.Equal(t, vid, nocCertificatesBySubjectKeyID[0].Certs[0].Vid)
-
-	// query noc certificate by VID
-	nocCertificatesByVid, err := utils.QueryNocIcaCertificatesByVid(setup, testconstants.Vid)
-	require.NoError(t, err)
-	require.Equal(t, len(nocCertificatesByVid.Certs), 2)
-	require.Equal(t, testconstants.NocCert1Subject, nocCertificatesByVid.Certs[0].Subject)
-	require.Equal(t, testconstants.NocCert1SubjectKeyID, nocCertificatesByVid.Certs[0].SubjectKeyId)
-	require.Equal(t, vid, nocCertificatesByVid.Certs[0].Vid)
+	indexes := utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.AllCertificatesKeyPrefix, Count: 2},
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Count: 2},
+			{Key: types.NocCertificatesKeyPrefix, Count: 2},
+			{Key: types.NocCertificatesBySubjectKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix, Count: 2},
+			{Key: types.NocCertificatesByVidAndSkidKeyPrefix, Count: 2},
+			{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // we create root certificate as well but ica should not be there
+			{Key: types.NocIcaCertificatesKeyPrefix, Count: 2},
+			{Key: types.UniqueCertificateKeyPrefix},
+			{Key: types.ChildCertificatesKeyPrefix},
+		},
+		Missing: []utils.TestIndex{
+			{Key: types.ProposedCertificateKeyPrefix},
+			{Key: types.ApprovedCertificatesKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ApprovedRootCertificatesKeyPrefix},
+		},
+	}
+	utils.CheckCertificateStateIndexes(t, setup, icaCertificate, indexes)
 }
 
 // Error cases

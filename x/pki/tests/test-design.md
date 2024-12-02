@@ -191,6 +191,8 @@ Test cases:
 
 * Positive:
     * Add Noc root certificate: `TestHandler_AddNocRootCert`
+    * Add two Noc root certificates with same subject/skid but different serial number:
+      `TestHandler_AddNocRootCert_SameSubjectAndSkid_DifferentSerialNumber`
 * Negative:
     * TBD
 
@@ -210,6 +212,8 @@ Test cases:
 
 * Positive:
     * Add Noc intermediate certificate: `TestHandler_AddNocIntermediateCert`
+    * Add two Noc intermediate certificates with same subject/skid but different serial number:
+      `TestHandler_AddNocIntermediateCert_SameSubjectAndSkid_DifferentSerialNumber`
 * Negative:
     * TBD
 
