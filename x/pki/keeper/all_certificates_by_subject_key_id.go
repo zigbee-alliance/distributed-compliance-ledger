@@ -8,7 +8,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-// SetAllCertificatesBySubjectKeyID set a specific AllCertificatesBySubjectKeyId in the store from its index.
+// SetAllCertificatesBySubjectKeyID set a specific AllCertificatesBySubjectKeyID in the store from its index.
 func (k Keeper) SetAllCertificatesBySubjectKeyID(ctx sdk.Context, allCertificatesBySubjectKeyID types.AllCertificatesBySubjectKeyId) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.AllCertificatesBySubjectKeyIDKeyPrefix))
 	b := k.cdc.MustMarshal(&allCertificatesBySubjectKeyID)
@@ -49,7 +49,7 @@ func (k Keeper) addAllCertificatesBySubjectKeyID(ctx sdk.Context, subjectKeyID s
 	k.SetAllCertificatesBySubjectKeyID(ctx, AllCertificates)
 }
 
-// GetAllCertificatesBySubjectKeyID returns a AllCertificatesBySubjectKeyId from its index.
+// GetAllCertificatesBySubjectKeyID returns a AllCertificatesBySubjectKeyID from its index.
 func (k Keeper) GetAllCertificatesBySubjectKeyID(
 	ctx sdk.Context,
 	subjectKeyID string,
@@ -69,7 +69,7 @@ func (k Keeper) GetAllCertificatesBySubjectKeyID(
 	return val, true
 }
 
-// RemoveAllCertificatesBySubjectKeyID removes a AllCertificatesBySubjectKeyId from the store.
+// RemoveAllCertificatesBySubjectKeyID removes a AllCertificatesBySubjectKeyID from the store.
 func (k Keeper) RemoveAllCertificatesBySubjectKeyID(
 	ctx sdk.Context,
 	subject string,
@@ -104,7 +104,7 @@ func (k Keeper) RemoveAllCertificatesBySubjectKeyIDBySerialNumber(ctx sdk.Contex
 	})
 }
 
-// GetAllAllCertificatesBySubjectKeyID returns all AllCertificatesBySubjectKeyId.
+// GetAllAllCertificatesBySubjectKeyID returns all AllCertificatesBySubjectKeyID.
 func (k Keeper) GetAllAllCertificatesBySubjectKeyID(ctx sdk.Context) (list []types.AllCertificatesBySubjectKeyId) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.AllCertificatesBySubjectKeyIDKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})

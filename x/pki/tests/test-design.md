@@ -36,9 +36,11 @@ Indexes:
 Test cases:
 
 * Positive:
-    * Propose add approve adding of DA root certificate: `TestHandler_AddDaRootCert`,
+    * Add DA root certificate: `TestHandler_AddDaRootCert`,
       `TestHandler_AddDaRootCert_TwoThirdApprovalsNeeded`,
       `TestHandler_AddDaRootCert_FourApprovalsAreNeeded_FiveTrustees`
+    * Add two DA root certificates with same SKID but different subject:
+      `TestHandler_AddDaRootCerts_SameSubjectKeyIdButDifferentSubject`
 * Negative:
     * TBD
 
@@ -76,7 +78,14 @@ Indexes to check:
 Test cases:
 
 * Positive:
-    * Add DA intermediate certificate: `TestHandler_AddDaIntermediateCert`
+    * Add DA intermediate certificate: `TestHandler_AddDaIntermediateCert`,
+      `TestHandler_AddDaIntermediateCert_VidScoped`
+    * Add two DA intermediate certificates with same Subject/SKID but different Serial Number:
+      `TestHandler_AddDaIntermediateCert_SameSubjectAndSkid_DifferentSerialNumber`
+    * Add tree of DA certificates (root, intermediate, leaf):
+      `TestHandler_AddDaCert_ForTree`
+    * Add intermediate DA certificate but other Vendor with the same VID:
+      `TestHandler_AddDaIntermediateCert_ByNotOwnerButSameVendor`
 * Negative:
     * TBD
 
@@ -93,6 +102,7 @@ Indexes to check:
     * `DA Certificates`: Subject+SKID (approved), Subject+SKID (root), SKID, Subject
 * Missing:
     * `RevokedCertificates`
+    * `RevokedRootCertificates`
 
 Test cases:
 
@@ -108,6 +118,7 @@ Indexes:
 
 * Present:
     * `RevokedCertificates`
+    * `RevokedRootCertificates`
     * `UniqueCertificate`
 * Missing:
     * `ProposedCertificateRevocation`
@@ -117,7 +128,10 @@ Indexes:
 Test cases:
 
 * Positive:
-    * Propose and approve revocation of DA root certificate: `TestHandler_RevokeDaRootCert_TwoThirdApprovalsNeeded`
+    * Propose and approve revocation of DA root certificate by Subject/SKID: `TestHandler_RevokeDaRootCert`,
+      `TestHandler_RevokeDaRootCert_TwoThirdApprovalsNeeded`
+    * Revoke DA root certificate by Subject/SKID when two certs with the same SKID exist:
+      `TestHandler_RevokeDaRootCert_BySubjectAndSkid_WhenTwoCertsWithSameSkidExist`
 * Negative:
     * TBD
 
@@ -177,6 +191,8 @@ Test cases:
 
 * Positive:
     * Add Noc root certificate: `TestHandler_AddNocRootCert`
+    * Add two Noc root certificates with same subject/skid but different serial number:
+      `TestHandler_AddNocRootCert_SameSubjectAndSkid_DifferentSerialNumber`
 * Negative:
     * TBD
 
@@ -196,6 +212,8 @@ Test cases:
 
 * Positive:
     * Add Noc intermediate certificate: `TestHandler_AddNocIntermediateCert`
+    * Add two Noc intermediate certificates with same subject/skid but different serial number:
+      `TestHandler_AddNocIntermediateCert_SameSubjectAndSkid_DifferentSerialNumber`
 * Negative:
     * TBD
 
