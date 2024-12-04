@@ -54,7 +54,7 @@ func CreatePAACertNoVidOptions(vid int32) *RootCertOptions {
 	}
 }
 
-func RootCertificate(address sdk.AccAddress) types.Certificate {
+func RootDaCertificate(address sdk.AccAddress) types.Certificate {
 	return types.NewRootCertificate(
 		testconstants.RootCertPem,
 		testconstants.RootSubject,
@@ -69,7 +69,7 @@ func RootCertificate(address sdk.AccAddress) types.Certificate {
 	)
 }
 
-func RootCertWithVid(address sdk.AccAddress) types.Certificate {
+func RootDaCertificateWithVid(address sdk.AccAddress) types.Certificate {
 	return types.NewRootCertificate(
 		testconstants.RootCertWithVid,
 		testconstants.RootCertWithVidSubject,
@@ -84,7 +84,7 @@ func RootCertWithVid(address sdk.AccAddress) types.Certificate {
 	)
 }
 
-func PAACertWithNumericVid(address sdk.AccAddress) types.Certificate {
+func RootDaCertificateWithNumericVid(address sdk.AccAddress) types.Certificate {
 	return types.NewRootCertificate(
 		testconstants.PAACertWithNumericVid,
 		testconstants.PAACertWithNumericVidSubject,
@@ -99,12 +99,12 @@ func PAACertWithNumericVid(address sdk.AccAddress) types.Certificate {
 	)
 }
 
-func PAACertWithSameSubjectID1(address sdk.AccAddress) types.Certificate {
+func RootDaCertWithSameSubjectKeyID1(address sdk.AccAddress) types.Certificate {
 	return types.NewRootCertificate(
 		testconstants.PAACertWithSameSubjectID1,
 		testconstants.PAACertWithSameSubjectID1Subject,
 		testconstants.PAACertWithSameSubjectID1SubjectAsText,
-		testconstants.PAACertWithSameSubjectIDSubjectID,
+		testconstants.PAACertWithSameSubjectIDSubjectKeyID,
 		testconstants.PAACertWithSameSubjectSerialNumber,
 		address.String(),
 		[]*types.Grant{},
@@ -114,12 +114,12 @@ func PAACertWithSameSubjectID1(address sdk.AccAddress) types.Certificate {
 	)
 }
 
-func PAACertWithSameSubjectID2(address sdk.AccAddress) types.Certificate {
+func RootDaCertificateWithSameSubjectKeyID2(address sdk.AccAddress) types.Certificate {
 	return types.NewRootCertificate(
 		testconstants.PAACertWithSameSubjectID2,
 		testconstants.PAACertWithSameSubjectID2Subject,
 		testconstants.PAACertWithSameSubjectID1SubjectAsText,
-		testconstants.PAACertWithSameSubjectIDSubjectID,
+		testconstants.PAACertWithSameSubjectIDSubjectKeyID,
 		testconstants.PAACertWithSameSubject2SerialNumber,
 		address.String(),
 		[]*types.Grant{},
@@ -129,7 +129,7 @@ func PAACertWithSameSubjectID2(address sdk.AccAddress) types.Certificate {
 	)
 }
 
-func RootCertWithSameSubjectAndSKID1(address sdk.AccAddress) types.Certificate {
+func RootDaCertificateWithSameSubjectAndSKID1(address sdk.AccAddress) types.Certificate {
 	return types.NewRootCertificate(
 		testconstants.RootCertWithSameSubjectAndSKID1,
 		testconstants.RootCertWithSameSubjectAndSKIDSubject,
@@ -144,7 +144,7 @@ func RootCertWithSameSubjectAndSKID1(address sdk.AccAddress) types.Certificate {
 	)
 }
 
-func RootCertWithSameSubjectAndSKID2(address sdk.AccAddress) types.Certificate {
+func RootDaCertificateWithSameSubjectAndSKID2(address sdk.AccAddress) types.Certificate {
 	return types.NewRootCertificate(
 		testconstants.RootCertWithSameSubjectAndSKID2,
 		testconstants.RootCertWithSameSubjectAndSKIDSubject,
@@ -159,7 +159,7 @@ func RootCertWithSameSubjectAndSKID2(address sdk.AccAddress) types.Certificate {
 	)
 }
 
-func IntermediateCertPem(address sdk.AccAddress) types.Certificate {
+func IntermediateDaCertificate(address sdk.AccAddress) types.Certificate {
 	return types.NewNonRootCertificate(
 		testconstants.IntermediateCertPem,
 		testconstants.IntermediateSubject,
@@ -176,7 +176,7 @@ func IntermediateCertPem(address sdk.AccAddress) types.Certificate {
 	)
 }
 
-func PAICertWithNumericPidVid(address sdk.AccAddress) types.Certificate {
+func IntermediateDaCertificateWithNumericPidVid(address sdk.AccAddress) types.Certificate {
 	return types.NewNonRootCertificate(
 		testconstants.PAICertWithNumericPidVid,
 		testconstants.PAICertWithNumericPidVidSubject,
@@ -193,7 +193,7 @@ func PAICertWithNumericPidVid(address sdk.AccAddress) types.Certificate {
 	)
 }
 
-func IntermediateWithSameSubjectAndSKID1(address sdk.AccAddress) types.Certificate {
+func IntermediateDaCertificateWithSameSubjectAndSKID1(address sdk.AccAddress) types.Certificate {
 	return types.NewNonRootCertificate(
 		testconstants.IntermediateWithSameSubjectAndSKID1,
 		testconstants.IntermediateCertWithSameSubjectAndSKIDSubject,
@@ -210,7 +210,7 @@ func IntermediateWithSameSubjectAndSKID1(address sdk.AccAddress) types.Certifica
 	)
 }
 
-func IntermediateWithSameSubjectAndSKID2(address sdk.AccAddress) types.Certificate {
+func IntermediateDaCertificateWithSameSubjectAndSKID2(address sdk.AccAddress) types.Certificate {
 	return types.NewNonRootCertificate(
 		testconstants.IntermediateWithSameSubjectAndSKID2,
 		testconstants.IntermediateCertWithSameSubjectAndSKIDSubject,
@@ -227,7 +227,7 @@ func IntermediateWithSameSubjectAndSKID2(address sdk.AccAddress) types.Certifica
 	)
 }
 
-func LeafCertWithSameSubjectAndSKID(address sdk.AccAddress) types.Certificate {
+func LeafDaCertificateWithSameSubjectAndSKID(address sdk.AccAddress) types.Certificate {
 	return types.NewNonRootCertificate(
 		testconstants.LeafCertWithSameSubjectAndSKID,
 		testconstants.LeafCertWithSameSubjectAndSKIDSubject,
@@ -244,7 +244,7 @@ func LeafCertWithSameSubjectAndSKID(address sdk.AccAddress) types.Certificate {
 	)
 }
 
-func LeafCertPem(address sdk.AccAddress) types.Certificate {
+func LeafCertificate(address sdk.AccAddress) types.Certificate {
 	return types.NewNonRootCertificate(
 		testconstants.LeafCertPem,
 		testconstants.LeafSubject,
@@ -261,7 +261,7 @@ func LeafCertPem(address sdk.AccAddress) types.Certificate {
 	)
 }
 
-func NocRootCert1(address sdk.AccAddress) types.Certificate {
+func RootNocCertificate1(address sdk.AccAddress) types.Certificate {
 	return types.NewNocRootCertificate(
 		testconstants.NocRootCert1,
 		testconstants.NocRootCert1Subject,
@@ -274,7 +274,7 @@ func NocRootCert1(address sdk.AccAddress) types.Certificate {
 	)
 }
 
-func NocRootCert1Copy(address sdk.AccAddress) types.Certificate {
+func RootNocCertificate1Copy(address sdk.AccAddress) types.Certificate {
 	return types.NewNocRootCertificate(
 		testconstants.NocRootCert1Copy,
 		testconstants.NocRootCert1CopySubject,
@@ -287,7 +287,7 @@ func NocRootCert1Copy(address sdk.AccAddress) types.Certificate {
 	)
 }
 
-func NocRootCert2(address sdk.AccAddress) types.Certificate {
+func RootNocCertificate2(address sdk.AccAddress) types.Certificate {
 	return types.NewNocRootCertificate(
 		testconstants.NocRootCert2,
 		testconstants.NocRootCert2Subject,
@@ -300,7 +300,7 @@ func NocRootCert2(address sdk.AccAddress) types.Certificate {
 	)
 }
 
-func NocCertIca1(address sdk.AccAddress) types.Certificate {
+func IntermediateNocCertificate1(address sdk.AccAddress) types.Certificate {
 	return types.NewNocCertificate(
 		testconstants.NocCert1,
 		testconstants.NocCert1Subject,
@@ -317,7 +317,7 @@ func NocCertIca1(address sdk.AccAddress) types.Certificate {
 	)
 }
 
-func NocCert1Copy(address sdk.AccAddress) types.Certificate {
+func IntermediateNocCertificate1Copy(address sdk.AccAddress) types.Certificate {
 	return types.NewNocCertificate(
 		testconstants.NocCert1Copy,
 		testconstants.NocCert1CopySubject,
@@ -334,7 +334,7 @@ func NocCert1Copy(address sdk.AccAddress) types.Certificate {
 	)
 }
 
-func NocCert2(address sdk.AccAddress) types.Certificate {
+func IntermediateNocCertificate2(address sdk.AccAddress) types.Certificate {
 	return types.NewNocCertificate(
 		testconstants.NocCert2,
 		testconstants.NocCert2Subject,
@@ -351,7 +351,7 @@ func NocCert2(address sdk.AccAddress) types.Certificate {
 	)
 }
 
-func NocLeafCert1(address sdk.AccAddress) types.Certificate {
+func LeafNocCertificate1(address sdk.AccAddress) types.Certificate {
 	return types.NewNocCertificate(
 		testconstants.NocLeafCert1,
 		testconstants.NocLeafCert1Subject,

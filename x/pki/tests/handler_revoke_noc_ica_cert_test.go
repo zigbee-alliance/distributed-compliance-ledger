@@ -18,12 +18,12 @@ func TestHandler_RevokeNocIntermediateCert(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// add the first NOC root certificate
-	rootCertificate := utils.NocRootCert1(setup.Vendor1)
-	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate.PemCert)
+	rootCertificate := utils.RootNocCertificate1(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, rootCertificate)
 
 	// add the NOC non-root certificate
-	icaCertificate := utils.NocCertIca1(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate.PemCert)
+	icaCertificate := utils.IntermediateNocCertificate1(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, icaCertificate)
 
 	// Revoke NOC with subject and subject key id only
 	utils.RevokeNocIntermediateCertificate(
@@ -62,19 +62,20 @@ func TestHandler_RevokeNocX509Cert_RevokeDefault(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// add the first NOC root certificate
-	utils.AddNocRootCertificate(setup, setup.Vendor1, testconstants.NocRootCert1)
+	rootCertificate := utils.RootNocCertificate1(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, rootCertificate)
 
 	// add the first NOC non-root certificate
-	icaCertificate1 := utils.NocCertIca1(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, testconstants.NocCert1)
+	icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, icaCertificate1)
 
 	// add the second NOC non-root certificate
-	icaCertificate2 := utils.NocCert1Copy(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, testconstants.NocCert1Copy)
+	icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, icaCertificate2)
 
 	// add the NOC leaf certificate
-	leafCertificate := utils.NocLeafCert1(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, testconstants.NocLeafCert1)
+	leafCertificate := utils.LeafNocCertificate1(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, leafCertificate)
 
 	// Revoke NOC with subject and subject key id only
 	utils.RevokeNocIntermediateCertificate(
@@ -139,19 +140,20 @@ func TestHandler_RevokeNocX509Cert_RevokeWithChild(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// add the first NOC root certificate
-	utils.AddNocRootCertificate(setup, setup.Vendor1, testconstants.NocRootCert1)
+	rootCertificate := utils.RootNocCertificate1(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, rootCertificate)
 
 	// add the first NOC non-root certificate
-	icaCertificate1 := utils.NocCertIca1(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate1.PemCert)
+	icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, icaCertificate1)
 
 	// add the second NOC non-root certificate
-	icaCertificate2 := utils.NocCert1Copy(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate2.PemCert)
+	icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, icaCertificate2)
 
 	// add the NOC leaf certificate
-	leafCertificate := utils.NocLeafCert1(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, leafCertificate.PemCert)
+	leafCertificate := utils.LeafNocCertificate1(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, leafCertificate)
 
 	// Revoke noc with subject and subject key id and its child too
 	utils.RevokeNocIntermediateCertificate(
@@ -216,19 +218,20 @@ func TestHandler_RevokeNocX509Cert_RevokeBySerialNumber(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// add the first NOC root certificate
-	utils.AddNocRootCertificate(setup, setup.Vendor1, testconstants.NocRootCert1)
+	rootCertificate := utils.RootNocCertificate1(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, rootCertificate)
 
 	// add the first NOC non-root certificate
-	icaCertificate1 := utils.NocCertIca1(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate1.PemCert)
+	icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, icaCertificate1)
 
 	// add the second NOC non-root certificate
-	icaCertificate2 := utils.NocCert1Copy(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate2.PemCert)
+	icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, icaCertificate2)
 
 	// add the NOC leaf certificate
-	leafCertificate := utils.NocLeafCert1(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, leafCertificate.PemCert)
+	leafCertificate := utils.LeafNocCertificate1(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, leafCertificate)
 
 	// Revoke NOC by serial number only
 	utils.RevokeNocIntermediateCertificate(
@@ -289,19 +292,20 @@ func TestHandler_RevokeNocX509Cert_RevokeBySerialNumberAndWithChild(t *testing.T
 	setup := utils.Setup(t)
 
 	// add the first NOC root certificate
-	utils.AddNocRootCertificate(setup, setup.Vendor1, testconstants.NocRootCert1)
+	rootCertificate := utils.RootNocCertificate1(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, rootCertificate)
 
 	// add the first NOC non-root certificate
-	icaCertificate1 := utils.NocCertIca1(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate1.PemCert)
+	icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, icaCertificate1)
 
 	// add the second NOC non-root certificate
-	icaCertificate2 := utils.NocCert1Copy(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate2.PemCert)
+	icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, icaCertificate2)
 
 	// add the NOC leaf certificate
-	leafCertificate := utils.NocLeafCert1(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, leafCertificate.PemCert)
+	leafCertificate := utils.LeafNocCertificate1(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, leafCertificate)
 
 	// Revoke NOC with subject and subject key id and its child too
 	utils.RevokeNocIntermediateCertificate(

@@ -20,10 +20,9 @@ import (
 func TestHandler_ProposeAddDaRootCert(t *testing.T) {
 	setup := utils.Setup(t)
 
-	rootCertificate := utils.RootCertificate(setup.Trustee1)
-
 	// propose DA root certificate
-	proposeAddX509RootCert := utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PemCert)
+	rootCertificate := utils.RootDaCertificate(setup.Trustee1)
+	proposeAddX509RootCert := utils.ProposeDaRootCertificate(setup, rootCertificate)
 
 	// Check state indexes
 	indexes := utils.TestIndexes{
@@ -53,8 +52,8 @@ func TestHandler_AddDaRootCert(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// propose add x509 root certificate by trustee
-	rootCertificate := utils.RootCertificate(setup.Trustee1)
-	utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PemCert)
+	rootCertificate := utils.RootDaCertificate(setup.Trustee1)
+	utils.ProposeDaRootCertificate(setup, rootCertificate)
 
 	// approve by second trustee
 	utils.ApproveDaRootCertificate(setup, setup.Trustee2, rootCertificate.Subject, rootCertificate.SubjectKeyId)
@@ -83,8 +82,8 @@ func TestHandler_AddDaRootCert_TwoThirdApprovalsNeeded(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// propose x509 root certificate by account without trustee role
-	rootCertificate := utils.RootCertificate(setup.Trustee1)
-	utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PemCert)
+	rootCertificate := utils.RootDaCertificate(setup.Trustee1)
+	utils.ProposeDaRootCertificate(setup, rootCertificate)
 
 	// Create an array of trustee account from 1 to 50
 	trusteeAccounts, totalAdditionalTrustees := setup.CreateNTrusteeAccounts()
@@ -160,8 +159,8 @@ func TestHandler_AddDaRootCert_FourApprovalsAreNeeded_FiveTrustees(t *testing.T)
 	setup.AddAccount(fifthTrustee, []dclauthtypes.AccountRole{dclauthtypes.Trustee}, 1)
 
 	// propose x509 root certificate by account Trustee1
-	rootCertificate := utils.RootCertificate(setup.Trustee1)
-	utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PemCert)
+	rootCertificate := utils.RootDaCertificate(setup.Trustee1)
+	utils.ProposeDaRootCertificate(setup, rootCertificate)
 
 	// approve x509 root certificate by account Trustee2
 	utils.ApproveDaRootCertificate(setup, setup.Trustee2, rootCertificate.Subject, rootCertificate.SubjectKeyId)
@@ -220,13 +219,13 @@ func TestHandler_ProposeAddX509RootCert_ForDifferentSerialNumber(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// store root certificate with different serial number
-	rootCertificate := utils.RootCertificate(setup.Trustee1)
+	rootCertificate := utils.RootDaCertificate(setup.Trustee1)
 	rootCertificate.SerialNumber = utils.SerialNumber
-	utils.AddMokedDaCertificate(setup, rootCertificate, true)
+	utils.AddMokedDaCertificate(setup, rootCertificate)
 
 	// propose second root certificate
-	testRootCertificate := utils.RootCertificate(setup.Trustee1)
-	utils.ProposeDaRootCertificate(setup, setup.Trustee1, testRootCertificate.PemCert)
+	testRootCertificate := utils.RootDaCertificate(setup.Trustee1)
+	utils.ProposeDaRootCertificate(setup, testRootCertificate)
 
 	// Check state indexes
 	indexes := utils.TestIndexes{
@@ -255,11 +254,11 @@ func TestHandler_AddDaRootCerts_SameSubjectKeyIdButDifferentSubject(t *testing.T
 	setup := utils.Setup(t)
 
 	// add Certificate1
-	testRootCertificate := utils.PAACertWithSameSubjectID1(setup.Trustee1)
+	testRootCertificate := utils.RootDaCertWithSameSubjectKeyID1(setup.Trustee1)
 	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, testRootCertificate)
 
 	// add Certificate2
-	testRootCertificate2 := utils.PAACertWithSameSubjectID2(setup.Trustee1)
+	testRootCertificate2 := utils.RootDaCertificateWithSameSubjectKeyID2(setup.Trustee1)
 	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, testRootCertificate2)
 
 	// Check indexes by subject + subject key id
@@ -301,8 +300,8 @@ func TestHandler_RejectAddDaRootCert(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// propose x509 root certificate by account Trustee1
-	testRootCertificate := utils.RootCertificate(setup.Trustee1)
-	utils.ProposeDaRootCertificate(setup, setup.Trustee1, testRootCertificate.PemCert)
+	testRootCertificate := utils.RootDaCertificate(setup.Trustee1)
+	utils.ProposeDaRootCertificate(setup, testRootCertificate)
 
 	// reject x509 root certificate by account Trustee2
 	utils.RejectDaRootCertificate(setup, setup.Trustee2, testRootCertificate.Subject, testRootCertificate.SubjectKeyId)
@@ -369,8 +368,8 @@ func TestHandler_ApproveX509RootCertAndRejectX509RootCert_FromTheSameTrustee(t *
 	setup := utils.Setup(t)
 
 	// propose add x509 root certificate
-	rootCertificate := utils.RootCertificate(setup.Trustee1)
-	utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PemCert)
+	rootCertificate := utils.RootDaCertificate(setup.Trustee1)
+	utils.ProposeDaRootCertificate(setup, rootCertificate)
 
 	for _, role := range []dclauthtypes.AccountRole{
 		dclauthtypes.Trustee,
@@ -404,8 +403,8 @@ func TestHandler_RejectX509RootCertAndApproveX509RootCert_FromTheSameTrustee(t *
 	setup := utils.Setup(t)
 
 	// propose add x509 root certificate
-	rootCertificate := utils.RootCertificate(setup.Trustee1)
-	utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PemCert)
+	rootCertificate := utils.RootDaCertificate(setup.Trustee1)
+	utils.ProposeDaRootCertificate(setup, rootCertificate)
 
 	for _, role := range []dclauthtypes.AccountRole{
 		dclauthtypes.Trustee,
@@ -450,8 +449,8 @@ func TestHandler_RejectX509RootCert_TwoRejectApprovalsAreNeeded_FiveTrustees(t *
 	setup.AddAccount(fifthTrustee, []dclauthtypes.AccountRole{dclauthtypes.Trustee}, 1)
 
 	// propose x509 root certificate by account Trustee1
-	rootCertificate := utils.RootCertificate(setup.Trustee1)
-	utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PemCert)
+	rootCertificate := utils.RootDaCertificate(setup.Trustee1)
+	utils.ProposeDaRootCertificate(setup, rootCertificate)
 
 	// reject x509 root certificate by account Trustee2
 	utils.RejectDaRootCertificate(setup, setup.Trustee2, rootCertificate.Subject, rootCertificate.SubjectKeyId)
@@ -502,8 +501,8 @@ func TestHandler_ProposeAddAndRejectX509RootCert_ByTrustee(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// propose x509 root certificate
-	rootCertificate := utils.RootCertificate(setup.Trustee1)
-	utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PemCert)
+	rootCertificate := utils.RootDaCertificate(setup.Trustee1)
+	utils.ProposeDaRootCertificate(setup, rootCertificate)
 
 	// reject x509 root certificate
 	utils.RejectDaRootCertificate(setup, setup.Trustee1, rootCertificate.Subject, rootCertificate.SubjectKeyId)
@@ -531,8 +530,8 @@ func TestHandler_ProposeAddAndRejectX509RootCert_ByAnotherTrustee(t *testing.T) 
 	setup := utils.Setup(t)
 
 	// propose x509 root certificate
-	rootCertificate := utils.RootCertificate(setup.Trustee1)
-	utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PemCert)
+	rootCertificate := utils.RootDaCertificate(setup.Trustee1)
+	utils.ProposeDaRootCertificate(setup, rootCertificate)
 
 	// reject x509 root certificate
 	utils.RejectDaRootCertificate(setup, setup.Trustee2, rootCertificate.Subject, rootCertificate.SubjectKeyId)
@@ -564,8 +563,8 @@ func TestHandler_ProposeAddAndRejectX509RootCertWithApproval_ByTrustee(t *testin
 	setup.CreateTrusteeAccount(1)
 
 	// propose x509 root certificate
-	rootCertificate := utils.RootCertificate(setup.Trustee1)
-	utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PemCert)
+	rootCertificate := utils.RootDaCertificate(setup.Trustee1)
+	utils.ProposeDaRootCertificate(setup, rootCertificate)
 
 	// approve
 	utils.ApproveDaRootCertificate(setup, setup.Trustee2, rootCertificate.Subject, rootCertificate.SubjectKeyId)
@@ -660,7 +659,7 @@ func TestHandler_ProposeAddX509RootCert_CertificateAlreadyExists(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// store x509 root certificate
-	rootCertificate := utils.RootCertificate(testconstants.Address1)
+	rootCertificate := utils.RootDaCertificate(testconstants.Address1)
 	setup.Keeper.SetUniqueCertificate(
 		setup.Ctx,
 		utils.UniqueCertificate(rootCertificate.Subject, rootCertificate.SerialNumber),
@@ -678,7 +677,7 @@ func TestHandler_ProposeAddX509RootCert_ForNocCertificate(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// Store the NOC root certificate
-	nocRootCertificate := utils.RootCertificate(setup.Vendor1)
+	nocRootCertificate := utils.RootDaCertificate(setup.Vendor1)
 	nocRootCertificate.SerialNumber = testconstants.TestSerialNumber
 	nocRootCertificate.CertificateType = types.CertificateType_OperationalPKI
 	nocRootCertificate.Approvals = nil
@@ -704,7 +703,7 @@ func TestHandler_ProposeAddX509RootCert_ForDifferentSerialNumberDifferentSigner(
 	setup := utils.Setup(t)
 
 	// store root certificate with different serial number
-	rootCertificate := utils.RootCertificate(testconstants.Address1)
+	rootCertificate := utils.RootDaCertificate(testconstants.Address1)
 	rootCertificate.SerialNumber = utils.SerialNumber
 	setup.Keeper.SetUniqueCertificate(
 		setup.Ctx,

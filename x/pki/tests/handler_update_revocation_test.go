@@ -247,7 +247,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_NotUniqueDataURLForIssuer(
 	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.PAACertWithNumericVidVid)
 
 	// propose and approve root certificate
-	rootCertOptions := utils.PAACertWithNumericVid(setup.Trustee1)
+	rootCertOptions := utils.RootDaCertificateWithNumericVid(setup.Trustee1)
 	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
 	addPkiRevocationDistributionPoint1 := createAddRevocationMessageWithPAACertWithNumericVid(vendorAcc.String())

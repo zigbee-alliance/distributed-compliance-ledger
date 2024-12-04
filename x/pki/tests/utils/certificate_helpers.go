@@ -50,19 +50,17 @@ func ProposeAndApproveRootCertificate(
 func AddMokedDaCertificate(
 	setup *TestSetup,
 	certificate types.Certificate,
-	isRoot bool,
 ) {
 	setup.Keeper.SetUniqueCertificate(setup.Ctx, UniqueCertificate(certificate.Issuer, certificate.SerialNumber))
-	setup.Keeper.StoreDaCertificate(setup.Ctx, certificate, isRoot)
+	setup.Keeper.StoreDaCertificate(setup.Ctx, certificate, certificate.IsRoot)
 }
 
 func AddMokedNocCertificate(
 	setup *TestSetup,
 	certificate types.Certificate,
-	isRoot bool,
 ) {
 	setup.Keeper.SetUniqueCertificate(setup.Ctx, UniqueCertificate(certificate.Issuer, certificate.SerialNumber))
-	setup.Keeper.StoreNocCertificate(setup.Ctx, certificate, isRoot)
+	setup.Keeper.StoreNocCertificate(setup.Ctx, certificate, certificate.IsRoot)
 }
 
 func UniqueCertificate(issuer string, serialNumber string) types.UniqueCertificate {
@@ -82,12 +80,11 @@ func CertificateIdentifier(subject string, subjectKeyID string) types.Certificat
 
 func ProposeDaRootCertificate(
 	setup *TestSetup,
-	address sdk.AccAddress,
-	pemCert string,
+	certificate types.Certificate,
 ) *types.MsgProposeAddX509RootCert {
 	proposeAddX509RootCert := types.NewMsgProposeAddX509RootCert(
-		address.String(),
-		pemCert,
+		certificate.Owner,
+		certificate.PemCert,
 		testconstants.Info,
 		testconstants.Vid,
 		testconstants.CertSchemaVersion,
@@ -136,10 +133,9 @@ func RejectDaRootCertificate(
 
 func AddDaIntermediateCertificate(
 	setup *TestSetup,
-	address sdk.AccAddress,
-	pemCert string,
+	certificate types.Certificate,
 ) *types.MsgAddX509Cert {
-	addX509Cert := types.NewMsgAddX509Cert(address.String(), pemCert, testconstants.CertSchemaVersion)
+	addX509Cert := types.NewMsgAddX509Cert(certificate.Owner, certificate.PemCert, testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
 	require.NoError(setup.T, err)
 
@@ -229,10 +225,9 @@ func RevokeDaIntermediateCertificate(
 
 func AddNocRootCertificate(
 	setup *TestSetup,
-	address sdk.AccAddress,
-	pemCert string,
+	certificate types.Certificate,
 ) *types.MsgAddNocX509RootCert {
-	addNocX509RootCert := types.NewMsgAddNocX509RootCert(address.String(), pemCert, testconstants.CertSchemaVersion)
+	addNocX509RootCert := types.NewMsgAddNocX509RootCert(certificate.Owner, certificate.PemCert, testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
 	require.NoError(setup.T, err)
 
@@ -241,10 +236,9 @@ func AddNocRootCertificate(
 
 func AddNocIntermediateCertificate(
 	setup *TestSetup,
-	address sdk.AccAddress,
-	pemCert string,
+	certificate types.Certificate,
 ) *types.MsgAddNocX509IcaCert {
-	nocX509Cert := types.NewMsgAddNocX509IcaCert(address.String(), pemCert, testconstants.CertSchemaVersion)
+	nocX509Cert := types.NewMsgAddNocX509IcaCert(certificate.Owner, certificate.PemCert, testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, nocX509Cert)
 	require.NoError(setup.T, err)
 

@@ -18,8 +18,8 @@ func TestHandler_RevokeNoRootCert(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// add the first NOC root certificate
-	rootCertificate := utils.NocRootCert1(setup.Vendor1)
-	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate.PemCert)
+	rootCertificate := utils.RootNocCertificate1(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, rootCertificate)
 
 	// Revoke NOC root with subject and subject key id only
 	utils.RevokeNocRootCertificate(
@@ -59,16 +59,16 @@ func TestHandler_RevokeNocX509RootCert_TwoCerts(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// add the first NOC root certificate
-	rootCertificate := utils.NocRootCert1(setup.Vendor1)
-	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate.PemCert)
+	rootCertificate := utils.RootNocCertificate1(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, rootCertificate)
 
 	// add the second NOC root certificate
-	rootCertificate2 := utils.NocRootCert1Copy(setup.Vendor1)
-	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate2.PemCert)
+	rootCertificate2 := utils.RootNocCertificate1Copy(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, rootCertificate2)
 
 	// add the first NOC non-root certificate
-	icaCertificate := utils.NocCertIca1(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate.PemCert)
+	icaCertificate := utils.IntermediateNocCertificate1(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, icaCertificate)
 
 	// Revoke NOC root with subject and subject key id only
 	utils.RevokeNocRootCertificate(
@@ -130,16 +130,16 @@ func TestHandler_RevokeNocX509RootCert_RevokeWithChild(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// add the first NOC root certificate
-	rootCertificate := utils.NocRootCert1(setup.Vendor1)
-	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate.PemCert)
+	rootCertificate := utils.RootNocCertificate1(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, rootCertificate)
 
 	// add the second NOC root certificate
-	rootCertificate2 := utils.NocRootCert1Copy(setup.Vendor1)
-	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate2.PemCert)
+	rootCertificate2 := utils.RootNocCertificate1Copy(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, rootCertificate2)
 
 	// add the first NOC non-root certificate
-	icaCertificate := utils.NocCertIca1(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate.PemCert)
+	icaCertificate := utils.IntermediateNocCertificate1(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, icaCertificate)
 
 	// Revoke NOC root with subject and subject key id only
 	utils.RevokeNocRootCertificate(
@@ -200,16 +200,16 @@ func TestHandler_RevokeNocX509RootCert_RevokeWithSerialNumber(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// add the first NOC root certificate
-	rootCertificate := utils.NocRootCert1(setup.Vendor1)
-	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate.PemCert)
+	rootCertificate := utils.RootNocCertificate1(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, rootCertificate)
 
 	// add the second NOC root certificate
-	rootCertificate2 := utils.NocRootCert1Copy(setup.Vendor1)
-	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate2.PemCert)
+	rootCertificate2 := utils.RootNocCertificate1Copy(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, rootCertificate2)
 
 	// add the first NOC non-root certificate
-	icaCertificate := utils.NocCertIca1(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate.PemCert)
+	icaCertificate := utils.IntermediateNocCertificate1(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, icaCertificate)
 
 	// Revoke NOC root with subject and subject key id by serial number
 	utils.RevokeNocRootCertificate(
@@ -272,16 +272,16 @@ func TestHandler_RevokeNocX509RootCert_RevokeWithSerialNumberAndChild(t *testing
 	setup := utils.Setup(t)
 
 	// add the first NOC root certificate
-	rootCertificate := utils.NocRootCert1(setup.Vendor1)
-	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate.PemCert)
+	rootCertificate := utils.RootNocCertificate1(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, rootCertificate)
 
 	// add the second NOC root certificate
-	rootCertificate2 := utils.NocRootCert1Copy(setup.Vendor1)
-	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate2.PemCert)
+	rootCertificate2 := utils.RootNocCertificate1Copy(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, rootCertificate2)
 
 	// add the first NOC non-root certificate
-	icaCertificate := utils.NocCertIca1(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate.PemCert)
+	icaCertificate := utils.IntermediateNocCertificate1(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, icaCertificate)
 
 	// Revoke NOC root with subject and subject key id by serial number
 	utils.RevokeNocRootCertificate(

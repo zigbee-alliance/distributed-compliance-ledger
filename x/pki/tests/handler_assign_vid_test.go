@@ -20,7 +20,7 @@ func TestHandler_AssignVid_certificateWithoutSubjectVid(t *testing.T) {
 	vendorAcc := setup.CreateVendorAdminAccount(0)
 
 	// propose and approve x509 root certificate
-	rootCertificate := utils.RootCertificate(setup.Trustee1)
+	rootCertificate := utils.RootDaCertificate(setup.Trustee1)
 	rootCertificate.Vid = 0
 	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertificate)
 
@@ -58,7 +58,7 @@ func TestHandler_AssignVid_certificateWithSubjectVid(t *testing.T) {
 	vendorAcc := setup.CreateVendorAdminAccount(0)
 
 	// propose and approve x509 root certificate
-	rootCertificate := utils.PAACertWithNumericVid(setup.Trustee1)
+	rootCertificate := utils.RootDaCertificateWithNumericVid(setup.Trustee1)
 	rootCertificate.Vid = 0
 	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertificate)
 
@@ -129,7 +129,7 @@ func TestHandler_AssignVid_ForNonRootCertificate(t *testing.T) {
 	vendorAcc := setup.CreateVendorAdminAccount(0)
 
 	// propose and approve x509 root certificate
-	rootCert := utils.RootCertificate(setup.Trustee1)
+	rootCert := utils.RootDaCertificate(setup.Trustee1)
 	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
 
 	// Add vendor account
@@ -158,7 +158,7 @@ func TestHandler_AssignVid_CertificateAlreadyHasVid(t *testing.T) {
 	vendorAcc := setup.CreateVendorAdminAccount(0)
 
 	// propose and approve x509 root certificate
-	rootCert := utils.PAACertWithNumericVid(setup.Trustee1)
+	rootCert := utils.RootDaCertificateWithNumericVid(setup.Trustee1)
 	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
 
 	assignVid := types.MsgAssignVid{
@@ -178,7 +178,7 @@ func TestHandler_AssignVid_MessageVidAndCertificateVidNotEqual(t *testing.T) {
 	vendorAcc := setup.CreateVendorAdminAccount(0)
 
 	// propose and approve x509 root certificate
-	rootCert := utils.PAACertWithNumericVid(setup.Trustee1)
+	rootCert := utils.RootDaCertificateWithNumericVid(setup.Trustee1)
 	rootCert.Vid = 0
 	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
 

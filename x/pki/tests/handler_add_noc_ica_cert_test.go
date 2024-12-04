@@ -19,12 +19,12 @@ func TestHandler_AddNocIntermediateCert(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// add NOC root certificate
-	rootCertificate := utils.NocRootCert1(setup.Vendor1)
-	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate.PemCert)
+	rootCertificate := utils.RootNocCertificate1(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, rootCertificate)
 
 	// add NOC ICA certificate
-	icaCertificate := utils.NocCertIca1(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate.PemCert)
+	icaCertificate := utils.IntermediateNocCertificate1(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, icaCertificate)
 
 	// Check state indexes
 	indexes := utils.TestIndexes{
@@ -58,17 +58,17 @@ func TestHandler_AddNocIntermediateCert_SameSubjectAndSkid_DifferentSerialNumber
 	setup := utils.Setup(t)
 
 	// add NOC root certificate
-	rootCertificate := utils.NocRootCert1(setup.Vendor1)
-	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate.PemCert)
+	rootCertificate := utils.RootNocCertificate1(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, rootCertificate)
 
 	// Store the NOC certificate with different serial number
-	intermediateCertificate := utils.NocCertIca1(setup.Vendor1)
+	intermediateCertificate := utils.IntermediateNocCertificate1(setup.Vendor1)
 	intermediateCertificate.SerialNumber = testconstants.TestSerialNumber
-	utils.AddMokedNocCertificate(setup, intermediateCertificate, false)
+	utils.AddMokedNocCertificate(setup, intermediateCertificate)
 
 	// add the new NOC certificate
-	icaCertificate := utils.NocCertIca1(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate.PemCert)
+	icaCertificate := utils.IntermediateNocCertificate1(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, icaCertificate)
 
 	// Check state indexes
 	indexes := utils.TestIndexes{
@@ -111,7 +111,8 @@ func TestHandler_AddNocX509Cert_Root_VID_Does_Not_Equal_To_AccountVID(t *testing
 	setup := utils.Setup(t)
 
 	// add NOC root certificate
-	utils.AddNocRootCertificate(setup, setup.Vendor1, testconstants.NocRootCert1)
+	rootCertificate := utils.RootNocCertificate1(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, rootCertificate)
 
 	newAccAddress := setup.CreateVendorAccount(1111)
 
@@ -144,7 +145,7 @@ func TestHandler_AddXNoc509Cert_ForRootNonNocCertificate(t *testing.T) {
 
 	// store root certificate
 
-	rootCert := utils.RootCertWithVid(setup.Trustee1)
+	rootCert := utils.RootDaCertificateWithVid(setup.Trustee1)
 	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
 
 	// try to add root certificate x509 certificate
@@ -277,7 +278,8 @@ func TestHandler_AddNocX509Cert_CertificateExist(t *testing.T) {
 			setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, vid)
 
 			// add NOC root certificate
-			utils.AddNocRootCertificate(setup, accAddress, testconstants.NocRootCert1)
+			rootCertificate := utils.RootNocCertificate1(accAddress)
+			utils.AddNocRootCertificate(setup, rootCertificate)
 
 			// add the existing certificate
 			setup.Keeper.AddAllCertificate(setup.Ctx, *tc.existingCert)
