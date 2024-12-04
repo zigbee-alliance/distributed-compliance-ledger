@@ -18,19 +18,19 @@ func TestHandler_RevokeNocIntermediateCert(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// add the first NOC root certificate
-	rootCertificate := utils.CreateTestNocRoot1Cert()
-	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate.PEM)
+	rootCertificate := utils.NocRootCert1(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate.PemCert)
 
 	// add the NOC non-root certificate
-	icaCertificate := utils.CreateTestNocIca1Cert()
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate.PEM)
+	icaCertificate := utils.NocCertIca1(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate.PemCert)
 
 	// Revoke NOC with subject and subject key id only
 	utils.RevokeNocIntermediateCertificate(
 		setup,
 		setup.Vendor1,
 		icaCertificate.Subject,
-		icaCertificate.SubjectKeyID,
+		icaCertificate.SubjectKeyId,
 		"",
 		false)
 
@@ -65,15 +65,15 @@ func TestHandler_RevokeNocX509Cert_RevokeDefault(t *testing.T) {
 	utils.AddNocRootCertificate(setup, setup.Vendor1, testconstants.NocRootCert1)
 
 	// add the first NOC non-root certificate
-	icaCertificate1 := utils.CreateTestNocIca1Cert()
+	icaCertificate1 := utils.NocCertIca1(setup.Vendor1)
 	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, testconstants.NocCert1)
 
 	// add the second NOC non-root certificate
-	icaCertificate2 := utils.CreateTestNocIca1CertCopy()
+	icaCertificate2 := utils.NocCert1Copy(setup.Vendor1)
 	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, testconstants.NocCert1Copy)
 
 	// add the NOC leaf certificate
-	leafCertificate := utils.CreateTestNocLeafCert()
+	leafCertificate := utils.NocLeafCert1(setup.Vendor1)
 	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, testconstants.NocLeafCert1)
 
 	// Revoke NOC with subject and subject key id only
@@ -81,7 +81,7 @@ func TestHandler_RevokeNocX509Cert_RevokeDefault(t *testing.T) {
 		setup,
 		setup.Vendor1,
 		icaCertificate1.Subject,
-		icaCertificate1.SubjectKeyID,
+		icaCertificate1.SubjectKeyId,
 		"",
 		false)
 
@@ -142,23 +142,23 @@ func TestHandler_RevokeNocX509Cert_RevokeWithChild(t *testing.T) {
 	utils.AddNocRootCertificate(setup, setup.Vendor1, testconstants.NocRootCert1)
 
 	// add the first NOC non-root certificate
-	icaCertificate1 := utils.CreateTestNocIca1Cert()
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate1.PEM)
+	icaCertificate1 := utils.NocCertIca1(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate1.PemCert)
 
 	// add the second NOC non-root certificate
-	icaCertificate2 := utils.CreateTestNocIca1CertCopy()
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate2.PEM)
+	icaCertificate2 := utils.NocCert1Copy(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate2.PemCert)
 
 	// add the NOC leaf certificate
-	leafCertificate := utils.CreateTestNocLeafCert()
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, leafCertificate.PEM)
+	leafCertificate := utils.NocLeafCert1(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, leafCertificate.PemCert)
 
 	// Revoke noc with subject and subject key id and its child too
 	utils.RevokeNocIntermediateCertificate(
 		setup,
 		setup.Vendor1,
 		icaCertificate1.Subject,
-		icaCertificate1.SubjectKeyID,
+		icaCertificate1.SubjectKeyId,
 		"",
 		true)
 
@@ -219,23 +219,23 @@ func TestHandler_RevokeNocX509Cert_RevokeBySerialNumber(t *testing.T) {
 	utils.AddNocRootCertificate(setup, setup.Vendor1, testconstants.NocRootCert1)
 
 	// add the first NOC non-root certificate
-	icaCertificate1 := utils.CreateTestNocIca1Cert()
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate1.PEM)
+	icaCertificate1 := utils.NocCertIca1(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate1.PemCert)
 
 	// add the second NOC non-root certificate
-	icaCertificate2 := utils.CreateTestNocIca1CertCopy()
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate2.PEM)
+	icaCertificate2 := utils.NocCert1Copy(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate2.PemCert)
 
 	// add the NOC leaf certificate
-	leafCertificate := utils.CreateTestNocLeafCert()
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, leafCertificate.PEM)
+	leafCertificate := utils.NocLeafCert1(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, leafCertificate.PemCert)
 
 	// Revoke NOC by serial number only
 	utils.RevokeNocIntermediateCertificate(
 		setup,
 		setup.Vendor1,
 		icaCertificate1.Subject,
-		icaCertificate1.SubjectKeyID,
+		icaCertificate1.SubjectKeyId,
 		icaCertificate1.SerialNumber,
 		false)
 
@@ -292,23 +292,23 @@ func TestHandler_RevokeNocX509Cert_RevokeBySerialNumberAndWithChild(t *testing.T
 	utils.AddNocRootCertificate(setup, setup.Vendor1, testconstants.NocRootCert1)
 
 	// add the first NOC non-root certificate
-	icaCertificate1 := utils.CreateTestNocIca1Cert()
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate1.PEM)
+	icaCertificate1 := utils.NocCertIca1(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate1.PemCert)
 
 	// add the second NOC non-root certificate
-	icaCertificate2 := utils.CreateTestNocIca1CertCopy()
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate2.PEM)
+	icaCertificate2 := utils.NocCert1Copy(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate2.PemCert)
 
 	// add the NOC leaf certificate
-	leafCertificate := utils.CreateTestNocLeafCert()
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, leafCertificate.PEM)
+	leafCertificate := utils.NocLeafCert1(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, leafCertificate.PemCert)
 
 	// Revoke NOC with subject and subject key id and its child too
 	utils.RevokeNocIntermediateCertificate(
 		setup,
 		setup.Vendor1,
 		icaCertificate1.Subject,
-		icaCertificate1.SubjectKeyID,
+		icaCertificate1.SubjectKeyId,
 		icaCertificate1.SerialNumber,
 		true)
 

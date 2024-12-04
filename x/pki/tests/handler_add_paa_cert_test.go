@@ -20,10 +20,10 @@ import (
 func TestHandler_ProposeAddDaRootCert(t *testing.T) {
 	setup := utils.Setup(t)
 
-	rootCertificate := utils.CreateTestRootCert()
+	rootCertificate := utils.RootCertificate(setup.Trustee1)
 
 	// propose DA root certificate
-	proposeAddX509RootCert := utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PEM)
+	proposeAddX509RootCert := utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PemCert)
 
 	// Check state indexes
 	indexes := utils.TestIndexes{
@@ -53,11 +53,11 @@ func TestHandler_AddDaRootCert(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// propose add x509 root certificate by trustee
-	rootCertificate := utils.CreateTestRootCert()
-	utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PEM)
+	rootCertificate := utils.RootCertificate(setup.Trustee1)
+	utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PemCert)
 
 	// approve by second trustee
-	utils.ApproveDaRootCertificate(setup, setup.Trustee2, rootCertificate.Subject, rootCertificate.SubjectKeyID)
+	utils.ApproveDaRootCertificate(setup, setup.Trustee2, rootCertificate.Subject, rootCertificate.SubjectKeyId)
 
 	// Check state indexes
 	indexes := utils.TestIndexes{
@@ -83,8 +83,8 @@ func TestHandler_AddDaRootCert_TwoThirdApprovalsNeeded(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// propose x509 root certificate by account without trustee role
-	rootCertificate := utils.CreateTestRootCert()
-	utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PEM)
+	rootCertificate := utils.RootCertificate(setup.Trustee1)
+	utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PemCert)
 
 	// Create an array of trustee account from 1 to 50
 	trusteeAccounts, totalAdditionalTrustees := setup.CreateNTrusteeAccounts()
@@ -94,7 +94,7 @@ func TestHandler_AddDaRootCert_TwoThirdApprovalsNeeded(t *testing.T) {
 
 	// Until we hit 2/3 of the total number of Trustees, we should not be able to approve the certificate
 	for i := 1; i < twoThirds-1; i++ {
-		utils.ApproveDaRootCertificate(setup, trusteeAccounts[i], rootCertificate.Subject, rootCertificate.SubjectKeyID)
+		utils.ApproveDaRootCertificate(setup, trusteeAccounts[i], rootCertificate.Subject, rootCertificate.SubjectKeyId)
 
 		// Check state indexes
 		indexes := utils.TestIndexes{
@@ -117,7 +117,7 @@ func TestHandler_AddDaRootCert_TwoThirdApprovalsNeeded(t *testing.T) {
 	}
 
 	// One more approval will move this to approved state from pending
-	utils.ApproveDaRootCertificate(setup, setup.Trustee2, rootCertificate.Subject, rootCertificate.SubjectKeyID)
+	utils.ApproveDaRootCertificate(setup, setup.Trustee2, rootCertificate.Subject, rootCertificate.SubjectKeyId)
 
 	// Check state indexes
 	indexes := utils.TestIndexes{
@@ -160,17 +160,17 @@ func TestHandler_AddDaRootCert_FourApprovalsAreNeeded_FiveTrustees(t *testing.T)
 	setup.AddAccount(fifthTrustee, []dclauthtypes.AccountRole{dclauthtypes.Trustee}, 1)
 
 	// propose x509 root certificate by account Trustee1
-	rootCertificate := utils.CreateTestRootCert()
-	utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PEM)
+	rootCertificate := utils.RootCertificate(setup.Trustee1)
+	utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PemCert)
 
 	// approve x509 root certificate by account Trustee2
-	utils.ApproveDaRootCertificate(setup, setup.Trustee2, rootCertificate.Subject, rootCertificate.SubjectKeyID)
+	utils.ApproveDaRootCertificate(setup, setup.Trustee2, rootCertificate.Subject, rootCertificate.SubjectKeyId)
 
 	// approve x509 root certificate by account Trustee3
-	utils.ApproveDaRootCertificate(setup, setup.Trustee3, rootCertificate.Subject, rootCertificate.SubjectKeyID)
+	utils.ApproveDaRootCertificate(setup, setup.Trustee3, rootCertificate.Subject, rootCertificate.SubjectKeyId)
 
 	// reject x509 root certificate by account Trustee4
-	utils.RejectDaRootCertificate(setup, fourthTrustee, rootCertificate.Subject, rootCertificate.SubjectKeyID)
+	utils.RejectDaRootCertificate(setup, fourthTrustee, rootCertificate.Subject, rootCertificate.SubjectKeyId)
 
 	// Check state indexes - certificate is in proposed state
 	indexes := utils.TestIndexes{
@@ -192,7 +192,7 @@ func TestHandler_AddDaRootCert_FourApprovalsAreNeeded_FiveTrustees(t *testing.T)
 	utils.CheckCertificateStateIndexes(t, setup, rootCertificate, indexes)
 
 	// approve x509 root certificate by account Trustee5
-	utils.ApproveDaRootCertificate(setup, fifthTrustee, rootCertificate.Subject, rootCertificate.SubjectKeyID)
+	utils.ApproveDaRootCertificate(setup, fifthTrustee, rootCertificate.Subject, rootCertificate.SubjectKeyId)
 
 	// Check state indexes
 	indexes = utils.TestIndexes{
@@ -225,8 +225,8 @@ func TestHandler_ProposeAddX509RootCert_ForDifferentSerialNumber(t *testing.T) {
 	utils.AddMokedDaCertificate(setup, rootCertificate, true)
 
 	// propose second root certificate
-	testRootCertificate := utils.CreateTestRootCert()
-	utils.ProposeDaRootCertificate(setup, setup.Trustee1, testRootCertificate.PEM)
+	testRootCertificate := utils.RootCertificate(setup.Trustee1)
+	utils.ProposeDaRootCertificate(setup, setup.Trustee1, testRootCertificate.PemCert)
 
 	// Check state indexes
 	indexes := utils.TestIndexes{
@@ -255,12 +255,12 @@ func TestHandler_AddDaRootCerts_SameSubjectKeyIdButDifferentSubject(t *testing.T
 	setup := utils.Setup(t)
 
 	// add Certificate1
-	testRootCertificate := utils.CreateTestRootCertWithSameSubject()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &testRootCertificate)
+	testRootCertificate := utils.PAACertWithSameSubjectID1(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, testRootCertificate)
 
 	// add Certificate2
-	testRootCertificate2 := utils.CreateTestRootCertWithSameSubject2()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &testRootCertificate2)
+	testRootCertificate2 := utils.PAACertWithSameSubjectID2(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, testRootCertificate2)
 
 	// Check indexes by subject + subject key id
 	allApprovedCertificates, _ := utils.QueryAllApprovedCertificates(setup)
@@ -292,7 +292,7 @@ func TestHandler_AddDaRootCerts_SameSubjectKeyIdButDifferentSubject(t *testing.T
 	resolvedCertificates := utils.CheckCertificateStateIndexes(t, setup, testRootCertificate2, indexes)
 
 	// Additional checks
-	require.Equal(t, testRootCertificate.SubjectKeyID, resolvedCertificates.AllCertificatesBySubjectKeyID[0].SubjectKeyId)
+	require.Equal(t, testRootCertificate.SubjectKeyId, resolvedCertificates.AllCertificatesBySubjectKeyID[0].SubjectKeyId)
 	require.Equal(t, testRootCertificate.Subject, resolvedCertificates.AllCertificatesBySubjectKeyID[0].Certs[0].Subject)
 	require.Equal(t, testRootCertificate2.Subject, resolvedCertificates.AllCertificatesBySubjectKeyID[0].Certs[1].Subject)
 }
@@ -301,11 +301,11 @@ func TestHandler_RejectAddDaRootCert(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// propose x509 root certificate by account Trustee1
-	testRootCertificate := utils.CreateTestRootCert()
-	utils.ProposeDaRootCertificate(setup, setup.Trustee1, testRootCertificate.PEM)
+	testRootCertificate := utils.RootCertificate(setup.Trustee1)
+	utils.ProposeDaRootCertificate(setup, setup.Trustee1, testRootCertificate.PemCert)
 
 	// reject x509 root certificate by account Trustee2
-	utils.RejectDaRootCertificate(setup, setup.Trustee2, testRootCertificate.Subject, testRootCertificate.SubjectKeyID)
+	utils.RejectDaRootCertificate(setup, setup.Trustee2, testRootCertificate.Subject, testRootCertificate.SubjectKeyId)
 
 	// certificate should be in the entity <Proposed X509 Root Certificate>, because we haven't enough reject approvals
 	indexes := utils.TestIndexes{
@@ -334,7 +334,7 @@ func TestHandler_RejectAddDaRootCert(t *testing.T) {
 	require.Equal(t, testconstants.Info, resolvedCertificates.ProposedCertificate.Rejects[0].Info)
 
 	// reject x509 root certificate by account Trustee3
-	utils.RejectDaRootCertificate(setup, setup.Trustee3, testRootCertificate.Subject, testRootCertificate.SubjectKeyID)
+	utils.RejectDaRootCertificate(setup, setup.Trustee3, testRootCertificate.Subject, testRootCertificate.SubjectKeyId)
 
 	// certificate should not be in the entity <Proposed X509 Root Certificate>, because we have enough reject approvals
 	indexes = utils.TestIndexes{
@@ -369,8 +369,8 @@ func TestHandler_ApproveX509RootCertAndRejectX509RootCert_FromTheSameTrustee(t *
 	setup := utils.Setup(t)
 
 	// propose add x509 root certificate
-	rootCertificate := utils.CreateTestRootCert()
-	utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PEM)
+	rootCertificate := utils.RootCertificate(setup.Trustee1)
+	utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PemCert)
 
 	for _, role := range []dclauthtypes.AccountRole{
 		dclauthtypes.Trustee,
@@ -379,21 +379,21 @@ func TestHandler_ApproveX509RootCertAndRejectX509RootCert_FromTheSameTrustee(t *
 		setup.AddAccount(accAddress, []dclauthtypes.AccountRole{role}, 1)
 
 		// approve x509 root certificate by account Trustee2
-		utils.ApproveDaRootCertificate(setup, setup.Trustee2, rootCertificate.Subject, rootCertificate.SubjectKeyID)
+		utils.ApproveDaRootCertificate(setup, setup.Trustee2, rootCertificate.Subject, rootCertificate.SubjectKeyId)
 
 		pendingCert, _ := setup.Keeper.GetProposedCertificate(
 			setup.Ctx,
 			rootCertificate.Subject,
-			rootCertificate.SubjectKeyID)
+			rootCertificate.SubjectKeyId)
 		prevRejectsLen := len(pendingCert.Rejects)
 		prevApprovalsLen := len(pendingCert.Approvals)
 
 		// reject x509 root certificate by account Trustee2
-		utils.RejectDaRootCertificate(setup, setup.Trustee2, rootCertificate.Subject, rootCertificate.SubjectKeyID)
+		utils.RejectDaRootCertificate(setup, setup.Trustee2, rootCertificate.Subject, rootCertificate.SubjectKeyId)
 
 		pendingCert, found := setup.Keeper.GetProposedCertificate(setup.Ctx,
 			rootCertificate.Subject,
-			rootCertificate.SubjectKeyID)
+			rootCertificate.SubjectKeyId)
 		require.True(t, found)
 		require.Equal(t, len(pendingCert.Rejects), prevRejectsLen+1)
 		require.Equal(t, len(pendingCert.Approvals), prevApprovalsLen-1)
@@ -404,8 +404,8 @@ func TestHandler_RejectX509RootCertAndApproveX509RootCert_FromTheSameTrustee(t *
 	setup := utils.Setup(t)
 
 	// propose add x509 root certificate
-	rootCertificate := utils.CreateTestRootCert()
-	utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PEM)
+	rootCertificate := utils.RootCertificate(setup.Trustee1)
+	utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PemCert)
 
 	for _, role := range []dclauthtypes.AccountRole{
 		dclauthtypes.Trustee,
@@ -414,22 +414,22 @@ func TestHandler_RejectX509RootCertAndApproveX509RootCert_FromTheSameTrustee(t *
 		setup.AddAccount(accAddress, []dclauthtypes.AccountRole{role}, 1)
 
 		// reject x509 root certificate by account Trustee2
-		utils.RejectDaRootCertificate(setup, setup.Trustee2, rootCertificate.Subject, rootCertificate.SubjectKeyID)
+		utils.RejectDaRootCertificate(setup, setup.Trustee2, rootCertificate.Subject, rootCertificate.SubjectKeyId)
 
 		pendingCert, _ := setup.Keeper.GetProposedCertificate(
 			setup.Ctx,
 			rootCertificate.Subject,
-			rootCertificate.SubjectKeyID)
+			rootCertificate.SubjectKeyId)
 		prevRejectsLen := len(pendingCert.Rejects)
 		prevApprovalsLen := len(pendingCert.Approvals)
 
 		// approve x509 root certificate by account Trustee2
-		utils.ApproveDaRootCertificate(setup, setup.Trustee2, rootCertificate.Subject, rootCertificate.SubjectKeyID)
+		utils.ApproveDaRootCertificate(setup, setup.Trustee2, rootCertificate.Subject, rootCertificate.SubjectKeyId)
 
 		pendingCert, found := setup.Keeper.GetProposedCertificate(
 			setup.Ctx,
 			rootCertificate.Subject,
-			rootCertificate.SubjectKeyID)
+			rootCertificate.SubjectKeyId)
 		require.True(t, found)
 		require.Equal(t, len(pendingCert.Rejects), prevRejectsLen-1)
 		require.Equal(t, len(pendingCert.Approvals), prevApprovalsLen+1)
@@ -450,11 +450,11 @@ func TestHandler_RejectX509RootCert_TwoRejectApprovalsAreNeeded_FiveTrustees(t *
 	setup.AddAccount(fifthTrustee, []dclauthtypes.AccountRole{dclauthtypes.Trustee}, 1)
 
 	// propose x509 root certificate by account Trustee1
-	rootCertificate := utils.CreateTestRootCert()
-	utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PEM)
+	rootCertificate := utils.RootCertificate(setup.Trustee1)
+	utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PemCert)
 
 	// reject x509 root certificate by account Trustee2
-	utils.RejectDaRootCertificate(setup, setup.Trustee2, rootCertificate.Subject, rootCertificate.SubjectKeyID)
+	utils.RejectDaRootCertificate(setup, setup.Trustee2, rootCertificate.Subject, rootCertificate.SubjectKeyId)
 
 	// Check state indexes
 	indexes := utils.TestIndexes{
@@ -476,7 +476,7 @@ func TestHandler_RejectX509RootCert_TwoRejectApprovalsAreNeeded_FiveTrustees(t *
 	utils.CheckCertificateStateIndexes(t, setup, rootCertificate, indexes)
 
 	// reject x509 root certificate by account Trustee3
-	utils.RejectDaRootCertificate(setup, setup.Trustee3, rootCertificate.Subject, rootCertificate.SubjectKeyID)
+	utils.RejectDaRootCertificate(setup, setup.Trustee3, rootCertificate.Subject, rootCertificate.SubjectKeyId)
 
 	// Check state indexes
 	indexes = utils.TestIndexes{
@@ -502,11 +502,11 @@ func TestHandler_ProposeAddAndRejectX509RootCert_ByTrustee(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// propose x509 root certificate
-	rootCertificate := utils.CreateTestRootCert()
-	utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PEM)
+	rootCertificate := utils.RootCertificate(setup.Trustee1)
+	utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PemCert)
 
 	// reject x509 root certificate
-	utils.RejectDaRootCertificate(setup, setup.Trustee1, rootCertificate.Subject, rootCertificate.SubjectKeyID)
+	utils.RejectDaRootCertificate(setup, setup.Trustee1, rootCertificate.Subject, rootCertificate.SubjectKeyId)
 
 	// Check state indexes
 	indexes := utils.TestIndexes{
@@ -531,11 +531,11 @@ func TestHandler_ProposeAddAndRejectX509RootCert_ByAnotherTrustee(t *testing.T) 
 	setup := utils.Setup(t)
 
 	// propose x509 root certificate
-	rootCertificate := utils.CreateTestRootCert()
-	utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PEM)
+	rootCertificate := utils.RootCertificate(setup.Trustee1)
+	utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PemCert)
 
 	// reject x509 root certificate
-	utils.RejectDaRootCertificate(setup, setup.Trustee2, rootCertificate.Subject, rootCertificate.SubjectKeyID)
+	utils.RejectDaRootCertificate(setup, setup.Trustee2, rootCertificate.Subject, rootCertificate.SubjectKeyId)
 
 	// Check state indexes
 	indexes := utils.TestIndexes{
@@ -564,14 +564,14 @@ func TestHandler_ProposeAddAndRejectX509RootCertWithApproval_ByTrustee(t *testin
 	setup.CreateTrusteeAccount(1)
 
 	// propose x509 root certificate
-	rootCertificate := utils.CreateTestRootCert()
-	utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PEM)
+	rootCertificate := utils.RootCertificate(setup.Trustee1)
+	utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PemCert)
 
 	// approve
-	utils.ApproveDaRootCertificate(setup, setup.Trustee2, rootCertificate.Subject, rootCertificate.SubjectKeyID)
+	utils.ApproveDaRootCertificate(setup, setup.Trustee2, rootCertificate.Subject, rootCertificate.SubjectKeyId)
 
 	// reject x509 root certificate
-	utils.RejectDaRootCertificate(setup, setup.Trustee1, rootCertificate.Subject, rootCertificate.SubjectKeyID)
+	utils.RejectDaRootCertificate(setup, setup.Trustee1, rootCertificate.Subject, rootCertificate.SubjectKeyId)
 
 	// Check state indexes
 	indexes := utils.TestIndexes{

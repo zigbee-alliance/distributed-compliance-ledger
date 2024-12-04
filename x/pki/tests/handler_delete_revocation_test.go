@@ -187,8 +187,8 @@ func TestHandler_DeletePkiRevocationDistributionPoint_Multiple_SameIssuerSubject
 	utils.ProposeAndApproveRootCertificateByOptions(setup, setup.Trustee1, rootCertOptions)
 
 	// add PAA VID
-	rootCert := utils.CreateTestPAACertWithNumericVid()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCert)
+	rootCert := utils.PAACertWithNumericVid(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
 
 	// add Revocation Point PAA NOVID
 	addRevocationPAANoVid := createAddRevocationMessageWithPAACertNoVid(vendorAcc.String(), testconstants.PAACertWithNumericVidVid)

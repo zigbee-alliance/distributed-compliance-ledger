@@ -284,6 +284,7 @@ qoAC9NkyqaAFOPZTaK0P/8jvu8m+t9pWmDXPmqdRDgIgI7rI/g8j51RFtlM5CBpH
 mUkpxyqvChVI1A0DTVFLJd4=
 -----END CERTIFICATE-----`
 	PAACertWithNumericVidSubject                    = "MDAxGDAWBgNVBAMMD01hdHRlciBUZXN0IFBBQTEUMBIGCisGAQQBgqJ8AgEMBEZGRjE="
+	PAACertWithNumericVidSubjectAsText              = "CN=Matter Test PAA,1.3.6.1.4.1.37244.2.1=FFF1"
 	PAACertWithNumericVidSubjectKeyID               = "6A:FD:22:77:1F:51:1F:EC:BF:16:41:97:67:10:DC:DC:31:A1:71:7E"
 	PAACertWithNumericVidSerialNumber               = "4ea8e83182d41c1c"
 	PAACertWithNumericVidVid                  int32 = 65521
@@ -350,11 +351,12 @@ cX4wCgYIKoZIzj0EAwIDSAAwRQIhAJbJyM8uAYhgBdj1vHLAe3X9mldpWsSRETET
 i+oDPOUDAiAlVJQ75X1T1sR199I+v8/CA2zSm6Y5PsfvrYcUq3GCGQ==
 -----END CERTIFICATE-----`
 
-	PAICertWithNumericPidVidSubject      = "MEYxGDAWBgNVBAMMD01hdHRlciBUZXN0IFBBSTEUMBIGCisGAQQBgqJ8AgEMBEZGRjExFDASBgorBgEEAYKifAICDAQ4MDAw"
-	PAICertWithNumericPidVidSubjectKeyID = "AF:42:B7:09:4D:EB:D5:15:EC:6E:CF:33:B8:11:15:22:5F:32:52:88"
-	PAICertWithNumericPidVidVid          = 65521
-	PAICertWithNumericPidVidPid          = 32768
-	PAICertWithNumericPidVidSerialNumber = "4498223361705918669"
+	PAICertWithNumericPidVidSubject       = "MEYxGDAWBgNVBAMMD01hdHRlciBUZXN0IFBBSTEUMBIGCisGAQQBgqJ8AgEMBEZGRjExFDASBgorBgEEAYKifAICDAQ4MDAw"
+	PAICertWithNumericPidVidSubjectAsText = "CN=Matter Test PAI,1.3.6.1.4.1.37244.2.1=FFF1,1.3.6.1.4.1.37244.2.2=8000"
+	PAICertWithNumericPidVidSubjectKeyID  = "AF:42:B7:09:4D:EB:D5:15:EC:6E:CF:33:B8:11:15:22:5F:32:52:88"
+	PAICertWithNumericPidVidVid           = 65521
+	PAICertWithNumericPidVidPid           = 32768
+	PAICertWithNumericPidVidSerialNumber  = "4498223361705918669"
 
 	PAICertWithPidVid = `
 -----BEGIN CERTIFICATE-----
@@ -702,13 +704,15 @@ eujhLsD51w==
 	RootSubjectKeyIDWithoutColumns = "5A880E6C3653D07FB08971A3F473790930E62BDB"
 	RootSerialNumber               = "442314047376310867378175982234956458728610743315"
 
-	RootCertWithSameSubjectAndSKIDSubject         = "MIGCMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlvcmsxETAPBgNVBAcMCE5ldyBZb3JrMRgwFgYDVQQKDA9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsMEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbQ=="
-	RootCertWithSameSubjectAndSKIDSubjectKeyID    = "33:5E:0C:07:44:F8:B5:9C:CD:55:01:9B:6D:71:23:83:6F:D0:D4:BE"
-	RootCertWithSameSubjectAndSKID1SerialNumber   = "1"
-	RootCertWithSameSubjectAndSKID2SerialNumber   = "2"
-	RootCertWithSameSubjectAndSKID1Issuer         = "MIGCMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlvcmsxETAPBgNVBAcMCE5ldyBZb3JrMRgwFgYDVQQKDA9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsMEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbQ=="
-	RootCertWithSameSubjectAndSKID2Issuer         = "MIGCMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlvcmsxETAPBgNVBAcMCE5ldyBZb3JrMRgwFgYDVQQKDA9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsMEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbQ=="
-	IntermediateCertWithSameSubjectAndSKIDSubject = "MEUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQ="
+	RootCertWithSameSubjectAndSKIDSubject               = "MIGCMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlvcmsxETAPBgNVBAcMCE5ldyBZb3JrMRgwFgYDVQQKDA9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsMEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbQ=="
+	RootCertWithSameSubjectAndSKIDSubjectAsText         = "C=US,ST=New York,L=New York,O=Example Company,OU=Testing Division,CN=www.example.com"
+	RootCertWithSameSubjectAndSKIDSubjectKeyID          = "33:5E:0C:07:44:F8:B5:9C:CD:55:01:9B:6D:71:23:83:6F:D0:D4:BE"
+	RootCertWithSameSubjectAndSKID1SerialNumber         = "1"
+	RootCertWithSameSubjectAndSKID2SerialNumber         = "2"
+	RootCertWithSameSubjectAndSKID1Issuer               = "MIGCMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlvcmsxETAPBgNVBAcMCE5ldyBZb3JrMRgwFgYDVQQKDA9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsMEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbQ=="
+	RootCertWithSameSubjectAndSKID2Issuer               = "MIGCMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlvcmsxETAPBgNVBAcMCE5ldyBZb3JrMRgwFgYDVQQKDA9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsMEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbQ=="
+	IntermediateCertWithSameSubjectAndSKIDSubject       = "MEUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQ="
+	IntermediateCertWithSameSubjectAndSKIDSubjectAsText = "C=AU,ST=Some-State,O=Internet Widgits Pty Ltd"
 
 	IntermediateCertWithSameSubjectIssuer               = RootCertWithSameSubjectAndSKIDSubject
 	IntermediateCertWithSameSubjectAuthorityKeyID       = RootCertWithSameSubjectAndSKIDSubjectKeyID
@@ -717,6 +721,7 @@ eujhLsD51w==
 	IntermediateCertWithSameSubjectAndSKID1SerialNumber = "3"
 	IntermediateCertWithSameSubjectAndSKID2SerialNumber = "4"
 	LeafCertWithSameSubjectAndSKIDSubject               = "MEUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQ="
+	LeafCertWithSameSubjectAndSKIDSubjectAsText         = "C=AU,ST=Some-State,O=Internet Widgits Pty Ltd"
 	LeafCertWithSameSubjectAndSKIDSubjectKeyID          = "12:16:55:8E:5E:2A:DF:04:D7:E6:FE:D1:53:69:61:98:EF:17:2F:03"
 	LeafCertWithSameSubjectAndSKIDSerialNumber          = "5"
 	LeafCertWithSameSubjectIssuer                       = IntermediateCertWithSameSubjectAndSKIDSubject
@@ -752,13 +757,14 @@ eujhLsD51w==
 	TestSubjectKeyID   = "E2:90:8D:36:9C:3C:A3:C1:13:BB:09:E2:4D:C1:CC:C5:A6:66:91:D4"
 	TestSerialNumber   = "1647312298631"
 
-	PAACertWithSameSubjectID1Subject    = "MFoxCzAJBgNVBAYTAlVaMQwwCgYDVQQIDANUU0gxETAPBgNVBAcMCFRBU0hLRU5UMQwwCgYDVQQKDANEU1IxCzAJBgNVBAsMAkRDMQ8wDQYDVQQDDAZNQVRURVI="
-	PAACertWithSameSubjectID2Subject    = "MGAxCzAJBgNVBAYTAlVaMQwwCgYDVQQIDANUU0gxETAPBgNVBAcMCFRBU0hLRU5UMQwwCgYDVQQKDANEU1IxEDAOBgNVBAsMB01BVFRFUjIxEDAOBgNVBAMMB01BVFRFUjI="
-	PAACertWithSameSubjectIDSubjectID   = "7F:C5:4C:61:A7:2A:40:02:DA:B3:73:FB:A8:A0:AC:42:2C:44:77:05"
-	PAACertWithSameSubjectIssuer        = "MFoxCzAJBgNVBAYTAlVaMQwwCgYDVQQIDANUU0gxETAPBgNVBAcMCFRBU0hLRU5UMQwwCgYDVQQKDANEU1IxCzAJBgNVBAsMAkRDMQ8wDQYDVQQDDAZNQVRURVI="
-	PAACertWithSameSubjectSerialNumber  = "52395954309929518473720319596322683729415766451"
-	PAACertWithSameSubject2Issuer       = "MGAxCzAJBgNVBAYTAlVaMQwwCgYDVQQIDANUU0gxETAPBgNVBAcMCFRBU0hLRU5UMQwwCgYDVQQKDANEU1IxEDAOBgNVBAsMB01BVFRFUjIxEDAOBgNVBAMMB01BVFRFUjI="
-	PAACertWithSameSubject2SerialNumber = "619677517297003610282920732322368299925590816980"
+	PAACertWithSameSubjectID1Subject       = "MFoxCzAJBgNVBAYTAlVaMQwwCgYDVQQIDANUU0gxETAPBgNVBAcMCFRBU0hLRU5UMQwwCgYDVQQKDANEU1IxCzAJBgNVBAsMAkRDMQ8wDQYDVQQDDAZNQVRURVI="
+	PAACertWithSameSubjectID1SubjectAsText = "C=UZ,ST=TSH,L=TASHKENT,O=DSR,OU=DC,CN=MATTER"
+	PAACertWithSameSubjectID2Subject       = "MGAxCzAJBgNVBAYTAlVaMQwwCgYDVQQIDANUU0gxETAPBgNVBAcMCFRBU0hLRU5UMQwwCgYDVQQKDANEU1IxEDAOBgNVBAsMB01BVFRFUjIxEDAOBgNVBAMMB01BVFRFUjI="
+	PAACertWithSameSubjectIDSubjectID      = "7F:C5:4C:61:A7:2A:40:02:DA:B3:73:FB:A8:A0:AC:42:2C:44:77:05"
+	PAACertWithSameSubjectIssuer           = "MFoxCzAJBgNVBAYTAlVaMQwwCgYDVQQIDANUU0gxETAPBgNVBAcMCFRBU0hLRU5UMQwwCgYDVQQKDANEU1IxCzAJBgNVBAsMAkRDMQ8wDQYDVQQDDAZNQVRURVI="
+	PAACertWithSameSubjectSerialNumber     = "52395954309929518473720319596322683729415766451"
+	PAACertWithSameSubject2Issuer          = "MGAxCzAJBgNVBAYTAlVaMQwwCgYDVQQIDANUU0gxETAPBgNVBAcMCFRBU0hLRU5UMQwwCgYDVQQKDANEU1IxEDAOBgNVBAsMB01BVFRFUjIxEDAOBgNVBAMMB01BVFRFUjI="
+	PAACertWithSameSubject2SerialNumber    = "619677517297003610282920732322368299925590816980"
 
 	TestVID1String            = "0xA13"
 	TestPID1String            = "0xA11"
@@ -772,6 +778,7 @@ eujhLsD51w==
 	TestCertPemVid = 4701
 
 	RootCertWithVidSubject                    = "MIGYMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlvcmsxETAPBgNVBAcMCE5ldyBZb3JrMRgwFgYDVQQKDA9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsMEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbTEUMBIGCisGAQQBgqJ8AgEMBEZGRjE="
+	RootCertWithVidSubjectSubjectAsText       = "C=US,ST=New York,L=New York,O=Example Company,OU=Testing "
 	RootCertWithVidSubjectKeyID               = "CE:A8:92:66:EA:E0:80:BD:2B:B5:68:E4:0B:07:C4:FA:2C:34:6D:31"
 	RootCertWithVidSubjectKeyIDWithoutColumns = "CEA89266EAE080BD2BB568E40B07C4FA2C346D31"
 	RootCertWithVidVid                        = 65521

@@ -17,19 +17,19 @@ func TestHandler_RemoveDaIntermediateCert_BySubjectAndSKID(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// propose and approve x509 root certificate
-	rootCert := utils.CreateTestRootCert()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCert)
+	rootCert := utils.RootCertificate(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
 
 	// Add intermediate certificates
-	testIntermediateCertificate := utils.CreateTestIntermediateCert()
-	utils.AddDaIntermediateCertificate(setup, setup.Vendor1, testIntermediateCertificate.PEM)
+	testIntermediateCertificate := utils.IntermediateCertPem(setup.Vendor1)
+	utils.AddDaIntermediateCertificate(setup, setup.Vendor1, testIntermediateCertificate.PemCert)
 
 	// Remove intermediate certificate
 	utils.RemoveDaIntermediateCertificate(
 		setup,
 		setup.Vendor1,
 		testIntermediateCertificate.Subject,
-		testIntermediateCertificate.SubjectKeyID,
+		testIntermediateCertificate.SubjectKeyId,
 		"")
 
 	// Check: only one certificate exists - root
@@ -62,19 +62,19 @@ func TestHandler_RemoveX509Cert_BySubjectAndSKID_TwoCerts(t *testing.T) {
 	vendorAccAddress := setup.CreateVendorAccount(testconstants.RootCertWithVidVid)
 
 	// propose and approve x509 root certificate
-	rootCert := utils.CreateTestRootCertWithSameSubjectAndSkid1()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCert)
+	rootCert := utils.RootCertWithSameSubjectAndSKID1(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
 
 	// Add two intermediate certificates
-	testIntermediateCertificate1 := utils.CreateTestIntermediateCertWithSameSubjectAndSKID1()
-	utils.AddDaIntermediateCertificate(setup, vendorAccAddress, testIntermediateCertificate1.PEM)
+	testIntermediateCertificate1 := utils.IntermediateWithSameSubjectAndSKID1(vendorAccAddress)
+	utils.AddDaIntermediateCertificate(setup, vendorAccAddress, testIntermediateCertificate1.PemCert)
 
-	testIntermediateCertificate2 := utils.CreateTestIntermediateCertWithSameSubjectAndSKID2()
-	utils.AddDaIntermediateCertificate(setup, vendorAccAddress, testIntermediateCertificate2.PEM)
+	testIntermediateCertificate2 := utils.IntermediateWithSameSubjectAndSKID2(vendorAccAddress)
+	utils.AddDaIntermediateCertificate(setup, vendorAccAddress, testIntermediateCertificate2.PemCert)
 
 	// Add a leaf certificate
-	testLeafCertificate := utils.CreateTestLeafCertWithSameSubjectAndSKID()
-	utils.AddDaIntermediateCertificate(setup, vendorAccAddress, testLeafCertificate.PEM)
+	testLeafCertificate := utils.LeafCertWithSameSubjectAndSKID(vendorAccAddress)
+	utils.AddDaIntermediateCertificate(setup, vendorAccAddress, testLeafCertificate.PemCert)
 
 	// get certificates for further comparison
 	allCerts := setup.Keeper.GetAllApprovedCertificates(setup.Ctx)
@@ -87,7 +87,7 @@ func TestHandler_RemoveX509Cert_BySubjectAndSKID_TwoCerts(t *testing.T) {
 		setup,
 		vendorAccAddress,
 		testIntermediateCertificate1.Subject,
-		testIntermediateCertificate1.SubjectKeyID,
+		testIntermediateCertificate1.SubjectKeyId,
 		"")
 
 	// check that only two certificates exists
@@ -142,26 +142,26 @@ func TestHandler_RemoveX509Cert_BySerialNumber_TwoCerts(t *testing.T) {
 	vendorAccAddress := setup.CreateVendorAccount(testconstants.RootCertWithVidVid)
 
 	// propose and approve x509 root certificate
-	rootCert := utils.CreateTestRootCertWithSameSubjectAndSkid1()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCert)
+	rootCert := utils.RootCertWithSameSubjectAndSKID1(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
 
 	// Add intermediate certificates
-	testIntermediateCertificate1 := utils.CreateTestIntermediateCertWithSameSubjectAndSKID1()
-	utils.AddDaIntermediateCertificate(setup, vendorAccAddress, testIntermediateCertificate1.PEM)
+	testIntermediateCertificate1 := utils.IntermediateWithSameSubjectAndSKID1(vendorAccAddress)
+	utils.AddDaIntermediateCertificate(setup, vendorAccAddress, testIntermediateCertificate1.PemCert)
 
-	testIntermediateCertificate2 := utils.CreateTestIntermediateCertWithSameSubjectAndSKID2()
-	utils.AddDaIntermediateCertificate(setup, vendorAccAddress, testIntermediateCertificate2.PEM)
+	testIntermediateCertificate2 := utils.IntermediateWithSameSubjectAndSKID2(vendorAccAddress)
+	utils.AddDaIntermediateCertificate(setup, vendorAccAddress, testIntermediateCertificate2.PemCert)
 
 	// Add a leaf certificate
-	testLeafCertificate := utils.CreateTestLeafCertWithSameSubjectAndSKID()
-	utils.AddDaIntermediateCertificate(setup, vendorAccAddress, testLeafCertificate.PEM)
+	testLeafCertificate := utils.LeafCertWithSameSubjectAndSKID(vendorAccAddress)
+	utils.AddDaIntermediateCertificate(setup, vendorAccAddress, testLeafCertificate.PemCert)
 
 	// remove  intermediate certificate by serial number
 	utils.RemoveDaIntermediateCertificate(
 		setup,
 		vendorAccAddress,
 		testIntermediateCertificate1.Subject,
-		testIntermediateCertificate1.SubjectKeyID,
+		testIntermediateCertificate1.SubjectKeyId,
 		testIntermediateCertificate1.SerialNumber)
 
 	// check that only root, intermediate(with serial number 3) and leaf certificates exists
@@ -221,7 +221,7 @@ func TestHandler_RemoveX509Cert_BySerialNumber_TwoCerts(t *testing.T) {
 		setup,
 		vendorAccAddress,
 		testIntermediateCertificate2.Subject,
-		testIntermediateCertificate2.SubjectKeyID,
+		testIntermediateCertificate2.SubjectKeyId,
 		testIntermediateCertificate2.SerialNumber)
 
 	allCerts, _ = utils.QueryAllApprovedCertificates(setup)
@@ -267,19 +267,19 @@ func TestHandler_RemoveX509Cert_RevokedCertificate(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// propose and approve x509 root certificate
-	rootCert := utils.CreateTestRootCert()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCert)
+	rootCert := utils.RootCertificate(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
 
 	// Add two intermediate certificates again
-	testIntermediateCertificate := utils.CreateTestIntermediateCert()
-	utils.AddDaIntermediateCertificate(setup, setup.Vendor1, testIntermediateCertificate.PEM)
+	testIntermediateCertificate := utils.IntermediateCertPem(setup.Vendor1)
+	utils.AddDaIntermediateCertificate(setup, setup.Vendor1, testIntermediateCertificate.PemCert)
 
 	// revoke intermediate certificate by serial number
 	utils.RevokeDaIntermediateCertificate(
 		setup,
 		setup.Vendor1,
 		testIntermediateCertificate.Subject,
-		testIntermediateCertificate.SubjectKeyID,
+		testIntermediateCertificate.SubjectKeyId,
 		testIntermediateCertificate.SerialNumber,
 		false)
 
@@ -306,7 +306,7 @@ func TestHandler_RemoveX509Cert_RevokedCertificate(t *testing.T) {
 		setup,
 		setup.Vendor1,
 		testIntermediateCertificate.Subject,
-		testIntermediateCertificate.SubjectKeyID,
+		testIntermediateCertificate.SubjectKeyId,
 		testIntermediateCertificate.SerialNumber)
 
 	indexes = utils.TestIndexes{
@@ -336,12 +336,12 @@ func TestHandler_RemoveX509Cert_RevokedAndApprovedCertificate(t *testing.T) {
 	vendorAccAddress := setup.CreateVendorAccount(testconstants.RootCertWithVidVid)
 
 	// propose and approve x509 root certificate
-	rootCert := utils.CreateTestRootCertWithSameSubjectAndSkid1()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCert)
+	rootCert := utils.RootCertWithSameSubjectAndSKID1(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
 
 	// Add an intermediate certificate
-	testIntermediateCertificate := utils.CreateTestIntermediateCertWithSameSubjectAndSKID1()
-	utils.AddDaIntermediateCertificate(setup, vendorAccAddress, testIntermediateCertificate.PEM)
+	testIntermediateCertificate := utils.IntermediateWithSameSubjectAndSKID1(vendorAccAddress)
+	utils.AddDaIntermediateCertificate(setup, vendorAccAddress, testIntermediateCertificate.PemCert)
 
 	// get certificates for further comparison
 	allCerts := setup.Keeper.GetAllApprovedCertificates(setup.Ctx)
@@ -352,13 +352,13 @@ func TestHandler_RemoveX509Cert_RevokedAndApprovedCertificate(t *testing.T) {
 		setup,
 		vendorAccAddress,
 		testIntermediateCertificate.Subject,
-		testIntermediateCertificate.SubjectKeyID,
+		testIntermediateCertificate.SubjectKeyId,
 		testIntermediateCertificate.SerialNumber,
 		false)
 
 	// Add an intermediate certificate with new serial number
-	testIntermediateCertificate2 := utils.CreateTestIntermediateCertWithSameSubjectAndSKID2()
-	utils.AddDaIntermediateCertificate(setup, vendorAccAddress, testIntermediateCertificate2.PEM)
+	testIntermediateCertificate2 := utils.IntermediateWithSameSubjectAndSKID2(vendorAccAddress)
+	utils.AddDaIntermediateCertificate(setup, vendorAccAddress, testIntermediateCertificate2.PemCert)
 
 	// check that intermediate certificate 2 exists
 	indexes := utils.TestIndexes{
@@ -402,7 +402,7 @@ func TestHandler_RemoveX509Cert_RevokedAndApprovedCertificate(t *testing.T) {
 		setup,
 		vendorAccAddress,
 		testIntermediateCertificate2.Subject,
-		testIntermediateCertificate2.SubjectKeyID,
+		testIntermediateCertificate2.SubjectKeyId,
 		"")
 
 	// check indexes after removing re-activated certificate
@@ -429,12 +429,12 @@ func TestHandler_RemoveX509Cert_ByNotOwnerButSameVendor(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// store root certificate
-	rootCert := utils.CreateTestRootCert()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCert)
+	rootCert := utils.RootCertificate(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
 
 	// add x509 certificate by fist vendor account
-	testIntermediateCertificate := utils.CreateTestIntermediateCert()
-	utils.AddDaIntermediateCertificate(setup, setup.Vendor1, testIntermediateCertificate.PEM)
+	testIntermediateCertificate := utils.IntermediateCertPem(setup.Vendor1)
+	utils.AddDaIntermediateCertificate(setup, setup.Vendor1, testIntermediateCertificate.PemCert)
 
 	// add second vendor account with VID = 1
 	vendorAccAddress2 := setup.CreateVendorAccount(testconstants.Vid)
@@ -444,7 +444,7 @@ func TestHandler_RemoveX509Cert_ByNotOwnerButSameVendor(t *testing.T) {
 		setup,
 		vendorAccAddress2,
 		testIntermediateCertificate.Subject,
-		testIntermediateCertificate.SubjectKeyID,
+		testIntermediateCertificate.SubjectKeyId,
 		testIntermediateCertificate.SerialNumber)
 
 	// check state indexes
@@ -536,8 +536,8 @@ func TestHandler_RemoveX509Cert_SenderNotVendor(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// store root certificate
-	rootCert := utils.CreateTestRootCertWithVid()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCert)
+	rootCert := utils.RootCertWithVid(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
 
 	// Add vendor account
 	vendorAccAddress := setup.CreateVendorAccount(testconstants.RootCertWithVidVid)
@@ -557,8 +557,8 @@ func TestHandler_RemoveX509Cert_SenderNotVendor(t *testing.T) {
 func TestHandler_RemoveX509Cert_ForRootCertificate(t *testing.T) {
 	setup := utils.Setup(t)
 
-	rootCert := utils.CreateTestRootCert()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCert)
+	rootCert := utils.RootCertificate(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
 
 	removeX509Cert := types.NewMsgRemoveX509Cert(
 		setup.Vendor1.String(),
@@ -573,8 +573,8 @@ func TestHandler_RemoveX509Cert_ForRootCertificate(t *testing.T) {
 func TestHandler_RemoveX509Cert_InvalidSerialNumber(t *testing.T) {
 	setup := utils.Setup(t)
 
-	rootCert := utils.CreateTestRootCert()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCert)
+	rootCert := utils.RootCertificate(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
 
 	addX509Cert := types.NewMsgAddX509Cert(setup.Vendor1.String(), testconstants.IntermediateCertPem, testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)

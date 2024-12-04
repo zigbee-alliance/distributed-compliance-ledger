@@ -30,19 +30,19 @@ func ProposeAndApproveRootCertificateByOptions(
 func ProposeAndApproveRootCertificate(
 	setup *TestSetup,
 	ownerTrustee sdk.AccAddress,
-	certificate *TestCertificate,
+	certificate types.Certificate,
 ) {
 	// ensure that `ownerTrustee` is trustee to eventually have enough approvals
 	require.True(setup.T, setup.DclauthKeeper.HasRole(setup.Ctx, ownerTrustee, types.RootCertificateApprovalRole))
 
 	// propose x509 root certificate by `ownerTrustee`
-	proposeAddX509RootCert := types.NewMsgProposeAddX509RootCert(ownerTrustee.String(), certificate.PEM, testconstants.Info, certificate.VID, testconstants.CertSchemaVersion)
+	proposeAddX509RootCert := types.NewMsgProposeAddX509RootCert(ownerTrustee.String(), certificate.PemCert, testconstants.Info, certificate.Vid, testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, proposeAddX509RootCert)
 	require.NoError(setup.T, err)
 
 	// approve x509 root certificate by another trustee
 	approveAddX509RootCert := types.NewMsgApproveAddX509RootCert(
-		setup.Trustee2.String(), certificate.Subject, certificate.SubjectKeyID, testconstants.Info)
+		setup.Trustee2.String(), certificate.Subject, certificate.SubjectKeyId, testconstants.Info)
 	_, err = setup.Handler(setup.Ctx, approveAddX509RootCert)
 	require.NoError(setup.T, err)
 }

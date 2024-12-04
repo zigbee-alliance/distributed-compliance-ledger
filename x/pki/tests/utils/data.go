@@ -69,7 +69,97 @@ func RootCertificate(address sdk.AccAddress) types.Certificate {
 	)
 }
 
-func IntermediateCertificateNoVid(address sdk.AccAddress) types.Certificate {
+func RootCertWithVid(address sdk.AccAddress) types.Certificate {
+	return types.NewRootCertificate(
+		testconstants.RootCertWithVid,
+		testconstants.RootCertWithVidSubject,
+		testconstants.RootCertWithVidSubjectSubjectAsText,
+		testconstants.RootCertWithVidSubjectKeyID,
+		testconstants.RootCertWithVidSerialNumber,
+		address.String(),
+		[]*types.Grant{},
+		[]*types.Grant{},
+		testconstants.RootCertWithVidVid,
+		testconstants.SchemaVersion,
+	)
+}
+
+func PAACertWithNumericVid(address sdk.AccAddress) types.Certificate {
+	return types.NewRootCertificate(
+		testconstants.PAACertWithNumericVid,
+		testconstants.PAACertWithNumericVidSubject,
+		testconstants.PAACertWithNumericVidSubjectAsText,
+		testconstants.PAACertWithNumericVidSubjectKeyID,
+		testconstants.PAACertWithNumericVidSerialNumber,
+		address.String(),
+		[]*types.Grant{},
+		[]*types.Grant{},
+		testconstants.PAACertWithNumericVidVid,
+		testconstants.SchemaVersion,
+	)
+}
+
+func PAACertWithSameSubjectID1(address sdk.AccAddress) types.Certificate {
+	return types.NewRootCertificate(
+		testconstants.PAACertWithSameSubjectID1,
+		testconstants.PAACertWithSameSubjectID1Subject,
+		testconstants.PAACertWithSameSubjectID1SubjectAsText,
+		testconstants.PAACertWithSameSubjectIDSubjectID,
+		testconstants.PAACertWithSameSubjectSerialNumber,
+		address.String(),
+		[]*types.Grant{},
+		[]*types.Grant{},
+		testconstants.Vid,
+		testconstants.SchemaVersion,
+	)
+}
+
+func PAACertWithSameSubjectID2(address sdk.AccAddress) types.Certificate {
+	return types.NewRootCertificate(
+		testconstants.PAACertWithSameSubjectID2,
+		testconstants.PAACertWithSameSubjectID2Subject,
+		testconstants.PAACertWithSameSubjectID1SubjectAsText,
+		testconstants.PAACertWithSameSubjectIDSubjectID,
+		testconstants.PAACertWithSameSubject2SerialNumber,
+		address.String(),
+		[]*types.Grant{},
+		[]*types.Grant{},
+		testconstants.Vid,
+		testconstants.SchemaVersion,
+	)
+}
+
+func RootCertWithSameSubjectAndSKID1(address sdk.AccAddress) types.Certificate {
+	return types.NewRootCertificate(
+		testconstants.RootCertWithSameSubjectAndSKID1,
+		testconstants.RootCertWithSameSubjectAndSKIDSubject,
+		testconstants.RootCertWithSameSubjectAndSKIDSubjectAsText,
+		testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID,
+		testconstants.RootCertWithSameSubjectAndSKID1SerialNumber,
+		address.String(),
+		[]*types.Grant{},
+		[]*types.Grant{},
+		testconstants.RootCertWithVidVid,
+		testconstants.SchemaVersion,
+	)
+}
+
+func RootCertWithSameSubjectAndSKID2(address sdk.AccAddress) types.Certificate {
+	return types.NewRootCertificate(
+		testconstants.RootCertWithSameSubjectAndSKID2,
+		testconstants.RootCertWithSameSubjectAndSKIDSubject,
+		testconstants.RootCertWithSameSubjectAndSKIDSubjectAsText,
+		testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID,
+		testconstants.RootCertWithSameSubjectAndSKID2SerialNumber,
+		address.String(),
+		[]*types.Grant{},
+		[]*types.Grant{},
+		testconstants.RootCertWithVidVid,
+		testconstants.SchemaVersion,
+	)
+}
+
+func IntermediateCertPem(address sdk.AccAddress) types.Certificate {
 	return types.NewNonRootCertificate(
 		testconstants.IntermediateCertPem,
 		testconstants.IntermediateSubject,
@@ -86,7 +176,131 @@ func IntermediateCertificateNoVid(address sdk.AccAddress) types.Certificate {
 	)
 }
 
-func NocIntermediateCertificate(address sdk.AccAddress) types.Certificate {
+func PAICertWithNumericPidVid(address sdk.AccAddress) types.Certificate {
+	return types.NewNonRootCertificate(
+		testconstants.PAICertWithNumericPidVid,
+		testconstants.PAICertWithNumericPidVidSubject,
+		testconstants.PAICertWithNumericPidVidSubjectAsText,
+		testconstants.PAICertWithNumericPidVidSubjectKeyID,
+		testconstants.PAICertWithNumericPidVidSerialNumber,
+		testconstants.PAACertWithNumericVidSubject,
+		testconstants.PAACertWithNumericVidSubjectKeyID,
+		testconstants.PAACertWithNumericVidSubject,
+		testconstants.PAACertWithNumericVidSubjectKeyID,
+		address.String(),
+		0,
+		testconstants.SchemaVersion,
+	)
+}
+
+func IntermediateWithSameSubjectAndSKID1(address sdk.AccAddress) types.Certificate {
+	return types.NewNonRootCertificate(
+		testconstants.IntermediateWithSameSubjectAndSKID1,
+		testconstants.IntermediateCertWithSameSubjectAndSKIDSubject,
+		testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectAsText,
+		testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID,
+		testconstants.IntermediateCertWithSameSubjectAndSKID1SerialNumber,
+		testconstants.IntermediateCertWithSameSubjectIssuer,
+		testconstants.IntermediateCertWithSameSubjectAuthorityKeyID,
+		testconstants.IntermediateCertWithSameSubjectIssuer,
+		testconstants.IntermediateCertWithSameSubjectAuthorityKeyID,
+		address.String(),
+		testconstants.RootCertWithVidVid,
+		testconstants.SchemaVersion,
+	)
+}
+
+func IntermediateWithSameSubjectAndSKID2(address sdk.AccAddress) types.Certificate {
+	return types.NewNonRootCertificate(
+		testconstants.IntermediateWithSameSubjectAndSKID2,
+		testconstants.IntermediateCertWithSameSubjectAndSKIDSubject,
+		testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectAsText,
+		testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID,
+		testconstants.IntermediateCertWithSameSubjectAndSKID2SerialNumber,
+		testconstants.IntermediateCertWithSameSubjectIssuer,
+		testconstants.IntermediateCertWithSameSubjectAuthorityKeyID,
+		testconstants.IntermediateCertWithSameSubjectIssuer,
+		testconstants.IntermediateCertWithSameSubjectAuthorityKeyID,
+		address.String(),
+		testconstants.RootCertWithVidVid,
+		testconstants.SchemaVersion,
+	)
+}
+
+func LeafCertWithSameSubjectAndSKID(address sdk.AccAddress) types.Certificate {
+	return types.NewNonRootCertificate(
+		testconstants.LeafCertWithSameSubjectAndSKID,
+		testconstants.LeafCertWithSameSubjectAndSKIDSubject,
+		testconstants.LeafCertWithSameSubjectAndSKIDSubjectAsText,
+		testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID,
+		testconstants.LeafCertWithSameSubjectAndSKIDSerialNumber,
+		testconstants.LeafCertWithSameSubjectIssuer,
+		testconstants.LeafCertWithSameSubjectAuthorityKeyID,
+		testconstants.IntermediateCertWithSameSubjectIssuer,
+		testconstants.IntermediateCertWithSameSubjectAuthorityKeyID,
+		address.String(),
+		testconstants.RootCertWithVidVid,
+		testconstants.SchemaVersion,
+	)
+}
+
+func LeafCertPem(address sdk.AccAddress) types.Certificate {
+	return types.NewNonRootCertificate(
+		testconstants.LeafCertPem,
+		testconstants.LeafSubject,
+		testconstants.LeafSubjectAsText,
+		testconstants.LeafSubjectKeyID,
+		testconstants.LeafSerialNumber,
+		testconstants.LeafIssuer,
+		testconstants.LeafAuthorityKeyID,
+		testconstants.IntermediateIssuer,
+		testconstants.IntermediateAuthorityKeyID,
+		address.String(),
+		0,
+		testconstants.SchemaVersion,
+	)
+}
+
+func NocRootCert1(address sdk.AccAddress) types.Certificate {
+	return types.NewNocRootCertificate(
+		testconstants.NocRootCert1,
+		testconstants.NocRootCert1Subject,
+		testconstants.NocRootCert1SubjectAsText,
+		testconstants.NocRootCert1SubjectKeyID,
+		testconstants.NocRootCert1SerialNumber,
+		address.String(),
+		testconstants.Vid,
+		testconstants.SchemaVersion,
+	)
+}
+
+func NocRootCert1Copy(address sdk.AccAddress) types.Certificate {
+	return types.NewNocRootCertificate(
+		testconstants.NocRootCert1Copy,
+		testconstants.NocRootCert1CopySubject,
+		testconstants.NocRootCert1CopySubjectAsText,
+		testconstants.NocRootCert1CopySubjectKeyID,
+		testconstants.NocRootCert1CopySerialNumber,
+		address.String(),
+		testconstants.Vid,
+		testconstants.SchemaVersion,
+	)
+}
+
+func NocRootCert2(address sdk.AccAddress) types.Certificate {
+	return types.NewNocRootCertificate(
+		testconstants.NocRootCert2,
+		testconstants.NocRootCert2Subject,
+		testconstants.NocRootCert2SubjectAsText,
+		testconstants.NocRootCert2SubjectKeyID,
+		testconstants.NocRootCert2SerialNumber,
+		address.String(),
+		testconstants.Vid,
+		testconstants.SchemaVersion,
+	)
+}
+
+func NocCertIca1(address sdk.AccAddress) types.Certificate {
 	return types.NewNocCertificate(
 		testconstants.NocCert1,
 		testconstants.NocCert1Subject,
@@ -103,254 +317,53 @@ func NocIntermediateCertificate(address sdk.AccAddress) types.Certificate {
 	)
 }
 
-func CreateTestRootCert() TestCertificate {
-	return TestCertificate{
-		PEM:            testconstants.RootCertPem,
-		Subject:        testconstants.RootSubject,
-		SubjectKeyID:   testconstants.RootSubjectKeyID,
-		SerialNumber:   testconstants.RootSerialNumber,
-		Issuer:         testconstants.RootIssuer,
-		AuthorityKeyID: testconstants.RootSubjectKeyID,
-		VID:            testconstants.Vid,
-		IsRoot:         true,
-	}
+func NocCert1Copy(address sdk.AccAddress) types.Certificate {
+	return types.NewNocCertificate(
+		testconstants.NocCert1Copy,
+		testconstants.NocCert1CopySubject,
+		testconstants.NocCert1CopySubjectAsText,
+		testconstants.NocCert1CopySubjectKeyID,
+		testconstants.NocCert1CopySerialNumber,
+		testconstants.NocRootCert1CopySubject,
+		testconstants.NocRootCert1CopySubjectKeyID,
+		testconstants.NocRootCert1CopySubject,
+		testconstants.NocRootCert1CopySubjectKeyID,
+		address.String(),
+		testconstants.Vid,
+		testconstants.SchemaVersion,
+	)
 }
 
-func CreateTestRootCertWithVid() TestCertificate {
-	return TestCertificate{
-		PEM:            testconstants.RootCertWithVid,
-		Subject:        testconstants.RootCertWithVidSubject,
-		SubjectKeyID:   testconstants.RootCertWithVidSubjectKeyID,
-		SerialNumber:   testconstants.RootCertWithVidSerialNumber,
-		Issuer:         testconstants.RootCertWithVidSubject,
-		AuthorityKeyID: testconstants.RootCertWithVidSubjectKeyID,
-		VID:            testconstants.RootCertWithVidVid,
-		IsRoot:         true,
-	}
+func NocCert2(address sdk.AccAddress) types.Certificate {
+	return types.NewNocCertificate(
+		testconstants.NocCert2,
+		testconstants.NocCert2Subject,
+		testconstants.NocCert2SubjectAsText,
+		testconstants.NocCert2SubjectKeyID,
+		testconstants.NocCert2SerialNumber,
+		testconstants.NocRootCert2Subject,
+		testconstants.NocRootCert2SubjectKeyID,
+		testconstants.NocRootCert2Subject,
+		testconstants.NocRootCert2SubjectKeyID,
+		address.String(),
+		testconstants.Vid,
+		testconstants.SchemaVersion,
+	)
 }
 
-func CreateTestPAACertWithNumericVid() TestCertificate {
-	return TestCertificate{
-		PEM:            testconstants.PAACertWithNumericVid,
-		Subject:        testconstants.PAACertWithNumericVidSubject,
-		SubjectKeyID:   testconstants.PAACertWithNumericVidSubjectKeyID,
-		SerialNumber:   testconstants.PAACertWithNumericVidSerialNumber,
-		Issuer:         testconstants.PAACertWithNumericVidSubject,
-		AuthorityKeyID: testconstants.PAACertWithNumericVidSubjectKeyID,
-		VID:            testconstants.PAACertWithNumericVidVid,
-		IsRoot:         true,
-	}
-}
-
-func CreateTestRootCertWithSameSubject() TestCertificate {
-	return TestCertificate{
-		PEM:          testconstants.PAACertWithSameSubjectID1,
-		Subject:      testconstants.PAACertWithSameSubjectID1Subject,
-		SubjectKeyID: testconstants.PAACertWithSameSubjectIDSubjectID,
-		SerialNumber: testconstants.PAACertWithSameSubjectSerialNumber,
-		Issuer:       testconstants.PAACertWithSameSubjectIssuer,
-		VID:          testconstants.Vid,
-		IsRoot:       true,
-	}
-}
-
-func CreateTestRootCertWithSameSubject2() TestCertificate {
-	return TestCertificate{
-		PEM:          testconstants.PAACertWithSameSubjectID2,
-		Subject:      testconstants.PAACertWithSameSubjectID2Subject,
-		SubjectKeyID: testconstants.PAACertWithSameSubjectIDSubjectID,
-		SerialNumber: testconstants.PAACertWithSameSubject2SerialNumber,
-		Issuer:       testconstants.PAACertWithSameSubject2Issuer,
-		VID:          testconstants.Vid,
-		IsRoot:       true,
-	}
-}
-
-func CreateTestRootCertWithSameSubjectAndSkid1() TestCertificate {
-	return TestCertificate{
-		PEM:            testconstants.RootCertWithSameSubjectAndSKID1,
-		Subject:        testconstants.RootCertWithSameSubjectAndSKIDSubject,
-		SubjectKeyID:   testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID,
-		SerialNumber:   testconstants.RootCertWithSameSubjectAndSKID1SerialNumber,
-		Issuer:         testconstants.RootCertWithSameSubjectAndSKID1Issuer,
-		AuthorityKeyID: testconstants.RootCertWithSameSubjectAndSKIDSubject,
-		VID:            testconstants.RootCertWithVidVid,
-		IsRoot:         true,
-	}
-}
-
-func CreateTestRootCertWithSameSubjectAndSkid2() TestCertificate {
-	return TestCertificate{
-		PEM:            testconstants.RootCertWithSameSubjectAndSKID2,
-		Subject:        testconstants.RootCertWithSameSubjectAndSKIDSubject,
-		SubjectKeyID:   testconstants.RootCertWithSameSubjectAndSKIDSubjectKeyID,
-		SerialNumber:   testconstants.RootCertWithSameSubjectAndSKID2SerialNumber,
-		Issuer:         testconstants.RootCertWithSameSubjectAndSKID2Issuer,
-		AuthorityKeyID: testconstants.RootCertWithSameSubjectAndSKIDSubject,
-		IsRoot:         true,
-	}
-}
-
-func CreateTestIntermediateCert() TestCertificate {
-	return TestCertificate{
-		PEM:            testconstants.IntermediateCertPem,
-		Subject:        testconstants.IntermediateSubject,
-		SubjectKeyID:   testconstants.IntermediateSubjectKeyID,
-		SerialNumber:   testconstants.IntermediateSerialNumber,
-		Issuer:         testconstants.IntermediateIssuer,
-		AuthorityKeyID: testconstants.IntermediateAuthorityKeyID,
-		IsRoot:         false,
-	}
-}
-
-func CreateTestIntermediateVidScopedCert() TestCertificate {
-	return TestCertificate{
-		PEM:            testconstants.PAICertWithNumericPidVid,
-		Subject:        testconstants.PAICertWithNumericPidVidSubject,
-		SubjectKeyID:   testconstants.PAICertWithNumericPidVidSubjectKeyID,
-		SerialNumber:   testconstants.PAICertWithNumericPidVidSerialNumber,
-		Issuer:         testconstants.PAACertWithNumericVidSubject,
-		AuthorityKeyID: testconstants.PAACertWithNumericVidSubjectKeyID,
-		IsRoot:         false,
-	}
-}
-
-func CreateTestIntermediateCertWithSameSubjectAndSKID1() TestCertificate {
-	return TestCertificate{
-		PEM:            testconstants.IntermediateWithSameSubjectAndSKID1,
-		Subject:        testconstants.IntermediateCertWithSameSubjectAndSKIDSubject,
-		SubjectKeyID:   testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID,
-		SerialNumber:   testconstants.IntermediateCertWithSameSubjectAndSKID1SerialNumber,
-		Issuer:         testconstants.IntermediateCertWithSameSubjectIssuer,
-		AuthorityKeyID: testconstants.IntermediateCertWithSameSubjectAuthorityKeyID,
-		VID:            testconstants.RootCertWithVidVid,
-		IsRoot:         false,
-	}
-}
-
-func CreateTestIntermediateCertWithSameSubjectAndSKID2() TestCertificate {
-	return TestCertificate{
-		PEM:            testconstants.IntermediateWithSameSubjectAndSKID2,
-		Subject:        testconstants.IntermediateCertWithSameSubjectAndSKIDSubject,
-		SubjectKeyID:   testconstants.IntermediateCertWithSameSubjectAndSKIDSubjectKeyID,
-		SerialNumber:   testconstants.IntermediateCertWithSameSubjectAndSKID2SerialNumber,
-		Issuer:         testconstants.IntermediateCertWithSameSubjectIssuer,
-		AuthorityKeyID: testconstants.IntermediateCertWithSameSubjectAuthorityKeyID,
-		IsRoot:         false,
-	}
-}
-
-func CreateTestLeafCertWithSameSubjectAndSKID() TestCertificate {
-	return TestCertificate{
-		PEM:            testconstants.LeafCertWithSameSubjectAndSKID,
-		Subject:        testconstants.LeafCertWithSameSubjectAndSKIDSubject,
-		SubjectKeyID:   testconstants.LeafCertWithSameSubjectAndSKIDSubjectKeyID,
-		SerialNumber:   testconstants.LeafCertWithSameSubjectAndSKIDSerialNumber,
-		Issuer:         testconstants.LeafCertWithSameSubjectIssuer,
-		AuthorityKeyID: testconstants.LeafCertWithSameSubjectAuthorityKeyID,
-		IsRoot:         false,
-	}
-}
-
-func CreateTestLeafCert() TestCertificate {
-	return TestCertificate{
-		PEM:            testconstants.LeafCertPem,
-		Subject:        testconstants.LeafSubject,
-		SubjectKeyID:   testconstants.LeafSubjectKeyID,
-		SerialNumber:   testconstants.LeafSerialNumber,
-		Issuer:         testconstants.LeafIssuer,
-		AuthorityKeyID: testconstants.LeafAuthorityKeyID,
-		IsRoot:         false,
-	}
-}
-
-func CreateTestNocRoot1Cert() TestCertificate {
-	return TestCertificate{
-		PEM:            testconstants.NocRootCert1,
-		Subject:        testconstants.NocRootCert1Subject,
-		SubjectKeyID:   testconstants.NocRootCert1SubjectKeyID,
-		SerialNumber:   testconstants.NocRootCert1SerialNumber,
-		Issuer:         testconstants.NocRootCert1Issuer,
-		AuthorityKeyID: testconstants.NocRootCert1SubjectKeyID,
-		VID:            testconstants.Vid,
-		IsRoot:         true,
-	}
-}
-
-func CreateTestNocRoot2Cert() TestCertificate {
-	return TestCertificate{
-		PEM:            testconstants.NocRootCert1Copy,
-		Subject:        testconstants.NocRootCert1CopySubject,
-		SubjectKeyID:   testconstants.NocRootCert1CopySubjectKeyID,
-		SerialNumber:   testconstants.NocRootCert1CopySerialNumber,
-		Issuer:         testconstants.NocRootCert1CopyIssuer,
-		AuthorityKeyID: testconstants.NocRootCert1CopySubjectKeyID,
-		VID:            testconstants.Vid,
-		IsRoot:         true,
-	}
-}
-
-func CreateTestNoc2RootCert() TestCertificate {
-	return TestCertificate{
-		PEM:            testconstants.NocRootCert2,
-		Subject:        testconstants.NocRootCert2Subject,
-		SubjectKeyID:   testconstants.NocRootCert2SubjectKeyID,
-		SerialNumber:   testconstants.NocRootCert2SerialNumber,
-		Issuer:         testconstants.NocRootCert2Subject,
-		AuthorityKeyID: testconstants.NocRootCert2SubjectKeyID,
-		VID:            testconstants.Vid,
-		IsRoot:         true,
-	}
-}
-
-func CreateTestNocIca1Cert() TestCertificate {
-	return TestCertificate{
-		PEM:            testconstants.NocCert1,
-		Subject:        testconstants.NocCert1Subject,
-		SubjectKeyID:   testconstants.NocCert1SubjectKeyID,
-		SerialNumber:   testconstants.NocCert1SerialNumber,
-		Issuer:         testconstants.NocCert1Issuer,
-		AuthorityKeyID: testconstants.NocCert1AuthorityKeyID,
-		VID:            testconstants.Vid,
-		IsRoot:         false,
-	}
-}
-
-func CreateTestNocIca1CertCopy() TestCertificate {
-	return TestCertificate{
-		PEM:            testconstants.NocCert1Copy,
-		Subject:        testconstants.NocCert1CopySubject,
-		SubjectKeyID:   testconstants.NocCert1CopySubjectKeyID,
-		SerialNumber:   testconstants.NocCert1CopySerialNumber,
-		Issuer:         testconstants.NocCert1CopyIssuer,
-		AuthorityKeyID: testconstants.NocCert1CopyAuthorityKeyID,
-		VID:            testconstants.Vid,
-		IsRoot:         false,
-	}
-}
-
-func CreateTestNocIca2Cert() TestCertificate {
-	return TestCertificate{
-		PEM:            testconstants.NocCert2,
-		Subject:        testconstants.NocCert2Subject,
-		SubjectKeyID:   testconstants.NocCert2SubjectKeyID,
-		SerialNumber:   testconstants.NocCert2SerialNumber,
-		Issuer:         testconstants.NocCert2Issuer,
-		AuthorityKeyID: testconstants.NocCert2AuthorityKeyID,
-		VID:            testconstants.Vid,
-		IsRoot:         false,
-	}
-}
-
-func CreateTestNocLeafCert() TestCertificate {
-	return TestCertificate{
-		PEM:            testconstants.NocLeafCert1,
-		Subject:        testconstants.NocLeafCert1Subject,
-		SubjectKeyID:   testconstants.NocLeafCert1SubjectKeyID,
-		SerialNumber:   testconstants.NocLeafCert1SerialNumber,
-		Issuer:         testconstants.NocLeafCert1Issuer,
-		AuthorityKeyID: testconstants.NocLeafCert1AuthorityKeyID,
-		VID:            testconstants.Vid,
-		IsRoot:         false,
-	}
+func NocLeafCert1(address sdk.AccAddress) types.Certificate {
+	return types.NewNocCertificate(
+		testconstants.NocLeafCert1,
+		testconstants.NocLeafCert1Subject,
+		testconstants.NocLeafCert1SubjectAsText,
+		testconstants.NocLeafCert1SubjectKeyID,
+		testconstants.NocLeafCert1SerialNumber,
+		testconstants.NocLeafCert1Issuer,
+		testconstants.NocLeafCert1AuthorityKeyID,
+		testconstants.NocRootCert2Subject,
+		testconstants.NocRootCert2SubjectKeyID,
+		address.String(),
+		testconstants.Vid,
+		testconstants.SchemaVersion,
+	)
 }

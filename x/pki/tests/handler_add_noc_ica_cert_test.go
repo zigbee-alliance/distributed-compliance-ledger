@@ -19,12 +19,12 @@ func TestHandler_AddNocIntermediateCert(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// add NOC root certificate
-	rootCertificate := utils.CreateTestNocRoot1Cert()
-	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate.PEM)
+	rootCertificate := utils.NocRootCert1(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate.PemCert)
 
 	// add NOC ICA certificate
-	icaCertificate := utils.CreateTestNocIca1Cert()
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate.PEM)
+	icaCertificate := utils.NocCertIca1(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate.PemCert)
 
 	// Check state indexes
 	indexes := utils.TestIndexes{
@@ -58,17 +58,17 @@ func TestHandler_AddNocIntermediateCert_SameSubjectAndSkid_DifferentSerialNumber
 	setup := utils.Setup(t)
 
 	// add NOC root certificate
-	rootCertificate := utils.CreateTestNocRoot1Cert()
-	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate.PEM)
+	rootCertificate := utils.NocRootCert1(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate.PemCert)
 
 	// Store the NOC certificate with different serial number
-	intermediateCertificate := utils.NocIntermediateCertificate(setup.Vendor1)
+	intermediateCertificate := utils.NocCertIca1(setup.Vendor1)
 	intermediateCertificate.SerialNumber = testconstants.TestSerialNumber
 	utils.AddMokedNocCertificate(setup, intermediateCertificate, false)
 
 	// add the new NOC certificate
-	icaCertificate := utils.CreateTestNocIca1Cert()
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate.PEM)
+	icaCertificate := utils.NocCertIca1(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate.PemCert)
 
 	// Check state indexes
 	indexes := utils.TestIndexes{
@@ -144,8 +144,8 @@ func TestHandler_AddXNoc509Cert_ForRootNonNocCertificate(t *testing.T) {
 
 	// store root certificate
 
-	rootCert := utils.CreateTestRootCertWithVid()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCert)
+	rootCert := utils.RootCertWithVid(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
 
 	// try to add root certificate x509 certificate
 	addX509Cert := types.NewMsgAddNocX509IcaCert(setup.Vendor1.String(), testconstants.IntermediateCertWithVid1, testconstants.CertSchemaVersion)

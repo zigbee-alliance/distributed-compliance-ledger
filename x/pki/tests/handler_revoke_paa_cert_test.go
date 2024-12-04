@@ -21,15 +21,15 @@ func TestHandler_ProposeRevokeDaRootCert(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// propose x509 root certificate by `setup.Trustee` and approve by another trustee
-	rootCertificate := utils.CreateTestRootCert()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCertificate)
+	rootCertificate := utils.RootCertificate(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertificate)
 
 	// propose revocation of x509 root certificate by `setup.Trustee`
 	utils.ProposeRevokeDaRootCertificate(
 		setup,
 		setup.Trustee1,
 		rootCertificate.Subject,
-		rootCertificate.SubjectKeyID,
+		rootCertificate.SubjectKeyId,
 		rootCertificate.SerialNumber,
 		false)
 
@@ -62,8 +62,8 @@ func TestHandler_ProposeRevokeDaRootCert_ByTrusteeNotOwner(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// propose x509 root certificate by `setup.Trustee` and approve by another trustee
-	rootCertificate := utils.CreateTestRootCert()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCertificate)
+	rootCertificate := utils.RootCertificate(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertificate)
 
 	// add another trustee
 	anotherTrustee := setup.CreateTrusteeAccount(1)
@@ -73,7 +73,7 @@ func TestHandler_ProposeRevokeDaRootCert_ByTrusteeNotOwner(t *testing.T) {
 		setup,
 		anotherTrustee,
 		rootCertificate.Subject,
-		rootCertificate.SubjectKeyID,
+		rootCertificate.SubjectKeyId,
 		rootCertificate.SerialNumber,
 		false)
 
@@ -108,15 +108,15 @@ func TestHandler_RevokeDaRootCert(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// propose x509 root certificate by `setup.Trustee` and approve by another trustee
-	rootCertificate := utils.CreateTestRootCert()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCertificate)
+	rootCertificate := utils.RootCertificate(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertificate)
 
 	// revoke certificate
 	proposeAndApproveCertificateRevocation(
 		t,
 		setup,
 		rootCertificate.Subject,
-		rootCertificate.SubjectKeyID,
+		rootCertificate.SubjectKeyId,
 		"",
 	)
 
@@ -146,18 +146,18 @@ func TestHandler_RevokeDaRootCert_BySubjectAndSkid_WhenTwoCertsWithSameSkidExist
 	setup := utils.Setup(t)
 
 	// add root certificates
-	rootCertificate1 := utils.CreateTestRootCertWithSameSubject()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCertificate1)
+	rootCertificate1 := utils.PAACertWithSameSubjectID1(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertificate1)
 
-	rootCertificate2 := utils.CreateTestRootCertWithSameSubject2()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCertificate2)
+	rootCertificate2 := utils.PAACertWithSameSubjectID2(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertificate2)
 
 	// revoke Certificate1 certificate
 	proposeAndApproveCertificateRevocation(
 		t,
 		setup,
 		rootCertificate1.Subject,
-		rootCertificate1.SubjectKeyID,
+		rootCertificate1.SubjectKeyId,
 		"",
 	)
 
@@ -205,11 +205,11 @@ func TestHandler_RevokeDaRootCert_BySubjectAndSkid_WhenTwoCertsWithSameSkidExist
 func TestHandler_RevokeDaRootCert_BySerialNumber_WhenTwoCertsWithSameSubjectAndSkidExist(t *testing.T) {
 	setup := utils.Setup(t)
 
-	rootCertificate1 := utils.CreateTestRootCertWithSameSubjectAndSkid1()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCertificate1)
+	rootCertificate1 := utils.RootCertWithSameSubjectAndSKID1(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertificate1)
 
-	rootCertificate2 := utils.CreateTestRootCertWithSameSubjectAndSkid2()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCertificate2)
+	rootCertificate2 := utils.RootCertWithSameSubjectAndSKID2(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertificate2)
 
 	// revoke Certificate1 certificate
 	proposeAndApproveCertificateRevocation(
@@ -246,7 +246,7 @@ func TestHandler_RevokeDaRootCert_BySerialNumber_WhenTwoCertsWithSameSubjectAndS
 		t,
 		setup,
 		rootCertificate2.Subject,
-		rootCertificate2.SubjectKeyID,
+		rootCertificate2.SubjectKeyId,
 		rootCertificate2.SerialNumber,
 	)
 
@@ -275,8 +275,8 @@ func TestHandler_RevokeDaRootCert_TwoThirdApprovalsNeeded(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// add root x509 certificate
-	rootCertificate := utils.CreateTestRootCert()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCertificate)
+	rootCertificate := utils.RootCertificate(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertificate)
 
 	// root exists
 	indexes := utils.TestIndexes{
@@ -310,7 +310,7 @@ func TestHandler_RevokeDaRootCert_TwoThirdApprovalsNeeded(t *testing.T) {
 		setup,
 		setup.Trustee1,
 		rootCertificate.Subject,
-		rootCertificate.SubjectKeyID,
+		rootCertificate.SubjectKeyId,
 		rootCertificate.SerialNumber,
 		false)
 
@@ -322,7 +322,7 @@ func TestHandler_RevokeDaRootCert_TwoThirdApprovalsNeeded(t *testing.T) {
 			setup,
 			trusteeAccounts[i],
 			rootCertificate.Subject,
-			rootCertificate.SubjectKeyID,
+			rootCertificate.SubjectKeyId,
 			rootCertificate.SerialNumber)
 
 		// check that the certificate is still not revoked
@@ -334,7 +334,7 @@ func TestHandler_RevokeDaRootCert_TwoThirdApprovalsNeeded(t *testing.T) {
 		setup,
 		setup.Trustee2,
 		rootCertificate.Subject,
-		rootCertificate.SubjectKeyID,
+		rootCertificate.SubjectKeyId,
 		rootCertificate.SerialNumber)
 
 	indexes = utils.TestIndexes{
@@ -378,23 +378,23 @@ func TestHandler_RevokeDaRootCert_ForTree(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// add root x509 certificate
-	rootCertificate := utils.CreateTestRootCert()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCertificate)
+	rootCertificate := utils.RootCertificate(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertificate)
 
 	// add intermediate x509 certificate
-	intermediateCertificate := utils.CreateTestIntermediateCert()
-	utils.AddDaIntermediateCertificate(setup, setup.Vendor1, intermediateCertificate.PEM)
+	intermediateCertificate := utils.IntermediateCertPem(setup.Vendor1)
+	utils.AddDaIntermediateCertificate(setup, setup.Vendor1, intermediateCertificate.PemCert)
 
 	// add leaf x509 certificate
-	leafCertificate := utils.CreateTestLeafCert()
-	utils.AddDaIntermediateCertificate(setup, setup.Vendor1, leafCertificate.PEM)
+	leafCertificate := utils.LeafCertPem(setup.Vendor1)
+	utils.AddDaIntermediateCertificate(setup, setup.Vendor1, leafCertificate.PemCert)
 
 	// propose revocation of x509 root certificate
 	utils.ProposeRevokeDaRootCertificate(
 		setup,
 		setup.Trustee1,
 		rootCertificate.Subject,
-		rootCertificate.SubjectKeyID,
+		rootCertificate.SubjectKeyId,
 		"",
 		true)
 
@@ -403,7 +403,7 @@ func TestHandler_RevokeDaRootCert_ForTree(t *testing.T) {
 		setup,
 		setup.Trustee2,
 		rootCertificate.Subject,
-		rootCertificate.SubjectKeyID,
+		rootCertificate.SubjectKeyId,
 		"")
 
 	indexes := utils.TestIndexes{
@@ -435,8 +435,8 @@ func TestHandler_ApproveRevokeX509RootCert_ForNotEnoughApprovals(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// propose and approve x509 root certificate
-	rootCertificate := utils.CreateTestRootCert()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCertificate)
+	rootCertificate := utils.RootCertificate(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertificate)
 
 	// Add 1 more trustee (this will bring the total trustee's to 4)
 	setup.CreateTrusteeAccount(1)
@@ -446,7 +446,7 @@ func TestHandler_ApproveRevokeX509RootCert_ForNotEnoughApprovals(t *testing.T) {
 		setup,
 		setup.Trustee1,
 		rootCertificate.Subject,
-		rootCertificate.SubjectKeyID,
+		rootCertificate.SubjectKeyId,
 		rootCertificate.SerialNumber,
 		false)
 
@@ -455,7 +455,7 @@ func TestHandler_ApproveRevokeX509RootCert_ForNotEnoughApprovals(t *testing.T) {
 		setup,
 		setup.Trustee2,
 		rootCertificate.Subject,
-		rootCertificate.SubjectKeyID,
+		rootCertificate.SubjectKeyId,
 		rootCertificate.SerialNumber)
 
 	indexes := utils.TestIndexes{
@@ -483,8 +483,8 @@ func TestHandler_ProposeRevokeX509RootCert_ByNotTrustee(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// propose and approve x509 root certificate
-	rootCert := utils.CreateTestRootCert()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCert)
+	rootCert := utils.RootCertificate(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
 
 	for _, role := range []dclauthtypes.AccountRole{
 		dclauthtypes.Vendor,
@@ -522,8 +522,8 @@ func TestHandler_ProposeRevokeX509RootCert_CertificateDoesNotExist(t *testing.T)
 func TestHandler_ProposeRevokeX509RootCert_CertificateDoesNotExistBySerialNumber(t *testing.T) {
 	setup := utils.Setup(t)
 	// propose and approve x509 root certificate
-	rootCert := utils.CreateTestRootCert()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCert)
+	rootCert := utils.RootCertificate(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
 
 	// revoke x509 certificate
 	revokeX509Cert := types.NewMsgProposeRevokeX509RootCert(
@@ -573,8 +573,8 @@ func TestHandler_ProposeRevokeX509RootCert_ProposedRevocationAlreadyExists(t *te
 	setup := utils.Setup(t)
 
 	// propose and approve x509 root certificate
-	rootCert := utils.CreateTestRootCert()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCert)
+	rootCert := utils.RootCertificate(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
 
 	// propose revocation of x509 root certificate
 	proposeRevokeX509RootCert := types.NewMsgProposeRevokeX509RootCert(
@@ -626,8 +626,8 @@ func TestHandler_ApproveRevokeX509RootCert_ByNotTrustee(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// propose and approve x509 root certificate
-	rootCert := utils.CreateTestRootCert()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCert)
+	rootCert := utils.RootCertificate(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
 
 	// propose revocation of x509 root certificate
 	proposeRevokeX509RootCert := types.NewMsgProposeRevokeX509RootCert(
@@ -665,8 +665,8 @@ func TestHandler_ApproveRevokeX509RootCert_ProposedRevocationDoesNotExist(t *tes
 	setup := utils.Setup(t)
 
 	// propose and approve x509 root certificate
-	rootCert := utils.CreateTestRootCert()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCert)
+	rootCert := utils.RootCertificate(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
 
 	// approve revocation of x509 root certificate
 	approveRevokeX509RootCert := types.NewMsgApproveRevokeX509RootCert(
@@ -684,8 +684,8 @@ func TestHandler_ApproveRevokeX509RootCert_Twice(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// propose and approve x509 root certificate
-	rootCert := utils.CreateTestRootCert()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCert)
+	rootCert := utils.RootCertificate(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
 
 	// propose revocation of x509 root certificate
 	proposeRevokeX509RootCert := types.NewMsgProposeRevokeX509RootCert(

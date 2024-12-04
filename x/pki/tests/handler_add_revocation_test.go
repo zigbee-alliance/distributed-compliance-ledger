@@ -190,8 +190,8 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAAAlreadyExists(t *testing.T
 	accAddress := setup.CreateVendorAccount(testconstants.PAACertWithNumericVidVid)
 
 	// propose and approve x509 root certificate
-	rootCert := utils.CreateTestPAACertWithNumericVid()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCert)
+	rootCert := utils.PAACertWithNumericVid(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
 
 	addPkiRevocationDistributionPoint := createAddRevocationMessageWithPAACertWithNumericVid(accAddress.String())
 

@@ -20,12 +20,12 @@ func TestHandler_AddDaIntermediateCert(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// add DA root certificate
-	testRootCertificate := utils.CreateTestRootCert()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &testRootCertificate)
+	rootCertificate := utils.RootCertificate(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertificate)
 
 	// add DA PAI certificate
-	testIntermediateCertificate := utils.CreateTestIntermediateCert()
-	utils.AddDaIntermediateCertificate(setup, setup.Vendor1, testIntermediateCertificate.PEM)
+	testIntermediateCertificate := utils.IntermediateCertPem(setup.Vendor1)
+	utils.AddDaIntermediateCertificate(setup, setup.Vendor1, testIntermediateCertificate.PemCert)
 
 	// Check state indexes
 	indexes := utils.TestIndexes{
@@ -56,12 +56,12 @@ func TestHandler_AddDaIntermediateCert_VidScoped(t *testing.T) {
 	accAddress := setup.CreateVendorAccount(testconstants.PAACertWithNumericVidVid)
 
 	// store root certificate
-	testRootCertificate := utils.CreateTestPAACertWithNumericVid()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &testRootCertificate)
+	testRootCertificate := utils.PAACertWithNumericVid(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, testRootCertificate)
 
 	// add intermediate certificate
-	testIntermediateCertificate := utils.CreateTestIntermediateVidScopedCert()
-	utils.AddDaIntermediateCertificate(setup, accAddress, testIntermediateCertificate.PEM)
+	testIntermediateCertificate := utils.PAICertWithNumericPidVid(accAddress)
+	utils.AddDaIntermediateCertificate(setup, accAddress, testIntermediateCertificate.PemCert)
 
 	// Check state indexes
 	indexes := utils.TestIndexes{
@@ -88,19 +88,17 @@ func TestHandler_AddDaIntermediateCert_SameSubjectAndSkid_DifferentSerialNumber(
 	setup := utils.Setup(t)
 
 	// store root certificate
-	rootCertOptions := utils.CreateTestRootCert()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCertOptions)
+	rootCertificate := utils.RootCertificate(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertificate)
 
 	// store intermediate certificate with different serial number
-	intermediateCertificate := utils.IntermediateCertificateNoVid(setup.Vendor1)
+	intermediateCertificate := utils.IntermediateCertPem(setup.Vendor1)
 	intermediateCertificate.SerialNumber = utils.SerialNumber
-	testIntermediateCertificate2 := utils.CreateTestIntermediateCert()
-	testIntermediateCertificate2.SerialNumber = utils.SerialNumber
 	utils.AddMokedDaCertificate(setup, intermediateCertificate, false)
 
 	// store intermediate certificate second time
-	testIntermediateCertificate1 := utils.CreateTestIntermediateCert()
-	utils.AddDaIntermediateCertificate(setup, setup.Vendor1, testIntermediateCertificate1.PEM)
+	testIntermediateCertificate1 := utils.IntermediateCertPem(setup.Vendor1)
+	utils.AddDaIntermediateCertificate(setup, setup.Vendor1, testIntermediateCertificate1.PemCert)
 
 	// query All approved certificate
 	allApprovedCertificates, _ := utils.QueryAllApprovedCertificates(setup)
@@ -131,7 +129,7 @@ func TestHandler_AddDaIntermediateCert_SameSubjectAndSkid_DifferentSerialNumber(
 	resolvedCertificates := utils.CheckCertificateStateIndexes(t, setup, testIntermediateCertificate1, indexes)
 
 	// additional checks
-	require.Equal(t, resolvedCertificates.ApprovedCertificates.Certs[0].SerialNumber, testIntermediateCertificate2.SerialNumber)
+	require.Equal(t, resolvedCertificates.ApprovedCertificates.Certs[0].SerialNumber, intermediateCertificate.SerialNumber)
 	require.Equal(t, resolvedCertificates.ApprovedCertificates.Certs[1].SerialNumber, testIntermediateCertificate1.SerialNumber)
 	require.NotEqual(
 		t,
@@ -140,23 +138,23 @@ func TestHandler_AddDaIntermediateCert_SameSubjectAndSkid_DifferentSerialNumber(
 	)
 
 	// Check indexes for certificate2
-	utils.CheckCertificateStateIndexes(t, setup, testIntermediateCertificate2, indexes)
+	utils.CheckCertificateStateIndexes(t, setup, intermediateCertificate, indexes)
 }
 
 func TestHandler_AddDaCert_ForTree(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// add root x509 certificate
-	testRootCertificate := utils.CreateTestRootCert()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &testRootCertificate)
+	testRootCertificate := utils.RootCertificate(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, testRootCertificate)
 
 	// add intermediate x509 certificate
-	testIntermediateCertificate := utils.CreateTestIntermediateCert()
-	utils.AddDaIntermediateCertificate(setup, setup.Vendor1, testIntermediateCertificate.PEM)
+	testIntermediateCertificate := utils.IntermediateCertPem(setup.Vendor1)
+	utils.AddDaIntermediateCertificate(setup, setup.Vendor1, testIntermediateCertificate.PemCert)
 
 	// add leaf x509 certificate
-	testLeafCertificate := utils.CreateTestLeafCert()
-	utils.AddDaIntermediateCertificate(setup, setup.Vendor1, testLeafCertificate.PEM)
+	testLeafCertificate := utils.LeafCertPem(setup.Vendor1)
+	utils.AddDaIntermediateCertificate(setup, setup.Vendor1, testLeafCertificate.PemCert)
 
 	// Check indexes for root
 	indexes := utils.TestIndexes{
@@ -210,7 +208,7 @@ func TestHandler_AddX509Cert_EachChildCertRefersToTwoParentCerts(t *testing.T) {
 	utils.AddMokedDaCertificate(setup, rootCert, true)
 
 	// store intermediate certificate (it refers to two parent certificates)
-	intermediateCertificate := utils.IntermediateCertificateNoVid(setup.Vendor1)
+	intermediateCertificate := utils.IntermediateCertPem(setup.Vendor1)
 	intermediateCertificate.SerialNumber = utils.SerialNumber
 	utils.AddMokedDaCertificate(setup, intermediateCertificate, true)
 
@@ -265,17 +263,17 @@ func TestHandler_AddDaIntermediateCert_ByNotOwnerButSameVendor(t *testing.T) {
 	vendorAccAddress2 := setup.CreateVendorAccount(testconstants.Vid)
 
 	// store root certificate
-	testRootCertificate := utils.CreateTestRootCert()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &testRootCertificate)
+	testRootCertificate := utils.RootCertificate(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, testRootCertificate)
 
 	// Store an intermediate certificate with the first vendor account as the owner
-	intermediateCertificate := utils.IntermediateCertificateNoVid(vendorAccAddress1)
+	intermediateCertificate := utils.IntermediateCertPem(vendorAccAddress1)
 	intermediateCertificate.SerialNumber = utils.SerialNumber
 	utils.AddMokedDaCertificate(setup, intermediateCertificate, false)
 
 	// add an intermediate certificate with the same subject and SKID by second vendor account
-	testIntermediateCertificate := utils.CreateTestIntermediateCert()
-	utils.AddDaIntermediateCertificate(setup, vendorAccAddress2, testIntermediateCertificate.PEM)
+	testIntermediateCertificate := utils.IntermediateCertPem(vendorAccAddress2)
+	utils.AddDaIntermediateCertificate(setup, vendorAccAddress2, testIntermediateCertificate.PemCert)
 
 	// Check state indexes
 	indexes := utils.TestIndexes{
@@ -304,12 +302,12 @@ func TestHandler_AddX509Cert_VIDScopedRoot(t *testing.T) {
 	accAddress := setup.CreateVendorAccount(testconstants.PAACertWithNumericVidVid)
 
 	// store root certificate
-	rootCert := utils.CreateTestPAACertWithNumericVid()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCert)
+	rootCert := utils.PAACertWithNumericVid(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
 
 	// add x509 certificate
-	testIntermediateCertificate := utils.CreateTestIntermediateVidScopedCert()
-	utils.AddDaIntermediateCertificate(setup, accAddress, testIntermediateCertificate.PEM)
+	testIntermediateCertificate := utils.PAICertWithNumericPidVid(accAddress)
+	utils.AddDaIntermediateCertificate(setup, accAddress, testIntermediateCertificate.PemCert)
 
 	// Check state indexes
 	indexes := utils.TestIndexes{
@@ -435,7 +433,7 @@ func TestHandler_AddX509Cert_ForExistingNocCertificate(t *testing.T) {
 	setup.Keeper.AddAllCertificate(setup.Ctx, rootCertificate)
 
 	// Store the NOC certificate
-	nocCertificate := utils.IntermediateCertificateNoVid(setup.Vendor1)
+	nocCertificate := utils.IntermediateCertPem(setup.Vendor1)
 	nocCertificate.SerialNumber = testconstants.TestSerialNumber
 	nocCertificate.CertificateType = types.CertificateType_OperationalPKI
 
@@ -458,7 +456,7 @@ func TestHandler_AddX509Cert_NoRootCert(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// add intermediate certificate
-	intermediateCertificate := utils.IntermediateCertificateNoVid(setup.Vendor1)
+	intermediateCertificate := utils.IntermediateCertPem(setup.Vendor1)
 	setup.Keeper.AddAllCertificate(setup.Ctx, intermediateCertificate)
 
 	// add leaf x509 certificate
@@ -518,7 +516,7 @@ func TestHandler_AddX509Cert_ByOtherVendor(t *testing.T) {
 	vendorAccAddress1 := setup.CreateVendorAccount(testconstants.Vid)
 
 	// Store an intermediate certificate with the first vendor account as the owner
-	intermediateCertificate := utils.IntermediateCertificateNoVid(vendorAccAddress1)
+	intermediateCertificate := utils.IntermediateCertPem(vendorAccAddress1)
 	intermediateCertificate.SerialNumber = utils.SerialNumber
 	setup.Keeper.AddAllCertificate(setup.Ctx, intermediateCertificate)
 	setup.Keeper.AddApprovedCertificateBySubjectKeyID(setup.Ctx, intermediateCertificate)
@@ -541,8 +539,8 @@ func TestHandler_AddX509Cert_SenderNotVendor(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// store root certificate
-	rootCert := utils.CreateTestRootCertWithVid()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCert)
+	rootCert := utils.RootCertWithVid(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
 
 	// add x509 certificate
 	addX509Cert := types.NewMsgAddX509Cert(setup.Trustee1.String(), testconstants.IntermediateCertWithVid1, testconstants.CertSchemaVersion)

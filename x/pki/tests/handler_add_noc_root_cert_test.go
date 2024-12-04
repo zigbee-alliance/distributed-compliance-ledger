@@ -18,8 +18,8 @@ func TestHandler_AddNocRootCert(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// add NOC root certificate
-	rootCertificate := utils.CreateTestNocRoot1Cert()
-	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate.PEM)
+	rootCertificate := utils.NocRootCert1(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate.PemCert)
 
 	// Check state indexes
 	indexes := utils.TestIndexes{
@@ -52,12 +52,12 @@ func TestHandler_AddNocRootCert_SameSubjectAndSkid_DifferentSerialNumber(t *test
 	setup := utils.Setup(t)
 
 	// Store the NOC root certificate
-	rootCertificate1 := utils.CreateTestNocRoot1Cert()
-	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate1.PEM)
+	rootCertificate1 := utils.NocRootCert1(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate1.PemCert)
 
 	// add the new NOC root certificate
-	rootCertificate2 := utils.CreateTestNocRoot2Cert()
-	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate2.PEM)
+	rootCertificate2 := utils.NocRootCert1Copy(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate2.PemCert)
 
 	// Check state indexes
 	indexes := utils.TestIndexes{

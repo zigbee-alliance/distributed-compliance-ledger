@@ -20,12 +20,12 @@ func TestHandler_AssignVid_certificateWithoutSubjectVid(t *testing.T) {
 	vendorAcc := setup.CreateVendorAdminAccount(0)
 
 	// propose and approve x509 root certificate
-	rootCertificate := utils.CreateTestRootCert()
-	rootCertificate.VID = 0
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCertificate)
+	rootCertificate := utils.RootCertificate(setup.Trustee1)
+	rootCertificate.Vid = 0
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertificate)
 
 	// assign Vid
-	utils.AssignCertificateVid(setup, vendorAcc, rootCertificate.Subject, rootCertificate.SubjectKeyID, testconstants.Vid)
+	utils.AssignCertificateVid(setup, vendorAcc, rootCertificate.Subject, rootCertificate.SubjectKeyId, testconstants.Vid)
 
 	// Check state indexes
 	indexes := utils.TestIndexes{
@@ -58,12 +58,12 @@ func TestHandler_AssignVid_certificateWithSubjectVid(t *testing.T) {
 	vendorAcc := setup.CreateVendorAdminAccount(0)
 
 	// propose and approve x509 root certificate
-	rootCertificate := utils.CreateTestPAACertWithNumericVid()
-	rootCertificate.VID = 0
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCertificate)
+	rootCertificate := utils.PAACertWithNumericVid(setup.Trustee1)
+	rootCertificate.Vid = 0
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertificate)
 
 	// assign Vid
-	utils.AssignCertificateVid(setup, vendorAcc, rootCertificate.Subject, rootCertificate.SubjectKeyID, testconstants.PAACertWithNumericVidVid)
+	utils.AssignCertificateVid(setup, vendorAcc, rootCertificate.Subject, rootCertificate.SubjectKeyId, testconstants.PAACertWithNumericVidVid)
 
 	// Check state indexes
 	indexes := utils.TestIndexes{
@@ -129,8 +129,8 @@ func TestHandler_AssignVid_ForNonRootCertificate(t *testing.T) {
 	vendorAcc := setup.CreateVendorAdminAccount(0)
 
 	// propose and approve x509 root certificate
-	rootCert := utils.CreateTestRootCert()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCert)
+	rootCert := utils.RootCertificate(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
 
 	// Add vendor account
 	vendorAccAddress := utils.GenerateAccAddress()
@@ -158,13 +158,13 @@ func TestHandler_AssignVid_CertificateAlreadyHasVid(t *testing.T) {
 	vendorAcc := setup.CreateVendorAdminAccount(0)
 
 	// propose and approve x509 root certificate
-	rootCert := utils.CreateTestPAACertWithNumericVid()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCert)
+	rootCert := utils.PAACertWithNumericVid(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
 
 	assignVid := types.MsgAssignVid{
 		Signer:       vendorAcc.String(),
 		Subject:      rootCert.Subject,
-		SubjectKeyId: rootCert.SubjectKeyID,
+		SubjectKeyId: rootCert.SubjectKeyId,
 		Vid:          testconstants.PAACertWithNumericVidVid,
 	}
 
@@ -178,14 +178,14 @@ func TestHandler_AssignVid_MessageVidAndCertificateVidNotEqual(t *testing.T) {
 	vendorAcc := setup.CreateVendorAdminAccount(0)
 
 	// propose and approve x509 root certificate
-	rootCert := utils.CreateTestPAACertWithNumericVid()
-	rootCert.VID = 0
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCert)
+	rootCert := utils.PAACertWithNumericVid(setup.Trustee1)
+	rootCert.Vid = 0
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
 
 	assignVid := types.MsgAssignVid{
 		Signer:       vendorAcc.String(),
 		Subject:      rootCert.Subject,
-		SubjectKeyId: rootCert.SubjectKeyID,
+		SubjectKeyId: rootCert.SubjectKeyId,
 		Vid:          1,
 	}
 

@@ -18,11 +18,11 @@ func TestHandler_RemoveNocRootCert(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// add NOC root certificates
-	rootCertificate := utils.CreateTestNocRoot1Cert()
-	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate.PEM)
+	rootCertificate := utils.NocRootCert1(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate.PemCert)
 
 	// remove noc root certificate
-	utils.RemoveNocRootCertificate(setup, setup.Vendor1, rootCertificate.Subject, rootCertificate.SubjectKeyID, "")
+	utils.RemoveNocRootCertificate(setup, setup.Vendor1, rootCertificate.Subject, rootCertificate.SubjectKeyId, "")
 
 	// Check indexes
 	indexes := utils.TestIndexes{
@@ -51,15 +51,15 @@ func TestHandler_RemoveNocX509RootCert_BySubjectAndSKID(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// add NOC root certificates
-	rootCertificate1 := utils.CreateTestNocRoot1Cert()
-	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate1.PEM)
+	rootCertificate1 := utils.NocRootCert1(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate1.PemCert)
 
-	rootCertificate2 := utils.CreateTestNocRoot2Cert()
-	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate2.PEM)
+	rootCertificate2 := utils.NocRootCert1Copy(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate2.PemCert)
 
 	// Add intermediate certificate
-	icaCertificate := utils.CreateTestNocIca1Cert()
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate.PEM)
+	icaCertificate := utils.NocCertIca1(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate.PemCert)
 
 	// get certificates for further comparison
 	nocCerts := setup.Keeper.GetAllNocCertificates(setup.Ctx)
@@ -68,7 +68,7 @@ func TestHandler_RemoveNocX509RootCert_BySubjectAndSKID(t *testing.T) {
 	require.Equal(t, 3, len(nocCerts[0].Certs)+len(nocCerts[1].Certs))
 
 	// remove all root noc root certificates
-	utils.RemoveNocRootCertificate(setup, setup.Vendor1, rootCertificate1.Subject, rootCertificate1.SubjectKeyID, "")
+	utils.RemoveNocRootCertificate(setup, setup.Vendor1, rootCertificate1.Subject, rootCertificate1.SubjectKeyId, "")
 
 	// check that only IAC certificate exists
 	nocCerts, _ = utils.QueryAllNocCertificates(setup)
@@ -119,15 +119,15 @@ func TestHandler_RemoveNocX509RootCert_BySerialNumber(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// add NOC root certificates
-	rootCertificate1 := utils.CreateTestNocRoot1Cert()
-	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate1.PEM)
+	rootCertificate1 := utils.NocRootCert1(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate1.PemCert)
 
-	rootCertificate2 := utils.CreateTestNocRoot2Cert()
-	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate2.PEM)
+	rootCertificate2 := utils.NocRootCert1Copy(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate2.PemCert)
 
 	// Add ICA certificates
-	icaCertificate := utils.CreateTestNocIca1Cert()
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate.PEM)
+	icaCertificate := utils.NocCertIca1(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate.PemCert)
 
 	// get certificates for further comparison
 	nocCerts := setup.Keeper.GetAllNocCertificates(setup.Ctx)
@@ -140,7 +140,7 @@ func TestHandler_RemoveNocX509RootCert_BySerialNumber(t *testing.T) {
 		setup,
 		setup.Vendor1,
 		rootCertificate1.Subject,
-		rootCertificate1.SubjectKeyID,
+		rootCertificate1.SubjectKeyId,
 		rootCertificate1.SerialNumber)
 
 	// check total
@@ -191,7 +191,7 @@ func TestHandler_RemoveNocX509RootCert_BySerialNumber(t *testing.T) {
 		setup,
 		setup.Vendor1,
 		rootCertificate2.Subject,
-		rootCertificate2.SubjectKeyID,
+		rootCertificate2.SubjectKeyId,
 		rootCertificate2.SerialNumber)
 
 	// check total
@@ -243,22 +243,22 @@ func TestHandler_RemoveNocX509RootCert_RevokedCertificate(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// add NOC root certificate
-	rootCertificate1 := utils.CreateTestNocRoot1Cert()
-	utils.AddNocRootCertificate(setup, setup.Vendor1, testconstants.NocRootCert1)
+	rootCertificate1 := utils.NocRootCert1(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate1.PemCert)
 
-	rootCertificate2 := utils.CreateTestNocRoot2Cert()
-	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate2.PEM)
+	rootCertificate2 := utils.NocRootCert1Copy(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate2.PemCert)
 
 	// Add an intermediate certificate
-	icaCertificate := utils.CreateTestNocIca1Cert()
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate.PEM)
+	icaCertificate := utils.NocCertIca1(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate.PemCert)
 
 	// revoke NOC root certificates
 	utils.RevokeNocRootCertificate(
 		setup,
 		setup.Vendor1,
 		rootCertificate2.Subject,
-		rootCertificate2.SubjectKeyID,
+		rootCertificate2.SubjectKeyId,
 		"",
 		false,
 	)
@@ -305,7 +305,7 @@ func TestHandler_RemoveNocX509RootCert_RevokedCertificate(t *testing.T) {
 		setup,
 		setup.Vendor1,
 		rootCertificate2.Subject,
-		rootCertificate2.SubjectKeyID,
+		rootCertificate2.SubjectKeyId,
 		"",
 	)
 
@@ -350,19 +350,19 @@ func TestHandler_RemoveNocX509RootCert_RevokedWithChildCertificate(t *testing.T)
 	setup := utils.Setup(t)
 
 	// add NOC root certificate
-	rootCertificate := utils.CreateTestNocRoot1Cert()
-	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate.PEM)
+	rootCertificate := utils.NocRootCert1(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate.PemCert)
 
 	// Add an intermediate certificate
-	icaCertificate := utils.CreateTestNocIca1Cert()
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate.PEM)
+	icaCertificate := utils.NocCertIca1(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate.PemCert)
 
 	// revoke NOC root certificates
 	utils.RevokeNocRootCertificate(
 		setup,
 		setup.Vendor1,
 		rootCertificate.Subject,
-		rootCertificate.SubjectKeyID,
+		rootCertificate.SubjectKeyId,
 		"",
 		true,
 	)
@@ -409,7 +409,7 @@ func TestHandler_RemoveNocX509RootCert_RevokedWithChildCertificate(t *testing.T)
 		setup,
 		setup.Vendor1,
 		rootCertificate.Subject,
-		rootCertificate.SubjectKeyID,
+		rootCertificate.SubjectKeyId,
 		"",
 	)
 
@@ -456,33 +456,33 @@ func TestHandler_RemoveNocX509RootCert_RevokedAndActiveCertificate(t *testing.T)
 	setup := utils.Setup(t)
 
 	// add NOC root certificate
-	rootCertificate := utils.CreateTestNocRoot1Cert()
-	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate.PEM)
+	rootCertificate := utils.NocRootCert1(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate.PemCert)
 
 	// Add an intermediate certificate
-	icaCertificate := utils.CreateTestNocIca1Cert()
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate.PEM)
+	icaCertificate := utils.NocCertIca1(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate.PemCert)
 
 	// revoke an intermediate certificate
 	utils.RevokeNocRootCertificate(
 		setup,
 		setup.Vendor1,
 		rootCertificate.Subject,
-		rootCertificate.SubjectKeyID,
+		rootCertificate.SubjectKeyId,
 		rootCertificate.SerialNumber,
 		false,
 	)
 
 	// Add NOC root certificate with new serial number
-	rootCertificate2 := utils.CreateTestNocRoot2Cert()
-	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate2.PEM)
+	rootCertificate2 := utils.NocRootCert1Copy(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate2.PemCert)
 
 	// remove NOC root certificate by serial number
 	utils.RemoveNocRootCertificate(
 		setup,
 		setup.Vendor1,
 		rootCertificate.Subject,
-		rootCertificate.SubjectKeyID,
+		rootCertificate.SubjectKeyId,
 		rootCertificate.SerialNumber,
 	)
 
@@ -527,7 +527,7 @@ func TestHandler_RemoveNocX509RootCert_RevokedAndActiveCertificate(t *testing.T)
 		setup,
 		setup.Vendor1,
 		rootCertificate2.Subject,
-		rootCertificate2.SubjectKeyID,
+		rootCertificate2.SubjectKeyId,
 		"",
 	)
 
@@ -554,8 +554,8 @@ func TestHandler_RemoveNocX509RootCert_ByNotOwnerButSameVendor(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// add NOC root certificate
-	rootCertificate := utils.CreateTestNocRoot1Cert()
-	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate.PEM)
+	rootCertificate := utils.NocRootCert1(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate.PemCert)
 
 	// add second vendor account with VID = 1
 	vendorAccAddress2 := setup.CreateVendorAccount(testconstants.Vid)
@@ -565,7 +565,7 @@ func TestHandler_RemoveNocX509RootCert_ByNotOwnerButSameVendor(t *testing.T) {
 		setup,
 		vendorAccAddress2,
 		rootCertificate.Subject,
-		rootCertificate.SubjectKeyID,
+		rootCertificate.SubjectKeyId,
 		rootCertificate.SerialNumber,
 	)
 
