@@ -10,8 +10,6 @@ import (
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/tests/utils"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 // Main
@@ -69,14 +67,13 @@ func TestHandler_RemoveNocX509RootCert_BySubjectAndSKID(t *testing.T) {
 	require.Equal(t, 2, len(nocCerts))
 	require.Equal(t, 3, len(nocCerts[0].Certs)+len(nocCerts[1].Certs))
 
-	// remove all root nOC certificates but IAC certificate
+	// remove all root noc root certificates
 	utils.RemoveNocRootCertificate(setup, setup.Vendor1, rootCertificate1.Subject, rootCertificate1.SubjectKeyID, "")
 
 	// check that only IAC certificate exists
 	nocCerts, _ = utils.QueryAllNocCertificates(setup)
 	require.Equal(t, 1, len(nocCerts))
 	require.Equal(t, 1, len(nocCerts[0].Certs))
-	require.Equal(t, testconstants.NocCert1SerialNumber, nocCerts[0].Certs[0].SerialNumber)
 
 	// Check indexes for root certificates
 	indexes := utils.TestIndexes{
@@ -132,20 +129,24 @@ func TestHandler_RemoveNocX509RootCert_BySerialNumber(t *testing.T) {
 	icaCertificate := utils.CreateTestNocIca1Cert()
 	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate.PEM)
 
-	// remove NOC root certificate by serial number
-	utils.RemoveNocRootCertificate(setup, setup.Vendor1, rootCertificate1.Subject, rootCertificate1.SubjectKeyID, rootCertificate1.SerialNumber)
-
-	nocCerts, _ := utils.QueryAllNocCertificates(setup)
+	// get certificates for further comparison
+	nocCerts := setup.Keeper.GetAllNocCertificates(setup.Ctx)
+	require.NotNil(t, nocCerts)
 	require.Equal(t, 2, len(nocCerts))
+	require.Equal(t, 3, len(nocCerts[0].Certs)+len(nocCerts[1].Certs))
 
-	// NocCertificates: Subject and SKID
-	nocCertificates, err := utils.QueryNocCertificates(
+	// remove NOC root certificate by serial number
+	utils.RemoveNocRootCertificate(
 		setup,
-		rootCertificate2.Subject,
-		rootCertificate2.SubjectKeyID,
-	)
-	require.NoError(t, err)
-	require.Equal(t, 1, len(nocCertificates.Certs))
+		setup.Vendor1,
+		rootCertificate1.Subject,
+		rootCertificate1.SubjectKeyID,
+		rootCertificate1.SerialNumber)
+
+	// check total
+	nocCerts, _ = utils.QueryAllNocCertificates(setup)
+	require.Equal(t, 2, len(nocCerts))
+	require.Equal(t, 2, len(nocCerts[0].Certs)+len(nocCerts[1].Certs))
 
 	// Check indexes for root certificates
 	indexes := utils.TestIndexes{
@@ -166,6 +167,7 @@ func TestHandler_RemoveNocX509RootCert_BySerialNumber(t *testing.T) {
 	}
 	utils.CheckCertificateStateIndexes(t, setup, rootCertificate1, indexes)
 
+	// same but unique does not exist
 	indexes = utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.AllCertificatesKeyPrefix},
@@ -185,12 +187,17 @@ func TestHandler_RemoveNocX509RootCert_BySerialNumber(t *testing.T) {
 	utils.CheckCertificateStateIndexes(t, setup, rootCertificate2, indexes)
 
 	// remove NOC root certificate by serial number and check that IAC cert is not removed
-	utils.RemoveNocRootCertificate(setup, setup.Vendor1, rootCertificate2.Subject, rootCertificate2.SubjectKeyID, rootCertificate2.SerialNumber)
+	utils.RemoveNocRootCertificate(
+		setup,
+		setup.Vendor1,
+		rootCertificate2.Subject,
+		rootCertificate2.SubjectKeyID,
+		rootCertificate2.SerialNumber)
 
+	// check total
 	nocCerts, _ = utils.QueryAllNocCertificates(setup)
 	require.Equal(t, 1, len(nocCerts))
 	require.Equal(t, 1, len(nocCerts[0].Certs))
-	require.Equal(t, testconstants.NocCert1SerialNumber, nocCerts[0].Certs[0].SerialNumber)
 
 	// Check indexes for root certificates
 	indexes = utils.TestIndexes{
@@ -240,11 +247,11 @@ func TestHandler_RemoveNocX509RootCert_RevokedCertificate(t *testing.T) {
 	utils.AddNocRootCertificate(setup, setup.Vendor1, testconstants.NocRootCert1)
 
 	rootCertificate2 := utils.CreateTestNocRoot2Cert()
-	utils.AddNocRootCertificate(setup, setup.Vendor1, testconstants.NocRootCert1Copy)
+	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate2.PEM)
 
 	// Add an intermediate certificate
 	icaCertificate := utils.CreateTestNocIca1Cert()
-	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, testconstants.NocCert1)
+	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate.PEM)
 
 	// revoke NOC root certificates
 	utils.RevokeNocRootCertificate(
@@ -275,10 +282,7 @@ func TestHandler_RemoveNocX509RootCert_RevokedCertificate(t *testing.T) {
 	utils.CheckCertificateStateIndexes(t, setup, rootCertificate1, indexes)
 	utils.CheckCertificateStateIndexes(t, setup, rootCertificate2, indexes)
 
-	revokedCerts, _ := utils.QueryNocRevokedRootCertificates(setup, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
-	require.Equal(t, 2, len(revokedCerts.Certs))
-
-	// Check that intermediate certificates does not exist
+	// Check indexes for intermediate certificate
 	indexes = utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.AllCertificatesKeyPrefix},
@@ -304,10 +308,6 @@ func TestHandler_RemoveNocX509RootCert_RevokedCertificate(t *testing.T) {
 		rootCertificate2.SubjectKeyID,
 		"",
 	)
-
-	allCerts, _ := utils.QueryAllNocCertificates(setup)
-	require.Equal(t, 1, len(allCerts))
-	require.Equal(t, testconstants.NocCert1SerialNumber, allCerts[0].Certs[0].SerialNumber)
 
 	// Check indexes for root certificates
 	indexes = utils.TestIndexes{
@@ -346,173 +346,245 @@ func TestHandler_RemoveNocX509RootCert_RevokedCertificate(t *testing.T) {
 	utils.CheckCertificateStateIndexes(t, setup, icaCertificate, indexes)
 }
 
+func TestHandler_RemoveNocX509RootCert_RevokedWithChildCertificate(t *testing.T) {
+	setup := utils.Setup(t)
+
+	// add NOC root certificate
+	rootCertificate := utils.CreateTestNocRoot1Cert()
+	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate.PEM)
+
+	// Add an intermediate certificate
+	icaCertificate := utils.CreateTestNocIca1Cert()
+	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate.PEM)
+
+	// revoke NOC root certificates
+	utils.RevokeNocRootCertificate(
+		setup,
+		setup.Vendor1,
+		rootCertificate.Subject,
+		rootCertificate.SubjectKeyID,
+		"",
+		true,
+	)
+
+	// Check indexes for root certificates
+	indexes := utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.UniqueCertificateKeyPrefix},
+			{Key: types.RevokedNocRootCertificatesKeyPrefix},
+		},
+		Missing: []utils.TestIndex{
+			{Key: types.AllCertificatesKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
+			{Key: types.RevokedNocIcaCertificatesKeyPrefix},
+		},
+	}
+	utils.CheckCertificateStateIndexes(t, setup, rootCertificate, indexes)
+
+	indexes = utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.UniqueCertificateKeyPrefix},
+			{Key: types.RevokedNocIcaCertificatesKeyPrefix},
+		},
+		Missing: []utils.TestIndex{
+			{Key: types.AllCertificatesKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
+			{Key: types.RevokedNocRootCertificatesKeyPrefix},
+		},
+	}
+	utils.CheckCertificateStateIndexes(t, setup, icaCertificate, indexes)
+
+	// remove NOC root certificates
+	utils.RemoveNocRootCertificate(
+		setup,
+		setup.Vendor1,
+		rootCertificate.Subject,
+		rootCertificate.SubjectKeyID,
+		"",
+	)
+
+	// Check indexes for root certificates
+	indexes = utils.TestIndexes{
+		Present: []utils.TestIndex{},
+		Missing: []utils.TestIndex{
+			{Key: types.UniqueCertificateKeyPrefix},
+			{Key: types.AllCertificatesKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
+			{Key: types.RevokedNocRootCertificatesKeyPrefix},
+		},
+	}
+	utils.CheckCertificateStateIndexes(t, setup, rootCertificate, indexes)
+
+	// Check that intermediate certificates still is revoked
+	indexes = utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.UniqueCertificateKeyPrefix},
+			{Key: types.RevokedNocIcaCertificatesKeyPrefix},
+		},
+		Missing: []utils.TestIndex{
+			{Key: types.AllCertificatesKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
+			{Key: types.RevokedNocRootCertificatesKeyPrefix},
+		},
+	}
+	utils.CheckCertificateStateIndexes(t, setup, icaCertificate, indexes)
+}
+
 // Extra cases
 
 func TestHandler_RemoveNocX509RootCert_RevokedAndActiveCertificate(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// add NOC root certificate
-	utils.AddNocRootCertificate(setup, setup.Vendor1, testconstants.NocRootCert1)
+	rootCertificate := utils.CreateTestNocRoot1Cert()
+	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate.PEM)
 
 	// Add an intermediate certificate
-	addIcaCert := types.NewMsgAddNocX509IcaCert(setup.Vendor1.String(), testconstants.NocCert1, testconstants.CertSchemaVersion)
-	_, err := setup.Handler(setup.Ctx, addIcaCert)
-	require.NoError(t, err)
-
-	// get certificates for further comparison
-	nocCerts := setup.Keeper.GetAllNocCertificates(setup.Ctx)
-	require.NotNil(t, nocCerts)
-	require.Equal(t, 2, len(nocCerts))
+	icaCertificate := utils.CreateTestNocIca1Cert()
+	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate.PEM)
 
 	// revoke an intermediate certificate
 	utils.RevokeNocRootCertificate(
 		setup,
 		setup.Vendor1,
-		testconstants.NocRootCert1Subject,
-		testconstants.NocRootCert1SubjectKeyID,
-		testconstants.NocRootCert1SerialNumber,
+		rootCertificate.Subject,
+		rootCertificate.SubjectKeyID,
+		rootCertificate.SerialNumber,
 		false,
 	)
 
 	// Add NOC root certificate with new serial number
-	utils.AddNocRootCertificate(setup, setup.Vendor1, testconstants.NocRootCert1Copy)
-
-	certs, _ := utils.QueryNocCertificates(setup, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
-	require.Equal(t, 1, len(certs.Certs))
-	require.Equal(t, testconstants.NocRootCert1CopySerialNumber, certs.Certs[0].SerialNumber)
+	rootCertificate2 := utils.CreateTestNocRoot2Cert()
+	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate2.PEM)
 
 	// remove NOC root certificate by serial number
-	removeIcaCert := types.NewMsgRemoveNocX509RootCert(
-		setup.Vendor1.String(),
-		testconstants.NocRootCert1Subject,
-		testconstants.NocRootCert1SubjectKeyID,
-		testconstants.NocRootCert1SerialNumber,
+	utils.RemoveNocRootCertificate(
+		setup,
+		setup.Vendor1,
+		rootCertificate.Subject,
+		rootCertificate.SubjectKeyID,
+		rootCertificate.SerialNumber,
 	)
-	_, err = setup.Handler(setup.Ctx, removeIcaCert)
-	require.NoError(t, err)
 
-	// check that only one root and IAC certificates exists
-	nocCerts, _ = utils.QueryAllNocCertificates(setup)
-	require.Equal(t, 2, len(nocCerts))
+	// Check indexes for re-activated root certificates
+	indexes := utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.AllCertificatesKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
+			{Key: types.UniqueCertificateKeyPrefix},
+		},
+		Missing: []utils.TestIndex{
+			{Key: types.RevokedNocRootCertificatesKeyPrefix},
+		},
+	}
+	utils.CheckCertificateStateIndexes(t, setup, rootCertificate2, indexes)
 
-	certs, _ = utils.QueryNocCertificates(setup, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
-	require.Equal(t, testconstants.NocRootCert1CopySerialNumber, certs.Certs[0].SerialNumber)
-	certs, _ = utils.QueryNocCertificates(setup, testconstants.NocCert1Subject, testconstants.NocCert1SubjectKeyID)
-	require.Equal(t, 1, len(certs.Certs))
-
-	_, err = utils.QueryNocRevokedRootCertificates(setup, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
-	require.Equal(t, codes.NotFound, status.Code(err))
-
-	// check that unique certificates does not exists
-	found := setup.Keeper.IsUniqueCertificatePresent(setup.Ctx, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SerialNumber)
-	require.Equal(t, false, found)
-	found = setup.Keeper.IsUniqueCertificatePresent(setup.Ctx, testconstants.NocRootCert1Subject, testconstants.NocRootCert1CopySerialNumber)
-	require.Equal(t, true, found)
-
-	// query noc certificate by VID
-	nocCertificates, err := utils.QueryNocIcaCertificatesByVid(setup, testconstants.Vid)
-	require.NoError(t, err)
-	require.Equal(t, len(nocCertificates.Certs), 1)
-	require.Equal(t, testconstants.NocCert1SerialNumber, nocCertificates.Certs[0].SerialNumber)
-
-	// Add NOC root certificate with new serial number
-	utils.AddNocRootCertificate(setup, setup.Vendor1, testconstants.NocRootCert1)
-
-	certs, _ = utils.QueryNocCertificates(setup, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
-	require.Equal(t, 2, len(certs.Certs))
+	// Check indexes for deleted root certificates
+	indexes = utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.AllCertificatesKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
+		},
+		Missing: []utils.TestIndex{
+			{Key: types.RevokedNocRootCertificatesKeyPrefix},
+			{Key: types.UniqueCertificateKeyPrefix},
+		},
+	}
+	utils.CheckCertificateStateIndexes(t, setup, rootCertificate, indexes)
 
 	// remove NOC root certificates
-	removeIcaCert = types.NewMsgRemoveNocX509RootCert(
-		setup.Vendor1.String(),
-		testconstants.NocRootCert1Subject,
-		testconstants.NocRootCert1SubjectKeyID,
+	utils.RemoveNocRootCertificate(
+		setup,
+		setup.Vendor1,
+		rootCertificate2.Subject,
+		rootCertificate2.SubjectKeyID,
 		"",
 	)
-	_, err = setup.Handler(setup.Ctx, removeIcaCert)
-	require.NoError(t, err)
 
-	nocCerts, _ = utils.QueryAllNocCertificates(setup)
-	require.Equal(t, 1, len(nocCerts))
-	require.Equal(t, 1, len(nocCerts[0].Certs))
-	require.Equal(t, testconstants.NocCert1SerialNumber, nocCerts[0].Certs[0].SerialNumber)
-
-	nocCertificates, err = utils.QueryNocIcaCertificatesByVid(setup, testconstants.Vid)
-	require.NoError(t, err)
-	require.Equal(t, len(nocCertificates.Certs), 1)
-	require.Equal(t, testconstants.NocCert1SerialNumber, nocCertificates.Certs[0].SerialNumber)
-
-	// check that IAC certificates can be queried by vid+skid
-	certsByVidSkid, _ := utils.QueryNocCertificatesByVidAndSkid(setup, testconstants.Vid, testconstants.NocCert1SubjectKeyID)
-	require.Equal(t, 1, len(certsByVidSkid.Certs))
-	require.Equal(t, testconstants.NocCert1SerialNumber, certsByVidSkid.Certs[0].SerialNumber)
-
-	// check that root certs removed
-	_, err = utils.QueryNocCertificates(setup, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
-	require.Equal(t, codes.NotFound, status.Code(err))
-	_, err = utils.QueryNocCertificatesBySubject(setup, testconstants.NocRootCert1Subject)
-	require.Equal(t, codes.NotFound, status.Code(err))
-	certsBySKID, _ := utils.QueryNocCertificatesBySubjectKeyID(setup, testconstants.NocRootCert1SubjectKeyID)
-	require.Empty(t, certsBySKID)
-	_, err = utils.QueryNocRootCertificatesByVid(setup, testconstants.Vid)
-	require.Equal(t, codes.NotFound, status.Code(err))
-	_, err = utils.QueryNocRootCertificatesByVid(setup, testconstants.Vid)
-	require.Equal(t, codes.NotFound, status.Code(err))
-	_, err = utils.QueryNocCertificatesByVidAndSkid(setup, testconstants.Vid, testconstants.NocRootCert1SubjectKeyID)
-	require.Equal(t, codes.NotFound, status.Code(err))
-
-	// check that unique certificates does not exists
-	found = setup.Keeper.IsUniqueCertificatePresent(setup.Ctx, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SerialNumber)
-	require.Equal(t, false, found)
-	found = setup.Keeper.IsUniqueCertificatePresent(setup.Ctx, testconstants.NocRootCert1Subject, testconstants.NocRootCert1CopySerialNumber)
-	require.Equal(t, false, found)
+	// Check indexes for root certificates (after deletion re-activated)
+	indexes = utils.TestIndexes{
+		Present: []utils.TestIndex{},
+		Missing: []utils.TestIndex{
+			{Key: types.AllCertificatesKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
+			{Key: types.UniqueCertificateKeyPrefix},
+			{Key: types.RevokedNocRootCertificatesKeyPrefix},
+		},
+	}
+	utils.CheckCertificateStateIndexes(t, setup, rootCertificate2, indexes)
+	utils.CheckCertificateStateIndexes(t, setup, rootCertificate, indexes)
 }
 
 func TestHandler_RemoveNocX509RootCert_ByNotOwnerButSameVendor(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// add NOC root certificate
-	utils.AddNocRootCertificate(setup, setup.Vendor1, testconstants.NocRootCert1)
-
-	// add first vendor account with VID = 1
-	vendorAccAddress1 := utils.GenerateAccAddress()
-	setup.AddAccount(vendorAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
+	rootCertificate := utils.CreateTestNocRoot1Cert()
+	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate.PEM)
 
 	// add second vendor account with VID = 1
-	vendorAccAddress2 := utils.GenerateAccAddress()
-	setup.AddAccount(vendorAccAddress2, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
+	vendorAccAddress2 := setup.CreateVendorAccount(testconstants.Vid)
 
 	// remove x509 certificate by second vendor account
-	removeIcaCert := types.NewMsgRemoveNocX509RootCert(
-		vendorAccAddress2.String(),
-		testconstants.NocRootCert1Subject,
-		testconstants.NocRootCert1SubjectKeyID,
-		testconstants.NocRootCert1SerialNumber,
+	utils.RemoveNocRootCertificate(
+		setup,
+		vendorAccAddress2,
+		rootCertificate.Subject,
+		rootCertificate.SubjectKeyID,
+		rootCertificate.SerialNumber,
 	)
-	_, err := setup.Handler(setup.Ctx, removeIcaCert)
-	require.NoError(t, err)
 
-	// check that certificate removed from 'noc certificates' list
-	_, err = utils.QueryNocCertificates(setup, testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID)
-	require.Error(t, err)
-	require.Equal(t, codes.NotFound, status.Code(err))
-
-	// check that certificate removed from 'noc certificates by subject' list
-	_, err = utils.QueryNocCertificatesBySubject(setup, testconstants.NocRootCert1Subject)
-	require.Error(t, err)
-	require.Equal(t, codes.NotFound, status.Code(err))
-
-	// check that certificate removed from 'noc certificates by SKID' list
-	nocCerts, err := utils.QueryNocCertificatesBySubjectKeyID(setup, testconstants.NocRootCert1SubjectKeyID)
-	require.NoError(t, err)
-	require.Equal(t, 0, len(nocCerts))
-
-	// query noc certificate by VID
-	_, err = utils.QueryNocRootCertificatesByVid(setup, testconstants.Vid)
-	require.Equal(t, codes.NotFound, status.Code(err))
-
-	// check that unique certificate key is not registered
-	require.False(t, setup.Keeper.IsUniqueCertificatePresent(setup.Ctx,
-		testconstants.NocRootCert1Subject, testconstants.NocRootCert1SerialNumber))
+	// Check indexes for root certificates
+	indexes := utils.TestIndexes{
+		Present: []utils.TestIndex{},
+		Missing: []utils.TestIndex{
+			{Key: types.AllCertificatesKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
+			{Key: types.UniqueCertificateKeyPrefix},
+			{Key: types.RevokedNocRootCertificatesKeyPrefix},
+		},
+	}
+	utils.CheckCertificateStateIndexes(t, setup, rootCertificate, indexes)
 }
 
 // Error cases

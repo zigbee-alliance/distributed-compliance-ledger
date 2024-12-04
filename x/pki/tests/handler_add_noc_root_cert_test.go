@@ -21,7 +21,7 @@ func TestHandler_AddNocRootCert(t *testing.T) {
 	rootCertificate := utils.CreateTestNocRoot1Cert()
 	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate.PEM)
 
-	// Check indexes
+	// Check state indexes
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.AllCertificatesKeyPrefix},
@@ -57,14 +57,9 @@ func TestHandler_AddNocRootCert_SameSubjectAndSkid_DifferentSerialNumber(t *test
 
 	// add the new NOC root certificate
 	rootCertificate2 := utils.CreateTestNocRoot2Cert()
-	addNocX509RootCert := types.NewMsgAddNocX509RootCert(
-		setup.Vendor1.String(),
-		rootCertificate2.PEM,
-		testconstants.CertSchemaVersion)
-	_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
-	require.NoError(t, err)
+	utils.AddNocRootCertificate(setup, setup.Vendor1, rootCertificate2.PEM)
 
-	// check indexes
+	// Check state indexes
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.AllCertificatesKeyPrefix, Count: 2},

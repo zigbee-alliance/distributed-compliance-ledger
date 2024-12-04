@@ -26,7 +26,7 @@ func TestHandler_AddNocIntermediateCert(t *testing.T) {
 	icaCertificate := utils.CreateTestNocIca1Cert()
 	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate.PEM)
 
-	// Check indexes
+	// Check state indexes
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.AllCertificatesKeyPrefix},
@@ -70,7 +70,7 @@ func TestHandler_AddNocIntermediateCert_SameSubjectAndSkid_DifferentSerialNumber
 	icaCertificate := utils.CreateTestNocIca1Cert()
 	utils.AddNocIntermediateCertificate(setup, setup.Vendor1, icaCertificate.PEM)
 
-	// query noc certificate by Subject and SKID
+	// Check state indexes
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.AllCertificatesKeyPrefix, Count: 2},
@@ -143,14 +143,9 @@ func TestHandler_AddXNoc509Cert_ForRootNonNocCertificate(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// store root certificate
-	rootCertOptions := &utils.RootCertOptions{
-		PemCert:      testconstants.RootCertWithVid,
-		Info:         testconstants.Info,
-		Subject:      testconstants.RootCertWithVidSubject,
-		SubjectKeyID: testconstants.RootCertWithVidSubjectKeyID,
-		Vid:          testconstants.RootCertWithVidVid,
-	}
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+
+	rootCert := utils.CreateTestRootCertWithVid()
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCert)
 
 	// try to add root certificate x509 certificate
 	addX509Cert := types.NewMsgAddNocX509IcaCert(setup.Vendor1.String(), testconstants.IntermediateCertWithVid1, testconstants.CertSchemaVersion)

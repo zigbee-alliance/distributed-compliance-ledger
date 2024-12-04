@@ -25,7 +25,7 @@ func TestHandler_ProposeAddDaRootCert(t *testing.T) {
 	// propose DA root certificate
 	proposeAddX509RootCert := utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PEM)
 
-	// Check indexes
+	// Check state indexes
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.ProposedCertificateKeyPrefix},
@@ -52,15 +52,14 @@ func TestHandler_ProposeAddDaRootCert(t *testing.T) {
 func TestHandler_AddDaRootCert(t *testing.T) {
 	setup := utils.Setup(t)
 
-	rootCertificate := utils.CreateTestRootCert()
-
 	// propose add x509 root certificate by trustee
+	rootCertificate := utils.CreateTestRootCert()
 	utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PEM)
 
 	// approve by second trustee
 	utils.ApproveDaRootCertificate(setup, setup.Trustee2, rootCertificate.Subject, rootCertificate.SubjectKeyID)
 
-	// Check indexes
+	// Check state indexes
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.UniqueCertificateKeyPrefix},
@@ -83,9 +82,8 @@ func TestHandler_AddDaRootCert(t *testing.T) {
 func TestHandler_AddDaRootCert_TwoThirdApprovalsNeeded(t *testing.T) {
 	setup := utils.Setup(t)
 
-	rootCertificate := utils.CreateTestRootCert()
-
 	// propose x509 root certificate by account without trustee role
+	rootCertificate := utils.CreateTestRootCert()
 	utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PEM)
 
 	// Create an array of trustee account from 1 to 50
@@ -98,7 +96,7 @@ func TestHandler_AddDaRootCert_TwoThirdApprovalsNeeded(t *testing.T) {
 	for i := 1; i < twoThirds-1; i++ {
 		utils.ApproveDaRootCertificate(setup, trusteeAccounts[i], rootCertificate.Subject, rootCertificate.SubjectKeyID)
 
-		// Check indexes
+		// Check state indexes
 		indexes := utils.TestIndexes{
 			Present: []utils.TestIndex{
 				{Key: types.UniqueCertificateKeyPrefix},
@@ -121,7 +119,7 @@ func TestHandler_AddDaRootCert_TwoThirdApprovalsNeeded(t *testing.T) {
 	// One more approval will move this to approved state from pending
 	utils.ApproveDaRootCertificate(setup, setup.Trustee2, rootCertificate.Subject, rootCertificate.SubjectKeyID)
 
-	// Check indexes
+	// Check state indexes
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.UniqueCertificateKeyPrefix},
@@ -140,7 +138,7 @@ func TestHandler_AddDaRootCert_TwoThirdApprovalsNeeded(t *testing.T) {
 	}
 	resolvedCertificates := utils.CheckCertificateStateIndexes(t, setup, rootCertificate, indexes)
 
-	// Additional check: Check all approvals are present
+	// Additional checks
 	for i := 1; i < twoThirds-1; i++ {
 		require.Equal(t, resolvedCertificates.ApprovedCertificates.Certs[0].HasApprovalFrom(trusteeAccounts[i].String()), true)
 	}
@@ -150,8 +148,6 @@ func TestHandler_AddDaRootCert_TwoThirdApprovalsNeeded(t *testing.T) {
 
 func TestHandler_AddDaRootCert_FourApprovalsAreNeeded_FiveTrustees(t *testing.T) {
 	setup := utils.Setup(t)
-
-	rootCertificate := utils.CreateTestRootCert()
 
 	// we have 5 trustees: 1 approval comes from propose => we need 3 more approvals
 
@@ -164,6 +160,7 @@ func TestHandler_AddDaRootCert_FourApprovalsAreNeeded_FiveTrustees(t *testing.T)
 	setup.AddAccount(fifthTrustee, []dclauthtypes.AccountRole{dclauthtypes.Trustee}, 1)
 
 	// propose x509 root certificate by account Trustee1
+	rootCertificate := utils.CreateTestRootCert()
 	utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PEM)
 
 	// approve x509 root certificate by account Trustee2
@@ -175,19 +172,29 @@ func TestHandler_AddDaRootCert_FourApprovalsAreNeeded_FiveTrustees(t *testing.T)
 	// reject x509 root certificate by account Trustee4
 	utils.RejectDaRootCertificate(setup, fourthTrustee, rootCertificate.Subject, rootCertificate.SubjectKeyID)
 
-	// Check: ProposedCertificate - present because we haven't enough approvals
+	// Check state indexes - certificate is in proposed state
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.ProposedCertificateKeyPrefix},
+			{Key: types.UniqueCertificateKeyPrefix},
 		},
-		Missing: []utils.TestIndex{},
+		Missing: []utils.TestIndex{
+			{Key: types.RejectedCertificateKeyPrefix},
+			{Key: types.AllCertificatesKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ApprovedCertificatesKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ApprovedRootCertificatesKeyPrefix},
+		},
 	}
 	utils.CheckCertificateStateIndexes(t, setup, rootCertificate, indexes)
 
 	// approve x509 root certificate by account Trustee5
 	utils.ApproveDaRootCertificate(setup, fifthTrustee, rootCertificate.Subject, rootCertificate.SubjectKeyID)
 
-	// Check indexes
+	// Check state indexes
 	indexes = utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.UniqueCertificateKeyPrefix},
@@ -221,7 +228,7 @@ func TestHandler_ProposeAddX509RootCert_ForDifferentSerialNumber(t *testing.T) {
 	testRootCertificate := utils.CreateTestRootCert()
 	utils.ProposeDaRootCertificate(setup, setup.Trustee1, testRootCertificate.PEM)
 
-	// Check indexes
+	// Check state indexes
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.ProposedCertificateKeyPrefix}, // we have both: Proposed and Approved
@@ -247,28 +254,13 @@ func TestHandler_ProposeAddX509RootCert_ForDifferentSerialNumber(t *testing.T) {
 func TestHandler_AddDaRootCerts_SameSubjectKeyIdButDifferentSubject(t *testing.T) {
 	setup := utils.Setup(t)
 
-	testRootCertificate := utils.CreateTestRootCertWithSameSubject()
-	testRootCertificate2 := utils.CreateTestRootCertWithSameSubject2()
-
 	// add Certificate1
-	rootCertOptions := &utils.RootCertOptions{
-		PemCert:      testRootCertificate.PEM,
-		Subject:      testRootCertificate.Subject,
-		SubjectKeyID: testRootCertificate.SubjectKeyID,
-		Info:         testconstants.Info,
-		Vid:          testconstants.Vid,
-	}
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+	testRootCertificate := utils.CreateTestRootCertWithSameSubject()
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &testRootCertificate)
 
 	// add Certificate2
-	rootCert2Options := &utils.RootCertOptions{
-		PemCert:      testRootCertificate2.PEM,
-		Subject:      testRootCertificate2.Subject,
-		SubjectKeyID: testRootCertificate2.SubjectKeyID,
-		Info:         testconstants.Info,
-		Vid:          testconstants.Vid,
-	}
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert2Options)
+	testRootCertificate2 := utils.CreateTestRootCertWithSameSubject2()
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &testRootCertificate2)
 
 	// Check indexes by subject + subject key id
 	allApprovedCertificates, _ := utils.QueryAllApprovedCertificates(setup)
@@ -277,7 +269,7 @@ func TestHandler_AddDaRootCerts_SameSubjectKeyIdButDifferentSubject(t *testing.T
 	allCertificates, _ := utils.QueryAllCertificatesAll(setup)
 	require.Equal(t, 2, len(allCertificates))
 
-	// Check indexes
+	// Check state indexes
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.UniqueCertificateKeyPrefix},
@@ -308,9 +300,8 @@ func TestHandler_AddDaRootCerts_SameSubjectKeyIdButDifferentSubject(t *testing.T
 func TestHandler_RejectAddDaRootCert(t *testing.T) {
 	setup := utils.Setup(t)
 
-	testRootCertificate := utils.CreateTestRootCert()
-
 	// propose x509 root certificate by account Trustee1
+	testRootCertificate := utils.CreateTestRootCert()
 	utils.ProposeDaRootCertificate(setup, setup.Trustee1, testRootCertificate.PEM)
 
 	// reject x509 root certificate by account Trustee2
@@ -377,9 +368,8 @@ func TestHandler_RejectAddDaRootCert(t *testing.T) {
 func TestHandler_ApproveX509RootCertAndRejectX509RootCert_FromTheSameTrustee(t *testing.T) {
 	setup := utils.Setup(t)
 
-	rootCertificate := utils.CreateTestRootCert()
-
 	// propose add x509 root certificate
+	rootCertificate := utils.CreateTestRootCert()
 	utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PEM)
 
 	for _, role := range []dclauthtypes.AccountRole{
@@ -413,9 +403,8 @@ func TestHandler_ApproveX509RootCertAndRejectX509RootCert_FromTheSameTrustee(t *
 func TestHandler_RejectX509RootCertAndApproveX509RootCert_FromTheSameTrustee(t *testing.T) {
 	setup := utils.Setup(t)
 
-	rootCertificate := utils.CreateTestRootCert()
-
 	// propose add x509 root certificate
+	rootCertificate := utils.CreateTestRootCert()
 	utils.ProposeDaRootCertificate(setup, setup.Trustee1, rootCertificate.PEM)
 
 	for _, role := range []dclauthtypes.AccountRole{
@@ -467,6 +456,7 @@ func TestHandler_RejectX509RootCert_TwoRejectApprovalsAreNeeded_FiveTrustees(t *
 	// reject x509 root certificate by account Trustee2
 	utils.RejectDaRootCertificate(setup, setup.Trustee2, rootCertificate.Subject, rootCertificate.SubjectKeyID)
 
+	// Check state indexes
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.ProposedCertificateKeyPrefix},
@@ -488,6 +478,7 @@ func TestHandler_RejectX509RootCert_TwoRejectApprovalsAreNeeded_FiveTrustees(t *
 	// reject x509 root certificate by account Trustee3
 	utils.RejectDaRootCertificate(setup, setup.Trustee3, rootCertificate.Subject, rootCertificate.SubjectKeyID)
 
+	// Check state indexes
 	indexes = utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.RejectedCertificateKeyPrefix}, // certificate is rejected now
@@ -517,7 +508,7 @@ func TestHandler_ProposeAddAndRejectX509RootCert_ByTrustee(t *testing.T) {
 	// reject x509 root certificate
 	utils.RejectDaRootCertificate(setup, setup.Trustee1, rootCertificate.Subject, rootCertificate.SubjectKeyID)
 
-	// check state indexes
+	// Check state indexes
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{},
 		Missing: []utils.TestIndex{
@@ -546,7 +537,7 @@ func TestHandler_ProposeAddAndRejectX509RootCert_ByAnotherTrustee(t *testing.T) 
 	// reject x509 root certificate
 	utils.RejectDaRootCertificate(setup, setup.Trustee2, rootCertificate.Subject, rootCertificate.SubjectKeyID)
 
-	// check state indexes
+	// Check state indexes
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.UniqueCertificateKeyPrefix},
@@ -582,7 +573,7 @@ func TestHandler_ProposeAddAndRejectX509RootCertWithApproval_ByTrustee(t *testin
 	// reject x509 root certificate
 	utils.RejectDaRootCertificate(setup, setup.Trustee1, rootCertificate.Subject, rootCertificate.SubjectKeyID)
 
-	// check state indexes
+	// Check state indexes
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.UniqueCertificateKeyPrefix},

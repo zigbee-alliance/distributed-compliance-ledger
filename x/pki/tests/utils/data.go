@@ -111,6 +111,33 @@ func CreateTestRootCert() TestCertificate {
 		SerialNumber:   testconstants.RootSerialNumber,
 		Issuer:         testconstants.RootIssuer,
 		AuthorityKeyID: testconstants.RootSubjectKeyID,
+		VID:            testconstants.Vid,
+		IsRoot:         true,
+	}
+}
+
+func CreateTestRootCertWithVid() TestCertificate {
+	return TestCertificate{
+		PEM:            testconstants.RootCertWithVid,
+		Subject:        testconstants.RootCertWithVidSubject,
+		SubjectKeyID:   testconstants.RootCertWithVidSubjectKeyID,
+		SerialNumber:   testconstants.RootCertWithVidSerialNumber,
+		Issuer:         testconstants.RootCertWithVidSubject,
+		AuthorityKeyID: testconstants.RootCertWithVidSubjectKeyID,
+		VID:            testconstants.RootCertWithVidVid,
+		IsRoot:         true,
+	}
+}
+
+func CreateTestPAACertWithNumericVid() TestCertificate {
+	return TestCertificate{
+		PEM:            testconstants.PAACertWithNumericVid,
+		Subject:        testconstants.PAACertWithNumericVidSubject,
+		SubjectKeyID:   testconstants.PAACertWithNumericVidSubjectKeyID,
+		SerialNumber:   testconstants.PAACertWithNumericVidSerialNumber,
+		Issuer:         testconstants.PAACertWithNumericVidSubject,
+		AuthorityKeyID: testconstants.PAACertWithNumericVidSubjectKeyID,
+		VID:            testconstants.PAACertWithNumericVidVid,
 		IsRoot:         true,
 	}
 }
@@ -122,6 +149,7 @@ func CreateTestRootCertWithSameSubject() TestCertificate {
 		SubjectKeyID: testconstants.PAACertWithSameSubjectIDSubjectID,
 		SerialNumber: testconstants.PAACertWithSameSubjectSerialNumber,
 		Issuer:       testconstants.PAACertWithSameSubjectIssuer,
+		VID:          testconstants.Vid,
 		IsRoot:       true,
 	}
 }
@@ -133,6 +161,7 @@ func CreateTestRootCertWithSameSubject2() TestCertificate {
 		SubjectKeyID: testconstants.PAACertWithSameSubjectIDSubjectID,
 		SerialNumber: testconstants.PAACertWithSameSubject2SerialNumber,
 		Issuer:       testconstants.PAACertWithSameSubject2Issuer,
+		VID:          testconstants.Vid,
 		IsRoot:       true,
 	}
 }
@@ -145,6 +174,7 @@ func CreateTestRootCertWithSameSubjectAndSkid1() TestCertificate {
 		SerialNumber:   testconstants.RootCertWithSameSubjectAndSKID1SerialNumber,
 		Issuer:         testconstants.RootCertWithSameSubjectAndSKID1Issuer,
 		AuthorityKeyID: testconstants.RootCertWithSameSubjectAndSKIDSubject,
+		VID:            testconstants.RootCertWithVidVid,
 		IsRoot:         true,
 	}
 }
@@ -193,6 +223,7 @@ func CreateTestIntermediateCertWithSameSubjectAndSKID1() TestCertificate {
 		SerialNumber:   testconstants.IntermediateCertWithSameSubjectAndSKID1SerialNumber,
 		Issuer:         testconstants.IntermediateCertWithSameSubjectIssuer,
 		AuthorityKeyID: testconstants.IntermediateCertWithSameSubjectAuthorityKeyID,
+		VID:            testconstants.RootCertWithVidVid,
 		IsRoot:         false,
 	}
 }
@@ -259,6 +290,19 @@ func CreateTestNocRoot2Cert() TestCertificate {
 	}
 }
 
+func CreateTestNoc2RootCert() TestCertificate {
+	return TestCertificate{
+		PEM:            testconstants.NocRootCert2,
+		Subject:        testconstants.NocRootCert2Subject,
+		SubjectKeyID:   testconstants.NocRootCert2SubjectKeyID,
+		SerialNumber:   testconstants.NocRootCert2SerialNumber,
+		Issuer:         testconstants.NocRootCert2Subject,
+		AuthorityKeyID: testconstants.NocRootCert2SubjectKeyID,
+		VID:            testconstants.Vid,
+		IsRoot:         true,
+	}
+}
+
 func CreateTestNocIca1Cert() TestCertificate {
 	return TestCertificate{
 		PEM:            testconstants.NocCert1,
@@ -280,6 +324,19 @@ func CreateTestNocIca1CertCopy() TestCertificate {
 		SerialNumber:   testconstants.NocCert1CopySerialNumber,
 		Issuer:         testconstants.NocCert1CopyIssuer,
 		AuthorityKeyID: testconstants.NocCert1CopyAuthorityKeyID,
+		VID:            testconstants.Vid,
+		IsRoot:         false,
+	}
+}
+
+func CreateTestNocIca2Cert() TestCertificate {
+	return TestCertificate{
+		PEM:            testconstants.NocCert2,
+		Subject:        testconstants.NocCert2Subject,
+		SubjectKeyID:   testconstants.NocCert2SubjectKeyID,
+		SerialNumber:   testconstants.NocCert2SerialNumber,
+		Issuer:         testconstants.NocCert2Issuer,
+		AuthorityKeyID: testconstants.NocCert2AuthorityKeyID,
 		VID:            testconstants.Vid,
 		IsRoot:         false,
 	}

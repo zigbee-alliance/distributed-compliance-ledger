@@ -226,7 +226,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_NegativeCases(t *testing.T
 			setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, tc.vendorAccVid)
 
 			if tc.rootCertOptions != nil {
-				utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, tc.rootCertOptions)
+				utils.ProposeAndApproveRootCertificateByOptions(setup, setup.Trustee1, tc.rootCertOptions)
 			}
 
 			if tc.addRevocation != nil {
@@ -247,8 +247,8 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_NotUniqueDataURLForIssuer(
 	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.PAACertWithNumericVidVid)
 
 	// propose and approve root certificate
-	rootCertOptions := utils.CreatePAACertWithNumericVidOptions()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+	rootCertOptions := utils.CreateTestPAACertWithNumericVid()
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCertOptions)
 
 	addPkiRevocationDistributionPoint1 := createAddRevocationMessageWithPAACertWithNumericVid(vendorAcc.String())
 	addPkiRevocationDistributionPoint1.Label += "-1"
@@ -285,7 +285,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_DataURLNotUnique(t *testin
 
 	// propose and approve root certificate
 	rootCertOptions := utils.CreatePAACertNoVidOptions(testconstants.Vid)
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+	utils.ProposeAndApproveRootCertificateByOptions(setup, setup.Trustee1, rootCertOptions)
 
 	addPkiRevocationDistributionPoint1 := createAddRevocationMessageWithPAICertWithVidPid(vendorAcc.String())
 	addPkiRevocationDistributionPoint1.DataURL += "/1"
@@ -318,7 +318,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAI_NotChainedOnLedger(t *
 
 	// propose and approve root certificate
 	rootCertOptions := utils.CreatePAACertWithNumericVidOptions()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+	utils.ProposeAndApproveRootCertificateByOptions(setup, setup.Trustee1, rootCertOptions)
 
 	addPkiRevocationDistributionPoint := createAddRevocationMessageWithPAICertWithNumericVidPid(vendorAcc.String())
 	_, err := setup.Handler(setup.Ctx, addPkiRevocationDistributionPoint)
@@ -354,12 +354,12 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAI_VID_TO_PAI_NOVID(t *te
 
 	// add PAA for PAI_VID
 	rootCertOptions := utils.CreatePAACertWithNumericVidOptions()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+	utils.ProposeAndApproveRootCertificateByOptions(setup, setup.Trustee1, rootCertOptions)
 
 	// add PAA for PAI_NOVID
 	rootCertOptions = utils.CreateTestRootCertOptions()
 	rootCertOptions.Vid = testconstants.PAACertWithNumericVidVid
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+	utils.ProposeAndApproveRootCertificateByOptions(setup, setup.Trustee1, rootCertOptions)
 
 	// add Revocation Point PAI_VID
 	addPkiRevocationDistributionPoint := createAddRevocationMessageWithPAICertWithNumericVidPid(vendorAcc.String())
@@ -387,12 +387,12 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAA_NOVID_DifferentVID(t *
 
 	// add PAA NOVID 1 with VendorID1
 	rootCertOptions := utils.CreatePAACertNoVidOptions(testconstants.VendorID1)
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+	utils.ProposeAndApproveRootCertificateByOptions(setup, setup.Trustee1, rootCertOptions)
 
 	// add PAA NOVID 2 with VendorID2
 	rootCertOptions = utils.CreateTestRootCertOptions()
 	rootCertOptions.Vid = testconstants.VendorID2
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+	utils.ProposeAndApproveRootCertificateByOptions(setup, setup.Trustee1, rootCertOptions)
 
 	// add Revocation Point PAA NOVID 1
 	addPkiRevocationDistributionPoint := createAddRevocationMessageWithPAACertNoVid(vendorAcc.String(), testconstants.VendorID1)
@@ -466,7 +466,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAA_VID(t *testing.T) {
 
 			// propose and approve root certificate
 			rootCertOptions := utils.CreatePAACertWithNumericVidOptions()
-			utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+			utils.ProposeAndApproveRootCertificateByOptions(setup, setup.Trustee1, rootCertOptions)
 
 			// add revocation
 			if addedRevocation != nil {
@@ -545,7 +545,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAA_NOVID(t *testing.T) {
 
 			// propose x509 root certificate by account Trustee1
 			rootCertOptions := utils.CreatePAACertNoVidOptions(addedRevocation.Vid)
-			utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+			utils.ProposeAndApproveRootCertificateByOptions(setup, setup.Trustee1, rootCertOptions)
 
 			// add revocation
 			if addedRevocation != nil {
@@ -623,7 +623,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAI_VIDPID(t *testing.T) {
 
 			// propose and approve root certificate
 			rootCertOptions := utils.CreatePAACertWithNumericVidOptions()
-			utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+			utils.ProposeAndApproveRootCertificateByOptions(setup, setup.Trustee1, rootCertOptions)
 
 			// add revocation
 			if addedRevocation != nil {
@@ -677,7 +677,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAIWithoutPid(t *testing.T
 
 	// propose x509 root certificate by account Trustee1
 	rootCertOptions := utils.CreatePAACertNoVidOptions(testconstants.Vid)
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+	utils.ProposeAndApproveRootCertificateByOptions(setup, setup.Trustee1, rootCertOptions)
 
 	addPkiRevocationDistributionPoint := createAddRevocationMessageWithPAICertWithVidPid(vendorAcc.String())
 	addPkiRevocationDistributionPoint.Pid = 0
@@ -796,8 +796,8 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_CrlSignerCertificateField(
 
 			setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, tc.addRevocation.Vid)
 
-			utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, tc.rootCertOptions1)
-			utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, tc.rootCertOptions2)
+			utils.ProposeAndApproveRootCertificateByOptions(setup, setup.Trustee1, tc.rootCertOptions1)
+			utils.ProposeAndApproveRootCertificateByOptions(setup, setup.Trustee1, tc.rootCertOptions2)
 
 			_, err := setup.Handler(setup.Ctx, tc.addRevocation)
 			require.NoError(t, err)

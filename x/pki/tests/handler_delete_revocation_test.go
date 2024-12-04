@@ -107,7 +107,7 @@ func TestHandler_DeletePkiRevocationDistributionPoint_NegativeCases(t *testing.T
 			setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, tc.vendorAccVid)
 
 			if tc.rootCertOptions != nil {
-				utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, tc.rootCertOptions)
+				utils.ProposeAndApproveRootCertificateByOptions(setup, setup.Trustee1, tc.rootCertOptions)
 			}
 
 			if tc.addRevocation != nil {
@@ -160,7 +160,7 @@ func TestHandler_DeletePkiRevocationDistributionPoint_PositiveCases(t *testing.T
 
 			setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, tc.deleteRevocation.Vid)
 
-			utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, tc.rootCertOptions)
+			utils.ProposeAndApproveRootCertificateByOptions(setup, setup.Trustee1, tc.rootCertOptions)
 
 			_, err := setup.Handler(setup.Ctx, tc.addRevocation)
 			require.NoError(t, err)
@@ -184,11 +184,11 @@ func TestHandler_DeletePkiRevocationDistributionPoint_Multiple_SameIssuerSubject
 
 	// add PAA NOVID
 	rootCertOptions := utils.CreatePAACertNoVidOptions(testconstants.PAACertWithNumericVidVid)
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+	utils.ProposeAndApproveRootCertificateByOptions(setup, setup.Trustee1, rootCertOptions)
 
 	// add PAA VID
-	rootCertOptions = utils.CreatePAACertWithNumericVidOptions()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+	rootCert := utils.CreateTestPAACertWithNumericVid()
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCert)
 
 	// add Revocation Point PAA NOVID
 	addRevocationPAANoVid := createAddRevocationMessageWithPAACertNoVid(vendorAcc.String(), testconstants.PAACertWithNumericVidVid)

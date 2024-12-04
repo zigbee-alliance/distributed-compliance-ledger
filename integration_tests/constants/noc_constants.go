@@ -165,11 +165,12 @@ zodhpBXZfzhHDvINejK8wzwWgf7Ds8wk3oENlmAj
 	NocCert1CopyAuthorityKeyID = NocCert1AuthorityKeyID
 	NocCert1CopySubjectAsText  = "CN=NOC-child-1,OU=Testing Division,O=Example Company,L=Some State,ST=Some State,C=UZ"
 
-	NocCert2Subject       = "MIGCMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDDAtOT0MtY2hpbGQtMg=="
-	NocCert2Issuer        = NocRootCert2Subject
-	NocCert2SubjectKeyID  = "87:48:A2:33:12:1F:51:5C:93:E6:90:40:4A:2C:AB:9E:D6:19:E5:AD"
-	NocCert2SerialNumber  = "361372967010167010646904372658654439710639340814"
-	NocCert2SubjectAsText = "CN=NOC-child-2,OU=Testing Division,O=Example Company,L=Some State,ST=Some State,C=UZ"
+	NocCert2Subject        = "MIGCMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDDAtOT0MtY2hpbGQtMg=="
+	NocCert2Issuer         = NocRootCert2Subject
+	NocCert2AuthorityKeyID = NocRootCert2SubjectKeyID
+	NocCert2SubjectKeyID   = "87:48:A2:33:12:1F:51:5C:93:E6:90:40:4A:2C:AB:9E:D6:19:E5:AD"
+	NocCert2SerialNumber   = "361372967010167010646904372658654439710639340814"
+	NocCert2SubjectAsText  = "CN=NOC-child-2,OU=Testing Division,O=Example Company,L=Some State,ST=Some State,C=UZ"
 
 	NocLeafCert1Subject        = "MIGBMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRMwEQYDVQQDDApOT0MtbGVhZi0x"
 	NocLeafCert1Issuer         = NocCert1Subject

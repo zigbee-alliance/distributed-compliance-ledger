@@ -175,7 +175,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_NegativeCases(t *testing.T) {
 			setup.AddAccount(accAddress, []dclauthtypes.AccountRole{tc.accountRole}, tc.accountVid)
 
 			if tc.rootCertOptions != nil {
-				utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, tc.rootCertOptions)
+				utils.ProposeAndApproveRootCertificateByOptions(setup, setup.Trustee1, tc.rootCertOptions)
 			}
 
 			_, err := setup.Handler(setup.Ctx, tc.addRevocation)
@@ -190,8 +190,8 @@ func TestHandler_AddPkiRevocationDistributionPoint_PAAAlreadyExists(t *testing.T
 	accAddress := setup.CreateVendorAccount(testconstants.PAACertWithNumericVidVid)
 
 	// propose and approve x509 root certificate
-	rootCertOptions := utils.CreatePAACertWithNumericVidOptions()
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+	rootCert := utils.CreateTestPAACertWithNumericVid()
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, &rootCert)
 
 	addPkiRevocationDistributionPoint := createAddRevocationMessageWithPAACertWithNumericVid(accAddress.String())
 
@@ -294,7 +294,8 @@ func TestHandler_AddPkiRevocationDistributionPoint_PositiveCases(t *testing.T) {
 			setup := utils.Setup(t)
 			setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, tc.addRevocation.Vid)
 
-			utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, tc.rootCertOptions)
+			utils.ProposeAndApproveRootCertificateByOptions(setup, setup.Trustee1, tc.rootCertOptions)
+
 			tc.addRevocation.SchemaVersion = tc.SchemaVersion
 			_, err := setup.Handler(setup.Ctx, tc.addRevocation)
 			require.NoError(t, err)
@@ -318,7 +319,7 @@ func TestHandler_AddPkiRevocationDistributionPoint_DataURLNotUnique(t *testing.T
 
 	// propose and approve root certificate
 	rootCertOptions := utils.CreatePAACertNoVidOptions(testconstants.Vid)
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
+	utils.ProposeAndApproveRootCertificateByOptions(setup, setup.Trustee1, rootCertOptions)
 
 	addPkiRevocationDistributionPoint := createAddRevocationMessageWithPAICertWithVidPid(vendorAcc.String())
 	_, err := setup.Handler(setup.Ctx, addPkiRevocationDistributionPoint)
