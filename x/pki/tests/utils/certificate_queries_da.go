@@ -200,6 +200,23 @@ func QueryRejectedCertificates(
 	return &resp.RejectedCertificate, nil
 }
 
+func QueryAllProposedCertificates(
+	setup *TestSetup,
+) ([]types.ProposedCertificate, error) {
+	req := &types.QueryAllProposedCertificateRequest{}
+
+	resp, err := setup.Keeper.ProposedCertificateAll(setup.Wctx, req)
+	if err != nil {
+		require.Nil(setup.T, resp)
+
+		return nil, err
+	}
+
+	require.NotNil(setup.T, resp)
+
+	return resp.ProposedCertificate, nil
+}
+
 func QueryAllApprovedCertificates(
 	setup *TestSetup,
 ) ([]types.ApprovedCertificates, error) {

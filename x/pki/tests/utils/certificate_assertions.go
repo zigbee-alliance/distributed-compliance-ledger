@@ -205,6 +205,8 @@ func CheckCertificateStateIndexes(
 				certificate.SubjectKeyId,
 				certificate.SerialNumber,
 			)
+			require.Equal(t, certificate.Subject, proposedRevocation.Subject)
+			require.Equal(t, certificate.SubjectKeyId, proposedRevocation.SubjectKeyId)
 			resolvedCertificate.ProposedRevocation = proposedRevocation
 		}
 	}

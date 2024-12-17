@@ -24,7 +24,7 @@ func CmdShowApprovedRootCertificates() *cobra.Command {
 			return cli.QueryWithProofList(
 				clientCtx,
 				pkitypes.StoreKey,
-				pkitypes.ApprovedRootCertificatesKeyPrefix,
+				types.ApprovedRootCertificatesKeyPrefix,
 				pkitypes.ApprovedRootCertificatesKey,
 				&res,
 			)

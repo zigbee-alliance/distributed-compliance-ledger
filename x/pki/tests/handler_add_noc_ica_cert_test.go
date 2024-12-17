@@ -52,8 +52,6 @@ func TestHandler_AddNocIntermediateCert(t *testing.T) {
 	utils.CheckCertificateStateIndexes(t, setup, icaCertificate, indexes)
 }
 
-// Extra cases
-
 func TestHandler_AddNocIntermediateCert_SameSubjectAndSkid_DifferentSerialNumber(t *testing.T) {
 	setup := utils.Setup(t)
 
@@ -96,10 +94,60 @@ func TestHandler_AddNocIntermediateCert_SameSubjectAndSkid_DifferentSerialNumber
 	utils.CheckCertificateStateIndexes(t, setup, icaCertificate, indexes)
 }
 
+func TestHandler_AddNocIntermediateCert_ByNotOwnerButSameVendor(t *testing.T) {
+	setup := utils.Setup(t)
+
+	// add two vendors with the same VID
+	vendorAccAddress1 := setup.CreateVendorAccount(testconstants.Vid)
+	vendorAccAddress2 := setup.CreateVendorAccount(testconstants.Vid)
+
+	// add NOC root certificate
+	rootCertificate := utils.RootNocCertificate1(vendorAccAddress1)
+	utils.AddNocRootCertificate(setup, rootCertificate)
+
+	// add the new NOC certificate by first vendor
+	icaCertificate := utils.IntermediateNocCertificate1(vendorAccAddress1)
+	utils.AddNocIntermediateCertificate(setup, icaCertificate)
+
+	// add the new NOC certificate by second vendor
+	icaCertificate2 := utils.IntermediateNocCertificate1Copy(vendorAccAddress2)
+	utils.AddNocIntermediateCertificate(setup, icaCertificate2)
+
+	// Check state indexes
+	indexes := utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.AllCertificatesKeyPrefix, Count: 2},
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Count: 2},
+			{Key: types.NocCertificatesKeyPrefix, Count: 2},
+			{Key: types.NocCertificatesBySubjectKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix, Count: 2},
+			{Key: types.NocCertificatesByVidAndSkidKeyPrefix, Count: 2},
+			{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // we create root certificate as well but ica should not be there
+			{Key: types.NocIcaCertificatesKeyPrefix, Count: 2},
+			{Key: types.UniqueCertificateKeyPrefix},
+			{Key: types.ChildCertificatesKeyPrefix},
+		},
+		Missing: []utils.TestIndex{
+			{Key: types.ProposedCertificateKeyPrefix},
+			{Key: types.ApprovedCertificatesKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ApprovedRootCertificatesKeyPrefix},
+		},
+	}
+	utils.CheckCertificateStateIndexes(t, setup, icaCertificate, indexes)
+	utils.CheckCertificateStateIndexes(t, setup, icaCertificate2, indexes)
+}
+
 // Error cases
 
-func TestHandler_AddNocX509Cert_SenderNotVendor(t *testing.T) {
+func TestHandler_AddNocIntermediateCert_SenderNotVendor(t *testing.T) {
 	setup := utils.Setup(t)
+
+	// add NOC root certificate
+	rootCertificate := utils.RootNocCertificate1(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, rootCertificate)
 
 	addNocX509Cert := types.NewMsgAddNocX509IcaCert(setup.Trustee1.String(), testconstants.NocCert1, testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addNocX509Cert)
@@ -107,7 +155,7 @@ func TestHandler_AddNocX509Cert_SenderNotVendor(t *testing.T) {
 	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
 }
 
-func TestHandler_AddNocX509Cert_Root_VID_Does_Not_Equal_To_AccountVID(t *testing.T) {
+func TestHandler_AddNocIntermediateCert_Root_VID_Does_Not_Equal_To_AccountVID(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// add NOC root certificate
@@ -122,7 +170,7 @@ func TestHandler_AddNocX509Cert_Root_VID_Does_Not_Equal_To_AccountVID(t *testing
 	require.ErrorIs(t, err, pkitypes.ErrCertVidNotEqualAccountVid)
 }
 
-func TestHandler_AddNocX509Cert_ForInvalidCertificate(t *testing.T) {
+func TestHandler_AddNocIntermediateCert_ForInvalidCertificate(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// add x509 certificate
@@ -131,7 +179,7 @@ func TestHandler_AddNocX509Cert_ForInvalidCertificate(t *testing.T) {
 	require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
 }
 
-func TestHandler_AddXNoc509Cert_ForNocRootCertificate(t *testing.T) {
+func TestHandler_AddNocIntermediateCert_ForNocRootCertificate(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// try to add root certificate x509 certificate
@@ -140,11 +188,10 @@ func TestHandler_AddXNoc509Cert_ForNocRootCertificate(t *testing.T) {
 	require.ErrorIs(t, err, pkitypes.ErrNonRootCertificateSelfSigned)
 }
 
-func TestHandler_AddXNoc509Cert_ForRootNonNocCertificate(t *testing.T) {
+func TestHandler_AddNocIntermediateCert_ForRootNonNocCertificate(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// store root certificate
-
 	rootCert := utils.RootDaCertificateWithVid(setup.Trustee1)
 	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
 
@@ -154,7 +201,7 @@ func TestHandler_AddXNoc509Cert_ForRootNonNocCertificate(t *testing.T) {
 	require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
 }
 
-func TestHandler_AddXNoc509Cert_WhenNocRootCertIsAbsent(t *testing.T) {
+func TestHandler_AddNocIntermediateCert_WhenNocRootCertIsAbsent(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// add the new NOC certificate
@@ -164,7 +211,7 @@ func TestHandler_AddXNoc509Cert_WhenNocRootCertIsAbsent(t *testing.T) {
 	require.ErrorIs(t, err, pkitypes.ErrCertificateDoesNotExist)
 }
 
-func TestHandler_AddNocX509Cert_CertificateExist(t *testing.T) {
+func TestHandler_AddNocIntermediateCert_CertificateExist(t *testing.T) {
 	accAddress := utils.GenerateAccAddress()
 
 	cases := []struct {

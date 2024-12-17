@@ -12,6 +12,138 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
+func TestHandler_RevocationPointsByIssuerSubjectKeyID(t *testing.T) {
+	setup := utils.Setup(t)
+
+	vendorAcc := setup.CreateVendorAccount(65521)
+
+	// propose x509 root certificate by account Trustee1
+	proposeAddX509RootCert := types.NewMsgProposeAddX509RootCert(
+		setup.Trustee1.String(),
+		testconstants.PAACertWithNumericVid,
+		testconstants.Info,
+		testconstants.Vid,
+		testconstants.CertSchemaVersion)
+	_, err := setup.Handler(setup.Ctx, proposeAddX509RootCert)
+	require.NoError(t, err)
+
+	// approve
+	approveAddX509RootCert := types.NewMsgApproveAddX509RootCert(
+		setup.Trustee2.String(),
+		testconstants.PAACertWithNumericVidSubject,
+		testconstants.PAACertWithNumericVidSubjectKeyID,
+		testconstants.Info)
+	_, err = setup.Handler(setup.Ctx, approveAddX509RootCert)
+	require.NoError(t, err)
+
+	revocationPointBySubjectKeyID, isFound := setup.Keeper.GetPkiRevocationDistributionPointsByIssuerSubjectKeyID(setup.Ctx, testconstants.SubjectKeyIDWithoutColons)
+	require.False(t, isFound)
+	require.Equal(t, len(revocationPointBySubjectKeyID.Points), 0)
+
+	addPkiRevocationDistributionPoint := types.MsgAddPkiRevocationDistributionPoint{
+		Signer:               vendorAcc.String(),
+		Vid:                  testconstants.PAACertWithNumericVidVid,
+		IsPAA:                true,
+		Pid:                  8,
+		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
+		Label:                "label",
+		DataURL:              testconstants.DataURL + "/1",
+		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+		RevocationType:       1,
+	}
+	_, err = setup.Handler(setup.Ctx, &addPkiRevocationDistributionPoint)
+	require.NoError(t, err)
+
+	revocationPointBySubjectKeyID, isFound = setup.Keeper.GetPkiRevocationDistributionPointsByIssuerSubjectKeyID(setup.Ctx, testconstants.SubjectKeyIDWithoutColons)
+	require.True(t, isFound)
+	require.Equal(t, len(revocationPointBySubjectKeyID.Points), 1)
+
+	addPkiRevocationDistributionPoint = types.MsgAddPkiRevocationDistributionPoint{
+		Signer:               vendorAcc.String(),
+		Vid:                  testconstants.PAACertWithNumericVidVid,
+		IsPAA:                true,
+		Pid:                  8,
+		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
+		Label:                "label1",
+		DataURL:              testconstants.DataURL + "/2",
+		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+		RevocationType:       1,
+	}
+	_, err = setup.Handler(setup.Ctx, &addPkiRevocationDistributionPoint)
+	require.NoError(t, err)
+
+	revocationPointBySubjectKeyID, isFound = setup.Keeper.GetPkiRevocationDistributionPointsByIssuerSubjectKeyID(setup.Ctx, testconstants.SubjectKeyIDWithoutColons)
+	require.True(t, isFound)
+	require.Equal(t, len(revocationPointBySubjectKeyID.Points), 2)
+
+	dataURLNew := testconstants.DataURL + "/new"
+	updatePkiRevocationDistributionPoint := types.MsgUpdatePkiRevocationDistributionPoint{
+		Signer:               vendorAcc.String(),
+		Vid:                  testconstants.PAACertWithNumericVidVid,
+		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
+		Label:                "label",
+		DataURL:              dataURLNew,
+		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+	}
+	_, err = setup.Handler(setup.Ctx, &updatePkiRevocationDistributionPoint)
+	require.NoError(t, err)
+
+	revocationPointBySubjectKeyID, isFound = setup.Keeper.GetPkiRevocationDistributionPointsByIssuerSubjectKeyID(setup.Ctx, testconstants.SubjectKeyIDWithoutColons)
+	require.True(t, isFound)
+	require.Equal(t, len(revocationPointBySubjectKeyID.Points), 2)
+	require.Equal(t, revocationPointBySubjectKeyID.Points[0].CrlSignerCertificate, updatePkiRevocationDistributionPoint.CrlSignerCertificate)
+	require.Equal(t, revocationPointBySubjectKeyID.Points[0].DataURL, updatePkiRevocationDistributionPoint.DataURL)
+
+	deletePkiRevocationDistributionPoint := types.MsgDeletePkiRevocationDistributionPoint{
+		Signer:             vendorAcc.String(),
+		Vid:                65521,
+		Label:              "label",
+		IssuerSubjectKeyID: testconstants.SubjectKeyIDWithoutColons,
+	}
+	_, err = setup.Handler(setup.Ctx, &deletePkiRevocationDistributionPoint)
+	require.NoError(t, err)
+
+	revocationPointBySubjectKeyID, isFound = setup.Keeper.GetPkiRevocationDistributionPointsByIssuerSubjectKeyID(setup.Ctx, testconstants.SubjectKeyIDWithoutColons)
+	require.True(t, isFound)
+	require.Equal(t, len(revocationPointBySubjectKeyID.Points), 1)
+}
+
+func TestHandler_AddRevocationPointForSameCertificateWithDifferentWhitespaces(t *testing.T) {
+	setup := utils.Setup(t)
+
+	vendorAcc := setup.CreateVendorAccount(65521)
+
+	// propose x509 root certificate by account Trustee1
+	proposeAddX509RootCert := types.NewMsgProposeAddX509RootCert(setup.Trustee1.String(), testconstants.PAACertWithNumericVid, testconstants.Info, testconstants.Vid, testconstants.CertSchemaVersion)
+	_, err := setup.Handler(setup.Ctx, proposeAddX509RootCert)
+	require.NoError(t, err)
+
+	// approve
+	approveAddX509RootCert := types.NewMsgApproveAddX509RootCert(
+		setup.Trustee2.String(), testconstants.PAACertWithNumericVidSubject, testconstants.PAACertWithNumericVidSubjectKeyID, testconstants.Info)
+	_, err = setup.Handler(setup.Ctx, approveAddX509RootCert)
+	require.NoError(t, err)
+
+	addPkiRevocationDistributionPoint := types.MsgAddPkiRevocationDistributionPoint{
+		Signer:               vendorAcc.String(),
+		Vid:                  testconstants.PAACertWithNumericVidVid,
+		IsPAA:                true,
+		Pid:                  8,
+		CrlSignerCertificate: testconstants.PAACertWithNumericVidDifferentWhitespaces,
+		Label:                "label",
+		DataURL:              testconstants.DataURL + "/1",
+		IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+		RevocationType:       1,
+	}
+	_, err = setup.Handler(setup.Ctx, &addPkiRevocationDistributionPoint)
+	require.NoError(t, err)
+
+	revocationPointBySubjectKeyID, isFound := setup.Keeper.GetPkiRevocationDistributionPointsByIssuerSubjectKeyID(setup.Ctx, testconstants.SubjectKeyIDWithoutColons)
+	require.True(t, isFound)
+	require.Equal(t, len(revocationPointBySubjectKeyID.Points), 1)
+	require.Equal(t, revocationPointBySubjectKeyID.Points[0].CrlSignerCertificate, addPkiRevocationDistributionPoint.CrlSignerCertificate)
+}
+
 func TestHandler_AddPkiRevocationDistributionPoint_NegativeCases(t *testing.T) {
 	accAddress := utils.GenerateAccAddress()
 

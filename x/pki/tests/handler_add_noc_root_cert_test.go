@@ -46,8 +46,6 @@ func TestHandler_AddNocRootCert(t *testing.T) {
 	utils.CheckCertificateStateIndexes(t, setup, rootCertificate, indexes)
 }
 
-// Extra cases
-
 func TestHandler_AddNocRootCert_SameSubjectAndSkid_DifferentSerialNumber(t *testing.T) {
 	setup := utils.Setup(t)
 
@@ -84,19 +82,62 @@ func TestHandler_AddNocRootCert_SameSubjectAndSkid_DifferentSerialNumber(t *test
 	utils.CheckCertificateStateIndexes(t, setup, rootCertificate2, indexes)
 }
 
-// Error cases
-
-func TestHandler_AddNocX509RootCert_SenderNotVendor(t *testing.T) {
+func TestHandler_AddNocRootCert_ByNotOwnerButSameVendor(t *testing.T) {
 	setup := utils.Setup(t)
 
-	addNocX509RootCert := types.NewMsgAddNocX509RootCert(setup.Trustee1.String(), testconstants.RootCertPem, testconstants.CertSchemaVersion)
+	// add two vendors with the same VID
+	vendorAccAddress1 := setup.CreateVendorAccount(testconstants.Vid)
+	vendorAccAddress2 := setup.CreateVendorAccount(testconstants.Vid)
+
+	// add NOC root certificate
+	rootCertificate1 := utils.RootNocCertificate1(vendorAccAddress1)
+	utils.AddNocRootCertificate(setup, rootCertificate1)
+
+	// add NOC root certificate
+	rootCertificate2 := utils.RootNocCertificate1Copy(vendorAccAddress2)
+	utils.AddNocRootCertificate(setup, rootCertificate2)
+
+	// Check state indexes
+	indexes := utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.AllCertificatesKeyPrefix, Count: 2},
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Count: 2},
+			{Key: types.NocCertificatesKeyPrefix, Count: 2},
+			{Key: types.NocCertificatesBySubjectKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix, Count: 2},
+			{Key: types.NocRootCertificatesKeyPrefix, Count: 2},
+			{Key: types.UniqueCertificateKeyPrefix},
+		},
+		Missing: []utils.TestIndex{
+			{Key: types.NocIcaCertificatesKeyPrefix},
+			{Key: types.ProposedCertificateKeyPrefix},
+			{Key: types.ApprovedCertificatesKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ApprovedRootCertificatesKeyPrefix},
+		},
+	}
+	utils.CheckCertificateStateIndexes(t, setup, rootCertificate1, indexes)
+	utils.CheckCertificateStateIndexes(t, setup, rootCertificate2, indexes)
+}
+
+// Error cases
+
+func TestHandler_AddNocRootCert_SenderNotVendor(t *testing.T) {
+	setup := utils.Setup(t)
+
+	addNocX509RootCert := types.NewMsgAddNocX509RootCert(
+		setup.Trustee1.String(),
+		testconstants.RootCertPem,
+		testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
 
 	require.Error(t, err)
 	require.True(t, sdkerrors.ErrUnauthorized.Is(err))
 }
 
-func TestHandler_AddNocX509RootCert_InvalidCertificate(t *testing.T) {
+func TestHandler_AddNocRootCert_InvalidCertificate(t *testing.T) {
 	accAddress := utils.GenerateAccAddress()
 
 	cases := []struct {
@@ -141,7 +182,7 @@ func TestHandler_AddNocX509RootCert_InvalidCertificate(t *testing.T) {
 	}
 }
 
-func TestHandler_AddNocX509RootCert_CertificateExist(t *testing.T) {
+func TestHandler_AddNocRootCert_CertificateExist(t *testing.T) {
 	accAddress := utils.GenerateAccAddress()
 
 	cases := []struct {

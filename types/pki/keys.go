@@ -21,11 +21,6 @@ func KeyPrefix(p string) []byte {
 	return []byte(p)
 }
 
-const (
-	ApprovedRootCertificatesKeyPrefix = "ApprovedRootCertificates/value/"
-	RevokedRootCertificatesKeyPrefix  = "RevokedRootCertificates/value/"
-)
-
 var (
 	ApprovedRootCertificatesKey = []byte{0}
 	RevokedRootCertificatesKey  = []byte{0}

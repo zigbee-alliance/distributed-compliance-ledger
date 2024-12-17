@@ -47,6 +47,33 @@ func ProposeAndApproveRootCertificate(
 	require.NoError(setup.T, err)
 }
 
+func ProposeAndApproveCertificateRevocation(
+	setup *TestSetup,
+	subject string,
+	subjectKeyID string,
+	serialNumber string,
+) {
+	// revoke certificate
+	revokeX509Cert := types.NewMsgProposeRevokeX509RootCert(
+		setup.Trustee1.String(),
+		subject,
+		subjectKeyID,
+		serialNumber,
+		false,
+		testconstants.Info)
+	_, err := setup.Handler(setup.Ctx, revokeX509Cert)
+	require.NoError(setup.T, err)
+
+	aprRevokeX509Cert := types.NewMsgApproveRevokeX509RootCert(
+		setup.Trustee2.String(),
+		subject,
+		subjectKeyID,
+		serialNumber,
+		testconstants.Info)
+	_, err = setup.Handler(setup.Ctx, aprRevokeX509Cert)
+	require.NoError(setup.T, err)
+}
+
 func AddMokedDaCertificate(
 	setup *TestSetup,
 	certificate types.Certificate,
@@ -148,14 +175,14 @@ func ProposeRevokeDaRootCertificate(
 	subject string,
 	subjectKeyID string,
 	serialNumber string,
-	revokedChild bool,
+	revokeChild bool,
 ) *types.MsgProposeRevokeX509RootCert {
 	proposeRevokeX509RootCert := types.NewMsgProposeRevokeX509RootCert(
 		address.String(),
 		subject,
 		subjectKeyID,
 		serialNumber,
-		revokedChild,
+		revokeChild,
 		testconstants.Info)
 	_, err := setup.Handler(setup.Ctx, proposeRevokeX509RootCert)
 	require.NoError(setup.T, err)

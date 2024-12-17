@@ -7,138 +7,13 @@ import (
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
-	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/tests/utils"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
 // Main
 
-func TestHandler_RevokeDaIntermediateCert(t *testing.T) {
-	setup := utils.Setup(t)
-
-	// propose and approve x509 root certificate
-	rootCertificate := utils.RootDaCertificate(setup.Trustee1)
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertificate)
-
-	// Add intermediate certificate
-	intermediateCertificate := utils.IntermediateDaCertificate(setup.Vendor1)
-	utils.AddDaIntermediateCertificate(setup, intermediateCertificate)
-
-	// revoke intermediate certificate
-	utils.RevokeDaIntermediateCertificate(
-		setup,
-		setup.Vendor1,
-		intermediateCertificate.Subject,
-		intermediateCertificate.SubjectKeyId,
-		"",
-		false)
-
-	// Check: Certificate is revoked
-	indexes := utils.TestIndexes{
-		Present: []utils.TestIndex{
-			{Key: types.UniqueCertificateKeyPrefix},
-			{Key: types.RevokedCertificatesKeyPrefix},
-		},
-		Missing: []utils.TestIndex{
-			{Key: types.ProposedCertificateRevocationKeyPrefix},
-			{Key: types.AllCertificatesKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.ApprovedCertificatesKeyPrefix},
-			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
-			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.ApprovedRootCertificatesKeyPrefix},
-			{Key: types.ChildCertificatesKeyPrefix},
-		},
-	}
-	utils.CheckCertificateStateIndexes(t, setup, intermediateCertificate, indexes)
-
-	// Check: Root stays approved
-	indexes = utils.TestIndexes{
-		Present: []utils.TestIndex{
-			{Key: types.UniqueCertificateKeyPrefix},
-			{Key: types.AllCertificatesKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.ApprovedCertificatesKeyPrefix},
-			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
-			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.ApprovedRootCertificatesKeyPrefix},
-		},
-		Missing: []utils.TestIndex{
-			{Key: types.ChildCertificatesKeyPrefix},
-			{Key: types.RevokedCertificatesKeyPrefix},
-		},
-	}
-	utils.CheckCertificateStateIndexes(t, setup, rootCertificate, indexes)
-}
-
-func TestHandler_RevokeX509Cert_ForTree(t *testing.T) {
-	setup := utils.Setup(t)
-
-	// add root x509 certificate
-	rootCertificate := utils.RootDaCertificate(setup.Trustee1)
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertificate)
-
-	// add intermediate x509 certificate
-	intermediateCertificate := utils.IntermediateDaCertificate(setup.Vendor1)
-	utils.AddDaIntermediateCertificate(setup, intermediateCertificate)
-
-	// add leaf x509 certificate
-	leafCertificate := utils.LeafCertificate(setup.Vendor1)
-	utils.AddDaIntermediateCertificate(setup, leafCertificate)
-
-	// revoke x509 certificate
-	utils.RevokeDaIntermediateCertificate(
-		setup,
-		setup.Vendor1,
-		intermediateCertificate.Subject,
-		intermediateCertificate.SubjectKeyId,
-		"",
-		true)
-
-	// root stays approved
-	indexes := utils.TestIndexes{
-		Present: []utils.TestIndex{
-			{Key: types.UniqueCertificateKeyPrefix},
-			{Key: types.AllCertificatesKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.ApprovedCertificatesKeyPrefix},
-			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
-			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.ApprovedRootCertificatesKeyPrefix},
-		},
-		Missing: []utils.TestIndex{
-			{Key: types.ChildCertificatesKeyPrefix},
-			{Key: types.RevokedCertificatesKeyPrefix},
-		},
-	}
-	utils.CheckCertificateStateIndexes(t, setup, rootCertificate, indexes)
-
-	// intermediate and leaf are revoked
-	indexes = utils.TestIndexes{
-		Present: []utils.TestIndex{
-			{Key: types.UniqueCertificateKeyPrefix},
-			{Key: types.RevokedCertificatesKeyPrefix},
-		},
-		Missing: []utils.TestIndex{
-			{Key: types.AllCertificatesKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.ApprovedCertificatesKeyPrefix},
-			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
-			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.ApprovedRootCertificatesKeyPrefix},
-			{Key: types.ChildCertificatesKeyPrefix},
-		},
-	}
-	utils.CheckCertificateStateIndexes(t, setup, intermediateCertificate, indexes)
-	utils.CheckCertificateStateIndexes(t, setup, leafCertificate, indexes)
-}
-
-func TestHandler_RevokeX509Cert_BySerialNumber(t *testing.T) {
+func TestHandler_RevokeDaIntermediateCert_BySubjectAndSKID(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// Add vendor account
@@ -155,14 +30,50 @@ func TestHandler_RevokeX509Cert_BySerialNumber(t *testing.T) {
 	testIntermediateCertificate2 := utils.IntermediateDaCertificateWithSameSubjectAndSKID2(vendorAccAddress)
 	utils.AddDaIntermediateCertificate(setup, testIntermediateCertificate2)
 
-	// Add a leaf certificate
-	testLeafCertificate := utils.LeafDaCertificateWithSameSubjectAndSKID(vendorAccAddress)
-	utils.AddDaIntermediateCertificate(setup, testLeafCertificate)
+	// revoke only an intermediate certificate
+	utils.RevokeDaIntermediateCertificate(
+		setup,
+		vendorAccAddress,
+		testIntermediateCertificate1.Subject,
+		testIntermediateCertificate1.SubjectKeyId,
+		"",
+		false)
 
-	// get certificates for further comparison
-	allCerts := setup.Keeper.GetAllApprovedCertificates(setup.Ctx)
-	require.Equal(t, 3, len(allCerts))
-	require.Equal(t, 4, len(allCerts[0].Certs)+len(allCerts[1].Certs)+len(allCerts[2].Certs))
+	// intermediate and leaf are revoked
+	indexes := utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.UniqueCertificateKeyPrefix},
+			{Key: types.RevokedCertificatesKeyPrefix, Count: 2},
+		},
+		Missing: []utils.TestIndex{
+			{Key: types.AllCertificatesKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ApprovedCertificatesKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+		},
+	}
+	utils.CheckCertificateStateIndexes(t, setup, testIntermediateCertificate1, indexes)
+	utils.CheckCertificateStateIndexes(t, setup, testIntermediateCertificate2, indexes)
+}
+
+func TestHandler_RevokeDaIntermediateCert_BySerialNumber(t *testing.T) {
+	setup := utils.Setup(t)
+
+	// Add vendor account
+	vendorAccAddress := setup.CreateVendorAccount(testconstants.RootCertWithVidVid)
+
+	// propose and approve x509 root certificate
+	rootCert := utils.RootDaCertificateWithSameSubjectAndSKID1(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
+
+	// Add intermediate certificates
+	testIntermediateCertificate1 := utils.IntermediateDaCertificateWithSameSubjectAndSKID1(vendorAccAddress)
+	utils.AddDaIntermediateCertificate(setup, testIntermediateCertificate1)
+
+	testIntermediateCertificate2 := utils.IntermediateDaCertificateWithSameSubjectAndSKID2(vendorAccAddress)
+	utils.AddDaIntermediateCertificate(setup, testIntermediateCertificate2)
 
 	// revoke only an intermediate certificate
 	utils.RevokeDaIntermediateCertificate(
@@ -179,31 +90,16 @@ func TestHandler_RevokeX509Cert_BySerialNumber(t *testing.T) {
 			{Key: types.UniqueCertificateKeyPrefix},
 			{Key: types.RevokedCertificatesKeyPrefix},
 			{Key: types.AllCertificatesKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyPrefix, Count: 2}, // inter + leaf
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
 			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
 			{Key: types.ApprovedCertificatesKeyPrefix},
-			{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Count: 2}, // inter + leaf
+			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
 			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
 		},
 		Missing: []utils.TestIndex{},
 	}
 	utils.CheckCertificateStateIndexes(t, setup, testIntermediateCertificate1, indexes)
 	utils.CheckCertificateStateIndexes(t, setup, testIntermediateCertificate2, indexes)
-
-	// check indexes for leaf
-	indexes = utils.TestIndexes{
-		Present: []utils.TestIndex{
-			{Key: types.UniqueCertificateKeyPrefix},
-			{Key: types.AllCertificatesKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.ApprovedCertificatesKeyPrefix},
-			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
-		},
-		Missing: []utils.TestIndex{
-			{Key: types.RevokedCertificatesKeyPrefix},
-		},
-	}
-	utils.CheckCertificateStateIndexes(t, setup, testLeafCertificate, indexes)
 
 	// revoke intermediate and leaf certificates
 	utils.RevokeDaIntermediateCertificate(
@@ -212,7 +108,7 @@ func TestHandler_RevokeX509Cert_BySerialNumber(t *testing.T) {
 		testIntermediateCertificate2.Subject,
 		testIntermediateCertificate2.SubjectKeyId,
 		testIntermediateCertificate2.SerialNumber,
-		true)
+		false)
 
 	// intermediate and leaf are revoked
 	indexes = utils.TestIndexes{
@@ -231,14 +127,144 @@ func TestHandler_RevokeX509Cert_BySerialNumber(t *testing.T) {
 	}
 	utils.CheckCertificateStateIndexes(t, setup, testIntermediateCertificate1, indexes)
 	utils.CheckCertificateStateIndexes(t, setup, testIntermediateCertificate2, indexes)
+}
 
-	// intermediate and leaf are revoked
-	indexes = utils.TestIndexes{
+func TestHandler_RevokeDaIntermediateCert_BySubjectAndSKID_KeepChild(t *testing.T) {
+	setup := utils.Setup(t)
+
+	// Add vendor account
+	vendorAccAddress := setup.CreateVendorAccount(testconstants.RootCertWithVidVid)
+
+	// propose and approve x509 root certificate
+	rootCert := utils.RootDaCertificateWithSameSubjectAndSKID1(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
+
+	// Add intermediate certificates
+	intermediateCertificate1 := utils.IntermediateDaCertificateWithSameSubjectAndSKID1(vendorAccAddress)
+	utils.AddDaIntermediateCertificate(setup, intermediateCertificate1)
+
+	intermediateCertificate2 := utils.IntermediateDaCertificateWithSameSubjectAndSKID2(vendorAccAddress)
+	utils.AddDaIntermediateCertificate(setup, intermediateCertificate2)
+
+	// add leaf x509 certificate
+	leafCertificate := utils.LeafDaCertificateWithSameSubjectAndSKID(vendorAccAddress)
+	utils.AddDaIntermediateCertificate(setup, leafCertificate)
+
+	// revoke x509 certificate
+	utils.RevokeDaIntermediateCertificate(
+		setup,
+		vendorAccAddress,
+		intermediateCertificate1.Subject,
+		intermediateCertificate1.SubjectKeyId,
+		"",
+		false)
+
+	// leaf stays approved
+	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.UniqueCertificateKeyPrefix},
-			{Key: types.RevokedCertificatesKeyPrefix, Count: 1},
+			{Key: types.AllCertificatesKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ApprovedCertificatesKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
 		},
 		Missing: []utils.TestIndex{
+			{Key: types.ChildCertificatesKeyPrefix},
+			{Key: types.RevokedCertificatesKeyPrefix},
+		},
+	}
+	utils.CheckCertificateStateIndexes(t, setup, leafCertificate, indexes)
+}
+
+func TestHandler_RevokeDaIntermediateCert_BySerialNumber_KeepChild(t *testing.T) {
+	setup := utils.Setup(t)
+
+	// Add vendor account
+	vendorAccAddress := setup.CreateVendorAccount(testconstants.RootCertWithVidVid)
+
+	// propose and approve x509 root certificate
+	rootCert := utils.RootDaCertificateWithSameSubjectAndSKID1(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
+
+	// Add intermediate certificates
+	intermediateCertificate1 := utils.IntermediateDaCertificateWithSameSubjectAndSKID1(vendorAccAddress)
+	utils.AddDaIntermediateCertificate(setup, intermediateCertificate1)
+
+	intermediateCertificate2 := utils.IntermediateDaCertificateWithSameSubjectAndSKID2(vendorAccAddress)
+	utils.AddDaIntermediateCertificate(setup, intermediateCertificate2)
+
+	// add leaf x509 certificate
+	leafCertificate := utils.LeafDaCertificateWithSameSubjectAndSKID(vendorAccAddress)
+	utils.AddDaIntermediateCertificate(setup, leafCertificate)
+
+	// revoke x509 certificate
+	utils.RevokeDaIntermediateCertificate(
+		setup,
+		vendorAccAddress,
+		intermediateCertificate1.Subject,
+		intermediateCertificate1.SubjectKeyId,
+		intermediateCertificate1.SerialNumber,
+		false)
+
+	// leaf stays approved
+	indexes := utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.UniqueCertificateKeyPrefix},
+			{Key: types.AllCertificatesKeyPrefix},
+			// {Key: types.AllCertificatesBySubjectKeyPrefix, Count: 2},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ApprovedCertificatesKeyPrefix},
+			// {Key: types.ApprovedCertificatesBySubjectKeyPrefix, Count: 2},
+			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+		},
+		Missing: []utils.TestIndex{
+			{Key: types.ChildCertificatesKeyPrefix},
+			{Key: types.RevokedCertificatesKeyPrefix},
+		},
+	}
+	utils.CheckCertificateStateIndexes(t, setup, leafCertificate, indexes)
+}
+
+func TestHandler_RevokeDaIntermediateCert_BySubjectAndSKID_RevokeChild(t *testing.T) {
+	setup := utils.Setup(t)
+
+	// Add vendor account
+	vendorAccAddress := setup.CreateVendorAccount(testconstants.RootCertWithVidVid)
+
+	// propose and approve x509 root certificate
+	rootCert := utils.RootDaCertificateWithSameSubjectAndSKID1(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
+
+	// Add intermediate certificates
+	intermediateCertificate1 := utils.IntermediateDaCertificateWithSameSubjectAndSKID1(vendorAccAddress)
+	utils.AddDaIntermediateCertificate(setup, intermediateCertificate1)
+
+	intermediateCertificate2 := utils.IntermediateDaCertificateWithSameSubjectAndSKID2(vendorAccAddress)
+	utils.AddDaIntermediateCertificate(setup, intermediateCertificate2)
+
+	// add leaf x509 certificate
+	leafCertificate := utils.LeafDaCertificateWithSameSubjectAndSKID(vendorAccAddress)
+	utils.AddDaIntermediateCertificate(setup, leafCertificate)
+
+	// revoke x509 certificate
+	utils.RevokeDaIntermediateCertificate(
+		setup,
+		vendorAccAddress,
+		intermediateCertificate1.Subject,
+		intermediateCertificate1.SubjectKeyId,
+		"",
+		true)
+
+	// leaf stays approved
+	indexes := utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.UniqueCertificateKeyPrefix},
+			{Key: types.RevokedCertificatesKeyPrefix},
+		},
+		Missing: []utils.TestIndex{
+			{Key: types.ChildCertificatesKeyPrefix},
 			{Key: types.AllCertificatesKeyPrefix},
 			{Key: types.AllCertificatesBySubjectKeyPrefix},
 			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
@@ -247,12 +273,149 @@ func TestHandler_RevokeX509Cert_BySerialNumber(t *testing.T) {
 			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
 		},
 	}
-	utils.CheckCertificateStateIndexes(t, setup, testLeafCertificate, indexes)
+	utils.CheckCertificateStateIndexes(t, setup, leafCertificate, indexes)
 }
 
-// Extra cases
+func TestHandler_RevokeDaIntermediateCert_BySerialNumber_RevokeChild(t *testing.T) {
+	setup := utils.Setup(t)
 
-func TestHandler_RevokeX509Cert_ByNotOwnerButSameVendor(t *testing.T) {
+	// Add vendor account
+	vendorAccAddress := setup.CreateVendorAccount(testconstants.RootCertWithVidVid)
+
+	// propose and approve x509 root certificate
+	rootCert := utils.RootDaCertificateWithSameSubjectAndSKID1(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
+
+	// Add intermediate certificates
+	intermediateCertificate1 := utils.IntermediateDaCertificateWithSameSubjectAndSKID1(vendorAccAddress)
+	utils.AddDaIntermediateCertificate(setup, intermediateCertificate1)
+
+	intermediateCertificate2 := utils.IntermediateDaCertificateWithSameSubjectAndSKID2(vendorAccAddress)
+	utils.AddDaIntermediateCertificate(setup, intermediateCertificate2)
+
+	// add leaf x509 certificate
+	leafCertificate := utils.LeafDaCertificateWithSameSubjectAndSKID(vendorAccAddress)
+	utils.AddDaIntermediateCertificate(setup, leafCertificate)
+
+	// revoke x509 certificate
+	utils.RevokeDaIntermediateCertificate(
+		setup,
+		vendorAccAddress,
+		intermediateCertificate1.Subject,
+		intermediateCertificate1.SubjectKeyId,
+		intermediateCertificate1.SerialNumber,
+		true)
+
+	// leaf stays approved
+	indexes := utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.UniqueCertificateKeyPrefix},
+			{Key: types.RevokedCertificatesKeyPrefix},
+		},
+		Missing: []utils.TestIndex{
+			{Key: types.ChildCertificatesKeyPrefix},
+			{Key: types.AllCertificatesKeyPrefix},
+			// {Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ApprovedCertificatesKeyPrefix},
+			// {Key: types.ApprovedCertificatesBySubjectKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+		},
+	}
+	utils.CheckCertificateStateIndexes(t, setup, leafCertificate, indexes)
+}
+
+func TestHandler_RevokeDaIntermediateCert_BySubjectAndSKID_ParentExist(t *testing.T) {
+	setup := utils.Setup(t)
+
+	// Add vendor account
+	vendorAccAddress := setup.CreateVendorAccount(testconstants.RootCertWithVidVid)
+
+	// propose and approve x509 root certificate
+	rootCert := utils.RootDaCertificateWithSameSubjectAndSKID1(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
+
+	// Add intermediate certificates
+	intermediateCertificate1 := utils.IntermediateDaCertificateWithSameSubjectAndSKID1(vendorAccAddress)
+	utils.AddDaIntermediateCertificate(setup, intermediateCertificate1)
+
+	intermediateCertificate2 := utils.IntermediateDaCertificateWithSameSubjectAndSKID2(vendorAccAddress)
+	utils.AddDaIntermediateCertificate(setup, intermediateCertificate2)
+
+	// revoke x509 certificate
+	utils.RevokeDaIntermediateCertificate(
+		setup,
+		vendorAccAddress,
+		intermediateCertificate1.Subject,
+		intermediateCertificate1.SubjectKeyId,
+		"",
+		false)
+
+	// leaf stays approved
+	indexes := utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.UniqueCertificateKeyPrefix},
+			{Key: types.AllCertificatesKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ApprovedCertificatesKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+		},
+		Missing: []utils.TestIndex{
+			{Key: types.ChildCertificatesKeyPrefix},
+			{Key: types.RevokedCertificatesKeyPrefix},
+		},
+	}
+	utils.CheckCertificateStateIndexes(t, setup, rootCert, indexes)
+}
+
+func TestHandler_RevokeDaIntermediateCert_BySerialNumber_ParentExist(t *testing.T) {
+	setup := utils.Setup(t)
+
+	// Add vendor account
+	vendorAccAddress := setup.CreateVendorAccount(testconstants.RootCertWithVidVid)
+
+	// propose and approve x509 root certificate
+	rootCert := utils.RootDaCertificateWithSameSubjectAndSKID1(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
+
+	// Add intermediate certificates
+	intermediateCertificate1 := utils.IntermediateDaCertificateWithSameSubjectAndSKID1(vendorAccAddress)
+	utils.AddDaIntermediateCertificate(setup, intermediateCertificate1)
+
+	intermediateCertificate2 := utils.IntermediateDaCertificateWithSameSubjectAndSKID2(vendorAccAddress)
+	utils.AddDaIntermediateCertificate(setup, intermediateCertificate2)
+
+	// revoke x509 certificate
+	utils.RevokeDaIntermediateCertificate(
+		setup,
+		vendorAccAddress,
+		intermediateCertificate1.Subject,
+		intermediateCertificate1.SubjectKeyId,
+		intermediateCertificate1.SerialNumber,
+		false)
+
+	// leaf stays approved
+	indexes := utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.UniqueCertificateKeyPrefix},
+			{Key: types.AllCertificatesKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ApprovedCertificatesKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+		},
+		Missing: []utils.TestIndex{
+			{Key: types.ChildCertificatesKeyPrefix},
+			{Key: types.RevokedCertificatesKeyPrefix},
+		},
+	}
+	utils.CheckCertificateStateIndexes(t, setup, rootCert, indexes)
+}
+
+func TestHandler_RevokeDaIntermediateCert_ByNotOwnerButSameVendor(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// store root certificate
@@ -298,7 +461,7 @@ func TestHandler_RevokeX509Cert_ByNotOwnerButSameVendor(t *testing.T) {
 
 // Error cases
 
-func TestHandler_RevokeX509Cert_CertificateDoesNotExist(t *testing.T) {
+func TestHandler_RevokeDaIntermediateCert_CertificateDoesNotExist(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// revoke x509 certificate
@@ -315,7 +478,7 @@ func TestHandler_RevokeX509Cert_CertificateDoesNotExist(t *testing.T) {
 	require.True(t, pkitypes.ErrCertificateDoesNotExist.Is(err))
 }
 
-func TestHandler_RevokeX509Cert_CertificateDoesNotExistBySerialNumber(t *testing.T) {
+func TestHandler_RevokeDaIntermediateCert_CertificateDoesNotExistBySerialNumber(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// propose and approve x509 root certificate
@@ -323,28 +486,24 @@ func TestHandler_RevokeX509Cert_CertificateDoesNotExistBySerialNumber(t *testing
 	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
 
 	// Add intermediate certificate
-	addIntermediateX509Cert := types.NewMsgAddX509Cert(
-		setup.Vendor1.String(),
-		testconstants.IntermediateCertPem,
-		testconstants.CertSchemaVersion)
-	_, err := setup.Handler(setup.Ctx, addIntermediateX509Cert)
-	require.NoError(t, err)
+	intermediateCertificate := utils.IntermediateDaCertificate(setup.Vendor1)
+	utils.AddDaIntermediateCertificate(setup, intermediateCertificate)
 
 	// revoke x509 certificate
 	revokeX509Cert := types.NewMsgRevokeX509Cert(
 		setup.Vendor1.String(),
-		testconstants.IntermediateSubject,
-		testconstants.IntermediateSubjectKeyID,
+		intermediateCertificate.Subject,
+		intermediateCertificate.SubjectKeyId,
 		"invalid",
 		false,
 		testconstants.Info,
 	)
-	_, err = setup.Handler(setup.Ctx, revokeX509Cert)
+	_, err := setup.Handler(setup.Ctx, revokeX509Cert)
 	require.Error(t, err)
 	require.True(t, pkitypes.ErrCertificateDoesNotExist.Is(err))
 }
 
-func TestHandler_RevokeX509Cert_ForRootCertificate(t *testing.T) {
+func TestHandler_RevokeDaIntermediateCert_ForRootCertificate(t *testing.T) {
 	setup := utils.Setup(t)
 
 	// propose and approve x509 root certificate
@@ -354,9 +513,9 @@ func TestHandler_RevokeX509Cert_ForRootCertificate(t *testing.T) {
 	// revoke x509 root certificate
 	revokeX509Cert := types.NewMsgRevokeX509Cert(
 		setup.Vendor1.String(),
-		testconstants.RootSubject,
-		testconstants.RootSubjectKeyID,
-		testconstants.RootSerialNumber,
+		rootCert.Subject,
+		rootCert.SubjectKeyId,
+		rootCert.SerialNumber,
 		false,
 		testconstants.Info,
 	)
@@ -365,61 +524,55 @@ func TestHandler_RevokeX509Cert_ForRootCertificate(t *testing.T) {
 	require.True(t, pkitypes.ErrInappropriateCertificateType.Is(err))
 }
 
-func TestHandler_RevokeX509Cert_ByOtherVendor(t *testing.T) {
+func TestHandler_RevokeDaIntermediateCert_ByVendorWithOtherVid(t *testing.T) {
 	setup := utils.Setup(t)
 
-	// store root certificate
-	rootCertificate := utils.RootDaCertificate(setup.Trustee1)
-	setup.Keeper.AddAllCertificate(setup.Ctx, rootCertificate)
-	setup.Keeper.AddApprovedCertificate(setup.Ctx, rootCertificate)
+	// propose and approve x509 root certificate
+	rootCert := utils.RootDaCertificate(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
 
-	// add x509 certificate by first vendor account
-	addX509Cert := types.NewMsgAddX509Cert(setup.Vendor1.String(), testconstants.IntermediateCertPem, testconstants.CertSchemaVersion)
-	_, err := setup.Handler(setup.Ctx, addX509Cert)
-	require.NoError(t, err)
+	// Add intermediate certificate
+	intermediateCertificate := utils.IntermediateDaCertificate(setup.Vendor1)
+	utils.AddDaIntermediateCertificate(setup, intermediateCertificate)
 
 	// add second vendor account with VID = 1000
-	vendorAccAddress2 := utils.GenerateAccAddress()
-	setup.AddAccount(vendorAccAddress2, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID1)
+	vendorAccAddress2 := setup.CreateVendorAccount(testconstants.VendorID1)
 
 	// revoke x509 certificate by second vendor account
 	revokeX509Cert := types.NewMsgRevokeX509Cert(
 		vendorAccAddress2.String(),
-		testconstants.IntermediateSubject,
-		testconstants.IntermediateSubjectKeyID,
-		testconstants.IntermediateSerialNumber,
+		intermediateCertificate.Subject,
+		intermediateCertificate.SubjectKeyId,
+		intermediateCertificate.SerialNumber,
 		false,
 		testconstants.Info,
 	)
-	_, err = setup.Handler(setup.Ctx, revokeX509Cert)
+	_, err := setup.Handler(setup.Ctx, revokeX509Cert)
 	require.Error(t, err)
 	require.True(t, sdkerrors.ErrUnauthorized.Is(err))
 }
 
-func TestHandler_RevokeX509Cert_SenderNotVendor(t *testing.T) {
+func TestHandler_RevokeDaIntermediateCert_SenderNotVendor(t *testing.T) {
 	setup := utils.Setup(t)
 
-	// store root certificate
-	rootCert := utils.RootDaCertificateWithVid(setup.Trustee1)
+	// propose and approve x509 root certificate
+	rootCert := utils.RootDaCertificate(setup.Trustee1)
 	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
 
-	// Add vendor account
-	vendorAccAddress := setup.CreateVendorAccount(testconstants.RootCertWithVidVid)
+	// Add intermediate certificate
+	intermediateCertificate := utils.IntermediateDaCertificate(setup.Vendor1)
+	utils.AddDaIntermediateCertificate(setup, intermediateCertificate)
 
-	// add x509 certificate
-	addX509Cert := types.NewMsgAddX509Cert(vendorAccAddress.String(), testconstants.IntermediateCertWithVid1, testconstants.CertSchemaVersion)
-	_, err := setup.Handler(setup.Ctx, addX509Cert)
-	require.NoError(t, err)
-
+	// Try to revoke By Trustee
 	removeX509Cert := types.NewMsgRevokeX509Cert(
 		setup.Trustee1.String(),
-		testconstants.IntermediateSubject,
-		testconstants.IntermediateSubjectKeyID,
-		testconstants.IntermediateSerialNumber,
+		intermediateCertificate.Subject,
+		intermediateCertificate.SubjectKeyId,
+		intermediateCertificate.SerialNumber,
 		false,
 		testconstants.Info,
 	)
-	_, err = setup.Handler(setup.Ctx, removeX509Cert)
+	_, err := setup.Handler(setup.Ctx, removeX509Cert)
 	require.Error(t, err)
 	require.True(t, sdkerrors.ErrUnauthorized.Is(err))
 }
