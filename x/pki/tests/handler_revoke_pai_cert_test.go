@@ -293,7 +293,7 @@ func TestHandler_RevokeDaIntermediateCert_BySerialNumber_RevokeChild(t *testing.
 	intermediateCertificate2 := utils.IntermediateDaCertificateWithSameSubjectAndSKID2(vendorAccAddress)
 	utils.AddDaIntermediateCertificate(setup, intermediateCertificate2)
 
-	//Aad leaf certificate
+	// Aad leaf certificate
 	leafCertificate := utils.LeafDaCertificateWithSameSubjectAndSKID(vendorAccAddress)
 	utils.AddDaIntermediateCertificate(setup, leafCertificate)
 

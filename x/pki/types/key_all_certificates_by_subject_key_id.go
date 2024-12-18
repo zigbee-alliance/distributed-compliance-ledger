@@ -6,7 +6,7 @@ var _ binary.ByteOrder
 
 const (
 	// AllCertificatesBySubjectKeyIDKeyPrefix is the prefix to retrieve all AllCertificatesBySubjectKeyId
-	AllCertificatesBySubjectKeyIDKeyPrefix = "AllCertificatesBySubjectKeyID/value/"
+	AllCertificatesBySubjectKeyIDKeyPrefix = "AllCertificatesBySubjectKeyId/value/"
 )
 
 // AllCertificatesBySubjectKeyIDKey returns the store key to retrieve a AllCertificatesBySubjectKeyId from the index fields

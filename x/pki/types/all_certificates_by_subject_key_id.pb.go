@@ -83,7 +83,7 @@ func (m *AllCertificatesBySubjectKeyId) GetSchemaVersion() uint32 {
 }
 
 func init() {
-	proto.RegisterType((*AllCertificatesBySubjectKeyId)(nil), "zigbeealliance.distributedcomplianceledger.pki.AllCertificatesBySubjectKeyID")
+	proto.RegisterType((*AllCertificatesBySubjectKeyId)(nil), "zigbeealliance.distributedcomplianceledger.pki.AllCertificatesBySubjectKeyId")
 }
 
 func init() {
@@ -223,10 +223,10 @@ func (m *AllCertificatesBySubjectKeyId) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: AllCertificatesBySubjectKeyID: wiretype end group for non-group")
+			return fmt.Errorf("proto: AllCertificatesBySubjectKeyId: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: AllCertificatesBySubjectKeyID: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: AllCertificatesBySubjectKeyId: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:

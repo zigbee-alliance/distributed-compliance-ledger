@@ -293,7 +293,7 @@ func TestHandler_ProposeAddDaRootCert_CertificateAlreadyExists(t *testing.T) {
 	require.True(t, pkitypes.ErrCertificateAlreadyExists.Is(err))
 }
 
-//func TestHandler_ProposeAddDaRootCert_ForNocCertificate(t *testing.T) {
+// func TestHandler_ProposeAddDaRootCert_ForNocCertificate(t *testing.T) {
 //	setup := utils.Setup(t)
 //
 //	// propose a new root certificate
@@ -306,7 +306,7 @@ func TestHandler_ProposeAddDaRootCert_CertificateAlreadyExists(t *testing.T) {
 //		testconstants.CertSchemaVersion)
 //	_, err := setup.Handler(setup.Ctx, proposeAddX509RootCert)
 //	require.True(t, pkitypes.ErrInappropriateCertificateType.Is(err))
-//}
+// }
 
 func TestHandler_ProposeAddDaRootCert_ForDifferentSigner(t *testing.T) {
 	setup := utils.Setup(t)

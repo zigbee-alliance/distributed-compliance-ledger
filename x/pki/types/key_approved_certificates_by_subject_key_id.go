@@ -6,7 +6,7 @@ var _ binary.ByteOrder
 
 const (
 	// ApprovedCertificatesBySubjectKeyIDKeyPrefix is the prefix to retrieve all ApprovedCertificatesBySubjectKeyId.
-	ApprovedCertificatesBySubjectKeyIDKeyPrefix = "ApprovedCertificatesBySubjectKeyID/value/"
+	ApprovedCertificatesBySubjectKeyIDKeyPrefix = "ApprovedCertificatesBySubjectKeyId/value/"
 )
 
 // ApprovedCertificatesBySubjectKeyIDKey returns the store key to retrieve a ApprovedCertificatesBySubjectKeyId from the index fields.
