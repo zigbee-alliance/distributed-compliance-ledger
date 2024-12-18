@@ -18,6 +18,7 @@ func (k msgServer) ApproveRevokeX509RootCert(goCtx context.Context, msg *types.M
 	if err != nil {
 		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
+
 	if !k.dclauthKeeper.HasRole(ctx, signerAddr, types.RootCertificateApprovalRole) {
 		return nil, errors.Wrapf(sdkerrors.ErrUnauthorized,
 			"MsgApproveRevokeX509RootCert transaction should be signed by "+

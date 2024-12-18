@@ -24,7 +24,7 @@ func CmdShowRevokedRootCertificates() *cobra.Command {
 			return cli.QueryWithProofList(
 				clientCtx,
 				pkitypes.StoreKey,
-				pkitypes.RevokedRootCertificatesKeyPrefix,
+				types.RevokedRootCertificatesKeyPrefix,
 				pkitypes.RevokedRootCertificatesKey,
 				&res,
 			)

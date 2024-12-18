@@ -82,7 +82,7 @@ func FilterCertificateList(certificates *[]*types.Certificate, predicate Certifi
 	return result
 }
 
-func (k msgServer) AddCertificateToGlobalCertificateIndexes(
+func (k Keeper) AddCertificateToGlobalCertificateIndexes(
 	ctx sdk.Context,
 	certificate types.Certificate,
 ) {
@@ -94,7 +94,7 @@ func (k msgServer) AddCertificateToGlobalCertificateIndexes(
 	k.AddAllCertificateBySubject(ctx, certificate.Subject, certificate.SubjectKeyId)
 }
 
-func (k msgServer) RemoveCertificateFromGlobalCertificateIndexes(
+func (k Keeper) RemoveCertificateFromGlobalCertificateIndexes(
 	ctx sdk.Context,
 	subject string,
 	subjectKeyID string,
@@ -107,7 +107,7 @@ func (k msgServer) RemoveCertificateFromGlobalCertificateIndexes(
 	k.RemoveAllCertificateBySubject(ctx, subject, subjectKeyID)
 }
 
-func (k msgServer) StoreDaCertificate(
+func (k Keeper) StoreDaCertificate(
 	ctx sdk.Context,
 	certificate types.Certificate,
 	isRoot bool,
@@ -133,7 +133,7 @@ func (k msgServer) StoreDaCertificate(
 	}
 }
 
-func (k msgServer) RemoveDaCertificate(
+func (k Keeper) RemoveDaCertificate(
 	ctx sdk.Context,
 	subject string,
 	subjectKeyID string,
@@ -152,7 +152,7 @@ func (k msgServer) RemoveDaCertificate(
 	}
 }
 
-func (k msgServer) RemoveDaCertificateBySerialNumber(
+func (k Keeper) RemoveDaCertificateBySerialNumber(
 	ctx sdk.Context,
 	subject string,
 	subjectKeyID string,
@@ -173,7 +173,7 @@ func (k msgServer) RemoveDaCertificateBySerialNumber(
 	}
 }
 
-func (k msgServer) StoreNocCertificate(
+func (k Keeper) StoreNocCertificate(
 	ctx sdk.Context,
 	certificate types.Certificate,
 	isRoot bool) {
@@ -203,7 +203,7 @@ func (k msgServer) StoreNocCertificate(
 	}
 }
 
-func (k msgServer) RemoveNocCertificate(
+func (k Keeper) RemoveNocCertificate(
 	ctx sdk.Context,
 	subject string,
 	subjectKeyID string,
@@ -229,7 +229,7 @@ func (k msgServer) RemoveNocCertificate(
 	}
 }
 
-func (k msgServer) RemoveNocCertBySerialNumber(
+func (k Keeper) RemoveNocCertBySerialNumber(
 	ctx sdk.Context,
 	subject string,
 	subjectKeyID string,

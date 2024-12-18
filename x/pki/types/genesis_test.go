@@ -226,7 +226,7 @@ AllCertificatesBySubjectKeyIdList: []types.AllCertificatesBySubjectKeyId{
 		SubjectKeyId: "1",
 },
 },
-AllCertificatesBySubjectKeyIdList: []types.AllCertificatesBySubjectKeyId{
+AllCertificatesBySubjectKeyIdList: []types.AllCertificatesBySubjectKeyID{
 	{
 		SubjectKeyId: "0",
 },
