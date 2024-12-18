@@ -38,7 +38,7 @@ func TestHandler_RevokeNocIntermediateCert_BySubjectAndSKID(t *testing.T) {
 		"",
 		false)
 
-	// Check indexes
+	// Check indexes - both intermediate are revoked
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.UniqueCertificateKeyPrefix},
@@ -87,7 +87,7 @@ func TestHandler_RevokeNocIntermediateCert_BySerialNumber(t *testing.T) {
 		icaCertificate1.SerialNumber,
 		false)
 
-	// Check indexes for intermediate after revocation
+	// Check state indexes for intermediate - revoked and approved exist
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.UniqueCertificateKeyPrefix},
@@ -99,7 +99,7 @@ func TestHandler_RevokeNocIntermediateCert_BySerialNumber(t *testing.T) {
 			{Key: types.NocCertificatesBySubjectKeyPrefix},
 			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
 			{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
-			{Key: types.NocIcaCertificatesKeyPrefix}, // other intermediate exist
+			{Key: types.NocIcaCertificatesKeyPrefix},
 			{Key: types.ChildCertificatesKeyPrefix},
 		},
 		Missing: []utils.TestIndex{
@@ -131,7 +131,7 @@ func TestHandler_RevokeNocIntermediateCert_BySubjectAndSKID_ParentExist(t *testi
 		"",
 		false)
 
-	// Check state indexes for root
+	// Check state indexes for root - approved
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.AllCertificatesKeyPrefix},
@@ -176,7 +176,7 @@ func TestHandler_RevokeNocIntermediateCert_BySerialNumber_ParentExist(t *testing
 		icaCertificate.SerialNumber,
 		false)
 
-	// Check state indexes for root
+	// Check state indexes for root - approved
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.AllCertificatesKeyPrefix},
@@ -229,7 +229,7 @@ func TestHandler_RevokeNocIntermediateCert_BySubjectAndSKID_KeepChild(t *testing
 		"",
 		false)
 
-	// Check state indexes for leaf
+	// Check state indexes for leaf - approved
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.AllCertificatesKeyPrefix},
@@ -283,7 +283,7 @@ func TestHandler_RevokeNocIntermediateCert_BySerialNumber_KeepChild(t *testing.T
 		icaCertificate1.SerialNumber,
 		false)
 
-	// Check state indexes for leaf
+	// Check state indexes for leaf - approved
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.AllCertificatesKeyPrefix},
@@ -337,7 +337,7 @@ func TestHandler_RevokeNocIntermediateCert_BySubjectAndSKID_RevokeChild(t *testi
 		"",
 		true)
 
-	// Check indexes for child
+	// Check indexes for child - revoked
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.UniqueCertificateKeyPrefix},
@@ -392,7 +392,7 @@ func TestHandler_RevokeNocIntermediateCert_BySerialNumber_RevokeChild(t *testing
 	allRevokedCerts, _ := utils.QueryAllNocRevokedIcaCertificates(setup)
 	require.Equal(t, 2, len(allRevokedCerts))
 
-	// Check indexes for child
+	// Check indexes for child - revoked
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.UniqueCertificateKeyPrefix},
@@ -439,7 +439,7 @@ func TestHandler_RevokeNocIntermediateCert_ByOtherVendor(t *testing.T) {
 		"",
 		false)
 
-	// Check indexes for intermediate
+	// Check indexes for intermediate - revoked
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.UniqueCertificateKeyPrefix},

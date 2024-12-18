@@ -42,7 +42,7 @@ func TestHandler_RemoveNocRootCert_BySubjectAndSKID(t *testing.T) {
 	nocCerts, _ = utils.QueryAllNocCertificates(setup)
 	require.Equal(t, 0, len(nocCerts))
 
-	// Check indexes for root certificates
+	// Check indexes for root certificates - all removed
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{},
 		Missing: []utils.TestIndex{
@@ -87,7 +87,7 @@ func TestHandler_RemoveNocRootCert_BySerialNumber(t *testing.T) {
 		rootCertificate1.SubjectKeyId,
 		rootCertificate1.SerialNumber)
 
-	// Check indexes for root certificates
+	// Check indexes for root certificate1 - unique does not exist (another approved exists)
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.AllCertificatesKeyPrefix},
@@ -106,9 +106,10 @@ func TestHandler_RemoveNocRootCert_BySerialNumber(t *testing.T) {
 	}
 	utils.CheckCertificateStateIndexes(t, setup, rootCertificate1, indexes)
 
-	// same but unique does not exist
+	// Check indexes for root certificate2 - approved
 	indexes = utils.TestIndexes{
 		Present: []utils.TestIndex{
+			{Key: types.UniqueCertificateKeyPrefix},
 			{Key: types.AllCertificatesKeyPrefix},
 			{Key: types.AllCertificatesBySubjectKeyPrefix},
 			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
@@ -116,7 +117,6 @@ func TestHandler_RemoveNocRootCert_BySerialNumber(t *testing.T) {
 			{Key: types.NocCertificatesBySubjectKeyPrefix},
 			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
 			{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
-			{Key: types.UniqueCertificateKeyPrefix},
 		},
 		Missing: []utils.TestIndex{
 			{Key: types.RevokedNocRootCertificatesKeyPrefix},
@@ -125,7 +125,7 @@ func TestHandler_RemoveNocRootCert_BySerialNumber(t *testing.T) {
 	}
 	utils.CheckCertificateStateIndexes(t, setup, rootCertificate2, indexes)
 
-	// remove NOC root certificate by serial number and check that IAC cert is not removed
+	// remove second NOC root certificate by serial number and check that IAC cert is not removed
 	utils.RemoveNocRootCertificate(
 		setup,
 		setup.Vendor1,
@@ -187,7 +187,7 @@ func TestHandler_RemoveNocRootCert_BySubjectAndSKID_ChildExist(t *testing.T) {
 	require.Equal(t, 1, len(nocCerts))
 	require.Equal(t, 1, len(nocCerts[0].Certs))
 
-	// Check indexes for intermediate certificates
+	// Check state indexes for intermediate certificates - approved
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.AllCertificatesKeyPrefix},
@@ -232,7 +232,7 @@ func TestHandler_RemoveNocRootCert_BySerialNumber_ChildExist(t *testing.T) {
 	nocCerts, _ := utils.QueryAllNocCertificates(setup)
 	require.Equal(t, 2, len(nocCerts))
 
-	// Check indexes for intermediate certificates
+	// Check indexes for intermediate certificates - approved
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.AllCertificatesKeyPrefix},
@@ -263,7 +263,7 @@ func TestHandler_RemoveNocRootCert_BySerialNumber_ChildExist(t *testing.T) {
 	require.Equal(t, 1, len(nocCerts))
 	require.Equal(t, 1, len(nocCerts[0].Certs))
 
-	// Check indexes for intermediate certificates
+	// Check indexes for intermediate certificates - approved
 	indexes = utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.AllCertificatesKeyPrefix},
@@ -311,7 +311,7 @@ func TestHandler_RemoveNocRootCert_BySubjectAndSKID_RevokedCertificate(t *testin
 		"",
 	)
 
-	// Check indexes for root certificates
+	// Check indexes for root certificates - removed
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{},
 		Missing: []utils.TestIndex{
@@ -359,7 +359,7 @@ func TestHandler_RemoveNocRootCert_BySerialNumber_RevokedCertificate(t *testing.
 		rootCertificate2.SerialNumber,
 	)
 
-	// Check indexes for root certificates
+	// Check indexes for root certificate1 - revoked
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.UniqueCertificateKeyPrefix},
@@ -377,6 +377,7 @@ func TestHandler_RemoveNocRootCert_BySerialNumber_RevokedCertificate(t *testing.
 	}
 	utils.CheckCertificateStateIndexes(t, setup, rootCertificate1, indexes)
 
+	// Check indexes for root certificate2 - removed
 	indexes = utils.TestIndexes{
 		Present: []utils.TestIndex{
 			// another root with same vid exists
@@ -426,7 +427,7 @@ func TestHandler_RemoveNocRootCert_BySubjectAndSKID_RevokedAndActiveCertificate(
 		"",
 	)
 
-	// Check indexes for root certificates (after deletion re-activated)
+	// Check indexes for root certificates - removed
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{},
 		Missing: []utils.TestIndex{
@@ -464,7 +465,7 @@ func TestHandler_RemoveNocRootCert_ByNotOwnerButSameVendor(t *testing.T) {
 		rootCertificate.SerialNumber,
 	)
 
-	// Check indexes for root certificates
+	// Check indexes for root certificates - removed
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{},
 		Missing: []utils.TestIndex{

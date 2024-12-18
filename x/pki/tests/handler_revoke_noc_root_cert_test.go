@@ -34,7 +34,7 @@ func TestHandler_RevokeNocRootCert_BySubjectAndSKID(t *testing.T) {
 		false,
 	)
 
-	// Check indexes
+	// Check indexes - both revoked
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.UniqueCertificateKeyPrefix},
@@ -78,7 +78,7 @@ func TestHandler_RevokeNocRootCert_BySerialNumber(t *testing.T) {
 		false,
 	)
 
-	// Check indexes
+	// Check indexes - both approved and revoked exist
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.AllCertificatesKeyPrefix},
@@ -126,7 +126,7 @@ func TestHandler_RevokeNocRootCert_BySubjectAndSKID_KeepChild(t *testing.T) {
 		"",
 		false)
 
-	// Check state indexes for intermediate certificate
+	// Check state indexes for intermediate certificate - stays approved
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.AllCertificatesKeyPrefix},
@@ -176,7 +176,7 @@ func TestHandler_RevokeNocRootCert_BySerialNumber_KeepChild(t *testing.T) {
 		rootCertificate1.SerialNumber,
 		false)
 
-	// Check state indexes for intermediate certificate
+	// Check state indexes for intermediate certificate - stays approved
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.AllCertificatesKeyPrefix},
@@ -226,7 +226,7 @@ func TestHandler_RevokeNocRootCert_BySubjectAndSKID_RevokeChild(t *testing.T) {
 		"",
 		true)
 
-	// Check indexes for ica
+	// Check indexes for intermediate certificate - revoked
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.UniqueCertificateKeyPrefix},
@@ -244,7 +244,7 @@ func TestHandler_RevokeNocRootCert_BySubjectAndSKID_RevokeChild(t *testing.T) {
 			{Key: types.ChildCertificatesKeyPrefix},
 			{Key: types.RevokedNocRootCertificatesKeyPrefix},
 			{Key: types.RevokedCertificatesKeyPrefix},
-			{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // root still exits
+			{Key: types.NocRootCertificatesKeyPrefix}, // root also revoked
 		},
 	}
 	utils.CheckCertificateStateIndexes(t, setup, icaCertificate1, indexes)
@@ -274,12 +274,12 @@ func TestHandler_RevokeNocRootCert_BySerialNumber_RevokeChild(t *testing.T) {
 		rootCertificate1.SerialNumber,
 		true)
 
-	// Check indexes for ica
+	// Check indexes for intermediate certificates - revoked
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.UniqueCertificateKeyPrefix},
 			{Key: types.RevokedNocIcaCertificatesKeyPrefix, Count: 1},
-			{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // root still exits
+			{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // root with same vid still exits
 		},
 		Missing: []utils.TestIndex{
 			{Key: types.AllCertificatesKeyPrefix},
@@ -317,7 +317,7 @@ func TestHandler_RevokeNocRootCert_OtherVendor(t *testing.T) {
 		false,
 	)
 
-	// Check indexes
+	// Check state indexes - intermediate certificate revoked
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.UniqueCertificateKeyPrefix},

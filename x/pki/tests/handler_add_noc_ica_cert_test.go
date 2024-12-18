@@ -36,7 +36,7 @@ func TestHandler_AddNocIntermediateCert(t *testing.T) {
 			{Key: types.NocCertificatesBySubjectKeyPrefix},
 			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
 			{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
-			{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // we created root certificate with same vid
+			{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // root certificate with same vid exists
 			{Key: types.NocIcaCertificatesKeyPrefix},
 			{Key: types.UniqueCertificateKeyPrefix},
 			{Key: types.ChildCertificatesKeyPrefix},
@@ -61,12 +61,11 @@ func TestHandler_AddNocIntermediateCert_SameSubjectAndSkid_DifferentSerialNumber
 
 	// Store the NOC certificate with different serial number
 	intermediateCertificate := utils.IntermediateNocCertificate1(setup.Vendor1)
-	intermediateCertificate.SerialNumber = testconstants.TestSerialNumber
 	utils.AddMokedNocCertificate(setup, intermediateCertificate)
 
 	// add the new NOC certificate
-	icaCertificate := utils.IntermediateNocCertificate1(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, icaCertificate)
+	intermediateCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1)
+	utils.AddNocIntermediateCertificate(setup, intermediateCertificate2)
 
 	// Check state indexes
 	indexes := utils.TestIndexes{
@@ -78,7 +77,7 @@ func TestHandler_AddNocIntermediateCert_SameSubjectAndSkid_DifferentSerialNumber
 			{Key: types.NocCertificatesBySubjectKeyPrefix},
 			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix, Count: 2},
 			{Key: types.NocCertificatesByVidAndSkidKeyPrefix, Count: 2},
-			{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // we create root certificate as well but ica should not be there
+			{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // root certificate with same vid exists
 			{Key: types.NocIcaCertificatesKeyPrefix, Count: 2},
 			{Key: types.UniqueCertificateKeyPrefix},
 			{Key: types.ChildCertificatesKeyPrefix},
@@ -91,7 +90,8 @@ func TestHandler_AddNocIntermediateCert_SameSubjectAndSkid_DifferentSerialNumber
 			{Key: types.ApprovedRootCertificatesKeyPrefix},
 		},
 	}
-	utils.CheckCertificateStateIndexes(t, setup, icaCertificate, indexes)
+	utils.CheckCertificateStateIndexes(t, setup, intermediateCertificate, indexes)
+	utils.CheckCertificateStateIndexes(t, setup, intermediateCertificate2, indexes)
 }
 
 func TestHandler_AddNocIntermediateCert_ByNotOwnerButSameVendor(t *testing.T) {
@@ -123,7 +123,7 @@ func TestHandler_AddNocIntermediateCert_ByNotOwnerButSameVendor(t *testing.T) {
 			{Key: types.NocCertificatesBySubjectKeyPrefix},
 			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix, Count: 2},
 			{Key: types.NocCertificatesByVidAndSkidKeyPrefix, Count: 2},
-			{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // we create root certificate as well but ica should not be there
+			{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // root certificate with same vid exists
 			{Key: types.NocIcaCertificatesKeyPrefix, Count: 2},
 			{Key: types.UniqueCertificateKeyPrefix},
 			{Key: types.ChildCertificatesKeyPrefix},

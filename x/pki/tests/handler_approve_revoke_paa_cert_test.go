@@ -18,14 +18,11 @@ import (
 func TestHandler_ApproveRevokeDaRootCert_NotEnoughApprovals(t *testing.T) {
 	setup := utils.Setup(t)
 
-	// propose and approve x509 root certificate
+	// add root certificate
 	rootCertificate := utils.RootDaCertificate(setup.Trustee1)
 	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertificate)
 
-	// Add 1 more trustee (this will bring the total trustee's to 4)
-	setup.CreateTrusteeAccount(1)
-
-	// propose revocation of x509 root certificate
+	// propose revocation of root certificate
 	utils.ProposeRevokeDaRootCertificate(
 		setup,
 		setup.Trustee1,
@@ -34,7 +31,10 @@ func TestHandler_ApproveRevokeDaRootCert_NotEnoughApprovals(t *testing.T) {
 		rootCertificate.SerialNumber,
 		false)
 
-	// approve
+	// Add 1 more trustee (this will bring the total trustee's to 4)
+	setup.CreateTrusteeAccount(1)
+
+	// approve revocation
 	utils.ApproveRevokeDaRootCertificate(
 		setup,
 		setup.Trustee2,
@@ -42,8 +42,10 @@ func TestHandler_ApproveRevokeDaRootCert_NotEnoughApprovals(t *testing.T) {
 		rootCertificate.SubjectKeyId,
 		rootCertificate.SerialNumber)
 
+	// check state indexes - certificate is proposed for revocation (stays approved)
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
+			{Key: types.ProposedCertificateRevocationKeyPrefix},
 			{Key: types.UniqueCertificateKeyPrefix},
 			{Key: types.AllCertificatesKeyPrefix},
 			{Key: types.AllCertificatesBySubjectKeyPrefix},
@@ -52,10 +54,10 @@ func TestHandler_ApproveRevokeDaRootCert_NotEnoughApprovals(t *testing.T) {
 			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
 			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
 			{Key: types.ApprovedRootCertificatesKeyPrefix},
-			{Key: types.ProposedCertificateRevocationKeyPrefix},
 		},
 		Missing: []utils.TestIndex{
 			{Key: types.RevokedCertificatesKeyPrefix},
+			{Key: types.RevokedRootCertificatesKeyPrefix},
 		},
 	}
 	utils.CheckCertificateStateIndexes(t, setup, rootCertificate, indexes)
@@ -64,13 +66,14 @@ func TestHandler_ApproveRevokeDaRootCert_NotEnoughApprovals(t *testing.T) {
 func TestHandler_RevokeDaRootCert_BySubjectAndSKID(t *testing.T) {
 	setup := utils.Setup(t)
 
+	// add two root certificates
 	rootCertificate1 := utils.RootDaCertificateWithSameSubjectAndSKID1(setup.Trustee1)
 	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertificate1)
 
 	rootCertificate2 := utils.RootDaCertificateWithSameSubjectAndSKID2(setup.Trustee1)
 	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertificate2)
 
-	// revoke Certificate1 certificate
+	// revoke certificate1
 	utils.ProposeAndApproveCertificateRevocation(
 		setup,
 		rootCertificate1.Subject,
@@ -78,7 +81,7 @@ func TestHandler_RevokeDaRootCert_BySubjectAndSKID(t *testing.T) {
 		"",
 	)
 
-	// Check: Certificate1 is revoked
+	// Check state indexes - certificates are revoked
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.RevokedCertificatesKeyPrefix, Count: 2},
@@ -103,13 +106,14 @@ func TestHandler_RevokeDaRootCert_BySubjectAndSKID(t *testing.T) {
 func TestHandler_RevokeDaRootCert_BySerialNumber(t *testing.T) {
 	setup := utils.Setup(t)
 
+	// add two root certificates
 	rootCertificate1 := utils.RootDaCertificateWithSameSubjectAndSKID1(setup.Trustee1)
 	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertificate1)
 
 	rootCertificate2 := utils.RootDaCertificateWithSameSubjectAndSKID2(setup.Trustee1)
 	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertificate2)
 
-	// revoke Certificate1 certificate
+	// revoke certificate1  by serial number
 	utils.ProposeAndApproveCertificateRevocation(
 		setup,
 		rootCertificate1.Subject,
@@ -117,18 +121,19 @@ func TestHandler_RevokeDaRootCert_BySerialNumber(t *testing.T) {
 		rootCertificate1.SerialNumber,
 	)
 
-	// Check: Certificate1 - RevokedCertificates - present
+	// Check state indexes: exists both revoked + approved
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
-			{Key: types.RevokedCertificatesKeyPrefix},
-			{Key: types.UniqueCertificateKeyPrefix},
+			{Key: types.RevokedCertificatesKeyPrefix, Count: 1},
+			{Key: types.RevokedRootCertificatesKeyPrefix, Count: 1},
+			{Key: types.UniqueCertificateKeyPrefix, Count: 1},
 			{Key: types.AllCertificatesKeyPrefix, Count: 1},
 			{Key: types.AllCertificatesBySubjectKeyPrefix, Count: 1},
 			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Count: 1},
 			{Key: types.ApprovedCertificatesKeyPrefix, Count: 1},
 			{Key: types.ApprovedCertificatesBySubjectKeyPrefix, Count: 1},
 			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix, Count: 1},
-			{Key: types.ApprovedRootCertificatesKeyPrefix},
+			{Key: types.ApprovedRootCertificatesKeyPrefix, Count: 1},
 		},
 		Missing: []utils.TestIndex{
 			{Key: types.ProposedCertificateRevocationKeyPrefix},
@@ -137,48 +142,20 @@ func TestHandler_RevokeDaRootCert_BySerialNumber(t *testing.T) {
 	}
 	utils.CheckCertificateStateIndexes(t, setup, rootCertificate1, indexes)
 	utils.CheckCertificateStateIndexes(t, setup, rootCertificate2, indexes)
-
-	// revoke Certificate2 certificate
-	utils.ProposeAndApproveCertificateRevocation(
-		setup,
-		rootCertificate2.Subject,
-		rootCertificate2.SubjectKeyId,
-		rootCertificate2.SerialNumber,
-	)
-
-	// Check: Certificate1 is revoked
-	indexes = utils.TestIndexes{
-		Present: []utils.TestIndex{
-			{Key: types.RevokedCertificatesKeyPrefix, Count: 2},
-			{Key: types.UniqueCertificateKeyPrefix},
-		},
-		Missing: []utils.TestIndex{
-			{Key: types.ProposedCertificateRevocationKeyPrefix},
-			{Key: types.AllCertificatesKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.ApprovedCertificatesKeyPrefix},
-			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
-			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.ApprovedRootCertificatesKeyPrefix},
-			{Key: types.ChildCertificatesKeyPrefix},
-		},
-	}
-	utils.CheckCertificateStateIndexes(t, setup, rootCertificate2, indexes)
 }
 
 func TestHandler_RevokeDaRootCert_RevokeChild(t *testing.T) {
 	setup := utils.Setup(t)
 
-	// add root x509 certificate
+	// add root certificate
 	rootCertificate := utils.RootDaCertificate(setup.Trustee1)
 	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertificate)
 
-	// add intermediate x509 certificate
+	// add intermediate certificate
 	intermediateCertificate := utils.IntermediateDaCertificate(setup.Vendor1)
 	utils.AddDaIntermediateCertificate(setup, intermediateCertificate)
 
-	// propose revocation of x509 root certificate
+	// propose revocation of root certificate
 	utils.ProposeRevokeDaRootCertificate(
 		setup,
 		setup.Trustee1,
@@ -187,7 +164,7 @@ func TestHandler_RevokeDaRootCert_RevokeChild(t *testing.T) {
 		rootCertificate.SerialNumber,
 		true)
 
-	// approve
+	// approve revocation
 	utils.ApproveRevokeDaRootCertificate(
 		setup,
 		setup.Trustee2,
@@ -195,6 +172,7 @@ func TestHandler_RevokeDaRootCert_RevokeChild(t *testing.T) {
 		rootCertificate.SubjectKeyId,
 		rootCertificate.SerialNumber)
 
+	// check state indexes - both certificates are revoked
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.RevokedCertificatesKeyPrefix},
@@ -220,15 +198,15 @@ func TestHandler_RevokeDaRootCert_RevokeChild(t *testing.T) {
 func TestHandler_RevokeDaRootCert_KeepChild(t *testing.T) {
 	setup := utils.Setup(t)
 
-	// add root x509 certificate
+	// add root certificate
 	rootCertificate := utils.RootDaCertificate(setup.Trustee1)
 	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertificate)
 
-	// add intermediate x509 certificate
+	// add intermediate certificate
 	intermediateCertificate := utils.IntermediateDaCertificate(setup.Vendor1)
 	utils.AddDaIntermediateCertificate(setup, intermediateCertificate)
 
-	// propose revocation of x509 root certificate
+	// propose revocation of root certificate
 	utils.ProposeRevokeDaRootCertificate(
 		setup,
 		setup.Trustee1,
@@ -237,7 +215,7 @@ func TestHandler_RevokeDaRootCert_KeepChild(t *testing.T) {
 		rootCertificate.SerialNumber,
 		false)
 
-	// approve
+	// approve revocation
 	utils.ApproveRevokeDaRootCertificate(
 		setup,
 		setup.Trustee2,
@@ -245,6 +223,7 @@ func TestHandler_RevokeDaRootCert_KeepChild(t *testing.T) {
 		rootCertificate.SubjectKeyId,
 		rootCertificate.SerialNumber)
 
+	// check state indexes - root is revoked
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.RevokedCertificatesKeyPrefix},
@@ -265,6 +244,7 @@ func TestHandler_RevokeDaRootCert_KeepChild(t *testing.T) {
 	}
 	utils.CheckCertificateStateIndexes(t, setup, rootCertificate, indexes)
 
+	// check state indexes - child stays approved
 	indexes = utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.UniqueCertificateKeyPrefix},
@@ -277,6 +257,7 @@ func TestHandler_RevokeDaRootCert_KeepChild(t *testing.T) {
 			{Key: types.ChildCertificatesKeyPrefix},
 		},
 		Missing: []utils.TestIndex{
+			{Key: types.RevokedCertificatesKeyPrefix},
 			{Key: types.ApprovedRootCertificatesKeyPrefix},
 			{Key: types.ProposedCertificateKeyPrefix},
 			{Key: types.RejectedCertificateKeyPrefix},
@@ -288,14 +269,14 @@ func TestHandler_RevokeDaRootCert_KeepChild(t *testing.T) {
 func TestHandler_RevokeDaRootCert_BySubjectAndSkid_TwoCertificatesWithSameSkid(t *testing.T) {
 	setup := utils.Setup(t)
 
-	// add root certificates
+	// add two root certificates
 	rootCertificate1 := utils.RootDaCertWithSameSubjectKeyID1(setup.Trustee1)
 	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertificate1)
 
 	rootCertificate2 := utils.RootDaCertificateWithSameSubjectKeyID2(setup.Trustee1)
 	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertificate2)
 
-	// revoke Certificate1 certificate
+	// revoke certificate1
 	utils.ProposeAndApproveCertificateRevocation(
 		setup,
 		rootCertificate1.Subject,
@@ -303,7 +284,7 @@ func TestHandler_RevokeDaRootCert_BySubjectAndSkid_TwoCertificatesWithSameSkid(t
 		"",
 	)
 
-	// Check state indexes
+	// Check state indexes - certificate1 is revoked
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.RevokedCertificatesKeyPrefix},
@@ -323,7 +304,7 @@ func TestHandler_RevokeDaRootCert_BySubjectAndSkid_TwoCertificatesWithSameSkid(t
 	}
 	utils.CheckCertificateStateIndexes(t, setup, rootCertificate1, indexes)
 
-	// second still exists
+	// Check state indexes - certificate2 stays approved
 	indexes = utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.UniqueCertificateKeyPrefix},
@@ -347,15 +328,9 @@ func TestHandler_RevokeDaRootCert_BySubjectAndSkid_TwoCertificatesWithSameSkid(t
 func TestHandler_RevokeDaRootCert_TwoThirdApprovalsNeeded(t *testing.T) {
 	setup := utils.Setup(t)
 
-	// add root x509 certificate
+	// add root certificate
 	rootCertificate := utils.RootDaCertificate(setup.Trustee1)
 	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertificate)
-
-	// Create an array of trustee account from 1 to 50
-	trusteeAccounts, totalAdditionalTrustees := setup.CreateNTrusteeAccounts()
-
-	// We have 3 Trustees in test setup.
-	twoThirds := int(math.Ceil(types.RootCertificateApprovalsPercent * float64(3+totalAdditionalTrustees)))
 
 	// Trustee1 proposes to revoke the certificate
 	utils.ProposeRevokeDaRootCertificate(
@@ -365,6 +340,12 @@ func TestHandler_RevokeDaRootCert_TwoThirdApprovalsNeeded(t *testing.T) {
 		rootCertificate.SubjectKeyId,
 		rootCertificate.SerialNumber,
 		false)
+
+	// Create an array of trustee account from 1 to 50
+	trusteeAccounts, totalAdditionalTrustees := setup.CreateNTrusteeAccounts()
+
+	// We have 3 Trustees in test setup.
+	twoThirds := int(math.Ceil(types.RootCertificateApprovalsPercent * float64(3+totalAdditionalTrustees)))
 
 	// Until we hit 2/3 of the total number of Trustees, we should not be able to revoke the certificate
 	// We start the counter from 2 as the proposer is a trustee as well
@@ -377,11 +358,11 @@ func TestHandler_RevokeDaRootCert_TwoThirdApprovalsNeeded(t *testing.T) {
 			rootCertificate.SubjectKeyId,
 			rootCertificate.SerialNumber)
 
-		// check that the certificate is still not revoked
+		// check that the certificate is still not revoked (proposed to revoke)
 		indexes := utils.TestIndexes{
 			Present: []utils.TestIndex{
-				{Key: types.UniqueCertificateKeyPrefix},
 				{Key: types.ProposedCertificateRevocationKeyPrefix},
+				{Key: types.UniqueCertificateKeyPrefix},
 				{Key: types.AllCertificatesKeyPrefix},
 				{Key: types.AllCertificatesBySubjectKeyPrefix},
 				{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
@@ -407,6 +388,7 @@ func TestHandler_RevokeDaRootCert_TwoThirdApprovalsNeeded(t *testing.T) {
 		rootCertificate.SubjectKeyId,
 		rootCertificate.SerialNumber)
 
+	// check state indexes - certificate is revoked
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.RevokedCertificatesKeyPrefix},

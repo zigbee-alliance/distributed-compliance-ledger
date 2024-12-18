@@ -41,7 +41,7 @@ func TestHandler_RemoveNocIntermediateCert_BySubjectAndSKID(t *testing.T) {
 		"",
 	)
 
-	// Check indexes for intermediate certificates
+	// Check indexes for intermediate certificates - removed
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // root still exits
@@ -93,7 +93,7 @@ func TestHandler_RemoveNocIntermediateCert_BySerialNumber(t *testing.T) {
 		icaCertificate1.SubjectKeyId,
 		icaCertificate1.SerialNumber)
 
-	// Check indexes for first certificate (second ica exist)
+	// Check indexes for first certificate - removed (no exist in unique index, but second approved ica exist)
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.AllCertificatesKeyPrefix, Count: 1},
@@ -171,7 +171,7 @@ func TestHandler_RemoveNocIntermediateCert_BySubjectAndSKID_ParentExist(t *testi
 		"",
 	)
 
-	// Check indexes for root certificate
+	// Check indexes for root certificate - approved
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.AllCertificatesKeyPrefix},
@@ -227,7 +227,7 @@ func TestHandler_RemoveNocIntermediateCert_BySerialNumber_ParentExist(t *testing
 		icaCertificate1.SubjectKeyId,
 		icaCertificate1.SerialNumber)
 
-	// Check indexes for leaf certificate (all same as for ica1 but also UniqueCertificate exists)
+	// Check indexes for root certificate - approved
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.AllCertificatesKeyPrefix, Count: 1},
@@ -281,7 +281,7 @@ func TestHandler_RemoveNocIntermediateCert_BySubjectAndSKID_ApprovedChildExist(t
 		"",
 	)
 
-	// Check indexes for leaf certificate
+	// Check indexes for leaf certificate - approved
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.AllCertificatesKeyPrefix},
@@ -338,7 +338,7 @@ func TestHandler_RemoveNocIntermediateCert_BySerialNumber_ApprovedChildExist(t *
 		icaCertificate1.SubjectKeyId,
 		icaCertificate1.SerialNumber)
 
-	// Check indexes for leaf certificate (all same as for ica1 but also UniqueCertificate exists)
+	// Check indexes for leaf certificate - approved
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.AllCertificatesKeyPrefix, Count: 1},
@@ -350,7 +350,7 @@ func TestHandler_RemoveNocIntermediateCert_BySerialNumber_ApprovedChildExist(t *
 			{Key: types.NocCertificatesByVidAndSkidKeyPrefix, Count: 1},
 			{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // root still exits
 			{Key: types.NocIcaCertificatesKeyPrefix, Count: 2},  // ica and leaf cert with same vid exist
-			{Key: types.UniqueCertificateKeyPrefix},             // all same as for ica1 but also UniqueCertificate exists
+			{Key: types.UniqueCertificateKeyPrefix},
 			{Key: types.ChildCertificatesKeyPrefix},
 		},
 		Missing: []utils.TestIndex{
@@ -403,7 +403,7 @@ func TestHandler_RemoveNocIntermediateCert_BySubjectAndSKID_RevokedChildExist(t 
 		"",
 	)
 
-	// Check indexes for leaf certificate
+	// Check indexes for leaf certificate - revoked
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.UniqueCertificateKeyPrefix},
@@ -462,7 +462,7 @@ func TestHandler_RemoveNocIntermediateCert_BySerialNumber_RevokedChildExist(t *t
 		icaCertificate1.SubjectKeyId,
 		icaCertificate1.SerialNumber)
 
-	// Check indexes for leaf certificate
+	// Check indexes for leaf certificate- revoked
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.UniqueCertificateKeyPrefix},
@@ -509,13 +509,20 @@ func TestHandler_RemoveNocIntermediateCert_BySubjectAndSKID_RevokedCertificate(t
 		false,
 	)
 
-	// Check indexes after revocation
+	// remove ICA certificate by serial number
+	utils.RemoveNocIntermediateCertificate(
+		setup,
+		setup.Vendor1,
+		icaCertificate1.Subject,
+		icaCertificate1.SubjectKeyId,
+		"")
+
+	// Check indexes after revocation - removed
 	indexes := utils.TestIndexes{
-		Present: []utils.TestIndex{
-			{Key: types.UniqueCertificateKeyPrefix},
-			{Key: types.RevokedNocIcaCertificatesKeyPrefix, Count: 2},
-		},
+		Present: []utils.TestIndex{},
 		Missing: []utils.TestIndex{
+			{Key: types.UniqueCertificateKeyPrefix},
+			{Key: types.RevokedNocIcaCertificatesKeyPrefix},
 			{Key: types.AllCertificatesKeyPrefix},
 			{Key: types.AllCertificatesBySubjectKeyPrefix},
 			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
@@ -558,11 +565,40 @@ func TestHandler_RemoveNocIntermediateCert_BySerialNumber_RevokedCertificate(t *
 		false,
 	)
 
-	// Check indexes after revocation
+	// remove ICA certificate by serial number
+	utils.RemoveNocIntermediateCertificate(
+		setup,
+		setup.Vendor1,
+		icaCertificate1.Subject,
+		icaCertificate1.SubjectKeyId,
+		icaCertificate1.SerialNumber)
+
+	// Check indexes for certificate 1 - removed (unique does not exist but another approved exists)
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
+			{Key: types.AllCertificatesKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
+			{Key: types.NocIcaCertificatesKeyPrefix},
+			{Key: types.ChildCertificatesKeyPrefix},
+		},
+		Missing: []utils.TestIndex{
 			{Key: types.UniqueCertificateKeyPrefix},
 			{Key: types.RevokedNocIcaCertificatesKeyPrefix},
+			{Key: types.RevokedNocRootCertificatesKeyPrefix},
+			{Key: types.RevokedCertificatesKeyPrefix},
+		},
+	}
+	utils.CheckCertificateStateIndexes(t, setup, icaCertificate1, indexes)
+
+	// Check indexes for certificate 1 - approved
+	indexes = utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.UniqueCertificateKeyPrefix},
 			{Key: types.AllCertificatesKeyPrefix},
 			{Key: types.AllCertificatesBySubjectKeyPrefix},
 			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
@@ -578,7 +614,6 @@ func TestHandler_RemoveNocIntermediateCert_BySerialNumber_RevokedCertificate(t *
 			{Key: types.RevokedCertificatesKeyPrefix},
 		},
 	}
-	utils.CheckCertificateStateIndexes(t, setup, icaCertificate1, indexes)
 	utils.CheckCertificateStateIndexes(t, setup, icaCertificate2, indexes)
 }
 
@@ -603,51 +638,9 @@ func TestHandler_RemoveNocIntermediateCert_BySubjectAndSKID_RevokedAndActiveCert
 		false,
 	)
 
-	// Check indexes after revocation
-	indexes := utils.TestIndexes{
-		Present: []utils.TestIndex{
-			{Key: types.UniqueCertificateKeyPrefix},
-			{Key: types.RevokedNocIcaCertificatesKeyPrefix},
-		},
-		Missing: []utils.TestIndex{
-			{Key: types.AllCertificatesKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.NocCertificatesKeyPrefix},
-			{Key: types.NocCertificatesBySubjectKeyPrefix},
-			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
-			{Key: types.NocIcaCertificatesKeyPrefix},
-			{Key: types.ChildCertificatesKeyPrefix},
-			{Key: types.RevokedNocRootCertificatesKeyPrefix},
-			{Key: types.RevokedCertificatesKeyPrefix},
-		},
-	}
-	utils.CheckCertificateStateIndexes(t, setup, icaCertificate, indexes)
-
 	// Add an intermediate certificate with new serial number
 	icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1)
 	utils.AddNocIntermediateCertificate(setup, icaCertificate2)
-
-	// Check indexes
-	indexes = utils.TestIndexes{
-		Present: []utils.TestIndex{
-			{Key: types.AllCertificatesKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.NocCertificatesKeyPrefix},
-			{Key: types.NocCertificatesBySubjectKeyPrefix},
-			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
-			{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // we create root certificate as well but ica should not get there
-			{Key: types.NocIcaCertificatesKeyPrefix},
-			{Key: types.UniqueCertificateKeyPrefix},
-			{Key: types.ChildCertificatesKeyPrefix},
-			{Key: types.RevokedNocIcaCertificatesKeyPrefix}, // we have evoked cert with same id
-		},
-		Missing: []utils.TestIndex{},
-	}
-	utils.CheckCertificateStateIndexes(t, setup, icaCertificate2, indexes)
 
 	// remove an intermediate certificate
 	utils.RemoveNocIntermediateCertificate(
@@ -663,7 +656,7 @@ func TestHandler_RemoveNocIntermediateCert_BySubjectAndSKID_RevokedAndActiveCert
 	require.Equal(t, 1, len(allCerts))
 
 	// check state indexes for intermediate certificates
-	indexes = utils.TestIndexes{
+	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{},
 		Missing: []utils.TestIndex{
 			{Key: types.AllCertificatesKeyPrefix},
@@ -700,7 +693,7 @@ func TestHandler_RemoveNocIntermediateCert_ByNotOwnerButSameVendor(t *testing.T)
 	vendorAccAddress2 := utils.GenerateAccAddress()
 	setup.AddAccount(vendorAccAddress2, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
-	// remove x509 certificate by second vendor account
+	// remove certificate by second vendor account
 	utils.RemoveNocIntermediateCertificate(
 		setup,
 		vendorAccAddress2,
@@ -709,7 +702,7 @@ func TestHandler_RemoveNocIntermediateCert_ByNotOwnerButSameVendor(t *testing.T)
 		icaCertificate.SerialNumber,
 	)
 
-	// check state indexes for intermediate certificates
+	// check state indexes for intermediate certificates - removed
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{},
 		Missing: []utils.TestIndex{

@@ -21,7 +21,7 @@ func TestHandler_AddNocRootCert(t *testing.T) {
 	rootCertificate := utils.RootNocCertificate1(setup.Vendor1)
 	utils.AddNocRootCertificate(setup, rootCertificate)
 
-	// Check state indexes
+	// check state indexes
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.AllCertificatesKeyPrefix},
@@ -53,7 +53,7 @@ func TestHandler_AddNocRootCert_SameSubjectAndSkid_DifferentSerialNumber(t *test
 	rootCertificate1 := utils.RootNocCertificate1(setup.Vendor1)
 	utils.AddNocRootCertificate(setup, rootCertificate1)
 
-	// add the new NOC root certificate
+	// add second NOC root certificate
 	rootCertificate2 := utils.RootNocCertificate1Copy(setup.Vendor1)
 	utils.AddNocRootCertificate(setup, rootCertificate2)
 
@@ -93,7 +93,7 @@ func TestHandler_AddNocRootCert_ByNotOwnerButSameVendor(t *testing.T) {
 	rootCertificate1 := utils.RootNocCertificate1(vendorAccAddress1)
 	utils.AddNocRootCertificate(setup, rootCertificate1)
 
-	// add NOC root certificate
+	// add second NOC root certificate by other vendor
 	rootCertificate2 := utils.RootNocCertificate1Copy(vendorAccAddress2)
 	utils.AddNocRootCertificate(setup, rootCertificate2)
 
@@ -101,10 +101,10 @@ func TestHandler_AddNocRootCert_ByNotOwnerButSameVendor(t *testing.T) {
 	indexes := utils.TestIndexes{
 		Present: []utils.TestIndex{
 			{Key: types.AllCertificatesKeyPrefix, Count: 2},
-			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyPrefix, Count: 1},
 			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Count: 2},
 			{Key: types.NocCertificatesKeyPrefix, Count: 2},
-			{Key: types.NocCertificatesBySubjectKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyPrefix, Count: 1},
 			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix, Count: 2},
 			{Key: types.NocRootCertificatesKeyPrefix, Count: 2},
 			{Key: types.UniqueCertificateKeyPrefix},
@@ -132,7 +132,6 @@ func TestHandler_AddNocRootCert_SenderNotVendor(t *testing.T) {
 		testconstants.RootCertPem,
 		testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
-
 	require.Error(t, err)
 	require.True(t, sdkerrors.ErrUnauthorized.Is(err))
 }

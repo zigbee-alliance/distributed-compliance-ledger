@@ -1,6 +1,6 @@
-## [Add DA Root](./handler_add_paa_cert_test.go)
+## Add DA Root
 
-### Propose adding of DA root certificate
+### [Propose adding of DA root certificate](./handler_propose_paa_cert_test.go)
 
 Indexes to check:
 
@@ -24,17 +24,16 @@ Test cases:
 * Negative:
     * Propose by not Trustee: `TestHandler_ProposeAddDaRootCert_ByNotTrustee`
     * Propose invalid certificate: `TestHandler_ProposeAddDaRootCert_ForInvalidCertificate`
-    * Propose with existing proposed certificate (Subject/SKID):
-      `TestHandler_ProposeAddDaRootCert_ProposedCertificateAlreadyExists`
+    * Propose with existing proposed certificate (Subject/SKID): `TestHandler_ProposeAddDaRootCert_Duplicate`
     * Propose with existing approved certificate (Subject/SKID/SerialNumber):
       `TestHandler_ProposeAddDaRootCert_CertificateAlreadyExists`
     * Propose not self-signed certificate: `TestHandler_ProposeAddDaRootCert_ForNonRootCertificate`
     * Propose not root certificate: `TestHandler_ProposeAddDaRootCert_ForNonRootCertificate`
-    * Propose NOC root certificate: `TestHandler_ProposeAddDaRootCert_ForNocCertificate`
+    * Propose NOC root certificate: can we check it? `TestHandler_ProposeAddDaRootCert_ForNocCertificate` - wrong test.
     * Propose with existing approved subject/SKID where signer is not owner of active:
       `TestHandler_ProposeAddDaRootCert_ForDifferentSigner`
 
-### Approve adding of DA root certificate
+### [Approve adding of DA root certificate](handler_approve_add_paa_cert_test.go)
 
 Indexes:
 
@@ -48,23 +47,23 @@ Indexes:
 Test cases:
 
 * Positive:
-    * Add certificate: `TestHandler_AddDaRootCert`,
-      `TestHandler_AddDaRootCert_TwoThirdApprovalsNeeded`,
-      `TestHandler_AddDaRootCert_FourApprovalsAreNeeded_FiveTrustees`
-    * Add two certificates with same SKID but different Subject:
-      `TestHandler_AddDaRootCert_SameSkid_DifferentSubject`
-    * Add two certificates with same Subject but different SKID:
-    * Add two certificates with same Subject and SKID:
-      `TestHandler_AddDaRootCert_SameSubjectAndSkid_DifferentSerialNumber`
     * Approve certificate for not enough approvals: `TestHandler_AddDaRootCert_TwoThirdApprovalsNeeded`
-    * Approve certificate which was previously rejected by the current user:
-      `TestHandler_ApproveAddDaRootCert_PreviouslyRejectedByCurrentTrustee`
+  * Add certificate: `TestHandler_AddDaRootCert`,
+    `TestHandler_AddDaRootCert_TwoThirdApprovalsNeeded`,
+    `TestHandler_AddDaRootCert_FourOfFiveApprovalsAreNeeded`
+  * Add two certificates with same SKID but different Subject:
+    `TestHandler_AddDaRootCert_SameSkid_DifferentSubject`
+  * Add two certificates with same Subject but different SKID:
+  * Add two certificates with same Subject and SKID:
+    `TestHandler_AddDaRootCert_SameSubjectAndSkid_DifferentSerialNumber`
+  * Approve certificate which was previously rejected by the current user:
+    `TestHandler_ApproveAddDaRootCert_PreviouslyRejectedByCurrentTrustee`
 * Negative:
     * Approve by not Trustee: `TestHandler_ApproveAddDaRootCert_ByNotTrustee`
-    * Approve of non-existing proposed certificate: `TestHandler_ApproveAddDaRootCert_ForUnknownProposedCertificate`
+    * Approve of non-existing proposed certificate: `TestHandler_ApproveAddDaRootCert_UnknownProposedCertificate`
     * Approve certificate already approved by the current user: `TestHandler_ApproveAddDaRootCert_Twice`
 
-### Reject adding of DA root certificate
+### [Reject adding of DA root certificate](handler_reject_add_paa_cert_test.go)
 
 Indexes:
 
@@ -83,20 +82,16 @@ Test cases:
       `TestHandler_RejectX509RootCert_TwoRejectApprovalsAreNeeded_FiveTrustees`
     * Reject adding of DA root certificate for not enough rejects: `TestHandler_RejectAddDaRootCert`,
       `TestHandler_RejectX509RootCert_TwoRejectApprovalsAreNeeded_FiveTrustees`
-    * Reject DA root certificate which was previously approved by the current user and certificate has other
-      approval:
-      `TestHandler_RejectAddDaRootCert_PreviouslyApprovedByCurrentTrustee_CertificateHasOtherApproval`
-    * Reject DA root certificate which was previously approved by the current user and certificate has other
-      rejects:
-      `TestHandler_RejectAddDaRootCert_PreviouslyApprovedByCurrentTrustee_CertificateHasOtherReject`
-    * Reject DA root certificate which was previously approved by the current user (and certificate does not have other
-      rejects/approvals):
-      `TestHandler_RejectAddDaRootCert_PreviouslyApprovedByCurrentTrustee_CertificateNotHasOtherApproval`
+    * Reject DA root certificate - certificate still has other approval (certificates must be proposed):
+      `TestHandler_RejectAddDaRootCert_CertificateHasOtherApproval`
+    * Reject DA root certificate - certificate still has other reject (certificates must be proposed):
+      `TestHandler_RejectAddDaRootCert_CertificateHasOtherReject`
+    * Reject DA root certificate - certificate does not have other rejects/approvals (certificates must be removed):
+      `TestHandler_RejectAddDaRootCert_CertificateNotHasOtherApprovalAndRejects`
 * Negative:
     * Reject by not Trustee: `TestHandler_RejectAddDaRootCert_ByNotTrustee`
-    * Reject of non-existing proposed certificate: `TestHandler_RejectAddDaRootCert_ForUnknownProposedCertificate`
-    * Reject certificate already rejected by the current user:
-      `TestHandler_RejectX509RootCert_TwiceFromTheSameTrustee`
+    * Reject of non-existing proposed certificate: `TestHandler_RejectAddDaRootCert_UnknownProposedCertificate`
+    * Reject certificate already rejected by the current user: `TestHandler_RejectAddDaRootCert_Twice`
 
 ## [Add DA Intermediate](./handler_add_pai_cert_test.go)
 
@@ -133,9 +128,9 @@ Test cases:
     * Add with different VID: `TestHandler_AddDaIntermediateCert_ByOtherVendor`
     * Add with invalid chain: `TestHandler_AddDaIntermediateCert_ForAbsentDirectParentCert`
 
-## [Revoke DA Root](./handler_revoke_paa_cert_test.go)
+## Revoke DA Root
 
-### Propose revocation of DA root certificate
+### [Propose revocation of DA root certificate](handler_propose_revoke_paa_cert_test.go)
 
 Indexes to check:
 
@@ -168,7 +163,7 @@ Test cases:
       `TestHandler_ProposeRevokeDaRootCert_CertificateDoesNotExistBySerialNumber`
     * Propose revocation of not root certificate: `TestHandler_ProposeRevokeDaRootCert_ForNonRootCertificate`
 
-### Approve revocation of DA root certificate
+### [Approve revocation of DA root certificate](handler_approve_revoke_paa_cert_test.go)
 
 Indexes:
 
