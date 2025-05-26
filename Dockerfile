@@ -32,11 +32,11 @@ RUN wget -P /tmp "https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz"
 RUN tar -C /usr/local -xzf "/tmp/go${GO_VERSION}.linux-amd64.tar.gz"
 RUN rm "/tmp/go${GO_VERSION}.linux-amd64.tar.gz"
 
-ENV GOPATH /go
-ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
+ENV GOPATH=/go
+ENV PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 
-RUN go install github.com/cosmos/cosmos-sdk/cosmovisor/cmd/cosmovisor@v1.3.0
+RUN go install cosmossdk.io/tools/cosmovisor/cmd/cosmovisor@v1.5.0
 
 ############################
 # STEP 2 build node image
@@ -59,6 +59,7 @@ RUN adduser --disabled-password --uid ${TEST_UID} --home /var/lib/${TEST_USER} -
 ENV DAEMON_HOME=/var/lib/${TEST_USER}/.dcl
 ENV DAEMON_NAME=dcld
 ENV DAEMON_ALLOW_DOWNLOAD_BINARIES=true
+ENV COSMOVISOR_CUSTOM_PREUPGRADE=preupgrade.sh
 
 RUN apt-get update
 RUN apt-get install -y ca-certificates
@@ -72,6 +73,10 @@ EXPOSE 26656 26657 1317 26660 8888
 STOPSIGNAL SIGTERM
 
 USER ${TEST_USER}
+
+COPY integration_tests/node_helper.sh /var/lib/${TEST_USER}/
+COPY integration_tests/dcld_manager.sh /var/lib/${TEST_USER}/
+COPY integration_tests/preupgrade.sh /var/lib/${TEST_USER}/
 
 ENV PATH=$PATH:${DAEMON_HOME}/cosmovisor/current/bin
 

@@ -13,11 +13,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -euo pipefail
+# this script the script will write file with information before the upcoming upgrade
 
-source integration_tests/upgrade/01-test-upgrade-initialize-0.12.sh
-source integration_tests/upgrade/02-test-upgrade-0.12-rollback.sh
-source integration_tests/upgrade/03-test-upgrade-0.12-to-1.2.sh
-source integration_tests/upgrade/04-test-upgrade-1.2-rollback.sh
-source integration_tests/upgrade/05-test-upgrade-1.2-to-1.4.3.sh
-source integration_tests/upgrade/06-test-upgrade-1.4.3-to-1.4.4.sh
+info_file="$DAEMON_HOME/cosmovisor/upgrade_info.csv"
+
+if [ -f $info_file ]; then
+    exit 1
+fi
+
+echo "Writing preupgrade info to $info_file" >&2
+
+current_dcld_path=$(readlink -f $DAEMON_HOME/cosmovisor/current)
+upgrade_name=$1
+upgrade_height=$2
+
+echo "$upgrade_name,$current_dcld_path,$upgrade_height" > "$info_file"
+
+exit 0

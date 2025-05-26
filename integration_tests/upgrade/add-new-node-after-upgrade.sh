@@ -61,7 +61,7 @@ cleanup() {
     fi
 }
 
-trap cleanup EXIT
+# trap cleanup EXIT
 
 check_adding_new_node() {
   local stable_binary_version="${1:-0.12.1}"
@@ -96,9 +96,11 @@ check_adding_new_node() {
   test_divider
 
   echo "5. Start Node \"$node_name\""
-  docker exec -d $node_name cosmovisor run start
+  docker exec -d $node_name /var/lib/dcl/./node_helper.sh
 
   test_divider
+
+  sleep 1
 
   echo "6. Check dcld version == $stable_binary_version in $node_name"
   dcld_version=$(docker exec $node_name dcld version)
@@ -111,7 +113,8 @@ check_adding_new_node() {
   test_divider
 
   sleep_time_sec=1
-  overall_ping_time_sec=200
+  overall_ping_time_sec=700
+
   echo "7. Check node $node_name for START catching up process pinging it every $sleep_time_sec second for $overall_ping_time_sec seconds"
 
   check_expected_catching_up_status_for_interval true $overall_ping_time_sec $sleep_time_sec

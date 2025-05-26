@@ -13,11 +13,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -euo pipefail
+# this script is the entry point of docker contain
 
-source integration_tests/upgrade/01-test-upgrade-initialize-0.12.sh
-source integration_tests/upgrade/02-test-upgrade-0.12-rollback.sh
-source integration_tests/upgrade/03-test-upgrade-0.12-to-1.2.sh
-source integration_tests/upgrade/04-test-upgrade-1.2-rollback.sh
-source integration_tests/upgrade/05-test-upgrade-1.2-to-1.4.3.sh
-source integration_tests/upgrade/06-test-upgrade-1.4.3-to-1.4.4.sh
+timestamp=0
+cooldown_time=10
+
+RUN_CMD=/var/lib/dcl/./dcld_manager.sh
+ln -s /var/lib/dcl/preupgrade.sh /var/lib/dcl/.dcl/cosmovisor/preupgrade.sh
+
+while $RUN_CMD; do
+    now=$(date +%s)
+
+    if (( now < timestamp + cooldown_time )); then
+        echo "Unacceptable to restart '$RUN_CMD' more than every $cooldown_time seconds, exit" >&2
+        exit 1
+    fi
+
+    timestamp=$now
+    sleep 1
+    echo "'$RUN_CMD' stopped, restarting" >&2
+done
+
+echo "'$RUN_CMD' crashed with an error code" >&2
+
