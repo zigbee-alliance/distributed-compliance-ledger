@@ -20,15 +20,10 @@ source integration_tests/cli/common.sh
 
 plan_name="wrong_plan_name"
 upgrade_checksum="sha256:3f2b2a98b7572c6598383f7798c6bc16b4e432ae5cfd9dc8e84105c3d53b5026"
-binary_version_old="v0.12.0"
 binary_version_new="v1.2.2"
 
-wget -O dcld_v_0_12_0 "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version_old/dcld"
-chmod ugo+x dcld_v_0_12_0
-
-DCLD_BIN_V_0_12_0="./dcld_v_0_12_0"
-DCLD_BIN_NEW="./dcld_v_0_12_0"
-
+DCLD_BIN_OLD="/tmp/dcld_bins/dcld_v0.12.0"
+DCLD_BIN_NEW="/tmp/dcld_bins/dcld_v0.12.0"
 ########################################################################################
 
 # Upgrade to version wrong_plan_name
@@ -44,21 +39,21 @@ echo "Propose upgrade $plan_name at height $plan_height"
 sleep 20
 
 echo "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version_new/dcld?checksum=$upgrade_checksum"
-result=$(echo $passphrase | $DCLD_BIN_V_0_12_0 tx dclupgrade propose-upgrade --name=$plan_name --upgrade-height=$plan_height --upgrade-info="{\"binaries\":{\"linux/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version_new/dcld?checksum=$upgrade_checksum\"}}" --from $trustee_account_1 --yes)
+result=$(echo $passphrase | $DCLD_BIN_OLD tx dclupgrade propose-upgrade --name=$plan_name --upgrade-height=$plan_height --upgrade-info="{\"binaries\":{\"linux/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version_new/dcld?checksum=$upgrade_checksum\"}}" --from $trustee_account_1 --yes)
 echo "$result"
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Approve upgrade $plan_name"
-result=$(echo $passphrase | $DCLD_BIN_V_0_12_0 tx dclupgrade approve-upgrade --name $plan_name --from $trustee_account_2 --yes)
+result=$(echo $passphrase | $DCLD_BIN_OLD tx dclupgrade approve-upgrade --name $plan_name --from $trustee_account_2 --yes)
 echo "$result"
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Approve upgrade $plan_name"
-result=$(echo $passphrase | $DCLD_BIN_V_0_12_0 tx dclupgrade approve-upgrade --name $plan_name --from $trustee_account_3 --yes)
+result=$(echo $passphrase | $DCLD_BIN_OLD tx dclupgrade approve-upgrade --name $plan_name --from $trustee_account_3 --yes)
 echo "$result"
 check_response "$result" "\"code\": 0"
 
@@ -70,13 +65,13 @@ wait_for_height $(expr $plan_height + 1) 300 outage-safe
 test_divider
 
 echo "Verify that no upgrade has been scheduled anymore"
-result=$($DCLD_BIN_V_0_12_0 query upgrade plan 2>&1) || true
+result=$($DCLD_BIN_OLD query upgrade plan 2>&1) || true
 check_response_and_report "$result" "no upgrade scheduled" raw
 
 test_divider
 
 echo "Verify that upgrade is not applied"
-result=$(! $DCLD_BIN_V_0_12_0 query upgrade applied $plan_name)
+result=$(! $DCLD_BIN_OLD query upgrade applied $plan_name)
 echo "$result"
 
 test_divider
@@ -88,13 +83,13 @@ echo "Verify that old data is not corrupted"
 # VENDORINFO
 
 echo "Verify if VendorInfo Record for VID: $vid is present or not"
-result=$($DCLD_BIN_V_0_12_0 query vendorinfo vendor --vid=$vid)
+result=$($DCLD_BIN_OLD query vendorinfo vendor --vid=$vid)
 check_response "$result" "\"vendorID\": $vid"
 check_response "$result" "\"companyLegalName\": \"$company_legal_name\""
 check_response "$result" "\"vendorName\": \"$vendor_name\""
 
 echo "Request all vendor infos"
-result=$($DCLD_BIN_V_0_12_0 query vendorinfo all-vendors)
+result=$($DCLD_BIN_OLD query vendorinfo all-vendors)
 check_response "$result" "\"vendorID\": $vid"
 check_response "$result" "\"companyLegalName\": \"$company_legal_name\""
 check_response "$result" "\"vendorName\": \"$vendor_name\""
@@ -104,36 +99,36 @@ test_divider
 # MODEL
 
 echo "Get Model with VID: $vid PID: $pid_1"
-result=$($DCLD_BIN_V_0_12_0 query model get-model --vid=$vid --pid=$pid_1)
+result=$($DCLD_BIN_OLD query model get-model --vid=$vid --pid=$pid_1)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid_1"
 check_response "$result" "\"productLabel\": \"$product_label\""
 
 echo "Get Model with VID: $vid PID: $pid_2"
-result=$($DCLD_BIN_V_0_12_0 query model get-model --vid=$vid --pid=$pid_2)
+result=$($DCLD_BIN_OLD query model get-model --vid=$vid --pid=$pid_2)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid_2"
 check_response "$result" "\"productLabel\": \"$product_label\""
 
 echo "Get all models"
-result=$($DCLD_BIN_V_0_12_0 query model all-models)
+result=$($DCLD_BIN_OLD query model all-models)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid_1"
 check_response "$result" "\"pid\": $pid_2"
 
 echo "Get Vendor Models with VID: ${vid}"
-result=$($DCLD_BIN_V_0_12_0 query model vendor-models --vid=$vid)
+result=$($DCLD_BIN_OLD query model vendor-models --vid=$vid)
 check_response "$result" "\"pid\": $pid_1"
 check_response "$result" "\"pid\": $pid_2"
 
 echo "Get model version VID: $vid PID: $pid_1"
-result=$($DCLD_BIN_V_0_12_0 query model model-version --vid=$vid --pid=$pid_1 --softwareVersion=$software_version)
+result=$($DCLD_BIN_OLD query model model-version --vid=$vid --pid=$pid_1 --softwareVersion=$software_version)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid_1"
 check_response "$result" "\"softwareVersion\": $software_version"
 
 echo "Get model version VID: $vid PID: $pid_2"
-result=$($DCLD_BIN_V_0_12_0 query model model-version --vid=$vid --pid=$pid_2 --softwareVersion=$software_version)
+result=$($DCLD_BIN_OLD query model model-version --vid=$vid --pid=$pid_2 --softwareVersion=$software_version)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid_2"
 check_response "$result" "\"softwareVersion\": $software_version"
@@ -143,7 +138,7 @@ test_divider
 # COMPLIANCE
 
 echo "Get certified model vid=$vid pid=$pid_1"
-result=$($DCLD_BIN_V_0_12_0 query compliance certified-model --vid=$vid --pid=$pid_1 --softwareVersion=$software_version --certificationType=$certification_type)
+result=$($DCLD_BIN_OLD query compliance certified-model --vid=$vid --pid=$pid_1 --softwareVersion=$software_version --certificationType=$certification_type)
 check_response "$result" "\"value\": true"
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid_1"
@@ -151,58 +146,58 @@ check_response "$result" "\"softwareVersion\": $software_version"
 check_response "$result" "\"certificationType\": \"$certification_type\""
 
 echo "Get revoked Model with VID: $vid PID: $pid_2"
-result=$($DCLD_BIN_V_0_12_0 query compliance revoked-model --vid=$vid --pid=$pid_2 --softwareVersion=$software_version --certificationType=$certification_type)
+result=$($DCLD_BIN_OLD query compliance revoked-model --vid=$vid --pid=$pid_2 --softwareVersion=$software_version --certificationType=$certification_type)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid_2"
 
 echo "Get provisional model with VID: $vid PID: $pid_3"
-result=$($DCLD_BIN_V_0_12_0 query compliance provisional-model --vid=$vid --pid=$pid_3 --softwareVersion=$software_version --certificationType=$certification_type)
+result=$($DCLD_BIN_OLD query compliance provisional-model --vid=$vid --pid=$pid_3 --softwareVersion=$software_version --certificationType=$certification_type)
 check_response "$result" "\"value\": true"
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid_3"
 
 echo "Get compliance-info model with VID: $vid PID: $pid_1"
-result=$($DCLD_BIN_V_0_12_0 query compliance compliance-info --vid=$vid --pid=$pid_1 --softwareVersion=$software_version --certificationType=$certification_type)
+result=$($DCLD_BIN_OLD query compliance compliance-info --vid=$vid --pid=$pid_1 --softwareVersion=$software_version --certificationType=$certification_type)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid_1"
 check_response "$result" "\"softwareVersion\": $software_version"
 check_response "$result" "\"certificationType\": \"$certification_type\""
 
 echo "Get compliance-info model with VID: $vid PID: $pid_2"
-result=$($DCLD_BIN_V_0_12_0 query compliance compliance-info --vid=$vid --pid=$pid_2 --softwareVersion=$software_version --certificationType=$certification_type)
+result=$($DCLD_BIN_OLD query compliance compliance-info --vid=$vid --pid=$pid_2 --softwareVersion=$software_version --certificationType=$certification_type)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid_2"
 check_response "$result" "\"softwareVersion\": $software_version"
 check_response "$result" "\"certificationType\": \"$certification_type\""
 
 echo "Get device software compliance cDCertificateId=$cd_certificate_id"
-result=$($DCLD_BIN_V_0_12_0 query compliance device-software-compliance --cdCertificateId=$cd_certificate_id)
+result=$($DCLD_BIN_OLD query compliance device-software-compliance --cdCertificateId=$cd_certificate_id)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid_1"
 
 echo "Get all certified models"
-result=$($DCLD_BIN_V_0_12_0 query compliance all-certified-models)
+result=$($DCLD_BIN_OLD query compliance all-certified-models)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid_1"
 
 echo "Get all provisional models"
-result=$($DCLD_BIN_V_0_12_0 query compliance all-provisional-models)
+result=$($DCLD_BIN_OLD query compliance all-provisional-models)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid_3"
 
 echo "Get all revoked models"
-result=$($DCLD_BIN_V_0_12_0 query compliance all-revoked-models)
+result=$($DCLD_BIN_OLD query compliance all-revoked-models)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid_2"
 
 echo "Get all compliance infos"
-result=$($DCLD_BIN_V_0_12_0 query compliance all-compliance-info)
+result=$($DCLD_BIN_OLD query compliance all-compliance-info)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid_1"
 check_response "$result" "\"pid\": $pid_2"
 
 echo "Get all device software compliances"
-result=$($DCLD_BIN_V_0_12_0 query compliance all-device-software-compliance)
+result=$($DCLD_BIN_OLD query compliance all-device-software-compliance)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid_1"
 check_response "$result" "\"cDCertificateId\": \"$cd_certificate_id\""
@@ -212,27 +207,27 @@ test_divider
 # PKI
 
 echo "Get all x509 root certificates"
-result=$($DCLD_BIN_V_0_12_0 query pki all-x509-root-certs)
+result=$($DCLD_BIN_OLD query pki all-x509-root-certs)
 check_response "$result" "\"subject\": \"$test_root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id\""
 
 echo "Get all revoked x509 root certificates"
-result=$($DCLD_BIN_V_0_12_0 query pki all-revoked-x509-root-certs)
+result=$($DCLD_BIN_OLD query pki all-revoked-x509-root-certs)
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
 
 echo "Get all proposed x509 root certificates"
-result=$($DCLD_BIN_V_0_12_0 query pki all-proposed-x509-root-certs)
+result=$($DCLD_BIN_OLD query pki all-proposed-x509-root-certs)
 check_response "$result" "\"subject\": \"$google_root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$google_root_cert_subject_key_id\""
 
 echo "Get all proposed x509 root certificates"
-result=$($DCLD_BIN_V_0_12_0 query pki all-proposed-x509-root-certs-to-revoke)
+result=$($DCLD_BIN_OLD query pki all-proposed-x509-root-certs-to-revoke)
 check_response "$result" "\"subject\": \"$test_root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id\""
 
 echo "Get x509 root certificates"
-result=$($DCLD_BIN_V_0_12_0 query pki x509-cert --subject="$test_root_cert_subject" --subject-key-id="$test_root_cert_subject_key_id")
+result=$($DCLD_BIN_OLD query pki x509-cert --subject="$test_root_cert_subject" --subject-key-id="$test_root_cert_subject_key_id")
 echo $result | jq
 check_response "$result" "\"subject\": \"$test_root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$test_root_cert_subject_key_id\""
@@ -241,7 +236,7 @@ check_response "$result" "\"subjectAsText\": \"$test_root_cert_subject_as_text\"
 response_does_not_contain "$result" "\"vid\":"
 
 echo "Get x509 proposed root certificates"
-result=$($DCLD_BIN_V_0_12_0 query pki proposed-x509-root-cert --subject="$google_root_cert_subject" --subject-key-id="$google_root_cert_subject_key_id")
+result=$($DCLD_BIN_OLD query pki proposed-x509-root-cert --subject="$google_root_cert_subject" --subject-key-id="$google_root_cert_subject_key_id")
 echo $result | jq
 check_response "$result" "\"subject\": \"$google_root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$google_root_cert_subject_key_id\""
@@ -254,19 +249,19 @@ test_divider
 # AUTH
 
 echo "Get all accounts"
-result=$($DCLD_BIN_V_0_12_0 query auth all-accounts)
+result=$($DCLD_BIN_OLD query auth all-accounts)
 check_response "$result" "\"address\": \"$user_2_address\""
 
 echo "Get all proposed accounts"
-result=$($DCLD_BIN_V_0_12_0 query auth all-proposed-accounts)
+result=$($DCLD_BIN_OLD query auth all-proposed-accounts)
 check_response "$result" "\"address\": \"$user_3_address\""
 
 echo "Get all proposed accounts to revoke"
-result=$($DCLD_BIN_V_0_12_0 query auth all-proposed-accounts-to-revoke)
+result=$($DCLD_BIN_OLD query auth all-proposed-accounts-to-revoke)
 check_response "$result" "\"address\": \"$user_2_address\""
 
 echo "Get all revoked accounts"
-result=$($DCLD_BIN_V_0_12_0 query auth all-revoked-accounts)
+result=$($DCLD_BIN_OLD query auth all-revoked-accounts)
 check_response "$result" "\"address\": \"$user_1_address\""
 
 test_divider
@@ -274,7 +269,7 @@ test_divider
 # Validator
 
 echo "Get proposed node to disable"
-# FIXME: use proper binary (not dcld but $DCLD_BIN_V_0_12_0)
+# FIXME: use proper binary (not dcld but $DCLD_BIN_OLD)
 result=$(docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" /bin/sh -c "echo test1234 | dcld query validator proposed-disable-node --address="$address"")
 check_response "$result" "\"address\": \"$validator_address\""
 
@@ -587,7 +582,3 @@ result=$(docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" /bin/sh -c "echo test1234 
 check_response "$result" "\"owner\": \"$validator_address\""
 
 echo "Rollback when update to wrong_plan_name PASSED"
-
-test_divider
-
-rm -f $DCLD_BIN_V_0_12_0

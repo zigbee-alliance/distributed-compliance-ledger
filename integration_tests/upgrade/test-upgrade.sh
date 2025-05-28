@@ -41,4 +41,4 @@ source integration_tests/upgrade/05-test-upgrade-1.2-to-1.4.3.sh
 source integration_tests/upgrade/06-test-upgrade-1.4.3-to-1.4.4.sh
 source integration_tests/upgrade/07-test-upgrade-1.4.4-to-1.5.0.sh
 source integration_tests/upgrade/08-test-upgrade-1.5.0-to-master.sh
-source integration_tests/upgrade/09-add-new-node-after-upgrade.sh
+source integration_tests/upgrade/09-test-add-new-node-after-upgrade.sh

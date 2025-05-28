@@ -25,11 +25,15 @@ node_client_port=26571
 chain_id="dclchain"
 ip="192.167.10.28"
 docker_network="distributed-compliance-ledger_localnet"
-binary_version="0.12.0"
 
 MASTER_UPGRADE_DOCKERFILE="./integration_tests/upgrade/Dockerfile-build-master"
 MASTER_UPGRADE_IMAGE="dcld-build-master"
 MASTER_UPGRADE_CONTAINER_NAME="$MASTER_UPGRADE_IMAGE-inst"
+
+binary_version_old="v1.5.0-0.dev.5"
+binary_version_new="master"
+DCLD_BIN_OLD="/tmp/dcld_bins/dcld_v0.12.0"
+DCLD_BIN_NEW="/tmp/dcld_bins/dcld_master"
 
 function check_expected_catching_up_status_for_interval {
     local expected_status="$1"
@@ -89,11 +93,8 @@ docker run -d --name "$NEW_OBSERVER_CONTAINER_NAME" --ip $ip -p "$node_p2p_port-
 
 test_divider
 
-echo "2. install dcld v$binary_version to $NEW_OBSERVER_CONTAINER_NAME"
-wget "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v$binary_version/dcld"
-chmod ugo+x dcld
-docker cp ./dcld "$NEW_OBSERVER_CONTAINER_NAME":"$dcl_user_home"/
-rm -f ./dcld
+echo "2. install dcld $binary_version_old to $NEW_OBSERVER_CONTAINER_NAME"
+docker cp "$DCLD_BIN_OLD" "$NEW_OBSERVER_CONTAINER_NAME":"$dcl_user_home"/dcld
 
 test_divider
 
@@ -112,10 +113,8 @@ docker exec "$NEW_OBSERVER_CONTAINER_NAME" cp -f ./dcld "$DCL_DIR"/cosmovisor/ge
 
 test_divider
 
-echo "5. Set up master upgrade for $NEW_OBSERVER_CONTAINER_NAME"
-docker cp "$MASTER_UPGRADE_CONTAINER_NAME":/go/bin/dcld ./dcld_master
-docker cp ./dcld_master "$NEW_OBSERVER_CONTAINER_NAME":"$DCL_DIR"/dcld
-rm -f ./dcld_master
+echo "5. Set up "$binary_version_new" upgrade for $NEW_OBSERVER_CONTAINER_NAME"
+docker cp "$DCLD_BIN_NEW" "$NEW_OBSERVER_CONTAINER_NAME":"$DCL_DIR"/dcld
 master_upgrade_plan_name="$(docker run "$MASTER_UPGRADE_IMAGE" /bin/sh -c "cd /go/src/distributed-compliance-ledger && git rev-parse --short HEAD")"
 docker exec "$NEW_OBSERVER_CONTAINER_NAME" /bin/sh -c "cosmovisor add-upgrade "$master_upgrade_plan_name" "$DCL_DIR"/dcld"
 docker rm "$MASTER_UPGRADE_CONTAINER_NAME"
@@ -164,4 +163,4 @@ check_expected_version_for_interval "$master_upgrade_plan_name" || {
     exit 1
 }
 
-echo "PASSED"
+echo "Add new node after upgrade PASSED"

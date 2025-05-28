@@ -16,12 +16,7 @@
 set -euo pipefail
 source integration_tests/cli/common.sh
 
-binary_version="v0.12.0"
-
-wget -O dcld-initial "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version/dcld"
-chmod ugo+x dcld-initial
-
-DCLD_BIN="./dcld-initial"
+DCLD_BIN="/tmp/dcld_bins/dcld_v0.12.0"
 $DCLD_BIN config broadcast-mode block
 
 add_validator_node() {
@@ -533,8 +528,4 @@ check_response "$result" "\"serialNumber\": \"$google_cert_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$google_cert_subject_as_text\""
 response_does_not_contain "$result" "\"vid\":"
 
-echo "Initialize 0.12.0 passed"
-
-test_divider
-
-rm -f $DCLD_BIN
+echo "Initialize 0.12.0 PASSED"
