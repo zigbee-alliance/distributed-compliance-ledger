@@ -42,7 +42,7 @@ jobs:
         run: |
           git fetch --all --tags
           tag="$(git describe --tags --exact-match)"
-          echo "version=${tag#v}" >> $GITHUB_OUTPUT
+          echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
         shell: bash
 
       - name: Get release info
@@ -50,7 +50,7 @@ jobs:
         run: |
           release_info="$(curl -s https://api.github.com/repos/${{ github.repository }}/releases \
               | jq '.[] | select(.tag_name == "v${{ steps.current_version.outputs.version }}")')"
-          echo "release_info=$release_info" >> $GITHUB_OUTPUT
+          echo "release_info=$release_info" >> "$GITHUB_OUTPUT"
           echo "$release_info"
 
           asset_bin_url="$(echo "$release_info" \
