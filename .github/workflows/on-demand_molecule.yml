@@ -14,7 +14,6 @@
 # limitations under the License.
 
 name: Check All Molecule tests
-description: 'Ansible Molecule test execution'
 # yamllint disable-line rule:truthy
 on:
   push:
