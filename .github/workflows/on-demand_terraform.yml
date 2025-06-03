@@ -32,7 +32,7 @@ jobs:
     name: Check static code (checkov)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Run Checkov action
         uses: bridgecrewio/checkov-action@master
         with:
@@ -44,14 +44,14 @@ jobs:
   check-lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Lint Terraform
         uses: actionshub/terraform-lint@main
   check-terrascan:
     runs-on: ubuntu-latest
     name: terrascan-action
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Run Terrascan
         id: terrascan
         uses: accurics/terrascan-action@main
