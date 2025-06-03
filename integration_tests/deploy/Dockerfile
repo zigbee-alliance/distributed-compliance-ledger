@@ -43,6 +43,3 @@ EXPOSE 26656 26657 1317 26660
 
 # USER ${TEST_USER}
 WORKDIR /var/lib/${TEST_USER}
-VOLUME ["/sys/fs/cgroup", "/tmp", "/run"]
-
-CMD ["/lib/systemd/systemd"]
