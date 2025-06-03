@@ -35,8 +35,8 @@ jobs:
       docs: ${{ steps.filter.outputs.docs }}
       workflows: ${{ steps.filter.outputs.workflows }}
     steps:
-      - uses: actions/checkout@v3
-      - uses: dorny/paths-filter@v2
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
         if: ${{ !env.ACT }}
         id: filter
         with:
@@ -69,7 +69,7 @@ jobs:
     needs:
       - changes
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: gaurav-nelson/github-action-markdown-link-check@v1
   spell:
     if: needs.changes.outputs.docs == 'true'
@@ -78,7 +78,7 @@ jobs:
     needs:
       - changes
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: rojopolis/spellcheck-github-actions@0.35.0
   unit-tests:
     name: Check unit tests
@@ -86,11 +86,11 @@ jobs:
     needs:
       - lint
     steps:
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@v5
         with:
           go-version: ^1.20
-      - uses: actions/checkout@v3
-      - uses: actions/cache@v3
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
         if: ${{ !env.ACT }}
         with:
           path: |
@@ -128,15 +128,15 @@ jobs:
   integration-tests:
     if: needs.changes.outputs.src == 'true'
     name: Integration tests
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs:
       - changes
     steps:
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@v5
         with:
           go-version: ^1.20
-      - uses: actions/checkout@v3
-      - uses: actions/cache@v3
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
         with:
           path: |
             ~/.cache/go-build
@@ -177,12 +177,12 @@ jobs:
     needs:
       - changes
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-go@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
         with:
           go-version: 1.21
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v4
         with:
           version: v1.55
           args: --timeout 5m0s
