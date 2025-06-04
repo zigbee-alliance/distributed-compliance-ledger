@@ -8,10 +8,7 @@ Type=simple
 Restart=always
 RestartSec=1
 User=ubuntu
-Environment="DAEMON_HOME=/var/lib/ubuntu/.dcl" 
-Environment="DAEMON_NAME=dcld"
-Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=true"
-ExecStart=/usr/bin/cosmovisor run start
+ExecStart=/var/lib/ubuntu/dcld_manager.sh
 
 [Install]
 WantedBy=multi-user.target

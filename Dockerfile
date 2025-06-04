@@ -75,8 +75,8 @@ STOPSIGNAL SIGTERM
 USER ${TEST_USER}
 
 COPY integration_tests/node_helper.sh /var/lib/${TEST_USER}/
-COPY integration_tests/dcld_manager.sh /var/lib/${TEST_USER}/
-COPY integration_tests/preupgrade.sh /var/lib/${TEST_USER}/
+COPY deployment/dcld_manager.sh /var/lib/${TEST_USER}/
+COPY deployment/preupgrade.sh /var/lib/${TEST_USER}/
 
 ENV PATH=$PATH:${DAEMON_HOME}/cosmovisor/current/bin
 

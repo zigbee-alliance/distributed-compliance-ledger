@@ -30,7 +30,8 @@ JSON_PARSER=
 #   - do not show private data
 #       - requries 'dcld keys' adjustment, pipes configuration is not an option
 
-SERVICE_FILE="./cosmovisor.service"
+COSMOVISOR_SERVICE_FILE="./cosmovisor.service"
+COSMOVISOR_CONFIG_FILE="./cosmovisor.conf"
 PERSISTENT_PEERS_FILE='./persistent_peers.txt'
 GENESIS_IN_FILE="./genesis.json"
 DCL_HOME="$HOME/.dcl"
@@ -293,7 +294,8 @@ function config_node {
     local _node_name="$1"
     local _node_user="$2"
     local _cosmovisor_service_p="${3:-./cosmovisor.service}"
-    local _peers="${4:-}"
+    local _cosmovisor_conf_p="${4:-./cosmovisor.conf}"
+    local _peers="${5:-}"
 
     local _debug="${DEBUG:-}"
 
@@ -312,6 +314,10 @@ function config_node {
                 echo "Error. '$_cosmovisor_service_p' file not found"
                 exit 1
             fi
+            if [[ ! -f "$_cosmovisor_conf_p" ]]; then
+                echo "Error. '$_cosmovisor_conf_p' file not found"
+                exit 1
+            fi
 
             # TODO move ot a separate script
             # Open '26656' (p2p) and '26657' (RPC) ports. 
@@ -319,9 +325,14 @@ function config_node {
             # sudo ufw allow 26657/tcp
 
             # set systemd cosmovisor.service
-            sed -i -r "s~^User=ubuntu$~User=${_node_user}~" "$_cosmovisor_service_p"
-            sed -i -r "s~\"DAEMON_HOME=/var/lib/ubuntu/.dcl\"~\"DAEMON_HOME=${DCL_HOME}\"~" "$_cosmovisor_service_p"
+            sed -i "s/ubuntu/${_node_user}/g" "$_cosmovisor_service_p"
             sudo cp -f "$_cosmovisor_service_p" /etc/systemd/system/cosmovisor.service
+
+            # set systemd cosmovisor.conf
+            sed -i "s/ubuntu/${_node_user}/g" "$_cosmovisor_conf_p"
+            sudo mkdir -p /etc/systemd/system.conf.d
+            sudo cp -f "$_cosmovisor_conf_p" /etc/systemd/system.conf.d/cosmovisor.conf
+
         } || { echo "WARNING: Not a systemd system. Skipping systemd service configuration";}
     fi
 }
@@ -346,7 +357,7 @@ function run_node {
         echo -e "\tUse 'systemctl status cosmovisor' to get the node service status."
         echo "Use 'journalctl -u cosmovisor.service -f' to see node logs."
     else
-        cosmovisor run start >./cosmovisor.log 2>&1 &
+        $HOME/dcld_manager.sh >./cosmovisor.log 2>&1 &
         echo "Node has been stared in the backgroud."
     fi
 }
@@ -490,7 +501,7 @@ else
 fi
 
 echo "Configuring node"
-config_node "$NODE_NAME" "$NODE_USER" "$SERVICE_FILE" "$PERSISTENT_PEERS"
+config_node "$NODE_NAME" "$NODE_USER" "$COSMOVISOR_SERVICE_FILE" "$COSMOVISOR_CONFIG_FILE" "$PERSISTENT_PEERS"
 echo -e "\tDone."
 echo -e "\nOptionally, edit '$CONFIG_FILE' in order to set different setting (like listen address)"
 
