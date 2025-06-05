@@ -8,7 +8,7 @@ Type=simple
 Restart=always
 RestartSec=1
 User=ubuntu
-ExecStart=/var/lib/ubuntu/dcld_manager.sh
+ExecStart=/var/lib/ubuntu/cosmovisor_start.sh
 
 [Install]
 WantedBy=multi-user.target

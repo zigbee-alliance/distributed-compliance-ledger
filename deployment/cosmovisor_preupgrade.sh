@@ -15,18 +15,24 @@
 
 # this script the script will write file with information before the upcoming upgrade
 
-info_file="$DAEMON_HOME/cosmovisor/upgrade_info.csv"
+set -euo pipefail
 
-if [ -f $info_file ]; then
+info_file="$DAEMON_HOME/cosmovisor/upgrade.info"
+
+#check if upgrade is running
+
+if [ "$(grep "^UPGRADE_IS_RUNNING=" "$info_file" | cut -d'=' -f2-)" = 1 ]; then
+    echo -n "The upgrade has already started, exit"
     exit 1
 fi
 
-echo "Writing preupgrade info to $info_file" >&2
+echo -n "Writing preupgrade info to $info_file"
 
-current_dcld_path=$(readlink -f $DAEMON_HOME/cosmovisor/current)
-upgrade_name=$1
-upgrade_height=$2
+prev_dcld_path=$(readlink -f "$DAEMON_HOME/cosmovisor/current")
+upgrade_plan="$1"
+upgrade_height="$2"
+upgrade_is_running=1
 
-echo "$upgrade_name,$current_dcld_path,$upgrade_height" > "$info_file"
+echo -e "UPGRADE_PLAN=$upgrade_plan\nPREV_DCLD_PATH=$prev_dcld_path\nUPGRADE_HEIGHT=$upgrade_height\nUPGRADE_IS_RUNNING=$upgrade_is_running\n" > "$info_file"
 
 exit 0

@@ -69,8 +69,8 @@ for node in "$GVN_NAME" "$VN_NAME"; do
     # TODO firewall routine (requires ufw installed)
 
     echo "$node: upload release artifacts"
-    docker cp deployment/preupgrade.sh "$node":"$DCL_USER_HOME"
-    docker cp deployment/dcld_manager.sh "$node":"$DCL_USER_HOME"
+    docker cp deployment/cosmovisor_preupgrade.sh "$node":"$DCL_USER_HOME"
+    docker cp deployment/cosmovisor_start.sh "$node":"$DCL_USER_HOME"
     docker cp deployment/cosmovisor.service "$node":"$DCL_USER_HOME"
     docker cp deployment/cosmovisor.conf "$node":"$DCL_USER_HOME"
     docker cp "$GOBIN"/dcld "$node":"$DCL_USER_HOME"

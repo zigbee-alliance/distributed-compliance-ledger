@@ -357,7 +357,7 @@ function run_node {
         echo -e "\tUse 'systemctl status cosmovisor' to get the node service status."
         echo "Use 'journalctl -u cosmovisor.service -f' to see node logs."
     else
-        $HOME/dcld_manager.sh >./cosmovisor.log 2>&1 &
+        $HOME/cosmovisor_start.sh >./cosmovisor.log 2>&1 &
         echo "Node has been stared in the backgroud."
     fi
 }

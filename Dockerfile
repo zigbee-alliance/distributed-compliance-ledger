@@ -59,7 +59,7 @@ RUN adduser --disabled-password --uid ${TEST_UID} --home /var/lib/${TEST_USER} -
 ENV DAEMON_HOME=/var/lib/${TEST_USER}/.dcl
 ENV DAEMON_NAME=dcld
 ENV DAEMON_ALLOW_DOWNLOAD_BINARIES=true
-ENV COSMOVISOR_CUSTOM_PREUPGRADE=preupgrade.sh
+ENV COSMOVISOR_CUSTOM_PREUPGRADE=cosmovisor_preupgrade.sh
 
 RUN apt-get update
 RUN apt-get install -y ca-certificates
@@ -75,8 +75,8 @@ STOPSIGNAL SIGTERM
 USER ${TEST_USER}
 
 COPY integration_tests/node_helper.sh /var/lib/${TEST_USER}/
-COPY deployment/dcld_manager.sh /var/lib/${TEST_USER}/
-COPY deployment/preupgrade.sh /var/lib/${TEST_USER}/
+COPY deployment/cosmovisor_start.sh /var/lib/${TEST_USER}/
+COPY deployment/cosmovisor_preupgrade.sh /var/lib/${TEST_USER}/
 
 ENV PATH=$PATH:${DAEMON_HOME}/cosmovisor/current/bin
 
