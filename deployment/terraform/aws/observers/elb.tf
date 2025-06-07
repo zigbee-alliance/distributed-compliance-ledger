@@ -13,7 +13,7 @@ resource "aws_lb" "this_nlb" {
 }
 
 locals {
-  tls_cert_arn = var.enable_tls ? aws_acm_certificate_validation.this_acm_cert_validation[0].certificate_arn : ""
+  tls_cert_arn = local.enable_tls ? aws_acm_certificate_validation.this_acm_cert_validation[0].certificate_arn : ""
   ssl_policy   = "ELBSecurityPolicy-TLS13-1-2-2021-06" # TLS 1.3 (recommended)
 }
 
