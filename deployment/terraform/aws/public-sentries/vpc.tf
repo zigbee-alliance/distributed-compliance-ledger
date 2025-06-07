@@ -8,7 +8,7 @@ locals {
 
 module "this_vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "3.14.0"
+  version = "3.19.0"
 
   name = "public-sentries-vpc"
   cidr = "${local.vpc_network_prefix}.0.0/16"
