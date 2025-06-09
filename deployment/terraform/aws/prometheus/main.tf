@@ -15,6 +15,7 @@ data "aws_ami" "ubuntu" {
 
 resource "aws_key_pair" "key_pair" {
   public_key = file(var.ssh_public_key_path)
+  tags = var.tags
 }
 
 resource "aws_instance" "this_node" {
@@ -48,9 +49,9 @@ resource "aws_instance" "this_node" {
     script = "./provisioner/install-prometheus-service.sh"
   }
 
-  tags = {
+  tags = merge(var.tags, {
     Name = "Prometheus Server Node"
-  }
+  })
 
   root_block_device {
     encrypted   = true

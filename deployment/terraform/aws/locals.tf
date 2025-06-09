@@ -1,4 +1,13 @@
 locals {
+
+  project_name_default = "DCL"
+
+  base_tags = {
+   project = local.project_name_default
+  }
+
+  tags = merge(local.base_tags, {for k, v in var.common_tags :  k => v if try(length(v), 0) > 0})
+
   nodes = {
     validator = {
       private_ips = module.validator.private_ips

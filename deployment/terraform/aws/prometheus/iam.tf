@@ -14,6 +14,7 @@ resource "aws_iam_role" "this_iam_role" {
   ]
 }
 EOF
+  tags = var.tags
 }
 
 resource "aws_iam_policy" "this_amp_write_policy" {
@@ -33,6 +34,7 @@ resource "aws_iam_policy" "this_amp_write_policy" {
     ]
 }
 EOF
+  tags = var.tags
 }
 
 resource "aws_iam_role_policy_attachment" "this_amp_policy_attachment" {
@@ -42,4 +44,5 @@ resource "aws_iam_role_policy_attachment" "this_amp_policy_attachment" {
 
 resource "aws_iam_instance_profile" "this_amp_role_profile" {
   role = aws_iam_role.this_iam_role.name
+  tags = var.tags
 }

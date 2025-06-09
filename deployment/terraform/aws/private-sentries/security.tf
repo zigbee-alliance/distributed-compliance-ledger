@@ -9,6 +9,7 @@ module "this_dev_sg" {
   ingress_cidr_blocks = ["0.0.0.0/0"]
   ingress_rules       = ["all-icmp", "ssh-tcp"]
   egress_rules        = ["all-all"]
+  tags = var.tags
 }
 
 module "this_private_sg" {
@@ -43,6 +44,7 @@ module "this_private_sg" {
       cidr_blocks = "10.0.0.0/8"
     },
   ]
+  tags = var.tags
 }
 
 module "this_public_sg" {
@@ -66,4 +68,5 @@ module "this_public_sg" {
       cidr_blocks = "10.1.1.1/32" # whitelist IP
     },
   ]
+  tags = var.tags
 }

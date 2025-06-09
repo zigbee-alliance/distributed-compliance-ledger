@@ -4,6 +4,7 @@ module "this_dev_sg" {
 
   name        = "observer-dev-security-group"
   description = "Observer nodes security group for development"
+  tags = var.tags
 
   vpc_id = module.this_vpc.vpc_id
 
@@ -18,6 +19,7 @@ module "this_private_sg" {
 
   name        = "observer-private-security-group"
   description = "Observer nodes security group for internal connections"
+  tags = var.tags
 
   vpc_id = module.this_vpc.vpc_id
 

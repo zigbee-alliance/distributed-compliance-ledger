@@ -1,3 +1,13 @@
+variable "common_tags" {
+  description = "Common tags for resources created in AWS."
+  type = object({
+    created-by       = string
+    purpose          = string
+    project = optional(string) # default: DCL
+  })
+}
+
+
 variable "region_1" {
   description = "AWS Region 1"
   # default     = "us-west-1"

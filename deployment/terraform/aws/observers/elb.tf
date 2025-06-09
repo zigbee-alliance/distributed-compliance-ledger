@@ -7,9 +7,9 @@ resource "aws_lb" "this_nlb" {
   enable_cross_zone_load_balancing = true
   # enable_deletion_protection = true
 
-  tags = {
+  tags = merge(var.tags, {
     Name = "Observers NLB"
-  }
+  })
 }
 
 locals {
@@ -28,6 +28,7 @@ resource "aws_lb_listener" "rest" {
     type             = "forward"
     target_group_arn = aws_lb_target_group.rest.arn
   }
+  tags = var.tags
 }
 
 resource "aws_lb_listener" "grpc" {
@@ -41,6 +42,7 @@ resource "aws_lb_listener" "grpc" {
     type             = "forward"
     target_group_arn = aws_lb_target_group.grpc.arn
   }
+  tags = var.tags
 }
 
 resource "aws_lb_listener" "rpc" {
@@ -54,6 +56,7 @@ resource "aws_lb_listener" "rpc" {
     type             = "forward"
     target_group_arn = aws_lb_target_group.rpc.arn
   }
+  tags = var.tags
 }
 
 resource "aws_lb_listener" "tls_rest" {
@@ -73,6 +76,7 @@ resource "aws_lb_listener" "tls_rest" {
   depends_on = [
     aws_acm_certificate_validation.this_acm_cert_validation[0]
   ]
+  tags = var.tags
 }
 
 resource "aws_lb_listener" "tls_grpc" {
@@ -92,6 +96,7 @@ resource "aws_lb_listener" "tls_grpc" {
   depends_on = [
     aws_acm_certificate_validation.this_acm_cert_validation[0]
   ]
+  tags = var.tags
 }
 
 resource "aws_lb_listener" "tls_rpc" {
@@ -111,6 +116,7 @@ resource "aws_lb_listener" "tls_rpc" {
   depends_on = [
     aws_acm_certificate_validation.this_acm_cert_validation[0]
   ]
+  tags = var.tags
 }
 
 resource "aws_lb_target_group" "rest" {
@@ -119,6 +125,7 @@ resource "aws_lb_target_group" "rest" {
   protocol           = "TCP"
   vpc_id             = module.this_vpc.vpc_id
   preserve_client_ip = false
+  tags = var.tags
 }
 
 resource "aws_lb_target_group" "grpc" {
@@ -127,6 +134,7 @@ resource "aws_lb_target_group" "grpc" {
   protocol           = "TCP"
   vpc_id             = module.this_vpc.vpc_id
   preserve_client_ip = false
+  tags = var.tags
 }
 
 resource "aws_lb_target_group" "rpc" {
@@ -135,6 +143,7 @@ resource "aws_lb_target_group" "rpc" {
   protocol           = "TCP"
   vpc_id             = module.this_vpc.vpc_id
   preserve_client_ip = false
+  tags = var.tags
 }
 
 resource "aws_lb_target_group_attachment" "rest_targets" {

@@ -15,6 +15,7 @@ data "aws_ami" "ubuntu" {
 
 resource "aws_key_pair" "key_pair" {
   public_key = file(var.ssh_public_key_path)
+  tags = var.tags
 }
 
 resource "aws_instance" "this_nodes" {
@@ -54,9 +55,9 @@ resource "aws_instance" "this_nodes" {
     script = "./provisioner/install-ansible-deps.sh"
   }
 
-  tags = {
+  tags = merge(var.tags, {
     Name = "Observer Node [${count.index}]"
-  }
+  })
 
   root_block_device {
     encrypted   = true
