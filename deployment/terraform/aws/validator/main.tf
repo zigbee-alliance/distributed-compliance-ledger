@@ -21,7 +21,7 @@ resource "aws_key_pair" "key_pair" {
 resource "aws_instance" "this_node" {
   ami                                  = data.aws_ami.ubuntu.id
   instance_type                        = var.instance_type
-  disable_api_termination              = true
+  disable_api_termination              = !var.disable_instance_protection
   instance_initiated_shutdown_behavior = "stop"
 
   iam_instance_profile = var.iam_instance_profile.name

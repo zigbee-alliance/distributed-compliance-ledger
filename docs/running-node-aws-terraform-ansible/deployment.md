@@ -370,3 +370,23 @@ ansible-playbook -i ./deployment/ansible/inventory/aws  -u ubuntu ./deployment/a
 
 [1]: https://aws.amazon.com/blogs/opensource/using-amazon-managed-service-for-prometheus-to-monitor-ec2-environments/
 [2]: https://docs.aws.amazon.com/amplify/latest/userguide/getting-started.html
+
+## Destruction [WIP]
+
+**TODO**:
+
+- double-check no actions needed neither on business level logic nor on infra conifguration one (Ansible)
+
+### 1. Disable validator node termination protection
+
+```bash
+cd deployment/terraform/aws
+terraform apply -var="disable_validator_protection=true"
+```
+
+### 2. Destroy the infrastructure
+
+```bash
+cd deployment/terraform/aws
+terraform destroy
+```

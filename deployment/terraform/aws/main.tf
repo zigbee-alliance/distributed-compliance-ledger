@@ -30,6 +30,7 @@ module "validator" {
   ssh_private_key_path = var.ssh_private_key_path
 
   instance_type        = var.validator_config.instance_type
+  disable_instance_protection = local.disable_validator_protection
   iam_instance_profile = module.iam.iam_instance_profile
 }
 

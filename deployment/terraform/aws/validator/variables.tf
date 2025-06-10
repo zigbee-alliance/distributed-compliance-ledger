@@ -4,6 +4,12 @@ variable "tags" {
   default     = {}
 }
 
+variable "disable_instance_protection" {
+  description = "Disable the protection that prevents the validator instance from being accidentally terminated"
+  type = bool
+  default = true
+}
+
 variable "ssh_public_key_path" {
   description = "SSH public key file path"
   default     = "~/.ssh/id_rsa.pub"

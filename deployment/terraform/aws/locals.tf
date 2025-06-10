@@ -6,6 +6,8 @@ locals {
    project = local.project_name_default
   }
 
+  disable_validator_protection = tobool(var.disable_validator_protection) == true
+
   tags = merge(local.base_tags, {for k, v in var.common_tags :  k => v if try(length(v), 0) > 0})
 
   nodes = {

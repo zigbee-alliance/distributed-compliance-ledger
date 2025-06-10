@@ -7,7 +7,6 @@ variable "common_tags" {
   })
 }
 
-
 variable "region_1" {
   description = "AWS Region 1"
   # default     = "us-west-1"
@@ -31,6 +30,12 @@ variable "validator_config" {
     instance_type = string
     is_genesis    = bool
   })
+}
+
+variable "disable_validator_protection" {
+  description = "Disable the protection that prevents the validator instance from being accidentally terminated"
+  type = bool
+  default = false
 }
 
 variable "private_sentries_config" {
