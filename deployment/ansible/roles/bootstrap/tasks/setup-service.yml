@@ -34,10 +34,22 @@
 
 - name: setup-service | recreate cosmovisor service
   become: true
-  template:
-    mode: preserve
-    src: cosmovisor.service.j2
-    dest: /etc/systemd/system/cosmovisor.service
+  block:
+    - name: create destination directory for cosmovisor config
+      file:
+        state: directory
+        recurse: true
+        path: /etc/systemd/system.conf.d/
+    - name: copy cosmovisor config
+      template:
+        mode: preserve
+        src: cosmovisor.conf.j2
+        dest: /etc/systemd/system.conf.d/cosmovisor.conf
+    - name: copy service file
+      template:
+        mode: preserve
+        src: cosmovisor.service.j2
+        dest: /etc/systemd/system/cosmovisor.service
 
 - name: create destination directories
   file:
@@ -66,6 +78,22 @@
   loop:
     - {url: "{{ dcld_download_url }}", dest: "{{ dcld.path }}", checksum: "{{ dcld_binary_checksum }}"}
     - {url: "{{ cosmovisor_download_url }}", dest: "{{ cosmovisor.path }}", checksum: "{{ cosmovisor_binary_checksum }}"}
+
+- name: copy script files to home directory
+  become: true
+  block:
+    - name: copy start script
+      copy:
+        src: "../../../../../cosmovisor_start.sh"
+        dest: "{{ dcl_home }}/cosmovisor/cosmovisor_start.sh"
+        owner: "{{ cosmovisor.user }}"
+        mode: 0755
+    - name: copy preupgrade script
+      copy:
+        src: "../../../../../cosmovisor_preupgrade.sh"
+        dest: "{{ dcl_home }}/cosmovisor/cosmovisor_preupgrade.sh"
+        owner: "{{ cosmovisor.user }}"
+        mode: 0755
 
 - name: create a symbolic link to dcld binary
   ansible.builtin.file:
