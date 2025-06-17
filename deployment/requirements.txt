@@ -4,9 +4,9 @@
 #
 #    pip-compile --output-file=requirements.txt requirements.in
 #
-ansible==5.5.0
+ansible==5.8.0
     # via -r requirements.in
-ansible-core==2.12.3
+ansible-core==2.12.8
     # via ansible
 boto3==1.21.25
     # via -r requirements.in

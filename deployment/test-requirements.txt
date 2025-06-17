@@ -11,7 +11,7 @@ ansible-compat==2.1.0
     #   ansible-lint
     #   molecule
     #   molecule-docker
-ansible-core==2.12.6
+ansible-core==2.12.8
     # via
     #   ansible
     #   ansible-lint
@@ -154,7 +154,7 @@ rich==12.4.4
     #   molecule
 ruamel-yaml
     # via ansible-lint
-ruamel-yaml-clib==0.2.6
+ruamel-yaml-clib==0.2.12
     # via ruamel-yaml
 selinux==0.2.1
     # via molecule-docker

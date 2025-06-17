@@ -22,16 +22,20 @@ platforms:
   - name: node0
     image: geerlingguy/docker-ubuntu2004-ansible:latest
     pre_build_image: true
+    privileged: true
+    cgroupns_mode: host
     command: /sbin/init
     tmpfs:
       - /run
       - /tmp
       - /run/lock
     volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
 provisioner:
   name: ansible
   inventory:
+    links:
+      group_vars: ../../../../inventory/group_vars
     group_vars:
       all:
         chain_id: test-net

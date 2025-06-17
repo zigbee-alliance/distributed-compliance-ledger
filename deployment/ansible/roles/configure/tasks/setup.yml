@@ -37,7 +37,7 @@
     - "{{ existing_values }}"
     - "{{ local_config }}"
 
-- name: setup | create TOMLs files
-  copy:
-    dest: "{{ filename }}"
-    content: "{{ existing_values | combine(local_config, recursive=True) | sivel.toiletwater.to_toml }}"
+# - name: setup | create TOMLs files
+#   copy:
+#     dest: "{{ filename }}"
+#     content: "{{ existing_values | combine(local_config, recursive=True) | sivel.toiletwater.to_toml }}"
