@@ -34,5 +34,3 @@ upgrade_height="$2"
 upgrade_is_running=1
 
 echo -e "UPGRADE_PLAN=$upgrade_plan\nPREV_DCLD_PATH=$prev_dcld_path\nUPGRADE_HEIGHT=$upgrade_height\nUPGRADE_IS_RUNNING=$upgrade_is_running\n" > "$info_file"
-
-exit 0

@@ -75,4 +75,4 @@ if [[ "$exit_code" -ne 0 && "$(grep "^UPGRADE_IS_RUNNING=" "$info_file" | cut -d
     exit 0
 fi
 
-exit 1
+exit $exit_code
