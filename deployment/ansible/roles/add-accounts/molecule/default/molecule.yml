@@ -33,9 +33,6 @@ platforms:
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
 provisioner:
   name: ansible
-  env:
-    ANSIBLE_LOCAL_TEMP: "${WORKSPACE:-$HOME}/.ansible/tmp"
-    ANSIBLE_REMOTE_TMP: /tmp
   inventory:
     links:
       group_vars: ../../../../inventory/group_vars
