@@ -20,7 +20,7 @@ lint: |
   yamllint -c ../../../../.yaml-lint.yml .
 platforms:
   - name: node0
-    image: geerlingguy/docker-ubuntu2004-ansible:latest
+    image: geerlingguy/docker-ubuntu2204-ansible:latest
     pre_build_image: true
     privileged: true
     cgroupns_mode: host
