@@ -87,9 +87,6 @@ platforms:
       - seeds
 provisioner:
   name: ansible
-  env:
-    ANSIBLE_LOCAL_TEMP: /tmp
-    ANSIBLE_REMOTE_TMP: /tmp
   inventory:
     links:
       group_vars: ../../../../inventory/group_vars
