@@ -29,10 +29,7 @@ on:
       - deployment/test-requirements.txt
       - deployment/ansible/roles/**
   workflow_dispatch:
-    branches:
-    paths:
-      - deployment/test-requirements.txt
-      - deployment/ansible/roles/**
+
 jobs:
   changes:
     runs-on: ubuntu-latest
