@@ -50,8 +50,13 @@ jobs:
         run: |
           release_info="$(curl -s https://api.github.com/repos/${{ github.repository }}/releases \
               | jq '.[] | select(.tag_name == "v${{ steps.current_version.outputs.version }}")')"
-          echo "release_info=$release_info" >> "$GITHUB_OUTPUT"
           echo "$release_info"
+          EOF="_EOF_"
+          {
+            echo "release_info<<$EOF"
+            echo "$release_info"
+            echo "$EOF"
+          } >> "$GITHUB_OUTPUT"
 
           asset_bin_url="$(echo "$release_info" \
               | jq -r '.assets[] | select(.name | match("^${{ env.BIN_NAME }}$")) | .browser_download_url')"
@@ -78,8 +83,8 @@ jobs:
           echo "$asset_macos_tgz_url"
 
           upload_url="$(echo "$release_info" | jq -r '.upload_url')"
-          echo "upload_url=$upload_url" >> "$GITHUB_OUTPUT"
           echo "$upload_url"
+          echo "upload_url=$upload_url" >> "$GITHUB_OUTPUT"
 
           # build json string to use later as a job matrix
           included=()
@@ -97,8 +102,8 @@ jobs:
               [ .[] | split("|") | .[0] ] | if .|length > 0 then . else empty end
             ' <<<"${included[*]}"
           )"
-          echo "matrix_os=$matrix_os" >> "$GITHUB_OUTPUT"
           echo "$matrix_os"
+          echo "matrix_os=$matrix_os" >> "$GITHUB_OUTPUT"
 
           if [[ -n "$matrix_os" ]]; then
             included_json="$(jq -ncR '
@@ -107,8 +112,8 @@ jobs:
                 {"os": .[0], "bin": .[1] | length, "tgz": .[2] | length, "cosmovisor": .[3] | length, "service": .[4] | length, "deploy_script": .[5] | length, "tgz_name_suffix": .[6]} ]
               ' <<<"${included[*]}"
             )"
-          echo "included=$included_json" >> "$GITHUB_OUTPUT"
             echo "$included_json"
+            echo "included=$included_json" >> "$GITHUB_OUTPUT"
           fi
 
         shell: bash
