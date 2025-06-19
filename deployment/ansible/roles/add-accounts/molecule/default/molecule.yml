@@ -24,11 +24,8 @@ platforms:
     pre_build_image: true
     privileged: true
     cgroupns_mode: host
+    network_mode: ${MOLECULE_NETWORK_MODE:-default}
     command: /sbin/init
-    tmpfs:
-      - /run
-      - /tmp
-      - /run/lock
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
 provisioner:
@@ -47,7 +44,9 @@ provisioner:
             roles:
               - NodeAdmin
               - Trustee
+  env:
+    ANSIBLE_ROLES_PATH: ../../../
 verifier:
   name: testinfra
-  lint:
-    name: flake8
+# lint: TODO either remove or upgrade
+#   name: flake8
