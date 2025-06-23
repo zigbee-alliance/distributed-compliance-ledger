@@ -150,9 +150,10 @@ test_divider
 echo "Update Model with VID: ${vid} PID: ${pid} with new description and commissioningModeInitialStepsHint"
 description="New Device Description"
 newCommissioningModeInitialStepsHint=8
+newCommissioningModeSecondaryStepsHint=9
 enhancedSetupFlowOptions_2=2
 result=$(echo "test1234" | dcld tx model update-model --vid=$vid --pid=$pid --from $vendor_account --yes --productLabel "$description" --schemaVersion=$schema_version_0 \
-  --commissioningModeInitialStepsHint="$newCommissioningModeInitialStepsHint" --enhancedSetupFlowOptions=$enhancedSetupFlowOptions_2)
+  --commissioningModeInitialStepsHint="$newCommissioningModeInitialStepsHint" --commissioningModeSecondaryStepsHint="$newCommissioningModeSecondaryStepsHint" --enhancedSetupFlowOptions=$enhancedSetupFlowOptions_2)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
@@ -181,6 +182,7 @@ check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"productLabel\": \"$description\""
 check_response "$result" "\"schemaVersion\": $schema_version_0"
 check_response "$result" "\"commissioningModeInitialStepsHint\": $newCommissioningModeInitialStepsHint"
+check_response "$result" "\"commissioningModeSecondaryStepsHint\": $newCommissioningModeSecondaryStepsHint"
 check_response "$result" "\"enhancedSetupFlowOptions\": $enhancedSetupFlowOptions_2"
 echo "$result"
 
@@ -215,6 +217,7 @@ check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"supportUrl\": \"$supportURL\""
 check_response "$result" "\"commissioningModeInitialStepsHint\": $newCommissioningModeInitialStepsHint"
+check_response "$result" "\"commissioningModeSecondaryStepsHint\": $newCommissioningModeSecondaryStepsHint"
 echo "$result"
 
 test_divider
