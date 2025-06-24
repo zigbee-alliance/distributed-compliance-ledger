@@ -100,8 +100,12 @@ This command:
   - `sudo ufw allow 26657/tcp`
 - Edit `cosmovisor.service`
   - Replace `ubuntu` with a username you want to start service on behalf
+  - Replace `home_dir` with the path that points to the user's home directory
+- Edit `cosmovisor.confe`
+  - Replace `home_dir` with the path that points to the user's home directory
 - Copy service configuration.
   - `cp cosmovisor.service /etc/systemd/system/`
+  - `cp cosmovisor.conf /etc/systemd/system.conf.d/cosmovisor.conf`
 - Make your node public:
   - Open `$HOME/.dcl/config/config.toml`
   - Find the line under `# TCP or UNIX socket address for the RPC server to listen on`

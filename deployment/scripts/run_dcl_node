@@ -324,12 +324,15 @@ function config_node {
             # sudo ufw allow 26656/tcp
             # sudo ufw allow 26657/tcp
 
+            local home_dir="$(realpath "$HOME")"
+
             # set systemd cosmovisor.service
             sed -i "s/ubuntu/${_node_user}/g" "$_cosmovisor_service_p"
+            sed -i "s#home_dir#${home_dir}#g" "$_cosmovisor_service_p"
             sudo cp -f "$_cosmovisor_service_p" /etc/systemd/system/cosmovisor.service
 
             # set systemd cosmovisor.conf
-            sed -i "s/ubuntu/${_node_user}/g" "$_cosmovisor_conf_p"
+            sed -i "s#home_dir#${home_dir}#g" "$_cosmovisor_conf_p"
             sudo mkdir -p /etc/systemd/system.conf.d
             sudo cp -f "$_cosmovisor_conf_p" /etc/systemd/system.conf.d/cosmovisor.conf
 

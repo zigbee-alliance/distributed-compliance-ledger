@@ -6,7 +6,10 @@
   * Binary artifacts (part of the release):
     * `dcld`: The binary used for both running a node and interacting with it.
     * `cosmovisor`: A small process manager that supports an automated process of Cosmos SDK based application upgrade (`dcld` upgrade in our case).
-  * The service configuration file `cosmovisor.service`
+  * The scripts files (part of the release):
+    * `cosmovisor_preupgrade.sh`: The script that cosmovisor uses before updating dcld.
+    * `cosmovisor_start.sh`: The script that start cosmovisor.
+  * The service configuration files `cosmovisor.service` and `cosmovisor.conf`
         (either part of the release or [deployment](../../deployment) folder).
 * Additional generated data (for validators and observers):
   * Genesis transactions file: `genesis.json`
@@ -67,7 +70,7 @@ _NOTE: Some of the commands above may fail depending on whether or not `cosmovis
 
 ### Get the artifacts
 
-* download `dcld`, `cosmovisor` and `cosmovisor.service` from GitHub [release page](https://github.com/zigbee-alliance/distributed-compliance-ledger/releases)
+* download `dcld`, `cosmovisor`, `cosmovisor.service`, `cosmovisor.conf`, `cosmovisor_preupgrade.sh` and `cosmovisor_start.sh` from GitHub [release page](https://github.com/zigbee-alliance/distributed-compliance-ledger/releases)
 * Get setup scripts either from [release page](https://github.com/zigbee-alliance/distributed-compliance-ledger/releases) or
     from [repository](../../deployment/scripts) if you need latest development version.
 * (for validator and observer) Get the running DCLedegr network data:
@@ -86,6 +89,9 @@ See [this](../advanced/running-node-in-existing-network.md) document for running
 curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/dcld
 curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/cosmovisor
 curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/cosmovisor.service
+curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/cosmovisor.conf
+curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/cosmovisor_start.sh
+curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/cosmovisor_preupgrade.sh
 
 # deployment scripts
     # from release (if available)
@@ -130,6 +136,31 @@ need or just comment out the corresponding line and manually add
 sudo cp -f ./cosmovisor -t /usr/bin
 sudo chown ubuntu /usr/bin/cosmovisor
 sudo chmod u+x /usr/bin/cosmovisor
+```
+
+</p>
+</details>
+<!-- markdownlint-enable MD033 -->
+
+### Setup DCL scripts
+
+* put `cosmovisor_start.sh` script in a folder `$HOME`
+* put `cosmovisor_preupgrade.sh` script in a folder `$HOME`
+* set owner of `cosmovisor_start.sh` and `cosmovisor_preupgrade.sh` scripts to the user who will be used them
+* set executable permission on `cosmovisor_start.sh` and `cosmovisor_preupgrade.sh` scripts for owner
+
+<!-- markdownlint-disable MD033 -->
+<details>
+<summary>Example for ubuntu user (click to expand)</summary>
+<p>
+
+```bash
+sudo cp -f ./cosmovisor_start.sh -t $HOME
+sudo cp -f ./cosmovisor_preupgrade.sh -t $HOME
+sudo chown ubuntu $HOME/cosmovisor_start.sh
+sudo chmod u+x $HOME/cosmovisor_start.sh
+sudo chown ubuntu $HOME/cosmovisor_preupgrade.sh
+sudo chmod u+x $HOME/cosmovisor_preupgrade.sh
 ```
 
 </p>
