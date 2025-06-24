@@ -34,6 +34,15 @@ function check_expected_catching_up_status_for_interval {
     local seconds=0
 
     while [ $seconds -lt $overall_ping_time_sec ]; do
+
+        if ! docker container ls -a | grep -q $node_name; then
+            break
+        fi
+
+        if ! docker container inspect $node_name | grep -q '"Status": "running"'; then
+            break
+        fi
+
         local dcld_status=$(docker exec --user root $node_name dcld status 2>&1)
         
         status_substring="\"catching_up\":$expected_status"
@@ -96,7 +105,8 @@ check_adding_new_node() {
   test_divider
 
   echo "5. Start Node \"$node_name\""
-  docker exec -d $node_name /var/lib/dcl/./node_helper.sh
+  docker exec -d $node_name sh -c "/var/lib/dcl/./node_helper.sh | tee /proc/1/fd/1"
+  docker logs -f $node_name &
 
   test_divider
 
