@@ -13,28 +13,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# this script is the entry point of docker contain
+# this script is the entry point of docker contain (used only in tests)
 
 set -euo pipefail
 
 timestamp=0
-cooldown_time=10
+max_restart_cnt=10
+restart_cnt=0
 
 RUN_CMD=/var/lib/dcl/./cosmovisor_start.sh
 ln -s /var/lib/dcl/cosmovisor_preupgrade.sh /var/lib/dcl/.dcl/cosmovisor/cosmovisor_preupgrade.sh
 
 while $RUN_CMD; do
-    now=$(date +%s)
-
-    if (( now <= timestamp + cooldown_time )); then
-        echo "Unacceptable to restart '$RUN_CMD' more than every $cooldown_time seconds, exit"
+    # in tests, the number of restarts is very limited, mainly when an upgrade occurs
+    # exit with error if there are any unexpected unnecessary restarts
+    if (( restart_cnt > max_restart_cnt )) ; then
+        echo "The maximum number ($max_restart_cnt) of restart attempts has been reached, exit"
         exit 1
     fi
 
     sleep 1
     echo "'$RUN_CMD' stopped, restarting"
 
-    timestamp="$now"
+   restart_cnt=$((restart_cnt+1))
 done
 
 echo "'$RUN_CMD' crashed with an error code"
