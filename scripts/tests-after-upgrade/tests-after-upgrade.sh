@@ -229,8 +229,12 @@ test_divider
 
 # Validator Node
 
+echo "Get validator"
+result=$(dcld query validator node --address=$validator_address)
+check_response "$result" "\"owner\": \"$validator_address\""
+
 echo "Get all validators"
-result=$(dcld query validator all-nodes")
+result=$(dcld query validator all-nodes)
 check_response "$result" "\"owner\": \"$validator_address\""
 
 ########################################################################################
