@@ -40,6 +40,14 @@ software_version_for_vid_2=103
 software_version_revoked=4
 certification_type="matter"
 cd_certificate_id="ZIG20142ZB330003-24"
+user_address="cosmos1qpx7ct4468hyp2kg597tm8fc0knw795tt6a4ed"
+user_address_1="cosmos1qp6zumhaf7fgh6etjyt72p0x4dhgl5vxptvj7d"
+user_rejected_address="cosmos1rw0ssqkqakaqycaqpj7uhvc7puuyzhzlejtl53"
+noc_root_cert_subject="MEYxLjAsBgNVBAMMJUFSQyBUZWNobm9sb2d5IE1hdHRlciBEZXZlbG9wbWVudCBQQUExFDASBgorBgEEAYKifAIBDAQxMjY3"
+noc_root_cert_subject_key_id="98:DE:57:C6:02:AF:C4:F8:3E:AF:6D:28:0A:C3:26:6D:73:0A:F4:0D"
+da_root_cert_subject="MC0xFTATBgNVBAMMDEFDSyBUZXN0IFBBQTEUMBIGCisGAQQBgqJ8AgEMBDEzN0E="
+da_root_cert_subject_key_id="79:B6:04:69:28:A7:5E:48:D8:DB:CF:5E:FF:A3:F9:DB:E5:F5:83:78"
+validator_address="cosmosvaloper1pq46zr92e4xt2cg6z0gw4n668suvxsgufmyyxk"
 
 dcld config broadcast-mode sync #TODO
 
@@ -157,57 +165,16 @@ check_response "$result" "\"cDCertificateId\": \"$cd_certificate_id\""
 
 test_divider
 
-# PKI
-
-echo "Get certificates (ALL)"
-result=$(dcld query pki all-certs)
-echo $result | jq
-check_response "$result" "\"subjectKeyId\": \"$da_root_cert_2_subject_key_id_for_1_4_4\""
-
-echo "Get all certificates by subject (Global)"
-result=$(dcld query pki all-subject-certs --subject=$da_root_cert_2_subject_for_1_4_4)
-check_response "$result" "$da_root_cert_2_subject_key_id_for_1_4_4"
-
-echo "Get all certificates by SKID (Global)"
-result=$(dcld query pki cert --subject-key-id=$da_root_cert_2_subject_key_id_for_1_4_4)
-check_response "$result" "\"subjectKeyId\": \"$da_root_cert_2_subject_key_id_for_1_4_4\""
-check_response "$result" "$da_root_cert_2_subject_key_id_for_1_4_4"
-
-echo "Get certificate (ALL)"
-result=$(dcld query pki cert --subject=$da_root_cert_2_subject_for_1_4_4 --subject-key-id=$da_root_cert_2_subject_key_id_for_1_4_4)
-check_response "$result" "\"subject\": \"$da_root_cert_2_subject_for_1_4_4\""
-check_response "$result" "\"subjectKeyId\": \"$da_root_cert_2_subject_key_id_for_1_4_4\""
-
-echo "Get certificates (NOC)"
-result=$(dcld query pki all-noc-x509-certs)
-check_response "$result" "$noc_root_cert_2_subject_key_id_for_1_4_4"
-
-echo "Get certificate (NOC)"
-result=$(dcld query pki noc-x509-cert --subject=$noc_root_cert_2_subject_for_1_4_4 --subject-key-id=$noc_root_cert_2_subject_key_id_for_1_4_4)
-check_response "$result" "\"subject\": \"$noc_root_cert_2_subject_for_1_4_4\""
-check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_2_subject_key_id_for_1_4_4\""
-
-echo "Get certificates (DA)"
-result=$(dcld query pki all-x509-certs)
-check_response "$result" "\"subjectKeyId\": \"$da_root_cert_2_subject_key_id_for_1_4_4\""
-
-echo "Get certificate (DA)"
-result=$(dcld query pki x509-cert --subject=$da_root_cert_2_subject_for_1_4_4 --subject-key-id=$da_root_cert_2_subject_key_id_for_1_4_4)
-check_response "$result" "\"subject\": \"$da_root_cert_2_subject_for_1_4_4\""
-check_response "$result" "\"subjectKeyId\": \"$da_root_cert_2_subject_key_id_for_1_4_4\""
-
-test_divider
-
 # AUTH
 
 echo "Get account"
-result=$(dcld query auth account --address=$user_11_address)
-check_response "$result" "\"address\": \"$user_11_address\""
+result=$(dcld query auth account --address=$user_address)
+check_response "$result" "\"address\": \"$user_address\""
 
 echo "Get all accounts"
 result=$(dcld query auth all-accounts)
-check_response "$result" "\"address\": \"$user_11_address\""
-check_response "$result" "\"address\": \"$user_2_address\""
+check_response "$result" "\"address\": \"$user_address\""
+check_response "$result" "\"address\": \"$user_address_1\""
 
 echo "Get rejected account"
 result=$(dcld query auth rejected-account --address=$user_rejected_address)
@@ -216,15 +183,54 @@ check_response "$result" "\"address\": \"$user_rejected_address\""
 echo "Get all rejected accounts"
 result=$(dcld query auth all-rejected-accounts)
 check_response "$result" "\"address\": \"$user_rejected_address\""
-check_response "$result" "\"address\": \"$user_rejected_1_address\""
+
+test_divider
+
+# PKI
+
+echo "Get certificates (ALL)"
+result=$(dcld query pki all-certs)
+check_response "$result" "\"subject\": \"$noc_root_cert_subject\""
+check_response "$result" "\"subject\": \"$da_root_cert_subject\""
+
+echo "Get all certificates by subject (Global)"
+result=$(dcld query pki all-subject-certs --subject=$noc_root_cert_subject)
+check_response "$result" "\"subject\": \"$noc_root_cert_subject\""
+
+echo "Get all certificates by SKID (Global)"
+result=$(dcld query pki cert --subject-key-id=$noc_root_cert_subject_key_id)
+check_response "$result" "\"subject\": \"$noc_root_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_subject_key_id\""
+
+echo "Get certificate (ALL)"
+result=$(dcld query pki cert --subject=$noc_root_cert_subject --subject-key-id=$noc_root_cert_subject_key_id)
+check_response "$result" "\"subject\": \"$noc_root_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_subject_key_id\""
+
+echo "Get certificates (NOC)"
+result=$(dcld query pki all-noc-x509-certs)
+# check_response "$result" "\"subject\": \"$noc_root_cert_subject\""
+
+echo "Get certificate (NOC)"
+result=$(dcld query pki noc-x509-cert --subject=$noc_root_cert_subject --subject-key-id=$noc_root_cert_subject_key_id)
+# check_response "$result" "\"subject\": \"$noc_root_cert_subject\""
+# check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_subject_key_id\""
+
+echo "Get certificates (DA)"
+result=$(dcld query pki all-x509-certs)
+check_response "$result" "\"subject\": \"$da_root_cert_subject\""
+
+echo "Get certificate (DA)"
+result=$(dcld query pki x509-cert --subject=$da_root_cert_subject --subject-key-id=$da_root_cert_subject_key_id)
+check_response "$result" "\"subject\": \"$da_root_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$da_root_cert_subject_key_id\""
 
 test_divider
 
 # Validator Node
 
-echo "Get node"
-# FIXME: use proper binary (not dcld but $DCLD_BIN_OLD)
-result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator all-nodes")
+echo "Get all validators"
+result=$(dcld query validator all-nodes")
 check_response "$result" "\"owner\": \"$validator_address\""
 
 ########################################################################################
