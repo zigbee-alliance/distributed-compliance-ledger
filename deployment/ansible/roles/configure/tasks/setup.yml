@@ -26,7 +26,7 @@
   command: "cat {{ filename }}"
   register: filename_content
 
-#FIXME this logic should be fixed or skipped
+#TODO this logic should be fixed or skipped
 
 # - name: setup | combine user with existing config values
 #   set_fact:

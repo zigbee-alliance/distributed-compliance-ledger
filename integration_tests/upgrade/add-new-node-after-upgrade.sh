@@ -44,10 +44,41 @@ function check_expected_catching_up_status_for_interval {
         fi
 
         local dcld_status=$(docker exec --user root $node_name dcld status 2>&1)
-        
+
         status_substring="\"catching_up\":$expected_status"
         if [[ $dcld_status == *"$status_substring"* ]]; then
             echo -e "dcld status:\n$dcld_status"
+            return 1
+        fi
+
+        sleep $sleep_time_sec
+        local seconds=$((seconds+1))
+    done
+
+    return 0
+}
+
+function check_expected_version_for_interval {
+    local expected_version="$1"
+    local overall_ping_time_sec="${2:-10}"
+    local sleep_time_sec="${3:-1}"
+    local seconds=0
+
+    while [ $seconds -lt $overall_ping_time_sec ]; do
+
+        if ! docker container ls -a | grep -q $node_name; then
+            break
+        fi
+
+        if ! docker container inspect $node_name | grep -q '"Status": "running"'; then
+            break
+        fi
+
+        local dcld_version=$(docker exec $node_name dcld version 2>&1)
+
+        status_substring="\"catching_up\":$expected_status"
+        if [ "$dcld_version" == "$expected_version" ]; then
+            echo "dcld_version = $dcld_version"
             return 1
         fi
         
@@ -73,89 +104,93 @@ cleanup() {
 # trap cleanup EXIT
 
 check_adding_new_node() {
-  local stable_binary_version="${1:-0.12.1}"
-  local latest_binary_version="${2:-1.4.4}"
+    local stable_binary_version="${1:-0.12.1}"
+    local latest_binary_version="${2:-1.4.4}"
 
-  echo "1. run $node_name container"
-  docker run -d --name $node_name --ip $ip -p "$node_p2p_port-$node_client_port:26656-26657" --network $docker_network -i dcledger
+    echo "1. run $node_name container"
+    docker run -d --name $node_name --ip $ip -p "$node_p2p_port-$node_client_port:26656-26657" --network $docker_network -i dcledger
 
-  test_divider
+    test_divider
 
-  echo "2. install dcld v$stable_binary_version to $node_name"
-  wget "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v$stable_binary_version/dcld"
-  chmod ugo+x dcld
-  docker cp ./dcld "$node_name":"$dcl_user_home"/
-  rm -f ./dcld
+    echo "2. install dcld v$stable_binary_version to $node_name"
+    wget "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v$stable_binary_version/dcld"
+    chmod ugo+x dcld
+    docker cp ./dcld "$node_name":"$dcl_user_home"/
+    rm -f ./dcld
 
-  test_divider
+    test_divider
 
-  echo "3. Set up configuration files for $node_name"
-  docker exec $node_name ./dcld init $node_name --chain-id $chain_id
-  docker cp "$localnet_dir/node0/config/genesis.json" $node_name:$DCL_DIR/config
-  peers="$(cat "$localnet_dir/node0/config/config.toml" | grep -o -E "persistent_peers = \".*\"")"
-  docker exec $node_name sed -i "s/persistent_peers = \"\"/$peers/g" $DCL_DIR/config/config.toml
-  docker exec $node_name sed -i 's/laddr = "tcp:\/\/127.0.0.1:26657"/laddr = "tcp:\/\/0.0.0.0:26657"/g' $DCL_DIR/config/config.toml
+    echo "3. Set up configuration files for $node_name"
+    docker exec $node_name ./dcld init $node_name --chain-id $chain_id
+    docker cp "$localnet_dir/node0/config/genesis.json" $node_name:$DCL_DIR/config
+    peers="$(cat "$localnet_dir/node0/config/config.toml" | grep -o -E "persistent_peers = \".*\"")"
+    docker exec $node_name sed -i "s/persistent_peers = \"\"/$peers/g" $DCL_DIR/config/config.toml
+    docker exec $node_name sed -i 's/laddr = "tcp:\/\/127.0.0.1:26657"/laddr = "tcp:\/\/0.0.0.0:26657"/g' $DCL_DIR/config/config.toml
 
-  test_divider
+    test_divider
 
-  echo "4. Locate the app to $DCL_DIR/cosmovisor/genesis/bin directory in $node_name"
-  docker exec $node_name mkdir -p "$DCL_DIR"/cosmovisor/genesis/bin
-  docker exec $node_name cp -f ./dcld "$DCL_DIR"/cosmovisor/genesis/bin/
+    echo "4. Locate the app to $DCL_DIR/cosmovisor/genesis/bin directory in $node_name"
+    docker exec $node_name mkdir -p "$DCL_DIR"/cosmovisor/genesis/bin
+    docker exec $node_name cp -f ./dcld "$DCL_DIR"/cosmovisor/genesis/bin/
 
-  test_divider
+    test_divider
 
-  echo "5. Start Node \"$node_name\""
-  docker exec -d $node_name sh -c "/var/lib/dcl/./node_helper.sh | tee /proc/1/fd/1"
-  docker logs -f $node_name &
+    echo "5. Start Node \"$node_name\""
+    docker exec -d $node_name sh -c "/var/lib/dcl/./node_helper.sh | tee /proc/1/fd/1"
+    docker logs -f $node_name &
 
-  test_divider
+    test_divider
 
-  sleep 1
+    echo "6. Check dcld version == $stable_binary_version in $node_name"
 
-  echo "6. Check dcld version == $stable_binary_version in $node_name"
-  dcld_version=$(docker exec $node_name dcld version)
-  echo "dcld_version = $dcld_version"
-  if [ "$dcld_version" != $stable_binary_version ]; then
-      echo "installed dcld version $dcld_version != dcld mainnet version $stable_binary_version"
-      exit 1
-  fi
+    check_expected_version_for_interval "$stable_binary_version"
 
-  test_divider
+    is_version_correct=$?
 
-  sleep_time_sec=1
-  overall_ping_time_sec=700
+    if [ $is_version_correct == 0 ] ; then
+        echo "installed dcld version does not match dcld mainnet version"
+        exit 1
+    fi
 
-  echo "7. Check node $node_name for START catching up process pinging it every $sleep_time_sec second for $overall_ping_time_sec seconds"
+    test_divider
 
-  check_expected_catching_up_status_for_interval true $overall_ping_time_sec $sleep_time_sec
-  is_catching_up=$?
+    sleep_time_sec=1
+    overall_ping_time_sec=700
 
-  if [ $is_catching_up == 0 ] ; then
-      echo "Catch-up procedure does not started"
-      exit 1
-  fi
+    echo "7. Check node $node_name for START catching up process pinging it every $sleep_time_sec second for $overall_ping_time_sec seconds"
 
-  test_divider
+    check_expected_catching_up_status_for_interval true $overall_ping_time_sec $sleep_time_sec
+    is_catching_up=$?
 
-  echo "8. Check node $node_name for FINISH catching up process pinging it every $sleep_time_sec second for $overall_ping_time_sec seconds"
+    if [ $is_catching_up == 0 ] ; then
+        echo "Catch-up procedure does not started"
+        exit 1
+    fi
 
-  check_expected_catching_up_status_for_interval false $overall_ping_time_sec $sleep_time_sec
-  is_not_catching_up=$?
+    test_divider
 
-  if [ $is_not_catching_up == 0 ] ; then
-      echo "Catch-up procedure does not finished"
-      exit 1
-  fi
+    echo "8. Check node $node_name for FINISH catching up process pinging it every $sleep_time_sec second for $overall_ping_time_sec seconds"
 
-  test_divider
+    check_expected_catching_up_status_for_interval false $overall_ping_time_sec $sleep_time_sec
+    is_not_catching_up=$?
 
-  echo "9. Check node $node_name dcld updated to version $latest_binary_version"
-  dcld_version=$(docker exec $node_name dcld version)
-  echo "dcld_version = $dcld_version"
-  if [ "$dcld_version" != "$latest_binary_version" ]; then
-      echo "installed dcld version $dcld_version != dcld expected version $latest_binary_version"
-      exit 1
-  fi
+    if [ $is_not_catching_up == 0 ] ; then
+        echo "Catch-up procedure does not finished"
+        exit 1
+    fi
+
+    test_divider
+
+    echo "9. Check node $node_name dcld updated to version $latest_binary_version"
+
+    check_expected_version_for_interval "$latest_binary_version"
+
+    is_version_correct=$?
+
+    if [ $is_version_correct == 0 ] ; then
+        echo "installed dcld version does not match dcld expected version"
+        exit 1
+    fi
 
   echo "PASSED"
 

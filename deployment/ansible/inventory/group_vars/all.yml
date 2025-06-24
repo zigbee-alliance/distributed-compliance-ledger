@@ -38,6 +38,7 @@ cosmovisor:
   log_path: /var/log/cosmovisor/cosmovisor.log
 
 dcld_checksums:
+  # TODO upgrade the version from development to release after release
   1.5.0-0.dev.2: e81461c42a462c84ad58485f665692f20a0d545afd5556880f03c12a8bbc6dad
   0.12.0: ac8dc75bcbebda04fbef644ddbcee4b852d721a3522ccf06ff5d1bb8464949c6
   0.11.0: 33986b277be76d3e7b5443a09232d87d58324ad7cb6123f3d550149f2dc28452

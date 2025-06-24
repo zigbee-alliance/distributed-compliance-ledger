@@ -84,13 +84,13 @@
   block:
     - name: copy start script
       copy:
-        src: "../../../../files/cosmovisor_start.sh"
+        src: "../files/cosmovisor_start.sh"
         dest: "{{ dcl_home }}/cosmovisor/cosmovisor_start.sh"
         owner: "{{ cosmovisor.user }}"
         mode: 0755
     - name: copy preupgrade script
       copy:
-        src: "../../../../files/cosmovisor_preupgrade.sh"
+        src: "../files/cosmovisor_preupgrade.sh"
         dest: "{{ dcl_home }}/cosmovisor/cosmovisor_preupgrade.sh"
         owner: "{{ cosmovisor.user }}"
         mode: 0755
