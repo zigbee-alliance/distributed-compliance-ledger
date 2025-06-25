@@ -47,6 +47,10 @@ random_string() {
   fi
 }
 
+random_four_digit_int() {
+  echo $(( RANDOM % 9000 + 1000 ))
+}
+
 DEF_OUTPUT_MODE=json
 
 

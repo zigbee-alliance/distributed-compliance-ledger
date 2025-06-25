@@ -211,15 +211,17 @@ check_response "$result" "\"owner\": \"$validator_address\""
 
 # MODEL and MODEL_VERSION
 
-echo "Add model vid=$vid_testnet pid=$pid_random"
-result=$(echo $passphrase | dcld tx model add-model --vid=$vid_testnet --pid=$pid_random --deviceTypeID=$device_type_id_for_1_4_4 --productName=$product_name_for_1_4_4 --productLabel=$product_label_for_1_4_4 --partNumber=$part_number_for_1_4_4 --from=$vendor_account_testnet --yes)
+pid_random=$(random_four_digit_int)
+echo "Add model vid=$vid_vendor pid=$pid_random"
+result=$(echo $passphrase | dcld tx model add-model --vid=$vid_vendor --pid=$pid_random --deviceTypeID=$device_type_id --productName=$product_name --from=$vendor_account --yes)
+#result=$(dcld tx model add-model --vid=$vid_vendor --pid=$pid_random --deviceTypeID=$device_type_id --productName=$product_name --from=$vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Add model version vid=$vid_for_1_4_4 pid=$pid_1_for_1_4_4"
-result=$(echo $passphrase | dcld tx model add-model-version --vid=$vid_testnet --pid=$pid_1_for_1_4_4 --softwareVersion=$software_version_for_1_4_4 --softwareVersionString=$software_version_string_for_1_4_4 --cdVersionNumber=$cd_version_number_for_1_4_4 --minApplicableSoftwareVersion=$min_applicable_software_version_for_1_4_4 --maxApplicableSoftwareVersion=$max_applicable_software_version_for_1_4_4 --from=$vendor_account_testnet --yes)
+echo "Add model version vid=$vid_vendor pid=$pid_for_add_version"
+result=$(echo $passphrase | dcld tx model add-model-version --vid=$vid_vendor --pid=$pid_for_add_version --softwareVersion=$software_version --softwareVersionString=$software_version_string --cdVersionNumber=$cd_version_number --minApplicableSoftwareVersion=$min_applicable_software_version --maxApplicableSoftwareVersion=$max_applicable_software_version --from=$vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -227,8 +229,8 @@ test_divider
 
 # X509 PKI
 
-echo "Add NOC Root certificate by vendor with VID = $vid_testnet"
-result=$(echo "$passphrase" | dcld tx pki add-noc-x509-root-cert --certificate="$noc_root_cert_1_path_for_1_4_4" --from $vid_testnet --yes)
+echo "Add NOC Root certificate by vendor with VID = $vid_vendor"
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-root-cert --certificate="$noc_root_cert_1_path_for_1_4_4" --from $vid_vendor --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
