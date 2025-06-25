@@ -152,8 +152,12 @@ Run node:
   - `sudo ufw allow 26657/tcp`
 - Edit `cosmovisor.service`
   - Replace `ubuntu` with a username you want to start service on behalf
+  - Replace `home_dir` with the path that points to the user's home directory
+- Edit `cosmovisor.confe`
+  - Replace `home_dir` with the path that points to the user's home directory
 - Copy service configuration.
   - `cp cosmovisor.service /etc/systemd/system/`
+  - `cp cosmovisor.conf /etc/systemd/system.conf.d/cosmovisor.conf`
 - Enable the service: `sudo systemctl enable cosmovisor`
 - Start node: `sudo systemctl start cosmovisor`
 - For testing purpose the node process can be started directly: `./dcld start` (instead of two previous `systemctl` commands using `cosmovisor` service).

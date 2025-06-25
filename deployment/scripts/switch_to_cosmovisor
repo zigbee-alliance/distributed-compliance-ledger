@@ -63,6 +63,21 @@ if [[ ! -f "./cosmovisor.service" ]]; then
     exit 1
 fi
 
+if [[ ! -f "$HOME/cosmovisor_start.sh" ]]; then
+    echo "Error. 'cosmovisor_start.sh' file not found in '$HOME'"
+    exit 1
+fi
+
+if [[ ! -f "$HOME/cosmovisor_preupgrade.sh" ]]; then
+    echo "Error. 'cosmovisor_preupgrade.sh' file not found in '$HOME'"
+    exit 1
+fi
+
+if [[ ! -f "./cosmovisor.conf" ]]; then
+    echo "Error. './cosmovisor.conf' file not found"
+    exit 1
+fi
+
 OLD_DCLD="$(which dcld)"
 
 if [[ -z "$OLD_DCLD" ]]; then
@@ -123,12 +138,17 @@ sudo chown "$NODE_USER" "$GENESIS_APP_DIR"/dcld
 sudo chmod a+x "$GENESIS_APP_DIR"/dcld
 echo "Copied new 'dcld' binary to '${GENESIS_APP_DIR}/'"
 
-# set up systemd cosmovisor.service
-sed -i -r "s~^User=ubuntu$~User=${NODE_USER}~" ./cosmovisor.service
-sed -i -r "s~\"DAEMON_HOME=/var/lib/ubuntu/.dcl\"~\"DAEMON_HOME=${HOME}/.dcl\"~" ./cosmovisor.service
-
-sudo cp -f ./cosmovisor.service /etc/systemd/system/
+# set systemd cosmovisor.service
+sed -i "s/ubuntu/${_node_user}/g" ./cosmovisor.service
+sed -i "s#home_dir#${home_dir}#g" ./cosmovisor.service
+sudo cp -f ./cosmovisor.service /etc/systemd/system/cosmovisor.service
 echo "Added 'cosmovisor' service"
+
+# set systemd cosmovisor.conf
+sed -i "s#home_dir#${home_dir}#g" ./cosmovisor.conf
+sudo mkdir -p /etc/systemd/system.conf.d
+sudo cp -f ./cosmovisor.conf /etc/systemd/system.conf.d/cosmovisor.conf
+echo "Added 'cosmovisor' conf"
 
 sudo systemctl enable cosmovisor
 
