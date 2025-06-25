@@ -15,39 +15,7 @@
 
 set -euo pipefail
 source integration_tests/cli/common.sh
-
-# TestNet constants
-
-plan_name="v1.4.4"
-chain_id=testnet-2.0
-node_endpoint=https://on.test-net.dcl.csa-iot.org:26657
-upgrade_checksum="sha256:e4031c6a77aa8e58add391be671a334613271bcf6e7f11d23b04a0881ece6958"
-
-vid="1"
-vid_1="4107"
-vid_2="4161"
-vid_3="4251" # certified model
-vid_revoked="12288"
-vid_complience="5218"
-pid="1111"
-pid_1="1"
-pid_for_vid_3="4096"
-pid_revoked="1000"
-vendor_name="Panasonic"
-company_legal_name="Panasonic Corporation"
-software_version=1
-software_version_for_vid_2=103
-software_version_revoked=4
-certification_type="matter"
-cd_certificate_id="ZIG20142ZB330003-24"
-user_address="cosmos1qpx7ct4468hyp2kg597tm8fc0knw795tt6a4ed"
-user_address_1="cosmos1qp6zumhaf7fgh6etjyt72p0x4dhgl5vxptvj7d"
-user_rejected_address="cosmos1rw0ssqkqakaqycaqpj7uhvc7puuyzhzlejtl53"
-noc_root_cert_subject="MCIxIDAeBgorBgEEAYKifAEDDBBDQUNBQ0FDQUNBMDAwMDAy"
-noc_root_cert_subject_key_id="C3:B5:94:FA:19:BE:C3:83:E4:B3:09:C0:D3:7D:E8:FE:DE:47:8F:3B"
-da_root_cert_subject="MC0xFTATBgNVBAMMDEFDSyBUZXN0IFBBQTEUMBIGCisGAQQBgqJ8AgEMBDEzN0E="
-da_root_cert_subject_key_id="79:B6:04:69:28:A7:5E:48:D8:DB:CF:5E:FF:A3:F9:DB:E5:F5:83:78"
-validator_address="cosmosvaloper1pq46zr92e4xt2cg6z0gw4n668suvxsgufmyyxk"
+source scripts/tests-after-upgrade/testnet.sh
 
 dcld config broadcast-mode sync #TODO
 
@@ -213,8 +181,8 @@ check_response "$result" "\"subject\": \"$noc_root_cert_subject\""
 
 echo "Get certificate (NOC)"
 result=$(dcld query pki noc-x509-cert --subject=$noc_root_cert_subject --subject-key-id=$noc_root_cert_subject_key_id)
-# check_response "$result" "\"subject\": \"$noc_root_cert_subject\""
-# check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_subject_key_id\""
+check_response "$result" "\"subject\": \"$noc_root_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_subject_key_id\""
 
 echo "Get certificates (DA)"
 result=$(dcld query pki all-x509-certs)
