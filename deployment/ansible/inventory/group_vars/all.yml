@@ -23,7 +23,7 @@ accounts:
 chain_id: testnet-2.0
 company_name: CSA
 type_name: "" # "ON", "Priv-SN", "Pub-SN", "SeedN" or "VN"
-dcl_version: 1.5.0-0.dev.2
+dcl_version: 1.5.0-0.dev.3
 
 dcl_home: /var/lib/dcl/.dcl
 dcld:
@@ -39,6 +39,7 @@ cosmovisor:
 
 dcld_checksums:
   # TODO upgrade the version from development to release after release
+  1.5.0-0.dev.3: bf2f800ebf1f92ee44392da702f54879b611df65d72921351e26d3fa4df0ab47
   1.5.0-0.dev.2: e81461c42a462c84ad58485f665692f20a0d545afd5556880f03c12a8bbc6dad
   0.12.0: ac8dc75bcbebda04fbef644ddbcee4b852d721a3522ccf06ff5d1bb8464949c6
   0.11.0: 33986b277be76d3e7b5443a09232d87d58324ad7cb6123f3d550149f2dc28452
@@ -48,6 +49,7 @@ dcld_checksums:
   0.7.0: 50708d4f7e00da347d4e678bf26780cd424232461c4bb414f72391c75e39545a
   0.6.0: 1ab6b9084fc0444858307f13b708d9f275d548dd2cfb3bc7d8e10d59897d7278
 cosmovisor_checksums:
+  1.5.0-0.dev.3: 21bff17f214e0bb0c078e7238b1ea5895388207faa6c6586a0f454097a54eb33
   1.5.0-0.dev.2: 1dbed08364bb9b767d1a88523f68ddc5a9f75b0a088ac8776fa5cf73a21f2067
   0.12.0: eae97a7207b5747dca9614e7b7ec478a4cc559669ad716b142dd5a2bc2266881
   0.11.0: 05bf568e34a7c92a61f268401a9f1d6df3c3f015e884a239da5d35c299da6adb
