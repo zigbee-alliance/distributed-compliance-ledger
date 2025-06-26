@@ -102,7 +102,7 @@ jobs:
           included=()
           if [[ -z "$asset_bin_url" || -z "$asset_ubuntu_tgz_url" || -z "$asset_cosmovisor_url" || -z "$asset_service_url" || -z "$asset_service_conf_url" || -z "$asset_start_url" || -z "$asset_preupgrade_url" || -z "$asset_deploy_script_url" ]]; then
             # os|bin-url|tgz-url|service-file-url|service-conf-file-url|start-script-url|preupgrade-script-url|deploy-script-url|tgz-suffix
-            included+=("ubuntu-22.04|$asset_bin_url|$asset_ubuntu_tgz_url|$asset_cosmovisor_url|$asset_service_url|$asset_service_conf_url|$asset_start_url|$asset_preupgrade_url|$asset_deploy_script_url|.ubuntu.tar.gz")
+            included+=("ubuntu-20.04|$asset_bin_url|$asset_ubuntu_tgz_url|$asset_cosmovisor_url|$asset_service_url|$asset_service_conf_url|$asset_start_url|$asset_preupgrade_url|$asset_deploy_script_url|.ubuntu.tar.gz")
           fi
           if [[ -z "$asset_macos_tgz_url" ]]; then
             # bin, service file and deploy script are not considered for macos job
