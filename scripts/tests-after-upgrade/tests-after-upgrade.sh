@@ -13,9 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+ENVIRONMENT=${1:-local}
+
 set -euo pipefail
 source integration_tests/cli/common.sh
-source scripts/tests-after-upgrade/testnet.sh
+source scripts/tests-after-upgrade/${ENVIRONMENT}.env
 
 dcld config broadcast-mode sync #TODO
 
@@ -24,13 +26,17 @@ dcld config output json
 dcld config chain-id $chain_id
 dcld config node $node_endpoint
 
+random_four_digit_int() {
+  echo $(( RANDOM % 9000 + 1000 ))
+}
+
 # UPGRADE
 
 echo "Verify that upgrade is applied"
 result=$(dcld query upgrade applied $plan_name)
 echo "$result"
 
-# test_divider
+test_divider
 
 ########################################################################################
 
@@ -209,19 +215,26 @@ check_response "$result" "\"owner\": \"$validator_address\""
 
 # Write commands for vendor test account
 
+if [ "$ENVIRONMENT" = "local" ]; then
+  :
+  # create_new_vendor_account $vendor_account $vid_vendor
+fi
+
+echo "Use keys for a test vendor"
+cmd="(echo $passphrase; echo $passphrase) | dcld keys add $vendor_account"
+
 # MODEL and MODEL_VERSION
 
 pid_random=$(random_four_digit_int)
 echo "Add model vid=$vid_vendor pid=$pid_random"
-result=$(echo $passphrase | dcld tx model add-model --vid=$vid_vendor --pid=$pid_random --deviceTypeID=$device_type_id --productName=$product_name --from=$vendor_account --yes)
-#result=$(dcld tx model add-model --vid=$vid_vendor --pid=$pid_random --deviceTypeID=$device_type_id --productName=$product_name --from=$vendor_account --yes)
+result=$(dcld tx model add-model --vid=$vid_vendor --pid=$pid_random --deviceTypeID=$device_type_id --productName=$product_name --from=$vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Add model version vid=$vid_vendor pid=$pid_for_add_version"
-result=$(echo $passphrase | dcld tx model add-model-version --vid=$vid_vendor --pid=$pid_for_add_version --softwareVersion=$software_version --softwareVersionString=$software_version_string --cdVersionNumber=$cd_version_number --minApplicableSoftwareVersion=$min_applicable_software_version --maxApplicableSoftwareVersion=$max_applicable_software_version --from=$vendor_account --yes)
+echo "Add model version vid=$vid_vendor pid=$pid_random"
+result=$(dcld tx model add-model-version --vid=$vid_vendor --pid=$pid_random --softwareVersion=$software_version --softwareVersionString="$software_version_string" --cdVersionNumber=$cd_version_number --minApplicableSoftwareVersion=$min_applicable_software_version --maxApplicableSoftwareVersion=$max_applicable_software_version --from=$vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -229,8 +242,13 @@ test_divider
 
 # X509 PKI
 
-echo "Add NOC Root certificate by vendor with VID = $vid_vendor"
-result=$(echo "$passphrase" | dcld tx pki add-noc-x509-root-cert --certificate="$noc_root_cert_1_path_for_1_4_4" --from $vid_vendor --yes)
+echo "Add NOC Root certificate by vendor with VID = $vendor_account"
+result=$(dcld tx pki add-noc-x509-root-cert --certificate="$noc_root_cert" --from $vendor_account --yes)
+result=$(get_txn_result "$result")
+echo result
+check_response "$result" "\"code\": 0"
+echo "Teardown: delete the added NOC Root certificate"
+result=$(dcld tx pki remove-noc-x509-root-cert --subject="$subject" --subject-key-id="$subject_key_id" --from $vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
