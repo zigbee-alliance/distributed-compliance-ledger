@@ -220,8 +220,8 @@ if [ "$ENVIRONMENT" = "local" ]; then
   # create_new_vendor_account $vendor_account $vid_vendor
 fi
 
-echo "Use keys for a test vendor"
-cmd="(echo $passphrase; echo $passphrase) | dcld keys add $vendor_account"
+echo "Use keys for a $vendor_account"
+result="$(echo "$passphrase" | dcld keys add "$vendor_account" --recover)"
 
 # MODEL and MODEL_VERSION
 
