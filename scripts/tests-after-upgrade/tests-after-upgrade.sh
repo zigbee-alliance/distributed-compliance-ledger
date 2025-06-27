@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ENVIRONMENT=${1:-testnet}
+ENVIRONMENT=${1:-local}
 ENV_FILE="scripts/tests-after-upgrade/${ENVIRONMENT}.env"
 
 set -euo pipefail
@@ -161,6 +161,8 @@ result=$(dcld query auth all-accounts)
 check_response "$result" "\"address\": \"$user_address\""
 check_response "$result" "\"address\": \"$user_address_1\""
 
+if [ "$ENVIRONMENT" != "mainnet" ]; then
+
 echo "Get rejected account"
 result=$(dcld query auth rejected-account --address=$user_rejected_address)
 check_response "$result" "\"address\": \"$user_rejected_address\""
@@ -168,6 +170,7 @@ check_response "$result" "\"address\": \"$user_rejected_address\""
 echo "Get all rejected accounts"
 result=$(dcld query auth all-rejected-accounts)
 check_response "$result" "\"address\": \"$user_rejected_address\""
+  
 fi
 
 test_divider
@@ -176,22 +179,23 @@ test_divider
 
 echo "Get certificates (ALL)"
 result=$(dcld query pki all-certs)
-check_response "$result" "\"subject\": \"$noc_root_cert_subject\""
 check_response "$result" "\"subject\": \"$da_root_cert_subject\""
 
 echo "Get all certificates by subject (Global)"
-result=$(dcld query pki all-subject-certs --subject=$noc_root_cert_subject)
-check_response "$result" "\"subject\": \"$noc_root_cert_subject\""
+result=$(dcld query pki all-subject-certs --subject=$da_root_cert_subject)
+check_response "$result" "\"subject\": \"$da_root_cert_subject\""
 
 echo "Get all certificates by SKID (Global)"
-result=$(dcld query pki cert --subject-key-id=$noc_root_cert_subject_key_id)
-check_response "$result" "\"subject\": \"$noc_root_cert_subject\""
-check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_subject_key_id\""
+result=$(dcld query pki cert --subject-key-id=$da_root_cert_subject_key_id)
+check_response "$result" "\"subject\": \"$da_root_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$da_root_cert_subject_key_id\""
 
 echo "Get certificate (ALL)"
-result=$(dcld query pki cert --subject=$noc_root_cert_subject --subject-key-id=$noc_root_cert_subject_key_id)
-check_response "$result" "\"subject\": \"$noc_root_cert_subject\""
-check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_subject_key_id\""
+result=$(dcld query pki cert --subject=$da_root_cert_subject --subject-key-id=$da_root_cert_subject_key_id)
+check_response "$result" "\"subject\": \"$da_root_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$da_root_cert_subject_key_id\""
+
+if [ "$ENVIRONMENT" != "mainnet" ]; then
 
 echo "Get certificates (NOC)"
 result=$(dcld query pki all-noc-x509-certs)
@@ -201,6 +205,8 @@ echo "Get certificate (NOC)"
 result=$(dcld query pki noc-x509-cert --subject=$noc_root_cert_subject --subject-key-id=$noc_root_cert_subject_key_id)
 check_response "$result" "\"subject\": \"$noc_root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_subject_key_id\""
+
+fi
 
 echo "Get certificates (DA)"
 result=$(dcld query pki all-x509-certs)
@@ -223,6 +229,8 @@ echo "Get all validators"
 result=$(dcld query validator all-nodes)
 check_response "$result" "\"owner\": \"$validator_address\""
 
+test_divider
+
 ########################################################################################
 
 # Write commands for vendor test account
@@ -232,8 +240,11 @@ if [ "$ENVIRONMENT" = "local" ]; then
   # create_new_vendor_account $vendor_account $vid_vendor
 fi
 
+if [ "$ENVIRONMENT" != "mainnet" ]; then
+
 echo "Use keys for a $vendor_account"
 result="$(echo "$passphrase" | dcld keys add "$vendor_account" --recover)"
+  # echo "$(dcld keys list)" # for debug
 
 # MODEL and MODEL_VERSION
 
@@ -264,5 +275,6 @@ result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
+fi
 
 echo "Upgrade of TestNet from 1.4.3 to 1.4.4 passed"
