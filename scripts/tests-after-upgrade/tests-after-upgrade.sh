@@ -13,11 +13,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ENVIRONMENT=${1:-local}
-
 set -euo pipefail
 source integration_tests/cli/common.sh
-source scripts/tests-after-upgrade/${ENVIRONMENT}.env
+
+ENVIRONMENT=${1:-local}
+ENV_FILE="scripts/tests-after-upgrade/${ENVIRONMENT}.env"
+
+if grep -qE '^[[:space:]]*passphrase=' "$ENV_FILE"; then
+  source "$ENV_FILE"
+
+  if [ -z "${passphrase:-}" ]; then
+    echo "Error: 'passphrase' is empty in $ENV_FILE"
+    exit 1
+  fi
+else
+  echo "Error: 'passphrase' is not defined in $ENV_FILE"
+  exit 1
+fi
 
 dcld config broadcast-mode sync #TODO
 
