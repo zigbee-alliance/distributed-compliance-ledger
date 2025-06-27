@@ -168,6 +168,7 @@ check_response "$result" "\"address\": \"$user_rejected_address\""
 echo "Get all rejected accounts"
 result=$(dcld query auth all-rejected-accounts)
 check_response "$result" "\"address\": \"$user_rejected_address\""
+fi
 
 test_divider
 
