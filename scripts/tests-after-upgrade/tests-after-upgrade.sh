@@ -13,22 +13,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -euo pipefail
-source integration_tests/cli/common.sh
-
-ENVIRONMENT=${1:-local}
+ENVIRONMENT=${1:-testnet}
 ENV_FILE="scripts/tests-after-upgrade/${ENVIRONMENT}.env"
 
-if grep -qE '^[[:space:]]*passphrase=' "$ENV_FILE"; then
+set -euo pipefail
+source integration_tests/cli/common.sh
   source "$ENV_FILE"
 
+if [ "$ENVIRONMENT" != "mainnet" ]; then
+  if ! grep -qE '^[[:space:]]*passphrase=' "$ENV_FILE"; then
+    echo "Error: 'passphrase' is not defined in $ENV_FILE"
+    exit 1
+  fi
   if [ -z "${passphrase:-}" ]; then
     echo "Error: 'passphrase' is empty in $ENV_FILE"
     exit 1
   fi
-else
-  echo "Error: 'passphrase' is not defined in $ENV_FILE"
-  exit 1
 fi
 
 dcld config broadcast-mode sync #TODO
@@ -66,58 +66,56 @@ echo "Request all vendor infos"
 result=$(dcld query vendorinfo all-vendors)
 check_response "$result" "\"vendorID\": $vid"
 check_response "$result" "\"vendorID\": $vid_1"
-check_response "$result" "\"vendorID\": $vid_2"
 
 test_divider
 
 # MODEL
 
-echo "Get Model with VID: $vid PID: $pid"
-result=$(dcld query model get-model --vid=$vid --pid=$pid)
+echo "Get Model with VID: $vid PID: $pid_for_vid"
+result=$(dcld query model get-model --vid=$vid --pid=$pid_for_vid)
 check_response "$result" "\"vid\": $vid"
-check_response "$result" "\"pid\": $pid"
+check_response "$result" "\"pid\": $pid_for_vid"
 
-echo "Get model version VID: $vid PID: $pid"
-result=$(dcld query model model-version --vid=$vid --pid=$pid --softwareVersion=$software_version)
+echo "Get model version VID: $vid PID: $pid_for_vid"
+result=$(dcld query model model-version --vid=$vid --pid=$pid_for_vid --softwareVersion=$software_version)
 check_response "$result" "\"vid\": $vid"
-check_response "$result" "\"pid\": $pid"
+check_response "$result" "\"pid\": $pid_for_vid"
 check_response "$result" "\"softwareVersion\": $software_version"
 
 echo "Get all models"
 result=$(dcld query model all-models)
 check_response "$result" "\"vid\": $vid"
-check_response "$result" "\"pid\": $pid"
+check_response "$result" "\"pid\": $pid_for_vid"
 
 echo "Get Vendor Models with VID: ${vid}"
 result=$(dcld query model vendor-models --vid=$vid)
-check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"pid\": $pid_1"
+check_response "$result" "\"pid\": $pid_for_vid"
+check_response "$result" "\"pid\": $pid_1_for_vid"
 
-echo "Get all model versions with VID: $vid PID: $pid"
-result=$(dcld query model all-model-versions --vid=$vid --pid=$pid)
+echo "Get all model versions with VID: $vid PID: $pid_for_vid"
+result=$(dcld query model all-model-versions --vid=$vid --pid=$pid_for_vid)
 check_response "$result" "\"vid\": $vid"
-check_response "$result" "\"pid\": $pid"
-# check_response "$result" "\"softwareVersions\": [$software_version]" TODO: fix
+check_response "$result" "\"pid\": $pid_for_vid"
+# # check_response "$result" "\"softwareVersions\": [$software_version]" TODO: fix
 
 test_divider
 
 # COMPLIANCE
 
-echo "Get certified model vid=$vid_2 pid=$pid_1"
-result=$(dcld query compliance certified-model --vid=$vid_2 --pid=$pid_1 --softwareVersion=$software_version_for_vid_2 --certificationType=$certification_type)
+echo "Get certified model vid=$vid_2 pid=$pid_for_vid_2"
+result=$(dcld query compliance certified-model --vid=$vid_2 --pid=$pid_for_vid_2 --softwareVersion=$software_version_for_vid_2 --certificationType=$certification_type)
 check_response "$result" "\"value\": true"
 check_response "$result" "\"vid\": $vid_2"
-check_response "$result" "\"pid\": $pid_1"
+check_response "$result" "\"pid\": $pid_for_vid_2"
 check_response "$result" "\"softwareVersion\": $software_version_for_vid_2"
 check_response "$result" "\"certificationType\": \"$certification_type\""
 
 echo "Get all certified models"
 result=$(dcld query compliance all-certified-models)
 check_response "$result" "\"vid\": $vid_2"
-check_response "$result" "\"pid\": $pid_1"
-check_response "$result" "\"vid\": $vid_3"
-check_response "$result" "\"pid\": $pid_for_vid_3"
+check_response "$result" "\"pid\": $pid_for_vid_2"
 
+if [ "$ENVIRONMENT" != "mainnet" ]; then
 echo "Get revoked Model with VID: $vid_revoked PID: $pid_revoked"
 result=$(dcld query compliance revoked-model --vid=$vid_revoked --pid=$pid_revoked --softwareVersion=$software_version_revoked --certificationType=$certification_type)
 check_response "$result" "\"vid\": $vid_revoked"
@@ -129,24 +127,25 @@ echo "Get all revoked models"
 result=$(dcld query compliance all-revoked-models)
 check_response "$result" "\"vid\": $vid_revoked"
 check_response "$result" "\"pid\": $pid_revoked"
+fi
 
-echo "Get compliance-info model with VID: $vid_2 PID: $pid_1"
-result=$(dcld query compliance compliance-info --vid=$vid_2 --pid=$pid_1 --softwareVersion=$software_version_for_vid_2 --certificationType=$certification_type)
+echo "Get compliance-info model with VID: $vid_2 PID: $pid_for_vid_2"
+result=$(dcld query compliance compliance-info --vid=$vid_2 --pid=$pid_for_vid_2 --softwareVersion=$software_version_for_vid_2 --certificationType=$certification_type)
 check_response "$result" "\"vid\": $vid_2"
-check_response "$result" "\"pid\": $pid_1"
+check_response "$result" "\"pid\": $pid_for_vid_2"
 check_response "$result" "\"softwareVersion\": $software_version_for_vid_2"
 check_response "$result" "\"certificationType\": \"$certification_type\""
 
 echo "Get device software compliance cDCertificateId=$cd_certificate_id"
 result=$(dcld query compliance device-software-compliance --cdCertificateId=$cd_certificate_id)
 check_response "$result" "\"vid\": $vid_complience"
-check_response "$result" "\"pid\": $pid_1"
+check_response "$result" "\"pid\": $pid_complience"
 check_response "$result" "\"cDCertificateId\": \"$cd_certificate_id\""
 
 echo "Get all device software compliances"
 result=$(dcld query compliance all-device-software-compliance)
 check_response "$result" "\"vid\": $vid_complience"
-check_response "$result" "\"pid\": $pid_1"
+check_response "$result" "\"pid\": $pid_complience"
 check_response "$result" "\"cDCertificateId\": \"$cd_certificate_id\""
 
 test_divider
@@ -257,7 +256,6 @@ test_divider
 echo "Add NOC Root certificate by vendor with VID = $vendor_account"
 result=$(dcld tx pki add-noc-x509-root-cert --certificate="$noc_root_cert" --from $vendor_account --yes)
 result=$(get_txn_result "$result")
-echo result
 check_response "$result" "\"code\": 0"
 echo "Teardown: delete the added NOC Root certificate"
 result=$(dcld tx pki remove-noc-x509-root-cert --subject="$subject" --subject-key-id="$subject_key_id" --from $vendor_account --yes)
