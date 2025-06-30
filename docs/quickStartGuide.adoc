@@ -1,4 +1,4 @@
-== Disctributed Compliance Ledger (DCL)
+== Distributed Compliance Ledger (DCL)
 
 === Quick Start Guide for CLI for testnet
 This guide will help you configure DCL CLI (`dcld`) and interact with DCL TestNet.

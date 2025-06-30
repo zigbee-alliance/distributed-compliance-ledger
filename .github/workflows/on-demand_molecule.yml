@@ -18,16 +18,17 @@ name: Check All Molecule tests
 on:
   push:
     branches:
-      - dev
+      - master
     paths:
       - deployment/test-requirements.txt
       - deployment/ansible/roles/**
   pull_request:
     branches:
-      - dev
+      - master
     paths:
       - deployment/test-requirements.txt
       - deployment/ansible/roles/**
+  workflow_dispatch:
 
 jobs:
   changes:
@@ -38,8 +39,8 @@ jobs:
       add-accounts: ${{ steps.filter.outputs.add-accounts }}
       configure: ${{ steps.filter.outputs.configure }}
     steps:
-      - uses: actions/checkout@v3
-      - uses: dorny/paths-filter@v2
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
         if: ${{ !env.ACT }}
         id: filter
         with:
@@ -65,7 +66,7 @@ jobs:
     name: Check Bootstrap Ansible role
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-molecule
         with:
           ansible-role: bootstrap
@@ -75,7 +76,7 @@ jobs:
     name: Check Genesis Ansible role
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-molecule
         with:
           ansible-role: genesis
@@ -85,7 +86,7 @@ jobs:
     name: Check Add accounts Ansible role
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-molecule
         with:
           ansible-role: add-accounts
@@ -95,7 +96,7 @@ jobs:
     name: Check Configure Ansible role
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-molecule
         with:
           ansible-role: configure
