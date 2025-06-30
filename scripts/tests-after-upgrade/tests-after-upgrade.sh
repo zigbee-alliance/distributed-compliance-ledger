@@ -96,7 +96,6 @@ echo "Get all model versions with VID: $vid PID: $pid_for_vid"
 result=$(dcld query model all-model-versions --vid=$vid --pid=$pid_for_vid)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid_for_vid"
-# check_response "$result" "\"softwareVersions\":[$software_version]" # TODO: fix
 check_response "$result" "\"softwareVersions\""
 check_response "$result" "$software_version"
 
