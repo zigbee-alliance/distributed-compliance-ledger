@@ -100,9 +100,9 @@ This command:
   - `sudo ufw allow 26657/tcp`
 - Edit `cosmovisor.service`
   - Replace `ubuntu` with a username you want to start service on behalf
-  - Replace `home_dir` with the path that points to the user's home directory
-- Edit `cosmovisor.confe`
-  - Replace `home_dir` with the path that points to the user's home directory
+  - Replace `/tmp` with the path that points to the user's home directory
+- Edit `cosmovisor.conf`
+  - Replace `/tmp` with the path that points to the user's home directory
 - Copy service configuration.
   - `cp cosmovisor.service /etc/systemd/system/`
   - `cp cosmovisor.conf /etc/systemd/system.conf.d/cosmovisor.conf`

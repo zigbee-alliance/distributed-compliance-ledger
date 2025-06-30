@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# TODO there are similar bootstrap (genesis) creds in other places, looks like a legacy issue
 accounts:
   - name: genesis-account-key
     passphrase: password123

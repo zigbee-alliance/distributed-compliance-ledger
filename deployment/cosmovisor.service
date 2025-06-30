@@ -8,7 +8,7 @@ Type=simple
 Restart=always
 RestartSec=1
 User=ubuntu
-ExecStart=home_dir/cosmovisor_start.sh
+ExecStart=/tmp/cosmovisor_start.sh
 
 [Install]
 WantedBy=multi-user.target

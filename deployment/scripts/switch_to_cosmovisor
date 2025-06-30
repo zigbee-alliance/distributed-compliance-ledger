@@ -140,12 +140,12 @@ echo "Copied new 'dcld' binary to '${GENESIS_APP_DIR}/'"
 
 # set systemd cosmovisor.service
 sed -i "s/ubuntu/${_node_user}/g" ./cosmovisor.service
-sed -i "s#home_dir#${home_dir}#g" ./cosmovisor.service
+sed -i "s#/tmp#${home_dir}#g" ./cosmovisor.service
 sudo cp -f ./cosmovisor.service /etc/systemd/system/cosmovisor.service
 echo "Added 'cosmovisor' service"
 
 # set systemd cosmovisor.conf
-sed -i "s#home_dir#${home_dir}#g" ./cosmovisor.conf
+sed -i "s#/tmp#${home_dir}#g" ./cosmovisor.conf
 sudo mkdir -p /etc/systemd/system.conf.d
 sudo cp -f ./cosmovisor.conf /etc/systemd/system.conf.d/cosmovisor.conf
 echo "Added 'cosmovisor' conf"
