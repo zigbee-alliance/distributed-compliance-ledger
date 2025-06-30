@@ -275,6 +275,10 @@ result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
+
+  echo "Teardown: delete keys for a $vendor_account"
+  result=$(dcld keys delete $vendor_account --yes)
+
 fi
 
 echo "Upgrade of TestNet from 1.4.3 to 1.4.4 passed"
