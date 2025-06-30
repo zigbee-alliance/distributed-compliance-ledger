@@ -20,17 +20,10 @@ source integration_tests/cli/common.sh
 
 plan_name="v1.2"
 upgrade_checksum="sha256:3f2b2a98b7572c6598383f7798c6bc16b4e432ae5cfd9dc8e84105c3d53b5026"
-binary_version_old="v0.12.0"
 binary_version_new="v1.2.2"
 
-wget -O dcld_old "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version_old/dcld"
-chmod ugo+x dcld_old
-
-wget -O dcld_new "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version_new/dcld"
-chmod ugo+x dcld_new
-
-DCLD_BIN_OLD="./dcld_old"
-DCLD_BIN_NEW="./dcld_new"
+DCLD_BIN_OLD="/tmp/dcld_bins/dcld_v0.12.0"
+DCLD_BIN_NEW="/tmp/dcld_bins/dcld_v1.2.2"
 
 ########################################################################################
 
@@ -769,6 +762,3 @@ result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validat
 check_response "$result" "\"owner\": \"$validator_address\""
 
 echo "Upgrade from 0.12.0 to 1.2 passed"
-
-rm -f $DCLD_BIN_OLD
-rm -f $DCLD_BIN_NEW

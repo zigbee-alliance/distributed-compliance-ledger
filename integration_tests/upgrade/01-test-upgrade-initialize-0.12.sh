@@ -16,15 +16,11 @@
 set -euo pipefail
 source integration_tests/cli/common.sh
 
-binary_version="v0.12.0"
-
-wget -O dcld-initial "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version/dcld"
-chmod ugo+x dcld-initial
-
-DCLD_BIN="./dcld-initial"
+DCLD_BIN="/tmp/dcld_bins/dcld_v0.12.0"
 $DCLD_BIN config broadcast-mode block
 
 container="validator-demo"
+
 add_validator_node() {
   random_string account
   address=""
@@ -116,6 +112,19 @@ EOF
   result=$($DCLD_BIN query validator node --address "$address")
   validator_address=$(echo "$result" | jq -r '.owner')
   echo "$result"
+}
+
+cleanup() {
+  echo "cleanup container $container"
+  if docker container ls -a | grep -q $container; then
+    if docker container inspect $container | grep -q '"Status": "running"'; then
+      echo "Stopping container $container"
+      docker container kill $container
+    fi
+
+    echo "Removing container $container"
+    docker container rm -f "$container"
+  fi
 }
 
 # constants
@@ -466,6 +475,9 @@ test_divider
 # VALIDATOR_NODE
 
 echo "Add new validator node"
+
+cleanup
+
 add_validator_node
 
 test_divider
@@ -534,5 +546,3 @@ check_response "$result" "\"subjectAsText\": \"$google_cert_subject_as_text\""
 response_does_not_contain "$result" "\"vid\":"
 
 echo "Initialize 0.12.0 passed"
-
-rm -f $DCLD_BIN
