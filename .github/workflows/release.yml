@@ -68,7 +68,7 @@ jobs:
 
           asset_cosmovisor_url="$(echo "$release_info" \
               | jq -r '.assets[] | select(.name | match("^cosmovisor$")) | .browser_download_url')"
-          echo "$asset_bin_url"
+          echo "$asset_cosmovisor_url"
 
           asset_service_url="$(echo "$release_info" \
               | jq -r '.assets[] | select(.name | match("^cosmovisor.service$")) | .browser_download_url')"
