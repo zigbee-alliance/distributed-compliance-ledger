@@ -39,7 +39,7 @@ HOST_KEY_CHECKING=False
 
 ### 1. Configure Terraform backend
 
-By default AWS infrastructure backend is set as `s3` (see [`deployment/terraform/aws/backend.tf`]).
+By default AWS infrastructure backend is set as `s3` (see [`deployment/terraform/aws/backend.tf`](/deployment/terraform/aws/backend.tf)).
 
 You may consider the following options
 
@@ -60,8 +60,8 @@ To complete the configuration please specify:
 
 using one of the following ways:
 
-*   as parameters in [`deployment/terraform/aws/backend.tf`]
-*   as a separate configuration file, please check [`deployment/terraform/aws/config.s3.tfbackend.example`]
+*   as parameters in [`deployment/terraform/aws/backend.tf`](/deployment/terraform/aws/backend.tf)
+*   as a separate configuration file, please check [`deployment/terraform/aws/config.s3.tfbackend.example`](/deployment/terraform/aws/config.s3.tfbackend.example)
 *   as command line arguments
 *   interactively during terraform initialization
 
@@ -69,7 +69,7 @@ Please see also Terraform [docs](https://developer.hashicorp.com/terraform/langu
 
 #### 1.2 Use `local` backend (only for development)
 
-Need to replace `s3` with `local` in [`deployment/terraform/aws/backend.tf`].
+Need to replace `s3` with `local` in [`deployment/terraform/aws/backend.tf`](/deployment/terraform/aws/backend.tf).
 
 #### 1.3 Use another remote backend
 
@@ -77,7 +77,7 @@ Please see Terraform [docs](https://developer.hashicorp.com/terraform/language/v
 
 ### 2. Configure AWS infrastructure parameters
 
-[`deployment/terraform/aws/terraform.tfvars`]
+[`deployment/terraform/aws/terraform.tfvars`](/deployment/terraform/aws/terraform.tfvars)
 
 #### AWS Regions
 
@@ -124,7 +124,7 @@ validator_config = {
   - Manually adding the validator to the network (see [making node a validator](../running-node-ansible/vn.md#make-your-node-a-validator-target-machine)) after the step [run-ansible](#4-run-ansible)
 
 - Manually set `persistent_peers` string in validator config (only if `Private Sentries` are disabled)
-  [`deployment/ansible/roles/configure/vars/validator.yml`]
+  [`deployment/ansible/roles/configure/vars/validator.yml`](/deployment/ansible/roles/configure/vars/validator.yml)
 
   ```yaml
   config:
@@ -151,7 +151,7 @@ private_sentries_config = {
 - Can be disabled by setting `enable = false`
 - Only one instance of private sentry is created with static ip address
 - Manually set `persistent_peers` string in private sentry config
-  [`deployment/ansible/roles/configure/vars/private-sentry.yml`]
+  [`deployment/ansible/roles/configure/vars/private-sentry.yml`](/deployment/ansible/roles/configure/vars/private-sentry.yml)
 
   ```yaml
   config:
@@ -221,7 +221,7 @@ prometheus_config = {
 
 ### 3. Set DCL network params ansible inventory
 
-[`deployment/ansible/inventory/aws/group_vars/all.yaml`]
+[`deployment/ansible/inventory/aws/group_vars/all.yaml`](/deployment/ansible/inventory/aws/group_vars/all.yaml)
 
 ```yaml
 chain_id: test-net
@@ -264,7 +264,7 @@ cd deployment/terraform/aws
 terraform init -backend-config=<backend-config-file> # in case backend configuration is in a file
 ```
 
-where `<backend-config-file>` is the name of the workspace (e.g. `config.s3.tfbackend`).
+where `<backend-config-file>` is the backend configuration file (please see AWS S3 backend [example](/deployment/terraform/aws/config.s3.tfbackend.example) configuration).
 
 (optional) Create/Activate the deployment workspace:
 
@@ -395,7 +395,7 @@ ansible-playbook -i ./deployment/ansible/inventory/aws  -u ubuntu ./deployment/a
 
 ## Deployment Verification
 
-1. Verify [`deployment/persistent_chains/<chain_id>/genesis.json`] is created
+1. Verify `deployment/persistent_chains/<chain_id>/genesis.json` is created
     - `<chain_id>` - chain ID of the network specified in Ansible inventory variables
 2. Verify `Observers` REST endpoint is available under `http(s)://on.<root_domain_name>` using your browser
 3. Verify `Observers` RPC endpoint is available under `http(s)://on.<root_domain_name>:26657` using your browser
