@@ -7,23 +7,14 @@ Make sure you have all [prerequisites](./prerequisites.md) set up.
 
 ## Deployment steps
 
-### 1. Put `cosmovisor` binary to `/usr/bin/`, set proper owner and execution permissions
-
-### 2. Locate the genesis app version to genesis application version directory
-
-- Create `$HOME/.dcl/cosmovisor/genesis/bin` directory.
-- Copy `dcld` binary to it, set proper owner and execution permissions.
-    Please note that execution permissions on `dcld` should be granted to all (i.e. User, Group and Others classes)
-    because cosmovisor requires execution permission on the application binary to be granted to Others class.
-
-### 3. Configure CLI
+### 1. Configure CLI
 
 - `./dcld config chain-id <chain-id>`
   - Use `testnet-2.0` for `<chain-id>` if you want to connect to the persistent Test Net
   - Use `main-net` for `<chain-id>` if you want to connect to the persistent Main Net
 - `./dcld config output json` - Output format (text/json).
 
-### 4. Initilize the node
+### 2. Initilize the node
 
 ```bash
 ./dcld init "<node-name>" --chain-id "<chain-id>"
@@ -32,7 +23,7 @@ Make sure you have all [prerequisites](./prerequisites.md) set up.
 - Use `testnet-2.0` for `<chain-id>` if you want to connect to the persistent Test Net
 - Use `main-net` for `<chain-id>` if you want to connect to the persistent Main Net
 
-### 5. Enable `state sync` in the configuration or use one of the options in [running-node-in-existing-network.md](../advanced/running-node-in-existing-network.md) if you are joining long-running network
+### 3. Enable `state sync` in the configuration or use one of the options in [running-node-in-existing-network.md](../advanced/running-node-in-existing-network.md) if you are joining long-running network
 
 [`$HOME/.dcl/config/config.toml`]
 
@@ -99,7 +90,7 @@ curl -s https://on.dcl.csa-iot.org:26657/commit | jq "{height: .result.signed_he
 
 > **_NOTE:_** State sync is not attempted if the node has any local state (LastBlockHeight > 0)
 
-### 6. (Optional) Enable `state sync` snapshots in `[~/.dcl/config/app.toml]` file
+### 4. (Optional) Enable `state sync` snapshots in `[~/.dcl/config/app.toml]` file
 
 ```toml
 [state-sync]
@@ -107,7 +98,7 @@ snapshot-interval = "snapshot-interval"
 snapshot-keep-recent = "snapshot-keep-recent"
 ```
 
-### 7. Get genesis and persistent peers files
+### 5. Get genesis and persistent peers files
 
 - Put `genesis.json` into dcld's config directory (usually `$HOME/.dcl/config/`).
   - Use `deployment/persistent_chains/testnet-2.0/genesis.json` if you want to connect to the persistent Testnet 2.0
@@ -117,7 +108,7 @@ snapshot-keep-recent = "snapshot-keep-recent"
     touch persistent_peers.txt
     ```
 
-### *** Step 8 can be automated using `run_dcl_node` script
+### *** Step 6 can be automated using `run_dcl_node` script
 
 Run node:
 
@@ -139,7 +130,7 @@ Run node:
 >   - current user is going to be used for `cosmovisor` service to run as
 >   - current user is in sudoers list
 
-### 8. Run node
+### 6. Run node
 
 - Open `$HOME/.dcl/config/config.toml` file in your favorite text editor:
   - Make your node public:
@@ -151,13 +142,26 @@ Run node:
   - `sudo ufw allow 26656/tcp`
   - `sudo ufw allow 26657/tcp`
 - Edit `cosmovisor.service`
-  - Replace `ubuntu` with a username you want to start service on behalf
   - Replace `/home/ubuntu/` with the path that points to the user's home directory
+  - Replace `ubuntu` with a username you want to start service on behalf
 - Edit `cosmovisor.conf`
   - Replace `/home/ubuntu/` with the path that points to the user's home directory
 - Copy service configuration.
   - `cp cosmovisor.service /etc/systemd/system/`
   - `cp cosmovisor.conf /etc/systemd/system.conf.d/cosmovisor.conf`
+- Copy script files.
+  - `cp cosmovisor_start.sh $HOME/.dcl/cosmovisor/cosmovisor_start.sh`
+  - `cp cosmovisor_preupgrade.sh $HOME/.dcl/cosmovisor/cosmovisor_preupgrade.sh`
+- Copy `dcld` binary to `$HOME/.dcl/cosmovisor/genesis/bin`, set proper owner and execution permissions.
+    Please note that execution permissions on `dcld` should be granted to all (i.e. User, Group and Others classes)
+    because cosmovisor requires execution permission on the application binary to be granted to Others class.
+  - `sudo cp -f ./dcld -t $HOME/.dcl/cosmovisor/genesis/bin/dcld`
+  - `sudo chown $USER $HOME/.dcl/cosmovisor/genesis/bin/dcld`
+  - `sudo chmod a+x $HOME/.dcl/cosmovisor/genesis/bin/dcld`
+- Copy `cosmovisor` binary to `/usr/bin/`, set proper owner and execution permissions.
+  - `sudo cp -f ./cosmovisor -t /usr/bin`
+  - `sudo chown $USER /usr/bin/cosmovisor`
+  - `sudo chmod u+x /usr/bin/cosmovisor`
 - Enable the service: `sudo systemctl enable cosmovisor`
 - Start node: `sudo systemctl start cosmovisor`
 - For testing purpose the node process can be started directly: `./dcld start` (instead of two previous `systemctl` commands using `cosmovisor` service).
@@ -173,7 +177,7 @@ Service mode is recommended for demo and production environment.
 - Execute the following command to apply the updated `$PATH` immediately:
   - `source $HOME/.profile`
 
-### 9. Check the node is running and getting all the transactions
+### 7. Check the node is running and getting all the transactions
 
 - Get the node status: `dcld status --node tcp://localhost:26657`.
 - Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 10 mins). When you see the `catching_up` as `true` that signifies that the node is still downloading all the transactions. Once it has fully synced this will value will turn to `false`

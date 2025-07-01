@@ -30,7 +30,6 @@ JSON_PARSER=
 #   - do not show private data
 #       - requries 'dcld keys' adjustment, pipes configuration is not an option
 
-
 DCLD_FILE="./dcld"
 COSMOVISOR_FILE="./cosmovisor"
 COSMOVISOR_SERVICE_FILE="./cosmovisor.service"
@@ -330,15 +329,15 @@ function config_node {
             # sudo ufw allow 26656/tcp
             # sudo ufw allow 26657/tcp
 
-            local home_dir="$(realpath "$HOME")"
+            local abs_user_home="$(realpath "$HOME")"
 
             # set systemd cosmovisor.service
-            sed -i "s#/home/ubuntu#${home_dir}#g" "$_cosmovisor_service_p"
+            sed -i "s#/home/ubuntu#${abs_user_home}#g" "$_cosmovisor_service_p"
             sed -i "s/ubuntu/${_node_user}/g" "$_cosmovisor_service_p"
             sudo cp -f "$_cosmovisor_service_p" /etc/systemd/system/cosmovisor.service
 
             # set systemd cosmovisor.conf
-            sed -i "s#/home/ubuntu#${home_dir}#g" "$_cosmovisor_conf_p"
+            sed -i "s#/home/ubuntu#${abs_user_home}#g" "$_cosmovisor_conf_p"
             sudo mkdir -p /etc/systemd/system.conf.d
             sudo cp -f "$_cosmovisor_conf_p" /etc/systemd/system.conf.d/cosmovisor.conf
 

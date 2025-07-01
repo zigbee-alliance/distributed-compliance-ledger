@@ -149,14 +149,16 @@ cp -f "$COSMOVISOR_PREUPGRADE_SCRIPT" "$COSMOVISOR_DIR"
 cp -f "$COSMOVISOR_START_SCRIPT" "$COSMOVISOR_DIR"
 echo "Copied cosmovisor scripts to '${COSMOVISOR_DIR}'"
 
+abs_user_home="$(realpath "$HOME")"
+
 # set systemd cosmovisor.service
-sed -i "s#/home/ubuntu#${home_dir}#g" "$COSMOVISOR_SERVICE_FILE"
-sed -i "s/ubuntu/${_node_user}/g" "$COSMOVISOR_SERVICE_FILE"
+sed -i "s#/home/ubuntu#${abs_user_home}#g" "$COSMOVISOR_SERVICE_FILE"
+sed -i "s/ubuntu/${NODE_USER}/g" "$COSMOVISOR_SERVICE_FILE"
 sudo cp -f "$COSMOVISOR_SERVICE_FILE" /etc/systemd/system/cosmovisor.service
 echo "Added 'cosmovisor' service"
 
 # set systemd cosmovisor.conf
-sed -i "s#/home/ubuntu#${home_dir}#g" "$COSMOVISOR_CONFIG_FILE"
+sed -i "s#/home/ubuntu#${abs_user_home}#g" "$COSMOVISOR_CONFIG_FILE"
 sudo mkdir -p /etc/systemd/system.conf.d
 sudo cp -f "$COSMOVISOR_CONFIG_FILE" /etc/systemd/system.conf.d/cosmovisor.conf
 echo "Added 'cosmovisor' conf"
