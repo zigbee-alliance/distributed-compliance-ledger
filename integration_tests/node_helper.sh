@@ -21,8 +21,8 @@ timestamp=0
 max_restart_cnt=10
 restart_cnt=0
 
-RUN_CMD=/var/lib/dcl/./cosmovisor_start.sh
-ln -s /var/lib/dcl/cosmovisor_preupgrade.sh /var/lib/dcl/.dcl/cosmovisor/cosmovisor_preupgrade.sh
+RUN_CMD="$HOME"/./cosmovisor_start.sh
+ln -s "$HOME"/cosmovisor_preupgrade.sh "$HOME"/.dcl/cosmovisor/cosmovisor_preupgrade.sh
 
 while $RUN_CMD; do
     # in tests, the number of restarts is very limited, mainly when an upgrade occurs

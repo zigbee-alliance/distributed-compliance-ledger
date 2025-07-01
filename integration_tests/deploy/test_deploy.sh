@@ -64,9 +64,11 @@ test_divider
 echo "CLUSTER NODES PREPARATION"
 for node in "$GVN_NAME" "$VN_NAME"; do
     echo "$node: install cosmovisor"
-    docker cp "$GOBIN"/cosmovisor "$node":/usr/bin
+    docker cp "$GOBIN"/cosmovisor "$node":"$DCL_USER_HOME"
 
     # TODO firewall routine (requires ufw installed)
+
+    docker_exec "$node" mkdir -p "$DCL_DIR/cosmovisor/"
 
     echo "$node: upload release artifacts"
     docker cp deployment/ansible/roles/bootstrap/files/cosmovisor_preupgrade.sh "$node":"$DCL_USER_HOME"

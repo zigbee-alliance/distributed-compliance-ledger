@@ -16,8 +16,15 @@
 set -eu
 set -o pipefail
 
-GENESIS_APP_DIR="$HOME/.dcl/cosmovisor/genesis/bin"
-CURRENT_APP_DIR="$HOME/.dcl/cosmovisor/current/bin"
+DCLD_FILE="./dcld"
+COSMOVISOR_FILE="./cosmovisor"
+COSMOVISOR_SERVICE_FILE="./cosmovisor.service"
+COSMOVISOR_CONFIG_FILE="./cosmovisor.conf"
+COSMOVISOR_PREUPGRADE_SCRIPT="./cosmovisor_preupgrade.sh"
+COSMOVISOR_START_SCRIPT="./cosmovisor_start.sh"
+COSMOVISOR_DIR="$HOME/.dcl/cosmovisor/"
+GENESIS_APP_DIR="$COSMOVISOR_DIR/genesis/bin"
+CURRENT_APP_DIR="$COSMOVISOR_DIR/current/bin"
 
 DEF_NODE_USER="ubuntu"
 CURR_USER="${USER:-$(whoami 2>/dev/null)}"
@@ -28,7 +35,7 @@ function wait_node_up {
     local _try=1
 
     echo -e "Waiting the node becomes up"
-    until ./dcld status >/dev/null 2>&1
+    until "$DCLD_FILE" status >/dev/null 2>&1
     do
         if [[ "$_try" -gt "$_timeout" ]]; then
             echo -e "\nERROR: dcld node seems not ready after $_timeout seconds."
@@ -48,33 +55,33 @@ if [[ ! -d "/etc/systemd/system" ]]; then
     exit 1
 fi
 
-if [[ ! -f "./dcld" ]]; then
-    echo "Error. './dcld' file to install not found"
+if [[ ! -f "$DCLD_FILE" ]]; then
+    echo "Error. '"$DCLD_FILE"' file to install not found"
     exit 1
 fi
 
-if [[ ! -f "./cosmovisor" ]]; then
-    echo "Error. './cosmovisor' file not found"
+if [[ ! -f "$COSMOVISOR_FILE" ]]; then
+    echo "Error. '"$COSMOVISOR_FILE"' file not found"
     exit 1
 fi
 
-if [[ ! -f "./cosmovisor.service" ]]; then
-    echo "Error. './cosmovisor.service' file not found"
+if [[ ! -f "$COSMOVISOR_SERVICE_FILE" ]]; then
+    echo "Error. '"$COSMOVISOR_SERVICE_FILE"' file not found"
     exit 1
 fi
 
-if [[ ! -f "$HOME/cosmovisor_start.sh" ]]; then
-    echo "Error. 'cosmovisor_start.sh' file not found in '$HOME'"
+if [[ ! -f "$COSMOVISOR_START_SCRIPT" ]]; then
+    echo "Error. '"$COSMOVISOR_START_SCRIPT"' file not found"
     exit 1
 fi
 
-if [[ ! -f "$HOME/cosmovisor_preupgrade.sh" ]]; then
-    echo "Error. 'cosmovisor_preupgrade.sh' file not found in '$HOME'"
+if [[ ! -f "$COSMOVISOR_PREUPGRADE_SCRIPT" ]]; then
+    echo "Error. 'cosmovisor_preupgrade.sh' file not found"
     exit 1
 fi
 
-if [[ ! -f "./cosmovisor.conf" ]]; then
-    echo "Error. './cosmovisor.conf' file not found"
+if [[ ! -f "$COSMOVISOR_CONFIG_FILE" ]]; then
+    echo "Error. '"$COSMOVISOR_CONFIG_FILE"' file not found"
     exit 1
 fi
 
@@ -119,10 +126,10 @@ echo "Removed old stand-alone 'dcld' binary from '${BIN_DIR}'"
 
 ### Cosmovisor and new dcld installation
 
-sudo chown "$NODE_USER" ./dcld
-sudo chmod u+x ./dcld
+sudo chown "$NODE_USER" "$DCLD_FILE"
+sudo chmod u+x "$DCLD_FILE"
 
-sudo cp -f ./cosmovisor "$BIN_DIR"/
+sudo cp -f "$COSMOVISOR_FILE" "$BIN_DIR"/
 sudo chown "$NODE_USER" "$BIN_DIR"/cosmovisor
 sudo chmod u+x "$BIN_DIR"/cosmovisor
 echo "Copied 'cosmovisor' to '${BIN_DIR}'"
@@ -130,7 +137,7 @@ echo "Copied 'cosmovisor' to '${BIN_DIR}'"
 mkdir -p "$GENESIS_APP_DIR"
 echo "Created '${GENESIS_APP_DIR}' directory treated by cosmovisor as path to genesis app version"
 
-sudo cp -f ./dcld "$GENESIS_APP_DIR"/
+sudo cp -f "$DCLD_FILE" "$GENESIS_APP_DIR"/
 sudo chown "$NODE_USER" "$GENESIS_APP_DIR"/dcld
 # Execution permissions on `dcld` are granted to all (i.e. User, Group and Others classes)
 # because cosmovisor requires execution permission on the application binary to be granted to Others class:
@@ -138,16 +145,20 @@ sudo chown "$NODE_USER" "$GENESIS_APP_DIR"/dcld
 sudo chmod a+x "$GENESIS_APP_DIR"/dcld
 echo "Copied new 'dcld' binary to '${GENESIS_APP_DIR}/'"
 
+cp -f "$COSMOVISOR_PREUPGRADE_SCRIPT" "$COSMOVISOR_DIR"
+cp -f "$COSMOVISOR_START_SCRIPT" "$COSMOVISOR_DIR"
+echo "Copied cosmovisor scripts to '${COSMOVISOR_DIR}'"
+
 # set systemd cosmovisor.service
-sed -i "s/ubuntu/${_node_user}/g" ./cosmovisor.service
-sed -i "s#/tmp#${home_dir}#g" ./cosmovisor.service
-sudo cp -f ./cosmovisor.service /etc/systemd/system/cosmovisor.service
+sed -i "s#/home/ubuntu#${home_dir}#g" "$COSMOVISOR_SERVICE_FILE"
+sed -i "s/ubuntu/${_node_user}/g" "$COSMOVISOR_SERVICE_FILE"
+sudo cp -f "$COSMOVISOR_SERVICE_FILE" /etc/systemd/system/cosmovisor.service
 echo "Added 'cosmovisor' service"
 
 # set systemd cosmovisor.conf
-sed -i "s#/tmp#${home_dir}#g" ./cosmovisor.conf
+sed -i "s#/home/ubuntu#${home_dir}#g" "$COSMOVISOR_CONFIG_FILE"
 sudo mkdir -p /etc/systemd/system.conf.d
-sudo cp -f ./cosmovisor.conf /etc/systemd/system.conf.d/cosmovisor.conf
+sudo cp -f "$COSMOVISOR_CONFIG_FILE" /etc/systemd/system.conf.d/cosmovisor.conf
 echo "Added 'cosmovisor' conf"
 
 sudo systemctl enable cosmovisor

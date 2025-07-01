@@ -121,52 +121,6 @@ need or just comment out the corresponding line and manually add
 `$HOME/.dcl/cosmovisor/current/bin` to `$PATH` of current user after
 `run_dcl_node` script is executed (see below).
 
-### Setup DCL binaries
-
-* put `cosmovisor` binary in a folder listed in `$PATH` (e.g. `/usr/bin/`)
-* set owner of `cosmovisor` binary to the user who will be used for `cosmovisor` service to run as
-* set executable permission on `cosmovisor` binary for owner
-
-<!-- markdownlint-disable MD033 -->
-<details>
-<summary>Example for ubuntu user (click to expand)</summary>
-<p>
-
-```bash
-sudo cp -f ./cosmovisor -t /usr/bin
-sudo chown ubuntu /usr/bin/cosmovisor
-sudo chmod u+x /usr/bin/cosmovisor
-```
-
-</p>
-</details>
-<!-- markdownlint-enable MD033 -->
-
-### Setup DCL scripts
-
-* put `cosmovisor_start.sh` script in a folder `$HOME`
-* put `cosmovisor_preupgrade.sh` script in a folder `$HOME`
-* set owner of `cosmovisor_start.sh` and `cosmovisor_preupgrade.sh` scripts to the user who will be used them
-* set executable permission on `cosmovisor_start.sh` and `cosmovisor_preupgrade.sh` scripts for owner
-
-<!-- markdownlint-disable MD033 -->
-<details>
-<summary>Example for ubuntu user (click to expand)</summary>
-<p>
-
-```bash
-sudo cp -f ./cosmovisor_start.sh -t $HOME
-sudo cp -f ./cosmovisor_preupgrade.sh -t $HOME
-sudo chown ubuntu $HOME/cosmovisor_start.sh
-sudo chmod u+x $HOME/cosmovisor_start.sh
-sudo chown ubuntu $HOME/cosmovisor_preupgrade.sh
-sudo chmod u+x $HOME/cosmovisor_preupgrade.sh
-```
-
-</p>
-</details>
-<!-- markdownlint-enable MD033 -->
-
 ### Configure the firewall
 
 * ports `26656` (p2p) and `26657` (RPC) should be available for TCP connections

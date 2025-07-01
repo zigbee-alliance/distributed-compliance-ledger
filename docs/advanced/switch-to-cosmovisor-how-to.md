@@ -44,24 +44,7 @@ of the store.
     curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/cosmovisor_preupgrade.sh
     ```
 
-3. Setup DCL scripts
-    * put `cosmovisor_start.sh` script in a folder `$HOME`
-    * put `cosmovisor_preupgrade.sh` script in a folder `$HOME`
-    * set owner of `cosmovisor_start.sh` and `cosmovisor_preupgrade.sh` scripts to the user who will be used them
-    * set executable permission on `cosmovisor_start.sh` and `cosmovisor_preupgrade.sh` scripts for owner
-
-    Example for ubuntu user:
-
-    ```bash
-    sudo cp -f ./cosmovisor_start.sh -t $HOME
-    sudo cp -f ./cosmovisor_preupgrade.sh -t $HOME
-    sudo chown ubuntu $HOME/cosmovisor_start.sh
-    sudo chmod u+x $HOME/cosmovisor_start.sh
-    sudo chown ubuntu $HOME/cosmovisor_preupgrade.sh
-    sudo chmod u+x $HOME/cosmovisor_preupgrade.sh
-    ```
-
-4. Download `switch_to_cosmovisor` script from [repository](../../deployment/scripts/)
+3. Download `switch_to_cosmovisor` script from [repository](../../deployment/scripts/)
 
     Example using curl:
 
@@ -80,13 +63,13 @@ of the store.
     `$HOME/.dcl/cosmovisor/current/bin` to `$PATH` of current user after
     `switch_to_cosmovisor` script is executed (see below).
 
-5. Grant execution permission on `switch_to_cosmovisor` script:
+4. Grant execution permission on `switch_to_cosmovisor` script:
 
     ```bash
     chmod u+x ./switch_to_cosmovisor
     ```
 
-6. Run `switch_to_cosmovisor` script:
+5. Run `switch_to_cosmovisor` script:
 
     ```bash
     ./switch_to_cosmovisor
