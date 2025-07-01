@@ -1,9 +1,10 @@
 variable "common_tags" {
   description = "Common tags for resources created in AWS."
   type = object({
-    created-by       = string
-    purpose          = string
-    project = optional(string) # default: DCL
+    project     = optional(string)  # default: DCL
+    environment = optional(string)  # default: workspace name
+    created-by  = optional(string)  # e.g. email address
+    purpose     = optional(string)
   })
 }
 

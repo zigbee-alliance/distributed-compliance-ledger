@@ -3,7 +3,8 @@ locals {
   project_name_default = "DCL"
 
   base_tags = {
-   project = local.project_name_default
+    project = local.project_name_default
+    environment = terraform.workspace
   }
 
   disable_validator_protection = tobool(var.disable_validator_protection) == true
@@ -57,6 +58,37 @@ locals {
         (var.private_sentries_config.enable && var.observers_config.enable && contains(var.observers_config.regions, 2)) ? module.observers_2[0].public_ips : [],
       )
     },
+  }
+
+  ansible_inventory = {
+    all = {
+      children = {
+
+        genesis = {
+          hosts = var.validator_config.is_genesis ? { for host in local.nodes.validator.public_ips : host => null } : null
+        }
+
+        validators = {
+          hosts = { for host in local.nodes.validator.public_ips : host => null }
+        }
+
+        private_sentries = {
+          hosts = { for host in local.nodes.private_sentries.public_ips : host => null }
+        }
+
+        public_sentries = {
+          hosts = { for host in local.nodes.public_sentries.public_ips : host => null }
+        }
+
+        seeds = {
+          hosts = { for host in local.nodes.seeds.public_ips : host => null }
+        }
+
+        observers = {
+          hosts = { for host in local.nodes.observers.public_ips : host => null }
+        }
+      }
+    }
   }
 
   prometheus_endpoints = concat(local.nodes.validator.private_ips, local.nodes.private_sentries.private_ips, local.nodes.public_sentries.private_ips, local.nodes.observers.private_ips, local.nodes.seeds.private_ips)
