@@ -37,7 +37,45 @@ HOST_KEY_CHECKING=False
 
 ## Deployment Configuration
 
-### 1. Configure AWS infrastructure parameters
+### 1. Configure Terraform backend
+
+By default AWS infrastructure backend is set as `s3` (see [`deployment/terraform/aws/backend.tf`]).
+
+You may consider the following options
+
+#### 1.1 Configure S3 backend
+
+S3 backend configuration implies:
+
+*   existent S3 bucket
+*   (optional but recommended) DynamoDB table to support [remote state locking](https://developer.hashicorp.com/terraform/language/v1.5.x/state/locking)
+    *   **Note** The table must have a partition key named `LockID` with a type of `String`.
+
+To complete the configuration please specify:
+
+*   S3 bucket name
+*   S3 object key
+*   region
+*   DynamoDB table name
+
+using one of the following ways:
+
+*   as parameters in [`deployment/terraform/aws/backend.tf`]
+*   as a separate configuration file, please check [`deployment/terraform/aws/config.s3.tfbackend.example`]
+*   as command line arguments
+*   interactively during terraform initialization
+
+Please see also Terraform [docs](https://developer.hashicorp.com/terraform/language/v1.5.x/settings/backends/s3) for the details.
+
+#### 1.2 Use `local` backend (only for development)
+
+Need to replace `s3` with `local` in [`deployment/terraform/aws/backend.tf`].
+
+#### 1.3 Use another remote backend
+
+Please see Terraform [docs](https://developer.hashicorp.com/terraform/language/v1.5.x/settings/backends/configuration#available-backends) for the available backends configuration.
+
+### 2. Configure AWS infrastructure parameters
 
 [`deployment/terraform/aws/terraform.tfvars`]
 
@@ -47,8 +85,19 @@ HOST_KEY_CHECKING=False
 region_1 = "us-west-1"
 region_2 = "us-east-2"
 ```
-
 - Selects two regions where nodes will be created
+
+#### Commmon tags
+
+```hcl
+common_tags = {
+  project		   = "DCL"  # (optional, default - "DCL")
+  environment      = "issue-123" (optional, default - workspace name)
+  purpose          = "some context details" (optional)
+  created-by       = "user@domain.com" (optional)
+}
+```
+
 
 #### (Genesis) Validator
 
@@ -170,7 +219,7 @@ prometheus_config = {
 - When enabled runs a dedicated Prometheus server on Private Sentries VPC to collect Tendermint metrics from all DCL nodes
 - Collected metrics are written to AWS [AMP workspace](https://aws.amazon.com/prometheus/)
 
-### 2. Set DCL network params ansible inventory
+### 3. Set DCL network params ansible inventory
 
 [`deployment/ansible/inventory/aws/group_vars/all.yaml`]
 
@@ -207,22 +256,49 @@ dcl_version: 0.12.0
 
 ## Deployment
 
-### 1. Run terraform
+### 1. Initialize terraform
 
 ```bash
 cd deployment/terraform/aws
+
+terraform init -backend-config=<backend-config-file> # in case backend configuration is in a file
+```
+
+where `<backend-config-file>` is the name of the workspace (e.g. `config.s3.tfbackend`).
+
+(optional) Create/Activate the deployment workspace:
+
+```bash
+terraform workspace select -or-create=true <workspace-name>
+```
+
+where `<workspace-name>` is the name of the workspace (e.g. `prod` or `issue-123`).
+
+### 2. Run terraform
+
+Before applying the configuration it is recommended to make the checks:
+
+```bash
+terraform workspace show
+
+terraform plan
+```
+
+Apply the configuration:
+
+```bash
 terraform apply
 ```
 
 > **_Note:_** Terraform asks a confirmation before applying changes
 
-### 2. Generate ansible inventory from terraform output
+### 3. Generate ansible inventory from terraform output
 
 ```bash
-terraform output -json ansible_inventory | dasel -r json -w yaml . > ../../ansible/inventory/aws/aws_all.yaml
+terraform output -raw ansible_inventory_yaml > ../../ansible/inventory/aws/aws_all.yaml
 ```
 
-### 3. Consider enabling state sync
+### 4. Consider enabling state sync
 
 When joining an existing pool, you may want to enable state sync for all the nodes.
 To do so, you should set state sync parameters:
@@ -257,7 +333,6 @@ config:
   statesync:
     enable: true
     rpc_servers: "https://on.test-net.dcl.csa-iot.org:26657,https://on.test-net.dcl.csa-iot.org:26657"
-    
 ```
 
 </details>
@@ -270,7 +345,7 @@ config:
   statesync:
     enable: true
     rpc_servers: "https://on.dcl.csa-iot.org:26657,https://on.dcl.csa-iot.org:26657"
-    
+
 ```
 
 </details>
@@ -304,7 +379,7 @@ curl -s https://on.dcl.csa-iot.org:26657/commit | jq "{height: .result.signed_he
 - `<host>` - RPC endpoint host of the network being joined
 - `<port>` - RPC endpoint port of the network being joined
 
-### 4. Run Ansible
+### 5. Run Ansible
 
 Run the following command from the project home:
 
@@ -314,7 +389,7 @@ ansible-playbook -i ./deployment/ansible/inventory/aws  -u ubuntu ./deployment/a
 
 - Ansible provisioning can take several minutes depending on number of nodes being provisioned
 
-### 5. (For non-genesis validator nodes) Add Validator to the network
+### 6. (For non-genesis validator nodes) Add Validator to the network
 
 - Manually add the validator to the network (see [making node a validator](../running-node-ansible/vn.md#make-your-node-a-validator-target-machine))
 
@@ -346,7 +421,7 @@ ansible-playbook -i ./deployment/ansible/inventory/aws  -u ubuntu ./deployment/a
       VUE_APP_DCL_REFRESH=500000
       ```
     - add your `<root_domain_name>` with a free SSL certificate
-  
+
   3. Your DCL UI should be available under `https://<root_domain_name>`
 
 ## Health and Monitoring

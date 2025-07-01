@@ -33,23 +33,28 @@ sudo apt install python3-testresources
 
 ### 4. Install [Ansible][4] and its dependencies
 
-Run the following commands from the [DCL][5] project home
+Run the following commands from the [DCL][5] project home (uses [python virtual environment][6]):
+
+**option 1 rootless (Recommended)**
 
 ```bash
-sudo pip install -r deployment/requirements.txt
+python3 -m venv dcld-venv
+source dcld-venv/bin/activate
+pip install -r deployment/requirements.txt
 ansible-galaxy install -r deployment/galaxy-requirements.yml 
 ```
 
-### 5. Install [Dasel][6] to make conversions between `json` and `yaml`
+**option 2**
 
 ```bash
-sudo wget -qO /usr/local/bin/dasel https://github.com/TomWright/dasel/releases/latest/download/dasel_linux_amd64
-sudo chmod a+x /usr/local/bin/dasel
+sudo pip3 install -r deployment/requirements.txt
+ansible-galaxy install -r deployment/galaxy-requirements.yml 
 ```
+
 
 [1]: https://www.terraform.io/
 [2]: https://learn.hashicorp.com/tutorials/terraform/install-cli
 [3]: https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
 [4]: https://www.ansible.com
 [5]: https://github.com/zigbee-alliance/distributed-compliance-ledger.git
-[6]: https://github.com/TomWright/dasel
+[6]: https://docs.python.org/3/library/venv.html
