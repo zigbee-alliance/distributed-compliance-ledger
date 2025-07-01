@@ -33,6 +33,10 @@ resource "aws_instance" "this_node" {
 
   iam_instance_profile = aws_iam_instance_profile.this_amp_role_profile.name
 
+  lifecycle {
+    ignore_changes = [ami]
+  }
+
   connection {
     type        = "ssh"
     host        = self.public_ip

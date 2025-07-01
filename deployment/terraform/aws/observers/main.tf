@@ -35,6 +35,10 @@ resource "aws_instance" "this_nodes" {
   key_name   = aws_key_pair.key_pair.id
   monitoring = true
 
+  lifecycle {
+    ignore_changes = [ami]
+  }
+
   connection {
     type        = "ssh"
     host        = self.public_ip
