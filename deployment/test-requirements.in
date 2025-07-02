@@ -12,12 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ansible # GPLv3
+-r ./requirements.txt
 ansible-lint # MIT
 molecule # MIT
-molecule-docker # MIT
+molecule-plugins[docker] # MIT
 pytest-testinfra # Apache-2.0
 yamllint # GPLv3
 jmespath # MIT
-toml # MIT
-netaddr # BSD

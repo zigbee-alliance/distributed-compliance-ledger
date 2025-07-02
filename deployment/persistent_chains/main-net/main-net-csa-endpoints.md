@@ -1,6 +1,7 @@
 ### Mainnet CSA public endpoints ###
 
 #Observer Node
+<!-- markdown-link-check-disable-next-line -->
 - `REST` - <https://on.dcl.csa-iot.org>
 - `RPC`  - <https://on.dcl.csa-iot.org:26657>
 - `gRPC` - on.dcl.csa-iot.org:8443
