@@ -1,6 +1,14 @@
 package types
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
+	"os"
+	"strings"
 	"time"
 
 	"cosmossdk.io/errors"
@@ -10,6 +18,7 @@ import (
 )
 
 const TypeMsgProposeUpgrade = "propose_upgrade"
+const TmpFileForValidateBinaries = "/tmp/testfile"
 
 var _ sdk.Msg = &MsgProposeUpgrade{}
 
@@ -45,6 +54,58 @@ func (msg *MsgProposeUpgrade) GetSignBytes() []byte {
 	return sdk.MustSortJSON(bz)
 }
 
+func ValidateBinaries(planInfo *string) error {
+	var planInfoJson map[string]map[string]string
+
+	err := json.Unmarshal([]byte(*planInfo), &planInfoJson)
+	if err != nil {
+		return fmt.Errorf("invalid JSON: %v", err)
+	}
+
+	for _, urlWithSum := range planInfoJson["binaries"] {
+		fileUrl, sh256Sum, found1 := strings.Cut(urlWithSum, "?")
+		if !found1 {
+			return fmt.Errorf("invalid parsing raw url")
+		}
+
+		_, expectedSum, found2 := strings.Cut(sh256Sum, ":")
+		if !found2 {
+			return fmt.Errorf("invalid parsing raw url")
+		}
+
+		// println("Trying download file from ", fileUrl)
+
+		// Create the file
+		out, err := os.Create(TmpFileForValidateBinaries)
+		if err != nil {
+			return err
+		}
+		defer out.Close()
+		defer os.Remove(TmpFileForValidateBinaries)
+
+		resp, err := http.Get(fileUrl)
+		if err != nil {
+			return fmt.Errorf("downloading file: %v", err)
+		}
+		defer resp.Body.Close()
+
+		hash256 := sha256.New()
+		_, err = io.Copy(hash256, resp.Body)
+		if err != nil {
+			return err
+		}
+
+		realSum := hex.EncodeToString(hash256.Sum(nil))
+		if expectedSum != realSum {
+			return fmt.Errorf("invalid file checksum")
+		}
+
+		// println("Download and checksum verification completed successfully")
+	}
+
+	return nil
+}
+
 func (msg *MsgProposeUpgrade) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
@@ -57,6 +118,11 @@ func (msg *MsgProposeUpgrade) ValidateBasic() error {
 	}
 
 	err = msg.Plan.ValidateBasic()
+	if err != nil {
+		return err
+	}
+
+	err = ValidateBinaries(&msg.Plan.Info)
 	if err != nil {
 		return err
 	}
