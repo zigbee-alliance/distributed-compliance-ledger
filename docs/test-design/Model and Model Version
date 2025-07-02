@@ -1,0 +1,2605 @@
+1. [ADD_MODEL](#add_model)
+2. [EDIT_MODEL](#edit_model)
+3. [DELETE_MODEL](#delete_model)
+4. [ADD_MODEL_VERSION](#add_model_version)
+5. [EDIT_MODEL_VERSION](#edit_model_version)
+6. [DELETE_MODEL_VERSION](#delete_model_version)
+7. [GET_MODEL](#get_model)
+8. [GET_MODEL_VERSION](#get_model_version)
+9. [GET_ALL_MODELS](#get_all_models)
+10. [GET_ALL_VENDOR_MODELS](#get_all_vendor_models)
+11. [GET_ALL_MODEL_VERSIONS](#get_all_model_versions)
+
+## [ADD_MODEL](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/transactions/model.md#add_model)	
+
+### CLI command	
+
+CLI command minimal: `dcld tx model add-model --vid=<uint16> --pid=<uint16> --deviceTypeID=<uint16> --productName=<string> --productLabel=<string or path> --partNumber=<string> --from=<account>`
+
+CLI command full: `dcld tx model add-model --vid=<uint16> --pid=<uint16> --deviceTypeID=<uint16> --productName=<string> --productLabel=<string or path> --partNumber=<string> 
+    --commissioningCustomFlow=<uint8> --commissioningCustomFlowUrl=<string> --commissioningModeInitialStepsHint=<uint32> --commissioningModeInitialStepsInstruction=<string>
+    --commissioningModeSecondaryStepsHint=<uint32> --commissioningModeSecondaryStepsInstruction=<string> --userManualURL=<string> --supportURL=<string> --productURL=<string> --lsfURL=<string> --discoveryCapabilitiesBitmask=<uint16> --commissioningFallbackURL<string>
+    --from=<account>`
+
+* CLI command send	
+   * Positive:
+      * command exists/relevant	
+   * Negative:	
+      * access is denied to execute command
+      * multiple commands are sent with the same unique combination of vid (vendor ID) and pid (product ID)	
+      * incorrect command syntax	
+
+* Сommand result	
+  * Positive:
+      * ADD_MODEL command completed successfully **⇒** adds a new Model identified by a unique combination of vid (vendor ID) and pid (product ID)
+   * Negative:	
+      * ADD_MODEL command failed **⇒** does not add a new Model identified by a unique combination of vid (vendor ID) and pid (product ID)
+
+* Role (Who can send)
+   * Positive:
+      * Vendor (Vendor account associated with the given Vendor ID)
+   * Negative:		
+      * Trustee
+      * Vendor (Vendor account is not associated with the given Vendor ID)
+      * VendorAdmin 	
+      * CertificationCenter 	
+      * NodeAdmin 	
+
+* Parameters:	
+   
+   * vid (Vendor ID) - uint16 
+     * Positive:
+       * unique combination	
+       * value > 0	
+       * integer value format
+       * nonexistent ID	
+     * Negative:
+       * empty value	
+       * value =< 0
+       * string value format
+       * length > MAX	(MAX = 65535)
+   
+   * pid (Product ID) - uint16 
+     * Positive:
+       * unique combination	
+       * value > 0	
+       * integer value format
+       * nonexistent ID	
+       * value falls within the specified range
+     * Negative:
+       * empty value
+       * value =< 0
+       * string value format	
+       * length > MAX	(MAX = 65535)
+   
+   * deviceTypeID (Device Type ID) - uint16 
+     * Positive:
+       * value exists	
+       * value >= 0	
+       * integer value format
+     * Negative:
+       * empty value	
+       * length > MAX	(MAX = 65535)
+       * nonexistent ID	
+   
+   * productName (Product Name) - string 
+     * Positive:
+       * text value format	
+       * MIN < length < MAX	
+     * Negative:
+       * empty value	
+       * length > MAX	
+   
+   * productLabel (Product Label) - optional(string)
+     * Positive:
+       * empty value	
+       * text value format	
+       * MIN < length < MAX	
+     * Negative:
+       * length > MAX	
+       * path/string format does not match	
+   
+   * partNumber (Part Number) - optional(string)
+     * Positive:
+       * empty value	
+       * text value format	
+       * MIN < length < MAX	
+     * Negative:
+       * length > MAX	
+   
+   * commissioningCustomFlow (Commissioning Custom Flow) - optional(uint8)
+     * Positive:
+       * value exists	
+       * empty value	
+       * value state	
+         * 1: User interaction with the device (pressing a button, for example) is required before commissioning can take place.
+         * 2: The commissioner SHOULD attempt to obtain a URL which MAY be used to provide an end user with the necessary details for how to configure the product for initial commissioning 
+     * Negative:
+       * length > MAX	(MAX = 255)
+       * nonexistent value	
+   
+   * commissioningCustomFlowURL (Commissioning Custom Flow URL) - optional(string)
+       * commissioningCustomFlow value = '2'	
+         * Positive:
+           * value exists	
+           * text value format	
+           * MIN < length < MAX	
+         * Negative:
+           * length > MAX	
+           * сontains spaces or line breaks	
+       * commissioningCustomFlow value = '1'	
+         * Positive:
+           * value exists	
+           * empty value	
+           * text value format	
+           * MIN < length < MAX	
+         * Negative:
+           * length > MAX	
+           * сontains spaces or line breaks	
+   
+   * commissioningModeInitialStepsHint (Commissioning Mode Initial Steps Hint) - optional(uint32)
+     * Positive:
+      * value exists	
+      * value >= 0	
+      * integer value format
+     * Negative:
+      * empty value	
+      * length > MAX	(MAX = 4 294 967 295)
+      * value does not match Pairing Hint table	
+   * commissioningModeInitialStepsInstruction (Commissioning Mode Initial Steps Instruction) - optional(string)
+     * Positive:
+      * value exists	
+      * empty value	
+      * text value format	
+      * MIN < length < MAX	
+     * Negative:
+      * length > MAX	
+   
+   * commissioningModeSecondaryStepsHint (Commissioning Mode Secondary Steps Hint) - optional(uint32)
+     * Positive:
+      * value exists	
+      * value >= 0	
+      * integer value format
+     * Negative:
+      * empty value	
+      * length > MAX	(MAX = 4 294 967 295)
+      * inappropriate value: commissioning ModeInitialStepsInstruction text does not match selected commissioningModeInitialStepsHint value
+   
+   * commissioningModeSecondaryStepInstruction (Commissioning Mode Secondary Step Instruction) - optional(string)
+     * Positive:
+      * value exists	
+      * empty value	
+      * text value format	
+      * MIN < length < MAX	
+     * Negative:
+      * length > MAX	
+      * value does not match Pairing Hint table	
+   
+   * userManualURL (User Manual URL) - optional(string)
+     * Positive:
+      * value exists	
+      * empty value	
+      * text value format	
+      * MIN < length < MAX	
+     * Negative:
+      * length > MAX	
+      * сontains spaces or line breaks	
+      * User Manual URL does not match Device Type ID	
+   
+   * supportURL (Support URL) - optional(string)
+     * Positive:
+      * value exists	
+      * empty value	
+      * text value format	
+      * MIN < length < MAX	
+     * Negative:
+      * length > MAX	
+      * сontains spaces or line breaks	
+      * Support URL does not match Device Type ID	
+   
+   * productURL (Product URL) - optional(string)
+     * Positive:
+      * value exists	
+      * empty value	
+      * text value format	
+      * MIN < length < MAX	
+     * Negative:
+      * length > MAX	
+      * сontains spaces or line breaks	
+      * Product URL does not match Device Type ID	
+   
+   * lsfURL (Localized String File URL) - optional(string)
+     * Positive:
+      * value exists	
+      * empty value	
+      * text value format	
+      * MIN < length < MAX	
+     * Negative:
+      * length > MAX	
+      * сontains spaces or line breaks	
+      * Localized String File URL does not match Device Type ID	
+   
+   * enhancedSetupFlowOptions (Enhanced Setup Flow Options) - optional(uint16)
+     * Positive:
+      * value >= 0	
+      * integer value format
+      * empty value	
+     * Negative:
+      * length > MAX	(MAX = 65535)
+   
+   * enhancedSetupFlowTCUrl (Enhanced Setup Flow  Terms and Condition URL) - optional(string)
+      * EnhancedSetupFlowOptions field has bit 0 set	
+        * Positive:
+          * value exists	
+          * empty value	
+          * text value format	
+          * format	
+        * Negative:
+          * length > MAX	
+          * сontains spaces or line breaks	
+          * enhancedSetupFlowTCUrl does not match Device Type ID	
+      * EnhancedSetupFlowOptions field has bit not equal to 0 set: enhancedSetupFlowTCUrl field should not be present in the command	
+   
+   * enhancedSetupFlowTCRevision (Enhanced Setup Flow Terms and Conditions Revision) - optional(uint16)
+      * EnhancedSetupFlowOptions field has bit 0 set	
+        * Positive:
+          * unique value	
+          * value >= 0	
+          * integer value format
+          * empty value	
+        * Negative:
+          * length > MAX	(MAX = 65535)
+          * new value < previous value	
+      * EnhancedSetupFlowOptions field has bit not equal to 0 set: enhancedSetupFlowTCRevision field should not be present in the command
+   
+   * enhancedSetupFlowTCDigest (Enhanced Setup Flow Terms and Conditions Digest) - optional(string)
+      * EnhancedSetupFlowOptions field has bit 0 set	
+        * Positive:
+          * value exists	
+          * empty value	
+          * text value format	
+          * MIN < length < MAX	
+        * Negative:
+          * length > MAX	
+          * inappropriate value: digest does not match the file uploaded from the EnhancedSetupFlowTCUrl field 	
+      * EnhancedSetupFlowOptions field has bit not equal to 0 set: enhancedSetupFlowTCDigest field should not be present in the command	
+   
+   * enhancedSetupFlowTCFileSize (Enhanced Setup Flow Terms and Conditions File Size) - optional(uint32)
+      * EnhancedSetupFlowOptions field has bit 0 set	
+        * Positive:
+          * value exists	
+          * value >= 0	
+          * integer value format
+          * unit of measurement = bytes	
+        * Negative:
+          * empty value	
+          * length > MAX	(MAX = 4 294 967 295)
+          * enhancedSetupFlowTC file size >  EnhancedSetupFlowTCFileSize limit	
+      * EnhancedSetupFlowOptions field has bit not equal to 0 set: enhancedSetupFlowTCFileSize field should not be present in the command
+   
+   * maintenanceUrl (Maintenance URL)	optional(string)
+      * EnhancedSetupFlowOptions field has bit 0 set	
+        * Positive:
+          * value exists	
+          * empty value	
+          * text value format	
+          * MIN < length < MAX	
+        * Negative:
+          * length > MAX	
+      * EnhancedSetupFlowOptions field has bit not equal to 0 set: maintenanceUrl field should not be present in the command	
+   
+   * schemaVersion (Schema Version) - optional(uint16)
+     * Positive:
+       * value = 0	
+       * integer value format
+       * empty value	
+     * Negative:
+       * length > MAX	(MAX = 65535)
+   
+   * discoveryCapabilitiesBitmask (Discovery Capabilities Bitmask) - optional(uint16)
+     * commissioningFallbackURL field is filled	
+       * Positive:
+         * value = 0	
+         * integer value format
+         * empty value	
+       * Negative:
+         * length > MAX	(MAX = 65535)
+     * commissioningFallbackURL field is not filled	
+   
+   * commissioningFallbackURL (Commissioning Fallback URL) - optional(string)
+     * Positive:
+       * value exists	
+       * empty value	
+       * text value format	
+       * MIN < length < MAX	
+     * Negative:
+       * length > MAX	
+       * сontains spaces or line breaks	
+
+### REST API
+REST API command: /cosmos/tx/v1beta1/txs: [MsgCreateModel](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/proto/zigbeealliance/distributedcomplianceledger/model/tx.proto#L24) 	
+
+* REST API command send		
+  * Positive:
+      * correct HTTP method	
+      * request is authorized	
+      * uses valid credentials/role	
+  * Negative:
+      * incorrect request	
+      * multiple commands are sent with the same unique combination of vid (vendor ID) and pid (product ID)	
+      * server-side error	
+
+* Сommand result	
+  * Positive:
+      * ADD_MODEL command completed successfully	**⇒** adds a new Model identified by a unique combination of vid (vendor ID) and pid (product ID)
+   * Negative:	
+      * ADD_MODEL command failed	**⇒** does not add a new Model identified by a unique combination of vid (vendor ID) and pid (product ID)
+
+* Role (Who can send)
+   * Positive:
+      * Vendor (Vendor account associated with the given Vendor ID)
+   * Negative:		
+      * Trustee
+      * Vendor (Vendor account is not associated with the given Vendor ID)
+      * VendorAdmin 	
+      * CertificationCenter 	
+      * NodeAdmin 	
+
+* Parameters:	
+   
+   * vid (Vendor ID) - uint16 
+     * Positive:
+       * unique combination	
+       * value > 0	
+       * integer value format
+       * nonexistent ID	
+     * Negative:
+       * empty value	
+       * length > MAX	(MAX = 65535)
+
+   * pid (Product ID) - uint16 
+     * Positive:
+       * unique combination	
+       * value > 0	
+       * integer value format
+       * nonexistent ID	
+       * value falls within the specified range
+     * Negative:
+       * empty value	
+       * length > MAX	(MAX = 65535)
+
+   * deviceTypeID (Device Type ID) - uint16 
+     * Positive:
+       * value exists	
+       * value >= 0	
+       * integer value format
+     * Negative:
+       * empty value	
+       * length > MAX	(MAX = 65535)
+       * nonexistent ID	
+
+   * productName (Product Name) - string 
+     * Positive:
+       * text value format	
+       * MIN < length < MAX	
+     * Negative:
+       * empty value	
+       * length > MAX	
+   
+   * productLabel (Product Label) - optional(string)
+     * Positive:
+       * empty value	
+       * text value format	
+       * MIN < length < MAX	
+     * Negative:
+       * length > MAX	
+       * path/string format does not match	
+   
+   * partNumber (Part Number) - optional(string)
+     * Positive:
+       * empty value	
+       * text value format	
+       * MIN < length < MAX	
+     * Negative:
+       * length > MAX	
+   
+   * commissioningCustomFlow (Commissioning Custom Flow) - optional(uint8)
+     * Positive:
+       * value exists	
+       * empty value	
+       * value state	
+         * 1: User interaction with the device (pressing a button, for example) is required before commissioning can take place.
+         * 2: The commissioner SHOULD attempt to obtain a URL which MAY be used to provide an end user with the necessary details for how to configure the product for initial commissioning 
+     * Negative:
+       * length > MAX	(MAX = 255)
+       * nonexistent value	
+   
+   * commissioningCustomFlowURL (Commissioning Custom Flow URL) - optional(string)
+       * commissioningCustomFlow value = '2'	
+         * Positive:
+           * value exists	
+           * text value format	
+           * MIN < length < MAX	
+         * Negative:
+           * length > MAX	
+           * сontains spaces or line breaks	
+       * commissioningCustomFlow value = '1'	
+         * Positive:
+           * value exists	
+           * empty value	
+           * text value format	
+           * MIN < length < MAX	
+         * Negative:
+           * length > MAX	
+           * сontains spaces or line breaks	
+   
+   * commissioningModeInitialStepsHint (Commissioning Mode Initial Steps Hint) - optional(uint32)
+     * Positive:
+      * value exists	
+      * value >= 0	
+      * integer value format
+     * Negative:
+      * empty value	
+      * length > MAX	(MAX = 4 294 967 295)
+      * value does not match Pairing Hint table	
+   
+   * commissioningModeInitialStepsInstruction (Commissioning Mode Initial Steps Instruction) - optional(string)
+     * Positive:
+      * value exists	
+      * empty value	
+      * text value format	
+      * MIN < length < MAX	
+     * Negative:
+      * length > MAX	
+
+   * commissioningModeSecondaryStepsHint (Commissioning Mode Secondary Steps Hint) - optional(uint32)
+     * Positive:
+      * value exists	
+      * value >= 0	
+      * integer value format
+     * Negative:
+      * empty value	
+      * length > MAX	(MAX = 4 294 967 295)
+      * inappropriate value: commissioning ModeInitialStepsInstruction text does not match selected commissioningModeInitialStepsHint value
+   
+   * commissioningModeSecondaryStepInstruction (Commissioning Mode Secondary Step Instruction) - optional(string)
+     * Positive:
+      * value exists	
+      * empty value	
+      * text value format	
+      * MIN < length < MAX	
+     * Negative:
+      * length > MAX	
+      * value does not match Pairing Hint table	
+   
+   * userManualURL (User Manual URL) - optional(string)
+     * Positive:
+      * value exists	
+      * empty value	
+      * text value format	
+      * MIN < length < MAX	
+     * Negative:
+      * length > MAX	
+      * сontains spaces or line breaks	
+      * User Manual URL does not match Device Type ID	
+   
+   * supportURL (Support URL) - optional(string)
+     * Positive:
+      * value exists	
+      * empty value	
+      * text value format	
+      * MIN < length < MAX	
+     * Negative:
+      * length > MAX	
+      * сontains spaces or line breaks	
+      * Support URL does not match Device Type ID	
+
+   * productURL (Product URL) - optional(string)
+     * Positive:
+      * value exists	
+      * empty value	
+      * text value format	
+      * MIN < length < MAX	
+     * Negative:
+      * length > MAX	
+      * сontains spaces or line breaks	
+      * Product URL does not match Device Type ID	
+
+   * lsfURL (Localized String File URL) - optional(string)
+     * Positive:
+      * value exists	
+      * empty value	
+      * text value format	
+      * MIN < length < MAX	
+     * Negative:
+      * length > MAX	
+      * сontains spaces or line breaks	
+      * Localized String File URL does not match Device Type ID	
+
+   * enhancedSetupFlowOptions (Enhanced Setup Flow Options) - optional(uint16)
+     * Positive:
+      * value >= 0	
+      * integer value format
+      * empty value	
+     * Negative:
+      * length > MAX	(MAX = 65535)
+
+   * enhancedSetupFlowTCUrl (Enhanced Setup Flow  Terms and Condition URL) - optional(string)
+      * EnhancedSetupFlowOptions field has bit 0 set	
+        * Positive:
+          * value exists	
+          * empty value	
+          * text value format	
+          * format	
+        * Negative:
+          * length > MAX	
+          * сontains spaces or line breaks	
+          * enhancedSetupFlowTCUrl does not match Device Type ID	
+      * EnhancedSetupFlowOptions field has bit not equal to 0 set:enhancedSetupFlowTCUrl field should not be present in the command.	
+   
+   * enhancedSetupFlowTCRevision (Enhanced Setup Flow Terms and Conditions Revision) - optional(uint16)
+      * EnhancedSetupFlowOptions field has bit 0 set	
+        * Positive:
+          * unique value	
+          * value >= 0	
+          * integer value format
+          * empty value	
+        * Negative:
+          * length > MAX	(MAX = 65535)
+          * new value < previous value	
+      * EnhancedSetupFlowOptions field has bit not equal to 0 set: enhancedSetupFlowTCRevision field should not be present in the command.	
+   
+   * enhancedSetupFlowTCDigest (Enhanced Setup Flow Terms and Conditions Digest) - optional(string)
+      * EnhancedSetupFlowOptions field has bit 0 set	
+        * Positive:
+          * value exists	
+          * empty value	
+          * text value format	
+          * MIN < length < MAX	
+        * Negative:
+          * length > MAX	
+          * inappropriate value: digest does not match the file uploaded from the EnhancedSetupFlowTCUrl field	
+      * EnhancedSetupFlowOptions field has bit not equal to 0 set: enhancedSetupFlowTCDigest field should not be present in the command
+   
+   * enhancedSetupFlowTCFileSize (Enhanced Setup Flow Terms and Conditions File Size) - optional(uint32)
+      * EnhancedSetupFlowOptions field has bit 0 set	
+        * Positive:
+          * value exists	
+          * value >= 0	
+          * integer value format
+          * unit of measurement = bytes	
+        * Negative:
+          * empty value	
+          * length > MAX	(MAX = 4 294 967 295)
+          * enhancedSetupFlowTC file size >  EnhancedSetupFlowTCFileSize limit	
+      * EnhancedSetupFlowOptions field has bit not equal to 0 set: enhancedSetupFlowTCFileSize field should not be present in the command
+
+   * maintenanceUrl (Maintenance URL)	optional(string)
+      * EnhancedSetupFlowOptions field has bit 0 set	
+        * Positive:
+          * value exists	
+          * empty value	
+          * text value format	
+          * MIN < length < MAX	
+        * Negative:
+          * length > MAX	
+      * EnhancedSetupFlowOptions field has bit not equal to 0 set: maintenanceUrl field should not be present in the command
+
+   * schemaVersion (Schema Version) - optional(uint16)
+     * Positive:
+       * value = 0	
+       * integer value format
+       * empty value	
+     * Negative:
+       * length > MAX	(MAX = 65535)
+   
+   * discoveryCapabilitiesBitmask (Discovery Capabilities Bitmask) - optional(uint16)
+     * commissioningFallbackURL field is filled	
+       * Positive:
+         * value = 0	
+         * integer value format
+         * empty value	
+       * Negative:
+         * length > MAX	(MAX = 65535)
+     * commissioningFallbackURL field is not filled	
+   
+   * commissioningFallbackURL (Commissioning Fallback URL) - optional(string)
+     * Positive:
+       * value exists	
+       * empty value	
+       * text value format	
+       * MIN < length < MAX	
+     * Negative:
+       * length > MAX	
+       * сontains spaces or line breaks
+
+## [EDIT_MODEL](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/transactions/model.md#edit_model)	
+
+### CLI command	
+CLI command send: `dcld tx model delete-model --vid=<uint16> --pid=<uint16> --from=<account>`	
+
+* CLI command send:
+  * Valid command	
+    * command exists/relevant	
+  * Invalid command	
+    * access is denied to execute command	
+    * incorrect command syntax	
+
+* Сommand result	
+  * EDIT_MODEL command completed successfully	⇒ edits an existing Model identified by a unique combination of vid (vendor ID) and pid (product ID) by the vendor account
+    * ADD_MODEL command completed successfully	
+    * there is at least one Model identified by a unique combination of vid (vendor ID) and pid (product ID)	
+    * combination of vid (vendor ID) and pid (product ID) valid	
+    * user do not make changes to non-editable fields	
+  * EDIT_MODEL command failed	⇒ does not edits an existing Model identified by a unique combination of vid (vendor ID) and pid (product ID) by the vendor account
+    * ADD_MODEL command was not executed	
+    * there is not one Model identified by a unique combination of vid (vendor ID) and pid (product ID)	
+    * vid (vendor ID) valid and pid (product ID) invalid	
+    * vid (vendor ID) invalid and pid (product ID) valid	
+    * user tries to edit non-editable fields	
+
+* Role (Who can send)	
+  * Positive:
+    * Vendor (Vendor account associated with the given Vendor ID who has created the model)	
+  * Negative:
+    * Trustee
+    * Vendor (Vendor account is not associated with the given Vendor ID who has created the model	error)
+    * VendorAdmin 	
+    * CertificationCenter 	
+    * NodeAdmin
+
+* Parameters:	
+
+    * vid (Vendor ID) - uint16 
+        * Positive:
+                * value > 0	
+                * integer value format
+        * Negative:	
+                * empty value
+                * value =< 0
+                * string value format	
+                * nonexistent ID	
+                * length > MAX	(MAX = 65535)
+    
+    * pid (Product ID) - uint16 
+        * Positive:
+                * value > 0	
+                * integer value format
+                * value falls within the specified range	
+        * Negative:	
+                * empty value	
+                * value =< 0
+                * string value format	
+                * nonexistent ID	
+                * length > MAX	(MAX = 65535)
+    * productName (Product Name) - optional(string)
+       * Positive:
+            * empty value	
+            * text value format	
+            * MIN < length < MAX	
+       * Negative:	
+            * length > MAX	
+    * productLabel (Product Label) - optional(string)
+       * Positive:
+            * empty value	
+            * text value format	
+            * MIN < length < MAX	
+       * Negative:	
+            * length > MAX	
+            * path/string format does not match	
+    * partNumber (Part Number) - optional(string)
+       * Positive:
+            * empty value	
+            * text value format	
+            * MIN < length < MAX	
+       * Negative:	
+            * length > MAX	
+            * nonexistent value	
+    * commissioningCustomFlowURL (Commissioning Custom Flow URL) - optional(string)
+        * commissioningCustomFlow value = '2'	
+            * Positive:
+                * value exists	
+                * text value format	
+                * MIN < length < MAX	
+            * Negative:	
+                * length > MAX	
+                * сontains spaces or line breaks	
+        * commissioningCustomFlow value = '1'	
+            * Positive:
+                * value exists	
+                * empty value	
+                * text value format	
+                * MIN < length < MAX	
+            * Negative:	
+                * length > MAX	
+                * сontains spaces or line breaks	
+    * commissioningModeInitialStepsInstruction (Commissioning Mode Initial Steps Instruction) - optional(string)
+       * Positive:
+            * value exists	
+            * empty value	
+            * text value format	
+            * MIN < length < MAX	
+       * Negative:	
+            * length > MAX	
+    * commissioningModeSecondaryStepInstruction (Commissioning Mode Secondary Step Instruction) - optional(string)
+       * Positive:
+            * value exists	
+            * empty value	
+            * text value format	
+            * MIN < length < MAX	
+       * Negative:	
+            * length > MAX	
+            * value does not match Pairing Hint table	
+    * userManualURL (User Manual URL) - optional(string)
+       * Positive:
+            * value exists	
+            * empty value	
+            * text value format	
+            * MIN < length < MAX	
+       * Negative:	
+            * length > MAX	
+            * сontains spaces or line breaks	
+            * User Manual URL does not match Device Type ID	
+    * supportURL (Support URL) - optional(string)
+       * Positive:
+            * value exists	
+            * empty value	
+            * text value format	
+            * MIN < length < MAX	
+       * Negative:	
+            * length > MAX	
+            * сontains spaces or line breaks	
+            * Support URL does not match Device Type ID	
+    * productURL (Product URL) - optional(string)
+       * Positive:
+            * value exists	
+            * empty value	
+            * text value format	
+            * MIN < length < MAX	
+       * Negative:	
+            * length > MAX	
+            * сontains spaces or line breaks	
+            * Product URL does not match Device Type ID	
+    * lsfURL (Localized String File URL) - optional(string)
+       * Positive:
+            * value exists	
+            * empty value	
+            * text value format	
+            * MIN < length < MAX	
+       * Negative:	
+            * length > MAX	
+            * сontains spaces or line breaks	
+            * Localized String File URL does not match Device Type ID	
+    * lsfRevision (Localized String File Revision)- optional(uint32)
+       * Positive:
+            * value exists	
+            * value >= 0	
+            * integer value format
+       * Negative:	
+            * empty value	
+            * length > MAX	(MAX = 4 294 967 295)
+            * nonexistent ID	
+    * commissioningModeInitialStepsHint (Commissioning Mode Initial Steps Hint) - optional(uint32)
+       * Positive:
+            * value exists	
+            * value > 0	
+            * integer value format
+       * Negative:	
+            * empty value	
+            * value =< 0
+            * string value format	
+            * length > MAX	MAX = (4 294 967 295)
+            * nonexistent ID	
+    * enhancedSetupFlowOptions (Enhanced Setup Flow Options) - optional(uint16)
+       * Positive:
+            * value state	
+                * 0: The following fields are available for editing: enhancedSetupFlowTCUrl, enhancedSetupFlowTCRevision, enhancedSetupFlowTCDiges, enhancedSetupFlowTCFileSize, maintenanceUrl
+                * 1	
+            * integer value format
+            * empty value	
+       * Negative:	
+            * length > MAX	(MAX = 65535)
+    * enhancedSetupFlowTCUrl (Enhanced Setup Flow Terms and Condition URL)- optional(string)
+        * EnhancedSetupFlowOptions field has bit 0 set: enhancedSetupFlowTCUrl field should be present in the command	
+            * Positive:
+                * value exists	
+                * empty value	
+                * text value format	
+                * MIN < length < MAX	
+            * Negative:	
+                * length > MAX	
+                * сontains spaces or line breaks	
+                * enhancedSetupFlowTCUrl does not match Device Type ID	
+        * EnhancedSetupFlowOptions field has bit not equal to 0 set: enhancedSetupFlowTCUrl field should not be present in the command.	
+    * enhancedSetupFlowTCRevision (Enhanced Setup Flow Terms and Condition Revision) - optional(uint16)
+        * EnhancedSetupFlowOptions field has bit 0 set: enhancedSetupFlowTCRevision field should be present in the command	
+            * Positive:
+                * unique value	
+                * value >= 0	
+                * integer value format
+                * empty value	
+            * Negative:	
+                * length > MAX	(MAX = 65535)
+                * new value < previous value	
+        * EnhancedSetupFlowOptions field has bit not equal to 0 set: enhancedSetupFlowTCRevision field should not be present in the command.	
+    * enhancedSetupFlowTCDigest (Enhanced Setup Flow Terms and Condition Digest) - optional(string)
+        * EnhancedSetupFlowOptions field has bit 0 set: enhancedSetupFlowTCDigest field field should be present in the command	
+            * Positive:
+                * value exists	
+                * empty value	
+                * text value format	
+                * MIN < length < MAX	
+            * Negative:	
+                * length > MAX	
+                * inappropriate value: digest does not match the file uploaded from the EnhancedSetupFlowTCUrl field	
+        * EnhancedSetupFlowOptions field has bit not equal to 0 set: enhancedSetupFlowTCDigest field should not be present in the command
+    * enhancedSetupFlowTCFileSize (Enhanced Setup Flow Terms and Condition File Size) - optional(uint32)
+        * EnhancedSetupFlowOptions field has bit 0 set: enhancedSetupFlowTCFileSize field should be present in the command	
+            * Positive:
+                * value exists	
+                * value >= 0	
+                * integer value format
+                * unit of measurement = bytes	
+            * Negative:	
+                * empty value	
+                * length > MAX	(MAX = 4 294 967 295)
+                * enhancedSetupFlowTC file size >  
+                * EnhancedSetupFlowTCFileSize limit	
+        * EnhancedSetupFlowOptions field has bit not equal to 0 set: enhancedSetupFlowTCFileSize field should not be present in the command.	
+    * maintenanceUrl (Maintenance URL) - optional(string)
+        * EnhancedSetupFlowOptions field has bit 0 set: maintenanceUrl field should be present in the command 	
+            * Positive:
+                * value exists	
+                * empty value	
+                * text value format	
+                * MIN < length < MAX	
+            * Negative:	
+                * length > MAX	
+        * EnhancedSetupFlowOptions field has bit not equal to 0 set: maintenanceUrl field should not be present in the command.	
+    * schemaVersion (Schema Version) - optional(uint16)
+       * Positive:
+            * value exists	
+            * value = 0	
+            * integer value format
+            * empty value	
+       * Negative:	
+            * length > MAX	(MAX = 65535)
+  * commissioningFallbackURL (Commissioning Fallback URL) - optional(string)
+       * Positive:
+            * specific value	
+            * empty value	
+            * text value format	
+            * MIN < length < MAX	
+       * Negative:	
+            * length > MAX	
+            * сontains spaces or line breaks	
+
+### REST API 	
+
+REST API: /cosmos/tx/v1beta1/txs: [MsgUpdateModel](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/proto/zigbeealliance/distributedcomplianceledger/model/tx.proto#L55)
+
+* REST API command send	
+    * Valid command	
+        * correct HTTP method	
+        * request is authorized	
+        * uses valid credentials/role	
+    * Invalid command	
+        * incorrect request	
+        * server side error	
+	
+* Сommand result	
+    * EDIT_MODEL command completed successfully	⇒ edits an existing Model identified by a unique combination of vid (vendor ID) and pid (product ID) by * the vendor account
+        * ADD_MODEL command completed successfully	
+        * there is at least one Model identified by a unique combination of vid (vendor ID) and pid (product ID)	
+        * combination of vid (vendor ID) and pid (product ID) valid	
+        * user do not make changes to non-editable fields	
+    * EDIT_MODEL command failed	⇒ does not edits an existing Model identified by a unique combination of vid (vendor ID) and pid (product ID) by the vendor account
+        * ADD_MODEL command was not executed	
+        * there is not one Model identified by a unique combination of vid (vendor ID) and pid (product ID)	
+        * vid (vendor ID) valid and pid (product ID) invalid	
+        * vid (vendor ID) invalid and pid (product ID) valid	
+        * user tries to edit non-editable fields	
+
+* Role (Who can send)	
+  * Positive:
+    * Vendor (Vendor account associated with the given Vendor ID who has created the model)	
+  * Negative:
+    * Trustee
+    * Vendor (Vendor account is not associated with the given Vendor ID who has created the model	error)
+    * VendorAdmin 	
+    * CertificationCenter 	
+    * NodeAdmin
+
+* Parameters:	
+
+    * vid (Vendor ID) - uint16 
+        * Positive:
+                * value > 0	
+                * integer value format
+        * Negative:	
+                * empty value
+                * value =< 0
+                * string value format	
+                * nonexistent ID	
+                * length > MAX	(MAX = 65535)
+    
+    * pid (Product ID) - uint16 
+        * Positive:
+                * value > 0	
+                * integer value format
+                * value falls within the specified range	
+        * Negative:	
+                * empty value	
+                * value =< 0
+                * string value format	
+                * nonexistent ID	
+                * length > MAX	(MAX = 65535)
+    * productName (Product Name) - optional(string)
+       * Positive:
+            * empty value	
+            * text value format	
+            * MIN < length < MAX	
+       * Negative:	
+            * length > MAX	
+    * productLabel (Product Label) - optional(string)
+       * Positive:
+            * empty value	
+            * text value format	
+            * MIN < length < MAX	
+       * Negative:	
+            * length > MAX	
+            * path/string format does not match	
+    * partNumber (Part Number) - optional(string)
+       * Positive:
+            * empty value	
+            * text value format	
+            * MIN < length < MAX	
+       * Negative:	
+            * length > MAX	
+            * nonexistent value	
+    * commissioningCustomFlowURL (Commissioning Custom Flow URL) - optional(string)
+        * commissioningCustomFlow value = '2'	
+            * Positive:
+                * value exists	
+                * text value format	
+                * MIN < length < MAX	
+            * Negative:	
+                * length > MAX	
+                * сontains spaces or line breaks	
+        * commissioningCustomFlow value = '1'	
+            * Positive:
+                * value exists	
+                * empty value	
+                * text value format	
+                * MIN < length < MAX	
+            * Negative:	
+                * length > MAX	
+                * сontains spaces or line breaks	
+    * commissioningModeInitialStepsInstruction (Commissioning Mode Initial Steps Instruction) - optional(string)
+       * Positive:
+            * value exists	
+            * empty value	
+            * text value format	
+            * MIN < length < MAX	
+       * Negative:	
+            * length > MAX	
+    * commissioningModeSecondaryStepInstruction (Commissioning Mode Secondary Step Instruction) - optional(string)
+       * Positive:
+            * value exists	
+            * empty value	
+            * text value format	
+            * MIN < length < MAX	
+       * Negative:	
+            * length > MAX	
+            * value does not match Pairing Hint table	
+    * userManualURL (User Manual URL) - optional(string)
+       * Positive:
+            * value exists	
+            * empty value	
+            * text value format	
+            * MIN < length < MAX	
+       * Negative:	
+            * length > MAX	
+            * сontains spaces or line breaks	
+            * User Manual URL does not match Device Type ID	
+    * supportURL (Support URL) - optional(string)
+       * Positive:
+            * value exists	
+            * empty value	
+            * text value format	
+            * MIN < length < MAX	
+       * Negative:	
+            * length > MAX	
+            * сontains spaces or line breaks	
+            * Support URL does not match Device Type ID	
+    * productURL (Product URL) - optional(string)
+       * Positive:
+            * value exists	
+            * empty value	
+            * text value format	
+            * MIN < length < MAX	
+       * Negative:	
+            * length > MAX	
+            * сontains spaces or line breaks	
+            * Product URL does not match Device Type ID	
+    * lsfURL (Localized String File URL) - optional(string)
+       * Positive:
+            * value exists	
+            * empty value	
+            * text value format	
+            * MIN < length < MAX	
+       * Negative:	
+            * length > MAX	
+            * сontains spaces or line breaks	
+            * Localized String File URL does not match Device Type ID	
+    * lsfRevision (Localized String File Revision)- optional(uint32)
+       * Positive:
+            * value exists	
+            * value >= 0	
+            * integer value format
+       * Negative:	
+            * empty value	
+            * length > MAX	(MAX = 4 294 967 295)
+            * nonexistent ID	
+    * commissioningModeInitialStepsHint (Commissioning Mode Initial Steps Hint) - optional(uint32)
+       * Positive:
+            * value exists	
+            * value > 0	
+            * integer value format
+       * Negative:	
+            * empty value	
+            * value =< 0
+            * string value format	
+            * length > MAX	MAX = (4 294 967 295)
+            * nonexistent ID	
+    * enhancedSetupFlowOptions (Enhanced Setup Flow Options) - optional(uint16)
+       * Positive:
+            * value state	
+                * 0: The following fields are available for editing: enhancedSetupFlowTCUrl, enhancedSetupFlowTCRevision, enhancedSetupFlowTCDiges, enhancedSetupFlowTCFileSize, maintenanceUrl
+                * 1	
+            * integer value format
+            * empty value	
+       * Negative:	
+            * length > MAX	(MAX = 65535)
+    * enhancedSetupFlowTCUrl (Enhanced Setup Flow Terms and Condition URL)- optional(string)
+        * EnhancedSetupFlowOptions field has bit 0 set: enhancedSetupFlowTCUrl field should be present in the command	
+            * Positive:
+                * value exists	
+                * empty value	
+                * text value format	
+                * MIN < length < MAX	
+            * Negative:	
+                * length > MAX	
+                * сontains spaces or line breaks	
+                * enhancedSetupFlowTCUrl does not match Device Type ID	
+        * EnhancedSetupFlowOptions field has bit not equal to 0 set: enhancedSetupFlowTCUrl field should not be present in the command.	
+    * enhancedSetupFlowTCRevision (Enhanced Setup Flow Terms and Condition Revision) - optional(uint16)
+        * EnhancedSetupFlowOptions field has bit 0 set: enhancedSetupFlowTCRevision field should be present in the command	
+            * Positive:
+                * unique value	
+                * value >= 0	
+                * integer value format
+                * empty value	
+            * Negative:	
+                * length > MAX	(MAX = 65535)
+                * new value < previous value	
+        * EnhancedSetupFlowOptions field has bit not equal to 0 set: enhancedSetupFlowTCRevision field should not be present in the command.	
+    * enhancedSetupFlowTCDigest (Enhanced Setup Flow Terms and Condition Digest) - optional(string)
+        * EnhancedSetupFlowOptions field has bit 0 set: enhancedSetupFlowTCDigest field field should be present in the command	
+            * Positive:
+                * value exists	
+                * empty value	
+                * text value format	
+                * MIN < length < MAX	
+            * Negative:	
+                * length > MAX	
+                * inappropriate value: digest does not match the file uploaded from the EnhancedSetupFlowTCUrl field	
+        * EnhancedSetupFlowOptions field has bit not equal to 0 set: enhancedSetupFlowTCDigest field should not be present in the command
+    * enhancedSetupFlowTCFileSize (Enhanced Setup Flow Terms and Condition File Size) - optional(uint32)
+        * EnhancedSetupFlowOptions field has bit 0 set: enhancedSetupFlowTCFileSize field should be present in the command	
+            * Positive:
+                * value exists	
+                * value >= 0	
+                * integer value format
+                * unit of measurement = bytes	
+            * Negative:	
+                * empty value	
+                * length > MAX	(MAX = 4 294 967 295)
+                * enhancedSetupFlowTC file size >  
+                * EnhancedSetupFlowTCFileSize limit	
+        * EnhancedSetupFlowOptions field has bit not equal to 0 set: enhancedSetupFlowTCFileSize field should not be present in the command.	
+    * maintenanceUrl (Maintenance URL) - optional(string)
+        * EnhancedSetupFlowOptions field has bit 0 set: maintenanceUrl field should be present in the command 	
+            * Positive:
+                * value exists	
+                * empty value	
+                * text value format	
+                * MIN < length < MAX	
+            * Negative:	
+                * length > MAX	
+        * EnhancedSetupFlowOptions field has bit not equal to 0 set: maintenanceUrl field should not be present in the command.	
+    * schemaVersion (Schema Version) - optional(uint16)
+       * Positive:
+            * value exists	
+            * value = 0	
+            * integer value format
+            * empty value	
+       * Negative:	
+            * length > MAX	(MAX = 65535)
+  * commissioningFallbackURL (Commissioning Fallback URL) - optional(string)
+       * Positive:
+            * specific value	
+            * empty value	
+            * text value format	
+            * MIN < length < MAX	
+       * Negative:	
+            * length > MAX	
+            * сontains spaces or line breaks
+
+## [DELETE_MODEL](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/transactions/model.md#delete_model)	
+
+### CLI command	
+CLI command: `dcld tx model delete-model --vid=<uint16> --pid=<uint16> --from=<account>`
+
+* CLI command send	
+    * Valid command	
+        * command exists/relevant	
+    * Invalid command	
+        * access is denied to execute command	
+        * incorrect command syntax	
+
+* Сommand result	
+    * DELETE_MODEL command completed successfully ⇒ deletes an existing Model identified by a unique combination of vid (vendor ID) and pid (product ID) by the vendor account
+        * ADD_MODEL command completed successfully	
+        * there is at least one Model identified by a unique combination of vid * (vendor ID) and pid (product ID)	
+        * combination of vid (vendor ID) and pid (product ID) valid	
+        * the selected model has not been deleted before	
+        * Model Versions associated with the Model is not certified	all associated * Model Versions will be deleted as well
+    * DELETE_MODEL command failed ⇒ does not deletes an existing Model identified by a unique combination of vid (vendor ID) and pid (product ID) by the vendor account
+        * ADD_MODEL command was not executed	
+        * there is not one Model identified by a unique combination of vid (vendor ID) and pid (product ID)	
+        * vid (vendor ID) valid and pid (product ID) invalid	
+        * vid (vendor ID) invalid and pid (product ID) valid	
+        * the selected model has been deleted before	
+        * Model Versions associated with the Model is certified	Model can not be deleted
+
+* Role (Who can send)
+    * Positive:
+        * Vendor (Vendor account associated with the given Vendor ID who has created the model)	
+    * Negative:	
+        * Trustee	
+        * Vendor(Vendor account is not associated with the given Vendor ID who has create the model)	
+        * VendorAdmin 	
+        * CertificationCenter 	
+        * NodeAdmin 	
+
+* Parameters:	
+    * vid (Vendor ID)	uint16 
+        * Positive:
+            * value > 0	
+            * integer value format
+        * Negative:	
+            * empty value
+            * value =< 0
+            * string value format		
+            * nonexistent ID	
+            * length > MAX	(MAX = 65535)
+    * pid (Product ID)	uint16 
+        * Positive:
+            * value > 0	
+            * integer value format
+            * value falls within the specified range	
+        * Negative:	
+            * empty value
+            * value =< 0
+            * string value format		
+            * nonexistent ID	
+            * length > MAX	(MAX = 65535)
+### REST API
+REST API command: /cosmos/tx/v1beta1/txs: [MsgDeleteModel](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/proto/zigbeealliance/distributedcomplianceledger/model/tx.proto#L83)	
+
+* REST API command send	
+    * Valid command	
+        * correct HTTP method	
+        * request is authorized	
+        * uses valid credentials/role	
+    * Invalid command	
+        * incorrect request	
+        * server side error	
+
+* Сommand result	
+    * DELETE_MODEL command completed successfully ⇒ deletes an existing Model identified by a unique combination of vid (vendor ID) and pid (product ID) by the vendor account
+        * ADD_MODEL command completed successfully	
+        there is at least one Model identified by a unique combination of vid (vendor ID) and pid (product ID)	
+        * combination of vid (vendor ID) and pid (product ID) valid	
+        * the selected model has not been deleted before	
+        * Model Versions associated with the Model is not certified	all associated Model Versions will be deleted as well
+    * DELETE_MODEL command failed ⇒ does not deletes an existing Model identified by a unique combination of vid (vendor ID) and pid (product ID) by the vendor account
+        * ADD_MODEL command was not executed	
+        * there is not one Model identified by a unique combination of vid (vendor ID) and pid (product ID)	
+        * vid (vendor ID) valid and pid (product ID) invalid	
+        * vid (vendor ID) invalid and pid (product ID) valid	
+        * the selected model has been deleted before	
+        * Model Versions associated with the Model is certified	Model can not be deleted
+
+* Role (Who can send)
+    * Positive:
+        * Vendor (Vendor account associated with the given Vendor ID who has created the model)	
+    * Negative:	
+        * Trustee	
+        * Vendor(Vendor account is not associated with the given Vendor ID who has create the model)	
+        * VendorAdmin 	
+        * CertificationCenter 	
+        * NodeAdmin 	
+
+* Parameters:	
+    * vid (Vendor ID)	uint16 
+        * Positive:
+            * value > 0	
+            * integer value format
+        * Negative:	
+            * empty value
+            * value =< 0
+            * string value format		
+            * nonexistent ID	
+            * length > MAX	(MAX = 65535)
+    * pid (Product ID)	uint16 
+        * Positive:
+            * value > 0	
+            * integer value format
+            * value falls within the specified range	
+        * Negative:	
+            * empty value
+            * value =< 0
+            * string value format		
+            * nonexistent ID	
+            * length > MAX	(MAX = 65535)
+
+## [ADD_MODEL_VERSION](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/transactions/model.md#add_model_version)	
+### CLI command	
+CLI command: `dcld tx model add-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --cdVersionNumber=<uint32>
+--minApplicableSoftwareVersion=<uint32> --maxApplicableSoftwareVersion=<uint32> --from=<account>`
+
+* CLI command send	
+    * Valid command	
+        * command exists/relevant	
+    * Invalid command	
+        * incorrect request	
+        * server side error	
+
+* Сommand result	
+    * ADD_MODEL_VERSION command completed successfully ⇒ adds a new Model Software Version identified by a unique combination of vid (vendor ID), pid (product ID) and softwareVersion
+        * ADD_MODEL command completed successfully	
+        * there is at least one Model	
+        * combination of vid (vendor ID) and pid (product ID) for Model valid	
+        * user do not make changes to non-editable fields	
+    * ADD_MODEL_VERSION command failed	⇒ does not adds a new Model Software Version identified by a unique combination of vid (vendor ID), pid (product ID) and softwareVersion
+        * ADD_MODEL command was not executed	
+        * there is not one Model	
+        * vid (vendor ID) valid and pid (product ID) invalid for Model	
+        * vid (vendor ID) invalid and pid (product ID) valid for Model	
+        * the selected model has been deleted before	
+        * user changes to non-editable fields	
+
+* Role (Who can send)
+    * Positive:	
+        * Vendor (Vendor with same Vendor ID who created the Model)	
+    * Negative:
+        * Trustee	
+        * Vendor (Vendor with other Vendor ID who created the Model)	
+        * VendorAdmin 	
+        * CertificationCenter 	
+        * NodeAdmin 	
+
+* Parameters:	
+
+    * vid (Vendor ID) - uint16 
+        * Positive:
+            * unique combination	
+            * value > 0	
+            * integer value format
+            * nonexistent ID	
+        * Negative:	
+            * empty value
+            * value =< 0
+            * string value format		
+            * length > MAX	(MAX = 65535)
+    * pid (Product ID) - uint16 
+        * Positive:
+            * unique combination	
+            * value > 0	
+            * integer value format
+            * nonexistent ID	
+            * value falls within the specified range	
+        * Negative:	
+            * empty value
+            * value =< 0
+            * string value format		
+            * length > MAX	(MAX = 65535)
+    * softwareVersion (Software Version) - uint32
+        * Positive:
+            * value exists	
+            * value >= 0	
+            * integer value format
+        * Negative:	
+            * empty value	
+            * length > MAX	(MAX = 4 294 967 295)
+    * softwareVersionSting (Software Version Sting) - string
+        * Positive:
+            * value exists	
+            * text value format	
+            * MIN < length < MAX	
+        * Negative:	
+            * length > MAX	
+            * empty value	
+    * cdVersionNumber (CD Version Number) - uint16
+        * Positive:
+            * value >= 0	
+            * integer value format
+        * Negative:	
+            * length > MAX	(MAX = 65535)
+            * empty value	
+    * minApplicableSoftwareVersion (Min Applicable Software Version) - uint32
+        * Positive:
+            * value exists	
+            * integer value format
+        * Negative:	
+            * entered value > MinApplicableSoftwareVersion value	
+            * empty value	
+            * length > MAX	(MAX = 4 294 967 295)
+    * maxApplicableSoftwareVersion (Max Applicable Software Version) - uint32
+        * Positive:
+            * value exists	
+            * integer value format
+        * Negative:	
+            * entered value < maxApplicableSoftwareVersion value	
+            * empty value	
+            * length > MAX	(MAX = 4 294 967 295)
+    * firmwareInformation (Firmware Information) - optional(string)
+        * Positive:
+            * value exists	
+            * empty value	
+            * text value format	
+            * MIN < length < MAX	
+        * Negative:	
+            * length > MAX	
+    * softwareVersionValid (Software Version Valid) - optional(bool)
+        * Positive:
+            * empty value	
+            * value state	
+                * TRUE	
+                * FALSE	
+        * Negative:	
+            * value is not bool	
+    * otaURL (OTA URL) - optional(string)
+        * OTA_checksum/OTA_checksum_type fields is set: otaURL field should be set 	
+            * Positive:
+                * value exists	
+                * text value format	
+                * MIN < length < MAX	
+            * Negative:	
+                * empty value	
+                * length > MAX	
+                * сontains spaces or line breaks	
+                * incorrect URL	
+        * OTA_checksum/OTA_checksum_type fields is not set: otaURL field optional	
+            * Positive:
+                * value exists	
+                * empty value	
+                * text value format	
+                * MIN < length < MAX	
+            * Negative:	
+                * length > MAX	
+                * сontains spaces or line breaks	
+                * incorrect URL	
+    * otaFileSize (OTA File Size) - optional(string)
+        * Positive:
+            * value exists	
+            * empty value	
+            * unit of measurement = bytes	
+            * text value format	
+            * MIN < length < MAX	
+        * Negative:	
+            * length > MAX	
+    * otaChecksum (OTA Checksum) - optional(string)
+        * otaURL /OTA_checksum_type fields is set: OTA_checksum field should be set	
+            * Positive:
+                * value exists	
+                * digest corresponds to the content of the OtaUrl attribute	
+                * calculation method for the Digest corresponds to the algorithm from OtaChecksumType	
+                * text value format	
+                * MIN < length < MAX	
+            * Negative:	
+                * empty value	
+                * length > MAX	
+        * otaURL/OTA_checksum_type fields is not set: OTA_checksum field optional	
+            * Positive:
+                * value exists	
+                * digest corresponds to the content of the OtaUrl attribute	
+                * calculation method for the Digest corresponds to the algorithm from OtaChecksumType	
+                * empty value	
+                * text value format	
+                * MIN < length < MAX	
+            * Negative:	
+                * length > MAX	
+    * otaChecksumType (OTA Checksum Type) - optional(string)
+        * otaURL /otaChecksum fields is set: otaChecksumType field should be set	
+            * Positive:
+                * value exists	
+                * integer value format
+                * MIN < length < MAX	
+                * value corresponds to SHA identifier	
+            * Negative:	
+                * empty value	
+                * length > MAX	
+        * otaURL/otaChecksum fields is not set: otaChecksumType field optional	
+            * Positive:
+                * value exists	
+                * empty value	
+                * integer value format
+                * MIN < length < MAX	
+                * value corresponds to SHA identifier	
+            * Negative:	
+                * length > MAX	
+    * releaseNotesURL (Release Notes URL) - optional(string)
+        * Positive:
+            * empty value	
+            * value exists	
+            * URL corresponds to a specific device model	
+            * text value format	
+            * MIN < length < MAX	
+        * Negative:	
+            * length > MAX	
+            * сontains spaces or line breaks	
+            * incorrect URL	
+    * schemaVersion (Schema Version) - optional(uint16)
+        * Positive:
+            * value = 0	
+            * integer value format
+            * empty value	
+        * Negative:	
+            * length > MAX	(MAX = 65535)
+
+### REST API
+REST API command: /cosmos/tx/v1beta1/txs: [MsgCreateModelVersion](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/proto/zigbeealliance/distributedcomplianceledger/model/tx.proto#L90)  	
+
+* REST API command send	
+    * Valid command	
+        * correct HTTP method	
+        * request is authorized	
+        * uses valid credentials/role	
+    * Invalid command	
+        * incorrect request	
+        * server side error	
+
+* Сommand result	
+    * ADD_MODEL_VERSION command completed successfully ⇒ adds a new Model Software Version identified by a unique combination of vid (vendor ID), pid (product ID) and softwareVersion
+        * ADD_MODEL command completed successfully	
+        * there is at least one Model	
+        * combination of vid (vendor ID) and pid (product ID) for Model valid	
+        * user do not make changes to non-editable fields	
+    * ADD_MODEL_VERSION command failed ⇒ does not adds a new Model Software Version identified by a unique combination of vid (vendor ID), pid (product ID) and softwareVersion
+        * ADD_MODEL command was not executed	
+        * there is not one Model	
+        * vid (vendor ID) valid and pid (product ID) invalid for Model	
+        * vid (vendor ID) invalid and pid (product ID) valid for Model	
+        * the selected model has been deleted before	
+        * user changes to non-editable fields	
+
+* Role (Who can send)
+    * Positive:	
+        * Vendor (Vendor with same Vendor ID who created the Model)	
+    * Negative:
+        * Trustee	
+        * Vendor (Vendor with other Vendor ID who created the Model)	
+        * VendorAdmin 	
+        * CertificationCenter 	
+        * NodeAdmin 	
+
+* Parameters:	
+
+    * vid (Vendor ID) - uint16 
+        * Positive:
+            * unique combination	
+            * value > 0	
+            * integer value format
+            * nonexistent ID	
+        * Negative:	
+            * empty value
+            * value =< 0
+            * string value format		
+            * length > MAX	(MAX = 65535)
+    * pid (Product ID) - uint16 
+        * Positive:
+            * unique combination	
+            * value > 0	
+            * integer value format
+            * nonexistent ID	
+            * value falls within the specified range	
+        * Negative:	
+            * empty value
+            * value =< 0
+            * string value format		
+            * length > MAX	(MAX = 65535)
+    * softwareVersion (Software Version) - uint32
+        * Positive:
+            * value exists	
+            * value >= 0	
+            * integer value format
+        * Negative:	
+            * empty value	
+            * length > MAX	(MAX = 4 294 967 295)
+    * softwareVersionSting (Software Version Sting) - string
+        * Positive:
+            * value exists	
+            * text value format	
+            * MIN < length < MAX	
+        * Negative:	
+            * length > MAX	
+            * empty value	
+    * cdVersionNumber (CD Version Number) - uint16
+        * Positive:
+            * value >= 0	
+            * integer value format
+        * Negative:	
+            * length > MAX	(MAX = 65535)
+            * empty value	
+    * minApplicableSoftwareVersion (Min Applicable Software Version) - uint32
+        * Positive:
+            * value exists	
+            * integer value format
+        * Negative:	
+            * entered value > MinApplicableSoftwareVersion value	
+            * empty value	
+            * length > MAX	(MAX = 4 294 967 295)
+    * maxApplicableSoftwareVersion (Max Applicable Software Version) - uint32
+        * Positive:
+            * value exists	
+            * integer value format
+        * Negative:	
+            * entered value < maxApplicableSoftwareVersion value	
+            * empty value	
+            * length > MAX	(MAX = 4 294 967 295)
+    * firmwareInformation (Firmware Information) - optional(string)
+        * Positive:
+            * value exists	
+            * empty value	
+            * text value format	
+            * MIN < length < MAX	
+        * Negative:	
+            * length > MAX	
+    * softwareVersionValid (Software Version Valid) - optional(bool)
+        * Positive:
+            * empty value	
+            * value state	
+                * TRUE	
+                * FALSE	
+        * Negative:	
+            * value is not bool	
+    * otaURL (OTA URL) - optional(string)
+        * OTA_checksum/OTA_checksum_type fields is set: otaURL field should be set 	
+            * Positive:
+                * value exists	
+                * text value format	
+                * MIN < length < MAX	
+            * Negative:	
+                * empty value	
+                * length > MAX	
+                * сontains spaces or line breaks	
+                * incorrect URL	
+        * OTA_checksum/OTA_checksum_type fields is not set: otaURL field optional	
+            * Positive:
+                * value exists	
+                * empty value	
+                * text value format	
+                * MIN < length < MAX	
+            * Negative:	
+                * length > MAX	
+                * сontains spaces or line breaks	
+                * incorrect URL	
+    * otaFileSize (OTA File Size) - optional(string)
+        * Positive:
+            * value exists	
+            * empty value	
+            * unit of measurement = bytes	
+            * text value format	
+            * MIN < length < MAX	
+        * Negative:	
+            * length > MAX	
+    * otaChecksum (OTA Checksum) - optional(string)
+        * otaURL /OTA_checksum_type fields is set: OTA_checksum field should be set	
+            * Positive:
+                * value exists	
+                * digest corresponds to the content of the OtaUrl attribute	
+                * calculation method for the Digest corresponds to the algorithm from OtaChecksumType	
+                * text value format	
+                * MIN < length < MAX	
+            * Negative:	
+                * empty value	
+                * length > MAX	
+        * otaURL/OTA_checksum_type fields is not set: OTA_checksum field optional	
+            * Positive:
+                * value exists	
+                * digest corresponds to the content of the OtaUrl attribute	
+                * calculation method for the Digest corresponds to the algorithm from OtaChecksumType	
+                * empty value	
+                * text value format	
+                * MIN < length < MAX	
+            * Negative:	
+                * length > MAX	
+    * otaChecksumType (OTA Checksum Type) - optional(string)
+        * otaURL /otaChecksum fields is set: otaChecksumType field should be set	
+            * Positive:
+                * value exists	
+                * integer value format
+                * MIN < length < MAX	
+                * value corresponds to SHA identifier	
+            * Negative:	
+                * empty value	
+                * length > MAX	
+        * otaURL/otaChecksum fields is not set: otaChecksumType field optional	
+            * Positive:
+                * value exists	
+                * empty value	
+                * integer value format
+                * MIN < length < MAX	
+                * value corresponds to SHA identifier	
+            * Negative:	
+                * length > MAX	
+    * releaseNotesURL (Release Notes URL) - optional(string)
+        * Positive:
+            * empty value	
+            * value exists	
+            * URL corresponds to a specific device model	
+            * text value format	
+            * MIN < length < MAX	
+        * Negative:	
+            * length > MAX	
+            * сontains spaces or line breaks	
+            * incorrect URL	
+    * schemaVersion (Schema Version) - optional(uint16)
+        * Positive:
+            * value = 0	
+            * integer value format
+            * empty value	
+        * Negative:	
+            * length > MAX	(MAX = 65535)
+
+## EDIT_MODEL_VERSION	
+### CLI command	
+CLI command send	
+Valid command	
+command exists/relevant	
+Invalid command	
+access is denied to execute command	
+incorrect command syntax	
+Сommand result	
+EDIT_MODEL_VERSION command completed successfully	edits an existing Model Software Version identified by a unique combination of vid (vendor ID) pid (product ID) and softwareVersion by the vendor
+ADD_MODEL and ADD_MODEL_VERSION command completed successfully	
+there is at least one Model and Model Version	
+combination of vid (vendor ID) and pid (product ID) for Model valid	
+combination of vid (vendor ID) pid (product ID) and softwareVersion for Model Version valid	
+the user did not make changes to the fields vid (vendor ID), pid (product ID) and softwareVersion	
+EDIT_MODEL_VERSION command failed	does not edits an existing Model Software Version identified by a unique combination of vid (vendor ID) pid (product ID) and softwareVersion by the vendor
+ADD_MODEL command was not executed	
+ADD_MODEL command completed successfully, but  ADD_MODEL_VERSION command was not executed	
+record about a selected Model has been deleted	
+record about a selected Model Version has been deleted	
+there is not one Model Version or Model	
+vid (vendor ID) valid,  pid (product ID) and softwareVersion invalid	
+pid (product ID) valid, vid (vendor ID) and softwareVersion invalid	
+softwareVersion valid, vid (vendor ID) and pid (product ID) invalid	
+user changes to non-editable fields	
+Role (Who can send)	
+Trustee	error
+Vendor 	error
+Vendor with same Vendor ID who created the Model	
+Vendor with other Vendor ID who created the Model	error
+VendorAdmin 	error
+CertificationCenter 	error
+NodeAdmin 	error
+Parameters:	
+vid (Vendor ID)	uint16 
+     * Positive:
+unique combination	
+value > 0	
+integer value format
+nonexistent ID	
+     * Negative:	
+empty value
+value =< 0
+string value format		
+length > MAX	(MAX = 65535)
+pid (Product ID)	uint16 
+     * Positive:
+unique combination	
+value > 0	
+integer value format
+nonexistent ID	
+value falls within the specified range	
+     * Negative:	
+empty value
+value =< 0
+string value format		
+length > MAX	(MAX = 65535)
+softwareVersion (Software Version)	uint32
+     * Positive:
+value exists	
+value >= 0	
+integer value format
+     * Negative:	
+empty value	
+length > MAX	(MAX = 4 294 967 295)
+softwareVersionValid (Software Version Valid)	optional(bool)
+     * Positive:
+empty value	
+value state	
+TRUE	
+FALSE	
+     * Negative:	
+value is not bool	
+otaURL (OTA URL)	optional(string)
+otaFileSize, otaChecksum and otaChecksumType field are already set	
+     * Positive:
+value exists	
+empty value	
+text value format	
+MIN < length < MAX	
+     * Negative:	
+length > MAX	
+сontains spaces or line breaks	
+incorrect URL	
+otaFileSize, otaChecksum and otaChecksumType field are not set	
+maxApplicableSoftwareVersion (Max Applicable Software Version)	uint32
+     * Positive:
+value exists	
+integer value format
+     * Negative:	
+entered value < maxApplicableSoftwareVersion value	
+empty value	
+length > MAX	(MAX = 4 294 967 295)
+minApplicableSoftwareVersion (Min Applicable Software Version)	uint32
+     * Positive:
+value exists	
+integer value format
+     * Negative:	
+entered value > MinApplicableSoftwareVersion value	
+empty value	
+length > MAX	MAX = (4 294 967 295)
+otaFileSize (OTA File Size)	optional(string)
+     * Positive:
+value exists	
+empty value	
+unit of measurement = bytes	
+text value format	
+MIN < length < MAX	
+     * Negative:	
+length > MAX	
+otaChecksum (OTA Checksum)	optional(string)
+     * Positive:
+value exists	
+digest corresponds to the content of the OtaUrl attribute	
+calculation method for the Digest corresponds to the algorithm from OtaChecksumType	
+empty value	
+text value format	
+MIN < length < MAX	
+     * Negative:	
+length > MAX	
+otaChecksumType (OTA Checksum Type)	optional(string)
+     * Positive:
+value exists	
+empty value	
+integer value format
+MIN < length < MAX	
+value corresponds to SHA identifier	
+     * Negative:	
+length > MAX	
+releaseNotesURL (Release Notes URL)	optional(string)
+     * Positive:
+empty value	
+value exists	
+URL corresponds to a specific device model	
+text value format	
+MIN < length < MAX	
+     * Negative:	
+length > MAX	
+сontains spaces or line breaks	
+incorrect URL	
+schemaVersion (Schema Version)	optional(uint16)
+     * Positive:
+value = 0	
+integer value format
+empty value	
+     * Negative:	
+length > MAX	(MAX = 65535)
+#### REST API 	
+REST API command send	
+Valid command	
+correct HTTP method	
+request is authorized	
+uses valid credentials/role	
+Invalid command	
+incorrect request	
+server side error	
+Сommand result	
+EDIT_MODEL_VERSION command completed successfully	edits an existing Model Software Version identified by a unique combination of vid (vendor ID) pid (product ID) and softwareVersion by the vendor
+ADD_MODEL and ADD_MODEL_VERSION command completed successfully	
+there is at least one Model and Model Version	
+combination of vid (vendor ID) and pid (product ID) for Model valid	
+combination of vid (vendor ID) pid (product ID) and softwareVersion for Model Version valid	
+the user did not make changes to the fields vid (vendor ID), pid (product ID) and softwareVersion	
+EDIT_MODEL_VERSION command failed	does not edits an existing Model Software Version identified by a unique combination of vid (vendor ID) pid (product ID) and softwareVersion by the vendor
+ADD_MODEL command was not executed	
+ADD_MODEL command completed successfully, but  ADD_MODEL_VERSION command was not executed	
+record about a selected Model has been deleted	
+record about a selected Model Version has been deleted	
+there is not one Model Version or Model	
+vid (vendor ID) valid,  pid (product ID) and softwareVersion invalid	
+pid (product ID) valid, vid (vendor ID) and softwareVersion invalid	
+softwareVersion valid, vid (vendor ID) and pid (product ID) invalid	
+user changes to non-editable fields	
+Role (Who can send)	
+Trustee	error
+Vendor 	error
+Vendor with same Vendor ID who created the Model	
+Vendor with other Vendor ID who created the Model	error
+VendorAdmin 	error
+CertificationCenter 	error
+NodeAdmin 	error
+Parameters:	
+vid (Vendor ID)	uint16 
+     * Positive:
+unique combination	
+value > 0	
+integer value format
+nonexistent ID	
+     * Negative:	
+empty value
+value =< 0
+string value format		
+length > MAX	(MAX = 65535)
+pid (Product ID)	uint16 
+     * Positive:
+unique combination	
+value > 0	
+integer value format
+nonexistent ID	
+value falls within the specified range	
+     * Negative:	
+empty value
+value =< 0
+string value format		
+length > MAX	(MAX = 65535)
+softwareVersion (Software Version)	uint32
+     * Positive:
+value exists	
+value >= 0	
+integer value format
+     * Negative:	
+empty value	
+length > MAX	(MAX = 4 294 967 295)
+softwareVersionValid (Software Version Valid)	optional(bool)
+     * Positive:
+empty value	
+value state	
+TRUE	
+FALSE	
+     * Negative:	
+value is not bool	
+otaURL (OTA URL)	optional(string)
+otaFileSize, otaChecksum and otaChecksumType field are already set	
+     * Positive:
+value exists	
+empty value	
+text value format	
+format	
+format	
+length > MAX	
+сontains spaces or line breaks	
+incorrect URL	
+otaFileSize, otaChecksum and otaChecksumType field are not set	
+maxApplicableSoftwareVersion (Max Applicable Software Version)	uint32
+     * Positive:
+value exists	
+integer value format
+     * Negative:	
+entered value < maxApplicableSoftwareVersion value	
+empty value	
+length > MAX	(MAX = 4 294 967 295)
+minApplicableSoftwareVersion (Min Applicable Software Version)	uint32
+     * Positive:
+value exists	
+integer value format
+     * Negative:	
+entered value > MinApplicableSoftwareVersion value	
+empty value	
+length > MAX	(MAX = 4 294 967 295)
+otaFileSize (OTA File Size)	optional(string)
+     * Positive:
+value exists	
+empty value	
+unit of measurement = bytes	
+text value format	
+MIN < length < MAX	
+     * Negative:	
+length > MAX	
+otaChecksum (OTA Checksum)	optional(string)
+     * Positive:
+value exists	
+digest corresponds to the content of the OtaUrl attribute	
+calculation method for the Digest corresponds to the algorithm from OtaChecksumType	
+empty value	
+text value format	
+MIN < length < MAX	
+     * Negative:	
+length > MAX	
+otaChecksumType (OTA Checksum Type)	optional(string)
+     * Positive:
+value exists	
+empty value	
+integer value format
+MIN < length < MAX	
+value corresponds to SHA identifier	
+     * Negative:	
+length > MAX	
+releaseNotesURL (Release Notes URL)	optional(string)
+     * Positive:
+empty value	
+value exists	
+URL corresponds to a specific device model	
+text value format	
+MIN < length < MAX	
+     * Negative:	
+length > MAX	
+сontains spaces or line breaks	
+incorrect URL	
+schemaVersion (Schema Version)	optional(uint16)
+     * Positive:
+value = 0	
+integer value format
+empty value	
+     * Negative:	
+length > MAX	(MAX = 65535)
+### DELETE_MODEL_VERSION	
+#### CLI command	
+CLI command send	
+Valid command	
+command exists/relevant	
+Invalid command	
+access is denied to execute command	
+incorrect command syntax	
+Сommand result	
+DELETE_MODEL_VERSION command completed successfully	deletes an existing Model Version identified by a unique combination of vid (vendor ID), pid (product ID) and softwareVersion by the vendor account
+ADD_MODEL and ADD_MODEL_VERSION command completed successfully	
+selected Model and Model Version have not been deleted previously	
+Model Version can be deleted only before it is certified	
+combination of vid (vendor ID) and pid (product ID) for Model valid	
+combination of vid (vendor ID) pid (product ID) and softwareVersion for Model Version valid	
+DELETE_MODEL_VERSION command failed	does not deletes an existing Model Version identified by a unique combination of vid (vendor ID), pid (product ID) and softwareVersion by the vendor account
+Model Version is certified	
+ADD_MODEL command was not executed	
+ADD_MODEL command completed successfully, but  ADD_MODEL_VERSION command was not executed	
+selected Model and Model Version have not been deleted previously	
+vid (vendor ID) valid,  pid (product ID) and softwareVersion invalid	
+pid (product ID) valid, vid (vendor ID) and softwareVersion invalid	
+softwareVersion valid, vid (vendor ID) and pid (product ID) invalid	
+Role (Who can send)	
+Trustee	error
+Vendor 	error
+Vendor account associated with the same Vendor ID who has created the model version	
+Vendor account is not associated with the same Vendor ID who has created the model version	error
+VendorAdmin 	error
+CertificationCenter 	error
+NodeAdmin 	error
+Parameters:	
+vid (Vendor ID)	uint16 
+     * Positive:
+unique combination	
+value > 0	
+integer value format
+nonexistent ID	
+     * Negative:	
+empty value
+value =< 0
+string value format		
+length > MAX	(MAX = 65535)
+pid (Product ID)	uint16 
+     * Positive:
+unique combination	
+value > 0	
+integer value format
+nonexistent ID	
+value falls within the specified range	
+     * Negative:	
+empty value
+value =< 0
+string value format		
+length > MAX	(MAX = 65535)
+softwareVersion (Software Version)	uint32
+     * Positive:
+value exists	
+value >= 0	
+integer value format
+     * Negative:	
+empty value	
+length > MAX	(MAX = 4 294 967 295)
+#### REST API 	
+REST API command send	
+Valid command	
+correct HTTP method	
+request is authorized	
+uses valid credentials/role	
+Invalid command	
+incorrect request	
+server side error	
+Сommand result	
+DELETE_MODEL_VERSION command completed successfully	deletes an existing Model Version identified by a unique combination of vid (vendor ID), pid (product ID) and softwareVersion by the vendor account
+ADD_MODEL and ADD_MODEL_VERSION command completed successfully	
+selected Model and Model Version have not been deleted previously	
+Model Version can be deleted only before it is certified	
+combination of vid (vendor ID) and pid (product ID) for Model valid	
+combination of vid (vendor ID) pid (product ID) and softwareVersion for Model Version valid	
+DELETE_MODEL_VERSION command failed	does not deletes an existing Model Version identified by a unique combination of vid (vendor ID), pid (product ID) and softwareVersion by the vendor account
+Model Version is certified	
+ADD_MODEL command was not executed	
+ADD_MODEL command completed successfully, but  ADD_MODEL_VERSION command was not executed	
+selected Model and Model Version have not been deleted previously	
+vid (vendor ID) valid,  pid (product ID) and softwareVersion invalid	
+pid (product ID) valid, vid (vendor ID) and softwareVersion invalid	
+softwareVersion valid, vid (vendor ID) and pid (product ID) invalid	
+Role (Who can send)	
+Trustee	error
+Vendor 	error
+Vendor account associated with the same Vendor ID who has created the model version	
+Vendor account is not associated with the same Vendor ID who has created the model version	error
+VendorAdmin 	error
+CertificationCenter 	error
+NodeAdmin 	error
+Parameters:	
+vid (Vendor ID)	uint16 
+     * Positive:
+unique combination	
+value > 0	
+integer value format
+nonexistent ID	
+     * Negative:	
+empty value
+value =< 0
+string value format		
+length > MAX	(MAX = 65535)
+pid (Product ID)	uint16 
+     * Positive:
+unique combination	
+value > 0	
+integer value format
+nonexistent ID	
+value falls within the specified range	
+     * Negative:	
+empty value
+value =< 0
+string value format		
+length > MAX	(MAX = 65535)
+softwareVersion (Software Version)	uint32
+     * Positive:
+value exists	
+value >= 0	
+integer value format
+     * Negative:	
+empty value	
+length > MAX	(MAX = 4 294 967 295)
+### GET_MODEL	
+#### CLI command	
+CLI command send	
+Valid command	
+command exists/relevant	
+Invalid command	
+access is denied to execute command	
+incorrect command syntax	
+Сommand result	
+GET_MODEL command completed successfully	gets a Model Info with the given vid (vendor ID) and pid (product ID)
+ADD_MODEL command completed successfully	
+selected Model have not been deleted previously	
+combination of vid (vendor ID) and pid (product ID) for Model valid	
+GET_MODEL command failed	does not gets a Model Info with the given vid (vendor ID) and pid (product ID)
+ADD_MODEL command was not executed	
+record about a Model has been deleted	
+vid (vendor ID) valid,  pid (product ID) invalid	
+pid (product ID) valid, vid (vendor ID) invalid	
+Role (Who can send)	
+Trustee	
+Vendor 	
+VendorAdmin 	
+CertificationCenter 	
+NodeAdmin 	
+Parameters:	
+vid (Vendor ID)	uint16 
+     * Positive:
+unique value	
+value > 0	
+integer value format
+     * Negative:	
+empty value
+value =< 0
+string value format		
+nonexistent value	
+length > MAX	(MAX = 65535)
+pid (Product ID)	uint16 
+     * Positive:
+unique value	
+value > 0	
+integer value format
+value falls within the specified range	
+     * Negative:	
+empty value
+value =< 0
+string value format		
+nonexistent value	
+length > MAX	(MAX = 65535)
+#### REST API 	
+REST API command send	
+Valid command	
+correct HTTP method	
+request is authorized	
+uses valid credentials/role	
+Invalid command	
+incorrect request	
+server side error	
+Сommand result	
+GET_MODEL command completed successfully	gets a Model Info with the given vid (vendor ID) and pid (product ID)
+ADD_MODEL command completed successfully	
+selected Model have not been deleted previously	
+combination of vid (vendor ID) and pid (product ID) for Model valid	
+GET_MODEL command failed	does not gets a Model Info with the given vid (vendor ID) and pid (product ID)
+ADD_MODEL command was not executed	
+record about a Model has been deleted	
+vid (vendor ID) valid,  pid (product ID)  invalid	
+pid (product ID) valid, vid (vendor ID) invalid	
+Role (Who can send)	
+Trustee	
+Vendor 	
+VendorAdmin 	
+CertificationCenter 	
+NodeAdmin 	
+Parameters:	
+vid (Vendor ID)	uint16 
+     * Positive:
+unique value	
+value > 0	
+integer value format
+     * Negative:	
+empty value
+value =< 0
+string value format		
+nonexistent value	
+length > MAX	(MAX = 65535)
+pid (Product ID)	uint16 
+     * Positive:
+unique value	
+value > 0	
+integer value format
+value falls within the specified range	
+     * Negative:	
+empty value
+value =< 0
+string value format		
+nonexistent value	
+length > MAX	(MAX = 65535)
+### GET_MODEL_VERSION	
+#### CLI command	
+CLI command send	
+Valid command	
+command exists/relevant	
+Invalid command	
+access is denied to execute command	
+incorrect command syntax	
+Сommand result	
+GET_MODEL_VERSION command completed successfully	gets a Model Software Versions for the given vid, pid and softwareVersion
+ADD_MODEL and ADD_MODEL_VERSION command completed successfully	
+selected Model and Model Version have not been deleted previously	
+combination of vid (vendor ID), pid (product ID) and softwareVersion for Model Version valid	
+GET_MODEL_VERSION command failed	does not gets a Model Software Versions for the given vid, pid and softwareVersion
+ADD_MODEL command was not executed	
+ADD_MODEL command completed successfully, but ADD_MODEL_VERSION command was not executed	
+record about a selected Model has been deleted	
+record about a selected Model Version has been deleted	
+vid (vendor ID) valid,  pid (product ID) and softwareVersion invalid	
+pid (product ID) valid, vid (vendor ID) and softwareVersion invalid	
+softwareVersion valid, vid (vendor ID) and pid (product ID) invalid	
+Role (Who can send)	
+Trustee	
+Vendor 	
+VendorAdmin 	
+CertificationCenter 	
+NodeAdmin 	
+Role (Who can send)	
+Trustee	
+The role corresponds to the Vendor ID	
+The role is not corresponds to the Vendor ID	
+Vendor 	
+The role corresponds to the Vendor ID	
+The role is not corresponds to the Vendor ID	
+VendorAdmin 	
+The role corresponds to the Vendor ID	
+The role is not corresponds to the Vendor ID	
+CertificationCenter 	
+The role corresponds to the Vendor ID	
+The role is not corresponds to the Vendor ID	
+NodeAdmin 	
+The role corresponds to the Vendor ID	
+The role is not corresponds to the Vendor ID	
+Parameters:	
+vid (Vendor ID)	uint16 
+     * Positive:
+unique value	
+value > 0	
+integer value format
+     * Negative:	
+empty value
+value =< 0
+string value format		
+nonexistent value	
+length > MAX	(MAX = 65535)
+pid (Product ID)	uint16 
+     * Positive:
+unique value	
+value > 0	
+integer value format
+value falls within the specified range	
+     * Negative:	
+empty value
+value =< 0
+string value format		
+nonexistent value	
+length > MAX	(MAX = 65535)
+softwareVersion (Software Version)	uint32
+     * Positive:
+value exists	
+value >= 0	
+integer value format
+     * Negative:	
+empty value	
+length > MAX	(MAX = 4 294 967 295)
+#### REST API 	
+REST API command send	
+Valid command	
+correct HTTP method	
+request is authorized	
+uses valid credentials/role	
+Invalid command	
+incorrect request	
+server side error	
+Сommand result	
+GET_MODEL_VERSION command completed successfully	gets a Model Software Versions for the given vid, pid and softwareVersion
+ADD_MODEL and ADD_MODEL_VERSION command completed successfully	
+selected Model and Model Version have not been deleted previously	
+combination of vid (vendor ID), pid (product ID) and softwareVersion for Model Version valid	
+GET_MODEL_VERSION command failed	does not gets a Model Software Versions for the given vid, pid and softwareVersion
+ADD_MODEL command was not executed	
+ADD_MODEL command completed successfully, but ADD_MODEL_VERSION command was not executed	
+record about a selected Model has been deleted	
+record about a selected Model Version has been deleted	
+vid (vendor ID) valid,  pid (product ID) and softwareVersion invalid	
+pid (product ID) valid, vid (vendor ID) and softwareVersion invalid	
+softwareVersion valid, vid (vendor ID) and pid (product ID) invalid	
+Role (Who can send)	
+Trustee	
+Vendor 	
+VendorAdmin 	
+CertificationCenter 	
+NodeAdmin 	
+Parameters:	
+vid (Vendor ID)	uint16 
+     * Positive:
+unique value	
+value > 0	
+integer value format
+     * Negative:	
+empty value
+value =< 0
+string value format		
+nonexistent value	
+length > MAX	(MAX = 65535)
+pid (Product ID)	uint16 
+     * Positive:
+unique value	
+value > 0	
+integer value format
+value falls within the specified range	
+     * Negative:	
+empty value
+value =< 0
+string value format		
+nonexistent value	
+length > MAX	(MAX = 65535)
+softwareVersion (Software Version)	uint32
+     * Positive:
+value exists	
+value >= 0	
+integer value format
+     * Negative:	
+empty value	
+length > MAX	(MAX = 4 294 967 295)
+### GET_ALL_MODELS	
+#### CLI command	
+CLI command send	
+Valid command	
+command exists/relevant	
+Invalid command	
+access is denied to execute command	
+incorrect command syntax	
+there is not a single model	
+Сommand result	
+GET_ALL_MODELS command completed successfully	gets all Model Infos for all vendors
+ADD_MODEL command completed successfully	
+there is at least one Model Info	
+GET_ALL_MODELS command failed	does not gets all Model Infos for all vendors
+ADD_MODEL command was not executed	
+there is not one Model Info	
+Role (Who can send)	
+Trustee	
+Vendor 	
+VendorAdmin 	
+CertificationCenter 	
+NodeAdmin 	
+Parameters:	
+count-total	optional(bool)
+     * Positive:
+empty value	
+value state	
+TRUE (-1)	
+FALSE (0)	
+     * Negative:	
+value is not bool	
+limit 	optional(uint)
+     * Positive:
+value exists	
+empty value	
+     * Negative:	
+value > 100	
+offset 	optional(uint)
+     * Positive:
+value exists	
+empty value	
+     * Negative:	
+value < 0	
+page 	optional(uint)
+     * Positive:
+value exists	
+empty value	
+     * Negative:	
+value < 0	
+page-key	optional(string)
+     * Positive:
+empty value	
+value exists	
+     * Negative:	
+length < MIN	
+reverse	optional(bool)
+     * Positive:
+empty value	
+value state	
+TRUE (-1)	
+FALSE (0)	
+     * Negative:	
+value is not bool	
+#### REST API 	
+REST API command send	
+Valid command	
+correct HTTP method	
+request is authorized	
+uses valid credentials/role	
+Invalid command	
+incorrect request	
+server side error	
+Сommand result	
+GET_ALL_MODELS command completed successfully	gets all Model Infos for all vendors
+ADD_MODEL command completed successfully	
+there is at least one Model Info	
+GET_ALL_MODELS command failed	does not gets all Model Infos for all vendors
+ADD_MODEL command was not executed	
+there is not one Model Info	
+Role (Who can send)	
+Trustee	
+Vendor 	
+VendorAdmin 	
+CertificationCenter 	
+NodeAdmin 	
+Parameters:	
+count-total	optional(bool)
+     * Positive:
+empty value	
+value state	
+TRUE (-1)	
+FALSE (0)	
+     * Negative:	
+value is not bool	
+limit 	optional(uint)
+     * Positive:
+value exists	
+empty value	
+     * Negative:	
+value > 100	
+offset 	optional(uint)
+     * Positive:
+value exists	
+empty value	
+     * Negative:	
+value < 0	
+page 	optional(uint)
+     * Positive:
+value exists	
+empty value	
+     * Negative:	
+value < 0	
+page-key	optional(string)
+     * Positive:
+empty value	
+value exists	
+     * Negative:	
+length < MIN	
+reverse	optional(bool)
+     * Positive:
+empty value	
+value state	
+TRUE (-1)	
+FALSE (0)	
+     * Negative:	
+value is not bool	
+### GET_ALL_VENDOR_MODELS	
+#### CLI command	
+CLI command send	
+Valid command	
+command exists/relevant	
+Invalid command	
+access is denied to execute command	
+incorrect command syntax	
+Сommand result	
+GET_ALL_VENDOR_MODELS command completed successfully	gets all Model Infos by the given Vendor (vid)
+ADD_MODEL command completed successfully	
+there is at least one Model Info by the given Vendor (vid)	
+GET_ALL_VENDOR_MODELS command failed	does not gets all Model Infos by the given Vendor (vid)
+ADD_MODEL command was not executed	
+there is not one Model Info by the given Vendor (vid)	
+Role (Who can send)	
+Trustee	
+Vendor 	
+VendorAdmin 	
+CertificationCenter 	
+NodeAdmin 	
+Parameters:	
+vid (Vendor ID)	uint16 
+     * Positive:
+unique value	
+value > 0	
+integer value format
+     * Negative:	
+empty value
+value =< 0
+string value format		
+nonexistent value	
+length > MAX	(MAX = 65535)
+#### REST API 	
+REST API command send	
+Valid command	
+correct HTTP method	
+request is authorized	
+uses valid credentials/role	
+Invalid command	
+incorrect request	
+server side error	
+Сommand result	
+GET_ALL_VENDOR_MODELS command completed successfully	gets all Model Infos by the given Vendor (vid)
+ADD_MODEL command completed successfully	
+there is at least one Model Info by the given Vendor (vid)	
+GET_ALL_VENDOR_MODELS command failed	does not gets all Model Infos by the given Vendor (vid)
+ADD_MODEL command was not executed	
+there is not one Model Info by the given Vendor (vid)	
+Role (Who can send)	
+Trustee	
+Vendor 	
+VendorAdmin 	
+CertificationCenter 	
+NodeAdmin 	
+Parameters:	
+vid (Vendor ID)	uint16 
+     * Positive:
+unique value	
+value > 0	
+integer value format
+     * Negative:	
+empty value
+value =< 0
+string value format		
+nonexistent value	
+length > MAX	MAX = 65535
+### GET_ALL_MODEL_VERSIONS	
+#### CLI command	
+CLI command send	
+Valid command	
+command exists/relevant	
+Invalid command	
+access is denied to execute command	
+incorrect command syntax	
+Сommand result	
+GET_ALL_MODEL_VERSIONS command completed successfully	gets all Model Software Versions for the given vid and pid combination
+ADD_MODEL command completed successfully	
+there is at least one Model Software Versions for the given vid and pid combination	
+GET_ALL_MODEL_VERSIONS command failed	does not gets all Model Software Versions for the given vid and pid combination
+ADD_MODEL command was not executed	
+there is not oneModel Software Versions for the given vid and pid combination	
+Role (Who can send)	
+Trustee	
+Vendor 	
+VendorAdmin 	
+CertificationCenter 	
+NodeAdmin 	
+Parameters:	
+vid (Vendor ID)	uint16 
+     * Positive:
+unique value	
+value > 0	
+integer value format
+     * Negative:	
+empty value
+value =< 0
+string value format		
+nonexistent value	
+length > MAX	MAX = 65535
+pid (Product ID)	uint16 
+     * Positive:
+unique value	
+value > 0	
+integer value format
+value falls within the specified range	
+     * Negative:	
+empty value
+value =< 0
+string value format		
+nonexistent value	
+length > MAX	MAX = 65535
+#### REST API 	
+REST API command send	
+Valid command	
+correct HTTP method	
+request is authorized	
+uses valid credentials/role	
+Invalid command	
+incorrect request	
+server side error	
+Сommand result	
+GET_ALL_MODEL_VERSIONS command completed successfully	gets all Model Software Versions for the given vid and pid combination
+ADD_MODEL command completed successfully	
+there is at least one Model Software Versions for the given vid and pid combination	
+GET_ALL_MODEL_VERSIONS command failed	does not gets all Model Software Versions for the given vid and pid combination
+ADD_MODEL command was not executed	
+there is not oneModel Software Versions for the given vid and pid combination	
+Role (Who can send)	
+Trustee	
+Vendor 	
+VendorAdmin 	
+CertificationCenter 	
+NodeAdmin 	
+Parameters:	
+vid (Vendor ID)	uint16 
+     * Positive:
+unique value	
+value > 0	
+integer value format
+     * Negative:	
+empty value
+value =< 0
+string value format		
+nonexistent value	
+length > MAX	MAX = 65535
+pid (Product ID)	uint16 
+     * Positive:
+unique value	
+value > 0	
+integer value format
+value falls within the specified range	
+     * Negative:	
+empty value
+value =< 0
+string value format		
+nonexistent value	
+length > MAX	MAX = 65535
