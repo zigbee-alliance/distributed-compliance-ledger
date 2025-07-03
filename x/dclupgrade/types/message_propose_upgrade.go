@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -54,6 +55,7 @@ func (msg *MsgProposeUpgrade) GetSignBytes() []byte {
 }
 
 func ValidateBinaries(planInfo *string) error {
+	fmt.Fprintln(os.Stderr, "Start validate binaries")
 	var planInfoJson map[string]map[string]string
 
 	err := json.Unmarshal([]byte(*planInfo), &planInfoJson)
@@ -73,11 +75,12 @@ func ValidateBinaries(planInfo *string) error {
 		}
 
 		// println("Trying download file from ", fileUrl)
+		fmt.Fprintln(os.Stderr, "Trying download file from ", fileUrl)
 
 		// Create the file
 		out, err := os.Create(TmpFileForValidateBinaries)
 		if err != nil {
-			return err
+			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "error creatinging temp binary file")
 		}
 		defer out.Close()
 		defer os.Remove(TmpFileForValidateBinaries)
@@ -98,9 +101,9 @@ func ValidateBinaries(planInfo *string) error {
 		if expectedSum != realSum {
 			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid file checksum")
 		}
-
-		// println("Download and checksum verification completed successfully")
 	}
+
+	println("Download and checksum verification completed successfully")
 
 	return nil
 }

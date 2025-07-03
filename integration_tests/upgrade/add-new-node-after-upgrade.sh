@@ -194,5 +194,7 @@ check_adding_new_node() {
 
   echo "PASSED"
 
+  sleep 9999999999999
+
   cleanup
 }
