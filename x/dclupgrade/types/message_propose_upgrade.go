@@ -4,7 +4,6 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -59,18 +58,18 @@ func ValidateBinaries(planInfo *string) error {
 
 	err := json.Unmarshal([]byte(*planInfo), &planInfoJson)
 	if err != nil {
-		return fmt.Errorf("invalid JSON: %v", err)
+		return sdkerrors.ErrJSONUnmarshal
 	}
 
 	for _, urlWithSum := range planInfoJson["binaries"] {
 		fileUrl, sh256Sum, found1 := strings.Cut(urlWithSum, "?")
 		if !found1 {
-			return fmt.Errorf("invalid parsing raw url")
+			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid parsing raw url")
 		}
 
 		_, expectedSum, found2 := strings.Cut(sh256Sum, ":")
 		if !found2 {
-			return fmt.Errorf("invalid parsing raw url")
+			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid parsing raw url")
 		}
 
 		// println("Trying download file from ", fileUrl)
@@ -85,7 +84,7 @@ func ValidateBinaries(planInfo *string) error {
 
 		resp, err := http.Get(fileUrl)
 		if err != nil {
-			return fmt.Errorf("downloading file: %v", err)
+			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "error downloading a binary file")
 		}
 		defer resp.Body.Close()
 
@@ -97,7 +96,7 @@ func ValidateBinaries(planInfo *string) error {
 
 		realSum := hex.EncodeToString(hash256.Sum(nil))
 		if expectedSum != realSum {
-			return fmt.Errorf("invalid file checksum")
+			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid file checksum")
 		}
 
 		// println("Download and checksum verification completed successfully")
@@ -122,9 +121,11 @@ func (msg *MsgProposeUpgrade) ValidateBasic() error {
 		return err
 	}
 
-	err = ValidateBinaries(&msg.Plan.Info)
-	if err != nil {
-		return err
+	if len(msg.Plan.Info) > 0 {
+		err = ValidateBinaries(&msg.Plan.Info)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

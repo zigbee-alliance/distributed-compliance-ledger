@@ -137,9 +137,11 @@ var (
 	TestDate   = "2020-02-02T02:00:00Z"
 
 	// Upgrade.
-	UpgradePlanName         = "TestUpgrade"
-	UpgradePlanHeight int64 = 1337
-	UpgradePlanInfo         = "Some upgrade info"
+	UpgradePlanName                    = "TestUpgrade"
+	UpgradePlanHeight            int64 = 1337
+	UpgradePlanInfo                    = "{\"binaries\":{\"linux/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.2.2/dcld?checksum=sha256:3f2b2a98b7572c6598383f7798c6bc16b4e432ae5cfd9dc8e84105c3d53b5026\"}}"
+	UpgradePlanInfoWrongChecksum       = "{\"binaries\":{\"linux/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.2.2/dcld?checksum=sha256:1f2b2a98b7572c6598383f7798c6bc16b4e432ae5cfd9dc8e84105c3d53b5026\"}}"
+	UpgradePlanInfoWrong               = "Some upgrade info wrong"
 
 	//
 	Address1, _           = sdk.AccAddressFromBech32("cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf")

@@ -85,6 +85,20 @@ func TestMsgProposeUpgrade_ValidateBasic(t *testing.T) {
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		},
+		{
+			name: "invalid binary file checksum",
+			msg: MsgProposeUpgrade{
+				Creator: sample.AccAddress(),
+				Plan: Plan{
+					Name:   testconstants.UpgradePlanName,
+					Height: testconstants.UpgradePlanHeight,
+					Info:   testconstants.UpgradePlanInfoWrongChecksum,
+				},
+				Info: testconstants.Info,
+				Time: testconstants.Time,
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		},
 	}
 
 	positiveTests := []struct {
