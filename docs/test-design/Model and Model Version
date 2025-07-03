@@ -1144,7 +1144,8 @@ CLI command: `dcld tx model delete-model --vid=<uint16> --pid=<uint16> --from=<a
 * CLI command send	
     * Valid command	
         * command exists/relevant	
-    * Invalid command	
+    * Invalid command
+        * multiple commands are sent with the same unique combination of vid (vendor ID) and pid (product ID)		
         * access is denied to execute command	
         * incorrect command syntax	
 
@@ -1263,7 +1264,8 @@ CLI command: `dcld tx model add-model-version --vid=<uint16> --pid=<uint16> --so
 * CLI command send	
     * Valid command	
         * command exists/relevant	
-    * Invalid command	
+    * Invalid command
+        * multiple commands are sent with the same unique combination of vid (vendor ID), pid (product ID) and softwareVersion
         * incorrect request	
         * server side error	
 
@@ -1665,941 +1667,1059 @@ REST API command: /cosmos/tx/v1beta1/txs: [MsgCreateModelVersion](https://github
         * Negative:	
             * length > MAX	(MAX = 65535)
 
-## EDIT_MODEL_VERSION	
+## [EDIT_MODEL_VERSION](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/transactions/model.md#edit_model)	
+
 ### CLI command	
-CLI command send	
-Valid command	
-command exists/relevant	
-Invalid command	
-access is denied to execute command	
-incorrect command syntax	
-Сommand result	
-EDIT_MODEL_VERSION command completed successfully	edits an existing Model Software Version identified by a unique combination of vid (vendor ID) pid (product ID) and softwareVersion by the vendor
-ADD_MODEL and ADD_MODEL_VERSION command completed successfully	
-there is at least one Model and Model Version	
-combination of vid (vendor ID) and pid (product ID) for Model valid	
-combination of vid (vendor ID) pid (product ID) and softwareVersion for Model Version valid	
-the user did not make changes to the fields vid (vendor ID), pid (product ID) and softwareVersion	
-EDIT_MODEL_VERSION command failed	does not edits an existing Model Software Version identified by a unique combination of vid (vendor ID) pid (product ID) and softwareVersion by the vendor
-ADD_MODEL command was not executed	
-ADD_MODEL command completed successfully, but  ADD_MODEL_VERSION command was not executed	
-record about a selected Model has been deleted	
-record about a selected Model Version has been deleted	
-there is not one Model Version or Model	
-vid (vendor ID) valid,  pid (product ID) and softwareVersion invalid	
-pid (product ID) valid, vid (vendor ID) and softwareVersion invalid	
-softwareVersion valid, vid (vendor ID) and pid (product ID) invalid	
-user changes to non-editable fields	
-Role (Who can send)	
-Trustee	error
-Vendor 	error
-Vendor with same Vendor ID who created the Model	
-Vendor with other Vendor ID who created the Model	error
-VendorAdmin 	error
-CertificationCenter 	error
-NodeAdmin 	error
-Parameters:	
-vid (Vendor ID)	uint16 
-     * Positive:
-unique combination	
-value > 0	
-integer value format
-nonexistent ID	
-     * Negative:	
-empty value
-value =< 0
-string value format		
-length > MAX	(MAX = 65535)
-pid (Product ID)	uint16 
-     * Positive:
-unique combination	
-value > 0	
-integer value format
-nonexistent ID	
-value falls within the specified range	
-     * Negative:	
-empty value
-value =< 0
-string value format		
-length > MAX	(MAX = 65535)
-softwareVersion (Software Version)	uint32
-     * Positive:
-value exists	
-value >= 0	
-integer value format
-     * Negative:	
-empty value	
-length > MAX	(MAX = 4 294 967 295)
-softwareVersionValid (Software Version Valid)	optional(bool)
-     * Positive:
-empty value	
-value state	
-TRUE	
-FALSE	
-     * Negative:	
-value is not bool	
-otaURL (OTA URL)	optional(string)
-otaFileSize, otaChecksum and otaChecksumType field are already set	
-     * Positive:
-value exists	
-empty value	
-text value format	
-MIN < length < MAX	
-     * Negative:	
-length > MAX	
-сontains spaces or line breaks	
-incorrect URL	
-otaFileSize, otaChecksum and otaChecksumType field are not set	
-maxApplicableSoftwareVersion (Max Applicable Software Version)	uint32
-     * Positive:
-value exists	
-integer value format
-     * Negative:	
-entered value < maxApplicableSoftwareVersion value	
-empty value	
-length > MAX	(MAX = 4 294 967 295)
-minApplicableSoftwareVersion (Min Applicable Software Version)	uint32
-     * Positive:
-value exists	
-integer value format
-     * Negative:	
-entered value > MinApplicableSoftwareVersion value	
-empty value	
-length > MAX	MAX = (4 294 967 295)
-otaFileSize (OTA File Size)	optional(string)
-     * Positive:
-value exists	
-empty value	
-unit of measurement = bytes	
-text value format	
-MIN < length < MAX	
-     * Negative:	
-length > MAX	
-otaChecksum (OTA Checksum)	optional(string)
-     * Positive:
-value exists	
-digest corresponds to the content of the OtaUrl attribute	
-calculation method for the Digest corresponds to the algorithm from OtaChecksumType	
-empty value	
-text value format	
-MIN < length < MAX	
-     * Negative:	
-length > MAX	
-otaChecksumType (OTA Checksum Type)	optional(string)
-     * Positive:
-value exists	
-empty value	
-integer value format
-MIN < length < MAX	
-value corresponds to SHA identifier	
-     * Negative:	
-length > MAX	
-releaseNotesURL (Release Notes URL)	optional(string)
-     * Positive:
-empty value	
-value exists	
-URL corresponds to a specific device model	
-text value format	
-MIN < length < MAX	
-     * Negative:	
-length > MAX	
-сontains spaces or line breaks	
-incorrect URL	
-schemaVersion (Schema Version)	optional(uint16)
-     * Positive:
-value = 0	
-integer value format
-empty value	
-     * Negative:	
-length > MAX	(MAX = 65535)
-#### REST API 	
-REST API command send	
-Valid command	
-correct HTTP method	
-request is authorized	
-uses valid credentials/role	
-Invalid command	
-incorrect request	
-server side error	
-Сommand result	
-EDIT_MODEL_VERSION command completed successfully	edits an existing Model Software Version identified by a unique combination of vid (vendor ID) pid (product ID) and softwareVersion by the vendor
-ADD_MODEL and ADD_MODEL_VERSION command completed successfully	
-there is at least one Model and Model Version	
-combination of vid (vendor ID) and pid (product ID) for Model valid	
-combination of vid (vendor ID) pid (product ID) and softwareVersion for Model Version valid	
-the user did not make changes to the fields vid (vendor ID), pid (product ID) and softwareVersion	
-EDIT_MODEL_VERSION command failed	does not edits an existing Model Software Version identified by a unique combination of vid (vendor ID) pid (product ID) and softwareVersion by the vendor
-ADD_MODEL command was not executed	
-ADD_MODEL command completed successfully, but  ADD_MODEL_VERSION command was not executed	
-record about a selected Model has been deleted	
-record about a selected Model Version has been deleted	
-there is not one Model Version or Model	
-vid (vendor ID) valid,  pid (product ID) and softwareVersion invalid	
-pid (product ID) valid, vid (vendor ID) and softwareVersion invalid	
-softwareVersion valid, vid (vendor ID) and pid (product ID) invalid	
-user changes to non-editable fields	
-Role (Who can send)	
-Trustee	error
-Vendor 	error
-Vendor with same Vendor ID who created the Model	
-Vendor with other Vendor ID who created the Model	error
-VendorAdmin 	error
-CertificationCenter 	error
-NodeAdmin 	error
-Parameters:	
-vid (Vendor ID)	uint16 
-     * Positive:
-unique combination	
-value > 0	
-integer value format
-nonexistent ID	
-     * Negative:	
-empty value
-value =< 0
-string value format		
-length > MAX	(MAX = 65535)
-pid (Product ID)	uint16 
-     * Positive:
-unique combination	
-value > 0	
-integer value format
-nonexistent ID	
-value falls within the specified range	
-     * Negative:	
-empty value
-value =< 0
-string value format		
-length > MAX	(MAX = 65535)
-softwareVersion (Software Version)	uint32
-     * Positive:
-value exists	
-value >= 0	
-integer value format
-     * Negative:	
-empty value	
-length > MAX	(MAX = 4 294 967 295)
-softwareVersionValid (Software Version Valid)	optional(bool)
-     * Positive:
-empty value	
-value state	
-TRUE	
-FALSE	
-     * Negative:	
-value is not bool	
-otaURL (OTA URL)	optional(string)
-otaFileSize, otaChecksum and otaChecksumType field are already set	
-     * Positive:
-value exists	
-empty value	
-text value format	
-format	
-format	
-length > MAX	
-сontains spaces or line breaks	
-incorrect URL	
-otaFileSize, otaChecksum and otaChecksumType field are not set	
-maxApplicableSoftwareVersion (Max Applicable Software Version)	uint32
-     * Positive:
-value exists	
-integer value format
-     * Negative:	
-entered value < maxApplicableSoftwareVersion value	
-empty value	
-length > MAX	(MAX = 4 294 967 295)
-minApplicableSoftwareVersion (Min Applicable Software Version)	uint32
-     * Positive:
-value exists	
-integer value format
-     * Negative:	
-entered value > MinApplicableSoftwareVersion value	
-empty value	
-length > MAX	(MAX = 4 294 967 295)
-otaFileSize (OTA File Size)	optional(string)
-     * Positive:
-value exists	
-empty value	
-unit of measurement = bytes	
-text value format	
-MIN < length < MAX	
-     * Negative:	
-length > MAX	
-otaChecksum (OTA Checksum)	optional(string)
-     * Positive:
-value exists	
-digest corresponds to the content of the OtaUrl attribute	
-calculation method for the Digest corresponds to the algorithm from OtaChecksumType	
-empty value	
-text value format	
-MIN < length < MAX	
-     * Negative:	
-length > MAX	
-otaChecksumType (OTA Checksum Type)	optional(string)
-     * Positive:
-value exists	
-empty value	
-integer value format
-MIN < length < MAX	
-value corresponds to SHA identifier	
-     * Negative:	
-length > MAX	
-releaseNotesURL (Release Notes URL)	optional(string)
-     * Positive:
-empty value	
-value exists	
-URL corresponds to a specific device model	
-text value format	
-MIN < length < MAX	
-     * Negative:	
-length > MAX	
-сontains spaces or line breaks	
-incorrect URL	
-schemaVersion (Schema Version)	optional(uint16)
-     * Positive:
-value = 0	
-integer value format
-empty value	
-     * Negative:	
-length > MAX	(MAX = 65535)
-### DELETE_MODEL_VERSION	
-#### CLI command	
-CLI command send	
-Valid command	
-command exists/relevant	
-Invalid command	
-access is denied to execute command	
-incorrect command syntax	
-Сommand result	
-DELETE_MODEL_VERSION command completed successfully	deletes an existing Model Version identified by a unique combination of vid (vendor ID), pid (product ID) and softwareVersion by the vendor account
-ADD_MODEL and ADD_MODEL_VERSION command completed successfully	
-selected Model and Model Version have not been deleted previously	
-Model Version can be deleted only before it is certified	
-combination of vid (vendor ID) and pid (product ID) for Model valid	
-combination of vid (vendor ID) pid (product ID) and softwareVersion for Model Version valid	
-DELETE_MODEL_VERSION command failed	does not deletes an existing Model Version identified by a unique combination of vid (vendor ID), pid (product ID) and softwareVersion by the vendor account
-Model Version is certified	
-ADD_MODEL command was not executed	
-ADD_MODEL command completed successfully, but  ADD_MODEL_VERSION command was not executed	
-selected Model and Model Version have not been deleted previously	
-vid (vendor ID) valid,  pid (product ID) and softwareVersion invalid	
-pid (product ID) valid, vid (vendor ID) and softwareVersion invalid	
-softwareVersion valid, vid (vendor ID) and pid (product ID) invalid	
-Role (Who can send)	
-Trustee	error
-Vendor 	error
-Vendor account associated with the same Vendor ID who has created the model version	
-Vendor account is not associated with the same Vendor ID who has created the model version	error
-VendorAdmin 	error
-CertificationCenter 	error
-NodeAdmin 	error
-Parameters:	
-vid (Vendor ID)	uint16 
-     * Positive:
-unique combination	
-value > 0	
-integer value format
-nonexistent ID	
-     * Negative:	
-empty value
-value =< 0
-string value format		
-length > MAX	(MAX = 65535)
-pid (Product ID)	uint16 
-     * Positive:
-unique combination	
-value > 0	
-integer value format
-nonexistent ID	
-value falls within the specified range	
-     * Negative:	
-empty value
-value =< 0
-string value format		
-length > MAX	(MAX = 65535)
-softwareVersion (Software Version)	uint32
-     * Positive:
-value exists	
-value >= 0	
-integer value format
-     * Negative:	
-empty value	
-length > MAX	(MAX = 4 294 967 295)
-#### REST API 	
-REST API command send	
-Valid command	
-correct HTTP method	
-request is authorized	
-uses valid credentials/role	
-Invalid command	
-incorrect request	
-server side error	
-Сommand result	
-DELETE_MODEL_VERSION command completed successfully	deletes an existing Model Version identified by a unique combination of vid (vendor ID), pid (product ID) and softwareVersion by the vendor account
-ADD_MODEL and ADD_MODEL_VERSION command completed successfully	
-selected Model and Model Version have not been deleted previously	
-Model Version can be deleted only before it is certified	
-combination of vid (vendor ID) and pid (product ID) for Model valid	
-combination of vid (vendor ID) pid (product ID) and softwareVersion for Model Version valid	
-DELETE_MODEL_VERSION command failed	does not deletes an existing Model Version identified by a unique combination of vid (vendor ID), pid (product ID) and softwareVersion by the vendor account
-Model Version is certified	
-ADD_MODEL command was not executed	
-ADD_MODEL command completed successfully, but  ADD_MODEL_VERSION command was not executed	
-selected Model and Model Version have not been deleted previously	
-vid (vendor ID) valid,  pid (product ID) and softwareVersion invalid	
-pid (product ID) valid, vid (vendor ID) and softwareVersion invalid	
-softwareVersion valid, vid (vendor ID) and pid (product ID) invalid	
-Role (Who can send)	
-Trustee	error
-Vendor 	error
-Vendor account associated with the same Vendor ID who has created the model version	
-Vendor account is not associated with the same Vendor ID who has created the model version	error
-VendorAdmin 	error
-CertificationCenter 	error
-NodeAdmin 	error
-Parameters:	
-vid (Vendor ID)	uint16 
-     * Positive:
-unique combination	
-value > 0	
-integer value format
-nonexistent ID	
-     * Negative:	
-empty value
-value =< 0
-string value format		
-length > MAX	(MAX = 65535)
-pid (Product ID)	uint16 
-     * Positive:
-unique combination	
-value > 0	
-integer value format
-nonexistent ID	
-value falls within the specified range	
-     * Negative:	
-empty value
-value =< 0
-string value format		
-length > MAX	(MAX = 65535)
-softwareVersion (Software Version)	uint32
-     * Positive:
-value exists	
-value >= 0	
-integer value format
-     * Negative:	
-empty value	
-length > MAX	(MAX = 4 294 967 295)
-### GET_MODEL	
-#### CLI command	
-CLI command send	
-Valid command	
-command exists/relevant	
-Invalid command	
-access is denied to execute command	
-incorrect command syntax	
-Сommand result	
-GET_MODEL command completed successfully	gets a Model Info with the given vid (vendor ID) and pid (product ID)
-ADD_MODEL command completed successfully	
-selected Model have not been deleted previously	
-combination of vid (vendor ID) and pid (product ID) for Model valid	
-GET_MODEL command failed	does not gets a Model Info with the given vid (vendor ID) and pid (product ID)
-ADD_MODEL command was not executed	
-record about a Model has been deleted	
-vid (vendor ID) valid,  pid (product ID) invalid	
-pid (product ID) valid, vid (vendor ID) invalid	
-Role (Who can send)	
-Trustee	
-Vendor 	
-VendorAdmin 	
-CertificationCenter 	
-NodeAdmin 	
-Parameters:	
-vid (Vendor ID)	uint16 
-     * Positive:
-unique value	
-value > 0	
-integer value format
-     * Negative:	
-empty value
-value =< 0
-string value format		
-nonexistent value	
-length > MAX	(MAX = 65535)
-pid (Product ID)	uint16 
-     * Positive:
-unique value	
-value > 0	
-integer value format
-value falls within the specified range	
-     * Negative:	
-empty value
-value =< 0
-string value format		
-nonexistent value	
-length > MAX	(MAX = 65535)
-#### REST API 	
-REST API command send	
-Valid command	
-correct HTTP method	
-request is authorized	
-uses valid credentials/role	
-Invalid command	
-incorrect request	
-server side error	
-Сommand result	
-GET_MODEL command completed successfully	gets a Model Info with the given vid (vendor ID) and pid (product ID)
-ADD_MODEL command completed successfully	
-selected Model have not been deleted previously	
-combination of vid (vendor ID) and pid (product ID) for Model valid	
-GET_MODEL command failed	does not gets a Model Info with the given vid (vendor ID) and pid (product ID)
-ADD_MODEL command was not executed	
-record about a Model has been deleted	
-vid (vendor ID) valid,  pid (product ID)  invalid	
-pid (product ID) valid, vid (vendor ID) invalid	
-Role (Who can send)	
-Trustee	
-Vendor 	
-VendorAdmin 	
-CertificationCenter 	
-NodeAdmin 	
-Parameters:	
-vid (Vendor ID)	uint16 
-     * Positive:
-unique value	
-value > 0	
-integer value format
-     * Negative:	
-empty value
-value =< 0
-string value format		
-nonexistent value	
-length > MAX	(MAX = 65535)
-pid (Product ID)	uint16 
-     * Positive:
-unique value	
-value > 0	
-integer value format
-value falls within the specified range	
-     * Negative:	
-empty value
-value =< 0
-string value format		
-nonexistent value	
-length > MAX	(MAX = 65535)
-### GET_MODEL_VERSION	
-#### CLI command	
-CLI command send	
-Valid command	
-command exists/relevant	
-Invalid command	
-access is denied to execute command	
-incorrect command syntax	
-Сommand result	
-GET_MODEL_VERSION command completed successfully	gets a Model Software Versions for the given vid, pid and softwareVersion
-ADD_MODEL and ADD_MODEL_VERSION command completed successfully	
-selected Model and Model Version have not been deleted previously	
-combination of vid (vendor ID), pid (product ID) and softwareVersion for Model Version valid	
-GET_MODEL_VERSION command failed	does not gets a Model Software Versions for the given vid, pid and softwareVersion
-ADD_MODEL command was not executed	
-ADD_MODEL command completed successfully, but ADD_MODEL_VERSION command was not executed	
-record about a selected Model has been deleted	
-record about a selected Model Version has been deleted	
-vid (vendor ID) valid,  pid (product ID) and softwareVersion invalid	
-pid (product ID) valid, vid (vendor ID) and softwareVersion invalid	
-softwareVersion valid, vid (vendor ID) and pid (product ID) invalid	
-Role (Who can send)	
-Trustee	
-Vendor 	
-VendorAdmin 	
-CertificationCenter 	
-NodeAdmin 	
-Role (Who can send)	
-Trustee	
-The role corresponds to the Vendor ID	
-The role is not corresponds to the Vendor ID	
-Vendor 	
-The role corresponds to the Vendor ID	
-The role is not corresponds to the Vendor ID	
-VendorAdmin 	
-The role corresponds to the Vendor ID	
-The role is not corresponds to the Vendor ID	
-CertificationCenter 	
-The role corresponds to the Vendor ID	
-The role is not corresponds to the Vendor ID	
-NodeAdmin 	
-The role corresponds to the Vendor ID	
-The role is not corresponds to the Vendor ID	
-Parameters:	
-vid (Vendor ID)	uint16 
-     * Positive:
-unique value	
-value > 0	
-integer value format
-     * Negative:	
-empty value
-value =< 0
-string value format		
-nonexistent value	
-length > MAX	(MAX = 65535)
-pid (Product ID)	uint16 
-     * Positive:
-unique value	
-value > 0	
-integer value format
-value falls within the specified range	
-     * Negative:	
-empty value
-value =< 0
-string value format		
-nonexistent value	
-length > MAX	(MAX = 65535)
-softwareVersion (Software Version)	uint32
-     * Positive:
-value exists	
-value >= 0	
-integer value format
-     * Negative:	
-empty value	
-length > MAX	(MAX = 4 294 967 295)
-#### REST API 	
-REST API command send	
-Valid command	
-correct HTTP method	
-request is authorized	
-uses valid credentials/role	
-Invalid command	
-incorrect request	
-server side error	
-Сommand result	
-GET_MODEL_VERSION command completed successfully	gets a Model Software Versions for the given vid, pid and softwareVersion
-ADD_MODEL and ADD_MODEL_VERSION command completed successfully	
-selected Model and Model Version have not been deleted previously	
-combination of vid (vendor ID), pid (product ID) and softwareVersion for Model Version valid	
-GET_MODEL_VERSION command failed	does not gets a Model Software Versions for the given vid, pid and softwareVersion
-ADD_MODEL command was not executed	
-ADD_MODEL command completed successfully, but ADD_MODEL_VERSION command was not executed	
-record about a selected Model has been deleted	
-record about a selected Model Version has been deleted	
-vid (vendor ID) valid,  pid (product ID) and softwareVersion invalid	
-pid (product ID) valid, vid (vendor ID) and softwareVersion invalid	
-softwareVersion valid, vid (vendor ID) and pid (product ID) invalid	
-Role (Who can send)	
-Trustee	
-Vendor 	
-VendorAdmin 	
-CertificationCenter 	
-NodeAdmin 	
-Parameters:	
-vid (Vendor ID)	uint16 
-     * Positive:
-unique value	
-value > 0	
-integer value format
-     * Negative:	
-empty value
-value =< 0
-string value format		
-nonexistent value	
-length > MAX	(MAX = 65535)
-pid (Product ID)	uint16 
-     * Positive:
-unique value	
-value > 0	
-integer value format
-value falls within the specified range	
-     * Negative:	
-empty value
-value =< 0
-string value format		
-nonexistent value	
-length > MAX	(MAX = 65535)
-softwareVersion (Software Version)	uint32
-     * Positive:
-value exists	
-value >= 0	
-integer value format
-     * Negative:	
-empty value	
-length > MAX	(MAX = 4 294 967 295)
-### GET_ALL_MODELS	
-#### CLI command	
-CLI command send	
-Valid command	
-command exists/relevant	
-Invalid command	
-access is denied to execute command	
-incorrect command syntax	
-there is not a single model	
-Сommand result	
-GET_ALL_MODELS command completed successfully	gets all Model Infos for all vendors
-ADD_MODEL command completed successfully	
-there is at least one Model Info	
-GET_ALL_MODELS command failed	does not gets all Model Infos for all vendors
-ADD_MODEL command was not executed	
-there is not one Model Info	
-Role (Who can send)	
-Trustee	
-Vendor 	
-VendorAdmin 	
-CertificationCenter 	
-NodeAdmin 	
-Parameters:	
-count-total	optional(bool)
-     * Positive:
-empty value	
-value state	
-TRUE (-1)	
-FALSE (0)	
-     * Negative:	
-value is not bool	
-limit 	optional(uint)
-     * Positive:
-value exists	
-empty value	
-     * Negative:	
-value > 100	
-offset 	optional(uint)
-     * Positive:
-value exists	
-empty value	
-     * Negative:	
-value < 0	
-page 	optional(uint)
-     * Positive:
-value exists	
-empty value	
-     * Negative:	
-value < 0	
-page-key	optional(string)
-     * Positive:
-empty value	
-value exists	
-     * Negative:	
-length < MIN	
-reverse	optional(bool)
-     * Positive:
-empty value	
-value state	
-TRUE (-1)	
-FALSE (0)	
-     * Negative:	
-value is not bool	
-#### REST API 	
-REST API command send	
-Valid command	
-correct HTTP method	
-request is authorized	
-uses valid credentials/role	
-Invalid command	
-incorrect request	
-server side error	
-Сommand result	
-GET_ALL_MODELS command completed successfully	gets all Model Infos for all vendors
-ADD_MODEL command completed successfully	
-there is at least one Model Info	
-GET_ALL_MODELS command failed	does not gets all Model Infos for all vendors
-ADD_MODEL command was not executed	
-there is not one Model Info	
-Role (Who can send)	
-Trustee	
-Vendor 	
-VendorAdmin 	
-CertificationCenter 	
-NodeAdmin 	
-Parameters:	
-count-total	optional(bool)
-     * Positive:
-empty value	
-value state	
-TRUE (-1)	
-FALSE (0)	
-     * Negative:	
-value is not bool	
-limit 	optional(uint)
-     * Positive:
-value exists	
-empty value	
-     * Negative:	
-value > 100	
-offset 	optional(uint)
-     * Positive:
-value exists	
-empty value	
-     * Negative:	
-value < 0	
-page 	optional(uint)
-     * Positive:
-value exists	
-empty value	
-     * Negative:	
-value < 0	
-page-key	optional(string)
-     * Positive:
-empty value	
-value exists	
-     * Negative:	
-length < MIN	
-reverse	optional(bool)
-     * Positive:
-empty value	
-value state	
-TRUE (-1)	
-FALSE (0)	
-     * Negative:	
-value is not bool	
-### GET_ALL_VENDOR_MODELS	
-#### CLI command	
-CLI command send	
-Valid command	
-command exists/relevant	
-Invalid command	
-access is denied to execute command	
-incorrect command syntax	
-Сommand result	
-GET_ALL_VENDOR_MODELS command completed successfully	gets all Model Infos by the given Vendor (vid)
-ADD_MODEL command completed successfully	
-there is at least one Model Info by the given Vendor (vid)	
-GET_ALL_VENDOR_MODELS command failed	does not gets all Model Infos by the given Vendor (vid)
-ADD_MODEL command was not executed	
-there is not one Model Info by the given Vendor (vid)	
-Role (Who can send)	
-Trustee	
-Vendor 	
-VendorAdmin 	
-CertificationCenter 	
-NodeAdmin 	
-Parameters:	
-vid (Vendor ID)	uint16 
-     * Positive:
-unique value	
-value > 0	
-integer value format
-     * Negative:	
-empty value
-value =< 0
-string value format		
-nonexistent value	
-length > MAX	(MAX = 65535)
-#### REST API 	
-REST API command send	
-Valid command	
-correct HTTP method	
-request is authorized	
-uses valid credentials/role	
-Invalid command	
-incorrect request	
-server side error	
-Сommand result	
-GET_ALL_VENDOR_MODELS command completed successfully	gets all Model Infos by the given Vendor (vid)
-ADD_MODEL command completed successfully	
-there is at least one Model Info by the given Vendor (vid)	
-GET_ALL_VENDOR_MODELS command failed	does not gets all Model Infos by the given Vendor (vid)
-ADD_MODEL command was not executed	
-there is not one Model Info by the given Vendor (vid)	
-Role (Who can send)	
-Trustee	
-Vendor 	
-VendorAdmin 	
-CertificationCenter 	
-NodeAdmin 	
-Parameters:	
-vid (Vendor ID)	uint16 
-     * Positive:
-unique value	
-value > 0	
-integer value format
-     * Negative:	
-empty value
-value =< 0
-string value format		
-nonexistent value	
-length > MAX	MAX = 65535
-### GET_ALL_MODEL_VERSIONS	
-#### CLI command	
-CLI command send	
-Valid command	
-command exists/relevant	
-Invalid command	
-access is denied to execute command	
-incorrect command syntax	
-Сommand result	
-GET_ALL_MODEL_VERSIONS command completed successfully	gets all Model Software Versions for the given vid and pid combination
-ADD_MODEL command completed successfully	
-there is at least one Model Software Versions for the given vid and pid combination	
-GET_ALL_MODEL_VERSIONS command failed	does not gets all Model Software Versions for the given vid and pid combination
-ADD_MODEL command was not executed	
-there is not oneModel Software Versions for the given vid and pid combination	
-Role (Who can send)	
-Trustee	
-Vendor 	
-VendorAdmin 	
-CertificationCenter 	
-NodeAdmin 	
-Parameters:	
-vid (Vendor ID)	uint16 
-     * Positive:
-unique value	
-value > 0	
-integer value format
-     * Negative:	
-empty value
-value =< 0
-string value format		
-nonexistent value	
-length > MAX	MAX = 65535
-pid (Product ID)	uint16 
-     * Positive:
-unique value	
-value > 0	
-integer value format
-value falls within the specified range	
-     * Negative:	
-empty value
-value =< 0
-string value format		
-nonexistent value	
-length > MAX	MAX = 65535
-#### REST API 	
-REST API command send	
-Valid command	
-correct HTTP method	
-request is authorized	
-uses valid credentials/role	
-Invalid command	
-incorrect request	
-server side error	
-Сommand result	
-GET_ALL_MODEL_VERSIONS command completed successfully	gets all Model Software Versions for the given vid and pid combination
-ADD_MODEL command completed successfully	
-there is at least one Model Software Versions for the given vid and pid combination	
-GET_ALL_MODEL_VERSIONS command failed	does not gets all Model Software Versions for the given vid and pid combination
-ADD_MODEL command was not executed	
-there is not oneModel Software Versions for the given vid and pid combination	
-Role (Who can send)	
-Trustee	
-Vendor 	
-VendorAdmin 	
-CertificationCenter 	
-NodeAdmin 	
-Parameters:	
-vid (Vendor ID)	uint16 
-     * Positive:
-unique value	
-value > 0	
-integer value format
-     * Negative:	
-empty value
-value =< 0
-string value format		
-nonexistent value	
-length > MAX	MAX = 65535
-pid (Product ID)	uint16 
-     * Positive:
-unique value	
-value > 0	
-integer value format
-value falls within the specified range	
-     * Negative:	
-empty value
-value =< 0
-string value format		
-nonexistent value	
-length > MAX	MAX = 65535
+CLI command: `dcld tx model delete-model --vid=<uint16> --pid=<uint16> --from=<account>`
+
+* CLI command send	
+    * Valid command	
+        * command exists/relevant	
+    * Invalid command	
+        * access is denied to execute command	
+        * incorrect command syntax	
+
+* Сommand result	
+    * EDIT_MODEL_VERSION command completed successfully ⇒ edits an existing Model Software Version identified by a unique combination of vid (vendor ID) pid (product ID) and softwareVersion by the vendor
+        * ADD_MODEL and ADD_MODEL_VERSION command completed successfully	
+        * there is at least one Model and Model Version	
+        * combination of vid (vendor ID) and pid (product ID) for Model valid	
+        * combination of vid (vendor ID) pid (product ID) and softwareVersion for Model Version valid	
+        * the user did not make changes to the fields vid (vendor ID), pid (product ID) and softwareVersion	
+    * EDIT_MODEL_VERSION command failed	⇒ does not edits an existing Model Software Version identified by a unique combination of vid (vendor ID) pid (product ID) and softwareVersion by the vendor
+        * ADD_MODEL command was not executed	
+        * ADD_MODEL command completed successfully, but  ADD_MODEL_VERSION command was not executed	
+        * record about a selected Model has been deleted	
+        * record about a selected Model Version has been deleted	
+        * there is not one Model Version or Model	
+        * vid (vendor ID) valid,  pid (product ID) and softwareVersion invalid	
+        * pid (product ID) valid, vid (vendor ID) and softwareVersion invalid	
+        * softwareVersion valid, vid (vendor ID) and pid (product ID) invalid	
+        * user changes to non-editable fields	
+
+* Role (Who can send)
+    * Positive:
+        * Vendor (Vendor with same Vendor ID who created the Model)
+    * Negative:	
+        * Trustee	
+        * Vendor (Vendor with other Vendor ID who created the Model)	
+        * VendorAdmin 	
+        * CertificationCenter 	
+        * NodeAdmin 	
+
+* Parameters:	
+    * vid (Vendor ID) - uint16 
+        * Positive:
+            * unique combination	
+            * value > 0	
+            * integer value format
+            * nonexistent ID	
+        * Negative:	
+            * empty value
+            * value =< 0
+            * string value format		
+            * length > MAX	(MAX = 65535)
+    * pid (Product ID) - uint16 
+        * Positive:
+            * unique combination	
+            * value > 0	
+            * integer value format
+            * nonexistent ID	
+            * value falls within the specified range	
+        * Negative:	
+            * empty value
+            * value =< 0
+            * string value format		
+            * length > MAX	(MAX = 65535)
+    * softwareVersion (Software Version) - uint32
+        * Positive:
+            * value exists	
+            * value >= 0	
+            * integer value format
+        * Negative:	
+            * empty value	
+            * length > MAX	(MAX = 4 294 967 295)
+    * softwareVersionValid (Software Version Valid) - optional(bool)
+        * Positive:
+            * empty value	
+            * value state	
+                * TRUE	
+                * FALSE	
+        * Negative:	
+            * value is not bool	
+    * otaURL (OTA URL) - optional(string)
+        * otaFileSize, otaChecksum and otaChecksumType field are already set: otaURL field can be edited	
+            * Positive:
+                * value exists	
+                * empty value	
+                * text value format	
+                * MIN < length < MAX	
+            * Negative:	
+                * length > MAX	
+                * сontains spaces or line breaks	
+                * incorrect URL	
+        * otaFileSize, otaChecksum and otaChecksumType field are not set: otaURL field can not be edited 	
+    * maxApplicableSoftwareVersion (Max Applicable Software Version) - uint32
+        * Positive:
+            * value exists	
+            * integer value format
+        * Negative:	
+            * entered value < maxApplicableSoftwareVersion value	
+            * empty value	
+            * length > MAX	(MAX = 4 294 967 295)
+    * minApplicableSoftwareVersion (Min Applicable Software Version) - uint32
+        * Positive:
+            * value exists	
+            * integer value format
+        * Negative:	
+            * entered value > MinApplicableSoftwareVersion value	
+            * empty value	
+            * length > MAX	MAX = (4 294 967 295)
+    * otaFileSize (OTA File Size) - optional(string)
+        * Positive:
+            * value exists	
+            * empty value	
+            * unit of measurement = bytes	
+            * text value format	
+            * MIN < length < MAX	
+        * Negative:	
+            * length > MAX	
+    * otaChecksum (OTA Checksum) - optional(string)
+        * Positive:
+            * value exists	
+            * digest corresponds to the content of the OtaUrl attribute	
+            * calculation method for the Digest corresponds to the algorithm from OtaChecksumType	
+            * empty value	
+            * text value format	
+            * MIN < length < MAX	
+        * Negative:	
+            * length > MAX	
+    * otaChecksumType (OTA Checksum Type) - optional(string)
+        * Positive:
+            * value exists	
+            * empty value	
+            * integer value format
+            * MIN < length < MAX	
+            * value corresponds to SHA identifier	
+        * Negative:	
+            * length > MAX	
+    * releaseNotesURL (Release Notes URL) - optional(string)
+        * Positive:
+            * empty value	
+            * value exists	
+            * URL corresponds to a specific device model	
+            * text value format	
+            * MIN < length < MAX	
+        * Negative:	
+            * length > MAX	
+            * сontains spaces or line breaks	
+            * incorrect URL	
+    * schemaVersion (Schema Version) - optional(uint16)
+        * Positive:
+            * value = 0	
+            * integer value format
+            * empty value	
+        * Negative:	
+            * length > MAX	(MAX = 65535)
+
+### REST API
+REST API command: POST /cosmos/tx/v1beta1/txs: [MsgUpdateModelVersion](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/proto/zigbeealliance/distributedcomplianceledger/model/tx.proto#L110) 	
+
+* REST API command send	
+    * Valid command	
+        * correct HTTP method	
+        * request is authorized	
+        * uses valid credentials/role	
+    * Invalid command	
+        * incorrect request	
+        * server side error	
+
+* Сommand result	
+    * EDIT_MODEL_VERSION command completed successfully ⇒ edits an existing Model Software Version identified by a unique combination of vid (vendor ID) pid (product ID) and softwareVersion by the vendor
+        * ADD_MODEL and ADD_MODEL_VERSION command completed successfully	
+        * there is at least one Model and Model Version	
+        * combination of vid (vendor ID) and pid (product ID) for Model valid	
+        * combination of vid (vendor ID) pid (product ID) and softwareVersion for Model Version valid	
+        * the user did not make changes to the fields vid (vendor ID), pid (product ID) and softwareVersion	
+    * EDIT_MODEL_VERSION command failed	⇒ does not edits an existing Model Software Version identified by a unique combination of vid (vendor ID) pid (product ID) and softwareVersion by the vendor
+        * ADD_MODEL command was not executed	
+        * ADD_MODEL command completed successfully, but  ADD_MODEL_VERSION command was not executed	
+        * record about a selected Model has been deleted	
+        * record about a selected Model Version has been deleted	
+        * there is not one Model Version or Model	
+        * vid (vendor ID) valid,  pid (product ID) and softwareVersion invalid	
+        * pid (product ID) valid, vid (vendor ID) and softwareVersion invalid	
+        * softwareVersion valid, vid (vendor ID) and pid (product ID) invalid	
+        * user changes to non-editable fields	
+
+* Role (Who can send)
+    * Positive:
+        * Vendor (Vendor with same Vendor ID who created the Model)
+    * Negative:	
+        * Trustee	
+        * Vendor (Vendor with other Vendor ID who created the Model)	
+        * VendorAdmin 	
+        * CertificationCenter 	
+        * NodeAdmin 	
+
+* Parameters:	
+    * vid (Vendor ID) - uint16 
+        * Positive:
+            * unique combination	
+            * value > 0	
+            * integer value format
+            * nonexistent ID	
+        * Negative:	
+            * empty value
+            * value =< 0
+            * string value format		
+            * length > MAX	(MAX = 65535)
+    * pid (Product ID) - uint16 
+        * Positive:
+            * unique combination	
+            * value > 0	
+            * integer value format
+            * nonexistent ID	
+            * value falls within the specified range	
+        * Negative:	
+            * empty value
+            * value =< 0
+            * string value format		
+            * length > MAX	(MAX = 65535)
+    * softwareVersion (Software Version) - uint32
+        * Positive:
+            * value exists	
+            * value >= 0	
+            * integer value format
+        * Negative:	
+            * empty value	
+            * length > MAX	(MAX = 4 294 967 295)
+    * softwareVersionValid (Software Version Valid) - optional(bool)
+        * Positive:
+            * empty value	
+            * value state	
+                * TRUE	
+                * FALSE	
+        * Negative:	
+            * value is not bool	
+    * otaURL (OTA URL) - optional(string)
+        * otaFileSize, otaChecksum and otaChecksumType field are already set: otaURL field can be edited	
+            * Positive:
+                * value exists	
+                * empty value	
+                * text value format	
+                * MIN < length < MAX	
+            * Negative:	
+                * length > MAX	
+                * сontains spaces or line breaks	
+                * incorrect URL	
+        * otaFileSize, otaChecksum and otaChecksumType field are not set: otaURL field can not be edited 	
+    * maxApplicableSoftwareVersion (Max Applicable Software Version) - uint32
+        * Positive:
+            * value exists	
+            * integer value format
+        * Negative:	
+            * entered value < maxApplicableSoftwareVersion value	
+            * empty value	
+            * length > MAX	(MAX = 4 294 967 295)
+    * minApplicableSoftwareVersion (Min Applicable Software Version) - uint32
+        * Positive:
+            * value exists	
+            * integer value format
+        * Negative:	
+            * entered value > MinApplicableSoftwareVersion value	
+            * empty value	
+            * length > MAX	MAX = (4 294 967 295)
+    * otaFileSize (OTA File Size) - optional(string)
+        * Positive:
+            * value exists	
+            * empty value	
+            * unit of measurement = bytes	
+            * text value format	
+            * MIN < length < MAX	
+        * Negative:	
+            * length > MAX	
+    * otaChecksum (OTA Checksum) - optional(string)
+        * Positive:
+            * value exists	
+            * digest corresponds to the content of the OtaUrl attribute	
+            * calculation method for the Digest corresponds to the algorithm from OtaChecksumType	
+            * empty value	
+            * text value format	
+            * MIN < length < MAX	
+        * Negative:	
+            * length > MAX	
+    * otaChecksumType (OTA Checksum Type) - optional(string)
+        * Positive:
+            * value exists	
+            * empty value	
+            * integer value format
+            * MIN < length < MAX	
+            * value corresponds to SHA identifier	
+        * Negative:	
+            * length > MAX	
+    * releaseNotesURL (Release Notes URL) - optional(string)
+        * Positive:
+            * empty value	
+            * value exists	
+            * URL corresponds to a specific device model	
+            * text value format	
+            * MIN < length < MAX	
+        * Negative:	
+            * length > MAX	
+            * сontains spaces or line breaks	
+            * incorrect URL	
+    * schemaVersion (Schema Version) - optional(uint16)
+        * Positive:
+            * value = 0	
+            * integer value format
+            * empty value	
+        * Negative:	
+            * length > MAX	(MAX = 65535)
+
+## [DELETE_MODEL_VERSION](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/transactions/model.md#delete_model_version)	
+
+### CLI command	
+
+CLI command: `https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/transactions/model.md#delete_model_version`
+
+* CLI command send	
+    * Valid command	
+        * command exists/relevant	
+    * Invalid command
+    	* multiple commands are sent with the same unique combination of vid (vendor ID), pid (product ID) and softwareVersion
+        * access is denied to execute command	
+        * incorrect command syntax	
+
+* Сommand result	
+    * DELETE_MODEL_VERSION command completed successfully ⇒ deletes an existing Model Version identified by a unique combination of vid (vendor ID), pid (product ID) and softwareVersion by the vendor account
+        * ADD_MODEL and ADD_MODEL_VERSION command completed successfully	
+        * selected Model and Model Version have not been deleted previously	
+        * Model Version can be deleted only before it is certified	
+        * combination of vid (vendor ID) and pid (product ID) for Model valid	
+        * combination of vid (vendor ID) pid (product ID) and softwareVersion for Model Version valid	
+    * DELETE_MODEL_VERSION command failed	⇒ does not deletes an existing Model Version identified by a unique combination of vid (vendor ID), pid (product ID) and softwareVersion by the vendor account
+        * Model Version is certified	
+        * ADD_MODEL command was not executed	
+        * ADD_MODEL command completed successfully, but  ADD_MODEL_VERSION command was not executed	
+        * selected Model and Model Version have not been deleted previously	
+        * vid (vendor ID) valid,  pid (product ID) and softwareVersion invalid	
+        * pid (product ID) valid, vid (vendor ID) and softwareVersion invalid	
+        * softwareVersion valid, vid (vendor ID) and pid (product ID) invalid	
+
+* Role (Who can send)
+    * Positive:
+        * Vendor (Vendor account associated with the same Vendor ID who has created the model version)
+    * Negative:
+        * Trustee	
+        * Vendor (Vendor account is not associated with the same Vendor ID who has created the model version)
+        * VendorAdmin 	
+        * CertificationCenter 	
+        * NodeAdmin 	
+
+* Parameters:	
+    * vid (Vendor ID) - uint16 
+        * Positive:
+            * unique combination	
+            * value > 0	
+            * integer value format
+            * nonexistent ID	
+        * Negative:	
+            * empty value
+            * value =< 0
+            * string value format		
+            * length > MAX	(MAX = 65535)
+    * pid (Product ID) - uint16 
+        * Positive:
+            * unique combination	
+            * value > 0	
+            * integer value format
+            * nonexistent ID	
+            * value falls within the specified range	
+        * Negative:	
+            * empty value
+            * value =< 0
+            * string value format		
+            * length > MAX	(MAX = 65535)
+    * softwareVersion (Software Version) - uint32
+        * Positive:
+            * value exists	
+            * value >= 0	
+            * integer value format
+        * Negative:	
+            * empty value	
+            * length > MAX	(MAX = 4 294 967 295)
+
+### REST API 
+REST API command: POST /cosmos/tx/v1beta1/txs: [MsgDeleteModelVersion](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/proto/zigbeealliance/distributedcomplianceledger/model/tx.proto#L126)
+
+* REST API command send	
+    * Valid command	
+        * correct HTTP method	
+        * request is authorized	
+        * uses valid credentials/role	
+    * Invalid command	
+        * incorrect request	
+        * server side error	
+
+* Сommand result	
+    * DELETE_MODEL_VERSION command completed successfully ⇒ deletes an existing Model Version identified by a unique combination of vid (vendor ID), pid (product ID) and softwareVersion by the vendor account
+        * ADD_MODEL and ADD_MODEL_VERSION command completed successfully	
+        * selected Model and Model Version have not been deleted previously	
+        * Model Version can be deleted only before it is certified	
+        * combination of vid (vendor ID) and pid (product ID) for Model valid	
+        * combination of vid (vendor ID) pid (product ID) and softwareVersion for Model Version valid	
+    * DELETE_MODEL_VERSION command failed	⇒ does not deletes an existing Model Version identified by a unique combination of vid (vendor ID), pid (product ID) and softwareVersion by the vendor account
+        * Model Version is certified	
+        * ADD_MODEL command was not executed	
+        * ADD_MODEL command completed successfully, but  ADD_MODEL_VERSION command was not executed	
+        * selected Model and Model Version have not been deleted previously	
+        * vid (vendor ID) valid,  pid (product ID) and softwareVersion invalid	
+        * pid (product ID) valid, vid (vendor ID) and softwareVersion invalid	
+        * softwareVersion valid, vid (vendor ID) and pid (product ID) invalid	
+
+* Role (Who can send)
+    * Positive:
+        * Vendor (Vendor account associated with the same Vendor ID who has created the model version)
+    * Negative:
+        * Trustee	
+        * Vendor (Vendor account is not associated with the same Vendor ID who has created the model version)
+        * VendorAdmin 	
+        * CertificationCenter 	
+        * NodeAdmin 	
+
+* Parameters:	
+    * vid (Vendor ID) - uint16 
+        * Positive:
+            * unique combination	
+            * value > 0	
+            * integer value format
+            * nonexistent ID	
+        * Negative:	
+            * empty value
+            * value =< 0
+            * string value format		
+            * length > MAX	(MAX = 65535)
+    * pid (Product ID) - uint16 
+        * Positive:
+            * unique combination	
+            * value > 0	
+            * integer value format
+            * nonexistent ID	
+            * value falls within the specified range	
+        * Negative:	
+            * empty value
+            * value =< 0
+            * string value format		
+            * length > MAX	(MAX = 65535)
+    * softwareVersion (Software Version) - uint32
+        * Positive:
+            * value exists	
+            * value >= 0	
+            * integer value format
+        * Negative:	
+            * empty value	
+            * length > MAX	(MAX = 4 294 967 295)
+
+## [GET_MODEL](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/transactions/model.md#get_model)	
+
+### CLI command	
+CLI command: `dcld query model get-model --vid=<uint16> --pid=<uint16>`
+
+* CLI command send	
+    * Valid command	
+        * command exists/relevant	
+    * Invalid command	
+        * incorrect command syntax	
+
+* Сommand result	
+    * GET_MODEL command completed successfully ⇒ gets a Model Info with the given vid (vendor ID) and pid (product ID)
+        * ADD_MODEL command completed successfully	
+        * selected Model have not been deleted previously	
+        * combination of vid (vendor ID) and pid (product ID) for Model valid	
+    * GET_MODEL command failed ⇒ does not gets a Model Info with the given vid (vendor ID) and pid (product ID)
+        * ADD_MODEL command was not executed	
+        * record about a Model has been deleted	
+        * vid (vendor ID) valid,  pid (product ID) invalid	
+        * pid (product ID) valid, vid (vendor ID) invalid	
+
+* Role (Who can send)
+    * Positive:	
+        * Trustee	
+        * Vendor 	
+        * VendorAdmin 	
+        * CertificationCenter 	
+        * NodeAdmin 	
+
+* Parameters:	
+    * vid (Vendor ID) - uint16 
+        * Positive:
+            * unique value	
+            * value > 0	
+            * integer value format
+        * Negative:	
+            * empty value
+            * value =< 0
+            * string value format		
+            * nonexistent value	
+            * length > MAX	(MAX = 65535)
+    * pid (Product ID) - uint16 
+        * Positive:
+            * unique value	
+            * value > 0	
+            * integer value format
+            * value falls within the specified range	
+        * Negative:	
+            * empty value
+            * value =< 0
+            * string value format		
+            * nonexistent value	
+            * length > MAX	(MAX = 65535)
+
+### REST API
+REST API command: `GET /dcl/model/models/{vid}/{pid}` 	
+
+* REST API command send	
+    * Valid command	
+        * correct HTTP method	
+        * request is authorized	
+        * uses valid credentials/role	
+    * Invalid command	
+        * incorrect request	
+        * server side error	
+
+* Сommand result	
+    * GET_MODEL command completed successfully ⇒ gets a Model Info with the given vid (vendor ID) and pid (product ID)
+        * ADD_MODEL command completed successfully	
+        * selected Model have not been deleted previously	
+        * combination of vid (vendor ID) and pid (product ID) for Model valid	
+    * GET_MODEL command failed ⇒ does not gets a Model Info with the given vid (vendor ID) and pid (product ID)
+        * ADD_MODEL command was not executed	
+        * record about a Model has been deleted	
+        * vid (vendor ID) valid,  pid (product ID) invalid	
+        * pid (product ID) valid, vid (vendor ID) invalid	
+
+* Role (Who can send)
+    * Positive:	
+        * Trustee	
+        * Vendor 	
+        * VendorAdmin 	
+        * CertificationCenter 	
+        * NodeAdmin 	
+
+* Parameters:	
+    * vid (Vendor ID) - uint16 
+        * Positive:
+            * unique value	
+            * value > 0	
+            * integer value format
+        * Negative:	
+            * empty value
+            * value =< 0
+            * string value format		
+            * nonexistent value	
+            * length > MAX	(MAX = 65535)
+    * pid (Product ID) - uint16 
+        * Positive:
+            * unique value	
+            * value > 0	
+            * integer value format
+            * value falls within the specified range	
+        * Negative:	
+            * empty value
+            * value =< 0
+            * string value format		
+            * nonexistent value	
+            * length > MAX	(MAX = 65535)
+
+## [GET_MODEL_VERSION](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/transactions/model.md#get_model_version)	
+
+### CLI command	
+CLI command: `dcld query model model-version --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32>`
+
+* CLI command send	
+    * Valid command	
+         command exists/relevant	
+    * Invalid command	
+        * incorrect command syntax	
+
+* Сommand result	
+    * GET_MODEL_VERSION command completed successfully ⇒ gets a Model Software Versions for the given vid, pid and softwareVersion
+        * ADD_MODEL and ADD_MODEL_VERSION command completed successfully	
+        * selected Model and Model Version have not been deleted previously	
+        * combination of vid (vendor ID), pid (product ID) and softwareVersion for Model Version valid	
+    * GET_MODEL_VERSION command failed	⇒ does not gets a Model Software Versions for the given vid, pid and softwareVersion
+        * ADD_MODEL command was not executed	
+        * ADD_MODEL command completed successfully, but ADD_MODEL_VERSION command was not executed	
+        * record about a selected Model has been deleted	
+        * record about a selected Model Version has been deleted	
+        * vid (vendor ID) valid,  pid (product ID) and softwareVersion invalid	
+        * pid (product ID) valid, vid (vendor ID) and softwareVersion invalid	
+        * softwareVersion valid, vid (vendor ID) and pid (product ID) invalid	
+
+* Role (Who can send)
+    * Positive:	
+        * Trustee	
+        * Vendor 	
+        * VendorAdmin 	
+        * CertificationCenter 	
+        * NodeAdmin 	
+* Role (Who can send)
+    * Positive:	
+        * Trustee	
+            * The role corresponds to the Vendor ID	
+            * The role is not corresponds to the Vendor ID	
+        * Vendor 	
+            * The role corresponds to the Vendor ID	
+            * The role is not corresponds to the Vendor ID	
+        * VendorAdmin 	
+            * The role corresponds to the Vendor ID	
+            * The role is not corresponds to the Vendor ID	
+        * CertificationCenter 	
+            * The role corresponds to the Vendor ID	
+            * The role is not corresponds to the Vendor ID	
+        * NodeAdmin 	
+            * The role corresponds to the Vendor ID	
+            * The role is not corresponds to the Vendor ID	
+
+* Parameters:	
+    * vid (Vendor ID) - uint16 
+        * Positive:
+            * unique value	
+            * value > 0	
+            * integer value format
+        * Negative:	
+            * empty value
+            * value =< 0
+            * string value format		
+            * nonexistent value	
+            * length > MAX	(MAX = 65535)
+    * pid (Product ID) - uint16 
+        * Positive:
+            * unique value	
+            * value > 0	
+            * integer value format
+            * value falls within the specified range	
+        * Negative:	
+            * empty value
+            * value =< 0
+            * string value format		
+            * nonexistent value	
+            * length > MAX	(MAX = 65535)
+    * softwareVersion (Software Version) - uint32
+        * Positive:
+            * value exists	
+            * value >= 0	
+            * integer value format
+        * Negative:	
+            * empty value	
+            * length > MAX	(MAX = 4 294 967 295)
+
+### REST API 
+REST API command: `GET /dcl/model/versions/{vid}/{pid}/{softwareVersion}` 	
+
+* REST API command send	
+    * Valid command	
+        * correct HTTP method	
+        * request is authorized	
+        * uses valid credentials/role	
+    * Invalid command	
+        * incorrect request	
+        * server side error	
+
+* Сommand result	
+    * GET_MODEL_VERSION command completed successfully ⇒ gets a Model Software Versions for the given vid, pid and softwareVersion
+        * ADD_MODEL and ADD_MODEL_VERSION command completed successfully	
+        * selected Model and Model Version have not been deleted previously	
+        * combination of vid (vendor ID), pid (product ID) and softwareVersion for Model Version valid	
+    * GET_MODEL_VERSION command failed	⇒ does not gets a Model Software Versions for the given vid, pid and softwareVersion
+        * ADD_MODEL command was not executed	
+        * ADD_MODEL command completed successfully, but ADD_MODEL_VERSION command was not executed	
+        * record about a selected Model has been deleted	
+        * record about a selected Model Version has been deleted	
+        * vid (vendor ID) valid,  pid (product ID) and softwareVersion invalid	
+        * pid (product ID) valid, vid (vendor ID) and softwareVersion invalid	
+        * softwareVersion valid, vid (vendor ID) and pid (product ID) invalid	
+
+* Role (Who can send)
+    * Positive:	
+        * Trustee	
+        * Vendor 	
+        * VendorAdmin 	
+        * CertificationCenter 	
+        * NodeAdmin 	
+* Role (Who can send)
+    * Positive:	
+        * Trustee	
+            * The role corresponds to the Vendor ID	
+            * The role is not corresponds to the Vendor ID	
+        * Vendor 	
+            * The role corresponds to the Vendor ID	
+            * The role is not corresponds to the Vendor ID	
+        * VendorAdmin 	
+            * The role corresponds to the Vendor ID	
+            * The role is not corresponds to the Vendor ID	
+        * CertificationCenter 	
+            * The role corresponds to the Vendor ID	
+            * The role is not corresponds to the Vendor ID	
+        * NodeAdmin 	
+            * The role corresponds to the Vendor ID	
+            * The role is not corresponds to the Vendor ID	
+
+* Parameters:	
+    * vid (Vendor ID) - uint16 
+        * Positive:
+            * unique value	
+            * value > 0	
+            * integer value format
+        * Negative:	
+            * empty value
+            * value =< 0
+            * string value format		
+            * nonexistent value	
+            * length > MAX	(MAX = 65535)
+    * pid (Product ID) - uint16 
+        * Positive:
+            * unique value	
+            * value > 0	
+            * integer value format
+            * value falls within the specified range	
+        * Negative:	
+            * empty value
+            * value =< 0
+            * string value format		
+            * nonexistent value	
+            * length > MAX	(MAX = 65535)
+    * softwareVersion (Software Version) - uint32
+        * Positive:
+            * value exists	
+            * value >= 0	
+            * integer value format
+        * Negative:	
+            * empty value	
+            * length > MAX	(MAX = 4 294 967 295)
+
+## [GET_ALL_MODELS](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/transactions/model.md#get_all_models)	
+
+### CLI command	
+CLI command: `dcld query model all-models`
+
+* CLI command send	
+    * Valid command	
+        * command exists/relevant	
+    * Invalid command	
+        * incorrect command syntax		
+
+* Сommand result	
+    * GET_ALL_MODELS command completed successfully ⇒ gets all Model Infos for all vendors
+        * ADD_MODEL command completed successfully	
+        * there is at least one Model Info	
+    * GET_ALL_MODELS command failed	⇒ does not gets all Model Infos for all vendors
+        * ADD_MODEL command was not executed	
+        * there is not one Model Info	
+
+* Role (Who can send)
+    * Positive:
+        * Trustee	
+        * Vendor 	
+        * VendorAdmin 	
+        * CertificationCenter 	
+        * NodeAdmin 	
+
+* Parameters:	
+    * count-total - optional(bool)
+        * Positive:
+            * empty value	
+            * value state	
+                * TRUE (-1)	
+                * FALSE (0)	
+        * Negative:	
+            * value is not bool	
+    * limit  - optional(uint)
+        * Positive:
+            * value exists	
+            * empty value	
+        * Negative:	
+            * value > 100	
+    * offset - optional(uint)
+        * Positive:
+            * value exists	
+            * empty value	
+        * Negative:	
+            * value < 0	
+    * page  - optional(uint)
+        * Positive:
+            * value exists	
+            * empty value	
+        * Negative:	
+            * value < 0	
+    * page-key - optional(string)
+        * Positive:
+            * empty value	
+            * value exists	
+        * Negative:	
+            * length < MIN	
+    * reverse - optional(bool)
+        * Positive:
+            * empty value	
+            * value state	
+                * TRUE (-1)	
+                * FALSE (0)	
+        * Negative:	
+            * value is not bool	
+
+### REST API 
+REST API command: `GET /dcl/model/models`	
+
+* REST API command send	
+    * Valid command	
+        * correct HTTP method	
+        * request is authorized	
+        * uses valid credentials/role	
+    * Invalid command	
+        * incorrect request	
+        * server side error	
+
+* Сommand result	
+    * GET_ALL_MODELS command completed successfully ⇒ gets all Model Infos for all vendors
+        * ADD_MODEL command completed successfully	
+        * there is at least one Model Info	
+    * GET_ALL_MODELS command failed	⇒ does not gets all Model Infos for all vendors
+        * ADD_MODEL command was not executed	
+        * there is not one Model Info	
+
+* Role (Who can send)
+    * Positive:
+        * Trustee	
+        * Vendor 	
+        * VendorAdmin 	
+        * CertificationCenter 	
+        * NodeAdmin 	
+
+* Parameters:	
+    * count-total - optional(bool)
+        * Positive:
+            * empty value	
+            * value state	
+                * TRUE (-1)	
+                * FALSE (0)	
+        * Negative:	
+            * value is not bool	
+    * limit  - optional(uint)
+        * Positive:
+            * value exists	
+            * empty value	
+        * Negative:	
+            * value > 100	
+    * offset - optional(uint)
+        * Positive:
+            * value exists	
+            * empty value	
+        * Negative:	
+            * value < 0	
+    * page  - optional(uint)
+        * Positive:
+            * value exists	
+            * empty value	
+        * Negative:	
+            * value < 0	
+    * page-key - optional(string)
+        * Positive:
+            * empty value	
+            * value exists	
+        * Negative:	
+            * length < MIN	
+    * reverse - optional(bool)
+        * Positive:
+            * empty value	
+            * value state	
+                * TRUE (-1)	
+                * FALSE (0)	
+        * Negative:	
+            * value is not bool
+
+## [GET_ALL_VENDOR_MODELS](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/transactions/model.md#get_all_vendor_models)	
+
+### CLI command
+CLI command: `dcld query model vendor-models --vid=<uint16>`	
+
+* CLI command send	
+    * Valid command	
+        * command exists/relevant	
+    * Invalid command	
+        * incorrect command syntax	
+
+* Сommand result	
+    * GET_ALL_VENDOR_MODELS command completed successfully ⇒ gets all Model Infos by the given Vendor (vid)
+        * ADD_MODEL command completed successfully	
+        * there is at least one Model Info by the given Vendor (vid)	
+    * GET_ALL_VENDOR_MODELS command failed ⇒ does not gets all Model Infos by the given Vendor (vid)
+        * ADD_MODEL command was not executed	
+        * there is not one Model Info by the given Vendor (vid)	
+
+* Role (Who can send)
+    * Positive:	
+        * Trustee	
+        * Vendor 	
+        * VendorAdmin 	
+        * CertificationCenter 	
+        * NodeAdmin 	
+
+* Parameters:	
+    * vid (Vendor ID) - uint16 
+        * Positive:
+            * unique value	
+            * value > 0	
+            * integer value format
+        * Negative:	
+            * empty value
+            * value =< 0
+            * string value format		
+            * nonexistent value	
+            * length > MAX	(MAX = 65535)
+
+### REST API 
+REST API command: `GET /dcl/model/models/{vid}`	
+
+* REST API command send	
+    * Valid command	
+        * correct HTTP method	
+        * request is authorized	
+        * uses valid credentials/role	
+    * Invalid command	
+        * incorrect request	
+        * server side error	
+
+* Сommand result	
+    * GET_ALL_VENDOR_MODELS command completed successfully ⇒ gets all Model Infos by the given Vendor (vid)
+        * ADD_MODEL command completed successfully	
+        * there is at least one Model Info by the given Vendor (vid)	
+    * GET_ALL_VENDOR_MODELS command failed ⇒ does not gets all Model Infos by the given Vendor (vid)
+        * ADD_MODEL command was not executed	
+        * there is not one Model Info by the given Vendor (vid)	
+
+* Role (Who can send)
+    * Positive:	
+        * Trustee	
+        * Vendor 	
+        * VendorAdmin 	
+        * CertificationCenter 	
+        * NodeAdmin 	
+
+* Parameters:	
+    * vid (Vendor ID) - uint16 
+        * Positive:
+            * unique value	
+            * value > 0	
+            * integer value format
+        * Negative:	
+            * empty value
+            * value =< 0
+            * string value format		
+            * nonexistent value	
+            * length > MAX	(MAX = 65535)
+
+## [GET_ALL_MODEL_VERSIONS](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/transactions/model.md#get_all_model_versions)	
+
+### CLI command	
+CLI command: `CLI dcld query model all-model-versions --vid=<uint16> --pid=<uint16>`
+
+* CLI command send	
+    * Valid command	
+        * command exists/relevant	
+    * Invalid command	
+        * incorrect command syntax	
+
+* Сommand result	
+    * GET_ALL_MODEL_VERSIONS command completed successfully	⇒ gets all Model Software Versions for the given vid and pid combination
+        * ADD_MODEL command completed successfully	
+        * there is at least one Model Software Versions for the given vid and pid combination	
+    * GET_ALL_MODEL_VERSIONS command failed	⇒ does not gets all Model Software Versions for the given vid and pid combination
+        * ADD_MODEL command was not executed	
+        * there is not oneModel Software Versions for the given vid and pid combination	
+
+* Role (Who can send)
+    * Positive:	
+        * Trustee	
+        * Vendor 	
+        * VendorAdmin 	
+        * CertificationCenter 	
+        * NodeAdmin 	
+
+* Parameters:	
+    * vid (Vendor ID) - uint16 
+        * Positive:
+            * unique value	
+            * value > 0	
+            * integer value format
+        * Negative:	
+            * empty value
+            * value =< 0
+            * string value format		
+            * nonexistent value	
+            * length > MAX	(MAX = 65535)
+    * pid (Product ID) - uint16 
+        * Positive:
+            * unique value	
+            * value > 0	
+            * integer value format
+            * value falls within the specified range	
+        * Negative:	
+            * empty value
+            * value =< 0
+            * string value format		
+            * nonexistent value	
+            * length > MAX	(MAX = 65535)
+
+### REST API 	
+REST API command: `GET /dcl/model/versions/{vid}/{pid}`
+
+* REST API command send	
+    * Valid command	
+        * correct HTTP method	
+        * request is authorized	
+        * uses valid credentials/role	
+    * Invalid command	
+        * incorrect request	
+        * server side error	
+
+* Сommand result	
+    * GET_ALL_MODEL_VERSIONS command completed successfully	⇒ gets all Model Software Versions for the given vid and pid combination
+        * ADD_MODEL command completed successfully	
+        * there is at least one Model Software Versions for the given vid and pid combination	
+    * GET_ALL_MODEL_VERSIONS command failed	⇒ does not gets all Model Software Versions for the given vid and pid combination
+        * ADD_MODEL command was not executed	
+        * there is not oneModel Software Versions for the given vid and pid combination	
+
+* Role (Who can send)
+    * Positive:	
+        * Trustee	
+        * Vendor 	
+        * VendorAdmin 	
+        * CertificationCenter 	
+        * NodeAdmin 	
+
+* Parameters:	
+    * vid (Vendor ID) - uint16 
+        * Positive:
+            * unique value	
+            * value > 0	
+            * integer value format
+        * Negative:	
+            * empty value
+            * value =< 0
+            * string value format		
+            * nonexistent value	
+            * length > MAX	(MAX = 65535)
+    * pid (Product ID) - uint16 
+        * Positive:
+            * unique value	
+            * value > 0	
+            * integer value format
+            * value falls within the specified range	
+        * Negative:	
+            * empty value
+            * value =< 0
+            * string value format		
+            * nonexistent value	
+            * length > MAX	(MAX = 65535)
