@@ -51,7 +51,7 @@ CLI command: `dcld tx vendorinfo add-vendor --vid=<uint16> --vendorName=<string>
          * MIN < length < MAX	
       * Negative 
          * empty value
-         * length > MAX
+         * length > MAX (MAX = 128)
       
    * companyLegalName (Company Legal Name) - string 
       * Positive:
@@ -59,7 +59,7 @@ CLI command: `dcld tx vendorinfo add-vendor --vid=<uint16> --vendorName=<string>
          * MIN < length < MAX	
       * Negative
         * empty value	
-        * length > MAX
+        * length > MAX (MAX = 256)
 
    * companyPreferredName (Company Preferred Name)	optional(string)
       * Positive:
@@ -78,6 +78,9 @@ CLI command: `dcld tx vendorinfo add-vendor --vid=<uint16> --vendorName=<string>
       * Negative              
          * length > MAX	
          * сontains spaces or line breaks
+         * value is not URL
+         * URL starts not with https:
+         * URL can't be non-http
    
    * schemaVersion (Schema Version)	optional(uint16)
       * Positive:
@@ -86,6 +89,8 @@ CLI command: `dcld tx vendorinfo add-vendor --vid=<uint16> --vendorName=<string>
          * empty value	
       * Negative 	
          * length > MAX	(MAX = 65535)
+         * value >< 0
+         * string value format
 
 ### REST API 
 POST: `/cosmos/tx/v1beta1/txs`[NewMsgCreateVendorInfo](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/proto/zigbeealliance/distributedcomplianceledger/vendorinfo/tx.proto#L18)
@@ -136,7 +141,7 @@ POST: `/cosmos/tx/v1beta1/txs`[NewMsgCreateVendorInfo](https://github.com/zigbee
          * MIN < length < MAX	
       * Negative 
          * empty value	
-         * length > MAX	
+         * length > MAX (MAX = 128)	
 
    * companyLegalName (Company Legal Name) - string 
       * Positive:
@@ -144,7 +149,7 @@ POST: `/cosmos/tx/v1beta1/txs`[NewMsgCreateVendorInfo](https://github.com/zigbee
          * MIN < length < MAX	
       * Negative
         * empty value	
-        * length > MAX	
+        * length > MAX (MAX = 256)
 
    * companyPreferredName (Company Preferred Name) - optional(string)
       * Positive:
@@ -163,6 +168,9 @@ POST: `/cosmos/tx/v1beta1/txs`[NewMsgCreateVendorInfo](https://github.com/zigbee
       * Negative              
          * length > MAX	
          * сontains spaces or line breaks	
+         * value is not URL
+         * URL starts not with https:
+         * URL can't be non-http
    
    * schemaVersion (Schema Version) - optional(uint16)
       * Positive:
@@ -171,6 +179,8 @@ POST: `/cosmos/tx/v1beta1/txs`[NewMsgCreateVendorInfo](https://github.com/zigbee
          * empty value	
       * Negative 	
          * length > MAX	(MAX = 65535)
+         * value >< 0
+         * string value format
 
 ## [UPDATE_VENDOR_INFO](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/transactions/vendor-info.md#update_vendor_info)
 
@@ -223,13 +233,15 @@ CLI command: `dcld tx vendorinfo update-vendor --vid=<uint16> ... --from=<accoun
          * text value format	
          * MIN < length < MAX	
       * Negative 	
-         * empty value	
+         * empty value
+         * length > MAX	(MAX = 128)
    * companyLegalName (Company Legal Name) - string 
       * Positive:	
          * text value format	
          * MIN < length < MAX	
       * Negative 	
-         * empty value	
+         * empty value
+         * length > MAX	(MAX = 256)
    
    * companyPreferredName (Company Preferred Name) - optional(string)
       * Positive:	
@@ -247,7 +259,10 @@ CLI command: `dcld tx vendorinfo update-vendor --vid=<uint16> ... --from=<accoun
          * MIN < length < MAX	
       * Negative 	
          * length > MAX	
-         * сontains spaces or line breaks	
+         * сontains spaces or line breaks
+         * value is not URL
+         * URL starts not with https:
+         * URL can't be non-http	
    
    * schemaVersion (Schema Version) - optional(uint16)
       * Positive:	
@@ -256,6 +271,8 @@ CLI command: `dcld tx vendorinfo update-vendor --vid=<uint16> ... --from=<accoun
          * empty value	
       * Negative 	
          * length > MAX	(MAX = 65535)
+         * value >< 0
+         * string value format
 
 ### REST API 
 POST: `/cosmos/tx/v1beta1/txs`[MsgUpdateVendorInfo](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/proto/zigbeealliance/distributedcomplianceledger/vendorinfo/tx.proto#L30)
@@ -307,14 +324,16 @@ POST: `/cosmos/tx/v1beta1/txs`[MsgUpdateVendorInfo](https://github.com/zigbee-al
          * text value format	
          * MIN < length < MAX	
       * Negative 	
-         * empty value	
+         * empty value
+         * length > MAX	(MAX = 128)
    
    * companyLegalName (Company Legal Name) - string 
       * Positive:	
          * text value format	
          * MIN < length < MAX	
       * Negative 	
-         * empty value	
+         * empty value
+         * length > MAX	
    
    * companyPreferredName (Company Preferred Name) - optional(string)
       * Positive:	
@@ -322,7 +341,7 @@ POST: `/cosmos/tx/v1beta1/txs`[MsgUpdateVendorInfo](https://github.com/zigbee-al
          * text value format	
          * MIN < length < MAX	
       * Negative 	
-         * length > MAX	
+         * length > MAX	(MAX = 256)
    
    * vendorLandingPageURL (Vendor Landing Page URL) - optional(string)
       * Positive:	
@@ -332,7 +351,10 @@ POST: `/cosmos/tx/v1beta1/txs`[MsgUpdateVendorInfo](https://github.com/zigbee-al
          * MIN < length < MAX	
       * Negative 	
          * length > MAX	
-         * сontains spaces or line breaks	
+         * сontains spaces or line breaks
+         * value is not URL
+         * URL starts not with https:
+         * URL can't be non-http	
    
    * schemaVersion (Schema Version) - optional(uint16)
       * Positive:	
@@ -341,6 +363,8 @@ POST: `/cosmos/tx/v1beta1/txs`[MsgUpdateVendorInfo](https://github.com/zigbee-al
          * empty value	
       * Negative 	
          * length > MAX	(MAX = 65535)
+         * value >< 0
+         * string value format
 
 ## [GET_VENDOR_INFO](https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/transactions/vendor-info.md#get_vendor_info)
 
@@ -465,21 +489,24 @@ CLI command: `dcld query vendorinfo all-vendors`
    * limit - optional(uint)
       * Positive:	
          * value exists	
-         * empty value	
+         * empty value
+         * value =< 100	
       * Negative	
          * value > 100	
    
    * offset - optional(uint)
       * Positive:	
          * value exists	
-         * empty value	
+         * empty value
+         * value >= 0		
       * Negative	
          * value < 0	
    
    * page - optional(uint)
       * Positive:	
          * value exists	
-         * empty value	
+         * empty value
+         * value >= 0	
       * Negative	
          * value < 0	
    
@@ -488,7 +515,8 @@ CLI command: `dcld query vendorinfo all-vendors`
          * empty value	
          * value exists	
       * Negative	
-         * length < MIN	
+         * length < MIN
+         * length > MAX
    
    * reverse - optional(bool)
       * Positive:	
@@ -542,20 +570,23 @@ GET: `/dcl/vendorinfo/vendors`
    * limit - optional(uint)
       * Positive:	
          * value exists	
-         * empty value	
+         * empty value
+         * value < 100	
       * Negative	
          * value > 100	
    
    * offset - optional(uint)
       * Positive:	
          * value exists	
-         * empty value	
+         * empty value
+         * value >= 0	
       * Negative	
          * value < 0	
    * page - optional(uint)
       * Positive:	
          * value exists	
-         * empty value	
+         * empty value
+         * value >= 0	
       * Negative	
          * value < 0	
    
@@ -564,7 +595,8 @@ GET: `/dcl/vendorinfo/vendors`
          * empty value	
          * value exists	
       * Negative	
-         * length < MIN	
+         * length < MIN
+         * length > MAX	
    
    * reverse - optional(bool)
       * Positive:	
