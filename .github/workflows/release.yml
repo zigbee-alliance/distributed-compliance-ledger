@@ -178,7 +178,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          asset_label: "short description"
           upload_url: ${{ needs.checks.outputs.upload_url }}
           asset_path: build/${{ env.BIN_NAME }}
           asset_name: ${{ env.BIN_NAME }}
