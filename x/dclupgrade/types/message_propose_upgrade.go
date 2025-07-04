@@ -1,8 +1,6 @@
 package types
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -19,6 +17,7 @@ import (
 
 const TypeMsgProposeUpgrade = "propose_upgrade"
 const TmpFileForValidateBinaries = "/tmp/testfile"
+const GitReleaseApiUrl = "https://api.github.com/repos/zigbee-alliance/distributed-compliance-ledger/releases/tags/"
 
 var _ sdk.Msg = &MsgProposeUpgrade{}
 
@@ -64,46 +63,58 @@ func ValidateBinaries(planInfo *string) error {
 	}
 
 	for _, urlWithSum := range planInfoJson["binaries"] {
-		fileUrl, sh256Sum, found1 := strings.Cut(urlWithSum, "?")
-		if !found1 {
-			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid parsing raw url")
+		fileUrl, sha256Sum, foundSep := strings.Cut(urlWithSum, "?")
+		if !foundSep {
+			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid parsing upgrade plan url")
 		}
 
-		_, expectedSum, found2 := strings.Cut(sh256Sum, ":")
-		if !found2 {
-			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid parsing raw url")
-		}
+		partsUrl := strings.Split(fileUrl, "/")
 
-		// println("Trying download file from ", fileUrl)
-		fmt.Fprintln(os.Stderr, "Trying download file from ", fileUrl)
+		gitTag := partsUrl[7]
 
-		// Create the file
-		out, err := os.Create(TmpFileForValidateBinaries)
+		resp, err := http.Get(GitReleaseApiUrl + gitTag)
 		if err != nil {
-			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "error creatinging temp binary file")
-		}
-		defer out.Close()
-		defer os.Remove(TmpFileForValidateBinaries)
-
-		resp, err := http.Get(fileUrl)
-		if err != nil {
-			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "error downloading a binary file")
+			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "request error")
 		}
 		defer resp.Body.Close()
 
-		hash256 := sha256.New()
-		_, err = io.Copy(hash256, resp.Body)
+		body, err := io.ReadAll(resp.Body)
 		if err != nil {
-			return err
+			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "read request error")
 		}
 
-		realSum := hex.EncodeToString(hash256.Sum(nil))
-		if expectedSum != realSum {
-			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid file checksum")
+		var parsedBody map[string]any
+
+		err = json.Unmarshal([]byte(body), &parsedBody)
+
+		if err != nil {
+			return sdkerrors.ErrJSONUnmarshal
+		}
+
+		var valid bool = false
+
+		for _, asset := range parsedBody["assets"].([]any) {
+
+			assetMap := asset.(map[string]any)
+
+			if assetMap["name"] == "dcld" && assetMap["browser_download_url"] == fileUrl &&
+				(assetMap["digest"] == nil || assetMap["digest"] == sha256Sum) {
+
+				valid = true
+				fmt.Printf("Valid link\n")
+				// for key, value := range assetMap {
+				// 	fmt.Printf("key: %s, value: %s\n", key, value)
+				// }
+			}
+
+		}
+
+		if !valid {
+			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid binary file")
 		}
 	}
 
-	println("Download and checksum verification completed successfully")
+	println("Binary files validation completed successfully")
 
 	return nil
 }

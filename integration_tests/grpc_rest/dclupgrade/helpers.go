@@ -278,7 +278,6 @@ func Demo(suite *utils.TestSuite) {
 	// trustee proposes upgrade
 	proposeUpgradeMsg := NewMsgProposeUpgrade(aliceAccount.Address, utils.RandString(), 100000, testconstants.UpgradePlanInfo)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{proposeUpgradeMsg}, aliceName, aliceAccount)
-	fmt.Println("err: ", err)
 	require.NoError(suite.T, err)
 
 	// Check upgrade is proposed
