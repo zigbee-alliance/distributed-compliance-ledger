@@ -125,7 +125,7 @@ resource "aws_lb_target_group" "rest" {
   protocol           = "TCP"
   vpc_id             = module.this_vpc.vpc_id
   preserve_client_ip = false
-  tags = var.tags
+  tags               = var.tags
 }
 
 resource "aws_lb_target_group" "grpc" {
@@ -134,7 +134,7 @@ resource "aws_lb_target_group" "grpc" {
   protocol           = "TCP"
   vpc_id             = module.this_vpc.vpc_id
   preserve_client_ip = false
-  tags = var.tags
+  tags               = var.tags
 }
 
 resource "aws_lb_target_group" "rpc" {
@@ -143,7 +143,7 @@ resource "aws_lb_target_group" "rpc" {
   protocol           = "TCP"
   vpc_id             = module.this_vpc.vpc_id
   preserve_client_ip = false
-  tags = var.tags
+  tags               = var.tags
 }
 
 resource "aws_lb_target_group_attachment" "rest_targets" {

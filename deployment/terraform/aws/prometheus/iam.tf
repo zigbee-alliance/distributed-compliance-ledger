@@ -14,7 +14,7 @@ resource "aws_iam_role" "this_iam_role" {
   ]
 }
 EOF
-  tags = var.tags
+  tags               = var.tags
 }
 
 resource "aws_iam_policy" "this_amp_write_policy" {
@@ -34,7 +34,7 @@ resource "aws_iam_policy" "this_amp_write_policy" {
     ]
 }
 EOF
-  tags = var.tags
+  tags   = var.tags
 }
 
 resource "aws_iam_role_policy_attachment" "this_amp_policy_attachment" {

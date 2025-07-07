@@ -6,8 +6,8 @@ variable "tags" {
 
 variable "disable_instance_protection" {
   description = "Disable the protection that prevents the validator instance from being accidentally terminated"
-  type = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 variable "ssh_public_key_path" {

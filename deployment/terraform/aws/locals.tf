@@ -3,13 +3,13 @@ locals {
   project_name_default = "DCL"
 
   base_tags = {
-    project = local.project_name_default
+    project     = local.project_name_default
     environment = terraform.workspace
   }
 
   disable_validator_protection = tobool(var.disable_validator_protection) == true
 
-  tags = merge(local.base_tags, {for k, v in var.common_tags :  k => v if try(length(v), 0) > 0})
+  tags = merge(local.base_tags, { for k, v in var.common_tags : k => v if try(length(v), 0) > 0 })
 
   nodes = {
     validator = {

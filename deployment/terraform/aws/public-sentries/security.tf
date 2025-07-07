@@ -10,7 +10,7 @@ module "this_dev_sg" {
   ingress_ipv6_cidr_blocks = ["::/0"]
   ingress_rules            = ["all-icmp", "ssh-tcp"]
   egress_rules             = ["all-all"]
-  tags = var.tags
+  tags                     = var.tags
 }
 
 module "this_public_sg" {

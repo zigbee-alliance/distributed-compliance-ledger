@@ -15,7 +15,7 @@ data "aws_ami" "ubuntu" {
 
 resource "aws_key_pair" "key_pair" {
   public_key = file(var.ssh_public_key_path)
-  tags = var.tags
+  tags       = var.tags
 }
 
 resource "aws_instance" "this_node" {

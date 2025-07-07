@@ -29,9 +29,9 @@ module "validator" {
   ssh_public_key_path  = var.ssh_public_key_path
   ssh_private_key_path = var.ssh_private_key_path
 
-  instance_type        = var.validator_config.instance_type
+  instance_type               = var.validator_config.instance_type
   disable_instance_protection = local.disable_validator_protection
-  iam_instance_profile = module.iam.iam_instance_profile
+  iam_instance_profile        = module.iam.iam_instance_profile
 }
 
 # Private Sentries
@@ -171,7 +171,7 @@ module "observers_2" {
 module "prometheus" {
   count = local.prometheus_enabled ? 1 : 0
 
-  source        = "./prometheus"
+  source = "./prometheus"
   providers = {
     aws = aws.region_1
   }

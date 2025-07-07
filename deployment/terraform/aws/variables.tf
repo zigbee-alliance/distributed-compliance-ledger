@@ -1,9 +1,9 @@
 variable "common_tags" {
   description = "Common tags for resources created in AWS."
   type = object({
-    project     = optional(string)  # default: DCL
-    environment = optional(string)  # default: workspace name
-    created-by  = optional(string)  # e.g. email address
+    project     = optional(string) # default: DCL
+    environment = optional(string) # default: workspace name
+    created-by  = optional(string) # e.g. email address
     purpose     = optional(string)
   })
 }
@@ -35,8 +35,8 @@ variable "validator_config" {
 
 variable "disable_validator_protection" {
   description = "Disable the protection that prevents the validator instance from being accidentally terminated"
-  type = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 variable "private_sentries_config" {
