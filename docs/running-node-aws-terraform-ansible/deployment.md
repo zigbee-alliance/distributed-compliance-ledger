@@ -32,7 +32,7 @@ aws_secret_access_key = <secret_access_key_here>
 
 #### 1.1.2 Configure Terraform backend
 
-By default AWS infrastructure backend is set as `s3` (see [`deployment/terraform/aws/backend.tf`](/deployment/terraform/aws/backend.tf)).
+By default AWS infrastructure backend is set as `s3` (see [`deployment/terraform/aws/backend.tf`](../../deployment/terraform/aws/backend.tf)).
 
 You may consider the following options
 
@@ -53,8 +53,8 @@ To complete the configuration please specify:
 
 using one of the following ways:
 
-*   as parameters in [`deployment/terraform/aws/backend.tf`](/deployment/terraform/aws/backend.tf)
-*   as a separate configuration file, please check [`deployment/terraform/aws/config.s3.tfbackend.example`](/deployment/terraform/aws/config.s3.tfbackend.example)
+*   as parameters in [`deployment/terraform/aws/backend.tf`](../../deployment/terraform/aws/backend.tf)
+*   as a separate configuration file, please check [`deployment/terraform/aws/config.s3.tfbackend.example`](../../deployment/terraform/aws/config.s3.tfbackend.example)
 *   as command line arguments
 *   interactively during terraform initialization
 
@@ -62,7 +62,7 @@ Please see also Terraform [docs](https://developer.hashicorp.com/terraform/langu
 
 ##### Option 2. `local` backend (only for development)
 
-Need to replace `s3` with `local` in [`deployment/terraform/aws/backend.tf`](/deployment/terraform/aws/backend.tf).
+Need to replace `s3` with `local` in [`deployment/terraform/aws/backend.tf`](../../deployment/terraform/aws/backend.tf).
 
 ##### Option 3. Use another remote backend
 
@@ -70,7 +70,7 @@ Please see Terraform [docs](https://developer.hashicorp.com/terraform/language/v
 
 #### 1.1.3 Configure AWS infrastructure parameters
 
-[`deployment/terraform/aws/terraform.tfvars`](/deployment/terraform/aws/terraform.tfvars)
+[`deployment/terraform/aws/terraform.tfvars`](../../deployment/terraform/aws/terraform.tfvars)
 
 ##### AWS Regions
 
@@ -184,7 +184,7 @@ cd deployment/terraform/aws
 terraform init -backend-config=<backend-config-file> # in case backend configuration is in a file
 ```
 
-where `<backend-config-file>` is the backend configuration file (please see AWS S3 backend [example](/deployment/terraform/aws/config.s3.tfbackend.example) configuration).
+where `<backend-config-file>` is the backend configuration file (please see AWS S3 backend [example](../../deployment/terraform/aws/config.s3.tfbackend.example) configuration).
 
 (optional) Create/Activate the deployment workspace:
 
@@ -235,7 +235,7 @@ HOST_KEY_CHECKING=False
 
 #### 2.1.2 Set base DCL network parameters
 
-[`deployment/ansible/inventory/aws/group_vars/all.yaml`](/deployment/ansible/inventory/aws/group_vars/all.yaml)
+[`deployment/ansible/inventory/aws/group_vars/all.yaml`](../../deployment/ansible/inventory/aws/group_vars/all.yaml)
 
 ```yaml
 chain_id: <chain-id>
@@ -281,8 +281,8 @@ where `<chain-id>` is the chain ID of a network being joined.
 
 **Note** For `testnet-2.0` and `main-net` the genesis files are already in place
 
-  - [`deployment/persistent_chains/testnet-2.0/genesis.json`](/deployment/persistent_chains/testnet-2.0/genesis.json)
-  - [`deployment/persistent_chains/main-net/genesis.json`](/deployment/persistent_chains/main-net/genesis.json)
+  - [`deployment/persistent_chains/testnet-2.0/genesis.json`](../../deployment/persistent_chains/testnet-2.0/genesis.json)
+  - [`deployment/persistent_chains/main-net/genesis.json`](../../deployment/persistent_chains/main-net/genesis.json)
 
 #### 2.1.4 Persistent peers configuration
 
@@ -304,11 +304,11 @@ config:
 
 In particular:
 
-*   validator (**required if private sentries are disabled, otherwise by default resolved from private sentries**) [`deployment/ansible/roles/configure/vars/validator.yml`](/deployment/ansible/roles/configure/vars/validator.yml)
-*   private-sentry (**required if private sentries are enabled, otherwise by default resolved from validators**) [`deployment/ansible/roles/configure/vars/private-sentry.yml`](/deployment/ansible/roles/configure/vars/private-sentry.yml)
-*   observer (optional, by default resolved from private sentries) [`deployment/ansible/roles/configure/vars/observer.yml`](/deployment/ansible/roles/configure/vars/observer.yml)
-*   public-sentry (optional, by default resolved from private sentries) [`deployment/ansible/roles/configure/vars/public-sentry.yml`](/deployment/ansible/roles/configure/vars/public-sentry.yml)
-*   seed (optional, by default resolved from public sentries) [`deployment/ansible/roles/configure/vars/seed.yml`](/deployment/ansible/roles/configure/vars/seed.yml)
+*   validator (**required if private sentries are disabled, otherwise by default resolved from private sentries**) [`deployment/ansible/roles/configure/vars/validator.yml`](../../deployment/ansible/roles/configure/vars/validator.yml)
+*   private-sentry (**required if private sentries are enabled, otherwise by default resolved from validators**) [`deployment/ansible/roles/configure/vars/private-sentry.yml`](../../deployment/ansible/roles/configure/vars/private-sentry.yml)
+*   observer (optional, by default resolved from private sentries) [`deployment/ansible/roles/configure/vars/observer.yml`](../../deployment/ansible/roles/configure/vars/observer.yml)
+*   public-sentry (optional, by default resolved from private sentries) [`deployment/ansible/roles/configure/vars/public-sentry.yml`](../../deployment/ansible/roles/configure/vars/public-sentry.yml)
+*   seed (optional, by default resolved from public sentries) [`deployment/ansible/roles/configure/vars/seed.yml`](../../deployment/ansible/roles/configure/vars/seed.yml)
 
 **Note** For `testnet-2.0` or `main-net` get the latest `persistent_peers` string from the CSA slack channel
 
