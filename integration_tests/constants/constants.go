@@ -137,12 +137,11 @@ var (
 	TestDate   = "2020-02-02T02:00:00Z"
 
 	// Upgrade.
-	UpgradePlanName                    = "TestUpgrade"
-	UpgradePlanHeight            int64 = 1337
-	UpgradePlanInfo                    = "{\"binaries\":{\"linux/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.2.2/dcld?checksum=sha256:3f2b2a98b7572c6598383f7798c6bc16b4e432ae5cfd9dc8e84105c3d53b5026\"}}"
-	UpgradePlanInfoWrongChecksum       = "{\"binaries\":{\"linux/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.2.2/dcld?checksum=sha256:1f2b2a98b7572c6598383f7798c6bc16b4e432ae5cfd9dc8e84105c3d53b5026\"}}"
-	UpgradePlanInfoWrong               = "Some upgrade info wrong"
-
+	UpgradePlanName                 = "v1.4.4"
+	UpgradePlanHeight         int64 = 1337
+	UpgradePlanInfo                 = "{\"binaries\":{\"linux/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.4.4/dcld?checksum=sha256:e4031c6a77aa8e58add391be671a334613271bcf6e7f11d23b04a0881ece6958\"}}"
+	UpgradeBrowserDownloadUrl       = "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.4.4/dcld"
+	UpgradeGitApiJsonResponse       = "{\"assets\":[{\"name\": \"dcld\", \"state\": \"uploaded\", \"digest\": \"sha256:e4031c6a77aa8e58add391be671a334613271bcf6e7f11d23b04a0881ece6958\", \"browser_download_url\":\"" + UpgradeBrowserDownloadUrl + "\"}]}"
 	//
 	Address1, _           = sdk.AccAddressFromBech32("cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf")
 	Address2, _           = sdk.AccAddressFromBech32("cosmos1nl4uaesk9gtu7su3n89lne6xpa6lq8gljn79rq")
