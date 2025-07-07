@@ -23,6 +23,7 @@ on:
 
 env:
   BIN_NAME: dcld
+  COSMOVISOR_VERSION: 1.5.0
 
 jobs:
 
@@ -117,7 +118,6 @@ jobs:
         if: ${{ !steps.release_info.outputs.release_info }}
         run: exit 1
 
-
   release:
     name: Release
     needs: checks
@@ -154,11 +154,11 @@ jobs:
           tar czf build/${{ env.BIN_NAME }}${{ matrix.tgz_name_suffix }} -C build ${{ env.BIN_NAME }}
         shell: bash
 
-      - name: build application binary
-        if: ${{ matrix.os == 'ubuntu-22.04' && (!matrix.bin || !matrix.tgz) }}
+      - name: build application and cosmovisor binary | ubuntu-22.04
+        if: ${{ matrix.os == 'ubuntu-22.04' && (!matrix.bin || !matrix.tgz || !matrix.cosmovisor) }}
         run: |
           bash .github/workflows/ubuntu-20.04-build.sh
-          build/${{ env.BIN_NAME }} version
+          ls -la build
 
           tar czf build/${{ env.BIN_NAME }}${{ matrix.tgz_name_suffix }} -C build ${{ env.BIN_NAME }}
         shell: bash
@@ -186,19 +186,12 @@ jobs:
           asset_content_type: application/x-gtar
 
       - name: build cosmovisor binary
-        if: ${{ !matrix.cosmovisor }}
+        if: ${{ matrix.os != 'ubuntu-22.04' && !matrix.cosmovisor }}
         run: |
-          go install github.com/cosmos/cosmos-sdk/cosmovisor/cmd/cosmovisor@v1.0.0
-        shell: bash
-
-      - name: get GOBIN
-        id: get_gobin
-        run: |
-          GOPATH=${GOPATH:-${HOME}/go}
-          GOBIN=${GOBIN:-${GOPATH}/bin}
-          echo "$GOBIN"
-
-          echo "gobin=$GOBIN" >> "$GITHUB_OUTPUT"
+          go install "cosmossdk.io/tools/cosmovisor/cmd/cosmovisor@v${{ env.COSMOVISOR_VERSION }}"
+          GOPATH="${GOPATH:-${HOME}/go}"
+          GOBIN="${GOBIN:-${GOPATH}/bin}"
+          cp "$GOBIN/cosmovisor" build
         shell: bash
 
       - name: upload to GitHub (cosmovisor binary)
@@ -208,7 +201,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.checks.outputs.upload_url }}
-          asset_path: ${{ steps.get_gobin.outputs.gobin }}/cosmovisor
+          asset_path: build/cosmovisor
           asset_name: cosmovisor
           asset_content_type: application/octet-stream  # TODO check for less generic type
 
