@@ -38,9 +38,13 @@
     to_port: '1317'
     proto: tcp
     rule: allow
+  when:
+    - ansible_facts.services["ufw.service"] is defined
 
 - name: open gRPC port
   community.general.ufw:
     to_port: '9090'
     proto: tcp
-    rule: allow    
+    rule: allow
+  when:
+    - ansible_facts.services["ufw.service"] is defined

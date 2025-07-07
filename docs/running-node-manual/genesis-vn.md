@@ -6,31 +6,22 @@ Make sure you have all [prerequisites](./prerequisites.md) set up.
 
 ## Deployment steps
 
-### 1. Put `cosmovisor` binary to `/usr/bin/`, set proper owner and execution permissions
+### 1. Choose the chain ID. Every network (for example, test-net, main-net, etc.) must have a unique chain ID
 
-### 2. Locate the genesis app version to genesis application version directory
-
-- Create `$HOME/.dcl/cosmovisor/genesis/bin` directory.
-- Copy `dcld` binary to it, set proper owner and execution permissions.
-    Please note that execution permissions on `dcld` should be granted to all (i.e. User, Group and Others classes)
-    because cosmovisor requires execution permission on the application binary to be granted to Others class.
-
-### 3. Choose the chain ID. Every network (for example, test-net, main-net, etc.) must have a unique chain ID
-
-### 4. Configure CLI
+### 2. Configure CLI
 
 - `./dcld config chain-id <chain-id>`
   - Use `testnet-2.0` for `<chain-id>` if you want to connect to the persistent Test Net - the chosen unique chain ID.
   - Use `main-net` for `<chain-id>` if you want to connect to the persistent Test Net - the chosen unique chain ID.
 - `./dcld config output json` - Output format (text/json).
 
-### 5. Initilize the node
+### 3. Initilize the node
 
 ```bash
 ./dcld init "<node-name>" --chain-id "<chain-id>"
 ```
 
-### 6. Configure p2p and consensus parameters in `[~/.dcl/config.toml]` file
+### 4. Configure p2p and consensus parameters in `[~/.dcl/config.toml]` file
 
   ```toml
   [p2p]
@@ -42,7 +33,7 @@ Make sure you have all [prerequisites](./prerequisites.md) set up.
   create_empty_blocks_interval = "600s" # 10 mins
   ```
 
-### 7. (Optional) Enable `state sync` snapshots in`[~/.dcl/app.toml]` file
+### 5. (Optional) Enable `state sync` snapshots in`[~/.dcl/app.toml]` file
 
   ```toml
   [state-sync]
@@ -50,7 +41,7 @@ Make sure you have all [prerequisites](./prerequisites.md) set up.
   snapshot-keep-recent = "snapshot-keep-recent"
   ```
 
-### 8. Create keys for a node admin and a trustee genesis accounts
+### 6. Create keys for a node admin and a trustee genesis accounts
 
 ```bash
 ./dcld keys add "<key-name>" 2>&1 | tee "<key-name>.dclkey.data"
@@ -62,7 +53,7 @@ Of course, only on the machine where the keypair was generated.
 
 > Notes: It's important to keep the generated data (especially a mnemonic that allows to recover a key) in a safe place
 
-### *** Steps (9-10) can be automated using `run_dcl_node` script
+### *** Steps (7-8) can be automated using `run_dcl_node` script
 
 Run node:
 
@@ -83,7 +74,7 @@ This command:
   - current user is in sudoers list
 - you may likely want to note the summary that this script prints, in particular: node's address, public key and ID.
 
-### 9. Prepare genesis node configuration
+### 7. Prepare genesis node configuration
 
 - Add genesis account with the generated key and `Trustee`, `NodeAdmin` roles:
 `./dcld add-genesis-account --address=<address> --pubkey=<pubkey> --roles="Trustee,NodeAdmin"`
@@ -93,15 +84,32 @@ This command:
 - Validate genesis file: `./dcld validate-genesis`.
 - Genesis file is located in `$HOME/.dcl/config/genesis.json`. Give this file to each new node admin.
 
-### 10. Run node
+### 8. Run node
 
 - Open `26656` (p2p) and `26657` (RPC) ports.
   - `sudo ufw allow 26656/tcp`
   - `sudo ufw allow 26657/tcp`
 - Edit `cosmovisor.service`
+  - Replace `/home/ubuntu/` with the path that points to the user's home directory
   - Replace `ubuntu` with a username you want to start service on behalf
+- Edit `cosmovisor.conf`
+  - Replace `/home/ubuntu/` with the path that points to the user's home directory
 - Copy service configuration.
   - `cp cosmovisor.service /etc/systemd/system/`
+  - `cp cosmovisor.conf /etc/systemd/system.conf.d/cosmovisor.conf`
+- Copy script files.
+  - `cp cosmovisor_start.sh $HOME/.dcl/cosmovisor/cosmovisor_start.sh`
+  - `cp cosmovisor_preupgrade.sh $HOME/.dcl/cosmovisor/cosmovisor_preupgrade.sh`
+- Copy `dcld` binary to `$HOME/.dcl/cosmovisor/genesis/bin`, set proper owner and execution permissions.
+    Please note that execution permissions on `dcld` should be granted to all (i.e. User, Group and Others classes)
+    because cosmovisor requires execution permission on the application binary to be granted to Others class.
+  - `sudo cp -f ./dcld -t $HOME/.dcl/cosmovisor/genesis/bin/dcld`
+  - `sudo chown $USER $HOME/.dcl/cosmovisor/genesis/bin/dcld`
+  - `sudo chmod a+x $HOME/.dcl/cosmovisor/genesis/bin/dcld`
+- Copy `cosmovisor` binary to `/usr/bin/`, set proper owner and execution permissions.
+  - `sudo cp -f ./cosmovisor -t /usr/bin`
+  - `sudo chown $USER /usr/bin/cosmovisor`
+  - `sudo chmod u+x /usr/bin/cosmovisor`
 - Make your node public:
   - Open `$HOME/.dcl/config/config.toml`
   - Find the line under `# TCP or UNIX socket address for the RPC server to listen on`
@@ -122,12 +130,12 @@ Service mode is recommended for demo and production environment.
 - Execute the following command to apply the updated `$PATH` immediately:
   - `source $HOME/.profile`
 
-### 11. Check that genesis account is created
+### 9. Check that genesis account is created
 
 - In order to ensure that account is created and has assigned role you can use the command:
 `dcld query auth account --address=<address>`.
 
-### 12. Check the node is running and participates in consensus
+### 10. Check the node is running and participates in consensus
 
 - Get the list of all nodes: `dcld query validator all-nodes`.
 The node must present in the list and has the following params: `power:10` and `jailed:false`.
@@ -141,4 +149,4 @@ Make sure that `result.sync_info.latest_block_height` is increasing over the tim
   - You can pass the additional value to get the result for a specific height: `dcld query tendermint-validator-set 100`.
   - As for the genesis state we have just 1 node, the command should return only our node at this phase.
 
-### 13. Congrats! You are an owner of the genesis validator node
+### 11. Congrats! You are an owner of the genesis validator node

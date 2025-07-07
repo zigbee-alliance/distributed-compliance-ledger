@@ -25,6 +25,19 @@ DCLD_BIN="./dcld-initial"
 $DCLD_BIN config broadcast-mode block
 
 container="validator-demo"
+
+cleanup_validator_node() {
+  if docker container ls -a | grep -q $container; then
+    if docker container inspect $container | grep -q '"Status": "running"'; then
+      echo "Stopping container"
+      docker container kill $container
+    fi
+
+    echo "Removing container"
+    docker container rm -f "$container"
+  fi
+}
+
 add_validator_node() {
   random_string account
   address=""
@@ -110,7 +123,7 @@ EOF
   docker exec $container cp -f ./dcld "$DCL_DIR"/cosmovisor/genesis/bin/
 
   echo "$account Start Node \"$node_name\""
-  docker exec -d $container cosmovisor run start
+  docker exec -d $container /var/lib/dcl/./node_helper.sh
   sleep 10
 
   result=$($DCLD_BIN query validator node --address "$address")
@@ -466,6 +479,8 @@ test_divider
 # VALIDATOR_NODE
 
 echo "Add new validator node"
+
+cleanup_validator_node
 add_validator_node
 
 test_divider
@@ -534,5 +549,7 @@ check_response "$result" "\"subjectAsText\": \"$google_cert_subject_as_text\""
 response_does_not_contain "$result" "\"vid\":"
 
 echo "Initialize 0.12.0 passed"
+
+test_divider
 
 rm -f $DCLD_BIN
