@@ -905,1698 +905,1665 @@ REST API command: `POST /certificates/approve-add-paa`
           * Negative:  
                * length > MAX (9_223_372_036_854_775_807)  
 
-### REJECT_ADD_PAA	
-#### CLI command	
-CLI command send	
-Valid command	
-command exists/relevant	
-query works for  the following certificates	
-PAA 	
-Invalid command	
-access is denied to execute command	
-incorrect command syntax	
-Сommand result	
-REJECT_ADD_PAA command completed successfully	rejects the proposed PAA (self-signed root certificate)
-PROPOSE_ADD_PAA command completed successfully	
-APPROVE_ADD_PAA command completed successfully	
-command used for re-voting	change vote from approve to reject
-remove the proposal	
-proposed PAA certificate has only proposer's approval and no rejects	
-number of approvals greater than 1/3 of Trustees 	certificate rejects
-the proposal to add a root certificate with the provided subject and subject_key_id, submitted first	
-the proposed certificate hasn't been rejected by the signer yet	
-REJECT_ADD_PAA command failed	does not rejects the proposed PAA (self-signed root certificate)
-PROPOSE_ADD_PAA command failed	
-APPROVE_ADD_PAA command failed	
-number of approvals is less than 1/3 of Trustees	certificate is not reject 
-number of approvals equal 1/3 of Trustees 	certificate is not reject 
-the proposal to add a root certificate with the provided subject and subject_key_id, not submitted first	
-the proposed certificate has rejected by the signer	
-remove the proposal	
-certificate has not proposer's approval	
-certificate has only proposer's approval and rejects	
-Role	
- Who can send	
-Trustee	
-Vendor 	error
-VendorAdmin 	error
-CertificationCenter 	error
-NodeAdmin 	error
-Parameters:	
-subject (Subject)	string 
-     * Positive:	
-string matches the format	
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-subject_key_id (Subject Key ID)	string 
-     * Positive:	
-string matches the format	for example: 5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-info (Information/Notes)	optional(string)
-     * Positive:	
-empty value	
-text value format
-MIN < length < MAX	
-     * Negative:	
-length > MAX	MAX=4096 characters
-time (Proposal Time)	optional(int64)
-     * Positive:	
-default value	current time by default
-empty value	
-integer value format
-     * Negative:	
-length > MAX	MAX = 9 223 372 036 854 775 807
-#### REST API 	
-REST API command send	
-Valid command	
-correct HTTP method	
-request is authorized	
-uses valid credentials/role	
-query works for  the following certificates	
-PAA 	
-Invalid command	
-incorrect request	
-server side error	
-Сommand result	
-REJECT_ADD_PAA command completed successfully	rejects the proposed PAA (self-signed root certificate)
-PROPOSE_ADD_PAA command completed successfully	
-APPROVE_ADD_PAA command completed successfully	
-command used for re-voting	change vote from approve to reject
-remove the proposal	
-proposed PAA certificate has only proposer's approval and no rejects	
-number of approvals greater than 1/3 of Trustees 	certificate rejects
-the proposal to add a root certificate with the provided subject and subject_key_id, submitted first	
-the proposed certificate hasn't been rejected by the signer yet	
-REJECT_ADD_PAA command failed	does not rejects the proposed PAA (self-signed root certificate)
-PROPOSE_ADD_PAA command failed	
-APPROVE_ADD_PAA command failed	
-number of approvals is less than 1/3 of Trustees	certificate is not reject 
-number of approvals equal 1/3 of Trustees 	certificate is not reject 
-the proposal to add a root certificate with the provided subject and subject_key_id, not submitted first	
-the proposed certificate has rejected by the signer	
-remove the proposal	
-certificate has not proposer's approval	
-certificate has only proposer's approval and rejects	
-Parameters:	
-subject (Subject)	string 
-     * Positive:	
-string matches the format	
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-subject_key_id (Subject Key ID)	string 
-     * Positive:	
-string matches the format	for example: 5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-info (Information/Notes)	optional(string)
-     * Positive:	
-empty value	
-text value format
-MIN < length < MAX	
-     * Negative:	
-length > MAX	MAX=4096 characters
-time (Proposal Time)	optional(int64)
-     * Positive:	
-default value	current time by default
-empty value	
-integer value format
-     * Negative:	
-length > MAX	MAX = 9 223 372 036 854 775 807
-### PROPOSE_REVOKE_PAA	
-#### CLI command	
-CLI command send	
-Valid command	
-command exists/relevant	
-query works for  the following certificates	
-PAA 	
-Invalid command	
-access is denied to execute command	
-incorrect command syntax	
-Сommand result	
-PROPOSE_REVOKE_PAA command completed successfully	proposes revocation of the given PAA (self-signed root certificate) by a Trustee
-PROPOSE_ADD_PAA command completed successfully	
-APPROVE_ADD_PAA command completed successfully	
-revoke-child = True	all the certificates in the chain signed by the revoked certificate will be revoked as well
-revoke-child = Falce	the certificates in the chain signed by the revoked certificate not be revoked
-sufficient number of Trustee's approvals is received	PAA certificate is revoked
-revoked certificate root	
-Issuer == Subject	
-Authority Key Identifier == Subject Key Identifier	
-no existing Proposed certificate with the same <Certificate's Subject>:<Certificate's Subject Key ID> combination	
-PROPOSE_REVOKE_PAA command failed	does not proposes revocation of the given PAA (self-signed root certificate) by a Trustee
-PROPOSE_ADD_PAA command failed	
-APPROVE_ADD_PAA command failed	
-not sufficient number of Trustee's approvals is received	PAA certificate in the pending state
-there are no Trustee's approvals	PAA certificate is not revoked
-revoked certificate is not root	
-Issuer!= Subject and Authority Key Identifier == Subject Key Identifier	
-Issuer!= Subject and Authority Key Identifier!= Subject Key Identifier	
-Issuer == Subject and Authority Key Identifier!= Subject Key Identifier	
-existing Proposed certificate with the same <Certificate's Subject>:<Certificate's Subject Key ID> combination	
-Role	
- Who can send	
-Trustee	
-Vendor 	error
-VendorAdmin 	error
-CertificationCenter 	error
-NodeAdmin 	error
-Parameters:	
-subject (Subject)	string 
-     * Positive:	
-string matches the format	
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-subject_key_id (Subject Key ID)	string 
-     * Positive:	
-string matches the format	for example: 5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-serial-number (Serial Number)	optional(string)
-     * Positive:	
-empty value	
-text value format
-MIN < length < MAX	
-     * Negative:	
-length > MAX	
-revoke-child (Revoke Child)	optional(bool)
-     * Positive:	
-empty value	
-value state	
-TRUE (-1)	
-FALSE (0)	default value
-     * Negative:	
-value is not bool	
-info (Information/Notes)	optional(string)
-     * Positive:	
-empty value	
-text value format
-MIN < length < MAX	
-     * Negative:	
-length > MAX	MAX=4096 characters
-time (Proposal Time)	optional(int64)
-     * Positive:	
-default value	current time by default
-empty value	
-integer value format
-     * Negative:	
-length > MAX	MAX = 9 223 372 036 854 775 807
-#### REST API 	
-REST API command send	
-Valid command	
-correct HTTP method	
-request is authorized	
-uses valid credentials/role	
-query works for  the following certificates	
-PAA 	
-Invalid command	
-incorrect request	
-server side error	
-Сommand result	
-PROPOSE_REVOKE_PAA command completed successfully	proposes revocation of the given PAA (self-signed root certificate) by a Trustee
-PROPOSE_ADD_PAA command completed successfully	
-APPROVE_ADD_PAA command completed successfully	
-revoke-child = True	all the certificates in the chain signed by the revoked certificate will be revoked as well
-revoke-child = Falce	the certificates in the chain signed by the revoked certificate not be revoked
-sufficient number of Trustee's approvals is received	PAA certificate is revoked
-revoked certificate root	
-Issuer == Subject	
-Authority Key Identifier == Subject Key Identifier	
-no existing Proposed certificate with the same <Certificate's Subject>:<Certificate's Subject Key ID> combination	
-PROPOSE_REVOKE_PAA command failed	does not proposes revocation of the given PAA (self-signed root certificate) by a Trustee
-PROPOSE_ADD_PAA command failed	
-APPROVE_ADD_PAA command failed	
-not sufficient number of Trustee's approvals is received	PAA certificate in the pending state
-there are no Trustee's approvals	PAA certificate is not revoked
-revoked certificate is not root	
-Issuer!= Subject and Authority Key Identifier == Subject Key Identifier	
-Issuer!= Subject and Authority Key Identifier!= Subject Key Identifier	
-Issuer == Subject and Authority Key Identifier!= Subject Key Identifier	
-existing Proposed certificate with the same <Certificate's Subject>:<Certificate's Subject Key ID> combination	
-Role	
- Who can send	
-Trustee	
-Vendor 	error
-VendorAdmin 	error
-CertificationCenter 	error
-NodeAdmin 	error
-Parameters:	
-subject (Subject)	string 
-     * Positive:	
-string matches the format	
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-subject_key_id (Subject Key ID)	string 
-     * Positive:	
-string matches the format	for example: 5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-serial-number (Serial Number)	optional(string)
-     * Positive:	
-empty value	
-text value format
-MIN < length < MAX	
-     * Negative:	
-length > MAX	
-revoke-child (Revoke Child)	optional(bool)
-     * Positive:	
-empty value	
-value state	
-TRUE (-1)	
-FALSE (0)	default value
-     * Negative:	
-value is not bool	
-info (Information/Notes)	optional(string)
-     * Positive:	
-empty value	
-text value format
-MIN < length < MAX	
-     * Negative:	
-length > MAX	MAX=4096 characters
-time (Proposal Time)	optional(int64)
-     * Positive:	
-default value	current time by default
-empty value	
-integer value format
-     * Negative:	
-length > MAX	MAX = 9 223 372 036 854 775 807
-### APPROVE_REVOKE_PAA	
-#### CLI command	
-CLI command send	
-Valid command	
-command exists/relevant	
-query works for  the following certificates	
-PAA 	
-Invalid command	
-access is denied to execute command	
-incorrect command syntax	
-Сommand result	
-APPROVE_REVOKE_PAA command completed successfully	approves the revocation of the given PAA (self-signed root certificate) by a Trustee
-PROPOSE_ADD_PAA command completed successfully	
-APPROVE_ADD_PAA command completed successfully	
-PROPOSE_REVOKE_PAA command completed successfully	
-Number of required approvals greater than 2/3 of Trustees	revocation is applied
-Number of required approvals equal 2/3 of Trustees	revocation is applied
-the proposal to revoke a root certificate with the provided subject and subject_key_id, submitted first	
-the proposed certificate revocation hasn't been approved by the signer yet	
-APPROVE_REVOKE_PAA command failed	does not approves the revocation of the given PAA (self-signed root certificate) by a Trustee
-PROPOSE_ADD_PAA command failed	
-APPROVE_ADD_PAA command failed	
-PROPOSE_REVOKE_PAA command failed	
-Number of required approvals less  than 2/3 of Trustees	revocation is not applied
-the proposal to revoke a root certificate with the provided subject and subject_key_id, not submitted first	
-the proposed certificate revocation has approved by the signer	
-Role	
- Who can send	
-Trustee	
-Vendor 	error
-VendorAdmin 	error
-CertificationCenter 	error
-NodeAdmin 	error
-Parameters:	
-subject (Subject)	string 
-     * Positive:	
-string matches the format	
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-subject_key_id (Subject Key ID)	string 
-     * Positive:	
-string matches the format	for example: 5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-serial-number (Serial Number)	optional(string)
-     * Positive:	
-empty value	
-text value format
-MIN < length < MAX	
-     * Negative:	
-length > MAX	
-info (Information/Notes)	optional(string)
-     * Positive:	
-empty value	
-text value format
-MIN < length < MAX	
-     * Negative:	
-length > MAX	MAX=4096 characters
-time (Proposal Time)	optional(int64)
-     * Positive:	
-default value	current time by default
-empty value	
-integer value format
-     * Negative:	
-length > MAX	MAX = 9 223 372 036 854 775 807
-#### REST API 	
-REST API command send	
-Valid command	
-correct HTTP method	
-request is authorized	
-uses valid credentials/role	
-query works for  the following certificates	
-PAA 	
-Invalid command	
-incorrect request	
-server side error	
-Сommand result	
-APPROVE_REVOKE_PAA command completed successfully	approves the revocation of the given PAA (self-signed root certificate) by a Trustee
-PROPOSE_ADD_PAA command completed successfully	
-APPROVE_ADD_PAA command completed successfully	
-PROPOSE_REVOKE_PAA command completed successfully	
-Number of required approvals greater than 2/3 of Trustees	revocation is applied
-Number of required approvals equal 2/3 of Trustees	revocation is applied
-the proposal to revoke a root certificate with the provided subject and subject_key_id, submitted first	
-the proposed certificate revocation hasn't been approved by the signer yet	
-APPROVE_REVOKE_PAA command failed	does not approves the revocation of the given PAA (self-signed root certificate) by a Trustee
-PROPOSE_ADD_PAA command failed	
-APPROVE_ADD_PAA command failed	
-PROPOSE_REVOKE_PAA command failed	
-Number of required approvals less  than 2/3 of Trustees	revocation is not applied
-the proposal to revoke a root certificate with the provided subject and subject_key_id, not submitted first	
-the proposed certificate revocation has approved by the signer	
-Role	
- Who can send	
-Trustee	
-Vendor 	error
-VendorAdmin 	error
-CertificationCenter 	error
-NodeAdmin 	error
-Parameters:	
-subject (Subject)	string 
-     * Positive:	
-string matches the format	
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-subject_key_id (Subject Key ID)	string 
-     * Positive:	
-string matches the format	for example: 5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-serial-number (Serial Number)	optional(string)
-     * Positive:	
-empty value	
-text value format
-MIN < length < MAX	
-     * Negative:	
-length > MAX	
-info (Information/Notes)	optional(string)
-     * Positive:	
-empty value	
-text value format
-MIN < length < MAX	
-     * Negative:	
-length > MAX	MAX=4096 characters
-time (Proposal Time)	optional(int64)
-     * Positive:	
-default value	current time by default
-empty value	
-integer value format
-     * Negative:	
-length > MAX	MAX = 9 223 372 036 854 775 807
-### ASSIGN_VID_TO_PAA	
-#### CLI command	
-CLI command send	
-Valid command	
-command exists/relevant	
-query works for  the following certificates	
-PAA 	
-Invalid command	
-access is denied to execute command	
-incorrect command syntax	
-Сommand result	
-ASSIGN_VID_TO_PAA command completed successfully	assigns a Vendor ID (VID) to non-VID scoped PAAs (self-signed root certificate) already present on the ledger
-PROPOSE_ADD_PAA command completed successfully	
-APPROVE_ADD_PAA command completed successfully	
-PAA Certificate with the provided subject and subject_key_id exist in the ledger	
-the PAA is a VID scoped one	
-the vid field equal to the VID value in the PAA's subject	
-ASSIGN_VID_TO_PAA command failed	does not assigns a Vendor ID (VID) to non-VID scoped PAAs (self-signed root certificate) already present on the ledger
-PROPOSE_ADD_PAA command failed	
-APPROVE_ADD_PAA command failed	
-PAA Certificate with the provided subject and subject_key_id not exist in the ledger	
-the PAA is a VID scoped one	
-the vid field not equal to the VID value in the PAA's subject	
-Role	
- Who can send	
-Trustee	error
-Vendor 	error
-VendorAdmin 	
-CertificationCenter 	error
-NodeAdmin 	error
-Parameters:	
-subject (Subject)	string 
-     * Positive:	
-string matches the format	
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-subject_key_id (Subject Key ID)	string 
-     * Positive:	
-string matches the format	for example: 5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-vid (Vendor ID)	uint16
-     * Positive:	
-value exists	
-value > 0	
-integer value format
-Vendor ID value = vid field in the VID-scoped PAA certificate	
-     * Negative:	
-empty value
-value =< 0
-string value format		
-length > MAX	MAX = 65535
-nonexistent ID	
-#### REST API 	
-REST API command send	
-Valid command	
-correct HTTP method	
-request is authorized	
-uses valid credentials/role	
-query works for  the following certificates	
-PAA 	
-Invalid command	
-incorrect request	
-server side error	
-Сommand result	
-ASSIGN_VID_TO_PAA command completed successfully	assigns a Vendor ID (VID) to non-VID scoped PAAs (self-signed root certificate) already present on the ledger
-PROPOSE_ADD_PAA command completed successfully	
-APPROVE_ADD_PAA command completed successfully	
-PAA Certificate with the provided subject and subject_key_id exist in the ledger	
-the PAA is a VID scoped one	
-the vid field equal to the VID value in the PAA's subject	
-ASSIGN_VID_TO_PAA command failed	does not assigns a Vendor ID (VID) to non-VID scoped PAAs (self-signed root certificate) already present on the ledger
-PROPOSE_ADD_PAA command failed	
-APPROVE_ADD_PAA command failed	
-PAA Certificate with the provided subject and subject_key_id not exist in the ledger	
-the PAA is a VID scoped one	
-the vid field not equal to the VID value in the PAA's subject	
-Role	
- Who can send	
-Trustee	error
-Vendor 	error
-VendorAdmin 	
-CertificationCenter 	error
-NodeAdmin 	error
-Parameters:	
-subject (Subject)	string 
-     * Positive:	
-string matches the format	
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-subject_key_id (Subject Key ID)	string 
-     * Positive:	
-string matches the format	for example: 5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-vid (Vendor ID)	uint16
-     * Positive:	
-value exists	
-value > 0	
-integer value format
-Vendor ID value = vid field in the VID-scoped PAA certificate	
-     * Negative:	
-empty value
-value =< 0
-string value format		
-length > MAX	MAX = 65535
-nonexistent ID	
-### ADD_REVOCATION_DISTRIBUTION_POINT	
-#### CLI command	
-CLI command send	
-Valid command	
-command exists/relevant	
-Invalid command	
-access is denied to execute command	
-incorrect command syntax	
-Сommand result	
-ADD_REVOCATION_DISTRIBUTION_POINT command completed successfully	publishes a PKI Revocation distribution endpoint (such as RFC5280 Certificate Revocation List) owned by the Vendor
-PROPOSE_ADD_PAA command completed successfully	
-APPROVE_ADD_PAA command completed successfully	
-crlSignerCertificate is a PAA (root certificate)	
-crlSignerCertificate is present on DCL	
-crlSignerCertificate is a PAI (intermediate certificate)	
-crlSignerCertificate chained back to a valid PAA (root certificate) present on DCL	
-crlSignerCertificate is present on DCL	
-crlSignerCertificate is not present on DCL	
-crlSignerCertificate is a delegated by PAA	
-crlSignerCertificate chained back to a valid PAA (root certificate) present on DCL	
-crlSignerCertificate is present on DCL	
-crlSignerCertificate is not present on DCL	
-ADD_REVOCATION_DISTRIBUTION_POINT command failed	does not publishes a PKI Revocation distribution endpoint (such as RFC5280 Certificate Revocation List) owned by the Vendor
-PROPOSE_ADD_PAA command failed	
-APPROVE_ADD_PAA command failed	
-crlSignerCertificate is a PAA (root certificate)	
-crlSignerCertificate is not present on DCL	
-crlSignerCertificate is a PAI (intermediate certificate)	
-crlSignerCertificate is not chained back to a valid PAA (root certificate) present on DCL	
-crlSignerCertificate is not present on DCL	
-crlSignerCertificate is a delegated by PAA	
-crlSignerCertificate is not chained back to a valid PAA (root certificate) present on DCL	
-crlSignerCertificate is not present on DCL	
-Role	
- Who can send	
-Trustee	error
-Vendor 	
-vid field in the transaction (VendorID) equal to the Vendor account's VID	
-VID-scoped PAAs (Root certs) and PAIs (Intermediate certs): vid field in the CRLSignerCertificate's subject equal to the Vendor account's VID	
-Non-VID scoped PAAs (Root certs): vid field associated with the corresponding PAA on the ledger equal to the Vendor account's VID	
-VendorAdmin 	error
-CertificationCenter 	error
-NodeAdmin 	error
-Parameters:	
-vid (Vendor ID)	uint16
-     * Positive:	
-value exists	
-value > 0	
-integer value format
-Vendor ID value = Vendor account's VID and vid field in the VID-scoped CRLSignerCertificate	
-Vendor ID value = vid associated with non-VID scoped CRLSignerCertificate on the ledger	
-     * Negative:	
-empty value	
-value =< 0
-string value format	
-length > MAX	MAX = 65535
-nonexistent ID	
-pid (Product ID)	optional(uint16)
-     * Positive:	
-unique combination	
-value > 0	
-integer value format
-nonexistent ID	
-value falls within the specified range	
-     * Negative:	
-empty value	
-value =< 0
-string value format	
-length > MAX	MAX = 65535
-field is not empty if IsPAA is true	
-value ≠ pid field in CRLSignerCertificate	
-isPAA (Is PAA)	bool
-     * Positive:	
-value state	
-TRUE (-1)	if the revocation information distribution point relates to a PAA
-FALSE (0)	
-     * Negative:	
-empty value	
-value is not bool	
-label (Label)	string 
-     * Positive:	
-value exists	
-text value format
-MIN < length < MAX	
-     * Negative:	
-length > MAX	
-empty value	
-crlSignerCertificate (Certificate Revocation List Signer Certificate)	string 
-     * Positive:	
-value exists	
-contain a PEM string	
-contain path to a file containing the data	
-certificate type	
-delegated certificate by a PAI	must be provided using the crlSignerDelegator field
-not delegated certificate by a PAI	
-text value format
-MIN < length < MAX	
-     * Negative:	
-length > MAX	
-empty value	
-crlSignerDelegator (Certificate Revocation List Signer Delegator)	optional(string)
-     * Positive:	
-value exists	
-contain a PEM string	
-contain path to a file containing the data	
-certificate type	
-delegated certificate by a PAI	crlSignerDelegator must contain the delegator PAI certificate which must be chained back to an approved certificate in the ledger, encoded in X.509v3 PEM format
-not delegated certificate by a PAI	field can be omitted
-empty value	
-text value format
-MIN < length < MAX	
-     * Negative:	
-length > MAX	
-issuerSubjectKeyID (Issuer Subject Key ID)	string 
-     * Positive:	
-unique value for PAA/PAI	
-certificate type	
-delegated certificate by a PAI	must be provided using the crlSignerDelegator field
-not delegated certificate by a PAI	
-text value format
-MIN < length < MAX	
-value consist of even number of uppercase hexadecimal characters ([0-9A-F])	for example, 5A880E6C3653D07FB08971A3F473790930E62BDB
-     * Negative:	
-contains whitespace	
-contains non-hexadecimal characters	
-length > MAX	
-empty value	
-dataUrl (Data Url)	string 
-     * Positive:	
-unique value for all pairs of VendorID and IssuerSubjectKeyID	
-text value format
-MIN < length < MAX	
-value start with either http/https	
-     * Negative:	
-the format of the information does not match the format specified in the RevocationType field	
-length > MAX	
-empty value	
-dataFileSize (Data File Size)	optional(uint64)
-RevocationType ≠ 1	
-     * Positive:	
-value >= 0	
-integer value format
-     * Negative:	
-empty value	
-length > MAX	MAX = 18,446,744,073,709,551,615
-RevocationType = 1	field is omitted
-dataDigest (Data Digest)	optional(string)
-the DataFileSize field is present	must be provided
-RevocationType ≠ 1	
-     * Positive:	
-string matches the format	2019-10-12T07:20:50.52Z
-text value format
-MIN < length < MAX	
-empty value	
-     * Negative:	
-nonexistent value	
-length > MAX	
-RevocationType = 1	field is omitted
-the DataFileSize field is present	not must be provided
-dataDigestType (Data Digest Type)	optional(uint32)
-the DataDigest field is present	must be provided
-     * Positive:	
-value exists	
-value > 0	
-empty value	
-format	
-     * Negative:	
-value =< 0
-string value format	
-length > MAX	MAX = 4 294 967 295
-the DataDigest field is present	not must be provided
-revocationType (Revocation Type)	uint32 
-     * Positive:	
-value exists	
-value >= 0	
-integer value format
-supported types	1 - RFC5280 CRL
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	MAX = 4 294 967 295
-schemaVersion (Schema Version)	optional(uint16)
-     * Positive:	
-value = 0	
-integer value format
-empty value	
-     * Negative:	
-length > MAX	MAX = 65535
-#### REST API 	
-REST API command send	
-Valid command	
-correct HTTP method	
-request is authorized	
-uses valid credentials/role	
-Invalid command	
-incorrect request	
-server side error	
-Сommand result	
-ADD_REVOCATION_DISTRIBUTION_POINT command completed successfully	publishes a PKI Revocation distribution endpoint (such as RFC5280 Certificate Revocation List) owned by the Vendor
-PROPOSE_ADD_PAA command completed successfully	
-APPROVE_ADD_PAA command completed successfully	
-crlSignerCertificate is a PAA (root certificate)	
-crlSignerCertificate is present on DCL	
-crlSignerCertificate is a PAI (intermediate certificate)	
-crlSignerCertificate chained back to a valid PAA (root certificate) present on DCL	
-crlSignerCertificate is present on DCL	
-crlSignerCertificate is not present on DCL	
-crlSignerCertificate is a delegated by PAA	
-crlSignerCertificate chained back to a valid PAA (root certificate) present on DCL	
-crlSignerCertificate is present on DCL	
-crlSignerCertificate is not present on DCL	
-ADD_REVOCATION_DISTRIBUTION_POINT command failed	does not publishes a PKI Revocation distribution endpoint (such as RFC5280 Certificate Revocation List) owned by the Vendor
-PROPOSE_ADD_PAA command failed	
-APPROVE_ADD_PAA command failed	
-crlSignerCertificate is a PAA (root certificate)	
-crlSignerCertificate is not present on DCL	
-crlSignerCertificate is a PAI (intermediate certificate)	
-crlSignerCertificate is not chained back to a valid PAA (root certificate) present on DCL	
-crlSignerCertificate is not present on DCL	
-crlSignerCertificate is a delegated by PAA	
-crlSignerCertificate is not chained back to a valid PAA (root certificate) present on DCL	
-crlSignerCertificate is not present on DCL	
-Role	
- Who can send	
-Trustee	error
-Vendor 	
-vid field in the transaction (VendorID) equal to the Vendor account's VID	
-VID-scoped PAAs (Root certs) and PAIs (Intermediate certs): vid field in the CRLSignerCertificate's subject equal to the Vendor account's VID	
-Non-VID scoped PAAs (Root certs): vid field associated with the corresponding PAA on the ledger equal to the Vendor account's VID	
-VendorAdmin 	error
-CertificationCenter 	error
-NodeAdmin 	error
-Parameters:	
-vid (Vendor ID)	uint16
-     * Positive:	
-value exists	
-value > 0	
-integer value format
-Vendor ID value = Vendor account's VID and vid field in the VID-scoped CRLSignerCertificate	
-Vendor ID value = vid associated with non-VID scoped CRLSignerCertificate on the ledger	
-     * Negative:	
-empty value	
-value =< 0
-string value format	
-length > MAX	MAX = 65535
-nonexistent ID	
-pid (Product ID)	optional(uint16)
-     * Positive:	
-unique combination	
-value > 0	
-integer value format
-nonexistent ID	
-value falls within the specified range	
-     * Negative:	
-empty value	
-value =< 0
-string value format	
-length > MAX	MAX = 65535
-field is not empty if IsPAA is true	
-value ≠ pid field in CRLSignerCertificate	
-isPAA (Is PAA)	bool
-     * Positive:	
-value state	
-TRUE (-1)	if the revocation information distribution point relates to a PAA
-FALSE (0)	
-     * Negative:	
-empty value	
-value is not bool	
-label (Label)	string 
-     * Positive:	
-value exists	
-text value format
-MIN < length < MAX	
-     * Negative:	
-length > MAX	
-empty value	
-crlSignerCertificate (Certificate Revocation List Signer Certificate)	string 
-     * Positive:	
-value exists	
-contain a PEM string	
-contain path to a file containing the data	
-certificate type	
-delegated certificate by a PAI	must be provided using the crlSignerDelegator field
-not delegated certificate by a PAI	
-text value format
-MIN < length < MAX	
-     * Negative:	
-length > MAX	
-empty value	
-crlSignerDelegator (Certificate Revocation List Signer Delegator)	optional(string)
-     * Positive:	
-value exists	
-contain a PEM string	
-contain path to a file containing the data	
-certificate type	
-delegated certificate by a PAI	crlSignerDelegator must contain the delegator PAI certificate which must be chained back to an approved certificate in the ledger, encoded in X.509v3 PEM format
-not delegated certificate by a PAI	field can be omitted
-empty value	
-text value format
-MIN < length < MAX	
-     * Negative:	
-length > MAX	
-issuerSubjectKeyID (Issuer Subject Key ID)	string 
-     * Positive:	
-unique value for PAA/PAI	
-certificate type	
-delegated certificate by a PAI	must be provided using the crlSignerDelegator field
-not delegated certificate by a PAI	
-text value format
-MIN < length < MAX	
-value consist of even number of uppercase hexadecimal characters ([0-9A-F])	for example, 5A880E6C3653D07FB08971A3F473790930E62BDB
-     * Negative:	
-contains whitespace	
-contains non-hexadecimal characters	
-length > MAX	
-empty value	
-dataUrl (Data Url)	string 
-     * Positive:	
-unique value for all pairs of VendorID and IssuerSubjectKeyID	
-text value format
-MIN < length < MAX	
-value start with either http/https	
-     * Negative:	
-the format of the information does not match the format specified in the RevocationType field	
-length > MAX	
-empty value	
-dataFileSize (Data File Size)	optional(uint64)
-RevocationType ≠ 1	
-     * Positive:	
-value >= 0	
-integer value format
-     * Negative:	
-empty value	
-length > MAX	MAX = 18,446,744,073,709,551,615
-RevocationType = 1	field is omitted
-dataDigest (Data Digest)	optional(string)
-the DataFileSize field is present	must be provided
-RevocationType ≠ 1	
-     * Positive:	
-string matches the format	2019-10-12T07:20:50.52Z
-text value format
-MIN < length < MAX	
-empty value	
-     * Negative:	
-nonexistent value	
-length > MAX	
-RevocationType = 1	field is omitted
-the DataFileSize field is present	not must be provided
-dataDigestType (Data Digest Type)	optional(uint32)
-the DataDigest field is present	must be provided
-     * Positive:	
-value exists	
-value > 0	
-empty value	
-format	
+## REJECT_ADD_PAA
+
+### CLI command
+CLI command send
+
+* Valid command
+     * command exists/relevant
+     * query works for the following certificates
+          * PAA
+
+* Invalid command
+     * access is denied to execute command
+     * incorrect command syntax
+
+* Command result
+     * REJECT_ADD_PAA command completed successfully ⇒ rejects the proposed PAA (self-signed root certificate)
+          * PROPOSE_ADD_PAA command completed successfully
+          * APPROVE_ADD_PAA command completed successfully
+          * command used for re-voting ⇒ change vote from approve to reject
+          * remove the proposal
+          * proposed PAA certificate has only proposer's approval and no rejects
+          * number of approvals greater than 1/3 of Trustees ⇒ certificate rejects
+          * the proposal to add a root certificate with the provided subject and subject_key_id, submitted first
+          * the proposed certificate hasn't been rejected by the signer yet
+     * REJECT_ADD_PAA command failed ⇒ does not reject the proposed PAA (self-signed root certificate)
+          * PROPOSE_ADD_PAA command failed
+          * APPROVE_ADD_PAA command failed
+          * number of approvals is less than 1/3 of Trustees ⇒ certificate is not rejected
+          * number of approvals equal 1/3 of Trustees ⇒ certificate is not rejected
+          * the proposal to add a root certificate with the provided subject and subject_key_id, not submitted first
+          * the proposed certificate has been rejected by the signer
+          * remove the proposal
+          * certificate has not proposer's approval
+          * certificate has only proposer's approval and rejects
+
+* Role (Who can send)
+     * Positive:
+          * Trustee
      * Negative:
-value =< 0
-string value format		
-length > MAX	MAX = 4 294 967 295
-the DataDigest field is present	not must be provided
-revocationType (Revocation Type)	uint32 
-     * Positive:	
-value exists	
-value >= 0	
-integer value format
-supported types	1 - RFC5280 CRL
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	MAX = 4 294 967 295
-schemaVersion (Schema Version)	optional(uint16)
-     * Positive:	
-value = 0	
-integer value format
-empty value	
-     * Negative:	
-length > MAX	MAX = 65535
-### UPDATE_REVOCATION_DISTRIBUTION_POINT	
-#### CLI command	
-CLI command send	
-Valid command	
-command exists/relevant	
-Invalid command	
-access is denied to execute command	
-incorrect command syntax	
-Сommand result	
-UPDATE_REVOCATION_DISTRIBUTION_POINT command completed successfully	updates an existing PKI Revocation distribution endpoint (such as RFC5280 Certificate Revocation List) owned by the Vendor
-PROPOSE_ADD_PAA command completed successfully	
-APPROVE_ADD_PAA command completed successfully	
-ADD_REVOCATION_DISTRIBUTION_POINT command completed successfully	
-UPDATE_REVOCATION_DISTRIBUTION_POINT command failed	does not updates an existing PKI Revocation distribution endpoint (such as RFC5280 Certificate Revocation List) owned by the Vendor
-PROPOSE_ADD_PAA command failed	
-APPROVE_ADD_PAA command failed	
-ADD_REVOCATION_DISTRIBUTION_POINT command failed	
-Role	
- Who can send	
-Trustee	error
-Vendor 	
-vid field in the transaction (VendorID) equal to the Vendor account's VID	
-VID-scoped PAAs (Root certs) and PAIs (Intermediate certs): vid field in the CRLSignerCertificate's subject equal to the Vendor account's VID	
-Non-VID scoped PAAs (Root certs): vid field associated with the corresponding PAA on the ledger equal to the Vendor account's VID	
-VendorAdmin 	error
-CertificationCenter 	error
-NodeAdmin 	error
-Parameters:	
-vid (Vendor ID)	uint16
-     * Positive:	
-value exists	
-value > 0	
-integer value format
-Vendor ID value = Vendor account's VID and vid field in the VID-scoped CRLSignerCertificate	
-Vendor ID value = vid associated with non-VID scoped CRLSignerCertificate on the ledger	
-     * Negative:	
-empty value	
-value =< 0
-string value format	
-length > MAX	MAX = 65535
-nonexistent ID	
-label (Label)	string 
-     * Positive:	
-value exists	
-text value format
-MIN < length < MAX	
-     * Negative:	
-length > MAX	
-empty value	
-issuerSubjectKeyID (Issuer Subject Key ID)	string 
-     * Positive:	
-unique value for PAA/PAI	
-certificate type	
-delegated certificate by a PAI	must be provided using the crlSignerDelegator field
-not delegated certificate by a PAI	
-text value format
-MIN < length < MAX	
-value consist of even number of uppercase hexadecimal characters ([0-9A-F])	for example, 5A880E6C3653D07FB08971A3F473790930E62BDB
-     * Negative:	
-contains whitespace	
-contains non-hexadecimal characters	
-length > MAX	
-empty value	
-crlSignerCertificate (Certificate Revocation List Signer Certificate)	optional(string)
-     * Positive:	
-value exists	
-contain a PEM string	
-contain path to a file containing the data	
-empty value	
-certificate type	
-delegated certificate by a PAI	must be provided using the crlSignerDelegator field
-not delegated certificate by a PAI	
-text value format
-MIN < length < MAX	
-     * Negative:	
-length > MAX	
-crlSignerDelegator (Certificate Revocation List Signer Delegator)	optional(string)
-     * Positive:	
-value exists	
-contain a PEM string	
-contain path to a file containing the data	
-certificate type	
-delegated certificate by a PAI	crlSignerDelegator must contain the delegator PAI certificate which must be chained back to an approved certificate in the ledger, encoded in X.509v3 PEM format
-not delegated certificate by a PAI	field can be omitted
-empty value	
-text value format
-MIN < length < MAX	
-     * Negative:	
-length > MAX	
-dataUrl (Data Url)	string 
-     * Positive:	
-unique value for all pairs of VendorID and IssuerSubjectKeyID	
-text value format
-MIN < length < MAX	
-value start with either http/https	
-     * Negative:	
-the format of the information does not match the format specified in the RevocationType field	
-length > MAX	
-empty value	
-dataFileSize (Data File Size)	optional(uint64)
-RevocationType ≠ 1	
-     * Positive:	
-value >= 0	
-integer value format
-     * Negative:	
-empty value	
-length > MAX	MAX = 18,446,744,073,709,551,615
-RevocationType = 1	field is omitted
-dataDigest (Data Digest)	optional(string)
-the DataFileSize field is present	must be provided
-RevocationType ≠ 1	
-     * Positive:	
-string matches the format	2019-10-12T07:20:50.52Z
-text value format
-MIN < length < MAX	
-empty value	
-     * Negative:	
-nonexistent value	
-length > MAX	
-RevocationType = 1	field is omitted
-the DataFileSize field is present	not must be provided
-dataDigestType (Data Digest Type)	optional(uint32)
-the DataDigest field is present	must be provided
-     * Positive:	
-value exists	
-value > 0	
-empty value	
-format	
-     * Negative:
-value =< 0
-string value format		
-length > MAX	MAX = 4 294 967 295
-the DataDigest field is present	not must be provided
-schemaVersion (Schema Version)	optional(uint16)
-     * Positive:	
-value = 0	
-integer value format
-empty value	
-     * Negative:	
-length > MAX	MAX = 65535
-#### REST API 	
-REST API command send	
-Valid command	
-correct HTTP method	
-request is authorized	
-uses valid credentials/role	
-Invalid command	
-incorrect request	
-server side error	
-Сommand result	
-UPDATE_REVOCATION_DISTRIBUTION_POINT command completed successfully	updates an existing PKI Revocation distribution endpoint (such as RFC5280 Certificate Revocation List) owned by the Vendor
-PROPOSE_ADD_PAA command completed successfully	
-APPROVE_ADD_PAA command completed successfully	
-ADD_REVOCATION_DISTRIBUTION_POINT command completed successfully	
-UPDATE_REVOCATION_DISTRIBUTION_POINT command failed	does not updates an existing PKI Revocation distribution endpoint (such as RFC5280 Certificate Revocation List) owned by the Vendor
-PROPOSE_ADD_PAA command failed	
-APPROVE_ADD_PAA command failed	
-ADD_REVOCATION_DISTRIBUTION_POINT command failed	
-Role	
- Who can send	
-Trustee	error
-Vendor 	
-vid field in the transaction (VendorID) equal to the Vendor account's VID	
-VID-scoped PAAs (Root certs) and PAIs (Intermediate certs): vid field in the CRLSignerCertificate's subject equal to the Vendor account's VID	
-Non-VID scoped PAAs (Root certs): vid field associated with the corresponding PAA on the ledger equal to the Vendor account's VID	
-VendorAdmin 	error
-CertificationCenter 	error
-NodeAdmin 	error
-Parameters:	
-vid (Vendor ID)	uint16
-     * Positive:	
-value exists	
-value > 0	
-integer value format
-Vendor ID value = Vendor account's VID and vid field in the VID-scoped CRLSignerCertificate	
-Vendor ID value = vid associated with non-VID scoped CRLSignerCertificate on the ledger	
-     * Negative:	
-empty value	
-value =< 0
-string value format	
-length > MAX	MAX = 65535
-nonexistent ID	
-label (Label)	string 
-     * Positive:	
-value exists	
-text value format
-MIN < length < MAX	
-     * Negative:	
-length > MAX	
-empty value	
-issuerSubjectKeyID (Issuer Subject Key ID)	string 
-     * Positive:	
-unique value for PAA/PAI	
-certificate type	
-delegated certificate by a PAI	must be provided using the crlSignerDelegator field
-not delegated certificate by a PAI	
-text value format
-MIN < length < MAX	
-value consist of even number of uppercase hexadecimal characters ([0-9A-F])	for example, 5A880E6C3653D07FB08971A3F473790930E62BDB
-     * Negative:	
-contains whitespace	
-contains non-hexadecimal characters	
-length > MAX	
-empty value	
-crlSignerCertificate (Certificate Revocation List Signer Certificate)	optional(string)
-     * Positive:	
-value exists	
-contain a PEM string	
-contain path to a file containing the data	
-empty value	
-certificate type	
-delegated certificate by a PAI	must be provided using the crlSignerDelegator field
-not delegated certificate by a PAI	
-text value format
-MIN < length < MAX	
-     * Negative:	
-length > MAX	
-crlSignerDelegator (Certificate Revocation List Signer Delegator)	optional(string)
-     * Positive:	
-value exists	
-contain a PEM string	
-contain path to a file containing the data	
-certificate type	
-delegated certificate by a PAI	crlSignerDelegator must contain the delegator PAI certificate which must be chained back to an approved certificate in the ledger, encoded in X.509v3 PEM format
-not delegated certificate by a PAI	field can be omitted
-empty value	
-text value format
-MIN < length < MAX	
-     * Negative:	
-length > MAX	
-dataUrl (Data Url)	string 
-     * Positive:	
-unique value for all pairs of VendorID and IssuerSubjectKeyID	
-text value format
-MIN < length < MAX	
-value start with either http/https	
-     * Negative:	
-the format of the information does not match the format specified in the RevocationType field	
-length > MAX	
-empty value	
-dataFileSize (Data File Size)	optional(uint64)
-RevocationType ≠ 1	
-     * Positive:	
-value >= 0	
-integer value format
-     * Negative:	
-empty value	
-length > MAX	MAX = 18,446,744,073,709,551,615
-RevocationType = 1	field is omitted
-dataDigest (Data Digest)	optional(string)
-the DataFileSize field is present	must be provided
-RevocationType ≠ 1	
-     * Positive:	
-string matches the format	2019-10-12T07:20:50.52Z
-text value format
-MIN < length < MAX	
-empty value	
-     * Negative:	
-nonexistent value	
-length > MAX	
-RevocationType = 1	field is omitted
-the DataFileSize field is present	not must be provided
-dataDigestType (Data Digest Type)	optional(uint32)
-the DataDigest field is present	must be provided
-     * Positive:	
-value exists	
-value > 0	
-empty value	
-format	
-     * Negative:
-value =< 0
-string value format		
-length > MAX	MAX = 4 294 967 295
-the DataDigest field is present	not must be provided
-schemaVersion (Schema Version)	optional(uint16)
-     * Positive:	
-value = 0	
-integer value format
-empty value	
-     * Negative:	
-length > MAX	MAX = 65535
-### DELETE_REVOCATION_DISTRIBUTION_POINT	
-#### CLI command	
-CLI command send	
-Valid command	
-command exists/relevant	
-Invalid command	
-access is denied to execute command	
-incorrect command syntax	
-Сommand result	
-DELETE_REVOCATION_DISTRIBUTION_POINT command completed successfully	deletes a PKI Revocation distribution endpoint (such as RFC5280 Certificate Revocation List) owned by the Vendor
-PROPOSE_ADD_PAA command completed successfully	
-APPROVE_ADD_PAA command completed successfully	
-ADD_REVOCATION_DISTRIBUTION_POINT command completed successfully	
-DELETE_REVOCATION_DISTRIBUTION_POINT command failed	does not deletes a PKI Revocation distribution endpoint (such as RFC5280 Certificate Revocation List) owned by the Vendor
-PROPOSE_ADD_PAA command failed	
-APPROVE_ADD_PAA command failed	
-ADD_REVOCATION_DISTRIBUTION_POINT command failed	
-Role	
- Who can send	
-Trustee	error
-Vendor 	
-vid field in the transaction (VendorID) equal to the Vendor account's VID	
-VID-scoped PAAs (Root certs) and PAIs (Intermediate certs): vid field in the CRLSignerCertificate's subject equal to the Vendor account's VID	
-Non-VID scoped PAAs (Root certs): vid field associated with the corresponding PAA on the ledger equal to the Vendor account's VID	
-VendorAdmin 	error
-CertificationCenter 	error
-NodeAdmin 	error
-Parameters:	
-vid (Vendor ID)	uint16
-     * Positive:	
-value exists	
-value > 0	
-integer value format
-Vendor ID value = Vendor account's VID and vid field in the VID-scoped CRLSignerCertificate	
-Vendor ID value = vid associated with non-VID scoped CRLSignerCertificate on the ledger	
-     * Negative:	
-empty value	
-value =< 0
-string value format	
-length > MAX	MAX = 65535
-nonexistent ID	
-label (Label)	string 
-     * Positive:	
-value exists	
-text value format
-MIN < length < MAX	
-     * Negative:	
-length > MAX	
-empty value	
-issuerSubjectKeyID (Issuer Subject Key ID)	string 
-     * Positive:	
-unique value for PAA/PAI	
-certificate type	
-delegated certificate by a PAI	must be provided using the crlSignerDelegator field
-not delegated certificate by a PAI	
-text value format
-MIN < length < MAX	
-value consist of even number of uppercase hexadecimal characters ([0-9A-F])	for example, 5A880E6C3653D07FB08971A3F473790930E62BDB
-     * Negative:	
-contains whitespace	
-contains non-hexadecimal characters	
-length > MAX	
-empty value	
-#### REST API 	
-REST API command send	
-Valid command	
-correct HTTP method	
-request is authorized	
-uses valid credentials/role	
-Invalid command	
-incorrect request	
-server side error	
-Сommand result	
-DELETE_REVOCATION_DISTRIBUTION_POINT command completed successfully	deletes a PKI Revocation distribution endpoint (such as RFC5280 Certificate Revocation List) owned by the Vendor
-PROPOSE_ADD_PAA command completed successfully	
-APPROVE_ADD_PAA command completed successfully	
-ADD_REVOCATION_DISTRIBUTION_POINT command completed successfully	
-DELETE_REVOCATION_DISTRIBUTION_POINT command failed	does not deletes a PKI Revocation distribution endpoint (such as RFC5280 Certificate Revocation List) owned by the Vendor
-PROPOSE_ADD_PAA command failed	
-APPROVE_ADD_PAA command failed	
-ADD_REVOCATION_DISTRIBUTION_POINT command failed	
-Role	
- Who can send	
-Trustee	error
-Vendor 	
-vid field in the transaction (VendorID) equal to the Vendor account's VID	
-VID-scoped PAAs (Root certs) and PAIs (Intermediate certs): vid field in the CRLSignerCertificate's subject equal to the Vendor account's VID	
-Non-VID scoped PAAs (Root certs): vid field associated with the corresponding PAA on the ledger equal to the Vendor account's VID	
-VendorAdmin 	error
-CertificationCenter 	error
-NodeAdmin 	error
-Parameters:	
-vid (Vendor ID)	uint16
-     * Positive:	
-value exists	
-value > 0	
-integer value format
-Vendor ID value = Vendor account's VID and vid field in the VID-scoped CRLSignerCertificate	
-Vendor ID value = vid associated with non-VID scoped CRLSignerCertificate on the ledger	
-     * Negative:	
-empty value	
-value =< 0
-string value format	
-length > MAX	MAX = 65535
-nonexistent ID	
-label (Label)	string 
-     * Positive:	
-value exists	
-text value format
-MIN < length < MAX	
-     * Negative:	
-length > MAX	
-empty value	
-issuerSubjectKeyID (Issuer Subject Key ID)	string 
-     * Positive:	
-unique value for PAA/PAI	
-certificate type	
-delegated certificate by a PAI	must be provided using the crlSignerDelegator field
-not delegated certificate by a PAI	
-text value format
-MIN < length < MAX	
-value consist of even number of uppercase hexadecimal characters ([0-9A-F])	for example, 5A880E6C3653D07FB08971A3F473790930E62BDB
-     * Negative:	
-contains whitespace	
-contains non-hexadecimal characters	
-length > MAX	
-empty value	
-### ADD_PAI	
-#### CLI command	
-CLI command send	
-Valid command	
-command exists/relevant	
-query works for  the following certificates	
-PAI	
-Invalid command	
-access is denied to execute command	
-incorrect command syntax	
-Сommand result	
-ADD_PAI command completed successfully	adds a PAI (intermediate certificate) signed by a chain of certificates which must be already present on the ledger
-PROPOSE_ADD_PAA command completed successfully	
-APPROVE_ADD_PAA command completed successfully	
-provided certificate not root	
-Issuer != Subject	
-"Authority Key Identifier != Subject Key Identifier
-"	
-no existing certificate with the same <Certificate's Issuer>:<Certificate's Serial Number> combination	
-certificates with the same <Certificate's Subject>:<Certificate's Subject Key ID> combination already exist	
-the existing certificate not be NOC certificate	
-"the sender's VID match the VID of the existing certificate's owner
-"	
-the signature and expiration date are valid	
-parent certificate already stored on the ledger and a valid chain to some root certificate can be built	
-the parent root certificate is VID scoped	
-the provided certificate also be VID scoped	
-the vid in the subject of the root certificate equal to the vid in the subject of the provided certificate.	
-the vid in the subjects of both certificates equal to the sender Vendor account's VID	
-the parent root certificate is not VID scoped but has an associated VID	
-the provided certificate either VID scoped or non-VID scoped	
-the provided certificate is VID scoped, the vid in the subject of the certificate equal to the VID associated with the root certificate and to the sender Vendor account's VID	
-multiple certificates refer to the same <Certificate's Subject>:<Certificate's Subject Key ID> combination	
-ADD_PAI command failed	does not adds a PAI (intermediate certificate) signed by a chain of certificates which must be already present on the ledger
-PROPOSE_ADD_PAA command failed	
-APPROVE_ADD_PAA command failed	
-provided certificate is root	
-Issuer == Subject	
-"Authority Key Identifier == Subject Key Identifier
-"	
-existing certificate with the same <Certificate's Issuer>:<Certificate's Serial Number> combination	
-certificates with the same <Certificate's Subject>:<Certificate's Subject Key ID> combination already exist	
-the existing certificate is NOC certificate	
-"the sender's VID does not match the VID of the existing certificate's owner
-"	
-the signature and expiration date are not valid	
-the signature is valid and expiration date are not valid	
-the signature is not valid and expiration date are valid	
-parent certificate not stored on the ledger	
-parent certificate already stored on the ledger but a valid chain to some root certificate can not be built	
-the parent root certificate is VID scoped	
-the provided certificate not be VID scoped	
-the vid in the subject of the root certificate not equal to the vid in the subject of the provided certificate.	
-the vid in the subjects of both certificates not equal to the sender Vendor account's VID	
-the parent root certificate is not VID scoped but has an associated VID	
-parent root certificate is non-VID scoped and does not have an associated VID	
-the provided certificate is not VID scoped	
-the provided certificate is VID scoped, but the vid in the subject of the certificate not equal to the VID associated with the root certificate and to the sender Vendor account's VID	
-Role	
- Who can send	
-Trustee	error
-Vendor 	
-VendorAdmin 	error
-CertificationCenter 	error
-NodeAdmin 	error
-Parameters:	
-cert (Certificate)	string 
-     * Positive:	
-value exists	
-contain a PEM string	
-contain path to a file containing the data	
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-certificate-schema-version	optional(uint16)
-     * Positive:	
-value = 0	
-integer value format
-empty value	
-     * Negative:	
-length > MAX	MAX = 65535
-#### REST API 	
-REST API command send	
-Valid command	
-correct HTTP method	
-request is authorized	
-uses valid credentials/role	
-query works for  the following certificates	
-PAI	
-Invalid command	
-incorrect request	
-server side error	
-Сommand result	
-ADD_PAI command completed successfully	adds a PAI (intermediate certificate) signed by a chain of certificates which must be already present on the ledger
-PROPOSE_ADD_PAA command completed successfully	
-APPROVE_ADD_PAA command completed successfully	
-provided certificate not root	
-Issuer != Subject	
-"Authority Key Identifier != Subject Key Identifier
-"	
-no existing certificate with the same <Certificate's Issuer>:<Certificate's Serial Number> combination	
-certificates with the same <Certificate's Subject>:<Certificate's Subject Key ID> combination already exist	
-the existing certificate not be NOC certificate	
-"the sender's VID match the VID of the existing certificate's owner
-"	
-the signature and expiration date are valid	
-parent certificate already stored on the ledger and a valid chain to some root certificate can be built	
-the parent root certificate is VID scoped	
-the provided certificate also be VID scoped	
-the vid in the subject of the root certificate equal to the vid in the subject of the provided certificate.	
-the vid in the subjects of both certificates equal to the sender Vendor account's VID	
-the parent root certificate is not VID scoped but has an associated VID	
-the provided certificate either VID scoped or non-VID scoped	
-the provided certificate is VID scoped, the vid in the subject of the certificate equal to the VID associated with the root certificate and to the sender Vendor account's VID	
-multiple certificates refer to the same <Certificate's Subject>:<Certificate's Subject Key ID> combination	
-ADD_PAI command failed	does not adds a PAI (intermediate certificate) signed by a chain of certificates which must be already present on the ledger
-PROPOSE_ADD_PAA command failed	
-APPROVE_ADD_PAA command failed	
-provided certificate is root	
-Issuer == Subject	
-"Authority Key Identifier == Subject Key Identifier
-"	
-existing certificate with the same <Certificate's Issuer>:<Certificate's Serial Number> combination	
-certificates with the same <Certificate's Subject>:<Certificate's Subject Key ID> combination already exist	
-the existing certificate is NOC certificate	
-"the sender's VID does not match the VID of the existing certificate's owner
-"	
-the signature and expiration date are not valid	
-the signature is valid and expiration date are not valid	
-the signature is not valid and expiration date are valid	
-parent certificate not stored on the ledger	
-parent certificate already stored on the ledger but a valid chain to some root certificate can not be built	
-the parent root certificate is VID scoped	
-the provided certificate not be VID scoped	
-the vid in the subject of the root certificate not equal to the vid in the subject of the provided certificate.	
-the vid in the subjects of both certificates not equal to the sender Vendor account's VID	
-the parent root certificate is not VID scoped but has an associated VID	
-parent root certificate is non-VID scoped and does not have an associated VID	
-the provided certificate is not VID scoped	
-the provided certificate is VID scoped, but the vid in the subject of the certificate not equal to the VID associated with the root certificate and to the sender Vendor account's VID	
-Role	
- Who can send	
-Trustee	error
-Vendor 	
-VendorAdmin 	error
-CertificationCenter 	error
-NodeAdmin 	error
-Parameters:	
-cert (Certificate)	string 
-     * Positive:	
-value exists	
-contain a PEM string	
-contain path to a file containing the data	
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-certificate-schema-version	optional(uint16)
-     * Positive:	
-value = 0	
-integer value format
-empty value	
-     * Negative:	
-length > MAX	MAX = 65535
-### REVOKE_PAI	
-#### CLI command	
-CLI command send	
-Valid command	
-command exists/relevant	
-query works for  the following certificates	
-PAI	
-Invalid command	
-access is denied to execute command	
-incorrect command syntax	
-Сommand result	
-REVOKE_PAI command completed successfully	revokes the given PAI (intermediate certificate)
-PROPOSE_ADD_PAA command completed successfully	
-APPROVE_ADD_PAA command completed successfully	
-ADD_PAI command completed successfully	
-revoke-child = True	all the certificates in the chain signed by the revoked certificate will be revoked as well
-revoke-child = Falce	the certificates in the chain signed by the revoked certificate not revoked
-PAI Certificate with the provided subject and subject_key_id exist in the ledger	
-REVOKE_PAI command failed	does not revokes the given PAI (intermediate certificate)
-PROPOSE_ADD_PAA command failed	
-APPROVE_ADD_PAA command failed	
-ADD_PAI command failed	
-PAI Certificate with the provided subject and subject_key_id not exist in the ledger	
-Role	
- Who can send	
-Trustee	error
-Vendor 	
-sender's VID match the VID of the revoking certificate's owner	
-VendorAdmin 	error
-CertificationCenter 	error
-NodeAdmin 	error
-Parameters:	
-subject (Subject)	string 
-     * Positive:	
-string matches the format	
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-subject_key_id (Subject Key ID)	string 
-     * Positive:	
-string matches the format	for example: 5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-serial-number (Serial Number)	optional(string)
-     * Positive:	
-empty value	
-text value format
-MIN < length < MAX	
-     * Negative:	
-length > MAX	
-revoke-child (Revoke Child)	optional(bool)
-     * Positive:	
-empty value	
-value state	
-TRUE (-1)	all the certificates in the chain signed by the revoked certificate will be revoked as well
-FALSE (0)	default value
-     * Negative:	
-value is not bool	
-info (Information/Notes)	optional(string)
-     * Positive:	
-empty value	
-text value format
-MIN < length < MAX	
-     * Negative:	
-length > MAX	MAX=4096 characters
-time (Proposal Time)	optional(int64)
-     * Positive:	
-default value	current time by default
-empty value	
-integer value format
-     * Negative:	
-length > MAX	MAX = 9 223 372 036 854 775 807
-#### REST API 	
-REST API command send	
-Valid command	
-correct HTTP method	
-request is authorized	
-uses valid credentials/role	
-query works for  the following certificates	
-PAI	
-Invalid command	
-incorrect request	
-server side error	
-Сommand result	
-REVOKE_PAI command completed successfully	revokes the given PAI (intermediate certificate)
-PROPOSE_ADD_PAA command completed successfully	
-APPROVE_ADD_PAA command completed successfully	
-ADD_PAI command completed successfully	
-revoke-child = True	all the certificates in the chain signed by the revoked certificate will be revoked as well
-revoke-child = Falce	the certificates in the chain signed by the revoked certificate not revoked
-PAI Certificate with the provided subject and subject_key_id exist in the ledger	
-REVOKE_PAI command failed	does not revokes the given PAI (intermediate certificate)
-PROPOSE_ADD_PAA command failed	
-APPROVE_ADD_PAA command failed	
-ADD_PAI command failed	
-PAI Certificate with the provided subject and subject_key_id not exist in the ledger	
-Role	
- Who can send	
-Trustee	error
-Vendor 	
-sender's VID match the VID of the revoking certificate's owner	
-VendorAdmin 	error
-CertificationCenter 	error
-NodeAdmin 	error
-Parameters:	
-subject (Subject)	string 
-     * Positive:	
-string matches the format	
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-subject_key_id (Subject Key ID)	string 
-     * Positive:	
-string matches the format	for example: 5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-serial-number (Serial Number)	optional(string)
-     * Positive:	
-empty value	
-text value format
-MIN < length < MAX	
-     * Negative:	
-length > MAX	
-revoke-child (Revoke Child)	optional(bool)
-     * Positive:	
-empty value	
-value state	
-TRUE (-1)	all the certificates in the chain signed by the revoked certificate will be revoked as well
-FALSE (0)	default value
-     * Negative:	
-value is not bool	
-info (Information/Notes)	optional(string)
-     * Positive:	
-empty value	
-text value format
-MIN < length < MAX	
-     * Negative:	
-length > MAX	MAX=4096 characters
-time (Proposal Time)	optional(int64)
-     * Positive:	
-default value	current time by default
-empty value	
-integer value format
-     * Negative:	
-length > MAX	MAX = 9 223 372 036 854 775 807
-### REMOVE_PAI	
-#### CLI command	
+          * Vendor
+          * VendorAdmin
+          * CertificationCenter
+          * NodeAdmin
+
+* Parameters:
+     * subject (Subject) - string
+          * Positive:
+               * string matches the format
+               * text value format
+               * MIN < length < MAX
+          * Negative:
+               * empty value
+               * nonexistent value
+               * length > MAX
+
+     * subject_key_id (Subject Key ID) - string
+          * Positive:
+               * string matches the format (e.g., 5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB)
+               * text value format
+               * MIN < length < MAX
+          * Negative:
+               * empty value
+               * nonexistent value
+               * length > MAX
+
+     * info (Information/Notes) - optional(string)
+          * Positive:
+               * empty value
+               * text value format
+               * MIN < length < MAX
+          * Negative:
+               * length > MAX (MAX = 4096 characters)
+
+     * time (Proposal Time) - optional(int64)
+          * Positive:
+               * default value ⇒ current time by default
+               * empty value
+               * integer value format
+          * Negative:
+               * length > MAX (MAX = 9 223 372 036 854 775 807)
+
+### REST API
+REST API command send
+
+* Valid command
+     * correct HTTP method
+     * request is authorized
+     * uses valid credentials/role
+     * query works for the following certificates
+          * PAA
+
+* Invalid command
+     * incorrect request
+     * server side error
+
+* Command result
+     * REJECT_ADD_PAA command completed successfully ⇒ rejects the proposed PAA (self-signed root certificate)
+          * PROPOSE_ADD_PAA command completed successfully
+          * APPROVE_ADD_PAA command completed successfully
+          * command used for re-voting ⇒ change vote from approve to reject
+          * remove the proposal
+          * proposed PAA certificate has only proposer's approval and no rejects
+          * number of approvals greater than 1/3 of Trustees ⇒ certificate rejects
+          * the proposal to add a root certificate with the provided subject and subject_key_id, submitted first
+          * the proposed certificate hasn't been rejected by the signer yet
+     * REJECT_ADD_PAA command failed ⇒ does not reject the proposed PAA (self-signed root certificate)
+          * PROPOSE_ADD_PAA command failed
+          * APPROVE_ADD_PAA command failed
+          * number of approvals is less than 1/3 of Trustees ⇒ certificate is not rejected
+          * number of approvals equal 1/3 of Trustees ⇒ certificate is not rejected
+          * the proposal to add a root certificate with the provided subject and subject_key_id, not submitted first
+          * the proposed certificate has been rejected by the signer
+          * remove the proposal
+          * certificate has not proposer's approval
+          * certificate has only proposer's approval and rejects
+
+* Parameters:
+     * subject (Subject) - string
+          * Positive:
+               * string matches the format
+               * text value format
+               * MIN < length < MAX
+          * Negative:
+               * empty value
+               * nonexistent value
+               * length > MAX
+
+     * subject_key_id (Subject Key ID) - string
+          * Positive:
+               * string matches the format (e.g., 5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB)
+               * text value format
+               * MIN < length < MAX
+          * Negative:
+               * empty value
+               * nonexistent value
+               * length > MAX
+
+     * info (Information/Notes) - optional(string)
+          * Positive:
+               * empty value
+               * text value format
+               * MIN < length < MAX
+          * Negative:
+               * length > MAX (MAX = 4096 characters)
+
+     * time (Proposal Time) - optional(int64)
+          * Positive:
+               * default value ⇒ current time by default
+               * empty value
+               * integer value format
+          * Negative:
+               * length > MAX (MAX = 9 223 372 036 854 775 807)
+
+## PROPOSE_REVOKE_PAA
+
+### CLI command  
+CLI command: `dcld tx paa propose-revoke-paa --subject=<string> --subject-key-id=<string> [--serial-number=<string>] [--revoke-child=<bool>] [--info=<string>] [--time=<int64>] --from=<account>`
+
+* CLI command send  
+     * Valid command  
+          * command exists/relevant  
+          * query works for the following certificates  
+               * PAA  
+     * Invalid command  
+          * access is denied to execute command  
+          * incorrect command syntax  
+
+* Command result  
+     * PROPOSE_REVOKE_PAA command completed successfully ⇒ proposes revocation of the given PAA (self-signed root certificate) by a Trustee  
+          * PROPOSE_ADD_PAA command completed successfully  
+          * APPROVE_ADD_PAA command completed successfully  
+          * revoke-child = True ⇒ all the certificates in the chain signed by the revoked certificate will be revoked as well  
+          * revoke-child = Falce ⇒ the certificates in the chain signed by the revoked certificate not be revoked  
+          * sufficient number of Trustee's approvals is received ⇒ PAA certificate is revoked  
+          * revoked certificate root  
+               * Issuer == Subject  
+               * Authority Key Identifier == Subject Key Identifier  
+          * no existing Proposed certificate with the same <Certificate's Subject>:<Certificate's Subject Key ID> combination  
+     * PROPOSE_REVOKE_PAA command failed ⇒ does not propose revocation of the given PAA (self-signed root certificate) by a Trustee  
+          * PROPOSE_ADD_PAA command failed  
+          * APPROVE_ADD_PAA command failed  
+          * not sufficient number of Trustee's approvals is received ⇒ PAA certificate in the pending state  
+          * there are no Trustee's approvals ⇒ PAA certificate is not revoked  
+          * revoked certificate is not root  
+               * Issuer != Subject and Authority Key Identifier == Subject Key Identifier  
+               * Issuer != Subject and Authority Key Identifier != Subject Key Identifier  
+               * Issuer == Subject and Authority Key Identifier != Subject Key Identifier  
+          * existing Proposed certificate with the same <Certificate's Subject>:<Certificate's Subject Key ID> combination  
+
+* Role (Who can send)  
+     * Positive:  
+          * Trustee  
+     * Negative:  
+          * Vendor ⇒ error  
+          * VendorAdmin ⇒ error  
+          * CertificationCenter ⇒ error  
+          * NodeAdmin ⇒ error  
+
+* Parameters:  
+     * subject (Subject) - string  
+          * Positive:  
+               * string matches the format  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * nonexistent value  
+               * length > MAX  
+     * subject_key_id (Subject Key ID) - string  
+          * Positive:  
+               * string matches the format  
+                    * e.g., 5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * nonexistent value  
+               * length > MAX  
+     * serial-number (Serial Number) - optional(string)  
+          * Positive:  
+               * empty value  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * length > MAX  
+     * revoke-child (Revoke Child) - optional(bool)  
+          * Positive:  
+               * empty value  
+               * value state  
+               * TRUE (-1)  
+               * FALSE (0) ⇒ default value  
+          * Negative:  
+               * value is not bool  
+     * info (Information/Notes) - optional(string)  
+          * Positive:  
+               * empty value  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * length > MAX ⇒ MAX = 4096 characters  
+     * time (Proposal Time) - optional(int64)  
+          * Positive:  
+               * default value ⇒ current time by default  
+               * empty value  
+               * integer value format  
+          * Negative:  
+               * length > MAX ⇒ MAX = 9 223 372 036 854 775 807  
+
+### REST API  
+REST API command: POST /cosmos/tx/v1beta1/txs: [MsgProposeRevokePAA](https://github.com/zigbee-alliance/distributed-compliance-ledger)
+
+* REST API command send  
+     * Valid command  
+          * correct HTTP method  
+          * request is authorized  
+          * uses valid credentials/role  
+          * query works for the following certificates  
+               * PAA  
+     * Invalid command  
+          * incorrect request  
+          * server side error  
+
+* Command result  
+     * PROPOSE_REVOKE_PAA command completed successfully ⇒ proposes revocation of the given PAA (self-signed root certificate) by a Trustee  
+          * PROPOSE_ADD_PAA command completed successfully  
+          * APPROVE_ADD_PAA command completed successfully  
+          * revoke-child = True ⇒ all the certificates in the chain signed by the revoked certificate will be revoked as well  
+          * revoke-child = Falce ⇒ the certificates in the chain signed by the revoked certificate not be revoked  
+          * sufficient number of Trustee's approvals is received ⇒ PAA certificate is revoked  
+          * revoked certificate root  
+               * Issuer == Subject  
+               * Authority Key Identifier == Subject Key Identifier  
+          * no existing Proposed certificate with the same <Certificate's Subject>:<Certificate's Subject Key ID> combination  
+     * PROPOSE_REVOKE_PAA command failed ⇒ does not propose revocation of the given PAA (self-signed root certificate) by a Trustee  
+          * PROPOSE_ADD_PAA command failed  
+          * APPROVE_ADD_PAA command failed  
+          * not sufficient number of Trustee's approvals is received ⇒ PAA certificate in the pending state  
+          * there are no Trustee's approvals ⇒ PAA certificate is not revoked  
+          * revoked certificate is not root  
+               * Issuer != Subject and Authority Key Identifier == Subject Key Identifier  
+               * Issuer != Subject and Authority Key Identifier != Subject Key Identifier  
+               * Issuer == Subject and Authority Key Identifier != Subject Key Identifier  
+          * existing Proposed certificate with the same <Certificate's Subject>:<Certificate's Subject Key ID> combination  
+
+* Role (Who can send)  
+     * Positive:  
+          * Trustee  
+     * Negative:  
+          * Vendor ⇒ error  
+          * VendorAdmin ⇒ error  
+          * CertificationCenter ⇒ error  
+          * NodeAdmin ⇒ error  
+
+* Parameters:  
+     * subject (Subject) - string  
+          * Positive:  
+               * string matches the format  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * nonexistent value  
+               * length > MAX  
+     * subject_key_id (Subject Key ID) - string  
+          * Positive:  
+               * string matches the format  
+                    * e.g., 5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * nonexistent value  
+               * length > MAX  
+     * serial-number (Serial Number) - optional(string)  
+          * Positive:  
+               * empty value  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * length > MAX  
+     * revoke-child (Revoke Child) - optional(bool)  
+          * Positive:  
+               * empty value  
+               * value state  
+               * TRUE (-1)  
+               * FALSE (0) ⇒ default value  
+          * Negative:  
+               * value is not bool  
+     * info (Information/Notes) - optional(string)  
+          * Positive:  
+               * empty value  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * length > MAX ⇒ MAX = 4096 characters  
+     * time (Proposal Time) - optional(int64)  
+          * Positive:  
+               * default value ⇒ current time by default  
+               * empty value  
+               * integer value format  
+          * Negative:  
+               * length > MAX ⇒ MAX = 9 223 372 036 854 775 807  
+
+
+## APPROVE_REVOKE_PAA
+### CLI command  
+CLI command: `dcld tx paa approve-revoke-paa --subject=<string> --subject-key-id=<string> [--serial-number=<string>] [--info=<string>] [--time=<int64>] --from=<account>`
+
+* CLI command send  
+     * Valid command  
+          * command exists/relevant  
+          * query works for the following certificates  
+               * PAA  
+     * Invalid command  
+          * access is denied to execute command  
+          * incorrect command syntax  
+
+* Command result  
+     * APPROVE_REVOKE_PAA command completed successfully ⇒ approves the revocation of the given PAA (self-signed root certificate) by a Trustee  
+          * PROPOSE_ADD_PAA command completed successfully  
+          * APPROVE_ADD_PAA command completed successfully  
+          * PROPOSE_REVOKE_PAA command completed successfully  
+          * Number of required approvals greater than 2/3 of Trustees ⇒ revocation is applied  
+          * Number of required approvals equal 2/3 of Trustees ⇒ revocation is applied  
+          * the proposal to revoke a root certificate with the provided subject and subject_key_id, submitted first  
+          * the proposed certificate revocation hasn't been approved by the signer yet  
+     * APPROVE_REVOKE_PAA command failed ⇒ does not approve the revocation of the given PAA (self-signed root certificate) by a Trustee  
+          * PROPOSE_ADD_PAA command failed  
+          * APPROVE_ADD_PAA command failed  
+          * PROPOSE_REVOKE_PAA command failed  
+          * Number of required approvals less than 2/3 of Trustees ⇒ revocation is not applied  
+          * the proposal to revoke a root certificate with the provided subject and subject_key_id, not submitted first  
+          * the proposed certificate revocation has been approved by the signer  
+
+* Role (Who can send)  
+     * Positive:  
+          * Trustee  
+     * Negative:  
+          * Vendor ⇒ error  
+          * VendorAdmin ⇒ error  
+          * CertificationCenter ⇒ error  
+          * NodeAdmin ⇒ error  
+
+* Parameters:  
+     * subject (Subject) - string  
+          * Positive:  
+               * string matches the format  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * nonexistent value  
+               * length > MAX  
+     * subject_key_id (Subject Key ID) - string  
+          * Positive:  
+               * string matches the format  
+                    * e.g., 5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * nonexistent value  
+               * length > MAX  
+     * serial-number (Serial Number) - optional(string)  
+          * Positive:  
+               * empty value  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * length > MAX  
+     * info (Information/Notes) - optional(string)  
+          * Positive:  
+               * empty value  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * length > MAX ⇒ MAX = 4096 characters  
+     * time (Proposal Time) - optional(int64)  
+          * Positive:  
+               * default value ⇒ current time by default  
+               * empty value  
+               * integer value format  
+          * Negative:  
+               * length > MAX ⇒ MAX = 9 223 372 036 854 775 807  
+
+### REST API  
+REST API command: POST /cosmos/tx/v1beta1/txs: [MsgApproveRevokePAA](https://github.com/zigbee-alliance/distributed-compliance-ledger)
+
+* REST API command send  
+     * Valid command  
+          * correct HTTP method  
+          * request is authorized  
+          * uses valid credentials/role  
+          * query works for the following certificates  
+               * PAA  
+     * Invalid command  
+          * incorrect request  
+          * server side error  
+
+* Command result  
+     * APPROVE_REVOKE_PAA command completed successfully ⇒ approves the revocation of the given PAA (self-signed root certificate) by a Trustee  
+          * PROPOSE_ADD_PAA command completed successfully  
+          * APPROVE_ADD_PAA command completed successfully  
+          * PROPOSE_REVOKE_PAA command completed successfully  
+          * Number of required approvals greater than 2/3 of Trustees ⇒ revocation is applied  
+          * Number of required approvals equal 2/3 of Trustees ⇒ revocation is applied  
+          * the proposal to revoke a root certificate with the provided subject and subject_key_id, submitted first  
+          * the proposed certificate revocation hasn't been approved by the signer yet  
+     * APPROVE_REVOKE_PAA command failed ⇒ does not approve the revocation of the given PAA (self-signed root certificate) by a Trustee  
+          * PROPOSE_ADD_PAA command failed  
+          * APPROVE_ADD_PAA command failed  
+          * PROPOSE_REVOKE_PAA command failed  
+          * Number of required approvals less than 2/3 of Trustees ⇒ revocation is not applied  
+          * the proposal to revoke a root certificate with the provided subject and subject_key_id, not submitted first  
+          * the proposed certificate revocation has been approved by the signer  
+
+* Role (Who can send)  
+     * Positive:  
+          * Trustee  
+     * Negative:  
+          * Vendor ⇒ error  
+          * VendorAdmin ⇒ error  
+          * CertificationCenter ⇒ error  
+          * NodeAdmin ⇒ error  
+
+* Parameters:  
+     * subject (Subject) - string  
+          * Positive:  
+               * string matches the format  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * nonexistent value  
+               * length > MAX  
+     * subject_key_id (Subject Key ID) - string  
+          * Positive:  
+               * string matches the format  
+                    * e.g., 5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * nonexistent value  
+               * length > MAX  
+     * serial-number (Serial Number) - optional(string)  
+          * Positive:  
+               * empty value  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * length > MAX  
+     * info (Information/Notes) - optional(string)  
+          * Positive:  
+               * empty value  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * length > MAX ⇒ MAX = 4096 characters  
+     * time (Proposal Time) - optional(int64)  
+          * Positive:  
+               * default value ⇒ current time by default  
+               * empty value  
+               * integer value format  
+          * Negative:  
+               * length > MAX ⇒ MAX = 9 223 372 036 854 775 807  
+
+
+## ASSIGN_VID_TO_PAA
+
+### CLI command  
+CLI command: `dcld tx paa assign-vid --subject=<string> --subject-key-id=<string> --vid=<uint16> --from=<account>`
+
+* CLI command send  
+     * Valid command  
+          * command exists/relevant  
+          * query works for the following certificates  
+               * PAA  
+     * Invalid command  
+          * access is denied to execute command  
+          * incorrect command syntax  
+
+* Command result  
+     * ASSIGN_VID_TO_PAA command completed successfully ⇒ assigns a Vendor ID (VID) to non-VID scoped PAAs (self-signed root certificate) already present on the ledger  
+          * PROPOSE_ADD_PAA command completed successfully  
+          * APPROVE_ADD_PAA command completed successfully  
+          * PAA Certificate with the provided subject and subject_key_id exist in the ledger  
+          * the PAA is a VID scoped one  
+          * the vid field equal to the VID value in the PAA's subject  
+     * ASSIGN_VID_TO_PAA command failed ⇒ does not assign a Vendor ID (VID) to non-VID scoped PAAs (self-signed root certificate) already present on the ledger  
+          * PROPOSE_ADD_PAA command failed  
+          * APPROVE_ADD_PAA command failed  
+          * PAA Certificate with the provided subject and subject_key_id not exist in the ledger  
+          * the PAA is a VID scoped one  
+          * the vid field not equal to the VID value in the PAA's subject  
+
+* Role (Who can send)  
+     * Positive:  
+          * VendorAdmin  
+     * Negative:  
+          * Trustee ⇒ error  
+          * Vendor ⇒ error  
+          * CertificationCenter ⇒ error  
+          * NodeAdmin ⇒ error  
+
+* Parameters:  
+     * subject (Subject) - string  
+          * Positive:  
+               * string matches the format  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * nonexistent value  
+               * length > MAX  
+     * subject_key_id (Subject Key ID) - string  
+          * Positive:  
+               * string matches the format  
+                    * e.g., 5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * nonexistent value  
+               * length > MAX  
+     * vid (Vendor ID) - uint16  
+          * Positive:  
+               * value exists  
+               * value > 0  
+               * integer value format  
+               * Vendor ID value = vid field in the VID-scoped PAA certificate  
+          * Negative:  
+               * empty value  
+               * value =< 0  
+               * string value format  
+               * length > MAX ⇒ MAX = 65535  
+               * nonexistent ID  
+
+### REST API  
+REST API command: POST /cosmos/tx/v1beta1/txs: [MsgAssignVidToPAA](https://github.com/zigbee-alliance/distributed-compliance-ledger)
+
+* REST API command send  
+     * Valid command  
+          * correct HTTP method  
+          * request is authorized  
+          * uses valid credentials/role  
+          * query works for the following certificates  
+               * PAA  
+     * Invalid command  
+          * incorrect request  
+          * server side error  
+
+* Command result  
+     * ASSIGN_VID_TO_PAA command completed successfully ⇒ assigns a Vendor ID (VID) to non-VID scoped PAAs (self-signed root certificate) already present on the ledger  
+          * PROPOSE_ADD_PAA command completed successfully  
+          * APPROVE_ADD_PAA command completed successfully  
+          * PAA Certificate with the provided subject and subject_key_id exist in the ledger  
+          * the PAA is a VID scoped one  
+          * the vid field equal to the VID value in the PAA's subject  
+     * ASSIGN_VID_TO_PAA command failed ⇒ does not assign a Vendor ID (VID) to non-VID scoped PAAs (self-signed root certificate) already present on the ledger  
+          * PROPOSE_ADD_PAA command failed  
+          * APPROVE_ADD_PAA command failed  
+          * PAA Certificate with the provided subject and subject_key_id not exist in the ledger  
+          * the PAA is a VID scoped one  
+          * the vid field not equal to the VID value in the PAA's subject  
+
+* Role (Who can send)  
+     * Positive:  
+          * VendorAdmin  
+     * Negative:  
+          * Trustee ⇒ error  
+          * Vendor ⇒ error  
+          * CertificationCenter ⇒ error  
+          * NodeAdmin ⇒ error  
+
+* Parameters:  
+     * subject (Subject) - string  
+          * Positive:  
+               * string matches the format  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * nonexistent value  
+               * length > MAX  
+     * subject_key_id (Subject Key ID) - string  
+          * Positive:  
+               * string matches the format  
+                    * e.g., 5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * nonexistent value  
+               * length > MAX  
+     * vid (Vendor ID) - uint16  
+          * Positive:  
+               * value exists  
+               * value > 0  
+               * integer value format  
+               * Vendor ID value = vid field in the VID-scoped PAA certificate  
+          * Negative:  
+               * empty value  
+               * value =< 0  
+               * string value format  
+               * length > MAX ⇒ MAX = 65535  
+               * nonexistent ID
+
+## ADD_REVOCATION_DISTRIBUTION_POINT
+
+### CLI command  
+CLI command: `dcld tx pki add-revocation-distribution-point --vid=<uint16> --label=<string> --issuerSubjectKeyID=<string> --crlSignerCertificate=<string> [--crlSignerDelegator=<string>] --dataUrl=<string> [--dataFileSize=<uint64>] [--dataDigest=<string>] [--dataDigestType=<uint32>] --revocationType=<uint32> [--schemaVersion=<uint16>] --from=<account>`
+
+* CLI command send  
+     * Valid command  
+          * command exists/relevant  
+     * Invalid command  
+          * access is denied to execute command  
+          * incorrect command syntax  
+
+* Command result  
+     * ADD_REVOCATION_DISTRIBUTION_POINT command completed successfully ⇒ publishes a PKI Revocation distribution endpoint (such as RFC5280 Certificate Revocation List) owned by the Vendor  
+          * PROPOSE_ADD_PAA command completed successfully  
+          * APPROVE_ADD_PAA command completed successfully  
+          * crlSignerCertificate is a PAA (root certificate)  
+          * crlSignerCertificate is present on DCL  
+          * crlSignerCertificate is a PAI (intermediate certificate)  
+          * crlSignerCertificate chained back to a valid PAA (root certificate) present on DCL  
+          * crlSignerCertificate is a delegated by PAA  
+     * ADD_REVOCATION_DISTRIBUTION_POINT command failed ⇒ does not publish a PKI Revocation distribution endpoint (such as RFC5280 Certificate Revocation List) owned by the Vendor  
+          * PROPOSE_ADD_PAA command failed  
+          * APPROVE_ADD_PAA command failed  
+          * crlSignerCertificate is not present on DCL  
+          * crlSignerCertificate is a PAI (intermediate certificate)  
+          * crlSignerCertificate is not chained back to a valid PAA (root certificate) present on DCL  
+          * crlSignerCertificate is a delegated by PAA  
+          * crlSignerCertificate is not chained back to a valid PAA (root certificate) present on DCL  
+
+* Role (Who can send)  
+     * Positive:  
+          * Vendor  
+               * vid field in the transaction (VendorID) equals the Vendor account's VID  
+               * VID-scoped PAAs and PAIs: vid field in the CRLSignerCertificate's subject equals the Vendor account's VID  
+               * Non-VID scoped PAAs: vid associated with the corresponding PAA on the ledger equals the Vendor account's VID  
+     * Negative:  
+          * Trustee ⇒ error  
+          * VendorAdmin ⇒ error  
+          * CertificationCenter ⇒ error  
+          * NodeAdmin ⇒ error  
+
+* Parameters:  
+     * vid (Vendor ID) - uint16  
+          * Positive:  
+               * value exists  
+               * value > 0  
+               * integer value format  
+               * matches Vendor account's VID and CRLSignerCertificate's subject  
+          * Negative:  
+               * empty value  
+               * value =< 0  
+               * string value format  
+               * length > MAX (65535)  
+               * nonexistent ID  
+     * pid (Product ID) - optional(uint16)  
+          * Positive:  
+               * unique combination  
+               * value > 0  
+               * integer value format  
+          * Negative:  
+               * empty value  
+               * value =< 0  
+               * string value format  
+               * length > MAX (65535)  
+               * field not empty if IsPAA is true  
+               * value ≠ pid field in CRLSignerCertificate  
+     * isPAA (Is PAA) - bool  
+          * Positive:  
+               * TRUE (-1) ⇒ relates to a PAA  
+               * FALSE (0)  
+          * Negative:  
+               * empty value  
+               * not a boolean  
+     * label (Label) - string  
+          * Positive:  
+               * value exists  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * length > MAX  
+     * crlSignerCertificate - string  
+          * Positive:  
+               * value exists  
+               * contains PEM string or path to file  
+               * delegated certificate by a PAI must use crlSignerDelegator  
+               * not delegated ⇒ field is direct  
+          * Negative:  
+               * empty value  
+               * length > MAX  
+     * crlSignerDelegator - optional(string)  
+          * Positive:  
+               * value exists  
+               * contains PEM string or file  
+               * delegated certificate by a PAI ⇒ must be chained to an approved cert on ledger  
+               * not delegated ⇒ field can be omitted  
+          * Negative:  
+               * length > MAX  
+     * issuerSubjectKeyID - string  
+          * Positive:  
+               * unique to PAA/PAI  
+               * text format, MIN < length < MAX  
+               * even number of uppercase hex characters  
+               * e.g., 5A880E6C3653D07FB08971A3F473790930E62BDB  
+          * Negative:  
+               * contains whitespace or non-hex chars  
+               * length > MAX  
+               * empty value  
+     * dataUrl - string  
+          * Positive:  
+               * unique for VendorID and IssuerSubjectKeyID  
+               * text format, MIN < length < MAX  
+               * starts with http/https  
+          * Negative:  
+               * format does not match RevocationType spec  
+               * empty value  
+               * length > MAX  
+     * dataFileSize - optional(uint64)  
+          * Positive:  
+               * value >= 0  
+               * integer value format  
+          * Negative:  
+               * empty value  
+               * length > MAX (18,446,744,073,709,551,615)  
+     * dataDigest - optional(string)  
+          * Required if dataFileSize present  
+          * Positive:  
+               * matches format  
+               * text format  
+               * MIN < length < MAX  
+               * empty value  
+          * Negative:  
+               * nonexistent  
+               * length > MAX  
+     * dataDigestType - optional(uint32)  
+          * Required if dataDigest present  
+          * Positive:  
+               * value exists  
+               * value > 0  
+               * empty value  
+               * correct format  
+          * Negative:  
+               * value =< 0  
+               * string format  
+               * length > MAX (4,294,967,295)  
+     * revocationType (Revocation Type) - uint32  
+          * Positive:  
+               * value exists  
+               * value >= 0  
+               * integer format  
+               * supported: 1 - RFC5280 CRL  
+          * Negative:  
+               * empty  
+               * nonexistent  
+               * length > MAX (4,294,967,295)  
+     * schemaVersion - optional(uint16)  
+          * Positive:  
+               * value = 0  
+               * integer format  
+               * empty value  
+          * Negative:  
+               * length > MAX (65535)
+
+### REST API  
+REST API command: POST /cosmos/tx/v1beta1/txs: [MsgAddRevocationDistributionPoint](https://github.com/zigbee-alliance/distributed-compliance-ledger)
+
+* REST API command send  
+     * Valid command  
+          * correct HTTP method  
+          * request is authorized  
+          * uses valid credentials/role  
+     * Invalid command  
+          * incorrect request  
+          * server side error  
+
+* Command result  
+     * ADD_REVOCATION_DISTRIBUTION_POINT command completed successfully ⇒ publishes a PKI Revocation distribution endpoint (such as RFC5280 Certificate Revocation List) owned by the Vendor  
+          * PROPOSE_ADD_PAA command completed successfully  
+          * APPROVE_ADD_PAA command completed successfully  
+          * crlSignerCertificate is a PAA (root certificate)  
+          * crlSignerCertificate is present on DCL  
+          * crlSignerCertificate is a PAI (intermediate certificate)  
+          * crlSignerCertificate chained back to a valid PAA (root certificate) present on DCL  
+          * crlSignerCertificate is a delegated by PAA  
+     * ADD_REVOCATION_DISTRIBUTION_POINT command failed ⇒ does not publish a PKI Revocation distribution endpoint (such as RFC5280 Certificate Revocation List) owned by the Vendor  
+          * PROPOSE_ADD_PAA command failed  
+          * APPROVE_ADD_PAA command failed  
+          * crlSignerCertificate is not present on DCL  
+          * crlSignerCertificate is not chained back to a valid PAA  
+          * crlSignerCertificate is a delegated by PAA  
+          * crlSignerCertificate is not chained back to a valid PAA (root certificate) present on DCL  
+
+* Role (Who can send)  
+     * Positive:  
+          * Vendor (conditions as per CLI)  
+     * Negative:  
+          * Trustee ⇒ error  
+          * VendorAdmin ⇒ error  
+          * CertificationCenter ⇒ error  
+          * NodeAdmin ⇒ error
+
+* Parameters:  
+     * vid (Vendor ID) - uint16  
+          * Positive:  
+               * value exists  
+               * value > 0  
+               * integer value format  
+               * matches Vendor account's VID and CRLSignerCertificate's subject  
+          * Negative:  
+               * empty value  
+               * value =< 0  
+               * string value format  
+               * length > MAX (65535)  
+               * nonexistent ID  
+     * pid (Product ID) - optional(uint16)  
+          * Positive:  
+               * unique combination  
+               * value > 0  
+               * integer value format  
+          * Negative:  
+               * empty value  
+               * value =< 0  
+               * string value format  
+               * length > MAX (65535)  
+               * field not empty if IsPAA is true  
+               * value ≠ pid field in CRLSignerCertificate  
+     * isPAA (Is PAA) - bool  
+          * Positive:  
+               * TRUE (-1) ⇒ relates to a PAA  
+               * FALSE (0)  
+          * Negative:  
+               * empty value  
+               * not a boolean  
+     * label (Label) - string  
+          * Positive:  
+               * value exists  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * length > MAX  
+     * crlSignerCertificate - string  
+          * Positive:  
+               * value exists  
+               * contains PEM string or path to file  
+               * delegated certificate by a PAI must use crlSignerDelegator  
+               * not delegated ⇒ field is direct  
+          * Negative:  
+               * empty value  
+               * length > MAX  
+     * crlSignerDelegator - optional(string)  
+          * Positive:  
+               * value exists  
+               * contains PEM string or file  
+               * delegated certificate by a PAI ⇒ must be chained to an approved cert on ledger  
+               * not delegated ⇒ field can be omitted  
+          * Negative:  
+               * length > MAX  
+     * issuerSubjectKeyID - string  
+          * Positive:  
+               * unique to PAA/PAI  
+               * text format, MIN < length < MAX  
+               * even number of uppercase hex characters  
+               * e.g., 5A880E6C3653D07FB08971A3F473790930E62BDB  
+          * Negative:  
+               * contains whitespace or non-hex chars  
+               * length > MAX  
+               * empty value  
+     * dataUrl - string  
+          * Positive:  
+               * unique for VendorID and IssuerSubjectKeyID  
+               * text format, MIN < length < MAX  
+               * starts with http/https  
+          * Negative:  
+               * format does not match RevocationType spec  
+               * empty value  
+               * length > MAX  
+     * dataFileSize - optional(uint64)  
+          * Positive:  
+               * value >= 0  
+               * integer value format  
+          * Negative:  
+               * empty value  
+               * length > MAX (18,446,744,073,709,551,615)  
+     * dataDigest - optional(string)  
+          * Required if dataFileSize present  
+          * Positive:  
+               * matches format  
+               * text format  
+               * MIN < length < MAX  
+               * empty value  
+          * Negative:  
+               * nonexistent  
+               * length > MAX  
+     * dataDigestType - optional(uint32)  
+          * Required if dataDigest present  
+          * Positive:  
+               * value exists  
+               * value > 0  
+               * empty value  
+               * correct format  
+          * Negative:  
+               * value =< 0  
+               * string format  
+               * length > MAX (4,294,967,295)  
+     * revocationType (Revocation Type) - uint32  
+          * Positive:  
+               * value exists  
+               * value >= 0  
+               * integer format  
+               * supported: 1 - RFC5280 CRL  
+          * Negative:  
+               * empty  
+               * nonexistent  
+               * length > MAX (4,294,967,295)  
+     * schemaVersion - optional(uint16)  
+          * Positive:  
+               * value = 0  
+               * integer format  
+               * empty value  
+          * Negative:  
+               * length > MAX (65535)
+
+## UPDATE_REVOCATION_DISTRIBUTION_POINT
+
+### CLI command  
+CLI command: `dcld tx pki update-revocation-distribution-point --vid=<uint16> --label=<string> --issuerSubjectKeyID=<string> [--crlSignerCertificate=<string>] [--crlSignerDelegator=<string>] --dataUrl=<string> [--dataFileSize=<uint64>] [--dataDigest=<string>] [--dataDigestType=<uint32>] [--schemaVersion=<uint16>] --from=<account>`
+
+* CLI command send  
+     * Valid command  
+          * command exists/relevant  
+     * Invalid command  
+          * access is denied to execute command  
+          * incorrect command syntax  
+
+* Command result  
+     * UPDATE_REVOCATION_DISTRIBUTION_POINT command completed successfully ⇒ updates an existing PKI Revocation distribution endpoint (such as RFC5280 Certificate Revocation List) owned by the Vendor  
+          * PROPOSE_ADD_PAA command completed successfully  
+          * APPROVE_ADD_PAA command completed successfully  
+          * ADD_REVOCATION_DISTRIBUTION_POINT command completed successfully  
+     * UPDATE_REVOCATION_DISTRIBUTION_POINT command failed ⇒ does not update an existing PKI Revocation distribution endpoint  
+          * PROPOSE_ADD_PAA command failed  
+          * APPROVE_ADD_PAA command failed  
+          * ADD_REVOCATION_DISTRIBUTION_POINT command failed  
+
+* Role (Who can send)  
+     * Positive:  
+          * Vendor  
+               * vid field in transaction equals Vendor account's VID  
+               * VID-scoped certs: subject VID equals Vendor account's VID  
+               * Non-VID scoped PAAs: associated VID matches Vendor account's VID  
+     * Negative:  
+          * Trustee ⇒ error  
+          * VendorAdmin ⇒ error  
+          * CertificationCenter ⇒ error  
+          * NodeAdmin ⇒ error  
+
+* Parameters:  
+     * vid (Vendor ID) - uint16  
+          * Positive:  
+               * value exists  
+               * value > 0  
+               * integer format  
+               * matches account and certificate VID  
+          * Negative:  
+               * empty value  
+               * value ≤ 0  
+               * string format  
+               * length > 65535  
+               * nonexistent ID  
+     * label (Label) - string  
+          * Positive:  
+               * value exists  
+               * proper text format, MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * length > MAX  
+     * issuerSubjectKeyID - string  
+          * Positive:  
+               * unique for PAA/PAI  
+               * text format, even-length uppercase hex (e.g. 5A880E6C...)  
+               * MIN < length < MAX  
+          * Negative:  
+               * whitespace, non-hex chars  
+               * length > MAX  
+               * empty value  
+     * crlSignerCertificate - optional(string)  
+          * Positive:  
+               * exists or empty  
+               * PEM string or file path  
+               * proper certificate type  
+               * delegated certs require crlSignerDelegator  
+          * Negative:  
+               * length > MAX  
+     * crlSignerDelegator - optional(string)  
+          * Positive:  
+               * exists or empty  
+               * PEM string or file path  
+               * if delegated cert, must chain back to approved cert  
+          * Negative:  
+               * length > MAX  
+     * dataUrl - string  
+          * Positive:  
+               * unique for VendorID + IssuerSubjectKeyID  
+               * starts with http/https  
+               * MIN < length < MAX  
+          * Negative:  
+               * invalid format  
+               * empty value  
+               * length > MAX  
+     * dataFileSize - optional(uint64)  
+          * Positive:  
+               * value ≥ 0  
+               * integer format  
+          * Negative:  
+               * empty value  
+               * length > MAX (18,446,744,073,709,551,615)  
+     * dataDigest - optional(string)  
+          * Required if dataFileSize is present and revocationType ≠ 1  
+          * Positive:  
+               * matches ISO datetime format (e.g. 2019-10-12T...)  
+               * text format, MIN < length < MAX  
+               * empty value allowed  
+          * Negative:  
+               * nonexistent value  
+               * length > MAX  
+     * dataDigestType - optional(uint32)  
+          * Required if dataDigest present  
+          * Positive:  
+               * value exists and > 0  
+               * empty value  
+          * Negative:  
+               * value ≤ 0  
+               * string format  
+               * length > MAX (4,294,967,295)  
+     * schemaVersion - optional(uint16)  
+          * Positive:  
+               * value = 0  
+               * empty value  
+               * integer format  
+          * Negative:  
+               * length > MAX (65535)
+
+### REST API  
+REST API command: POST /cosmos/tx/v1beta1/txs: [MsgUpdateRevocationDistributionPoint](https://github.com/zigbee-alliance/distributed-compliance-ledger)
+
+* REST API command send  
+     * Valid command  
+          * correct HTTP method  
+          * request is authorized  
+          * uses valid credentials/role  
+     * Invalid command  
+          * incorrect request  
+          * server side error  
+
+* Command result  
+     * UPDATE_REVOCATION_DISTRIBUTION_POINT command completed successfully ⇒ updates an existing PKI Revocation distribution endpoint (such as RFC5280 Certificate Revocation List) owned by the Vendor  
+          * PROPOSE_ADD_PAA command completed successfully  
+          * APPROVE_ADD_PAA command completed successfully  
+          * ADD_REVOCATION_DISTRIBUTION_POINT command completed successfully  
+     * UPDATE_REVOCATION_DISTRIBUTION_POINT command failed ⇒ does not update an existing PKI Revocation distribution endpoint  
+          * PROPOSE_ADD_PAA command failed  
+          * APPROVE_ADD_PAA command failed  
+          * ADD_REVOCATION_DISTRIBUTION_POINT command failed  
+
+* Role (Who can send)  
+     * Positive:  
+          * Vendor  
+     * Negative:  
+          * Trustee ⇒ error  
+          * VendorAdmin ⇒ error  
+          * CertificationCenter ⇒ error  
+          * NodeAdmin ⇒ error
+
+* Parameters:  
+     * vid (Vendor ID) - uint16  
+          * Positive:  
+               * value exists  
+               * value > 0  
+               * integer format  
+               * matches account and certificate VID  
+          * Negative:  
+               * empty value  
+               * value ≤ 0  
+               * string format  
+               * length > 65535  
+               * nonexistent ID  
+     * label (Label) - string  
+          * Positive:  
+               * value exists  
+               * proper text format, MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * length > MAX  
+     * issuerSubjectKeyID - string  
+          * Positive:  
+               * unique for PAA/PAI  
+               * text format, even-length uppercase hex (e.g. 5A880E6C...)  
+               * MIN < length < MAX  
+          * Negative:  
+               * whitespace, non-hex chars  
+               * length > MAX  
+               * empty value  
+     * crlSignerCertificate - optional(string)  
+          * Positive:  
+               * exists or empty  
+               * PEM string or file path  
+               * proper certificate type  
+               * delegated certs require crlSignerDelegator  
+          * Negative:  
+               * length > MAX  
+     * crlSignerDelegator - optional(string)  
+          * Positive:  
+               * exists or empty  
+               * PEM string or file path  
+               * if delegated cert, must chain back to approved cert  
+          * Negative:  
+               * length > MAX  
+     * dataUrl - string  
+          * Positive:  
+               * unique for VendorID + IssuerSubjectKeyID  
+               * starts with http/https  
+               * MIN < length < MAX  
+          * Negative:  
+               * invalid format  
+               * empty value  
+               * length > MAX  
+     * dataFileSize - optional(uint64)  
+          * Positive:  
+               * value ≥ 0  
+               * integer format  
+          * Negative:  
+               * empty value  
+               * length > MAX (18,446,744,073,709,551,615)  
+     * dataDigest - optional(string)  
+          * Required if dataFileSize is present and revocationType ≠ 1  
+          * Positive:  
+               * matches ISO datetime format (e.g. 2019-10-12T...)  
+               * text format, MIN < length < MAX  
+               * empty value allowed  
+          * Negative:  
+               * nonexistent value  
+               * length > MAX  
+     * dataDigestType - optional(uint32)  
+          * Required if dataDigest present  
+          * Positive:  
+               * value exists and > 0  
+               * empty value  
+          * Negative:  
+               * value ≤ 0  
+               * string format  
+               * length > MAX (4,294,967,295)  
+     * schemaVersion - optional(uint16)  
+          * Positive:  
+               * value = 0  
+               * empty value  
+               * integer format  
+          * Negative:  
+               * length > MAX (65535)
+
+## DELETE_REVOCATION_DISTRIBUTION_POINT
+
+### CLI command  
+CLI command: `dcld tx pki delete-revocation-distribution-point --vid=<uint16> --label=<string> --issuerSubjectKeyID=<string> --from=<account>`
+
+* CLI command send  
+     * Valid command  
+          * command exists/relevant  
+     * Invalid command  
+          * access is denied to execute command  
+          * incorrect command syntax  
+
+* Command result  
+     * DELETE_REVOCATION_DISTRIBUTION_POINT command completed successfully ⇒ deletes a PKI Revocation distribution endpoint (such as RFC5280 Certificate Revocation List) owned by the Vendor  
+          * PROPOSE_ADD_PAA command completed successfully  
+          * APPROVE_ADD_PAA command completed successfully  
+          * ADD_REVOCATION_DISTRIBUTION_POINT command completed successfully  
+     * DELETE_REVOCATION_DISTRIBUTION_POINT command failed ⇒ does not delete a PKI Revocation distribution endpoint (such as RFC5280 Certificate Revocation List) owned by the Vendor  
+          * PROPOSE_ADD_PAA command failed  
+          * APPROVE_ADD_PAA command failed  
+          * ADD_REVOCATION_DISTRIBUTION_POINT command failed  
+
+* Role (Who can send)  
+     * Positive:  
+          * Vendor  
+               * vid field in transaction equals Vendor account's VID  
+               * VID-scoped certs: subject VID equals Vendor account's VID  
+               * Non-VID scoped PAAs: associated VID matches Vendor account's VID  
+     * Negative:  
+          * Trustee ⇒ error  
+          * VendorAdmin ⇒ error  
+          * CertificationCenter ⇒ error  
+          * NodeAdmin ⇒ error  
+
+* Parameters:  
+     * vid (Vendor ID) - uint16  
+          * Positive:  
+               * value exists  
+               * value > 0  
+               * integer format  
+               * matches account and certificate VID  
+          * Negative:  
+               * empty value  
+               * value ≤ 0  
+               * string format  
+               * length > 65535  
+               * nonexistent ID  
+     * label (Label) - string  
+          * Positive:  
+               * value exists  
+               * proper text format, MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * length > MAX  
+     * issuerSubjectKeyID - string  
+          * Positive:  
+               * unique for PAA/PAI  
+               * text format, even-length uppercase hex (e.g. 5A880E6C...)  
+               * MIN < length < MAX  
+               * must be provided using crlSignerDelegator field if delegated by PAI  
+          * Negative:  
+               * whitespace, non-hex chars  
+               * length > MAX  
+               * empty value
+
+### REST API  
+REST API command: POST /cosmos/tx/v1beta1/txs: [MsgDeleteRevocationDistributionPoint](https://github.com/zigbee-alliance/distributed-compliance-ledger)
+
+* REST API command send  
+     * Valid command  
+          * correct HTTP method  
+          * request is authorized  
+          * uses valid credentials/role  
+     * Invalid command  
+          * incorrect request  
+          * server side error  
+
+* Command result  
+     * DELETE_REVOCATION_DISTRIBUTION_POINT command completed successfully ⇒ deletes a PKI Revocation distribution endpoint (such as RFC5280 Certificate Revocation List) owned by the Vendor  
+          * PROPOSE_ADD_PAA command completed successfully  
+          * APPROVE_ADD_PAA command completed successfully  
+          * ADD_REVOCATION_DISTRIBUTION_POINT command completed successfully  
+     * DELETE_REVOCATION_DISTRIBUTION_POINT command failed ⇒ does not delete a PKI Revocation distribution endpoint  
+          * PROPOSE_ADD_PAA command failed  
+          * APPROVE_ADD_PAA command failed  
+          * ADD_REVOCATION_DISTRIBUTION_POINT command failed  
+
+* Role (Who can send)  
+     * Positive:  
+          * Vendor (see CLI role conditions)  
+     * Negative:  
+          * Trustee ⇒ error  
+          * VendorAdmin ⇒ error  
+          * CertificationCenter ⇒ error  
+          * NodeAdmin ⇒ error
+
+* Parameters:  
+     * vid (Vendor ID) - uint16  
+          * Positive:  
+               * value exists  
+               * value > 0  
+               * integer format  
+               * matches account and certificate VID  
+          * Negative:  
+               * empty value  
+               * value ≤ 0  
+               * string format  
+               * length > 65535  
+               * nonexistent ID  
+     * label (Label) - string  
+          * Positive:  
+               * value exists  
+               * proper text format, MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * length > MAX  
+     * issuerSubjectKeyID - string  
+          * Positive:  
+               * unique for PAA/PAI  
+               * text format, even-length uppercase hex (e.g. 5A880E6C...)  
+               * MIN < length < MAX  
+               * must be provided using crlSignerDelegator field if delegated by PAI  
+          * Negative:  
+               * whitespace, non-hex chars  
+               * length > MAX  
+               * empty value
+
+## ADD_PAI
+
+### CLI command  
+CLI command: `dcld tx pki add-pai --cert=<string> [--certificate-schema-version=<uint16>] --from=<account>`
+
+* CLI command send  
+     * Valid command  
+          * command exists/relevant  
+          * query works for the following certificates  
+               * PAI  
+     * Invalid command  
+          * access is denied to execute command  
+          * incorrect command syntax  
+
+* Command result  
+     * ADD_PAI command completed successfully ⇒ adds a PAI (intermediate certificate) signed by a chain of certificates already present on the ledger  
+          * PROPOSE_ADD_PAA command completed successfully  
+          * APPROVE_ADD_PAA command completed successfully  
+          * provided certificate is not root  
+               * Issuer ≠ Subject  
+               * Authority Key Identifier ≠ Subject Key Identifier  
+          * no existing certificate with the same <Issuer>:<Serial Number>  
+          * no certificate with the same <Subject>:<Subject Key ID>  
+          * existing certificate is not a NOC  
+          * sender's VID matches existing certificate's owner VID  
+          * signature and expiration date are valid  
+          * parent certificate already stored and valid chain to root exists  
+          * root is VID scoped, provided certificate is also VID scoped  
+               * VIDs in root and provided cert match and equal to sender VID  
+          * root is not VID scoped but has associated VID  
+               * provided cert is VID or non-VID scoped  
+               * if VID scoped, its VID matches root's associated VID and sender VID  
+          * multiple certificates refer to the same <Subject>:<Subject Key ID>  
+     * ADD_PAI command failed ⇒ does not add the certificate  
+          * PROPOSE_ADD_PAA command failed  
+          * APPROVE_ADD_PAA command failed  
+          * certificate is root (Issuer == Subject)  
+          * Authority Key Identifier == Subject Key Identifier  
+          * existing certificate with same <Issuer>:<Serial Number>  
+          * duplicate <Subject>:<Subject Key ID>  
+          * certificate is a NOC  
+          * sender's VID does not match certificate owner's VID  
+          * signature or expiration invalid  
+               * one or both invalid  
+          * parent cert not stored or chain to root cannot be built  
+          * root is VID scoped, provided cert is not VID scoped  
+               * VIDs in root and provided cert do not match  
+               * VIDs do not match sender's VID  
+          * root is non-VID scoped without associated VID  
+          * provided cert is not VID scoped  
+               * if VID scoped, its VID does not match root's associated VID and sender VID  
+
+* Role (Who can send)  
+     * Positive:  
+          * Vendor  
+     * Negative:  
+          * Trustee ⇒ error  
+          * VendorAdmin ⇒ error  
+          * CertificationCenter ⇒ error  
+          * NodeAdmin ⇒ error  
+
+* Parameters:  
+     * cert (Certificate) - string  
+          * Positive:  
+               * value exists  
+               * contains PEM string or valid file path  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * nonexistent value  
+               * length > MAX  
+     * certificate-schema-version - optional(uint16)  
+          * Positive:  
+               * value = 0  
+               * integer value format  
+               * empty value  
+          * Negative:  
+               * length > MAX (65535)
+
+### REST API  
+REST API command: POST /cosmos/tx/v1beta1/txs: [MsgAddPAI](https://github.com/zigbee-alliance/distributed-compliance-ledger)
+
+* REST API command send  
+     * Valid command  
+          * correct HTTP method  
+          * request is authorized  
+          * uses valid credentials/role  
+          * query works for the following certificates  
+               * PAI  
+     * Invalid command  
+          * incorrect request  
+          * server side error  
+
+* Command result  
+     * ADD_PAI command completed successfully ⇒ adds a PAI (intermediate certificate) signed by a chain of certificates already present on the ledger  
+          * PROPOSE_ADD_PAA command completed successfully  
+          * APPROVE_ADD_PAA command completed successfully  
+          * provided certificate is not root  
+               * Issuer ≠ Subject  
+               * Authority Key Identifier ≠ Subject Key Identifier  
+          * no existing certificate with the same <Issuer>:<Serial Number>  
+          * no certificate with the same <Subject>:<Subject Key ID>  
+          * existing certificate is not a NOC  
+          * sender's VID matches existing certificate's owner VID  
+          * signature and expiration date are valid  
+          * parent certificate already stored and valid chain to root exists  
+          * root is VID scoped, provided certificate is also VID scoped  
+               * VIDs in root and provided cert match and equal to sender VID  
+          * root is not VID scoped but has associated VID  
+               * provided cert is VID or non-VID scoped  
+               * if VID scoped, its VID matches root's associated VID and sender VID  
+          * multiple certificates refer to the same <Subject>:<Subject Key ID>  
+     * ADD_PAI command failed ⇒ does not add the certificate  
+          * PROPOSE_ADD_PAA command failed  
+          * APPROVE_ADD_PAA command failed  
+          * certificate is root (Issuer == Subject)  
+          * Authority Key Identifier == Subject Key Identifier  
+          * existing certificate with same <Issuer>:<Serial Number>  
+          * duplicate <Subject>:<Subject Key ID>  
+          * certificate is a NOC  
+          * sender's VID does not match certificate owner's VID  
+          * signature or expiration invalid  
+               * one or both invalid  
+          * parent cert not stored or chain to root cannot be built  
+          * root is VID scoped, provided cert is not VID scoped  
+               * VIDs in root and provided cert do not match  
+               * VIDs do not match sender's VID  
+          * root is non-VID scoped without associated VID  
+          * provided cert is not VID scoped  
+               * if VID scoped, its VID does not match root's associated VID and sender VID  
+
+* Role (Who can send)  
+     * Positive:  
+          * Vendor  
+     * Negative:  
+          * Trustee ⇒ error  
+          * VendorAdmin ⇒ error  
+          * CertificationCenter ⇒ error  
+          * NodeAdmin ⇒ error
+
+* Parameters:  
+     * cert (Certificate) - string  
+          * Positive:  
+               * value exists  
+               * contains PEM string or valid file path  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * nonexistent value  
+               * length > MAX  
+     * certificate-schema-version - optional(uint16)  
+          * Positive:  
+               * value = 0  
+               * integer value format  
+               * empty value  
+          * Negative:  
+               * length > MAX (65535)
+
+## REVOKE_PAI
+
+### CLI command  
+CLI command: `dcld tx pki revoke-pai --subject=<string> --subject-key-id=<string> [--serial-number=<string>] [--revoke-child=<bool>] [--info=<string>] [--time=<int64>] --from=<account>`
+
+* CLI command send  
+     * Valid command  
+          * command exists/relevant  
+          * query works for the following certificates  
+               * PAI  
+     * Invalid command  
+          * access is denied to execute command  
+          * incorrect command syntax  
+
+* Command result  
+     * REVOKE_PAI command completed successfully ⇒ revokes the given PAI (intermediate certificate)  
+          * PROPOSE_ADD_PAA command completed successfully  
+          * APPROVE_ADD_PAA command completed successfully  
+          * ADD_PAI command completed successfully  
+          * revoke-child = True ⇒ all certificates signed by the revoked certificate will be revoked  
+          * revoke-child = False ⇒ certificates in the chain will not be revoked  
+          * PAI certificate with the provided subject and subject_key_id exists on the ledger  
+     * REVOKE_PAI command failed ⇒ does not revoke the given PAI (intermediate certificate)  
+          * PROPOSE_ADD_PAA command failed  
+          * APPROVE_ADD_PAA command failed  
+          * ADD_PAI command failed  
+          * PAI certificate with the provided subject and subject_key_id does not exist  
+
+* Role (Who can send)  
+     * Positive:  
+          * Vendor  
+               * sender's VID matches the VID of the certificate owner  
+     * Negative:  
+          * Trustee ⇒ error  
+          * VendorAdmin ⇒ error  
+          * CertificationCenter ⇒ error  
+          * NodeAdmin ⇒ error  
+
+* Parameters:  
+     * subject (Subject) - string  
+          * Positive:  
+               * string matches format  
+               * valid text format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty or nonexistent value  
+               * length > MAX  
+     * subject_key_id (Subject Key ID) - string  
+          * Positive:  
+               * string matches format  
+               * valid text format, e.g., `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty or nonexistent value  
+               * length > MAX  
+     * serial-number (Serial Number) - optional(string)  
+          * Positive:  
+               * empty or valid text format  
+               * MIN < length < MAX  
+          * Negative:  
+               * length > MAX  
+     * revoke-child (Revoke Child) - optional(bool)  
+          * Positive:  
+               * empty value or valid state  
+               * TRUE (-1) ⇒ all child certs revoked  
+               * FALSE (0) ⇒ default  
+          * Negative:  
+               * value is not a boolean  
+     * info (Information/Notes) - optional(string)  
+          * Positive:  
+               * empty or valid text format  
+               * MIN < length < MAX  
+          * Negative:  
+               * length > MAX (4096 characters)  
+     * time (Proposal Time) - optional(int64)  
+          * Positive:  
+               * default value ⇒ current time  
+               * empty value or valid integer format  
+          * Negative:  
+               * length > MAX (9,223,372,036,854,775,807)
+
+### REST API  
+REST API command: POST /cosmos/tx/v1beta1/txs: [MsgRevokePAI](https://github.com/zigbee-alliance/distributed-compliance-ledger)
+
+* REST API command send  
+     * Valid command  
+          * correct HTTP method  
+          * request is authorized  
+          * uses valid credentials/role  
+          * query works for the following certificates  
+               * PAI  
+     * Invalid command  
+          * incorrect request  
+          * server side error  
+
+* Command result  
+     * REVOKE_PAI command completed successfully ⇒ revokes the given PAI (intermediate certificate)  
+          * PROPOSE_ADD_PAA command completed successfully  
+          * APPROVE_ADD_PAA command completed successfully  
+          * ADD_PAI command completed successfully  
+          * revoke-child = True ⇒ all certificates signed by the revoked certificate will be revoked  
+          * revoke-child = False ⇒ certificates in the chain will not be revoked  
+          * PAI certificate with the provided subject and subject_key_id exists on the ledger  
+     * REVOKE_PAI command failed ⇒ does not revoke the given PAI (intermediate certificate)  
+          * PROPOSE_ADD_PAA command failed  
+          * APPROVE_ADD_PAA command failed  
+          * ADD_PAI command failed  
+          * PAI certificate with the provided subject and subject_key_id does not exist  
+
+* Role (Who can send)  
+     * Positive:  
+          * Vendor  
+     * Negative:  
+          * Trustee ⇒ error  
+          * VendorAdmin ⇒ error  
+          * CertificationCenter ⇒ error  
+          * NodeAdmin ⇒ error
+
+* Parameters:  
+     * subject (Subject) - string  
+          * Positive:  
+               * string matches format  
+               * valid text format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty or nonexistent value  
+               * length > MAX  
+     * subject_key_id (Subject Key ID) - string  
+          * Positive:  
+               * string matches format  
+               * valid text format, e.g., `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty or nonexistent value  
+               * length > MAX  
+     * serial-number (Serial Number) - optional(string)  
+          * Positive:  
+               * empty or valid text format  
+               * MIN < length < MAX  
+          * Negative:  
+               * length > MAX  
+     * revoke-child (Revoke Child) - optional(bool)  
+          * Positive:  
+               * empty value or valid state  
+               * TRUE (-1) ⇒ all child certs revoked  
+               * FALSE (0) ⇒ default  
+          * Negative:  
+               * value is not a boolean  
+     * info (Information/Notes) - optional(string)  
+          * Positive:  
+               * empty or valid text format  
+               * MIN < length < MAX  
+          * Negative:  
+               * length > MAX (4096 characters)  
+     * time (Proposal Time) - optional(int64)  
+          * Positive:  
+               * default value ⇒ current time  
+               * empty value or valid integer format  
+          * Negative:  
+               * length > MAX (9,223,372,036,854,775,807)
+
+## REMOVE_PAI	
+### CLI command	
 CLI command send	
 Valid command	
 command exists/relevant	
@@ -2650,7 +2617,7 @@ text value format
 MIN < length < MAX	
      * Negative:	
 length > MAX	
-#### REST API 	
+### REST API 	
 REST API command send	
 Valid command	
 correct HTTP method	
@@ -2706,8 +2673,8 @@ text value format
 MIN < length < MAX	
      * Negative:	
 length > MAX	
-### GET_DA_CERT	
-#### CLI command	
+## GET_DA_CERT	
+### CLI command	
 CLI command send	
 Valid command	
 command exists/relevant	
@@ -2754,7 +2721,7 @@ MIN < length < MAX
 empty value	
 nonexistent value	
 length > MAX	
-#### REST API 	
+### REST API 	
 REST API command send	
 Valid command	
 correct HTTP method	
@@ -2801,8 +2768,8 @@ MIN < length < MAX
 empty value	
 nonexistent value	
 length > MAX	
-### GET_REVOKED_DA_CERT	
-#### CLI command	
+## GET_REVOKED_DA_CERT	
+### CLI command	
 CLI command send	
 Valid command	
 command exists/relevant	
@@ -2847,7 +2814,7 @@ MIN < length < MAX
 empty value	
 nonexistent value	
 length > MAX	
-#### REST API 	
+### REST API 	
 REST API command send	
 Valid command	
 correct HTTP method	
@@ -2894,8 +2861,8 @@ MIN < length < MAX
 empty value	
 nonexistent value	
 length > MAX	
-### GET_DA_CERTS_BY_SKID	
-#### CLI command	
+## GET_DA_CERTS_BY_SKID	
+### CLI command	
 CLI command send	
 Valid command	
 command exists/relevant	
@@ -2931,7 +2898,7 @@ MIN < length < MAX
 empty value	
 nonexistent value	
 length > MAX	
-#### REST API 	
+### REST API 	
 REST API command send	
 Valid command	
 correct HTTP method	
@@ -2969,8 +2936,8 @@ MIN < length < MAX
 empty value	
 nonexistent value	
 length > MAX	
-### GET_DA_CERTS_BY_SUBJECT	
-#### CLI command	
+## GET_DA_CERTS_BY_SUBJECT	
+### CLI command	
 CLI command send	
 Valid command	
 command exists/relevant	
@@ -3006,7 +2973,7 @@ MIN < length < MAX
 empty value	
 nonexistent value	
 length > MAX	
-#### REST API 	
+### REST API 	
 REST API command send	
 Valid command	
 correct HTTP method	
@@ -3044,8 +3011,8 @@ MIN < length < MAX
 empty value	
 nonexistent value	
 length > MAX	
-### GET_ALL_DA_CERTS	
-#### CLI command	
+## GET_ALL_DA_CERTS	
+### CLI command	
 CLI command send	
 Valid command	
 command exists/relevant	
@@ -3112,7 +3079,7 @@ TRUE (-1)
 FALSE (0)	
      * Negative:	
 value is not bool	
-#### REST API 	
+### REST API 	
 REST API command send	
 Valid command	
 correct HTTP method	
