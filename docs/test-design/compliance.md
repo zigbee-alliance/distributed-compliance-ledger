@@ -2012,1001 +2012,1068 @@ REST API command: `GET /dcl/compliance/revoked-models/{vid}/{pid}/{software_vers
                * nonexistent value	
                * length > MAX
 
-## [GET_PROVISIONAL_MODEL]()	
+## [GET_PROVISIONAL_MODEL]()
 
-### CLI command	
+### CLI command  
+CLI command: `dcld query compliance get-provisional-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter>`
 
-* CLI command send	
-* Valid command	
-* command exists/relevant	
-* Invalid command	
-* access is denied to execute command	
-* incorrect command syntax	
-* Сommand result	
-* GET_PROVISIONAL_MODEL command completed successfully	gets a structure containing the Model Version / Certification Type key (vid, pid, softwareVersion, certificationType) and a flag (value) indicating whether the given Model Version is revoked for certificationType standard
-* ADD_MODEL and ADD_MODEL_VERSION command completed successfully	
-* a record of a Model and Model Version is present on the ledger	
-* Model Version was certified or revoked earlier	
-* compliance information is found on the ledger and it's in provisional state	
-* GET_PROVISIONAL_MODEL command failed	does not gets a structure containing the Model Version / Certification Type key (vid, pid, softwareVersion, certificationType) and a flag (value) indicating whether the given Model Version is revoked for certificationType standard
-* ADD_MODEL command was not executed	
-* record about a model has been removed	
-* ADD_MODEL command executed, but ADD_MODEL_VERSION command was not executed	
-* record about a model version has been removed	
-* Model Version was never certified or revoked earlier	
-* compliance information is not found on ledger	
-* compliance information is found on ledger but it is not provisional state	
-* Role (Who can send)	
-* Trustee	
-* Vendor 	
-* VendorAdmin 	
-* CertificationCenter 	
-* NodeAdmin 	
-* Parameters:	
-* vid (Vendor ID)	uint16
-     * Positive:	
-* unique value	
-* value > 0	
-* integer value format
-     * Negative:	
-* empty value
-* value =< 0
-* string value format		
-* nonexistent value	
-* length > MAX	MAX = 65535
-* pid (Product ID)	uint16 
-     * Positive:	
-* unique value	
-* value > 0	
-* integer value format
-     * Negative:	
-* empty value
-* value =< 0
-* string value format		
-* nonexistent value	
-* length > MAX	MAX = 65535
-* softwareVersion (Software Version)	uint32 
-     * Positive:	
-* value exists	
-* value >= 0	
-* integer value format
-     * Negative:	
-* empty value	
-* nonexistent value	
-* length > MAX	MAX = 4 294 967 295
-* certificationType (Certification Type)	string 
-     * Positive:	
-* existing value	
-* valid type	
-* zigbee	
-* matter	
-* text value format
-* MIN < length < MAX	
-     * Negative:	
-* empty value	
-* nonexistent value	
-* length > MAX	
+* CLI command send
+     * Valid command
+          * command exists/relevant
+     * Invalid command
+          * access is denied to execute command
+          * incorrect command syntax
 
-### REST API 	
+* Command result
+     * GET_PROVISIONAL_MODEL command completed successfully  ⇒ gets a structure containing the Model Version / Certification Type key (vid, pid, softwareVersion, certificationType) and a flag (value) indicating whether the given Model Version is revoked for certificationType standard
+          * ADD_MODEL and ADD_MODEL_VERSION command completed successfully
+          * a record of a Model and Model Version is present on the ledger
+          * Model Version was certified or revoked earlier
+          * compliance information is found on the ledger and it's in provisional state
+     * GET_PROVISIONAL_MODEL command failed  ⇒ does not get a structure containing the Model Version / Certification Type key
+          * ADD_MODEL command was not executed
+          * record about a model has been removed
+          * ADD_MODEL command executed, but ADD_MODEL_VERSION command was not executed
+          * record about a model version has been removed
+          * Model Version was never certified or revoked earlier
+          * compliance information is not found on ledger
+          * compliance information is found on ledger but it is not in provisional state
 
-* REST API command send	
-* Valid command	
-* correct HTTP method	
-* request is authorized	
-* uses valid credentials/role	
-* Invalid command	
-* incorrect request	
-* server side error	
+* Role (Who can send)
+     * Positive:
+          * Trustee
+          * Vendor
+          * VendorAdmin
+          * CertificationCenter
+          * NodeAdmin
 
-Сommand result	
-GET_PROVISIONAL_MODEL command completed successfully	gets a structure containing the Model Version / Certification Type key (vid, pid, softwareVersion, certificationType) and a flag (value) indicating whether the given Model Version is revoked for certificationType standard
-ADD_MODEL and ADD_MODEL_VERSION command completed successfully	
-a record of a Model and Model Version is present on the ledger	
-Model Version was certified or revoked earlier	
-compliance information is found on the ledger and it's in provisional state	
-GET_PROVISIONAL_MODEL command failed	does not gets a structure containing the Model Version / Certification Type key (vid, pid, softwareVersion, certificationType) and a flag (value) indicating whether the given Model Version is revoked for certificationType standard
-ADD_MODEL command was not executed	
-record about a model has been removed	
-ADD_MODEL command executed, but ADD_MODEL_VERSION command was not executed	
-record about a model version has been removed	
-Model Version was never certified or revoked earlier	
-compliance information is not found on ledger	
-compliance information is found on ledger but it is not provisional state	
-Role (Who can send)	
-Trustee	
-Vendor 	
-VendorAdmin 	
-CertificationCenter 	
-NodeAdmin 	
-Parameters:	
-vid (Vendor ID)	uint16
-     * Positive:	
-unique value	
-value > 0	
-integer value format
-     * Negative:	
-empty value
-value =< 0
-string value format		
-nonexistent value	
-length > MAX	MAX = 65535
-pid (Product ID)	uint16 
-     * Positive:	
-unique value	
-value > 0	
-integer value format
-     * Negative:	
-empty value
-value =< 0
-string value format		
-nonexistent value	
-length > MAX	MAX = 65535
-softwareVersion (Software Version)	uint32 
-     * Positive:	
-value exists	
-value >= 0	
-integer value format
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	MAX = 4 294 967 295
-certificationType (Certification Type)	string 
-     * Positive:	
-existing value	
-valid type	
-zigbee	
-matter	
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
+* Parameters:
+     * vid (Vendor ID) - uint16
+          * Positive:
+               * unique value
+               * value > 0
+               * integer value format
+          * Negative:
+               * empty value
+               * value =< 0
+               * string value format
+               * nonexistent value
+               * length > MAX (MAX = 65535)
+     * pid (Product ID) - uint16
+          * Positive:
+               * unique value
+               * value > 0
+               * integer value format
+          * Negative:
+               * empty value
+               * value =< 0
+               * string value format
+               * nonexistent value
+               * length > MAX (MAX = 65535)
+     * softwareVersion (Software Version) - uint32
+          * Positive:
+               * value exists
+               * value >= 0
+               * integer value format
+          * Negative:
+               * empty value
+               * nonexistent value
+               * length > MAX (MAX = 4 294 967 295)
+     * certificationType (Certification Type) - string
+          * Positive:
+               * existing value
+               * valid type
+                    * zigbee
+                    * matter
+               * text value format
+               * MIN < length < MAX
+          * Negative:
+               * empty value
+               * nonexistent value
+               * length > MAX
 
-## GET_COMPLIANCE_INFO	
+### REST API  
+REST API command: GET /compliance/provisional-models/{vid}/{pid}/{softwareVersion}/{certificationType}
 
-### CLI command	
+* REST API command send
+     * Valid command
+          * correct HTTP method
+          * request is authorized
+          * uses valid credentials/role
+     * Invalid command
+          * incorrect request
+          * server side error
 
-* CLI command send	
-* Valid command	
-* command exists/relevant	
-* Invalid command	
-* access is denied to execute command	
-* incorrect command syntax	
-* Сommand result	
-* GET_COMPLIANCE_INFO command completed successfully	compliance information associated with the Model Version and Certification Type (identified by the vid, pid, softwareVersion and certification_type)
-* CERTIFY_MODEL command completed successfully for the selected compliance	
-* compliance information is found in store	
-* GET_COMPLIANCE_INFO command failed	does not gets compliance information associated with the Model Version and Certification Type (identified by the vid, pid, softwareVersion and certification_type)
-* CERTIFY_MODEL command was not executed for the selected compliance	
-* compliance information is not found in store	
-* Role (Who can send)	
-* Trustee	
-* Vendor 	
-* VendorAdmin 	
-* CertificationCenter 	
-* NodeAdmin 	
-* Parameters:	
-* vid (Vendor ID)	uint16
-     * Positive:	
-* unique value	
-* value > 0	
-* integer value format
-     * Negative:	
-* empty value
-* value =< 0
-* string value format		
-* nonexistent value	
-* length > MAX	MAX = 65535
-* pid (Product ID)	uint16 
-     * Positive:	
-* unique value	
-* value > 0	
-* integer value format
-     * Negative:	
-* empty value	
-* value =< 0
-* string value format	
-* nonexistent value	
-* length > MAX	MAX = 65535
-* softwareVersion (Software Version)	uint32 
-     * Positive:	
-* value exists	
-* value >= 0	
-* integer value format
-     * Negative:	
-* empty value	
-* nonexistent value	
-* length > MAX	MAX = 4 294 967 295
-* certificationType (Certification Type)	string 
-     * Positive:	
-* existing value	
-* valid type	
-* zigbee	
-* matter	
-* text value format
-* MIN < length < MAX	
-     * Negative:	
-* empty value	
-* nonexistent value	
-* length > MAX	
+* Command result
+     * GET_PROVISIONAL_MODEL command completed successfully  ⇒ gets a structure containing the Model Version / Certification Type key
+          * ADD_MODEL and ADD_MODEL_VERSION command completed successfully
+          * a record of a Model and Model Version is present on the ledger
+          * Model Version was certified or revoked earlier
+          * compliance information is found on the ledger and it's in provisional state
+     * GET_PROVISIONAL_MODEL command failed  ⇒ does not get a structure containing the Model Version / Certification Type key
+          * ADD_MODEL command was not executed
+          * record about a model has been removed
+          * ADD_MODEL command executed, but ADD_MODEL_VERSION command was not executed
+          * record about a model version has been removed
+          * Model Version was never certified or revoked earlier
+          * compliance information is not found on ledger
+          * compliance information is found on ledger but it is not in provisional state
 
-### REST API 	
+* Role (Who can send)
+     * Positive:
+          * Trustee
+          * Vendor
+          * VendorAdmin
+          * CertificationCenter
+          * NodeAdmin
 
-* REST API command send	
-* Valid command	
-* correct HTTP method	
-* request is authorized	
-* uses valid credentials/role	
-* Invalid command	
-* incorrect request	
-* server side error	
+* Parameters:
+     * vid (Vendor ID) - uint16
+          * Positive:
+               * unique value
+               * value > 0
+               * integer value format
+          * Negative:
+               * empty value
+               * value =< 0
+               * string value format
+               * nonexistent value
+               * length > MAX (MAX = 65535)
+     * pid (Product ID) - uint16
+          * Positive:
+               * unique value
+               * value > 0
+               * integer value format
+          * Negative:
+               * empty value
+               * value =< 0
+               * string value format
+               * nonexistent value
+               * length > MAX (MAX = 65535)
+     * softwareVersion (Software Version) - uint32
+          * Positive:
+               * value exists
+               * value >= 0
+               * integer value format
+          * Negative:
+               * empty value
+               * nonexistent value
+               * length > MAX (MAX = 4 294 967 295)
+     * certificationType (Certification Type) - string
+          * Positive:
+               * existing value
+               * valid type
+                    * zigbee
+                    * matter
+               * text value format
+               * MIN < length < MAX
+          * Negative:
+               * empty value
+               * nonexistent value
+               * length > MAX
 
-Сommand result	
-GET_COMPLIANCE_INFO command completed successfully	compliance information associated with the Model Version and Certification Type (identified by the vid, pid, softwareVersion and certification_type)
-CERTIFY_MODEL command completed successfully for the selected compliance	
-compliance information is found in store	
-GET_COMPLIANCE_INFO command failed	does not gets compliance information associated with the Model Version and Certification Type (identified by the vid, pid, softwareVersion and certification_type)
-CERTIFY_MODEL command was not executed for the selected compliance	
-compliance information is not found in store	
-Role (Who can send)	
-Trustee	
-Vendor 	
-VendorAdmin 	
-CertificationCenter 	
-NodeAdmin 	
-Parameters:	
-vid (Vendor ID)	uint16
-     * Positive:	
-unique value	
-value > 0	
-integer value format
-     * Negative:	
-empty value
-value =< 0
-string value format		
-nonexistent value	
-length > MAX	MAX = 65535
-pid (Product ID)	uint16 
-     * Positive:	
-unique value	
-value > 0	
-integer value format
-     * Negative:	
-empty value
-value =< 0
-string value format		
-nonexistent value	
-length > MAX	MAX = 65535
-softwareVersion (Software Version)	uint32 
-     * Positive:	
-value exists	
-value >= 0	
-integer value format
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	MAX = 4 294 967 295
-certificationType (Certification Type)	string 
-     * Positive:	
-existing value	
-valid type	
-zigbee	
-matter	
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
+## [GET_COMPLIANCE_INFO]()
 
-## GET_DEVICE_SOFTWARE_COMPLIANCE	
+### CLI command  
+CLI command: `dcld query compliance get-compliance-info --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter>`
 
-### CLI command	
+* CLI command send  
+     * Valid command  
+          * command exists/relevant  
+     * Invalid command  
+          * access is denied to execute command  
+          * incorrect command syntax  
 
-* CLI command send	
-* Valid command	
-* command exists/relevant	
-* Invalid command	
-* access is denied to execute command	
-* incorrect command syntax	
-* Сommand result	
-* GET_COMPLIANCE_INFO command completed successfully	gets device software compliance associated with the cDCertificateId
-* device software compliance is found in store	
-* cDCertificateId value is correct	
-* GET_COMPLIANCE_INFO command failed	does not gets device software compliance associated with the cDCertificateId
-* cDCertificateId value is incorrect	
-* device software compliance is not found in store	
-* Role (Who can send)	
-* Trustee	
-* Vendor 	
-* VendorAdmin 	
-* CertificationCenter 	
-* NodeAdmin 	
-* Parameters:	
-* cdCertificateId (CD Certificate ID)	string 
-     * Positive:	
-* existing value	
-* text value format
-* MIN < length < MAX	
-     * Negative:	
-* empty value	
-* nonexistent value	
-* length > MAX	
+* Command result  
+     * GET_COMPLIANCE_INFO command completed successfully ⇒ returns compliance information associated with the Model Version and Certification Type (identified by `vid`, `pid`, `softwareVersion`, and `certificationType`)  
+          * CERTIFY_MODEL command completed successfully for the selected compliance  
+          * compliance information is found in store  
+     * GET_COMPLIANCE_INFO command failed ⇒ does not return compliance information  
+          * CERTIFY_MODEL command was not executed for the selected compliance  
+          * compliance information is not found in store  
 
-### REST API 	
+* Role (Who can send)  
+     * Positive:  
+          * Trustee  
+          * Vendor  
+          * VendorAdmin  
+          * CertificationCenter  
+          * NodeAdmin  
 
-* REST API command send	
-* Valid command	
-* correct HTTP method	
-* request is authorized	
-* uses valid credentials/role	
-* Invalid command	
-* incorrect request	
-* server side error	
+* Parameters:  
+     * **vid (Vendor ID)** - uint16  
+          * Positive:  
+               * unique value  
+               * value > 0  
+               * integer value format  
+          * Negative:  
+               * empty value  
+               * value ≤ 0  
+               * string format  
+               * nonexistent  
+               * length > MAX (65535)  
+     * **pid (Product ID)** - uint16  
+          * Positive:  
+               * unique value  
+               * value > 0  
+               * integer value format  
+          * Negative:  
+               * empty value  
+               * value ≤ 0  
+               * string format  
+               * nonexistent  
+               * length > MAX (65535)  
+     * **softwareVersion** - uint32  
+          * Positive:  
+               * value exists  
+               * value ≥ 0  
+               * integer format  
+          * Negative:  
+               * empty value  
+               * nonexistent  
+               * length > MAX (4294967295)  
+     * **certificationType** - string  
+          * Positive:  
+               * existing value  
+               * valid types: `zigbee`, `matter`  
+               * proper string format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty  
+               * nonexistent  
+               * length > MAX  
 
-Сommand result	
-GET_COMPLIANCE_INFO command completed successfully	gets device software compliance associated with the cDCertificateId
-device software compliance is found in store	
-cDCertificateId value is correct	
-GET_COMPLIANCE_INFO command failed	does not gets device software compliance associated with the cDCertificateId
-cDCertificateId value is incorrect	
-device software compliance is not found in store	
-Role (Who can send)	
-Trustee	
-Vendor 	
-VendorAdmin 	
-CertificationCenter 	
-NodeAdmin 	
-Parameters:	
-cdCertificateId (CD Certificate ID)	string 
-     * Positive:	
-existing value	
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
+---
 
-## GET_ALL_CERTIFIED_MODELS	
+### REST API  
+REST API command: `GET /compliance/info/{vid}/{pid}/{softwareVersion}/{certificationType}`
 
-### CLI command	
+* REST API command send  
+     * Valid command  
+          * correct HTTP method  
+          * request is authorized  
+          * uses valid credentials/role  
+     * Invalid command  
+          * incorrect request  
+          * server-side error  
 
-* CLI command send	
-* Valid command	
-* command exists/relevant	
-* Invalid command	
-* access is denied to execute command	
-* incorrect command syntax	
-* Сommand result	
-* GET_ALL_CERTIFIED_MODELS command completed successfully	gets all compliant Model Versions for all vendors (vids)
-* compliance is tracked on ledger	
-* there is at least one compliant Model Versions for all vendors	
-* GET_ALL_CERTIFIED_MODELS command failed	does not gets all compliant Model Versions for all vendors (vids)
-* compliance is not tracked on ledger	
-* there is not one compliant Model Versions for all vendors	
-* Role (Who can send)	
-* Trustee	error
-* Vendor 	error
-* VendorAdmin 	error
-* CertificationCenter 	
-* NodeAdmin 	error
-* Parameters:	
-* count-total	optional(bool)
-     * Positive:	
-* empty value	
-* value state	
-* TRUE (-1)	
-* FALSE (0)	
-     * Negative:	
-* value is not bool	
-* limit 	optional(uint)
-     * Positive:	
-* value exists	
-* empty value	
-     * Negative:	
-* value > 100	
-* offset 	optional(uint)
-     * Positive:	
-* value exists	
-* empty value	
-     * Negative:	
-* value < 0	
-* page 	optional(uint)
-     * Positive:	
-* value exists	
-* empty value	
-     * Negative:	
-* value < 0	
-* page-key	optional(string)
-     * Positive:	
-* empty value	
-* value exists	
-     * Negative:	
-* length < MIN	
-* reverse	optional(bool)
-     * Positive:	
-* empty value	
-* value state	
-* TRUE (-1)	
-* FALSE (0)	
-     * Negative:	
-* value is not bool	
+* Command result  
+     * GET_COMPLIANCE_INFO command completed successfully ⇒ returns compliance information associated with the Model Version and Certification Type  
+          * CERTIFY_MODEL command completed successfully for the selected compliance  
+          * compliance information is found in store  
+     * GET_COMPLIANCE_INFO command failed ⇒ no compliance data  
+          * CERTIFY_MODEL command was not executed  
+          * compliance information is not found in store  
 
-### REST API 	
+* Role (Who can send)  
+     * Positive:  
+          * Trustee  
+          * Vendor  
+          * VendorAdmin  
+          * CertificationCenter  
+          * NodeAdmin  
 
-* REST API command send	
-* Valid command	
-* correct HTTP method	
-* request is authorized	
-* uses valid credentials/role	
-* Invalid command	
-* incorrect request	
-* server side error	
+* Parameters: 
+     * **vid (Vendor ID)** - uint16  
+          * Positive:  
+               * unique value  
+               * value > 0  
+               * integer value format  
+          * Negative:  
+               * empty value  
+               * value ≤ 0  
+               * string format  
+               * nonexistent  
+               * length > MAX (65535)  
+     * **pid (Product ID)** - uint16  
+          * Positive:  
+               * unique value  
+               * value > 0  
+               * integer value format  
+          * Negative:  
+               * empty value  
+               * value ≤ 0  
+               * string format  
+               * nonexistent  
+               * length > MAX (65535)  
+     * **softwareVersion** - uint32  
+          * Positive:  
+               * value exists  
+               * value ≥ 0  
+               * integer format  
+          * Negative:  
+               * empty value  
+               * nonexistent  
+               * length > MAX (4294967295)  
+     * **certificationType** - string  
+          * Positive:  
+               * existing value  
+               * valid types: `zigbee`, `matter`  
+               * proper string format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty  
+               * nonexistent  
+               * length > MAX 
 
-Сommand result	
-GET_ALL_CERTIFIED_MODELS command completed successfully	gets all compliant Model Versions for all vendors (vids)
-compliance is tracked on ledger	
-there is at least one compliant Model Versions for all vendors	
-GET_ALL_CERTIFIED_MODELS command failed	does not gets all compliant Model Versions for all vendors (vids)
-compliance is not tracked on ledger	
-there is not one compliant Model Versions for all vendors	
-Role (Who can send)	
-Trustee	error
-Vendor 	error
-VendorAdmin 	error
-CertificationCenter 	
-NodeAdmin 	error
-Parameters:	
-count-total	optional(bool)
-     * Positive:	
-empty value	
-value state	
-TRUE (-1)	
-FALSE (0)	
-     * Negative:	
-value is not bool	
-limit 	optional(uint)
-     * Positive:	
-value exists	
-empty value	
-     * Negative:	
-value > 100	
-offset 	optional(uint)
-     * Positive:	
-value exists	
-empty value	
-     * Negative:	
-value < 0	
-page 	optional(uint)
-     * Positive:	
-value exists	
-empty value	
-     * Negative:	
-value < 0	
-page-key	optional(string)
-     * Positive:	
-empty value	
-value exists	
-     * Negative:	
-length < MIN	
-reverse	optional(bool)
-     * Positive:	
-empty value	
-value state	
-TRUE (-1)	
-FALSE (0)	
-     * Negative:	
-value is not bool	
+## [GET_DEVICE_SOFTWARE_COMPLIANCE]()
 
-## GET_ALL_REVOKED_MODELS	
+### CLI command  
+CLI command: `dcld query compliance get-device-software-compliance --cdCertificateId=<string>`
 
-### CLI command	
+* CLI command send  
+     * Valid command  
+          * command exists/relevant  
+     * Invalid command  
+          * access is denied to execute command  
+          * incorrect command syntax  
 
-* CLI command send	
-* Valid command	
-* command exists/relevant	
-* Invalid command	
-* access is denied to execute command	
-* incorrect command syntax	
-* Сommand result	
-* GET_ALL_REVOKED_MODELS command completed successfully	gets all revoked Model Versions for all vendors (vids)
-* only revocation is tracked on the ledger	
-* there is at least one compliant revoked Model Versions for all vendors	
-* GET_ALL_REVOKED_MODELS command failed	does not gets all revoked Model Versions for all vendors (vids)
-* not only revocation is tracked on the ledger	
-* there is not one compliant revoked Model Versions for all vendors	
-* Role (Who can send)	
-* Trustee	error
-* Vendor 	error
-* VendorAdmin 	error
-* CertificationCenter 	
-* NodeAdmin 	error
-* Parameters:	
-* count-total	optional(bool)
-     * Positive:	
-* empty value	
-* value state	
-* TRUE (-1)	
-* FALSE (0)	
-     * Negative:	
-* value is not bool	
-* limit 	optional(uint)
-     * Positive:	
-* value exists	
-* empty value	
-     * Negative:	
-* value > 100	
-* offset 	optional(uint)
-     * Positive:	
-* value exists	
-* empty value	
-     * Negative:	
-* value < 0	
-* page 	optional(uint)
-     * Positive:	
-* value exists	
-* empty value	
-     * Negative:	
-* value < 0	
-* page-key	optional(string)
-     * Positive:	
-* empty value	
-* value exists	
-     * Negative:	
-* length < MIN	
-* reverse	optional(bool)
-     * Positive:	
-* empty value	
-* value state	
-* TRUE (-1)	
-* FALSE (0)	
-     * Negative:	
-* value is not bool	
+* Command result  
+     * GET_DEVICE_SOFTWARE_COMPLIANCE command completed successfully ⇒ returns device software compliance associated with the `cdCertificateId`  
+          * device software compliance is found in store  
+          * `cdCertificateId` value is valid  
+     * GET_DEVICE_SOFTWARE_COMPLIANCE command failed ⇒ no compliance data returned  
+          * `cdCertificateId` value is incorrect  
+          * no record found in store  
 
-### REST API 	
+* Role (Who can send)  
+     * Positive:  
+          * Trustee  
+          * Vendor  
+          * VendorAdmin  
+          * CertificationCenter  
+          * NodeAdmin  
 
-* REST API command send	
-* Valid command	
-* correct HTTP method	
-* request is authorized	
-* uses valid credentials/role	
-* Invalid command	
-* incorrect request	
-* server side error	
-*
-Сommand result	
-GET_ALL_REVOKED_MODELS command completed successfully	gets all revoked Model Versions for all vendors (vids)
-only revocation is tracked on the ledger	
-there is at least one compliant revoked Model Versions for all vendors	
-GET_ALL_REVOKED_MODELS command failed	does not gets all revoked Model Versions for all vendors (vids)
-not only revocation is tracked on the ledger	
-there is not one compliant revoked Model Versions for all vendors	
-Role (Who can send)	
-Trustee	error
-Vendor 	error
-VendorAdmin 	error
-CertificationCenter 	
-NodeAdmin 	error
-Parameters:	
-count-total	optional(bool)
-     * Positive:	
-empty value	
-value state	
-TRUE (-1)	
-FALSE (0)	
-     * Negative:	
-value is not bool	
-limit 	optional(uint)
-     * Positive:	
-value exists	
-empty value	
-     * Negative:	
-value > 100	
-offset 	optional(uint)
-     * Positive:	
-value exists	
-empty value	
-     * Negative:	
-value < 0	
-page 	optional(uint)
-     * Positive:	
-value exists	
-empty value	
-     * Negative:	
-value < 0	
-page-key	optional(string)
-     * Positive:	
-empty value	
-value exists	
-     * Negative:	
-length < MIN	
-reverse	optional(bool)
-     * Positive:	
-empty value	
-value state	
-TRUE (-1)	
-FALSE (0)	
-     * Negative:	
-value is not bool	
+* Parameters:  
+     * **cdCertificateId (CD Certificate ID)** - string  
+          * Positive:  
+               * existing value  
+               * correct text format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty  
+               * nonexistent  
+               * length > MAX  
 
-## GET_ALL_PROVISIONAL_MODELS	
+---
 
-### CLI command	
+### REST API  
+REST API command: `GET /compliance/device-software-compliance/{cdCertificateId}`
 
-* CLI command send	
-* Valid command	
-* command exists/relevant	
-* Invalid command	
-* access is denied to execute command	
-* incorrect command syntax	
-* Сommand result	
-* GET_ALL_PROVISIONAL_MODELS command completed successfully	gets all Model Versions in provisional state for all vendors (vids)
-* there is at least one Model Versions in provisional state for all vendors	
-* GET_ALL_PROVISIONAL_MODELS command failed	does not gets all Model Versions in provisional state for all vendors (vids)
-* there is at least one Model Versions in provisional state for all vendors	
-* Role (Who can send)	
-* Trustee	error
-* Vendor 	error
-* VendorAdmin 	error
-* CertificationCenter 	
-* NodeAdmin 	error
-* Parameters:	
-* count-total	optional(bool)
-     * Positive:	
-* empty value	
-* value state	
-* TRUE (-1)	
-* FALSE (0)	
-     * Negative:	
-* value is not bool	
-* limit 	optional(uint)
-     * Positive:	
-* value exists	
-* empty value	
-     * Negative:	
-* value > 100	
-* offset 	optional(uint)
-     * Positive:	
-* value exists	
-* empty value	
-     * Negative:	
-* value < 0	
-* page 	optional(uint)
-     * Positive:	
-* value exists	
-* empty value	
-     * Negative:	
-* value < 0	
-* page-key	optional(string)
-     * Positive:	
-* empty value	
-* value exists	
-     * Negative:	
-* length < MIN	
-* reverse	optional(bool)
-     * Positive:	
-* empty value	
-* value state	
-* TRUE (-1)	
-* FALSE (0)	
-     * Negative:	
-* value is not bool	
+* REST API command send  
+     * Valid command  
+          * correct HTTP method  
+          * request is authorized  
+          * uses valid credentials/role  
+     * Invalid command  
+          * incorrect request  
+          * server-side error  
 
-### REST API 	
+* Command result  
+     * GET_DEVICE_SOFTWARE_COMPLIANCE command completed successfully ⇒ returns device software compliance  
+          * record found in store  
+          * valid `cdCertificateId`  
+     * GET_DEVICE_SOFTWARE_COMPLIANCE command failed ⇒ no data returned  
+          * `cdCertificateId` is incorrect  
+          * record not found  
 
-* REST API command send	
-* Valid command	
-* correct HTTP method	
-* request is authorized	
-* uses valid credentials/role	
-* Invalid command	
-* incorrect request	
-* server side error	
+* Role (Who can send)  
+     * Positive:  
+          * Trustee  
+          * Vendor  
+          * VendorAdmin  
+          * CertificationCenter  
+          * NodeAdmin  
 
-Сommand result	
-GET_ALL_PROVISIONAL_MODELS command completed successfully	gets all Model Versions in provisional state for all vendors (vids)
-there is at least one Model Versions in provisional state for all vendors	
-GET_ALL_PROVISIONAL_MODELS command failed	does not gets all Model Versions in provisional state for all vendors (vids)
-there is at least one Model Versions in provisional state for all vendors	
-Role (Who can send)	
-Trustee	error
-Vendor 	error
-VendorAdmin 	error
-CertificationCenter 	
-NodeAdmin 	error
-Parameters:	
-count-total	optional(bool)
-     * Positive:	
-empty value	
-value state	
-TRUE (-1)	
-FALSE (0)	
-     * Negative:	
-value is not bool	
-limit 	optional(uint)
-     * Positive:	
-value exists	
-empty value	
-     * Negative:	
-value > 100	
-offset 	optional(uint)
-     * Positive:	
-value exists	
-empty value	
-     * Negative:	
-value < 0	
-page 	optional(uint)
-     * Positive:	
-value exists	
-empty value	
-     * Negative:	
-value < 0	
-page-key	optional(string)
-     * Positive:	
-empty value	
-value exists	
-     * Negative:	
-length < MIN	
-reverse	optional(bool)
-     * Positive:	
-empty value	
-value state	
-TRUE (-1)	
-FALSE (0)	
-     * Negative:	
-value is not bool	
+* Parameters:  
+     * **cdCertificateId (CD Certificate ID)** - string  
+          * Positive:  
+               * existing value  
+               * correct text format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty  
+               * nonexistent  
+               * length > MAX  
 
-## GET_ALL_COMPLIANCE_INFO_RECORDS	
+## [GET_ALL_CERTIFIED_MODELS]()
 
-### CLI command	
+### CLI command  
+CLI command: `dcld query compliance all-certified-models [--count-total=<bool>] [--limit=<uint>] [--offset=<uint>] [--page=<uint>] [--page-key=<string>] [--reverse=<bool>]`
 
-* CLI command send	
-* Valid command	
-* command exists/relevant	
-* Invalid command	
-* access is denied to execute command	
-* incorrect command syntax	
-* Сommand result	
-* GET_ALL_COMPLIANCE_INFO_RECORDS command completed successfully	gets all stored compliance information records for all vendors (vids)
-* there is at least one stored compliance information records for all vendors	
-* GET_ALL_COMPLIANCE_INFO_RECORDS command failed	does not gets all stored compliance information records for all vendors (vids)
-* there is at least onestored compliance information records for all vendors	
-* Role (Who can send)	
-* Trustee	error
-* Vendor 	error
-* VendorAdmin 	error
-* CertificationCenter 	
-* NodeAdmin 	error
-* Parameters:	
-* count-total	optional(bool)
-     * Positive:	
-* empty value	
-* value state	
-* TRUE (-1)	
-* FALSE (0)	
-     * Negative:	
-* value is not bool	
-* limit 	optional(uint)
-     * Positive:	
-* value exists	
-* empty value	
-     * Negative:	
-* value > 100	
-* offset 	optional(uint)
-     * Positive:	
-* value exists	
-* empty value	
-     * Negative:	
-* value < 0	
-* page 	optional(uint)
-     * Positive:	
-* value exists	
-* empty value	
-     * Negative:	
-* value < 0	
-* page-key	optional(string)
-     * Positive:	
-* empty value	
-* value exists	
-     * Negative:	
-* length < MIN	
-* reverse	optional(bool)
-     * Positive:	
-* empty value	
-* value state	
-* TRUE (-1)	
-* FALSE (0)	
-     * Negative:	
-* value is not bool	
+* CLI command send  
+     * Valid command  
+          * command exists/relevant  
+     * Invalid command  
+          * access is denied to execute command  
+          * incorrect command syntax  
 
-### REST API 	
+* Command result  
+     * GET_ALL_CERTIFIED_MODELS command completed successfully ⇒ retrieves all compliant Model Versions for all vendors (VIDs)  
+          * compliance is tracked on the ledger  
+          * at least one compliant Model Version exists  
+     * GET_ALL_CERTIFIED_MODELS command failed ⇒ no Model Versions returned  
+          * compliance is not tracked  
+          * no compliant Model Versions found  
 
-* REST API command send	
-* Valid command	
-* correct HTTP method	
-* request is authorized	
-* uses valid credentials/role	
-* Invalid command	
-* incorrect request	
-* server side error	
+* Role (Who can send)  
+     * Positive:  
+          * CertificationCenter  
+     * Negative:  
+          * Trustee  
+          * Vendor  
+          * VendorAdmin  
+          * NodeAdmin  
 
-Сommand result	
-GET_ALL_COMPLIANCE_INFO_RECORDS command completed successfully	gets all stored compliance information records for all vendors (vids)
-there is at least one stored compliance information records for all vendors	
-GET_ALL_COMPLIANCE_INFO_RECORDS command failed	does not gets all stored compliance information records for all vendors (vids)
-there is at least onestored compliance information records for all vendors	
-Role (Who can send)	
-Trustee	error
-Vendor 	error
-VendorAdmin 	error
-CertificationCenter 	
-NodeAdmin 	error
-Parameters:	
-count-total	optional(bool)
-     * Positive:	
-empty value	
-value state	
-TRUE (-1)	
-FALSE (0)	
-     * Negative:	
-value is not bool	
-limit 	optional(uint)
-     * Positive:	
-value exists	
-empty value	
-     * Negative:	
-value > 100	
-offset 	optional(uint)
-     * Positive:	
-value exists	
-empty value	
-     * Negative:	
-value < 0	
-page 	optional(uint)
-     * Positive:	
-value exists	
-empty value	
-     * Negative:	
-value < 0	
-page-key	optional(string)
-     * Positive:	
-empty value	
-value exists	
-     * Negative:	
-length < MIN	
-reverse	optional(bool)
-     * Positive:	
-empty value	
-value state	
-TRUE (-1)	
-FALSE (0)	
-     * Negative:	
-value is not bool	
+* Parameters:  
+     * **count-total** (optional, bool)  
+          * Positive:  
+               * empty value  
+               * TRUE (-1)  
+               * FALSE (0)  
+          * Negative:  
+               * value is not boolean  
+     * **limit** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value > 100  
+     * **offset** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value < 0  
+     * **page** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value < 0  
+     * **page-key** (optional, string)  
+          * Positive:  
+               * empty value  
+               * value exists  
+          * Negative:  
+               * length < MIN  
+     * **reverse** (optional, bool)  
+          * Positive:  
+               * empty value  
+               * TRUE (-1)  
+               * FALSE (0)  
+          * Negative:  
+               * value is not boolean  
 
-## GET_ALL_DEVICE_SOFTWARE_COMPLIANCES	
+---
 
-### CLI command	
+### REST API  
+REST API command: `GET /compliance/certified-models`
 
-* CLI command send	
-* Valid command	
-* command exists/relevant	
-* Invalid command	
-* access is denied to execute command	
-* incorrect command syntax	
-* Сommand result	
-* GET_ALL_DEVICE_SOFTWARE_COMPLIANCES command completed successfully	gets all stored device software compliance's
-* there is at least one stored device software compliance's	
-* GET_ALL_DEVICE_SOFTWARE_COMPLIANCES command failed	does not gets all stored device software compliance's
-* there is at least one stored device software compliance's	
-* Role (Who can send)	
-* Trustee	error
-* Vendor 	error
-* VendorAdmin 	error
-* CertificationCenter 	
-* NodeAdmin 	error
-* Parameters:	
-* count-total	optional(bool)
-     * Positive:	
-* empty value	
-* value state	
-* TRUE (-1)	
-* FALSE (0)	
-     * Negative:	
-* value is not bool	
-* limit 	optional(uint)
-     * Positive:	
-* value exists	
-* empty value	
-     * Negative:	
-* value > 100	
-* offset 	optional(uint)
-     * Positive:	
-* value exists	
-* empty value	
-     * Negative:	
-* value < 0	
-* page 	optional(uint)
-     * Positive:	
-* value exists	
-* empty value	
-     * Negative:	
-* value < 0	
-* page-key	optional(string)
-     * Positive:	
-* empty value	
-* value exists	
-     * Negative:	
-* length < MIN	
-* reverse	optional(bool)
-     * Positive:	
-* empty value	
-* value state	
-* TRUE (-1)	
-* FALSE (0)	
-     * Negative:	
-* value is not bool	
+* REST API command send  
+     * Valid command  
+          * correct HTTP method  
+          * request is authorized  
+          * uses valid credentials/role  
+     * Invalid command  
+          * incorrect request  
+          * server side error  
 
-### REST API 	
-* REST API command send	
-* Valid command	
-* correct HTTP method	
-* request is authorized	
-* uses valid credentials/role	
-* Invalid command	
-* incorrect request	
-* server side error	
+* Command result  
+     * GET_ALL_CERTIFIED_MODELS command completed successfully ⇒ retrieves all compliant Model Versions for all vendors  
+          * compliance is tracked on ledger  
+          * at least one compliant Model Version exists  
+     * GET_ALL_CERTIFIED_MODELS command failed ⇒ no Model Versions returned  
+          * compliance is not tracked  
+          * no compliant Model Versions found  
 
-Сommand result	
-GET_ALL_DEVICE_SOFTWARE_COMPLIANCES command completed successfully	gets all stored device software compliance's
-there is at least one stored device software compliance's	
-GET_ALL_DEVICE_SOFTWARE_COMPLIANCES command failed	does not gets all stored device software compliance's
-there is at least one stored device software compliance's	
-Role (Who can send)	
-Trustee	error
-Vendor 	error
-VendorAdmin 	error
-CertificationCenter 	
-NodeAdmin 	error
-Parameters:	
-count-total	optional(bool)
-     * Positive:	
-empty value	
-value state	
-TRUE (-1)	
-FALSE (0)	
-     * Negative:	
-value is not bool	
-limit 	optional(uint)
-     * Positive:	
-value exists	
-empty value	
-     * Negative:	
-value > 100	
-offset 	optional(uint)
-     * Positive:	
-value exists	
-empty value	
-     * Negative:	
-value < 0	
-page 	optional(uint)
-     * Positive:	
-value exists	
-empty value	
-     * Negative:	
-value < 0	
-page-key	optional(string)
-     * Positive:	
-empty value	
-value exists	
-     * Negative:	
-length < MIN	
-reverse	optional(bool)
-     * Positive:	
-empty value	
-value state	
-TRUE (-1)	
-FALSE (0)	
-     * Negative:	
-value is not bool	
+* Role (Who can send)  
+     * Positive:  
+          * CertificationCenter  
+     * Negative:  
+          * Trustee  
+          * Vendor  
+          * VendorAdmin  
+          * NodeAdmin  
+
+* Parameters: 
+     * **count-total** (optional, bool)  
+          * Positive:  
+               * empty value  
+               * TRUE (-1)  
+               * FALSE (0)  
+          * Negative:  
+               * value is not boolean  
+     * **limit** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value > 100  
+     * **offset** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value < 0  
+     * **page** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value < 0  
+     * **page-key** (optional, string)  
+          * Positive:  
+               * empty value  
+               * value exists  
+          * Negative:  
+               * length < MIN  
+     * **reverse** (optional, bool)  
+          * Positive:  
+               * empty value  
+               * TRUE (-1)  
+               * FALSE (0)  
+          * Negative:  
+               * value is not boolean  	
+
+## [GET_ALL_REVOKED_MODELS]()
+
+### CLI command  
+CLI command: `dcld query compliance all-revoked-models [--count-total=<bool>] [--limit=<uint>] [--offset=<uint>] [--page=<uint>] [--page-key=<string>] [--reverse=<bool>]`
+
+* CLI command send  
+     * Valid command  
+          * command exists/relevant  
+     * Invalid command  
+          * access is denied to execute command  
+          * incorrect command syntax  
+
+* Command result  
+     * GET_ALL_REVOKED_MODELS command completed successfully ⇒ retrieves all revoked Model Versions for all vendors (VIDs)  
+          * only revocation is tracked on the ledger  
+          * at least one revoked Model Version exists  
+     * GET_ALL_REVOKED_MODELS command failed ⇒ no Model Versions returned  
+          * not only revocation is tracked on ledger  
+          * no revoked Model Versions found  
+
+* Role (Who can send)  
+     * Positive:  
+          * CertificationCenter  
+     * Negative:  
+          * Trustee  
+          * Vendor  
+          * VendorAdmin  
+          * NodeAdmin  
+
+* Parameters:  
+     * **count-total** (optional, bool)  
+          * Positive:  
+               * empty value  
+               * TRUE (-1)  
+               * FALSE (0)  
+          * Negative:  
+               * value is not boolean  
+     * **limit** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value > 100  
+     * **offset** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value < 0  
+     * **page** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value < 0  
+     * **page-key** (optional, string)  
+          * Positive:  
+               * empty value  
+               * value exists  
+          * Negative:  
+               * length < MIN  
+     * **reverse** (optional, bool)  
+          * Positive:  
+               * empty value  
+               * TRUE (-1)  
+               * FALSE (0)  
+          * Negative:  
+               * value is not boolean  
+
+---
+
+### REST API  
+REST API command: `GET /compliance/revoked-models`
+
+* REST API command send  
+     * Valid command  
+          * correct HTTP method  
+          * request is authorized  
+          * uses valid credentials/role  
+     * Invalid command  
+          * incorrect request  
+          * server side error  
+
+* Command result  
+     * GET_ALL_REVOKED_MODELS command completed successfully ⇒ retrieves all revoked Model Versions for all vendors  
+          * only revocation is tracked on the ledger  
+          * at least one revoked Model Version exists  
+     * GET_ALL_REVOKED_MODELS command failed ⇒ no Model Versions returned  
+          * not only revocation is tracked  
+          * no revoked Model Versions found  
+
+* Role (Who can send)  
+     * Positive:  
+          * CertificationCenter  
+     * Negative:  
+          * Trustee  
+          * Vendor  
+          * VendorAdmin  
+          * NodeAdmin  
+
+* Parameters: 
+     * **count-total** (optional, bool)  
+          * Positive:  
+               * empty value  
+               * TRUE (-1)  
+               * FALSE (0)  
+          * Negative:  
+               * value is not boolean  
+     * **limit** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value > 100  
+     * **offset** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value < 0  
+     * **page** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value < 0  
+     * **page-key** (optional, string)  
+          * Positive:  
+               * empty value  
+               * value exists  
+          * Negative:  
+               * length < MIN  
+     * **reverse** (optional, bool)  
+          * Positive:  
+               * empty value  
+               * TRUE (-1)  
+               * FALSE (0)  
+          * Negative:  
+               * value is not boolean  
+
+## [GET_ALL_PROVISIONAL_MODELS]()
+
+### CLI command  
+CLI command: `dcld query compliance all-provisional-models [--count-total=<bool>] [--limit=<uint>] [--offset=<uint>] [--page=<uint>] [--page-key=<string>] [--reverse=<bool>]`
+
+* CLI command send  
+     * Valid command  
+          * command exists/relevant  
+     * Invalid command  
+          * access is denied to execute command  
+          * incorrect command syntax  
+
+* Command result  
+     * GET_ALL_PROVISIONAL_MODELS command completed successfully ⇒ retrieves all Model Versions in provisional state for all vendors (VIDs)  
+          * at least one provisional Model Version exists  
+     * GET_ALL_PROVISIONAL_MODELS command failed ⇒ no provisional Model Versions returned  
+          * no provisional Model Versions found  
+
+* Role (Who can send)  
+     * Positive:  
+          * CertificationCenter  
+     * Negative:  
+          * Trustee  
+          * Vendor  
+          * VendorAdmin  
+          * NodeAdmin  
+
+* Parameters:  
+     * **count-total** (optional, bool)  
+          * Positive:  
+               * empty value  
+               * TRUE (-1)  
+               * FALSE (0)  
+          * Negative:  
+               * value is not boolean  
+     * **limit** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value > 100  
+     * **offset** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value < 0  
+     * **page** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value < 0  
+     * **page-key** (optional, string)  
+          * Positive:  
+               * empty value  
+               * value exists  
+          * Negative:  
+               * length < MIN  
+     * **reverse** (optional, bool)  
+          * Positive:  
+               * empty value  
+               * TRUE (-1)  
+               * FALSE (0)  
+          * Negative:  
+               * value is not boolean  
+
+---
+
+### REST API  
+REST API command: `GET /compliance/provisional-models`
+
+* REST API command send  
+     * Valid command  
+          * correct HTTP method  
+          * request is authorized  
+          * uses valid credentials/role  
+     * Invalid command  
+          * incorrect request  
+          * server side error  
+
+* Command result  
+     * GET_ALL_PROVISIONAL_MODELS command completed successfully ⇒ retrieves all provisional Model Versions for all vendors  
+          * at least one provisional Model Version exists  
+     * GET_ALL_PROVISIONAL_MODELS command failed ⇒ no provisional Model Versions returned  
+          * no provisional Model Versions found  
+
+* Role (Who can send)  
+     * Positive:  
+          * CertificationCenter  
+     * Negative:  
+          * Trustee  
+          * Vendor  
+          * VendorAdmin  
+          * NodeAdmin  
+
+* Parameters:
+     * **count-total** (optional, bool)  
+          * Positive:  
+               * empty value  
+               * TRUE (-1)  
+               * FALSE (0)  
+          * Negative:  
+               * value is not boolean  
+     * **limit** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value > 100  
+     * **offset** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value < 0  
+     * **page** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value < 0  
+     * **page-key** (optional, string)  
+          * Positive:  
+               * empty value  
+               * value exists  
+          * Negative:  
+               * length < MIN  
+     * **reverse** (optional, bool)  
+          * Positive:  
+               * empty value  
+               * TRUE (-1)  
+               * FALSE (0)  
+          * Negative:  
+               * value is not boolean  
+
+## [GET_ALL_COMPLIANCE_INFO_RECORDS]()
+
+### CLI command  
+CLI command: `dcld query compliance all-compliance-info-records [--count-total=<bool>] [--limit=<uint>] [--offset=<uint>] [--page=<uint>] [--page-key=<string>] [--reverse=<bool>]`
+
+* CLI command send  
+     * Valid command  
+          * command exists/relevant  
+     * Invalid command  
+          * access is denied to execute command  
+          * incorrect command syntax  
+
+* Command result  
+     * GET_ALL_COMPLIANCE_INFO_RECORDS command completed successfully ⇒ retrieves all stored compliance information records for all vendors (VIDs)  
+          * at least one compliance information record is stored  
+     * GET_ALL_COMPLIANCE_INFO_RECORDS command failed ⇒ no compliance information records returned  
+          * no records found  
+
+* Role (Who can send)  
+     * Positive:  
+          * CertificationCenter  
+     * Negative:  
+          * Trustee  
+          * Vendor  
+          * VendorAdmin  
+          * NodeAdmin  
+
+* Parameters:  
+     * **count-total** (optional, bool)  
+          * Positive:  
+               * empty value  
+               * TRUE (-1)  
+               * FALSE (0)  
+          * Negative:  
+               * value is not boolean  
+     * **limit** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value > 100  
+     * **offset** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value < 0  
+     * **page** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value < 0  
+     * **page-key** (optional, string)  
+          * Positive:  
+               * empty value  
+               * value exists  
+          * Negative:  
+               * length < MIN  
+     * **reverse** (optional, bool)  
+          * Positive:  
+               * empty value  
+               * TRUE (-1)  
+               * FALSE (0)  
+          * Negative:  
+               * value is not boolean  
+
+---
+
+### REST API  
+REST API command: `GET /compliance/all-compliance-info-records`
+
+* REST API command send  
+     * Valid command  
+          * correct HTTP method  
+          * request is authorized  
+          * uses valid credentials/role  
+     * Invalid command  
+          * incorrect request  
+          * server side error  
+
+* Command result  
+     * GET_ALL_COMPLIANCE_INFO_RECORDS command completed successfully ⇒ retrieves all stored compliance information records for all vendors  
+          * at least one record exists  
+     * GET_ALL_COMPLIANCE_INFO_RECORDS command failed ⇒ no records returned  
+          * none found  
+
+* Role (Who can send)  
+     * Positive:  
+          * CertificationCenter  
+     * Negative:  
+          * Trustee  
+          * Vendor  
+          * VendorAdmin  
+          * NodeAdmin  
+
+* Parameters:
+     * **count-total** (optional, bool)  
+          * Positive:  
+               * empty value  
+               * TRUE (-1)  
+               * FALSE (0)  
+          * Negative:  
+               * value is not boolean  
+     * **limit** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value > 100  
+     * **offset** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value < 0  
+     * **page** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value < 0  
+     * **page-key** (optional, string)  
+          * Positive:  
+               * empty value  
+               * value exists  
+          * Negative:  
+               * length < MIN  
+     * **reverse** (optional, bool)  
+          * Positive:  
+               * empty value  
+               * TRUE (-1)  
+               * FALSE (0)  
+          * Negative:  
+               * value is not boolean  	
+
+## [GET_ALL_DEVICE_SOFTWARE_COMPLIANCES]()
+
+### CLI command  
+CLI command: `dcld query compliance all-device-software-compliances [--count-total=<bool>] [--limit=<uint>] [--offset=<uint>] [--page=<uint>] [--page-key=<string>] [--reverse=<bool>]`
+
+* CLI command send  
+     * Valid command  
+          * command exists/relevant  
+     * Invalid command  
+          * access is denied to execute command  
+          * incorrect command syntax  
+
+* Command result  
+     * GET_ALL_DEVICE_SOFTWARE_COMPLIANCES command completed successfully ⇒ retrieves all stored device software compliances  
+          * at least one device software compliance exists  
+     * GET_ALL_DEVICE_SOFTWARE_COMPLIANCES command failed ⇒ no compliance data returned  
+          * no device software compliance records found  
+
+* Role (Who can send)  
+     * Positive:  
+          * CertificationCenter  
+     * Negative:  
+          * Trustee  
+          * Vendor  
+          * VendorAdmin  
+          * NodeAdmin  
+
+* Parameters:  
+     * **count-total** (optional, bool)  
+          * Positive:  
+               * empty value  
+               * TRUE (-1)  
+               * FALSE (0)  
+          * Negative:  
+               * value is not boolean  
+     * **limit** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value > 100  
+     * **offset** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value < 0  
+     * **page** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value < 0  
+     * **page-key** (optional, string)  
+          * Positive:  
+               * empty value  
+               * value exists  
+          * Negative:  
+               * length < MIN  
+     * **reverse** (optional, bool)  
+          * Positive:  
+               * empty value  
+               * TRUE (-1)  
+               * FALSE (0)  
+          * Negative:  
+               * value is not boolean  
+
+---
+
+### REST API  
+REST API command: `GET /compliance/device-software-compliances`
+
+* REST API command send  
+     * Valid command  
+          * correct HTTP method  
+          * request is authorized  
+          * uses valid credentials/role  
+     * Invalid command  
+          * incorrect request  
+          * server side error  
+
+* Command result  
+     * GET_ALL_DEVICE_SOFTWARE_COMPLIANCES command completed successfully ⇒ retrieves all stored device software compliances  
+          * at least one record exists  
+     * GET_ALL_DEVICE_SOFTWARE_COMPLIANCES command failed ⇒ no records returned  
+          * none found  
+
+* Role (Who can send)  
+     * Same as CLI  
+
+* Parameters: 
+     * **count-total** (optional, bool)  
+          * Positive:  
+               * empty value  
+               * TRUE (-1)  
+               * FALSE (0)  
+          * Negative:  
+               * value is not boolean  
+     * **limit** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value > 100  
+     * **offset** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value < 0  
+     * **page** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value < 0  
+     * **page-key** (optional, string)  
+          * Positive:  
+               * empty value  
+               * value exists  
+          * Negative:  
+               * length < MIN  
+     * **reverse** (optional, bool)  
+          * Positive:  
+               * empty value  
+               * TRUE (-1)  
+               * FALSE (0)  
+          * Negative:  
+               * value is not boolean  

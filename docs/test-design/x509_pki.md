@@ -1,4 +1,4 @@
-4. [X509 PKI](#X509-PKI)
+
    * [All Certificates (DA, NOC)](#all_certificates)
       * [GET_CERT](#get_cert)
       * [GET_ALL_CERTS](#get_all_certs)
@@ -56,772 +56,855 @@
       * [GET_ALL_REVOKED_NOC_ICA (ICACs)](#get_all_revoked_noc_ica_(icacs))
 
 # All Certificates (DA, NOC)	
-### GET_CERT	
-#### CLI command	
-CLI command send	
-Valid command	
-command exists/relevant	
-query works for all types of certificates	
-PAA	
-PAI	
-RCAC	
-ICAC	
-Invalid command	
-access is denied to execute command	
-incorrect command syntax	
-Сommand result	
-GET_CERT command completed successfully	gets a certificate by the given subject and subject key ID attributes
-certificate with given subject and subject key ID attributes exists	
-GET_CERT command failed	does not gets a certificate by the given subject and subject key ID attributes
-certificate with given subject and subject key ID attributes not exists	
-Role (Who can send)	
-Trustee	
-Vendor 	
-VendorAdmin 	
-CertificationCenter 	
-NodeAdmin 	
-Parameters:	
-subject (Subject)	string 
-     * Positive:	
-string matches the format	
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-subject_key_id (Subject Key ID)	string 
-     * Positive:	
-string matches the format	for example: 5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-#### REST API 	
-REST API command send	
-Valid command	
-correct HTTP method	
-request is authorized	
-uses valid credentials/role	
-query works for all types of certificates	
-PAA	
-PAI	
-RCAC	
-ICAC	
-Invalid command	
-incorrect request	
-server side error	
-Сommand result	
-GET_CERT command completed successfully	gets a certificate by the given subject and subject key ID attributes
-certificate with given subject and subject key ID attributes exists	
-GET_CERT command failed	does not gets a certificate by the given subject and subject key ID attributes
-certificate with given subject and subject key ID attributes not exists	
-Role (Who can send)	
-Trustee	
-Vendor 	
-VendorAdmin 	
-CertificationCenter 	
-NodeAdmin 	
-Parameters:	
-subject (Subject)	string 
-     * Positive:	
-string matches the format	
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-subject_key_id (Subject Key ID)	string 
-     * Positive:	
-string matches the format	for example: 5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-### GET_ALL_CERTS	
-#### CLI command	
-CLI command send	
-Valid command	
-command exists/relevant	
-query works for all types of certificates	
-PAA	
-PAI	
-RCAC	
-ICAC	
-Invalid command	
-access is denied to execute command	
-incorrect command syntax	
-Сommand result	
-GET_ALL_CERTS command completed successfully	gets all certificates
-there is at least one certificate	
-GET_ALL_CERTS command failed	does not gets all certificates
-there is not a single certificate	
-Role (Who can send)	
-Trustee	
-Vendor 	
-VendorAdmin 	
-CertificationCenter 	
-NodeAdmin 	
-Parameters:	
-count-total	optional(bool)
-     * Positive:	
-empty value	
-value state	
-TRUE (-1)	
-FALSE (0)	
-     * Negative:	
-value is not bool	
-limit 	optional(uint)
-     * Positive:	
-value exists	
-empty value	
-     * Negative:	
-value > 100	
-offset 	optional(uint)
-     * Positive:	
-value exists	
-empty value	
-     * Negative:	
-value < 0	
-page 	optional(uint)
-     * Positive:	
-value exists	
-empty value	
-     * Negative:	
-value < 0	
-page-key	optional(string)
-     * Positive:	
-empty value	
-value exists	
-     * Negative:	
-length < MIN	
-reverse	optional(bool)
-     * Positive:	
-empty value	
-value state	
-TRUE (-1)	
-FALSE (0)	
-     * Negative:	
-value is not bool	
-#### REST API 	
-REST API command send	
-Valid command	
-correct HTTP method	
-request is authorized	
-uses valid credentials/role	
-query works for all types of certificates	
-PAA	
-PAI	
-RCAC	
-ICAC	
-Invalid command	
-incorrect request	
-server side error	
-Сommand result	
-GET_ALL_CERTS command completed successfully	gets all certificates
-there is at least one certificate	
-GET_ALL_CERTS command failed	does not gets all certificates
-there is not a single certificate	
-Role (Who can send)	
-Trustee	
-Vendor 	
-VendorAdmin 	
-CertificationCenter 	
-NodeAdmin 	
-Parameters:	
-count-total	optional(bool)
-     * Positive:	
-empty value	
-value state	
-TRUE (-1)	
-FALSE (0)	
-     * Negative:	
-value is not bool	
-limit 	optional(uint)
-     * Positive:	
-value exists	
-empty value	
-     * Negative:	
-value > 100	
-offset 	optional(uint)
-     * Positive:	
-value exists	
-empty value	
-     * Negative:	
-value < 0	
-page 	optional(uint)
-     * Positive:	
-value exists	
-empty value	
-     * Negative:	
-value < 0	
-page-key	optional(string)
-     * Positive:	
-empty value	
-value exists	
-     * Negative:	
-length < MIN	
-reverse	optional(bool)
-     * Positive:	
-empty value	
-value state	
-TRUE (-1)	
-FALSE (0)	
-     * Negative:	
-value is not bool	
-### GET_ALL_CERTS_BY_SUBJECT	
-#### CLI command	
-CLI command send	
-Valid command	
-command exists/relevant	
-query works for all types of certificates	
-PAA	
-PAI	
-RCAC	
-ICAC	
-Invalid command	
-access is denied to execute command	
-incorrect command syntax	
-Сommand result	
-GET_ALL_CERTS_BY_SUBJECT command completed successfully	gets all certificates associated with a subject
-there is at least one certificate associated with a subject	
-GET_ALL_CERTS_BY_SUBJECT command failed	does not gets all certificates associated with a subject
-there is not one certificate associated with a subject	
-Role (Who can send)	
-Trustee	
-Vendor 	
-VendorAdmin 	
-CertificationCenter 	
-NodeAdmin 	
-Parameters:	
-subject (Subject)	string 
-     * Positive:	
-string matches the format	
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-#### REST API 	
-REST API command send	
-Valid command	
-correct HTTP method	
-request is authorized	
-uses valid credentials/role	
-query works for all types of certificates	
-PAA	
-PAI	
-RCAC	
-ICAC	
-Invalid command	
-incorrect request	
-server side error	
-Сommand result	
-GET_ALL_CERTS_BY_SUBJECT command completed successfully	gets all certificates associated with a subject
-there is at least one certificate associated with a subject	
-GET_ALL_CERTS_BY_SUBJECT command failed	does not gets all certificates associated with a subject
-there is not one certificate associated with a subject	
-Role (Who can send)	
-Trustee	
-Vendor 	
-VendorAdmin 	
-CertificationCenter 	
-NodeAdmin 	
-Parameters:	
-subject (Subject)	string 
-     * Positive:	
-string matches the format	
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-### GET_ALL_CERTS_BY_SKID	
-#### CLI command	
-CLI command send	
-Valid command	
-command exists/relevant	
-query works for all types of certificates	
-PAA	
-PAI	
-RCAC	
-ICAC	
-Invalid command	
-access is denied to execute command	
-incorrect command syntax	
-Сommand result	
-GET_ALL_CERTS_BY_SKID command completed successfully	gets all certificates by the given subject key ID attribute
-there is at least one certificate by the given subject key ID attribute	
-GET_ALL_CERTS_BY_SKID command failed	does not gets all certificates by the given subject key ID attribute
-there is not one certificate by the given subject key ID attribute	
-Role (Who can send)	
-Trustee	
-Vendor 	
-VendorAdmin 	
-CertificationCenter 	
-NodeAdmin 	
-Parameters:	
-subject_key_id (Subject Key ID)	string 
-     * Positive:	
-string matches the format	for example: 5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-#### REST API 	
-REST API command send	
-Valid command	
-correct HTTP method	
-request is authorized	
-uses valid credentials/role	
-query works for all types of certificates	
-PAA	
-PAI	
-RCAC	
-ICAC	
-Invalid command	
-incorrect request	
-server side error	
-Сommand result	
-GET_ALL_CERTS_BY_SKID command completed successfully	gets all certificates by the given subject key ID attribute
-there is at least one certificate by the given subject key ID attribute	
-GET_ALL_CERTS_BY_SKID command failed	does not gets all certificates by the given subject key ID attribute
-there is not one certificate by the given subject key ID attribute	
-Role (Who can send)	
-Trustee	
-Vendor 	
-VendorAdmin 	
-CertificationCenter 	
-NodeAdmin 	
-Parameters:	
-subject_key_id (Subject Key ID)	string 
-     * Positive:	
-string matches the format	for example: 5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-### GET_CHILD_CERTS	
-#### CLI command	
-CLI command send	
-Valid command	
-command exists/relevant	
-query works for child certificates	
-PAI	
-NOC_ICA	
-Invalid command	
-access is denied to execute command	
-incorrect command syntax	
-Сommand result	
-GET_CHILD_CERTS command completed successfully	gets all child certificates for the given certificate
-there is at least one child certificates for the given certificate	
-GET_CHILD_CERTS command failed	does not gets all child certificates for the given certificate
-there is not one child certificates for the given certificate	
-Role (Who can send)	
-Trustee	
-Vendor 	
-VendorAdmin 	
-CertificationCenter 	
-NodeAdmin 	
-Parameters:	
-subject (Subject)	string 
-     * Positive:	
-string matches the format	
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-subject_key_id (Subject Key ID)	string 
-     * Positive:	
-string matches the format	for example: 5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-#### REST API 	
-REST API command send	
-Valid command	
-correct HTTP method	
-request is authorized	
-uses valid credentials/role	
-query works for child certificates	
-PAI	
-NOC_ICA	
-Invalid command	
-incorrect request	
-server side error	
-Сommand result	
-GET_CHILD_CERTS command completed successfully	gets all child certificates for the given certificate
-there is at least one child certificates for the given certificate	
-GET_CHILD_CERTS command failed	does not gets all child certificates for the given certificate
-there is not one child certificates for the given certificate	
-Role (Who can send)	
-Trustee	
-Vendor 	
-VendorAdmin 	
-CertificationCenter 	
-NodeAdmin 	
-Parameters:	
-subject (Subject)	string 
-     * Positive:	
-string matches the format	
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-subject_key_id (Subject Key ID)	string 
-     * Positive:	
-string matches the format	for example: 5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-Device Attestation Certificates (DA): PAA, PAI	
-### PROPOSE_ADD_PAA	
-#### CLI command	
-CLI command send	
-Valid command	
-command exists/relevant	
-query works for  the following certificates	
-PAA 	
-Invalid command	
-access is denied to execute command	
-incorrect command syntax	
-Сommand result	
-PROPOSE_ADD_PAA command completed successfully	proposes a new PAA (self-signed root certificate)
-sufficient number of approvals is received	certificate added
-provided certificate is root	
-Issuer == Subject	
-"Authority Key Identifier == Subject Key Identifier
-"	
-no existing Proposed certificate with the same <Certificate's Subject>:<Certificate's Subject Key ID> combination	
-certificates with the same <Certificate's Subject>:<Certificate's Subject Key ID> combination already exists	
-the existing certificate not be NOC certificate	
-"sender match to the owner of the existing certificates.
-"	
-no existing certificate with the same <Certificate's Issuer>:<Certificate's Serial Number> combination	
-signature (self-signature) and expiration date are valid	
-PROPOSE_ADD_PAA command failed	does not proposes a new PAA (self-signed root certificate)
-not sufficient number of approvals is received	certificate is in Pending state
-not of approvals is received	certificate not added
-user tries to edit certificate	The PAA certificate is immutable
-provided certificate is not root	
-Issuer!= Subject, but Authority Key Identifier == Subject Key Identifier	
-"Issuer == Subject, but Authority Key Identifier!= Subject Key Identifier
-"	
-Issuer!= Subject and Authority Key Identifier!= Subject Key Identifier	
-existing Proposed certificate with the same <Certificate's Subject>:<Certificate's Subject Key ID> combination	
-existing certificate is NOC certificate	
-sender does not match to the owner of the existing certificates	
-existing certificate with the same <Certificate's Issuer>:<Certificate's Serial Number> combination	
-signature (self-signature) is not valid	
-signature (self-signature) is not valid and expiration date is valid	
-signature (self-signature) and expiration date is not valid	
-Role	
- Who can send	
-Trustee	
-Vendor 	error
-VendorAdmin 	error
-CertificationCenter 	error
-NodeAdmin 	error
- Who can revoked	
-Trustee	
-owner	if there was 1 signature for the certificate
-quorum 	if there was more than 1 signature for the certificate
-Vendor 	error
-VendorAdmin 	error
-CertificationCenter 	error
-NodeAdmin 	error
-Parameters:	
-cert (Certificate)	string 
-     * Positive:	
-value exists	
-contain a PEM string	
-contain path to a file containing the data	
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-info (Information/Notes)	optional(string)
-     * Positive:	
-empty value	
-text value format
-MIN < length < MAX	
-     * Negative:	
-length > MAX	MAX=4096 characters
-time (Proposal Time)	optional(int64)
-     * Positive:	
-default value	current time by default
-empty value	
-integer value format
-     * Negative:	
-length > MAX	MAX = 9 223 372 036 854 775 807
-vid (Vendor ID)	uint16 
-     * Positive:	
-unique combination	
-value > 0	
-integer value format
-nonexistent ID	
-Vendor ID = Certificate's vid field for VID-scoped PAA	
-     * Negative:	
-empty value
-value =< 0
-string value format		
-length > MAX	MAX = 65535
-schemaVersion (Schema Version)	optional(uint16)
-     * Positive:	
-value = 0	
-integer value format
-empty value	
-     * Negative:	
-length > MAX	MAX = 65535
-#### REST API 	
-REST API command send	
-Valid command	
-correct HTTP method	
-request is authorized	
-uses valid credentials/role	
-query works for  the following certificates	
-PAA 	
-Invalid command	
-incorrect request	
-server side error	
-Сommand result	
-PROPOSE_ADD_PAA command completed successfully	proposes a new PAA (self-signed root certificate)
-sufficient number of approvals is received	certificate added
-provided certificate is root	
-Issuer == Subject	
-"Authority Key Identifier == Subject Key Identifier
-"	
-no existing Proposed certificate with the same <Certificate's Subject>:<Certificate's Subject Key ID> combination	
-certificates with the same <Certificate's Subject>:<Certificate's Subject Key ID> combination already exists	
-the existing certificate not be NOC certificate	
-"sender match to the owner of the existing certificates.
-"	
-no existing certificate with the same <Certificate's Issuer>:<Certificate's Serial Number> combination	
-signature (self-signature) and expiration date are valid	
-PROPOSE_ADD_PAA command failed	does not proposes a new PAA (self-signed root certificate)
-not sufficient number of approvals is received	certificate is in Pending state
-not of approvals is received	certificate not added
-user tries to edit certificate	The PAA certificate is immutable
-provided certificate is not root	
-Issuer!= Subject, but Authority Key Identifier == Subject Key Identifier	
-"Issuer == Subject, but Authority Key Identifier!= Subject Key Identifier
-"	
-Issuer!= Subject and Authority Key Identifier!= Subject Key Identifier	
-existing Proposed certificate with the same <Certificate's Subject>:<Certificate's Subject Key ID> combination	
-existing certificate is NOC certificate	
-sender does not match to the owner of the existing certificates	
-existing certificate with the same <Certificate's Issuer>:<Certificate's Serial Number> combination	
-signature (self-signature) is not valid	
-signature (self-signature) is not valid and expiration date is valid	
-signature (self-signature) and expiration date is not valid	
-Role	
- Who can send	
-Trustee	
-Vendor 	error
-VendorAdmin 	error
-CertificationCenter 	error
-NodeAdmin 	error
- Who can revoked	
-Trustee	
-owner	if there was 1 signature for the certificate
-quorum 	if there was more than 1 signature for the certificate
-Vendor 	error
-VendorAdmin 	error
-CertificationCenter 	error
-NodeAdmin 	error
-Parameters:	
-cert (Certificate)	string 
-     * Positive:	
-value exists	
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-info (Information/Notes)	optional(string)
-     * Positive:	
-empty value	
-text value format
-MIN < length < MAX	
-     * Negative:	
-length > MAX	MAX=4096 characters
-time (Proposal Time)	optional(int64)
-     * Positive:	
-default value	current time by default
-empty value	
-integer value format
-     * Negative:	
-length > MAX	MAX = 9 223 372 036 854 775 807
-vid (Vendor ID)	uint16 
-     * Positive:	
-unique combination	
-value > 0	
-integer value format
-nonexistent ID	
-Vendor ID = Certificate's vid field for VID-scoped PAA	
-     * Negative:	
-empty value
-value =< 0
-string value format		
-length > MAX	MAX = 65535
-schemaVersion (Schema Version)	optional(uint16)
-     * Positive:	
-value = 0	
-integer value format
-empty value	
-     * Negative:	
-length > MAX	MAX = 65535
-### APPROVE_ADD_PAA	
-#### CLI command	
-CLI command send	
-Valid command	
-command exists/relevant	
-query works for  the following certificates	
-PAA 	
-Invalid command	
-access is denied to execute command	
-incorrect command syntax	
-Сommand result	
-APPROVE_ADD_PAA command completed successfully	approves the proposed PAA (self-signed root certificate)
-PROPOSE_ADD_PAA command completed successfully	
-command used for re-voting	i.e. change vote from reject to approve
-number of approvals greater than 2/3 of Trustees 	certificate active
-number of approvals equal 2/3 of Trustees 	certificate active
-the proposal to add a root certificate with the provided subject and subject_key_id, submitted first	
-the proposed certificate hasn't been approved by the signer yet	
-APPROVE_ADD_PAA command failed	does not approves the proposed PAA (self-signed root certificate)
-PROPOSE_ADD_PAA command failed	
-number of approvals is less than 2/3 of Trustees	certificate is not active
-the proposal to add a root certificate with the provided subject and subject_key_id, not submitted first	
-the proposed certificate has been approved by the signer	
-Role	
- Who can send	
-Trustee	
-Vendor 	error
-VendorAdmin 	error
-CertificationCenter 	error
-NodeAdmin 	error
-Parameters:	
-subject (Subject)	string 
-     * Positive:	
-string matches the format	
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-subject_key_id (Subject Key ID)	string 
-     * Positive:	
-string matches the format	for example: 5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-info (Information/Notes)	optional(string)
-     * Positive:	
-empty value	
-text value format
-MIN < length < MAX	
-     * Negative:	
-length > MAX	MAX=4096 characters
-time (Proposal Time)	optional(int64)
-     * Positive:	
-default value	current time by default
-empty value	
-integer value format
-     * Negative:	
-length > MAX	MAX = 9 223 372 036 854 775 807
-#### REST API 	
-REST API command send	
-Valid command	
-correct HTTP method	
-request is authorized	
-uses valid credentials/role	
-query works for  the following certificates	
-PAA 	
-Invalid command	
-incorrect request	
-server side error	
-Сommand result	
-APPROVE_ADD_PAA command completed successfully	approves the proposed PAA (self-signed root certificate)
-PROPOSE_ADD_PAA command completed successfully	
-command used for re-voting	i.e. change vote from reject to approve
-number of approvals greater than 2/3 of Trustees 	certificate active
-number of approvals equal 2/3 of Trustees 	certificate active
-the proposal to add a root certificate with the provided subject and subject_key_id, submitted first	
-the proposed certificate hasn't been approved by the signer yet	
-APPROVE_ADD_PAA command failed	does not approves the proposed PAA (self-signed root certificate)
-PROPOSE_ADD_PAA command failed	
-number of approvals is less than 2/3 of Trustees	certificate is not active
-the proposal to add a root certificate with the provided subject and subject_key_id, not submitted first	
-the proposed certificate has been approved by the signer	
-Role	
- Who can send	
-Trustee	
-Vendor 	error
-VendorAdmin 	error
-CertificationCenter 	error
-NodeAdmin 	error
-Parameters:	
-subject (Subject)	string 
-     * Positive:	
-string matches the format	
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-subject_key_id (Subject Key ID)	string 
-     * Positive:	
-string matches the format	for example: 5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB
-text value format
-MIN < length < MAX	
-     * Negative:	
-empty value	
-nonexistent value	
-length > MAX	
-info (Information/Notes)	optional(string)
-     * Positive:	
-empty value	
-text value format
-MIN < length < MAX	
-     * Negative:	
-length > MAX	MAX=4096 characters
-time (Proposal Time)	optional(int64)
-     * Positive:	
-default value	current time by default
-empty value	
-integer value format
-     * Negative:	
-length > MAX	MAX = 9 223 372 036 854 775 807
+## [GET_CERT]()
+
+### CLI command  
+CLI command: `dcld query certificate get-cert --subject=<string> --subject-key-id=<string>`
+
+* CLI command send  
+     * Valid command  
+          * command exists/relevant  
+          * query works for all types of certificates:  
+               * PAA  
+               * PAI  
+               * RCAC  
+               * ICAC  
+     * Invalid command  
+          * access is denied to execute command  
+          * incorrect command syntax  
+
+* Command result  
+     * GET_CERT command completed successfully ⇒ gets a certificate by the given subject and subject key ID attributes  
+          * certificate with given subject and subject key ID attributes exists  
+     * GET_CERT command failed ⇒ does not get a certificate  
+          * certificate with given subject and subject key ID attributes does not exist  
+
+* Role (Who can send)  
+     * Trustee  
+     * Vendor  
+     * VendorAdmin  
+     * CertificationCenter  
+     * NodeAdmin  
+
+* Parameters:  
+     * **subject (Subject)** - string  
+          * Positive:  
+               * string matches the format  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * nonexistent value  
+               * length > MAX  
+     * **subject_key_id (Subject Key ID)** - string  
+          * Positive:  
+               * formatted string (e.g., `5A:88:0E:6C:36:53:D0:7F:...`)  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * nonexistent value  
+               * length > MAX  
+
+---
+
+### REST API  
+REST API command: `GET /certificates/{subject}/{subjectKeyId}`
+
+* REST API command send  
+     * Valid command  
+          * correct HTTP method  
+          * request is authorized  
+          * uses valid credentials/role  
+          * works for all certificate types:  
+               * PAA  
+               * PAI  
+               * RCAC  
+               * ICAC  
+     * Invalid command  
+          * incorrect request  
+          * server side error  
+
+* Command result  
+     * GET_CERT command completed successfully ⇒ gets a certificate by the given subject and subject key ID attributes  
+          * certificate with given subject and subject key ID attributes exists  
+     * GET_CERT command failed ⇒ does not get a certificate  
+          * certificate with given subject and subject key ID attributes does not exist  
+
+* Role (Who can send)  
+     * Trustee  
+     * Vendor  
+     * VendorAdmin  
+     * CertificationCenter  
+     * NodeAdmin  
+
+* Parameters:
+     * **subject (Subject)** - string  
+          * Positive:  
+               * string matches the format  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * nonexistent value  
+               * length > MAX  
+     * **subject_key_id (Subject Key ID)** - string  
+          * Positive:  
+               * formatted string (e.g., `5A:88:0E:6C:36:53:D0:7F:...`)  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * nonexistent value  
+               * length > MAX 
+
+## [GET_ALL_CERTS]()
+
+### CLI command  
+CLI command: `dcld query certificate all-certs [--count-total=<bool>] [--limit=<uint>] [--offset=<uint>] [--page=<uint>] [--page-key=<string>] [--reverse=<bool>]`
+
+* CLI command send  
+     * Valid command  
+          * command exists/relevant  
+          * query works for all types of certificates  
+               * PAA  
+               * PAI  
+               * RCAC  
+               * ICAC  
+     * Invalid command  
+          * access is denied to execute command  
+          * incorrect command syntax  
+
+* Command result  
+     * GET_ALL_CERTS command completed successfully ⇒ gets all certificates  
+          * there is at least one certificate  
+     * GET_ALL_CERTS command failed ⇒ does not get all certificates  
+          * there is not a single certificate  
+
+* Role (Who can send)  
+     * Trustee  
+     * Vendor  
+     * VendorAdmin  
+     * CertificationCenter  
+     * NodeAdmin  
+
+* Parameters:  
+     * **count-total** (optional, bool)  
+          * Positive:  
+               * empty value  
+               * value state  
+               * TRUE (-1)  
+               * FALSE (0)  
+          * Negative:  
+               * value is not bool  
+     * **limit** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value > 100  
+     * **offset** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value < 0  
+     * **page** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value < 0  
+     * **page-key** (optional, string)  
+          * Positive:  
+               * empty value  
+               * value exists  
+          * Negative:  
+               * length < MIN  
+     * **reverse** (optional, bool)  
+          * Positive:  
+               * empty value  
+               * value state  
+               * TRUE (-1)  
+               * FALSE (0)  
+          * Negative:  
+               * value is not bool  
+
+---
+
+### REST API  
+REST API command: `GET /certificates`
+
+* REST API command send  
+     * Valid command  
+          * correct HTTP method  
+          * request is authorized  
+          * uses valid credentials/role  
+          * query works for all types of certificates  
+               * PAA  
+               * PAI  
+               * RCAC  
+               * ICAC  
+     * Invalid command  
+          * incorrect request  
+          * server side error  
+
+* Command result  
+     * GET_ALL_CERTS command completed successfully ⇒ gets all certificates  
+          * there is at least one certificate  
+     * GET_ALL_CERTS command failed ⇒ does not get all certificates  
+          * there is not a single certificate  
+
+* Role (Who can send)  
+     * Trustee  
+     * Vendor  
+     * VendorAdmin  
+     * CertificationCenter  
+     * NodeAdmin  
+
+* Parameters: 
+     * **count-total** (optional, bool)  
+          * Positive:  
+               * empty value  
+               * value state  
+               * TRUE (-1)  
+               * FALSE (0)  
+          * Negative:  
+               * value is not bool  
+     * **limit** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value > 100  
+     * **offset** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value < 0  
+     * **page** (optional, uint)  
+          * Positive:  
+               * value exists  
+               * empty value  
+          * Negative:  
+               * value < 0  
+     * **page-key** (optional, string)  
+          * Positive:  
+               * empty value  
+               * value exists  
+          * Negative:  
+               * length < MIN  
+     * **reverse** (optional, bool)  
+          * Positive:  
+               * empty value  
+               * value state  
+               * TRUE (-1)  
+               * FALSE (0)  
+          * Negative:  
+               * value is not bool  
+
+## [GET_ALL_CERTS_BY_SUBJECT]()
+
+### CLI command  
+CLI command: `dcld query certificate all-certs-by-subject --subject=<string>`
+
+* CLI command send  
+     * Valid command  
+          * command exists/relevant  
+          * query works for all types of certificates  
+               * PAA  
+               * PAI  
+               * RCAC  
+               * ICAC  
+     * Invalid command  
+          * access is denied to execute command  
+          * incorrect command syntax  
+
+* Command result  
+     * GET_ALL_CERTS_BY_SUBJECT command completed successfully ⇒ gets all certificates associated with a subject  
+          * there is at least one certificate associated with a subject  
+     * GET_ALL_CERTS_BY_SUBJECT command failed ⇒ does not get all certificates associated with a subject  
+          * there is not one certificate associated with a subject  
+
+* Role (Who can send)  
+     * Trustee  
+     * Vendor  
+     * VendorAdmin  
+     * CertificationCenter  
+     * NodeAdmin  
+
+* Parameters:  
+     * **subject (Subject)** - string  
+          * Positive:  
+               * string matches the format  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * nonexistent value  
+               * length > MAX  
+
+---
+
+### REST API  
+REST API command: `GET /certificates/by-subject/{subject}`
+
+* REST API command send  
+     * Valid command  
+          * correct HTTP method  
+          * request is authorized  
+          * uses valid credentials/role  
+          * query works for all types of certificates  
+               * PAA  
+               * PAI  
+               * RCAC  
+               * ICAC  
+     * Invalid command  
+          * incorrect request  
+          * server side error  
+
+* Command result  
+     * GET_ALL_CERTS_BY_SUBJECT command completed successfully ⇒ gets all certificates associated with a subject  
+          * there is at least one certificate associated with a subject  
+     * GET_ALL_CERTS_BY_SUBJECT command failed ⇒ does not get all certificates associated with a subject  
+          * there is not one certificate associated with a subject  
+
+* Role (Who can send)  
+     * Trustee  
+     * Vendor  
+     * VendorAdmin  
+     * CertificationCenter  
+     * NodeAdmin  
+
+* Parameters:
+     * **subject (Subject)** - string  
+          * Positive:  
+               * string matches the format  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * nonexistent value  
+               * length > MAX  
+
+## [GET_ALL_CERTS_BY_SKID]()
+
+### CLI command  
+CLI command: `dcld query certificate all-certs-by-skid --subject-key-id=<string>`
+
+* CLI command send  
+     * Valid command  
+          * command exists/relevant  
+          * query works for all types of certificates  
+               * PAA  
+               * PAI  
+               * RCAC  
+               * ICAC  
+     * Invalid command  
+          * access is denied to execute command  
+          * incorrect command syntax  
+
+* Command result  
+     * GET_ALL_CERTS_BY_SKID command completed successfully ⇒ gets all certificates by the given subject key ID attribute  
+          * there is at least one certificate by the given subject key ID attribute  
+     * GET_ALL_CERTS_BY_SKID command failed ⇒ does not get certificates  
+          * there is not one certificate by the given subject key ID attribute  
+
+* Role (Who can send)  
+     * Trustee  
+     * Vendor  
+     * VendorAdmin  
+     * CertificationCenter  
+     * NodeAdmin  
+
+* Parameters:  
+     * **subject_key_id (Subject Key ID)** - string  
+          * Positive:  
+               * string matches the format (e.g., `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`)  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * nonexistent value  
+               * length > MAX  
+
+---
+
+### REST API  
+REST API command: `GET /certificates/by-skid/{subjectKeyId}`
+
+* REST API command send  
+     * Valid command  
+          * correct HTTP method  
+          * request is authorized  
+          * uses valid credentials/role  
+          * query works for all types of certificates  
+               * PAA  
+               * PAI  
+               * RCAC  
+               * ICAC  
+     * Invalid command  
+          * incorrect request  
+          * server side error  
+
+* Command result  
+     * GET_ALL_CERTS_BY_SKID command completed successfully ⇒ gets all certificates by the given subject key ID attribute  
+          * there is at least one certificate by the given subject key ID attribute  
+     * GET_ALL_CERTS_BY_SKID command failed ⇒ does not get certificates  
+          * there is not one certificate by the given subject key ID attribute  
+
+* Role (Who can send)  
+     * Trustee  
+     * Vendor  
+     * VendorAdmin  
+     * CertificationCenter  
+     * NodeAdmin  
+
+* Parameters:
+     * **subject_key_id (Subject Key ID)** - string  
+          * Positive:  
+               * string matches the format (e.g., `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`)  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * nonexistent value  
+               * length > MAX  
+
+## [GET_CHILD_CERTS]()
+
+### CLI command  
+CLI command: `dcld query certificate child-certs --subject=<string> --subject-key-id=<string>`
+
+* CLI command send  
+     * Valid command  
+          * command exists/relevant  
+          * query works for child certificates  
+               * PAI  
+               * NOC_ICA  
+     * Invalid command  
+          * access is denied to execute command  
+          * incorrect command syntax  
+
+* Command result  
+     * GET_CHILD_CERTS command completed successfully ⇒ gets all child certificates for the given certificate  
+          * there is at least one child certificate for the given certificate  
+     * GET_CHILD_CERTS command failed ⇒ does not get all child certificates  
+          * there is not one child certificate for the given certificate  
+
+* Role (Who can send)  
+     * Trustee  
+     * Vendor  
+     * VendorAdmin  
+     * CertificationCenter  
+     * NodeAdmin  
+
+* Parameters:  
+     * **subject (Subject)** - string  
+          * Positive:  
+               * string matches the format  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * nonexistent value  
+               * length > MAX  
+     * **subject_key_id (Subject Key ID)** - string  
+          * Positive:  
+               * string matches the format (e.g., `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`)  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * nonexistent value  
+               * length > MAX  
+
+---
+
+### REST API  
+REST API command: `GET /certificates/children/{subject}/{subjectKeyId}`
+
+* REST API command send  
+     * Valid command  
+          * correct HTTP method  
+          * request is authorized  
+          * uses valid credentials/role  
+          * query works for child certificates  
+               * PAI  
+               * NOC_ICA  
+     * Invalid command  
+          * incorrect request  
+          * server side error  
+
+* Command result  
+     * GET_CHILD_CERTS command completed successfully ⇒ gets all child certificates for the given certificate  
+          * there is at least one child certificate for the given certificate  
+     * GET_CHILD_CERTS command failed ⇒ does not get all child certificates  
+          * there is not one child certificate for the given certificate  
+
+* Role (Who can send)  
+     * Trustee  
+     * Vendor  
+     * VendorAdmin  
+     * CertificationCenter  
+     * NodeAdmin  
+
+* Parameters: 
+     * **subject (Subject)** - string  
+          * Positive:  
+               * string matches the format  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * nonexistent value  
+               * length > MAX  
+     * **subject_key_id (Subject Key ID)** - string  
+          * Positive:  
+               * string matches the format (e.g., `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`)  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * nonexistent value  
+               * length > MAX   
+
+# Device Attestation Certificates (DA): PAA, PAI	
+## [PROPOSE_ADD_PAA]()
+### CLI command  
+CLI command: `dcld tx certificate propose-add-paa --cert=<string> --vid=<uint16> [--info=<string>] [--time=<int64>] [--schema-version=<uint16>]`
+
+* CLI command send  
+     * Valid command  
+          * command exists/relevant  
+          * query works for the following certificates  
+               * PAA  
+     * Invalid command  
+          * access is denied to execute command  
+          * incorrect command syntax  
+
+* Command result  
+     * PROPOSE_ADD_PAA command completed successfully ⇒ proposes a new PAA (self-signed root certificate)  
+          * sufficient number of approvals is received → certificate added  
+          * provided certificate is root  
+               * Issuer == Subject  
+               * Authority Key Identifier == Subject Key Identifier  
+          * no existing Proposed certificate with the same <Certificate's Subject>:<Certificate's Subject Key ID> combination  
+          * certificates with the same <Certificate's Subject>:<Certificate's Subject Key ID> combination already exist  
+          * the existing certificate is not a NOC certificate  
+          * sender matches the owner of the existing certificates  
+          * no existing certificate with the same <Certificate's Issuer>:<Certificate's Serial Number> combination  
+          * signature (self-signature) and expiration date are valid  
+     * PROPOSE_ADD_PAA command failed ⇒ does not propose a new PAA  
+          * insufficient number of approvals received → certificate is in Pending state  
+          * certificate not added  
+          * user tries to edit certificate → PAA certificate is immutable  
+          * provided certificate is not root  
+               * Issuer != Subject, but Authority Key Identifier == Subject Key Identifier  
+               * Issuer == Subject, but Authority Key Identifier != Subject Key Identifier  
+               * Issuer != Subject and Authority Key Identifier != Subject Key Identifier  
+          * existing Proposed certificate with same Subject:SKID combination  
+          * existing certificate is a NOC certificate  
+          * sender does not match the owner of the existing certificates  
+          * existing certificate with same Issuer:Serial Number  
+          * signature (self-signature) is not valid  
+          * signature valid but expiration is not  
+          * both signature and expiration are invalid  
+
+* Role  
+
+     * Who can send
+          * Positive: 
+               * Trustee 
+          * Negative:   
+               * Vendor  
+               * VendorAdmin  
+               * CertificationCenter  
+               * NodeAdmin 
+
+     * Who can revoke 
+          * Positive:
+               * Trustee  
+                    * owner → if there was 1 signature for the certificate  
+                    * quorum → if more than 1 signature for the certificate   
+          * Negative: 
+               * Vendor   
+               * VendorAdmin   
+               * CertificationCenter  
+               * NodeAdmin 
+
+* Parameters:  
+     * **cert (Certificate)** - string  
+          * Positive:  
+               * value exists  
+               * contains PEM string or path to file  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * nonexistent value  
+               * length > MAX  
+     * **info (Information/Notes)** - optional string  
+          * Positive:  
+               * empty value  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * length > MAX (4096 characters)  
+     * **time (Proposal Time)** - optional int64  
+          * Positive:  
+               * default value is current time  
+               * empty value  
+               * integer value format  
+          * Negative:  
+               * length > MAX (9_223_372_036_854_775_807)  
+     * **vid (Vendor ID)** - uint16  
+          * Positive:  
+               * unique combination  
+               * value > 0  
+               * integer value format  
+               * Vendor ID matches Certificate's vid field for VID-scoped PAA  
+          * Negative:  
+               * empty value  
+               * value <= 0  
+               * string value format  
+               * length > MAX (65535)  
+     * **schemaVersion (Schema Version)** - optional uint16  
+          * Positive:  
+               * value = 0  
+               * integer value format  
+               * empty value  
+          * Negative:  
+               * length > MAX (65535)  
+
+---
+
+### REST API  
+REST API command: `POST /certificates/propose-add-paa`
+
+* REST API command send  
+     * Valid command  
+          * correct HTTP method  
+          * request is authorized  
+          * uses valid credentials/role  
+          * query works for the following certificates  
+               * PAA  
+     * Invalid command  
+          * incorrect request  
+          * server side error  
+
+* Command result  
+     * PROPOSE_ADD_PAA command completed successfully ⇒ proposes a new PAA (self-signed root certificate)  
+          * identical results as CLI above  
+     * PROPOSE_ADD_PAA command failed ⇒ does not propose new PAA  
+          * identical results as CLI above  
+
+* Role  
+
+     * Who can send
+          * Positive: 
+               * Trustee 
+          * Negative:   
+               * Vendor  
+               * VendorAdmin  
+               * CertificationCenter  
+               * NodeAdmin 
+
+     * Who can revoke 
+          * Positive:
+               * Trustee  
+                    * owner → if there was 1 signature for the certificate  
+                    * quorum → if more than 1 signature for the certificate   
+          * Negative: 
+               * Vendor   
+               * VendorAdmin   
+               * CertificationCenter  
+               * NodeAdmin 
+
+* Parameters:  
+     * **cert (Certificate)** - string  
+          * Positive:  
+               * value exists  
+               * contains PEM string or path to file  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * nonexistent value  
+               * length > MAX  
+     * **info (Information/Notes)** - optional string  
+          * Positive:  
+               * empty value  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * length > MAX (4096 characters)  
+     * **time (Proposal Time)** - optional int64  
+          * Positive:  
+               * default value is current time  
+               * empty value  
+               * integer value format  
+          * Negative:  
+               * length > MAX (9_223_372_036_854_775_807)  
+     * **vid (Vendor ID)** - uint16  
+          * Positive:  
+               * unique combination  
+               * value > 0  
+               * integer value format  
+               * Vendor ID matches Certificate's vid field for VID-scoped PAA  
+          * Negative:  
+               * empty value  
+               * value <= 0  
+               * string value format  
+               * length > MAX (65535)  
+     * **schemaVersion (Schema Version)** - optional uint16  
+          * Positive:  
+               * value = 0  
+               * integer value format  
+               * empty value  
+          * Negative:  
+               * length > MAX (65535) 
+
+## [APPROVE_ADD_PAA]()
+
+### CLI command  
+CLI command: `dcld tx certificate approve-add-paa --subject=<string> --subject-key-id=<string> [--info=<string>] [--time=<int64>]`
+
+* CLI command send  
+     * Valid command  
+          * command exists/relevant  
+          * query works for the following certificates  
+               * PAA  
+     * Invalid command  
+          * access is denied to execute command  
+          * incorrect command syntax  
+
+* Command result  
+     * APPROVE_ADD_PAA command completed successfully ⇒ approves the proposed PAA (self-signed root certificate)  
+          * PROPOSE_ADD_PAA command completed successfully  
+          * command used for re-voting (i.e., change vote from reject to approve)  
+          * number of approvals > 2/3 of Trustees ⇒ certificate active  
+          * number of approvals = 2/3 of Trustees ⇒ certificate active  
+          * the proposal to add a root certificate with the provided subject and subject_key_id was submitted first  
+          * the proposed certificate hasn't been approved by the signer yet  
+     * APPROVE_ADD_PAA command failed ⇒ does not approve the proposed PAA  
+          * PROPOSE_ADD_PAA command failed  
+          * number of approvals < 2/3 of Trustees ⇒ certificate not active  
+          * the proposal to add a root certificate with the provided subject and subject_key_id was not submitted first  
+          * the proposed certificate has already been approved by the signer  
+
+* Role  
+
+     * Who can send
+          * Positive:
+               * Trustee     
+          * Negative: 
+               * Vendor 
+               * VendorAdmin  
+               * CertificationCenter
+               * NodeAdmin 
+
+* Parameters:  
+     * **subject (Subject)** - string  
+          * Positive:  
+               * string matches the format  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * nonexistent value  
+               * length > MAX  
+     * **subject_key_id (Subject Key ID)** - string  
+          * Positive:  
+               * formatted string (e.g., `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`)  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * nonexistent value  
+               * length > MAX  
+     * **info (Information/Notes)** - optional string  
+          * Positive:  
+               * empty value  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * length > MAX (4096 characters)  
+     * **time (Proposal Time)** - optional int64  
+          * Positive:  
+               * default value is current time  
+               * empty value  
+               * integer value format  
+          * Negative:  
+               * length > MAX (9_223_372_036_854_775_807)  
+
+---
+
+### REST API  
+REST API command: `POST /certificates/approve-add-paa`
+
+* REST API command send  
+     * Valid command  
+          * correct HTTP method  
+          * request is authorized  
+          * uses valid credentials/role  
+          * query works for the following certificates  
+               * PAA  
+     * Invalid command  
+          * incorrect request  
+          * server side error  
+
+* Command result  
+     * APPROVE_ADD_PAA command completed successfully ⇒ approves the proposed PAA (self-signed root certificate)  
+          * identical outcomes as CLI  
+     * APPROVE_ADD_PAA command failed ⇒ does not approve the proposed PAA  
+          * identical outcomes as CLI  
+
+* Role
+     * Who can send
+          * Positive:
+               * Trustee     
+          * Negative: 
+               * Vendor 
+               * VendorAdmin  
+               * CertificationCenter
+               * NodeAdmin 
+
+* Parameters:  
+     * **subject (Subject)** - string  
+          * Positive:  
+               * string matches the format  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * nonexistent value  
+               * length > MAX  
+     * **subject_key_id (Subject Key ID)** - string  
+          * Positive:  
+               * formatted string (e.g., `5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB`)  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * empty value  
+               * nonexistent value  
+               * length > MAX  
+     * **info (Information/Notes)** - optional string  
+          * Positive:  
+               * empty value  
+               * text value format  
+               * MIN < length < MAX  
+          * Negative:  
+               * length > MAX (4096 characters)  
+     * **time (Proposal Time)** - optional int64  
+          * Positive:  
+               * default value is current time  
+               * empty value  
+               * integer value format  
+          * Negative:  
+               * length > MAX (9_223_372_036_854_775_807)  
+
 ### REJECT_ADD_PAA	
 #### CLI command	
 CLI command send	
@@ -4488,7 +4571,7 @@ TRUE (-1)
 FALSE (0)	
      * Negative:	
 value is not bool	
-E2E (NOC): RCAC, ICAC	
+# E2E (NOC): RCAC, ICAC	
 ### ADD_NOC_ROOT (RCAC)	
 #### CLI command	
 CLI command send	
