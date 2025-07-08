@@ -20,6 +20,7 @@
     - genesis
   tasks:
     - name: run cosmovisor service
+      become: true
       service:
         name: cosmovisor
         state: started
