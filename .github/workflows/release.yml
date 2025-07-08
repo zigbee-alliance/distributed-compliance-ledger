@@ -68,11 +68,23 @@ jobs:
 
           asset_cosmovisor_url="$(echo "$release_info" \
               | jq -r '.assets[] | select(.name | match("^cosmovisor$")) | .browser_download_url')"
-          echo "$asset_bin_url"
+          echo "$asset_cosmovisor_url"
 
           asset_service_url="$(echo "$release_info" \
               | jq -r '.assets[] | select(.name | match("^cosmovisor.service$")) | .browser_download_url')"
           echo "$asset_service_url"
+
+          asset_service_conf_url="$(echo "$release_info" \
+              | jq -r '.assets[] | select(.name | match("^cosmovisor.conf$")) | .browser_download_url')"
+          echo "$asset_service_conf_url"
+
+          asset_start_url="$(echo "$release_info" \
+              | jq -r '.assets[] | select(.name | match("^cosmovisor_start.sh$")) | .browser_download_url')"
+          echo "$asset_start_url"
+
+          asset_preupgrade_url="$(echo "$release_info" \
+              | jq -r '.assets[] | select(.name | match("^cosmovisor_preupgrade.sh$")) | .browser_download_url')"
+          echo "$asset_preupgrade_url"
 
           asset_deploy_script_url="$(echo "$release_info" \
               | jq -r '.assets[] | select(.name | match("^run_dcl_node$")) | .browser_download_url')"
@@ -88,13 +100,13 @@ jobs:
 
           # build json string to use later as a job matrix
           included=()
-          if [[ -z "$asset_bin_url" || -z "$asset_ubuntu_tgz_url" || -z "$asset_cosmovisor_url" || -z "$asset_service_url" || -z "$asset_deploy_script_url" ]]; then
-            # os|bin-url|tgz-url|service-file-url|deploy-script-url|tgz-suffix
-            included+=("ubuntu-20.04|$asset_bin_url|$asset_ubuntu_tgz_url|$asset_cosmovisor_url|$asset_service_url|$asset_deploy_script_url|.ubuntu.tar.gz")
+          if [[ -z "$asset_bin_url" || -z "$asset_ubuntu_tgz_url" || -z "$asset_cosmovisor_url" || -z "$asset_service_url" || -z "$asset_service_conf_url" || -z "$asset_start_url" || -z "$asset_preupgrade_url" || -z "$asset_deploy_script_url" ]]; then
+            # os|bin-url|tgz-url|cosmovisor-url|service-file-url|service-conf-file-url|start-script-url|preupgrade-script-url|deploy-script-url|tgz-suffix
+            included+=("ubuntu-20.04|$asset_bin_url|$asset_ubuntu_tgz_url|$asset_cosmovisor_url|$asset_service_url|$asset_service_conf_url|$asset_start_url|$asset_preupgrade_url|$asset_deploy_script_url|.ubuntu.tar.gz")
           fi
           if [[ -z "$asset_macos_tgz_url" ]]; then
             # bin, service file and deploy script are not considered for macos job
-            included+=("macos-14|-||-|-|-|.macos.tar.gz")
+            included+=("macos-14|-||-|-|-|-|-|-|.macos.tar.gz")
           fi
 
           matrix_os="$(jq -ncR '
@@ -109,7 +121,8 @@ jobs:
             included_json="$(jq -ncR '
                 (input | split(" ")) |
                 [ .[] | split("|") |
-                {"os": .[0], "bin": .[1] | length, "tgz": .[2] | length, "cosmovisor": .[3] | length, "service": .[4] | length, "deploy_script": .[5] | length, "tgz_name_suffix": .[6]} ]
+                {"os": .[0], "bin": .[1] | length, "tgz": .[2] | length, "cosmovisor": .[3] | length, "service": .[4] | length, "service_conf": .[5] |
+                length, "start": .[6] | length, "preupgrade": .[7] | length, "deploy_script": .[8] | length, "tgz_name_suffix": .[9]} ]
               ' <<<"${included[*]}"
             )"
             echo "$included_json"
@@ -217,6 +230,39 @@ jobs:
           upload_url: ${{ needs.checks.outputs.upload_url }}
           asset_path: deployment/cosmovisor.service
           asset_name: cosmovisor.service
+          asset_content_type: text/plain
+
+      - name: upload to GitHub (service conf file)
+        if: ${{ !matrix.service_conf }}
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.checks.outputs.upload_url }}
+          asset_path: deployment/cosmovisor.conf
+          asset_name: cosmovisor.conf
+          asset_content_type: text/plain
+
+      - name: upload to GitHub (preupgrade script)
+        if: ${{ !matrix.preupgrade }}
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.checks.outputs.upload_url }}
+          asset_path: deployment/ansible/roles/bootstrap/files/cosmovisor_preupgrade.sh
+          asset_name: cosmovisor_preupgrade.sh
+          asset_content_type: text/plain
+
+      - name: upload to GitHub (start script)
+        if: ${{ !matrix.start }}
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.checks.outputs.upload_url }}
+          asset_path: deployment/ansible/roles/bootstrap/files/cosmovisor_start.sh
+          asset_name: cosmovisor_start.sh
           asset_content_type: text/plain
 
       - name: upload to GitHub (deploy script)

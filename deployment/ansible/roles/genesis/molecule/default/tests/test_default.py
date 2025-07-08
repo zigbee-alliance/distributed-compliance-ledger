@@ -26,8 +26,8 @@ dcld_cmd = "/var/lib/dcl/.dcl/cosmovisor/current/bin/dcld {} --home=/var/lib/dcl
 
 def test_service(host):
     svc = host.service("cosmovisor")
-    assert svc.is_running
     assert svc.is_enabled
+    assert svc.is_running
 
 
 def test_node_not_jailed(host):

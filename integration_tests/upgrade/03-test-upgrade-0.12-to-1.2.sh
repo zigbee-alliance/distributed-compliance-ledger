@@ -97,8 +97,11 @@ check_response "$result" "\"vendorName\": \"$vendor_name\""
 echo "Request all vendor infos"
 result=$($DCLD_BIN_NEW query vendorinfo all-vendors)
 check_response "$result" "\"vendorID\": $vid"
+check_response "$result" "\"vendorID\": $vid_for_rollback"
 check_response "$result" "\"companyLegalName\": \"$company_legal_name\""
+check_response "$result" "\"companyLegalName\": \"$company_legal_name_for_rollback\""
 check_response "$result" "\"vendorName\": \"$vendor_name\""
+check_response "$result" "\"vendorName\": \"$vendor_name_for_rollback\""
 
 test_divider
 
@@ -114,7 +117,8 @@ echo "Get Model with VID: $vid PID: $pid_2"
 result=$($DCLD_BIN_NEW query model get-model --vid=$vid --pid=$pid_2)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid_2"
-check_response "$result" "\"productLabel\": \"$product_label\""
+check_response "$result" "\"productLabel\": \"$product_label_for_rollback\""
+check_response "$result" "\"partNumber\": \"$part_number_for_rollback\""
 
 echo "Get all models"
 result=$($DCLD_BIN_NEW query model all-models)
@@ -345,7 +349,7 @@ result="$(echo $passphrase | $DCLD_BIN_NEW tx auth approve-add-account --address
 result="$(echo $passphrase | $DCLD_BIN_NEW tx auth approve-add-account --address="$_address" --from "$trustee_account_3" --yes)"
 result="$(echo $passphrase | $DCLD_BIN_NEW tx auth approve-add-account --address="$_address" --from "$trustee_account_4" --yes)"
 
-echo "Create CertificationCenter account"
+echo "Create CertificationCenter account $certification_center_account"
 
 result="$(echo $passphrase | $DCLD_BIN_NEW keys add "$certification_center_account")"
 _address=$(echo $passphrase | $DCLD_BIN_NEW keys show $certification_center_account -a)
@@ -769,6 +773,8 @@ result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validat
 check_response "$result" "\"owner\": \"$validator_address\""
 
 echo "Upgrade from 0.12.0 to 1.2 passed"
+
+test_divider
 
 rm -f $DCLD_BIN_OLD
 rm -f $DCLD_BIN_NEW
