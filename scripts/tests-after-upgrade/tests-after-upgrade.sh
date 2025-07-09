@@ -252,6 +252,23 @@ test_write_requests() {
     echo "Use keys for a $vendor_account"
     result="$(echo "$passphrase" | dcld keys add "$vendor_account" --recover)"
 
+    cleanup() {
+      echo "Teardown: delete the added NOC Root certificate"
+      result=$(dcld tx pki remove-noc-x509-root-cert --subject="$subject" --subject-key-id="$subject_key_id" --from "$vendor_account" --yes)
+      result=$(get_txn_result "$result")
+      code=$(echo "$result" | jq -r '.code')
+      if [[ "$code" == "0" ]]; then
+        echo "Certificate successfully deleted"
+      else
+        echo "Error: certificate was not deleted (code=$code)"
+      fi
+
+      echo "Teardown: delete keys for a $vendor_account"
+      result=$(dcld keys delete "$vendor_account" --yes)
+    }
+
+    trap cleanup EXIT
+
     # MODEL and MODEL_VERSION
 
     pid_random=$(random_four_digit_int)
@@ -273,23 +290,11 @@ test_write_requests() {
     check_response "$result" "\"code\": 0"
 
     test_divider
-
-    cleanup() {
-      echo "Teardown: delete the added NOC Root certificate"
-      result=$(dcld tx pki remove-noc-x509-root-cert --subject="$subject" --subject-key-id="$subject_key_id" --from "$vendor_account" --yes)
-      result=$(get_txn_result "$result")
-      check_response "$result" "\"code\": 0"
-
-      echo "Teardown: delete keys for a $vendor_account"
-      result=$(dcld keys delete "$vendor_account" --yes)
-    }
-
   fi
 }
 
 setup_network
 test_read_requests
 test_write_requests
-cleanup
 
-echo "Upgrade of TestNet from 1.4.3 to 1.4.4 passed"
+echo "Upgrade of $ENVIRONMENT to $plan_name has been successfully completed and verified."
