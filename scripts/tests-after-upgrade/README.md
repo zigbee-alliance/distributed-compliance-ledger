@@ -21,10 +21,10 @@ Run the script with the desired environment as an argument:
 
 If no environment is specified, the script defaults to `TestNet`.
 
-## Passphrase Requirement
+## Write operation: keys recovery
 
-For the `local` and `TestNet` environments, the corresponding `.env` file **must** include a non-empty `passphrase` variable:
+An approved account is needed for sending transactions to a pool. That is why the `TestNet` environment, the corresponding `.env` file **must** include a non-empty `mnemonic` variable:
 
 ```
-passphrase="your wallet passphrase here"
+mnemonic="your mnemonic for recovering keys"
 ```

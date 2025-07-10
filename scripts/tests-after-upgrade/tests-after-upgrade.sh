@@ -16,22 +16,12 @@
 set -euo pipefail
 source integration_tests/cli/common.sh
 
+ENVIRONMENT=${1:-testnet}
+ENV_FILE="scripts/tests-after-upgrade/${ENVIRONMENT}.env"
+
+source "$ENV_FILE"
+
 setup_network() {
-  ENVIRONMENT=${1:-testnet}
-  ENV_FILE="scripts/tests-after-upgrade/${ENVIRONMENT}.env"
-
-  source "$ENV_FILE"
-
-  if [ "$ENVIRONMENT" != "mainnet" ]; then
-    if ! grep -qE '^[[:space:]]*passphrase=' "$ENV_FILE"; then
-      echo "Error: 'passphrase' is not defined in $ENV_FILE"
-      exit 1
-    fi
-    if [ -z "${passphrase:-}" ]; then
-      echo "Error: 'passphrase' is empty in $ENV_FILE"
-      exit 1
-    fi
-  fi
 
   dcld config broadcast-mode sync #TODO
 
@@ -41,17 +31,13 @@ setup_network() {
   dcld config node $node_endpoint
 }
 
-random_four_digit_int() {
-  echo $(( RANDOM % 9000 + 1000 ))
-}
-
 test_read_requests() {
 
   # UPGRADE
 
   echo "Verify that upgrade is applied"
   result=$(dcld query upgrade applied $plan_name)
-  # echo "$result"
+  echo "$result"
 
   test_divider
 
@@ -244,17 +230,27 @@ test_write_requests() {
 
   if [ "$ENVIRONMENT" = "local" ]; then
     :
-    # create_new_vendor_account $vendor_account $vid_vendor
+    create_new_vendor_account $vendor_account $vid_vendor
+  fi
+  if [ "$ENVIRONMENT" = "testnet" ]; then
+      if ! grep -qE '^[[:space:]]*mnemonic=' "$ENV_FILE"; then
+        echo "Error: 'mnemonic' is not defined in $ENV_FILE"
+        exit 1
+      fi
+      if [ -z "${mnemonic:-}" ]; then
+        echo "Error: 'mnemonic' is empty in $ENV_FILE"
+        exit 1
+      fi
+    echo "Use keys for a $vendor_account"
+    cmd="(echo $mnemonic; echo $passphrase) | dcld keys add $vendor_account --recover"
+    result="$(bash -c "$cmd")"
   fi
 
   if [ "$ENVIRONMENT" != "mainnet" ]; then
 
-    echo "Use keys for a $vendor_account"
-    result="$(echo "$passphrase" | dcld keys add "$vendor_account" --recover)"
-
     cleanup() {
       echo "Teardown: delete the added NOC Root certificate"
-      result=$(dcld tx pki remove-noc-x509-root-cert --subject="$subject" --subject-key-id="$subject_key_id" --from "$vendor_account" --yes)
+      result=$(echo $passphrase | dcld tx pki remove-noc-x509-root-cert --subject="$subject" --subject-key-id="$subject_key_id" --from "$vendor_account" --yes)
       result=$(get_txn_result "$result")
       code=$(echo "$result" | jq -r '.code')
       if [[ "$code" == "0" ]]; then
@@ -264,28 +260,27 @@ test_write_requests() {
       fi
 
       echo "Teardown: delete keys for a $vendor_account"
-      result=$(dcld keys delete "$vendor_account" --yes)
+      result=$(echo $passphrase | dcld keys delete "$vendor_account" --yes)
     }
 
     trap cleanup EXIT
 
     # MODEL and MODEL_VERSION
-
-    pid_random=$(random_four_digit_int)
+    pid_random=$RANDOM
     echo "Add model vid=$vid_vendor pid=$pid_random"
-    result=$(dcld tx model add-model --vid="$vid_vendor" --pid="$pid_random" --deviceTypeID="$device_type_id" --productName="$product_name" --from="$vendor_account" --yes)
+    result=$(echo $passphrase | dcld tx model add-model --vid="$vid_vendor" --pid="$pid_random" --deviceTypeID="$device_type_id" --productName="$product_name" --from="$vendor_account" --yes)
     result=$(get_txn_result "$result")
     check_response "$result" "\"code\": 0"
 
     echo "Add model version vid=$vid_vendor pid=$pid_random"
-    result=$(dcld tx model add-model-version --vid="$vid_vendor" --pid="$pid_random" --softwareVersion="$software_version" --softwareVersionString="$software_version_string" --cdVersionNumber="$cd_version_number" --minApplicableSoftwareVersion="$min_applicable_software_version" --maxApplicableSoftwareVersion="$max_applicable_software_version" --from="$vendor_account" --yes)
+    result=$(echo $passphrase | dcld tx model add-model-version --vid="$vid_vendor" --pid="$pid_random" --softwareVersion="$software_version" --softwareVersionString="$software_version_string" --cdVersionNumber="$cd_version_number" --minApplicableSoftwareVersion="$min_applicable_software_version" --maxApplicableSoftwareVersion="$max_applicable_software_version" --from="$vendor_account" --yes)
     result=$(get_txn_result "$result")
     check_response "$result" "\"code\": 0"
 
     # X509 PKI
 
     echo "Add NOC Root certificate by vendor with VID = $vendor_account"
-    result=$(dcld tx pki add-noc-x509-root-cert --certificate="$noc_root_cert" --from "$vendor_account" --yes)
+    result=$(echo $passphrase | dcld tx pki add-noc-x509-root-cert --certificate="$noc_root_cert" --from "$vendor_account" --yes)
     result=$(get_txn_result "$result")
     check_response "$result" "\"code\": 0"
 
