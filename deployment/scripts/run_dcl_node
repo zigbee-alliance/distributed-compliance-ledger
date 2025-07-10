@@ -30,14 +30,20 @@ JSON_PARSER=
 #   - do not show private data
 #       - requries 'dcld keys' adjustment, pipes configuration is not an option
 
-SERVICE_FILE="./cosmovisor.service"
+DCLD_FILE="./dcld"
+COSMOVISOR_FILE="./cosmovisor"
+COSMOVISOR_SERVICE_FILE="./cosmovisor.service"
+COSMOVISOR_CONFIG_FILE="./cosmovisor.conf"
 PERSISTENT_PEERS_FILE='./persistent_peers.txt'
+COSMOVISOR_PREUPGRADE_SCRIPT="./cosmovisor_preupgrade.sh"
+COSMOVISOR_START_SCRIPT="./cosmovisor_start.sh"
 GENESIS_IN_FILE="./genesis.json"
 DCL_HOME="$HOME/.dcl"
 CONFIG_FILE="$DCL_HOME/config/config.toml"
 GENESIS_FILE="$DCL_HOME/config/genesis.json"
-GENESIS_APP_DIR="$DCL_HOME/cosmovisor/genesis/bin"
-CURRENT_APP_DIR="$DCL_HOME/cosmovisor/current/bin"
+COSMOVISOR_DIR="$DCL_HOME/cosmovisor/"
+GENESIS_APP_DIR="$COSMOVISOR_DIR/genesis/bin"
+CURRENT_APP_DIR="$COSMOVISOR_DIR/current/bin"
 
 CLI_PORT=26657
 NT_GENESIS="genesis"
@@ -228,15 +234,15 @@ function config_cli {
     local _chain_id="$1"
     local _peer_host="${2:-}"
 
-    ./dcld config chain-id "$_chain_id"
-    ./dcld config output json
-    ./dcld config broadcast-mode sync
+    "$DCLD_FILE" config chain-id "$_chain_id"
+    "$DCLD_FILE" config output json
+    "$DCLD_FILE" config broadcast-mode sync
     if [[ -n "$KEYRING_BACKEND" ]]; then
-        ./dcld config keyring-backend "$KEYRING_BACKEND"
+        "$DCLD_FILE" config keyring-backend "$KEYRING_BACKEND"
     fi
 
     if [[ -n "$_peer_host" ]]; then
-        ./dcld config node tcp://"$_peer_host"
+        "$DCLD_FILE" config node tcp://"$_peer_host"
     fi
 }
 
@@ -248,7 +254,7 @@ function add_key {
     local _key_name="$1"
     local _output="${2:-${_key_name}.dclkey.json}"
 
-    ./dcld keys add "$_key_name" 2>&1 | tee "$_output"
+    "$DCLD_FILE" keys add "$_key_name" 2>&1 | tee "$_output"
     echo -e "\tSaved key data in '$_output'"
 }
 
@@ -263,7 +269,7 @@ function node_init {
     rm -rf "$DCL_HOME/config/gentx"
     rm -f "$GENESIS_FILE"
 
-    ./dcld init "$_name" --chain-id "$_chain_id"
+    "$DCLD_FILE" init "$_name" --chain-id "$_chain_id"
 }
 
 
@@ -277,13 +283,13 @@ function build_genesis {
     local _acc_address_tr="${4:-}"
     local _acc_pubkey_tr="${5:-}"
 
-    ./dcld add-genesis-account --address "$_acc_address" --pubkey "$_acc_pubkey" --roles "NodeAdmin"
+    "$DCLD_FILE" add-genesis-account --address "$_acc_address" --pubkey "$_acc_pubkey" --roles "NodeAdmin"
     if [[ -n "$_acc_address_tr" && -n "$_acc_pubkey_tr" ]]; then
-        ./dcld add-genesis-account --address "$_acc_address_tr" --pubkey "$_acc_pubkey_tr" --roles "Trustee"
+        "$DCLD_FILE" add-genesis-account --address "$_acc_address_tr" --pubkey "$_acc_pubkey_tr" --roles "Trustee"
     fi
-    ./dcld gentx --chain-id "$CHAIN_ID" "$_key_name_admin"
-    ./dcld collect-gentxs
-    ./dcld validate-genesis
+    "$DCLD_FILE" gentx --chain-id "$CHAIN_ID" "$_key_name_admin"
+    "$DCLD_FILE" collect-gentxs
+    "$DCLD_FILE" validate-genesis
 }
 
 function config_node {
@@ -293,7 +299,8 @@ function config_node {
     local _node_name="$1"
     local _node_user="$2"
     local _cosmovisor_service_p="${3:-./cosmovisor.service}"
-    local _peers="${4:-}"
+    local _cosmovisor_conf_p="${4:-./cosmovisor.conf}"
+    local _peers="${5:-}"
 
     local _debug="${DEBUG:-}"
 
@@ -312,16 +319,28 @@ function config_node {
                 echo "Error. '$_cosmovisor_service_p' file not found"
                 exit 1
             fi
+            if [[ ! -f "$_cosmovisor_conf_p" ]]; then
+                echo "Error. '$_cosmovisor_conf_p' file not found"
+                exit 1
+            fi
 
             # TODO move ot a separate script
             # Open '26656' (p2p) and '26657' (RPC) ports. 
             # sudo ufw allow 26656/tcp
             # sudo ufw allow 26657/tcp
 
+            local abs_user_home="$(realpath "$HOME")"
+
             # set systemd cosmovisor.service
-            sed -i -r "s~^User=ubuntu$~User=${_node_user}~" "$_cosmovisor_service_p"
-            sed -i -r "s~\"DAEMON_HOME=/var/lib/ubuntu/.dcl\"~\"DAEMON_HOME=${DCL_HOME}\"~" "$_cosmovisor_service_p"
+            sed -i "s#/home/ubuntu#${abs_user_home}#g" "$_cosmovisor_service_p"
+            sed -i "s/ubuntu/${_node_user}/g" "$_cosmovisor_service_p"
             sudo cp -f "$_cosmovisor_service_p" /etc/systemd/system/cosmovisor.service
+
+            # set systemd cosmovisor.conf
+            sed -i "s#/home/ubuntu#${abs_user_home}#g" "$_cosmovisor_conf_p"
+            sudo mkdir -p /etc/systemd/system.conf.d
+            sudo cp -f "$_cosmovisor_conf_p" /etc/systemd/system.conf.d/cosmovisor.conf
+
         } || { echo "WARNING: Not a systemd system. Skipping systemd service configuration";}
     fi
 }
@@ -346,7 +365,7 @@ function run_node {
         echo -e "\tUse 'systemctl status cosmovisor' to get the node service status."
         echo "Use 'journalctl -u cosmovisor.service -f' to see node logs."
     else
-        cosmovisor run start >./cosmovisor.log 2>&1 &
+        /usr/share/cosmovisor/cosmovisor_start.sh >./cosmovisor.log 2>&1 &
         echo "Node has been stared in the backgroud."
     fi
 }
@@ -357,7 +376,7 @@ function wait_node_up {
     local _try=1
 
     echo -e "Waiting the node becomes up"
-    until ./dcld status >/dev/null 2>&1
+    until "$DCLD_FILE" status >/dev/null 2>&1
     do
         if [[ "$_try" -gt "$_timeout" ]]; then
             echo -e "\nERROR: dcld node seems not ready after $_timeout seconds."
@@ -381,13 +400,13 @@ function verify_node {
     echo "Checking a node's 'sync_info.latest_block_height' value is not increasing..."
 
     echo "sync_info.latest_block_height Try 1"
-    local status="$(./dcld status --node "tcp://${_node_host}:${_node_port}")"
+    local status="$(${DCLD_FILE} status --node "tcp://${_node_host}:${_node_port}")"
     local check1="$(_jq "$status" | grep latest_block_height)"
 
     echo "sync_info.latest_block_height Try 2"
     # TODO it should depend on empty block creation setting value
     sleep 6
-    status="$(./dcld status --node "tcp://${_node_host}:${_node_port}")"
+    status="$(${DCLD_FILE} status --node "tcp://${_node_host}:${_node_port}")"
     local check2="$(_jq "$status" | grep latest_block_height)"
 
     if [[ "$check1" == "$check2" ]]; then
@@ -397,7 +416,7 @@ function verify_node {
 
     # TODO improve: makes sense only for initial genesis node
     echo "Checking the node is participating in consensus..."
-    ./dcld query tendermint-validator-set | grep -q address
+    "$DCLD_FILE" query tendermint-validator-set | grep -q address
 
     # TODO check: catching_up is false
 
@@ -414,7 +433,7 @@ function add_account {
     local _acc_roles="$3"
     local _from="$4"
 
-    ./dcld tx auth propose-add-account --address "$_acc_address" --pubkey "$_acc_pubkey" \
+    "$DCLD_FILE" tx auth propose-add-account --address "$_acc_address" --pubkey "$_acc_pubkey" \
         --roles "$_acc_roles" --from "$_from"
 
     echo "Account added"
@@ -429,7 +448,7 @@ function approve_account {
     local _acc_address="$1"
     local _from="$2"
 
-    ./dcld tx auth approve-add-account --address "$_acc_address" --from "$_from"
+    "$DCLD_FILE" tx auth approve-add-account --address "$_acc_address" --from "$_from"
 
     echo "Account approved by $_from"
 }
@@ -455,8 +474,8 @@ if [[ "$verbosity" -ge 1 ]]; then
     #echo -e "Parsed arguments:\n$parsed_args"
 fi
 
-sudo chown "$NODE_USER" ./dcld
-sudo chmod u+x ./dcld
+sudo chown "$NODE_USER" "$DCLD_FILE"
+sudo chmod u+x "$DCLD_FILE"
 
 echo "Configuring CLI"
 
@@ -466,13 +485,13 @@ config_cli "$CHAIN_ID"
 ACC_ADDR="<acc-addr>"
 ACC_PUBKEY="<acc-pubkey>"
 if [[ -n "$KEY_NAME" ]]; then
-    KEY_INFO="$(./dcld keys show --output text "${KEY_NAME}")"
+    KEY_INFO="$("$DCLD_FILE" keys show --output text "${KEY_NAME}")"
     ACC_ADDR="$(grep address <<<"$KEY_INFO" | awk '{print $NF}')"
     ACC_PUBKEY="$(grep pubkey <<<"$KEY_INFO" | awk '{print $NF}' | sed -e "s/^'//" -e "s/'$//")"
 fi
 
 if [[ -n "$KEY_NAME_GEN_TRUSTEE" ]]; then
-    KEY_INFO="$(./dcld keys show --output text "${KEY_NAME_GEN_TRUSTEE}")"
+    KEY_INFO="$("$DCLD_FILE" keys show --output text "${KEY_NAME_GEN_TRUSTEE}")"
     ACC_ADDR_TR="$(grep address <<<"$KEY_INFO" | awk '{print $NF}')"
     ACC_PUBKEY_TR="$(grep pubkey <<<"$KEY_INFO" | awk '{print $NF}' | sed -e "s/^'//" -e "s/'$//")"
 fi
@@ -490,18 +509,27 @@ else
 fi
 
 echo "Configuring node"
-config_node "$NODE_NAME" "$NODE_USER" "$SERVICE_FILE" "$PERSISTENT_PEERS"
+config_node "$NODE_NAME" "$NODE_USER" "$COSMOVISOR_SERVICE_FILE" "$COSMOVISOR_CONFIG_FILE" "$PERSISTENT_PEERS"
 echo -e "\tDone."
 echo -e "\nOptionally, edit '$CONFIG_FILE' in order to set different setting (like listen address)"
 
 echo "Locating the genesis app version to $GENESIS_APP_DIR directory"
 mkdir -p "$GENESIS_APP_DIR"
-cp -f ./dcld "$GENESIS_APP_DIR"/
+cp -f "$DCLD_FILE" "$GENESIS_APP_DIR"/
 sudo chown "$NODE_USER" "$GENESIS_APP_DIR"/dcld
 # Execution permissions on `dcld` are granted to all (i.e. User, Group and Others classes)
 # because cosmovisor requires execution permission on the application binary to be granted to Others class:
 # https://github.com/cosmos/cosmos-sdk/blob/cosmovisor/v1.0.0/cosmovisor/upgrade.go#L164
 sudo chmod a+x "$GENESIS_APP_DIR"/dcld
+
+echo "Locating the cosmovisor to /usr/bin directory"
+sudo cp -f "$COSMOVISOR_FILE" /usr/bin
+sudo chown "$NODE_USER" /usr/bin/cosmovisor
+sudo chmod u+x /usr/bin/cosmovisor
+
+echo "Locating scripts to $COSMOVISOR_DIR directory"
+cp -f "$COSMOVISOR_PREUPGRADE_SCRIPT" "$COSMOVISOR_DIR"
+cp -f "$COSMOVISOR_START_SCRIPT" "$COSMOVISOR_DIR"
 
 echo "Running the node"
 run_node

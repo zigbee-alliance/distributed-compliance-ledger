@@ -32,7 +32,6 @@ def test_service(host):
     for prop in [
         "User=cosmovisor",
         "Group=dcl",
-        'Environment="DAEMON_HOME=/var/lib/dcl/.dcl" "DAEMON_NAME=dcld"',
-        "ExecStart=/usr/bin/cosmovisor run start",
+        "ExecStart=/var/lib/dcl/.dcl/cosmovisor/cosmovisor_start.sh"
     ]:
         assert prop in svc.content_string

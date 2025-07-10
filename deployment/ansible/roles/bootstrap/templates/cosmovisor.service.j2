@@ -9,9 +9,7 @@ Group={{ cosmovisor.group }}
 Type=simple
 Restart=always
 RestartSec=1
-Environment="DAEMON_HOME={{ dcl_home }}" "DAEMON_NAME=dcld"
-Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=true"
-ExecStart={{ cosmovisor.path }} start
+ExecStart={{ dcl_home }}/cosmovisor/cosmovisor_start.sh
 
 StandardOutput=append:/var/log/cosmovisor/cosmovisor.log
 StandardError=append:/var/log/cosmovisor/cosmovisor.log
