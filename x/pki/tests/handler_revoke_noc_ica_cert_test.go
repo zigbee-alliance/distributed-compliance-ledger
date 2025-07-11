@@ -15,478 +15,498 @@ import (
 // Main
 
 func TestHandler_RevokeNocIntermediateCert_BySubjectAndSKID(t *testing.T) {
-	setup := utils.Setup(t)
+	for _, crtType := range certificatesTypes {
+		setup := utils.Setup(t)
 
-	// add the first NOC root certificate
-	rootCertificate := utils.RootNocCertificate1(setup.Vendor1)
-	utils.AddNocRootCertificate(setup, rootCertificate)
+		// add the first NOC root certificate
+		rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+		utils.AddNocRootCertificate(setup, rootCertificate)
 
-	// add the first NOC non-root certificate
-	icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, icaCertificate1)
+		// add the first NOC non-root certificate
+		icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1, crtType)
+		utils.AddNocIntermediateCertificate(setup, icaCertificate1)
 
-	// add the second NOC non-root certificate
-	icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, icaCertificate2)
+		// add the second NOC non-root certificate
+		icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1, crtType)
+		utils.AddNocIntermediateCertificate(setup, icaCertificate2)
 
-	// Revoke NOC with subject and subject key id only
-	utils.RevokeNocIntermediateCertificate(
-		setup,
-		setup.Vendor1,
-		icaCertificate1.Subject,
-		icaCertificate1.SubjectKeyId,
-		"",
-		false)
+		// Revoke NOC with subject and subject key id only
+		utils.RevokeNocIntermediateCertificate(
+			setup,
+			setup.Vendor1,
+			icaCertificate1.Subject,
+			icaCertificate1.SubjectKeyId,
+			"",
+			false)
 
-	// Check indexes - both intermediate are revoked
-	indexes := utils.TestIndexes{
-		Present: []utils.TestIndex{
-			{Key: types.UniqueCertificateKeyPrefix},
-			{Key: types.RevokedNocIcaCertificatesKeyPrefix, Count: 2},
-			{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // root still exits
-		},
-		Missing: []utils.TestIndex{
-			{Key: types.AllCertificatesKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.NocCertificatesKeyPrefix},
-			{Key: types.NocCertificatesBySubjectKeyPrefix},
-			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
-			{Key: types.NocIcaCertificatesKeyPrefix},
-			{Key: types.ChildCertificatesKeyPrefix},
-			{Key: types.RevokedNocRootCertificatesKeyPrefix},
-			{Key: types.RevokedCertificatesKeyPrefix},
-		},
+		// Check indexes - both intermediate are revoked
+		indexes := utils.TestIndexes{
+			Present: []utils.TestIndex{
+				{Key: types.UniqueCertificateKeyPrefix},
+				{Key: types.RevokedNocIcaCertificatesKeyPrefix, Count: 2},
+				{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // root still exits
+			},
+			Missing: []utils.TestIndex{
+				{Key: types.AllCertificatesKeyPrefix},
+				{Key: types.AllCertificatesBySubjectKeyPrefix},
+				{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+				{Key: types.NocCertificatesKeyPrefix},
+				{Key: types.NocCertificatesBySubjectKeyPrefix},
+				{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
+				{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
+				{Key: types.NocIcaCertificatesKeyPrefix},
+				{Key: types.ChildCertificatesKeyPrefix},
+				{Key: types.RevokedNocRootCertificatesKeyPrefix},
+				{Key: types.RevokedCertificatesKeyPrefix},
+			},
+		}
+		utils.CheckCertificateStateIndexes(t, setup, icaCertificate1, indexes)
+		utils.CheckCertificateStateIndexes(t, setup, icaCertificate2, indexes)
 	}
-	utils.CheckCertificateStateIndexes(t, setup, icaCertificate1, indexes)
-	utils.CheckCertificateStateIndexes(t, setup, icaCertificate2, indexes)
 }
 
 func TestHandler_RevokeNocIntermediateCert_BySerialNumber(t *testing.T) {
-	setup := utils.Setup(t)
+	for _, crtType := range certificatesTypes {
+		setup := utils.Setup(t)
 
-	// add the first NOC root certificate
-	rootCertificate := utils.RootNocCertificate1(setup.Vendor1)
-	utils.AddNocRootCertificate(setup, rootCertificate)
+		// add the first NOC root certificate
+		rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+		utils.AddNocRootCertificate(setup, rootCertificate)
 
-	// add the first NOC non-root certificate
-	icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, icaCertificate1)
+		// add the first NOC non-root certificate
+		icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1, crtType)
+		utils.AddNocIntermediateCertificate(setup, icaCertificate1)
 
-	// add the second NOC non-root certificate
-	icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, icaCertificate2)
+		// add the second NOC non-root certificate
+		icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1, crtType)
+		utils.AddNocIntermediateCertificate(setup, icaCertificate2)
 
-	// Revoke NOC by serial number only
-	utils.RevokeNocIntermediateCertificate(
-		setup,
-		setup.Vendor1,
-		icaCertificate1.Subject,
-		icaCertificate1.SubjectKeyId,
-		icaCertificate1.SerialNumber,
-		false)
+		// Revoke NOC by serial number only
+		utils.RevokeNocIntermediateCertificate(
+			setup,
+			setup.Vendor1,
+			icaCertificate1.Subject,
+			icaCertificate1.SubjectKeyId,
+			icaCertificate1.SerialNumber,
+			false)
 
-	// Check state indexes for intermediate - revoked and approved exist
-	indexes := utils.TestIndexes{
-		Present: []utils.TestIndex{
-			{Key: types.UniqueCertificateKeyPrefix},
-			{Key: types.RevokedNocIcaCertificatesKeyPrefix},
-			{Key: types.AllCertificatesKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.NocCertificatesKeyPrefix},
-			{Key: types.NocCertificatesBySubjectKeyPrefix},
-			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
-			{Key: types.NocIcaCertificatesKeyPrefix},
-			{Key: types.ChildCertificatesKeyPrefix},
-		},
-		Missing: []utils.TestIndex{
-			{Key: types.RevokedNocRootCertificatesKeyPrefix},
-			{Key: types.RevokedCertificatesKeyPrefix},
-		},
+		// Check state indexes for intermediate - revoked and approved exist
+		indexes := utils.TestIndexes{
+			Present: []utils.TestIndex{
+				{Key: types.UniqueCertificateKeyPrefix},
+				{Key: types.RevokedNocIcaCertificatesKeyPrefix},
+				{Key: types.AllCertificatesKeyPrefix},
+				{Key: types.AllCertificatesBySubjectKeyPrefix},
+				{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+				{Key: types.NocCertificatesKeyPrefix},
+				{Key: types.NocCertificatesBySubjectKeyPrefix},
+				{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
+				{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
+				{Key: types.NocIcaCertificatesKeyPrefix},
+				{Key: types.ChildCertificatesKeyPrefix},
+			},
+			Missing: []utils.TestIndex{
+				{Key: types.RevokedNocRootCertificatesKeyPrefix},
+				{Key: types.RevokedCertificatesKeyPrefix},
+			},
+		}
+		utils.CheckCertificateStateIndexes(t, setup, icaCertificate1, indexes)
+		utils.CheckCertificateStateIndexes(t, setup, icaCertificate2, indexes)
 	}
-	utils.CheckCertificateStateIndexes(t, setup, icaCertificate1, indexes)
-	utils.CheckCertificateStateIndexes(t, setup, icaCertificate2, indexes)
 }
 
 func TestHandler_RevokeNocIntermediateCert_BySubjectAndSKID_ParentExist(t *testing.T) {
-	setup := utils.Setup(t)
+	for _, crtType := range certificatesTypes {
+		setup := utils.Setup(t)
 
-	// add the first NOC root certificate
-	rootCertificate := utils.RootNocCertificate1(setup.Vendor1)
-	utils.AddNocRootCertificate(setup, rootCertificate)
+		// add the first NOC root certificate
+		rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+		utils.AddNocRootCertificate(setup, rootCertificate)
 
-	// add the NOC non-root certificate
-	icaCertificate := utils.IntermediateNocCertificate1(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, icaCertificate)
+		// add the NOC non-root certificate
+		icaCertificate := utils.IntermediateNocCertificate1(setup.Vendor1, crtType)
+		utils.AddNocIntermediateCertificate(setup, icaCertificate)
 
-	// Revoke NOC with subject and subject key id only
-	utils.RevokeNocIntermediateCertificate(
-		setup,
-		setup.Vendor1,
-		icaCertificate.Subject,
-		icaCertificate.SubjectKeyId,
-		"",
-		false)
+		// Revoke NOC with subject and subject key id only
+		utils.RevokeNocIntermediateCertificate(
+			setup,
+			setup.Vendor1,
+			icaCertificate.Subject,
+			icaCertificate.SubjectKeyId,
+			"",
+			false)
 
-	// Check state indexes for root - approved
-	indexes := utils.TestIndexes{
-		Present: []utils.TestIndex{
-			{Key: types.AllCertificatesKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.NocCertificatesKeyPrefix},
-			{Key: types.NocCertificatesBySubjectKeyPrefix},
-			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
-			{Key: types.NocRootCertificatesKeyPrefix},
-			{Key: types.UniqueCertificateKeyPrefix},
-		},
-		Missing: []utils.TestIndex{
-			{Key: types.NocIcaCertificatesKeyPrefix},
-			{Key: types.ProposedCertificateKeyPrefix},
-			{Key: types.ApprovedCertificatesKeyPrefix},
-			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
-			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.ApprovedRootCertificatesKeyPrefix},
-		},
+		// Check state indexes for root - approved
+		indexes := utils.TestIndexes{
+			Present: []utils.TestIndex{
+				{Key: types.AllCertificatesKeyPrefix},
+				{Key: types.AllCertificatesBySubjectKeyPrefix},
+				{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+				{Key: types.NocCertificatesKeyPrefix},
+				{Key: types.NocCertificatesBySubjectKeyPrefix},
+				{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
+				{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
+				{Key: types.NocRootCertificatesKeyPrefix},
+				{Key: types.UniqueCertificateKeyPrefix},
+			},
+			Missing: []utils.TestIndex{
+				{Key: types.NocIcaCertificatesKeyPrefix},
+				{Key: types.ProposedCertificateKeyPrefix},
+				{Key: types.ApprovedCertificatesKeyPrefix},
+				{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
+				{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+				{Key: types.ApprovedRootCertificatesKeyPrefix},
+			},
+		}
+		utils.CheckCertificateStateIndexes(t, setup, rootCertificate, indexes)
 	}
-	utils.CheckCertificateStateIndexes(t, setup, rootCertificate, indexes)
 }
 
 func TestHandler_RevokeNocIntermediateCert_BySerialNumber_ParentExist(t *testing.T) {
-	setup := utils.Setup(t)
+	for _, crtType := range certificatesTypes {
+		setup := utils.Setup(t)
 
-	// add the first NOC root certificate
-	rootCertificate := utils.RootNocCertificate1(setup.Vendor1)
-	utils.AddNocRootCertificate(setup, rootCertificate)
+		// add the first NOC root certificate
+		rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+		utils.AddNocRootCertificate(setup, rootCertificate)
 
-	// add the NOC non-root certificate
-	icaCertificate := utils.IntermediateNocCertificate1(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, icaCertificate)
+		// add the NOC non-root certificate
+		icaCertificate := utils.IntermediateNocCertificate1(setup.Vendor1, crtType)
+		utils.AddNocIntermediateCertificate(setup, icaCertificate)
 
-	// Revoke NOC with subject and subject key id only
-	utils.RevokeNocIntermediateCertificate(
-		setup,
-		setup.Vendor1,
-		icaCertificate.Subject,
-		icaCertificate.SubjectKeyId,
-		icaCertificate.SerialNumber,
-		false)
+		// Revoke NOC with subject and subject key id only
+		utils.RevokeNocIntermediateCertificate(
+			setup,
+			setup.Vendor1,
+			icaCertificate.Subject,
+			icaCertificate.SubjectKeyId,
+			icaCertificate.SerialNumber,
+			false)
 
-	// Check state indexes for root - approved
-	indexes := utils.TestIndexes{
-		Present: []utils.TestIndex{
-			{Key: types.AllCertificatesKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.NocCertificatesKeyPrefix},
-			{Key: types.NocCertificatesBySubjectKeyPrefix},
-			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
-			{Key: types.NocRootCertificatesKeyPrefix},
-			{Key: types.UniqueCertificateKeyPrefix},
-		},
-		Missing: []utils.TestIndex{
-			{Key: types.NocIcaCertificatesKeyPrefix},
-			{Key: types.ProposedCertificateKeyPrefix},
-			{Key: types.ApprovedCertificatesKeyPrefix},
-			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
-			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.ApprovedRootCertificatesKeyPrefix},
-		},
+		// Check state indexes for root - approved
+		indexes := utils.TestIndexes{
+			Present: []utils.TestIndex{
+				{Key: types.AllCertificatesKeyPrefix},
+				{Key: types.AllCertificatesBySubjectKeyPrefix},
+				{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+				{Key: types.NocCertificatesKeyPrefix},
+				{Key: types.NocCertificatesBySubjectKeyPrefix},
+				{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
+				{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
+				{Key: types.NocRootCertificatesKeyPrefix},
+				{Key: types.UniqueCertificateKeyPrefix},
+			},
+			Missing: []utils.TestIndex{
+				{Key: types.NocIcaCertificatesKeyPrefix},
+				{Key: types.ProposedCertificateKeyPrefix},
+				{Key: types.ApprovedCertificatesKeyPrefix},
+				{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
+				{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+				{Key: types.ApprovedRootCertificatesKeyPrefix},
+			},
+		}
+		utils.CheckCertificateStateIndexes(t, setup, rootCertificate, indexes)
 	}
-	utils.CheckCertificateStateIndexes(t, setup, rootCertificate, indexes)
 }
 
 func TestHandler_RevokeNocIntermediateCert_BySubjectAndSKID_KeepChild(t *testing.T) {
-	setup := utils.Setup(t)
+	for _, crtType := range certificatesTypes {
+		setup := utils.Setup(t)
 
-	// add the first NOC root certificate
-	rootCertificate := utils.RootNocCertificate1(setup.Vendor1)
-	utils.AddNocRootCertificate(setup, rootCertificate)
+		// add the first NOC root certificate
+		rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+		utils.AddNocRootCertificate(setup, rootCertificate)
 
-	// add the first NOC non-root certificate
-	icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, icaCertificate1)
+		// add the first NOC non-root certificate
+		icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1, crtType)
+		utils.AddNocIntermediateCertificate(setup, icaCertificate1)
 
-	// add the second NOC non-root certificate
-	icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, icaCertificate2)
+		// add the second NOC non-root certificate
+		icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1, crtType)
+		utils.AddNocIntermediateCertificate(setup, icaCertificate2)
 
-	// add the NOC leaf certificate
-	leafCertificate := utils.LeafNocCertificate1(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, leafCertificate)
+		// add the NOC leaf certificate
+		leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, crtType)
+		utils.AddNocIntermediateCertificate(setup, leafCertificate)
 
-	// Revoke NOC with subject and subject key id only
-	utils.RevokeNocIntermediateCertificate(
-		setup,
-		setup.Vendor1,
-		icaCertificate1.Subject,
-		icaCertificate1.SubjectKeyId,
-		"",
-		false)
+		// Revoke NOC with subject and subject key id only
+		utils.RevokeNocIntermediateCertificate(
+			setup,
+			setup.Vendor1,
+			icaCertificate1.Subject,
+			icaCertificate1.SubjectKeyId,
+			"",
+			false)
 
-	// Check state indexes for leaf - approved
-	indexes := utils.TestIndexes{
-		Present: []utils.TestIndex{
-			{Key: types.AllCertificatesKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.NocCertificatesKeyPrefix},
-			{Key: types.NocCertificatesBySubjectKeyPrefix},
-			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
-			{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // we created root certificate with same vid
-			{Key: types.NocIcaCertificatesKeyPrefix},
-			{Key: types.UniqueCertificateKeyPrefix},
-			{Key: types.ChildCertificatesKeyPrefix},
-		},
-		Missing: []utils.TestIndex{
-			{Key: types.ProposedCertificateKeyPrefix},
-			{Key: types.ApprovedCertificatesKeyPrefix},
-			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
-			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.ApprovedRootCertificatesKeyPrefix},
-		},
+		// Check state indexes for leaf - approved
+		indexes := utils.TestIndexes{
+			Present: []utils.TestIndex{
+				{Key: types.AllCertificatesKeyPrefix},
+				{Key: types.AllCertificatesBySubjectKeyPrefix},
+				{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+				{Key: types.NocCertificatesKeyPrefix},
+				{Key: types.NocCertificatesBySubjectKeyPrefix},
+				{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
+				{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
+				{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // we created root certificate with same vid
+				{Key: types.NocIcaCertificatesKeyPrefix},
+				{Key: types.UniqueCertificateKeyPrefix},
+				{Key: types.ChildCertificatesKeyPrefix},
+			},
+			Missing: []utils.TestIndex{
+				{Key: types.ProposedCertificateKeyPrefix},
+				{Key: types.ApprovedCertificatesKeyPrefix},
+				{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
+				{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+				{Key: types.ApprovedRootCertificatesKeyPrefix},
+			},
+		}
+		utils.CheckCertificateStateIndexes(t, setup, leafCertificate, indexes)
 	}
-	utils.CheckCertificateStateIndexes(t, setup, leafCertificate, indexes)
 }
 
 func TestHandler_RevokeNocIntermediateCert_BySerialNumber_KeepChild(t *testing.T) {
-	setup := utils.Setup(t)
+	for _, crtType := range certificatesTypes {
+		setup := utils.Setup(t)
 
-	// add the first NOC root certificate
-	rootCertificate := utils.RootNocCertificate1(setup.Vendor1)
-	utils.AddNocRootCertificate(setup, rootCertificate)
+		// add the first NOC root certificate
+		rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+		utils.AddNocRootCertificate(setup, rootCertificate)
 
-	// add the first NOC non-root certificate
-	icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, icaCertificate1)
+		// add the first NOC non-root certificate
+		icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1, crtType)
+		utils.AddNocIntermediateCertificate(setup, icaCertificate1)
 
-	// add the second NOC non-root certificate
-	icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, icaCertificate2)
+		// add the second NOC non-root certificate
+		icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1, crtType)
+		utils.AddNocIntermediateCertificate(setup, icaCertificate2)
 
-	// add the NOC leaf certificate
-	leafCertificate := utils.LeafNocCertificate1(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, leafCertificate)
+		// add the NOC leaf certificate
+		leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, crtType)
+		utils.AddNocIntermediateCertificate(setup, leafCertificate)
 
-	// Revoke NOC by serial number only
-	utils.RevokeNocIntermediateCertificate(
-		setup,
-		setup.Vendor1,
-		icaCertificate1.Subject,
-		icaCertificate1.SubjectKeyId,
-		icaCertificate1.SerialNumber,
-		false)
+		// Revoke NOC by serial number only
+		utils.RevokeNocIntermediateCertificate(
+			setup,
+			setup.Vendor1,
+			icaCertificate1.Subject,
+			icaCertificate1.SubjectKeyId,
+			icaCertificate1.SerialNumber,
+			false)
 
-	// Check state indexes for leaf - approved
-	indexes := utils.TestIndexes{
-		Present: []utils.TestIndex{
-			{Key: types.AllCertificatesKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.NocCertificatesKeyPrefix},
-			{Key: types.NocCertificatesBySubjectKeyPrefix},
-			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
-			{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // we created root certificate with same vid
-			{Key: types.NocIcaCertificatesKeyPrefix, Count: 2},  // intermediate + leaf
-			{Key: types.UniqueCertificateKeyPrefix},
-			{Key: types.ChildCertificatesKeyPrefix},
-		},
-		Missing: []utils.TestIndex{
-			{Key: types.ProposedCertificateKeyPrefix},
-			{Key: types.ApprovedCertificatesKeyPrefix},
-			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
-			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.ApprovedRootCertificatesKeyPrefix},
-		},
+		// Check state indexes for leaf - approved
+		indexes := utils.TestIndexes{
+			Present: []utils.TestIndex{
+				{Key: types.AllCertificatesKeyPrefix},
+				{Key: types.AllCertificatesBySubjectKeyPrefix},
+				{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+				{Key: types.NocCertificatesKeyPrefix},
+				{Key: types.NocCertificatesBySubjectKeyPrefix},
+				{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
+				{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
+				{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // we created root certificate with same vid
+				{Key: types.NocIcaCertificatesKeyPrefix, Count: 2},  // intermediate + leaf
+				{Key: types.UniqueCertificateKeyPrefix},
+				{Key: types.ChildCertificatesKeyPrefix},
+			},
+			Missing: []utils.TestIndex{
+				{Key: types.ProposedCertificateKeyPrefix},
+				{Key: types.ApprovedCertificatesKeyPrefix},
+				{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
+				{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+				{Key: types.ApprovedRootCertificatesKeyPrefix},
+			},
+		}
+		utils.CheckCertificateStateIndexes(t, setup, leafCertificate, indexes)
 	}
-	utils.CheckCertificateStateIndexes(t, setup, leafCertificate, indexes)
 }
 
 func TestHandler_RevokeNocIntermediateCert_BySubjectAndSKID_RevokeChild(t *testing.T) {
-	setup := utils.Setup(t)
+	for _, crtType := range certificatesTypes {
+		setup := utils.Setup(t)
 
-	// add the first NOC root certificate
-	rootCertificate := utils.RootNocCertificate1(setup.Vendor1)
-	utils.AddNocRootCertificate(setup, rootCertificate)
+		// add the first NOC root certificate
+		rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+		utils.AddNocRootCertificate(setup, rootCertificate)
 
-	// add the first NOC non-root certificate
-	icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, icaCertificate1)
+		// add the first NOC non-root certificate
+		icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1, crtType)
+		utils.AddNocIntermediateCertificate(setup, icaCertificate1)
 
-	// add the second NOC non-root certificate
-	icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, icaCertificate2)
+		// add the second NOC non-root certificate
+		icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1, crtType)
+		utils.AddNocIntermediateCertificate(setup, icaCertificate2)
 
-	// add the NOC leaf certificate
-	leafCertificate := utils.LeafNocCertificate1(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, leafCertificate)
+		// add the NOC leaf certificate
+		leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, crtType)
+		utils.AddNocIntermediateCertificate(setup, leafCertificate)
 
-	// Revoke noc with subject and subject key id and its child too
-	utils.RevokeNocIntermediateCertificate(
-		setup,
-		setup.Vendor1,
-		icaCertificate1.Subject,
-		icaCertificate1.SubjectKeyId,
-		"",
-		true)
+		// Revoke noc with subject and subject key id and its child too
+		utils.RevokeNocIntermediateCertificate(
+			setup,
+			setup.Vendor1,
+			icaCertificate1.Subject,
+			icaCertificate1.SubjectKeyId,
+			"",
+			true)
 
-	// Check indexes for child - revoked
-	indexes := utils.TestIndexes{
-		Present: []utils.TestIndex{
-			{Key: types.UniqueCertificateKeyPrefix},
-			{Key: types.RevokedNocIcaCertificatesKeyPrefix, Count: 1},
-			{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // root still exits
-		},
-		Missing: []utils.TestIndex{
-			{Key: types.AllCertificatesKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.NocCertificatesKeyPrefix},
-			{Key: types.NocCertificatesBySubjectKeyPrefix},
-			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
-			{Key: types.NocIcaCertificatesKeyPrefix},
-			{Key: types.ChildCertificatesKeyPrefix},
-			{Key: types.RevokedNocRootCertificatesKeyPrefix},
-			{Key: types.RevokedCertificatesKeyPrefix},
-		},
+		// Check indexes for child - revoked
+		indexes := utils.TestIndexes{
+			Present: []utils.TestIndex{
+				{Key: types.UniqueCertificateKeyPrefix},
+				{Key: types.RevokedNocIcaCertificatesKeyPrefix, Count: 1},
+				{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // root still exits
+			},
+			Missing: []utils.TestIndex{
+				{Key: types.AllCertificatesKeyPrefix},
+				{Key: types.AllCertificatesBySubjectKeyPrefix},
+				{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+				{Key: types.NocCertificatesKeyPrefix},
+				{Key: types.NocCertificatesBySubjectKeyPrefix},
+				{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
+				{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
+				{Key: types.NocIcaCertificatesKeyPrefix},
+				{Key: types.ChildCertificatesKeyPrefix},
+				{Key: types.RevokedNocRootCertificatesKeyPrefix},
+				{Key: types.RevokedCertificatesKeyPrefix},
+			},
+		}
+		utils.CheckCertificateStateIndexes(t, setup, leafCertificate, indexes)
 	}
-	utils.CheckCertificateStateIndexes(t, setup, leafCertificate, indexes)
 }
 
 func TestHandler_RevokeNocIntermediateCert_BySerialNumber_RevokeChild(t *testing.T) {
-	setup := utils.Setup(t)
+	for _, crtType := range certificatesTypes {
+		setup := utils.Setup(t)
 
-	// add the first NOC root certificate
-	rootCertificate := utils.RootNocCertificate1(setup.Vendor1)
-	utils.AddNocRootCertificate(setup, rootCertificate)
+		// add the first NOC root certificate
+		rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+		utils.AddNocRootCertificate(setup, rootCertificate)
 
-	// add the first NOC non-root certificate
-	icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, icaCertificate1)
+		// add the first NOC non-root certificate
+		icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1, crtType)
+		utils.AddNocIntermediateCertificate(setup, icaCertificate1)
 
-	// add the second NOC non-root certificate
-	icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, icaCertificate2)
+		// add the second NOC non-root certificate
+		icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1, crtType)
+		utils.AddNocIntermediateCertificate(setup, icaCertificate2)
 
-	// add the NOC leaf certificate
-	leafCertificate := utils.LeafNocCertificate1(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, leafCertificate)
+		// add the NOC leaf certificate
+		leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, crtType)
+		utils.AddNocIntermediateCertificate(setup, leafCertificate)
 
-	// Revoke noc with subject and subject key id and its child too
-	utils.RevokeNocIntermediateCertificate(
-		setup,
-		setup.Vendor1,
-		icaCertificate1.Subject,
-		icaCertificate1.SubjectKeyId,
-		icaCertificate1.SerialNumber,
-		true)
+		// Revoke noc with subject and subject key id and its child too
+		utils.RevokeNocIntermediateCertificate(
+			setup,
+			setup.Vendor1,
+			icaCertificate1.Subject,
+			icaCertificate1.SubjectKeyId,
+			icaCertificate1.SerialNumber,
+			true)
 
-	allRevokedCerts, _ := utils.QueryAllNocRevokedIcaCertificates(setup)
-	require.Equal(t, 2, len(allRevokedCerts))
+		allRevokedCerts, _ := utils.QueryAllNocRevokedIcaCertificates(setup)
+		require.Equal(t, 2, len(allRevokedCerts))
 
-	// Check indexes for child - revoked
-	indexes := utils.TestIndexes{
-		Present: []utils.TestIndex{
-			{Key: types.UniqueCertificateKeyPrefix},
-			{Key: types.RevokedNocIcaCertificatesKeyPrefix, Count: 1},
-			{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // root still exits
-			{Key: types.NocIcaCertificatesKeyPrefix},            // inter with same vid exists
-		},
-		Missing: []utils.TestIndex{
-			{Key: types.AllCertificatesKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.NocCertificatesKeyPrefix},
-			{Key: types.NocCertificatesBySubjectKeyPrefix},
-			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
-			{Key: types.ChildCertificatesKeyPrefix},
-			{Key: types.RevokedNocRootCertificatesKeyPrefix},
-			{Key: types.RevokedCertificatesKeyPrefix},
-		},
+		// Check indexes for child - revoked
+		indexes := utils.TestIndexes{
+			Present: []utils.TestIndex{
+				{Key: types.UniqueCertificateKeyPrefix},
+				{Key: types.RevokedNocIcaCertificatesKeyPrefix, Count: 1},
+				{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // root still exits
+				{Key: types.NocIcaCertificatesKeyPrefix},            // inter with same vid exists
+			},
+			Missing: []utils.TestIndex{
+				{Key: types.AllCertificatesKeyPrefix},
+				{Key: types.AllCertificatesBySubjectKeyPrefix},
+				{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+				{Key: types.NocCertificatesKeyPrefix},
+				{Key: types.NocCertificatesBySubjectKeyPrefix},
+				{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
+				{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
+				{Key: types.ChildCertificatesKeyPrefix},
+				{Key: types.RevokedNocRootCertificatesKeyPrefix},
+				{Key: types.RevokedCertificatesKeyPrefix},
+			},
+		}
+		utils.CheckCertificateStateIndexes(t, setup, leafCertificate, indexes)
 	}
-	utils.CheckCertificateStateIndexes(t, setup, leafCertificate, indexes)
 }
 
 func TestHandler_RevokeNocIntermediateCert_ByOtherVendor(t *testing.T) {
-	setup := utils.Setup(t)
+	for _, crtType := range certificatesTypes {
+		setup := utils.Setup(t)
 
-	// add vendor with same vid
-	otherVendor := setup.CreateVendorAccount(testconstants.Vid)
+		// add vendor with same vid
+		otherVendor := setup.CreateVendorAccount(testconstants.Vid)
 
-	// add the first NOC root certificate
-	rootCertificate := utils.RootNocCertificate1(setup.Vendor1)
-	utils.AddNocRootCertificate(setup, rootCertificate)
+		// add the first NOC root certificate
+		rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+		utils.AddNocRootCertificate(setup, rootCertificate)
 
-	// add the NOC non-root certificate
-	icaCertificate := utils.IntermediateNocCertificate1(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, icaCertificate)
+		// add the NOC non-root certificate
+		icaCertificate := utils.IntermediateNocCertificate1(setup.Vendor1, crtType)
+		utils.AddNocIntermediateCertificate(setup, icaCertificate)
 
-	// Revoke NOC with subject and subject key id only
-	utils.RevokeNocIntermediateCertificate(
-		setup,
-		otherVendor,
-		icaCertificate.Subject,
-		icaCertificate.SubjectKeyId,
-		"",
-		false)
+		// Revoke NOC with subject and subject key id only
+		utils.RevokeNocIntermediateCertificate(
+			setup,
+			otherVendor,
+			icaCertificate.Subject,
+			icaCertificate.SubjectKeyId,
+			"",
+			false)
 
-	// Check indexes for intermediate - revoked
-	indexes := utils.TestIndexes{
-		Present: []utils.TestIndex{
-			{Key: types.UniqueCertificateKeyPrefix},
-			{Key: types.RevokedNocIcaCertificatesKeyPrefix},
-			{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // root still exits
-		},
-		Missing: []utils.TestIndex{
-			{Key: types.AllCertificatesKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.NocCertificatesKeyPrefix},
-			{Key: types.NocCertificatesBySubjectKeyPrefix},
-			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
-			{Key: types.NocIcaCertificatesKeyPrefix},
-			{Key: types.ChildCertificatesKeyPrefix},
-			{Key: types.RevokedNocRootCertificatesKeyPrefix},
-			{Key: types.RevokedCertificatesKeyPrefix},
-		},
+		// Check indexes for intermediate - revoked
+		indexes := utils.TestIndexes{
+			Present: []utils.TestIndex{
+				{Key: types.UniqueCertificateKeyPrefix},
+				{Key: types.RevokedNocIcaCertificatesKeyPrefix},
+				{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // root still exits
+			},
+			Missing: []utils.TestIndex{
+				{Key: types.AllCertificatesKeyPrefix},
+				{Key: types.AllCertificatesBySubjectKeyPrefix},
+				{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+				{Key: types.NocCertificatesKeyPrefix},
+				{Key: types.NocCertificatesBySubjectKeyPrefix},
+				{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
+				{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
+				{Key: types.NocIcaCertificatesKeyPrefix},
+				{Key: types.ChildCertificatesKeyPrefix},
+				{Key: types.RevokedNocRootCertificatesKeyPrefix},
+				{Key: types.RevokedCertificatesKeyPrefix},
+			},
+		}
+		utils.CheckCertificateStateIndexes(t, setup, icaCertificate, indexes)
 	}
-	utils.CheckCertificateStateIndexes(t, setup, icaCertificate, indexes)
 }
 
 // Error cases
 
 func TestHandler_RevokeNocIntermediateCert_SenderNotVendor(t *testing.T) {
-	setup := utils.Setup(t)
+	for _, crtType := range certificatesTypes {
+		setup := utils.Setup(t)
 
-	// add the first NOC root certificate
-	rootCertificate := utils.RootNocCertificate1(setup.Vendor1)
-	utils.AddNocRootCertificate(setup, rootCertificate)
+		// add the first NOC root certificate
+		rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+		utils.AddNocRootCertificate(setup, rootCertificate)
 
-	// add the first NOC non-root certificate
-	icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, icaCertificate1)
+		// add the first NOC non-root certificate
+		icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1, crtType)
+		utils.AddNocIntermediateCertificate(setup, icaCertificate1)
 
-	revokeCert := types.NewMsgRevokeNocX509RootCert(
-		setup.Trustee1.String(),
-		icaCertificate1.Subject,
-		icaCertificate1.SubjectKeyId,
-		icaCertificate1.SerialNumber,
-		"",
-		false,
-	)
-	_, err := setup.Handler(setup.Ctx, revokeCert)
-	require.Error(t, err)
-	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
+		revokeCert := types.NewMsgRevokeNocX509RootCert(
+			setup.Trustee1.String(),
+			icaCertificate1.Subject,
+			icaCertificate1.SubjectKeyId,
+			icaCertificate1.SerialNumber,
+			"",
+			false,
+		)
+		_, err := setup.Handler(setup.Ctx, revokeCert)
+		require.Error(t, err)
+		require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
+	}
 }
 
 func TestHandler_RevokeNocIntermediateCert_CertificateDoesNotExist(t *testing.T) {

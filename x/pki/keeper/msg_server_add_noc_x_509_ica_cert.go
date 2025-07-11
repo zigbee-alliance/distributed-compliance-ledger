@@ -42,6 +42,11 @@ func (k msgServer) AddNocX509IcaCert(goCtx context.Context, msg *types.MsgAddNoc
 	signerAccount, _ := k.dclauthKeeper.GetAccountO(ctx, signerAddr)
 	accountVid := signerAccount.VendorID
 
+	msgCertType := types.CertificateType_OperationalPKI
+	if msg.IsVVSC {
+		msgCertType = types.CertificateType_VIDSignerPKI
+	}
+
 	// Get list of certificates for Subject / Subject Key Id combination
 	certificates, _ := k.GetAllCertificates(ctx, x509Certificate.Subject, x509Certificate.SubjectKeyID)
 	if len(certificates.Certs) > 0 {
@@ -56,7 +61,7 @@ func (k msgServer) AddNocX509IcaCert(goCtx context.Context, msg *types.MsgAddNoc
 		}
 
 		// Existing certificate must be NOC certificate
-		if existingCertificate.CertificateType != types.CertificateType_OperationalPKI {
+		if existingCertificate.CertificateType != msgCertType {
 			return nil, pkitypes.NewErrProvidedNocCertButExistingNotNoc(x509Certificate.Subject, x509Certificate.SubjectKeyID)
 		}
 
@@ -79,7 +84,7 @@ func (k msgServer) AddNocX509IcaCert(goCtx context.Context, msg *types.MsgAddNoc
 	nocRootCert := rootCerts.Certs[0]
 
 	// Root certificate must be NOC certificate
-	if nocRootCert.CertificateType != types.CertificateType_OperationalPKI {
+	if nocRootCert.CertificateType != msgCertType {
 		return nil, pkitypes.NewErrRootOfNocCertIsNotNoc(rootCert.Subject, rootCert.SubjectKeyID)
 	}
 	// Check VID scoping
@@ -101,6 +106,7 @@ func (k msgServer) AddNocX509IcaCert(goCtx context.Context, msg *types.MsgAddNoc
 		msg.Signer,
 		accountVid,
 		msg.CertSchemaVersion,
+		msgCertType,
 	)
 
 	// register the unique certificate key

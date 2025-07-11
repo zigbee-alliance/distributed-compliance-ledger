@@ -13,11 +13,12 @@ const TypeMsgAddNocX509IcaCert = "add_noc_x_509_ica_cert"
 
 var _ sdk.Msg = &MsgAddNocX509IcaCert{}
 
-func NewMsgAddNocX509IcaCert(signer string, cert string, certSchemaVersion uint32) *MsgAddNocX509IcaCert {
+func NewMsgAddNocX509IcaCert(signer string, cert string, certSchemaVersion uint32, isVVSC bool) *MsgAddNocX509IcaCert {
 	return &MsgAddNocX509IcaCert{
 		Signer:            signer,
 		Cert:              cert,
 		CertSchemaVersion: certSchemaVersion,
+		IsVVSC:            isVVSC,
 	}
 }
 
