@@ -7,12 +7,12 @@ import { msgTypes } from './registry';
 import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
-import { MsgEnableValidator } from "./types/zigbeealliance/distributedcomplianceledger/validator/tx";
-import { MsgCreateValidator } from "./types/zigbeealliance/distributedcomplianceledger/validator/tx";
 import { MsgRejectDisableValidator } from "./types/zigbeealliance/distributedcomplianceledger/validator/tx";
-import { MsgProposeDisableValidator } from "./types/zigbeealliance/distributedcomplianceledger/validator/tx";
-import { MsgDisableValidator } from "./types/zigbeealliance/distributedcomplianceledger/validator/tx";
+import { MsgCreateValidator } from "./types/zigbeealliance/distributedcomplianceledger/validator/tx";
+import { MsgEnableValidator } from "./types/zigbeealliance/distributedcomplianceledger/validator/tx";
 import { MsgApproveDisableValidator } from "./types/zigbeealliance/distributedcomplianceledger/validator/tx";
+import { MsgDisableValidator } from "./types/zigbeealliance/distributedcomplianceledger/validator/tx";
+import { MsgProposeDisableValidator } from "./types/zigbeealliance/distributedcomplianceledger/validator/tx";
 
 import { Description as typeDescription} from "./types"
 import { DisabledValidator as typeDisabledValidator} from "./types"
@@ -22,10 +22,10 @@ import { ProposedDisableValidator as typeProposedDisableValidator} from "./types
 import { RejectedDisableValidator as typeRejectedDisableValidator} from "./types"
 import { Validator as typeValidator} from "./types"
 
-export { MsgEnableValidator, MsgCreateValidator, MsgRejectDisableValidator, MsgProposeDisableValidator, MsgDisableValidator, MsgApproveDisableValidator };
+export { MsgRejectDisableValidator, MsgCreateValidator, MsgEnableValidator, MsgApproveDisableValidator, MsgDisableValidator, MsgProposeDisableValidator };
 
-type sendMsgEnableValidatorParams = {
-  value: MsgEnableValidator,
+type sendMsgRejectDisableValidatorParams = {
+  value: MsgRejectDisableValidator,
   fee?: StdFee,
   memo?: string
 };
@@ -36,20 +36,8 @@ type sendMsgCreateValidatorParams = {
   memo?: string
 };
 
-type sendMsgRejectDisableValidatorParams = {
-  value: MsgRejectDisableValidator,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgProposeDisableValidatorParams = {
-  value: MsgProposeDisableValidator,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgDisableValidatorParams = {
-  value: MsgDisableValidator,
+type sendMsgEnableValidatorParams = {
+  value: MsgEnableValidator,
   fee?: StdFee,
   memo?: string
 };
@@ -60,29 +48,41 @@ type sendMsgApproveDisableValidatorParams = {
   memo?: string
 };
 
+type sendMsgDisableValidatorParams = {
+  value: MsgDisableValidator,
+  fee?: StdFee,
+  memo?: string
+};
 
-type msgEnableValidatorParams = {
-  value: MsgEnableValidator,
+type sendMsgProposeDisableValidatorParams = {
+  value: MsgProposeDisableValidator,
+  fee?: StdFee,
+  memo?: string
+};
+
+
+type msgRejectDisableValidatorParams = {
+  value: MsgRejectDisableValidator,
 };
 
 type msgCreateValidatorParams = {
   value: MsgCreateValidator,
 };
 
-type msgRejectDisableValidatorParams = {
-  value: MsgRejectDisableValidator,
+type msgEnableValidatorParams = {
+  value: MsgEnableValidator,
 };
 
-type msgProposeDisableValidatorParams = {
-  value: MsgProposeDisableValidator,
+type msgApproveDisableValidatorParams = {
+  value: MsgApproveDisableValidator,
 };
 
 type msgDisableValidatorParams = {
   value: MsgDisableValidator,
 };
 
-type msgApproveDisableValidatorParams = {
-  value: MsgApproveDisableValidator,
+type msgProposeDisableValidatorParams = {
+  value: MsgProposeDisableValidator,
 };
 
 
@@ -115,17 +115,17 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 
   return {
 		
-		async sendMsgEnableValidator({ value, fee, memo }: sendMsgEnableValidatorParams): Promise<DeliverTxResponse> {
+		async sendMsgRejectDisableValidator({ value, fee, memo }: sendMsgRejectDisableValidatorParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgEnableValidator: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgRejectDisableValidator: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgEnableValidator({ value: MsgEnableValidator.fromPartial(value) })
+				let msg = this.msgRejectDisableValidator({ value: MsgRejectDisableValidator.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgEnableValidator: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgRejectDisableValidator: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -143,45 +143,17 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		async sendMsgRejectDisableValidator({ value, fee, memo }: sendMsgRejectDisableValidatorParams): Promise<DeliverTxResponse> {
+		async sendMsgEnableValidator({ value, fee, memo }: sendMsgEnableValidatorParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgRejectDisableValidator: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgEnableValidator: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgRejectDisableValidator({ value: MsgRejectDisableValidator.fromPartial(value) })
+				let msg = this.msgEnableValidator({ value: MsgEnableValidator.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgRejectDisableValidator: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgProposeDisableValidator({ value, fee, memo }: sendMsgProposeDisableValidatorParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgProposeDisableValidator: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgProposeDisableValidator({ value: MsgProposeDisableValidator.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgProposeDisableValidator: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgDisableValidator({ value, fee, memo }: sendMsgDisableValidatorParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgDisableValidator: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgDisableValidator({ value: MsgDisableValidator.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgDisableValidator: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgEnableValidator: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -199,12 +171,40 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		
-		msgEnableValidator({ value }: msgEnableValidatorParams): EncodeObject {
-			try {
-				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.validator.MsgEnableValidator", value: MsgEnableValidator.fromPartial( value ) }  
+		async sendMsgDisableValidator({ value, fee, memo }: sendMsgDisableValidatorParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgDisableValidator: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgDisableValidator({ value: MsgDisableValidator.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:MsgEnableValidator: Could not create message: ' + e.message)
+				throw new Error('TxClient:sendMsgDisableValidator: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgProposeDisableValidator({ value, fee, memo }: sendMsgProposeDisableValidatorParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgProposeDisableValidator: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgProposeDisableValidator({ value: MsgProposeDisableValidator.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgProposeDisableValidator: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		
+		msgRejectDisableValidator({ value }: msgRejectDisableValidatorParams): EncodeObject {
+			try {
+				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.validator.MsgRejectDisableValidator", value: MsgRejectDisableValidator.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgRejectDisableValidator: Could not create message: ' + e.message)
 			}
 		},
 		
@@ -216,19 +216,19 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		msgRejectDisableValidator({ value }: msgRejectDisableValidatorParams): EncodeObject {
+		msgEnableValidator({ value }: msgEnableValidatorParams): EncodeObject {
 			try {
-				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.validator.MsgRejectDisableValidator", value: MsgRejectDisableValidator.fromPartial( value ) }  
+				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.validator.MsgEnableValidator", value: MsgEnableValidator.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgRejectDisableValidator: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgEnableValidator: Could not create message: ' + e.message)
 			}
 		},
 		
-		msgProposeDisableValidator({ value }: msgProposeDisableValidatorParams): EncodeObject {
+		msgApproveDisableValidator({ value }: msgApproveDisableValidatorParams): EncodeObject {
 			try {
-				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.validator.MsgProposeDisableValidator", value: MsgProposeDisableValidator.fromPartial( value ) }  
+				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.validator.MsgApproveDisableValidator", value: MsgApproveDisableValidator.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgProposeDisableValidator: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgApproveDisableValidator: Could not create message: ' + e.message)
 			}
 		},
 		
@@ -240,11 +240,11 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		msgApproveDisableValidator({ value }: msgApproveDisableValidatorParams): EncodeObject {
+		msgProposeDisableValidator({ value }: msgProposeDisableValidatorParams): EncodeObject {
 			try {
-				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.validator.MsgApproveDisableValidator", value: MsgApproveDisableValidator.fromPartial( value ) }  
+				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.validator.MsgProposeDisableValidator", value: MsgProposeDisableValidator.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgApproveDisableValidator: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgProposeDisableValidator: Could not create message: ' + e.message)
 			}
 		},
 		

@@ -7,8 +7,8 @@ import { msgTypes } from './registry';
 import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
-import { MsgProposeUpgrade } from "./types/zigbeealliance/distributedcomplianceledger/dclupgrade/tx";
 import { MsgApproveUpgrade } from "./types/zigbeealliance/distributedcomplianceledger/dclupgrade/tx";
+import { MsgProposeUpgrade } from "./types/zigbeealliance/distributedcomplianceledger/dclupgrade/tx";
 import { MsgRejectUpgrade } from "./types/zigbeealliance/distributedcomplianceledger/dclupgrade/tx";
 
 import { ApprovedUpgrade as typeApprovedUpgrade} from "./types"
@@ -16,16 +16,16 @@ import { Grant as typeGrant} from "./types"
 import { ProposedUpgrade as typeProposedUpgrade} from "./types"
 import { RejectedUpgrade as typeRejectedUpgrade} from "./types"
 
-export { MsgProposeUpgrade, MsgApproveUpgrade, MsgRejectUpgrade };
+export { MsgApproveUpgrade, MsgProposeUpgrade, MsgRejectUpgrade };
 
-type sendMsgProposeUpgradeParams = {
-  value: MsgProposeUpgrade,
+type sendMsgApproveUpgradeParams = {
+  value: MsgApproveUpgrade,
   fee?: StdFee,
   memo?: string
 };
 
-type sendMsgApproveUpgradeParams = {
-  value: MsgApproveUpgrade,
+type sendMsgProposeUpgradeParams = {
+  value: MsgProposeUpgrade,
   fee?: StdFee,
   memo?: string
 };
@@ -37,12 +37,12 @@ type sendMsgRejectUpgradeParams = {
 };
 
 
-type msgProposeUpgradeParams = {
-  value: MsgProposeUpgrade,
-};
-
 type msgApproveUpgradeParams = {
   value: MsgApproveUpgrade,
+};
+
+type msgProposeUpgradeParams = {
+  value: MsgProposeUpgrade,
 };
 
 type msgRejectUpgradeParams = {
@@ -79,20 +79,6 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 
   return {
 		
-		async sendMsgProposeUpgrade({ value, fee, memo }: sendMsgProposeUpgradeParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgProposeUpgrade: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgProposeUpgrade({ value: MsgProposeUpgrade.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgProposeUpgrade: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
 		async sendMsgApproveUpgrade({ value, fee, memo }: sendMsgApproveUpgradeParams): Promise<DeliverTxResponse> {
 			if (!signer) {
 					throw new Error('TxClient:sendMsgApproveUpgrade: Unable to sign Tx. Signer is not present.')
@@ -104,6 +90,20 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
 				throw new Error('TxClient:sendMsgApproveUpgrade: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgProposeUpgrade({ value, fee, memo }: sendMsgProposeUpgradeParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgProposeUpgrade: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgProposeUpgrade({ value: MsgProposeUpgrade.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgProposeUpgrade: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -122,19 +122,19 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 		},
 		
 		
-		msgProposeUpgrade({ value }: msgProposeUpgradeParams): EncodeObject {
-			try {
-				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.dclupgrade.MsgProposeUpgrade", value: MsgProposeUpgrade.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgProposeUpgrade: Could not create message: ' + e.message)
-			}
-		},
-		
 		msgApproveUpgrade({ value }: msgApproveUpgradeParams): EncodeObject {
 			try {
 				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.dclupgrade.MsgApproveUpgrade", value: MsgApproveUpgrade.fromPartial( value ) }  
 			} catch (e: any) {
 				throw new Error('TxClient:MsgApproveUpgrade: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgProposeUpgrade({ value }: msgProposeUpgradeParams): EncodeObject {
+			try {
+				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.dclupgrade.MsgProposeUpgrade", value: MsgProposeUpgrade.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgProposeUpgrade: Could not create message: ' + e.message)
 			}
 		},
 		
