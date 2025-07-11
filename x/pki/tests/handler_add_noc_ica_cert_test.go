@@ -13,170 +13,209 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
+var certificatesTypes = [...]types.CertificateType{types.CertificateType_OperationalPKI, types.CertificateType_VIDSignerPKI}
+
 // Main
 
 func TestHandler_AddNocIntermediateCert(t *testing.T) {
-	setup := utils.Setup(t)
+	for _, crtType := range certificatesTypes {
+		t.Run(crtType.String(), func(t *testing.T) {
+			setup := utils.Setup(t)
 
-	// add NOC root certificate
-	rootCertificate := utils.RootNocCertificate1(setup.Vendor1)
-	utils.AddNocRootCertificate(setup, rootCertificate)
+			// add NOC root certificate
+			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+			utils.AddNocRootCertificate(setup, rootCertificate)
 
-	// add NOC ICA certificate
-	icaCertificate := utils.IntermediateNocCertificate1(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, icaCertificate)
+			// add NOC ICA certificate
+			icaCertificate := utils.IntermediateNocCertificate1(setup.Vendor1, crtType)
+			utils.AddNocIntermediateCertificate(setup, icaCertificate)
 
-	// Check state indexes
-	indexes := utils.TestIndexes{
-		Present: []utils.TestIndex{
-			{Key: types.AllCertificatesKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.NocCertificatesKeyPrefix},
-			{Key: types.NocCertificatesBySubjectKeyPrefix},
-			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
-			{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // root certificate with same vid exists
-			{Key: types.NocIcaCertificatesKeyPrefix},
-			{Key: types.UniqueCertificateKeyPrefix},
-			{Key: types.ChildCertificatesKeyPrefix},
-		},
-		Missing: []utils.TestIndex{
-			{Key: types.ProposedCertificateKeyPrefix},
-			{Key: types.ApprovedCertificatesKeyPrefix},
-			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
-			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.ApprovedRootCertificatesKeyPrefix},
-		},
+			// Check state indexes
+			indexes := utils.TestIndexes{
+				Present: []utils.TestIndex{
+					{Key: types.AllCertificatesKeyPrefix},
+					{Key: types.AllCertificatesBySubjectKeyPrefix},
+					{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+					{Key: types.NocCertificatesKeyPrefix},
+					{Key: types.NocCertificatesBySubjectKeyPrefix},
+					{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
+					{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
+					{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // root certificate with same vid exists
+					{Key: types.NocIcaCertificatesKeyPrefix},
+					{Key: types.UniqueCertificateKeyPrefix},
+					{Key: types.ChildCertificatesKeyPrefix},
+				},
+				Missing: []utils.TestIndex{
+					{Key: types.ProposedCertificateKeyPrefix},
+					{Key: types.ApprovedCertificatesKeyPrefix},
+					{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
+					{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+					{Key: types.ApprovedRootCertificatesKeyPrefix},
+				},
+			}
+			utils.CheckCertificateStateIndexes(t, setup, icaCertificate, indexes)
+		})
 	}
-	utils.CheckCertificateStateIndexes(t, setup, icaCertificate, indexes)
 }
 
 func TestHandler_AddNocIntermediateCert_SameSubjectAndSkid_DifferentSerialNumber(t *testing.T) {
-	setup := utils.Setup(t)
+	for _, crtType := range certificatesTypes {
+		t.Run(crtType.String(), func(t *testing.T) {
+			setup := utils.Setup(t)
 
-	// add NOC root certificate
-	rootCertificate := utils.RootNocCertificate1(setup.Vendor1)
-	utils.AddNocRootCertificate(setup, rootCertificate)
+			// add NOC root certificate
+			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+			utils.AddNocRootCertificate(setup, rootCertificate)
 
-	// Store the NOC certificate with different serial number
-	intermediateCertificate := utils.IntermediateNocCertificate1(setup.Vendor1)
-	utils.AddMokedNocCertificate(setup, intermediateCertificate)
+			// Store the NOC certificate with different serial number
+			intermediateCertificate := utils.IntermediateNocCertificate1(setup.Vendor1, crtType)
+			utils.AddMokedNocCertificate(setup, intermediateCertificate)
 
-	// add the new NOC certificate
-	intermediateCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1)
-	utils.AddNocIntermediateCertificate(setup, intermediateCertificate2)
+			// add the new NOC certificate
+			intermediateCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1, crtType)
+			utils.AddNocIntermediateCertificate(setup, intermediateCertificate2)
 
-	// Check state indexes
-	indexes := utils.TestIndexes{
-		Present: []utils.TestIndex{
-			{Key: types.AllCertificatesKeyPrefix, Count: 2},
-			{Key: types.AllCertificatesBySubjectKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Count: 2},
-			{Key: types.NocCertificatesKeyPrefix, Count: 2},
-			{Key: types.NocCertificatesBySubjectKeyPrefix},
-			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix, Count: 2},
-			{Key: types.NocCertificatesByVidAndSkidKeyPrefix, Count: 2},
-			{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // root certificate with same vid exists
-			{Key: types.NocIcaCertificatesKeyPrefix, Count: 2},
-			{Key: types.UniqueCertificateKeyPrefix},
-			{Key: types.ChildCertificatesKeyPrefix},
-		},
-		Missing: []utils.TestIndex{
-			{Key: types.ProposedCertificateKeyPrefix},
-			{Key: types.ApprovedCertificatesKeyPrefix},
-			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
-			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.ApprovedRootCertificatesKeyPrefix},
-		},
+			// Check state indexes
+			indexes := utils.TestIndexes{
+				Present: []utils.TestIndex{
+					{Key: types.AllCertificatesKeyPrefix, Count: 2},
+					{Key: types.AllCertificatesBySubjectKeyPrefix},
+					{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Count: 2},
+					{Key: types.NocCertificatesKeyPrefix, Count: 2},
+					{Key: types.NocCertificatesBySubjectKeyPrefix},
+					{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix, Count: 2},
+					{Key: types.NocCertificatesByVidAndSkidKeyPrefix, Count: 2},
+					{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // root certificate with same vid exists
+					{Key: types.NocIcaCertificatesKeyPrefix, Count: 2},
+					{Key: types.UniqueCertificateKeyPrefix},
+					{Key: types.ChildCertificatesKeyPrefix},
+				},
+				Missing: []utils.TestIndex{
+					{Key: types.ProposedCertificateKeyPrefix},
+					{Key: types.ApprovedCertificatesKeyPrefix},
+					{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
+					{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+					{Key: types.ApprovedRootCertificatesKeyPrefix},
+				},
+			}
+			utils.CheckCertificateStateIndexes(t, setup, intermediateCertificate, indexes)
+			utils.CheckCertificateStateIndexes(t, setup, intermediateCertificate2, indexes)
+		})
 	}
-	utils.CheckCertificateStateIndexes(t, setup, intermediateCertificate, indexes)
-	utils.CheckCertificateStateIndexes(t, setup, intermediateCertificate2, indexes)
 }
 
 func TestHandler_AddNocIntermediateCert_ByNotOwnerButSameVendor(t *testing.T) {
-	setup := utils.Setup(t)
+	for _, crtType := range certificatesTypes {
+		t.Run(crtType.String(), func(t *testing.T) {
+			setup := utils.Setup(t)
 
-	// add two vendors with the same VID
-	vendorAccAddress1 := setup.CreateVendorAccount(testconstants.Vid)
-	vendorAccAddress2 := setup.CreateVendorAccount(testconstants.Vid)
+			// add two vendors with the same VID
+			vendorAccAddress1 := setup.CreateVendorAccount(testconstants.Vid)
+			vendorAccAddress2 := setup.CreateVendorAccount(testconstants.Vid)
 
-	// add NOC root certificate
-	rootCertificate := utils.RootNocCertificate1(vendorAccAddress1)
-	utils.AddNocRootCertificate(setup, rootCertificate)
+			// add NOC root certificate
+			rootCertificate := utils.RootNocCertificate1(vendorAccAddress1, crtType)
+			utils.AddNocRootCertificate(setup, rootCertificate)
 
-	// add the new NOC certificate by first vendor
-	icaCertificate := utils.IntermediateNocCertificate1(vendorAccAddress1)
-	utils.AddNocIntermediateCertificate(setup, icaCertificate)
+			// add the new NOC certificate by first vendor
+			icaCertificate := utils.IntermediateNocCertificate1(vendorAccAddress1, crtType)
+			utils.AddNocIntermediateCertificate(setup, icaCertificate)
 
-	// add the new NOC certificate by second vendor
-	icaCertificate2 := utils.IntermediateNocCertificate1Copy(vendorAccAddress2)
-	utils.AddNocIntermediateCertificate(setup, icaCertificate2)
+			// add the new NOC certificate by second vendor
+			icaCertificate2 := utils.IntermediateNocCertificate1Copy(vendorAccAddress2, crtType)
+			utils.AddNocIntermediateCertificate(setup, icaCertificate2)
 
-	// Check state indexes
-	indexes := utils.TestIndexes{
-		Present: []utils.TestIndex{
-			{Key: types.AllCertificatesKeyPrefix, Count: 2},
-			{Key: types.AllCertificatesBySubjectKeyPrefix},
-			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Count: 2},
-			{Key: types.NocCertificatesKeyPrefix, Count: 2},
-			{Key: types.NocCertificatesBySubjectKeyPrefix},
-			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix, Count: 2},
-			{Key: types.NocCertificatesByVidAndSkidKeyPrefix, Count: 2},
-			{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // root certificate with same vid exists
-			{Key: types.NocIcaCertificatesKeyPrefix, Count: 2},
-			{Key: types.UniqueCertificateKeyPrefix},
-			{Key: types.ChildCertificatesKeyPrefix},
-		},
-		Missing: []utils.TestIndex{
-			{Key: types.ProposedCertificateKeyPrefix},
-			{Key: types.ApprovedCertificatesKeyPrefix},
-			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
-			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
-			{Key: types.ApprovedRootCertificatesKeyPrefix},
-		},
+			// Check state indexes
+			indexes := utils.TestIndexes{
+				Present: []utils.TestIndex{
+					{Key: types.AllCertificatesKeyPrefix, Count: 2},
+					{Key: types.AllCertificatesBySubjectKeyPrefix},
+					{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Count: 2},
+					{Key: types.NocCertificatesKeyPrefix, Count: 2},
+					{Key: types.NocCertificatesBySubjectKeyPrefix},
+					{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix, Count: 2},
+					{Key: types.NocCertificatesByVidAndSkidKeyPrefix, Count: 2},
+					{Key: types.NocRootCertificatesKeyPrefix, Count: 1}, // root certificate with same vid exists
+					{Key: types.NocIcaCertificatesKeyPrefix, Count: 2},
+					{Key: types.UniqueCertificateKeyPrefix},
+					{Key: types.ChildCertificatesKeyPrefix},
+				},
+				Missing: []utils.TestIndex{
+					{Key: types.ProposedCertificateKeyPrefix},
+					{Key: types.ApprovedCertificatesKeyPrefix},
+					{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
+					{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+					{Key: types.ApprovedRootCertificatesKeyPrefix},
+				},
+			}
+			utils.CheckCertificateStateIndexes(t, setup, icaCertificate, indexes)
+			utils.CheckCertificateStateIndexes(t, setup, icaCertificate2, indexes)
+		})
 	}
-	utils.CheckCertificateStateIndexes(t, setup, icaCertificate, indexes)
-	utils.CheckCertificateStateIndexes(t, setup, icaCertificate2, indexes)
 }
 
 // Error cases
 
 func TestHandler_AddNocIntermediateCert_SenderNotVendor(t *testing.T) {
-	setup := utils.Setup(t)
+	for _, crtType := range certificatesTypes {
+		t.Run(crtType.String(), func(t *testing.T) {
+			setup := utils.Setup(t)
 
-	// add NOC root certificate
-	rootCertificate := utils.RootNocCertificate1(setup.Vendor1)
-	utils.AddNocRootCertificate(setup, rootCertificate)
+			// add NOC root certificate
+			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+			utils.AddNocRootCertificate(setup, rootCertificate)
 
-	addNocX509Cert := types.NewMsgAddNocX509IcaCert(setup.Trustee1.String(), testconstants.NocCert1, testconstants.CertSchemaVersion)
-	_, err := setup.Handler(setup.Ctx, addNocX509Cert)
+			isVVSC := false
+			if crtType == types.CertificateType_VIDSignerPKI {
+				isVVSC = true
+			}
 
-	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
+			addNocX509Cert := types.NewMsgAddNocX509IcaCert(setup.Trustee1.String(), testconstants.NocCert1, testconstants.CertSchemaVersion, isVVSC)
+			_, err := setup.Handler(setup.Ctx, addNocX509Cert)
+
+			require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
+		})
+	}
 }
 
 func TestHandler_AddNocIntermediateCert_Root_VID_Does_Not_Equal_To_AccountVID(t *testing.T) {
-	setup := utils.Setup(t)
+	for _, crtType := range certificatesTypes {
+		t.Run(crtType.String(), func(t *testing.T) {
+			setup := utils.Setup(t)
 
-	// add NOC root certificate
-	rootCertificate := utils.RootNocCertificate1(setup.Vendor1)
-	utils.AddNocRootCertificate(setup, rootCertificate)
+			// add NOC root certificate
+			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+			utils.AddNocRootCertificate(setup, rootCertificate)
 
-	newAccAddress := setup.CreateVendorAccount(1111)
+			newAccAddress := setup.CreateVendorAccount(1111)
 
-	// try to add NOC certificate
-	nocX509Cert := types.NewMsgAddNocX509IcaCert(newAccAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion)
-	_, err := setup.Handler(setup.Ctx, nocX509Cert)
-	require.ErrorIs(t, err, pkitypes.ErrCertVidNotEqualAccountVid)
+			isVVSC := false
+			if crtType == types.CertificateType_VIDSignerPKI {
+				isVVSC = true
+			}
+
+			// try to add NOC certificate
+			nocX509Cert := types.NewMsgAddNocX509IcaCert(newAccAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion, isVVSC)
+			_, err := setup.Handler(setup.Ctx, nocX509Cert)
+			require.ErrorIs(t, err, pkitypes.ErrCertVidNotEqualAccountVid)
+		})
+	}
 }
 
 func TestHandler_AddNocIntermediateCert_ForInvalidCertificate(t *testing.T) {
-	setup := utils.Setup(t)
-
-	// add x509 certificate
-	addX509Cert := types.NewMsgAddNocX509IcaCert(setup.Vendor1.String(), testconstants.StubCertPem, testconstants.CertSchemaVersion)
-	_, err := setup.Handler(setup.Ctx, addX509Cert)
-	require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
+	for _, crtType := range certificatesTypes {
+		t.Run(crtType.String(), func(t *testing.T) {
+			setup := utils.Setup(t)
+			isVVSC := false
+			if crtType == types.CertificateType_VIDSignerPKI {
+				isVVSC = true
+			}
+			// add x509 certificate
+			addX509Cert := types.NewMsgAddNocX509IcaCert(setup.Vendor1.String(), testconstants.StubCertPem, testconstants.CertSchemaVersion, isVVSC)
+			_, err := setup.Handler(setup.Ctx, addX509Cert)
+			require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
+		})
+	}
 }
 
 func TestHandler_AddNocIntermediateCert_ForNocRootCertificate(t *testing.T) {
@@ -189,26 +228,40 @@ func TestHandler_AddNocIntermediateCert_ForNocRootCertificate(t *testing.T) {
 }
 
 func TestHandler_AddNocIntermediateCert_ForRootNonNocCertificate(t *testing.T) {
-	setup := utils.Setup(t)
+	for _, crtType := range certificatesTypes {
+		t.Run(crtType.String(), func(t *testing.T) {
+			setup := utils.Setup(t)
 
-	// store root certificate
-	rootCert := utils.RootDaCertificateWithVid(setup.Trustee1)
-	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
-
-	// try to add root certificate x509 certificate
-	addX509Cert := types.NewMsgAddNocX509IcaCert(setup.Vendor1.String(), testconstants.IntermediateCertWithVid1, testconstants.CertSchemaVersion)
-	_, err := setup.Handler(setup.Ctx, addX509Cert)
-	require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+			// store root certificate
+			rootCert := utils.RootDaCertificateWithVid(setup.Trustee1)
+			utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
+			isVVSC := false
+			if crtType == types.CertificateType_VIDSignerPKI {
+				isVVSC = true
+			}
+			// try to add root certificate x509 certificate
+			addX509Cert := types.NewMsgAddNocX509IcaCert(setup.Vendor1.String(), testconstants.IntermediateCertWithVid1, testconstants.CertSchemaVersion, isVVSC)
+			_, err := setup.Handler(setup.Ctx, addX509Cert)
+			require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+		})
+	}
 }
 
 func TestHandler_AddNocIntermediateCert_WhenNocRootCertIsAbsent(t *testing.T) {
-	setup := utils.Setup(t)
+	for _, crtType := range certificatesTypes {
+		t.Run(crtType.String(), func(t *testing.T) {
+			setup := utils.Setup(t)
+			isVVSC := false
+			if crtType == types.CertificateType_VIDSignerPKI {
+				isVVSC = true
+			}
+			// add the new NOC certificate
+			addNocX509Cert := types.NewMsgAddNocX509IcaCert(setup.Vendor1.String(), testconstants.NocCert1, testconstants.CertSchemaVersion, isVVSC)
+			_, err := setup.Handler(setup.Ctx, addNocX509Cert)
 
-	// add the new NOC certificate
-	addNocX509Cert := types.NewMsgAddNocX509IcaCert(setup.Vendor1.String(), testconstants.NocCert1, testconstants.CertSchemaVersion)
-	_, err := setup.Handler(setup.Ctx, addNocX509Cert)
-
-	require.ErrorIs(t, err, pkitypes.ErrCertificateDoesNotExist)
+			require.ErrorIs(t, err, pkitypes.ErrCertificateDoesNotExist)
+		})
+	}
 }
 
 func TestHandler_AddNocIntermediateCert_CertificateExist(t *testing.T) {
@@ -223,15 +276,14 @@ func TestHandler_AddNocIntermediateCert_CertificateExist(t *testing.T) {
 		{
 			name: "Duplicate",
 			existingCert: &types.Certificate{
-				Issuer:          testconstants.NocRootCert1Subject,
-				AuthorityKeyId:  testconstants.NocRootCert1SubjectKeyID,
-				Subject:         testconstants.NocCert1Subject,
-				SubjectAsText:   testconstants.NocCert1SubjectAsText,
-				SubjectKeyId:    testconstants.NocCert1SubjectKeyID,
-				SerialNumber:    testconstants.NocCert1SerialNumber,
-				IsRoot:          false,
-				CertificateType: types.CertificateType_OperationalPKI,
-				Vid:             testconstants.Vid,
+				Issuer:         testconstants.NocRootCert1Subject,
+				AuthorityKeyId: testconstants.NocRootCert1SubjectKeyID,
+				Subject:        testconstants.NocCert1Subject,
+				SubjectAsText:  testconstants.NocCert1SubjectAsText,
+				SubjectKeyId:   testconstants.NocCert1SubjectKeyID,
+				SerialNumber:   testconstants.NocCert1SerialNumber,
+				IsRoot:         false,
+				Vid:            testconstants.Vid,
 			},
 			nocCert: testconstants.NocCert1,
 			err:     pkitypes.ErrCertificateAlreadyExists,
@@ -239,15 +291,14 @@ func TestHandler_AddNocIntermediateCert_CertificateExist(t *testing.T) {
 		{
 			name: "ExistingIsRootCert",
 			existingCert: &types.Certificate{
-				Issuer:          testconstants.NocRootCert1Subject,
-				AuthorityKeyId:  testconstants.NocRootCert1SubjectKeyID,
-				Subject:         testconstants.NocCert1Subject,
-				SubjectAsText:   testconstants.NocCert1SubjectAsText,
-				SubjectKeyId:    testconstants.NocCert1SubjectKeyID,
-				SerialNumber:    testconstants.NocRootCert1SerialNumber,
-				IsRoot:          true,
-				CertificateType: types.CertificateType_OperationalPKI,
-				Vid:             testconstants.Vid,
+				Issuer:         testconstants.NocRootCert1Subject,
+				AuthorityKeyId: testconstants.NocRootCert1SubjectKeyID,
+				Subject:        testconstants.NocCert1Subject,
+				SubjectAsText:  testconstants.NocCert1SubjectAsText,
+				SubjectKeyId:   testconstants.NocCert1SubjectKeyID,
+				SerialNumber:   testconstants.NocRootCert1SerialNumber,
+				IsRoot:         true,
+				Vid:            testconstants.Vid,
 			},
 			nocCert: testconstants.NocCert1,
 			err:     sdkerrors.ErrUnauthorized,
@@ -255,15 +306,14 @@ func TestHandler_AddNocIntermediateCert_CertificateExist(t *testing.T) {
 		{
 			name: "ExistingWithDifferentIssuer",
 			existingCert: &types.Certificate{
-				Issuer:          testconstants.RootIssuer,
-				AuthorityKeyId:  testconstants.NocRootCert1SubjectKeyID,
-				Subject:         testconstants.NocCert1Subject,
-				SubjectAsText:   testconstants.NocCert1SubjectAsText,
-				SubjectKeyId:    testconstants.NocCert1SubjectKeyID,
-				SerialNumber:    "1234",
-				IsRoot:          false,
-				CertificateType: types.CertificateType_OperationalPKI,
-				Vid:             testconstants.Vid,
+				Issuer:         testconstants.RootIssuer,
+				AuthorityKeyId: testconstants.NocRootCert1SubjectKeyID,
+				Subject:        testconstants.NocCert1Subject,
+				SubjectAsText:  testconstants.NocCert1SubjectAsText,
+				SubjectKeyId:   testconstants.NocCert1SubjectKeyID,
+				SerialNumber:   "1234",
+				IsRoot:         false,
+				Vid:            testconstants.Vid,
 			},
 			nocCert: testconstants.NocCert1,
 			err:     sdkerrors.ErrUnauthorized,
@@ -271,15 +321,14 @@ func TestHandler_AddNocIntermediateCert_CertificateExist(t *testing.T) {
 		{
 			name: "ExistingWithDifferentAuthorityKeyId",
 			existingCert: &types.Certificate{
-				Issuer:          testconstants.NocRootCert1Subject,
-				AuthorityKeyId:  testconstants.RootSubjectKeyID,
-				Subject:         testconstants.NocCert1Subject,
-				SubjectAsText:   testconstants.NocCert1SubjectAsText,
-				SubjectKeyId:    testconstants.NocCert1SubjectKeyID,
-				SerialNumber:    "1234",
-				IsRoot:          false,
-				CertificateType: types.CertificateType_OperationalPKI,
-				Vid:             testconstants.Vid,
+				Issuer:         testconstants.NocRootCert1Subject,
+				AuthorityKeyId: testconstants.RootSubjectKeyID,
+				Subject:        testconstants.NocCert1Subject,
+				SubjectAsText:  testconstants.NocCert1SubjectAsText,
+				SubjectKeyId:   testconstants.NocCert1SubjectKeyID,
+				SerialNumber:   "1234",
+				IsRoot:         false,
+				Vid:            testconstants.Vid,
 			},
 			nocCert: testconstants.NocCert1,
 			err:     sdkerrors.ErrUnauthorized,
@@ -287,15 +336,14 @@ func TestHandler_AddNocIntermediateCert_CertificateExist(t *testing.T) {
 		{
 			name: "ExistingNotNocCert",
 			existingCert: &types.Certificate{
-				Issuer:          testconstants.NocRootCert1Subject,
-				AuthorityKeyId:  testconstants.NocRootCert1SubjectKeyID,
-				Subject:         testconstants.NocCert1Subject,
-				SubjectAsText:   testconstants.NocCert1SubjectAsText,
-				SubjectKeyId:    testconstants.NocCert1SubjectKeyID,
-				SerialNumber:    "1234",
-				IsRoot:          false,
-				CertificateType: types.CertificateType_DeviceAttestationPKI,
-				Vid:             testconstants.Vid,
+				Issuer:         testconstants.NocRootCert1Subject,
+				AuthorityKeyId: testconstants.NocRootCert1SubjectKeyID,
+				Subject:        testconstants.NocCert1Subject,
+				SubjectAsText:  testconstants.NocCert1SubjectAsText,
+				SubjectKeyId:   testconstants.NocCert1SubjectKeyID,
+				SerialNumber:   "1234",
+				IsRoot:         false,
+				Vid:            testconstants.Vid,
 			},
 			nocCert: testconstants.NocCert1,
 			err:     pkitypes.ErrInappropriateCertificateType,
@@ -303,15 +351,14 @@ func TestHandler_AddNocIntermediateCert_CertificateExist(t *testing.T) {
 		{
 			name: "ExistingCertWithDifferentVid",
 			existingCert: &types.Certificate{
-				Issuer:          testconstants.NocRootCert1Subject,
-				AuthorityKeyId:  testconstants.NocRootCert1SubjectKeyID,
-				Subject:         testconstants.NocCert1Subject,
-				SubjectAsText:   testconstants.NocCert1SubjectAsText,
-				SubjectKeyId:    testconstants.NocCert1SubjectKeyID,
-				SerialNumber:    "1234",
-				IsRoot:          false,
-				CertificateType: types.CertificateType_OperationalPKI,
-				Vid:             testconstants.VendorID1,
+				Issuer:         testconstants.NocRootCert1Subject,
+				AuthorityKeyId: testconstants.NocRootCert1SubjectKeyID,
+				Subject:        testconstants.NocCert1Subject,
+				SubjectAsText:  testconstants.NocCert1SubjectAsText,
+				SubjectKeyId:   testconstants.NocCert1SubjectKeyID,
+				SerialNumber:   "1234",
+				IsRoot:         false,
+				Vid:            testconstants.VendorID1,
 			},
 			nocCert: testconstants.NocCert1,
 			err:     sdkerrors.ErrUnauthorized,
@@ -319,27 +366,41 @@ func TestHandler_AddNocIntermediateCert_CertificateExist(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		t.Run(tc.name, func(t *testing.T) {
-			setup := utils.Setup(t)
-			vid := testconstants.Vid
-			setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, vid)
+		for _, crtType := range certificatesTypes {
+			t.Run(tc.name+" "+crtType.String(), func(t *testing.T) {
+				setup := utils.Setup(t)
+				vid := testconstants.Vid
+				setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, vid)
 
-			// add NOC root certificate
-			rootCertificate := utils.RootNocCertificate1(accAddress)
-			utils.AddNocRootCertificate(setup, rootCertificate)
+				// add NOC root certificate
+				rootCertificate := utils.RootNocCertificate1(accAddress, crtType)
+				utils.AddNocRootCertificate(setup, rootCertificate)
 
-			// add the existing certificate
-			setup.Keeper.AddAllCertificate(setup.Ctx, *tc.existingCert)
-			uniqueCertificate := types.UniqueCertificate{
-				Issuer:       tc.existingCert.Issuer,
-				SerialNumber: tc.existingCert.SerialNumber,
-				Present:      true,
-			}
-			setup.Keeper.SetUniqueCertificate(setup.Ctx, uniqueCertificate)
+				existingCert := *tc.existingCert
 
-			addNocX509Cert := types.NewMsgAddNocX509IcaCert(accAddress.String(), tc.nocCert, testconstants.CertSchemaVersion)
-			_, err := setup.Handler(setup.Ctx, addNocX509Cert)
-			require.ErrorIs(t, err, tc.err)
-		})
+				// the test for this error requires different types
+				if tc.err != pkitypes.ErrInappropriateCertificateType {
+					existingCert.CertificateType = crtType
+				}
+
+				// add the existing certificate
+				setup.Keeper.AddAllCertificate(setup.Ctx, existingCert)
+				uniqueCertificate := types.UniqueCertificate{
+					Issuer:       existingCert.Issuer,
+					SerialNumber: existingCert.SerialNumber,
+					Present:      true,
+				}
+				setup.Keeper.SetUniqueCertificate(setup.Ctx, uniqueCertificate)
+
+				isVVSC := false
+				if crtType == types.CertificateType_VIDSignerPKI {
+					isVVSC = true
+				}
+
+				addNocX509Cert := types.NewMsgAddNocX509IcaCert(accAddress.String(), tc.nocCert, testconstants.CertSchemaVersion, isVVSC)
+				_, err := setup.Handler(setup.Ctx, addNocX509Cert)
+				require.ErrorIs(t, err, tc.err)
+			})
+		}
 	}
 }

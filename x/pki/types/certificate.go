@@ -50,6 +50,7 @@ func NewNocRootCertificate(
 	owner string,
 	vid int32,
 	schemaVersion uint32,
+	certificateType CertificateType,
 ) Certificate {
 	return Certificate{
 		PemCert:         pemCert,
@@ -60,7 +61,7 @@ func NewNocRootCertificate(
 		IsRoot:          true,
 		Owner:           owner,
 		Vid:             vid,
-		CertificateType: CertificateType_OperationalPKI,
+		CertificateType: certificateType,
 		SchemaVersion:   schemaVersion,
 	}
 }
@@ -78,6 +79,7 @@ func NewNocCertificate(
 	owner string,
 	vid int32,
 	schemaVersion uint32,
+	certificateType CertificateType,
 ) Certificate {
 	return Certificate{
 		PemCert:          pemCert,
@@ -92,7 +94,7 @@ func NewNocCertificate(
 		Vid:              vid,
 		Owner:            owner,
 		IsRoot:           false,
-		CertificateType:  CertificateType_OperationalPKI,
+		CertificateType:  certificateType,
 		SchemaVersion:    schemaVersion,
 	}
 }

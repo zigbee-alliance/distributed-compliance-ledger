@@ -41,7 +41,7 @@ func (k msgServer) RemoveNocX509RootCert(goCtx context.Context, msg *types.MsgRe
 	}
 
 	// Existing certificate must be NOC certificate
-	if cert.CertificateType != types.CertificateType_OperationalPKI {
+	if cert.CertificateType != types.CertificateType_OperationalPKI && cert.CertificateType != types.CertificateType_VIDSignerPKI {
 		return nil, pkitypes.NewErrProvidedNocCertButExistingNotNoc(msg.Subject, msg.SubjectKeyId)
 	}
 
