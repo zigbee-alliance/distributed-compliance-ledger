@@ -104,7 +104,8 @@ Please take into account [running-node-in-existing-network.md](docs/advanced/run
 ### Upgrade all nodes in a pool to a new version of DCL application
 
 DCL application can be simultaneously updated on all nodes in the pool without breaking consensus.
-See [Pool Upgrade](docs/pool-upgrade.md) and [Pool Upgrade How To](docs/pool-upgrade-how-to.md) for details.
+See [Pool Upgrade](docs/pool-upgrade.md) and [Pool Upgrade How To](docs/pool-upgrade-how-to.md) for details.  
+See [Tests After Upgrade](scripts/tests-after-upgrade/README.md) to verify the functionality of the pool after the upgrade.
 
 ### Run a local pool of nodes in Docker
 
