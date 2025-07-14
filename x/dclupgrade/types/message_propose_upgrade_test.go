@@ -165,10 +165,10 @@ func TestMsgProposeUpgrade_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
-	var expectedResponse *string
+	var expectedResponse string
 
 	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, *expectedResponse)
+		fmt.Fprint(w, expectedResponse)
 	}))
 	defer svr.Close()
 
@@ -180,7 +180,7 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 	}{
 		{
 			name:     "invalid binary format 1",
-			expected: testconstants.UpgradeGitApiJsonResponse,
+			expected: testconstants.UpgradeGitAPIJSONResponse,
 			msg: MsgProposeUpgrade{
 				Creator: sample.AccAddress(),
 				Plan: Plan{
@@ -195,7 +195,7 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 		},
 		{
 			name:     "invalid binary format 2",
-			expected: testconstants.UpgradeGitApiJsonResponse,
+			expected: testconstants.UpgradeGitAPIJSONResponse,
 			msg: MsgProposeUpgrade{
 				Creator: sample.AccAddress(),
 				Plan: Plan{
@@ -210,7 +210,7 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 		},
 		{
 			name:     "invalid binary format 3",
-			expected: testconstants.UpgradeGitApiJsonResponse,
+			expected: testconstants.UpgradeGitAPIJSONResponse,
 			msg: MsgProposeUpgrade{
 				Creator: sample.AccAddress(),
 				Plan: Plan{
@@ -225,7 +225,7 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 		},
 		{
 			name:     "lots of binary files",
-			expected: testconstants.UpgradeGitApiJsonResponse,
+			expected: testconstants.UpgradeGitAPIJSONResponse,
 			msg: MsgProposeUpgrade{
 				Creator: sample.AccAddress(),
 				Plan: Plan{
@@ -240,7 +240,7 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 		},
 		{
 			name:     "no binary files",
-			expected: testconstants.UpgradeGitApiJsonResponse,
+			expected: testconstants.UpgradeGitAPIJSONResponse,
 			msg: MsgProposeUpgrade{
 				Creator: sample.AccAddress(),
 				Plan: Plan{
@@ -262,7 +262,7 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 	}{
 		{
 			name:     "valid binary file without checksum",
-			expected: "{\"assets\":[{\"name\": \"dcld\", \"state\": \"uploaded\", \"digest\": null, \"browser_download_url\":\"" + testconstants.UpgradeBrowserDownloadUrl + "\"}]}",
+			expected: "{\"assets\":[{\"name\": \"dcld\", \"state\": \"uploaded\", \"digest\": null, \"browser_download_url\":\"" + testconstants.UpgradeBrowserDownloadURL + "\"}]}",
 			msg: MsgProposeUpgrade{
 				Creator: sample.AccAddress(),
 				Plan: Plan{
@@ -276,7 +276,7 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 		},
 		{
 			name:     "valid binary file with checksum",
-			expected: testconstants.UpgradeGitApiJsonResponse,
+			expected: testconstants.UpgradeGitAPIJSONResponse,
 			msg: MsgProposeUpgrade{
 				Creator: sample.AccAddress(),
 				Plan: Plan{
@@ -291,7 +291,7 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 	}
 	for _, tt := range positiveTests {
 		t.Run(tt.name, func(t *testing.T) {
-			expectedResponse = &tt.expected
+			expectedResponse = tt.expected
 			err := ValidateBinaries(&tt.msg, svr.URL)
 			require.NoError(t, err)
 		})
@@ -299,7 +299,7 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 
 	for _, tt := range negativeTests {
 		t.Run(tt.name, func(t *testing.T) {
-			expectedResponse = &tt.expected
+			expectedResponse = tt.expected
 			err := ValidateBinaries(&tt.msg, svr.URL)
 			require.Error(t, err)
 			require.ErrorIs(t, err, tt.err)

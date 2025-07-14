@@ -15,10 +15,10 @@ import (
 )
 
 const TypeMsgProposeUpgrade = "propose_upgrade"
-const GitReleaseApiUrl = "https://api.github.com/repos/zigbee-alliance/distributed-compliance-ledger/releases/tags"
+const GitReleaseAPIURL = "https://api.github.com/repos/zigbee-alliance/distributed-compliance-ledger/releases/tags"
 
-// plan name <--> git tag
 var ExistingUpgradesMap = map[string]string{
+	// plan name <--> git tag
 	"v0.10.0": "v0.10.0",
 	"v0.11.0": "v0.11.0",
 	"v0.12.0": "v0.12.0",
@@ -61,20 +61,20 @@ func (msg *MsgProposeUpgrade) GetSignBytes() []byte {
 	return sdk.MustSortJSON(bz)
 }
 
-func ValidateBinaries(msg *MsgProposeUpgrade, gitBaseUrl string) error {
+func ValidateBinaries(msg *MsgProposeUpgrade, gitBaseURL string) error {
 	println("Start ValidateBinaries")
 	if len(msg.Plan.Info) == 0 {
 		return nil
 	}
 
-	var planInfoJson map[string]map[string]string
+	var planInfoJSON map[string]map[string]string
 
-	err := json.Unmarshal([]byte(msg.Plan.Info), &planInfoJson)
+	err := json.Unmarshal([]byte(msg.Plan.Info), &planInfoJSON)
 	if err != nil {
 		return sdkerrors.ErrJSONUnmarshal
 	}
 	println("json.Unmarshal")
-	binariesLen := len(planInfoJson["binaries"])
+	binariesLen := len(planInfoJSON["binaries"])
 
 	if binariesLen > 1 {
 		return errors.Wrapf(sdkerrors.ErrJSONUnmarshal, "invalid parsing, supports only one binary file")
@@ -84,16 +84,16 @@ func ValidateBinaries(msg *MsgProposeUpgrade, gitBaseUrl string) error {
 		return errors.Wrapf(sdkerrors.ErrJSONUnmarshal, "invalid parsing, binary files not found")
 	}
 	println("jbinariesLen != 0")
-	for _, urlWithSum := range planInfoJson["binaries"] {
-		fileUrl, sha256Sum, foundSep := strings.Cut(urlWithSum, "?")
+	for _, urlWithSum := range planInfoJSON["binaries"] {
+		fileURL, sha256Sum, foundSep := strings.Cut(urlWithSum, "?")
 		if !foundSep || !strings.HasPrefix(sha256Sum, "checksum=") {
 			return errors.Wrapf(sdkerrors.ErrJSONUnmarshal, "invalid parsing upgrade plan url")
 		}
 
 		sha256Sum = strings.TrimPrefix(sha256Sum, "checksum=")
 
-		partsUrl := strings.Split(fileUrl, "/")
-		urlGitTag := partsUrl[7]
+		partsURL := strings.Split(fileURL, "/")
+		urlGitTag := partsURL[7]
 
 		// support previous updates where there is no direct matching of plan name and git tag
 		existingGitTag, upgradeExist := ExistingUpgradesMap[msg.Plan.Name]
@@ -101,10 +101,11 @@ func ValidateBinaries(msg *MsgProposeUpgrade, gitBaseUrl string) error {
 			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "planName is not equal to the binary file version")
 		}
 
-		println("http.Get", gitBaseUrl+"/"+urlGitTag)
-		resp, err := http.Get(gitBaseUrl + "/" + urlGitTag)
+		println("http.Get", gitBaseURL+"/"+urlGitTag)
+		resp, err := http.NewRequest(http.MethodGet, gitBaseURL+"/"+urlGitTag, nil)
 		if err != nil {
 			println("http.Get ERROR")
+
 			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "binary file info request failed")
 		}
 		defer resp.Body.Close()
@@ -117,7 +118,7 @@ func ValidateBinaries(msg *MsgProposeUpgrade, gitBaseUrl string) error {
 
 		var parsedBody map[string]any
 
-		err = json.Unmarshal([]byte(body), &parsedBody)
+		err = json.Unmarshal(body, &parsedBody)
 		if err != nil {
 			return errors.Wrapf(sdkerrors.ErrJSONUnmarshal, "invalid parsing binary file info")
 		}
@@ -126,21 +127,21 @@ func ValidateBinaries(msg *MsgProposeUpgrade, gitBaseUrl string) error {
 
 		if !assetsExist {
 			println(string(body))
+
 			return errors.Wrapf(sdkerrors.ErrJSONUnmarshal, "invalid assets in json response")
 		}
 
-		var valid bool = false
+		valid := false
 
 		for _, asset := range assets.([]any) {
-
 			assetMap := asset.(map[string]any)
 
 			if assetMap["name"] == "dcld" &&
 				assetMap["state"] == "uploaded" &&
-				assetMap["browser_download_url"] == fileUrl &&
+				assetMap["browser_download_url"] == fileURL &&
 				(assetMap["digest"] == nil || assetMap["digest"] == sha256Sum) {
-
 				valid = true
+
 				break
 			}
 		}
@@ -171,12 +172,14 @@ func (msg *MsgProposeUpgrade) ValidateBasic() error {
 		return err
 	}
 	println("alidateBasic PASS")
-	err = ValidateBinaries(msg, GitReleaseApiUrl)
+	err = ValidateBinaries(msg, GitReleaseAPIURL)
 	if err != nil {
 		fmt.Println(err)
+
 		return err
 	}
 
 	println("end ValidateBasic")
+
 	return nil
 }

@@ -153,8 +153,8 @@ var (
 	UpgradePlanName                 = "v1.4.4"
 	UpgradePlanHeight         int64 = 1337
 	UpgradePlanInfo                 = "{\"binaries\":{\"linux/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.4.4/dcld?checksum=sha256:e4031c6a77aa8e58add391be671a334613271bcf6e7f11d23b04a0881ece6958\"}}"
-	UpgradeBrowserDownloadUrl       = "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.4.4/dcld"
-	UpgradeGitApiJsonResponse       = "{\"assets\":[{\"name\": \"dcld\", \"state\": \"uploaded\", \"digest\": \"sha256:e4031c6a77aa8e58add391be671a334613271bcf6e7f11d23b04a0881ece6958\", \"browser_download_url\":\"" + UpgradeBrowserDownloadUrl + "\"}]}"
+	UpgradeBrowserDownloadURL       = "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.4.4/dcld"
+	UpgradeGitAPIJSONResponse       = "{\"assets\":[{\"name\": \"dcld\", \"state\": \"uploaded\", \"digest\": \"sha256:e4031c6a77aa8e58add391be671a334613271bcf6e7f11d23b04a0881ece6958\", \"browser_download_url\":\"" + UpgradeBrowserDownloadURL + "\"}]}"
 	//
 	Address1, _           = sdk.AccAddressFromBech32("cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf")
 	Address2, _           = sdk.AccAddressFromBech32("cosmos1nl4uaesk9gtu7su3n89lne6xpa6lq8gljn79rq")
