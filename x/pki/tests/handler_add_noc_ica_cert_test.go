@@ -380,7 +380,7 @@ func TestHandler_AddNocIntermediateCert_CertificateExist(t *testing.T) {
 				existingCert := *tc.existingCert
 
 				// the test for this error requires different types
-				if errors.Is(tc.err, pkitypes.ErrInappropriateCertificateType) {
+				if !errors.Is(tc.err, pkitypes.ErrInappropriateCertificateType) {
 					existingCert.CertificateType = crtType
 				}
 
