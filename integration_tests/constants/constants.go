@@ -137,6 +137,16 @@ var (
 	TestDate   = "2020-02-02T02:00:00Z"
 
 	// Upgrade.
+	UpgradePlanNameV0_13_0_pre = "v0.13.0-pre"
+	UpgradePlanInfoV0_13_0_pre = "{\"binaries\":{\"linux/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v0.13.0-pre/dcld?checksum=sha256:e4031c6a77aa8e58add391be671a334613271bcf6e7f11d23b04a0881ece6958\"}}"
+	UpgradePlanNameV1_2        = "v1.2"
+	UpgradePlanInfoV1_2        = "{\"binaries\":{\"linux/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.2.2/dcld?checksum=sha256:e4031c6a77aa8e58add391be671a334613271bcf6e7f11d23b04a0881ece6958\"}}"
+
+	UpgradePlanNameV1_4   = "v1.4"
+	UpgradePlanInfoV1_4   = "{\"binaries\":{\"linux/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.4.3/dcld?checksum=sha256:e4031c6a77aa8e58add391be671a334613271bcf6e7f11d23b04a0881ece6958\"}}"
+	UpgradePlanNameV1_4_4 = "v1.4.4"
+	UpgradePlanInfoV1_4_4 = "{\"binaries\":{\"linux/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.4.4/dcld?checksum=sha256:e4031c6a77aa8e58add391be671a334613271bcf6e7f11d23b04a0881ece6958\"}}"
+
 	UpgradePlanName                 = "v1.4.4"
 	UpgradePlanHeight         int64 = 1337
 	UpgradePlanInfo                 = "{\"binaries\":{\"linux/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.4.4/dcld?checksum=sha256:e4031c6a77aa8e58add391be671a334613271bcf6e7f11d23b04a0881ece6958\"}}"

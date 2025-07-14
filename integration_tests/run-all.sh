@@ -194,7 +194,12 @@ if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "rest" ]]; then
   GO_REST_TESTS="$(find integration_tests/grpc_rest -type f -name '*_test.go')"
 
   for GO_REST_TEST in ${GO_REST_TESTS}; do
-    init_pool
+
+    if [[ "$GO_REST_TEST" == *"dclupgrade"* ]]; then
+      init_pool yes localnet_init_latest_stable_release "v0.12.0"
+    else
+      init_pool
+    fi
 
     log "*****************************************************************************************"
     log "Running $GO_REST_TEST"

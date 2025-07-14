@@ -2,10 +2,8 @@ package types
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 
@@ -17,6 +15,17 @@ import (
 
 const TypeMsgProposeUpgrade = "propose_upgrade"
 const GitReleaseApiUrl = "https://api.github.com/repos/zigbee-alliance/distributed-compliance-ledger/releases/tags"
+
+// plan name <--> git tag
+var ExistingUpgradesMap = map[string]string{
+	"v0.10.0":     "v0.10.0",
+	"v0.11.0":     "v0.11.0",
+	"v0.12.0":     "v0.12.0",
+	"v0.13.0-pre": "v0.13.0-pre",
+	"v1.2":        "v1.2.2",
+	"v1.4":        "v1.4.3",
+	"v1.4.4":      "v1.4.4",
+}
 
 var _ sdk.Msg = &MsgProposeUpgrade{}
 
@@ -53,10 +62,6 @@ func (msg *MsgProposeUpgrade) GetSignBytes() []byte {
 }
 
 func ValidateBinaries(msg *MsgProposeUpgrade, gitBaseUrl string) error {
-	fmt.Fprintln(os.Stderr, "-- Start validate binaries --")
-	fmt.Fprintln(os.Stderr, "-- msg.Plan.Name -- : ", msg.Plan.Name)
-	fmt.Fprintln(os.Stderr, "-- msg.Plan.Info -- : ", msg.Plan.Info)
-	fmt.Fprintln(os.Stderr, "-- gitBaseUrl -- : ", gitBaseUrl)
 
 	if len(msg.Plan.Info) == 0 {
 		return nil
@@ -88,16 +93,15 @@ func ValidateBinaries(msg *MsgProposeUpgrade, gitBaseUrl string) error {
 		sha256Sum = strings.TrimPrefix(sha256Sum, "checksum=")
 
 		partsUrl := strings.Split(fileUrl, "/")
-		gitTag := partsUrl[7]
+		urlGitTag := partsUrl[7]
 
-		// fmt.Fprintln(os.Stderr, "-- gitTag --", gitTag)
-		if msg.Plan.Name != gitTag {
+		// support previous updates where there is no direct matching of plan name and git tag
+		existingGitTag, isUpgradeExist := ExistingUpgradesMap[msg.Plan.Name]
+		if (!isUpgradeExist || urlGitTag != existingGitTag) && msg.Plan.Name != urlGitTag {
 			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "planName is not equal to the binary file version")
 		}
 
-		// fmt.Fprintln(os.Stderr, "-- request to --", gitBaseUrl+gitTag)
-
-		resp, err := http.Get(gitBaseUrl + "/" + gitTag)
+		resp, err := http.Get(gitBaseUrl + "/" + urlGitTag)
 		if err != nil {
 			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "binary file info request failed")
 		}
@@ -127,7 +131,6 @@ func ValidateBinaries(msg *MsgProposeUpgrade, gitBaseUrl string) error {
 				(assetMap["digest"] == nil || assetMap["digest"] == sha256Sum) {
 
 				valid = true
-				fmt.Printf("Valid link\n")
 				break
 			}
 		}
@@ -136,8 +139,6 @@ func ValidateBinaries(msg *MsgProposeUpgrade, gitBaseUrl string) error {
 			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid binary file")
 		}
 	}
-
-	println("Binary files validation completed successfully")
 
 	return nil
 }
