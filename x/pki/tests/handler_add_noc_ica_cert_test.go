@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"errors"
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -379,7 +380,7 @@ func TestHandler_AddNocIntermediateCert_CertificateExist(t *testing.T) {
 				existingCert := *tc.existingCert
 
 				// the test for this error requires different types
-				if tc.err != pkitypes.ErrInappropriateCertificateType {
+				if errors.Is(tc.err, pkitypes.ErrInappropriateCertificateType) {
 					existingCert.CertificateType = crtType
 				}
 
