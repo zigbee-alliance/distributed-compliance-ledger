@@ -2,6 +2,7 @@ package types
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -18,13 +19,12 @@ const GitReleaseApiUrl = "https://api.github.com/repos/zigbee-alliance/distribut
 
 // plan name <--> git tag
 var ExistingUpgradesMap = map[string]string{
-	"v0.10.0":     "v0.10.0",
-	"v0.11.0":     "v0.11.0",
-	"v0.12.0":     "v0.12.0",
-	"v0.13.0-pre": "v0.13.0-pre",
-	"v1.2":        "v1.2.2",
-	"v1.4":        "v1.4.3",
-	"v1.4.4":      "v1.4.4",
+	"v0.10.0": "v0.10.0",
+	"v0.11.0": "v0.11.0",
+	"v0.12.0": "v0.12.0",
+	"v1.2":    "v1.2.2",
+	"v1.4":    "v1.4.3",
+	"v1.4.4":  "v1.4.4",
 }
 
 var _ sdk.Msg = &MsgProposeUpgrade{}
@@ -62,7 +62,7 @@ func (msg *MsgProposeUpgrade) GetSignBytes() []byte {
 }
 
 func ValidateBinaries(msg *MsgProposeUpgrade, gitBaseUrl string) error {
-
+	println("Start ValidateBinaries")
 	if len(msg.Plan.Info) == 0 {
 		return nil
 	}
@@ -73,7 +73,7 @@ func ValidateBinaries(msg *MsgProposeUpgrade, gitBaseUrl string) error {
 	if err != nil {
 		return sdkerrors.ErrJSONUnmarshal
 	}
-
+	println("json.Unmarshal")
 	binariesLen := len(planInfoJson["binaries"])
 
 	if binariesLen > 1 {
@@ -83,7 +83,7 @@ func ValidateBinaries(msg *MsgProposeUpgrade, gitBaseUrl string) error {
 	if binariesLen == 0 {
 		return errors.Wrapf(sdkerrors.ErrJSONUnmarshal, "invalid parsing, binary files not found")
 	}
-
+	println("jbinariesLen != 0")
 	for _, urlWithSum := range planInfoJson["binaries"] {
 		fileUrl, sha256Sum, foundSep := strings.Cut(urlWithSum, "?")
 		if !foundSep || !strings.HasPrefix(sha256Sum, "checksum=") {
@@ -96,17 +96,20 @@ func ValidateBinaries(msg *MsgProposeUpgrade, gitBaseUrl string) error {
 		urlGitTag := partsUrl[7]
 
 		// support previous updates where there is no direct matching of plan name and git tag
-		existingGitTag, isUpgradeExist := ExistingUpgradesMap[msg.Plan.Name]
-		if (!isUpgradeExist || urlGitTag != existingGitTag) && msg.Plan.Name != urlGitTag {
+		existingGitTag, upgradeExist := ExistingUpgradesMap[msg.Plan.Name]
+		if (!upgradeExist || urlGitTag != existingGitTag) && msg.Plan.Name != urlGitTag {
 			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "planName is not equal to the binary file version")
 		}
 
+		println("http.Get", gitBaseUrl+"/"+urlGitTag)
 		resp, err := http.Get(gitBaseUrl + "/" + urlGitTag)
 		if err != nil {
+			println("http.Get ERROR")
 			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "binary file info request failed")
 		}
 		defer resp.Body.Close()
 
+		println("io.ReadAll")
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "binary file info request failed")
@@ -119,9 +122,16 @@ func ValidateBinaries(msg *MsgProposeUpgrade, gitBaseUrl string) error {
 			return errors.Wrapf(sdkerrors.ErrJSONUnmarshal, "invalid parsing binary file info")
 		}
 
+		assets, assetsExist := parsedBody["assets"]
+
+		if !assetsExist {
+			println(string(body))
+			return errors.Wrapf(sdkerrors.ErrJSONUnmarshal, "invalid assets in json response")
+		}
+
 		var valid bool = false
 
-		for _, asset := range parsedBody["assets"].([]any) {
+		for _, asset := range assets.([]any) {
 
 			assetMap := asset.(map[string]any)
 
@@ -144,25 +154,29 @@ func ValidateBinaries(msg *MsgProposeUpgrade, gitBaseUrl string) error {
 }
 
 func (msg *MsgProposeUpgrade) ValidateBasic() error {
+	println("start ValidateBasic")
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
+	println("AccAddressFromBech32 PASS")
 	err = validator.Validate(msg)
 	if err != nil {
 		return err
 	}
-
+	println("validator.Validate PASS")
 	err = msg.Plan.ValidateBasic()
 	if err != nil {
 		return err
 	}
-
+	println("alidateBasic PASS")
 	err = ValidateBinaries(msg, GitReleaseApiUrl)
 	if err != nil {
+		fmt.Println(err)
 		return err
 	}
 
+	println("end ValidateBasic")
 	return nil
 }

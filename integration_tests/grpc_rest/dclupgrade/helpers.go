@@ -276,7 +276,7 @@ func Demo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// trustee proposes upgrade
-	proposeUpgradeMsg := NewMsgProposeUpgrade(aliceAccount.Address, testconstants.UpgradePlanNameV0_13_0_pre, 100000, testconstants.UpgradePlanInfoV0_13_0_pre)
+	proposeUpgradeMsg := NewMsgProposeUpgrade(aliceAccount.Address, testconstants.UpgradePlanNameV1_2_0, 100000, testconstants.UpgradePlanInfoV1_2_0)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{proposeUpgradeMsg}, aliceName, aliceAccount)
 	require.NoError(suite.T, err)
 
@@ -340,7 +340,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Contains(suite.T, approvedUpgrades, *approvedUpgrade)
 
 	// Trustee proposes upgrade
-	proposeUpgradeMsg = NewMsgProposeUpgrade(aliceAccount.Address, testconstants.UpgradePlanNameV1_2, 100000, testconstants.UpgradePlanInfoV1_2)
+	proposeUpgradeMsg = NewMsgProposeUpgrade(aliceAccount.Address, testconstants.UpgradePlanNameV1_2_1, 100000, testconstants.UpgradePlanInfoV1_2_1)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{proposeUpgradeMsg}, aliceName, aliceAccount)
 	require.NoError(suite.T, err)
 
@@ -465,7 +465,7 @@ func ProposeUpgradeByNonTrustee(suite *utils.TestSuite) {
 	)
 
 	// try to add proposeUpgradeMsg
-	proposeUpgradeMsg := NewMsgProposeUpgrade(nonTrusteeAccount.Address, testconstants.UpgradePlanNameV1_4, 100000, testconstants.UpgradePlanInfoV1_4)
+	proposeUpgradeMsg := NewMsgProposeUpgrade(nonTrusteeAccount.Address, testconstants.UpgradePlanNameV1_2_2, 100000, testconstants.UpgradePlanInfoV1_2_2)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{proposeUpgradeMsg}, nonTrusteeAccountName, nonTrusteeAccount)
 	require.Error(suite.T, err)
 	require.ErrorIs(suite.T, err, sdkerrors.ErrUnauthorized)
@@ -490,7 +490,7 @@ func ApproveUpgradeByNonTrustee(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// propose upgrade
-	proposeUpgradeMsg := NewMsgProposeUpgrade(aliceAccount.Address, testconstants.UpgradePlanNameV1_4, 100000, testconstants.UpgradePlanInfoV1_4)
+	proposeUpgradeMsg := NewMsgProposeUpgrade(aliceAccount.Address, testconstants.UpgradePlanNameV1_4_0, 100000, testconstants.UpgradePlanInfoV1_4_0)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{proposeUpgradeMsg}, aliceName, aliceAccount)
 	require.NoError(suite.T, err)
 
@@ -539,7 +539,7 @@ func ProposeUpgradeTwice(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// trustee proposes upgrade
-	proposeUpgradeMsg := NewMsgProposeUpgrade(aliceAccount.Address, testconstants.UpgradePlanNameV1_4_4, 100000, testconstants.UpgradePlanInfoV1_4_4)
+	proposeUpgradeMsg := NewMsgProposeUpgrade(aliceAccount.Address, testconstants.UpgradePlanNameV1_4_1, 100000, testconstants.UpgradePlanInfoV1_4_1)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{proposeUpgradeMsg}, aliceName, aliceAccount)
 	require.NoError(suite.T, err)
 
@@ -550,7 +550,7 @@ func ProposeUpgradeTwice(suite *utils.TestSuite) {
 	require.ErrorIs(suite.T, err, dclupgradetypes.ErrProposedUpgradeAlreadyExists)
 
 	// trustee rejects upgrade
-	rejectUpgradeMsg := NewMsgRejectUpgrade(aliceAccount.Address, testconstants.UpgradePlanNameV1_4_4)
+	rejectUpgradeMsg := NewMsgRejectUpgrade(aliceAccount.Address, testconstants.UpgradePlanNameV1_4_1)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{rejectUpgradeMsg}, aliceName, aliceAccount)
 	require.NoError(suite.T, err)
 }
@@ -566,12 +566,12 @@ func ProposeAndRejectUpgrade(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// trustee proposes upgrade
-	proposeUpgradeMsg := NewMsgProposeUpgrade(aliceAccount.Address, testconstants.UpgradePlanNameV1_4_4, 100000, testconstants.UpgradePlanInfoV1_4_4)
+	proposeUpgradeMsg := NewMsgProposeUpgrade(aliceAccount.Address, testconstants.UpgradePlanNameV1_4_2, 100000, testconstants.UpgradePlanInfoV1_4_2)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{proposeUpgradeMsg}, aliceName, aliceAccount)
 	require.NoError(suite.T, err)
 
 	// trustee rejects upgrade
-	rejectUpgradeMsg := NewMsgRejectUpgrade(aliceAccount.Address, testconstants.UpgradePlanNameV1_4_4)
+	rejectUpgradeMsg := NewMsgRejectUpgrade(aliceAccount.Address, testconstants.UpgradePlanNameV1_4_2)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{rejectUpgradeMsg}, aliceName, aliceAccount)
 	require.NoError(suite.T, err)
 
