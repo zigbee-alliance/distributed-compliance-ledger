@@ -219,22 +219,3 @@ if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "rest" ]]; then
     cleanup_pool
   done
 fi
-
-# Go rest tests
-if [[$TESTS_TO_RUN =~ "test" ]]; then
-
-  init_pool
-
-  # TODO issue 99: improve, that await helps with the cases of not ready connections to Cosmos endpoints
-  sleep 5
-
-  dcld config keyring-backend test
-  if go test integration_tests/grpc_rest/dclupgrade/grpc_test.go &>${DETAILED_OUTPUT_TARGET}; then
-    log "test integration_tests/grpc_rest/dclupgrade/grpc_test.go finished successfully"
-  else
-    log "test integration_tests/grpc_rest/dclupgrade/grpc_test.go failed"
-  fi
-
-  sleep 99999999999999
-  cleanup_pool
-fi

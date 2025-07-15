@@ -1,10 +1,12 @@
 package types
 
 import (
+	context "context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -62,7 +64,6 @@ func (msg *MsgProposeUpgrade) GetSignBytes() []byte {
 }
 
 func ValidateBinaries(msg *MsgProposeUpgrade, gitBaseURL string) error {
-	println("Start ValidateBinaries")
 	if len(msg.Plan.Info) == 0 {
 		return nil
 	}
@@ -73,7 +74,7 @@ func ValidateBinaries(msg *MsgProposeUpgrade, gitBaseURL string) error {
 	if err != nil {
 		return sdkerrors.ErrJSONUnmarshal
 	}
-	println("json.Unmarshal")
+
 	binariesLen := len(planInfoJSON["binaries"])
 
 	if binariesLen > 1 {
@@ -83,7 +84,7 @@ func ValidateBinaries(msg *MsgProposeUpgrade, gitBaseURL string) error {
 	if binariesLen == 0 {
 		return errors.Wrapf(sdkerrors.ErrJSONUnmarshal, "invalid parsing, binary files not found")
 	}
-	println("jbinariesLen != 0")
+
 	for _, urlWithSum := range planInfoJSON["binaries"] {
 		fileURL, sha256Sum, foundSep := strings.Cut(urlWithSum, "?")
 		if !foundSep || !strings.HasPrefix(sha256Sum, "checksum=") {
@@ -101,16 +102,25 @@ func ValidateBinaries(msg *MsgProposeUpgrade, gitBaseURL string) error {
 			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "planName is not equal to the binary file version")
 		}
 
-		println("http.Get", gitBaseURL+"/"+urlGitTag)
-		resp, err := http.NewRequest(http.MethodGet, gitBaseURL+"/"+urlGitTag, nil)
+		ctx := context.Background()
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, gitBaseURL+"/"+urlGitTag, http.NoBody)
 		if err != nil {
-			println("http.Get ERROR")
+			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "binary file info create request failed")
+		}
 
-			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "binary file info request failed")
+		gitToken := os.Getenv("GH_TOKEN")
+		if len(gitToken) > 0 {
+			req.Header.Add("Authorization", gitToken)
+		}
+
+		client := &http.Client{}
+		resp, err := client.Do(req)
+
+		if err != nil {
+			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "binary file info do request failed")
 		}
 		defer resp.Body.Close()
 
-		println("io.ReadAll")
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "binary file info request failed")
@@ -126,8 +136,6 @@ func ValidateBinaries(msg *MsgProposeUpgrade, gitBaseURL string) error {
 		assets, assetsExist := parsedBody["assets"]
 
 		if !assetsExist {
-			println(string(body))
-
 			return errors.Wrapf(sdkerrors.ErrJSONUnmarshal, "invalid assets in json response")
 		}
 
@@ -155,31 +163,27 @@ func ValidateBinaries(msg *MsgProposeUpgrade, gitBaseURL string) error {
 }
 
 func (msg *MsgProposeUpgrade) ValidateBasic() error {
-	println("start ValidateBasic")
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	println("AccAddressFromBech32 PASS")
 	err = validator.Validate(msg)
 	if err != nil {
 		return err
 	}
-	println("validator.Validate PASS")
+
 	err = msg.Plan.ValidateBasic()
 	if err != nil {
 		return err
 	}
-	println("alidateBasic PASS")
+
 	err = ValidateBinaries(msg, GitReleaseAPIURL)
 	if err != nil {
 		fmt.Println(err)
 
 		return err
 	}
-
-	println("end ValidateBasic")
 
 	return nil
 }
