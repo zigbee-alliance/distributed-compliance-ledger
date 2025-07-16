@@ -100,8 +100,6 @@ stop_rest_server() {
 # Global init
 set -euo pipefail
 
-echo "GH_TOKEN: $GH_TOKEN"
-sleep 9999
 log "Verifying the environment"
 check_env
 
