@@ -288,6 +288,34 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 				Time: testconstants.Time,
 			},
 		},
+		{
+			name:     "valid legacy binary file v1.2.2",
+			expected: "{\"assets\":[{\"name\": \"dcld\", \"state\": \"uploaded\", \"digest\": \"sha256:e4031c6a77aa8e58add391be671a334613271bcf6e7f11d23b04a0881ece6958\", \"browser_download_url\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.2.2/dcld\"}]}",
+			msg: MsgProposeUpgrade{
+				Creator: sample.AccAddress(),
+				Plan: Plan{
+					Name:   "v1.2",
+					Height: testconstants.UpgradePlanHeight,
+					Info:   "{\"binaries\":{\"linux/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.2.2/dcld?checksum=sha256:e4031c6a77aa8e58add391be671a334613271bcf6e7f11d23b04a0881ece6958\"}}",
+				},
+				Info: testconstants.Info,
+				Time: testconstants.Time,
+			},
+		},
+		{
+			name:     "valid legacy binary file v1.4.3",
+			expected: "{\"assets\":[{\"name\": \"dcld\", \"state\": \"uploaded\", \"digest\": \"sha256:e4031c6a77aa8e58add391be671a334613271bcf6e7f11d23b04a0881ece6958\", \"browser_download_url\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.4.3/dcld\"}]}",
+			msg: MsgProposeUpgrade{
+				Creator: sample.AccAddress(),
+				Plan: Plan{
+					Name:   "v1.4",
+					Height: testconstants.UpgradePlanHeight,
+					Info:   "{\"binaries\":{\"linux/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.4.3/dcld?checksum=sha256:e4031c6a77aa8e58add391be671a334613271bcf6e7f11d23b04a0881ece6958\"}}",
+				},
+				Info: testconstants.Info,
+				Time: testconstants.Time,
+			},
+		},
 	}
 	for _, tt := range positiveTests {
 		t.Run(tt.name, func(t *testing.T) {

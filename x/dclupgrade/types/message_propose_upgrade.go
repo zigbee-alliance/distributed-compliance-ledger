@@ -18,7 +18,7 @@ import (
 const TypeMsgProposeUpgrade = "propose_upgrade"
 const GitReleaseAPIURL = "https://api.github.com/repos/zigbee-alliance/distributed-compliance-ledger/releases/tags"
 
-var ExistingUpgradesMap = map[string]string{
+var LegacyUpgradesMap = map[string]string{
 	// plan name <--> git tag
 	"v0.10.0": "v0.10.0",
 	"v0.11.0": "v0.11.0",
@@ -96,8 +96,8 @@ func ValidateBinaries(msg *MsgProposeUpgrade, gitBaseURL string) error {
 		urlGitTag := partsURL[7]
 
 		// support previous updates where there is no direct matching of plan name and git tag
-		existingGitTag, upgradeExist := ExistingUpgradesMap[msg.Plan.Name]
-		if (!upgradeExist || urlGitTag != existingGitTag) && msg.Plan.Name != urlGitTag {
+		legacyGitTag, upgradeExist := LegacyUpgradesMap[msg.Plan.Name]
+		if (!upgradeExist || urlGitTag != legacyGitTag) && msg.Plan.Name != urlGitTag {
 			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "planName is not equal to the binary file version")
 		}
 
