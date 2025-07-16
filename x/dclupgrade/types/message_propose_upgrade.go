@@ -110,8 +110,6 @@ func ValidateBinaries(msg *MsgProposeUpgrade, gitBaseURL string) error {
 		gitToken := os.Getenv("GH_TOKEN")
 		if len(gitToken) > 0 {
 			req.Header.Add("Authorization", "token "+gitToken)
-		} else {
-			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "gitToken == 0")
 		}
 
 		client := &http.Client{}
@@ -137,7 +135,7 @@ func ValidateBinaries(msg *MsgProposeUpgrade, gitBaseURL string) error {
 		assets, assetsExist := parsedBody["assets"]
 
 		if !assetsExist {
-			return errors.Wrapf(sdkerrors.ErrJSONUnmarshal, "invalid assets in json response", parsedBody)
+			return errors.Wrapf(sdkerrors.ErrJSONUnmarshal, "invalid assets in json response")
 		}
 
 		valid := false
