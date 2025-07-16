@@ -3,7 +3,6 @@ package types
 import (
 	context "context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -111,9 +110,8 @@ func ValidateBinaries(msg *MsgProposeUpgrade, gitBaseURL string) error {
 		gitToken := os.Getenv("GH_TOKEN")
 		if len(gitToken) > 0 {
 			req.Header.Add("Authorization", "token "+gitToken)
-			fmt.Println("GH_TOKEN: ", gitToken)
 		} else {
-			fmt.Println("gitToken == 0")
+			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "gitToken == 0")
 		}
 
 		client := &http.Client{}
@@ -139,8 +137,7 @@ func ValidateBinaries(msg *MsgProposeUpgrade, gitBaseURL string) error {
 		assets, assetsExist := parsedBody["assets"]
 
 		if !assetsExist {
-			fmt.Println("FAILED BODY: ", parsedBody)
-			return errors.Wrapf(sdkerrors.ErrJSONUnmarshal, "invalid assets in json response")
+			return errors.Wrapf(sdkerrors.ErrJSONUnmarshal, "invalid assets in json response", parsedBody)
 		}
 
 		valid := false
