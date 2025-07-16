@@ -3,7 +3,6 @@ package types
 import (
 	context "context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -110,7 +109,7 @@ func ValidateBinaries(msg *MsgProposeUpgrade, gitBaseURL string) error {
 
 		gitToken := os.Getenv("GH_TOKEN")
 		if len(gitToken) > 0 {
-			req.Header.Add("Authorization", gitToken)
+			req.Header.Add("Authorization", "token "+gitToken)
 		}
 
 		client := &http.Client{}
@@ -178,10 +177,27 @@ func (msg *MsgProposeUpgrade) ValidateBasic() error {
 		return err
 	}
 
+	return nil
+}
+
+func (msg *MsgProposeUpgrade) ValidateBasicCLI() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	err = validator.Validate(msg)
+	if err != nil {
+		return err
+	}
+
+	err = msg.Plan.ValidateBasic()
+	if err != nil {
+		return err
+	}
+
 	err = ValidateBinaries(msg, GitReleaseAPIURL)
 	if err != nil {
-		fmt.Println(err)
-
 		return err
 	}
 
