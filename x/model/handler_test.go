@@ -214,6 +214,47 @@ func TestHandler_AddModel_CheckCommissioningModeInitialStepsHintHandling(t *test
 	}
 }
 
+func TestHandler_AddModel_CheckCommissioningModeSecondaryStepsHintHandling(t *testing.T) {
+	cases := []struct {
+		name                                        string
+		commissioningModeSecondaryStepsHint         uint32
+		expectedCommissioningModeSecondaryStepsHint uint32
+	}{
+		{
+			name:                                "CommissioningModeSecondaryStepsHint=0 Sets Default 1",
+			commissioningModeSecondaryStepsHint: 0,
+			expectedCommissioningModeSecondaryStepsHint: 1,
+		},
+		{
+			name:                                "CommissioningModeSecondaryStepsHint=3 Remains 3",
+			commissioningModeSecondaryStepsHint: 3,
+			expectedCommissioningModeSecondaryStepsHint: 3,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			setup := Setup(t)
+
+			// add new model
+			msgCreateModel := NewMsgCreateModel(setup.Vendor)
+			msgCreateModel.CommissioningModeSecondaryStepsHint = tc.commissioningModeSecondaryStepsHint
+			_, err := setup.Handler(setup.Ctx, msgCreateModel)
+			require.NoError(t, err)
+
+			// query model
+			receivedModel, err := queryModel(setup, msgCreateModel.Vid, msgCreateModel.Pid)
+			require.NoError(t, err)
+
+			// check
+			require.Equal(t, msgCreateModel.Vid, receivedModel.Vid)
+			require.Equal(t, msgCreateModel.Pid, receivedModel.Pid)
+			require.Equal(t, msgCreateModel.DeviceTypeId, receivedModel.DeviceTypeId)
+			require.Equal(t, tc.expectedCommissioningModeSecondaryStepsHint, receivedModel.CommissioningModeSecondaryStepsHint)
+		})
+	}
+}
+
 func TestHandler_UpdateModel(t *testing.T) {
 	setup := Setup(t)
 
@@ -236,8 +277,10 @@ func TestHandler_UpdateModel(t *testing.T) {
 	// update existing model
 	var newSchemaVersion uint32 = 2
 	var newCommissioningModeInitialStepsHint uint32 = 8
+	var newCommissioningModeSecondaryStepsHint uint32 = 9
 	msgUpdateModel.SchemaVersion = newSchemaVersion
 	msgUpdateModel.CommissioningModeInitialStepsHint = newCommissioningModeInitialStepsHint
+	msgUpdateModel.CommissioningModeSecondaryStepsHint = newCommissioningModeSecondaryStepsHint
 	_, err = setup.Handler(setup.Ctx, msgUpdateModel)
 	require.NoError(t, err)
 
@@ -252,6 +295,7 @@ func TestHandler_UpdateModel(t *testing.T) {
 	require.Equal(t, msgUpdateModel.Pid, receivedModel.Pid)
 	require.Equal(t, msgUpdateModel.ProductLabel, receivedModel.ProductLabel)
 	require.Equal(t, newCommissioningModeInitialStepsHint, receivedModel.CommissioningModeInitialStepsHint)
+	require.Equal(t, newCommissioningModeSecondaryStepsHint, receivedModel.CommissioningModeSecondaryStepsHint)
 	require.Equal(t, newSchemaVersion, receivedModel.SchemaVersion)
 	require.Equal(t, msgUpdateModel.CommissioningFallbackUrl, receivedModel.CommissioningFallbackUrl)
 }
