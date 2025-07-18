@@ -66,7 +66,7 @@ Gets information about all vendors for all VIDs.
 Should be sent to trusted nodes only.
 
 - Parameters:
-  - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
+  - Common pagination parameters (see [pagination-params](../transactions.md#common-pagination-parameters))
 - CLI command:
   - `dcld query vendorinfo all-vendors`
 - REST API:
