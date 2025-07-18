@@ -32,7 +32,7 @@ func (k msgServer) RevokeNocX509IcaCert(goCtx context.Context, msg *types.MsgRev
 		return nil, pkitypes.NewErrMessageExpectedNonRoot(msg.Subject, msg.SubjectKeyId)
 	}
 	// Existing certificate must be NOC certificate
-	if cert.CertificateType != types.CertificateType_OperationalPKI {
+	if cert.CertificateType != types.CertificateType_OperationalPKI && cert.CertificateType != types.CertificateType_VIDSignerPKI {
 		return nil, pkitypes.NewErrProvidedNocCertButExistingNotNoc(cert.Subject, cert.SubjectKeyId)
 	}
 

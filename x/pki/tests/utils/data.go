@@ -261,7 +261,7 @@ func LeafCertificate(address sdk.AccAddress) types.Certificate {
 	)
 }
 
-func RootNocCertificate1(address sdk.AccAddress) types.Certificate {
+func RootNocCertificate1(address sdk.AccAddress, certificateType types.CertificateType) types.Certificate {
 	return types.NewNocRootCertificate(
 		testconstants.NocRootCert1,
 		testconstants.NocRootCert1Subject,
@@ -271,10 +271,11 @@ func RootNocCertificate1(address sdk.AccAddress) types.Certificate {
 		address.String(),
 		testconstants.Vid,
 		testconstants.SchemaVersion,
+		certificateType,
 	)
 }
 
-func RootNocCertificate1Copy(address sdk.AccAddress) types.Certificate {
+func RootNocCertificate1Copy(address sdk.AccAddress, certificateType types.CertificateType) types.Certificate {
 	return types.NewNocRootCertificate(
 		testconstants.NocRootCert1Copy,
 		testconstants.NocRootCert1CopySubject,
@@ -284,10 +285,11 @@ func RootNocCertificate1Copy(address sdk.AccAddress) types.Certificate {
 		address.String(),
 		testconstants.Vid,
 		testconstants.SchemaVersion,
+		certificateType,
 	)
 }
 
-func RootNocCertificate2(address sdk.AccAddress) types.Certificate {
+func RootNocCertificate2(address sdk.AccAddress, certificateType types.CertificateType) types.Certificate {
 	return types.NewNocRootCertificate(
 		testconstants.NocRootCert2,
 		testconstants.NocRootCert2Subject,
@@ -297,10 +299,11 @@ func RootNocCertificate2(address sdk.AccAddress) types.Certificate {
 		address.String(),
 		testconstants.Vid,
 		testconstants.SchemaVersion,
+		certificateType,
 	)
 }
 
-func IntermediateNocCertificate1(address sdk.AccAddress) types.Certificate {
+func IntermediateNocCertificate1(address sdk.AccAddress, certificateType types.CertificateType) types.Certificate {
 	return types.NewNocCertificate(
 		testconstants.NocCert1,
 		testconstants.NocCert1Subject,
@@ -314,10 +317,11 @@ func IntermediateNocCertificate1(address sdk.AccAddress) types.Certificate {
 		address.String(),
 		testconstants.Vid,
 		testconstants.SchemaVersion,
+		certificateType,
 	)
 }
 
-func IntermediateNocCertificate1Copy(address sdk.AccAddress) types.Certificate {
+func IntermediateNocCertificate1Copy(address sdk.AccAddress, certificateType types.CertificateType) types.Certificate {
 	return types.NewNocCertificate(
 		testconstants.NocCert1Copy,
 		testconstants.NocCert1CopySubject,
@@ -331,10 +335,11 @@ func IntermediateNocCertificate1Copy(address sdk.AccAddress) types.Certificate {
 		address.String(),
 		testconstants.Vid,
 		testconstants.SchemaVersion,
+		certificateType,
 	)
 }
 
-func IntermediateNocCertificate2(address sdk.AccAddress) types.Certificate {
+func IntermediateNocCertificate2(address sdk.AccAddress, certificateType types.CertificateType) types.Certificate {
 	return types.NewNocCertificate(
 		testconstants.NocCert2,
 		testconstants.NocCert2Subject,
@@ -348,10 +353,11 @@ func IntermediateNocCertificate2(address sdk.AccAddress) types.Certificate {
 		address.String(),
 		testconstants.Vid,
 		testconstants.SchemaVersion,
+		certificateType,
 	)
 }
 
-func LeafNocCertificate1(address sdk.AccAddress) types.Certificate {
+func LeafNocCertificate1(address sdk.AccAddress, certificateType types.CertificateType) types.Certificate {
 	return types.NewNocCertificate(
 		testconstants.NocLeafCert1,
 		testconstants.NocLeafCert1Subject,
@@ -365,5 +371,6 @@ func LeafNocCertificate1(address sdk.AccAddress) types.Certificate {
 		address.String(),
 		testconstants.Vid,
 		testconstants.SchemaVersion,
+		certificateType,
 	)
 }
