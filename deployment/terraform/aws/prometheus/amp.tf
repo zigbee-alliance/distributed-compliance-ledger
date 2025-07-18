@@ -1,8 +1,8 @@
 resource "aws_prometheus_workspace" "this_amp_workspace" {
   alias = "amp-workspace"
-  tags = {
+  tags = merge(var.tags, {
     Name = "DCL AMP Workspace"
-  }
+  })
 }
 
 data "aws_region" "current" {}

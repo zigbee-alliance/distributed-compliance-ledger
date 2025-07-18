@@ -3,6 +3,7 @@ resource "aws_acm_certificate" "this_acm_cert" {
 
   domain_name       = "on.${data.aws_route53_zone.this_zone[0].name}"
   validation_method = "DNS"
+  tags              = var.tags
 }
 
 resource "aws_route53_record" "this_acm_val_records" {

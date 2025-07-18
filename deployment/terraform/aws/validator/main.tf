@@ -15,12 +15,13 @@ data "aws_ami" "ubuntu" {
 
 resource "aws_key_pair" "key_pair" {
   public_key = file(var.ssh_public_key_path)
+  tags       = var.tags
 }
 
 resource "aws_instance" "this_node" {
   ami                                  = data.aws_ami.ubuntu.id
   instance_type                        = var.instance_type
-  disable_api_termination              = true
+  disable_api_termination              = !var.disable_instance_protection
   instance_initiated_shutdown_behavior = "stop"
 
   iam_instance_profile = var.iam_instance_profile.name
@@ -33,6 +34,10 @@ resource "aws_instance" "this_node" {
 
   key_name   = aws_key_pair.key_pair.id
   monitoring = true
+
+  lifecycle {
+    ignore_changes = [ami]
+  }
 
   connection {
     type        = "ssh"
@@ -54,9 +59,9 @@ resource "aws_instance" "this_node" {
     script = "./provisioner/install-ansible-deps.sh"
   }
 
-  tags = {
+  tags = merge(var.tags, {
     Name = "Validator Node"
-  }
+  })
 
   root_block_device {
     encrypted   = true

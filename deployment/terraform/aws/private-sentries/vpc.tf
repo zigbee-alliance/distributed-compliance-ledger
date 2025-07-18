@@ -8,7 +8,7 @@ locals {
 
 module "this_vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "3.14.0"
+  version = "3.19.0"
 
   name = "private-sentries-vpc"
   cidr = "${local.vpc_network_prefix}.0.0/16"
@@ -19,4 +19,5 @@ module "this_vpc" {
 
   enable_nat_gateway   = true
   enable_dns_hostnames = true
+  tags                 = var.tags
 }

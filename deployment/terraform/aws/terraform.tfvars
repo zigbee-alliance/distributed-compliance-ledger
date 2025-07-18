@@ -9,6 +9,9 @@ validator_config = {
   is_genesis    = true
 }
 
+# set to `true` before the destruction procedure
+disable_validator_protection = false
+
 private_sentries_config = {
   enable        = true
   nodes_count   = 2

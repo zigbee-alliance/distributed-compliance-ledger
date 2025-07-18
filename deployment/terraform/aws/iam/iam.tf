@@ -14,6 +14,8 @@ resource "aws_iam_role" "this_iam_role" {
   ]
 }
 EOF
+
+  tags = var.tags
 }
 
 resource "aws_iam_policy" "this_cloudwatch_write_policy" {
@@ -49,6 +51,8 @@ resource "aws_iam_policy" "this_cloudwatch_write_policy" {
     ]
 }
 EOF
+
+  tags = var.tags
 }
 
 resource "aws_iam_role_policy_attachment" "this_cloudwatch_policy_attachment" {
@@ -58,4 +62,5 @@ resource "aws_iam_role_policy_attachment" "this_cloudwatch_policy_attachment" {
 
 resource "aws_iam_instance_profile" "this_iam_instance_profile" {
   role = aws_iam_role.this_iam_role.name
+  tags = var.tags
 }
