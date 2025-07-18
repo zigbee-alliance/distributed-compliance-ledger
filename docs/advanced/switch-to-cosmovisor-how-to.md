@@ -29,7 +29,7 @@ of the store.
 
     The command will ask for the user's password. Enter it.
 
-2. Download new `dcld`, `cosmovisor` and `cosmovisor.service` from GitHub
+2. Download new `dcld`, `cosmovisor`, `cosmovisor.service`, `cosmovisor.conf`, `cosmovisor_start.sh` and `cosmovisor_preupgrade.sh` from GitHub
   [release page](https://github.com/zigbee-alliance/distributed-compliance-ledger/releases). *(To ensure that no old `dcld` binary remains in the current direcory, try to remove it at first.)*
 
     Example using curl:
@@ -39,6 +39,9 @@ of the store.
     curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/dcld
     curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/cosmovisor
     curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/cosmovisor.service
+    curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/cosmovisor.conf
+    curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/cosmovisor_start.sh
+    curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/cosmovisor_preupgrade.sh
     ```
 
 3. Download `switch_to_cosmovisor` script from [repository](../../deployment/scripts/)

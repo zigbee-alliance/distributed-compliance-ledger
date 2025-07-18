@@ -66,6 +66,10 @@ func (k msgServer) CreateModel(goCtx context.Context, msg *types.MsgCreateModel)
 		model.CommissioningModeInitialStepsHint = 1
 	}
 
+	if model.CommissioningModeSecondaryStepsHint == 0 {
+		model.CommissioningModeSecondaryStepsHint = 1
+	}
+
 	if model.EnhancedSetupFlowOptions&1 == 1 {
 		model.EnhancedSetupFlowTCUrl = msg.EnhancedSetupFlowTCUrl
 		model.EnhancedSetupFlowTCRevision = msg.EnhancedSetupFlowTCRevision
@@ -192,6 +196,10 @@ func (k msgServer) UpdateModel(goCtx context.Context, msg *types.MsgUpdateModel)
 
 	if msg.CommissioningModeInitialStepsHint != 0 {
 		model.CommissioningModeInitialStepsHint = msg.CommissioningModeInitialStepsHint
+	}
+
+	if msg.CommissioningModeSecondaryStepsHint != 0 {
+		model.CommissioningModeSecondaryStepsHint = msg.CommissioningModeSecondaryStepsHint
 	}
 
 	// store updated model

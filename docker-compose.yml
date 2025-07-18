@@ -13,8 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-version: '3.2'
-
 services:
   node0:
     image: dcledger
@@ -30,7 +28,7 @@ services:
     networks:
       localnet:
         ipv4_address: 192.167.10.2
-    command: cosmovisor run start
+    command: /var/lib/dcl/./node_helper.sh
 
   node1:
     image: dcledger
@@ -46,7 +44,7 @@ services:
     networks:
       localnet:
         ipv4_address: 192.167.10.3
-    command: cosmovisor run start
+    command: /var/lib/dcl/./node_helper.sh
 
   node2:
     image: dcledger
@@ -62,7 +60,7 @@ services:
     networks:
       localnet:
         ipv4_address: 192.167.10.4
-    command: cosmovisor run start
+    command: /var/lib/dcl/./node_helper.sh
 
   node3:
     image: dcledger
@@ -78,7 +76,7 @@ services:
     networks:
       localnet:
         ipv4_address: 192.167.10.5
-    command: cosmovisor run start
+    command: /var/lib/dcl/./node_helper.sh
 
   observer0:
     image: dcledger
@@ -96,7 +94,7 @@ services:
     networks:
       localnet:
         ipv4_address: 192.167.10.6
-    command: cosmovisor run start
+    command: /var/lib/dcl/./node_helper.sh
 
   lightclient0:
     image: dcledger
