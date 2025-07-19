@@ -27,6 +27,7 @@ func CmdCreateModelVersion() *cobra.Command {
 		maxApplicableSoftwareVersion uint32
 		releaseNotesURL              string
 		schemaVersion                uint32
+		specificationVersion         uint32
 	)
 
 	cmd := &cobra.Command{
@@ -55,6 +56,7 @@ func CmdCreateModelVersion() *cobra.Command {
 				maxApplicableSoftwareVersion,
 				releaseNotesURL,
 				schemaVersion,
+				specificationVersion,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -106,6 +108,8 @@ SoftwareVersion for which this image can be applied`)
 		`URL that contains product specific web page that contains 
 release notes for the device model.`)
 	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version")
+	cmd.Flags().Uint32Var(&specificationVersion, FlagSpecificationVersion, 0,
+		"SpecificationVersion SHALL identify the specification version applicable to the device model.")
 
 	cli.AddTxFlagsToCmd(cmd)
 
