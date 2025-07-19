@@ -189,7 +189,8 @@ var (
 	CertSchemaVersion uint32
 
 	// SchemaVersion initial default value.
-	SchemaVersion uint32
+	SchemaVersion        uint32
+	SpecificationVersion uint32
 )
 
 /*

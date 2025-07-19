@@ -61,6 +61,7 @@ func (k msgServer) CreateModelVersion(goCtx context.Context, msg *types.MsgCreat
 		MaxApplicableSoftwareVersion: msg.MaxApplicableSoftwareVersion,
 		ReleaseNotesUrl:              msg.ReleaseNotesUrl,
 		SchemaVersion:                msg.SchemaVersion,
+		SpecificationVersion:         msg.SpecificationVersion,
 	}
 
 	// store new model version
