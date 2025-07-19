@@ -43,4 +43,5 @@ const (
 	FlagMinApplicableSoftwareVersion = "minApplicableSoftwareVersion"
 	FlagMaxApplicableSoftwareVersion = "maxApplicableSoftwareVersion"
 	FlagReleaseNotesURL              = "releaseNotesURL"
+	FlagSpecificationVersion         = "specificationVersion"
 )
