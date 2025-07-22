@@ -254,12 +254,12 @@ func AddNocRootCertificate(
 	setup *TestSetup,
 	certificate types.Certificate,
 ) *types.MsgAddNocX509RootCert {
-	var isVVSC = false
+	var isVidVerificationSigner = false
 	if certificate.CertificateType == types.CertificateType_VIDSignerPKI {
-		isVVSC = true
+		isVidVerificationSigner = true
 	}
 
-	addNocX509RootCert := types.NewMsgAddNocX509RootCert(certificate.Owner, certificate.PemCert, testconstants.CertSchemaVersion, isVVSC)
+	addNocX509RootCert := types.NewMsgAddNocX509RootCert(certificate.Owner, certificate.PemCert, testconstants.CertSchemaVersion, isVidVerificationSigner)
 	_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
 	require.NoError(setup.T, err)
 
@@ -270,12 +270,12 @@ func AddNocIntermediateCertificate(
 	setup *TestSetup,
 	certificate types.Certificate,
 ) *types.MsgAddNocX509IcaCert {
-	var isVVSC = false
+	var isVidVerificationSigner = false
 	if certificate.CertificateType == types.CertificateType_VIDSignerPKI {
-		isVVSC = true
+		isVidVerificationSigner = true
 	}
 
-	nocX509Cert := types.NewMsgAddNocX509IcaCert(certificate.Owner, certificate.PemCert, testconstants.CertSchemaVersion, isVVSC)
+	nocX509Cert := types.NewMsgAddNocX509IcaCert(certificate.Owner, certificate.PemCert, testconstants.CertSchemaVersion, isVidVerificationSigner)
 	_, err := setup.Handler(setup.Ctx, nocX509Cert)
 	require.NoError(setup.T, err)
 

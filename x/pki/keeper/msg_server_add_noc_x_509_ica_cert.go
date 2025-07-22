@@ -43,7 +43,7 @@ func (k msgServer) AddNocX509IcaCert(goCtx context.Context, msg *types.MsgAddNoc
 	accountVid := signerAccount.VendorID
 
 	msgCertType := types.CertificateType_OperationalPKI
-	if msg.IsVVSC {
+	if msg.IsVidVerificationSigner {
 		msgCertType = types.CertificateType_VIDSignerPKI
 	}
 

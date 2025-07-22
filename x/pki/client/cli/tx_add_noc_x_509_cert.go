@@ -18,8 +18,8 @@ var _ = strconv.Itoa(0)
 
 func CmdAddNocX509IcaCert() *cobra.Command {
 	var (
-		certSchemaVersion uint32
-		isVVSC            bool
+		certSchemaVersion       uint32
+		isVidVerificationSigner bool
 	)
 	cmd := &cobra.Command{
 		Use:   "add-noc-x509-ica-cert",
@@ -40,7 +40,7 @@ func CmdAddNocX509IcaCert() *cobra.Command {
 				clientCtx.GetFromAddress().String(),
 				cert,
 				certSchemaVersion,
-				isVVSC,
+				isVidVerificationSigner,
 			)
 			// validate basic will be called in GenerateOrBroadcastTxCLI
 			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
@@ -55,7 +55,7 @@ func CmdAddNocX509IcaCert() *cobra.Command {
 	cmd.Flags().StringP(FlagCertificate, FlagCertificateShortcut, "",
 		"PEM encoded certificate (string or path to file containing data)")
 	cmd.Flags().Uint32Var(&certSchemaVersion, common.FlagSchemaVersion, 0, "Schema version of certificate")
-	cmd.Flags().BoolVar(&isVVSC, FlagIsVVSC, false, "is VID Verification Signer Certificate")
+	cmd.Flags().BoolVar(&isVidVerificationSigner, FlagIsVVSC, false, "is VID Verification Signer Certificate")
 
 	cli.AddTxFlagsToCmd(cmd)
 

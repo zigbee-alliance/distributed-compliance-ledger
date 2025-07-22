@@ -449,9 +449,9 @@ func NocCertDemo(suite *utils.TestSuite) {
 
 	// Add second NOC certificate by first vendor
 	msgAddNocRootCertificate = pkitypes.MsgAddNocX509RootCert{
-		Signer: vendor1Account.Address,
-		Cert:   testconstants.NocRootCert2,
-		IsVVSC: true,
+		Signer:                  vendor1Account.Address,
+		Cert:                    testconstants.NocRootCert2,
+		IsVidVerificationSigner: true,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddNocRootCertificate}, vendor1Name, vendor1Account)
 	require.NoError(suite.T, err)
@@ -603,9 +603,9 @@ func NocCertDemo(suite *utils.TestSuite) {
 
 	// Add second intermediate NOC certificate
 	msgAddNocCertificate = pkitypes.MsgAddNocX509IcaCert{
-		Signer: vendor1Account.Address,
-		Cert:   testconstants.NocCert2,
-		IsVVSC: true,
+		Signer:                  vendor1Account.Address,
+		Cert:                    testconstants.NocCert2,
+		IsVidVerificationSigner: true,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddNocCertificate}, vendor1Name, vendor1Account)
 	require.NoError(suite.T, err)

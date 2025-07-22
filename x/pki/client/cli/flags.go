@@ -30,5 +30,5 @@ const (
 	FlagRevokeChildShortcut      = "r"
 	FlagCertificateSchemaVersion = "certificate-schema-version"
 	FlagCertificateDelegator     = "certificate-delegator"
-	FlagIsVVSC                   = "is-vvsc"
+	FlagIsVVSC                   = "is-vid-verification-signer"
 )

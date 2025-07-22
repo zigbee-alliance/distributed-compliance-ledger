@@ -177,12 +177,12 @@ func TestHandler_AddNocRootCert_SenderNotVendor(t *testing.T) {
 
 	cases := []CertificateTestCase{
 		{
-			name:   "OperationalPKI_AddNocRootCert_SenderNotVendor",
-			isVVSC: false,
+			name:                    "OperationalPKI_AddNocRootCert_SenderNotVendor",
+			isVidVerificationSigner: false,
 		},
 		{
-			name:   "VIDSignerPKI_AddNocRootCert_SenderNotVendor",
-			isVVSC: true,
+			name:                    "VIDSignerPKI_AddNocRootCert_SenderNotVendor",
+			isVidVerificationSigner: true,
 		},
 	}
 
@@ -193,7 +193,7 @@ func TestHandler_AddNocRootCert_SenderNotVendor(t *testing.T) {
 			addNocX509RootCert := types.NewMsgAddNocX509RootCert(
 				setup.Trustee1.String(),
 				testconstants.RootCertPem,
-				testconstants.CertSchemaVersion, tc.isVVSC)
+				testconstants.CertSchemaVersion, tc.isVidVerificationSigner)
 			_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
 			require.Error(t, err)
 			require.True(t, sdkerrors.ErrUnauthorized.Is(err))
@@ -236,12 +236,12 @@ func TestHandler_AddNocRootCert_InvalidCertificate(t *testing.T) {
 
 	crtCases := []CertificateTestCase{
 		{
-			name:   "OperationalPKI",
-			isVVSC: false,
+			name:                    "OperationalPKI",
+			isVidVerificationSigner: false,
 		},
 		{
-			name:   "VIDSignerPKI",
-			isVVSC: true,
+			name:                    "VIDSignerPKI",
+			isVidVerificationSigner: true,
 		},
 	}
 
@@ -251,7 +251,7 @@ func TestHandler_AddNocRootCert_InvalidCertificate(t *testing.T) {
 				setup := utils.Setup(t)
 				setup.AddAccount(accAddress, []dclauthtypes.AccountRole{tc.accountRole}, tc.accountVid)
 
-				addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), tc.nocRoorCert, testconstants.CertSchemaVersion, tcc.isVVSC)
+				addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), tc.nocRoorCert, testconstants.CertSchemaVersion, tcc.isVidVerificationSigner)
 				_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
 				require.ErrorIs(t, err, tc.err)
 			})
@@ -328,14 +328,14 @@ func TestHandler_AddNocRootCert_CertificateExist(t *testing.T) {
 
 	crtCases := []CertificateTestCase{
 		{
-			name:    "OperationalPKI",
-			crtType: types.CertificateType_OperationalPKI,
-			isVVSC:  false,
+			name:                    "OperationalPKI",
+			crtType:                 types.CertificateType_OperationalPKI,
+			isVidVerificationSigner: false,
 		},
 		{
-			name:    "VIDSignerPKI",
-			crtType: types.CertificateType_VIDSignerPKI,
-			isVVSC:  true,
+			name:                    "VIDSignerPKI",
+			crtType:                 types.CertificateType_VIDSignerPKI,
+			isVidVerificationSigner: true,
 		},
 	}
 
@@ -363,7 +363,7 @@ func TestHandler_AddNocRootCert_CertificateExist(t *testing.T) {
 				}
 				setup.Keeper.SetUniqueCertificate(setup.Ctx, uniqueCertificate)
 
-				addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), tc.nocRoorCert, testconstants.CertSchemaVersion, tcc.isVVSC)
+				addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), tc.nocRoorCert, testconstants.CertSchemaVersion, tcc.isVidVerificationSigner)
 				_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
 				require.ErrorIs(t, err, tc.err)
 			})

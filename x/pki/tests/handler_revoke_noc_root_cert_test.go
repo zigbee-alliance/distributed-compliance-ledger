@@ -18,12 +18,12 @@ func TestHandler_RevokeNocRootCert_BySubjectAndSKID(t *testing.T) {
 
 	cases := []CertificateTestCase{
 		{
-			name:   "OperationalPKI_RevokeNocRootCert_BySubjectAndSKID",
-			isVVSC: false,
+			name:                    "OperationalPKI_RevokeNocRootCert_BySubjectAndSKID",
+			isVidVerificationSigner: false,
 		},
 		{
-			name:   "VIDSignerPKI_RevokeNocRootCert_BySubjectAndSKID",
-			isVVSC: true,
+			name:                    "VIDSignerPKI_RevokeNocRootCert_BySubjectAndSKID",
+			isVidVerificationSigner: true,
 		},
 	}
 
@@ -78,12 +78,12 @@ func TestHandler_RevokeNocRootCert_BySerialNumber(t *testing.T) {
 
 	cases := []CertificateTestCase{
 		{
-			name:   "OperationalPKI_RevokeNocRootCert_BySerialNumber",
-			isVVSC: false,
+			name:                    "OperationalPKI_RevokeNocRootCert_BySerialNumber",
+			isVidVerificationSigner: false,
 		},
 		{
-			name:   "VIDSignerPKI_RevokeNocRootCert_BySerialNumber",
-			isVVSC: true,
+			name:                    "VIDSignerPKI_RevokeNocRootCert_BySerialNumber",
+			isVidVerificationSigner: true,
 		},
 	}
 
@@ -139,12 +139,12 @@ func TestHandler_RevokeNocRootCert_BySubjectAndSKID_KeepChild(t *testing.T) {
 
 	cases := []CertificateTestCase{
 		{
-			name:   "OperationalPKI_RevokeNocRootCert_BySubjectAndSKID_KeepChild",
-			isVVSC: false,
+			name:                    "OperationalPKI_RevokeNocRootCert_BySubjectAndSKID_KeepChild",
+			isVidVerificationSigner: false,
 		},
 		{
-			name:   "VIDSignerPKI_RevokeNocRootCert_BySubjectAndSKID_KeepChild",
-			isVVSC: true,
+			name:                    "VIDSignerPKI_RevokeNocRootCert_BySubjectAndSKID_KeepChild",
+			isVidVerificationSigner: true,
 		},
 	}
 
@@ -205,12 +205,12 @@ func TestHandler_RevokeNocRootCert_BySerialNumber_KeepChild(t *testing.T) {
 
 	cases := []CertificateTestCase{
 		{
-			name:   "OperationalPKI_RevokeNocRootCert_BySerialNumber_KeepChild",
-			isVVSC: false,
+			name:                    "OperationalPKI_RevokeNocRootCert_BySerialNumber_KeepChild",
+			isVidVerificationSigner: false,
 		},
 		{
-			name:   "VIDSignerPKI_RevokeNocRootCert_BySerialNumber_KeepChild",
-			isVVSC: true,
+			name:                    "VIDSignerPKI_RevokeNocRootCert_BySerialNumber_KeepChild",
+			isVidVerificationSigner: true,
 		},
 	}
 
@@ -271,12 +271,12 @@ func TestHandler_RevokeNocRootCert_BySubjectAndSKID_RevokeChild(t *testing.T) {
 
 	cases := []CertificateTestCase{
 		{
-			name:   "OperationalPKI_RevokeNocRootCert_BySubjectAndSKID_RevokeChild",
-			isVVSC: false,
+			name:                    "OperationalPKI_RevokeNocRootCert_BySubjectAndSKID_RevokeChild",
+			isVidVerificationSigner: false,
 		},
 		{
-			name:   "VIDSignerPKI_RevokeNocRootCert_BySubjectAndSKID_RevokeChild",
-			isVVSC: true,
+			name:                    "VIDSignerPKI_RevokeNocRootCert_BySubjectAndSKID_RevokeChild",
+			isVidVerificationSigner: true,
 		},
 	}
 
@@ -335,12 +335,12 @@ func TestHandler_RevokeNocRootCert_BySerialNumber_RevokeChild(t *testing.T) {
 
 	cases := []CertificateTestCase{
 		{
-			name:   "OperationalPKI_RevokeNocRootCert_BySerialNumber_RevokeChild",
-			isVVSC: false,
+			name:                    "OperationalPKI_RevokeNocRootCert_BySerialNumber_RevokeChild",
+			isVidVerificationSigner: false,
 		},
 		{
-			name:   "VIDSignerPKI_RevokeNocRootCert_BySerialNumber_RevokeChild",
-			isVVSC: true,
+			name:                    "VIDSignerPKI_RevokeNocRootCert_BySerialNumber_RevokeChild",
+			isVidVerificationSigner: true,
 		},
 	}
 
@@ -399,12 +399,12 @@ func TestHandler_RevokeNocRootCert_OtherVendor(t *testing.T) {
 
 	cases := []CertificateTestCase{
 		{
-			name:   "OperationalPKI_RevokeNocRootCert_OtherVendor",
-			isVVSC: false,
+			name:                    "OperationalPKI_RevokeNocRootCert_OtherVendor",
+			isVidVerificationSigner: false,
 		},
 		{
-			name:   "VIDSignerPKI_RevokeNocRootCert_OtherVendor",
-			isVVSC: true,
+			name:                    "VIDSignerPKI_RevokeNocRootCert_OtherVendor",
+			isVidVerificationSigner: true,
 		},
 	}
 
@@ -460,12 +460,12 @@ func TestHandler_RevokeNocRootCert_SenderNotVendor(t *testing.T) {
 
 	cases := []CertificateTestCase{
 		{
-			name:   "OperationalPKI_RevokeNocRootCert_SenderNotVendor",
-			isVVSC: false,
+			name:                    "OperationalPKI_RevokeNocRootCert_SenderNotVendor",
+			isVidVerificationSigner: false,
 		},
 		{
-			name:   "VIDSignerPKI_RevokeNocRootCert_SenderNotVendor",
-			isVVSC: true,
+			name:                    "VIDSignerPKI_RevokeNocRootCert_SenderNotVendor",
+			isVidVerificationSigner: true,
 		},
 	}
 
