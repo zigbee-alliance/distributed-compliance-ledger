@@ -16,7 +16,6 @@ import (
 // Main
 
 func TestHandler_AddNocRootCert(t *testing.T) {
-
 	cases := []CertificateTestCase{
 		{
 			name:    "OperationalPKI_AddNocRootCert",
@@ -64,7 +63,6 @@ func TestHandler_AddNocRootCert(t *testing.T) {
 }
 
 func TestHandler_AddNocRootCert_SameSubjectAndSkid_DifferentSerialNumber(t *testing.T) {
-
 	cases := []CertificateTestCase{
 		{
 			name:    "OperationalPKI_AddNocRootCert_SameSubjectAndSkid_DifferentSerialNumber",
@@ -116,7 +114,6 @@ func TestHandler_AddNocRootCert_SameSubjectAndSkid_DifferentSerialNumber(t *test
 }
 
 func TestHandler_AddNocRootCert_ByNotOwnerButSameVendor(t *testing.T) {
-
 	cases := []CertificateTestCase{
 		{
 			name:    "OperationalPKI_AddNocRootCert_ByNotOwnerButSameVendor",
@@ -174,7 +171,6 @@ func TestHandler_AddNocRootCert_ByNotOwnerButSameVendor(t *testing.T) {
 // Error cases
 
 func TestHandler_AddNocRootCert_SenderNotVendor(t *testing.T) {
-
 	cases := []CertificateTestCase{
 		{
 			name:                    "OperationalPKI_AddNocRootCert_SenderNotVendor",

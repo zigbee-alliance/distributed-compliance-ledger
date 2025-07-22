@@ -687,7 +687,6 @@ func TestHandler_RemoveDaIntermediateCert_ForRootCertificate(t *testing.T) {
 }
 
 func TestHandler_RemoveDaIntermediateCert_ForNocIcaCertificate(t *testing.T) {
-
 	cases := []CertificateTestCase{
 		{
 			name:    "OperationalPKI_RemoveDaIntermediateCert_ForNocIcaCertificate",

@@ -16,7 +16,6 @@ import (
 // Main
 
 func TestHandler_RevokeNocIntermediateCert_BySubjectAndSKID(t *testing.T) {
-
 	cases := []CertificateTestCase{
 		{
 			name:    "OperationalPKI_RevokeNocIntermediateCert_BySubjectAndSKID",
@@ -81,7 +80,6 @@ func TestHandler_RevokeNocIntermediateCert_BySubjectAndSKID(t *testing.T) {
 }
 
 func TestHandler_RevokeNocIntermediateCert_BySerialNumber(t *testing.T) {
-
 	cases := []CertificateTestCase{
 		{
 			name:    "OperationalPKI_RevokeNocIntermediateCert_BySerialNumber",
@@ -145,7 +143,6 @@ func TestHandler_RevokeNocIntermediateCert_BySerialNumber(t *testing.T) {
 }
 
 func TestHandler_RevokeNocIntermediateCert_BySubjectAndSKID_ParentExist(t *testing.T) {
-
 	cases := []CertificateTestCase{
 		{
 			name:    "OperationalPKI_RevokeNocIntermediateCert_BySubjectAndSKID_ParentExist",
@@ -206,7 +203,6 @@ func TestHandler_RevokeNocIntermediateCert_BySubjectAndSKID_ParentExist(t *testi
 }
 
 func TestHandler_RevokeNocIntermediateCert_BySerialNumber_ParentExist(t *testing.T) {
-
 	cases := []CertificateTestCase{
 		{
 			name:    "OperationalPKI_RevokeNocIntermediateCert_BySerialNumber_ParentExist",
@@ -267,7 +263,6 @@ func TestHandler_RevokeNocIntermediateCert_BySerialNumber_ParentExist(t *testing
 }
 
 func TestHandler_RevokeNocIntermediateCert_BySubjectAndSKID_KeepChild(t *testing.T) {
-
 	cases := []CertificateTestCase{
 		{
 			name:    "OperationalPKI_RevokeNocIntermediateCert_BySubjectAndSKID_KeepChild",
@@ -337,7 +332,6 @@ func TestHandler_RevokeNocIntermediateCert_BySubjectAndSKID_KeepChild(t *testing
 }
 
 func TestHandler_RevokeNocIntermediateCert_BySerialNumber_KeepChild(t *testing.T) {
-
 	cases := []CertificateTestCase{
 		{
 			name:    "OperationalPKI_RevokeNocIntermediateCert_BySerialNumber_KeepChild",
@@ -407,7 +401,6 @@ func TestHandler_RevokeNocIntermediateCert_BySerialNumber_KeepChild(t *testing.T
 }
 
 func TestHandler_RevokeNocIntermediateCert_BySubjectAndSKID_RevokeChild(t *testing.T) {
-
 	cases := []CertificateTestCase{
 		{
 			name:    "OperationalPKI_RevokeNocIntermediateCert_BySubjectAndSKID_RevokeChild",
@@ -475,7 +468,6 @@ func TestHandler_RevokeNocIntermediateCert_BySubjectAndSKID_RevokeChild(t *testi
 }
 
 func TestHandler_RevokeNocIntermediateCert_BySerialNumber_RevokeChild(t *testing.T) {
-
 	cases := []CertificateTestCase{
 		{
 			name:    "OperationalPKI_RevokeNocIntermediateCert_BySerialNumber_RevokeChild",
@@ -546,7 +538,6 @@ func TestHandler_RevokeNocIntermediateCert_BySerialNumber_RevokeChild(t *testing
 }
 
 func TestHandler_RevokeNocIntermediateCert_ByOtherVendor(t *testing.T) {
-
 	cases := []CertificateTestCase{
 		{
 			name:    "OperationalPKI_RevokeNocIntermediateCert_ByOtherVendor",
@@ -611,7 +602,6 @@ func TestHandler_RevokeNocIntermediateCert_ByOtherVendor(t *testing.T) {
 // Error cases
 
 func TestHandler_RevokeNocIntermediateCert_SenderNotVendor(t *testing.T) {
-
 	cases := []CertificateTestCase{
 		{
 			name:    "OperationalPKI_RevokeNocIntermediateCert_SenderNotVendor",

@@ -23,7 +23,6 @@ type CertificateTestCase struct {
 // Main
 
 func TestHandler_AddNocIntermediateCert(t *testing.T) {
-
 	cases := []CertificateTestCase{
 		{
 			name:    "OperationalPKI_AddNocIntermediateCert",
@@ -76,7 +75,6 @@ func TestHandler_AddNocIntermediateCert(t *testing.T) {
 }
 
 func TestHandler_AddNocIntermediateCert_SameSubjectAndSkid_DifferentSerialNumber(t *testing.T) {
-
 	cases := []CertificateTestCase{
 		{
 			name:    "OperationalPKI_AddNocIntermediateCert_SameSubjectAndSkid_DifferentSerialNumber",
@@ -134,7 +132,6 @@ func TestHandler_AddNocIntermediateCert_SameSubjectAndSkid_DifferentSerialNumber
 }
 
 func TestHandler_AddNocIntermediateCert_ByNotOwnerButSameVendor(t *testing.T) {
-
 	cases := []CertificateTestCase{
 		{
 			name:    "OperationalPKI_AddNocIntermediateCert_ByNotOwnerButSameVendor",
@@ -198,7 +195,6 @@ func TestHandler_AddNocIntermediateCert_ByNotOwnerButSameVendor(t *testing.T) {
 // Error cases
 
 func TestHandler_AddNocIntermediateCert_SenderNotVendor(t *testing.T) {
-
 	cases := []CertificateTestCase{
 		{
 			name:                    "OperationalPKI_AddNocIntermediateCert_SenderNotVendor",
@@ -229,7 +225,6 @@ func TestHandler_AddNocIntermediateCert_SenderNotVendor(t *testing.T) {
 }
 
 func TestHandler_AddNocIntermediateCert_Root_VID_Does_Not_Equal_To_AccountVID(t *testing.T) {
-
 	cases := []CertificateTestCase{
 		{
 			name:                    "OperationalPKI_AddNocIntermediateCert_Root_VID_Does_Not_Equal_To_AccountVID",
@@ -262,7 +257,6 @@ func TestHandler_AddNocIntermediateCert_Root_VID_Does_Not_Equal_To_AccountVID(t 
 }
 
 func TestHandler_AddNocIntermediateCert_ForInvalidCertificate(t *testing.T) {
-
 	cases := []CertificateTestCase{
 		{
 			name:                    "OperationalPKI_AddNocIntermediateCert_ForInvalidCertificate",
@@ -296,7 +290,6 @@ func TestHandler_AddNocIntermediateCert_ForNocRootCertificate(t *testing.T) {
 }
 
 func TestHandler_AddNocIntermediateCert_ForRootNonNocCertificate(t *testing.T) {
-
 	cases := []CertificateTestCase{
 		{
 			name:                    "OperationalPKI_AddNocIntermediateCert_ForRootNonNocCertificate",
@@ -325,7 +318,6 @@ func TestHandler_AddNocIntermediateCert_ForRootNonNocCertificate(t *testing.T) {
 }
 
 func TestHandler_AddNocIntermediateCert_WhenNocRootCertIsAbsent(t *testing.T) {
-
 	cases := []CertificateTestCase{
 		{
 			name:                    "OperationalPKI_AddNocIntermediateCert_WhenNocRootCertIsAbsent",

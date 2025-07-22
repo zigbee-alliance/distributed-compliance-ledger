@@ -15,7 +15,6 @@ import (
 // Main
 
 func TestHandler_RevokeNocRootCert_BySubjectAndSKID(t *testing.T) {
-
 	cases := []CertificateTestCase{
 		{
 			name:                    "OperationalPKI_RevokeNocRootCert_BySubjectAndSKID",
@@ -75,7 +74,6 @@ func TestHandler_RevokeNocRootCert_BySubjectAndSKID(t *testing.T) {
 }
 
 func TestHandler_RevokeNocRootCert_BySerialNumber(t *testing.T) {
-
 	cases := []CertificateTestCase{
 		{
 			name:                    "OperationalPKI_RevokeNocRootCert_BySerialNumber",
@@ -136,7 +134,6 @@ func TestHandler_RevokeNocRootCert_BySerialNumber(t *testing.T) {
 }
 
 func TestHandler_RevokeNocRootCert_BySubjectAndSKID_KeepChild(t *testing.T) {
-
 	cases := []CertificateTestCase{
 		{
 			name:                    "OperationalPKI_RevokeNocRootCert_BySubjectAndSKID_KeepChild",
@@ -202,7 +199,6 @@ func TestHandler_RevokeNocRootCert_BySubjectAndSKID_KeepChild(t *testing.T) {
 }
 
 func TestHandler_RevokeNocRootCert_BySerialNumber_KeepChild(t *testing.T) {
-
 	cases := []CertificateTestCase{
 		{
 			name:                    "OperationalPKI_RevokeNocRootCert_BySerialNumber_KeepChild",
@@ -268,7 +264,6 @@ func TestHandler_RevokeNocRootCert_BySerialNumber_KeepChild(t *testing.T) {
 }
 
 func TestHandler_RevokeNocRootCert_BySubjectAndSKID_RevokeChild(t *testing.T) {
-
 	cases := []CertificateTestCase{
 		{
 			name:                    "OperationalPKI_RevokeNocRootCert_BySubjectAndSKID_RevokeChild",
@@ -332,7 +327,6 @@ func TestHandler_RevokeNocRootCert_BySubjectAndSKID_RevokeChild(t *testing.T) {
 }
 
 func TestHandler_RevokeNocRootCert_BySerialNumber_RevokeChild(t *testing.T) {
-
 	cases := []CertificateTestCase{
 		{
 			name:                    "OperationalPKI_RevokeNocRootCert_BySerialNumber_RevokeChild",
@@ -396,7 +390,6 @@ func TestHandler_RevokeNocRootCert_BySerialNumber_RevokeChild(t *testing.T) {
 }
 
 func TestHandler_RevokeNocRootCert_OtherVendor(t *testing.T) {
-
 	cases := []CertificateTestCase{
 		{
 			name:                    "OperationalPKI_RevokeNocRootCert_OtherVendor",
@@ -457,7 +450,6 @@ func TestHandler_RevokeNocRootCert_OtherVendor(t *testing.T) {
 // Error cases
 
 func TestHandler_RevokeNocRootCert_SenderNotVendor(t *testing.T) {
-
 	cases := []CertificateTestCase{
 		{
 			name:                    "OperationalPKI_RevokeNocRootCert_SenderNotVendor",
