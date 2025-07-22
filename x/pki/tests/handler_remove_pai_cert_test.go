@@ -687,25 +687,39 @@ func TestHandler_RemoveDaIntermediateCert_ForRootCertificate(t *testing.T) {
 }
 
 func TestHandler_RemoveDaIntermediateCert_ForNocIcaCertificate(t *testing.T) {
-	for _, crtType := range certificatesTypes {
-		setup := utils.Setup(t)
 
-		// add NOC root certificate
-		rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
-		utils.AddNocRootCertificate(setup, rootCertificate)
+	cases := []CertificateTestCase{
+		{
+			name:    "OperationalPKI_RemoveDaIntermediateCert_ForNocIcaCertificate",
+			crtType: types.CertificateType_OperationalPKI,
+		},
+		{
+			name:    "VIDSignerPKI_RemoveDaIntermediateCert_ForNocIcaCertificate",
+			crtType: types.CertificateType_VIDSignerPKI,
+		},
+	}
 
-		// Add ICA certificate
-		icaCertificate := utils.IntermediateNocCertificate1(setup.Vendor1, crtType)
-		utils.AddNocIntermediateCertificate(setup, icaCertificate)
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			setup := utils.Setup(t)
 
-		// Try to remove NOC ICA certificate
-		removeX509Cert := types.NewMsgRemoveX509Cert(
-			setup.Vendor1.String(),
-			icaCertificate.Subject,
-			icaCertificate.SubjectKeyId,
-			icaCertificate.SerialNumber)
-		_, err := setup.Handler(setup.Ctx, removeX509Cert)
-		require.Error(t, err)
-		require.True(t, pkitypes.ErrCertificateDoesNotExist.Is(err))
+			// add NOC root certificate
+			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, tc.crtType)
+			utils.AddNocRootCertificate(setup, rootCertificate)
+
+			// Add ICA certificate
+			icaCertificate := utils.IntermediateNocCertificate1(setup.Vendor1, tc.crtType)
+			utils.AddNocIntermediateCertificate(setup, icaCertificate)
+
+			// Try to remove NOC ICA certificate
+			removeX509Cert := types.NewMsgRemoveX509Cert(
+				setup.Vendor1.String(),
+				icaCertificate.Subject,
+				icaCertificate.SubjectKeyId,
+				icaCertificate.SerialNumber)
+			_, err := setup.Handler(setup.Ctx, removeX509Cert)
+			require.Error(t, err)
+			require.True(t, pkitypes.ErrCertificateDoesNotExist.Is(err))
+		})
 	}
 }

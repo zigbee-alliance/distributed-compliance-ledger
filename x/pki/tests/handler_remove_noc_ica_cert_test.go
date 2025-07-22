@@ -15,19 +15,31 @@ import (
 // Main
 
 func TestHandler_RemoveNocIntermediateCert_BySubjectAndSKID(t *testing.T) {
-	for _, crtType := range certificatesTypes {
-		t.Run(crtType.String(), func(t *testing.T) {
+
+	cases := []CertificateTestCase{
+		{
+			name:    "OperationalPKI_RemoveNocIntermediateCert_BySubjectAndSKID",
+			crtType: types.CertificateType_OperationalPKI,
+		},
+		{
+			name:    "VIDSignerPKI_RemoveNocIntermediateCert_BySubjectAndSKID",
+			crtType: types.CertificateType_VIDSignerPKI,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
 			setup := utils.Setup(t)
 
 			// add NOC root certificate
-			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocRootCertificate(setup, rootCertificate)
 
 			// add two intermediate certificates
-			icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1, crtType)
+			icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, icaCertificate1)
 
-			icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1, crtType)
+			icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, icaCertificate2)
 
 			// check total number of certificates
@@ -75,20 +87,32 @@ func TestHandler_RemoveNocIntermediateCert_BySubjectAndSKID(t *testing.T) {
 }
 
 func TestHandler_RemoveNocIntermediateCert_BySerialNumber(t *testing.T) {
-	for _, crtType := range certificatesTypes {
-		t.Run(crtType.String(), func(t *testing.T) {
+
+	cases := []CertificateTestCase{
+		{
+			name:    "OperationalPKI_RemoveNocIntermediateCert_BySerialNumber",
+			crtType: types.CertificateType_OperationalPKI,
+		},
+		{
+			name:    "VIDSignerPKI_RemoveNocIntermediateCert_BySerialNumber",
+			crtType: types.CertificateType_VIDSignerPKI,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
 			setup := utils.Setup(t)
 
 			// add NOC root certificate
-			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocRootCertificate(setup, rootCertificate)
 
 			// Add ICA certificates
-			icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1, crtType)
+			icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, icaCertificate1)
 
 			// Add ICA certificates with sam subject and SKID but different serial number
-			icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1, crtType)
+			icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, icaCertificate2)
 
 			// remove ICA certificate by serial number
@@ -149,23 +173,35 @@ func TestHandler_RemoveNocIntermediateCert_BySerialNumber(t *testing.T) {
 }
 
 func TestHandler_RemoveNocIntermediateCert_BySubjectAndSKID_ParentExist(t *testing.T) {
-	for _, crtType := range certificatesTypes {
-		t.Run(crtType.String(), func(t *testing.T) {
+
+	cases := []CertificateTestCase{
+		{
+			name:    "OperationalPKI_RemoveNocIntermediateCert_BySubjectAndSKID_ParentExist",
+			crtType: types.CertificateType_OperationalPKI,
+		},
+		{
+			name:    "VIDSignerPKI_RemoveNocIntermediateCert_BySubjectAndSKID_ParentExist",
+			crtType: types.CertificateType_VIDSignerPKI,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
 			setup := utils.Setup(t)
 
 			// add NOC root certificate
-			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocRootCertificate(setup, rootCertificate)
 
 			// add two intermediate certificates
-			icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1, crtType)
+			icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, icaCertificate1)
 
-			icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1, crtType)
+			icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, icaCertificate2)
 
 			// add leaf certificate
-			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, crtType)
+			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, leafCertificate)
 
 			// check total number of certificates
@@ -213,24 +249,36 @@ func TestHandler_RemoveNocIntermediateCert_BySubjectAndSKID_ParentExist(t *testi
 }
 
 func TestHandler_RemoveNocIntermediateCert_BySerialNumber_ParentExist(t *testing.T) {
-	for _, crtType := range certificatesTypes {
-		t.Run(crtType.String(), func(t *testing.T) {
+
+	cases := []CertificateTestCase{
+		{
+			name:    "OperationalPKI_RemoveNocIntermediateCert_BySerialNumber_ParentExist",
+			crtType: types.CertificateType_OperationalPKI,
+		},
+		{
+			name:    "VIDSignerPKI_RemoveNocIntermediateCert_BySerialNumber_ParentExist",
+			crtType: types.CertificateType_VIDSignerPKI,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
 			setup := utils.Setup(t)
 
 			// add NOC root certificate
-			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocRootCertificate(setup, rootCertificate)
 
 			// Add ICA certificates
-			icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1, crtType)
+			icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, icaCertificate1)
 
 			// Add ICA certificates with sam subject and SKID but different serial number
-			icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1, crtType)
+			icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, icaCertificate2)
 
 			// Add a leaf certificate
-			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, crtType)
+			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, leafCertificate)
 
 			// remove ICA certificate by serial number
@@ -267,23 +315,35 @@ func TestHandler_RemoveNocIntermediateCert_BySerialNumber_ParentExist(t *testing
 }
 
 func TestHandler_RemoveNocIntermediateCert_BySubjectAndSKID_ApprovedChildExist(t *testing.T) {
-	for _, crtType := range certificatesTypes {
-		t.Run(crtType.String(), func(t *testing.T) {
+
+	cases := []CertificateTestCase{
+		{
+			name:    "OperationalPKI_RemoveNocIntermediateCert_BySubjectAndSKID_ApprovedChildExist",
+			crtType: types.CertificateType_OperationalPKI,
+		},
+		{
+			name:    "VIDSignerPKI_RemoveNocIntermediateCert_BySubjectAndSKID_ApprovedChildExist",
+			crtType: types.CertificateType_VIDSignerPKI,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
 			setup := utils.Setup(t)
 
 			// add NOC root certificate
-			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocRootCertificate(setup, rootCertificate)
 
 			// add two intermediate certificates
-			icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1, crtType)
+			icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, icaCertificate1)
 
-			icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1, crtType)
+			icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, icaCertificate2)
 
 			// add leaf certificate
-			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, crtType)
+			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, leafCertificate)
 
 			// check total number of certificates
@@ -332,24 +392,36 @@ func TestHandler_RemoveNocIntermediateCert_BySubjectAndSKID_ApprovedChildExist(t
 }
 
 func TestHandler_RemoveNocIntermediateCert_BySerialNumber_ApprovedChildExist(t *testing.T) {
-	for _, crtType := range certificatesTypes {
-		t.Run(crtType.String(), func(t *testing.T) {
+
+	cases := []CertificateTestCase{
+		{
+			name:    "OperationalPKI_RemoveNocIntermediateCert_BySerialNumber_ApprovedChildExist",
+			crtType: types.CertificateType_OperationalPKI,
+		},
+		{
+			name:    "VIDSignerPKI_RemoveNocIntermediateCert_BySerialNumber_ApprovedChildExist",
+			crtType: types.CertificateType_VIDSignerPKI,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
 			setup := utils.Setup(t)
 
 			// add NOC root certificate
-			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocRootCertificate(setup, rootCertificate)
 
 			// Add ICA certificates
-			icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1, crtType)
+			icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, icaCertificate1)
 
 			// Add ICA certificates with sam subject and SKID but different serial number
-			icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1, crtType)
+			icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, icaCertificate2)
 
 			// Add a leaf certificate
-			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, crtType)
+			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, leafCertificate)
 
 			// remove ICA certificate by serial number
@@ -387,23 +459,35 @@ func TestHandler_RemoveNocIntermediateCert_BySerialNumber_ApprovedChildExist(t *
 }
 
 func TestHandler_RemoveNocIntermediateCert_BySubjectAndSKID_RevokedChildExist(t *testing.T) {
-	for _, crtType := range certificatesTypes {
-		t.Run(crtType.String(), func(t *testing.T) {
+
+	cases := []CertificateTestCase{
+		{
+			name:    "OperationalPKI_RemoveNocIntermediateCert_BySerialNumber_ApprovedChildExist",
+			crtType: types.CertificateType_OperationalPKI,
+		},
+		{
+			name:    "VIDSignerPKI_RemoveNocIntermediateCert_BySerialNumber_ApprovedChildExist",
+			crtType: types.CertificateType_VIDSignerPKI,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
 			setup := utils.Setup(t)
 
 			// add NOC root certificate
-			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocRootCertificate(setup, rootCertificate)
 
 			// add two intermediate certificates
-			icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1, crtType)
+			icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, icaCertificate1)
 
-			icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1, crtType)
+			icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, icaCertificate2)
 
 			// add leaf certificate
-			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, crtType)
+			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, leafCertificate)
 
 			// check total number of certificates
@@ -454,24 +538,36 @@ func TestHandler_RemoveNocIntermediateCert_BySubjectAndSKID_RevokedChildExist(t 
 }
 
 func TestHandler_RemoveNocIntermediateCert_BySerialNumber_RevokedChildExist(t *testing.T) {
-	for _, crtType := range certificatesTypes {
-		t.Run(crtType.String(), func(t *testing.T) {
+
+	cases := []CertificateTestCase{
+		{
+			name:    "OperationalPKI_RemoveNocIntermediateCert_BySerialNumber_RevokedChildExist",
+			crtType: types.CertificateType_OperationalPKI,
+		},
+		{
+			name:    "VIDSignerPKI_RemoveNocIntermediateCert_BySerialNumber_RevokedChildExist",
+			crtType: types.CertificateType_VIDSignerPKI,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
 			setup := utils.Setup(t)
 
 			// add NOC root certificate
-			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocRootCertificate(setup, rootCertificate)
 
 			// Add ICA certificates
-			icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1, crtType)
+			icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, icaCertificate1)
 
 			// Add ICA certificates with sam subject and SKID but different serial number
-			icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1, crtType)
+			icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, icaCertificate2)
 
 			// Add a leaf certificate
-			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, crtType)
+			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, leafCertificate)
 
 			// revoke leaf certificate
@@ -517,20 +613,32 @@ func TestHandler_RemoveNocIntermediateCert_BySerialNumber_RevokedChildExist(t *t
 }
 
 func TestHandler_RemoveNocIntermediateCert_BySubjectAndSKID_RevokedCertificate(t *testing.T) {
-	for _, crtType := range certificatesTypes {
-		t.Run(crtType.String(), func(t *testing.T) {
+
+	cases := []CertificateTestCase{
+		{
+			name:    "OperationalPKI_RemoveNocIntermediateCert_BySubjectAndSKID_RevokedCertificate",
+			crtType: types.CertificateType_OperationalPKI,
+		},
+		{
+			name:    "VIDSignerPKI_RemoveNocIntermediateCert_BySubjectAndSKID_RevokedCertificate",
+			crtType: types.CertificateType_VIDSignerPKI,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
 			setup := utils.Setup(t)
 
 			// add NOC root certificate
-			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocRootCertificate(setup, rootCertificate)
 
 			// Add an intermediate certificate
-			icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1, crtType)
+			icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, icaCertificate1)
 
 			// Add an intermediate certificate
-			icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1, crtType)
+			icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, icaCertificate2)
 
 			// revoke intermediate certificate by serial number
@@ -577,20 +685,32 @@ func TestHandler_RemoveNocIntermediateCert_BySubjectAndSKID_RevokedCertificate(t
 }
 
 func TestHandler_RemoveNocIntermediateCert_BySerialNumber_RevokedCertificate(t *testing.T) {
-	for _, crtType := range certificatesTypes {
-		t.Run(crtType.String(), func(t *testing.T) {
+
+	cases := []CertificateTestCase{
+		{
+			name:    "OperationalPKI_RemoveNocIntermediateCert_BySerialNumber_RevokedCertificate",
+			crtType: types.CertificateType_OperationalPKI,
+		},
+		{
+			name:    "VIDSignerPKI_RemoveNocIntermediateCert_BySerialNumber_RevokedCertificate",
+			crtType: types.CertificateType_VIDSignerPKI,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
 			setup := utils.Setup(t)
 
 			// add NOC root certificate
-			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocRootCertificate(setup, rootCertificate)
 
 			// Add an intermediate certificate
-			icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1, crtType)
+			icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, icaCertificate1)
 
 			// Add an intermediate certificate
-			icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1, crtType)
+			icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, icaCertificate2)
 
 			// revoke intermediate certificate by serial number
@@ -658,16 +778,28 @@ func TestHandler_RemoveNocIntermediateCert_BySerialNumber_RevokedCertificate(t *
 }
 
 func TestHandler_RemoveNocIntermediateCert_BySubjectAndSKID_RevokedAndActiveCertificate(t *testing.T) {
-	for _, crtType := range certificatesTypes {
-		t.Run(crtType.String(), func(t *testing.T) {
+
+	cases := []CertificateTestCase{
+		{
+			name:    "OperationalPKI_RemoveNocIntermediateCert_BySubjectAndSKID_RevokedAndActiveCertificate",
+			crtType: types.CertificateType_OperationalPKI,
+		},
+		{
+			name:    "VIDSignerPKI_RemoveNocIntermediateCert_BySubjectAndSKID_RevokedAndActiveCertificate",
+			crtType: types.CertificateType_VIDSignerPKI,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
 			setup := utils.Setup(t)
 
 			// add NOC root certificate
-			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocRootCertificate(setup, rootCertificate)
 
 			// Add an intermediate certificate
-			icaCertificate := utils.IntermediateNocCertificate1(setup.Vendor1, crtType)
+			icaCertificate := utils.IntermediateNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, icaCertificate)
 
 			// revoke an intermediate certificate
@@ -681,7 +813,7 @@ func TestHandler_RemoveNocIntermediateCert_BySubjectAndSKID_RevokedAndActiveCert
 			)
 
 			// Add an intermediate certificate with new serial number
-			icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1, crtType)
+			icaCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, icaCertificate2)
 
 			// remove an intermediate certificate
@@ -723,16 +855,28 @@ func TestHandler_RemoveNocIntermediateCert_BySubjectAndSKID_RevokedAndActiveCert
 }
 
 func TestHandler_RemoveNocIntermediateCert_ByNotOwnerButSameVendor(t *testing.T) {
-	for _, crtType := range certificatesTypes {
-		t.Run(crtType.String(), func(t *testing.T) {
+
+	cases := []CertificateTestCase{
+		{
+			name:    "OperationalPKI_RemoveNocIntermediateCert_ByNotOwnerButSameVendor",
+			crtType: types.CertificateType_OperationalPKI,
+		},
+		{
+			name:    "VIDSignerPKI_RemoveNocIntermediateCert_ByNotOwnerButSameVendor",
+			crtType: types.CertificateType_VIDSignerPKI,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
 			setup := utils.Setup(t)
 
 			// add NOC root certificate
-			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocRootCertificate(setup, rootCertificate)
 
 			// add ICA certificate by fist vendor account
-			icaCertificate := utils.IntermediateNocCertificate1(setup.Vendor1, crtType)
+			icaCertificate := utils.IntermediateNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, icaCertificate)
 
 			// add second vendor account with VID = 1
@@ -788,16 +932,28 @@ func TestHandler_RemoveNocIntermediateCert_CertificateDoesNotExist(t *testing.T)
 }
 
 func TestHandler_RemoveNocIntermediateCert_ByOtherVendor(t *testing.T) {
-	for _, crtType := range certificatesTypes {
-		t.Run(crtType.String(), func(t *testing.T) {
+
+	cases := []CertificateTestCase{
+		{
+			name:    "OperationalPKI_RemoveNocIntermediateCert_ByOtherVendor",
+			crtType: types.CertificateType_OperationalPKI,
+		},
+		{
+			name:    "VIDSignerPKI_RemoveNocIntermediateCert_ByOtherVendor",
+			crtType: types.CertificateType_VIDSignerPKI,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
 			setup := utils.Setup(t)
 
 			// add NOC root certificate
-			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocRootCertificate(setup, rootCertificate)
 
 			// add two intermediate certificates
-			icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1, crtType)
+			icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, icaCertificate1)
 
 			// add fist vendor account with VID = 1
@@ -817,16 +973,28 @@ func TestHandler_RemoveNocIntermediateCert_ByOtherVendor(t *testing.T) {
 }
 
 func TestHandler_RemoveNocIntermediateCert_SenderNotVendor(t *testing.T) {
-	for _, crtType := range certificatesTypes {
-		t.Run(crtType.String(), func(t *testing.T) {
+
+	cases := []CertificateTestCase{
+		{
+			name:    "OperationalPKI_RemoveNocIntermediateCert_SenderNotVendor",
+			crtType: types.CertificateType_OperationalPKI,
+		},
+		{
+			name:    "VIDSignerPKI_RemoveNocIntermediateCert_SenderNotVendor",
+			crtType: types.CertificateType_VIDSignerPKI,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
 			setup := utils.Setup(t)
 
 			// add NOC root certificate
-			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocRootCertificate(setup, rootCertificate)
 
 			// add two intermediate certificates
-			icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1, crtType)
+			icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, icaCertificate1)
 
 			removeIcaCert := types.NewMsgRemoveNocX509IcaCert(
@@ -863,16 +1031,28 @@ func TestHandler_RemoveNocIntermediateCert_ForNonIcaCertificate(t *testing.T) {
 }
 
 func TestHandler_RemoveNocIntermediateCert_InvalidSerialNumber(t *testing.T) {
-	for _, crtType := range certificatesTypes {
-		t.Run(crtType.String(), func(t *testing.T) {
+
+	cases := []CertificateTestCase{
+		{
+			name:    "OperationalPKI_RemoveNocIntermediateCert_InvalidSerialNumber",
+			crtType: types.CertificateType_OperationalPKI,
+		},
+		{
+			name:    "VIDSignerPKI_RemoveNocIntermediateCert_InvalidSerialNumber",
+			crtType: types.CertificateType_VIDSignerPKI,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
 			setup := utils.Setup(t)
 
 			// add NOC root certificate
-			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocRootCertificate(setup, rootCertificate)
 
 			// add two intermediate certificates
-			icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1, crtType)
+			icaCertificate1 := utils.IntermediateNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, icaCertificate1)
 
 			removeX509Cert := types.NewMsgRemoveNocX509IcaCert(
@@ -888,12 +1068,24 @@ func TestHandler_RemoveNocIntermediateCert_InvalidSerialNumber(t *testing.T) {
 }
 
 func TestHandler_RemoveNocIntermediateCert_ForRoot(t *testing.T) {
-	for _, crtType := range certificatesTypes {
-		t.Run(crtType.String(), func(t *testing.T) {
+
+	cases := []CertificateTestCase{
+		{
+			name:    "OperationalPKI_RemoveNocIntermediateCert_ForRoot",
+			crtType: types.CertificateType_OperationalPKI,
+		},
+		{
+			name:    "VIDSignerPKI_RemoveNocIntermediateCert_ForRoot",
+			crtType: types.CertificateType_VIDSignerPKI,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
 			setup := utils.Setup(t)
 
 			// add NOC root certificate
-			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocRootCertificate(setup, rootCertificate)
 
 			removeX509Cert := types.NewMsgRemoveNocX509IcaCert(

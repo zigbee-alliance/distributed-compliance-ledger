@@ -14,21 +14,37 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-var certificatesTypes = [...]types.CertificateType{types.CertificateType_OperationalPKI, types.CertificateType_VIDSignerPKI}
+type CertificateTestCase struct {
+	name    string
+	crtType types.CertificateType
+	isVVSC  bool
+}
 
 // Main
 
 func TestHandler_AddNocIntermediateCert(t *testing.T) {
-	for _, crtType := range certificatesTypes {
-		t.Run(crtType.String(), func(t *testing.T) {
+
+	cases := []CertificateTestCase{
+		{
+			name:    "OperationalPKI_AddNocIntermediateCert",
+			crtType: types.CertificateType_OperationalPKI,
+		},
+		{
+			name:    "VIDSignerPKI_AddNocIntermediateCert",
+			crtType: types.CertificateType_VIDSignerPKI,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
 			setup := utils.Setup(t)
 
 			// add NOC root certificate
-			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocRootCertificate(setup, rootCertificate)
 
 			// add NOC ICA certificate
-			icaCertificate := utils.IntermediateNocCertificate1(setup.Vendor1, crtType)
+			icaCertificate := utils.IntermediateNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, icaCertificate)
 
 			// Check state indexes
@@ -60,20 +76,32 @@ func TestHandler_AddNocIntermediateCert(t *testing.T) {
 }
 
 func TestHandler_AddNocIntermediateCert_SameSubjectAndSkid_DifferentSerialNumber(t *testing.T) {
-	for _, crtType := range certificatesTypes {
-		t.Run(crtType.String(), func(t *testing.T) {
+
+	cases := []CertificateTestCase{
+		{
+			name:    "OperationalPKI_AddNocIntermediateCert_SameSubjectAndSkid_DifferentSerialNumber",
+			crtType: types.CertificateType_OperationalPKI,
+		},
+		{
+			name:    "VIDSignerPKI_AddNocIntermediateCert_SameSubjectAndSkid_DifferentSerialNumber",
+			crtType: types.CertificateType_VIDSignerPKI,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
 			setup := utils.Setup(t)
 
 			// add NOC root certificate
-			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocRootCertificate(setup, rootCertificate)
 
 			// Store the NOC certificate with different serial number
-			intermediateCertificate := utils.IntermediateNocCertificate1(setup.Vendor1, crtType)
+			intermediateCertificate := utils.IntermediateNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddMokedNocCertificate(setup, intermediateCertificate)
 
 			// add the new NOC certificate
-			intermediateCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1, crtType)
+			intermediateCertificate2 := utils.IntermediateNocCertificate1Copy(setup.Vendor1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, intermediateCertificate2)
 
 			// Check state indexes
@@ -106,8 +134,20 @@ func TestHandler_AddNocIntermediateCert_SameSubjectAndSkid_DifferentSerialNumber
 }
 
 func TestHandler_AddNocIntermediateCert_ByNotOwnerButSameVendor(t *testing.T) {
-	for _, crtType := range certificatesTypes {
-		t.Run(crtType.String(), func(t *testing.T) {
+
+	cases := []CertificateTestCase{
+		{
+			name:    "OperationalPKI_AddNocIntermediateCert_ByNotOwnerButSameVendor",
+			crtType: types.CertificateType_OperationalPKI,
+		},
+		{
+			name:    "VIDSignerPKI_AddNocIntermediateCert_ByNotOwnerButSameVendor",
+			crtType: types.CertificateType_VIDSignerPKI,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
 			setup := utils.Setup(t)
 
 			// add two vendors with the same VID
@@ -115,15 +155,15 @@ func TestHandler_AddNocIntermediateCert_ByNotOwnerButSameVendor(t *testing.T) {
 			vendorAccAddress2 := setup.CreateVendorAccount(testconstants.Vid)
 
 			// add NOC root certificate
-			rootCertificate := utils.RootNocCertificate1(vendorAccAddress1, crtType)
+			rootCertificate := utils.RootNocCertificate1(vendorAccAddress1, tc.crtType)
 			utils.AddNocRootCertificate(setup, rootCertificate)
 
 			// add the new NOC certificate by first vendor
-			icaCertificate := utils.IntermediateNocCertificate1(vendorAccAddress1, crtType)
+			icaCertificate := utils.IntermediateNocCertificate1(vendorAccAddress1, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, icaCertificate)
 
 			// add the new NOC certificate by second vendor
-			icaCertificate2 := utils.IntermediateNocCertificate1Copy(vendorAccAddress2, crtType)
+			icaCertificate2 := utils.IntermediateNocCertificate1Copy(vendorAccAddress2, tc.crtType)
 			utils.AddNocIntermediateCertificate(setup, icaCertificate2)
 
 			// Check state indexes
@@ -158,20 +198,29 @@ func TestHandler_AddNocIntermediateCert_ByNotOwnerButSameVendor(t *testing.T) {
 // Error cases
 
 func TestHandler_AddNocIntermediateCert_SenderNotVendor(t *testing.T) {
-	for _, crtType := range certificatesTypes {
-		t.Run(crtType.String(), func(t *testing.T) {
+
+	cases := []CertificateTestCase{
+		{
+			name:    "OperationalPKI_AddNocIntermediateCert_SenderNotVendor",
+			crtType: types.CertificateType_OperationalPKI,
+			isVVSC:  false,
+		},
+		{
+			name:    "VIDSignerPKI_AddNocIntermediateCert_SenderNotVendor",
+			crtType: types.CertificateType_VIDSignerPKI,
+			isVVSC:  true,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
 			setup := utils.Setup(t)
 
 			// add NOC root certificate
-			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocRootCertificate(setup, rootCertificate)
 
-			isVVSC := false
-			if crtType == types.CertificateType_VIDSignerPKI {
-				isVVSC = true
-			}
-
-			addNocX509Cert := types.NewMsgAddNocX509IcaCert(setup.Trustee1.String(), testconstants.NocCert1, testconstants.CertSchemaVersion, isVVSC)
+			addNocX509Cert := types.NewMsgAddNocX509IcaCert(setup.Trustee1.String(), testconstants.NocCert1, testconstants.CertSchemaVersion, tc.isVVSC)
 			_, err := setup.Handler(setup.Ctx, addNocX509Cert)
 
 			require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
@@ -180,23 +229,32 @@ func TestHandler_AddNocIntermediateCert_SenderNotVendor(t *testing.T) {
 }
 
 func TestHandler_AddNocIntermediateCert_Root_VID_Does_Not_Equal_To_AccountVID(t *testing.T) {
-	for _, crtType := range certificatesTypes {
-		t.Run(crtType.String(), func(t *testing.T) {
+
+	cases := []CertificateTestCase{
+		{
+			name:    "OperationalPKI_AddNocIntermediateCert_Root_VID_Does_Not_Equal_To_AccountVID",
+			crtType: types.CertificateType_OperationalPKI,
+			isVVSC:  false,
+		},
+		{
+			name:    "VIDSignerPKI_AddNocIntermediateCert_Root_VID_Does_Not_Equal_To_AccountVID",
+			crtType: types.CertificateType_VIDSignerPKI,
+			isVVSC:  true,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
 			setup := utils.Setup(t)
 
 			// add NOC root certificate
-			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, crtType)
+			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, tc.crtType)
 			utils.AddNocRootCertificate(setup, rootCertificate)
 
 			newAccAddress := setup.CreateVendorAccount(1111)
 
-			isVVSC := false
-			if crtType == types.CertificateType_VIDSignerPKI {
-				isVVSC = true
-			}
-
 			// try to add NOC certificate
-			nocX509Cert := types.NewMsgAddNocX509IcaCert(newAccAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion, isVVSC)
+			nocX509Cert := types.NewMsgAddNocX509IcaCert(newAccAddress.String(), testconstants.NocCert1, testconstants.CertSchemaVersion, tc.isVVSC)
 			_, err := setup.Handler(setup.Ctx, nocX509Cert)
 			require.ErrorIs(t, err, pkitypes.ErrCertVidNotEqualAccountVid)
 		})
@@ -204,15 +262,24 @@ func TestHandler_AddNocIntermediateCert_Root_VID_Does_Not_Equal_To_AccountVID(t 
 }
 
 func TestHandler_AddNocIntermediateCert_ForInvalidCertificate(t *testing.T) {
-	for _, crtType := range certificatesTypes {
-		t.Run(crtType.String(), func(t *testing.T) {
+
+	cases := []CertificateTestCase{
+		{
+			name:   "OperationalPKI_AddNocIntermediateCert_ForInvalidCertificate",
+			isVVSC: false,
+		},
+		{
+			name:   "VIDSignerPKI_AddNocIntermediateCert_ForInvalidCertificate",
+			isVVSC: true,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
 			setup := utils.Setup(t)
-			isVVSC := false
-			if crtType == types.CertificateType_VIDSignerPKI {
-				isVVSC = true
-			}
+
 			// add x509 certificate
-			addX509Cert := types.NewMsgAddNocX509IcaCert(setup.Vendor1.String(), testconstants.StubCertPem, testconstants.CertSchemaVersion, isVVSC)
+			addX509Cert := types.NewMsgAddNocX509IcaCert(setup.Vendor1.String(), testconstants.StubCertPem, testconstants.CertSchemaVersion, tc.isVVSC)
 			_, err := setup.Handler(setup.Ctx, addX509Cert)
 			require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
 		})
@@ -229,19 +296,28 @@ func TestHandler_AddNocIntermediateCert_ForNocRootCertificate(t *testing.T) {
 }
 
 func TestHandler_AddNocIntermediateCert_ForRootNonNocCertificate(t *testing.T) {
-	for _, crtType := range certificatesTypes {
-		t.Run(crtType.String(), func(t *testing.T) {
+
+	cases := []CertificateTestCase{
+		{
+			name:   "OperationalPKI_AddNocIntermediateCert_ForRootNonNocCertificate",
+			isVVSC: false,
+		},
+		{
+			name:   "VIDSignerPKI_AddNocIntermediateCert_ForRootNonNocCertificate",
+			isVVSC: true,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
 			setup := utils.Setup(t)
 
 			// store root certificate
 			rootCert := utils.RootDaCertificateWithVid(setup.Trustee1)
 			utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
-			isVVSC := false
-			if crtType == types.CertificateType_VIDSignerPKI {
-				isVVSC = true
-			}
+
 			// try to add root certificate x509 certificate
-			addX509Cert := types.NewMsgAddNocX509IcaCert(setup.Vendor1.String(), testconstants.IntermediateCertWithVid1, testconstants.CertSchemaVersion, isVVSC)
+			addX509Cert := types.NewMsgAddNocX509IcaCert(setup.Vendor1.String(), testconstants.IntermediateCertWithVid1, testconstants.CertSchemaVersion, tc.isVVSC)
 			_, err := setup.Handler(setup.Ctx, addX509Cert)
 			require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
 		})
@@ -249,15 +325,24 @@ func TestHandler_AddNocIntermediateCert_ForRootNonNocCertificate(t *testing.T) {
 }
 
 func TestHandler_AddNocIntermediateCert_WhenNocRootCertIsAbsent(t *testing.T) {
-	for _, crtType := range certificatesTypes {
-		t.Run(crtType.String(), func(t *testing.T) {
+
+	cases := []CertificateTestCase{
+		{
+			name:   "OperationalPKI_AddNocIntermediateCert_WhenNocRootCertIsAbsent",
+			isVVSC: false,
+		},
+		{
+			name:   "VIDSignerPKI_AddNocIntermediateCert_WhenNocRootCertIsAbsent",
+			isVVSC: true,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
 			setup := utils.Setup(t)
-			isVVSC := false
-			if crtType == types.CertificateType_VIDSignerPKI {
-				isVVSC = true
-			}
+
 			// add the new NOC certificate
-			addNocX509Cert := types.NewMsgAddNocX509IcaCert(setup.Vendor1.String(), testconstants.NocCert1, testconstants.CertSchemaVersion, isVVSC)
+			addNocX509Cert := types.NewMsgAddNocX509IcaCert(setup.Vendor1.String(), testconstants.NocCert1, testconstants.CertSchemaVersion, tc.isVVSC)
 			_, err := setup.Handler(setup.Ctx, addNocX509Cert)
 
 			require.ErrorIs(t, err, pkitypes.ErrCertificateDoesNotExist)
@@ -366,22 +451,37 @@ func TestHandler_AddNocIntermediateCert_CertificateExist(t *testing.T) {
 		},
 	}
 
+	crtCases := []CertificateTestCase{
+		{
+			name:    "OperationalPKI",
+			crtType: types.CertificateType_OperationalPKI,
+			isVVSC:  false,
+		},
+		{
+			name:    "VIDSignerPKI",
+			crtType: types.CertificateType_VIDSignerPKI,
+			isVVSC:  true,
+		},
+	}
+
 	for _, tc := range cases {
-		for _, crtType := range certificatesTypes {
-			t.Run(tc.name+" "+crtType.String(), func(t *testing.T) {
+		for _, tcc := range crtCases {
+			t.Run(tcc.name+"_"+tc.name, func(t *testing.T) {
 				setup := utils.Setup(t)
 				vid := testconstants.Vid
 				setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, vid)
 
 				// add NOC root certificate
-				rootCertificate := utils.RootNocCertificate1(accAddress, crtType)
+				rootCertificate := utils.RootNocCertificate1(accAddress, tcc.crtType)
 				utils.AddNocRootCertificate(setup, rootCertificate)
 
 				existingCert := *tc.existingCert
 
 				// the test for this error requires different types
-				if !errors.Is(tc.err, pkitypes.ErrInappropriateCertificateType) {
-					existingCert.CertificateType = crtType
+				if errors.Is(tc.err, pkitypes.ErrInappropriateCertificateType) {
+					existingCert.CertificateType = types.CertificateType_DeviceAttestationPKI
+				} else {
+					existingCert.CertificateType = tcc.crtType
 				}
 
 				// add the existing certificate
@@ -393,12 +493,7 @@ func TestHandler_AddNocIntermediateCert_CertificateExist(t *testing.T) {
 				}
 				setup.Keeper.SetUniqueCertificate(setup.Ctx, uniqueCertificate)
 
-				isVVSC := false
-				if crtType == types.CertificateType_VIDSignerPKI {
-					isVVSC = true
-				}
-
-				addNocX509Cert := types.NewMsgAddNocX509IcaCert(accAddress.String(), tc.nocCert, testconstants.CertSchemaVersion, isVVSC)
+				addNocX509Cert := types.NewMsgAddNocX509IcaCert(accAddress.String(), tc.nocCert, testconstants.CertSchemaVersion, tcc.isVVSC)
 				_, err := setup.Handler(setup.Ctx, addNocX509Cert)
 				require.ErrorIs(t, err, tc.err)
 			})
