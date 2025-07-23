@@ -59,6 +59,7 @@ RUN adduser --disabled-password --uid ${TEST_UID} --home /var/lib/${TEST_USER} -
 ENV DAEMON_HOME=/var/lib/${TEST_USER}/.dcl
 ENV DAEMON_NAME=dcld
 ENV DAEMON_ALLOW_DOWNLOAD_BINARIES=true
+ENV GOCOVERDIR=/var/lib/${TEST_USER}/.dcl/gocover
 
 RUN apt-get update
 RUN apt-get install -y ca-certificates
