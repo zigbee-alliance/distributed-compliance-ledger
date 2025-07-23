@@ -27,6 +27,7 @@ on:
 
 jobs:
   changes:
+    name: Checking for changes
     runs-on: ubuntu-latest
     outputs:
       go: ${{ steps.filter.outputs.go }}
@@ -103,9 +104,27 @@ jobs:
         run: |
           set -euo pipefail
           # shellcheck disable=SC2046
-          go test -json -v $(go list ./... | grep -v '/integration_tests') 2>&1 | tee /tmp/gotest.log | gotestfmt
+          go test -json -v $(go list ./... | grep -v '/integration_tests') -coverprofile=./cover.out -covermode=set -coverpkg=./... 2>&1 | tee /tmp/gotest.log | gotestfmt
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      - name: Report test coverage
+        uses: vladopajic/go-test-coverage@v2
+        continue-on-error: true
+        with:
+          config: ./.github/.testcoverage.yml
+      - name: Generate html test coverage
+        shell: bash
+        run: go tool cover -html=cover.out -o coverage.html
+      - name: Upload html coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit_coverage
+          path: coverage.html
+      - name: Store test coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit_cover
+          path: cover.out
   integration-tests:
     if: needs.changes.outputs.src == 'true'
     name: Integration tests
@@ -127,9 +146,30 @@ jobs:
             ${{ runner.os }}-go-
       - name: Run integration tests
         shell: bash
-        run: integration_tests/run-all.sh
+        run: integration_tests/run-all.sh all cover
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      - name: Generate test coverage
+        shell: bash
+        run: go tool covdata textfmt -i=integration_tests/gocover -o cover.out
+      - name: Report test coverage
+        uses: vladopajic/go-test-coverage@v2
+        continue-on-error: true
+        with:
+          config: ./.github/.testcoverage.yml
+      - name: Generate html test coverage
+        shell: bash
+        run: go tool cover -html=cover.out -o coverage.html
+      - name: Upload html coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration_coverage
+          path: coverage.html
+      - name: Store test coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration_cover
+          path: cover.out
   lint:
     if: needs.changes.outputs.go == 'true'
     name: Check linter issues with golangci-lint tool
@@ -146,8 +186,49 @@ jobs:
         with:
           version: v1.55
           args: --timeout 5m0s
+  cover:
+    if: needs.changes.outputs.src == 'true'
+    name: Report on overall test coverage
+    needs:
+      - changes
+      - unit-tests
+      - integration-tests
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ^1.20
+      - name: Gocovmerge build
+        shell: bash
+        run: go build github.com/wadey/gocovmerge
+      - name: Merge test coverage
+        shell: bash
+        run: ./gocovmerge unit_cover/cover.out integration_cover/cover.out > cover.out
+      - name: Report test coverage
+        uses: vladopajic/go-test-coverage@v2
+        continue-on-error: true
+        with:
+          config: ./.github/.testcoverage.yml
+          git-token: ${{ github.ref_name == 'main' && secrets.GITHUB_TOKEN || '' }}
+          git-branch: cover_badges
+      - name: Generate html test coverage
+        shell: bash
+        run: go tool cover -html=cover.out -o coverage.html
+      - name: Upload html coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: all_coverage
+          path: coverage.html
+      - uses: geekyeggo/delete-artifact@v5
+        with:
+          name: |
+            integration_cover
+            unit_cover
   check:
     if: always()
+    name: Final check
     needs:
       - unit-tests
       - integration-tests
@@ -155,6 +236,7 @@ jobs:
       - links
       - spell
       - gh-actions
+      - cover
     runs-on: ubuntu-latest
     steps:
       - name: Decide whether the needed jobs succeeded or failed

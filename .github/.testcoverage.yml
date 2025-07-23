@@ -1,0 +1,9 @@
+# Config file for go-test-coverage github action.
+
+profile: 'cover.out'
+threshold:
+  total: 10
+  file: 0
+exclude:
+  paths:
+    - \.pb\.go$
