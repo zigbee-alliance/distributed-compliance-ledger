@@ -132,7 +132,7 @@ For example, a value of 1 (bit 0 is set) indicates
 that a device that has not yet been commissioned will enter Commissioning Mode upon a power cycle (default 1).`)
 	cmd.Flags().StringVar(&commissioningModeInitialStepsInstruction, FlagCommissioningModeInitialStepsInstruction, "",
 		`commissioningModeInitialStepsInstruction SHALL contain text which relates to specific 
-values of commissioningModeSecondaryStepsHint. Certain values of CommissioningModeInitialStepsHint, 
+values of commissioningModeInitialStepsHint. Certain values of CommissioningModeInitialStepsHint, 
 as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these 
 values the commissioningModeInitialStepsInstruction SHALL be set`)
 	cmd.Flags().Uint32Var(&commissioningModeSecondaryStepsHint, FlagCommissioningModeSecondaryStepsHint, 0,
@@ -203,6 +203,7 @@ func CmdUpdateModel() *cobra.Command {
 		enhancedSetupFlowTCFileSize                uint32
 		maintenanceURL                             string
 		commissioningFallbackURL                   string
+		commissioningModeSecondaryStepsHint        uint32
 	)
 
 	cmd := &cobra.Command{
@@ -244,6 +245,7 @@ func CmdUpdateModel() *cobra.Command {
 				enhancedSetupFlowTCFileSize,
 				maintenanceURL,
 				commissioningFallbackURL,
+				commissioningModeSecondaryStepsHint,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -271,7 +273,7 @@ func CmdUpdateModel() *cobra.Command {
 device model when the commissioningCustomFlow field is set to '2'`)
 	cmd.Flags().StringVar(&commissioningModeInitialStepsInstruction, FlagCommissioningModeInitialStepsInstruction, "",
 		`commissioningModeInitialStepsInstruction SHALL contain text which relates to specific 
-values of commissioningModeSecondaryStepsHint. Certain values of CommissioningModeInitialStepsHint, 
+values of commissioningModeInitialStepsHint. Certain values of CommissioningModeInitialStepsHint, 
 as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these 
 values the commissioningModeInitialStepsInstruction SHALL be set`)
 	cmd.Flags().StringVar(&commissioningModeSecondaryStepsInstruction, FlagCommissioningModeSecondaryStepsInstruction, "",
@@ -291,6 +293,12 @@ and for these values the commissioningModeSecondaryStepInstruction SHALL be set`
 	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version")
 	cmd.Flags().Uint32Var(&commissioningModeInitialStepsHint, FlagCommissioningModeInitialStepsHint, 0,
 		`commissioningModeInitialStepsHint SHALL 
+identify a hint for the steps that can be used to put into commissioning mode a device that 
+has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. 
+For example, a value of 1 (bit 0 is set) indicates that a device that has not yet been commissioned 
+will enter Commissioning Mode upon a power cycle. Note that this value cannot be updated to 0. (default 1).`)
+	cmd.Flags().Uint32Var(&commissioningModeSecondaryStepsHint, FlagCommissioningModeSecondaryStepsHint, 0,
+		`commissioningModeSecondaryStepsHint SHALL 
 identify a hint for the steps that can be used to put into commissioning mode a device that 
 has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. 
 For example, a value of 1 (bit 0 is set) indicates that a device that has not yet been commissioned 

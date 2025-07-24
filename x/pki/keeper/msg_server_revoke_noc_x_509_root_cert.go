@@ -33,7 +33,7 @@ func (k msgServer) RevokeNocX509RootCert(goCtx context.Context, msg *types.MsgRe
 		return nil, pkitypes.NewErrMessageExistingCertIsNotRoot(cert.Subject, cert.SubjectKeyId)
 	}
 	// Existing certificate must be NOC certificate
-	if cert.CertificateType != types.CertificateType_OperationalPKI {
+	if cert.CertificateType != types.CertificateType_OperationalPKI && cert.CertificateType != types.CertificateType_VIDSignerPKI {
 		return nil, pkitypes.NewErrProvidedNocCertButExistingNotNoc(cert.Subject, cert.SubjectKeyId)
 	}
 

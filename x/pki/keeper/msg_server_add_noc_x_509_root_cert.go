@@ -49,6 +49,11 @@ func (k msgServer) AddNocX509RootCert(goCtx context.Context, msg *types.MsgAddNo
 	signerAccount, _ := k.dclauthKeeper.GetAccountO(ctx, signerAddr)
 	signerVid := signerAccount.VendorID
 
+	msgCertType := types.CertificateType_OperationalPKI
+	if msg.IsVidVerificationSigner {
+		msgCertType = types.CertificateType_VIDSignerPKI
+	}
+
 	// Get list of certificates for Subject / Subject Key Id combination
 	existingCertificates, found := k.GetAllCertificates(ctx, x509Certificate.Subject, x509Certificate.SubjectKeyID)
 	if found && len(existingCertificates.Certs) > 0 {
@@ -62,7 +67,7 @@ func (k msgServer) AddNocX509RootCert(goCtx context.Context, msg *types.MsgAddNo
 		}
 
 		// Existing certificate must be NOC certificate
-		if existingCertificate.CertificateType != types.CertificateType_OperationalPKI {
+		if existingCertificate.CertificateType != msgCertType {
 			return nil, pkitypes.NewErrProvidedNocCertButExistingNotNoc(x509Certificate.Subject, x509Certificate.SubjectKeyID)
 		}
 
@@ -82,6 +87,7 @@ func (k msgServer) AddNocX509RootCert(goCtx context.Context, msg *types.MsgAddNo
 		msg.Signer,
 		signerVid,
 		msg.CertSchemaVersion,
+		msgCertType,
 	)
 
 	// register the unique certificate key

@@ -146,6 +146,7 @@ func NewMsgUpdateModel(
 	enhancedSetupFlowTCFileSize uint32,
 	maintenanceURL string,
 	commissioningFallbackURL string,
+	commissioningModeSecondaryStepsHint uint32,
 
 ) *MsgUpdateModel {
 	return &MsgUpdateModel{
@@ -158,20 +159,21 @@ func NewMsgUpdateModel(
 		CommissioningCustomFlowUrl:               commissioningCustomFlowURL,
 		CommissioningModeInitialStepsInstruction: commissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsInstruction: commissioningModeSecondaryStepsInstruction,
-		UserManualUrl:                     userManualURL,
-		SupportUrl:                        supportURL,
-		ProductUrl:                        productURL,
-		LsfUrl:                            lsfURL,
-		LsfRevision:                       lsfRevision,
-		CommissioningModeInitialStepsHint: commissioningModeInitialStepsHint,
-		EnhancedSetupFlowOptions:          enhancedSetupFlowOptions,
-		EnhancedSetupFlowTCUrl:            enhancedSetupFlowTCURL,
-		EnhancedSetupFlowTCRevision:       enhancedSetupFlowTCRevision,
-		EnhancedSetupFlowTCDigest:         enhancedSetupFlowTCDigest,
-		EnhancedSetupFlowTCFileSize:       enhancedSetupFlowTCFileSize,
-		MaintenanceUrl:                    maintenanceURL,
-		SchemaVersion:                     schemaVersion,
-		CommissioningFallbackUrl:          commissioningFallbackURL,
+		UserManualUrl:                       userManualURL,
+		SupportUrl:                          supportURL,
+		ProductUrl:                          productURL,
+		LsfUrl:                              lsfURL,
+		LsfRevision:                         lsfRevision,
+		CommissioningModeInitialStepsHint:   commissioningModeInitialStepsHint,
+		EnhancedSetupFlowOptions:            enhancedSetupFlowOptions,
+		EnhancedSetupFlowTCUrl:              enhancedSetupFlowTCURL,
+		EnhancedSetupFlowTCRevision:         enhancedSetupFlowTCRevision,
+		EnhancedSetupFlowTCDigest:           enhancedSetupFlowTCDigest,
+		EnhancedSetupFlowTCFileSize:         enhancedSetupFlowTCFileSize,
+		MaintenanceUrl:                      maintenanceURL,
+		SchemaVersion:                       schemaVersion,
+		CommissioningFallbackUrl:            commissioningFallbackURL,
+		CommissioningModeSecondaryStepsHint: commissioningModeSecondaryStepsHint,
 	}
 }
 
