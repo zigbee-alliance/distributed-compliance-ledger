@@ -15,7 +15,7 @@ module "this_vpc_peerings" {
 
   auto_accept_peering = true
 
-  tags = {
+  tags = merge(var.tags, {
     Name = "Observers to Private Sentries peering"
-  }
+  })
 }
