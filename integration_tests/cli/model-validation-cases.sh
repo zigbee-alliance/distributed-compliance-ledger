@@ -338,12 +338,14 @@ check_response_and_report "$result" "\"releaseNotesUrl\": \"https://release.url.
 test_divider
 
 sv_1=$RANDOM
+specification_version=4
+
 echo "Create a Device Model Version with all fields for VID: $vid_1 PID: $pid_1 SV: $sv_1"
 result=$(echo 'test1234' | dcld tx model add-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 \
 --softwareVersionString="1.0" --cdVersionNumber=21334 \
 --firmwareInformation="123456789012345678901234567890123456789012345678901234567890123" \
 --softwareVersionValid=true --otaURL="https://ota.url.info" --otaFileSize=123456789 \
---otaChecksum="SGVsbG8gd29ybGQh" --releaseNotesURL="https://release.notes.url.info" \
+--specificationVersion=$specification_version --otaChecksum="SGVsbG8gd29ybGQh" --releaseNotesURL="https://release.notes.url.info" \
 --otaChecksumType=1 --maxApplicableSoftwareVersion=32 --minApplicableSoftwareVersion=5   --from=$vendor_account_1 --yes)
 result=$(get_txn_result "$result")
 echo "$result"
@@ -369,6 +371,7 @@ check_response_and_report "$result" "\"otaChecksumType\": 1"
 check_response_and_report "$result" "\"releaseNotesUrl\": \"https://release.notes.url.info\""
 check_response_and_report "$result" "\"maxApplicableSoftwareVersion\": 32"
 check_response_and_report "$result" "\"minApplicableSoftwareVersion\": 5"
+check_response_and_report "$result" "\"specificationVersion\": $specification_version"
 
 test_divider
 
@@ -459,17 +462,122 @@ check_response_and_report "$result" "\"releaseNotesUrl\": \"https://updated.rele
 check_response_and_report "$result" "\"maxApplicableSoftwareVersion\": 25"
 check_response_and_report "$result" "\"minApplicableSoftwareVersion\": 15"
 
+test_divider
+
 sv_1=$RANDOM
+specification_version=6
+
 echo "Create a Device Model Version with mandatory fields and some optional fields for VID: $vid_1 PID: $pid_1 SV: $sv_1"
 result=$(echo 'test1234' | dcld tx model add-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 \
 --softwareVersionString="1.0" --cdVersionNumber=21334 \
 --firmwareInformation="123456789012345678901234567890123456789012345678901234567890123" \
 --softwareVersionValid=true --otaURL="https://ota.url.info" --otaFileSize=123456789 \
---otaChecksum="SGVsbG8gd29ybGQh" \
+--specificationVersion=$specification_version --otaChecksum="SGVsbG8gd29ybGQh" \
 --otaChecksumType=1 --maxApplicableSoftwareVersion=32 --minApplicableSoftwareVersion=5   --from=$vendor_account_1 --yes)
 result=$(get_txn_result "$result")
 echo "$result"
 check_response_and_report "$result" "\"code\": 0"
+
+test_divider
+
+# Query the model version
+
+echo "Query Device Model Version with VID: $vid_1 PID: $pid_1 SV: $sv_1"
+result=$(dcld query model model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1)
+
+check_response_and_report "$result" "\"vid\": $vid_1"
+check_response_and_report "$result" "\"pid\": $pid_1"
+check_response_and_report "$result" "\"softwareVersion\": $sv_1"
+check_response_and_report "$result" "\"softwareVersionString\": \"1.0\""
+check_response_and_report "$result" "\"cdVersionNumber\": 21334"
+check_response_and_report "$result" "\"firmwareInformation\": \"123456789012345678901234567890123456789012345678901234567890123\""
+check_response_and_report "$result" "\"softwareVersionValid\": true"
+check_response_and_report "$result" "\"otaUrl\": \"https://ota.url.info\""
+check_response_and_report "$result" "\"otaFileSize\": \"123456789\""
+check_response_and_report "$result" "\"otaChecksum\": \"SGVsbG8gd29ybGQh\""
+check_response_and_report "$result" "\"otaChecksumType\": 1"
+check_response_and_report "$result" "\"maxApplicableSoftwareVersion\": 32"
+check_response_and_report "$result" "\"minApplicableSoftwareVersion\": 5"
+check_response_and_report "$result" "\"specificationVersion\": $specification_version"
+# FIXME: Fields marked with `json:"omitempty"` are taken into responses for unknown reason after migration to Cosmos SDK v0.44
+# response_does_not_contain "$result" "\"release_notes_url\""
+
+test_divider
+
+# Update the model version with maxApplicableSoftwareVersion less then minApplicableSoftwareVersion 
+echo "Update the model version with maxApplicableSoftwareVersion less then minApplicableSoftwareVersion and make sure we get error back VID: $vid_1 PID: $pid_1 SV: $sv_1"
+result=$(echo "test1234" | dcld tx model update-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 --maxApplicableSoftwareVersion=3 --minApplicableSoftwareVersion=5 --from=$vendor_account_1 --yes 2>&1) || true
+check_response_and_report "$result" "MaxApplicableSoftwareVersion must not be less than MinApplicableSoftwareVersion" raw
+
+test_divider
+
+# Update the model version with minApplicableSoftwareVersion greater then maxApplicableSoftwareVersion 
+echo "Update the model version with minApplicableSoftwareVersion greater then maxApplicableSoftwareVersion and make sure we get error back VID: $vid_1 PID: $pid_1 SV: $sv_1"
+result=$(echo "test1234" | dcld tx model update-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 --maxApplicableSoftwareVersion=32 --minApplicableSoftwareVersion=33 --from=$vendor_account_1 --yes 2>&1) || true
+check_response_and_report "$result" "MaxApplicableSoftwareVersion must not be less than MinApplicableSoftwareVersion" raw
+
+test_divider
+
+sv_1=$RANDOM
+#Specification Version is not passed to create, but this default value (0) will be checked
+specification_version=0
+
+echo "Create a Device Model Version without Specification Version for VID: $vid_1 PID: $pid_1 SV: $sv_1"
+result=$(echo 'test1234' | dcld tx model add-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 \
+--softwareVersionString="1.0" --cdVersionNumber=21334 \
+--firmwareInformation="123456789012345678901234567890123456789012345678901234567890123" \
+--softwareVersionValid=true --otaURL="https://ota.url.info" --otaFileSize=123456789 \
+--otaChecksum="SGVsbG8gd29ybGQh" --releaseNotesURL="https://release.notes.url.info" \
+--otaChecksumType=1 --maxApplicableSoftwareVersion=32 --minApplicableSoftwareVersion=5   --from=$vendor_account_1 --yes)
+result=$(get_txn_result "$result")
+echo "$result"
+check_response_and_report "$result" "\"code\": 0"
+
+test_divider
+
+# Query the model version
+echo "Query Device Model Version with VID: $vid_1 PID: $pid_1 SV: $sv_1"
+result=$(dcld query model model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1)
+
+check_response_and_report "$result" "\"vid\": $vid_1"
+check_response_and_report "$result" "\"pid\": $pid_1"
+check_response_and_report "$result" "\"softwareVersion\": $sv_1"
+check_response_and_report "$result" "\"softwareVersionString\": \"1.0\""
+check_response_and_report "$result" "\"cdVersionNumber\": 21334"
+check_response_and_report "$result" "\"firmwareInformation\": \"123456789012345678901234567890123456789012345678901234567890123\""
+check_response_and_report "$result" "\"softwareVersionValid\": true"
+check_response_and_report "$result" "\"otaUrl\": \"https://ota.url.info\""
+check_response_and_report "$result" "\"otaFileSize\": \"123456789\""
+check_response_and_report "$result" "\"otaChecksum\": \"SGVsbG8gd29ybGQh\""
+check_response_and_report "$result" "\"otaChecksumType\": 1"
+check_response_and_report "$result" "\"releaseNotesUrl\": \"https://release.notes.url.info\""
+check_response_and_report "$result" "\"maxApplicableSoftwareVersion\": 32"
+check_response_and_report "$result" "\"minApplicableSoftwareVersion\": 5"
+check_response_and_report "$result" "\"specificationVersion\": $specification_version"
+
+test_divider
+
+sv_1=$RANDOM
+specification_version=33
+
+echo "Create a Device Model Version with all fields with VID: $vid_1 PID: $pid_1 SV: $sv_1"
+result=$(echo 'test1234' | dcld tx model add-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 \
+--softwareVersionString="1.0" --cdVersionNumber=21334 \
+--firmwareInformation="123456789012345678901234567890123456789012345678901234567890123" \
+--softwareVersionValid=true --otaURL="https://ota.url.info" --otaFileSize=123456789 \
+--specificationVersion=$specification_version --otaChecksum="SGVsbG8gd29ybGQh" --releaseNotesURL="https://release.notes.url.info" \
+--otaChecksumType=1 --maxApplicableSoftwareVersion=32 --minApplicableSoftwareVersion=5   --from=$vendor_account_1 --yes)
+result=$(get_txn_result "$result")
+echo "$result"
+check_response_and_report "$result" "\"code\": 0"
+
+test_divider
+
+# Update the model version with Specification Version must fail
+echo "Update the model version with Specification Version must fail for VID: $vid_1 PID: $pid_1 SV: $sv_1"
+result=$(echo "test1234" | dcld tx model update-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 --specificationVersion=11 --from=$vendor_account_1 --yes 2>&1) || true
+
+check_response "$result" "Error: unknown flag: --specificationVersion" raw
 
 test_divider
 
@@ -488,23 +596,9 @@ check_response_and_report "$result" "\"otaUrl\": \"https://ota.url.info\""
 check_response_and_report "$result" "\"otaFileSize\": \"123456789\""
 check_response_and_report "$result" "\"otaChecksum\": \"SGVsbG8gd29ybGQh\""
 check_response_and_report "$result" "\"otaChecksumType\": 1"
+check_response_and_report "$result" "\"releaseNotesUrl\": \"https://release.notes.url.info\""
 check_response_and_report "$result" "\"maxApplicableSoftwareVersion\": 32"
 check_response_and_report "$result" "\"minApplicableSoftwareVersion\": 5"
-# FIXME: Fields marked with `json:"omitempty"` are taken into responses for unknown reason after migration to Cosmos SDK v0.44
-# response_does_not_contain "$result" "\"release_notes_url\""
-
-test_divider
-
-# Update the model version with maxApplicableSoftwareVersion less then minApplicableSoftwareVersion 
-echo "Update the model version with maxApplicableSoftwareVersion less then minApplicableSoftwareVersion and make sure we get error back VID: $vid_1 PID: $pid_1 SV: $sv_1"
-result=$(echo "test1234" | dcld tx model update-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 --maxApplicableSoftwareVersion=3 --minApplicableSoftwareVersion=5 --from=$vendor_account_1 --yes 2>&1) || true
-check_response_and_report "$result" "MaxApplicableSoftwareVersion must not be less than MinApplicableSoftwareVersion" raw
-
-test_divider
-
-# Update the model version with minApplicableSoftwareVersion greater then maxApplicableSoftwareVersion 
-echo "Update the model version with minApplicableSoftwareVersion greater then maxApplicableSoftwareVersion and make sure we get error back VID: $vid_1 PID: $pid_1 SV: $sv_1"
-result=$(echo "test1234" | dcld tx model update-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 --maxApplicableSoftwareVersion=32 --minApplicableSoftwareVersion=33 --from=$vendor_account_1 --yes 2>&1) || true
-check_response_and_report "$result" "MaxApplicableSoftwareVersion must not be less than MinApplicableSoftwareVersion" raw
+check_response_and_report "$result" "\"specificationVersion\": $specification_version"
 
 test_divider

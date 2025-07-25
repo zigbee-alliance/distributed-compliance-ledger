@@ -1098,7 +1098,7 @@ func TestHandler_UpdateModelVersion(t *testing.T) {
 	require.Equal(t, receivedModelVersion.FirmwareInformation, msgCreateModelVersion.FirmwareInformation)
 	require.Equal(t, receivedModelVersion.OtaChecksum, msgCreateModelVersion.OtaChecksum+"updated")
 	require.Equal(t, receivedModelVersion.OtaChecksumType, msgCreateModelVersion.OtaChecksumType)
-	require.Equal(t, receivedModelVersion.OtaChecksumType, msgCreateModelVersion.OtaChecksumType)
+	require.Equal(t, receivedModelVersion.SpecificationVersion, msgCreateModelVersion.SpecificationVersion)
 	require.Equal(t, newSchemaVersion, receivedModelVersion.SchemaVersion)
 
 	// query model versions
@@ -1907,6 +1907,7 @@ func NewMsgCreateModelVersion(signer sdk.AccAddress, softwareVersion uint32) *ty
 		MaxApplicableSoftwareVersion: testconstants.MaxApplicableSoftwareVersion,
 		ReleaseNotesUrl:              testconstants.ReleaseNotesURL,
 		SchemaVersion:                testconstants.SchemaVersion,
+		SpecificationVersion:         testconstants.SpecificationVersion,
 	}
 }
 
