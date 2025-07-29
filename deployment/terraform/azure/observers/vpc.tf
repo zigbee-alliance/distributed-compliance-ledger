@@ -6,7 +6,7 @@ locals {
   vpc_network_prefix = "10.${30 + var.region_index}"
 }
 
-module "this_vnet" {
+module "this_vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "3.19.0"
 

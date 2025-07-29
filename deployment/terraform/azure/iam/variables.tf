@@ -1,10 +1,22 @@
-variable "tags" {
-  description = "A map of tags to add to all resources"
-  type        = map(string)
-  default     = {}
+variable "identity_name" {
+  description = "Name of the User Assigned Managed Identity"
+  type        = string
 }
 
-variable "scope_id" {
+variable "resource_group_name" {
+  description = "Name of the Resource Group where identity is created"
   type        = string
-  description = "ID области (subscription, resource group или resource) для назначения роли"
 }
+
+variable "location" {
+  description = "Azure region for resources"
+  type        = string
+}
+
+variable "roles" {
+  description = "List of role definition names to assign to the identity"
+  type        = list(string)
+  default     = ["Contributor"]
+}
+
+data "azurerm_subscription" "primary" {}

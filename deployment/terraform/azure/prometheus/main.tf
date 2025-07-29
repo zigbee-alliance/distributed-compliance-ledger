@@ -13,12 +13,12 @@ data "aws_ami" "ubuntu" {
   }
 }
 
-resource "azurerm_key_pair" "key_pair" {
+resource "aws_key_pair" "key_pair" {
   public_key = file(var.ssh_public_key_path)
   tags       = var.tags
 }
 
-resource "azurerm_instance" "this_node" {
+resource "aws_instance" "this_node" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = var.instance_type
 
@@ -28,7 +28,7 @@ resource "azurerm_instance" "this_node" {
     module.this_dev_sg.security_group_id,
   ]
 
-  key_name   = azurerm_key_pair.key_pair.id
+  key_name   = aws_key_pair.key_pair.id
   monitoring = true
 
   iam_instance_profile = aws_iam_instance_profile.this_amp_role_profile.name

@@ -6,7 +6,7 @@ module "this_dev_sg" {
   description = "Observer nodes security group for development"
   tags        = var.tags
 
-  vpc_id = module.this_vnet.vpc_id
+  vpc_id = module.this_vpc.vpc_id
 
   ingress_cidr_blocks = ["0.0.0.0/0"]
   ingress_rules       = ["all-icmp", "ssh-tcp"]
@@ -21,7 +21,7 @@ module "this_private_sg" {
   description = "Observer nodes security group for internal connections"
   tags        = var.tags
 
-  vpc_id = module.this_vnet.vpc_id
+  vpc_id = module.this_vpc.vpc_id
 
   egress_rules = ["all-all"]
   ingress_with_cidr_blocks = [

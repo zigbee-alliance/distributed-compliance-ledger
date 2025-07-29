@@ -1,14 +1,15 @@
-output "vnet_id" {
-  description = "ID of the Virtual Network"
-  value       = azurerm_virtual_network.main.id
+output "vpc" {
+  value = module.this_vpc
 }
 
-output "nsg_id" {
-  description = "ID of the Network Security Group"
-  value       = azurerm_network_security_group.nsg.id
+output "private_ips" {
+  value = aws_instance.this_nodes.*.private_ip
 }
 
-output "peering_id" {
-  description = "ID of the VNet Peering"
-  value       = azurerm_virtual_network_peering.peer.id
+output "public_ips" {
+  value = concat(slice(aws_instance.this_nodes, length(aws_eip.this_eips), length(aws_instance.this_nodes)).*.public_ip, aws_eip.this_eips.*.public_ip)
+}
+
+output "public_eips" {
+  value = aws_eip.this_eips.*.public_ip
 }

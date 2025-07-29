@@ -1,24 +1,23 @@
-variable "peer_resource_group_name" {
-  description = "Resource group of the peer VNet"
-  type        = string
+data "aws_availability_zones" "available" {
+  state = "available"
 }
 
-variable "peer_vnet_name" {
-  description = "Name of the peer VNet"
-  type        = string
+locals {
+  vpc_network_prefix = "10.10"
 }
 
-resource "azurerm_virtual_network" "main" {
-  name                = var.vnet_name
-  address_space       = var.vnet_address_space
-  location            = var.location
-  resource_group_name = var.resource_group_name
-}
+module "this_vpc" {
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "3.19.0"
 
-resource "azurerm_subnet" "subnets" {
-  for_each             = { for s in var.subnet_configs : s.name => s }
-  name                  = each.value.name
-  resource_group_name   = var.resource_group_name
-  virtual_network_name  = azurerm_virtual_network.main.name
-  address_prefixes      = [each.value.address_prefix]
+  name = "private-sentries-vpc"
+  cidr = "${local.vpc_network_prefix}.0.0/16"
+
+  azs = [data.aws_availability_zones.available.names[0]]
+
+  public_subnets = ["${local.vpc_network_prefix}.1.0/24"]
+
+  enable_nat_gateway   = true
+  enable_dns_hostnames = true
+  tags                 = var.tags
 }

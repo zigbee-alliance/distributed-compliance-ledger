@@ -13,12 +13,12 @@ data "aws_ami" "ubuntu" {
   }
 }
 
-resource "azurerm_key_pair" "key_pair" {
+resource "aws_key_pair" "key_pair" {
   public_key = file(var.ssh_public_key_path)
   tags       = var.tags
 }
 
-resource "azurerm_instance" "this_nodes" {
+resource "aws_instance" "this_nodes" {
   count = var.nodes_count
 
   ami           = data.aws_ami.ubuntu.id
@@ -26,13 +26,13 @@ resource "azurerm_instance" "this_nodes" {
 
   iam_instance_profile = var.iam_instance_profile.name
 
-  subnet_id = element(module.this_vnet.public_subnets, count.index % length(module.this_vnet.public_subnets))
+  subnet_id = element(module.this_vpc.public_subnets, count.index % length(module.this_vpc.public_subnets))
   vpc_security_group_ids = [
     module.this_dev_sg.security_group_id,
     module.this_private_sg.security_group_id
   ]
 
-  key_name   = azurerm_key_pair.key_pair.id
+  key_name   = aws_key_pair.key_pair.id
   monitoring = true
 
   lifecycle {

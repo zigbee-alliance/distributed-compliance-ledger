@@ -1,4 +1,4 @@
-resource "azurerm_role_definition" "this_role_definition" {
+resource "aws_iam_role" "this_iam_role" {
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -38,11 +38,11 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "this_amp_policy_attachment" {
-  role       = azurerm_role_definition.this_role_definition.name
+  role       = aws_iam_role.this_iam_role.name
   policy_arn = aws_iam_policy.this_amp_write_policy.arn
 }
 
 resource "aws_iam_instance_profile" "this_amp_role_profile" {
-  role = azurerm_role_definition.this_role_definition.name
+  role = aws_iam_role.this_iam_role.name
   tags = var.tags
 }

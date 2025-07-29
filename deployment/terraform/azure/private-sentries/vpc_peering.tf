@@ -1,17 +1,21 @@
-resource "azurerm_virtual_network_peering" "peer" {
-  name                      = var.peering_name
-  resource_group_name       = var.resource_group_name
-  virtual_network_name      = var.vnet_name
-  remote_virtual_network_id = data.azurerm_virtual_network.peer.id
-  allow_forwarded_traffic   = true
-  allow_gateway_transit     = false
-  use_remote_gateways       = false
-  depends_on                = [azurerm_virtual_network.main]
-}
+module "this_vpc_peering" {
+  source  = "grem11n/vpc-peering/aws"
+  version = "4.1.0"
 
-// Data for peer VNet
+  providers = {
+    aws.this = aws
+    aws.peer = aws.peer
+  }
 
-data "azurerm_virtual_network" "peer" {
-  name                = var.peer_vnet_name
-  resource_group_name = var.peer_resource_group_name
+  this_vpc_id = module.this_vpc.vpc_id
+  peer_vpc_id = var.peer_vpc.vpc_id
+
+  this_rts_ids = [element(module.this_vpc.public_route_table_ids, 0)]
+  peer_rts_ids = [element(var.peer_vpc.public_route_table_ids, 0)]
+
+  auto_accept_peering = true
+
+  tags = merge(var.tags, {
+    Name = "Private Sentries to Validator VPC peering"
+  })
 }

@@ -22,5 +22,5 @@ resource "aws_route53_record" "on" {
   }
 
   set_identifier = "Observers NLB [${var.region_index}]"
-  records        = ["${azurerm_lb.this_nb.dns_name}"]
+  records        = ["${aws_lb.this_nlb.dns_name}"]
 }
