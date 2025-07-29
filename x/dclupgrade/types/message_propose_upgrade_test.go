@@ -239,6 +239,21 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 			err: sdkerrors.ErrJSONUnmarshal,
 		},
 		{
+			name:     "unsupported os platform",
+			expected: testconstants.UpgradeGitAPIJSONResponse,
+			msg: MsgProposeUpgrade{
+				Creator: sample.AccAddress(),
+				Plan: Plan{
+					Name:   testconstants.UpgradePlanName,
+					Height: testconstants.UpgradePlanHeight,
+					Info:   "{\"binaries\":[\"mac\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.4.4/dcld?checksum-sha256:e4031c6a77aa8e58add391be671a334613271bcf6e7f11d23b04a0881ece6958\"]}",
+				},
+				Info: testconstants.Info,
+				Time: testconstants.Time,
+			},
+			err: sdkerrors.ErrJSONUnmarshal,
+		},
+		{
 			name:     "no binary files",
 			expected: testconstants.UpgradeGitAPIJSONResponse,
 			msg: MsgProposeUpgrade{

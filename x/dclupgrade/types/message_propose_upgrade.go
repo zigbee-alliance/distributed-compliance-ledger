@@ -71,28 +71,37 @@ func ValidateBinaries(msg *MsgProposeUpgrade, gitBaseURL string) error {
 
 	err := json.Unmarshal([]byte(msg.Plan.Info), &planInfoJSON)
 	if err != nil {
-		return sdkerrors.ErrJSONUnmarshal
+		return errors.Wrapf(sdkerrors.ErrJSONUnmarshal, "failed to unmarshal upgrade plan info: %v", err)
 	}
 
 	binariesLen := len(planInfoJSON["binaries"])
 
 	if binariesLen > 1 {
-		return errors.Wrapf(sdkerrors.ErrJSONUnmarshal, "invalid parsing, supports only one binary file")
+		return errors.Wrapf(sdkerrors.ErrJSONUnmarshal, "supports only one binary file")
 	}
 
 	if binariesLen == 0 {
-		return errors.Wrapf(sdkerrors.ErrJSONUnmarshal, "invalid parsing, binary files not found")
+		return errors.Wrapf(sdkerrors.ErrJSONUnmarshal, "binary files not found")
 	}
 
-	for _, urlWithSum := range planInfoJSON["binaries"] {
+	for osName, urlWithSum := range planInfoJSON["binaries"] {
+		if osName != "linux/amd64" {
+			return errors.Wrapf(sdkerrors.ErrJSONUnmarshal, "supports only \"linux/amd64\" binary files")
+		}
+
 		fileURL, sha256Sum, foundSep := strings.Cut(urlWithSum, "?")
 		if !foundSep || !strings.HasPrefix(sha256Sum, "checksum=") {
-			return errors.Wrapf(sdkerrors.ErrJSONUnmarshal, "invalid parsing upgrade plan url")
+			return errors.Wrapf(sdkerrors.ErrJSONUnmarshal, "failed to parse upgrade plan URL")
 		}
 
 		sha256Sum = strings.TrimPrefix(sha256Sum, "checksum=")
 
 		partsURL := strings.Split(fileURL, "/")
+
+		if len(partsURL) <= 7 {
+			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "unexpected binary URL format: %s", fileURL)
+		}
+
 		urlGitTag := partsURL[7]
 
 		// support previous updates where there is no direct matching of plan name and git tag
@@ -129,7 +138,7 @@ func ValidateBinaries(msg *MsgProposeUpgrade, gitBaseURL string) error {
 
 		err = json.Unmarshal(body, &parsedBody)
 		if err != nil {
-			return errors.Wrapf(sdkerrors.ErrJSONUnmarshal, "invalid parsing binary file info")
+			return errors.Wrapf(sdkerrors.ErrJSONUnmarshal, "failed to parse binary file info")
 		}
 
 		assets, assetsExist := parsedBody["assets"]
