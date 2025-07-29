@@ -1,9 +1,8 @@
 terraform {
   required_providers {
-    aws = {
-      source                = "hashicorp/aws"
-      version               = ">= 4.1"
-      configuration_aliases = [aws, aws.peer]
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 3.0"
     }
   }
 }

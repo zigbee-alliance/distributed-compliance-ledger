@@ -1,51 +1,36 @@
-data "aws_ami" "ubuntu" {
-  most_recent = true
-  owners      = ["099720109477"]
+resource "azurerm_linux_virtual_machine" "this_nodes" {
+  count               = var.nodes_count
+  name                = "private-sentry-node-${count.index}"
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  size                = var.instance_type
+  admin_username      = var.ssh_username
 
-  filter {
-    name   = "name"
-    values = ["ubuntu-minimal/images/hvm-ssd/ubuntu-focal-20.04-amd64-minimal-*"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-}
-
-resource "aws_key_pair" "key_pair" {
-  public_key = file(var.ssh_public_key_path)
-  tags       = var.tags
-}
-
-resource "aws_instance" "this_nodes" {
-  count = var.nodes_count
-
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = var.instance_type
-
-  iam_instance_profile = var.iam_instance_profile.name
-
-  subnet_id = element(module.this_vpc.public_subnets, 0)
-  vpc_security_group_ids = [
-    module.this_dev_sg.security_group_id,
-    module.this_private_sg.security_group_id,
-    module.this_public_sg.security_group_id
+  network_interface_ids = [
+    azurerm_network_interface.this_nodes[count.index].id
   ]
 
-  key_name   = aws_key_pair.key_pair.id
-  monitoring = true
-
-  lifecycle {
-    ignore_changes = [ami]
+  admin_ssh_key {
+    username   = var.ssh_username
+    public_key = file(var.ssh_public_key_path)
   }
 
-  connection {
-    type        = "ssh"
-    host        = self.public_ip
-    user        = var.ssh_username
-    private_key = file(var.ssh_private_key_path)
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+    disk_size_gb         = 80
   }
+
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "0001-com-ubuntu-server-focal"
+    sku       = "20_04-lts"
+    version   = "latest"
+  }
+
+  tags = merge(var.tags, {
+    Name = "Private Sentry Node [${count.index}]"
+  })
 
   provisioner "file" {
     content     = templatefile("./provisioner/cloudwatch-config.tpl", {})
@@ -59,28 +44,27 @@ resource "aws_instance" "this_nodes" {
   provisioner "remote-exec" {
     script = "./provisioner/install-ansible-deps.sh"
   }
+}
 
-  tags = merge(var.tags, {
-    Name = "Private Sentry Node [${count.index}]"
-  })
+resource "azurerm_network_interface" "this_nodes" {
+  count               = var.nodes_count
+  name                = "private-sentry-nic-${count.index}"
+  location            = var.location
+  resource_group_name = var.resource_group_name
 
-  root_block_device {
-    encrypted   = true
-    volume_size = 80
-  }
-
-  metadata_options {
-    http_endpoint = "enabled"
-    http_tokens   = "required"
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = var.subnet_id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.this_nodes[count.index].id
   }
 }
 
-resource "aws_eip" "this_eips" {
-  count    = length(aws_instance.this_nodes) > 0 ? 1 : 0
-  instance = aws_instance.this_nodes[0].id
-  vpc      = true
-
-  tags = merge(var.tags, {
-    Name = "Private Sentry Node [${count.index}] Elastic IP"
-  })
+resource "azurerm_public_ip" "this_nodes" {
+  count               = var.nodes_count
+  name                = "private-sentry-pip-${count.index}"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  allocation_method   = "Dynamic"
+  sku                 = "Basic"
 }

@@ -1,48 +1,35 @@
-data "aws_ami" "ubuntu" {
-  most_recent = true
-  owners      = ["099720109477"]
+resource "azurerm_linux_virtual_machine" "this_node" {
+  name                = "prometheus-server-node"
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  size                = var.instance_type
+  admin_username      = var.ssh_username
 
-  filter {
-    name   = "name"
-    values = ["ubuntu-minimal/images/hvm-ssd/ubuntu-focal-20.04-amd64-minimal-*"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-}
-
-resource "aws_key_pair" "key_pair" {
-  public_key = file(var.ssh_public_key_path)
-  tags       = var.tags
-}
-
-resource "aws_instance" "this_node" {
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = var.instance_type
-
-  subnet_id = element(var.vpc.public_subnets, 0)
-
-  vpc_security_group_ids = [
-    module.this_dev_sg.security_group_id,
+  network_interface_ids = [
+    azurerm_network_interface.this_node.id
   ]
 
-  key_name   = aws_key_pair.key_pair.id
-  monitoring = true
-
-  iam_instance_profile = aws_iam_instance_profile.this_amp_role_profile.name
-
-  lifecycle {
-    ignore_changes = [ami]
+  admin_ssh_key {
+    username   = var.ssh_username
+    public_key = file(var.ssh_public_key_path)
   }
 
-  connection {
-    type        = "ssh"
-    host        = self.public_ip
-    user        = var.ssh_username
-    private_key = file(var.ssh_private_key_path)
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+    disk_size_gb         = 20
   }
+
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "0001-com-ubuntu-server-focal"
+    sku       = "20_04-lts"
+    version   = "latest"
+  }
+
+  tags = merge(var.tags, {
+    Name = "Prometheus Server Node"
+  })
 
   provisioner "file" {
     content     = local.prometheus_config
@@ -52,18 +39,25 @@ resource "aws_instance" "this_node" {
   provisioner "remote-exec" {
     script = "./provisioner/install-prometheus-service.sh"
   }
+}
 
-  tags = merge(var.tags, {
-    Name = "Prometheus Server Node"
-  })
+resource "azurerm_network_interface" "this_node" {
+  name                = "prometheus-nic"
+  location            = var.location
+  resource_group_name = var.resource_group_name
 
-  root_block_device {
-    encrypted   = true
-    volume_size = 20
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = var.subnet_id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.this_node.id
   }
+}
 
-  metadata_options {
-    http_endpoint = "enabled"
-    http_tokens   = "required"
-  }
+resource "azurerm_public_ip" "this_node" {
+  name                = "prometheus-pip"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  allocation_method   = "Dynamic"
+  sku                 = "Basic"
 }

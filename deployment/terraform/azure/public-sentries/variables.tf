@@ -1,47 +1,49 @@
-variable "location" {
-  description = "Azure region for resource deployment"
-  type        = string
-  default     = "East US"
+variable "tags" {
+  description = "A map of tags to add to all resources"
+  type        = map(string)
+  default     = {}
 }
 
 variable "resource_group_name" {
   description = "Name of the Azure Resource Group"
   type        = string
-  default     = "my-resource-group"
 }
 
-variable "vnet_name" {
-  description = "Name of the Azure Virtual Network"
+variable "location" {
+  description = "Azure region for resources"
   type        = string
-  default     = "my-vnet"
 }
 
-variable "vnet_address_space" {
-  description = "Address space for the VNet"
-  type        = list(string)
-  default     = ["10.0.0.0/16"]
-}
-
-variable "subnet_configs" {
-  description = "List of subnet configurations"
-  type = list(object({
-    name          = string
-    address_prefix = string
-  }))
-  default = [
-    { name = "subnet1", address_prefix = "10.0.1.0/24" },
-    { name = "subnet2", address_prefix = "10.0.2.0/24" }
-  ]
-}
-
-variable "nsg_name" {
-  description = "Name of the network security group"
+variable "subnet_id" {
+  description = "ID of the subnet to deploy VMs into"
   type        = string
-  default     = "my-nsg"
 }
 
-variable "peering_name" {
-  description = "Name for VNet peering"
-  type        = string
-  default     = "peer-to-other-vnet"
+variable "ssh_public_key_path" {
+  description = "SSH public key file path"
+  default     = "~/.ssh/id_rsa.pub"
+}
+
+variable "ssh_private_key_path" {
+  description = "SSH private key file path"
+  default     = "~/.ssh/id_rsa"
+}
+
+variable "ssh_username" {
+  description = "SSH username"
+  default     = "ubuntu"
+}
+
+variable "nodes_count" {
+  description = "Number of Public Sentry nodes"
+}
+
+variable "instance_type" {
+  description = "Azure VM size (e.g., Standard_B2s)"
+}
+
+variable "enable_ipv6" {
+  description = "Enable IPv6 support"
+  type        = bool
+  default     = false
 }

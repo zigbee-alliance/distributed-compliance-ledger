@@ -1,30 +1,70 @@
-resource "azurerm_resource_group" "rg" {
-  name     = var.resource_group_name
-  location = var.location
+resource "azurerm_linux_virtual_machine" "this_nodes" {
+  count               = var.nodes_count
+  name                = "public-sentry-node-${count.index}"
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  size                = var.instance_type
+  admin_username      = var.ssh_username
+
+  network_interface_ids = [
+    azurerm_network_interface.this_nodes[count.index].id
+  ]
+
+  admin_ssh_key {
+    username   = var.ssh_username
+    public_key = file(var.ssh_public_key_path)
+  }
+
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+    disk_size_gb         = 80
+  }
+
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "0001-com-ubuntu-server-focal"
+    sku       = "20_04-lts"
+    version   = "latest"
+  }
+
+  tags = merge(var.tags, {
+    Name = "Public Sentry Node [${count.index}]"
+  })
+
+  provisioner "file" {
+    content     = templatefile("./provisioner/cloudwatch-config.tpl", {})
+    destination = "/tmp/cloudwatch-config.json"
+  }
+
+  provisioner "remote-exec" {
+    script = "./provisioner/install-cloudwatch.sh"
+  }
+
+  provisioner "remote-exec" {
+    script = "./provisioner/install-ansible-deps.sh"
+  }
 }
 
-module "vnet" {
-  source              = "./vpc.tf"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  vnet_name           = var.vnet_name
-  vnet_address_space  = var.vnet_address_space
-  subnet_configs      = var.subnet_configs
+resource "azurerm_network_interface" "this_nodes" {
+  count               = var.nodes_count
+  name                = "public-sentry-nic-${count.index}"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = var.subnet_id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.this_nodes[count.index].id
+  }
 }
 
-module "security" {
-  source              = "./security.tf"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  nsg_name            = var.nsg_name
-}
-
-module "peering" {
-  source                       = "./vpc_peering.tf"
-  resource_group_name          = azurerm_resource_group.rg.name
-  location                     = azurerm_resource_group.rg.location
-  vnet_name                    = var.vnet_name
-  peering_name                 = var.peering_name
-  peer_resource_group_name     = var.peer_resource_group_name
-  peer_vnet_name               = var.peer_vnet_name
+resource "azurerm_public_ip" "this_nodes" {
+  count               = var.nodes_count
+  name                = "public-sentry-pip-${count.index}"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  allocation_method   = "Dynamic"
+  sku                 = "Basic"
 }

@@ -4,6 +4,21 @@ variable "tags" {
   default     = {}
 }
 
+variable "resource_group_name" {
+  description = "Name of the Azure Resource Group"
+  type        = string
+}
+
+variable "location" {
+  description = "Azure region for resources"
+  type        = string
+}
+
+variable "subnet_id" {
+  description = "ID of the subnet to deploy VMs into"
+  type        = string
+}
+
 variable "disable_instance_protection" {
   description = "Disable the protection that prevents the validator instance from being accidentally terminated"
   type        = bool
@@ -26,9 +41,10 @@ variable "ssh_username" {
 }
 
 variable "instance_type" {
-  description = "Type of Azure instances"
+  description = "Azure VM size (e.g., Standard_B2s)"
 }
 
-variable "iam_instance_profile" {
-  description = "IAM instance profile"
+variable "identity_name" {
+  description = "Name of the managed identity"
+  type        = string
 }

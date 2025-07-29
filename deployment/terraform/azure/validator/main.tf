@@ -1,30 +1,7 @@
-resource "azurerm_resource_group" "validator_rg" {
-  name     = "rg-validator"
-  location = var.location
-  tags     = var.tags
-}
-
-module "this_vnet" {
-  source  = "Azure/vnet/azurerm"
-  version = "4.0.0"
-
-  resource_group_name = azurerm_resource_group.validator_rg.name
-  location            = var.location
-
-  name            = "validator-vnet"
-  address_space   = ["10.0.0.0/16"]
-  subnet_prefixes = ["10.0.1.0/24"]
-
-  dns_servers        = ["168.63.129.16"] # Azure default DNS
-  enable_nat_gateway = true
-
-  tags = var.tags
-}
-
 resource "azurerm_public_ip" "validator_public_ip" {
   name                = "validator-public-ip"
   location            = var.location
-  resource_group_name = azurerm_resource_group.validator_rg.name
+  resource_group_name = var.resource_group_name
   allocation_method   = "Dynamic"
   tags                = var.tags
 }
@@ -32,13 +9,11 @@ resource "azurerm_public_ip" "validator_public_ip" {
 resource "azurerm_network_interface" "nic" {
   name                = "nic-validator"
   location            = var.location
-  resource_group_name = azurerm_resource_group.validator_rg.name
-
-  network_security_group_id = azurerm_network_security_group.dev_sg.id
+  resource_group_name = var.resource_group_name
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = module.this_vnet.subnets[0]
+    subnet_id                     = var.subnet_id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.validator_public_ip.id
   }
@@ -46,7 +21,7 @@ resource "azurerm_network_interface" "nic" {
 
 resource "azurerm_linux_virtual_machine" "validator_vm" {
   name                = "validator-node"
-  resource_group_name = azurerm_resource_group.validator_rg.name
+  resource_group_name = var.resource_group_name
   location            = var.location
   size                = var.instance_type
   admin_username      = var.ssh_username

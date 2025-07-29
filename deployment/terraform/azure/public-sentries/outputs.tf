@@ -1,14 +1,7 @@
-output "vnet_id" {
-  description = "ID of the Virtual Network"
-  value       = azurerm_virtual_network.main.id
+output "private_ips" {
+  value = azurerm_linux_virtual_machine.this_nodes[*].private_ip_address
 }
 
-output "nsg_id" {
-  description = "ID of the Network Security Group"
-  value       = azurerm_network_security_group.nsg.id
-}
-
-output "peering_id" {
-  description = "ID of the VNet Peering"
-  value       = azurerm_virtual_network_peering.peer.id
+output "public_ips" {
+  value = azurerm_public_ip.this_nodes[*].ip_address
 }

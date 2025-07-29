@@ -4,6 +4,21 @@ variable "tags" {
   default     = {}
 }
 
+variable "resource_group_name" {
+  description = "Name of the Azure Resource Group"
+  type        = string
+}
+
+variable "location" {
+  description = "Azure region for resources"
+  type        = string
+}
+
+variable "subnet_id" {
+  description = "ID of the subnet to deploy VMs into"
+  type        = string
+}
+
 variable "ssh_public_key_path" {
   description = "SSH public key file path"
   default     = "~/.ssh/id_rsa.pub"
@@ -19,18 +34,10 @@ variable "ssh_username" {
   default     = "ubuntu"
 }
 
-variable "peer_vpc" {
-  description = "Peer VPC"
-}
-
 variable "nodes_count" {
   description = "Number of Private Sentry nodes"
 }
 
 variable "instance_type" {
-  description = "Type of AWS instances"
-}
-
-variable "iam_instance_profile" {
-  description = "IAM instance profile"
+  description = "Azure VM size (e.g., Standard_B2s)"
 }

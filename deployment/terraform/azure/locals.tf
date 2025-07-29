@@ -23,9 +23,9 @@ locals {
     }
 
     private_sentries = var.private_sentries_config.enable ? {
-      private_ips = module.private_sentries.private_ips
-      public_ips  = module.private_sentries.public_ips
-      public_eips = module.private_sentries.public_eips
+      private_ips = module.private_sentries[0].private_ips
+      public_ips  = module.private_sentries[0].public_ips
+      public_eips = module.private_sentries[0].public_eips
     } : {
       private_ips = []
       public_ips  = []
@@ -33,28 +33,32 @@ locals {
     }
 
     public_sentries = var.public_sentries_config.enable ? {
-      private_ips = module.public_sentries.private_ips
-      public_ips  = module.public_sentries.public_ips
+      private_ips = concat(
+        length(module.public_sentries_1) > 0 ? module.public_sentries_1[0].private_ips : [],
+        length(module.public_sentries_2) > 0 ? module.public_sentries_2[0].private_ips : []
+      )
+      public_ips = concat(
+        length(module.public_sentries_1) > 0 ? module.public_sentries_1[0].public_ips : [],
+        length(module.public_sentries_2) > 0 ? module.public_sentries_2[0].public_ips : []
+      )
     } : {
       private_ips = []
       public_ips  = []
     }
 
-    seeds = var.public_sentries_config.enable ? {
-      private_ips = module.public_sentries.seed_private_ips
-      public_ips  = module.public_sentries.seed_public_ips
+    observers = var.observers_config.enable ? {
+      private_ips = concat(
+        length(module.observers_1) > 0 ? module.observers_1[0].private_ips : [],
+        length(module.observers_2) > 0 ? module.observers_2[0].private_ips : []
+      )
+      public_ips = concat(
+        length(module.observers_1) > 0 ? module.observers_1[0].public_ips : [],
+        length(module.observers_2) > 0 ? module.observers_2[0].public_ips : []
+      )
     } : {
       private_ips = []
       public_ips  = []
     }
-
-   # observers = var.observers_config.enable ? {
-   #   private_ips = module.observers.private_ips
-   #   public_ips  = module.observers.public_ips
-   # } : {
-   #   private_ips = []
-   #   public_ips  = []
-   # }
   }
 
   # Build Ansible inventory structure
@@ -62,15 +66,20 @@ locals {
     all = {
       children = {
         genesis = {
-          hosts = var.validator_config.is_genesis
-            ? { for ip in local.nodes.validator.public_ips : ip => null }
-            : {}
+          hosts = var.validator_config.is_genesis ? local.nodes.validator.public_ips : []
         }
-        validators        = { hosts = { for ip in local.nodes.validator.public_ips       : ip => null } }
-        private_sentries  = { hosts = { for ip in local.nodes.private_sentries.public_ips : ip => null } }
-        public_sentries   = { hosts = { for ip in local.nodes.public_sentries.public_ips  : ip => null } }
-        seeds             = { hosts = { for ip in local.nodes.seeds.public_ips            : ip => null } }
-       # observers         = { hosts = { for ip in local.nodes.observers.public_ips        : ip => null } }
+        validators = {
+          hosts = local.nodes.validator.public_ips
+        }
+        private_sentries = {
+          hosts = local.nodes.private_sentries.public_ips
+        }
+        public_sentries = {
+          hosts = local.nodes.public_sentries.public_ips
+        }
+        observers = {
+          hosts = local.nodes.observers.public_ips
+        }
       }
     }
   }
@@ -80,12 +89,10 @@ locals {
     local.nodes.validator.private_ips,
     local.nodes.private_sentries.private_ips,
     local.nodes.public_sentries.private_ips,
-   # local.nodes.observers.private_ips,
-    local.nodes.seeds.private_ips,
+    local.nodes.observers.private_ips
   )
 
-  prometheus_enabled  = var.private_sentries_config.enable && var.prometheus_config.enable
-  prometheus_endpoint = local.prometheus_enabled
-    ? module.prometheus.prometheus_endpoint
-    : null
+  prometheus_enabled = var.prometheus_config.enable
+  
+  prometheus_endpoint = local.prometheus_enabled && length(module.prometheus) > 0 ? module.prometheus[0].prometheus_endpoint : null
 }

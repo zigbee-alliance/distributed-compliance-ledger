@@ -1,12 +1,8 @@
-provider "azurerm" {
-  features {}
-}
-
-variable "location" {
-  default = "East US"
-}
-
-variable "tags" {
-  type    = map(string)
-  default = {}
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 3.0"
+    }
+  }
 }
