@@ -24,7 +24,6 @@ VALIDATOR_DEMO_CONTAINER_NAME="validator-demo"
 
 cleanup_containers() {
     echo "Cleanup containers"
-    sleep 99999
     cleanup_container "$MASTER_UPGRADE_CONTAINER_NAME"
     cleanup_container "$NEW_OBSERVER_CONTAINER_NAME"
     cleanup_container "$VALIDATOR_DEMO_CONTAINER_NAME"
@@ -32,9 +31,7 @@ cleanup_containers() {
 
 trap cleanup_containers EXIT
 
-cleanup_container "$MASTER_UPGRADE_CONTAINER_NAME"
-cleanup_container "$NEW_OBSERVER_CONTAINER_NAME"
-cleanup_container "$VALIDATOR_DEMO_CONTAINER_NAME"
+cleanup_containers
 
 source integration_tests/upgrade/01-test-upgrade-initialize-0.12.sh
 source integration_tests/upgrade/02-test-upgrade-0.12-rollback.sh

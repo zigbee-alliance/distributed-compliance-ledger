@@ -34,30 +34,24 @@ MASTER_UPGRADE_CONTAINER_NAME="$MASTER_UPGRADE_IMAGE-inst"
 function check_expected_catching_up_status_for_interval {
     local expected_status="$1"
     local overall_ping_time_sec="${2:-100}"
-    local sleep_time_sec="${3:-1}"
     local seconds=0
+    local status_substring="\"catching_up\":$expected_status"
 
     while [ $seconds -lt $overall_ping_time_sec ]; do
+        sleep 1
+        local seconds=$((seconds+1))
 
         if [ $( docker container ls -a | grep "$NEW_OBSERVER_CONTAINER_NAME" | wc -l ) -eq 0 ]; then
-            echo "! docker container inspect"
-            break
+            continue
         fi
 
         if ! docker container inspect "$NEW_OBSERVER_CONTAINER_NAME" | grep -q '"Status": "running"'; then
-            break
+            continue
         fi
 
-        local dcld_status=$(docker exec --user root "$NEW_OBSERVER_CONTAINER_NAME" dcld status 2>&1)
-
-        status_substring="\"catching_up\":$expected_status"
-        if [[ $dcld_status == *"$status_substring"* ]]; then
-            echo -e "dcld status:\n$dcld_status"
+        if [[ $(docker exec --user root "$NEW_OBSERVER_CONTAINER_NAME" dcld status 2>&1) == *"$status_substring"* ]]; then
             return 0
         fi
-
-        sleep $sleep_time_sec
-        local seconds=$((seconds+1))
     done
 
     return 1
@@ -66,29 +60,23 @@ function check_expected_catching_up_status_for_interval {
 function check_expected_version_for_interval {
     local expected_version="$1"
     local overall_ping_time_sec="${2:-10}"
-    local sleep_time_sec="${3:-1}"
     local seconds=0
 
     while [ $seconds -lt $overall_ping_time_sec ]; do
+        sleep 1
+        local seconds=$((seconds+1))
 
         if [ $( docker container ls -a | grep "$NEW_OBSERVER_CONTAINER_NAME" | wc -l ) -eq 0 ]; then
-            break
+            continue
         fi
 
         if ! docker container inspect "$NEW_OBSERVER_CONTAINER_NAME" | grep -q '"Status": "running"'; then
-            break
+            continue
         fi
 
-        local dcld_version=$(docker exec "$NEW_OBSERVER_CONTAINER_NAME" dcld version 2>&1)
-        echo "dcld_version = $dcld_version"
-
-        if [ "$dcld_version" == "$expected_version" ]; then
-            echo "dcld_version = $dcld_version"
+        if [ $(docker exec "$NEW_OBSERVER_CONTAINER_NAME" dcld version 2>&1) == "$expected_version" ]; then
             return 0
         fi
-        
-        sleep $sleep_time_sec
-        local seconds=$((seconds+1))
     done
 
     return 1
@@ -135,59 +123,44 @@ test_divider
 
 echo "6. Start Node \"$NEW_OBSERVER_CONTAINER_NAME\""
 docker exec -d "$NEW_OBSERVER_CONTAINER_NAME" sh -c "/var/lib/dcl/./node_helper.sh | tee /proc/1/fd/1"
-docker logs -f "$NEW_OBSERVER_CONTAINER_NAME" &
+# docker logs -f "$NEW_OBSERVER_CONTAINER_NAME" &
 
 test_divider
 
 echo "7. Check dcld version == $binary_version in $NEW_OBSERVER_CONTAINER_NAME"
 
-check_expected_version_for_interval "$binary_version"
-
-is_version_correct=$?
-
-if [ $is_version_correct == 1 ] ; then
+check_expected_version_for_interval "$binary_version" || {
     echo "installed dcld version does not match dcld mainnet version"
     exit 1
-fi
+}
 
 test_divider
 
-sleep_time_sec=1
-overall_ping_time_sec=700
+overall_ping_time_sec=900
 
-echo "8. Check node $NEW_OBSERVER_CONTAINER_NAME for START catching up process pinging it every $sleep_time_sec second for $overall_ping_time_sec seconds"
+echo "8. Check node $NEW_OBSERVER_CONTAINER_NAME for START catching up process pinging it every second for $overall_ping_time_sec seconds"
 
-check_expected_catching_up_status_for_interval true $overall_ping_time_sec $sleep_time_sec
-is_catching_up=$?
-
-if [ $is_catching_up == 1 ] ; then
+check_expected_catching_up_status_for_interval true $overall_ping_time_sec || {
     echo "Catch-up procedure does not started"
     exit 1
-fi
+}
 
 test_divider
 
-echo "9. Check node $NEW_OBSERVER_CONTAINER_NAME for FINISH catching up process pinging it every $sleep_time_sec second for $overall_ping_time_sec seconds"
+echo "9. Check node $NEW_OBSERVER_CONTAINER_NAME for FINISH catching up process pinging it every second for $overall_ping_time_sec seconds"
 
-check_expected_catching_up_status_for_interval false $overall_ping_time_sec $sleep_time_sec
-is_not_catching_up=$?
-
-if [ $is_not_catching_up == 1 ] ; then
+check_expected_catching_up_status_for_interval false $overall_ping_time_sec || {
     echo "Catch-up procedure does not finished"
     exit 1
-fi
+}
 
 test_divider
 
 echo "10. Check node $NEW_OBSERVER_CONTAINER_NAME dcld updated to version $master_upgrade_plan_name"
 
-check_expected_version_for_interval "$master_upgrade_plan_name"
-
-is_version_correct=$?
-
-if [ $is_version_correct == 1 ] ; then
+check_expected_version_for_interval "$master_upgrade_plan_name" || {
     echo "installed dcld version does not match dcld expected version"
     exit 1
-fi
+}
 
 echo "PASSED"
