@@ -35,8 +35,13 @@ func CmdProposeUpgrade() *cobra.Command {
 				info,
 			)
 
-			// validate basic will be called in GenerateOrBroadcastTxCLI
-			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+			err = msg.ValidateBasicCLI()
+
+			if err == nil {
+				// validate basic will be called in GenerateOrBroadcastTxCLI
+				err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+			}
+
 			if cli.IsWriteInsteadReadRPCError(err) {
 				return clientCtx.PrintString(cli.LightClientProxyForWriteRequests)
 			}
