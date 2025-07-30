@@ -6,9 +6,10 @@ output "common_labels" {
   value = local.labels
 }
 
-output "prometheus_endpoint" {
-  value = local.prometheus_endpoint
-}
+# FIXME
+#output "prometheus_endpoint" {
+#  value = local.prometheus_endpoint
+#}
 
 output "ansible_inventory" {
   value = local.ansible_inventory

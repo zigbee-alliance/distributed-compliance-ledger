@@ -1,3 +1,7 @@
+# FIXME
+# - tags for root_block_device (boot disk in GCP)
+# - disk type configuration variable (AWS/GCP)
+
 data "aws_ami" "ubuntu" {
   most_recent = true
   owners      = ["099720109477"]
@@ -46,15 +50,16 @@ resource "aws_instance" "this_node" {
     private_key = file(var.ssh_private_key_path)
   }
 
+  // logs
   provisioner "file" {
     content     = templatefile("./provisioner/cloudwatch-config.tpl", {})
     destination = "/tmp/cloudwatch-config.json"
   }
-
   provisioner "remote-exec" {
     script = "./provisioner/install-cloudwatch.sh"
   }
 
+  // ansible
   provisioner "remote-exec" {
     script = "./provisioner/install-ansible-deps.sh"
   }

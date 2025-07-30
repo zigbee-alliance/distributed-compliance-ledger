@@ -1,3 +1,19 @@
+# FIXME get from provider ???
+variable "region" {
+  type    = string
+}
+
+variable "project_id" {
+  description = "GCP project ID"
+  type        = string
+}
+
+variable "os_family" {
+  description = "Node base image family"
+  type        = string
+  default     = "ubuntu-2004-lts"  # TODO ubuntu 20.04 is deprecated
+}
+
 variable "labels" {
   description = "A map of labels to add to all applicable resources"
   type        = map(string)
@@ -10,26 +26,30 @@ variable "disable_instance_protection" {
   default     = false
 }
 
-variable "project_id" {
-  type = string
+variable "ssh_public_key_path" {
+  description = "SSH public key file path"
+  default     = "~/.ssh/id_rsa.pub"
+}
+
+variable "ssh_private_key_path" {
+  description = "SSH private key file path"
+  default     = "~/.ssh/id_rsa"
+}
+
+variable "ssh_username" {
+  description = "SSH username"
+  default     = "ubuntu"
 }
 
 variable "instance_type" {
-  type = string
+  description = "Type of GCP compute instances"
 }
 
-variable "boot_image" {
-  description = "Image to use for the boot disk"
-  type        = string
-  default     = local.default_source_image
-}
-
-variable "subnetwork" {
-  description = "The subnetwork to deploy the instance into"
-  type        = string
-}
-
-variable "service_account_email" {
-  description = "IAM service account email"
-  type        = string
-}
+# FIXME
+#variable "iam_instance_profile" {
+#  description = "IAM instance profile"
+#}
+#variable "service_account_email" {
+#  description = "IAM service account email"
+#  type        = string
+#}

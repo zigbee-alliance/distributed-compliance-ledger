@@ -10,21 +10,22 @@ provider "google" {
   project = var.project_id
 }
 
+# FIXME
 # Enable OS Login for all compute instances in the project
-resource "google_compute_project_metadata" "default" {
-  metadata = {
-    enable-oslogin = "TRUE"
-  }
-}
+#resource "google_compute_project_metadata" "default" {
+#  metadata = {
+#    enable-oslogin = "TRUE"
+#  }
+#}
 
 # IAM
-module "iam" {
-  source = "./iam"
-  providers = {
-    google = google.region_1
-  }
-  project_id = var.project_id
-}
+#   module "iam" {
+#     source = "./iam"
+#     providers = {
+#       google = google.region_1
+#     }
+#     project_id = var.project_id
+#   }
 
 # Validator
 module "validator" {
@@ -33,166 +34,168 @@ module "validator" {
     google = google.region_1
   }
 
+  region = var.region_1
   labels = local.labels
+
+  ssh_public_key_path  = var.ssh_public_key_path
+  ssh_private_key_path = var.ssh_private_key_path
 
   instance_type = var.validator_config.instance_type
   disable_instance_protection = local.disable_validator_protection
-  service_account_email = module.iam.service_account_email
+#   service_account_email = module.iam.service_account_email FIXME
 
-  boot_image = local.default_source_image
-  subnetwork = ""
   project_id = var.project_id
 }
 
 # Private Sentries
-module "private_sentries" {
-  count = var.private_sentries_config.enable ? 1 : 0
+#   module "private_sentries" {
+#     count = var.private_sentries_config.enable ? 1 : 0
 
-  source = "./private-sentries"
-  providers = {
-    google      = google.region_1
-    google.peer = google.region_1
-  }
+#     source = "./private-sentries"
+#     providers = {
+#       google      = google.region_1
+#       google.peer = google.region_1
+#     }
 
-  labels = local.labels
+#     labels = local.labels
 
-  nodes_count           = var.private_sentries_config.nodes_count
-  instance_type         = var.private_sentries_config.instance_type
-  service_account_email = module.iam.service_account_email
+#     nodes_count           = var.private_sentries_config.nodes_count
+#     instance_type         = var.private_sentries_config.instance_type
+#     service_account_email = module.iam.service_account_email
 
-  ssh_public_key_path  = var.ssh_public_key_path
-  ssh_private_key_path = var.ssh_private_key_path
+#     ssh_public_key_path  = var.ssh_public_key_path
+#     ssh_private_key_path = var.ssh_private_key_path
 
-  peer_vpc = module.validator.vpc
-  project_id = var.project_id
-  region = var.region_1
-}
+#     peer_vpc = module.validator.vpc
+#     project_id = var.project_id
+#     region = var.region_1
+#   }
 
-# Public Sentries region 1
-module "public_sentries_1" {
-  count = (var.private_sentries_config.enable &&
-    var.public_sentries_config.enable &&
-  contains(var.public_sentries_config.regions, 1)) ? 1 : 0
+#   # Public Sentries region 1
+#   module "public_sentries_1" {
+#     count = (var.private_sentries_config.enable &&
+#       var.public_sentries_config.enable &&
+#     contains(var.public_sentries_config.regions, 1)) ? 1 : 0
 
-  source = "./public-sentries"
-  providers = {
-    google      = google.region_1
-    google.peer = google.region_1
-  }
+#     source = "./public-sentries"
+#     providers = {
+#       google      = google.region_1
+#       google.peer = google.region_1
+#     }
 
-  labels = local.labels
+#     labels = local.labels
 
-  nodes_count           = var.public_sentries_config.nodes_count
-  instance_type         = var.public_sentries_config.instance_type
-  service_account_email = module.iam.service_account_email
+#     nodes_count           = var.public_sentries_config.nodes_count
+#     instance_type         = var.public_sentries_config.instance_type
+#     service_account_email = module.iam.service_account_email
 
-  enable_ipv6 = var.public_sentries_config.enable_ipv6
+#     enable_ipv6 = var.public_sentries_config.enable_ipv6
 
-  ssh_public_key_path  = var.ssh_public_key_path
-  ssh_private_key_path = var.ssh_private_key_path
+#     ssh_public_key_path  = var.ssh_public_key_path
+#     ssh_private_key_path = var.ssh_private_key_path
 
-  region_index = 1
-  peer_vpc     = module.private_sentries[0].vpc
-}
+#     region_index = 1
+#     peer_vpc     = module.private_sentries[0].vpc
+#   }
 
-# Public Sentries region 2
-module "public_sentries_2" {
-  count = (var.private_sentries_config.enable &&
-    var.public_sentries_config.enable &&
-  contains(var.public_sentries_config.regions, 2)) ? 1 : 0
+#   # Public Sentries region 2
+#   module "public_sentries_2" {
+#     count = (var.private_sentries_config.enable &&
+#       var.public_sentries_config.enable &&
+#     contains(var.public_sentries_config.regions, 2)) ? 1 : 0
 
-  source = "./public-sentries"
-  providers = {
-    google      = google.region_2
-    google.peer = google.region_1
-  }
+#     source = "./public-sentries"
+#     providers = {
+#       google      = google.region_2
+#       google.peer = google.region_1
+#     }
 
-  labels = local.labels
+#     labels = local.labels
 
-  nodes_count           = var.public_sentries_config.nodes_count
-  instance_type         = var.public_sentries_config.instance_type
-  service_account_email = module.iam.service_account_email
+#     nodes_count           = var.public_sentries_config.nodes_count
+#     instance_type         = var.public_sentries_config.instance_type
+#     service_account_email = module.iam.service_account_email
 
-  enable_ipv6 = var.public_sentries_config.enable_ipv6
+#     enable_ipv6 = var.public_sentries_config.enable_ipv6
 
-  ssh_public_key_path  = var.ssh_public_key_path
-  ssh_private_key_path = var.ssh_private_key_path
+#     ssh_public_key_path  = var.ssh_public_key_path
+#     ssh_private_key_path = var.ssh_private_key_path
 
-  region_index = 2
-  peer_vpc     = module.private_sentries[0].vpc
-}
+#     region_index = 2
+#     peer_vpc     = module.private_sentries[0].vpc
+#   }
 
-# Observers region 1
-module "observers_1" {
-  count = (var.private_sentries_config.enable &&
-    var.observers_config.enable &&
-  contains(var.observers_config.regions, 1)) ? 1 : 0
+#   # Observers region 1
+#   module "observers_1" {
+#     count = (var.private_sentries_config.enable &&
+#       var.observers_config.enable &&
+#     contains(var.observers_config.regions, 1)) ? 1 : 0
 
-  source = "./observers"
-  providers = {
-    google      = google.region_1
-    google.peer = google.region_1
-  }
+#     source = "./observers"
+#     providers = {
+#       google      = google.region_1
+#       google.peer = google.region_1
+#     }
 
-  labels = local.labels
+#     labels = local.labels
 
-  nodes_count           = var.observers_config.nodes_count
-  instance_type         = var.observers_config.instance_type
-  service_account_email = module.iam.service_account_email
+#     nodes_count           = var.observers_config.nodes_count
+#     instance_type         = var.observers_config.instance_type
+#     service_account_email = module.iam.service_account_email
 
-  root_domain_name = var.observers_config.root_domain_name
-  enable_tls       = var.observers_config.enable_tls
+#     root_domain_name = var.observers_config.root_domain_name
+#     enable_tls       = var.observers_config.enable_tls
 
-  ssh_public_key_path  = var.ssh_public_key_path
-  ssh_private_key_path = var.ssh_private_key_path
+#     ssh_public_key_path  = var.ssh_public_key_path
+#     ssh_private_key_path = var.ssh_private_key_path
 
-  region_index = 1
-  peer_vpc     = module.private_sentries[0].vpc
-}
+#     region_index = 1
+#     peer_vpc     = module.private_sentries[0].vpc
+#   }
 
-# Observers region 2
-module "observers_2" {
-  count = (var.private_sentries_config.enable &&
-    var.observers_config.enable &&
-  contains(var.observers_config.regions, 2)) ? 1 : 0
+#   # Observers region 2
+#   module "observers_2" {
+#     count = (var.private_sentries_config.enable &&
+#       var.observers_config.enable &&
+#     contains(var.observers_config.regions, 2)) ? 1 : 0
 
-  source = "./observers"
-  providers = {
-    google      = google.region_2
-    google.peer = google.region_1
-  }
+#     source = "./observers"
+#     providers = {
+#       google      = google.region_2
+#       google.peer = google.region_1
+#     }
 
-  labels = local.labels
+#     labels = local.labels
 
-  nodes_count           = var.observers_config.nodes_count
-  instance_type         = var.observers_config.instance_type
-  service_account_email = module.iam.service_account_email
+#     nodes_count           = var.observers_config.nodes_count
+#     instance_type         = var.observers_config.instance_type
+#     service_account_email = module.iam.service_account_email
 
-  root_domain_name = var.observers_config.root_domain_name
-  enable_tls       = var.observers_config.enable_tls
+#     root_domain_name = var.observers_config.root_domain_name
+#     enable_tls       = var.observers_config.enable_tls
 
-  ssh_public_key_path  = var.ssh_public_key_path
-  ssh_private_key_path = var.ssh_private_key_path
+#     ssh_public_key_path  = var.ssh_public_key_path
+#     ssh_private_key_path = var.ssh_private_key_path
 
-  region_index = 2
-  peer_vpc     = module.private_sentries[0].vpc
-}
+#     region_index = 2
+#     peer_vpc     = module.private_sentries[0].vpc
+#   }
 
-module "prometheus" {
-  count = local.prometheus_enabled ? 1 : 0
+#   module "prometheus" {
+#     count = local.prometheus_enabled ? 1 : 0
 
-  source = "./prometheus"
-  providers = {
-    google = google.region_1
-  }
+#     source = "./prometheus"
+#     providers = {
+#       google = google.region_1
+#     }
 
-  labels = local.labels
+#     labels = local.labels
 
-  instance_type = var.prometheus_config.instance_type
-  endpoints     = local.prometheus_endpoints
+#     instance_type = var.prometheus_config.instance_type
+#     endpoints     = local.prometheus_endpoints
 
-  ssh_public_key_path  = var.ssh_public_key_path
-  ssh_private_key_path = var.ssh_private_key_path
+#     ssh_public_key_path  = var.ssh_public_key_path
+#     ssh_private_key_path = var.ssh_private_key_path
 
-  vpc = module.private_sentries[0].vpc
-}
+#     vpc = module.private_sentries[0].vpc
+#   }
