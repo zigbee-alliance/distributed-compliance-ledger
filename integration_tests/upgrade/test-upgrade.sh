@@ -39,5 +39,6 @@ source integration_tests/upgrade/03-test-upgrade-0.12-to-1.2.sh
 source integration_tests/upgrade/04-test-upgrade-1.2-rollback.sh
 source integration_tests/upgrade/05-test-upgrade-1.2-to-1.4.3.sh
 source integration_tests/upgrade/06-test-upgrade-1.4.3-to-1.4.4.sh
-source integration_tests/upgrade/07-test-upgrade-1.4.4-to-master.sh
-source integration_tests/upgrade/08-add-new-node-after-upgrade.sh
+source integration_tests/upgrade/07-test-upgrade-1.4.4-to-1.5.0.sh
+source integration_tests/upgrade/08-test-upgrade-1.5.0-to-master.sh
+source integration_tests/upgrade/09-add-new-node-after-upgrade.sh
