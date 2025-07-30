@@ -17,7 +17,7 @@ set -euo pipefail
 source integration_tests/cli/common.sh
 
 # Upgrade constants
-binary_version_old="v1.4.3"
+binary_version_old="v1.4.4"
 
 DCLD_BIN_OLD="./dcld_old"
 DCLD_BIN_NEW="./dcld_new"

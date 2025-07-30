@@ -14,7 +14,6 @@
 # limitations under the License.
 
 set -euo pipefail
-
 source integration_tests/cli/common.sh
 
 # Upgrade constants
