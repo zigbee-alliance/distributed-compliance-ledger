@@ -115,6 +115,7 @@ test_divider
 echo "5. Set up master upgrade for $NEW_OBSERVER_CONTAINER_NAME"
 docker cp "$MASTER_UPGRADE_CONTAINER_NAME":/go/bin/dcld ./dcld_master
 docker cp ./dcld_master "$NEW_OBSERVER_CONTAINER_NAME":"$DCL_DIR"/dcld
+rm -f ./dcld_master
 master_upgrade_plan_name="$(docker run "$MASTER_UPGRADE_IMAGE" /bin/sh -c "cd /go/src/distributed-compliance-ledger && git rev-parse --short HEAD")"
 docker exec "$NEW_OBSERVER_CONTAINER_NAME" /bin/sh -c "cosmovisor add-upgrade "$master_upgrade_plan_name" "$DCL_DIR"/dcld"
 docker rm "$MASTER_UPGRADE_CONTAINER_NAME"
