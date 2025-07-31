@@ -17,11 +17,11 @@ set -euo pipefail
 source integration_tests/cli/common.sh
 
 # Upgrade constants
-plan_name="v1.5.0"
-upgrade_checksum="sha256:792c2733a5494d5c2310e1730b2384f15dc7bc250f4abd8612cf4c8875a6fce1"
+plan_name="v1.5"
+upgrade_checksum="sha256:71128e28ce906a6f8b3454a68c8691f13f62097de03a3290b51751d3679f992d"
 binary_version_old="v1.4.4"
-# TODO it must be v1.5.0 before actual 1.5.0 release
-binary_version_new="v1.5.0-0.dev.4"
+# TODO it must be v1.5 before actual 1.5 release
+binary_version_new="v1.5.0-0.dev.5"
 
 wget -O dcld_old "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version_old/dcld"
 chmod ugo+x dcld_old
