@@ -124,7 +124,7 @@ test_divider
 
 echo "6. Start Node \"$NEW_OBSERVER_CONTAINER_NAME\""
 docker exec -d "$NEW_OBSERVER_CONTAINER_NAME" sh -c "/var/lib/dcl/./node_helper.sh | tee /proc/1/fd/1"
-# docker logs -f "$NEW_OBSERVER_CONTAINER_NAME" &
+docker logs -f "$NEW_OBSERVER_CONTAINER_NAME" &
 
 test_divider
 
