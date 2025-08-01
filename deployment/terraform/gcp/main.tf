@@ -48,28 +48,28 @@ module "validator" {
 }
 
 # Private Sentries
-#   module "private_sentries" {
-#     count = var.private_sentries_config.enable ? 1 : 0
+module "private_sentries" {
+  count = var.private_sentries_config.enable ? 1 : 0
 
-#     source = "./private-sentries"
-#     providers = {
-#       google      = google.region_1
-#       google.peer = google.region_1
-#     }
+  source = "./private-sentries"
+  providers = {
+    google      = google.region_1
+    google.peer = google.region_1
+  }
 
-#     labels = local.labels
+  region = var.region_1
+  labels = local.labels
 
-#     nodes_count           = var.private_sentries_config.nodes_count
-#     instance_type         = var.private_sentries_config.instance_type
-#     service_account_email = module.iam.service_account_email
+  nodes_count           = var.private_sentries_config.nodes_count
+  instance_type         = var.private_sentries_config.instance_type
+  # service_account_email = module.iam.service_account_email FIXME
 
-#     ssh_public_key_path  = var.ssh_public_key_path
-#     ssh_private_key_path = var.ssh_private_key_path
+  ssh_public_key_path  = var.ssh_public_key_path
+  ssh_private_key_path = var.ssh_private_key_path
 
-#     peer_vpc = module.validator.vpc
-#     project_id = var.project_id
-#     region = var.region_1
-#   }
+  peer_vpc = module.validator.vpc
+  project_id = var.project_id
+}
 
 #   # Public Sentries region 1
 #   module "public_sentries_1" {

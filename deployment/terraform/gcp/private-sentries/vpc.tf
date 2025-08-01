@@ -7,7 +7,7 @@ module "this_vpc" {
    
     project_id = var.project_id
 
-    network_name = "validator-vpc"
+    network_name = "private-sentries-vpc"
     routing_mode = "REGIONAL" // TODO for now keeps similar to AWS
 
     subnets = [
@@ -20,7 +20,7 @@ module "this_vpc" {
 
     routes = [
         {
-            name                   = "validator-egress-internet"
+            name                   = "private-sentries-egress-internet"
             destination_range      = "0.0.0.0/0"
             tags                   = "egress-inet"
             next_hop_internet      = "true"

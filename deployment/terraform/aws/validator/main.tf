@@ -55,6 +55,7 @@ resource "aws_instance" "this_node" {
     content     = templatefile("./provisioner/cloudwatch-config.tpl", {})
     destination = "/tmp/cloudwatch-config.json"
   }
+
   provisioner "remote-exec" {
     script = "./provisioner/install-cloudwatch.sh"
   }

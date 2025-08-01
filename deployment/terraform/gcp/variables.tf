@@ -14,14 +14,16 @@ variable "project_id" {
   default     = "DCL"
 }
 
+# FIXME default regions
+
 variable "region_1" {
   type    = string
-  default = "us-west1"
+  default = "us-east1"
 }
 
 variable "region_2" {
   type    = string
-  default = "us-east2"
+  default = "us-west1"
 }
 
 # FIXME

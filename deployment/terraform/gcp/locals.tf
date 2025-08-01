@@ -17,13 +17,13 @@ locals {
       public_ips  = module.validator.public_ips
     }
 
-# FIXME
-#   private_sentries = {
-#     private_ips = var.private_sentries_config.enable ? module.private_sentries[0].private_ips : []
-#     public_ips  = var.private_sentries_config.enable ? module.private_sentries[0].public_ips : []
-#     public_eips = var.private_sentries_config.enable ? module.private_sentries[0].public_eips : []
-#   }
+    private_sentries = {
+      private_ips = var.private_sentries_config.enable ? module.private_sentries[0].private_ips : []
+      public_ips  = var.private_sentries_config.enable ? module.private_sentries[0].public_ips : []
+      public_static_ips = var.private_sentries_config.enable ? module.private_sentries[0].public_static_ips : []
+    }
 
+# FIXME
 #   public_sentries = {
 #     private_ips = concat(
 #       (var.private_sentries_config.enable && var.public_sentries_config.enable && contains(var.public_sentries_config.regions, 1)) ? module.public_sentries_1[0].private_ips : [],
@@ -72,11 +72,11 @@ locals {
           hosts = { for host in local.nodes.validator.public_ips : host => null }
         }
 
-# FIXME
-#       private_sentries = {
-#         hosts = { for host in local.nodes.private_sentries.public_ips : host => null }
-#       }
+        private_sentries = {
+          hosts = { for host in local.nodes.private_sentries.public_ips : host => null }
+        }
 
+# FIXME
 #       public_sentries = {
 #         hosts = { for host in local.nodes.public_sentries.public_ips : host => null }
 #       }
