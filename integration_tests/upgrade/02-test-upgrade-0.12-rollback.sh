@@ -275,13 +275,13 @@ test_divider
 
 echo "Get proposed node to disable"
 # FIXME: use proper binary (not dcld but $DCLD_BIN_V_0_12_0)
-result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator proposed-disable-node --address="$address"")
+result=$(docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" /bin/sh -c "echo test1234 | dcld query validator proposed-disable-node --address="$address"")
 check_response "$result" "\"address\": \"$validator_address\""
 
 test_divider
 
 echo "Get node"
-result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator all-nodes")
+result=$(docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" /bin/sh -c "echo test1234 | dcld query validator all-nodes")
 check_response "$result" "\"owner\": \"$validator_address\""
 
 test_divider
@@ -545,13 +545,13 @@ test_divider
 
 # VALIDATOR_NODE
 echo "Disable node"
-result=$(docker exec "$container" /bin/sh -c "echo test1234  | dcld tx validator disable-node --from=$account --yes")
+result=$(docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" /bin/sh -c "echo test1234  | dcld tx validator disable-node --from=$account --yes")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Enable node"
-result=$(docker exec "$container" /bin/sh -c "echo test1234  | dcld tx validator enable-node --from=$account --yes")
+result=$(docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" /bin/sh -c "echo test1234  | dcld tx validator enable-node --from=$account --yes")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -569,7 +569,7 @@ check_response "$result" "\"code\": 0"
 test_divider
 
 echo "Enable node"
-result=$(docker exec "$container" /bin/sh -c "echo test1234  | dcld tx validator enable-node --from=$account --yes")
+result=$(docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" /bin/sh -c "echo test1234  | dcld tx validator enable-node --from=$account --yes")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -583,7 +583,7 @@ test_divider
 # Validator
 
 echo "Get node"
-result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator all-nodes")
+result=$(docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" /bin/sh -c "echo test1234 | dcld query validator all-nodes")
 check_response "$result" "\"owner\": \"$validator_address\""
 
 echo "Rollback when update to wrong_plan_name PASSED"

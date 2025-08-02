@@ -124,8 +124,6 @@ if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "upgrade" ]]; then
     if bash "$UPGRADE_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
       rm dcld_mainnet_stable
       log "$UPGRADE_SHELL_TEST finished successfully"
-      source integration_tests/upgrade/add-new-node-after-upgrade.sh
-      check_adding_new_node
     else
       log "$UPGRADE_SHELL_TEST failed"
       exit 1

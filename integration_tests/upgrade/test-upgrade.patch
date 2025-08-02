@@ -1,0 +1,18 @@
+diff --git a/app/app.go b/app/app.go
+index 6bd659d9..632f0c40 100644
+--- a/app/app.go
++++ b/app/app.go
+@@ -693,6 +693,13 @@ func New(
+ 		},
+ 	)
+ 
++	app.UpgradeKeeper.SetUpgradeHandler(
++		"TESTUPGRADE",
++		func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
++			return make(module.VersionMap), nil
++		},
++	)
++
+ 	return app
+ }
+ 
