@@ -160,7 +160,7 @@ test_divider
 echo "10. Check node $NEW_OBSERVER_CONTAINER_NAME dcld updated to version $master_upgrade_plan_name"
 
 check_expected_version_for_interval "$master_upgrade_plan_name" || {
-    echo "installed dcld version does not match dcld expected version"
+    echo "updated dcld version does not match dcld expected version"
     exit 1
 }
 
