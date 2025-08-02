@@ -38,6 +38,6 @@ WORKDIR /go/src
 RUN git clone --depth 1 --single-branch --branch master "https://github.com/zigbee-alliance/distributed-compliance-ledger.git"
 WORKDIR /go/src/distributed-compliance-ledger
 COPY integration_tests/upgrade/test-upgrade.patch ./integration_tests/upgrade/test-upgrade.patch
-RUN sed -i "s/TESTUPGRADE/$DCL_VERSION/" ./integration_tests/upgrade/test-upgrade.patch
+RUN sed -i "s/TESTUPGRADE/$(git rev-parse --short HEAD)/" ./integration_tests/upgrade/test-upgrade.patch
 RUN git apply ./integration_tests/upgrade/test-upgrade.patch
 RUN DCL_VERSION=$(git rev-parse --short HEAD) LEDGER_ENABLED=false make
