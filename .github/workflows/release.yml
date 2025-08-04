@@ -136,6 +136,14 @@ jobs:
         if: ${{ !steps.release_info.outputs.release_info }}
         run: exit 1
 
+      - name: Verify upgrade handler exists
+        id: upgrade_handler
+        run: |
+          git fetch --all --tags
+          ver="$(git describe --tags --exact-match)"
+          scripts/verify_upgrade_handler.sh "$ver" || exit 1
+        shell: bash
+
   release:
     name: Release
     needs: checks
