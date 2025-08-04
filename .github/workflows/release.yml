@@ -23,6 +23,7 @@ on:
 
 env:
   BIN_NAME: dcld
+  COSMOVISOR_VERSION: 1.5.0
 
 jobs:
 
@@ -102,7 +103,7 @@ jobs:
           included=()
           if [[ -z "$asset_bin_url" || -z "$asset_ubuntu_tgz_url" || -z "$asset_cosmovisor_url" || -z "$asset_service_url" || -z "$asset_service_conf_url" || -z "$asset_start_url" || -z "$asset_preupgrade_url" || -z "$asset_deploy_script_url" ]]; then
             # os|bin-url|tgz-url|cosmovisor-url|service-file-url|service-conf-file-url|start-script-url|preupgrade-script-url|deploy-script-url|tgz-suffix
-            included+=("ubuntu-20.04|$asset_bin_url|$asset_ubuntu_tgz_url|$asset_cosmovisor_url|$asset_service_url|$asset_service_conf_url|$asset_start_url|$asset_preupgrade_url|$asset_deploy_script_url|.ubuntu.tar.gz")
+            included+=("ubuntu-22.04|$asset_bin_url|$asset_ubuntu_tgz_url|$asset_cosmovisor_url|$asset_service_url|$asset_service_conf_url|$asset_start_url|$asset_preupgrade_url|$asset_deploy_script_url|.ubuntu.tar.gz")
           fi
           if [[ -z "$asset_macos_tgz_url" ]]; then
             # bin, service file and deploy script are not considered for macos job
@@ -171,10 +172,19 @@ jobs:
             ${{ runner.os }}-go-
 
       - name: build application binary
-        if: ${{ !matrix.bin || !matrix.tgz }}
+        if: ${{ matrix.os != 'ubuntu-22.04' && (!matrix.bin || !matrix.tgz) }}
         run: |
           make build
           build/${{ env.BIN_NAME }} version
+
+          tar czf build/${{ env.BIN_NAME }}${{ matrix.tgz_name_suffix }} -C build ${{ env.BIN_NAME }}
+        shell: bash
+
+      - name: build application and cosmovisor binary | ubuntu-22.04
+        if: ${{ matrix.os == 'ubuntu-22.04' && (!matrix.bin || !matrix.tgz || !matrix.cosmovisor) }}
+        run: |
+          bash .github/workflows/ubuntu-20.04-build.sh
+          ls -la build
 
           tar czf build/${{ env.BIN_NAME }}${{ matrix.tgz_name_suffix }} -C build ${{ env.BIN_NAME }}
         shell: bash
@@ -202,19 +212,12 @@ jobs:
           asset_content_type: application/x-gtar
 
       - name: build cosmovisor binary
-        if: ${{ !matrix.cosmovisor }}
+        if: ${{ matrix.os != 'ubuntu-22.04' && !matrix.cosmovisor }}
         run: |
-          go install cosmossdk.io/tools/cosmovisor/cmd/cosmovisor@v1.5.0
-        shell: bash
-
-      - name: get GOBIN
-        id: get_gobin
-        run: |
-          GOPATH=${GOPATH:-${HOME}/go}
-          GOBIN=${GOBIN:-${GOPATH}/bin}
-          echo "$GOBIN"
-
-          echo "gobin=$GOBIN" >> "$GITHUB_OUTPUT"
+          go install "cosmossdk.io/tools/cosmovisor/cmd/cosmovisor@v${{ env.COSMOVISOR_VERSION }}"
+          GOPATH="${GOPATH:-${HOME}/go}"
+          GOBIN="${GOBIN:-${GOPATH}/bin}"
+          cp "$GOBIN/cosmovisor" build
         shell: bash
 
       - name: upload to GitHub (cosmovisor binary)
@@ -224,7 +227,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.checks.outputs.upload_url }}
-          asset_path: ${{ steps.get_gobin.outputs.gobin }}/cosmovisor
+          asset_path: build/cosmovisor
           asset_name: cosmovisor
           asset_content_type: application/octet-stream  # TODO check for less generic type
 

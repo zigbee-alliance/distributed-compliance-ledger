@@ -693,6 +693,13 @@ func New(
 		},
 	)
 
+	app.UpgradeKeeper.SetUpgradeHandler(
+		"v1.5",
+		func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
+			return make(module.VersionMap), nil
+		},
+	)
+
 	return app
 }
 
