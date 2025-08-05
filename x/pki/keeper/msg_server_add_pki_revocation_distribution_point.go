@@ -110,7 +110,7 @@ func (k msgServer) checkRootCert(ctx sdk.Context, crlSignerCertificate *x509.Cer
 	if err != nil {
 		return pkitypes.NewErrInvalidVidFormat(err)
 	}
-	if ledgerRootVid != 0 && msg.Vid != foundRootCert.Vid {
+	if ledgerRootVid == 0 && msg.Vid != foundRootCert.Vid {
 		return pkitypes.NewErrMessageVidNotEqualRootCertVid(msg.Vid, foundRootCert.Vid)
 	}
 

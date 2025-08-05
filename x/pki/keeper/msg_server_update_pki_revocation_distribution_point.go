@@ -147,7 +147,6 @@ func (k msgServer) verifyUpdatedPAA(ctx sdk.Context, newCertificatePem string, r
 	if err != nil {
 		return pkitypes.NewErrInvalidVidFormat(err)
 	}
-	// TODO: double-check this condition
 	if ledgerRootVid == 0 && revocationPoint.Vid != foundRootCert.Vid {
 		return pkitypes.NewErrMessageVidNotEqualRootCertVid(revocationPoint.Vid, foundRootCert.Vid)
 	}
