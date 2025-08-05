@@ -105,6 +105,26 @@ response_does_not_contain() {
     echo "${GREEN}SUCCESS: ${RESET}Result does not contain unexpected substring: '$_unexpected_string'"
 }
 
+check_upgrade_plan_info () {
+    local _result="$1"
+    local _expected_upgrade_plan_info="$2"
+    local _info=$(echo "$_result" | jq '.plan.info')
+
+    if [[ "$_info" == "null" ]]; then
+        _info=$(echo "$_result" | jq '.info')
+    fi
+
+    _info=${_info//\\/}
+
+    if [[ "$_info" != "\"$_expected_upgrade_plan_info\"" ]]; then
+        echo "$_info != $_expected_upgrade_plan_info"
+        echo "ERROR: command failed. The expected upgrade plan info: '$_expected_upgrade_plan_info' not found in the result: $_result"
+        exit 1
+    fi
+
+    echo "${GREEN}SUCCESS: ${RESET} Result contains upgrade plan info: '$_expected_upgrade_plan_info'"
+}
+
 create_new_account(){
   local __resultvar="$1"
   random_string name
