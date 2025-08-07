@@ -215,12 +215,14 @@ jobs:
           git-branch: cover_badges
       - name: Generate html test coverage
         shell: bash
-        run: go tool cover -html=cover.out -o coverage.html
+        run: go tool cover -html=cover.out -o cover.html
       - name: Upload html coverage
         uses: actions/upload-artifact@v4
         with:
           name: all_coverage
-          path: coverage.html
+          path: |
+            cover.html
+            cover.out
       - uses: geekyeggo/delete-artifact@v5
         with:
           name: |
@@ -228,7 +230,6 @@ jobs:
             unit_cover
   check:
     if: always()
-    name: Final check
     needs:
       - unit-tests
       - integration-tests
