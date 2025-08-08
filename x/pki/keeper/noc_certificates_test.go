@@ -71,210 +71,149 @@ func TestNocCertificatesGetAll(t *testing.T) {
 	)
 }
 
-func TestNocCertificates_ExtendedOperations(t *testing.T) {
+func TestNocCertificatesBySubjectKeyID(t *testing.T) {
 	keeper, ctx := keepertest.PkiKeeper(t, nil)
 	
-	tests := []struct {
-		name        string
-		setup       func() (types.NocCertificates, string, string)
-		operation   func(types.NocCertificates, string, string)
-		verify      func(string, string) (types.NocCertificates, bool)
-		expectFound bool
-		description string
-	}{
-		{
-			name: "BySubjectKeyID",
-			setup: func() (types.NocCertificates, string, string) {
-				subjectKeyID := "test-noc-key-id"
-				nocCerts := types.NocCertificatesBySubjectKeyID{
-					SubjectKeyId: subjectKeyID,
-					Certs: []*types.CertificateIdentifier{
-						{
-							Subject:      "test-noc-subject",
-							SubjectKeyId: subjectKeyID,
-						},
-					},
-				}
-				keeper.SetNocCertificatesBySubjectKeyID(ctx, nocCerts)
-				return types.NocCertificates{}, subjectKeyID, ""
+	// Test setting and getting NOC certificates by subject key ID
+	subjectKeyID := "test-noc-key-id"
+	nocCerts := types.NocCertificatesBySubjectKeyID{
+		SubjectKeyId: subjectKeyID,
+		Certs: []*types.CertificateIdentifier{
+			{
+				Subject:      "test-noc-subject",
+				SubjectKeyId: subjectKeyID,
 			},
-			operation: func(cert types.NocCertificates, subjectKeyID, _ string) {
-				keeper.RemoveNocCertificatesBySubjectKeyID(ctx, subjectKeyID)
-			},
-			verify: func(subjectKeyID, _ string) (types.NocCertificates, bool) {
-				return keeper.GetNocCertificatesBySubjectKeyID(ctx, subjectKeyID)
-			},
-			expectFound: false,
-			description: "Test setting and getting NOC certificates by subject key ID",
-		},
-		{
-			name: "EmptyCertificates",
-			setup: func() (types.NocCertificates, string, string) {
-				emptyCert := types.NocCertificates{
-					Subject:      "empty-noc-subject",
-					SubjectKeyId: "empty-noc-key-id",
-					Certs:        []*types.CertificateIdentifier{},
-				}
-				keeper.SetNocCertificates(ctx, emptyCert)
-				return emptyCert, emptyCert.Subject, emptyCert.SubjectKeyId
-			},
-			operation: func(cert types.NocCertificates, subject, subjectKeyId string) {
-				// No operation needed for this test
-			},
-			verify: func(subject, subjectKeyId string) (types.NocCertificates, bool) {
-				return keeper.GetNocCertificates(ctx, subject, subjectKeyId)
-			},
-			expectFound: true,
-			description: "Test with empty certificates",
-		},
-		{
-			name: "NilCertificates",
-			setup: func() (types.NocCertificates, string, string) {
-				nilCert := types.NocCertificates{
-					Subject:      "nil-noc-subject",
-					SubjectKeyId: "nil-noc-key-id",
-					Certs:        nil,
-				}
-				keeper.SetNocCertificates(ctx, nilCert)
-				return nilCert, nilCert.Subject, nilCert.SubjectKeyId
-			},
-			operation: func(cert types.NocCertificates, subject, subjectKeyId string) {
-				// No operation needed for this test
-			},
-			verify: func(subject, subjectKeyId string) (types.NocCertificates, bool) {
-				return keeper.GetNocCertificates(ctx, subject, subjectKeyId)
-			},
-			expectFound: true,
-			description: "Test with nil certificates",
-		},
-		{
-			name: "UpdateCertificates",
-			setup: func() (types.NocCertificates, string, string) {
-				initialCert := types.NocCertificates{
-					Subject:      "update-noc-subject",
-					SubjectKeyId: "update-noc-key-id",
-					Certs: []*types.CertificateIdentifier{
-						{
-							Subject:      "update-noc-subject",
-							SubjectKeyId: "update-noc-key-id",
-						},
-					},
-				}
-				keeper.SetNocCertificates(ctx, initialCert)
-				
-				updatedCert := types.NocCertificates{
-					Subject:      "update-noc-subject",
-					SubjectKeyId: "update-noc-key-id",
-					Certs: []*types.CertificateIdentifier{
-						{
-							Subject:      "update-noc-subject",
-							SubjectKeyId: "update-noc-key-id",
-						},
-						{
-							Subject:      "update-noc-subject-2",
-							SubjectKeyId: "update-noc-key-id-2",
-						},
-					},
-				}
-				keeper.SetNocCertificates(ctx, updatedCert)
-				return updatedCert, updatedCert.Subject, updatedCert.SubjectKeyId
-			},
-			operation: func(cert types.NocCertificates, subject, subjectKeyId string) {
-				// Update already done in setup
-			},
-			verify: func(subject, subjectKeyId string) (types.NocCertificates, bool) {
-				return keeper.GetNocCertificates(ctx, subject, subjectKeyId)
-			},
-			expectFound: true,
-			description: "Test certificate updates",
-		},
-		{
-			name: "MultipleOperations",
-			setup: func() (types.NocCertificates, string, string) {
-				cert1 := types.NocCertificates{
-					Subject:      "noc-issuer1",
-					SubjectKeyId: "noc-serial1",
-					Certs: []*types.CertificateIdentifier{
-						{
-							Subject:      "noc-issuer1",
-							SubjectKeyId: "noc-serial1",
-						},
-					},
-				}
-				cert2 := types.NocCertificates{
-					Subject:      "noc-issuer2",
-					SubjectKeyId: "noc-serial2",
-					Certs: []*types.CertificateIdentifier{
-						{
-							Subject:      "noc-issuer2",
-							SubjectKeyId: "noc-serial2",
-						},
-					},
-				}
-				keeper.SetNocCertificates(ctx, cert1)
-				keeper.SetNocCertificates(ctx, cert2)
-				return cert1, cert1.Subject, cert1.SubjectKeyId
-			},
-			operation: func(cert types.NocCertificates, subject, subjectKeyId string) {
-				keeper.RemoveNocCertificates(ctx, subject, subjectKeyId)
-			},
-			verify: func(subject, subjectKeyId string) (types.NocCertificates, bool) {
-				return keeper.GetNocCertificates(ctx, subject, subjectKeyId)
-			},
-			expectFound: false,
-			description: "Test multiple operations in sequence",
 		},
 	}
 	
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			cert, key1, key2 := tt.setup()
-			tt.operation(cert, key1, key2)
-			retrieved, found := tt.verify(key1, key2)
-			
-			if tt.expectFound {
-				require.True(t, found)
-				if tt.name == "UpdateCertificates" {
-					require.Len(t, retrieved.Certs, 2)
-				}
-			} else {
-				require.False(t, found)
-			}
-		})
+	keeper.SetNocCertificatesBySubjectKeyID(ctx, nocCerts)
+	
+	// Test getting the certificate
+	retrieved, found := keeper.GetNocCertificatesBySubjectKeyID(ctx, subjectKeyID)
+	require.True(t, found)
+	require.Equal(t, nocCerts, retrieved)
+	
+	// Test removing the certificate
+	keeper.RemoveNocCertificatesBySubjectKeyID(ctx, subjectKeyID)
+	_, found = keeper.GetNocCertificatesBySubjectKeyID(ctx, subjectKeyID)
+	require.False(t, found)
+}
+
+func TestNocCertificates_EdgeCases(t *testing.T) {
+	keeper, ctx := keepertest.PkiKeeper(t, nil)
+	
+	// Test with empty certificates
+	emptyCert := types.NocCertificates{
+		Subject:      "empty-noc-subject",
+		SubjectKeyId: "empty-noc-key-id",
+		Certs:        []*types.CertificateIdentifier{},
 	}
+	
+	keeper.SetNocCertificates(ctx, emptyCert)
+	retrieved, found := keeper.GetNocCertificates(ctx, emptyCert.Subject, emptyCert.SubjectKeyId)
+	require.True(t, found)
+	require.Equal(t, emptyCert, retrieved)
+	
+	// Test with nil certificates
+	nilCert := types.NocCertificates{
+		Subject:      "nil-noc-subject",
+		SubjectKeyId: "nil-noc-key-id",
+		Certs:        nil,
+	}
+	
+	keeper.SetNocCertificates(ctx, nilCert)
+	retrieved, found = keeper.GetNocCertificates(ctx, nilCert.Subject, nilCert.SubjectKeyId)
+	require.True(t, found)
+	require.Equal(t, nilCert, retrieved)
+}
+
+func TestNocCertificates_Update(t *testing.T) {
+	keeper, ctx := keepertest.PkiKeeper(t, nil)
+	
+	// Create certificate with multiple certs
+	cert := types.NocCertificates{
+		Subject:      "update-noc-subject",
+		SubjectKeyId: "update-noc-key-id",
+		Certs: []*types.CertificateIdentifier{
+			{
+				Subject:      "update-noc-subject",
+				SubjectKeyId: "update-noc-key-id",
+			},
+			{
+				Subject:      "update-noc-subject-2",
+				SubjectKeyId: "update-noc-key-id-2",
+			},
+		},
+	}
+	
+	keeper.SetNocCertificates(ctx, cert)
+	
+	// Verify the certificate
+	retrieved, found := keeper.GetNocCertificates(ctx, cert.Subject, cert.SubjectKeyId)
+	require.True(t, found)
+	require.Equal(t, cert, retrieved)
+	require.Len(t, retrieved.Certs, 2)
+}
+
+func TestNocCertificates_MultipleOperations(t *testing.T) {
+	keeper, ctx := keepertest.PkiKeeper(t, nil)
+	
+	// Test multiple operations in sequence
+	cert1 := types.NocCertificates{
+		Subject:      "noc-issuer1",
+		SubjectKeyId: "noc-serial1",
+		Certs: []*types.CertificateIdentifier{
+			{
+				Subject:      "noc-issuer1",
+				SubjectKeyId: "noc-serial1",
+			},
+		},
+	}
+	
+	cert2 := types.NocCertificates{
+		Subject:      "noc-issuer2",
+		SubjectKeyId: "noc-serial2",
+		Certs: []*types.CertificateIdentifier{
+			{
+				Subject:      "noc-issuer2",
+				SubjectKeyId: "noc-serial2",
+			},
+		},
+	}
+	
+	// Set both certificates
+	keeper.SetNocCertificates(ctx, cert1)
+	keeper.SetNocCertificates(ctx, cert2)
+	
+	// Verify both exist
+	retrieved1, found1 := keeper.GetNocCertificates(ctx, cert1.Subject, cert1.SubjectKeyId)
+	require.True(t, found1)
+	require.Equal(t, cert1, retrieved1)
+	
+	retrieved2, found2 := keeper.GetNocCertificates(ctx, cert2.Subject, cert2.SubjectKeyId)
+	require.True(t, found2)
+	require.Equal(t, cert2, retrieved2)
+	
+	// Remove one certificate
+	keeper.RemoveNocCertificates(ctx, cert1.Subject, cert1.SubjectKeyId)
+	
+	// Verify first is removed, second still exists
+	_, found1 = keeper.GetNocCertificates(ctx, cert1.Subject, cert1.SubjectKeyId)
+	require.False(t, found1)
+	
+	retrieved2, found2 = keeper.GetNocCertificates(ctx, cert2.Subject, cert2.SubjectKeyId)
+	require.True(t, found2)
+	require.Equal(t, cert2, retrieved2)
 }
 
 func TestNocCertificates_NonExistent(t *testing.T) {
 	keeper, ctx := keepertest.PkiKeeper(t, nil)
 	
-	tests := []struct {
-		name        string
-		subject     string
-		subjectKeyId string
-		operation   func(string, string) (types.NocCertificates, bool)
-	}{
-		{
-			name:        "GetNocCertificates",
-			subject:     "non-existent",
-			subjectKeyId: "non-existent",
-			operation:   func(subject, subjectKeyId string) (types.NocCertificates, bool) {
-				return keeper.GetNocCertificates(ctx, subject, subjectKeyId)
-			},
-		},
-		{
-			name:        "GetNocCertificatesBySubjectKeyID",
-			subject:     "",
-			subjectKeyId: "non-existent",
-			operation:   func(_, subjectKeyId string) (types.NocCertificates, bool) {
-				return keeper.GetNocCertificatesBySubjectKeyID(ctx, subjectKeyId)
-			},
-		},
-	}
+	// Test getting non-existent NOC certificates
+	_, found := keeper.GetNocCertificates(ctx, "non-existent", "non-existent")
+	require.False(t, found)
 	
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			_, found := tt.operation(tt.subject, tt.subjectKeyId)
-			require.False(t, found)
-		})
-	}
+	// Test getting non-existent NOC certificates by subject key ID
+	_, found = keeper.GetNocCertificatesBySubjectKeyID(ctx, "non-existent")
+	require.False(t, found)
 }
