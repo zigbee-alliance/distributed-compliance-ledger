@@ -10,6 +10,7 @@ locals {
   subnet_region = var.region
   subnet_output_key = "${local.subnet_region}/${local.subnet_name}"
 
+  egress_inet_tag = "egress-inet"
   private_sentry_tag = "private-sentry"
 }
 
@@ -77,5 +78,5 @@ resource "google_compute_instance" "this_nodes" {
 
   labels = var.labels # FIXME gcp.labels == aws.tags
 
-  tags = [local.private_sentry_tag]
+  tags = [local.private_sentry_tag, local.egress_inet_tag]
 }

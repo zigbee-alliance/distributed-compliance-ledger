@@ -71,59 +71,63 @@ module "private_sentries" {
   project_id = var.project_id
 }
 
-#   # Public Sentries region 1
-#   module "public_sentries_1" {
-#     count = (var.private_sentries_config.enable &&
-#       var.public_sentries_config.enable &&
-#     contains(var.public_sentries_config.regions, 1)) ? 1 : 0
+# Public Sentries region 1
+module "public_sentries_1" {
+  count = (var.private_sentries_config.enable &&
+    var.public_sentries_config.enable &&
+  contains(var.public_sentries_config.regions, 1)) ? 1 : 0
 
-#     source = "./public-sentries"
-#     providers = {
-#       google      = google.region_1
-#       google.peer = google.region_1
-#     }
+  source = "./public-sentries"
+  providers = {
+    google      = google.region_1
+    google.peer = google.region_1
+  }
 
-#     labels = local.labels
+  region = var.region_1
+  region_index = 1
+  labels = local.labels
 
-#     nodes_count           = var.public_sentries_config.nodes_count
-#     instance_type         = var.public_sentries_config.instance_type
-#     service_account_email = module.iam.service_account_email
+  nodes_count           = var.public_sentries_config.nodes_count
+  instance_type         = var.public_sentries_config.instance_type
+  # service_account_email = module.iam.service_account_email # FIXME
 
-#     enable_ipv6 = var.public_sentries_config.enable_ipv6
+  enable_ipv6 = var.public_sentries_config.enable_ipv6
 
-#     ssh_public_key_path  = var.ssh_public_key_path
-#     ssh_private_key_path = var.ssh_private_key_path
+  ssh_public_key_path  = var.ssh_public_key_path
+  ssh_private_key_path = var.ssh_private_key_path
 
-#     region_index = 1
-#     peer_vpc     = module.private_sentries[0].vpc
-#   }
+  peer_vpc     = module.private_sentries[0].vpc
+  project_id = var.project_id
+}
 
-#   # Public Sentries region 2
-#   module "public_sentries_2" {
-#     count = (var.private_sentries_config.enable &&
-#       var.public_sentries_config.enable &&
-#     contains(var.public_sentries_config.regions, 2)) ? 1 : 0
+# Public Sentries region 2
+module "public_sentries_2" {
+  count = (var.private_sentries_config.enable &&
+    var.public_sentries_config.enable &&
+  contains(var.public_sentries_config.regions, 2)) ? 1 : 0
 
-#     source = "./public-sentries"
-#     providers = {
-#       google      = google.region_2
-#       google.peer = google.region_1
-#     }
+  source = "./public-sentries"
+  providers = {
+    google      = google.region_2
+    google.peer = google.region_1
+  }
 
-#     labels = local.labels
+  region = var.region_2
+  region_index = 2
+  labels = local.labels
 
-#     nodes_count           = var.public_sentries_config.nodes_count
-#     instance_type         = var.public_sentries_config.instance_type
-#     service_account_email = module.iam.service_account_email
+  nodes_count           = var.public_sentries_config.nodes_count
+  instance_type         = var.public_sentries_config.instance_type
+  # service_account_email = module.iam.service_account_email # FIXME
 
-#     enable_ipv6 = var.public_sentries_config.enable_ipv6
+  enable_ipv6 = var.public_sentries_config.enable_ipv6
 
-#     ssh_public_key_path  = var.ssh_public_key_path
-#     ssh_private_key_path = var.ssh_private_key_path
+  ssh_public_key_path  = var.ssh_public_key_path
+  ssh_private_key_path = var.ssh_private_key_path
 
-#     region_index = 2
-#     peer_vpc     = module.private_sentries[0].vpc
-#   }
+  peer_vpc     = module.private_sentries[0].vpc
+  project_id = var.project_id
+}
 
 #   # Observers region 1
 #   module "observers_1" {

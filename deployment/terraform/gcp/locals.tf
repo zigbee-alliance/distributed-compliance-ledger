@@ -23,31 +23,31 @@ locals {
       public_static_ips = var.private_sentries_config.enable ? module.private_sentries[0].public_static_ips : []
     }
 
+   public_sentries = {
+     private_ips = concat(
+       (var.private_sentries_config.enable && var.public_sentries_config.enable && contains(var.public_sentries_config.regions, 1)) ? module.public_sentries_1[0].private_ips : [],
+       (var.private_sentries_config.enable && var.public_sentries_config.enable && contains(var.public_sentries_config.regions, 2)) ? module.public_sentries_2[0].private_ips : [],
+     )
+
+     public_ips = concat(
+       (var.private_sentries_config.enable && var.public_sentries_config.enable && contains(var.public_sentries_config.regions, 1)) ? module.public_sentries_1[0].public_ips : [],
+       (var.private_sentries_config.enable && var.public_sentries_config.enable && contains(var.public_sentries_config.regions, 2)) ? module.public_sentries_2[0].public_ips : [],
+     )
+   }
+
+   seeds = {
+     private_ips = concat(
+       (var.private_sentries_config.enable && var.public_sentries_config.enable && contains(var.public_sentries_config.regions, 1)) ? module.public_sentries_1[0].seed_private_ips : [],
+       (var.private_sentries_config.enable && var.public_sentries_config.enable && contains(var.public_sentries_config.regions, 2)) ? module.public_sentries_2[0].seed_private_ips : [],
+     )
+
+     public_ips = concat(
+       (var.private_sentries_config.enable && var.public_sentries_config.enable && contains(var.public_sentries_config.regions, 1)) ? module.public_sentries_1[0].seed_public_ips : [],
+       (var.private_sentries_config.enable && var.public_sentries_config.enable && contains(var.public_sentries_config.regions, 2)) ? module.public_sentries_2[0].seed_public_ips : [],
+     )
+   }
+
 # FIXME
-#   public_sentries = {
-#     private_ips = concat(
-#       (var.private_sentries_config.enable && var.public_sentries_config.enable && contains(var.public_sentries_config.regions, 1)) ? module.public_sentries_1[0].private_ips : [],
-#       (var.private_sentries_config.enable && var.public_sentries_config.enable && contains(var.public_sentries_config.regions, 2)) ? module.public_sentries_2[0].private_ips : [],
-#     )
-
-#     public_ips = concat(
-#       (var.private_sentries_config.enable && var.public_sentries_config.enable && contains(var.public_sentries_config.regions, 1)) ? module.public_sentries_1[0].public_ips : [],
-#       (var.private_sentries_config.enable && var.public_sentries_config.enable && contains(var.public_sentries_config.regions, 2)) ? module.public_sentries_2[0].public_ips : [],
-#     )
-#   }
-
-#   seeds = {
-#     private_ips = concat(
-#       (var.private_sentries_config.enable && var.public_sentries_config.enable && contains(var.public_sentries_config.regions, 1)) ? module.public_sentries_1[0].seed_private_ips : [],
-#       (var.private_sentries_config.enable && var.public_sentries_config.enable && contains(var.public_sentries_config.regions, 2)) ? module.public_sentries_2[0].seed_private_ips : [],
-#     )
-
-#     public_ips = concat(
-#       (var.private_sentries_config.enable && var.public_sentries_config.enable && contains(var.public_sentries_config.regions, 1)) ? module.public_sentries_1[0].seed_public_ips : [],
-#       (var.private_sentries_config.enable && var.public_sentries_config.enable && contains(var.public_sentries_config.regions, 2)) ? module.public_sentries_2[0].seed_public_ips : [],
-#     )
-#   }
-
 #   observers = {
 #     private_ips = concat(
 #       (var.private_sentries_config.enable && var.observers_config.enable && contains(var.observers_config.regions, 1)) ? module.observers_1[0].private_ips : [],
@@ -76,15 +76,15 @@ locals {
           hosts = { for host in local.nodes.private_sentries.public_ips : host => null }
         }
 
+       public_sentries = {
+         hosts = { for host in local.nodes.public_sentries.public_ips : host => null }
+       }
+
+       seeds = {
+         hosts = { for host in local.nodes.seeds.public_ips : host => null }
+       }
+
 # FIXME
-#       public_sentries = {
-#         hosts = { for host in local.nodes.public_sentries.public_ips : host => null }
-#       }
-
-#       seeds = {
-#         hosts = { for host in local.nodes.seeds.public_ips : host => null }
-#       }
-
 #       observers = {
 #         hosts = { for host in local.nodes.observers.public_ips : host => null }
 #       }

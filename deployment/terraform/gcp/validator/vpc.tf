@@ -22,7 +22,7 @@ module "this_vpc" {
         {
             name                   = "validator-egress-internet"
             destination_range      = "0.0.0.0/0"
-            tags                   = "egress-inet"
+            tags                   = local.egress_inet_tag
             next_hop_internet      = "true"
         },
     ]

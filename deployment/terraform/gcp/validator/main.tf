@@ -8,6 +8,7 @@ locals {
   subnet_region = var.region
   subnet_output_key = "${local.subnet_region}/${local.subnet_name}"
 
+  egress_inet_tag = "egress-inet"
   validator_tag = "validator"
 }
 
@@ -67,5 +68,5 @@ resource "google_compute_instance" "this_node" {
 
   labels = var.labels # FIXME gcp.labels == aws.tags
 
-  tags = [local.validator_tag]
+  tags = [local.validator_tag, local.egress_inet_tag]
 }
