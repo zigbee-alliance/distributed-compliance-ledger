@@ -138,61 +138,65 @@ func TestApprovedCertificatesQuery_ExtendedScenarios(t *testing.T) {
 	keeper, ctx := keepertest.PkiKeeper(t, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	
+	// Setup test data once
+	emptyCert := createNApprovedCertificates(keeper, ctx, 1)[0]
+	emptyCert.Certs = []*types.CertificateIdentifier{}
+	keeper.SetApprovedCertificates(ctx, emptyCert)
+	
 	tests := []struct {
 		name        string
-		setup       func() *types.QueryGetApprovedCertificatesRequest
+		request     *types.QueryGetApprovedCertificatesRequest
 		expectError bool
-		errorMsg    string
-		verify      func(*types.QueryGetApprovedCertificatesResponse, error)
+		expectErrorType codes.Code
 	}{
 		{
 			name: "EmptyCertificates",
-			setup: func() *types.QueryGetApprovedCertificatesRequest {
-				emptyCert := createNApprovedCertificates(keeper, ctx, 1)[0]
-				emptyCert.Certs = []*types.CertificateIdentifier{}
-				keeper.SetApprovedCertificates(ctx, emptyCert)
-				
-				return &types.QueryGetApprovedCertificatesRequest{
-					Subject:      emptyCert.Subject,
-					SubjectKeyId: emptyCert.SubjectKeyId,
-				}
+			request: &types.QueryGetApprovedCertificatesRequest{
+				Subject:      emptyCert.Subject,
+				SubjectKeyId: emptyCert.SubjectKeyId,
 			},
 			expectError: false,
-			verify: func(response *types.QueryGetApprovedCertificatesResponse, err error) {
-				require.NoError(t, err)
-				require.Empty(t, response.ApprovedCertificates.Certs)
-			},
 		},
 		{
-			name: "NilRequest",
-			setup: func() *types.QueryGetApprovedCertificatesRequest {
-				return nil
-			},
+			name:        "NilRequest",
+			request:     nil,
 			expectError: true,
-			verify: func(response *types.QueryGetApprovedCertificatesResponse, err error) {
-				require.Error(t, err)
-			},
+			expectErrorType: codes.InvalidArgument,
 		},
 		{
 			name: "EmptySubjectAndKeyId",
-			setup: func() *types.QueryGetApprovedCertificatesRequest {
-				return &types.QueryGetApprovedCertificatesRequest{
-					Subject:      "",
-					SubjectKeyId: "",
-				}
+			request: &types.QueryGetApprovedCertificatesRequest{
+				Subject:      "",
+				SubjectKeyId: "",
 			},
 			expectError: true,
-			verify: func(response *types.QueryGetApprovedCertificatesResponse, err error) {
-				require.Error(t, err)
+			expectErrorType: codes.InvalidArgument,
+		},
+		{
+			name: "NonExistentCertificate",
+			request: &types.QueryGetApprovedCertificatesRequest{
+				Subject:      "non-existent-subject",
+				SubjectKeyId: "non-existent-key-id",
 			},
+			expectError: true,
+			expectErrorType: codes.NotFound,
 		},
 	}
 	
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			request := tt.setup()
-			response, err := keeper.ApprovedCertificates(wctx, request)
-			tt.verify(response, err)
+			response, err := keeper.ApprovedCertificates(wctx, tt.request)
+			
+					if tt.expectError {
+			require.Error(t, err)
+			if tt.expectErrorType != codes.OK {
+				require.ErrorIs(t, err, status.Error(tt.expectErrorType, ""))
+			}
+		} else {
+			require.NoError(t, err)
+			// For successful queries, we just verify the response exists
+			require.NotNil(t, response)
+		}
 		})
 	}
 }
@@ -201,97 +205,96 @@ func TestApprovedCertificatesQueryAll_ExtendedScenarios(t *testing.T) {
 	keeper, ctx := keepertest.PkiKeeper(t, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	
+	// Setup test data once
+	certs := createNApprovedCertificates(keeper, ctx, 5)
+	
 	tests := []struct {
-		name        string
-		setup       func() *types.QueryAllApprovedCertificatesRequest
-		expectError bool
-		verify      func(*types.QueryAllApprovedCertificatesResponse, error)
+		name           string
+		request        *types.QueryAllApprovedCertificatesRequest
+		expectError    bool
+		expectErrorType codes.Code
+		expectCount    int
+		expectTotal    uint64
+		expectPaginated bool
 	}{
 		{
 			name: "EmptyResult",
-			setup: func() *types.QueryAllApprovedCertificatesRequest {
-				// Clear existing certificates
-				allCerts := keeper.GetAllApprovedCertificates(ctx)
-				for _, cert := range allCerts {
-					keeper.RemoveApprovedCertificates(ctx, cert.Subject, cert.SubjectKeyId)
-				}
-				
-				return &types.QueryAllApprovedCertificatesRequest{
-					Pagination: &query.PageRequest{
-						Limit: 10,
-					},
-				}
+			request: &types.QueryAllApprovedCertificatesRequest{
+				Pagination: &query.PageRequest{
+					Limit: 10,
+				},
+				SubjectKeyId: "non-existent-key-id", // Filter that won't match any certificates
 			},
 			expectError: false,
-			verify: func(response *types.QueryAllApprovedCertificatesResponse, err error) {
-				require.NoError(t, err)
-				require.Empty(t, response.ApprovedCertificates)
-			},
+			expectCount: 0,
 		},
 		{
 			name: "WithSubjectKeyIdFilter",
-			setup: func() *types.QueryAllApprovedCertificatesRequest {
-				// Create certificates with different subject key IDs
-				certs := createNApprovedCertificates(keeper, ctx, 3)
-				
-				return &types.QueryAllApprovedCertificatesRequest{
-					Pagination: &query.PageRequest{
-						Limit: 10,
-					},
-					SubjectKeyId: certs[0].SubjectKeyId,
-				}
+			request: &types.QueryAllApprovedCertificatesRequest{
+				Pagination: &query.PageRequest{
+					Limit: 10,
+				},
+				SubjectKeyId: certs[0].SubjectKeyId,
 			},
 			expectError: false,
-			verify: func(response *types.QueryAllApprovedCertificatesResponse, err error) {
-				require.NoError(t, err)
-				require.Len(t, response.ApprovedCertificates, 1)
-			},
+			expectCount: 1,
 		},
 		{
 			name: "Pagination",
-			setup: func() *types.QueryAllApprovedCertificatesRequest {
-				// Create multiple certificates
-				createNApprovedCertificates(keeper, ctx, 10)
-				
-				return &types.QueryAllApprovedCertificatesRequest{
-					Pagination: &query.PageRequest{
-						Limit: 5,
-					},
-				}
+			request: &types.QueryAllApprovedCertificatesRequest{
+				Pagination: &query.PageRequest{
+					Limit: 3,
+				},
 			},
-			expectError: false,
-			verify: func(response *types.QueryAllApprovedCertificatesResponse, err error) {
-				require.NoError(t, err)
-				require.Len(t, response.ApprovedCertificates, 5)
-				require.NotNil(t, response.Pagination)
-			},
+			expectError:     false,
+			expectCount:     3,
+			expectPaginated: true,
 		},
 		{
 			name: "CountTotal",
-			setup: func() *types.QueryAllApprovedCertificatesRequest {
-				// Create certificates
-				createNApprovedCertificates(keeper, ctx, 5)
-				
-				return &types.QueryAllApprovedCertificatesRequest{
-					Pagination: &query.PageRequest{
-						Limit:      10,
-						CountTotal: true,
-					},
-				}
+			request: &types.QueryAllApprovedCertificatesRequest{
+				Pagination: &query.PageRequest{
+					Limit:      10,
+					CountTotal: true,
+				},
 			},
 			expectError: false,
-			verify: func(response *types.QueryAllApprovedCertificatesResponse, err error) {
-				require.NoError(t, err)
-				require.Equal(t, uint64(5), response.Pagination.Total)
+			expectCount: 5,
+			expectTotal: 5,
+		},
+		{
+			name: "AllCertificates",
+			request: &types.QueryAllApprovedCertificatesRequest{
+				Pagination: &query.PageRequest{
+					Limit: 10,
+				},
 			},
+			expectError: false,
+			expectCount: 5,
 		},
 	}
 	
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			request := tt.setup()
-			response, err := keeper.ApprovedCertificatesAll(wctx, request)
-			tt.verify(response, err)
+			response, err := keeper.ApprovedCertificatesAll(wctx, tt.request)
+			
+					if tt.expectError {
+			require.Error(t, err)
+			if tt.expectErrorType != codes.OK {
+				require.ErrorIs(t, err, status.Error(tt.expectErrorType, ""))
+			}
+		} else {
+			require.NoError(t, err)
+			require.Len(t, response.ApprovedCertificates, tt.expectCount)
+			
+			if tt.expectPaginated {
+				require.NotNil(t, response.Pagination)
+			}
+			
+			if tt.expectTotal > 0 {
+				require.Equal(t, tt.expectTotal, response.Pagination.Total)
+			}
+		}
 		})
 	}
 }

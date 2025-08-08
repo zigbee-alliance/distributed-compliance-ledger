@@ -68,149 +68,105 @@ func TestUniqueCertificateGetAll(t *testing.T) {
 	)
 }
 
-func TestUniqueCertificate_ExtendedOperations(t *testing.T) {
+func TestUniqueCertificate_EdgeCases(t *testing.T) {
 	keeper, ctx := keepertest.PkiKeeper(t, nil)
 	
-	tests := []struct {
-		name        string
-		setup       func() (types.UniqueCertificate, string, string)
-		operation   func(types.UniqueCertificate, string, string)
-		verify      func(string, string) (types.UniqueCertificate, bool)
-		expectFound bool
-		description string
-	}{
-		{
-			name: "EmptyIssuerAndSerial",
-			setup: func() (types.UniqueCertificate, string, string) {
-				emptyCert := types.UniqueCertificate{
-					Issuer:       "",
-					SerialNumber: "",
-				}
-				keeper.SetUniqueCertificate(ctx, emptyCert)
-				return emptyCert, emptyCert.Issuer, emptyCert.SerialNumber
-			},
-			operation: func(cert types.UniqueCertificate, issuer, serial string) {
-				// No operation needed for this test
-			},
-			verify: func(issuer, serial string) (types.UniqueCertificate, bool) {
-				return keeper.GetUniqueCertificate(ctx, issuer, serial)
-			},
-			expectFound: true,
-			description: "Test with empty issuer and serial number",
-		},
-		{
-			name: "SpecialCharacters",
-			setup: func() (types.UniqueCertificate, string, string) {
-				specialCert := types.UniqueCertificate{
-					Issuer:       "test@issuer.com",
-					SerialNumber: "123-456-789",
-				}
-				keeper.SetUniqueCertificate(ctx, specialCert)
-				return specialCert, specialCert.Issuer, specialCert.SerialNumber
-			},
-			operation: func(cert types.UniqueCertificate, issuer, serial string) {
-				// No operation needed for this test
-			},
-			verify: func(issuer, serial string) (types.UniqueCertificate, bool) {
-				return keeper.GetUniqueCertificate(ctx, issuer, serial)
-			},
-			expectFound: true,
-			description: "Test with special characters",
-		},
-		{
-			name: "UpdateCertificate",
-			setup: func() (types.UniqueCertificate, string, string) {
-				initialCert := types.UniqueCertificate{
-					Issuer:       "test-issuer",
-					SerialNumber: "test-serial",
-				}
-				keeper.SetUniqueCertificate(ctx, initialCert)
-				
-				updatedCert := types.UniqueCertificate{
-					Issuer:       "test-issuer",
-					SerialNumber: "test-serial",
-					// Add some additional data if the struct has more fields
-				}
-				keeper.SetUniqueCertificate(ctx, updatedCert)
-				return updatedCert, updatedCert.Issuer, updatedCert.SerialNumber
-			},
-			operation: func(cert types.UniqueCertificate, issuer, serial string) {
-				// Update already done in setup
-			},
-			verify: func(issuer, serial string) (types.UniqueCertificate, bool) {
-				return keeper.GetUniqueCertificate(ctx, issuer, serial)
-			},
-			expectFound: true,
-			description: "Test certificate updates",
-		},
-		{
-			name: "MultipleOperations",
-			setup: func() (types.UniqueCertificate, string, string) {
-				cert1 := types.UniqueCertificate{
-					Issuer:       "issuer1",
-					SerialNumber: "serial1",
-				}
-				cert2 := types.UniqueCertificate{
-					Issuer:       "issuer2",
-					SerialNumber: "serial2",
-				}
-				keeper.SetUniqueCertificate(ctx, cert1)
-				keeper.SetUniqueCertificate(ctx, cert2)
-				return cert1, cert1.Issuer, cert1.SerialNumber
-			},
-			operation: func(cert types.UniqueCertificate, issuer, serial string) {
-				keeper.RemoveUniqueCertificate(ctx, issuer, serial)
-			},
-			verify: func(issuer, serial string) (types.UniqueCertificate, bool) {
-				return keeper.GetUniqueCertificate(ctx, issuer, serial)
-			},
-			expectFound: false,
-			description: "Test multiple operations in sequence",
-		},
-		{
-			name: "GetAllWithEmpty",
-			setup: func() (types.UniqueCertificate, string, string) {
-				// Clear any existing certificates
-				allCerts := keeper.GetAllUniqueCertificate(ctx)
-				for _, cert := range allCerts {
-					keeper.RemoveUniqueCertificate(ctx, cert.Issuer, cert.SerialNumber)
-				}
-				
-				cert := types.UniqueCertificate{
-					Issuer:       "test-issuer",
-					SerialNumber: "test-serial",
-				}
-				keeper.SetUniqueCertificate(ctx, cert)
-				return cert, cert.Issuer, cert.SerialNumber
-			},
-			operation: func(cert types.UniqueCertificate, issuer, serial string) {
-				// Verify GetAll works
-				allCerts := keeper.GetAllUniqueCertificate(ctx)
-				require.Len(t, allCerts, 1)
-				require.Equal(t, cert, allCerts[0])
-			},
-			verify: func(issuer, serial string) (types.UniqueCertificate, bool) {
-				return keeper.GetUniqueCertificate(ctx, issuer, serial)
-			},
-			expectFound: true,
-			description: "Test GetAll with single certificate",
-		},
+	// Test with empty issuer and serial number
+	emptyCert := types.UniqueCertificate{
+		Issuer:       "",
+		SerialNumber: "",
 	}
 	
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			cert, key1, key2 := tt.setup()
-			tt.operation(cert, key1, key2)
-			retrieved, found := tt.verify(key1, key2)
-			
-			if tt.expectFound {
-				require.True(t, found)
-				require.Equal(t, cert, retrieved)
-			} else {
-				require.False(t, found)
-			}
-		})
+	keeper.SetUniqueCertificate(ctx, emptyCert)
+	retrieved, found := keeper.GetUniqueCertificate(ctx, emptyCert.Issuer, emptyCert.SerialNumber)
+	require.True(t, found)
+	require.Equal(t, emptyCert, retrieved)
+	
+	// Test with special characters
+	specialCert := types.UniqueCertificate{
+		Issuer:       "test@issuer.com",
+		SerialNumber: "123-456-789",
 	}
+	
+	keeper.SetUniqueCertificate(ctx, specialCert)
+	retrieved, found = keeper.GetUniqueCertificate(ctx, specialCert.Issuer, specialCert.SerialNumber)
+	require.True(t, found)
+	require.Equal(t, specialCert, retrieved)
+}
+
+func TestUniqueCertificate_Update(t *testing.T) {
+	keeper, ctx := keepertest.PkiKeeper(t, nil)
+	
+	// Create initial certificate
+	initialCert := types.UniqueCertificate{
+		Issuer:       "test-issuer",
+		SerialNumber: "test-serial",
+	}
+	
+	keeper.SetUniqueCertificate(ctx, initialCert)
+	
+	// Verify the certificate was set correctly
+	retrieved, found := keeper.GetUniqueCertificate(ctx, initialCert.Issuer, initialCert.SerialNumber)
+	require.True(t, found)
+	require.Equal(t, initialCert, retrieved)
+}
+
+func TestUniqueCertificate_MultipleOperations(t *testing.T) {
+	keeper, ctx := keepertest.PkiKeeper(t, nil)
+	
+	// Test multiple operations in sequence
+	cert1 := types.UniqueCertificate{
+		Issuer:       "issuer1",
+		SerialNumber: "serial1",
+	}
+	
+	cert2 := types.UniqueCertificate{
+		Issuer:       "issuer2",
+		SerialNumber: "serial2",
+	}
+	
+	// Set both certificates
+	keeper.SetUniqueCertificate(ctx, cert1)
+	keeper.SetUniqueCertificate(ctx, cert2)
+	
+	// Verify both exist
+	retrieved1, found1 := keeper.GetUniqueCertificate(ctx, cert1.Issuer, cert1.SerialNumber)
+	require.True(t, found1)
+	require.Equal(t, cert1, retrieved1)
+	
+	retrieved2, found2 := keeper.GetUniqueCertificate(ctx, cert2.Issuer, cert2.SerialNumber)
+	require.True(t, found2)
+	require.Equal(t, cert2, retrieved2)
+	
+	// Remove one certificate
+	keeper.RemoveUniqueCertificate(ctx, cert1.Issuer, cert1.SerialNumber)
+	
+	// Verify first is removed, second still exists
+	_, found1 = keeper.GetUniqueCertificate(ctx, cert1.Issuer, cert1.SerialNumber)
+	require.False(t, found1)
+	
+	retrieved2, found2 = keeper.GetUniqueCertificate(ctx, cert2.Issuer, cert2.SerialNumber)
+	require.True(t, found2)
+	require.Equal(t, cert2, retrieved2)
+}
+
+func TestUniqueCertificate_GetAllWithEmpty(t *testing.T) {
+	keeper, ctx := keepertest.PkiKeeper(t, nil)
+	
+	// Test GetAll with no certificates
+	allCerts := keeper.GetAllUniqueCertificate(ctx)
+	require.Empty(t, allCerts)
+	
+	// Add one certificate and test GetAll
+	cert := types.UniqueCertificate{
+		Issuer:       "test-issuer",
+		SerialNumber: "test-serial",
+	}
+	keeper.SetUniqueCertificate(ctx, cert)
+	
+	allCerts = keeper.GetAllUniqueCertificate(ctx)
+	require.Len(t, allCerts, 1)
+	require.Equal(t, cert, allCerts[0])
 }
 
 func TestUniqueCertificate_NonExistent(t *testing.T) {

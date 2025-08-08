@@ -72,207 +72,130 @@ func TestApprovedCertificatesGetAll(t *testing.T) {
 	)
 }
 
-func TestApprovedCertificates_ExtendedOperations(t *testing.T) {
+func TestApprovedCertificatesBySubjectKeyID(t *testing.T) {
 	keeper, ctx := keepertest.PkiKeeper(t, nil)
 	
-	tests := []struct {
-		name        string
-		setup       func() (types.ApprovedCertificates, string, string)
-		operation   func(types.ApprovedCertificates, string, string)
-		verify      func(string, string) (types.ApprovedCertificates, bool)
-		expectFound bool
-		description string
-	}{
-		{
-			name: "BySubjectKeyID",
-			setup: func() (types.ApprovedCertificates, string, string) {
-				subjectKeyID := "test-key-id"
-				approvedCerts := types.ApprovedCertificatesBySubjectKeyId{
-					SubjectKeyId: subjectKeyID,
-					Certs: []*types.CertificateIdentifier{
-						{
-							Subject:      "test-subject",
-							SubjectKeyId: subjectKeyID,
-						},
-					},
-				}
-				keeper.SetApprovedCertificatesBySubjectKeyID(ctx, approvedCerts)
-				return types.ApprovedCertificates{}, subjectKeyID, ""
+	// Test setting and getting approved certificates by subject key ID
+	subjectKeyID := "test-key-id"
+	approvedCerts := types.ApprovedCertificatesBySubjectKeyId{
+		SubjectKeyId: subjectKeyID,
+		Certs: []*types.CertificateIdentifier{
+			{
+				Subject:      "test-subject",
+				SubjectKeyId: subjectKeyID,
 			},
-			operation: func(cert types.ApprovedCertificates, subjectKeyID, _ string) {
-				keeper.RemoveApprovedCertificatesBySubjectKeyID(ctx, subjectKeyID)
-			},
-			verify: func(subjectKeyID, _ string) (types.ApprovedCertificates, bool) {
-				return keeper.GetApprovedCertificatesBySubjectKeyID(ctx, subjectKeyID)
-			},
-			expectFound: false,
-			description: "Test setting and getting approved certificates by subject key ID",
-		},
-		{
-			name: "BySubject",
-			setup: func() (types.ApprovedCertificates, string, string) {
-				subject := "test-subject"
-				approvedCerts := types.ApprovedCertificatesBySubject{
-					Subject: subject,
-					Certs: []*types.CertificateIdentifier{
-						{
-							Subject:      subject,
-							SubjectKeyId: "test-key-id",
-						},
-					},
-				}
-				keeper.SetApprovedCertificatesBySubject(ctx, approvedCerts)
-				return types.ApprovedCertificates{}, "", subject
-			},
-			operation: func(cert types.ApprovedCertificates, _, subject string) {
-				keeper.RemoveApprovedCertificatesBySubject(ctx, subject)
-			},
-			verify: func(_, subject string) (types.ApprovedCertificates, bool) {
-				return keeper.GetApprovedCertificatesBySubject(ctx, subject)
-			},
-			expectFound: false,
-			description: "Test setting and getting approved certificates by subject",
-		},
-		{
-			name: "EmptyCertificates",
-			setup: func() (types.ApprovedCertificates, string, string) {
-				emptyCert := types.ApprovedCertificates{
-					Subject:      "empty-subject",
-					SubjectKeyId: "empty-key-id",
-					Certs:        []*types.CertificateIdentifier{},
-				}
-				keeper.SetApprovedCertificates(ctx, emptyCert)
-				return emptyCert, emptyCert.Subject, emptyCert.SubjectKeyId
-			},
-			operation: func(cert types.ApprovedCertificates, subject, subjectKeyId string) {
-				// No operation needed for this test
-			},
-			verify: func(subject, subjectKeyId string) (types.ApprovedCertificates, bool) {
-				return keeper.GetApprovedCertificates(ctx, subject, subjectKeyId)
-			},
-			expectFound: true,
-			description: "Test with empty certificates",
-		},
-		{
-			name: "NilCertificates",
-			setup: func() (types.ApprovedCertificates, string, string) {
-				nilCert := types.ApprovedCertificates{
-					Subject:      "nil-subject",
-					SubjectKeyId: "nil-key-id",
-					Certs:        nil,
-				}
-				keeper.SetApprovedCertificates(ctx, nilCert)
-				return nilCert, nilCert.Subject, nilCert.SubjectKeyId
-			},
-			operation: func(cert types.ApprovedCertificates, subject, subjectKeyId string) {
-				// No operation needed for this test
-			},
-			verify: func(subject, subjectKeyId string) (types.ApprovedCertificates, bool) {
-				return keeper.GetApprovedCertificates(ctx, subject, subjectKeyId)
-			},
-			expectFound: true,
-			description: "Test with nil certificates",
-		},
-		{
-			name: "UpdateCertificates",
-			setup: func() (types.ApprovedCertificates, string, string) {
-				initialCert := types.ApprovedCertificates{
-					Subject:      "update-subject",
-					SubjectKeyId: "update-key-id",
-					Certs: []*types.CertificateIdentifier{
-						{
-							Subject:      "update-subject",
-							SubjectKeyId: "update-key-id",
-						},
-					},
-				}
-				keeper.SetApprovedCertificates(ctx, initialCert)
-				
-				updatedCert := types.ApprovedCertificates{
-					Subject:      "update-subject",
-					SubjectKeyId: "update-key-id",
-					Certs: []*types.CertificateIdentifier{
-						{
-							Subject:      "update-subject",
-							SubjectKeyId: "update-key-id",
-						},
-						{
-							Subject:      "update-subject-2",
-							SubjectKeyId: "update-key-id-2",
-						},
-					},
-				}
-				keeper.SetApprovedCertificates(ctx, updatedCert)
-				return updatedCert, updatedCert.Subject, updatedCert.SubjectKeyId
-			},
-			operation: func(cert types.ApprovedCertificates, subject, subjectKeyId string) {
-				// Update already done in setup
-			},
-			verify: func(subject, subjectKeyId string) (types.ApprovedCertificates, bool) {
-				return keeper.GetApprovedCertificates(ctx, subject, subjectKeyId)
-			},
-			expectFound: true,
-			description: "Test certificate updates",
 		},
 	}
 	
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			cert, key1, key2 := tt.setup()
-			tt.operation(cert, key1, key2)
-			retrieved, found := tt.verify(key1, key2)
-			
-			if tt.expectFound {
-				require.True(t, found)
-				if tt.name == "UpdateCertificates" {
-					require.Len(t, retrieved.Certs, 2)
-				}
-			} else {
-				require.False(t, found)
-			}
-		})
+	keeper.SetApprovedCertificatesBySubjectKeyID(ctx, approvedCerts)
+	
+	// Test getting the certificate
+	retrieved, found := keeper.GetApprovedCertificatesBySubjectKeyID(ctx, subjectKeyID)
+	require.True(t, found)
+	require.Equal(t, approvedCerts, retrieved)
+	
+	// Test removing the certificate
+	keeper.RemoveApprovedCertificatesBySubjectKeyID(ctx, subjectKeyID)
+	_, found = keeper.GetApprovedCertificatesBySubjectKeyID(ctx, subjectKeyID)
+	require.False(t, found)
+}
+
+func TestApprovedCertificatesBySubject(t *testing.T) {
+	keeper, ctx := keepertest.PkiKeeper(t, nil)
+	
+	// Test setting and getting approved certificates by subject
+	subject := "test-subject"
+	approvedCerts := types.ApprovedCertificatesBySubject{
+		Subject: subject,
+		Certs: []*types.CertificateIdentifier{
+			{
+				Subject:      subject,
+				SubjectKeyId: "test-key-id",
+			},
+		},
 	}
+	
+	keeper.SetApprovedCertificatesBySubject(ctx, approvedCerts)
+	
+	// Test getting the certificate
+	retrieved, found := keeper.GetApprovedCertificatesBySubject(ctx, subject)
+	require.True(t, found)
+	require.Equal(t, approvedCerts, retrieved)
+	
+	// Test removing the certificate
+	keeper.RemoveApprovedCertificatesBySubject(ctx, subject)
+	_, found = keeper.GetApprovedCertificatesBySubject(ctx, subject)
+	require.False(t, found)
+}
+
+func TestApprovedCertificates_EdgeCases(t *testing.T) {
+	keeper, ctx := keepertest.PkiKeeper(t, nil)
+	
+	// Test with empty certificates
+	emptyCert := types.ApprovedCertificates{
+		Subject:      "empty-subject",
+		SubjectKeyId: "empty-key-id",
+		Certs:        []*types.CertificateIdentifier{},
+	}
+	
+	keeper.SetApprovedCertificates(ctx, emptyCert)
+	retrieved, found := keeper.GetApprovedCertificates(ctx, emptyCert.Subject, emptyCert.SubjectKeyId)
+	require.True(t, found)
+	require.Equal(t, emptyCert, retrieved)
+	
+	// Test with nil certificates
+	nilCert := types.ApprovedCertificates{
+		Subject:      "nil-subject",
+		SubjectKeyId: "nil-key-id",
+		Certs:        nil,
+	}
+	
+	keeper.SetApprovedCertificates(ctx, nilCert)
+	retrieved, found = keeper.GetApprovedCertificates(ctx, nilCert.Subject, nilCert.SubjectKeyId)
+	require.True(t, found)
+	require.Equal(t, nilCert, retrieved)
+}
+
+func TestApprovedCertificates_Update(t *testing.T) {
+	keeper, ctx := keepertest.PkiKeeper(t, nil)
+	
+	// Create certificate with multiple certs
+	cert := types.ApprovedCertificates{
+		Subject:      "update-subject",
+		SubjectKeyId: "update-key-id",
+		Certs: []*types.CertificateIdentifier{
+			{
+				Subject:      "update-subject",
+				SubjectKeyId: "update-key-id",
+			},
+			{
+				Subject:      "update-subject-2",
+				SubjectKeyId: "update-key-id-2",
+			},
+		},
+	}
+	
+	keeper.SetApprovedCertificates(ctx, cert)
+	
+	// Verify the certificate
+	retrieved, found := keeper.GetApprovedCertificates(ctx, cert.Subject, cert.SubjectKeyId)
+	require.True(t, found)
+	require.Equal(t, cert, retrieved)
+	require.Len(t, retrieved.Certs, 2)
 }
 
 func TestApprovedCertificates_NonExistent(t *testing.T) {
 	keeper, ctx := keepertest.PkiKeeper(t, nil)
 	
-	tests := []struct {
-		name        string
-		subject     string
-		subjectKeyId string
-		operation   func(string, string) (types.ApprovedCertificates, bool)
-	}{
-		{
-			name:        "GetApprovedCertificates",
-			subject:     "non-existent",
-			subjectKeyId: "non-existent",
-			operation:   func(subject, subjectKeyId string) (types.ApprovedCertificates, bool) {
-				return keeper.GetApprovedCertificates(ctx, subject, subjectKeyId)
-			},
-		},
-		{
-			name:        "GetApprovedCertificatesBySubjectKeyID",
-			subject:     "",
-			subjectKeyId: "non-existent",
-			operation:   func(_, subjectKeyId string) (types.ApprovedCertificates, bool) {
-				return keeper.GetApprovedCertificatesBySubjectKeyID(ctx, subjectKeyId)
-			},
-		},
-		{
-			name:        "GetApprovedCertificatesBySubject",
-			subject:     "non-existent",
-			subjectKeyId: "",
-			operation:   func(subject, _ string) (types.ApprovedCertificates, bool) {
-				return keeper.GetApprovedCertificatesBySubject(ctx, subject)
-			},
-		},
-	}
+	// Test getting non-existent approved certificates
+	_, found := keeper.GetApprovedCertificates(ctx, "non-existent", "non-existent")
+	require.False(t, found)
 	
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			_, found := tt.operation(tt.subject, tt.subjectKeyId)
-			require.False(t, found)
-		})
-	}
+	// Test getting non-existent approved certificates by subject key ID
+	_, found = keeper.GetApprovedCertificatesBySubjectKeyID(ctx, "non-existent")
+	require.False(t, found)
+	
+	// Test getting non-existent approved certificates by subject
+	_, found = keeper.GetApprovedCertificatesBySubject(ctx, "non-existent")
+	require.False(t, found)
 }
