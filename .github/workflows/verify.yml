@@ -180,6 +180,9 @@ jobs:
       - name: Merge test coverage
         shell: bash
         run: ./gocovmerge unit_cover/cover.out integration_cover/cover.out > cover.out
+      - name: Filter test coverage
+        shell: bash
+        run: .github/workflows/filter_coverage.sh
       - name: Report test coverage
         uses: vladopajic/go-test-coverage@v2
         continue-on-error: true
@@ -187,16 +190,13 @@ jobs:
           config: ./.github/.testcoverage.yml
           git-token: ${{ github.ref_name == 'main' && secrets.GITHUB_TOKEN || '' }}
           git-branch: cover_badges
-      - name: Filter test coverage
-        shell: bash
-        run: .github/workflows/filter_coverage.sh
       - name: Generate html test coverage
         shell: bash
         run: go tool cover -html=cover.out -o cover.html
       - name: Upload html coverage
         uses: actions/upload-artifact@v4
         with:
-          name: all_coverage
+          name: test_coverage
           path: |
             cover.html
             cover.out
