@@ -2,8 +2,5 @@
 
 profile: 'cover.out'
 threshold:
-  total: 10
+  total: 50
   file: 0
-exclude:
-  paths:
-    - \.pb\.go$
