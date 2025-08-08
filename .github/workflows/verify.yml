@@ -107,11 +107,6 @@ jobs:
           go test -json -v $(go list ./... | grep -v '/integration_tests') -coverprofile=./cover.out -covermode=set -coverpkg=./... 2>&1 | tee /tmp/gotest.log | gotestfmt
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-      - name: Report test coverage
-        uses: vladopajic/go-test-coverage@v2
-        continue-on-error: true
-        with:
-          config: ./.github/.testcoverage.yml
       - name: Store test coverage
         uses: actions/upload-artifact@v4
         with:
@@ -144,11 +139,6 @@ jobs:
       - name: Generate test coverage
         shell: bash
         run: go tool covdata textfmt -i=integration_tests/gocover -o cover.out
-      - name: Report test coverage
-        uses: vladopajic/go-test-coverage@v2
-        continue-on-error: true
-        with:
-          config: ./.github/.testcoverage.yml
       - name: Store test coverage
         uses: actions/upload-artifact@v4
         with:
@@ -199,7 +189,7 @@ jobs:
           git-branch: cover_badges
       - name: Filter test coverage
         shell: bash
-        run: scripts/filter_coverage.sh
+        run: .github/workflows/filter_coverage.sh
       - name: Generate html test coverage
         shell: bash
         run: go tool cover -html=cover.out -o cover.html
