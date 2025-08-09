@@ -188,12 +188,12 @@ jobs:
         continue-on-error: true
         with:
           config: ./.github/.testcoverage.yml
-          git-token: ${{ github.ref_name == 'main' && secrets.GITHUB_TOKEN || '' }}
+          git-token: ${{ github.ref_name == 'master' && secrets.GITHUB_TOKEN || '' }}
           git-branch: cover_badges
       - name: Generate html test coverage
         shell: bash
         run: go tool cover -html=cover.out -o cover.html
-      - name: Upload html coverage
+      - name: Upload test coverage
         uses: actions/upload-artifact@v4
         with:
           name: test_coverage
