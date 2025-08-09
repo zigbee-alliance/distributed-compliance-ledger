@@ -16,6 +16,7 @@ import (
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/require"
 
+	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
@@ -46,13 +47,16 @@ func setupKeeperWithParams(t *testing.T) (*Keeper, sdk.Context) {
 
 	// Params keeper and subspace for auth with its key table
 	pk := paramskeeper.NewKeeper(appCodec, legacyAmino, paramsKey, tparamsKey)
-	subspace := pk.Subspace(authtypes.ModuleName).WithKeyTable(authtypes.ParamKeyTable())
+	authParams := authtypes.DefaultGenesisState().Params
+	authKeyTable := paramtypes.NewKeyTable().RegisterParamSet(&authParams)
+	subspace := pk.Subspace(authtypes.ModuleName).WithKeyTable(authKeyTable)
 
 	// Base keeper and context
 	k := NewKeeper(appCodec, storeKey, memStoreKey)
 	k.paramSubspace = subspace
 
 	ctx := sdk.NewContext(cms, tmproto.Header{}, false, log.NewNopLogger())
+
 	return k, ctx
 }
 

@@ -53,11 +53,8 @@ func TestNewDefaultGenesisState_WithNilCodec(t *testing.T) {
 }
 
 func TestGenesisState_TypeDefinition(t *testing.T) {
-	// Test that GenesisState is properly defined as a map
-	var genesisState GenesisState
-
 	// Test that it can be used as a map
-	genesisState = make(GenesisState)
+	genesisState := make(GenesisState)
 	genesisState["test"] = json.RawMessage("test")
 	require.Equal(t, json.RawMessage("test"), genesisState["test"])
 
@@ -143,11 +140,8 @@ func TestGenesisState_CodecIntegration(t *testing.T) {
 }
 
 func TestGenesisState_TypeSafety(t *testing.T) {
-	// Test type safety of genesis state
-	var genesisState GenesisState
-
 	// Test assignment
-	genesisState = make(GenesisState)
+	genesisState := make(GenesisState)
 	require.NotNil(t, genesisState)
 
 	// Test that it can hold different types of data
