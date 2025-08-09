@@ -78,6 +78,7 @@ OpenAPI
 blockquote
 gRPC
 github
+githubusercontent
 html
 io
 li
