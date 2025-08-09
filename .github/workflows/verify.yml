@@ -188,12 +188,12 @@ jobs:
         continue-on-error: true
         with:
           config: ./.github/.testcoverage.yml
-          git-token: ${{ github.ref_name == 'main' && secrets.GITHUB_TOKEN || '' }}
+          git-token: ${{ github.ref_name == 'master' && secrets.GITHUB_TOKEN || '' }}
           git-branch: cover_badges
       - name: Generate html test coverage
         shell: bash
         run: go tool cover -html=cover.out -o cover.html
-      - name: Upload html coverage
+      - name: Upload test coverage
         uses: actions/upload-artifact@v4
         with:
           name: test_coverage
@@ -220,5 +220,5 @@ jobs:
       - name: Decide whether the needed jobs succeeded or failed
         uses: re-actors/alls-green@release/v1
         with:
-          allowed-skips: lint, unit-tests, integration-tests, links, spell, gh-actions
+          allowed-skips: lint, unit-tests, integration-tests, links, spell, gh-actions, cover
           jobs: ${{ toJSON(needs) }}
