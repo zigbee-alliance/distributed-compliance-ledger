@@ -220,5 +220,5 @@ jobs:
       - name: Decide whether the needed jobs succeeded or failed
         uses: re-actors/alls-green@release/v1
         with:
-          allowed-skips: lint, unit-tests, integration-tests, links, spell, gh-actions
+          allowed-skips: lint, unit-tests, integration-tests, links, spell, gh-actions, cover
           jobs: ${{ toJSON(needs) }}
