@@ -78,7 +78,7 @@ func TestNocCertificatesBySubjectKeyID(t *testing.T) {
 	subjectKeyID := "test-noc-key-id"
 	nocCerts := types.NocCertificatesBySubjectKeyID{
 		SubjectKeyId: subjectKeyID,
-		Certs: []*types.CertificateIdentifier{
+		Certs: []*types.Certificate{
 			{
 				Subject:      "test-noc-subject",
 				SubjectKeyId: subjectKeyID,
@@ -106,7 +106,7 @@ func TestNocCertificates_EdgeCases(t *testing.T) {
 	emptyCert := types.NocCertificates{
 		Subject:      "empty-noc-subject",
 		SubjectKeyId: "empty-noc-key-id",
-		Certs:        []*types.CertificateIdentifier{},
+		Certs:        []*types.Certificate(nil),
 	}
 	
 	keeper.SetNocCertificates(ctx, emptyCert)
@@ -134,7 +134,7 @@ func TestNocCertificates_Update(t *testing.T) {
 	cert := types.NocCertificates{
 		Subject:      "update-noc-subject",
 		SubjectKeyId: "update-noc-key-id",
-		Certs: []*types.CertificateIdentifier{
+		Certs: []*types.Certificate{
 			{
 				Subject:      "update-noc-subject",
 				SubjectKeyId: "update-noc-key-id",
@@ -162,7 +162,7 @@ func TestNocCertificates_MultipleOperations(t *testing.T) {
 	cert1 := types.NocCertificates{
 		Subject:      "noc-issuer1",
 		SubjectKeyId: "noc-serial1",
-		Certs: []*types.CertificateIdentifier{
+		Certs: []*types.Certificate{
 			{
 				Subject:      "noc-issuer1",
 				SubjectKeyId: "noc-serial1",
@@ -173,7 +173,7 @@ func TestNocCertificates_MultipleOperations(t *testing.T) {
 	cert2 := types.NocCertificates{
 		Subject:      "noc-issuer2",
 		SubjectKeyId: "noc-serial2",
-		Certs: []*types.CertificateIdentifier{
+		Certs: []*types.Certificate{
 			{
 				Subject:      "noc-issuer2",
 				SubjectKeyId: "noc-serial2",

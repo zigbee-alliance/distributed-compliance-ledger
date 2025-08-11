@@ -77,15 +77,17 @@ func TestApprovedCertificatesBySubjectKeyID(t *testing.T) {
 	
 	// Test setting and getting approved certificates by subject key ID
 	subjectKeyID := "test-key-id"
+	subject := "test-subject"
 	approvedCerts := types.ApprovedCertificatesBySubjectKeyId{
 		SubjectKeyId: subjectKeyID,
-		Certs: []*types.CertificateIdentifier{
+		Certs: []*types.Certificate{
 			{
-				Subject:      "test-subject",
+				Subject:      subject,
 				SubjectKeyId: subjectKeyID,
 			},
 		},
 	}
+		
 	
 	keeper.SetApprovedCertificatesBySubjectKeyID(ctx, approvedCerts)
 	
@@ -95,7 +97,7 @@ func TestApprovedCertificatesBySubjectKeyID(t *testing.T) {
 	require.Equal(t, approvedCerts, retrieved)
 	
 	// Test removing the certificate
-	keeper.RemoveApprovedCertificatesBySubjectKeyID(ctx, subjectKeyID)
+	keeper.RemoveApprovedCertificatesBySubjectKeyID(ctx, subject, subjectKeyID)
 	_, found = keeper.GetApprovedCertificatesBySubjectKeyID(ctx, subjectKeyID)
 	require.False(t, found)
 }
@@ -107,12 +109,7 @@ func TestApprovedCertificatesBySubject(t *testing.T) {
 	subject := "test-subject"
 	approvedCerts := types.ApprovedCertificatesBySubject{
 		Subject: subject,
-		Certs: []*types.CertificateIdentifier{
-			{
-				Subject:      subject,
-				SubjectKeyId: "test-key-id",
-			},
-		},
+		SubjectKeyIds: []string{"test-key-id"},
 	}
 	
 	keeper.SetApprovedCertificatesBySubject(ctx, approvedCerts)
@@ -128,14 +125,14 @@ func TestApprovedCertificatesBySubject(t *testing.T) {
 	require.False(t, found)
 }
 
-func TestApprovedCertificates_EdgeCases(t *testing.T) {
+func TestApprovedCertificates_NilEdgeCases(t *testing.T) {
 	keeper, ctx := keepertest.PkiKeeper(t, nil)
 	
 	// Test with empty certificates
 	emptyCert := types.ApprovedCertificates{
 		Subject:      "empty-subject",
 		SubjectKeyId: "empty-key-id",
-		Certs:        []*types.CertificateIdentifier{},
+		Certs:        []*types.Certificate(nil),
 	}
 	
 	keeper.SetApprovedCertificates(ctx, emptyCert)
@@ -147,7 +144,7 @@ func TestApprovedCertificates_EdgeCases(t *testing.T) {
 	nilCert := types.ApprovedCertificates{
 		Subject:      "nil-subject",
 		SubjectKeyId: "nil-key-id",
-		Certs:        nil,
+		Certs:        []*types.Certificate(nil),
 	}
 	
 	keeper.SetApprovedCertificates(ctx, nilCert)
@@ -156,14 +153,14 @@ func TestApprovedCertificates_EdgeCases(t *testing.T) {
 	require.Equal(t, nilCert, retrieved)
 }
 
-func TestApprovedCertificates_Update(t *testing.T) {
+func TestApprovedCertificates_MultipleCerts(t *testing.T) {
 	keeper, ctx := keepertest.PkiKeeper(t, nil)
 	
 	// Create certificate with multiple certs
 	cert := types.ApprovedCertificates{
 		Subject:      "update-subject",
 		SubjectKeyId: "update-key-id",
-		Certs: []*types.CertificateIdentifier{
+		Certs: []*types.Certificate{
 			{
 				Subject:      "update-subject",
 				SubjectKeyId: "update-key-id",
