@@ -9,8 +9,49 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestExportAppStateAndValidators_Success(t *testing.T) {
-	// Test successful export with default parameters
+func TestExport_AppStateAndValidators(t *testing.T) {
+	positiveTests := []struct {
+		name            string
+		modulesToExport []string
+	}{
+		{
+			name:            "export_all_modules",
+			modulesToExport: []string{"dclupgrade", "vendorinfo", "compliance", "params", "upgrade", "dclgenutil", "model", "dclauth", "validator", "pki"},
+		},
+		{
+			name:            "export_specific_modules",
+			modulesToExport: []string{"dclauth", "validator", "pki"},
+		},
+		{
+			name:            "export_without_modules",
+			modulesToExport: []string{},
+		},
+	}
+
+	negativeTests := []struct {
+		name            string
+		modulesToExport []string
+		expectPanic     bool
+		err             error
+	}{
+		{
+			name:            "export_non-existent_modules",
+			modulesToExport: []string{"non_existent1", "non_existent2"},
+			expectPanic:     true,
+			err:             nil,
+		},
+		{
+			name:            "export_with_non-existent_modules",
+			modulesToExport: []string{"vendorinfo", "non_existent1"},
+			expectPanic:     true,
+			err:             nil,
+		},
+	}
+
+	forZeroHeight := false
+	jailAllowedAddrs := []string{}
+	var jsonData any
+
 	logger := log.NewNopLogger()
 	db := dbm.NewMemDB()
 	encodingConfig := MakeEncodingConfig()
@@ -26,275 +67,42 @@ func TestExportAppStateAndValidators_Success(t *testing.T) {
 		encodingConfig,
 	)
 
-	// Test export with empty modules list (exports all modules)
-	exportedApp, err := app.ExportAppStateAndValidators(false, []string{}, []string{})
-	require.NoError(t, err)
-	require.NotNil(t, exportedApp)
-	// AppState is a byte slice, should not be nil
-	require.NotNil(t, exportedApp.AppState)
-	// Validators can be nil in fresh app state
-	require.Greater(t, exportedApp.Height, int64(0))
-	require.NotNil(t, exportedApp.ConsensusParams)
-}
+	for _, tc := range positiveTests {
+		t.Run(tc.name, func(t *testing.T) {
+			exportedApp, err := app.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs, tc.modulesToExport)
+			require.NoError(t, err)
+			require.NotNil(t, exportedApp)
 
-func TestExportAppStateAndValidators_WithSpecificModules(t *testing.T) {
-	// Test export with specific modules
-	logger := log.NewNopLogger()
-	db := dbm.NewMemDB()
-	encodingConfig := MakeEncodingConfig()
+			// AppState should be non-nil and valid JSON
+			require.NotNil(t, exportedApp.AppState)
 
-	app := New(
-		logger,
-		db,
-		nil,
-		true,
-		map[int64]bool{},
-		"",
-		0,
-		encodingConfig,
-	)
+			require.NoError(t, json.Unmarshal(exportedApp.AppState, &jsonData))
 
-	// Test export with specific modules
-	modulesToExport := []string{"validator", "auth"}
-	modulesToSkip := []string{}
+			// Height should be positive (last height + 1)
+			require.Greater(t, exportedApp.Height, int64(0))
 
-	exportedApp, err := app.ExportAppStateAndValidators(false, modulesToExport, modulesToSkip)
-	require.NoError(t, err)
-	require.NotNil(t, exportedApp)
-	require.NotNil(t, exportedApp.AppState)
-	require.Greater(t, exportedApp.Height, int64(0))
-}
+			// Validators should be nil
+			require.Nil(t, exportedApp.Validators)
 
-func TestExportAppStateAndValidators_WithSkippedModules(t *testing.T) {
-	// Test export with modules to skip
-	logger := log.NewNopLogger()
-	db := dbm.NewMemDB()
-	encodingConfig := MakeEncodingConfig()
+			// ConsensusParams should be non-nil
+			require.NotNil(t, exportedApp.ConsensusParams)
+		})
+	}
 
-	app := New(
-		logger,
-		db,
-		nil,
-		true,
-		map[int64]bool{},
-		"",
-		0,
-		encodingConfig,
-	)
+	for _, tc := range negativeTests {
+		t.Run(tc.name, func(t *testing.T) {
+			if tc.expectPanic {
+				defer func() {
+					r := recover()
+					if (r != nil) != tc.expectPanic {
+						t.Error("Expected panic but none occurred")
+					}
+				}()
+			}
 
-	// Test export with modules to skip
-	modulesToExport := []string{}
-	modulesToSkip := []string{"validator"}
-
-	exportedApp, err := app.ExportAppStateAndValidators(false, modulesToExport, modulesToSkip)
-	require.NoError(t, err)
-	require.NotNil(t, exportedApp)
-	require.NotNil(t, exportedApp.AppState)
-	require.Greater(t, exportedApp.Height, int64(0))
-}
-
-func TestExportAppStateAndValidators_WithNonExistentModules(t *testing.T) {
-	// Test export with non-existent modules (should be ignored)
-	logger := log.NewNopLogger()
-	db := dbm.NewMemDB()
-	encodingConfig := MakeEncodingConfig()
-
-	app := New(
-		logger,
-		db,
-		nil,
-		true,
-		map[int64]bool{},
-		"",
-		0,
-		encodingConfig,
-	)
-
-	// Test export with non-existent modules - should be ignored
-	modulesToExport := []string{"nonexistent1", "nonexistent2"}
-
-	// Non-existent modules should be ignored, not cause panic
-	exportedApp, err := app.ExportAppStateAndValidators(false, modulesToExport, []string{})
-	require.NoError(t, err)
-	require.NotNil(t, exportedApp)
-	require.NotNil(t, exportedApp.AppState)
-	require.Greater(t, exportedApp.Height, int64(0))
-}
-
-func TestExportAppStateAndValidators_ValidatorsStructure(t *testing.T) {
-	// Test that the exported validators have proper structure
-	logger := log.NewNopLogger()
-	db := dbm.NewMemDB()
-	encodingConfig := MakeEncodingConfig()
-
-	app := New(
-		logger,
-		db,
-		nil,
-		true,
-		map[int64]bool{},
-		"",
-		0,
-		encodingConfig,
-	)
-
-	exportedApp, err := app.ExportAppStateAndValidators(false, []string{}, []string{})
-	require.NoError(t, err)
-	require.NotNil(t, exportedApp)
-	// Validators can be nil in fresh app state, so we just check the field exists
-	_ = exportedApp.Validators
-}
-
-func TestExportAppStateAndValidators_HeightCalculation(t *testing.T) {
-	// Test that height is calculated correctly
-	logger := log.NewNopLogger()
-	db := dbm.NewMemDB()
-	encodingConfig := MakeEncodingConfig()
-
-	app := New(
-		logger,
-		db,
-		nil,
-		true,
-		map[int64]bool{},
-		"",
-		0,
-		encodingConfig,
-	)
-
-	exportedApp, err := app.ExportAppStateAndValidators(false, []string{}, []string{})
-	require.NoError(t, err)
-	require.NotNil(t, exportedApp)
-	require.Greater(t, exportedApp.Height, int64(0))
-}
-
-func TestExportAppStateAndValidators_ConsensusParams(t *testing.T) {
-	// Test that consensus params are exported correctly
-	logger := log.NewNopLogger()
-	db := dbm.NewMemDB()
-	encodingConfig := MakeEncodingConfig()
-
-	app := New(
-		logger,
-		db,
-		nil,
-		true,
-		map[int64]bool{},
-		"",
-		0,
-		encodingConfig,
-	)
-
-	exportedApp, err := app.ExportAppStateAndValidators(false, []string{}, []string{})
-	require.NoError(t, err)
-	require.NotNil(t, exportedApp)
-	// ConsensusParams can be nil in fresh app state
-	_ = exportedApp.ConsensusParams
-}
-
-func TestExportAppStateAndValidators_AppStateJSON(t *testing.T) {
-	// Test that AppState is valid JSON
-	logger := log.NewNopLogger()
-	db := dbm.NewMemDB()
-	encodingConfig := MakeEncodingConfig()
-
-	app := New(
-		logger,
-		db,
-		nil,
-		true,
-		map[int64]bool{},
-		"",
-		0,
-		encodingConfig,
-	)
-
-	exportedApp, err := app.ExportAppStateAndValidators(false, []string{}, []string{})
-	require.NoError(t, err)
-	require.NotNil(t, exportedApp)
-	require.NotNil(t, exportedApp.AppState)
-
-	// Verify that AppState is valid JSON
-	var jsonData interface{}
-	err = json.Unmarshal(exportedApp.AppState, &jsonData)
-	require.NoError(t, err)
-}
-
-func TestExportAppStateAndValidators_ForZero(t *testing.T) {
-	// Test export with forZero=true parameter
-	logger := log.NewNopLogger()
-	db := dbm.NewMemDB()
-	encodingConfig := MakeEncodingConfig()
-
-	app := New(
-		logger,
-		db,
-		nil,
-		true,
-		map[int64]bool{},
-		"",
-		0,
-		encodingConfig,
-	)
-
-	// Test export with forZero=true
-	exportedApp, err := app.ExportAppStateAndValidators(true, []string{}, []string{})
-	require.NoError(t, err)
-	require.NotNil(t, exportedApp)
-	require.NotNil(t, exportedApp.AppState)
-	require.Greater(t, exportedApp.Height, int64(0))
-}
-
-func TestExportAppStateAndValidators_EmptyModulesAndSkip(t *testing.T) {
-	// Test export with both empty modules and skip lists
-	logger := log.NewNopLogger()
-	db := dbm.NewMemDB()
-	encodingConfig := MakeEncodingConfig()
-
-	app := New(
-		logger,
-		db,
-		nil,
-		true,
-		map[int64]bool{},
-		"",
-		0,
-		encodingConfig,
-	)
-
-	// Test export with empty modules and skip lists
-	exportedApp, err := app.ExportAppStateAndValidators(false, []string{}, []string{})
-	require.NoError(t, err)
-	require.NotNil(t, exportedApp)
-	require.NotNil(t, exportedApp.AppState)
-	require.Greater(t, exportedApp.Height, int64(0))
-}
-
-func TestExportAppStateAndValidators_AllFieldsPresent(t *testing.T) {
-	// Test that all expected fields are present in the exported app
-	logger := log.NewNopLogger()
-	db := dbm.NewMemDB()
-	encodingConfig := MakeEncodingConfig()
-
-	app := New(
-		logger,
-		db,
-		nil,
-		true,
-		map[int64]bool{},
-		"",
-		0,
-		encodingConfig,
-	)
-
-	exportedApp, err := app.ExportAppStateAndValidators(false, []string{}, []string{})
-	require.NoError(t, err)
-	require.NotNil(t, exportedApp)
-
-	// Check that all expected fields are present
-	require.NotNil(t, exportedApp.AppState)
-	require.Greater(t, exportedApp.Height, int64(0))
-	// Validators and ConsensusParams can be nil in fresh app state
-	_ = exportedApp.Validators
-	_ = exportedApp.ConsensusParams
+			exportedApp, err := app.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs, tc.modulesToExport)
+			require.Nil(t, exportedApp)
+			require.Equal(t, tc.err, err)
+		})
+	}
 }

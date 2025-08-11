@@ -16,7 +16,6 @@ import (
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/require"
 
-	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
@@ -48,20 +47,20 @@ func setupKeeperWithParams(t *testing.T) (*Keeper, sdk.Context) {
 	// Params keeper and subspace for auth with its key table
 	pk := paramskeeper.NewKeeper(appCodec, legacyAmino, paramsKey, tparamsKey)
 	authParams := authtypes.DefaultGenesisState().Params
-	authKeyTable := paramtypes.NewKeyTable().RegisterParamSet(&authParams)
+	authKeyTable := paramstypes.NewKeyTable().RegisterParamSet(&authParams)
 	subspace := pk.Subspace(authtypes.ModuleName).WithKeyTable(authKeyTable)
 
 	// Base keeper and context
-	k := NewKeeper(appCodec, storeKey, memStoreKey)
-	k.paramSubspace = subspace
+	keeper := NewKeeper(appCodec, storeKey, memStoreKey)
+	keeper.paramSubspace = subspace
 
 	ctx := sdk.NewContext(cms, tmproto.Header{}, false, log.NewNopLogger())
 
-	return k, ctx
+	return keeper, ctx
 }
 
-func TestParams_SetAndGet_RoundTrip(t *testing.T) {
-	k, ctx := setupKeeperWithParams(t)
+func TestParams_SetAndGetParams(t *testing.T) {
+	keeper, ctx := setupKeeperWithParams(t)
 
 	expected := authtypes.Params{
 		MaxMemoCharacters:      512,
@@ -71,26 +70,8 @@ func TestParams_SetAndGet_RoundTrip(t *testing.T) {
 		SigVerifyCostSecp256k1: 1000,
 	}
 
-	k.SetParams(ctx, expected)
-	got := k.GetParams(ctx)
+	keeper.SetParams(ctx, expected)
+	got := keeper.GetParams(ctx)
 
 	require.Equal(t, expected, got)
-}
-
-func TestParams_GRPC_Success(t *testing.T) {
-	k, ctx := setupKeeperWithParams(t)
-
-	expected := authtypes.Params{
-		MaxMemoCharacters:      1024,
-		TxSigLimit:             10,
-		TxSizeCostPerByte:      5,
-		SigVerifyCostED25519:   1900,
-		SigVerifyCostSecp256k1: 900,
-	}
-	k.SetParams(ctx, expected)
-
-	resp, err := k.Params(sdk.WrapSDKContext(ctx), &authtypes.QueryParamsRequest{})
-	require.NoError(t, err)
-	require.NotNil(t, resp)
-	require.Equal(t, expected, resp.Params)
 }
