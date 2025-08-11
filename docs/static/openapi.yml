@@ -9198,6 +9198,9 @@ paths:
                   schemaVersion:
                     type: integer
                     format: int64
+                  specificationVersion:
+                    type: integer
+                    format: int32
         default:
           description: An unexpected error response.
           schema:
@@ -23567,6 +23570,9 @@ definitions:
       schemaVersion:
         type: integer
         format: int64
+      specificationVersion:
+        type: integer
+        format: int32
   zigbeealliance.distributedcomplianceledger.model.ModelVersions:
     type: object
     properties:
@@ -23816,6 +23822,9 @@ definitions:
           schemaVersion:
             type: integer
             format: int64
+          specificationVersion:
+            type: integer
+            format: int32
   zigbeealliance.distributedcomplianceledger.model.QueryGetModelVersionsResponse:
     type: object
     properties:

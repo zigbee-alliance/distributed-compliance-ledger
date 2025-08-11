@@ -354,6 +354,22 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			}(validMsgCreateModelVersion()),
 		},
 		{
+			name: "SpecificationVersion == 0",
+			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
+				msg.SpecificationVersion = 0
+
+				return msg
+			}(validMsgCreateModelVersion()),
+		},
+		{
+			name: "SpecificationVersion > 0",
+			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
+				msg.SpecificationVersion = 1
+
+				return msg
+			}(validMsgCreateModelVersion()),
+		},
+		{
 			name: "SoftwareVersionString length == 64",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.SoftwareVersionString = tmrand.Str(64)
@@ -911,6 +927,7 @@ func validMsgCreateModelVersion() *MsgCreateModelVersion {
 		MinApplicableSoftwareVersion: testconstants.MinApplicableSoftwareVersion,
 		MaxApplicableSoftwareVersion: testconstants.MaxApplicableSoftwareVersion,
 		ReleaseNotesUrl:              testconstants.ReleaseNotesURL,
+		SpecificationVersion:         testconstants.SpecificationVersion,
 	}
 }
 

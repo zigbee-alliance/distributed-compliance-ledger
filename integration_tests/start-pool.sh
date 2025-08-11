@@ -1,5 +1,6 @@
 source integration_tests/cli/common.sh
 
+DCLD_VERSION=${1:-""}
 LOCALNET_DIR=".localnet"
 SED_EXT=
 
@@ -17,7 +18,14 @@ patch_consensus_config() {
   done
 }
 
-make install image localnet_rebuild
+if [ -n "$DCLD_VERSION" ]; then
+  make image localnet_clean
+  /bin/bash ./genlocalnetconfig.sh "$DCLD_VERSION"
+  /bin/bash ./genlocalnetappbins.sh "" "" "" "$DCLD_VERSION"
+else
+  make install image localnet_rebuild
+fi
+
 patch_consensus_config
 make localnet_start
 wait_for_height 2 20

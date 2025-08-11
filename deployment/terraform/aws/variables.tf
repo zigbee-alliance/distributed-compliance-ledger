@@ -1,3 +1,13 @@
+variable "common_tags" {
+  description = "Common tags for resources created in AWS."
+  type = object({
+    project     = optional(string) # default: DCL
+    environment = optional(string) # default: workspace name
+    created-by  = optional(string) # e.g. email address
+    purpose     = optional(string)
+  })
+}
+
 variable "region_1" {
   description = "AWS Region 1"
   # default     = "us-west-1"
@@ -21,6 +31,12 @@ variable "validator_config" {
     instance_type = string
     is_genesis    = bool
   })
+}
+
+variable "disable_validator_protection" {
+  description = "Disable the protection that prevents the validator instance from being accidentally terminated"
+  type        = bool
+  default     = false
 }
 
 variable "private_sentries_config" {
