@@ -1,15 +1,14 @@
-# FIXME get from provider ???
-variable "region" {
-  type    = string
-}
-
-variable "region_index" {
-  description = "Public Sentries Region Index"
-}
-
 variable "project_id" {
   description = "GCP project ID"
   type        = string
+}
+
+variable "region_config" {
+  description = "Observer nodes distribution across regions"
+  type = list(object({
+    region      = string
+    nodes_count = number
+  }))
 }
 
 variable "os_family" {
@@ -43,9 +42,6 @@ variable "peer_vpc" {
   description = "Peer VPC"
 }
 
-variable "nodes_count" {
-  description = "Number of Public Sentry nodes"
-}
 
 variable "instance_type" {
   description = "Type of GCP compute instances"

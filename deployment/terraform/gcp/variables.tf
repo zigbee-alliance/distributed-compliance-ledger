@@ -6,6 +6,7 @@ variable "common_labels" {
     created-by  = optional(string) # e.g. email address # FIXME @ is not allowed for labels
     purpose     = optional(string)
   })
+  default = {}
 }
 
 variable "project_id" {
@@ -77,9 +78,9 @@ variable "public_sentries_config" {
   type = object({
     enable        = bool
     enable_ipv6   = bool
-    nodes_count   = number
+    region1_nodes_count      = number
+    region2_nodes_count      = number
     instance_type = string
-    regions       = set(number)
   })
 
   description = "Public Sentries config"
@@ -88,11 +89,11 @@ variable "public_sentries_config" {
 variable "observers_config" {
   type = object({
     enable           = bool
-    nodes_count      = number
+    region1_nodes_count      = number
+    region2_nodes_count      = number
     instance_type    = string
     root_domain_name = string
     enable_tls       = bool
-    regions          = set(number)
   })
 
   description = "Observers config"

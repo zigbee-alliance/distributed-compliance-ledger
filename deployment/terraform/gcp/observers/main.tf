@@ -5,24 +5,38 @@ locals {
   rpc_port = 26657
   prometheus_port = 26660
 
-  vpc = var.vpc_name == null ? module.this_vpc : data.google_compute_network.vpc[0]
+  vpc = module.this_vpc
 
-  vpc_network_prefix = "10.${30 + var.region_index}"
-  internal_ips_prefix = "10.0"
   subnet_name_prefix = "observers-subnet"
-
-  subnet_region = var.region
-  subnet_output_key_prefix = "${local.subnet_region}/${local.subnet_name_prefix}"
+  internal_ips_prefix = "10.0"
 
   egress_inet_tag = "egress-inet"
   observer_tag = "observer"
+
+  subnets = flatten([ for index, config in var.region_config : [
+    {
+      subnet_name     = "${local.subnet_name_prefix}-0"
+      subnet_ip       = "10.${30 + index}.1.0/24"
+      subnet_region   = "${config.region}"
+    },
+    {
+      subnet_name     = "${local.subnet_name_prefix}-1"
+      subnet_ip       = "10.${30 + index}.2.0/24"
+      subnet_region   = "${config.region}"
+    },
+  ]])
+
+  nodes = flatten([ for region_index, config in var.region_config : [ 
+    for node_index in range(config.nodes_count) : {
+      region_index = region_index
+      subnet_key = "${config.region}/${local.subnet_name_prefix}-${node_index % 2}"
+      zone = data.google_compute_zones.available[region_index].names[node_index % length(data.google_compute_zones.available[region_index].names)]
+    }
+  ]])
+
+  regions = [ for config in var.region_config : config.region ]
 }
 
-
-data "google_compute_network" "vpc" {
-  count = var.vpc_name == null ? 0 : 1
-  name = var.vpc_name
-}
 
 data "google_compute_image" "ubuntu" {
   most_recent = true
@@ -32,17 +46,16 @@ data "google_compute_image" "ubuntu" {
 
 
 data "google_compute_zones" "available" {
+  count = length(local.regions)
+  region = local.regions[count.index]
 }
 
 resource "google_compute_instance" "this_nodes" {
-  count = var.nodes_count
+  count = length(local.nodes)
 
-  name                = "observer-node-${count.index}" # FIXME copy-paste
-  machine_type        = var.instance_type
-  # FIXME 
-  # - count.index might not fit available zones
-  # - aws logic implements distibution across public zones in vpc
-  zone               = data.google_compute_zones.available.names[count.index]
+  name          = "observer-node-${count.index}" # FIXME copy-paste
+  machine_type  = var.instance_type
+  zone          = local.nodes[count.index].zone
 
   boot_disk {
     initialize_params {
@@ -61,7 +74,7 @@ resource "google_compute_instance" "this_nodes" {
   }
 
   network_interface {
-    subnetwork = local.vpc.subnets["${local.subnet_output_key_prefix}-${count.index % length(local.vpc.subnets)}"].name
+    subnetwork = local.vpc.subnets[local.nodes[count.index].subnet_key].name
     access_config {} # enables external IP
   }
 

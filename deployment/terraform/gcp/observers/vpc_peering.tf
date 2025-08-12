@@ -8,7 +8,6 @@ resource "google_compute_network_peering" "this_observers_to_private_sentries_vp
 
 resource "google_compute_network_peering" "this_private_sentries_to_observers_vpc_peering" {
   name         = "private-sentries-to-observers-vpc-peering"
-  provider     = google.peer
   network      = var.peer_vpc.network_self_link
   peer_network = local.vpc.network_self_link
 }

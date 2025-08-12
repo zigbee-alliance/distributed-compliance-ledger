@@ -7,18 +7,9 @@ module "this_vpc" {
    
     project_id = var.project_id
 
-    network_name = "public-sentries-vpc-${var.region}"
-    routing_mode = "REGIONAL" // TODO for now keeps similar to AWS
+    network_name = "public-sentries-vpc"
 
-    subnets = [
-        {
-            subnet_name           = "${local.subnet_name}"
-            subnet_ip             = "${local.vpc_network_prefix}.1.0/24"
-            subnet_region         = "${local.subnet_region}"
-            stack_type            = var.enable_ipv6 ? "IPV4_IPV6" : "IPV4_ONLY"
-            ipv6_access_type      = var.enable_ipv6 ? "EXTERNAL" : null
-        },
-    ]
+    subnets = local.subnets
 
     routes = concat([
         {

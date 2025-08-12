@@ -3,16 +3,37 @@ locals {
   rpc_port = 26657
   prometheus_port = 26660
 
-  vpc_network_prefix = "10.${20 + var.region_index}"
-  internal_ips_prefix = "10.0"
   subnet_name = "public-sentries-subnet"
-
-  subnet_region = var.region
-  subnet_output_key = "${local.subnet_region}/${local.subnet_name}"
+  internal_ips_prefix = "10.0"
 
   egress_inet_tag = "egress-inet"
   public_sentry_tag = "public-sentry"
   public_sentry_seed_tag = "public-sentry-seed"
+
+  subnets = [ for index, config in var.region_config : 
+    {
+      subnet_name       = "${local.subnet_name}"
+      subnet_ip         = "10.${20 + index}.1.0/24"
+      subnet_region     = "${config.region}"
+      stack_type        = var.enable_ipv6 ? "IPV4_IPV6" : "IPV4_ONLY"
+      ipv6_access_type  = var.enable_ipv6 ? "EXTERNAL" : null
+    }
+  ]
+
+  regions = [ for config in var.region_config : config.region ]
+
+  nodes = flatten([ for region_index, config in var.region_config : [ 
+    for node_index in range(config.nodes_count) : {
+      region = config.region
+      subnet_key = "${config.region}/${local.subnet_name}"
+      zone = data.google_compute_zones.available[region_index].names[node_index % length(data.google_compute_zones.available[region_index].names)],    }
+  ]])
+
+  seed_nodes = [ for region_index, config in var.region_config : {
+    region = config.region
+    subnet_key = "${config.region}/${local.subnet_name}"
+    zone = data.google_compute_zones.available[region_index].names[0]
+  } if config.nodes_count > 0 ]
 }
 
 data "google_compute_image" "ubuntu" {
@@ -23,32 +44,35 @@ data "google_compute_image" "ubuntu" {
 
 
 data "google_compute_zones" "available" {
+  count = length(local.regions)
+  region = local.regions[count.index]
 }
 
 # FIXME vpc = true in aws
 resource "google_compute_address" "this_static_ips" {
-  count = var.nodes_count
+  count = length(local.nodes)
   name  = "public-sentry-node-${count.index}-static-ip"
+  region = local.nodes[count.index].region
   ip_version = var.enable_ipv6 ? "IPV6" : "IPV4"
   #subnetwork = module.this_vpc.subnets[local.subnet_output_key].name
 }
 
 # FIXME vpc = true in aws
-resource "google_compute_address" "this_seed_static_ip" {
-  name  = "public-sentry-seed-node-static-ip"
+resource "google_compute_address" "this_seed_static_ips" {
+  count = length(local.seed_nodes)
+  name  = "public-sentry-seed-node-${count.index}-static-ip"
+  region = local.seed_nodes[count.index].region
   ip_version = var.enable_ipv6 ? "IPV6" : "IPV4"
   #subnetwork = module.this_vpc.subnets[local.subnet_output_key].name
 }
 
 
 resource "google_compute_instance" "this_nodes" {
-  count = var.nodes_count
+  count = length(local.nodes)
 
   name                = "public-sentry-node-${count.index}" # FIXME copy-paste
   machine_type        = var.instance_type
-  # FIXME 
-  # - count.index might not fit available zones
-  zone               = data.google_compute_zones.available.names[count.index]
+  zone          = local.nodes[count.index].zone
 
   boot_disk {
     initialize_params {
@@ -68,7 +92,7 @@ resource "google_compute_instance" "this_nodes" {
 
   network_interface {
     stack_type            = var.enable_ipv6 ? "IPV4_IPV6" : "IPV4_ONLY"
-    subnetwork = module.this_vpc.subnets[local.subnet_output_key].name
+    subnetwork = module.this_vpc.subnets[local.nodes[count.index].subnet_key].name
     access_config {
       nat_ip = var.enable_ipv6 ? null : google_compute_address.this_static_ips[count.index].address # static external IP
     }
@@ -104,10 +128,12 @@ resource "google_compute_instance" "this_nodes" {
   tags = [local.public_sentry_tag, local.egress_inet_tag]
 }
 
-resource "google_compute_instance" "this_seed_node" {
-  name                = "public-sentry-seed-node"
+resource "google_compute_instance" "this_seed_nodes" {
+  count = length(local.seed_nodes)
+
+  name                = "public-sentry-seed-node-${count.index}"
   machine_type        = var.instance_type
-  zone               = data.google_compute_zones.available.names[0]
+  zone          = local.seed_nodes[count.index].zone
 
   boot_disk {
     initialize_params {
@@ -127,16 +153,16 @@ resource "google_compute_instance" "this_seed_node" {
 
   network_interface {
     stack_type            = var.enable_ipv6 ? "IPV4_IPV6" : "IPV4_ONLY"
-    subnetwork = module.this_vpc.subnets[local.subnet_output_key].name
+    subnetwork = module.this_vpc.subnets[local.seed_nodes[count.index].subnet_key].name
     access_config {
-      nat_ip = var.enable_ipv6 ? google_compute_address.this_static_ips.0.address : null # static external IP
+      nat_ip = var.enable_ipv6 ? null : google_compute_address.this_seed_static_ips[count.index].address # static external IP
     }
 
     dynamic "ipv6_access_config" {
       for_each = var.enable_ipv6 ? [{}] : []
       content {
         network_tier = "PREMIUM" # required, Only PREMIUM tier is validA
-        external_ipv6 = google_compute_address.this_seed_static_ip.address # static external IPv6
+        external_ipv6 = google_compute_address.this_seed_static_ips[count.index].address # static external IPv6
       }
     }
   }
