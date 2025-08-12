@@ -30,8 +30,7 @@ MASTER_UPGRADE_DOCKERFILE="./integration_tests/upgrade/Dockerfile-build-master"
 MASTER_UPGRADE_IMAGE="dcld-build-master"
 MASTER_UPGRADE_CONTAINER_NAME="$MASTER_UPGRADE_IMAGE-inst"
 
-binary_version_old="v1.5.0-0.dev.5"
-binary_version_new="master"
+DCLD_VERSION_OLD="0.12.0"
 DCLD_BIN_OLD="/tmp/dcld_bins/dcld_v0.12.0"
 DCLD_BIN_NEW="/tmp/dcld_bins/dcld_master"
 
@@ -88,17 +87,17 @@ function check_expected_version_for_interval {
 
 cleanup_container $NEW_OBSERVER_CONTAINER_NAME
 
-echo "1. run $NEW_OBSERVER_CONTAINER_NAME container"
+echo "1. Run \"$NEW_OBSERVER_CONTAINER_NAME\" container"
 docker run -d --name "$NEW_OBSERVER_CONTAINER_NAME" --ip $ip -p "$node_p2p_port-$node_client_port:26656-26657" --network $docker_network -i dcledger
 
 test_divider
 
-echo "2. install dcld $binary_version_old to $NEW_OBSERVER_CONTAINER_NAME"
+echo "2. Install dcld version \"$DCLD_VERSION_OLD\" to \"$NEW_OBSERVER_CONTAINER_NAME\""
 docker cp "$DCLD_BIN_OLD" "$NEW_OBSERVER_CONTAINER_NAME":"$dcl_user_home"/dcld
 
 test_divider
 
-echo "3. Set up configuration files for $NEW_OBSERVER_CONTAINER_NAME"
+echo "3. Set up configuration files for \"$NEW_OBSERVER_CONTAINER_NAME\""
 docker exec "$NEW_OBSERVER_CONTAINER_NAME" ./dcld init "$NEW_OBSERVER_CONTAINER_NAME" --chain-id $chain_id
 docker cp "$localnet_dir/node0/config/genesis.json" $NEW_OBSERVER_CONTAINER_NAME:$DCL_DIR/config
 peers="$(cat "$localnet_dir/node0/config/config.toml" | grep -o -E "persistent_peers = \".*\"")"
@@ -107,29 +106,30 @@ docker exec "$NEW_OBSERVER_CONTAINER_NAME" sed -i 's/laddr = "tcp:\/\/127.0.0.1:
 
 test_divider
 
-echo "4. Locate the app to $DCL_DIR/cosmovisor/genesis/bin directory in $NEW_OBSERVER_CONTAINER_NAME"
+echo "4. Locate the app to $DCL_DIR/cosmovisor/genesis/bin directory in \"$NEW_OBSERVER_CONTAINER_NAME\""
 docker exec "$NEW_OBSERVER_CONTAINER_NAME" mkdir -p "$DCL_DIR"/cosmovisor/genesis/bin
 docker exec "$NEW_OBSERVER_CONTAINER_NAME" cp -f ./dcld "$DCL_DIR"/cosmovisor/genesis/bin/
 
 test_divider
 
-echo "5. Set up "$binary_version_new" upgrade for $NEW_OBSERVER_CONTAINER_NAME"
+DCLD_VERSION_NEW="$(docker run "$MASTER_UPGRADE_IMAGE" /bin/sh -c "cd /go/src/distributed-compliance-ledger && git rev-parse --short HEAD")"
+
+echo "5. Set up version \"$DCLD_VERSION_NEW\" upgrade for \"$NEW_OBSERVER_CONTAINER_NAME\""
 docker cp "$DCLD_BIN_NEW" "$NEW_OBSERVER_CONTAINER_NAME":"$DCL_DIR"/dcld
-master_upgrade_plan_name="$(docker run "$MASTER_UPGRADE_IMAGE" /bin/sh -c "cd /go/src/distributed-compliance-ledger && git rev-parse --short HEAD")"
-docker exec "$NEW_OBSERVER_CONTAINER_NAME" /bin/sh -c "cosmovisor add-upgrade "$master_upgrade_plan_name" "$DCL_DIR"/dcld"
+docker exec "$NEW_OBSERVER_CONTAINER_NAME" /bin/sh -c "cosmovisor add-upgrade "$DCLD_VERSION_NEW" "$DCL_DIR"/dcld"
 docker rm "$MASTER_UPGRADE_CONTAINER_NAME"
 
 test_divider
 
-echo "6. Start Node \"$NEW_OBSERVER_CONTAINER_NAME\""
+echo "6. Start node \"$NEW_OBSERVER_CONTAINER_NAME\""
 docker exec -d "$NEW_OBSERVER_CONTAINER_NAME" sh -c "/var/lib/dcl/./node_helper.sh | tee /proc/1/fd/1"
 docker logs -f "$NEW_OBSERVER_CONTAINER_NAME" &
 
 test_divider
 
-echo "7. Check dcld version == $binary_version in $NEW_OBSERVER_CONTAINER_NAME"
+echo "7. Check dcld version == \"$DCLD_VERSION_OLD\" in \"$NEW_OBSERVER_CONTAINER_NAME\""
 
-check_expected_version_for_interval "$binary_version" || {
+check_expected_version_for_interval "$DCLD_VERSION_OLD" || {
     echo "installed dcld version does not match dcld mainnet version"
     exit 1
 }
@@ -138,7 +138,7 @@ test_divider
 
 overall_ping_time_sec=900
 
-echo "8. Check node $NEW_OBSERVER_CONTAINER_NAME for START catching up process pinging it every second for $overall_ping_time_sec seconds"
+echo "8. Check node \"$NEW_OBSERVER_CONTAINER_NAME\" for START catching up process pinging it every second for $overall_ping_time_sec seconds"
 
 check_expected_catching_up_status_for_interval true $overall_ping_time_sec || {
     echo "Catch-up procedure does not started"
@@ -147,7 +147,7 @@ check_expected_catching_up_status_for_interval true $overall_ping_time_sec || {
 
 test_divider
 
-echo "9. Check node $NEW_OBSERVER_CONTAINER_NAME for FINISH catching up process pinging it every second for $overall_ping_time_sec seconds"
+echo "9. Check node \"$NEW_OBSERVER_CONTAINER_NAME\" for FINISH catching up process pinging it every second for $overall_ping_time_sec seconds"
 
 check_expected_catching_up_status_for_interval false $overall_ping_time_sec || {
     echo "Catch-up procedure does not finished"
@@ -156,9 +156,9 @@ check_expected_catching_up_status_for_interval false $overall_ping_time_sec || {
 
 test_divider
 
-echo "10. Check node $NEW_OBSERVER_CONTAINER_NAME dcld updated to version $master_upgrade_plan_name"
+echo "10. Check node \"$NEW_OBSERVER_CONTAINER_NAME\" dcld updated to version \"$DCLD_VERSION_NEW\""
 
-check_expected_version_for_interval "$master_upgrade_plan_name" || {
+check_expected_version_for_interval "$DCLD_VERSION_NEW" || {
     echo "updated dcld version does not match dcld expected version"
     exit 1
 }
