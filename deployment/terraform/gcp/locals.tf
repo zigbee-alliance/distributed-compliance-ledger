@@ -47,18 +47,17 @@ locals {
      )
    }
 
-# FIXME
-#   observers = {
-#     private_ips = concat(
-#       (var.private_sentries_config.enable && var.observers_config.enable && contains(var.observers_config.regions, 1)) ? module.observers_1[0].private_ips : [],
-#       (var.private_sentries_config.enable && var.observers_config.enable && contains(var.observers_config.regions, 2)) ? module.observers_2[0].private_ips : [],
-#     )
+   observers = {
+     private_ips = concat(
+       (var.private_sentries_config.enable && var.observers_config.enable && contains(var.observers_config.regions, 1)) ? module.observers_1[0].private_ips : [],
+       (var.private_sentries_config.enable && var.observers_config.enable && contains(var.observers_config.regions, 2)) ? module.observers_2[0].private_ips : [],
+     )
 
-#     public_ips = concat(
-#       (var.private_sentries_config.enable && var.observers_config.enable && contains(var.observers_config.regions, 1)) ? module.observers_1[0].public_ips : [],
-#       (var.private_sentries_config.enable && var.observers_config.enable && contains(var.observers_config.regions, 2)) ? module.observers_2[0].public_ips : [],
-#     )
-#   }
+     public_ips = concat(
+       (var.private_sentries_config.enable && var.observers_config.enable && contains(var.observers_config.regions, 1)) ? module.observers_1[0].public_ips : [],
+       (var.private_sentries_config.enable && var.observers_config.enable && contains(var.observers_config.regions, 2)) ? module.observers_2[0].public_ips : [],
+     )
+   }
  }
 
   ansible_inventory = {
@@ -84,10 +83,9 @@ locals {
          hosts = { for host in local.nodes.seeds.public_ips : host => null }
        }
 
-# FIXME
-#       observers = {
-#         hosts = { for host in local.nodes.observers.public_ips : host => null }
-#       }
+       observers = {
+         hosts = { for host in local.nodes.observers.public_ips : host => null }
+       }
       }
     }
   }

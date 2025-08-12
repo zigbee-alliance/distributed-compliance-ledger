@@ -30,12 +30,14 @@ resource "google_compute_address" "this_static_ips" {
   count = var.nodes_count
   name  = "public-sentry-node-${count.index}-static-ip"
   ip_version = var.enable_ipv6 ? "IPV6" : "IPV4"
+  #subnetwork = module.this_vpc.subnets[local.subnet_output_key].name
 }
 
 # FIXME vpc = true in aws
 resource "google_compute_address" "this_seed_static_ip" {
   name  = "public-sentry-seed-node-static-ip"
   ip_version = var.enable_ipv6 ? "IPV6" : "IPV4"
+  #subnetwork = module.this_vpc.subnets[local.subnet_output_key].name
 }
 
 
@@ -44,6 +46,8 @@ resource "google_compute_instance" "this_nodes" {
 
   name                = "public-sentry-node-${count.index}" # FIXME copy-paste
   machine_type        = var.instance_type
+  # FIXME 
+  # - count.index might not fit available zones
   zone               = data.google_compute_zones.available.names[count.index]
 
   boot_disk {

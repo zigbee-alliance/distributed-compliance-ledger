@@ -1,31 +1,59 @@
+# FIXME get from provider ???
+variable "region" {
+  type    = string
+}
+
+variable "region_index" {
+  description = "Observer Region Index"
+}
+
+variable "project_id" {
+  description = "GCP project ID"
+  type        = string
+}
+
+variable "vpc_name" {
+  type    = string
+  default = null
+}
+
+variable "os_family" {
+  description = "Node base image family"
+  type        = string
+  default     = "ubuntu-2004-lts"  # TODO ubuntu 20.04 is deprecated
+}
+
 variable "labels" {
   description = "A map of labels to add to all applicable resources"
   type        = map(string)
   default     = {}
 }
 
-variable "project_id" {
-  description = "The GCP Project ID"
-  type = string
+variable "ssh_public_key_path" {
+  description = "SSH public key file path"
+  default     = "~/.ssh/id_rsa.pub"
 }
 
-variable "machine_type" {
-  type    = string
+variable "ssh_private_key_path" {
+  description = "SSH private key file path"
+  default     = "~/.ssh/id_rsa"
 }
 
-variable "instance_count" {
-  type    = number
-  default = 2
+variable "ssh_username" {
+  description = "SSH username"
+  default     = "ubuntu"
 }
 
-variable "boot_image" {
-  description = "Image to use for the boot disk"
-  type        = string
-  default     = local.default_source_image
+variable "peer_vpc" {
+  description = "Peer VPC"
 }
 
-variable "region_index" {
-  description = "Observer Region Index"
+variable "nodes_count" {
+  description = "Number of Observer nodes"
+}
+
+variable "instance_type" {
+  description = "Type of GCP compute instances"
 }
 
 variable "enable_tls" {
@@ -36,10 +64,11 @@ variable "root_domain_name" {
   description = "Root domain name"
 }
 
-variable "peer_vpc" {
-  description = "Peer VPC"
-}
-
-variable "service_account_email" {
-  type = string
-}
+# FIXME
+#variable "iam_instance_profile" {
+#  description = "IAM instance profile"
+#}
+#variable "service_account_email" {
+#  description = "IAM service account email"
+#  type        = string
+#}

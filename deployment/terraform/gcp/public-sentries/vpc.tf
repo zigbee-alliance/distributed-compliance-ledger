@@ -7,7 +7,7 @@ module "this_vpc" {
    
     project_id = var.project_id
 
-    network_name = "public-sentries-vpc"
+    network_name = "public-sentries-vpc-${var.region}"
     routing_mode = "REGIONAL" // TODO for now keeps similar to AWS
 
     subnets = [
