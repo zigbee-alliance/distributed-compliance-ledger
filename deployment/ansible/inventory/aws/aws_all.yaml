@@ -1,15 +1,21 @@
 ---
-all:
-  children:
-    genesis:
-      hosts:
-    observers:
-      hosts:
-    private_sentries:
-      hosts:
-    public_sentries:
-      hosts:
-    seeds:
-      hosts:
-    validators:
-      hosts:
+"all":
+  "children":
+    "genesis":
+      "hosts":
+        "34.23.97.23": null
+    "observers":
+      "hosts":
+        "104.196.183.217": null
+        "35.185.49.237": null
+    "private_sentries":
+      "hosts":
+        "104.196.17.146": null
+        "35.229.18.46": null
+    "public_sentries":
+      "hosts": {}
+    "seeds":
+      "hosts": {}
+    "validators":
+      "hosts":
+        "34.23.97.23": null

@@ -16,17 +16,17 @@
 config:
   p2p:
     pex: true
-    persistent_peers:
+    persistent_peers: "e3f9a40a0f8e1a482793fa41ca44dca722891a71@47.100.246.240:26656,5bcac6b5dd837f8c3132c188f7f9f2ded43f43e1@44.204.185.62:26656,6b29ff21159b232b7d8c19079d35be407c846c20@54.163.57.173:26656,be21399af86efeb91041d55d063103aa33f973a2@18.130.162.236:26656,29d5bc40bd86dc148c2e945b32524782fb23441d@35.155.38.14:26656,1a757528c43e9a0e5f70805ca5d162d0b1f1d7c8@54.180.40.2:26656,d2778f747cbcaa9cf1c7d4c5d1c3687ac6d79739@52.53.135.1:26656"
     seeds:
     addr_book_strict: false
   rpc:
     laddr: "tcp://0.0.0.0:26657"
     cors_allowed_origins: ["*"]
   statesync:
-    enable: false
-    rpc_servers: ""
-    trust_height: 0
-    trust_hash: ""
+    enable: true
+    rpc_servers: "https://on.test-net.dcl.csa-iot.org:26657,https://on.test-net.dcl.csa-iot.org:26657"
+    trust_height: 1476576
+    trust_hash: "3B7017302AFFE989CE5250B1AA752415C0EB2258F8F30A6C4A19DDDF29961B5B"
   instrumentation:
     prometheus: true
 app:
