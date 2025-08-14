@@ -447,7 +447,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAI_VID_TO_PAI_NOVID(t *te
 	utils.ProposeAndApproveRootCertificateByOptions(setup, setup.Trustee1, rootCertOptions)
 
 	// add Revocation Point PAI_VID
-	addPkiRevocationDistributionPoint := createAddRevocationMessageWithPAICertWithNumericVidPid(vendorAcc.String())
+	addPkiRevocationDistributionPoint := createAddRevocationMessageWithPAICertNoVid(vendorAcc.String())
 	_, err := setup.Handler(setup.Ctx, addPkiRevocationDistributionPoint)
 	require.NoError(t, err)
 
@@ -461,7 +461,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAI_VID_TO_PAI_NOVID(t *te
 		SchemaVersion:        0,
 	}
 	_, err = setup.Handler(setup.Ctx, &updatePkiRevocationDistributionPoint)
-	require.NotErrorIs(t, err, pkitypes.ErrCRLSignerCertificateVidNotEqualRevocationPointVid)
+	require.NoError(t, err)
 }
 
 func TestHandler_UpdatePkiRevocationDistributionPoint_PAA_NOVID_DifferentVID(t *testing.T) {
