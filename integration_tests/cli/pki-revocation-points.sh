@@ -52,6 +52,8 @@ crl_signer_delegated_by_pai_1="integration_tests/constants/leaf_cert_with_vid_65
 crl_signer_delegated_by_pai_2="integration_tests/constants/leaf_cert_with_vid_65522"
 crl_signer_delegated_by_paa="integration_tests/constants/leaf_cert_without_vid"
 
+intermediate_cert_path="integration_tests/constants/intermediate_cert"
+
 trustee_account="jack"
 second_trustee_account="alice"
 third_trustee_account="bob"
@@ -64,6 +66,7 @@ label="label"
 label_pai="label_pai"
 label_leaf="label_leaf"
 label_leaf_with_delegator="label_leaf_with_delegator"
+label_intermediate="label_intermediate"
 vid=65521
 vid_65522=65522
 vid_non_vid_scoped=4701
@@ -323,7 +326,22 @@ echo $result
 
 test_divider
 
-echo "13. ADD REVOCATION POINT FOR CRL SIGNER CERTIFICATE DELEGATED BY PAA"
+echo "13. ADD REVOCATION POINT FOR NON-VID-SCOPED PAI"
+
+result=$(dcld tx pki add-revocation-point --vid=$vid --is-paa="false" --certificate="$intermediate_cert_path" --label="$label_intermediate" --data-url="$data_url_non_vid_scoped" --issuer-subject-key-id=$issuer_subject_key_id --revocation-type=1 --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+
+result=$(dcld query pki revocation-point --vid=$vid --label=$label_intermediate --issuer-subject-key-id=$issuer_subject_key_id)
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"label\": \"$label_intermediate\""
+check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
+
+echo $result
+
+test_divider
+
+echo "14. ADD REVOCATION POINT FOR CRL SIGNER CERTIFICATE DELEGATED BY PAA"
 
 echo "Add PAI certificate"
 result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$delegator_cert_with_vid_65521_path" --from $vendor_account --yes)
@@ -343,7 +361,7 @@ echo $result
 
 test_divider
 
-echo "14. UPDATE REVOCATION POINT FOR CRL SIGNER CERTIFICATE DELEGATED BY PAI"
+echo "15. UPDATE REVOCATION POINT FOR CRL SIGNER CERTIFICATE DELEGATED BY PAI"
 data_url_new="$data_url"_new
 result=$(dcld tx pki update-revocation-point --vid=$vid --certificate="$crl_signer_delegated_by_pai_1" --label="$label_leaf_with_delegator" --data-url="$data_url_new" --issuer-subject-key-id=$delegator_cert_with_vid_subject_key_id --certificate-delegator="$delegator_cert_with_vid_65521_copy_path" --from=$vendor_account --yes)
 result=$(get_txn_result "$result")
@@ -361,7 +379,24 @@ echo $result
 
 test_divider
 
-echo "15. UPDATE REVOCATION POINT FOR CRL SIGNER CERTIFICATE DELEGATED BY PAA"
+echo "16. UPDATE REVOCATION POINT FOR NON-VID SCOPED PAI"
+data_url_non_vid_scoped_new="$data_url_non_vid_scoped"_new
+result=$(dcld tx pki update-revocation-point --vid=$vid --label="$label_intermediate" --certificate="$intermediate_cert_path" --data-url="$data_url_non_vid_scoped_new" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+echo $result
+
+result=$(dcld query pki revocation-point --vid=$vid --label=$label_intermediate --issuer-subject-key-id=$issuer_subject_key_id)
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"label\": \"$label_intermediate\""
+check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
+check_response "$result" "\"dataURL\": \"$data_url_non_vid_scoped_new\""
+check_response "$result" "\"CrlSignerCertificate\": $(<$intermediate_cert_path)"
+echo $result
+
+test_divider
+
+echo "17. UPDATE REVOCATION POINT FOR CRL SIGNER CERTIFICATE DELEGATED BY PAA"
 result=$(dcld tx pki update-revocation-point --vid=$vid_65522 --certificate="$crl_signer_delegated_by_pai_2" --label="$label_leaf" --data-url="$data_url_new" --issuer-subject-key-id=$delegator_cert_with_vid_subject_key_id --from=$vendor_account_65522 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
@@ -378,7 +413,7 @@ echo $result
 
 test_divider
 
-echo "16. UPDATE REVOCATION POINT WHEN POINT NOT FOUND"
+echo "18. UPDATE REVOCATION POINT WHEN POINT NOT FOUND"
 
 result=$(dcld tx pki update-revocation-point --vid=$vid_65522 --certificate="$pai_cert_with_numeric_vid_pid_path" --label="$label" --data-url="$data_url" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account_65522 --yes)
 result=$(get_txn_result "$result")
@@ -387,7 +422,7 @@ echo $result
 
 test_divider
 
-echo "17. UPDATE REVOCATION POINT FOR PAA WHEN NEW CERT IS NOT PAA"
+echo "19. UPDATE REVOCATION POINT FOR PAA WHEN NEW CERT IS NOT PAA"
 
 result=$(dcld tx pki update-revocation-point --vid=$vid --certificate="$pai_cert_with_numeric_vid_pid_path" --label="$label" --data-url="$data_url" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account --yes)
 result=$(get_txn_result "$result")
@@ -396,7 +431,7 @@ echo $result
 
 test_divider
 
-echo "18. UPDATE REVOCATION POINT WHEN SENDER IS NOT VENDOR"
+echo "20. UPDATE REVOCATION POINT WHEN SENDER IS NOT VENDOR"
 
 result=$(dcld tx pki update-revocation-point --vid=$vid --certificate="$paa_cert_with_numeric_vid_path" --label="$label" --data-url="$data_url" --issuer-subject-key-id=$issuer_subject_key_id --from=$trustee_account --yes)
 result=$(get_txn_result "$result")
@@ -405,7 +440,7 @@ echo $result
 
 test_divider
 
-echo "19. UPDATE REVOCATION POINT FOR PAA WHEN SENDER VID IS NOT EQUAL TO CERT VID"
+echo "21. UPDATE REVOCATION POINT FOR PAA WHEN SENDER VID IS NOT EQUAL TO CERT VID"
 
 result=$(dcld tx pki update-revocation-point --vid=$vid --certificate="$paa_cert_with_numeric_vid_path" --label="$label" --data-url="$data_url" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account_65522 --yes)
 result=$(get_txn_result "$result")
@@ -414,7 +449,7 @@ echo $result
 
 test_divider
 
-echo "20. UPDATE REVOCATION POINT FOR PAA WHEN MSG VID IS NOT EQUAL TO CERT VID"
+echo "22. UPDATE REVOCATION POINT FOR PAA WHEN MSG VID IS NOT EQUAL TO CERT VID"
 
 result=$(dcld tx pki update-revocation-point --vid=$vid_65522 --certificate="$paa_cert_with_numeric_vid_path" --label="$label" --data-url="$data_url" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account --yes)
 result=$(get_txn_result "$result")
@@ -423,7 +458,7 @@ echo $result
 
 test_divider
 
-echo "21. UPDATE REVOCATION POINT FOR VID-SCOPED PAA"
+echo "23. UPDATE REVOCATION POINT FOR VID-SCOPED PAA"
 result=$(dcld tx pki update-revocation-point --vid=$vid --certificate="$root_cert_path" --label="$label" --data-url="$data_url" --issuer-subject-key-id=$issuer_subject_key_id --schemaVersion=$schema_version_0 --from=$vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
@@ -437,7 +472,7 @@ check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
 check_response "$result" "\"schemaVersion\": $schema_version_0"
 test_divider
 
-echo "22. UPDATE REVOCATION POINT FOR NON-VID SCOPED PAA"
+echo "24. UPDATE REVOCATION POINT FOR NON-VID SCOPED PAA"
 
 result=$(dcld tx pki update-revocation-point --vid=$vid_non_vid_scoped --certificate="$test_root_cert_path" --label="$label_non_vid_scoped" --data-url="$data_url_non_vid_scoped" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account_non_vid_scoped --yes)
 result=$(get_txn_result "$result")
@@ -452,7 +487,7 @@ check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
 
 test_divider
 
-echo "23. UPDATE REVOCATION POINT FOR PAI"
+echo "25. UPDATE REVOCATION POINT FOR PAI"
 
 result=$(dcld tx pki update-revocation-point --vid=$vid_65522 --certificate="$pai_cert_vid_path" --label="$label_pai" --data-url="$data_url" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account_65522 --yes)
 result=$(get_txn_result "$result")
@@ -467,7 +502,7 @@ check_response "$result" "\"issuerSubjectKeyID\": \"$issuer_subject_key_id\""
 
 test_divider
 
-echo "24. DELETE REVOCATION POINT"
+echo "26. DELETE REVOCATION POINT"
 
 result=$(dcld tx pki delete-revocation-point --vid=$vid --label="$label" --issuer-subject-key-id=$issuer_subject_key_id --from=$vendor_account --yes)
 result=$(get_txn_result "$result")
