@@ -1,9 +1,32 @@
 locals {
-  grpc_port = 9090
-  rest_port = 1317
   p2p_port = 26656
-  rpc_port = 26657
   prometheus_port = 26660
+  rest_port = 1317
+  grpc_port = 9090
+  rpc_port = 26657
+
+  nlb_ports = [
+    {
+      name: "rest",
+      port: local.rest_port,
+      listen_port: 80,
+      listen_port_tls: 443,
+    },
+    {
+      name: "grpc",
+      port: local.grpc_port,
+      listen_port: 9090,
+      listen_port_tls: 8443,
+    },
+    {
+      name: "rpc",
+      port: local.rpc_port,
+      listen_port: 8080,
+      listen_port_tls: 26657,
+    },
+  ]
+
+  enable_tls = var.enable_tls && var.root_domain_name != ""
 
   vpc = module.this_vpc
 
@@ -12,6 +35,7 @@ locals {
 
   egress_inet_tag = "egress-inet"
   observer_tag = "observer"
+  observer_nlb_tag = "observer-nlb-health-check"
 
   subnets = flatten([ for index, config in var.region_config : [
     {
@@ -35,6 +59,7 @@ locals {
   ]])
 
   regions = [ for config in var.region_config : config.region ]
+  zones = distinct([ for node in local.nodes : node.zone ])
 }
 
 
@@ -97,5 +122,31 @@ resource "google_compute_instance" "this_nodes" {
 
   labels = var.labels # FIXME gcp.labels == aws.tags
 
-  tags = [local.observer_tag, local.egress_inet_tag]
+  tags = [local.observer_tag, local.egress_inet_tag, local.observer_nlb_tag]
+}
+
+resource "google_compute_instance_group" "this_nodes_group" {
+  count = length(local.zones)
+
+  name        = "observers-nodes-group-${local.zones[count.index]}"
+  description = "Observer nodes instance group in ${local.zones[count.index]}"
+
+  instances = [ for node in google_compute_instance.this_nodes : node.id if node.zone == local.zones[count.index] ]
+
+  named_port {
+    name = "grpc"
+    port = local.grpc_port
+  }
+
+  named_port {
+    name = "rest"
+    port = local.rest_port
+  }
+
+  named_port {
+    name = "rpc"
+    port = local.rpc_port
+  }
+
+  zone = local.zones[count.index]
 }
