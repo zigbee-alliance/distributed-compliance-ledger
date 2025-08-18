@@ -1,46 +1,90 @@
-module "this_dev_sg" {
-  source  = "terraform-aws-modules/security-group/aws"
-  version = "~> 4.0"
-
-  name        = "validator-dev-security-group"
-  description = "Validator security group for development"
-  vpc_id      = module.this_vpc.vpc_id
-
-  ingress_cidr_blocks = ["0.0.0.0/0"]
-  ingress_rules       = ["all-icmp", "ssh-tcp"]
-  egress_rules        = ["all-all"]
+resource "azurerm_network_security_group" "this" {
+  name                = "validator-private-security-group"
+  resource_group_name = local.resource_group_name
+  location            = local.location
 }
-module "this_private_sg" {
-  source  = "terraform-aws-modules/security-group/aws"
-  version = "~> 4.0"
 
-  name        = "validator-private-security-group"
-  description = "Validator node security group for internal connections"
-  vpc_id      = module.this_vpc.vpc_id
+resource "azurerm_network_security_rule" "sg-dev-inbound-ssh" {
+  name                       = "AllowInboundSSH"
+  resource_group_name         = local.resource_group_name
+  network_security_group_name = azurerm_network_security_group.this.name
+  access                     = "Allow"
+  destination_address_prefix = "*"
+  destination_port_range     = "22"
+  direction                  = "Inbound"
+  priority                   = 100
+  protocol                   = "Tcp"
+  source_address_prefix      = "*"
+  source_port_range          = "*"
+}
 
-  egress_rules = ["all-all"]
-  ingress_with_cidr_blocks = [
-    {
-      from_port   = 26656
-      to_port     = 26656
-      protocol    = "tcp"
-      description = "Allow p2p from internal IPs"
-      cidr_blocks = "10.0.0.0/8"
-    },
-    {
-      from_port   = 26657
-      to_port     = 26657
-      protocol    = "tcp"
-      description = "Allow RPC from internal IPs"
-      cidr_blocks = "10.0.0.0/8"
-    },
+resource "azurerm_network_security_rule" "sg-dev-inbound-icmp" {
+  name                       = "AllowInboundICMP"
+  resource_group_name         = local.resource_group_name
+  network_security_group_name = azurerm_network_security_group.this.name
+  access                     = "Allow"
+  destination_address_prefix = "*"
+  destination_port_range     = "*"
+  direction                  = "Inbound"
+  priority                   = 101
+  protocol                   = "Icmp"
+  source_address_prefix      = "*"
+  source_port_range          = "*"
+}
 
-    {
-      from_port   = 26660
-      to_port     = 26660
-      protocol    = "tcp"
-      description = "Allow Prometheus from internal IPs"
-      cidr_blocks = "10.0.0.0/8"
-    },
-  ]
+resource "azurerm_network_security_rule" "sg-dev-outbound-all" {
+  name                       = "AllowOutboundAll"
+  resource_group_name         = local.resource_group_name
+  network_security_group_name = azurerm_network_security_group.this.name
+  access                     = "Allow"
+  destination_address_prefix = "*"
+  destination_port_range     = "*"
+  direction                  = "Outbound"
+  priority                   = 102
+  protocol                   = "*"
+  source_address_prefix      = "*"
+  source_port_range          = "*"
+}
+
+resource "azurerm_network_security_rule" "sg-inbound-private-p2p" {
+  name                       = "AllowInboundP2PFromInternalIPs"
+  resource_group_name         = local.resource_group_name
+  network_security_group_name = azurerm_network_security_group.this.name
+  access                     = "Allow"
+  destination_address_prefix = "*"
+  destination_port_range     = local.p2p_port
+  direction                  = "Inbound"
+  priority                   = 103
+  protocol                   = "Tcp"
+  source_address_prefix      = "${local.vpc_network_prefix}.0.0/8"
+  source_port_range          = local.p2p_port
+}
+
+resource "azurerm_network_security_rule" "sg-inbound-private-rpc" {
+  name                       = "AllowInboundRPCFromInternalIPs"
+  resource_group_name         = local.resource_group_name
+  network_security_group_name = azurerm_network_security_group.this.name
+  access                     = "Allow"
+  destination_address_prefix = "*"
+  destination_port_range     = local.rpc_port
+  direction                  = "Inbound"
+  priority                   = 104
+  protocol                   = "Tcp"
+  source_address_prefix      = "${local.vpc_network_prefix}.0.0/8"
+  source_port_range          = local.rpc_port
+}
+
+# TODO
+resource "azurerm_network_security_rule" "sg-inbound-private-prometheus" {
+  name                       = "AllowInboundPrometheusFromInternalIPs"
+  resource_group_name         = local.resource_group_name
+  network_security_group_name = azurerm_network_security_group.this.name
+  access                     = "Allow"
+  destination_address_prefix = "*"
+  destination_port_range     = local.prometheus_port
+  direction                  = "Inbound"
+  priority                   = 105
+  protocol                   = "Tcp"
+  source_address_prefix      = "${local.vpc_network_prefix}.0.0/8"
+  source_port_range          = local.prometheus_port
 }

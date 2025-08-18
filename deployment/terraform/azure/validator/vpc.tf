@@ -1,22 +1,44 @@
-data "aws_availability_zones" "available" {
-  state = "available"
+resource "azurerm_virtual_network" "this" {
+  name                = "validator-vnet"
+  location            = local.location
+  resource_group_name = local.resource_group_name
+  address_space       = ["${local.vpc_network_prefix}.0.0/16"]
+
+  tags                = var.tags
 }
 
-locals {
-  vpc_network_prefix = "10.0"
+resource "azurerm_subnet" "this" {
+  name                 = local.subnet_name
+  resource_group_name  = local.resource_group_name
+  virtual_network_name = azurerm_virtual_network.this.name
+  address_prefixes     = ["${local.vpc_network_prefix}.1.0/24"]
 }
 
-module "this_vpc" {
-  source  = "terraform-aws-modules/vpc/aws"
-  version = "3.14.0"
+resource "azurerm_subnet_network_security_group_association" "this" {
+  subnet_id                 = azurerm_subnet.this.id
+  network_security_group_id = azurerm_network_security_group.this.id
+}
 
-  name = "validator-vpc"
-  cidr = "${local.vpc_network_prefix}.0.0/16"
+resource "azurerm_nat_gateway" "this" {
+  name                = "validator-vnet-nat-gw"
+  resource_group_name = local.resource_group_name
+  location            = local.location
+}
 
-  azs = [data.aws_availability_zones.available.names[0]]
+resource "azurerm_subnet_nat_gateway_association" "this" {
+  subnet_id      = azurerm_subnet.this.id
+  nat_gateway_id = azurerm_nat_gateway.this.id
+}
 
-  public_subnets = ["${local.vpc_network_prefix}.1.0/24"]
+resource "azurerm_public_ip" "nat_gw" {
+  name                = "validator-nat-gw-public-ip"
+  location            = local.location
+  resource_group_name = local.resource_group_name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+}
 
-  enable_nat_gateway   = true
-  enable_dns_hostnames = true
+resource "azurerm_nat_gateway_public_ip_association" "this" {
+  nat_gateway_id       = azurerm_nat_gateway.this.id
+  public_ip_address_id = azurerm_public_ip.nat_gw.id
 }

@@ -1,11 +1,11 @@
 output "vpc" {
-  value = module.this_vpc
+  value = azurerm_virtual_network.this
 }
 
 output "private_ips" {
-  value = [azurerm_instance.this_node.private_ip]
+  value = [azurerm_linux_virtual_machine.this_node.private_ip_address]
 }
 
 output "public_ips" {
-  value = [azurerm_instance.this_node.public_ip]
+  value = [azurerm_linux_virtual_machine.this_node.public_ip_address]
 }
