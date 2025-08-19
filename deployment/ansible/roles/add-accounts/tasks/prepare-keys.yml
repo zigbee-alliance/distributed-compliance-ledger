@@ -26,7 +26,7 @@
   shell: "echo {{ passphrase }} | {{ dcld.path }} keys show {{ key_name }} --home {{ dcl_home }}"
   register: key_name_exists
   ignore_errors: true
-  no_log: true
+  no_log: false
 
 - name: prepare-keys | print key_name_exists output
   debug:
@@ -36,7 +36,7 @@
   shell: "(echo {{ passphrase }}; echo {{ passphrase }}) | {{ dcld.path }} keys add {{ key_name }} --home {{ dcl_home }}"
   register: key_secret
   when: key_name_exists.rc != 0
-  no_log: true
+  no_log: false
 
 - name: prepare-keys | copy key secret to local machine
   become: false
@@ -50,4 +50,4 @@
 - name: prepare-keys | persist key name local fact
   changed_when: false
   shell: "echo {{ passphrase }} | {{ dcld.path }} keys show {{ key_name }} --home {{ dcl_home }} --output json | tee /etc/ansible/facts.d/{{ key_name}}.fact"
-  no_log: true
+  no_log: false
