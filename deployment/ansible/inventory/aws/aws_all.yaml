@@ -1,9 +1,6 @@
 ---
 "all":
   "children":
-    "genesis":
-      "hosts":
-        "35.243.247.76": null
     "observers":
       "hosts":
         "104.196.17.146": null

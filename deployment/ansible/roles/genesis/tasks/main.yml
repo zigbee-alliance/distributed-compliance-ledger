@@ -13,36 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Check if local genesis exists
-  become: false
-  stat:
-    path: "{{ playbook_dir }}/../persistent_chains/{{ chain_id }}/genesis.json"
-  register: local_genesis_file
-  delegate_to: localhost
-  run_once: true
-
-- name: Copy genesis from local to remote (if exists locally)
-  become: true
-  copy:
-    src: "{{ playbook_dir }}/../persistent_chains/{{ chain_id }}/genesis.json"
-    dest: "{{ dcl_home }}/config/genesis.json"
-    owner: "{{ ansible_user | default('root') }}"
-    mode: '0644'
-  when: local_genesis_file.stat.exists
-  run_once: true
-  
-- name: prepare genesis node configuration (if no local copy)
+- name: prepare genesis node configuration
   include_tasks: prepare-genesis.yml
-  when: not local_genesis_file.stat.exists
 
-- name: ensure user permissions (if no local copy)
+- name: ensure user permissions
   file:
     recurse: true
     state: directory
     owner: "{{ cosmovisor.user }}"
     path: "{{ dcl_home }}"
-  when: not local_genesis_file.stat.exists
 
-- name: copy genesis file (if no local copy)
+- name: copy genesis file
   include_tasks: copy-genesis-file.yml
-  when: not local_genesis_file.stat.exists
