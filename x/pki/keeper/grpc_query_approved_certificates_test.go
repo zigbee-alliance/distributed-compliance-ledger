@@ -153,7 +153,7 @@ func TestApprovedCertificatesQueryAll_Pagination(t *testing.T) {
 			name: "WithSubjectKeyIdFilter",
 			req: &types.QueryAllApprovedCertificatesRequest{
 				SubjectKeyId: subjectKeyId,
-				Pagination: &query.PageRequest{Limit: 10},
+				Pagination:   &query.PageRequest{Limit: 10},
 			},
 			expectCount: 1,
 		},
@@ -191,6 +191,7 @@ func TestApprovedCertificatesQueryAll_Pagination(t *testing.T) {
 				if tc.expectErrMsg != "" {
 					require.Contains(t, err.Error(), tc.expectErrMsg)
 				}
+
 				return
 			}
 
