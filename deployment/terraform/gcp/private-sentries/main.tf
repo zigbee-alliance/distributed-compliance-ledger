@@ -4,7 +4,7 @@ locals {
   prometheus_port = 26660
 
   vpc_network_prefix = "10.10"
-  internal_ips_prefix = "10.0"
+  internal_ips_range = "10.0.0.0/8"
   subnet_name = "private-sentries-subnet"
 
   subnet_region = var.region

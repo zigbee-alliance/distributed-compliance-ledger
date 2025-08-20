@@ -3,7 +3,8 @@ locals {
   rpc_port = 26657
   prometheus_port = 26660
 
-  vpc_network_prefix = "10.0"
+  vnet_network_prefix = "10.0"
+  internal_ips_range = "10.0.0.0/8"
   subnet_name = "validator-subnet"
 
   location = var.location == null ? data.azurerm_resource_group.this.location : var.location
@@ -38,6 +39,8 @@ resource "azurerm_network_interface" "this" {
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id = azurerm_public_ip.node.id
   }
+
+  tags                = var.tags
 }
 
 
@@ -99,6 +102,7 @@ resource "azurerm_linux_virtual_machine" "this_node" {
   tags                = var.tags
 }
 
+# FIXME verify, doesn't protect against terraform destroy
 resource "azurerm_management_lock" "this_node_lock" {
   count = var.disable_instance_protection ? 0 : 1
 

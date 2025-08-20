@@ -1,15 +1,11 @@
-output "vpc" {
-  value = module.this_vpc
+output "vnet" {
+  value = azurerm_virtual_network.this
 }
 
 output "private_ips" {
-  value = azurerm_instance.this_nodes.*.private_ip
+  value = azurerm_linux_virtual_machine.this_nodes.*.private_ip_address
 }
 
 output "public_ips" {
-  value = concat(slice(azurerm_instance.this_nodes, length(aws_eip.this_eips), length(azurerm_instance.this_nodes)).*.public_ip, aws_eip.this_eips.*.public_ip)
-}
-
-output "public_eips" {
-  value = aws_eip.this_eips.*.public_ip
+  value = azurerm_linux_virtual_machine.this_nodes.*.public_ip_address
 }

@@ -62,7 +62,7 @@ resource "google_compute_firewall" "this_private_fw_ingress_rules" {
     ports    = [local.prometheus_port]
   }
 
-  source_ranges = ["${local.internal_ips_prefix}.0.0/8"]
+  source_ranges = [local.internal_ips_range]
 
   target_tags   = [local.private_sentry_tag]
 }

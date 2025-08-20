@@ -1,5 +1,11 @@
 variable "resource_group_name" {
   description = "Azure Resource Group name"
+  default = null
+}
+
+variable "resource_group_name_prefix" {
+  description = "Prefix to use for Azure Resource Group names. Ignored if 'resource_group_name' is set"
+  default   = "dcl-resource-group"
 }
 
 variable "common_tags" {

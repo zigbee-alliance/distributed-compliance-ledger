@@ -1,7 +1,9 @@
 resource "azurerm_network_security_group" "this" {
-  name                = "validator-private-security-group"
+  name                = "validator-security-group"
   resource_group_name = local.resource_group_name
   location            = local.location
+
+  tags                = var.tags
 }
 
 resource "azurerm_network_security_rule" "sg-dev-inbound-ssh" {
@@ -56,7 +58,7 @@ resource "azurerm_network_security_rule" "sg-inbound-private-p2p" {
   direction                  = "Inbound"
   priority                   = 103
   protocol                   = "Tcp"
-  source_address_prefix      = "${local.vpc_network_prefix}.0.0/8"
+  source_address_prefix      = local.internal_ips_range
   source_port_range          = local.p2p_port
 }
 
@@ -70,7 +72,7 @@ resource "azurerm_network_security_rule" "sg-inbound-private-rpc" {
   direction                  = "Inbound"
   priority                   = 104
   protocol                   = "Tcp"
-  source_address_prefix      = "${local.vpc_network_prefix}.0.0/8"
+  source_address_prefix      = local.internal_ips_range
   source_port_range          = local.rpc_port
 }
 
@@ -85,6 +87,6 @@ resource "azurerm_network_security_rule" "sg-inbound-private-prometheus" {
   direction                  = "Inbound"
   priority                   = 105
   protocol                   = "Tcp"
-  source_address_prefix      = "${local.vpc_network_prefix}.0.0/8"
+  source_address_prefix      = local.internal_ips_range
   source_port_range          = local.prometheus_port
 }

@@ -31,7 +31,7 @@ locals {
   vpc = module.this_vpc
 
   subnet_name_prefix = "observers-subnet"
-  internal_ips_prefix = "10.0"
+  internal_ips_range = "10.0.0.0/8"
 
   egress_inet_tag = "egress-inet"
   observer_tag = "observer"

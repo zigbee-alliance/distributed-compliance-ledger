@@ -4,7 +4,7 @@ locals {
   prometheus_port = 26660
 
   subnet_name = "public-sentries-subnet"
-  internal_ips_prefix = "10.0"
+  internal_ips_range = "10.0.0.0/8"
 
   egress_inet_tag = "egress-inet"
   public_sentry_tag = "public-sentry"

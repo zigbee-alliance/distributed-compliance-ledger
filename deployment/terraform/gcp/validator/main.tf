@@ -4,6 +4,7 @@ locals {
   prometheus_port = 26660
 
   vpc_network_prefix = "10.0"
+  internal_ips_range = "10.0.0.0/8"
   subnet_name = "validator-subnet"
   subnet_region = var.region
   subnet_output_key = "${local.subnet_region}/${local.subnet_name}"
