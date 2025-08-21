@@ -70,18 +70,22 @@ build_tags := $(strip $(build_tags))
 
 
 ### Resulting build flags
-BUILD_FLAGS := -tags "$(build_tags)" -ldflags '$(ldflags)'
+DCLD_BUILD_FLAGS := -tags "$(build_tags)" -ldflags '$(ldflags)'
 
 # Check for nostrip option
 ifeq (,$(findstring nostrip,$(COSMOS_BUILD_OPTIONS)))
-  BUILD_FLAGS += -trimpath
+  DCLD_BUILD_FLAGS += -trimpath
 endif
 
 # Check for debug option
 ifeq (debug,$(findstring debug,$(COSMOS_BUILD_OPTIONS)))
-  BUILD_FLAGS += -gcflags "all=-N -l"
+  DCLD_BUILD_FLAGS += -gcflags "all=-N -l"
 endif
 
+# Check for cover option
+ifdef GOCOVER
+  DCLD_BUILD_FLAGS += -cover
+endif
 
 LICENSE_TYPE = "apache"
 COPYRIGHT_YEAR = "2020"
@@ -96,10 +100,10 @@ TEST_TARGETS= ${LOCALNET_TARGETS} ${TEST_DEPLOY_TARGETS}
 all: install
 
 build: go.sum
-	go build -mod=readonly $(BUILD_FLAGS) -o $(OUTPUT_DIR)/dcld ./cmd/dcld
+	go build -mod=readonly $(DCLD_BUILD_FLAGS) -o $(OUTPUT_DIR)/dcld ./cmd/dcld
 
 install: go.sum
-	go install -mod=readonly $(BUILD_FLAGS) ./cmd/dcld
+	go install -mod=readonly $(DCLD_BUILD_FLAGS) ./cmd/dcld
 
 go.sum: go.mod
 	@echo "--> Ensure dependencies have not been modified"

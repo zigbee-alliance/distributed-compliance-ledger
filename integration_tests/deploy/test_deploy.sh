@@ -29,29 +29,29 @@ VN_NAME="test_deploy_vn"
 
 CHAIN_ID=dcl_test_deploy
 
+DCL_TMP_DIR=/tmp/dcl_tmp
+
 cleanup() {
     make test_deploy_env_clean
+    rm -rf "$DCL_TMP_DIR"
 }
-trap cleanup EXIT
 
-
-function docker_exec {
+docker_exec() {
     docker exec -u "$DCL_USER" "$@"
 }
 
+trap cleanup EXIT
 
 test_divider
 
 echo "PROVISIONING"
-GOPATH=${GOPATH:-${HOME}/go}
-GOBIN=${GOBIN:-${GOPATH}/bin}
 
-mkdir -p "$GOBIN"
+mkdir -p "$DCL_TMP_DIR"
 
 docker build -f integration_tests/deploy/Dockerfile-build -t dcl-deploy-build .
 docker container create --name dcl-deploy-build-inst dcl-deploy-build
-docker cp dcl-deploy-build-inst:/go/bin/dcld "$GOBIN"/
-docker cp dcl-deploy-build-inst:/go/bin/cosmovisor "$GOBIN"/
+docker cp dcl-deploy-build-inst:/go/bin/dcld "$DCL_TMP_DIR"/
+docker cp dcl-deploy-build-inst:/go/bin/cosmovisor "$DCL_TMP_DIR"/
 docker rm dcl-deploy-build-inst
 
 make test_deploy_env_build
@@ -70,8 +70,8 @@ for node in "$GVN_NAME" "$VN_NAME"; do
     docker cp deployment/ansible/roles/bootstrap/files/cosmovisor_start.sh "$node":"$DCL_USER_HOME"
     docker cp deployment/cosmovisor.service "$node":"$DCL_USER_HOME"
     docker cp deployment/cosmovisor.conf "$node":"$DCL_USER_HOME"
-    docker cp "$GOBIN"/dcld "$node":"$DCL_USER_HOME"
-    docker cp "$GOBIN"/cosmovisor "$node":"$DCL_USER_HOME"
+    docker cp "$DCL_TMP_DIR"/dcld "$node":"$DCL_USER_HOME"
+    docker cp "$DCL_TMP_DIR"/cosmovisor "$node":"$DCL_USER_HOME"
     docker cp deployment/scripts/run_dcl_node "$node":"$DCL_USER_HOME"
     docker cp deployment/scripts/test_peers_conn "$node":"$DCL_USER_HOME"
 

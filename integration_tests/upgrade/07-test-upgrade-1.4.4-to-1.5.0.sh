@@ -17,24 +17,18 @@ set -euo pipefail
 source integration_tests/cli/common.sh
 
 # Upgrade constants
+
 plan_name="v1.5"
 upgrade_checksum="sha256:71128e28ce906a6f8b3454a68c8691f13f62097de03a3290b51751d3679f992d"
-binary_version_old="v1.4.4"
 # TODO it must be v1.5 before actual 1.5 release
 binary_version_new="v1.5.0-0.dev.5"
 
-wget -O dcld_old "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version_old/dcld"
-chmod ugo+x dcld_old
-
-wget -O dcld_new "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version_new/dcld"
-chmod ugo+x dcld_new
-
-DCLD_BIN_OLD="./dcld_old"
-DCLD_BIN_NEW="./dcld_new"
+DCLD_BIN_OLD="/tmp/dcld_bins/dcld_v1.4.4"
+DCLD_BIN_NEW="/tmp/dcld_bins/dcld_v1.5.0-0.dev.5"
 $DCLD_BIN_NEW config broadcast-mode sync
 ########################################################################################
 
-# Upgrade to 1.5.0 version
+# Upgrade to 1.5 version
 
 get_height current_height
 echo "Current height is $current_height"
@@ -511,7 +505,7 @@ certification_date_for_1_5_0="2024-01-01T00:00:00Z"
 provisional_date_for_1_5_0="2016-12-12T00:00:00Z"
 cd_certificate_id_for_1_5_0="20DEXZ"
 
-test_data_url_for_1_5_0="https://url.data.dclmodel-1.5.0"
+test_data_url_for_1_5_0="https://url.data.dclmodel-1.5"
 
 vendor_name_for_1_5_0="Vendor_1_5_0"
 company_legal_name_for_1_5_0="LegalCompanyName_1_5_0"
@@ -988,7 +982,4 @@ check_response "$result" "\"owner\": \"$validator_address\""
 
 test_divider
 
-echo "Upgrade from 1.4.4 to 1.5.0 passed"
-
-rm -f $DCLD_BIN_OLD
-rm -f $DCLD_BIN_NEW
+echo "Upgrade from 1.4.4 to 1.5 PASSED"
