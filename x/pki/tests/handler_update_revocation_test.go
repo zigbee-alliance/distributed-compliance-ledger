@@ -398,7 +398,7 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAI_NotChainedOnLedger(t *
 	require.ErrorIs(t, err, pkitypes.ErrCertNotChainedBack)
 }
 
-func TestHandler_UpdatePkiRevocationDistributionPoint_PAI_VID_TO_PAI_NOVID(t *testing.T) {
+func TestHandler_UpdatePkiRevocationDistributionPoint_PAI_VID_TO_PAI_DifferentVID(t *testing.T) {
 	setup := utils.Setup(t)
 
 	vendorAcc := utils.GenerateAccAddress()
@@ -422,13 +422,46 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_PAI_VID_TO_PAI_NOVID(t *te
 	updatePkiRevocationDistributionPoint := types.MsgUpdatePkiRevocationDistributionPoint{
 		Signer:               vendorAcc.String(),
 		Vid:                  testconstants.PAACertWithNumericVidVid,
-		CrlSignerCertificate: testconstants.IntermediateCertPem,
+		CrlSignerCertificate: testconstants.IntermediateCertWithVid2,
 		Label:                addPkiRevocationDistributionPoint.Label,
 		IssuerSubjectKeyID:   addPkiRevocationDistributionPoint.IssuerSubjectKeyID,
 		SchemaVersion:        0,
 	}
 	_, err = setup.Handler(setup.Ctx, &updatePkiRevocationDistributionPoint)
 	require.ErrorIs(t, err, pkitypes.ErrCRLSignerCertificateVidNotEqualRevocationPointVid)
+}
+
+func TestHandler_UpdatePkiRevocationDistributionPoint_PAI_VID_TO_PAI_NOVID(t *testing.T) {
+	setup := utils.Setup(t)
+
+	vendorAcc := utils.GenerateAccAddress()
+	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.PAACertWithNumericVidVid)
+
+	// add PAA for PAI_VID
+	rootCertOptions := utils.CreatePAACertWithNumericVidOptions()
+	utils.ProposeAndApproveRootCertificateByOptions(setup, setup.Trustee1, rootCertOptions)
+
+	// add PAA for PAI_NOVID
+	rootCertOptions = utils.CreateTestRootCertOptions()
+	rootCertOptions.Vid = testconstants.PAACertWithNumericVidVid
+	utils.ProposeAndApproveRootCertificateByOptions(setup, setup.Trustee1, rootCertOptions)
+
+	// add Revocation Point PAI_VID
+	addPkiRevocationDistributionPoint := createAddRevocationMessageWithPAICertNoVid(vendorAcc.String())
+	_, err := setup.Handler(setup.Ctx, addPkiRevocationDistributionPoint)
+	require.NoError(t, err)
+
+	// update Revocation Point to PAI_NOVID
+	updatePkiRevocationDistributionPoint := types.MsgUpdatePkiRevocationDistributionPoint{
+		Signer:               vendorAcc.String(),
+		Vid:                  testconstants.PAACertWithNumericVidVid,
+		CrlSignerCertificate: testconstants.IntermediateCertPem,
+		Label:                addPkiRevocationDistributionPoint.Label,
+		IssuerSubjectKeyID:   addPkiRevocationDistributionPoint.IssuerSubjectKeyID,
+		SchemaVersion:        0,
+	}
+	_, err = setup.Handler(setup.Ctx, &updatePkiRevocationDistributionPoint)
+	require.NoError(t, err)
 }
 
 func TestHandler_UpdatePkiRevocationDistributionPoint_PAA_NOVID_DifferentVID(t *testing.T) {
