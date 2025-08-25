@@ -1,146 +1,211 @@
-data "aws_ami" "ubuntu" {
-  most_recent = true
-  owners      = ["099720109477"]
+# TODO ipv6 support
 
-  filter {
-    name   = "name"
-    values = ["ubuntu-minimal/images/hvm-ssd/ubuntu-focal-20.04-amd64-minimal-*"]
-  }
+locals {
+  p2p_port = 26656
+  rpc_port = 26657
+  prometheus_port = 26660
 
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
+  vnet_network_prefix = "10.${20 + var.location_index}"
+  internal_ips_range = "10.0.0.0/8"
+  subnet_name = "public-sentries-subnet"
+
+  location = var.location == null ? data.azurerm_resource_group.this.location : var.location
+  resource_group_name = data.azurerm_resource_group.this.name
 }
 
-resource "azurerm_key_pair" "key_pair" {
-  public_key = file(var.ssh_public_key_path)
+
+data "azurerm_resource_group" "this" {
+  name = var.resource_group_name
 }
 
-resource "azurerm_instance" "this_nodes" {
+
+resource "azurerm_public_ip" "node" {
   count = var.nodes_count
 
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = var.instance_type
+  name                = "public-sentry-node-${count.index}-public-ip"
+  allocation_method   = "Static"
+  location            = local.location
+  resource_group_name = local.resource_group_name
+  sku                 = "Standard"
 
-  iam_instance_profile = var.iam_instance_profile.name
+  tags                = var.tags
+}
 
-  subnet_id          = element(module.this_vpc.public_subnets, 0)
-  ipv6_address_count = var.enable_ipv6 ? 1 : 0
 
-  vpc_security_group_ids = [
-    module.this_dev_sg.security_group_id,
-    module.this_public_sg.security_group_id
+resource "azurerm_network_interface" "node" {
+  count = var.nodes_count
+
+  name                = "public-sentry-node-${count.index}-nic"
+  location            = local.location
+  resource_group_name = local.resource_group_name
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id = azurerm_subnet.this.id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id = azurerm_public_ip.node[count.index].id
+  }
+
+  tags                = var.tags
+}
+
+resource "azurerm_network_interface_application_security_group_association" "sentries" {
+  count = var.nodes_count
+
+  network_interface_id      = azurerm_network_interface.node[count.index].id
+  application_security_group_id = azurerm_application_security_group.sentries.id
+}
+
+resource "azurerm_linux_virtual_machine" "this_nodes" {
+  count = var.nodes_count
+
+  name                       = "public-sentry-node-${count.index}"
+  resource_group_name        = local.resource_group_name
+  location                   = local.location
+
+  size                       = var.instance_size
+
+  admin_username      = var.ssh_username
+
+  admin_ssh_key {
+    username = var.ssh_username
+    public_key = file(var.ssh_public_key_path)
+  }
+
+  network_interface_ids = [
+    azurerm_network_interface.node[count.index].id,
   ]
 
-  key_name   = azurerm_key_pair.key_pair.id
-  monitoring = true
+  os_disk {
+    caching                   = "ReadWrite" # FIXME
+    storage_account_type      = "StandardSSD_LRS"
+    disk_size_gb              = 80
+  }
+
+  encryption_at_host_enabled = var.enable_encryption_at_host
+
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "0001-com-ubuntu-server-focal"
+    sku       = "20_04-lts"
+    version   = "latest"
+  }
+
+  # to avoid changes in case new latest image released
+  lifecycle {
+    ignore_changes = [source_image_reference]
+  }
+
+  #   service_account { #  FIXME
+  #     email  = var.service_account_email
+  #     scopes = ["cloud-platform"]
+  #   }
 
   connection {
     type        = "ssh"
-    host        = self.public_ip
+    host        = self.public_ip_address
     user        = var.ssh_username
     private_key = file(var.ssh_private_key_path)
   }
 
-  provisioner "file" {
-    content     = templatefile("./provisioner/cloudwatch-config.tpl", {})
-    destination = "/tmp/cloudwatch-config.json"
-  }
-
-  provisioner "remote-exec" {
-    script = "./provisioner/install-cloudwatch.sh"
-  }
-
+  // ansible
   provisioner "remote-exec" {
     script = "./provisioner/install-ansible-deps.sh"
   }
 
-  tags = {
-    Name = "Public Sentry Node [${count.index}]"
-  }
-
-  root_block_device {
-    encrypted   = true
-    volume_size = 80
-  }
-
-  metadata_options {
-    http_endpoint = "enabled"
-    http_tokens   = "required"
-  }
+  tags                = var.tags
 }
 
-resource "azurerm_instance" "this_seed_node" {
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = var.instance_type
 
-  iam_instance_profile = var.iam_instance_profile.name
+##### SEED ##########
 
-  subnet_id          = element(module.this_vpc.public_subnets, 0)
-  ipv6_address_count = var.enable_ipv6 ? 1 : 0
+resource "azurerm_public_ip" "seed" {
+  name                = "public-sentry-seed-public-ip"
+  allocation_method   = "Static"
+  location            = local.location
+  resource_group_name = local.resource_group_name
+  sku                 = "Standard"
 
-  vpc_security_group_ids = [
-    module.this_dev_sg.security_group_id,
-    module.this_seed_sg.security_group_id
+  tags                = var.tags
+}
+
+
+resource "azurerm_network_interface" "seed" {
+  name                = "public-sentry-seed-nic"
+  location            = local.location
+  resource_group_name = local.resource_group_name
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id = azurerm_subnet.this.id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id = azurerm_public_ip.seed.id
+  }
+
+  tags                = var.tags
+}
+
+resource "azurerm_network_interface_application_security_group_association" "seeds" {
+  count = var.nodes_count
+
+  network_interface_id      = azurerm_network_interface.seed.id
+  application_security_group_id = azurerm_application_security_group.seeds.id
+}
+
+resource "azurerm_linux_virtual_machine" "seed" {
+  name                       = "public-sentry-seed"
+  resource_group_name        = local.resource_group_name
+  location                   = local.location
+
+  size                       = var.instance_size
+
+  admin_username      = var.ssh_username
+
+  admin_ssh_key {
+    username = var.ssh_username
+    public_key = file(var.ssh_public_key_path)
+  }
+
+  network_interface_ids = [
+    azurerm_network_interface.seed.id,
   ]
 
-  key_name   = azurerm_key_pair.key_pair.id
-  monitoring = true
+  os_disk {
+    caching                   = "ReadWrite" # FIXME
+    storage_account_type      = "StandardSSD_LRS"
+    disk_size_gb              = 80
+  }
+
+  encryption_at_host_enabled = var.enable_encryption_at_host
+
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "0001-com-ubuntu-server-focal"
+    sku       = "20_04-lts"
+    version   = "latest"
+  }
+
+  # to avoid changes in case new latest image released
+  lifecycle {
+    ignore_changes = [source_image_reference]
+  }
+
+  #   service_account { #  FIXME
+  #     email  = var.service_account_email
+  #     scopes = ["cloud-platform"]
+  #   }
 
   connection {
     type        = "ssh"
-    host        = self.public_ip
+    host        = self.public_ip_address
     user        = var.ssh_username
     private_key = file(var.ssh_private_key_path)
   }
 
-  provisioner "file" {
-    content     = templatefile("./provisioner/cloudwatch-config.tpl", {})
-    destination = "/tmp/cloudwatch-config.json"
-  }
-
-  provisioner "remote-exec" {
-    script = "./provisioner/install-cloudwatch.sh"
-  }
-
+  // ansible
   provisioner "remote-exec" {
     script = "./provisioner/install-ansible-deps.sh"
   }
 
-  tags = {
-    Name = "Public Sentries' Seed Node"
-  }
-
-  root_block_device {
-    encrypted   = true
-    volume_size = 80
-  }
-
-  metadata_options {
-    http_endpoint = "enabled"
-    http_tokens   = "required"
-  }
-}
-
-resource "aws_eip" "this_nodes_eips" {
-  count = var.enable_ipv6 ? 0 : length(azurerm_instance.this_nodes)
-
-  instance = azurerm_instance.this_nodes[count.index].id
-  vpc      = true
-
-  tags = {
-    Name = "Public Sentry Node [${count.index}] Elastic IP"
-  }
-}
-
-resource "aws_eip" "this_seed_eip" {
-  count = var.enable_ipv6 ? 0 : 1
-
-  instance = azurerm_instance.this_seed_node.id
-  vpc      = true
-
-  tags = {
-    Name = "Public Sentries' Seed Node Elastic IP"
-  }
+  tags                = var.tags
 }

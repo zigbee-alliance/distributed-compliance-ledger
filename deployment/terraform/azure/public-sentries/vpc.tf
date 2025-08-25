@@ -1,26 +1,50 @@
-data "aws_availability_zones" "available" {
-  state = "available"
+# TODO ipv6 support
+
+resource "azurerm_virtual_network" "this" {
+  name                = "public-sentries-vnet"
+  location            = local.location
+  resource_group_name = local.resource_group_name
+  address_space       = ["${local.vnet_network_prefix}.0.0/16"]
+
+  tags                = var.tags
 }
 
-locals {
-  vpc_network_prefix = "10.${20 + var.region_index}"
+resource "azurerm_subnet" "this" {
+  name                 = local.subnet_name
+  resource_group_name  = local.resource_group_name
+  virtual_network_name = azurerm_virtual_network.this.name
+  address_prefixes     = ["${local.vnet_network_prefix}.1.0/24"]
 }
 
-module "this_vpc" {
-  source  = "terraform-aws-modules/vpc/aws"
-  version = "3.14.0"
+resource "azurerm_subnet_network_security_group_association" "this" {
+  subnet_id                 = azurerm_subnet.this.id
+  network_security_group_id = azurerm_network_security_group.this.id
+}
 
-  name = "public-sentries-vpc"
-  cidr = "${local.vpc_network_prefix}.0.0/16"
+resource "azurerm_nat_gateway" "this" {
+  name                = "public-sentries-vnet-nat-gw"
+  resource_group_name = local.resource_group_name
+  location            = local.location
 
-  enable_ipv6                                   = var.enable_ipv6
-  public_subnet_assign_ipv6_address_on_creation = var.enable_ipv6
-  public_subnet_ipv6_prefixes                   = var.enable_ipv6 ? [1] : []
+  tags                = var.tags
+}
 
-  azs = [data.aws_availability_zones.available.names[0]]
+resource "azurerm_subnet_nat_gateway_association" "this" {
+  subnet_id      = azurerm_subnet.this.id
+  nat_gateway_id = azurerm_nat_gateway.this.id
+}
 
-  public_subnets = ["${local.vpc_network_prefix}.1.0/24"]
+resource "azurerm_public_ip" "nat_gw" {
+  name                = "public-sentries-nat-gw-public-ip"
+  location            = local.location
+  resource_group_name = local.resource_group_name
+  allocation_method   = "Static"
+  sku                 = "Standard"
 
-  enable_nat_gateway   = true
-  enable_dns_hostnames = true
+  tags                = var.tags
+}
+
+resource "azurerm_nat_gateway_public_ip_association" "this" {
+  nat_gateway_id       = azurerm_nat_gateway.this.id
+  public_ip_address_id = azurerm_public_ip.nat_gw.id
 }

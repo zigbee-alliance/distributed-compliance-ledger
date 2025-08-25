@@ -1,15 +1,17 @@
 output "private_ips" {
-  value = azurerm_instance.this_nodes.*.private_ip
+  value = azurerm_linux_virtual_machine.this_nodes.*.private_ip_address
 }
 
+# TODO ipv6 support
 output "public_ips" {
-  value = var.enable_ipv6 ? [for node in azurerm_instance.this_nodes : node.ipv6_addresses[0]] : aws_eip.this_nodes_eips.*.public_ip
+  value = azurerm_linux_virtual_machine.this_nodes.*.public_ip_address
 }
 
 output "seed_private_ips" {
-  value = [azurerm_instance.this_seed_node.private_ip]
+  value = [azurerm_linux_virtual_machine.seed.private_ip_address]
 }
 
+# TODO ipv6 support
 output "seed_public_ips" {
-  value = [var.enable_ipv6 ? azurerm_instance.this_seed_node.ipv6_addresses[0] : aws_eip.this_seed_eip[0].public_ip]
+  value = [azurerm_linux_virtual_machine.seed.public_ip_address]
 }

@@ -1,87 +1,140 @@
-module "this_dev_sg" {
-  source  = "terraform-aws-modules/security-group/aws"
-  version = "~> 4.0"
-
-  name        = "public-sentry-dev-security-group"
-  description = "Public Sentry nodes security group for development"
-  vpc_id      = module.this_vpc.vpc_id
-
-  ingress_cidr_blocks      = ["0.0.0.0/0"]
-  ingress_ipv6_cidr_blocks = ["::/0"]
-  ingress_rules            = ["all-icmp", "ssh-tcp"]
-  egress_rules             = ["all-all"]
+resource "azurerm_network_security_group" "this" {
+  name                = "public-sentries-security-group"
+  resource_group_name = local.resource_group_name
+  location            = local.location
+  tags                = var.tags
 }
 
-module "this_public_sg" {
-  source  = "terraform-aws-modules/security-group/aws"
-  version = "~> 4.0"
-
-  name        = "public-sentry-public-security-group"
-  description = "Public Sentry nodes security group for external connections"
-  vpc_id      = module.this_vpc.vpc_id
-
-  egress_rules = ["all-all"]
-  ingress_with_cidr_blocks = [
-    {
-      from_port   = 26656
-      to_port     = 26656
-      protocol    = "tcp"
-      description = "Allow p2p from all external IPs"
-      cidr_blocks = "0.0.0.0/0"
-    },
-    {
-      from_port   = 26657
-      to_port     = 26657
-      protocol    = "tcp"
-      description = "Allow RPC from all external IPs"
-      cidr_blocks = "0.0.0.0/0"
-    },
-    {
-      from_port   = 26660
-      to_port     = 26660
-      protocol    = "tcp"
-      description = "Allow Prometheus from internal IPs"
-      cidr_blocks = "10.0.0.0/8"
-    },
-  ]
-
-  ingress_with_ipv6_cidr_blocks = [
-    {
-      from_port        = 26656
-      to_port          = 26656
-      protocol         = "tcp"
-      description      = "Allow p2p from all external IPs"
-      ipv6_cidr_blocks = "::/0"
-    },
-    {
-      from_port        = 26657
-      to_port          = 26657
-      protocol         = "tcp"
-      description      = "Allow RPC from all external IPs"
-      ipv6_cidr_blocks = "::/0"
-    },
-  ]
+resource "azurerm_application_security_group" "sentries" {
+  name                = "public-sentries-appsecurity-group"
+  resource_group_name = local.resource_group_name
+  location            = local.location
+  tags                = var.tags
 }
 
-module "this_seed_sg" {
-  source  = "terraform-aws-modules/security-group/aws"
-  version = "~> 4.0"
+resource "azurerm_application_security_group" "seeds" {
+  name                = "public-sentries-seeds-appsecurity-group"
+  resource_group_name = local.resource_group_name
+  location            = local.location
+  tags                = var.tags
+}
 
-  name        = "public-sentries-seed-security-group"
-  description = "Public Sentries Seed node security group for external connections"
-  vpc_id      = module.this_vpc.vpc_id
+# TODO
+# - dev ipv6 ingress from "::/0" (ssh, icmp)
+# - p2p and rcp ipv6 ingress from "::/0"
 
-  # ingress_cidr_blocks = ["10.0.0.0/8"]
-  egress_rules = ["all-all"]
-
-
-  ingress_with_cidr_blocks = [
-    {
-      from_port   = 26656
-      to_port     = 26656
-      protocol    = "tcp"
-      description = "Allow P2P from all"
-      cidr_blocks = "0.0.0.0/0"
-    },
+resource "azurerm_network_security_rule" "sg_dev_inbound_ssh" {
+  name                       = "AllowInboundSSH"
+  resource_group_name         = local.resource_group_name
+  network_security_group_name = azurerm_network_security_group.this.name
+  access                     = "Allow"
+  destination_application_security_group_ids = [
+    azurerm_application_security_group.sentries.id,
+    azurerm_application_security_group.seeds.id,
   ]
+  destination_port_range     = "22"
+  direction                  = "Inbound"
+  priority                   = 100
+  protocol                   = "Tcp"
+  source_address_prefix      = "*"
+  source_port_range          = "*"
+}
+
+resource "azurerm_network_security_rule" "sg_dev_inbound_icmp" {
+  name                       = "AllowInboundICMP"
+  resource_group_name         = local.resource_group_name
+  network_security_group_name = azurerm_network_security_group.this.name
+  access                     = "Allow"
+  destination_application_security_group_ids = [
+    azurerm_application_security_group.sentries.id,
+    azurerm_application_security_group.seeds.id,
+  ]
+  destination_port_range     = "*"
+  direction                  = "Inbound"
+  priority                   = 101
+  protocol                   = "Icmp"
+  source_address_prefix      = "*"
+  source_port_range          = "*"
+}
+
+resource "azurerm_network_security_rule" "sg_outbound_all" {
+  name                       = "AllowOutboundAll"
+  resource_group_name         = local.resource_group_name
+  network_security_group_name = azurerm_network_security_group.this.name
+  access                     = "Allow"
+  destination_address_prefix = "*"
+  destination_port_range     = "*"
+  direction                  = "Outbound"
+  priority                   = 102
+  protocol                   = "*"
+  source_application_security_group_ids = [
+    azurerm_application_security_group.sentries.id,
+    azurerm_application_security_group.seeds.id,
+  ]
+  source_port_range          = "*"
+}
+
+resource "azurerm_network_security_rule" "sg_inbound_public_p2p" {
+  name                       = "AllowInboundP2PFromAll"
+  resource_group_name         = local.resource_group_name
+  network_security_group_name = azurerm_network_security_group.this.name
+  access                     = "Allow"
+  destination_application_security_group_ids = [
+    azurerm_application_security_group.sentries.id,
+  ]
+  destination_port_range     = local.p2p_port
+  direction                  = "Inbound"
+  priority                   = 103
+  protocol                   = "Tcp"
+  source_address_prefix      = "*"
+  source_port_range          = local.p2p_port
+}
+
+resource "azurerm_network_security_rule" "sg_inbound_public_rpc" {
+  name                       = "AllowInboundRPCFromAll"
+  resource_group_name         = local.resource_group_name
+  network_security_group_name = azurerm_network_security_group.this.name
+  access                     = "Allow"
+  destination_application_security_group_ids = [
+    azurerm_application_security_group.sentries.id,
+  ]
+  destination_port_range     = local.rpc_port
+  direction                  = "Inbound"
+  priority                   = 104
+  protocol                   = "Tcp"
+  source_address_prefix      = "*"
+  source_port_range          = local.rpc_port
+}
+
+# TODO
+resource "azurerm_network_security_rule" "sg_inbound_public_prometheus" {
+  name                       = "AllowInboundPrometheusFromInternalIPs"
+  resource_group_name         = local.resource_group_name
+  network_security_group_name = azurerm_network_security_group.this.name
+  access                     = "Allow"
+  destination_application_security_group_ids = [
+    azurerm_application_security_group.sentries.id,
+  ]
+  destination_port_range     = local.prometheus_port
+  direction                  = "Inbound"
+  priority                   = 106
+  protocol                   = "Tcp"
+  source_address_prefix      = local.internal_ips_range
+  source_port_range          = local.prometheus_port
+}
+
+resource "azurerm_network_security_rule" "sg_inbound_seed_public_p2p" {
+  name                       = "AllowInboundSeedP2PFromAll"
+  resource_group_name         = local.resource_group_name
+  network_security_group_name = azurerm_network_security_group.this.name
+  access                     = "Allow"
+  destination_application_security_group_ids = [
+    azurerm_application_security_group.seeds.id,
+  ]
+  destination_port_range     = local.p2p_port
+  direction                  = "Inbound"
+  priority                   = 105
+  protocol                   = "Tcp"
+  source_address_prefix      = "*"
+  source_port_range          = local.p2p_port
 }
