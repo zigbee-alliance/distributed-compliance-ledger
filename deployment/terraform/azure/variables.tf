@@ -65,7 +65,7 @@ variable "public_sentries_config" {
     enable_ipv6   = bool
     nodes_count   = number
     instance_size = string
-    locations       = set(number) # FIXME multi-location support
+    locations       = set(number)
   })
 
   description = "Public Sentries config"
@@ -78,7 +78,7 @@ variable "observers_config" {
     instance_size    = string
     root_domain_name = string
     enable_tls       = bool
-    locations          = set(number) # FIXME multi-location support
+    locations          = set(number)
   })
 
   description = "Observers config"

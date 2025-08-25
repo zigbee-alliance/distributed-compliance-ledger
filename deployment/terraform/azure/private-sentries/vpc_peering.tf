@@ -1,6 +1,8 @@
 data "azurerm_virtual_network" "peer_vnet" {
   name                = var.peer_vnet_name
   resource_group_name = var.peer_vnet_resource_group_name
+
+  depends_on = [azurerm_virtual_network.this] # force deferring to apply phase
 }
 
 resource "azurerm_virtual_network_peering" "this_private_sentries_to_validator_vnet_peering" {

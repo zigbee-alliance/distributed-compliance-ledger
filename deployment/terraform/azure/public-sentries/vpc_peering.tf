@@ -6,7 +6,7 @@ data "azurerm_virtual_network" "peer_vnet" {
 }
 
 resource "azurerm_virtual_network_peering" "this_public_sentries_to_private_sentries_vnet_peering" {
-  name                         = "public-sentries-to-private-sentries-vnet-peering"
+  name                         = "${local.resource_prefix}-to-private-sentries-vnet-peering"
   resource_group_name          = local.resource_group_name
   virtual_network_name         = azurerm_virtual_network.this.name
   remote_virtual_network_id    = data.azurerm_virtual_network.peer_vnet.id
@@ -17,7 +17,7 @@ resource "azurerm_virtual_network_peering" "this_public_sentries_to_private_sent
 
 # Azure Virtual Network peering between Virtual Network B and A
 resource "azurerm_virtual_network_peering" "this_private_sentries_to_public_sentries_vnet_peering" {
-  name                         = "private-sentries-to-public-sentries-vnet-peering"
+  name                         = "private-sentries-to-${local.resource_prefix}-vnet-peering"
   resource_group_name          = var.peer_vnet_resource_group_name
   virtual_network_name         = data.azurerm_virtual_network.peer_vnet.name
   remote_virtual_network_id    = azurerm_virtual_network.this.id

@@ -1,7 +1,7 @@
 # TODO ipv6 support
 
 resource "azurerm_virtual_network" "this" {
-  name                = "public-sentries-vnet"
+  name                = "${local.resource_prefix}-vnet"
   location            = local.location
   resource_group_name = local.resource_group_name
   address_space       = ["${local.vnet_network_prefix}.0.0/16"]
@@ -22,7 +22,7 @@ resource "azurerm_subnet_network_security_group_association" "this" {
 }
 
 resource "azurerm_nat_gateway" "this" {
-  name                = "public-sentries-vnet-nat-gw"
+  name                = "${local.resource_prefix}-vnet-nat-gw"
   resource_group_name = local.resource_group_name
   location            = local.location
 
@@ -35,7 +35,7 @@ resource "azurerm_subnet_nat_gateway_association" "this" {
 }
 
 resource "azurerm_public_ip" "nat_gw" {
-  name                = "public-sentries-nat-gw-public-ip"
+  name                = "${local.resource_prefix}-nat-gw-public-ip"
   location            = local.location
   resource_group_name = local.resource_group_name
   allocation_method   = "Static"

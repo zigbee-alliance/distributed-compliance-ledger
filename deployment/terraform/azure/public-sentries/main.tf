@@ -1,13 +1,15 @@
 # TODO ipv6 support
 
 locals {
+  resource_prefix = var.resource_suffix == null ? "public-sentries" : "public-sentries-${var.resource_suffix}"
+
   p2p_port = 26656
   rpc_port = 26657
   prometheus_port = 26660
 
   vnet_network_prefix = "10.${20 + var.location_index}"
   internal_ips_range = "10.0.0.0/8"
-  subnet_name = "public-sentries-subnet"
+  subnet_name = "${local.resource_prefix}-subnet"
 
   location = var.location == null ? data.azurerm_resource_group.this.location : var.location
   resource_group_name = data.azurerm_resource_group.this.name
@@ -22,7 +24,7 @@ data "azurerm_resource_group" "this" {
 resource "azurerm_public_ip" "node" {
   count = var.nodes_count
 
-  name                = "public-sentry-node-${count.index}-public-ip"
+  name                = "${local.resource_prefix}-node-${count.index}-public-ip"
   allocation_method   = "Static"
   location            = local.location
   resource_group_name = local.resource_group_name
@@ -35,7 +37,7 @@ resource "azurerm_public_ip" "node" {
 resource "azurerm_network_interface" "node" {
   count = var.nodes_count
 
-  name                = "public-sentry-node-${count.index}-nic"
+  name                = "${local.resource_prefix}-node-${count.index}-nic"
   location            = local.location
   resource_group_name = local.resource_group_name
 
@@ -59,7 +61,7 @@ resource "azurerm_network_interface_application_security_group_association" "sen
 resource "azurerm_linux_virtual_machine" "this_nodes" {
   count = var.nodes_count
 
-  name                       = "public-sentry-node-${count.index}"
+  name                       = "${local.resource_prefix}-node-${count.index}"
   resource_group_name        = local.resource_group_name
   location                   = local.location
 
@@ -120,7 +122,7 @@ resource "azurerm_linux_virtual_machine" "this_nodes" {
 ##### SEED ##########
 
 resource "azurerm_public_ip" "seed" {
-  name                = "public-sentry-seed-public-ip"
+  name                = "${local.resource_prefix}-seed-public-ip"
   allocation_method   = "Static"
   location            = local.location
   resource_group_name = local.resource_group_name
@@ -131,7 +133,7 @@ resource "azurerm_public_ip" "seed" {
 
 
 resource "azurerm_network_interface" "seed" {
-  name                = "public-sentry-seed-nic"
+  name                = "${local.resource_prefix}-seed-nic"
   location            = local.location
   resource_group_name = local.resource_group_name
 
@@ -153,7 +155,7 @@ resource "azurerm_network_interface_application_security_group_association" "see
 }
 
 resource "azurerm_linux_virtual_machine" "seed" {
-  name                       = "public-sentry-seed"
+  name                       = "${local.resource_prefix}-seed"
   resource_group_name        = local.resource_group_name
   location                   = local.location
 

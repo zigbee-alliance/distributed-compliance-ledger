@@ -68,59 +68,71 @@ module "private_sentries" {
   depends_on = [module.validator]
 }
 
-#   # Public Sentries location 1
-#   module "public_sentries_1" {
-#     count = (var.private_sentries_config.enable &&
-#       var.public_sentries_config.enable &&
-#     contains(var.public_sentries_config.locations, 1)) ? 1 : 0
+# Public Sentries location 1
+module "public_sentries_1" {
+  count = (var.private_sentries_config.enable &&
+    var.public_sentries_config.enable &&
+  contains(var.public_sentries_config.locations, 1)) ? 1 : 0
 
-#     source = "./public-sentries"
-#     providers = {
-#       aws      = aws.location_1
-#       aws.peer = aws.location_1
-#     }
+  source = "./public-sentries"
+  providers = {
+    azurerm = azurerm
+  }
 
-#     tags = local.tags
+  resource_group_name = local.resource_group_names[0]
+  location = local.locations[0]
 
-#     nodes_count          = var.public_sentries_config.nodes_count
-#     instance_size        = var.public_sentries_config.instance_size
-#     iam_instance_profile = module.iam.iam_instance_profile
+  tags = local.tags
 
-#     enable_ipv6 = var.public_sentries_config.enable_ipv6
+  nodes_count          = var.public_sentries_config.nodes_count
+  instance_size        = var.public_sentries_config.instance_size
+  # iam_instance_profile = module.iam.iam_instance_profile # FIXME
 
-#     ssh_public_key_path  = var.ssh_public_key_path
-#     ssh_private_key_path = var.ssh_private_key_path
+  enable_ipv6 = var.public_sentries_config.enable_ipv6
 
-#     location_index = 1
-#     peer_vnet     = module.private_sentries[0].vnet
-#   }
+  ssh_public_key_path  = var.ssh_public_key_path
+  ssh_private_key_path = var.ssh_private_key_path
 
-#   # Public Sentries location 2
-#   module "public_sentries_2" {
-#     count = (var.private_sentries_config.enable &&
-#       var.public_sentries_config.enable &&
-#     contains(var.public_sentries_config.locations, 2)) ? 1 : 0
+  location_index = 1
 
-#     source = "./public-sentries"
-#     providers = {
-#       aws      = aws.location_2
-#       aws.peer = aws.location_1
-#     }
+  peer_vnet_name = module.private_sentries[0].vnet.name
+  peer_vnet_resource_group_name = local.resource_group_names[0]
 
-#     tags = local.tags
+  depends_on = [module.private_sentries[0]]
+}
 
-#     nodes_count          = var.public_sentries_config.nodes_count
-#     instance_size        = var.public_sentries_config.instance_size
-#     iam_instance_profile = module.iam.iam_instance_profile
+# Public Sentries location 2
+module "public_sentries_2" {
+  count = (var.private_sentries_config.enable &&
+    var.public_sentries_config.enable &&
+  contains(var.public_sentries_config.locations, 2)) ? 1 : 0
 
-#     enable_ipv6 = var.public_sentries_config.enable_ipv6
+  source = "./public-sentries"
+  providers = {
+    azurerm = azurerm
+  }
 
-#     ssh_public_key_path  = var.ssh_public_key_path
-#     ssh_private_key_path = var.ssh_private_key_path
+  resource_group_name = local.resource_group_names[1]
+  location = local.locations[1]
 
-#     location_index = 2
-#     peer_vnet     = module.private_sentries[0].vnet
-#   }
+  tags = local.tags
+
+  nodes_count          = var.public_sentries_config.nodes_count
+  instance_size        = var.public_sentries_config.instance_size
+  # iam_instance_profile = module.iam.iam_instance_profile # FIXME
+
+  enable_ipv6 = var.public_sentries_config.enable_ipv6
+
+  ssh_public_key_path  = var.ssh_public_key_path
+  ssh_private_key_path = var.ssh_private_key_path
+
+  location_index = 2
+
+  peer_vnet_name = module.private_sentries[0].vnet.name
+  peer_vnet_resource_group_name = local.resource_group_names[0]
+
+  depends_on = [module.private_sentries[0]]
+}
 
 #   # Observers location 1
 #   module "observers_1" {

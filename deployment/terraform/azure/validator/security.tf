@@ -6,7 +6,7 @@ resource "azurerm_network_security_group" "this" {
   tags                = var.tags
 }
 
-resource "azurerm_network_security_rule" "sg-dev-inbound-ssh" {
+resource "azurerm_network_security_rule" "sg_dev_inbound_ssh" {
   name                       = "AllowInboundSSH"
   resource_group_name         = local.resource_group_name
   network_security_group_name = azurerm_network_security_group.this.name
@@ -20,7 +20,7 @@ resource "azurerm_network_security_rule" "sg-dev-inbound-ssh" {
   source_port_range          = "*"
 }
 
-resource "azurerm_network_security_rule" "sg-dev-inbound-icmp" {
+resource "azurerm_network_security_rule" "sg_dev_inbound_icmp" {
   name                       = "AllowInboundICMP"
   resource_group_name         = local.resource_group_name
   network_security_group_name = azurerm_network_security_group.this.name
@@ -34,7 +34,7 @@ resource "azurerm_network_security_rule" "sg-dev-inbound-icmp" {
   source_port_range          = "*"
 }
 
-resource "azurerm_network_security_rule" "sg-dev-outbound-all" {
+resource "azurerm_network_security_rule" "sg_dev_outbound_all" {
   name                       = "AllowOutboundAll"
   resource_group_name         = local.resource_group_name
   network_security_group_name = azurerm_network_security_group.this.name
@@ -48,7 +48,7 @@ resource "azurerm_network_security_rule" "sg-dev-outbound-all" {
   source_port_range          = "*"
 }
 
-resource "azurerm_network_security_rule" "sg-inbound-private-p2p" {
+resource "azurerm_network_security_rule" "sg_inbound_private_p2p" {
   name                       = "AllowInboundP2PFromInternalIPs"
   resource_group_name         = local.resource_group_name
   network_security_group_name = azurerm_network_security_group.this.name
@@ -62,7 +62,7 @@ resource "azurerm_network_security_rule" "sg-inbound-private-p2p" {
   source_port_range          = local.p2p_port
 }
 
-resource "azurerm_network_security_rule" "sg-inbound-private-rpc" {
+resource "azurerm_network_security_rule" "sg_inbound_private_rpc" {
   name                       = "AllowInboundRPCFromInternalIPs"
   resource_group_name         = local.resource_group_name
   network_security_group_name = azurerm_network_security_group.this.name
@@ -77,7 +77,7 @@ resource "azurerm_network_security_rule" "sg-inbound-private-rpc" {
 }
 
 # TODO
-resource "azurerm_network_security_rule" "sg-inbound-private-prometheus" {
+resource "azurerm_network_security_rule" "sg_inbound_private_prometheus" {
   name                       = "AllowInboundPrometheusFromInternalIPs"
   resource_group_name         = local.resource_group_name
   network_security_group_name = azurerm_network_security_group.this.name

@@ -1,19 +1,19 @@
 resource "azurerm_network_security_group" "this" {
-  name                = "public-sentries-security-group"
+  name                = "${local.resource_prefix}-security-group"
   resource_group_name = local.resource_group_name
   location            = local.location
   tags                = var.tags
 }
 
 resource "azurerm_application_security_group" "sentries" {
-  name                = "public-sentries-appsecurity-group"
+  name                = "${local.resource_prefix}-appsecurity-group"
   resource_group_name = local.resource_group_name
   location            = local.location
   tags                = var.tags
 }
 
 resource "azurerm_application_security_group" "seeds" {
-  name                = "public-sentries-seeds-appsecurity-group"
+  name                = "${local.resource_prefix}-seeds-appsecurity-group"
   resource_group_name = local.resource_group_name
   location            = local.location
   tags                = var.tags
