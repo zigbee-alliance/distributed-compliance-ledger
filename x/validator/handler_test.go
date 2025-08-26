@@ -138,7 +138,10 @@ func TestHandler_CreateValidator_WithIncorrectPubKey(t *testing.T) {
 		testconstants.PubKey1, // not a validator pubkey
 		&types.Description{Moniker: testconstants.ProductName},
 	)
-	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
+	require.NoError(t, err)
+
+	_, err = setup.Handler(setup.Ctx, msgCreateValidator)
+	require.ErrorIs(t, err, sdkstakingtypes.ErrValidatorPubKeyTypeNotSupported)
 }
 
 func TestHandler_CreateValidator_TwiceForSameValidatorAddress(t *testing.T) {

@@ -61,7 +61,7 @@ func (k msgServer) CreateValidator(goCtx context.Context, msg *types.MsgCreateVa
 				"consensus pubkey %s is not supported (only ed25519 allowed)",
 				pk.Type(),
 			)
-    	}
+		}
 		if !tmstrings.StringInSlice(pk.Type(), cp.Validator.PubKeyTypes) {
 			return nil, errors.Wrapf(
 				sdkstakingtypes.ErrValidatorPubKeyTypeNotSupported,
