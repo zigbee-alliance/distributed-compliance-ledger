@@ -347,7 +347,7 @@ func TestHandler_RevokeX509RootCertsBySubjectKeyId(t *testing.T) {
 	rootCertOptions := &rootCertOptions{
 		pemCert:      testconstants.PAACertWithSameSubjectID1,
 		subject:      testconstants.PAACertWithSameSubjectID1Subject,
-		subjectKeyID: testconstants.PAACertWithSameSubjectIDSubjectID,
+		subjectKeyID: testconstants.PAACertWithSameSubjectIDSubjectKeyID,
 		info:         testconstants.Info,
 		vid:          testconstants.Vid,
 	}
@@ -358,25 +358,25 @@ func TestHandler_RevokeX509RootCertsBySubjectKeyId(t *testing.T) {
 
 	// revoke certificate
 	revokeX509Cert := types.NewMsgProposeRevokeX509RootCert(
-		setup.Trustee1.String(), testconstants.PAACertWithSameSubjectID1Subject, testconstants.PAACertWithSameSubjectIDSubjectID, "", false, testconstants.Info)
+		setup.Trustee1.String(), testconstants.PAACertWithSameSubjectID1Subject, testconstants.PAACertWithSameSubjectIDSubjectKeyID, "", false, testconstants.Info)
 	_, err := setup.Handler(setup.Ctx, revokeX509Cert)
 	require.NoError(t, err)
 
 	aprRevokeX509Cert := types.NewMsgApproveRevokeX509RootCert(
-		setup.Trustee2.String(), testconstants.PAACertWithSameSubjectID1Subject, testconstants.PAACertWithSameSubjectIDSubjectID, "", testconstants.Info)
+		setup.Trustee2.String(), testconstants.PAACertWithSameSubjectID1Subject, testconstants.PAACertWithSameSubjectIDSubjectKeyID, "", testconstants.Info)
 	_, err = setup.Handler(setup.Ctx, aprRevokeX509Cert)
 	require.NoError(t, err)
 
 	// check that root certificate has been revoked
-	approvedCertificates, _ := queryApprovedCertificates(setup, testconstants.PAACertWithSameSubjectID2Subject, testconstants.PAACertWithSameSubjectIDSubjectID)
+	approvedCertificates, _ := queryApprovedCertificates(setup, testconstants.PAACertWithSameSubjectID2Subject, testconstants.PAACertWithSameSubjectIDSubjectKeyID)
 	require.Equal(t, 1, len(approvedCertificates.Certs))
 	require.Equal(t, testconstants.PAACertWithSameSubjectID2Subject, approvedCertificates.Certs[0].Subject)
-	require.Equal(t, testconstants.PAACertWithSameSubjectIDSubjectID, approvedCertificates.SubjectKeyId)
+	require.Equal(t, testconstants.PAACertWithSameSubjectIDSubjectKeyID, approvedCertificates.SubjectKeyId)
 
-	certsBySubjectKeyID, _ := queryAllApprovedCertificatesBySubjectKeyID(setup, testconstants.PAACertWithSameSubjectIDSubjectID)
+	certsBySubjectKeyID, _ := queryAllApprovedCertificatesBySubjectKeyID(setup, testconstants.PAACertWithSameSubjectIDSubjectKeyID)
 	require.Equal(t, 1, len(certsBySubjectKeyID))
 	require.Equal(t, 1, len(certsBySubjectKeyID[0].Certs))
-	require.Equal(t, testconstants.PAACertWithSameSubjectIDSubjectID, certsBySubjectKeyID[0].SubjectKeyId)
+	require.Equal(t, testconstants.PAACertWithSameSubjectIDSubjectKeyID, certsBySubjectKeyID[0].SubjectKeyId)
 	require.Equal(t, testconstants.PAACertWithSameSubjectID2Subject, certsBySubjectKeyID[0].Certs[0].Subject)
 
 	// check that no proposed certificate revocations have been created

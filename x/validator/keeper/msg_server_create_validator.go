@@ -55,13 +55,6 @@ func (k msgServer) CreateValidator(goCtx context.Context, msg *types.MsgCreateVa
 	// check key type
 	cp := ctx.ConsensusParams()
 	if cp != nil && cp.Validator != nil {
-		if pk.Type() != "tendermint/PubKeyEd25519" {
-			return nil, errors.Wrapf(
-				sdkstakingtypes.ErrValidatorPubKeyTypeNotSupported,
-				"consensus pubkey %s is not supported (only ed25519 allowed)",
-				pk.Type(),
-			)
-		}
 		if !tmstrings.StringInSlice(pk.Type(), cp.Validator.PubKeyTypes) {
 			return nil, errors.Wrapf(
 				sdkstakingtypes.ErrValidatorPubKeyTypeNotSupported,

@@ -32,6 +32,7 @@ import (
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 )
 
 type TestSetup struct {
@@ -46,6 +47,11 @@ func Setup(t *testing.T) TestSetup {
 	t.Helper()
 	dclauthK, _ := testkeeper.DclauthKeeper(t)
 	k, ctx := testkeeper.ValidatorKeeper(t, dclauthK)
+	cp := ctx.ConsensusParams()
+	if cp.Validator == nil {
+		cp.Validator = &tmproto.ValidatorParams{}
+	}
+	cp.Validator.PubKeyTypes = []string{"ed25519"} 
 	handler := NewHandler(*k)
 
 	ba := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
@@ -141,6 +147,7 @@ func TestHandler_CreateValidator_WithIncorrectPubKey(t *testing.T) {
 	require.NoError(t, err)
 
 	_, err = setup.Handler(setup.Ctx, msgCreateValidator)
+	println(setup.Ctx.ConsensusParams().Validator.PubKeyTypes)
 	require.ErrorIs(t, err, sdkstakingtypes.ErrValidatorPubKeyTypeNotSupported)
 }
 
