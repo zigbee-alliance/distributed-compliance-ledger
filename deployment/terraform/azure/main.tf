@@ -114,6 +114,7 @@ module "public_sentries_2" {
 
   resource_group_name = local.resource_group_names[1]
   location = local.locations[1]
+  resource_suffix = local.locations[0]
 
   tags = local.tags
 
