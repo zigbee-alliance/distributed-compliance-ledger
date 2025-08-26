@@ -1,90 +1,146 @@
-variable "resource_group_name" {
-  description = "Azure Resource Group name"
+locals {
+  resource_prefix = var.resource_suffix == null ? "observers" : "observers-${var.resource_suffix}"
+
+  p2p_port = 26656
+  rpc_port = 26657
+  prometheus_port = 26660
+  rest_port = 1317
+  grpc_port = 9090
+
+  #  FIXME
+  nlb_ports = [
+    {
+      name: "rest",
+      port: local.rest_port,
+      listen_port: 80,
+      listen_port_tls: 443,
+    },
+    {
+      name: "grpc",
+      port: local.grpc_port,
+      listen_port: 9090,
+      listen_port_tls: 8443,
+    },
+    {
+      name: "rpc",
+      port: local.rpc_port,
+      listen_port: 8080,
+      listen_port_tls: 26657,
+    },
+  ]
+
+  enable_tls = var.enable_tls && var.root_domain_name != ""
+
+  vnet_network_prefix = "10.${30 + var.location_index}"
+  internal_ips_range = "10.0.0.0/8"
+  subnet_name = "${local.resource_prefix}-subnet"
+
+  location = var.location == null ? data.azurerm_resource_group.this.location : var.location
+  resource_group_name = data.azurerm_resource_group.this.name
+
+  azs = [ for zm in data.azurerm_location.this.zone_mappings : zm.physical_zone ]
+
+  node_zones = [ 
+    for index in range(var.nodes_count) : local.azs[index % length(local.azs)]
+  ]
 }
 
-variable "location" {
-  description = "Azure region"
+data "azurerm_resource_group" "this" {
+  name = var.resource_group_name
 }
 
-variable "nodes_count" {
-  description = "Number of observer nodes"
-  type        = number
+data "azurerm_location" "this" {
+  location = local.location
 }
 
-variable "instance_type" {
-  description = "VM size for observer nodes"
-  type        = string
+resource "azurerm_public_ip" "node" {
+  count = var.nodes_count
+
+  name                = "${local.resource_prefix}-node-${count.index}-public-ip"
+  allocation_method   = "Static"
+  location            = local.location
+  resource_group_name = local.resource_group_name
+  sku                 = "Standard"
+
+  tags                = var.tags
 }
 
-variable "admin_username" {
-  description = "SSH username"
-  type        = string
-  default     = "ubuntu"
-}
 
-variable "ssh_public_key_path" {
-  description = "Path to SSH public key"
-  type        = string
-}
+resource "azurerm_network_interface" "this" {
+  count = var.nodes_count
 
-variable "subnet_id" {
-  description = "Subnet ID for observer nodes"
-  type        = string
-}
-
-variable "network_security_group_id" {
-  description = "NSG for observer nodes"
-  type        = string
-}
-
-resource "azurerm_public_ip" "observer_public_ip" {
-  count               = var.nodes_count
-  name                = "observer-public-ip-${count.index}"
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  allocation_method   = "Dynamic"
-}
-
-resource "azurerm_network_interface" "observer_nic" {
-  count               = var.nodes_count
-  name                = "observer-nic-${count.index}"
-  location            = var.location
-  resource_group_name = var.resource_group_name
+  name                = "${local.resource_prefix}-node-${count.index}-nic"
+  location            = local.location
+  zone                = local.node_zones[count.index]
+  resource_group_name = local.resource_group_name
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = var.subnet_id
+    subnet_id = azurerm_subnet.this.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.observer_public_ip[count.index].id
+    public_ip_address_id = azurerm_public_ip.node[count.index].id
   }
 
-  network_security_group_id = var.network_security_group_id
+  tags                = var.tags
 }
 
-resource "azurerm_linux_virtual_machine" "observer_vm" {
-  count                = var.nodes_count
-  name                 = "observer-vm-${count.index}"
-  resource_group_name  = var.resource_group_name
-  location             = var.location
-  size                 = var.instance_type
-  admin_username       = var.admin_username
-  network_interface_ids = [azurerm_network_interface.observer_nic[count.index].id]
+
+resource "azurerm_linux_virtual_machine" "this_nodes" {
+  count = var.nodes_count
+
+  name                       = "${local.resource_prefix}-node-${count.index}"
+  resource_group_name        = local.resource_group_name
+  location                   = local.location
+
+  size                       = var.instance_size
+
+  admin_username      = var.ssh_username
 
   admin_ssh_key {
-    username   = var.admin_username
+    username = var.ssh_username
     public_key = file(var.ssh_public_key_path)
   }
 
+  network_interface_ids = [
+    azurerm_network_interface.this[count.index].id,
+  ]
+
   os_disk {
-    caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"
-    disk_size_gb         = 30
+    caching                   = "ReadWrite" # FIXME
+    storage_account_type      = "StandardSSD_LRS"
+    disk_size_gb              = 80
   }
+
+  encryption_at_host_enabled = var.enable_encryption_at_host
 
   source_image_reference {
     publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "20.04-LTS"
+    offer     = "0001-com-ubuntu-server-focal"
+    sku       = "20_04-lts"
     version   = "latest"
   }
+
+  # to avoid changes in case new latest image released
+  lifecycle {
+    ignore_changes = [source_image_reference]
+  }
+
+  #   service_account { #  FIXME
+  #     email  = var.service_account_email
+  #     scopes = ["cloud-platform"]
+  #   }
+
+  connection {
+    type        = "ssh"
+    host        = self.public_ip_address
+    user        = var.ssh_username
+    private_key = file(var.ssh_private_key_path)
+  }
+
+  // ansible
+  provisioner "remote-exec" {
+    script = "./provisioner/install-ansible-deps.sh"
+  }
+
+  tags                = var.tags
 }

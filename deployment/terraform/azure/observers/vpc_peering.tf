@@ -1,21 +1,27 @@
-module "this_vpc_peerings" {
-  source  = "grem11n/vpc-peering/aws"
-  version = "4.1.0"
+data "azurerm_virtual_network" "peer_vnet" {
+  name                = var.peer_vnet_name
+  resource_group_name = var.peer_vnet_resource_group_name
 
-  providers = {
-    aws.this = aws
-    aws.peer = aws.peer
-  }
+  depends_on = [azurerm_virtual_network.this] # force deferring to apply phase
+}
 
-  this_vpc_id = module.this_vpc.vpc_id
-  peer_vpc_id = var.peer_vpc.vpc_id
+resource "azurerm_virtual_network_peering" "this_observers_to_private_sentries_vnet_peering" {
+  name                         = "${local.resource_prefix}-to-private-sentries-vnet-peering"
+  resource_group_name          = local.resource_group_name
+  virtual_network_name         = azurerm_virtual_network.this.name
+  remote_virtual_network_id    = data.azurerm_virtual_network.peer_vnet.id
+  allow_virtual_network_access = true
+  allow_forwarded_traffic      = true
+  allow_gateway_transit = false
+}
 
-  this_rts_ids = module.this_vpc.public_route_table_ids
-  peer_rts_ids = [element(var.peer_vpc.public_route_table_ids, 0)]
-
-  auto_accept_peering = true
-
-  tags = {
-    Name = "Observers to Private Sentries peering"
-  }
+# Azure Virtual Network peering between Virtual Network B and A
+resource "azurerm_virtual_network_peering" "this_private_sentries_to_observers_vnet_peering" {
+  name                         = "private-sentries-to-${local.resource_prefix}-vnet-peering"
+  resource_group_name          = var.peer_vnet_resource_group_name
+  virtual_network_name         = data.azurerm_virtual_network.peer_vnet.name
+  remote_virtual_network_id    = azurerm_virtual_network.this.id
+  allow_virtual_network_access = true
+  allow_forwarded_traffic      = true
+  allow_gateway_transit = false
 }

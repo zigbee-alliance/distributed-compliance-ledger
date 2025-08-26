@@ -1,7 +1,7 @@
 output "private_ips" {
-  value = azurerm_instance.this_nodes.*.private_ip
+  value = azurerm_linux_virtual_machine.this_nodes.*.private_ip_address
 }
 
 output "public_ips" {
-  value = azurerm_instance.this_nodes.*.public_ip
+  value = azurerm_linux_virtual_machine.this_nodes.*.public_ip_address
 }
