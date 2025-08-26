@@ -126,6 +126,10 @@ jobs:
       - name: Run integration tests
         shell: bash
         run: integration_tests/run-all.sh upgrade
+
+      - name: Run integration rest tests
+        shell: bash
+        run: integration_tests/run-all.sh rest
   lint:
     if: needs.changes.outputs.go == 'true'
     name: Check linter issues with golangci-lint tool

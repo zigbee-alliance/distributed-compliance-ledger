@@ -44,9 +44,9 @@ check_pool_accepts_tx() {
 # Add NodeAdmin profile and approve with trustees
 random_string nodeadmin_account
 passphrase="test1234"
-docker exec validator-0 /bin/sh -c "(echo $passphrase; echo $passphrase) | ./dcld keys add $nodeadmin_account"
-nodeadmin_address=$(docker exec validator-0 /bin/sh -c "echo $passphrase | ./dcld keys show $nodeadmin_account -a")
-nodeadmin_pubkey=$(docker exec validator-0 /bin/sh -c "echo $passphrase | ./dcld keys show $nodeadmin_account -p")
+echo $passphrase | $DCLD_BIN_OLD keys add $nodeadmin_account
+nodeadmin_address=$(echo $passphrase | $DCLD_BIN_OLD keys show $nodeadmin_account -a)
+nodeadmin_pubkey=$(echo $passphrase | $DCLD_BIN_OLD keys show $nodeadmin_account -p)
 
 trustees=("jack" "alice" "bob")
 echo $passphrase | $DCLD_BIN_OLD tx auth propose-add-account --address="$nodeadmin_address" --pubkey="$nodeadmin_pubkey" --roles="NodeAdmin" --from jack --yes
