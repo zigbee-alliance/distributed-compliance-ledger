@@ -3,12 +3,12 @@
 set -euo pipefail
 source integration_tests/cli/common.sh
 
-binary_version="1.4.4"
+binary_version="v1.4.4"
 local_build_bin="/build/dcld" # Path to locally built dcld v1.4.5
 node_count=4
 
-# wget -O dcld_old "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version/dcld"
-# chmod ugo+x dcld_old
+wget -O dcld_old "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version/dcld"
+chmod ugo+x dcld_old
 
 DCLD_BIN_OLD="./dcld_old"
 
