@@ -37,10 +37,13 @@ func (app *App) ExportAppStateAndValidators(_ bool, _ []string, modulesToExport 
 	}
 
 	cp := app.BaseApp.GetConsensusParams(ctx)
+	if cp == nil {
+		cp = &tmproto.ConsensusParams{}
+	}
 	if cp.Validator == nil {
 		cp.Validator = &tmproto.ValidatorParams{}
 	}
-	cp.Validator.PubKeyTypes = []string{"ed25519"} 
+	cp.Validator.PubKeyTypes = []string{"ed25519"}
 
 	return servertypes.ExportedApp{
 		AppState:        appState,

@@ -315,6 +315,10 @@ func Demo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 	validatorAddr := sdk.ValAddress(nodeAdminAddr)
 
+	// node admin cannot add a new validator with incorrect validator pubkey
+	_, err = CreateValidator(suite, validatorAddr, nodeAdminName, nodeAdminAcc, testconstants.PubKey1, "test123")
+	require.Error(suite.T, err)
+
 	_, err = CreateValidator(suite, validatorAddr, nodeAdminName, nodeAdminAcc, testconstants.ValidatorPubKey1, "test123")
 	require.NoError(suite.T, err)
 
