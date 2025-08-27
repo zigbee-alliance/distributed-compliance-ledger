@@ -14,14 +14,14 @@ variable "location" {
   default = null
 }
 
-variable "resource_suffix" {
-  description = "Resource suffix to use for all the resources"
-  default = null
-}
-
 variable "location_index" {
   description = "Public Sentries Location Index"
   type        = number
+}
+
+variable "resource_suffix" {
+  description = "Resource suffix to use for all the resources"
+  default = null
 }
 
 variable "enable_encryption_at_host" {

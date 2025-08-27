@@ -6,6 +6,10 @@
 #   - ensure you have enough quota for the selected virtual machine sizes in the required locations and request the new quotes if needed
 #   - (optional) if disk encryption is on need to enable that for the subscription
 #     https://learn.microsoft.com/en-us/azure/virtual-machines/linux/disks-enable-host-based-encryption-cli
+#   - choose instance_size taking into account the following:
+#       - limits & quotas for you subscription
+#       - SKUs [availbility](https://learn.microsoft.com/en-us/azure/azure-resource-manager/troubleshooting/error-sku-not-available?tabs=azure-cli#solution)
+#         - if a size is not availble for a zone, include that zone to the `exclude_zones` list
 
 provider "azurerm" {
   features {}
@@ -114,7 +118,6 @@ module "public_sentries_2" {
 
   resource_group_name = local.resource_group_names[1]
   location = local.locations[1]
-  resource_suffix = local.locations[0]
 
   tags = local.tags
 
@@ -135,63 +138,76 @@ module "public_sentries_2" {
   depends_on = [module.private_sentries[0]]
 }
 
-#   # Observers location 1
-#   module "observers_1" {
-#     count = (var.private_sentries_config.enable &&
-#       var.observers_config.enable &&
-#     contains(var.observers_config.locations, 1)) ? 1 : 0
+# Observers location 1
+module "observers_1" {
+  count = (var.private_sentries_config.enable &&
+    var.observers_config.enable &&
+  contains(var.observers_config.locations, 1)) ? 1 : 0
 
-#     source = "./observers"
-#     providers = {
-#       aws      = aws.location_1
-#       aws.peer = aws.location_1
-#     }
+  source = "./observers"
+  providers = {
+    azurerm = azurerm
+  }
 
-#     tags = local.tags
+  resource_group_name = local.resource_group_names[0]
+  location = local.locations[0]
 
-#     nodes_count          = var.observers_config.nodes_count
-#     instance_size        = var.observers_config.instance_size
-#     iam_instance_profile = module.iam.iam_instance_profile
+  tags = local.tags
 
-#     root_domain_name = var.observers_config.root_domain_name
+  nodes_count          = var.observers_config.nodes_count
+  instance_size        = var.observers_config.instance_size
+  # iam_instance_profile = module.iam.iam_instance_profile # FIXME
 
-#     enable_tls = var.observers_config.enable_tls
+  root_domain_name = var.observers_config.root_domain_name
+  enable_tls = var.observers_config.enable_tls
 
-#     ssh_public_key_path  = var.ssh_public_key_path
-#     ssh_private_key_path = var.ssh_private_key_path
+  ssh_public_key_path  = var.ssh_public_key_path
+  ssh_private_key_path = var.ssh_private_key_path
 
-#     location_index = 1
-#     peer_vnet     = module.private_sentries[0].vnet
-#   }
+  location_index = 1
+  azs = try(local.observers_azs[0], null)
 
-#   # Observers location 2
-#   module "observers_2" {
-#     count = (var.private_sentries_config.enable &&
-#       var.observers_config.enable &&
-#     contains(var.observers_config.locations, 2)) ? 1 : 0
+  peer_vnet_name = module.private_sentries[0].vnet.name
+  peer_vnet_resource_group_name = local.resource_group_names[0]
 
-#     source = "./observers"
-#     providers = {
-#       aws      = aws.location_2
-#       aws.peer = aws.location_1
-#     }
+  depends_on = [module.private_sentries[0]]
+}
 
-#     tags = local.tags
+# Observers location 2
+module "observers_2" {
+  count = (var.private_sentries_config.enable &&
+    var.observers_config.enable &&
+  contains(var.observers_config.locations, 2)) ? 1 : 0
 
-#     nodes_count          = var.observers_config.nodes_count
-#     instance_size        = var.observers_config.instance_size
-#     iam_instance_profile = module.iam.iam_instance_profile
+  source = "./observers"
+  providers = {
+    azurerm = azurerm
+  }
 
-#     root_domain_name = var.observers_config.root_domain_name
+  resource_group_name = local.resource_group_names[1]
+  location = local.locations[1]
 
-#     enable_tls = var.observers_config.enable_tls
+  tags = local.tags
 
-#     ssh_public_key_path  = var.ssh_public_key_path
-#     ssh_private_key_path = var.ssh_private_key_path
+  nodes_count          = var.observers_config.nodes_count
+  instance_size        = var.observers_config.instance_size
+  # iam_instance_profile = module.iam.iam_instance_profile # FIXME
 
-#     location_index = 2
-#     peer_vnet     = module.private_sentries[0].vnet
-#   }
+  root_domain_name = var.observers_config.root_domain_name
+
+  enable_tls = var.observers_config.enable_tls
+
+  ssh_public_key_path  = var.ssh_public_key_path
+  ssh_private_key_path = var.ssh_private_key_path
+
+  location_index = 2
+  azs = try(local.observers_azs[1], null)
+
+  peer_vnet_name = module.private_sentries[0].vnet.name
+  peer_vnet_resource_group_name = local.resource_group_names[0]
+
+  depends_on = [module.private_sentries[0]]
+}
 
 #   module "prometheus" {
 #     count = local.prometheus_enabled ? 1 : 0

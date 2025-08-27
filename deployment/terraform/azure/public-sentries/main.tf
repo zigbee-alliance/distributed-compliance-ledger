@@ -1,7 +1,17 @@
 # TODO ipv6 support
 
 locals {
-  resource_prefix = var.resource_suffix == null ? "public-sentries" : "public-sentries-${var.resource_suffix}"
+  location = var.location == null ? data.azurerm_resource_group.this.location : var.location
+  resource_group_name = data.azurerm_resource_group.this.name
+
+  base_prefix = "public-sentries"
+
+  resource_prefix = (
+    var.resource_suffix == null
+      ? "${local.base_prefix}-${local.location}"
+      : length(var.resource_suffix) > 0
+        ? "${local.base_prefix}-${var.resource_suffix}" : local.base_prefix
+  )
 
   p2p_port = 26656
   rpc_port = 26657
@@ -10,9 +20,6 @@ locals {
   vnet_network_prefix = "10.${20 + var.location_index}"
   internal_ips_range = "10.0.0.0/8"
   subnet_name = "${local.resource_prefix}-subnet"
-
-  location = var.location == null ? data.azurerm_resource_group.this.location : var.location
-  resource_group_name = data.azurerm_resource_group.this.name
 }
 
 

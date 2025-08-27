@@ -46,6 +46,7 @@ observers_config = {
     1,
     2
   ]
+  azs              = [[2], [2]]
 }
 
 prometheus_config = {

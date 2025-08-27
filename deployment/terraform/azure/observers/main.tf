@@ -1,5 +1,15 @@
 locals {
-  resource_prefix = var.resource_suffix == null ? "observers" : "observers-${var.resource_suffix}"
+  location = var.location == null ? data.azurerm_resource_group.this.location : var.location
+  resource_group_name = data.azurerm_resource_group.this.name
+
+  base_prefix = "observers"
+
+  resource_prefix = (
+    var.resource_suffix == null
+      ? "${local.base_prefix}-${local.location}"
+      : length(var.resource_suffix) > 0
+        ? "${local.base_prefix}-${var.resource_suffix}" : local.base_prefix
+  )
 
   p2p_port = 26656
   rpc_port = 26657
@@ -35,13 +45,11 @@ locals {
   internal_ips_range = "10.0.0.0/8"
   subnet_name = "${local.resource_prefix}-subnet"
 
-  location = var.location == null ? data.azurerm_resource_group.this.location : var.location
-  resource_group_name = data.azurerm_resource_group.this.name
-
-  azs = [ for zm in data.azurerm_location.this.zone_mappings : zm.physical_zone ]
+  azs = [ for zm in data.azurerm_location.this.zone_mappings : zm.logical_zone ]
+  azs_to_use = var.azs == null || length(var.azs) == 0 ? local.azs : [ for zone in local.azs : zone if contains(var.azs, tonumber(zone)) ]
 
   node_zones = [ 
-    for index in range(var.nodes_count) : local.azs[index % length(local.azs)]
+    for index in range(var.nodes_count) : local.azs_to_use[index % length(local.azs_to_use)]
   ]
 }
 
@@ -71,7 +79,6 @@ resource "azurerm_network_interface" "this" {
 
   name                = "${local.resource_prefix}-node-${count.index}-nic"
   location            = local.location
-  zone                = local.node_zones[count.index]
   resource_group_name = local.resource_group_name
 
   ip_configuration {
@@ -84,6 +91,12 @@ resource "azurerm_network_interface" "this" {
   tags                = var.tags
 }
 
+resource "azurerm_network_interface_application_security_group_association" "observers" {
+  count = var.nodes_count
+
+  network_interface_id      = azurerm_network_interface.this[count.index].id
+  application_security_group_id = azurerm_application_security_group.observers.id
+}
 
 resource "azurerm_linux_virtual_machine" "this_nodes" {
   count = var.nodes_count
@@ -91,6 +104,7 @@ resource "azurerm_linux_virtual_machine" "this_nodes" {
   name                       = "${local.resource_prefix}-node-${count.index}"
   resource_group_name        = local.resource_group_name
   location                   = local.location
+  # zone                       = local.node_zones[count.index]
 
   size                       = var.instance_size
 

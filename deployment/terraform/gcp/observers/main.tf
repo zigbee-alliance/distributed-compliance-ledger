@@ -37,6 +37,8 @@ locals {
   observer_tag = "observer"
   observer_nlb_tag = "observer-nlb-health-check"
 
+  # TODO multiple subnets in a VPC (one per AZ) is not needed
+  #      since GCP subnet can span multiple zones (unlike AWS)
   subnets = flatten([ for index, config in var.region_config : [
     {
       subnet_name     = "${local.subnet_name_prefix}-0"

@@ -65,7 +65,7 @@ variable "public_sentries_config" {
     enable_ipv6   = bool
     nodes_count   = number
     instance_size = string
-    locations       = set(number)
+    locations     = set(number)
   })
 
   description = "Public Sentries config"
@@ -78,7 +78,8 @@ variable "observers_config" {
     instance_size    = string
     root_domain_name = string
     enable_tls       = bool
-    locations          = set(number)
+    locations        = set(number)
+    azs              = optional(list(set(number)))
   })
 
   description = "Observers config"

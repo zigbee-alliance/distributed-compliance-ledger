@@ -19,6 +19,17 @@ variable "location_index" {
   type        = number
 }
 
+variable "azs" {
+  description = "The list of availbility zones logical numbers to locate the observer nodes"
+  type        = set(number)
+  default     = null
+}
+
+variable "resource_suffix" {
+  description = "Resource suffix to use for all the resources"
+  default = null
+}
+
 variable "enable_encryption_at_host" {
   description = "Enables encryption at host for the node's managed disks"
   type        = bool
