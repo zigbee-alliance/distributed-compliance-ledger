@@ -42,6 +42,11 @@ check_pool_accepts_tx() {
 
 test_divider
 
+if !check_pool_accepts_tx; then
+  echo "Pool stopped accepting transactions as expected"
+  exit 1
+fi
+
 echo "Add NodeAdmin profile and approve with trustees"
 random_string nodeadmin_account
 passphrase="test1234"
@@ -71,15 +76,13 @@ test_divider
 echo "Try to add validator with wrong pubkey (NodeAdmin pubkey instead of validator pubkey)"
 echo "NodeAdmin tries to add validator with its own pubkey (should break consensus)"
 result=$(echo $passphrase | $DCLD_BIN_OLD  tx validator add-node --pubkey="$nodeadmin_pubkey" --moniker="bad-node" --from="$nodeadmin_account" --yes)
-result=$(get_txn_result "$result")
-echo "$result"
 
 test_divider
 
 # echo "Check that pool stopped accepting tx (simulate by sending tx and expecting failure)"
 if check_pool_accepts_tx; then
   echo "Pool still accepts transactions, test failed"
-  # exit 1
+  exit 1
 else
   echo "Pool stopped accepting transactions as expected"
 fi
@@ -113,6 +116,7 @@ if check_pool_accepts_tx "$local_build_bin"; then
   echo "Pool accepts transactions after upgrade"
 else
   echo "Pool does NOT accept transactions after upgrade, test failed"
+  echo $(docker logs -n 100 node1)
   exit 1
 fi
 
