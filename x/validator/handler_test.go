@@ -47,10 +47,6 @@ func Setup(t *testing.T) TestSetup {
 	t.Helper()
 	dclauthK, _ := testkeeper.DclauthKeeper(t)
 	k, ctx := testkeeper.ValidatorKeeper(t, dclauthK)
-	cp := &tmproto.ConsensusParams{}
-	cp.Validator = &tmproto.ValidatorParams{}
-	cp.Validator.PubKeyTypes = []string{"ed25519"}
-	ctx = ctx.WithConsensusParams(cp)
 	handler := NewHandler(*k)
 
 	ba := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
