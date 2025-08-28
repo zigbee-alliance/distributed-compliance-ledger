@@ -20,7 +20,6 @@ import (
 
 	// cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types".
 
-	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/testutil/testdata"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
