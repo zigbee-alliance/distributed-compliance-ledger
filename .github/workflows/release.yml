@@ -51,7 +51,6 @@ jobs:
         run: |
           release_info="$(curl -s https://api.github.com/repos/${{ github.repository }}/releases \
               | jq '.[] | select(.tag_name == "v${{ steps.current_version.outputs.version }}")')"
-          echo "release_info=$release_info" >> "$GITHUB_OUTPUT"
           echo "$release_info"
           EOF="_EOF_"
           {
