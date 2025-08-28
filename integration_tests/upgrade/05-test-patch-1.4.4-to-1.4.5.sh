@@ -50,11 +50,13 @@ nodeadmin_pubkey=$(echo $passphrase | $DCLD_BIN_OLD keys show $nodeadmin_account
 result=$(echo $passphrase | $DCLD_BIN_OLD tx auth propose-add-account --address="$nodeadmin_address" --pubkey="$nodeadmin_pubkey" --roles="NodeAdmin" --from jack --yes)
 
 result=$(get_txn_result "$result")
+echo "$result"
 check_response "$result" "\"code\": 0"
 
 for trustee in "alice" "bob"; do
   result=$(echo $passphrase | $DCLD_BIN_OLD tx auth approve-add-account --address="$nodeadmin_address" --from $trustee --yes)
   result=$(get_txn_result "$result")
+  echo "$result"
 done
 
 echo "Query account to check validity"
