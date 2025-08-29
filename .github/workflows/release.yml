@@ -51,8 +51,13 @@ jobs:
         run: |
           release_info="$(curl -s https://api.github.com/repos/${{ github.repository }}/releases \
               | jq '.[] | select(.tag_name == "v${{ steps.current_version.outputs.version }}")')"
-          echo "release_info=$release_info" >> "$GITHUB_OUTPUT"
           echo "$release_info"
+          EOF="_EOF_"
+          {
+            echo "release_info<<$EOF"
+            echo "$release_info"
+            echo "$EOF"
+          } >> "$GITHUB_OUTPUT"
 
           asset_bin_url="$(echo "$release_info" \
               | jq -r '.assets[] | select(.name | match("^${{ env.BIN_NAME }}$")) | .browser_download_url')"
