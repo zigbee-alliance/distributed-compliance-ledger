@@ -23,6 +23,7 @@ on:
 
 env:
   BIN_NAME: dcld
+  COSMOVISOR_VERSION: 1.5.0
 
 jobs:
 
@@ -35,14 +36,14 @@ jobs:
       upload_url: ${{ steps.release_info.outputs.upload_url }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Get current version
         id: current_version
         run: |
           git fetch --all --tags
           tag="$(git describe --tags --exact-match)"
-          echo "::set-output name=version::${tag#v}"
+          echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
         shell: bash
 
       - name: Get release info
@@ -50,8 +51,13 @@ jobs:
         run: |
           release_info="$(curl -s https://api.github.com/repos/${{ github.repository }}/releases \
               | jq '.[] | select(.tag_name == "v${{ steps.current_version.outputs.version }}")')"
-          echo "::set-output name=release_info::$release_info"
           echo "$release_info"
+          EOF="_EOF_"
+          {
+            echo "release_info<<$EOF"
+            echo "$release_info"
+            echo "$EOF"
+          } >> "$GITHUB_OUTPUT"
 
           asset_bin_url="$(echo "$release_info" \
               | jq -r '.assets[] | select(.name | match("^${{ env.BIN_NAME }}$")) | .browser_download_url')"
@@ -63,7 +69,7 @@ jobs:
 
           asset_cosmovisor_url="$(echo "$release_info" \
               | jq -r '.assets[] | select(.name | match("^cosmovisor$")) | .browser_download_url')"
-          echo "$asset_bin_url"
+          echo "$asset_cosmovisor_url"
 
           asset_service_url="$(echo "$release_info" \
               | jq -r '.assets[] | select(.name | match("^cosmovisor.service$")) | .browser_download_url')"
@@ -78,14 +84,14 @@ jobs:
           echo "$asset_macos_tgz_url"
 
           upload_url="$(echo "$release_info" | jq -r '.upload_url')"
-          echo "::set-output name=upload_url::$upload_url"
+          echo "upload_url=$upload_url" >> "$GITHUB_OUTPUT"
           echo "$upload_url"
 
           # build json string to use later as a job matrix
           included=()
           if [[ -z "$asset_bin_url" || -z "$asset_ubuntu_tgz_url" || -z "$asset_cosmovisor_url" || -z "$asset_service_url" || -z "$asset_deploy_script_url" ]]; then
             # os|bin-url|tgz-url|service-file-url|deploy-script-url|tgz-suffix
-            included+=("ubuntu-20.04|$asset_bin_url|$asset_ubuntu_tgz_url|$asset_cosmovisor_url|$asset_service_url|$asset_deploy_script_url|.ubuntu.tar.gz")
+            included+=("ubuntu-22.04|$asset_bin_url|$asset_ubuntu_tgz_url|$asset_cosmovisor_url|$asset_service_url|$asset_deploy_script_url|.ubuntu.tar.gz")
           fi
           if [[ -z "$asset_macos_tgz_url" ]]; then
             # bin, service file and deploy script are not considered for macos job
@@ -97,7 +103,7 @@ jobs:
               [ .[] | split("|") | .[0] ] | if .|length > 0 then . else empty end
             ' <<<"${included[*]}"
           )"
-          echo "::set-output name=matrix_os::$matrix_os"
+          echo "matrix_os=$matrix_os" >> "$GITHUB_OUTPUT"
           echo "$matrix_os"
 
           if [[ -n "$matrix_os" ]]; then
@@ -107,7 +113,7 @@ jobs:
                 {"os": .[0], "bin": .[1] | length, "tgz": .[2] | length, "cosmovisor": .[3] | length, "service": .[4] | length, "deploy_script": .[5] | length, "tgz_name_suffix": .[6]} ]
               ' <<<"${included[*]}"
             )"
-            echo "::set-output name=included::$included_json"
+          echo "included=$included_json" >> "$GITHUB_OUTPUT"
             echo "$included_json"
           fi
 
@@ -116,7 +122,6 @@ jobs:
       - name: check release published
         if: ${{ !steps.release_info.outputs.release_info }}
         run: exit 1
-
 
   release:
     name: Release
@@ -129,14 +134,14 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Set up Go 1.x
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: ^1.20
 
       - name: Check out code into the Go module directory
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: |
             ~/.cache/go-build
@@ -146,10 +151,19 @@ jobs:
             ${{ runner.os }}-go-
 
       - name: build application binary
-        if: ${{ !matrix.bin || !matrix.tgz }}
+        if: ${{ matrix.os != 'ubuntu-22.04' && (!matrix.bin || !matrix.tgz) }}
         run: |
           make build
           build/${{ env.BIN_NAME }} version
+
+          tar czf build/${{ env.BIN_NAME }}${{ matrix.tgz_name_suffix }} -C build ${{ env.BIN_NAME }}
+        shell: bash
+
+      - name: build application and cosmovisor binary | ubuntu-22.04
+        if: ${{ matrix.os == 'ubuntu-22.04' && (!matrix.bin || !matrix.tgz || !matrix.cosmovisor) }}
+        run: |
+          bash .github/workflows/ubuntu-20.04-build.sh
+          ls -la build
 
           tar czf build/${{ env.BIN_NAME }}${{ matrix.tgz_name_suffix }} -C build ${{ env.BIN_NAME }}
         shell: bash
@@ -177,19 +191,12 @@ jobs:
           asset_content_type: application/x-gtar
 
       - name: build cosmovisor binary
-        if: ${{ !matrix.cosmovisor }}
+        if: ${{ matrix.os != 'ubuntu-22.04' && !matrix.cosmovisor }}
         run: |
-          go install github.com/cosmos/cosmos-sdk/cosmovisor/cmd/cosmovisor@v1.0.0
-        shell: bash
-
-      - name: get GOBIN
-        id: get_gobin
-        run: |
-          GOPATH=${GOPATH:-${HOME}/go}
-          GOBIN=${GOBIN:-${GOPATH}/bin}
-          echo "$GOBIN"
-
-          echo "::set-output name=gobin::$GOBIN"
+          go install "cosmossdk.io/tools/cosmovisor/cmd/cosmovisor@v${{ env.COSMOVISOR_VERSION }}"
+          GOPATH="${GOPATH:-${HOME}/go}"
+          GOBIN="${GOBIN:-${GOPATH}/bin}"
+          cp "$GOBIN/cosmovisor" build
         shell: bash
 
       - name: upload to GitHub (cosmovisor binary)
@@ -199,7 +206,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.checks.outputs.upload_url }}
-          asset_path: ${{ steps.get_gobin.outputs.gobin }}/cosmovisor
+          asset_path: build/cosmovisor
           asset_name: cosmovisor
           asset_content_type: application/octet-stream  # TODO check for less generic type
 

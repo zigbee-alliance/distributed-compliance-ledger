@@ -317,7 +317,7 @@ func TestHandler_AddX509RootCertsBySubjectKeyId(t *testing.T) {
 	rootCertOptions := &rootCertOptions{
 		pemCert:      testconstants.PAACertWithSameSubjectID1,
 		subject:      testconstants.PAACertWithSameSubjectID1Subject,
-		subjectKeyID: testconstants.PAACertWithSameSubjectIDSubjectID,
+		subjectKeyID: testconstants.PAACertWithSameSubjectIDSubjectKeyID,
 		info:         testconstants.Info,
 		vid:          testconstants.Vid,
 	}
@@ -326,10 +326,10 @@ func TestHandler_AddX509RootCertsBySubjectKeyId(t *testing.T) {
 	rootCertOptions.subject = testconstants.PAACertWithSameSubjectID2Subject
 	proposeAndApproveRootCertificate(setup, setup.Trustee1, rootCertOptions)
 
-	approvedCertificates, _ := queryAllApprovedCertificatesBySubjectKeyID(setup, testconstants.PAACertWithSameSubjectIDSubjectID)
+	approvedCertificates, _ := queryAllApprovedCertificatesBySubjectKeyID(setup, testconstants.PAACertWithSameSubjectIDSubjectKeyID)
 	require.Equal(t, 1, len(approvedCertificates))
 	require.Equal(t, 2, len(approvedCertificates[0].Certs))
-	require.Equal(t, testconstants.PAACertWithSameSubjectIDSubjectID, approvedCertificates[0].SubjectKeyId)
+	require.Equal(t, testconstants.PAACertWithSameSubjectIDSubjectKeyID, approvedCertificates[0].SubjectKeyId)
 	require.Equal(t, testconstants.PAACertWithSameSubjectID1Subject, approvedCertificates[0].Certs[0].Subject)
 	require.Equal(t, testconstants.PAACertWithSameSubjectID2Subject, approvedCertificates[0].Certs[1].Subject)
 }
