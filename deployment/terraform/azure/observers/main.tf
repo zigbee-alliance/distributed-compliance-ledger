@@ -39,6 +39,9 @@ locals {
     },
   ]
 
+  lb_ip_configuration_name = "${local.resource_prefix}-lb-public-ip-configuration"
+  nic_ip_configuration_name = "internal"
+
   enable_tls = var.enable_tls && var.root_domain_name != ""
 
   vnet_network_prefix = "10.${30 + var.location_index}"
@@ -48,7 +51,7 @@ locals {
   azs = [ for zm in data.azurerm_location.this.zone_mappings : zm.logical_zone ]
   azs_to_use = var.azs == null || length(var.azs) == 0 ? local.azs : [ for zone in local.azs : zone if contains(var.azs, tonumber(zone)) ]
 
-  node_zones = [ 
+  node_zones = [
     for index in range(var.nodes_count) : local.azs_to_use[index % length(local.azs_to_use)]
   ]
 }
@@ -82,7 +85,7 @@ resource "azurerm_network_interface" "this" {
   resource_group_name = local.resource_group_name
 
   ip_configuration {
-    name                          = "internal"
+    name                          = local.nic_ip_configuration_name
     subnet_id = azurerm_subnet.this.id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id = azurerm_public_ip.node[count.index].id
