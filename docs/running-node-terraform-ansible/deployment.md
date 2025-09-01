@@ -18,7 +18,14 @@ Make sure you have all [prerequisites](./prerequisites.md) set up
 
 ### 1.1 Configuration
 
-#### 1.1.1 Set up an AWS user for use with Terraform
+#### 1.1.1 Cloud authentication
+
+Terraform scirpts appliance requires cloud authentication configuration.
+
+The details below provide the options how do that for each cloud.
+
+<details>
+<summary> AWS </summary>
 
 Create credentials file [`~/.aws/credentials`] with the following content:
 
@@ -30,13 +37,59 @@ aws_secret_access_key = <secret_access_key_here>
 
 > **_Note:_** Your account must have enough privileges to manage all AWS resources required by terraform
 
+Please see other authentication configuration options [here](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#authentication-and-configuration).
+
+</details>
+
+<details>
+<summary> GCP </summary>
+
+*   install `gcloud` CLI tool following [this](https://cloud.google.com/sdk/docs/install) docs
+*   run `gcloud auth application-default login`
+
+Please see the additional details [here](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#authenticating-to-azur://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/getting_started).
+
+</details>
+
+
+<details>
+<summary> Azure </summary>
+
+The following steps are based on Azure CLI (see the details [here](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/azure_cli)):
+
+*   install `az` CLI tool using [this](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest) docs
+*   run `az login`
+    *   once logged in you may run `az account list` to list the availble subscriptions
+    *   run `az account set --subscription="SUBSCRIPTION_ID"` in case multiple subscriptions are listed 
+*  run `export ARM_SUBSCRIPTION_ID="SUBSCRIPTION_ID"`
+
+Please see other authentication configuration options [here](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#authenticating-to-azure).
+
+</details>
+
+
+
 #### 1.1.2 Configure Terraform backend
+
+The general recommendation is:
+
+*   use [`local`](https://developer.hashicorp.com/terraform/language/v1.5.x/settings/backends/local) backend only for development
+*   use one of the remote [backends](https://developer.hashicorp.com/terraform/language/v1.5.x/settings/backends/configuration#available-backends)
+available for your cloud provider.
+
+The default backends:
+
+*   AWS: [`s3`](https://developer.hashicorp.com/terraform/language/v1.5.x/settings/backends/s3)
+*   GCP and Azure: [`local`](https://developer.hashicorp.com/terraform/language/v1.5.x/settings/backends/local)
+
+Please see below more backend configuration details for each supported cloud.
+
+<details>
+<summary> AWS </summary>
 
 By default AWS infrastructure backend is set as `s3` (see [`deployment/terraform/aws/backend.tf`](../../deployment/terraform/aws/backend.tf)).
 
-You may consider the following options
-
-##### Option 1. S3 backend
+> **_Note_** In case you need to switch to `local` one set it in [`deployment/terraform/aws/backend.tf`](../../deployment/terraform/aws/backend.tf).
 
 S3 backend configuration implies:
 
@@ -60,27 +113,71 @@ using one of the following ways:
 
 Please see also Terraform [docs](https://developer.hashicorp.com/terraform/language/v1.5.x/settings/backends/s3) for the details.
 
-##### Option 2. `local` backend (only for development)
+</details>
 
-Need to replace `s3` with `local` in [`deployment/terraform/aws/backend.tf`](../../deployment/terraform/aws/backend.tf).
+#### 1.1.3 Configure infrastructure parameters
 
-##### Option 3. Use another remote backend
+Deployment configuration for each of the supported clouds includes common set of parameters:
 
-Please see Terraform [docs](https://developer.hashicorp.com/terraform/language/v1.5.x/settings/backends/configuration#available-backends) for the available backends configuration.
+*   regions / locations
+*   tags
+*   validator paramteres
+*   private sentries paramteres
+*   public sentries paramteres
+*   observers paramteres
+*   prometheus (**only for AWS for now**)
 
-#### 1.1.3 Configure AWS infrastructure parameters
+And should be defined in the floowing files:
 
-[`deployment/terraform/aws/terraform.tfvars`](../../deployment/terraform/aws/terraform.tfvars)
+*   AWS [`deployment/terraform/aws/terraform.tfvars`](../../deployment/terraform/aws/terraform.tfvars)
+*   GCP [`deployment/terraform/aws/terraform.tfvars`](../../deployment/terraform/gcp/terraform.tfvars)
+*   Azure [`deployment/terraform/aws/terraform.tfvars`](../../deployment/terraform/azure/terraform.tfvars)
 
-##### AWS Regions
+##### 1.1.3.1  Regions / Locations
+
+Selects two regions (locations in Azure) where nodes will be created. Examples:
+
+<details>
+<summary> AWS </summary>
 
 ```hcl
 region_1 = "us-west-1"
 region_2 = "us-east-2"
 ```
-- Selects two regions where nodes will be created
+</details>
 
-##### Commmon tags
+
+<details>
+<summary> GCP </summary>
+
+```hcl
+region_1 = "us-east1"
+region_2 = "us-west1"
+```
+</details>
+
+
+<details>
+<summary> Azure </summary>
+
+```hcl
+location_1 = "eastus"
+location_2 = "westus2"
+```
+
+>**_Note:_** ensure you have enough quota for the planned virtual machine sizes
+in the required locations and request the new quotes if needed (more details in
+[docs](https://learn.microsoft.com/en-us/azure/quotas/per-vm-quota-requests))
+
+</details>
+
+
+##### 1.1.3.2 Commmon tags
+
+These tags will be applied to all the resourcers that support them
+
+<details>
+<summary> AWS & Azure </summary>
 
 ```hcl
 common_tags = {
@@ -90,8 +187,29 @@ common_tags = {
   created-by       = "user@domain.com" (optional)
 }
 ```
+</details>
 
-##### (Genesis) Validator
+
+<details>
+<summary> GCP </summary>
+
+```hcl
+common_labels= {
+  project		   = "DCL"  # (optional, default - "DCL")
+  environment      = "issue-123" (optional, default - workspace name)
+  purpose          = "some-context-details" (optional)
+  created-by       = "username" (optional)
+}
+```
+</details>
+
+##### 1.1.3.3 (Genesis) Validator
+
+*   Set `is_genesis = false` to deploy just a validator node (not genesis).
+*   Validator/Genesis node is created in `region_1` by default
+
+<details>
+<summary> AWS </summary>
 
 ```hcl
 validator_config = {
@@ -99,11 +217,48 @@ validator_config = {
     is_genesis    = true
 }
 ```
+</details>
 
-- Set `is_genesis = false` to deploy just a validator node (not genesis).
-- Validator/Genesis node is created in `region_1` by default
 
-##### Private Sentries (optional)
+<details>
+<summary> GCP </summary>
+
+```hcl
+validator_config = {
+  instance_type = "e2-standard-2"
+  is_genesis    = true
+}
+```
+</details>
+
+
+<details>
+<summary> Azure </summary>
+
+```hcl
+validator_config = {
+  instance_size = "Standard_B1s"
+  is_genesis    = true
+  enable_encryption_at_host = true
+}
+```
+
+>**_Note:_** choose `instance_size` taking into account the following:
+>  *    limits & quotas for you subscription
+>  *    SKUs [availbility](https://learn.microsoft.com/en-us/azure/azure-resource-manager/troubleshooting/error-sku-not-available?tabs=azure-cli#solution)
+
+>**_Note:_** if disk encryption is requied it's necessary to [enable](https://learn.microsoft.com/en-us/azure/virtual-machines/linux/disks-enable-host-based-encryption-cli)
+that for the subscription
+
+</details>
+
+##### 1.1.3.4 Private Sentries (optional)
+
+*   Private sentry nodes are created in the same region as Validator by default
+*   Can be disabled by setting `enable = false`
+
+<details>
+<summary> AWS </summary>
 
 ```hcl
 private_sentries_config = {
@@ -112,12 +267,42 @@ private_sentries_config = {
     instance_type = "t3.medium"
 }
 ```
+</details>
 
-- Private sentry nodes are created in the region as Validator by default
-- Can be disabled by setting `enable = false`
-- Only one instance of private sentry is created with a static ip address
 
-##### Public Sentries (optional)
+<details>
+<summary> GCP </summary>
+
+```hcl
+private_sentries_config = {
+  enable        = true
+  nodes_count   = 2
+  instance_type = "e2-standard-2"
+}
+```
+</details>
+
+<details>
+<summary> Azure </summary>
+
+```hcl
+private_sentries_config = {
+  enable        = true
+  nodes_count   = 2
+  instance_size = "Standard_B2s"
+}
+```
+</details>
+
+
+##### 1.1.3.5 Public Sentries (optional)
+
+*   **Requires** `Private Sentries` being enabled
+*   Can be configured to have IPv6 addresses using `enable_ipv6 = true` (**only for AWS for now**)
+*   Can be configured to run on multiple regions
+
+<details>
+<summary> AWS </summary>
 
 ```hcl
 public_sentries_config = {
@@ -131,14 +316,54 @@ public_sentries_config = {
         2
     ]
 }
+
+> **_Note:_** Number of available IPv4 static addresses is restricted to 5 per region on AWS by default
+```
+</details>
+
+<details>
+<summary> GCP </summary>
+
+```hcl
+public_sentries_config = {
+  enable        = true
+  region1_nodes_count   = 2
+  region2_nodes_count   = 2
+  instance_type = "e2-standard-2"
+}
 ```
 
-- **Requires** `Private Sentries` being enabled
-- Can be configured to have IPv6 addresses using `enable_ipv6 = true`
-    > **_Note:_** Number of available IPv4 static addresses is restricted to 5 per region on AWS by default
-- Can be configured to run on multiple regions
+> **_Note:_** The properties block differs from other clouds:
+> * you set number of nodes for each region separately
+> * the reason: in GCP a single virtual network span both regions
 
-##### Observers (optional)
+</details>
+
+<details>
+<summary> Azure </summary>
+
+```hcl
+public_sentries_config = {
+  enable        = true
+  nodes_count   = 2
+  instance_size = "Standard_B2s"
+
+  locations = [
+    1,
+    2
+  ]
+}
+```
+</details>
+
+##### 1.1.3.6 Observers (optional)
+
+*    **Requires** `Private Sentries` being enabled
+*    Can be configured to run on multiple regions
+
+
+<details>
+<summary> AWS </summary>
 
 ```hcl
 observers_config = {
@@ -155,13 +380,69 @@ observers_config = {
 }
 ```
 
-- **Requires** `Private Sentries` being enabled
-- When `root_domain_name` parameter is set, will be serving requests under `on.<root_domain_name>` domain
-  - Name servers for `root_domain_name` servers must be pointed to AWS and managed by the AWS account
-- TLS can be enabled or disabled
-- Can be configured to run on multiple regions
+*    When `root_domain_name` parameter is set, will be serving requests under `on.<root_domain_name>` domain
+    *   Name servers for `root_domain_name` servers must be pointed to AWS and managed by the AWS account
+*    TLS can be enabled or disabled
+</details>
 
-##### Prometheus (optional)
+
+<details>
+<summary> GCP </summary>
+
+```hcl
+observers_config = {
+  enable           = true
+  region1_nodes_count      = 3
+  region2_nodes_count      = 3
+  instance_type    = "e2-standard-2"
+}
+```
+
+> **_Note:_** The properties block differs from other clouds:
+> * you set number of nodes for each region separately
+> * the reason: in GCP a single virtual network span both regions
+</details>
+
+
+<details>
+<summary> Azure </summary>
+
+```hcl
+observers_config = {
+  enable           = true
+  nodes_count      = 3
+  instance_size    = "Standard_B2s"
+
+  locations = [
+    1,
+    2
+  ]
+  azs              = [[2], [2]]
+}
+```
+
+> **_Note:_** The properties block differs from other clouds:
+> * additional property `azs` allows to specify observer nodes distribution across availbility zones as follows:
+>   *   `azs` is a list of number sets of zones logical ids to use
+>   *   only first 2 items are expected (equal to number of locations)
+>   *   `null` or empty set are allowed and treated as "use all the available zones for the location"
+>       *   **_Note:_** this might be not the best option since not all the zones in a location have quotes for the particular VM sizes
+>       *   please use `az vm list-skus --location <location> --resource-type virtualMachines --zone --all --output table --size <vn-size>` to explore
+>   *   examples:
+>       *   `[[2], [2]]` zones with logical ids `2` in each location
+>       *   `[[1, 2], null]` or `[[1, 2], []]` or `[[1, 2]]` - zones `1` and `2` for location 1, all available zones for location 2
+>       *   `null` or `[[], []]` or omitted - all availble zones for each location
+
+</details>
+
+##### 1.1.3.7 Prometheus (optional)
+
+> **_Note:_** Only for AWS cloud for now
+
+*   **Requires** `Private Sentries` being enabled
+
+<details>
+<summary> AWS </summary>
 
 ```hcl
 prometheus_config = {
@@ -170,9 +451,9 @@ prometheus_config = {
 }
 ```
 
-- **Requires** `Private Sentries` being enabled
-- When enabled runs a dedicated Prometheus server on Private Sentries VPC to collect Tendermint metrics from all DCL nodes
-- Collected metrics are written to AWS [AMP workspace](https://aws.amazon.com/prometheus/)
+*   When enabled runs a dedicated Prometheus server on Private Sentries VPC to collect Tendermint metrics from all DCL nodes
+*   Collected metrics are written to AWS [AMP workspace](https://aws.amazon.com/prometheus/)
+</details>
 
 ### 1.2 Deployment
 
@@ -184,7 +465,7 @@ cd deployment/terraform/aws
 terraform init -backend-config=<backend-config-file> # in case backend configuration is in a file
 ```
 
-where `<backend-config-file>` is the backend configuration file (please see AWS S3 backend [example](../../deployment/terraform/aws/config.s3.tfbackend.example) configuration).
+where `<backend-config-file>` is the backend configuration file ([AWS S3 backend example](../../deployment/terraform/aws/config.s3.tfbackend.example)).
 
 (optional) Create/Activate the deployment workspace:
 
@@ -390,8 +671,8 @@ curl -s https://on.dcl.csa-iot.org:26657/commit | jq "{height: .result.signed_he
 
 </details>
 
-- `<host>` - RPC endpoint host of the network being joined
-- `<port>` - RPC endpoint port of the network being joined
+*   `<host>` - RPC endpoint host of the network being joined
+*   `<port>` - RPC endpoint port of the network being joined
 
 ### 2.2 Deployment
 
@@ -403,11 +684,11 @@ Run the following command from the project home:
 ansible-playbook -i ./deployment/ansible/inventory/aws  -u ubuntu ./deployment/ansible/deploy.yml
 ```
 
-- Ansible provisioning can take several minutes depending on number of nodes being provisioned
+*   Ansible provisioning can take several minutes depending on number of nodes being provisioned
 
 #### 2.2.2 (For non-genesis validator nodes) Add Validator to the network
 
-- Manually add the validator to the network (see [making node a validator](../running-node-ansible/vn.md#make-your-node-a-validator-target-machine))
+*   Manually add the validator to the network (see [making node a validator](../running-node-ansible/vn.md#make-your-node-a-validator-target-machine))
 
 ## 3. Deployment Verification
 
@@ -417,7 +698,7 @@ ansible-playbook -i ./deployment/ansible/inventory/aws  -u ubuntu ./deployment/a
 3. Verify `Observers` RPC endpoint is available under `http(s)://on.<root_domain_name>:26657` using your browser
 4. Verify `Observers` gRPC endpoint is available under `http(s)://on.<root_domain_name>:8443` using Postman (or similar tool)
 
-- `<root_domain_name>` - domain name specified in terraform `Observers` config
+*   `<root_domain_name>` - domain name specified in terraform `Observers` config
 
 ## 4. DCL Web UI integration
 
@@ -444,14 +725,14 @@ ansible-playbook -i ./deployment/ansible/inventory/aws  -u ubuntu ./deployment/a
 
 ### Logs
 
-- Logs from all DCL nodes are collected by AWS cloudwatch agent and available at [AWS Cloudwatch](https://aws.amazon.com/cloudwatch/)
-- Logs are collected per DCL node and AWS region
+*   Logs from all DCL nodes are collected by AWS cloudwatch agent and available at [AWS Cloudwatch](https://aws.amazon.com/cloudwatch/)
+*   Logs are collected per DCL node and AWS region
 
 ### Monitoring
 
-- Metrics of AWS EC2 instances where the DCL nodes run on are available at [AWS Cloudwatch](https://aws.amazon.com/cloudwatch/)
-- Metrics of underlying blockchain engine (Tendermint) are pushed to [AWS AMP Service](https://aws.amazon.com/prometheus/) when prometheus is enabled
-- Use
+*   Metrics of AWS EC2 instances where the DCL nodes run on are available at [AWS Cloudwatch](https://aws.amazon.com/cloudwatch/)
+*   Metrics of underlying blockchain engine (Tendermint) are pushed to [AWS AMP Service](https://aws.amazon.com/prometheus/) when prometheus is enabled
+*   Use
 
     ```bash
     terraform output prometheus_endpoint
@@ -466,7 +747,7 @@ ansible-playbook -i ./deployment/ansible/inventory/aws  -u ubuntu ./deployment/a
 
 **TODO**:
 
-- double-check no actions needed neither on business level logic nor on infra conifguration one (Ansible)
+*   double-check no actions needed neither on business level logic nor on infra conifguration one (Ansible)
 
 ### 1. Disable validator node termination protection
 

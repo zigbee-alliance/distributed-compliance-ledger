@@ -1,16 +1,3 @@
-# FIXME docs:
-# - authentication
-# - pre-requisites:
-#   - resource group should exist (not managed by the logic)
-#   - subscription resource providers should be registered (or the client should have permissions to do that)
-#   - ensure you have enough quota for the selected virtual machine sizes in the required locations and request the new quotes if needed
-#   - (optional) if disk encryption is on need to enable that for the subscription
-#     https://learn.microsoft.com/en-us/azure/virtual-machines/linux/disks-enable-host-based-encryption-cli
-#   - choose instance_size taking into account the following:
-#       - limits & quotas for you subscription
-#       - SKUs [availbility](https://learn.microsoft.com/en-us/azure/azure-resource-manager/troubleshooting/error-sku-not-available?tabs=azure-cli#solution)
-#         - if a size is not availble for a zone, include that zone to the `exclude_zones` list
-
 provider "azurerm" {
   features {}
   resource_provider_registrations = "core"

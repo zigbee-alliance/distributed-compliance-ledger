@@ -1,4 +1,4 @@
-# DCL Deployment on AWS using Terraform and Ansible (Prerequisites)
+# DCL Deployment on cloud using Terraform and Ansible (Prerequisites)
 
 ## Environment
 
@@ -50,6 +50,34 @@ ansible-galaxy install -r deployment/galaxy-requirements.yml
 sudo pip3 install -r deployment/requirements.txt
 ansible-galaxy install -r deployment/galaxy-requirements.yml 
 ```
+
+### 5. Preliminary cloud configuration
+
+<details>
+<summary> AWS </summary>
+
+In case you choose S3 as a terraform backend:
+
+*   create S3 bucket
+*   (optional but recommended) create DynamoDB table to support [remote state locking](https://developer.hashicorp.com/terraform/language/v1.5.x/state/locking)
+    *   **Note** The table must have a partition key named `LockID` with a type of `String`.
+
+</details>
+
+<details>
+<summary> Azure </summary>
+
+The Azure deployment automation logic considers the following:
+
+*   resource group exists
+*   subscription resource providers should be registered
+    *   or the client should have permissions to do that (e.g. via `Contributor` role)
+    *   please see more details [here](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/resource-providers-and-types)
+
+</details>
+
+
+
 
 
 [1]: https://www.terraform.io/
