@@ -20,18 +20,10 @@ source integration_tests/cli/common.sh
 
 plan_name="v1.2"
 upgrade_checksum="sha256:3f2b2a98b7572c6598383f7798c6bc16b4e432ae5cfd9dc8e84105c3d53b5026"
-binary_version_old="v0.12.0"
 binary_version_new="v1.2.2"
 
-wget -O dcld_old "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version_old/dcld"
-chmod ugo+x dcld_old
-
-wget -O dcld_new "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version_new/dcld"
-chmod ugo+x dcld_new
-
-DCLD_BIN_OLD="./dcld_old"
-DCLD_BIN_NEW="./dcld_new"
-
+DCLD_BIN_OLD="/tmp/dcld_bins/dcld_v0.12.0"
+DCLD_BIN_NEW="/tmp/dcld_bins/dcld_v1.2.2"
 ########################################################################################
 
 # Upgrade to version 1.2
@@ -280,7 +272,7 @@ test_divider
 
 echo "Get proposed node to disable"
 # FIXME: use proper binary (not dcld but $DCLD_BIN_OLD)
-result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator proposed-disable-node --address="$address"")
+result=$(docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" /bin/sh -c "echo test1234 | dcld query validator proposed-disable-node --address="$address"")
 check_response "$result" "\"address\": \"$validator_address\""
 
 test_divider
@@ -725,13 +717,13 @@ test_divider
 
 # VALIDATOR_NODE
 echo "Disable node"
-result=$(docker exec "$container" /bin/sh -c "echo test1234  | dcld tx validator disable-node --from=$account --yes")
+result=$(docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" /bin/sh -c "echo test1234  | dcld tx validator disable-node --from=$account --yes")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Enable node"
-result=$(docker exec "$container" /bin/sh -c "echo test1234  | dcld tx validator enable-node --from=$account --yes")
+result=$(docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" /bin/sh -c "echo test1234  | dcld tx validator enable-node --from=$account --yes")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -755,7 +747,7 @@ check_response "$result" "\"code\": 0"
 test_divider
 
 echo "Enable node"
-result=$(docker exec "$container" /bin/sh -c "echo test1234  | dcld tx validator enable-node --from=$account --yes")
+result=$(docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" /bin/sh -c "echo test1234  | dcld tx validator enable-node --from=$account --yes")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -769,12 +761,7 @@ test_divider
 # Validator
 
 echo "Get node"
-result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator all-nodes")
+result=$(docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" /bin/sh -c "echo test1234 | dcld query validator all-nodes")
 check_response "$result" "\"owner\": \"$validator_address\""
 
-echo "Upgrade from 0.12.0 to 1.2 passed"
-
-test_divider
-
-rm -f $DCLD_BIN_OLD
-rm -f $DCLD_BIN_NEW
+echo "Upgrade from 0.12.0 to 1.2 PASSED"
