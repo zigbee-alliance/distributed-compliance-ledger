@@ -49,13 +49,15 @@ resource "google_compute_health_check" "default" {
   count                 = length(local.nlb_ports)
 
   name               = "observer-nlb-health-check-${local.nlb_ports[count.index].name}"
-  timeout_sec        = 1
-  check_interval_sec = 1
+  timeout_sec        = 10
+  check_interval_sec = 30
+  healthy_threshold   = 5
+  unhealthy_threshold = 2
+
   tcp_health_check {
     port = local.nlb_ports[count.index].port
   }
 }
-
 
 # forwarding rule
 resource "google_compute_global_forwarding_rule" "this_nlb_global_forwarding_rule" {
