@@ -9,8 +9,8 @@ ssh_public_key_path  = "~/.ssh/id_rsa.pub"
 ssh_private_key_path = "~/.ssh/id_rsa"
 
 validator_config = {
-  instance_size = "Standard_B2s"
-  is_genesis    = true
+  instance_size             = "Standard_B2s"
+  is_genesis                = true
   enable_encryption_at_host = true
 }
 
@@ -46,7 +46,7 @@ observers_config = {
     1,
     2
   ]
-  azs              = [[2], [2]]
+  azs = [[2], [2]]
 }
 
 prometheus_config = {

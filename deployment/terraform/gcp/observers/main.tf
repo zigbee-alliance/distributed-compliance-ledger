@@ -1,28 +1,28 @@
 locals {
-  p2p_port = 26656
+  p2p_port        = 26656
   prometheus_port = 26660
-  rest_port = 1317
-  grpc_port = 9090
-  rpc_port = 26657
+  rest_port       = 1317
+  grpc_port       = 9090
+  rpc_port        = 26657
 
   nlb_ports = [
     {
-      name: "rest",
-      port: local.rest_port,
-      listen_port: 80,
-      listen_port_tls: 443,
+      name : "rest",
+      port : local.rest_port,
+      listen_port : 80,
+      listen_port_tls : 443,
     },
     {
-      name: "grpc",
-      port: local.grpc_port,
-      listen_port: 9090,
-      listen_port_tls: 8443,
+      name : "grpc",
+      port : local.grpc_port,
+      listen_port : 9090,
+      listen_port_tls : 8443,
     },
     {
-      name: "rpc",
-      port: local.rpc_port,
-      listen_port: 8080,
-      listen_port_tls: 26657,
+      name : "rpc",
+      port : local.rpc_port,
+      listen_port : 8080,
+      listen_port_tls : 26657,
     },
   ]
 
@@ -33,61 +33,61 @@ locals {
   subnet_name_prefix = "observers-subnet"
   internal_ips_range = "10.0.0.0/8"
 
-  egress_inet_tag = "egress-inet"
-  observer_tag = "observer"
+  egress_inet_tag  = "egress-inet"
+  observer_tag     = "observer"
   observer_nlb_tag = "observer-nlb-health-check"
 
   # TODO multiple subnets in a VPC (one per AZ) is not needed
   #      since GCP subnet can span multiple zones (unlike AWS)
-  subnets = flatten([ for index, config in var.region_config : [
+  subnets = flatten([for index, config in var.region_config : [
     {
-      subnet_name     = "${local.subnet_name_prefix}-0"
-      subnet_ip       = "10.${30 + index}.1.0/24"
-      subnet_region   = "${config.region}"
+      subnet_name   = "${local.subnet_name_prefix}-0"
+      subnet_ip     = "10.${30 + index}.1.0/24"
+      subnet_region = "${config.region}"
     },
     {
-      subnet_name     = "${local.subnet_name_prefix}-1"
-      subnet_ip       = "10.${30 + index}.2.0/24"
-      subnet_region   = "${config.region}"
+      subnet_name   = "${local.subnet_name_prefix}-1"
+      subnet_ip     = "10.${30 + index}.2.0/24"
+      subnet_region = "${config.region}"
     },
   ]])
 
-  nodes = flatten([ for region_index, config in var.region_config : [ 
+  nodes = flatten([for region_index, config in var.region_config : [
     for node_index in range(config.nodes_count) : {
       region_index = region_index
-      subnet_key = "${config.region}/${local.subnet_name_prefix}-${node_index % 2}"
-      zone = data.google_compute_zones.available[region_index].names[node_index % length(data.google_compute_zones.available[region_index].names)]
+      subnet_key   = "${config.region}/${local.subnet_name_prefix}-${node_index % 2}"
+      zone         = data.google_compute_zones.available[region_index].names[node_index % length(data.google_compute_zones.available[region_index].names)]
     }
   ]])
 
-  regions = [ for config in var.region_config : config.region ]
-  zones = distinct([ for node in local.nodes : node.zone ])
+  regions = [for config in var.region_config : config.region]
+  zones   = distinct([for node in local.nodes : node.zone])
 }
 
 
 data "google_compute_image" "ubuntu" {
   most_recent = true
-  project = "ubuntu-os-cloud"
-  filter = "(family = \"${var.os_family}\") AND (architecture = \"X86_64\")"
+  project     = "ubuntu-os-cloud"
+  filter      = "(family = \"${var.os_family}\") AND (architecture = \"X86_64\")"
 }
 
 
 data "google_compute_zones" "available" {
-  count = length(local.regions)
+  count  = length(local.regions)
   region = local.regions[count.index]
 }
 
 resource "google_compute_instance" "this_nodes" {
   count = length(local.nodes)
 
-  name          = "observer-node-${count.index}" # FIXME copy-paste
-  machine_type  = var.instance_type
-  zone          = local.nodes[count.index].zone
+  name         = "observer-node-${count.index}" # FIXME copy-paste
+  machine_type = var.instance_type
+  zone         = local.nodes[count.index].zone
 
   boot_disk {
     initialize_params {
       image = data.google_compute_image.ubuntu.self_link
-      size = 80
+      size  = 80
     }
   }
 
@@ -133,7 +133,7 @@ resource "google_compute_instance_group" "this_nodes_group" {
   name        = "observers-nodes-group-${local.zones[count.index]}"
   description = "Observer nodes instance group in ${local.zones[count.index]}"
 
-  instances = [ for node in google_compute_instance.this_nodes : node.id if node.zone == local.zones[count.index] ]
+  instances = [for node in google_compute_instance.this_nodes : node.id if node.zone == local.zones[count.index]]
 
   named_port {
     name = "grpc"

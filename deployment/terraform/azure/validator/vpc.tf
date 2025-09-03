@@ -4,7 +4,7 @@ resource "azurerm_virtual_network" "this" {
   resource_group_name = local.resource_group_name
   address_space       = ["${local.vnet_network_prefix}.0.0/16"]
 
-  tags                = var.tags
+  tags = var.tags
 }
 
 resource "azurerm_subnet" "this" {
@@ -24,7 +24,7 @@ resource "azurerm_nat_gateway" "this" {
   resource_group_name = local.resource_group_name
   location            = local.location
 
-  tags                = var.tags
+  tags = var.tags
 }
 
 resource "azurerm_subnet_nat_gateway_association" "this" {
@@ -39,7 +39,7 @@ resource "azurerm_public_ip" "nat_gw" {
   allocation_method   = "Static"
   sku                 = "Standard"
 
-  tags                = var.tags
+  tags = var.tags
 }
 
 resource "azurerm_nat_gateway_public_ip_association" "this" {

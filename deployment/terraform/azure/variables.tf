@@ -1,11 +1,11 @@
 variable "resource_group_name" {
   description = "Azure Resource Group name"
-  default = null
+  default     = null
 }
 
 variable "resource_group_name_prefix" {
   description = "Prefix to use for Azure Resource Group names. Ignored if 'resource_group_name' is set"
-  default   = "dcl-resource-group"
+  default     = "dcl-resource-group"
 }
 
 variable "common_tags" {
@@ -37,8 +37,8 @@ variable "ssh_private_key_path" {
 
 variable "validator_config" {
   type = object({
-    instance_size = string
-    is_genesis    = bool
+    instance_size             = string
+    is_genesis                = bool
     enable_encryption_at_host = bool
   })
 }

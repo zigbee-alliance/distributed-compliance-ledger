@@ -14,10 +14,10 @@ resource "azurerm_lb" "this" {
   sku                 = "Standard"
 
   frontend_ip_configuration {
-    name                 = local.lb_ip_configuration_name 
+    name                 = local.lb_ip_configuration_name
     public_ip_address_id = azurerm_public_ip.lb.id
   }
-  tags                = var.tags
+  tags = var.tags
 }
 
 resource "azurerm_lb_backend_address_pool" "this" {
@@ -32,16 +32,16 @@ resource "azurerm_lb_probe" "this" {
   protocol        = "Tcp"
   port            = local.nlb_ports[count.index].port
   probe_threshold = 2 # NOTE no way to set different health/unhealth
-                      # threasholds like for AWS or GCP
+  # threasholds like for AWS or GCP
   interval_in_seconds = 30
 }
 
 resource "azurerm_lb_rule" "this" {
   count           = length(local.nlb_ports)
-  loadbalancer_id                = azurerm_lb.this.id
-  name                           = "${local.resource_prefix}-lb-rule-${local.nlb_ports[count.index].name}"
-  protocol                       = "Tcp"
-  frontend_port                  = (
+  loadbalancer_id = azurerm_lb.this.id
+  name            = "${local.resource_prefix}-lb-rule-${local.nlb_ports[count.index].name}"
+  protocol        = "Tcp"
+  frontend_port = (
     local.enable_tls
     ? local.nlb_ports[count.index].listen_port_tls
     : local.nlb_ports[count.index].listen_port

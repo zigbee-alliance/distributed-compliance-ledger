@@ -12,7 +12,7 @@ resource "azurerm_virtual_network_peering" "this_observers_to_private_sentries_v
   remote_virtual_network_id    = data.azurerm_virtual_network.peer_vnet.id
   allow_virtual_network_access = true
   allow_forwarded_traffic      = true
-  allow_gateway_transit = false
+  allow_gateway_transit        = false
 }
 
 # Azure Virtual Network peering between Virtual Network B and A
@@ -23,5 +23,5 @@ resource "azurerm_virtual_network_peering" "this_private_sentries_to_observers_v
   remote_virtual_network_id    = azurerm_virtual_network.this.id
   allow_virtual_network_access = true
   allow_forwarded_traffic      = true
-  allow_gateway_transit = false
+  allow_gateway_transit        = false
 }

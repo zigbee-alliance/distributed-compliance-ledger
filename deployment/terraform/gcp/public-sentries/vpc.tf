@@ -2,28 +2,28 @@
 # - no tags support
 
 module "this_vpc" {
-    source  = "terraform-google-modules/network/google"
-    version = "~> 11.1"
-   
-    project_id = var.project_id
+  source  = "terraform-google-modules/network/google"
+  version = "~> 11.1"
 
-    network_name = "public-sentries-vpc"
+  project_id = var.project_id
 
-    subnets = local.subnets
+  network_name = "public-sentries-vpc"
 
-    routes = concat([
-        {
-            name                   = "public-sentries-egress-internet"
-            destination_range      = "0.0.0.0/0"
-            tags                   = local.egress_inet_tag 
-            next_hop_internet      = "true"
-        },
+  subnets = local.subnets
+
+  routes = concat([
+    {
+      name              = "public-sentries-egress-internet"
+      destination_range = "0.0.0.0/0"
+      tags              = local.egress_inet_tag
+      next_hop_internet = "true"
+    },
     ], (var.enable_ipv6 ? [
-        {
-            name                   = "public-sentries-egress-internet-ipv6"
-            destination_range      = "::/0"
-            tags                   = local.egress_inet_tag
-            next_hop_internet      = "true"
-        },
-    ] : []))
+      {
+        name              = "public-sentries-egress-internet-ipv6"
+        destination_range = "::/0"
+        tags              = local.egress_inet_tag
+        next_hop_internet = "true"
+      },
+  ] : []))
 }

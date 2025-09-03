@@ -1,13 +1,13 @@
 locals {
-  p2p_port = 26656
-  rpc_port = 26657
+  p2p_port        = 26656
+  rpc_port        = 26657
   prometheus_port = 26660
 
   vnet_network_prefix = "10.10"
-  internal_ips_range = "10.0.0.0/8"
-  subnet_name = "private-sentries-subnet"
+  internal_ips_range  = "10.0.0.0/8"
+  subnet_name         = "private-sentries-subnet"
 
-  location = var.location == null ? data.azurerm_resource_group.this.location : var.location
+  location            = var.location == null ? data.azurerm_resource_group.this.location : var.location
   resource_group_name = data.azurerm_resource_group.this.name
 }
 
@@ -26,7 +26,7 @@ resource "azurerm_public_ip" "node" {
   resource_group_name = local.resource_group_name
   sku                 = "Standard"
 
-  tags                = var.tags
+  tags = var.tags
 }
 
 
@@ -39,28 +39,28 @@ resource "azurerm_network_interface" "this" {
 
   ip_configuration {
     name                          = "internal"
-    subnet_id = azurerm_subnet.this.id
+    subnet_id                     = azurerm_subnet.this.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id = azurerm_public_ip.node[count.index].id
+    public_ip_address_id          = azurerm_public_ip.node[count.index].id
   }
 
-  tags                = var.tags
+  tags = var.tags
 }
 
 
 resource "azurerm_linux_virtual_machine" "this_nodes" {
   count = var.nodes_count
 
-  name                       = "private-sentry-node-${count.index}"
-  resource_group_name        = local.resource_group_name
-  location                   = local.location
+  name                = "private-sentry-node-${count.index}"
+  resource_group_name = local.resource_group_name
+  location            = local.location
 
-  size                       = var.instance_size
+  size = var.instance_size
 
-  admin_username      = var.ssh_username
+  admin_username = var.ssh_username
 
   admin_ssh_key {
-    username = var.ssh_username
+    username   = var.ssh_username
     public_key = file(var.ssh_public_key_path)
   }
 
@@ -69,9 +69,9 @@ resource "azurerm_linux_virtual_machine" "this_nodes" {
   ]
 
   os_disk {
-    caching                   = "ReadWrite" # FIXME
-    storage_account_type      = "StandardSSD_LRS"
-    disk_size_gb              = 80
+    caching              = "ReadWrite" # FIXME
+    storage_account_type = "StandardSSD_LRS"
+    disk_size_gb         = 80
   }
 
   encryption_at_host_enabled = var.enable_encryption_at_host
@@ -105,5 +105,5 @@ resource "azurerm_linux_virtual_machine" "this_nodes" {
     script = "./provisioner/install-ansible-deps.sh"
   }
 
-  tags                = var.tags
+  tags = var.tags
 }

@@ -11,7 +11,7 @@ variable "resource_group_name" {
 
 variable "location" {
   description = "Azure location. By default resource group's location is used"
-  default = null
+  default     = null
 }
 
 variable "location_index" {
@@ -21,7 +21,7 @@ variable "location_index" {
 
 variable "resource_suffix" {
   description = "Resource suffix to use for all the resources"
-  default = null
+  default     = null
 }
 
 variable "enable_encryption_at_host" {

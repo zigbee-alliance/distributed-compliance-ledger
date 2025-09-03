@@ -98,16 +98,16 @@ locals {
     }
   }
 
-# FIXME
-# prometheus_endpoints = concat(
-#   local.nodes.validator.private_ips,
-#   local.nodes.private_sentries.private_ips,
-#   local.nodes.public_sentries.private_ips,
-#   local.nodes.observers.private_ips,
-#   local.nodes.seeds.private_ips
-# )
+  # FIXME
+  # prometheus_endpoints = concat(
+  #   local.nodes.validator.private_ips,
+  #   local.nodes.private_sentries.private_ips,
+  #   local.nodes.public_sentries.private_ips,
+  #   local.nodes.observers.private_ips,
+  #   local.nodes.seeds.private_ips
+  # )
 
-# prometheus_enabled = var.private_sentries_config.enable && var.prometheus_config.enable
+  # prometheus_enabled = var.private_sentries_config.enable && var.prometheus_config.enable
 
-# prometheus_endpoint = local.prometheus_enabled ? module.prometheus[0].prometheus_endpoint : null
+  # prometheus_endpoint = local.prometheus_enabled ? module.prometheus[0].prometheus_endpoint : null
 }

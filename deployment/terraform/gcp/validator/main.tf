@@ -1,22 +1,22 @@
 locals {
-  p2p_port = 26656
-  rpc_port = 26657
+  p2p_port        = 26656
+  rpc_port        = 26657
   prometheus_port = 26660
 
   vpc_network_prefix = "10.0"
   internal_ips_range = "10.0.0.0/8"
-  subnet_name = "validator-subnet"
-  subnet_region = var.region
-  subnet_output_key = "${local.subnet_region}/${local.subnet_name}"
+  subnet_name        = "validator-subnet"
+  subnet_region      = var.region
+  subnet_output_key  = "${local.subnet_region}/${local.subnet_name}"
 
   egress_inet_tag = "egress-inet"
-  validator_tag = "validator"
+  validator_tag   = "validator"
 }
 
 data "google_compute_image" "ubuntu" {
   most_recent = true
-  project = "ubuntu-os-cloud"
-  filter = "(family = \"${var.os_family}\") AND (architecture = \"X86_64\")"
+  project     = "ubuntu-os-cloud"
+  filter      = "(family = \"${var.os_family}\") AND (architecture = \"X86_64\")"
 }
 
 
@@ -24,15 +24,15 @@ data "google_compute_zones" "available" {
 }
 
 resource "google_compute_instance" "this_node" {
-  name                = "validator-node" # FIXME copy-paste
+  name                = "validator-node"  # FIXME copy-paste
   machine_type        = var.instance_type # FIXME default instance type
   deletion_protection = !var.disable_instance_protection
-  zone               = data.google_compute_zones.available.names[0]
+  zone                = data.google_compute_zones.available.names[0]
 
   boot_disk {
     initialize_params {
       image = data.google_compute_image.ubuntu.self_link
-      size = 80
+      size  = 80
     }
   }
 

@@ -14,7 +14,7 @@ variable "region_config" {
 variable "os_family" {
   description = "Node base image family"
   type        = string
-  default     = "ubuntu-2004-lts"  # TODO ubuntu 20.04 is deprecated
+  default     = "ubuntu-2004-lts" # TODO ubuntu 20.04 is deprecated
 }
 
 variable "labels" {
