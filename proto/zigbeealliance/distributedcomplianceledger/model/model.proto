@@ -34,6 +34,8 @@ message Model {
   string maintenanceUrl = 25 [(gogoproto.moretags) = "validate:\"required_if_bit_0_set=EnhancedSetupFlowOptions,omitempty,url,startswith=https:,max=256\""];
   uint32 discoveryCapabilitiesBitmask = 26 [(gogoproto.moretags) = "validate:\"gte=0,lte=14\""];
   string commissioningFallbackUrl = 27 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
+  uint32 factoryResetStepsHint = 28; 
+  string factoryResetStepsInstruction = 29; 
 
 }
 

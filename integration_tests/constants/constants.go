@@ -77,6 +77,8 @@ var (
 	CommissioningModeInitialStepsInstruction          = "commissioningModeInitialStepsInstruction details"
 	CommissioningModeSecondaryStepsHint        uint32 = 3
 	CommissioningModeSecondaryStepsInstruction        = "commissioningModeSecondaryStepsInstruction steps"
+	FactoryResetStepsHint                      uint32 = 4
+	FactoryResetStepsInstruction                      = "factoryResetStepsInstruction steps"
 	ReleaseNotesURL                                   = "https://url.releasenotes.dclmodel"
 	UserManualURL                                     = "https://url.usermanual.dclmodel"
 	SupportURL                                        = "https://url.supporturl.dclmodel"

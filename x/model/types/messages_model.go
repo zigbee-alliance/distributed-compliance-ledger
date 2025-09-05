@@ -33,6 +33,8 @@ func NewMsgCreateModel(
 	commissioningModeInitialStepsInstruction string,
 	commissioningModeSecondaryStepsHint uint32,
 	commissioningModeSecondaryStepsInstruction string,
+	factoryResetStepsHint uint32,
+	factoryResetStepsInstruction string,
 	userManualURL string,
 	supportURL string,
 	productURL string,
@@ -61,18 +63,20 @@ func NewMsgCreateModel(
 		CommissioningModeInitialStepsInstruction: commissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsHint:      commissioningModeSecondaryStepsHint,
 		CommissioningModeSecondaryStepsInstruction: commissioningModeSecondaryStepsInstruction,
-		UserManualUrl:               userManualURL,
-		SupportUrl:                  supportURL,
-		ProductUrl:                  productURL,
-		LsfUrl:                      lsfURL,
-		EnhancedSetupFlowOptions:    enhancedSetupFlowOptions,
-		EnhancedSetupFlowTCUrl:      enhancedSetupFlowTCURL,
-		EnhancedSetupFlowTCRevision: enhancedSetupFlowTCRevision,
-		EnhancedSetupFlowTCDigest:   enhancedSetupFlowTCDigest,
-		EnhancedSetupFlowTCFileSize: enhancedSetupFlowTCFileSize,
-		MaintenanceUrl:              maintenanceURL,
-		SchemaVersion:               schemaVersion,
-		CommissioningFallbackUrl:    commissioningFallbackURL,
+		FactoryResetStepsHint:                      factoryResetStepsHint,
+		FactoryResetStepsInstruction:               factoryResetStepsInstruction,
+		UserManualUrl:                              userManualURL,
+		SupportUrl:                                 supportURL,
+		ProductUrl:                                 productURL,
+		LsfUrl:                                     lsfURL,
+		EnhancedSetupFlowOptions:                   enhancedSetupFlowOptions,
+		EnhancedSetupFlowTCUrl:                     enhancedSetupFlowTCURL,
+		EnhancedSetupFlowTCRevision:                enhancedSetupFlowTCRevision,
+		EnhancedSetupFlowTCDigest:                  enhancedSetupFlowTCDigest,
+		EnhancedSetupFlowTCFileSize:                enhancedSetupFlowTCFileSize,
+		MaintenanceUrl:                             maintenanceURL,
+		SchemaVersion:                              schemaVersion,
+		CommissioningFallbackUrl:                   commissioningFallbackURL,
 	}
 }
 
@@ -147,6 +151,8 @@ func NewMsgUpdateModel(
 	maintenanceURL string,
 	commissioningFallbackURL string,
 	commissioningModeSecondaryStepsHint uint32,
+	factoryResetStepsHint uint32,
+	factoryResetStepsInstruction string,
 
 ) *MsgUpdateModel {
 	return &MsgUpdateModel{
@@ -174,6 +180,8 @@ func NewMsgUpdateModel(
 		SchemaVersion:                       schemaVersion,
 		CommissioningFallbackUrl:            commissioningFallbackURL,
 		CommissioningModeSecondaryStepsHint: commissioningModeSecondaryStepsHint,
+		FactoryResetStepsHint:               factoryResetStepsHint,
+		FactoryResetStepsInstruction:        factoryResetStepsInstruction,
 	}
 }
 
