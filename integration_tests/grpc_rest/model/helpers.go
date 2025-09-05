@@ -1120,6 +1120,7 @@ func Demo(suite *utils.TestSuite) {
 	newFactoryResetStepsHint := uint32(7)
 	updateSecondModelMsg := NewMsgUpdateModel(createSecondModelMsg.Vid, createSecondModelMsg.Pid, vendorAccount.Address)
 	updateSecondModelMsg.CommissioningModeInitialStepsHint = newCommissioningModeInitialStepsHint
+	updateSecondModelMsg.CommissioningModeSecondaryStepsHint = newCommissioningModeSecondaryStepsHint
 	updateSecondModelMsg.FactoryResetStepsHint = newFactoryResetStepsHint
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{updateSecondModelMsg}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)

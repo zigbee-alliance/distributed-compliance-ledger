@@ -322,6 +322,7 @@ func TestHandler_UpdateModel(t *testing.T) {
 	var newFactoryResetStepsHint uint32 = 7
 	msgUpdateModel.SchemaVersion = newSchemaVersion
 	msgUpdateModel.CommissioningModeInitialStepsHint = newCommissioningModeInitialStepsHint
+	msgUpdateModel.CommissioningModeSecondaryStepsHint = newCommissioningModeSecondaryStepsHint
 	msgUpdateModel.FactoryResetStepsHint = newFactoryResetStepsHint
 	_, err = setup.Handler(setup.Ctx, msgUpdateModel)
 	require.NoError(t, err)

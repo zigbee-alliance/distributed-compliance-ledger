@@ -297,10 +297,6 @@ values the commissioningModeInitialStepsInstruction SHALL be set`)
 of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, 
 as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, 
 and for these values the commissioningModeSecondaryStepInstruction SHALL be set`)
-	cmd.Flags().Uint32Var(&factoryResetStepsHint, FlagFactoryResetStepsHint, 0,
-		`FactoryResetStepsHint SHALL identify a hint for the steps that MAY be used to factory 
-reset a device. This field is a bitmap with values defined in the Pairing/Reset Hint Table. For example, 
-a value of 64 (bit 6 is set) indicates that a device will be factory reset when the Reset Button is pressed.`)
 	cmd.Flags().StringVar(&factoryResetStepsInstruction, FlagFactoryResetStepsInstruction, "",
 		`FactoryResetStepsInstruction SHALL be populated with the appropriate 
 factory reset instruction for those values of FactoryResetStepsHint, for which the Pairing/Reset Hint Table 
@@ -327,6 +323,10 @@ identify a hint for the steps that can be used to put into commissioning mode a 
 has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. 
 For example, a value of 1 (bit 0 is set) indicates that a device that has not yet been commissioned 
 will enter Commissioning Mode upon a power cycle. Note that this value cannot be updated to 0. (default 1).`)
+	cmd.Flags().Uint32Var(&factoryResetStepsHint, FlagFactoryResetStepsHint, 0,
+		`FactoryResetStepsHint SHALL identify a hint for the steps that MAY be used to factory 
+reset a device. This field is a bitmap with values defined in the Pairing/Reset Hint Table. For example, 
+a value of 64 (bit 6 is set) indicates that a device will be factory reset when the Reset Button is pressed.`)
 	cmd.Flags().Int32Var(&enhancedSetupFlowOptions, FlagEnhancedSetupFlowOptions, 0,
 		"enhancedSetupFlowOptions SHALL identify the configuration options for the Enhanced Setup Flow.")
 	cmd.Flags().StringVar(&enhancedSetupFlowTCURL, FlagEnhancedSetupFlowTCURL, "",
