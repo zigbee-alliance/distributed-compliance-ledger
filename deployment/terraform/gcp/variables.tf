@@ -1,5 +1,5 @@
 variable "common_labels" {
-  description = "Common tags for resources created in AWS."
+  description = "Common labels for resources created in Google Cloud"
   type = object({
     project     = optional(string) # default: DCL
     environment = optional(string) # default: workspace name

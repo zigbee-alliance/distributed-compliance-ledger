@@ -1,6 +1,3 @@
-# FIXME
-# - no tags support
-
 module "this_vpc" {
   source  = "terraform-google-modules/network/google"
   version = "~> 11.1"

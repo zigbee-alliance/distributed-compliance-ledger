@@ -67,7 +67,7 @@ resource "google_compute_instance" "this_node" {
     script = "./provisioner/install-ansible-deps.sh"
   }
 
-  labels = var.labels # FIXME gcp.labels == aws.tags
+  labels = var.labels
 
   tags = [local.validator_tag, local.egress_inet_tag]
 }

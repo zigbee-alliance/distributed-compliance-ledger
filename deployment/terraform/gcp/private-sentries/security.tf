@@ -1,5 +1,4 @@
 # FIXME
-# - aws tags (aka labels here)
 # - block project wirde ssh keys
 
 resource "google_compute_firewall" "this_dev_fw_ingress_rules" {
