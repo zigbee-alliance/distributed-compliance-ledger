@@ -27,6 +27,11 @@ resource "azurerm_network_security_rule" "sg_dev_inbound_ssh" {
   protocol               = "Tcp"
   source_address_prefix  = "*"
   source_port_range      = "*"
+
+  # TODO a workaround, there is some issue (likely on Azure side) that leads to infinite state drifts
+  lifecycle {  
+    ignore_changes = [ destination_application_security_group_ids ]
+  }
 }
 
 resource "azurerm_network_security_rule" "sg_dev_inbound_icmp" {
@@ -43,6 +48,11 @@ resource "azurerm_network_security_rule" "sg_dev_inbound_icmp" {
   protocol               = "Icmp"
   source_address_prefix  = "*"
   source_port_range      = "*"
+
+  # TODO a workaround, there is some issue (likely on Azure side) that leads to infinite state drifts
+  lifecycle {  
+    ignore_changes = [ destination_application_security_group_ids ]
+  }
 }
 
 resource "azurerm_network_security_rule" "sg_outbound_all" {
@@ -59,6 +69,11 @@ resource "azurerm_network_security_rule" "sg_outbound_all" {
     azurerm_application_security_group.observers.id,
   ]
   source_port_range = "*"
+
+  # TODO a workaround, there is some issue (likely on Azure side) that leads to infinite state drifts
+  lifecycle {  
+    ignore_changes = [ source_application_security_group_ids ]
+  }
 }
 
 resource "azurerm_network_security_rule" "sg_inbound_private_p2p" {
@@ -75,6 +90,11 @@ resource "azurerm_network_security_rule" "sg_inbound_private_p2p" {
   protocol               = "Tcp"
   source_address_prefix  = local.internal_ips_range
   source_port_range      = local.p2p_port
+
+  # TODO a workaround, there is some issue (likely on Azure side) that leads to infinite state drifts
+  lifecycle {  
+    ignore_changes = [ destination_application_security_group_ids ]
+  }
 }
 
 resource "azurerm_network_security_rule" "sg_inbound_private_rpc" {
@@ -91,6 +111,11 @@ resource "azurerm_network_security_rule" "sg_inbound_private_rpc" {
   protocol               = "Tcp"
   source_address_prefix  = local.internal_ips_range
   source_port_range      = local.rpc_port
+
+  # TODO a workaround, there is some issue (likely on Azure side) that leads to infinite state drifts
+  lifecycle {  
+    ignore_changes = [ destination_application_security_group_ids ]
+  }
 }
 
 resource "azurerm_network_security_rule" "sg_inbound_private_grpc" {
@@ -107,6 +132,11 @@ resource "azurerm_network_security_rule" "sg_inbound_private_grpc" {
   protocol               = "Tcp"
   source_address_prefix  = local.internal_ips_range
   source_port_range      = local.grpc_port
+
+  # TODO a workaround, there is some issue (likely on Azure side) that leads to infinite state drifts
+  lifecycle {  
+    ignore_changes = [ destination_application_security_group_ids ]
+  }
 }
 
 resource "azurerm_network_security_rule" "sg_inbound_private_rest" {
@@ -123,6 +153,11 @@ resource "azurerm_network_security_rule" "sg_inbound_private_rest" {
   protocol               = "Tcp"
   source_address_prefix  = local.internal_ips_range
   source_port_range      = local.rest_port
+
+  # TODO a workaround, there is some issue (likely on Azure side) that leads to infinite state drifts
+  lifecycle {  
+    ignore_changes = [ destination_application_security_group_ids ]
+  }
 }
 
 # TODO
@@ -140,4 +175,9 @@ resource "azurerm_network_security_rule" "sg_inbound_private_prometheus" {
   protocol               = "Tcp"
   source_address_prefix  = local.internal_ips_range
   source_port_range      = local.prometheus_port
+
+  # TODO a workaround, there is some issue (likely on Azure side) that leads to infinite state drifts
+  lifecycle {  
+    ignore_changes = [ destination_application_security_group_ids ]
+  }
 }
