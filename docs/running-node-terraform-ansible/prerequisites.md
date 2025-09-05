@@ -56,11 +56,23 @@ ansible-galaxy install -r deployment/galaxy-requirements.yml
 <details>
 <summary> AWS </summary>
 
-In case you choose S3 as a terraform backend:
+In case you choose [`s3`](https://developer.hashicorp.com/terraform/language/v1.5.x/settings/backends/s3) as a terraform backend:
 
 *   create S3 bucket
 *   (optional but recommended) create DynamoDB table to support [remote state locking](https://developer.hashicorp.com/terraform/language/v1.5.x/state/locking)
     *   **Note** The table must have a partition key named `LockID` with a type of `String`.
+
+</details>
+
+
+<details>
+<summary> GCP </summary>
+
+In case you choose [`gcs`](https://developer.hashicorp.com/terraform/language/v1.5.x/settings/backends/gcs) as a terraform backend:
+
+*   create a Cloud Storage bucket (e.g. like decribed [here](ihttps://cloud.google.com/storage/docs/creating-buckets)), recommended:
+    *   enable the versioning (with limited number of concurrent versions and expiration days)
+    *   prevent the public access
 
 </details>
 
@@ -73,7 +85,7 @@ The Azure deployment automation logic considers the following:
 *   subscription resource providers should be registered
     *   or the client should have permissions to do that (e.g. via `Contributor` role)
     *   please see more details [here](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/resource-providers-and-types)
-*   in case `azurerm` backend is used the following resources are needed:
+*   in case [`azurerm`](https://developer.hashicorp.com/terraform/language/v1.5.x/settings/backends/azurerm) backend is used the following resources are needed:
     *   a storage account (see [here](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-create?toc=%2Fazure%2Fstorage%2Fblobs%2Ftoc.json&bc=%2Fazure%2Fstorage%2Fblobs%2Fbreadcrumb%2Ftoc.json&tabs=azure-portal) for the details)
         *   (recommended) versioning is [enabled](https://learn.microsoft.com/en-us/azure/storage/blobs/versioning-enable?tabs=portal)
     *   a container in the storage account (see [here](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal#create-a-container) for the details)

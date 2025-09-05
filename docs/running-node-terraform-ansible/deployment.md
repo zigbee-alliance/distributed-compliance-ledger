@@ -80,7 +80,7 @@ available for your cloud provider
 The default backends:
 
 *   AWS: [`s3`](https://developer.hashicorp.com/terraform/language/v1.5.x/settings/backends/s3)
-*   GCP: [`local`](https://developer.hashicorp.com/terraform/language/v1.5.x/settings/backends/local)
+*   GCP: [`gcs`](https://developer.hashicorp.com/terraform/language/v1.5.x/settings/backends/gcs)
 *   Azure: [`azurerm`](https://developer.hashicorp.com/terraform/language/v1.5.x/settings/backends/azurerm)
 
 > **_Note_** In case you need to switch a backend for already deployed infrastracture:
@@ -117,6 +117,36 @@ using one of the following ways:
 *   interactively during terraform initialization
 
 Please see also Terraform [docs](https://developer.hashicorp.com/terraform/language/v1.5.x/settings/backends/s3) for the details.
+</details>
+
+
+<details>
+<summary> GCP </summary>
+
+By default GCP infrastructure backend is set as `gcs` (see [`deployment/terraform/gcp/backend.tf`](../../deployment/terraform/gcp/backend.tf)).
+
+S3 backend configuration implies:
+
+*   existent S3 bucket
+*   (optional but recommended) DynamoDB table to support [remote state locking](https://developer.hashicorp.com/terraform/language/v1.5.x/state/locking)
+    *   **_Note_** The table must have a partition key named `LockID` with a type of `String`.
+
+To complete the configuration please specify:
+
+*   Cloud Storage bucket name
+*   (optional) prefix inside the bucket
+
+using one of the following ways:
+
+*   as parameters in [`deployment/terraform/gcp/backend.tf`](../../deployment/terraform/gcp/backend.tf)
+*   as a separate configuration file:
+    *   use `-backend-config=<config.gcs.tfbackend>` (more [details](https://developer.hashicorp.com/terraform/language/v1.5.x/settings/backends/configuration#partial-configuration))
+    *   example: [`deployment/terraform/gcp/config.gcs.tfbackend.example`](../../deployment/terraform/gcp/config.gcs.tfbackend.example)
+*   as command line arguments
+*   interactively during terraform initialization
+
+Please see also Terraform [docs](https://developer.hashicorp.com/terraform/language/v1.5.x/settings/backends/gcs) for the details.
+
 </details>
 
 <details>
