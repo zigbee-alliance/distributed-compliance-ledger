@@ -69,18 +69,23 @@ Please see other authentication configuration options [here](https://registry.te
 
 
 
-#### 1.1.2 Configure Terraform backend
+#### 1.1.2 Terraform backend
 
 The general recommendation is:
 
 *   use [`local`](https://developer.hashicorp.com/terraform/language/v1.5.x/settings/backends/local) backend only for development
 *   use one of the remote [backends](https://developer.hashicorp.com/terraform/language/v1.5.x/settings/backends/configuration#available-backends)
-available for your cloud provider.
+available for your cloud provider
 
 The default backends:
 
 *   AWS: [`s3`](https://developer.hashicorp.com/terraform/language/v1.5.x/settings/backends/s3)
-*   GCP and Azure: [`local`](https://developer.hashicorp.com/terraform/language/v1.5.x/settings/backends/local)
+*   GCP: [`local`](https://developer.hashicorp.com/terraform/language/v1.5.x/settings/backends/local)
+*   Azure: [`azurerm`](https://developer.hashicorp.com/terraform/language/v1.5.x/settings/backends/azurerm)
+
+> **_Note_** In case you need to switch a backend for already deployed infrastracture:
+> * configure new backend
+> * use `-migrate-state` option for `terraform init` command (see the details [here](https://developer.hashicorp.com/terraform/cli/v1.5.x/commands/init#backend-initialization))
 
 Please see below more backend configuration details for each supported cloud.
 
@@ -89,13 +94,11 @@ Please see below more backend configuration details for each supported cloud.
 
 By default AWS infrastructure backend is set as `s3` (see [`deployment/terraform/aws/backend.tf`](../../deployment/terraform/aws/backend.tf)).
 
-> **_Note_** In case you need to switch to `local` one set it in [`deployment/terraform/aws/backend.tf`](../../deployment/terraform/aws/backend.tf).
-
 S3 backend configuration implies:
 
 *   existent S3 bucket
 *   (optional but recommended) DynamoDB table to support [remote state locking](https://developer.hashicorp.com/terraform/language/v1.5.x/state/locking)
-    *   **Note** The table must have a partition key named `LockID` with a type of `String`.
+    *   **_Note_** The table must have a partition key named `LockID` with a type of `String`.
 
 To complete the configuration please specify:
 
@@ -107,24 +110,53 @@ To complete the configuration please specify:
 using one of the following ways:
 
 *   as parameters in [`deployment/terraform/aws/backend.tf`](../../deployment/terraform/aws/backend.tf)
-*   as a separate configuration file, please check [`deployment/terraform/aws/config.s3.tfbackend.example`](../../deployment/terraform/aws/config.s3.tfbackend.example)
+*   as a separate configuration file:
+    *   use `-backend-config=<config.s3.tfbackend>` (more [details](https://developer.hashicorp.com/terraform/language/v1.5.x/settings/backends/configuration#partial-configuration))
+    *   example: [`deployment/terraform/aws/config.s3.tfbackend.example`](../../deployment/terraform/aws/config.s3.tfbackend.example)
 *   as command line arguments
 *   interactively during terraform initialization
 
 Please see also Terraform [docs](https://developer.hashicorp.com/terraform/language/v1.5.x/settings/backends/s3) for the details.
-
 </details>
+
+<details>
+<summary> Azure </summary>
+
+By default AWS infrastructure backend is set as `azurerm` (see [`deployment/terraform/azure/backend.tf`](../../deployment/terraform/azure/backend.tf)).
+
+`azurerm` backend configuration implies:
+
+*   existent storage account along with storage account container (see [prerequisites](./prerequisites.md#5-preliminary-cloud-configuration) for the details)
+
+To complete the configuration please specify:
+
+*   resource group name
+*   storage account name
+*   container name
+*   key name
+
+using one of the following ways:
+
+*   as parameters in [`deployment/terraform/azure/backend.tf`](../../deployment/terraform/azure/backend.tf)
+*   as a separate configuration file
+    *   use `-backend-config=<config.azurerm.tfbackend>` option (more [details](https://developer.hashicorp.com/terraform/language/v1.5.x/settings/backends/configuration#partial-configuration))
+    *   example: [`deployment/terraform/azure/config.azurerm.tfbackend.example`](../../deployment/terraform/azure/config.azurerm.tfbackend.example)
+*   as command line arguments
+*   interactively during terraform initialization
+
+Please see also Terraform [docs](https://developer.hashicorp.com/terraform/language/v1.5.x/settings/backends/azurerm) for the details.
+</details>
+
 
 #### 1.1.3 Configure infrastructure parameters
 
 Deployment configuration for each of the supported clouds includes common set of parameters:
 
-*   regions / locations
-*   tags
-*   validator paramteres
-*   private sentries paramteres
-*   public sentries paramteres
-*   observers paramteres
+*   common parameters (regions / locations, tags, other cloud specific ones)
+*   validator parameteres
+*   private sentries parameteres
+*   public sentries parameteres
+*   observers parameteres
 *   prometheus (**only for AWS for now**)
 
 And should be defined in the floowing files:
@@ -133,7 +165,9 @@ And should be defined in the floowing files:
 *   GCP [`deployment/terraform/aws/terraform.tfvars`](../../deployment/terraform/gcp/terraform.tfvars)
 *   Azure [`deployment/terraform/aws/terraform.tfvars`](../../deployment/terraform/azure/terraform.tfvars)
 
-##### 1.1.3.1  Regions / Locations
+##### 1.1.3.1  Common parameters
+
+**Regions / Locations**
 
 Selects two regions (locations in Azure) where nodes will be created. Examples:
 
@@ -171,8 +205,7 @@ in the required locations and request the new quotes if needed (more details in
 
 </details>
 
-
-##### 1.1.3.2 Commmon tags
+**Commmon tags**
 
 These tags will be applied to all the resourcers that support them
 
@@ -203,7 +236,25 @@ common_labels= {
 ```
 </details>
 
-##### 1.1.3.3 (Genesis) Validator
+**Cloud specific parameters**
+
+<details>
+<summary> GCP </summary>
+
+```hcl
+project_id = "<your-project-id>"
+```
+</details>
+
+<details>
+<summary> Azure </summary>
+
+```hcl
+resource_group_name = "<your-resource-group-name>"
+```
+</details>
+
+##### 1.1.3.2 (Genesis) Validator
 
 *   Set `is_genesis = false` to deploy just a validator node (not genesis).
 *   Validator/Genesis node is created in `region_1` by default
@@ -252,7 +303,7 @@ that for the subscription
 
 </details>
 
-##### 1.1.3.4 Private Sentries (optional)
+##### 1.1.3.3 Private Sentries (optional)
 
 *   Private sentry nodes are created in the same region as Validator by default
 *   Can be disabled by setting `enable = false`
@@ -295,7 +346,7 @@ private_sentries_config = {
 </details>
 
 
-##### 1.1.3.5 Public Sentries (optional)
+##### 1.1.3.4 Public Sentries (optional)
 
 *   **Requires** `Private Sentries` being enabled
 *   Can be configured to have IPv6 addresses using `enable_ipv6 = true` (**only for AWS for now**)
@@ -356,7 +407,7 @@ public_sentries_config = {
 ```
 </details>
 
-##### 1.1.3.6 Observers (optional)
+##### 1.1.3.5 Observers (optional)
 
 *    **Requires** `Private Sentries` being enabled
 *    Can be configured to run on multiple regions
@@ -435,7 +486,7 @@ observers_config = {
 
 </details>
 
-##### 1.1.3.7 Prometheus (optional)
+##### 1.1.3.6 Prometheus (optional)
 
 > **_Note:_** Only for AWS cloud for now
 

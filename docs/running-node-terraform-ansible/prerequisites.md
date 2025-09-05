@@ -73,10 +73,12 @@ The Azure deployment automation logic considers the following:
 *   subscription resource providers should be registered
     *   or the client should have permissions to do that (e.g. via `Contributor` role)
     *   please see more details [here](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/resource-providers-and-types)
+*   in case `azurerm` backend is used the following resources are needed:
+    *   a storage account (see [here](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-create?toc=%2Fazure%2Fstorage%2Fblobs%2Ftoc.json&bc=%2Fazure%2Fstorage%2Fblobs%2Fbreadcrumb%2Ftoc.json&tabs=azure-portal) for the details)
+        *   (recommended) versioning is [enabled](https://learn.microsoft.com/en-us/azure/storage/blobs/versioning-enable?tabs=portal)
+    *   a container in the storage account (see [here](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal#create-a-container) for the details)
 
 </details>
-
-
 
 
 
