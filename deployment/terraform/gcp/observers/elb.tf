@@ -33,7 +33,7 @@ resource "google_compute_target_ssl_proxy" "this_nlb_target_ssl_proxy" {
 
   name             = "observer-nlb-target-ssl-proxy-${local.nlb_ports[count.index].name}"
   backend_service  = google_compute_backend_service.this_nlb_backend_service[count.index].id
-  ssl_certificates = [google_compute_ssl_certificate.this_cert[0].id]
+  ssl_certificates = [null] # [google_compute_ssl_certificate.this_cert[0].id] TODO need to implement support for TLS
 }
 
 resource "google_compute_target_tcp_proxy" "this_nlb_target_tcp_proxy" {
