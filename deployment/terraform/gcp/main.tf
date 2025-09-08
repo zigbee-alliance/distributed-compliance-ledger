@@ -1,14 +1,14 @@
 provider "google" {
-  alias   = "region_1"
-  region  = var.region_1
-  project = var.project_id
+  alias          = "region_1"
+  region         = var.region_1
+  project        = var.project_id
   default_labels = local.labels
 }
 
 provider "google" {
-  alias   = "region_2"
-  region  = var.region_2
-  project = var.project_id
+  alias          = "region_2"
+  region         = var.region_2
+  project        = var.project_id
   default_labels = local.labels
 }
 
@@ -42,9 +42,9 @@ module "validator" {
   ssh_public_key_path  = var.ssh_public_key_path
   ssh_private_key_path = var.ssh_private_key_path
 
-  instance_type = var.validator_config.instance_type
+  instance_type               = var.validator_config.instance_type
   disable_instance_protection = local.disable_validator_protection
-#   service_account_email = module.iam.service_account_email FIXME
+  #   service_account_email = module.iam.service_account_email FIXME
 
   project_id = var.project_id
 }
@@ -62,21 +62,21 @@ module "private_sentries" {
   region = var.region_1
   labels = local.labels
 
-  nodes_count           = var.private_sentries_config.nodes_count
-  instance_type         = var.private_sentries_config.instance_type
+  nodes_count   = var.private_sentries_config.nodes_count
+  instance_type = var.private_sentries_config.instance_type
   # service_account_email = module.iam.service_account_email FIXME
 
   ssh_public_key_path  = var.ssh_public_key_path
   ssh_private_key_path = var.ssh_private_key_path
 
-  peer_vpc = module.validator.vpc
+  peer_vpc   = module.validator.vpc
   project_id = var.project_id
 }
 
 # Public Sentries
 module "public_sentries" {
   count = (var.private_sentries_config.enable &&
-    var.public_sentries_config.enable) ? 1 : 0
+  var.public_sentries_config.enable) ? 1 : 0
 
   source = "./public-sentries"
   providers = {
@@ -86,18 +86,18 @@ module "public_sentries" {
 
   region_config = [
     {
-      region = var.region_1
+      region      = var.region_1
       nodes_count = var.public_sentries_config.region1_nodes_count
     },
     {
-      region = var.region_2
+      region      = var.region_2
       nodes_count = var.public_sentries_config.region2_nodes_count
     }
   ]
 
   labels = local.labels
 
-  instance_type         = var.public_sentries_config.instance_type
+  instance_type = var.public_sentries_config.instance_type
   # service_account_email = module.iam.service_account_email # FIXME
 
   enable_ipv6 = var.public_sentries_config.enable_ipv6
@@ -105,14 +105,14 @@ module "public_sentries" {
   ssh_public_key_path  = var.ssh_public_key_path
   ssh_private_key_path = var.ssh_private_key_path
 
-  peer_vpc     = module.private_sentries[0].vpc
+  peer_vpc   = module.private_sentries[0].vpc
   project_id = var.project_id
 }
 
 # Observers
 module "observers" {
   count = (var.private_sentries_config.enable &&
-    var.observers_config.enable) ? 1 : 0
+  var.observers_config.enable) ? 1 : 0
 
   source = "./observers"
   # FIXME
@@ -123,18 +123,18 @@ module "observers" {
 
   region_config = [
     {
-      region = var.region_1
+      region      = var.region_1
       nodes_count = var.observers_config.region1_nodes_count
     },
     {
-      region = var.region_2
+      region      = var.region_2
       nodes_count = var.observers_config.region2_nodes_count
     }
   ]
 
   labels = local.labels
 
-  instance_type         = var.observers_config.instance_type
+  instance_type = var.observers_config.instance_type
   #  service_account_email = module.iam.service_account_email # FIXME
 
   root_domain_name = var.observers_config.root_domain_name
@@ -143,7 +143,7 @@ module "observers" {
   ssh_public_key_path  = var.ssh_public_key_path
   ssh_private_key_path = var.ssh_private_key_path
 
-  peer_vpc     = module.private_sentries[0].vpc
+  peer_vpc   = module.private_sentries[0].vpc
   project_id = var.project_id
 }
 

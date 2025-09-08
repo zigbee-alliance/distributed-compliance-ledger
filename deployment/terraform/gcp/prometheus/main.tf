@@ -12,7 +12,7 @@ resource "google_compute_instance" "prometheus" {
   }
 
   network_interface {
-    subnetwork         = var.subnetwork
+    subnetwork = var.subnetwork
     access_config {}
   }
 

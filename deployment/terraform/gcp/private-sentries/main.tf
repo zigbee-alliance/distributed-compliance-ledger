@@ -1,23 +1,23 @@
 locals {
-  p2p_port = 26656
-  rpc_port = 26657
+  p2p_port        = 26656
+  rpc_port        = 26657
   prometheus_port = 26660
 
   vpc_network_prefix = "10.10"
-  internal_ips_prefix = "10.0"
-  subnet_name = "private-sentries-subnet"
+  internal_ips_range = "10.0.0.0/8"
+  subnet_name        = "private-sentries-subnet"
 
-  subnet_region = var.region
+  subnet_region     = var.region
   subnet_output_key = "${local.subnet_region}/${local.subnet_name}"
 
-  egress_inet_tag = "egress-inet"
+  egress_inet_tag    = "egress-inet"
   private_sentry_tag = "private-sentry"
 }
 
 data "google_compute_image" "ubuntu" {
   most_recent = true
-  project = "ubuntu-os-cloud"
-  filter = "(family = \"${var.os_family}\") AND (architecture = \"X86_64\")"
+  project     = "ubuntu-os-cloud"
+  filter      = "(family = \"${var.os_family}\") AND (architecture = \"X86_64\")"
 }
 
 
@@ -32,14 +32,14 @@ resource "google_compute_address" "this_static_ips" {
 resource "google_compute_instance" "this_nodes" {
   count = var.nodes_count
 
-  name                = "private-sentry-node-${count.index}" # FIXME copy-paste
-  machine_type        = var.instance_type
-  zone               = data.google_compute_zones.available.names[count.index]
+  name         = "private-sentry-node-${count.index}" # FIXME copy-paste
+  machine_type = var.instance_type
+  zone         = data.google_compute_zones.available.names[count.index]
 
   boot_disk {
     initialize_params {
       image = data.google_compute_image.ubuntu.self_link
-      size = 80
+      size  = 80
     }
   }
 
@@ -76,7 +76,7 @@ resource "google_compute_instance" "this_nodes" {
     script = "./provisioner/install-ansible-deps.sh"
   }
 
-  labels = var.labels # FIXME gcp.labels == aws.tags
+  labels = var.labels
 
   tags = [local.private_sentry_tag, local.egress_inet_tag]
 }

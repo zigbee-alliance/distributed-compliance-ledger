@@ -1,5 +1,4 @@
 # FIXME
-# - aws tags (aka labels here)
 # - block project wirde ssh keys
 
 resource "google_compute_firewall" "this_dev_fw_ingress_rules" {
@@ -19,7 +18,7 @@ resource "google_compute_firewall" "this_dev_fw_ingress_rules" {
 
   source_ranges = ["0.0.0.0/0"]
 
-  target_tags   = [local.observer_tag]
+  target_tags = [local.observer_tag]
 }
 
 resource "google_compute_firewall" "this_fw_egress_rules" {
@@ -33,7 +32,7 @@ resource "google_compute_firewall" "this_fw_egress_rules" {
 
   direction = "EGRESS"
 
-  target_tags   = [local.observer_tag]
+  target_tags = [local.observer_tag]
 }
 
 
@@ -74,19 +73,19 @@ resource "google_compute_firewall" "this_private_fw_ingress_rules" {
     ports    = [local.rest_port]
   }
 
-  source_ranges = ["${local.internal_ips_prefix}.0.0/8"]
+  source_ranges = [local.internal_ips_range]
 
-  target_tags   = [local.observer_tag]
+  target_tags = [local.observer_tag]
 }
 
 # FIXME what about NLB proxy IP
 # allow access from health check ranges
 resource "google_compute_firewall" "default" {
-  name          = "observer-nlb-hc-fw-ingress-rule"
-  network       = local.vpc.network_name
+  name    = "observer-nlb-hc-fw-ingress-rule"
+  network = local.vpc.network_name
   allow {
     protocol = "tcp"
   }
   source_ranges = ["130.211.0.0/22", "35.191.0.0/16"]
-  target_tags = [local.observer_nlb_tag]
+  target_tags   = [local.observer_nlb_tag]
 }

@@ -1,5 +1,4 @@
 # FIXME
-# - aws tags (aka labels here)
 # - block project wirde ssh keys
 
 resource "google_compute_firewall" "this_dev_fw_ingress_rules" {
@@ -19,7 +18,7 @@ resource "google_compute_firewall" "this_dev_fw_ingress_rules" {
 
   source_ranges = ["0.0.0.0/0"]
 
-  target_tags   = [local.validator_tag]
+  target_tags = [local.validator_tag]
 }
 
 resource "google_compute_firewall" "this_fw_egress_rules" {
@@ -33,7 +32,7 @@ resource "google_compute_firewall" "this_fw_egress_rules" {
 
   direction = "EGRESS"
 
-  target_tags   = [local.validator_tag]
+  target_tags = [local.validator_tag]
 }
 
 
@@ -62,7 +61,7 @@ resource "google_compute_firewall" "this_private_fw_ingress_rules" {
     ports    = [local.prometheus_port]
   }
 
-  source_ranges = ["${local.vpc_network_prefix}.0.0/8"]
+  source_ranges = [local.internal_ips_range]
 
-  target_tags   = [local.validator_tag]
+  target_tags = [local.validator_tag]
 }
