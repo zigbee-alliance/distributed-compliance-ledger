@@ -21,20 +21,20 @@ private_sentries_config = {
 }
 
 public_sentries_config = {
-  enable        = true
-  enable_ipv6   = false
-  region1_nodes_count   = 2
-  region2_nodes_count   = 2
-  instance_type = "e2-standard-2"
+  enable              = true
+  enable_ipv6         = false
+  region1_nodes_count = 2
+  region2_nodes_count = 2
+  instance_type       = "e2-standard-2"
 }
 
 observers_config = {
-  enable           = true
-  region1_nodes_count      = 3
-  region2_nodes_count      = 3
-  instance_type    = "e2-standard-2"
-  root_domain_name = "matterprotocol.com"
-  enable_tls       = true
+  enable              = true
+  region1_nodes_count = 3
+  region2_nodes_count = 3
+  instance_type       = "e2-standard-2"
+  root_domain_name    = "matterprotocol.com"
+  enable_tls          = true
 }
 
 prometheus_config = {

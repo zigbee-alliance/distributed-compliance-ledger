@@ -18,26 +18,26 @@ locals {
     }
 
     private_sentries = {
-      private_ips = var.private_sentries_config.enable ? module.private_sentries[0].private_ips : []
-      public_ips  = var.private_sentries_config.enable ? module.private_sentries[0].public_ips : []
+      private_ips       = var.private_sentries_config.enable ? module.private_sentries[0].private_ips : []
+      public_ips        = var.private_sentries_config.enable ? module.private_sentries[0].public_ips : []
       public_static_ips = var.private_sentries_config.enable ? module.private_sentries[0].public_static_ips : []
     }
 
-   public_sentries = {
-     private_ips = (var.private_sentries_config.enable && var.public_sentries_config.enable) ? module.public_sentries[0].private_ips : [],
-     public_ips = (var.private_sentries_config.enable && var.public_sentries_config.enable) ? module.public_sentries[0].public_ips : [],
-   }
+    public_sentries = {
+      private_ips = (var.private_sentries_config.enable && var.public_sentries_config.enable) ? module.public_sentries[0].private_ips : [],
+      public_ips  = (var.private_sentries_config.enable && var.public_sentries_config.enable) ? module.public_sentries[0].public_ips : [],
+    }
 
-   seeds = {
-     private_ips = (var.private_sentries_config.enable && var.public_sentries_config.enable) ? module.public_sentries[0].seed_private_ips : []
-     public_ips = (var.private_sentries_config.enable && var.public_sentries_config.enable) ? module.public_sentries[0].seed_public_ips : []
-   }
+    seeds = {
+      private_ips = (var.private_sentries_config.enable && var.public_sentries_config.enable) ? module.public_sentries[0].seed_private_ips : []
+      public_ips  = (var.private_sentries_config.enable && var.public_sentries_config.enable) ? module.public_sentries[0].seed_public_ips : []
+    }
 
-   observers = {
-     private_ips = (var.private_sentries_config.enable && var.observers_config.enable) ? module.observers[0].private_ips : []
-     public_ips  = (var.private_sentries_config.enable && var.observers_config.enable) ? module.observers[0].public_ips : []
-   }
- }
+    observers = {
+      private_ips = (var.private_sentries_config.enable && var.observers_config.enable) ? module.observers[0].private_ips : []
+      public_ips  = (var.private_sentries_config.enable && var.observers_config.enable) ? module.observers[0].public_ips : []
+    }
+  }
 
   ansible_inventory = {
     all = {
@@ -54,31 +54,31 @@ locals {
           hosts = { for host in local.nodes.private_sentries.public_ips : host => null }
         }
 
-       public_sentries = {
-         hosts = { for host in local.nodes.public_sentries.public_ips : host => null }
-       }
+        public_sentries = {
+          hosts = { for host in local.nodes.public_sentries.public_ips : host => null }
+        }
 
-       seeds = {
-         hosts = { for host in local.nodes.seeds.public_ips : host => null }
-       }
+        seeds = {
+          hosts = { for host in local.nodes.seeds.public_ips : host => null }
+        }
 
-       observers = {
-         hosts = { for host in local.nodes.observers.public_ips : host => null }
-       }
+        observers = {
+          hosts = { for host in local.nodes.observers.public_ips : host => null }
+        }
       }
     }
   }
 
-# FIXME
-# prometheus_endpoints = concat(
-#   local.nodes.validator.private_ips,
-#   local.nodes.private_sentries.private_ips,
-#   local.nodes.public_sentries.private_ips,
-#   local.nodes.observers.private_ips,
-#   local.nodes.seeds.private_ips
-# )
+  # FIXME
+  # prometheus_endpoints = concat(
+  #   local.nodes.validator.private_ips,
+  #   local.nodes.private_sentries.private_ips,
+  #   local.nodes.public_sentries.private_ips,
+  #   local.nodes.observers.private_ips,
+  #   local.nodes.seeds.private_ips
+  # )
 
-# prometheus_enabled = var.private_sentries_config.enable && var.prometheus_config.enable
+  # prometheus_enabled = var.private_sentries_config.enable && var.prometheus_config.enable
 
-# prometheus_endpoint = local.prometheus_enabled ? module.prometheus[0].prometheus_endpoint : null
+  # prometheus_endpoint = local.prometheus_enabled ? module.prometheus[0].prometheus_endpoint : null
 }

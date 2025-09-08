@@ -1,5 +1,5 @@
 variable "common_labels" {
-  description = "Common tags for resources created in AWS."
+  description = "Common labels for resources created in Google Cloud"
   type = object({
     project     = optional(string) # default: DCL
     environment = optional(string) # default: workspace name
@@ -76,11 +76,11 @@ variable "private_sentries_config" {
 
 variable "public_sentries_config" {
   type = object({
-    enable        = bool
-    enable_ipv6   = bool
-    region1_nodes_count      = number
-    region2_nodes_count      = number
-    instance_type = string
+    enable              = bool
+    enable_ipv6         = bool
+    region1_nodes_count = number
+    region2_nodes_count = number
+    instance_type       = string
   })
 
   description = "Public Sentries config"
@@ -88,12 +88,12 @@ variable "public_sentries_config" {
 
 variable "observers_config" {
   type = object({
-    enable           = bool
-    region1_nodes_count      = number
-    region2_nodes_count      = number
-    instance_type    = string
-    root_domain_name = string
-    enable_tls       = bool
+    enable              = bool
+    region1_nodes_count = number
+    region2_nodes_count = number
+    instance_type       = string
+    root_domain_name    = string
+    enable_tls          = bool
   })
 
   description = "Observers config"

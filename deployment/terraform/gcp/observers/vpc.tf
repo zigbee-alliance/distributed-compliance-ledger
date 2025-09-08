@@ -1,22 +1,19 @@
-# FIXME
-# - no tags support
-
 module "this_vpc" {
-    source  = "terraform-google-modules/network/google"
-    version = "~> 11.1"
-   
-    project_id = var.project_id
+  source  = "terraform-google-modules/network/google"
+  version = "~> 11.1"
 
-    network_name = "observers-vpc"
+  project_id = var.project_id
 
-    subnets = local.subnets
+  network_name = "observers-vpc"
 
-    routes = [
-        {
-            name                   = "observers-egress-internet"
-            destination_range      = "0.0.0.0/0"
-            tags                   = local.egress_inet_tag 
-            next_hop_internet      = "true"
-        },
-    ]
+  subnets = local.subnets
+
+  routes = [
+    {
+      name              = "observers-egress-internet"
+      destination_range = "0.0.0.0/0"
+      tags              = local.egress_inet_tag
+      next_hop_internet = "true"
+    },
+  ]
 }
