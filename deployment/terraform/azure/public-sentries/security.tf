@@ -43,8 +43,8 @@ resource "azurerm_network_security_rule" "sg_dev_inbound_ssh" {
   # - ids repassed with upper-cases
   # - on cloud they are lowercased partly
   # - so terraform plan is always with the changes
-  lifecycle {  
-    ignore_changes = [ destination_application_security_group_ids ]
+  lifecycle {
+    ignore_changes = [destination_application_security_group_ids]
   }
 }
 
@@ -65,8 +65,8 @@ resource "azurerm_network_security_rule" "sg_dev_inbound_icmp" {
   source_port_range      = "*"
 
   # TODO a workaround, there is some issue (likely on Azure side) that leads to infinite state drifts
-  lifecycle {  
-    ignore_changes = [ destination_application_security_group_ids ]
+  lifecycle {
+    ignore_changes = [destination_application_security_group_ids]
   }
 }
 
@@ -87,8 +87,8 @@ resource "azurerm_network_security_rule" "sg_outbound_all" {
   source_port_range = "*"
 
   # TODO a workaround, there is some issue (likely on Azure side) that leads to infinite state drifts
-  lifecycle {  
-    ignore_changes = [ source_application_security_group_ids ]
+  lifecycle {
+    ignore_changes = [source_application_security_group_ids]
   }
 }
 
@@ -108,8 +108,8 @@ resource "azurerm_network_security_rule" "sg_inbound_public_p2p" {
   source_port_range      = local.p2p_port
 
   # TODO a workaround, there is some issue (likely on Azure side) that leads to infinite state drifts
-  lifecycle {  
-    ignore_changes = [ destination_application_security_group_ids ]
+  lifecycle {
+    ignore_changes = [destination_application_security_group_ids]
   }
 }
 
@@ -129,8 +129,8 @@ resource "azurerm_network_security_rule" "sg_inbound_public_rpc" {
   source_port_range      = local.rpc_port
 
   # TODO a workaround, there is some issue (likely on Azure side) that leads to infinite state drifts
-  lifecycle {  
-    ignore_changes = [ destination_application_security_group_ids ]
+  lifecycle {
+    ignore_changes = [destination_application_security_group_ids]
   }
 }
 
@@ -151,8 +151,8 @@ resource "azurerm_network_security_rule" "sg_inbound_public_prometheus" {
   source_port_range      = local.prometheus_port
 
   # TODO a workaround, there is some issue (likely on Azure side) that leads to infinite state drifts
-  lifecycle {  
-    ignore_changes = [ destination_application_security_group_ids ]
+  lifecycle {
+    ignore_changes = [destination_application_security_group_ids]
   }
 }
 
@@ -172,7 +172,7 @@ resource "azurerm_network_security_rule" "sg_inbound_seed_public_p2p" {
   source_port_range      = local.p2p_port
 
   # TODO a workaround, there is some issue (likely on Azure side) that leads to infinite state drifts
-  lifecycle {  
-    ignore_changes = [ destination_application_security_group_ids ]
+  lifecycle {
+    ignore_changes = [destination_application_security_group_ids]
   }
 }
