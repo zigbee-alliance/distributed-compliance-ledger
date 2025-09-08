@@ -15,6 +15,23 @@ git clone https://github.com/zigbee-alliance/distributed-compliance-ledger.git
 
 ### 2. Install [Terraform][2] CLI
 
+The deployment scripts in this repository were verified with Terraform v1.5.7, the latest one
+with the Mozilla Public License v2.0 (MPL 2.0) before the [change](https://www.hashicorp.com/en/license-faq).
+
+The binary be get as follows:
+
+```bash
+PRODUCT=terraform VERSION=1.5.7 OS_ARCH=linux_amd64 curl --remote-name https://releases.hashicorp.com/"${PRODUCT}"/"${VERSION}"/"${PRODUCT}"_"${VERSION}"_"${OS_ARCH}".zip
+```
+
+Please consider to do checksum and sugnature verification like described [here](https://developer.hashicorp.com/well-architected-framework/verify-hashicorp-binary?page=operational-excellence&page=verify-hashicorp-binary)
+and put the binary into the directory in your `$PATH`.
+
+In case you want to try other installation options and/or Terraform CLI version you may follow
+one of the [multiple ways](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli#verify-the-installation).
+
+E.g. using `apt` package manager for Debian systems:
+
 ```bash
 sudo apt-get update && sudo apt-get install -y gnupg software-properties-common curl
 curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
