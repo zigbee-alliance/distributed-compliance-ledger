@@ -55,7 +55,7 @@ result=$(echo "test1234" | dcld tx model add-model --vid=$vid_1 --pid=$pid_2 --d
 --partNumber="23.456" --commissioningCustomFlow=1 --commissioningCustomFlowURL="https://customflow.url.info" \
 --commissioningModeInitialStepsHint=1  --commissioningModeInitialStepsInstruction="Initial Instructions" \
 --commissioningModeSecondaryStepsHint=2 --commissioningModeSecondaryStepsInstruction="Secondary Steps Instruction" \
---icdUserActiveModeTriggerHint=4 --icdUserActiveModeTriggerInstruction="Factory Reset Steps Instruction" \
+--icdUserActiveModeTriggerHint=4 --icdUserActiveModeTriggerInstruction="CD User Active Mode Trigger Instruction" \
 --factoryResetStepsHint=3 --factoryResetStepsInstruction="Factory Reset Steps Instruction" \
 --userManualURL="https://usermanual.url" --productURL="https://product.url.info" --lsfURL="https://lsf.url.info" --supportURL="https://support.url.info" --enhancedSetupFlowOptions=0 --from=$vendor_account_1 --yes)
 result=$(get_txn_result "$result")

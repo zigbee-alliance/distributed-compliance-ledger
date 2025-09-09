@@ -8811,6 +8811,11 @@ paths:
                       format: int64
                     commissioningFallbackUrl:
                       type: string
+                    icdUserActiveModeTriggerHint:
+                      type: integer
+                      format: int64
+                    icdUserActiveModeTriggerInstruction:
+                      type: string
                     factoryResetStepsHint:
                       type: integer
                       format: int64
@@ -9059,6 +9064,11 @@ paths:
                     type: integer
                     format: int64
                   commissioningFallbackUrl:
+                    type: string
+                  icdUserActiveModeTriggerHint:
+                    type: integer
+                    format: int64
+                  icdUserActiveModeTriggerInstruction:
                     type: string
                   factoryResetStepsHint:
                     type: integer
@@ -23536,6 +23546,11 @@ definitions:
         format: int64
       commissioningFallbackUrl:
         type: string
+      icdUserActiveModeTriggerHint:
+        type: integer
+        format: int64
+      icdUserActiveModeTriggerInstruction:
+        type: string
       factoryResetStepsHint:
         type: integer
         format: int64
@@ -23692,6 +23707,11 @@ definitions:
               format: int64
             commissioningFallbackUrl:
               type: string
+            icdUserActiveModeTriggerHint:
+              type: integer
+              format: int64
+            icdUserActiveModeTriggerInstruction:
+              type: string
             factoryResetStepsHint:
               type: integer
               format: int64
@@ -23794,6 +23814,11 @@ definitions:
             type: integer
             format: int64
           commissioningFallbackUrl:
+            type: string
+          icdUserActiveModeTriggerHint:
+            type: integer
+            format: int64
+          icdUserActiveModeTriggerInstruction:
             type: string
           factoryResetStepsHint:
             type: integer

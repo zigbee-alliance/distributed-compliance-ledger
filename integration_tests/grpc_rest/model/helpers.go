@@ -1120,14 +1120,11 @@ func Demo(suite *utils.TestSuite) {
 	newCommissioningModeInitialStepsHint := uint32(8)
 	newCommissioningModeSecondaryStepsHint := uint32(9)
 	newIcdUserActiveModeTriggerHint := uint32(7)
-	updateSecondModelMsg := NewMsgUpdateModel(createSecondModelMsg.Vid, createSecondModelMsg.Pid, vendorAccount.Address)
-	updateSecondModelMsg.CommissioningModeInitialStepsHint = newCommissioningModeInitialStepsHint
-	updateSecondModelMsg.CommissioningModeSecondaryStepsHint = newCommissioningModeSecondaryStepsHint
-	updateSecondModelMsg.IcdUserActiveModeTriggerHint = newIcdUserActiveModeTriggerHint
 	newFactoryResetStepsHint := uint32(7)
 	updateSecondModelMsg := NewMsgUpdateModel(createSecondModelMsg.Vid, createSecondModelMsg.Pid, vendorAccount.Address)
 	updateSecondModelMsg.CommissioningModeInitialStepsHint = newCommissioningModeInitialStepsHint
 	updateSecondModelMsg.CommissioningModeSecondaryStepsHint = newCommissioningModeSecondaryStepsHint
+	updateSecondModelMsg.IcdUserActiveModeTriggerHint = newIcdUserActiveModeTriggerHint
 	updateSecondModelMsg.FactoryResetStepsHint = newFactoryResetStepsHint
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{updateSecondModelMsg}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)

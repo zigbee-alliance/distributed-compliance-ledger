@@ -155,7 +155,7 @@ of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecon
 as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, 
 and for these values the commissioningModeSecondaryStepInstruction SHALL be set`)
 	cmd.Flags().Uint32Var(&icdUserActiveModeTriggerHint, FlagIcdUserActiveModeTriggerHint, 0,
-		`IcdUserActiveModeTriggerHint IcdUserActiveModeTriggerHint  (when provided) is applicable to 
+		`IcdUserActiveModeTriggerHint (when provided) is applicable to 
 an ICD that supports the UserActiveModeTriggerFeature feature. This field SHALL indicate which user action(s) 
 will trigger the ICD to switch to Active mode. This field SHALL follow the requirements specified in UserActiveModeTriggerHint.`)
 	cmd.Flags().StringVar(&icdUserActiveModeTriggerInstruction, FlagIcdUserActiveModeTriggerInstruction, "",
@@ -315,7 +315,7 @@ of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecon
 as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, 
 and for these values the commissioningModeSecondaryStepInstruction SHALL be set`)
 	cmd.Flags().Uint32Var(&icdUserActiveModeTriggerHint, FlagIcdUserActiveModeTriggerHint, 0,
-		`IcdUserActiveModeTriggerHint IcdUserActiveModeTriggerHint  (when provided) is applicable to 
+		`IcdUserActiveModeTriggerHint (when provided) is applicable to 
 an ICD that supports the UserActiveModeTriggerFeature feature. This field SHALL indicate which user action(s) 
 will trigger the ICD to switch to Active mode. This field SHALL follow the requirements specified in UserActiveModeTriggerHint.`)
 	cmd.Flags().StringVar(&icdUserActiveModeTriggerInstruction, FlagIcdUserActiveModeTriggerInstruction, "",

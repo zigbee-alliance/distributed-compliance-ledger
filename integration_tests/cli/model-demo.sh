@@ -147,23 +147,16 @@ echo "$result"
 
 test_divider
 
-echo "Update Model with VID: ${vid} PID: ${pid} with new description, commissioningModeInitialStepsHint, and icdUserActiveModeTriggerHint"
+echo "Update Model with VID: ${vid} PID: ${pid} with new description, commissioningModeInitialStepsHint, factoryResetStepsHint and icdUserActiveModeTriggerHint"
 description="New Device Description"
 newCommissioningModeInitialStepsHint=8
 newCommissioningModeSecondaryStepsHint=9
 newIcdUserActiveModeTriggerHint=7
-enhancedSetupFlowOptions_2=2
-result=$(echo "test1234" | dcld tx model update-model --vid=$vid --pid=$pid --from $vendor_account --yes --productLabel "$description" --schemaVersion=$schema_version_0 \
-  --commissioningModeInitialStepsHint="$newCommissioningModeInitialStepsHint" --commissioningModeSecondaryStepsHint="$newCommissioningModeSecondaryStepsHint" \
-  --icdUserActiveModeTriggerHint="$newIcdUserActiveModeTriggerHint" --enhancedSetupFlowOptions=$enhancedSetupFlowOptions_2)
-echo "Update Model with VID: ${vid} PID: ${pid} with new description, commissioningModeInitialStepsHint, and factoryResetStepsHint"
-description="New Device Description"
-newCommissioningModeInitialStepsHint=8
-newCommissioningModeSecondaryStepsHint=9
 newFactoryResetStepsHint=6
 enhancedSetupFlowOptions_2=2
 result=$(echo "test1234" | dcld tx model update-model --vid=$vid --pid=$pid --from $vendor_account --yes --productLabel "$description" --schemaVersion=$schema_version_0 \
   --commissioningModeInitialStepsHint="$newCommissioningModeInitialStepsHint" --commissioningModeSecondaryStepsHint="$newCommissioningModeSecondaryStepsHint" \
+  --icdUserActiveModeTriggerHint="$newIcdUserActiveModeTriggerHint" --enhancedSetupFlowOptions=$enhancedSetupFlowOptions_2\
   --factoryResetStepsHint="$newFactoryResetStepsHint" --enhancedSetupFlowOptions=$enhancedSetupFlowOptions_2)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
