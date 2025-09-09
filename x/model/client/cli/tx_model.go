@@ -26,6 +26,8 @@ func CmdCreateModel() *cobra.Command {
 		commissioningModeInitialStepsInstruction   string
 		commissioningModeSecondaryStepsHint        uint32
 		commissioningModeSecondaryStepsInstruction string
+		icdUserActiveModeTriggerHint               uint32
+		icdUserActiveModeTriggerInstruction        string
 		userManualURL                              string
 		supportURL                                 string
 		productURL                                 string
@@ -77,6 +79,8 @@ func CmdCreateModel() *cobra.Command {
 				commissioningModeInitialStepsInstruction,
 				commissioningModeSecondaryStepsHint,
 				commissioningModeSecondaryStepsInstruction,
+				icdUserActiveModeTriggerHint,
+				icdUserActiveModeTriggerInstruction,
 				userManualURL,
 				supportURL,
 				productURL,
@@ -146,6 +150,15 @@ current CHIP Administrator to put the device into commissioning mode.`)
 of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, 
 as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, 
 and for these values the commissioningModeSecondaryStepInstruction SHALL be set`)
+	cmd.Flags().Uint32Var(&icdUserActiveModeTriggerHint, FlagIcdUserActiveModeTriggerHint, 0,
+		`IcdUserActiveModeTriggerHint IcdUserActiveModeTriggerHint  (when provided) is applicable to 
+an ICD that supports the UserActiveModeTriggerFeature feature. This field SHALL indicate which user action(s) 
+will trigger the ICD to switch to Active mode. This field SHALL follow the requirements specified in UserActiveModeTriggerHint.`)
+	cmd.Flags().StringVar(&icdUserActiveModeTriggerInstruction, FlagIcdUserActiveModeTriggerInstruction, "",
+		`IcdUserActiveModeTriggerInstruction (when provided) is applicable to an ICD that supports the UserActiveModeTriggerFeature 
+feature. The meaning of this field is dependent upon the UserActiveModeTriggerHint field value, and the conformance is indicated 
+in the "dependency" column in UserActiveModeTriggerHintTable. This field SHALL follow the requirements specified in 
+UserActiveModeTriggerInstruction.`)
 	cmd.Flags().StringVar(&userManualURL, FlagUserManualURL, "",
 		"URL that contains product specific web page that contains user manual for the device model.")
 	cmd.Flags().StringVar(&supportURL, FlagSupportURL, "",
@@ -189,6 +202,8 @@ func CmdUpdateModel() *cobra.Command {
 		commissioningCustomFlowURL                 string
 		commissioningModeInitialStepsInstruction   string
 		commissioningModeSecondaryStepsInstruction string
+		icdUserActiveModeTriggerHint               uint32
+		icdUserActiveModeTriggerInstruction        string
 		userManualURL                              string
 		supportURL                                 string
 		productURL                                 string
@@ -246,6 +261,8 @@ func CmdUpdateModel() *cobra.Command {
 				maintenanceURL,
 				commissioningFallbackURL,
 				commissioningModeSecondaryStepsHint,
+				icdUserActiveModeTriggerHint,
+				icdUserActiveModeTriggerInstruction,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -281,6 +298,15 @@ values the commissioningModeInitialStepsInstruction SHALL be set`)
 of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, 
 as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, 
 and for these values the commissioningModeSecondaryStepInstruction SHALL be set`)
+	cmd.Flags().Uint32Var(&icdUserActiveModeTriggerHint, FlagIcdUserActiveModeTriggerHint, 0,
+		`IcdUserActiveModeTriggerHint IcdUserActiveModeTriggerHint  (when provided) is applicable to 
+an ICD that supports the UserActiveModeTriggerFeature feature. This field SHALL indicate which user action(s) 
+will trigger the ICD to switch to Active mode. This field SHALL follow the requirements specified in UserActiveModeTriggerHint.`)
+	cmd.Flags().StringVar(&icdUserActiveModeTriggerInstruction, FlagIcdUserActiveModeTriggerInstruction, "",
+		`IcdUserActiveModeTriggerInstruction (when provided) is applicable to an ICD that supports the UserActiveModeTriggerFeature 
+feature. The meaning of this field is dependent upon the UserActiveModeTriggerHint field value, and the conformance is indicated 
+in the "dependency" column in UserActiveModeTriggerHintTable. This field SHALL follow the requirements specified in 
+UserActiveModeTriggerInstruction.`)
 	cmd.Flags().StringVar(&userManualURL, FlagUserManualURL, "",
 		"URL that contains product specific web page that contains user manual for the device model.")
 	cmd.Flags().StringVar(&supportURL, FlagSupportURL, "",

@@ -219,7 +219,9 @@ Full command:
 ```bash
 dcld tx model add-model --vid=<uint16> --pid=<uint16> --deviceTypeID=<uint16> --productName=<string> --productLabel=<string or path> --partNumber=<string> 
     --commissioningCustomFlow=<uint8> --commissioningCustomFlowUrl=<string> --commissioningModeInitialStepsHint=<uint32> --commissioningModeInitialStepsInstruction=<string>
-    --commissioningModeSecondaryStepsHint=<uint32> --commissioningModeSecondaryStepsInstruction=<string> --userManualURL=<string> --supportURL=<string> --productURL=<string> --lsfURL=<string>
+    --commissioningModeSecondaryStepsHint=<uint32> --commissioningModeSecondaryStepsInstruction=<string> 
+    --icdUserActiveModeTriggerHint=<uint32> --icdUserActiveModeTriggerInstruction=<string> 
+    --userManualURL=<string> --supportURL=<string> --productURL=<string> --lsfURL=<string>
     --from=<account>
 ```
 
