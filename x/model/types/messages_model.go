@@ -35,6 +35,8 @@ func NewMsgCreateModel(
 	commissioningModeSecondaryStepsInstruction string,
 	icdUserActiveModeTriggerHint uint32,
 	icdUserActiveModeTriggerInstruction string,
+	factoryResetStepsHint uint32,
+	factoryResetStepsInstruction string,
 	userManualURL string,
 	supportURL string,
 	productURL string,
@@ -65,6 +67,8 @@ func NewMsgCreateModel(
 		CommissioningModeSecondaryStepsInstruction: commissioningModeSecondaryStepsInstruction,
 		IcdUserActiveModeTriggerHint:               icdUserActiveModeTriggerHint,
 		IcdUserActiveModeTriggerInstruction:        icdUserActiveModeTriggerInstruction,
+		FactoryResetStepsHint:                      factoryResetStepsHint,
+		FactoryResetStepsInstruction:               factoryResetStepsInstruction,
 		UserManualUrl:                              userManualURL,
 		SupportUrl:                                 supportURL,
 		ProductUrl:                                 productURL,
@@ -153,6 +157,8 @@ func NewMsgUpdateModel(
 	commissioningModeSecondaryStepsHint uint32,
 	icdUserActiveModeTriggerHint uint32,
 	icdUserActiveModeTriggerInstruction string,
+	factoryResetStepsHint uint32,
+	factoryResetStepsInstruction string,
 
 ) *MsgUpdateModel {
 	return &MsgUpdateModel{
@@ -182,6 +188,8 @@ func NewMsgUpdateModel(
 		CommissioningModeSecondaryStepsHint: commissioningModeSecondaryStepsHint,
 		IcdUserActiveModeTriggerHint:        icdUserActiveModeTriggerHint,
 		IcdUserActiveModeTriggerInstruction: icdUserActiveModeTriggerInstruction,
+		FactoryResetStepsHint:               factoryResetStepsHint,
+		FactoryResetStepsInstruction:        factoryResetStepsInstruction,
 	}
 }
 

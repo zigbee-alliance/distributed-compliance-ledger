@@ -19,6 +19,8 @@ const (
 	FlagCommissioningModeSecondaryStepsInstruction = "commissioningModeSecondaryStepsInstruction"
 	FlagIcdUserActiveModeTriggerHint               = "icdUserActiveModeTriggerHint"
 	FlagIcdUserActiveModeTriggerInstruction        = "icdUserActiveModeTriggerInstruction"
+	FlagFactoryResetStepsHint                      = "factoryResetStepsHint"
+	FlagFactoryResetStepsInstruction               = "factoryResetStepsInstruction"
 	FlagUserManualURL                              = "userManualURL"
 	FlagSupportURL                                 = "supportURL"
 	FlagProductURL                                 = "productURL"

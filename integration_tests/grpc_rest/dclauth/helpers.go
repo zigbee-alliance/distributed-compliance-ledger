@@ -515,6 +515,8 @@ func NewMsgCreateModel(vid int32, pid int32, signer string) *modeltypes.MsgCreat
 		CommissioningModeSecondaryStepsInstruction: testconstants.CommissioningModeSecondaryStepsInstruction,
 		IcdUserActiveModeTriggerHint:               testconstants.IcdUserActiveModeTriggerHint,
 		IcdUserActiveModeTriggerInstruction:        testconstants.IcdUserActiveModeTriggerInstruction,
+		FactoryResetStepsHint:                      testconstants.FactoryResetStepsHint,
+		FactoryResetStepsInstruction:               testconstants.FactoryResetStepsInstruction,
 		UserManualUrl:                              testconstants.UserManualURL,
 		SupportUrl:                                 testconstants.SupportURL,
 		ProductUrl:                                 testconstants.ProductURL,

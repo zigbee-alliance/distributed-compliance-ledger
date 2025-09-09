@@ -221,6 +221,7 @@ dcld tx model add-model --vid=<uint16> --pid=<uint16> --deviceTypeID=<uint16> --
     --commissioningCustomFlow=<uint8> --commissioningCustomFlowUrl=<string> --commissioningModeInitialStepsHint=<uint32> --commissioningModeInitialStepsInstruction=<string>
     --commissioningModeSecondaryStepsHint=<uint32> --commissioningModeSecondaryStepsInstruction=<string> 
     --icdUserActiveModeTriggerHint=<uint32> --icdUserActiveModeTriggerInstruction=<string> 
+    --factoryResetStepsHint=<uint32> --factoryResetStepsInstruction=<string> 
     --userManualURL=<string> --supportURL=<string> --productURL=<string> --lsfURL=<string>
     --from=<account>
 ```

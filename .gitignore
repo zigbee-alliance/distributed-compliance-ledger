@@ -2,6 +2,8 @@ vue/node_modules
 vue/dist
 release/
 integration_tests/gocover
+bin/
+lib/
 
 settings.json
 .idea

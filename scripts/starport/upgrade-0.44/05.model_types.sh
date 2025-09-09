@@ -7,7 +7,7 @@ starport scaffold --module model type Product pid:int name partNumber
 #   Change `products` field type to array of Product after scaffolding
 starport scaffold --module model map VendorProducts products:Product --index vid:int --no-message
 #   Model
-starport scaffold --module model map Model deviceTypeId:int productName productLabel partNumber commissioningCustomFlow:int commissioningCustomFlowUrl commissioningModeInitialStepsHint:uint commissioningModeInitialStepsInstruction commissioningModeSecondaryStepsHint:uint commissioningModeSecondaryStepsInstruction icdUserActiveModeTriggerHint:uint icdUserActiveModeTriggerInstruction userManualUrl supportUrl productUrl lsfUrl lsfRevision --index vid:int,pid:int
+starport scaffold --module model map Model deviceTypeId:int productName productLabel partNumber commissioningCustomFlow:int commissioningCustomFlowUrl commissioningModeInitialStepsHint:uint commissioningModeInitialStepsInstruction commissioningModeSecondaryStepsHint:uint commissioningModeSecondaryStepsInstruction icdUserActiveModeTriggerHint:uint icdUserActiveModeTriggerInstruction factoryResetStepsHint:uint factoryResetStepsInstruction userManualUrl supportUrl productUrl lsfUrl lsfRevision --index vid:int,pid:int
 #   ModelVersion
 starport scaffold --module model map ModelVersion softwareVersionString cdVersionNumber:int firmwareInformation softwareVersionValid:bool otaUrl otaFileSize:uint otaChecksum otaChecksumType:int minApplicableSoftwareVersion:uint maxApplicableSoftwareVersion:uint releaseNotesUrl --index vid:int,pid:int,softwareVersion:uint
 #   ModelVersions

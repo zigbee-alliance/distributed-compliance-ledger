@@ -56,6 +56,8 @@ func NewMsgCreateModel(vid int32, pid int32, signer string) *modeltypes.MsgCreat
 		CommissioningModeSecondaryStepsInstruction: testconstants.CommissioningModeSecondaryStepsInstruction,
 		IcdUserActiveModeTriggerHint:               testconstants.IcdUserActiveModeTriggerHint,
 		IcdUserActiveModeTriggerInstruction:        testconstants.IcdUserActiveModeTriggerInstruction,
+		FactoryResetStepsHint:                      testconstants.FactoryResetStepsHint,
+		FactoryResetStepsInstruction:               testconstants.FactoryResetStepsInstruction,
 		UserManualUrl:                              testconstants.UserManualURL,
 		SupportUrl:                                 testconstants.SupportURL,
 		ProductUrl:                                 testconstants.ProductURL,
@@ -1122,6 +1124,11 @@ func Demo(suite *utils.TestSuite) {
 	updateSecondModelMsg.CommissioningModeInitialStepsHint = newCommissioningModeInitialStepsHint
 	updateSecondModelMsg.CommissioningModeSecondaryStepsHint = newCommissioningModeSecondaryStepsHint
 	updateSecondModelMsg.IcdUserActiveModeTriggerHint = newIcdUserActiveModeTriggerHint
+	newFactoryResetStepsHint := uint32(7)
+	updateSecondModelMsg := NewMsgUpdateModel(createSecondModelMsg.Vid, createSecondModelMsg.Pid, vendorAccount.Address)
+	updateSecondModelMsg.CommissioningModeInitialStepsHint = newCommissioningModeInitialStepsHint
+	updateSecondModelMsg.CommissioningModeSecondaryStepsHint = newCommissioningModeSecondaryStepsHint
+	updateSecondModelMsg.FactoryResetStepsHint = newFactoryResetStepsHint
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{updateSecondModelMsg}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
@@ -1132,6 +1139,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, newCommissioningModeInitialStepsHint, receivedModel.CommissioningModeInitialStepsHint)
 	require.Equal(suite.T, newCommissioningModeSecondaryStepsHint, receivedModel.CommissioningModeSecondaryStepsHint)
 	require.Equal(suite.T, newIcdUserActiveModeTriggerHint, receivedModel.IcdUserActiveModeTriggerHint)
+	require.Equal(suite.T, newFactoryResetStepsHint, receivedModel.FactoryResetStepsHint)
 
 	// add new model version
 	createModelVersionMsg := NewMsgCreateModelVersion(createFirstModelMsg.Vid, createFirstModelMsg.Pid, 1, "1", vendorAccount.Address)

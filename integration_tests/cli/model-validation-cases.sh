@@ -56,6 +56,7 @@ result=$(echo "test1234" | dcld tx model add-model --vid=$vid_1 --pid=$pid_2 --d
 --commissioningModeInitialStepsHint=1  --commissioningModeInitialStepsInstruction="Initial Instructions" \
 --commissioningModeSecondaryStepsHint=2 --commissioningModeSecondaryStepsInstruction="Secondary Steps Instruction" \
 --icdUserActiveModeTriggerHint=4 --icdUserActiveModeTriggerInstruction="Factory Reset Steps Instruction" \
+--factoryResetStepsHint=3 --factoryResetStepsInstruction="Factory Reset Steps Instruction" \
 --userManualURL="https://usermanual.url" --productURL="https://product.url.info" --lsfURL="https://lsf.url.info" --supportURL="https://support.url.info" --enhancedSetupFlowOptions=0 --from=$vendor_account_1 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
@@ -79,6 +80,8 @@ check_response_and_report "$result" "\"commissioningModeSecondaryStepsHint\": 2"
 check_response_and_report "$result" "\"commissioningModeSecondaryStepsInstruction\": \"Secondary Steps Instruction\""
 check_response_and_report "$result" "\"icdUserActiveModeTriggerHint\": 4"
 check_response_and_report "$result" "\"icdUserActiveModeTriggerInstruction\": \"ICD User Active Mode Trigger Instruction\""
+check_response_and_report "$result" "\"factoryResetStepsHint\": 3"
+check_response_and_report "$result" "\"factoryResetStepsInstruction\": \"Factory Reset Steps Instruction\""
 check_response_and_report "$result" "\"userManualUrl\": \"https://usermanual.url\""
 check_response_and_report "$result" "\"supportUrl\": \"https://support.url.info\""
 check_response_and_report "$result" "\"productUrl\": \"https://product.url.info\""
@@ -95,6 +98,7 @@ result=$(echo "test1234" | dcld tx model add-model --vid=$vid_1 --pid=$pid_3 --d
 --commissioningModeInitialStepsHint=1  --commissioningModeInitialStepsInstruction="Initial Instructions" \
 --commissioningModeSecondaryStepsHint=2 --commissioningModeSecondaryStepsInstruction="Secondary Steps Instruction" \
 --icdUserActiveModeTriggerHint=4 --icdUserActiveModeTriggerInstruction="ICD User Active Mode Trigger Instruction" \
+--factoryResetStepsHint=3 --factoryResetStepsInstruction="Factory Reset Steps Instruction" \
 --enhancedSetupFlowOptions=0 \
 --from=$vendor_account_1 --yes)
 result=$(get_txn_result "$result")
@@ -119,6 +123,8 @@ check_response_and_report "$result" "\"commissioningModeSecondaryStepsHint\": 2"
 check_response_and_report "$result" "\"commissioningModeSecondaryStepsInstruction\": \"Secondary Steps Instruction\""
 check_response_and_report "$result" "\"icdUserActiveModeTriggerHint\": 4"
 check_response_and_report "$result" "\"icdUserActiveModeTriggerInstruction\": \"ICD User Active Mode Trigger Instruction\""
+check_response_and_report "$result" "\"factoryResetStepsHint\": 3"
+check_response_and_report "$result" "\"factoryResetStepsInstruction\": \"Factory Reset Steps Instruction\""
 # FIXME: Fields marked with `json:"omitempty"` are taken into responses for unknown reason after migration to Cosmos SDK v0.44
 # response_does_not_contain "$result" "\"userManualUrl\""
 # response_does_not_contain "$result" "\"supportUrl\""
@@ -171,6 +177,7 @@ result=$(echo "test1234" | dcld tx model update-model --vid=$vid_1 --pid=$pid_1 
 --productLabel="Updated Test Product V3" --commissioningModeInitialStepsInstruction="Instructions updated v3" \
 --commissioningModeSecondaryStepsInstruction="Secondary Instructions v3" \
 --icdUserActiveModeTriggerInstruction="ICD User Active Mode Trigger Instructions v3" \
+--factoryResetStepsInstruction="Factory Reset Instructions v3" \
 --userManualURL="https://userManual.info/v3" \
 --supportURL="https://support.url.info/v3" --productURL="https://product.landingpage.url" --lsfURL="https://lsf.url.info?v=2" --lsfRevision=2 --enhancedSetupFlowOptions=0 --from=$vendor_account_1 --yes)
 result=$(get_txn_result "$result")
@@ -190,6 +197,7 @@ check_response_and_report "$result" "\"commissioningCustomFlowUrl\": \"https://u
 check_response_and_report "$result" "\"commissioningModeInitialStepsInstruction\": \"Instructions updated v3\""
 check_response_and_report "$result" "\"commissioningModeSecondaryStepsInstruction\": \"Secondary Instructions v3\""
 check_response_and_report "$result" "\"icdUserActiveModeTriggerInstruction\": \"ICD User Active Mode Trigger Instructions v3\""
+check_response_and_report "$result" "\"factoryResetStepsInstruction\": \"Factory Reset Instructions v3\""
 check_response_and_report "$result" "\"userManualUrl\": \"https://userManual.info/v3\""
 check_response_and_report "$result" "\"supportUrl\": \"https://support.url.info/v3\""
 check_response_and_report "$result" "\"productUrl\": \"https://product.landingpage.url\""
@@ -218,6 +226,7 @@ check_response_and_report "$result" "\"commissioningCustomFlowUrl\": \"https://u
 check_response_and_report "$result" "\"commissioningModeInitialStepsInstruction\": \"Instructions updated v3\""
 check_response_and_report "$result" "\"commissioningModeSecondaryStepsInstruction\": \"Secondary Instructions v3\""
 check_response_and_report "$result" "\"icdUserActiveModeTriggerInstruction\": \"ICD User Active Mode Trigger Instructions v3\""
+check_response_and_report "$result" "\"factoryResetStepsInstruction\": \"Factory Reset Instructions v3\""
 check_response_and_report "$result" "\"userManualUrl\": \"https://userManual.info/v3\""
 check_response_and_report "$result" "\"supportUrl\": \"https://support.url.info/v3\""
 check_response_and_report "$result" "\"productUrl\": \"https://product.landingpage.url\""
@@ -245,6 +254,7 @@ check_response_and_report "$result" "\"commissioningCustomFlowUrl\": \"https://u
 check_response_and_report "$result" "\"commissioningModeInitialStepsInstruction\": \"Instructions updated v3\""
 check_response_and_report "$result" "\"commissioningModeSecondaryStepsInstruction\": \"Secondary Instructions v3\""
 check_response_and_report "$result" "\"icdUserActiveModeTriggerInstruction\": \"ICD User Active Mode Trigger Instructions v3\""
+check_response_and_report "$result" "\"factoryResetStepsInstruction\": \"Factory Reset Instructions v3\""
 check_response_and_report "$result" "\"userManualUrl\": \"https://userManual.info/v3\""
 check_response_and_report "$result" "\"supportUrl\": \"https://support.url.info/v3\""
 check_response_and_report "$result" "\"productUrl\": \"https://product.landingpage.url\""

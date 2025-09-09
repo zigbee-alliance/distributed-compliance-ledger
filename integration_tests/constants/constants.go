@@ -79,6 +79,8 @@ var (
 	CommissioningModeSecondaryStepsInstruction        = "commissioningModeSecondaryStepsInstruction steps"
 	IcdUserActiveModeTriggerHint               uint32 = 5
 	IcdUserActiveModeTriggerInstruction               = "icdUserActiveModeTriggerInstruction steps"
+	FactoryResetStepsHint                      uint32 = 4
+	FactoryResetStepsInstruction                      = "factoryResetStepsInstruction steps"
 	ReleaseNotesURL                                   = "https://url.releasenotes.dclmodel"
 	UserManualURL                                     = "https://url.usermanual.dclmodel"
 	SupportURL                                        = "https://url.supporturl.dclmodel"
