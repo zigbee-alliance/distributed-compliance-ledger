@@ -131,7 +131,7 @@ General considerations:
 - as long as target production deploy architecture is not yet defined automation for testing environment provisioning would simplify comparison of the options
 - single cloud provider as a starting point
 - multiple cloud provides as a very possible production case
-- tools: [terraform](https://www.terraform.io/) and [pulumi](https://www.pulumi.com/) as the preferred options
+- tools: [terraform](https://developer.hashicorp.com/terraform) and [pulumi](https://www.pulumi.com/) as the preferred options
 
 ## ToDo
 

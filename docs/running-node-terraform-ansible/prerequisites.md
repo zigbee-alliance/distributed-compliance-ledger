@@ -94,7 +94,7 @@ The Azure deployment automation logic considers the following:
 
 
 
-[1]: https://www.terraform.io/
+[1]: https://developer.hashicorp.com/terraform
 [2]: https://learn.hashicorp.com/tutorials/terraform/install-cli
 [3]: https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
 [4]: https://www.ansible.com
