@@ -1,12 +1,12 @@
-# FIXME
-# - block project wirde ssh keys
+# TODO
+# - block project wide ssh keys
 
 resource "google_compute_firewall" "this_dev_fw_ingress_rules" {
   name        = "observer-dev-fw-ingress-rules"
   description = "Validator firewall ingress rules for development"
   network     = local.vpc.network_name
 
-  # FIXME in aws source port 22 is also specified
+  # TODO in aws source port 22 is also specified
   allow {
     protocol = "tcp"
     ports    = ["22"]
@@ -41,7 +41,7 @@ resource "google_compute_firewall" "this_private_fw_ingress_rules" {
   description = "Observer nodes firewall ingress rules for internal connections"
   network     = local.vpc.network_name
 
-  # FIXME source ports are not restricted
+  # TODO source ports are not restricted
 
   # Allow p2p from internal IPs
   allow {
@@ -78,7 +78,7 @@ resource "google_compute_firewall" "this_private_fw_ingress_rules" {
   target_tags = [local.observer_tag]
 }
 
-# FIXME what about NLB proxy IP
+# TODO what about NLB proxy IP
 # allow access from health check ranges
 resource "google_compute_firewall" "default" {
   name    = "observer-nlb-hc-fw-ingress-rule"

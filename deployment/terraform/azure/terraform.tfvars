@@ -25,7 +25,7 @@ private_sentries_config = {
 
 public_sentries_config = {
   enable        = true
-  enable_ipv6   = false
+  enable_ipv6   = false # TODO
   nodes_count   = 2
   instance_size = "Standard_B2s"
 
@@ -40,7 +40,7 @@ observers_config = {
   nodes_count      = 3
   instance_size    = "Standard_B2s"
   root_domain_name = "matterprotocol.com"
-  enable_tls       = true
+  enable_tls       = false # TODO
 
   locations = [
     1,
@@ -50,6 +50,6 @@ observers_config = {
 }
 
 prometheus_config = {
-  enable        = true
+  enable        = false # TODO
   instance_size = "Standard_B1s"
 }

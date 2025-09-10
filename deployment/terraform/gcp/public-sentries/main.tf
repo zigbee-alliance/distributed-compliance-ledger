@@ -48,7 +48,6 @@ data "google_compute_zones" "available" {
   region = local.regions[count.index]
 }
 
-# FIXME vpc = true in aws
 resource "google_compute_address" "this_static_ips" {
   count      = length(local.nodes)
   name       = "public-sentry-node-${count.index}-static-ip"
@@ -57,7 +56,6 @@ resource "google_compute_address" "this_static_ips" {
   #subnetwork = module.this_vpc.subnets[local.subnet_output_key].name
 }
 
-# FIXME vpc = true in aws
 resource "google_compute_address" "this_seed_static_ips" {
   count      = length(local.seed_nodes)
   name       = "public-sentry-seed-node-${count.index}-static-ip"
@@ -70,7 +68,7 @@ resource "google_compute_address" "this_seed_static_ips" {
 resource "google_compute_instance" "this_nodes" {
   count = length(local.nodes)
 
-  name         = "public-sentry-node-${count.index}" # FIXME copy-paste
+  name         = "public-sentry-node-${count.index}"
   machine_type = var.instance_type
   zone         = local.nodes[count.index].zone
 

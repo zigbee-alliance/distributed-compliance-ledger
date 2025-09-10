@@ -1,12 +1,12 @@
-# FIXME
-# - block project wirde ssh keys
+# TODO
+# - block project wide ssh keys
 
 resource "google_compute_firewall" "this_dev_fw_ingress_rules" {
   name        = "public-sentry-dev-fw-ingress-rules"
   description = "Public Sentry nodes firewall ingress rules for development"
   network     = module.this_vpc.network_name
 
-  # FIXME in aws source port 22 is also specified
+  # TODO in aws source port 22 is also specified
   allow {
     protocol = "tcp"
     ports    = ["22"]
@@ -27,7 +27,7 @@ resource "google_compute_firewall" "this_dev_fw_ingress_rules_ipv6" {
   description = "Public Sentry nodes firewall IPv6 ingress rules for development"
   network     = module.this_vpc.network_name
 
-  # FIXME in aws source port 22 is also specified
+  # TODO in aws source port 22 is also specified
   allow {
     protocol = "tcp"
     ports    = ["22"]
@@ -110,7 +110,7 @@ resource "google_compute_firewall" "this_prometheus_fw_ingress_rules" {
   description = "Public Sentry nodes firewall ingress rules for internal prometheus connections"
   network     = module.this_vpc.network_name
 
-  # FIXME source ports are not restricted
+  # TODO source ports are not restricted
 
   # Allow Prometheus from internal IPs
   allow {

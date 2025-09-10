@@ -1,4 +1,4 @@
-# FIXME
+# TODO
 # - tags for root_block_device (boot disk in GCP)
 # - disk type configuration variable (AWS/GCP)
 

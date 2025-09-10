@@ -1,12 +1,12 @@
-# FIXME
-# - block project wirde ssh keys
+# TODO
+# - block project wide ssh keys
 
 resource "google_compute_firewall" "this_dev_fw_ingress_rules" {
   name        = "validator-dev-fw-ingress-rules"
   description = "Validator firewall ingress rules for development"
   network     = module.this_vpc.network_name
 
-  # FIXME in aws source port 22 is also specified
+  # TODO in aws source port 22 is also specified
   allow {
     protocol = "tcp"
     ports    = ["22"]
@@ -41,7 +41,7 @@ resource "google_compute_firewall" "this_private_fw_ingress_rules" {
   description = "Validator node firewall ingress rules for internal connections"
   network     = module.this_vpc.network_name
 
-  # FIXME source ports are not restricted
+  # TODO source ports are not restricted
 
   # Allow p2p from internal IPs
   allow {

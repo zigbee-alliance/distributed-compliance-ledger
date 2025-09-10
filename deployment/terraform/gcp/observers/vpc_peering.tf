@@ -1,4 +1,4 @@
-# FIXME aws logic explicitly defines route ids to exchange this_rts_ids / peer_rts_ids
+# TODO aws logic explicitly defines route ids to exchange this_rts_ids / peer_rts_ids
 
 resource "google_compute_network_peering" "this_observers_to_private_sentries_vpc_peering" {
   name         = "observers-to-private-sentries-vpc-peering"

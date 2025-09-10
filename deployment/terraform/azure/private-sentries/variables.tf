@@ -52,8 +52,3 @@ variable "nodes_count" {
 variable "instance_size" {
   description = "Type of Azure instances"
 }
-
-# FIXME
-#variable "iam_instance_profile" {
-#  description = "IAM instance profile"
-#}

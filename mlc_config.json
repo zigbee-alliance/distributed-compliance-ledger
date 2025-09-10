@@ -1,4 +1,12 @@
 {
     "retryOn429": true,
-    "retryCount": 10
+    "retryCount": 10,
+    "ignorePatterns": [
+        {
+            "pattern": "^https://www.terraform.io"
+        },
+        {
+            "pattern": "^https://.+.hashicorp.com"
+        }
+    ]
 }
