@@ -50,13 +50,3 @@ variable "instance_type" {
 variable "enable_ipv6" {
   description = "Enable public IPv6 addresses"
 }
-
-
-# FIXME
-#variable "iam_instance_profile" {
-#  description = "IAM instance profile"
-#}
-#variable "service_account_email" {
-#  description = "IAM service account email"
-#  type        = string
-#}

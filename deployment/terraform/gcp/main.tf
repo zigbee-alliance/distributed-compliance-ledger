@@ -12,22 +12,13 @@ provider "google" {
   default_labels = local.labels
 }
 
-# FIXME
+# TODO
 # Enable OS Login for all compute instances in the project
 #resource "google_compute_project_metadata" "default" {
 #  metadata = {
 #    enable-oslogin = "TRUE"
 #  }
 #}
-
-# IAM
-#   module "iam" {
-#     source = "./iam"
-#     providers = {
-#       google = google.region_1
-#     }
-#     project_id = var.project_id
-#   }
 
 # Validator
 module "validator" {
@@ -44,7 +35,6 @@ module "validator" {
 
   instance_type               = var.validator_config.instance_type
   disable_instance_protection = local.disable_validator_protection
-  #   service_account_email = module.iam.service_account_email FIXME
 
   project_id = var.project_id
 }
@@ -64,7 +54,6 @@ module "private_sentries" {
 
   nodes_count   = var.private_sentries_config.nodes_count
   instance_type = var.private_sentries_config.instance_type
-  # service_account_email = module.iam.service_account_email FIXME
 
   ssh_public_key_path  = var.ssh_public_key_path
   ssh_private_key_path = var.ssh_private_key_path
@@ -98,7 +87,6 @@ module "public_sentries" {
   labels = local.labels
 
   instance_type = var.public_sentries_config.instance_type
-  # service_account_email = module.iam.service_account_email # FIXME
 
   enable_ipv6 = var.public_sentries_config.enable_ipv6
 
@@ -115,7 +103,7 @@ module "observers" {
   var.observers_config.enable) ? 1 : 0
 
   source = "./observers"
-  # FIXME
+
   providers = {
     google      = google.region_1
     google.peer = google.region_1
@@ -135,7 +123,6 @@ module "observers" {
   labels = local.labels
 
   instance_type = var.observers_config.instance_type
-  #  service_account_email = module.iam.service_account_email # FIXME
 
   root_domain_name = var.observers_config.root_domain_name
   enable_tls       = var.observers_config.enable_tls

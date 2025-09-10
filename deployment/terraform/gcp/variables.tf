@@ -3,7 +3,7 @@ variable "common_labels" {
   type = object({
     project     = optional(string) # default: DCL
     environment = optional(string) # default: workspace name
-    created-by  = optional(string) # e.g. email address # FIXME @ is not allowed for labels
+    created-by  = optional(string) # e.g. email address # TODO @ is not allowed for labels
     purpose     = optional(string)
   })
   default = {}
@@ -15,8 +15,6 @@ variable "project_id" {
   default     = "DCL"
 }
 
-# FIXME default regions
-
 variable "region_1" {
   type    = string
   default = "us-east1"
@@ -27,7 +25,6 @@ variable "region_2" {
   default = "us-west1"
 }
 
-# FIXME
 variable "zone" {
   type    = string
   default = "us-east1-b"
@@ -40,16 +37,6 @@ variable "ssh_public_key_path" {
 variable "ssh_private_key_path" {
   description = "SSH private key path"
 }
-
-# FIXME
-#variable "subnetwork" {
-#  type = string
-#}
-
-# FIXME
-#variable "service_account_email" {
-#  type = string
-#}
 
 variable "validator_config" {
   type = object({

@@ -57,12 +57,3 @@ variable "enable_tls" {
 variable "root_domain_name" {
   description = "Root domain name"
 }
-
-# FIXME
-#variable "iam_instance_profile" {
-#  description = "IAM instance profile"
-#}
-#variable "service_account_email" {
-#  description = "IAM service account email"
-#  type        = string
-#}
