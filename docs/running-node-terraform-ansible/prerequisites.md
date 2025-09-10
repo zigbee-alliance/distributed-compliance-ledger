@@ -9,9 +9,11 @@ But you are free to use any other environment that supports [Terraform][1] and [
 
 ### 1. Clone [DCL][5] project
 
+<!-- markdown-link-check-disable -->
 ```bash
 git clone https://github.com/zigbee-alliance/distributed-compliance-ledger.git
 ```
+<!-- markdown-link-check-enable -->
 
 ### 2. Install [Terraform][2] CLI
 
