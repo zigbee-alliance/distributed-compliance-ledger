@@ -1,4 +1,4 @@
-# FIXME get from provider ???
+# TODO is it possible to get from provider ???
 variable "region" {
   type = string
 }
@@ -46,12 +46,3 @@ variable "nodes_count" {
 variable "instance_type" {
   description = "Type of GCP compute instances"
 }
-
-# FIXME
-#variable "iam_instance_profile" {
-#  description = "IAM instance profile"
-#}
-#variable "service_account_email" {
-#  description = "IAM service account email"
-#  type        = string
-#}

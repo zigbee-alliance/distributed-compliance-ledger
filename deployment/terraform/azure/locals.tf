@@ -98,7 +98,7 @@ locals {
     }
   }
 
-  # FIXME
+  # TODO
   # prometheus_endpoints = concat(
   #   local.nodes.validator.private_ips,
   #   local.nodes.private_sentries.private_ips,

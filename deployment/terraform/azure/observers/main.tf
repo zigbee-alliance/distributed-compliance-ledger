@@ -17,7 +17,6 @@ locals {
   rest_port       = 1317
   grpc_port       = 9090
 
-  #  FIXME
   nlb_ports = [
     {
       name : "rest",
@@ -123,7 +122,7 @@ resource "azurerm_linux_virtual_machine" "this_nodes" {
   ]
 
   os_disk {
-    caching              = "ReadWrite" # FIXME
+    caching              = "ReadWrite" # TODO review
     storage_account_type = "StandardSSD_LRS"
     disk_size_gb         = 80
   }
@@ -141,11 +140,6 @@ resource "azurerm_linux_virtual_machine" "this_nodes" {
   lifecycle {
     ignore_changes = [source_image_reference]
   }
-
-  #   service_account { #  FIXME
-  #     email  = var.service_account_email
-  #     scopes = ["cloud-platform"]
-  #   }
 
   connection {
     type        = "ssh"

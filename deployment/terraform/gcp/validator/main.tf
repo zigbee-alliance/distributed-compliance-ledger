@@ -24,8 +24,8 @@ data "google_compute_zones" "available" {
 }
 
 resource "google_compute_instance" "this_node" {
-  name                = "validator-node"  # FIXME copy-paste
-  machine_type        = var.instance_type # FIXME default instance type
+  name                = "validator-node" 
+  machine_type        = var.instance_type
   deletion_protection = !var.disable_instance_protection
   zone                = data.google_compute_zones.available.names[0]
 

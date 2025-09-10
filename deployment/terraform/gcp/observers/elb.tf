@@ -4,7 +4,6 @@ resource "google_compute_global_address" "this_static_ip" {
 }
 
 
-# FIXME EXTERNAL vs EXTERNAL_MANAGED and other properties
 # backend service GRPC
 resource "google_compute_backend_service" "this_nlb_backend_service" {
   count = length(local.nodes) > 0 ? length(local.nlb_ports) : 0
@@ -13,7 +12,7 @@ resource "google_compute_backend_service" "this_nlb_backend_service" {
   protocol              = "SSL"
   port_name             = local.nlb_ports[count.index].name
   load_balancing_scheme = "EXTERNAL"
-  timeout_sec           = 10 # FIXME
+  timeout_sec           = 10
   health_checks         = [google_compute_health_check.default[count.index].id]
 
   dynamic "backend" {
@@ -44,7 +43,6 @@ resource "google_compute_target_tcp_proxy" "this_nlb_target_tcp_proxy" {
 }
 
 
-# FIXME properties
 resource "google_compute_health_check" "default" {
   count = length(local.nlb_ports)
 

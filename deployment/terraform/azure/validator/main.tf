@@ -63,7 +63,7 @@ resource "azurerm_linux_virtual_machine" "this_node" {
   ]
 
   os_disk {
-    caching              = "ReadWrite" # FIXME
+    caching              = "ReadWrite" # TODO review
     storage_account_type = "StandardSSD_LRS"
     disk_size_gb         = 80
   }
@@ -82,11 +82,6 @@ resource "azurerm_linux_virtual_machine" "this_node" {
     ignore_changes = [source_image_reference]
   }
 
-  #   service_account { #  FIXME
-  #     email  = var.service_account_email
-  #     scopes = ["cloud-platform"]
-  #   }
-
   connection {
     type        = "ssh"
     host        = self.public_ip_address
@@ -102,7 +97,7 @@ resource "azurerm_linux_virtual_machine" "this_node" {
   tags = var.tags
 }
 
-# FIXME verify, doesn't protect against terraform destroy
+# TODO verify, doesn't protect against terraform destroy
 resource "azurerm_management_lock" "this_node_lock" {
   count = var.disable_instance_protection ? 0 : 1
 

@@ -44,8 +44,3 @@ variable "ssh_username" {
 variable "instance_size" {
   description = "Type of Azure instances"
 }
-
-# FIXME
-#variable "iam_instance_profile" {
-#  description = "IAM instance profile"
-#}
