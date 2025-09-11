@@ -80,7 +80,7 @@ data "google_compute_zones" "available" {
 resource "google_compute_instance" "this_nodes" {
   count = length(local.nodes)
 
-  name         = "observer-node-${count.index}" # FIXME copy-paste
+  name         = "observer-node-${count.index}"
   machine_type = var.instance_type
   zone         = local.nodes[count.index].zone
 

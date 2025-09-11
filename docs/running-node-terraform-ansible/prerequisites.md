@@ -9,11 +9,30 @@ But you are free to use any other environment that supports [Terraform][1] and [
 
 ### 1. Clone [DCL][5] project
 
+<!-- markdown-link-check-disable -->
 ```bash
 git clone https://github.com/zigbee-alliance/distributed-compliance-ledger.git
 ```
+<!-- markdown-link-check-enable -->
 
 ### 2. Install [Terraform][2] CLI
+
+The deployment scripts in this repository were verified with Terraform v1.5.7, the latest one
+with the Mozilla Public License v2.0 (MPL 2.0) before the [change](https://www.hashicorp.com/en/license-faq).
+
+The binary be get as follows:
+
+```bash
+PRODUCT=terraform VERSION=1.5.7 OS_ARCH=linux_amd64 curl --remote-name https://releases.hashicorp.com/"${PRODUCT}"/"${VERSION}"/"${PRODUCT}"_"${VERSION}"_"${OS_ARCH}".zip
+```
+
+Please consider to do checksum and sugnature verification like described [here](https://developer.hashicorp.com/well-architected-framework/verify-hashicorp-binary?page=operational-excellence&page=verify-hashicorp-binary)
+and put the binary into the directory in your `$PATH`.
+
+In case you want to try other installation options and/or Terraform CLI version you may follow
+one of the [multiple ways](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli#verify-the-installation).
+
+E.g. using `apt` package manager for Debian systems:
 
 ```bash
 sudo apt-get update && sudo apt-get install -y gnupg software-properties-common curl
@@ -70,7 +89,7 @@ In case you choose [`s3`](https://developer.hashicorp.com/terraform/language/v1.
 
 In case you choose [`gcs`](https://developer.hashicorp.com/terraform/language/v1.5.x/settings/backends/gcs) as a terraform backend:
 
-*   create a Cloud Storage bucket (e.g. like decribed [here](ihttps://cloud.google.com/storage/docs/creating-buckets)), recommended:
+*   create a Cloud Storage bucket (e.g. like decribed [here](https://cloud.google.com/storage/docs/creating-buckets)), recommended:
     *   enable the versioning (with limited number of concurrent versions and expiration days)
     *   prevent the public access
 

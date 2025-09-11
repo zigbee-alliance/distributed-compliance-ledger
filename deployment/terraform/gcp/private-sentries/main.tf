@@ -32,7 +32,7 @@ resource "google_compute_address" "this_static_ips" {
 resource "google_compute_instance" "this_nodes" {
   count = var.nodes_count
 
-  name         = "private-sentry-node-${count.index}" # FIXME copy-paste
+  name         = "private-sentry-node-${count.index}"
   machine_type = var.instance_type
   zone         = data.google_compute_zones.available.names[count.index]
 

@@ -29,7 +29,6 @@ module "validator" {
 
   disable_instance_protection = local.disable_validator_protection
   enable_encryption_at_host   = tobool(var.validator_config.enable_encryption_at_host) == true
-  # iam_instance_profile        = module.iam.iam_instance_profile # FIXME
 }
 
 # Private Sentries
@@ -48,7 +47,6 @@ module "private_sentries" {
 
   nodes_count   = var.private_sentries_config.nodes_count
   instance_size = var.private_sentries_config.instance_size
-  # iam_instance_profile = module.iam.iam_instance_profile FIXME
 
   ssh_public_key_path  = var.ssh_public_key_path
   ssh_private_key_path = var.ssh_private_key_path
@@ -77,7 +75,6 @@ module "public_sentries_1" {
 
   nodes_count   = var.public_sentries_config.nodes_count
   instance_size = var.public_sentries_config.instance_size
-  # iam_instance_profile = module.iam.iam_instance_profile # FIXME
 
   enable_ipv6 = var.public_sentries_config.enable_ipv6
 
@@ -110,7 +107,6 @@ module "public_sentries_2" {
 
   nodes_count   = var.public_sentries_config.nodes_count
   instance_size = var.public_sentries_config.instance_size
-  # iam_instance_profile = module.iam.iam_instance_profile # FIXME
 
   enable_ipv6 = var.public_sentries_config.enable_ipv6
 
@@ -143,7 +139,6 @@ module "observers_1" {
 
   nodes_count   = var.observers_config.nodes_count
   instance_size = var.observers_config.instance_size
-  # iam_instance_profile = module.iam.iam_instance_profile # FIXME
 
   root_domain_name = var.observers_config.root_domain_name
   enable_tls       = var.observers_config.enable_tls
@@ -178,7 +173,6 @@ module "observers_2" {
 
   nodes_count   = var.observers_config.nodes_count
   instance_size = var.observers_config.instance_size
-  # iam_instance_profile = module.iam.iam_instance_profile # FIXME
 
   root_domain_name = var.observers_config.root_domain_name
 

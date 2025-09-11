@@ -6,7 +6,7 @@ output "common_labels" {
   value = local.labels
 }
 
-# FIXME
+# TODO
 #output "prometheus_endpoint" {
 #  value = local.prometheus_endpoint
 #}
