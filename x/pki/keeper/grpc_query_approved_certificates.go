@@ -32,13 +32,15 @@ func (k Keeper) ApprovedCertificatesAll(c context.Context, req *types.QueryAllAp
 			req.SubjectKeyId,
 		)
 
+		pageRes = &query.PageResponse{Total: 0}
 		if found {
 			approvedCertificatess = append(approvedCertificatess, types.ApprovedCertificates{
-				SubjectKeyId: aprCerts.SubjectKeyId,
-				Certs:        aprCerts.Certs,
+				SubjectKeyId:  aprCerts.SubjectKeyId,
+				Certs:         aprCerts.Certs,
+				SchemaVersion: aprCerts.SchemaVersion,
 			})
+			pageRes = &query.PageResponse{Total: 1}
 		}
-		pageRes = &query.PageResponse{Total: 1}
 	} else {
 		store := ctx.KVStore(k.storeKey)
 		approvedCertificatesStore := prefix.NewStore(store, pkitypes.KeyPrefix(types.ApprovedCertificatesKeyPrefix))

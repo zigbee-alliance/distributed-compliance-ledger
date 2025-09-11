@@ -214,6 +214,88 @@ func TestHandler_AddModel_CheckCommissioningModeInitialStepsHintHandling(t *test
 	}
 }
 
+func TestHandler_AddModel_CheckCommissioningModeSecondaryStepsHintHandling(t *testing.T) {
+	cases := []struct {
+		name                                        string
+		commissioningModeSecondaryStepsHint         uint32
+		expectedCommissioningModeSecondaryStepsHint uint32
+	}{
+		{
+			name:                                "CommissioningModeSecondaryStepsHint=0 Sets Default 1",
+			commissioningModeSecondaryStepsHint: 0,
+			expectedCommissioningModeSecondaryStepsHint: 1,
+		},
+		{
+			name:                                "CommissioningModeSecondaryStepsHint=3 Remains 3",
+			commissioningModeSecondaryStepsHint: 3,
+			expectedCommissioningModeSecondaryStepsHint: 3,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			setup := Setup(t)
+
+			// add new model
+			msgCreateModel := NewMsgCreateModel(setup.Vendor)
+			msgCreateModel.CommissioningModeSecondaryStepsHint = tc.commissioningModeSecondaryStepsHint
+			_, err := setup.Handler(setup.Ctx, msgCreateModel)
+			require.NoError(t, err)
+
+			// query model
+			receivedModel, err := queryModel(setup, msgCreateModel.Vid, msgCreateModel.Pid)
+			require.NoError(t, err)
+
+			// check
+			require.Equal(t, msgCreateModel.Vid, receivedModel.Vid)
+			require.Equal(t, msgCreateModel.Pid, receivedModel.Pid)
+			require.Equal(t, msgCreateModel.DeviceTypeId, receivedModel.DeviceTypeId)
+			require.Equal(t, tc.expectedCommissioningModeSecondaryStepsHint, receivedModel.CommissioningModeSecondaryStepsHint)
+		})
+	}
+}
+
+func TestHandler_AddModel_CheckFactoryResetStepsHintHandling(t *testing.T) {
+	cases := []struct {
+		name                          string
+		factoryResetStepsHint         uint32
+		expectedFactoryResetStepsHint uint32
+	}{
+		{
+			name:                          "factoryResetStepsHint=0 Sets Default 1",
+			factoryResetStepsHint:         0,
+			expectedFactoryResetStepsHint: 1,
+		},
+		{
+			name:                          "factoryResetStepsHint=3 Remains 3",
+			factoryResetStepsHint:         3,
+			expectedFactoryResetStepsHint: 3,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			setup := Setup(t)
+
+			// add new model
+			msgCreateModel := NewMsgCreateModel(setup.Vendor)
+			msgCreateModel.FactoryResetStepsHint = tc.factoryResetStepsHint
+			_, err := setup.Handler(setup.Ctx, msgCreateModel)
+			require.NoError(t, err)
+
+			// query model
+			receivedModel, err := queryModel(setup, msgCreateModel.Vid, msgCreateModel.Pid)
+			require.NoError(t, err)
+
+			// check
+			require.Equal(t, msgCreateModel.Vid, receivedModel.Vid)
+			require.Equal(t, msgCreateModel.Pid, receivedModel.Pid)
+			require.Equal(t, msgCreateModel.DeviceTypeId, receivedModel.DeviceTypeId)
+			require.Equal(t, tc.expectedFactoryResetStepsHint, receivedModel.FactoryResetStepsHint)
+		})
+	}
+}
+
 func TestHandler_UpdateModel(t *testing.T) {
 	setup := Setup(t)
 
@@ -236,8 +318,12 @@ func TestHandler_UpdateModel(t *testing.T) {
 	// update existing model
 	var newSchemaVersion uint32 = 2
 	var newCommissioningModeInitialStepsHint uint32 = 8
+	var newCommissioningModeSecondaryStepsHint uint32 = 9
+	var newFactoryResetStepsHint uint32 = 7
 	msgUpdateModel.SchemaVersion = newSchemaVersion
 	msgUpdateModel.CommissioningModeInitialStepsHint = newCommissioningModeInitialStepsHint
+	msgUpdateModel.CommissioningModeSecondaryStepsHint = newCommissioningModeSecondaryStepsHint
+	msgUpdateModel.FactoryResetStepsHint = newFactoryResetStepsHint
 	_, err = setup.Handler(setup.Ctx, msgUpdateModel)
 	require.NoError(t, err)
 
@@ -252,6 +338,8 @@ func TestHandler_UpdateModel(t *testing.T) {
 	require.Equal(t, msgUpdateModel.Pid, receivedModel.Pid)
 	require.Equal(t, msgUpdateModel.ProductLabel, receivedModel.ProductLabel)
 	require.Equal(t, newCommissioningModeInitialStepsHint, receivedModel.CommissioningModeInitialStepsHint)
+	require.Equal(t, newCommissioningModeSecondaryStepsHint, receivedModel.CommissioningModeSecondaryStepsHint)
+	require.Equal(t, newFactoryResetStepsHint, receivedModel.FactoryResetStepsHint)
 	require.Equal(t, newSchemaVersion, receivedModel.SchemaVersion)
 	require.Equal(t, msgUpdateModel.CommissioningFallbackUrl, receivedModel.CommissioningFallbackUrl)
 }
@@ -1054,7 +1142,7 @@ func TestHandler_UpdateModelVersion(t *testing.T) {
 	require.Equal(t, receivedModelVersion.FirmwareInformation, msgCreateModelVersion.FirmwareInformation)
 	require.Equal(t, receivedModelVersion.OtaChecksum, msgCreateModelVersion.OtaChecksum+"updated")
 	require.Equal(t, receivedModelVersion.OtaChecksumType, msgCreateModelVersion.OtaChecksumType)
-	require.Equal(t, receivedModelVersion.OtaChecksumType, msgCreateModelVersion.OtaChecksumType)
+	require.Equal(t, receivedModelVersion.SpecificationVersion, msgCreateModelVersion.SpecificationVersion)
 	require.Equal(t, newSchemaVersion, receivedModelVersion.SchemaVersion)
 
 	// query model versions
@@ -1803,11 +1891,13 @@ func NewMsgCreateModel(signer sdk.AccAddress) *types.MsgCreateModel {
 		CommissioningModeInitialStepsInstruction: testconstants.CommissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsHint:      testconstants.CommissioningModeSecondaryStepsHint,
 		CommissioningModeSecondaryStepsInstruction: testconstants.CommissioningModeSecondaryStepsInstruction,
-		UserManualUrl:            testconstants.UserManualURL,
-		SupportUrl:               testconstants.SupportURL,
-		ProductUrl:               testconstants.ProductURL,
-		LsfUrl:                   testconstants.LsfURL,
-		CommissioningFallbackUrl: testconstants.CommissioningFallbackURL,
+		FactoryResetStepsHint:                      testconstants.FactoryResetStepsHint,
+		FactoryResetStepsInstruction:               testconstants.FactoryResetStepsInstruction,
+		UserManualUrl:                              testconstants.UserManualURL,
+		SupportUrl:                                 testconstants.SupportURL,
+		ProductUrl:                                 testconstants.ProductURL,
+		LsfUrl:                                     testconstants.LsfURL,
+		CommissioningFallbackUrl:                   testconstants.CommissioningFallbackURL,
 	}
 }
 
@@ -1822,18 +1912,19 @@ func NewMsgUpdateModel(signer sdk.AccAddress) *types.MsgUpdateModel {
 		CommissioningCustomFlowUrl:               testconstants.CommissioningCustomFlowURL + "/updated",
 		CommissioningModeInitialStepsInstruction: testconstants.CommissioningModeInitialStepsInstruction + "-updated",
 		CommissioningModeSecondaryStepsInstruction: testconstants.CommissioningModeSecondaryStepsInstruction + "-updated",
-		UserManualUrl:               testconstants.UserManualURL + "/updated",
-		SupportUrl:                  testconstants.SupportURL + "/updated",
-		ProductUrl:                  testconstants.ProductURL + "/updated",
-		LsfUrl:                      testconstants.LsfURL + "/updated",
-		LsfRevision:                 testconstants.LsfRevision + 1,
-		EnhancedSetupFlowOptions:    testconstants.EnhancedSetupFlowOptions + 2,
-		EnhancedSetupFlowTCUrl:      testconstants.EnhancedSetupFlowTCURL + "/updated",
-		EnhancedSetupFlowTCRevision: int32(testconstants.EnhancedSetupFlowTCRevision + 1),
-		EnhancedSetupFlowTCDigest:   testconstants.EnhancedSetupFlowTCDigest,
-		EnhancedSetupFlowTCFileSize: uint32(testconstants.EnhancedSetupFlowTCFileSize + 1),
-		MaintenanceUrl:              testconstants.MaintenanceURL + "/updated",
-		CommissioningFallbackUrl:    testconstants.CommissioningFallbackURL + "/updated",
+		FactoryResetStepsInstruction:               testconstants.FactoryResetStepsInstruction + "-updated",
+		UserManualUrl:                              testconstants.UserManualURL + "/updated",
+		SupportUrl:                                 testconstants.SupportURL + "/updated",
+		ProductUrl:                                 testconstants.ProductURL + "/updated",
+		LsfUrl:                                     testconstants.LsfURL + "/updated",
+		LsfRevision:                                testconstants.LsfRevision + 1,
+		EnhancedSetupFlowOptions:                   testconstants.EnhancedSetupFlowOptions + 2,
+		EnhancedSetupFlowTCUrl:                     testconstants.EnhancedSetupFlowTCURL + "/updated",
+		EnhancedSetupFlowTCRevision:                int32(testconstants.EnhancedSetupFlowTCRevision + 1),
+		EnhancedSetupFlowTCDigest:                  testconstants.EnhancedSetupFlowTCDigest,
+		EnhancedSetupFlowTCFileSize:                uint32(testconstants.EnhancedSetupFlowTCFileSize + 1),
+		MaintenanceUrl:                             testconstants.MaintenanceURL + "/updated",
+		CommissioningFallbackUrl:                   testconstants.CommissioningFallbackURL + "/updated",
 	}
 }
 
@@ -1863,6 +1954,7 @@ func NewMsgCreateModelVersion(signer sdk.AccAddress, softwareVersion uint32) *ty
 		MaxApplicableSoftwareVersion: testconstants.MaxApplicableSoftwareVersion,
 		ReleaseNotesUrl:              testconstants.ReleaseNotesURL,
 		SchemaVersion:                testconstants.SchemaVersion,
+		SpecificationVersion:         testconstants.SpecificationVersion,
 	}
 }
 

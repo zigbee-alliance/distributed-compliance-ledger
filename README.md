@@ -2,6 +2,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Unit Tests](https://github.com/zigbee-alliance/distributed-compliance-ledger/workflows/Check%20Tests%20and%20Documentation/badge.svg)](https://github.com/zigbee-alliance/distributed-compliance-ledger/actions/workflows/verify.yml)
+[![Coverage](https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/cover_badges/.badges/master/coverage.svg)](https://github.com/zigbee-alliance/distributed-compliance-ledger/actions/workflows/verify.yml)
 
 If you are interested in how to build and run the project locally, please look at [README-DEV](README-DEV.md)
 
@@ -104,7 +105,8 @@ Please take into account [running-node-in-existing-network.md](docs/advanced/run
 ### Upgrade all nodes in a pool to a new version of DCL application
 
 DCL application can be simultaneously updated on all nodes in the pool without breaking consensus.
-See [Pool Upgrade](docs/pool-upgrade.md) and [Pool Upgrade How To](docs/pool-upgrade-how-to.md) for details.
+See [Pool Upgrade](docs/pool-upgrade.md) and [Pool Upgrade How To](docs/pool-upgrade-how-to.md) for details.  
+See [Tests After Upgrade](scripts/tests-after-upgrade/README.md) to verify the functionality of the pool after the upgrade.
 
 ### Run a local pool of nodes in Docker
 

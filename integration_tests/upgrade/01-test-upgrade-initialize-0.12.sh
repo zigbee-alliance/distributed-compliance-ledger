@@ -16,15 +16,9 @@
 set -euo pipefail
 source integration_tests/cli/common.sh
 
-binary_version="v0.12.0"
-
-wget -O dcld-initial "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version/dcld"
-chmod ugo+x dcld-initial
-
-DCLD_BIN="./dcld-initial"
+DCLD_BIN="/tmp/dcld_bins/dcld_v0.12.0"
 $DCLD_BIN config broadcast-mode block
 
-container="validator-demo"
 add_validator_node() {
   random_string account
   address=""
@@ -41,14 +35,14 @@ add_validator_node() {
   passphrase="test1234"
   docker_network="distributed-compliance-ledger_localnet"
 
-  docker run -d --name $container --ip $ip -p "$node_p2p_port-$node_client_port:26656-26657" --network $docker_network -i dcledger
+  docker run -d --name "$VALIDATOR_DEMO_CONTAINER_NAME" --ip $ip -p "$node_p2p_port-$node_client_port:26656-26657" --network $docker_network -i dcledger
 
-  docker cp $DCLD_BIN "$container":"$DCL_USER_HOME"/dcld
+  docker cp $DCLD_BIN "$VALIDATOR_DEMO_CONTAINER_NAME":"$DCL_USER_HOME"/dcld
 
   test_divider
 
   echo "$account Configure CLI"
-  docker exec $container /bin/sh -c "
+  docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" /bin/sh -c "
     ./dcld config chain-id dclchain &&
     ./dcld config output json &&
     ./dcld config node $node0conn &&
@@ -58,20 +52,20 @@ add_validator_node() {
   test_divider
 
   echo "$account Prepare Node configuration files"
-  docker exec $container ./dcld init $node_name --chain-id $chain_id
-  docker cp "$LOCALNET_DIR/node0/config/genesis.json" $container:$DCL_DIR/config
+  docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" ./dcld init $node_name --chain-id $chain_id
+  docker cp "$LOCALNET_DIR/node0/config/genesis.json" "$VALIDATOR_DEMO_CONTAINER_NAME":$DCL_DIR/config
   peers="$(cat "$LOCALNET_DIR/node0/config/config.toml" | grep -o -E "persistent_peers = \".*\"")"
-  docker exec $container sed -i "s/persistent_peers = \"\"/$peers/g" $DCL_DIR/config/config.toml
-  docker exec $container sed -i 's/laddr = "tcp:\/\/127.0.0.1:26657"/laddr = "tcp:\/\/0.0.0.0:26657"/g' $DCL_DIR/config/config.toml
+  docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" sed -i "s/persistent_peers = \"\"/$peers/g" $DCL_DIR/config/config.toml
+  docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" sed -i 's/laddr = "tcp:\/\/127.0.0.1:26657"/laddr = "tcp:\/\/0.0.0.0:26657"/g' $DCL_DIR/config/config.toml
 
   test_divider
 
   echo "Generate keys for $account"
   cmd="(echo $passphrase; echo $passphrase) | ./dcld keys add $account"
-  docker exec $container /bin/sh -c "$cmd"
+  docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" /bin/sh -c "$cmd"
 
-  address="$(docker exec $container /bin/sh -c "echo $passphrase | ./dcld keys show $account -a")"
-  pubkey="$(docker exec $container /bin/sh -c "echo $passphrase | ./dcld keys show $account -p")"
+  address="$(docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" /bin/sh -c "echo $passphrase | ./dcld keys show $account -a")"
+  pubkey="$(docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" /bin/sh -c "echo $passphrase | ./dcld keys show $account -p")"
   alice_address="$($DCLD_BIN keys show alice -a)"
   bob_address="$($DCLD_BIN keys show bob -a)"
   jack_address="$($DCLD_BIN keys show jack -a)"
@@ -81,8 +75,8 @@ add_validator_node() {
   echo $passphrase | $DCLD_BIN tx auth approve-add-account --address="$address" --from bob --yes
 
   test_divider
-  vaddress=$(docker exec $container ./dcld tendermint show-address)
-  vpubkey=$(docker exec $container ./dcld tendermint show-validator)
+  vaddress=$(docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" ./dcld tendermint show-address)
+  vpubkey=$(docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" ./dcld tendermint show-validator)
 
   echo "Check pool response for yet unknown node \"$node_name\""
   result=$($DCLD_BIN query validator node --address "$address")
@@ -97,7 +91,7 @@ add_validator_node() {
   ! read -r -d '' _script << EOF
       set -eu; echo test1234 | $DCLD_BIN tx validator add-node --pubkey='$vpubkey' --moniker="$node_name" --from="$account" --yes
 EOF
-  result="$(docker exec "$container" /bin/sh -c "echo test1234 | ./dcld tx validator add-node --pubkey='$vpubkey' --moniker="$node_name" --from="$account" --yes")"
+  result="$(docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" /bin/sh -c "echo test1234 | ./dcld tx validator add-node --pubkey='$vpubkey' --moniker="$node_name" --from="$account" --yes")"
   check_response "$result" "\"code\": 0"
   echo "$result"
 
@@ -106,11 +100,11 @@ EOF
 
 
   echo "Locating the app to $DCL_DIR/cosmovisor/genesis/bin directory"
-  docker exec $container mkdir -p "$DCL_DIR"/cosmovisor/genesis/bin
-  docker exec $container cp -f ./dcld "$DCL_DIR"/cosmovisor/genesis/bin/
+  docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" mkdir -p "$DCL_DIR"/cosmovisor/genesis/bin
+  docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" cp -f ./dcld "$DCL_DIR"/cosmovisor/genesis/bin/
 
   echo "$account Start Node \"$node_name\""
-  docker exec -d $container cosmovisor run start
+  docker exec -d "$VALIDATOR_DEMO_CONTAINER_NAME" /var/lib/dcl/./node_helper.sh
   sleep 10
 
   result=$($DCLD_BIN query validator node --address "$address")
@@ -466,20 +460,21 @@ test_divider
 # VALIDATOR_NODE
 
 echo "Add new validator node"
+
 add_validator_node
 
 test_divider
 
 echo "Disable node"
 # FIXME: use proper binary (not dcld but $DCLD_BIN)
-result=$(docker exec "$container" /bin/sh -c "echo test1234  | dcld tx validator disable-node --from=$account --yes")
+result=$(docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" /bin/sh -c "echo test1234  | dcld tx validator disable-node --from=$account --yes")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Enable node"
 # FIXME: use proper binary (not dcld but $DCLD_BIN)
-result=$(docker exec "$container" /bin/sh -c "echo test1234  | dcld tx validator enable-node --from=$account --yes")
+result=$(docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" /bin/sh -c "echo test1234  | dcld tx validator enable-node --from=$account --yes")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -504,7 +499,7 @@ test_divider
 
 echo "Enable node"
 # FIXME: use proper binary (not dcld but $DCLD_BIN)
-result=$(docker exec "$container" /bin/sh -c "echo test1234  | dcld tx validator enable-node --from=$account --yes")
+result=$(docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" /bin/sh -c "echo test1234  | dcld tx validator enable-node --from=$account --yes")
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -533,6 +528,4 @@ check_response "$result" "\"serialNumber\": \"$google_cert_serial_number\""
 check_response "$result" "\"subjectAsText\": \"$google_cert_subject_as_text\""
 response_does_not_contain "$result" "\"vid\":"
 
-echo "Initialize 0.12.0 passed"
-
-rm -f $DCLD_BIN
+echo "Initialize 0.12.0 PASSED"

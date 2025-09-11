@@ -19,6 +19,11 @@ source integration_tests/cli/common.sh
 LOCALNET_DIR=".localnet"
 DCL_USER_HOME="/var/lib/dcl"
 DCL_DIR="$DCL_USER_HOME/.dcl"
+DCL_TMP_DIR=/tmp/dcl_tmp
+DCL_TMP_VALIDATOR_DEMO_GOCOVERDIR="/tmp/dcl_validator_demo_gocover"
+DOCKERFILE="Dockerfile-build"
+IMAGE_TAG="dcld-build"
+GOCOVER_ENABLED=false
 
 random_string account
 container="validator-demo"
@@ -41,20 +46,30 @@ cleanup() {
       echo "Removing container"
       docker container rm -f "$container"
     fi
+
+    rm -rf "$DCL_TMP_DIR"
 }
 trap cleanup EXIT
 
 cleanup
 
-docker build -f Dockerfile-build -t dcld-build .
-docker container create --name dcld-build-inst dcld-build
-docker cp dcld-build-inst:/go/bin/dcld ./
-docker rm dcld-build-inst
+if env | grep GOCOVER=1; then
+    docker build --build-arg "GOCOVER=1" -f ${DOCKERFILE} -t ${IMAGE_TAG} .
+    GOCOVER_ENABLED=true
+else
+    docker build --build-arg "GOCOVER=" -f ${DOCKERFILE} -t ${IMAGE_TAG} .
+fi
 
+docker container create --name ${IMAGE_TAG}-inst ${IMAGE_TAG}
+mkdir -p "$DCL_TMP_DIR"
+docker cp ${IMAGE_TAG}-inst:/go/bin/dcld "$DCL_TMP_DIR"/
+docker rm ${IMAGE_TAG}-inst
 docker run -d --name $container --ip $ip -p "$node_p2p_port-$node_client_port:26656-26657" --network $docker_network -i dcledger
+docker cp "$DCL_TMP_DIR"/dcld "$container":"$DCL_USER_HOME"/
 
-docker cp ./dcld "$container":"$DCL_USER_HOME"/
-rm -f ./dcld
+if "$GOCOVER_ENABLED"; then
+    docker exec $container mkdir -p "$DCL_DIR"/gocover
+fi
 
 test_divider
 
@@ -115,7 +130,6 @@ echo "$result"
 
 
 test_divider
-
 
 echo "Locating the app to $DCL_DIR/cosmovisor/genesis/bin directory"
 docker exec $container mkdir -p "$DCL_DIR"/cosmovisor/genesis/bin
@@ -735,5 +749,10 @@ check_response "$result" "key not found" raw
 test_divider
 
 echo "PASSED"
+
+if "$GOCOVER_ENABLED"; then
+    rm -rf "$DCL_TMP_VALIDATOR_DEMO_GOCOVERDIR"
+    docker cp "$container":"$DCL_DIR"/gocover "$DCL_TMP_VALIDATOR_DEMO_GOCOVERDIR"
+fi
 
 cleanup

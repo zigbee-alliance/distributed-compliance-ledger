@@ -34,6 +34,7 @@ func NewMsgCreateModelVersion(
 	maxApplicableSoftwareVersion uint32,
 	releaseNotesURL string,
 	schemaVersion uint32,
+	specificationVersion uint32,
 ) *MsgCreateModelVersion {
 	return &MsgCreateModelVersion{
 		Creator:                      creator,
@@ -52,6 +53,7 @@ func NewMsgCreateModelVersion(
 		MaxApplicableSoftwareVersion: maxApplicableSoftwareVersion,
 		ReleaseNotesUrl:              releaseNotesURL,
 		SchemaVersion:                schemaVersion,
+		SpecificationVersion:         specificationVersion,
 	}
 }
 

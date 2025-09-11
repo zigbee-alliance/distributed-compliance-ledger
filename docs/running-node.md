@@ -16,12 +16,12 @@ DCL network architecture can logically have the following variations based on di
 ### 1. Genesis Validator + (Optional) Private Sentry + (Optional) Public Sentry + (Optional) Observer + (Optional) Seed
 
 - Running a full DCL network from scratch with Genesis Validator Node
-- Refer to [deployment-design-aws.md](./deployment-design-aws.md) for more info
+- (AWS) Refer to [deployment-design-aws.md](./deployment-design-aws.md) for more info
 
 ### 2. Validator + (Optional) Private Sentry + (Optional) Public Sentry + (Optional) Observer + (Optional) Seed
 
 - Running a full DCL infrastructure with Validator Node to join existing DCL network
-- Refer to [deployment-design-aws.md](./deployment-design-aws.md) for more info
+- (AWS) Refer to [deployment-design-aws.md](./deployment-design-aws.md) for more info
 
 ### 3. Observer only
 
@@ -49,9 +49,9 @@ Depending on your use cases you can choose one of the following options to run y
 - [Observer](./running-node-ansible/on.md)
 - [Seed](./running-node-ansible/seed.md)
 
-### 3. Using Terraform and Ansible on AWS cloud (fully automated)
+### 3. Using Terraform and Ansible on cloud [AWS / GCP / Azure] (fully automated)
 
-- [AWS deployment](./running-node-aws-terraform-ansible/deployment.md) - this option includes configurable scripts to run DCL network according to [deployment-design-aws.md](./deployment-design-aws.md)
+- [cloud deployment](./running-node-terraform-ansible/deployment.md)
 
 ## Security and DDoS mitigation
 
@@ -74,7 +74,7 @@ Some general recommendations:
 - [ELK][3] - for collecting application and system logs
 - See [deployment wiki][1] for more info
 
-[AWS deployment](./running-node-aws-terraform-ansible/deployment.md) - contains automation scripts for setting up health and monitoring on AWS
+[Cloud deployment](./running-node-terraform-ansible/deployment.md) - contains automation scripts for setting up health and monitoring on cloud
 
 [1]: https://github.com/zigbee-alliance/distributed-compliance-ledger/wiki/DCL-MainNet-Deployment#4-health-and-monitoring
 [2]: https://prometheus.io

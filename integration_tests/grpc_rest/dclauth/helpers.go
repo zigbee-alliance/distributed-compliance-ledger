@@ -513,10 +513,12 @@ func NewMsgCreateModel(vid int32, pid int32, signer string) *modeltypes.MsgCreat
 		CommissioningModeInitialStepsInstruction: testconstants.CommissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsHint:      testconstants.CommissioningModeSecondaryStepsHint,
 		CommissioningModeSecondaryStepsInstruction: testconstants.CommissioningModeSecondaryStepsInstruction,
-		UserManualUrl: testconstants.UserManualURL,
-		SupportUrl:    testconstants.SupportURL,
-		ProductUrl:    testconstants.ProductURL,
-		LsfUrl:        testconstants.LsfURL,
+		FactoryResetStepsHint:                      testconstants.FactoryResetStepsHint,
+		FactoryResetStepsInstruction:               testconstants.FactoryResetStepsInstruction,
+		UserManualUrl:                              testconstants.UserManualURL,
+		SupportUrl:                                 testconstants.SupportURL,
+		ProductUrl:                                 testconstants.ProductURL,
+		LsfUrl:                                     testconstants.LsfURL,
 	}
 }
 

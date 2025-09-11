@@ -1,0 +1,4 @@
+bucket         = "dcl-tf-backend"
+key            = "dcl-node"
+region         = "us-east-2"
+dynamodb_table = "dcl-tf-backend"

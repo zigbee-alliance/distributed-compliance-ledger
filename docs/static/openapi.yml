@@ -8811,6 +8811,11 @@ paths:
                       format: int64
                     commissioningFallbackUrl:
                       type: string
+                    factoryResetStepsHint:
+                      type: integer
+                      format: int64
+                    factoryResetStepsInstruction:
+                      type: string
               pagination:
                 type: object
                 properties:
@@ -9055,6 +9060,11 @@ paths:
                     format: int64
                   commissioningFallbackUrl:
                     type: string
+                  factoryResetStepsHint:
+                    type: integer
+                    format: int64
+                  factoryResetStepsInstruction:
+                    type: string
         default:
           description: An unexpected error response.
           schema:
@@ -9196,6 +9206,9 @@ paths:
                   creator:
                     type: string
                   schemaVersion:
+                    type: integer
+                    format: int64
+                  specificationVersion:
                     type: integer
                     format: int64
         default:
@@ -23523,6 +23536,11 @@ definitions:
         format: int64
       commissioningFallbackUrl:
         type: string
+      factoryResetStepsHint:
+        type: integer
+        format: int64
+      factoryResetStepsInstruction:
+        type: string
   zigbeealliance.distributedcomplianceledger.model.ModelVersion:
     type: object
     properties:
@@ -23565,6 +23583,9 @@ definitions:
       creator:
         type: string
       schemaVersion:
+        type: integer
+        format: int64
+      specificationVersion:
         type: integer
         format: int64
   zigbeealliance.distributedcomplianceledger.model.ModelVersions:
@@ -23671,6 +23692,11 @@ definitions:
               format: int64
             commissioningFallbackUrl:
               type: string
+            factoryResetStepsHint:
+              type: integer
+              format: int64
+            factoryResetStepsInstruction:
+              type: string
       pagination:
         type: object
         properties:
@@ -23769,6 +23795,11 @@ definitions:
             format: int64
           commissioningFallbackUrl:
             type: string
+          factoryResetStepsHint:
+            type: integer
+            format: int64
+          factoryResetStepsInstruction:
+            type: string
   zigbeealliance.distributedcomplianceledger.model.QueryGetModelVersionResponse:
     type: object
     properties:
@@ -23814,6 +23845,9 @@ definitions:
           creator:
             type: string
           schemaVersion:
+            type: integer
+            format: int64
+          specificationVersion:
             type: integer
             format: int64
   zigbeealliance.distributedcomplianceledger.model.QueryGetModelVersionsResponse:

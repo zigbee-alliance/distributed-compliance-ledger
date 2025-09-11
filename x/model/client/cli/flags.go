@@ -17,6 +17,8 @@ const (
 	FlagCommissioningModeInitialStepsInstruction   = "commissioningModeInitialStepsInstruction"
 	FlagCommissioningModeSecondaryStepsHint        = "commissioningModeSecondaryStepsHint"
 	FlagCommissioningModeSecondaryStepsInstruction = "commissioningModeSecondaryStepsInstruction"
+	FlagFactoryResetStepsHint                      = "factoryResetStepsHint"
+	FlagFactoryResetStepsInstruction               = "factoryResetStepsInstruction"
 	FlagUserManualURL                              = "userManualURL"
 	FlagSupportURL                                 = "supportURL"
 	FlagProductURL                                 = "productURL"
@@ -43,4 +45,5 @@ const (
 	FlagMinApplicableSoftwareVersion = "minApplicableSoftwareVersion"
 	FlagMaxApplicableSoftwareVersion = "maxApplicableSoftwareVersion"
 	FlagReleaseNotesURL              = "releaseNotesURL"
+	FlagSpecificationVersion         = "specificationVersion"
 )

@@ -71,7 +71,7 @@ func TestApprovedCertificatesQuerySingle(t *testing.T) {
 	}
 }
 
-func TestApprovedCertificatesQueryPaginated(t *testing.T) {
+func TestApprovedCertificatesQueryAll(t *testing.T) {
 	keeper, ctx := keepertest.PkiKeeper(t, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNApprovedCertificates(keeper, ctx, 5)
@@ -123,13 +123,88 @@ func TestApprovedCertificatesQueryPaginated(t *testing.T) {
 		)
 	})
 	t.Run("By subjectkey-id", func(t *testing.T) {
-		resp, err := keeper.ApprovedCertificatesAll(wctx, request(nil, 0, 0, true, "0"))
+		resp, err := keeper.ApprovedCertificatesAll(wctx, request(nil, 0, 0, true, msgs[1].SubjectKeyId))
 		require.NoError(t, err)
 		require.Equal(t, 1, len(resp.ApprovedCertificates))
-		require.Equal(t, msgs[0].SubjectKeyId, resp.ApprovedCertificates[0].SubjectKeyId)
+		require.Equal(t, msgs[1].SubjectKeyId, resp.ApprovedCertificates[0].SubjectKeyId)
 	})
 	t.Run("InvalidRequest", func(t *testing.T) {
 		_, err := keeper.ApprovedCertificatesAll(wctx, nil)
 		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid request"))
 	})
+}
+
+func TestApprovedCertificatesQueryAll_Pagination(t *testing.T) {
+	k, ctx := keepertest.PkiKeeper(t, nil)
+	wctx := sdk.WrapSDKContext(ctx)
+	certs := createNApprovedCertificates(k, ctx, 5)
+	subjectKeyId := certs[0].SubjectKeyId
+
+	tests := []struct {
+		name         string
+		req          *types.QueryAllApprovedCertificatesRequest
+		expectCount  int
+		expectTotal  uint64
+		expectPaged  bool
+		expectErr    bool
+		expectErrMsg string
+	}{
+		{
+			name: "WithSubjectKeyIdFilter",
+			req: &types.QueryAllApprovedCertificatesRequest{
+				SubjectKeyId: subjectKeyId,
+				Pagination:   &query.PageRequest{Limit: 10},
+			},
+			expectCount: 1,
+		},
+		{
+			name: "AllCertificates",
+			req: &types.QueryAllApprovedCertificatesRequest{
+				Pagination: &query.PageRequest{Limit: 10},
+			},
+			expectCount: 5,
+		},
+		{
+			name: "Pagination",
+			req: &types.QueryAllApprovedCertificatesRequest{
+				Pagination: &query.PageRequest{Limit: 3},
+			},
+			expectCount: 3,
+			expectPaged: true,
+		},
+		{
+			name: "CountTotal",
+			req: &types.QueryAllApprovedCertificatesRequest{
+				Pagination: &query.PageRequest{Limit: 10, CountTotal: true},
+			},
+			expectCount: 5,
+			expectTotal: 5,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			resp, err := k.ApprovedCertificatesAll(wctx, tc.req)
+
+			if tc.expectErr {
+				require.Error(t, err)
+				if tc.expectErrMsg != "" {
+					require.Contains(t, err.Error(), tc.expectErrMsg)
+				}
+
+				return
+			}
+
+			require.NoError(t, err)
+			require.Len(t, resp.ApprovedCertificates, tc.expectCount)
+
+			if tc.expectPaged {
+				require.NotNil(t, resp.Pagination)
+			}
+
+			if tc.expectTotal > 0 {
+				require.Equal(t, tc.expectTotal, resp.Pagination.Total)
+			}
+		})
+	}
 }
