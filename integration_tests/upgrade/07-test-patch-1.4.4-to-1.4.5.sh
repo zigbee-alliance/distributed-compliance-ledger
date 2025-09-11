@@ -126,7 +126,7 @@ for i in $(seq 0 $((node_count-1))); do
   docker start $name
 done
 
-sleep 5
+wait_for_height $(expr $broken_height + 3) 300 outage-safe
 
 test_divider
 
@@ -147,9 +147,9 @@ docker cp $DCLD_BIN_NEW $container:/var/lib/dcl/.dcl/cosmovisor/upgrades/v1.4.4/
 docker exec $container pkill cosmovisor
 docker exec $container dcld rollback --hard
 docker exec -d $container cosmovisor run start
-sleep 5
 
-get_height container_height
+wait_for_height $(expr $broken_height + 3) 300 outage-safe "tcp://localhost:$node_client_port"
+
 if (( container_height > broken_height )); then
   echo "Node started successfully after rollback and upgrade"
 else
