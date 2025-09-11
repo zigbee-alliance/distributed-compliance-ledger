@@ -128,6 +128,22 @@ func TestHandler_CreateValidator_ByNotNodeAdmin(t *testing.T) {
 	}
 }
 
+func TestHandler_CreateValidator_WithIncorrectPubKey(t *testing.T) {
+	setup := Setup(t)
+
+	valAddr := sdk.ValAddress(testconstants.Address1)
+	// create validator
+	msgCreateValidator, err := types.NewMsgCreateValidator(
+		valAddr,
+		testconstants.PubKey1, // not a validator pubkey
+		&types.Description{Moniker: testconstants.ProductName},
+	)
+	require.NoError(t, err)
+
+	_, err = setup.Handler(setup.Ctx, msgCreateValidator)
+	require.ErrorIs(t, err, sdkstakingtypes.ErrValidatorPubKeyTypeNotSupported)
+}
+
 func TestHandler_CreateValidator_TwiceForSameValidatorAddress(t *testing.T) {
 	setup := Setup(t)
 
