@@ -174,7 +174,7 @@ func (k msgServer) verifyUpdatedPAI(ctx sdk.Context, newCertificatePem, newDeleg
 	if err != nil {
 		return pkitypes.NewErrInvalidVidFormat(err)
 	}
-	if newCertificateVid != revocationPoint.Vid {
+	if newCertificateVid > 0 && newCertificateVid != revocationPoint.Vid {
 		return pkitypes.NewErrCRLSignerCertificateVidNotEqualRevocationPointVid(revocationPoint.Vid, newCertificateVid)
 	}
 
