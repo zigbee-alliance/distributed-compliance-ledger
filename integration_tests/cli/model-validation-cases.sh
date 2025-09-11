@@ -55,6 +55,7 @@ result=$(echo "test1234" | dcld tx model add-model --vid=$vid_1 --pid=$pid_2 --d
 --partNumber="23.456" --commissioningCustomFlow=1 --commissioningCustomFlowURL="https://customflow.url.info" \
 --commissioningModeInitialStepsHint=1  --commissioningModeInitialStepsInstruction="Initial Instructions" \
 --commissioningModeSecondaryStepsHint=2 --commissioningModeSecondaryStepsInstruction="Secondary Steps Instruction" \
+--icdUserActiveModeTriggerHint=4 --icdUserActiveModeTriggerInstruction="ICD User Active Mode Trigger Instruction" \
 --factoryResetStepsHint=3 --factoryResetStepsInstruction="Factory Reset Steps Instruction" \
 --userManualURL="https://usermanual.url" --productURL="https://product.url.info" --lsfURL="https://lsf.url.info" --supportURL="https://support.url.info" --enhancedSetupFlowOptions=0 --from=$vendor_account_1 --yes)
 result=$(get_txn_result "$result")
@@ -77,6 +78,8 @@ check_response_and_report "$result" "\"commissioningModeInitialStepsHint\": 1"
 check_response_and_report "$result" "\"commissioningModeInitialStepsInstruction\": \"Initial Instructions\""
 check_response_and_report "$result" "\"commissioningModeSecondaryStepsHint\": 2"
 check_response_and_report "$result" "\"commissioningModeSecondaryStepsInstruction\": \"Secondary Steps Instruction\""
+check_response_and_report "$result" "\"icdUserActiveModeTriggerHint\": 4"
+check_response_and_report "$result" "\"icdUserActiveModeTriggerInstruction\": \"ICD User Active Mode Trigger Instruction\""
 check_response_and_report "$result" "\"factoryResetStepsHint\": 3"
 check_response_and_report "$result" "\"factoryResetStepsInstruction\": \"Factory Reset Steps Instruction\""
 check_response_and_report "$result" "\"userManualUrl\": \"https://usermanual.url\""
@@ -94,6 +97,7 @@ result=$(echo "test1234" | dcld tx model add-model --vid=$vid_1 --pid=$pid_3 --d
 --partNumber="23.456" --commissioningCustomFlow=1 --commissioningCustomFlowURL="https://customflow.url.info" \
 --commissioningModeInitialStepsHint=1  --commissioningModeInitialStepsInstruction="Initial Instructions" \
 --commissioningModeSecondaryStepsHint=2 --commissioningModeSecondaryStepsInstruction="Secondary Steps Instruction" \
+--icdUserActiveModeTriggerHint=4 --icdUserActiveModeTriggerInstruction="ICD User Active Mode Trigger Instruction" \
 --factoryResetStepsHint=3 --factoryResetStepsInstruction="Factory Reset Steps Instruction" \
 --enhancedSetupFlowOptions=0 \
 --from=$vendor_account_1 --yes)
@@ -117,6 +121,8 @@ check_response_and_report "$result" "\"commissioningModeInitialStepsHint\": 1"
 check_response_and_report "$result" "\"commissioningModeInitialStepsInstruction\": \"Initial Instructions\""
 check_response_and_report "$result" "\"commissioningModeSecondaryStepsHint\": 2"
 check_response_and_report "$result" "\"commissioningModeSecondaryStepsInstruction\": \"Secondary Steps Instruction\""
+check_response_and_report "$result" "\"icdUserActiveModeTriggerHint\": 4"
+check_response_and_report "$result" "\"icdUserActiveModeTriggerInstruction\": \"ICD User Active Mode Trigger Instruction\""
 check_response_and_report "$result" "\"factoryResetStepsHint\": 3"
 check_response_and_report "$result" "\"factoryResetStepsInstruction\": \"Factory Reset Steps Instruction\""
 # FIXME: Fields marked with `json:"omitempty"` are taken into responses for unknown reason after migration to Cosmos SDK v0.44
@@ -170,6 +176,7 @@ result=$(echo "test1234" | dcld tx model update-model --vid=$vid_1 --pid=$pid_1 
 --partNumber="V3" --commissioningCustomFlowURL="https://updated.url.info" \
 --productLabel="Updated Test Product V3" --commissioningModeInitialStepsInstruction="Instructions updated v3" \
 --commissioningModeSecondaryStepsInstruction="Secondary Instructions v3" \
+--icdUserActiveModeTriggerInstruction="ICD User Active Mode Trigger Instructions v3" \
 --factoryResetStepsInstruction="Factory Reset Instructions v3" \
 --userManualURL="https://userManual.info/v3" \
 --supportURL="https://support.url.info/v3" --productURL="https://product.landingpage.url" --lsfURL="https://lsf.url.info?v=2" --lsfRevision=2 --enhancedSetupFlowOptions=0 --from=$vendor_account_1 --yes)
@@ -189,6 +196,7 @@ check_response_and_report "$result" "\"commissioningCustomFlow\": 0" # default v
 check_response_and_report "$result" "\"commissioningCustomFlowUrl\": \"https://updated.url.info\""
 check_response_and_report "$result" "\"commissioningModeInitialStepsInstruction\": \"Instructions updated v3\""
 check_response_and_report "$result" "\"commissioningModeSecondaryStepsInstruction\": \"Secondary Instructions v3\""
+check_response_and_report "$result" "\"icdUserActiveModeTriggerInstruction\": \"ICD User Active Mode Trigger Instructions v3\""
 check_response_and_report "$result" "\"factoryResetStepsInstruction\": \"Factory Reset Instructions v3\""
 check_response_and_report "$result" "\"userManualUrl\": \"https://userManual.info/v3\""
 check_response_and_report "$result" "\"supportUrl\": \"https://support.url.info/v3\""
@@ -217,6 +225,7 @@ check_response_and_report "$result" "\"commissioningCustomFlow\": 0" # default v
 check_response_and_report "$result" "\"commissioningCustomFlowUrl\": \"https://updated.url.info\""
 check_response_and_report "$result" "\"commissioningModeInitialStepsInstruction\": \"Instructions updated v3\""
 check_response_and_report "$result" "\"commissioningModeSecondaryStepsInstruction\": \"Secondary Instructions v3\""
+check_response_and_report "$result" "\"icdUserActiveModeTriggerInstruction\": \"ICD User Active Mode Trigger Instructions v3\""
 check_response_and_report "$result" "\"factoryResetStepsInstruction\": \"Factory Reset Instructions v3\""
 check_response_and_report "$result" "\"userManualUrl\": \"https://userManual.info/v3\""
 check_response_and_report "$result" "\"supportUrl\": \"https://support.url.info/v3\""
@@ -244,6 +253,7 @@ check_response_and_report "$result" "\"commissioningCustomFlow\": 0" # default v
 check_response_and_report "$result" "\"commissioningCustomFlowUrl\": \"https://updated.url.info\""
 check_response_and_report "$result" "\"commissioningModeInitialStepsInstruction\": \"Instructions updated v3\""
 check_response_and_report "$result" "\"commissioningModeSecondaryStepsInstruction\": \"Secondary Instructions v3\""
+check_response_and_report "$result" "\"icdUserActiveModeTriggerInstruction\": \"ICD User Active Mode Trigger Instructions v3\""
 check_response_and_report "$result" "\"factoryResetStepsInstruction\": \"Factory Reset Instructions v3\""
 check_response_and_report "$result" "\"userManualUrl\": \"https://userManual.info/v3\""
 check_response_and_report "$result" "\"supportUrl\": \"https://support.url.info/v3\""

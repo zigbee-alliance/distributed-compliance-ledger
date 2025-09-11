@@ -226,6 +226,15 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
+			name: "IcdUserActiveModeTriggerInstruction length > 1024",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.IcdUserActiveModeTriggerInstruction = tmrand.Str(1025)
+
+				return msg
+			}(validMsgCreateModel()),
+			err: validator.ErrFieldMaxLengthExceeded,
+		},
+		{
 			name: "FactoryResetStepsInstruction length > 1024",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.FactoryResetStepsInstruction = tmrand.Str(1025)
@@ -779,9 +788,25 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			}(validMsgCreateModel()),
 		},
 		{
+			name: "IcdUserActiveModeTriggerHint == 0",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.IcdUserActiveModeTriggerHint = 0
+
+				return msg
+			}(validMsgCreateModel()),
+		},
+		{
 			name: "FactoryResetStepsHint == 0",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.FactoryResetStepsHint = 0
+
+				return msg
+			}(validMsgCreateModel()),
+		},
+		{
+			name: "IcdUserActiveModeTriggerHint > 0",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.IcdUserActiveModeTriggerHint = 1
 
 				return msg
 			}(validMsgCreateModel()),
@@ -795,9 +820,25 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			}(validMsgCreateModel()),
 		},
 		{
+			name: "IcdUserActiveModeTriggerInstruction is omitted",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.IcdUserActiveModeTriggerInstruction = ""
+
+				return msg
+			}(validMsgCreateModel()),
+		},
+		{
 			name: "FactoryResetStepsInstruction is omitted",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.FactoryResetStepsInstruction = ""
+
+				return msg
+			}(validMsgCreateModel()),
+		},
+		{
+			name: "IcdUserActiveModeTriggerInstruction length == 1024",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.IcdUserActiveModeTriggerInstruction = tmrand.Str(1024)
 
 				return msg
 			}(validMsgCreateModel()),
@@ -1054,6 +1095,15 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "CommissioningModeInitialStepsInstruction length > 1024",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.CommissioningModeInitialStepsInstruction = tmrand.Str(1025)
+
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrFieldMaxLengthExceeded,
+		},
+		{
+			name: "IcdUserActiveModeTriggerInstruction length > 1024",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.IcdUserActiveModeTriggerInstruction = tmrand.Str(1025)
 
 				return msg
 			}(validMsgUpdateModel()),
@@ -1598,9 +1648,25 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			}(validMsgUpdateModel()),
 		},
 		{
+			name: "IcdUserActiveModeTriggerInstruction is omitted",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.IcdUserActiveModeTriggerInstruction = ""
+
+				return msg
+			}(validMsgUpdateModel()),
+		},
+		{
 			name: "FactoryResetStepsInstruction is omitted",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.FactoryResetStepsInstruction = ""
+
+				return msg
+			}(validMsgUpdateModel()),
+		},
+		{
+			name: "IcdUserActiveModeTriggerInstruction length == 1024",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.IcdUserActiveModeTriggerInstruction = tmrand.Str(1024)
 
 				return msg
 			}(validMsgUpdateModel()),
@@ -1894,6 +1960,8 @@ func validMsgCreateModel() *MsgCreateModel {
 		CommissioningModeInitialStepsInstruction: testconstants.CommissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsHint:      testconstants.CommissioningModeSecondaryStepsHint,
 		CommissioningModeSecondaryStepsInstruction: testconstants.CommissioningModeSecondaryStepsInstruction,
+		IcdUserActiveModeTriggerHint:               testconstants.IcdUserActiveModeTriggerHint,
+		IcdUserActiveModeTriggerInstruction:        testconstants.IcdUserActiveModeTriggerInstruction,
 		FactoryResetStepsHint:                      testconstants.FactoryResetStepsHint,
 		FactoryResetStepsInstruction:               testconstants.FactoryResetStepsInstruction,
 		UserManualUrl:                              testconstants.UserManualURL,
@@ -1920,6 +1988,7 @@ func validMsgUpdateModel() *MsgUpdateModel {
 		CommissioningCustomFlowUrl:               testconstants.CommissioningCustomFlowURL + "/updated",
 		CommissioningModeInitialStepsInstruction: testconstants.CommissioningModeInitialStepsInstruction + "-updated",
 		CommissioningModeSecondaryStepsInstruction: testconstants.CommissioningModeSecondaryStepsInstruction + "-updated",
+		IcdUserActiveModeTriggerInstruction:        testconstants.IcdUserActiveModeTriggerInstruction + "-updated",
 		FactoryResetStepsInstruction:               testconstants.FactoryResetStepsInstruction + "-updated",
 		UserManualUrl:                              testconstants.UserManualURL + "/updated",
 		SupportUrl:                                 testconstants.SupportURL + "/updated",
