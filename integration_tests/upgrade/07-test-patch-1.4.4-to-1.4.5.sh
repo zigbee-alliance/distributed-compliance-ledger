@@ -17,17 +17,11 @@ set -euo pipefail
 source integration_tests/cli/common.sh
 
 binary_version_old="v1.4.4"
-binary_version_new="v1.4.5-0.dev.1"
+binary_version_new="v1.4.5"
 node_count=4
 
-wget -O dcld_$binary_version_old "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version_old/dcld"
-chmod ugo+x dcld_$binary_version_old
-wget -O dcld_$binary_version_new "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version_new/dcld"
-chmod ugo+x dcld_$binary_version_new
-
-
-DCLD_BIN_OLD="./dcld_$binary_version_old"
-DCLD_BIN_NEW="./dcld_$binary_version_new"  # Path to locally built dcld v1.4.5
+DCLD_BIN_OLD="/tmp/dcld_bins/dcld_$binary_version_old"
+DCLD_BIN_NEW="/tmp/dcld_bins/dcld_$binary_version_new"
 
 check_pool_accepts_tx() {
   # Generate random test data for transaction
@@ -54,6 +48,10 @@ check_pool_accepts_tx() {
 
 
 test_divider
+if ! check_pool_accepts_tx; then
+  echo "FAIL: Pool does NOT accept transactions"
+  exit 1
+fi
 if ! check_pool_accepts_tx; then
   echo "FAIL: Pool does NOT accept transactions"
   exit 1
@@ -126,7 +124,7 @@ for i in $(seq 0 $((node_count-1))); do
   docker start $name
 done
 
-sleep 5
+wait_for_height $(expr $broken_height + 2) 300 outage-safe
 
 test_divider
 
@@ -143,19 +141,14 @@ test_divider
 
 echo "Rollback and upgrade the last node"
 
-docker cp $DCLD_BIN_NEW $container:/var/lib/dcl/.dcl/cosmovisor/upgrades/v1.4.4/bin/dcld
-docker exec $container pkill cosmovisor
-docker exec $container dcld rollback --hard
-docker exec -d $container cosmovisor run start
-sleep 5
+docker cp $DCLD_BIN_NEW $VALIDATOR_DEMO_CONTAINER_NAME:/var/lib/dcl/.dcl/cosmovisor/upgrades/v1.4.4/bin/dcld
+docker exec $VALIDATOR_DEMO_CONTAINER_NAME pkill cosmovisor
+docker exec $VALIDATOR_DEMO_CONTAINER_NAME dcld rollback --hard
+docker exec -d $VALIDATOR_DEMO_CONTAINER_NAME cosmovisor run start
 
-get_height container_height
-if (( container_height > broken_height )); then
-  echo "Node started successfully after rollback and upgrade"
-else
-  echo "FAIL: Node failed to start after rollback and upgrade"
-  exit 1
-fi
+wait_for_height $(expr $broken_height + 3) 300 outage-safe "tcp://localhost:$node_client_port"
+
+echo "Node started successfully after rollback and upgrade"
 
 test_divider
 echo "Consensus failure patch test passed"
